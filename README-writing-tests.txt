@@ -85,5 +85,4 @@ Notes
     on the command line and list any database names that match it. This is useful for 
     developing/debugging the regular expressions. There is a script called database-name-matcher.sh that 
     can be used as a wrapper for this class.
-[4] Note that all tests by default are members of a group called "all". There is no need to explicitly 
-    add your new test to this group.
+

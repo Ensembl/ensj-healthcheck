@@ -97,7 +97,7 @@ public abstract class EnsTestCase {
 	/** If set, this is applied to the database names before databaseRegexp. */
 	protected String preFilterRegexp = "";
 	/** A list of Strings representing the groups that this test is a member of.
-	 * All tests are members of the group "all", and also of a group with the same name as the test. */
+	 * Every test is (at least) a member of a group with the same name as the test. */
 	protected List groups;
 	/** Each test has a set of conditions that it needs to be fulfilled in order for it to run */
 	protected List conditions;
@@ -118,7 +118,6 @@ public abstract class EnsTestCase {
 	public EnsTestCase() {
 
 		groups = new ArrayList();
-		addToGroup("all"); // everything is in all, by default
 		addToGroup(getShortTestName()); // each test is in a one-test group
 		setDescription("No description set for this test.");
 

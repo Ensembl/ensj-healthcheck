@@ -57,7 +57,7 @@ If no tests or test groups are specified, and a database regular expression is g
 Test Groups
 -----------
 
-There are a number of test groups which contain one or more tests, e.g. post_genebuild, pre_release. There is a special group called "all" which every test is a member of by default. Each test is also a member (in fact the only member) of a test group with the same name as the test case. This allows individual tests to be specified by name on the command line if necessary.
+There are a number of test groups which contain one or more tests, e.g. post_genebuild, pre_release. Each test is also a member (in fact the only member) of a test group with the same name as the test case. This allows individual tests to be specified by name on the command line if necessary.
 
 Other Utilities
 ---------------
