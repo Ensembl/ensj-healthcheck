@@ -600,9 +600,10 @@ public class TestRunner {
   // -------------------------------------------------------------------------
   /**
    * Create and cache information about all the schemas that are available.
-   * @param serialize If true, write schema information to schema_name.ser file.
+   * @param serialize If true, write schema information to file.
+   * @param fileName Name of file to write List of SchemaInfo objects to.
    */
-  public void buildSchemaList(boolean serialize) {
+  public void buildSchemaList(boolean serialize, String fileName) {
     
     // check props file loaded
     if (System.getProperty("driver") == null) {
@@ -627,7 +628,7 @@ public class TestRunner {
     }
     
     if (serialize) {
-      SchemaManager.serializeAll();
+      SchemaManager.serializeAllToSingleFile(fileName);
     }
     
   }
@@ -645,54 +646,72 @@ public class TestRunner {
     System.getProperty("user"),
     System.getProperty("password"));
     
-    return new SchemaInfo(con);    
+    return new SchemaInfo(con);
     
   }
   
   // -------------------------------------------------------------------------
   /**
    * Read schema information from serialized object files (schema_name.ser)
-   * If the .ser file for a particular schema does not exist or cannot be read, 
+   * If the .ser file for a particular schema does not exist or cannot be read,
    * the SchemaInfo object is created on the fly.
    */
-  public void readStoredSchemaInfo() {
+  public void readStoredSchemaInfo(String fileName) {
     
-    FileInputStream fis = null;
-    ObjectInputStream in = null;
-    
-    String[] schemas = getAllSchemaNames();
-    
-    for (int i = 0; i < schemas.length; i++) {
+    try {
       
-      String fileName = schemas[i] + ".ser";
-      File f = new File(fileName);
-      if (!f.exists() || !f.canRead()) {
-        
-        logger.warning("Cannot read cached schema info for " + schemas[i] + ", rebuilding");
-        SchemaManager.addSchema(getSingleSchemaInfo(schemas[i]));
-        
-      } else {
-        
-        SchemaInfo si = null;
-        try {
-          
-          fis = new FileInputStream(fileName);
-          in = new ObjectInputStream(fis);
-          si = (SchemaInfo)in.readObject();
-          SchemaManager.addSchema(si);
-          logger.finest("Read stored schema info for " + fileName);
-          in.close();
-          fis.close();
-          
-        } catch(IOException ex) {
-          ex.printStackTrace();
-        } catch(ClassNotFoundException ex) {
-          ex.printStackTrace();
-        }
-        
+      FileInputStream fis = new FileInputStream(fileName);
+      ObjectInputStream in = new ObjectInputStream(fis);
+      List schemas = (List)in.readObject();
+      in.close();
+      fis.close();
+      Iterator it = schemas.iterator();
+      while (it.hasNext()) {
+        SchemaInfo si = (SchemaInfo)it.next();
+        SchemaManager.addSchema(si);
+        logger.fine("Read stored schema info for " + si.getName());
       }
+      
+    } catch(IOException ex) {
+      ex.printStackTrace();
+    } catch(ClassNotFoundException ex) {
+      ex.printStackTrace();
     }
     
+    //
+    //    String[] schemas = getAllSchemaNames();
+    //
+    //    for (int i = 0; i < schemas.length; i++) {
+    //
+    //      String fileName = schemas[i] + ".ser";
+    //      File f = new File(fileName);
+    //      if (!f.exists() || !f.canRead()) {
+    //
+    //        logger.warning("Cannot read cached schema info for " + schemas[i] + ", rebuilding");
+    //        SchemaManager.addSchema(getSingleSchemaInfo(schemas[i]));
+    //
+    //      } else {
+    //
+    //        SchemaInfo si = null;
+    //        try {
+    //
+    //          fis = new FileInputStream(fileName);
+    //          in = new ObjectInputStream(fis);
+    //          si = (SchemaInfo)in.readObject();
+    //          SchemaManager.addSchema(si);
+    //          logger.finest("Read stored schema info for " + fileName);
+    //          in.close();
+    //          fis.close();
+    //
+    //        } catch(IOException ex) {
+    //          ex.printStackTrace();
+    //        } catch(ClassNotFoundException ex) {
+    //          ex.printStackTrace();
+    //        }
+    //
+    //      }
+    //    }
+    //
   }
   
   // -------------------------------------------------------------------------

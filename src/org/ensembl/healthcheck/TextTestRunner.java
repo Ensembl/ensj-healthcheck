@@ -37,6 +37,8 @@ public class TextTestRunner extends TestRunner {
   private boolean debug = false;
   private boolean useSchemaInfo = true;
   private boolean rebuildSchemaInfo = false;
+  private static final String SCHEMA_INFO_FILENAME = "schemas.ser";
+  
   // -------------------------------------------------------------------------
   
   /**
@@ -56,11 +58,11 @@ public class TextTestRunner extends TestRunner {
     ttr.readPropertiesFile();
     
     if (ttr.rebuildSchemaInfo) {
-      ttr.buildSchemaList(true);
+      ttr.buildSchemaList(true, SCHEMA_INFO_FILENAME);
     }
     
     if (ttr.useSchemaInfo) {
-      ttr.readStoredSchemaInfo();
+      ttr.readStoredSchemaInfo(SCHEMA_INFO_FILENAME);
     }
     
     ttr.runAllTests(ttr.findAllTests(), ttr.forceDatabases);
