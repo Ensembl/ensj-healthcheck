@@ -101,10 +101,9 @@ public class AssemblyNameInfo {
     try {
       Statement stmt = con.createStatement();
       ResultSet rs = stmt.executeQuery("SELECT meta_value FROM meta WHERE meta_key='assembly.default'");
-      if (rs != null) {
-        rs.first();
+      if (rs != null && rs.first()) {
         metaTableAssemblyDefault = rs.getString(1);
-      }
+      } 
       
     } catch (Exception e) {
       logger.severe("Could not get assembly information from database.");
