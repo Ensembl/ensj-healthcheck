@@ -16,19 +16,19 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package org.ensembl.healthcheck.testcase;
+package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.*;
 
-import org.ensembl.healthcheck.*;
+import org.ensembl.healthcheck.testcase.*;
 
-import org.ensembl.healthcheck.util.*;
+import org.ensembl.healthcheck.*;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key realtionships.
  */
 
-public class CoreForeignKeys extends EnsTestCase {
+public class CoreForeignKeys extends SingleDatabaseTestCase {
   
   /**
    * Create an OrphanTestCase that applies to a specific set of databases.
@@ -42,15 +42,15 @@ public class CoreForeignKeys extends EnsTestCase {
    * Look for broken foreign-key realtionships.
    * @return Result.
    */
-  public TestResult run() {
+  public boolean run(DatabaseRegistryEntry dbre) {
     
     boolean result = true;
-    DatabaseConnectionIterator it = getDatabaseConnectionIterator();
+    
     int orphans = 0;
     
-    while (it.hasNext()) {
+    
       
-      Connection con = (Connection)it.next();
+      Connection con = dbre.getConnection();
       // after stable_ids are loaded, there should be a one to one relationship
       // Following four tests check stable_id fulfill that
       
@@ -261,10 +261,8 @@ public class CoreForeignKeys extends EnsTestCase {
       }
       result &= (orphans == 0);
 
-    }
-    
-    return new TestResult(getShortTestName(), result);
+    return result;
     
   }
   
-} // OrphanTestCase
+} // CoreForeignKeys

@@ -1,77 +1,57 @@
 /*
-  Copyright (C) 2004 EBI, GRL
- 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
- 
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
- 
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Copyright (C) 2004 EBI, GRL
+ * 
+ * This library is free software; you can redistribute it and/or modify it under the
+ * terms of the GNU Lesser General Public License as published by the Free Software
+ * Foundation; either version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License along with
+ * this library; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+ * Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.ensembl.healthcheck.testcase;
+package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.*;
+import org.ensembl.healthcheck.testcase.*;
 import org.ensembl.healthcheck.*;
-import org.ensembl.healthcheck.util.*;
 
 /**
- * An EnsEMBL Healthcheck test case which checks all exon of a gene are on the same strand
- * and in the correct order in their transcript.
+ * An EnsEMBL Healthcheck test case which checks all exon of a gene are on the same
+ * strand and in the correct order in their transcript.
  */
 
-public class ExonStrandOrder extends EnsTestCase {
+public class ExonStrandOrder extends SingleDatabaseTestCase {
   
   public static final int TRANSCRIPT_WARN_LENGTH = 2000000;
   public static final int TRANSCRIPT_COUNT_LEVEL = 1000000;
-  
-  
+
   /**
-   * Constructor.
-   */
+	 * Constructor.
+	 */
   public ExonStrandOrder() {
-    databaseRegexp = "^.*_core_\\d.*";
+
     addToGroup("post_genebuild");
   }
   
   /**
-   * Check strand order of exons.
-   * @return Result.
-   */
+	 * Check strand order of exons.
+	 * 
+	 * @return Result.
+	 */
   
-  public TestResult run() {
+  public boolean run(DatabaseRegistryEntry dbre) {
     
     boolean result = true;
     
-    DatabaseConnectionIterator it = getDatabaseConnectionIterator();
+    
     int singleExonTranscripts = 0;
     int transcriptCount = 0;
-    
-//    String sql =
-//    "SELECT t.gene_id, t.transcript_id, e.exon_id, " +
-//    "IF     (a.contig_ori=1,(e.contig_start+a.chr_start-a.contig_start)," +
-//    "                       (a.chr_start+a.contig_end-e.contig_end )) as start, " +
-//    "IF     (a.contig_ori=1,(e.contig_end+a.chr_start-a.contig_start), " +
-//    "                       (a.chr_start+a.contig_end-e.contig_start)) as end, " +
-//    "       a.contig_ori*e.contig_strand, " +
-//    "       a.chromosome_id, " +
-//    "       et.rank " +
-//    "FROM   transcript t, exon_transcript et ,exon e, assembly a " +
-//    "WHERE  t.transcript_id = et.transcript_id " +
-//    "AND    et.exon_id = e.exon_id " +
-//    "AND    e.contig_id = a.contig_id " +
-//    "ORDER  BY t.gene_id, t.transcript_id, et.rank, e.sticky_rank ";
-    // +
-    //				"LIMIT  100";
-    // + "GROUP BY et.transcript_id, e.exon_id";
-    
+ 
     String sql =
     "SELECT t.gene_id, t.transcript_id, e.exon_id, t.seq_region_start, t.seq_region_end, " +
     "       a.ori*e.seq_region_strand, a.asm_seq_region_id, et.rank " +
@@ -82,10 +62,8 @@ public class ExonStrandOrder extends EnsTestCase {
     "ORDER  BY t.gene_id, t.transcript_id, et.rank ";
     
     //System.out.println(sql);
-    
-    while (it.hasNext()) {
-      
-      Connection con = (Connection)it.next();
+
+      Connection con = dbre.getConnection();
       try {
         Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
         stmt.setFetchSize(Integer.MIN_VALUE);
@@ -207,12 +185,9 @@ public class ExonStrandOrder extends EnsTestCase {
       } catch (Exception e) {
         e.printStackTrace();
       }
-      
-    }
-    
-    return new TestResult(getShortTestName(), result);
+
+    return result;
     
   }
   
-  
-} // ExonStrandOrder TestCase
+} // ExonStrandOrder

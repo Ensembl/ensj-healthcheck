@@ -1,36 +1,34 @@
 /*
-  Copyright (C) 2004 EBI, GRL
- 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
- 
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
- 
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Copyright (C) 2004 EBI, GRL
+ * 
+ * This library is free software; you can redistribute it and/or modify it under the
+ * terms of the GNU Lesser General Public License as published by the Free Software
+ * Foundation; either version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License along with
+ * this library; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+ * Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.ensembl.healthcheck.testcase;
+package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.*;
 import java.util.regex.*;
 
+import org.ensembl.healthcheck.testcase.*;
+import org.ensembl.healthcheck.util.*;
 import org.ensembl.healthcheck.*;
 
-import org.ensembl.healthcheck.util.*;
-
 /**
- * Checks the metadata table to make sure it is OK.
- * Only one meta table at a time is done here; checks for the consistency of the
- * meta table across species are done in MetaCrossSpecies.
+ * Checks the metadata table to make sure it is OK. Only one meta table at a time is done
+ * here; checks for the consistency of the meta table across species are done in
+ * MetaCrossSpecies.
  */
-public class Meta extends EnsTestCase {
+public class Meta extends SingleDatabaseTestCase {
 
 	// update this array as necessary
 	private static final String[] validPrefixes = { "RGSC", "DROM", "ZFISH", "FUGU", "MOZ", "CEL", "CBR", "MGSC", "NCBI", "NCBIM" };
@@ -47,17 +45,14 @@ public class Meta extends EnsTestCase {
 
 	/**
 	 * Check various aspects of the meta table.
+	 * 
 	 * @return Result.
 	 */
-	public TestResult run() {
+	public boolean run(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
 
-		DatabaseConnectionIterator it = getDatabaseConnectionIterator();
-
-		while (it.hasNext()) {
-
-			Connection con = (Connection)it.next();
+			Connection con = dbre.getConnection();
 
 			String dbName = DBUtils.getShortDatabaseName(con);
 
@@ -120,7 +115,9 @@ public class Meta extends EnsTestCase {
 
 				if (!metaTableAssemblyVersion.equalsIgnoreCase(dbNameAssemblyVersion)) {
 					result = false;
-					//warn(con, "Database name assembly version (" + dbNameAssemblyVersion + ") does not match meta table assembly version (" + metaTableAssemblyVersion + ").");
+					//warn(con, "Database name assembly version (" + dbNameAssemblyVersion + ")
+					// does not match meta table assembly version (" + metaTableAssemblyVersion +
+					// ").");
 					ReportManager.problem(
 						this,
 						con,
@@ -154,7 +151,8 @@ public class Meta extends EnsTestCase {
 
 			String[] metaTableSpeciesGenusArray =
 				getColumnValues(con, "SELECT LCASE(meta_value) FROM meta WHERE meta_key='species.classification' ORDER BY meta_id LIMIT 2");
-			// if all is well, metaTableSpeciesGenusArray should contain the species and genus (in that order) from the meta table
+			// if all is well, metaTableSpeciesGenusArray should contain the species and genus
+			// (in that order) from the meta table
 
 			if (metaTableSpeciesGenusArray != null
 				&& metaTableSpeciesGenusArray.length == 2
@@ -167,7 +165,8 @@ public class Meta extends EnsTestCase {
 				logger.finest("Classification from DB name:" + dbNameGenusSpecies + " Meta table: " + metaTableGenusSpecies);
 				if (!dbNameGenusSpecies.equalsIgnoreCase(metaTableGenusSpecies)) {
 					result = false;
-					//warn(con, "Database name does not correspond to species/genus data from meta table");
+					//warn(con, "Database name does not correspond to species/genus data from meta
+					// table");
 					ReportManager.problem(this, con, "Database name does not correspond to species/genus data from meta table");
 				} else {
 					ReportManager.correct(this, con, "Database name corresponds to species/genus data from meta table");
@@ -181,7 +180,8 @@ public class Meta extends EnsTestCase {
 			// -------------------------------------------
 			// Check formatting of assembly.mapping entries
 			// should be of format
-			// coord_system1{:default}|coord_system2{:default} with optional third coordinate system
+			// coord_system1{:default}|coord_system2{:default} with optional third coordinate
+			// system
 			// and all coord systems should be valid from coord_system
 			Pattern assemblyMappingPattern = Pattern.compile("^(\\w+)(:\\w+)?\\|(\\w+)(:\\w+)?(\\|(\\w+)(:\\w+)?)?$");
 			String[] validCoordSystems = getColumnValues(con, "SELECT name FROM coord_system");
@@ -206,7 +206,10 @@ public class Meta extends EnsTestCase {
 						valid = false;
 						ReportManager.problem(this, con, "Target co-ordinate system " + cs2 + " is not in the coord_system table");
 					}
-					if (cs3 != null && !Utils.stringInArray(cs3, validCoordSystems, false)) { // third CS is optional
+					if (cs3 != null && !Utils.stringInArray(cs3, validCoordSystems, false)) { // third
+																																										// CS
+																																										// is
+																																										// optional
 						valid = false;
 						ReportManager.problem(this, con, "Third co-ordinate system in mapping (" + cs3 + ") is not in the coord_system table");
 					}
@@ -217,7 +220,7 @@ public class Meta extends EnsTestCase {
 			}
 
 			// -------------------------------------------
-			// Check that the taxonomy ID matches a known one. 
+			// Check that the taxonomy ID matches a known one.
 			// The taxonomy ID-species mapping is held in the Species class.
 			
 			String dbSpeciesCommonName = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='species.common_name'");
@@ -234,10 +237,8 @@ public class Meta extends EnsTestCase {
 			}
 			// -------------------------------------------
 
-		} // while connection
-	
-		return new TestResult(getShortTestName(), result);
+		return result;
 
 	} // run
 
-} // CheckMetaDataTableTestCase
+} // Meta

@@ -1,36 +1,34 @@
 /*
-  Copyright (C) 2004 EBI, GRL
- 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
- 
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
- 
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Copyright (C) 2004 EBI, GRL
+ * 
+ * This library is free software; you can redistribute it and/or modify it under the
+ * terms of the GNU Lesser General Public License as published by the Free Software
+ * Foundation; either version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License along with
+ * this library; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+ * Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.ensembl.healthcheck.testcase;
+package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.*;
 import java.util.*;
 
+import org.ensembl.healthcheck.testcase.*;
 import org.ensembl.healthcheck.*;
 import org.ensembl.healthcheck.util.*;
 
 /**
- * Check that the logic names in the analysis table are displayable.
- * Currently reads the list of displayable logc names from a text file.
- * Current set of logic names is stored at
- *  http://www.ensembl.org/Docs/wiki/html/EnsemblDocs/LogicNames.html
+ * Check that the logic names in the analysis table are displayable. Currently reads the
+ * list of displayable logc names from a text file. Current set of logic names is stored
+ * at http://www.ensembl.org/Docs/wiki/html/EnsemblDocs/LogicNames.html
  */
-public class LogicNamesDisplayable extends EnsTestCase {
+public class LogicNamesDisplayable extends SingleDatabaseTestCase {
   
   // a list of the tables to check the analysis_id in
   private String[] featureTables = { "gene", "prediction_transcript",
@@ -39,13 +37,12 @@ public class LogicNamesDisplayable extends EnsTestCase {
   "repeat_feature", "simple_feature",
   "protein_align_feature" };
   
-  
   private static final String LOGIC_NAMES_FILE = "logicnames.txt";
   private static final boolean CASE_SENSITIVE = false;
   
   /**
-   * Creates a new instance of LogicNamesDisplayable
-   */
+	 * Creates a new instance of LogicNamesDisplayable
+	 */
   public LogicNamesDisplayable() {
     
     addToGroup("post_genebuild");
@@ -54,40 +51,32 @@ public class LogicNamesDisplayable extends EnsTestCase {
  
   }
   
-  
-  public TestResult run() {
+  public boolean run(DatabaseRegistryEntry dbre) {
     
-    DatabaseConnectionIterator it = getDatabaseConnectionIterator();
     boolean result = true;
     
-    while (it.hasNext()) {
-      try {
-        Connection con = (Connection)it.next();
+		try {
+        Connection con = dbre.getConnection();
         result &= checkLogicNames(con);
         result &= checkProteinFeatureAnalysis(con);
       } catch (SQLException e) {
         e.printStackTrace();
       }
-    }
-    
-    return new TestResult(getShortTestName(), result);
+
+    return result;
     
   } // run
   
-  
-  
-  
+
   /**
-   * Looks at analysis IDs in feature tables and checks the logic names
-   * they are associated with will be displayed by the web code.
-   * The list of valid logic names is currently at
-   * http://www.ensembl.org/Docs/wiki/html/EnsemblDocs/LogicNames.html
-   * Note that this test case actually uses the names from the file
-   * logicnames.txt
-   * which currently has to be manually created from the above URL.
-   *
-   * @return
-   */
+	 * Looks at analysis IDs in feature tables and checks the logic names they are
+	 * associated with will be displayed by the web code. The list of valid logic names is
+	 * currently at http://www.ensembl.org/Docs/wiki/html/EnsemblDocs/LogicNames.html Note
+	 * that this test case actually uses the names from the file logicnames.txt which
+	 * currently has to be manually created from the above URL.
+	 * 
+	 * @return
+	 */
   private boolean checkLogicNames(Connection con) throws SQLException {
     boolean result = true;
     String message = CASE_SENSITIVE ?
@@ -121,9 +110,10 @@ public class LogicNamesDisplayable extends EnsTestCase {
         
         // check each analysis ID
         for (int i = 0; i < analysisIDs.length; i++) {
-        /* check that there is an entry in the analysis table with this
-         * ID (i.e. foreign key integrity check)
-         */
+        /*
+				 * check that there is an entry in the analysis table with this ID (i.e. foreign
+				 * key integrity check)
+				 */
           if (logicNamesByAnalID.get(analysisIDs[i]) == null) {
             ReportManager.problem(this, con, "Feature table " + featureTableName
             + " refers to non-existant analysis with ID "
@@ -150,12 +140,10 @@ public class LogicNamesDisplayable extends EnsTestCase {
   
   
   /*
-   * Does a set of analysis checks for the protein feature table
-   * This table has some bizarre requirements for the associated analysis
-   * which will hopefully change at some point.  In the meantime
-   * this healthcheck will verify that those requirements are
-   * met.
-   */
+	 * Does a set of analysis checks for the protein feature table This table has some
+	 * bizarre requirements for the associated analysis which will hopefully change at some
+	 * point. In the meantime this healthcheck will verify that those requirements are met.
+	 */
   private boolean
   checkProteinFeatureAnalysis(Connection con) throws SQLException {
     Statement stmt = con.createStatement();
@@ -212,5 +200,4 @@ public class LogicNamesDisplayable extends EnsTestCase {
     return noProblems;
   }
   
-  
-} // LogicNamesDisplayableTestCase
+} // LogicNamesDisplayable

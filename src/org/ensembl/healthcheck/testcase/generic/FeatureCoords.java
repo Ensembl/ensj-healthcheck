@@ -16,18 +16,18 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package org.ensembl.healthcheck.testcase;
+package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.*;
 
-import org.ensembl.healthcheck.*;
-
+import org.ensembl.healthcheck.testcase.*;
 import org.ensembl.healthcheck.util.*;
+import org.ensembl.healthcheck.*;
 
 /**
  * Check that feature co-ords make sense.
  */
-public class FeatureCoords extends EnsTestCase {
+public class FeatureCoords extends SingleDatabaseTestCase {
 
 	/**
 	 * Creates a new instance of CheckFeatureCoordsTestCase
@@ -41,7 +41,7 @@ public class FeatureCoords extends EnsTestCase {
 	 * Iterate over each affected database and perform various checks.
 	 * @return Result.
 	 */
-	public TestResult run() {
+	public boolean run(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
 
@@ -64,11 +64,7 @@ public class FeatureCoords extends EnsTestCase {
 		for (int tableIndex = 0; tableIndex < featureTables.length; tableIndex++) {
 			String tableName = featureTables[tableIndex];
 
-			DatabaseConnectionIterator it = getDatabaseConnectionIterator();
-
-			while (it.hasNext()) {
-
-				Connection con = (Connection)it.next();
+				Connection con = dbre.getConnection();
 
 				logger.info("Checking " + tableName + " for " + DBUtils.getShortDatabaseName(con) + " ...");
 
@@ -120,10 +116,9 @@ public class FeatureCoords extends EnsTestCase {
 					e.printStackTrace();
 				}
 			}
-		}
 
-		return new TestResult(getShortTestName(), result);
+		return result;
 
 	} // run
 
-} // CheckFeatureCoordsTestCase
+} // FeatureCoords

@@ -1,79 +1,80 @@
 /*
-  Copyright (C) 2004 EBI, GRL
- 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
- 
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
- 
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Copyright (C) 2004 EBI, GRL
+ * 
+ * This library is free software; you can redistribute it and/or modify it under the
+ * terms of the GNU Lesser General Public License as published by the Free Software
+ * Foundation; either version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License along with
+ * this library; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+ * Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.ensembl.healthcheck.testcase;
+package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.*;
 import java.util.*;
-import org.ensembl.healthcheck.*;
+import org.ensembl.healthcheck.testcase.*;
 import org.ensembl.healthcheck.util.*;
+import org.ensembl.healthcheck.*;
 
 /**
- * An EnsEMBL Healthcheck test case which checks that the protein_feature table
- * agrees with the translation table.
+ * An EnsEMBL Healthcheck test case which checks that the protein_feature table agrees
+ * with the translation table.
  */
 
-public class ProteinFeatureTranslation extends EnsTestCase implements Repair {
+public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements Repair {
   
   // hash of lists of protein features to delete
   // key - database name
   Map featuresToDelete;
   
   /**
-   * Create an ProteinFeatureTranslationTestCase that applies to a specific set of databases.
-   */
+	 * Create an ProteinFeatureTranslationTestCase that applies to a specific set of
+	 * databases.
+	 */
   public ProteinFeatureTranslation() {
     addToGroup("post_genebuild");
     featuresToDelete = new HashMap();
   }
   
   /**
-   * Builds a cache of the translation lengths, then compares them with the values in the protein_features table.
-   * @return Result.
-   */
+	 * Builds a cache of the translation lengths, then compares them with the values in the
+	 * protein_features table.
+	 * 
+	 * @return Result.
+	 */
   
-  public TestResult run() {
+  public boolean run(DatabaseRegistryEntry dbre) {
     
     boolean result = true;
-    
-    DatabaseConnectionIterator it = getDatabaseConnectionIterator();
-    
+
     // get list of transcripts
     String sql =
     "SELECT t.transcript_id, e.exon_id, tr.start_exon_id, tr.translation_id, tr.end_exon_id, tr.seq_start, tr.seq_end, e.seq_region_start, e.seq_region_end " +
     "FROM   transcript t, exon_transcript et, exon e, translation tr " +
     "WHERE  t.transcript_id = et.transcript_id AND et.exon_id = e.exon_id AND t.transcript_id = tr.transcript_id " +
     "ORDER  BY t.transcript_id, et.rank DESC";
-    
-    while (it.hasNext()) {
-      
+
       try {
         
-        Connection con = (Connection)it.next();
+        Connection con = dbre.getConnection();
         
-        // check that the protein feature table actually has some rows - if not there's no point working out the translation lengths
+        // check that the protein feature table actually has some rows - if not there's
+				// no point working out the translation lengths
         if (!tableHasRows(con, "protein_feature")) {
           logger.warning("protein_feature table for " + DBUtils.getShortDatabaseName(con) + " has zero rows - skipping.");
           continue;
         }
         
-        // NOTE: By default the MM MySQL JDBC driver reads and stores *all* rows in the ResultSet.
-        // Since this TestCase is likely to produce lots of output, we must use the "streaming"
+        // NOTE: By default the MM MySQL JDBC driver reads and stores *all* rows in the
+				// ResultSet.
+        // Since this TestCase is likely to produce lots of output, we must use the
+				// "streaming"
         // mode where only one row of the ResultSet is stored at a time.
         // To do this, the following two lines are both necessary.
         // See the README file for the mm MySQL driver.
@@ -150,9 +151,18 @@ public class ProteinFeatureTranslation extends EnsTestCase implements Repair {
         rs = stmt.executeQuery("SELECT protein_feature_id, translation_id, seq_end FROM protein_feature");
         while (rs.next()) {
           Integer id = new Integer(rs.getInt("translation_id"));
-          int minTranslationLength = (((Integer)translationLengths.get(id)).intValue() + 2) / 3; // some codons can only be 2 bp
+          int minTranslationLength = (((Integer)translationLengths.get(id)).intValue() + 2) / 3; // some
+																																																 // codons
+																																																 // can
+																																																 // only
+																																																 // be
+																																																 // 2
+																																																 // bp
           if (rs.getInt("seq_end")  > minTranslationLength) {
-            //ReportManager.problem(this, con, "Protein feature " + rs.getInt("protein_feature_id") + " claims to have length " + rs.getInt("seq_end") + " but translation is of length " + minTranslationLength);
+            //ReportManager.problem(this, con, "Protein feature " +
+						// rs.getInt("protein_feature_id") + " claims to have length " +
+						// rs.getInt("seq_end") + " but translation is of length " +
+						// minTranslationLength);
             result = false;
             thisDBFeatures.add(new Integer(rs.getInt("protein_feature_id")));
           }
@@ -171,10 +181,8 @@ public class ProteinFeatureTranslation extends EnsTestCase implements Repair {
       } catch (Exception e) {
         e.printStackTrace();
       }
-      
-    } // while it
-    
-    return new TestResult(getShortTestName(), result);
+
+    return result;
     
   }
   
@@ -182,14 +190,13 @@ public class ProteinFeatureTranslation extends EnsTestCase implements Repair {
   // Implementation of Repair interface.
   
   /**
-   * Delete any protein features that run past the end of the translation.
-   * <strong>CAUTION!</strong>Actually deletes the features from the protein_feature table.
-   */
-  public void repair() {
+	 * Delete any protein features that run past the end of the translation.
+	 * <strong>CAUTION! </strong>Actually deletes the features from the protein_feature
+	 * table.
+	 */
+  public void repair(DatabaseRegistryEntry dbre) {
     
-    DatabaseConnectionIterator connectionIterator = getDatabaseConnectionIterator();
-    while (connectionIterator.hasNext()) {
-      Connection con = (Connection)connectionIterator.next();
+      Connection con = dbre.getConnection();
       String sql = setupRepairSQL(con);
       if (sql.length() == 0) {
         System.out.println("No invalid protein features were found in " + DBUtils.getShortDatabaseName(con));
@@ -204,34 +211,35 @@ public class ProteinFeatureTranslation extends EnsTestCase implements Repair {
           se.printStackTrace();
         }
       }
-    }
+
   }
   
   
   /**
-   * Show which protein features would be deleted by the repair method.
-   */
-  public void show() {
+	 * Show which protein features would be deleted by the repair method.
+	 */
+  public void show(DatabaseRegistryEntry dbre) {
     
-    System.out.println("Candidates for repair:");
-    DatabaseConnectionIterator connectionIterator = getDatabaseConnectionIterator();
-    while (connectionIterator.hasNext()) {
-      Connection con = (Connection)connectionIterator.next();
+    System.out.println("Candidate for repair:");
+
+      Connection con = dbre.getConnection();
       String sql = setupRepairSQL(con);
       if (sql.length() == 0) {
         System.out.println("No invalid protein features were found in " + DBUtils.getShortDatabaseName(con));
       } else {
         System.out.println(DBUtils.getShortDatabaseName(con) + ": " + sql);
       }
-    }
+    
     
   }
   
   /**
-   * Set up the SQL to delete the offending protein features.
-   * @param con The database connection to use.
-   * @return The SQL to delete the incorrect protein features, or "" if there are no problems.
-   */
+	 * Set up the SQL to delete the offending protein features.
+	 * 
+	 * @param con The database connection to use.
+	 * @return The SQL to delete the incorrect protein features, or "" if there are no
+	 *         problems.
+	 */
   private String setupRepairSQL(Connection con) {
     
     StringBuffer sql = new StringBuffer("DELETE FROM protein_feaure WHERE protein_feature_id IN (");
@@ -268,6 +276,7 @@ public class ProteinFeatureTranslation extends EnsTestCase implements Repair {
     
     Iterator it = keyList.iterator();
     while (it.hasNext()) {
+    	
       Integer iid = (Integer)it.next();
       int id = iid.intValue();
       if (id > maxID) {
@@ -283,5 +292,3 @@ public class ProteinFeatureTranslation extends EnsTestCase implements Repair {
   // -------------------------------------------------------------------------
   
 } // ProteinFeatureTranslationTestCase
-
-

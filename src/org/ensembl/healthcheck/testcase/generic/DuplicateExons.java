@@ -16,25 +16,26 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package org.ensembl.healthcheck.testcase;
+package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.*;
+import org.ensembl.healthcheck.testcase.*;
 import org.ensembl.healthcheck.*;
-import org.ensembl.healthcheck.util.*;
 
 /**
  * An EnsEMBL Healthcheck test case which checks all exon of a gene are on the same strand
  * and in the correct order in their transcript..
  */
 
-public class DuplicateExons extends EnsTestCase {
+public class DuplicateExons extends SingleDatabaseTestCase {
   
   /**
    * Create an OrphanTestCase that applies to a specific set of databases.
    */
   public DuplicateExons() {
-    databaseRegexp = "^.*_core_\\d.*";
+
     addToGroup("post_genebuild");
+    
   }
   
   /**
@@ -42,18 +43,14 @@ public class DuplicateExons extends EnsTestCase {
    * @return Result.
    */
   
-  public TestResult run() {
+  public boolean run(DatabaseRegistryEntry dbre) {
     
     boolean result = true;
-    
-    DatabaseConnectionIterator it = getDatabaseConnectionIterator();
     
     String sql = "SELECT e.exon_id, e.phase, e.seq_region_start AS start, e.seq_region_end AS end, e.seq_region_id AS chromosome_id, e.end_phase, e.seq_region_strand AS strand " +
     "             FROM exon e ORDER BY chromosome_id, strand, start, end, phase, end_phase";
     
-    while (it.hasNext()) {
-      
-      Connection con = (Connection)it.next();
+      Connection con = dbre.getConnection();
       try {
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
@@ -114,10 +111,8 @@ public class DuplicateExons extends EnsTestCase {
         result = false;
         e.printStackTrace();
       }
-    } // while rs
-    
-    
-    return new TestResult(getShortTestName(),result);
+     
+    return result;
     
   }
   

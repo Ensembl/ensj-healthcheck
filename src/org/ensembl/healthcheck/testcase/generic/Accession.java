@@ -16,21 +16,20 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package org.ensembl.healthcheck.testcase;
+package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.*;
 import java.util.*;
 
 import org.ensembl.healthcheck.*;
-
-import org.ensembl.healthcheck.util.*;
+import org.ensembl.healthcheck.testcase.*;
 
 /**
  * Check for presence and format of PFAM hits, and format of others.
  * Also checks for protein features with no hit_id.
  */
 
-public class Accession extends EnsTestCase {
+public class Accession extends SingleDatabaseTestCase {
   
   private HashMap formats = new HashMap();
  
@@ -55,14 +54,11 @@ public class Accession extends EnsTestCase {
    * Check each type of hit.
    * @return Result.
    */
-  public TestResult run() {
+  public boolean run(DatabaseRegistryEntry dbre) {
     
     boolean result = true;
-    DatabaseConnectionIterator it = getDatabaseConnectionIterator();
     
-    while (it.hasNext()) {
-      
-      Connection con = (Connection)it.next();
+      Connection con = dbre.getConnection();
       
       // check that there is at least one PFAM hit
       // others - prints, prosite etc - may not have any hits
@@ -102,10 +98,8 @@ public class Accession extends EnsTestCase {
       } else {
         ReportManager.correct(this, con, "No protein features have null or blank hit_ids");
       }
-      
-    }
     
-    return new TestResult(getShortTestName(), result);
+    return result;
     
   }
   

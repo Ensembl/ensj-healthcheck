@@ -15,15 +15,17 @@
  * along with this library; if not, write to the Free Software Foundation,
  * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-package org.ensembl.healthcheck.testcase;
+package org.ensembl.healthcheck.testcase.generic;
+
 import java.sql.*;
+import org.ensembl.healthcheck.testcase.*;
 import org.ensembl.healthcheck.*;
 import org.ensembl.healthcheck.util.*;
 
 /**
  * Check that the chromosome lengths stored in various places are consistent.
  */
-public class ChromosomeLengths extends EnsTestCase {
+public class ChromosomeLengths extends SingleDatabaseTestCase {
 	/**
 	 * Creates a new instance of CheckChromosomeLengthsTestCase
 	 */
@@ -34,11 +36,11 @@ public class ChromosomeLengths extends EnsTestCase {
 	/**
 	 * @return The test case result.
 	 */
-	public TestResult run() {
+	public boolean run(DatabaseRegistryEntry dbre) {
 		boolean result = true;
-		DatabaseConnectionIterator it = getDatabaseConnectionIterator();
-		while (it.hasNext()) {
-			Connection con = (Connection)it.next();
+		
+		
+			Connection con = dbre.getConnection();
 			String dbName = DBUtils.getShortDatabaseName(con);
 			// check that there are some chromosomes
 			// of course this may not necessarily be a problem for some species
@@ -122,10 +124,8 @@ public class ChromosomeLengths extends EnsTestCase {
 				ReportManager.correct(this, con, "Chromosome lengths are the same" + " in karyotype and seq_region tables");
 			}
 			// -------------------------------------------
-		} // while connection
-		// ------------------------------------------
 		
-		return new TestResult(getShortTestName(), result);
+		return result;
 		
 	} // run
 	

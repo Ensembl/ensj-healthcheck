@@ -16,19 +16,18 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package org.ensembl.healthcheck.testcase;
+package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.*;
 
+import org.ensembl.healthcheck.testcase.*;
 import org.ensembl.healthcheck.*;
-
-import org.ensembl.healthcheck.util.*;
 
 /**
  * Healthcheck for the assembly_exception table.
  */
 
-public class AssemblyException extends EnsTestCase {
+public class AssemblyException extends SingleDatabaseTestCase {
   
   /**
    * Check the assembly_exception table.
@@ -43,14 +42,14 @@ public class AssemblyException extends EnsTestCase {
    * Note referential integrity checks are done in CoreForeignKeyTestCase.
    * @return Result.
    */
-  public TestResult run() {
+  public boolean run(DatabaseRegistryEntry dbre) {
     
     boolean result = true;
-    DatabaseConnectionIterator it = getDatabaseConnectionIterator();
     
-    while (it.hasNext()) {
+    
+    
       
-      Connection con = (Connection)it.next();
+      Connection con = dbre.getConnection();
       
       // check that seq_region_end > seq_region_start
       int rows = getRowCount(con, "SELECT COUNT(*) FROM assembly_exception WHERE seq_region_start > seq_region_end");
@@ -67,11 +66,9 @@ public class AssemblyException extends EnsTestCase {
       }
       
       // more tests to be added later
-      
-    }
-    
-    return new TestResult(getShortTestName(), result);
+
+    return result;
     
   }
   
-}
+} // AssemblyException
