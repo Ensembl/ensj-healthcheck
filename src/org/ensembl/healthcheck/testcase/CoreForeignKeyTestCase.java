@@ -132,6 +132,14 @@ public class CoreForeignKeyTestCase extends EnsTestCase {
         ReportManager.correct(this, con, "All object_xref <-> xref relationships OK");
       }
       result &= (orphans == 0);
+
+      orphans = countOrphans( con, "xref", "external_db_id", "external_db", "external_db_id", true);
+      if( orphans > 0) {
+        ReportManager.problem(this, con, "xref <-> external_db has unlinked entries");
+      } else {
+        ReportManager.correct(this, con, "All xref <-> external_db relationships OK");
+      }
+      result &= (orphans == 0);
     }
     
     return new TestResult(getShortTestName(), result);
