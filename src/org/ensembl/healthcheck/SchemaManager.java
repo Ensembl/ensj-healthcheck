@@ -21,6 +21,7 @@ package org.ensembl.healthcheck;
 import java.io.*;
 import java.util.*;
 import java.sql.*;
+import java.util.zip.*;
 import org.ensembl.healthcheck.util.*;
 
 /**
@@ -130,14 +131,22 @@ public class SchemaManager {
   /**
    * Serialize the List of SchemaInfo objects to a file.
    * @param fileName The name of the file to write to.
+   * @param gzip If true, gzip compress the output. Results in approx 95% size reduction.
    */
   
-  public static void serializeAllToSingleFile(String fileName) {
+  public static void serializeAllToSingleFile(String fileName, boolean gzip) {
     
     try {
-      ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName));
+
+      OutputStream os = new FileOutputStream(fileName);
+      if (gzip) {
+        os = new GZIPOutputStream(os);
+      }
+
+      ObjectOutputStream out = new ObjectOutputStream(os);
       out.writeObject(schemas);
       out.close();
+   
     }
     catch(IOException ex) {
       ex.printStackTrace();
