@@ -229,6 +229,7 @@ public class Meta extends EnsTestCase {
 			if (dbTaxonID.equals(Species.getTaxonomyID(species))) {
 				ReportManager.correct(this, con, "Taxonomy ID " + dbTaxonID + " is correct for " + species.toString());
 			} else {
+				result = false;
 				ReportManager.problem(this, con, "Taxonomy ID " + dbTaxonID + " in database is not correct - should be " + Species.getTaxonomyID(species) + " for " + species.toString());
 			}
 			// -------------------------------------------
