@@ -185,7 +185,8 @@ public class ListAllTests extends TestRunner {
 
 				buf.append(group + ":\n");
 				String[] tests = listTestsInGroup(allTests, group);
-
+				Arrays.sort(tests);
+				
 				for (int j = 0; j < tests.length; j++) {
 
 					if (!tests[j].equals(group)) {
