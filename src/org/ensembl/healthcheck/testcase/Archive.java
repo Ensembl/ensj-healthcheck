@@ -27,9 +27,9 @@ import org.ensembl.healthcheck.util.DatabaseConnectionIterator;
 /**
  * Checks that the archive tables are up to date.
  */
-public class CheckArchiveTestCase extends EnsTestCase {
+public class Archive extends EnsTestCase {
 
-	public CheckArchiveTestCase() {
+	public Archive() {
 		addToGroup("check_archive");
 		setDescription("Checks the archive tables are up to date.");
 	}
