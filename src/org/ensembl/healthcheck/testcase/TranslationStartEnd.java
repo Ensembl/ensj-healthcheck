@@ -27,12 +27,12 @@ import org.ensembl.healthcheck.util.*;
 /**
  * Check that if the start and end of translation is on the same exon, that start < end.
  */
-public class CheckTranslationStartEndTestCase extends EnsTestCase {
+public class TranslationStartEnd extends EnsTestCase {
   
   /**
-   * Creates a new instance of CheckTranslationStartEndTestCase
+   * Creates a new instance of CheckTranslationStartEnd
    */
-  public CheckTranslationStartEndTestCase() {
+  public TranslationStartEnd() {
     addToGroup("post_genebuild");
     setDescription("Check that if the start and end of translation is on the same exon, that start < end.");
   }
