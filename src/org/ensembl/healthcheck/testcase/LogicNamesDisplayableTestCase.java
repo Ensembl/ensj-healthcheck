@@ -27,10 +27,13 @@ import org.ensembl.healthcheck.util.*;
 /**
  * Check that the logic names in the analysis table are displayable.
  * Currently reads the list of displayable logc names from a text file.
- * Current set of logic names is stored at 
+ * Current set of logic names is stored at
  *  http://www.ensembl.org/Docs/wiki/html/EnsemblDocs/LogicNames.html
  */
 public class LogicNamesDisplayableTestCase extends EnsTestCase {
+  
+  // a list of the tables to check the analysis_id in
+  private String[] featureTables = { "gene", "prediction_transcript", "dna_align_feature", "marker_feature", "protein_feature", "protein_align_feature", "qtl_feature", "repeat_feature", "simple_feature" };
   
   private static final String LOGIC_NAMES_FILE = "logicnames.txt";
   private static final boolean CASE_SENSITIVE = false;
@@ -39,14 +42,14 @@ public class LogicNamesDisplayableTestCase extends EnsTestCase {
    * Creates a new instance of LogicNamesDisplayableTestCase
    */
   public LogicNamesDisplayableTestCase() {
-    String[] cols = { "logic_name" };
+    String[] cols = { "logic_name", "analysis_id" };
     addCondition(new HasTableColumnsCondition("analysis", cols));
     addToGroup("db_constraints");
     setDescription("Checks that all logic names in analysis are displayable");
   }
   
   /**
-   * Check each row in the logic_names column of the analysis table against the 
+   * Check each row in the logic_names column of the analysis table against the
    * list of logic names that are displayed by the web code; this list is currently at
    * http://www.ensembl.org/Docs/wiki/html/EnsemblDocs/LogicNames.html
    * Note that this test case actually uses the names from the file logicnames.txt
@@ -60,22 +63,49 @@ public class LogicNamesDisplayableTestCase extends EnsTestCase {
     logger.info(message);
     
     // read the file containing the allowed logic names
-    String[] allowedNames = Utils.readTextFile(LOGIC_NAMES_FILE);
-    logger.fine("Read " + allowedNames.length + " logic names from " + LOGIC_NAMES_FILE);
+    String[] allowedLogicNames = Utils.readTextFile(LOGIC_NAMES_FILE);
+    logger.fine("Read " + allowedLogicNames.length + " logic names from " + LOGIC_NAMES_FILE);
     
-    DatabaseConnectionIterator it = getMatchingSchemaIterator();
+    // DatabaseConnectionIterator it = getMatchingSchemaIterator();
+    DatabaseConnectionIterator it = getDatabaseConnectionIterator();
     
     while (it.hasNext()) {
       
       Connection con = (Connection)it.next();
-      
-      String[] dbLogicNames = getColumnValues(con, "SELECT logic_name FROM analysis");
-      
-      for (int i = 0; i < dbLogicNames.length; i++) {
+      try {
+        // cache logic_names by analysis_id
+        Map logicNamesByAnalID = new HashMap();
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT analysis_id, logic_name FROM analysis");
+        while (rs.next()) {
+          logicNamesByAnalID.put(rs.getString("analysis_id"), rs.getString("logic_name"));
+        }
         
-        if (!Utils.stringInArray(dbLogicNames[i], allowedNames, CASE_SENSITIVE)) {
-          ReportManager.problem(this, con, "Logic name " + dbLogicNames[i] + " in analysis table will not be drawn by the web code");
-        } 
+        for (int t = 0; t < featureTables.length; t++) {
+          
+          String featureTableName = featureTables[t];
+          logger.finest("Analysing features in " + featureTableName);
+          
+          // get analysis IDs
+          String[] analysisIDs = getColumnValues(con, "SELECT DISTINCT analysis_id FROM " + featureTableName);
+          
+          // check each analysis ID
+          for (int i = 0; i < analysisIDs.length; i++) {
+            
+            // check that the logic name corresponding to this analysis id is valid
+            String logicName = (String)logicNamesByAnalID.get(analysisIDs[i]);
+            if (!Utils.stringInArray(logicName, allowedLogicNames, CASE_SENSITIVE)) {
+              ReportManager.problem(this, con, "Feature table " + featureTableName + " has features with logic name " + logicName + " which will not be drawn");
+            } else {
+              System.out.println(logicName + " for analysis ID " + analysisIDs[i] + " is OK");
+            }
+          }
+          
+        }
+
+      } catch (SQLException se) {
+        
+        se.printStackTrace();
         
       }
       
