@@ -52,13 +52,13 @@ public class TextTestRunner extends TestRunner implements Reporter {
     
     System.out.println(ttr.getVersion());
     
+    ttr.readPropertiesFile();
+    
     ttr.parseCommandLine(args);
     ttr.outputBuffer = new Vector();
     
     ttr.setupLogging();
-    
-    ttr.readPropertiesFile();
-    
+        
     if (ttr.useSchemaInfo) {
       ttr.buildSchemaList(true);
     }
@@ -78,7 +78,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
   // -------------------------------------------------------------------------
   private void printUsage() {
     
-    System.out.println("\nUsage: TextTestRunner {-d regexp} {-force} {-output none|problem|correct|summary|info|all} {group1} {group2} ...\n");
+    System.out.println("\nUsage: TextTestRunner {options} {group1} {group2} ...\n");
     System.out.println("Options:");
     System.out.println("  -d regexp       Use the given regular expression to decide which databases to use.");
     System.out.println("  -force          Run the named tests on the databases matched by -d, without ");
@@ -203,6 +203,15 @@ public class TextTestRunner extends TestRunner implements Reporter {
         System.err.println("You have requested -force but not specified a database name regular expression with -d");
         System.exit(1);
         
+      }
+      
+      // print matching databases if no tests specified
+      if (groupsToRun.size() == 0 && preFilterRegexp != null) {
+        System.out.println("Databases that match the regular expression '" + preFilterRegexp + "':");
+        String[] names = getListOfDatabaseNames(".*");
+        for (int i = 0; i < names.length; i++) {
+          System.out.println("  " + names[i]);
+        }
       }
       
     }
