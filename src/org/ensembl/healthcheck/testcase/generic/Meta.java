@@ -224,9 +224,7 @@ public class Meta extends SingleDatabaseTestCase {
 			// Check that the taxonomy ID matches a known one.
 			// The taxonomy ID-species mapping is held in the Species class.
 			
-			String dbSpeciesCommonName = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='species.common_name'");
-			Species species = Species.resolveAlias(dbSpeciesCommonName);
-			logger.finest("Species common name from database is " + dbSpeciesCommonName + " - resolves to " + species.toString());
+			Species species = dbre.getSpecies();
 			String dbTaxonID = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='species.taxonomy_id'");
 			logger.finest("Taxonomy ID from database: " + dbTaxonID);
 			
