@@ -316,8 +316,8 @@ public class TestRunner {
     throw new NotImplementedException();
     
     // @todo - implement findTestsInar();
-    
-    return tests;
+    sds
+    //return tests;
     
   } // findTestsInJar
   
