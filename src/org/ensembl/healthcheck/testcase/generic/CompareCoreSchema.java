@@ -202,7 +202,8 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
             // compare DESCRIBE <table>
             ResultSet rs1 = s1.executeQuery("DESCRIBE " + table);
             ResultSet rs2 = s2.executeQuery("DESCRIBE " + table);
-	    boolean describeSame = DBUtils.compareResultSets(rs1, rs2, this, "", false, false, table);
+	    int[] columns = { 1,2 };
+	    boolean describeSame = DBUtils.compareResultSets(rs1, rs2, this, "", true, false, table, columns);
 
             result &= describeSame;
 
