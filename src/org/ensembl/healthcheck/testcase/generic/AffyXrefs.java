@@ -68,7 +68,7 @@ public class AffyXrefs extends SingleDatabaseTestCase {
             // Get a list of chromosomes, then check the number of Affy xrefs associated with each one
             // Note that this can't be done with a GROUP BY/HAVING clause as that would miss any chromosomes that had zero xrefs
             sql = "SELECT DISTINCT(sr.name) AS chromosome FROM seq_region sr, coord_system cs "
-                    + "WHERE sr.coord_system_id=cs.coord_system_id AND cs.name='chromosome'";
+                    + "WHERE sr.coord_system_id=cs.coord_system_id AND cs.name='chromosome' AND sr.name NOT LIKE '%\\_%'";
 
             String[] chrNames = getColumnValues(con, sql);
 
