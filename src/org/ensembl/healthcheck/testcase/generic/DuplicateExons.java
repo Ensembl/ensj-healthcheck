@@ -56,7 +56,7 @@ public class DuplicateExons extends SingleDatabaseTestCase {
     }
     
     /**
-     * Check strand order of exons.
+     * Check for duplicate exons.
      * 
      * @param dbre
      *          The database to check.
