@@ -36,9 +36,6 @@ public class EmptyTables extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 
-		// by default tests in the generic package apply to core, vega, est and estgene databases
-		removeAppliesToType(DatabaseType.EST);
-		removeAppliesToType(DatabaseType.ESTGENE);
 		setDescription("Checks that all tables have data");
 
 	}
@@ -51,19 +48,54 @@ public class EmptyTables extends SingleDatabaseTestCase {
 	private String[] getTablesToCheck(DatabaseRegistryEntry dbre) {
 
 		String[] tables = getTableNames(dbre.getConnection());
+		Species species = dbre.getSpecies();
+		DatabaseType type = dbre.getType();
 
-		// the following tables are allowed to be empty
-		String[] allowedEmpty = { "alt_allele", "assembly_exception", "dnac" };
-		tables = remove(tables, allowedEmpty);
+		// ----------------------------------------------------
+		if (type == DatabaseType.CORE) {
 
-		// only rat has entries in QTL tables
-		if (dbre.getSpecies() != Species.RATTUS_NORVEGICUS) {
-			String[] qtlTables = { "qtl", "qtl_feature", "qtl_synonym" };
-			tables = remove(tables, qtlTables);
+			// the following tables are allowed to be empty
+			String[] allowedEmpty = { "alt_allele", "assembly_exception", "dnac", "density_feature", "density_type"};
+			tables = remove(tables, allowedEmpty);
+
+			// ID mapping related tables are checked in a separate test case
+			String[] idMapping = { "gene_archive", "peptide_archive", "mapping_session", "stable_id_event" };
+			tables = remove(tables, idMapping);
+
+			// only rat has entries in QTL tables
+			if (species != Species.RATTUS_NORVEGICUS) {
+				String[] qtlTables = { "qtl", "qtl_feature", "qtl_synonym" };
+				tables = remove(tables, qtlTables);
+			}
+
+			// seq_region_attrib only filled in for human and mouse
+			if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS) {
+				tables = remove(tables, "seq_region_attrib");
+			}
+
+			// map, marker etc 
+			if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.RATTUS_NORVEGICUS && species != Species.DANIO_RERIO) {
+				String[] markerTables = { "map", "marker", "marker_map_location", "marker_synonym", "marker_feature" };
+				tables = remove(tables, markerTables);
+			}
+
+			// misc_feature etc
+			if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.ANOPHELES_GAMBIAE) {
+				String[] miscTables = { "misc_feature", "misc_feature_misc_set", "misc_set", "misc_attrib" };
+				tables = remove(tables, miscTables);
+			}
+
+			// go_xref only in human
+			if (species != Species.HOMO_SAPIENS) {
+				tables = remove(tables, "go_xref");
+			}
+
+		} else if (type == DatabaseType.EST) {
+
+			// TODO more database type/species checks
+
 		}
-
-		// TODO more database type/species checks
-
+		
 		return tables;
 
 	}
@@ -105,7 +137,11 @@ public class EmptyTables extends SingleDatabaseTestCase {
 		int j = 0;
 		for (int i = 0; i < tables.length; i++) {
 			if (!tables[i].equalsIgnoreCase(table)) {
-				result[j++] = tables[i];
+				if (j < result.length) {
+					result[j++] = tables[i];
+				} else {
+					logger.severe("Cannot remove " + table + " since it's not in the list!");
+				}
 			}
 		}
 
