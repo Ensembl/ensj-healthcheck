@@ -92,7 +92,8 @@ public final class Species {
 
     private static Map speciesToTaxonID = new HashMap();
 
-    private static Map assemblyPrefixes = new HashMap();
+    private static Map assemblyPrefixToSpecies = new HashMap();
+    private static Map speciesToAssemblyPrefix = new HashMap();
     
     static {
 
@@ -118,20 +119,27 @@ public final class Species {
             speciesToTaxonID.put(species, taxonID);
         }
         
-        assemblyPrefixes.put("RGSC", RATTUS_NORVEGICUS);
-        assemblyPrefixes.put("DROM", DROSOPHILA_MELANOGASTER);
-        assemblyPrefixes.put("ZFISH", DANIO_RERIO);
-        assemblyPrefixes.put("FUGU", FUGU_RUBRIPES);
-        assemblyPrefixes.put("MOZ", ANOPHELES_GAMBIAE);
-        assemblyPrefixes.put("CEL", CAENORHABDITIS_ELEGANS);
-        assemblyPrefixes.put("CBR", CAENORHABDITIS_BRIGGSAE);
-        assemblyPrefixes.put("NCBI", HOMO_SAPIENS);
-        assemblyPrefixes.put("NCBIM", MUS_MUSCULUS);
-        assemblyPrefixes.put("TETRAODON", TETRAODON_NIGROVIRIDIS);
-        assemblyPrefixes.put("AMEL", APIS_MELLIFERA);
-        assemblyPrefixes.put("CHIMP", PAN_TROGLODYTES);
-        assemblyPrefixes.put("WASHUC", GALLUS_GALLUS);
-        
+        assemblyPrefixToSpecies.put("RGSC", RATTUS_NORVEGICUS);
+        assemblyPrefixToSpecies.put("DROM", DROSOPHILA_MELANOGASTER);
+        assemblyPrefixToSpecies.put("ZFISH", DANIO_RERIO);
+        assemblyPrefixToSpecies.put("FUGU", FUGU_RUBRIPES);
+        assemblyPrefixToSpecies.put("MOZ", ANOPHELES_GAMBIAE);
+        assemblyPrefixToSpecies.put("CEL", CAENORHABDITIS_ELEGANS);
+        assemblyPrefixToSpecies.put("CBR", CAENORHABDITIS_BRIGGSAE);
+        assemblyPrefixToSpecies.put("NCBI", HOMO_SAPIENS);
+        assemblyPrefixToSpecies.put("NCBIM", MUS_MUSCULUS);
+        assemblyPrefixToSpecies.put("TETRAODON", TETRAODON_NIGROVIRIDIS);
+        assemblyPrefixToSpecies.put("AMEL", APIS_MELLIFERA);
+        assemblyPrefixToSpecies.put("CHIMP", PAN_TROGLODYTES);
+        assemblyPrefixToSpecies.put("WASHUC", GALLUS_GALLUS);
+     
+	// and the other way around
+        it = assemblyPrefixToSpecies.keySet().iterator();
+        while (it.hasNext()) {
+            String ap = (String) it.next();
+            Species species = (Species) assemblyPrefixToSpecies.get(ap);
+            speciesToAssemblyPrefix.put(species, ap);
+        }   
     }
 
     // -----------------------------------------------------------------
@@ -322,8 +330,8 @@ public final class Species {
         
         Species result = Species.UNKNOWN;
         
-        if (assemblyPrefixes.containsKey(prefix)) {
-            result = (Species)assemblyPrefixes.get(prefix);
+        if (assemblyPrefixToSpecies.containsKey(prefix)) {
+            result = (Species)assemblyPrefixToSpecies.get(prefix);
         } else {
             result = Species.UNKNOWN;
         }
@@ -332,6 +340,18 @@ public final class Species {
         
     }
     
+    // -------------------------------------------------------------------------
+    /**
+     * Get the assembly prefix for a species.
+     * @param s The species.
+     * @return The assembly prefix for s.
+     */
+    public static String getAssemblyPrefixForSpecies(Species s) {
+        
+	return (String)speciesToAssemblyPrefix.get(s);
+        
+    }
+
     // -----------------------------------------------------------------
 
 }

@@ -105,11 +105,10 @@ public class Meta extends SingleDatabaseTestCase {
             // ----------------------------------------
             // Check that assembly prefix is valid and corresponds to this species
             // Prefix is OK as long as it starts with the valid one
-            String dbSpecies = dbre.getSpecies().toString();
-            String apSpecies = Species.getSpeciesForAssemblyPrefix(metaTableAssemblyPrefix).toString();
-            
-            if (!apSpecies.startsWith(dbSpecies)) {
-                ReportManager.problem(this, con, "Database species is " + dbSpecies + " but assembly prefix " + metaTableAssemblyPrefix + " corresponds to " + apSpecies);
+            Species dbSpecies = dbre.getSpecies();
+            String correctPrefix = Species.getAssemblyPrefixForSpecies(dbSpecies);
+            if (!metaTableAssemblyPrefix.startsWith(correctPrefix)) {
+                ReportManager.problem(this, con, "Database species is " + dbSpecies + " but assembly prefix " + metaTableAssemblyPrefix + " should have prefix beginning with " + correctPrefix);
                 result = false;
             } else {
                 ReportManager.correct(this, con, "Meta table assembly prefix (" + metaTableAssemblyPrefix + ") is correct for " + dbSpecies);
@@ -301,6 +300,8 @@ public class Meta extends SingleDatabaseTestCase {
 
     private boolean checkGenebuildVersion(Connection con) {
 
+	System.out.println("###here");
+
         String gbv = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.version'");
         logger.finest("genebuild.version from database: " + gbv);
 
@@ -333,6 +334,9 @@ public class Meta extends SingleDatabaseTestCase {
             }
 
         }
+
+	ReportManager.correct(this, con, "genebuild.version " + gbv + " is present & in a valid format");
+
         return true;
 
     }
