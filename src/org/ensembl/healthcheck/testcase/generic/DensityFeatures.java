@@ -75,7 +75,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 
         Connection con = dbre.getConnection();
 
-	//result &= checkFeaturesAndCounts(con);
+	result &= checkFeaturesAndCounts(con);
     
 	result &= checkAnalysisAndDensityTypes(con);
 
@@ -208,7 +208,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
     // ----------------------------------------------------------------------
     
     /**
-     * Check that each analysis_id is used by one and only one density_type.
+     * Check that each analysis_id is used at least one one density_type.
      */
 
     private boolean checkAnalysisAndDensityTypes(Connection con) {
@@ -224,7 +224,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 	    String sql = "SELECT dt.density_type_id FROM analysis a, density_type dt WHERE a.analysis_id=dt.analysis_id AND a.logic_name='" + logicName + "'";
 
 	    String[] rows = getColumnValues(con, sql);
-	    if (rows.length == 1) {
+	    if (rows.length >= 1) {
 
 		ReportManager.correct(this, con, "One density_type for analysis " + logicName);
 
@@ -233,12 +233,8 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 		ReportManager.problem(this, con, "No entry in density_type for analysis " + logicName);
 		result = false;
 
-	    } else if (rows.length > 1) {
-		
-		ReportManager.problem(this, con, "Analysis " + logicName + " has " + rows.length + " associated density types (IDs " + Utils.arrayToString(rows, ",") + ")");
-		result = false;
-	
-	    }
+	    } 
+	    // note UNIQUE constraint prevents duplicate analysis_id/block_size values
 
 	}
 
