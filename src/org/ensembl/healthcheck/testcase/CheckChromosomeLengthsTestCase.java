@@ -80,19 +80,18 @@ public class CheckChromosomeLengthsTestCase extends EnsTestCase {
 					+ "\" AND chr.chromosome_id=ass.chromosome_id GROUP BY ass.chromosome_id HAVING chr.length < MAX(ass.chr_end) ";
 
 			String[] chrs = getColumnValues(con, sql);
-			// TO DO: report the bad chrs at high log level
 
 			if (chrs.length > 0) {
 				result = false;
-				ReportManager.problem(this, con, "Chromosome lengths are shorter in the chromosome table than in the assembly table");
+				ReportManager.problem(this, con, "Chromosome lengths are shorter in the seq_region table than in the assembly table");
 				for (int i = 0; i < chrs.length && i < 50; i++) {
-					ReportManager.problem(this, con, " Chromosome " + chrs[i] + " is longer in assembly than in chromosome");
+					ReportManager.problem(this, con, " Chromosome " + chrs[i] + " is longer in assembly than in seq_region");
 				}
 			} else {
 				ReportManager.correct(
 					this,
 					con,
-					"Chromosome lengths are equal or greater in the chromosome table compared to the assembly table");
+					"Chromosome lengths are equal or greater in the seq_region table compared to the assembly table");
 			}
 
 			// --------------------------------------------------
