@@ -88,9 +88,9 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
         testRegistry = new TestRegistry();
 
-        Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
-
         parseCommandLine(args);
+
+        Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
         
         setupLogging();
 
