@@ -21,13 +21,7 @@ package org.ensembl.healthcheck.util;
 import java.io.*;
 
 /**
- * <p>Title: ClassFileFilenameFilter.java</p>
- * <p>Description: Implementation of FilenameFilter that looks for class files.</p>
- * <p>Copyright: Copyright (c) 2003</p>
- * <p>Organisation: EMBL</p>
- * <p>Created on March 12, 2003, 10:11 AM</p>
- * @author Glenn Proctor <glenn@ebi.ac.uk>
- * @version $Revision$
+ * Implementation of FilenameFilter that looks for class files.
  */
 
 public class ClassFileFilenameFilter implements FilenameFilter {

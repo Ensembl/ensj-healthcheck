@@ -25,13 +25,8 @@ import java.io.*;
 import org.ensembl.healthcheck.util.*;
 
 /**
- * <p>Title: ListDatabasesMatching.java</p>
- * <p>Description: List the databases matching a particular regular expression.</p>
- * <p>Copyright: Copyright (c) 2003</p>
- * <p>Organisation: EMBL</p>
- * <p>Created on March 20, 2003, 1:52 PM</p>
- * @author Glenn Proctor <glenn@ebi.ac.uk>
- * @version $Revision$
+ * Utility to aid in debugging database regular expressions by listing which databases match 
+ * a regular expression given on the command line.
  */
 
 public class DatabaseNameMatcher {
@@ -40,7 +35,10 @@ public class DatabaseNameMatcher {
   private Properties dbProps;
   
   // -------------------------------------------------------------------------
-  
+  /**
+   * Command-line entry point.
+   * @param args Command-line arguments.
+   */
   public static void main(String[] args) {
     
     DatabaseNameMatcher dnm = new DatabaseNameMatcher();
@@ -90,7 +88,9 @@ public class DatabaseNameMatcher {
   } // readPropertiesFile
   
   // -------------------------------------------------------------------------
-  
+  /**
+   * Show matching database names.
+   */
   public void showMatches() {
     
     Connection con;

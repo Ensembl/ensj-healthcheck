@@ -25,13 +25,8 @@ import java.sql.*;
 import org.ensembl.healthcheck.*;
 
 /**
- * <p>Title: DatabaseConnectionIterator.java</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2003</p>
- * <p>Organisation: EMBL</p>
- * <p>Created on March 12, 2003, 3:25 PM</p>
- * @author Glenn Proctor <glenn@ebi.ac.uk>
- * @version $Revision$
+ * Implentation of the Iterator interface that facilitates getting database
+ * connections to a number of databases, given their names.
  */
 
 public class DatabaseConnectionIterator implements Iterator {
@@ -114,7 +109,9 @@ public class DatabaseConnectionIterator implements Iterator {
   } // getCurrentDatabaseName
 
   // -------------------------------------------------------------------------
-  
+  /**
+   * Remove the current connection from the list. Currently not implemented.
+   */
   public void remove() {
      
      throw new NotImplementedException("remove() method is not implemented for " + this.getClass().getName());

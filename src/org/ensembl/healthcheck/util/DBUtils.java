@@ -25,12 +25,7 @@ import java.util.regex.*;
 import java.util.logging.*;
 
 /**
- * <p>Title: DBUtils.java</p>
- * <p>Description: Various database utilities.</p>
- * <p>Copyright: Copyright (c) 2003</p>
- * <p>Organisation: EMBL</p>
- * @author Glenn Proctor <glenn@ebi.ac.uk>
- * @version $Revision$
+ * Various database utilities.
  */
 
 public class DBUtils {
@@ -309,7 +304,11 @@ public class DBUtils {
   } // compareColumns
   
   // -------------------------------------------------------------------------
-  
+  /** 
+   * Print a ResultSet to standard out. Optionally limit the number of rows.
+   * @param maxRows The maximum number of rows to print. -1 to print all rows.
+   * @param rs The ResultSet to print.
+   */
   public static void printResultSet(ResultSet rs, int maxRows) {
     
     int row = 0;
@@ -333,7 +332,10 @@ public class DBUtils {
   } // printResultSet
   
   // -------------------------------------------------------------------------
-  
+  /** Gets the database name, without the jdbc:// prefix.
+   * @param con The Connection to query.
+   * @return The name of the database (everything after the last / in the JDBC URL).
+   */
   public static String getShortDatabaseName(Connection con) {
     
     String url = null;

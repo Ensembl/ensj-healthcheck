@@ -19,13 +19,7 @@
 package org.ensembl.healthcheck;
 
 /**
- * <p>Title: TestResult.java</p>
- * <p>Description: Object to hold information about a test result.</p>
- * <p>Copyright: Copyright (c) 2003</p>
- * <p>Organisation: EMBL</p>
- * <p>Created on March 12, 2003, 1:08 PM</p>
- * @author Glenn Proctor <glenn@ebi.ac.uk>
- * @version
+ * Object to hold information about a test result.
  */
 
 public class TestResult {

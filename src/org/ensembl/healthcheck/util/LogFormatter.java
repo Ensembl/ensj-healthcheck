@@ -23,17 +23,15 @@ import java.util.logging.*;
 import java.util.*;
 
 /**
- * <p>Title: LogFormatter</p>
- * <p>Description: This custom formatter formats parts of a log record to a single line.</p>
- * <p>Copyright: Copyright (c) 2003</p>
- * <p>Organisation: EMBL</p>
- * @author Glenn Proctor <glenn@ebi.ac.uk>
- * @version $Revision$
+ * Custom formatter that formats parts of a log record to a single line.
  */
 
 public class LogFormatter extends Formatter {
 
-  // This method is called for every log record
+  /** Implementation of the Formatter interface. This method is called for every log record.
+   * @param rec The log record to format.
+   * @return The formatted log record.
+   */
   public String format(LogRecord rec) {
     StringBuffer buf = new StringBuffer();
     buf.append(rec.getLevel() + ": ");

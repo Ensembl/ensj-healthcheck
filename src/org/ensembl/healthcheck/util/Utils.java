@@ -23,12 +23,8 @@ import java.util.*;
 import java.util.jar.*;
 
 /**
- * <p>Title: Utils.java</p>
- * <p>Description: General utilities.</p>
- * <p>Copyright: Copyright (c) 2003</p>
- * <p>Organisation: EMBL</p>
- * @author Glenn Proctor <glenn@ebi.ac.uk>
- * @version $Revision$
+ * General utilities (not database-related).
+ * For database-related utilities, see {@link DBUtils DBUtils}.
  */
 
 public class Utils {
@@ -89,9 +85,8 @@ public class Utils {
   } // printArray
   
   // -------------------------------------------------------------------------
-  /**
-   * Print an Enumeration, one String per line.
-   * @param a The Enumeration to be printed.
+  /** Print an Enumeration, one String per line.
+   * @param e The enumeration to be printed.
    */
   public static void printEnumeration(Enumeration e) {
     

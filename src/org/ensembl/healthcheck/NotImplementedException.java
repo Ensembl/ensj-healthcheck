@@ -19,27 +19,28 @@
 package org.ensembl.healthcheck;
 
 /**
- * <p>Title: NotImplementedException.java</p>
- * <p>Description: RuntimeException that can be thrown if a feature is not yet implemented.</p>
- * <p>Copyright: Copyright (c) 2003</p>
- * <p>Organisation: EMBL</p>
- * <p>Created on March 21, 2003, 11:05 AM</p>
- * @author Glenn Proctor <glenn@ebi.ac.uk>
- * @version $Revision$
+ * A RuntimeException that can be thrown if a feature is not yet implemented.
  */
 
 public class NotImplementedException extends RuntimeException {
   
+  /**
+   * Create a NotImplementedException. Currently just calls superclass' constructor.
+   */
   public NotImplementedException() {
     
     super();
- 
+    
   }
   
+  /**
+   * Create a NotImplementedException, with a warning message. Currently just calls superclass' constructor.
+   * @param message The warning message.
+   */
   public NotImplementedException(String message){
     
     super(message);
-  
+    
   }
   
 } // NotImplementedException
