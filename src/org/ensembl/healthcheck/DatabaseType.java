@@ -64,6 +64,9 @@ public final class DatabaseType {
     /** An xref database */
     public static final DatabaseType XREF = new DatabaseType("xref");
     
+    /** An cDNA database */
+    public static final DatabaseType CDNA = new DatabaseType("cdna");
+
     /** A database whos type has not been determined */
     public static final DatabaseType UNKNOWN = new DatabaseType("unknown");
 
@@ -210,6 +213,17 @@ public final class DatabaseType {
 
         }
 
+
+	// --------------------------------------
+	
+	if (in(lcAlias, "cdna")) { 
+
+	    return CDNA; 
+
+        }
+
+	// --------------------------------------
+
         // default case
         return UNKNOWN;
 
@@ -233,7 +247,7 @@ public final class DatabaseType {
      */
     public boolean isGeneric() {
         
-        if (name.equals("core") || name.equals("est") || name.equals("estgene") || name.equals("vega")) {
+        if (name.equals("core") || name.equals("est") || name.equals("estgene") || name.equals("vega") || name.equals("cdna")) {
             return true;
         }
         
