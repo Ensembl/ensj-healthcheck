@@ -28,7 +28,7 @@ import org.ensembl.healthcheck.util.*;
  * agrees with the translation table.
  */
 
-public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Repair {
+public class ProteinFeatureTranslation extends EnsTestCase implements Repair {
   
   // hash of lists of protein features to delete
   // key - database name
@@ -37,7 +37,7 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
   /**
    * Create an ProteinFeatureTranslationTestCase that applies to a specific set of databases.
    */
-  public ProteinFeatureTranslationTestCase() {
+  public ProteinFeatureTranslation() {
     addToGroup("post_genebuild");
     featuresToDelete = new HashMap();
   }
