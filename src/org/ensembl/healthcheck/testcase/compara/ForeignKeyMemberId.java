@@ -60,47 +60,20 @@ public class ForeignKeyMemberId extends SingleDatabaseTestCase {
 
         if (tableHasRows(con, "member")) {
 
-            orphans = countOrphans(con, "family_member", "member_id", "member", "member_id", false);
-            if (orphans == 0) {
-                ReportManager.correct(this, con, "PASSED family_member <-> member relationships");
-            } else if (orphans > 0) {
-                ReportManager.problem(this, con, "FAILED family_member <-> member relationships: " + orphans + " family_member has unlinked entries in member");
-            } else {
-                ReportManager.problem(this, con,
-                        "TEST NOT COMPLETED family_member <-> member, look at the StackTrace if any");
-            }
+            orphans = countOrphans(con, "family_member", "member_id", "member", "member_id", true);
+            fillReportManager(con, orphans,"family_member","member","member_id");
+
+            orphans = countOrphans(con, "member", "member_id", "family_member", "member_id", true);
+            fillReportManager(con, orphans,"member","family_member","member_id");
 
             orphans = countOrphans(con, "homology_member", "member_id", "member", "member_id", true);
-            if (orphans == 0) {
-                ReportManager.correct(this, con, "homology_member <-> member relationships PASSED");
-            } else if (orphans > 0) {
-                ReportManager.problem(this, con, "homology_member has unlinked entries in member FAILED");
-            } else {
-                ReportManager.problem(this, con,
-                        "homology_member <-> member TEST NOT COMPLETED, look at the StackTrace if any");
-            }
+            fillReportManager(con, orphans,"homology_member","member","member_id");
 
             orphans = countOrphans(con, "homology_member", "peptide_member_id", "member", "member_id", true);
-            if (orphans == 0) {
-                ReportManager.correct(this, con,
-                        "homology_member <-> member via peptide_member_id relationships PASSED");
-            } else if (orphans > 0) {
-                ReportManager.problem(this, con,
-                        "homology_member has unlinked entries via peptide_member_id in member FAILED");
-            } else {
-                ReportManager.problem(this, con,
-                        "homology_member <-> member TEST NOT COMPLETED, look at the StackTrace if any");
-            }
-
+            fillReportManager(con, orphans,"homology_member","member","peptide_member_id");
+            
             orphans = countOrphans(con, "domain_member", "member_id", "member", "member_id", true);
-            if (orphans == 0) {
-                ReportManager.correct(this, con, "domain_member <-> member relationships PASSED");
-            } else if (orphans > 0) {
-                ReportManager.problem(this, con, "domain_member has unlinked entries in member FAILED");
-            } else {
-                ReportManager.problem(this, con,
-                        "domain_member <-> member TEST NOT COMPLETED, look at the StackTrace if any");
-            }
+            fillReportManager(con, orphans,"domain_member","member","member_id");
 
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in member table, so nothing to test IGNORED");
@@ -111,5 +84,19 @@ public class ForeignKeyMemberId extends SingleDatabaseTestCase {
         return result;
 
     }
+
+    public int fillReportManager(Connection con, int orphans, String table1, String table2, String fk) {
+        
+        if (orphans == 0) {
+            ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + fk + " relationships");
+        } else if (orphans > 0) {
+            ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + fk + " relationships");
+            ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries have unlinked entries in " + table2);
+        } else {
+            ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + fk + ", look at the StackTrace if any");
+        }
+
+        return 1;
+    } //fillReportManager
 
 } // OrphanTestCase

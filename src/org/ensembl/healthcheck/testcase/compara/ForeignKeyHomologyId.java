@@ -59,24 +59,12 @@ public class ForeignKeyHomologyId extends SingleDatabaseTestCase {
         // 1 test to check gene_relationship_id used as foreign key
 
         if (tableHasRows(con, "homology")) {
+
             orphans = countOrphans(con, "homology_member", "homology_id", "homology", "homology_id", true);
-            if (orphans == 0) {
-                ReportManager.correct(this, con, "PASSED homology_member -> homology relationships");
-            } else if (orphans > 0) {
-                ReportManager.problem(this, con, "FAILED homology_member -> homology relationships: " + orphans + " homology_member entries have unlinked entries in homology");
-            } else {
-                ReportManager.problem(this, con,
-                        "TEST NOT COMPLETED homology_member -> homology, look at the StackTrace if any");
-            }
+            fillReportManager(con, orphans,"homology_member","homology","homology_id");
+
             orphans = countOrphans(con, "homology", "homology_id", "homology_member", "homology_id", true);
-            if (orphans == 0) {
-                ReportManager.correct(this, con, "PASSED homology -> homology_member relationships");
-            } else if (orphans > 0) {
-                ReportManager.problem(this, con, "FAILED homology -> homology_member relationships: " + orphans + " homology entries have unlinked entries in homology_member");
-            } else {
-                ReportManager.problem(this, con,
-                        "TEST NOT COMPLETED homology -> homology_member, look at the StackTrace if any");
-            }
+            fillReportManager(con, orphans,"homology","homology_member","homology_id");
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in homology table, so nothing to test IGNORED");
         }
@@ -86,5 +74,19 @@ public class ForeignKeyHomologyId extends SingleDatabaseTestCase {
         return result;
 
     }
+
+    public int fillReportManager(Connection con, int orphans, String table1, String table2, String fk) {
+        
+        if (orphans == 0) {
+            ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + fk + " relationships");
+        } else if (orphans > 0) {
+            ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + fk + " relationships");
+            ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries have unlinked entries in " + table2);
+        } else {
+            ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + fk + ", look at the StackTrace if any");
+        }
+
+        return 1;
+    } //fillReportManager
 
 } // OrphanTestCase
