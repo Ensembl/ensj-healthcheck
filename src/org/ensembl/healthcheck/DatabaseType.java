@@ -58,6 +58,9 @@ public final class DatabaseType {
     /** A GO database */
     public static final DatabaseType GO = new DatabaseType("go");
     
+    /** An expression database */
+    public static final DatabaseType EXPRESSION = new DatabaseType("expression");
+    
     /** A database whos type has not been determined */
     public static final DatabaseType UNKNOWN = new DatabaseType("unknown");
 
@@ -90,6 +93,14 @@ public final class DatabaseType {
     public static DatabaseType resolveAlias(final String alias) {
 
         String lcAlias = alias.toLowerCase();
+
+	// --------------------------------------
+	// needs to be before core since names are of the form homo_sapiens_core_expression_24_34e
+        if (in(lcAlias, "expression")) { 
+
+        return EXPRESSION; 
+
+        }
 
         // --------------------------------------
 
@@ -178,6 +189,7 @@ public final class DatabaseType {
         return GO; 
 
         }
+
         // default case
         return UNKNOWN;
 
