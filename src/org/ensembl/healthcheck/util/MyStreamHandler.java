@@ -18,7 +18,7 @@
 
 /**
  * <p>Title: MyStreamHandler.java</p>
- * <p>Description: </p>
+ * <p>Description: Custom stream handler for logging.</p>
  * <p>Copyright: Copyright (c) 2003</p>
  * <p>Organisation: EMBL</p>
  * <p>Created on March 12, 2003, 11:30 AM</p>
@@ -36,7 +36,9 @@ public class MyStreamHandler extends Handler {
   
   OutputStream outputStream;
   
-  /** Creates a new instance of MyStreamHandler */
+  /** 
+   * Creates a new instance of MyStreamHandler 
+   */
   public MyStreamHandler(OutputStream os, Formatter formatter) {
     this.outputStream = os;
     setFormatter(formatter);
