@@ -77,8 +77,7 @@ public class MetaCoord extends SingleDatabaseTestCase {
             for (int tableIndex = 0; tableIndex < featureTables.length; tableIndex++) {
 
                 String tableName = featureTables[tableIndex];
-                // note straight join used for performance reasons here
-                String sql = "SELECT STRAIGHT_JOIN DISTINCT(sr.coord_system_id) FROM seq_region sr, " + tableName
+                String sql = "SELECT DISTINCT(sr.coord_system_id) FROM seq_region sr, " + tableName
                         + " f WHERE sr.seq_region_id = f.seq_region_id";
 
                 logger.finest("Getting feature coordinate systems for " + tableName);
