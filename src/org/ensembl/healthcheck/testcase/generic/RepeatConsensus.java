@@ -13,7 +13,7 @@ Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+\Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 package org.ensembl.healthcheck.testcase.generic;
 
@@ -54,17 +54,17 @@ public class RepeatConsensus extends SingleDatabaseTestCase {
        
        Connection con = dbre.getConnection();
        
-       String sql = "SELECT COUNT(*) FROM repeat_consensus WHERE repeat_type IS NOT NULL";
+       String sql = "SELECT COUNT(*) FROM repeat_consensus WHERE repeat_type IS NULL";
 
        int rows = getRowCount(con, sql);
        if (rows > 0) {
 
-           ReportManager.problem(this, con, "repeat_consensus table has " + rows + " rows where repeat_type is populated.");
+           ReportManager.problem(this, con, "repeat_consensus table has " + rows + " rows where repeat_type is not populated.");
            result = false;
 
        } else {
 
-           ReportManager.correct(this, con, "No repeat_type information in repeat_consensus");
+           ReportManager.correct(this, con, "repeat_consensus has repeat_type populated for all rows");
        }
 
        return result;
