@@ -23,7 +23,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that the seq_region_strand is +1 or -1 for several tables.
+ * Check that some display_xrefs are set.
  */
 
 public class DisplayXref extends SingleDatabaseTestCase {
