@@ -71,6 +71,20 @@ public class DatabaseRegistry {
 
 	}
 
+	// -------------------------------------------------------------------------
+	/**
+	 * Create a new DatabaseRegistry from a set of DatabaseRegistryEntries.
+	 */
+	public DatabaseRegistry (DatabaseRegistryEntry[] dbres) {
+	
+	    for (int i = 0; i < dbres.length; i++) {
+			
+			entries.add(dbres[i]);
+			
+		}
+	    
+	}
+	
 	// -----------------------------------------------------------------
 
 	private void addEntriesToRegistry(String[] names) {
