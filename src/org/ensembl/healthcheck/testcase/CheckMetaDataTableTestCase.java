@@ -68,9 +68,9 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
 			if (!checkTableExists(con, "meta")) {
 				result = false;
 				//logger.severe(dbName + " does not have a meta table!");
-				ReportManager.problem(this, con, "Meta table not present");
+				//xxReportManager.problem(this, con, "Meta table not present");
 			} else {
-				ReportManager.correct(this, con, "Meta table present");
+				//xxReportManager.correct(this, con, "Meta table present");
 			}
 
 			// ----------------------------------------
@@ -116,7 +116,7 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
 				|| metaTableAssemblyPrefix == null
 				|| dbNameAssemblyVersion == null) {
 
-				ReportManager.problem(this, con, "Cannot get all information from meta table - check for null values");
+					ReportManager.problem(this, con, "Cannot get all information from meta table - check for null values");
 
 			} else {
 
@@ -155,9 +155,7 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
 			// Check that species.classification matches database name
 
 			String[] metaTableSpeciesGenusArray =
-				getColumnValues(
-					con,
-					"SELECT LCASE(meta_value) FROM meta WHERE meta_key='species.classification' ORDER BY meta_id LIMIT 2");
+				getColumnValues(con, "SELECT LCASE(meta_value) FROM meta WHERE meta_key='species.classification' ORDER BY meta_id LIMIT 2");
 			// if all is well, metaTableSpeciesGenusArray should contain the species and genus (in that order) from the meta table
 
 			if (metaTableSpeciesGenusArray != null
@@ -185,9 +183,9 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
 			// -------------------------------------------
 			// Check formatting of assembly.mapping entries
 			// should be of format
-			// coord_system1{:default}|coord_system2{:default}
-			// and coord_system1 & 2 should be valid from coord_system table.
-			Pattern assemblyMappingPattern = Pattern.compile("^(\\w+)(:\\w+)?\\|(\\w+)(:\\w+)?$");
+			// coord_system1{:default}|coord_system2{:default} with optional third coordinate system
+			// and all coord systems should be valid from coord_system
+			Pattern assemblyMappingPattern = Pattern.compile("^(\\w+)(:\\w+)?\\|(\\w+)(:\\w+)?(\\|(\\w+)(:\\w+)?)?$");
 			String[] validCoordSystems = getColumnValues(con, "SELECT name FROM coord_system");
 
 			String[] mappings = getColumnValues(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.mapping'");
@@ -201,6 +199,7 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
 					boolean valid = true;
 					String cs1 = matcher.group(1);
 					String cs2 = matcher.group(3);
+					String cs3 = matcher.group(6);
 					if (!Utils.stringInArray(cs1, validCoordSystems, false)) {
 						valid = false;
 						ReportManager.problem(this, con, "Source co-ordinate system " + cs1 + " is not in the coord_system table");
@@ -208,6 +207,10 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
 					if (!Utils.stringInArray(cs2, validCoordSystems, false)) {
 						valid = false;
 						ReportManager.problem(this, con, "Target co-ordinate system " + cs2 + " is not in the coord_system table");
+					}
+					if (cs3 != null && !Utils.stringInArray(cs3, validCoordSystems, false)) { // third CS is optional
+						valid = false;
+						ReportManager.problem(this, con, "Third co-ordinate system in mapping (" + cs3 + ") is not in the coord_system table");
 					}
 					if (valid == true) {
 						ReportManager.correct(this, con, "Coordinate system mapping " + mappings[i] + " is OK");
@@ -239,17 +242,14 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
 
 			String speciesRegexp = species[i] + CORE_DB_REGEXP;
 			logger.info("Checking meta tables in " + speciesRegexp);
-			;
 
 			boolean allMatch =
-				checkSameSQLResult(
-					"SELECT LCASE(meta_value) FROM meta WHERE meta_key LIKE \'species.%' ORDER BY meta_id",
-					speciesRegexp);
+				checkSameSQLResult("SELECT LCASE(meta_value) FROM meta WHERE meta_key LIKE \'species.%' ORDER BY meta_id", speciesRegexp);
 			if (!allMatch) {
 				result = false;
-				ReportManager.problem(this, "", "meta information not the same for all " + species[i] + " databases");
+				ReportManager.problem(this, speciesRegexp, "meta information not the same for all " + species[i] + " databases");
 			} else {
-				ReportManager.correct(this, "", "meta information is the same for all " + species[i] + " databases");
+				ReportManager.correct(this, speciesRegexp, "meta information is the same for all " + species[i] + " databases");
 			}
 
 		} // foreach species
