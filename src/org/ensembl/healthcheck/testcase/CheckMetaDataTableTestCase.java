@@ -19,6 +19,7 @@
 package org.ensembl.healthcheck.testcase;
 
 import java.sql.*;
+import java.util.regex.*;
 
 import org.ensembl.healthcheck.*;
 
@@ -29,8 +30,8 @@ import org.ensembl.healthcheck.util.*;
  */
 public class CheckMetaDataTableTestCase extends EnsTestCase {
   
-  private static final String[] validPrefixes = {"RGSC", "DROM", "ZFISH", "FUGU", "MOZ", "CEL", 
-						 "CBR", "MGSC", "NCBI", "NCBIM" };
+  private static final String[] validPrefixes = {"RGSC", "DROM", "ZFISH", "FUGU", "MOZ", "CEL",
+  "CBR", "MGSC", "NCBI", "NCBIM" };
   
   /**
    * Creates a new instance of CheckMetaDataTableTestCase
@@ -38,7 +39,7 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
   public CheckMetaDataTableTestCase() {
     addToGroup("post_genebuild");
     setDescription("Check that the meta table exists, has data, the entries correspond to the " +
-		   "database name, and that the values in assembly.type match what's in the meta table");
+    "database name, and that the values in assembly.type match what's in the meta table");
   }
   
   /**
@@ -80,8 +81,8 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
       
       // ----------------------------------------
       // check that there are species, classification and taxonomy_id entries
-      String [] meta_keys = { "assembly.default", "species.classification", 
-			      "species.common_name", "species.taxonomy_id" };
+      String [] meta_keys = { "assembly.default", "species.classification",
+      "species.common_name", "species.taxonomy_id" };
       for (int i = 0; i < meta_keys.length; i++) {
         String meta_key = meta_keys[i];
         rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + meta_key + "'");
@@ -119,22 +120,22 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
         } else {
           ReportManager.correct(this, con, "Assembly version in database name matches assembly version in meta table");
         }
-      
-      // ----------------------------------------
-      // Check that assembly prefix is one of the correct ones
-      boolean member = false;
-      for (int i = 0; i < validPrefixes.length; i++) {
-        if (metaTableAssemblyPrefix.equalsIgnoreCase(validPrefixes[i])) {
-          member = true;
+        
+        // ----------------------------------------
+        // Check that assembly prefix is one of the correct ones
+        boolean member = false;
+        for (int i = 0; i < validPrefixes.length; i++) {
+          if (metaTableAssemblyPrefix.equalsIgnoreCase(validPrefixes[i])) {
+            member = true;
+          }
         }
-      }
-      if (!member) {
-        result = false;
-        //warn(con, "Assembly prefix (" + metaTableAssemblyPrefix + ") is not valid");
-        ReportManager.problem(this, con, "Assembly prefix (" + metaTableAssemblyPrefix + ") is not valid");
-      } else {
-        ReportManager.correct(this, con, "Meta table assembly prefix (" + metaTableAssemblyPrefix + ") is valid");
-      }
+        if (!member) {
+          result = false;
+          //warn(con, "Assembly prefix (" + metaTableAssemblyPrefix + ") is not valid");
+          ReportManager.problem(this, con, "Assembly prefix (" + metaTableAssemblyPrefix + ") is not valid");
+        } else {
+          ReportManager.correct(this, con, "Meta table assembly prefix (" + metaTableAssemblyPrefix + ") is valid");
+        }
       }
       // ----------------------------------------
       // Check that species.classification matches database name
@@ -163,6 +164,39 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
       }
       
       // -------------------------------------------
+      // Check formatting of assembly.mapping entries
+      // should be of format
+      // coord_system1{:default}|coord_system2{:default}
+      // and coord_system1 & 2 should be valid from coord_system table.
+      Pattern assemblyMappingPattern = Pattern.compile("^(\\w+)(:\\w+)?\\|(\\w+)(:\\w+)?$");
+      String[] validCoordSystems = getColumnValues(con, "SELECT name FROM coord_system");
+      
+      String[] mappings = getColumnValues(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.mapping'");
+      for (int i = 0; i < mappings.length; i++) {
+        Matcher matcher = assemblyMappingPattern.matcher(mappings[i]);
+        if (!matcher.matches()) {
+          result = false;
+          ReportManager.problem(this, con, "Coordinate system mapping " + mappings[i] + " is not in the correct format");
+        } else {
+          // if format is OK, check coord systems are valid
+          boolean valid = true;
+          String cs1 = matcher.group(1);
+          String cs2 = matcher.group(3);
+          if (!Utils.stringInArray(cs1, validCoordSystems, false)) {
+            valid = false;
+            ReportManager.problem(this, con, "Source co-ordinate system " + cs1 + " is not in the coord_system table");
+          }
+          if (!Utils.stringInArray(cs2, validCoordSystems, false)) {
+            valid = false;
+            ReportManager.problem(this, con, "Target co-ordinate system " + cs2 + " is not in the coord_system table");
+          }
+          if (valid == true) {
+            ReportManager.correct(this, con, "Coordinate system mapping " + mappings[i] + " is OK");
+          }
+        }
+      }
+      
+      // -------------------------------------------
       
     } // while connection
     
@@ -185,6 +219,9 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
       }
       
     } // foreach species
+    
+    
+    // -------------------------------------------
     
     return new TestResult(getShortTestName(), result);
     
