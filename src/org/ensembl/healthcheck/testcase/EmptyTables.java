@@ -27,12 +27,12 @@ import org.ensembl.healthcheck.util.*;
 /**
  * Check that all tables have data.
  */
-public class EmptyTablesTestCase extends EnsTestCase {
+public class EmptyTables extends EnsTestCase {
   
   /**
    * Creates a new instance of EmptyTablesTestCase
    */
-  public EmptyTablesTestCase() {
+  public EmptyTables() {
      
     //addToGroup("post_genebuild");
     databaseRegexp = "\\w+_\\w+_(core|vega)_\\d+_\\w+";
