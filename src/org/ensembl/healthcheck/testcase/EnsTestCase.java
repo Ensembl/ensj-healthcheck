@@ -80,7 +80,6 @@ import org.ensembl.healthcheck.util.*;
  *
  */
 
-
 public abstract class EnsTestCase {
   
   /** Regexp that, when combined with a species name, will match core databases */
@@ -1119,6 +1118,19 @@ public abstract class EnsTestCase {
     return result;
     
   }
+  
+  // -------------------------------------------------------------------------
+
+  /**
+   * Check if the current test has repair capability. Signified by implementing
+   * the Repair interface.
+   * @return True if this test implements Repair, false otherwise.
+   */
+  public boolean canRepair() {
+    
+    return (this instanceof Repair);
+    
+  } 
   // -------------------------------------------------------------------------
   
 } // EnsTestCase
