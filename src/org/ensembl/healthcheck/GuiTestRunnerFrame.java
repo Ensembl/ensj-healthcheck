@@ -1,7 +1,19 @@
 /*
- * GuiTestRunnerFrame.java
- *
- * Created on March 31, 2003, 2:27 PM
+  Copyright (C) 2003 EBI, GRL
+ 
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+ 
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+ 
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 package org.ensembl.healthcheck;
@@ -15,7 +27,6 @@ import java.io.*;
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.BorderLayout;
 
 import java.awt.event.*;
@@ -28,18 +39,21 @@ import org.ensembl.healthcheck.testcase.*;
 
 /**
  *
- * @author  glenn
+ * The main display frame for GuiTestRunner.
  */
 public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTarget {
   
-  HashMap testButtons = new HashMap();
-  HashMap testButtonInfoWindows = new HashMap();
+  Map testButtons = new HashMap();
+  Map testButtonInfoWindows = new HashMap();
   
   GuiTestRunner guiTestRunner;
   
   private static final Dimension PANEL_SIZE = new Dimension(300, 350);
   
-  /** Creates new form GuiTestRunnerFrame */
+  /** 
+   * Creates new form GuiTestRunnerFrame
+   * @param gtr The GuiTestRunner that is associated with this Frame.
+   */
   public GuiTestRunnerFrame(GuiTestRunner gtr) {
     initComponents();
     this.guiTestRunner = gtr;
@@ -134,11 +148,12 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
   /**
    * Implementation of CallbackTarget; update the relevant part of the GUI when a
    * message is received from the logger.
+   * @param logRecord The log record to display.
    */
   public void callback(LogRecord logRecord) {
     
     setStatus(logRecord.getMessage());
-    updateTestInfoWindow(logRecord);
+    //updateTestInfoWindow(logRecord);
     
   } // callback
   
@@ -162,7 +177,6 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
     if (tests != null) {
       
       // find the longest test name
-      int longest = -1;
       String longestName = "";
       
       Iterator it = tests.iterator();
@@ -184,6 +198,7 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
           //testButton.setBackground(Color.WHITE);
           testButton.setPreferredSize(largestSize);
           testButtons.put(test.getTestName(), testButton);
+          testButton.setToolTipText(test.getDescription());
           testButton.setEnabled(false);
           
           TestInfoWindow infoWindow = new TestInfoWindow(this, test.getShortTestName(), false);
@@ -300,11 +315,46 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
     TestInfoWindow infoWindow = (TestInfoWindow)testButtonInfoWindows.get(loggingClass);
     if (infoWindow != null) {
       infoWindow.append(logRecord.getMessage() + "\n");
-    } 
+    }
     
   } // updateTestRunnerWindow
   
   // -------------------------------------------------------------------------
+  
+  public void setTestInfoWindowText(String testClassName, String report) {
+    
+    TestInfoWindow infoWindow = (TestInfoWindow)testButtonInfoWindows.get(testClassName);
+    if (infoWindow != null) {
+      infoWindow.setText(report);
+    }
+    
+  } // setTestInfoWindowText
+  
+  // -------------------------------------------------------------------------
+  
+  public void setTestInfoWindowText(String testClassName, List lines) {
+    
+    TestInfoWindow infoWindow = (TestInfoWindow)testButtonInfoWindows.get(testClassName);
+    if (infoWindow != null) {
+      Iterator it = lines.iterator();
+      while (it.hasNext()) {
+        ReportLine line = (ReportLine)it.next();
+        infoWindow.append(line.getDatabaseName() + ": " + (String)line.getMessage() + "\n");
+      }
+    }
+    
+  } // setTestInfoWindowText
+  
+  // -------------------------------------------------------------------------
+  /**
+   * Return the output level as set in the parent GuiTestRunner.
+   * @return The output level.
+   */
+  public int getOutputLevel() {
+
+    return guiTestRunner.getOutputLevel();
+    
+  } // getOutputLevel
   
   // -------------------------------------------------------------------------
   
