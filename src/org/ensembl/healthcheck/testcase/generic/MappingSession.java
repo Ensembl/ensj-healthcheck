@@ -30,6 +30,10 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  */
 public class MappingSession extends SingleDatabaseTestCase {
 
+
+    // historical names to ignore when doing format checking
+    private String[] ignoredNames = {"homo_sapiens_core_120"};
+
     /** 
      * Create a new MappingSession healthcheck.
      */
@@ -95,6 +99,11 @@ public class MappingSession extends SingleDatabaseTestCase {
 
         boolean result = true;
 
+	// don't bother checking if table is empty
+	if (countRowsInTable(con, "mapping_session") == 0) {
+	    return true;
+	}
+
         // Following query should give one result - the ALL/LATEST one - if all
         // is well
         String sql = "SELECT ms.old_db_name, ms.new_db_name, count(*) AS entries "
@@ -103,6 +112,7 @@ public class MappingSession extends SingleDatabaseTestCase {
                 + "GROUP BY ms.mapping_session_id ORDER BY entries DESC LIMIT 1";
 
         String oldDBName = getRowColumnValue(con, sql);
+
         if (!(oldDBName.equalsIgnoreCase("ALL"))) {
             ReportManager.problem(this, con,
                     "ALL/LATEST mapping session does not seem to have the most stable_id_event entries");
@@ -132,7 +142,7 @@ public class MappingSession extends SingleDatabaseTestCase {
 
             String[] names = getColumnValues(con, sql[i]);
             for (int j = 0; j < names.length; j++) {
-                if (!(names[j].matches(dbNameRegexp))) {
+                if (!(names[j].matches(dbNameRegexp)) && !ignoreName(names[j])) {
                     ReportManager.problem(this, con, "Database name " + names[j]
                             + " in mapping_session does not appear to be in the correct format");
                     result = false;
@@ -276,6 +286,24 @@ public class MappingSession extends SingleDatabaseTestCase {
         }
 
         return result;
+
+    }
+
+    // -----------------------------------------------------------------
+    /**
+     * Certain historical names don't match the new format and should be 
+     * ignored to prevent constant failures.
+     */
+    private boolean ignoreName(String name) {
+
+	for (int i = 0; i < ignoredNames.length; i++) {
+
+	    if (name.equals(ignoredNames[i])) {
+		return true;
+	    }
+	}
+
+	return false;
 
     }
 
