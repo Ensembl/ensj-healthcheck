@@ -51,4 +51,4 @@ public class AssemblyTablesAcrossSpecies extends MultiDatabaseTestCase {
 
     } // run
 
-} // CheckAssemblyTables
+} // AssemblyTablesAcrossSpecies
