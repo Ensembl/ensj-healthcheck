@@ -60,60 +60,23 @@ public class ForeignKeyGenomeDbId extends SingleDatabaseTestCase {
 
         if (tableHasRows(con, "genome_db")) {
             orphans = countOrphans(con, "dnafrag", "genome_db_id", "genome_db", "genome_db_id", true);
-            if (orphans == 0) {
-                ReportManager.correct(this, con, "dnafrag -> genome_db relationships PASSED");
-            } else if (orphans > 0) {
-                ReportManager.problem(this, con, "dnafrag has unlinked entries in genome_db FAILED");
-            } else {
-                ReportManager.problem(this, con,
-                        "dnafrag ->  genome_db TEST NOT COMPLETED, look at the StackTrace if any");
-            }
+            fillReportManager(con, orphans,"dnafrag", "genome_db_id", "genome_db", "genome_db_id");
 
-            orphans = countOrphans(con, "genomic_align_genome", "consensus_genome_db_id", "genome_db", "genome_db_id",
-                    true);
-            if (orphans == 0) {
-                ReportManager.correct(this, con,
-                        "consensus_genome_db_id in genomic_align_genome -> genome_db relationships PASSED");
-            } else if (orphans > 0) {
-                ReportManager.problem(this, con,
-                        "consensus_genome_db_id in genomic_align_genome has unlinked entries to genome_db FAILED");
-            } else {
-                ReportManager.problem(this, con,
-                        "genomic_align_genome -> genome_db TEST NOT COMPLETED, look at the StackTrace if any");
-            }
+            orphans = countOrphans(con, "genomic_align_genome", "consensus_genome_db_id", "genome_db", "genome_db_id", true);
+            fillReportManager(con, orphans,"genomic_align_genome", "consensus_genome_db_id", "genome_db", "genome_db_id");
 
             orphans = countOrphans(con, "genomic_align_genome", "query_genome_db_id", "genome_db", "genome_db_id", true);
-            if (orphans == 0) {
-                ReportManager.correct(this, con,
-                        "query_genome_db_id in genomic_align_genome -> genome_db relationships PASSED");
-            } else if (orphans > 0) {
-                ReportManager.problem(this, con,
-                        "query_genome_db_id in genomic_align_genome has unlinked entries to genome_db FAILED");
-            } else {
-                ReportManager
-                        .problem(this, con,
-                                "genomic_align_genome -> genome_db relationships TEST NOT COMPLETED, look at the StackTrace if any");
-            }
+            fillReportManager(con, orphans,"genomic_align_genome", "query_genome_db_id", "genome_db", "genome_db_id");
 
             orphans = countOrphans(con, "member", "genome_db_id", "genome_db", "genome_db_id", true);
-            if (orphans == 0) {
-                ReportManager.correct(this, con, "member -> genome_db relationships PASSED");
-            } else if (orphans > 0) {
-                ReportManager.problem(this, con, "member has unlinked entries to genome_db FAILED");
-            } else {
-                ReportManager.problem(this, con,
-                        "member -> genome_db TEST NOT COMPLETED, look at the StackTrace if any");
-            }
+            fillReportManager(con, orphans,"member", "genome_db_id", "genome_db", "genome_db_id");
 
-            orphans = countOrphans(con, "method_link_species", "genome_db_id", "genome_db", "genome_db_id", false);
-            if (orphans == 0) {
-                ReportManager.correct(this, con, "method_link_species <-> genome_db relationships PASSED");
-            } else if (orphans > 0) {
-                ReportManager.problem(this, con, "method_link_species has unlinked entries in genome_db FAILED");
-            } else {
-                ReportManager.problem(this, con,
-                        "method_link_species <-> genome_db TEST NOT COMPLETED, look at the StackTrace if any");
-            }
+            orphans = countOrphans(con, "method_link_species", "genome_db_id", "genome_db", "genome_db_id", true);
+            fillReportManager(con, orphans,"method_link_species", "genome_db_id", "genome_db", "genome_db_id");
+            
+            orphans = countOrphans(con, "genome_db", "genome_db_id", "method_link_species", "genome_db_id", true);
+            fillReportManager(con, orphans,"genome_db", "genome_db_id", "method_link_species", "genome_db_id");
+
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in genome_db table, so nothing to test IGNORED");
         }
@@ -123,5 +86,22 @@ public class ForeignKeyGenomeDbId extends SingleDatabaseTestCase {
         return result;
 
     }
+
+    public int fillReportManager(Connection con, int orphans, String table1, String col1, String table2, String col2) {
+
+        String sql = "SELECT " + table1 + "." + col1 + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
+
+        if (orphans == 0) {
+            ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + col1 + "("+col2+")" + " relationships");
+        } else if (orphans > 0) {
+            ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + col1 + "("+col2+")" + " relationships");
+            ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
+            ReportManager.problem(this, con, "USEFUL SQL: " + sql);
+        } else {
+            ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1 + ", look at the StackTrace if any");
+        }
+
+        return 1;
+    } //fillReportManager
 
 } // OrphanTestCase

@@ -59,39 +59,14 @@ public class ForeignKeyDnafragId extends SingleDatabaseTestCase {
 
         if (tableHasRows(con, "dnafrag")) {
             orphans = countOrphans(con, "dnafrag_region", "dnafrag_id", "dnafrag", "dnafrag_id", true);
-            if (orphans == 0) {
-                ReportManager.correct(this, con, "dnafrag_region -> dnafrag relationships PASSED");
-            } else if (orphans > 0) {
-                ReportManager.problem(this, con, "dnafrag_region has unlinked entries in dnafrag FAILED");
-            } else {
-                ReportManager.problem(this, con,
-                        "dnafrag_region -> dnafrag TEST NOT COMPLETED, look at the StackTrace if any");
-            }
+            fillReportManager(con, orphans,"dnafrag_region", "dnafrag_id", "dnafrag", "dnafrag_id");
 
             orphans = countOrphans(con, "genomic_align_block", "consensus_dnafrag_id", "dnafrag", "dnafrag_id", true);
-            if (orphans == 0) {
-                ReportManager.correct(this, con,
-                        "consensus_dnafrag_id in genomic_align_block -> dnafrag relationships PASSED");
-            } else if (orphans > 0) {
-                ReportManager.problem(this, con,
-                        "consensus_dnafrag_id in genomic_align_block has unlinked entries in dnafrag FAILED");
-            } else {
-                ReportManager
-                        .problem(this, con,
-                                "genomic_align_block -> dnafrag relationships TEST NOT COMPLETED, look at the StackTrace if any");
-            }
+            fillReportManager(con, orphans,"genomic_align_block", "consensus_dnafrag_id", "dnafrag", "dnafrag_id");
 
             orphans = countOrphans(con, "genomic_align_block", "query_dnafrag_id", "dnafrag", "dnafrag_id", true);
-            if (orphans == 0) {
-                ReportManager.correct(this, con,
-                        "query_dnafrag_id in genomic_align_block -> dnafrag relationships PASSED");
-            } else if (orphans > 0) {
-                ReportManager.problem(this, con,
-                        "query_dnafrag_id in genomic_align_block has unlinked entries in dnafrag FAILED");
-            } else {
-                ReportManager.problem(this, con,
-                        "genomic_align_block -> dnafragTEST NOT COMPLETED, look at the StackTrace if any");
-            }
+            fillReportManager(con, orphans,"genomic_align_block", "query_dnafrag_id", "dnafrag", "dnafrag_id");
+
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in dnafrag table, so nothing to test IGNORED");
         }
@@ -101,5 +76,22 @@ public class ForeignKeyDnafragId extends SingleDatabaseTestCase {
         return result;
 
     }
+
+    public int fillReportManager(Connection con, int orphans, String table1, String col1, String table2, String col2) {
+
+        String sql = "SELECT " + table1 + "." + col1 + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
+
+        if (orphans == 0) {
+            ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + col1 + "("+col2+")" + " relationships");
+        } else if (orphans > 0) {
+            ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + col1 + "("+col2+")" + " relationships");
+            ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
+            ReportManager.problem(this, con, "USEFUL SQL: " + sql);
+        } else {
+            ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1 + ", look at the StackTrace if any");
+        }
+
+        return 1;
+    } //fillReportManager
 
 } // OrphanTestCase

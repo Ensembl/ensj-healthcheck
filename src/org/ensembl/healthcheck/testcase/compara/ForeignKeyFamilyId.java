@@ -60,23 +60,36 @@ public class ForeignKeyFamilyId extends SingleDatabaseTestCase {
 
         if (tableHasRows(con, "family")) {
 
-            orphans = countOrphans(con, "family_member", "family_id", "family", "family_id", false);
-            if (orphans == 0) {
-                ReportManager.correct(this, con, "family_member <-> family relationships PASSED");
-            } else if (orphans > 0) {
-                ReportManager.problem(this, con, "family_member has unlinked entries in family FAILED");
-            } else {
-                ReportManager.problem(this, con,
-                        "family_member <-> family TEST NOT COMPLETED, look at the StackTrace if any");
-            }
+            orphans = countOrphans(con, "family_member", "family_id", "family", "family_id", true);
+            fillReportManager(con, orphans,"family_member", "family_id", "family", "family_id");
+
+            orphans = countOrphans(con, "family", "family_id", "family_member", "family_id", true);
+            fillReportManager(con, orphans,"family", "family_id", "family_member", "family_id");
+            
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in family table, so nothing to test IGNORED");
         }
-
         result &= (orphans == 0);
-
+        
         return result;
-
+        
     }
+    
+    public int fillReportManager(Connection con, int orphans, String table1, String col1, String table2, String col2) {
+
+        String sql = "SELECT " + table1 + "." + col1 + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
+
+        if (orphans == 0) {
+            ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + col1 + "("+col2+")" + " relationships");
+        } else if (orphans > 0) {
+            ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + col1 + "("+col2+")" + " relationships");
+            ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
+            ReportManager.problem(this, con, "USEFUL SQL: " + sql);
+        } else {
+            ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1 + ", look at the StackTrace if any");
+        }
+
+        return 1;
+    } //fillReportManager
 
 } // OrphanTestCase

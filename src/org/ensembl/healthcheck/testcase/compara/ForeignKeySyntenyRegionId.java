@@ -59,16 +59,13 @@ public class ForeignKeySyntenyRegionId extends SingleDatabaseTestCase {
         // 1 test to check synteny_region_id used as foreign key
 
         if (tableHasRows(con, "synteny_region")) {
-            orphans = countOrphans(con, "dnafrag_region", "synteny_region_id", "synteny_region", "synteny_region_id",
-                    false);
-            if (orphans == 0) {
-                ReportManager.correct(this, con, "dnafrag_region <-> synteny_region relationships PASSED");
-            } else if (orphans > 0) {
-                ReportManager.problem(this, con, "dnafrag_region has unlinked entries in synteny_region FAILED");
-            } else {
-                ReportManager.problem(this, con,
-                        "dnafrag_region <-> synteny_region TEST NOT COMPLETED, look at the StackTrace if any");
-            }
+            orphans = countOrphans(con, "dnafrag_region", "synteny_region_id", "synteny_region", "synteny_region_id", true);
+            fillReportManager(con, orphans,"dnafrag_region", "synteny_region_id", "synteny_region", "synteny_region_id");
+            
+            orphans = countOrphans(con, "synteny_region", "synteny_region_id", "dnafrag_region", "synteny_region_id", true);
+            fillReportManager(con, orphans,"synteny_region", "synteny_region_id", "dnafrag_region", "synteny_region_id");
+
+            
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in synteny_region table, so nothing to test IGNORED");
         }
@@ -78,5 +75,22 @@ public class ForeignKeySyntenyRegionId extends SingleDatabaseTestCase {
         return result;
 
     }
+
+    public int fillReportManager(Connection con, int orphans, String table1, String col1, String table2, String col2) {
+
+        String sql = "SELECT " + table1 + "." + col1 + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
+
+        if (orphans == 0) {
+            ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + col1 + "("+col2+")" + " relationships");
+        } else if (orphans > 0) {
+            ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + col1 + "("+col2+")" + " relationships");
+            ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
+            ReportManager.problem(this, con, "USEFUL SQL: " + sql);
+        } else {
+            ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1 + ", look at the StackTrace if any");
+        }
+
+        return 1;
+    } //fillReportManager
 
 } // OrphanTestCase

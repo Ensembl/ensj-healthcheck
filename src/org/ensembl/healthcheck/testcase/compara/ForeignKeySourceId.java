@@ -59,41 +59,16 @@ public class ForeignKeySourceId extends SingleDatabaseTestCase {
         if (tableHasRows(con, "source")) {
 
             orphans = countOrphans(con, "member", "source_id", "source", "source_id", true);
-            if (orphans == 0) {
-                ReportManager.correct(this, con, "source <- member relationships PASSED");
-            } else if (orphans > 0) {
-                ReportManager.problem(this, con, "source <- member has unlinked entries FAILED");
-            } else {
-                ReportManager.problem(this, con, "source <- member TEST NOT COMPLETED, look at the StackTrace if any");
-            }
+            fillReportManager(con, orphans,"member", "source_id", "source", "source_id");
 
             orphans = countOrphans(con, "family", "source_id", "source", "source_id", true);
-            if (orphans == 0) {
-                ReportManager.correct(this, con, "source <- family relationships PASSED");
-            } else if (orphans > 0) {
-                ReportManager.problem(this, con, "source <- family has unlinked entries FAILED");
-            } else {
-                ReportManager.problem(this, con, "source <- family TEST NOT COMPLETED, look at the StackTrace if any");
-            }
+            fillReportManager(con, orphans,"family", "source_id", "source", "source_id");
 
             orphans = countOrphans(con, "homology", "source_id", "source", "source_id", true);
-            if (orphans == 0) {
-                ReportManager.correct(this, con, "source <- homology relationships PASSED");
-            } else if (orphans > 0) {
-                ReportManager.problem(this, con, "source <- homology has unlinked entries FAILED");
-            } else {
-                ReportManager
-                        .problem(this, con, "source <- homology TEST NOT COMPLETED, look at the StackTrace if any");
-            }
+            fillReportManager(con, orphans,"homology", "source_id", "source", "source_id");
 
             orphans = countOrphans(con, "domain", "source_id", "source", "source_id", true);
-            if (orphans == 0) {
-                ReportManager.correct(this, con, "source <- domain relationships PASSED");
-            } else if (orphans > 0) {
-                ReportManager.problem(this, con, "source <- domain has unlinked entries FAILED");
-            } else {
-                ReportManager.problem(this, con, "source <- domain TEST NOT COMPLETED, look at the StackTrace if any");
-            }
+            fillReportManager(con, orphans,"domain", "source_id", "source", "source_id");
 
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in source table, so nothing to test IGNORED");
@@ -104,5 +79,22 @@ public class ForeignKeySourceId extends SingleDatabaseTestCase {
         return result;
 
     }
+
+    public int fillReportManager(Connection con, int orphans, String table1, String col1, String table2, String col2) {
+
+        String sql = "SELECT " + table1 + "." + col1 + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
+
+        if (orphans == 0) {
+            ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + col1 + "("+col2+")" + " relationships");
+        } else if (orphans > 0) {
+            ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + col1 + "("+col2+")" + " relationships");
+            ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
+            ReportManager.problem(this, con, "USEFUL SQL: " + sql);
+        } else {
+            ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1 + ", look at the StackTrace if any");
+        }
+
+        return 1;
+    } //fillReportManager
 
 } // OrphanTestCase

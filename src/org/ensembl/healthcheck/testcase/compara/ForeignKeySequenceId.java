@@ -61,7 +61,7 @@ public class ForeignKeySequenceId extends SingleDatabaseTestCase {
         if (tableHasRows(con, "sequence")) {
 
             orphans = countOrphans(con, "member", "sequence_id", "sequence", "sequence_id", true);
-            fillReportManager(con, orphans,"member","sequence","sequence_id");
+            fillReportManager(con, orphans,"member", "sequence_id", "sequence", "sequence_id");
 
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in sequence table, so nothing to test IGNORED");
@@ -72,19 +72,18 @@ public class ForeignKeySequenceId extends SingleDatabaseTestCase {
         return result;
 
     }
+    public int fillReportManager(Connection con, int orphans, String table1, String col1, String table2, String col2) {
 
-    public int fillReportManager(Connection con, int orphans, String table1, String table2, String fk) {
-
-        String sql = "SELECT " + table1 + "." + fk + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + fk + " = " + table2 + "." + fk + " WHERE " + table2 + "." + fk + " iS NULL";
+        String sql = "SELECT " + table1 + "." + col1 + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
 
         if (orphans == 0) {
-            ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + fk + " relationships");
+            ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + col1 + "("+col2+")" + " relationships");
         } else if (orphans > 0) {
-            ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + fk + " relationships");
+            ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + col1 + "("+col2+")" + " relationships");
             ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
             ReportManager.problem(this, con, "USEFUL SQL: " + sql);
         } else {
-            ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + fk + ", look at the StackTrace if any");
+            ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1 + ", look at the StackTrace if any");
         }
 
         return 1;
