@@ -52,13 +52,17 @@ public class CheckChromosomeLengthsTestCase extends EnsTestCase {
 
 			String dbName = DBUtils.getShortDatabaseName(con);
 
-			// check chromosome table has > 0 rows
-			int rows = countRowsInTable(con, "chromosome");
+			// check that there are some chromosomes
+			// of course this may not necessarily be a problem for some species
+			String chrSQL =
+				"SELECT count(*) from seq_region sr, coord_system cs "
+					+ "WHERE sr.coord_system_id=cs.coord_system_id AND cs.name='chromosome'";
+			int rows = getRowCount(con, chrSQL);
 			if (rows == 0) {
 				result = false;
-				ReportManager.problem(this, con, "chromosome table is empty");
+				ReportManager.problem(this, con, "No chromosomes in seq_region table");
 			} else {
-				ReportManager.correct(this, con, "chromosome table has data");
+				ReportManager.correct(this, con, "seq_region table contains chromosomes");
 			}
 
 			AssemblyNameInfo assembly = new AssemblyNameInfo(con);
