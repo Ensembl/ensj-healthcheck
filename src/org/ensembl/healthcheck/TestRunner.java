@@ -261,7 +261,7 @@ public class TestRunner {
       
       if (testCase.inGroups(groupsToRun)) {
         logger.warning("\nRunning test of type " + testCase.getClass().getName());
-         if (preFilterRegexp != null) {
+        if (preFilterRegexp != null) {
           testCase.setPreFilterRegexp(preFilterRegexp);
         }
         
@@ -297,8 +297,8 @@ public class TestRunner {
     
   } // runAllTests
   
-    // -------------------------------------------------------------------------
- 
+  // -------------------------------------------------------------------------
+  
   // -------------------------------------------------------------------------
   /**
    * Get an iterator that will iterate over database connections whose names
@@ -600,8 +600,9 @@ public class TestRunner {
   // -------------------------------------------------------------------------
   /**
    * Create and cache information about all the schemas that are available.
+   * @param serialize If true, write schema information to schema_name.ser file.
    */
-  public void buildSchemaList() {
+  public void buildSchemaList(boolean serialize) {
     
     // check props file loaded
     if (System.getProperty("driver") == null) {
@@ -620,18 +621,77 @@ public class TestRunner {
     
     for (int i = 0; i < schemas.length; i++) {
       
-      String url = System.getProperty("databaseURL") + schemas[i];
-      Connection con = DBUtils.openConnection(System.getProperty("driver"),
-      url,
-      System.getProperty("user"),
-      System.getProperty("password"));
-      
-      SchemaInfo si = new SchemaInfo(con);
-      SchemaManager.addSchema(si);
-      logger.finest("Added schema info for " + si.getName());
+      SchemaManager.addSchema(getSingleSchemaInfo(schemas[i]));
+      logger.finest("Added SchemaInfo object for " + schemas[i]);
       
     }
     
+    if (serialize) {
+      SchemaManager.serializeAll();
+    }
+    
+  }
+  
+  // -------------------------------------------------------------------------
+  /**
+   * Get the schema information for a single schema.
+   * @param schemaName The name of the schema to analyse.
+   */
+  public SchemaInfo getSingleSchemaInfo(String schemaName) {
+    
+    String url = System.getProperty("databaseURL") + schemaName;
+    Connection con = DBUtils.openConnection(System.getProperty("driver"),
+    url,
+    System.getProperty("user"),
+    System.getProperty("password"));
+    
+    return new SchemaInfo(con);    
+    
+  }
+  
+  // -------------------------------------------------------------------------
+  /**
+   * Read schema information from serialized object files (schema_name.ser)
+   * If the .ser file for a particular schema does not exist or cannot be read, 
+   * the SchemaInfo object is created on the fly.
+   */
+  public void readStoredSchemaInfo() {
+    
+    FileInputStream fis = null;
+    ObjectInputStream in = null;
+    
+    String[] schemas = getAllSchemaNames();
+    
+    for (int i = 0; i < schemas.length; i++) {
+      
+      String fileName = schemas[i] + ".ser";
+      File f = new File(fileName);
+      if (!f.exists() || !f.canRead()) {
+        
+        logger.warning("Cannot read cached schema info for " + schemas[i] + ", rebuilding");
+        SchemaManager.addSchema(getSingleSchemaInfo(schemas[i]));
+        
+      } else {
+        
+        SchemaInfo si = null;
+        try {
+          
+          fis = new FileInputStream(fileName);
+          in = new ObjectInputStream(fis);
+          si = (SchemaInfo)in.readObject();
+          SchemaManager.addSchema(si);
+          logger.finest("Read stored schema info for " + fileName);
+          in.close();
+          fis.close();
+          
+        } catch(IOException ex) {
+          ex.printStackTrace();
+        } catch(ClassNotFoundException ex) {
+          ex.printStackTrace();
+        }
+        
+      }
+    }
     
   }
   
@@ -657,8 +717,8 @@ public class TestRunner {
       
     }
     
-   return (String[])result.toArray(new String[result.size()]);
-   
+    return (String[])result.toArray(new String[result.size()]);
+    
   }
   
   // -------------------------------------------------------------------------
