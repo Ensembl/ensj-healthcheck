@@ -615,7 +615,7 @@ public abstract class EnsTestCase {
 				if (rs != null) {
 					resultSetGroup.add(rs);
 				}
-				logger.fine("Added ResultSet for " + sql);
+				logger.fine("Added ResultSet for " + DBUtils.getShortDatabaseName(con) + ": " + sql);
 				//DBUtils.printResultSet(rs, 100);
 				// note that the Statement can't be closed here as we use the
 				// ResultSet elsewhere
@@ -668,7 +668,7 @@ public abstract class EnsTestCase {
 				if (rs != null) {
 					resultSetGroup.add(rs);
 				}
-				logger.fine("Added ResultSet for " + sql);
+				logger.fine("Added ResultSet for " + DBUtils.getShortDatabaseName(con) + ": " + sql);
 				//DBUtils.printResultSet(rs, 100);
 				// note that the Statement can't be closed here as we use the
 				// ResultSet elsewhere
