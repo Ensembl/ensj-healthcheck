@@ -8,8 +8,6 @@ Note: list-all-tests.sh can be used to verify which tests are in a particular gr
 
 all                     # default group name - all tests are a member of this group
 db_constraints         
-compara_db_constraints
-family_db_constraints
 pre_mart
 post_genebuild
 
