@@ -36,7 +36,7 @@ import org.ensembl.healthcheck.util.*;
 public class TestRunner {
   
   /** List that holds an instance of each test. */
-  protected List allTests;            
+  protected List allTests;
   /** The List of group names (as Strings) that will be run. */
   protected List groupsToRun;
   /** Contains database connection parameters read in from database.properties */
@@ -82,7 +82,7 @@ public class TestRunner {
   public String[] getListOfDatabaseNames(String regexp) {
     
     Connection conn;
-
+    
     String[] databaseNames = null;
     
     // open connection
@@ -188,9 +188,9 @@ public class TestRunner {
   
   // -------------------------------------------------------------------------
   /**
-   * Run all the tests in a list. 
+   * Run all the tests in a list.
    * @param allTests The tests to run, as objects.
-   * @param forceDatabases If true, use only the database name pattern specified 
+   * @param forceDatabases If true, use only the database name pattern specified
    * on the command line, <em>not</em> the regular expression built in to the test case.
    */
   protected void runAllTests(List allTests, boolean forceDatabases) {
@@ -209,7 +209,7 @@ public class TestRunner {
     while (it.hasNext()) {
       
       EnsTestCase testCase = (EnsTestCase)it.next();
-            
+      
       if (testCase.inGroups(groupsToRun)) {
         logger.warning("\nRunning test of type " + testCase.getClass().getName());
         if (preFilterRegexp != null) {
@@ -225,7 +225,7 @@ public class TestRunner {
         
         String passFail = tr.getResult() ? "PASSED" : "FAILED";
         logger.warning(tr.getName() + " " + passFail + " " + tr.getMessage());
-
+        
       }
     }
     
@@ -233,10 +233,10 @@ public class TestRunner {
   
   // -------------------------------------------------------------------------
   /**
-   * Get an iterator that will iterate over database connections whose names 
+   * Get an iterator that will iterate over database connections whose names
    * match a particular regular expression.
    * @param databaseRegexp The regular expression to match.
-   * @return A DatabaseConnectionIterator object that will iterate over database 
+   * @return A DatabaseConnectionIterator object that will iterate over database
    * Connections for databases whose names match the regular expression.
    */
   public DatabaseConnectionIterator getDatabaseConnectionIterator(String databaseRegexp) {
@@ -289,7 +289,7 @@ public class TestRunner {
         }
       } catch (InstantiationException ie) {
         // normally it is a BAD THING to just ignore exceptions
-        // however InstantiationExceptions may be thrown often in this case, 
+        // however InstantiationExceptions may be thrown often in this case,
         // so we deliberately chose to suppres this particular exception
       } catch (Exception e) {
         e.printStackTrace();
@@ -308,24 +308,24 @@ public class TestRunner {
   } // findTestsInDirectory
   
   // -------------------------------------------------------------------------
-  /** 
+  /**
    * Find tests in a jar file.
    * @param jarFileName The name of the jar file to search.
    * @param packageName The package name of the tests.
    * @return The list of tests in the jar file.
-   */ 
+   */
   public List findTestsInJar(String jarFileName, String packageName) {
     
     ArrayList tests = new ArrayList();
     
     //throw new NotImplementedException();
-
+    
     return tests;
     
   } // findTestsInJar
   
   // -------------------------------------------------------------------------
-  /** 
+  /**
    * Add all tests in subList to mainList, <em>unless</em> the test is already a member of mainList.
    * @param mainList The list to add to.
    * @param subList The list to be added.
@@ -369,6 +369,33 @@ public class TestRunner {
     return inList;
     
   } // testInList
+  
+  // -------------------------------------------------------------------------
+  /**
+   * Get the union of all the test groups.
+   * @param tests The tests to check.
+   * @return An array containing the names of all the groups that any member of tests is a member of.
+   */
+  public String[] listAllGroups(List tests) {
+    
+    ArrayList g = new ArrayList();
+    
+    Iterator it = tests.iterator();
+    while (it.hasNext()) {
+      List thisTestsGroups = ((EnsTestCase)it.next()).getGroups();
+      Iterator it2 = thisTestsGroups.iterator();
+      while (it2.hasNext()) {
+        String group = (String)it2.next();
+        if (!g.contains(group)) {
+          g.add(group);
+        }
+      }
+    }
+    
+    return (String[])g.toArray(new String[g.size()]);
+    
+  } // listAllGroups
+  
   // -------------------------------------------------------------------------
   
 } // TestRunner
