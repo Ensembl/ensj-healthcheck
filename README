@@ -1,0 +1,165 @@
+EnsEMBL-J HealthCheck
+=====================
+
+
+REQUIREMENTS
+============
+
+1. JDK 1.4 (see http://java.sun.com/ for downloads); 1.4 (or later) must be used since the Healthcheck system 
+   uses several 1.4-specific features, e.g. regular expressions and logging
+
+2. JDBC drivers for connecting to a mySQL database. For convenience a suitable jar file is included in the lib 
+   directory created when you do the CVS checkout (next version).
+
+3. The jar file containing support classes for the JUnit unittesting framework; again, junit.jar will be in 
+   the lib/ directory after CVS checkout.
+ 
+
+INSTALLATION
+============
+
+1. Obtain the source files, either as a tarball or by checking out from CVS. The name of the module is 
+   ensj-healthcheck. Use the -r option to check out a specific tag if required. [1]
+
+2. cd ensj-healthcheck
+
+3. Edit database.properties to contain values that correspond to the database server which you want to 
+   connect to. This file is in standard Java properties file format.
+
+4. Compile the source. This can be done in a number of ways:
+   a) Invoke javac on the command-line. A simple shell script, compile-healthcheck.sh, has been provided 
+      as a guide to setting the classpath etc. Ensure that your JAVA_HOME environment variable
+      points to the directory in which Java 1.4 is installed; on Sanger machines this is usually
+      /usr/opt/java141/
+   b) Use the Apache ANT build system (http://ant.apache.org) - this is highly recommended if you need 
+      to do non-trivial tasks such as compiling, building distributions etc. A sample build.xml file is 
+      included in the Healthcheck distribution.
+   c) Use an IDE of your choice, e.g. Eclipse or NetBeans
+
+5. Install java healthcheck documentation if needed
+   Invoke javadoc on the command-line. A simple shell script, javadoc-healthcheck.sh, has been provided 
+   as a guide.
+   If you're having problems with this method, check your $PATH, $JAVA_HOME. That will create a javadoc 
+   directory in doc/external_web_pages/. You can the browse the documentation on your web browser opening
+   doc/external_web_pages/javadoc/index.html
+
+RUNNING
+=======
+
+See the file run-healthcheck.sh for an example of how to set classpaths etc. Note that this script passes 
+any of its command-line options through to the TextTestRunner class.
+
+    Usage: TextTestRunner {-d regexp} {-force} {-output none|problem|correct|summary|info|all} {group1} {group2} ...
+    Options:
+      -d regexp       Use the given regular expression to decide which databases to use.
+      -force          Run the named tests on the databases matched by -d, without 
+                      taking into account the regular expressions built into the tests themselves.
+      -h              This message.
+      -output level   Set output level; level can be one of 
+                      none      nothing is printed
+                      problem   only problems are reported
+                      correct   only correct results (and problems) are reported
+                      summary   only summary info (and problems, and correct reports) are reported
+                      info      info (and problem, correct, summary) messages reported
+                      all       everything is printed
+      -debug          Print debugging info (for developers only)
+      group1          Names of groups of test cases to run.
+                      Note each test case is in a group of its own with the name of the test case.
+                      This allows individual tests to be run if required.
+    
+There is also a script called run-healthcheck-gui.sh which will start the GUI version.
+
+Note that there is a special group called "all" which every test is a member of by default. Each test is 
+also a member (in fact the only member) of a test group with the same name as the test case. This allows 
+individual tests to be specified by name on the command line if necessary.
+
+  
+WRITING YOUR OWN TESTS
+======================
+
+The TestRunner class is able to "discover" test case classes at runtime, provided they fulfil certain criteria:
+
+1. They must be in the package org.ensembl.healthcheck.testcase
+
+2. The .class files must be in src/org/ensembl/healthcheck/testcase or build/org/ensembl/healthcheck/testcase [2]
+
+3. The test case classes must extend org.ensembl.healthcheck.EnsTestCase
+
+See the Javadoc documentation for more details, particularly for the following classes:
+
+ EnsTestCase                Base class containing many methods that can be used in tests.
+ TestResult			        The object that the run() method can return after the test.
+ ReportManager              Can be used to store information about the outcome of the tests.
+ DatabaseConnectionIterator Implements java.lang.Iterator to facilitate obtaining database connections.
+ DBUtils                    Various (static) methods for doing common database-oriented tasks.
+ Utils				        Non-database utilities.
+
+The EnsTestCase class is the base class for all test cases in the EnsEMBL Healthcheck system. It is not 
+intended to be instantiated directly; subclasses should implement the run() method and use that to provide 
+test-case specific behaviour.
+
+EnsTestCase provides a number of methods which are intended to make writing test cases simple; in many 
+cases an extension test case will involve little more than calling one of the methods in this class and 
+setting some return value based on the result. For example, the following test case gets a 
+DatabaseConnectionIterator, then uses it to loop over each affected database and call the countOrphans() 
+method in EnsTestCase. In this particular situation, if there are any orphans in any of the databases, 
+the test fails. The problem and correct methods of the ReportManager class are used to store information
+about which databases pass or fail the test.
+
+public class OrphanTestCase extends EnsTestCase {
+  
+  public OrphanTestCase() {
+    databaseRegexp = "^homo_sapiens_core_12.*";
+    addToGroup("group2
+  }
+  
+  TestResult run() {
+    
+    boolean result = true;
+    
+    DatabaseConnectionIterator it = getDatabaseConnectionIterator();
+        
+    while (it.hasNext()) {
+      
+      Connection con = (Connection)it.next();
+      int orphans = super.countOrphans(con, "gene", "gene_id", "gene_stable_id", "gene_id", false);
+      
+      if (orphans == 0) {
+        ReportManager.correct(this, con, "No orphans between gene and gene_stable_id");
+      } else {
+        ReportManager.problem(this, con, orphans + " orphans between gene and gene_stable_id");
+      }
+      result &= (orphans == 0);
+    }
+    
+    return new TestResult(getShortTestName(), result);
+    
+  }
+  
+} // OrphanTestCase
+
+Most test cases you write will take this form:
+
+1. Set up the database regexp [3] and any groups that this test case is a member of [4].
+
+2. Implement the run() method; normally this will involve getting a DatabaseConnectionIterator, 
+   calling one or more superclass methods on each database connection.
+
+3. Create and return a TestResult object according to the results of your tests.
+
+----------------------------------------------------------------------
+
+Notes
+-----
+
+[1] The CVS checkout currently includes some directories and files that are not necessary 
+    (e.g. build/ classes/ etc).
+[2] More flexible "discovery" of classes at runtime, e.g. from jar files and other directory 
+    locations, is reasonably straightforward to add by modifying or overriding findAllTests() 
+    in TestRunner.
+[3] A utility class called DatabaseNameMatcher is provided that will take a regular expression 
+    on the command line and list any database names that match it. This is useful for 
+    developing/debugging the regular expressions. There is a script called database-name-matcher.sh that 
+    can be used as a wrapper for this class.
+[4] Note that all tests by default are members of a group called "all". There is no need to explicitly 
+    add your new test to this group.
