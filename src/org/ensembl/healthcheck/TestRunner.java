@@ -53,6 +53,9 @@ public class TestRunner {
   /** Flag to determine whether repairs will be carried out if appropriate */
   protected boolean doRepair = false;
   
+  private static final String SCHEMA_INFO_FILENAME = "schemas.ser";
+  private static final boolean GZIP_SCHEMA_INFO = true;
+
   // -------------------------------------------------------------------------
   /** Creates a new instance of TestRunner */
   
@@ -261,9 +264,9 @@ public class TestRunner {
       EnsTestCase testCase = (EnsTestCase)it.next();
       
       if (testCase.inGroups(groupsToRun)) {
-	  logger.info("\nRunning test of type " + testCase.getClass().getName());
+        logger.info("\nRunning test of type " + testCase.getClass().getName());
         if (testCase.isLongRunning()) {
-          logger.info("Note that " + testCase.getClass().getName() + " may take a significant amount of time to run");          
+          logger.info("Note that " + testCase.getClass().getName() + " may take a significant amount of time to run");
         }
         
         if (preFilterRegexp != null) {
@@ -275,9 +278,9 @@ public class TestRunner {
           testCase.setDatabaseRegexp(preFilterRegexp);
         }
         
-	ReportManager.startTestCase( testCase );
+        ReportManager.startTestCase( testCase );
         TestResult tr = testCase.run();
-	ReportManager.finishTestCase( testCase );
+        ReportManager.finishTestCase( testCase, tr );
         
         numberOfTestsRun++;
         
@@ -608,10 +611,8 @@ public class TestRunner {
   /**
    * Create and cache information about all the schemas that are available.
    * @param serialize If true, write schema information to file.
-   * @param fileName Name of file to write List of SchemaInfo objects to.
-   * @param gzip If true, any output file is gzipped.
    */
-  public void buildSchemaList(boolean serialize, String fileName, boolean gzip) {
+  public void buildSchemaList(boolean serialize) {
     
     // check props file loaded
     if (System.getProperty("driver") == null) {
@@ -636,10 +637,11 @@ public class TestRunner {
     }
     
     if (serialize) {
-      if (gzip) {
+      String fileName = SCHEMA_INFO_FILENAME;
+      if (GZIP_SCHEMA_INFO) {
         fileName += ".gz";
       }
-      SchemaManager.serializeAllToSingleFile(fileName, gzip);
+      SchemaManager.serializeAllToSingleFile(fileName, GZIP_SCHEMA_INFO);
     }
     
   }
@@ -667,16 +669,17 @@ public class TestRunner {
    * If the .ser file for a particular schema does not exist or cannot be read,
    * the SchemaInfo object is created on the fly.
    */
-  public void readStoredSchemaInfo(String fileName, boolean gzip) {
+  public void readStoredSchemaInfo() {
     
-    if (gzip) {
+    String fileName = SCHEMA_INFO_FILENAME;
+    if (GZIP_SCHEMA_INFO) {
       fileName += ".gz";
     }
     
     try {
       
       InputStream is = new FileInputStream(fileName);
-      if (gzip) {
+      if (GZIP_SCHEMA_INFO) {
         is = new GZIPInputStream(is);
       }
       ObjectInputStream in = new ObjectInputStream(is);
@@ -691,9 +694,9 @@ public class TestRunner {
       }
       
     } catch(IOException ex) {
-	// ex.printStackTrace();
+      // ex.printStackTrace();
     } catch(ClassNotFoundException ex) {
-	// ex.printStackTrace();
+      // ex.printStackTrace();
     }
     
   }

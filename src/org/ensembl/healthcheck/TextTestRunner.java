@@ -37,8 +37,6 @@ public class TextTestRunner extends TestRunner implements Reporter {
   private boolean debug = false;
   private boolean useSchemaInfo = true;
   private boolean rebuildSchemaInfo = false;
-  private static final String SCHEMA_INFO_FILENAME = "schemas.ser";
-  private static final boolean GZIP_SCHEMA_INFO = true;
   public Vector outputBuffer ;
   private String lastDatabase = "";
   
@@ -62,11 +60,11 @@ public class TextTestRunner extends TestRunner implements Reporter {
     ttr.readPropertiesFile();
     
     if (ttr.rebuildSchemaInfo) {
-      ttr.buildSchemaList(true, SCHEMA_INFO_FILENAME, GZIP_SCHEMA_INFO);
+      ttr.buildSchemaList(true);
     }
     
     if (ttr.useSchemaInfo && !ttr.rebuildSchemaInfo) { // if buildSchemaList has been called, SchemaManager will already have been populated
-      ttr.readStoredSchemaInfo(SCHEMA_INFO_FILENAME, GZIP_SCHEMA_INFO);
+      ttr.readStoredSchemaInfo();
     }
     ReportManager.setReporter( ttr );
     
