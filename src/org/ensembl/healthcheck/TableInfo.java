@@ -18,13 +18,14 @@
 
 package org.ensembl.healthcheck;
 
+import java.io.*;
 import java.util.*;
 import org.ensembl.healthcheck.util.*;
 
 /**
  * Store information about a table.
  */
-public class TableInfo {
+public class TableInfo implements Serializable {
   
   /** The name of this table */
   protected String name;
