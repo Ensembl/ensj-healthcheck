@@ -184,7 +184,25 @@ public class TestRunner {
 		// --------------------------------
 		// Multi-database tests
 
-		// TODO implement
+		// here we just pass the whole DatabaseRegistry to each test
+		// and let the test decide what to do
+
+			List allMultiDatabaseTests = testRegistry.getAllMulti(groupsToRun);
+			
+			for (Iterator it = allMultiDatabaseTests.iterator(); it.hasNext();) {
+
+				MultiDatabaseTestCase testCase = (MultiDatabaseTestCase)it.next();
+
+				ReportManager.startTestCase(testCase);
+
+				boolean result = testCase.run(databaseRegistry);
+
+				ReportManager.finishTestCase(testCase, result);
+				logger.info(testCase.getName() + " " + (result ? "PASSED" : "FAILED"));
+
+				numberOfTestsRun++;
+
+			} // foreach test
 
 		// --------------------------------
 
