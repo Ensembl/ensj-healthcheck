@@ -83,12 +83,14 @@
             </classpath>
         </java>
     </target>
-    
-    
+
+
     <!-- ################################################################################## -->
 
-    <target name="copy-resources" description="Copy images etc into appropriate directories">
-       <copy todir="${build}/org/ensembl/healthcheck/gui">
+    <target name="copy-resources"
+            description="Copy images etc into appropriate directories"
+     >
+        <copy todir="${build}/org/ensembl/healthcheck/gui">
             <fileset dir="${images}">
                 <include name="*.gif"/>
                 <include name="*.png"/>
@@ -184,15 +186,18 @@
     <target name="javadoc">
 
         <javadoc
-      sourcepath="${src}"
       destdir="${doc}/javadoc"
       author="true"
       version="true"
       use="true"
       windowtitle="EnsEMBL HealthCheck"
       doctitle="EnsEMBL HealthCheck"
-      packagenames="org.ensembl.healthcheck, org.ensembl.healthcheck.util, org.ensembl.healthcheck.testcase"
       >
+            <packageset dir="${src}" defaultexcludes="yes">
+                <include name="org/ensembl/healthcheck/**" />
+                <exclude name="org/ensembl/healthcheck/test/**" />
+            </packageset>
+
         </javadoc>
     </target>
 
@@ -202,6 +207,12 @@
              basedir="${doc}/javadoc"
              compression="gzip"
          />
+
+    </target>
+
+    <target name="javadoc-zip" depends="javadoc">
+
+        <zip destfile="${doc}/javadoc/${name}.zip" basedir="${doc}/javadoc" />
 
     </target>
 
