@@ -918,5 +918,45 @@ public abstract class EnsTestCase {
     } // setDescription
     
     // -------------------------------------------------------------------------
+    /**
+     * Read a database schema from a file and create a temporary database from it.
+     * @param fileName The name of the schema to read.
+     * @return A connection to a database buit from the schema.
+     */
+    public Connection importSchema(String fileName) {
+        
+        Connection con = null;
+        
+        // exceptions?
+                
+        String tempDBName = DBUtils.generateTempDatabaseName();
+        
+        // create the database
+        
+        // create a batch statement that will be used
+        
+        // parse the file
+        
+        // foreach SQL command, add to batch
+        
+        // execute batch
+        
+        // close statement
+        
+        return con;
+    }
+    
+    // -------------------------------------------------------------------------
+    /**
+     * Remove a whole database. Generally should *only* be used with temporary databases.
+     * Use at your own risk! 
+     * @param con The connection pointing to the database to remove. Should be 
+     * connected as a user that has sufficient permissions to remove it.
+     */
+    public void removeDatabase(Connection con) {
+        
+      // TBC
+        
+    } 
     
 } // EnsTestCase
