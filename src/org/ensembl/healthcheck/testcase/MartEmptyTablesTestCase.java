@@ -19,12 +19,14 @@
 /*
 
  $Log$
+ Revision 1.2  2004/01/12 11:19:50  gp1
+ Updated relevant dates (Copyright notices etc) to 2004.
+
  Revision 1.1  2003/11/04 12:09:52  dkeefe
  checks that all tables which should contain data do contain data
 
 
  */
-
 
 package org.ensembl.healthcheck.testcase;
 
@@ -45,21 +47,24 @@ public class MartEmptyTablesTestCase extends EnsTestCase {
 	public MartEmptyTablesTestCase() {
 
 		addToGroup("post_ensmartbuild");
-		databaseRegexp = ".*";// any 
+		databaseRegexp = ".*"; // any 
 		setDescription("Checks that all tables which must be filled, have data");
 
 	}
 
-        // a small number of tables are allowed to be empty so mustBeFilled is false
+	// a small number of tables are allowed to be empty so mustBeFilled is false
 	private boolean mustBeFilled(String table) {
 
-	    //if (table.equals("")){return false;}
-	    if (table.equals("hsapiens_expression_gnf_pathology_support")){return false;}
-	    if (table.equals("hsapiens_expression_gnf_preparation_support")){return false;}
-	    return true;
-    
-	} // mustBeFilled
+		//if (table.equals("")){return false;}
+		if (table.equals("hsapiens_expression_gnf_pathology_support")) {
+			return false;
+		}
+		if (table.equals("hsapiens_expression_gnf_preparation_support")) {
+			return false;
+		}
+		return true;
 
+	} // mustBeFilled
 
 	/**
 	 * For each schema, check that every table has more than 0 rows.
@@ -74,12 +79,10 @@ public class MartEmptyTablesTestCase extends EnsTestCase {
 
 			Connection con = (Connection)it.next();
 
-			SchemaInfo si = SchemaManager.getSchema(con);
-
-			Iterator tableIterator = si.getTables().iterator();
+			Iterator tableIterator = getTableNames(con).iterator();
 			while (tableIterator.hasNext()) {
 
-				String table = ((TableInfo)tableIterator.next()).getName();
+				String table = (String)tableIterator.next();
 				logger.finest("Checking that " + table + " has rows");
 
 				if (!tableHasRows(con, table) && mustBeFilled(table)) {
