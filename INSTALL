@@ -26,6 +26,12 @@ INSTALLATION
    b) Use the Apache ANT build system (http://ant.apache.org) - this is highly recommended if you need to do non-trivial tasks such as compiling, building distributions etc. A sample build.xml file is included in the Healthcheck distribution.
    c) Use an IDE of your choice, e.g. NetBeans
 
+5. Install java healthcheck documentation if needed
+   Invoke javadoc on the command-line. A simple shell script, javadoc-healthcheck.sh, has been provided as a guide.
+   If you're having problems with this method, check your $PATH, $JAVA_HOME. That will create a javadoc directory in
+   doc/external_web_pages/. You can the browse the documentation on your web browser opening
+   doc/external_web_pages/javadoc/index.html
+
 RUNNING
 =======
 
