@@ -117,7 +117,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
         } else if (type == DatabaseType.ESTGENE) {
 
             // Only a few tables need to be filled in ESTGENE
-            String[] estGene = {"gene", "transcript", "exon", "meta_coord", "coord_system"};
+            String[] estGene = {"gene", "transcript", "exon", "meta_coord", "coord_system", "gene_stable_id", "exon_stable_id", "translation_stable_id", "transcript_stable_id", "karyotype"};
             tables = estGene;
 
         }
