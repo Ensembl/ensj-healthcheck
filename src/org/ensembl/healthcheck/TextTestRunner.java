@@ -35,8 +35,8 @@ public class TextTestRunner extends TestRunner {
   private static String version = "$Id$";
   private boolean forceDatabases = false;
   private boolean debug = false;
-  private boolean buildSchemaInfo = true;
-  
+  private boolean useSchemaInfo = true;
+  private boolean rebuildSchemaInfo = false;
   // -------------------------------------------------------------------------
   
   /**
@@ -55,8 +55,12 @@ public class TextTestRunner extends TestRunner {
     
     ttr.readPropertiesFile();
     
-    if (ttr.buildSchemaInfo) {
-      ttr.buildSchemaList();
+    if (ttr.rebuildSchemaInfo) {
+      ttr.buildSchemaList(true);
+    }
+    
+    if (ttr.useSchemaInfo) {
+      ttr.readStoredSchemaInfo();
     }
     
     ttr.runAllTests(ttr.findAllTests(), ttr.forceDatabases);
@@ -91,6 +95,7 @@ public class TextTestRunner extends TestRunner {
     System.out.println("  -repair         If appropriate, carry out repair methods on test cases that support it");
     System.out.println("  -showrepair     Like -repair, but the repair is NOT carried out, just reported.");
     System.out.println("  -noschemainfo   Do not cache schema info at startup. Quicker, but may cause some tests not to work. Use with caution.");
+    System.out.println("  -refreshschemas Rebuild the stored schema info; this is rather slow as every schema must be examined, but should be used when a schema structure change has occurred.");
     System.out.println("  group1          Names of groups of test cases to run.");
     System.out.println("                  Note each test case is in a group of its own with the name of the test case.");
     System.out.println("                  This allows individual tests to be run if required.");
@@ -156,8 +161,13 @@ public class TextTestRunner extends TestRunner {
           
         } else if (args[i].equals("-noschemainfo")) {
           
-          buildSchemaInfo = false;
-          System.out.println("Will NOT cache schema info at startup");
+          useSchemaInfo = false;
+          System.out.println("Will NOT read schema info at startup");
+        
+        } else if (args[i].equals("-refreshschemas")) {
+          
+          rebuildSchemaInfo = true;
+          System.out.println("Will rebuild and store schema info at startup");
           
         } else if (args[i].equals("-config")) {
           
@@ -207,6 +217,8 @@ public class TextTestRunner extends TestRunner {
   
   // setupLogging
   // -------------------------------------------------------------------------
+  
+ 
 }
 
 
