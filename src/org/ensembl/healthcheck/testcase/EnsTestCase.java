@@ -102,6 +102,9 @@ public abstract class EnsTestCase {
   /** Logger object to use */
   protected static Logger logger = Logger.getLogger("HealthCheckLogger");
   
+  /** Boolean variable that can be set if the test case is likely to take a long time to run */
+  protected boolean hintLongRunning = false;
+  
   // -------------------------------------------------------------------------
   /**
    * Creates a new instance of EnsTestCase
@@ -1181,5 +1184,27 @@ public abstract class EnsTestCase {
     
   }
   // -------------------------------------------------------------------------
+  /**
+   * See if the "hintLongRunning" flag is set.
+   * @param The value of the hintLongRunning flag.
+   */
+  public boolean isLongRunning() {
+  
+     return hintLongRunning;
+     
+  }
+  
+  // -------------------------------------------------------------------------
+  /**
+   * Set the flag that indicates that this test may take a long time to run.
+   * @param b The new value of the flag.
+   */
+  public void setHintLongRunning(boolean b) {
+   
+    hintLongRunning = b;
+    
+  }
+  // -------------------------------------------------------------------------
+
   
 } // EnsTestCase
