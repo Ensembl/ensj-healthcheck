@@ -94,6 +94,7 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
             int rows = getRowCount(con, sql);
             if (rows == 0) {
                 ReportManager.problem(this, con, table + " has no features for analysis " + analyses[i]);
+                result = false;
             } else {
                 ReportManager.correct(this, con, table + " has features for analysis " + analyses[i]);
             }
