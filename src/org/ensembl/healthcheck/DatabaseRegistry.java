@@ -17,8 +17,14 @@
  */
 package org.ensembl.healthcheck;
 
+import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
+
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Class that stores information about which databases are available.
@@ -26,28 +32,146 @@ import java.util.List;
 public class DatabaseRegistry {
 
 	List entries = new ArrayList();
-	
+
+	protected static Logger logger = Logger.getLogger("HealthCheckLogger");
+
+	// -----------------------------------------------------------------
+	/**
+	 * 
+	 */
+	public DatabaseRegistry(String regexp) {
+
+		Connection con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System.getProperty("user"), System.getProperty("password"));
+
+		String[] names = DBUtils.listDatabases(con, regexp);
+
+		for (int i = 0; i < names.length; i++) {
+			DatabaseRegistryEntry dbre = new DatabaseRegistryEntry(names[i]);
+			entries.add(dbre);
+			logger.finest(dbre.getName() + " appears to be type " + dbre.getType() + " and species " + dbre.getSpecies());
+			logger.finest("Added DatabaseRegistryEntry for " + names[i] + " to DatabaseRegistry");
+		}
+
+	}
+
 	// -----------------------------------------------------------------
 	/**
 	 * Add a new DatabaseRegistryEntry to this registry.
 	 * @param dbre The new DatabaseRegistryEntry.
 	 */
 	public void add(DatabaseRegistryEntry dbre) {
-		
+
 		entries.add(dbre);
-		
+
 	}
-	
+
 	// -----------------------------------------------------------------
 	/**
 	 * Get all of the DatabaseRegistryEntries stored in this DatabaseRegistry.
 	 * @return The DatabaseRegistryEntries stored in this DatabaseRegistry.
 	 */
 	public DatabaseRegistryEntry[] getAll() {
-		
-		return (DatabaseRegistryEntry[])entries.toArray(new DatabaseRegistry[entries.size()]);
-		
-	}
-	 
-} // DatabaseRegistry
 
+		return (DatabaseRegistryEntry[])entries.toArray(new DatabaseRegistryEntry[entries.size()]);
+
+	}
+
+	//	-----------------------------------------------------------------
+	/**
+	 * Get all of the DatabaseRegistryEntries for a particular species
+	 * @param species The species to look for.
+	 * @return The DatabaseRegistryEntries for species..
+	 */
+	public DatabaseRegistryEntry[] getAll(Species species) {
+
+		List result = new ArrayList();
+		Iterator it = entries.iterator();
+		while (it.hasNext()) {
+			DatabaseRegistryEntry dbre = (DatabaseRegistryEntry)it.next();
+			if (dbre.getSpecies().equals(species)) {
+				result.add(dbre);
+			}
+		}
+
+		return (DatabaseRegistryEntry[])result.toArray(new DatabaseRegistryEntry[result.size()]);
+
+	}
+
+	//	-----------------------------------------------------------------
+	/**
+	 * Get all of the DatabaseRegistryEntries for a particular database type.
+	 * @param type The type to look for.
+	 * @return The DatabaseRegistryEntries for type.
+	 */
+	public DatabaseRegistryEntry[] getAll(DatabaseType type) {
+
+		List result = new ArrayList();
+		Iterator it = entries.iterator();
+		while (it.hasNext()) {
+			DatabaseRegistryEntry dbre = (DatabaseRegistryEntry)it.next();
+			if (dbre.getType().equals(type)) {
+				result.add(dbre);
+			}
+		}
+
+		return (DatabaseRegistryEntry[])result.toArray(new DatabaseRegistryEntry[result.size()]);
+
+	}
+
+	//	-----------------------------------------------------------------
+	/**
+	 * Get all of the DatabaseRegistryEntries for a particular database type and species.
+	 * @param type The type to look for.
+	 * @param species The Species to look for.
+	 * @return The DatabaseRegistryEntries that match type and species..
+	 */
+	public DatabaseRegistryEntry[] getAll(DatabaseType type, Species species) {
+
+		List result = new ArrayList();
+		Iterator it = entries.iterator();
+		while (it.hasNext()) {
+			DatabaseRegistryEntry dbre = (DatabaseRegistryEntry)it.next();
+			if (dbre.getType().equals(type) && dbre.getSpecies().equals(species)) {
+				result.add(dbre);
+			}
+		}
+
+		return (DatabaseRegistryEntry[])result.toArray(new DatabaseRegistryEntry[result.size()]);
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+	 * Sets the type of every DatabaseRegistryEntry.
+	 * @param type The type to set.
+	 */
+	public void setTypeOfAll(DatabaseType type) {
+
+		List result = new ArrayList();
+		Iterator it = entries.iterator();
+		while (it.hasNext()) {
+			DatabaseRegistryEntry dbre = (DatabaseRegistryEntry)it.next();
+			dbre.setType(type);
+		}
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+	 * Sets the species of every DatabaseRegistryEntry.
+	 * @param species The species to set.
+	 */
+	public void setSpeciesOfAll(Species species) {
+
+		List result = new ArrayList();
+		Iterator it = entries.iterator();
+		while (it.hasNext()) {
+			DatabaseRegistryEntry dbre = (DatabaseRegistryEntry)it.next();
+			dbre.setSpecies(species);
+		}
+
+	}
+
+	// -----------------------------------------------------------------
+
+} // DatabaseRegistry
