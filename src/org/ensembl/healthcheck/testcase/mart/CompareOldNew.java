@@ -19,6 +19,9 @@
 /*
 
  $Log$
+ Revision 1.1.2.1  2004/03/01 09:42:08  gp1
+ Moved into mart subdirectory. Some tests renamed
+
  Revision 1.3.2.1  2004/02/23 14:26:57  gp1
  No longer depends on SchemaInfo etc
 
@@ -38,7 +41,7 @@
 package org.ensembl.healthcheck.testcase.mart;
 
 import java.sql.*;
-import java.util.*;
+import java.util.Hashtable;
 
 import org.ensembl.healthcheck.*;
 import org.ensembl.healthcheck.testcase.*;
@@ -46,7 +49,7 @@ import org.ensembl.healthcheck.testcase.*;
 /**
  * Compares the contents of two marts and reports significant changes
  */
-public class CompareOldNew extends MultiDatabaseTestCase {
+public class CompareOldNew extends OrderedDatabaseTestCase {
 
 	/**
 	 * Creates a new instance of MartCompareOldNewTestCase
@@ -61,43 +64,35 @@ public class CompareOldNew extends MultiDatabaseTestCase {
 	/**
 	 * Compare the _meta_table_info for two marts and report big differences
 	 */
-	public boolean run(DatabaseRegistry dbr) {
+	public boolean run(DatabaseRegistryEntry[] databases) {
 
 		boolean result = true;
 
 		int i;
 		Connection con;
 
-// TODO - convert to new multi DB API - OrderedDatabaseTestCase???
-
-/*
- 
 		// first check we got acceptable input from user
-		i = 0;
-		while (it.hasNext()) {
-			con = (Connection)it.next();
-			System.out.print(it.getCurrentDatabaseName() + " ");
-			i++;
-		}
-		if (i != 2) { // check we have 2 and only 2 databases
+
+		if (databases.length != 2) { // check we have 2 and only 2 databases
 			result = false;
-			System.out.print("incorrect number of marts included by regex");
+			logger.severe("Incorrect number of marts specified");
 			return result;
 		}
+
+		DatabaseRegistryEntry mart1 = databases[0];
+		DatabaseRegistryEntry mart2 = databases[1];
+		System.out.println("Using " + mart1.getName() + " as mart one and " + mart2.getName() + " as mart 2");
 
 		String query = "select table_column, column_non_null_value_count,column_distinct_non_null_value_count from _meta_table_info ";
 
 		try {
-			con = (Connection)it.next();
-			String mart1 = it.getCurrentDatabaseName();
-			Statement st1 = con.createStatement();
-			ResultSet rs1 = st1.executeQuery(query);
+
+			Connection con1 = mart1.getConnection();
+			ResultSet rs1 = con1.createStatement().executeQuery(query);
 
 			// put results for new mart in a hash
-			con = (Connection)it.next();
-			String mart2 = it.getCurrentDatabaseName();
-			Statement st2 = con.createStatement();
-			ResultSet rs2 = st2.executeQuery(query);
+			Connection con2 = mart2.getConnection();
+			ResultSet rs2 = con2.createStatement().executeQuery(query);
 			Hashtable counts = new Hashtable();
 			while (rs2.next()) {
 				String key = rs2.getString(1);
@@ -115,18 +110,18 @@ public class CompareOldNew extends MultiDatabaseTestCase {
 					// if so compare the values
 					Integer newCount = (Integer)counts.get(key);
 					if (newCount.intValue() > distinct.intValue() * 2) {
-						ReportManager.info(this, con, "SUDDEN INCREASE: " + key + " " + mart1 + " " + distinct + " " + mart2 + " " + newCount);
+						ReportManager.info(this, con2, "SUDDEN INCREASE: " + key + " " + mart1.getName() + " " + distinct + " " + mart2.getName() + " " + newCount);
 					}
 
 					if (newCount.intValue() < distinct.intValue() / 2) {
-						ReportManager.info(this, con, "SUDDEN DECREASE: " + key + " " + mart1 + " " + distinct + " " + mart2 + " " + newCount);
+						ReportManager.info(this, con2, "SUDDEN DECREASE: " + key + " " + mart1.getName() + " " + distinct + " " + mart2.getName() + " " + newCount);
 					}
 
 					// and remove the entry from the hash table
 					counts.remove(key);
 				} else {
 					// report the missing column as a problem
-					ReportManager.problem(this, con, "MISSING COLUMN: " + key + " not in " + mart2);
+					ReportManager.problem(this, con2, "MISSING COLUMN: " + key + " not in " + mart2.getName());
 					result = false;
 				}
 
@@ -137,7 +132,6 @@ public class CompareOldNew extends MultiDatabaseTestCase {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-*/
 
 		return result;
 
