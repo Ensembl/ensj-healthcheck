@@ -188,7 +188,7 @@ public final class DBUtils {
             for (int j = i + 1; j < size; j++) {
                 ResultSet rsi = (ResultSet) resultSetGroup.get(i);
                 ResultSet rsj = (ResultSet) resultSetGroup.get(j);
-                same &= compareResultSets(rsi, rsj, testCase, "", true, true);
+                same &= compareResultSets(rsi, rsj, testCase, "", true, true, "");
             }
         }
 
@@ -211,8 +211,9 @@ public final class DBUtils {
      * @param rs1 The first ResultSet to compare.
      * @param rs2 The second ResultSet to compare.
      * @param reportErrors If true, error details are stored in ReportManager as they are found.
+     * @param singleTableName If comparing 2 result sets from a single table (or from a DESCRIBE table) this should be the name of the table, to be output in any error text. Otherwise "".
      */
-    public static boolean compareResultSets(ResultSet rs1, ResultSet rs2, EnsTestCase testCase, String text, boolean reportErrors, boolean warnNull) {
+    public static boolean compareResultSets(ResultSet rs1, ResultSet rs2, EnsTestCase testCase, String text, boolean reportErrors, boolean warnNull, String singleTableName) {
 
         // quick tests first
         // Check for object equality
@@ -231,7 +232,7 @@ public final class DBUtils {
             ResultSetMetaData rsmd2 = rs2.getMetaData();
             if (rsmd1.getColumnCount() != rsmd2.getColumnCount()) {
                 
-                    ReportManager.problem(testCase, name1, "Column counts differ -  " + name1 + ": " + rsmd1.getColumnCount() + " "
+                    ReportManager.problem(testCase, name1, "Column counts differ " + singleTableName + " " + name1 + ": " + rsmd1.getColumnCount() + " "
                             + name2 + ": " + rsmd2.getColumnCount());
 
                 return false; // Deliberate early return for performance
@@ -241,7 +242,7 @@ public final class DBUtils {
                 //  note columns indexed from l
                 if (!((rsmd1.getColumnName(i)).equals(rsmd2.getColumnName(i)))) {
                     
-                        ReportManager.problem(testCase, name1, "Column names differ for column " + i + " - " + name1 + ": "
+                        ReportManager.problem(testCase, name1, "Column names differ for " + singleTableName + " column " + i + " - " + name1 + ": "
                                 + rsmd1.getColumnName(i) + " " + name2 + ": " + rsmd2.getColumnName(i));
                     
                     // Deliberate early return for performance reasons
@@ -250,7 +251,7 @@ public final class DBUtils {
                 }
                 if (rsmd1.getColumnType(i) != rsmd2.getColumnType(i)) {
                     
-                        ReportManager.problem(testCase, name1, "Column types differ for column " + i + " - " + name1 + ": "
+                        ReportManager.problem(testCase, name1, "Column types differ for " + singleTableName + " column " + i + " - " + name1 + ": "
                                 + rsmd1.getColumnType(i) + " " + name2 + ": " + rsmd2.getColumnType(i));
                     
                     return false; // Deliberate early return for performance
@@ -263,36 +264,49 @@ public final class DBUtils {
             rs1.beforeFirst();
             rs2.beforeFirst();
             // if quick checks didn't cause return, try comparing row-wise
-            int row = 0;
-            while (rs1.next() && rs2.next()) {
 
-                for (int j = 1; j <= rsmd1.getColumnCount(); j++) {
-                    // note columns indexed from l
-                    if (!compareColumns(rs1, rs2, j, warnNull)) {
-                        String str = name1 + " and " + name2 + text + " differ at row " + row + " column " + j + " ("
-                                + rsmd1.getColumnName(j) + ")" + " Values: " + Utils.truncate(rs1.getString(j), 25, true) + ", "
-                                + Utils.truncate(rs2.getString(j), 25, true);
-                        if (reportErrors) {
-                            ReportManager.problem(testCase, name1, str);
-                        }
-                        return false;
-                    }
-                }
-                row++;
+            while (rs1.next()) {
 
-            }
+		int row = 1;
+
+		if (rs2.next()) {
+		    for (int j = 1; j <= rsmd1.getColumnCount(); j++) {
+			// note columns indexed from l
+			if (!compareColumns(rs1, rs2, j, warnNull)) {
+			    String str = name1 + " and " + name2 + text + " " + singleTableName + " differ at row " + row + " column " + j + " ("
+                                + rsmd1.getColumnName(j) + ")" + " Values: " + Utils.truncate(rs1.getString(j), 250, true) + ", "
+                                + Utils.truncate(rs2.getString(j), 250, true);
+			    if (reportErrors) {
+				ReportManager.problem(testCase, name1, str);
+			    }
+			    return false;
+			}
+		    }
+		    row++;
+
+		} else {
+		    // rs1 has more rows than rs2
+		    ReportManager.problem(testCase, name1, singleTableName + " (or definition) has more rows in " + name1 + " than in " + name2);
+		    return false;
+		}
+
+            } // while rs1
+	    
 
             // if both ResultSets are the same, then we should be at the end of
-            // both, i.e. .next()
-            // should return false
+            // both, i.e. .next() should return false
             if (rs1.next()) {
+
                 if (reportErrors) {
-                    ReportManager.problem(testCase, name1, name1 + " has additional rows that are not in " + name2);
+                    ReportManager.problem(testCase, name1, name1 + " " + singleTableName + " has additional rows that are not in " + name2);
+
                 }
                 return false;
             } else if (rs2.next()) {
+
                 if (reportErrors) {
-                    ReportManager.problem(testCase, name2, name2 + " has additional rows that are not in " + name1);
+                    ReportManager.problem(testCase, name2, name2 + " " + singleTableName + " has additional rows that are not in " + name1);
+
                 }
                 return false;
             }
