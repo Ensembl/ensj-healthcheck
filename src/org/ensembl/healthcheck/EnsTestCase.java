@@ -79,18 +79,18 @@ import org.ensembl.healthcheck.util.*;
 
 public abstract class EnsTestCase {
   
+  /** Regexp that, when combined with a species name, will match core databases */
+  protected static final String CORE_DB_REGEXP = "_(core|est|estgene|vega)_\\d.*";
   /** The TestRunner associated with this EnsTestCase */
   protected TestRunner testRunner;
   /** The regular expression to match the names of the databases that the test case will apply to. */
-  protected String databaseRegexp = "";
+  protected String databaseRegexp = CORE_DB_REGEXP;
   /** If set, this is applied to the database names before databaseRegexp. */
   protected String preFilterRegexp = "";
   /** A list of Strings representing the groups that this test is a member of.
    * All tests are members of the group "all", and also of a group with the same name as the test. */
   protected List groups;
-  /** Regexp that, when combined with a species name, will match core databases */
-  protected static final String CORE_DB_REGEXP = "_(core|est|estgene|vega)_\\d.*";
-
+  
   /** Logger object to use */
   protected static Logger logger = Logger.getLogger("HealthCheckLogger");
   
@@ -749,10 +749,10 @@ public abstract class EnsTestCase {
   } //warn
   
   // -------------------------------------------------------------------------
-  /** 
+  /**
    * Get a list of the databases which represent species. Filter out any which don't seem to represent species.
    * @return A list of the species; each species will occur only once, and be of the form homo_sapiens (no trailing _).
-   */  
+   */
   public String[] getListOfSpecies() {
     
     ArrayList list = new ArrayList();
@@ -766,16 +766,16 @@ public abstract class EnsTestCase {
       if (bits.length > 2) {
         String species = bits[0] + "_" + bits[1];
         if (!list.contains(species)) {
-          list.add(species); 
+          list.add(species);
         }
       } else {
         logger.fine("Database " + dbName + " does not seem to represent a species; ignored");
       }
-            
+      
     }
     
     String[] dummy = { "" };
-
+    
     return (String[])list.toArray(dummy);
     
   }
