@@ -261,6 +261,14 @@ public class TestRunner {
       
       if (testCase.inGroups(groupsToRun)) {
         logger.warning("\nRunning test of type " + testCase.getClass().getName());
+         if (preFilterRegexp != null) {
+          testCase.setPreFilterRegexp(preFilterRegexp);
+        }
+        
+        if (forceDatabases) {
+          // override built-in database regexp with the one specified on the command line
+          testCase.setDatabaseRegexp(preFilterRegexp);
+        }
         
         TestResult tr = testCase.run();
         
