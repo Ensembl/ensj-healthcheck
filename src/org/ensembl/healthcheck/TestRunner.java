@@ -390,12 +390,14 @@ public class TestRunner {
         Map map = ReportManager.getAllReportsByTestCase(level);
         Set keys = map.keySet();
         Iterator it = keys.iterator();
+
         while (it.hasNext()) {
-            String key = (String) it.next();
-            System.out.println("\n" + key);
+
+            String test = (String) it.next();
+
 	    String failureText = "";
 	    try {
-		EnsTestCase testObj = (EnsTestCase)(Class.forName(key).newInstance());
+		EnsTestCase testObj = (EnsTestCase)(Class.forName(test).newInstance());
 		failureText = testObj.getFailureText();
 	    } catch (Exception e) {
 		System.err.println("Error, can't instantiate object ");
@@ -404,20 +406,27 @@ public class TestRunner {
 	    if (printFailureText && failureText.length() > 0) {
 		System.out.println("Note: " + failureText);
 	    }
-            List lines = (List) map.get(key);
-            Iterator it2 = lines.iterator();
-            while (it2.hasNext()) {
-                ReportLine reportLine = (ReportLine) it2.next();
-                if (reportLine.getLevel() >= level) {
-                    String dbName = reportLine.getDatabaseName();
-                    if (dbName.equals("no_database")) {
-                        dbName = "";
-                    } else {
-                        dbName = reportLine.getDatabaseName() + ": ";
-                    }
-                    System.out.println("  " + dbName + reportLine.getMessage());
-                } // if level
-            } // while it2
+            List lines = (List) map.get(test);
+	    
+	    if (lines.size() > 0) {
+
+		System.out.println("\n" + test);
+		
+		Iterator it2 = lines.iterator();
+		while (it2.hasNext()) {
+		    ReportLine reportLine = (ReportLine) it2.next();
+		    if (reportLine.getLevel() >= level) {
+			String dbName = reportLine.getDatabaseName();
+			if (dbName.equals("no_database")) {
+			    dbName = "";
+			} else {
+			    dbName = reportLine.getDatabaseName() + ": ";
+			}
+			System.out.println("  " + dbName + reportLine.getMessage());
+		    } // if level
+		} // while it2
+	    } // if lines
+
         } // while it
 
     } // printReportsByTest
