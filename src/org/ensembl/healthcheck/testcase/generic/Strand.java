@@ -60,7 +60,7 @@ public class Strand extends SingleDatabaseTestCase {
             int rows = getRowCount(con, sql);
             if (rows == 0) {
                 ReportManager.correct(this, con, "All seq_region_strand in " + table + " are 1 or -1");
-            } else {
+            } else if (rows > 0) {
                 ReportManager.problem(this, con, rows + " rows in " + table
                         + " have seq_region_strand not equal to 1 or -1");
             }
