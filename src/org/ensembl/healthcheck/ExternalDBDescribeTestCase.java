@@ -27,7 +27,7 @@ public class ExternalDBDescribeTestCase extends EnsTestCase {
   
   /** Creates a new instance of ExternalDBDescriptionTestCase */
   public ExternalDBDescribeTestCase() {
-    databaseRegexp = ".*_((core)|(estgene))_.*";
+    databaseRegexp = ".*_((core)|(estgene))_\\d.*";
     addToGroup("current");
   }
   
@@ -35,7 +35,7 @@ public class ExternalDBDescribeTestCase extends EnsTestCase {
     
     boolean result = super.checkSameSQLResult("DESCRIBE external_db");
     
-    return new TestResult(getShortTestName(), result, "DESCRIBE external_db");
+    return new TestResult(getShortTestName(), result, "");
   }
   
 }
