@@ -230,7 +230,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 
 	boolean result = true;
 
-	String[] logicNames = {"PercentGC", "PercentageRepeat", "knownGeneDensity", "geneDensity", "variationDensity"};
+	String[] logicNames = {"PercentGC", "PercentageRepeat", "knownGeneDensity", "geneDensity", "snpDensity"};
 
 	// check that each analysis_id is only used by one density_type
 	for (int i = 0; i < logicNames.length; i++) {
