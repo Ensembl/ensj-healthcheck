@@ -77,14 +77,14 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
         definitionFile = System.getProperty("schema.file");
         if (definitionFile == null) {
             logger
-                    .warning("CompareCoreSchema: No schema definition file found! Set schema.file property in database.properties if you want to use a table.sql file or similar.");
+                    .info("CompareCoreSchema: No schema definition file found! Set schema.file property in database.properties if you want to use a table.sql file or similar.");
 
             masterSchema = System.getProperty("master.schema");
             if (masterSchema != null) {
                 logger.info("Will use " + masterSchema + " as specified master schema for comparisons.");
             } else {
                 logger
-                        .warning("CompareCoreSchema: No master schema defined file found! Set master.schema property in database.properties if you want to use a master schema.");
+                        .info("CompareCoreSchema: No master schema defined file found! Set master.schema property in database.properties if you want to use a master schema.");
             }
         } else {
             logger.fine("Will use schema definition from " + definitionFile);
