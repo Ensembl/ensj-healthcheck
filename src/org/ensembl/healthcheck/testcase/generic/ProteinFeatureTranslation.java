@@ -267,7 +267,7 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
      */
     private String setupRepairSQL(Connection con) {
 
-        StringBuffer sql = new StringBuffer("DELETE FROM protein_feaure WHERE protein_feature_id IN (");
+        StringBuffer sql = new StringBuffer("DELETE FROM protein_feature WHERE protein_feature_id IN (");
 
         List thisDBFeatures = (List) featuresToDelete.get(DBUtils.getShortDatabaseName(con));
 
