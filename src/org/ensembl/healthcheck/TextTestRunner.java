@@ -83,6 +83,8 @@ public class TextTestRunner extends TestRunner {
     System.out.println("                  all       everything is printed");
     System.out.println("  -config file    Read config from file (in ensj-healthcheck dir) rather than database.properties");
     System.out.println("  -debug          Print debugging info (for developers only)");
+    System.out.println("  -repair         If appropriate, carry out repair methods on test cases that support it");
+    System.out.println("  -showrepair     Like -repair, but the repair is NOT carried out, just reported.");
     System.out.println("  group1          Names of groups of test cases to run.");
     System.out.println("                  Note each test case is in a group of its own with the name of the test case.");
     System.out.println("                  This allows individual tests to be run if required.");
@@ -126,7 +128,15 @@ public class TextTestRunner extends TestRunner {
         } else if (args[i].equals("-debug")) {
 
           debug = true;
+          
+        } else if (args[i].equals("-repair")) {
+          
+          doRepair = true;
+          
+        } else if (args[i].equals("-showrepair")) {
 
+          showRepair = true;
+          
         } else if (args[i].equals("-d")) {
 
           i++;
