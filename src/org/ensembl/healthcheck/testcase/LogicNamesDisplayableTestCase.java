@@ -102,6 +102,9 @@ public class LogicNamesDisplayableTestCase extends EnsTestCase {
           
         }
 
+        rs.close();
+        stmt.close();
+        
       } catch (SQLException se) {
         
         se.printStackTrace();
