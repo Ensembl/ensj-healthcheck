@@ -37,8 +37,9 @@ public class CheckChromosomeLengthsTestCase extends EnsTestCase {
     setDescription("Check that the chromosome lengths from the chromosome table agree with both the assembly table and the karyotype table.");
   }
   
-  /**
+  /** 
    * Check various aspects of the meta table.
+   * @return The test case result.
    */
   public TestResult run() {
     

@@ -40,7 +40,7 @@ public class CheckMarkerFeaturesTestCase extends EnsTestCase {
   }
   
   /** 
-   * Verify marker features exist if markers exist, and that map weights != 0
+   * Verify marker features exist if markers exist, and that map weights are non-zero.
    * @return Result.
    */
   public TestResult run() {

@@ -194,7 +194,7 @@ public abstract class EnsTestCase {
   
   // -------------------------------------------------------------------------
   /**
-   * Get the very short form of the test name; i.e. that returned by getShortTestName() without the trailing "TestCase"
+   * Get the very short form of the test name; ie that returned by getShortTestName() without the trailing "TestCase"
    *
    * @return The very short test name, e.g. CheckMetaTables
    */
@@ -1186,7 +1186,7 @@ public abstract class EnsTestCase {
   // -------------------------------------------------------------------------
   /**
    * See if the "hintLongRunning" flag is set.
-   * @param The value of the hintLongRunning flag.
+   * @return The value of the hintLongRunning flag.
    */
   public boolean isLongRunning() {
   
