@@ -65,13 +65,14 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
 		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
 
+		testRegistry = new TestRegistry();
+		
 		parseCommandLine(args);
 
 		setupLogging();
 
 		ReportManager.setReporter(this);
 
-		testRegistry = new TestRegistry();
 		databaseRegistry = new DatabaseRegistry(databaseRegexps);
 		if (databaseRegistry.getAll().length == 0) {
 			logger.warning("Warning: no database names matched any of the database regexps given");
