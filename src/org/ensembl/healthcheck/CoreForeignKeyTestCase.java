@@ -47,45 +47,74 @@ public class CoreForeignKeyTestCase extends EnsTestCase {
 
 				Connection con = (Connection)it.next();
 				// after stable_ids are loaded, there should be a one to one relationship
+				// Following four tests check stable_id fulfill that
+
 				if( getRowCount( con, "select count(*) from gene_stable_id" ) > 0 ) {
-						orphans = countOrphans(con, "gene", "gene_id", "gene_stable_id", "gene_id", true );
+						orphans = countOrphans(con, "gene", "gene_id", "gene_stable_id", "gene_id", false );
 						if( orphans > 0 ) {
-								logger.warning( "gene <-> gene_stable_id has unlinked entries" );
+								warn( con, "gene <-> gene_stable_id has unlinked entries" );
 						}
 				}
 															 
 				result &= (orphans == 0);
 
 				if( getRowCount( con, "select count(*) from transcript_stable_id" ) > 0 ) {
-						orphans = countOrphans(con, "transcript", "transcript_id", "transcript_stable_id", "transcript_id", true );
+						orphans = countOrphans(con, "transcript", "transcript_id", "transcript_stable_id", "transcript_id", false );
 						if( orphans > 0 ) {
-								logger.warning( "transcript <-> transcript_stable_id has unlinked entries" );
+								warn( con, "transcript <-> transcript_stable_id has unlinked entries" );
 						}
 				}
 				result &= (orphans == 0);
 
 				if( getRowCount( con, "select count(*) from translation_stable_id" ) > 0 ) {
-						orphans = countOrphans(con, "translation", "translation_id", "translation_stable_id", "translation_id", true );
+						orphans = countOrphans(con, "translation", "translation_id", "translation_stable_id", "translation_id", false );
 						if( orphans > 0 ) {
-								logger.warning( "translation <-> translation_stable_id has unlinked entries" );
+								warn( con, "translation <-> translation_stable_id has unlinked entries" );
 						}
 				}
 				result &= (orphans == 0);
 
 				if( getRowCount( con, "select count(*) from exon_stable_id" ) > 0 ) {
-						orphans = countOrphans(con, "exon", "exon_id", "exon_stable_id", "exon_id", true );
+						orphans = countOrphans(con, "exon", "exon_id", "exon_stable_id", "exon_id", false );
 						if( orphans > 0 ) {
-								logger.warning( "exon <-> exon_stable_id has unlinked entries" );
+								warn( con, "exon <-> exon_stable_id has unlinked entries" );
 						}
 				} 
 				result &= (orphans == 0);
 
+				// following needs always to be true, no row cuont tests necessary
+				orphans = countOrphans( con, "exon", "exon_id", "exon_transcript", "exon_id", false );
+				if( orphans > 0 ) {
+						warn( con, "exon <-> exon_transcript has unlinked entries" );
+				}
+				result &= (orphans == 0);
 				
+				orphans = countOrphans( con, "transcript", "transcript_id", "exon_transcript", "transcript_id", false );
+				if( orphans > 0 ) {
+						warn( con, "transcript <-> exon_transcript has unlinked entries" );
+				}
+				result &= (orphans == 0);
+
+				orphans = countOrphans( con, "gene", "gene_id", "transcript", "gene_id", false );
+				if( orphans > 0 ) {
+						warn( con, "gene <-> transcript has unlinked entries" );
+				}
+				result &= (orphans == 0);
       
+				orphans = countOrphans( con, "object_xref", "xref_id", "xref", "xref_id", true );
+				if( orphans > 0 ) {
+						warn( con, "object_xref <-> xref has unlinked entries" );
+				}
+				result &= (orphans == 0);
     }
     
     return new TestResult(getShortTestName(), result, "");
     
   }
+
+		private void warn ( Connection con, String message ) {
+				logger.warning( "Problem in " + DBUtils.getShortDatabaseName( con ));
+				logger.warning( message );
+		}
   
 } // OrphanTestCase
