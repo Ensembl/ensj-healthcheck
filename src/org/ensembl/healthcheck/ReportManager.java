@@ -161,7 +161,7 @@ public class ReportManager {
    * @param dbName The name of the database involved.
    * @param message The message to be reported.
    */
-   public static void info(EnsTestCase testCase, String dbName, String message) {
+  public static void info(EnsTestCase testCase, String dbName, String message) {
     
     report(testCase, dbName, ReportLine.INFO, message);
     
@@ -185,7 +185,7 @@ public class ReportManager {
    * @param dbName The name of the database involved.
    * @param message The message to be reported.
    */
-   public static void summary(EnsTestCase testCase, String dbName, String message) {
+  public static void summary(EnsTestCase testCase, String dbName, String message) {
     
     report(testCase, dbName, ReportLine.SUMMARY, message);
     
@@ -295,17 +295,19 @@ public class ReportManager {
    * @return A list of the ReportLines that have a level >= that specified.
    */
   public static List filterList(List list, int level) {
-
+    
     ArrayList result = new ArrayList();
     
-    Iterator it = list.iterator();
-    while (it.hasNext()) {
-      ReportLine line = (ReportLine)it.next();
-      if (line.getLevel() >= level) {
-        result.add(line);
+    if (list != null) {
+      Iterator it = list.iterator();
+      while (it.hasNext()) {
+        ReportLine line = (ReportLine)it.next();
+        if (line.getLevel() >= level) {
+          result.add(line);
+        }
       }
-    }
-
+    } 
+    
     return result;
     
   } // filterList
@@ -317,9 +319,9 @@ public class ReportManager {
    * @return A HashMap with the same keys as map, but with the lists filtered by level.
    */
   public static Map filterMap(Map map, int level) {
-
+    
     HashMap result = new HashMap();
-
+    
     Set keySet = map.keySet();
     Iterator it = keySet.iterator();
     while (it.hasNext()) {
