@@ -246,5 +246,83 @@ public class Utils {
   } // pad
   
   // -------------------------------------------------------------------------
+  /**
+   * Read a text file.
+   * @param name The name of the file to read.
+   * @return An array of Strings representing the lines of the file.
+   */
+  public static String[] readTextFile(String name) {
+    
+    List lines = new ArrayList();
+    
+    BufferedReader br = null;
+    
+    try {
+      
+      br = new BufferedReader(new FileReader(name));
+      
+    } catch (FileNotFoundException fe) {
+      
+      System.err.println("Cannot find " + name);
+      fe.printStackTrace();
+      
+    }
+    
+    String line;
+    
+    try {
+      
+      while ((line = br.readLine()) != null) {
+        
+        lines.add(line);
+        
+      }
+      
+      br.close();
+      
+    } catch (Exception e) {
+      
+      e.printStackTrace();
+      
+    }
+    
+    return (String[])lines.toArray(new String[lines.size()]);
+    
+  } // readTextFile
+  
+  // -------------------------------------------------------------------------
+  /** 
+   * Check if a String is in an array of Strings.
+   * The whole array is searched (until a match is found); this is quite slow but does not require the 
+   * array to be sorted in any way beforehand.
+   * @param str The String to search for.
+   * @param a The array to search through.
+   * @param caseSensitive If true, case sensitive searching is done.
+   */
+  public static boolean stringInArray(String str, String[] a, boolean caseSensitive) {
+    
+   boolean result = false;
+   
+   for (int i = 0; i < a.length; i++) {
+     
+     if (caseSensitive) {
+        if (a[i].equals(str)) {
+          result = true;
+          break;
+        }
+     } else {
+       if (a[i].equalsIgnoreCase(str)) {
+          result = true;
+          break;
+        }
+     }
+     
+   }
+   
+   return result;
+   
+  }
+  
+  // -------------------------------------------------------------------------
   
 } // Utils
