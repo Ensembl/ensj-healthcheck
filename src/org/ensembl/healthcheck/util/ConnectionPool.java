@@ -8,7 +8,7 @@
  
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNUsql
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
  
   You should have received a copy of the GNU Lesser General Public
@@ -27,14 +27,20 @@ import java.util.logging.*;
  */
 public class ConnectionPool {
   
+  /** The logger to use for this class */
   protected static Logger logger = Logger.getLogger("HealthCheckLogger");
   
   // store connections; key = database URL (as String), Connection object
-  private static HashMap pool = new HashMap();
+  private static Map pool = new HashMap();
   
   /**
    * Get a connection from the pool. If a connection to this database already exists in the
    * pool, it is returned. If not, it is created and added to the pool.
+   * @return A new connection, or one re-used from the pool.
+   * @param driverClassName The class of the JDBC driver.
+   * @param databaseURL The URL of the database to connect to.
+   * @param user The username to connect to the database with.
+   * @param password The password for username.
    */
   public static Connection getConnection(String driverClassName, String databaseURL, String user, String password) {
     

@@ -74,8 +74,9 @@ public class Utils {
   // -------------------------------------------------------------------------
   /**
    * Print the keys in a HashMap.
+   * @param m The map to use.
    */
-  public static void printKeys(HashMap m) {
+  public static void printKeys(Map m) {
     
     Set s = m.keySet();
     Iterator it = s.iterator();
