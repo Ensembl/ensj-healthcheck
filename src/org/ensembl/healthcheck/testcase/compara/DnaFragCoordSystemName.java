@@ -28,15 +28,15 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key relationships.
  */
 
-public class ForeignKeySourceId extends SingleDatabaseTestCase {
+public class DnaFragCoordSystemName extends SingleDatabaseTestCase {
 
     /**
-     * Create an ForeignKeySourceId that applies to a specific set of databases.
+     * Create an OrphanTestCase that applies to a specific set of databases.
      */
-    public ForeignKeySourceId() {
+    public DnaFragCoordSystemName() {
 
         addToGroup("compara_db_constraints");
-        setDescription("Check for broken foreign-key relationships in ensembl_compara databases.");
+        setDescription("Check for species name inconsistancies in ensembl_compara databases.");
 
     }
 
@@ -45,30 +45,26 @@ public class ForeignKeySourceId extends SingleDatabaseTestCase {
      * 
      * @param dbre
      *          The database to use.
-     * @return true if the test passed.
+     * @return true if the test pased.
      *  
      */
     public boolean run(DatabaseRegistryEntry dbre) {
 
         boolean result = true;
 
-        int orphans = 0;
-
         Connection con = dbre.getConnection();
 
-        if (tableHasRows(con, "source")) {
-
-            result &= checkForOrphans(con, "member", "source_id", "source", "source_id");
-            result &= checkForOrphans(con, "family", "source_id", "source", "source_id");
-            result &= checkForOrphans(con, "homology", "source_id", "source", "source_id");
-            result &= checkForOrphans(con, "domain", "source_id", "source", "source_id");
-
+        // check genome_db table has > 0 rows
+        if (tableHasRows(con, "dnafrag")) {
+            result &= checkCountIsZero(con,"dnafrag","coord_system_name=''");
+            result &= checkCountIsZero(con,"dnafrag","coord_system_name is NULL");
         } else {
-            ReportManager.correct(this, con, "NO ENTRIES in source table, so nothing to test IGNORED");
-        }
+            result = false;
+            ReportManager.correct(this, con, "NO ENTRIES in dnafrag table, so nothing to test IGNORED");
+        }        
 
         return result;
 
     }
 
-} // ForeignKeySourceId
+} // DnaFragCoordSystemName
