@@ -78,6 +78,8 @@ public class GeneTranscriptStartEnd extends SingleDatabaseTestCase {
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
 
+	    rs.first();
+
             // gene GC32491 in drosophila is allowed to have all sorts of things wrong with it
             if (dbre.getSpecies() != Species.DROSOPHILA_MELANOGASTER && rs.getString("stable_id") != null
                     && !rs.getString("stable_id").equalsIgnoreCase("CG32491")) {
