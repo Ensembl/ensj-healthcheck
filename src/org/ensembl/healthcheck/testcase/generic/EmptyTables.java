@@ -95,7 +95,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
             }
 
             // certain species can have empty karyotype table
-            if (species == Species.CAENORHABDITIS_BRIGGSAE || species == Species.CAENORHABDITIS_ELEGANS || species == Species.DANIO_RERIO || species == Species.FUGU_RUBRIPES || species == Species.XENOPUS_TROPICALIS || species == Species.APIS_MELLIFERA || species == Species.PAN_TROGLODYTES || species == Species.SACCHAROMYCES_CEREVISIAE) {
+            if (species == Species.CAENORHABDITIS_BRIGGSAE || species == Species.CAENORHABDITIS_ELEGANS || species == Species.DANIO_RERIO || species == Species.FUGU_RUBRIPES || species == Species.XENOPUS_TROPICALIS || species == Species.APIS_MELLIFERA || species == Species.PAN_TROGLODYTES || species == Species.SACCHAROMYCES_CEREVISIAE || species == Species.CANIS_FAMILIARIS) {
                 tables = remove(tables, "karyotype");
             }
 
