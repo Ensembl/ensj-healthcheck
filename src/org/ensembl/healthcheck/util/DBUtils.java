@@ -418,12 +418,11 @@ public class DBUtils {
 
     // -------------------------------------------------------------------------
     /**
-     * Convert properties used by Healthcheck into properties suitable for ensj. ensj properties
+     * Convert properties used by Healthcheck into properties suitable for ensj; ensj properties
      * host, port, user, password are converted. Note ensj property database is <em>not</em> set.
      * 
      * @return A Properties object containing host, port, user and password NOT database.
-     * @param testRunnerProps
-     *            A set of properties in the format used by HealthCheck, e.g. databaseURL etc.
+     * @param testRunnerProps A set of properties in the format used by HealthCheck, e.g. databaseURL etc.
      */
     public static Properties convertHealthcheckToEnsjProperties(Properties testRunnerProps) {
 
@@ -458,7 +457,7 @@ public class DBUtils {
 
     // -------------------------------------------------------------------------
     /**
-     * Convert properties used by Healthcheck into properties suitable for ensj. ensj properties
+     * Convert properties used by Healthcheck into properties suitable for ensj; ensj properties
      * host, port, user, password are converted. Note ensj property database is <em>not</em> set.
      * Input properties are obtained from System.properties.
      * 

@@ -41,9 +41,6 @@ public class TestRegistry {
     // -----------------------------------------------------------------
     /**
      * Create a new TestRegistry.
-     * 
-     * @param locations A list of strings representing locations in which to look for tests. Can be
-     *            directories or jar files.
      */
     public TestRegistry() {
 

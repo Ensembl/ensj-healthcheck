@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 /**
  * Store info about a species.
  * Implemented as a typesafe enum 
- * @see http://java.sun.com/developer/Books/shiftintojava/page1.html
+ * @see <a href="http://java.sun.com/developer/Books/shiftintojava/page1.html">Java Typesafe Enums</a>
  */
 
 public class Species {

@@ -195,7 +195,7 @@ public class DatabaseRegistryEntry {
 	}
 
 	/**
-	 * @param type New database connection.
+	 * @param con New database connection.
 	 */
 	public void setConnection(Connection con) {
 		this.con = con;
