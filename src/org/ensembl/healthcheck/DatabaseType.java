@@ -20,8 +20,8 @@ package org.ensembl.healthcheck;
 import java.util.logging.Logger;
 
 /**
- * Typesafe "enum" to store information about the type of a database. Declared
- * final since it only has private constructors.
+ * Typesafe "enum" to store information about the type of a database. Declared final since it only
+ * has private constructors.
  */
 public final class DatabaseType {
 
@@ -52,6 +52,12 @@ public final class DatabaseType {
     /** A haplotype database */
     public static final DatabaseType HAPLOTYPE = new DatabaseType("haplotype");
 
+    /** A lite database */
+    public static final DatabaseType LITE = new DatabaseType("lite");
+
+    /** A GO database */
+    public static final DatabaseType GO = new DatabaseType("go");
+    
     /** A database whos type has not been determined */
     public static final DatabaseType UNKNOWN = new DatabaseType("unknown");
 
@@ -61,6 +67,7 @@ public final class DatabaseType {
     private static Logger logger = Logger.getLogger("HealthCheckLogger");
 
     private DatabaseType(final String name) {
+
         this.name = name;
     }
 
@@ -68,6 +75,7 @@ public final class DatabaseType {
      * @return a String representation of this DatabaseType object.
      */
     public String toString() {
+
         return this.name;
     }
 
@@ -75,10 +83,9 @@ public final class DatabaseType {
     /**
      * Resolve an alias to a DatabaseType object.
      * 
-     * @param alias
-     *          The alias (e.g. core).
-     * @return The DatabaseType object corresponding to alias, or
-     *         DatabaseType.UNKNOWN if it cannot be resolved.
+     * @param alias The alias (e.g. core).
+     * @return The DatabaseType object corresponding to alias, or DatabaseType.UNKNOWN if it cannot
+     *         be resolved.
      */
     public static DatabaseType resolveAlias(final String alias) {
 
@@ -86,7 +93,7 @@ public final class DatabaseType {
 
         // --------------------------------------
 
-        if (in(lcAlias, "core")) {
+        if (in(lcAlias, "core")) { 
 
         return CORE; 
 
@@ -94,7 +101,7 @@ public final class DatabaseType {
 
         // --------------------------------------
 
-        if (in(lcAlias, "est")) {
+        if (in(lcAlias, "est")) { 
 
         return EST; 
 
@@ -102,7 +109,7 @@ public final class DatabaseType {
 
         // --------------------------------------
 
-        if (in(lcAlias, "estgene")) {
+        if (in(lcAlias, "estgene")) { 
 
         return ESTGENE; 
 
@@ -110,7 +117,7 @@ public final class DatabaseType {
 
         // --------------------------------------
 
-        if (in(lcAlias, "compara")) {
+        if (in(lcAlias, "compara")) { 
 
         return COMPARA; 
 
@@ -118,7 +125,7 @@ public final class DatabaseType {
 
         // --------------------------------------
 
-        if (in(lcAlias, "mart")) {
+        if (in(lcAlias, "mart")) { 
 
         return MART; 
 
@@ -126,7 +133,7 @@ public final class DatabaseType {
 
         // --------------------------------------
 
-        if (in(lcAlias, "vega")) {
+        if (in(lcAlias, "vega")) { 
 
         return VEGA; 
 
@@ -134,7 +141,7 @@ public final class DatabaseType {
 
         // --------------------------------------
 
-        if (in(lcAlias, "snp")) {
+        if (in(lcAlias, "snp")) { 
 
         return SNP; 
 
@@ -142,7 +149,7 @@ public final class DatabaseType {
 
         // --------------------------------------
 
-        if (in(lcAlias, "disease")) {
+        if (in(lcAlias, "disease")) { 
 
         return DISEASE; 
 
@@ -150,12 +157,27 @@ public final class DatabaseType {
 
         // --------------------------------------
 
-        if (in(lcAlias, "haplotype")) {
+        if (in(lcAlias, "haplotype")) { 
 
         return HAPLOTYPE; 
 
         }
 
+        // --------------------------------------
+
+        if (in(lcAlias, "lite")) { 
+
+        return LITE; 
+
+        }
+        
+        // --------------------------------------
+
+        if (in(lcAlias, "go")) { 
+
+        return GO; 
+
+        }
         // default case
         return UNKNOWN;
 
