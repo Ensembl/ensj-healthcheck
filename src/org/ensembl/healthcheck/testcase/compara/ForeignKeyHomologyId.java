@@ -59,14 +59,23 @@ public class ForeignKeyHomologyId extends SingleDatabaseTestCase {
         // 1 test to check gene_relationship_id used as foreign key
 
         if (tableHasRows(con, "homology")) {
-            orphans = countOrphans(con, "homology_member", "homology_id", "homology", "homology_id", false);
+            orphans = countOrphans(con, "homology_member", "homology_id", "homology", "homology_id", true);
             if (orphans == 0) {
-                ReportManager.correct(this, con, "homology_member <-> homology relationships PASSED");
+                ReportManager.correct(this, con, "PASSED homology_member -> homology relationships");
             } else if (orphans > 0) {
-                ReportManager.problem(this, con, "homology_member has unlinked entries in homology FAILED");
+                ReportManager.problem(this, con, "FAILED homology_member -> homology relationships: " + orphans + " homology_member entries have unlinked entries in homology");
             } else {
                 ReportManager.problem(this, con,
-                        "homology_member <-> homology TEST NOT COMPLETED, look at the StackTrace if any");
+                        "TEST NOT COMPLETED homology_member -> homology, look at the StackTrace if any");
+            }
+            orphans = countOrphans(con, "homology", "homology_id", "homology_member", "homology_id", true);
+            if (orphans == 0) {
+                ReportManager.correct(this, con, "PASSED homology -> homology_member relationships");
+            } else if (orphans > 0) {
+                ReportManager.problem(this, con, "FAILED homology -> homology_member relationships: " + orphans + " homology entries have unlinked entries in homology_member");
+            } else {
+                ReportManager.problem(this, con,
+                        "TEST NOT COMPLETED homology -> homology_member, look at the StackTrace if any");
             }
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in homology table, so nothing to test IGNORED");

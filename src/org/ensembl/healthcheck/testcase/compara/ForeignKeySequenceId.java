@@ -63,13 +63,13 @@ public class ForeignKeySequenceId extends SingleDatabaseTestCase {
             if (orphans == 0) {
                 ReportManager.correct(this, con, "member -> sequence relationships PASSED");
             } else if (orphans > 0) {
-                ReportManager.problem(this, con, "member has unlinked entries in member FAILED");
+                ReportManager.problem(this, con, orphans + " members are unlinked to sequence table FAILED");
             } else {
                 ReportManager.problem(this, con,
                         "member <-> sequence TEST NOT COMPLETED, look at the StackTrace if any");
             }
         } else {
-            ReportManager.correct(this, con, "NO ENTRIES in homology table, so nothing to test IGNORED");
+            ReportManager.correct(this, con, "NO ENTRIES in sequence table, so nothing to test IGNORED");
         }
 
         result &= (orphans == 0);

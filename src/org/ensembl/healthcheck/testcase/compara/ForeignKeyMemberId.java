@@ -62,12 +62,12 @@ public class ForeignKeyMemberId extends SingleDatabaseTestCase {
 
             orphans = countOrphans(con, "family_member", "member_id", "member", "member_id", false);
             if (orphans == 0) {
-                ReportManager.correct(this, con, "family_member <-> member relationships PASSED");
+                ReportManager.correct(this, con, "PASSED family_member <-> member relationships");
             } else if (orphans > 0) {
-                ReportManager.problem(this, con, "family_member has unlinked entries in member FAILED");
+                ReportManager.problem(this, con, "FAILED family_member <-> member relationships: " + orphans + " family_member has unlinked entries in member");
             } else {
                 ReportManager.problem(this, con,
-                        "family_member <-> member TEST NOT COMPLETED, look at the StackTrace if any");
+                        "TEST NOT COMPLETED family_member <-> member, look at the StackTrace if any");
             }
 
             orphans = countOrphans(con, "homology_member", "member_id", "member", "member_id", true);
