@@ -164,8 +164,9 @@ public class TestRunner {
      *          The DatabaseRegistry to use.
      * @param testRegistry
      *          The TestRegistry to use.
+     * @param skipSlow If true, skip long-running tests.
      */
-    protected void runAllTests(DatabaseRegistry databaseRegistry, TestRegistry testRegistry) {
+    protected void runAllTests(DatabaseRegistry databaseRegistry, TestRegistry testRegistry, boolean skipSlow) {
 
         int numberOfTestsRun = 0;
 
@@ -185,16 +186,24 @@ public class TestRunner {
 
                 SingleDatabaseTestCase testCase = (SingleDatabaseTestCase) it.next();
 
-                ReportManager.startTestCase(testCase, databases[i]);
+		if (!testCase.isLongRunning() || (testCase.isLongRunning() && !skipSlow)) {
 
-                boolean result = testCase.run(database);
+		    ReportManager.startTestCase(testCase, databases[i]);
 
-                ReportManager.finishTestCase(testCase, result, databases[i]);
-                logger.info(testCase.getName() + " [" + databases[i].getName() + "]" + (result ? "PASSED" : "FAILED"));
+		    boolean result = testCase.run(database);
+		    
+		    ReportManager.finishTestCase(testCase, result, databases[i]);
+		    logger.info(testCase.getName() + " [" + databases[i].getName() + "]" + (result ? "PASSED" : "FAILED"));
+		    
+		    numberOfTestsRun++;
 
-                numberOfTestsRun++;
+		    checkRepair(testCase, database);
 
-                checkRepair(testCase, database);
+		} else {
+
+		    logger.info("Skipping long-running test " + testCase.getName());
+
+		}
 
             } // foreach test
 
@@ -212,14 +221,22 @@ public class TestRunner {
 
             MultiDatabaseTestCase testCase = (MultiDatabaseTestCase) it.next();
 
-            ReportManager.startTestCase(testCase, null);
+	    if (!testCase.isLongRunning() || (testCase.isLongRunning() && !skipSlow)) {
 
-            boolean result = testCase.run(databaseRegistry);
+		ReportManager.startTestCase(testCase, null);
 
-            ReportManager.finishTestCase(testCase, result, null);
-            logger.info(testCase.getName() + " " + (result ? "PASSED" : "FAILED"));
+		boolean result = testCase.run(databaseRegistry);
 
-            numberOfTestsRun++;
+		ReportManager.finishTestCase(testCase, result, null);
+		logger.info(testCase.getName() + " " + (result ? "PASSED" : "FAILED"));
+
+		numberOfTestsRun++;
+
+	    } else {
+		
+		logger.info("Skipping long-running test " + testCase.getName());
+		
+	    }
 
         } // foreach test
 
