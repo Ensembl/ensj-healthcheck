@@ -18,11 +18,8 @@
 
 package org.ensembl.healthcheck.testcase;
 
-import java.sql.*;
-
 import org.ensembl.healthcheck.*;
 
-import org.ensembl.healthcheck.util.*;
 
 /**
  * Check the DNA tables in a range of databases.

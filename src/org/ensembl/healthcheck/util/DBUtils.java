@@ -20,12 +20,10 @@ package org.ensembl.healthcheck.util;
 
 import java.sql.*;
 import java.util.*;
-import java.io.*;
 import java.util.regex.*;
 import java.util.logging.*;
 
 import org.ensembl.healthcheck.*;
-import org.ensembl.healthcheck.util.*;
 import org.ensembl.healthcheck.testcase.*;
 
 /**

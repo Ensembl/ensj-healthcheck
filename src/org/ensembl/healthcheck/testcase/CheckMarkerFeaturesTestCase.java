@@ -36,10 +36,10 @@ public class CheckMarkerFeaturesTestCase extends EnsTestCase {
   public CheckMarkerFeaturesTestCase() {
     addToGroup("post_genebuild");
     setDescription("Checks that marker_features exist and that they have"
-		   + " non-zero map_weights");
+    + " non-zero map_weights");
   }
   
-  /** 
+  /**
    * Verify marker features exist if markers exist, and that map weights are non-zero.
    * @return Result.
    */
@@ -47,41 +47,41 @@ public class CheckMarkerFeaturesTestCase extends EnsTestCase {
     DatabaseConnectionIterator it = getDatabaseConnectionIterator();
     
     boolean result = true;
-
+    
     while (it.hasNext()) {
       
       Connection con = (Connection)it.next();
-      boolean markersExist = 
-	  getRowCount(con, "select count(*) from marker") > 0;
-
-      /* 
+      boolean markersExist =
+      getRowCount(con, "select count(*) from marker") > 0;
+      
+      /*
        * assume this species has no markers, dangling refs test case will
-       * catch problem if marker_features exist without markers 
+       * catch problem if marker_features exist without markers
        */
       if (!markersExist) {
-	  continue;
+        continue;
       }
-
+      
       int count = getRowCount(con, "select count(*) from marker_feature");
       
       
       if(count == 0) {
-	  ReportManager.problem(this, con, "no marker features in database"
-				+ "even though markers are present");
-	  result = false;
-	  continue;
+        ReportManager.problem(this, con, "no marker features in database"
+        + "even though markers are present");
+        result = false;
+        continue;
       }
       
       count = getRowCount(con, "select count(*) from marker_feature"
-			  + " where map_weight = 0"); 
+      + " where map_weight = 0");
       
       if(count > 0) {
-	  ReportManager.problem(this, con, "marker features have not been" +
-				"assigned correct map weights");
-	  result = false;
-	  continue;
+        ReportManager.problem(this, con, "marker features have not been" +
+        "assigned correct map weights");
+        result = false;
+        continue;
       }
-
+      
       ReportManager.correct(this, con, "Marker features appear to be ok");
     } // while connection
     

@@ -18,15 +18,12 @@
 
 package org.ensembl.healthcheck.testcase;
 
-import java.net.*;
 import java.util.*;
 
 import org.ensembl.healthcheck.*;
 import org.ensembl.healthcheck.util.*;
 
 // ensj-core imports
-import org.ensembl.*;
-import org.ensembl.util.*;
 import org.ensembl.driver.*;
 import org.ensembl.datamodel.*;
 import org.ensembl.driver.plugin.standard.*;

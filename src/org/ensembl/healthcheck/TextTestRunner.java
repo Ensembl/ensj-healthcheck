@@ -19,13 +19,9 @@ package org.ensembl.healthcheck;
 
 import org.ensembl.healthcheck.util.*;
 import org.ensembl.healthcheck.testcase.*;
-import java.io.*;
-
-import java.sql.*;
 
 import java.util.*;
 import java.util.logging.*;
-import java.util.regex.*;
 
 /**
  * Subclass of TestRunner intended for running tests from the command line.

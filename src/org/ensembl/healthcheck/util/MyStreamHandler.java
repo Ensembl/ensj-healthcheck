@@ -19,7 +19,6 @@
 package org.ensembl.healthcheck.util;
 
 import java.util.logging.*;
-import java.util.*;
 import java.io.*;
 
 /**

@@ -7,11 +7,7 @@
 
 package org.ensembl.healthcheck.test;
 
-import java.sql.*;
 import java.util.*;
-import java.io.*;
-import java.util.regex.*;
-import java.util.logging.*;
 import junit.framework.*;
 
 import org.ensembl.healthcheck.util.*;

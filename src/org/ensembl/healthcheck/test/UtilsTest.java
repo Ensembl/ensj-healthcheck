@@ -10,8 +10,6 @@ package org.ensembl.healthcheck.test;
 import org.ensembl.healthcheck.util.*;
 
 import junit.framework.*;
-import java.io.*;
-import java.util.*;
 
 /**
  * @version $Revision$

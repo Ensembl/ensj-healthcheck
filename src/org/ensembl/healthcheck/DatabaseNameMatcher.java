@@ -20,7 +20,6 @@ package org.ensembl.healthcheck;
 
 import java.util.*;
 import java.sql.*;
-import java.io.*;
 
 import org.ensembl.healthcheck.util.*;
 

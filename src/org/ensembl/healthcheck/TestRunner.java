@@ -22,7 +22,6 @@ import java.util.*;
 import java.util.logging.*;
 import java.sql.*;
 import java.io.*;
-import java.util.regex.*;
 import java.util.zip.*;
 
 import org.ensembl.healthcheck.testcase.*;
