@@ -21,7 +21,6 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.sql.*;
 
 import org.ensembl.healthcheck.testcase.*;
-
 import org.ensembl.healthcheck.*;
 
 /**
@@ -40,144 +39,61 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 	}
 
 	/**
-	 * Look for broken foreign-key realtionships.
-	 * @return Result.
+	 * Look for broken foreign key realtionships.
+	 * @return true Ff all foreign key relationships are valid.
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
 
-		int orphans = 0;
-
 		Connection con = dbre.getConnection();
-		// after stable_ids are loaded, there should be a one to one relationship
-		// Following four tests check stable_id fulfill that
+		
+        // ----------------------------
+		
+		result &= checkForOrphans(con, "exon", "exon_id", "exon_transcript", "exon_id", false);
+		
+		result &= checkForOrphans(con, "transcript", "transcript_id", "exon_transcript", "transcript_id", false);
+		
+		result &= checkForOrphans(con, "gene", "gene_id", "transcript", "gene_id", false);
+		
+		result &= checkForOrphans(con, "object_xref", "xref_id", "xref", "xref_id", true);
+		
+		result &= checkForOrphans(con, "xref", "external_db_id", "external_db", "external_db_id", true);
+		
+		result &= checkForOrphans(con, "dna", "seq_region_id", "seq_region", "seq_region_id", true);
+		
+		result &= checkForOrphans(con, "seq_region", "coord_system_id", "coord_system", "coord_system_id", true);
+		
+		result &= checkForOrphans(con, "assembly", "cmp_seq_region_id", "seq_region", "seq_region_id", true);
+		
+		result &= checkForOrphans(con, "marker_feature", "marker_id", "marker", "marker_id", true);
+		
+		result &= checkForOrphans(con, "seq_region_attrib", "seq_region_id", "seq_region", "seq_region_id", true);
+		
+		result &= checkForOrphans(con, "seq_region_attrib", "attrib_type_id", "attrib_type", "attrib_type_id", true);
+		
+		result &= checkForOrphans(con, "misc_feature_misc_set", "misc_feature_id", "misc_feature", "misc_feature_id", true);
+		
+		result &= checkForOrphans(con, "misc_feature_misc_set", "misc_set_id", "misc_set", "misc_set_id", true);
+		
+		result &= checkForOrphans(con, "misc_feature", "misc_feature_id", "misc_attrib", "misc_feature_id", true);
+		
+		result &= checkForOrphans(con, "misc_attrib", "attrib_type_id", "attrib_type", "attrib_type_id", true);
+		
+		result &= checkForOrphans(con, "assembly_exception", "seq_region_id", "seq_region", "seq_region_id", true);
+		
+		result &= checkForOrphans(con, "assembly_exception", "exc_seq_region_id", "seq_region", "seq_region_id", true);
 
-		if (getRowCount(con, "select count(*) from gene_stable_id") > 0) {
-			orphans = countOrphans(con, "gene", "gene_id", "gene_stable_id", "gene_id", false);
-			if (orphans > 0) {
-				//warn( con, "gene <-> gene_stable_id has unlinked entries" );
-				ReportManager.problem(this, con, "gene <-> gene_stable_id has unlinked entries");
-			} else {
-				ReportManager.correct(this, con, "All gene <-> gene_stable_id relationships OK");
-			}
+//		 ----------------------------
+		// Check stable IDs all correspond to an existing object
+		String[] stableIDtypes = {"gene", "transcript", "translation", "exon"};
+		for (int i = 0; i < stableIDtypes.length; i++) {
+			result &= checkStableIDKeys(con, stableIDtypes[i]);
 		}
+	
+		// ----------------------------
+		// Ensure that feature tables reference existing seq_regions
 
-		result &= (orphans == 0);
-
-		if (getRowCount(con, "select count(*) from transcript_stable_id") > 0) {
-			orphans = countOrphans(con, "transcript", "transcript_id", "transcript_stable_id", "transcript_id", false);
-			if (orphans > 0) {
-				//warn( con, "transcript <-> transcript_stable_id has unlinked entries" );
-				ReportManager.problem(this, con, "transcript <-> transcript_stable_id has unlinked entries");
-			} else {
-				ReportManager.correct(this, con, "All transcript <-> transcript_stable_id relationships OK");
-			}
-		}
-		result &= (orphans == 0);
-
-		if (getRowCount(con, "select count(*) from translation_stable_id") > 0) {
-			orphans = countOrphans(con, "translation", "translation_id", "translation_stable_id", "translation_id", false);
-			if (orphans > 0) {
-				//warn( con, "translation <-> translation_stable_id has unlinked entries" );
-				ReportManager.problem(this, con, "translation <-> translation_stable_id has unlinked entries");
-			} else {
-				ReportManager.correct(this, con, "All translation <-> translation_stable_id relationships OK");
-			}
-		}
-		result &= (orphans == 0);
-
-		if (getRowCount(con, "select count(*) from exon_stable_id") > 0) {
-			orphans = countOrphans(con, "exon", "exon_id", "exon_stable_id", "exon_id", false);
-			if (orphans > 0) {
-				//warn( con, "exon <-> exon_stable_id has unlinked entries" );
-				ReportManager.problem(this, con, "exon <-> exon_stable_id has unlinked entries");
-			} else {
-				ReportManager.correct(this, con, "All exon <-> exon_stable_id relationships OK");
-			}
-		}
-		result &= (orphans == 0);
-
-		// following needs always to be true, no row cuont tests necessary
-		orphans = countOrphans(con, "exon", "exon_id", "exon_transcript", "exon_id", false);
-		if (orphans > 0) {
-			//warn( con, "exon <-> exon_transcript has unlinked entries" );
-			ReportManager.problem(this, con, "exon <-> exon_transcript has unlinked entries");
-		} else {
-			ReportManager.correct(this, con, "All exon <-> exon_transcript relationships are OK");
-		}
-		result &= (orphans == 0);
-
-		orphans = countOrphans(con, "transcript", "transcript_id", "exon_transcript", "transcript_id", false);
-		if (orphans > 0) {
-			//warn( con, "transcript <-> exon_transcript has unlinked entries" );
-			ReportManager.problem(this, con, "transcript <-> exon_transcript has unlinked entries");
-		} else {
-			ReportManager.correct(this, con, "All transcript <-> exon_transcript relationships OK");
-		}
-		result &= (orphans == 0);
-
-		orphans = countOrphans(con, "gene", "gene_id", "transcript", "gene_id", false);
-		if (orphans > 0) {
-			//warn( con, "gene <-> transcript has unlinked entries" );
-			ReportManager.problem(this, con, "gene <-> transcript has unlinked entries");
-		} else {
-			ReportManager.correct(this, con, "All gene <-> transcript relationships OK");
-		}
-		result &= (orphans == 0);
-
-		orphans = countOrphans(con, "object_xref", "xref_id", "xref", "xref_id", true);
-		if (orphans > 0) {
-			//warn( con, "object_xref <-> xref has unlinked entries" );
-			ReportManager.problem(this, con, "object_xref -> xref has unlinked entries");
-		} else {
-			ReportManager.correct(this, con, "All object_xref -> xref relationships OK");
-		}
-		result &= (orphans == 0);
-
-		orphans = countOrphans(con, "xref", "external_db_id", "external_db", "external_db_id", true);
-		if (orphans > 0) {
-			ReportManager.problem(this, con, "xref -> external_db has unlinked entries");
-		} else {
-			ReportManager.correct(this, con, "All xref -> external_db relationships OK");
-		}
-		result &= (orphans == 0);
-
-		orphans = countOrphans(con, "dna", "seq_region_id", "seq_region", "seq_region_id", true);
-		if (orphans > 0) {
-			ReportManager.problem(this, con, "dna -> seq_region has unlinked entries");
-		} else {
-			ReportManager.correct(this, con, "All dna <-> seq_region relationships OK");
-		}
-		result &= (orphans == 0);
-
-		orphans = countOrphans(con, "seq_region", "coord_system_id", "coord_system", "coord_system_id", true);
-		if (orphans > 0) {
-			ReportManager.problem(this, con, "seq_region -> coord_system has unlinked entries");
-		} else {
-			ReportManager.correct(this, con, "All seq_region <-> coord_system relationships OK");
-		}
-		result &= (orphans == 0);
-
-		orphans = countOrphans(con, "assembly", "cmp_seq_region_id", "seq_region", "seq_region_id", true);
-		if (orphans > 0) {
-			ReportManager.problem(this, con, "assembly -> seq_region has unlinked entries");
-		} else {
-			ReportManager.correct(this, con, "All assembly -> seq_region relationships OK");
-		}
-		result &= (orphans == 0);
-
-		orphans = countOrphans(con, "marker_feature", "marker_id", "marker", "marker_id", true);
-		if (orphans > 0) {
-			ReportManager.problem(this, con, "marker_feature -> marker has " + "unlinked entries");
-		} else {
-			ReportManager.correct(this, con, "All marker_featre -> marker " + "relationships OK");
-		}
-		result &= (orphans == 0);
-
-		/*
-		 * make sure that feature tables reference existing contigs
-		 */
 		String[] featTabs =
 			{
 				"exon",
@@ -195,81 +111,43 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
 		for (int i = 0; i < featTabs.length; i++) {
 			String featTab = featTabs[i];
-			orphans = countOrphans(con, featTab, "seq_region_id", "seq_region", "seq_region_id", true);
-			if (orphans > 0) {
-				ReportManager.problem(this, con, featTab + " -> seq_region has unlinked entries");
-			} else {
-				ReportManager.correct(this, con, "All " + featTab + " -> seq_region relationships OK");
-			}
-			result &= (orphans == 0);
+			result &= checkForOrphans(con, featTab, "seq_region_id", "seq_region", "seq_region_id", true);
+			
 		}
-
-		orphans = countOrphans(con, "seq_region_attrib", "seq_region_id", "seq_region", "seq_region_id", true);
-		if (orphans > 0) {
-			ReportManager.problem(this, con, "seq_region_attrib -> seq_region has unlinked entries");
-		} else {
-			ReportManager.correct(this, con, "All seq_region_attrib -> seq_region relationships OK");
-		}
-		result &= (orphans == 0);
-
-		orphans = countOrphans(con, "seq_region_attrib", "attrib_type_id", "attrib_type", "attrib_type_id", true);
-		if (orphans > 0) {
-			ReportManager.problem(this, con, "seq_region_attrib -> attrib_type has unlinked entries");
-		} else {
-			ReportManager.correct(this, con, "All seq_region_attrib -> attrib_type relationships OK");
-		}
-		result &= (orphans == 0);
-
-		orphans = countOrphans(con, "misc_feature_misc_set", "misc_feature_id", "misc_feature", "misc_feature_id", true);
-		if (orphans > 0) {
-			ReportManager.problem(this, con, "misc_feature_misc_set -> misc_feature has unlinked entries");
-		} else {
-			ReportManager.correct(this, con, "All misc_feature_misc_set -> misc_feature relationships OK");
-		}
-		result &= (orphans == 0);
-
-		orphans = countOrphans(con, "misc_feature_misc_set", "misc_set_id", "misc_set", "misc_set_id", true);
-		if (orphans > 0) {
-			ReportManager.problem(this, con, "misc_feature_misc_set -> misc_set has unlinked entries");
-		} else {
-			ReportManager.correct(this, con, "All misc_feature_misc_set -> misc_set relationships OK");
-		}
-		result &= (orphans == 0);
-
-		orphans = countOrphans(con, "misc_feature", "misc_feature_id", "misc_attrib", "misc_feature_id", true);
-		if (orphans > 0) {
-			ReportManager.problem(this, con, "misc_feature -> misc_attrib has unlinked entries");
-		} else {
-			ReportManager.correct(this, con, "All misc_feature -> misc_attrib relationships OK");
-		}
-		result &= (orphans == 0);
-
-		orphans = countOrphans(con, "misc_attrib", "attrib_type_id", "attrib_type", "attrib_type_id", true);
-		if (orphans > 0) {
-			ReportManager.problem(this, con, "misc_feature -> attrib_type has unlinked entries");
-		} else {
-			ReportManager.correct(this, con, "All misc_feature -> attrib_type relationships OK");
-		}
-		result &= (orphans == 0);
-
-		orphans = countOrphans(con, "assembly_exception", "seq_region_id", "seq_region", "seq_region_id", true);
-		if (orphans > 0) {
-			ReportManager.problem(this, con, "assembly_exception -> seq_region_id has unlinked entries");
-		} else {
-			ReportManager.correct(this, con, "All assembly_exception -> seq_region_id relationships OK");
-		}
-		result &= (orphans == 0);
-
-		orphans = countOrphans(con, "assembly_exception", "exc_seq_region_id", "seq_region", "seq_region_id", true);
-		if (orphans > 0) {
-			ReportManager.problem(this, con, "assembly_exception (exc)-> seq_region_id has unlinked entries");
-		} else {
-			ReportManager.correct(this, con, "All assembly_exception (exc)-> seq_region_id relationships OK");
-		}
-		result &= (orphans == 0);
 
 		return result;
 
 	}
 
+	// -------------------------------------------------------------------------
+	/**
+	 * Generic way to check for orphan foreign key relationships.
+	 * @return true If there are no orphans.
+	 */
+	private boolean checkForOrphans(Connection con, String table1, String key1, String table2, String key2, boolean oneWay) {
+	
+	int orphans = countOrphans(con, table1, key1, table2, key2, oneWay);
+	if (orphans > 0) {
+		ReportManager.problem(this, con, table1 + " <-> " + table2 + " has unlinked entries");
+	} else {
+		ReportManager.correct(this, con, "All " + table1 + " <-> " + table2 + " relationships are OK");
+	}
+	
+	return orphans == 0;
+	
+	} // checkForOrphans
+	
+	// -------------------------------------------------------------------------
+	private boolean checkStableIDKeys(Connection con, String type) {
+		
+	if (tableHasRows(con, type + "_stable_id")) {
+		return checkForOrphans(con, type, type + "_id", type + "_stable_id", type + "_id", false);
+	}
+	
+	return true;
+	
+	} // checkStableIDKeys
+	
+	// -------------------------------------------------------------------------
+	
 } // CoreForeignKeys
