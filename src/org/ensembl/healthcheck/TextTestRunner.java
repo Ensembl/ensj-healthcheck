@@ -90,16 +90,9 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
         ReportManager.setReporter(this);
 
-        databaseRegistry = new DatabaseRegistry(databaseRegexps);
+        databaseRegistry = new DatabaseRegistry(databaseRegexps, globalType, globalSpecies);
         if (databaseRegistry.getEntryCount() == 0) {
             logger.warning("Warning: no database names matched any of the database regexps given");
-        }
-
-        if (globalSpecies != null) {
-            databaseRegistry.setSpeciesOfAll(globalSpecies);
-        }
-        if (globalType != null) {
-            databaseRegistry.setTypeOfAll(globalType);
         }
 
         runAllTests(databaseRegistry, testRegistry);

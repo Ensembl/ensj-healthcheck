@@ -44,35 +44,24 @@ public class DatabaseRegistryEntry {
      * Create a new DatabaseRegistryEntry. A connection to the named database is also created.
      * 
      * @param name The name of the database.
-     * @param species The species that this database represents.
-     * @param type The type of this databse.
+     * @param species The species that this database represents. If null, guess it from name.
+     * @param type The type of this databse. If null, guess it from name.
      */
-    public DatabaseRegistryEntry(final String name, final Species species, final DatabaseType type) {
+    public DatabaseRegistryEntry(String name, Species species, DatabaseType type) {
 
         this.name = name;
-        this.species = species;
-        this.type = type;
+        if (species != null) {
+            this.species = species;
+        } else {
+            this.species = setSpeciesFromName(name);
+        }
+        if (type != null) {
+            this.type = type;
+        } else {
+            this.type = setTypeFromName(name);
+        }
         this.con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL") + name, System
                 .getProperty("user"), System.getProperty("password"));
-
-    }
-
-    // -----------------------------------------------------------------
-    /**
-     * Create a DatabaseRegistryEntry from just the database name; the species and type are
-     * estimated from the database name. Note these can be overridden later by setSpecies/setType
-     * if they are specified on the command-line. A connection to the named database is also
-     * created.
-     * 
-     * @param name The name of the databse to use. Species and type are automatically set.
-     */
-    public DatabaseRegistryEntry(final String name) {
-
-        this.name = name;
-        this.con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL") + name, System
-                .getProperty("user"), System.getProperty("password"));
-        species = setSpeciesFromName(name);
-        type = setTypeFromName(name);
 
     }
 

@@ -31,20 +31,23 @@ import org.ensembl.healthcheck.util.DBUtils;
 public class DatabaseRegistry {
 
     // Entries is explicitly specified as an ArrayList rather than the list
-    // because the order is
-    // important
+    // because the order is important
     private ArrayList entries = new ArrayList();
 
+    // these global settings override guessing if they are specified
+    private Species globalSpecies = null;
+    private DatabaseType globalType = null;
+    
     /** The logger to use */
     private static Logger logger = Logger.getLogger("HealthCheckLogger");
 
     // -----------------------------------------------------------------
     /**
-     * Create a new DatabaseRegistry. DatabaseRegistryEntry objects for the
-     * databases matching regexp are created and added to the registry.
+     * Create a new DatabaseRegistry. DatabaseRegistryEntry objects for the databases matching regexp are created and added to the
+     * registry.
      * 
      * @param regexp
-     *          The regular expression matching the databases to use.
+     *            The regular expression matching the databases to use.
      */
     public DatabaseRegistry(final String regexp) {
 
@@ -59,13 +62,16 @@ public class DatabaseRegistry {
 
     // -----------------------------------------------------------------
     /**
-     * Create a new DatabaseRegistry. DatabaseRegistryEntry objects for the
-     * databases matching regexp are created and added to the registry.
+     * Create a new DatabaseRegistry. DatabaseRegistryEntry objects for the databases matching regexp are created and added to the
+     * registry.
      * 
      * @param regexps
-     *          The regular expressions matching the databases to use.
+     *            The regular expressions matching the databases to use.
      */
-    public DatabaseRegistry(final List regexps) {
+    public DatabaseRegistry(final List regexps, DatabaseType globalType, Species globalSpecies) {
+
+        this.globalType = globalType;
+        this.globalSpecies = globalSpecies;
 
         Connection con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System
                 .getProperty("user"), System.getProperty("password"));
@@ -85,7 +91,7 @@ public class DatabaseRegistry {
      * Create a new DatabaseRegistry from a set of DatabaseRegistryEntries.
      * 
      * @param dbres
-     *          The entries to use.
+     *            The entries to use.
      */
     public DatabaseRegistry(final DatabaseRegistryEntry[] dbres) {
 
@@ -102,10 +108,9 @@ public class DatabaseRegistry {
     private void addEntriesToRegistry(final String[] names) {
 
         for (int i = 0; i < names.length; i++) {
-            DatabaseRegistryEntry dbre = new DatabaseRegistryEntry(names[i]);
+            DatabaseRegistryEntry dbre = new DatabaseRegistryEntry(names[i], globalSpecies, globalType);
             entries.add(dbre);
-            logger.finest(dbre.getName() + " appears to be type " + dbre.getType() + " and species "
-                    + dbre.getSpecies());
+            logger.finest(dbre.getName() + " appears to be type " + dbre.getType() + " and species " + dbre.getSpecies());
             logger.finest("Added DatabaseRegistryEntry for " + names[i] + " to DatabaseRegistry");
         }
 
@@ -116,7 +121,7 @@ public class DatabaseRegistry {
      * Add a new DatabaseRegistryEntry to this registry.
      * 
      * @param dbre
-     *          The new DatabaseRegistryEntry.
+     *            The new DatabaseRegistryEntry.
      */
     public final void add(final DatabaseRegistryEntry dbre) {
 
@@ -141,7 +146,7 @@ public class DatabaseRegistry {
      * Get all of the DatabaseRegistryEntries for a particular species
      * 
      * @param species
-     *          The species to look for.
+     *            The species to look for.
      * @return The DatabaseRegistryEntries for species..
      */
     public final DatabaseRegistryEntry[] getAll(final Species species) {
@@ -164,7 +169,7 @@ public class DatabaseRegistry {
      * Get all of the DatabaseRegistryEntries for a particular database type.
      * 
      * @param type
-     *          The type to look for.
+     *            The type to look for.
      * @return The DatabaseRegistryEntries for type.
      */
     public final DatabaseRegistryEntry[] getAll(final DatabaseType type) {
@@ -184,13 +189,12 @@ public class DatabaseRegistry {
 
     // -----------------------------------------------------------------
     /**
-     * Get all of the DatabaseRegistryEntries for a particular database type
-     * and species.
+     * Get all of the DatabaseRegistryEntries for a particular database type and species.
      * 
      * @param type
-     *          The type to look for.
+     *            The type to look for.
      * @param species
-     *          The Species to look for.
+     *            The Species to look for.
      * @return The DatabaseRegistryEntries that match type and species..
      */
     public final DatabaseRegistryEntry[] getAll(final DatabaseType type, final Species species) {
@@ -213,7 +217,7 @@ public class DatabaseRegistry {
      * Sets the type of every DatabaseRegistryEntry.
      * 
      * @param type
-     *          The type to set.
+     *            The type to set.
      */
     public final void setTypeOfAll(final DatabaseType type) {
 
@@ -230,7 +234,7 @@ public class DatabaseRegistry {
      * Sets the species of every DatabaseRegistryEntry.
      * 
      * @param species
-     *          The species to set.
+     *            The species to set.
      */
     public final void setSpeciesOfAll(final Species species) {
 
@@ -247,7 +251,7 @@ public class DatabaseRegistry {
      * Get a single, named DatabaseRegistryEntry.
      * 
      * @param name
-     *          The name to look for.
+     *            The name to look for.
      * @return The matching DatabaseRegistryEntry, or null if none is found.
      */
     public final DatabaseRegistryEntry getByExactName(final String name) {
@@ -255,9 +259,9 @@ public class DatabaseRegistry {
         Iterator it = entries.iterator();
         while (it.hasNext()) {
             DatabaseRegistryEntry dbre = (DatabaseRegistryEntry) it.next();
-            if (dbre.getName().equals(name)) { 
-                return dbre; 
-                }
+            if (dbre.getName().equals(name)) {
+                return dbre;
+            }
         }
 
         return null;
