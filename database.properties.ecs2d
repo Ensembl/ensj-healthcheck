@@ -1,4 +1,0 @@
-driver=org.gjt.mm.mysql.Driver
-databaseURL=jdbc:mysql://ecs2d.internal.sanger.ac.uk/
-user=ensro
-password=
