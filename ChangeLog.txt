@@ -7,3 +7,11 @@ Changes in version 2:
   accessible through show-groups.sh
   
 * Renamed many tests to remove redundant "Check" prefix and "TestCase" suffix
+
+* Can now set host, port etc separately in database.properties rather than having
+  to piece together a JDBC URL
+
+* INSTALL is now called README and contains information on obtaining, configuring
+  and running healthchecks. README-writing-tests.txt now contains the information 
+  on how to write your own tests.
+  
