@@ -23,8 +23,7 @@ import java.util.logging.Logger;
 /**
  * Store info about a species. Implemented as a typesafe enum
  * 
- * @see <a href="http://java.sun.com/developer/Books/shiftintojava/page1.html">Java Typesafe Enums
- *      </a>
+ * @see <a href="http://java.sun.com/developer/Books/shiftintojava/page1.html">Java Typesafe Enums </a>
  */
 
 public final class Species {
@@ -61,6 +60,12 @@ public final class Species {
 
     /** Specific type of species */
     public static final Species GALLUS_GALLUS = new Species("gallus_gallus");
+
+    /** Specific type of species */
+    public static final Species TETRAODON_NIGROVIRIDIS = new Species("tetraodon_nigroviridis");
+
+    /** Specific type of species */
+    public static final Species APIS_MELLIFERA = new Species("apis_mellifera");
 
     /** Unknown species */
     public static final Species UNKNOWN = new Species("unknown");
@@ -100,7 +105,9 @@ public final class Species {
         taxonIDToSpecies.put("7955", DANIO_RERIO);
         taxonIDToSpecies.put("9598", PAN_TROGLODYTES);
         taxonIDToSpecies.put("9031", GALLUS_GALLUS);
-        
+        taxonIDToSpecies.put("99883", TETRAODON_NIGROVIRIDIS);
+        taxonIDToSpecies.put("7460", APIS_MELLIFERA);
+
         // and the other way around
         Iterator it = taxonIDToSpecies.keySet().iterator();
         while (it.hasNext()) {
@@ -114,9 +121,9 @@ public final class Species {
     /**
      * Resolve an alias to a Species object.
      * 
-     * @param speciesAlias The alias (e.g. human, homosapiens, hsapiens).
-     * @return The species object corresponding to alias, or Species.UNKNOWN if it cannot be
-     *         resolved.
+     * @param speciesAlias
+     *            The alias (e.g. human, homosapiens, hsapiens).
+     * @return The species object corresponding to alias, or Species.UNKNOWN if it cannot be resolved.
      */
     public static Species resolveAlias(String speciesAlias) {
 
@@ -200,15 +207,31 @@ public final class Species {
             return PAN_TROGLODYTES;
 
         }
-        
-       // --------------------------------------
+
+        // --------------------------------------
 
         if (in(alias, "chicken,chick,ggallus,gallusgallus,gallus_gallus")) {
 
             return GALLUS_GALLUS;
 
         }
-        
+
+        // --------------------------------------
+
+        if (in(alias, "tetraodon,tnigroviridis,tetraodonnigroviridis,tetraodon_nigroviridis")) {
+
+            return TETRAODON_NIGROVIRIDIS;
+
+        }
+
+        // --------------------------------------
+
+        if (in(alias, "honeybee,honey_bee,apis,amellifera,apismellifera,apis_mellifera")) {
+
+            return APIS_MELLIFERA;
+
+        }
+
         // --------------------------------------
 
         // default
@@ -223,7 +246,8 @@ public final class Species {
     /**
      * Get the taxonomy ID associated with a particular species.
      * 
-     * @param s The species to look up.
+     * @param s
+     *            The species to look up.
      * @return The taxonomy ID associated with s, or "" if none is found.
      */
     public static String getTaxonomyID(Species s) {
@@ -243,7 +267,8 @@ public final class Species {
     /**
      * Get the species associated with a particular taxonomy ID.
      * 
-     * @param t The taxonomy ID to look up.
+     * @param t
+     *            The taxonomy ID to look up.
      * @return The species associated with t, or Species.UNKNOWN if none is found.
      */
     public static Species getSpeciesFromTaxonomyID(String t) {
