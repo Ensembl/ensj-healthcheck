@@ -61,6 +61,9 @@ public final class DatabaseType {
     /** An expression database */
     public static final DatabaseType EXPRESSION = new DatabaseType("expression");
     
+    /** An xref database */
+    public static final DatabaseType XREF = new DatabaseType("xref");
+    
     /** A database whos type has not been determined */
     public static final DatabaseType UNKNOWN = new DatabaseType("unknown");
 
@@ -188,6 +191,22 @@ public final class DatabaseType {
         if (in(lcAlias, "go")) { 
 
         return GO; 
+
+        }
+
+        // --------------------------------------
+	
+	if (in(lcAlias, "expression")) { 
+
+	    return EXPRESSION; 
+
+        }
+
+	// --------------------------------------
+	
+	if (in(lcAlias, "xref")) { 
+
+	    return xref; 
 
         }
 
