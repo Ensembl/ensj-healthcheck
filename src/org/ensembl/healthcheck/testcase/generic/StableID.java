@@ -48,12 +48,10 @@ public class StableID extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		boolean exonResult = checkStableIDs(con, "exon");
-		boolean translationResult = checkStableIDs(con, "translation");
-		boolean transcriptResult = checkStableIDs(con, "transcript");
-		boolean geneResult = checkStableIDs(con, "gene");
-
-		result = result && exonResult && translationResult && transcriptResult && geneResult;
+		result &= checkStableIDs(con, "exon");
+		result &= checkStableIDs(con, "translation");
+		result &= checkStableIDs(con, "transcript");
+		result &= checkStableIDs(con, "gene");
 
 		return result;
 	}
@@ -71,17 +69,18 @@ public class StableID extends SingleDatabaseTestCase {
 	public boolean checkStableIDs(Connection con, String typeName) {
 
 		boolean result = true;
-
-		String nStableIDs = getRowColumnValue(con, "select count(*) from " + typeName + "_stable_id;");
+		
+		String stableIDtable = typeName + "_stable_id";
+		int nStableIDs = countRowsInTable(con, stableIDtable);
 		ReportManager.info(this, con, "Num " + typeName + "s stable ids = " + nStableIDs);
 
-		if (Integer.parseInt(nStableIDs) < 1) {
-			ReportManager.problem(this, con, typeName + "_stable_id table is empty.");
+		if (nStableIDs < 1) {
+			ReportManager.problem(this, con, stableIDtable + " table is empty.");
 			result = false;
 		}
 
 		// print a few rows so we can check by eye that the table looks ok
-		DBUtils.printRows(this, con, "select * from " + typeName + "_stable_id limit 10;");
+		DBUtils.printRows(this, con, "select * from " + stableIDtable + " limit 10;");
 
 		// look for orphans between type and type_stable_id tables
 		int orphans = countOrphans(con, typeName, typeName + "_id", typeName + "_stable_id", typeName + "_id", false);
@@ -91,12 +90,12 @@ public class StableID extends SingleDatabaseTestCase {
 			result = false;
 		}
 
-		String nInvalidVersionsStr = getRowColumnValue(con, "select count(*) as " + typeName + "_with_invalid_version"
-				+ " from " + typeName + "_stable_id where version<1;");
-		int nInvalidVersions = Integer.parseInt(nInvalidVersionsStr);
+		int nInvalidVersions  = getRowCount(con, "SELECT COUNT(*) AS " + typeName + "_with_invalid_version"
+				+ " FROM " + stableIDtable + " WHERE version < 1;");
+		
 		if (nInvalidVersions > 0) {
-			ReportManager.problem(this, con, "Invalid " + typeName + "versions in " + typeName + "_stable_id.");
-			DBUtils.printRows(this, con, "select distinct(version) from " + typeName + "_stable_id;");
+			ReportManager.problem(this, con, "Invalid " + typeName + "versions in " + stableIDtable);
+			DBUtils.printRows(this, con, "SELECT DISTINCT(version) FROM " + stableIDtable);
 			result = false;
 		}
 
