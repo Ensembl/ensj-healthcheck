@@ -25,10 +25,7 @@ INSTALLATION
 RUNNING
 =======
 
-A number of shell scripts (with a .sh extension) are provided to aid in running healthchecks. These are summarised below; the main one you will use is called run-healthcheck.sh
-
-See the file run-healthcheck.sh for an example of how to set classpaths etc. Note that this script passes 
-any of its command-line options through to the TextTestRunner class.
+A number of shell scripts (with a .sh extension) are provided to aid in running healthchecks. These are summarised below; the main one you will use is called run-healthcheck.sh; note that this script actually passes all of its command-line options through to the TextTestRunner class.
 
  Usage: TextTestRunner {options} {group1} {group2} ...
  
@@ -49,7 +46,7 @@ any of its command-line options through to the TextTestRunner class.
    -repair         If appropriate, carry out repair methods on test cases that support it
    -showrepair     Like -repair, but the repair is NOT carried out, just reported.
    -length n       Break output lines at n columns; default is 65. 0 means never break
-   -noschemainfo   Do not cache schema info at startup. Quicker, but may cause some tests not to work. Use with caution.
+   -schemainfo     Cache schema info at startup; required for SchemasMatch testcase
    -refreshschemas Rebuild the stored schema info; this is rather slow as every schema must be examined, but should be used when a schema structure change has occurred.
    group1          Names of groups of test cases to run.
                    Note each test case is in a group of its own with the name of the test case.
