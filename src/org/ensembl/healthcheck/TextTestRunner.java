@@ -31,7 +31,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
 	private static String version = "$Id$";
 
-	private String databaseRegexp = null;
+	private ArrayList databaseRegexps = new ArrayList(); // note order is important
 	private boolean debug = false;
 
 	public ArrayList outputBuffer = new ArrayList();
@@ -72,9 +72,9 @@ public class TextTestRunner extends TestRunner implements Reporter {
 		ReportManager.setReporter(this);
 
 		testRegistry = new TestRegistry();
-		databaseRegistry = new DatabaseRegistry(databaseRegexp);
+		databaseRegistry = new DatabaseRegistry(databaseRegexps);
 		if (databaseRegistry.getAll().length == 0) {
-			logger.warning("Warning: no database names matched " + databaseRegexp);
+			logger.warning("Warning: no database names matched any of the database regexps given");
 		}
 
 		if (globalSpecies != null) {
@@ -96,6 +96,8 @@ public class TextTestRunner extends TestRunner implements Reporter {
 		System.out.println("\nUsage: TextTestRunner {options} {group1} {group2} ...\n");
 		System.out.println("Options:");
 		System.out.println("  -d regexp       Use the given regular expression to decide which databases to use.");
+		System.out.println(
+			"                  Note that more than one -d argument can be used; testcases that depend on the order of databases will be passed the databases in the order in which they appear on the command line");
 		System.out.println("  -h              This message.");
 		System.out.println("  -output level   Set output level; level can be one of ");
 		System.out.println("                  none      nothing is printed");
@@ -183,8 +185,8 @@ public class TextTestRunner extends TestRunner implements Reporter {
 				} else if (args[i].equals("-d")) {
 
 					i++;
-					databaseRegexp = args[i];
-					logger.finest("Set database regular expression to " + databaseRegexp);
+					databaseRegexps.add(args[i]);
+					logger.finest("Added database regular expression " + args[i]);
 
 				} else if (args[i].equals("-config")) {
 
@@ -226,7 +228,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
 			}
 
-			if (databaseRegexp == null) {
+			if (databaseRegexps.size() == 0) {
 
 				System.err.println("No databases specified!");
 				System.exit(1);
@@ -234,11 +236,16 @@ public class TextTestRunner extends TestRunner implements Reporter {
 			}
 
 			// print matching databases if no tests specified
-			if (groupsToRun.size() == 0 && databaseRegexp != null) {
-				System.out.println("Databases that match the regular expression '" + databaseRegexp + "':");
-				String[] names = getListOfDatabaseNames(".*");
-				for (int i = 0; i < names.length; i++) {
-					System.out.println("  " + names[i]);
+			if (groupsToRun.size() == 0 && databaseRegexps.size() > 0) {
+
+				Iterator it = databaseRegexps.iterator();
+				while (it.hasNext()) {
+					String databaseRegexp = (String)it.next();
+					System.out.println("Databases that match the regular expression '" + databaseRegexp + "':");
+					String[] names = getListOfDatabaseNames(databaseRegexp);
+					for (int i = 0; i < names.length; i++) {
+						System.out.println("  " + names[i]);
+					}
 				}
 			}
 

@@ -30,19 +30,50 @@ import org.ensembl.healthcheck.util.DBUtils;
  */
 public class DatabaseRegistry {
 
-	List entries = new ArrayList();
+	// Entries is explicitly specified as an ArrayList rather than the list because the order is important
+	ArrayList entries = new ArrayList();
 
 	protected static Logger logger = Logger.getLogger("HealthCheckLogger");
 
 	// -----------------------------------------------------------------
 	/**
+	 * Create a new DatabaseRegistry. DatabaseRegistryEntry objects for the databases matching regexp are created and added to the registry.
 	 * 
+	 * @param regexp The regular expression matching the databases to use. 
 	 */
 	public DatabaseRegistry(String regexp) {
 
 		Connection con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System.getProperty("user"), System.getProperty("password"));
 
 		String[] names = DBUtils.listDatabases(con, regexp);
+		
+		addEntriesToRegistry(names);
+
+	}
+
+	//	-----------------------------------------------------------------
+	/**
+	 * Create a new DatabaseRegistry. DatabaseRegistryEntry objects for the databases matching regexp are created and added to the registry.
+	 * 
+	 * @param regexps The regular expressions matching the databases to use. 
+	 */
+	public DatabaseRegistry(List regexps) {
+
+		Connection con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System.getProperty("user"), System.getProperty("password"));
+
+		Iterator it = regexps.iterator();
+		while (it.hasNext()) {
+
+			String[] names = DBUtils.listDatabases(con, (String)it.next());
+			addEntriesToRegistry(names);
+
+		}
+
+	}
+
+	// -----------------------------------------------------------------
+
+	private void addEntriesToRegistry(String[] names) {
 
 		for (int i = 0; i < names.length; i++) {
 			DatabaseRegistryEntry dbre = new DatabaseRegistryEntry(names[i]);
@@ -50,7 +81,7 @@ public class DatabaseRegistry {
 			logger.finest(dbre.getName() + " appears to be type " + dbre.getType() + " and species " + dbre.getSpecies());
 			logger.finest("Added DatabaseRegistryEntry for " + names[i] + " to DatabaseRegistry");
 		}
-
+		
 	}
 
 	// -----------------------------------------------------------------
@@ -178,7 +209,7 @@ public class DatabaseRegistry {
 	 * @return The matching DatabaseRegistryEntry, or null if none is found.
 	 */
 	public DatabaseRegistryEntry getByExactName(String name) {
-		
+
 		Iterator it = entries.iterator();
 		while (it.hasNext()) {
 			DatabaseRegistryEntry dbre = (DatabaseRegistryEntry)it.next();
@@ -186,7 +217,7 @@ public class DatabaseRegistry {
 				return dbre;
 			}
 		}
-		
+
 		return null;
 	}
 	// -----------------------------------------------------------------
