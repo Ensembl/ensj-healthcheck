@@ -8,7 +8,7 @@
  
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNUsql
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
  
   You should have received a copy of the GNU Lesser General Public
@@ -31,8 +31,8 @@ public class CallbackHandler extends Handler {
   CallbackTarget callbackTarget;
   
   // ------------------------------------------------------------------------
-  /**
-   * Creates a new instance of CallbackHandler
+  /** Creates a new instance of CallbackHandler
+   * @param ct The object on which to call the callback method.
    * @param formatter The formatter object to use.
    */
   public CallbackHandler(CallbackTarget ct, Formatter formatter) {
