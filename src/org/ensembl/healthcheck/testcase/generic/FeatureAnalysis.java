@@ -18,6 +18,13 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
@@ -25,12 +32,15 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that features exist for expected analysis types.
+ * Check that features exist for expected analysis types, and that all analysis types have features.
  */
 public class FeatureAnalysis extends SingleDatabaseTestCase {
 
-    private String[] proteinFeatureAnalyses = {"prints", "pfscan", "scanprosite", "signalp", "seg", "ncoils", "pfam",
-            "tmhmm"};
+    // the following tables have an analysis_id column
+    String[] featureTables = {"gene", "protein_feature", "dna_align_feature", "protein_align_feature", "repeat_feature",
+            "prediction_transcript", "simple_feature", "marker_feature", "qtl_feature", "density_type", "identity_xref"};
+
+    private String[] proteinFeatureAnalyses = {"prints", "pfscan", "scanprosite", "signalp", "seg", "ncoils", "pfam", "tmhmm"};
 
     /**
      * Creates a new instance of FeatureAnalysis
@@ -39,6 +49,7 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 
         addToGroup("post_genebuild");
         addToGroup("release");
+        setHintLongRunning(true);
         setDescription("Check that features exist for the expected analyses.");
 
     }
@@ -57,13 +68,17 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
      * Run the test.
      * 
      * @param dbre
-     *          The database to use.
+     *            The database to use.
      * @return true if the test pased.
      *  
      */
     public boolean run(DatabaseRegistryEntry dbre) {
 
         boolean result = true;
+
+        // --------------------------------
+        // First check that all analyses have some features
+        result &= checkAnalysesHaveFeatures(dbre, featureTables);
 
         // --------------------------------
         // Check protein_feature
@@ -77,6 +92,64 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
         return result;
 
     } // run
+
+    //---------------------------------------------------------------------
+
+    /**
+     * Check that all the analyses in the analysis table have some features associated.
+     */
+    private boolean checkAnalysesHaveFeatures(DatabaseRegistryEntry dbre, String[] featureTables) {
+
+        boolean result = true;
+
+        try {
+
+            Map analysesFromFeatureTables = new HashMap();
+            Connection con = dbre.getConnection();
+            // build cumulative list of analyses from feature tables
+            for (int t = 0; t < featureTables.length; t++) {
+                String featureTable = featureTables[t];
+                logger.fine("Collecting analysis IDs from " + featureTable);
+                Statement stmt = con.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT DISTINCT(analysis_id) FROM " + featureTable);
+                while (rs.next()) {
+                    Integer analysisID = new Integer(rs.getInt("analysis_id"));
+                    if (analysesFromFeatureTables.containsKey(analysisID)) {
+                        ReportManager.problem(this, con, "Analysis with ID " + analysisID + " is used in " + featureTable + " as well as " + analysesFromFeatureTables.get(analysisID));
+                        result = false;
+                    } else {
+                        analysesFromFeatureTables.put(analysisID, featureTable);
+                    }
+                }
+                rs.close();
+                stmt.close();
+            }
+
+            // look at each analysis ID *from the analysis table* to see if it's used somewhere
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT analysis_id, logic_name FROM analysis");
+            while (rs.next()) {
+                int analysisID = rs.getInt("analysis_id");
+                String logicName = rs.getString("logic_name");
+                if (!analysesFromFeatureTables.containsKey(new Integer(analysisID))) {
+                    ReportManager.problem(this, con, "Analysis with ID " + analysisID + ", logic name " + logicName
+                            + " is not used in any feature table");
+                    result = false;
+                } else {
+                    ReportManager.correct(this, con, "Analysis with ID " + analysisID + ", logic name " + logicName
+                            + " is used in " + analysesFromFeatureTables.get(new Integer(analysisID)));
+                }
+            }
+            rs.close();
+            stmt.close();
+
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+
+        return result;
+
+    }
 
     // -----------------------------------------------------------------
 
