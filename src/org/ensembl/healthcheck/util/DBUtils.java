@@ -229,23 +229,23 @@ public class DBUtils {
       ResultSetMetaData rsmd1 = rs1.getMetaData();
       ResultSetMetaData rsmd2 = rs2.getMetaData();
       if (rsmd1.getColumnCount() != rsmd2.getColumnCount()) {
-        ReportManager.problem(testCase, name1, "Column counts differ -  " + name1 + ": " + rsmd1.getColumnCount() + " " + name2 + ": " + rsmd2.getColumnCount());
+        ReportManager.problem(testCase, name2, "Column counts differ -  " + name1 + ": " + rsmd1.getColumnCount() + " " + name2 + ": " + rsmd2.getColumnCount());
         return false;  // Deliberate early return for performance reasons
       }
       for (int i=1; i <= rsmd1.getColumnCount(); i++) {                 // note columns indexed from 1
         if (!((rsmd1.getColumnName(i)).equals(rsmd2.getColumnName(i)))) {
-          ReportManager.problem(testCase, name1, "Column names differ for column " + i + " - " + name1 + ": " + rsmd1.getColumnName(i) + " " + name2 + ": " + rsmd2.getColumnName(i));
+          ReportManager.problem(testCase, name2, "Column names differ for column " + i + " - " + name1 + ": " + rsmd1.getColumnName(i) + " " + name2 + ": " + rsmd2.getColumnName(i));
           return false;  // Deliberate early return for performance reasons
         }
         if (rsmd1.getColumnType(i) != rsmd2.getColumnType(i)) {
-          ReportManager.problem(testCase, name1, "Column types differ for column " + i + " - " + name1 + ": " + rsmd1.getColumnType(i) + " " + name2 + ": " + rsmd2.getColumnType(i));
+          ReportManager.problem(testCase, name2, "Column types differ for column " + i + " - " + name1 + ": " + rsmd1.getColumnType(i) + " " + name2 + ": " + rsmd2.getColumnType(i));
           return false;  // Deliberate early return for performance reasons
         }
       } // for column
       
       // make sure both cursors are at the start of the ResultSet (default is before the start)
-      rs1.first();
-      rs2.first();
+      rs1.beforeFirst();
+      rs2.beforeFirst();
       // if quick checks didn't cause return, try comparing row-wise
       int row = 0;
       while (rs1.next() && rs2.next()) {
@@ -253,7 +253,7 @@ public class DBUtils {
         for (int j=1; j <= rsmd1.getColumnCount(); j++) {              // note columns indexed from 1
           if (compareColumns(rs1, rs2, j) == false) {
             String str = name1 + " and " + name2 + text + " differ at row " + row + " column " + j + " (" + rsmd1.getColumnName(j) + ")" + " Values: " + Utils.truncate(rs1.getString(j), 25, true) + ", " + Utils.truncate(rs2.getString(j), 25, true);
-            ReportManager.problem(testCase, name1, str);
+            ReportManager.problem(testCase, name2, str);
             return false;  // Deliberate early return for performance reasons
           }
         }
@@ -263,7 +263,7 @@ public class DBUtils {
       
       // if both ResultSets are the same, then we should be at the end of both, i.e. .next() should return false
       if (rs1.next() == true) {
-        ReportManager.problem(testCase, name1, text + " in " + name1 + " seems to have additional rows that are not in " + name2);
+        ReportManager.problem(testCase, name2, text + " in " + name1 + " seems to have additional rows that are not in " + name2);
         return false;
       } else if (rs2.next() == true) {
         ReportManager.problem(testCase, name2, text + " in " + name2 + " seems to have additional rows that are not in " + name1);
