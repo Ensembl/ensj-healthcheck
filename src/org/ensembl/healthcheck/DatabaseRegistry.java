@@ -220,6 +220,48 @@ public class DatabaseRegistry {
 
 		return null;
 	}
+	
+	// -------------------------------------------------------------------------
+	/**
+	 * Get a list of the types of databases in the registry.
+	 * @return An array containing each DatabaseType found in the registry.
+	 */
+	public DatabaseType[] getTypes() {
+	    
+	    List types = new ArrayList();
+	    
+	    Iterator it = entries.iterator();
+		while (it.hasNext()) {
+			DatabaseRegistryEntry dbre = (DatabaseRegistryEntry)it.next();
+			if (!types.contains(dbre.getType())) {
+				types.add(dbre.getType());
+			}
+		}
+		
+	    return (DatabaseType[])types.toArray(new DatabaseType[types.size()]);
+	    
+	}
+	
+//	 -------------------------------------------------------------------------
+	/**
+	 * Get a list of the species in the registry.
+	 * @return An array containing each Species found in the registry.
+	 */
+	public Species[] getSpecies() {
+	    
+	    List species = new ArrayList();
+	    
+	    Iterator it = entries.iterator();
+		while (it.hasNext()) {
+			DatabaseRegistryEntry dbre = (DatabaseRegistryEntry)it.next();
+			if (!species.contains(dbre.getSpecies())) {
+				species.add(dbre.getSpecies());
+			}
+		}
+		
+	    return (Species[])species.toArray(new Species[species.size()]);
+	    
+	}
 	// -----------------------------------------------------------------
 
 } // DatabaseRegistry
