@@ -25,6 +25,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.Utils;
 import org.ensembl.healthcheck.ReportManager;
@@ -56,11 +57,25 @@ public class DensityFeatures extends SingleDatabaseTestCase {
         setDescription("Check that all top-level seq regions have some SNP/gene/knownGene density features, and that the values agree between the density_feature and seq_region attrib tables.");
 	setFailureText("May report count mismatches on HAP/PAR regions. ");
 
-	logicNameToAttribCode.put("variationDensity", "SNPCount");
+	logicNameToAttribCode.put("snpDensity", "SNPCount");
 	logicNameToAttribCode.put("geneDensity", "GeneCount");
 	logicNameToAttribCode.put("knownGeneDensity", "knownGeneCount");
 
     }
+
+    // ----------------------------------------------------------------------
+
+    /**
+     * This only really applies to core databases
+     */
+    public void types() {
+
+        removeAppliesToType(DatabaseType.EST);
+        removeAppliesToType(DatabaseType.ESTGENE);
+        removeAppliesToType(DatabaseType.VEGA);
+
+    }
+
 
     /**
      * Run the test.
