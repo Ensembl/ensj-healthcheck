@@ -203,13 +203,13 @@ public class GuiTestRunner extends TestRunner implements Reporter {
 
 	}
 
-	public void startTestCase(EnsTestCase testCase) {
+	public void startTestCase(EnsTestCase testCase, DatabaseRegistryEntry dbre) {
 
 		// TBC
 
 	}
 
-	public void finishTestCase(EnsTestCase testCase, boolean result) {
+	public void finishTestCase(EnsTestCase testCase, boolean result, DatabaseRegistryEntry dbre) {
 
 		// TBC
 

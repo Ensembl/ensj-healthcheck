@@ -102,7 +102,7 @@ public class TestRunner {
 		// open connection
 		try {
 			conn = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System.getProperty("user"), System.getProperty("password"));
-			logger.fine("Opened connection to " + System.getProperty("databaseURL") + " as " + System.getProperty("user"));
+			System.out.println("Opened connection to " + System.getProperty("databaseURL") + " as " + System.getProperty("user"));
 			databaseNames = DBUtils.listDatabases(conn, regexp);
 			if (databaseNames.length == 0) {
 				logger.info("No database names matched");
@@ -165,12 +165,12 @@ public class TestRunner {
 
 				SingleDatabaseTestCase testCase = (SingleDatabaseTestCase)it.next();
 
-				ReportManager.startTestCase(testCase);
+				ReportManager.startTestCase(testCase, databases[i]);
 
 				boolean result = testCase.run(database);
 
-				ReportManager.finishTestCase(testCase, result);
-				logger.info(testCase.getName() + " " + (result ? "PASSED" : "FAILED"));
+				ReportManager.finishTestCase(testCase, result, databases[i]);
+				logger.info(testCase.getName() + " [" + databases[i].getName() + "]" + (result ? "PASSED" : "FAILED"));
 
 				numberOfTestsRun++;
 
@@ -192,11 +192,11 @@ public class TestRunner {
 
 			MultiDatabaseTestCase testCase = (MultiDatabaseTestCase)it.next();
 
-			ReportManager.startTestCase(testCase);
+			ReportManager.startTestCase(testCase, null);
 
 			boolean result = testCase.run(databaseRegistry);
 
-			ReportManager.finishTestCase(testCase, result);
+			ReportManager.finishTestCase(testCase, result, null);
 			logger.info(testCase.getName() + " " + (result ? "PASSED" : "FAILED"));
 
 			numberOfTestsRun++;
@@ -215,11 +215,11 @@ public class TestRunner {
 
 			OrderedDatabaseTestCase testCase = (OrderedDatabaseTestCase)it.next();
 
-			ReportManager.startTestCase(testCase);
+			ReportManager.startTestCase(testCase, null);
 
 			boolean result = testCase.run(orderedDatabases);
 
-			ReportManager.finishTestCase(testCase, result);
+			ReportManager.finishTestCase(testCase, result, null);
 			logger.info(testCase.getName() + " " + (result ? "PASSED" : "FAILED"));
 
 			numberOfTestsRun++;
@@ -383,8 +383,14 @@ public class TestRunner {
 		Iterator it = keys.iterator();
 		while (it.hasNext()) {
 			String key = (String)it.next();
-			System.out.println("\n" + key);
+			System.out.print("\n" + key + ": ");
 			List lines = (List)map.get(key);
+			int nProblems = lines.size();
+			if (nProblems == 0) {
+				System.out.println("No problems found");
+			} else {
+				String s = (nProblems == 1) ? "" : "s";
+				System.out.println(nProblems + " problem" + s + " found");
 			Iterator it2 = lines.iterator();
 			while (it2.hasNext()) {
 				ReportLine reportLine = (ReportLine)it2.next();
@@ -392,6 +398,7 @@ public class TestRunner {
 					System.out.println(" " + reportLine.getShortTestCaseName() + ": " + reportLine.getMessage());
 				} // if level
 			} // while it2
+			} // if nProblems
 		} // while it
 
 	} // printReportsByDatabase

@@ -87,6 +87,10 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
 		runAllTests(databaseRegistry, testRegistry);
 
+		printReportsByDatabase(outputLevel);
+		
+		printReportsByTest(outputLevel);
+		
 		ConnectionPool.closeAll();
 
 	} // run
@@ -108,7 +112,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 		System.out.println("                    info      info (and problem, correct, summary) messages reported");
 		System.out.println("                    all       everything is printed");
 		System.out.println("  -species s      Use s as the species for all databases instead of trying to guess the species from the name");
-		System.out.println("  -type t         Use 2 as the type for all databases instead of trying to guess the type from the name");
+		System.out.println("  -type t         Use t as the type for all databases instead of trying to guess the type from the name");
 		System.out.println("  -debug          Print debugging info (for developers only)");
 		System.out.println("  -config file    Read configuration information from file instead of " + PROPERTIES_FILE);
 		System.out.println("  -repair         If appropriate, carry out repair methods on test cases that support it");
@@ -242,7 +246,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 				Iterator it = databaseRegexps.iterator();
 				while (it.hasNext()) {
 					String databaseRegexp = (String)it.next();
-					System.out.println("Databases that match the regular expression '" + databaseRegexp + "':");
+					System.out.println("Databases that match the regular expression " + databaseRegexp + ":");
 					String[] names = getListOfDatabaseNames(databaseRegexp);
 					for (int i = 0; i < names.length; i++) {
 						System.out.println("  " + names[i]);
@@ -312,25 +316,25 @@ public class TextTestRunner extends TestRunner implements Reporter {
 		outputBuffer.add("    " + level + ":  " + lineBreakString(reportLine.getMessage(), outputLineLength, "              "));
 	}
 
-	public void startTestCase(EnsTestCase testCase) {
+	public void startTestCase(EnsTestCase testCase, DatabaseRegistryEntry dbre) {
 		String name;
 		name = testCase.getClass().getName();
 		name = name.substring(name.lastIndexOf(".") + 1);
-		System.out.print(name + " ");
+		System.out.print(name + " [" + dbre.getName() + "]");
 		System.out.flush();
 	}
 
-	public void finishTestCase(EnsTestCase testCase, boolean result) {
+	public void finishTestCase(EnsTestCase testCase, boolean result, DatabaseRegistryEntry dbre) {
 
 		System.out.println(result ? " PASSED" : " FAILED");
-
+		/*
 		lastDatabase = "";
 		Iterator it = outputBuffer.iterator();
 		while (it.hasNext()) {
 			System.out.println((String)it.next());
 		}
 		outputBuffer.clear();
-
+*/
 	}
 
 	private String lineBreakString(String mesg, int maxLen, String indent) {

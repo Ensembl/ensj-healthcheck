@@ -45,15 +45,15 @@ public class ReportManager {
   }
   
   
-  public static void startTestCase( EnsTestCase testCase ) {
+  public static void startTestCase( EnsTestCase testCase, DatabaseRegistryEntry dbre ) {
     if( reporter != null ) {
-      reporter.startTestCase( testCase );
+      reporter.startTestCase( testCase, dbre );
     }
   }
   
-  public static void finishTestCase( EnsTestCase testCase, boolean result ) {
+  public static void finishTestCase( EnsTestCase testCase, boolean result, DatabaseRegistryEntry dbre ) {
     if( reporter != null ) {
-      reporter.finishTestCase( testCase, result );
+      reporter.finishTestCase( testCase, result, dbre );
     }
   }
   

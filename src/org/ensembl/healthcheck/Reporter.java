@@ -28,8 +28,19 @@ public interface Reporter {
 
   public void message( ReportLine reportLine );
   
-  public void startTestCase( EnsTestCase testCase );
+  /**
+   * Should be called just before a test case is run.
+   * @param testCase The test case about to be run.
+   * @param dbre The database which testCase is to be run on, or null of no/several databases.
+   */
+  public void startTestCase( EnsTestCase testCase, DatabaseRegistryEntry dbre );
   
-  public void finishTestCase( EnsTestCase testCase, boolean result );
+  /**
+   * Should be called just after a test case has been run.
+   * @param testCase The test case that was run.
+   * @param result The result of testCase.
+   * @param dbre The database which testCase was run on, or null of no/several databases.
+   */
+  public void finishTestCase( EnsTestCase testCase, boolean result, DatabaseRegistryEntry dbre );
 
 }
