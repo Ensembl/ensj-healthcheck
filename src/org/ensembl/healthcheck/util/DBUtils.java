@@ -31,8 +31,11 @@ import java.sql.*;
 import java.util.*;
 import java.io.*;
 import java.util.regex.*;
+import java.util.logging.*;
 
 public class DBUtils {
+  
+  private static Logger logger = Logger.getLogger("HealthCheckLogger");
   
   public DBUtils() {
   }
@@ -69,17 +72,21 @@ public class DBUtils {
   // -------------------------------------------------------------------------
   /**
    * Get a list of the database names for a particular connection.
-   * @param conn The connection to query.
+   * @param con The connection to query.
    * @return An array of Strings containing the database names.
    */
   
-  public static String[] listDatabases(Connection conn) {
+  public static String[] listDatabases(Connection con) {
+    
+    if (con == null) {
+      logger.severe("Database connection is null");
+    }
     
     ArrayList dbNames = new ArrayList();
     
     try {
       
-      Statement stmt = conn.createStatement();
+      Statement stmt = con.createStatement();
       ResultSet rs = stmt.executeQuery("SHOW DATABASES");
       
       while (rs.next()) {
@@ -108,25 +115,47 @@ public class DBUtils {
    * Get a list of the database names that match a certain pattern for a particular connection.
    * @param conn The connection to query.
    * @param regex A regular expression to match.
+   * @param preFilterRegexp If non-null and non-blank, this is applied to the list <em>before</em> regex.
    * @return An array of Strings containing the database names.
    */
-  public static String[] listDatabases(Connection conn, String regex) {
+  public static String[] listDatabases(Connection conn, String regex, String preFilterRegexp) {
+    
+    Pattern pattern, preFilterPattern = null;
+    Matcher matcher, preFilterMatcher = null;
+    boolean usePreFilter = false;
+    
+    if (conn == null) {
+      logger.severe("Database connection is null");
+    }
+    
+    if (preFilterRegexp != null && preFilterRegexp.length() != 0) {
+      preFilterPattern = Pattern.compile(preFilterRegexp);
+      usePreFilter = true;
+    }
     
     ArrayList dbMatches = new ArrayList();
     
-    Pattern pattern = Pattern.compile(regex);
-    
-    Matcher matcher;
+    pattern = Pattern.compile(regex);
     
     String[] allDBNames = listDatabases(conn);
     
     for (int i = 0; i < allDBNames.length; i++) {
       
       matcher = pattern.matcher(allDBNames[i]);
-      if (matcher.matches()) {
-	dbMatches.add(allDBNames[i]);
+      
+      if (usePreFilter) {
+	preFilterMatcher = preFilterPattern.matcher(allDBNames[i]);
+	if (preFilterMatcher.matches() && matcher.matches()) {
+	  dbMatches.add(allDBNames[i]);
+	}
+      } else { // not using preFilter
+	if (matcher.matches()) {
+	  dbMatches.add(allDBNames[i]);
+	}
       }
-    }
+      
+    } // for i
+    
     
     String[] ret = new String[dbMatches.size()];
     
@@ -143,18 +172,18 @@ public class DBUtils {
    */
   public static boolean compareResultSetGroup(ArrayList resultSetGroup) {
     
-    boolean same = true;;
+    boolean same = true;
     
-    Iterator it1 = resultSetGroup.iterator();
-    while (it1.hasNext()) {
-      ResultSet rs1 = (ResultSet)it1.next();
-      // compare this ResultSet with all the others ...
-      Iterator it2 = resultSetGroup.iterator();
-      while (it2.hasNext()) {
-	ResultSet rs2 = (ResultSet)it2.next();
-	same &= compareResultSets(rs1, rs2);
-      } // it2
-    } // it1
+    // avoid comparing the same two ResultSets more than once
+    // i.e. only need the upper-right triangle of the comparison matrix
+    int size = resultSetGroup.size();
+    for (int i = 0; i < size; i++) {
+      for (int j = i+1; j < size; j++) {
+	ResultSet rsi = (ResultSet)resultSetGroup.get(i);
+	ResultSet rsj = (ResultSet)resultSetGroup.get(j);
+	same &= compareResultSets(rsi, rsj);
+      }
+    }
     
     return same;
     
@@ -180,28 +209,41 @@ public class DBUtils {
     }
     
     try {
+      
+      // get some information about the ResultSets
+      String url1 = rs1.getStatement().getConnection().getMetaData().getURL();
+      String name1 = url1.substring(url1.lastIndexOf('/')+1);
+      String url2 = rs2.getStatement().getConnection().getMetaData().getURL();
+      String name2 = url2.substring(url2.lastIndexOf('/')+1);
+      
       // Check for same column count, names and types
       ResultSetMetaData rsmd1 = rs1.getMetaData();
       ResultSetMetaData rsmd2 = rs2.getMetaData();
       if (rsmd1.getColumnCount() != rsmd2.getColumnCount()) {
+	System.out.println("Column counts differ -  " + name1 + ": " + rsmd1.getColumnCount() + " " + name2 + ": " + rsmd2.getColumnCount());
 	return false;
       }
       for (int i=1; i <= rsmd1.getColumnCount(); i++) {                 // note columns indexed from 1
 	if (!((rsmd1.getColumnName(i)).equals(rsmd2.getColumnName(i)))) {
+	  System.out.println("Column names differ for column " + i + " - " + name1 + ": " + rsmd1.getColumnName(i) + " " + name2 + ": " + rsmd2.getColumnName(i));
 	  return false;
 	}
 	if (rsmd1.getColumnType(i) != rsmd2.getColumnType(i)) {
+	  System.out.println("Column types differ for column " + i + " - " + name1 + ": " + rsmd1.getColumnType(i) + " " + name2 + ": " + rsmd2.getColumnType(i));
 	  return false;
 	}
       } // for column
-
+      
       // make sure both cursors are at the start of the ResultSet (default is before the start)
       rs1.first();
       rs2.first();
       // if quick checks didn't cause return, try comparing row-wise
-      while (rs1.next()) {
+      while (rs1.next() && rs2.next()) {
+	
 	for (int j=1; j <= rsmd1.getColumnCount(); j++) {              // note columns indexed from 1
 	  if (compareColumns(rs1, rs2, j) == false) {
+	    System.out.print(name1 + " and " + name2 + " differ at column " + j + " (" + rsmd1.getColumnName(j) + ")");
+	    System.out.println(" Values: " + rs1.getString(j) + "\t" + rs2.getString(j));
 	    return false;
 	  }
 	}
@@ -254,7 +296,11 @@ public class DBUtils {
 	  return rs1.getTimestamp(i).equals(rs2.getTimestamp(i));
 	  
 	default:  // treat everything else as a String (should deal with ENUM and TEXT)
-	  return rs1.getString(i).equals(rs2.getString(i));
+	  if (rs1.getString(i) == null || rs2.getString(i) == null) {
+	    return true; // ????
+	  } else {
+	    return rs1.getString(i).equals(rs2.getString(i));
+	  }
 	  
       } // switch
       
