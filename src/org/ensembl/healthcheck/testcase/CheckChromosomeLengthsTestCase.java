@@ -95,19 +95,46 @@ public class CheckChromosomeLengthsTestCase extends EnsTestCase {
       // be the same.
       // The SQL returns failures
       // --------------------------------------------------
-      String karsql =  "SELECT chr.name, chr.length FROM chromosome chr, karyotype kar WHERE chr.chromosome_id=kar.chromosome_id GROUP BY kar.chromosome_id HAVING chr.length <> MAX(kar.chr_end) ";
+      String karsql =  
+          "SELECT chr.name, max(kar.chr_end), chr.length " +
+          "FROM chromosome chr, karyotype kar " + 
+          "WHERE chr.chromosome_id=kar.chromosome_id " +
+          "GROUP BY kar.chromosome_id " +
+          "HAVING chr.length <> MAX(kar.chr_end) ";
 
-      String[] kars = getColumnValues(con, karsql);
-      // TO DO: report the bad chrs at high log level
+      int count = 0;
       
-      if (kars.length > 0){
-	result = false;
-	ReportManager.info(this, con, "chromosome lengths differ between karyotype and chromosome tables");
-	for( int i = 0 ; i<kars.length && i<50; i++ ) {
-	    ReportManager.problem( this, con, " Chromosome " + kars[i] + " is different in karyotype and chromosome table" );
-	}
-      } else {
-	ReportManager.correct(this, con, "chromosome lengths are the same in karyotype and chromosome tables");
+      try {
+          Statement stmt = con.createStatement();
+          ResultSet rs = stmt.executeQuery(karsql);
+          if(rs != null) {     
+              while(rs.next() && count < 50) {
+                  count++;
+                  String chrName = rs.getString(1);
+                  int karLen = rs.getInt(2);
+                  int chrLen = rs.getInt(3);
+
+                  String prob = "";
+                  int bp = 0;
+                  if(karLen > chrLen) {
+                      bp = karLen - chrLen;
+                      prob = "longer";
+                  } else {
+                      bp = chrLen - karLen;
+                      prob = "shorter";
+                  }
+                  ReportManager.problem( this, con, "Chromosome " + chrName 
+                         + " is "+bp+"bp "+prob+" in the karyotype table than "
+                         + "in the chromosome table" );
+              }
+          }
+      } catch(SQLException e) {
+          e.printStackTrace();
+      }
+
+      if(count == 0) {
+	ReportManager.correct(this, con, "chromosome lengths are the same"
+                              + " in karyotype and chromosome tables");
       }
 
       // -------------------------------------------
