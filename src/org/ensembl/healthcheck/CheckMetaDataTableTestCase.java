@@ -147,7 +147,6 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
     // ------------------------------------------
     // Check meta table species, classification and taxonomy_id is the same
     // in all DBs for each species
-    
     String[] species = getListOfSpecies();
 
     for (int i = 0; i < species.length; i++) {

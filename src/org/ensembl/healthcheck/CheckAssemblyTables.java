@@ -35,7 +35,7 @@ public class CheckAssemblyTables extends EnsTestCase {
   }
   
   /**
-   * Make sure that the assembly table has the same number of rows
+   * Make sure that the assembly table has the same number of rows.
    */
   TestResult run() {
     
