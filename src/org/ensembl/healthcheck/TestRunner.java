@@ -262,6 +262,10 @@ public class TestRunner {
       
       if (testCase.inGroups(groupsToRun)) {
         logger.warning("\nRunning test of type " + testCase.getClass().getName());
+        if (testCase.isLongRunning()) {
+          logger.warning("Note that " + testCase.getClass().getName() + " may take a significant amount of time to run");          
+        }
+        
         if (preFilterRegexp != null) {
           testCase.setPreFilterRegexp(preFilterRegexp);
         }
@@ -664,7 +668,7 @@ public class TestRunner {
   public void readStoredSchemaInfo(String fileName, boolean gzip) {
     
     if (gzip) {
-      fileName += ".gz"; 
+      fileName += ".gz";
     }
     
     try {
@@ -689,7 +693,7 @@ public class TestRunner {
     } catch(ClassNotFoundException ex) {
       ex.printStackTrace();
     }
-        
+    
   }
   
   // -------------------------------------------------------------------------
