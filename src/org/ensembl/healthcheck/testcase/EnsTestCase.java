@@ -415,10 +415,11 @@ public abstract class EnsTestCase {
 
             result = getRowCountFast(con, sql);
 
-        } else {
+        } else if (sql.toLowerCase().indexOf("select count") < 0) {
             // otherwise, do it row-by-row
+
             logger
-                    .warning("getRowCount() executing SQL which does not appear to begin with SELECT COUNT - performing row-by-row count, which may take a long time if the table is large.");
+                    .fine("getRowCount() executing SQL which does not appear to begin with SELECT COUNT - performing row-by-row count, which may take a long time if the table is large.");
             result = getRowCountSlow(con, sql);
 
         }
