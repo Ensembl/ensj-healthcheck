@@ -15,11 +15,13 @@ celegans_est
 celegans_mrna
 cloneset
 CpG
+drosophila-peptides
 Dust
 ensembl
 Eponine
 EST_cluster_WashU
 EST_cluster_IMCB
+Expression_profile
 external
 flybase
 from
@@ -58,6 +60,7 @@ rat_cdna
 refseq
 RepeatMask
 riken_prot
+RNA_BEST
 RNAi
 rodent_protein
 rodent_protein
