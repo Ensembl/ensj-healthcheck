@@ -163,7 +163,7 @@ public class Species {
 		//		--------------------------------------
 
 		// default
-		logger.warning("Cannot resolve species alias " + alias + " to a species - returning Species.UNKNOWN");
+		//logger.warning("Cannot resolve species alias " + alias + " to a species - returning Species.UNKNOWN");
 
 		return Species.UNKNOWN;
 
@@ -210,7 +210,7 @@ public class Species {
 
 	// -----------------------------------------------------------------
 	/**
-	 * Return true if alias appears somewhere in comma-separated list.
+	 * Return true if alias appears somewhere in a string.
 	 */
 	private static boolean in(String alias, String list) {
 
