@@ -29,7 +29,7 @@ import org.ensembl.healthcheck.util.*;
  */
 public class CheckMetaDataTableTestCase extends EnsTestCase {
   
-  private static final String[] validPrefixes = {"RGSC", "DROM", "ZFISH", "FUGU", "MOZ", "CEL", "CBR", "MGSC", "NCBI"};
+  private static final String[] validPrefixes = {"RGSC", "DROM", "ZFISH", "FUGU", "MOZ", "CEL", "CBR", "MGSC", "NCBI", "NCBIM" };
   
   /**
    * Creates a new instance of CheckMetaDataTableTestCase
