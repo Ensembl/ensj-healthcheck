@@ -29,6 +29,8 @@ import org.ensembl.healthcheck.testcase.*;
 public class ListAllTests extends TestRunner {
   
   String groupToList = "";
+  boolean showGroups = false;
+  boolean showDesc = false;
   
   // -------------------------------------------------------------------------
   /**
@@ -54,28 +56,37 @@ public class ListAllTests extends TestRunner {
   
   private void parseCommandLine(String[] args) {
     
-    if (args.length == 0) {
+    for (int i=0; i < args.length; i++) {
+      
+      if (args[i].equals("-h")) {
+	
+	printUsage();
+	System.exit(0);
+	
+      } 
+
+      if (args[i].equals("-g")) {
+
+	showGroups = true;
+
+      } else if (args[i].equals("-d")){
+	  
+	showDesc = true;
+	
+      } else {
+	
+	groupToList = args[i];
+	
+      }
+    }
+
+    if (groupToList.equals("")){
       
       groupToList = "all";
-      
-    } else {
-      
-      for (int i=0; i < args.length; i++) {
-        
-        if (args[i].equals("-h")) {
-          
-          printUsage();
-          System.exit(0);
-          
-        } else {
-          
-          groupToList = args[i];
-          
-        }
-      }
-      
+
     }
     
+  
   } // parseCommandLine
   // -------------------------------------------------------------------------
   
@@ -84,6 +95,8 @@ public class ListAllTests extends TestRunner {
     System.out.println("\nUsage: ListTests group1 ...\n");
     System.out.println("Options:");
     System.out.println("  -h         This message.");
+    System.out.println("  -g         Show groups associated with each test.");
+    System.out.println("  -d         Show test description.");
     System.out.println("  group1     List tests that are members of group1.");
     System.out.println("");
     System.out.println("If no groups are specified, the group 'all', which contains all tests, is listed.");
@@ -101,7 +114,32 @@ public class ListAllTests extends TestRunner {
     while (it.hasNext()) {
       EnsTestCase test = (EnsTestCase)it.next();
       if (test.inGroup(groupToList)) {
-        System.out.println(test.getShortTestName());
+	StringBuffer testline = new StringBuffer(test.getShortTestName());
+
+	if (showGroups){
+	  testline.append( " (" );
+	  List groups = test.getGroups();
+	  java.util.Iterator gIt = groups.iterator();
+	  while (gIt.hasNext()) {
+	    String groupname = (String)gIt.next();
+	    if (!groupname.equals(test.getShortTestName())){
+	      testline.append(groupname);
+	      testline.append(",");
+	    }
+	  }
+	  if (testline.charAt(testline.length()-1) == ','){
+	    testline.deleteCharAt(testline.length()-1);
+	  }
+	    
+	  testline.append( ")" );
+
+	}
+
+	if (showDesc){
+	  testline.append("\n" + test.getDescription() + "\n");
+	}
+
+        System.out.println(testline.toString());
       }
       
     }
