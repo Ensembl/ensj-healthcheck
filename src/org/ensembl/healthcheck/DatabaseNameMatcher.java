@@ -98,7 +98,7 @@ public class DatabaseNameMatcher {
       
       con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System.getProperty("user"), System.getProperty("password"));
       
-      databaseNames = DBUtils.listDatabases(con, databaseRegexp, "");
+      databaseNames = DBUtils.listDatabases(con, databaseRegexp);
       
       con.close();
       
