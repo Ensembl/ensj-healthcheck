@@ -84,18 +84,30 @@ public class DatabaseRegistryEntry {
         // homo_sapiens_core_20_34a
         if (bits.length >= 2) {
             alias = bits[0] + "_" + bits[1];
-            if (Species.resolveAlias(alias) != Species.UNKNOWN) { return Species.resolveAlias(alias); }
+            if (Species.resolveAlias(alias) != Species.UNKNOWN) { 
+		return Species.resolveAlias(alias); 
+	    }
         }
 
         // human_core_20, hsapiens_XXX
         if (bits.length > 1) {
             alias = bits[0];
-            if (Species.resolveAlias(alias) != Species.UNKNOWN) { return Species.resolveAlias(alias); }
+            if (Species.resolveAlias(alias) != Species.UNKNOWN) { 
+		return Species.resolveAlias(alias); 
+	    }
         }
 
         // compara, mart, go doesn't really have a species
         if (bits.length >= 2
                 && (bits[1].equalsIgnoreCase("compara") || bits[1].equalsIgnoreCase("go") || bits[1].equalsIgnoreCase("mart"))) { return Species.UNKNOWN; }
+
+	// Vega naming convention e.g. vega_homo_sapiens_ext_20040821_v19
+	if (bits.length > 3 && bits[0].equalsIgnoreCase("vega")) {
+	    alias = bits[1] + "_" + bits[2];
+	    if (Species.resolveAlias(alias) != Species.UNKNOWN) { 
+		return Species.resolveAlias(alias); 
+	    }
+	}
 
         // other permutations?
 
@@ -126,14 +138,24 @@ public class DatabaseRegistryEntry {
         // homo_sapiens_core_20_34a
         if (bits.length >= 4) {
             alias = bits[2];
-            if (DatabaseType.resolveAlias(alias) != DatabaseType.UNKNOWN) { return DatabaseType.resolveAlias(alias); }
+            if (DatabaseType.resolveAlias(alias) != DatabaseType.UNKNOWN) { 
+		return DatabaseType.resolveAlias(alias); 
+	    }
         }
 
         // human_core_20, ensembl_compara_20_1
         if (bits.length >= 3) {
             alias = bits[1];
-            if (DatabaseType.resolveAlias(alias) != DatabaseType.UNKNOWN) { return DatabaseType.resolveAlias(alias); }
+            if (DatabaseType.resolveAlias(alias) != DatabaseType.UNKNOWN) { 
+		return DatabaseType.resolveAlias(alias); 
+	    }
         }
+
+	// Vega naming convention e.g. vega_homo_sapiens_ext_20040821_v19
+	if (bits.length > 3 && bits[0].equalsIgnoreCase("vega")) {
+	    return DatabaseType.VEGA;
+	}
+
 
         // other permutations?
 
