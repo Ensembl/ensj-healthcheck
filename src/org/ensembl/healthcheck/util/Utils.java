@@ -1,19 +1,19 @@
 /*
- Copyright (C) 2004 EBI, GRL
- 
- This library is free software; you can redistribute it and/or
- modify it under the terms of the GNU Lesser General Public
- License as published by the Free Software Foundation; either
- version 2.1 of the License, or (at your option) any later version.
- 
- This library is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- Lesser General Public License for more details.
- 
- You should have received a copy of the GNU Lesser General Public
- License along with this library; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Copyright (C) 2004 EBI, GRL
+ * 
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
 package org.ensembl.healthcheck.util;
@@ -52,10 +52,11 @@ public final class Utils {
     }
 
     /**
-     * Read the <code>database.properties</code> file into the System properties so that it can
-     * be overridden with -D.
+     * Read the <code>database.properties</code> file into the System
+     * properties so that it can be overridden with -D.
      * 
-     * @param propertiesFileName The properties file to read.
+     * @param propertiesFileName
+     *            The properties file to read.
      */
     public static void readPropertiesFileIntoSystem(final String propertiesFileName) {
 
@@ -71,6 +72,16 @@ public final class Utils {
 
         }
 
+        // check that properties that need to be set are set
+        String[] requiredProps = {"port", "host", "user"};
+        for (int i = 0; i < requiredProps.length; i++) {
+            if (System.getProperty(requiredProps[i]) == null) {
+                System.err.println("WARNING: " + requiredProps[i] + " is not set in " + propertiesFileName
+                        + " - cannot connect to database");
+                System.exit(1);
+            }
+        }
+
         // check if a databaseURL property has been specified; if so, use it
         // if not, build the databaseURL property from host, port etc
 
@@ -83,8 +94,6 @@ public final class Utils {
 
             if (System.getProperty("host") != null) {
                 databaseURL += System.getProperty("host");
-            } else {
-                System.err.println("Error: host not specified in " + propertiesFileName);
             }
 
             if (System.getProperty("port") != null) {
@@ -111,7 +120,8 @@ public final class Utils {
     /**
      * Read a properties file.
      * 
-     * @param propertiesFileName The name of the properties file to use.
+     * @param propertiesFileName
+     *            The name of the properties file to use.
      * @return The Properties hashtable.
      */
     public static Properties readSimplePropertiesFile(String propertiesFileName) {
@@ -139,7 +149,8 @@ public final class Utils {
     /**
      * Print a list of Strings, one per line.
      * 
-     * @param l The List to be printed.
+     * @param l
+     *            The List to be printed.
      */
     public static void printList(List l) {
 
@@ -154,9 +165,12 @@ public final class Utils {
     /**
      * Concatenate a list of Strings into a single String.
      * 
-     * @param list The Strings to list.
-     * @param delim The delimiter to use.
-     * @return A String containing the elements of list separated by delim. No trailing delimiter.
+     * @param list
+     *            The Strings to list.
+     * @param delim
+     *            The delimiter to use.
+     * @return A String containing the elements of list separated by delim. No
+     *         trailing delimiter.
      */
     public static String listToString(List list, String delim) {
 
@@ -177,9 +191,12 @@ public final class Utils {
     /**
      * Concatenate an array of Strings into a single String.
      * 
-     * @param a The Strings to list.
-     * @param delim The delimiter to use.
-     * @return A String containing the elements of a separated by delim. No trailing delimiter.
+     * @param a
+     *            The Strings to list.
+     * @param delim
+     *            The delimiter to use.
+     * @return A String containing the elements of a separated by delim. No
+     *         trailing delimiter.
      */
     public static String arrayToString(String[] a, String delim) {
 
@@ -199,7 +216,8 @@ public final class Utils {
     /**
      * Print the keys in a HashMap.
      * 
-     * @param m The map to use.
+     * @param m
+     *            The map to use.
      */
     public static void printKeys(Map m) {
 
@@ -215,7 +233,8 @@ public final class Utils {
     /**
      * Print an array of Strings, one per line.
      * 
-     * @param a The array to be printed.
+     * @param a
+     *            The array to be printed.
      */
     public static void printArray(String[] a) {
 
@@ -229,7 +248,8 @@ public final class Utils {
     /**
      * Print an Enumeration, one String per line.
      * 
-     * @param e The enumeration to be printed.
+     * @param e
+     *            The enumeration to be printed.
      */
     public static void printEnumeration(Enumeration e) {
 
@@ -243,9 +263,12 @@ public final class Utils {
     /**
      * Split a classpath-like string into a list of constituent paths.
      * 
-     * @param classPath The String to split.
-     * @param delim FileSystem classpath delimiter.
-     * @return An array containing one string per path, in the order they appear in classPath.
+     * @param classPath
+     *            The String to split.
+     * @param delim
+     *            FileSystem classpath delimiter.
+     * @return An array containing one string per path, in the order they appear
+     *         in classPath.
      */
     public static String[] splitClassPath(String classPath, String delim) {
 
@@ -265,9 +288,12 @@ public final class Utils {
     /**
      * Search an array of strings for those that contain a pattern.
      * 
-     * @param paths The List to search.
-     * @param pattern The pattern to look for.
-     * @return The matching paths, in the order that they were in the input array.
+     * @param paths
+     *            The List to search.
+     * @param pattern
+     *            The pattern to look for.
+     * @return The matching paths, in the order that they were in the input
+     *         array.
      */
     public static String[] grepPaths(String[] paths, String pattern) {
 
@@ -294,7 +320,8 @@ public final class Utils {
     /**
      * Print the contents of a jar file.
      * 
-     * @param path The path to the jar file.
+     * @param path
+     *            The path to the jar file.
      */
     public static void printJarFileContents(String path) {
 
@@ -313,9 +340,13 @@ public final class Utils {
     /**
      * Truncate a string to a certain number of characters.
      * 
-     * @param str The string to truncate.
-     * @param size The maximum number of characters.
-     * @param useEllipsis If true, add "..." to the truncated string to show it's been truncated.
+     * @param str
+     *            The string to truncate.
+     * @param size
+     *            The maximum number of characters.
+     * @param useEllipsis
+     *            If true, add "..." to the truncated string to show it's been
+     *            truncated.
      * @return The truncated String, with ellipsis if specified.
      */
     public static String truncate(String str, int size, boolean useEllipsis) {
@@ -340,9 +371,12 @@ public final class Utils {
      * Pad (on the right) a string with a certain number of characters.
      * 
      * @return The padded String.
-     * @param size The desired length of the final, padded string.
-     * @param str The String to add the padding to.
-     * @param pad The String to pad with.
+     * @param size
+     *            The desired length of the final, padded string.
+     * @param str
+     *            The String to add the padding to.
+     * @param pad
+     *            The String to pad with.
      */
     public static String pad(String str, String pad, int size) {
 
@@ -361,7 +395,8 @@ public final class Utils {
     /**
      * Read a text file.
      * 
-     * @param name The name of the file to read.
+     * @param name
+     *            The name of the file to read.
      * @return An array of Strings representing the lines of the file.
      */
     public static String[] readTextFile(String name) {
@@ -405,13 +440,16 @@ public final class Utils {
 
     // -------------------------------------------------------------------------
     /**
-     * Check if a String is in an array of Strings. The whole array is searched (until a match is
-     * found); this is quite slow but does not require the array to be sorted in any way
-     * beforehand.
+     * Check if a String is in an array of Strings. The whole array is searched
+     * (until a match is found); this is quite slow but does not require the
+     * array to be sorted in any way beforehand.
      * 
-     * @param str The String to search for.
-     * @param a The array to search through.
-     * @param caseSensitive If true, case sensitive searching is done.
+     * @param str
+     *            The String to search for.
+     * @param a
+     *            The array to search through.
+     * @param caseSensitive
+     *            If true, case sensitive searching is done.
      * @return true if str is in a.
      */
     public static boolean stringInArray(String str, String[] a, boolean caseSensitive) {
@@ -440,11 +478,14 @@ public final class Utils {
 
     // -------------------------------------------------------------------------
     /**
-     * Check if an object is in an array. The whole array is searched (until a match is found);
-     * this is quite slow but does not require the array to be sorted in any way beforehand.
+     * Check if an object is in an array. The whole array is searched (until a
+     * match is found); this is quite slow but does not require the array to be
+     * sorted in any way beforehand.
      * 
-     * @param o The Object to search for.
-     * @param a The array to search through.
+     * @param o
+     *            The Object to search for.
+     * @param a
+     *            The array to search through.
      * @return true if o is in a.
      */
     public static boolean objectInArray(Object o, Object[] a) {
@@ -463,9 +504,11 @@ public final class Utils {
 
     // -----------------------------------------------------------------
     /**
-     * Return an array containing all of the subdirectories of a given directory.
+     * Return an array containing all of the subdirectories of a given
+     * directory.
      * 
-     * @param parentDir The directory to look in.
+     * @param parentDir
+     *            The directory to look in.
      * @return All the subdirectories (if any) in parentDir.
      */
     public static String[] getSubDirs(String parentDir) {
@@ -496,9 +539,12 @@ public final class Utils {
     /**
      * Remove the objects from one array that are present in another.
      * 
-     * @param source The array to be filtered.
-     * @param remove An array of objects to be removed from source.
-     * @return A new array containing all objects that are in source minus any that are in remove.
+     * @param source
+     *            The array to be filtered.
+     * @param remove
+     *            An array of objects to be removed from source.
+     * @return A new array containing all objects that are in source minus any
+     *         that are in remove.
      */
     public static Object[] filterArray(Object[] source, Object[] remove) {
 
@@ -519,9 +565,10 @@ public final class Utils {
     /**
      * Format a time as hours, minutes and seconds.
      * 
-     * @param time The time in ms, e.g. from System.currentTimeMillis()
-     * @return The time formatted as e.g. 4 hours 2 min 3s. Hours is largest unit currently
-     *         supported.
+     * @param time
+     *            The time in ms, e.g. from System.currentTimeMillis()
+     * @return The time formatted as e.g. 4 hours 2 min 3s. Hours is largest
+     *         unit currently supported.
      */
     public static String formatTimeString(long time) {
 
