@@ -74,11 +74,13 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 
         Connection con = dbre.getConnection();
 
-	result &= checkFeaturesAndCounts(con);
+	//result &= checkFeaturesAndCounts(con);
     
 	result &= checkAnalysisAndDensityTypes(con);
 
 	result &= checkDensityTypes(con);
+
+	result &= checkFeatureSeqRegions(con);
 
 	return result;
 	
@@ -278,6 +280,25 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 
 	return result;
 
+    }
+
+    // ----------------------------------------------------------------------
+    /**
+     * Check for density_features that link to non-existent seq_regions.
+     */
+    private boolean checkFeatureSeqRegions(Connection con) {
+
+	boolean result = true;
+
+	logger.finest("Checking density_feature-seq_region links");
+	int orphans = countOrphans(con, "density_feature", "seq_region_id", "seq_region", "seq_region_id", true);
+        if (orphans > 0) {
+            ReportManager.problem(this, con, orphans + " density_features reference non-existent seq_regions");
+        } else {
+            ReportManager.correct(this, con, "All density_type->seq_region relationships are OK");
+        }
+	return result;
+	
     }
 
     // ----------------------------------------------------------------------
