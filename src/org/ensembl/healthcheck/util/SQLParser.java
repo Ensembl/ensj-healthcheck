@@ -97,8 +97,10 @@ public class SQLParser {
   }
   
   // -------------------------------------------------------------------------
-  /**
+  /** 
    * Fill a SQL Statement with a set of batch commands from the SQL file.
+   * @param stmt The statement to be filled.
+   * @return A statement with addBatch() called for each command in the parsed SQL file.
    */
   public Statement populateBatch(Statement stmt) {
     
@@ -142,7 +144,9 @@ public class SQLParser {
   }
   
   // -------------------------------------------------------------------------
-  
+  /**
+   * Dump the SQL commands to stdout.
+   */
   public void printLines() {
     
     Iterator it = lines.iterator();

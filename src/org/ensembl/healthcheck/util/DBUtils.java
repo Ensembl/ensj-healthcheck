@@ -170,11 +170,12 @@ public class DBUtils {
   } // listDatabases
   
   // -------------------------------------------------------------------------
-  /**
+  /** 
    * Compare a list of ResultSets to see if there are any differences.
    * Note that if the ResultSets are large and/or there are many of them, this may take a long time!
-   * @param resultSetGroup The list of ResultSets to compare
    * @return The number of differences.
+   * @param testCase The test case that is calling the comparison. Used for ReportManager.
+   * @param resultSetGroup The list of ResultSets to compare
    */
   public static boolean compareResultSetGroup(List resultSetGroup, EnsTestCase testCase) {
     
@@ -196,15 +197,17 @@ public class DBUtils {
   } // compareResultSetGroup
   
   // -------------------------------------------------------------------------
-  /**
+  /** 
    * Compare two ResultSets.
-   * @param rs1 The first ResultSet to compare.
-   * @param rs2 The second ResultSet to compare.
    * @return True if all the following are true: <ol>
    * <li> rs1 and rs2 have the same number of columns</li>
    * <li> The name and type of each column in rs1 is equivalent to the corresponding column in rs2.</li>
    * <li> All the rows in rs1 have the same type and value as the corresponding rows in rs2.</li>
-   *</ol>
+   * </ol>
+   * @param testCase The test case calling the comparison; used in ReportManager.
+   * @param text Additional text to put in any error reports.
+   * @param rs1 The first ResultSet to compare.
+   * @param rs2 The second ResultSet to compare.
    */
   public static boolean compareResultSets(ResultSet rs1, ResultSet rs2, EnsTestCase testCase, String text) {
     

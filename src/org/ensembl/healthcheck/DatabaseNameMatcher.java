@@ -35,7 +35,10 @@ public class DatabaseNameMatcher {
   private Properties dbProps;
   
   // -------------------------------------------------------------------------
-  
+  /**
+   * Command-line entry point.
+   * @param args Arguments.
+   */
   public static void main(String[] args) {
     
     DatabaseNameMatcher dnm = new DatabaseNameMatcher();
@@ -85,7 +88,9 @@ public class DatabaseNameMatcher {
   } // readPropertiesFile
   
   // -------------------------------------------------------------------------
-  
+  /**
+   * Show the databases that have names that match the regexp.
+   */
   public void showMatches() {
     
     Connection con;
