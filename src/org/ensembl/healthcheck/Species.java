@@ -117,7 +117,7 @@ public final class Species {
         taxonIDToSpecies.put("99883", TETRAODON_NIGROVIRIDIS);
         taxonIDToSpecies.put("7460", APIS_MELLIFERA);
 	taxonIDToSpecies.put("9913", BOS_TAURUS);
-	taxonIDToSpecies.put("9915", CANIS_FAMILIARIS);
+	taxonIDToSpecies.put("9615", CANIS_FAMILIARIS);
 
         // and the other way around
         Iterator it = taxonIDToSpecies.keySet().iterator();
