@@ -93,7 +93,7 @@ public class ForeignKeyMemberId extends SingleDatabaseTestCase {
             ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + fk + " relationships");
         } else if (orphans > 0) {
             ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + fk + " relationships");
-            ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries have unlinked entries in " + table2);
+            ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
             ReportManager.problem(this, con, "USEFUL SQL: " + sql);
         } else {
             ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + fk + ", look at the StackTrace if any");
