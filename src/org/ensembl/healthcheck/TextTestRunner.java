@@ -61,7 +61,7 @@ public class TextTestRunner extends TestRunner {
       ttr.buildSchemaList(true, SCHEMA_INFO_FILENAME);
     }
     
-    if (ttr.useSchemaInfo) {
+    if (ttr.useSchemaInfo && !ttr.rebuildSchemaInfo) { // if buildSchemaList has been called, SchemaManager will already have been populated
       ttr.readStoredSchemaInfo(SCHEMA_INFO_FILENAME);
     }
     
