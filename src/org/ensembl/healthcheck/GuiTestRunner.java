@@ -27,10 +27,16 @@ import org.ensembl.healthcheck.util.*;
 /**
  * Graphical test runner.
  */
-public class GuiTestRunner extends TestRunner{
+public class GuiTestRunner extends TestRunner {
   
   protected static Logger logger = Logger.getLogger("HealthCheckLogger");
   private GuiTestRunnerFrame gtrf;
+  
+  protected int maxThreads = 1;
+  
+  protected boolean forceDatabases = false;
+  
+  protected String preFilterRegexp = "";
   
   /**
    * Creates a new instance of GuiTestRunner
@@ -62,7 +68,7 @@ public class GuiTestRunner extends TestRunner{
   
   private void openFrame() {
     
-    gtrf = new GuiTestRunnerFrame();
+    gtrf = new GuiTestRunnerFrame(this);
     gtrf.show();
     
   } // openFrame
@@ -73,13 +79,11 @@ public class GuiTestRunner extends TestRunner{
     
     List tests = findAllTests();
     
-    gtrf.initTestPanel(tests, groupsToRun);
+    gtrf.initTestPanel(null, null);
     
-    this.runAllTests(tests, false, gtrf);
+    gtrf.initGroupList(tests, listAllGroups(tests));
     
     ConnectionPool.closeAll();
-    
-    gtrf.setStatus("Done");
     
   } // initFrame
   
@@ -89,7 +93,9 @@ public class GuiTestRunner extends TestRunner{
   private void setupLogging() {
     
     logger.addHandler(new CallbackHandler(gtrf, new LogFormatter()));
-    logger.setLevel(Level.INFO);
+    logger.addHandler(new MyStreamHandler(System.out, new LogFormatter()));
+
+    logger.setLevel(Level.ALL);
     
     logger.info("Ready");
     
@@ -100,11 +106,6 @@ public class GuiTestRunner extends TestRunner{
   
   private void parseCommandLine(String[] args) {
     
-    for (int i=0; i < args.length; i++) {
-      
-      groupsToRun.add(args[i]);
-      System.out.println("Will run tests in group " + args[i]);
-    }
     
   } // parseCommandLine
   
@@ -115,14 +116,25 @@ public class GuiTestRunner extends TestRunner{
    * @param forceDatabases If true, use only the database name pattern specified
    * on the command line, <em>not</em> the regular expression built in to the test case.
    */
-  protected void runAllTests(List allTests, boolean forceDatabases, GuiTestRunnerFrame gtrf) {
+  protected void runAllTests(List allTests, List groups, GuiTestRunnerFrame gtrf) {
+    
+    ThreadGroup testThreads = new ThreadGroup("test_threads");
     
     Iterator it = allTests.iterator();
     while (it.hasNext()) {
       
-      EnsTestCase testCase = (EnsTestCase)it.next();
+      // wait for the number of threads to drop
+      while (testThreads.activeCount() > 1000) { // XXX
+        try {
+          Thread.yield();
+          Thread.sleep(100);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+      org.ensembl.healthcheck.testcase.EnsTestCase testCase = (org.ensembl.healthcheck.testcase.EnsTestCase)it.next();
       
-      if (testCase.inGroups(groupsToRun)) {
+      if (testCase.inGroups(groups)) {
         
         gtrf.setStatus("Running " + testCase.getShortTestName());
         if (preFilterRegexp != null) {
@@ -134,18 +146,61 @@ public class GuiTestRunner extends TestRunner{
           testCase.setDatabaseRegexp(preFilterRegexp);
         }
         
-        gtrf.setTestButtonEnabled(testCase.getTestName(), true);
+        Thread t = new Thread(testThreads, new GUITestRunnerThread(testCase, gtrf));
+        System.out.println("active_count = " + testThreads.activeCount());
+        t.start();
         
-        TestResult tr = testCase.run();
-        
-        Color c = tr.getResult() ? new Color(0, 128, 0) : Color.RED;
-                  
-        gtrf.setTestButtonColour(testCase.getTestName(), c);
-          
       }
-    }
+      
+    } // while it.hasNext()
     
-  } // runAllTests
+    gtrf.setStatus("Done");
+    
+  }
+  
+  // runAllTests
+  // -------------------------------------------------------------------------
+  
+  public void setMaxThreads(int t) {
+    
+    maxThreads = t;
+    logger.finest("Set maxThreads to " + maxThreads);
+    
+  } // setMaxThreads
+  
+  public int getMaxThreads() {
+    
+    return maxThreads;
+    
+  } // getMaxThreads
+  
+  public void setForceDatabases(boolean b) {
+    
+    forceDatabases = b;
+    logger.finest("Set forceDatabases to " + forceDatabases);
+    
+    
+  } // setForceDatabases
+  
+  public boolean getForceDatabases() {
+    
+    return forceDatabases;
+    
+  } // getforceDatabase
+  
+  public void setPreFilterRegexp(String re) {
+    
+    preFilterRegexp = re;
+    logger.finest("Set preFilterRegexp to " + preFilterRegexp);
+    
+  } // setPreFilterRegexp
+  
+  public String getPreFilterRegexp() {
+    
+    return preFilterRegexp;
+    
+  } // getPreFilterRegexp
+  
   // -------------------------------------------------------------------------
   
 } // GuiTestRunner
