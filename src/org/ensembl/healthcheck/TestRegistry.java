@@ -299,6 +299,9 @@ public class TestRegistry {
 
                 testCase.setTypeFromDirName(dirName);
 
+                // call the test's type method
+                testCase.types();
+                
                 // store the test instance
                 tests.add(testCase);
 
@@ -455,7 +458,7 @@ public class TestRegistry {
      * Get a list of the union of groups of all the tests.
      */
     public String[] getGroups() {
-        
+
         List groups = new ArrayList();
 
         Iterator it = allTests.iterator();
@@ -464,8 +467,9 @@ public class TestRegistry {
             List testGroups = test.getGroups();
             Iterator it2 = testGroups.iterator();
             while (it2.hasNext()) {
-                String group = (String)it.next();
-                if (!groups.contains(group)) {
+                String group = (String) it.next();
+                // filter out test names
+                if (!isTestName(group) && !groups.contains(group)) {
                     groups.add(group);
                 }
             }
@@ -474,13 +478,13 @@ public class TestRegistry {
         return (String[]) groups.toArray(new String[groups.size()]);
 
     }
-    
+
     // -------------------------------------------------------------------------
     /**
      * Get all the tests in a particular group.
      */
     public EnsTestCase[] getTestsInGroup(String group) {
-    
+
         List result = new ArrayList();
 
         Iterator it = allTests.iterator();
@@ -494,7 +498,75 @@ public class TestRegistry {
         return (EnsTestCase[]) result.toArray(new EnsTestCase[result.size()]);
 
     }
-    
+
     // -------------------------------------------------------------------------
-    
+    /**
+     * Get a list of the union of groups of all the tests that apply to a particular type of
+     * database.
+     */
+    public String[] getGroups(DatabaseType type) {
+
+        List groups = new ArrayList();
+
+        Iterator it = allTests.iterator();
+        while (it.hasNext()) {
+            EnsTestCase test = (EnsTestCase) it.next();
+            if (test.appliesToType(type)) {
+                List testGroups = test.getGroups();
+                Iterator it2 = testGroups.iterator();
+                while (it2.hasNext()) {
+                    String group = (String) it2.next();
+                    // filter out test names
+                    if (!isTestName(group) && !groups.contains(group)) {
+                        groups.add(group);
+                    }
+                }
+            }
+        }
+
+        return (String[]) groups.toArray(new String[groups.size()]);
+
+    }
+
+    // -------------------------------------------------------------------------
+    /**
+     * Get all the tests in a particular group that apply to a particular 
+     * type of database.
+     */
+    public EnsTestCase[] getTestsInGroup(String group, DatabaseType type) {
+
+        List result = new ArrayList();
+
+        Iterator it = allTests.iterator();
+        while (it.hasNext()) {
+            EnsTestCase test = (EnsTestCase) it.next();
+            if (test.inGroup(group) && test.appliesToType(type)) {
+                result.add(test);
+            }
+        }
+
+        return (EnsTestCase[]) result.toArray(new EnsTestCase[result.size()]);
+
+    }
+
+    // -------------------------------------------------------------------------
+    /**
+     * Check if a string (e.g. the name of a group) is actually the name of a known
+     * test case.
+     */
+    private boolean isTestName(String s) {
+        
+        Iterator it = allTests.iterator();
+        while (it.hasNext()) {
+            EnsTestCase test = (EnsTestCase) it.next();
+            if (test.getShortTestName().equals(s)) {
+                return true;
+            }
+        }
+        
+        return false;
+        
+    }
+    // -------------------------------------------------------------------------
+
 } // TestRegistry
