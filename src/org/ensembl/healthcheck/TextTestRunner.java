@@ -80,28 +80,38 @@ public class TextTestRunner extends TestRunner implements Reporter {
     
     System.out.println("\nUsage: TextTestRunner {options} {group1} {group2} ...\n");
     System.out.println("Options:");
-    System.out.println("  -d regexp       Use the given regular expression to decide which databases to use.");
+    System.out.println("  -d regexp       Use the given regular expression to decide which databases to");
+    System.out.println("                  use.");
     System.out.println("  -force          Run the named tests on the databases matched by -d, without ");
-    System.out.println("                  taking into account the regular expressions built into the tests themselves.");
+    System.out.println("                  taking into account the regular expressions built into the ");
+    System.out.println("                  tests themselves.");
     System.out.println("  -h              This message.");
-    System.out.println("  -output level   Set output level; level can be one of ");
-    System.out.println("                  none      nothing is printed");
-    System.out.println("                  problem   only problems are reported");
-    System.out.println("                  correct   only correct results (and problems) are reported");
-    System.out.println("                  summary   only summary info (and problems, and correct reports) are reported");
-    System.out.println("                  info      info (and problem, correct, summary) messages reported");
-    System.out.println("                  all       everything is printed");
-    System.out.println("  -config file    Read config from file (in ensj-healthcheck dir) rather than database.properties");
+    System.out.println("  -output level   Set output level; level can be one of:");
+    System.out.println("                    none     nothing is printed");
+    System.out.println("                    problem  only problems are reported");
+    System.out.println("                    warning  warnings and problems are reported");
+    System.out.println("                    info     additional info, warnings and problems are reported");
+    System.out.println("                    correct  correct (and all other) messages are reported");
+    System.out.println("                    all      everything is reported");
+    System.out.println("  -config file    Read config from file (in ensj-healthcheck dir) rather than ");
+    System.out.println("                  database.properties");
     System.out.println("  -debug          Print debugging info (for developers only)");
-    System.out.println("  -repair         If appropriate, carry out repair methods on test cases that support it");
-    System.out.println("  -showrepair     Like -repair, but the repair is NOT carried out, just reported.");
-    System.out.println("  -noschemainfo   Do not cache schema info at startup. Quicker, but may cause some tests not to work. Use with caution.");
-    System.out.println("  -refreshschemas Rebuild the stored schema info; this is rather slow as every schema must be examined, but should be used when a schema structure change has occurred.");
+    System.out.println("  -repair         If appropriate, carry out repair methods on test cases that ");
+    System.out.println("                  support it");
+    System.out.println("  -showrepair     Like -repair, but the repair is NOT carried out, just ");
+    System.out.println("                  reported.");
+    System.out.println("  -noschemainfo   Do not cache schema info at startup. Quicker, but may cause");
+    System.out.println("                  some tests not to work. Use with caution.");
+    System.out.println("  -refreshschemas Rebuild the stored schema info; this is rather slow as every ");
+    System.out.println("                  schema must be examined, but should be used when a schema ");
+    System.out.println("                  structure change has occurred.");
     System.out.println("  group1          Names of groups of test cases to run.");
-    System.out.println("                  Note each test case is in a group of its own with the name of the test case.");
-    System.out.println("                  This allows individual tests to be run if required.");
+    System.out.println("                  Note each test case is in a group of its own with the name of ");
+    System.out.println("                  the test case. This allows individual tests to be run if ");
+    System.out.println("                  required.");
     System.out.println("");
-    System.out.println("If no tests or test groups are specified, and a database regular expression is given with -d, the matching databases are shown. ");
+    System.out.println("If no tests or test groups are specified, and a database regular expression is ");
+    System.out.println("given with -d, the matching databases are shown. ");
     System.out.println("");
     System.out.println("Currently available tests:");
     
@@ -110,7 +120,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
     Iterator it = tests.iterator();
     while (it.hasNext()) {
       EnsTestCase test = (EnsTestCase)it.next();
-      System.out.print(test.getShortTestName() + " ");
+      System.out.print("  " + test.getShortTestName() + "\n");
     }
     
     System.out.println("");
