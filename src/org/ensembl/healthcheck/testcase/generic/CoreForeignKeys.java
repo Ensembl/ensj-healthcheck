@@ -128,7 +128,7 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
         int orphans = countOrphans(con, table1, key1, table2, key2, oneWay);
         if (orphans > 0) {
-            ReportManager.problem(this, con, table1 + " <-> " + table2 + " has unlinked entries");
+            ReportManager.problem(this, con, table1 + " <-> " + table2 + " has " + orphans + " unlinked entries");
         } else {
             ReportManager.correct(this, con, "All " + table1 + " <-> " + table2 + " relationships are OK");
         }
