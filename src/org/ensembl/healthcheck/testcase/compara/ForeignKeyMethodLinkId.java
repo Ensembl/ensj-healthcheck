@@ -59,8 +59,8 @@ public class ForeignKeyMethodLinkId extends SingleDatabaseTestCase {
 
         if (tableHasRows(con, "method_link")) {
 
-            result &= checkForOrphans(con, "method_link_species", "method_link_id", "method_link", "method_link_id");
-            result &= checkForOrphans(con, "method_link", "method_link_id", "method_link_species", "method_link_id");
+            result &= checkForOrphans(con, "method_link_species_set", "method_link_id", "method_link", "method_link_id");
+            result &= checkForOrphans(con, "method_link", "method_link_id", "method_link_species_set", "method_link_id");
 
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in method_link table, so nothing to test IGNORED");
