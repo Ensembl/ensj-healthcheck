@@ -98,6 +98,25 @@ public class TestRegistry {
 
 	} // getAllMulti
 
+	//	-----------------------------------------------------------------
+	/**
+	 * @return All the ordered database tests.
+	 */
+	public List getAllOrdered() {
+
+		List allOrdered = new ArrayList();
+		Iterator it = allTests.iterator();
+		while (it.hasNext()) {
+			Object test = it.next();
+			if (test instanceof OrderedDatabaseTestCase) {
+				allOrdered.add(test);
+			}
+		}
+
+		return allOrdered;
+
+	} // getAllOrdered
+
 	// -----------------------------------------------------------------
 	/**
 	 * Get a list of all the single-database test cases that match certain conditions. 
@@ -143,7 +162,29 @@ public class TestRegistry {
 		return result;
 
 	}
-	
+
+	//	-----------------------------------------------------------------
+	/**
+	 * Get a list of all the ordered database test cases that match certain conditions. 
+	 * Note the database type that the test applies to is /not/ checked here.
+	 * @param groups A list of test case groups
+	 * @return All the ordered-database tests that are in at least one of groups.
+	 */
+	public List getAllOrdered(List groups) {
+
+		List result = new ArrayList();
+
+		Iterator it = getAllOrdered().iterator();
+		while (it.hasNext()) {
+			OrderedDatabaseTestCase test = (OrderedDatabaseTestCase)it.next();
+			if (test.inGroups(groups)) {
+				result.add(test);
+			}
+		}
+
+		return result;
+
+	}
 	// -----------------------------------------------------------------
 
 	/**
