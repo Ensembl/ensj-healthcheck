@@ -23,6 +23,7 @@ import java.util.logging.*;
 import java.sql.*;
 import java.io.*;
 import java.util.regex.*;
+import java.util.zip.*;
 
 import org.ensembl.healthcheck.testcase.*;
 
@@ -668,11 +669,14 @@ public class TestRunner {
     
     try {
       
-      FileInputStream fis = new FileInputStream(fileName);
-      ObjectInputStream in = new ObjectInputStream(fis);
+      InputStream is = new FileInputStream(fileName);
+      if (gzip) {
+        is = new GZIPInputStream(is);
+      }
+      ObjectInputStream in = new ObjectInputStream(is);
       List schemas = (List)in.readObject();
       in.close();
-      fis.close();
+      is.close();
       Iterator it = schemas.iterator();
       while (it.hasNext()) {
         SchemaInfo si = (SchemaInfo)it.next();
