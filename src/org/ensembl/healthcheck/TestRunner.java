@@ -17,11 +17,8 @@
 package org.ensembl.healthcheck;
 
 import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import java.util.logging.*;
 import java.sql.*;
-import java.io.*;
 import org.ensembl.healthcheck.testcase.*;
 import org.ensembl.healthcheck.util.*;
 
@@ -40,12 +37,6 @@ public class TestRunner {
 	/** The List of group names (as Strings) that will be run. */
 	protected List groupsToRun;
 
-	/**
-	 * If set, database names are filtered with this regular expression before the regexp
-	 * built into the tests.
-	 */
-	protected String preFilterRegexp;
-
 	/** The logger to use for this class */
 	protected static Logger logger = Logger.getLogger("HealthCheckLogger");
 
@@ -61,17 +52,13 @@ public class TestRunner {
 	/** Flag to determine whether repairs will be carried out if appropriate */
 	protected boolean doRepair = false;
 
-	/** Where to start looking for testcase classes */
-	private static final String TESTCASE_SEARCH_PACKAGE = "org.ensembl.healthcheck";
-
-	/** Will hold information about all the databases targeted */
-	protected DatabaseRegistry databaseRegistry;
-
 	// -------------------------------------------------------------------------
 	/** Creates a new instance of TestRunner */
 
 	public TestRunner() {
+		
 		groupsToRun = new ArrayList();
+	
 	} // TestRunner
 
 	// -------------------------------------------------------------------------
@@ -81,13 +68,13 @@ public class TestRunner {
 	 * @return An array of the schema names.
 	 */
 	public String[] getAllSchemaNames() {
+		
 		Connection conn;
 		String[] schemaNames = null;
 
 		// open connection
 		try {
-			conn = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System
-					.getProperty("user"), System.getProperty("password"));
+			conn = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System.getProperty("user"), System.getProperty("password"));
 			logger.fine("Opened connection to " + System.getProperty("databaseURL") + " as " + System.getProperty("user"));
 			schemaNames = DBUtils.listDatabases(conn);
 			logger.fine("Connection closed");
@@ -95,7 +82,9 @@ public class TestRunner {
 			e.printStackTrace();
 			System.exit(1);
 		}
+		
 		return schemaNames;
+		
 	}
 
 	// -------------------------------------------------------------------------
@@ -106,15 +95,15 @@ public class TestRunner {
 	 * @return An array of the matching database names (may be empty if none matched).
 	 */
 	public String[] getListOfDatabaseNames(String regexp) {
+		
 		Connection conn;
 		String[] databaseNames = null;
 
 		// open connection
 		try {
-			conn = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System
-					.getProperty("user"), System.getProperty("password"));
+			conn = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System.getProperty("user"), System.getProperty("password"));
 			logger.fine("Opened connection to " + System.getProperty("databaseURL") + " as " + System.getProperty("user"));
-			databaseNames = DBUtils.listDatabases(conn, regexp, preFilterRegexp);
+			databaseNames = DBUtils.listDatabases(conn, regexp);
 			if (databaseNames.length == 0) {
 				logger.info("No database names matched");
 			}
@@ -126,7 +115,9 @@ public class TestRunner {
 			e.printStackTrace();
 			System.exit(1);
 		}
+		
 		return databaseNames;
+		
 	} // getDatabaseList
 
 	// -------------------------------------------------------------------------
@@ -137,148 +128,73 @@ public class TestRunner {
 	 * @param regexp The regular expression to match.
 	 */
 	protected void showDatabaseList(String regexp) {
+		
 		logger.fine("Listing databases matching " + regexp + " :\n");
 		String[] databaseList = getListOfDatabaseNames(regexp);
 		for (int i = 0; i < databaseList.length; i++) {
 			logger.fine("\t" + databaseList[i]);
 		}
+		
 	} // showDatabaseList
 
+	
 	// -------------------------------------------------------------------------
 	/**
-	 * Finds all tests in several locations.
-	 * 
-	 * A test case is a class that extends EnsTestCase. Test case classes found in more
-	 * than one location are only added once.
-	 * 
-	 * @return A List containing objects of the test case classes found.
-	 */
-	protected List findAllTests() {
-		ArrayList allTests = new ArrayList();
-
-		// some variables that will come in useful later on
-
-		String packageName = TESTCASE_SEARCH_PACKAGE + ".testcase";
-		String directoryName = packageName.replace('.', File.separatorChar);
-		logger.finest("Package name: " + packageName + " Directory name: " + directoryName);
-		String runDir = System.getProperty("user.dir") + File.separator;
-
-		// places to look
-		ArrayList locations = new ArrayList();
-		//locations.add(runDir + "src" + File.separator + directoryName); //
-		// same directory as this class
-		//locations.add(runDir + "build" + File.separator + directoryName); //
-		// ../build/<packagename>
-		locations.add(runDir + "lib" + File.separator + "ensj-healthcheck.jar"); // ../lib
-
-		// look in each of the locations defined above
-		Iterator it = locations.iterator();
-		while (it.hasNext()) {
-			String location = (String)it.next();
-			logger.finest("Looking for tests in " + location);
-			File dir = new File(location);
-			if (dir.exists()) {
-				if (location.lastIndexOf('.') > -1 && location.substring(location.lastIndexOf('.') + 1).equalsIgnoreCase("jar")) {
-					addUniqueTests(allTests, findTestsInJar(location, packageName));
-				} else {
-					addUniqueTests(allTests, findTestsInDirectory(location, packageName));
-				}
-			} else {
-				logger.info(dir.getAbsolutePath() + " does not exist, skipping.");
-			} // if dir.exists
-		}
-
-		// --------------------------------
-		logger.finer("Found " + allTests.size() + " unique test case classes.");
-
-		/*
-		 * Iterator it = allTests.iterator(); while (it.hasNext()) { EnsTestCase tc =
-		 * (EnsTestCase)it.next(); System.out.println("#####" + tc.getTestName()); }
-		 */
-
-		return allTests;
-	} // findAllTests
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Run all the tests in a list. Also run show/repair methods if the test implements the
+	 * Run appropriate tests against databases. Also run show/repair methods if the test implements the
 	 * Repair interface and the appropriate flags are set.
 	 * 
-	 * @param allTests The tests to run, as objects.
+	 * @param databaseRegistry The DatabaseRegistry to use.
+	 * @param testRegistry The TestRegistry to use.
 	 */
-	protected void runAllTests(List allTests) {
+	protected void runAllTests(DatabaseRegistry databaseRegistry, TestRegistry testRegistry) {
 
 		int numberOfTestsRun = 0;
+		
+		// --------------------------------	
+		// Single-database tests
 
-		// check if allTests() has been populated
-		if (allTests == null) {
-			logger.warning("No tests to run! Call findAllTests() first?");
-		}
-		if (allTests.size() == 0) {
-			logger.warning("Warning: no tests found!");
-			return;
-		}
-
-		// get all the databases from the registry
 		DatabaseRegistryEntry[] databases = databaseRegistry.getAll();
 
 		// run the appropriate tests on each of them
 		for (int i = 0; i < databases.length; i++) {
 
 			DatabaseRegistryEntry database = databases[i];
-			Connection con = getDatabaseConnection(database.getName());
 
-			// check if each test in turn applies to this database
-			for (Iterator it = allTests.iterator(); it.hasNext();) {
+			List allSingleDatabaseTests = testRegistry.getAllSingle(groupsToRun, database.getType());
+			
+			for (Iterator it = allSingleDatabaseTests.iterator(); it.hasNext();) {
 
-				EnsTestCase testCase = (EnsTestCase)it.next();
+				SingleDatabaseTestCase testCase = (SingleDatabaseTestCase)it.next();
 
-				/**
-				 * The testCase will only be run if all the following conditions are fulfilled:
-				 * <ul>
-				 * <li>It is in the group(s) to be run</li>
-				 * <li>It applies to the type of database represented by this
-				 * DatabaseRegistryEntry</li>
-				 * <li>It applies to the species that this database represents</li>
-				 * </ul>
-				 */
-				logger.fine("Database " + database.getName() + " TestCase: " + testCase.getName() + " in groups: "
-						+ testCase.inGroups(groupsToRun) + " applies to db type " + testCase.appliesToType(database.getType())
-						+ " matches species: ");
-				// TODO species check??
-				if (testCase.inGroups(groupsToRun) && testCase.appliesToType(database.getType())) {
+				ReportManager.startTestCase(testCase);
 
-					ReportManager.startTestCase(testCase);
-					boolean result = true;
-					// if the case applies to one database, we do the iteration over
-					// databases here; otherwise, it is responsible for its own connection
-					// management and is passed a null argument
-					if (!testCase.isMultiDatabaseTest()) {
-						result &= testCase.run(con);
-					} else {
-						result &= testCase.run(null);
+				boolean result = testCase.run(database);
+
+				ReportManager.finishTestCase(testCase, result);
+				logger.info(testCase.getName() + " " + (result ? "PASSED" : "FAILED"));
+
+				numberOfTestsRun++;
+
+				// check for show/do repair
+				if (testCase.canRepair()) {
+					if (showRepair) {
+						((Repair)testCase).show();
 					}
-
-					ReportManager.finishTestCase(testCase, result);
-					logger.info(testCase.getName() + " " + (result ? "PASSED" : "FAILED"));
-
-					numberOfTestsRun++;
-
-					// check for show/do repair
-					if (testCase.canRepair()) {
-						if (showRepair) {
-							((Repair)testCase).show();
-						}
-						if (doRepair) {
-							((Repair)testCase).repair();
-						}
+					if (doRepair) {
+						((Repair)testCase).repair();
 					}
-
-				} // check if test is to be run
+				}
 
 			} // foreach test
 
 		} // foreach DB
+
+		// --------------------------------
+		// Multi-database tests
+
+		// TODO implement
+
+		// --------------------------------
 
 		if (numberOfTestsRun == 0) {
 			logger.warning("Warning: no tests were run.");
@@ -290,12 +206,12 @@ public class TestRunner {
 	/**
 	 * Get a connection to a particular database.
 	 * 
-	 * @param name The name of the database to connect to.
 	 * @return A connection to database.
 	 */
-	public Connection getDatabaseConnection(String name) {
-		return DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System
-				.getProperty("user"), System.getProperty("password"));
+	public Connection getDatabaseConnection() {
+		
+		return DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System.getProperty("user"), System.getProperty("password"));
+	
 	} // getDatabaseConnection
 
 	// -------------------------------------------------------------------------
@@ -308,162 +224,15 @@ public class TestRunner {
 	 *         Connections for databases whose names match the regular expression.
 	 */
 	public DatabaseConnectionIterator getDatabaseConnectionIterator(String databaseRegexp) {
-		return new DatabaseConnectionIterator(System.getProperty("driver"), System.getProperty("databaseURL"), System
-				.getProperty("user"), System.getProperty("password"), getListOfDatabaseNames(databaseRegexp));
+		
+		return new DatabaseConnectionIterator(
+			System.getProperty("driver"),
+			System.getProperty("databaseURL"),
+			System.getProperty("user"),
+			System.getProperty("password"),
+			getListOfDatabaseNames(databaseRegexp));
+			
 	} // getDatabaseConnectionIterator
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Find all the tests (ie classes that extend EnsTestCase) in a directory.
-	 * 
-	 * @param dir The base directory to look in.
-	 * @param packageName The EnsTestCase package name.
-	 * @return A list of tests in dir.
-	 */
-	public List findTestsInDirectory(String dir, String packageName) {
-		logger.fine("Looking for tests in " + dir);
-		ArrayList tests = new ArrayList();
-		File f = new File(dir);
-
-		// find all classes that extend org.ensembl.healthcheck.EnsTestCase
-		ClassFileFilenameFilter cnff = new ClassFileFilenameFilter();
-		File[] classFiles = f.listFiles(cnff);
-		logger.finer("Examining " + classFiles.length + " class files ...");
-
-		// check if each class file extends EnsTestCase by checking its type
-		// need to avoid trying to instantiate the abstract class EnsTestCase
-		// iteslf
-		Class newClass;
-		Object obj = new Object();
-		String baseClassName;
-		for (int i = 0; i < classFiles.length; i++) {
-			logger.finest(classFiles[i].getName());
-			baseClassName = classFiles[i].getName().substring(0, classFiles[i].getName().lastIndexOf("."));
-			try {
-				newClass = Class.forName(packageName + "." + baseClassName);
-				String className = newClass.getName();
-				if (!className.equals("org.ensembl.healthcheck.testcase.EnsTestCase")) { // ignore
-					// JUnit
-					// tests
-					obj = newClass.newInstance();
-				}
-			} catch (InstantiationException ie) {
-				// normally it is a BAD THING to just ignore exceptions
-				// however InstantiationExceptions may be thrown often in this
-				// case,
-				// so we deliberately chose to suppress this particular
-				// exception
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			if (obj instanceof org.ensembl.healthcheck.testcase.EnsTestCase && !tests.contains(obj)) {
-				((org.ensembl.healthcheck.testcase.EnsTestCase)obj).init(this);
-				tests.add(obj); // note we store an INSTANCE of the test, not
-				// just its name
-				//logger.info("Added test case " + obj.getClass().getName());
-			}
-		} // for classFiles
-
-		return tests;
-	} // findTestsInDirectory
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Find tests in a jar file.
-	 * 
-	 * @param jarFileName The name of the jar file to search.
-	 * @param packageName The package name of the tests.
-	 * @return The list of tests in the jar file.
-	 */
-	public List findTestsInJar(String jarFileName, String packageName) {
-		ArrayList tests = new ArrayList();
-		try {
-			JarFile jarFile = new JarFile(jarFileName);
-			for (Enumeration enum = jarFile.entries(); enum.hasMoreElements();) {
-				JarEntry entry = (JarEntry)enum.nextElement();
-				String entryName = entry.getName();
-
-				// if the entry is a class file in the right package, use it
-				// this should deal with sub-packages of
-				// org.ensembl.healthcheck.testcase too
-				String packagePathName = packageName.replaceAll("\\.", File.separator);
-				if (entryName != null && entryName.indexOf(".class") > -1 && entryName.indexOf(packagePathName) > -1) {
-					String baseClassName = entryName.substring(entryName.lastIndexOf(File.separator) + 1, entryName
-							.lastIndexOf(".class"));
-					Object obj = new Object();
-					try {
-						Class newClass = Class.forName(packageName + "." + baseClassName);
-						String className = newClass.getName();
-						if (!className.equals("org.ensembl.healthcheck.testcase.EnsTestCase")) {
-							obj = newClass.newInstance();
-						}
-					} catch (InstantiationException ie) {
-						// normally it is a BAD THING to just ignore exceptions
-						// however InstantiationExceptions may be thrown often
-						// in this case,
-						// so we deliberately chose to suppress this particular
-						// exception
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					if (obj instanceof org.ensembl.healthcheck.testcase.EnsTestCase && !tests.contains(obj)) {
-						((org.ensembl.healthcheck.testcase.EnsTestCase)obj).init(this);
-						tests.add(obj); // note we store an INSTANCE of the
-						// test, not just its name
-						//logger.info("Added test case " +
-						// obj.getClass().getName());
-					}
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return tests;
-	} // findTestsInJar
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Add all tests in subList to mainList, <em>unless</em> the test is already a member
-	 * of mainList.
-	 * 
-	 * @param mainList The list to add to.
-	 * @param subList The list to be added.
-	 */
-	public void addUniqueTests(List mainList, List subList) {
-		Iterator it = subList.iterator();
-		while (it.hasNext()) {
-			EnsTestCase test = (EnsTestCase)it.next();
-			if (!testInList(test, mainList)) { // can't really use
-				// List.contains() as the lists
-				// store objects which may be
-				// different
-				mainList.add(test);
-				logger.fine("Added " + test.getShortTestName() + " to the list of tests");
-			} else {
-				logger.fine("Skipped " + test.getShortTestName() + " as it is already in the list of tests");
-			}
-		}
-	} // addUniqueTests
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Check if a particular test is in a list of tests. The check is done by test name.
-	 * 
-	 * @param test The test case to check.
-	 * @param list The list to search.
-	 * @return true if test is in list.
-	 */
-	public boolean testInList(EnsTestCase test, List list) {
-		boolean inList = false;
-		Iterator it = list.iterator();
-		while (it.hasNext()) {
-			EnsTestCase thisTest = (EnsTestCase)it.next();
-			if (thisTest.getTestName().equals(test.getTestName())) {
-				inList = true;
-			}
-		}
-		return inList;
-	} // testInList
 
 	// -------------------------------------------------------------------------
 	/**
@@ -474,6 +243,7 @@ public class TestRunner {
 	 *         a member of.
 	 */
 	public String[] listAllGroups(List tests) {
+		
 		ArrayList g = new ArrayList();
 		Iterator it = tests.iterator();
 		while (it.hasNext()) {
@@ -486,7 +256,9 @@ public class TestRunner {
 				}
 			}
 		}
+		
 		return (String[])g.toArray(new String[g.size()]);
+		
 	} // listAllGroups
 
 	// -------------------------------------------------------------------------
@@ -498,6 +270,7 @@ public class TestRunner {
 	 * @return An array containing the names whatever tests are a member of group.
 	 */
 	public String[] listTestsInGroup(List tests, String group) {
+		
 		ArrayList g = new ArrayList();
 		Iterator it = tests.iterator();
 		while (it.hasNext()) {
@@ -506,7 +279,9 @@ public class TestRunner {
 				g.add(test.getShortTestName());
 			}
 		}
+		
 		return (String[])g.toArray(new String[g.size()]);
+		
 	} // listTestsInGroup
 
 	// -------------------------------------------------------------------------
@@ -517,6 +292,7 @@ public class TestRunner {
 	 *          lower than this are not printed.
 	 */
 	public void printReportsByTest(int level) {
+		
 		System.out.println("\n---- RESULTS BY TEST CASE ----");
 		Map map = ReportManager.getAllReportsByTestCase(level);
 		Set keys = map.keySet();
@@ -550,6 +326,7 @@ public class TestRunner {
 	 *          this level are not printed.
 	 */
 	public void printReportsByDatabase(int level) {
+		
 		System.out.println("\n---- RESULTS BY DATABASE ----");
 		Map map = ReportManager.getAllReportsByDatabase(level);
 		Set keys = map.keySet();
@@ -577,6 +354,7 @@ public class TestRunner {
 	 * @param str The output level to use.
 	 */
 	protected void setOutputLevel(String str) {
+		
 		String lstr = str.toLowerCase();
 		if (lstr.equals("all")) {
 			outputLevel = ReportLine.ALL;
@@ -593,6 +371,7 @@ public class TestRunner {
 		} else {
 			logger.warning("Output level " + str + " not recognised; using 'all'");
 		}
+		
 	} // setOutputLevel
 
 	// -------------------------------------------------------------------------
@@ -602,8 +381,10 @@ public class TestRunner {
 	 * @param l The new output level.
 	 */
 	public void setOutputLevel(int l) {
+		
 		outputLevel = l;
 		logger.finest("Set outputLevel to " + outputLevel);
+		
 	} // setOutputLevel
 
 	// -------------------------------------------------------------------------
@@ -614,7 +395,9 @@ public class TestRunner {
 	 * @return The current output level. See ReportLine.
 	 */
 	public int getOutputLevel() {
+		
 		return outputLevel;
+		
 	} // getOutputLevel
 
 	// -------------------------------------------------------------------------
