@@ -59,14 +59,14 @@ public class TextTestRunner extends TestRunner implements Reporter {
     
     ttr.readPropertiesFile();
     
-    if (ttr.rebuildSchemaInfo) {
+    if (ttr.useSchemaInfo) {
       ttr.buildSchemaList(true);
     }
     
-    if (ttr.useSchemaInfo && !ttr.rebuildSchemaInfo) { // if buildSchemaList has been called, SchemaManager will already have been populated
-      ttr.readStoredSchemaInfo();
-    }
-    ReportManager.setReporter( ttr );
+    //if (ttr.useSchemaInfo && !ttr.rebuildSchemaInfo) { // if buildSchemaList has been called, SchemaManager will already have been populated
+    //  ttr.readStoredSchemaInfo();
+    //}
+    ReportManager.setReporter(ttr);
     
     ttr.runAllTests(ttr.findAllTests(), ttr.forceDatabases);
     
@@ -219,39 +219,39 @@ public class TextTestRunner extends TestRunner implements Reporter {
   // setupLogging
   // -------------------------------------------------------------------------
   
-    public void message( ReportLine reportLine ) {
-	String level = "ODD    ";
-
-	System.out.print( "." );
-	System.out.flush();
-
-	if( reportLine.getLevel() < outputLevel ) {
-	    return;
-	}
-
-	if( ! reportLine.getDatabaseName().equals( lastDatabase )) {
-	    outputBuffer.add( "  " + reportLine.getDatabaseName() );
-	    lastDatabase = reportLine.getDatabaseName();
-	}
-
-	switch( reportLine.getLevel() ) {
-	case( ReportLine.PROBLEM ) : 
-	    level = "PROBLEM";
-	    break;
-	case( ReportLine.WARNING ) : 
-	    level = "WARNING";
-	    break;
-	case( ReportLine.INFO ) : 
-	    level = "INFO   ";
-	    break;
-	case( ReportLine.CORRECT ) : 
-	    level = "CORRECT";
-	    break;
-	}
-
-	outputBuffer.add( "    " + level + ":  " +
-			  lineBreakString( reportLine.getMessage(), 65, "              " ));
+  public void message( ReportLine reportLine ) {
+    String level = "ODD    ";
+    
+    System.out.print( "." );
+    System.out.flush();
+    
+    if( reportLine.getLevel() < outputLevel ) {
+      return;
     }
+    
+    if( ! reportLine.getDatabaseName().equals( lastDatabase )) {
+      outputBuffer.add( "  " + reportLine.getDatabaseName() );
+      lastDatabase = reportLine.getDatabaseName();
+    }
+    
+    switch( reportLine.getLevel() ) {
+      case( ReportLine.PROBLEM ) :
+        level = "PROBLEM";
+        break;
+      case( ReportLine.WARNING ) :
+        level = "WARNING";
+        break;
+      case( ReportLine.INFO ) :
+        level = "INFO   ";
+        break;
+      case( ReportLine.CORRECT ) :
+        level = "CORRECT";
+        break;
+    }
+    
+    outputBuffer.add( "    " + level + ":  " +
+    lineBreakString( reportLine.getMessage(), 65, "              " ));
+  }
   
   public void startTestCase( EnsTestCase testCase ) {
     String name;
@@ -268,29 +268,29 @@ public class TextTestRunner extends TestRunner implements Reporter {
     } else {
       System.out.println(" FAILED");
     }
-
+    
     lastDatabase = "";
     Iterator it = outputBuffer.iterator();
     while( it.hasNext() ) {
-	    System.out.println( (String) it.next() );
+      System.out.println( (String) it.next() );
     }
     outputBuffer.clear();
   }
-
-    private String lineBreakString( String mesg, int maxLen, String indent ) {
-	if( mesg.length() <= maxLen ) {
-	    return mesg;
-	}
-
-	int lastSpace = mesg.lastIndexOf( " ", maxLen );
-	if( lastSpace > 15 ) {
-	    return mesg.substring(0, lastSpace) + "\n" + indent + 
-		lineBreakString(mesg.substring(lastSpace+1), maxLen, indent);
-	} else {
-	    return mesg.substring(0, maxLen) + "\n" + indent + 
-		lineBreakString(mesg.substring(maxLen), maxLen, indent);
-	}
+  
+  private String lineBreakString( String mesg, int maxLen, String indent ) {
+    if( mesg.length() <= maxLen ) {
+      return mesg;
     }
+    
+    int lastSpace = mesg.lastIndexOf( " ", maxLen );
+    if( lastSpace > 15 ) {
+      return mesg.substring(0, lastSpace) + "\n" + indent +
+      lineBreakString(mesg.substring(lastSpace+1), maxLen, indent);
+    } else {
+      return mesg.substring(0, maxLen) + "\n" + indent +
+      lineBreakString(mesg.substring(maxLen), maxLen, indent);
+    }
+  }
 }
 
 
