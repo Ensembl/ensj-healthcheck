@@ -16,6 +16,14 @@ import org.ensembl.healthcheck.testcase.*;
  */
 public class Karyotype extends SingleDatabaseTestCase {
 
+	public Karyotype() {
+	    
+		addToGroup("post_genebuild");
+		addToGroup("release");
+		setDescription("Check that karyotype and seq_region tables agree");
+
+	}
+	
     public boolean run(DatabaseRegistryEntry dbre) {
 
         boolean result = true;
