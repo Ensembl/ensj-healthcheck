@@ -313,11 +313,11 @@ public class TestRunner {
     
     ArrayList tests = new ArrayList();
     
-    throw new NotImplementedException();
+    //throw new NotImplementedException();
     
-    // @todo - implement findTestsInar();
-    sds
-    //return tests;
+    // @todo - implement findTestsInJar();
+    
+    return tests;
     
   } // findTestsInJar
   
