@@ -34,8 +34,7 @@ import org.ensembl.healthcheck.util.*;
 
 public class TextTestRunner extends TestRunner {
   
-  private String commandLineRegexp = null;
-  private boolean forceDatabases = false;
+  private boolean forceDatabases = true;
   
   private static Logger logger = Logger.getLogger("HealthCheckLogger");
   
@@ -103,32 +102,32 @@ public class TextTestRunner extends TestRunner {
     } else {
       
       for (int i=0; i < args.length; i++) {
-	
-	if (args[i].equals("-h")) {
-	  
-	  printUsage();
-	  System.exit(0);
-	  
-	} else if (args[i].equals("-d")) {
-	  
-	  i++;
-	  commandLineRegexp = args[i];
-	  System.out.println("Will pre-filter database names on " + commandLineRegexp);
-	  
-	} else if (args[i].equals("-force")) {
-	  
-	  forceDatabases = true;
-	  System.out.println("Will use ONLY databases specified by -d");
-	  
-	} else {
-	  groupsToRun.add(args[i]);
-	  System.out.println("Will run tests in group " + args[i]);
-	}
+        
+        if (args[i].equals("-h")) {
+          
+          printUsage();
+          System.exit(0);
+          
+        } else if (args[i].equals("-d")) {
+          
+          i++;
+          preFilterRegexp = args[i];
+          System.out.println("Will pre-filter database names on " + preFilterRegexp);
+          
+        } else if (args[i].equals("-force")) {
+          
+          forceDatabases = true;
+          System.out.println("Will use ONLY databases specified by -d");
+          
+        } else {
+          groupsToRun.add(args[i]);
+          System.out.println("Will run tests in group " + args[i]);
+        }
       }
       
-      if (forceDatabases && commandLineRegexp == null) {
-	System.err.println("You have requested -force but not specified a database name regular expression with -d");
-	System.exit(1);
+      if (forceDatabases && preFilterRegexp == null) {
+        System.err.println("You have requested -force but not specified a database name regular expression with -d");
+        System.exit(1);
       }
     }
     
@@ -145,7 +144,7 @@ public class TextTestRunner extends TestRunner {
     logger.info("Set logging level to " + logger.getLevel().getName());
     
   } // setupLogging
-    
+  
   // -------------------------------------------------------------------------
   
 } // TextTestRunner
