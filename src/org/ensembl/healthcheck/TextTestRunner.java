@@ -39,9 +39,9 @@ public class TextTestRunner extends TestRunner implements Reporter {
   private boolean rebuildSchemaInfo = false;
   private static final String SCHEMA_INFO_FILENAME = "schemas.ser";
   private static final boolean GZIP_SCHEMA_INFO = true;
-    public Vector outputBuffer ;
-    private String lastDatabase = "";
-
+  public Vector outputBuffer ;
+  private String lastDatabase = "";
+  
   // -------------------------------------------------------------------------
   
   /**
@@ -56,7 +56,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
     
     ttr.parseCommandLine(args);
     ttr.outputBuffer = new Vector();
-
+    
     ttr.setupLogging();
     
     ttr.readPropertiesFile();
@@ -69,7 +69,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
       ttr.readStoredSchemaInfo(SCHEMA_INFO_FILENAME, GZIP_SCHEMA_INFO);
     }
     ReportManager.setReporter( ttr );
-
+    
     ttr.runAllTests(ttr.findAllTests(), ttr.forceDatabases);
     
     ConnectionPool.closeAll();
@@ -166,7 +166,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
           
           useSchemaInfo = false;
           // System.out.println("Will NOT read schema info at startup");
-        
+          
         } else if (args[i].equals("-refreshschemas")) {
           
           rebuildSchemaInfo = true;
@@ -221,58 +221,62 @@ public class TextTestRunner extends TestRunner implements Reporter {
   // setupLogging
   // -------------------------------------------------------------------------
   
-    public void message( ReportLine reportLine ) {
-	String level = "ODD    ";
-
-	System.out.print( "." );
-	System.out.flush();
-
-	if( reportLine.getLevel() < outputLevel ) {
-	    return;
-	}
-
-	if( ! reportLine.getDatabaseName().equals( lastDatabase )) {
-	    outputBuffer.add( "  " + reportLine.getDatabaseName() );
-	    lastDatabase = reportLine.getDatabaseName();
-	}
-
-	switch( reportLine.getLevel() ) {
-	case( ReportLine.PROBLEM ) : 
-	    level = "PROBLEM";
-	    break;
-	case( ReportLine.WARNING ) : 
-	    level = "WARNING";
-	    break;
-	case( ReportLine.INFO ) : 
-	    level = "INFO   ";
-	    break;
-	case( ReportLine.CORRECT ) : 
-	    level = "CORRECT";
-	    break;
-	}
-
-	outputBuffer.add( "    " + level + ":  " + reportLine.getMessage() );
+  public void message( ReportLine reportLine ) {
+    String level = "ODD    ";
+    
+    System.out.print( "." );
+    System.out.flush();
+    
+    if( reportLine.getLevel() < outputLevel ) {
+      return;
     }
-
-    public void startTestCase( EnsTestCase testCase ) {
-	String name;
-	name = testCase.getClass().getName();
-	name = name.substring( name.lastIndexOf( "." ) + 1 );
-	System.out.print( name + " " );
-	System.out.flush();
+    
+    if( ! reportLine.getDatabaseName().equals( lastDatabase )) {
+      outputBuffer.add( "  " + reportLine.getDatabaseName() );
+      lastDatabase = reportLine.getDatabaseName();
     }
-
-    public void finishTestCase( EnsTestCase testCase ) {
-
-	System.out.println( " PASSED" );
-	lastDatabase = "";
-	Iterator it = outputBuffer.iterator();
-	while( it.hasNext() ) {
-	    System.out.println( (String) it.next() );
-	}
-	outputBuffer.clear();
+    
+    switch( reportLine.getLevel() ) {
+      case( ReportLine.PROBLEM ) :
+        level = "PROBLEM";
+        break;
+      case( ReportLine.WARNING ) :
+        level = "WARNING";
+        break;
+      case( ReportLine.INFO ) :
+        level = "INFO   ";
+        break;
+      case( ReportLine.CORRECT ) :
+        level = "CORRECT";
+        break;
     }
-
+    
+    outputBuffer.add( "    " + level + ":  " + reportLine.getMessage() );
+  }
+  
+  public void startTestCase( EnsTestCase testCase ) {
+    String name;
+    name = testCase.getClass().getName();
+    name = name.substring( name.lastIndexOf( "." ) + 1 );
+    System.out.print( name + " " );
+    System.out.flush();
+  }
+  
+  public void finishTestCase( EnsTestCase testCase, TestResult result ) {
+    
+    if (result.getResult()) {
+      System.out.println( " PASSED" );
+    } else {
+      System.out.println("FAILED");
+    }
+    lastDatabase = "";
+    Iterator it = outputBuffer.iterator();
+    while( it.hasNext() ) {
+      System.out.println( (String) it.next() );
+    }
+    outputBuffer.clear();
+  }
+  
 }
 
 
