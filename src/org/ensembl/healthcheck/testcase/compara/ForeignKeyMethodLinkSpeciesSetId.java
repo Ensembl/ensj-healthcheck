@@ -63,11 +63,10 @@ public class ForeignKeyMethodLinkSpeciesSetId extends SingleDatabaseTestCase {
             result &= checkForOrphans(con, "homology", "method_link_species_set_id", "method_link_species_set", "method_link_species_set_id");
             result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "family", "method_link_species_set_id", "method_link_id = 301");
             result &= checkForOrphans(con, "family", "method_link_species_set_id", "method_link_species_set", "method_link_species_set_id");
- 
-            result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "genomic_align_block", "method_link_species_set_id", "method_link_id < 100");
-            result &= checkForOrphans(con, "genomic_align_block", "method_link_species_set_id", "method_link_species_set", "method_link_species_set_id");
-            result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "genomic_align", "method_link_species_set_id", "method_link_id < 100");
-            result &= checkForOrphans(con, "genomic_align", "method_link_species_set_id", "method_link_species_set", "method_link_species_set_id");
+            result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "synteny_region", "method_link_species_set_id", "method_link_id = 101");
+            result &= checkForOrphans(con, "synteny_region", "method_link_species_set_id", "method_link_species_set", "method_link_species_set_id");
+
+
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in method_link_species_set table, so nothing to test IGNORED");
         }
