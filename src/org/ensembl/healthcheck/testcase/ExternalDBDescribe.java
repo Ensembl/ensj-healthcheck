@@ -25,10 +25,10 @@ import org.ensembl.healthcheck.*;
  * query <code>DESCRIBE external_db</code> are the same for a set of databases.
  */
 
-public class ExternalDBDescribeTestCase extends EnsTestCase {
+public class ExternalDBDescribe extends EnsTestCase {
 
   /** Creates a new instance of ExternalDBDescriptionTestCase */
-  public ExternalDBDescribeTestCase() {
+  public ExternalDBDescribe() {
     addToGroup("pre_release");
     setDescription("Check that the external_db table is the same in all databases.");
   }
