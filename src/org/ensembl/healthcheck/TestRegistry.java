@@ -333,7 +333,8 @@ public class TestRegistry {
 					String[] bits = entryName.split("\\.");
 					String className = bits[bits.length - 2];
 					String dirName = bits[bits.length - 3];
-					if (!dirName.equals("testcase")) {
+					String extension = bits[bits.length - 1];
+					if (extension.equalsIgnoreCase("class") && !dirName.equals("testcase")) {
 						try {
 
 							Class newClass = Class.forName(packageName + "." + dirName + "." + className);
