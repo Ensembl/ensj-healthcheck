@@ -23,6 +23,11 @@ package org.ensembl.healthcheck;
  */
 public abstract class SchemaMatchCondition {
   
+  /** 
+   * Test if a particular schema matches this condition.
+   * @param s The schema to compare.
+   * @return true if the schema fulfils this condition, false if not.
+   */
   public abstract boolean matches(SchemaInfo s);
   
 }
