@@ -128,7 +128,7 @@ public class GuiTestRunner extends TestRunner implements Reporter {
         final GuiTestRunnerFrame gtrf = lgtrf;
         final EnsTestCase[] tests = ltests;
         final DatabaseRegistryEntry[] databases = ldatabases;
-
+        
         Thread t = new Thread() {
 
             public void run() {
@@ -175,20 +175,19 @@ public class GuiTestRunner extends TestRunner implements Reporter {
                     }
 
                     // TODO - warn about not running OrderedDatabaseTestCase
-                    // TODO - result handling
 
                 }
 
                 gtrf.setTestProgressDialogVisibility(false);
-
-                gtrf.setResultFrameVisibility(true);
-
+                
+                gtrf.createResultFrame();
+                
             } // run
 
         }; // thread
 
         t.start();
-
+        
     } // runAllTests
 
     // -------------------------------------------------------------------------
@@ -200,37 +199,7 @@ public class GuiTestRunner extends TestRunner implements Reporter {
      * @param reportLine The message to store.
      */
     public void message(ReportLine reportLine) {
-
-        // TODO - remove debug
-        String level = "ODD    ";
-
-        System.out.print(".");
-        System.out.flush();
-
-        if (reportLine.getLevel() < outputLevel) {
-            System.out.println("## returning");
-            return;
-        }
-
-        switch (reportLine.getLevel()) {
-        case (ReportLine.PROBLEM):
-            level = "PROBLEM";
-            break;
-        case (ReportLine.WARNING):
-            level = "WARNING";
-            break;
-        case (ReportLine.INFO):
-            level = "INFO   ";
-            break;
-        case (ReportLine.CORRECT):
-            level = "CORRECT";
-            break;
-        default:
-            level = "PROBLEM";
-        }
-
-        System.out.println(reportLine.getDatabaseName() + " " + level + ":  " + reportLine.getMessage());
-
+ 
     }
 
     /**
@@ -240,8 +209,6 @@ public class GuiTestRunner extends TestRunner implements Reporter {
      * @param dbre The database which testCase is to be run on, or null of no/several databases.
      */
     public void startTestCase(EnsTestCase testCase, DatabaseRegistryEntry dbre) {
-
-        // TBC
 
     }
 
@@ -253,8 +220,6 @@ public class GuiTestRunner extends TestRunner implements Reporter {
      * @param dbre The database which testCase was run on, or null of no/several databases.
      */
     public void finishTestCase(EnsTestCase testCase, boolean result, DatabaseRegistryEntry dbre) {
-
-        // TBC
 
     }
 

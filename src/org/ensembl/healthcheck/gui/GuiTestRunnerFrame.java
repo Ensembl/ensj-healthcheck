@@ -60,6 +60,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTree;
 import javax.swing.SwingConstants;
+import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
@@ -73,8 +74,10 @@ import org.ensembl.healthcheck.CallbackTarget;
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.ReportLine;
 import org.ensembl.healthcheck.TestRegistry;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
+import org.ensembl.healthcheck.testcase.OrderedDatabaseTestCase;
 import org.ensembl.healthcheck.util.ConnectionPool;
 
 import com.jgoodies.plaf.plastic.PlasticLookAndFeel;
@@ -93,8 +96,6 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
     private Map testButtonInfoWindows = new HashMap();
 
     private TestProgressDialog testProgressDialog;
-
-    private GuiTestResultWindow testResultWindow = null;
 
     private int testsRun = 0;
 
@@ -201,6 +202,7 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
         final GuiTestRunnerFrame localGTRF = this;
         JButton runButton = new JButton("Run");
         runButton.setIcon(new ImageIcon(this.getClass().getResource("green_arrow.gif")));
+        runButton.setToolTipText("Run the selected tests on the selected databases");
         runButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -214,6 +216,7 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
 
         JButton settingsButton = new JButton("Settings");
         settingsButton.setIcon(new ImageIcon(this.getClass().getResource("cog.gif")));
+        settingsButton.setToolTipText("Change healthcheck settings");
         settingsButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -223,6 +226,7 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
         });
 
         JButton quitButton = new JButton("Quit");
+        quitButton.setToolTipText("Quit this healthcheck session");
         quitButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -329,6 +333,43 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
 
     } // getOutputLevel
 
+    //  -------------------------------------------------------------------------
+    /**
+     * Return the output level as set in the parent GuiTestRunner, as a String.
+     * 
+     * @return The output level .e.g "problems only" etc.
+     */
+    public String getOutputLevelAsString() {
+
+        String result = "";
+
+        switch (guiTestRunner.getOutputLevel()) {
+
+        case ReportLine.ALL:
+            result = "All";
+            break;
+        case ReportLine.PROBLEM:
+            result = "Problems only";
+            break;
+        case ReportLine.CORRECT:
+            result = "Correct results";
+            break;
+        case ReportLine.WARNING:
+            result = "Warnings";
+            break;
+        case ReportLine.INFO:
+            result = "Info";
+            break;
+        case ReportLine.NONE:
+            result = "None";
+            break;
+
+        }
+
+        return result;
+
+    } // getOutputLevelAsString
+
     // -------------------------------------------------------------------------
     /**
      * Set the total number of tests that are to be run in this session so that the progress dialog
@@ -395,7 +436,6 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
     public void setTestProgressDialogVisibility(boolean v) {
 
         testProgressDialog.setVisible(v);
-        testProgressDialog.repaint();
 
     }
 
@@ -423,21 +463,10 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
 
     /**
      * Show the result window. Create if necessary.
-     * 
-     * @param v true to create/show the result window, false to hide it.
      */
-    public void setResultFrameVisibility(boolean v) {
+    public void createResultFrame() {
 
-        if (testResultWindow == null) {
-
-            testResultWindow = new GuiTestResultWindow(this);
-            testResultWindow.setVisible(v);
-
-        } else {
-
-            testResultWindow.setVisible(v);
-
-        }
+        new GuiTestResultWindow(this).show();
 
     }
 
@@ -548,7 +577,7 @@ class DatabaseListPanel extends JScrollPane {
         JPanel allDatabasesPanel = new JPanel();
         allDatabasesPanel.setLayout(new BoxLayout(allDatabasesPanel, BoxLayout.Y_AXIS));
         allDatabasesPanel.setBackground(Color.WHITE);
-        
+
         Iterator it = checkBoxes.iterator();
         while (it.hasNext()) {
             JPanel checkBoxPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -746,6 +775,7 @@ class TestListPanel extends JScrollPane {
 
         tree = new JTree(top);
         tree.setRowHeight(0);
+        ToolTipManager.sharedInstance().registerComponent(tree);
         tree.setCellRenderer(new TestTreeCellRenderer());
         tree.addMouseListener(new TestTreeNodeSelectionListener(tree));
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
@@ -810,7 +840,7 @@ class TestTreeCellRenderer extends JComponent implements TreeCellRenderer {
 
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf,
             int row, boolean hasFocus) {
-        
+
         TestTreeNode node = (TestTreeNode) value;
         if (node != null) {
 
@@ -818,17 +848,42 @@ class TestTreeCellRenderer extends JComponent implements TreeCellRenderer {
             String defaultFontName = label.getFont().getName();
             int defaultFontSize = label.getFont().getSize();
 
+            // defaults
+            setToolTipText(null);
+            label.setIcon(null);
+            label.setFont(new Font(defaultFontName, Font.PLAIN, defaultFontSize));
+            label.setForeground(Color.BLACK);
+
             if (node.isGroup()) {
+
                 label.setText(node.getGroupName());
                 label.setFont(new Font(defaultFontName, Font.BOLD, defaultFontSize));
+                setToolTipText("Selecting the group " + node.getGroupName() + " will select all the tests in it");
+
             } else {
+
                 EnsTestCase test = node.getTest();
                 label.setText(test.getShortTestName());
-                label.setFont(new Font(defaultFontName, Font.PLAIN, defaultFontSize));
-                if (test.isLongRunning()) {
-                    label.setIcon(slowIcon);
+
+                if (test instanceof OrderedDatabaseTestCase) {
+
+                    label.setFont(new Font(defaultFontName, Font.PLAIN, defaultFontSize));
+                    label.setForeground(Color.GRAY);
+                    setToolTipText("Ordered test cases are not currently supported in the GUI test runner.");
+
                 } else {
-                    label.setIcon(null);
+
+                    label.setFont(new Font(defaultFontName, Font.PLAIN, defaultFontSize));
+                    String toolTip = "<html>" + test.getDescription();
+                    if (test.isLongRunning()) {
+                        label.setIcon(slowIcon);
+                        toolTip += "<br><strong>Note this test may take a long time to run</strong>";
+                    } else {
+                        label.setIcon(null);
+                    }
+                    toolTip += "</html>";
+                    setToolTipText(toolTip);
+
                 }
             }
 
@@ -836,7 +891,7 @@ class TestTreeCellRenderer extends JComponent implements TreeCellRenderer {
 
         return this;
     }
-    
+
     public Dimension getPreferredSize() {
 
         Dimension dim = new Dimension(550, 25);
@@ -1038,8 +1093,9 @@ class DatabaseTypeGUIComparator implements Comparator {
 
     public int compare(Object o1, Object o2) {
 
-        if (!(o1 instanceof DatabaseType) || !(o2 instanceof DatabaseType)) { throw new RuntimeException(
-                "Arguments to DatabaseTypeGUIComparator must be DatabaseType!"); }
+        if (!(o1 instanceof DatabaseType) || !(o2 instanceof DatabaseType)) {
+            throw new RuntimeException("Arguments to DatabaseTypeGUIComparator must be DatabaseType!");
+        }
 
         DatabaseType t1 = (DatabaseType) o1;
         DatabaseType t2 = (DatabaseType) o2;

@@ -44,7 +44,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
-import javax.swing.UIManager;
+import javax.swing.ToolTipManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
@@ -59,18 +59,12 @@ public class GuiTestResultWindow extends JFrame {
     private GuiTestRunnerFrame gtrf;
 
     private static final String OUTPUT_FILE = "GuiTestRunner.txt";
-    
+
     public GuiTestResultWindow(GuiTestRunnerFrame gtrf) {
 
         super("Healthcheck Results");
 
         this.gtrf = gtrf;
-
-        try {
-            UIManager.setLookAndFeel("com.jgoodies.plaf.plastic.Plastic3DLookAndFeel");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
@@ -103,13 +97,7 @@ public class GuiTestResultWindow extends JFrame {
                         Iterator it2 = lines.iterator();
                         while (it2.hasNext()) {
                             ReportLine reportLine = (ReportLine) it2.next();
-                            String dbName = reportLine.getDatabaseName();
-                            if (dbName.equals("no_database")) {
-                                dbName = "";
-                            } else {
-                                dbName = reportLine.getDatabaseName() + ": ";
-                            }
-                            pw.write("  " + dbName + reportLine.getMessage() + "\n");
+                            pw.write(" " + reportLine.getDatabaseName() + ": " + reportLine.getMessage() + "\n");
                         } // while it2
                     } // while it
 
@@ -182,25 +170,17 @@ class ResultTreePanel extends JScrollPane {
 
     public ResultTreePanel(GuiTestRunnerFrame gtrf) {
 
-        try {
-            UIManager.setLookAndFeel("com.jgoodies.plaf.plastic.Plastic3DLookAndFeel");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         this.gtrf = gtrf;
-
-        //setPreferredSize(new Dimension(300, 500));
 
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         panel.setBackground(Color.GREEN);
 
-        // set root visible false?
-        DefaultMutableTreeNode top = new DefaultMutableTreeNode(new ResultNode("Test Results", false, false, false, false));
+        String title = "Test Results - minimum output level: " + gtrf.getOutputLevelAsString().toLowerCase();
+        
+        DefaultMutableTreeNode top = new DefaultMutableTreeNode(new ResultNode(title, false, false, false, false));
 
-        // TODO have this filtered by output level?
-        Map reportsByTest = ReportManager.getAllReportsByTestCase();
+        Map reportsByTest = ReportManager.getAllReportsByTestCase(gtrf.getOutputLevel());
         Set tests = reportsByTest.keySet();
         Iterator it = tests.iterator();
         while (it.hasNext()) {
@@ -237,6 +217,7 @@ class ResultTreePanel extends JScrollPane {
 
         tree = new JTree(top);
         //tree.setRootVisible(false);
+        ToolTipManager.sharedInstance().registerComponent(tree);
         tree.setCellRenderer(new JLabelTreeCellRenderer());
         tree.setRowHeight(0);
 
@@ -244,8 +225,8 @@ class ResultTreePanel extends JScrollPane {
 
         setViewportView(panel);
 
-        // make window as wide as it needs to be, fixed height
-        setPreferredSize(new Dimension(getPreferredSize().width, 500));
+        // make window as wide as it needs to be plus a bit of padding, fixed height
+        setPreferredSize(new Dimension(getPreferredSize().width + 150, 500));
 
     }
 
@@ -340,6 +321,7 @@ class JLabelTreeCellRenderer extends DefaultTreeCellRenderer {
         setForeground(Color.BLACK);
         setBackground(Color.WHITE);
         setFont(new Font(defaultFontName, Font.PLAIN, defaultFontSize));
+        setToolTipText(null);
 
         // node is rendered differently depending on how its flags are set
         if (node.isTestName()) {
@@ -352,6 +334,8 @@ class JLabelTreeCellRenderer extends DefaultTreeCellRenderer {
                 setForeground(red);
                 setIcon(listFail);
             }
+            int[] passesFails = ReportManager.countPassesAndFailsTest(node.getText());
+            setToolTipText(passesFails[0] + " databases passed, " + passesFails[1] + " databases failed");
 
         } else if (node.isDatabaseName()) {
 
@@ -362,8 +346,18 @@ class JLabelTreeCellRenderer extends DefaultTreeCellRenderer {
                 setForeground(red);
                 setIcon(smallCross);
             }
+            int[] passesFails = ReportManager.countPassesAndFailsDatabase(node.getText());
+            setToolTipText(node.getText() + " passed a total of " + passesFails[0] + " tests and failed a total of "
+                    + passesFails[1] + " tests");
 
         } else if (node.isDatabaseLabel()) {
+
+        } else {
+
+            // other nodes - e.g. root
+            setFont(new Font(defaultFontName, Font.BOLD, defaultFontSize));
+            int[] passesFails = ReportManager.countPassesAndFailsAll();
+            setToolTipText("A total of " + passesFails[0] + " individual tests passed and " + passesFails[1] + " failed");
 
         }
 
