@@ -18,6 +18,7 @@
 
 package org.ensembl.healthcheck.testcase;
 
+
 import org.ensembl.healthcheck.*;
 
 /**

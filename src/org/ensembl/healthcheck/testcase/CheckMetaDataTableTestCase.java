@@ -19,6 +19,7 @@
 package org.ensembl.healthcheck.testcase;
 
 import java.sql.*;
+import java.util.regex.*;
 
 import org.ensembl.healthcheck.*;
 
@@ -29,10 +30,10 @@ import org.ensembl.healthcheck.util.*;
  */
 public class CheckMetaDataTableTestCase extends EnsTestCase {
 
-	// these should be updated as necessary
+	// update this array as necessary
 	private static final String[] validPrefixes = { "RGSC", "DROM", "ZFISH", "FUGU", "MOZ", "CEL", "CBR", "MGSC", "NCBI", "NCBIM" };
 
-	// these should be updated as necessary; an up-to-date list can be found in
+	//these should be updated as necessary; an up-to-date list can be found in
 	// ensembl-compara/sql/taxon.txt
 	private static final String[] validTaxonIDs = { "9606", "10090", "10116", "31033", "7165", "7227", "6239", "6238", "7955" };
 
@@ -181,16 +182,37 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
 				ReportManager.problem(this, con, "Cannot get species information from meta table");
 			}
 
-			// ------------------------------------------
-			// Check that all values in assembly.type match what's in the meta table
+			// -------------------------------------------
+			// Check formatting of assembly.mapping entries
+			// should be of format
+			// coord_system1{:default}|coord_system2{:default}
+			// and coord_system1 & 2 should be valid from coord_system table.
+			Pattern assemblyMappingPattern = Pattern.compile("^(\\w+)(:\\w+)?\\|(\\w+)(:\\w+)?$");
+			String[] validCoordSystems = getColumnValues(con, "SELECT name FROM coord_system");
 
-			rows = checkColumnValue(con, "assembly", "type", metaTableAssemblyDefault);
-			if (rows > 0) {
-				result = false;
-				//warn(con, "Not all values in assembly.type match assembly.default in meta table");
-				ReportManager.problem(this, con, "Not all values in assembly.type match assembly.default in meta table");
-			} else {
-				ReportManager.correct(this, con, "All values in assembly.type match assembly.default in meta table");
+			String[] mappings = getColumnValues(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.mapping'");
+			for (int i = 0; i < mappings.length; i++) {
+				Matcher matcher = assemblyMappingPattern.matcher(mappings[i]);
+				if (!matcher.matches()) {
+					result = false;
+					ReportManager.problem(this, con, "Coordinate system mapping " + mappings[i] + " is not in the correct format");
+				} else {
+					// if format is OK, check coord systems are valid
+					boolean valid = true;
+					String cs1 = matcher.group(1);
+					String cs2 = matcher.group(3);
+					if (!Utils.stringInArray(cs1, validCoordSystems, false)) {
+						valid = false;
+						ReportManager.problem(this, con, "Source co-ordinate system " + cs1 + " is not in the coord_system table");
+					}
+					if (!Utils.stringInArray(cs2, validCoordSystems, false)) {
+						valid = false;
+						ReportManager.problem(this, con, "Target co-ordinate system " + cs2 + " is not in the coord_system table");
+					}
+					if (valid == true) {
+						ReportManager.correct(this, con, "Coordinate system mapping " + mappings[i] + " is OK");
+					}
+				}
 			}
 
 			// -------------------------------------------
@@ -204,8 +226,7 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
 			} else {
 				ReportManager.problem(this, con, "Taxonomy ID " + dbTaxonID + " is not list of valid IDs");
 			}
-
-			// ------------------------------------------
+			// -------------------------------------------
 
 		} // while connection
 
@@ -226,12 +247,14 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
 					speciesRegexp);
 			if (!allMatch) {
 				result = false;
-				ReportManager.problem(this, "all databases", "meta information not the same for all " + "all databases");
+				ReportManager.problem(this, "", "meta information not the same for all " + species[i] + " databases");
 			} else {
-				ReportManager.correct(this, "all databases", "meta information is the same for all " + species[i] + " databases");
+				ReportManager.correct(this, "", "meta information is the same for all " + species[i] + " databases");
 			}
 
 		} // foreach species
+
+		// -------------------------------------------
 
 		return new TestResult(getShortTestName(), result);
 

@@ -54,33 +54,33 @@ public class CheckExonCoordsTestCase extends EnsTestCase {
       Connection con = (Connection)it.next();
       
       logger.fine("Checking for start < 1 ...");
-      int rows = getRowCount(con, "SELECT COUNT(*) FROM exon WHERE contig_start < 1");
+      int rows = getRowCount(con, "SELECT COUNT(*) FROM exon WHERE seq_region_start < 1");
       if (rows > 0) {
         result = false;
         //logger.warning(rows + " exons in " + DBUtils.getShortDatabaseName(con) + " have contig_start values < 1.");
-        ReportManager.problem(this, con, rows + " exons with contig_start values < 1");
+        ReportManager.problem(this, con, rows + " exons with seq_region_start values < 1");
       } else {
-        ReportManager.correct(this, con, "All exons have contig start values >= 1");
+        ReportManager.correct(this, con, "All exons have seq_region start values >= 1");
       } 
       
-      logger.fine("Checking for contig start > contig_end...");
-      rows = getRowCount(con, "SELECT COUNT(*) FROM exon WHERE contig_start > contig_end;");
+      logger.fine("Checking for seq_region start > seq_region_end...");
+      rows = getRowCount(con, "SELECT COUNT(*) FROM exon WHERE seq_region_start > seq_region_end;");
       if (rows > 0) {
         result = false;
         //logger.warning(rows + " exons in " + DBUtils.getShortDatabaseName(con) + " have contig_start > contig_end.");
-        ReportManager.problem(this, con, rows + " exons with contig_start > contig_end 1");
+        ReportManager.problem(this, con, rows + " exons with seq_region_start > seq_region_end");
       } else {
-        ReportManager.correct(this, con, "All exons have contig_start < contig_end");
+        ReportManager.correct(this, con, "All exons have seq_region_start < seq_region_end");
       }
       
-      logger.fine("Checking for contig_end beyond end of exon ...");
-      rows = getRowCount(con, "SELECT COUNT(EXON_ID) FROM exon, contig WHERE exon.contig_id =contig.contig_id AND exon.contig_end > contig.length");
+      logger.fine("Checking for seq_region_end beyond end of exon ...");
+      rows = getRowCount(con, "SELECT COUNT(EXON_ID) FROM exon, seq_region WHERE exon.seq_region_id=seq_region.seq_region_id AND exon.seq_region_end > seq_region.length");
       if (rows > 0) {
         result = false;
         //logger.warning(rows + " exons in " + DBUtils.getShortDatabaseName(con) + " have contig_end values beyond the end of the contig.");
-        ReportManager.problem(this, con, rows + " exons with contig_end beyond end of contig");
+        ReportManager.problem(this, con, rows + " exons with seq_region_end beyond end of contig");
       } else {
-        ReportManager.correct(this, con, "No exons have contig_end beyond end of contig"); 
+        ReportManager.correct(this, con, "No exons have seq_region_end beyond end of contig"); 
       }
       
     } // DBIterator

@@ -48,38 +48,27 @@ public class DuplicateExons extends EnsTestCase {
     
     DatabaseConnectionIterator it = getDatabaseConnectionIterator();
     
-    String sql =
-    "SELECT e.exon_id, e.phase, " +
-    "MIN( IF     (a.contig_ori=1,(e.contig_start+a.chr_start-a.contig_start)," +
-    "                       (a.chr_start+a.contig_end-e.contig_end ))) as start, " +
-    "MAX( IF     (a.contig_ori=1,(e.contig_end+a.chr_start-a.contig_start), " +
-    "                       (a.chr_start+a.contig_end-e.contig_start)))  as end, " +
-    "       a.contig_ori*e.contig_strand as strand, " +
-    "       a.chromosome_id, e.end_phase " +
-    "FROM   exon e, assembly a " +
-    "WHERE  e.contig_id = a.contig_id " +
-    "GROUP  BY e.exon_id " +
-    "ORDER BY chromosome_id, strand, start, end, phase, end_phase";
-
-
+    String sql = "SELECT e.exon_id, e.phase, e.seq_region_start AS start, e.seq_region_end AS end, e.seq_region_id AS chromosome_id, e.end_phase, e.seq_region_strand AS strand " +
+    "             FROM exon e ORDER BY chromosome_id, strand, start, end, phase, end_phase";
+    
     while (it.hasNext()) {
       
       Connection con = (Connection)it.next();
       try {
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
-
-        int exonStart,  exonEnd, exonPhase, exonStrand, exonChromosome, exonId, exonEndPhase;
-	int lastExonStart = -1;
-	int lastExonEnd = -1;
-	int lastExonPhase = -1;
-	int lastExonStrand = -1;
-	int lastExonChromosome = -1;
-	int lastExonEndPhase = -1;
-	int duplicateExon = 0;
-
-	boolean first = true;
-
+        
+        int exonStart, exonEnd, exonPhase, exonChromosome, exonId, exonEndPhase, exonStrand;
+        int lastExonStart = -1;
+        int lastExonEnd = -1;
+        int lastExonPhase = -1;
+        int lastExonChromosome = -1;
+        int lastExonEndPhase = -1;
+        int lastExonStrand = -1;
+        int duplicateExon = 0;
+        
+        boolean first = true;
+        
         while (rs.next()) {
           
           // load the vars
@@ -87,50 +76,50 @@ public class DuplicateExons extends EnsTestCase {
           exonPhase = rs.getInt(2);
           exonStart = rs.getInt(3);
           exonEnd = rs.getInt(4);
-          exonStrand = rs.getInt(5);
-          exonChromosome = rs.getInt(6);
-          exonEndPhase = rs.getInt(7);
-
+          exonChromosome = rs.getInt(5);
+          exonEndPhase = rs.getInt(6);
+          exonStrand = rs.getInt(7);
+          
           if( !first ) {
-	      if( lastExonChromosome == exonChromosome &&
-		  lastExonStart == exonStart &&
-		  lastExonEnd == exonEnd &&
-		  lastExonPhase == exonPhase &&
-		  lastExonStrand == exonStrand &&
-		  lastExonEndPhase == exonEndPhase ) {
-		  duplicateExon++;
-		  ReportManager.warning( this, con, "Exon " + exonId + " is duplicated." );
-	      }
-	  } else {
-	      first = false ;
-	      ReportManager.info(this, con, "Running duplicate exon test");
-	  }
-	  
-	  lastExonStart = exonStart;
-	  lastExonEnd = exonEnd;
-	  lastExonChromosome = exonChromosome;
-	  lastExonStrand = exonStrand;
-	  lastExonPhase = exonPhase;
-	  lastExonEndPhase = exonEndPhase;
-	}
-
-	if( duplicateExon > 0 ) {
-	    ReportManager.problem( this, con, duplicateExon + " duplicated Exons." );
-	    result = false;
-	}
-	rs.close();
-	stmt.close();
-	
+            if( lastExonChromosome == exonChromosome &&
+            lastExonStart == exonStart &&
+            lastExonEnd == exonEnd &&
+            lastExonPhase == exonPhase &&
+            lastExonStrand == exonStrand &&
+            lastExonEndPhase == exonEndPhase ) {
+              duplicateExon++;
+              ReportManager.warning( this, con, "Exon " + exonId + " is duplicated." );
+            }
+          } else {
+            first = false ;
+            ReportManager.info(this, con, "Running duplicate exon test");
+          }
+          
+          lastExonStart = exonStart;
+          lastExonEnd = exonEnd;
+          lastExonChromosome = exonChromosome;
+          lastExonPhase = exonPhase;
+          lastExonEndPhase = exonEndPhase;
+          lastExonStrand = exonStrand;
+        }
+        
+        if( duplicateExon > 0 ) {
+          ReportManager.problem( this, con, duplicateExon + " duplicated Exons." );
+          result = false;
+        }
+        rs.close();
+        stmt.close();
+        
       } catch (Exception e) {
-	  result = false;
-	  e.printStackTrace();
+        result = false;
+        e.printStackTrace();
       }
     } // while rs
- 
-
+    
+    
     return new TestResult(getShortTestName(),result);
     
-}
+  }
   
   
 } // ExonStrandOrder TestCase

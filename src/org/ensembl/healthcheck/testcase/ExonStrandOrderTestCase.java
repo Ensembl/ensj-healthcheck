@@ -24,15 +24,15 @@ import org.ensembl.healthcheck.util.*;
 
 /**
  * An EnsEMBL Healthcheck test case which checks all exon of a gene are on the same strand
- * and in the correct order in their transcript..
+ * and in the correct order in their transcript.
  */
 
 public class ExonStrandOrderTestCase extends EnsTestCase {
   
-    public static final int TRANSCRIPT_WARN_LENGTH = 2000000;
-    public static final int TRANSCRIPT_COUNT_LEVEL = 1000000;
-
-
+  public static final int TRANSCRIPT_WARN_LENGTH = 2000000;
+  public static final int TRANSCRIPT_COUNT_LEVEL = 1000000;
+  
+  
   /**
    * Create an OrphanTestCase that applies to a specific set of databases.
    */
@@ -54,24 +54,34 @@ public class ExonStrandOrderTestCase extends EnsTestCase {
     int singleExonTranscripts = 0;
     int transcriptCount = 0;
     
-    String sql =
-    "SELECT t.gene_id, t.transcript_id, e.exon_id, " +
-    "IF     (a.contig_ori=1,(e.contig_start+a.chr_start-a.contig_start)," +
-    "                       (a.chr_start+a.contig_end-e.contig_end )) as start, " +
-    "IF     (a.contig_ori=1,(e.contig_end+a.chr_start-a.contig_start), " +
-    "                       (a.chr_start+a.contig_end-e.contig_start)) as end, " +
-    "       a.contig_ori*e.contig_strand, " +
-    "       a.chromosome_id, " +
-    "       et.rank " +
-    "FROM   transcript t, exon_transcript et ,exon e, assembly a " +
-    "WHERE  t.transcript_id = et.transcript_id " +
-    "AND    et.exon_id = e.exon_id " +
-    "AND    e.contig_id = a.contig_id " +
-    "ORDER  BY t.gene_id, t.transcript_id, et.rank, e.sticky_rank ";
+//    String sql =
+//    "SELECT t.gene_id, t.transcript_id, e.exon_id, " +
+//    "IF     (a.contig_ori=1,(e.contig_start+a.chr_start-a.contig_start)," +
+//    "                       (a.chr_start+a.contig_end-e.contig_end )) as start, " +
+//    "IF     (a.contig_ori=1,(e.contig_end+a.chr_start-a.contig_start), " +
+//    "                       (a.chr_start+a.contig_end-e.contig_start)) as end, " +
+//    "       a.contig_ori*e.contig_strand, " +
+//    "       a.chromosome_id, " +
+//    "       et.rank " +
+//    "FROM   transcript t, exon_transcript et ,exon e, assembly a " +
+//    "WHERE  t.transcript_id = et.transcript_id " +
+//    "AND    et.exon_id = e.exon_id " +
+//    "AND    e.contig_id = a.contig_id " +
+//    "ORDER  BY t.gene_id, t.transcript_id, et.rank, e.sticky_rank ";
     // +
     //				"LIMIT  100";
     // + "GROUP BY et.transcript_id, e.exon_id";
     
+    String sql =
+    "SELECT t.gene_id, t.transcript_id, e.exon_id, t.seq_region_start, t.seq_region_end, " +
+    "       a.ori*e.seq_region_strand, a.asm_seq_region_id, et.rank " +
+    "FROM   transcript t, exon_transcript et, exon e, assembly a " +
+    "WHERE  t.transcript_id = et.transcript_id " +
+    "AND    et.exon_id = e.exon_id " +
+    "AND    e.seq_region_id = a.cmp_seq_region_id " +
+    "ORDER  BY t.gene_id, t.transcript_id, et.rank ";
+    
+    System.out.println(sql);
     
     while (it.hasNext()) {
       
@@ -81,9 +91,9 @@ public class ExonStrandOrderTestCase extends EnsTestCase {
         stmt.setFetchSize(Integer.MIN_VALUE);
         ResultSet rs = stmt.executeQuery(sql);
         int transcriptStart = 0;
-	int geneStart, lastStart;
-	
-	int transcriptEnd = 0;
+        int geneStart, lastStart;
+        
+        int transcriptEnd = 0;
         int lastTranscriptId = -1;
         int lastGeneId = -1;
         int lastRank = -1;
@@ -109,19 +119,19 @@ public class ExonStrandOrderTestCase extends EnsTestCase {
           
           
           if( transcriptId != lastTranscriptId ) {
-	    if( lastTranscriptId > 0 ) {
-		if( transcriptEnd - transcriptStart > TRANSCRIPT_WARN_LENGTH ) {
-		    ReportManager.warning( this, con, "Long transcript " + lastTranscriptId + " Length " +
-					   ( transcriptEnd - transcriptStart ));
-		}
-	    }
+            if( lastTranscriptId > 0 ) {
+              if( transcriptEnd - transcriptStart > TRANSCRIPT_WARN_LENGTH ) {
+                ReportManager.warning( this, con, "Long transcript " + lastTranscriptId + " Length " +
+                ( transcriptEnd - transcriptStart ));
+              }
+            }
             lastTranscriptId = transcriptId;
             if( lastRank == 1 ) {
               singleExonTranscripts++;
             }
-
-	    transcriptStart = start;
-	    transcriptEnd = end;
+            
+            transcriptStart = start;
+            transcriptEnd = end;
             
             if( lastGeneId != geneId ) {
               geneStart = transcriptStart;
@@ -129,18 +139,18 @@ public class ExonStrandOrderTestCase extends EnsTestCase {
               currentChromosomeId = chromosomeId;
               
             } else {
-//               if( strand == 1 ) {
-//                 geneStart = transcriptStart < geneStart ?
-//                 transcriptStart : geneStart;
-//               } else {
-//                 geneStart = transcriptStart > geneStart ?
-//                 transcriptStart : geneStart;
-//               }
+              //               if( strand == 1 ) {
+              //                 geneStart = transcriptStart < geneStart ?
+              //                 transcriptStart : geneStart;
+              //               } else {
+              //                 geneStart = transcriptStart > geneStart ?
+              //                 transcriptStart : geneStart;
+              //               }
             }
             lastRank = exonRank;
             lastStart = start;
             transcriptCount++;
-//            continue;
+            //            continue;
           }
           
           // strand or chromosome jumping in Gene
@@ -177,14 +187,14 @@ public class ExonStrandOrderTestCase extends EnsTestCase {
             result = false;
           }
           
-	  if( strand == 1 ) {
-              transcriptEnd = end;
-	  } else {
-              transcriptStart = start;
-	  }
-
-	  lastRank = exonRank;
-
+          if( strand == 1 ) {
+            transcriptEnd = end;
+          } else {
+            transcriptStart = start;
+          }
+          
+          lastRank = exonRank;
+          
         } // while rs
         rs.close();
         stmt.close();

@@ -8,6 +8,7 @@
 package org.ensembl.healthcheck.test;
 
 import junit.framework.*;
+
 import org.ensembl.healthcheck.util.*;
 
 /**

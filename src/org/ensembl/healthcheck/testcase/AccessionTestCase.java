@@ -26,16 +26,14 @@ import org.ensembl.healthcheck.*;
 import org.ensembl.healthcheck.util.*;
 
 /**
- * Check for presence and format of PFAM etc hits. Also checks for protein features
- * with not hit_id
+ * Check for presence and format of PFAM hits, and format of others.
+ * Also checks for protein features with no hit_id.
  */
 
 public class AccessionTestCase extends EnsTestCase {
   
-  private HashMap logicNames = new HashMap();
-  private HashMap format = new HashMap();
-  
-  
+  private HashMap formats = new HashMap();
+ 
   /**
    * Constructor.
    */
@@ -44,9 +42,12 @@ public class AccessionTestCase extends EnsTestCase {
     addToGroup("post_genebuild");
     setDescription("Check for presence and format of PFAM etc hits");
     
-    // add to these hashes to check for other types and formats
-    logicNames.put("pfam", "pfam");
-    format.put("pfam", "PF_____");
+    // add to this hash to check for other types and formats
+    formats.put("pfam",        "PF_____");
+    formats.put("prints",      "PR_____");
+    formats.put("prosite",     "PS_____");
+    formats.put("profile",     "PS_____");    
+    formats.put("scanprosite", "PS_____");
     
   }
   
@@ -63,30 +64,32 @@ public class AccessionTestCase extends EnsTestCase {
       
       Connection con = (Connection)it.next();
       
-      Set keys = logicNames.keySet();
+      // check that there is at least one PFAM hit
+      // others - prints, prosite etc - may not have any hits
+      int hits = getRowCount(con, "SELECT COUNT(*) FROM protein_feature pf, analysis a WHERE a.logic_name='pfam' AND a.analysis_id=pf.analysis_id");
+      if (hits < 1) {
+        result = false;
+        ReportManager.problem(this, con, "No proteins with PFAM hits; this is only a problem for *_core_* databases");
+      } else {
+        ReportManager.correct(this, con, hits  + " proteins with PFAM hits");
+      }
+      
+      // check formats for others
+      Set keys = formats.keySet();
       Iterator it2 = keys.iterator();
       
       while (it2.hasNext()) {
         
         String key = (String)it2.next();
-        logger.fine("Checking for logic name " + logicNames.get(key) + " with hits of format " + format.get(key));
-        
-        // check that there is at least one hit
-        int hits = getRowCount(con, "SELECT COUNT(*) FROM protein_feature pf, analysis a WHERE a.logic_name='" + logicNames.get(key) + "' AND a.analysis_id=pf.analysis_id");
-        if (hits < 1) {
-          result = false;
-          ReportManager.problem(this, con, "No proteins with " + logicNames.get(key) + " hits; this is only a problem for *_core_* databases");
-        } else {
-          ReportManager.correct(this, con, hits  + " proteins with " + logicNames.get(key) + "  hits");
-        }
+        logger.fine("Checking for logic name " + key + " with hits of format " + formats.get(key));
         
         // check format of hits
-        int badFormat = getRowCount(con, "SELECT COUNT(*) FROM protein_feature pf, analysis a WHERE a.logic_name='" + logicNames.get(key) + "' AND a.analysis_id=pf.analysis_id AND pf.hit_id NOT LIKE '" + format.get(key) + "'");
+        int badFormat = getRowCount(con, "SELECT COUNT(*) FROM protein_feature pf, analysis a WHERE a.logic_name='" + key + "' AND a.analysis_id=pf.analysis_id AND pf.hit_id NOT LIKE '" + formats.get(key) + "'");
         if (badFormat > 0) {
           result = false;
-          ReportManager.problem(this, con, badFormat + " " + logicNames.get(key) + " hit IDs are not in the correct format");
+          ReportManager.problem(this, con, badFormat + " " + key + " hit IDs are not in the correct format");
         } else {
-          ReportManager.correct(this, con, "All " + logicNames.get(key) + " hits are in the correct format");
+          ReportManager.correct(this, con, "All " + key + " hits are in the correct format");
         }
         
       }
@@ -100,7 +103,7 @@ public class AccessionTestCase extends EnsTestCase {
         ReportManager.correct(this, con, "No protein features have null or blank hit_ids");
       }
       
-    }    
+    }
     
     return new TestResult(getShortTestName(), result);
     

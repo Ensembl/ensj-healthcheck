@@ -93,6 +93,26 @@ public class Utils {
   }
   
   // -------------------------------------------------------------------------
+  /** Concatenate an array of Strings into a single String.
+   * @param a The Strings to list.
+   * @param delim The delimiter to use.
+   * @return A String containing the elements of a separated by delim. No trailing delimiter.
+   */
+  public static String arrayToString(String[] a, String delim) {
+    
+    StringBuffer buf = new StringBuffer();
+    for (int i = 0; i < a.length; i++) {
+      buf.append(a[i]);
+      if (i < a.length) {
+        buf.append(delim);
+      }
+    }
+    
+    return buf.toString();
+    
+  }
+  
+  // -------------------------------------------------------------------------
   /**
    * Print the keys in a HashMap.
    * @param m The map to use.

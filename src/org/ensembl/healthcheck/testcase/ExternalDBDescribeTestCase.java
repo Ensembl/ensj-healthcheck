@@ -44,9 +44,9 @@ public class ExternalDBDescribeTestCase extends EnsTestCase {
     
     // XXX update when ReportManager can handle non database/test-specific reports
     if (result) {
-      ReportManager.correct(this, "all databases", "external_db table is the same in all databases");
+      ReportManager.correct(this, "", "external_db table is the same in all databases");
     } else {
-       ReportManager.problem(this, "all databases", "external_db table is NOT the same in all databases");
+       ReportManager.problem(this, "", "external_db table is NOT the same in all databases");
     } 
     return new TestResult(getShortTestName(), result);
   }

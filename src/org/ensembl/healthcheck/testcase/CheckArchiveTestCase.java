@@ -40,8 +40,6 @@ public class CheckArchiveTestCase extends EnsTestCase {
 
 		DatabaseConnectionIterator it = getDatabaseConnectionIterator();
 
-		System.out.println("Warning - some tests are commented out for speed");
-
 		while (it.hasNext()) {
 
 			Connection con = (Connection)it.next();
@@ -65,28 +63,28 @@ public class CheckArchiveTestCase extends EnsTestCase {
 			result = checkDeletedInGeneArchive(con, "gene", "G", 355) && result;
 			System.out.println("Checking deleted transcripts");
 			result = checkDeletedInGeneArchive(con, "transcript", "T", 355) && result;
-			//System.out.println("Checking deleted translations");
-			//result = checkDeletedInGeneArchive(con, "translation", "P", 355) && result;
-			//System.out.println("Checking changed translations");
-			//result = checkChangedInGeneArchive(con, "translation", "P", 355) && result;
+			System.out.println("Checking deleted translations");
+			result = checkDeletedInGeneArchive(con, "translation", "P", 355) && result;
+			System.out.println("Checking changed translations");
+			result = checkChangedInGeneArchive(con, "translation", "P", 355) && result;
 			System.out.println("Checking changed transcript");
 			result = checkChangedInGeneArchive(con, "transcript", "T", 355) && result;
 			System.out.println("Checking changed genes");
 			result = checkChangedInGeneArchive(con, "gene", "G", 355) && result;
-			//System.out.println("Checking deleted translations in peptide archive");
-			//result = checkDeletedTranslationsInPeptideArchive(con, 355) && result;
-			//System.out.println("Checking deleted translations in peptide archive");
-			//result = checkChangedTranslationsInPeptideArchive(con, 355) && result;
-			//System.out.println("Checking translations from peptide archive in gene archive");
-			//result = checkTranslationsFromPeptideArchiveInGeneArchive(con) && result;
-			//System.out.println("Checking no current translations in peptide archive");
-			//result = checkNoCurrentTranslationsInPeptideArchive(con) && result;
+			System.out.println("Checking deleted translations in peptide archive");
+			result = checkDeletedTranslationsInPeptideArchive(con, 355) && result;
+			System.out.println("Checking deleted translations in peptide archive");
+			result = checkChangedTranslationsInPeptideArchive(con, 355) && result;
+			System.out.println("Checking translations from peptide archive in gene archive");
+			result = checkTranslationsFromPeptideArchiveInGeneArchive(con) && result;
+			System.out.println("Checking no current translations in peptide archive");
+			result = checkNoCurrentTranslationsInPeptideArchive(con) && result;
 			System.out.println("Checking gene propagation IDs are current");
 			result = checkPropagationIDsAreCurrent(con, "gene", "G");
 			System.out.println("Checking transcript propagation IDs are current");
 			result = checkPropagationIDsAreCurrent(con, "transcript", "T");
-			//System.out.println("Checking translation propagation IDs are current");
-			//result = checkPropagationIDsAreCurrent(con, "translation", "P");
+			System.out.println("Checking translation propagation IDs are current");
+			result = checkPropagationIDsAreCurrent(con, "translation", "P");
 
 		}
 

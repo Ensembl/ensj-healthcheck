@@ -20,6 +20,7 @@ package org.ensembl.healthcheck.testcase;
 
 import org.ensembl.healthcheck.*;
 
+
 /**
  * Check the DNA tables in a range of databases.
  */

@@ -525,7 +525,7 @@ public class DBUtils {
   }
   
   // -------------------------------------------------------------------------
-  /** 
+  /**
    * List the columns in a particular table.
    * @param table The name of the table to list.
    * @param con The connection to use.
@@ -535,7 +535,7 @@ public class DBUtils {
     
     List result = new ArrayList();
     
-     try {
+    try {
       
       Statement stmt = con.createStatement();
       ResultSet rs = stmt.executeQuery("DESCRIBE " + table);
@@ -584,7 +584,7 @@ public class DBUtils {
       e.printStackTrace();
     }
   }
-    
+  
   // -------------------------------------------------------------------------
-
+  
 } // DBUtils

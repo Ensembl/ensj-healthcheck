@@ -43,7 +43,7 @@ public class CheckCoreTablesHaveDataTestCase extends EnsTestCase {
    */
   public TestResult run() {
     
-    String[] tables = { "chromosome", "assembly", "dna", "contig", "clone", "interpro" };
+    String[] tables = { "seq_region", "assembly", "dna" };
     
     boolean result = true;
        
@@ -57,7 +57,7 @@ public class CheckCoreTablesHaveDataTestCase extends EnsTestCase {
         String table = tables[i];        
         logger.info("Checking " + DBUtils.getShortDatabaseName(con) + "." + table);
         if (countRowsInTable(con, table) == 0) {
-            //warn(con, table + " has no data!");
+          warn(con, table + " has no data!");
           ReportManager.problem(this, con, table + " has no data.");
         } else {
           ReportManager.correct(this, con, table + " is OK.");
