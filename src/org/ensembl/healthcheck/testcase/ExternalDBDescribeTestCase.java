@@ -29,6 +29,7 @@ public class ExternalDBDescribeTestCase extends EnsTestCase {
 
   /** Creates a new instance of ExternalDBDescriptionTestCase */
   public ExternalDBDescribeTestCase() {
+    addToGroup("db_constraints");
     setDescription("Check that the external_db table is the same in all databases.");
   }
   
