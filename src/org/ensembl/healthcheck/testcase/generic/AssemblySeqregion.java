@@ -73,6 +73,33 @@ public class AssemblySeqregion extends SingleDatabaseTestCase {
             e.printStackTrace();
         }
 
+        // -------------------------------------------------------
+        // check various other things about the assembly table
+        // Check for mismatched lengths of assembled and component sides. 
+        // ie where (asm_end - asm_start + 1) != (cmp_end - cmp_start + 1) 
+        int rows = getRowCount(con, "SELECT COUNT(*) FROM assembly WHERE (asm_end - asm_start + 1) != (cmp_end - cmp_start + 1)");
+        if (rows > 0) {
+            ReportManager.problem(this, con, rows + " rows in assembly table have mismatched lengths of assembled and component sides");
+        } else {
+            ReportManager.correct(this, con, "All rows in assembly table have matching lengths of assembled and component sides");
+        }
+        
+        // check for start/end < 1
+        rows = getRowCount(con, "SELECT COUNT(*) FROM assembly WHERE asm_start < 1 OR asm_end < 1 OR cmp_start < 1 OR cmp_end < 1");
+        if (rows > 0) {
+            ReportManager.problem(this, con, rows + " rows in assembly table have start or end coords < 1");
+        } else {
+            ReportManager.correct(this, con, "All rows in assembly table have start and end coords > 0");
+        }
+        
+        // check for end < start
+        rows = getRowCount(con, "SELECT COUNT(*) FROM assembly WHERE asm_end < asm_start OR cmp_end < cmp_start");
+        if (rows > 0) {
+            ReportManager.problem(this, con, rows + " rows in assembly table have start or end coords < 1");
+        } else {
+            ReportManager.correct(this, con, "All rows in assembly table have end coords > start coords");
+        }
+        
         return result;
 
     } // run
