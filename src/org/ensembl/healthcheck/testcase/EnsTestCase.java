@@ -103,25 +103,8 @@ import org.ensembl.healthcheck.util.*;
 
 public abstract class EnsTestCase {
 
-	/**
-	 * Regexp that, when combined with a species name, will match core
-	 * databases
-	 */
-	protected static final String CORE_DB_REGEXP = "[A-Za-z]+_[A-Za-z]+_(core|est|estgene|vega)_\\d+_\\d+[A-Za-z]?.*";
-
-	protected static final String CORE_DB_REGEXP_POSTFIX = "_(core|est|estgene|vega)_\\d+_\\d+[A-Za-z]?.*";
-
 	/** The TestRunner associated with this EnsTestCase */
 	protected TestRunner testRunner;
-
-	/**
-	 * The regular expression to match the names of the databases that the test
-	 * case will apply to.
-	 */
-	protected String databaseRegexp = CORE_DB_REGEXP;
-
-	/** If set, this is applied to the database names before databaseRegexp. */
-	protected String preFilterRegexp = "";
 
 	/**
 	 * A list of Strings representing the groups that this test is a member of.
@@ -141,6 +124,11 @@ public abstract class EnsTestCase {
 	 * long time to run
 	 */
 	protected boolean hintLongRunning = false;
+
+	/**
+	 * Store a list of which types of database this test applies to.
+	 */
+	protected List appliesToTypes = new ArrayList();
 
 	// -------------------------------------------------------------------------
 	/**
@@ -265,7 +253,7 @@ public abstract class EnsTestCase {
 
 		java.util.Iterator it = groups.iterator();
 		while (it.hasNext()) {
-			gString.append((String) it.next());
+			gString.append((String)it.next());
 			if (it.hasNext()) {
 				gString.append(",");
 			}
@@ -363,55 +351,13 @@ public abstract class EnsTestCase {
 
 		java.util.Iterator it = checkGroups.iterator();
 		while (it.hasNext()) {
-			if (inGroup((String) it.next())) {
+			if (inGroup((String)it.next())) {
 				result = true;
 			}
 		}
 		return result;
 
 	} // inGroups
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Get a list of the databases matching a particular pattern. Uses
-	 * pre-filter regexp if it is defined.
-	 * 
-	 * @return The list of database names matched.
-	 */
-	public String[] getAffectedDatabases() {
-
-		return testRunner.getListOfDatabaseNames(databaseRegexp);
-
-	} // getAffectedDatabases
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Convenience method to return a DatabaseConnectionIterator from the
-	 * parent TestRunner class, with the current database regular expression.
-	 * 
-	 * @return A new DatabaseConnectionIterator.
-	 */
-	public DatabaseConnectionIterator getDatabaseConnectionIterator() {
-
-		return testRunner.getDatabaseConnectionIterator(databaseRegexp);
-
-	}
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Prints (to stdout) all the databases that match the current class'
-	 * database regular expression. Uses pre-filter regexp if it is defined.
-	 */
-	public void printAffectedDatabases() {
-
-		System.out.println("Databases matching " + databaseRegexp + ":");
-		String[] databaseList = getAffectedDatabases();
-		Utils.printArray(databaseList);
-		for (int i = 0; i < databaseList.length; i++) {
-			System.out.println("\t\t" + databaseList[i]);
-		}
-
-	} // printAffectedDatabases
 
 	// -------------------------------------------------------------------------
 	/**
@@ -518,8 +464,8 @@ public abstract class EnsTestCase {
 
 		} else { //  otherwise, do it row-by-row
 
-			logger
-					.warning("getRowCount() executing SQL which does not appear to begin with SELECT COUNT - performing row-by-row count, which may take a long time if the table is large.");
+			logger.warning(
+				"getRowCount() executing SQL which does not appear to begin with SELECT COUNT - performing row-by-row count, which may take a long time if the table is large.");
 			result = getRowCountSlow(con, sql);
 
 		}
@@ -584,7 +530,7 @@ public abstract class EnsTestCase {
 			e.printStackTrace();
 		}
 
-		return (String[]) list.toArray(new String[list.size()]);
+		return (String[])list.toArray(new String[list.size()]);
 
 	} // getRowColumnValue
 
@@ -610,8 +556,7 @@ public abstract class EnsTestCase {
 
 		int resultLeft, resultRight;
 
-		String sql = " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "."
-				+ col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
+		String sql = " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
 
 		resultLeft = getRowCount(con, "SELECT COUNT(*)" + sql);
 
@@ -624,8 +569,7 @@ public abstract class EnsTestCase {
 
 		if (!oneWayOnly) {
 			// and the other way ... (a right join?)
-			sql = " FROM " + table2 + " LEFT JOIN " + table1 + " ON " + table2 + "." + col2 + " = " + table1 + "." + col1
-					+ " WHERE " + table1 + "." + col1 + " IS NULL";
+			sql = " FROM " + table2 + " LEFT JOIN " + table1 + " ON " + table2 + "." + col2 + " = " + table1 + "." + col1 + " WHERE " + table1 + "." + col1 + " IS NULL";
 
 			resultRight = getRowCount(con, "SELECT COUNT(*)" + sql);
 			if (resultRight > 0) {
@@ -663,7 +607,7 @@ public abstract class EnsTestCase {
 
 		while (dcit.hasNext()) {
 
-			Connection con = (Connection) dcit.next();
+			Connection con = (Connection)dcit.next();
 
 			try {
 				Statement stmt = con.createStatement();
@@ -689,7 +633,7 @@ public abstract class EnsTestCase {
 		Iterator it = statements.iterator();
 		while (it.hasNext()) {
 			try {
-				((Statement) it.next()).close();
+				((Statement)it.next()).close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -698,68 +642,6 @@ public abstract class EnsTestCase {
 		return same;
 
 	} // checkSameSQLResult
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Check that a particular SQL statement has the same result when executed
-	 * on more than one database. The test case's build-in regexp is used to
-	 * decide which database names to match.
-	 * 
-	 * @return True if all matched databases provide the same result, false
-	 *         otherwise.
-	 * @param sql The SQL query to execute.
-	 */
-	public boolean checkSameSQLResult(String sql) {
-
-		return checkSameSQLResult(sql, databaseRegexp);
-
-	} // checkSameSQLResult
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Over-ride the database regular expression set in the subclass'
-	 * constructor.
-	 * 
-	 * @param re The new regular expression to use.
-	 */
-	public void setDatabaseRegexp(String re) {
-
-		databaseRegexp = re;
-
-	} // setDatabaseRegexp
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Get the database regular expression that this test case is using.
-	 * 
-	 * @return The database regular expression that this test case is using.
-	 */
-	public String getDatabaseRegexp() {
-
-		return databaseRegexp;
-
-	} // getDatabaseRegexp
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Get the regular expression that will be applied to database names before
-	 * the built-in regular expression.
-	 * 
-	 * @return The value of preFilterRegexp
-	 */
-	public String getPreFilterRegexp() {
-		return preFilterRegexp;
-	}
-
-	/**
-	 * Set the regular expression that will be applied to database names before
-	 * the built-in regular expression.
-	 * 
-	 * @param s The new value for preFilterRegexp.
-	 */
-	public void setPreFilterRegexp(String s) {
-		preFilterRegexp = s;
-	}
 
 	// -------------------------------------------------------------------------
 	/**
@@ -969,7 +851,7 @@ public abstract class EnsTestCase {
 		DatabaseConnectionIterator dbci = testRunner.getDatabaseConnectionIterator(".*");
 		while (dbci.hasNext()) {
 
-			String dbName = DBUtils.getShortDatabaseName((Connection) dbci.next());
+			String dbName = DBUtils.getShortDatabaseName((Connection)dbci.next());
 
 			String[] bits = dbName.split("_");
 			if (bits.length > 2) {
@@ -983,7 +865,7 @@ public abstract class EnsTestCase {
 
 		}
 
-		return (String[]) list.toArray(new String[list.size()]);
+		return (String[])list.toArray(new String[list.size()]);
 
 	}
 
@@ -1047,8 +929,7 @@ public abstract class EnsTestCase {
 		try {
 
 			Class.forName(System.getProperty("driver"));
-			Connection tmp_con = DriverManager.getConnection(System.getProperty("databaseURL"), System.getProperty("user"),
-					System.getProperty("password"));
+			Connection tmp_con = DriverManager.getConnection(System.getProperty("databaseURL"), System.getProperty("user"), System.getProperty("password"));
 
 			String sql = "CREATE DATABASE " + tempDBName;
 			logger.finest(sql);
@@ -1058,8 +939,7 @@ public abstract class EnsTestCase {
 
 			// close the temporary connection and create a "real" one
 			tmp_con.close();
-			con = DriverManager.getConnection(System.getProperty("databaseURL") + tempDBName, System.getProperty("user"),
-					System.getProperty("password"));
+			con = DriverManager.getConnection(System.getProperty("databaseURL") + tempDBName, System.getProperty("user"), System.getProperty("password"));
 
 		} catch (Exception e) {
 
@@ -1165,8 +1045,8 @@ public abstract class EnsTestCase {
 	 */
 	public Connection getSchemaConnection(String schema) {
 
-		Connection con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL") + schema,
-				System.getProperty("user"), System.getProperty("password"));
+		Connection con =
+			DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL") + schema, System.getProperty("user"), System.getProperty("password"));
 
 		return con;
 	}
@@ -1269,51 +1149,85 @@ public abstract class EnsTestCase {
 	 * Check if this test case applies to a particular DatabaseType.
 	 */
 	public boolean appliesToType(DatabaseType t) {
-		
-		DatabaseType[] types = databaseTypes();
-		for (int i = 0; i < types.length; i++) {
-			if (t.equals(types[i])) {
+
+		Iterator it = appliesToTypes.iterator();
+		while (it.hasNext()) {
+			DatabaseType type = (DatabaseType)it.next();
+			if (t.equals(type)) {
 				return true;
 			}
 		}
-		
+
 		return false;
-		
+
 	}
-	
+
+	// -----------------------------------------------------------------
+	/**
+	 * Add another database type to the list of types that this test case applies to.
+	 * @param t The new type.
+	 */
+	public void addAppliesToType(DatabaseType t) {
+
+		appliesToTypes.add(t);
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+		* Remove a database type from the list of types that this test case applies to.
+	  * @param t The type to remove.
+		*/
+	public void removeAppliesToType(DatabaseType t) {
+
+		appliesToTypes.remove(t);
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+	 * Specify the database types that a test applies to.
+	 * @param types A List of DatabaseTypes - overwrites the current setting.
+	 */
+	public void setAppliesToTypes(List types) {
+
+		appliesToTypes = types;
+
+	}
+
+	// -----------------------------------------------------------------
+	/** 
+	 * Set the database type(s) that this test applies to based upon the directory name.
+	 * For directories called "generic", the type is set to core, est, estgene and vega.
+	 * For all other directories the type is set based upon the directory name.
+	 */
+	public void setTypeFromDirName(String dirName) {
+
+		List types = new ArrayList();
+		
+		if (dirName.equals("generic")) {
+
+			types.add(DatabaseType.CORE);
+			types.add(DatabaseType.VEGA);
+			types.add(DatabaseType.EST);
+			types.add(DatabaseType.ESTGENE);
+			logger.finest("Set generic types for " + getName());
+			
+		} else {
+
+			DatabaseType type = DatabaseType.resolveAlias(dirName);
+			if (type != DatabaseType.UNKNOWN) {
+
+				types.add(type);
+				logger.finest("Set type to " + type.toString() + " for " + getName());
+			} else {
+				logger.warning("Cannot deduce test type from directory name " + dirName + " for " + getName());
+			}
+		}
+		
+		setAppliesToTypes(types);
+
+	}
 	// -------------------------------------------------------------------------
-
-	// Abstract methods - must be implemented by subclasses.
-
-	//---------------------------------------------------------------------
-	/**
-	 * This method should be implemented by test cases to specify which
-	 * database types they apply to.
-	 * 
-	 * @return The type(s) of database that the test applies to.
-	 */
-	public abstract DatabaseType[] databaseTypes();
-
-	/**
-	 * The principal run method. Subclasses of EnsTestCase should implement
-	 * this to provide test-specific behaviour.
-	 * 
-	 * @param con A connection to the database on which the test is to run.
-	 *            This will be null if the test case is a multi-database test
-	 *            case, since these are responsible for their own connection
-	 *            management.
-	 * @return true if the test passed, false otherwise.
-	 */
-	public abstract boolean run(Connection con);
-
-	/**
-	 * Some tests run on only one database schema at a time, others run across
-	 * multiple databases. The test runner needs to know what type of test this
-	 * is. Multi-database tests are passed a null Connection in the run()
-	 * method since they are responsible for their own connection management.
-	 * 
-	 * @return True if this test accesses more than one database at once.
-	 */
-	public abstract boolean isMultiDatabaseTest();
 
 } // EnsTestCase
