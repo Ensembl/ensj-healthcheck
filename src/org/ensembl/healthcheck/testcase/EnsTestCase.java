@@ -1035,29 +1035,7 @@ public abstract class EnsTestCase {
    */
   public List getTableNames(Connection con) {
     
-    List result = new ArrayList();
-    
-    if (con == null) {
-      logger.severe("getTableNames(): Database connection is null");
-    }
-    
-    try {
-      
-      Statement stmt = con.createStatement();
-      ResultSet rs = stmt.executeQuery("SHOW TABLES");
-      
-      while (rs.next()) {
-        result.add(rs.getString(1));
-      }
-      
-      rs.close();
-      stmt.close();
-      
-    } catch (SQLException se) {
-      logger.severe(se.getMessage());
-    }
-    
-    return result;
+    return DBUtils.getTableNames(con);
     
   }
   
