@@ -44,7 +44,7 @@ public class DatabaseRegistryEntry {
 		this.name = name;
 		this.species = species;
 		this.type = type;
-		this.con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System.getProperty("user"), System.getProperty("password"));
+		this.con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL") + name, System.getProperty("user"), System.getProperty("password"));
 
 	}
 
@@ -59,7 +59,7 @@ public class DatabaseRegistryEntry {
 	public DatabaseRegistryEntry(String name) {
 
 		this.name = name;
-		this.con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System.getProperty("user"), System.getProperty("password"));
+		this.con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL") + name, System.getProperty("user"), System.getProperty("password"));
 		species = setSpeciesFromName(name);
 		type = setTypeFromName(name);
 
