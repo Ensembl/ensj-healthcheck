@@ -561,6 +561,21 @@ public class TestRunner {
   
   // -------------------------------------------------------------------------
 
+  public void buildSchemaList() {
+    
+   Iterator it = getDatabaseConnectionIterator("."); // should get all of them
+   
+   while (it.hasNext()) {
+    
+     Connection con = (Connection)it.next();
+     SchemaManager.addSchema(new SchemaInfo(con));
+     
+   }
+   
+   
+  }
+  // -------------------------------------------------------------------------
+
  
 } // TestRunner
 
