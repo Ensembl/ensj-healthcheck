@@ -83,18 +83,28 @@
             </classpath>
         </java>
     </target>
+    
+    
+    <!-- ################################################################################## -->
+
+    <target name="copy-resources" description="Copy images etc into appropriate directories">
+       <copy todir="${build}/org/ensembl/healthcheck/gui">
+            <fileset dir="${images}">
+                <include name="*.gif"/>
+                <include name="*.png"/>
+                <include name="*.jpg"/>
+            </fileset>
+        </copy>
+    </target>
 
     <!-- ################################################################################## -->
 
     <target name="jar"
-            depends="compile"
+            depends="compile, copy-resources"
             description="generate ensj-healthcheck.jar"
      >
         <jar jarfile="${lib}/${name}.jar">
             <fileset dir="${build}/"/>
-            <fileset dir=".">
-                <include name="images/*.gif"/>
-            </fileset>
         </jar>
     </target>
 
