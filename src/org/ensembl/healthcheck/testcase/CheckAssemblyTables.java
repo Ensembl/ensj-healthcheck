@@ -37,8 +37,9 @@ public class CheckAssemblyTables extends EnsTestCase {
     setDescription("Check that the assembly table is present, and contains the same information for each species.");
   }
   
-  /**
+  /** 
    * Make sure that the assembly table has the same number of rows.
+   * @return Result.
    */
   public TestResult run() {
     
@@ -54,9 +55,9 @@ public class CheckAssemblyTables extends EnsTestCase {
       boolean allMatch = checkSameSQLResult("SELECT COUNT(*) FROM assembly", speciesRegexp);
       if (!allMatch) {
         result = false;
-        ReportManager.problem(this, "[see report text]", "Differences in assembly table across species " + speciesRegexp); // XXX null
+        ReportManager.problem(this, "[see report text]", "Differences in assembly table across species " + speciesRegexp); 
       } else {
-       ReportManager.correct(this, "[see report text]",  "All assembly tables the same for " + speciesRegexp);  // XXX null
+       ReportManager.correct(this, "[see report text]",  "All assembly tables the same for " + speciesRegexp);  
       }
       
     } // foreach species

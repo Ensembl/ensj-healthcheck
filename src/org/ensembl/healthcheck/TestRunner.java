@@ -410,8 +410,9 @@ public class TestRunner {
   } // listAllGroups
   
   // -------------------------------------------------------------------------
-  /**
+  /** 
    * Print (to stdout) out a list of test reports, keyed by the test type.
+   * @param level The lowest report level (see ReportLine) to print. Reports with a level lower than this are not printed.
    */
   public void printReportsByTest(int level) {
     
@@ -441,8 +442,9 @@ public class TestRunner {
   } // printReportsByTest
   
   // -------------------------------------------------------------------------
-  /**
+  /** 
    * Print (to stdout) a list of test results, ordered by database.
+   * @param level The minimum level of report to print - see ReportLine. Reports below this level are not printed.
    */
   public void printReportsByDatabase(int level) {
     
@@ -493,9 +495,9 @@ public class TestRunner {
   } // setOutputLevel
   
   // -------------------------------------------------------------------------
-  /**
+  /** 
    * Set the output level.
-   * @param The new output level, e.g. ReportLine.PROBLEM.
+   * @param l The new output level.
    */
   public void setOutputLevel(int l) {
     

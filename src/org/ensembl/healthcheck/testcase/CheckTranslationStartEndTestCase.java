@@ -37,8 +37,9 @@ public class CheckTranslationStartEndTestCase extends EnsTestCase {
     setDescription("Check that if the start and end of translation is on the same exon, that start < end.");
   }
   
-  /**
-   * Find any matching databases that have start > end
+  /** 
+   * Find any matching databases that have start > end.
+   * @return Result.
    */
   public TestResult run() {
     

@@ -37,9 +37,9 @@ public class CheckTranscriptsTranslateTestCase extends EnsTestCase {
     setDescription("Check that all transcripts have an associated translation");
   }
   
-  /**
+  /** 
    * Find any transcripts that don't translate.
-   * @todo use countOrphans()?
+   * @return Result.
    */
   public TestResult run() {
     

@@ -37,8 +37,9 @@ public class CheckAllTranscriptsHaveExonsTestCase extends EnsTestCase {
     setDescription("Check that all transcripts have an associated exon.");
   }
   
-  /**
+  /** 
    * Find any transcripts that are not associated with an exon.
+   * @return Result.
    */
   public TestResult run() {
     

@@ -39,9 +39,9 @@ public class CheckExonCoordsTestCase extends EnsTestCase {
   
   // -------------------------------------------------------------------------
   
-  /**
+  /** 
    * Check if there are any exons with invalid co-ordinates.
-   *
+   * @return Result.
    */
   public TestResult run() {
     

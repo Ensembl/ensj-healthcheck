@@ -37,8 +37,9 @@ public class CheckAllTranscriptsBelongToAGeneTestCase extends EnsTestCase {
     setDescription("Check that all transcripts belong to a gene.");
   }
   
-  /**
+  /** 
    * Find how many transcripts don't belong to a gene.
+   * @return Result.
    */
   public TestResult run() {
     

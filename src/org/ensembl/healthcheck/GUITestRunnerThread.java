@@ -32,8 +32,13 @@ public class GUITestRunnerThread extends Thread {
   private ThreadGroup threadGroup;
   private int maxThreads;
   private boolean isRunning = false;
-  /**
+  
+  /** 
    * Creates a new instance of GUITestRunnerThread
+   * @param threadGroup The group which this test thread should be a member of.
+   * @param testCase The test case that this thread should run.
+   * @param gtrf A reference to the parent GuiTestRunnerFrame to update as the thread runs.
+   * @param maxThreads The maximum number of threads to run at any one time.
    */
   public GUITestRunnerThread(ThreadGroup threadGroup, EnsTestCase testCase, GuiTestRunnerFrame gtrf, int maxThreads) {
     
@@ -46,6 +51,9 @@ public class GUITestRunnerThread extends Thread {
     
   }
   
+  /** 
+   * Implementation of the Runnable interface.
+   */
   public void run() {
     
     // wait until there aren't too many threads running
@@ -79,7 +87,10 @@ public class GUITestRunnerThread extends Thread {
   }
   
   // -------------------------------------------------------------------------
-  
+  /**
+   * Try to figure out how many tests are actually running; note that just because a test thread has been started doesn't mean that the test is actually running.
+   * @return The number of threads that are currently running.
+   */
   private int runningThreadCount() {
     
     int result = 0;
@@ -100,7 +111,10 @@ public class GUITestRunnerThread extends Thread {
   } // runningThreadCount
   
   // -------------------------------------------------------------------------
-
+  /** 
+   * Return whether this test is acutally running.
+   * @return Whether the test is running or not.
+   */
   public boolean isRunning() {
    
     return isRunning;

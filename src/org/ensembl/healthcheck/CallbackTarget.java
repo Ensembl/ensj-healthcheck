@@ -28,7 +28,7 @@ public interface CallbackTarget {
   
   /**
    * Perform the callback.
-   * @param rec The log record.
+   * @param record The LogRecord involved.
    */
   void callback(LogRecord record);
   

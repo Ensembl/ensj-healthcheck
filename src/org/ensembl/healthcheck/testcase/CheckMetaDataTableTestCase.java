@@ -39,8 +39,9 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
     setDescription("Check that the meta table exists, has data, the entries correspond to the database name, and that the values in assembly.type match what's in the meta table");
   }
   
-  /**
+  /** 
    * Check various aspects of the meta table.
+   * @return Result.
    */
   public TestResult run() {
     
@@ -77,7 +78,7 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
       
       // ----------------------------------------
       // check that there are species, classification and taxonomy_id entries
-      String [] meta_keys = { "assembly.default", "species.classification", "species.common_name", "species.taxonomy_id" }; // XXX are all these mandatory?
+      String [] meta_keys = { "assembly.default", "species.classification", "species.common_name", "species.taxonomy_id" }; 
       for (int i = 0; i < meta_keys.length; i++) {
         String meta_key = meta_keys[i];
         rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + meta_key + "'");

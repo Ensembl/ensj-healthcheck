@@ -36,6 +36,10 @@ public class UnderscoreInAssemblyTypeTestCase extends EnsTestCase {
     setDescription("Checks for the presence of _ characters in assembly.type");
   }
   
+  /** 
+   * Check the assembly.type column in each database to look for _.
+   * @return Result.
+   */
   public TestResult run() {
     
     boolean result = true;

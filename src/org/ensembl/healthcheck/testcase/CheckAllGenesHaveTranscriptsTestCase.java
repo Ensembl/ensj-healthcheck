@@ -37,8 +37,9 @@ public class CheckAllGenesHaveTranscriptsTestCase extends EnsTestCase {
     setDescription("Check that all genes have associated transcripts");
   }
   
-  /**
+  /** 
    * Check each database for any genes that don't have transcripts.
+   * @return Result.
    */
   public TestResult run() {
     

@@ -32,12 +32,16 @@ public class ExternalDBDescribeTestCase extends EnsTestCase {
     setDescription("Check that the external_db table is the same in all databases.");
   }
   
+  /**
+   * Check that the external_db tables are the same for each matched database.
+   * @return Result.
+   */
   public TestResult run() {
     
     //boolean result = super.checkSameSQLResult("DESCRIBE external_db");
     boolean result = super.checkSameSQLResult("SELECT * FROM external_db ORDER BY external_db_id");
     
-    // XXX null bad here?
+    // XXX update when ReportManager can handle non database/test-specific reports
     if (result) {
       ReportManager.correct(this, "", "external_db table is the same in all databases");
     } else {

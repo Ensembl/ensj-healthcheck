@@ -28,18 +28,23 @@ import org.ensembl.healthcheck.util.*;
  */
 public class GuiTestRunner extends TestRunner {
   
+  /** The logger to use for this class */
   protected static Logger logger = Logger.getLogger("HealthCheckLogger");
   private GuiTestRunnerFrame gtrf;
   
+  /** Default maximum number of test threads to run at any one time */
   protected int maxThreads = 4;
   
+  /** Whether or not to use only the pre-filter regexp */
   protected boolean forceDatabases = false;
   
+  /** Pre-filter regexp; may be overridded on command line */
   protected String preFilterRegexp = "";
  
   // -------------------------------------------------------------------------
   /**
-   *
+   * Command-line entry point.
+   * @param args Command line arguments.
    */
   public static void main(String[] args) {
     
@@ -111,11 +116,11 @@ public class GuiTestRunner extends TestRunner {
   } // parseCommandLine
   
   // -------------------------------------------------------------------------
-  /**
+  /** 
    * Run all the tests in a list.
+   * @param groups The groups to run (as Strings)
+   * @param gtrf A reference to the GuiTestRunnerFrame to update as the tests run.
    * @param allTests The tests to run, as objects.
-   * @param forceDatabases If true, use only the database name pattern specified
-   * on the command line, <em>not</em> the regular expression built in to the test case.
    */
   protected void runAllTests(List allTests, List groups, GuiTestRunnerFrame gtrf) {
     
@@ -162,7 +167,10 @@ public class GuiTestRunner extends TestRunner {
   
   // runAllTests
   // -------------------------------------------------------------------------
-  
+  /** 
+   * Set the maximum number of test threads to run at one time.
+   * @param t The new number of threads.
+   */
   public void setMaxThreads(int t) {
     
     maxThreads = t;
@@ -170,12 +178,21 @@ public class GuiTestRunner extends TestRunner {
     
   } // setMaxThreads
   
+  /**
+   * Get the maximum number of test threads to run at one time.
+   * @return The number of threads.
+   */
   public int getMaxThreads() {
     
     return maxThreads;
     
   } // getMaxThreads
   
+  // -------------------------------------------------------------------------
+  /**
+   * Set whether or not to only use the pre-filter regexp.
+   * @param b Whether or not to use the pre-filter regexp.
+   */
   public void setForceDatabases(boolean b) {
     
     forceDatabases = b;
@@ -184,12 +201,21 @@ public class GuiTestRunner extends TestRunner {
     
   } // setForceDatabases
   
+  /** 
+   * Get whether or not to only use the pre-filter regexp.
+   * @return True if the pre-filter regecp only is to be used.
+   */
   public boolean getForceDatabases() {
     
     return forceDatabases;
     
   } // getforceDatabase
   
+  // -------------------------------------------------------------------------
+  /** 
+   * Set the pre-filter regexp.
+   * @param re The new pre-filter regexp.
+   */
   public void setPreFilterRegexp(String re) {
     
     preFilterRegexp = re;
@@ -197,6 +223,10 @@ public class GuiTestRunner extends TestRunner {
     
   } // setPreFilterRegexp
   
+  /** 
+   * Get the value of the pre-filter regexp.
+   * @return The pre-filter regexp (may be "")
+   */
   public String getPreFilterRegexp() {
     
     return preFilterRegexp;

@@ -89,7 +89,11 @@ public class TextTestRunner extends TestRunner {
     System.out.println("");
 
   }
-
+  
+  /**
+   * Return the CVS version string for this class.
+   * @return The version.
+   */
   public String getVersion() {
 
     // strip off first and last few chars of version since these are only used by CVS
@@ -97,7 +101,6 @@ public class TextTestRunner extends TestRunner {
 
   }
 
-  // getVersion
   // -------------------------------------------------------------------------
   private void parseCommandLine(String[] args) {
 

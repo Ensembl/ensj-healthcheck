@@ -37,8 +37,9 @@ public class CheckDuplicateExonsTestCase extends EnsTestCase {
     setDescription("Check for duplicate exons.");
   }
   
-  /**
-   * Find any exons that are duplicated. 
+  /** 
+   * Find any exons that are duplicated.
+   * @return Result.
    */
   public TestResult run() {
     

@@ -84,7 +84,7 @@ public abstract class EnsTestCase {
   
   /** Regexp that, when combined with a species name, will match core databases */
   //protected static final String CORE_DB_REGEXP = ".*_(core|est|estgene|vega)_\\d.*";
-  // XXX
+  // XXX change regexp to match other databases than just core ones?
   protected static final String CORE_DB_REGEXP = ".*_core_\\d.*";
   /** The TestRunner associated with this EnsTestCase */
   protected TestRunner testRunner;
@@ -116,9 +116,10 @@ public abstract class EnsTestCase {
   } // EnsTestCase
   
   // -------------------------------------------------------------------------
-  /**
+  /** 
    * The principal run method. Subclasses of EnsTestCase should implement this
    * to provide test-specific behaviour.
+   * @return A TestResult object representing the result of the test.
    */
   public abstract TestResult run();
   
@@ -641,8 +642,9 @@ public abstract class EnsTestCase {
   } // setDatabaseRegexp
   
   // -------------------------------------------------------------------------
-  /**
+  /** 
    * Get the database regular expression that this test case is using.
+   * @return The database regular expression that this test case is using.
    */
   public String getDatabaseRegexp() {
     
@@ -891,9 +893,9 @@ public abstract class EnsTestCase {
   } // getDescription
   
   // -------------------------------------------------------------------------
-  /**
+  /** 
    * Set the text description of this test case.
-   * @param The new description.
+   * @param s The new description.
    */
   public void setDescription(String s) {
     

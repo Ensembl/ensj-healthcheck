@@ -131,6 +131,12 @@ public class ReportManager {
     
   } // problem
   
+  /**
+   * Store a ReportLine with a level of ReportLine.PROBLEM.
+   * @param testCase The test case filing the report.
+   * @param dbName The name of the database involved.
+   * @param message The message to be reported.
+   */
   public static void problem(EnsTestCase testCase, String dbName, String message) {
     
     report(testCase, dbName, ReportLine.PROBLEM, message);
@@ -149,6 +155,12 @@ public class ReportManager {
     
   } // info
   
+  /**
+   * Store a ReportLine with a level of ReportLine.INFO.
+   * @param testCase The test case filing the report.
+   * @param dbName The name of the database involved.
+   * @param message The message to be reported.
+   */
    public static void info(EnsTestCase testCase, String dbName, String message) {
     
     report(testCase, dbName, ReportLine.INFO, message);
@@ -167,6 +179,12 @@ public class ReportManager {
     
   } // summary
   
+  /**
+   * Store a ReportLine with a level of ReportLine.SUMMARY.
+   * @param testCase The test case filing the report.
+   * @param dbName The name of the database involved.
+   * @param message The message to be reported.
+   */
    public static void summary(EnsTestCase testCase, String dbName, String message) {
     
     report(testCase, dbName, ReportLine.SUMMARY, message);
@@ -185,6 +203,12 @@ public class ReportManager {
     
   } // summary
   
+  /**
+   * Store a ReportLine with a level of ReportLine.CORRECT.
+   * @param testCase The test case filing the report.
+   * @param dbName The name of the database involved.
+   * @param message The message to be reported.
+   */
   public static void correct(EnsTestCase testCase, String dbName, String message) {
     
     report(testCase, dbName, ReportLine.CORRECT, message);

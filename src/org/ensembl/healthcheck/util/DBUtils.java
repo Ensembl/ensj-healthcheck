@@ -366,12 +366,12 @@ public class DBUtils {
   } // getShortDatabaseName
   
   // -------------------------------------------------------------------------
-  /**
+  /** 
    * Convert properties used by Healthcheck into properties suitable for ensj.
    * ensj properties host, port, user, password are converted.
    * Note ensj property database is <em>not</em> set.
-   * @param testRunnerProperties The Healthcheck-format properties to use.
    * @return A Properties object containing host, port, user and password NOT database.
+   * @param testRunnerProps A set of properties in the format used by HealthCheck, e.g. databaseURL etc.
    */
   public static Properties convertHealthcheckToEnsjProperties(Properties testRunnerProps) {
     

@@ -37,8 +37,9 @@ public class CheckCoreTablesHaveDataTestCase extends EnsTestCase {
     setDescription("Verify that important tables in core DBs actually have data.");
   }
   
-  /**
+  /** 
    * Check that the number of rows in several tables is > 0.
+   * @return Result.
    */
   public TestResult run() {
     

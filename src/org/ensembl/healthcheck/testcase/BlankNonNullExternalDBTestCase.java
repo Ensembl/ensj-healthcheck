@@ -39,8 +39,9 @@ public class BlankNonNullExternalDBTestCase extends EnsTestCase {
     setDescription("Checks for columns in the external_db table that are marked as NON NULL but contain null or blank values");
   }
   
-  /**
+  /** 
    * Check for any columns in the external_db table that are marked as NON NULL but contain null or blank values.
+   * @return Result.
    */
   public TestResult run() {
     DatabaseConnectionIterator it = getDatabaseConnectionIterator();

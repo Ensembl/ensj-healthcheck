@@ -44,18 +44,16 @@ public class EnsjTrialTestCase extends EnsTestCase {
     setDescription("An example of how to integrate ensj-core functionality. Checks that all genes on a chromosome have transcripts. For illustration only - not intended to be used in production.");
   }
   
-  /**
-   * description
+  /** 
+   * Get a chromosome and check that all the genes on it translate.
+   * @return Result.
    */
   public TestResult run() {
     
     boolean result = true;
     
     // ensj needs some properties set; some are the same as in database.properties
-    String propsFile = System.getProperty("user.dir") + System.getProperty("file.separator") + "database.properties";
-    // @todo - use System. properties like elsewhere
-    Properties testRunnerProps = Utils.readPropertiesFile(propsFile);
-    Properties props = DBUtils.convertHealthcheckToEnsjProperties(testRunnerProps);
+    Properties props = DBUtils.convertHealthcheckToEnsjProperties();
     
     // database *name* is not set at all in database.properties
     // we can use getAffectedDatabases() to do the loop

@@ -37,8 +37,9 @@ public class CheckDNATables extends EnsTestCase {
     setDescription("Check that the DNA table exists, and all DBs for a particular species have the same entries.");
   }
   
-  /**
+  /** 
    * Make sure that the assembly table has the same number of rows
+   * @return Result.
    */
   public TestResult run() {
     
@@ -53,9 +54,9 @@ public class CheckDNATables extends EnsTestCase {
       boolean allMatch = checkSameSQLResult("SELECT COUNT(*) FROM dna", speciesRegexp);
       if (!allMatch) {
         result = false;
-        ReportManager.problem(this, "[see report text]", "Differences in dna table for " + speciesRegexp); // XXX null?
+        ReportManager.problem(this, "[see report text]", "Differences in dna table for " + speciesRegexp); 
       } else {
-       ReportManager.correct(this, "[see report text]", "All dna tables have the same number of rows for " + speciesRegexp);  // XXX null
+       ReportManager.correct(this, "[see report text]", "All dna tables have the same number of rows for " + speciesRegexp);  
       }
       
     } // foreach species

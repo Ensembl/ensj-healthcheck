@@ -38,6 +38,10 @@ public class CoreForeignKeyTestCase extends EnsTestCase {
     setDescription("Check for broken foreign-key realtionships.");
   }
   
+  /**
+   * Look for broken foreign-key realtionships.
+   * @return Result.
+   */
   public TestResult run() {
     
     boolean result = true;

@@ -37,8 +37,9 @@ public class CheckFeatureCoordsTestCase extends EnsTestCase {
     setDescription("Check that feature co-ords (DNA and protein) make sense.");
   }
   
-  /**
+  /** 
    * Iterate over each affected database and perform various checks.
+   * @return Result.
    */
   public TestResult run() {
     

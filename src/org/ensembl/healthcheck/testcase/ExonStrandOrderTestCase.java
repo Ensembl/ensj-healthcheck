@@ -37,6 +37,11 @@ public class ExonStrandOrderTestCase extends EnsTestCase {
     addToGroup("db_constraints");
   }
   
+  /**
+   * Check strand order of exons.
+   * @return Result.
+   */
+  
   public TestResult run() {
     
     boolean result = true;
@@ -70,7 +75,6 @@ public class ExonStrandOrderTestCase extends EnsTestCase {
       try {
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
-        ResultSetMetaData rsmd = rs.getMetaData();
         int transcriptStart, geneStart, lastStart;
         int lastTranscriptId = -1;
         int lastGeneId = -1;
