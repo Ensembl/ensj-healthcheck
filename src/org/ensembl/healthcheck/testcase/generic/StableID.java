@@ -126,6 +126,10 @@ public class StableID extends SingleDatabaseTestCase {
         }
 
         // check for duplicate stable IDs (will be redundant when stable ID columns get a UNIQUE constraint)
+        // to find which records are duplicated use
+        // SELECT exon_id, stable_id, COUNT(*) FROM exon_stable_id GROUP BY stable_id HAVING COUNT(*) > 1;
+        // this will give the internal IDs for *one* of each of the duplicates
+        // if there are only a few then reassign the stable IDs of one of the duplicates
         int duplicates = getRowCount(con, "SELECT COUNT(stable_id)-COUNT(DISTINCT stable_id) FROM " + stableIDtable);
         if (duplicates > 0) {
             ReportManager.problem(this, con, stableIDtable + " has " + duplicates + " duplicate stable IDs (versions not checked)");
