@@ -18,7 +18,7 @@
 
 /**
  * <p>Title: EnsTestCase.java</p>
- * <p>Description: </p>
+ * <p>Description: Base class for all EnsEMBL Healthcheck tests.</p>
  * <p>Copyright: Copyright (c) 2003</p>
  * <p>Organisation: EMBL</p>
  * <p>Created on March 11, 2003, 1:12 PM</p>
@@ -57,7 +57,10 @@ public abstract class EnsTestCase {
   } // EnsTestCase
   
   // -------------------------------------------------------------------------
-  
+  /**
+   * The principal run method. Subclasses of EnsTestCase should implement this
+   * to provide test-specific behaviour.
+   */
   abstract TestResult run();
   
   // -------------------------------------------------------------------------
@@ -100,7 +103,7 @@ public abstract class EnsTestCase {
   // -------------------------------------------------------------------------
   
   /**
-   * Get the short form of the test name, i.e. the name of the test class without the
+   * Get the short form of the test name, ie the name of the test class without the
    * package qualifier.
    *
    * @return The short test name, e.g. EnsTestCase
@@ -178,10 +181,10 @@ public abstract class EnsTestCase {
     if (!groups.contains(newGroupName)) {
       groups.add(newGroupName);
     } else {
-      System.err.println("Warning: " + getTestName() + " is already a member of " + newGroupName + " not added again.");
+      logger.warning(getTestName() + " is already a member of " + newGroupName + " not added again.");
     }
     
-  }
+  } // addToGroup
   
   // -------------------------------------------------------------------------
   /**
@@ -194,10 +197,10 @@ public abstract class EnsTestCase {
     if (groups.contains(groupName)) {
       groups.remove(groupName);
     } else {
-      System.err.println("Warning: " + getTestName() + " was not a memeber of " + groupName);
+      logger.warning(getTestName() + " was not a memeber of " + groupName);
     }
     
-  }
+  } // removeFromGroup
   
   // -------------------------------------------------------------------------
   /**
@@ -229,7 +232,8 @@ public abstract class EnsTestCase {
     }
     return result;
     
-  }
+  } // inGroups
+  
   // -------------------------------------------------------------------------
   /**
    * Get a list of the databases matching a particular pattern.
@@ -294,8 +298,8 @@ public abstract class EnsTestCase {
     int result = -1;
     
     try {
-      java.sql.Statement stmt = con.createStatement();
-      java.sql.ResultSet rs = stmt.executeQuery(sql);
+      Statement stmt = con.createStatement();
+      ResultSet rs = stmt.executeQuery(sql);
       if (rs != null) {
 	rs.next();
 	result = rs.getInt(1);
@@ -346,7 +350,7 @@ public abstract class EnsTestCase {
       resultRight = 0;
     }
     
-    System.out.println("Left: " + resultLeft + " Right: " + resultRight);
+    logger.finest("Left: " + resultLeft + " Right: " + resultRight);
     
     return resultLeft + resultRight;
     
@@ -443,20 +447,20 @@ public abstract class EnsTestCase {
     
     String sql = "SELECT COUNT(*) FROM " + table + " WHERE " + column + " LIKE \"" + str + "\"";
     logger.fine(sql);
+    
     return getRowCount(con, sql);
     
   } // findStringInColumn
   
   // -------------------------------------------------------------------------
   /**
-   * Check if there are any blank entires in a column that has an ENUM type
-   * that is not null.
+   * Check if there are any blank entires in a column that is not supposed to be null.
    * @param con The database connection to use.
    * @param table The table to use.
    * @param column The column to examine.
    * @return An list of the row indices of any blank entries. Will be zero-length if there are none.
    */
-  public ArrayList checkBlankEnums(Connection con, String table, String column) {
+  public ArrayList checkBlankNonNull(Connection con, String table, String column) {
     
     if (con == null) {
       logger.severe("Database connection is null");
@@ -465,16 +469,14 @@ public abstract class EnsTestCase {
     ArrayList blanks = new ArrayList();
     
     String sql = "SELECT " + column + " FROM " + table;
-    
     try {
       Statement stmt = con.createStatement();
       ResultSet rs = stmt.executeQuery(sql);
       ResultSetMetaData rsmd = rs.getMetaData();
-      String columnType  = rsmd.getColumnTypeName(1);
       while (rs.next()) {
 	String columnValue = rs.getString(1);
-	// is it an enum that should be non-null?
-	if (columnType.toLowerCase().indexOf("enum") > -1 && rsmd.isNullable(1) == rsmd.columnNoNulls) {
+	// should it be non-null?
+	if (rsmd.isNullable(1) == rsmd.columnNoNulls) {
 	  if (columnValue == null || columnValue.equals("")) {
 	    blanks.add("" + rs.getRow());
 	  }
@@ -486,21 +488,18 @@ public abstract class EnsTestCase {
       e.printStackTrace();
     }
     
-    // TBC
-    
     return blanks;
     
-  } // checkBlankEnums
+  } // checkBlankNonNull
   
   // -------------------------------------------------------------------------
   /**
-   * Check all columns of a table for blank entires in columns that have an ENUM type
-   * that are marked as being NOT NULL.
+   * Check all columns of a table for blank entires in columns that are marked as being NOT NULL.
    * @param con The database connection to use.
    * @param table The table to use.
    * @return The total number of blank null enums.
    */
-  public int checkBlankEnums(Connection con, String table) {
+  public int checkBlankNonNull(Connection con, String table) {
     
     if (con == null) {
       logger.severe("Database connection is null");
@@ -515,13 +514,14 @@ public abstract class EnsTestCase {
       ResultSet rs = stmt.executeQuery(sql);
       ResultSetMetaData rsmd = rs.getMetaData();
       while (rs.next()) {
-	for (int i = 0; i < rsmd.getColumnCount(); i++) {
-	  String columnType  = rsmd.getColumnTypeName(i);	  
+	for (int i = 1; i <= rsmd.getColumnCount(); i++) {
 	  String columnValue = rs.getString(i);
-	  // is it an enum that should be non-null?
-	  if (columnType.toLowerCase().indexOf("enum") > -1 && rsmd.isNullable(i) == rsmd.columnNoNulls) {
+	  String columnName = rsmd.getColumnName(i);
+	  // should it be non-null?
+	  if (rsmd.isNullable(i) == rsmd.columnNoNulls) {
 	    if (columnValue == null || columnValue.equals("")) {
 	      blanks++;
+	      logger.warning("Found blank non-null value in column " + columnName + " in " + table);
 	    }
 	  }
 	} // for column
@@ -534,7 +534,8 @@ public abstract class EnsTestCase {
     
     return blanks;
     
-  } // checkBlankEnums
+  } // checkBlankNonNull
+  
   // -------------------------------------------------------------------------
   
 } // EnsTestCase
