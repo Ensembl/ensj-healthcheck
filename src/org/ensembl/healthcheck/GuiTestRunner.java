@@ -135,11 +135,14 @@ public class GuiTestRunner extends TestRunner implements Reporter {
       
       if (testCase.inGroups(groups)) {
         
-        // TODO - set databases somehow
-        
-        GUITestRunnerThread t = new GUITestRunnerThread(testThreads, testCase, gtrf, maxThreads);
-        t.start(); // note that this will actually wait until < maxThreads are running before calling run()
-        
+        // set the regexp in each test case to be the actual name of the database, then run the test
+        for (int i = 0; i < selectedSchemas.length; i++) {
+          
+          testCase.setDatabaseRegexp(selectedSchemas[i]);
+          GUITestRunnerThread t = new GUITestRunnerThread(testThreads, testCase, gtrf, maxThreads);
+          t.start(); // note that this will actually wait until < maxThreads are running before calling run()
+                    
+        }
       }
       
     } // while it.hasNext()
