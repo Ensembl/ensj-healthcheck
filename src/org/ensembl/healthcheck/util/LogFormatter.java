@@ -34,7 +34,7 @@ public class LogFormatter extends Formatter {
    */
   public String format(LogRecord rec) {
     StringBuffer buf = new StringBuffer();
-    buf.append(rec.getLevel() + ": ");
+    //buf.append(rec.getLevel() + ": ");
     buf.append(formatMessage(rec));
     buf.append('\n');
     return buf.toString();
