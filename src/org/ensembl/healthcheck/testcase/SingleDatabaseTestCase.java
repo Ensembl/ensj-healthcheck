@@ -131,4 +131,49 @@ public abstract class SingleDatabaseTestCase extends EnsTestCase {
         return result;
     } //checkForOrphansWithConstraint
 
+    // -------------------------------------------------------------------------
+    /**
+     * Check that the count in a table for a given constraint is 0.
+     * 
+     * @param con
+     *          The database connection to use.
+     * @param table
+     *          The name of the table to examine.
+     * @param constraint
+     *          constraint
+     * @return boolean
+     *          true if everything is fine
+     *          false otherwise
+     */
+    public boolean checkCountIsZero(Connection con, String table, String constraint) {
+
+        int count = 0;
+        boolean result = true;
+
+        // cheat by looking for any rows that DO NOT match the pattern
+        String useful_sql = "SELECT COUNT(*) FROM " + table;
+        
+        if (! constraint.equals("")) {
+            useful_sql = useful_sql + " WHERE " + constraint;
+        }
+
+        logger.fine(useful_sql);
+        count = getRowCount(con, useful_sql);
+
+        if (count == 0) {
+            ReportManager.correct(this, con, "PASSED ");
+        } else if (count > 0) {
+            ReportManager.problem(this, con, "FAILED ");
+            ReportManager.problem(this, con, "FAILURE DETAILS: " + count + " ENTRIES have " + constraint + " and should not");
+            ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
+            result = false;
+        } else {
+            ReportManager.problem(this, con, "TEST NOT COMPLETED, look at the StackTrace if any");
+            result = false;
+        }
+
+        return result;
+
+    } // checkColumnPattern
+
 }
