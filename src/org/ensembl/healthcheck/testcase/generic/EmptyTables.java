@@ -77,15 +77,14 @@ public class EmptyTables extends SingleDatabaseTestCase {
             }
 
             // map, marker etc
-            if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS
-                    && species != Species.RATTUS_NORVEGICUS && species != Species.DANIO_RERIO) {
+            if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.RATTUS_NORVEGICUS
+                    && species != Species.DANIO_RERIO) {
                 String[] markerTables = {"map", "marker", "marker_map_location", "marker_synonym", "marker_feature"};
                 tables = remove(tables, markerTables);
             }
 
             // misc_feature etc
-            if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS
-                    && species != Species.ANOPHELES_GAMBIAE) {
+            if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.ANOPHELES_GAMBIAE) {
                 String[] miscTables = {"misc_feature", "misc_feature_misc_set", "misc_set", "misc_attrib"};
                 tables = remove(tables, miscTables);
             }
@@ -96,10 +95,15 @@ public class EmptyTables extends SingleDatabaseTestCase {
             }
 
             // certain species can have empty karyotype table
-            if (species == Species.CAENORHABDITIS_BRIGGSAE || species == Species.CAENORHABDITIS_ELEGANS || species == Species.DANIO_RERIO || species == Species.FUGU_RUBRIPES) {
+            if (species == Species.CAENORHABDITIS_BRIGGSAE || species == Species.CAENORHABDITIS_ELEGANS
+                    || species == Species.DANIO_RERIO || species == Species.FUGU_RUBRIPES) {
                 tables = remove(tables, "karyotype");
             }
-            
+
+            // for tetraodon, supporting_feature is empty because it is an imported gene set 
+            if (species == Species.TETRAODON_NIGROVIRIDIS) {
+                tables = remove(tables, "supporting_feature");
+            }
             // ----------------------------------------------------
 
         } else if (type == DatabaseType.EST) {
@@ -126,7 +130,9 @@ public class EmptyTables extends SingleDatabaseTestCase {
 
     /**
      * Check that every table has more than 0 rows.
-     * @param dbre The database to check.
+     * 
+     * @param dbre
+     *            The database to check.
      * @return true if the test passed.
      */
     public boolean run(DatabaseRegistryEntry dbre) {
@@ -135,7 +141,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 
         String[] tables = getTablesToCheck(dbre);
         Connection con = dbre.getConnection();
-        
+
         // if there is only one coordinate system then there's no assembly
         if (getRowCount(con, "SELECT COUNT(*) FROM coord_system") == 1) {
             tables = remove(tables, "assembly");
@@ -158,7 +164,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
         if (result) {
             ReportManager.correct(this, con, "All required tables have data");
         }
-        
+
         return result;
 
     } // run
