@@ -84,7 +84,7 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 	}
 
 	if (result == true) {
-	    ReportManager.correct(this, con, "All gene seq_regions have top_level attribute set");
+	    ReportManager.correct(this, con, "All " + geneSeqRegionIDs.length + " gene seq_regions have top_level attribute set");
 	}
 	
         return result;
