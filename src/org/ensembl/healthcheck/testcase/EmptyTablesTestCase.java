@@ -61,7 +61,8 @@ public class EmptyTablesTestCase extends EnsTestCase {
             Iterator tableIterator = tables.iterator();
             while(tableIterator.hasNext()) {
                 
-                String table = (String)tableIterator.next();
+                TableInfo tableInfo = (TableInfo)tableIterator.next();
+                String table = tableInfo.getName();
                 logger.finest("Checking that " + table + " has rows");
                 
                 if (!tableHasRows(con, table)) {
