@@ -28,7 +28,7 @@ import org.ensembl.healthcheck.util.*;
  * agrees with the translation table.
  */
 
-public class ProteinFeatureTranslationTestCase extends EnsTestCase {
+public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Repair {
   
   /**
    * Create an ProteinFeatureTranslationTestCase that applies to a specific set of databases.
@@ -60,60 +60,90 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase {
       try {
         
         Connection con = (Connection)it.next();
-        Statement stmt = con.createStatement();
+
+        // NOTE: By default the MM MySQL JDBC driver reads and stores *all* rows in the ResultSet.
+        // Since this TestCase is likely to produce lots of output, we must use the "streaming" 
+        // mode where only one row of the ResultSet is stored at a time.
+        // To do this, the following two lines are both necessary.
+        // See the README file for the mm MySQL driver.
         
-        // first get max translation ID so we can dimension the array
-        ResultSet rs = stmt.executeQuery("SELECT MAX(translation_id) FROM translation");
-        rs.first();
-        int maxTranslationID = rs.getInt(1);
-        logger.fine("Max translation ID = " + maxTranslationID);
-        int[] translationLengths = new int[maxTranslationID + 1]; // better to use a list if the array is going to be sparse
+        Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
+        stmt.setFetchSize(Integer.MIN_VALUE);
+        
+        Map translationLengths = new HashMap();
         
         // now calculate and store the translation lengths
-        rs = stmt.executeQuery(sql);
+        ResultSet rs = stmt.executeQuery(sql);
+        rs.setFetchSize(100);
+        rs.setFetchDirection(ResultSet.FETCH_FORWARD);
         
         boolean inCodingRegion = false;
         
         while(rs.next()) {
-
+          
           int currentTranslationID = rs.getInt("translation_id");
+          
+          Integer id = new Integer(currentTranslationID);
+          // initialise if necessary
+          if (translationLengths.get(id) == null) {
+            translationLengths.put(id, new Integer(0));
+          }
           
           if (!inCodingRegion) {
             if (rs.getInt("start_exon_id") == rs.getInt("exon_id")) {
               // single-exon-translations
               if (rs.getInt("start_exon_id") == rs.getInt("end_exon_id")) {
-                translationLengths[currentTranslationID] = (rs.getInt("seq_end") - rs.getInt("seq_start")) + 1;
+                int length = (rs.getInt("seq_end") - rs.getInt("seq_start")) + 1;
+                translationLengths.put(id, new Integer(length));
                 continue;
               }
               inCodingRegion = true;
-              translationLengths[currentTranslationID] -= rs.getInt("seq_start");
+              // subtract seq_start
+              int currentLength = ((Integer)translationLengths.get(id)).intValue();
+              currentLength -= rs.getInt("seq_start");
+              translationLengths.put(id, new Integer(currentLength));
             }
           } // if !inCoding
           
           if (inCodingRegion) {
             if (rs.getInt("exon_id") == rs.getInt("end_exon_id")) {
-              translationLengths[currentTranslationID] += rs.getInt("seq_end");
+              // add seq_end
+              int currentLength = ((Integer)translationLengths.get(id)).intValue();
+              currentLength += rs.getInt("seq_start");
+              translationLengths.put(id, new Integer(currentLength));
               inCodingRegion = false;
             } else {
-              translationLengths[currentTranslationID] += (rs.getInt("contig_end") - rs.getInt("contig_start")) + 1;
+              int currentLength = ((Integer)translationLengths.get(id)).intValue();
+              currentLength += (rs.getInt("contig_end") - rs.getInt("contig_start")) + 1;
+              translationLengths.put(id, new Integer(currentLength));
+              inCodingRegion = false;
             }
           } // if inCoding
           
         } // while rs
         
         rs.close();
-        
+        stmt.close();
+        stmt = null;
+
+        // Re-open the statement to make sure it's GC'd
+        stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
+        stmt.setFetchSize(Integer.MIN_VALUE);
+
         // find protein features where seq_end is > than the length of the translation
         rs = stmt.executeQuery("SELECT protein_feature_id, translation_id, seq_end FROM protein_feature");
         while (rs.next()) {
-          int minTranslationLength = (translationLengths[rs.getInt("translation_id")] + 2) / 3; // some codons can only be 2 bp
+          Integer id = new Integer(rs.getInt("translation_id"));
+          int minTranslationLength = (((Integer)translationLengths.get(id)).intValue() + 2) / 3; // some codons can only be 2 bp
           if (rs.getInt("seq_end")  > minTranslationLength) {
             ReportManager.problem(this, con, "Protein feature " + rs.getInt("protein_feature_id") + " claims to have length " + rs.getInt("seq_end") + " but translation is of length " + minTranslationLength);
             result = false;
           }
         }
         
+        rs.close();
         stmt.close();
+        
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -121,7 +151,18 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase {
     } // while it
     
     return new TestResult(getShortTestName(), result);
-
-  } // run
+    
+  }
+  
+  // ------------------------------------------
+  // Implementation of Repair interface.
+  
+  public void repair() {
+  }
+  
+  public void show() {
+  }
+  
+  // -------------------------------------------------------------------------
   
 } // ProteinFeatureTranslationTestCase
