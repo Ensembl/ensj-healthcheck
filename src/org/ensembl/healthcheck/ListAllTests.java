@@ -182,18 +182,16 @@ public class ListAllTests extends TestRunner {
 
 				StringBuffer buf = new StringBuffer();
 
-				buf.append(group + ": ");
+				buf.append(group + ":\n");
 				String[] tests = listTestsInGroup(allTests, group);
 
 				for (int j = 0; j < tests.length; j++) {
 
 					if (!tests[j].equals(group)) {
-						buf.append(tests[j] + " ");
+						buf.append("\t" + tests[j] + "\n");
 					}
 
 				} // tests
-
-				buf.append("\n");
 
 				System.out.println(buf.toString());
 
