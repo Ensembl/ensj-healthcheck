@@ -55,63 +55,67 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
         // ----------------------------
 
-        result &= checkForOrphans(con, "exon", "exon_id", "exon_transcript", "exon_id", false);
+	result &= checkForOrphans(con, "exon", "exon_id", "exon_transcript", "exon_id", false);
+	
+	result &= checkForOrphans(con, "transcript", "transcript_id", "exon_transcript", "transcript_id", false);
+	
+	result &= checkForOrphans(con, "gene", "gene_id", "transcript", "gene_id", false);
+	
+	result &= checkForOrphans(con, "object_xref", "xref_id", "xref", "xref_id", true);
+	
+	result &= checkForOrphans(con, "xref", "external_db_id", "external_db", "external_db_id", true);
+	
+	result &= checkForOrphans(con, "dna", "seq_region_id", "seq_region", "seq_region_id", true);
+	
+	result &= checkForOrphans(con, "seq_region", "coord_system_id", "coord_system", "coord_system_id", true);
+	
+	result &= checkForOrphans(con, "assembly", "cmp_seq_region_id", "seq_region", "seq_region_id", true);
+	
+	result &= checkForOrphans(con, "marker_feature", "marker_id", "marker", "marker_id", true);
+	
+	result &= checkForOrphans(con, "seq_region_attrib", "seq_region_id", "seq_region", "seq_region_id", true);
+	
+	result &= checkForOrphans(con, "seq_region_attrib", "attrib_type_id", "attrib_type", "attrib_type_id", true);
+	
+	result &= checkForOrphans(con, "misc_feature_misc_set", "misc_feature_id", "misc_feature", "misc_feature_id",
+				  true);
+	
+	result &= checkForOrphans(con, "misc_feature_misc_set", "misc_set_id", "misc_set", "misc_set_id", true);
+	
+	result &= checkForOrphans(con, "misc_feature", "misc_feature_id", "misc_attrib", "misc_feature_id", true);
+	
+	result &= checkForOrphans(con, "misc_attrib", "attrib_type_id", "attrib_type", "attrib_type_id", true);
+	
+	result &= checkForOrphans(con, "assembly_exception", "seq_region_id", "seq_region", "seq_region_id", true);
+	
+	result &= checkForOrphans(con, "assembly_exception", "exc_seq_region_id", "seq_region", "seq_region_id", true);
+	
+	result &= checkForOrphans(con, "protein_feature", "translation_id", "translation", "translation_id", true);
+	
+	result &= checkForOrphans(con, "marker_synonym", "marker_id", "marker", "marker_id", true);
+	
+	result &= checkForOrphans(con, "translation_attrib", "translation_id", "translation", "translation_id", true);
+	
+	result &= checkForOrphans(con, "transcript_attrib", "transcript_id", "transcript", "transcript_id", true);
 
-        result &= checkForOrphans(con, "transcript", "transcript_id", "exon_transcript", "transcript_id", false);
+         // ----------------------------
+         // Check stable IDs all correspond to an existing object
+         String[] stableIDtypes = {"gene", "transcript", "translation", "exon"};
+         for (int i = 0; i < stableIDtypes.length; i++) {
+             result &= checkStableIDKeys(con, stableIDtypes[i]);
+         }
 
-        result &= checkForOrphans(con, "gene", "gene_id", "transcript", "gene_id", false);
+         // ----------------------------
+         // Ensure that feature tables reference existing seq_regions
 
-        result &= checkForOrphans(con, "object_xref", "xref_id", "xref", "xref_id", true);
+         String[] featTabs = {"exon", "repeat_feature", "simple_feature", "dna_align_feature", "protein_align_feature",
+                 "marker_feature", "prediction_transcript", "prediction_exon", "gene", "qtl_feature", "transcript",
+                 "karyotype"};
 
-        result &= checkForOrphans(con, "xref", "external_db_id", "external_db", "external_db_id", true);
-
-        result &= checkForOrphans(con, "dna", "seq_region_id", "seq_region", "seq_region_id", true);
-
-        result &= checkForOrphans(con, "seq_region", "coord_system_id", "coord_system", "coord_system_id", true);
-
-        result &= checkForOrphans(con, "assembly", "cmp_seq_region_id", "seq_region", "seq_region_id", true);
-
-        result &= checkForOrphans(con, "marker_feature", "marker_id", "marker", "marker_id", true);
-
-        result &= checkForOrphans(con, "seq_region_attrib", "seq_region_id", "seq_region", "seq_region_id", true);
-
-        result &= checkForOrphans(con, "seq_region_attrib", "attrib_type_id", "attrib_type", "attrib_type_id", true);
-
-        result &= checkForOrphans(con, "misc_feature_misc_set", "misc_feature_id", "misc_feature", "misc_feature_id",
-                true);
-
-        result &= checkForOrphans(con, "misc_feature_misc_set", "misc_set_id", "misc_set", "misc_set_id", true);
-
-        result &= checkForOrphans(con, "misc_feature", "misc_feature_id", "misc_attrib", "misc_feature_id", true);
-
-        result &= checkForOrphans(con, "misc_attrib", "attrib_type_id", "attrib_type", "attrib_type_id", true);
-
-        result &= checkForOrphans(con, "assembly_exception", "seq_region_id", "seq_region", "seq_region_id", true);
-
-        result &= checkForOrphans(con, "assembly_exception", "exc_seq_region_id", "seq_region", "seq_region_id", true);
-
-        result &= checkForOrphans(con, "protein_feature", "translation_id", "translation", "translation_id", true);
-
-        result &= checkForOrphans(con, "marker_synonym", "marker_id", "marker", "marker_id", true);
-
-        // ----------------------------
-        // Check stable IDs all correspond to an existing object
-        String[] stableIDtypes = {"gene", "transcript", "translation", "exon"};
-        for (int i = 0; i < stableIDtypes.length; i++) {
-            result &= checkStableIDKeys(con, stableIDtypes[i]);
-        }
-
-        // ----------------------------
-        // Ensure that feature tables reference existing seq_regions
-
-        String[] featTabs = {"exon", "repeat_feature", "simple_feature", "dna_align_feature", "protein_align_feature",
-                "marker_feature", "prediction_transcript", "prediction_exon", "gene", "qtl_feature", "transcript",
-                "karyotype"};
-
-        for (int i = 0; i < featTabs.length; i++) {
-            String featTab = featTabs[i];
-            result &= checkForOrphans(con, featTab, "seq_region_id", "seq_region", "seq_region_id", true);
-        }
+         for (int i = 0; i < featTabs.length; i++) {
+             String featTab = featTabs[i];
+             result &= checkForOrphans(con, featTab, "seq_region_id", "seq_region", "seq_region_id", true);
+         }
 
         return result;
 
