@@ -18,6 +18,8 @@
 package org.ensembl.healthcheck.testcase;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.ReportManager;
+import java.sql.Connection;
 
 /**
  * Subclass of EnsTestCase for tests that apply to a <em>single</em> database. Such tests should
@@ -32,6 +34,101 @@ public abstract class SingleDatabaseTestCase extends EnsTestCase {
      *          The database to run on.
      * @return True if the test passed.
      */
+
     public abstract boolean run(DatabaseRegistryEntry dbre);
+
+    // -------------------------------------------------------------------------
+    /**
+     * Verify foreign-key relations, and fills ReportManager with useful sql
+     * if necessary.
+     * 
+     * @param con
+     *          A connection to the database to be tested. Should already be
+     *          open.
+     * @param table1
+     *          With col1, specifies the first key to check.
+     * @param col1
+     *          Column in table1 to check.
+     * @param table2
+     *          With col2, specifies the second key to check.
+     * @param col2
+     *          Column in table2 to check.
+     * @return boolean
+     *          true if everything is fine
+     *          false otherwise
+     */
+    public boolean checkForOrphans(Connection con, String table1, String col1, String table2, String col2) {
+        
+        int orphans = 0;
+        boolean result = true;
+
+        orphans = countOrphans(con, table1, col1, table2, col2, true);
+
+        String useful_sql = "SELECT " + table1 + "." + col1 + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
+
+        if (orphans == 0) {
+            ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + col1 + "("+col2+")" + " relationships");
+        } else if (orphans > 0) {
+            ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + col1 + "("+col2+")" + " relationships");
+            ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
+            ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
+            result = false;
+        } else {
+            ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1 + ", look at the StackTrace if any");
+            result = false;
+        }
+        
+        return result;
+    } //checkForOrphans
+
+    // -------------------------------------------------------------------------
+    /**
+     * Verify foreign-key relations, and fills ReportManager with useful sql
+     * if necessary.
+     *
+     * @param con
+     *          A connection to the database to be tested. Should already be
+     *          open.
+     * @param table1
+     *          With col1, specifies the first key to check.
+     * @param col1
+     *          Column in table1 to check.
+     * @param table2
+     *          With col2, specifies the second key to check.
+     * @param col2
+     *          Column in table2 to check.
+     * @param constraint1
+     *          additional constraint on col1
+     * @return boolean
+     *          true if everything is fine
+     *          false otherwise
+     */
+    public boolean checkForOrphansWithConstraint(Connection con, String table1, String col1, String table2, String col2, String constraint1) {
+
+        int orphans = 0;
+        boolean result = true;
+
+        orphans = countOrphansWithConstraint(con, table1, col1, table2, col2, constraint1);
+
+        String useful_sql = "SELECT " + table1 + "." + col1 + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
+
+        if (! constraint1.equals("")) {
+            useful_sql = useful_sql+ " AND " + table1 + "." + constraint1;
+        }
+
+        if (orphans == 0) {
+            ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + col1 + "("+col2+")" + " relationships");
+        } else if (orphans > 0) {
+            ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + col1 + "("+col2+")" + " relationships");
+            ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
+            ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
+            result = false;
+        } else {
+            ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1 + ", look at the StackTrace if any");
+            result = false;
+        }
+        
+        return result;
+    } //checkForOrphansWithConstraint
 
 }
