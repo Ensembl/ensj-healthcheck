@@ -69,7 +69,6 @@ public class CheckChromosomeLengthsTestCase extends EnsTestCase {
 					+ "AND ass.asm_seq_region_id = sr.seq_region_id "
 					+ "GROUP BY ass.asm_seq_region_id "
 					+ "HAVING sr.length < MAX(ass.asm_end)";
-			System.out.println(sql);
 
 			String[] chrs = getColumnValues(con, sql);
 			if (chrs.length > 0) {
