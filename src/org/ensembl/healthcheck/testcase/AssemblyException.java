@@ -28,12 +28,12 @@ import org.ensembl.healthcheck.util.*;
  * Healthcheck for the assembly_exception table.
  */
 
-public class AssemblyExceptionTestCase extends EnsTestCase {
+public class AssemblyException extends EnsTestCase {
   
   /**
    * Check the assembly_exception table.
    */
-  public AssemblyExceptionTestCase() {
+  public AssemblyException() {
     addToGroup("post_genebuild");
     setDescription("Check assembly_exception table");
   }
