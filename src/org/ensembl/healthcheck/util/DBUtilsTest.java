@@ -65,7 +65,7 @@ public class DBUtilsTest extends TestCase {
     // ----------
     System.out.println("testListDatabases - regexp ^homo.*");
 
-    dbs = DBUtils.listDatabases(con, "^*homo.*");
+    dbs = DBUtils.listDatabases(con, "^*homo.*", "");
     assertNotNull(dbs);
     
     // ----------
