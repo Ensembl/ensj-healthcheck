@@ -25,7 +25,8 @@ import org.ensembl.healthcheck.*;
 import org.ensembl.healthcheck.util.*;
 
 /**
- * Temporary test case to check database importing.
+ * Test case to compare table structures between several schemas.
+ *
  * Has several ways of deciding which schema to use as the "master" to compare
  * all the others against:<p>
  * <ol>
@@ -37,10 +38,10 @@ import org.ensembl.healthcheck.util.*;
 public class CompareCoreSchemaTestCase extends EnsTestCase {
   
   /**
-   * Creates a new instance of GlennsDatabaseSchemaImportTestCase
+   * Creates a new instance of CompareCoreSchemaTestCase.
    */
   public CompareCoreSchemaTestCase() {
-    addToGroup("dev");
+    addToGroup("db_constraints");
     setDatabaseRegexp(".*_(core|estgene)_\\d.*");
   }
   
@@ -82,9 +83,7 @@ public class CompareCoreSchemaTestCase extends EnsTestCase {
         logger.info("Got connection to " + DBUtils.getShortDatabaseName(masterCon));
         
       } else if (masterSchema != null) {  // use the defined schema name as the master
-        
-        // TODO check it exists
-        
+                
         // get connection to master schema
         masterCon = getSchemaConnection(masterSchema);
         logger.fine("Opened connection to master schema in " + DBUtils.getShortDatabaseName(masterCon));
