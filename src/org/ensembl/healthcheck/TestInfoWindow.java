@@ -110,7 +110,7 @@ public class TestInfoWindow extends javax.swing.JDialog {
     while(it.hasNext()) {
       
      ReportLine line = (ReportLine)it.next();
-     infoTextArea.append(line.getMessage()); // @todo e.g. colour by level?
+     infoTextArea.append(line.getMessage()); 
      
     }
     
