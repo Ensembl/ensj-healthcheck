@@ -3,7 +3,7 @@
 <!--
 
   Ant build file for the EnsEBML HealthCheck tool.
-
+a
 -->
 
 <project default="compile" basedir=".">
@@ -42,7 +42,7 @@
     <!-- Compile the java code from ${src} into ${build} -->
     <javac 
       srcdir="${src}" 
-      destdir="${build}" 
+      destdir="${src}" 
       excludes="**/*Test.*" >
       <classpath>
         <pathelement path="${java.class.path}"/>
@@ -90,7 +90,6 @@
   <target name="run" depends="dist">
     <java classname="org.ensembl.healthcheck.TestRunner">
       <classpath>
-       <!-- <pathelement location="${dist}/ensj-healthcheck.jar"/>-->
         <pathelement path="${src}"/>
         <pathelement path="${java.class.path}"/>
         <pathelement location="${lib}/mysql-connector-java-2.0.14-bin.jar"/>
