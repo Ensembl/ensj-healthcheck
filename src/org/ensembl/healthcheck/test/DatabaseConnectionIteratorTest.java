@@ -1,9 +1,3 @@
-/*
- * DatabaseConnectionIteratorTest.java
- * NetBeans JUnit based test
- *
- * Created on March 13, 2003, 10:01 AM
- */
 
 package org.ensembl.healthcheck.test;
 

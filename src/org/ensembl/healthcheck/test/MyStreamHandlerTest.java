@@ -1,9 +1,4 @@
-/*
- * MyStreamHandlerTest.java
- * NetBeans JUnit based test
- *
- * Created on March 13, 2003, 9:36 AM
- */
+
 
 package org.ensembl.healthcheck.test;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 EBI, GRL
+ * Copyright (C) 2004 EBI, GRL
  * 
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by the
@@ -19,6 +19,9 @@
 /*
 
  $Log$
+ Revision 1.2  2003/11/19 09:13:45  dkeefe
+ added checks for sudden increases or decreases in distinct counts
+
  Revision 1.1  2003/11/18 17:01:12  dkeefe
  Compare the _meta_table_info for old and new mart. So far just looks
  for missing columns in new

@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2003 EBI, GRL
+  Copyright (C) 2004 EBI, GRL
  
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -19,9 +19,9 @@
 /**
  * <p>Title: TestReadingClasspath.java</p>
  * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2003</p>
+ * <p>Copyright: Copyright (c) 2004</p>
  * <p>Organisation: EMBL</p>
- * <p>Created on March 18, 2003, 9:53 AM</p>
+ * <p>Created on March 18, 2004, 9:53 AM</p>
  * @author Glenn Proctor <glenn@ebi.ac.uk>
  * @version $Revision$
  */

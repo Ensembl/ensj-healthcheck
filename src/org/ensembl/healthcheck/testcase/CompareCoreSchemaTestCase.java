@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2003 EBI, GRL
+  Copyright (C) 2004 EBI, GRL
  
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -42,6 +42,7 @@ public class CompareCoreSchemaTestCase extends EnsTestCase {
    */
   public CompareCoreSchemaTestCase() {
     addToGroup("pre_release");
+    setDatabaseRegexp("\\w+_\\w+_(core|est|estgene|vega)_\\d+_\\w+");
   }
   
   /**

@@ -1,9 +1,3 @@
-/*
- * ClassFileFilenameFilterTest.java
- * NetBeans JUnit based test
- *
- * Created on March 13, 2003, 8:49 AM
- */
 
 package org.ensembl.healthcheck.test;
 

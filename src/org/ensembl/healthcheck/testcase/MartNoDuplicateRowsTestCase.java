@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 EBI, GRL
+ * Copyright (C) 2004 EBI, GRL
  * 
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by the
@@ -19,6 +19,9 @@
 /*
 
  $Log$
+ Revision 1.1  2003/11/04 16:43:51  dkeefe
+ checks that tables do not contain duplicate rows
+
 
 
 

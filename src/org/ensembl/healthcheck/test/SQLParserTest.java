@@ -1,9 +1,3 @@
-/*
- * SQLParserTest.java
- * JUnit based test
- *
- * Created on May 19, 2003, 10:17 AM
- */
 
 package org.ensembl.healthcheck.test;
 

@@ -1,9 +1,3 @@
-/*
- * DBUtilsTest.java
- * NetBeans JUnit based test
- *
- * Created on March 13, 2003, 9:52 AM
- */
 
 package org.ensembl.healthcheck.test;
 

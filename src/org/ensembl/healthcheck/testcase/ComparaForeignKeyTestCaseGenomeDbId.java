@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2003 EBI, GRL
+  Copyright (C) 2004 EBI, GRL
  
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -79,13 +79,13 @@ public class ComparaForeignKeyTestCaseGenomeDbId extends EnsTestCase {
 	    ReportManager.problem(this, con, "genomic_align_genome -> genome_db relationships TEST NOT COMPLETED, look at the StackTrace if any");
         }
   
-        orphans = countOrphans(con, "member", "genome_db_id", "genome_db", "genome_db_id", true );
+        orphans = countOrphans(con, "gene_relationship_member", "genome_db_id", "genome_db", "genome_db_id", true );
         if( orphans == 0 ) {
-	    ReportManager.correct(this, con, "member -> genome_db relationships PASSED");
+	    ReportManager.correct(this, con, "gene_relationship_member -> genome_db relationships PASSED");
         } else if( orphans > 0 ) {
-	    ReportManager.problem(this, con, "member has unlinked entries to genome_db FAILED");
+	    ReportManager.problem(this, con, "gene_relationship_member has unlinked entries to genome_db FAILED");
         } else {
-	    ReportManager.problem(this, con, "member -> genome_db TEST NOT COMPLETED, look at the StackTrace if any");
+	    ReportManager.problem(this, con, "gene_relationship_member -> genome_db TEST NOT COMPLETED, look at the StackTrace if any");
         }
   
         orphans = countOrphans(con, "method_link_species", "genome_db_id", "genome_db", "genome_db_id", false );
