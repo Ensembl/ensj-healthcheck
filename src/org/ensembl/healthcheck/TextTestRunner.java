@@ -35,6 +35,8 @@ import org.ensembl.healthcheck.util.*;
 public class TextTestRunner extends TestRunner {
   
   private boolean forceDatabases = false;
+  private boolean verbose = false;
+  private boolean debug = false;
   
   private static Logger logger = Logger.getLogger("HealthCheckLogger");
   
@@ -70,6 +72,9 @@ public class TextTestRunner extends TestRunner {
     System.out.println("  -d regexp  Use the given regular expression to decide which databases to use.");
     System.out.println("  -force     Run the named tests on the databases matched by -d, without ");
     System.out.println("             taking into account the regular expressions built into the tests themselves.");
+    System.out.println("  -h         This message.");
+    System.out.println("  -v         Verbose output");
+    System.out.println("  -debug     Print debugging info (for developers only)");
     System.out.println("  group1     Names of groups of test cases to run.");
     System.out.println("             Note each test case is in a group of its own with the name of the test case.");
     System.out.println("             This allows individual tests to be run if required.");
@@ -108,6 +113,14 @@ public class TextTestRunner extends TestRunner {
           printUsage();
           System.exit(0);
           
+        } else if (args[i].equals("-v")) {
+          
+          verbose = true;
+          
+        } else if (args[i].equals("-debug")) {
+          
+          debug = true;
+
         } else if (args[i].equals("-d")) {
           
           i++;
@@ -140,8 +153,14 @@ public class TextTestRunner extends TestRunner {
     logger.setUseParentHandlers(false); // stop parent logger getting the message
     Handler myHandler = new MyStreamHandler(System.out, new LogFormatter());
     logger.addHandler(myHandler);
-    logger.setLevel(Level.FINEST);
-    logger.info("Set logging level to " + logger.getLevel().getName());
+    logger.setLevel(Level.WARNING); // default - only print important messages
+    if (debug) {
+      logger.setLevel(Level.FINEST);
+    }
+    if (verbose) {
+      logger.setLevel(Level.INFO);
+    }
+    //logger.info("Set logging level to " + logger.getLevel().getName());
     
   } // setupLogging
   
