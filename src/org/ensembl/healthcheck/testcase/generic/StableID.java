@@ -120,7 +120,7 @@ public class StableID extends SingleDatabaseTestCase {
                 + stableIDtable + " WHERE version < 1;");
 
         if (nInvalidVersions > 0) {
-            ReportManager.problem(this, con, "Invalid " + typeName + "versions in " + stableIDtable);
+            ReportManager.problem(this, con, "Invalid " + typeName + " versions in " + stableIDtable);
             DBUtils.printRows(this, con, "SELECT DISTINCT(version) FROM " + stableIDtable);
             result = false;
         }
