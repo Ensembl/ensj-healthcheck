@@ -23,8 +23,7 @@ import java.util.logging.Logger;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Container for information about a database that can be stored in a
- * DatabaseRegistry.
+ * Container for information about a database that can be stored in a DatabaseRegistry.
  *  
  */
 public class DatabaseRegistryEntry {
@@ -42,42 +41,36 @@ public class DatabaseRegistryEntry {
 
     // -----------------------------------------------------------------
     /**
-     * Create a new DatabaseRegistryEntry. A connection to the named database
-     * is also created.
+     * Create a new DatabaseRegistryEntry. A connection to the named database is also created.
      * 
-     * @param name
-     *          The name of the database.
-     * @param species
-     *          The species that this database represents.
-     * @param type
-     *          The type of this databse.
+     * @param name The name of the database.
+     * @param species The species that this database represents.
+     * @param type The type of this databse.
      */
     public DatabaseRegistryEntry(final String name, final Species species, final DatabaseType type) {
 
         this.name = name;
         this.species = species;
         this.type = type;
-        this.con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL") + name,
-                System.getProperty("user"), System.getProperty("password"));
+        this.con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL") + name, System
+                .getProperty("user"), System.getProperty("password"));
 
     }
 
     // -----------------------------------------------------------------
     /**
-     * Create a DatabaseRegistryEntry from just the database name; the species
-     * and type are estimated from the database name. Note these can be
-     * overridden later by setSpecies/setType if they are specified on the
-     * command-line. A connection to the named database is also created.
+     * Create a DatabaseRegistryEntry from just the database name; the species and type are
+     * estimated from the database name. Note these can be overridden later by setSpecies/setType
+     * if they are specified on the command-line. A connection to the named database is also
+     * created.
      * 
-     * @param name
-     *          The name of the databse to use. Species and type are
-     *          automatically set.
+     * @param name The name of the databse to use. Species and type are automatically set.
      */
     public DatabaseRegistryEntry(final String name) {
 
         this.name = name;
-        this.con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL") + name,
-                System.getProperty("user"), System.getProperty("password"));
+        this.con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL") + name, System
+                .getProperty("user"), System.getProperty("password"));
         species = setSpeciesFromName(name);
         type = setTypeFromName(name);
 
@@ -87,8 +80,7 @@ public class DatabaseRegistryEntry {
     /**
      * Attempt to figure out species from database name.
      * 
-     * @param name
-     *          The name to use.
+     * @param name The name to use.
      * @return The species corresponding to name, or Species.UNKNOWN.
      */
     public final Species setSpeciesFromName(final String name) {
@@ -103,18 +95,18 @@ public class DatabaseRegistryEntry {
         // homo_sapiens_core_20_34a
         if (bits.length >= 2) {
             alias = bits[0] + "_" + bits[1];
-            if (Species.resolveAlias(alias) != Species.UNKNOWN) {
-                return Species.resolveAlias(alias);
-            }
+            if (Species.resolveAlias(alias) != Species.UNKNOWN) { return Species.resolveAlias(alias); }
         }
 
         // human_core_20, hsapiens_XXX
         if (bits.length > 1) {
             alias = bits[0];
-            if (Species.resolveAlias(alias) != Species.UNKNOWN) {
-                return Species.resolveAlias(alias);
-            }
+            if (Species.resolveAlias(alias) != Species.UNKNOWN) { return Species.resolveAlias(alias); }
         }
+
+        // compara, mart, go doesn't really have a species
+        if (bits.length >= 2
+                && (bits[1].equalsIgnoreCase("compara") || bits[1].equalsIgnoreCase("go") || bits[1].equalsIgnoreCase("mart"))) { return Species.UNKNOWN; }
 
         // other permutations?
 
@@ -130,10 +122,8 @@ public class DatabaseRegistryEntry {
     /**
      * Attempt to figure out database type from database name.
      * 
-     * @param name
-     *          The database name to use.
-     * @return The database type corresponding to name, or
-     *         DatabaseType.UNKNOWN.
+     * @param name The database name to use.
+     * @return The database type corresponding to name, or DatabaseType.UNKNOWN.
      */
     public final DatabaseType setTypeFromName(final String name) {
 
@@ -147,17 +137,13 @@ public class DatabaseRegistryEntry {
         // homo_sapiens_core_20_34a
         if (bits.length >= 4) {
             alias = bits[2];
-            if (DatabaseType.resolveAlias(alias) != DatabaseType.UNKNOWN) {
-                return DatabaseType.resolveAlias(alias);
-            }
+            if (DatabaseType.resolveAlias(alias) != DatabaseType.UNKNOWN) { return DatabaseType.resolveAlias(alias); }
         }
 
         // human_core_20, ensembl_compara_20_1
         if (bits.length >= 3) {
             alias = bits[1];
-            if (DatabaseType.resolveAlias(alias) != DatabaseType.UNKNOWN) {
-                return DatabaseType.resolveAlias(alias);
-            }
+            if (DatabaseType.resolveAlias(alias) != DatabaseType.UNKNOWN) { return DatabaseType.resolveAlias(alias); }
         }
 
         // other permutations?
@@ -176,14 +162,15 @@ public class DatabaseRegistryEntry {
      * @return Database name.
      */
     public final String getName() {
+
         return name;
     }
 
     /**
-     * @param name
-     *          New database name.
+     * @param name New database name.
      */
     public final void setName(final String name) {
+
         this.name = name;
     }
 
@@ -191,14 +178,15 @@ public class DatabaseRegistryEntry {
      * @return Species.
      */
     public final Species getSpecies() {
+
         return species;
     }
 
     /**
-     * @param species
-     *          New Species.
+     * @param species New Species.
      */
     public final void setSpecies(final Species species) {
+
         this.species = species;
     }
 
@@ -206,14 +194,15 @@ public class DatabaseRegistryEntry {
      * @return Database type (core, est etc)
      */
     public final DatabaseType getType() {
+
         return type;
     }
 
     /**
-     * @param type
-     *          New database type (core, est etc)
+     * @param type New database type (core, est etc)
      */
     public final void setType(final DatabaseType type) {
+
         this.type = type;
     }
 
@@ -221,14 +210,15 @@ public class DatabaseRegistryEntry {
      * @return Connection to the database.
      */
     public final Connection getConnection() {
+
         return con;
     }
 
     /**
-     * @param con
-     *          New database connection.
+     * @param con New database connection.
      */
     public final void setConnection(final Connection con) {
+
         this.con = con;
     }
 
