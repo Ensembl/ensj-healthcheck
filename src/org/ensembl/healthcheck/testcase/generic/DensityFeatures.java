@@ -24,7 +24,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
-import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseRegistryEntry;z
 import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
@@ -52,6 +52,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
         addToGroup("post_genebuild");
         addToGroup("release");
         setDescription("Check that all top-level seq regions have some SNP/gene/knownGene density features, and that the values agree between the density_feature and seq_region attrib tables.");
+	setFailureText("May report count mismatches on HAP/PAR regions. ");
 
 	logicNameToAttribCode.put("snpDensity", "SNPCount");
 	logicNameToAttribCode.put("geneDensity", "GeneCount");
@@ -142,7 +143,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 			    sql = "SELECT value FROM seq_region_attrib sra, attrib_type at WHERE sra.attrib_type_id=at.attrib_type_id AND at.code='" + attribCode + "' AND seq_region_id=" + seqRegionID;
 			    
 			    String sumSRA = getRowColumnValue(con, sql);
-			    
+			    //System.out.println(sql + " " + sumSRA);
 			    if (sumSRA != null && sumSRA.length() > 0) {
 				
 				long valueFromSeqRegionAttrib = Long.parseLong(sumSRA);
