@@ -89,7 +89,9 @@ public class GeneType extends SingleDatabaseTestCase {
 				       "rRNA-pseudogene",           //19
 				       "wormbase",                  //20
 				       "Genoscope_predicted",       //21
-				       "Genoscope_annotated"        //22
+				       "Genoscope_annotated",       //22
+				       "Mt-rRNA",                   //23
+				       "Mt-tRNA"                    //24
 
     }; 
 
@@ -101,12 +103,12 @@ public class GeneType extends SingleDatabaseTestCase {
      * example: whitelist[0][2][1] would be 
      *      ["core" database]["wormbase" analysis]["gene" gene type]
      */
-    private int[][][] whitelist =    {  {  {0,1,2},    //this block    //this array for "ensembl" analysis' XXX here
+    private int[][][] whitelist =    {  {  {0,1,2},    //this block    //this array for "ensembl" analysis' 
 					   {1,10,20},  //for CORE      //this array for "wormbase" analysis'
 					   {1,10},     //databases     //this array for "flybase" analysis'
 					   {},         //
 					   {},         //
-					   {3,4,5,6,7,8,11,12,13,14,15,16,18,19},
+					   {3,4,5,6,7,8,11,12,13,14,15,16,18,19,23,24},
 					   {22},   // Allowed gene types for CYT
 					   {22},   // Allowed gene types for HOX
 					   {21}    // Allowed gene types for GSTEN
