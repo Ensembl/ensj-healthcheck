@@ -40,6 +40,7 @@ public class AssemblyExceptionTestCase extends EnsTestCase {
   
   /**
    * Check the data in the assembly_exception table.
+   * Note referential integrity checks are done in CoreForeignKeyTestCase.
    * @return Result.
    */
   public TestResult run() {
@@ -51,6 +52,19 @@ public class AssemblyExceptionTestCase extends EnsTestCase {
       
       Connection con = (Connection)it.next();
       
+      // check that seq_region_end > seq_region_start
+      int rows = getRowCount(con, "SELECT COUNT(*) FROM assembly_exception WHERE seq_region_start > seq_region_end");
+      if (rows > 0) {
+        ReportManager.problem(this, con, "assembly_exception has " + rows + " rows where seq_region_start > seq_region_end");
+      }
+      
+      // check that exc_seq_region_start > exc_seq_region_end
+      rows = getRowCount(con, "SELECT COUNT(*) FROM assembly_exception WHERE exc_seq_region_start > exc_seq_region_end");
+      if (rows > 0) {
+        ReportManager.problem(this, con, "assembly_exception has " + rows + " rows where exc_seq_region_start > exc_seq_region_end");
+      }
+      
+      // more tests to be added later
       
     }
     
