@@ -8,10 +8,6 @@
 package org.ensembl.healthcheck.test;
 
 import junit.framework.*;
-import java.util.*;
-import java.util.logging.*;
-import java.sql.*;
-
 import org.ensembl.healthcheck.util.*;
 
 /**

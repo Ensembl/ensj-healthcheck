@@ -29,9 +29,6 @@
 
 package org.ensembl.healthcheck.test;
 
-import java.text.*;
-import java.util.*;
-
 import org.ensembl.healthcheck.util.*;
 
 public class TestReadingClasspath {

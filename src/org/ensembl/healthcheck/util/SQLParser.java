@@ -21,7 +21,6 @@ package org.ensembl.healthcheck.util;
 import java.sql.*;
 import java.util.*;
 import java.io.*;
-import java.util.regex.*;
 import java.util.logging.*;
 
 /**

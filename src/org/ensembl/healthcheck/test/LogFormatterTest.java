@@ -9,7 +9,6 @@ package org.ensembl.healthcheck.test;
 
 import junit.framework.*;
 import java.util.logging.*;
-import java.util.*;
 
 import org.ensembl.healthcheck.util.*;
 

@@ -18,11 +18,7 @@
 
 package org.ensembl.healthcheck.testcase;
 
-import java.sql.*;
-
 import org.ensembl.healthcheck.*;
-
-import org.ensembl.healthcheck.util.*;
 
 /**
  * Check that the assembly table is present in all necessary databases.

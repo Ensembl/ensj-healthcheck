@@ -20,8 +20,6 @@
 package org.ensembl.healthcheck.testcase;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.TestResult;

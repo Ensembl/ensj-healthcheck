@@ -20,7 +20,6 @@
 package org.ensembl.healthcheck.util;
 
 import java.util.logging.*;
-import java.util.*;
 
 /**
  * Custom formatter that formats parts of a log record to a single line.
