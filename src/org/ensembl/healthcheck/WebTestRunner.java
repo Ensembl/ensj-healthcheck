@@ -82,7 +82,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
             logger.warning("Warning: no database names matched any of the database regexps given");
         }
 
-        runAllTests(databaseRegistry, testRegistry);
+        runAllTests(databaseRegistry, testRegistry, false);
 
         printOutput();
 
