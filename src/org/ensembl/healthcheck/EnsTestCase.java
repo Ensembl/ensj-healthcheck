@@ -479,12 +479,12 @@ public abstract class EnsTestCase {
   /**
    * Get the regular expression that will be applied to database names before the built-in regular expression.
    * @return The value of preFilterRegexp
-   */  
+   */
   public String getPreFilterRegexp() {
     return preFilterRegexp;
   }
   
-  /** 
+  /**
    * Set the regular expression that will be applied to database names before the built-in regular expression.
    * @param s The new value for preFilterRegexp.
    **/
@@ -528,13 +528,13 @@ public abstract class EnsTestCase {
     // @todo - what about NULLs?
     
     boolean result = false;
-
+    
     // cheat by looking for any rows that DO NOT match the pattern
     String sql = "SELECT COUNT(*) FROM " + table + " WHERE " + column + " NOT LIKE \"" + pattern + "\"";
     logger.fine(sql);
     
     return getRowCount(con, sql);
-        
+    
   } // checkColumnPattern
   
   // -------------------------------------------------------------------------
@@ -621,6 +621,18 @@ public abstract class EnsTestCase {
     
   } // checkBlankNonNull
   
+  // -------------------------------------------------------------------------
+  /**
+   * Print a warning message about a specific database.
+   * @param con The database connection involved.
+   * @param message The message to print.
+   */
+  protected void warn(Connection con, String message) {
+
+    logger.warning( "Problem in " + DBUtils.getShortDatabaseName( con ));
+    logger.warning( message );
+
+  } //warn
   // -------------------------------------------------------------------------
   
 } // EnsTestCase
