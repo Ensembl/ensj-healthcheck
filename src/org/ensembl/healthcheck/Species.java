@@ -140,6 +140,8 @@ public final class Species {
         assemblyPrefixToSpecies.put("AMEL", APIS_MELLIFERA);
         assemblyPrefixToSpecies.put("CHIMP", PAN_TROGLODYTES);
         assemblyPrefixToSpecies.put("WASHUC", GALLUS_GALLUS);
+        assemblyPrefixToSpecies.put("BTAU", BOS_TAURUS);
+        assemblyPrefixToSpecies.put("BROADD", CANIS_FAMILIARIS);
      
 	// and the other way around
         it = assemblyPrefixToSpecies.keySet().iterator();
