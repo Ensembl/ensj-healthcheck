@@ -55,12 +55,14 @@ public class AssemblyException extends EnsTestCase {
       // check that seq_region_end > seq_region_start
       int rows = getRowCount(con, "SELECT COUNT(*) FROM assembly_exception WHERE seq_region_start > seq_region_end");
       if (rows > 0) {
+      	result = false;
         ReportManager.problem(this, con, "assembly_exception has " + rows + " rows where seq_region_start > seq_region_end");
       }
       
       // check that exc_seq_region_start > exc_seq_region_end
       rows = getRowCount(con, "SELECT COUNT(*) FROM assembly_exception WHERE exc_seq_region_start > exc_seq_region_end");
       if (rows > 0) {
+      	result = false;
         ReportManager.problem(this, con, "assembly_exception has " + rows + " rows where exc_seq_region_start > exc_seq_region_end");
       }
       
