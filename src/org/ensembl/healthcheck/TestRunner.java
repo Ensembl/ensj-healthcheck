@@ -138,12 +138,12 @@ public class TestRunner {
     // open connection
     try {
       
-      conn = DBUtils.openConnection(System.getProperty("driver",      "org.gjt.mm.mysql.Driver"),
-      System.getProperty("databaseURL", "kaka.sanger.ac.uk"),
-      System.getProperty("user",        "anonymous"),
-      System.getProperty("password",    ""));
+      conn = DBUtils.openConnection(System.getProperty("driver"),
+      System.getProperty("databaseURL"),
+      System.getProperty("user"),
+      System.getProperty("password"));
       
-      logger.fine("Opened connection to " + System.getProperty("databaseURL", "kaka.sanger.ac.uk") + " as " + System.getProperty("user", "anonymous"));
+      logger.fine("Opened connection to " + System.getProperty("databaseURL") + " as " + System.getProperty("user"));
       
       databaseNames = DBUtils.listDatabases(conn, regexp, preFilterRegexp);
       
