@@ -140,7 +140,6 @@ public class Archive extends SingleDatabaseTestCase {
                 + " FROM peptide_archive pa LEFT JOIN gene_archive ga "
                 + " ON ga.translation_stable_id=pa.translation_stable_id "
                 + " AND ga.translation_version=pa.translation_version " + " WHERE ga.translation_stable_id is NULL;";
-
         String[] rows = getColumnValues(con, sql);
         if (rows.length > 0) {
             ReportManager.problem(this, con, rows.length + " translations from peptide archive not in gene archive");
@@ -162,7 +161,7 @@ public class Archive extends SingleDatabaseTestCase {
                 + " WHERE ts.stable_id=pa.translation_stable_id " + "       AND ts.version= pa.translation_version;";
         String[] rows = getColumnValues(con, sql);
         if (rows.length > 0) {
-            ReportManager.problem(this, con, rows + " current translations in peptide archive");
+            ReportManager.problem(this, con, rows.length + " current translations in peptide archive");
             result = false;
         }
 
