@@ -174,7 +174,7 @@ public class DBUtils {
   } // listDatabases
   
   // -------------------------------------------------------------------------
-  /** 
+  /**
    * Compare a list of ResultSets to see if there are any differences.
    * Note that if the ResultSets are large and/or there are many of them, this may take a long time!
    * @return The number of differences.
@@ -201,7 +201,7 @@ public class DBUtils {
   } // compareResultSetGroup
   
   // -------------------------------------------------------------------------
-  /** 
+  /**
    * Compare two ResultSets.
    * @return True if all the following are true: <ol>
    * <li> rs1 and rs2 have the same number of columns</li>
@@ -475,6 +475,37 @@ public class DBUtils {
       
       Statement stmt = con.createStatement();
       ResultSet rs = stmt.executeQuery("SHOW TABLES");
+      
+      while (rs.next()) {
+        result.add(rs.getString(1));
+      }
+      
+      rs.close();
+      stmt.close();
+      
+    } catch (SQLException se) {
+      logger.severe(se.getMessage());
+    }
+    
+    return result;
+    
+  }
+  
+  // -------------------------------------------------------------------------
+  /**
+   * List the columns in a particular table.
+   * @param con The connection to use.
+   * @param the table to use.
+   * @return A List of Strings representing the column names.
+   */
+  public List getColumnsInTable(Connection con, String table) {
+    
+    List result = new ArrayList();
+    
+     try {
+      
+      Statement stmt = con.createStatement();
+      ResultSet rs = stmt.executeQuery("DESCRIBE " + table);
       
       while (rs.next()) {
         result.add(rs.getString(1));
