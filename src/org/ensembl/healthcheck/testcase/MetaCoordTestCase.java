@@ -72,8 +72,10 @@ public class MetaCoordTestCase extends EnsTestCase {
           ReportManager.problem(this, con, featureTable + " does not appear to have any associated coordinate systems");
           
         } else if (cs.length > 1) {
+          
+          result = false;
           String problemCoordinateSystems = Utils.arrayToString(cs, ",");
-          ReportManager.info(this, con, featureTable + " has more than one associated coordinate system: " + problemCoordinateSystems);
+          ReportManager.problem(this, con, featureTable + " has more than one associated coordinate system: " + problemCoordinateSystems);
           
         } else {
           

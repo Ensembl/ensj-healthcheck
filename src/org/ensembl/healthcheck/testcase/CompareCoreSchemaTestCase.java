@@ -119,7 +119,7 @@ public class CompareCoreSchemaTestCase extends EnsTestCase {
           
           String table = (String)tableIterator.next();
           
-          String sql = "SHOW CREATE TABLE " + table;
+          String sql = "DESCRIBE " + table;
           ResultSet masterRS = masterStmt.executeQuery(sql);
           ResultSet dbRS = dbStmt.executeQuery(sql);
           
