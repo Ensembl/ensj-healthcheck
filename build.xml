@@ -212,7 +212,7 @@
 
     <target name="javadoc-zip" depends="javadoc">
 
-        <zip destfile="${doc}/javadoc/${name}.zip" basedir="${doc}/javadoc" />
+        <zip destfile="${doc}/javadoc/${name}.zip" basedir="${doc}/javadoc" includes="**/*.html" excludes="**/*.zip"/>
 
     </target>
 
