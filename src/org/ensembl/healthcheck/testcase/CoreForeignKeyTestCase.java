@@ -34,7 +34,7 @@ public class CoreForeignKeyTestCase extends EnsTestCase {
    * Create an OrphanTestCase that applies to a specific set of databases.
    */
   public CoreForeignKeyTestCase() {
-    addToGroup("db_constraints");
+    addToGroup("post_genebuild");
     setDescription("Check for broken foreign-key relationships.");
   }
   

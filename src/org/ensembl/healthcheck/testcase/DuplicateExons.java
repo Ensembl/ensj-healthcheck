@@ -34,7 +34,7 @@ public class DuplicateExons extends EnsTestCase {
    */
   public DuplicateExons() {
     databaseRegexp = "^.*_core_\\d.*";
-    addToGroup("db_constraints");
+    addToGroup("post_genebuild");
   }
   
   /**
@@ -99,7 +99,7 @@ public class DuplicateExons extends EnsTestCase {
 		  lastExonStrand == exonStrand &&
 		  lastExonEndPhase == exonEndPhase ) {
 		  duplicateExon++;
-		  ReportManager.info( this, con, "Exon " + exonId + " is duplicated." );
+		  ReportManager.warning( this, con, "Exon " + exonId + " is duplicated." );
 	      }
 	  } else {
 	      first = false ;

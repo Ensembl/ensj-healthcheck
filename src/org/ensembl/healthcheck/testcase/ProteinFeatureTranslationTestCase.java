@@ -38,7 +38,7 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
    * Create an ProteinFeatureTranslationTestCase that applies to a specific set of databases.
    */
   public ProteinFeatureTranslationTestCase() {
-    addToGroup("db_constraints");
+    addToGroup("post_genebuild");
     featuresToDelete = new HashMap();
   }
   

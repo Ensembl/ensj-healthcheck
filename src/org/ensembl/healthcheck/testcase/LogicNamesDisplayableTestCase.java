@@ -33,7 +33,9 @@ import org.ensembl.healthcheck.util.*;
 public class LogicNamesDisplayableTestCase extends EnsTestCase {
   
   // a list of the tables to check the analysis_id in
-  private String[] featureTables = { "gene", "prediction_transcript", "dna_align_feature", "marker_feature", "protein_feature", "protein_align_feature", "qtl_feature", "repeat_feature", "simple_feature" };
+  private String[] featureTables = { "gene", "prediction_transcript", "dna_align_feature", 
+				     "marker_feature", "protein_feature", "protein_align_feature", 
+				     "qtl_feature", "repeat_feature", "simple_feature" };
   
   private static final String LOGIC_NAMES_FILE = "logicnames.txt";
   private static final boolean CASE_SENSITIVE = false;
@@ -44,7 +46,7 @@ public class LogicNamesDisplayableTestCase extends EnsTestCase {
   public LogicNamesDisplayableTestCase() {
     String[] cols = { "logic_name", "analysis_id" };
     addCondition(new HasTableColumnsCondition("analysis", cols));
-    addToGroup("db_constraints");
+    addToGroup("post_genebuild");
     setDescription("Checks that all logic names in analysis are displayable");
     setHintLongRunning(true);
   }
@@ -95,13 +97,18 @@ public class LogicNamesDisplayableTestCase extends EnsTestCase {
             
             // check that there is an entry in the analysis table with this ID (i.e. foreign key integrity check)
             if (logicNamesByAnalID.get(analysisIDs[i]) == null) {
-              ReportManager.problem(this, con, "Feature table " + featureTableName + " refers to an entry with ID " + analysisIDs[i] + " - there is NO such entry");
-            }
+              ReportManager.problem(this, con, "Feature table " + featureTableName + " refers to non-existant analysis with ID " + analysisIDs[i]);
+	      result = false;
+            } else {
             
-            // check that the logic name corresponding to this analysis id is valid
-            String logicName = (String)logicNamesByAnalID.get(analysisIDs[i]);
-            if (!Utils.stringInArray(logicName, allowedLogicNames, CASE_SENSITIVE)) {
-              ReportManager.problem(this, con, "Feature table " + featureTableName + " has features with logic name " + logicName + " which will not be drawn");
+		// check that the logic name corresponding to this analysis id is valid
+		String logicName = (String)logicNamesByAnalID.get(analysisIDs[i]);
+		if (!Utils.stringInArray(logicName, allowedLogicNames, CASE_SENSITIVE)) {
+		    ReportManager.problem(this, con, "Feature table " + 
+					  featureTableName + " has features with logic name " + 
+					  logicName + " which will not be drawn");
+		    result = false;
+		}
             } 
           }
           

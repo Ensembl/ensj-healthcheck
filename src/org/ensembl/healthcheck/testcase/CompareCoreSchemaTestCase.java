@@ -41,8 +41,8 @@ public class CompareCoreSchemaTestCase extends EnsTestCase {
    * Creates a new instance of CompareCoreSchemaTestCase.
    */
   public CompareCoreSchemaTestCase() {
-    addToGroup("db_constraints");
-    setDatabaseRegexp(".*_(core|estgene)_\\d.*");
+    addToGroup("pre_release");
+    setDatabaseRegexp("\\w+_\\w+_(core|est|estgene|vega)_\\d+_\\w+");
   }
   
   /**

@@ -33,7 +33,7 @@ public class UnderscoreInAssemblyTypeTestCase extends EnsTestCase {
   
   /** Creates a new instance of UnderscoreInAssemblyTypeTestCase */
   public UnderscoreInAssemblyTypeTestCase() {
-    addToGroup("db_constraints");
+    addToGroup("post_genebuild");
     setDescription("Checks for the presence of _ characters in assembly.type");
   }
   

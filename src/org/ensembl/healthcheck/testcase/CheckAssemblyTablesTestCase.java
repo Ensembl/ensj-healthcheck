@@ -49,15 +49,16 @@ public class CheckAssemblyTablesTestCase extends EnsTestCase {
     
     for (int i = 0; i < species.length; i++) {
       
-      String speciesRegexp = species[i] + CORE_DB_REGEXP;
-      logger.info("Checking assembly tables in "+ speciesRegexp);
-      
+      String speciesRegexp = species[i] + CORE_DB_REGEXP_POSTFIX;
+      ReportManager.problem( this, species[i], "Thsi is a really unneccasarry lon wrong ugly test messsage just to see if line break do what they should do and if I write more blabla we can maybe test it properly ajsdlfsagd aslud isdg liahg" );
+      ReportManager.problem( this, species[i], "Thsi is a really unneccasarry lonwronguglytestmesssagejusttoseeiflinebreakdowhattheyshoulddoandifIwritemoreblablawecanmaybetestaskdjh;erhg;oeirg'oierjg'ioejg'ijfg'lksj'eijr" );
+
       boolean allMatch = checkSameSQLResult("SELECT COUNT(*) FROM assembly", speciesRegexp);
       if (!allMatch) {
-        result = false;
-        ReportManager.problem(this, "[see report text]", "Differences in assembly table across species " + speciesRegexp); 
+	  result = false;
+        ReportManager.problem(this, species[i], "Differences in assembly table across species" ); 
       } else {
-       ReportManager.correct(this, "[see report text]",  "All assembly tables the same for " + speciesRegexp);  
+	  ReportManager.correct(this, species[i],  "All assembly tables the same" );  
       }
       
     } // foreach species

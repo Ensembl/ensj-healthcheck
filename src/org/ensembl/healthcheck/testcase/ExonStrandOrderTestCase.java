@@ -34,7 +34,7 @@ public class ExonStrandOrderTestCase extends EnsTestCase {
    */
   public ExonStrandOrderTestCase() {
     databaseRegexp = "^.*_core_\\d.*";
-    addToGroup("db_constraints");
+    addToGroup("post_genebuild");
   }
   
   /**
@@ -135,7 +135,7 @@ public class ExonStrandOrderTestCase extends EnsTestCase {
           // strand or chromosome jumping in Gene
           if( strand != currentStrand ||
           chromosomeId != currentChromosomeId ) {
-            warn( con, "Jumping strand or chromosome Exon " + exonId +
+            ReportManager.problem( this, con, "Jumping strand or chromosome Exon " + exonId +
             " Transcript: " + transcriptId +
             " Gene: " + geneId );
           }
@@ -144,7 +144,7 @@ public class ExonStrandOrderTestCase extends EnsTestCase {
           if( strand == 1 ) {
             if( lastStart > start ) {
               // test fails
-              warn( con, "Order wrong in Exon " + exonId +
+              ReportManager.problem( this, con, "Order wrong in Exon " + exonId +
               " Transcript: " + transcriptId +
               " Gene: " + geneId );
               result = false;
@@ -152,7 +152,7 @@ public class ExonStrandOrderTestCase extends EnsTestCase {
           } else {
             if( lastStart < start ) {
               // test fails
-              warn( con, "Order wrong in Exon " + exonId +
+              ReportManager.problem( this, con, "Order wrong in Exon " + exonId +
               " Transcript: " + transcriptId +
               " Gene: " + geneId );
               result = false;
@@ -160,7 +160,7 @@ public class ExonStrandOrderTestCase extends EnsTestCase {
           }
           
           if( exonRank - lastRank > 1 ) {
-            warn( con, "Exon rank jump in Exon " + exonId +
+            ReportManager.problem( this, con, "Exon rank jump in Exon " + exonId +
             " Transcript: " + transcriptId +
             " Gene: " + geneId );
             result = false;
@@ -171,7 +171,7 @@ public class ExonStrandOrderTestCase extends EnsTestCase {
         rs.close();
         stmt.close();
         if( (double)singleExonTranscripts / transcriptCount > 0.2 ) {
-          warn( con, "High single exon transcript count. (" +
+          ReportManager.warning(this,  con, "High single exon transcript count. (" +
           singleExonTranscripts + "/" +
           transcriptCount + ")" );
         }

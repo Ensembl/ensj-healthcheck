@@ -34,10 +34,13 @@ public class EmptyTablesTestCase extends EnsTestCase {
    */
   public EmptyTablesTestCase() {
     
-    addToGroup("db_constraints");
-    setDescription("Checks that all tables have data");
-    
-  }
+        
+        addToGroup("post_genebuild");
+	databaseRegexp = "\\w+_\\w+_(core|vega)_\\d+_\\w+";
+        setDescription("Checks that all tables have data");
+        
+    }
+
   
   /**
    * For each schema, check that every table has more than 0 rows.
@@ -69,7 +72,7 @@ public class EmptyTablesTestCase extends EnsTestCase {
       }
       
     } // while connection
-    
+
     return new TestResult(getShortTestName(), result);
     
   } // run

@@ -34,7 +34,7 @@ public class CheckMarkerFeaturesTestCase extends EnsTestCase {
    * Creates a new instance of CheckAllTranscriptsBelongToAGeneTestCase
    */
   public CheckMarkerFeaturesTestCase() {
-    addToGroup("db_constraints");
+    addToGroup("post_genebuild");
     setDescription("Checks that marker_features exist and that they have"
 		   + " non-zero map_weights");
   }
@@ -59,7 +59,6 @@ public class CheckMarkerFeaturesTestCase extends EnsTestCase {
        * catch problem if marker_features exist without markers 
        */
       if (!markersExist) {
-	  ReportManager.info(this, con, "Marker features appear to be ok");
 	  continue;
       }
 
@@ -83,7 +82,7 @@ public class CheckMarkerFeaturesTestCase extends EnsTestCase {
 	  continue;
       }
 
-      ReportManager.info(this, con, "Marker features appear to be ok");
+      ReportManager.correct(this, con, "Marker features appear to be ok");
     } // while connection
     
     return new TestResult(getShortTestName(), result);

@@ -84,6 +84,7 @@ public abstract class EnsTestCase {
   
   /** Regexp that, when combined with a species name, will match core databases */
   protected static final String CORE_DB_REGEXP = "\\w+_\\w+_(core|est|estgene|vega)_\\d+_.*";
+  protected static final String CORE_DB_REGEXP_POSTFIX = "_(core|est|estgene|vega)_\\d+_.*";
   /** The TestRunner associated with this EnsTestCase */
   protected TestRunner testRunner;
   /** The regular expression to match the names of the databases that the test case will apply to. */
