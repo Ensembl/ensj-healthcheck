@@ -101,7 +101,7 @@ public class TestRunner {
         logger.info("No database names matched");
       }
       
-      conn.close();
+      //conn.close();
       
       logger.fine("Connection closed");
       

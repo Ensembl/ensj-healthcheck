@@ -504,7 +504,7 @@ public abstract class EnsTestCase {
         // note that the Statement can't be closed here as we use the ResultSet elsewhere
         // so store a reference to it for closing later
         statements.add(stmt);
-        con.close();
+        //con.close();
       } catch (Exception e) {
         e.printStackTrace();
       }
