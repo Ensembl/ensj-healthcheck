@@ -32,7 +32,7 @@ public class CoreForeignKeyTestCase extends EnsTestCase {
    * Create an OrphanTestCase that applies to a specific set of databases.
    */
   public CoreForeignKeyTestCase() {
-    databaseRegexp = "^_core_\\d.*";
+    databaseRegexp = "^.*_core_\\d.*";
     addToGroup("db_constraints");
   }
   
@@ -111,10 +111,5 @@ public class CoreForeignKeyTestCase extends EnsTestCase {
     return new TestResult(getShortTestName(), result, "");
     
   }
-
-		private void warn ( Connection con, String message ) {
-				logger.warning( "Problem in " + DBUtils.getShortDatabaseName( con ));
-				logger.warning( message );
-		}
   
 } // OrphanTestCase
