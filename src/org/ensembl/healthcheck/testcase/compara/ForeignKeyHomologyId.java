@@ -76,12 +76,15 @@ public class ForeignKeyHomologyId extends SingleDatabaseTestCase {
     }
 
     public int fillReportManager(Connection con, int orphans, String table1, String table2, String fk) {
-        
+
+        String sql = "SELECT " + table1 + "." + fk + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + fk + " = " + table2 + "." + fk + " WHERE " + table2 + "." + fk + " iS NULL";
+
         if (orphans == 0) {
             ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + fk + " relationships");
         } else if (orphans > 0) {
             ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + fk + " relationships");
             ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries have unlinked entries in " + table2);
+            ReportManager.problem(this, con, "USEFUL SQL: " + sql);
         } else {
             ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + fk + ", look at the StackTrace if any");
         }
