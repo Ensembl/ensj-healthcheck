@@ -39,8 +39,6 @@ public class TestRunner {
   protected List allTests;
   /** The List of group names (as Strings) that will be run. */
   protected List groupsToRun;
-  /** Contains database connection parameters read in from database.properties */
-  protected Properties dbProps;
   /** If set, database names are filtered with this regular expression before the regexp built into the tests. */
   protected String preFilterRegexp;
   /** The logger to use for this class */
@@ -59,18 +57,22 @@ public class TestRunner {
   
   // -------------------------------------------------------------------------
   /**
-   * Read the <code>database.properties</code> file into dbProps.
+   * Read the <code>database.properties</code> file into the System properties
+   * so that it can be overridden with -D.
    */
   protected void readPropertiesFile() {
     
     String propsFile = System.getProperty("user.dir") + System.getProperty("file.separator") + "database.properties";
-    dbProps = Utils.readPropertiesFile(propsFile);
+    Properties dbProps = Utils.readPropertiesFile(propsFile);
     logger.fine("Read database properties from " + propsFile);
     Enumeration e = dbProps.propertyNames();
-    String propName;
+    String name, value;
     while (e.hasMoreElements()) {
-      propName = (String)e.nextElement();
-      logger.finer("\t" + propName + " = " + dbProps.getProperty(propName));
+      name = (String)e.nextElement();
+      value = dbProps.getProperty(name);
+      // add to System
+      System.setProperty(name, value);
+      logger.finer("\t" + name + " = " + value);
     }
     
   } // readPropertiesFile
@@ -90,12 +92,12 @@ public class TestRunner {
     // open connection
     try {
       
-      conn = DBUtils.openConnection(dbProps.getProperty("driver",      "org.gjt.mm.mysql.Driver"),
-      dbProps.getProperty("databaseURL", "kaka.sanger.ac.uk"),
-      dbProps.getProperty("user",        "anonymous"),
-      dbProps.getProperty("password",    ""));
+      conn = DBUtils.openConnection(System.getProperty("driver",      "org.gjt.mm.mysql.Driver"),
+      System.getProperty("databaseURL", "kaka.sanger.ac.uk"),
+      System.getProperty("user",        "anonymous"),
+      System.getProperty("password",    ""));
       
-      logger.fine("Opened connection to " + dbProps.getProperty("databaseURL", "kaka.sanger.ac.uk") + " as " + dbProps.getProperty("user", "anonymous"));
+      logger.fine("Opened connection to " + System.getProperty("databaseURL", "kaka.sanger.ac.uk") + " as " + System.getProperty("user", "anonymous"));
       
       databaseNames = DBUtils.listDatabases(conn, regexp, preFilterRegexp);
       
@@ -251,10 +253,10 @@ public class TestRunner {
    */
   public DatabaseConnectionIterator getDatabaseConnectionIterator(String databaseRegexp) {
     
-    return new DatabaseConnectionIterator(dbProps.getProperty("driver"),
-    dbProps.getProperty("databaseURL"),
-    dbProps.getProperty("user"),
-    dbProps.getProperty("password"),
+    return new DatabaseConnectionIterator(System.getProperty("driver"),
+    System.getProperty("databaseURL"),
+    System.getProperty("user"),
+    System.getProperty("password"),
     getListOfDatabaseNames(databaseRegexp));
     
   } // getDatabaseConnectionIterator
@@ -501,7 +503,7 @@ public class TestRunner {
   } // setOutputLevel
   
   // -------------------------------------------------------------------------
-
+  
   /**
    * Get the current output level.
    * @return The current output level. See ReportLine.
@@ -513,7 +515,7 @@ public class TestRunner {
   } // getOutputLevel
   
   // -------------------------------------------------------------------------
-
+  
 } // TestRunner
 
 // -------------------------------------------------------------------------
