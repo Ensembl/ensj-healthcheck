@@ -39,7 +39,7 @@ public class CheckFeatureCoordsTestCase extends EnsTestCase {
   /**
    * Iterate over each affected database and perform various checks.
    */
-  TestResult run() {
+  public TestResult run() {
     
     boolean result = true;
     

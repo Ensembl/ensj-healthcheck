@@ -37,7 +37,7 @@ public class CoreForeignKeyTestCase extends EnsTestCase {
     addToGroup("db_constraints");
   }
   
-  TestResult run() {
+  public TestResult run() {
     
     boolean result = true;
     

@@ -39,7 +39,7 @@ public class CheckDuplicateExonsTestCase extends EnsTestCase {
   /**
    * Find any exons that are duplicated. 
    */
-  TestResult run() {
+  public TestResult run() {
     
     boolean result = true;
     

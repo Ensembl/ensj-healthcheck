@@ -39,7 +39,7 @@ public class CheckTranslationStartEndTestCase extends EnsTestCase {
   /**
    * Find any matching databases that have start > end
    */
-  TestResult run() {
+  public TestResult run() {
     
     boolean result = true;
     

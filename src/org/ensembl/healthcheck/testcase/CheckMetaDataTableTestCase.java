@@ -41,7 +41,7 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
   /**
    * Check various aspects of the meta table.
    */
-  TestResult run() {
+  public TestResult run() {
     
     boolean result = true;
     

@@ -39,7 +39,7 @@ public class CheckAllExonsBelongToTranscriptTestCase extends EnsTestCase {
   /**
    * Find any exons that aren't in a transcript.
    */
-  TestResult run() {
+  public TestResult run() {
     
     boolean result = true;
     

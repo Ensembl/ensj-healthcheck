@@ -36,7 +36,7 @@ public class OrphanTestCase extends EnsTestCase {
   public OrphanTestCase() {
   }
   
-  TestResult run() {
+  public TestResult run() {
     
     boolean result = true;
     

@@ -42,7 +42,7 @@ public class CheckExonCoordsTestCase extends EnsTestCase {
    * Check if there are any exons with invalide co-ordinates.
    *
    */
-  TestResult run() {
+  public TestResult run() {
     
     boolean result = true;
     

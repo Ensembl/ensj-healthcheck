@@ -35,7 +35,7 @@ public class UnderscoreInAssemblyTypeTestCase extends EnsTestCase {
   public UnderscoreInAssemblyTypeTestCase() {
   }
   
-  TestResult run() {
+  public TestResult run() {
     
     boolean result = true;
     

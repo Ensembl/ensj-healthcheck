@@ -31,7 +31,7 @@ public class ExternalDBDescribeTestCase extends EnsTestCase {
   public ExternalDBDescribeTestCase() {
   }
   
-  TestResult run() {
+  public TestResult run() {
     
     boolean result = super.checkSameSQLResult("DESCRIBE external_db");
     

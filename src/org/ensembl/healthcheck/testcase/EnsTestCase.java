@@ -117,7 +117,7 @@ public abstract class EnsTestCase {
    * The principal run method. Subclasses of EnsTestCase should implement this
    * to provide test-specific behaviour.
    */
-  abstract TestResult run();
+  public abstract TestResult run();
   
   // -------------------------------------------------------------------------
   

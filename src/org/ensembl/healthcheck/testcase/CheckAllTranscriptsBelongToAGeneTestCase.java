@@ -39,7 +39,7 @@ public class CheckAllTranscriptsBelongToAGeneTestCase extends EnsTestCase {
   /**
    * Find how many transcripts don't belong to a gene.
    */
-  TestResult run() {
+  public TestResult run() {
     
     boolean result = true;
     

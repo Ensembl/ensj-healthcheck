@@ -40,7 +40,7 @@ public class CheckTranscriptsTranslateTestCase extends EnsTestCase {
    * Find any transcripts that don't translate.
    * @todo use countOrphans()?
    */
-  TestResult run() {
+  public TestResult run() {
     
     boolean result = true;
     

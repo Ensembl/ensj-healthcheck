@@ -39,7 +39,7 @@ public class CheckAllGenesHaveTranscriptsTestCase extends EnsTestCase {
   /**
    * Check each database for any genes that don't have transcripts.
    */
-  TestResult run() {
+  public TestResult run() {
     
     boolean result = true;
     

@@ -39,7 +39,7 @@ public class CheckCoreTablesHaveDataTestCase extends EnsTestCase {
   /**
    * Check that the number of rows in several tables is > 0.
    */
-  TestResult run() {
+  public TestResult run() {
     
     String[] tables = { "chromosome", "assembly", "dna", "contig", "clone" };
     
