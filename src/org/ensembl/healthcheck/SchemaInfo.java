@@ -144,8 +144,26 @@ public class SchemaInfo {
     
   }
   // -------------------------------------------------------------------------
-  
-  
+  /**
+   * Get a particular table by name.
+   * @param tableName The table to get.
+   * @return The TableInfo object corresponding to tableName, or null.
+   */ 
+   public TableInfo getTable(String tableName) {
+     
+    TableInfo result = null;
+    
+    Iterator it = tables.iterator();
+    while (it.hasNext()) {
+      TableInfo ti = (TableInfo)it.next();
+      if (ti.getName().equalsIgnoreCase(tableName)) {
+        result = ti;
+      }
+    }
+    
+    return result;
+    
+   }
   // -------------------------------------------------------------------------
   
 } // SchemaInfo
