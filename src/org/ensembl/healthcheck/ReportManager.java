@@ -154,9 +154,7 @@ public final class ReportManager {
                 reportsByDatabase.put(databaseName, lines);
             }
 
-        } else {
-            //logger.warning("Cannot add report with database name not set");
-        }
+        } 
 
         if (reporter != null) {
             reporter.message(report);
@@ -441,7 +439,7 @@ public final class ReportManager {
      */
     public static int[] countPassesAndFailsDatabase(String database) {
 
-        int result[] = new int[2];
+        int[] result = new int[2];
 
         List testsRun = new ArrayList();
 
@@ -476,7 +474,7 @@ public final class ReportManager {
      */
     public static int[] countPassesAndFailsTest(String test) {
 
-        int result[] = new int[2];
+        int[] result = new int[2];
 
         List allDBs = new ArrayList();
 
@@ -496,7 +494,7 @@ public final class ReportManager {
         result[1] = reports.size();
         // if it didn't fail, it passed
         result[0] = allDBs.size() - result[1];
-
+        
         return result;
 
     }
@@ -511,7 +509,7 @@ public final class ReportManager {
      */
     public static int[] countPassesAndFailsAll() {
 
-        int result[] = new int[2];
+        int[] result = new int[2];
 
         Map allByDB = getAllReportsByDatabase();
         Set dbs = allByDB.keySet();
