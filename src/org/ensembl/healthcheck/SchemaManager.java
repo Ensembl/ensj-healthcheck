@@ -18,6 +18,7 @@
 
 package org.ensembl.healthcheck;
 
+import java.io.*;
 import java.util.*;
 import java.sql.*;
 import org.ensembl.healthcheck.util.*;
@@ -35,8 +36,8 @@ public class SchemaManager {
    */
   public static List getAllSchemas() {
     
-   return schemas;
-   
+    return schemas;
+    
   }
   
   // -------------------------------------------------------------------------
@@ -45,11 +46,11 @@ public class SchemaManager {
    * @param si The SchemaInfo object to add.
    */
   public static void addSchema(SchemaInfo si) {
-  
+    
     schemas.add(si);
     
   }
-
+  
   // -------------------------------------------------------------------------
   /**
    * Remove a schema from the list.
@@ -68,13 +69,13 @@ public class SchemaManager {
    * @return true if si is currently held in SchemaManager, false otherwise.
    */
   public static boolean hasSchema(SchemaInfo si) {
-   
+    
     return schemas.contains(si);
     
   }
   
   // -------------------------------------------------------------------------
-  /** 
+  /**
    * Get a schema from the cache by name.
    * @param name The name of the schema to get.
    * @return The schema named name, or null.
@@ -97,9 +98,9 @@ public class SchemaManager {
   }
   
   // -------------------------------------------------------------------------
-  /** 
+  /**
    * Get a schema that corresponds to the Connection. Note that this method
-   * retrieves the schema from the cache, it does <em>not</em> create it - see 
+   * retrieves the schema from the cache, it does <em>not</em> create it - see
    * the SchemaInfo(Connection con) constructor for that.
    * @param con The connection relating to the schema required.
    * @return The SchemaInfo object relating to con, or null if none is found.
@@ -113,7 +114,8 @@ public class SchemaManager {
   // -------------------------------------------------------------------------
   /**
    * Serialize all the SchemaInfo objects.
-   */ 
+   * Each schema is written to a file called schema_name.ser
+   */
   public static void serializeAll() {
     
     Iterator it = schemas.iterator();
@@ -125,5 +127,25 @@ public class SchemaManager {
   }
   
   // -------------------------------------------------------------------------
-
+  /**
+   * Serialize the List of SchemaInfo objects to a file.
+   * @param fileName The name of the file to write to.
+   */
+  
+  public static void serializeAllToSingleFile(String fileName) {
+    
+    try {
+      ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName));
+      out.writeObject(schemas);
+      out.close();
+    }
+    catch(IOException ex) {
+      ex.printStackTrace();
+    }
+    
+    
+  }
+  
+  // -------------------------------------------------------------------------
+  
 } // SchemaManager
