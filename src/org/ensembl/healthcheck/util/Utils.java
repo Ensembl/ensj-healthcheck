@@ -443,7 +443,7 @@ public class Utils {
 			}
 
 		} else {
-			logger.severe(parentDir + " does not exist or is not a directory");
+			logger.warning(parentDir + " does not exist or is not a directory");
 		}
 
 		return (String[]) (dirs.toArray(new String[dirs.size()]));
