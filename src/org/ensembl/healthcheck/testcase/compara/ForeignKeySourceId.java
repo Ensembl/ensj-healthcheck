@@ -56,7 +56,7 @@ public class ForeignKeySourceId extends SingleDatabaseTestCase {
 
         Connection con = dbre.getConnection();
 
-        if (tableHasRows(con, "external_db")) {
+        if (tableHasRows(con, "source")) {
 
             orphans = countOrphans(con, "member", "source_id", "source", "source_id", true);
             if (orphans == 0) {
