@@ -472,19 +472,19 @@ public class TestRunner {
    */
   protected void setOutputLevel(String str) {
     
-    str = str.toLowerCase();
+    String lstr = str.toLowerCase();
     
-    if (str.equals("all")) {
+    if (lstr.equals("all")) {
       outputLevel = ReportLine.ALL;
-    } else if (str.equals("none")) {
+    } else if (lstr.equals("none")) {
       outputLevel = ReportLine.NONE;
-    } else if (str.equals("problem")) {
+    } else if (lstr.equals("problem")) {
       outputLevel = ReportLine.PROBLEM;
-    }  else if (str.equals("correct")) {
+    }  else if (lstr.equals("correct")) {
       outputLevel = ReportLine.CORRECT;
-    }  else if (str.equals("summary")) {
+    }  else if (lstr.equals("summary")) {
       outputLevel = ReportLine.SUMMARY;
-    }  else if (str.equals("info")) {
+    }  else if (lstr.equals("info")) {
       outputLevel = ReportLine.INFO;
     }  else {
       logger.warning("Output level " + str + " not recognised; using 'all'");
