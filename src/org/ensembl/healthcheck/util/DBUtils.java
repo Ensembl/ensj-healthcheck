@@ -101,7 +101,7 @@ public class DBUtils {
 
    } // listDatabases
 
-
+   // -------------------------------------------------------------------------
    /**
     * Get a list of the database names that match a certain pattern for a particular connection.
     * @param conn The connection to query.
@@ -132,7 +132,56 @@ public class DBUtils {
 
    } // listDatabases
 
+   // -------------------------------------------------------------------------
+   /**
+    * Compare a list of ResultSets to see if there are any differences.
+    * Note that if the ResultSets are large and/or there are many of them, this may take a long time!
+    * @param resultSetGroup The list of ResultSets to compare
+    * @return The number of differences.
+    */
+   public static boolean compareResultSetGroup(ArrayList resultSetGroup) {
+     
+     boolean same = true;;
+     
+     Iterator it1 = resultSetGroup.iterator();
+     while (it1.hasNext()) {
+       ResultSet rs1 = (ResultSet)it1.next();
+       // compare this ResultSet with all the others ...
+       Iterator it2 = resultSetGroup.iterator();
+       while (it2.hasNext()) {
+	ResultSet rs2 = (ResultSet)it2.next();
+	same &= compareResultSets(rs1, rs2);
+       } // it2
+     } // it1
+     
+     return same;
+     
+   } // compareResultSetGroup
 
-
-
+   // -------------------------------------------------------------------------
+   
+   public static boolean compareResultSets(ResultSet rs1, ResultSet rs2) {
+     
+     boolean same = true;
+     
+     if (rs1.equals(rs2)) {
+       return true;
+     } else {
+       
+       try {
+	 while (rs1.next()) {
+	   
+	   // TBC
+	   
+	 }
+       } catch (SQLException se) {
+	 se.printStackTrace();
+       }
+       return same;
+       
+     }
+     
+   } // compareResultSets
+   
+   // -------------------------------------------------------------------------
 } // DBUtils

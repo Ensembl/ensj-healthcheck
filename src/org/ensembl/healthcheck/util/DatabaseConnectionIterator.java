@@ -39,7 +39,7 @@ public class DatabaseConnectionIterator implements Iterator {
   private String driverClassName, baseURL, user, password;
   private String[] databaseNames;
   
-  private static Logger logger = Logger.getLogger("org.ensembl.healthcheck.util.DatabaseConnectionIterator");
+  private Logger logger = Logger.getLogger("org.ensembl.healthcheck.util.DatabaseConnectionIterator");
 
   // -------------------------------------------------------------------------
   
@@ -53,12 +53,13 @@ public class DatabaseConnectionIterator implements Iterator {
     this.databaseNames = databaseNames;
     
     databaseIndex = 0;
-    
+   
     logger.setUseParentHandlers(false); // stop parent logger getting the message
     Handler myHandler = new MyStreamHandler(System.out, new LogFormatter());
     myHandler.setLevel(Level.FINEST);
     logger.addHandler(myHandler);
     logger.setLevel(Level.FINEST);
+    
     logger.info("Set logging level to " + logger.getLevel().getName());
   }
   
