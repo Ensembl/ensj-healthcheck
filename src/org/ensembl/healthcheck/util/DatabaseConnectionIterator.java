@@ -23,7 +23,7 @@
  * <p>Organisation: EMBL</p>
  * <p>Created on March 12, 2003, 3:25 PM</p>
  * @author Glenn Proctor <glenn@ebi.ac.uk>
- * @version
+ * @version $Revision$
  */
 
 
