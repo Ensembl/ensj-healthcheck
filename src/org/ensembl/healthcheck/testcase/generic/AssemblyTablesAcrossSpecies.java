@@ -43,17 +43,7 @@ public class AssemblyTablesAcrossSpecies extends MultiDatabaseTestCase {
 
 		boolean result = true;
 
-		// build up a hash of arrays of DatabaseRegistryEntries for species
-		Map speciesMap = new HashMap();
-		DatabaseRegistryEntry[] allDBs = dbr.getAll();
-		for (int i = 0; i < allDBs.length; i++) {
-			Species s = allDBs[i].getSpecies();
-			DatabaseRegistryEntry[] speciesDBs = dbr.getAll(s);
-			logger.finest("Got " + speciesDBs.length + " databases for " + s.toString());
-			if (!speciesMap.containsKey(s)) {
-				speciesMap.put(s, speciesDBs);
-			}
-		}
+		Map speciesMap = getSpeciesDatabaseMap(dbr);
 
 		// check that the assembly table has the same number of rows across the species
 		Iterator it = speciesMap.keySet().iterator();
