@@ -44,7 +44,7 @@ public class TestRunner {
   /** If set, database names are filtered with this regular expression before the regexp built into the tests. */
   protected String preFilterRegexp;
   
-  private static Logger logger = Logger.getLogger("HealthCheckLogger");
+  protected static Logger logger = Logger.getLogger("HealthCheckLogger");
   
   // -------------------------------------------------------------------------
   /** Creates a new instance of TestRunner */
@@ -98,7 +98,7 @@ public class TestRunner {
       databaseNames = DBUtils.listDatabases(conn, regexp, preFilterRegexp);
       
       if (databaseNames.length == 0) {
-        logger.warning("No database names matched");
+        logger.info("No database names matched");
       }
       
       conn.close();
@@ -211,7 +211,7 @@ public class TestRunner {
       EnsTestCase testCase = (EnsTestCase)it.next();
             
       if (testCase.inGroups(groupsToRun)) {
-        logger.info("\nRunning test of type " + testCase.getClass().getName());
+        logger.warning("\nRunning test of type " + testCase.getClass().getName());
         if (preFilterRegexp != null) {
           testCase.setPreFilterRegexp(preFilterRegexp);
         }
@@ -224,7 +224,7 @@ public class TestRunner {
         TestResult tr = testCase.run();
         
         String passFail = tr.getResult() ? "PASSED" : "FAILED";
-        logger.warning("\n" + tr.getName() + " " + passFail + " " + tr.getMessage() + "\n");
+        logger.warning(tr.getName() + " " + passFail + " " + tr.getMessage());
 
       }
     }
