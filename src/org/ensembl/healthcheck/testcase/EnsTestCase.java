@@ -1528,7 +1528,7 @@ public abstract class EnsTestCase {
         
         int orphans = 0;
         boolean result = true;
-	
+
         orphans = countOrphans(con, table1, col1, table2, col2, true);
 
         String useful_sql = "SELECT " + table1 + "." + col1 + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
@@ -1579,6 +1579,8 @@ public abstract class EnsTestCase {
         orphans = countOrphansWithConstraint(con, table1, col1, table2, col2, constraint1);
 
         String useful_sql = "SELECT " + table1 + "." + col1 + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
+
+	//System.out.println(table1 + "." + col1 + "." + table2 + "." + col2);
 
         if (! constraint1.equals("")) {
             useful_sql = useful_sql+ " AND " + table1 + "." + constraint1;
