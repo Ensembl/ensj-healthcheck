@@ -16,6 +16,8 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+package org.ensembl.healthcheck;
+
 /**
  * <p>Title: TestResult.java</p>
  * <p>Description: Object to hold information about a test result.</p>
@@ -25,8 +27,6 @@
  * @author Glenn Proctor <glenn@ebi.ac.uk>
  * @version
  */
-
-package org.ensembl.healthcheck;
 
 public class TestResult {
   

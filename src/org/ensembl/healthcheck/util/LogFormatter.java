@@ -16,6 +16,12 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+
+package org.ensembl.healthcheck.util;
+
+import java.util.logging.*;
+import java.util.*;
+
 /**
  * <p>Title: LogFormatter</p>
  * <p>Description: This custom formatter formats parts of a log record to a single line.</p>
@@ -24,11 +30,6 @@
  * @author Glenn Proctor <glenn@ebi.ac.uk>
  * @version $Revision$
  */
-
-package org.ensembl.healthcheck.util;
-
-import java.util.logging.*;
-import java.util.*;
 
 public class LogFormatter extends Formatter {
 

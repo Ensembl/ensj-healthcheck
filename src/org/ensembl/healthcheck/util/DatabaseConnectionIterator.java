@@ -16,6 +16,14 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+package org.ensembl.healthcheck.util;
+
+import java.util.*;
+import java.util.logging.*;
+import java.sql.*;
+
+import org.ensembl.healthcheck.*;
+
 /**
  * <p>Title: DatabaseConnectionIterator.java</p>
  * <p>Description: </p>
@@ -25,15 +33,6 @@
  * @author Glenn Proctor <glenn@ebi.ac.uk>
  * @version $Revision$
  */
-
-
-package org.ensembl.healthcheck.util;
-
-import java.util.*;
-import java.util.logging.*;
-import java.sql.*;
-
-import org.ensembl.healthcheck.*;
 
 public class DatabaseConnectionIterator implements Iterator {
   

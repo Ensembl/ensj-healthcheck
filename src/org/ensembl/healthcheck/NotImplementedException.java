@@ -16,6 +16,8 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+package org.ensembl.healthcheck;
+
 /**
  * <p>Title: NotImplementedException.java</p>
  * <p>Description: RuntimeException that can be thrown if a feature is not yet implemented.</p>
@@ -25,9 +27,6 @@
  * @author Glenn Proctor <glenn@ebi.ac.uk>
  * @version $Revision$
  */
-
-
-package org.ensembl.healthcheck;
 
 public class NotImplementedException extends RuntimeException {
   

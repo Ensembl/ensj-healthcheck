@@ -18,6 +18,10 @@
 
 package org.ensembl.healthcheck.util;
 
+import java.io.*;
+import java.util.*;
+import java.util.jar.*;
+
 /**
  * <p>Title: Utils.java</p>
  * <p>Description: General utilities.</p>
@@ -27,14 +31,7 @@ package org.ensembl.healthcheck.util;
  * @version $Revision$
  */
 
-import java.io.*;
-import java.util.*;
-import java.util.jar.*;
-
 public class Utils {
-  
-  public Utils() {
-  }
   
   // -------------------------------------------------------------------------
   /**

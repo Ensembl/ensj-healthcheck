@@ -16,6 +16,12 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+package org.ensembl.healthcheck;
+
+import java.sql.*;
+import java.util.*;
+import org.ensembl.healthcheck.util.*;
+
 /**
  * <p>Title: BlankEnumDBNameExternalDBTestCase.java</p>
  * <p>Description: </p>
@@ -25,12 +31,6 @@
  * @author Glenn Proctor <glenn@ebi.ac.uk>
  * @version $Revision$
  */
-
-package org.ensembl.healthcheck;
-
-import java.sql.*;
-import java.util.*;
-import org.ensembl.healthcheck.util.*;
 
 public class BlankNonNullExternalDBTestCase extends EnsTestCase {
   

@@ -16,6 +16,12 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+package org.ensembl.healthcheck.util;
+
+import java.util.logging.*;
+import java.util.*;
+import java.io.*;
+
 /**
  * <p>Title: MyStreamHandler.java</p>
  * <p>Description: Custom stream handler for logging.</p>
@@ -25,12 +31,6 @@
  * @author Glenn Proctor <glenn@ebi.ac.uk>
  * @version $Revision$
  */
-
-package org.ensembl.healthcheck.util;
-
-import java.util.logging.*;
-import java.util.*;
-import java.io.*;
 
 public class MyStreamHandler extends Handler {
   

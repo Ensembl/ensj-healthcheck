@@ -16,6 +16,14 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+package org.ensembl.healthcheck;
+
+import java.util.*;
+import java.sql.*;
+import java.io.*;
+
+import org.ensembl.healthcheck.util.*;
+
 /**
  * <p>Title: ListDatabasesMatching.java</p>
  * <p>Description: List the databases matching a particular regular expression.</p>
@@ -26,22 +34,10 @@
  * @version $Revision$
  */
 
-package org.ensembl.healthcheck;
-
-import java.util.*;
-import java.sql.*;
-import java.io.*;
-
-import org.ensembl.healthcheck.util.*;
-
 public class DatabaseNameMatcher {
   
   private String databaseRegexp = "";
   private Properties dbProps;
-  
-  /** Creates a new instance of ListDatabasesMatching */
-  public DatabaseNameMatcher() {
-  }
   
   // -------------------------------------------------------------------------
   
@@ -76,7 +72,7 @@ public class DatabaseNameMatcher {
     System.out.println("\nUsage: DatabaseNameMatcher regexp\n");
     
   } // printUsage
-  
+
   // -------------------------------------------------------------------------
   
   private void readPropertiesFile() {
@@ -84,8 +80,8 @@ public class DatabaseNameMatcher {
     String propsFile = System.getProperty("user.dir") + System.getProperty("file.separator") + "database.properties";
     dbProps = Utils.readPropertiesFile(propsFile);
     System.out.println("Read database properties from " + propsFile);
-    Enumeration e = dbProps.propertyNames();
-    String propName;
+    //Enumeration e = dbProps.propertyNames();
+    //String propName;
     //while (e.hasMoreElements()) {
     //  propName = (String)e.nextElement();
     //  System.out.println("\t" + propName + " = " + dbProps.getProperty(propName));

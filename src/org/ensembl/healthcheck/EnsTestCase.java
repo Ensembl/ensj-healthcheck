@@ -16,16 +16,6 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/**
- * <p>Title: EnsTestCase.java</p>
- * <p>Description: Base class for all EnsEMBL Healthcheck tests.</p>
- * <p>Copyright: Copyright (c) 2003</p>
- * <p>Organisation: EMBL</p>
- * <p>Created on March 11, 2003, 1:12 PM</p>
- * @author Glenn Proctor <glenn@ebi.ac.uk>
- * @version $Revision$
- */
-
 package org.ensembl.healthcheck;
 
 import java.util.*;
@@ -34,13 +24,23 @@ import java.util.logging.*;
 
 import org.ensembl.healthcheck.util.*;
 
+/**
+ * <p>The EnsTestCase class is the base class for all test cases in the EnsEMBL Healthcheck system. 
+ * <em>It is not intended to be instantiated directly</em>; subclasses should implement the <code>run()</code>
+ * method and use that to provide test-case specific behaviour.</p>
+ *
+ *<p>EnsTestCase provides a number of methods which are intended to make writing test cases simple; in many cases
+ * an extension test case will involve little more than calling one of the methods in this class and 
+ * setting some return value based on the result.</p>
+ */
+
 public abstract class EnsTestCase {
   
   protected TestRunner testRunner;
   protected String databaseRegexp = "";
   protected String preFilterRegexp = "";
   
-  protected ArrayList groups;
+  protected List groups;
   
   protected static Logger logger = Logger.getLogger("HealthCheckLogger");
   
@@ -121,7 +121,7 @@ public abstract class EnsTestCase {
    * Get a list of the names of the groups which this test case is a member of.
    * @return The list of names as Strings.
    */
-  public ArrayList getGroups() {
+  public List getGroups() {
     
     return groups;
     
@@ -152,7 +152,7 @@ public abstract class EnsTestCase {
    * Convenience method for assigning this test case to several groups at once.
    * @param s A list of Strings containing the group names.
    */
-  public void setGroups(ArrayList s) {
+  public void setGroups(List s) {
     
     groups = s;
     
@@ -220,7 +220,7 @@ public abstract class EnsTestCase {
    * @param checkGroups The list of group names to check.
    * @return True if this test case is in any of the groups, false if it is in none.
    */
-  public boolean inGroups(ArrayList checkGroups) {
+  public boolean inGroups(List checkGroups) {
     
     boolean result = false;
     
@@ -275,7 +275,7 @@ public abstract class EnsTestCase {
   public int countRowsInTable(Connection con, String table) {
     
     if (con == null) {
-      logger.severe("Database connection is null");
+      logger.severe("countRowsInTable: Database connection is null");
     }
     
     return getRowCount(con, "SELECT COUNT(*) FROM " + table);
@@ -292,7 +292,7 @@ public abstract class EnsTestCase {
   public int getRowCount(Connection con, String sql) {
     
     if (con == null) {
-      logger.severe("Database connection is null");
+      logger.severe("getRowCount: Database connection is null");
     }
     
     int result = -1;
@@ -328,7 +328,7 @@ public abstract class EnsTestCase {
   public int countOrphans(Connection con, String table1, String col1, String table2, String col2, boolean oneWayOnly) {
     
     if (con == null) {
-      logger.severe("Database connection is null");
+      logger.severe("countOrphans: Database connection is null");
     }
     
     int resultLeft, resultRight;
@@ -442,7 +442,7 @@ public abstract class EnsTestCase {
   public int findStringInColumn(Connection con, String table, String column, String str) {
     
     if (con == null) {
-      logger.severe("Database connection is null");
+      logger.severe("findStringInColumn: Database connection is null");
     }
     
     String sql = "SELECT COUNT(*) FROM " + table + " WHERE " + column + " LIKE \"" + str + "\"";
@@ -460,10 +460,10 @@ public abstract class EnsTestCase {
    * @param column The column to examine.
    * @return An list of the row indices of any blank entries. Will be zero-length if there are none.
    */
-  public ArrayList checkBlankNonNull(Connection con, String table, String column) {
+  public List checkBlankNonNull(Connection con, String table, String column) {
     
     if (con == null) {
-      logger.severe("Database connection is null");
+      logger.severe("checkBlankNonNull (column): Database connection is null");
     }
     
     ArrayList blanks = new ArrayList();
@@ -502,7 +502,7 @@ public abstract class EnsTestCase {
   public int checkBlankNonNull(Connection con, String table) {
     
     if (con == null) {
-      logger.severe("Database connection is null");
+      logger.severe("checkBlankNonNull (table): Database connection is null");
     }
     
     int blanks = 0;

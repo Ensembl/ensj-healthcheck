@@ -16,6 +16,12 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+package org.ensembl.healthcheck;
+
+import java.sql.*;
+
+import org.ensembl.healthcheck.util.*;
+
 /**
  * <p>Title: DummyTestCase.java</p>
  * <p>Description: </p>
@@ -25,13 +31,6 @@
  * @author Glenn Proctor <glenn@ebi.ac.uk>
  * @version
  */
-
-
-package org.ensembl.healthcheck;
-
-import java.sql.*;
-
-import org.ensembl.healthcheck.util.*;
 
 public class DummyTestCase extends EnsTestCase {
    

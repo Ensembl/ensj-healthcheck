@@ -18,6 +18,12 @@
 
 package org.ensembl.healthcheck.util;
 
+import java.sql.*;
+import java.util.*;
+import java.io.*;
+import java.util.regex.*;
+import java.util.logging.*;
+
 /**
  * <p>Title: DBUtils.java</p>
  * <p>Description: Various database utilities.</p>
@@ -27,18 +33,9 @@ package org.ensembl.healthcheck.util;
  * @version $Revision$
  */
 
-import java.sql.*;
-import java.util.*;
-import java.io.*;
-import java.util.regex.*;
-import java.util.logging.*;
-
 public class DBUtils {
   
   private static Logger logger = Logger.getLogger("HealthCheckLogger");
-  
-  public DBUtils() {
-  }
   
   // -------------------------------------------------------------------------
   /**
@@ -170,7 +167,7 @@ public class DBUtils {
    * @param resultSetGroup The list of ResultSets to compare
    * @return The number of differences.
    */
-  public static boolean compareResultSetGroup(ArrayList resultSetGroup) {
+  public static boolean compareResultSetGroup(List resultSetGroup) {
     
     boolean same = true;
     
@@ -219,16 +216,16 @@ public class DBUtils {
       ResultSetMetaData rsmd2 = rs2.getMetaData();
       if (rsmd1.getColumnCount() != rsmd2.getColumnCount()) {
 	logger.warning("Column counts differ -  " + name1 + ": " + rsmd1.getColumnCount() + " " + name2 + ": " + rsmd2.getColumnCount());
-	return false;
+	return false;  // Deliberate early return for performance reasons
       }
       for (int i=1; i <= rsmd1.getColumnCount(); i++) {                 // note columns indexed from 1
 	if (!((rsmd1.getColumnName(i)).equals(rsmd2.getColumnName(i)))) {
 	  logger.warning("Column names differ for column " + i + " - " + name1 + ": " + rsmd1.getColumnName(i) + " " + name2 + ": " + rsmd2.getColumnName(i));
-	  return false;
+	  return false;  // Deliberate early return for performance reasons
 	}
 	if (rsmd1.getColumnType(i) != rsmd2.getColumnType(i)) {
 	  logger.warning("Column types differ for column " + i + " - " + name1 + ": " + rsmd1.getColumnType(i) + " " + name2 + ": " + rsmd2.getColumnType(i));
-	  return false;
+	  return false;  // Deliberate early return for performance reasons
 	}
       } // for column
       
@@ -242,7 +239,7 @@ public class DBUtils {
 	  if (compareColumns(rs1, rs2, j) == false) {
 	    System.out.print(name1 + " and " + name2 + " differ at column " + j + " (" + rsmd1.getColumnName(j) + ")");
 	    System.out.println(" Values: " + rs1.getString(j) + "\t" + rs2.getString(j));
-	    return false;
+	    return false;  // Deliberate early return for performance reasons
 	  }
 	}
 	
@@ -270,6 +267,7 @@ public class DBUtils {
       
       ResultSetMetaData rsmd = rs1.getMetaData();
       
+       // Note deliberate early returns for performance reasons
       switch (rsmd.getColumnType(i)) {
 	
 	case Types.INTEGER:
