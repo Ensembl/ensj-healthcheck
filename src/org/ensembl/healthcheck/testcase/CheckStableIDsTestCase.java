@@ -26,6 +26,11 @@ import org.ensembl.healthcheck.TestResult;
 import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.DatabaseConnectionIterator;
 
+import java.util.Vector;
+import java.util.Collections;
+
+import java.lang.Comparable;
+
 /**
  * Checks the *_stable_id tables to ensure they are populated, have no orphan references,
  * and have valid versions. Also prints some examples from the table for checking by eye.
@@ -39,30 +44,89 @@ public class CheckStableIDsTestCase extends EnsTestCase {
 
 
 	public CheckStableIDsTestCase() {
-		addToGroup("check_stable_ids");
-		setDescription("Checks *_stable_id tables are valid.");
-		}
+      addToGroup("check_stable_ids");
+      setDescription("Checks *_stable_id tables are valid.");
+  }
 
-	
-	
+		
 	public TestResult run() {
 
 		boolean result = true;
     
 		DatabaseConnectionIterator it = getDatabaseConnectionIterator();
-    
-			 while (it.hasNext()) {
-			 	
-					Connection con = (Connection)it.next();
+    int numMinMaxIds = 0;
+    Vector minMaxList = new Vector();
+
+    while (it.hasNext()) {
+        Connection con = (Connection)it.next();
 					
-					boolean exonResult = checkStableIDs( con, "exon");
-					boolean translationResult = checkStableIDs( con, "translation");
-					boolean transcriptResult = checkStableIDs( con, "transcript");
-					boolean geneResult = checkStableIDs( con, "gene");
-		
-					result = result && exonResult && translationResult 
-											&& transcriptResult && geneResult;
-			 }
+        ReportManager.info(this, con, "Checking stable ids and versions for validity.");
+
+        boolean exonResult = checkStableIDs( con, "exon");
+        boolean translationResult = checkStableIDs( con, "translation");
+        boolean transcriptResult = checkStableIDs( con, "transcript");
+        boolean geneResult = checkStableIDs( con, "gene");
+        
+        minMaxList.add(getMinMaxStableIDs(con,"exon"));
+        minMaxList.add(getMinMaxStableIDs(con,"translation"));
+        minMaxList.add(getMinMaxStableIDs(con,"transcript"));
+        minMaxList.add(getMinMaxStableIDs(con,"gene"));
+        
+        result = result && exonResult && translationResult 
+            && transcriptResult && geneResult;
+    }
+
+    ReportManager.info(this, "All core DBs" , "Looking for possible duplicate stable identifiers.");
+       
+    /* Now make sure that there are no duplicate stable identifiers anywhere */    
+
+    /* Use an inefficient O(N^2) algorithm to find potentially overlapping
+     * stable ids. This could be made more efficient, but difficult to implement
+     * this is still way, way faster than doing many SQL queries against
+     * all of the databases.
+     */
+    int len = minMaxList.size();
+    for(int i=0; i< len; i++) {
+         Pair pair1 = (Pair)minMaxList.elementAt(i);
+
+         for(int j=i+1; j< len; j++) {
+           Pair pair2 = (Pair)minMaxList.elementAt(j);
+
+           if(pair1.overlaps(pair2)) {
+             /* do a *slow* SQL query because there are possible duplicates
+              * to see if any identifiers are the same 
+              */
+             String dupString = getRowColumnValue( pair1.con, "select count(*) from "+ 
+                                                   pair1.dbName + "." + pair1.tableName + " t1, " +
+                                                   pair2.dbName + "." + pair2.tableName + " t2  " +
+                                                   "where t1.stable_id = t2.stable_id");
+             int dupCount = Integer.parseInt(dupString);
+
+             if(dupCount > 0) {
+               /* Duplicates were found! */
+               if(pair1.dbName.equals(pair2.dbName)) {
+                   /* it is probably ok to have duplicate stable ids in the same database
+                    * but different tables.  Warn anyway.
+                    */
+                   ReportManager.warning(this, pair1.dbName, dupString + " duplicate stable identifiers" +
+                                         " found between " + pair1.tableName + 
+                                         " and " + pair2.tableName + ".");
+               } else {
+                 /* it is definately not ok to have duplicate stable ids in
+                  * different databases, this is a problem.
+                  */
+                 result = false;
+                 String dbName = pair1.dbName + " AND " + pair2.dbName;
+                 String tab1   = pair1.dbName + "." + pair1.tableName;
+                 String tab2   = pair2.dbName + "." + pair2.tableName;
+                           
+                 ReportManager.problem(this, dbName, dupString + " duplicate stable identifiers "+
+                                       "found between " + tab1 + " and " + tab2 + ".");
+               }
+             }
+           }       
+         }
+    }                
 			 
 		return new TestResult(getShortTestName(), result);
 	}
@@ -119,6 +183,46 @@ public class CheckStableIDsTestCase extends EnsTestCase {
 
 
 
+  private Pair getMinMaxStableIDs(Connection con, String typeName) {
+      Pair p = new Pair();
+      String tableName = typeName + "_stable_id";
+      
+      p.min  = getRowColumnValue(con,"SELECT MIN(stable_id) FROM " + tableName);
+      p.max  = getRowColumnValue(con,"SELECT MAX(stable_id) FROM " + tableName);
+      p.con  = con;
+
+      p.tableName = tableName;
+      p.dbName    = DBUtils.getShortDatabaseName(con);
+      
+      return p;
+  }
 	
+    private class Pair implements Comparable {
+        String min;
+        String max;
+        String dbName;
+        String tableName;
+        Connection con;
+        
+        public int compareTo(Object o) {
+            Pair p = (Pair)o;
+
+            if(p.min == null || this.min == null) {
+                return 0;
+            }
+
+            return this.min.compareTo(p.min);
+        }
+
+        public boolean overlaps(Pair p) {
+            if(this.min == null || this.max == null || p.min == null || p.max == null) {
+                return false;
+            }
+
+            return (p.max.compareTo(this.min) >= 0) && (p.min.compareTo(this.max) <= 0);
+        }
+
+    }
+
 
 }
