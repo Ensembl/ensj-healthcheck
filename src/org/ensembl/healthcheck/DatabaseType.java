@@ -43,8 +43,8 @@ public final class DatabaseType {
     /** A Mart database */
     public static final DatabaseType MART = new DatabaseType("mart");
 
-    /** A SNP database */
-    public static final DatabaseType SNP = new DatabaseType("snp");
+    /** A variation database */
+    public static final DatabaseType VARIATION = new DatabaseType("variation");
 
     /** A disease database */
     public static final DatabaseType DISEASE = new DatabaseType("disease");
@@ -153,9 +153,9 @@ public final class DatabaseType {
 
         // --------------------------------------
 
-        if (in(lcAlias, "snp")) { 
+        if (in(lcAlias, "variation")) { 
 
-        return SNP; 
+        return VARIATION; 
 
         }
 
