@@ -31,10 +31,9 @@ import org.ensembl.healthcheck.util.*;
 public class ProteinFeatureTranslationTestCase extends EnsTestCase {
   
   /**
-   * Create an OrphanTestCase that applies to a specific set of databases.
+   * Create an ProteinFeatureTranslationTestCase that applies to a specific set of databases.
    */
   public ProteinFeatureTranslationTestCase() {
-    databaseRegexp = "^.*_core_\\d.*";
     addToGroup("db_constraints");
   }
   
