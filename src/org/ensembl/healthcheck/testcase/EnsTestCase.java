@@ -615,7 +615,7 @@ public abstract class EnsTestCase {
      * 
      * @return true If there are no orphans.
      */
-    private boolean checkForOrphans(Connection con, String table1, String key1, String table2, String key2,
+    public boolean checkForOrphans(Connection con, String table1, String key1, String table2, String key2,
             boolean oneWay) {
 
         int orphans = countOrphans(con, table1, key1, table2, key2, oneWay);
