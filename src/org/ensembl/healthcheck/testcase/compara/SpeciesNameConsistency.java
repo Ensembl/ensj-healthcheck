@@ -83,7 +83,7 @@ public class SpeciesNameConsistency extends SingleDatabaseTestCase {
                         + " have different species name between genome_db and taxon tables");
             }
         } else {
-            ReportManager.correct(this, con, "genome_db and taxon table share the same species names");
+            ReportManager.correct(this, con, "PASSED genome_db and taxon table share the same species names");
         }
 
         return result;
