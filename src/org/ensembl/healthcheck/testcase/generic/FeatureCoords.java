@@ -19,14 +19,10 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that feature co-ords make sense.
@@ -59,56 +55,49 @@ public class FeatureCoords extends SingleDatabaseTestCase {
                 "karyotype", "transcript", "density_feature"};
 
         for (int tableIndex = 0; tableIndex < featureTables.length; tableIndex++) {
+
             String tableName = featureTables[tableIndex];
 
             Connection con = dbre.getConnection();
 
-            logger.info("Checking " + tableName + " for " + DBUtils.getShortDatabaseName(con) + " ...");
+            // three separate queries to avoid using an OR
 
-            String sql = "SELECT f.seq_region_id, f.seq_region_start, f.seq_region_end, s.length " + "FROM " + tableName
-                    + " f, seq_region s " + "WHERE s.seq_region_id = f.seq_region_id "
-                    + "AND ( f.seq_region_start > f.seq_region_end " + " OR f.seq_region_start < 1 "
-                    + " OR f.seq_region_end > s.length )";
+            // ------------------------
             
-            try {
-                Statement stmt = con.createStatement();
-                ResultSet rs = stmt.executeQuery(sql);
-                int smallStart = 0;
-                int swapCoords = 0;
-                int largeEnd = 0;
-
-                while (rs.next()) {
-                    int id = rs.getInt(1);
-                    int start = rs.getInt(2);
-                    int end = rs.getInt(3);
-                    int len = rs.getInt(4);
-
-                    if (end < start && swapCoords < 10) {
-                        ReportManager.warning(this, con, tableName + " " + id + " has seq_region_start > seq_region_end");
-                        swapCoords++;
-                    }
-
-                    if (end > len && largeEnd < 10) {
-                        ReportManager.warning(this, con, tableName + " " + id + " has seq_region_end > seq_region_length");
-                        largeEnd++;
-                    }
-
-                    if (start < 1 && smallStart < 10) {
-                        ReportManager.warning(this, con, tableName + " " + id + " has seq_region_start < 1");
-                        smallStart++;
-                    }
-                }
-
-                if (smallStart + largeEnd + swapCoords > 0) {
-                    ReportManager.problem(this, con, (tableName + " table has coordinate mistakes"));
-                    result = false;
-                } else {
-                    ReportManager.correct(this, con, (tableName + " coordinates seem correct"));
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            logger.info("Checking " + tableName + " for start < 1");
+            String sql = "SELECT COUNT(*) FROM " + tableName + " WHERE seq_region_start < 1";
+            int rows = getRowCount(con, sql);
+            if (rows > 0) {
+                ReportManager.correct(this, con, rows + " rows in " + tableName + " have seq_region_start < 1");
+                result = false;
+            } else {
+                ReportManager.correct(this, con, "All rows in " + tableName + " have seq_region_start >= 1");
             }
-        }
+
+            // ------------------------
+            logger.info("Checking " + tableName + " for start > end");
+            sql = "SELECT COUNT(*) FROM " + tableName + " WHERE seq_region_start > seq_region_end";
+            rows = getRowCount(con, sql);
+            if (rows > 0) {
+                ReportManager.correct(this, con, rows + " rows in " + tableName + " have seq_region_start > seq_region_end");
+                result = false;
+            } else {
+                ReportManager.correct(this, con, "All rows in " + tableName + " have seq_region_start < seq_region_end");
+            }
+            
+            // ------------------------
+            logger.info("Checking " + tableName + " for end > length");
+            sql = "SELECT COUNT(*) FROM " + tableName + " f, seq_region s WHERE f.seq_region_id = s.seq_region_id AND f.seq_region_end > s.length";
+            rows = getRowCount(con, sql);
+            if (rows > 0) {
+                ReportManager.correct(this, con, rows + " rows in " + tableName + " have seq_region_end > length in seq_region_table");
+                result = false;
+            } else {
+                ReportManager.correct(this, con, "All rows in " + tableName + " have sensible lengths");
+            }
+            
+            
+        } // foreach table
 
         return result;
 
