@@ -64,5 +64,24 @@ public class SpeciesTest extends TestCase {
 		assertEquals(Species.resolveAlias("littlegreenman"), Species.UNKNOWN);
 		
 	}
+	
+	// -----------------------------------------------------------------
+	
+	public void testTaxonomyIDs() {
+		
+		assertEquals(Species.getTaxonomyID(Species.HOMO_SAPIENS), "9606");
+		assertEquals(Species.getTaxonomyID(Species.DANIO_RERIO), "7955");
+		
+		assertEquals(Species.getSpeciesFromTaxonomyID("10090"), Species.MUS_MUSCULUS);
+		assertEquals(Species.getSpeciesFromTaxonomyID("10116"), Species.RATTUS_NORVEGICUS);
+			
+		assertEquals(Species.getTaxonomyID(Species.UNKNOWN), "");
+		assertEquals(Species.getSpeciesFromTaxonomyID("-1"), Species.UNKNOWN);
+		
+	}
+	
+	// -----------------------------------------------------------------
+	
+	
 
 }

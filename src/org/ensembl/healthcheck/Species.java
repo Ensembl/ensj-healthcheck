@@ -17,6 +17,9 @@
  */
 package org.ensembl.healthcheck;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -24,6 +27,7 @@ import java.util.logging.Logger;
  * Implemented as a typesafe enum 
  * @see http://java.sun.com/developer/Books/shiftintojava/page1.html
  */
+
 public class Species {
 
 	private final String name;
@@ -50,6 +54,31 @@ public class Species {
 
 	// special type to indicate that this species is unknown
 	public static final Species UNKNOWN = new Species("unknown");
+
+	// Taxonomy IDs - see ensembl-compara/sql/taxon.txt
+	private static Map taxonIDToSpecies = new HashMap();
+	private static Map speciesToTaxonID = new HashMap();
+
+	static {
+
+		taxonIDToSpecies.put("9606", HOMO_SAPIENS);
+		taxonIDToSpecies.put("10090", MUS_MUSCULUS);
+		taxonIDToSpecies.put("10116", RATTUS_NORVEGICUS);
+		taxonIDToSpecies.put("31033", FUGU_RUBRIPES);
+		taxonIDToSpecies.put("7165", ANOPHELES_GAMBIAE);
+		taxonIDToSpecies.put("7227", DROSOPHILA_MELANOGASTER);
+		taxonIDToSpecies.put("6239", CAENORHABDITIS_ELEGANS);
+		taxonIDToSpecies.put("6238", CAENORHABDITIS_BRIGGSAE);
+		taxonIDToSpecies.put("7955", DANIO_RERIO);
+
+		// and the other way around
+		Iterator it = taxonIDToSpecies.keySet().iterator();
+		while (it.hasNext()) {
+			String taxonID = (String)it.next();
+			Species species = (Species)taxonIDToSpecies.get(taxonID);
+			speciesToTaxonID.put(species, taxonID);
+		}
+	}
 
 	// -----------------------------------------------------------------
 	/**
@@ -143,6 +172,45 @@ public class Species {
 
 	// -----------------------------------------------------------------
 	/**
+	 * Get the taxonomy ID associated with a particular species.
+	 * @param s The species to look up.
+	 * @return The taxonomy ID associated with s, or "" if none is found.
+	 */
+	public static String getTaxonomyID(Species s) {
+
+		String result = "";
+		if (speciesToTaxonID.containsKey(s)) {
+			result = (String)speciesToTaxonID.get(s);
+		} else {
+			logger.warning("Cannot get taxonomy ID for species " + s);
+		}
+
+		return result;
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+	 * Get the species associated with a particular taxonomy ID.
+	 * @param t The taxonomy ID to look up.
+	 * @return The species associated with t, or Species.UNKNOWN if none is found.
+	 */
+	public static Species getSpeciesFromTaxonomyID(String t) {
+
+		Species result = UNKNOWN;
+
+		if (taxonIDToSpecies.containsKey(t)) {
+			result = (Species)taxonIDToSpecies.get(t);
+		} else {
+			logger.warning("Cannot get species for taxonomy ID " + t + " returning Species.UNKNOWN");
+		}
+
+		return result;
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
 	 * Return true if alias appears somewhere in comma-separated list.
 	 */
 	private static boolean in(String alias, String list) {
@@ -150,5 +218,6 @@ public class Species {
 		return (list.indexOf(alias) > -1);
 
 	}
+	// -----------------------------------------------------------------
 
 }
