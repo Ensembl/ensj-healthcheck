@@ -33,6 +33,7 @@ public class ExtraDNATestCase extends EnsTestCase {
    */
   public ExtraDNATestCase() {
     addToGroup("post_genebuild");
+    setDescription("Checks that all DNA has an associated contig.");
   }
   
   /**
