@@ -29,7 +29,6 @@ import org.ensembl.healthcheck.util.*;
  */
 public class CompareCoreSchemaTestCase extends EnsTestCase {
   
-  private static final String definitionFile = "/homes/glenn/work/ensj-healthcheck/table.sql";
   /**
    * Creates a new instance of GlennsDatabaseSchemaImportTestCase
    */
@@ -47,6 +46,13 @@ public class CompareCoreSchemaTestCase extends EnsTestCase {
     boolean result = true;
     
     Connection tableSQLCon = null;
+    
+    String definitionFile = System.getProperty("schema.file");
+    if (definitionFile == null) {
+      logger.warning("CompareCoreSchemaTestCase: No schema definition file found!");
+    } else {
+      logger.fine("Will use schema definition from " + definitionFile); 
+    }
     
     try {
       
