@@ -88,7 +88,9 @@ public abstract class EnsTestCase {
   /** A list of Strings representing the groups that this test is a member of.
    * All tests are members of the group "all", and also of a group with the same name as the test. */
   protected List groups;
-  
+  /** Regexp that, when combined with a species name, will match core databases */
+  protected static final String CORE_DB_REGEXP = "_(core|est|estgene|vega)_\\d.*";
+
   /** Logger object to use */
   protected static Logger logger = Logger.getLogger("HealthCheckLogger");
   
@@ -373,7 +375,7 @@ public abstract class EnsTestCase {
   } // getRowCount
   
   // -------------------------------------------------------------------------
-  /** 
+  /**
    * Execute a SQL statement and return the value of one column of one row.
    * Only the FIRST row matched is returned.
    * @param con The Connection to use.
@@ -473,7 +475,7 @@ public abstract class EnsTestCase {
   } // countOrphans
   
   // -------------------------------------------------------------------------
-  /** 
+  /**
    * Check that a particular SQL statement has the same result when executed
    * on more than one database.
    * @return True if all matched databases provide the same result, false otherwise.
@@ -525,7 +527,7 @@ public abstract class EnsTestCase {
   } // checkSameSQLResult
   
   // -------------------------------------------------------------------------
-  /** 
+  /**
    * Check that a particular SQL statement has the same result when executed
    * on more than one database.
    * The test case's build-in regexp is used to decide which database names to match.
@@ -600,7 +602,7 @@ public abstract class EnsTestCase {
   public int checkColumnPattern(Connection con, String table, String column, String pattern) {
     
     // @todo - what about NULLs?
-        
+    
     // cheat by looking for any rows that DO NOT match the pattern
     String sql = "SELECT COUNT(*) FROM " + table + " WHERE " + column + " NOT LIKE \"" + pattern + "\"";
     logger.fine(sql);
@@ -621,7 +623,7 @@ public abstract class EnsTestCase {
   public int checkColumnValue(Connection con, String table, String column, String value) {
     
     // @todo - what about NULLs?
-        
+    
     // cheat by looking for any rows that DO NOT match the pattern
     String sql = "SELECT COUNT(*) FROM " + table + " WHERE " + column + " != '" + value + "'";
     logger.fine(sql);
@@ -723,7 +725,7 @@ public abstract class EnsTestCase {
   public boolean checkTableExists(Connection con, String table) {
     
     String tables = getRowColumnValue(con, "SHOW TABLES LIKE '" + table + "'");
-
+    
     boolean result = false;
     if (tables != null && tables.length() != 0) {
       result = true;
@@ -745,6 +747,39 @@ public abstract class EnsTestCase {
     logger.warning( message );
     
   } //warn
+  
   // -------------------------------------------------------------------------
+  /** 
+   * Get a list of the databases which represent species. Filter out any which don't seem to represent species.
+   * @return A list of the species; each species will occur only once, and be of the form homo_sapiens (no trailing _).
+   */  
+  public String[] getListOfSpecies() {
+    
+    ArrayList list = new ArrayList();
+    
+    DatabaseConnectionIterator dbci = testRunner.getDatabaseConnectionIterator(".*");
+    while (dbci.hasNext()) {
+      
+      String dbName = DBUtils.getShortDatabaseName((Connection)dbci.next());
+      
+      String[] bits = dbName.split("_");
+      if (bits.length > 2) {
+        String species = bits[0] + "_" + bits[1];
+        if (!list.contains(species)) {
+          list.add(species); 
+        }
+      } else {
+        logger.fine("Database " + dbName + " does not seem to represent a species; ignored");
+      }
+            
+    }
+    
+    String[] dummy = { "" };
+
+    return (String[])list.toArray(dummy);
+    
+  }
+  // -------------------------------------------------------------------------
+  
   
 } // EnsTestCase
