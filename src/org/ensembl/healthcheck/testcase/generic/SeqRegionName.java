@@ -21,10 +21,11 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that the seq_region names are in the right format.
+ * Check that the seq_region names are in the right format. Only checks human and mouse.
  */
 
 public class SeqRegionName extends SingleDatabaseTestCase {
@@ -36,7 +37,7 @@ public class SeqRegionName extends SingleDatabaseTestCase {
 
         addToGroup("post_genebuild");
         addToGroup("release");
-        setDescription("Check that seq_region names are in the right format.");
+        setDescription("Check that seq_region names for human and mouse are in the right format.");
 
     }
 
@@ -51,13 +52,19 @@ public class SeqRegionName extends SingleDatabaseTestCase {
     public boolean run(DatabaseRegistryEntry dbre) {
 
         boolean result = true;
-        
-	Connection con = dbre.getConnection();
 
-	result &= seqRegionNameCheck(con, "clone",  "^[a-zA-Z]+[0-9]+\\.[0-9]+$");
-	result &= seqRegionNameCheck(con, "contig", "^[a-zA-Z]+[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+$");
+	// only do this for human and mouse
+        Species s = dbre.getSpecies();
+	if (s.equals(Species.HOMO_SAPIENS) || s.equals(Species.MUS_MUSCULUS)) {
 
-        return result;
+	    Connection con = dbre.getConnection();
+
+	    result &= seqRegionNameCheck(con, "clone",  "^[a-zA-Z]+[0-9]+\\.[0-9]+$");
+	    result &= seqRegionNameCheck(con, "contig", "^[a-zA-Z]+[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+$");
+
+	}
+
+	return result;
 
     } // run
 
