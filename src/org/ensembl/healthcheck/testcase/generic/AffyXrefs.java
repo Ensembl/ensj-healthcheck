@@ -94,8 +94,9 @@ public class AffyXrefs extends SingleDatabaseTestCase {
                     int count = -1;
                     try {
                         ResultSet rs = con.createStatement().executeQuery(sql);
-                        rs.next();
-                        count = rs.getInt("count");
+                        if (rs.next()) {
+			    count = rs.getInt("count"); 
+			}
                         rs.close();
                     } catch (SQLException se) {
                         se.printStackTrace();
