@@ -398,6 +398,28 @@ public class Utils {
 
 	}
 
+//	-------------------------------------------------------------------------
+	 /** 
+	  * Check if an object is in an array.
+	  * The whole array is searched (until a match is found); this is quite slow but does not require the 
+	  * array to be sorted in any way beforehand.
+	  * @param o The Object to search for.
+	  * @param a The array to search through.
+	  */
+	 public static boolean objectInArray(Object o, Object[] a) {
+
+		 for (int i = 0; i < a.length; i++) {
+
+				 if (a[i].equals(o)) {
+					 return true;
+				 }
+
+		 }
+
+		 return false;
+
+	 }
+
 	// -----------------------------------------------------------------
 	/**
 	 * Return an array containing all of the subdirectories of a given directory.
@@ -424,7 +446,30 @@ public class Utils {
 			logger.severe(parentDir + " does not exist or is not a directory");
 		}
 
-		return (String[])(dirs.toArray(new String[dirs.size()]));
+		return (String[]) (dirs.toArray(new String[dirs.size()]));
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+	* Remove the objects from one array that are present in another.
+	*
+	* @param source The array to be filtered.
+	* @param remove An array of objects to be removed from source.
+	* @return A new array containing all objects that are in source minus any that are in remove.
+	 */
+	public static Object[] filterArray(Object[] source, Object[] remove) {
+
+		List result = new ArrayList();
+
+		for (int i = 0; i < source.length; i++) {
+			
+			if (!objectInArray(source[i], remove)) {
+				result.add(source[i]);
+			}
+		}
+
+		return result.toArray(new Object[result.size()]);
 
 	}
 
