@@ -32,8 +32,13 @@ public class ExtraDNATestCase extends EnsTestCase {
    * Creates a new instance of ExtraDNATestCase
    */
   public ExtraDNATestCase() {
+    
+    String[] cols = { "dna_id" };
+    addCondition(new HasTableColumnsCondition("dna", cols));
+    addCondition(new HasTableColumnsCondition("contig", cols));    
     addToGroup("post_genebuild");
     setDescription("Checks that all DNA has an associated contig.");
+    
   }
   
   /**
@@ -45,7 +50,7 @@ public class ExtraDNATestCase extends EnsTestCase {
     
     String sql = "SELECT COUNT(*) FROM dna d LEFT JOIN contig c ON d.dna_id = c.dna_id WHERE c.dna_id is null";
     
-    DatabaseConnectionIterator it = getDatabaseConnectionIterator();
+    DatabaseConnectionIterator it = getMatchingSchemaIterator();
     
     while (it.hasNext()) {
       
