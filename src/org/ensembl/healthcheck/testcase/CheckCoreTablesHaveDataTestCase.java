@@ -57,7 +57,7 @@ public class CheckCoreTablesHaveDataTestCase extends EnsTestCase {
         String table = tables[i];        
         logger.info("Checking " + DBUtils.getShortDatabaseName(con) + "." + table);
         if (countRowsInTable(con, table) == 0) {
-          warn(con, table + " has no data!");
+            //warn(con, table + " has no data!");
           ReportManager.problem(this, con, table + " has no data.");
         } else {
           ReportManager.correct(this, con, table + " is OK.");

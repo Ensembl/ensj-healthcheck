@@ -69,7 +69,7 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
         // check that the protein feature table actually has some rows - if not there's no point working out the translation lengths
         // TODO - a case for a SchemaMatchCondition
         if (!tableHasRows(con, "protein_feature")) {
-          logger.warning("protein_feature table for " + DBUtils.getShortDatabaseName(con) + " has zero rows - skipping.");
+            //logger.warning("protein_feature table for " + DBUtils.getShortDatabaseName(con) + " has zero rows - skipping.");
           continue;
         }
         
