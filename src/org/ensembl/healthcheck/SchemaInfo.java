@@ -45,6 +45,7 @@ public class SchemaInfo {
     
   }
   
+  // -------------------------------------------------------------------------
   /**
    * Create a SchemaInfo object from a database connection.
    * @param con The connection to analyse.
@@ -65,6 +66,7 @@ public class SchemaInfo {
     
   }
   
+  // -------------------------------------------------------------------------
   /** Getter for property name.
    * @return Value of property name.
    *
@@ -81,6 +83,7 @@ public class SchemaInfo {
     this.name = name;
   }
   
+  // -------------------------------------------------------------------------
   /** Getter for property tables.
    * @return Value of property tables.
    *
@@ -97,6 +100,11 @@ public class SchemaInfo {
     this.tables = tables;
   }
   
+  // -------------------------------------------------------------------------
+  /** 
+   * Generate a String representation of this SchemaInfo object.
+   * @return A String containing the schema name and all the table names.
+   */
   public String toString() {
     
     StringBuffer buf = new StringBuffer();

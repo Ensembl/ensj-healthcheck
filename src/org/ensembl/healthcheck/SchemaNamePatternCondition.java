@@ -29,7 +29,8 @@ public class SchemaNamePatternCondition extends SchemaMatchCondition {
   private Pattern pattern;
   
   /**
-   * Creates a new instance of SchemaNamePatternCondition
+   * Creates a new instance of SchemaNamePatternCondition.
+   * @param regexp The regular expression against which the schema names will be checked.
    */
   public SchemaNamePatternCondition(String regexp) {
   
@@ -38,6 +39,11 @@ public class SchemaNamePatternCondition extends SchemaMatchCondition {
     
   }
   
+  /**
+   * Check if the schema name matches the regular expression set in the constructor.
+   * @param s The schema to check.
+   * @return True if the name matches, false otherwise.
+   */
   public boolean matches(SchemaInfo s) {
   
     Matcher matcher = pattern.matcher(s.getName());

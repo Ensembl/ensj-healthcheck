@@ -29,24 +29,44 @@ public class SchemaManager {
   
   private static List schemas = new ArrayList();
   
+  /**
+   * Get all the schemas.
+   * @return A List of SchemaInfo objects.
+   */
   public static List getAllSchemas() {
     
    return schemas;
    
   }
   
+  // -------------------------------------------------------------------------
+  /**
+   * Add a schema to the list.
+   * @param si The SchemaInfo object to add.
+   */
   public static void addSchema(SchemaInfo si) {
   
     schemas.add(si);
     
   }
-  
+
+  // -------------------------------------------------------------------------
+  /**
+   * Remove a schema from the list.
+   * @param si The schema to remove.
+   */
   public static void removeSchema(SchemaInfo si) {
     
     schemas.remove(si);
     
   }
   
+  // -------------------------------------------------------------------------
+  /**
+   * Check if a particular schema is currently held within the SchemaManager.
+   * @param si The schema to check.
+   * @return true if si is currently held in SchemaManager, false otherwise.
+   */
   public static boolean hasSchema(SchemaInfo si) {
    
     return schemas.contains(si);
@@ -54,10 +74,10 @@ public class SchemaManager {
   }
   
   // -------------------------------------------------------------------------
-  /**
+  /** 
    * Get a schema from the cache by name.
-   * @param The name of the schema to return.
-   * @return The schema named name, or null
+   * @param name The name of the schema to get.
+   * @return The schema named name, or null.
    */
   public static SchemaInfo getSchema(String name) {
     

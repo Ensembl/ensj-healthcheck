@@ -590,7 +590,9 @@ public class TestRunner {
   } // getOutputLevel
   
   // -------------------------------------------------------------------------
-  
+  /**
+   * Create and cache information about all the schemas that are available.
+   */
   public void buildSchemaList() {
     
     // check props file loaded

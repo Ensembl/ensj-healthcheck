@@ -33,6 +33,8 @@ public class TableInfo {
   
   /**
    * Creates a new instance of TableInfo
+   * @param name The name of the table.
+   * @param columns A List of Strings representing the column names.
    */
   public TableInfo(String name, List columns) {
     
@@ -86,7 +88,11 @@ public class TableInfo {
   }
   
   // -------------------------------------------------------------------------
-
+  /**
+   * Generate a String representation of this TableInfo object.
+   * @return A String representing this table; the name of the table and of
+   * each of the columns is included.
+   */
   public String toString() {
     
     StringBuffer buf = new StringBuffer();

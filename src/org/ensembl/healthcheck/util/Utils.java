@@ -72,10 +72,10 @@ public class Utils {
   } // printList
   
   // -------------------------------------------------------------------------
-  /**
-   * Concatenate a list of Strings into a single String.
+  /** Concatenate a list of Strings into a single String.
    * @param list The Strings to list.
    * @param delim The delimiter to use.
+   * @return A String containing the elements of list separated by delim. No trailing delimiter.
    */
   public static String listToString(List list, String delim) {
     

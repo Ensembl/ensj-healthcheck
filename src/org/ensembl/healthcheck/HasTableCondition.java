@@ -40,6 +40,8 @@ public class HasTableCondition extends SchemaMatchCondition {
   /**
    * Check if the schema in question has a table with a name that matches
    * that set in this class' constructor. The comparison is case insensitive.
+   * @return True if s's name matches that set in the constructor.
+   * @param s The schema to check.
    */
   public boolean matches(SchemaInfo s) {
     

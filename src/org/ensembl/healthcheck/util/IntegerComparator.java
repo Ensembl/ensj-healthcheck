@@ -26,11 +26,17 @@ import java.util.*;
 
 public class IntegerComparator implements Comparator {
   
+  /** 
+   * Implementation of Compare interface. Natural order for o1 and o2.
+   * @param o1 The first Integer to compare.
+   * @param o2 The second Integer to compare.
+   * @return -1 if o1<o2, 0 if o1--o2, 1 if o1>o2. 
+   */
   public int compare(Object o1, Object o2) {
     
-    int i1 = ((Integer)o1).intValue();
-    int i2 = ((Integer)o2).intValue();
-    
+   int i1 = ((Integer)o1).intValue();
+   int i2 = ((Integer)o2).intValue();
+   
     int result = 0;
     if (i1 == i2) {
       result = 0;

@@ -492,10 +492,10 @@ public class DBUtils {
   }
   
   // -------------------------------------------------------------------------
-  /**
+  /** 
    * List the columns in a particular table.
+   * @param table The name of the table to list.
    * @param con The connection to use.
-   * @param the table to use.
    * @return A List of Strings representing the column names.
    */
   public static List getColumnsInTable(Connection con, String table) {
