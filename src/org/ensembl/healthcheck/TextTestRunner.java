@@ -1,5 +1,5 @@
 /*
- Copyright (C) 2004 EBI, GRL
+ copyright (C) 2004 EBI, GRL
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -80,11 +80,11 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
     private void run(String[] args) {
 
+        testRegistry = new TestRegistry();
+
         parseCommandLine(args);
         
         Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
-
-        testRegistry = new TestRegistry();
 
         setupLogging();
 
@@ -152,7 +152,8 @@ public class TextTestRunner extends TestRunner implements Reporter {
         System.out.println("");
         System.out.println("Currently available tests:");
 
-        List tests = testRegistry.findAllTests();
+        System.out.println("##testRegistry null: " + (testRegistry == null));
+        List tests = testRegistry.getAll();
         Collections.sort(tests, new TestComparator());
         Iterator it = tests.iterator();
         while (it.hasNext()) {
