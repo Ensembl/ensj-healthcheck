@@ -1,0 +1,64 @@
+
+
+REQUIREMENTS
+============
+
+1. JDK 1.4 (see http://java.sun.com/ for downloads); 1.4 (or later) must be used since the Healthcheck system uses several 1.4-specific features, e.g. regular expressions and logging
+
+2. JDBC drivers for connecting to a mySQL database. For convenience a suitable jar file is included in the lib directory created when you do the CVS checkout (next version).
+
+3. The jar file containing support classes for the JUnit unittesting framework; again, junit.jar will be in the lib/ directory after CVS checkout.
+ 
+
+INSTALLATION
+============
+
+1. Obtain the source files, either as a tarball or by checking out from CVS. The name of the module is ensj-healthcheck. [1]
+
+2. cd ensj-healthcheck
+
+3. Edit database.properties to contain values that correspond to the database server which you want to connect to. This file is in standard Java properties file format.
+
+4. Compile the source. This can be done in a number of ways:
+   a) Invoke javac on the command-line. A simple shell script, compile-healthcheck.sh, has been provided as a guide to setting the classpath etc.
+   b) Use the Apache ANT build system (http://ant.apache.org) - this is highly recommended if you need to do non-trivial tasks such as compiling, building distributions etc. A sample build.xml file is included in the Healthcheck distribution.
+   c) Use an IDE of your choice, e.g. SunONE Studio
+
+RUNNING
+=======
+
+See the file run-healthcheck.sh for an example of how to set classpaths etc. Note that this script passes any of its command-line options through to the TestRunner class.
+
+  Usage: TestRunner {-d regexp} {-force} {group1} {group2} ...
+   
+  Options:
+    -d regexp  Use the given regular expression to decide which databases to use.
+    -force     Run the named tests on the databases matched by -d, without
+  	       taking into account the regular expressions built into the tests themselves.
+    group1     Names of groups of test cases to run.
+  	       Note each test case is in a group of its own with the name of the test case.
+  	       This allows individual tests to be run if required.
+
+Note that there is a special group called "all" which every test is a member of by default. Each test is also a member (in fact the only member) of a test group with the same name as the test case. This allows individual tests to be specified by name on the command line if necessary.
+
+  
+WRITING YOUR OWN TESTS
+======================
+
+The TestRunner class is able to "discover" test case classes at runtime, provided they fulfil certain criteria:
+
+1. They must be in the package org.ensembl.healthcheck
+
+2. The .class files must be in src/org/ensembl/healthcheck [2]
+
+3. The test case classes must extend org.ensembl.healthcheck.EnsTestCase
+
+
+
+----------------------------------------------------------------------
+
+Notes
+-----
+
+[1] The CVS checkout currently includes some directories and files that are not necessary (e.g. build/ classes/ etc).
+[2] More flexible "discovery" of classes at runtime, e.g. from jar files and other directory locations, will be included in later releases.
