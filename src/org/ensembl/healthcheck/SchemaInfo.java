@@ -19,6 +19,8 @@
 package org.ensembl.healthcheck;
 
 import java.util.*;
+import java.sql.*;
+import org.ensembl.healthcheck.util.*;
 
 /**
  * Store information about a database schema. Lighter-weight and simpler than
@@ -40,6 +42,26 @@ public class SchemaInfo {
     
     this.name = name;
     this.tables = tables;
+    
+  }
+  
+  /**
+   * Create a SchemaInfo object from a database connection.
+   * @param con The connection to analyse.
+   */
+  public SchemaInfo(Connection con) {
+    
+    this.name = DBUtils.getShortDatabaseName(con);
+    
+    List tableNames = DBUtils.getTableNames(con);
+    
+    Iterator tableIterator = tableNames.iterator();
+    while(tableIterator.hasNext()) {
+      String tableName = (String)tableIterator.next();
+      List columns = DBUtils.getColumnsInTable(con, tableName);
+      TableInfo ti = new TableInfo(tableName, columns);
+      this.tables.add(ti);
+    }
     
   }
   
