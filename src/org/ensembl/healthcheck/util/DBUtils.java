@@ -275,8 +275,8 @@ public final class DBUtils {
 
             // make sure both cursors are at the start of the ResultSet
             // (default is before the start)
-            rs1.first();
-            rs2.first();
+            rs1.beforeFirst();
+            rs2.beforeFirst();
             // if quick checks didn't cause return, try comparing row-wise
             int row = 0;
             while (rs1.next() && rs2.next()) {
