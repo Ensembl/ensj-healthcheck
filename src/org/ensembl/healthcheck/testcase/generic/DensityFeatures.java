@@ -52,7 +52,6 @@ public class DensityFeatures extends SingleDatabaseTestCase {
         addToGroup("post_genebuild");
         addToGroup("release");
         setDescription("Check that all top-level seq regions have some SNP/gene/knownGene density features, and that the values agree between the density_feature and seq_region attrib tables.");
-	setHintLongRunning(true);
 
 	logicNameToAttribCode.put("snpDensity", "SNPCount");
 	logicNameToAttribCode.put("geneDensity", "GeneCount");
