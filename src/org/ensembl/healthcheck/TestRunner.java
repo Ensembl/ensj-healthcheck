@@ -234,21 +234,36 @@ public class TestRunner {
     
     ArrayList allTests = new ArrayList();
     
-    // --------------------------------
-    // look for tests in the same directory as this class
+    // some variables that will come in useful later on
     String thisClassName = this.getClass().getName();
     String packageName = thisClassName.substring(0, thisClassName.lastIndexOf("."));
     String directoryName = packageName.replace('.', File.separatorChar);
     logger.finest("Package name: " + packageName + " Directory name: " + directoryName);
-    String fullDirectory = System.getProperty("user.dir") + File.separator + "src" + File.separator + directoryName;
-    allTests.addAll(findTestsInDirectory(fullDirectory, packageName));
+    String runDir = System.getProperty("user.dir") + File.separator;
+    
+    // places to look
+    ArrayList locations = new ArrayList();
+    locations.add(runDir + "src" + File.separator + directoryName);       // same directory as this class
+    locations.add(runDir + "build" + File.separator + directoryName);     // ../build/<packagename>
+    
+    // look in each of the locations defined above
+    Iterator it = locations.iterator();
+    while (it.hasNext()) {
+      String location = (String)it.next();
+      File dir = new File(location);
+      if (dir.exists()) {
+	if (location.lastIndexOf('.') > -1 && location.substring(location.lastIndexOf('.')).equalsIgnoreCase("jar")) { // ToDo -check this
+	  addUniqueTests(allTests, findTestsInJar(location, packageName));
+	} else {
+	  addUniqueTests(allTests, findTestsInDirectory(location, packageName));
+	}
+      } else {
+	logger.info(dir.getAbsolutePath() + " does not exist, skipping.");
+      } // if dir.exists
+    }
     
     // --------------------------------
-    
-    
-    
-    // --------------------------------
-    logger.finer("Found " + allTests.size() + " test case classes.");
+    logger.finer("Found " + allTests.size() + " test case classes of which .");
     
     /*Iterator it = allTests.iterator();
     while (it.hasNext()) {
@@ -317,6 +332,8 @@ public class TestRunner {
   
   public ArrayList findTestsInDirectory(String dir, String packageName) {
     
+    logger.info("Looking for tests in " + dir);
+    
     ArrayList tests = new ArrayList();
     
     File f = new File(dir);
@@ -351,18 +368,66 @@ public class TestRunner {
       if (obj instanceof org.ensembl.healthcheck.EnsTestCase && !tests.contains(obj)) {
 	((EnsTestCase)obj).init(this);
 	tests.add(obj); // note we store an INSTANCE of the test, not just its name
-	logger.info("Added test case " + obj.getClass().getName());
+	//logger.info("Added test case " + obj.getClass().getName());
       }
       
     } // for classFiles
     
     return tests;
     
-  } // findAllTestsByPath
+  } // findTestsInDirectory
+  
+   // -------------------------------------------------------------------------
+  
+  public ArrayList findTestsInJar(String jarFileName, String packageName) {
+    
+    ArrayList tests = new ArrayList();
+    
+    // TBC
+    
+    return tests;
+    
+  } // findTestsInJar
+  
+  // -------------------------------------------------------------------------
+  /**
+   * Add all tests in subList to mainList, <em>unless</em> the test is already a member of mainList.
+   */
+  public void addUniqueTests(ArrayList mainList, ArrayList subList) {
+    
+    Iterator it = subList.iterator();
+    
+    while (it.hasNext()) {
+      
+      EnsTestCase test = (EnsTestCase)it.next();
+      if (!testInList(test, mainList)) { // can't really use List.contains() as the lists store objects which may be different
+	mainList.add(test);
+	logger.info("Added " + test.getShortTestName() + " to the list of tests to run");
+      } else {
+	logger.fine("Skipped " + test.getShortTestName() + " as it is already in the list of tests to run");
+      }
+    }
+    
+  } // addUniqueTests
   
   // -------------------------------------------------------------------------
   
-  
+  public boolean testInList(EnsTestCase test, ArrayList list) {
+    
+    boolean inList = false;
+    
+    Iterator it = list.iterator();
+    while (it.hasNext()) {
+      EnsTestCase thisTest = (EnsTestCase)it.next();
+      if (thisTest.getTestName().equals(test.getTestName())) {
+	inList = true;
+      }
+    }
+    
+    return inList;
+    
+  } // testInList
+  // -------------------------------------------------------------------------
   
 } // TestRunner
 
