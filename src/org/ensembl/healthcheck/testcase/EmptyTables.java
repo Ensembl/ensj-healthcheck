@@ -53,12 +53,12 @@ public class EmptyTables extends EnsTestCase {
       
       Connection con = (Connection)it.next();
       
-      SchemaInfo si = SchemaManager.getSchema(con);
+      List tables = getTableNames(con);
       
-      Iterator tableIterator = si.getTables().iterator();
-      while(tableIterator.hasNext()) {
+      Iterator tableIterator = tables.iterator();
+      while (tableIterator.hasNext()) {
         
-        String table = ((TableInfo)tableIterator.next()).getName();
+        String table = (String)tableIterator.next();
         logger.finest("Checking that " + table + " has rows");
         
         if (!tableHasRows(con, table)) {

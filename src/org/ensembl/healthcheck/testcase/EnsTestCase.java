@@ -1171,17 +1171,6 @@ public abstract class EnsTestCase {
 		return (this instanceof Repair);
 
 	}
-	// -------------------------------------------------------------------------
-
-	/**
-	 * Add a condition to the list.
-	 * @param cond The condition to add.
-	 */
-	public void addCondition(SchemaMatchCondition cond) {
-
-		conditions.add(cond);
-
-	}
 
 	// -------------------------------------------------------------------------
 	/**
@@ -1192,24 +1181,6 @@ public abstract class EnsTestCase {
 	public List getConditions() {
 
 		return conditions;
-
-	}
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Run all the schema matching conditions defined in this test case against the
-	 * known schemas to see which ones match.
-	 * @return A DatabaseConnectionIterator that will give connections to any
-	 * schemas that match <em>all</em> the conditions.
-	 */
-	public DatabaseConnectionIterator getMatchingSchemaIterator() {
-
-		return new DatabaseConnectionIterator(
-			System.getProperty("driver"),
-			System.getProperty("databaseURL"),
-			System.getProperty("user"),
-			System.getProperty("password"),
-			testRunner.getMatchingSchemas(conditions));
 
 	}
 

@@ -56,8 +56,6 @@ public class GuiTestRunner extends TestRunner implements Reporter {
     
     Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
     
-    gtr.readStoredSchemaInfo();
-    
     ReportManager.setReporter(gtr);
     
     gtr.initFrame();

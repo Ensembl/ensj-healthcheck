@@ -24,7 +24,6 @@ import java.util.jar.JarFile;
 import java.util.logging.*;
 import java.sql.*;
 import java.io.*;
-import java.util.zip.*;
 
 import org.ensembl.healthcheck.testcase.*;
 
@@ -636,125 +635,6 @@ public class TestRunner {
 		return outputLevel;
 
 	} // getOutputLevel
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Create and cache information about all the schemas that are available.
-	 * @param serialize If true, write schema information to file.
-	 */
-	public void buildSchemaList(boolean serialize) {
-
-		// check props file loaded
-		if (System.getProperty("driver") == null) {
-			logger.severe("driver is null - database functions will probably not work");
-		}
-		if (System.getProperty("databaseURL") == null) {
-			logger.severe("databaseURL is null - database functions will probably not work");
-		}
-		if (System.getProperty("user") == null) {
-			logger.severe("user is null - database functions will probably not work");
-		}
-
-		logger.warning("Building schema info ...");
-
-		//String[] schemas = getAllSchemaNames();
-		String[] schemas = getListOfDatabaseNames(".*");
-
-		for (int i = 0; i < schemas.length; i++) {
-
-			SchemaManager.addSchema(getSingleSchemaInfo(schemas[i]));
-			logger.finest("Added SchemaInfo object for " + schemas[i]);
-
-		}
-
-		if (serialize) {
-			String fileName = SCHEMA_INFO_FILENAME;
-			if (GZIP_SCHEMA_INFO) {
-				fileName += ".gz";
-			}
-			SchemaManager.serializeAllToSingleFile(fileName, GZIP_SCHEMA_INFO);
-		}
-
-	}
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Get the schema information for a single schema.
-	 * @param schemaName The name of the schema to analyse.
-	 */
-	public SchemaInfo getSingleSchemaInfo(String schemaName) {
-
-		String url = System.getProperty("databaseURL") + schemaName;
-		Connection con =
-			DBUtils.openConnection(System.getProperty("driver"), url, System.getProperty("user"), System.getProperty("password"));
-
-		return new SchemaInfo(con);
-
-	}
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Read schema information from serialized object files (schema_name.ser)
-	 * If the .ser file for a particular schema does not exist or cannot be read,
-	 * the SchemaInfo object is created on the fly.
-	 */
-	public void readStoredSchemaInfo() {
-
-		String fileName = SCHEMA_INFO_FILENAME;
-		if (GZIP_SCHEMA_INFO) {
-			fileName += ".gz";
-		}
-
-		try {
-
-			InputStream is = new FileInputStream(fileName);
-			if (GZIP_SCHEMA_INFO) {
-				is = new GZIPInputStream(is);
-			}
-			ObjectInputStream in = new ObjectInputStream(is);
-			List schemas = (List)in.readObject();
-			in.close();
-			is.close();
-			Iterator it = schemas.iterator();
-			while (it.hasNext()) {
-				SchemaInfo si = (SchemaInfo)it.next();
-				SchemaManager.addSchema(si);
-				logger.fine("Read stored schema info for " + si.getName());
-			}
-
-		} catch (IOException ex) {
-			// ex.printStackTrace();
-		} catch (ClassNotFoundException ex) {
-			// ex.printStackTrace();
-		}
-
-	}
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Get an array of schema names that match a particular set of conditions.
-	 * @param conditions A List of subclasses of SchemaMatchCondition to test.
-	 * @return An array of Strings representing the names of the matching schemas. TODO return SchemaInfos?
-	 */
-	public String[] getMatchingSchemas(List conditions) {
-
-		List result = new ArrayList();
-
-		List schemas = SchemaManager.getAllSchemas();
-
-		Iterator schemaIterator = schemas.iterator();
-		while (schemaIterator.hasNext()) {
-
-			SchemaInfo si = (SchemaInfo)schemaIterator.next();
-			if (si.matchesAll(conditions)) {
-				result.add(si.getName());
-			}
-
-		}
-
-		return (String[])result.toArray(new String[result.size()]);
-
-	}
 
 	// -------------------------------------------------------------------------
 

@@ -47,17 +47,16 @@ public class LogicNamesDisplayable extends EnsTestCase {
    * Creates a new instance of LogicNamesDisplayable
    */
   public LogicNamesDisplayable() {
-    String[] cols = { "logic_name", "analysis_id" };
-    addCondition(new HasTableColumnsCondition("analysis", cols));
+    
     addToGroup("post_genebuild");
     setDescription("Checks that all logic names in analysis are displayable");
     setHintLongRunning(true);
+ 
   }
   
   
   public TestResult run() {
     
-    // DatabaseConnectionIterator it = getMatchingSchemaIterator();
     DatabaseConnectionIterator it = getDatabaseConnectionIterator();
     boolean result = true;
     

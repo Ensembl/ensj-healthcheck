@@ -31,8 +31,6 @@ public class TextTestRunner extends TestRunner implements Reporter {
 	private static String version = "$Id$";
 	private boolean forceDatabases = false;
 	private boolean debug = false;
-	private boolean useSchemaInfo = false;
-	private boolean rebuildSchemaInfo = false;
 	public ArrayList outputBuffer;
 	private String lastDatabase = "";
 	private int outputLineLength = 65;
@@ -56,13 +54,6 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
 		ttr.setupLogging();
 
-		if (ttr.useSchemaInfo) {
-			ttr.buildSchemaList(true);
-		}
-
-		//if (ttr.useSchemaInfo && !ttr.rebuildSchemaInfo) { // if buildSchemaList has been called, SchemaManager will already have been populated
-		//  ttr.readStoredSchemaInfo();
-		//}
 		ReportManager.setReporter(ttr);
 
 		ttr.runAllTests(ttr.findAllTests(), ttr.forceDatabases);
@@ -93,7 +84,6 @@ public class TextTestRunner extends TestRunner implements Reporter {
 		System.out.println("  -repair         If appropriate, carry out repair methods on test cases that support it");
 		System.out.println("  -showrepair     Like -repair, but the repair is NOT carried out, just reported.");
 		System.out.println("  -length n       Break output lines at n columns; default is " + outputLineLength + ". 0 means never break");
-		System.out.println("  -schemainfo     Cache schema info at startup; required for SchemasMatch testcase");
 		System.out.println(
 			"  -refreshschemas Rebuild the stored schema info; this is rather slow as every schema must be examined, but should be used when a schema structure change has occurred.");
 		System.out.println("  group1          Names of groups of test cases to run.");
@@ -172,16 +162,6 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
 					forceDatabases = true;
 					// System.out.println("Will use ONLY databases specified by -d");
-
-				} else if (args[i].equals("-schemainfo")) {
-
-					useSchemaInfo = true;
-					// System.out.println("Will NOT read schema info at startup");
-
-				} else if (args[i].equals("-refreshschemas")) {
-
-					rebuildSchemaInfo = true;
-					// System.out.println("Will rebuild and store schema info at startup");
 
 				} else if (args[i].equals("-config")) {
 
