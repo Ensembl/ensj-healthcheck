@@ -1,152 +1,176 @@
 /*
-  Copyright (C) 2003 EBI, GRL
+ Copyright (C) 2003 EBI, GRL
  
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
  
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
  
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 package org.ensembl.healthcheck;
 
 import java.util.logging.Logger;
 
 /**
- * Typesafe "enum" to store information about the type of a database.
- * 
+ * Typesafe "enum" to store information about the type of a database. Declared
+ * final since it only has private constructors.
  */
-public class DatabaseType {
+public final class DatabaseType {
 
-	public static final DatabaseType CORE = new DatabaseType("core");
-	public static final DatabaseType EST = new DatabaseType("est");
-	public static final DatabaseType ESTGENE = new DatabaseType("estgene");
-	public static final DatabaseType VEGA = new DatabaseType("vega");
-	public static final DatabaseType COMPARA = new DatabaseType("compara");
-	public static final DatabaseType MART = new DatabaseType("mart");
-	public static final DatabaseType SNP = new DatabaseType("snp");
-	public static final DatabaseType DISEASE = new DatabaseType("disease");
-	public static final DatabaseType HAPLOTYPE = new DatabaseType("haplotype");
-	
-	// special type to represent situtation when type is not known
-	public static final DatabaseType UNKNOWN = new DatabaseType("unknown");
+    /** A core database */
+    public static final DatabaseType CORE = new DatabaseType("core");
 
-	private final String name;
+    /** An EST database */
+    public static final DatabaseType EST = new DatabaseType("est");
 
-	protected static Logger logger = Logger.getLogger("HealthCheckLogger");
+    /** An ESTgene database */
+    public static final DatabaseType ESTGENE = new DatabaseType("estgene");
 
-	private DatabaseType(String name) {
-		this.name = name;
-	}
+    /** A Vega database */
+    public static final DatabaseType VEGA = new DatabaseType("vega");
 
-	public String toString() {
-		return this.name;
-	}
+    /** A Compara database */
+    public static final DatabaseType COMPARA = new DatabaseType("compara");
 
-	//	-----------------------------------------------------------------
-	/**
-	 * Resolve an alias to a DatabaseType object.
-	 * @param alias The alias (e.g. core).
-	 * @return The DatabaseType object corresponding to alias, or DatabaseType.UNKNOWN if it cannot be resolved.
-	 */
-	public static DatabaseType resolveAlias(String alias) {
+    /** A Mart database */
+    public static final DatabaseType MART = new DatabaseType("mart");
 
-		alias = alias.toLowerCase();
+    /** A SNP database */
+    public static final DatabaseType SNP = new DatabaseType("snp");
 
-		// --------------------------------------
+    /** A disease database */
+    public static final DatabaseType DISEASE = new DatabaseType("disease");
 
-		if (in(alias, "core")) {
+    /** A haplotype database */
+    public static final DatabaseType HAPLOTYPE = new DatabaseType("haplotype");
 
-			return CORE;
+    /** A database whos type has not been determined */
+    public static final DatabaseType UNKNOWN = new DatabaseType("unknown");
 
-		}
+    private final String name;
 
-		//		--------------------------------------
+    /** The logger to use */
+    private static Logger logger = Logger.getLogger("HealthCheckLogger");
 
-		if (in(alias, "est")) {
+    private DatabaseType(final String name) {
+        this.name = name;
+    }
 
-			return EST;
+    /**
+     * @return a String representation of this DatabaseType object.
+     */
+    public String toString() {
+        return this.name;
+    }
 
-		}
+    // -----------------------------------------------------------------
+    /**
+     * Resolve an alias to a DatabaseType object.
+     * 
+     * @param alias
+     *          The alias (e.g. core).
+     * @return The DatabaseType object corresponding to alias, or
+     *         DatabaseType.UNKNOWN if it cannot be resolved.
+     */
+    public static DatabaseType resolveAlias(final String alias) {
 
-		//		--------------------------------------
+        String lcAlias = alias.toLowerCase();
 
-		if (in(alias, "estgene")) {
+        // --------------------------------------
 
-			return ESTGENE;
+        if (in(lcAlias, "core")) { 
 
-		}
+        return CORE; 
 
-		//		--------------------------------------
+        }
 
-		if (in(alias, "compara")) {
+        // --------------------------------------
 
-			return COMPARA;
+        if (in(lcAlias, "est")) { 
 
-		}
+        return EST; 
 
-		//		--------------------------------------
+        }
 
-		if (in(alias, "mart")) {
+        // --------------------------------------
 
-			return MART;
+        if (in(lcAlias, "estgene")) { 
 
-		}
+        return ESTGENE; 
 
-		//		--------------------------------------
+        }
 
-		if (in(alias, "vega")) {
+        // --------------------------------------
 
-			return VEGA;
+        if (in(lcAlias, "compara")) { 
 
-		}
+        return COMPARA; 
 
-		//		--------------------------------------
+        }
 
-		if (in(alias, "snp")) {
+        // --------------------------------------
 
-			return SNP;
+        if (in(lcAlias, "mart")) { 
 
-		}
+        return MART; 
 
-		//		--------------------------------------
+        }
 
-		if (in(alias, "disease")) {
+        // --------------------------------------
 
-			return DISEASE;
+        if (in(lcAlias, "vega")) { 
 
-		}
+        return VEGA; 
 
-//		--------------------------------------
+        }
 
-		if (in(alias, "haplotype")) {
+        // --------------------------------------
 
-			return HAPLOTYPE;
+        if (in(lcAlias, "snp")) { 
 
-		}
-		
-		// default case 
-		return UNKNOWN;
+        return SNP; 
 
-	} // resolveAlias
+        }
 
-	// -----------------------------------------------------------------
+        // --------------------------------------
 
-	/**
-		 * Return true if alias appears somewhere in comma-separated list.
-		 */
-	private static boolean in(String alias, String list) {
+        if (in(lcAlias, "disease")) { 
 
-		return (list.indexOf(alias) > -1);
+        return DISEASE; 
 
-	}
-	// -----------------------------------------------------------------
+        }
+
+        // --------------------------------------
+
+        if (in(lcAlias, "haplotype")) { 
+
+        return HAPLOTYPE; 
+
+        }
+
+        // default case
+        return UNKNOWN;
+
+    } // resolveAlias
+
+    // -----------------------------------------------------------------
+
+    /**
+     * Return true if alias appears somewhere in comma-separated list.
+     */
+    private static boolean in(final String alias, final String list) {
+
+        return (list.indexOf(alias) > -1);
+
+    }
+    // -----------------------------------------------------------------
 
 } // DatabaseType

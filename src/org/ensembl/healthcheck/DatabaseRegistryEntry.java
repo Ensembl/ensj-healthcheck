@@ -1,19 +1,19 @@
 /*
-  Copyright (C) 2003 EBI, GRL
+ Copyright (C) 2003 EBI, GRL
  
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
  
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
  
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 package org.ensembl.healthcheck;
 
@@ -23,184 +23,195 @@ import java.util.logging.Logger;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Container for information about a database that can be stored in a DatabaseRegistry.
- *
+ * Container for information about a database that can be stored in a
+ * DatabaseRegistry.
+ *  
  */
 public class DatabaseRegistryEntry {
 
-	String name;
-	Species species;
-	DatabaseType type;
-	Connection con;
+    private String name;
 
-	protected static Logger logger = Logger.getLogger("HealthCheckLogger");
+    private Species species;
 
-	// -----------------------------------------------------------------
-	/**
-	 * Create a new DatabaseRegistryEntry. A connection to the named database is also created.
-	 */
-	public DatabaseRegistryEntry(String name, Species species, DatabaseType type) {
+    private DatabaseType type;
 
-		this.name = name;
-		this.species = species;
-		this.type = type;
-		this.con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL") + name, System.getProperty("user"), System.getProperty("password"));
+    private Connection con;
 
-	}
+    /** The logger to use */
+    private static Logger logger = Logger.getLogger("HealthCheckLogger");
 
-	// -----------------------------------------------------------------
-	/**
-	 * Create a DatabaseRegistryEntry from just the database name; the species 
-	 * and type are estimated from the database name. Note these can be 
-	 * overridden later by setSpecies/setType if they are specified on the 
-	 * command-line.
-	 * A connection to the named database is also created.
-	 */
-	public DatabaseRegistryEntry(String name) {
+    // -----------------------------------------------------------------
+    /**
+     * Create a new DatabaseRegistryEntry. A connection to the named database
+     * is also created.
+     * @param name The name of the database.
+     * @param species The species that this database represents.
+     * @param type The type of this databse.
+     */
+    public DatabaseRegistryEntry(final String name, final Species species, final DatabaseType type) {
 
-		this.name = name;
-		this.con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL") + name, System.getProperty("user"), System.getProperty("password"));
-		species = setSpeciesFromName(name);
-		type = setTypeFromName(name);
+        this.name = name;
+        this.species = species;
+        this.type = type;
+        this.con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL") + name,
+                System.getProperty("user"), System.getProperty("password"));
 
-	}
+    }
 
-	// -----------------------------------------------------------------
-	/**
-	 * Attempt to figure out species from database name.
-	 */
-	public Species setSpeciesFromName(String name) {
+    // -----------------------------------------------------------------
+    /**
+     * Create a DatabaseRegistryEntry from just the database name; the species
+     * and type are estimated from the database name. Note these can be
+     * overridden later by setSpecies/setType if they are specified on the
+     * command-line. A connection to the named database is also created.
+     * @param name The name of the databse to use. Species and type are automatically set.
+     */
+    public DatabaseRegistryEntry(final String name) {
 
-		Species result = Species.UNKNOWN;
-		String[] bits = name.split("_");
-		String alias;
+        this.name = name;
+        this.con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL") + name,
+                System.getProperty("user"), System.getProperty("password"));
+        species = setSpeciesFromName(name);
+        type = setTypeFromName(name);
 
-		// there are many different possibilities for database naming; the most
-		// likely are catered for here
+    }
 
-		// homo_sapiens_core_20_34a
-		if (bits.length >= 2) {
-			alias = bits[0] + "_" + bits[1];
-			if (Species.resolveAlias(alias) != Species.UNKNOWN) {
-				return Species.resolveAlias(alias);
-			}
-		}
+    // -----------------------------------------------------------------
+    /**
+     * Attempt to figure out species from database name.
+     * @param name The name to use.
+     * @return The species corresponding to name, or Species.UNKNOWN.
+     */
+    public final Species setSpeciesFromName(final String name) {
 
-		// human_core_20, hsapiens_XXX
-		if (bits.length > 1) {
-			alias = bits[0];
-			if (Species.resolveAlias(alias) != Species.UNKNOWN) {
-				return Species.resolveAlias(alias);
-			}
-		}
+        Species result = Species.UNKNOWN;
+        String[] bits = name.split("_");
+        String alias;
 
-		// other permutations?
+        // there are many different possibilities for database naming; the most
+        // likely are catered for here
 
-		if (result.equals(Species.UNKNOWN)) {
-			logger.warning("Can't deduce species from database name " + name);
-		}
+        // homo_sapiens_core_20_34a
+        if (bits.length >= 2) {
+            alias = bits[0] + "_" + bits[1];
+            if (Species.resolveAlias(alias) != Species.UNKNOWN) { return Species.resolveAlias(alias); }
+        }
 
-		return result;
+        // human_core_20, hsapiens_XXX
+        if (bits.length > 1) {
+            alias = bits[0];
+            if (Species.resolveAlias(alias) != Species.UNKNOWN) { return Species.resolveAlias(alias); }
+        }
 
-	}
+        // other permutations?
 
-	//	-----------------------------------------------------------------
-	/**
-	 * Attempt to figure out database type from database name.
-	 */
-	public DatabaseType setTypeFromName(String name) {
+        if (result.equals(Species.UNKNOWN)) {
+            logger.warning("Can't deduce species from database name " + name);
+        }
 
-		DatabaseType result = DatabaseType.UNKNOWN;
-		String[] bits = name.split("_");
-		String alias;
+        return result;
 
-		// there are many different possibilities for database naming; the most
-		// likely are catered for here
+    }
 
-		// homo_sapiens_core_20_34a
-		if (bits.length >= 4) {
-			alias = bits[2];
-			if (DatabaseType.resolveAlias(alias) != DatabaseType.UNKNOWN) {
-				return DatabaseType.resolveAlias(alias);
-			}
-		}
+    // -----------------------------------------------------------------
+    /**
+     * Attempt to figure out database type from database name.
+     * @param name The database name to use.
+     * @return The database type corresponding to name, or DatabaseType.UNKNOWN.
+     */
+    public final DatabaseType setTypeFromName(final String name) {
 
-		// human_core_20, ensembl_compara_20_1
-		if (bits.length >= 3) {
-			alias = bits[1];
-			if (DatabaseType.resolveAlias(alias) != DatabaseType.UNKNOWN) {
-				return DatabaseType.resolveAlias(alias);
-			}
-		}
-		
-		// other permutations?
+        DatabaseType result = DatabaseType.UNKNOWN;
+        String[] bits = name.split("_");
+        String alias;
 
-		if (result.equals(DatabaseType.UNKNOWN)) {
-			logger.warning("Can't deduce database type from database name " + name);
-		}
+        // there are many different possibilities for database naming; the most
+        // likely are catered for here
 
-		return result;
+        // homo_sapiens_core_20_34a
+        if (bits.length >= 4) {
+            alias = bits[2];
+            if (DatabaseType.resolveAlias(alias) != DatabaseType.UNKNOWN) { return DatabaseType.resolveAlias(alias); }
+        }
 
-	}
+        // human_core_20, ensembl_compara_20_1
+        if (bits.length >= 3) {
+            alias = bits[1];
+            if (DatabaseType.resolveAlias(alias) != DatabaseType.UNKNOWN) { return DatabaseType.resolveAlias(alias); }
+        }
 
-	// -----------------------------------------------------------------
+        // other permutations?
 
-	/**
-	 * @return Database name.
-	 */
-	public String getName() {
-		return name;
-	}
+        if (result.equals(DatabaseType.UNKNOWN)) {
+            logger.warning("Can't deduce database type from database name " + name);
+        }
 
-	/**
-	 * @param name New database name.
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+        return result;
 
-	/**
-	 * @return Species.
-	 */
-	public Species getSpecies() {
-		return species;
-	}
+    }
 
-	/**
-	 * @param species New Species.
-	 */
-	public void setSpecies(Species species) {
-		this.species = species;
-	}
+    // -----------------------------------------------------------------
 
-	/**
-	 * @return Database type (core, est etc)
-	 */
-	public DatabaseType getType() {
-		return type;
-	}
+    /**
+     * @return Database name.
+     */
+    public final String getName() {
+        return name;
+    }
 
-	/**
-	 * @param type New database type (core, est etc)
-	 */
-	public void setType(DatabaseType type) {
-		this.type = type;
-	}
+    /**
+     * @param name
+     *          New database name.
+     */
+    public final void setName(final String name) {
+        this.name = name;
+    }
 
-	/**
-		 * @return Connection to the database.
-		 */
-	public Connection getConnection() {
-		return con;
-	}
+    /**
+     * @return Species.
+     */
+    public final Species getSpecies() {
+        return species;
+    }
 
-	/**
-	 * @param con New database connection.
-	 */
-	public void setConnection(Connection con) {
-		this.con = con;
-	}
+    /**
+     * @param species
+     *          New Species.
+     */
+    public final void setSpecies(final Species species) {
+        this.species = species;
+    }
 
-	// -----------------------------------------------------------------
+    /**
+     * @return Database type (core, est etc)
+     */
+    public final DatabaseType getType() {
+        return type;
+    }
+
+    /**
+     * @param type
+     *          New database type (core, est etc)
+     */
+    public final void setType(final DatabaseType type) {
+        this.type = type;
+    }
+
+    /**
+     * @return Connection to the database.
+     */
+    public final Connection getConnection() {
+        return con;
+    }
+
+    /**
+     * @param con
+     *          New database connection.
+     */
+    public final void setConnection(final Connection con) {
+        this.con = con;
+    }
+
+    // -----------------------------------------------------------------
 
 } // DatabaseRegistryEntry

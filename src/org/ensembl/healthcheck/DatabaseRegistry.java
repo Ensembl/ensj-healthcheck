@@ -30,20 +30,23 @@ import org.ensembl.healthcheck.util.DBUtils;
  */
 public class DatabaseRegistry {
 
-    // Entries is explicitly specified as an ArrayList rather than the list because the order is
+    // Entries is explicitly specified as an ArrayList rather than the list
+    // because the order is
     // important
-    ArrayList entries = new ArrayList();
+    private ArrayList entries = new ArrayList();
 
-    protected static Logger logger = Logger.getLogger("HealthCheckLogger");
+    /** The logger to use */
+    private static Logger logger = Logger.getLogger("HealthCheckLogger");
 
     // -----------------------------------------------------------------
     /**
-     * Create a new DatabaseRegistry. DatabaseRegistryEntry objects for the databases matching
-     * regexp are created and added to the registry.
+     * Create a new DatabaseRegistry. DatabaseRegistryEntry objects for the
+     * databases matching regexp are created and added to the registry.
      * 
-     * @param regexp The regular expression matching the databases to use.
+     * @param regexp
+     *          The regular expression matching the databases to use.
      */
-    public DatabaseRegistry(String regexp) {
+    public DatabaseRegistry(final String regexp) {
 
         Connection con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System
                 .getProperty("user"), System.getProperty("password"));
@@ -54,14 +57,15 @@ public class DatabaseRegistry {
 
     }
 
-    //	-----------------------------------------------------------------
+    // -----------------------------------------------------------------
     /**
-     * Create a new DatabaseRegistry. DatabaseRegistryEntry objects for the databases matching
-     * regexp are created and added to the registry.
+     * Create a new DatabaseRegistry. DatabaseRegistryEntry objects for the
+     * databases matching regexp are created and added to the registry.
      * 
-     * @param regexps The regular expressions matching the databases to use.
+     * @param regexps
+     *          The regular expressions matching the databases to use.
      */
-    public DatabaseRegistry(List regexps) {
+    public DatabaseRegistry(final List regexps) {
 
         Connection con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System
                 .getProperty("user"), System.getProperty("password"));
@@ -79,8 +83,9 @@ public class DatabaseRegistry {
     // -------------------------------------------------------------------------
     /**
      * Create a new DatabaseRegistry from a set of DatabaseRegistryEntries.
+     * @param dbres The entries to use.
      */
-    public DatabaseRegistry(DatabaseRegistryEntry[] dbres) {
+    public DatabaseRegistry(final DatabaseRegistryEntry[] dbres) {
 
         for (int i = 0; i < dbres.length; i++) {
 
@@ -92,12 +97,13 @@ public class DatabaseRegistry {
 
     // -----------------------------------------------------------------
 
-    private void addEntriesToRegistry(String[] names) {
+    private void addEntriesToRegistry(final String[] names) {
 
         for (int i = 0; i < names.length; i++) {
             DatabaseRegistryEntry dbre = new DatabaseRegistryEntry(names[i]);
             entries.add(dbre);
-            logger.finest(dbre.getName() + " appears to be type " + dbre.getType() + " and species " + dbre.getSpecies());
+            logger.finest(dbre.getName() + " appears to be type " + dbre.getType() + " and species "
+                    + dbre.getSpecies());
             logger.finest("Added DatabaseRegistryEntry for " + names[i] + " to DatabaseRegistry");
         }
 
@@ -107,9 +113,10 @@ public class DatabaseRegistry {
     /**
      * Add a new DatabaseRegistryEntry to this registry.
      * 
-     * @param dbre The new DatabaseRegistryEntry.
+     * @param dbre
+     *          The new DatabaseRegistryEntry.
      */
-    public void add(DatabaseRegistryEntry dbre) {
+    public final void add(final DatabaseRegistryEntry dbre) {
 
         entries.add(dbre);
 
@@ -121,20 +128,21 @@ public class DatabaseRegistry {
      * 
      * @return The DatabaseRegistryEntries stored in this DatabaseRegistry.
      */
-    public DatabaseRegistryEntry[] getAll() {
+    public final DatabaseRegistryEntry[] getAll() {
 
         return (DatabaseRegistryEntry[]) entries.toArray(new DatabaseRegistryEntry[entries.size()]);
 
     }
 
-    //	-----------------------------------------------------------------
+    // -----------------------------------------------------------------
     /**
      * Get all of the DatabaseRegistryEntries for a particular species
      * 
-     * @param species The species to look for.
+     * @param species
+     *          The species to look for.
      * @return The DatabaseRegistryEntries for species..
      */
-    public DatabaseRegistryEntry[] getAll(Species species) {
+    public final DatabaseRegistryEntry[] getAll(final Species species) {
 
         List result = new ArrayList();
         Iterator it = entries.iterator();
@@ -149,14 +157,15 @@ public class DatabaseRegistry {
 
     }
 
-    //	-----------------------------------------------------------------
+    // -----------------------------------------------------------------
     /**
      * Get all of the DatabaseRegistryEntries for a particular database type.
      * 
-     * @param type The type to look for.
+     * @param type
+     *          The type to look for.
      * @return The DatabaseRegistryEntries for type.
      */
-    public DatabaseRegistryEntry[] getAll(DatabaseType type) {
+    public final DatabaseRegistryEntry[] getAll(final DatabaseType type) {
 
         List result = new ArrayList();
         Iterator it = entries.iterator();
@@ -171,15 +180,18 @@ public class DatabaseRegistry {
 
     }
 
-    //	-----------------------------------------------------------------
+    // -----------------------------------------------------------------
     /**
-     * Get all of the DatabaseRegistryEntries for a particular database type and species.
+     * Get all of the DatabaseRegistryEntries for a particular database type
+     * and species.
      * 
-     * @param type The type to look for.
-     * @param species The Species to look for.
+     * @param type
+     *          The type to look for.
+     * @param species
+     *          The Species to look for.
      * @return The DatabaseRegistryEntries that match type and species..
      */
-    public DatabaseRegistryEntry[] getAll(DatabaseType type, Species species) {
+    public final DatabaseRegistryEntry[] getAll(final DatabaseType type, final Species species) {
 
         List result = new ArrayList();
         Iterator it = entries.iterator();
@@ -198,9 +210,10 @@ public class DatabaseRegistry {
     /**
      * Sets the type of every DatabaseRegistryEntry.
      * 
-     * @param type The type to set.
+     * @param type
+     *          The type to set.
      */
-    public void setTypeOfAll(DatabaseType type) {
+    public final void setTypeOfAll(final DatabaseType type) {
 
         List result = new ArrayList();
         Iterator it = entries.iterator();
@@ -215,9 +228,10 @@ public class DatabaseRegistry {
     /**
      * Sets the species of every DatabaseRegistryEntry.
      * 
-     * @param species The species to set.
+     * @param species
+     *          The species to set.
      */
-    public void setSpeciesOfAll(Species species) {
+    public final void setSpeciesOfAll(final Species species) {
 
         List result = new ArrayList();
         Iterator it = entries.iterator();
@@ -232,10 +246,11 @@ public class DatabaseRegistry {
     /**
      * Get a single, named DatabaseRegistryEntry.
      * 
-     * @param name The name to look for.
+     * @param name
+     *          The name to look for.
      * @return The matching DatabaseRegistryEntry, or null if none is found.
      */
-    public DatabaseRegistryEntry getByExactName(String name) {
+    public final DatabaseRegistryEntry getByExactName(final String name) {
 
         Iterator it = entries.iterator();
         while (it.hasNext()) {
@@ -252,7 +267,7 @@ public class DatabaseRegistry {
      * 
      * @return An array containing each DatabaseType found in the registry.
      */
-    public DatabaseType[] getTypes() {
+    public final DatabaseType[] getTypes() {
 
         List types = new ArrayList();
 
@@ -268,13 +283,13 @@ public class DatabaseRegistry {
 
     }
 
-    //	 -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     /**
      * Get a list of the species in the registry.
      * 
      * @return An array containing each Species found in the registry.
      */
-    public Species[] getSpecies() {
+    public final Species[] getSpecies() {
 
         List species = new ArrayList();
 
@@ -294,7 +309,7 @@ public class DatabaseRegistry {
     /**
      * @return The number of DatabaseRegistryEntries in this registry.
      */
-    public int getEntryCount() {
+    public final int getEntryCount() {
 
         return entries.size();
 
