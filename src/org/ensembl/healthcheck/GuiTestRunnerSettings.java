@@ -182,7 +182,7 @@ public class GuiTestRunnerSettings extends javax.swing.JDialog {
         levels.put("All"            , new Integer(ReportLine.ALL));
         levels.put("Problems only"  , new Integer(ReportLine.PROBLEM));
         levels.put("Correct results", new Integer(ReportLine.CORRECT));
-        levels.put("Warnings"        , new Integer(ReportLine.WARNING));
+        levels.put("Warnings"       , new Integer(ReportLine.WARNING));
         levels.put("Info"           , new Integer(ReportLine.INFO));
         levels.put("None"           , new Integer(ReportLine.NONE));
         
