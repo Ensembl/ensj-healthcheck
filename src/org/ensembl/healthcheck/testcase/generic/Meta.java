@@ -105,14 +105,14 @@ public class Meta extends SingleDatabaseTestCase {
             // ----------------------------------------
             // Check that assembly prefix is valid and corresponds to this species
             // Prefix is OK as long as it starts with the valid one
-            Species dbSpecies = dbre.getSpecies();
-            Species apSpecies = Species.getSpeciesForAssemblyPrefix(metaTableAssemblyPrefix);
+            String dbSpecies = dbre.getSpecies().toString();
+            String apSpecies = Species.getSpeciesForAssemblyPrefix(metaTableAssemblyPrefix).toString();
             
-            if (!dbSpecies.equals(apSpecies)) {
-                ReportManager.problem(this, con, "Database species is " + dbSpecies.toString() + " but assembly prefix " + metaTableAssemblyPrefix + " corresponds to " + apSpecies.toString());
+            if (!apSpecies.startsWith(dbSpecies)) {
+                ReportManager.problem(this, con, "Database species is " + dbSpecies + " but assembly prefix " + metaTableAssemblyPrefix + " corresponds to " + apSpecies);
                 result = false;
             } else {
-                ReportManager.correct(this, con, "Meta table assembly prefix (" + metaTableAssemblyPrefix + ") is correct for " + dbSpecies.toString());
+                ReportManager.correct(this, con, "Meta table assembly prefix (" + metaTableAssemblyPrefix + ") is correct for " + dbSpecies);
             }
         }
 
