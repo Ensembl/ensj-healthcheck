@@ -63,6 +63,8 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
     private boolean printFailureText = true;
 
+    private boolean skipSlow = false;
+
     private static final String CORE_DB_REGEXP = "[a-z]+_[a-z]+_(core|est|estgene|vega)";
 
     // -------------------------------------------------------------------------
@@ -97,7 +99,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
             logger.warning("Warning: no database names matched any of the database regexps given");
         }
 
-        runAllTests(databaseRegistry, testRegistry);
+        runAllTests(databaseRegistry, testRegistry, skipSlow);
 
         if (printResultsByDatabase) {
             printReportsByDatabase(outputLevel);
@@ -259,6 +261,11 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
                     printFailureText = false;
                     logger.finest("Will not print failure text.");
+
+		} else if (args[i].equals("-skipslow")) {
+
+                    skipSlow = true;
+                    logger.finest("Will skip long-running tests.");
 
                 } else {
 
