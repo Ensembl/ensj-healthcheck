@@ -36,8 +36,6 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EtchedBorder;
 
 import org.ensembl.healthcheck.ReportLine;
@@ -56,9 +54,12 @@ public class GuiTestRunnerSettings extends JDialog {
     /**
      * Creates new form GuiTestRunnerSettings
      * 
-     * @param parent The parent frame.
-     * @param gtr The GuiTestRunner to use.
-     * @param modal Whether this dialog is modal or not.
+     * @param parent
+     *          The parent frame.
+     * @param gtr
+     *          The GuiTestRunner to use.
+     * @param modal
+     *          Whether this dialog is modal or not.
      */
     public GuiTestRunnerSettings(GuiTestRunnerFrame parent, GuiTestRunner gtr, boolean modal) {
 
@@ -76,8 +77,6 @@ public class GuiTestRunnerSettings extends JDialog {
         JPanel topPanel = new JPanel();
         JPanel centrePanel = new JPanel();
         JPanel threadsPanel = new JPanel();
-        JLabel maxThreadsLabel = new JLabel();
-        JSpinner threadsSpinner = new JSpinner();
         JLabel outputLabel = new JLabel();
         JComboBox outputComboBox = new JComboBox();
         JPanel bottomPanel = new JPanel();
@@ -104,22 +103,14 @@ public class GuiTestRunnerSettings extends JDialog {
         threadsPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         threadsPanel.setBackground(Color.WHITE);
         threadsPanel.setBorder(new EtchedBorder());
-        maxThreadsLabel.setFont(new Font("Dialog", 0, 12));
-        maxThreadsLabel.setText("Max. threads: ");
-        maxThreadsLabel.setToolTipText("The maximum number of tests to run at one time.");
-        threadsPanel.add(maxThreadsLabel);
-
-        threadsSpinner.setFont(new Font("Dialog", 0, 12));
-        threadsSpinner.setToolTipText("Select the maximum number of threads to run");
-        threadsPanel.add(threadsSpinner);
 
         outputLabel.setFont(new Font("Dialog", 0, 12));
         outputLabel.setText("  Output level: ");
         threadsPanel.add(outputLabel);
 
         outputComboBox.setFont(new Font("Dialog", 0, 12));
-outputComboBox.setModel(new DefaultComboBoxModel(new String[] {"All", "Problems only", "Correct results", "Summary",
-                "Info", "None"}));
+        outputComboBox.setModel(new DefaultComboBoxModel(new String[] {"All", "Problems only", "Correct results",
+                "Summary", "Info", "None"}));
         threadsPanel.add(outputComboBox);
 
         centrePanel.add(threadsPanel);
@@ -139,10 +130,7 @@ outputComboBox.setModel(new DefaultComboBoxModel(new String[] {"All", "Problems 
         getContentPane().add(bottomPanel, BorderLayout.SOUTH);
 
         final GuiTestRunner localGTR = guiTestRunner;
-        final JSpinner localThreadsSpinner = threadsSpinner;
         final JComboBox localOutputComboBox = outputComboBox;
-        
-        threadsSpinner.setModel(new SpinnerNumberModel(guiTestRunner.getMaxThreads(), 0, 10, 1));
 
         cancelButton.addActionListener(new ActionListener() {
 
@@ -156,7 +144,6 @@ outputComboBox.setModel(new DefaultComboBoxModel(new String[] {"All", "Problems 
 
             public void actionPerformed(ActionEvent e) {
 
-                int spinnerValue = ((SpinnerNumberModel) localThreadsSpinner.getModel()).getNumber().intValue();
                 HashMap levels = new HashMap();
                 levels.put("All", new Integer(ReportLine.ALL));
                 levels.put("Problems only", new Integer(ReportLine.PROBLEM));
@@ -169,7 +156,6 @@ outputComboBox.setModel(new DefaultComboBoxModel(new String[] {"All", "Problems 
                 int level = ((Integer) levels.get(selection)).intValue();
 
                 localGTR.setOutputLevel(level);
-                localGTR.setMaxThreads(spinnerValue);
 
                 closeDialog();
             }

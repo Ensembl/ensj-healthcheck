@@ -42,9 +42,6 @@ public class GuiTestRunner extends TestRunner implements Reporter {
     /** The logger to use for this class */
     protected static Logger logger = Logger.getLogger("HealthCheckLogger");
 
-    /** Default maximum number of test threads to run at any one time */
-    protected int maxThreads = 1;
-
     private boolean debug = false;
 
     private GuiTestRunnerFrame gtrf;
@@ -53,7 +50,8 @@ public class GuiTestRunner extends TestRunner implements Reporter {
     /**
      * Command-line entry point.
      * 
-     * @param args Command line arguments.
+     * @param args
+     *          Command line arguments.
      */
     public static void main(String[] args) {
 
@@ -66,22 +64,22 @@ public class GuiTestRunner extends TestRunner implements Reporter {
     private void run(String[] args) {
 
         ReportManager.setReporter(this);
-        
+
         parseCommandLine(args);
 
         Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
-        
+
         DatabaseRegistry databaseRegistry = new DatabaseRegistry(".*");
         if (databaseRegistry.getEntryCount() == 0) {
             logger.warning("Warning: no databases found!");
         }
-    
+
         gtrf = new GuiTestRunnerFrame(this, new TestRegistry(), databaseRegistry);
 
         gtrf.show();
 
         setupLogging();
-        
+
     }
 
     // -------------------------------------------------------------------------
@@ -118,94 +116,87 @@ public class GuiTestRunner extends TestRunner implements Reporter {
     // -------------------------------------------------------------------------
     /**
      * Run all the tests in a list.
-     * @param tests The tests to run.
-     * @param databases The databases to run the tests on.
-     * @param gtrf The test runner frame in which to display the results.
+     * 
+     * @param tests
+     *          The tests to run.
+     * @param databases
+     *          The databases to run the tests on.
+     * @param gtrf
+     *          The test runner frame in which to display the results.
      */
-    protected void runAllTests(EnsTestCase[] tests, DatabaseRegistryEntry[] databases, GuiTestRunnerFrame gtrf) {
+    protected void runAllTests(EnsTestCase[] ltests, DatabaseRegistryEntry[] ldatabases, GuiTestRunnerFrame lgtrf) {
 
-        gtrf.setTestProgressDialogVisibility(true);
+        // need to run the tests in a separate thread
+        final GuiTestRunnerFrame gtrf = lgtrf;
+        final EnsTestCase[] tests = ltests;
+        final DatabaseRegistryEntry[] databases = ldatabases;
 
-        ThreadGroup testThreads = new ThreadGroup("test_threads");
+        Thread t = new Thread() {
 
-        DatabaseRegistry selectedDatabaseRegistry = new DatabaseRegistry(databases);
+            public void run() {
 
-        int totalTestsToRun = tests.length * databases.length;
+                gtrf.setTestProgressDialogVisibility(true);
 
-        gtrf.setTotalToRun(totalTestsToRun);
+                ThreadGroup testThreads = new ThreadGroup("test_threads");
 
-        // for each test, if it's a single database test we run it against each
-        // selected database in turn
-        // for multi-database tests, we create a new DatabaseRegistry containing
-        // the selected tests and use that
-        GUITestRunnerThread t = null;
-        for (int i = 0; i < tests.length; i++) {
+                DatabaseRegistry selectedDatabaseRegistry = new DatabaseRegistry(databases);
 
-            EnsTestCase test = tests[i];
-            if (test instanceof SingleDatabaseTestCase) {
+                int totalTestsToRun = tests.length * databases.length;
 
-                for (int j = 0; j < databases.length; j++) {
+                gtrf.setTotalToRun(totalTestsToRun);
 
-                    t = new GUITestRunnerThread(testThreads, test, databases[j], gtrf, getMaxThreads());
-                    t.start();
+                // for each test, if it's a single database test we run it against each
+                // selected database in turn
+                // for multi-database tests, we create a new DatabaseRegistry containing
+                // the selected tests and use that
+                for (int i = 0; i < tests.length; i++) {
+
+                    EnsTestCase testCase = tests[i];
+
+                    if (testCase instanceof SingleDatabaseTestCase) {
+
+                        for (int j = 0; j < databases.length; j++) {
+                            DatabaseRegistryEntry dbre = databases[j];
+                            String message = testCase.getShortTestName() + ": " + dbre.getName();
+                            gtrf.updateProgressDialog(message);
+                            boolean result = ((SingleDatabaseTestCase) testCase).run(dbre);
+                            gtrf.incrementNumberRun(1);
+                            gtrf.updateProgressDialog();
+                            gtrf.repaintTestProgressDialog();
+                        }
+
+                    } else if (testCase instanceof MultiDatabaseTestCase) {
+
+                        DatabaseRegistry dbr = new DatabaseRegistry(databases);
+                        String message = testCase.getShortTestName() + " ( " + dbr.getEntryCount() + " databases)";
+                        gtrf.updateProgressDialog(message);
+                        boolean result = ((MultiDatabaseTestCase) testCase).run(dbr);
+                        gtrf.incrementNumberRun(dbr.getEntryCount());
+                        gtrf.updateProgressDialog();
+
+                    }
+
+                    // TODO - warn about not running OrderedDatabaseTestCase
+                    // TODO - result handling
 
                 }
 
-            } else if (test instanceof MultiDatabaseTestCase) {
+                gtrf.setTestProgressDialogVisibility(false);
 
-                t = new GUITestRunnerThread(testThreads, test, selectedDatabaseRegistry, gtrf, getMaxThreads());
-                t.start();
+                printReportsByTest(outputLevel);
 
-            }
-            // TODO - warn about not running OrderedDatabaseTestCase
-            // TODO - result handling
+            } // run
 
-        }
+        }; // thread
 
-        // TODO - wait until all tests have finished, print results, remove progress window
-        while (testThreads.activeCount() > 0) {
-            gtrf.repaint();
-            gtrf.repaintTestProgressDialog();
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        gtrf.setTestProgressDialogVisibility(false);
-
-        printReportsByTest(outputLevel);
-
+        t.start();
+        
+        
     } // runAllTests
 
     // -------------------------------------------------------------------------
-    /**
-     * Set the maximum number of test threads to run at one time.
-     * 
-     * @param t The new number of threads.
-     */
-    public void setMaxThreads(int t) {
-
-        maxThreads = t;
-        logger.finest("Set maxThreads to " + maxThreads);
-
-    } // setMaxThreads
-
-    /**
-     * Get the maximum number of test threads to run at one time.
-     * 
-     * @return The number of threads.
-     */
-    public int getMaxThreads() {
-
-        return maxThreads;
-
-    } // getMaxThreads
-
-    // -------------------------------------------------------------------------
     // Implementation of Reporter interface
-    
+
     /**
      * Called when a message is to be stored in the report manager.
      * 
@@ -263,3 +254,29 @@ public class GuiTestRunner extends TestRunner implements Reporter {
     // -------------------------------------------------------------------------
 
 } // GuiTestRunner
+
+//---------------------------------------------------------------------
+
+class MyThread implements Runnable {
+
+    private SingleDatabaseTestCase testCase;
+
+    private DatabaseRegistryEntry dbre;
+
+    public MyThread(SingleDatabaseTestCase testCase, DatabaseRegistryEntry dbre) {
+
+        this.testCase = testCase;
+        this.dbre = dbre;
+
+    }
+
+    public void run() {
+
+        testCase.run(dbre);
+    }
+
+}
+
+//class MySwingWorker extends SwingWorker {
+
+//}

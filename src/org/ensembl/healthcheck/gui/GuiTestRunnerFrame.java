@@ -53,7 +53,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -250,10 +249,7 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
 
         // ----------------------------
         // Create progress window
-        //testProgressDialog = new TestProgressDialog("Running tests", "", 0, 100);
-        TestProgressDialogThread tpdThread = new TestProgressDialogThread();
-        tpdThread.start();
-        testProgressDialog = tpdThread.getDialog();
+        testProgressDialog = new TestProgressDialog("Running tests", "", 0, 100);
 
     }
 
@@ -1091,27 +1087,4 @@ class DatabaseTypeGUIComparator implements Comparator {
     }
 
 }
-// -------------------------------------------------------------------------
-
-/**
- * A thread to hold the test progress dialog so it doesn't block everything else.
- */
-
-class TestProgressDialogThread extends Thread {
-
-    private TestProgressDialog dialog;
-
-    public TestProgressDialogThread() {
-
-        dialog = new TestProgressDialog("Running tests", "", 0, 100);
-
-    }
-
-    public TestProgressDialog getDialog() {
-
-        return dialog;
-
-    }
-}
-
 // -------------------------------------------------------------------------
