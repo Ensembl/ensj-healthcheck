@@ -41,7 +41,6 @@ public class TestRunner {
   protected List groupsToRun;
   /** If set, database names are filtered with this regular expression before the regexp built into the tests. */
   protected String preFilterRegexp;
-  protected String propertiesFileName;
   /** The logger to use for this class */
   protected static Logger logger = Logger.getLogger("HealthCheckLogger");
   /** Output level used by ReportManager */
