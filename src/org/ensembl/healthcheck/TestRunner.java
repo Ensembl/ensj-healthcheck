@@ -395,23 +395,25 @@ public class TestRunner {
 
             String test = (String) it.next();
 
-	    String failureText = "";
-	    try {
-		EnsTestCase testObj = (EnsTestCase)(Class.forName(test).newInstance());
-		failureText = testObj.getFailureText();
-	    } catch (Exception e) {
-		System.err.println("Error, can't instantiate object ");
-		e.printStackTrace();
-	    }
-	    if (printFailureText && failureText.length() > 0) {
-		System.out.println("Note: " + failureText);
-	    }
             List lines = (List) map.get(test);
 	    
 	    if (lines.size() > 0) {
 
 		System.out.println("\n" + test);
 		
+		// print failure text if appropriate
+		String failureText = "";
+		try {
+		    EnsTestCase testObj = (EnsTestCase)(Class.forName(test).newInstance());
+		    failureText = testObj.getFailureText();
+		} catch (Exception e) {
+		    System.err.println("Error, can't instantiate object ");
+		    e.printStackTrace();
+		}
+		if (printFailureText && failureText.length() > 0) {
+		    System.out.println("Note: " + failureText);
+		}
+
 		Iterator it2 = lines.iterator();
 		while (it2.hasNext()) {
 		    ReportLine reportLine = (ReportLine) it2.next();
