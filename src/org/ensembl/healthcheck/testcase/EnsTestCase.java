@@ -483,7 +483,8 @@ public abstract class EnsTestCase {
       if (rs != null && rs.first()) {
         result = rs.getString(1);
       }
-      
+      rs.close();
+      stmt.close();
     } catch (Exception e) {
       e.printStackTrace();
     }
