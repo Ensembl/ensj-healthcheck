@@ -122,6 +122,29 @@ public class TestRegistry {
 	}
 
 	// -----------------------------------------------------------------
+	/**
+	 * Get a list of all the multi-database test cases that match certain conditions. 
+	 * @param groups A list of test case groups
+	 * @param type The type of databases the result tests should apply to.
+	 * @return All the multi-database tests that are in at least one of groups, and apply to type.
+	 */
+	public List getAllMulti(List groups, DatabaseType type) {
+
+		List result = new ArrayList();
+
+		Iterator it = getAllMulti().iterator();
+		while (it.hasNext()) {
+			MultiDatabaseTestCase test = (MultiDatabaseTestCase)it.next();
+			if (test.inGroups(groups) && test.appliesToType(type)) {
+				result.add(test);
+			}
+		}
+
+		return result;
+
+	}
+	
+	// -----------------------------------------------------------------
 
 	/**
 	 * Finds all tests. 
