@@ -46,7 +46,8 @@ public class CheckFeatureCoordsTestCase extends EnsTestCase {
     boolean result = true;
     
     String[] featureTables = { "dna_align_feature", "protein_align_feature", "exon", "repeat_feature",
-    "prediction_transcript", "simple_feature", "marker_feature", "misc_feature" };
+    "prediction_transcript", "prediction_exon", "simple_feature", "marker_feature", "misc_feature",
+    "qtl_feature", "karyotype", "gene", "transcript" };
     
     
     for( int tableIndex = 0; tableIndex < featureTables.length; tableIndex++ ) {
@@ -60,8 +61,8 @@ public class CheckFeatureCoordsTestCase extends EnsTestCase {
         
         logger.info("Checking " + tableName + " for " + DBUtils.getShortDatabaseName(con) + " ...");
         
-        String sql = "SELECT f." + tableName + "_id, f.seq_region_start, f.seq_region_end, s.length " +
-          "FROM " + tableName + " f, seq_region s " +
+        String sql = "SELECT f.seq_region_start, f.seq_region_end, s.length " +
+        "FROM " + tableName + " f, seq_region s " +
         "WHERE s.seq_region_id = f.seq_region_id " +
         "AND ( f.seq_region_start > f.seq_region_end " +
         " OR f.seq_region_start < 1 " +
