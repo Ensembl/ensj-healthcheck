@@ -137,6 +137,8 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
         
         logger.fine("Built translation length cache, about to look at protein features");
         
+        //dumpTranslationLengths(con, translationLengths, 100);
+        
         // find protein features where seq_end is > than the length of the translation
         List thisDBFeatures = new ArrayList();
         rs = stmt.executeQuery("SELECT protein_feature_id, translation_id, seq_end FROM protein_feature");
@@ -211,7 +213,7 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
       sql.append(((Integer)featureIterator.next()).intValue());
       if (featureIterator.hasNext()) {
         sql.append(",");
-      }      
+      }
     }
     sql.append(")");
     
@@ -222,4 +224,52 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
   
   // -------------------------------------------------------------------------
   
+  private void dumpTranslationLengths(Connection con, Map lengths, int maxID) {
+    
+    System.out.println("Translation lengths for " + DBUtils.getShortDatabaseName(con));
+    
+    Set keySet = lengths.keySet();
+    List keyList = new ArrayList(keySet);
+    Collections.sort(keyList, new IntegerComparator());
+    
+    Iterator it = keyList.iterator();
+    while (it.hasNext()) {
+      Integer iid = (Integer)it.next();
+      int id = iid.intValue();
+      if (id > maxID) {
+        break;
+      }
+      Integer iLength = (Integer)lengths.get(iid);
+      int length = iLength.intValue();
+      System.out.println("ID: " + id + "\tLength: " + length);
+    }
+    
+  }
+  
+  // -------------------------------------------------------------------------
+  
 } // ProteinFeatureTranslationTestCase
+
+// -------------------------------------------------------------------------
+
+class IntegerComparator implements Comparator {
+  
+  public int compare(Object o1, Object o2) {
+    
+    int i1 = ((Integer)o1).intValue();
+    int i2 = ((Integer)o2).intValue();
+    
+    int result = 0;
+    if (i1 == i2) {
+      result = 0;
+    } else if (i1 < i2) {
+      result = -1;
+    } else if (i1 > i2) {
+      result = 1;
+    }
+    
+    return result;
+    
+  }
+  
+}
