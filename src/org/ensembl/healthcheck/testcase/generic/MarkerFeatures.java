@@ -166,7 +166,7 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 	//  - on the top-level co-ordinate system and
 	//  - doesn't have and _ or . in the name and
 	//  - has a seq_region name of less than 3 characters 
-        //  - doesn't have a name starting with "Un"
+        //  - doesn't have a name starting with "Un" or "MT"
 
 	// get top level co-ordinate system ID
 	String sql = "SELECT coord_system_id FROM coord_system WHERE rank=1 LIMIT 1";
@@ -186,7 +186,7 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 	    // marker_map_locations and marker features there are
 	    Statement stmt = con.createStatement();
 		
-	    ResultSet rs = stmt.executeQuery("SELECT * FROM seq_region WHERE coord_system_id=" + topLevelCSID + " AND name NOT LIKE '%\\_%' AND name NOT LIKE '%.%' AND name NOT LIKE 'Un%' AND LENGTH(name) < 3 ORDER BY name" );
+	    ResultSet rs = stmt.executeQuery("SELECT * FROM seq_region WHERE coord_system_id=" + topLevelCSID + " AND name NOT LIKE '%\\_%' AND name NOT LIKE '%.%' AND name NOT LIKE 'Un%' AND name NOT LIKE 'MT%' AND LENGTH(name) < 3 ORDER BY name" );
 		
 	    int numTopLevel = 0;
 		
