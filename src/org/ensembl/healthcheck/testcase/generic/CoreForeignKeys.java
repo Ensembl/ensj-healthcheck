@@ -87,6 +87,8 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
         result &= checkForOrphans(con, "assembly_exception", "exc_seq_region_id", "seq_region", "seq_region_id", true);
 
+        result &= checkForOrphans(con, "protein_feature", "translation_id", "translation", "translation_id", true);
+        
         //		 ----------------------------
         // Check stable IDs all correspond to an existing object
         String[] stableIDtypes = { "gene", "transcript", "translation", "exon"};
