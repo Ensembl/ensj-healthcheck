@@ -1501,5 +1501,35 @@ public abstract class EnsTestCase {
     } //checkForOrphansWithConstraint
 
     // ----------------------------------------------------------------------
+    /**
+     * Check that a particular column has no null values.
+     * Problem or correct reports are generated via ReportManager.
+     *
+     * @param con The database connection to use.
+     * @param table The table name.
+     * @param column The column to check.
+     * @return Ttrue if no columns are null, false otherwise.
+     */
+    public boolean checkNoNulls(Connection con, String table, String column) {
+     
+	boolean result = true;
+	
+	int nulls = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE " + column + " IS NULL");
+
+	if (nulls > 0) {
+	    
+	    ReportManager.problem(this, con, nulls + " NULL values in " + table + "." + column);
+	    result = false;
+
+	} else {
+	    
+	    ReportManager.correct(this, con, "No NULL values in " + table + "." + column);
+	}
+
+	return result;
+	
+    } // checkNoNulls
+     
+    // ----------------------------------------------------------------------
 
 } // EnsTestCase
