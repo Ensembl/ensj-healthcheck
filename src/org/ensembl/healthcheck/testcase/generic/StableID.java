@@ -38,12 +38,23 @@ import org.ensembl.healthcheck.util.DBUtils;
  */
 public class StableID extends SingleDatabaseTestCase {
 
+    /**
+     * Create a new instance of StableID.
+     */
     public StableID() {
         addToGroup("id_mapping");
         addToGroup("release");
         setDescription("Checks *_stable_id tables are valid.");
     }
 
+    /**
+     * Run the test.
+     * 
+     * @param dbre
+     *          The database to use.
+     * @return true if the test pased.
+     *  
+     */
     public boolean run(DatabaseRegistryEntry dbre) {
 
         boolean result = true;

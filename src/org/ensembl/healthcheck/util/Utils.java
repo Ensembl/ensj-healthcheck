@@ -36,8 +36,8 @@ import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
 /**
- * General utilities (not database-related). For database-related utilities,
- * see {@link DBUtils DBUtils}.
+ * General utilities (not database-related). For database-related utilities, see
+ * {@link DBUtils DBUtils}.
  */
 
 public final class Utils {
@@ -49,8 +49,8 @@ public final class Utils {
     };
 
     /**
-     * Read the <code>database.properties</code> file into the System
-     * properties so that it can be overridden with -D.
+     * Read the <code>database.properties</code> file into the System properties so that it can
+     * be overridden with -D.
      * 
      * @param propertiesFileName
      *          The properties file to read.
@@ -158,8 +158,7 @@ public final class Utils {
      *          The Strings to list.
      * @param delim
      *          The delimiter to use.
-     * @return A String containing the elements of list separated by delim. No
-     *         trailing delimiter.
+     * @return A String containing the elements of list separated by delim. No trailing delimiter.
      */
     public static String listToString(List list, String delim) {
 
@@ -184,8 +183,7 @@ public final class Utils {
      *          The Strings to list.
      * @param delim
      *          The delimiter to use.
-     * @return A String containing the elements of a separated by delim. No
-     *         trailing delimiter.
+     * @return A String containing the elements of a separated by delim. No trailing delimiter.
      */
     public static String arrayToString(String[] a, String delim) {
 
@@ -256,8 +254,7 @@ public final class Utils {
      *          The String to split.
      * @param delim
      *          FileSystem classpath delimiter.
-     * @return An array containing one string per path, in the order they
-     *         appear in classPath.
+     * @return An array containing one string per path, in the order they appear in classPath.
      */
     public static String[] splitClassPath(String classPath, String delim) {
 
@@ -281,8 +278,7 @@ public final class Utils {
      *          The List to search.
      * @param pattern
      *          The pattern to look for.
-     * @return The matching paths, in the order that they were in the input
-     *         array.
+     * @return The matching paths, in the order that they were in the input array.
      */
     public static String[] grepPaths(String[] paths, String pattern) {
 
@@ -334,8 +330,7 @@ public final class Utils {
      * @param size
      *          The maximum number of characters.
      * @param useEllipsis
-     *          If true, add "..." to the truncated string to show it's been
-     *          truncated.
+     *          If true, add "..." to the truncated string to show it's been truncated.
      * @return The truncated String, with ellipsis if specified.
      */
     public static String truncate(String str, int size, boolean useEllipsis) {
@@ -429,9 +424,9 @@ public final class Utils {
 
     // -------------------------------------------------------------------------
     /**
-     * Check if a String is in an array of Strings. The whole array is searched
-     * (until a match is found); this is quite slow but does not require the
-     * array to be sorted in any way beforehand.
+     * Check if a String is in an array of Strings. The whole array is searched (until a match is
+     * found); this is quite slow but does not require the array to be sorted in any way
+     * beforehand.
      * 
      * @param str
      *          The String to search for.
@@ -439,6 +434,7 @@ public final class Utils {
      *          The array to search through.
      * @param caseSensitive
      *          If true, case sensitive searching is done.
+     * @return true if str is in a.
      */
     public static boolean stringInArray(String str, String[] a, boolean caseSensitive) {
 
@@ -466,14 +462,14 @@ public final class Utils {
 
     // -------------------------------------------------------------------------
     /**
-     * Check if an object is in an array. The whole array is searched (until a
-     * match is found); this is quite slow but does not require the array to be
-     * sorted in any way beforehand.
+     * Check if an object is in an array. The whole array is searched (until a match is found);
+     * this is quite slow but does not require the array to be sorted in any way beforehand.
      * 
      * @param o
      *          The Object to search for.
      * @param a
      *          The array to search through.
+     * @return true if o is in a.
      */
     public static boolean objectInArray(Object o, Object[] a) {
 
@@ -491,8 +487,11 @@ public final class Utils {
 
     // -----------------------------------------------------------------
     /**
-     * Return an array containing all of the subdirectories of a given
-     * directory.
+     * Return an array containing all of the subdirectories of a given directory.
+     * 
+     * @param parentDir
+     *          The directory to look in.
+     * @return All the subdirectories (if any) in parentDir.
      */
     public static String[] getSubDirs(String parentDir) {
 
@@ -526,8 +525,7 @@ public final class Utils {
      *          The array to be filtered.
      * @param remove
      *          An array of objects to be removed from source.
-     * @return A new array containing all objects that are in source minus any
-     *         that are in remove.
+     * @return A new array containing all objects that are in source minus any that are in remove.
      */
     public static Object[] filterArray(Object[] source, Object[] remove) {
 

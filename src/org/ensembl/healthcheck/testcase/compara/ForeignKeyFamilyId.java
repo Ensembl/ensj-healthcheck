@@ -25,8 +25,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * An EnsEMBL Healthcheck test case that looks for broken foreign-key
- * relationships.
+ * An EnsEMBL Healthcheck test case that looks for broken foreign-key relationships.
  */
 
 public class ForeignKeyFamilyId extends SingleDatabaseTestCase {
@@ -41,6 +40,14 @@ public class ForeignKeyFamilyId extends SingleDatabaseTestCase {
 
     }
 
+    /**
+     * Run the test.
+     * 
+     * @param dbre
+     *          The database to use.
+     * @return true if the test pased.
+     *  
+     */
     public boolean run(DatabaseRegistryEntry dbre) {
 
         boolean result = true;

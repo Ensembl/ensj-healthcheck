@@ -31,7 +31,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 public class ExonStrandOrder extends SingleDatabaseTestCase {
 
-    public static final int TRANSCRIPT_WARN_LENGTH = 2000000;
+    private static final int TRANSCRIPT_WARN_LENGTH = 2000000;
 
     /**
      * Constructor.
@@ -47,6 +47,8 @@ public class ExonStrandOrder extends SingleDatabaseTestCase {
     /**
      * Check strand order of exons.
      * 
+     * @param dbre
+     *          The database to use.
      * @return Result.
      */
 
@@ -54,8 +56,7 @@ public class ExonStrandOrder extends SingleDatabaseTestCase {
 
         boolean result = true;
 
-        int singleExonTranscripts = 0;
-        int transcriptCount = 0;
+        int singleExonTranscripts = 0, transcriptCount = 0;
 
         String sql = "SELECT g.gene_id, g.seq_region_start, g.seq_region_end, g.seq_region_strand, tr.transcript_id, tr.seq_region_start, tr.seq_region_end, tr.seq_region_strand,e.exon_id, e.seq_region_start, e.seq_region_end, e.seq_region_strand, et.rank, gsi.stable_id "
                 + "FROM   gene g, transcript tr, exon_transcript et, exon e, gene_stable_id gsi "
@@ -63,11 +64,12 @@ public class ExonStrandOrder extends SingleDatabaseTestCase {
                 + "AND    et.transcript_id = tr.transcript_id "
                 + "AND    tr.gene_id = g.gene_id "
                 + "AND    g.gene_id = gsi.gene_id "
-                + "ORDER BY et.transcript_id, et.rank"; 
+                + "ORDER BY et.transcript_id, et.rank";
 
         Connection con = dbre.getConnection();
         try {
-            Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
+            Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY,
+                    java.sql.ResultSet.CONCUR_READ_ONLY);
             stmt.setFetchSize(Integer.MIN_VALUE);
             ResultSet rs = stmt.executeQuery(sql);
 
@@ -80,7 +82,6 @@ public class ExonStrandOrder extends SingleDatabaseTestCase {
 
             // ResultSet is ordered by transcript ID and rank, so we can loop through
             // and look at the grouped exons for each transcript
-
             while (rs.next()) {
 
                 long geneID = rs.getLong(1);
@@ -97,15 +98,15 @@ public class ExonStrandOrder extends SingleDatabaseTestCase {
                 int exonStrand = rs.getInt(12);
                 int exonRank = rs.getInt(13);
                 String geneStableID = rs.getString(14);
-                
+
                 if (geneStableID.equalsIgnoreCase("CG32491")) {
                     continue;
                 }
-                
+
                 if (transcriptID == lastTranscriptID) {
 
-                    if (lastExonStrand < -1) {// first exon in "new" transcript
-
+                    if (lastExonStrand < -1) {
+                        // first exon in "new" transcript
                         lastExonStrand = exonStrand;
                         lastExonStart = exonStart;
                         lastExonEnd = exonEnd;
@@ -114,41 +115,39 @@ public class ExonStrandOrder extends SingleDatabaseTestCase {
 
                     } else {
 
-                        //System.out.println("Checking tr " + transcriptID + " strand " +
-                        // transcriptStrand + " exon " + exonID + " strand " + exonStrand);
-
                         // check all exons in a transcript have the same strand
                         if (exonStrand != lastExonStrand) {
-                            ReportManager.problem(this, con, "Exons in transcript " + transcriptID + " have different strands");
+                            ReportManager.problem(this, con, "Exons in transcript " + transcriptID
+                                    + " have different strands");
                             result = false;
                         }
 
                         // check all exons have the same strand as their transcript
                         if (exonStrand != transcriptStrand) {
-                            ReportManager.problem(this, con, "Exon " + exonID + " in transcript " + transcriptID + " has strand "
-                                    + exonStrand + " but transcript's strand is " + transcriptStrand);
+                            ReportManager.problem(this, con, "Exon " + exonID + " in transcript " + transcriptID
+                                    + " has strand " + exonStrand + " but transcript's strand is " + transcriptStrand);
                             result = false;
                         }
 
                         // check that exon start/ends make sense
                         if (exonStrand == 1) {
                             if (lastExonEnd > exonStart) {
-                                ReportManager.problem(this, con, "Exons " + lastExonID + " and " + exonID + " in transcript "
-                                        + transcriptID + " appear to overlap (positive strand)");
+                                ReportManager.problem(this, con, "Exons " + lastExonID + " and " + exonID
+                                        + " in transcript " + transcriptID + " appear to overlap (positive strand)");
                                 result = false;
                             }
                         } else if (exonStrand == -1) {
                             if (lastExonStart < exonEnd) {
-                                ReportManager.problem(this, con, "Exons " + lastExonID + " and " + exonID + " in transcript "
-                                        + transcriptID + " appear to overlap (negative strand)");
+                                ReportManager.problem(this, con, "Exons " + lastExonID + " and " + exonID
+                                        + " in transcript " + transcriptID + " appear to overlap (negative strand)");
                                 result = false;
                             }
                         }
 
                         // check for rank jumping
                         if (exonRank - lastExonRank > 1) {
-                            ReportManager.problem(this, con, "Exon rank jump in exon " + exonID + " transcript: " + transcriptID
-                                    + " gene: " + geneID);
+                            ReportManager.problem(this, con, "Exon rank jump in exon " + exonID + " transcript: "
+                                    + transcriptID + " gene: " + geneID);
                             result = false;
                         }
 
@@ -195,11 +194,9 @@ public class ExonStrandOrder extends SingleDatabaseTestCase {
                 ReportManager.warning(this, con, "High single exon transcript count. (" + singleExonTranscripts + "/"
                         + transcriptCount + ")");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         ReportManager.correct(this, con, "Exon strand order seems OK");
 
         return result;

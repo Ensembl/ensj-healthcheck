@@ -30,7 +30,7 @@ import org.ensembl.healthcheck.CallbackTarget;
  */
 public class CallbackHandler extends Handler {
 
-    CallbackTarget callbackTarget;
+    private CallbackTarget callbackTarget;
 
     // ------------------------------------------------------------------------
     /**

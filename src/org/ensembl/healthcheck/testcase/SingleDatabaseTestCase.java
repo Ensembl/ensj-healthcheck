@@ -20,12 +20,18 @@ package org.ensembl.healthcheck.testcase;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 
 /**
- * Subclass of EnsTestCase for tests that apply to a <em>single</em>
- * database. Such tests should subclass <em>this</em> class and implement the
- * <code>run</code> method.
+ * Subclass of EnsTestCase for tests that apply to a <em>single</em> database. Such tests should
+ * subclass <em>this</em> class and implement the <code>run</code> method.
  */
 public abstract class SingleDatabaseTestCase extends EnsTestCase {
 
+    /**
+     * This method should be overridden by subclasses.
+     * 
+     * @param dbre
+     *          The database to run on.
+     * @return True if the test passed.
+     */
     public abstract boolean run(DatabaseRegistryEntry dbre);
 
 }

@@ -39,7 +39,7 @@ import org.ensembl.healthcheck.util.Utils;
  */
 public class TestRegistry {
 
-    protected static Logger logger = Logger.getLogger("HealthCheckLogger");
+    private static Logger logger = Logger.getLogger("HealthCheckLogger");
 
     private List allTests; // a list of EnsTestCase objects
 
@@ -126,8 +126,10 @@ public class TestRegistry {
     /**
      * Get a list of all the single-database test cases that match certain conditions.
      * 
-     * @param groups A list of test case groups
-     * @param type The type of databases the result tests should apply to.
+     * @param groups
+     *          A list of test case groups
+     * @param type
+     *          The type of databases the result tests should apply to.
      * @return All the single-database tests that are in at least one of groups, and apply to type.
      */
     public List getAllSingle(List groups, DatabaseType type) {
@@ -151,7 +153,8 @@ public class TestRegistry {
      * Get a list of all the multi-database test cases that match certain conditions. Note the
      * database type that the test applies to is /not/ checked here.
      * 
-     * @param groups A list of test case groups
+     * @param groups
+     *          A list of test case groups
      * @return All the multi-database tests that are in at least one of groups.
      */
     public List getAllMulti(List groups) {
@@ -175,7 +178,8 @@ public class TestRegistry {
      * Get a list of all the ordered database test cases that match certain conditions. Note the
      * database type that the test applies to is /not/ checked here.
      * 
-     * @param groups A list of test case groups
+     * @param groups
+     *          A list of test case groups
      * @return All the ordered-database tests that are in at least one of groups.
      */
     public List getAllOrdered(List groups) {
@@ -206,7 +210,7 @@ public class TestRegistry {
      */
     public List findAllTests() {
 
-       allTests = new ArrayList();
+        allTests = new ArrayList();
 
         // --------------------------------------
         // Look for class files located in the appropriate package in the build/ directory.
@@ -242,7 +246,8 @@ public class TestRegistry {
         // This is done second as if there is a class file for this test case in the build dir
         // then that should be used instead of the one in the jar file.
         // (addUniqueTests doesn't add a test if it's already in the list)
-        String jarFileName = System.getProperty("user.dir") + File.separator + "lib" + File.separator + "ensj-healthcheck.jar";
+        String jarFileName = System.getProperty("user.dir") + File.separator + "lib" + File.separator
+                + "ensj-healthcheck.jar";
         if ((new File(jarFileName)).exists()) {
             addUniqueTests(allTests, findTestsInJar(jarFileName, BASE_TESTCASE_PACKAGE));
         }
@@ -259,8 +264,10 @@ public class TestRegistry {
     /**
      * Find all the tests (ie classes that extend EnsTestCase) in a directory.
      * 
-     * @param dir The base directory to look in.
-     * @param packageName The package name to look for.
+     * @param dir
+     *          The base directory to look in.
+     * @param packageName
+     *          The package name to look for.
      * @return A list of tests in dir.
      */
     public List findTestsInDirectory(String dir, String packageName) {
@@ -274,7 +281,8 @@ public class TestRegistry {
         ClassFileFilenameFilter cnff = new ClassFileFilenameFilter();
         File[] classFiles = f.listFiles(cnff);
         if (classFiles.length > 0) {
-            logger.finer("Examining " + classFiles.length + " class file" + (classFiles.length > 1 ? "s" : "") + " in " + dir);
+            logger.finer("Examining " + classFiles.length + " class file" + (classFiles.length > 1 ? "s" : "") + " in "
+                    + dir);
         }
 
         Object obj = new Object();
@@ -305,7 +313,7 @@ public class TestRegistry {
 
                 // call the test's type method
                 testCase.types();
-                
+
                 // store the test instance
                 tests.add(testCase);
 
@@ -320,8 +328,10 @@ public class TestRegistry {
     /**
      * Find tests in a jar file.
      * 
-     * @param jarFileName The name of the jar file to search.
-     * @param packageName The package name of the tests.
+     * @param jarFileName
+     *          The name of the jar file to search.
+     * @param packageName
+     *          The package name of the tests.
      * @return The list of tests in the jar file.
      */
     public List findTestsInJar(String jarFileName, String packageName) {
@@ -387,8 +397,10 @@ public class TestRegistry {
      * Add all tests in subList to mainList, <em>unless</em> the test is already a member of
      * mainList.
      * 
-     * @param mainList The list to add to.
-     * @param subList The list to be added.
+     * @param mainList
+     *          The list to add to.
+     * @param subList
+     *          The list to be added.
      */
     public void addUniqueTests(List mainList, List subList) {
 
@@ -411,8 +423,10 @@ public class TestRegistry {
     /**
      * Check if a particular test is in a list of tests. The check is done by test name.
      * 
-     * @param test The test case to check.
-     * @param list The list to search.
+     * @param test
+     *          The test case to check.
+     * @param list
+     *          The list to search.
      * @return true if test is in list.
      */
     public boolean testInList(EnsTestCase test, List list) {
@@ -460,6 +474,8 @@ public class TestRegistry {
     // -------------------------------------------------------------------------
     /**
      * Get a list of the union of groups of all the tests.
+     * 
+     * @return An array of all the group names.
      */
     public String[] getGroups() {
 
@@ -486,6 +502,10 @@ public class TestRegistry {
     // -------------------------------------------------------------------------
     /**
      * Get all the tests in a particular group.
+     * 
+     * @param group
+     *          the group to run.
+     * @return The array of tests in group.
      */
     public EnsTestCase[] getTestsInGroup(String group) {
 
@@ -507,6 +527,10 @@ public class TestRegistry {
     /**
      * Get a list of the union of groups of all the tests that apply to a particular type of
      * database.
+     * 
+     * @param type
+     *          The type to check.
+     * @return The union of groups of all the tests that apply to type.
      */
     public String[] getGroups(DatabaseType type) {
 
@@ -534,8 +558,13 @@ public class TestRegistry {
 
     // -------------------------------------------------------------------------
     /**
-     * Get all the tests in a particular group that apply to a particular 
-     * type of database.
+     * Get all the tests in a particular group that apply to a particular type of database.
+     * 
+     * @param group
+     *          The group to check.
+     * @param type
+     *          The type to check.
+     * @return All the tests in group that apply to type.
      */
     public EnsTestCase[] getTestsInGroup(String group, DatabaseType type) {
 
@@ -555,11 +584,10 @@ public class TestRegistry {
 
     // -------------------------------------------------------------------------
     /**
-     * Check if a string (e.g. the name of a group) is actually the name of a known
-     * test case.
+     * Check if a string (e.g. the name of a group) is actually the name of a known test case.
      */
     private boolean isTestName(String s) {
-        
+
         Iterator it = allTests.iterator();
         while (it.hasNext()) {
             EnsTestCase test = (EnsTestCase) it.next();
@@ -567,9 +595,9 @@ public class TestRegistry {
                 return true;
             }
         }
-        
+
         return false;
-        
+
     }
     // -------------------------------------------------------------------------
 

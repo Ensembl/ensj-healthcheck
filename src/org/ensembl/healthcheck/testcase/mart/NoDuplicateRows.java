@@ -18,7 +18,10 @@
 
 /*
  * 
- * $Log$ Revision 1.1.2.1 2004/03/01 09:42:08 gp1
+ * $Log$
+ * Revision 1.1.2.2  2004/03/17 17:31:53  gp1
+ * Changes to nearly every file in the project; many are stylistic only, but many remove potential errors (e.g. tab characters in SQL) or improve performance (removal of use of on-demand imports)
+ * Revision 1.1.2.1 2004/03/01 09:42:08 gp1
  * Moved into mart subdirectory. Some tests renamed
  * 
  * Revision 1.2.2.1 2004/02/23 14:26:57 gp1 No longer depends on SchemaInfo etc
@@ -58,6 +61,9 @@ public class NoDuplicateRows extends SingleDatabaseTestCase {
 
     /**
      * For each schema, check that every table has #rows = #distinct rows.
+     * @param dbre
+     *          The database to use.
+     * @return true if the test passed.
      */
     public boolean run(DatabaseRegistryEntry dbre) {
 

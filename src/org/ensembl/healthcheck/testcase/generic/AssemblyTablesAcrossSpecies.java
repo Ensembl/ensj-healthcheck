@@ -40,6 +40,8 @@ public class AssemblyTablesAcrossSpecies extends MultiDatabaseTestCase {
     /**
      * Make sure that the assembly tables are all the same.
      * 
+     * @param dbr
+     *          The database registry containing all the specified databases.
      * @return True if the assembly table is the same across all the species in
      *         the registry.
      */

@@ -62,6 +62,9 @@ public final class Species {
         this.name = name;
     }
 
+    /**
+     * @return The string representation of this species.
+     */
     public String toString() {
         return this.name;
     }

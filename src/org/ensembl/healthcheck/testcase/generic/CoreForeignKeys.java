@@ -43,7 +43,8 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
     /**
      * Look for broken foreign key realtionships.
-     * 
+     * @param dbre
+     *          The database to use.
      * @return true Ff all foreign key relationships are valid.
      */
     public boolean run(DatabaseRegistryEntry dbre) {

@@ -39,7 +39,8 @@ public class TranslationStartEnd extends SingleDatabaseTestCase {
 
     /**
      * Find any matching databases that have start > end.
-     * 
+     * @param dbre
+     *          The database to use.
      * @return Result.
      */
     public boolean run(DatabaseRegistryEntry dbre) {

@@ -41,6 +41,14 @@ public class ForeignKeyMemberId extends SingleDatabaseTestCase {
 
     }
 
+    /**
+     * Run the test.
+     * 
+     * @param dbre
+     *          The database to use.
+     * @return true if the test pased.
+     *  
+     */
     public boolean run(DatabaseRegistryEntry dbre) {
 
         boolean result = true;

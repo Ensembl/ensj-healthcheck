@@ -256,14 +256,14 @@ public final class DBUtils {
                 return false; // Deliberate early return for performance
                 // reasons
             }
-            for (int i = 1; i <= rsmd1.getColumnCount(); i++) {// note columns
-                // indexed from
-                // 1
+            for (int i = 1; i <= rsmd1.getColumnCount(); i++) {
+                //  note columns indexed from l
                 if (!((rsmd1.getColumnName(i)).equals(rsmd2.getColumnName(i)))) {
                     ReportManager.problem(testCase, name1, "Column names differ for column " + i + " - " + name1 + ": "
                             + rsmd1.getColumnName(i) + " " + name2 + ": " + rsmd2.getColumnName(i));
-                    return false; // Deliberate early return for performance
-                    // reasons
+                    // Deliberate early return for performance reasons
+                    return false; 
+
                 }
                 if (rsmd1.getColumnType(i) != rsmd2.getColumnType(i)) {
                     ReportManager.problem(testCase, name1, "Column types differ for column " + i + " - " + name1 + ": "
@@ -281,18 +281,15 @@ public final class DBUtils {
             int row = 0;
             while (rs1.next() && rs2.next()) {
 
-                for (int j = 1; j <= rsmd1.getColumnCount(); j++) {// note
-                    // columns
-                    // indexed
-                    // from 1
+                for (int j = 1; j <= rsmd1.getColumnCount(); j++) {
+                    // note columns indexed from l
                     if (!compareColumns(rs1, rs2, j)) {
                         String str = name1 + " and " + name2 + text + " differ at row " + row + " column " + j + " ("
                                 + rsmd1.getColumnName(j) + ")" + " Values: "
                                 + Utils.truncate(rs1.getString(j), 25, true) + ", "
                                 + Utils.truncate(rs2.getString(j), 25, true);
                         ReportManager.problem(testCase, name1, str);
-                        return false; // Deliberate early return for
-                        // performance reasons
+                        return false; 
                     }
                 }
                 row++;

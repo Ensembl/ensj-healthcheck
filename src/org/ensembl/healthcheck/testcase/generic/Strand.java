@@ -29,7 +29,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 public class Strand extends SingleDatabaseTestCase {
 
-    String[] tables = {"prediction_transcript", "prediction_exon", "transcript", "gene", "exon"};
+    private String[] tables = {"prediction_transcript", "prediction_exon", "transcript", "gene", "exon"};
 
     /**
      * Create a new Strand testcase.
@@ -42,6 +42,14 @@ public class Strand extends SingleDatabaseTestCase {
 
     }
 
+    /**
+     * Run the test.
+     * 
+     * @param dbre
+     *          The database to use.
+     * @return true if the test pased.
+     *  
+     */
     public boolean run(DatabaseRegistryEntry dbre) {
 
         for (int i = 0; i < tables.length; i++) {

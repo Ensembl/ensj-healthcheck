@@ -31,15 +31,15 @@ import org.ensembl.healthcheck.util.Utils;
  */
 public class ListAllTests extends TestRunner {
 
-    String groupToList = "";
+    private String groupToList = "";
 
-    boolean showGroups = false;
+    private boolean showGroups = false;
 
-    boolean showDesc = false;
+    private boolean showDesc = false;
 
-    static boolean showGroupsOnly = false;
+    private static boolean showGroupsOnly = false;
 
-    boolean listAllGroups = false;
+    private boolean listAllGroups = false;
 
     // -------------------------------------------------------------------------
     /**

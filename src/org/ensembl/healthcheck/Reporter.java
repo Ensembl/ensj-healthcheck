@@ -21,11 +21,16 @@ package org.ensembl.healthcheck;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 
 /**
- * Interface to be implemented by any class that provides reports on the status
- * of a test case.
+ * Interface to be implemented by any class that provides reports on the status of a test case.
  */
 public interface Reporter {
 
+    /**
+     * Called when a message needs to be stored.
+     * 
+     * @param reportLine
+     *          The report to store.
+     */
     void message(ReportLine reportLine);
 
     /**
@@ -34,8 +39,7 @@ public interface Reporter {
      * @param testCase
      *          The test case about to be run.
      * @param dbre
-     *          The database which testCase is to be run on, or null of
-     *          no/several databases.
+     *          The database which testCase is to be run on, or null of no/several databases.
      */
     void startTestCase(EnsTestCase testCase, DatabaseRegistryEntry dbre);
 
@@ -47,8 +51,7 @@ public interface Reporter {
      * @param result
      *          The result of testCase.
      * @param dbre
-     *          The database which testCase was run on, or null of no/several
-     *          databases.
+     *          The database which testCase was run on, or null of no/several databases.
      */
     void finishTestCase(EnsTestCase testCase, boolean result, DatabaseRegistryEntry dbre);
 

@@ -22,14 +22,16 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 /**
- * Check meta table species, classification and taxonomy_id is the same in all
- * DBs for each species
+ * Check meta table species, classification and taxonomy_id is the same in all DBs for each species
  */
 
 public class MetaCrossSpecies extends MultiDatabaseTestCase {
 
     private DatabaseType[] types = {DatabaseType.CORE, DatabaseType.EST, DatabaseType.ESTGENE, DatabaseType.VEGA};
 
+    /**
+     * Create a new instance of MetaCrossSpecies
+     */
     public MetaCrossSpecies() {
         addToGroup("post_genebuild");
         addToGroup("release");
@@ -39,6 +41,8 @@ public class MetaCrossSpecies extends MultiDatabaseTestCase {
     /**
      * Check various aspects of the meta table.
      * 
+     * @param dbr
+     *          The database registry containing all the specified databases.
      * @return True if the meta information is consistent within species.
      */
     public boolean run(DatabaseRegistry dbr) {

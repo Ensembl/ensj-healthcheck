@@ -40,6 +40,8 @@ public class DNATablesAcrossSpecies extends MultiDatabaseTestCase {
     /**
      * Make sure that the dna table has the same number of rows across species.
      * 
+     * @param dbr
+     *          The database registry containing all the specified databases.
      * @return True if dna has the same number of rows within species.
      */
     public boolean run(DatabaseRegistry dbr) {

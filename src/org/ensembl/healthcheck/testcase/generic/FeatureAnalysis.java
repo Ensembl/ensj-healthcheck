@@ -29,7 +29,8 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  */
 public class FeatureAnalysis extends SingleDatabaseTestCase {
 
-    String[] proteinFeatureAnalyses = {"prints", "pfscan", "scanprosite", "signalp", "seg", "ncoils", "pfam", "tmhmm"};
+    private String[] proteinFeatureAnalyses = {"prints", "pfscan", "scanprosite", "signalp", "seg", "ncoils", "pfam",
+            "tmhmm"};
 
     /**
      * Creates a new instance of FeatureAnalysis
@@ -42,14 +43,24 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 
     }
 
+    /**
+     * FeatureAnalysis only applies to core and Vega databases.
+     */
     public void types() {
 
-        // this testcase only applies to CORE and VEGA
         removeAppliesToType(DatabaseType.EST);
         removeAppliesToType(DatabaseType.ESTGENE);
 
     }
 
+    /**
+     * Run the test.
+     * 
+     * @param dbre
+     *          The database to use.
+     * @return true if the test pased.
+     *  
+     */
     public boolean run(DatabaseRegistryEntry dbre) {
 
         boolean result = true;

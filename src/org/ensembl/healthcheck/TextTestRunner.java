@@ -40,11 +40,12 @@ public class TextTestRunner extends TestRunner implements Reporter {
     private static String version = "$Id$";
 
     private ArrayList databaseRegexps = new ArrayList(); // note order is
-                                                         // important
+
+    // important
 
     private boolean debug = false;
 
-    public ArrayList outputBuffer = new ArrayList();
+    private ArrayList outputBuffer = new ArrayList();
 
     private String lastDatabase = "";
 
@@ -300,13 +301,13 @@ public class TextTestRunner extends TestRunner implements Reporter {
     private void setupLogging() {
 
         logger.setUseParentHandlers(false); // stop parent logger getting the
-                                            // message
+        // message
 
         Handler myHandler = new MyStreamHandler(System.out, new LogFormatter());
 
         logger.addHandler(myHandler);
         logger.setLevel(Level.WARNING); // default - only print important
-                                        // messages
+        // messages
 
         if (debug) {
 
@@ -320,6 +321,12 @@ public class TextTestRunner extends TestRunner implements Reporter {
     // setupLogging
     // -------------------------------------------------------------------------
 
+    /**
+     * Called when a message is to be stored in the report manager.
+     * 
+     * @param reportLine
+     *          The message to store.
+     */
     public void message(ReportLine reportLine) {
 
         String level = "ODD    ";
@@ -357,6 +364,14 @@ public class TextTestRunner extends TestRunner implements Reporter {
                 + lineBreakString(reportLine.getMessage(), outputLineLength, "              "));
     }
 
+    /**
+     * Called just before a test case is run.
+     * 
+     * @param testCase
+     *          The test case about to be run.
+     * @param dbre
+     *          The database which testCase is to be run on, or null of no/several databases.
+     */
     public void startTestCase(EnsTestCase testCase, DatabaseRegistryEntry dbre) {
 
         String name;
@@ -369,13 +384,22 @@ public class TextTestRunner extends TestRunner implements Reporter {
         System.out.flush();
     }
 
+    /**
+     * Should be called just after a test case has been run.
+     * 
+     * @param testCase
+     *          The test case that was run.
+     * @param result
+     *          The result of testCase.
+     * @param dbre
+     *          The database which testCase was run on, or null of no/several databases.
+     */
     public void finishTestCase(EnsTestCase testCase, boolean result, DatabaseRegistryEntry dbre) {
 
         System.out.println(result ? " PASSED" : " FAILED");
         /*
-         * lastDatabase = ""; Iterator it = outputBuffer.iterator(); while
-         * (it.hasNext()) { System.out.println((String)it.next()); }
-         * outputBuffer.clear();
+         * lastDatabase = ""; Iterator it = outputBuffer.iterator(); while (it.hasNext()) {
+         * System.out.println((String)it.next()); } outputBuffer.clear();
          */
     }
 

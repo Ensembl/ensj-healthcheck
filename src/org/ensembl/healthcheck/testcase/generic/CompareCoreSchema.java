@@ -57,6 +57,10 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
 
     /**
      * Compare each database with the master.
+     * 
+     * @param dbr
+     *          The database registry containing all the specified databases.
+     * @return true if the test passed.
      */
     public boolean run(DatabaseRegistry dbr) {
 
@@ -89,21 +93,20 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
         try {
 
             if (definitionFile != null) { // use a schema definition file to
-                                          // generate a temporary database
+                // generate a temporary database
 
                 logger.info("About to import " + definitionFile);
                 masterCon = importSchema(definitionFile);
                 logger.info("Got connection to " + DBUtils.getShortDatabaseName(masterCon));
 
-            } else if (masterSchema != null) {// use the defined schema name as
-                                              // the master
-
+            } else if (masterSchema != null) {
+                // use the defined schema name as the master
                 // get connection to master schema
                 masterCon = getSchemaConnection(masterSchema);
                 logger.fine("Opened connection to master schema in " + DBUtils.getShortDatabaseName(masterCon));
 
-            } else {// just use the first one to compare with all the others
-
+            } else {
+                // just use the first one to compare with all the others
                 if (databases.length > 0) {
                     masterCon = databases[0].getConnection();
                     logger.info("Using " + DBUtils.getShortDatabaseName(masterCon) + " as 'master' for comparisions.");
@@ -127,15 +130,8 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
                                 + DBUtils.getShortDatabaseName(checkCon));
 
                         // check that both schemas have the same tables
-                        if (!compareTablesInSchema(masterCon, checkCon)) {// if
-                            // not
-                            // the
-                            // same,
-                            // this
-                            // method
-                            // will
-                            // generate
-                            // a
+                        if (!compareTablesInSchema(masterCon, checkCon)) {
+                            // if not the same, this method will generate a
                             // report
                             logger.info("Table name discrepancy detected, skipping rest of checks for "
                                     + DBUtils.getShortDatabaseName(checkCon));
@@ -175,9 +171,9 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
 
             logger.severe(se.getMessage());
 
-        } finally {// avoid leaving temporary DBs lying around if something
-            // bad happens
+        } finally {
 
+            // void leaving temporary DBs lying around if something bad happens
             if (definitionFile == null && masterCon != null) {
                 // double-check to make sure the DB we're going to remove is a
                 // temp one

@@ -18,9 +18,13 @@
 
 /*
  * 
- * $Log$ Revision 1.1.2.2 2004/03/02 14:35:01 gp1
- * Updated for new API; now extends OrderedDatabaseTestCase so getting the
- * databases int the right order is more straightforward.
+ * $Log$ Revision 1.1.2.3 2004/03/17 17:31:53 gp1
+ * Changes to nearly every file in the project; many are stylistic only, but
+ * many remove potential errors (e.g. tab characters in SQL) or improve
+ * performance (removal of use of on-demand imports) Revision 1.1.2.2
+ * 2004/03/02 14:35:01 gp1 Updated for new API; now extends
+ * OrderedDatabaseTestCase so getting the databases int the right order is more
+ * straightforward.
  * 
  * Revision 1.1.2.1 2004/03/01 09:42:08 gp1 Moved into mart subdirectory. Some
  * tests renamed
@@ -66,7 +70,11 @@ public class CompareOldNew extends OrderedDatabaseTestCase {
     }
 
     /**
-     * Compare the _meta_table_info for two marts and report big differences
+     * Compare the _meta_table_info for two marts and report big differences.
+     * 
+     * @param databases
+     *          The databases to check, in order old->new
+     * @return true if the test passes.
      */
     public boolean run(DatabaseRegistryEntry[] databases) {
 
@@ -76,8 +84,8 @@ public class CompareOldNew extends OrderedDatabaseTestCase {
         Connection con;
 
         // first check we got acceptable input from user
-
-        if (databases.length != 2) {// check we have 2 and only 2 databases
+        // check we have 2 and only 2 databases
+        if (databases.length != 2) {
             result = false;
             logger.severe("Incorrect number of marts specified");
             return result;
@@ -110,8 +118,8 @@ public class CompareOldNew extends OrderedDatabaseTestCase {
                 String key = rs1.getString(1);
                 Integer nonNull = new Integer(rs1.getInt(2));
                 Integer distinct = new Integer(rs1.getInt(3));
-                if (counts.containsKey(key)) {// does the new mart contain
-                                               // this column
+                if (counts.containsKey(key)) {
+                    // does the new mart contain this column
                     // if so compare the values
                     Integer newCount = (Integer) counts.get(key);
                     if (newCount.intValue() > distinct.intValue() * 2) {

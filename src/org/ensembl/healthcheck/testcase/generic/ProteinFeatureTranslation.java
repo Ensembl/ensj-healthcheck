@@ -44,7 +44,7 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
 
     // hash of lists of protein features to delete
     // key - database name
-    Map featuresToDelete;
+    private Map featuresToDelete;
 
     /**
      * Create an ProteinFeatureTranslationTestCase that applies to a specific
@@ -61,6 +61,8 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
      * Builds a cache of the translation lengths, then compares them with the
      * values in the protein_features table.
      * 
+     * @param dbre
+     *          The database to use.
      * @return Result.
      */
 
@@ -69,15 +71,12 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
         boolean result = true;
 
         // get list of transcripts
-        String sql = 
-	    "SELECT t.transcript_id, e.exon_id, tl.start_exon_id, " + 
-	    "       tl.translation_id, tl.end_exon_id, tl.seq_start, " + 
-	    "       tl.seq_end, e.seq_region_start, e.seq_region_end " +
-	    "FROM   transcript t, exon_transcript et, exon e, translation tl " +
-	    "WHERE  t.transcript_id = et.transcript_id " + 
-	    "AND    et.exon_id = e.exon_id " + 
-	    "AND    t.transcript_id = tl.transcript_id " +
-	    "ORDER  BY t.transcript_id, et.rank";
+        String sql = "SELECT t.transcript_id, e.exon_id, tl.start_exon_id, "
+                + "       tl.translation_id, tl.end_exon_id, tl.seq_start, "
+                + "       tl.seq_end, e.seq_region_start, e.seq_region_end "
+                + "FROM   transcript t, exon_transcript et, exon e, translation tl "
+                + "WHERE  t.transcript_id = et.transcript_id " + "AND    et.exon_id = e.exon_id "
+                + "AND    t.transcript_id = tl.transcript_id " + "ORDER  BY t.transcript_id, et.rank";
 
         try {
 
@@ -102,8 +101,8 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
             // See the README file for the mm MySQL driver.
 
             Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY,
-						 java.sql.ResultSet.CONCUR_READ_ONLY);
-            stmt.setFetchSize( 1000 );
+                    java.sql.ResultSet.CONCUR_READ_ONLY);
+            stmt.setFetchSize(1000);
 
             Map translationLengths = new HashMap();
 
@@ -219,6 +218,9 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
      * Delete any protein features that run past the end of the translation.
      * <strong>CAUTION! </strong>Actually deletes the features from the
      * protein_feature table.
+     * 
+     * @param dbre
+     *          The database to use.
      */
     public void repair(DatabaseRegistryEntry dbre) {
 
@@ -242,6 +244,9 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
 
     /**
      * Show which protein features would be deleted by the repair method.
+     * 
+     * @param dbre
+     *          The database to use.
      */
     public void show(DatabaseRegistryEntry dbre) {
 

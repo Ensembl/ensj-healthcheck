@@ -29,7 +29,7 @@ import java.util.logging.LogRecord;
 
 public class MyStreamHandler extends Handler {
   
-  OutputStream outputStream;
+  private OutputStream outputStream;
   
   // ------------------------------------------------------------------------
   /**

@@ -415,8 +415,8 @@ public abstract class EnsTestCase {
 
             result = getRowCountFast(con, sql);
 
-        } else {//  otherwise, do it row-by-row
-
+        } else {
+            // otherwise, do it row-by-row
             logger
                     .warning("getRowCount() executing SQL which does not appear to begin with SELECT COUNT - performing row-by-row count, which may take a long time if the table is large.");
             result = getRowCountSlow(con, sql);
@@ -1205,6 +1205,10 @@ public abstract class EnsTestCase {
     //---------------------------------------------------------------------
     /**
      * Check if this test case applies to a particular DatabaseType.
+     * 
+     * @param t
+     *          The database type to check against.
+     * @return true if this test applies to databases of type t.
      */
     public boolean appliesToType(DatabaseType t) {
 
@@ -1277,6 +1281,9 @@ public abstract class EnsTestCase {
      * directory name. For directories called "generic", the type is set to
      * core, est, estgene and vega. For all other directories the type is set
      * based upon the directory name.
+     * 
+     * @param dirName
+     *          The directory name to check.
      */
     public void setTypeFromDirName(String dirName) {
 

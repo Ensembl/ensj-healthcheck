@@ -47,7 +47,8 @@ public class FeatureCoords extends SingleDatabaseTestCase {
     /**
      * Iterate over each affected database and perform various checks.
      * 
-     * @return Result.
+     * @param dbre The database to check.
+     * @return True if the test passed.
      */
     public boolean run(DatabaseRegistryEntry dbre) {
 
@@ -68,6 +69,7 @@ public class FeatureCoords extends SingleDatabaseTestCase {
                     + " f, seq_region s " + "WHERE s.seq_region_id = f.seq_region_id "
                     + "AND ( f.seq_region_start > f.seq_region_end " + " OR f.seq_region_start < 1 "
                     + " OR f.seq_region_end > s.length )";
+            
             try {
                 Statement stmt = con.createStatement();
                 ResultSet rs = stmt.executeQuery(sql);

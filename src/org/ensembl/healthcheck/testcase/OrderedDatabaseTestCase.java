@@ -20,12 +20,18 @@ package org.ensembl.healthcheck.testcase;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 
 /**
- * Subclass of EnsTestCase for tests that apply to an <em>ordered set</em> of
- * databases. Such tests should subclass <em>this</em> class and implement
- * the <code>run</code> method.
+ * Subclass of EnsTestCase for tests that apply to an <em>ordered set</em> of databases. Such
+ * tests should subclass <em>this</em> class and implement the <code>run</code> method.
  */
 public abstract class OrderedDatabaseTestCase extends EnsTestCase {
 
+    /**
+     * This method must be overridden by subclasses.
+     * 
+     * @param dbre
+     *          The databases to check, in the order they were specified on the command line.
+     * @return true if the test passed.
+     */
     public abstract boolean run(DatabaseRegistryEntry[] dbre);
 
 }

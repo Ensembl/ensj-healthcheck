@@ -37,10 +37,13 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  */
 public class MetaCoord extends SingleDatabaseTestCase {
 
-    String[] featureTables = {"gene", "exon", "dna_align_feature", "protein_align_feature", "repeat_feature",
+    private String[] featureTables = {"gene", "exon", "dna_align_feature", "protein_align_feature", "repeat_feature",
             "prediction_transcript", "prediction_exon", "simple_feature", "marker_feature", "misc_feature", "qtl_feature",
             "karyotype", "transcript", "density_feature"};
 
+    /**
+     * Create a new instance of MetaCoord.
+     */
     public MetaCoord() {
 
         addToGroup("release");
@@ -49,6 +52,14 @@ public class MetaCoord extends SingleDatabaseTestCase {
 
     }
 
+    /**
+     * Run the test.
+     * 
+     * @param dbre
+     *          The database to use.
+     * @return true if the test pased.
+     *  
+     */
     public boolean run(DatabaseRegistryEntry dbre) {
 
         boolean result = true;

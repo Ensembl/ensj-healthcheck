@@ -40,6 +40,14 @@ public class ForeignKeyDnafragId extends SingleDatabaseTestCase {
         setDescription("Check for broken foreign-key relationships in ensembl_compara databases.");
     }
 
+    /**
+     * Run the test.
+     * 
+     * @param dbre
+     *          The database to use.
+     * @return true if the test pased.
+     *  
+     */
     public boolean run(DatabaseRegistryEntry dbre) {
 
         boolean result = true;

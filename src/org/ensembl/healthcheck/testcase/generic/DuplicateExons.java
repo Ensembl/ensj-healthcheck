@@ -33,6 +33,8 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 public class DuplicateExons extends SingleDatabaseTestCase {
 
+    private static final int MAX_WARNINGS = 50;
+
     /**
      * Create an OrphanTestCase that applies to a specific set of databases.
      */
@@ -46,7 +48,9 @@ public class DuplicateExons extends SingleDatabaseTestCase {
     /**
      * Check strand order of exons.
      * 
-     * @return Result.
+     * @param dbre
+     *          The database to check.
+     * @return True if the test passes.
      */
 
     public boolean run(DatabaseRegistryEntry dbre) {
@@ -88,11 +92,12 @@ public class DuplicateExons extends SingleDatabaseTestCase {
                             && lastExonPhase == exonPhase && lastExonStrand == exonStrand
                             && lastExonEndPhase == exonEndPhase) {
                         duplicateExon++;
-                        ReportManager.warning(this, con, "Exon " + exonId + " is duplicated.");
+                        if (duplicateExon <= MAX_WARNINGS) {
+                            ReportManager.warning(this, con, "Exon " + exonId + " is duplicated.");
+                        }
                     }
                 } else {
                     first = false;
-                    ReportManager.info(this, con, "Running duplicate exon test");
                 }
 
                 lastExonStart = exonStart;

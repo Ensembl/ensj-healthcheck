@@ -75,9 +75,8 @@ public class DatabaseConnectionIterator implements Iterator {
   /**
    * Return the next Connection (as an Object) if there is one.
    * @return The next object.
-   * @throws NoSuchElementException if there is no next object - use hasNext() to check this.
    */
-  public Object next() throws NoSuchElementException {
+  public Object next() {
     
     Connection con;
     

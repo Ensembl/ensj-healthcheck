@@ -22,7 +22,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
-/*
+/**
  * Check that marker features exist if markers exist, and that map_wieghts are
  * set to non-zero values
  */
@@ -40,7 +40,8 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
     /**
      * Verify marker features exist if markers exist, and that map weights are
      * non-zero.
-     * 
+     * @param dbre
+     *          The database to use.
      * @return Result.
      */
     public boolean run(DatabaseRegistryEntry dbre) {

@@ -40,9 +40,11 @@ public class AssemblyException extends SingleDatabaseTestCase {
     }
 
     /**
-     * Check the data in the assembly_exception table. Note referential integrity checks are done
-     * in CoreForeignKeys.
+     * Check the data in the assembly_exception table. Note referential
+     * integrity checks are done in CoreForeignKeys.
      * 
+     * @param dbre
+     *          The database to use.
      * @return Result.
      */
     public boolean run(DatabaseRegistryEntry dbre) {

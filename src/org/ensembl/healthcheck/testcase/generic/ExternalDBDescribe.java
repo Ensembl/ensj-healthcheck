@@ -23,14 +23,17 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 /**
- * EnsEMBL Healthcheck test case that ensures that the results of the SQL query <code>DESCRIBE external_db</code>
- * are the same for a set of databases.
+ * EnsEMBL Healthcheck test case that ensures that the results of the SQL query
+ * <code>DESCRIBE external_db</code> are the same for a set of databases.
  */
 
 public class ExternalDBDescribe extends MultiDatabaseTestCase {
 
     private DatabaseType[] types = {DatabaseType.CORE, DatabaseType.VEGA};
 
+    /**
+     * Create a new ExternalDBDescribe test case.
+     */
     public ExternalDBDescribe() {
 
         addToGroup("release");
@@ -39,8 +42,11 @@ public class ExternalDBDescribe extends MultiDatabaseTestCase {
     }
 
     /**
-     * Check that the external_db tables are the same for each matched database.
+     * Check that the external_db tables are the same for each matched
+     * database.
      * 
+     * @param dbr
+     *          The database registry containing all the specified databases.
      * @return Result.
      */
     public boolean run(DatabaseRegistry dbr) {
@@ -54,5 +60,5 @@ public class ExternalDBDescribe extends MultiDatabaseTestCase {
         return result;
 
     } // run
-    
+
 } // ExternalDBDescribe

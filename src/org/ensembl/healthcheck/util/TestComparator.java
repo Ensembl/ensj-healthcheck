@@ -30,6 +30,12 @@ public class TestComparator implements Comparator {
 
     /**
      * Implementation of Compare interface. Compares on test name.
+     * 
+     * @param o1
+     *          The first EnsTestCase (as an Object) to compare.
+     * @param o2
+     *          The first EnsTestCase (as an Object) to compare.
+     * @return Result of natural comparison of test name strings.
      */
     public int compare(Object o1, Object o2) {
 

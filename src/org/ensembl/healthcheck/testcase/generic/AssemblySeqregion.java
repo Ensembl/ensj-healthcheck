@@ -31,6 +31,9 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  */
 public class AssemblySeqregion extends SingleDatabaseTestCase {
 
+    /**
+     * Create a new AssemlySeqregion test case.
+     */
     public AssemblySeqregion() {
 
         addToGroup("post_genebuild");
@@ -40,6 +43,8 @@ public class AssemblySeqregion extends SingleDatabaseTestCase {
     }
 
     /**
+     * @param dbre
+     *          The database to use.
      * @return The test case result.
      */
     public boolean run(DatabaseRegistryEntry dbre) {

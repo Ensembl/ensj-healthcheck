@@ -47,7 +47,7 @@ public class LogicNamesDisplayable extends SingleDatabaseTestCase {
     private static final boolean CASE_SENSITIVE = false;
 
     /**
-     * Creates a new instance of LogicNamesDisplayable
+     * Creates a new instance of LogicNamesDisplayable.
      */
     public LogicNamesDisplayable() {
 
@@ -59,6 +59,14 @@ public class LogicNamesDisplayable extends SingleDatabaseTestCase {
 
     }
 
+    /**
+     * Run the test.
+     * 
+     * @param dbre
+     *          The database to use.
+     * @return true if the test pased.
+     *  
+     */
     public boolean run(DatabaseRegistryEntry dbre) {
 
         boolean result = true;

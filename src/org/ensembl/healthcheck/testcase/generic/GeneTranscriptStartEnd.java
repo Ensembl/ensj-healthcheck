@@ -29,6 +29,9 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  */
 public class GeneTranscriptStartEnd extends SingleDatabaseTestCase {
 
+    /**
+     * Create a new GeneTranscriptStartEnd test case.
+     */
     public GeneTranscriptStartEnd() {
 
         addToGroup("post_genebuild");
@@ -36,7 +39,15 @@ public class GeneTranscriptStartEnd extends SingleDatabaseTestCase {
         setDescription("Checks that gene start/end agrees with transcript table");
 
     }
-
+    
+    /**
+     * Run the test.
+     * 
+     * @param dbre
+     *          The database to use.
+     * @return true if the test pased.
+     *  
+     */
     public boolean run(DatabaseRegistryEntry dbre) {
 
         boolean startEndResult = true;
