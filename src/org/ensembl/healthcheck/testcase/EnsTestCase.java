@@ -536,8 +536,9 @@ public abstract class EnsTestCase {
             // and the other way ... (a right join?)
             sql = " FROM " + table2 + " LEFT JOIN " + table1 + " ON " + table2 + "." + col2 + " = " + table1 + "."
                     + col1 + " WHERE " + table1 + "." + col1 + " IS NULL";
-
+ 
             resultRight = getRowCount(con, "SELECT COUNT(*)" + sql);
+
             if (resultRight > 0) {
                 String[] values = getColumnValues(con, "SELECT " + table2 + "." + col2 + sql + " LIMIT 20");
                 for (int i = 0; i < values.length; i++) {
@@ -551,6 +552,52 @@ public abstract class EnsTestCase {
         logger.finest("Left: " + resultLeft + " Right: " + resultRight);
 
         return resultLeft + resultRight;
+
+    } // countOrphans
+
+    // -------------------------------------------------------------------------
+    /**
+     * Verify foreign-key relations.
+     * 
+     * @param con
+     *          A connection to the database to be tested. Should already be
+     *          open.
+     * @param table1
+     *          With col1, specifies the first key to check.
+     * @param col1
+     *          Column in table1 to check.
+     * @param table2
+     *          With col2, specifies the second key to check.
+     * @param col2
+     *          Column in table2 to check.
+     * @param constraint1
+     *          additional constraint on col1
+     * @return The number of "orphans"
+     */
+    public int countOrphansWithConstraint(Connection con, String table1, String col1, String table2, String col2, String constraint1) {
+
+        if (con == null) {
+            logger.severe("countOrphans: Database connection is null");
+        }
+
+        int resultLeft;
+
+        String sql = " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "."
+                + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
+        
+        sql = sql + " AND " + table1 + "." + constraint1;
+
+        resultLeft = getRowCount(con, "SELECT COUNT(*)" + sql);
+        if (resultLeft > 0) {
+            String[] values = getColumnValues(con, "SELECT " + table1 + "." + col1 + sql + " LIMIT 20");
+            for (int i = 0; i < values.length; i++) {
+                ReportManager.info(this, con, table1 + "." + col1 + " " + values[i] + " is not linked.");
+            }
+        }
+
+        logger.finest("Left: " + resultLeft);
+
+        return resultLeft;
 
     } // countOrphans
 
