@@ -189,5 +189,26 @@ public class Utils {
   } // truncate
   
   // -------------------------------------------------------------------------
+  /**
+   * Pad (on the right) a string with a certain number of characters.
+   * @param str The String to add the padding to.
+   * @param pad The String to pad with.
+   * @param n The eventual <em>total</em> length required.
+   * @return The padded String.
+   */
+  public static String pad(String str, String pad, int size) {
+    
+    StringBuffer result = new StringBuffer(str);
+    
+    int startSize = str.length();
+    for (int i = startSize; i < size; i++) {
+      result.append(pad); 
+    }
+
+    return result.toString();
+    
+  } // pad
+  
+  // -------------------------------------------------------------------------
 
 } // Utils
