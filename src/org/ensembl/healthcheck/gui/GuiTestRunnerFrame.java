@@ -143,9 +143,9 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
         JPanel topPanel = new JPanel();
         JLabel titleLabel = new JLabel();
         topPanel.setBackground(Color.WHITE);
-        titleLabel.setFont(new Font("SansSerif", 1, 18));
-        titleLabel.setText("HealthCheck");
-        titleLabel.setIcon(new ImageIcon(this.getClass().getResource("e-logo.gif")));
+        //titleLabel.setFont(new Font("SansSerif", 1, 18));
+        //titleLabel.setText("HealthCheck");
+        titleLabel.setIcon(new ImageIcon(this.getClass().getResource("logo.gif")));
         topPanel.add(titleLabel);
 
         // ----------------------------
