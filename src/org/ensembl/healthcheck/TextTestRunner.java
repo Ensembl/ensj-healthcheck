@@ -37,7 +37,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
   private boolean debug = false;
   private boolean useSchemaInfo = true;
   private boolean rebuildSchemaInfo = false;
-  public Vector outputBuffer ;
+  public ArrayList outputBuffer ;
   private String lastDatabase = "";
   
   // -------------------------------------------------------------------------
@@ -55,10 +55,10 @@ public class TextTestRunner extends TestRunner implements Reporter {
     ttr.readPropertiesFile();
     
     ttr.parseCommandLine(args);
-    ttr.outputBuffer = new Vector();
+    ttr.outputBuffer = new ArrayList();
     
     ttr.setupLogging();
-        
+    
     if (ttr.useSchemaInfo) {
       ttr.buildSchemaList(true);
     }
@@ -297,6 +297,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
       System.out.println( (String) it.next() );
     }
     outputBuffer.clear();
+    
   }
   
   private String lineBreakString( String mesg, int maxLen, String indent ) {
