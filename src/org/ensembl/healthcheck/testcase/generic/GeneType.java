@@ -1,4 +1,4 @@
-/*
+n/*
  Copyright (C) 2004 Wellcome Trust Sanger Centre
  
  This library is free software; you can redistribute it and/or
@@ -91,7 +91,7 @@ public class GeneType extends SingleDatabaseTestCase {
 				       "Genoscope_predicted",       //21
 				       "Genoscope_annotated"        //22
 
-    };  // XXX last 2 cause AIOOBE
+    }; 
 
 
     /*
