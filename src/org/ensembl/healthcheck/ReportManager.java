@@ -39,24 +39,24 @@ public class ReportManager {
   protected static Logger logger = Logger.getLogger("HealthCheckLogger");
   
   protected static Reporter reporter;
-
+  
   public static void setReporter( Reporter rep ) {
-      reporter = rep;
+    reporter = rep;
   }
-	
-    
-    public static void startTestCase( EnsTestCase testCase ) {
-	if( reporter != null ) {
-	    reporter.startTestCase( testCase );
-	}
+  
+  
+  public static void startTestCase( EnsTestCase testCase ) {
+    if( reporter != null ) {
+      reporter.startTestCase( testCase );
     }
-
-    public static void finishTestCase( EnsTestCase testCase, TestResult result ) {
-	if( reporter != null ) {
-	    reporter.finishTestCase( testCase, result );
-	}
+  }
+  
+  public static void finishTestCase( EnsTestCase testCase, TestResult result ) {
+    if( reporter != null ) {
+      reporter.finishTestCase( testCase, result );
     }
-
+  }
+  
   // -------------------------------------------------------------------------
   /**
    * Add a test case report.
@@ -105,7 +105,7 @@ public class ReportManager {
     }
     
     if( reporter != null ) {
-	reporter.message( report );
+      reporter.message( report );
     }
   } // add
   
@@ -327,7 +327,7 @@ public class ReportManager {
           result.add(line);
         }
       }
-    } 
+    }
     
     return result;
     
