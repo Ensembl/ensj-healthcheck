@@ -126,14 +126,7 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
 
         setSize(PANEL_SIZE);
 
-        PlasticLookAndFeel.setTabStyle(PlasticLookAndFeel.TAB_STYLE_METAL_VALUE);
-        PlasticLookAndFeel.setHighContrastFocusColorsEnabled(true);
-
-        try {
-            UIManager.setLookAndFeel("com.jgoodies.plaf.plastic.Plastic3DLookAndFeel");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        setLookAndFeel();
 
         setTitle("EnsEMBL HealthCheck");
         addWindowListener(new WindowAdapter() {
@@ -141,11 +134,8 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
             public void windowClosing(WindowEvent evt) {
 
                 exit();
-
             }
         });
-
-        //setIconImage(new ImageIcon(this.getClass().getResource("e-logo-small.gif")).getImage());
 
         // ----------------------------
         // Top panel - title
@@ -210,17 +200,18 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
 
                 DatabaseRegistryEntry[] selectedDatabases = databaseTabbedPane.getSelectedDatabases();
                 if (selectedDatabases.length == 0) {
-                    JOptionPane.showMessageDialog((Component) e.getSource(), "No databases selected!", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog((Component) e.getSource(), "No databases selected!", "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
                 EnsTestCase[] selectedTests = testTabbedPane.getSelectedTests();
                 if (selectedTests.length == 0) {
-                    JOptionPane.showMessageDialog((Component) e.getSource(), "No tests selected!", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog((Component) e.getSource(), "No tests selected!", "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
 
                 if (selectedTests.length > 0 && selectedDatabases.length > 0) {
                     guiTestRunner.runAllTests(selectedTests, selectedDatabases, localGTRF);
                 }
-
             }
         });
 
@@ -242,7 +233,6 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
             public void actionPerformed(ActionEvent e) {
 
                 exit();
-
             }
         });
 
@@ -373,6 +363,8 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
         case ReportLine.NONE:
             result = "None";
             break;
+        default:
+            result = "Unknown";
 
         }
 
@@ -481,6 +473,21 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
     }
 
     // -------------------------------------------------------------------------
+    
+    private void setLookAndFeel() {
+        
+        PlasticLookAndFeel.setTabStyle(PlasticLookAndFeel.TAB_STYLE_METAL_VALUE);
+        PlasticLookAndFeel.setHighContrastFocusColorsEnabled(true);
+
+        try {
+            UIManager.setLookAndFeel("com.jgoodies.plaf.plastic.Plastic3DLookAndFeel");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    
+    // -------------------------------------------------------------------------
 
 } // GuiTestRunnerFrame
 
@@ -556,9 +563,7 @@ class TabChangeListener implements ChangeListener {
 
         JTabbedPane jtp = (JTabbedPane) e.getSource();
         int sel = jtp.getSelectedIndex();
-        for (int i = 0; i < jtp.getTabCount(); i++) {
-            //jtp.setBackgroundAt(i, (i == sel ? Color.LIGHT_GRAY : Color.WHITE));
-        }
+        // nothing required at the moment
 
     }
 
@@ -719,10 +724,6 @@ class TestTabbedPane extends JTabbedPane {
 
         for (int i = 0; i < types.length; i++) {
             addTab(types[i].toString(), new TestListPanel(types[i], testRegistry));
-        }
-
-        if (getTabCount() > 0) {
-            //setBackgroundAt(0, Color.LIGHT_GRAY);
         }
 
         addChangeListener(new TabChangeListener());
@@ -909,6 +910,8 @@ class TestTreeCellRenderer extends JComponent implements TreeCellRenderer {
     }
 
 }
+
+// -------------------------------------------------------------------------
 
 /**
  * Subclass of DefaultMutableTreeNode that tracks whether it's selected or not.

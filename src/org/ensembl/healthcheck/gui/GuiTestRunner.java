@@ -118,9 +118,9 @@ public class GuiTestRunner extends TestRunner implements Reporter {
     /**
      * Run all the tests in a list.
      * 
-     * @param tests The tests to run.
-     * @param databases The databases to run the tests on.
-     * @param gtrf The test runner frame in which to display the results.
+     * @param ltests The tests to run.
+     * @param ldatabases The databases to run the tests on.
+     * @param lgtrf The test runner frame in which to display the results.
      */
     protected void runAllTests(EnsTestCase[] ltests, DatabaseRegistryEntry[] ldatabases, GuiTestRunnerFrame lgtrf) {
 
@@ -238,29 +238,3 @@ public class GuiTestRunner extends TestRunner implements Reporter {
     // -------------------------------------------------------------------------
 
 } // GuiTestRunner
-
-//---------------------------------------------------------------------
-
-class MyThread implements Runnable {
-
-    private SingleDatabaseTestCase testCase;
-
-    private DatabaseRegistryEntry dbre;
-
-    public MyThread(SingleDatabaseTestCase testCase, DatabaseRegistryEntry dbre) {
-
-        this.testCase = testCase;
-        this.dbre = dbre;
-
-    }
-
-    public void run() {
-
-        testCase.run(dbre);
-    }
-
-}
-
-//class MySwingWorker extends SwingWorker {
-
-//}

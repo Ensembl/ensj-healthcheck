@@ -60,6 +60,11 @@ public class GuiTestResultWindow extends JFrame {
 
     private static final String OUTPUT_FILE = "GuiTestRunner.txt";
 
+    /**
+     * Create a new GuiTestResultWindow.
+     * 
+     * @param gtrf The frame that opened this window.
+     */
     public GuiTestResultWindow(GuiTestRunnerFrame gtrf) {
 
         super("Healthcheck Results");
@@ -177,7 +182,7 @@ class ResultTreePanel extends JScrollPane {
         panel.setBackground(Color.GREEN);
 
         String title = "Test Results - minimum output level: " + gtrf.getOutputLevelAsString().toLowerCase();
-        
+
         DefaultMutableTreeNode top = new DefaultMutableTreeNode(new ResultNode(title, false, false, false, false));
 
         Map reportsByTest = ReportManager.getAllReportsByTestCase(gtrf.getOutputLevel());
@@ -296,9 +301,9 @@ class JLabelTreeCellRenderer extends DefaultTreeCellRenderer {
 
     private ImageIcon listFail = new ImageIcon(this.getClass().getResource("list_fail.gif"));
 
-    Color green = new Color(0, 192, 0);
+    private Color green = new Color(0, 192, 0);
 
-    Color red = new Color(192, 0, 0);
+    private Color red = new Color(192, 0, 0);
 
     public JLabelTreeCellRenderer() {
 
@@ -352,6 +357,8 @@ class JLabelTreeCellRenderer extends DefaultTreeCellRenderer {
 
         } else if (node.isDatabaseLabel()) {
 
+            int i = 1; // placeholder
+
         } else {
 
             // other nodes - e.g. root
@@ -367,6 +374,10 @@ class JLabelTreeCellRenderer extends DefaultTreeCellRenderer {
 }
 
 // -------------------------------------------------------------------------
+/**
+ * Class to store information about a node of the result tree; a node may represent a test, a
+ * database name, a database label, or nothing in particular.
+ */
 
 class ResultNode {
 

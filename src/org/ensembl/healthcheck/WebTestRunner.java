@@ -47,7 +47,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
     private List outputBuffer = new ArrayList();
 
-    long startTime;
+    private long startTime;
 
     //---------------------------------------------------------------------
     /**
