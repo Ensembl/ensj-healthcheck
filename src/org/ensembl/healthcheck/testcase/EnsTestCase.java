@@ -829,7 +829,7 @@ public abstract class EnsTestCase {
    * Get the description.
    * @return The description for this test.
    */
-  protected String getDescription() {
+  public String getDescription() {
     
     return description;
     
@@ -840,7 +840,7 @@ public abstract class EnsTestCase {
    * Set the text description of this test case. 
    * @param The new description.
    */
-  protected void setDescription(String s) {
+  public void setDescription(String s) {
     
    description = s;
     
