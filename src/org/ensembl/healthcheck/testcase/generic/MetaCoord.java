@@ -27,7 +27,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
  * Check that meta_coord table contains entries for all the coordinate systems that all the
- * features are stored in
+ * features are stored in.
  */
 public class MetaCoord extends SingleDatabaseTestCase {
 
@@ -109,9 +109,6 @@ public class MetaCoord extends SingleDatabaseTestCase {
                 String csID = rs.getString("coord_system_id");
                 logger.finest("Checking for coord_system_id " + csID + " in " + tableName);
                 List featureCSs = (ArrayList) coordSystems.get(tableName);
-                if (featureCSs == null) {
-                    logger.warning("Table " + tableName + " found in meta_coord but not in list of feature tables in MetaCoord test case!");
-                }
                 if (featureCSs != null && !featureCSs.contains(csID)) {
                     ReportManager.problem(this, con, "meta_coord has entry for coord_system ID " + csID + " in " + tableName
                             + " but this coordinate system is not actually used in " + tableName);
