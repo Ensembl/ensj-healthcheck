@@ -144,14 +144,8 @@ public class CoreForeignKeyTestCase extends EnsTestCase {
         ReportManager.correct(this, con, "All xref -> external_db relationships OK");
       }
       result &= (orphans == 0);
+      
 
-      orphans = countOrphans( con, "exon", "contig_id", "contig", "contig_id", true);
-      if( orphans > 0) {
-        ReportManager.problem(this, con, "exon -> contig has unlinked entries");
-      } else {
-        ReportManager.correct(this, con, "All exon -> contig relationships OK");
-      }
-      result &= (orphans == 0);
 
       orphans = countOrphans( con, "contig", "dna_id", "dna", "dna_id", false);
       if( orphans > 0) {
@@ -172,13 +166,30 @@ public class CoreForeignKeyTestCase extends EnsTestCase {
       orphans = countOrphans(con, "marker_feature", "marker_id", 
 			     "marker", "marker_id", true);
       if(orphans > 0) {
-	  ReportManager.problem(this, con, "marker_feature -> marker has "
-				+ "unlinked entries");
+          ReportManager.problem(this, con, "marker_feature -> marker has "
+                                + "unlinked entries");
       }	else {
-	  ReportManager.correct(this, con, "All marker_featre -> marker " 
-				+ "relationships OK");
+          ReportManager.correct(this, con, "All marker_featre -> marker " 
+                                + "relationships OK");
       }
       result &= (orphans == 0);
+
+      /*
+       * make sure that feature tables reference existing contigs
+       */
+      String[] featTabs = {"exon", "repeat_feature", "simple_feature", "dna_align_feature",
+                           "protein_align_feature", "marker_feature", "prediction_transcript"};
+
+      for(int i = 0; i < featTabs.length; i++) {
+          String featTab = featTabs[i];
+          orphans = countOrphans( con, featTab, "contig_id", "contig", "contig_id", true);
+          if( orphans > 0) {
+              ReportManager.problem(this, con, featTab + " -> contig has unlinked entries");
+          } else {
+              ReportManager.correct(this, con, "All " + featTab + " -> contig relationships OK");
+          }
+          result &= (orphans == 0);
+      }
     }
     
     return new TestResult(getShortTestName(), result);
