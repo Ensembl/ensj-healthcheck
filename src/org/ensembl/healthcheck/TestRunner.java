@@ -410,7 +410,32 @@ public class TestRunner {
   } // listAllGroups
   
   // -------------------------------------------------------------------------
-  /** 
+  /**
+   * List all the tests in a particular group.
+   * @param tests The tests to check.
+   * @param group The group name to check.
+   * @return An array containing the names whatever tests are a member of group.
+   */
+  public String[] listTestsInGroup(List tests, String group) {
+    
+    ArrayList g = new ArrayList();
+    
+    Iterator it = tests.iterator();
+    while (it.hasNext()) {
+      
+      EnsTestCase test = (EnsTestCase)it.next();
+      if (test.inGroup(group)) {
+        g.add(test.getShortTestName());
+      }
+      
+    }
+    
+    return (String[])g.toArray(new String[g.size()]);
+    
+  } // listTestsInGroup
+  
+  // -------------------------------------------------------------------------
+  /**
    * Print (to stdout) out a list of test reports, keyed by the test type.
    * @param level The lowest report level (see ReportLine) to print. Reports with a level lower than this are not printed.
    */
@@ -442,7 +467,7 @@ public class TestRunner {
   } // printReportsByTest
   
   // -------------------------------------------------------------------------
-  /** 
+  /**
    * Print (to stdout) a list of test results, ordered by database.
    * @param level The minimum level of report to print - see ReportLine. Reports below this level are not printed.
    */
@@ -495,7 +520,7 @@ public class TestRunner {
   } // setOutputLevel
   
   // -------------------------------------------------------------------------
-  /** 
+  /**
    * Set the output level.
    * @param l The new output level.
    */
