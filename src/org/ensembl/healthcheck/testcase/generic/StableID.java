@@ -19,6 +19,7 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -47,6 +48,16 @@ public class StableID extends SingleDatabaseTestCase {
         setDescription("Checks *_stable_id tables are valid.");
     }
 
+    /**
+     * This only applies to core and Vega databases.
+     */
+    public void types() {
+
+        removeAppliesToType(DatabaseType.EST);
+        removeAppliesToType(DatabaseType.ESTGENE);
+
+    }
+    
     /**
      * Run the test.
      * 
