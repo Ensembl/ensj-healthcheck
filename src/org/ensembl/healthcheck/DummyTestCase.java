@@ -36,14 +36,19 @@ import org.ensembl.healthcheck.util.*;
 public class DummyTestCase extends EnsTestCase {
    
   public DummyTestCase() {
+    super();
     databaseRegexp = "homo_sapiens_.*";
+    addToGroup("group1");
+    addToGroup("group2");
   }
  
-  public TestResult run() {
+  TestResult run() {
     
     System.out.println("In DummyTestCase; databaseRegexp=" + databaseRegexp);
     super.printAffectedDatabases(databaseRegexp);
-   
+    
+    System.out.println(getShortTestName() + " is a member of test groups: " + getCommaSeparatedGroups());
+    
     return new TestResult(getShortTestName(), true, "blank message");
     
   } // run
