@@ -128,7 +128,7 @@ public class StableID extends SingleDatabaseTestCase {
         // check for duplicate stable IDs (will be redundant when stable ID columns get a UNIQUE constraint)
         int duplicates = getRowCount(con, "SELECT COUNT(stable_id)-COUNT(DISTINCT stable_id) FROM " + stableIDtable);
         if (duplicates > 0) {
-            ReportManager.problem(this, con, stableIDtable + " has " + duplicates + " stable IDs (versions not checked)");
+            ReportManager.problem(this, con, stableIDtable + " has " + duplicates + " duplicate stable IDs (versions not checked)");
             result = false;
         } else {
             ReportManager.correct(this, con, "No duplicate stable IDs in " + stableIDtable);
