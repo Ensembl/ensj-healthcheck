@@ -211,25 +211,23 @@ public class DBUtils {
     try {
       
       // get some information about the ResultSets
-      String url1 = rs1.getStatement().getConnection().getMetaData().getURL();
-      String name1 = url1.substring(url1.lastIndexOf('/')+1);
-      String url2 = rs2.getStatement().getConnection().getMetaData().getURL();
-      String name2 = url2.substring(url2.lastIndexOf('/')+1);
+      String name1 = getShortDatabaseName(rs1.getStatement().getConnection());
+      String name2 = getShortDatabaseName(rs2.getStatement().getConnection());
       
       // Check for same column count, names and types
       ResultSetMetaData rsmd1 = rs1.getMetaData();
       ResultSetMetaData rsmd2 = rs2.getMetaData();
       if (rsmd1.getColumnCount() != rsmd2.getColumnCount()) {
-	System.out.println("Column counts differ -  " + name1 + ": " + rsmd1.getColumnCount() + " " + name2 + ": " + rsmd2.getColumnCount());
+	logger.warning("Column counts differ -  " + name1 + ": " + rsmd1.getColumnCount() + " " + name2 + ": " + rsmd2.getColumnCount());
 	return false;
       }
       for (int i=1; i <= rsmd1.getColumnCount(); i++) {                 // note columns indexed from 1
 	if (!((rsmd1.getColumnName(i)).equals(rsmd2.getColumnName(i)))) {
-	  System.out.println("Column names differ for column " + i + " - " + name1 + ": " + rsmd1.getColumnName(i) + " " + name2 + ": " + rsmd2.getColumnName(i));
+	  logger.warning("Column names differ for column " + i + " - " + name1 + ": " + rsmd1.getColumnName(i) + " " + name2 + ": " + rsmd2.getColumnName(i));
 	  return false;
 	}
 	if (rsmd1.getColumnType(i) != rsmd2.getColumnType(i)) {
-	  System.out.println("Column types differ for column " + i + " - " + name1 + ": " + rsmd1.getColumnType(i) + " " + name2 + ": " + rsmd2.getColumnType(i));
+	  logger.warning("Column types differ for column " + i + " - " + name1 + ": " + rsmd1.getColumnType(i) + " " + name2 + ": " + rsmd2.getColumnType(i));
 	  return false;
 	}
       } // for column
@@ -335,6 +333,23 @@ public class DBUtils {
     }
     
   } // printResultSet
+  
+  // -------------------------------------------------------------------------
+  
+  public static String getShortDatabaseName(Connection con) {
+    
+    String url = null;
+    
+    try {
+      url = con.getMetaData().getURL();
+    } catch (SQLException se) {
+      se.printStackTrace();
+    }
+    String name = url.substring(url.lastIndexOf('/') + 1);
+    
+    return name;
+    
+  } // getShortDatabaseName
   
   // -------------------------------------------------------------------------
   
