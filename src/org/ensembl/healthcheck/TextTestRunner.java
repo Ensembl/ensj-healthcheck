@@ -265,9 +265,9 @@ public class TextTestRunner extends TestRunner implements Reporter {
   public void finishTestCase( EnsTestCase testCase, TestResult result ) {
     
     if (result.getResult()) {
-      System.out.println( " PASSED" );
+      System.out.println(" PASSED");
     } else {
-      System.out.println("FAILED");
+      System.out.println(" FAILED");
     }
     lastDatabase = "";
     Iterator it = outputBuffer.iterator();
