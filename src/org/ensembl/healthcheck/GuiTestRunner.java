@@ -36,11 +36,8 @@ public class GuiTestRunner extends TestRunner implements Reporter {
   /** Default maximum number of test threads to run at any one time */
   protected int maxThreads = 4;
   
-  /** Whether or not to use only the pre-filter regexp */
-  protected boolean forceDatabases = false;
-  
-  /** Pre-filter regexp; may be overridded on command line */
-  protected String preFilterRegexp = "";
+  /** The schemas to act upon */
+  protected String[] selectedSchemas;
   
   // -------------------------------------------------------------------------
   /**
@@ -138,14 +135,7 @@ public class GuiTestRunner extends TestRunner implements Reporter {
       
       if (testCase.inGroups(groups)) {
         
-        if (preFilterRegexp != null) {
-          testCase.setPreFilterRegexp(preFilterRegexp);
-        }
-        
-        if (forceDatabases) {
-          // override built-in database regexp with the one specified on the command line
-          testCase.setDatabaseRegexp(preFilterRegexp);
-        }
+        // TODO - set databases somehow
         
         GUITestRunnerThread t = new GUITestRunnerThread(testThreads, testCase, gtrf, maxThreads);
         t.start(); // note that this will actually wait until < maxThreads are running before calling run()
@@ -195,48 +185,18 @@ public class GuiTestRunner extends TestRunner implements Reporter {
   
   // -------------------------------------------------------------------------
   /**
-   * Set whether or not to only use the pre-filter regexp.
-   * @param b Whether or not to use the pre-filter regexp.
+   * Set the schemas to run the tests on.
+   * @param s An array of schema names, as objects since this is how they are returned from a JList.
    */
-  public void setForceDatabases(boolean b) {
+  public void setSelectedSchemas(Object[] s) {
     
-    forceDatabases = b;
-    logger.finest("Set forceDatabases to " + forceDatabases);
+    selectedSchemas = new String[s.length];
+    for (int i = 0; i < s.length; i++) {
+      selectedSchemas[i] = (String)s[i];
+      logger.finest("Added " + selectedSchemas[i] + " to list of schemas");
+    }
     
-    
-  } // setForceDatabases
-  
-  /**
-   * Get whether or not to only use the pre-filter regexp.
-   * @return True if the pre-filter regecp only is to be used.
-   */
-  public boolean getForceDatabases() {
-    
-    return forceDatabases;
-    
-  } // getforceDatabase
-  
-  // -------------------------------------------------------------------------
-  /**
-   * Set the pre-filter regexp.
-   * @param re The new pre-filter regexp.
-   */
-  public void setPreFilterRegexp(String re) {
-    
-    preFilterRegexp = re;
-    logger.finest("Set preFilterRegexp to " + preFilterRegexp);
-    
-  } // setPreFilterRegexp
-  
-  /**
-   * Get the value of the pre-filter regexp.
-   * @return The pre-filter regexp (may be "")
-   */
-  public String getPreFilterRegexp() {
-    
-    return preFilterRegexp;
-    
-  } // getPreFilterRegexp
+  }
   
   // -------------------------------------------------------------------------
   
@@ -257,6 +217,17 @@ public class GuiTestRunner extends TestRunner implements Reporter {
   public void finishTestCase(EnsTestCase testCase, TestResult result) {
     
     // TBC
+    
+  }
+  
+  // -------------------------------------------------------------------------
+  /**
+   * Get a list of all the schemas. Used to produce the JList in the GUI.
+   * @return An array of the schema names.
+   */
+  public String[] getSchemaList() {
+    
+    return getListOfDatabaseNames(".*");
     
   }
   
