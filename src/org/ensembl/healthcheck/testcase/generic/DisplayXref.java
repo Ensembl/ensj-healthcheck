@@ -75,6 +75,12 @@ public class DisplayXref extends SingleDatabaseTestCase {
             }
         }
 
+        if (result) {
+        
+            ReportManager.correct(this, con, "All display_xrefs OK");
+            
+        }
+        
         return result;
 
     } // run
