@@ -28,7 +28,7 @@ import org.ensembl.healthcheck.util.*;
  * Check that the assembly table is present in all necessary databases.
  */
 public class CheckAssemblyTablesTestCase extends EnsTestCase {
-    
+  
   /**
    * Creates a new instance of CheckAssemblyTables
    */
@@ -37,14 +37,14 @@ public class CheckAssemblyTablesTestCase extends EnsTestCase {
     setDescription("Check that the assembly table  contains the same information for all databases with the same species.");
   }
   
-  /** 
+  /**
    * Make sure that the assembly table has the same number of rows.
    * @return Result.
    */
   public TestResult run() {
     
     boolean result = true;
-
+    
     String[] species = getListOfSpecies();
     
     for (int i = 0; i < species.length; i++) {
@@ -53,10 +53,10 @@ public class CheckAssemblyTablesTestCase extends EnsTestCase {
       
       boolean allMatch = checkSameSQLResult("SELECT COUNT(*) FROM assembly", speciesRegexp);
       if (!allMatch) {
-	  result = false;
-        ReportManager.problem(this, species[i], "Differences in assembly table across species" ); 
+        result = false;
+        ReportManager.problem(this, species[i], "Differences in assembly table across species" );
       } else {
-	  ReportManager.correct(this, species[i],  "All assembly tables the same" );  
+        ReportManager.correct(this, species[i],  "All assembly tables the same" );
       }
       
     } // foreach species
