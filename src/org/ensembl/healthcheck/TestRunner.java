@@ -175,15 +175,7 @@ public class TestRunner {
 
 				numberOfTestsRun++;
 
-				// check for show/do repair
-				if (testCase.canRepair()) {
-					if (showRepair) {
-						((Repair)testCase).show();
-					}
-					if (doRepair) {
-						((Repair)testCase).repair();
-					}
-				}
+				checkRepair(testCase, database);
 
 			} // foreach test
 
@@ -202,6 +194,24 @@ public class TestRunner {
 
 	} // runAllTests
 
+	//---------------------------------------------------------------------
+	/**
+	 * Check if the given testcase can repair errors on the given database.
+	 */
+	private void checkRepair(EnsTestCase testCase, DatabaseRegistryEntry database) {
+	
+		// check for show/do repair
+		if (testCase.canRepair()) {
+			if (showRepair) {
+				((Repair)testCase).show(database);
+			}
+			if (doRepair) {
+				((Repair)testCase).repair(database);
+			}
+		}
+		
+	} // checkRepair
+	
 	// -------------------------------------------------------------------------
 	/**
 	 * Get a connection to a particular database.
