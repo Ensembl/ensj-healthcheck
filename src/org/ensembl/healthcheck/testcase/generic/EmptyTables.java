@@ -155,6 +155,10 @@ public class EmptyTables extends SingleDatabaseTestCase {
             }
         }
 
+        if (result) {
+            ReportManager.correct(this, con, "All required tables have data");
+        }
+        
         return result;
 
     } // run
