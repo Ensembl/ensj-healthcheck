@@ -42,9 +42,7 @@ public class ChromosomeLengths extends EnsTestCase {
 			String dbName = DBUtils.getShortDatabaseName(con);
 			// check that there are some chromosomes
 			// of course this may not necessarily be a problem for some species
-			String chrSQL =
-				"SELECT count(*) from seq_region sr, coord_system cs "
-					+ "WHERE sr.coord_system_id=cs.coord_system_id AND cs.name='chromosome'";
+			String chrSQL = "SELECT count(*) from seq_region sr, coord_system cs " + "WHERE sr.coord_system_id=cs.coord_system_id AND cs.name='chromosome'";
 			int rows = getRowCount(con, chrSQL);
 			if (rows == 0) {
 				result = false;
@@ -79,10 +77,7 @@ public class ChromosomeLengths extends EnsTestCase {
 					ReportManager.problem(this, con, " Chromosome " + chrs[i] + " is shorter in seq_region than in assembly");
 				}
 			} else {
-				ReportManager.correct(
-					this,
-					con,
-					"Chromosome lengths are equal or greater in the seq_region table compared to the assembly table");
+				ReportManager.correct(this, con, "Chromosome lengths are equal or greater in the seq_region table compared to the assembly table");
 			}
 			// --------------------------------------------------
 			// Find any chromosomes that have different lengths in karyotype &
@@ -116,17 +111,8 @@ public class ChromosomeLengths extends EnsTestCase {
 							bp = chrLen - karLen;
 							prob = "shorter";
 						}
-						ReportManager.problem(
-							this,
-							con,
-							"Chromosome "
-								+ chrName
-								+ " is "
-								+ bp
-								+ "bp "
-								+ prob
-								+ " in the karyotype table than "
-								+ "in the seq_region table");
+						result = false;
+						ReportManager.problem(this, con, "Chromosome " + chrName + " is " + bp + "bp " + prob + " in the karyotype table than " + "in the seq_region table");
 					}
 				}
 			} catch (SQLException e) {
