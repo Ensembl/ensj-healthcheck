@@ -146,7 +146,6 @@ public class Utils {
   } // grepPaths
   
   // -------------------------------------------------------------------------
-  
   /**
    * Print the contents of a jar file.
    * @param path The path to the jar file.
@@ -165,4 +164,29 @@ public class Utils {
   } // printJarFileContents
  
   // -------------------------------------------------------------------------
+  /**
+   * Truncate a string to a certain number of characters.
+   * @param str The string to truncate.
+   * @param size The maximum number of characters.
+   * @param useEllipsis If true, add "..." to the truncated string to show it's been truncated.
+   */
+  public static String truncate(String str, int size, boolean useEllipsis) {
+    
+    String result = str;
+    
+    if (str.length() > size) {
+      
+      result = str.substring(0, size);
+      
+      if (useEllipsis) {
+        result += "...";
+      }
+    }
+    
+    return result;
+    
+  } // truncate
+  
+  // -------------------------------------------------------------------------
+
 } // Utils
