@@ -60,7 +60,11 @@ public class DBUtils {
       try {
         
         Class.forName(driverClassName);
-        con = DriverManager.getConnection(databaseURL, user, password);
+        Properties props = new Properties();
+        props.put("user",     user);
+        props.put("password", password);
+        props.put("maxRows",  "" + 100);
+        con = DriverManager.getConnection(databaseURL, props);
         
       } catch (Exception e) {
         
@@ -452,7 +456,40 @@ public class DBUtils {
     
   }
   
-  
+  // -------------------------------------------------------------------------
+  /**
+   * Get a list of all the table names.
+   * @param con The database connection to use.
+   * @return A list of Strings representing the names of the tables, obtained
+   * from the SHOW TABLES command.
+   */
+  public static List getTableNames(Connection con) {
+    
+    List result = new ArrayList();
+    
+    if (con == null) {
+      logger.severe("getTableNames(): Database connection is null");
+    }
+    
+    try {
+      
+      Statement stmt = con.createStatement();
+      ResultSet rs = stmt.executeQuery("SHOW TABLES");
+      
+      while (rs.next()) {
+        result.add(rs.getString(1));
+      }
+      
+      rs.close();
+      stmt.close();
+      
+    } catch (SQLException se) {
+      logger.severe(se.getMessage());
+    }
+    
+    return result;
+    
+  }
   
   // -------------------------------------------------------------------------
   
