@@ -59,29 +59,29 @@ public class ForeignKeySourceId extends SingleDatabaseTestCase {
         if (tableHasRows(con, "source")) {
 
             orphans = countOrphans(con, "member", "source_id", "source", "source_id", true);
-            fillReportManager(con, orphans,"member", "source_id", "source", "source_id");
+            result &= fillReportManager(con, orphans,"member", "source_id", "source", "source_id");
 
             orphans = countOrphans(con, "family", "source_id", "source", "source_id", true);
-            fillReportManager(con, orphans,"family", "source_id", "source", "source_id");
+            result &= fillReportManager(con, orphans,"family", "source_id", "source", "source_id");
 
             orphans = countOrphans(con, "homology", "source_id", "source", "source_id", true);
-            fillReportManager(con, orphans,"homology", "source_id", "source", "source_id");
+            result &= fillReportManager(con, orphans,"homology", "source_id", "source", "source_id");
 
             orphans = countOrphans(con, "domain", "source_id", "source", "source_id", true);
-            fillReportManager(con, orphans,"domain", "source_id", "source", "source_id");
+            result &= fillReportManager(con, orphans,"domain", "source_id", "source", "source_id");
 
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in source table, so nothing to test IGNORED");
         }
 
-        result &= (orphans == 0);
-
         return result;
 
     }
 
-    public int fillReportManager(Connection con, int orphans, String table1, String col1, String table2, String col2) {
+    public boolean fillReportManager(Connection con, int orphans, String table1, String col1, String table2, String col2) {
 
+        boolean result = true;
+        
         String sql = "SELECT " + table1 + "." + col1 + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
 
         if (orphans == 0) {
@@ -90,11 +90,13 @@ public class ForeignKeySourceId extends SingleDatabaseTestCase {
             ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + col1 + "("+col2+")" + " relationships");
             ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
             ReportManager.problem(this, con, "USEFUL SQL: " + sql);
+            result = false;
         } else {
             ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1 + ", look at the StackTrace if any");
+            result = false;
         }
-
-        return 1;
+        
+        return result;
     } //fillReportManager
 
 } // OrphanTestCase

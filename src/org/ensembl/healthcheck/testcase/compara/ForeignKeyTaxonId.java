@@ -59,23 +59,23 @@ public class ForeignKeyTaxonId extends SingleDatabaseTestCase {
 
         if (tableHasRows(con, "taxon")) {
             orphans = countOrphans(con, "member", "taxon_id", "taxon", "taxon_id", true);
-            fillReportManager(con, orphans,"member", "taxon_id", "taxon", "taxon_id");
+            result &= fillReportManager(con, orphans,"member", "taxon_id", "taxon", "taxon_id");
 
             orphans = countOrphans(con, "genome_db", "taxon_id", "taxon", "taxon_id", true);
-            fillReportManager(con, orphans,"genome_db", "taxon_id", "taxon", "taxon_id");
+            result &= fillReportManager(con, orphans,"genome_db", "taxon_id", "taxon", "taxon_id");
 
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in taxon table, so nothing to test IGNORED");
         }
 
-        result &= (orphans == 0);
-
         return result;
 
     }
 
-    public int fillReportManager(Connection con, int orphans, String table1, String col1, String table2, String col2) {
+    public boolean fillReportManager(Connection con, int orphans, String table1, String col1, String table2, String col2) {
 
+        boolean result = true;
+        
         String sql = "SELECT " + table1 + "." + col1 + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
 
         if (orphans == 0) {
@@ -84,11 +84,13 @@ public class ForeignKeyTaxonId extends SingleDatabaseTestCase {
             ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + col1 + "("+col2+")" + " relationships");
             ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
             ReportManager.problem(this, con, "USEFUL SQL: " + sql);
+            result = false;
         } else {
             ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1 + ", look at the StackTrace if any");
+            result = false;
         }
-
-        return 1;
+        
+        return result;
     } //fillReportManager
 
 } // ForeignKeyTaxonId
