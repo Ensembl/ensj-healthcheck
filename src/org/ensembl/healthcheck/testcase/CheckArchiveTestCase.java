@@ -431,7 +431,9 @@ public class CheckArchiveTestCase extends EnsTestCase {
 			}
 		}
 
-		ReportManager.correct(this, con, "Old/new db name chaining in mapping_session seems OK");
+		if (result) {
+			ReportManager.correct(this, con, "Old/new db name chaining in mapping_session seems OK");
+		}
 
 		return result;
 
