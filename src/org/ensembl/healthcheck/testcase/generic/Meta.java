@@ -34,7 +34,7 @@ import org.ensembl.healthcheck.util.Utils;
 public class Meta extends SingleDatabaseTestCase {
 
     // update this array as necessary
-    private static final String[] VALIDPREFIXES = {"RGSC", "DROM", "ZFISH", "FUGU", "MOZ", "CEL", "CBR", "MGSC", "NCBI", "NCBIM"};
+    private static final String[] VALIDPREFIXES = {"RGSC", "DROM", "ZFISH", "FUGU", "MOZ", "CEL", "CBR", "MGSC", "NCBI", "NCBIM", "TETRAODON", "AMEL"};
 
     // format for genebuild.version
     private static final String GBV_REGEXP = "[0-9]{4}[a-zA-Z]*";
