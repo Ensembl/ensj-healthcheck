@@ -18,6 +18,8 @@
 
 package org.ensembl.healthcheck.testcase;
 
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
+
 /**
  * Interface to be implemented by TestCases that can also repair problems they find.
  * 
@@ -27,11 +29,11 @@ public interface Repair {
   /**
    * Repair any problems that have been found.
    */
-  void repair();
+  void repair(DatabaseRegistryEntry dbre);
   
   /**
    * Show what repairs would be carried out, but <em>do not</em> actually do it.
    */
-  void show();
+  void show(DatabaseRegistryEntry dbre);
   
 }
