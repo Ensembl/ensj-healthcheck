@@ -29,11 +29,13 @@
 package org.ensembl.healthcheck;
 
 import java.sql.*;
+import java.util.*;
 
 public abstract class EnsTestCase {
     
     protected TestRunner testRunner;
     protected String databaseRegexp = "";
+    protected ArrayList groups;
     
     // -------------------------------------------------------------------------
     /** 
@@ -82,6 +84,40 @@ public abstract class EnsTestCase {
     
     // -------------------------------------------------------------------------
     
+    public ArrayList getGroups() {
+
+      return groups;
+      
+    }   
+
+    public void setGroups(ArrayList s) {
+      
+	groups = s;
+    
+    }
+    
+    public void addToGroup(String newGroupName) {
+      
+      if (!groups.contains(newGroupName)) {
+	groups.add(newGroupName);
+      } else {
+	System.err.println("Warning: " + getTestName() + " is already a memeber of " + newGroupName + " not added again.");
+      }
+      
+    }
+    
+    public void removeFromGroup(String groupName) {
+     
+      if (groups.contains(groupName)) {
+	groups.remove(groupName);
+      } else {
+	System.err.println("Warning: " + getTestName() + " was not a memeber of " + groupName);
+      }
+      
+    }
+    
+    // -------------------------------------------------------------------------
+    
     public String[] getAffectedDatabases(String databaseRegexp) {
     
       return testRunner.getListOfDatabaseNames(databaseRegexp);
@@ -99,6 +135,67 @@ public abstract class EnsTestCase {
       }
       
     } // printAffectedDatabases
+    
+    // -------------------------------------------------------------------------
+    public int countRowsInTable(Connection con, String table) {
+            
+      return getRowCount(con, "SELECT COUNT(*) FROM " + table);
+            
+    } // countRowsInTable
+    
+    // -------------------------------------------------------------------------
+   
+    public int getRowCount(Connection con, String sql) {
+      
+      int result = -1;
+      
+       try {
+	Statement stmt = con.createStatement();
+	ResultSet rs = stmt.executeQuery(sql);
+	if (rs != null) {
+	  rs.next();
+	  result = rs.getInt(1);	
+	}
+	rs.close();
+	stmt.close();
+      } catch (Exception e) {
+	e.printStackTrace();
+      }
+      
+      return result;
+      
+    }
+    
+    // -------------------------------------------------------------------------
+    
+    public int countOrphans(Connection con, String table1, String col1, String table2, String col2, boolean oneWayOnly) {
+      
+      int resultLeft, resultRight;
+      
+      String sql = "SELECT COUNT(*) FROM " + table1 + 
+                   " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + 
+		   " WHERE " + table2 + "." + col2 + " iS NULL";
+
+      resultLeft = getRowCount(con, sql);
+      
+      if (!oneWayOnly) {
+	// and the other way ... (a right join?)
+	sql = "SELECT COUNT(*) FROM " + table2 + 
+	      " LEFT JOIN " + table1 + " ON " + table2 + "." + col2 + " = " + table1 + "." + col1 + 
+	      " WHERE " + table1 + "." + col1 + " IS NULL";
+     
+	resultRight = getRowCount(con, sql);
+      } else {
+	 resultRight = 0;
+      }
+      
+      System.out.println("Left: " + resultLeft + " Right: " + resultRight);
+      
+      return resultLeft + resultRight;
+      
+      
+    } // countOrphans
+    
     // -------------------------------------------------------------------------
     
 } // EnsTestCase
