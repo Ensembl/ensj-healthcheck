@@ -30,7 +30,7 @@ import org.ensembl.healthcheck.util.DatabaseConnectionIterator;
 public class Archive extends EnsTestCase {
 
 	public Archive() {
-		addToGroup("check_archive");
+		addToGroup("id_mapping");
 		setDescription("Checks the archive tables are up to date.");
 	}
 
