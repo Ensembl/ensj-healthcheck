@@ -42,7 +42,7 @@
   <!-- ################################################################################## -->
 
   <target name="java-version" description="Print which version of Java is being used; hopefully will help to spot path problems" >
-    <exec executable="java" vmlauncher="no">
+    <exec executable="java">
       <arg value="-version"/>
     </exec>
   </target>
@@ -51,6 +51,11 @@
 
   <target name="compile" depends="init, java-version" description="Compile the source " >
     <javac srcdir="${src}" destdir="${build}" excludes="**/*Test.*" >
+      <classpath>
+        <fileset dir="lib">
+          <include name="**/*.jar"/>
+        </fileset>
+      </classpath>
     </javac>
   </target>
 
