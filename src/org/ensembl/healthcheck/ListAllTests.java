@@ -22,6 +22,7 @@ import java.util.*;
 import java.util.logging.*;
 
 import org.ensembl.healthcheck.testcase.*;
+import org.ensembl.healthcheck.util.Utils;
 
 /**
  * Subclass of TestRunner that lists all tests.
@@ -45,7 +46,7 @@ public class ListAllTests extends TestRunner {
     
     lat.parseCommandLine(args);
     
-    lat.readPropertiesFile();
+    Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
     
     lat.listAllTests();
     

@@ -54,7 +54,7 @@ public class GuiTestRunner extends TestRunner implements Reporter {
     
     gtr.parseCommandLine(args);
     
-    gtr.readPropertiesFile();
+    Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
     
     gtr.readStoredSchemaInfo();
     

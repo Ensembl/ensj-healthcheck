@@ -18,7 +18,6 @@
 
 package org.ensembl.healthcheck;
 
-import java.util.*;
 import java.sql.*;
 
 import org.ensembl.healthcheck.util.*;
@@ -31,7 +30,6 @@ import org.ensembl.healthcheck.util.*;
 public class DatabaseNameMatcher {
   
   private String databaseRegexp = "";
-  private Properties dbProps;
   
   // -------------------------------------------------------------------------
   /**
@@ -74,8 +72,8 @@ public class DatabaseNameMatcher {
   
   private void readPropertiesFile() {
     
-    String propsFile = System.getProperty("user.dir") + System.getProperty("file.separator") + "database.properties";
-    dbProps = Utils.readPropertiesFile(propsFile);
+    String propsFile = "database.properties";
+    Utils.readPropertiesFileIntoSystem(propsFile);
     System.out.println("Read database properties from " + propsFile);
     //Enumeration e = dbProps.propertyNames();
     //String propName;
@@ -98,7 +96,7 @@ public class DatabaseNameMatcher {
     
     try {
       
-      con = DBUtils.openConnection(dbProps.getProperty("driver"), dbProps.getProperty("databaseURL"), dbProps.getProperty("user"), dbProps.getProperty("password"));
+      con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System.getProperty("user"), System.getProperty("password"));
       
       databaseNames = DBUtils.listDatabases(con, databaseRegexp, "");
       

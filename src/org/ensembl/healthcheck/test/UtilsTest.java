@@ -32,7 +32,7 @@ public class UtilsTest extends TestCase {
   public void testReadPropertiesFile() {
     System.out.println("testReadPropertiesFile");
     
-    assertNotNull(Utils.readPropertiesFile("database.properties"));
+    assertNotNull(Utils.readSimplePropertiesFile("database.properties"));
   }
   
   public void tearDown() {

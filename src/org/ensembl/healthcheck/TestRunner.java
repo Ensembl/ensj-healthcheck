@@ -48,7 +48,7 @@ public class TestRunner {
 	/** Output level used by ReportManager */
 	protected int outputLevel = ReportLine.ALL;
 	/** The name of the file where configuration is stored */
-	protected String propertiesFileName = "database.properties";
+	protected static String PROPERTIES_FILE = "database.properties";
 	/** Flag to determine whether repairs will be shown if appropriate */
 	protected boolean showRepair = false;
 	/** Flag to determine whether repairs will be carried out if appropriate */
@@ -67,39 +67,7 @@ public class TestRunner {
 	} // TestRunner
 
 	// -------------------------------------------------------------------------
-	/**
-	 * Read the <code>database.properties</code> file into the System properties
-	 * so that it can be overridden with -D.
-	 */
-	protected void readPropertiesFile() {
-
-		String propsFile = System.getProperty("user.dir") + System.getProperty("file.separator") + propertiesFileName;
-		Properties dbProps = Utils.readPropertiesFile(propsFile);
-		logger.fine("Read database properties from " + propsFile);
-		Enumeration e = dbProps.propertyNames();
-		String name, value;
-		while (e.hasMoreElements()) {
-			name = (String)e.nextElement();
-			value = dbProps.getProperty(name);
-			// add to System
-			System.setProperty(name, value);
-			logger.finer("\t" + name + " = " + value);
-		}
-
-		// validate database URL - if it doesn't start with jdbc: this can cause confusion
-		String databaseURL = System.getProperty("databaseURL");
-		if (databaseURL == null || databaseURL.equals("")) {
-			System.err.println("Error: databaseURL not specified in " + propsFile);
-		} else {
-			String prefix = databaseURL.substring(0, 5);
-			if (!prefix.equalsIgnoreCase("jdbc:")) {
-				System.err.println(
-					"WARNING - databaseURL property should start with jdbc: but it does not seem to. Check this if you experience problems loading the database driver");
-			}
-		}
-
-	} // readPropertiesFile
-
+	
 	// -------------------------------------------------------------------------
 	/**
 	 * Get a list of all the schema names .
@@ -115,8 +83,7 @@ public class TestRunner {
 		try {
 
 			conn =
-				DBUtils.openConnection(
-					System.getProperty("driver"),
+				DBUtils.openConnection(System.getProperty("driver"),
 					System.getProperty("databaseURL"),
 					System.getProperty("user"),
 					System.getProperty("password"));

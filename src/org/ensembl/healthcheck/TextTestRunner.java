@@ -48,7 +48,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
     
     System.out.println(ttr.getVersion());
     
-    ttr.readPropertiesFile();
+    Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
     
     ttr.parseCommandLine(args);
     ttr.outputBuffer = new ArrayList();
@@ -182,7 +182,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
         } else if (args[i].equals("-config")) {
           
           i++;
-          propertiesFileName = args[i];
+          PROPERTIES_FILE = args[i];
           // System.out.println("Will read properties from " + propertiesFileName);
           
         } else {

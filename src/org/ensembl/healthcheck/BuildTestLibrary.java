@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.logging.*;
 
 import org.ensembl.healthcheck.testcase.*;
+import org.ensembl.healthcheck.util.Utils;
 
 /**
  * Subclass of TestRunner that produces a web page containing descriptions of available tests.
@@ -44,7 +45,7 @@ public class BuildTestLibrary extends TestRunner {
     
     btl.parseCommandLine(args);
     
-    btl.readPropertiesFile();
+    Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
     
     btl.buildList();
     

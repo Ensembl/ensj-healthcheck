@@ -985,17 +985,17 @@ public abstract class EnsTestCase {
 
 		// read properties file
 		String propsFile = System.getProperty("user.dir") + System.getProperty("file.separator") + "database.properties";
-		Properties dbProps = Utils.readPropertiesFile(propsFile);
+		Utils.readPropertiesFileIntoSystem(propsFile);
 		logger.fine("Read database properties from " + propsFile);
 
 		try {
 
-			Class.forName(dbProps.getProperty("driver"));
+			Class.forName(System.getProperty("driver"));
 			Connection tmp_con =
 				DriverManager.getConnection(
-					dbProps.getProperty("databaseURL"),
-					dbProps.getProperty("user"),
-					dbProps.getProperty("password"));
+					System.getProperty("databaseURL"),
+					System.getProperty("user"),
+					System.getProperty("password"));
 
 			String sql = "CREATE DATABASE " + tempDBName;
 			logger.finest(sql);
@@ -1007,9 +1007,9 @@ public abstract class EnsTestCase {
 			tmp_con.close();
 			con =
 				DriverManager.getConnection(
-					dbProps.getProperty("databaseURL") + tempDBName,
-					dbProps.getProperty("user"),
-					dbProps.getProperty("password"));
+					System.getProperty("databaseURL") + tempDBName,
+					System.getProperty("user"),
+					System.getProperty("password"));
 
 		} catch (Exception e) {
 
