@@ -27,12 +27,12 @@ import org.ensembl.healthcheck.util.*;
 /**
  * Check that exon co-ordinates are sensible.
  */
-public class CheckExonCoordsTestCase extends EnsTestCase {
+public class ExonCoords extends EnsTestCase {
   
   /**
    * Creates a new instance of CheckExonCoordsTestCase
    */
-  public CheckExonCoordsTestCase() {
+  public ExonCoords() {
     addToGroup("post_genebuild");
     setDescription("Check that exon co-ordinates are sensible.");
   }
