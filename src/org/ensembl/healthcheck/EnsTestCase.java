@@ -350,15 +350,17 @@ public abstract class EnsTestCase {
     if (con == null) {
       logger.severe("getRowCount: Database connection is null");
     }
-    
     int result = -1;
     
     try {
       Statement stmt = con.createStatement();
       ResultSet rs = stmt.executeQuery(sql);
       if (rs != null) {
-        rs.next();
-        result = rs.getInt(1);
+        if (rs.first()) {
+          result = rs.getInt(1);
+        } else {
+          result = -1; // probably signifies an empty ResultSet
+        }
       }
       rs.close();
       stmt.close();
