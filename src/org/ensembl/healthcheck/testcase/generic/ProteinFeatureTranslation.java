@@ -197,6 +197,7 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
                     if (rs.getInt("seq_end") > minTranslationLength) {
                         result = false;
                         thisDBFeatures.add(proteinFeatureID);
+			//System.out.println("proteinFeatureID: " + proteinFeatureID);
                     }
                 } else {
                     ReportManager.problem(this, con, "Protein feature " + proteinFeatureID
@@ -206,7 +207,7 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
 
             featuresToDelete.put(DBUtils.getShortDatabaseName(con), thisDBFeatures);
             if (thisDBFeatures.size() > 0) {
-                ReportManager.problem(this, con, "protein_feature_table has " + thisDBFeatures.size()
+                ReportManager.problem(this, con, "protein_feature table has " + thisDBFeatures.size()
                         + " features that are longer than the translation");
             } else {
                 ReportManager.correct(this, con,
