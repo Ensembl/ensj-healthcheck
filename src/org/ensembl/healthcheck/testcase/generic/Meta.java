@@ -33,9 +33,6 @@ import org.ensembl.healthcheck.util.Utils;
  */
 public class Meta extends SingleDatabaseTestCase {
 
-    // update this array as necessary
-    private static final String[] VALIDPREFIXES = {"RGSC", "DROM", "ZFISH", "FUGU", "MOZ", "CEL", "CBR", "MGSC", "NCBI", "NCBIM", "TETRAODON", "AMEL"};
-
     // format for genebuild.version
     private static final String GBV_REGEXP = "[0-9]{4}[a-zA-Z]*";
 
@@ -106,21 +103,16 @@ public class Meta extends SingleDatabaseTestCase {
             }
 
             // ----------------------------------------
-            // Check that assembly prefix is one of the correct ones
-            // Prefix is OK as long as it starts with a valid one
-            boolean member = false;
-            for (int i = 0; i < VALIDPREFIXES.length; i++) {
-                if (metaTableAssemblyPrefix.startsWith(VALIDPREFIXES[i])) {
-                    member = true;
-                }
-            }
-            if (!member) {
+            // Check that assembly prefix is valid and corresponds to this species
+            // Prefix is OK as long as it starts with the valid one
+            Species dbSpecies = dbre.getSpecies();
+            Species apSpecies = Species.getSpeciesForAssemblyPrefix(metaTableAssemblyPrefix);
+            
+            if (!dbSpecies.equals(apSpecies)) {
+                ReportManager.problem(this, con, "Database species is " + dbSpecies.toString() + " but assembly prefix " + metaTableAssemblyPrefix + " corresponds to " + apSpecies.toString());
                 result = false;
-                //warn(con, "Assembly prefix (" + metaTableAssemblyPrefix + ")
-                // is not valid");
-                ReportManager.problem(this, con, "Assembly prefix (" + metaTableAssemblyPrefix + ") is not valid");
             } else {
-                ReportManager.correct(this, con, "Meta table assembly prefix (" + metaTableAssemblyPrefix + ") is valid");
+                ReportManager.correct(this, con, "Meta table assembly prefix (" + metaTableAssemblyPrefix + ") is correct for " + dbSpecies.toString());
             }
         }
 

@@ -92,6 +92,8 @@ public final class Species {
 
     private static Map speciesToTaxonID = new HashMap();
 
+    private static Map assemblyPrefixes = new HashMap();
+    
     static {
 
         taxonIDToSpecies.put("9606", HOMO_SAPIENS);
@@ -115,6 +117,19 @@ public final class Species {
             Species species = (Species) taxonIDToSpecies.get(taxonID);
             speciesToTaxonID.put(species, taxonID);
         }
+        
+        assemblyPrefixes.put("RGSC", RATTUS_NORVEGICUS);
+        assemblyPrefixes.put("DROM", DROSOPHILA_MELANOGASTER);
+        assemblyPrefixes.put("ZFISH", DANIO_RERIO);
+        assemblyPrefixes.put("FUGU", FUGU_RUBRIPES);
+        assemblyPrefixes.put("MOZ", ANOPHELES_GAMBIAE);
+        assemblyPrefixes.put("CEL", CAENORHABDITIS_ELEGANS);
+        assemblyPrefixes.put("CBR", CAENORHABDITIS_BRIGGSAE);
+        assemblyPrefixes.put("NCBI", HOMO_SAPIENS);
+        assemblyPrefixes.put("NCBIM", MUS_MUSCULUS);
+        assemblyPrefixes.put("TETRAODON", TETRAODON_NIGROVIRIDIS);
+        assemblyPrefixes.put("AMEL", APIS_MELLIFERA);
+        
     }
 
     // -----------------------------------------------------------------
@@ -294,6 +309,27 @@ public final class Species {
         return (list.indexOf(alias) > -1);
 
     }
+    
+    // -------------------------------------------------------------------------
+    /**
+     * Return a Species object corresponding to a particular assembly prefix.
+     * @param prefix The assembly prefix.
+     * @return The Species corresponding to prefix, or Species.UNKNOWN.
+     */
+    public static Species getSpeciesForAssemblyPrefix(String prefix) {
+        
+        Species result = Species.UNKNOWN;
+        
+        if (assemblyPrefixes.containsKey(prefix)) {
+            result = (Species)assemblyPrefixes.get(prefix);
+        } else {
+            result = Species.UNKNOWN;
+        }
+        
+        return result;
+        
+    }
+    
     // -----------------------------------------------------------------
 
 }

@@ -86,5 +86,13 @@ public class SpeciesTest extends TestCase {
     }
 
     // -----------------------------------------------------------------
+    
+    public void testAssemblyPrefixes() {
+        
+        assertEquals(Species.getSpeciesForAssemblyPrefix("NCBI"), Species.HOMO_SAPIENS);
+        
+    }
+    
+    // -----------------------------------------------------------------
 
 }
