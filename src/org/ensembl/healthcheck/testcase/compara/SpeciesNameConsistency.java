@@ -52,8 +52,6 @@ public class SpeciesNameConsistency extends SingleDatabaseTestCase {
 
         boolean result = true;
 
-        int orphans = 0;
-
         Connection con = dbre.getConnection();
 
         // check genome_db table has > 0 rows

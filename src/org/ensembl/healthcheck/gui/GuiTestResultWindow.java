@@ -56,8 +56,6 @@ import org.ensembl.healthcheck.ReportManager;
  */
 public class GuiTestResultWindow extends JFrame {
 
-    private GuiTestRunnerFrame gtrf;
-
     private static final String OUTPUT_FILE = "GuiTestRunner.txt";
 
     /**
@@ -68,8 +66,6 @@ public class GuiTestResultWindow extends JFrame {
     public GuiTestResultWindow(GuiTestRunnerFrame gtrf) {
 
         super("Healthcheck Results");
-
-        this.gtrf = gtrf;
 
         Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
@@ -171,11 +167,7 @@ class ResultTreePanel extends JScrollPane {
 
     private JTree tree;
 
-    private GuiTestRunnerFrame gtrf;
-
     public ResultTreePanel(GuiTestRunnerFrame gtrf) {
-
-        this.gtrf = gtrf;
 
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
@@ -354,10 +346,6 @@ class JLabelTreeCellRenderer extends DefaultTreeCellRenderer {
             int[] passesFails = ReportManager.countPassesAndFailsDatabase(node.getText());
             setToolTipText(node.getText() + " passed a total of " + passesFails[0] + " tests and failed a total of "
                     + passesFails[1] + " tests");
-
-        } else if (node.isDatabaseLabel()) {
-
-            int i = 1; // placeholder
 
         } else {
 

@@ -47,7 +47,7 @@ public final class DBUtils {
 
     // hide constructor to stop instantiation
     private DBUtils() {
-    };
+    }
 
     // -------------------------------------------------------------------------
     /**

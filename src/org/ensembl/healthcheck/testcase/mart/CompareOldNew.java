@@ -19,6 +19,9 @@
 /*
  * 
  * $Log$
+ * Revision 1.2  2004/03/25 13:47:41  gp1
+ * Merged v2 branch into HEAD.
+ *
  * Revision 1.1.2.4  2004/03/18 14:19:46  gp1
  * Corrected Javdoc. 
  * 
@@ -85,9 +88,6 @@ public class CompareOldNew extends OrderedDatabaseTestCase {
 
         boolean result = true;
 
-        int i;
-        Connection con;
-
         // first check we got acceptable input from user
         // check we have 2 and only 2 databases
         if (databases.length != 2) {
@@ -113,7 +113,6 @@ public class CompareOldNew extends OrderedDatabaseTestCase {
             Hashtable counts = new Hashtable();
             while (rs2.next()) {
                 String key = rs2.getString(1);
-                Integer nonNull = new Integer(rs2.getInt(2));
                 Integer distinct = new Integer(rs2.getInt(3));
                 counts.put(key, distinct);
                 //System.out.print(key+" "+distinct+"\n");
@@ -121,7 +120,6 @@ public class CompareOldNew extends OrderedDatabaseTestCase {
 
             while (rs1.next()) {
                 String key = rs1.getString(1);
-                Integer nonNull = new Integer(rs1.getInt(2));
                 Integer distinct = new Integer(rs1.getInt(3));
                 if (counts.containsKey(key)) {
                     // does the new mart contain this column

@@ -217,7 +217,6 @@ public class DatabaseRegistry {
      */
     public final void setTypeOfAll(final DatabaseType type) {
 
-        List result = new ArrayList();
         Iterator it = entries.iterator();
         while (it.hasNext()) {
             DatabaseRegistryEntry dbre = (DatabaseRegistryEntry) it.next();
@@ -235,7 +234,6 @@ public class DatabaseRegistry {
      */
     public final void setSpeciesOfAll(final Species species) {
 
-        List result = new ArrayList();
         Iterator it = entries.iterator();
         while (it.hasNext()) {
             DatabaseRegistryEntry dbre = (DatabaseRegistryEntry) it.next();

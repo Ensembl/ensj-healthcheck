@@ -294,7 +294,6 @@ public class TestRegistry {
             try {
 
                 Class newClass = Class.forName(packageName + "." + baseClassName);
-                String className = newClass.getName();
                 obj = newClass.newInstance();
 
             } catch (InstantiationException ie) {

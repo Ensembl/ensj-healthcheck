@@ -95,9 +95,9 @@ public class ExonStrandOrder extends SingleDatabaseTestCase {
             while (rs.next()) {
 
                 long geneID = rs.getLong(1);
-                long geneStart = rs.getLong(2);
-                long geneEnd = rs.getLong(3);
-                int geneStrand = rs.getInt(4);
+                //long geneStart = rs.getLong(2);
+                //long geneEnd = rs.getLong(3);
+                //int geneStrand = rs.getInt(4);
                 long transcriptID = rs.getLong(5);
                 long transcriptStart = rs.getLong(6);
                 long transcriptEnd = rs.getLong(7);

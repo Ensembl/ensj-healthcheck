@@ -46,7 +46,7 @@ import org.ensembl.healthcheck.util.Utils;
  */
 public final class TestReadingClasspath {
 
-    private TestReadingClasspath() { };
+    private TestReadingClasspath() { }
     
     /**
      * Command-line entrypoint.

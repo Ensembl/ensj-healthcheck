@@ -59,7 +59,7 @@ public final class ReportManager {
     // hide constructor to stop instantiation
     private ReportManager() {
 
-    };
+    }
 
     /**
      * Set the reporter for this ReportManager.

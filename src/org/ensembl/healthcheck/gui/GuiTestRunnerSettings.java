@@ -20,7 +20,6 @@ package org.ensembl.healthcheck.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -45,11 +44,7 @@ import org.ensembl.healthcheck.ReportLine;
  */
 public class GuiTestRunnerSettings extends JDialog {
 
-    private GuiTestRunnerFrame gtrf;
-
     private GuiTestRunner guiTestRunner;
-
-    private static final Dimension PANEL_SIZE = new Dimension(300, 500);
 
     /**
      * Creates new form GuiTestRunnerSettings
@@ -64,7 +59,6 @@ public class GuiTestRunnerSettings extends JDialog {
     public GuiTestRunnerSettings(GuiTestRunnerFrame parent, GuiTestRunner gtr, boolean modal) {
 
         super(parent, modal);
-        this.gtrf = parent;
         this.guiTestRunner = gtr;
         initComponents();
     }

@@ -38,7 +38,7 @@ public final class ConnectionPool {
     private static Map pool = new HashMap();
 
     // hide constructor to stop people instantiating this
-    private ConnectionPool() { };
+    private ConnectionPool() { }
     
     /**
      * Get a connection from the pool. If a connection to this database already

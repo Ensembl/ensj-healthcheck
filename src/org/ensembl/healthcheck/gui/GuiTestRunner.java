@@ -1,17 +1,17 @@
 /*
  * Copyright (C) 2004 EBI, GRL
  * 
- * This library is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free Software
- * Foundation; either version 2.1 of the License, or (at your option) any later version.
+ * This library is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU Lesser General Public License as published by the Free Software Foundation; either version
+ * 2.1 of the License, or (at your option) any later version.
  * 
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
  * 
- * You should have received a copy of the GNU Lesser General Public License along with
- * this library; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
- * Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU Lesser General Public License along with this library;
+ * if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+ * 02111-1307 USA
  */
 
 package org.ensembl.healthcheck.gui;
@@ -63,7 +63,7 @@ public class GuiTestRunner extends TestRunner implements Reporter {
     private void run(String[] args) {
 
         outputLevel = ReportLine.ALL; // filtered later
-        
+
         ReportManager.setReporter(this);
 
         parseCommandLine(args);
@@ -128,16 +128,12 @@ public class GuiTestRunner extends TestRunner implements Reporter {
         final GuiTestRunnerFrame gtrf = lgtrf;
         final EnsTestCase[] tests = ltests;
         final DatabaseRegistryEntry[] databases = ldatabases;
-        
+
         Thread t = new Thread() {
 
             public void run() {
 
                 gtrf.setTestProgressDialogVisibility(true);
-
-                ThreadGroup testThreads = new ThreadGroup("test_threads");
-
-                DatabaseRegistry selectedDatabaseRegistry = new DatabaseRegistry(databases);
 
                 int totalTestsToRun = tests.length * databases.length;
 
@@ -157,7 +153,7 @@ public class GuiTestRunner extends TestRunner implements Reporter {
                             DatabaseRegistryEntry dbre = databases[j];
                             String message = testCase.getShortTestName() + ": " + dbre.getName();
                             gtrf.updateProgressDialog(message);
-                            boolean result = ((SingleDatabaseTestCase) testCase).run(dbre);
+                            ((SingleDatabaseTestCase) testCase).run(dbre);
                             gtrf.incrementNumberRun(1);
                             gtrf.updateProgressDialog();
                             gtrf.repaintTestProgressDialog();
@@ -168,7 +164,7 @@ public class GuiTestRunner extends TestRunner implements Reporter {
                         DatabaseRegistry dbr = new DatabaseRegistry(databases);
                         String message = testCase.getShortTestName() + " ( " + dbr.getEntryCount() + " databases)";
                         gtrf.updateProgressDialog(message);
-                        boolean result = ((MultiDatabaseTestCase) testCase).run(dbr);
+                        ((MultiDatabaseTestCase) testCase).run(dbr);
                         gtrf.incrementNumberRun(dbr.getEntryCount());
                         gtrf.updateProgressDialog();
 
@@ -179,15 +175,15 @@ public class GuiTestRunner extends TestRunner implements Reporter {
                 }
 
                 gtrf.setTestProgressDialogVisibility(false);
-                
+
                 gtrf.createResultFrame();
-                
+
             } // run
 
         }; // thread
 
         t.start();
-        
+
     } // runAllTests
 
     // -------------------------------------------------------------------------
@@ -199,7 +195,7 @@ public class GuiTestRunner extends TestRunner implements Reporter {
      * @param reportLine The message to store.
      */
     public void message(ReportLine reportLine) {
- 
+
     }
 
     /**

@@ -49,7 +49,7 @@ public final class Utils {
     // hide constuctor to prevent instantiation
     private Utils() {
 
-    };
+    }
 
     /**
      * Read the <code>database.properties</code> file into the System properties so that it can

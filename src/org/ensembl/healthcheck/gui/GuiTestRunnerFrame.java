@@ -94,8 +94,6 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
 
     private JLabel statusLabel;
 
-    private Map testButtonInfoWindows = new HashMap();
-
     private TestProgressDialog testProgressDialog;
 
     private int testsRun = 0;
@@ -516,7 +514,7 @@ class DatabaseTabbedPane extends JTabbedPane {
             List checkBoxesForTab = new ArrayList();
             for (int j = 0; j < entries.length; j++) {
                 if (entries[j].getType() == types[i]) {
-                    checkBoxesForTab.add((DatabaseCheckBox) checkBoxMap.get(entries[j]));
+                    checkBoxesForTab.add(checkBoxMap.get(entries[j]));
                 }
             }
             addTab(types[i].toString(), new DatabaseListPanel(checkBoxesForTab));
@@ -561,10 +559,7 @@ class TabChangeListener implements ChangeListener {
 
     public void stateChanged(ChangeEvent e) {
 
-        JTabbedPane jtp = (JTabbedPane) e.getSource();
-        int sel = jtp.getSelectedIndex();
-        // nothing required at the moment
-
+        
     }
 
 } // tabChangeListener
@@ -1046,7 +1041,7 @@ class TestProgressDialog extends JDialog {
         messageLabel = new JLabel(message);
         messageLabel.setFont(new Font("Dialog", Font.BOLD, 12));
         messageLabel.setBackground(Color.WHITE);
-        noteLabel = new JLabel(message);
+        noteLabel = new JLabel(note);
         noteLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
         noteLabel.setBackground(Color.WHITE);
 
