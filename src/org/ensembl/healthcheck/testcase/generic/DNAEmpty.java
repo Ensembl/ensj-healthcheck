@@ -42,9 +42,7 @@ public class DNAEmpty extends SingleDatabaseTestCase {
     }
 
     /**
-     * Check the data in the assembly_exception table. Note referential
-     * integrity checks are done in CoreForeignKeys.
-     * 
+     * Run the test.
      * @param dbre
      *          The database to use.
      * @return Result.
