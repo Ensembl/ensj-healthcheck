@@ -43,7 +43,7 @@ public class CheckCoreTablesHaveDataTestCase extends EnsTestCase {
    */
   public TestResult run() {
     
-    String[] tables = { "chromosome", "assembly", "dna", "contig", "clone" };
+    String[] tables = { "chromosome", "assembly", "dna", "contig", "clone", "interpro" };
     
     boolean result = true;
        
