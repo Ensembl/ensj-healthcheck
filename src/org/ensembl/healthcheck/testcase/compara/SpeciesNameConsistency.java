@@ -27,7 +27,7 @@ import org.ensembl.healthcheck.testcase.*;
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key relationships.
  */
 
-public class SpeciesNameConsistency extends EnsTestCase {
+public class SpeciesNameConsistency extends SingleDatabaseTestCase {
 
 	/**
 	 * Create an OrphanTestCase that applies to a specific set of databases.

@@ -27,7 +27,7 @@ import org.ensembl.healthcheck.testcase.*;
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key relationships.
  */
 
-public class ForeignKeyDnafragId extends EnsTestCase {
+public class ForeignKeyDnafragId extends SingleDatabaseEnsTestCase {
 
 	/**
 	 * Create an OrphanTestCase that applies to a specific set of databases.
