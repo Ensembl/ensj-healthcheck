@@ -75,6 +75,8 @@ public class LogicNamesDisplayable extends SingleDatabaseTestCase {
             Connection con = dbre.getConnection();
             result &= checkLogicNames(con);
             result &= checkProteinFeatureAnalysis(con);
+            result &= checkMissingDBEntries(con);
+            
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -149,6 +151,8 @@ public class LogicNamesDisplayable extends SingleDatabaseTestCase {
         return result;
     }
 
+    // -------------------------------------------------------------------------
+    
     /*
      * Does a set of analysis checks for the protein feature table This table has some bizarre
      * requirements for the associated analysis which will hopefully change at some point. In the
@@ -233,6 +237,31 @@ public class LogicNamesDisplayable extends SingleDatabaseTestCase {
 
     } // addSupportingFeatureLogicNames
 
+    // -------------------------------------------------------------------------
+    /**
+     * Check for analysis table rows where the db column is blank (but not null).
+     * This may cause problems as the db column is used for the 'domain type' labels in ProtView.
+     * This may change in future so this check may not be needed in future.
+     * @param con The database to check.
+     * @return true if there are no blank DB entries.
+     */
+    private boolean checkMissingDBEntries(Connection con) {
+    
+        boolean result = true;
+        
+        String[] blankDBLogicNames = getColumnValues(con, "SELECT logic_name FROM analysis WHERE db=''");
+        for (int j = 0; j < blankDBLogicNames.length; j++) {
+            ReportManager.problem(this, con, "Analysis with logic name '" + blankDBLogicNames[j] + "' has a blank db field - features of this type will have no label in ProtView");
+            result = false;
+        }
+        
+        if (result == true) {
+            ReportManager.correct(this, con, "analysis table has no rows with blank db entries");
+        }
+        
+        return result;
+    }
+    
     // -------------------------------------------------------------------------
 
 } // LogicNamesDisplayable
