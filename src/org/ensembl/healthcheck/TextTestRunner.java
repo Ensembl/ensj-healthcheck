@@ -39,9 +39,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
     private static String version = "$Id$";
 
-    private ArrayList databaseRegexps = new ArrayList(); // note order is
-
-    // important
+    private ArrayList databaseRegexps = new ArrayList(); 
 
     private boolean debug = false;
 

@@ -26,10 +26,7 @@ import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * @author glenn
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
+ * Check various things about ID mapping-related tables.
  */
 public class MappingSession extends SingleDatabaseTestCase {
 
@@ -41,7 +38,7 @@ public class MappingSession extends SingleDatabaseTestCase {
         addToGroup("id_mapping");
         addToGroup("release");
         setDescription("Checks the mapping session and stable ID tables.");
-    
+
     }
 
     /**
