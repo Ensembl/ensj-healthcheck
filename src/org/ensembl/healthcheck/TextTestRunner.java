@@ -63,7 +63,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
 		ReportManager.setReporter(ttr);
 
-		ttr.runAllTests(ttr.findAllTests(), ttr.forceDatabases);
+		ttr.runAllTests(ttr.findAllTests());
 
 		ConnectionPool.closeAll();
 
