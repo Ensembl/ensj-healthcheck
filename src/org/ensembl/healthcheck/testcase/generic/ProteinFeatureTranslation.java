@@ -82,8 +82,7 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
             // not there's
             // no point working out the translation lengths
             if (!tableHasRows(con, "protein_feature")) {
-                logger.warning("protein_feature table for " + DBUtils.getShortDatabaseName(con)
-                        + " has zero rows - skipping.");
+                ReportManager.problem(this, con, "protein_feature table is empty");
                 return false; // shoud we return true or false in this case?
             }
 
@@ -180,8 +179,6 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
                     //int minTranslationLength = ((Integer)
                     // translationLengths.get(translationID)).intValue();
                     if (rs.getInt("seq_end") > minTranslationLength) {
-                        System.out.println("pf " + proteinFeatureID + " length " + rs.getInt("seq_end")
-                                + " min translation length " + minTranslationLength);
                         result = false;
                         thisDBFeatures.add(proteinFeatureID);
                     }
