@@ -300,8 +300,6 @@ public class Meta extends SingleDatabaseTestCase {
 
     private boolean checkGenebuildVersion(Connection con) {
 
-	System.out.println("###here");
-
         String gbv = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.version'");
         logger.finest("genebuild.version from database: " + gbv);
 
