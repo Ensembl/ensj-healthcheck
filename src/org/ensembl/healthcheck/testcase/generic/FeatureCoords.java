@@ -68,7 +68,7 @@ public class FeatureCoords extends SingleDatabaseTestCase {
             String sql = "SELECT COUNT(*) FROM " + tableName + " WHERE seq_region_start < 1";
             int rows = getRowCount(con, sql);
             if (rows > 0) {
-                ReportManager.correct(this, con, rows + " rows in " + tableName + " have seq_region_start < 1");
+                ReportManager.problem(this, con, rows + " rows in " + tableName + " have seq_region_start < 1");
                 result = false;
             } else {
                 ReportManager.correct(this, con, "All rows in " + tableName + " have seq_region_start >= 1");
@@ -79,7 +79,7 @@ public class FeatureCoords extends SingleDatabaseTestCase {
             sql = "SELECT COUNT(*) FROM " + tableName + " WHERE seq_region_start > seq_region_end";
             rows = getRowCount(con, sql);
             if (rows > 0) {
-                ReportManager.correct(this, con, rows + " rows in " + tableName + " have seq_region_start > seq_region_end");
+                ReportManager.problem(this, con, rows + " rows in " + tableName + " have seq_region_start > seq_region_end");
                 result = false;
             } else {
                 ReportManager.correct(this, con, "All rows in " + tableName + " have seq_region_start < seq_region_end");
@@ -90,7 +90,7 @@ public class FeatureCoords extends SingleDatabaseTestCase {
             sql = "SELECT COUNT(*) FROM " + tableName + " f, seq_region s WHERE f.seq_region_id = s.seq_region_id AND f.seq_region_end > s.length";
             rows = getRowCount(con, sql);
             if (rows > 0) {
-                ReportManager.correct(this, con, rows + " rows in " + tableName + " have seq_region_end > length in seq_region_table");
+                ReportManager.problem(this, con, rows + " rows in " + tableName + " have seq_region_end > length in seq_region_table");
                 result = false;
             } else {
                 ReportManager.correct(this, con, "All rows in " + tableName + " have sensible lengths");
