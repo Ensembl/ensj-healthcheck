@@ -95,14 +95,14 @@ public class ForeignKeyGenomeDbId extends SingleDatabaseTestCase {
                                 "genomic_align_genome -> genome_db relationships TEST NOT COMPLETED, look at the StackTrace if any");
             }
 
-            orphans = countOrphans(con, "gene_relationship_member", "genome_db_id", "genome_db", "genome_db_id", true);
+            orphans = countOrphans(con, "member", "genome_db_id", "genome_db", "genome_db_id", true);
             if (orphans == 0) {
-                ReportManager.correct(this, con, "gene_relationship_member -> genome_db relationships PASSED");
+                ReportManager.correct(this, con, "member -> genome_db relationships PASSED");
             } else if (orphans > 0) {
-                ReportManager.problem(this, con, "gene_relationship_member has unlinked entries to genome_db FAILED");
+                ReportManager.problem(this, con, "member has unlinked entries to genome_db FAILED");
             } else {
                 ReportManager.problem(this, con,
-                        "gene_relationship_member -> genome_db TEST NOT COMPLETED, look at the StackTrace if any");
+                        "member -> genome_db TEST NOT COMPLETED, look at the StackTrace if any");
             }
 
             orphans = countOrphans(con, "method_link_species", "genome_db_id", "genome_db", "genome_db_id", false);
