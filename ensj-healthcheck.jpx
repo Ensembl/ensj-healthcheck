@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--JBuilder XML Project-->
+<project>
+  <property category="debug.0" name="SmartStepRedefineClasses" value="0"/>
+  <property category="debug.0" name="SmartStepSkipStaticInitializers" value="0"/>
+  <property category="debug.0" name="SmartStepSkipSynthetics" value="0"/>
+  <property category="optimize.0" name="OptimizableType" value="com.borland.jbuilder.optimize.IntroOptimizeitProfiler"/>
+  <property category="runtime" name="ConfigurationCount" value="2"/>
+  <property category="runtime" name="DefaultConfiguration" value="2"/>
+  <property category="runtime.0" name="BuildTargetOnRun" value="com.borland.jbuilder.build.ProjectBuilder$ProjectBuildAction;make"/>
+  <property category="runtime.0" name="ConfigurationName" value="TestDBConnection"/>
+  <property category="runtime.0" name="RunnableType" value="com.borland.jbuilder.runtime.ApplicationRunner"/>
+  <property category="runtime.0" name="application.class" value="org.ensembl.healthcheck.test.TestDBConnection"/>
+  <property category="runtime.1" name="BuildTargetOnRun" value="com.borland.jbuilder.build.ProjectBuilder$ProjectBuildAction;make"/>
+  <property category="runtime.1" name="ConfigurationName" value="RunCheck no args"/>
+  <property category="runtime.1" name="RunnableType" value="com.borland.jbuilder.runtime.ApplicationRunner"/>
+  <property category="runtime.1" name="application.class" value="org.ensembl.healthcheck.RunCheck"/>
+  <property category="runtime.2" name="BuildTargetOnRun" value="com.borland.jbuilder.build.ProjectBuilder$ProjectBuildAction;make"/>
+  <property category="runtime.2" name="ConfigurationName" value="RunCheck ^homo.* suite1 suite2"/>
+  <property category="runtime.2" name="RunnableType" value="com.borland.jbuilder.runtime.ApplicationRunner"/>
+  <property category="runtime.2" name="application.class" value="org.ensembl.healthcheck.RunCheck"/>
+  <property category="runtime.2" name="application.parameters" value=" ^homo.* suite1 suite2"/>
+  <property category="serverservices" name="disabled.services" value=""/>
+  <property category="serverservices" name="single.server.name" value="Tomcat 4.0"/>
+  <property category="sys" name="AuthorLabel" value="@author"/>
+  <property category="sys" name="BackupPath" value="bak"/>
+  <property category="sys" name="CheckStable" value="1"/>
+  <property category="sys" name="Company" value="EMBL"/>
+  <property category="sys" name="CompanyLabel" value="Organisation:"/>
+  <property category="sys" name="Copyright" value="Copyright (c) 2003"/>
+  <property category="sys" name="CopyrightLabel" value="Copyright:"/>
+  <property category="sys" name="DefaultPath" value="src"/>
+  <property category="sys" name="Description" value=""/>
+  <property category="sys" name="DescriptionLabel" value="Description:"/>
+  <property category="sys" name="DocPath" value="doc"/>
+  <property category="sys" name="ExcludeClassEnabled" value="0"/>
+  <property category="sys" name="IncludeTestPath" value="1"/>
+  <property category="sys" name="InstanceVisibility" value="2"/>
+  <property category="sys" name="JDK" value="java version 1.4.1-b21"/>
+  <property category="sys" name="JvmVersion" value="1.2"/>
+  <property category="sys" name="LastTag" value="0"/>
+  <property category="sys" name="Libraries" value="EnsJ;JUnit;mySQL"/>
+  <property category="sys" name="MakeStable" value="0"/>
+  <property category="sys" name="OutPath" value="classes"/>
+  <property category="sys" name="SourcePath" value="src;test"/>
+  <property category="sys" name="TestPath" value="test"/>
+  <property category="sys" name="Title" value=""/>
+  <property category="sys" name="TitleLabel" value="Title:"/>
+  <property category="sys" name="Version" value="1.0"/>
+  <property category="sys" name="VersionLabel" value="@version"/>
+  <property category="sys" name="WorkingDirectory" value="."/>
+  <file path="../../database.properties"/>
+  <file path="src/org/ensembl/healthcheck/util/DBUtils.java"/>
+  <file path="doc/design.txt"/>
+  <file path="src/org/ensembl/healthcheck/test/HelloWorld.java"/>
+  <file path="src/org/ensembl/healthcheck/util/LogFormatter.java"/>
+  <file path="src/org/ensembl/healthcheck/RunCheck.java"/>
+  <file path="src/org/ensembl/healthcheck/test/TestDBConnection.java"/>
+  <file path="src/org/ensembl/healthcheck/util/Utils.java"/>
+</project>

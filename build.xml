@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+
+<!--
+
+  Ant build file for the EnsEBML HealthCheck tool.
+
+-->
+
+<project default="compile" basedir=".">
+
+  <property name="name" value="ensj-healthcheck" />
+  <property name="version" value="0.1" />
+  <property name="build.name" value="${name}-${version}" />
+  <property name="build.compiler" value="modern" />
+
+  <property name="src"                 location="src"/>
+  <property name="build"               location="build"/>
+  <property name="dist"                location="dist"/>
+  <property name="doc"                 location="doc"/>
+  <property name="lib"                 location="lib"/>
+  <property name="test"                location="test"/>
+  <property name="reports"             location="reports"/>
+  <property name="reports.tests"       location="${reports}/tests"/>
+
+
+  <!-- ################################################################################## -->
+  <!-- Targets -->
+
+  <target name="init">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the directory structure -->
+    <mkdir dir="${build}"/>
+    <mkdir dir="${test}"/>
+    <mkdir dir="${reports}"/>
+    <mkdir dir="${reports.tests}"/>
+  </target>
+
+  <!-- ################################################################################## -->
+
+  <target name="compile" depends="init" description="Compile the source " >
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac 
+      srcdir="${src}" 
+      destdir="${build}" 
+      excludes="**/*Test.*" >
+      <classpath>
+        <pathelement path="${java.class.path}"/>
+        <pathelement path="${src}"/>
+        <pathelement location="/scratch/s1studio/ce/modules/ext/junit-ext.jar"/>
+      </classpath>
+    </javac>
+  </target>
+
+  <!-- ################################################################################## -->
+
+  <target name="compile-test" depends="init" description="Compile the tests " >
+    <javac srcdir="${src}" destdir="${test}" includes="**/*Test.*">
+      <classpath>
+        <pathelement path="${java.class.path}"/>
+        <pathelement path="${test}"/>
+        <pathelement location="${lib}/junit.jar"/>
+      </classpath>
+    </javac>
+  </target>
+
+  <!-- ################################################################################## -->
+
+  <target name="dist" depends="compile" description="generate the distribution" >
+    <!-- Create the distribution directory -->
+    <mkdir dir="${dist}/lib"/>
+    <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
+    <jar jarfile="${dist}/${build.name}-${DSTAMP}.jar" basedir="${build}"/>
+    <!-- Current version -->
+    <copy file="${dist}/${build.name}-${DSTAMP}.jar" tofile="${dist}/ensj-healthcheck.jar"/>
+  </target>
+
+  <!-- ################################################################################## -->
+
+  <target name="clean" description="Clean up" >
+    <delete dir="${build}"/>
+    <delete dir="${dist}" />
+    <delete dir="${test}" />
+    <delete dir="${reports}" />
+  </target>
+
+  <!-- ################################################################################## -->
+  <!-- Run targets -->
+
+  <target name="run" depends="dist">
+    <java classname="org.ensembl.healthcheck.TestRunner">
+      <classpath>
+       <!-- <pathelement location="${dist}/ensj-healthcheck.jar"/>-->
+        <pathelement path="${src}"/>
+        <pathelement path="${java.class.path}"/>
+        <pathelement location="${lib}/mysql-connector-java-2.0.14-bin.jar"/>
+        <pathelement location="${lib}/junit.jar"/>
+      </classpath>
+    </java>
+  </target>
+
+  <!-- ################################################################################## -->
+  <target name="doc">
+
+    <javadoc
+      sourcepath="${src}"
+      destdir="${doc}/javadoc"
+      author="true"
+      version="true"
+      use="true"
+      windowtitle="EnsEMBL HealthCheck"
+      doctitle="EnsEMBL HealthCheck"
+      packagenames="org.ensembl.healthcheck"
+      >
+    </javadoc>
+  </target>
+
+  <!-- ################################################################################## -->
+
+  <target name="test" depends="compile-test">
+
+    <junit printsummary="yes" fork="yes" haltonfailure="no">
+      <classpath>
+        <pathelement path="${java.class.path}"/>
+        <pathelement path="${test}"/>
+        <pathelement location="${lib}/junit.jar"/>
+      </classpath>
+      <formatter type="xml"/>
+      <batchtest fork="yes" todir="${reports.tests}">
+        <fileset dir="${test}">
+          <include name="**/*Test.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+
+    <antcall target="test-summary-impl"/>
+
+  </target>
+
+   <!-- ################################################################################## -->
+
+  <!-- html summary of results -->
+  <target name="test-summary" depends="init">
+    <antcall target="test-summary-impl"/>
+  </target>
+
+
+  <!-- NOTE: "init" MUST be included by calling task, we can't incude
+  it in a depends list here because that causes a problem with
+  multiple calls to "available" task in "init" block -->
+  
+  <target name="test-summary-impl">
+    <junitreport todir="${reports.tests}">
+      <fileset dir="${reports.tests}">
+        <include name="TEST-*.xml"/>
+      </fileset>
+      <report format="frames" todir="${reports.tests}/html"/>
+    </junitreport>
+  </target>
+
+  <!-- ################################################################################## -->
+
+</project>
