@@ -33,6 +33,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  * Check that all top-level seq regions have some SNP/gene/knownGene density features, and 
  * that the values agree between the density_feature and seq_region attrib tables.
  * Only checks top-level seq regions that do NOT have an _ in their names.
+ * Also checks that there are some density features for each analysis/density type
  */
 
 public class DensityFeatures extends SingleDatabaseTestCase {
@@ -54,7 +55,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
         setDescription("Check that all top-level seq regions have some SNP/gene/knownGene density features, and that the values agree between the density_feature and seq_region attrib tables.");
 	setFailureText("May report count mismatches on HAP/PAR regions. ");
 
-	logicNameToAttribCode.put("snpDensity", "SNPCount");
+	logicNameToAttribCode.put("variationDensity", "SNPCount");
 	logicNameToAttribCode.put("geneDensity", "GeneCount");
 	logicNameToAttribCode.put("knownGeneDensity", "knownGeneCount");
 
@@ -72,6 +73,22 @@ public class DensityFeatures extends SingleDatabaseTestCase {
         boolean result = true;
 
         Connection con = dbre.getConnection();
+
+	result &= checkFeaturesAndCounts(con);
+    
+	result &= checkAnalysisAndDensityTypes(con);
+
+	result &= checkDensityTypes(con);
+
+	return result;
+	
+    } // run
+
+    // ----------------------------------------------------------------------
+
+    private boolean checkFeaturesAndCounts(Connection con) {
+	
+	boolean result = true;
 
 	// get top level co-ordinate system ID
 	String sql = "SELECT coord_system_id FROM coord_system WHERE rank=1 LIMIT 1";
@@ -180,10 +197,89 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 	} catch (SQLException se) {
 	    se.printStackTrace();
 	}
-	
     
 	return result;
-	
-    } // run
+
+    }
+
+    // ----------------------------------------------------------------------
     
+    /**
+     * Check that each analysis_id is used by one and only one density_type.
+     */
+
+    private boolean checkAnalysisAndDensityTypes(Connection con) {
+
+	boolean result = true;
+
+	String[] logicNames = {"PercentGC", "PercentageRepeat", "knownGeneDensity", "geneDensity", "variationDensity"};
+
+	// check that each analysis_id is only used by one density_type
+	for (int i = 0; i < logicNames.length; i++) {
+	    
+	    String logicName = logicNames[i];
+	    String sql = "SELECT dt.density_type_id FROM analysis a, density_type dt WHERE a.analysis_id=dt.analysis_id AND a.logic_name='" + logicName + "'";
+
+	    String[] rows = getColumnValues(con, sql);
+	    if (rows.length == 1) {
+
+		ReportManager.correct(this, con, "One density_type for analysis " + logicName);
+
+	    } else if (rows.length == 0) {
+		
+		ReportManager.problem(this, con, "No entry in density_type for analysis " + logicName);
+		result = false;
+
+	    } else if (rows.length > 1) {
+		
+		String str = "Analysis " + logicName + " has " + rows.length + " associated density types (IDs ";
+		for (int j = 0; j < rows.length; j++) {
+		    str += rows[j];
+		    if (j+1 < rows.length) {
+			str += ",";
+		    }
+		}
+		str += ")";
+		ReportManager.problem(this, con, str);
+		result = false;
+	
+	    }
+
+	}
+
+	return result;
+
+    }
+
+    // ----------------------------------------------------------------------
+    /**
+     * Check for density_types that reference non-existent analysis_ids.
+     */
+    private boolean checkDensityTypes(Connection con) {
+
+	boolean result = true;
+
+	String sql = "SELECT dt.density_type_id FROM density_type dt LEFT JOIN analysis a ON dt.analysis_id=a.analysis_id WHERE a.analysis_id IS NULL";
+
+	String[] rows = getColumnValues(con, sql);
+	if (rows.length == 0) {
+
+	    ReportManager.correct(this, con, "All density_types reference existing analysis_ids");
+
+	} else {
+
+	    for (int j = 0; j < rows.length; j++) {
+		ReportManager.problem(this, con, "density_type with ID " + rows[j] + " references non-existent analysis");
+	    }
+
+	    result = false;
+
+	}
+
+	return result;
+
+    }
+
+    // ----------------------------------------------------------------------
+
 } // DensityFeatures
