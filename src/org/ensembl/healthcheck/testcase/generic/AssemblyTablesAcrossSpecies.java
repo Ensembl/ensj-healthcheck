@@ -37,32 +37,11 @@ public class AssemblyTablesAcrossSpecies extends MultiDatabaseTestCase {
 	/**
 	 * Make sure that the assembly table has the same number of rows.
 	 * 
-	 * @return Result.
+	 * @return True if the assembly table is the same across all the species in the registry.
 	 */
 	public boolean run(DatabaseRegistry dbr) {
 
-		boolean result = true;
-
-		Map speciesMap = getSpeciesDatabaseMap(dbr);
-
-		// check that the assembly table has the same number of rows across the species
-		Iterator it = speciesMap.keySet().iterator();
-		while (it.hasNext()) {
-
-			Species species = (Species)it.next();
-
-			boolean allMatch = checkSameSQLResult("SELECT COUNT(*) FROM assembly", (DatabaseRegistryEntry[])speciesMap
-					.get(species));
-			if (!allMatch) {
-				result = false;
-				ReportManager.problem(this, species.toString(), "Differences in assembly table across species");
-			} else {
-				ReportManager.correct(this, species.toString(), "All assembly tables the same");
-			}
-
-		} // foreach species
-
-		return result;
+		return checkTableAcrossSpecies("assembly", dbr);
 
 	} // run
 

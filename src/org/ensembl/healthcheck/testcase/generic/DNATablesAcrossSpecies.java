@@ -16,15 +16,15 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package org.ensembl.healthcheck.testcase;
+package org.ensembl.healthcheck.testcase.generic;
 
+import org.ensembl.healthcheck.testcase.*;
 import org.ensembl.healthcheck.*;
-
 
 /**
  * Check the DNA tables in a range of databases.
  */
-public class DNATablesAcrossSpecies extends EnsTestCase {
+public class DNATablesAcrossSpecies extends MultiDatabaseTestCase {
     
   /**
    * Creates a new instance of CheckDNATables
@@ -35,30 +35,12 @@ public class DNATablesAcrossSpecies extends EnsTestCase {
   }
   
   /** 
-   * Make sure that the assembly table has the same number of rows
-   * @return Result.
+   * Make sure that the dna table has the same number of rows across species.
+   * @return True if dna has the same number of rows within species.
    */
-  public TestResult run() {
+  public boolean run(DatabaseRegistry dbr) {
     
-    boolean result = true;
-    
-    String[] species = getListOfSpecies();
-    
-    for (int i = 0; i < species.length; i++) {
-      
-      String speciesRegexp = species[i] + CORE_DB_REGEXP;
-      logger.info("Checking dna tables in "+ speciesRegexp);
-      boolean allMatch = checkSameSQLResult("SELECT COUNT(*) FROM dna", speciesRegexp);
-      if (!allMatch) {
-        result = false;
-        ReportManager.problem(this, "[see report text]", "Differences in dna table for " + speciesRegexp); 
-      } else {
-       ReportManager.correct(this, "[see report text]", "All dna tables have the same number of rows for " + speciesRegexp);  
-      }
-      
-    } // foreach species
-    
-    return new TestResult(getShortTestName(), result);
+    return checkTableAcrossSpecies("dna", dbr);
     
   } // run
   

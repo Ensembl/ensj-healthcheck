@@ -52,4 +52,33 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
 
 	} // getSpeciesDatabaseMap
 
+	//---------------------------------------------------------------------
+	
+	public boolean checkTableAcrossSpecies(String table, DatabaseRegistry dbr) {
+		
+		boolean result = true;
+
+		Map speciesMap = getSpeciesDatabaseMap(dbr);
+
+		// check that the table has the same number of rows across the species
+		Iterator it = speciesMap.keySet().iterator();
+		while (it.hasNext()) {
+
+			Species species = (Species)it.next();
+
+			boolean allMatch = checkSameSQLResult("SELECT COUNT(*) FROM " + table, (DatabaseRegistryEntry[])speciesMap
+					.get(species));
+			if (!allMatch) {
+				result = false;
+				ReportManager.problem(this, species.toString(), "Differences in " + table + " table across species");
+			} else {
+				ReportManager.correct(this, species.toString(), "All " + table + " tables the same");
+			}
+
+		} // foreach species
+
+		return result;
+	}
+	
+	//---------------------------------------------------------------------
 }
