@@ -715,6 +715,26 @@ public abstract class EnsTestCase {
   
   // -------------------------------------------------------------------------
   /**
+   * Check if a particular table exists in a database.
+   * @param con The database connection to check.
+   * @param table The table to check for.
+   * @return true if the table exists in the database.
+   */
+  public boolean checkTableExists(Connection con, String table) {
+    
+    String tables = getRowColumnValue(con, "SHOW TABLES LIKE '" + table + "'");
+
+    boolean result = false;
+    if (tables != null && tables.length() != 0) {
+      result = true;
+    }
+    
+    return result;
+    
+  } // checkTableExists
+  
+  // -------------------------------------------------------------------------
+  /**
    * Print a warning message about a specific database.
    * @param con The database connection involved.
    * @param message The message to print.
