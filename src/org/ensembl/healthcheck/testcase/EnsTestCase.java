@@ -480,8 +480,7 @@ public abstract class EnsTestCase {
     try {
       Statement stmt = con.createStatement();
       ResultSet rs = stmt.executeQuery(sql);
-      if (rs != null) {
-        rs.first();
+      if (rs != null && rs.first()) {
         result = rs.getString(1);
       }
       
