@@ -25,6 +25,7 @@ import java.sql.SQLException;
 
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.TestResult;
+import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.DatabaseConnectionIterator;
 
 /**
@@ -92,7 +93,7 @@ public class CheckStableIDsTestCase extends EnsTestCase {
 				}
 
 				// print a few rows so we can check by eye that the table looks ok
-				printRows(con, "select * from " +  typeName +"_stable_id limit 10;");
+				DBUtils.printRows(this, con, "select * from " +  typeName +"_stable_id limit 10;");
 		
 		
 				// look for orphans between type and type_stable_id tables
@@ -110,7 +111,7 @@ public class CheckStableIDsTestCase extends EnsTestCase {
 				int nInvalidVersions = Integer.parseInt(	nInvalidVersionsStr ); 
 				if (  nInvalidVersions>0 ) {
 					ReportManager.problem(this, con, "Invalid "+  typeName + "versions in "+  typeName +"_stable_id.");
-					printRows( con, "select distinct(version) from "+  typeName +"_stable_id;" );
+					DBUtils.printRows(this, con, "select distinct(version) from "+  typeName +"_stable_id;" );
 					result = false;
 				}
 
@@ -119,32 +120,6 @@ public class CheckStableIDsTestCase extends EnsTestCase {
 
 
 
-	/**
-	 * Execute SQL and writes results to ReportManager.info().
-	 * @param con connection to execute sql on.
-	 * @param sql sql to execute.
-	 */
-	private void printRows(Connection con, String sql) {
-		// TODO Auto-generated method stub
-		try {
-			ResultSet rs = con.createStatement().executeQuery( sql );
-					if ( rs.next() ) {
-						int nCols = rs.getMetaData().getColumnCount();
-						StringBuffer line = new StringBuffer();
-						do {
-							line.delete(0, line.length());
-							for(int i=1; i<=nCols; ++i) {
-								line.append( rs.getString(i) );
-								if ( i <nCols ) line.append("\t");
-						
-							}
-							ReportManager.info( this, con, line.toString() );
-						} while ( rs.next() );
-					}
-			
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-	}
+	
 
 }
