@@ -69,10 +69,15 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
         boolean result = true;
 
         // get list of transcripts
-        String sql = "SELECT t.transcript_id, e.exon_id, tr.start_exon_id, tr.translation_id, tr.end_exon_id, tr.seq_start, tr.seq_end, e.seq_region_start, e.seq_region_end "
-                + "FROM   transcript t, exon_transcript et, exon e, translation tr "
-                + "WHERE  t.transcript_id = et.transcript_id AND et.exon_id = e.exon_id AND t.transcript_id = tr.transcript_id "
-                + "ORDER  BY t.transcript_id, et.rank DESC";
+        String sql = 
+	    "SELECT t.transcript_id, e.exon_id, tl.start_exon_id, " + 
+	    "       tl.translation_id, tl.end_exon_id, tl.seq_start, " + 
+	    "       tl.seq_end, e.seq_region_start, e.seq_region_end " +
+	    "FROM   transcript t, exon_transcript et, exon e, translation tl " +
+	    "WHERE  t.transcript_id = et.transcript_id " + 
+	    "AND    et.exon_id = e.exon_id " + 
+	    "AND    t.transcript_id = tl.transcript_id " +
+	    "ORDER  BY t.transcript_id, et.rank";
 
         try {
 
@@ -97,14 +102,13 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
             // See the README file for the mm MySQL driver.
 
             Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY,
-                    java.sql.ResultSet.CONCUR_READ_ONLY);
-            stmt.setFetchSize(Integer.MIN_VALUE);
+						 java.sql.ResultSet.CONCUR_READ_ONLY);
+            stmt.setFetchSize( 1000 );
 
             Map translationLengths = new HashMap();
 
             // now calculate and store the translation lengths
             ResultSet rs = stmt.executeQuery(sql);
-            rs.setFetchSize(100);
             rs.setFetchDirection(ResultSet.FETCH_FORWARD);
 
             boolean inCodingRegion = false;
@@ -158,7 +162,7 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
 
             // Re-open the statement to make sure it's GC'd
             stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
-            stmt.setFetchSize(Integer.MIN_VALUE);
+            stmt.setFetchSize(1000);
 
             logger.fine("Built translation length cache, about to look at protein features");
             //dumpTranslationLengths(con, translationLengths, 100);
