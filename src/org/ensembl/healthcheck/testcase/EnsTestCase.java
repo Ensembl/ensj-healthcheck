@@ -79,7 +79,6 @@ import org.ensembl.healthcheck.util.*;
  *
  */
 
-import org.ensembl.healthcheck.*;
 
 public abstract class EnsTestCase {
   
@@ -388,8 +387,13 @@ public abstract class EnsTestCase {
     }
     int result = -1;
     
+    // check that the SQL starts with SELECT COUNT(*) otherwise undefined results will occur
+    if (sql.toLowerCase().indexOf("select count(*)") < 0) {
+     logger.warning("getRowCount() executing SQL which does not appear to begin with SELECT COUNT(*) - results may be incorrect or undefined"); 
+    }
     try {
       Statement stmt = con.createStatement();
+      //System.out.println("Executing " + sql);
       ResultSet rs = stmt.executeQuery(sql);
       if (rs != null) {
         if (rs.first()) {
