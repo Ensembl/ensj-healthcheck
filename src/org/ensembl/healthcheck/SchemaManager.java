@@ -51,4 +51,21 @@ public class SchemaManager {
     
   }
   
+  public static SchemaInfo getSchema(String name) {
+    
+    SchemaInfo result = null;
+    
+    Iterator it = schemas.iterator();
+    while (it.hasNext()) {
+      SchemaInfo si = (SchemaInfo)it.next();
+      if (si.getName().equalsIgnoreCase(name)) {
+        result = si;
+        break;
+      }
+    }
+    
+    return result;
+    
+  }
+  
 } // SchemaManager
