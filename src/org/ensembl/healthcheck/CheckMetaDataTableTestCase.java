@@ -39,7 +39,7 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
   }
   
   /**
-   * Check that the meta table has rows, and .
+   * Check various aspects of the meta table.
    */
   TestResult run() {
     
@@ -52,6 +52,13 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
       Connection con = (Connection)it.next();
       
       String dbName = DBUtils.getShortDatabaseName(con);
+      
+      // ----------------------------------------
+      // Check that the meta table exists
+      if (!checkTableExists(con, "meta")) {
+        result = false;
+        logger.severe(dbName + " does not have a meta table!");
+      }
       
       // ----------------------------------------
       // check meta table has > 0 rows
