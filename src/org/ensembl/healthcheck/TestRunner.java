@@ -677,41 +677,7 @@ public class TestRunner {
     } catch(ClassNotFoundException ex) {
       ex.printStackTrace();
     }
-    
-    //
-    //    String[] schemas = getAllSchemaNames();
-    //
-    //    for (int i = 0; i < schemas.length; i++) {
-    //
-    //      String fileName = schemas[i] + ".ser";
-    //      File f = new File(fileName);
-    //      if (!f.exists() || !f.canRead()) {
-    //
-    //        logger.warning("Cannot read cached schema info for " + schemas[i] + ", rebuilding");
-    //        SchemaManager.addSchema(getSingleSchemaInfo(schemas[i]));
-    //
-    //      } else {
-    //
-    //        SchemaInfo si = null;
-    //        try {
-    //
-    //          fis = new FileInputStream(fileName);
-    //          in = new ObjectInputStream(fis);
-    //          si = (SchemaInfo)in.readObject();
-    //          SchemaManager.addSchema(si);
-    //          logger.finest("Read stored schema info for " + fileName);
-    //          in.close();
-    //          fis.close();
-    //
-    //        } catch(IOException ex) {
-    //          ex.printStackTrace();
-    //        } catch(ClassNotFoundException ex) {
-    //          ex.printStackTrace();
-    //        }
-    //
-    //      }
-    //    }
-    //
+        
   }
   
   // -------------------------------------------------------------------------
