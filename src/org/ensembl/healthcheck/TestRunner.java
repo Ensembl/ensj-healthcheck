@@ -39,16 +39,19 @@ import org.ensembl.healthcheck.util.*;
 
 public class TestRunner {
   
+  private static String version = $Id$;
   private ArrayList allTests;            // will hold an instance of each test
-  private ArrayList allDatabases;
+  private ArrayList groupsToRun;
   private Properties dbProps;
-    
+  
   private static Logger logger = Logger.getLogger("org.ensembl.healthcheck.TestRunner");
-    
+  
   // -------------------------------------------------------------------------
   /** Creates a new instance of TestRunner */
   
   public TestRunner() {
+    
+    groupsToRun = new ArrayList();
     
   } // TestRunner
   
@@ -57,10 +60,10 @@ public class TestRunner {
   public static void main(String[] args) {
     
     TestRunner tr = new TestRunner();
-
-    tr.setupLogging();
     
     tr.parseCommandLine(args);
+    
+    tr.setupLogging();
     
     tr.readPropertiesFile();
     
@@ -92,14 +95,21 @@ public class TestRunner {
   
   
   private void parseCommandLine(String[] args) {
-
-    if (args.length > 0) {
+    
+    if (args.length == 0) {
       
       printUsage();
       System.exit(1);
       
-    } 
-        
+    } else {
+      
+      for (int i=0; i < args.length; i++) {
+	groupsToRun.add(args[i]);
+	System.out.println("Will run tests in group " + args[i]);
+      }
+      
+    }
+    
   } // parseCommandLine
   
   // -------------------------------------------------------------------------
@@ -116,12 +126,21 @@ public class TestRunner {
   } // setupLogging
   
   // -------------------------------------------------------------------------
-
+  
   private void printUsage() {
     
-    System.out.println("\nUsage: TestRunner {suite1} {suite2} ...\n");
+    System.out.println("\nUsage: TestRunner {group1} {group2} ...\n");
     
   } // printUsage
+  
+  // -------------------------------------------------------------------------
+  
+  public String getVersion() {
+    
+    return version;
+    
+  } // getVersion
+  
   // -------------------------------------------------------------------------
   
   public String[] getListOfDatabaseNames(String regexp) {
@@ -178,11 +197,11 @@ public class TestRunner {
   // -------------------------------------------------------------------------
   
   private void findAllTests() {
-
+    
     allTests = new ArrayList();
     
     // find all classes that extend org.ensembl.healthcheck.EnsTestCase
-     
+    
     String thisClassName = this.getClass().getName();
     String packageName = thisClassName.substring(0, thisClassName.lastIndexOf("."));
     String directoryName = packageName.replace('.', File.separatorChar);
@@ -200,7 +219,7 @@ public class TestRunner {
     Class newClass;
     Object obj = new Object();
     String baseClassName;
-
+    
     for (int i = 0; i < classFiles.length; i++) {
       
       logger.finest(classFiles[i].getName());
@@ -208,22 +227,31 @@ public class TestRunner {
       
       try {
 	newClass = Class.forName(packageName + "." + baseClassName);
-	if (!newClass.getName().equals("org.ensembl.healthcheck.EnsTestCase")) {
+	String className = newClass.getName();
+	if (!className.equals("org.ensembl.healthcheck.EnsTestCase") &&
+	!className.substring(className.length()-4).equals("Test")  ) {  // ignore JUnit tests
 	  obj = newClass.newInstance();
 	}
       } catch (Exception e) {
 	e.printStackTrace();
       }
       
-      if (obj instanceof org.ensembl.healthcheck.EnsTestCase) {
+      if (obj instanceof org.ensembl.healthcheck.EnsTestCase && !allTests.contains(obj)) {
 	((EnsTestCase)obj).init(this);
 	allTests.add(obj); // note we store an INSTANCE of the test, not just its name
 	logger.info("Added test case " + obj.getClass().getName());
       }
-            
+      
     } // for classFiles
     
     logger.finer("Found " + allTests.size() + " test case classes.");
+    
+    /*Iterator it = allTests.iterator();
+    while (it.hasNext()) {
+      EnsTestCase tc = (EnsTestCase)it.next();
+      System.out.println("#####" + tc.getTestName());
+    }
+     */
     
   } // findAllTests
   
@@ -239,16 +267,19 @@ public class TestRunner {
     if (allTests.size() == 0) {
       logger.warning("Warning: no tests found!");
       return;
-    } 
+    }
     
     Iterator it = allTests.iterator();
     while (it.hasNext()) {
       
       EnsTestCase testCase = (EnsTestCase)it.next();
-      logger.info("\tRunning test of type " + testCase.getClass().getName());
-      TestResult tr = testCase.run();
-      System.out.println(tr.getName() + " " + tr.getResult() + " " + tr.getMessage());
-      // TBC
+      
+      if (testCase.inGroups(groupsToRun)) {
+	logger.info("\tRunning test of type " + testCase.getClass().getName());
+	TestResult tr = testCase.run();
+	System.out.println("\n" + tr.getName() + " " + tr.getResult() + " " + tr.getMessage() + "\n");
+	// TBC
+      }
       
     }
     
@@ -257,13 +288,13 @@ public class TestRunner {
   // -------------------------------------------------------------------------
   
   public DatabaseConnectionIterator getDatabaseConnectionIterator(String[] databaseNames) {
-  
+    
     return new DatabaseConnectionIterator(dbProps.getProperty("driver"),
-                                          dbProps.getProperty("databaseURL"),
-                                          dbProps.getProperty("user"),
-                                          dbProps.getProperty("password"),
-					  databaseNames);
-     
+    dbProps.getProperty("databaseURL"),
+    dbProps.getProperty("user"),
+    dbProps.getProperty("password"),
+    databaseNames);
+    
   } // getDatabaseConnectionIterator
   
   // -------------------------------------------------------------------------
