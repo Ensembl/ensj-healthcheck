@@ -23,15 +23,15 @@
  * <p>Organisation: EMBL</p>
  * <p>Created on March 11, 2003, 1:12 PM</p>
  * @author Glenn Proctor <glenn@ebi.ac.uk>
- * @version 1.0
+ * @version $Revision$
  */
 
 package org.ensembl.healthcheck;
 
-import java.sql.*;
 import java.util.*;
+import java.sql.*;
 
-import org.ensembl.healthcheck.util.*;
+import org.ensembl.healthcheck.util.DBUtils;
 
 public abstract class EnsTestCase {
     
@@ -55,6 +55,10 @@ public abstract class EnsTestCase {
     
     // -------------------------------------------------------------------------
     
+    /** 
+     * Get the TestRunner that is controlling this EnsTestCase.
+     * @return The parent TestRunner.
+     */    
     public TestRunner getTestRunner() {
       
 	return testRunner;
@@ -63,6 +67,11 @@ public abstract class EnsTestCase {
     
     // -------------------------------------------------------------------------
     
+    /** 
+     * Sets up this test. <B>Must</B> be called before the object is used.
+     * @param tr The TestRunner to associate with this test. Usually just <CODE>this</CODE>
+     * if being called from the TestRunner.
+     */    
     public void init(TestRunner tr) {
 
       this.testRunner = tr;
@@ -71,6 +80,10 @@ public abstract class EnsTestCase {
 
     // -------------------------------------------------------------------------
     
+    /** 
+     * Gets the full name of this test.
+     * @return The full name of the test, e.g. org.ensembl.healthcheck.EnsTestCase
+     */    
     public String getTestName() {
       
       return this.getClass().getName();
@@ -79,6 +92,12 @@ public abstract class EnsTestCase {
     
      // -------------------------------------------------------------------------
     
+    /** 
+     * Get the short form of the test name, i.e. the name of the test class without the
+     * package qualifier.
+     *
+     * @return The short test name, e.g. EnsTestCase
+     */    
     public String getShortTestName() {
       
       String longName = getTestName();
@@ -89,17 +108,26 @@ public abstract class EnsTestCase {
     
     // -------------------------------------------------------------------------
     
+    /** 
+     * Get a list of the names of the groups which this test case is a member of.
+     * @return The list of names as Strings.
+     */    
     public ArrayList getGroups() {
 
       return groups;
       
     }   
 
+    /** 
+     * Get a list of the groups that this test case is a member of, formatted for easy
+     * printing.
+     * @return The comma-separated list of group names.
+     */    
     public String getCommaSeparatedGroups() {
 
       StringBuffer gString = new StringBuffer();
       
-      Iterator it = groups.iterator();
+      java.util.Iterator it = groups.iterator();
       while (it.hasNext()) {
         gString.append((String)it.next());
 	if (it.hasNext()) {
@@ -109,28 +137,47 @@ public abstract class EnsTestCase {
       return gString.toString();
     }   
     
+    /** 
+     * Convenience method for assigning this test case to several groups at once.
+     * @param s A list of Strings containing the group names.
+     */    
     public void setGroups(ArrayList s) {
       
 	groups = s;
     
     }
     
+    /** 
+     * Convenience method for assigning this test case to several groups at once.
+     * @param s Array of group names.
+     */    
     public void setGroups(String[] s) {
       for (int i = 0; i < s.length; i++) {
 	groups.add(s[i]);
       }
     }
     
+    /** 
+     * Add this test case to a new group.
+     * If the test case is already a member of the group, a warning is printed and 
+     * it is not added again.
+     * @param newGroupName The name of the new group.
+     */    
     public void addToGroup(String newGroupName) {
-      
+
       if (!groups.contains(newGroupName)) {
 	groups.add(newGroupName);
       } else {
-	System.err.println("Warning: " + getTestName() + " is already a memeber of " + newGroupName + " not added again.");
+	System.err.println("Warning: " + getTestName() + " is already a member of " + newGroupName + " not added again.");
       }
       
     }
     
+    /** 
+     * Remove this test case from the specified group.
+     * If the test case is not a member of the specified group, a warning is printed.
+     * @param groupName The name of the group from which this test case is to be removed.
+     */    
     public void removeFromGroup(String groupName) {
      
       if (groups.contains(groupName)) {
@@ -141,17 +188,27 @@ public abstract class EnsTestCase {
       
     }
     
+    /** 
+     * Test if this test case is a member of a particular group.
+     * @param group The name of the group to check.
+     * @return True if this test case is a member of the named group, false otherwise.
+     */    
     public boolean inGroup(String group) {
      
       return groups.contains(group);
       
     }
     
+    /** 
+     * Convenience method for checking if this test case belongs to any of several groups.
+     * @param checkGroups The list of group names to check.
+     * @return True if this test case is in any of the groups, false if it is in none.
+     */    
     public boolean inGroups(ArrayList checkGroups) {
      
       boolean result = false;
       
-      Iterator it = checkGroups.iterator();
+      java.util.Iterator it = checkGroups.iterator();
       while (it.hasNext()) {
 	if (inGroup((String)it.next())) {
 	  result = true;
@@ -162,6 +219,11 @@ public abstract class EnsTestCase {
     }
     // -------------------------------------------------------------------------
     
+    /** 
+     * Get a list of the databases matching a particular pattern.
+     * @param databaseRegexp The Regular Expression to match.
+     * @return The list of database names matched.
+     */    
     public String[] getAffectedDatabases(String databaseRegexp) {
     
       return testRunner.getListOfDatabaseNames(databaseRegexp);
@@ -170,6 +232,10 @@ public abstract class EnsTestCase {
     
     // -------------------------------------------------------------------------
     
+    /** 
+     * Prints (to stdout) all the databases that match the current class' database regular expression.
+     * @param databaseRegexp The pattern of database names to match.
+     */    
     public void printAffectedDatabases(String databaseRegexp) {
     
       System.out.println("Databases matching " + databaseRegexp + ":");
@@ -181,6 +247,12 @@ public abstract class EnsTestCase {
     } // printAffectedDatabases
     
     // -------------------------------------------------------------------------
+    /**
+     * Count the number of rows in a table.
+     * @param con The database connection to use. Should have been opened already.
+     * @param table The name of the table to analyse.
+     * @return The number of rows in the table.
+     */    
     public int countRowsInTable(Connection con, String table) {
             
       return getRowCount(con, "SELECT COUNT(*) FROM " + table);
@@ -194,8 +266,8 @@ public abstract class EnsTestCase {
       int result = -1;
       
       try {
-	Statement stmt = con.createStatement();
-	ResultSet rs = stmt.executeQuery(sql);
+	java.sql.Statement stmt = con.createStatement();
+	java.sql.ResultSet rs = stmt.executeQuery(sql);
 	if (rs != null) {
 	  rs.next();
 	  result = rs.getInt(1);	
@@ -242,25 +314,27 @@ public abstract class EnsTestCase {
     
     // -------------------------------------------------------------------------
     
-    public TestResult checkSameSQLResult(String sql, String dbRegexp) {
+    public boolean checkSameSQLResult(String sql, String dbRegexp) {
       
-      TestResult tr = new TestResult();
       ArrayList resultSetGroup = new ArrayList();
+      ArrayList statements = new ArrayList();
       
-      DatabaseConnectionIterator it = testRunner.getDatabaseConnectionIterator(getAffectedDatabases(dbRegexp));
+      org.ensembl.healthcheck.util.DatabaseConnectionIterator dcit = testRunner.getDatabaseConnectionIterator(getAffectedDatabases(dbRegexp));
       
-      while (it.hasNext()) {
+      while (dcit.hasNext()) {
 	
-	Connection con = (Connection)it.next();
+	Connection con = (Connection)dcit.next();
 	
 	try {
-	  Statement stmt = con.createStatement();
-	  ResultSet rs = stmt.executeQuery(sql);
+	  java.sql.Statement stmt = con.createStatement();
+	  java.sql.ResultSet rs = stmt.executeQuery(sql);
 	  if (rs != null) {
 	    resultSetGroup.add(rs);
 	  }
-	  rs.close();
-	  stmt.close();
+	  System.out.println("Added ResultSet for " + sql);
+	  // note that the Statement can't be closed here as we use the ResultSet elsewhere
+	  // so store a reference to it for closing later
+	  statements.add(stmt);
 	  con.close();
 	} catch (Exception e) {
 	  e.printStackTrace();
@@ -268,8 +342,17 @@ public abstract class EnsTestCase {
       }
       
       boolean same = DBUtils.compareResultSetGroup(resultSetGroup);
+     
+      Iterator it = statements.iterator();
+      while (it.hasNext()) {
+	  try {
+	    ((Statement)it.next()).close();
+	  } catch (Exception e) {
+	  e.printStackTrace();
+	}
+      }
       
-      return tr;
+      return same;
     
     } // checkSameSQLResult
     
