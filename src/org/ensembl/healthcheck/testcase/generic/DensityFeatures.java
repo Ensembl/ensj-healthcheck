@@ -134,6 +134,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 			sql = "SELECT SUM(df.density_value) FROM density_type dt, density_feature df, analysis a WHERE dt.density_type_id=df.density_type_id AND dt.analysis_id=a.analysis_id AND a.logic_name='" + logicName + "' AND seq_region_id=" + seqRegionID;
 			
 			String sumDF = getRowColumnValue(con, sql);
+			//System.out.println(sql + " " + sumDF);
 			if (sumDF != null && sumDF.length() > 0) {
 			    
 			    long sumFromDensityFeature = Long.parseLong(sumDF);
