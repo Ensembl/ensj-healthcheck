@@ -56,6 +56,11 @@ public class BuildTestLibrary extends TestRunner {
   
   private void parseCommandLine(String[] args) {
     
+  	if (args.length == 0) {
+  		printUsage();
+  		System.exit(1);
+  	}
+  	
     if (args[0].equals("-h") || args.length == 0) {
       
       printUsage();
@@ -89,7 +94,7 @@ public class BuildTestLibrary extends TestRunner {
     try {
       
       // get the directory
-      String dir = template.substring(0, template.lastIndexOf("/"));
+      String dir = template.substring(0, template.lastIndexOf(File.separator));
       String outputFile = dir + File.separator + "test_list.html";
       PrintWriter out = new PrintWriter(new FileWriter(outputFile));
       
@@ -134,7 +139,7 @@ public class BuildTestLibrary extends TestRunner {
     
     StringBuffer buf = new StringBuffer();
     
-    List tests = findAllTests();
+    List tests = new TestRegistry().findAllTests();
     
     Iterator it = tests.iterator();
     while (it.hasNext()) {
@@ -173,7 +178,7 @@ public class BuildTestLibrary extends TestRunner {
     
     StringBuffer buf = new StringBuffer();
     
-    List allTests = findAllTests();
+    List allTests = new TestRegistry().findAllTests();
     String[] groups = listAllGroups(allTests);
     
     for (int i = 0; i < groups.length; i++) {
