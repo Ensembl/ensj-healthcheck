@@ -104,6 +104,12 @@ public class CompareCoreSchemaTestCase extends EnsTestCase {
         Connection check_con = (Connection)it.next();
         logger.info("Comparing " + DBUtils.getShortDatabaseName(masterCon) + " with " + DBUtils.getShortDatabaseName(check_con));
         
+        // check that both schemas have the same tables
+        if (!compareTablesInSchema(masterCon, check_con)) { // if not the same, this method will generate a report
+          logger.warning("Table name discrepancy detected, skipping rest of checks for " + DBUtils.getShortDatabaseName(check_con));
+          continue;
+        }
+        
         Statement dbStmt = check_con.createStatement();
         
         // check each table in turn
@@ -112,11 +118,6 @@ public class CompareCoreSchemaTestCase extends EnsTestCase {
         while (tableIterator.hasNext()) {
           
           String table = (String)tableIterator.next();
-          
-          if (!checkTableExists(check_con, table)) {
-            ReportManager.problem(this, check_con, "Table " + table + " exists in master schema but not in " + DBUtils.getShortDatabaseName(check_con));
-            continue;
-          }
           
           String sql = "DESCRIBE " + table;
           ResultSet masterRS = masterStmt.executeQuery(sql);
