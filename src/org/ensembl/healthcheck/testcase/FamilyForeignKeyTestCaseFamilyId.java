@@ -55,12 +55,15 @@ public class FamilyForeignKeyTestCaseFamilyId extends EnsTestCase {
 	    if( getRowCount( con, "select count(*) from family" ) > 0 ) {
 		
 		orphans = countOrphans(con, "family", "family_id", "family_members", "family_id", false );
-		if( orphans > 0 ) {
-		    //warn( con, "family <-> family_members has unlinked entries" );
-		    ReportManager.problem(this, con, "family <-> family_members has unlinked entries");
+		if (orphans == 0) {
+		    ReportManager.correct(this, con, "family <-> family_members relationships PASSED");
+		} else if (orphans > 0) {
+		    ReportManager.problem(this, con, "family <-> family_members has unlinked entries FAILED");
 		} else {
-		    ReportManager.correct(this, con, "family <-> family_members relationships OK");
+		    ReportManager.problem(this, con, "family <-> family_members TEST NOT COMPLETED, look at the StackTrace if any");
 		}
+	    } else {
+		ReportManager.correct(this, con, "NO ENTRIES in family table, so nothing to test IGNORED");
 	    }
 	    
 	    result &= (orphans == 0);

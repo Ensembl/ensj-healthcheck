@@ -53,11 +53,15 @@ public class ComparaForeignKeyTestCaseMethodLinkId extends EnsTestCase {
       
       if( getRowCount( con, "select count(*) from method_link" ) > 0 ) {
         orphans = countOrphans(con, "method_link_species", "method_link_id", "method_link", "method_link_id", false );
-        if( orphans > 0 ) {
-          ReportManager.problem(this, con, "method_link_species has unlinked entries in method_link");
+        if( orphans == 0 ) {
+	    ReportManager.correct(this, con, "method_link_species <-> method_link relationships PASSED");
+        } else if( orphans > 0 ) {
+	    ReportManager.problem(this, con, "method_link_species has unlinked entries in method_link FAILED");
         } else {
-          ReportManager.correct(this, con, "method_link_species  <-> method_link relationships OK");
+	    ReportManager.problem(this, con, "method_link_species <-> method_link TEST NOT COMPLETED, look at the StackTrace if any");
         }
+      } else {
+	  ReportManager.correct(this, con, "NO ENTRIES in method_link table, so nothing to test IGNORED");
       }
 
       result &= (orphans == 0);

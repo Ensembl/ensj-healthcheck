@@ -52,24 +52,24 @@ public class FamilyForeignKeyTestCaseTaxonId extends EnsTestCase {
 	    
 	    if( getRowCount( con, "select count(*) from taxon" ) > 0 ) {
 		orphans = countOrphans(con, "family_members", "taxon_id", "taxon", "taxon_id", true );
-		if( orphans > 0 ) {
-		    ReportManager.problem(this, con, "taxon <- family_members has unlinked entries");
+		if (orphans == 0) {
+		    ReportManager.correct(this, con, "taxon <- family_members relationships PASSED");
+		} else if (orphans > 0) {
+		    ReportManager.problem(this, con, "taxon <- family_members has unlinked entries FAILED");
 		} else {
-		    ReportManager.correct(this, con, "taxon <- family_members relationships OK");
+		    ReportManager.problem(this, con, "taxon <- family_members TEST NOT COMPLETED, look at the StackTrace if any");
 		}
 		
-		try {
-		    orphans = countOrphans(con, "genome_db", "taxon_id", "taxon", "taxon_id", true );
-		    if( orphans > 0 ) {
-			ReportManager.problem(this, con, "taxon <- genome_db has unlinked entries");
-		    } else {
-			ReportManager.correct(this, con, "taxon <- genome_db relationships OK");
-		    }
-		} catch (Exception e) {
-		    //		    e.printStackTrace();
-		    String message = e.getMessage();
-		    ReportManager.problem(this, con, message);
+		orphans = countOrphans(con, "genome_db", "taxon_id", "taxon", "taxon_id", true );
+		if (orphans == 0) {
+		    ReportManager.correct(this, con, "taxon <- genome_db relationships PASSED");
+		} else if (orphans > 0) {
+		    ReportManager.problem(this, con, "taxon <- genome_db has unlinked entries FAILED");
+		} else {
+		    ReportManager.problem(this, con, "taxon <- genome_db TEST NOT COMPLETED, look at the StackTrace if any");
 		}
+	    } else {
+		ReportManager.correct(this, con, "NO ENTRIES in taxon table, so nothing to test IGNORED");
 	    }
 	    
 	    result &= (orphans == 0);
@@ -80,4 +80,4 @@ public class FamilyForeignKeyTestCaseTaxonId extends EnsTestCase {
 	
     }
     
-} // OrphanTestCase
+} // FamilyForeignKeyTestCaseTaxonId

@@ -53,25 +53,33 @@ public class ComparaForeignKeyTestCaseDnafragId extends EnsTestCase {
       
       if( getRowCount( con, "select count(*) from dnafrag" ) > 0 ) {
         orphans = countOrphans(con, "dnafrag_region", "dnafrag_id", "dnafrag", "dnafrag_id", true );
-        if( orphans > 0 ) {
-          ReportManager.problem(this, con, "dnafrag_region has unlinked entries in dnafrag");
+        if( orphans == 0 ) {
+	    ReportManager.correct(this, con, "dnafrag_region -> dnafrag relationships PASSED");
+	} else if (orphans > 0) {
+	    ReportManager.problem(this, con, "dnafrag_region has unlinked entries in dnafrag FAILED");
         } else {
-          ReportManager.correct(this, con, "dnafrag_region -> dnafrag relationships OK");
+	    ReportManager.problem(this, con, "dnafrag_region -> dnafrag TEST NOT COMPLETED, look at the StackTrace if any");
         }
   
         orphans = countOrphans(con, "genomic_align_block", "consensus_dnafrag_id", "dnafrag", "dnafrag_id", true );
-        if( orphans > 0 ) {
-          ReportManager.problem(this, con, "consensus_dnafrag_id in genomic_align_block has unlinked entries in dnafrag");
+        if( orphans == 0 ) {
+	    ReportManager.correct(this, con, "consensus_dnafrag_id in genomic_align_block -> dnafrag relationships PASSED");
+	} else if( orphans > 0 ) {
+	    ReportManager.problem(this, con, "consensus_dnafrag_id in genomic_align_block has unlinked entries in dnafrag FAILED");
         } else {
-          ReportManager.correct(this, con, "consensus_dnafrag_id in genomic_align_block -> dnafrag relationships OK");
+	    ReportManager.problem(this, con, "genomic_align_block -> dnafrag relationships TEST NOT COMPLETED, look at the StackTrace if any");
         }
   
         orphans = countOrphans(con, "genomic_align_block", "query_dnafrag_id", "dnafrag", "dnafrag_id", true );
-        if( orphans > 0 ) {
-          ReportManager.problem(this, con, "query_dnafrag_id in genomic_align_block has unlinked entries in dnafrag");
+        if( orphans == 0 ) {
+	    ReportManager.correct(this, con, "query_dnafrag_id in genomic_align_block -> dnafrag relationships PASSED");
+	} else if( orphans > 0 ) {
+	    ReportManager.problem(this, con, "query_dnafrag_id in genomic_align_block has unlinked entries in dnafrag FAILED");
         } else {
-          ReportManager.correct(this, con, "query_dnafrag_id in genomic_align_block -> dnafrag relationships OK");
+	    ReportManager.problem(this, con, "genomic_align_block -> dnafragTEST NOT COMPLETED, look at the StackTrace if any");
         }
+      } else {
+	  ReportManager.correct(this, con, "NO ENTRIES in dnafrag table, so nothing to test IGNORED");
       }
       
       result &= (orphans == 0);

@@ -52,11 +52,15 @@ public class FamilyForeignKeyTestCaseExternalDbId extends EnsTestCase {
 
       if( getRowCount( con, "select count(*) from external_db" ) > 0 ) {
         orphans = countOrphans(con, "family_members", "external_db_id", "external_db", "external_db_id", true );
-        if( orphans > 0 ) {
-          ReportManager.problem(this, con, "external <- family_members has unlinked entries");
+	if (orphans == 0) {
+          ReportManager.correct(this, con, "external <- family_members relationships PASSED");
+	} else if( orphans > 0 ) {
+          ReportManager.problem(this, con, "external <- family_members has unlinked entries FAILED");
         } else {
-          ReportManager.correct(this, con, "external <- family_members relationships OK");
+          ReportManager.problem(this, con, "external <- family_members TEST NOT COMPLETED, look at the StackTrace if any");
         }
+      } else {
+	  ReportManager.correct(this, con, "NO ENTRIES in external_db table, so nothing to test IGNORED");
       }
       
       result &= (orphans == 0);

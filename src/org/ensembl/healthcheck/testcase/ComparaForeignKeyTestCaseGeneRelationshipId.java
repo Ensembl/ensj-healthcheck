@@ -53,11 +53,15 @@ public class ComparaForeignKeyTestCaseGeneRelationshipId extends EnsTestCase {
       
       if( getRowCount( con, "select count(*) from gene_relationship" ) > 0 ) {
         orphans = countOrphans(con, "gene_relationship_member", "gene_relationship_id", "gene_relationship", "gene_relationship_id", false );
-        if( orphans > 0 ) {
-          ReportManager.problem(this, con, "gene_relationship_member has unlinked entries in gene_relationship");
+        if( orphans == 0 ) {
+	    ReportManager.correct(this, con, "gene_relationship_member <-> gene_relationship relationships PASSED");
+	} else if( orphans > 0 ) {
+	    ReportManager.problem(this, con, "gene_relationship_member has unlinked entries in gene_relationship FAILED");
         } else {
-          ReportManager.correct(this, con, "gene_relationship_member <-> gene_relationship relationships OK");
+	    ReportManager.problem(this, con, "gene_relationship_member <-> gene_relationship TEST NOT COMPLETED, look at the StackTrace if any");
         }
+      } else {
+	  ReportManager.correct(this, con, "NO ENTRIES in gene_relationship table, so nothing to test IGNORED");
       }
 
       result &= (orphans == 0);

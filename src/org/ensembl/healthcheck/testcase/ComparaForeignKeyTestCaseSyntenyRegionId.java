@@ -53,11 +53,15 @@ public class ComparaForeignKeyTestCaseSyntenyRegionId extends EnsTestCase {
       
       if( getRowCount( con, "select count(*) from synteny_region" ) > 0 ) {
         orphans = countOrphans(con, "dnafrag_region", "synteny_region_id", "synteny_region", "synteny_region_id", false );
-        if( orphans > 0 ) {
-          ReportManager.problem(this, con, "dnafrag_region has unlinked entries in synteny_region");
+        if( orphans == 0 ) {
+	    ReportManager.correct(this, con, "dnafrag_region <-> synteny_region relationships PASSED");
+        } else if( orphans > 0 ) {
+	    ReportManager.problem(this, con, "dnafrag_region has unlinked entries in synteny_region FAILED");
         } else {
-          ReportManager.correct(this, con, "dnafrag_region <-> synteny_region relationships OK");
+	    ReportManager.problem(this, con, "dnafrag_region <-> synteny_region TEST NOT COMPLETED, look at the StackTrace if any");
         }
+      } else {
+	  ReportManager.correct(this, con, "NO ENTRIES in synteny_region table, so nothing to test IGNORED");
       }
 
       result &= (orphans == 0);
