@@ -773,6 +773,7 @@ class TestListPanel extends JScrollPane {
         for (int i = 0; i < groups.length; i++) {
             TestTreeNode groupNode = new TestTreeNode(groups[i]);
             EnsTestCase[] testCasesInGroup = testRegistry.getTestsInGroup(groups[i], type);
+	    Arrays.sort(testCasesInGroup, new EnsTestCaseNameComparator());
             for (int j = 0; j < testCasesInGroup.length; j++) {
                 groupNode.add(new TestTreeNode(testCasesInGroup[j]));
             }
@@ -925,8 +926,8 @@ class TestTreeNode extends DefaultMutableTreeNode {
     public TestTreeNode(Object o) {
 
         if (o instanceof String) {
-            this.groupName = (String) o;
-            isGroup = true;
+	    this.groupName = (String)o;
+	    isGroup = true;
         } else if (o instanceof EnsTestCase) {
             this.test = (EnsTestCase) o;
             isGroup = false;
@@ -1092,6 +1093,7 @@ class TestProgressDialog extends JDialog {
 
     }
 }
+
 // -------------------------------------------------------------------------
 /**
  * Fiddle things so that generic database types are moved to the front.
@@ -1118,4 +1120,28 @@ class DatabaseTypeGUIComparator implements Comparator {
     }
 
 }
+
+
+// -------------------------------------------------------------------------
+/**
+ * Compare test cases based on short name (i.e. without package name).
+ */
+
+class EnsTestCaseNameComparator implements Comparator {
+
+    public int compare(Object o1, Object o2) {
+
+        if (!(o1 instanceof EnsTestCase) || !(o2 instanceof EnsTestCase)) {
+            throw new RuntimeException("Arguments to EnsTestCaseNameComparator must be of type EnsTestCase!");
+        }
+
+        EnsTestCase t1 = (EnsTestCase) o1;
+        EnsTestCase t2 = (EnsTestCase) o2;
+        
+	return t1.getShortTestName().compareTo(t2.getShortTestName());
+
+    }
+
+}
+
 // -------------------------------------------------------------------------
