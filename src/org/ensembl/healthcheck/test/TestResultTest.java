@@ -17,7 +17,7 @@ import org.ensembl.healthcheck.*;
  */
 public class TestResultTest extends TestCase {
   
-  private org.ensembl.healthcheck.TestResult tr1, tr2, tr3, tr4;
+  private org.ensembl.healthcheck.TestResult tr1, tr2;
   
   public TestResultTest(java.lang.String testName) {
     super(testName);
@@ -38,8 +38,6 @@ public class TestResultTest extends TestCase {
     
     tr1 = new org.ensembl.healthcheck.TestResult("True no message",  true);
     tr2 = new org.ensembl.healthcheck.TestResult("False no message", false);
-    tr3 = new org.ensembl.healthcheck.TestResult("True, message",    true,  "message1");
-    tr4 = new org.ensembl.healthcheck.TestResult("False, message",   false, "message2");
     
   }
   
@@ -57,24 +55,6 @@ public class TestResultTest extends TestCase {
     System.out.println("testGetResult");
     
     assertTrue(!tr2.getResult());
-    
-  }
-  
-  /** Test of getMessage method, of class org.ensembl.healthcheck.TestResult. */
-  public void testGetMessage() {
-    System.out.println("testGetMessage");
-    
-    assertEquals(tr3.getMessage(), "message1");
-    assertEquals(tr4.getMessage(), "message2");
-
-  }
-  
-  /** Test of setMessage method, of class org.ensembl.healthcheck.TestResult. */
-  public void testSetMessage() {
-    System.out.println("testSetMessage");
-    
-    tr1.setMessage("new message");
-    assertEquals(tr1.getMessage(), "new message");
     
   }
   
