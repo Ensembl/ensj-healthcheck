@@ -32,6 +32,8 @@ public class DatabaseType {
 	public static final DatabaseType COMPARA = new DatabaseType("compara");
 	public static final DatabaseType MART = new DatabaseType("mart");
 	public static final DatabaseType SNP = new DatabaseType("snp");
+	public static final DatabaseType DISEASE = new DatabaseType("disease");
+
 	// special type to represent situtation when type is not known
 	public static final DatabaseType UNKNOWN = new DatabaseType("unknown");
 
@@ -102,6 +104,22 @@ public class DatabaseType {
 		if (in(alias, "vega")) {
 
 			return VEGA;
+
+		}
+
+		//		--------------------------------------
+
+		if (in(alias, "snp")) {
+
+			return SNP;
+
+		}
+
+		//		--------------------------------------
+
+		if (in(alias, "disease")) {
+
+			return DISEASE;
 
 		}
 
