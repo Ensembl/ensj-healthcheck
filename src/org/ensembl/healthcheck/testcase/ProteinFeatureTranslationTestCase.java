@@ -175,7 +175,6 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
   
   public void repair() {
     
-    System.out.println("##################### in repair");
     DatabaseConnectionIterator connectionIterator = getDatabaseConnectionIterator();
     while (connectionIterator.hasNext()) {
       Connection con = (Connection)connectionIterator.next();
@@ -193,6 +192,7 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
   
   public void show() {
     
+    System.out.println("Candidates for repair:");
     DatabaseConnectionIterator connectionIterator = getDatabaseConnectionIterator();
     while (connectionIterator.hasNext()) {
       Connection con = (Connection)connectionIterator.next();
