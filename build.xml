@@ -9,8 +9,8 @@
 <project default="compile" basedir=".">
 
   <property name="name" value="ensj-healthcheck" />
-  <property name="version" value="0.1" />
-  <property name="build.name" value="${name}-${version}" />
+  <property name="version" value="" />
+  <property name="build.name" value="${name}" />
   <property name="build.compiler" value="modern" />
 
   <property name="src"                 location="src"/>
@@ -21,7 +21,9 @@
   <property name="test"                location="test"/>
   <property name="reports"             location="reports"/>
   <property name="reports.tests"       location="${reports}/tests"/>
-  <property name="web.javadoc.dir"     location="/homes/glenn/public_html/javadoc"/>
+  <property name="web.dir"             location="${user.home}/public_html"/>
+  <property name="web.javadoc.dir"     location="${web.dir}/javadoc"/>
+  <property name="web.mirror.dir"      location="${doc}/external_web_pages"/>
 
   <!-- ################################################################################## -->
   <!-- Targets -->
@@ -39,7 +41,15 @@
 
   <!-- ################################################################################## -->
 
-  <target name="compile" depends="init" description="Compile the source " >
+  <target name="java-version" description="Print which version of Java is being used; hopefully will help to spot path problems" >
+    <exec executable="java" vmlauncher="no">
+      <arg value="-version"/>
+    </exec>
+  </target>
+  
+  <!-- ################################################################################## -->
+
+  <target name="compile" depends="init, java-version" description="Compile the source " >
     <javac srcdir="${src}" destdir="${build}" excludes="**/*Test.*" >
     </javac>
   </target>
@@ -64,6 +74,22 @@
     <jar jarfile="${dist}/${build.name}-${DSTAMP}.jar" basedir="${build}"/>
     <!-- Current version -->
     <copy file="${dist}/${build.name}-${DSTAMP}.jar" tofile="${dist}/ensj-healthcheck.jar"/>
+    <!-- And the source -->
+    <jar jarfile="${dist}/${build.name}-src.jar" basedir="${src}"/>
+    <!-- Tar file containing everything -->
+    <tar tarfile="${dist}/ensj-healthcheck.tar.gz" basedir="../" includes="ensj-healthcheck/**" excludes="**/*~, **/*.class, **/.nbattrs, **/.xvpics/*, **/dist/**" compression="gzip"/>
+  </target>
+  
+   <target name="dist-web" depends="javadoc-web, javadoc-tar, dist" description="Copy distribution files to a web dir" >
+      <copy todir="${web.dir}">
+      <fileset dir="${dist}">
+        <include name="**/*.jar"/>
+        <include name="**/*.tar.gz"/>
+      </fileset>
+      <fileset dir="${web.mirror.dir}">
+        <include name="**/*.html"/>
+      </fileset>
+    </copy>
   </target>
 
   <!-- ################################################################################## -->
@@ -72,6 +98,7 @@
     <delete dir="${test}" />
     <delete dir="${reports}" />
     <delete dir="${doc}/javadoc" />
+    <delete dir="${dist}" />
   </target>
 
   <target name="cleanall" depends="clean" description="Clean .class files out of src dir as well" >
@@ -98,6 +125,7 @@
   <target name="runall" depends="compile">
     <java classname="org.ensembl.healthcheck.TextTestRunner">
       <arg value="all"/> 
+      <arg value="-v"/> 
       <classpath>
         <pathelement path="${build}"/>
         <fileset dir="${lib}">
@@ -138,6 +166,9 @@
     </copy>
   
   </target>
+  
+   <!-- ################################################################################## -->
+  
   <!-- ################################################################################## -->
 
   <target name="test" depends="compile-test">
