@@ -402,7 +402,7 @@ public class TestRunner {
 					try {
 						Class newClass = Class.forName(packageName + "." + baseClassName);
 						String className = newClass.getName();
-						if (!className.equals("org.ensembl.healthcheck.testcase.EnsTestCase")) { // ignore JUnit tests
+						if (!className.equals("org.ensembl.healthcheck.testcase.EnsTestCase")) { 
 							obj = newClass.newInstance();
 						}
 					} catch (InstantiationException ie) {
