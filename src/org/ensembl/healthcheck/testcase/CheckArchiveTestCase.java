@@ -18,14 +18,11 @@
 
 
 package org.ensembl.healthcheck.testcase;
-
+ 
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.TestResult;
-import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.DatabaseConnectionIterator;
 
 /**
@@ -41,55 +38,6 @@ public class CheckArchiveTestCase extends EnsTestCase {
 		}
 
 	public TestResult run() {
-	
-// select old_stable_id, old_version as "Updated Gene missing from gene_archive"
-//  from stable_id_event LEFT JOIN gene_archive on old_stable_id=gene_stable_id
-//  where old_stable_id like "%G%" and gene_stable_id is NULL 
-//  and new_stable_id=old_stable_id and old_version!=new_version;
-
-// select old_stable_id, old_version as "Updated Transcript missing from gene_archive"
-//  from stable_id_event LEFT JOIN gene_archive on old_stable_id=transcript_stable_id
-//  where old_stable_id like "%T%" and transcript_stable_id is NULL 
-//  and new_stable_id=old_stable_id and old_version!=new_version;
-
-// select old_stable_id, old_version as "Updated Translation missing from gene_archive"
-//  from stable_id_event LEFT JOIN gene_archive on old_stable_id=translation_stable_id
-//  where old_stable_id like "%P%" and translation_stable_id is NULL; 
-//  and new_stable_id=old_stable_id and old_version!=new_version;
-
-
-
-
-// select old_stable_id as "Deleted Translation missing from peptide_archive"
-//  from stable_id_event LEFT JOIN peptide_archive on old_stable_id=translation_stable_id
-//  where old_stable_id like "%P%" and new_stable_id is NULL and translation_stable_id is NULL;
-
-// select old_stable_id, old_version as "Updated Translation missing from peptide_archive"
-//  from stable_id_event LEFT JOIN peptide_archive on old_stable_id=translation_stable_id
-//  where old_stable_id like "%P%" and new_stable_id=old_stable_id and old_version!=new_version
-//  and translation_stable_id is NULL ;
-
-
-
-
-
-
-// select * from peptide_archive limit 3;
-// select * from gene_archive limit 3;
-
-
-// select pa.translation_stable_id as "ERROR: these translations are in
-// peptide_archive but not gene_archive", pa.translation_version from
-// peptide_archive pa LEFT JOIN gene_archive ga ON
-// ga.translation_stable_id=pa.translation_stable_id AND
-// ga.translation_version=pa.translation_version WHERE
-// ga.translation_stable_id is NULL;
-
-
-// select ts.stable_id as "ERROR: this translation is in peptide but
-// hasn't changed", ts.version from translation_stable_id ts,
-// peptide_archive pa where ts.stable_id=pa.translation_stable_id AND
-// ts.version= pa.translation_version;
 		
 		boolean result = true;
     
@@ -99,15 +47,34 @@ public class CheckArchiveTestCase extends EnsTestCase {
 			 	
 					Connection con = (Connection)it.next();
 					
-					boolean nullResult = checkNoNullStrings( con);
-					boolean archiveIntegrityResult = checkArchiveIntegrity( con );
-					boolean translationDiffResult = checkChangesInArchive( con, "translation");
-					boolean transcriptDiffResult = checkChangesInArchive( con, "transcript");
-					boolean geneDiffResult = checkChangesInArchive( con, "gene");
-		
-					result = result && nullResult && archiveIntegrityResult 
-											&& translationDiffResult && transcriptDiffResult
-											&& geneDiffResult;
+					// must do "checkXXX() && result" rather than "result && checkXXX()"
+					// because in the second case no further tests will run after one fails.
+					
+					result = checkTablesExistAndPopulated(con) && result;
+					
+					
+					result = checkNoNullStrings( con) && result;
+					result = checkArchiveIntegrity( con ) && result;
+					
+					result = checkDeletedInGeneArchive( con, "gene", "G", 355 ) && result;
+					result = checkDeletedInGeneArchive( con, "transcript", "T", 355 ) && result;
+					result = checkDeletedInGeneArchive( con, "translation", "P", 355 ) && result;
+					
+					result = checkChangedInGeneArchive( con, "translation", "P", 355) && result;
+					result = checkChangedInGeneArchive( con, "transcript", "T", 355) && result;
+					result = checkChangedInGeneArchive( con, "gene", "G", 355) && result;
+					 
+					result = checkDeletedTranslationsInPeptideArchive( con, 355) && result;
+					result = checkChangedTranslationsInPeptideArchive( con, 355) && result;
+					
+					result = checkTranslationsFromPeptideArchiveInGeneArchive( con ) && result;
+					
+					result = checkNoCurrentTranslationsInPeptideArchive( con )  && result; 
+					
+					result = checkPropagationIDsAreCurrent(con, "gene", "G");
+					result = checkPropagationIDsAreCurrent(con, "transcript", "T");
+					result = checkPropagationIDsAreCurrent(con, "translation", "P");
+					
 			 }
 			 
 		return new TestResult(getShortTestName(), result);
@@ -115,25 +82,203 @@ public class CheckArchiveTestCase extends EnsTestCase {
 
 	
 	
+	
 
 	/**
+	 * Checks tables exist and have >0 rows.
 	 * @param con
-	 * @param string
 	 * @return
 	 */
-	private boolean checkChangesInArchive(Connection con, String string) {
-
-	boolean result = true;
-	
-	result = result && checkDeletedInArchive( con, "gene", "G" );
-	result = result && checkDeletedInArchive( con, "transcript", "T" );
-	result = result && checkDeletedInArchive( con, "translation", "P" );
-	
-	return result;
-
+	private boolean checkTablesExistAndPopulated(Connection con) {
+		String tables[] = new String[] {
+			"stable_id_event",
+			"mapping_session",
+			"gene_archive",
+			"peptide_archive" };
+			
+		boolean result = true;
+		
+		for (int i = 0; i < tables.length; i++) {
+			String table = tables[i];
+			boolean exists = checkTableExists(con, table);
+			if ( exists ) {
+				if ( countRowsInTable(con, table)==0 ) {
+					ReportManager.problem(this, con, "Empty table:" + table);
+					result = false;
+				}
+			}
+			else {
+				ReportManager.problem(this, con, "Missing table:" + table);
+				result = false;
+			}
+		}
+		
+		return result;
 	}
 
 
+	private boolean checkDeletedTranslationsInPeptideArchive(Connection con, long minMappingSessionID) {
+		boolean result = true;
+
+			String sql = "SELECT CONCAT(old_stable_id, \".\", old_version) " +
+				"FROM stable_id_event LEFT JOIN peptide_archive " +
+				"                     ON old_stable_id=translation_stable_id " +
+				"WHERE " +
+				"     mapping_session_id >= " + minMappingSessionID + " " +
+				"     AND old_stable_id like \"%P%\" " +
+				"     AND new_stable_id is NULL " +
+				"     AND translation_stable_id is NULL;";
+	
+			String[] rows = getColumnValues(con, sql);
+			if (rows.length > 0) {
+				StringBuffer msg = new StringBuffer();
+				msg.append("Deleted translation missing from peptide_archive");
+				for (int i = 0; i < rows.length && rows.length < 10; i++) {
+					msg.append(rows[i]).append("\n");
+				}
+
+				ReportManager.problem(this, con, msg.toString());
+				result = false;
+			}
+			
+			return result;
+	}
+
+
+	private boolean checkChangedTranslationsInPeptideArchive(Connection con, long minMappingSessionID) {
+			
+		boolean result = true;
+
+		String sql = "SELECT CONCAT(old_stable_id, \".\", old_version) " +
+			"FROM stable_id_event LEFT JOIN peptide_archive " +
+			"                     ON old_stable_id=translation_stable_id " +
+			"WHERE " +
+			"     mapping_session_id >= " + minMappingSessionID + " " +
+			"     AND old_stable_id like \"%P%\" " +
+			"     AND new_stable_id=old_stable_id " +
+			"     AND old_version!=new_version " +
+			"     AND translation_stable_id is NULL;";
+	
+		String[] rows = getColumnValues(con, sql);
+		if (rows.length > 0) {
+			StringBuffer msg = new StringBuffer();
+			msg.append("Updated Translations missing from peptide_archive.");
+			for (int i = 0; i < rows.length && rows.length < 10; i++) {
+				msg.append(rows[i]).append("\n");
+			}
+
+			ReportManager.problem(this, con, msg.toString());
+			result = false;
+		}
+
+		return result;
+	}
+
+
+	private boolean checkTranslationsFromPeptideArchiveInGeneArchive(
+		Connection con) {
+
+		boolean result = true;
+		
+		String sql = "SELECT CONCAT( pa.translation_stable_id, \".\", pa.translation_version) " +
+								 " FROM  peptide_archive pa LEFT JOIN gene_archive ga " +								 "                          ON  ga.translation_stable_id=pa.translation_stable_id " +								 "                              AND	 ga.translation_version=pa.translation_version " +								 " WHERE ga.translation_stable_id is NULL;";
+	
+				String[] rows = getColumnValues(con, sql);
+				if (rows.length > 0) {
+					StringBuffer msg = new StringBuffer();
+					for (int i = 0; i < rows.length && rows.length < 10; i++) {
+						msg.append(rows[i]).append("\n");
+					}
+
+					ReportManager.problem(this, con, msg.toString());
+					result = false;
+				}
+		
+		return result;
+	}
+
+
+
+	private boolean checkNoCurrentTranslationsInPeptideArchive(Connection con) {
+
+		boolean result = true;
+
+		String sql =
+			"SELECT CONCAT(ts.stable_id , \".\",ts.version)"
+				+ " FROM translation_stable_id ts, peptide_archive pa "
+				+ " WHERE ts.stable_id=pa.translation_stable_id "
+				+ "       AND ts.version= pa.translation_version;";
+		String[] rows = getColumnValues(con, sql);
+		if (rows.length > 0) {
+			StringBuffer msg = new StringBuffer();
+			for (int i = 0; i < rows.length && rows.length < 10; i++) {
+				msg.append(rows[i]).append("\n");
+			}
+
+			ReportManager.problem(this, con, msg.toString());
+			result = false;
+		}
+
+		return result;
+	}
+
+
+	/** this quite a slow query, about 1min to hopefulyy return nothing. */
+	private boolean checkPropagationIDsAreCurrent(Connection con, String type, String filter) {
+		// select * from stable_id_event sie left join gene_stable_id gsi on sie.new_stable_id = gsi.stable_id where mapping_session_id = 348 and sie.new_stable_id like "ENSG%" and gsi.stable_id is null													String type, String filter) {
+	
+		boolean result = true;
+		
+		String sql = "SELECT sie.new_stavle_id " +			"FROM stable_id_event sie " +			"         LEFT_JOIN "+type+"_stable_id tsi " +			"         ON sie.new_stable_id = tsi.stable_id " +
+			"         mapping_session ms " +			" WHERE ms.old_database_name=\"ALL\" " +			"       AND sie.mapping_session_id = ms.mapping_session_id " +			"       AND sie.new_stable_id like \"%"+filter+"%\" " +			"       AND tsi.stable_id is NULL";
+		
+		return result;																													
+	}
+
+	/**
+	 * Checks that all the changed _type_s are included in the gene_archive. A change has occured if the
+	 * version is different.
+	 * @param con connection on which to execute queries
+	 * @param type type of item deleted
+	 * @param filter substring to use use to filter relevant stableIDs, 
+	 * will be used in SQL as "%FILTER%".
+	 * @param minMappingSessionID mapping_session_id for first mapping session
+	 * which contains arechive data. This is needed because no archive data exists
+	 * for previous release.
+	 * @return whether the test succeeded.
+	 */
+	private boolean checkChangedInGeneArchive(Connection con, 
+																				String type, 
+																				String filter, 
+																				long minMappingSessionID) {
+		boolean result = true;
+																					
+		String sql = 
+			"SELECT CONCAT(old_stable_id, \".\", old_version) " +			"FROM stable_id_event sie LEFT JOIN gene_archive ga " +			"                     ON old_stable_id="+type+"_stable_id " +
+			"WHERE " +
+			"     sie.mapping_session_id >= " + minMappingSessionID + " " +			"     AND sie.mapping_session_id=ga.mapping_session_id " +
+			"     AND old_stable_id like \"%"+filter+"%\" " +			"     AND gene_stable_id is NULL " +
+			"     AND new_stable_id=old_stable_id and old_version!=new_version;";
+			
+			String[] rows = getColumnValues(con, sql);
+			if (rows.length > 0) {
+				StringBuffer msg = new StringBuffer();
+				msg.append(
+					rows.length
+						+ " deleted "
+						+ type
+						+ "s not in gene_archive ");
+				for (int i = 0; i < rows.length && rows.length < 10; i++) {
+					msg.append(rows[i]).append("\n");
+				}
+
+				ReportManager.problem(this, con, msg.toString());
+				result = false;
+			}
+
+			return result;
+
+	}
 
 	/**
 	 * Checks that all the deleted _type_s are included in the gene_archive.
@@ -141,15 +286,23 @@ public class CheckArchiveTestCase extends EnsTestCase {
 	 * @param type type of item deleted
 	 * @param filter substring to use use to filter relevant stableIDs, 
 	 * will be used in SQL as "%FILTER%".
+	 * @param minMappingSessionID mapping_session_id for first mapping session
+	 * which contains arechive data. This is needed because no archive data exists
+	 * for previous release.
 	 * @return whether the test succeeded.
 	 */
-	private boolean checkDeletedInArchive(Connection con, String type, String filter){	
+	private boolean checkDeletedInGeneArchive(Connection con, 
+																				String type, 
+																				String filter, 
+																				long minMappingSessionID){	
 
 		boolean result = true;
 		
-		String sql = "select old_stable_id from stable_id_event LEFT JOIN gene_archive on old_stable_id="
-									+ type + "_stable_id where old_stable_id like \"%" + filter + "%\""
-									+ " and new_stable_id is NULL and " + type + "_stable_id is NULL;";
+		String sql = 
+			"SELECT CONCAT(old_stable_id, \".\", old_version) " +			"FROM stable_id_event sie LEFT JOIN gene_archive ga " +			"                     ON old_stable_id=" + type + "_stable_id " +			"WHERE " +
+			"   sie.mapping_session_id >= " + minMappingSessionID + " " +
+			"   AND sie.mapping_session_id=ga.mapping_session_id " +			"   AND old_stable_id like \"%" + filter + "%\"" +
+			"   AND new_stable_id is NULL " +			"   AND " + type + "_stable_id is NULL;";
 		String[] rows = getColumnValues( con, sql);
 		if ( rows.length>0 ) {
 			StringBuffer msg = new StringBuffer();
@@ -158,7 +311,7 @@ public class CheckArchiveTestCase extends EnsTestCase {
 				msg.append( rows[i] ).append( "\n" ) ;
 			}
 			
-			ReportManager.problem(this, con, "Deleted.");
+			ReportManager.problem(this, con, msg.toString());
 			result = false;
 		}
 		
