@@ -643,6 +643,59 @@ public abstract class EnsTestCase {
 
 	} // checkSameSQLResult
 
+//-------------------------------------------------------------------------
+	/**
+	 * Check that a particular SQL statement has the same result when executed
+	 * on more than one database.
+	 * 
+	 * @return True if all matched databases provide the same result, false
+	 *         otherwise.
+	 * @param sql The SQL query to execute.
+	 * @param databases The DatabaseRegistryEntries on which to execute sql.
+	 */
+	public boolean checkSameSQLResult(String sql, DatabaseRegistryEntry[] databases) {
+
+		ArrayList resultSetGroup = new ArrayList();
+		ArrayList statements = new ArrayList();
+
+		for (int i = 0; i < databases.length; i++) {
+
+			Connection con = databases[i].getConnection();
+
+			try {
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(sql);
+				if (rs != null) {
+					resultSetGroup.add(rs);
+				}
+				logger.fine("Added ResultSet for " + sql);
+				//DBUtils.printResultSet(rs, 100);
+				// note that the Statement can't be closed here as we use the
+				// ResultSet elsewhere
+				// so store a reference to it for closing later
+				statements.add(stmt);
+				//con.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		logger.finest("Number of ResultSets to compare: " + resultSetGroup.size());
+		boolean same = DBUtils.compareResultSetGroup(resultSetGroup, this);
+
+		Iterator it = statements.iterator();
+		while (it.hasNext()) {
+			try {
+				((Statement)it.next()).close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		return same;
+
+	} // checkSameSQLResult
+	
 	// -------------------------------------------------------------------------
 	/**
 	 * Check for the presence of a particular String in a table column.
