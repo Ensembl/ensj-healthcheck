@@ -10,17 +10,21 @@ import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 
 /**
- *
- * @author  glenn
+ * Settings Dialog for the GuiTestRunner.
  */
 public class GuiTestRunnerSettings extends javax.swing.JDialog {
   
   GuiTestRunnerFrame gtrf;
   GuiTestRunner guiTestRunner;
   
-  /** Creates new form GuiTestRunnerSettings */
+  /** Creates new form GuiTestRunnerSettings
+   * @param parent The parent frame.
+   * @param gtr The GuiTestRunner to use.
+   * @param modal Whether this dialog is modal or not.
+   */
   public GuiTestRunnerSettings(GuiTestRunnerFrame parent, GuiTestRunner gtr, boolean modal) {
     super(parent, modal);
     this.gtrf = parent;
@@ -46,6 +50,9 @@ public class GuiTestRunnerSettings extends javax.swing.JDialog {
     threadsPanel = new javax.swing.JPanel();
     maxThreadsLabel = new javax.swing.JLabel();
     threadsSpinner = new javax.swing.JSpinner();
+    outputLevelPanel = new javax.swing.JPanel();
+    outputLabel = new javax.swing.JLabel();
+    outputComboBox = new javax.swing.JComboBox();
     bottomPanel = new javax.swing.JPanel();
     applyButton = new javax.swing.JButton();
     cancelButton = new javax.swing.JButton();
@@ -95,6 +102,18 @@ public class GuiTestRunnerSettings extends javax.swing.JDialog {
     
     centrePanel.add(threadsPanel);
     
+    outputLevelPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+    
+    outputLabel.setFont(new java.awt.Font("Dialog", 0, 12));
+    outputLabel.setText("Output level: ");
+    outputLevelPanel.add(outputLabel);
+    
+    outputComboBox.setFont(new java.awt.Font("Dialog", 0, 12));
+    outputComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "All", "Problems only", "Correct results", "Summary", "Info", "None" }));
+    outputLevelPanel.add(outputComboBox);
+    
+    centrePanel.add(outputLevelPanel);
+    
     getContentPane().add(centrePanel, java.awt.BorderLayout.CENTER);
     
     bottomPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
@@ -119,6 +138,7 @@ public class GuiTestRunnerSettings extends javax.swing.JDialog {
   }//GEN-LAST:event_closeDialog
   
   /**
+   * Command-line entry point.
    * @param args the command line arguments
    */
   public static void main(String args[]) {
@@ -134,6 +154,9 @@ public class GuiTestRunnerSettings extends javax.swing.JDialog {
   private javax.swing.JCheckBox forceBox;
   private javax.swing.JPanel forcePanel;
   private javax.swing.JLabel maxThreadsLabel;
+  private javax.swing.JComboBox outputComboBox;
+  private javax.swing.JLabel outputLabel;
+  private javax.swing.JPanel outputLevelPanel;
   private javax.swing.JLabel preFilterLabel;
   private javax.swing.JTextField preFilterTextField;
   private javax.swing.JPanel regexpPanel;
@@ -146,9 +169,8 @@ public class GuiTestRunnerSettings extends javax.swing.JDialog {
   
   private void init() {
     
-    final GuiTestRunnerFrame localParent = gtrf;
     final GuiTestRunner localGTR = guiTestRunner;
-
+    
     preFilterTextField.setText(guiTestRunner.getPreFilterRegexp());
     forceBox.setSelected(guiTestRunner.getForceDatabases());
     
@@ -163,9 +185,22 @@ public class GuiTestRunnerSettings extends javax.swing.JDialog {
     applyButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         int spinnerValue = ((SpinnerNumberModel)threadsSpinner.getModel()).getNumber().intValue();
+        HashMap levels = new HashMap();
+        levels.put("All"            , new Integer(ReportLine.ALL));
+        levels.put("Problems only"  , new Integer(ReportLine.PROBLEM));
+        levels.put("Correct results", new Integer(ReportLine.CORRECT));
+        levels.put("Summary"        , new Integer(ReportLine.SUMMARY));
+        levels.put("Info"           , new Integer(ReportLine.INFO));
+        levels.put("None"           , new Integer(ReportLine.NONE));
+        
+        String selection = outputComboBox.getSelectedItem().toString();
+        int level = ((Integer)levels.get(selection)).intValue();
+        
+        localGTR.setOutputLevel(level);
         localGTR.setPreFilterRegexp(preFilterTextField.getText());
         localGTR.setForceDatabases(forceBox.isSelected());
         localGTR.setMaxThreads(spinnerValue);
+        
         closeDialog(null);
       }
     });
