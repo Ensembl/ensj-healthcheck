@@ -33,6 +33,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -498,6 +500,7 @@ class DatabaseTabbedPane extends JTabbedPane {
         }
 
         DatabaseType[] types = databaseRegistry.getTypes();
+        Arrays.sort(types, new DatabaseTypeGUIComparator());
         for (int i = 0; i < types.length; i++) {
             List checkBoxesForTab = new ArrayList();
             for (int j = 0; j < entries.length; j++) {
@@ -656,6 +659,8 @@ class TestTabbedPane extends JTabbedPane {
         setBackground(Color.WHITE);
 
         DatabaseType[] types = testRegistry.getTypes();
+        Arrays.sort(types, new DatabaseTypeGUIComparator());
+        
         for (int i = 0; i < types.length; i++) {
             addTab(types[i].toString(), new TestListPanel(types[i], testRegistry));
         }
@@ -985,5 +990,30 @@ class TestProgressDialog extends JDialog {
         setProgress(p);
 
     }
+}
+// -------------------------------------------------------------------------
+/**
+ * Fiddle things so that generic database types are moved to the front.
+ */
+class DatabaseTypeGUIComparator implements Comparator {
+    
+    public int compare(Object o1, Object o2) {
+        
+        if (!(o1 instanceof DatabaseType) || !(o2 instanceof DatabaseType)) {
+            throw new RuntimeException("Arguments to DatabaseTypeGUIComparator must be DatabaseType!");
+        }
+        
+        DatabaseType t1 = (DatabaseType)o1;
+        DatabaseType t2 = (DatabaseType)o2;
+        
+        if (t1.isGeneric() && !t2.isGeneric()) {
+            return -1;
+        } else if (!t1.isGeneric() && t2.isGeneric()) {
+            return 1;
+        } else {
+            return t1.toString().compareTo(t2.toString());
+        }
+    }
+    
 }
 // -------------------------------------------------------------------------
