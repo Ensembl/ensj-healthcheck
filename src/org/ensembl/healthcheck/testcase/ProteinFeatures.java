@@ -27,12 +27,12 @@ import org.ensembl.healthcheck.util.*;
 /**
  * Check that feature co-ords make sense.
  */
-public class CheckProteinFeatureCoordsTestCase extends EnsTestCase {
+public class ProteinFeatures extends EnsTestCase {
   
   /**
    * Creates a new instance of CheckFeatureCoordsTestCase
    */
-  public CheckProteinFeatureCoordsTestCase() {
+  public ProteinFeatures() {
     setDescription("Check that protein annotation feature coords make sense and that all translations exist in the database");
     addToGroup("post_genebuild");
   }
