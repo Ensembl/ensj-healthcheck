@@ -19,9 +19,9 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.*;
-import java.util.*;
 
 import org.ensembl.healthcheck.testcase.*;
+import org.ensembl.healthcheck.*;
 import org.ensembl.healthcheck.util.*;
 
 /**
@@ -36,7 +36,7 @@ import org.ensembl.healthcheck.util.*;
  * </ol>
  */
 
-public class CompareCoreSchema extends SingleDatabaseTestCase {
+public class CompareCoreSchema extends MultiDatabaseTestCase {
   
   /**
    * Creates a new instance of CompareCoreSchemaTestCase.
@@ -50,7 +50,7 @@ public class CompareCoreSchema extends SingleDatabaseTestCase {
   /**
    * Compare each database with the master.
    */
-  public TestResult run() {
+  public boolean run(DatabaseRegistry dbr) {
     
     boolean result = true;
     
@@ -60,24 +60,24 @@ public class CompareCoreSchema extends SingleDatabaseTestCase {
     String definitionFile = null;
     String masterSchema = null;
     
+    DatabaseRegistryEntry[] databases = dbr.getAll();
+    
     definitionFile = System.getProperty("schema.file");
     if (definitionFile == null) {
-      logger.warning("CompareCoreSchemaTestCase: No schema definition file found! Set schema.file property in database.properties if you want to use a table.sql file or similar.");
+      logger.warning("CompareCoreSchema: No schema definition file found! Set schema.file property in database.properties if you want to use a table.sql file or similar.");
       
       masterSchema = System.getProperty("master.schema");
       if (masterSchema != null) {
         logger.info("Will use " + masterSchema + " as specified master schema for comparisons.");
       } else {
-        logger.warning("CompareCoreSchemaTestCase: No master schema defined file found! Set master.schema property in database.properties if you want to use a master schema.");
+        logger.warning("CompareCoreSchema: No master schema defined file found! Set master.schema property in database.properties if you want to use a master schema.");
       }
     } else {
       logger.fine("Will use schema definition from " + definitionFile);
     }
     
     try {
-      
-      DatabaseConnectionIterator it = getDatabaseConnectionIterator();
-      
+
       if (definitionFile != null) {        // use a schema definition file to generate a temporary database
         
         logger.info("About to import " + definitionFile);
@@ -92,34 +92,38 @@ public class CompareCoreSchema extends SingleDatabaseTestCase {
         
       } else {                            // just use the first one to compare with all the others
         
-        if (it.hasNext()) {
-          masterCon = (Connection)it.next();
+      	if (databases.length > 0) {
+          masterCon = databases[0].getConnection();
           logger.info("Using " + DBUtils.getShortDatabaseName(masterCon) + " as 'master' for comparisions.");
+        } else {
+        	logger.warning("Can't find any databases to check against");
         }
         
       }
       
       masterStmt = masterCon.createStatement();
       
-      while (it.hasNext()) {
+      for (int i = 0; i < databases.length; i++) {
+      	
+        Connection checkCon = databases[i].getConnection();
         
-        Connection check_con = (Connection)it.next();
-        logger.info("Comparing " + DBUtils.getShortDatabaseName(masterCon) + " with " + DBUtils.getShortDatabaseName(check_con));
+        if (checkCon != masterCon) {
+        	
+        logger.info("Comparing " + DBUtils.getShortDatabaseName(masterCon) + " with " + DBUtils.getShortDatabaseName(checkCon));
         
         // check that both schemas have the same tables
-        if (!compareTablesInSchema(masterCon, check_con)) { // if not the same, this method will generate a report
-          logger.warning("Table name discrepancy detected, skipping rest of checks for " + DBUtils.getShortDatabaseName(check_con));
+        if (!compareTablesInSchema(masterCon, checkCon)) { // if not the same, this method will generate a report
+          logger.warning("Table name discrepancy detected, skipping rest of checks for " + DBUtils.getShortDatabaseName(checkCon));
           continue;
         }
         
-        Statement dbStmt = check_con.createStatement();
+        Statement dbStmt = checkCon.createStatement();
         
         // check each table in turn
-        List tableNames = getTableNames(masterCon);
-        Iterator tableIterator = tableNames.iterator();
-        while (tableIterator.hasNext()) {
+        String[] tableNames = getTableNames(masterCon);
+        for (int j = 0; j < tableNames.length; j++) {
           
-          String table = (String)tableIterator.next();
+          String table = tableNames[j];
           
           String sql = "DESCRIBE " + table;
           ResultSet masterRS = masterStmt.executeQuery(sql);
@@ -133,6 +137,8 @@ public class CompareCoreSchema extends SingleDatabaseTestCase {
         } // while table
         
         dbStmt.close();
+        
+        } // if checkCon != masterCon
         
       } // while database
       
@@ -155,8 +161,8 @@ public class CompareCoreSchema extends SingleDatabaseTestCase {
       
     }
     
-    return new TestResult(getShortTestName(), result);
+    return result;
     
   } // run
   
-} // GlennsDatabaseSchemaImportTestCase
+} // CompareCoreSchema
