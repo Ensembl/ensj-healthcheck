@@ -85,6 +85,42 @@ public class TestRunner {
   
   // -------------------------------------------------------------------------
   /**
+   * Get a list of all the schema names .
+   * @return An array of the schema names.
+   */
+  public String[] getAllSchemaNames() {
+    
+    Connection conn;
+
+    String[] schemaNames = null;
+    
+    // open connection
+    try {
+      
+      conn = DBUtils.openConnection(System.getProperty("driver"),
+      System.getProperty("databaseURL"),
+      System.getProperty("user"),
+      System.getProperty("password"));
+      
+      logger.fine("Opened connection to " + System.getProperty("databaseURL") + " as " + System.getProperty("user"));
+      
+      schemaNames = DBUtils.listDatabases(conn);
+      
+      logger.fine("Connection closed");
+      
+    } catch (Exception e) {
+      
+      e.printStackTrace();
+      System.exit(1);
+      
+    }
+    
+    return schemaNames;
+    
+  }
+  
+  // -------------------------------------------------------------------------
+  /**
    * Get a list of database names that match a particular regular expression.
    * @param regexp The regular expression to match.
    * @return An array of the matching database names (may be empty if none matched).
@@ -249,7 +285,7 @@ public class TestRunner {
           if (doRepair) {
             ((Repair)testCase).repair();
           }
-            
+          
         }
         
       }
@@ -560,23 +596,41 @@ public class TestRunner {
   } // getOutputLevel
   
   // -------------------------------------------------------------------------
-
+  
   public void buildSchemaList() {
     
-   Iterator it = getDatabaseConnectionIterator("."); // should get all of them
-   
-   while (it.hasNext()) {
+    // check props file loaded
+    if (System.getProperty("driver") == null) {
+      logger.severe("driver is null - database functions will probably not work");
+    }
+     if (System.getProperty("databaseURL") == null) {
+      logger.severe("databaseURL is null - database functions will probably not work");
+    }
+     if (System.getProperty("user") == null) {
+      logger.severe("user is null - database functions will probably not work");
+    }
     
-     Connection con = (Connection)it.next();
-     SchemaManager.addSchema(new SchemaInfo(con));
-     
-   }
-   
-   
+    String[] schemas = getAllSchemaNames();
+    
+    for (int i = 0; i < schemas.length; i++) {
+      
+      String url = System.getProperty("databaseURL") + schemas[i];
+      Connection con = DBUtils.openConnection(System.getProperty("driver"),
+      url,
+      System.getProperty("user"),
+      System.getProperty("password"));
+      
+      SchemaInfo si = new SchemaInfo(con);
+      SchemaManager.addSchema(si);
+      logger.finest("Added " + si.toString());
+      
+    }
+    
+    
   }
   // -------------------------------------------------------------------------
-
- 
+  
+  
 } // TestRunner
 
 // -------------------------------------------------------------------------
