@@ -374,6 +374,63 @@ public abstract class EnsTestCase {
   
   // -------------------------------------------------------------------------
   /**
+   * Execute a SQL statement and return the value of one column of one row.
+   * Only the FIRST row matched is returned.
+   * @param con The Connection to use.
+   * @param sql The SQL to check; should return ONE value.
+   */
+  public String getRowColumnValue(Connection con, String sql) {
+    
+    String result = "";
+    
+    try {
+      Statement stmt = con.createStatement();
+      ResultSet rs = stmt.executeQuery(sql);
+      if (rs != null) {
+        rs.first();
+        result = rs.getString(1);
+      }
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    
+    return result;
+    
+  } // getRowColumnValue
+  
+  // -------------------------------------------------------------------------
+  /**
+   * Execute a SQL statement and return the values of one column of the result.
+   * @param con The Connection to use.
+   * @param sql The SQL to check; should return ONE column.
+   * @return The value(s) making up the column, in the order that they were read.
+   */
+  public String[] getColumnValues(Connection con, String sql) {
+    
+    ArrayList list = new ArrayList();
+    
+    try {
+      Statement stmt = con.createStatement();
+      ResultSet rs = stmt.executeQuery(sql);
+      if (rs != null) {
+        while (rs.next()) {
+          list.add(rs.getString(1));
+        }
+      }
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    
+    String[] dummy = {"", ""};
+    return (String[])list.toArray(dummy);
+    
+  } // getRowColumnValue
+  
+  
+  // -------------------------------------------------------------------------
+  /**
    * Verify foreign-key relations.
    * @param con A connection to the database to be tested. Should already be open.
    * @param table1 With col1, specifies the first key to check.
@@ -415,17 +472,19 @@ public abstract class EnsTestCase {
   } // countOrphans
   
   // -------------------------------------------------------------------------
-  /** Check that a particular SQL statement has the same result when executed
+  /** 
+   * Check that a particular SQL statement has the same result when executed
    * on more than one database.
    * @return True if all matched databases provide the same result, false otherwise.
    * @param sql The SQL query to execute.
+   * @param regexp A regexp matching the database names to check.
    */
-  public boolean checkSameSQLResult(String sql) {
+  public boolean checkSameSQLResult(String sql, String regexp) {
     
     ArrayList resultSetGroup = new ArrayList();
     ArrayList statements = new ArrayList();
     
-    DatabaseConnectionIterator dcit = this.getDatabaseConnectionIterator();
+    DatabaseConnectionIterator dcit = testRunner.getDatabaseConnectionIterator(regexp);
     
     while (dcit.hasNext()) {
       
@@ -461,6 +520,20 @@ public abstract class EnsTestCase {
     }
     
     return same;
+    
+  } // checkSameSQLResult
+  
+  // -------------------------------------------------------------------------
+  /** 
+   * Check that a particular SQL statement has the same result when executed
+   * on more than one database.
+   * The test case's build-in regexp is used to decide which database names to match.
+   * @return True if all matched databases provide the same result, false otherwise.
+   * @param sql The SQL query to execute.
+   */
+  public boolean checkSameSQLResult(String sql) {
+    
+    return checkSameSQLResult(sql, databaseRegexp);
     
   } // checkSameSQLResult
   
@@ -537,6 +610,28 @@ public abstract class EnsTestCase {
     
   } // checkColumnPattern
   
+  // -------------------------------------------------------------------------
+  /**
+   * Check that all entries in column match a particular value.
+   * @param con The database connection to use.
+   * @param table The name of the table to examine.
+   * @param column The name of the column to look in.
+   * @param value The string to look for (not a pattern).
+   * @return The number of columns that <em>DO NOT</em> match value.
+   */
+  public int checkColumnValue(Connection con, String table, String column, String value) {
+    
+    // @todo - what about NULLs?
+    
+    boolean result = false;
+    
+    // cheat by looking for any rows that DO NOT match the pattern
+    String sql = "SELECT COUNT(*) FROM " + table + " WHERE " + column + " != '" + value + "'";
+    logger.fine(sql);
+    
+    return getRowCount(con, sql);
+    
+  } // checkColumnPattern
   // -------------------------------------------------------------------------
   /**
    * Check if there are any blank entires in a column that is not supposed to be null.
@@ -628,10 +723,10 @@ public abstract class EnsTestCase {
    * @param message The message to print.
    */
   protected void warn(Connection con, String message) {
-
+    
     logger.warning( "Problem in " + DBUtils.getShortDatabaseName( con ));
     logger.warning( message );
-
+    
   } //warn
   // -------------------------------------------------------------------------
   
