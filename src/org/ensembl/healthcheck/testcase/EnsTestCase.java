@@ -111,7 +111,7 @@ public abstract class EnsTestCase {
     groups = new ArrayList();
     addToGroup("all");               // everything is in all, by default
     addToGroup(getShortTestName());  // each test is in a one-test group
-    setDescription("No description set for this test.");              
+    setDescription("No description set for this test.");
     
   } // EnsTestCase
   
@@ -159,7 +159,7 @@ public abstract class EnsTestCase {
     
   }
   
-   // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
   
   /**
    * Gets the full name of this test.
@@ -373,24 +373,15 @@ public abstract class EnsTestCase {
     
   } // countRowsInTable
   
+  
   // -------------------------------------------------------------------------
   /**
-   * Count the rows in a particular table or query.
-   * @param con A connection to the database. Should already be open.
-   * @param sql The SQL to execute; should be of the form <code>SELECT COUNT(*) FROM </code> ...
-   * @return The number of matching rows, or -1 if the query did not execute for some reason.
+   * Use SELECT COUNT(*) to get a row count.
    */
-  public int getRowCount(Connection con, String sql) {
+  private int getRowCountFast(Connection con, String sql) {
     
-    if (con == null) {
-      logger.severe("getRowCount: Database connection is null");
-    }
     int result = -1;
     
-    // check that the SQL starts with SELECT COUNT(*) otherwise undefined results will occur
-    if (sql.toLowerCase().indexOf("select count(*)") < 0) {
-     logger.warning("getRowCount() executing SQL which does not appear to begin with SELECT COUNT(*) - results may be incorrect or undefined"); 
-    }
     try {
       Statement stmt = con.createStatement();
       //System.out.println("Executing " + sql);
@@ -406,6 +397,66 @@ public abstract class EnsTestCase {
       stmt.close();
     } catch (Exception e) {
       e.printStackTrace();
+    }
+    
+    return result;
+    
+  } // getRowCountFast
+  
+  // -------------------------------------------------------------------------
+  /**
+   * Use a row-by-row approach to counting the rows in a table.
+   */
+  private int getRowCountSlow(Connection con, String sql) {
+    
+    int result = -1;
+    
+    try {
+      Statement stmt = con.createStatement();
+      ResultSet rs = stmt.executeQuery(sql);
+      if (rs != null) {
+        if (rs.last()) {
+          result = rs.getRow();
+        } else {
+          result = -1; // probably signifies an empty ResultSet
+        }
+      }
+      rs.close();
+      stmt.close();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    
+    return result;
+    
+  } // getRowCountSlow
+  
+  // -------------------------------------------------------------------------
+  /**
+   * Count the rows in a particular table or query.
+   * @param con A connection to the database. Should already be open.
+   * @param sql The SQL to execute. Note that if possible this should begin with <code>SELECT COUNT(*) FROM</code>
+   * since this is much quicker to execute. If a standard SELECT statement is used, a row-by-row count will
+   * be performed, which may be slow if the table is large.
+   * @return The number of matching rows, or -1 if the query did not execute for some reason.
+   */
+  public int getRowCount(Connection con, String sql) {
+    
+    if (con == null) {
+      logger.severe("getRowCount: Database connection is null");
+    }
+    int result = -1;
+    
+    // check if the SQL starts with SELECT COUNT(*) - if so it's a lot quicker
+    if (sql.toLowerCase().indexOf("select count(*) from") >= 0) {
+      
+      result = getRowCountFast(con, sql);
+      
+    } else {  // if not, do it row-by-row
+      
+      logger.warning("getRowCount() executing SQL which does not appear to begin with SELECT COUNT(*) FROM - performing row-by-row count, which may take a long time if the table is large.");
+      result = getRowCountSlow(con, sql);
+      
     }
     
     return result;
@@ -594,9 +645,9 @@ public abstract class EnsTestCase {
    * Get the database regular expression that this test case is using.
    */
   public String getDatabaseRegexp() {
-      
-      return databaseRegexp;
-      
+    
+    return databaseRegexp;
+    
   } // getDatabaseRegexp
   
   // -------------------------------------------------------------------------
@@ -841,12 +892,12 @@ public abstract class EnsTestCase {
   
   // -------------------------------------------------------------------------
   /**
-   * Set the text description of this test case. 
+   * Set the text description of this test case.
    * @param The new description.
    */
   public void setDescription(String s) {
     
-   description = s;
+    description = s;
     
   } // setDescription
   
