@@ -46,7 +46,6 @@ public class EmptyTablesTestCase extends EnsTestCase {
         
         boolean result = true;
         
-        // DatabaseConnectionIterator it = getMatchingSchemaIterator();
         DatabaseConnectionIterator it = getDatabaseConnectionIterator();
         
         while (it.hasNext()) {
@@ -54,14 +53,11 @@ public class EmptyTablesTestCase extends EnsTestCase {
             Connection con = (Connection)it.next();
             
             SchemaInfo si = SchemaManager.getSchema(con);
-            
-            List tables = si.getTables();
-            
-            Iterator tableIterator = tables.iterator();
+                        
+            Iterator tableIterator = si.getTables().iterator();
             while(tableIterator.hasNext()) {
                 
-                TableInfo tableInfo = (TableInfo)tableIterator.next();
-                String table = tableInfo.getName();
+                String table = ((TableInfo)tableIterator.next()).getName();
                 logger.finest("Checking that " + table + " has rows");
                 
                 if (!tableHasRows(con, table)) {
@@ -70,7 +66,6 @@ public class EmptyTablesTestCase extends EnsTestCase {
                     
                 }
             }
-            
             
         } // while connection
         
