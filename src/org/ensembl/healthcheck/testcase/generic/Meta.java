@@ -117,15 +117,10 @@ public class Meta extends SingleDatabaseTestCase {
 
         } else {
             
-            // database name assembly version may have a suffix e.g. 34b
-            String metaTableAssemblyVersionRegexp = metaTableAssemblyVersion.toLowerCase() + "(\\w)?";
-            if (!dbNameAssemblyVersion.toLowerCase().matches(metaTableAssemblyVersionRegexp)) {
-                result = false;
-                ReportManager.problem(this, con, "Database name assembly version (" + dbNameAssemblyVersion
-                        + ") does not match meta table assembly version (" + metaTableAssemblyVersion + ")");
-            } else {
-                ReportManager.correct(this, con,
-                        "Assembly version in database name matches assembly version in meta table");
+            // check that assembly.default matches the version of the coord_system with the lowest rank value
+            String lowestRankCS = getRowColumnValue(con, "SELECT version FROM coord_system WHERE version IS NOT NULL ORDER BY rank DESC LIMIT 1");
+            if (!lowestRankCS.equals(metaTableAssemblyDefault)) {
+                ReportManager.problem(this, con, "assembly.default from meta table is " + metaTableAssemblyDefault + " but lowest ranked coordinate system has version " + lowestRankCS);
             }
 
             // ----------------------------------------
