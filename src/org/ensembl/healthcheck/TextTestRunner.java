@@ -34,7 +34,7 @@ import org.ensembl.healthcheck.util.*;
 
 public class TextTestRunner extends TestRunner {
   
-  private boolean forceDatabases = true;
+  private boolean forceDatabases = false;
   
   private static Logger logger = Logger.getLogger("HealthCheckLogger");
   
