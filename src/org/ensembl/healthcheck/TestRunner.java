@@ -627,7 +627,8 @@ public class TestRunner {
     
     logger.warning("Building schema info ...");
     
-    String[] schemas = getAllSchemaNames();
+    //String[] schemas = getAllSchemaNames();
+    String[] schemas = getListOfDatabaseNames(".*"); 
     
     for (int i = 0; i < schemas.length; i++) {
       
