@@ -111,5 +111,19 @@ public class SchemaManager {
   }
   
   // -------------------------------------------------------------------------
+  /**
+   * Serialize all the SchemaInfo objects.
+   */ 
+  public static void serializeAll() {
+    
+    Iterator it = schemas.iterator();
+    while (it.hasNext()) {
+      SchemaInfo si = (SchemaInfo)it.next();
+      si.serialize();
+    }
+    
+  }
+  
+  // -------------------------------------------------------------------------
 
 } // SchemaManager
