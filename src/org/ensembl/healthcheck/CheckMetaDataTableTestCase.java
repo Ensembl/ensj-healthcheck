@@ -28,8 +28,7 @@ import org.ensembl.healthcheck.util.*;
 public class CheckMetaDataTableTestCase extends EnsTestCase {
   
   private static final String[] validPrefixes = {"RGSC", "DROM", "ZFISH", "FUGU", "MOZ", "CEL", "CBR", "MGSC", "NCBI"};
-  private static final String[] speciesRegexps = {"^homo_sapiens_(core|est|estgene|estgene|vega)_\\d.*"};
-
+  
   /**
    * Creates a new instance of CheckMetaDataTableTestCase
    */
@@ -145,21 +144,23 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
       
     } // while connection
     
-     // ------------------------------------------
-      // Check meta table species, classification and taxonomy_id is the same 
-      // in all DBs for each species
+    // ------------------------------------------
+    // Check meta table species, classification and taxonomy_id is the same
+    // in all DBs for each species
+    
+    String[] species = getListOfSpecies();
+
+    for (int i = 0; i < species.length; i++) {
       
-      for (int i = 0; i < speciesRegexps.length; i++) {
+      String speciesRegexp = species[i] + CORE_DB_REGEXP;
+      logger.info("Checking meta tables in "+ speciesRegexp);;
       
-          String speciesRegexp = speciesRegexps[i];
-          
-          boolean allMatch = checkSameSQLResult("SELECT LCASE(meta_value) FROM meta WHERE meta_key LIKE \'species.%' ORDER BY meta_id", speciesRegexp);
-          if (!allMatch) {
-            result = false;
-          }
-          
-          
-      } // foreach species
+      boolean allMatch = checkSameSQLResult("SELECT LCASE(meta_value) FROM meta WHERE meta_key LIKE \'species.%' ORDER BY meta_id", speciesRegexp);
+      if (!allMatch) {
+        result = false;
+      }
+      
+    } // foreach species
     
     return new TestResult(getShortTestName(), result, "");
     

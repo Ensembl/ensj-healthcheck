@@ -23,12 +23,10 @@ import java.sql.*;
 import org.ensembl.healthcheck.util.*;
 
 /**
- * description
+ * Check the DNA tables in a range of databases.
  */
 public class CheckDNATables extends EnsTestCase {
-  
-   private static final String[] speciesRegexps = {"^homo_sapiens_(core|est|estgene|vega)_\\d.*"}; // @todo add more species
-  
+    
   /**
    * Creates a new instance of CheckDNATables
    */
@@ -43,10 +41,12 @@ public class CheckDNATables extends EnsTestCase {
     
     boolean result = true;
     
-     for (int i = 0; i < speciesRegexps.length; i++) {
+    String[] species = getListOfSpecies();
+    
+    for (int i = 0; i < species.length; i++) {
       
-      String speciesRegexp = speciesRegexps[i];
-      
+      String speciesRegexp = species[i] + CORE_DB_REGEXP;
+      logger.info("Checking dna tables in "+ speciesRegexp);
       boolean allMatch = checkSameSQLResult("SELECT COUNT(*) FROM dna", speciesRegexp);
       if (!allMatch) {
         result = false;
