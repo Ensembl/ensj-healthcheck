@@ -164,7 +164,7 @@ public class GuiTestRunnerSettings extends javax.swing.JDialog {
       public void actionPerformed(ActionEvent e) {
         int spinnerValue = ((SpinnerNumberModel)threadsSpinner.getModel()).getNumber().intValue();
         localGTR.setPreFilterRegexp(preFilterTextField.getText());
-        localGTR.setForceDatabases(forceBox.isEnabled());
+        localGTR.setForceDatabases(forceBox.isSelected());
         localGTR.setMaxThreads(spinnerValue);
         closeDialog(null);
       }
