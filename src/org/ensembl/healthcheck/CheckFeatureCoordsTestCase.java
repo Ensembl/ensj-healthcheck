@@ -48,7 +48,7 @@ public class CheckFeatureCoordsTestCase extends EnsTestCase {
       
       Connection con = (Connection)it.next();
       
-      logger.info("Checking DNA align features ...");
+      logger.info("Checking DNA align features for " + DBUtils.getShortDatabaseName(con) + " ...");
       int rows = getRowCount(con, "select count(*) from dna_align_feature where contig_start > contig_end");
       if (rows > 0) {
         result = false;
@@ -69,7 +69,7 @@ public class CheckFeatureCoordsTestCase extends EnsTestCase {
         logger.warning(rows + " in " + DBUtils.getShortDatabaseName(con) + " have DNA align features where contig_length > contig_end");
       }
       
-      logger.info("Checking protein align features ...");
+      logger.info("Checking protein align features for " + DBUtils.getShortDatabaseName(con) + " ...");
       rows = getRowCount(con, "select count(*) from protein_align_feature where contig_start > contig_end");
       if (rows > 0) {
         result = false;
