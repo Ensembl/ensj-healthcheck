@@ -23,6 +23,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
+import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -163,7 +164,7 @@ public class MappingSession extends SingleDatabaseTestCase {
     // -----------------------------------------------------------------
 
     /**
-     * Checks tables exist and have >0 rows.
+     * Checks tables exist and have >0 rows. Doesn't check population for first-build databases.
      * 
      * @param con
      * @return True when all ID mapping-related tables exist and have > 0 rows.
@@ -176,7 +177,9 @@ public class MappingSession extends SingleDatabaseTestCase {
         boolean result = true;
 
         Connection con = dbre.getConnection();
-
+	String dbName = DBUtils.getShortDatabaseName(con);
+	if (!dbName.matches(".*_1[a-zA-Z]?$")) {
+	
         for (int i = 0; i < tables.length; i++) {
             String table = tables[i];
             boolean exists = checkTableExists(con, table);
@@ -191,9 +194,15 @@ public class MappingSession extends SingleDatabaseTestCase {
             }
         }
 
+	} else {
+
+	    logger.info(dbName + " seems to be a new genebuild, skipping table checks");
+
+	}
+
         return result;
     }
-
+    
     // -----------------------------------------------------------------
     /**
      * Check no "NULL" or "null" strings in stable_id_event.new_stable_id or
