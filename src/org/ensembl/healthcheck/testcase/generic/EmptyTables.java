@@ -95,12 +95,12 @@ public class EmptyTables extends SingleDatabaseTestCase {
             }
 
             // certain species can have empty karyotype table
-            if (species == Species.CAENORHABDITIS_BRIGGSAE || species == Species.CAENORHABDITIS_ELEGANS || species == Species.DANIO_RERIO || species == Species.FUGU_RUBRIPES || species == Species.XENOPUS_TROPICALIS || species == Species.APIS_MELLIFERA || species == Species.PAN_TROGLODYTES) {
+            if (species == Species.CAENORHABDITIS_BRIGGSAE || species == Species.CAENORHABDITIS_ELEGANS || species == Species.DANIO_RERIO || species == Species.FUGU_RUBRIPES || species == Species.XENOPUS_TROPICALIS || species == Species.APIS_MELLIFERA || species == Species.PAN_TROGLODYTES || species == Species.SACCHAROMYCES_CEREVISIAE) {
                 tables = remove(tables, "karyotype");
             }
 
-            // for tetraodon, supporting_feature is empty because it is an imported gene set 
-            if (species == Species.TETRAODON_NIGROVIRIDIS) {
+            // for tetraodon & yeast, supporting_feature is empty because they are imported gene sets
+            if (species == Species.TETRAODON_NIGROVIRIDIS || species == Species.SACCHAROMYCES_CEREVISIAE) {
                 tables = remove(tables, "supporting_feature");
             }
 
