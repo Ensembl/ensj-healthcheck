@@ -39,7 +39,7 @@ import org.ensembl.healthcheck.util.*;
 
 public class TestRunner {
   
-  private static String version = $Id$;
+  private static String version = "$Id$";
   private ArrayList allTests;            // will hold an instance of each test
   private ArrayList groupsToRun;
   private Properties dbProps;
@@ -60,6 +60,8 @@ public class TestRunner {
   public static void main(String[] args) {
     
     TestRunner tr = new TestRunner();
+    
+    System.out.println(tr.getVersion());
     
     tr.parseCommandLine(args);
     
@@ -137,7 +139,8 @@ public class TestRunner {
   
   public String getVersion() {
     
-    return version;
+    // strip off first and last few chars of version since these are only used by CVS
+    return version.substring(5, version.length()-2);
     
   } // getVersion
   
