@@ -107,6 +107,19 @@ public class ReportManager {
   
   // -------------------------------------------------------------------------
   /**
+   * Convenience method for storing reports, intended to be easy to call from an EnsTestCase.
+   * @param testCase The test case filing the report.
+   * @param dbName The name of the database involved.
+   * @param level The level of this report.
+   * @param message The message to be reported.
+   */
+  public static void report(EnsTestCase testCase, String dbName, int level, String message) {
+    
+    add(new ReportLine(testCase.getTestName(), dbName, level, message));
+    
+  } // report
+  // -------------------------------------------------------------------------
+  /**
    * Store a ReportLine with a level of ReportLine.INFO.
    * @param testCase The test case filing the report.
    * @param con The database connection involved.
@@ -115,6 +128,12 @@ public class ReportManager {
   public static void problem(EnsTestCase testCase, Connection con, String message) {
     
     report(testCase, con, ReportLine.PROBLEM, message);
+    
+  } // problem
+  
+  public static void problem(EnsTestCase testCase, String dbName, String message) {
+    
+    report(testCase, dbName, ReportLine.PROBLEM, message);
     
   } // problem
   
@@ -130,6 +149,12 @@ public class ReportManager {
     
   } // info
   
+   public static void info(EnsTestCase testCase, String dbName, String message) {
+    
+    report(testCase, dbName, ReportLine.INFO, message);
+    
+  } // info
+  
   /**
    * Store a ReportLine with a level of ReportLine.SUMMARY.
    * @param testCase The test case filing the report.
@@ -142,6 +167,12 @@ public class ReportManager {
     
   } // summary
   
+   public static void summary(EnsTestCase testCase, String dbName, String message) {
+    
+    report(testCase, dbName, ReportLine.SUMMARY, message);
+    
+  } // summary
+  
   /**
    * Store a ReportLine with a level of ReportLine.CORRECT.
    * @param testCase The test case filing the report.
@@ -151,6 +182,12 @@ public class ReportManager {
   public static void correct(EnsTestCase testCase, Connection con, String message) {
     
     report(testCase, con, ReportLine.CORRECT, message);
+    
+  } // summary
+  
+  public static void correct(EnsTestCase testCase, String dbName, String message) {
+    
+    report(testCase, dbName, ReportLine.CORRECT, message);
     
   } // summary
   
