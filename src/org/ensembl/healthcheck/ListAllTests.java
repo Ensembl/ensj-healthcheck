@@ -27,12 +27,12 @@ import org.ensembl.healthcheck.testcase.*;
  * Subclass of TestRunner that lists all tests.
  */
 public class ListAllTests extends TestRunner {
-    
-    String groupToList = "";
-    boolean showGroups = false;
-    boolean showDesc = false;
-    
-    // -------------------------------------------------------------------------
+  
+  String groupToList = "";
+  boolean showGroups = false;
+  boolean showDesc = false;
+  
+  // -------------------------------------------------------------------------
   /**
    * Command-line run method.
    * @param args The command-line arguments.
@@ -59,34 +59,34 @@ public class ListAllTests extends TestRunner {
     for (int i=0; i < args.length; i++) {
       
       if (args[i].equals("-h")) {
-	
-	printUsage();
-	System.exit(0);
-	
-      } 
-
+        
+        printUsage();
+        System.exit(0);
+        
+      }
+      
       if (args[i].equals("-g")) {
-
-	showGroups = true;
-
+        
+        showGroups = true;
+        
       } else if (args[i].equals("-d")){
-	  
-	showDesc = true;
-	
+        
+        showDesc = true;
+        
       } else {
-	
-	groupToList = args[i];
-	
+        
+        groupToList = args[i];
+        
       }
     }
-
+    
     if (groupToList.equals("")){
       
       groupToList = "all";
-
+      
     }
     
-  
+    
   } // parseCommandLine
   // -------------------------------------------------------------------------
   
@@ -114,31 +114,35 @@ public class ListAllTests extends TestRunner {
     while (it.hasNext()) {
       EnsTestCase test = (EnsTestCase)it.next();
       if (test.inGroup(groupToList)) {
-	StringBuffer testline = new StringBuffer(test.getShortTestName());
-
-	if (showGroups){
-	  testline.append( " (" );
-	  List groups = test.getGroups();
-	  java.util.Iterator gIt = groups.iterator();
-	  while (gIt.hasNext()) {
-	    String groupname = (String)gIt.next();
-	    if (!groupname.equals(test.getShortTestName())){
-	      testline.append(groupname);
-	      testline.append(",");
-	    }
-	  }
-	  if (testline.charAt(testline.length()-1) == ','){
-	    testline.deleteCharAt(testline.length()-1);
-	  }
-	    
-	  testline.append( ")" );
-
-	}
-
-	if (showDesc){
-	  testline.append("\n" + test.getDescription() + "\n");
-	}
-
+        StringBuffer testline = new StringBuffer(test.getShortTestName());
+        
+        if (test.canRepair()) {
+          testline.append(" [ can repair] ");
+        }
+        
+        if (showGroups){
+          testline.append( " (" );
+          List groups = test.getGroups();
+          java.util.Iterator gIt = groups.iterator();
+          while (gIt.hasNext()) {
+            String groupname = (String)gIt.next();
+            if (!groupname.equals(test.getShortTestName())){
+              testline.append(groupname);
+              testline.append(",");
+            }
+          }
+          if (testline.charAt(testline.length()-1) == ','){
+            testline.deleteCharAt(testline.length()-1);
+          }
+          
+          testline.append( ")" );
+          
+        }
+        
+        if (showDesc){
+          testline.append("\n" + test.getDescription() + "\n");
+        }
+        
         System.out.println(testline.toString());
       }
       
