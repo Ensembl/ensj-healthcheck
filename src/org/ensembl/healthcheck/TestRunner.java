@@ -51,6 +51,7 @@ public class TestRunner {
   protected boolean showRepair = false;
   /** Flag to determine whether repairs will be carried out if appropriate */
   protected boolean doRepair = false;
+  
   // -------------------------------------------------------------------------
   /** Creates a new instance of TestRunner */
   
@@ -197,7 +198,8 @@ public class TestRunner {
   
   // -------------------------------------------------------------------------
   /**
-   * Run all the tests in a list.
+   * Run all the tests in a list. Also run show/repair methods if the test
+   * implements the Repair interface and the appropriate flags are set.
    * @param allTests The tests to run, as objects.
    * @param forceDatabases If true, use only the database name pattern specified
    * on the command line, <em>not</em> the regular expression built in to the test case.
@@ -238,6 +240,17 @@ public class TestRunner {
         
         String passFail = tr.getResult() ? "PASSED" : "FAILED";
         logger.warning(tr.getName() + " " + passFail);
+        
+        // check for show/repair
+        if (testCase.canRepair()) {
+          if (showRepair) {
+            ((Repair)testCase).show();
+          }
+          if (doRepair) {
+            ((Repair)testCase).repair();
+          }
+            
+        }
         
       }
     }
@@ -547,10 +560,8 @@ public class TestRunner {
   } // getOutputLevel
   
   // -------------------------------------------------------------------------
-  
+
+ 
 } // TestRunner
-
-// -------------------------------------------------------------------------
-
 
 // -------------------------------------------------------------------------
