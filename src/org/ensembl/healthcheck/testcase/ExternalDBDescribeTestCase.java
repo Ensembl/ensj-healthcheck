@@ -39,9 +39,9 @@ public class ExternalDBDescribeTestCase extends EnsTestCase {
     
     // XXX null bad here?
     if (result) {
-      ReportManager.correct(this, null, "external_db table is the same in all databases");
+      ReportManager.correct(this, "", "external_db table is the same in all databases");
     } else {
-       ReportManager.problem(this, null, "external_db table is NOT the same in all databases");
+       ReportManager.problem(this, "", "external_db table is NOT the same in all databases");
     } 
     return new TestResult(getShortTestName(), result);
   }

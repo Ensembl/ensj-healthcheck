@@ -181,9 +181,9 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
       boolean allMatch = checkSameSQLResult("SELECT LCASE(meta_value) FROM meta WHERE meta_key LIKE \'species.%' ORDER BY meta_id", speciesRegexp);
       if (!allMatch) {
         result = false;
-        ReportManager.problem(this, null, "meta information not the same for all " + species[i] + " databases"); 
+        ReportManager.problem(this, "", "meta information not the same for all " + species[i] + " databases"); 
       } else {
-       ReportManager.correct(this, null, "meta information is the same for all " + species[i] + " databases"); 
+       ReportManager.correct(this, "", "meta information is the same for all " + species[i] + " databases"); 
       }
       
     } // foreach species
