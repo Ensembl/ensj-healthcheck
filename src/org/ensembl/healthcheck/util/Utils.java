@@ -73,6 +73,20 @@ public class Utils {
   
   // -------------------------------------------------------------------------
   /**
+   * Print the keys in a HashMap.
+   */
+  public static void printKeys(HashMap m) {
+    
+    Set s = m.keySet();
+    Iterator it = s.iterator();
+    while (it.hasNext()) {
+      System.out.println((String)it.next());
+    }
+    
+  } // printKeys
+  
+  // -------------------------------------------------------------------------
+  /**
    * Print an array of Strings, one per line.
    * @param a The array to be printed.
    */
@@ -129,7 +143,7 @@ public class Utils {
     int count = 0;
     for (int i = 0; i < paths.length; i++) {
       if (paths[i].indexOf(pattern) > -1) {
-	count++;
+        count++;
       }
     }
     
@@ -137,7 +151,7 @@ public class Utils {
     int j = 0;
     for (int i = 0; i < paths.length; i++) {
       if (paths[i].indexOf(pattern) > -1) {
-	greppedPaths[j++] = paths[i];
+        greppedPaths[j++] = paths[i];
       }
     }
     
@@ -160,11 +174,11 @@ public class Utils {
     } catch (IOException ioe) {
       ioe.printStackTrace();
     }
-        
+    
   } // printJarFileContents
- 
+  
   // -------------------------------------------------------------------------
-  /** 
+  /**
    * Truncate a string to a certain number of characters.
    * @param str The string to truncate.
    * @param size The maximum number of characters.
@@ -202,13 +216,13 @@ public class Utils {
     
     int startSize = str.length();
     for (int i = startSize; i < size; i++) {
-      result.append(pad); 
+      result.append(pad);
     }
-
+    
     return result.toString();
     
   } // pad
   
   // -------------------------------------------------------------------------
-
+  
 } // Utils
