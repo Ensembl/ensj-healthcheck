@@ -97,9 +97,7 @@ public class LogicNamesDisplayableTestCase extends EnsTestCase {
             String logicName = (String)logicNamesByAnalID.get(analysisIDs[i]);
             if (!Utils.stringInArray(logicName, allowedLogicNames, CASE_SENSITIVE)) {
               ReportManager.problem(this, con, "Feature table " + featureTableName + " has features with logic name " + logicName + " which will not be drawn");
-            } else {
-              System.out.println(logicName + " for analysis ID " + analysisIDs[i] + " is OK");
-            }
+            } 
           }
           
         }
