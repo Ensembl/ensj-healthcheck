@@ -213,7 +213,12 @@ public final class DBUtils {
      * @param reportErrors If true, error details are stored in ReportManager as they are found.
      * @param singleTableName If comparing 2 result sets from a single table (or from a DESCRIBE table) this should be the name of the table, to be output in any error text. Otherwise "".
      */
-    public static boolean compareResultSets(ResultSet rs1, ResultSet rs2, EnsTestCase testCase, String text, boolean reportErrors, boolean warnNull, String singleTableName) {
+    public static boolean compareResultSets(ResultSet rs1, ResultSet rs2, EnsTestCase testCase, String text, boolean reportErrors, boolean warnNull, String singleTableName ) {
+	return compareResultSets( rs1, rs2, testCase, text, reportErrors, warnNull, singleTableName, null );
+    }
+
+    public static boolean compareResultSets(ResultSet rs1, ResultSet rs2, EnsTestCase testCase, String text, boolean reportErrors, boolean warnNull, String singleTableName, int[] columns ) {
+
 
         // quick tests first
         // Check for object equality
@@ -221,6 +226,8 @@ public final class DBUtils {
             return true;
         }
 
+	
+	
         try {
 
             // get some information about the ResultSets
@@ -230,7 +237,7 @@ public final class DBUtils {
             // Check for same column count, names and types
             ResultSetMetaData rsmd1 = rs1.getMetaData();
             ResultSetMetaData rsmd2 = rs2.getMetaData();
-            if (rsmd1.getColumnCount() != rsmd2.getColumnCount()) {
+            if (rsmd1.getColumnCount() != rsmd2.getColumnCount() && columns == null ) {
                 
                     ReportManager.problem(testCase, name1, "Column counts differ " + singleTableName + " " + name1 + ": " + rsmd1.getColumnCount() + " "
                             + name2 + ": " + rsmd2.getColumnCount());
@@ -238,7 +245,17 @@ public final class DBUtils {
                 return false; // Deliberate early return for performance
                 // reasons
             }
-            for (int i = 1; i <= rsmd1.getColumnCount(); i++) {
+
+	    if( columns == null ) {
+		columns = new int[ rsmd1.getColumnCount() ];
+		for( int i=0; i<columns.length; i++ ) {
+		    columns[i] = i+1;
+		}
+	    }
+
+            for (int j = 0; j < columns.length; j++) {
+		int i = columns[j];
+
                 //  note columns indexed from l
                 if (!((rsmd1.getColumnName(i)).equals(rsmd2.getColumnName(i)))) {
                     
@@ -264,18 +281,20 @@ public final class DBUtils {
             rs1.beforeFirst();
             rs2.beforeFirst();
             // if quick checks didn't cause return, try comparing row-wise
-
+	    
+	    int row = 1;
             while (rs1.next()) {
 
-		int row = 1;
 
 		if (rs2.next()) {
-		    for (int j = 1; j <= rsmd1.getColumnCount(); j++) {
+		    for (int j = 0; j < columns.length; j++) {
+			int i = columns[j];
+
 			// note columns indexed from l
-			if (!compareColumns(rs1, rs2, j, warnNull)) {
-			    String str = name1 + " and " + name2 + text + " " + singleTableName + " differ at row " + row + " column " + j + " ("
-                                + rsmd1.getColumnName(j) + ")" + " Values: " + Utils.truncate(rs1.getString(j), 250, true) + ", "
-                                + Utils.truncate(rs2.getString(j), 250, true);
+			if (!compareColumns(rs1, rs2, i, warnNull)) {
+			    String str = name1 + " and " + name2 + text + " " + singleTableName + " differ at row " + row + " column " + i + " ("
+                                + rsmd1.getColumnName(i) + ")" + " Values: " + Utils.truncate(rs1.getString(i), 250, true) + ", "
+                                + Utils.truncate(rs2.getString(i), 250, true);
 			    if (reportErrors) {
 				ReportManager.problem(testCase, name1, str);
 			    }
