@@ -164,11 +164,12 @@ public class Utils {
   } // printJarFileContents
  
   // -------------------------------------------------------------------------
-  /**
+  /** 
    * Truncate a string to a certain number of characters.
    * @param str The string to truncate.
    * @param size The maximum number of characters.
    * @param useEllipsis If true, add "..." to the truncated string to show it's been truncated.
+   * @return The truncated String, with ellipsis if specified.
    */
   public static String truncate(String str, int size, boolean useEllipsis) {
     

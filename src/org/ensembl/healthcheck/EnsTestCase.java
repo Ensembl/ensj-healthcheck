@@ -373,11 +373,12 @@ public abstract class EnsTestCase {
   } // getRowCount
   
   // -------------------------------------------------------------------------
-  /**
+  /** 
    * Execute a SQL statement and return the value of one column of one row.
    * Only the FIRST row matched is returned.
    * @param con The Connection to use.
    * @param sql The SQL to check; should return ONE value.
+   * @return The value returned by the SQL.
    */
   public String getRowColumnValue(Connection con, String sql) {
     
@@ -599,9 +600,7 @@ public abstract class EnsTestCase {
   public int checkColumnPattern(Connection con, String table, String column, String pattern) {
     
     // @todo - what about NULLs?
-    
-    boolean result = false;
-    
+        
     // cheat by looking for any rows that DO NOT match the pattern
     String sql = "SELECT COUNT(*) FROM " + table + " WHERE " + column + " NOT LIKE \"" + pattern + "\"";
     logger.fine(sql);
@@ -622,9 +621,7 @@ public abstract class EnsTestCase {
   public int checkColumnValue(Connection con, String table, String column, String value) {
     
     // @todo - what about NULLs?
-    
-    boolean result = false;
-    
+        
     // cheat by looking for any rows that DO NOT match the pattern
     String sql = "SELECT COUNT(*) FROM " + table + " WHERE " + column + " != '" + value + "'";
     logger.fine(sql);
