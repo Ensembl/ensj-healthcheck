@@ -50,7 +50,7 @@ public final class ReportManager {
      * The maximum number of lines to store to prevent very verbose test cases causing memory
      * problems
      */
-    protected static final int MAX_BUFFER_SIZE = 1000;
+    protected static final int MAX_BUFFER_SIZE = 2000;
 
     private static boolean bufferSizeWarningPrinted = false;
 
