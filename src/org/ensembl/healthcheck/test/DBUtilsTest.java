@@ -1,9 +1,11 @@
 
 package org.ensembl.healthcheck.test;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
-import org.ensembl.healthcheck.util.*;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * @version $Revision$

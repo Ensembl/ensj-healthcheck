@@ -18,11 +18,12 @@
 
 package org.ensembl.healthcheck.util;
 
-import java.util.*;
-import java.util.logging.*;
-import java.sql.*;
+import java.sql.Connection;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.logging.Logger;
 
-import org.ensembl.healthcheck.*;
+import org.ensembl.healthcheck.NotImplementedException;
 
 /**
  * Implentation of the Iterator interface that facilitates getting database
@@ -74,9 +75,8 @@ public class DatabaseConnectionIterator implements Iterator {
   /**
    * Return the next Connection (as an Object) if there is one.
    * @return The next object.
-   * @throws NoSuchElementException if there is no next object - use hasNext() to check this.
    */
-  public Object next() throws NoSuchElementException {
+  public Object next() {
     
     Connection con;
     
@@ -104,7 +104,7 @@ public class DatabaseConnectionIterator implements Iterator {
    */
   public String getCurrentDatabaseName() {
     
-    return databaseNames[databaseIndex-1];
+    return databaseNames[databaseIndex - 1];
     
   } // getCurrentDatabaseName
 

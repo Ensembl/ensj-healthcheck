@@ -8,231 +8,224 @@
 
 <project default="compile" basedir=".">
 
-  <property name="name" value="ensj-healthcheck" />
-  <property name="version" value="" />
-  <property name="build.name" value="${name}" />
-  <property name="build.compiler" value="modern" />
+    <property name="name" value="ensj-healthcheck" />
+    <property name="version" value="" />
+    <property name="build.name" value="${name}" />
+    <property name="build.compiler" value="modern" />
 
-  <property name="src"                 location="src"/>
-  <property name="build"               location="build"/>
-  <property name="dist"                location="dist"/>
-  <property name="doc"                 location="doc"/>
-  <property name="lib"                 location="lib"/>
-  <property name="test"                location="test"/>
-  <property name="reports"             location="reports"/>
-  <property name="reports.tests"       location="${reports}/tests"/>
-  <property name="web.dir"             location="${user.home}/public_html"/>
-  <property name="web.javadoc.dir"     location="${web.dir}/javadoc"/>
-  <property name="web.mirror.dir"      location="${doc}/external_web_pages"/>
+    <property name="src"                 location="src"/>
+    <property name="build"               location="build"/>
+    <property name="dist"                location="dist"/>
+    <property name="doc"                 location="doc"/>
+    <property name="lib"                 location="lib"/>
+    <property name="images"              location="images"/>
+    <property name="web.dir"             location="${user.home}/public_html"/>
+    <property name="web.javadoc.dir"     location="${web.dir}/javadoc"/>
+    <property name="web.mirror.dir"      location="${doc}/external_web_pages"/>
 
-  <!-- ################################################################################## -->
-  <!-- Targets -->
+    <property name="scp-executable"      value="c:\cygwin\bin\scp.exe"/>
+    <property name="scp-port"            value="2222"/>
+    <property name="scp-target"
+              value="gp1@localhost:~/work/ensj-healthcheck-v2/lib"
+     />
 
-  <target name="init">
-    <!-- Create the time stamp -->
-    <tstamp/>
-    <!-- Create the directory structure -->
-    <mkdir dir="${build}"/>
-    <mkdir dir="${test}"/>
-    <mkdir dir="${dist}"/>
-    <mkdir dir="${reports}"/>
-    <mkdir dir="${reports.tests}"/>
-  </target>
+    <!-- ################################################################################## -->
+    <!-- Targets -->
 
-  <!-- ################################################################################## -->
+    <target name="init">
+        <!-- Create the time stamp -->
+        <tstamp/>
+        <!-- Create the directory structure -->
+        <mkdir dir="${build}"/>
+        <mkdir dir="${dist}"/>
+    </target>
 
-  <target name="java-version" description="Print which version of Java is being used; hopefully will help to spot path problems" >
-    <exec executable="java">
-      <arg value="-version"/>
-    </exec>
-  </target>
-  
-  <!-- ################################################################################## -->
+    <!-- ################################################################################## -->
 
-  <target name="compile" depends="init, java-version" description="Compile the source " >
-    <javac srcdir="${src}" destdir="${build}" excludes="**/*Test.*" debug="true" debugLevel="lines,vars,source" >
-      <classpath>
-        <fileset dir="lib">
-          <include name="**/*.jar"/>
-        </fileset>
-      </classpath>
-    </javac>
-  </target>
+    <target name="java-version"
+            description="Print which version of Java is being used; hopefully will help to spot path problems"
+     >
+        <exec executable="java">
+            <arg value="-version"/>
+        </exec>
+    </target>
 
-  <!-- ################################################################################## -->
+    <!-- ################################################################################## -->
 
-  <target name="compile-test" depends="init" description="Compile the tests " >
-    <javac srcdir="${src}" destdir="${test}" includes="**/*Test.*">
-      <classpath>
-        <pathelement path="${test}"/>
-        <fileset dir="lib">
-          <include name="**/*.jar"/>
-        </fileset>
-      </classpath>
-    </javac>
-  </target>
+    <target name="compile"
+            depends="init, java-version"
+            description="Compile the source "
+     >
+        <javac srcdir="${src}"
+               destdir="${build}"
+               excludes="**/*Test.*"
+               debug="true"
+               debugLevel="lines,vars,source"
+         >
+            <classpath>
+                <fileset dir="lib">
+                    <include name="**/*.jar"/>
+                </fileset>
+            </classpath>
+        </javac>
+    </target>
 
-  <!-- ################################################################################## -->
+    <!-- ################################################################################## -->
 
-  <target name="build-test-library" depends="compile">
-    <java classname="org.ensembl.healthcheck.BuildTestLibrary">
-      <arg value="${web.mirror.dir}/testlist_template.html"/> 
-      <classpath>
-        <pathelement path="${build}"/>
-        <fileset dir="lib">
-          <include name="**/*.jar"/>
-        </fileset>
-      </classpath>
-    </java>
-  </target>
-  
-  <!-- ################################################################################## -->
+    <target name="build-test-library" depends="compile">
+        <java classname="org.ensembl.healthcheck.BuildTestLibrary">
+            <arg value="${web.mirror.dir}/testlist_template.html"/>
+            <classpath>
+                <pathelement path="${build}"/>
+                <fileset dir="lib">
+                    <include name="**/*.jar"/>
+                </fileset>
+            </classpath>
+        </java>
+    </target>
 
-  <target name="dist" depends="compile" description="generate the distribution" >
-    <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
-    <jar jarfile="${dist}/${build.name}-${DSTAMP}.jar" basedir="${build}"/>
-    <!-- Current version -->
-    <copy file="${dist}/${build.name}-${DSTAMP}.jar" tofile="${dist}/${name}.jar"/>
-    <!-- And the source -->
-    <jar jarfile="${dist}/${build.name}-src.jar" basedir="${src}"/>
-    <!-- Tar file containing everything -->
-    <tar tarfile="${dist}/${name}.tar.gz" basedir="../" includes="${name}/**" excludes="**/*~, **/*.class, **/.nbattrs, **/.xvpics/*, **/dist/**" compression="gzip"/>
-  </target>
-  
-   <target name="dist-web" depends="javadoc-web, javadoc-tar, dist" description="Copy distribution files to a web dir" >
-      <copy todir="${web.dir}">
-      <fileset dir="${dist}">
-        <include name="**/*.jar"/>
-        <include name="**/*.tar.gz"/>
-      </fileset>
-      <fileset dir="${web.mirror.dir}">
-        <include name="**/*.html"/>
-      </fileset>
-    </copy>
-  </target>
 
-  <!-- ################################################################################## -->
+    <!-- ################################################################################## -->
 
-  <target name="clean" description="Clean up" >
-    <delete dir="${test}" />
-    <delete dir="${reports}" />
-    <delete dir="${doc}/javadoc" />
-    <delete dir="${dist}" />
-  </target>
+    <target name="copy-resources"
+            description="Copy images etc into appropriate directories"
+     >
+        <copy todir="${build}/org/ensembl/healthcheck/gui">
+            <fileset dir="${images}">
+                <include name="*.gif"/>
+                <include name="*.png"/>
+                <include name="*.jpg"/>
+            </fileset>
+        </copy>
+    </target>
 
-  <target name="cleanall" depends="clean" description="Clean .class files out of src dir as well" >
-    <delete>	
-      <fileset dir=".">
-        <include name="**/*.class"/>
-      </fileset>
-    </delete>
-  </target>
-  
-  <!-- ################################################################################## -->
-  <!-- Run targets -->
+    <!-- ################################################################################## -->
 
-  <target name="runh" depends="compile">
-    <java classname="org.ensembl.healthcheck.TextTestRunner">
-      <arg value="-h"/> 
-      <classpath>
-        <pathelement path="${build}"/>
-        <fileset dir="lib">
-          <include name="**/*.jar"/>
-        </fileset>
-      </classpath>
-    </java>
-  </target>
-  
-  <target name="runall" depends="compile">
-    <java classname="org.ensembl.healthcheck.TextTestRunner">
-      <arg value="all"/> 
-      <arg value="-v"/> 
-      <classpath>
-        <pathelement path="${build}"/>
-        <fileset dir="${lib}">
-          <include name="**/*.jar"/>
-        </fileset>
-      </classpath>
-    </java>
-  </target>
+    <target name="jar"
+            depends="compile, copy-resources"
+            description="generate ensj-healthcheck.jar"
+     >
+        <jar jarfile="${lib}/${name}.jar">
+            <fileset dir="${build}/"/>
+        </jar>
+    </target>
 
-  <!-- ################################################################################## -->
-  <target name="javadoc">
+    <!-- ################################################################################## -->
+    <!-- Transfer lib/ensj-healthcheck.jar to Sanger using scp over SSH tunnel
+       Assumes local port 2222 is forwarded to port 22 on a Sanger machine                -->
 
-    <javadoc
-      sourcepath="${src}"
+    <target name="scp-lib"
+            depends="jar"
+            description="scp jar file via SSH tunnel to Sanger"
+     >
+        <exec executable="${scp-executable}" dir="${lib}">
+            <arg value="-oPort=${scp-port}"/>
+            <arg value="${name}.jar"/>
+            <arg value="${scp-target}"/>
+        </exec>
+    </target>
+
+    <!-- ################################################################################## -->
+
+    <target name="dist"
+            depends="compile"
+            description="generate the distribution"
+     >
+        <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
+        <jar jarfile="${dist}/${build.name}-${DSTAMP}.jar" basedir="${build}"/>
+        <!-- Current version -->
+        <copy file="${dist}/${build.name}-${DSTAMP}.jar"
+              tofile="${dist}/${name}.jar"
+         />
+        <!-- And the source -->
+        <jar jarfile="${dist}/${build.name}-src.jar" basedir="${src}"/>
+        <!-- Tar file containing everything -->
+        <tar tarfile="${dist}/${name}.tar.gz"
+             basedir="../"
+             includes="${name}/**"
+             excludes="**/*~, **/*.class, **/.nbattrs, **/.xvpics/*, **/dist/**"
+             compression="gzip"
+         />
+    </target>
+
+    <target name="dist-web"
+            depends="javadoc-web, javadoc-tar, dist"
+            description="Copy distribution files to a web dir"
+     >
+        <copy todir="${web.dir}">
+            <fileset dir="${dist}">
+                <include name="**/*.jar"/>
+                <include name="**/*.tar.gz"/>
+            </fileset>
+            <fileset dir="${web.mirror.dir}">
+                <include name="**/*.html"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <!-- ################################################################################## -->
+
+    <target name="clean" description="Clean up" >
+        <delete dir="${doc}/javadoc" />
+        <delete dir="${dist}" />
+        <delete file="${lib}/${name}.jar" />
+    </target>
+
+    <target name="cleanall"
+            depends="clean"
+            description="Clean .class files out of src dir as well"
+     >
+        <delete>
+            <fileset dir=".">
+                <include name="**/*.class"/>
+            </fileset>
+        </delete>
+    </target>
+
+    <!-- ################################################################################## -->
+    <target name="javadoc">
+
+        <javadoc
       destdir="${doc}/javadoc"
       author="true"
       version="true"
       use="true"
       windowtitle="EnsEMBL HealthCheck"
       doctitle="EnsEMBL HealthCheck"
-      packagenames="org.ensembl.healthcheck, org.ensembl.healthcheck.util, org.ensembl.healthcheck.testcase"
       >
-    </javadoc>
-  </target>
+            <packageset dir="${src}" defaultexcludes="yes">
+                <include name="org/ensembl/healthcheck/**" />
+                <exclude name="org/ensembl/healthcheck/test/**" />
+            </packageset>
 
-  <target name="javadoc-tar" depends="javadoc">
+        </javadoc>
+    </target>
 
-    <tar tarfile="${dist}/${name}-javadoc.tar.gz" basedir="${doc}/javadoc" compression="gzip"/>
-    
-  </target>
-  
-  <target name="javadoc-web" depends="javadoc">
+    <target name="javadoc-tar" depends="javadoc">
 
-    <copy todir="${web.javadoc.dir}">
-      <fileset dir="${doc}/javadoc">
-        <include name="**/*.html"/>
-      </fileset>
-    </copy>
-  
-  </target>
-  
-   <!-- ################################################################################## -->
-  
-  <!-- ################################################################################## -->
+        <tar tarfile="${dist}/${name}-javadoc.tar.gz"
+             basedir="${doc}/javadoc"
+             compression="gzip"
+         />
 
-  <target name="test" depends="compile-test">
+    </target>
 
-    <junit printsummary="yes" fork="yes" haltonfailure="no">
-      <classpath>
-        <pathelement path="${java.class.path}"/>
-        <pathelement path="${test}"/>
-        <pathelement location="${lib}/junit.jar"/>
-      </classpath>
-      <formatter type="xml"/>
-      <batchtest fork="yes" todir="${reports.tests}">
-        <fileset dir="${test}">
-          <include name="**/*Test.class"/>
-        </fileset>
-      </batchtest>
-    </junit>
+    <target name="javadoc-zip" depends="javadoc">
 
-    <antcall target="test-summary-impl"/>
+        <zip destfile="${doc}/javadoc/${name}.zip" basedir="${doc}/javadoc" includes="**/*.html" excludes="**/*.zip"/>
 
-  </target>
+    </target>
 
-   <!-- ################################################################################## -->
+    <target name="javadoc-web" depends="javadoc">
 
-  <!-- html summary of results -->
-  <target name="test-summary" depends="init">
-    <antcall target="test-summary-impl"/>
-  </target>
+        <copy todir="${web.javadoc.dir}">
+            <fileset dir="${doc}/javadoc">
+                <include name="**/*.html"/>
+            </fileset>
+        </copy>
 
+    </target>
 
-  <!-- NOTE: "init" MUST be included by calling task, we can't incude
-  it in a depends list here because that causes a problem with
-  multiple calls to "available" task in "init" block -->
-  
-  <target name="test-summary-impl">
-    <junitreport todir="${reports.tests}">
-      <fileset dir="${reports.tests}">
-        <include name="TEST-*.xml"/>
-      </fileset>
-      <report format="frames" todir="${reports.tests}/html"/>
-    </junitreport>
-  </target>
-
-  <!-- ################################################################################## -->
+    <!-- ################################################################################## -->
 
 </project>

@@ -18,8 +18,10 @@
 
 package org.ensembl.healthcheck.util;
 
-import java.util.logging.*;
-import java.io.*;
+import java.io.OutputStream;
+import java.util.logging.Formatter;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 /**
  * Custom stream handler for logging. Just prints to an OutputStream.
@@ -27,7 +29,7 @@ import java.io.*;
 
 public class MyStreamHandler extends Handler {
   
-  OutputStream outputStream;
+  private OutputStream outputStream;
   
   // ------------------------------------------------------------------------
   /**
@@ -41,10 +43,10 @@ public class MyStreamHandler extends Handler {
   }
   
   // -------------------------------------------------------------------------
-  /** Close the Handler. Currently a no-op.
-   * @throws SecurityException N/A.
+  /** 
+   * Close the Handler. Currently a no-op.
    */
-  public void close() throws java.lang.SecurityException {
+  public void close() {
   }
   
   // -------------------------------------------------------------------------

@@ -5,5 +5,6 @@ if [ ! -d build ]; then
   mkdir build
 fi
 
-$JAVA_HOME/bin/javac -classpath "lib/ensj.jar:build/" -d build src/org/ensembl/healthcheck/util/*.java src/org/ensembl/healthcheck/testcase/*.java src/org/ensembl/healthcheck/*.java
+find src -name '*.java' | xargs $JAVA_HOME/bin/javac -classpath "lib/junit.jar:lib/looks-1.2.1.jar" -d build -sourcepath src
 
+$JAVA_HOME/bin/jar cf lib/ensj-healthcheck.jar -C build org images/*.gif

@@ -1,10 +1,14 @@
 
 package org.ensembl.healthcheck.test;
 
-import junit.framework.*;
-import java.io.*;
+import java.io.File;
 
-import org.ensembl.healthcheck.util.*;
+import junit.framework.Assert;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.ensembl.healthcheck.util.ClassFileFilenameFilter;
 
 /**
  * @version $Revision$

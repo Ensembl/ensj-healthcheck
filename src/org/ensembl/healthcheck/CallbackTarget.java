@@ -18,7 +18,7 @@
 
 package org.ensembl.healthcheck;
 
-import java.util.logging.*;
+import java.util.logging.LogRecord;
 
 /**
  * Interface that should be implemented by classes that wish to have callbacks invoked on them.
