@@ -129,6 +129,8 @@ public final class Species {
         assemblyPrefixes.put("NCBIM", MUS_MUSCULUS);
         assemblyPrefixes.put("TETRAODON", TETRAODON_NIGROVIRIDIS);
         assemblyPrefixes.put("AMEL", APIS_MELLIFERA);
+        assemblyPrefixes.put("CHIMP", PAN_TROGLODYTES);
+        assemblyPrefixes.put("WASHUC", GALLUS_GALLUS);
         
     }
 
