@@ -35,7 +35,7 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
    * Creates a new instance of CheckMetaDataTableTestCase
    */
   public CheckMetaDataTableTestCase() {
-    addToGroup("db_constaints");
+    addToGroup("db_constraints");
   }
   
   /**
