@@ -56,9 +56,9 @@ public class TestRunner {
 	/** Creates a new instance of TestRunner */
 
 	public TestRunner() {
-		
+
 		groupsToRun = new ArrayList();
-	
+
 	} // TestRunner
 
 	// -------------------------------------------------------------------------
@@ -68,7 +68,7 @@ public class TestRunner {
 	 * @return An array of the schema names.
 	 */
 	public String[] getAllSchemaNames() {
-		
+
 		Connection conn;
 		String[] schemaNames = null;
 
@@ -82,9 +82,9 @@ public class TestRunner {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		
+
 		return schemaNames;
-		
+
 	}
 
 	// -------------------------------------------------------------------------
@@ -95,7 +95,7 @@ public class TestRunner {
 	 * @return An array of the matching database names (may be empty if none matched).
 	 */
 	public String[] getListOfDatabaseNames(String regexp) {
-		
+
 		Connection conn;
 		String[] databaseNames = null;
 
@@ -115,9 +115,9 @@ public class TestRunner {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		
+
 		return databaseNames;
-		
+
 	} // getDatabaseList
 
 	// -------------------------------------------------------------------------
@@ -128,16 +128,15 @@ public class TestRunner {
 	 * @param regexp The regular expression to match.
 	 */
 	protected void showDatabaseList(String regexp) {
-		
+
 		logger.fine("Listing databases matching " + regexp + " :\n");
 		String[] databaseList = getListOfDatabaseNames(regexp);
 		for (int i = 0; i < databaseList.length; i++) {
 			logger.fine("\t" + databaseList[i]);
 		}
-		
+
 	} // showDatabaseList
 
-	
 	// -------------------------------------------------------------------------
 	/**
 	 * Run appropriate tests against databases. Also run show/repair methods if the test implements the
@@ -149,7 +148,7 @@ public class TestRunner {
 	protected void runAllTests(DatabaseRegistry databaseRegistry, TestRegistry testRegistry) {
 
 		int numberOfTestsRun = 0;
-		
+
 		// --------------------------------	
 		// Single-database tests
 
@@ -161,7 +160,7 @@ public class TestRunner {
 			DatabaseRegistryEntry database = databases[i];
 
 			List allSingleDatabaseTests = testRegistry.getAllSingle(groupsToRun, database.getType());
-			
+
 			for (Iterator it = allSingleDatabaseTests.iterator(); it.hasNext();) {
 
 				SingleDatabaseTestCase testCase = (SingleDatabaseTestCase)it.next();
@@ -187,22 +186,45 @@ public class TestRunner {
 		// here we just pass the whole DatabaseRegistry to each test
 		// and let the test decide what to do
 
-			List allMultiDatabaseTests = testRegistry.getAllMulti(groupsToRun);
-			
-			for (Iterator it = allMultiDatabaseTests.iterator(); it.hasNext();) {
+		List allMultiDatabaseTests = testRegistry.getAllMulti(groupsToRun);
 
-				MultiDatabaseTestCase testCase = (MultiDatabaseTestCase)it.next();
+		for (Iterator it = allMultiDatabaseTests.iterator(); it.hasNext();) {
 
-				ReportManager.startTestCase(testCase);
+			MultiDatabaseTestCase testCase = (MultiDatabaseTestCase)it.next();
 
-				boolean result = testCase.run(databaseRegistry);
+			ReportManager.startTestCase(testCase);
 
-				ReportManager.finishTestCase(testCase, result);
-				logger.info(testCase.getName() + " " + (result ? "PASSED" : "FAILED"));
+			boolean result = testCase.run(databaseRegistry);
 
-				numberOfTestsRun++;
+			ReportManager.finishTestCase(testCase, result);
+			logger.info(testCase.getName() + " " + (result ? "PASSED" : "FAILED"));
 
-			} // foreach test
+			numberOfTestsRun++;
+
+		} // foreach test
+
+		// --------------------------------
+		// Ordered database tests
+		
+		// getAll() should give back databases in the order they were specified on the command line
+		DatabaseRegistryEntry[] orderedDatabases = databaseRegistry.getAll();
+
+		List allOrderedDatabaseTests = testRegistry.getAllOrdered(groupsToRun);
+
+		for (Iterator it = allOrderedDatabaseTests.iterator(); it.hasNext();) {
+
+			OrderedDatabaseTestCase testCase = (OrderedDatabaseTestCase)it.next();
+
+			ReportManager.startTestCase(testCase);
+
+			boolean result = testCase.run(orderedDatabases);
+
+			ReportManager.finishTestCase(testCase, result);
+			logger.info(testCase.getName() + " " + (result ? "PASSED" : "FAILED"));
+
+			numberOfTestsRun++;
+
+		} // foreach test
 
 		// --------------------------------
 
@@ -217,7 +239,7 @@ public class TestRunner {
 	 * Check if the given testcase can repair errors on the given database.
 	 */
 	private void checkRepair(EnsTestCase testCase, DatabaseRegistryEntry database) {
-	
+
 		// check for show/do repair
 		if (testCase.canRepair()) {
 			if (showRepair) {
@@ -227,9 +249,9 @@ public class TestRunner {
 				((Repair)testCase).repair(database);
 			}
 		}
-		
+
 	} // checkRepair
-	
+
 	// -------------------------------------------------------------------------
 	/**
 	 * Get a connection to a particular database.
@@ -237,9 +259,9 @@ public class TestRunner {
 	 * @return A connection to database.
 	 */
 	public Connection getDatabaseConnection() {
-		
+
 		return DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System.getProperty("user"), System.getProperty("password"));
-	
+
 	} // getDatabaseConnection
 
 	// -------------------------------------------------------------------------
@@ -252,14 +274,14 @@ public class TestRunner {
 	 *         Connections for databases whose names match the regular expression.
 	 */
 	public DatabaseConnectionIterator getDatabaseConnectionIterator(String databaseRegexp) {
-		
+
 		return new DatabaseConnectionIterator(
 			System.getProperty("driver"),
 			System.getProperty("databaseURL"),
 			System.getProperty("user"),
 			System.getProperty("password"),
 			getListOfDatabaseNames(databaseRegexp));
-			
+
 	} // getDatabaseConnectionIterator
 
 	// -------------------------------------------------------------------------
@@ -271,7 +293,7 @@ public class TestRunner {
 	 *         a member of.
 	 */
 	public String[] listAllGroups(List tests) {
-		
+
 		ArrayList g = new ArrayList();
 		Iterator it = tests.iterator();
 		while (it.hasNext()) {
@@ -284,9 +306,9 @@ public class TestRunner {
 				}
 			}
 		}
-		
+
 		return (String[])g.toArray(new String[g.size()]);
-		
+
 	} // listAllGroups
 
 	// -------------------------------------------------------------------------
@@ -298,7 +320,7 @@ public class TestRunner {
 	 * @return An array containing the names whatever tests are a member of group.
 	 */
 	public String[] listTestsInGroup(List tests, String group) {
-		
+
 		ArrayList g = new ArrayList();
 		Iterator it = tests.iterator();
 		while (it.hasNext()) {
@@ -307,9 +329,9 @@ public class TestRunner {
 				g.add(test.getShortTestName());
 			}
 		}
-		
+
 		return (String[])g.toArray(new String[g.size()]);
-		
+
 	} // listTestsInGroup
 
 	// -------------------------------------------------------------------------
@@ -320,7 +342,7 @@ public class TestRunner {
 	 *          lower than this are not printed.
 	 */
 	public void printReportsByTest(int level) {
-		
+
 		System.out.println("\n---- RESULTS BY TEST CASE ----");
 		Map map = ReportManager.getAllReportsByTestCase(level);
 		Set keys = map.keySet();
@@ -354,7 +376,7 @@ public class TestRunner {
 	 *          this level are not printed.
 	 */
 	public void printReportsByDatabase(int level) {
-		
+
 		System.out.println("\n---- RESULTS BY DATABASE ----");
 		Map map = ReportManager.getAllReportsByDatabase(level);
 		Set keys = map.keySet();
@@ -382,7 +404,7 @@ public class TestRunner {
 	 * @param str The output level to use.
 	 */
 	protected void setOutputLevel(String str) {
-		
+
 		String lstr = str.toLowerCase();
 		if (lstr.equals("all")) {
 			outputLevel = ReportLine.ALL;
@@ -399,7 +421,7 @@ public class TestRunner {
 		} else {
 			logger.warning("Output level " + str + " not recognised; using 'all'");
 		}
-		
+
 	} // setOutputLevel
 
 	// -------------------------------------------------------------------------
@@ -409,10 +431,10 @@ public class TestRunner {
 	 * @param l The new output level.
 	 */
 	public void setOutputLevel(int l) {
-		
+
 		outputLevel = l;
 		logger.finest("Set outputLevel to " + outputLevel);
-		
+
 	} // setOutputLevel
 
 	// -------------------------------------------------------------------------
@@ -423,9 +445,9 @@ public class TestRunner {
 	 * @return The current output level. See ReportLine.
 	 */
 	public int getOutputLevel() {
-		
+
 		return outputLevel;
-		
+
 	} // getOutputLevel
 
 	// -------------------------------------------------------------------------
