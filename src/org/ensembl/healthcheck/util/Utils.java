@@ -29,13 +29,66 @@ import java.util.jar.*;
 
 public class Utils {
   
+	/**
+		 * Read the <code>database.properties</code> file into the System properties
+		 * so that it can be overridden with -D.
+		 */
+		public static void readPropertiesFileIntoSystem(String propertiesFileName) {
+
+			String propsFile = System.getProperty("user.dir") + System.getProperty("file.separator") + propertiesFileName;
+			Properties dbProps = Utils.readSimplePropertiesFile(propsFile);
+			Enumeration e = dbProps.propertyNames();
+			String name, value;
+			while (e.hasMoreElements()) {
+				name = (String)e.nextElement();
+				value = dbProps.getProperty(name);
+				// add to System
+				System.setProperty(name, value);
+
+			}
+
+			// check if a databaseURL property has been specified; if so, use it
+			// if not, build the databaseURL property from host, port etc
+
+			String databaseURL = System.getProperty("databaseURL");
+	
+			if (databaseURL == null || databaseURL.equals("")) {
+
+				// build it
+				databaseURL = "jdbc:mysql://";
+
+				if (System.getProperty("host") != null) {
+					databaseURL += System.getProperty("host");
+				} else {
+					System.err.println("Error: host not specified in " + propertiesFileName);
+				}
+
+				if (System.getProperty("port") != null) {
+					databaseURL += ":" + System.getProperty("port");
+				}
+
+				databaseURL += "/";
+				System.setProperty("databaseURL", databaseURL);
+
+			} else {
+
+				// validate database URL - if it doesn't start with jdbc: this can cause confusion
+				String prefix = databaseURL.substring(0, 5);
+				if (!prefix.equalsIgnoreCase("jdbc:")) {
+					System.err.println(
+						"WARNING - databaseURL property should start with jdbc: but it does not seem to. Check this if you experience problems loading the database driver");
+				}
+			}
+
+		} // readPropertiesFile
+
   // -------------------------------------------------------------------------
   /**
    * Read a properties file.
    * @param propertiesFileName The name of the properties file to use.
    * @return The Properties hashtable.
    */
-  public static Properties readPropertiesFile(String propertiesFileName) {
+  public static Properties readSimplePropertiesFile(String propertiesFileName) {
     
     Properties props = new Properties();
     
