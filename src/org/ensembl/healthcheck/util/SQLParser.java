@@ -28,28 +28,130 @@ import java.util.logging.*;
  * Utilities for parsing a SQL file.
  */
 public class SQLParser {
+  
+  /** Internal list of lines parsed from the file */
+  private List lines;
+  
+  /** Logger object to use */
+  protected static Logger logger = Logger.getLogger("HealthCheckLogger");
+  
+  /** Creates a new instance of SQLParser */
+  public SQLParser() {
+    lines = new ArrayList();
+  }
+  
+  // -------------------------------------------------------------------------
+  /**
+   * Parse a file containing SQL.
+   * @param fileName The name of the file to parse.
+   * @return A list of SQL commands read from the file.
+   * @throws FileNotFoundException If fileName cannot be found.
+   */
+  public List parse(String fileName) throws FileNotFoundException {
     
-    /** Creates a new instance of SQLParser */
-    public SQLParser() {
+    File file = new File(fileName);
+    if (!file.exists()) {
+      throw new FileNotFoundException();
     }
     
-    // -------------------------------------------------------------------------
-    /** 
-     * Parse a file containing SQL. 
-     * @param fileName The name of the file to parse.
-     * @return A list of SQL commands read from the file.
-     */
-    public List parse(String fileName) {
+    // the file may have SQL statements spread over several lines
+    // so line in file != SQL statement
+    StringBuffer sql = new StringBuffer();
+    BufferedReader br = new BufferedReader(new FileReader(file));
+    
+    String line;
+    try {
+      while ((line = br.readLine()) != null) {
         
-        List lines = new ArrayList();
+        line = line.trim();
         
-      // TBC
+        // skip comments and blank lines
+        if (line.startsWith("#") || line.length() == 0) {
+          continue;
+        }
         
-        return lines;
+        // remove trailing comments
+        int commentIndex = line.indexOf("#");
+        if (commentIndex > -1) {
+          line = line.substring(0, commentIndex);
+        }
         
+        if (line.endsWith(";")) {  // if we've hit a semi-colon, that's the end of the SQL statement
+          sql.append(line.substring(0, line.length()-1)); // chop off ;
+          lines.add(sql.toString());
+          logger.finest("Added SQL statement beginning " + Utils.truncate(sql.toString(), 80, false));
+          sql = new StringBuffer(); // ready for the next one
+          
+        } else {
+          
+          sql.append(line);
+          
+        }
+      }
+    } catch (IOException ioe) {
+      ioe.printStackTrace();
     }
     
-    // -------------------------------------------------------------------------
-
+    return lines;
     
+  }
+  
+  // -------------------------------------------------------------------------
+  /**
+   * Fill a SQL Statement with a set of batch commands from the SQL file.
+   */
+  public Statement populateBatch(Statement stmt) {
+    
+    if (stmt == null) {
+      logger.severe("SQLParser: input statement is NULL");
+    }
+    
+    Statement result = stmt;
+    
+    Iterator it = lines.iterator();
+    while (it.hasNext()) {
+      String line = (String)it.next();
+      try {
+        result.addBatch(line);
+        logger.finest("Added line begining " + Utils.truncate(line, 80, false) + " to batch");
+      } catch (SQLException se) {
+        se.printStackTrace();
+      }
+    }
+    
+    return result;
+    
+  }
+  
+  // -------------------------------------------------------------------------
+  
+  /**
+   * Getter for property lines.
+   * @return Value of property lines.
+   */
+  public java.util.List getLines() {
+    return lines;
+  }
+  
+  /**
+   * Setter for property lines.
+   * @param lines New value of property lines.
+   */
+  public void setLines(java.util.List lines) {
+    this.lines = lines;
+  }
+  
+  // -------------------------------------------------------------------------
+  
+  public void printLines() {
+    
+    Iterator it = lines.iterator();
+    while (it.hasNext()) {
+      System.out.println((String)it.next());
+    }
+    
+  }
+  
+  // -------------------------------------------------------------------------
+  
 }
