@@ -19,6 +19,7 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
@@ -42,6 +43,16 @@ public class Archive extends SingleDatabaseTestCase {
 
     }
 
+    /**
+     * This only applies to core and Vega databases.
+     */
+    public void types() {
+
+        removeAppliesToType(DatabaseType.EST);
+        removeAppliesToType(DatabaseType.ESTGENE);
+
+    }
+    
     /**
      * Run the test.
      * 
@@ -94,13 +105,7 @@ public class Archive extends SingleDatabaseTestCase {
 
         String[] rows = getColumnValues(con, sql);
         if (rows.length > 0) {
-            StringBuffer msg = new StringBuffer();
-            msg.append("Deleted translation missing from peptide_archive");
-            for (int i = 0; i < rows.length && rows.length < 10; i++) {
-                msg.append(rows[i]).append("\n");
-            }
-
-            ReportManager.problem(this, con, msg.toString());
+            ReportManager.problem(this, con, rows + " deleted translations missing from peptide_archive");
             result = false;
         }
 
@@ -120,13 +125,7 @@ public class Archive extends SingleDatabaseTestCase {
 
         String[] rows = getColumnValues(con, sql);
         if (rows.length > 0) {
-            StringBuffer msg = new StringBuffer();
-            msg.append("Updated Translations missing from peptide_archive.");
-            for (int i = 0; i < rows.length && rows.length < 10; i++) {
-                msg.append(rows[i]).append("\n");
-            }
-
-            ReportManager.problem(this, con, msg.toString());
+            ReportManager.problem(this, con, rows + " updated translations missing from peptide_archive");
             result = false;
         }
 
@@ -144,13 +143,7 @@ public class Archive extends SingleDatabaseTestCase {
 
         String[] rows = getColumnValues(con, sql);
         if (rows.length > 0) {
-            StringBuffer msg = new StringBuffer();
-            msg.append("Translations from peptide archive in gene archive");
-            for (int i = 0; i < rows.length && rows.length < 10; i++) {
-                msg.append(rows[i]).append("\n");
-            }
-
-            ReportManager.problem(this, con, msg.toString());
+            ReportManager.problem(this, con, rows + " translations from peptide archive in gene archive");
             result = false;
         }
 
@@ -166,13 +159,7 @@ public class Archive extends SingleDatabaseTestCase {
                 + " WHERE ts.stable_id=pa.translation_stable_id " + "       AND ts.version= pa.translation_version;";
         String[] rows = getColumnValues(con, sql);
         if (rows.length > 0) {
-            StringBuffer msg = new StringBuffer();
-            msg.append("Current translations in peptide archive");
-            for (int i = 0; i < rows.length && rows.length < 10; i++) {
-                msg.append(rows[i]).append("\n");
-            }
-
-            ReportManager.problem(this, con, msg.toString());
+            ReportManager.problem(this, con, rows + " current translations in peptide archive");
             result = false;
         }
 
@@ -228,13 +215,7 @@ public class Archive extends SingleDatabaseTestCase {
 
         String[] rows = getColumnValues(con, sql);
         if (rows.length > 0) {
-            StringBuffer msg = new StringBuffer();
-            msg.append(rows.length + " deleted " + type + "s not in gene_archive ");
-            for (int i = 0; i < rows.length && rows.length < 10; i++) {
-                msg.append(rows[i]).append("\n");
-            }
-
-            ReportManager.problem(this, con, msg.toString());
+            ReportManager.problem(this, con, rows.length + " deleted " + type + "s not in gene_archive ");
             result = false;
         }
 
@@ -269,13 +250,7 @@ public class Archive extends SingleDatabaseTestCase {
                 + "%\"" + "   AND new_stable_id is NULL " + "   AND " + type + "_stable_id is NULL;";
         String[] rows = getColumnValues(con, sql);
         if (rows.length > 0) {
-            StringBuffer msg = new StringBuffer();
-            msg.append(rows.length + " deleted " + type + "s not in gene_archive ");
-            for (int i = 0; i < rows.length && rows.length < 10; i++) {
-                msg.append(rows[i]).append("\n");
-            }
-
-            ReportManager.problem(this, con, msg.toString());
+            ReportManager.problem(this, con, rows.length + " deleted " + type + "s not in gene_archive ");
             result = false;
         }
 
