@@ -320,8 +320,9 @@ public class TextTestRunner extends TestRunner implements Reporter {
 		String name;
 		name = testCase.getClass().getName();
 		name = name.substring(name.lastIndexOf(".") + 1);
+		System.out.print(name + " ");
 		if (dbre != null) {
-			System.out.print(name + " [" + dbre.getName() + "]");
+			System.out.print("[" + dbre.getName() + "] ");
 		}
 		System.out.flush();
 	}
