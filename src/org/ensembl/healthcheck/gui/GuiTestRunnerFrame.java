@@ -53,6 +53,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -75,6 +76,8 @@ import org.ensembl.healthcheck.ReportLine;
 import org.ensembl.healthcheck.TestRegistry;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.util.ConnectionPool;
+
+import com.jgoodies.plaf.plastic.PlasticLookAndFeel;
 
 /**
  * The main display frame for GuiTestRunner.
@@ -119,9 +122,11 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
 
         setSize(PANEL_SIZE);
 
+        PlasticLookAndFeel.setTabStyle(PlasticLookAndFeel.TAB_STYLE_METAL_VALUE);
+        PlasticLookAndFeel.setHighContrastFocusColorsEnabled(true);
+
         try {
-            UIManager.setLookAndFeel("com.birosoft.liquid.LiquidLookAndFeel");
-            
+            UIManager.setLookAndFeel("com.jgoodies.plaf.plastic.Plastic3DLookAndFeel");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -143,10 +148,10 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
 
         JPanel topPanel = new JPanel();
         JLabel titleLabel = new JLabel();
-        topPanel.setBackground(new Color(255, 255, 255));
+        topPanel.setBackground(Color.WHITE);
         titleLabel.setFont(new Font("SansSerif", 1, 18));
         titleLabel.setText("HealthCheck");
-        //titleLabel.setIcon(new ImageIcon(this.getClass().getResource("e-logo.gif")));
+        titleLabel.setIcon(new ImageIcon(this.getClass().getResource("e-logo.gif")));
         topPanel.add(titleLabel);
 
         // ----------------------------
@@ -158,14 +163,14 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
         // Panel to hold list of tests
         JPanel testPanel = new JPanel();
         testPanel.setLayout(new BoxLayout(testPanel, BoxLayout.Y_AXIS));
-        testPanel.setBackground(new Color(255, 255, 255));
+        testPanel.setBackground(Color.WHITE);
         testPanel.setBorder(new TitledBorder("Select tests"));
         final TestTabbedPane testTabbedPane = new TestTabbedPane(testRegistry);
         testPanel.add(testTabbedPane);
 
         // Panel to hold database selection tabs
         JPanel databasePanel = new JPanel();
-        databasePanel.setBackground(new Color(255, 255, 255));
+        databasePanel.setBackground(Color.WHITE);
         databasePanel.setBorder(new TitledBorder("Select databases"));
         final DatabaseTabbedPane databaseTabbedPane = new DatabaseTabbedPane(databaseRegistry);
         databasePanel.add(databaseTabbedPane);
@@ -193,6 +198,7 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
 
         final GuiTestRunnerFrame localGTRF = this;
         JButton runButton = new JButton("Run");
+        runButton.setIcon(new ImageIcon(this.getClass().getResource("green_arrow.gif")));
         runButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -204,7 +210,8 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
             }
         });
 
-        JButton settingsButton = new JButton("Settings ...");
+        JButton settingsButton = new JButton("Settings");
+        settingsButton.setIcon(new ImageIcon(this.getClass().getResource("cog.gif")));
         settingsButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -518,7 +525,7 @@ class DatabaseTabbedPane extends JTabbedPane {
             addTab(types[i].toString(), new DatabaseListPanel(checkBoxesForTab));
         }
 
-        setBackgroundAt(0, Color.LIGHT_GRAY);
+        //setBackgroundAt(0, Color.LIGHT_GRAY);
 
         addChangeListener(new TabChangeListener());
 
@@ -560,7 +567,7 @@ class TabChangeListener implements ChangeListener {
         JTabbedPane jtp = (JTabbedPane) e.getSource();
         int sel = jtp.getSelectedIndex();
         for (int i = 0; i < jtp.getTabCount(); i++) {
-            jtp.setBackgroundAt(i, (i == sel ? Color.LIGHT_GRAY : Color.WHITE));
+            //jtp.setBackgroundAt(i, (i == sel ? Color.LIGHT_GRAY : Color.WHITE));
             // TODO - set font?
         }
 
@@ -586,18 +593,18 @@ class DatabaseListPanel extends JScrollPane {
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(Color.RED);
 
         Iterator it = checkBoxes.iterator();
         while (it.hasNext()) {
             JPanel checkBoxPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-            checkBoxPanel.setBackground(Color.WHITE);
+            checkBoxPanel.setBackground(Color.GREEN);
             checkBoxPanel.add((DatabaseCheckBox) it.next());
             panel.add(checkBoxPanel);
         }
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        buttonPanel.setBackground(Color.WHITE);
+        buttonPanel.setBackground(Color.YELLOW);
         JButton toggleAllButton = new JButton("Toggle all");
         final DatabaseListPanel localDBLP = this;
         toggleAllButton.addActionListener(new ActionListener() {
@@ -722,7 +729,7 @@ class TestTabbedPane extends JTabbedPane {
         }
 
         if (getTabCount() > 0) {
-            setBackgroundAt(0, Color.LIGHT_GRAY);
+            //setBackgroundAt(0, Color.LIGHT_GRAY);
         }
 
         addChangeListener(new TabChangeListener());
@@ -833,8 +840,7 @@ class TestTreeCellRenderer extends JComponent implements TreeCellRenderer {
 
     public TestTreeCellRenderer() {
 
-        slowIcon = null;
-        //slowIcon = new ImageIcon(this.getClass().getResource("hourglass-small.gif"));
+        slowIcon = new ImageIcon(this.getClass().getResource("clock.gif"));
 
         label = new JLabel();
         label.setBackground(Color.WHITE);

@@ -19,6 +19,7 @@
 package org.ensembl.healthcheck.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -32,6 +33,7 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -43,7 +45,7 @@ import org.ensembl.healthcheck.ReportLine;
 /**
  * Settings Dialog for the GuiTestRunner.
  */
-public class GuiTestRunnerSettings extends javax.swing.JDialog {
+public class GuiTestRunnerSettings extends JDialog {
 
     private GuiTestRunnerFrame gtrf;
 
@@ -92,10 +94,15 @@ public class GuiTestRunnerSettings extends javax.swing.JDialog {
             }
         });
 
+        setBackground(Color.WHITE);
+        topPanel.setBackground(Color.WHITE);
+        bottomPanel.setBackground(Color.WHITE);
         getContentPane().add(topPanel, BorderLayout.NORTH);
 
         centrePanel.setLayout(new BoxLayout(centrePanel, BoxLayout.Y_AXIS));
+        centrePanel.setBackground(Color.WHITE);
         threadsPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        threadsPanel.setBackground(Color.WHITE);
         threadsPanel.setBorder(new EtchedBorder());
         maxThreadsLabel.setFont(new Font("Dialog", 0, 12));
         maxThreadsLabel.setText("Max. threads: ");
