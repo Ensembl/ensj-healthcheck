@@ -93,9 +93,40 @@ public class MetaCoordTestCase extends EnsTestCase {
         if (checkTableExists(con, tableNames[j])) {
           ReportManager.correct(this, con, tableNames[j] + " listed in meta_coord exists");
         } else {
-          ReportManager.correct(this, con, tableNames[j] + " listed in meta_coord does not exist!");
+          ReportManager.problem(this, con, tableNames[j] + " listed in meta_coord does not exist!");
         }
       }
+      
+      // each species must have one co-ordinate system defined as "top_level" and one defined as
+      // "sequence_level" in the attrib column of the coord_system table.
+      String[] attribs = getColumnValues(con, "SELECT attrib FROM coord_system");
+      int topLevelFound = 0;
+      int seqLevelFound = 0;
+      for (int j = 0; j < attribs.length; j++) {
+        String[] bits = attribs[j].split(",");
+        for (int k = 0; k < bits.length; k++) {
+          if (bits[k].equalsIgnoreCase("top_level")) {
+            topLevelFound++;
+          } else if (bits[k].equalsIgnoreCase("sequence_level")) {
+            seqLevelFound++;
+          }
+        }
+      }
+      if (topLevelFound == 0) {
+        ReportManager.problem(this, con, "coord_system table does not have a top_level attribute defined");
+      } else if (topLevelFound == 1) {
+        ReportManager.correct(this, con, "coord_system table has a top_level attribute defined");
+      } else if (topLevelFound > 1) {
+        ReportManager.problem(this, con, "coord_system table has " + topLevelFound + " co-ordinate systems defined as top_level!");        
+      }
+      if (seqLevelFound == 0) {
+        ReportManager.problem(this, con, "coord_system table does not have a sequence_level attribute defined");
+      } else if (seqLevelFound == 1) {
+        ReportManager.correct(this, con, "coord_system table has a seq_level attribute defined");
+      } else if (seqLevelFound > 1) {
+        ReportManager.problem(this, con, "coord_system table has " + seqLevelFound + " co-ordinate systems defined as sequence_level!");        
+      }
+      
       
       
     }
