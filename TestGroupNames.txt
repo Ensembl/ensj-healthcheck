@@ -4,6 +4,8 @@ Since group names are strings, it is possible to inadvertently create a new grou
 
 If you create a new group, please add it to this file, with a description if necesary, so that the group names can be kept consistent.
 
+Note: list-all-tests.sh can be used to verify which tests are in a particular group
+
 all                     # default group name - all tests are a member of this group
 db_constraints         
 pre_mart
