@@ -36,6 +36,7 @@ public class OrphanTestCase extends EnsTestCase {
   
   public OrphanTestCase() {
     databaseRegexp = "^homo_sapiens_core_12.*";
+    addToGroup("group2");
   }
   
   TestResult run() {
