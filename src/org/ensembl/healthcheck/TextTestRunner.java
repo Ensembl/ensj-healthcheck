@@ -211,7 +211,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 						globalType = DatabaseType.resolveAlias(typeStr);
 						logger.finest("Will override guessed database types with " + globalType + " for all databases");
 					} else {
-						logger.severe("Argument " + typeStr + " to -typeargument not recognised");
+						logger.severe("Argument " + typeStr + " to -type argument not recognised");
 					}
 
 				} else {
