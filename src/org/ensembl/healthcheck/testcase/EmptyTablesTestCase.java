@@ -36,7 +36,6 @@ public class EmptyTablesTestCase extends EnsTestCase {
         
         addToGroup("db_constraints");
         setDescription("Checks that all tables have data");
-        setHintLongRunning(true);
         
     }
     
