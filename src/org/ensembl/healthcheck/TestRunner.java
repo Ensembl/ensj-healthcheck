@@ -40,12 +40,8 @@ import org.ensembl.healthcheck.util.*;
 
 public class TestRunner {
   
-<<<<<<< TestRunner.java
-  private static String version = "$Id$";
-=======
   private static String version = "$Id$";
   private ArrayList allTests;            // will hold an instance of each test
->>>>>>> 1.4
   private ArrayList groupsToRun;
   private Properties dbProps;
   private String commandLineRegexp = null;
