@@ -404,5 +404,19 @@ public class DBUtils {
   } // convertHealthcheckToEnsjProperties
   
   // -------------------------------------------------------------------------
+  /**
+   * Convert properties used by Healthcheck into properties suitable for ensj.
+   * ensj properties host, port, user, password are converted.
+   * Note ensj property database is <em>not</em> set.
+   * Input properties are obtained from System.properties.
+   * @return A Properties object containing host, port, user and password NOT database.
+   */
+  public static Properties convertHealthcheckToEnsjProperties() {
+    
+    return convertHealthcheckToEnsjProperties(System.getProperties());
+    
+  } 
+  
+  // -------------------------------------------------------------------------
   
 } // DBUtils
