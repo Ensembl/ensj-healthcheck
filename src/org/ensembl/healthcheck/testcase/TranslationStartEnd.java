@@ -28,40 +28,40 @@ import org.ensembl.healthcheck.util.*;
  * Check that if the start and end of translation is on the same exon, that start < end.
  */
 public class TranslationStartEnd extends EnsTestCase {
-  
-  /**
-   * Creates a new instance of CheckTranslationStartEnd
-   */
-  public TranslationStartEnd() {
-    addToGroup("post_genebuild");
-    setDescription("Check that if the start and end of translation is on the same exon, that start < end.");
-  }
-  
-  /** 
-   * Find any matching databases that have start > end.
-   * @return Result.
-   */
-  public TestResult run() {
-    
-    boolean result = true;
-    
-    DatabaseConnectionIterator it = getDatabaseConnectionIterator();
-    
-    while (it.hasNext()) {
-      
-      Connection con = (Connection)it.next();
-      int rows = getRowCount(con, "select count(translation_id) from translation where start_exon_id = end_exon_id and seq_start > seq_end");
-      if (rows > 0) {
-        result = false;
-        //logger.warning(rows + " translations in " + DBUtils.getShortDatabaseName(con) + " have start > end");
-        ReportManager.problem(this, con, rows + " translations have start > end");
-      } else {
-        ReportManager.correct(this, con, "No translations have start > end");
-      }
-    } // while connection
-    
-    return new TestResult(getShortTestName(), result);
-    
-  } // run
-  
-} // CheckTranslationStartEndTestCase
+
+	/**
+	 * Creates a new instance of CheckTranslationStartEnd
+	 */
+	public TranslationStartEnd() {
+		addToGroup("post_genebuild");
+		setDescription("Check that if the start and end of translation is on the same exon, that start < end.");
+	}
+
+	/** 
+	 * Find any matching databases that have start > end.
+	 * @return Result.
+	 */
+	public TestResult run() {
+
+		boolean result = true;
+
+		DatabaseConnectionIterator it = getDatabaseConnectionIterator();
+
+		while (it.hasNext()) {
+
+			Connection con = (Connection)it.next();
+			int rows = getRowCount(con, "select count(translation_id) from translation where start_exon_id = end_exon_id and seq_start > seq_end");
+			if (rows > 0) {
+				result = false;
+				//logger.warning(rows + " translations in " + DBUtils.getShortDatabaseName(con) + " have start > end");
+				ReportManager.problem(this, con, rows + " translations have start > end");
+			} else {
+				ReportManager.correct(this, con, "No translations have start > end");
+			}
+		} // while connection
+
+		return new TestResult(getShortTestName(), result);
+
+	} // run
+
+} // TranslationStartEnd
