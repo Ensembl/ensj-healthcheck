@@ -48,8 +48,8 @@ public class HasTableCondition extends SchemaMatchCondition {
     List tables = s.getTables();
     Iterator it = tables.iterator();
     while (it.hasNext()) {
-      String currentTable = (String)it.next();
-      result |= currentTable.equalsIgnoreCase(tableName);
+      TableInfo currentTable = (TableInfo)it.next();
+      result |= currentTable.getName().equalsIgnoreCase(tableName);
     }
     return result;
     
