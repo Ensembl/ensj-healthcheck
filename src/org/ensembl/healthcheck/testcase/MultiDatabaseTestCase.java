@@ -16,11 +16,14 @@
 
 package org.ensembl.healthcheck.testcase;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.sql.Statement;
+import java.sql.ResultSet;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
@@ -28,6 +31,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.util.Utils;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Subclass of EnsTestCase for tests that apply to <em>multiple</em> databases. Such tests should
@@ -159,4 +163,77 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
     }
 
     //---------------------------------------------------------------------
+    
+    /**
+     * Run different queries in two databases and compare the results
+     * 
+     * @param con1
+     *          Connection to database1
+     * @param sql1
+     *          SQL query to run in database1
+     * @param con2
+     *          Connection to database2
+     * @param sql2
+     *          SQL query to run in database2
+     * @return true if both queries return the same rows.
+     */
+    public boolean compareQueries(Connection con1, String sql1, Connection con2, String sql2) {
+      boolean result = true;
+      String dbName1 = (con1 == null) ? "no_database" : DBUtils.getShortDatabaseName(con1);
+      String dbName2 = (con2 == null) ? "no_database" : DBUtils.getShortDatabaseName(con2);
+      Map values1 = runQuery(con1, sql1);
+      Map values2 = runQuery(con2, sql2);
+      Iterator it1 = values1.keySet().iterator();
+      while (it1.hasNext()) {
+        String thisValue = (String) it1.next();
+        if (values2.get(thisValue) == null) {
+          result = false;
+          ReportManager.problem(this, dbName1, thisValue + " is not in " + dbName2);
+        }
+      } // foreach it1
+
+      Iterator it2 = values2.keySet().iterator();
+      while (it2.hasNext()) {
+        String thisValue = (String) it2.next();
+        if (values1.get(thisValue) == null) {
+          result = false;
+          ReportManager.problem(this, dbName2, thisValue + " is not in " + dbName1);
+        }
+      } // foreach it1
+
+      return result;
+    }
+
+    /**
+     * Run a query in a database and return the results as a HashMap where the keys
+     * are the rows (cols are concatenated with "::").
+     * 
+     * @param con
+     *          Connection to database
+     * @param sql
+     *          SQL query to run in database
+     * @return Map where the keys are the rows (cols are concatenated with "::").
+     */
+    private Map runQuery(Connection con, String sql) {
+      Map values = new HashMap();
+      try {
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+                
+        while (rs.next()) {
+          String thisValue = rs.getString(1);
+          for (int a = 2; a <= rs.getMetaData().getColumnCount(); a++) {
+            thisValue += "::" + rs.getString(a);
+          }
+          values.put(thisValue, "1");
+        }
+        rs.close();
+        stmt.close();
+
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      return values;
+    }
+
 }
