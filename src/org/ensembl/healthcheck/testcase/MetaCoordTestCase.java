@@ -68,7 +68,7 @@ public class MetaCoordTestCase extends EnsTestCase {
         
         if (cs.length == 0) {
           
-          result = false;          
+          result = false;
           ReportManager.problem(this, con, featureTable + " does not appear to have any associated coordinate systems");
           
         } else if (cs.length > 1) {
@@ -78,12 +78,25 @@ public class MetaCoordTestCase extends EnsTestCase {
           ReportManager.problem(this, con, featureTable + " has more than one associated coordinate system: " + problemCoordinateSystems);
           
         } else {
-         
+          
           ReportManager.correct(this, con, featureTable + " coordinates OK");
           
         }
         
       }
+      
+      // check that the tables listed in the meta_coord table actually exist
+      // typos in the table names could lead to all sorts of confusion
+      
+      String[] tableNames = getColumnValues(con, "SELECT table_name FROM meta_coord");
+      for (int j = 0; j < tableNames.length; j++) {
+        if (checkTableExists(con, tableNames[j])) {
+          ReportManager.correct(this, con, tableNames[j] + " listed in meta_coord exists");
+        } else {
+          ReportManager.correct(this, con, tableNames[j] + " listed in meta_coord does not exist!");
+        }
+      }
+      
       
     }
     
