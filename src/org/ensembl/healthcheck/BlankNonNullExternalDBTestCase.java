@@ -23,18 +23,15 @@ import java.util.*;
 import org.ensembl.healthcheck.util.*;
 
 /**
- * <p>Title: BlankEnumDBNameExternalDBTestCase.java</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2003</p>
- * <p>Organisation: EMBL</p>
- * <p>Created on March 21, 2003, 8:58 AM</p>
- * @author Glenn Proctor <glenn@ebi.ac.uk>
- * @version $Revision$
+ * EnsEMBL HealthCheck test case that looks for columns in the 
+ * external_db table that are marked as NON NULL but contain null or blank values.
  */
 
 public class BlankNonNullExternalDBTestCase extends EnsTestCase {
   
-  /** Creates a new instance of BlankEnumDBNameExternalDBTestCase */
+  /** 
+   * Create a BlankNonNullExternalDBTestCase that matches a particular set of databases.
+   */
   public BlankNonNullExternalDBTestCase() {
     databaseRegexp = ".*_core_\\d.*";
   }
@@ -43,7 +40,7 @@ public class BlankNonNullExternalDBTestCase extends EnsTestCase {
    * Check for any columns in the external_db table that are marked as NON NULL but contain null or blank values.
    */
   TestResult run() {
-    DatabaseConnectionIterator it = testRunner.getDatabaseConnectionIterator(getAffectedDatabases(databaseRegexp));
+    DatabaseConnectionIterator it = getDatabaseConnectionIterator();
     
     boolean result = true;
     
@@ -52,7 +49,7 @@ public class BlankNonNullExternalDBTestCase extends EnsTestCase {
       Connection con = (Connection)it.next();
       int blanks = checkBlankNonNull(con, "external_db");
       if (blanks > 0) {
-	result = false;
+        result = false;
       }
     }
     

@@ -22,27 +22,22 @@ import java.sql.*;
 import org.ensembl.healthcheck.util.*;
 
 /**
- * <p>Title: UnderscoreInAssemblyTypeTestCase.java</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2003</p>
- * <p>Organisation: EMBL</p>
- * <p>Created on March 19, 2003, 3:52 PM</p>
- * @author Glenn Proctor <glenn@ebi.ac.uk>
- * @version $Revision$
+ * EnsEMBL Healthcheck test case that looks for _ characters in the type 
+ * column of the assembly table.
  */
 
 public class UnderscoreInAssemblyTypeTestCase extends EnsTestCase {
   
   /** Creates a new instance of UnderscoreInAssemblyTypeTestCase */
   public UnderscoreInAssemblyTypeTestCase() {
-    databaseRegexp = "^homo_sapiens_core_12.*";
+    databaseRegexp = "^homo_sapiens_core_\\d.*";
   }
   
   TestResult run() {
     
     boolean result = true;
     
-    DatabaseConnectionIterator it = testRunner.getDatabaseConnectionIterator(getAffectedDatabases(databaseRegexp));
+    DatabaseConnectionIterator it = getDatabaseConnectionIterator();
         
     while (it.hasNext()) {
       

@@ -23,17 +23,15 @@ import java.sql.*;
 import org.ensembl.healthcheck.util.*;
 
 /**
- * <p>Title: DummyTestCase.java</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2003</p>
- * <p>Organisation: EMBL</p>
- * <p>Created on March 11, 2003, 2:44 PM</p>
- * @author Glenn Proctor <glenn@ebi.ac.uk>
- * @version
+ * Simple example of an EnsEMBL Healthcheck test case that just prints out the 
+ * databases that are affected by this class' regular expression.
  */
 
 public class DummyTestCase extends EnsTestCase {
    
+  /** 
+   * Create a simple DummyTestCase.
+   */
   public DummyTestCase() {
     super();
     databaseRegexp = "homo_sapiens_.*";
@@ -43,8 +41,7 @@ public class DummyTestCase extends EnsTestCase {
  
   TestResult run() {
     
-    System.out.println("In DummyTestCase; databaseRegexp=" + databaseRegexp);
-    super.printAffectedDatabases(databaseRegexp);
+    super.printAffectedDatabases();
     
     System.out.println(getShortTestName() + " is a member of test groups: " + getCommaSeparatedGroups());
     

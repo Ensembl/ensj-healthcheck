@@ -23,19 +23,16 @@ import java.sql.*;
 import org.ensembl.healthcheck.util.*;
 
 /**
- * <p>Title: OrphanTestCase.java</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2003</p>
- * <p>Organisation: EMBL</p>
- * <p>Created on March 13, 2003, 4:25 PM</p>
- * @author Glenn Proctor <glenn@ebi.ac.uk>
- * @version
+ * An EnsEMBL Healthcheck test case that looks for broken foreign-key realtionships.
  */
 
 public class OrphanTestCase extends EnsTestCase {
   
+  /**
+   * Create an OrphanTestCase that applies to a specific set of databases.
+   */
   public OrphanTestCase() {
-    databaseRegexp = "^homo_sapiens_core_12.*";
+    databaseRegexp = "^homo_sapiens_core_\\d.*";
     addToGroup("group2");
   }
   
@@ -43,7 +40,7 @@ public class OrphanTestCase extends EnsTestCase {
     
     boolean result = true;
     
-    DatabaseConnectionIterator it = testRunner.getDatabaseConnectionIterator(getAffectedDatabases(databaseRegexp));
+    DatabaseConnectionIterator it = getDatabaseConnectionIterator();
         
     while (it.hasNext()) {
       

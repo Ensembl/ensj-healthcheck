@@ -19,13 +19,8 @@
 package org.ensembl.healthcheck;
 
 /**
- * <p>Title: ExternalDBDescribeTestCase.java</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2003</p>
- * <p>Organisation: EMBL</p>
- * <p>Created on March 18, 2003, 4:08 PM</p>
- * @author Glenn Proctor <glenn@ebi.ac.uk>
- * @version $Revision$
+ * EnsEMBL Healthcheck test case that ensures that the results of the SQL
+ * query <code>DESCRIBE external_db</code> are the same for a set of databases.
  */
 
 public class ExternalDBDescribeTestCase extends EnsTestCase {
@@ -38,7 +33,7 @@ public class ExternalDBDescribeTestCase extends EnsTestCase {
   
   TestResult run() {
     
-    boolean result = super.checkSameSQLResult("DESCRIBE external_db", databaseRegexp, preFilterRegexp);
+    boolean result = super.checkSameSQLResult("DESCRIBE external_db");
     
     return new TestResult(getShortTestName(), result, "DESCRIBE external_db");
   }
