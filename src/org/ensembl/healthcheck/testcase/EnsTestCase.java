@@ -541,19 +541,35 @@ public abstract class EnsTestCase {
         
         int resultLeft, resultRight;
         
-        String sql = "SELECT COUNT(*) FROM " + table1 +
+        String sql = " FROM " + table1 +
         " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 +
         " WHERE " + table2 + "." + col2 + " iS NULL";
         
-        resultLeft = getRowCount(con, sql);
+        resultLeft = getRowCount(con, "SELECT COUNT(*)" + sql);
         
+	if( resultLeft > 0 ) {
+	    String values[] = getColumnValues( con, "SELECT " + table1 + "." + col1 + sql + " LIMIT 20" );
+	    for( int i=0; i<values.length; i++ ) {
+		ReportManager.info( this, con, table1 + "." + col1 + " " + values[i] + 
+				    " is not linked." );
+	    }
+	}
+
         if (!oneWayOnly) {
             // and the other way ... (a right join?)
-            sql = "SELECT COUNT(*) FROM " + table2 +
+            sql = " FROM " + table2 +
             " LEFT JOIN " + table1 + " ON " + table2 + "." + col2 + " = " + table1 + "." + col1 +
             " WHERE " + table1 + "." + col1 + " IS NULL";
             
-            resultRight = getRowCount(con, sql);
+            resultRight = getRowCount(con, "SELECT COUNT(*)" + sql);
+	    if( resultRight > 0 ) {
+		String values[] = getColumnValues( con, "SELECT " + table2 + "." + 
+						   col2 + sql + " LIMIT 20" );
+		for( int i=0; i<values.length; i++ ) {
+		    ReportManager.info( this, con, table2 + "." + col2 + " " + values[i] + 
+					" is not linked." );
+		}
+	    }
         } else {
             resultRight = 0;
         }

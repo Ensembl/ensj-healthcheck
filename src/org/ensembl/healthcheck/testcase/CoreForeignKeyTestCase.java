@@ -35,7 +35,7 @@ public class CoreForeignKeyTestCase extends EnsTestCase {
    */
   public CoreForeignKeyTestCase() {
     addToGroup("db_constraints");
-    setDescription("Check for broken foreign-key realtionships.");
+    setDescription("Check for broken foreign-key relationships.");
   }
   
   /**
@@ -131,17 +131,41 @@ public class CoreForeignKeyTestCase extends EnsTestCase {
       orphans = countOrphans( con, "object_xref", "xref_id", "xref", "xref_id", true );
       if( orphans > 0 ) {
         //warn( con, "object_xref <-> xref has unlinked entries" );
-        ReportManager.problem(this, con, "object_xref <-> xref has unlinked entries");
+        ReportManager.problem(this, con, "object_xref -> xref has unlinked entries");
       } else {
-        ReportManager.correct(this, con, "All object_xref <-> xref relationships OK");
+        ReportManager.correct(this, con, "All object_xref -> xref relationships OK");
       }
       result &= (orphans == 0);
 
       orphans = countOrphans( con, "xref", "external_db_id", "external_db", "external_db_id", true);
       if( orphans > 0) {
-        ReportManager.problem(this, con, "xref <-> external_db has unlinked entries");
+        ReportManager.problem(this, con, "xref -> external_db has unlinked entries");
       } else {
-        ReportManager.correct(this, con, "All xref <-> external_db relationships OK");
+        ReportManager.correct(this, con, "All xref -> external_db relationships OK");
+      }
+      result &= (orphans == 0);
+
+      orphans = countOrphans( con, "exon", "contig_id", "contig", "contig_id", true);
+      if( orphans > 0) {
+        ReportManager.problem(this, con, "exon -> contig has unlinked entries");
+      } else {
+        ReportManager.correct(this, con, "All exon -> contig relationships OK");
+      }
+      result &= (orphans == 0);
+
+      orphans = countOrphans( con, "contig", "dna_id", "dna", "dna_id", false);
+      if( orphans > 0) {
+        ReportManager.problem(this, con, "contig <-> dna has unlinked entries");
+      } else {
+        ReportManager.correct(this, con, "All contig <-> dna relationships OK");
+      }
+      result &= (orphans == 0);
+
+      orphans = countOrphans( con, "assembly", "contig_id", "contig", "contig_id", true);
+      if( orphans > 0) {
+        ReportManager.problem(this, con, "assembly -> contig has unlinked entries");
+      } else {
+        ReportManager.correct(this, con, "All assembly -> contig relationships OK");
       }
       result &= (orphans == 0);
     }
