@@ -47,7 +47,10 @@ public class TestRunner {
   protected int outputLevel = ReportLine.ALL;
   /** The name of the file where configuration is stored */
   protected String propertiesFileName = "database.properties";
-  
+  /** Flag to determine whether repairs will be shown if appropriate */
+  protected boolean showRepair = false;
+  /** Flag to determine whether repairs will be carried out if appropriate */
+  protected boolean doRepair = false;
   // -------------------------------------------------------------------------
   /** Creates a new instance of TestRunner */
   
