@@ -86,8 +86,6 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
         
         // now calculate and store the translation lengths
         ResultSet rs = stmt.executeQuery(sql);
-        rs.setFetchSize(100);
-        rs.setFetchDirection(ResultSet.FETCH_FORWARD);
         
         boolean inCodingRegion = false;
         
