@@ -42,7 +42,6 @@ public class CompareCoreSchemaTestCase extends EnsTestCase {
    */
   public CompareCoreSchemaTestCase() {
     addToGroup("pre_release");
-    setDatabaseRegexp("\\w+_\\w+_(core|est|estgene|vega)_\\d+_\\w+");
   }
   
   /**
