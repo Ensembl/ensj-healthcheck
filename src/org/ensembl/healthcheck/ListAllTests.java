@@ -21,6 +21,8 @@ package org.ensembl.healthcheck;
 import java.util.*;
 import java.util.logging.*;
 
+import org.ensembl.healthcheck.testcase.*;
+
 /**
  * Subclass of TestRunner that lists all tests.
  */

@@ -26,6 +26,8 @@ import java.util.regex.*;
 
 import junit.framework.*;
 
+import org.ensembl.healthcheck.testcase.*;
+
 import org.ensembl.healthcheck.util.*;
 
 /**
@@ -283,8 +285,7 @@ public class TestRunner {
       try {
         newClass = Class.forName(packageName + "." + baseClassName);
         String className = newClass.getName();
-        if (!className.equals("org.ensembl.healthcheck.testcase.EnsTestCase") &&
-        !className.substring(className.length()-4).equals("Test")  ) {  // ignore JUnit tests
+        if (!className.equals("org.ensembl.healthcheck.testcase.EnsTestCase")) {  // ignore JUnit tests
           obj = newClass.newInstance();
         }
       } catch (InstantiationException ie) {
@@ -295,8 +296,8 @@ public class TestRunner {
         e.printStackTrace();
       }
       
-      if (obj instanceof org.ensembl.healthcheck.EnsTestCase && !tests.contains(obj)) {
-        ((EnsTestCase)obj).init(this);
+      if (obj instanceof org.ensembl.healthcheck.testcase.EnsTestCase && !tests.contains(obj)) {
+        ((org.ensembl.healthcheck.testcase.EnsTestCase)obj).init(this);
         tests.add(obj); // note we store an INSTANCE of the test, not just its name
         //logger.info("Added test case " + obj.getClass().getName());
       }
