@@ -32,6 +32,8 @@ public class GuiTestRunnerSettings extends javax.swing.JDialog {
   GuiTestRunnerFrame gtrf;
   GuiTestRunner guiTestRunner;
   
+  private final static Dimension PANEL_SIZE = new Dimension(300, 500);
+  
   /** Creates new form GuiTestRunnerSettings
    * @param parent The parent frame.
    * @param gtr The GuiTestRunner to use.
@@ -54,21 +56,19 @@ public class GuiTestRunnerSettings extends javax.swing.JDialog {
   private void initComponents() {//GEN-BEGIN:initComponents
     topPanel = new javax.swing.JPanel();
     centrePanel = new javax.swing.JPanel();
-    regexpPanel = new javax.swing.JPanel();
-    preFilterLabel = new javax.swing.JLabel();
-    preFilterTextField = new javax.swing.JTextField();
-    forcePanel = new javax.swing.JPanel();
-    forceBox = new javax.swing.JCheckBox();
+    dbListPanel = new javax.swing.JPanel();
+    listScrollPane = new javax.swing.JScrollPane();
+    dbList = new javax.swing.JList();
     threadsPanel = new javax.swing.JPanel();
     maxThreadsLabel = new javax.swing.JLabel();
     threadsSpinner = new javax.swing.JSpinner();
-    outputLevelPanel = new javax.swing.JPanel();
     outputLabel = new javax.swing.JLabel();
     outputComboBox = new javax.swing.JComboBox();
     bottomPanel = new javax.swing.JPanel();
     applyButton = new javax.swing.JButton();
     cancelButton = new javax.swing.JButton();
     
+    setTitle("EnsEMBL HealthCheck Settings");
     addWindowListener(new java.awt.event.WindowAdapter() {
       public void windowClosing(java.awt.event.WindowEvent evt) {
         closeDialog(evt);
@@ -79,52 +79,39 @@ public class GuiTestRunnerSettings extends javax.swing.JDialog {
     
     centrePanel.setLayout(new javax.swing.BoxLayout(centrePanel, javax.swing.BoxLayout.Y_AXIS));
     
-    centrePanel.setBorder(new javax.swing.border.TitledBorder("EnsEMBL HealthCheck Settings"));
-    regexpPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+    dbListPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
     
-    preFilterLabel.setFont(new java.awt.Font("Dialog", 0, 12));
-    preFilterLabel.setText("Pre-filter regexp: ");
-    regexpPanel.add(preFilterLabel);
+    dbListPanel.setBackground(new java.awt.Color(255, 255, 255));
+    dbListPanel.setBorder(new javax.swing.border.TitledBorder("Select schemas"));
+    dbList.setFont(new java.awt.Font("Dialog", 0, 12));
+    dbList.setToolTipText("Select schema(s). Use Ctrl or Shift to make multiple selctions.");
+    listScrollPane.setViewportView(dbList);
     
-    preFilterTextField.setColumns(20);
-    preFilterTextField.setText(".*_core_.*");
-    preFilterTextField.setToolTipText("Regular expression to apply before test case's built-in regexp");
-    regexpPanel.add(preFilterTextField);
+    dbListPanel.add(listScrollPane);
     
-    centrePanel.add(regexpPanel);
-    
-    forcePanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-    
-    forceBox.setFont(new java.awt.Font("Dialog", 0, 12));
-    forceBox.setText("Use only pre-filter regexp");
-    forceBox.setToolTipText("If checked, only the pre-filter regexp is used.");
-    forcePanel.add(forceBox);
-    
-    centrePanel.add(forcePanel);
+    centrePanel.add(dbListPanel);
     
     threadsPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
     
+    threadsPanel.setBorder(new javax.swing.border.EtchedBorder());
     maxThreadsLabel.setFont(new java.awt.Font("Dialog", 0, 12));
-    maxThreadsLabel.setText("Maximum number of threads: ");
+    maxThreadsLabel.setText("Max. threads: ");
+    maxThreadsLabel.setToolTipText("The maximum number of tests to run at one time.");
     threadsPanel.add(maxThreadsLabel);
     
     threadsSpinner.setFont(new java.awt.Font("Dialog", 0, 12));
     threadsSpinner.setToolTipText("Select the maximum number of threads to run");
     threadsPanel.add(threadsSpinner);
     
-    centrePanel.add(threadsPanel);
-    
-    outputLevelPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-    
     outputLabel.setFont(new java.awt.Font("Dialog", 0, 12));
-    outputLabel.setText("Output level: ");
-    outputLevelPanel.add(outputLabel);
+    outputLabel.setText("  Output level: ");
+    threadsPanel.add(outputLabel);
     
     outputComboBox.setFont(new java.awt.Font("Dialog", 0, 12));
-    outputComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "All", "Problems only", "Warnings", "Correct results", "Info", "None" }));
-    outputLevelPanel.add(outputComboBox);
+    outputComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "All", "Problems only", "Correct results", "Summary", "Info", "None" }));
+    threadsPanel.add(outputComboBox);
     
-    centrePanel.add(outputLevelPanel);
+    centrePanel.add(threadsPanel);
     
     getContentPane().add(centrePanel, java.awt.BorderLayout.CENTER);
     
@@ -163,15 +150,12 @@ public class GuiTestRunnerSettings extends javax.swing.JDialog {
   private javax.swing.JPanel bottomPanel;
   private javax.swing.JButton cancelButton;
   private javax.swing.JPanel centrePanel;
-  private javax.swing.JCheckBox forceBox;
-  private javax.swing.JPanel forcePanel;
+  private javax.swing.JList dbList;
+  private javax.swing.JPanel dbListPanel;
+  private javax.swing.JScrollPane listScrollPane;
   private javax.swing.JLabel maxThreadsLabel;
   private javax.swing.JComboBox outputComboBox;
   private javax.swing.JLabel outputLabel;
-  private javax.swing.JPanel outputLevelPanel;
-  private javax.swing.JLabel preFilterLabel;
-  private javax.swing.JTextField preFilterTextField;
-  private javax.swing.JPanel regexpPanel;
   private javax.swing.JPanel threadsPanel;
   private javax.swing.JSpinner threadsSpinner;
   private javax.swing.JPanel topPanel;
@@ -182,9 +166,6 @@ public class GuiTestRunnerSettings extends javax.swing.JDialog {
   private void init() {
     
     final GuiTestRunner localGTR = guiTestRunner;
-    
-    preFilterTextField.setText(guiTestRunner.getPreFilterRegexp());
-    forceBox.setSelected(guiTestRunner.getForceDatabases());
     
     threadsSpinner.setModel(new SpinnerNumberModel(guiTestRunner.getMaxThreads(), 0, 10, 1));
     
@@ -209,13 +190,19 @@ public class GuiTestRunnerSettings extends javax.swing.JDialog {
         int level = ((Integer)levels.get(selection)).intValue();
         
         localGTR.setOutputLevel(level);
-        localGTR.setPreFilterRegexp(preFilterTextField.getText());
-        localGTR.setForceDatabases(forceBox.isSelected());
+        localGTR.setSelectedSchemas(dbList.getSelectedValues());
         localGTR.setMaxThreads(spinnerValue);
         
         closeDialog(null);
       }
     });
+    
+    listScrollPane.setPreferredSize(PANEL_SIZE);
+    //dbListPanel.setPreferredSize(PANEL_SIZE);
+    
+    dbList.setListData(localGTR.getSchemaList());
+  
+    pack();
     
   } // init
   
