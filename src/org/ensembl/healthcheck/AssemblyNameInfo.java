@@ -112,9 +112,9 @@ public class AssemblyNameInfo {
     
     // ----------------------------------------
     // Split the assembly into prefix + version
-    
+    if (metaTableAssemblyDefault != null) {
+      
     metaTableAssemblyPrefix = metaTableAssemblyDefault.replaceAll("\\d+$", "");
-    
     metaTableAssemblyVersion = metaTableAssemblyDefault.replaceAll("^\\D+", "");
     
     // -----------------------------------------
@@ -124,6 +124,13 @@ public class AssemblyNameInfo {
     dbNameAssemblyVersion = dbName.substring(dbName.lastIndexOf('_') + 1);
     
     //logger.finest(metaTableAssemblyDefault + " " + metaTableAssemblyPrefix + " " + metaTableAssemblyVersion + " " + dbNameAssemblyVersion);
+    
+    } else {
+      
+      logger.severe("Value for assembly.default in meta table for " + DBUtils.getShortDatabaseName(con)  + " seems to be null");
+      
+    }
+    
     
   } // queryConnection
   
