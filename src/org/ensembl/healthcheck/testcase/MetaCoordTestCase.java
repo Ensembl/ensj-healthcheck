@@ -97,37 +97,36 @@ public class MetaCoordTestCase extends EnsTestCase {
         }
       }
       
-      // each species must have one co-ordinate system defined as "top_level" and one defined as
-      // "sequence_level" in the attrib column of the coord_system table.
-      String[] attribs = getColumnValues(con, "SELECT attrib FROM coord_system");
-      int topLevelFound = 0;
-      int seqLevelFound = 0;
-      for (int j = 0; j < attribs.length; j++) {
-        String[] bits = attribs[j].split(",");
-        for (int k = 0; k < bits.length; k++) {
-          if (bits[k].equalsIgnoreCase("top_level")) {
-            topLevelFound++;
-          } else if (bits[k].equalsIgnoreCase("sequence_level")) {
-            seqLevelFound++;
-          }
+      // check for "top_level" and "sequence_level" attribs in the coord_system table
+      // there must be one and only one sequence_level co-ordinate system
+      // there can be more than one co-ordinate system labelled as top_level but in
+      // that case they must have different defaults and versions
+      
+      // first check for only one sequence_level
+      int seqLevelRows = getRowCount(con, "SELECT COUNT(*) FROM coord_system WHERE attrib LIKE '%sequence_level%'");
+      if (seqLevelRows == 0) {
+        ReportManager.problem(this, con, "No co-ordinate system defined with a sequence_level attribute in coord_system");
+      } else if (seqLevelRows == 1) {
+        ReportManager.correct(this, con, "coord_system table has one co-ordinate system defined as sequence_level");
+      } else if (seqLevelRows > 1) {
+        ReportManager.problem(this, con, "coord_system table has " + seqLevelRows + " rows defined with sequence_level attributes - there should be only one");
+      }
+      
+      // check that there is at least one top_level co-ordinate system
+      int topLevelRows = getRowCount(con, "SELECT COUNT(*) FROM coord_system WHERE attrib LIKE '%top_level%'");
+      if (topLevelRows == 0) {
+        ReportManager.problem(this, con, "No co-ordinate system defined with a top_level attribute in coord_system");
+      } else if (topLevelRows == 1) {
+        ReportManager.correct(this, con, "coord_system table has one co-ordinate system defined as top_level");
+      } else if (topLevelRows > 1) {
+        // this situation may be acceptable if the versions are different
+        int distinctDefaults = getRowCount(con, "SELECT DISTINCT version FROM coord_system WHERE attrib LIKE '%top_level%'");
+        if (distinctDefaults == topLevelRows) {
+          ReportManager.correct(this, con, "coord_system table has " + topLevelRows + " co-ordinate systems defined as top_level, and all have different versions");
+        } else {
+          ReportManager.correct(this, con, "coord_system table has " + topLevelRows + " co-ordinate systems defined as top_level, but not all have different versions");
         }
       }
-      if (topLevelFound == 0) {
-        ReportManager.problem(this, con, "coord_system table does not have a top_level attribute defined");
-      } else if (topLevelFound == 1) {
-        ReportManager.correct(this, con, "coord_system table has a top_level attribute defined");
-      } else if (topLevelFound > 1) {
-        ReportManager.problem(this, con, "coord_system table has " + topLevelFound + " co-ordinate systems defined as top_level!");        
-      }
-      if (seqLevelFound == 0) {
-        ReportManager.problem(this, con, "coord_system table does not have a sequence_level attribute defined");
-      } else if (seqLevelFound == 1) {
-        ReportManager.correct(this, con, "coord_system table has a seq_level attribute defined");
-      } else if (seqLevelFound > 1) {
-        ReportManager.problem(this, con, "coord_system table has " + seqLevelFound + " co-ordinate systems defined as sequence_level!");        
-      }
-      
-      
       
     }
     
