@@ -28,49 +28,50 @@ import org.ensembl.healthcheck.util.*;
  * Check that all tables have data.
  */
 public class EmptyTablesTestCase extends EnsTestCase {
+  
+  /**
+   * Creates a new instance of EmptyTablesTestCase
+   */
+  public EmptyTablesTestCase() {
     
-    /**
-     * Creates a new instance of EmptyTablesTestCase
-     */
-    public EmptyTablesTestCase() {
-        
-        addToGroup("db_constraints");
-        setDescription("Checks that all tables have data");
-        
-    }
+    addToGroup("db_constraints");
+    setDescription("Checks that all tables have data");
     
-    /**
-     * For each schema, check that every table has more than 0 rows.
-     */
-    public TestResult run() {
-        
-        boolean result = true;
-        
-        DatabaseConnectionIterator it = getDatabaseConnectionIterator();
-        
-        while (it.hasNext()) {
-            
-            Connection con = (Connection)it.next();
-            
-            SchemaInfo si = SchemaManager.getSchema(con);
-                        
-            Iterator tableIterator = si.getTables().iterator();
-            while(tableIterator.hasNext()) {
-                
-                String table = ((TableInfo)tableIterator.next()).getName();
-                logger.finest("Checking that " + table + " has rows");
-                
-                if (!tableHasRows(con, table)) {
-                 
-                    ReportManager.problem(this, con, table + " has zero rows");
-                    
-                }
-            }
-            
-        } // while connection
-        
-        return new TestResult(getShortTestName(), result);
-        
-    } // run
+  }
+  
+  /**
+   * For each schema, check that every table has more than 0 rows.
+   */
+  public TestResult run() {
     
+    boolean result = true;
+    
+    DatabaseConnectionIterator it = getDatabaseConnectionIterator();
+    
+    while (it.hasNext()) {
+      
+      Connection con = (Connection)it.next();
+      
+      SchemaInfo si = SchemaManager.getSchema(con);
+      
+      Iterator tableIterator = si.getTables().iterator();
+      while(tableIterator.hasNext()) {
+        
+        String table = ((TableInfo)tableIterator.next()).getName();
+        logger.finest("Checking that " + table + " has rows");
+        
+        if (!tableHasRows(con, table)) {
+          
+          ReportManager.problem(this, con, table + " has zero rows");
+          result = false;
+          
+        }
+      }
+      
+    } // while connection
+    
+    return new TestResult(getShortTestName(), result);
+    
+  } // run
+  
 } // EmptyTablesTestCase
