@@ -55,10 +55,10 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
     
     // get list of transcripts
     String sql =
-    "SELECT t.transcript_id, e.exon_id, tr.start_exon_id, tr.translation_id, tr.end_exon_id, tr.seq_start, tr.seq_end, e.contig_start, e.contig_end, e.sticky_rank " +
+    "SELECT t.transcript_id, e.exon_id, tr.start_exon_id, tr.translation_id, tr.end_exon_id, tr.seq_start, tr.seq_end, e.seq_region_start, e.seq_region_end " +
     "FROM   transcript t, exon_transcript et, exon e, translation tr " +
-    "WHERE  t.transcript_id = et.transcript_id AND et.exon_id = e.exon_id AND t.translation_id = tr.translation_id " +
-    "ORDER  BY t.transcript_id, et.rank, e.sticky_rank DESC";
+    "WHERE  t.transcript_id = et.transcript_id AND et.exon_id = e.exon_id AND t.transcript_id = tr.transcript_id " +
+    "ORDER  BY t.transcript_id, et.rank DESC";
     
     while (it.hasNext()) {
       
@@ -126,7 +126,7 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
               inCodingRegion = false;
             } else {
               int currentLength = ((Integer)translationLengths.get(id)).intValue();
-              currentLength += (rs.getInt("contig_end") - rs.getInt("contig_start")) + 1;
+              currentLength += (rs.getInt("seq_region_end") - rs.getInt("seq_region_start")) + 1;
               translationLengths.put(id, new Integer(currentLength));
               //inCodingRegion = false;
             }
@@ -197,7 +197,7 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
       } else {
         try {
           Statement stmt = con.createStatement();
-	  System.out.println( DBUtils.getShortDatabaseName(con));
+          System.out.println( DBUtils.getShortDatabaseName(con));
           System.out.println( sql );
           //stmt.execute(sql);
           stmt.close();
