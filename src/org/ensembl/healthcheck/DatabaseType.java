@@ -33,7 +33,8 @@ public class DatabaseType {
 	public static final DatabaseType MART = new DatabaseType("mart");
 	public static final DatabaseType SNP = new DatabaseType("snp");
 	public static final DatabaseType DISEASE = new DatabaseType("disease");
-
+	public static final DatabaseType HAPLOTYPE = new DatabaseType("haplotype");
+	
 	// special type to represent situtation when type is not known
 	public static final DatabaseType UNKNOWN = new DatabaseType("unknown");
 
@@ -123,6 +124,14 @@ public class DatabaseType {
 
 		}
 
+//		--------------------------------------
+
+		if (in(alias, "haplotype")) {
+
+			return HAPLOTYPE;
+
+		}
+		
 		// default case 
 		return UNKNOWN;
 
