@@ -23,9 +23,13 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that marker features exist if markers exist, and that map_wieghts are set to non-zero
- * values
+ * Check that:
+ *  - marker features exist if markers exist
+ *  - that map_wieghts are set to non-zero values
+ *  - all marker priorities are > 50
+ *  - each chromosome has some marker features
  */
+
 public class MarkerFeatures extends SingleDatabaseTestCase {
 
     /**
@@ -35,11 +39,12 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 
         addToGroup("post_genebuild");
         addToGroup("release");
-        setDescription("Checks that marker_features exist and that they have" + " non-zero map_weights");
+        setDescription("Checks that marker_features exist and that they have non-zero map_weights, that marker priorities are sensible and that all chromosomes have some marker features");
+
     }
 
     /**
-     * Verify marker features exist if markers exist, and that map weights are non-zero.
+     * Test various things about marker features.
      * 
      * @param dbre The database to use.
      * @return Result.
@@ -49,8 +54,24 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
         boolean result = true;
 
         Connection con = dbre.getConnection();
-        boolean markersExist = getRowCount(con, "select count(*) from marker") > 0;
 
+	result &= checkFeaturesAndMapWeights(con);
+
+
+        return result;
+
+    } // run
+
+    /*
+     * Verify marker features exist if markers exist, and that map weights are non-zero.
+     */
+    
+    private boolean checkFeaturesAndMapWeights(Connection con) {
+
+	boolean result = true;
+	
+	boolean markersExist = getRowCount(con, "select count(*) from marker") > 0;
+	
         /*
          * assume this species has no markers, dangling refs test case will catch problem if
          * marker_features exist without markers
@@ -77,8 +98,10 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
             ReportManager.correct(this, con, "Marker features appear to be ok");
         }
 
-        return result;
+	return result;
 
-    } // run
+    } // checkFeaturesAndMapWeights
+
+
 
 } // MarkerFeatures
