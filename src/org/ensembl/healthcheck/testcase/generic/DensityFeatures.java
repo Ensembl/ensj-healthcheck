@@ -141,10 +141,11 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 			    sql = "SELECT value FROM seq_region_attrib sra, attrib_type at WHERE sra.attrib_type_id=at.attrib_type_id AND at.code='" + attribCode + "' AND seq_region_id=" + seqRegionID;
 			    
 			    String sumSRA = getRowColumnValue(con, sql);
-			    long valueFromSeqRegionAttrib = Long.parseLong(sumSRA);
 			    
 			    if (sumSRA != null && sumSRA.length() > 0) {
 				
+				long valueFromSeqRegionAttrib = Long.parseLong(sumSRA);
+
 				if (sumFromDensityFeature != valueFromSeqRegionAttrib) {
 				    
 				    ReportManager.problem(this, con, "Sum of values for " + logicName + " from density_feature (" + sumFromDensityFeature + ") doesn't agree with value from seq_region_attrib (" + valueFromSeqRegionAttrib + ") for " + seqRegionName);
