@@ -24,6 +24,7 @@ import javax.swing.event.*;
 import javax.swing.border.*;
 import java.io.*;
 
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -318,8 +319,13 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
    */
   private void openSettingsDialog() {
     
+    Cursor waitCursor = new Cursor(Cursor.WAIT_CURSOR);
+    Cursor defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
+    
+    setCursor(waitCursor);
     GuiTestRunnerSettings gtrs = new GuiTestRunnerSettings(this, guiTestRunner, true);
     gtrs.show();
+    setCursor(defaultCursor);
     
   } // openSettingsDialog
   
