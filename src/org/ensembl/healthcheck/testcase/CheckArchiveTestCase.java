@@ -50,30 +50,39 @@ public class CheckArchiveTestCase extends EnsTestCase {
 					// must do "checkXXX() && result" rather than "result && checkXXX()"
 					// because in the second case no further tests will run after one fails.
 					
+					System.out.println("Checking tables exist and are populated");
 					result = checkTablesExistAndPopulated(con) && result;
-					
-					
+					System.out.println("Checking for null strings");
 					result = checkNoNullStrings( con) && result;
+					System.out.println("Checking archive integrity");
 					result = checkArchiveIntegrity( con ) && result;
-					
+					System.out.println("Checking deleted genes");
 					result = checkDeletedInGeneArchive( con, "gene", "G", 355 ) && result;
+					System.out.println("Checking deleted transcripts");		
 					result = checkDeletedInGeneArchive( con, "transcript", "T", 355 ) && result;
+					System.out.println("Checking deleted translations");
 					result = checkDeletedInGeneArchive( con, "translation", "P", 355 ) && result;
-					
+					System.out.println("Checking changed translations");
 					result = checkChangedInGeneArchive( con, "translation", "P", 355) && result;
+					System.out.println("Checking changed transcript");
 					result = checkChangedInGeneArchive( con, "transcript", "T", 355) && result;
+					System.out.println("Checking changed genes");
 					result = checkChangedInGeneArchive( con, "gene", "G", 355) && result;
-					 
+					System.out.println("Checking deleted translations in peptide archive");
 					result = checkDeletedTranslationsInPeptideArchive( con, 355) && result;
+					System.out.println("Checking deleted translations in peptide archive");
 					result = checkChangedTranslationsInPeptideArchive( con, 355) && result;
-					
+					System.out.println("Checking translations from peptide archive in gene archive");
 					result = checkTranslationsFromPeptideArchiveInGeneArchive( con ) && result;
-					
+					System.out.println("Checking no current translations in peptide archive");
 					result = checkNoCurrentTranslationsInPeptideArchive( con )  && result; 
-					
+					System.out.println("Checking gene propagation IDs are current");
 					result = checkPropagationIDsAreCurrent(con, "gene", "G");
+					System.out.println("Checking transcript propagation IDs are current");
 					result = checkPropagationIDsAreCurrent(con, "transcript", "T");
+					System.out.println("Checking translation propagation IDs are current");
 					result = checkPropagationIDsAreCurrent(con, "translation", "P");
+
 					
 			 }
 			 
