@@ -121,7 +121,7 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
               int currentLength = ((Integer)translationLengths.get(id)).intValue();
               currentLength += (rs.getInt("contig_end") - rs.getInt("contig_start")) + 1;
               translationLengths.put(id, new Integer(currentLength));
-              inCodingRegion = false;
+              //inCodingRegion = false;
             }
           } // if inCoding
           
@@ -139,12 +139,12 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
         
         // find protein features where seq_end is > than the length of the translation
         List thisDBFeatures = new ArrayList();
-        rs = stmt.executeQuery("SELECT protein_feature_id, translation_id, seq_end FROM protein_feature LIMIT 1000");
+        rs = stmt.executeQuery("SELECT protein_feature_id, translation_id, seq_end FROM protein_feature");
         while (rs.next()) {
           Integer id = new Integer(rs.getInt("translation_id"));
           int minTranslationLength = (((Integer)translationLengths.get(id)).intValue() + 2) / 3; // some codons can only be 2 bp
           if (rs.getInt("seq_end")  > minTranslationLength) {
-            ReportManager.problem(this, con, "Protein feature " + rs.getInt("protein_feature_id") + " claims to have length " + rs.getInt("seq_end") + " but translation is of length " + minTranslationLength);
+            //ReportManager.problem(this, con, "Protein feature " + rs.getInt("protein_feature_id") + " claims to have length " + rs.getInt("seq_end") + " but translation is of length " + minTranslationLength);
             result = false;
             thisDBFeatures.add(new Integer(rs.getInt("protein_feature_id")));
           }
