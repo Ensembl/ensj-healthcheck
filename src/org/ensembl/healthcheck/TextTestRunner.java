@@ -61,6 +61,8 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
     private boolean printResultsByDatabase = false;
 
+    private boolean printFailureText = true;
+
     private static final String CORE_DB_REGEXP = "[a-z]+_[a-z]+_(core|est|estgene|vega)";
 
     // -------------------------------------------------------------------------
@@ -102,7 +104,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
         }
 
         if (printResultsByTest) {
-            printReportsByTest(outputLevel);
+            printReportsByTest(outputLevel, printFailureText);
         }
 
         ConnectionPool.closeAll();
@@ -251,6 +253,11 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
                     printResultsByDatabase = true;
                     logger.finest("Will print results by database");
+
+		} else if (args[i].equals("-nofailuretext")) {
+
+                    printFailureText = false;
+                    logger.finest("Will not print failure text.");
 
                 } else {
 

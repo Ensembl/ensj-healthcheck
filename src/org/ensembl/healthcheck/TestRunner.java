@@ -365,8 +365,9 @@ public class TestRunner {
      * @param level
      *          The lowest report level (see ReportLine) to print. Reports with
      *          a level lower than this are not printed.
+     * @param printFailureText If true, print result of getFailureText() for each test.
      */
-    public void printReportsByTest(int level) {
+    public void printReportsByTest(int level, boolean printFailureText) {
 
         System.out.println("\n---- RESULTS BY TEST CASE ----");
         Map map = ReportManager.getAllReportsByTestCase(level);
@@ -375,6 +376,17 @@ public class TestRunner {
         while (it.hasNext()) {
             String key = (String) it.next();
             System.out.println("\n" + key);
+	    String failureText = "";
+	    try {
+		EnsTestCase testObj = (EnsTestCase)(Class.forName(key).newInstance());
+		failureText = testObj.getFailureText();
+	    } catch (Exception e) {
+		System.err.println("Error, can't instantiate object ");
+		e.printStackTrace();
+	    }
+	    if (printFailureText && failureText.length() > 0) {
+		System.out.println("Note: " + failureText);
+	    }
             List lines = (List) map.get(key);
             Iterator it2 = lines.iterator();
             while (it2.hasNext()) {
