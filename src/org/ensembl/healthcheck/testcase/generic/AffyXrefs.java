@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check Affymetrix xrefs: - that each chromosome has at least 1 Affy xref
@@ -58,15 +59,11 @@ public class AffyXrefs extends SingleDatabaseTestCase {
 
         Connection con = dbre.getConnection();
 
-        // First check whether there are any Affy xrefs
-        String sql = "SELECT COUNT(*) FROM external_db edb, xref x WHERE edb.db_name LIKE \'AFFY%\' AND x.external_db_id=edb.external_db_id";
+	// Check if there are any Affy features - if so there should be Affy Xrefs
+        String sql = "SELECT COUNT(*) FROM misc_set ms, misc_feature_misc_set mfms WHERE ms.code LIKE \'%AFFY%\' AND ms.misc_set_id=mfms.misc_set_id";
+	logger.fine("Counting Affy features");
 
-        if (getRowCount(con, sql) == 0) {
-
-            ReportManager.problem(this, con, "Has no Affy xrefs - may not be a problem for all databases");
-            result = false;
-
-        } else {
+        if (getRowCount(con, sql) > 0) {
 
             // Get a list of chromosomes, then check the number of Affy xrefs associated with each one
             // Note that this can't be done with a GROUP BY/HAVING clause as that would miss any chromosomes that had zero xrefs
@@ -114,7 +111,11 @@ public class AffyXrefs extends SingleDatabaseTestCase {
                 }
             }
 
-        }
+        } else {
+	    
+	    logger.info(DBUtils.getShortDatabaseName(con) + " has no Affy features, not checking for Affy xrefs");
+
+	}
 
         return result;
 
