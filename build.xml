@@ -165,7 +165,7 @@
       use="true"
       windowtitle="EnsEMBL HealthCheck"
       doctitle="EnsEMBL HealthCheck"
-      packagenames="org.ensembl.healthcheck, org.ensembl.healthcheck.util"
+      packagenames="org.ensembl.healthcheck, org.ensembl.healthcheck.util, org.ensembl.healthcheck.testcase"
       >
     </javadoc>
   </target>
