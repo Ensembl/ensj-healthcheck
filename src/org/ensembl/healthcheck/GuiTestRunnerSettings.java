@@ -121,7 +121,7 @@ public class GuiTestRunnerSettings extends javax.swing.JDialog {
     outputLevelPanel.add(outputLabel);
     
     outputComboBox.setFont(new java.awt.Font("Dialog", 0, 12));
-    outputComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "All", "Problems only", "Correct results", "Summary", "Info", "None" }));
+    outputComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "All", "Problems only", "Warnings", "Correct results", "Info", "None" }));
     outputLevelPanel.add(outputComboBox);
     
     centrePanel.add(outputLevelPanel);
@@ -201,7 +201,7 @@ public class GuiTestRunnerSettings extends javax.swing.JDialog {
         levels.put("All"            , new Integer(ReportLine.ALL));
         levels.put("Problems only"  , new Integer(ReportLine.PROBLEM));
         levels.put("Correct results", new Integer(ReportLine.CORRECT));
-        levels.put("Summary"        , new Integer(ReportLine.SUMMARY));
+        levels.put("Warnings"        , new Integer(ReportLine.WARNING));
         levels.put("Info"           , new Integer(ReportLine.INFO));
         levels.put("None"           , new Integer(ReportLine.NONE));
         

@@ -33,7 +33,7 @@ public class CheckCoreTablesHaveDataTestCase extends EnsTestCase {
    * Creates a new instance of CheckCoreTablesHaveDataTestCase
    */
   public CheckCoreTablesHaveDataTestCase() {
-    addToGroup("db_constraints");
+    addToGroup("post_genebuild");
     setDescription("Verify that important tables in core DBs actually have data.");
   }
   
@@ -60,7 +60,7 @@ public class CheckCoreTablesHaveDataTestCase extends EnsTestCase {
           warn(con, table + " has no data!");
           ReportManager.problem(this, con, table + " has no data.");
         } else {
-          ReportManager.summary(this, con, table + " is OK.");
+          ReportManager.correct(this, con, table + " is OK.");
         }
       } // foreach table
       

@@ -261,9 +261,9 @@ public class TestRunner {
       EnsTestCase testCase = (EnsTestCase)it.next();
       
       if (testCase.inGroups(groupsToRun)) {
-        logger.warning("\nRunning test of type " + testCase.getClass().getName());
+	  logger.info("\nRunning test of type " + testCase.getClass().getName());
         if (testCase.isLongRunning()) {
-          logger.warning("Note that " + testCase.getClass().getName() + " may take a significant amount of time to run");          
+          logger.info("Note that " + testCase.getClass().getName() + " may take a significant amount of time to run");          
         }
         
         if (preFilterRegexp != null) {
@@ -275,12 +275,14 @@ public class TestRunner {
           testCase.setDatabaseRegexp(preFilterRegexp);
         }
         
+	ReportManager.startTestCase( testCase );
         TestResult tr = testCase.run();
+	ReportManager.finishTestCase( testCase );
         
         numberOfTestsRun++;
         
         String passFail = tr.getResult() ? "PASSED" : "FAILED";
-        logger.warning(tr.getName() + " " + passFail);
+        logger.info(tr.getName() + " " + passFail);
         
         // check for show/repair
         if (testCase.canRepair()) {
@@ -568,8 +570,8 @@ public class TestRunner {
       outputLevel = ReportLine.PROBLEM;
     }  else if (lstr.equals("correct")) {
       outputLevel = ReportLine.CORRECT;
-    }  else if (lstr.equals("summary")) {
-      outputLevel = ReportLine.SUMMARY;
+    }  else if (lstr.equals("warning")) {
+      outputLevel = ReportLine.WARNING;
     }  else if (lstr.equals("info")) {
       outputLevel = ReportLine.INFO;
     }  else {
@@ -689,9 +691,9 @@ public class TestRunner {
       }
       
     } catch(IOException ex) {
-      ex.printStackTrace();
+	// ex.printStackTrace();
     } catch(ClassNotFoundException ex) {
-      ex.printStackTrace();
+	// ex.printStackTrace();
     }
     
   }

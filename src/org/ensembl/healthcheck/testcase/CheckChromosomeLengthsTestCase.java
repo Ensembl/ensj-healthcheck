@@ -33,7 +33,7 @@ public class CheckChromosomeLengthsTestCase extends EnsTestCase {
    * Creates a new instance of CheckChromosomeLengthsTestCase
    */
   public CheckChromosomeLengthsTestCase() {
-    addToGroup("db_constraints");
+    addToGroup("post_genebuild");
     setDescription("Check that the chromosome lengths from the chromosome table agree with both the assembly table and the karyotype table.");
   }
   
@@ -81,7 +81,7 @@ public class CheckChromosomeLengthsTestCase extends EnsTestCase {
       if (chrs.length > 0){
 	result = false;
 	ReportManager.problem(this, con, "Chromosome lengths are shorter in the chromosome table than in the assembly table");
-	for( int i = 0 ; i<chrs.length && i<5; i++ ) {
+	for( int i = 0 ; i<chrs.length && i<50; i++ ) {
 	    ReportManager.problem( this, con, " Chromosome " + chrs[i] + " is longer in assembly than in chromosome" );
 	}
       } else {
@@ -102,8 +102,8 @@ public class CheckChromosomeLengthsTestCase extends EnsTestCase {
       
       if (kars.length > 0){
 	result = false;
-	ReportManager.problem(this, con, "chromosome lengths differ between karyotype and chromosome tables");
-	for( int i = 0 ; i<kars.length && i<5; i++ ) {
+	ReportManager.info(this, con, "chromosome lengths differ between karyotype and chromosome tables");
+	for( int i = 0 ; i<kars.length && i<50; i++ ) {
 	    ReportManager.problem( this, con, " Chromosome " + kars[i] + " is different in karyotype and chromosome table" );
 	}
       } else {

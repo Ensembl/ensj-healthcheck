@@ -18,7 +18,7 @@
 package org.ensembl.healthcheck;
 
 import org.ensembl.healthcheck.util.*;
-
+import org.ensembl.healthcheck.testcase.*;
 import java.io.*;
 
 import java.sql.*;
@@ -30,7 +30,7 @@ import java.util.regex.*;
 /**
  * Subclass of TestRunner intended for running tests from the command line.
  */
-public class TextTestRunner extends TestRunner {
+public class TextTestRunner extends TestRunner implements Reporter {
   
   private static String version = "$Id$";
   private boolean forceDatabases = false;
@@ -39,7 +39,9 @@ public class TextTestRunner extends TestRunner {
   private boolean rebuildSchemaInfo = false;
   private static final String SCHEMA_INFO_FILENAME = "schemas.ser";
   private static final boolean GZIP_SCHEMA_INFO = true;
-  
+    public Vector outputBuffer ;
+    private String lastDatabase = "";
+
   // -------------------------------------------------------------------------
   
   /**
@@ -53,7 +55,8 @@ public class TextTestRunner extends TestRunner {
     System.out.println(ttr.getVersion());
     
     ttr.parseCommandLine(args);
-    
+    ttr.outputBuffer = new Vector();
+
     ttr.setupLogging();
     
     ttr.readPropertiesFile();
@@ -65,14 +68,11 @@ public class TextTestRunner extends TestRunner {
     if (ttr.useSchemaInfo && !ttr.rebuildSchemaInfo) { // if buildSchemaList has been called, SchemaManager will already have been populated
       ttr.readStoredSchemaInfo(SCHEMA_INFO_FILENAME, GZIP_SCHEMA_INFO);
     }
-    
+    ReportManager.setReporter( ttr );
+
     ttr.runAllTests(ttr.findAllTests(), ttr.forceDatabases);
     
     ConnectionPool.closeAll();
-    
-    ttr.printReportsByTest(ttr.outputLevel);
-    
-    ttr.printReportsByDatabase(ttr.outputLevel);
     
   }
   
@@ -137,7 +137,7 @@ public class TextTestRunner extends TestRunner {
         } else if (args[i].equals("-output")) {
           
           setOutputLevel(args[++i]);
-          System.out.println("Set output level to " + outputLevel);
+          // System.out.println("Set output level to " + outputLevel);
           
         } else if (args[i].equals("-debug")) {
           
@@ -155,33 +155,33 @@ public class TextTestRunner extends TestRunner {
           
           i++;
           preFilterRegexp = args[i];
-          System.out.println("Will pre-filter database names on " + preFilterRegexp);
+          // System.out.println("Will pre-filter database names on " + preFilterRegexp);
           
         } else if (args[i].equals("-force")) {
           
           forceDatabases = true;
-          System.out.println("Will use ONLY databases specified by -d");
+          // System.out.println("Will use ONLY databases specified by -d");
           
         } else if (args[i].equals("-noschemainfo")) {
           
           useSchemaInfo = false;
-          System.out.println("Will NOT read schema info at startup");
+          // System.out.println("Will NOT read schema info at startup");
         
         } else if (args[i].equals("-refreshschemas")) {
           
           rebuildSchemaInfo = true;
-          System.out.println("Will rebuild and store schema info at startup");
+          // System.out.println("Will rebuild and store schema info at startup");
           
         } else if (args[i].equals("-config")) {
           
           i++;
           propertiesFileName = args[i];
-          System.out.println("Will read properties from " + propertiesFileName);
+          // System.out.println("Will read properties from " + propertiesFileName);
           
         } else {
           
           groupsToRun.add(args[i]);
-          System.out.println("Will run tests in group " + args[i]);
+          // System.out.println("Will run tests in group " + args[i]);
           
         }
         
@@ -221,7 +221,58 @@ public class TextTestRunner extends TestRunner {
   // setupLogging
   // -------------------------------------------------------------------------
   
- 
+    public void message( ReportLine reportLine ) {
+	String level = "ODD    ";
+
+	System.out.print( "." );
+	System.out.flush();
+
+	if( reportLine.getLevel() < outputLevel ) {
+	    return;
+	}
+
+	if( ! reportLine.getDatabaseName().equals( lastDatabase )) {
+	    outputBuffer.add( "  " + reportLine.getDatabaseName() );
+	    lastDatabase = reportLine.getDatabaseName();
+	}
+
+	switch( reportLine.getLevel() ) {
+	case( ReportLine.PROBLEM ) : 
+	    level = "PROBLEM";
+	    break;
+	case( ReportLine.WARNING ) : 
+	    level = "WARNING";
+	    break;
+	case( ReportLine.INFO ) : 
+	    level = "INFO   ";
+	    break;
+	case( ReportLine.CORRECT ) : 
+	    level = "CORRECT";
+	    break;
+	}
+
+	outputBuffer.add( "    " + level + ":  " + reportLine.getMessage() );
+    }
+
+    public void startTestCase( EnsTestCase testCase ) {
+	String name;
+	name = testCase.getClass().getName();
+	name = name.substring( name.lastIndexOf( "." ) + 1 );
+	System.out.print( name + " " );
+	System.out.flush();
+    }
+
+    public void finishTestCase( EnsTestCase testCase ) {
+
+	System.out.println( " PASSED" );
+	lastDatabase = "";
+	Iterator it = outputBuffer.iterator();
+	while( it.hasNext() ) {
+	    System.out.println( (String) it.next() );
+	}
+	outputBuffer.clear();
+    }
+
 }
 
 

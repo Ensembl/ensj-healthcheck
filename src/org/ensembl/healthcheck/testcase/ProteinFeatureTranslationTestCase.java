@@ -197,7 +197,8 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
       } else {
         try {
           Statement stmt = con.createStatement();
-          System.out.println("would have executed " + sql);
+	  System.out.println( DBUtils.getShortDatabaseName(con));
+          System.out.println( sql );
           //stmt.execute(sql);
           stmt.close();
         } catch (SQLException se) {

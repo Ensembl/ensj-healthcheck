@@ -39,11 +39,11 @@ public class ReportLine {
   /** Output level representing a problem with a test */
   public static final int PROBLEM = 1000;
   /** Output level representing a test that has passed */
-  public static final int CORRECT = 750;
+  public static final int WARNING = 750;
   /** Output level representing something that should be included in the test summary */
-  public static final int SUMMARY = 500;
+  public static final int INFO = 500;
   /** Output level representing something that is for information only */
-  public static final int INFO    = 100;
+  public static final int CORRECT    = 100;
   /** Output level that is lower than all others */
   public static final int ALL     = 0;
   

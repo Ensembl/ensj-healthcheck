@@ -33,8 +33,8 @@ public class CheckAssemblyTablesTestCase extends EnsTestCase {
    * Creates a new instance of CheckAssemblyTables
    */
   public CheckAssemblyTablesTestCase() {
-    addToGroup("pre_mart");
-    setDescription("Check that the assembly table is present, and contains the same information for each species.");
+    addToGroup("pre_release");
+    setDescription("Check that the assembly table  contains the same information for all databases with the same species.");
   }
   
   /** 

@@ -38,6 +38,25 @@ public class ReportManager {
   /** The logger to use for this class */
   protected static Logger logger = Logger.getLogger("HealthCheckLogger");
   
+  protected static Reporter reporter;
+
+  public static void setReporter( Reporter rep ) {
+      reporter = rep;
+  }
+	
+    
+    public static void startTestCase( EnsTestCase testCase ) {
+	if( reporter != null ) {
+	    reporter.startTestCase( testCase );
+	}
+    }
+
+    public static void finishTestCase( EnsTestCase testCase ) {
+	if( reporter != null ) {
+	    reporter.finishTestCase( testCase );
+	}
+    }
+
   // -------------------------------------------------------------------------
   /**
    * Add a test case report.
@@ -85,7 +104,9 @@ public class ReportManager {
       logger.warning("Cannot add report with database name not set");
     }
     
-    
+    if( reporter != null ) {
+	reporter.message( report );
+    }
   } // add
   
   // -------------------------------------------------------------------------
@@ -173,9 +194,9 @@ public class ReportManager {
    * @param con The database connection involved.
    * @param message The message to be reported.
    */
-  public static void summary(EnsTestCase testCase, Connection con, String message) {
+  public static void warning(EnsTestCase testCase, Connection con, String message) {
     
-    report(testCase, con, ReportLine.SUMMARY, message);
+    report(testCase, con, ReportLine.WARNING, message);
     
   } // summary
   
@@ -185,9 +206,9 @@ public class ReportManager {
    * @param dbName The name of the database involved.
    * @param message The message to be reported.
    */
-  public static void summary(EnsTestCase testCase, String dbName, String message) {
+  public static void warning(EnsTestCase testCase, String dbName, String message) {
     
-    report(testCase, dbName, ReportLine.SUMMARY, message);
+    report(testCase, dbName, ReportLine.WARNING, message);
     
   } // summary
   
