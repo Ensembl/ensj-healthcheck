@@ -33,7 +33,6 @@ import org.ensembl.healthcheck.util.*;
 public class TextTestRunner extends TestRunner {
   
   private boolean forceDatabases = false;
-  private boolean verbose = false;
   private boolean debug = false;
     
   private static String version = "$Id$";
@@ -59,23 +58,33 @@ public class TextTestRunner extends TestRunner {
     
     ConnectionPool.closeAll();
     
+    ttr.printReportsByTest(ttr.outputLevel);
+    
+    ttr.printReportsByDatabase(ttr.outputLevel);
+    
   } // main
   
   // -------------------------------------------------------------------------
   
   private void printUsage() {
     
-    System.out.println("\nUsage: TextTestRunner {-d regexp} {-force} {group1} {group2} ...\n");
+    System.out.println("\nUsage: TextTestRunner {-d regexp} {-force} {-output none|problem|correct|summary|info|all} {group1} {group2} ...\n");
     System.out.println("Options:");
-    System.out.println("  -d regexp  Use the given regular expression to decide which databases to use.");
-    System.out.println("  -force     Run the named tests on the databases matched by -d, without ");
-    System.out.println("             taking into account the regular expressions built into the tests themselves.");
-    System.out.println("  -h         This message.");
-    System.out.println("  -v         Verbose output");
-    System.out.println("  -debug     Print debugging info (for developers only)");
-    System.out.println("  group1     Names of groups of test cases to run.");
-    System.out.println("             Note each test case is in a group of its own with the name of the test case.");
-    System.out.println("             This allows individual tests to be run if required.");
+    System.out.println("  -d regexp       Use the given regular expression to decide which databases to use.");
+    System.out.println("  -force          Run the named tests on the databases matched by -d, without ");
+    System.out.println("                  taking into account the regular expressions built into the tests themselves.");
+    System.out.println("  -h              This message.");
+    System.out.println("  -output level   Set output level; level can be one of ");
+    System.out.println("                  none      nothing is printed");
+    System.out.println("                  problem   only problems are reported");
+    System.out.println("                  correct   only correct results (and problems) are reported");
+    System.out.println("                  summary   only summary info (and problems, and correct reports) are reported");
+    System.out.println("                  info      info (and problem, correct, summary) messages reported");
+    System.out.println("                  all       everything is printed");
+    System.out.println("  -debug          Print debugging info (for developers only)");
+    System.out.println("  group1          Names of groups of test cases to run.");
+    System.out.println("                  Note each test case is in a group of its own with the name of the test case.");
+    System.out.println("                  This allows individual tests to be run if required.");
     System.out.println("");
     
   } // printUsage
@@ -111,9 +120,10 @@ public class TextTestRunner extends TestRunner {
           printUsage();
           System.exit(0);
           
-        } else if (args[i].equals("-v")) {
+        } else if (args[i].equals("-output")) {
           
-          verbose = true;
+          setOutputLevel(args[++i]);
+          System.out.println("Set output level to " + outputLevel);
           
         } else if (args[i].equals("-debug")) {
           
@@ -154,9 +164,6 @@ public class TextTestRunner extends TestRunner {
     logger.setLevel(Level.WARNING); // default - only print important messages
     if (debug) {
       logger.setLevel(Level.FINEST);
-    }
-    if (verbose) {
-      logger.setLevel(Level.INFO);
     }
     //logger.info("Set logging level to " + logger.getLevel().getName());
     
