@@ -16,40 +16,43 @@
 
 package org.ensembl.healthcheck.testcase.generic;
 
-import org.ensembl.healthcheck.*;
-import org.ensembl.healthcheck.testcase.*;
+import org.ensembl.healthcheck.DatabaseRegistry;
+import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 /**
- * Check meta table species, classification and taxonomy_id is the same in all DBs for
- * each species
+ * Check meta table species, classification and taxonomy_id is the same in all
+ * DBs for each species
  */
 
 public class MetaCrossSpecies extends MultiDatabaseTestCase {
 
-	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.EST, DatabaseType.ESTGENE, DatabaseType.VEGA };
+    private DatabaseType[] types = {DatabaseType.CORE, DatabaseType.EST, DatabaseType.ESTGENE, DatabaseType.VEGA};
 
-	public MetaCrossSpecies() {
-		addToGroup("post_genebuild");
-		addToGroup("release");
-		setDescription("Check meta table species, classification and taxonomy_id is the same in all DBs for each species");
-	}
+    public MetaCrossSpecies() {
+        addToGroup("post_genebuild");
+        addToGroup("release");
+        setDescription("Check meta table species, classification and taxonomy_id is the same in all DBs for each species");
+    }
 
-	/**
-	 * Check various aspects of the meta table.
-	 * 
-	 * @return True if the meta information is consistent within species.
-	 */
-	public boolean run(DatabaseRegistry dbr) {
+    /**
+     * Check various aspects of the meta table.
+     * 
+     * @return True if the meta information is consistent within species.
+     */
+    public boolean run(DatabaseRegistry dbr) {
 
-		boolean result = checkSQLAcrossSpecies("SELECT LCASE(meta_value) FROM meta WHERE meta_key LIKE \'species.%' ORDER BY meta_id", dbr, types);
-		if (!result) {
-			ReportManager.problem(this, "", "meta information not the same for some databases");
-		} else {
-			ReportManager.correct(this, "", "meta information is the same for all databases for all species");
-		}
+        boolean result = checkSQLAcrossSpecies(
+                "SELECT LCASE(meta_value) FROM meta WHERE meta_key LIKE \'species.%' ORDER BY meta_id", dbr, types);
+        if (!result) {
+            ReportManager.problem(this, "", "meta information not the same for some databases");
+        } else {
+            ReportManager.correct(this, "", "meta information is the same for all databases for all species");
+        }
 
-		return result;
+        return result;
 
-	}
+    }
 
 } // MetaCrossSpecies

@@ -18,14 +18,25 @@
 
 package org.ensembl.healthcheck.testcase;
 
-import java.io.*;
-import java.util.*;
-import java.sql.*;
-import java.util.logging.*;
+import java.io.FileNotFoundException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Logger;
 
-import org.ensembl.healthcheck.*;
-
-import org.ensembl.healthcheck.util.*;
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.TestRunner;
+import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.DatabaseConnectionIterator;
+import org.ensembl.healthcheck.util.SQLParser;
+import org.ensembl.healthcheck.util.Utils;
 
 /**
  * Base class for all healthcheck tests.
@@ -37,8 +48,9 @@ public abstract class EnsTestCase {
     protected TestRunner testRunner;
 
     /**
-     * A list of Strings representing the groups that this test is a member of. Every test is (at
-     * least) a member of a group with the same name as the test.
+     * A list of Strings representing the groups that this test is a member of.
+     * Every test is (at least) a member of a group with the same name as the
+     * test.
      */
     protected List groups;
 
@@ -49,7 +61,8 @@ public abstract class EnsTestCase {
     protected static Logger logger = Logger.getLogger("HealthCheckLogger");
 
     /**
-     * Boolean variable that can be set if the test case is likely to take a long time to run
+     * Boolean variable that can be set if the test case is likely to take a
+     * long time to run
      */
     protected boolean hintLongRunning = false;
 
@@ -88,8 +101,9 @@ public abstract class EnsTestCase {
     /**
      * Sets up this test. <B>Must </B> be called before the object is used.
      * 
-     * @param tr The TestRunner to associate with this test. Usually just <CODE>this</CODE> if
-     *            being called from the TestRunner.
+     * @param tr
+     *          The TestRunner to associate with this test. Usually just <CODE>
+     *          this</CODE> if being called from the TestRunner.
      */
     public void init(TestRunner tr) {
 
@@ -102,7 +116,8 @@ public abstract class EnsTestCase {
     /**
      * Gets the full name of this test.
      * 
-     * @return The full name of the test, e.g. org.ensembl.healthcheck.EnsTestCase
+     * @return The full name of the test, e.g.
+     *         org.ensembl.healthcheck.EnsTestCase
      */
     public String getTestName() {
 
@@ -115,7 +130,8 @@ public abstract class EnsTestCase {
     /**
      * Gets the full name of this test.
      * 
-     * @return The full name of the test, e.g. org.ensembl.healthcheck.EnsTestCase
+     * @return The full name of the test, e.g.
+     *         org.ensembl.healthcheck.EnsTestCase
      */
     public String getName() {
 
@@ -125,8 +141,8 @@ public abstract class EnsTestCase {
 
     // -------------------------------------------------------------------------
     /**
-     * Get the short form of the test name, ie the name of the test class without the package
-     * qualifier.
+     * Get the short form of the test name, ie the name of the test class
+     * without the package qualifier.
      * 
      * @return The short test name, e.g. EnsTestCase
      */
@@ -140,8 +156,8 @@ public abstract class EnsTestCase {
 
     // -------------------------------------------------------------------------
     /**
-     * Get the very short form of the test name; ie that returned by getShortTestName() without the
-     * trailing "TestCase"
+     * Get the very short form of the test name; ie that returned by
+     * getShortTestName() without the trailing "TestCase"
      * 
      * @return The very short test name, e.g. CheckMetaTables
      */
@@ -155,7 +171,8 @@ public abstract class EnsTestCase {
 
     // -------------------------------------------------------------------------
     /**
-     * Get a list of the names of the groups which this test case is a member of.
+     * Get a list of the names of the groups which this test case is a member
+     * of.
      * 
      * @return The list of names as Strings.
      */
@@ -167,7 +184,8 @@ public abstract class EnsTestCase {
 
     // -------------------------------------------------------------------------
     /**
-     * Get a list of the groups that this test case is a member of, formatted for easy printing.
+     * Get a list of the groups that this test case is a member of, formatted
+     * for easy printing.
      * 
      * @return The comma-separated list of group names.
      */
@@ -187,9 +205,11 @@ public abstract class EnsTestCase {
 
     // -------------------------------------------------------------------------
     /**
-     * Convenience method for assigning this test case to several groups at once.
+     * Convenience method for assigning this test case to several groups at
+     * once.
      * 
-     * @param s A list of Strings containing the group names.
+     * @param s
+     *          A list of Strings containing the group names.
      */
     public void setGroups(List s) {
 
@@ -199,9 +219,11 @@ public abstract class EnsTestCase {
 
     // -------------------------------------------------------------------------
     /**
-     * Convenience method for assigning this test case to several groups at once.
+     * Convenience method for assigning this test case to several groups at
+     * once.
      * 
-     * @param s Array of group names.
+     * @param s
+     *          Array of group names.
      */
     public void setGroups(String[] s) {
 
@@ -212,10 +234,11 @@ public abstract class EnsTestCase {
 
     // -------------------------------------------------------------------------
     /**
-     * Add this test case to a new group. If the test case is already a member of the group, a
-     * warning is printed and it is not added again.
+     * Add this test case to a new group. If the test case is already a member
+     * of the group, a warning is printed and it is not added again.
      * 
-     * @param newGroupName The name of the new group.
+     * @param newGroupName
+     *          The name of the new group.
      */
     public void addToGroup(String newGroupName) {
 
@@ -229,10 +252,12 @@ public abstract class EnsTestCase {
 
     // -------------------------------------------------------------------------
     /**
-     * Remove this test case from the specified group. If the test case is not a member of the
-     * specified group, a warning is printed.
+     * Remove this test case from the specified group. If the test case is not
+     * a member of the specified group, a warning is printed.
      * 
-     * @param groupName The name of the group from which this test case is to be removed.
+     * @param groupName
+     *          The name of the group from which this test case is to be
+     *          removed.
      */
     public void removeFromGroup(String groupName) {
 
@@ -248,8 +273,10 @@ public abstract class EnsTestCase {
     /**
      * Test if this test case is a member of a particular group.
      * 
-     * @param group The name of the group to check.
-     * @return True if this test case is a member of the named group, false otherwise.
+     * @param group
+     *          The name of the group to check.
+     * @return True if this test case is a member of the named group, false
+     *         otherwise.
      */
     public boolean inGroup(String group) {
 
@@ -259,10 +286,13 @@ public abstract class EnsTestCase {
 
     // -------------------------------------------------------------------------
     /**
-     * Convenience method for checking if this test case belongs to any of several groups.
+     * Convenience method for checking if this test case belongs to any of
+     * several groups.
      * 
-     * @param checkGroups The list of group names to check.
-     * @return True if this test case is in any of the groups, false if it is in none.
+     * @param checkGroups
+     *          The list of group names to check.
+     * @return True if this test case is in any of the groups, false if it is
+     *         in none.
      */
     public boolean inGroups(List checkGroups) {
 
@@ -282,8 +312,11 @@ public abstract class EnsTestCase {
     /**
      * Count the number of rows in a table.
      * 
-     * @param con The database connection to use. Should have been opened already.
-     * @param table The name of the table to analyse.
+     * @param con
+     *          The database connection to use. Should have been opened
+     *          already.
+     * @param table
+     *          The name of the table to analyse.
      * @return The number of rows in the table.
      */
     public int countRowsInTable(Connection con, String table) {
@@ -357,11 +390,16 @@ public abstract class EnsTestCase {
     /**
      * Count the rows in a particular table or query.
      * 
-     * @param con A connection to the database. Should already be open.
-     * @param sql The SQL to execute. Note that if possible this should begin with <code>SELECT COUNT FROM</code>
-     *            since this is much quicker to execute. If a standard SELECT statement is used, a
-     *            row-by-row count will be performed, which may be slow if the table is large.
-     * @return The number of matching rows, or -1 if the query did not execute for some reason.
+     * @param con
+     *          A connection to the database. Should already be open.
+     * @param sql
+     *          The SQL to execute. Note that if possible this should begin
+     *          with <code>SELECT COUNT FROM</code> since this is much
+     *          quicker to execute. If a standard SELECT statement is used, a
+     *          row-by-row count will be performed, which may be slow if the
+     *          table is large.
+     * @return The number of matching rows, or -1 if the query did not execute
+     *         for some reason.
      */
     public int getRowCount(Connection con, String sql) {
 
@@ -377,7 +415,7 @@ public abstract class EnsTestCase {
 
             result = getRowCountFast(con, sql);
 
-        } else { //  otherwise, do it row-by-row
+        } else {//  otherwise, do it row-by-row
 
             logger
                     .warning("getRowCount() executing SQL which does not appear to begin with SELECT COUNT - performing row-by-row count, which may take a long time if the table is large.");
@@ -391,11 +429,13 @@ public abstract class EnsTestCase {
 
     // -------------------------------------------------------------------------
     /**
-     * Execute a SQL statement and return the value of one column of one row. Only the FIRST row
-     * matched is returned.
+     * Execute a SQL statement and return the value of one column of one row.
+     * Only the FIRST row matched is returned.
      * 
-     * @param con The Connection to use.
-     * @param sql The SQL to check; should return ONE value.
+     * @param con
+     *          The Connection to use.
+     * @param sql
+     *          The SQL to check; should return ONE value.
      * @return The value returned by the SQL.
      */
     public String getRowColumnValue(Connection con, String sql) {
@@ -420,11 +460,15 @@ public abstract class EnsTestCase {
 
     // -------------------------------------------------------------------------
     /**
-     * Execute a SQL statement and return the values of one column of the result.
+     * Execute a SQL statement and return the values of one column of the
+     * result.
      * 
-     * @param con The Connection to use.
-     * @param sql The SQL to check; should return ONE column.
-     * @return The value(s) making up the column, in the order that they were read.
+     * @param con
+     *          The Connection to use.
+     * @param sql
+     *          The SQL to check; should return ONE column.
+     * @return The value(s) making up the column, in the order that they were
+     *         read.
      */
     public String[] getColumnValues(Connection con, String sql) {
 
@@ -451,13 +495,20 @@ public abstract class EnsTestCase {
     /**
      * Verify foreign-key relations.
      * 
-     * @param con A connection to the database to be tested. Should already be open.
-     * @param table1 With col1, specifies the first key to check.
-     * @param col1 Column in table1 to check.
-     * @param table2 With col2, specifies the second key to check.
-     * @param col2 Column in table2 to check.
-     * @param oneWayOnly If false, only a "left join" is performed on table1 and table2. If false,
-     *            the
+     * @param con
+     *          A connection to the database to be tested. Should already be
+     *          open.
+     * @param table1
+     *          With col1, specifies the first key to check.
+     * @param col1
+     *          Column in table1 to check.
+     * @param table2
+     *          With col2, specifies the second key to check.
+     * @param col2
+     *          Column in table2 to check.
+     * @param oneWayOnly
+     *          If false, only a "left join" is performed on table1 and table2.
+     *          If false, the
      * @return The number of "orphans"
      */
     public int countOrphans(Connection con, String table1, String col1, String table2, String col2, boolean oneWayOnly) {
@@ -468,13 +519,13 @@ public abstract class EnsTestCase {
 
         int resultLeft, resultRight;
 
-        String sql = " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2
-                + " WHERE " + table2 + "." + col2 + " iS NULL";
+        String sql = " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "."
+                + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
 
         resultLeft = getRowCount(con, "SELECT COUNT(*)" + sql);
 
         if (resultLeft > 0) {
-            String values[] = getColumnValues(con, "SELECT " + table1 + "." + col1 + sql + " LIMIT 20");
+            String[] values = getColumnValues(con, "SELECT " + table1 + "." + col1 + sql + " LIMIT 20");
             for (int i = 0; i < values.length; i++) {
                 ReportManager.info(this, con, table1 + "." + col1 + " " + values[i] + " is not linked.");
             }
@@ -482,12 +533,12 @@ public abstract class EnsTestCase {
 
         if (!oneWayOnly) {
             // and the other way ... (a right join?)
-            sql = " FROM " + table2 + " LEFT JOIN " + table1 + " ON " + table2 + "." + col2 + " = " + table1 + "." + col1
-                    + " WHERE " + table1 + "." + col1 + " IS NULL";
+            sql = " FROM " + table2 + " LEFT JOIN " + table1 + " ON " + table2 + "." + col2 + " = " + table1 + "."
+                    + col1 + " WHERE " + table1 + "." + col1 + " IS NULL";
 
             resultRight = getRowCount(con, "SELECT COUNT(*)" + sql);
             if (resultRight > 0) {
-                String values[] = getColumnValues(con, "SELECT " + table2 + "." + col2 + sql + " LIMIT 20");
+                String[] values = getColumnValues(con, "SELECT " + table2 + "." + col2 + sql + " LIMIT 20");
                 for (int i = 0; i < values.length; i++) {
                     ReportManager.info(this, con, table2 + "." + col2 + " " + values[i] + " is not linked.");
                 }
@@ -504,12 +555,15 @@ public abstract class EnsTestCase {
 
     // -------------------------------------------------------------------------
     /**
-     * Check that a particular SQL statement has the same result when executed on more than one
-     * database.
+     * Check that a particular SQL statement has the same result when executed
+     * on more than one database.
      * 
-     * @return True if all matched databases provide the same result, false otherwise.
-     * @param sql The SQL query to execute.
-     * @param regexp A regexp matching the database names to check.
+     * @return True if all matched databases provide the same result, false
+     *         otherwise.
+     * @param sql
+     *          The SQL query to execute.
+     * @param regexp
+     *          A regexp matching the database names to check.
      */
     public boolean checkSameSQLResult(String sql, String regexp) {
 
@@ -558,12 +612,15 @@ public abstract class EnsTestCase {
 
     //-------------------------------------------------------------------------
     /**
-     * Check that a particular SQL statement has the same result when executed on more than one
-     * database.
+     * Check that a particular SQL statement has the same result when executed
+     * on more than one database.
      * 
-     * @return True if all matched databases provide the same result, false otherwise.
-     * @param sql The SQL query to execute.
-     * @param databases The DatabaseRegistryEntries on which to execute sql.
+     * @return True if all matched databases provide the same result, false
+     *         otherwise.
+     * @param sql
+     *          The SQL query to execute.
+     * @param databases
+     *          The DatabaseRegistryEntries on which to execute sql.
      */
     public boolean checkSameSQLResult(String sql, DatabaseRegistryEntry[] databases) {
 
@@ -612,11 +669,16 @@ public abstract class EnsTestCase {
     /**
      * Check for the presence of a particular String in a table column.
      * 
-     * @param con The database connection to use.
-     * @param table The name of the table to examine.
-     * @param column The name of the column to look in.
-     * @param str The string to search for; can use database wildcards (%, _) Note that if you want
-     *            to search for one of these special characters, it must be backslash-escaped.
+     * @param con
+     *          The database connection to use.
+     * @param table
+     *          The name of the table to examine.
+     * @param column
+     *          The name of the column to look in.
+     * @param str
+     *          The string to search for; can use database wildcards (%, _)
+     *          Note that if you want to search for one of these special
+     *          characters, it must be backslash-escaped.
      * @return The number of times the string is matched.
      */
     public int findStringInColumn(Connection con, String table, String column, String str) {
@@ -636,10 +698,14 @@ public abstract class EnsTestCase {
     /**
      * Check that all entries in column match a particular pattern.
      * 
-     * @param con The database connection to use.
-     * @param table The name of the table to examine.
-     * @param column The name of the column to look in.
-     * @param pattern The SQL pattern (can contain _,%) to look for.
+     * @param con
+     *          The database connection to use.
+     * @param table
+     *          The name of the table to examine.
+     * @param column
+     *          The name of the column to look in.
+     * @param pattern
+     *          The SQL pattern (can contain _,%) to look for.
      * @return The number of columns that <em>DO NOT</em> match the pattern.
      */
     public int checkColumnPattern(Connection con, String table, String column, String pattern) {
@@ -658,10 +724,14 @@ public abstract class EnsTestCase {
     /**
      * Check that all entries in column match a particular value.
      * 
-     * @param con The database connection to use.
-     * @param table The name of the table to examine.
-     * @param column The name of the column to look in.
-     * @param value The string to look for (not a pattern).
+     * @param con
+     *          The database connection to use.
+     * @param table
+     *          The name of the table to examine.
+     * @param column
+     *          The name of the column to look in.
+     * @param value
+     *          The string to look for (not a pattern).
      * @return The number of columns that <em>DO NOT</em> match value.
      */
     public int checkColumnValue(Connection con, String table, String column, String value) {
@@ -678,13 +748,17 @@ public abstract class EnsTestCase {
 
     // -------------------------------------------------------------------------
     /**
-     * Check if there are any blank entires in a column that is not supposed to be null.
+     * Check if there are any blank entires in a column that is not supposed to
+     * be null.
      * 
-     * @param con The database connection to use.
-     * @param table The table to use.
-     * @param column The column to examine.
-     * @return An list of the row indices of any blank entries. Will be zero-length if there are
-     *         none.
+     * @param con
+     *          The database connection to use.
+     * @param table
+     *          The table to use.
+     * @param column
+     *          The column to examine.
+     * @return An list of the row indices of any blank entries. Will be
+     *         zero-length if there are none.
      */
     public List checkBlankNonNull(Connection con, String table, String column) {
 
@@ -720,10 +794,13 @@ public abstract class EnsTestCase {
 
     // -------------------------------------------------------------------------
     /**
-     * Check all columns of a table for blank entires in columns that are marked as being NOT NULL.
+     * Check all columns of a table for blank entires in columns that are
+     * marked as being NOT NULL.
      * 
-     * @param con The database connection to use.
-     * @param table The table to use.
+     * @param con
+     *          The database connection to use.
+     * @param table
+     *          The table to use.
      * @return The total number of blank null enums.
      */
     public int checkBlankNonNull(Connection con, String table) {
@@ -767,8 +844,10 @@ public abstract class EnsTestCase {
     /**
      * Check if a particular table exists in a database.
      * 
-     * @param con The database connection to check.
-     * @param table The table to check for.
+     * @param con
+     *          The database connection to check.
+     * @param table
+     *          The table to check for.
      * @return true if the table exists in the database.
      */
     public boolean checkTableExists(Connection con, String table) {
@@ -788,8 +867,10 @@ public abstract class EnsTestCase {
     /**
      * Print a warning message about a specific database.
      * 
-     * @param con The database connection involved.
-     * @param message The message to print.
+     * @param con
+     *          The database connection involved.
+     * @param message
+     *          The message to print.
      */
     protected void warn(Connection con, String message) {
 
@@ -800,11 +881,11 @@ public abstract class EnsTestCase {
 
     // -------------------------------------------------------------------------
     /**
-     * Get a list of the databases which represent species. Filter out any which don't seem to
-     * represent species.
+     * Get a list of the databases which represent species. Filter out any
+     * which don't seem to represent species.
      * 
-     * @return A list of the species; each species will occur only once, and be of the form
-     *         homo_sapiens (no trailing _).
+     * @return A list of the species; each species will occur only once, and be
+     *         of the form homo_sapiens (no trailing _).
      */
     public String[] getListOfSpeciesDatabases() {
 
@@ -847,7 +928,8 @@ public abstract class EnsTestCase {
     /**
      * Set the text description of this test case.
      * 
-     * @param s The new description.
+     * @param s
+     *          The new description.
      */
     public void setDescription(String s) {
 
@@ -857,9 +939,11 @@ public abstract class EnsTestCase {
 
     // -------------------------------------------------------------------------
     /**
-     * Read a database schema from a file and create a temporary database from it.
+     * Read a database schema from a file and create a temporary database from
+     * it.
      * 
-     * @param fileName The name of the schema to read.
+     * @param fileName
+     *          The name of the schema to read.
      * @return A connection to a database buit from the schema.
      */
     public Connection importSchema(String fileName) {
@@ -883,26 +967,27 @@ public abstract class EnsTestCase {
         String tempDBName = DBUtils.generateTempDatabaseName();
 
         // read properties file
-        String propsFile = System.getProperty("user.dir") + System.getProperty("file.separator") + "database.properties";
+        String propsFile = System.getProperty("user.dir") + System.getProperty("file.separator")
+                + "database.properties";
         Utils.readPropertiesFileIntoSystem(propsFile);
         logger.fine("Read database properties from " + propsFile);
 
         try {
 
             Class.forName(System.getProperty("driver"));
-            Connection tmp_con = DriverManager.getConnection(System.getProperty("databaseURL"), System.getProperty("user"), System
-                    .getProperty("password"));
+            Connection tmpCon = DriverManager.getConnection(System.getProperty("databaseURL"), System
+                    .getProperty("user"), System.getProperty("password"));
 
             String sql = "CREATE DATABASE " + tempDBName;
             logger.finest(sql);
-            Statement stmt = tmp_con.createStatement();
+            Statement stmt = tmpCon.createStatement();
             stmt.execute(sql);
             logger.fine("Database " + tempDBName + " created!");
 
             // close the temporary connection and create a "real" one
-            tmp_con.close();
-            con = DriverManager.getConnection(System.getProperty("databaseURL") + tempDBName, System.getProperty("user"), System
-                    .getProperty("password"));
+            tmpCon.close();
+            con = DriverManager.getConnection(System.getProperty("databaseURL") + tempDBName, System
+                    .getProperty("user"), System.getProperty("password"));
 
         } catch (Exception e) {
 
@@ -941,11 +1026,13 @@ public abstract class EnsTestCase {
 
     // -------------------------------------------------------------------------
     /**
-     * Remove a whole database. Generally should *only* be used with temporary databases. Use at
-     * your own risk!
+     * Remove a whole database. Generally should *only* be used with temporary
+     * databases. Use at your own risk!
      * 
-     * @param con The connection pointing to the database to remove. Should be connected as a user
-     *            that has sufficient permissions to remove it.
+     * @param con
+     *          The connection pointing to the database to remove. Should be
+     *          connected as a user that has sufficient permissions to remove
+     *          it.
      */
     public void removeDatabase(Connection con) {
 
@@ -972,9 +1059,10 @@ public abstract class EnsTestCase {
     /**
      * Get a list of all the table names.
      * 
-     * @param con The database connection to use.
-     * @return An array of Strings representing the names of the tables, obtained from the SHOW
-     *         TABLES command.
+     * @param con
+     *          The database connection to use.
+     * @return An array of Strings representing the names of the tables,
+     *         obtained from the SHOW TABLES command.
      */
     public String[] getTableNames(Connection con) {
 
@@ -986,10 +1074,13 @@ public abstract class EnsTestCase {
     /**
      * Get a list of the table names that match a particular pattern.
      * 
-     * @param con The database connection to use.
-     * @param pattern The pattern to use - note that this is a <em>SQL</em> pattern, not a
-     *            regexp.
-     * @return An array of Strings representing the names of the tables that match the pattern.
+     * @param con
+     *          The database connection to use.
+     * @param pattern
+     *          The pattern to use - note that this is a <em>SQL</em>
+     *          pattern, not a regexp.
+     * @return An array of Strings representing the names of the tables that
+     *         match the pattern.
      */
     public String[] getTableNames(Connection con, String pattern) {
 
@@ -1001,25 +1092,29 @@ public abstract class EnsTestCase {
     /**
      * Convenience method for getting a connection to a named schema.
      * 
-     * @param schema The name of the schema to connect to.
+     * @param schema
+     *          The name of the schema to connect to.
      * @return A connection to schema.
      */
     public Connection getSchemaConnection(String schema) {
 
-        Connection con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL") + schema, System
-                .getProperty("user"), System.getProperty("password"));
+        Connection con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL")
+                + schema, System.getProperty("user"), System.getProperty("password"));
 
         return con;
     }
 
     // -------------------------------------------------------------------------
     /**
-     * Compare two schemas to see if they have the same tables. The comparison is done in both
-     * directions, so will return false if a table exists in schema1 but not in schema2, <em>or</em>
-     * if a table exists in schema2 but not in schema2.
+     * Compare two schemas to see if they have the same tables. The comparison
+     * is done in both directions, so will return false if a table exists in
+     * schema1 but not in schema2, <em>or</em> if a table exists in schema2
+     * but not in schema2.
      * 
-     * @param schema1 The first schema to compare.
-     * @param schema2 The second schema to compare.
+     * @param schema1
+     *          The first schema to compare.
+     * @param schema2
+     *          The second schema to compare.
      * @return true if all tables in schema1 exist in schema2, and vice-versa.
      */
     public boolean compareTablesInSchema(Connection schema1, Connection schema2) {
@@ -1055,8 +1150,8 @@ public abstract class EnsTestCase {
     // -------------------------------------------------------------------------
 
     /**
-     * Check if the current test has repair capability. Signified by implementing the Repair
-     * interface.
+     * Check if the current test has repair capability. Signified by
+     * implementing the Repair interface.
      * 
      * @return True if this test implements Repair, false otherwise.
      */
@@ -1070,8 +1165,10 @@ public abstract class EnsTestCase {
     /**
      * Check if a table has rows.
      * 
-     * @param con The connection to the database to use.
-     * @param table The table to check.
+     * @param con
+     *          The connection to the database to use.
+     * @param table
+     *          The table to check.
      * @return true if the table has >0 rows, false otherwise.
      */
     public boolean tableHasRows(Connection con, String table) {
@@ -1096,7 +1193,8 @@ public abstract class EnsTestCase {
     /**
      * Set the flag that indicates that this test may take a long time to run.
      * 
-     * @param b The new value of the flag.
+     * @param b
+     *          The new value of the flag.
      */
     public void setHintLongRunning(boolean b) {
 
@@ -1113,7 +1211,9 @@ public abstract class EnsTestCase {
         Iterator it = appliesToTypes.iterator();
         while (it.hasNext()) {
             DatabaseType type = (DatabaseType) it.next();
-            if (t.equals(type)) { return true; }
+            if (t.equals(type)) {
+                return true;
+            }
         }
 
         return false;
@@ -1122,9 +1222,11 @@ public abstract class EnsTestCase {
 
     // -----------------------------------------------------------------
     /**
-     * Add another database type to the list of types that this test case applies to.
+     * Add another database type to the list of types that this test case
+     * applies to.
      * 
-     * @param t The new type.
+     * @param t
+     *          The new type.
      */
     public void addAppliesToType(DatabaseType t) {
 
@@ -1134,9 +1236,11 @@ public abstract class EnsTestCase {
 
     // -----------------------------------------------------------------
     /**
-     * Remove a database type from the list of types that this test case applies to.
+     * Remove a database type from the list of types that this test case
+     * applies to.
      * 
-     * @param t The type to remove.
+     * @param t
+     *          The type to remove.
      */
     public void removeAppliesToType(DatabaseType t) {
 
@@ -1148,7 +1252,8 @@ public abstract class EnsTestCase {
     /**
      * Specify the database types that a test applies to.
      * 
-     * @param types A List of DatabaseTypes - overwrites the current setting.
+     * @param types
+     *          A List of DatabaseTypes - overwrites the current setting.
      */
     public void setAppliesToTypes(List types) {
 
@@ -1168,9 +1273,10 @@ public abstract class EnsTestCase {
 
     // -----------------------------------------------------------------
     /**
-     * Set the database type(s) that this test applies to based upon the directory name. For
-     * directories called "generic", the type is set to core, est, estgene and vega. For all other
-     * directories the type is set based upon the directory name.
+     * Set the database type(s) that this test applies to based upon the
+     * directory name. For directories called "generic", the type is set to
+     * core, est, estgene and vega. For all other directories the type is set
+     * based upon the directory name.
      */
     public void setTypeFromDirName(String dirName) {
 
@@ -1204,7 +1310,8 @@ public abstract class EnsTestCase {
 
     /**
      * This method can be overridden in subclasses to define (via
-     * addAppliesToType/removeAppliesToType) which types of databases the test applies to.
+     * addAppliesToType/removeAppliesToType) which types of databases the test
+     * applies to.
      */
     public void types() {
 

@@ -6,31 +6,37 @@
  */
 package org.ensembl.healthcheck.testcase.generic;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-import org.ensembl.healthcheck.*;
-import org.ensembl.healthcheck.testcase.*;
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check if any chromosomes that have different lengths in karyotype & seq_region tables.
+ * Check if any chromosomes that have different lengths in karyotype &
+ * seq_region tables.
  */
 public class Karyotype extends SingleDatabaseTestCase {
 
-	public Karyotype() {
-	    
-		addToGroup("post_genebuild");
-		addToGroup("release");
-		setDescription("Check that karyotype and seq_region tables agree");
+    public Karyotype() {
 
-	}
-	
+        addToGroup("post_genebuild");
+        addToGroup("release");
+        setDescription("Check that karyotype and seq_region tables agree");
+
+    }
+
     public boolean run(DatabaseRegistryEntry dbre) {
 
         boolean result = true;
 
         Connection con = dbre.getConnection();
 
-        // The seq_region.length and karyotype.length should always be the same.
+        // The seq_region.length and karyotype.length should always be the
+        // same.
         // The SQL returns failures
 
         String karsql = "SELECT sr.name, max(kar.seq_region_end), sr.length " + "FROM seq_region sr, karyotype kar "

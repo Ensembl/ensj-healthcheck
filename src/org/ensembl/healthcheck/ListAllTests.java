@@ -1,27 +1,29 @@
 /*
-  Copyright (C) 2004 EBI, GRL
+ Copyright (C) 2004 EBI, GRL
  
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
  
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
  
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 package org.ensembl.healthcheck;
 
-import java.util.*;
-import java.util.logging.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Level;
 
-import org.ensembl.healthcheck.testcase.*;
+import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.util.Utils;
 
 /**
@@ -29,185 +31,193 @@ import org.ensembl.healthcheck.util.Utils;
  */
 public class ListAllTests extends TestRunner {
 
-	String groupToList = "";
-	boolean showGroups = false;
-	boolean showDesc = false;
-	static boolean showGroupsOnly = false;
-	boolean listAllGroups = false;
-	
-	// -------------------------------------------------------------------------
-	/**
-	 * Command-line run method.
-	 * @param args The command-line arguments.
-	 */
-	public static void main(String[] args) {
+    String groupToList = "";
 
-		ListAllTests lat = new ListAllTests();
+    boolean showGroups = false;
 
-		logger.setLevel(Level.OFF);
+    boolean showDesc = false;
 
-		lat.parseCommandLine(args);
+    static boolean showGroupsOnly = false;
 
-		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
+    boolean listAllGroups = false;
 
-		if (showGroupsOnly) {
+    // -------------------------------------------------------------------------
+    /**
+     * Command-line run method.
+     * 
+     * @param args
+     *          The command-line arguments.
+     */
+    public static void main(String[] args) {
 
-			lat.showAllTestsByGroup();
+        ListAllTests lat = new ListAllTests();
 
-		} else {
+        logger.setLevel(Level.OFF);
 
-			lat.listAllTests();
+        lat.parseCommandLine(args);
 
-		}
-	} // main
+        Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
 
-	// -------------------------------------------------------------------------
+        if (showGroupsOnly) {
 
-	private void parseCommandLine(String[] args) {
+            lat.showAllTestsByGroup();
 
-		for (int i = 0; i < args.length; i++) {
+        } else {
 
-			if (args[i].equals("-h")) {
+            lat.listAllTests();
 
-				printUsage();
-				System.exit(0);
+        }
+    } // main
 
-			}
+    // -------------------------------------------------------------------------
 
-			if (args[i].equals("-g")) {
+    private void parseCommandLine(String[] args) {
 
-				showGroups = true;
+        for (int i = 0; i < args.length; i++) {
 
-			} else if (args[i].equals("-d")) {
+            if (args[i].equals("-h")) {
 
-				showDesc = true;
+                printUsage();
+                System.exit(0);
 
-			} else if (args[i].equals("-groups")) {
+            }
 
-				showGroupsOnly = true;
+            if (args[i].equals("-g")) {
 
-			} else {
+                showGroups = true;
 
-				groupToList = args[i];
+            } else if (args[i].equals("-d")) {
 
-			}
-		}
+                showDesc = true;
 
-		if (groupToList.equals("")) {
+            } else if (args[i].equals("-groups")) {
 
-			listAllGroups = true;
+                showGroupsOnly = true;
 
-		}
+            } else {
 
-	} // parseCommandLine
-	// -------------------------------------------------------------------------
+                groupToList = args[i];
 
-	private void printUsage() {
+            }
+        }
 
-		System.out.println("\nUsage: ListTests -{h, g, d} group1 ... \n");
-		System.out.println("  or:    ListTests -groups\n");
-		System.out.println("Options:");
-		System.out.println("  -h         This message.");
-		System.out.println("  -g         Show groups associated with each test.");
-		System.out.println("  -d         Show test description.");
-		System.out.println("  -groups    Shows a list of the test groups and which tests are in each");
-		System.out.println("  group1     List tests that are members of group1.");
-		System.out.println("");
-		System.out.println("If no groups are specified all available tests are listed");
+        if (groupToList.equals("")) {
 
-	} // printUsage
+            listAllGroups = true;
 
-	// -------------------------------------------------------------------------
+        }
 
-	private void listAllTests() {
+    } // parseCommandLine
 
-		if (listAllGroups) {
-			System.out.println("All available tests:");
-		} else {
-			System.out.println("Tests in group " + groupToList + ":");
-		}
-		
-		List tests = new TestRegistry().findAllTests();
+    // -------------------------------------------------------------------------
 
-		Iterator it = tests.iterator();
-		while (it.hasNext()) {
-			EnsTestCase test = (EnsTestCase)it.next();
-			if (listAllGroups || test.inGroup(groupToList)) {
-				StringBuffer testline = new StringBuffer(test.getShortTestName());
+    private void printUsage() {
 
-				if (test.canRepair()) {
-					testline.append(" [ can repair] ");
-				}
+        System.out.println("\nUsage: ListTests -{h, g, d} group1 ... \n");
+        System.out.println("  or:    ListTests -groups\n");
+        System.out.println("Options:");
+        System.out.println("  -h         This message.");
+        System.out.println("  -g         Show groups associated with each test.");
+        System.out.println("  -d         Show test description.");
+        System.out.println("  -groups    Shows a list of the test groups and which tests are in each");
+        System.out.println("  group1     List tests that are members of group1.");
+        System.out.println("");
+        System.out.println("If no groups are specified all available tests are listed");
 
-				if (showGroups) {
-					testline.append(" (");
-					List groups = test.getGroups();
-					java.util.Iterator gIt = groups.iterator();
-					while (gIt.hasNext()) {
-						String groupname = (String)gIt.next();
-						if (!groupname.equals(test.getShortTestName())) {
-							testline.append(groupname);
-							testline.append(",");
-						}
-					}
-					if (testline.charAt(testline.length() - 1) == ',') {
-						testline.deleteCharAt(testline.length() - 1);
-					}
+    } // printUsage
 
-					testline.append(")");
+    // -------------------------------------------------------------------------
 
-				}
+    private void listAllTests() {
 
-				if (showDesc) {
-					testline.append("\n" + test.getDescription() + "\n");
-				}
+        if (listAllGroups) {
+            System.out.println("All available tests:");
+        } else {
+            System.out.println("Tests in group " + groupToList + ":");
+        }
 
-				System.out.println(testline.toString());
-			}
+        List tests = new TestRegistry().findAllTests();
 
-		}
+        Iterator it = tests.iterator();
+        while (it.hasNext()) {
+            EnsTestCase test = (EnsTestCase) it.next();
+            if (listAllGroups || test.inGroup(groupToList)) {
+                StringBuffer testline = new StringBuffer(test.getShortTestName());
 
-	} // listAllTests
+                if (test.canRepair()) {
+                    testline.append(" [ can repair] ");
+                }
 
-	// -------------------------------------------------------------------------
+                if (showGroups) {
+                    testline.append(" (");
+                    List groups = test.getGroups();
+                    java.util.Iterator gIt = groups.iterator();
+                    while (gIt.hasNext()) {
+                        String groupname = (String) gIt.next();
+                        if (!groupname.equals(test.getShortTestName())) {
+                            testline.append(groupname);
+                            testline.append(",");
+                        }
+                    }
+                    if (testline.charAt(testline.length() - 1) == ',') {
+                        testline.deleteCharAt(testline.length() - 1);
+                    }
 
-	private void showAllTestsByGroup() {
+                    testline.append(")");
 
-		List allTests = new TestRegistry().findAllTests();
-		String[] groups = listAllGroups(allTests);
-		Arrays.sort(groups);
+                }
 
-		// each test is technically a member of the group with the same name as 
-		// the test; this isn't interesting here so these are filtered out
+                if (showDesc) {
+                    testline.append("\n" + test.getDescription() + "\n");
+                }
 
-		for (int i = 0; i < groups.length; i++) {
+                System.out.println(testline.toString());
+            }
 
-			String group = groups[i];
+        }
 
-			// assume that tests have mixed case and group names are all lower case
-			if (group.equals(group.toLowerCase())) {
+    } // listAllTests
 
-				StringBuffer buf = new StringBuffer();
+    // -------------------------------------------------------------------------
 
-				buf.append(group + ":\n");
-				String[] tests = listTestsInGroup(allTests, group);
-				Arrays.sort(tests);
-				
-				for (int j = 0; j < tests.length; j++) {
+    private void showAllTestsByGroup() {
 
-					if (!tests[j].equals(group)) {
-						buf.append("\t" + tests[j] + "\n");
-					}
+        List allTests = new TestRegistry().findAllTests();
+        String[] groups = listAllGroups(allTests);
+        Arrays.sort(groups);
 
-				} // tests
+        // each test is technically a member of the group with the same name as
+        // the test; this isn't interesting here so these are filtered out
 
-				System.out.println(buf.toString());
+        for (int i = 0; i < groups.length; i++) {
 
-			}
+            String group = groups[i];
 
-		} // groups
+            // assume that tests have mixed case and group names are all lower
+            // case
+            if (group.equals(group.toLowerCase())) {
 
-	}
-	// -------------------------------------------------------------------------
+                StringBuffer buf = new StringBuffer();
+
+                buf.append(group + ":\n");
+                String[] tests = listTestsInGroup(allTests, group);
+                Arrays.sort(tests);
+
+                for (int j = 0; j < tests.length; j++) {
+
+                    if (!tests[j].equals(group)) {
+                        buf.append("\t" + tests[j] + "\n");
+                    }
+
+                } // tests
+
+                System.out.println(buf.toString());
+
+            }
+
+        } // groups
+
+    }
+    // -------------------------------------------------------------------------
 
 } // ListAllTests

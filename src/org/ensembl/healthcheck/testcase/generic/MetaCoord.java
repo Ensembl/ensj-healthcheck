@@ -18,8 +18,14 @@
 
 package org.ensembl.healthcheck.testcase.generic;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
@@ -31,7 +37,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  */
 public class MetaCoord extends SingleDatabaseTestCase {
 
-    String[] featureTables = { "gene", "exon", "dna_align_feature", "protein_align_feature", "repeat_feature",
+    String[] featureTables = {"gene", "exon", "dna_align_feature", "protein_align_feature", "repeat_feature",
             "prediction_transcript", "prediction_exon", "simple_feature", "marker_feature", "misc_feature", "qtl_feature",
             "karyotype", "transcript", "density_feature"};
 

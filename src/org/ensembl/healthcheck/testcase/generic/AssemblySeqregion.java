@@ -17,9 +17,14 @@
  */
 package org.ensembl.healthcheck.testcase.generic;
 
-import java.sql.*;
-import org.ensembl.healthcheck.testcase.*;
-import org.ensembl.healthcheck.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
  * Check that the assembly table and seq_region table are consistent.

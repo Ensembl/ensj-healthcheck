@@ -18,9 +18,21 @@
 
 package org.ensembl.healthcheck.util;
 
-import java.io.*;
-import java.util.*;
-import java.util.jar.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
 /**
@@ -28,15 +40,22 @@ import java.util.logging.Logger;
  * see {@link DBUtils DBUtils}.
  */
 
-public class Utils {
+public final class Utils {
 
-    protected static Logger logger = Logger.getLogger("HealthCheckLogger");
+    private static Logger logger = Logger.getLogger("HealthCheckLogger");
+
+    // hide constuctor to prevent instantiation
+    private Utils() {
+    };
 
     /**
      * Read the <code>database.properties</code> file into the System
      * properties so that it can be overridden with -D.
+     * 
+     * @param propertiesFileName
+     *          The properties file to read.
      */
-    public static void readPropertiesFileIntoSystem(String propertiesFileName) {
+    public static void readPropertiesFileIntoSystem(final String propertiesFileName) {
 
         String propsFile = System.getProperty("user.dir") + System.getProperty("file.separator") + propertiesFileName;
         Properties dbProps = Utils.readSimplePropertiesFile(propsFile);
@@ -460,7 +479,9 @@ public class Utils {
 
         for (int i = 0; i < a.length; i++) {
 
-            if (a[i].equals(o)) {return true; }
+            if (a[i].equals(o)) {
+                return true;
+            }
 
         }
 
@@ -491,8 +512,6 @@ public class Utils {
 
             }
 
-        } else {
-            //logger.info(parentDir + " does not exist or is not a directory");
         }
 
         return (String[]) (dirs.toArray(new String[dirs.size()]));

@@ -16,15 +16,28 @@
 
 package org.ensembl.healthcheck.testcase.generic;
 
-import java.sql.*;
-import java.util.*;
-import org.ensembl.healthcheck.testcase.*;
-import org.ensembl.healthcheck.util.*;
-import org.ensembl.healthcheck.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.testcase.Repair;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.IntegerComparator;
 
 /**
- * An EnsEMBL Healthcheck test case which checks that the protein_feature table agrees with the
- * translation table.
+ * An EnsEMBL Healthcheck test case which checks that the protein_feature table
+ * agrees with the translation table.
  */
 
 public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements Repair {
@@ -34,7 +47,8 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
     Map featuresToDelete;
 
     /**
-     * Create an ProteinFeatureTranslationTestCase that applies to a specific set of databases.
+     * Create an ProteinFeatureTranslationTestCase that applies to a specific
+     * set of databases.
      */
     public ProteinFeatureTranslation() {
 
@@ -44,8 +58,8 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
     }
 
     /**
-     * Builds a cache of the translation lengths, then compares them with the values in the
-     * protein_features table.
+     * Builds a cache of the translation lengths, then compares them with the
+     * values in the protein_features table.
      * 
      * @return Result.
      */
@@ -64,22 +78,27 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
 
             Connection con = dbre.getConnection();
 
-            // check that the protein feature table actually has some rows - if not there's
+            // check that the protein feature table actually has some rows - if
+            // not there's
             // no point working out the translation lengths
             if (!tableHasRows(con, "protein_feature")) {
-                logger.warning("protein_feature table for " + DBUtils.getShortDatabaseName(con) + " has zero rows - skipping.");
+                logger.warning("protein_feature table for " + DBUtils.getShortDatabaseName(con)
+                        + " has zero rows - skipping.");
                 return false; // shoud we return true or false in this case?
             }
 
-            // NOTE: By default the MM MySQL JDBC driver reads and stores *all* rows in the
+            // NOTE: By default the MM MySQL JDBC driver reads and stores *all*
+            // rows in the
             // ResultSet.
-            // Since this TestCase is likely to produce lots of output, we must use the
+            // Since this TestCase is likely to produce lots of output, we must
+            // use the
             // "streaming"
             // mode where only one row of the ResultSet is stored at a time.
             // To do this, the following two lines are both necessary.
             // See the README file for the mm MySQL driver.
 
-            Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
+            Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY,
+                    java.sql.ResultSet.CONCUR_READ_ONLY);
             stmt.setFetchSize(Integer.MIN_VALUE);
 
             Map translationLengths = new HashMap();
@@ -145,28 +164,30 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
             logger.fine("Built translation length cache, about to look at protein features");
             //dumpTranslationLengths(con, translationLengths, 100);
 
-            // find protein features where seq_end is > than the length of the translation
+            // find protein features where seq_end is > than the length of the
+            // translation
             List thisDBFeatures = new ArrayList();
             rs = stmt.executeQuery("SELECT protein_feature_id, translation_id, seq_end FROM protein_feature");
-            
+
             while (rs.next()) {
-                
+
                 Integer translationID = new Integer(rs.getInt("translation_id"));
                 Integer proteinFeatureID = new Integer(rs.getInt("protein_feature_id"));
 
                 if (translationLengths.get(translationID) != null) {
                     // some codons can only be 2 bp
                     int minTranslationLength = (((Integer) translationLengths.get(translationID)).intValue() + 2) / 3;
+                    //int minTranslationLength = ((Integer)
+                    // translationLengths.get(translationID)).intValue();
                     if (rs.getInt("seq_end") > minTranslationLength) {
-                        //ReportManager.problem(this, con, "Protein feature " +
-                        // rs.getInt("protein_feature_id") + " claims to have length " +
-                        // rs.getInt("seq_end") + " but translation is of length " +
-                        // minTranslationLength);
+                        System.out.println("pf " + proteinFeatureID + " length " + rs.getInt("seq_end")
+                                + " min translation length " + minTranslationLength);
                         result = false;
                         thisDBFeatures.add(proteinFeatureID);
                     }
                 } else {
-                    ReportManager.problem(this, con, "Protein feature " + proteinFeatureID + " refers to non-existent translation " + translationID);
+                    ReportManager.problem(this, con, "Protein feature " + proteinFeatureID
+                            + " refers to non-existent translation " + translationID);
                 }
             }
 
@@ -175,7 +196,8 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
                 ReportManager.problem(this, con, "protein_feature_table has " + thisDBFeatures.size()
                         + " features that are longer than the translation");
             } else {
-                ReportManager.correct(this, con, "protein_feature_table has no features that are longer than the translation");
+                ReportManager.correct(this, con,
+                        "protein_feature_table has no features that are longer than the translation");
             }
 
             rs.close();
@@ -193,8 +215,9 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
     // Implementation of Repair interface.
 
     /**
-     * Delete any protein features that run past the end of the translation. <strong>CAUTION!
-     * </strong>Actually deletes the features from the protein_feature table.
+     * Delete any protein features that run past the end of the translation.
+     * <strong>CAUTION! </strong>Actually deletes the features from the
+     * protein_feature table.
      */
     public void repair(DatabaseRegistryEntry dbre) {
 
@@ -236,8 +259,10 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
     /**
      * Set up the SQL to delete the offending protein features.
      * 
-     * @param con The database connection to use.
-     * @return The SQL to delete the incorrect protein features, or "" if there are no problems.
+     * @param con
+     *          The database connection to use.
+     * @return The SQL to delete the incorrect protein features, or "" if there
+     *         are no problems.
      */
     private String setupRepairSQL(Connection con) {
 
@@ -245,7 +270,9 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
 
         List thisDBFeatures = (List) featuresToDelete.get(DBUtils.getShortDatabaseName(con));
 
-        if (thisDBFeatures == null || thisDBFeatures.size() == 0) { return ""; }
+        if (thisDBFeatures == null || thisDBFeatures.size() == 0) {
+            return "";
+        }
 
         Iterator featureIterator = thisDBFeatures.iterator();
         while (featureIterator.hasNext()) {

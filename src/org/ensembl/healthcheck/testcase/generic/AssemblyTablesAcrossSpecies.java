@@ -16,35 +16,37 @@
 
 package org.ensembl.healthcheck.testcase.generic;
 
-import org.ensembl.healthcheck.*;
-import org.ensembl.healthcheck.testcase.*;
+import org.ensembl.healthcheck.DatabaseRegistry;
+import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 /**
  * Check that the assembly table is the same in all necessary databases.
  */
 public class AssemblyTablesAcrossSpecies extends MultiDatabaseTestCase {
 
-	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.VEGA };
+    private DatabaseType[] types = {DatabaseType.CORE, DatabaseType.VEGA};
 
-	/**
-	 * Creates a new instance of AssemblyTablesAcrossSpecies
-	 */
-	public AssemblyTablesAcrossSpecies() {
+    /**
+     * Creates a new instance of AssemblyTablesAcrossSpecies
+     */
+    public AssemblyTablesAcrossSpecies() {
 
-		addToGroup("release");
-		setDescription("Check that the assembly table contains the same information for all databases with the same species.");
+        addToGroup("release");
+        setDescription("Check that the assembly table contains the same information for all databases with the same species.");
 
-	}
+    }
 
-	/**
-	 * Make sure that the assembly tables are all the same.
-	 * 
-	 * @return True if the assembly table is the same across all the species in the registry.
-	 */
-	public boolean run(DatabaseRegistry dbr) {
+    /**
+     * Make sure that the assembly tables are all the same.
+     * 
+     * @return True if the assembly table is the same across all the species in
+     *         the registry.
+     */
+    public boolean run(DatabaseRegistry dbr) {
 
-		return checkTableAcrossSpecies("assembly", dbr, types);
+        return checkTableAcrossSpecies("assembly", dbr, types);
 
-	} // run
+    } // run
 
 } // CheckAssemblyTables

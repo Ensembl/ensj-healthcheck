@@ -18,11 +18,19 @@
 
 package org.ensembl.healthcheck;
 
-import org.ensembl.healthcheck.util.*;
-import org.ensembl.healthcheck.testcase.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.Level;
 
-import java.util.*;
-import java.util.logging.*;
+import org.ensembl.healthcheck.testcase.EnsTestCase;
+import org.ensembl.healthcheck.util.ConnectionPool;
+import org.ensembl.healthcheck.util.LogFormatter;
+import org.ensembl.healthcheck.util.MyStreamHandler;
+import org.ensembl.healthcheck.util.TestComparator;
+import org.ensembl.healthcheck.util.Utils;
 
 /**
  * Subclass of TestRunner intended for running tests from the command line.
@@ -31,7 +39,8 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
     private static String version = "$Id$";
 
-    private ArrayList databaseRegexps = new ArrayList(); // note order is important
+    private ArrayList databaseRegexps = new ArrayList(); // note order is
+                                                         // important
 
     private boolean debug = false;
 
@@ -58,7 +67,8 @@ public class TextTestRunner extends TestRunner implements Reporter {
     /**
      * Command-line run method.
      * 
-     * @param args The command-line arguments.
+     * @param args
+     *          The command-line arguments.
      */
     public static void main(String[] args) {
 
@@ -119,7 +129,8 @@ public class TextTestRunner extends TestRunner implements Reporter {
         System.out.println("                    none      nothing is printed");
         System.out.println("                    problem   only problems are reported (this is the default)");
         System.out.println("                    correct   only correct results (and problems) are reported");
-        System.out.println("                    summary   only summary info (and problems, and correct reports) are reported");
+        System.out
+                .println("                    summary   only summary info (and problems, and correct reports) are reported");
         System.out.println("                    info      info (and problem, correct, summary) messages reported");
         System.out.println("                    all       everything is printed");
         System.out
@@ -134,7 +145,8 @@ public class TextTestRunner extends TestRunner implements Reporter {
                 + ". 0 means never break");
         System.out.println("  -resultsbydb    Print results by databases as well as by test case.");
         System.out.println("  group1          Names of groups of test cases to run.");
-        System.out.println("                  Note each test case is in a group of its own with the name of the test case.");
+        System.out
+                .println("                  Note each test case is in a group of its own with the name of the test case.");
         System.out.println("                  This allows individual tests to be run if required.");
         System.out.println("");
         System.out
@@ -161,7 +173,8 @@ public class TextTestRunner extends TestRunner implements Reporter {
      */
     public String getVersion() {
 
-        // strip off first and last few chars of version since these are only used by CVS
+        // strip off first and last few chars of version since these are only
+        // used by CVS
         return version.substring(5, version.length() - 2);
 
     }
@@ -245,7 +258,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
                     printResultsByDatabase = true;
                     logger.finest("Will print results by database");
-                    
+
                 } else {
 
                     groupsToRun.add(args[i]);
@@ -286,12 +299,14 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
     private void setupLogging() {
 
-        logger.setUseParentHandlers(false); // stop parent logger getting the message
+        logger.setUseParentHandlers(false); // stop parent logger getting the
+                                            // message
 
         Handler myHandler = new MyStreamHandler(System.out, new LogFormatter());
 
         logger.addHandler(myHandler);
-        logger.setLevel(Level.WARNING); // default - only print important messages
+        logger.setLevel(Level.WARNING); // default - only print important
+                                        // messages
 
         if (debug) {
 
@@ -312,7 +327,9 @@ public class TextTestRunner extends TestRunner implements Reporter {
         System.out.print(".");
         System.out.flush();
 
-        if (reportLine.getLevel() < outputLevel) { return; }
+        if (reportLine.getLevel() < outputLevel) {
+            return;
+        }
 
         if (!reportLine.getDatabaseName().equals(lastDatabase)) {
             outputBuffer.add("  " + reportLine.getDatabaseName());
@@ -332,9 +349,12 @@ public class TextTestRunner extends TestRunner implements Reporter {
         case (ReportLine.CORRECT):
             level = "CORRECT";
             break;
+        default:
+            level = "PROBLEM";
         }
 
-        outputBuffer.add("    " + level + ":  " + lineBreakString(reportLine.getMessage(), outputLineLength, "              "));
+        outputBuffer.add("    " + level + ":  "
+                + lineBreakString(reportLine.getMessage(), outputLineLength, "              "));
     }
 
     public void startTestCase(EnsTestCase testCase, DatabaseRegistryEntry dbre) {
@@ -353,18 +373,22 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
         System.out.println(result ? " PASSED" : " FAILED");
         /*
-         * lastDatabase = ""; Iterator it = outputBuffer.iterator(); while (it.hasNext()) {
-         * System.out.println((String)it.next()); } outputBuffer.clear();
+         * lastDatabase = ""; Iterator it = outputBuffer.iterator(); while
+         * (it.hasNext()) { System.out.println((String)it.next()); }
+         * outputBuffer.clear();
          */
     }
 
     private String lineBreakString(String mesg, int maxLen, String indent) {
 
-        if (mesg.length() <= maxLen || maxLen == 0) { return mesg; }
+        if (mesg.length() <= maxLen || maxLen == 0) {
+            return mesg;
+        }
 
         int lastSpace = mesg.lastIndexOf(" ", maxLen);
         if (lastSpace > 15) {
-            return mesg.substring(0, lastSpace) + "\n" + indent + lineBreakString(mesg.substring(lastSpace + 1), maxLen, indent);
+            return mesg.substring(0, lastSpace) + "\n" + indent
+                    + lineBreakString(mesg.substring(lastSpace + 1), maxLen, indent);
         } else {
             return mesg.substring(0, maxLen) + "\n" + indent + lineBreakString(mesg.substring(maxLen), maxLen, indent);
         }

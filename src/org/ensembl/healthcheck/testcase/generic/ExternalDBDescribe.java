@@ -18,8 +18,9 @@
 
 package org.ensembl.healthcheck.testcase.generic;
 
-import org.ensembl.healthcheck.testcase.*;
-import org.ensembl.healthcheck.*;
+import org.ensembl.healthcheck.DatabaseRegistry;
+import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 /**
  * EnsEMBL Healthcheck test case that ensures that the results of the SQL query <code>DESCRIBE external_db</code>
@@ -28,7 +29,7 @@ import org.ensembl.healthcheck.*;
 
 public class ExternalDBDescribe extends MultiDatabaseTestCase {
 
-    private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.VEGA};
+    private DatabaseType[] types = {DatabaseType.CORE, DatabaseType.VEGA};
 
     public ExternalDBDescribe() {
 

@@ -17,13 +17,20 @@
  */
 package org.ensembl.healthcheck;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
-import org.ensembl.healthcheck.testcase.*;
+import org.ensembl.healthcheck.testcase.EnsTestCase;
+import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
+import org.ensembl.healthcheck.testcase.OrderedDatabaseTestCase;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.ClassFileFilenameFilter;
 import org.ensembl.healthcheck.util.Utils;
 
@@ -34,9 +41,9 @@ public class TestRegistry {
 
     protected static Logger logger = Logger.getLogger("HealthCheckLogger");
 
-    List allTests; // a list of EnsTestCase objects
+    private List allTests; // a list of EnsTestCase objects
 
-    private final static String BASE_TESTCASE_PACKAGE = "org.ensembl.healthcheck.testcase";
+    private static final String BASE_TESTCASE_PACKAGE = "org.ensembl.healthcheck.testcase";
 
     // -----------------------------------------------------------------
     /**
@@ -77,7 +84,7 @@ public class TestRegistry {
 
     } // getAllSingle
 
-    //	-----------------------------------------------------------------
+    // -----------------------------------------------------------------
     /**
      * @return All the multi-database tests.
      */
@@ -96,7 +103,7 @@ public class TestRegistry {
 
     } // getAllMulti
 
-    //	-----------------------------------------------------------------
+    // -----------------------------------------------------------------
     /**
      * @return All the ordered database tests.
      */
@@ -163,7 +170,7 @@ public class TestRegistry {
 
     }
 
-    //	-----------------------------------------------------------------
+    // -----------------------------------------------------------------
     /**
      * Get a list of all the ordered database test cases that match certain conditions. Note the
      * database type that the test applies to is /not/ checked here.
@@ -199,7 +206,7 @@ public class TestRegistry {
      */
     public List findAllTests() {
 
-        ArrayList allTests = new ArrayList();
+       allTests = new ArrayList();
 
         // --------------------------------------
         // Look for class files located in the appropriate package in the build/ directory.
@@ -400,7 +407,7 @@ public class TestRegistry {
 
     } // addUniqueTests
 
-    //	-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     /**
      * Check if a particular test is in a list of tests. The check is done by test name.
      * 
@@ -450,7 +457,7 @@ public class TestRegistry {
 
     }
 
-    //	 -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     /**
      * Get a list of the union of groups of all the tests.
      */

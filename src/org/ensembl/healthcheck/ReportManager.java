@@ -18,19 +18,24 @@
 
 package org.ensembl.healthcheck;
 
-import java.util.*;
-import java.util.logging.*;
-import java.sql.*;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
 
-import org.ensembl.healthcheck.util.*;
-import org.ensembl.healthcheck.testcase.*;
+import org.ensembl.healthcheck.testcase.EnsTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * ReportManager is the main class for reporting in the Ensj Healthcheck system. It provides
  * methods for storing reports - single items of information - and retrieving them in various
  * formats.
  */
-public class ReportManager {
+public final class ReportManager {
 
     /** A hash of lists keyed on the test name. */
     protected static Map reportsByTest = new HashMap();
@@ -42,10 +47,13 @@ public class ReportManager {
     protected static Logger logger = Logger.getLogger("HealthCheckLogger");
 
     /** The maximum number of lines to store to prevent very verbose test cases causing memory problems */
-    protected final static int MAX_BUFFER_SIZE = 1000;
+    protected static final int MAX_BUFFER_SIZE = 1000;
     private static boolean bufferSizeWarningPrinted = false;
     
     protected static Reporter reporter;
+    
+    // hide constructor to stop instantiation
+    private ReportManager() { };
     
     public static void setReporter(Reporter rep) {
 
@@ -96,7 +104,7 @@ public class ReportManager {
                         System.err.println("\n\nReportManager has reached its maximum buffer size (" + MAX_BUFFER_SIZE + " lines) - no more output will be stored\n");
                         bufferSizeWarningPrinted = true;
                     }
-                } else { 
+                } else {
                     // buffer small enough, add it
                     lines.add(report);
                     reportsByTest.put(testCaseName, lines);

@@ -16,64 +16,66 @@
 
 package org.ensembl.healthcheck.testcase.generic;
 
-import java.sql.*;
+import java.sql.Connection;
 
-import org.ensembl.healthcheck.testcase.*;
-import org.ensembl.healthcheck.*;
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /*
- * Check that marker features exist if markers exist, and that map_wieghts are set to
- * non-zero values
+ * Check that marker features exist if markers exist, and that map_wieghts are
+ * set to non-zero values
  */
 public class MarkerFeatures extends SingleDatabaseTestCase {
 
-	/**
-	 * Creates a new instance of CheckMarkerFeatures
-	 */
-	public MarkerFeatures() {
-		addToGroup("post_genebuild");
-		addToGroup("release");
-		setDescription("Checks that marker_features exist and that they have" + " non-zero map_weights");
-	}
+    /**
+     * Creates a new instance of CheckMarkerFeatures
+     */
+    public MarkerFeatures() {
+        addToGroup("post_genebuild");
+        addToGroup("release");
+        setDescription("Checks that marker_features exist and that they have" + " non-zero map_weights");
+    }
 
-	/**
-	 * Verify marker features exist if markers exist, and that map weights are non-zero.
-	 * 
-	 * @return Result.
-	 */
-	public boolean run(DatabaseRegistryEntry dbre) {
+    /**
+     * Verify marker features exist if markers exist, and that map weights are
+     * non-zero.
+     * 
+     * @return Result.
+     */
+    public boolean run(DatabaseRegistryEntry dbre) {
 
-		boolean result = true;
+        boolean result = true;
 
-		Connection con = dbre.getConnection();
-		boolean markersExist = getRowCount(con, "select count(*) from marker") > 0;
+        Connection con = dbre.getConnection();
+        boolean markersExist = getRowCount(con, "select count(*) from marker") > 0;
 
-		/*
-		 * assume this species has no markers, dangling refs test case will catch problem if
-		 * marker_features exist without markers
-		 */
-		if (!markersExist) {
-			return true;
-		}
+        /*
+         * assume this species has no markers, dangling refs test case will
+         * catch problem if marker_features exist without markers
+         */
+        if (!markersExist) {
+            return true;
+        }
 
-		int count = getRowCount(con, "select count(*) from marker_feature");
+        int count = getRowCount(con, "select count(*) from marker_feature");
 
-		if (count == 0) {
-			ReportManager.problem(this, con, "no marker features in database" + "even though markers are present");
-			result = false;
-		}
+        if (count == 0) {
+            ReportManager.problem(this, con, "no marker features in database" + "even though markers are present");
+            result = false;
+        }
 
-		count = getRowCount(con, "select count(*) from marker_feature" + " where map_weight = 0");
+        count = getRowCount(con, "select count(*) from marker_feature" + " where map_weight = 0");
 
-		if (count > 0) {
-			ReportManager.problem(this, con, "marker features have not been" + "assigned correct map weights");
-			result = false;
-		}
+        if (count > 0) {
+            ReportManager.problem(this, con, "marker features have not been" + "assigned correct map weights");
+            result = false;
+        }
 
-		ReportManager.correct(this, con, "Marker features appear to be ok");
+        ReportManager.correct(this, con, "Marker features appear to be ok");
 
-		return result;
+        return result;
 
-	} // run
+    } // run
 
 } // MarkerFeatures

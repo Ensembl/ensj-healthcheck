@@ -86,7 +86,7 @@ public final class DatabaseType {
 
         // --------------------------------------
 
-        if (in(lcAlias, "core")) { 
+        if (in(lcAlias, "core")) {
 
         return CORE; 
 
@@ -94,7 +94,7 @@ public final class DatabaseType {
 
         // --------------------------------------
 
-        if (in(lcAlias, "est")) { 
+        if (in(lcAlias, "est")) {
 
         return EST; 
 
@@ -102,7 +102,7 @@ public final class DatabaseType {
 
         // --------------------------------------
 
-        if (in(lcAlias, "estgene")) { 
+        if (in(lcAlias, "estgene")) {
 
         return ESTGENE; 
 
@@ -110,7 +110,7 @@ public final class DatabaseType {
 
         // --------------------------------------
 
-        if (in(lcAlias, "compara")) { 
+        if (in(lcAlias, "compara")) {
 
         return COMPARA; 
 
@@ -118,7 +118,7 @@ public final class DatabaseType {
 
         // --------------------------------------
 
-        if (in(lcAlias, "mart")) { 
+        if (in(lcAlias, "mart")) {
 
         return MART; 
 
@@ -126,7 +126,7 @@ public final class DatabaseType {
 
         // --------------------------------------
 
-        if (in(lcAlias, "vega")) { 
+        if (in(lcAlias, "vega")) {
 
         return VEGA; 
 
@@ -134,7 +134,7 @@ public final class DatabaseType {
 
         // --------------------------------------
 
-        if (in(lcAlias, "snp")) { 
+        if (in(lcAlias, "snp")) {
 
         return SNP; 
 
@@ -142,7 +142,7 @@ public final class DatabaseType {
 
         // --------------------------------------
 
-        if (in(lcAlias, "disease")) { 
+        if (in(lcAlias, "disease")) {
 
         return DISEASE; 
 
@@ -150,7 +150,7 @@ public final class DatabaseType {
 
         // --------------------------------------
 
-        if (in(lcAlias, "haplotype")) { 
+        if (in(lcAlias, "haplotype")) {
 
         return HAPLOTYPE; 
 

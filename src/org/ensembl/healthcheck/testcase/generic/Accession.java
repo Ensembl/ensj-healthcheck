@@ -18,11 +18,15 @@
 
 package org.ensembl.healthcheck.testcase.generic;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
-import org.ensembl.healthcheck.*;
-import org.ensembl.healthcheck.testcase.*;
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
  * Check for presence and format of PFAM hits, and format of others. Also checks for protein
@@ -53,10 +57,10 @@ public class Accession extends SingleDatabaseTestCase {
 
     /**
      * Check each type of hit.
-     * 
+     * @param dbre The database to check.
      * @return Result.
      */
-    public boolean run(DatabaseRegistryEntry dbre) {
+    public boolean run(final DatabaseRegistryEntry dbre) {
 
         boolean result = true;
 

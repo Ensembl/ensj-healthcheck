@@ -2,10 +2,15 @@
 
 package org.ensembl.healthcheck.test;
 
-import junit.framework.*;
-import java.util.logging.*;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 
-import org.ensembl.healthcheck.util.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.ensembl.healthcheck.util.LogFormatter;
+import org.ensembl.healthcheck.util.MyStreamHandler;
 
 /**
  * @version $Revision$

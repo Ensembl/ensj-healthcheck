@@ -18,10 +18,11 @@
 
 package org.ensembl.healthcheck.testcase.generic;
 
-import java.sql.*;
+import java.sql.Connection;
 
-import org.ensembl.healthcheck.testcase.*;
-import org.ensembl.healthcheck.*;
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key
@@ -75,7 +76,8 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
         result &= checkForOrphans(con, "seq_region_attrib", "attrib_type_id", "attrib_type", "attrib_type_id", true);
 
-        result &= checkForOrphans(con, "misc_feature_misc_set", "misc_feature_id", "misc_feature", "misc_feature_id", true);
+        result &= checkForOrphans(con, "misc_feature_misc_set", "misc_feature_id", "misc_feature", "misc_feature_id",
+                true);
 
         result &= checkForOrphans(con, "misc_feature_misc_set", "misc_set_id", "misc_set", "misc_set_id", true);
 
@@ -88,10 +90,10 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
         result &= checkForOrphans(con, "assembly_exception", "exc_seq_region_id", "seq_region", "seq_region_id", true);
 
         result &= checkForOrphans(con, "protein_feature", "translation_id", "translation", "translation_id", true);
-        
-        //		 ----------------------------
+
+        // ----------------------------
         // Check stable IDs all correspond to an existing object
-        String[] stableIDtypes = { "gene", "transcript", "translation", "exon"};
+        String[] stableIDtypes = {"gene", "transcript", "translation", "exon"};
         for (int i = 0; i < stableIDtypes.length; i++) {
             result &= checkStableIDKeys(con, stableIDtypes[i]);
         }
@@ -99,8 +101,9 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
         // ----------------------------
         // Ensure that feature tables reference existing seq_regions
 
-        String[] featTabs = { "exon", "repeat_feature", "simple_feature", "dna_align_feature", "protein_align_feature",
-                "marker_feature", "prediction_transcript", "prediction_exon", "gene", "qtl_feature", "transcript", "karyotype"};
+        String[] featTabs = {"exon", "repeat_feature", "simple_feature", "dna_align_feature", "protein_align_feature",
+                "marker_feature", "prediction_transcript", "prediction_exon", "gene", "qtl_feature", "transcript",
+                "karyotype"};
 
         for (int i = 0; i < featTabs.length; i++) {
             String featTab = featTabs[i];
@@ -117,7 +120,8 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
      * 
      * @return true If there are no orphans.
      */
-    private boolean checkForOrphans(Connection con, String table1, String key1, String table2, String key2, boolean oneWay) {
+    private boolean checkForOrphans(Connection con, String table1, String key1, String table2, String key2,
+            boolean oneWay) {
 
         int orphans = countOrphans(con, table1, key1, table2, key2, oneWay);
         if (orphans > 0) {
@@ -133,8 +137,9 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
     // -------------------------------------------------------------------------
     private boolean checkStableIDKeys(Connection con, String type) {
 
-        if (tableHasRows(con, type + "_stable_id")) { return checkForOrphans(con, type, type + "_id", type + "_stable_id", type
-                + "_id", false); }
+        if (tableHasRows(con, type + "_stable_id")) { 
+
+        return checkForOrphans(con, type, type + "_id", type + "_stable_id", type + "_id", false); }
 
         return true;
 

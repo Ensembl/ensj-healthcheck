@@ -17,86 +17,90 @@
  */
 
 /*
-
- $Log$
- Revision 1.2.2.1  2004/02/23 14:26:57  gp1
- No longer depends on SchemaInfo etc
-
- Revision 1.2  2004/01/12 11:19:50  gp1
- Updated relevant dates (Copyright notices etc) to 2004.
-
- Revision 1.1  2003/11/04 16:43:51  dkeefe
- checks that tables do not contain duplicate rows
-
-*/
+ * 
+ * $Log$ Revision 1.1.2.1 2004/03/01 09:42:08 gp1
+ * Moved into mart subdirectory. Some tests renamed
+ * 
+ * Revision 1.2.2.1 2004/02/23 14:26:57 gp1 No longer depends on SchemaInfo etc
+ * 
+ * Revision 1.2 2004/01/12 11:19:50 gp1 Updated relevant dates (Copyright
+ * notices etc) to 2004.
+ * 
+ * Revision 1.1 2003/11/04 16:43:51 dkeefe checks that tables do not contain
+ * duplicate rows
+ *  
+ */
 
 package org.ensembl.healthcheck.testcase.mart;
 
-import java.sql.*;
+import java.sql.Connection;
 import java.util.Iterator;
 
-import org.ensembl.healthcheck.*;
-import org.ensembl.healthcheck.testcase.*;
-import org.ensembl.healthcheck.util.*;
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that all rows in each table are unique.
  */
 public class NoDuplicateRows extends SingleDatabaseTestCase {
 
-	/**
-	 * Creates a new instance of MartNoDuplicateRowsTestCase
-	 */
-	public NoDuplicateRows() {
+    /**
+     * Creates a new instance of MartNoDuplicateRowsTestCase
+     */
+    public NoDuplicateRows() {
 
-		addToGroup("post_ensmartbuild");
-		setDescription("Checks that all rows in tables are distinct");
+        addToGroup("post_ensmartbuild");
+        setDescription("Checks that all rows in tables are distinct");
 
-	}
+    }
 
-	/**
-	 * For each schema, check that every table has #rows = #distinct rows.
-	 */
-	public boolean run(DatabaseRegistryEntry dbre) {
+    /**
+     * For each schema, check that every table has #rows = #distinct rows.
+     */
+    public boolean run(DatabaseRegistryEntry dbre) {
 
-		boolean result = true;
+        boolean result = true;
 
-			Connection con = dbre.getConnection();
+        Connection con = dbre.getConnection();
 
-			String[] tableNames = getTableNames(con);
-			for (int i = 0; i < tableNames.length; i++) {
+        String[] tableNames = getTableNames(con);
+        for (int i = 0; i < tableNames.length; i++) {
 
-				String table = tableNames[i];
-				logger.finest("Checking that " + table + " has all distinct rows");
+            String table = tableNames[i];
+            logger.finest("Checking that " + table + " has all distinct rows");
 
-				int total = getRowCount(con, "select count(*) from " + table);
-				int distinct = total; // ie not a problem in the total > distinct test below
+            int total = getRowCount(con, "select count(*) from " + table);
+            int distinct = total; // ie not a problem in the total > distinct
+                                  // test below
 
-				if (total > 0) {
-					// create a String listing the cols for this table
-					java.util.List colList = DBUtils.getColumnsInTable(con, table);
-					Iterator colIterator = colList.iterator();
-					String colTxt = "";
-					while (colIterator.hasNext()) {
-						if (colTxt.length() > 0) {
-							colTxt = colTxt + ",";
-						}
-						colTxt = colTxt + ((String)colIterator.next());
-					}
-					//System.out.print(colTxt + "\n");
-					// query does group by all columns to simulate count distinct *
-					distinct = getRowCount(con, "select count(*) from " + table + " group by " + colTxt);
+            if (total > 0) {
+                // create a String listing the cols for this table
+                java.util.List colList = DBUtils.getColumnsInTable(con, table);
+                Iterator colIterator = colList.iterator();
+                String colTxt = "";
+                while (colIterator.hasNext()) {
+                    if (colTxt.length() > 0) {
+                        colTxt = colTxt + ",";
+                    }
+                    colTxt = colTxt + ((String) colIterator.next());
+                }
+                //System.out.print(colTxt + "\n");
+                // query does group by all columns to simulate count distinct *
+                distinct = getRowCount(con, "select count(*) from " + table + " group by " + colTxt);
 
-				}
-				if (total > distinct) {
+            }
+            if (total > distinct) {
 
-					ReportManager.problem(this, con, table + " has " + total + " rows but only " + distinct + " distinct rows");
-					result = false;
-				}
-			}
+                ReportManager.problem(this, con, table + " has " + total + " rows but only " + distinct
+                        + " distinct rows");
+                result = false;
+            }
+        }
 
-		return result;
+        return result;
 
-	} // run
+    } // run
 
 } // NoDuplicateRows

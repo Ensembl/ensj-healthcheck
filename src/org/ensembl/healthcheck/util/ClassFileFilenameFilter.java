@@ -18,7 +18,7 @@
 
 package org.ensembl.healthcheck.util;
 
-import java.io.*;
+import java.io.FilenameFilter;
 
 /**
  * Implementation of FilenameFilter that looks for class files.

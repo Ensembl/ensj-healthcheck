@@ -83,7 +83,9 @@ public class DatabaseRegistry {
     // -------------------------------------------------------------------------
     /**
      * Create a new DatabaseRegistry from a set of DatabaseRegistryEntries.
-     * @param dbres The entries to use.
+     * 
+     * @param dbres
+     *          The entries to use.
      */
     public DatabaseRegistry(final DatabaseRegistryEntry[] dbres) {
 
@@ -255,7 +257,9 @@ public class DatabaseRegistry {
         Iterator it = entries.iterator();
         while (it.hasNext()) {
             DatabaseRegistryEntry dbre = (DatabaseRegistryEntry) it.next();
-            if (dbre.getName().equals(name)) { return dbre; }
+            if (dbre.getName().equals(name)) { 
+                return dbre; 
+                }
         }
 
         return null;

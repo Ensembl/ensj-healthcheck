@@ -151,7 +151,7 @@ public class ReportLine {
    */
   public String getShortTestCaseName() {
     
-    return testCaseName.substring(testCaseName.lastIndexOf(".")+1);
+    return testCaseName.substring(testCaseName.lastIndexOf(".") + 1);
     
   } // setShortTestCaseName
   

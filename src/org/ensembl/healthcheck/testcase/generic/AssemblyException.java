@@ -18,10 +18,11 @@
 
 package org.ensembl.healthcheck.testcase.generic;
 
-import java.sql.*;
+import java.sql.Connection;
 
-import org.ensembl.healthcheck.testcase.*;
-import org.ensembl.healthcheck.*;
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
  * Healthcheck for the assembly_exception table.

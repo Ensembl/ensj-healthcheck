@@ -18,11 +18,12 @@
 
 package org.ensembl.healthcheck.util;
 
-import java.util.*;
-import java.util.logging.*;
-import java.sql.*;
+import java.sql.Connection;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.logging.Logger;
 
-import org.ensembl.healthcheck.*;
+import org.ensembl.healthcheck.NotImplementedException;
 
 /**
  * Implentation of the Iterator interface that facilitates getting database
@@ -104,7 +105,7 @@ public class DatabaseConnectionIterator implements Iterator {
    */
   public String getCurrentDatabaseName() {
     
-    return databaseNames[databaseIndex-1];
+    return databaseNames[databaseIndex - 1];
     
   } // getCurrentDatabaseName
 

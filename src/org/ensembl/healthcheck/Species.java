@@ -1,19 +1,19 @@
 /*
-  Copyright (C) 2003 EBI, GRL
+ Copyright (C) 2003 EBI, GRL
  
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
  
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
  
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 package org.ensembl.healthcheck;
 
@@ -23,200 +23,222 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * Store info about a species.
- * Implemented as a typesafe enum 
- * @see <a href="http://java.sun.com/developer/Books/shiftintojava/page1.html">Java Typesafe Enums</a>
+ * Store info about a species. Implemented as a typesafe enum
+ * 
+ * @see <a
+ *      href="http://java.sun.com/developer/Books/shiftintojava/page1.html">Java
+ *      Typesafe Enums </a>
  */
 
-public class Species {
+public final class Species {
 
-	public static final Species HOMO_SAPIENS = new Species("homo_sapiens");
-	public static final Species ANOPHELES_GAMBIAE = new Species("anopheles_gambiae");
-	public static final Species CAENORHABDITIS_ELEGANS = new Species("caenorhabditis_elegans");
-	public static final Species CAENORHABDITIS_BRIGGSAE = new Species("caenorhabditis_briggsae");
-	public static final Species DANIO_RERIO = new Species("danio_rerio");
-	public static final Species DROSOPHILA_MELANOGASTER = new Species("drosophila_melanogaster");
-	public static final Species FUGU_RUBRIPES = new Species("fugu_rubripes");
-	public static final Species MUS_MUSCULUS = new Species("mus_musculus");
-	public static final Species RATTUS_NORVEGICUS = new Species("rattus_norvegicus");
-	// special type to indicate that this species is unknown
-	public static final Species UNKNOWN = new Species("unknown");
-	
-	private final String name;
+    /** Specific type of species */
+    public static final Species HOMO_SAPIENS = new Species("homo_sapiens");
+    /** Specific type of species */
+    public static final Species ANOPHELES_GAMBIAE = new Species("anopheles_gambiae");
+    /** Specific type of species */
+    public static final Species CAENORHABDITIS_ELEGANS = new Species("caenorhabditis_elegans");
+    /** Specific type of species */
+    public static final Species CAENORHABDITIS_BRIGGSAE = new Species("caenorhabditis_briggsae");
+    /** Specific type of species */
+    public static final Species DANIO_RERIO = new Species("danio_rerio");
+    /** Specific type of species */
+    public static final Species DROSOPHILA_MELANOGASTER = new Species("drosophila_melanogaster");
+    /** Specific type of species */
+    public static final Species FUGU_RUBRIPES = new Species("fugu_rubripes");
+    /** Specific type of species */
+    public static final Species MUS_MUSCULUS = new Species("mus_musculus");
+    /** Specific type of species */
+    public static final Species RATTUS_NORVEGICUS = new Species("rattus_norvegicus");
 
-	protected static Logger logger = Logger.getLogger("HealthCheckLogger");
+    /** Unknown species */
+    public static final Species UNKNOWN = new Species("unknown");
 
-	private Species(String name) {
-		this.name = name;
-	}
+    private final String name;
 
-	public String toString() {
-		return this.name;
-	}
+    private static Logger logger = Logger.getLogger("HealthCheckLogger");
 
-	// Taxonomy IDs - see ensembl-compara/sql/taxon.txt
-	private static Map taxonIDToSpecies = new HashMap();
-	private static Map speciesToTaxonID = new HashMap();
+    private Species(String name) {
+        this.name = name;
+    }
 
-	static {
+    public String toString() {
+        return this.name;
+    }
 
-		taxonIDToSpecies.put("9606", HOMO_SAPIENS);
-		taxonIDToSpecies.put("10090", MUS_MUSCULUS);
-		taxonIDToSpecies.put("10116", RATTUS_NORVEGICUS);
-		taxonIDToSpecies.put("31033", FUGU_RUBRIPES);
-		taxonIDToSpecies.put("7165", ANOPHELES_GAMBIAE);
-		taxonIDToSpecies.put("7227", DROSOPHILA_MELANOGASTER);
-		taxonIDToSpecies.put("6239", CAENORHABDITIS_ELEGANS);
-		taxonIDToSpecies.put("6238", CAENORHABDITIS_BRIGGSAE);
-		taxonIDToSpecies.put("7955", DANIO_RERIO);
+    // Taxonomy IDs - see ensembl-compara/sql/taxon.txt
+    private static Map taxonIDToSpecies = new HashMap();
 
-		// and the other way around
-		Iterator it = taxonIDToSpecies.keySet().iterator();
-		while (it.hasNext()) {
-			String taxonID = (String)it.next();
-			Species species = (Species)taxonIDToSpecies.get(taxonID);
-			speciesToTaxonID.put(species, taxonID);
-		}
-	}
+    private static Map speciesToTaxonID = new HashMap();
 
-	// -----------------------------------------------------------------
-	/**
-	 * Resolve an alias to a Species object.
-	 * @param alias The alias (e.g. human, homosapiens, hsapiens).
-	 * @return The species object corresponding to alias, or Species.UNKNOWN if it cannot be resolved.
-	 */
-	public static Species resolveAlias(String alias) {
+    static {
 
-		alias = alias.toLowerCase();
+        taxonIDToSpecies.put("9606", HOMO_SAPIENS);
+        taxonIDToSpecies.put("10090", MUS_MUSCULUS);
+        taxonIDToSpecies.put("10116", RATTUS_NORVEGICUS);
+        taxonIDToSpecies.put("31033", FUGU_RUBRIPES);
+        taxonIDToSpecies.put("7165", ANOPHELES_GAMBIAE);
+        taxonIDToSpecies.put("7227", DROSOPHILA_MELANOGASTER);
+        taxonIDToSpecies.put("6239", CAENORHABDITIS_ELEGANS);
+        taxonIDToSpecies.put("6238", CAENORHABDITIS_BRIGGSAE);
+        taxonIDToSpecies.put("7955", DANIO_RERIO);
 
-		// --------------------------------------
+        // and the other way around
+        Iterator it = taxonIDToSpecies.keySet().iterator();
+        while (it.hasNext()) {
+            String taxonID = (String) it.next();
+            Species species = (Species) taxonIDToSpecies.get(taxonID);
+            speciesToTaxonID.put(species, taxonID);
+        }
+    }
 
-		if (in(alias, "human,hsapiens,homosapiens,homo_sapiens")) {
+    // -----------------------------------------------------------------
+    /**
+     * Resolve an alias to a Species object.
+     * 
+     * @param speciesAlias
+     *          The alias (e.g. human, homosapiens, hsapiens).
+     * @return The species object corresponding to alias, or Species.UNKNOWN if
+     *         it cannot be resolved.
+     */
+    public static Species resolveAlias(String speciesAlias) {
 
-			return HOMO_SAPIENS;
+        String alias = speciesAlias.toLowerCase();
 
-		}
+        // --------------------------------------
 
-		//		--------------------------------------
+        if (in(alias, "human,hsapiens,homosapiens,homo_sapiens")) {
 
-		if (in(alias, "mosquito,anopheles,agambiae,anophelesgambiae,anopheles_gambiae")) {
+        return HOMO_SAPIENS; 
 
-			return ANOPHELES_GAMBIAE;
+        }
 
-		}
+        // -------------------------------------
 
-		//		--------------------------------------
+        if (in(alias, "mosquito,anopheles,agambiae,anophelesgambiae,anopheles_gambiae")) {
 
-		if (in(alias, "elegans,celegans,caenorhabditiselegans,caenorhabditis_elegans")) {
+        return ANOPHELES_GAMBIAE; 
 
-			return CAENORHABDITIS_ELEGANS;
+        }
 
-		}
+        // --------------------------------------
 
-		//		--------------------------------------
+        if (in(alias, "elegans,celegans,caenorhabditiselegans,caenorhabditis_elegans")) {
 
-		if (in(alias, "briggsae,cbriggsae,caenorhabditisbriggsae,caenorhabditis_briggsae")) {
+        return CAENORHABDITIS_ELEGANS; 
 
-			return CAENORHABDITIS_BRIGGSAE;
+        }
 
-		}
+        // --------------------------------------
 
-		//		--------------------------------------
+        if (in(alias, "briggsae,cbriggsae,caenorhabditisbriggsae,caenorhabditis_briggsae")) {
 
-		if (in(alias, "zebrafish,danio,drerio,daniorerio,danio_rerio")) {
+        return CAENORHABDITIS_BRIGGSAE; 
 
-			return DANIO_RERIO;
+        }
 
-		}
+        // --------------------------------------
 
-		//		--------------------------------------
-		if (in(alias, "pufferfish,fugu,frubripes,fugurubripes,fugu_rubripes")) {
+        if (in(alias, "zebrafish,danio,drerio,daniorerio,danio_rerio")) {
 
-			return FUGU_RUBRIPES;
+        return DANIO_RERIO; 
 
-		}
+        }
 
-		//		--------------------------------------
+        // --------------------------------------
+        if (in(alias, "pufferfish,fugu,frubripes,fugurubripes,fugu_rubripes")) {
 
-		if (in(alias, "drosophila,dmelongaster,drosophilamelanogaster,drosophila_melanogaster")) {
+        return FUGU_RUBRIPES; 
 
-			return DROSOPHILA_MELANOGASTER;
+        }
 
-		}
+        // --------------------------------------
 
-		//		--------------------------------------
+        if (in(alias, "drosophila,dmelongaster,drosophilamelanogaster,drosophila_melanogaster")) {
 
-		if (in(alias, "mouse,mmusculus,musmusculus,mus_musculus")) {
+        return DROSOPHILA_MELANOGASTER; 
 
-			return MUS_MUSCULUS;
+        }
 
-		}
+        // --------------------------------------
 
-		//		--------------------------------------
+        if (in(alias, "mouse,mmusculus,musmusculus,mus_musculus")) {
 
-		if (in(alias, "rat,rnovegicus,rattusnorvegicus,rattus_norvegicus")) {
+        return MUS_MUSCULUS; 
 
-			return RATTUS_NORVEGICUS;
+        }
 
-		}
+        // --------------------------------------
 
-		//		--------------------------------------
+        if (in(alias, "rat,rnovegicus,rattusnorvegicus,rattus_norvegicus")) {
 
-		// default
-		//logger.warning("Cannot resolve species alias " + alias + " to a species - returning Species.UNKNOWN");
+        return RATTUS_NORVEGICUS; 
 
-		return Species.UNKNOWN;
+        }
 
-	}
+        // --------------------------------------
 
-	// -----------------------------------------------------------------
-	/**
-	 * Get the taxonomy ID associated with a particular species.
-	 * @param s The species to look up.
-	 * @return The taxonomy ID associated with s, or "" if none is found.
-	 */
-	public static String getTaxonomyID(Species s) {
+        // default
+        //logger.warning("Cannot resolve species alias " + alias + " to a
+        // species - returning Species.UNKNOWN");
 
-		String result = "";
-		if (speciesToTaxonID.containsKey(s)) {
-			result = (String)speciesToTaxonID.get(s);
-		} else {
-			logger.warning("Cannot get taxonomy ID for species " + s);
-		}
+        return Species.UNKNOWN;
 
-		return result;
+    }
 
-	}
+    // -----------------------------------------------------------------
+    /**
+     * Get the taxonomy ID associated with a particular species.
+     * 
+     * @param s
+     *          The species to look up.
+     * @return The taxonomy ID associated with s, or "" if none is found.
+     */
+    public static String getTaxonomyID(Species s) {
 
-	// -----------------------------------------------------------------
-	/**
-	 * Get the species associated with a particular taxonomy ID.
-	 * @param t The taxonomy ID to look up.
-	 * @return The species associated with t, or Species.UNKNOWN if none is found.
-	 */
-	public static Species getSpeciesFromTaxonomyID(String t) {
+        String result = "";
+        if (speciesToTaxonID.containsKey(s)) {
+            result = (String) speciesToTaxonID.get(s);
+        } else {
+            logger.warning("Cannot get taxonomy ID for species " + s);
+        }
 
-		Species result = UNKNOWN;
+        return result;
 
-		if (taxonIDToSpecies.containsKey(t)) {
-			result = (Species)taxonIDToSpecies.get(t);
-		} else {
-			logger.warning("Cannot get species for taxonomy ID " + t + " returning Species.UNKNOWN");
-		}
+    }
 
-		return result;
+    // -----------------------------------------------------------------
+    /**
+     * Get the species associated with a particular taxonomy ID.
+     * 
+     * @param t
+     *          The taxonomy ID to look up.
+     * @return The species associated with t, or Species.UNKNOWN if none is
+     *         found.
+     */
+    public static Species getSpeciesFromTaxonomyID(String t) {
 
-	}
+        Species result = UNKNOWN;
 
-	// -----------------------------------------------------------------
-	/**
-	 * Return true if alias appears somewhere in a string.
-	 */
-	private static boolean in(String alias, String list) {
+        if (taxonIDToSpecies.containsKey(t)) {
+            result = (Species) taxonIDToSpecies.get(t);
+        } else {
+            logger.warning("Cannot get species for taxonomy ID " + t + " returning Species.UNKNOWN");
+        }
 
-		return (list.indexOf(alias) > -1);
+        return result;
 
-	}
-	// -----------------------------------------------------------------
+    }
+
+    // -----------------------------------------------------------------
+    /**
+     * Return true if alias appears somewhere in a string.
+     */
+    private static boolean in(String alias, String list) {
+
+        return (list.indexOf(alias) > -1);
+
+    }
+    // -----------------------------------------------------------------
 
 }

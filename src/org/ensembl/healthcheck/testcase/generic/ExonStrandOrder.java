@@ -16,9 +16,13 @@
 
 package org.ensembl.healthcheck.testcase.generic;
 
-import java.sql.*;
-import org.ensembl.healthcheck.testcase.*;
-import org.ensembl.healthcheck.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
  * An EnsEMBL Healthcheck test case which checks all exon of a gene are on the same strand and in
@@ -60,8 +64,6 @@ public class ExonStrandOrder extends SingleDatabaseTestCase {
                 + "AND    tr.gene_id = g.gene_id "
                 + "ORDER BY et.transcript_id, et.rank"; 
 
-        //System.out.println(sql);
-
         Connection con = dbre.getConnection();
         try {
             Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
@@ -96,7 +98,7 @@ public class ExonStrandOrder extends SingleDatabaseTestCase {
 
                 if (transcriptID == lastTranscriptID) {
 
-                    if (lastExonStrand < -1) { // first exon in "new" transcript
+                    if (lastExonStrand < -1) {// first exon in "new" transcript
 
                         lastExonStrand = exonStrand;
                         lastExonStart = exonStart;

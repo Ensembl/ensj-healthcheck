@@ -16,48 +16,51 @@
 
 package org.ensembl.healthcheck.testcase.generic;
 
-import java.sql.*;
+import java.sql.Connection;
 
-import org.ensembl.healthcheck.testcase.*;
-import org.ensembl.healthcheck.*;
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that if the start and end of translation is on the same exon, that start < end.
+ * Check that if the start and end of translation is on the same exon, that
+ * start < end.
  */
 public class TranslationStartEnd extends SingleDatabaseTestCase {
 
-	/**
-	 * Creates a new instance of CheckTranslationStartEnd
-	 */
-	public TranslationStartEnd() {
-		addToGroup("post_genebuild");
-		addToGroup("release");
-		setDescription("Check that if the start and end of translation is on the same exon, that start < end.");
-	}
+    /**
+     * Creates a new instance of CheckTranslationStartEnd
+     */
+    public TranslationStartEnd() {
+        addToGroup("post_genebuild");
+        addToGroup("release");
+        setDescription("Check that if the start and end of translation is on the same exon, that start < end.");
+    }
 
-	/**
-	 * Find any matching databases that have start > end.
-	 * 
-	 * @return Result.
-	 */
-	public boolean run(DatabaseRegistryEntry dbre) {
+    /**
+     * Find any matching databases that have start > end.
+     * 
+     * @return Result.
+     */
+    public boolean run(DatabaseRegistryEntry dbre) {
 
-		boolean result = true;
+        boolean result = true;
 
-		Connection con = dbre.getConnection();
-		int rows = getRowCount(	con,
-														"select count(translation_id) from translation where start_exon_id = end_exon_id and seq_start > seq_end");
-		if (rows > 0) {
-			result = false;
-			//logger.warning(rows + " translations in " + DBUtils.getShortDatabaseName(con) +
-			// " have start > end");
-			ReportManager.problem(this, con, rows + " translations have start > end");
-		} else {
-			ReportManager.correct(this, con, "No translations have start > end");
-		}
+        Connection con = dbre.getConnection();
+        int rows = getRowCount(con,
+                "select count(translation_id) from translation where start_exon_id = end_exon_id and seq_start > seq_end");
+        if (rows > 0) {
+            result = false;
+            //logger.warning(rows + " translations in " +
+            // DBUtils.getShortDatabaseName(con) +
+            // " have start > end");
+            ReportManager.problem(this, con, rows + " translations have start > end");
+        } else {
+            ReportManager.correct(this, con, "No translations have start > end");
+        }
 
-		return result;
+        return result;
 
-	} // run
+    } // run
 
 } // TranslationStartEnd

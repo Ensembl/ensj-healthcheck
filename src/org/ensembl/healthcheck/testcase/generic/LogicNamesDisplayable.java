@@ -16,12 +16,20 @@
 
 package org.ensembl.healthcheck.testcase.generic;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.ensembl.healthcheck.testcase.*;
-import org.ensembl.healthcheck.*;
-import org.ensembl.healthcheck.util.*;
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.Utils;
 
 /**
  * Check that the logic names in the analysis table are displayable. Currently reads the list of
@@ -31,7 +39,7 @@ import org.ensembl.healthcheck.util.*;
 public class LogicNamesDisplayable extends SingleDatabaseTestCase {
 
     // a list of the tables to check the analysis_id in
-    private String[] featureTables = { "gene", "prediction_transcript", "dna_align_feature", "marker_feature", "protein_feature",
+    private String[] featureTables = {"gene", "prediction_transcript", "dna_align_feature", "marker_feature", "protein_feature",
             "qtl_feature", "repeat_feature", "simple_feature", "protein_align_feature"};
 
     private static final String LOGIC_NAMES_FILE = "logicnames.txt";

@@ -19,7 +19,9 @@ package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
 
-import org.ensembl.healthcheck.*;
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -27,7 +29,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  */
 public class FeatureAnalysis extends SingleDatabaseTestCase {
 
-    String[] proteinFeatureAnalyses = { "prints", "pfscan", "scanprosite", "signalp", "seg", "ncoils", "pfam", "tmhmm"};
+    String[] proteinFeatureAnalyses = {"prints", "pfscan", "scanprosite", "signalp", "seg", "ncoils", "pfam", "tmhmm"};
 
     /**
      * Creates a new instance of FeatureAnalysis
@@ -42,7 +44,7 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 
     public void types() {
 
-        //	  this testcase only applies to CORE and VEGA
+        // this testcase only applies to CORE and VEGA
         removeAppliesToType(DatabaseType.EST);
         removeAppliesToType(DatabaseType.ESTGENE);
 

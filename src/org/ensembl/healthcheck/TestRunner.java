@@ -16,448 +16,476 @@
 
 package org.ensembl.healthcheck;
 
-import java.util.*;
-import java.util.logging.*;
-import java.sql.*;
-import org.ensembl.healthcheck.testcase.*;
-import org.ensembl.healthcheck.util.*;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
+
+import org.ensembl.healthcheck.testcase.EnsTestCase;
+import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
+import org.ensembl.healthcheck.testcase.OrderedDatabaseTestCase;
+import org.ensembl.healthcheck.testcase.Repair;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.DatabaseConnectionIterator;
 
 /**
  * <p>
- * TestRunner is a base class that provides utilities for running tests - logging, the
- * ability to find and run tests from certain locations, etc.
+ * TestRunner is a base class that provides utilities for running tests -
+ * logging, the ability to find and run tests from certain locations, etc.
  * </p>
  */
 
 public class TestRunner {
 
-	/** List that holds an instance of each test. */
-	protected List allTests;
-
-	/** The List of group names (as Strings) that will be run. */
-	protected List groupsToRun;
-
-	/** The logger to use for this class */
-	protected static Logger logger = Logger.getLogger("HealthCheckLogger");
-
-	/** Output level used by ReportManager */
-	protected int outputLevel = ReportLine.PROBLEM;
-
-	/** The name of the file where configuration is stored */
-	protected static String PROPERTIES_FILE = "database.properties";
-
-	/** Flag to determine whether repairs will be shown if appropriate */
-	protected boolean showRepair = false;
-
-	/** Flag to determine whether repairs will be carried out if appropriate */
-	protected boolean doRepair = false;
-
-	// -------------------------------------------------------------------------
-	/** Creates a new instance of TestRunner */
-
-	public TestRunner() {
-
-		groupsToRun = new ArrayList();
-
-	} // TestRunner
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Get a list of all the schema names .
-	 * 
-	 * @return An array of the schema names.
-	 */
-	public String[] getAllSchemaNames() {
+    /** List that holds an instance of each test. */
+    protected List allTests;
+
+    /** The List of group names (as Strings) that will be run. */
+    protected List groupsToRun;
+
+    /** The logger to use for this class */
+    protected static Logger logger = Logger.getLogger("HealthCheckLogger");
+
+    /** Output level used by ReportManager */
+    protected int outputLevel = ReportLine.PROBLEM;
+
+    /** The name of the file where configuration is stored */
+    protected static String PROPERTIES_FILE = "database.properties";
+
+    /** Flag to determine whether repairs will be shown if appropriate */
+    protected boolean showRepair = false;
+
+    /** Flag to determine whether repairs will be carried out if appropriate */
+    protected boolean doRepair = false;
+
+    // -------------------------------------------------------------------------
+    /** Creates a new instance of TestRunner */
+
+    public TestRunner() {
+
+        groupsToRun = new ArrayList();
+
+    } // TestRunner
+
+    // -------------------------------------------------------------------------
+    /**
+     * Get a list of all the schema names .
+     * 
+     * @return An array of the schema names.
+     */
+    public String[] getAllSchemaNames() {
+
+        Connection conn;
+        String[] schemaNames = null;
+
+        // open connection
+        try {
+            conn = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System
+                    .getProperty("user"), System.getProperty("password"));
+            logger.fine("Opened connection to " + System.getProperty("databaseURL") + " as "
+                    + System.getProperty("user"));
+            schemaNames = DBUtils.listDatabases(conn);
+            logger.fine("Connection closed");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
 
-		Connection conn;
-		String[] schemaNames = null;
+        return schemaNames;
 
-		// open connection
-		try {
-			conn = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System.getProperty("user"), System.getProperty("password"));
-			logger.fine("Opened connection to " + System.getProperty("databaseURL") + " as " + System.getProperty("user"));
-			schemaNames = DBUtils.listDatabases(conn);
-			logger.fine("Connection closed");
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
+    }
 
-		return schemaNames;
+    // -------------------------------------------------------------------------
+    /**
+     * Get a list of database names that match a particular regular expression.
+     * 
+     * @param regexp
+     *          The regular expression to match.
+     * @return An array of the matching database names (may be empty if none
+     *         matched).
+     */
+    public String[] getListOfDatabaseNames(String regexp) {
 
-	}
+        Connection conn;
+        String[] databaseNames = null;
 
-	// -------------------------------------------------------------------------
-	/**
-	 * Get a list of database names that match a particular regular expression.
-	 * 
-	 * @param regexp The regular expression to match.
-	 * @return An array of the matching database names (may be empty if none matched).
-	 */
-	public String[] getListOfDatabaseNames(String regexp) {
+        // open connection
+        try {
+            conn = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System
+                    .getProperty("user"), System.getProperty("password"));
+            System.out.println("Opened connection to " + System.getProperty("databaseURL") + " as "
+                    + System.getProperty("user"));
+            databaseNames = DBUtils.listDatabases(conn, regexp);
+            if (databaseNames.length == 0) {
+                logger.info("No database names matched");
+            }
 
-		Connection conn;
-		String[] databaseNames = null;
+            //conn.close();
 
-		// open connection
-		try {
-			conn = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System.getProperty("user"), System.getProperty("password"));
-			System.out.println("Opened connection to " + System.getProperty("databaseURL") + " as " + System.getProperty("user"));
-			databaseNames = DBUtils.listDatabases(conn, regexp);
-			if (databaseNames.length == 0) {
-				logger.info("No database names matched");
-			}
+            logger.fine("Connection closed");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
 
-			//conn.close();
+        return databaseNames;
 
-			logger.fine("Connection closed");
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
+    } // getDatabaseList
 
-		return databaseNames;
+    // -------------------------------------------------------------------------
+    /**
+     * Prints, to stdout, a list of the database names that match a given
+     * regular expression.
+     * 
+     * @param regexp
+     *          The regular expression to match.
+     */
+    protected void showDatabaseList(String regexp) {
 
-	} // getDatabaseList
+        logger.fine("Listing databases matching " + regexp + " :\n");
+        String[] databaseList = getListOfDatabaseNames(regexp);
+        for (int i = 0; i < databaseList.length; i++) {
+            logger.fine("\t" + databaseList[i]);
+        }
 
-	// -------------------------------------------------------------------------
-	/**
-	 * Prints, to stdout, a list of the database names that match a given regular
-	 * expression.
-	 * 
-	 * @param regexp The regular expression to match.
-	 */
-	protected void showDatabaseList(String regexp) {
+    } // showDatabaseList
 
-		logger.fine("Listing databases matching " + regexp + " :\n");
-		String[] databaseList = getListOfDatabaseNames(regexp);
-		for (int i = 0; i < databaseList.length; i++) {
-			logger.fine("\t" + databaseList[i]);
-		}
+    // -------------------------------------------------------------------------
+    /**
+     * Run appropriate tests against databases. Also run show/repair methods if
+     * the test implements the Repair interface and the appropriate flags are
+     * set.
+     * 
+     * @param databaseRegistry
+     *          The DatabaseRegistry to use.
+     * @param testRegistry
+     *          The TestRegistry to use.
+     */
+    protected void runAllTests(DatabaseRegistry databaseRegistry, TestRegistry testRegistry) {
 
-	} // showDatabaseList
+        int numberOfTestsRun = 0;
 
-	// -------------------------------------------------------------------------
-	/**
-	 * Run appropriate tests against databases. Also run show/repair methods if the test implements the
-	 * Repair interface and the appropriate flags are set.
-	 * 
-	 * @param databaseRegistry The DatabaseRegistry to use.
-	 * @param testRegistry The TestRegistry to use.
-	 */
-	protected void runAllTests(DatabaseRegistry databaseRegistry, TestRegistry testRegistry) {
+        // --------------------------------
+        // Single-database tests
 
-		int numberOfTestsRun = 0;
+        DatabaseRegistryEntry[] databases = databaseRegistry.getAll();
 
-		// --------------------------------	
-		// Single-database tests
+        // run the appropriate tests on each of them
+        for (int i = 0; i < databases.length; i++) {
 
-		DatabaseRegistryEntry[] databases = databaseRegistry.getAll();
+            DatabaseRegistryEntry database = databases[i];
 
-		// run the appropriate tests on each of them
-		for (int i = 0; i < databases.length; i++) {
+            List allSingleDatabaseTests = testRegistry.getAllSingle(groupsToRun, database.getType());
 
-			DatabaseRegistryEntry database = databases[i];
+            for (Iterator it = allSingleDatabaseTests.iterator(); it.hasNext();) {
 
-			List allSingleDatabaseTests = testRegistry.getAllSingle(groupsToRun, database.getType());
+                SingleDatabaseTestCase testCase = (SingleDatabaseTestCase) it.next();
 
-			for (Iterator it = allSingleDatabaseTests.iterator(); it.hasNext();) {
+                ReportManager.startTestCase(testCase, databases[i]);
 
-				SingleDatabaseTestCase testCase = (SingleDatabaseTestCase)it.next();
+                boolean result = testCase.run(database);
 
-				ReportManager.startTestCase(testCase, databases[i]);
+                ReportManager.finishTestCase(testCase, result, databases[i]);
+                logger.info(testCase.getName() + " [" + databases[i].getName() + "]" + (result ? "PASSED" : "FAILED"));
 
-				boolean result = testCase.run(database);
+                numberOfTestsRun++;
 
-				ReportManager.finishTestCase(testCase, result, databases[i]);
-				logger.info(testCase.getName() + " [" + databases[i].getName() + "]" + (result ? "PASSED" : "FAILED"));
+                checkRepair(testCase, database);
 
-				numberOfTestsRun++;
+            } // foreach test
 
-				checkRepair(testCase, database);
+        } // foreach DB
 
-			} // foreach test
+        // --------------------------------
+        // Multi-database tests
 
-		} // foreach DB
+        // here we just pass the whole DatabaseRegistry to each test
+        // and let the test decide what to do
 
-		// --------------------------------
-		// Multi-database tests
+        List allMultiDatabaseTests = testRegistry.getAllMulti(groupsToRun);
 
-		// here we just pass the whole DatabaseRegistry to each test
-		// and let the test decide what to do
+        for (Iterator it = allMultiDatabaseTests.iterator(); it.hasNext();) {
 
-		List allMultiDatabaseTests = testRegistry.getAllMulti(groupsToRun);
+            MultiDatabaseTestCase testCase = (MultiDatabaseTestCase) it.next();
 
-		for (Iterator it = allMultiDatabaseTests.iterator(); it.hasNext();) {
+            ReportManager.startTestCase(testCase, null);
 
-			MultiDatabaseTestCase testCase = (MultiDatabaseTestCase)it.next();
+            boolean result = testCase.run(databaseRegistry);
 
-			ReportManager.startTestCase(testCase, null);
+            ReportManager.finishTestCase(testCase, result, null);
+            logger.info(testCase.getName() + " " + (result ? "PASSED" : "FAILED"));
 
-			boolean result = testCase.run(databaseRegistry);
+            numberOfTestsRun++;
 
-			ReportManager.finishTestCase(testCase, result, null);
-			logger.info(testCase.getName() + " " + (result ? "PASSED" : "FAILED"));
+        } // foreach test
 
-			numberOfTestsRun++;
+        // --------------------------------
+        // Ordered database tests
 
-		} // foreach test
+        // getAll() should give back databases in the order they were specified
+        // on the command line
+        DatabaseRegistryEntry[] orderedDatabases = databaseRegistry.getAll();
 
-		// --------------------------------
-		// Ordered database tests
-		
-		// getAll() should give back databases in the order they were specified on the command line
-		DatabaseRegistryEntry[] orderedDatabases = databaseRegistry.getAll();
+        List allOrderedDatabaseTests = testRegistry.getAllOrdered(groupsToRun);
 
-		List allOrderedDatabaseTests = testRegistry.getAllOrdered(groupsToRun);
+        for (Iterator it = allOrderedDatabaseTests.iterator(); it.hasNext();) {
 
-		for (Iterator it = allOrderedDatabaseTests.iterator(); it.hasNext();) {
+            OrderedDatabaseTestCase testCase = (OrderedDatabaseTestCase) it.next();
 
-			OrderedDatabaseTestCase testCase = (OrderedDatabaseTestCase)it.next();
+            ReportManager.startTestCase(testCase, null);
 
-			ReportManager.startTestCase(testCase, null);
+            boolean result = testCase.run(orderedDatabases);
 
-			boolean result = testCase.run(orderedDatabases);
+            ReportManager.finishTestCase(testCase, result, null);
+            logger.info(testCase.getName() + " " + (result ? "PASSED" : "FAILED"));
 
-			ReportManager.finishTestCase(testCase, result, null);
-			logger.info(testCase.getName() + " " + (result ? "PASSED" : "FAILED"));
+            numberOfTestsRun++;
 
-			numberOfTestsRun++;
+        } // foreach test
 
-		} // foreach test
+        // --------------------------------
 
-		// --------------------------------
+        if (numberOfTestsRun == 0) {
+            logger.warning("Warning: no tests were run.");
+        }
 
-		if (numberOfTestsRun == 0) {
-			logger.warning("Warning: no tests were run.");
-		}
+    } // runAllTests
 
-	} // runAllTests
+    //---------------------------------------------------------------------
+    /**
+     * Check if the given testcase can repair errors on the given database.
+     */
+    private void checkRepair(EnsTestCase testCase, DatabaseRegistryEntry database) {
 
-	//---------------------------------------------------------------------
-	/**
-	 * Check if the given testcase can repair errors on the given database.
-	 */
-	private void checkRepair(EnsTestCase testCase, DatabaseRegistryEntry database) {
+        // check for show/do repair
+        if (testCase.canRepair()) {
+            if (showRepair) {
+                ((Repair) testCase).show(database);
+            }
+            if (doRepair) {
+                ((Repair) testCase).repair(database);
+            }
+        }
 
-		// check for show/do repair
-		if (testCase.canRepair()) {
-			if (showRepair) {
-				((Repair)testCase).show(database);
-			}
-			if (doRepair) {
-				((Repair)testCase).repair(database);
-			}
-		}
+    } // checkRepair
 
-	} // checkRepair
+    // -------------------------------------------------------------------------
+    /**
+     * Get a connection to a particular database.
+     * 
+     * @return A connection to database.
+     */
+    public Connection getDatabaseConnection() {
 
-	// -------------------------------------------------------------------------
-	/**
-	 * Get a connection to a particular database.
-	 * 
-	 * @return A connection to database.
-	 */
-	public Connection getDatabaseConnection() {
-
-		return DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System.getProperty("user"), System.getProperty("password"));
-
-	} // getDatabaseConnection
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Get an iterator that will iterate over database connections whose names match a
-	 * particular regular expression.
-	 * 
-	 * @param databaseRegexp The regular expression to match.
-	 * @return A DatabaseConnectionIterator object that will iterate over database
-	 *         Connections for databases whose names match the regular expression.
-	 */
-	public DatabaseConnectionIterator getDatabaseConnectionIterator(String databaseRegexp) {
-
-		return new DatabaseConnectionIterator(
-			System.getProperty("driver"),
-			System.getProperty("databaseURL"),
-			System.getProperty("user"),
-			System.getProperty("password"),
-			getListOfDatabaseNames(databaseRegexp));
-
-	} // getDatabaseConnectionIterator
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Get the union of all the test groups.
-	 * 
-	 * @param tests The tests to check.
-	 * @return An array containing the names of all the groups that any member of tests is
-	 *         a member of.
-	 */
-	public String[] listAllGroups(List tests) {
-
-		ArrayList g = new ArrayList();
-		Iterator it = tests.iterator();
-		while (it.hasNext()) {
-			List thisTestsGroups = ((EnsTestCase)it.next()).getGroups();
-			Iterator it2 = thisTestsGroups.iterator();
-			while (it2.hasNext()) {
-				String group = (String)it2.next();
-				if (!g.contains(group)) {
-					g.add(group);
-				}
-			}
-		}
-
-		return (String[])g.toArray(new String[g.size()]);
-
-	} // listAllGroups
-
-	// -------------------------------------------------------------------------
-	/**
-	 * List all the tests in a particular group.
-	 * 
-	 * @param tests The tests to check.
-	 * @param group The group name to check.
-	 * @return An array containing the names whatever tests are a member of group.
-	 */
-	public String[] listTestsInGroup(List tests, String group) {
-
-		ArrayList g = new ArrayList();
-		Iterator it = tests.iterator();
-		while (it.hasNext()) {
-			EnsTestCase test = (EnsTestCase)it.next();
-			if (test.inGroup(group)) {
-				g.add(test.getShortTestName());
-			}
-		}
-
-		return (String[])g.toArray(new String[g.size()]);
-
-	} // listTestsInGroup
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Print (to stdout) out a list of test reports, keyed by the test type.
-	 * 
-	 * @param level The lowest report level (see ReportLine) to print. Reports with a level
-	 *          lower than this are not printed.
-	 */
-	public void printReportsByTest(int level) {
-
-		System.out.println("\n---- RESULTS BY TEST CASE ----");
-		Map map = ReportManager.getAllReportsByTestCase(level);
-		Set keys = map.keySet();
-		Iterator it = keys.iterator();
-		while (it.hasNext()) {
-			String key = (String)it.next();
-			System.out.println("\n" + key);
-			List lines = (List)map.get(key);
-			Iterator it2 = lines.iterator();
-			while (it2.hasNext()) {
-				ReportLine reportLine = (ReportLine)it2.next();
-				if (reportLine.getLevel() >= level) {
-					String dbName = reportLine.getDatabaseName();
-					if (dbName.equals("no_database")) {
-						dbName = "";
-					} else {
-						dbName = reportLine.getDatabaseName() + ": ";
-					}
-					System.out.println("  " + dbName + reportLine.getMessage());
-				} // if level
-			} // while it2
-		} // while it
-
-	} // printReportsByTest
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Print (to stdout) a list of test results, ordered by database.
-	 * 
-	 * @param level The minimum level of report to print - see ReportLine. Reports below
-	 *          this level are not printed.
-	 */
-	public void printReportsByDatabase(int level) {
-
-		System.out.println("\n---- RESULTS BY DATABASE ----");
-		Map map = ReportManager.getAllReportsByDatabase(level);
-		Set keys = map.keySet();
-		Iterator it = keys.iterator();
-		while (it.hasNext()) {
-			String key = (String)it.next();
-			System.out.print("\n" + key + ": ");
-			List lines = (List)map.get(key);
-			int nProblems = lines.size();
-			if (nProblems == 0) {
-				System.out.println("No problems found");
-			} else {
-				String s = (nProblems == 1) ? "" : "s";
-				System.out.println(nProblems + " problem" + s + " found");
-			Iterator it2 = lines.iterator();
-			while (it2.hasNext()) {
-				ReportLine reportLine = (ReportLine)it2.next();
-				if (reportLine.getLevel() >= level) {
-					System.out.println(" " + reportLine.getShortTestCaseName() + ": " + reportLine.getMessage());
-				} // if level
-			} // while it2
-			} // if nProblems
-		} // while it
-
-	} // printReportsByDatabase
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Set the outputLevel variable based on an input string (probably from the command
-	 * line)
-	 * 
-	 * @param str The output level to use.
-	 */
-	protected void setOutputLevel(String str) {
-
-		String lstr = str.toLowerCase();
-		if (lstr.equals("all")) {
-			outputLevel = ReportLine.ALL;
-		} else if (lstr.equals("none")) {
-			outputLevel = ReportLine.NONE;
-		} else if (lstr.equals("problem")) {
-			outputLevel = ReportLine.PROBLEM;
-		} else if (lstr.equals("correct")) {
-			outputLevel = ReportLine.CORRECT;
-		} else if (lstr.equals("warning")) {
-			outputLevel = ReportLine.WARNING;
-		} else if (lstr.equals("info")) {
-			outputLevel = ReportLine.INFO;
-		} else {
-			logger.warning("Output level " + str + " not recognised; using 'all'");
-		}
-
-	} // setOutputLevel
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Set the output level.
-	 * 
-	 * @param l The new output level.
-	 */
-	public void setOutputLevel(int l) {
-
-		outputLevel = l;
-		logger.finest("Set outputLevel to " + outputLevel);
-
-	} // setOutputLevel
-
-	// -------------------------------------------------------------------------
-
-	/**
-	 * Get the current output level.
-	 * 
-	 * @return The current output level. See ReportLine.
-	 */
-	public int getOutputLevel() {
-
-		return outputLevel;
-
-	} // getOutputLevel
-
-	// -------------------------------------------------------------------------
+        return DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System
+                .getProperty("user"), System.getProperty("password"));
+
+    } // getDatabaseConnection
+
+    // -------------------------------------------------------------------------
+    /**
+     * Get an iterator that will iterate over database connections whose names
+     * match a particular regular expression.
+     * 
+     * @param databaseRegexp
+     *          The regular expression to match.
+     * @return A DatabaseConnectionIterator object that will iterate over
+     *         database Connections for databases whose names match the regular
+     *         expression.
+     */
+    public DatabaseConnectionIterator getDatabaseConnectionIterator(String databaseRegexp) {
+
+        return new DatabaseConnectionIterator(System.getProperty("driver"), System.getProperty("databaseURL"), System
+                .getProperty("user"), System.getProperty("password"), getListOfDatabaseNames(databaseRegexp));
+
+    } // getDatabaseConnectionIterator
+
+    // -------------------------------------------------------------------------
+    /**
+     * Get the union of all the test groups.
+     * 
+     * @param tests
+     *          The tests to check.
+     * @return An array containing the names of all the groups that any member
+     *         of tests is a member of.
+     */
+    public String[] listAllGroups(List tests) {
+
+        ArrayList g = new ArrayList();
+        Iterator it = tests.iterator();
+        while (it.hasNext()) {
+            List thisTestsGroups = ((EnsTestCase) it.next()).getGroups();
+            Iterator it2 = thisTestsGroups.iterator();
+            while (it2.hasNext()) {
+                String group = (String) it2.next();
+                if (!g.contains(group)) {
+                    g.add(group);
+                }
+            }
+        }
+
+        return (String[]) g.toArray(new String[g.size()]);
+
+    } // listAllGroups
+
+    // -------------------------------------------------------------------------
+    /**
+     * List all the tests in a particular group.
+     * 
+     * @param tests
+     *          The tests to check.
+     * @param group
+     *          The group name to check.
+     * @return An array containing the names whatever tests are a member of
+     *         group.
+     */
+    public String[] listTestsInGroup(List tests, String group) {
+
+        ArrayList g = new ArrayList();
+        Iterator it = tests.iterator();
+        while (it.hasNext()) {
+            EnsTestCase test = (EnsTestCase) it.next();
+            if (test.inGroup(group)) {
+                g.add(test.getShortTestName());
+            }
+        }
+
+        return (String[]) g.toArray(new String[g.size()]);
+
+    } // listTestsInGroup
+
+    // -------------------------------------------------------------------------
+    /**
+     * Print (to stdout) out a list of test reports, keyed by the test type.
+     * 
+     * @param level
+     *          The lowest report level (see ReportLine) to print. Reports with
+     *          a level lower than this are not printed.
+     */
+    public void printReportsByTest(int level) {
+
+        System.out.println("\n---- RESULTS BY TEST CASE ----");
+        Map map = ReportManager.getAllReportsByTestCase(level);
+        Set keys = map.keySet();
+        Iterator it = keys.iterator();
+        while (it.hasNext()) {
+            String key = (String) it.next();
+            System.out.println("\n" + key);
+            List lines = (List) map.get(key);
+            Iterator it2 = lines.iterator();
+            while (it2.hasNext()) {
+                ReportLine reportLine = (ReportLine) it2.next();
+                if (reportLine.getLevel() >= level) {
+                    String dbName = reportLine.getDatabaseName();
+                    if (dbName.equals("no_database")) {
+                        dbName = "";
+                    } else {
+                        dbName = reportLine.getDatabaseName() + ": ";
+                    }
+                    System.out.println("  " + dbName + reportLine.getMessage());
+                } // if level
+            } // while it2
+        } // while it
+
+    } // printReportsByTest
+
+    // -------------------------------------------------------------------------
+    /**
+     * Print (to stdout) a list of test results, ordered by database.
+     * 
+     * @param level
+     *          The minimum level of report to print - see ReportLine. Reports
+     *          below this level are not printed.
+     */
+    public void printReportsByDatabase(int level) {
+
+        System.out.println("\n---- RESULTS BY DATABASE ----");
+        Map map = ReportManager.getAllReportsByDatabase(level);
+        Set keys = map.keySet();
+        Iterator it = keys.iterator();
+        while (it.hasNext()) {
+            String key = (String) it.next();
+            System.out.print("\n" + key + ": ");
+            List lines = (List) map.get(key);
+            int nProblems = lines.size();
+            if (nProblems == 0) {
+                System.out.println("No problems found");
+            } else {
+                String s = (nProblems == 1) ? "" : "s";
+                System.out.println(nProblems + " problem" + s + " found");
+                Iterator it2 = lines.iterator();
+                while (it2.hasNext()) {
+                    ReportLine reportLine = (ReportLine) it2.next();
+                    if (reportLine.getLevel() >= level) {
+                        System.out.println(" " + reportLine.getShortTestCaseName() + ": " + reportLine.getMessage());
+                    } // if level
+                } // while it2
+            } // if nProblems
+        } // while it
+
+    } // printReportsByDatabase
+
+    // -------------------------------------------------------------------------
+    /**
+     * Set the outputLevel variable based on an input string (probably from the
+     * command line)
+     * 
+     * @param str
+     *          The output level to use.
+     */
+    protected void setOutputLevel(String str) {
+
+        String lstr = str.toLowerCase();
+        if (lstr.equals("all")) {
+            outputLevel = ReportLine.ALL;
+        } else if (lstr.equals("none")) {
+            outputLevel = ReportLine.NONE;
+        } else if (lstr.equals("problem")) {
+            outputLevel = ReportLine.PROBLEM;
+        } else if (lstr.equals("correct")) {
+            outputLevel = ReportLine.CORRECT;
+        } else if (lstr.equals("warning")) {
+            outputLevel = ReportLine.WARNING;
+        } else if (lstr.equals("info")) {
+            outputLevel = ReportLine.INFO;
+        } else {
+            logger.warning("Output level " + str + " not recognised; using 'all'");
+        }
+
+    } // setOutputLevel
+
+    // -------------------------------------------------------------------------
+    /**
+     * Set the output level.
+     * 
+     * @param l
+     *          The new output level.
+     */
+    public void setOutputLevel(int l) {
+
+        outputLevel = l;
+        logger.finest("Set outputLevel to " + outputLevel);
+
+    } // setOutputLevel
+
+    // -------------------------------------------------------------------------
+
+    /**
+     * Get the current output level.
+     * 
+     * @return The current output level. See ReportLine.
+     */
+    public int getOutputLevel() {
+
+        return outputLevel;
+
+    } // getOutputLevel
+
+    // -------------------------------------------------------------------------
 
 } // TestRunner
 
