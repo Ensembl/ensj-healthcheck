@@ -60,7 +60,15 @@ public final class Utils {
      */
     public static void readPropertiesFileIntoSystem(final String propertiesFileName) {
 
-        String propsFile = System.getProperty("user.dir") + System.getProperty("file.separator") + propertiesFileName;
+        String propsFile;
+
+	// Prepend home directory if not absolute path
+	if (propertiesFileName.indexOf(File.separator) == -1) {
+	    propsFile = System.getProperty("user.dir") + File.separator + propertiesFileName;
+	} else {
+	    propsFile = propertiesFileName;
+	}
+
         Properties dbProps = Utils.readSimplePropertiesFile(propsFile);
         Enumeration e = dbProps.propertyNames();
         String name, value;
