@@ -67,7 +67,7 @@ public class XrefTypes extends SingleDatabaseTestCase {
 	    // Query returns all external_db_id-object type relations
 	    // execute it and loop over each row checking for > 1 consecutive row with same ID
 	    
-	    ResultSet rs = stmt.executeQuery("SELECT x.external_db_id, ox.ensembl_object_type, COUNT(*) FROM xref x, object_xref ox WHERE x.xref_id = ox.xref_id GROUP BY x.external_db_id, ox.ensembl_object_type");
+	    ResultSet rs = stmt.executeQuery("SELECT x.external_db_id, ox.ensembl_object_type, COUNT(*), e.db_name FROM xref x, object_xref ox, external_db e WHERE x.xref_id = ox.xref_id AND e.external_db_id = x.external_db_id GROUP BY x.external_db_id, ox.ensembl_object_type");
 	    
 	    long previousID = -1;
 	    String previousType = "";
@@ -77,10 +77,11 @@ public class XrefTypes extends SingleDatabaseTestCase {
 		long externalDBID = rs.getLong(1);
 		String objectType = rs.getString(2);
 		int count = rs.getInt(3);
-		
+		String externalDBName = rs.getString(4);
+
 		if (externalDBID == previousID) {
 		    
-		    ReportManager.problem(this, con, "External DB ID " + externalDBID + " is associated with " + objectType + " as well as " + previousType);
+		    ReportManager.problem(this, con, "External DB with ID " + externalDBID + " (" + externalDBName + ") is associated with " + objectType + " as well as " + previousType);
 		    result = false;
 		    
 		}
