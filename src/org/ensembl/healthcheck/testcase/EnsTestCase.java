@@ -1046,6 +1046,19 @@ public abstract class EnsTestCase {
   
   // -------------------------------------------------------------------------
   /**
+   * Get a list of the table names that match a particular pattern.
+   * @param con The database connection to use.
+   * @param pattern The pattern to use - note that this is a <em>SQL</em> pattern, not a regexp.
+   * @return A list of Strings representing the names of the tables that match the pattern.
+   */
+  public List getTableNames(Connection con, String pattern) {
+    
+    return DBUtils.getTableNames(con, pattern);
+    
+  }
+  
+  // -------------------------------------------------------------------------
+  /**
    * Convenience method for getting a connection to a named schema.
    * @param schema The name of the schema to connect to.
    * @return A connection to schema.
