@@ -1,31 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE attributes PUBLIC "-//NetBeans//DTD DefaultAttributes 1.0//EN" "http://www.netbeans.org/dtds/attributes-1_0.dtd">
 <attributes version="1.0">
-    <fileobject name="DBUtilsTest.java">
-        <attr name="class_dependency_junit.framework.TestCase" stringvalue="DBUtilsTest"/>
-    </fileobject>
     <fileobject name="LogFormatterTest.java">
-        <attr name="class_dependency_org.netbeans.junit.NbTestCase" stringvalue="LogFormatterTest"/>
+        <attr name="class_dependency_junit.framework.TestCase" stringvalue="LogFormatterTest"/>
     </fileobject>
     <fileobject name="DatabaseConnectionIteratorTest.java">
-        <attr name="class_dependency_org.netbeans.junit.NbTestCase" stringvalue="DatabaseConnectionIteratorTest"/>
+        <attr name="class_dependency_junit.framework.TestCase" stringvalue="DatabaseConnectionIteratorTest"/>
     </fileobject>
     <fileobject name="MyStreamHandlerTest.java">
-        <attr name="class_dependency_org.netbeans.junit.NbTestCase" stringvalue="MyStreamHandlerTest"/>
-    </fileobject>
-    <fileobject name="LogFormatter.java">
-        <attr name="class_dependency_java.util.logging.Formatter" stringvalue="LogFormatter"/>
-    </fileobject>
-    <fileobject name="ClassFileFilenameFilterTest.java">
-        <attr name="class_dependency_junit.framework.TestCase" stringvalue="ClassFileFilenameFilterTest"/>
+        <attr name="class_dependency_junit.framework.TestCase" stringvalue="MyStreamHandlerTest"/>
     </fileobject>
     <fileobject name="DatabaseConnectionIterator.java">
         <attr name="class_dependency_java.util.Iterator" stringvalue="DatabaseConnectionIterator"/>
     </fileobject>
-    <fileobject name="MyStreamHandler.java">
-        <attr name="class_dependency_java.util.logging.Handler" stringvalue="MyStreamHandler"/>
-    </fileobject>
     <fileobject name="UtilsTest.java">
-        <attr name="class_dependency_org.netbeans.junit.NbTestCase" stringvalue="UtilsTest"/>
+        <attr name="class_dependency_junit.framework.TestCase" stringvalue="UtilsTest"/>
     </fileobject>
 </attributes>
