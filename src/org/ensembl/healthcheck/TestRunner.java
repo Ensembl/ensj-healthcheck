@@ -336,7 +336,7 @@ public class TestRunner {
    */
   public List findTestsInDirectory(String dir, String packageName) {
     
-    logger.info("Looking for tests in " + dir);
+    logger.fine("Looking for tests in " + dir);
     
     ArrayList tests = new ArrayList();
     
@@ -416,7 +416,7 @@ public class TestRunner {
       EnsTestCase test = (EnsTestCase)it.next();
       if (!testInList(test, mainList)) { // can't really use List.contains() as the lists store objects which may be different
         mainList.add(test);
-        logger.info("Added " + test.getShortTestName() + " to the list of tests");
+        logger.fine("Added " + test.getShortTestName() + " to the list of tests");
       } else {
         logger.fine("Skipped " + test.getShortTestName() + " as it is already in the list of tests");
       }
