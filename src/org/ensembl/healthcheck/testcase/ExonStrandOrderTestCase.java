@@ -81,7 +81,7 @@ public class ExonStrandOrderTestCase extends EnsTestCase {
     "AND    e.seq_region_id = a.cmp_seq_region_id " +
     "ORDER  BY t.gene_id, t.transcript_id, et.rank ";
     
-    System.out.println(sql);
+    //System.out.println(sql);
     
     while (it.hasNext()) {
       
