@@ -53,11 +53,14 @@ public class CheckDuplicateExonsTestCase extends EnsTestCase {
       int rows = getRowCount(con, "select e1.exon_id as exon1, e2.exon_id as exon2 from exon e1, exon e2 where e1.contig_start = e2.contig_start and e1.contig_end=e2.contig_end and e1.contig_strand=e2.contig_strand and e1.phase=e2.phase and e1.end_phase=e2.end_phase and e1.exon_id != e2.exon_id and e1.contig_id = e2.contig_id");
       if (rows > 0) {
         result = false;
-        logger.warning(rows + " exons in " + DBUtils.getShortDatabaseName(con) + " seem to be duplicated.");
+        //logger.warning(rows + " exons in " + DBUtils.getShortDatabaseName(con) + " seem to be duplicated.");
+        ReportManager.problem(this, con, rows + " exons seem to be duplicated");
+      } else {
+        ReportManager.correct(this, con, "No duplicate exons"); 
       }
     } // while connection
     
-    return new TestResult(getShortTestName(), result, "");
+    return new TestResult(getShortTestName(), result);
     
   } // run
   

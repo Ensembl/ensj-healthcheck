@@ -54,47 +54,65 @@ public class CheckFeatureCoordsTestCase extends EnsTestCase {
       int rows = getRowCount(con, "select count(*) from dna_align_feature where contig_start > contig_end");
       if (rows > 0) {
         result = false;
-        logger.warning(rows + " in " + DBUtils.getShortDatabaseName(con) + " have DNA align features where contig_start > contig_end");
+        //logger.warning(rows + " in " + DBUtils.getShortDatabaseName(con) + " have DNA align features where contig_start > contig_end");
+        ReportManager.problem(this, con, rows + " have DNA align features where contig_start > contig_end");
+      } else {
+        ReportManager.correct(this, con, "No DNA align features where contig_start > contig_end");
       }
       
       logger.info(".");
       rows = getRowCount(con, "select count(*) from dna_align_feature where contig_start < 1");
       if (rows > 0) {
         result = false;
-        logger.warning(rows + " in " + DBUtils.getShortDatabaseName(con) + " have DNA align features where contig_start < 1");
+        //logger.warning(rows + " in " + DBUtils.getShortDatabaseName(con) + " have DNA align features where contig_start < 1");
+        ReportManager.problem(this, con, rows + " have DNA align features where contig_start < 1");
+      } else {
+        ReportManager.correct(this, con, "No DNA align features where contig_start < 1");
       }
-
+      
       logger.info(".");
       rows = getRowCount(con, "select count(dna_align_feature_id) from dna_align_feature f, contig c where f.contig_id = c.contig_id and f.contig_end > c.length");
       if (rows > 0) {
         result = false;
-        logger.warning(rows + " in " + DBUtils.getShortDatabaseName(con) + " have DNA align features where contig_length > contig_end");
+        //logger.warning(rows + " in " + DBUtils.getShortDatabaseName(con) + " have DNA align features where contig_length > contig_end");
+        ReportManager.problem(this, con, rows + " have DNA align features where contig_length > contig_end");
+      } else {
+        ReportManager.correct(this, con, "No DNA align features where contig_length > contig_end");
       }
       
       logger.info("Checking protein align features for " + DBUtils.getShortDatabaseName(con) + " ...");
       rows = getRowCount(con, "select count(*) from protein_align_feature where contig_start > contig_end");
       if (rows > 0) {
         result = false;
-        logger.warning(rows + " in " + DBUtils.getShortDatabaseName(con) + " have protein align features where contig_start > contig_end");
+        //logger.warning(rows + " in " + DBUtils.getShortDatabaseName(con) + " have protein align features where contig_start > contig_end");
+        ReportManager.problem(this, con, rows + " have protein align features where contig_start > contig_end");
+      } else {
+        ReportManager.correct(this, con, "No have protein align features where contig_start > contig_end");
       }
-
+      
       logger.info(".");
       rows = getRowCount(con, "select count(*) from protein_align_feature where contig_start < 1");
       if (rows > 0) {
         result = false;
-        logger.warning(rows + " in " + DBUtils.getShortDatabaseName(con) + " have protein align features where contig_start < 1");
+        //logger.warning(rows + " in " + DBUtils.getShortDatabaseName(con) + " have protein align features where contig_start < 1");
+        ReportManager.problem(this, con, rows + " have protein align features where contig_start < 1");
+      } else {
+        ReportManager.correct(this, con, "No protein align features where contig_start < 1");
       }
       
       logger.info(".");
       rows = getRowCount(con, "select count(protein_align_feature_id) from protein_align_feature f, contig c where f.contig_id = c.contig_id and f.contig_end > c.length");
       if (rows > 0) {
         result = false;
-        logger.warning(rows + " in " + DBUtils.getShortDatabaseName(con) + " have protein align features where contig_length > contig_end");
+        //logger.warning(rows + " in " + DBUtils.getShortDatabaseName(con) + " have protein align features where contig_length > contig_end");
+        ReportManager.problem(this, con, rows + " have protein align features where contig_length > contig_end");
+      } else {
+        ReportManager.correct(this, con, "No protein align features where contig_length > contig_end");
       }
       
     } // while connection
     
-    return new TestResult(getShortTestName(), result, "");
+    return new TestResult(getShortTestName(), result);
     
   } // run
   

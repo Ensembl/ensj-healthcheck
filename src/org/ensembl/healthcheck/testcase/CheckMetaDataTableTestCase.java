@@ -58,7 +58,10 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
       // Check that the meta table exists
       if (!checkTableExists(con, "meta")) {
         result = false;
-        logger.severe(dbName + " does not have a meta table!");
+        //logger.severe(dbName + " does not have a meta table!");
+        ReportManager.problem(this, con, "Meta table not present");
+      } else {
+        ReportManager.correct(this, con, "Meta table present");
       }
       
       // ----------------------------------------
@@ -66,7 +69,10 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
       int rows = countRowsInTable(con, "meta");
       if (rows == 0) {
         result = false;
-        warn(con, " has empty meta table");
+        //warn(con, " has empty meta table");
+        ReportManager.problem(this, con, "meta table is empty");
+      } else {
+        ReportManager.correct(this, con, "meta table has data");
       }
       
       // ----------------------------------------
@@ -77,7 +83,10 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
         rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + meta_key + "'");
         if (rows == 0) {
           result = false;
-          warn(con, "No entry in meta table for " + meta_key);
+          //warn(con, "No entry in meta table for " + meta_key);
+          ReportManager.problem(this, con, "No entry in meta table for " + meta_key);
+        } else {
+         ReportManager.correct(this, con, meta_key + " entry present"); 
         }
       }
       // ----------------------------------------
@@ -95,7 +104,10 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
       
       if (!metaTableAssemblyVersion.equalsIgnoreCase(dbNameAssemblyVersion)) {
         result = false;
-        warn(con, "Database name assembly version (" + dbNameAssemblyVersion + ") does not match meta table assembly version (" + metaTableAssemblyVersion + ").");
+        //warn(con, "Database name assembly version (" + dbNameAssemblyVersion + ") does not match meta table assembly version (" + metaTableAssemblyVersion + ").");
+        ReportManager.problem(this, con, "Database name assembly version (" + dbNameAssemblyVersion + ") does not match meta table assembly version (" + metaTableAssemblyVersion + ")");
+      } else {
+       ReportManager.correct(this, con, "Assembly version in database name matches assembly version in meta table"); 
       }
       
       // ----------------------------------------
@@ -108,7 +120,10 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
       }
       if (!member) {
         result = false;
-        warn(con, "Assembly prefix (" + metaTableAssemblyPrefix + ") is not valid");
+        //warn(con, "Assembly prefix (" + metaTableAssemblyPrefix + ") is not valid");
+        ReportManager.problem(this, con, "Assembly prefix (" + metaTableAssemblyPrefix + ") is not valid");
+      } else {
+       ReportManager.correct(this, con, "Meta table assembly prefix (" + metaTableAssemblyPrefix + ") is valid"); 
       }
       
       // ----------------------------------------
@@ -126,11 +141,15 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
         logger.finest("Classification from DB name:" + dbNameGenusSpecies + " Meta table: " + metaTableGenusSpecies);
         if (!dbNameGenusSpecies.equalsIgnoreCase(metaTableGenusSpecies)) {
           result = false;
-          warn(con, "Database name does not correspond to species/genus data from meta table");
+          //warn(con, "Database name does not correspond to species/genus data from meta table");
+          ReportManager.problem(this, con, "Database name does not correspond to species/genus data from meta table");
+        } else {
+         ReportManager.correct(this, con, "Database name corresponds to species/genus data from meta table"); 
         }
         
       } else {
-        logger.warning("Cannot get species information from meta table");
+        //logger.warning("Cannot get species information from meta table");
+        ReportManager.problem(this, con, "Cannot get species information from meta table");
       }
       
       // ------------------------------------------
@@ -139,7 +158,10 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
       rows = checkColumnValue(con, "assembly", "type", metaTableAssemblyDefault);
       if (rows > 0) {
         result = false;
-        warn(con, "Not all values in assembly.type match assembly.default in meta table");
+        //warn(con, "Not all values in assembly.type match assembly.default in meta table");
+        ReportManager.problem(this, con, "Not all values in assembly.type match assembly.default in meta table");
+      } else {
+       ReportManager.correct(this, con, "All values in assembly.type match assembly.default in meta table"); 
       }
       
       // -------------------------------------------
@@ -150,7 +172,7 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
     // Check meta table species, classification and taxonomy_id is the same
     // in all DBs for each species
     String[] species = getListOfSpecies();
-
+    
     for (int i = 0; i < species.length; i++) {
       
       String speciesRegexp = species[i] + CORE_DB_REGEXP;
@@ -159,11 +181,14 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
       boolean allMatch = checkSameSQLResult("SELECT LCASE(meta_value) FROM meta WHERE meta_key LIKE \'species.%' ORDER BY meta_id", speciesRegexp);
       if (!allMatch) {
         result = false;
+        ReportManager.problem(this, null, "meta information not the same for all " + species[i] + " databases"); 
+      } else {
+       ReportManager.correct(this, null, "meta information is the same for all " + species[i] + " databases"); 
       }
       
     } // foreach species
     
-    return new TestResult(getShortTestName(), result, "");
+    return new TestResult(getShortTestName(), result);
     
   } // run
   

@@ -52,11 +52,14 @@ public class CheckAllExonsBelongToTranscriptTestCase extends EnsTestCase {
       int rows = getRowCount(con, "select count(distinct e.exon_id) from exon e left join exon_transcript et on e.exon_id =et.exon_id where et.exon_id is null");
       if (rows > 0) {
         result = false;
-        logger.warning(rows + " exons in " + DBUtils.getShortDatabaseName(con) + " have no associated transcript.");
+        //logger.warning(rows + " exons in " + DBUtils.getShortDatabaseName(con) + " have no associated transcript.");
+        ReportManager.problem(this, con, rows + " exons have no associated transcript");
+      } else {
+       ReportManager.correct(this, con, "All exons have associated transcripts"); 
       }
     } // while connection
     
-    return new TestResult(getShortTestName(), result, "");
+    return new TestResult(getShortTestName(), result);
     
   } // run
   

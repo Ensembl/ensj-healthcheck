@@ -25,7 +25,7 @@ import org.ensembl.healthcheck.*;
 import org.ensembl.healthcheck.util.*;
 
 /**
- * EnsEMBL Healthcheck test case that looks for _ characters in the type 
+ * EnsEMBL Healthcheck test case that looks for _ characters in the type
  * column of the assembly table.
  */
 
@@ -41,7 +41,7 @@ public class UnderscoreInAssemblyTypeTestCase extends EnsTestCase {
     boolean result = true;
     
     DatabaseConnectionIterator it = getDatabaseConnectionIterator();
-        
+    
     while (it.hasNext()) {
       
       Connection con = (Connection)it.next();
@@ -50,11 +50,14 @@ public class UnderscoreInAssemblyTypeTestCase extends EnsTestCase {
       int underscores = findStringInColumn(con, "assembly", "type", "%\\_%");
       logger.fine("" + underscores);
       if (underscores > 0) {
-	result = false;       // don't want any underscores in this case
+        result = false;       // don't want any underscores in this case
+        ReportManager.problem(this, con, "Underscore character found in assembly.type");
+      } else {
+       ReportManager.info(this, con, "No underscores found in assembly.type"); 
       }
     }
     
-    return new TestResult(getShortTestName(), result, "");
+    return new TestResult(getShortTestName(), result);
   }
   
   

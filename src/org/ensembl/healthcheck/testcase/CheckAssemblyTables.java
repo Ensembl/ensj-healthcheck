@@ -54,13 +54,16 @@ public class CheckAssemblyTables extends EnsTestCase {
       boolean allMatch = checkSameSQLResult("SELECT COUNT(*) FROM assembly", speciesRegexp);
       if (!allMatch) {
         result = false;
+        ReportManager.problem(this, null, "Differences in assembly table across species " + speciesRegexp); // XXX null
+      } else {
+       ReportManager.correct(this, null,  "All assembly tables the same for " + speciesRegexp);  // XXX null
       }
       
     } // foreach species
     
     
     
-    return new TestResult(getShortTestName(), result, "");
+    return new TestResult(getShortTestName(), result);
     
   } // run
   

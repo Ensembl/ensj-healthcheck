@@ -53,10 +53,13 @@ public class BlankNonNullExternalDBTestCase extends EnsTestCase {
       int blanks = checkBlankNonNull(con, "external_db");
       if (blanks > 0) {
         result = false;
+        ReportManager.problem(this, con, "Some blank rows in external_db column");
+      } else {
+       ReportManager.correct(this, con, "No blank rows in external_db column"); 
       }
     }
     
-    return new TestResult(getShortTestName(), result, "");
+    return new TestResult(getShortTestName(), result);
     
   }
   

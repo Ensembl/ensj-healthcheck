@@ -52,12 +52,15 @@ public class CheckAllGenesHaveTranscriptsTestCase extends EnsTestCase {
       int rows = getRowCount(con, "select count(gene.gene_id) from gene left join transcript on gene.gene_id=transcript.gene_id where transcript.gene_id is NULL");
       if (rows > 0) {
         result = false;
-        logger.warning(rows + " genes in " + DBUtils.getShortDatabaseName(con) + " have no associated transcripts.");
+        //logger.warning(rows + " genes in " + DBUtils.getShortDatabaseName(con) + " have no associated transcripts.");
+        ReportManager.problem(this, con, rows + " genes have no associated transctripts");
+      } else {
+        ReportManager.correct(this, con, "All genes have associated transcripts");
       }
       
     } // while connection
     
-    return new TestResult(getShortTestName(), result, "");
+    return new TestResult(getShortTestName(), result);
     
   }
   

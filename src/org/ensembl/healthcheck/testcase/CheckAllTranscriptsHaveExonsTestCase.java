@@ -52,11 +52,15 @@ public class CheckAllTranscriptsHaveExonsTestCase extends EnsTestCase {
       int rows = getRowCount(con, "SELECT COUNT(transcript.transcript_id) FROM transcript LEFT JOIN exon_transcript on transcript.transcript_id=exon_transcript.transcript_id WHERE exon_transcript.transcript_id IS NULL");
       if (rows > 0) {
         result = false;
-        logger.warning(rows + " transcripts in " + DBUtils.getShortDatabaseName(con) + " are not associated with an exon.");
+        //logger.warning(rows + " transcripts in " + DBUtils.getShortDatabaseName(con) + " are not associated with an exon.");
+        ReportManager.problem(this, con, rows + " transcripts are not associated with an exon");
+      } else {
+       ReportManager.correct(this, con, "All transcripts are associated with an exon");
       }
+      
     }
     
-    return new TestResult(getShortTestName(), result, "");
+    return new TestResult(getShortTestName(), result);
     
   } // run
   

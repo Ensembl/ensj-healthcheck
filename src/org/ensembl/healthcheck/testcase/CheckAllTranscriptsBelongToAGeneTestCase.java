@@ -52,11 +52,14 @@ public class CheckAllTranscriptsBelongToAGeneTestCase extends EnsTestCase {
       int rows = getRowCount(con, "select count(distinct t.transcript_id) from transcript t left join gene g on g.gene_id =t.gene_id where g.gene_id is null");
       if (rows > 0) {
         result = false;
-        logger.warning(rows + " transcripts in " + DBUtils.getShortDatabaseName(con) + " have no associated gene");
+        //logger.warning(rows + " transcripts in " + DBUtils.getShortDatabaseName(con) + " have no associated gene");
+        ReportManager.problem(this, con, rows + " transcripts have no associated gene");
+      } else {
+        ReportManager.info(this, con, "All transcripts have an associated gene");
       }
     } // while connection
     
-    return new TestResult(getShortTestName(), result, "");
+    return new TestResult(getShortTestName(), result);
     
   } // run
   

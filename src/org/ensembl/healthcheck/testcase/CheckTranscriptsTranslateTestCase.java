@@ -53,17 +53,23 @@ public class CheckTranscriptsTranslateTestCase extends EnsTestCase {
       int rows = getRowCount(con, "select count(gene.gene_id) from gene left join transcript on gene.gene_id=transcript.gene_id where transcript.gene_id is NULL");
       if (rows > 0) {
         result = false;
-        logger.warning(rows + " transcripts have no associated gene");
+        //logger.warning(rows + " transcripts have no associated gene");
+        ReportManager.problem(this, con, rows + " transcripts have no associated gene");
+      } else {
+       ReportManager.correct(this, con, "All transcripts have associated genes"); 
       }
       
       rows = getRowCount(con, "select count(t.transcript_id) from transcript t left join translation tr on t.transcript_id = tr.translation_id where t.translation_id is NULL");
       if (rows > 0) {
         result = false;
-        logger.warning(rows + " transcripts have no associated translation");
+        //logger.warning(rows + " transcripts have no associated translation");
+        ReportManager.problem(this, con, rows + " transcripts have no associated translation");
+      } else {
+       ReportManager.correct(this, con, "All transcripts have translations"); 
       }
     } // while connection
     
-    return new TestResult(getShortTestName(), result, "");
+    return new TestResult(getShortTestName(), result);
     
   } // run
   

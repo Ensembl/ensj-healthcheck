@@ -52,11 +52,14 @@ public class CheckTranslationStartEndTestCase extends EnsTestCase {
       int rows = getRowCount(con, "select count(translation_id) from translation where start_exon_id = end_exon_id and seq_start > seq_end");
       if (rows > 0) {
         result = false;
-        logger.warning(rows + " translations in " + DBUtils.getShortDatabaseName(con) + " have start > end");
+        //logger.warning(rows + " translations in " + DBUtils.getShortDatabaseName(con) + " have start > end");
+        ReportManager.problem(this, con, rows + " translations have start > end");
+      } else {
+        ReportManager.correct(this, con, "No translations have start > end");
       }
     } // while connection
     
-    return new TestResult(getShortTestName(), result, "");
+    return new TestResult(getShortTestName(), result);
     
   } // run
   

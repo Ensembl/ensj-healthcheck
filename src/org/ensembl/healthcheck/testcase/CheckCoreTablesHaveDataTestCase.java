@@ -45,7 +45,7 @@ public class CheckCoreTablesHaveDataTestCase extends EnsTestCase {
     String[] tables = { "chromosome", "assembly", "dna", "contig", "clone" };
     
     boolean result = true;
-    
+       
     DatabaseConnectionIterator it = getDatabaseConnectionIterator();
     
     while (it.hasNext()) {
@@ -57,12 +57,15 @@ public class CheckCoreTablesHaveDataTestCase extends EnsTestCase {
         logger.info("Checking " + DBUtils.getShortDatabaseName(con) + "." + table);
         if (countRowsInTable(con, table) == 0) {
           warn(con, table + " has no data!");
+          ReportManager.problem(this, con, table + " has no data.");
+        } else {
+          ReportManager.summary(this, con, table + " is OK.");
         }
       } // foreach table
       
     } // while connection
     
-    return new TestResult(getShortTestName(), result, "");
+    return new TestResult(getShortTestName(), result);
     
   } // run
   
