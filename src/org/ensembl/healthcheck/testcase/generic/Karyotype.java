@@ -56,6 +56,14 @@ public class Karyotype extends SingleDatabaseTestCase {
 
         Connection con = dbre.getConnection();
 
+	// This test should fail if the karyotype table is empty
+	if (!tableHasRows(con, "karyotype")) {
+
+	    ReportManager.problem(this, con, "Karyotype table is empty");
+	    return false;
+
+	}
+
         // The seq_region.length and karyotype.length should always be the
         // same.
         // The SQL returns failures
