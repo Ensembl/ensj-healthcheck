@@ -448,5 +448,93 @@ public abstract class EnsTestCase {
   } // findStringInColumn
   
   // -------------------------------------------------------------------------
+  /**
+   * Check if there are any blank entires in a column that has an ENUM type
+   * that is not null.
+   * @param con The database connection to use.
+   * @param table The table to use.
+   * @param column The column to examine.
+   * @return An list of the row indices of any blank entries. Will be zero-length if there are none.
+   */
+  public ArrayList checkBlankEnums(Connection con, String table, String column) {
+    
+    if (con == null) {
+      logger.severe("Database connection is null");
+    }
+    
+    ArrayList blanks = new ArrayList();
+    
+    String sql = "SELECT " + column + " FROM " + table;
+    
+    try {
+      Statement stmt = con.createStatement();
+      ResultSet rs = stmt.executeQuery(sql);
+      ResultSetMetaData rsmd = rs.getMetaData();
+      String columnType  = rsmd.getColumnTypeName(1);
+      while (rs.next()) {
+	String columnValue = rs.getString(1);
+	// is it an enum that should be non-null?
+	if (columnType.toLowerCase().indexOf("enum") > -1 && rsmd.isNullable(1) == rsmd.columnNoNulls) {
+	  if (columnValue == null || columnValue.equals("")) {
+	    blanks.add("" + rs.getRow());
+	  }
+	}
+      }
+      rs.close();
+      stmt.close();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    
+    // TBC
+    
+    return blanks;
+    
+  } // checkBlankEnums
+  
+  // -------------------------------------------------------------------------
+  /**
+   * Check all columns of a table for blank entires in columns that have an ENUM type
+   * that are marked as being NOT NULL.
+   * @param con The database connection to use.
+   * @param table The table to use.
+   * @return The total number of blank null enums.
+   */
+  public int checkBlankEnums(Connection con, String table) {
+    
+    if (con == null) {
+      logger.severe("Database connection is null");
+    }
+    
+    int blanks = 0;
+    
+    String sql = "SELECT * FROM " + table;
+    
+    try {
+      Statement stmt = con.createStatement();
+      ResultSet rs = stmt.executeQuery(sql);
+      ResultSetMetaData rsmd = rs.getMetaData();
+      while (rs.next()) {
+	for (int i = 0; i < rsmd.getColumnCount(); i++) {
+	  String columnType  = rsmd.getColumnTypeName(i);	  
+	  String columnValue = rs.getString(i);
+	  // is it an enum that should be non-null?
+	  if (columnType.toLowerCase().indexOf("enum") > -1 && rsmd.isNullable(i) == rsmd.columnNoNulls) {
+	    if (columnValue == null || columnValue.equals("")) {
+	      blanks++;
+	    }
+	  }
+	} // for column
+      } // while rs
+      rs.close();
+      stmt.close();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    
+    return blanks;
+    
+  } // checkBlankEnums
+  // -------------------------------------------------------------------------
   
 } // EnsTestCase
