@@ -44,7 +44,7 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
   public CompareCoreSchema() {
 
     addToGroup("release");
-
+   
   }
   
   /**
@@ -105,6 +105,8 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
       
       for (int i = 0; i < databases.length; i++) {
       	
+      	if (appliesToType(databases[i].getType())) {
+      		
         Connection checkCon = databases[i].getConnection();
         
         if (checkCon != masterCon) {
@@ -113,7 +115,7 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
         
         // check that both schemas have the same tables
         if (!compareTablesInSchema(masterCon, checkCon)) { // if not the same, this method will generate a report
-          logger.warning("Table name discrepancy detected, skipping rest of checks for " + DBUtils.getShortDatabaseName(checkCon));
+          logger.info("Table name discrepancy detected, skipping rest of checks for " + DBUtils.getShortDatabaseName(checkCon));
           continue;
         }
         
@@ -125,7 +127,7 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
           
           String table = tableNames[j];
           
-          String sql = "DESCRIBE " + table;
+          String sql = "SHOW CREATE TABLE " + table;
           ResultSet masterRS = masterStmt.executeQuery(sql);
           ResultSet dbRS = dbStmt.executeQuery(sql);
           
@@ -140,7 +142,9 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
         
         } // if checkCon != masterCon
         
-      } // while database
+      	} // if appliesToType
+      	
+      } // for database
       
       masterStmt.close();
       
