@@ -19,33 +19,132 @@
 
 package org.ensembl.healthcheck.testcase;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.TestResult;
+import org.ensembl.healthcheck.util.DatabaseConnectionIterator;
 
 /**
- * @author craig
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
+ * Checks the *_stable_id tables to ensure they are populated, have no orphan references,
+ * and have valid versions. Also prints some examples from the table for checking by eye.
+ * 
+ * <p>Group is <b>check_stable_ids</b></p>
+ * 
+ * <p>To be run after the stable ids have been assigned.</p>
  */
 public class CheckStableIDsTestCase extends EnsTestCase {
 
 
 
-	/**
-	 * Check that all the genes, exons, transcripts, translations and exons have
-	 * stable IDs and versions > 0. 
-	 */
 	public CheckStableIDsTestCase() {
 		addToGroup("check_stable_ids");
-		setDescription("Checks for the presence of _ characters in assembly.type");
+		setDescription("Checks *_stable_id tables are valid.");
 		}
 
-	/* (non-Javadoc)
-	 * @see org.ensembl.healthcheck.testcase.EnsTestCase#run()
-	 */
+	
+	
 	public TestResult run() {
+
 		boolean result = true;
+    
+		DatabaseConnectionIterator it = getDatabaseConnectionIterator();
+    
+			 while (it.hasNext()) {
+			 	
+					Connection con = (Connection)it.next();
+					
+					boolean exonResult = checkStableIDs( con, "exon");
+					boolean translationResult = checkStableIDs( con, "translation");
+					boolean transcriptResult = checkStableIDs( con, "transcript");
+					boolean geneResult = checkStableIDs( con, "gene");
+		
+					result = result && exonResult && translationResult 
+											&& transcriptResult && geneResult;
+			 }
+			 
 		return new TestResult(getShortTestName(), result);
+	}
+
+	
+	
+
+	/**
+	 * Checks that the typeName_stable_id table is valid. The table is valid if it has >0 rows,
+	 * and there are no orphan references between typeName table and typeName_stable_id. Also
+	 * prints some example data from the typeName_stable_id table via ReportManager.info().
+	 * @param con connection to run quries on.
+	 * @param typeName name of the type to check, e.g. "exon"
+	 * @return true if the table and references are valid, otherwise false.
+	 */
+	public boolean checkStableIDs(Connection con, String typeName) {
+		
+		boolean result = true;
+		
+				String nStableIDs = getRowColumnValue( con, "select count(*) from "+  typeName +"_stable_id;");
+				ReportManager.info(this, con, "Num " +  typeName +"s stable ids = " + nStableIDs);
+		
+				if ( Integer.parseInt(	nStableIDs )<1 ) {
+					ReportManager.problem(this, con,  typeName +"_stable_id table is empty.");
+					result = false;
+				}
+
+				// print a few rows so we can check by eye that the table looks ok
+				printRows(con, "select * from " +  typeName +"_stable_id limit 10;");
+		
+		
+				// look for orphans between type and type_stable_id tables
+				int orphans = countOrphans(con, typeName, typeName +"_id", 
+																		typeName +"_stable_id", typeName +"_id", false);
+				if ( orphans>0 ) {
+					ReportManager.problem(this, con, "Orphan references between "+  typeName +" and " 
+					+  typeName +"_stable_id tables.");
+					result = false;
+				}
+
+				String nInvalidVersionsStr = getRowColumnValue( con,
+							"select count(*) as "+  typeName +"_with_invalid_version"
+								+ " from "+  typeName +"_stable_id where version<1;");
+				int nInvalidVersions = Integer.parseInt(	nInvalidVersionsStr ); 
+				if (  nInvalidVersions>0 ) {
+					ReportManager.problem(this, con, "Invalid "+  typeName + "versions in "+  typeName +"_stable_id.");
+					printRows( con, "select distinct(version) from "+  typeName +"_stable_id;" );
+					result = false;
+				}
+
+				return result;
+	}
+
+
+
+	/**
+	 * Execute SQL and writes results to ReportManager.info().
+	 * @param con connection to execute sql on.
+	 * @param sql sql to execute.
+	 */
+	private void printRows(Connection con, String sql) {
+		// TODO Auto-generated method stub
+		try {
+			ResultSet rs = con.createStatement().executeQuery( sql );
+					if ( rs.next() ) {
+						int nCols = rs.getMetaData().getColumnCount();
+						StringBuffer line = new StringBuffer();
+						do {
+							line.delete(0, line.length());
+							for(int i=1; i<=nCols; ++i) {
+								line.append( rs.getString(i) );
+								if ( i <nCols ) line.append("\t");
+						
+							}
+							ReportManager.info( this, con, line.toString() );
+						} while ( rs.next() );
+					}
+			
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 	}
 
 }
