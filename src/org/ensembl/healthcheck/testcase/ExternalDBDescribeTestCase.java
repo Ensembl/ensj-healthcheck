@@ -34,7 +34,8 @@ public class ExternalDBDescribeTestCase extends EnsTestCase {
   
   public TestResult run() {
     
-    boolean result = super.checkSameSQLResult("DESCRIBE external_db");
+    //boolean result = super.checkSameSQLResult("DESCRIBE external_db");
+    boolean result = super.checkSameSQLResult("SELECT * FROM external_db ORDER BY external_db_id");
     
     // XXX null bad here?
     if (result) {
