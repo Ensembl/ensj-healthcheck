@@ -456,7 +456,7 @@ public abstract class EnsTestCase {
     int result = -1;
     
     // check if the SQL starts with SELECT COUNT - if so it's a lot quicker
-    if (sql.toLowerCase().indexOf("select count") >= 0) {
+    if (sql.toLowerCase().indexOf("select count") >= 0 && sql.toLowerCase().indexOf("group by") < 0) {
       
       result = getRowCountFast(con, sql);
       
