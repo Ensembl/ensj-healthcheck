@@ -51,6 +51,17 @@ public class GeneType extends SingleDatabaseTestCase {
     };
 
     /*
+     * Define valid Analysis-Types
+     */
+    private String[] whitelist_analysis = {"ensembl",               //0
+					   "wormbase",              //1
+					   "flybase",               //2
+					   "est_exonerate",         //3
+					   "estgene",               //4
+					   "ncRNA"                  //5
+    };
+
+    /*
      * Define valid Gene-Types
      */
     private String[] whitelist_type = {"ensembl",                   //0
@@ -72,19 +83,10 @@ public class GeneType extends SingleDatabaseTestCase {
 				       "snoRNA-pseudogene",         //16
 				       "est",                       //17
 				       "scRNA-pseudogene",          //18
-				       "rRNA-pseudogene"            //19
+				       "rRNA-pseudogene",           //19
+				       "wormbase"                   //20
     };
 
-    /*
-     * Define valid Analysis-Types
-     */
-    private String[] whitelist_analysis = {"ensembl",               //0
-					   "wormbase",              //1
-					   "flybase",               //2
-					   "est_exonerate",         //3
-					   "estgene",               //4
-					   "ncRNA"                  //5
-    };
 
     /*
      * Define valid Analysis/Gene combinations
@@ -94,7 +96,7 @@ public class GeneType extends SingleDatabaseTestCase {
      *      ["core" database]["wormbase" analysis]["gene" gene type]
      */
     private int[][][] whitelist =    {  {  {0,1,2},    //this block    //this array for "ensembl" analysis'
-					   {1,10},     //for CORE      //this array for "wormbase" analysis'
+					   {1,10,20},  //for CORE      //this array for "wormbase" analysis'
 					   {1,10},     //databases     //this array for "flybase" analysis'
 					   {},         //
 					   {},         //
