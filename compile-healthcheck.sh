@@ -7,3 +7,4 @@ fi
 
 $JAVA_HOME/bin/javac -classpath "lib/ensj.jar:build/" -d build src/org/ensembl/healthcheck/util/*.java src/org/ensembl/healthcheck/testcase/*.java src/org/ensembl/healthcheck/*.java
 
+$JAVA_HOME/bin/jar cf lib/ensj-healthcheck.jar -C build org
