@@ -29,330 +29,346 @@ import java.util.logging.*;
  */
 public class TextTestRunner extends TestRunner implements Reporter {
 
-	private static String version = "$Id$";
-
-	private ArrayList databaseRegexps = new ArrayList(); // note order is important
-	private boolean debug = false;
-
-	public ArrayList outputBuffer = new ArrayList();
-
-	private String lastDatabase = "";
-
-	private int outputLineLength = 65;
-
-	private TestRegistry testRegistry;
-	private DatabaseRegistry databaseRegistry;
-
-	private Species globalSpecies = null;
-	private DatabaseType globalType = null;
-
-	// -------------------------------------------------------------------------
-
-	/**
-	 * Command-line run method.
-	 * 
-	 * @param args The command-line arguments.
-	 */
-	public static void main(String[] args) {
-
-		new TextTestRunner().run(args);
+    private static String version = "$Id$";
 
-	} // main
+    private ArrayList databaseRegexps = new ArrayList(); // note order is important
 
-	// -----------------------------------------------------------------
+    private boolean debug = false;
 
-	private void run(String[] args) {
+    public ArrayList outputBuffer = new ArrayList();
 
-		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
+    private String lastDatabase = "";
 
-		testRegistry = new TestRegistry();
-		
-		parseCommandLine(args);
+    private int outputLineLength = 65;
 
-		setupLogging();
+    private TestRegistry testRegistry;
 
-		ReportManager.setReporter(this);
+    private DatabaseRegistry databaseRegistry;
 
-		databaseRegistry = new DatabaseRegistry(databaseRegexps);
-		if (databaseRegistry.getAll().length == 0) {
-			logger.warning("Warning: no database names matched any of the database regexps given");
-		}
+    private Species globalSpecies = null;
 
-		if (globalSpecies != null) {
-			databaseRegistry.setSpeciesOfAll(globalSpecies);
-		}
-		if (globalType != null) {
-			databaseRegistry.setTypeOfAll(globalType);
-		}
+    private DatabaseType globalType = null;
 
-		runAllTests(databaseRegistry, testRegistry);
+    private boolean printResultsByTest = true;
 
-		printReportsByDatabase(outputLevel);
-		
-		printReportsByTest(outputLevel);
-		
-		ConnectionPool.closeAll();
+    private boolean printResultsByDatabase = false;
 
-	} // run
+    // -------------------------------------------------------------------------
 
-	// -------------------------------------------------------------------------
-	private void printUsage() {
+    /**
+     * Command-line run method.
+     * 
+     * @param args The command-line arguments.
+     */
+    public static void main(String[] args) {
 
-		System.out.println("\nUsage: TextTestRunner {options} {group1} {group2} ...\n");
-		System.out.println("Options:");
-		System.out.println("  -d regexp       Use the given regular expression to decide which databases to use.");
-		System.out.println(
-			"                  Note that more than one -d argument can be used; testcases that depend on the order of databases will be passed the databases in the order in which they appear on the command line");
-		System.out.println("  -h              This message.");
-		System.out.println("  -output level   Set output level; level can be one of ");
-		System.out.println("                    none      nothing is printed");
-		System.out.println("                    problem   only problems are reported (this is the default)");
-		System.out.println("                    correct   only correct results (and problems) are reported");
-		System.out.println("                    summary   only summary info (and problems, and correct reports) are reported");
-		System.out.println("                    info      info (and problem, correct, summary) messages reported");
-		System.out.println("                    all       everything is printed");
-		System.out.println("  -species s      Use s as the species for all databases instead of trying to guess the species from the name");
-		System.out.println("  -type t         Use t as the type for all databases instead of trying to guess the type from the name");
-		System.out.println("  -debug          Print debugging info (for developers only)");
-		System.out.println("  -config file    Read configuration information from file instead of " + PROPERTIES_FILE);
-		System.out.println("  -repair         If appropriate, carry out repair methods on test cases that support it");
-		System.out.println("  -showrepair     Like -repair, but the repair is NOT carried out, just reported.");
-		System.out.println("  -length n       Break output lines at n columns; default is " + outputLineLength + ". 0 means never break");
-		System.out.println("  group1          Names of groups of test cases to run.");
-		System.out.println("                  Note each test case is in a group of its own with the name of the test case.");
-		System.out.println("                  This allows individual tests to be run if required.");
-		System.out.println("");
-		System.out.println("If no tests or test groups are specified, and a database regular expression is given with -d, the matching databases are shown. ");
-		System.out.println("");
-		System.out.println("Currently available tests:");
+        new TextTestRunner().run(args);
 
-		List tests = testRegistry.findAllTests();
-		Collections.sort(tests, new TestComparator());
-		Iterator it = tests.iterator();
-		while (it.hasNext()) {
-			EnsTestCase test = (EnsTestCase)it.next();
-			System.out.print(test.getShortTestName() + " ");
-		}
+    } // main
 
-		System.out.println("");
+    // -----------------------------------------------------------------
 
-	}
+    private void run(String[] args) {
 
-	/**
-	 * Return the CVS version string for this class.
-	 * 
-	 * @return The version.
-	 */
-	public String getVersion() {
+        Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
 
-		// strip off first and last few chars of version since these are only used by CVS
-		return version.substring(5, version.length() - 2);
+        testRegistry = new TestRegistry();
 
-	}
+        parseCommandLine(args);
 
-	// -------------------------------------------------------------------------
-	private void parseCommandLine(String[] args) {
+        setupLogging();
 
-		if (args.length == 0) {
+        ReportManager.setReporter(this);
 
-			printUsage();
-			System.exit(1);
+        databaseRegistry = new DatabaseRegistry(databaseRegexps);
+        if (databaseRegistry.getAll().length == 0) {
+            logger.warning("Warning: no database names matched any of the database regexps given");
+        }
 
-		} else {
+        if (globalSpecies != null) {
+            databaseRegistry.setSpeciesOfAll(globalSpecies);
+        }
+        if (globalType != null) {
+            databaseRegistry.setTypeOfAll(globalType);
+        }
 
-			for (int i = 0; i < args.length; i++) {
+        runAllTests(databaseRegistry, testRegistry);
 
-				if (args[i].equals("-h")) {
+        if (printResultsByDatabase) {
+            printReportsByDatabase(outputLevel);
+        }
 
-					printUsage();
-					System.exit(0);
+        if (printResultsByTest) {
+            printReportsByTest(outputLevel);
+        }
 
-				} else if (args[i].equals("-output")) {
+        ConnectionPool.closeAll();
 
-					setOutputLevel(args[++i]);
-					logger.finest("Set output level to " + outputLevel);
+    } // run
 
-				} else if (args[i].equals("-debug")) {
+    // -------------------------------------------------------------------------
+    private void printUsage() {
 
-					debug = true;
-					logger.finest("Running in debug mode");
+        System.out.println("\nUsage: TextTestRunner {options} {group1} {group2} ...\n");
+        System.out.println("Options:");
+        System.out.println("  -d regexp       Use the given regular expression to decide which databases to use.");
+        System.out
+                .println("                  Note that more than one -d argument can be used; testcases that depend on the order of databases will be passed the databases in the order in which they appear on the command line");
+        System.out.println("  -h              This message.");
+        System.out.println("  -output level   Set output level; level can be one of ");
+        System.out.println("                    none      nothing is printed");
+        System.out.println("                    problem   only problems are reported (this is the default)");
+        System.out.println("                    correct   only correct results (and problems) are reported");
+        System.out.println("                    summary   only summary info (and problems, and correct reports) are reported");
+        System.out.println("                    info      info (and problem, correct, summary) messages reported");
+        System.out.println("                    all       everything is printed");
+        System.out
+                .println("  -species s      Use s as the species for all databases instead of trying to guess the species from the name");
+        System.out
+                .println("  -type t         Use t as the type for all databases instead of trying to guess the type from the name");
+        System.out.println("  -debug          Print debugging info (for developers only)");
+        System.out.println("  -config file    Read configuration information from file instead of " + PROPERTIES_FILE);
+        System.out.println("  -repair         If appropriate, carry out repair methods on test cases that support it");
+        System.out.println("  -showrepair     Like -repair, but the repair is NOT carried out, just reported.");
+        System.out.println("  -length n       Break output lines at n columns; default is " + outputLineLength
+                + ". 0 means never break");
+        System.out.println("  -resultsbydb    Print results by databases as well as by test case.");
+        System.out.println("  group1          Names of groups of test cases to run.");
+        System.out.println("                  Note each test case is in a group of its own with the name of the test case.");
+        System.out.println("                  This allows individual tests to be run if required.");
+        System.out.println("");
+        System.out
+                .println("If no tests or test groups are specified, and a database regular expression is given with -d, the matching databases are shown. ");
+        System.out.println("");
+        System.out.println("Currently available tests:");
 
-				} else if (args[i].equals("-repair")) {
+        List tests = testRegistry.findAllTests();
+        Collections.sort(tests, new TestComparator());
+        Iterator it = tests.iterator();
+        while (it.hasNext()) {
+            EnsTestCase test = (EnsTestCase) it.next();
+            System.out.print(test.getShortTestName() + " ");
+        }
 
-					doRepair = true;
-					logger.finest("Will do repairs if appropriate");
+        System.out.println("");
 
-				} else if (args[i].equals("-showrepair")) {
+    }
 
-					showRepair = true;
-					logger.finest("Will show repairs");
+    /**
+     * Return the CVS version string for this class.
+     * 
+     * @return The version.
+     */
+    public String getVersion() {
 
-				} else if (args[i].equals("-d")) {
+        // strip off first and last few chars of version since these are only used by CVS
+        return version.substring(5, version.length() - 2);
 
-					i++;
-					databaseRegexps.add(args[i]);
-					logger.finest("Added database regular expression " + args[i]);
+    }
 
-				} else if (args[i].equals("-config")) {
+    // -------------------------------------------------------------------------
+    private void parseCommandLine(String[] args) {
 
-					i++;
-					PROPERTIES_FILE = args[i];
-					logger.finest("Will read properties from " + PROPERTIES_FILE);
+        if (args.length == 0) {
 
-				} else if (args[i].equals("-length")) {
+            printUsage();
+            System.exit(1);
 
-					outputLineLength = Integer.parseInt(args[++i]);
-					logger.finest((outputLineLength > 0 ? "Will break output lines at column " + outputLineLength : "Will not break output lines"));
+        } else {
 
-				} else if (args[i].equals("-species")) {
+            for (int i = 0; i < args.length; i++) {
 
-					String speciesStr = args[++i];
-					if (Species.resolveAlias(speciesStr) != Species.UNKNOWN) {
-						globalSpecies = Species.resolveAlias(speciesStr);
-						logger.finest("Will override guessed species with " + globalSpecies + " for all databases");
-					} else {
-						logger.severe("Argument " + speciesStr + " to -species not recognised");
-					}
+                if (args[i].equals("-h")) {
 
-				} else if (args[i].equals("-type")) {
+                    printUsage();
+                    System.exit(0);
 
-					String typeStr = args[++i];
-					if (DatabaseType.resolveAlias(typeStr) != DatabaseType.UNKNOWN) {
-						globalType = DatabaseType.resolveAlias(typeStr);
-						logger.finest("Will override guessed database types with " + globalType + " for all databases");
-					} else {
-						logger.severe("Argument " + typeStr + " to -type not recognised");
-					}
+                } else if (args[i].equals("-output")) {
 
-				} else {
+                    setOutputLevel(args[++i]);
+                    logger.finest("Set output level to " + outputLevel);
 
-					groupsToRun.add(args[i]);
-					logger.finest("Added " + args[i] + " to list of groups to run");
+                } else if (args[i].equals("-debug")) {
 
-				}
+                    debug = true;
+                    logger.finest("Running in debug mode");
 
-			}
+                } else if (args[i].equals("-repair")) {
 
-			if (databaseRegexps.size() == 0) {
+                    doRepair = true;
+                    logger.finest("Will do repairs if appropriate");
 
-				System.err.println("No databases specified!");
-				System.exit(1);
+                } else if (args[i].equals("-showrepair")) {
 
-			}
+                    showRepair = true;
+                    logger.finest("Will show repairs");
 
-			// print matching databases if no tests specified
-			if (groupsToRun.size() == 0 && databaseRegexps.size() > 0) {
+                } else if (args[i].equals("-d")) {
 
-				Iterator it = databaseRegexps.iterator();
-				while (it.hasNext()) {
-					String databaseRegexp = (String)it.next();
-					System.out.println("Databases that match the regular expression " + databaseRegexp + ":");
-					String[] names = getListOfDatabaseNames(databaseRegexp);
-					for (int i = 0; i < names.length; i++) {
-						System.out.println("  " + names[i]);
-					}
-				}
-			}
+                    i++;
+                    databaseRegexps.add(args[i]);
+                    logger.finest("Added database regular expression " + args[i]);
 
-		}
+                } else if (args[i].equals("-config")) {
 
-	}
+                    i++;
+                    PROPERTIES_FILE = args[i];
+                    logger.finest("Will read properties from " + PROPERTIES_FILE);
 
-	// parseCommandLine
+                } else if (args[i].equals("-length")) {
 
-	// -------------------------------------------------------------------------
+                    outputLineLength = Integer.parseInt(args[++i]);
+                    logger.finest((outputLineLength > 0 ? "Will break output lines at column " + outputLineLength
+                            : "Will not break output lines"));
 
-	private void setupLogging() {
+                } else if (args[i].equals("-species")) {
 
-		logger.setUseParentHandlers(false); // stop parent logger getting the message
+                    String speciesStr = args[++i];
+                    if (Species.resolveAlias(speciesStr) != Species.UNKNOWN) {
+                        globalSpecies = Species.resolveAlias(speciesStr);
+                        logger.finest("Will override guessed species with " + globalSpecies + " for all databases");
+                    } else {
+                        logger.severe("Argument " + speciesStr + " to -species not recognised");
+                    }
 
-		Handler myHandler = new MyStreamHandler(System.out, new LogFormatter());
+                } else if (args[i].equals("-type")) {
 
-		logger.addHandler(myHandler);
-		logger.setLevel(Level.WARNING); // default - only print important messages
+                    String typeStr = args[++i];
+                    if (DatabaseType.resolveAlias(typeStr) != DatabaseType.UNKNOWN) {
+                        globalType = DatabaseType.resolveAlias(typeStr);
+                        logger.finest("Will override guessed database types with " + globalType + " for all databases");
+                    } else {
+                        logger.severe("Argument " + typeStr + " to -type not recognised");
+                    }
 
-		if (debug) {
+                } else if (args[i].equals("-resultsbydb")) {
 
-			logger.setLevel(Level.FINEST);
+                    printResultsByDatabase = true;
+                    logger.finest("Will print results by database");
+                    
+                } else {
 
-		}
+                    groupsToRun.add(args[i]);
+                    logger.finest("Added " + args[i] + " to list of groups to run");
 
-		//logger.info("Set logging level to " + logger.getLevel().getName());
-	}
+                }
 
-	// setupLogging
-	// -------------------------------------------------------------------------
+            }
 
-	public void message(ReportLine reportLine) {
-		String level = "ODD    ";
+            if (databaseRegexps.size() == 0) {
 
-		System.out.print(".");
-		System.out.flush();
+                System.err.println("No databases specified!");
+                System.exit(1);
 
-		if (reportLine.getLevel() < outputLevel) {
-			return;
-		}
+            }
 
-		if (!reportLine.getDatabaseName().equals(lastDatabase)) {
-			outputBuffer.add("  " + reportLine.getDatabaseName());
-			lastDatabase = reportLine.getDatabaseName();
-		}
+            // print matching databases if no tests specified
+            if (groupsToRun.size() == 0 && databaseRegexps.size() > 0) {
 
-		switch (reportLine.getLevel()) {
-			case (ReportLine.PROBLEM) :
-				level = "PROBLEM";
-				break;
-			case (ReportLine.WARNING) :
-				level = "WARNING";
-				break;
-			case (ReportLine.INFO) :
-				level = "INFO   ";
-				break;
-			case (ReportLine.CORRECT) :
-				level = "CORRECT";
-				break;
-		}
+                Iterator it = databaseRegexps.iterator();
+                while (it.hasNext()) {
+                    String databaseRegexp = (String) it.next();
+                    System.out.println("Databases that match the regular expression " + databaseRegexp + ":");
+                    String[] names = getListOfDatabaseNames(databaseRegexp);
+                    for (int i = 0; i < names.length; i++) {
+                        System.out.println("  " + names[i]);
+                    }
+                }
+            }
 
-		outputBuffer.add("    " + level + ":  " + lineBreakString(reportLine.getMessage(), outputLineLength, "              "));
-	}
+        }
 
-	public void startTestCase(EnsTestCase testCase, DatabaseRegistryEntry dbre) {
-		String name;
-		name = testCase.getClass().getName();
-		name = name.substring(name.lastIndexOf(".") + 1);
-		System.out.print(name + " ");
-		if (dbre != null) {
-			System.out.print("[" + dbre.getName() + "] ");
-		}
-		System.out.flush();
-	}
+    }
 
-	public void finishTestCase(EnsTestCase testCase, boolean result, DatabaseRegistryEntry dbre) {
+    // parseCommandLine
 
-		System.out.println(result ? " PASSED" : " FAILED");
-		/*
-		lastDatabase = "";
-		Iterator it = outputBuffer.iterator();
-		while (it.hasNext()) {
-			System.out.println((String)it.next());
-		}
-		outputBuffer.clear();
-*/
-	}
+    // -------------------------------------------------------------------------
 
-	private String lineBreakString(String mesg, int maxLen, String indent) {
+    private void setupLogging() {
 
-		if (mesg.length() <= maxLen || maxLen == 0) {
-			return mesg;
-		}
+        logger.setUseParentHandlers(false); // stop parent logger getting the message
 
-		int lastSpace = mesg.lastIndexOf(" ", maxLen);
-		if (lastSpace > 15) {
-			return mesg.substring(0, lastSpace) + "\n" + indent + lineBreakString(mesg.substring(lastSpace + 1), maxLen, indent);
-		} else {
-			return mesg.substring(0, maxLen) + "\n" + indent + lineBreakString(mesg.substring(maxLen), maxLen, indent);
-		}
-	}
+        Handler myHandler = new MyStreamHandler(System.out, new LogFormatter());
+
+        logger.addHandler(myHandler);
+        logger.setLevel(Level.WARNING); // default - only print important messages
+
+        if (debug) {
+
+            logger.setLevel(Level.FINEST);
+
+        }
+
+        //logger.info("Set logging level to " + logger.getLevel().getName());
+    }
+
+    // setupLogging
+    // -------------------------------------------------------------------------
+
+    public void message(ReportLine reportLine) {
+
+        String level = "ODD    ";
+
+        System.out.print(".");
+        System.out.flush();
+
+        if (reportLine.getLevel() < outputLevel) { return; }
+
+        if (!reportLine.getDatabaseName().equals(lastDatabase)) {
+            outputBuffer.add("  " + reportLine.getDatabaseName());
+            lastDatabase = reportLine.getDatabaseName();
+        }
+
+        switch (reportLine.getLevel()) {
+        case (ReportLine.PROBLEM):
+            level = "PROBLEM";
+            break;
+        case (ReportLine.WARNING):
+            level = "WARNING";
+            break;
+        case (ReportLine.INFO):
+            level = "INFO   ";
+            break;
+        case (ReportLine.CORRECT):
+            level = "CORRECT";
+            break;
+        }
+
+        outputBuffer.add("    " + level + ":  " + lineBreakString(reportLine.getMessage(), outputLineLength, "              "));
+    }
+
+    public void startTestCase(EnsTestCase testCase, DatabaseRegistryEntry dbre) {
+
+        String name;
+        name = testCase.getClass().getName();
+        name = name.substring(name.lastIndexOf(".") + 1);
+        System.out.print(name + " ");
+        if (dbre != null) {
+            System.out.print("[" + dbre.getName() + "] ");
+        }
+        System.out.flush();
+    }
+
+    public void finishTestCase(EnsTestCase testCase, boolean result, DatabaseRegistryEntry dbre) {
+
+        System.out.println(result ? " PASSED" : " FAILED");
+        /*
+         * lastDatabase = ""; Iterator it = outputBuffer.iterator(); while (it.hasNext()) {
+         * System.out.println((String)it.next()); } outputBuffer.clear();
+         */
+    }
+
+    private String lineBreakString(String mesg, int maxLen, String indent) {
+
+        if (mesg.length() <= maxLen || maxLen == 0) { return mesg; }
+
+        int lastSpace = mesg.lastIndexOf(" ", maxLen);
+        if (lastSpace > 15) {
+            return mesg.substring(0, lastSpace) + "\n" + indent + lineBreakString(mesg.substring(lastSpace + 1), maxLen, indent);
+        } else {
+            return mesg.substring(0, maxLen) + "\n" + indent + lineBreakString(mesg.substring(maxLen), maxLen, indent);
+        }
+    }
 }
 
 // TextTestRunner
