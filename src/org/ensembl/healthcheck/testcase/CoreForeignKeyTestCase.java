@@ -168,6 +168,17 @@ public class CoreForeignKeyTestCase extends EnsTestCase {
         ReportManager.correct(this, con, "All assembly -> contig relationships OK");
       }
       result &= (orphans == 0);
+
+      orphans = countOrphans(con, "marker_feature", "marker_id", 
+			     "marker", "marker_id", true);
+      if(orphans > 0) {
+	  ReportManager.problem(this, con, "marker_feature -> marker has "
+				+ "unlinked entries");
+      }	else {
+	  ReportManager.correct(this, con, "All marker_featre -> marker " 
+				+ "relationships OK");
+      }
+      result &= (orphans == 0);
     }
     
     return new TestResult(getShortTestName(), result);
