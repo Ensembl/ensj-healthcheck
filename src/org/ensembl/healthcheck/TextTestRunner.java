@@ -54,6 +54,8 @@ public class TextTestRunner extends TestRunner {
 
     ttr.readPropertiesFile();
 
+    ttr.buildSchemaList();
+    
     ttr.runAllTests(ttr.findAllTests(), ttr.forceDatabases);
 
     ConnectionPool.closeAll();
