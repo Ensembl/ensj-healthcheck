@@ -73,6 +73,27 @@ public class Utils {
   
   // -------------------------------------------------------------------------
   /**
+   * Concatenate a list of Strings into a single String.
+   * @param list The Strings to list.
+   * @param delim The delimiter to use.
+   */
+  public String listToString(List list, String delim) {
+    
+    StringBuffer buf = new StringBuffer();
+    Iterator it = list.iterator();
+    while (it.hasNext()) {
+      buf.append((String)it.next());
+      if (it.hasNext()) {
+        buf.append(delim);
+      }
+    }
+    
+    return buf.toString();
+    
+  }
+  
+  // -------------------------------------------------------------------------
+  /**
    * Print the keys in a HashMap.
    * @param m The map to use.
    */
@@ -204,7 +225,7 @@ public class Utils {
   } // truncate
   
   // -------------------------------------------------------------------------
-  /** 
+  /**
    * Pad (on the right) a string with a certain number of characters.
    * @return The padded String.
    * @param size The desired length of the final, padded string.
