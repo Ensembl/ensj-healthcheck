@@ -97,7 +97,7 @@ public class SchemaInfo {
     this.tables = tables;
   }
   
-   public String toString() {
+  public String toString() {
     
     StringBuffer buf = new StringBuffer();
     buf.append("Schema: " );
@@ -112,4 +112,40 @@ public class SchemaInfo {
     return buf.toString();
     
   }
+  
+  // -------------------------------------------------------------------------
+  /**
+   * Check if this schema matches a particular condition.
+   * @param cond The condition to check.
+   * @return true if this schema fulfils cond, false otherwise.
+   */
+  public boolean matches(SchemaMatchCondition cond) {
+    
+    return cond.matches(this);
+    
+  }
+  
+  // -------------------------------------------------------------------------
+  /**
+   * Check if this schema matches a set of conditions.
+   * @param conds The conditions to check.
+   * @return true if this schema fulfils all the conditions, false otherwise.
+   */
+  public boolean matchesAll(List conds) {
+    
+    boolean result = true;
+    
+    Iterator it = conds.iterator();
+    while (it.hasNext()) {
+      SchemaMatchCondition cond = (SchemaMatchCondition)it.next();
+      result &= matches(cond);
+    }
+    return result;
+    
+  }
+  // -------------------------------------------------------------------------
+  
+  
+  // -------------------------------------------------------------------------
+  
 } // SchemaInfo
