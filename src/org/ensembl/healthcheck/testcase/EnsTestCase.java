@@ -377,7 +377,7 @@ public abstract class EnsTestCase {
                 if (rs.last()) {
                     result = rs.getRow();
                 } else {
-                    result = -1; // probably signifies an empty ResultSet
+                    result = 0; // probably signifies an empty ResultSet
                 }
             }
             rs.close();
@@ -630,6 +630,85 @@ public abstract class EnsTestCase {
     } // checkForOrphans
 
     // -------------------------------------------------------------------------
+    /**
+     * Verify multiple appearance of a given foreign key
+     * 
+     * @param con
+     *          A connection to the database to be tested. Should already be
+     *          open.
+     * @param table
+     *          With col, specifies the foreign key to check.
+     * @param col
+     *          Column in table to check.
+     * @return The number of "singles"
+     */
+    public int countSingles(Connection con, String table, String col) {
+
+        if (con == null) {
+            logger.severe("countSingles: Database connection is null");
+        }
+
+        int result = 0;
+
+        String sql = " FROM " + table + " GROUP BY (" + col + ") HAVING COUNT(*) = 1";
+
+        result = getRowCount(con, "SELECT *" + sql);
+
+        if (result > 0) {
+            String[] values = getColumnValues(con, "SELECT " + table + "." + col + sql + " LIMIT 20");
+            for (int i = 0; i < values.length; i++) {
+                ReportManager.info(this, con, table + "." + col + " " + values[i] + " is used only once.");
+            }
+        }
+
+        logger.finest("Singles: " + result);
+
+        return result;
+
+    } // countSingles
+
+    // -------------------------------------------------------------------------
+    /**
+     * Verify multiple appearance of a given foreign key
+     * 
+     * @param con
+     *          A connection to the database to be tested. Should already be
+     *          open.
+     * @param table
+     *          With col, specifies the foreign key to check.
+     * @param col
+     *          Column in table1 to check.
+     * @return boolean
+     *          true if everything is fine
+     *          false otherwise
+     */
+    public boolean checkForSingles(Connection con, String table, String col) {
+        
+        int singles = 0;
+        boolean result = true;
+
+        singles = countSingles(con, table, col);
+
+        String useful_sql = "SELECT " + table + "." + col + " FROM " + table + " GROUP BY (" + col + ") HAVING COUNT(*) = 1";
+
+        if (singles == 0) {
+            ReportManager.correct(this, con, "PASSED " + table + "." + col + " is a FK for a 1 to many (>1) relationship");
+        } else if (singles > 0) {
+            ReportManager.problem(this, con, "FAILED " + table + "." + col + " is a FK for a 1 to many (>1) relationship");
+            ReportManager.problem(this, con, "FAILURE DETAILS: " + singles + " " + table + "." + col + " entries are used only once");
+            ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
+            result = false;
+        } else {
+            ReportManager.problem(this, con, "TEST NOT COMPLETED " + table + "." + col + " is a FK for a 1 to many (>1) relationship, look at the StackTrace if any");
+            ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
+            result = false;
+        }
+        
+        return result;
+
+    } //checkForSingles
+
+   // -------------------------------------------------------------------------
     /**
      * Check that a particular SQL statement has the same result when executed
      * on more than one database.
