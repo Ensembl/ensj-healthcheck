@@ -32,7 +32,7 @@ public class DNATablesAcrossSpecies extends MultiDatabaseTestCase {
 	 * Creates a new instance of CheckDNATables
 	 */
 	public DNATablesAcrossSpecies() {
-		addToGroup("pre_mart");
+		addToGroup("release");
 		setDescription("Check that the DNA table exists, and all DBs for a particular species have the same entries.");
 	}
 

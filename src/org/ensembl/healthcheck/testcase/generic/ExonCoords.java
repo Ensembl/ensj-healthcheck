@@ -32,6 +32,7 @@ public class ExonCoords extends SingleDatabaseTestCase {
 	 */
 	public ExonCoords() {
 		addToGroup("post_genebuild");
+		addToGroup("release");
 		setDescription("Check that exon co-ordinates are sensible.");
 	}
 
@@ -71,8 +72,7 @@ public class ExonCoords extends SingleDatabaseTestCase {
 		}
 
 		logger.fine("Checking for seq_region_end beyond end of exon ...");
-		rows = getRowCount(	con,
-												"SELECT COUNT(EXON_ID) FROM exon, seq_region WHERE exon.seq_region_id=seq_region.seq_region_id AND exon.seq_region_end > seq_region.length");
+		rows = getRowCount(con, "SELECT COUNT(EXON_ID) FROM exon, seq_region WHERE exon.seq_region_id=seq_region.seq_region_id AND exon.seq_region_end > seq_region.length");
 		if (rows > 0) {
 			result = false;
 			//logger.warning(rows + " exons in " + DBUtils.getShortDatabaseName(con) + " have

@@ -26,41 +26,42 @@ import org.ensembl.healthcheck.*;
  * Verify that important tables in core DBs actually have data.
  */
 public class CoreTablesPopulated extends SingleDatabaseTestCase {
-  
-  /**
-	 * Creates a new instance of CheckCoreTablesHaveDataTestCase
-	 */
-  public CoreTablesPopulated() {
-    addToGroup("post_genebuild");
-    setDescription("Verify that important tables in core DBs actually have data.");
-  }
-  
-  /**
-	 * Check that the number of rows in several tables is > 0.
-	 * 
-	 * @return Result.
-	 */
-  public boolean run(DatabaseRegistryEntry dbre) {
-    
-    String[] tables = { "seq_region", "assembly", "dna" };
-    
-    boolean result = true;
-  
-      Connection con = dbre.getConnection();
-      
-      for (int i=0; i < tables.length; i++) {
-        String table = tables[i];        
-        logger.info("Checking " + DBUtils.getShortDatabaseName(con) + "." + table);
-        if (countRowsInTable(con, table) == 0) {
-          warn(con, table + " has no data!");
-          ReportManager.problem(this, con, table + " has no data.");
-        } else {
-          ReportManager.correct(this, con, table + " is OK.");
-        }
-      } // foreach table
-    
-    return result;
-    
-  } // run
-  
+
+	/**
+		 * Creates a new instance of CheckCoreTablesHaveDataTestCase
+		 */
+	public CoreTablesPopulated() {
+		addToGroup("post_genebuild");
+		addToGroup("release");
+		setDescription("Verify that important tables in core DBs actually have data.");
+	}
+
+	/**
+		 * Check that the number of rows in several tables is > 0.
+		 * 
+		 * @return Result.
+		 */
+	public boolean run(DatabaseRegistryEntry dbre) {
+
+		String[] tables = { "seq_region", "assembly", "dna" };
+
+		boolean result = true;
+
+		Connection con = dbre.getConnection();
+
+		for (int i = 0; i < tables.length; i++) {
+			String table = tables[i];
+			logger.info("Checking " + DBUtils.getShortDatabaseName(con) + "." + table);
+			if (countRowsInTable(con, table) == 0) {
+				warn(con, table + " has no data!");
+				ReportManager.problem(this, con, table + " has no data.");
+			} else {
+				ReportManager.correct(this, con, table + " is OK.");
+			}
+		} // foreach table
+
+		return result;
+
+	} // run
+
 } // CheckCoreTablesHaveDataTestCase

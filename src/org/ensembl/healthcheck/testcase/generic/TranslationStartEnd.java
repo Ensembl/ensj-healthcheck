@@ -31,6 +31,7 @@ public class TranslationStartEnd extends SingleDatabaseTestCase {
 	 */
 	public TranslationStartEnd() {
 		addToGroup("post_genebuild");
+		addToGroup("release");
 		setDescription("Check that if the start and end of translation is on the same exon, that start < end.");
 	}
 

@@ -34,6 +34,8 @@ public class EmptyTables extends SingleDatabaseTestCase {
 	public EmptyTables() {
 
 		addToGroup("post_genebuild");
+		addToGroup("release");
+
 		// by default tests in the generic package apply to core, vega, est and estgene databases
 		removeAppliesToType(DatabaseType.EST);
 		removeAppliesToType(DatabaseType.ESTGENE);
@@ -51,12 +53,12 @@ public class EmptyTables extends SingleDatabaseTestCase {
 		String[] tables = getTableNames(dbre.getConnection());
 
 		// the following tables are allowed to be empty
-		String[] allowedEmpty = {"alt_allele", "assembly_exception", "dnac"};
+		String[] allowedEmpty = { "alt_allele", "assembly_exception", "dnac" };
 		tables = remove(tables, allowedEmpty);
-		
+
 		// only rat has entries in QTL tables
 		if (dbre.getSpecies() != Species.RATTUS_NORVEGICUS) {
-			String[] qtlTables = {"qtl", "qtl_feature", "qtl_synonym"};
+			String[] qtlTables = { "qtl", "qtl_feature", "qtl_synonym" };
 			tables = remove(tables, qtlTables);
 		}
 

@@ -38,6 +38,7 @@ public class Meta extends SingleDatabaseTestCase {
 	 */
 	public Meta() {
 		addToGroup("post_genebuild");
+		addToGroup("release");
 		setDescription(
 			"Check that the meta table exists, has data, the entries correspond to the "
 				+ "database name, and that the values in assembly.type match what's in the meta table");

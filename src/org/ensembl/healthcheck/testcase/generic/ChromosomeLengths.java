@@ -31,6 +31,7 @@ public class ChromosomeLengths extends SingleDatabaseTestCase {
 	 */
 	public ChromosomeLengths() {
 		addToGroup("post_genebuild");
+		addToGroup("release");
 		setDescription("Check that the chromosome lengths from the seq_region table agree with both the assembly table and the karyotype table.");
 	}
 	/**

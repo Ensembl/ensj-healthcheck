@@ -28,6 +28,7 @@ public class Archive extends SingleDatabaseTestCase {
 
 	public Archive() {
 		addToGroup("id_mapping");
+		addToGroup("release");
 		setDescription("Checks the archive tables are up to date.");
 	}
 

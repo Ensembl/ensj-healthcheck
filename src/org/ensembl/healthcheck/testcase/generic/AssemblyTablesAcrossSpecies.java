@@ -24,14 +24,14 @@ import org.ensembl.healthcheck.testcase.*;
  */
 public class AssemblyTablesAcrossSpecies extends MultiDatabaseTestCase {
 
-	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.EST, DatabaseType.ESTGENE, DatabaseType.VEGA};
+	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.EST, DatabaseType.ESTGENE, DatabaseType.VEGA };
 
 	/**
 	 * Creates a new instance of AssemblyTablesAcrossSpecies
 	 */
 	public AssemblyTablesAcrossSpecies() {
 
-		addToGroup("pre_release");
+		addToGroup("release");
 		setDescription("Check that the assembly table contains the same information for all databases with the same species.");
 
 	}

@@ -27,6 +27,7 @@ public class Analysis extends SingleDatabaseTestCase {
 
 	public Analysis() {
 		addToGroup("post_genebuild");
+		addToGroup("release");
 		setDescription("Check the integrity of the analysis table");
 	}
 

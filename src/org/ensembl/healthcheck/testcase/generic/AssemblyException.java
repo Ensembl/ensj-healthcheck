@@ -28,47 +28,45 @@ import org.ensembl.healthcheck.*;
  */
 
 public class AssemblyException extends SingleDatabaseTestCase {
-  
-  /**
-   * Check the assembly_exception table.
-   */
-  public AssemblyException() {
-    addToGroup("post_genebuild");
-    setDescription("Check assembly_exception table");
-  }
-  
-  /**
-   * Check the data in the assembly_exception table.
-   * Note referential integrity checks are done in CoreForeignKeyTestCase.
-   * @return Result.
-   */
-  public boolean run(DatabaseRegistryEntry dbre) {
-    
-    boolean result = true;
-    
-    
-    
-      
-      Connection con = dbre.getConnection();
-      
-      // check that seq_region_end > seq_region_start
-      int rows = getRowCount(con, "SELECT COUNT(*) FROM assembly_exception WHERE seq_region_start > seq_region_end");
-      if (rows > 0) {
-      	result = false;
-        ReportManager.problem(this, con, "assembly_exception has " + rows + " rows where seq_region_start > seq_region_end");
-      }
-      
-      // check that exc_seq_region_start > exc_seq_region_end
-      rows = getRowCount(con, "SELECT COUNT(*) FROM assembly_exception WHERE exc_seq_region_start > exc_seq_region_end");
-      if (rows > 0) {
-      	result = false;
-        ReportManager.problem(this, con, "assembly_exception has " + rows + " rows where exc_seq_region_start > exc_seq_region_end");
-      }
-      
-      // more tests to be added later
 
-    return result;
-    
-  }
-  
+	/**
+	 * Check the assembly_exception table.
+	 */
+	public AssemblyException() {
+		addToGroup("post_genebuild");
+		addToGroup("release");
+		setDescription("Check assembly_exception table");
+	}
+
+	/**
+	 * Check the data in the assembly_exception table.
+	 * Note referential integrity checks are done in CoreForeignKeyTestCase.
+	 * @return Result.
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
+
+		boolean result = true;
+
+		Connection con = dbre.getConnection();
+
+		// check that seq_region_end > seq_region_start
+		int rows = getRowCount(con, "SELECT COUNT(*) FROM assembly_exception WHERE seq_region_start > seq_region_end");
+		if (rows > 0) {
+			result = false;
+			ReportManager.problem(this, con, "assembly_exception has " + rows + " rows where seq_region_start > seq_region_end");
+		}
+
+		// check that exc_seq_region_start > exc_seq_region_end
+		rows = getRowCount(con, "SELECT COUNT(*) FROM assembly_exception WHERE exc_seq_region_start > exc_seq_region_end");
+		if (rows > 0) {
+			result = false;
+			ReportManager.problem(this, con, "assembly_exception has " + rows + " rows where exc_seq_region_start > exc_seq_region_end");
+		}
+
+		// more tests to be added later
+
+		return result;
+
+	}
+
 } // AssemblyException

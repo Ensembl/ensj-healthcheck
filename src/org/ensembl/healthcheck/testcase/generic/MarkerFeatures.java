@@ -32,6 +32,7 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 	 */
 	public MarkerFeatures() {
 		addToGroup("post_genebuild");
+		addToGroup("release");
 		setDescription("Checks that marker_features exist and that they have" + " non-zero map_weights");
 	}
 
@@ -41,7 +42,7 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 	 * @return Result.
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
-		
+
 		boolean result = true;
 
 		Connection con = dbre.getConnection();

@@ -43,7 +43,7 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
    */
   public CompareCoreSchema() {
 
-    addToGroup("pre_release");
+    addToGroup("release");
 
   }
   

@@ -33,7 +33,7 @@ public class ExternalDBDescribe extends MultiDatabaseTestCase {
   /** Creates a new instance of ExternalDBDescribe */
   public ExternalDBDescribe() {
   	
-    addToGroup("pre_release");
+    addToGroup("release");
     setDescription("Check that the external_db table is the same in all databases.");
     
   }

@@ -34,6 +34,7 @@ public class FeatureCoords extends SingleDatabaseTestCase {
 	 */
 	public FeatureCoords() {
 		addToGroup("post_genebuild");
+		addToGroup("release");
 		setDescription("Check that feature co-ords (DNA and protein) make sense.");
 	}
 
@@ -64,58 +65,58 @@ public class FeatureCoords extends SingleDatabaseTestCase {
 		for (int tableIndex = 0; tableIndex < featureTables.length; tableIndex++) {
 			String tableName = featureTables[tableIndex];
 
-				Connection con = dbre.getConnection();
+			Connection con = dbre.getConnection();
 
-				logger.info("Checking " + tableName + " for " + DBUtils.getShortDatabaseName(con) + " ...");
+			logger.info("Checking " + tableName + " for " + DBUtils.getShortDatabaseName(con) + " ...");
 
-				String sql =
-					"SELECT f.seq_region_id, f.seq_region_start, f.seq_region_end, s.length "
-						+ "FROM "
-						+ tableName
-						+ " f, seq_region s "
-						+ "WHERE s.seq_region_id = f.seq_region_id "
-						+ "AND ( f.seq_region_start > f.seq_region_end "
-						+ " OR f.seq_region_start < 1 "
-						+ " OR f.seq_region_end > s.length )";
-				try {
-					Statement stmt = con.createStatement();
-					ResultSet rs = stmt.executeQuery(sql);
-					int smallStart = 0;
-					int swapCoords = 0;
-					int largeEnd = 0;
+			String sql =
+				"SELECT f.seq_region_id, f.seq_region_start, f.seq_region_end, s.length "
+					+ "FROM "
+					+ tableName
+					+ " f, seq_region s "
+					+ "WHERE s.seq_region_id = f.seq_region_id "
+					+ "AND ( f.seq_region_start > f.seq_region_end "
+					+ " OR f.seq_region_start < 1 "
+					+ " OR f.seq_region_end > s.length )";
+			try {
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(sql);
+				int smallStart = 0;
+				int swapCoords = 0;
+				int largeEnd = 0;
 
-					while (rs.next()) {
-						int id = rs.getInt(1);
-						int start = rs.getInt(2);
-						int end = rs.getInt(3);
-						int len = rs.getInt(4);
+				while (rs.next()) {
+					int id = rs.getInt(1);
+					int start = rs.getInt(2);
+					int end = rs.getInt(3);
+					int len = rs.getInt(4);
 
-						if (end < start && swapCoords < 10) {
-							ReportManager.warning(this, con, tableName + " " + id + " has seq_region_start > seq_region_end");
-							swapCoords++;
-						}
-
-						if (end > len && largeEnd < 10) {
-							ReportManager.warning(this, con, tableName + " " + id + " has seq_region_end > seq_region_length");
-							largeEnd++;
-						}
-
-						if (start < 1 && smallStart < 10) {
-							ReportManager.warning(this, con, tableName + " " + id + " has seq_region_start < 1");
-							smallStart++;
-						}
+					if (end < start && swapCoords < 10) {
+						ReportManager.warning(this, con, tableName + " " + id + " has seq_region_start > seq_region_end");
+						swapCoords++;
 					}
 
-					if (smallStart + largeEnd + swapCoords > 0) {
-						ReportManager.problem(this, con, (tableName + " table has coordinate mistakes"));
-						result = false;
-					} else {
-						ReportManager.correct(this, con, (tableName + " coordinates seem correct"));
+					if (end > len && largeEnd < 10) {
+						ReportManager.warning(this, con, tableName + " " + id + " has seq_region_end > seq_region_length");
+						largeEnd++;
 					}
-				} catch (SQLException e) {
-					e.printStackTrace();
+
+					if (start < 1 && smallStart < 10) {
+						ReportManager.warning(this, con, tableName + " " + id + " has seq_region_start < 1");
+						smallStart++;
+					}
 				}
+
+				if (smallStart + largeEnd + swapCoords > 0) {
+					ReportManager.problem(this, con, (tableName + " table has coordinate mistakes"));
+					result = false;
+				} else {
+					ReportManager.correct(this, con, (tableName + " coordinates seem correct"));
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
+		}
 
 		return result;
 
