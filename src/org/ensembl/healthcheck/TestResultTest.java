@@ -31,6 +31,7 @@ public class TestResultTest extends TestCase {
     return suite;
   }
   
+  //
   public void setUp() {
     
     tr1 = new TestResult("True no message",  true);

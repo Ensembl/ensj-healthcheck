@@ -67,6 +67,7 @@ public class TestResult {
     return name;
   }
   
+  //
   public void setName(String s) {
     name = s;
   }
