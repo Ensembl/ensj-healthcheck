@@ -144,7 +144,6 @@ public class TestRunner {
     
     logger.setUseParentHandlers(false); // stop parent logger getting the message
     Handler myHandler = new MyStreamHandler(System.out, new LogFormatter());
-    myHandler.setLevel(Level.FINEST);
     logger.addHandler(myHandler);
     logger.setLevel(Level.FINEST);
     logger.info("Set logging level to " + logger.getLevel().getName());
