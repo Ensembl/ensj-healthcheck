@@ -30,87 +30,46 @@ public class Archive extends SingleDatabaseTestCase {
 		addToGroup("id_mapping");
 		addToGroup("release");
 		setDescription("Checks the archive tables are up to date.");
+		setHintLongRunning(true);
 	}
 
 	public boolean run(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
-
+		
 		Connection con = dbre.getConnection();
-
-		System.out.println("Checking tables exist and are populated");
-		result = checkTablesExistAndPopulated(con) && result;
-		System.out.println("Checking for null strings");
-		result = checkNoNullStrings(con) && result;
-		System.out.println("Checking archive integrity");
-		result = checkArchiveIntegrity(con) && result;
-		System.out.println("Checking DB name format in mapping_session");
-		result = checkDBNameFormat(con) && result;
-		System.out.println("Checking mapping_session chaining");
-		result = checkMappingSessionChaining(con) && result;
-		System.out.println("Checking mapping_session/stable_id_event keys");
-		result = checkMappingSessionStableIDKeys(con) && result;
-		System.out.println("Checking that ALL/LATEST mapping session has most entries");
-		result = checkAllLatest(con) && result;
-
-		System.out.println("Checking deleted genes");
+		
+		logger.info("Checking deleted genes");
 		result = checkDeletedInGeneArchive(con, "gene", "G", 355) && result;
-		System.out.println("Checking deleted transcripts");
+		logger.info("Checking deleted transcripts");
 		result = checkDeletedInGeneArchive(con, "transcript", "T", 355) && result;
-		System.out.println("Checking deleted translations");
+		logger.info("Checking deleted translations");
 		result = checkDeletedInGeneArchive(con, "translation", "P", 355) && result;
-		System.out.println("Checking changed translations");
+		logger.info("Checking changed translations");
 		result = checkChangedInGeneArchive(con, "translation", "P", 355) && result;
-		System.out.println("Checking changed transcript");
+		logger.info("Checking changed transcript");
 		result = checkChangedInGeneArchive(con, "transcript", "T", 355) && result;
-		System.out.println("Checking changed genes");
+		logger.info("Checking changed genes");
 		result = checkChangedInGeneArchive(con, "gene", "G", 355) && result;
-		System.out.println("Checking deleted translations in peptide archive");
+		logger.info("Checking deleted translations in peptide archive");
 		result = checkDeletedTranslationsInPeptideArchive(con, 355) && result;
-		System.out.println("Checking deleted translations in peptide archive");
+		logger.info("Checking deleted translations in peptide archive");
 		result = checkChangedTranslationsInPeptideArchive(con, 355) && result;
-		System.out.println("Checking translations from peptide archive in gene archive");
+		logger.info("Checking translations from peptide archive in gene archive");
 		result = checkTranslationsFromPeptideArchiveInGeneArchive(con) && result;
-		System.out.println("Checking no current translations in peptide archive");
+		logger.info("Checking no current translations in peptide archive");
 		result = checkNoCurrentTranslationsInPeptideArchive(con) && result;
-		System.out.println("Checking gene propagation IDs are current");
+		logger.info("Checking gene propagation IDs are current");
 		result = checkPropagationIDsAreCurrent(con, "gene", "G");
-		System.out.println("Checking transcript propagation IDs are current");
+		logger.info("Checking transcript propagation IDs are current");
 		result = checkPropagationIDsAreCurrent(con, "transcript", "T");
-		System.out.println("Checking translation propagation IDs are current");
+		logger.info("Checking translation propagation IDs are current");
 		result = checkPropagationIDsAreCurrent(con, "translation", "P");
 
 		return result;
 	}
 
-	/**
-	 * Checks tables exist and have >0 rows.
-	 * 
-	 * @param con
-	 * @return
-	 */
-	private boolean checkTablesExistAndPopulated(Connection con) {
-		String tables[] = new String[]{ "stable_id_event", "mapping_session", "gene_archive", "peptide_archive" };
-
-		boolean result = true;
-
-		for (int i = 0; i < tables.length; i++) {
-			String table = tables[i];
-			boolean exists = checkTableExists(con, table);
-			if (exists) {
-				if (countRowsInTable(con, table) == 0) {
-					ReportManager.problem(this, con, "Empty table:" + table);
-					result = false;
-				}
-			} else {
-				ReportManager.problem(this, con, "Missing table:" + table);
-				result = false;
-			}
-		}
-
-		return result;
-	}
-
+	
 	private boolean checkDeletedTranslationsInPeptideArchive(Connection con, long minMappingSessionID) {
 		boolean result = true;
 
@@ -297,190 +256,6 @@ public class Archive extends SingleDatabaseTestCase {
 		return result;
 	}
 
-	/**
-	 * @param con
-	 * @return
-	 */
-	private boolean checkArchiveIntegrity(Connection con) {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
-	/**
-	 * Check no "NULL" or "null" strings in stable_id_event.new_stable_id or
-	 * stable_id_event.oldable_id.
-	 * 
-	 * @param con
-	 * @return
-	 */
-	private boolean checkNoNullStrings(Connection con) {
-
-		boolean result = true;
-
-		int rows = getRowCount(con, "select count(*) from stable_id_event sie where	new_stable_id='NULL'");
-		if (rows > 0) {
-			ReportManager.problem(this, con, rows
-					+ " rows in stable_id_event.new_stable_id contains \"NULL\" string instead of NULL value.");
-			result = false;
-		}
-
-		rows = getRowCount(con, "select count(*) from stable_id_event sie where	new_stable_id='null'");
-		if (rows > 0) {
-			ReportManager.problem(this, con, rows
-					+ " rows in stable_id_event.new_stable_id contains \"null\" string instead of NULL value.");
-			result = false;
-		}
-
-		rows = getRowCount(con, "select count(*) from stable_id_event sie where	old_stable_id='NULL'");
-		if (rows > 0) {
-			ReportManager.problem(this, con, rows
-					+ " rows in stable_id_event.old_stable_id contains \"NULL\" string instead of NULL value.");
-			result = false;
-		}
-
-		rows = getRowCount(con, "select count(*) from stable_id_event sie where	old_stable_id='null'");
-		if (rows > 0) {
-			ReportManager.problem(this, con, rows
-					+ " rows in stable_id_event.old_stable_id contains \"null\" string instead of NULL value.");
-			result = false;
-		}
-
-		// todo: add this auto-fix code?
-
-		//		#update stable_id_event set old_stable_id=NULL where
-		//		#old_stable_id="NULL"
-
-		//		#update stable_id_event set new_stable_id=NULL where
-		//		#new_stable_id="NULL"
-
-		return result;
-	}
-
 	// -----------------------------------------------------------------
-	/**
-	 * Check that the old_db_name and new_db_name columns "chain" together.
-	 */
-	private boolean checkMappingSessionChaining(Connection con) {
-
-		boolean result = true;
-
-		String[] oldNames = getColumnValues(con,
-																				"SELECT old_db_name FROM mapping_session WHERE old_db_name <> 'ALL' ORDER BY created");
-		String[] newNames = getColumnValues(con,
-																				"SELECT new_db_name FROM mapping_session WHERE new_db_name <> 'LATEST' ORDER BY created");
-
-		for (int i = 1; i < oldNames.length; i++) {
-			if (!(oldNames[i].equalsIgnoreCase(newNames[i - 1]))) {
-				ReportManager.problem(this, con, "Old/new names " + oldNames[i] + " " + newNames[i - 1]
-						+ " do not chain properly");
-				result = false;
-			}
-		}
-
-		if (result) {
-			ReportManager.correct(this, con, "Old/new db name chaining in mapping_session seems OK");
-		}
-
-		return result;
-
-	}
-
-	// -----------------------------------------------------------------
-	/**
-	 * Check that all mapping_sessions have entries in stable_id_event and vice-versa.
-	 */
-	private boolean checkMappingSessionStableIDKeys(Connection con) {
-
-		boolean result = true;
-
-		int orphans = countOrphans(	con,
-																"mapping_session",
-																"mapping_session_id",
-																"stable_id_event",
-																"mapping_session_id",
-																false);
-		if (orphans > 0) {
-			ReportManager.problem(this, con, orphans
-					+ " dangling references between mapping_session and stable_id_event tables");
-			result = false;
-		} else {
-			ReportManager.correct(this, con, "All mapping_session/stable_id_event keys are OK");
-		}
-
-		return result;
-
-	}
-
-	// -----------------------------------------------------------------
-	/**
-	 * Check that the ALL/LATEST mapping session has more entries than the others
-	 */
-	private boolean checkAllLatest(Connection con) {
-
-		boolean result = true;
-
-		// Following query should give one result - the ALL/LATEST one - if all is well
-		String sql = "SELECT ms.old_db_name, ms.new_db_name, count(*) AS entries "
-				+ "FROM stable_id_event sie, mapping_session ms " + "WHERE sie.mapping_session_id=ms.mapping_session_id "
-				+ "GROUP BY ms.mapping_session_id ORDER BY entries DESC LIMIT 1";
-
-		String oldDBName = getRowColumnValue(con, sql);
-		if (!(oldDBName.equalsIgnoreCase("ALL"))) {
-			ReportManager.problem(this,
-														con,
-														"ALL/LATEST mapping session does not seem to have the most stable_id_event entries");
-			result = false;
-		} else {
-			ReportManager.correct(this, con, "ALL/LATEST mapping session seems to have the most stable_id_event entries");
-		}
-
-		return result;
-
-	}
-
-	// -----------------------------------------------------------------
-	/**
-	 * Check format of old/new DB names in mapping_session.
-	 */
-	private boolean checkDBNameFormat(Connection con) {
-
-		boolean result = true;
-		String dbNameRegexp = "[A-Za-z]+_[A-Za-z]+_(core|est|estgene|vega)_\\d+_\\d+[A-Za-z]?.*";
-
-		String[] sql = { "SELECT old_db_name from mapping_session WHERE old_db_name <> 'ALL'",
-				"SELECT new_db_name from mapping_session WHERE new_db_name <> 'LATEST'" };
-
-		for (int i = 0; i < sql.length; i++) {
-
-			String[] names = getColumnValues(con, sql[i]);
-			for (int j = 0; j < names.length; j++) {
-				if (!(names[j].matches(dbNameRegexp))) {
-					ReportManager.problem(this, con, "Database name " + names[j]
-							+ " in mapping_session does not appear to be in the correct format");
-					result = false;
-				}
-			}
-
-		}
-
-		if (result == true) {
-			ReportManager.correct(this, con, "All database names in mapping_session appear to be in the correct format");
-		}
-
-		return result;
-	}
-
-	// -----------------------------------------------------------------
-	/**
-	 * Runs this TestCase via org.ensembl.healthcheck.TextTestRunner. Uses default if no
-	 * parameters provided.
-	 * 
-	 * @param args command line parameters to TextTestRunner.
-	 */
-	public static void main(String[] args) {
-		if (args.length == 0)
-			args = "-d danio_rerio_core_15_2 -config database.properties.ecs2dforward check_archive".split(" ");
-		org.ensembl.healthcheck.TextTestRunner.main(args);
-	}
 
 }
