@@ -201,7 +201,7 @@ public final class DatabaseType {
      */
     public boolean isGeneric() {
         
-        if (name.equals("core") || name.equals("est") || name.equals("estgene") || name.equals("estgene")) {
+        if (name.equals("core") || name.equals("est") || name.equals("estgene") || name.equals("vega")) {
             return true;
         }
         
