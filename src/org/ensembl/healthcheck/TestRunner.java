@@ -167,6 +167,7 @@ public class TestRunner {
 	// -------------------------------------------------------------------------
 	/**
 	 * Finds all tests in several locations.
+	 * 
 	 * A test case is a class that extends EnsTestCase.
 	 * Test case classes found in more than one location are only added once.
 	 * @return A List containing objects of the test case classes found.
@@ -181,17 +182,18 @@ public class TestRunner {
 		String directoryName = packageName.replace('.', File.separatorChar);
 		logger.finest("Package name: " + packageName + " Directory name: " + directoryName);
 		String runDir = System.getProperty("user.dir") + File.separator;
-System.out.println("Rundir is " + runDir);
+
 		// places to look
 		ArrayList locations = new ArrayList();
-		locations.add(runDir + "src" + File.separator + directoryName); // same directory as this class
-		locations.add(runDir + "build" + File.separator + directoryName); // ../build/<packagename>
+		//locations.add(runDir + "src" + File.separator + directoryName); // same directory as this class
+		//locations.add(runDir + "build" + File.separator + directoryName); // ../build/<packagename>
 		locations.add(runDir + "lib" + File.separator + "ensj-healthcheck.jar"); // ../lib
 
 		// look in each of the locations defined above
 		Iterator it = locations.iterator();
 		while (it.hasNext()) {
 			String location = (String)it.next();
+			logger.finest("Looking for tests in " + location);
 			File dir = new File(location);
 			if (dir.exists()) {
 				if (location.lastIndexOf('.') > -1 && location.substring(location.lastIndexOf('.') + 1).equalsIgnoreCase("jar")) {
