@@ -6,5 +6,6 @@ If you create a new group, please add it to this file, with a description if nec
 
 all                     # default group name - all tests are a member of this group
 db_constraints         
+pre_mart
 post_genebuild
 
