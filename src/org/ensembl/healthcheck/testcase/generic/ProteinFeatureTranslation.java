@@ -68,7 +68,7 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
 				// no point working out the translation lengths
         if (!tableHasRows(con, "protein_feature")) {
           logger.warning("protein_feature table for " + DBUtils.getShortDatabaseName(con) + " has zero rows - skipping.");
-          continue;
+          return false; // shoud we return true or false in this case? 
         }
         
         // NOTE: By default the MM MySQL JDBC driver reads and stores *all* rows in the
