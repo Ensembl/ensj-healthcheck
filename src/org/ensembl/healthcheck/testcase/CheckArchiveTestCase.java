@@ -59,7 +59,6 @@ public class CheckArchiveTestCase extends EnsTestCase {
 			System.out.println("Checking that ALL/LATEST mapping session has most entries");
 			result = checkAllLatest(con) && result;
 
-			/*
 			System.out.println("Checking deleted genes");
 			result = checkDeletedInGeneArchive(con, "gene", "G", 355) && result;
 			System.out.println("Checking deleted transcripts");
@@ -86,7 +85,6 @@ public class CheckArchiveTestCase extends EnsTestCase {
 			result = checkPropagationIDsAreCurrent(con, "transcript", "T");
 			System.out.println("Checking translation propagation IDs are current");
 			result = checkPropagationIDsAreCurrent(con, "translation", "P");
-			*/
 
 		}
 
