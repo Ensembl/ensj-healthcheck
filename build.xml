@@ -18,13 +18,16 @@
     <property name="dist"                location="dist"/>
     <property name="doc"                 location="doc"/>
     <property name="lib"                 location="lib"/>
+    <property name="images"              location="images"/>
     <property name="web.dir"             location="${user.home}/public_html"/>
     <property name="web.javadoc.dir"     location="${web.dir}/javadoc"/>
     <property name="web.mirror.dir"      location="${doc}/external_web_pages"/>
 
     <property name="scp-executable"      value="c:\cygwin\bin\scp.exe"/>
     <property name="scp-port"            value="2222"/>
-    <property name="scp-target"          value="gp1@localhost:~/work/ensj-healthcheck-v2/lib"/>
+    <property name="scp-target"
+              value="gp1@localhost:~/work/ensj-healthcheck-v2/lib"
+     />
 
     <!-- ################################################################################## -->
     <!-- Targets -->
@@ -34,7 +37,6 @@
         <tstamp/>
         <!-- Create the directory structure -->
         <mkdir dir="${build}"/>
-        <mkdir dir="${test}"/>
         <mkdir dir="${dist}"/>
     </target>
 
@@ -88,14 +90,22 @@
             depends="compile"
             description="generate ensj-healthcheck.jar"
      >
-        <jar jarfile="${lib}/${name}.jar" basedir="${build}"/>
+        <jar jarfile="${lib}/${name}.jar">
+            <fileset dir="${build}/"/>
+            <fileset dir=".">
+                <include name="images/*.gif"/>
+            </fileset>
+        </jar>
     </target>
 
     <!-- ################################################################################## -->
     <!-- Transfer lib/ensj-healthcheck.jar to Sanger using scp over SSH tunnel
        Assumes local port 2222 is forwarded to port 22 on a Sanger machine                -->
 
-    <target name="scp-lib" description="scp jar file via SSH tunnel to Sanger">
+    <target name="scp-lib"
+            depends="jar"
+            description="scp jar file via SSH tunnel to Sanger"
+     >
         <exec executable="${scp-executable}" dir="${lib}">
             <arg value="-oPort=${scp-port}"/>
             <arg value="${name}.jar"/>
