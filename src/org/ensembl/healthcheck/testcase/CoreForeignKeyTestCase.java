@@ -253,6 +253,14 @@ public class CoreForeignKeyTestCase extends EnsTestCase {
       }
       result &= (orphans == 0);
 
+      orphans = countOrphans( con, "assembly_exception", "exc_seq_region_id", "seq_region", "seq_region_id", true);
+      if( orphans > 0) {
+        ReportManager.problem(this, con, "assembly_exception (exc)-> seq_region_id has unlinked entries");
+      } else {
+        ReportManager.correct(this, con, "All assembly_exception (exc)-> seq_region_id relationships OK");
+      }
+      result &= (orphans == 0);
+
     }
     
     return new TestResult(getShortTestName(), result);
