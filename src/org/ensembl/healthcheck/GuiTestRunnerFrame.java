@@ -10,7 +10,6 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
-import java.io.*;
 
 import java.awt.Font;
 import java.awt.Color;
@@ -43,7 +42,6 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
   public GuiTestRunnerFrame(GuiTestRunner gtr) {
     initComponents();
     this.guiTestRunner = gtr;
-    init();
   }
   
   /** This method is called from within the constructor to
@@ -119,16 +117,6 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
     statusLabel.setText(s);
     
   } // setStatus
-  
-  // -------------------------------------------------------------------------
-  
-  private void init() {
-  
-    String iconName = System.getProperty("user.dir") + File.separator + "images" + File.separator + "e-logo.gif"; 
-    System.out.println(iconName);
-    titleLabel.setIcon(new javax.swing.ImageIcon(iconName));
-    
-  } // init
   
   // -------------------------------------------------------------------------
   /**
