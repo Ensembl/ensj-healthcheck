@@ -93,6 +93,8 @@ public abstract class EnsTestCase {
   /** A list of Strings representing the groups that this test is a member of.
    * All tests are members of the group "all", and also of a group with the same name as the test. */
   protected List groups;
+  /** Each test has a set of conditions that it needs to be fulfilled in order for it to run */
+  protected List conditions;
   
   /** Description field */
   protected String description;
@@ -110,6 +112,8 @@ public abstract class EnsTestCase {
     addToGroup("all");               // everything is in all, by default
     addToGroup(getShortTestName());  // each test is in a one-test group
     setDescription("No description set for this test.");
+    
+    conditions = new ArrayList();
     
   } // EnsTestCase
   
@@ -339,6 +343,7 @@ public abstract class EnsTestCase {
     return testRunner.getDatabaseConnectionIterator(databaseRegexp);
     
   }
+  
   // -------------------------------------------------------------------------
   /**
    * Prints (to stdout) all the databases that match the current class' database regular expression.
@@ -1110,5 +1115,41 @@ public abstract class EnsTestCase {
     
   } 
   // -------------------------------------------------------------------------
+
+  /** 
+   * Add a condition to the list.
+   * @param cond The condition to add.
+   */
+  public void addCondition(SchemaMatchCondition cond) {
+    
+    conditions.add(cond);
+    
+  }
   
+  // -------------------------------------------------------------------------
+  /**
+   *
+   * Get the list of conditions for this test.
+   *  @return The conditions.
+   */
+  public List getConditions() {
+    
+    return conditions;
+    
+  }
+  
+  // -------------------------------------------------------------------------
+
+  public DatabaseConnectionIterator getMatchingSchemaIterator() {
+    
+    return new DatabaseConnectionIterator(System.getProperty("driver"),
+    System.getProperty("databaseURL"),
+    System.getProperty("user"),
+    System.getProperty("password"),
+    testRunner.getMatchingSchemas(conditions));
+    
+  }
+  
+  // -------------------------------------------------------------------------
+
 } // EnsTestCase
