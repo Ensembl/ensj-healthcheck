@@ -40,6 +40,7 @@ public class Karyotype extends SingleDatabaseTestCase {
     public void types() {
 
         removeAppliesToType(DatabaseType.EST);
+        removeAppliesToType(DatabaseType.ESTGENE);
 
     }
     
@@ -62,7 +63,7 @@ public class Karyotype extends SingleDatabaseTestCase {
 
 	    // certain species are allowed to have empty karyotype tables
 	    Species species = dbre.getSpecies();
-	    if (species == Species.CAENORHABDITIS_BRIGGSAE || species == Species.CAENORHABDITIS_ELEGANS || species == Species.DANIO_RERIO || species == Species.FUGU_RUBRIPES || species == Species.XENOPUS_TROPICALIS || species == Species.APIS_MELLIFERA) {
+	    if (species == Species.CAENORHABDITIS_BRIGGSAE || species == Species.CAENORHABDITIS_ELEGANS || species == Species.DANIO_RERIO || species == Species.FUGU_RUBRIPES || species == Species.XENOPUS_TROPICALIS || species == Species.APIS_MELLIFERA || species == Species.PAN_TROGLODYTES) {
 	
 		ReportManager.correct(this, con, "Karyotype table is empty, but this is allowed for " + species.toString());
 		return true;
