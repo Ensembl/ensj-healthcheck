@@ -43,7 +43,9 @@ public class DatabaseRegistryEntryTest extends TestCase {
 		super(arg0);
 	}
 
-	public void testSetSpeciesFromName() {
+	// -----------------------------------------------------------------
+
+	public void testSetSpeciesAndTypeFromName() {
 
 		// all of these should resolve
 		String[] names = { "homo_sapiens_core_20_34", "human_core_20" };
@@ -54,5 +56,7 @@ public class DatabaseRegistryEntryTest extends TestCase {
 			assertTrue(dbre.getType() != DatabaseType.UNKNOWN);
 		}
 	}
+
+	// -----------------------------------------------------------------
 
 }
