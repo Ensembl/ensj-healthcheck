@@ -100,12 +100,12 @@ public class TextTestRunner extends TestRunner implements Reporter {
 			"                  Note that more than one -d argument can be used; testcases that depend on the order of databases will be passed the databases in the order in which they appear on the command line");
 		System.out.println("  -h              This message.");
 		System.out.println("  -output level   Set output level; level can be one of ");
-		System.out.println("                  none      nothing is printed");
-		System.out.println("                  problem   only problems are reported");
-		System.out.println("                  correct   only correct results (and problems) are reported");
-		System.out.println("                  summary   only summary info (and problems, and correct reports) are reported");
-		System.out.println("                  info      info (and problem, correct, summary) messages reported");
-		System.out.println("                  all       everything is printed");
+		System.out.println("                    none      nothing is printed");
+		System.out.println("                    problem   only problems are reported (this is the default)");
+		System.out.println("                    correct   only correct results (and problems) are reported");
+		System.out.println("                    summary   only summary info (and problems, and correct reports) are reported");
+		System.out.println("                    info      info (and problem, correct, summary) messages reported");
+		System.out.println("                    all       everything is printed");
 		System.out.println("  -species s      Use s as the species for all databases instead of trying to guess the species from the name");
 		System.out.println("  -type t         Use 2 as the type for all databases instead of trying to guess the type from the name");
 		System.out.println("  -debug          Print debugging info (for developers only)");

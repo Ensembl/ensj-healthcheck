@@ -54,9 +54,9 @@ public class Strand extends SingleDatabaseTestCase {
 				ReportManager.correct(this, con, "All seq_region_strand in " + table + " are 1 or -1");
 			} else {
 				ReportManager.problem(this, con, rows + " rows in " + table + " have seq_region_strand not equal to 1 or -1");
-				}
+			}
 		}
-		
+
 		return true;
 
 	} // run

@@ -41,7 +41,7 @@ public class TestRunner {
 	protected static Logger logger = Logger.getLogger("HealthCheckLogger");
 
 	/** Output level used by ReportManager */
-	protected int outputLevel = ReportLine.ALL;
+	protected int outputLevel = ReportLine.PROBLEM;
 
 	/** The name of the file where configuration is stored */
 	protected static String PROPERTIES_FILE = "database.properties";

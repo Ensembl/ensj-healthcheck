@@ -36,6 +36,7 @@ public class FeatureCoords extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription("Check that feature co-ords (DNA and protein) make sense.");
+		setHintLongRunning(true);
 	}
 
 	/**

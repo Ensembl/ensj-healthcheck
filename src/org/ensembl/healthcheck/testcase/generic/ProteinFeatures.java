@@ -49,7 +49,7 @@ public class ProteinFeatures extends SingleDatabaseTestCase {
 		int rows = getRowCount(con, "SELECT COUNT(*) FROM protein_feature WHERE seq_start > seq_end");
 		if (rows > 0) {
 			result = false;
-			ReportManager.problem(this, con, rows + " have protein features where seq_start > seq_end");
+			ReportManager.problem(this, con, rows + " protein features have seq_start > seq_end");
 		} else {
 			ReportManager.correct(this, con, "No protein features where seq_start > seq_end");
 		}
@@ -57,7 +57,7 @@ public class ProteinFeatures extends SingleDatabaseTestCase {
 		logger.info("Checking protein features for " + DBUtils.getShortDatabaseName(con) + " ...");
 		rows = getRowCount(con, "SELECT COUNT(*) from protein_feature WHERE seq_start < 0");
 		if (rows > 0) {
-			ReportManager.problem(this, con, rows + " have protein features where seq_start < 0");
+			ReportManager.problem(this, con, rows + " protein features have seq_start < 0");
 		} else {
 			ReportManager.correct(this, con, "No protein features where seq_start < 0");
 		}
@@ -65,7 +65,7 @@ public class ProteinFeatures extends SingleDatabaseTestCase {
 		logger.info("Checking protein features for " + DBUtils.getShortDatabaseName(con) + " ...");
 		rows = getRowCount(con, "SELECT COUNT(*) FROM protein_feature WHERE hit_start < 0");
 		if (rows > 0) {
-			ReportManager.problem(this, con, rows + " have protein features where hit_start < 0");
+			ReportManager.problem(this, con, rows + " protein features have hit_start < 0");
 		} else {
 			ReportManager.correct(this, con, "No protein features where hit_start < 0");
 		}
@@ -74,7 +74,7 @@ public class ProteinFeatures extends SingleDatabaseTestCase {
 		rows = getRowCount(con, "SELECT COUNT(*) from protein_feature WHERE hit_start > hit_end");
 		if (rows > 0) {
 			result = false;
-			ReportManager.problem(this, con, rows + " have protein features where hit_start > hit_end");
+			ReportManager.problem(this, con, rows + " protein features have hit_start > hit_end");
 		} else {
 			ReportManager.correct(this, con, "No protein features where hit_start > hit_end");
 		}
