@@ -62,7 +62,7 @@ public class ComparaForeignKeyTestCaseMemberId extends EnsTestCase {
 	    ReportManager.problem(this, con, "family_member <-> member TEST NOT COMPLETED, look at the StackTrace if any");
         }
 
-        orphans = countOrphans(con, "homology_member", "member_id", "member", "member_id", false );
+        orphans = countOrphans(con, "homology_member", "member_id", "member", "member_id", true );
         if( orphans == 0 ) {
 	    ReportManager.correct(this, con, "homology_member <-> member relationships PASSED");
 	} else if( orphans > 0 ) {
@@ -71,7 +71,16 @@ public class ComparaForeignKeyTestCaseMemberId extends EnsTestCase {
 	    ReportManager.problem(this, con, "homology_member <-> member TEST NOT COMPLETED, look at the StackTrace if any");
         }
 
-        orphans = countOrphans(con, "domain_member", "member_id", "member", "member_id", false );
+        orphans = countOrphans(con, "homology_member", "peptide_member_id", "member", "member_id", true );
+        if( orphans == 0 ) {
+	    ReportManager.correct(this, con, "homology_member <-> member via peptide_member_id relationships PASSED");
+	} else if( orphans > 0 ) {
+	    ReportManager.problem(this, con, "homology_member has unlinked entries via peptide_member_id in member FAILED");
+        } else {
+	    ReportManager.problem(this, con, "homology_member <-> member TEST NOT COMPLETED, look at the StackTrace if any");
+        }
+
+        orphans = countOrphans(con, "domain_member", "member_id", "member", "member_id", true );
         if( orphans == 0 ) {
 	    ReportManager.correct(this, con, "domain_member <-> member relationships PASSED");
 	} else if( orphans > 0 ) {
