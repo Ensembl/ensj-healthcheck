@@ -125,14 +125,14 @@ public class DatabaseRegistryEntry {
 			}
 		}
 
-		// human_core_20
+		// human_core_20, ensembl_compara_20_1
 		if (bits.length >= 3) {
 			alias = bits[1];
 			if (DatabaseType.resolveAlias(alias) != DatabaseType.UNKNOWN) {
 				return DatabaseType.resolveAlias(alias);
 			}
 		}
-
+		
 		// other permutations?
 
 		if (result.equals(DatabaseType.UNKNOWN)) {
