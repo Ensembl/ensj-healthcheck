@@ -18,25 +18,38 @@
 
 package org.ensembl.healthcheck.gui;
 
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.HashMap;
+
+import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EtchedBorder;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-
-import org.ensembl.healthcheck.*;
+import org.ensembl.healthcheck.ReportLine;
 
 /**
  * Settings Dialog for the GuiTestRunner.
  */
 public class GuiTestRunnerSettings extends javax.swing.JDialog {
 
-    GuiTestRunnerFrame gtrf;
+    private GuiTestRunnerFrame gtrf;
 
-    GuiTestRunner guiTestRunner;
+    private GuiTestRunner guiTestRunner;
 
-    private final static Dimension PANEL_SIZE = new Dimension(300, 500);
+    private static final Dimension PANEL_SIZE = new Dimension(300, 500);
 
     /**
      * Creates new form GuiTestRunnerSettings
@@ -53,7 +66,10 @@ public class GuiTestRunnerSettings extends javax.swing.JDialog {
         initComponents();
     }
 
-    private void initComponents() {//GEN-BEGIN:initComponents
+    /**
+     * Initialise the components making up the frame.
+     */
+    private void initComponents() {
 
         JPanel topPanel = new JPanel();
         JPanel centrePanel = new JPanel();
@@ -95,7 +111,7 @@ public class GuiTestRunnerSettings extends javax.swing.JDialog {
         threadsPanel.add(outputLabel);
 
         outputComboBox.setFont(new Font("Dialog", 0, 12));
-        outputComboBox.setModel(new DefaultComboBoxModel(new String[] { "All", "Problems only", "Correct results", "Summary",
+outputComboBox.setModel(new DefaultComboBoxModel(new String[] {"All", "Problems only", "Correct results", "Summary",
                 "Info", "None"}));
         threadsPanel.add(outputComboBox);
 

@@ -18,39 +18,84 @@
 
 package org.ensembl.healthcheck.gui;
 
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.LogRecord;
 
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.tree.*;
-import javax.swing.border.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.logging.*;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTree;
+import javax.swing.UIManager;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreeSelectionModel;
 
-import org.ensembl.healthcheck.*;
-import org.ensembl.healthcheck.util.*;
-import org.ensembl.healthcheck.testcase.*;
+import org.ensembl.healthcheck.CallbackTarget;
+import org.ensembl.healthcheck.DatabaseRegistry;
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.ReportLine;
+import org.ensembl.healthcheck.TestRegistry;
+import org.ensembl.healthcheck.testcase.EnsTestCase;
+import org.ensembl.healthcheck.util.ConnectionPool;
 
 /**
  * The main display frame for GuiTestRunner.
  */
-public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTarget {
+public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
 
-    GuiTestRunner guiTestRunner;
+    private GuiTestRunner guiTestRunner;
 
     private static final Dimension PANEL_SIZE = new Dimension(600, 650);
 
     private JLabel statusLabel;
 
-    Map testButtonInfoWindows = new HashMap();
+    private Map testButtonInfoWindows = new HashMap();
+
+    private TestProgressDialog testProgressDialog;
+
+    private int testsRun = 0;
 
     // -------------------------------------------------------------------------
     /**
      * Creates new form GuiTestRunnerFrame
      * 
      * @param gtr The GuiTestRunner that is associated with this Frame.
+     * @param testRegistry The test registry to use.
+     * @param databaseRegistry The database registry to use.
      */
     public GuiTestRunnerFrame(GuiTestRunner gtr, TestRegistry testRegistry, DatabaseRegistry databaseRegistry) {
 
@@ -81,9 +126,12 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
 
             public void windowClosing(WindowEvent evt) {
 
-                System.exit(0);
+                exit();
+
             }
         });
+
+        setIconImage(new ImageIcon(this.getClass().getResource("e-logo-small.gif")).getImage());
 
         // ----------------------------
         // Top panel - title
@@ -138,16 +186,15 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.setBackground(Color.WHITE);
 
+        final GuiTestRunnerFrame localGTRF = this;
         JButton runButton = new JButton("Run");
         runButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
 
                 DatabaseRegistryEntry[] selectedDatabases = databaseTabbedPane.getSelectedDatabases();
-                for (int i = 0; i < selectedDatabases.length; i++) {
-                    System.out.println(selectedDatabases[i].getName());
-                }
-                // TODO - implement
+                EnsTestCase[] selectedTests = testTabbedPane.getSelectedTests();
+                guiTestRunner.runAllTests(selectedTests, selectedDatabases, localGTRF);
 
             }
         });
@@ -166,8 +213,7 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
 
             public void actionPerformed(ActionEvent e) {
 
-                ConnectionPool.closeAll();
-                dispose();
+                exit();
 
             }
         });
@@ -189,6 +235,21 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
         contentPane.add(bottomPanel, BorderLayout.SOUTH);
 
         pack();
+
+        // ----------------------------
+        // Create progress window
+        testProgressDialog = new TestProgressDialog("Running tests", "", 0, 100);
+
+    }
+
+    // -------------------------------------------------------------------------
+
+    private void exit() {
+
+        ConnectionPool.closeAll();
+        testProgressDialog.dispose();
+        dispose();
+        System.exit(0);
 
     }
 
@@ -302,14 +363,106 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
     } // getOutputLevel
 
     // -------------------------------------------------------------------------
+    /**
+     * Set the total number of tests that are to be run in this session so that the progress dialog
+     * can update itself.
+     * 
+     * @param total The maximum number of tests that will be run.
+     */
+    public void setTotalToRun(int total) {
+
+        testProgressDialog.setMaximum(total);
+
+    }
+
+    // -------------------------------------------------------------------------
+    /**
+     * Increase the number of tests that have been run so that the progress bar can be updated.
+     * 
+     * @param i The amount by which to increment the count.
+     */
+    public void incrementNumberRun(int i) {
+
+        testsRun += i;
+
+    }
+
+    //  -------------------------------------------------------------------------
+    /**
+     * Update the test progress window with a new note.
+     * 
+     * @param s The string to display in the note area.
+     */
+    public void updateProgressDialog(String s) {
+
+        if (!testProgressDialog.isVisible()) {
+            testProgressDialog.setVisible(true);
+            testProgressDialog.toFront();
+        }
+
+        testProgressDialog.setNote(s);
+
+    } // updateProgressDialog
+
+    //  -------------------------------------------------------------------------
+    /**
+     * Update the test progress window based on the internal count of tests run.
+     */
+    public void updateProgressDialog() {
+
+        if (!testProgressDialog.isVisible()) {
+            testProgressDialog.setVisible(true);
+            testProgressDialog.toFront();
+        }
+
+        testProgressDialog.setProgress(testsRun);
+
+    } // updateProgressDialog
+
+    // -------------------------------------------------------------------------
+    /**
+     * Control whether the test progress dialog is displayed.
+     * 
+     * @param v Whether or not the progress dialog is displayed.
+     */
+    public void setTestProgressDialogVisibility(boolean v) {
+
+        testProgressDialog.setVisible(v);
+        testProgressDialog.repaint();
+
+    }
+
+    // -------------------------------------------------------------------------
+    /**
+     * Force the test progress dialog to show 100% completion.
+     */
+    public void setTestProgressDone() {
+
+        testProgressDialog.setProgress(testProgressDialog.getMaximum());
+
+    }
+
+    // -------------------------------------------------------------------------
+    /**
+     * Repaint the test progress dialog.
+     */
+    public void repaintTestProgressDialog() {
+
+        testProgressDialog.repaint();
+
+    }
+
+    // -------------------------------------------------------------------------
 
 } // GuiTestRunnerFrame
 
 // -------------------------------------------------------------------------
-
+/**
+ * ActionListener implementation to open a test info window.
+ */
 class TestInfoWindowOpener implements ActionListener {
 
-    TestInfoWindow infoWindow;
+    private TestInfoWindow infoWindow;
 
     public TestInfoWindowOpener(TestInfoWindow infoWindow) {
 
@@ -507,7 +660,9 @@ class TestTabbedPane extends JTabbedPane {
             addTab(types[i].toString(), new TestListPanel(types[i], testRegistry));
         }
 
-        setBackgroundAt(0, Color.LIGHT_GRAY);
+        if (getTabCount() > 0) {
+            setBackgroundAt(0, Color.LIGHT_GRAY);
+        }
 
         addChangeListener(new TabChangeListener());
 
@@ -545,6 +700,8 @@ class TestTabbedPane extends JTabbedPane {
 
 class TestListPanel extends JScrollPane {
 
+    private JTree tree;
+
     public TestListPanel(DatabaseType type, TestRegistry testRegistry) {
 
         setPreferredSize(new Dimension(300, 500));
@@ -565,7 +722,7 @@ class TestListPanel extends JScrollPane {
             top.add(groupNode);
         }
 
-        JTree tree = new JTree(top);
+        tree = new JTree(top);
         tree.setRowHeight(0);
         tree.setCellRenderer(new TestTreeCellRenderer());
         tree.addMouseListener(new TestTreeNodeSelectionListener(tree));
@@ -582,7 +739,15 @@ class TestListPanel extends JScrollPane {
 
         List selected = new ArrayList();
 
-        // TODO implement
+        TreeModel model = tree.getModel();
+        TestDefaultMutableTreeNode root = (TestDefaultMutableTreeNode) model.getRoot();
+        Enumeration children = root.breadthFirstEnumeration();
+        while (children.hasMoreElements()) {
+            TestDefaultMutableTreeNode child = (TestDefaultMutableTreeNode) children.nextElement();
+            if (!child.isGroup() && child.isSelected()) {
+                selected.add(child.getTest());
+            }
+        }
 
         return (EnsTestCase[]) selected.toArray(new EnsTestCase[selected.size()]);
 
@@ -593,12 +758,14 @@ class TestListPanel extends JScrollPane {
 } // TestListPanel
 
 // -------------------------------------------------------------------------
-
+/**
+ * Custom cell renderer for a tree of groups and tests.
+ */
 class TestTreeCellRenderer extends JComponent implements TreeCellRenderer {
 
-    JLabel label;
+    private JLabel label;
 
-    JCheckBox checkBox;
+    private JCheckBox checkBox;
 
     public TestTreeCellRenderer() {
 
@@ -643,7 +810,7 @@ class TestTreeCellRenderer extends JComponent implements TreeCellRenderer {
 
 }
 
-/*
+/**
  * Subclass of DefaultMutableTreeNode that tracks whether it's selected or not.
  */
 
@@ -703,26 +870,28 @@ class TestDefaultMutableTreeNode extends DefaultMutableTreeNode {
 }
 
 // -------------------------------------------------------------------------
-/*
+/**
  * Listener that changes whether or not a node is selected when it is clicked.
  */
 
 class TestTreeNodeSelectionListener extends MouseAdapter {
 
-    JTree tree;
+    private JTree tree;
 
-    int controlWidth = 20;
+    private int controlWidth = 20;
 
     TestTreeNodeSelectionListener(JTree tree) {
 
         this.tree = tree;
-        // TODO - get width of control icons from BasicLookAndFeel and set controlWidth appropriately
+        // TODO - get width of control icons from BasicLookAndFeel and set controlWidth
+        // appropriately
     }
 
     public void mouseClicked(MouseEvent me) {
 
-        if (me.getSource().equals(tree) && me.getX() > controlWidth) { // try to avoid tree expansion
-                                                             // controls
+        if (me.getSource().equals(tree) && me.getX() > controlWidth) { // try to avoid tree
+            // expansion
+            // controls
 
             // which node was clicked?
             TestDefaultMutableTreeNode node = (TestDefaultMutableTreeNode) tree.getLastSelectedPathComponent();
@@ -748,4 +917,73 @@ class TestTreeNodeSelectionListener extends MouseAdapter {
 
 }
 
+// -------------------------------------------------------------------------
+/**
+ * Progress dialog displayed when tests are being run.
+ */
+
+class TestProgressDialog extends JDialog {
+
+    private JProgressBar progressBar;
+
+    private JLabel messageLabel;
+
+    private JLabel noteLabel;
+
+    public TestProgressDialog(String message, String note, int min, int max) {
+
+        setSize(new Dimension(300, 100));
+
+        JPanel progressPanel = new JPanel();
+        progressPanel.setLayout(new BoxLayout(progressPanel, BoxLayout.Y_AXIS));
+        messageLabel = new JLabel(message);
+        messageLabel.setFont(new Font("Dialog", Font.BOLD, 12));
+        noteLabel = new JLabel(message);
+        noteLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
+
+        progressBar = new JProgressBar(min, max);
+
+        progressPanel.add(messageLabel);
+        progressPanel.add(noteLabel);
+        progressPanel.add(progressBar);
+
+        Container contentPane = getContentPane();
+        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+        contentPane.add(progressPanel);
+
+        //pack();
+
+    }
+
+    public void setMaximum(int max) {
+
+        progressBar.setMaximum(max);
+
+    }
+
+    public int getMaximum() {
+
+        return progressBar.getMaximum();
+
+    }
+
+    public void setProgress(int p) {
+
+        progressBar.setValue(p);
+
+    }
+
+    public void setNote(String s) {
+
+        noteLabel.setText(s);
+
+    }
+
+    public void update(String s, int p) {
+
+        setNote(s);
+        setProgress(p);
+
+    }
+}
 // -------------------------------------------------------------------------
