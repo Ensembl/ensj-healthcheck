@@ -1,0 +1,9 @@
+Changes in version 2:
+
+* Added -length attribute to TextTestRunner (accessible from run-healthcheck.sh) 
+  to allow length of output lines to be specified. Zero means never break lines.
+  
+* Added -groups option to ListAllTests to show all tests by group. This is 
+  accessible through show-groups.sh
+  
+* Renamed many tests to remove redundant "Check" prefix and "TestCase" suffix
