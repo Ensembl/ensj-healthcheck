@@ -69,12 +69,21 @@ public class AssemblyException extends SingleDatabaseTestCase {
             ReportManager.problem(this, con, "assembly_exception has " + rows
                     + " rows where exc_seq_region_start > exc_seq_region_end");
         }
+        
+        // If the assembly_exception table contains an exception of type 'HAP' then 
+        // there should be at least one seq_region_attrib row of type 'non-reference'
+       if (getRowCount(con, "SELECT COUNT(*) FROM assembly_exception WHERE exc_type='HAP'") > 0) {
+           
+           if (getRowCount(con, "SELECT COUNT(*) FROM seq_region_attrib sra, attrib_type at WHERE sra.attrib_type_id=at.attrib_type_id AND at.code='non_ref'") == 0) {
+               result = false;
+               ReportManager.problem(this, con, "assembly_exception contains at least one exception of type 'HAP' but there are no seq_region_attrib rows of type 'non-reference'");
+           }
+           
+       }
 
         if (result) {
             ReportManager.correct(this, con, "assembly_exception start/end co-ordinates make sense");
         }
-
-        // more tests to be added later
 
         return result;
 
