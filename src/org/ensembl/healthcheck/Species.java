@@ -59,6 +59,9 @@ public final class Species {
     /** Specific type of species */
     public static final Species PAN_TROGLODYTES = new Species("pan_troglodytes");
 
+    /** Specific type of species */
+    public static final Species GALLUS_GALLUS = new Species("gallus_gallus");
+
     /** Unknown species */
     public static final Species UNKNOWN = new Species("unknown");
 
@@ -96,7 +99,8 @@ public final class Species {
         taxonIDToSpecies.put("6238", CAENORHABDITIS_BRIGGSAE);
         taxonIDToSpecies.put("7955", DANIO_RERIO);
         taxonIDToSpecies.put("9598", PAN_TROGLODYTES);
-
+        taxonIDToSpecies.put("9031", GALLUS_GALLUS);
+        
         // and the other way around
         Iterator it = taxonIDToSpecies.keySet().iterator();
         while (it.hasNext()) {
@@ -194,6 +198,14 @@ public final class Species {
         if (in(alias, "chimp,chimpanzee,ptroglodytes,pantroglodytes,pan_troglodytes")) {
 
             return PAN_TROGLODYTES;
+
+        }
+        
+       // --------------------------------------
+
+        if (in(alias, "chicken,chick,ggallus,gallusgallus,gallus_gallus")) {
+
+            return GALLUS_GALLUS;
 
         }
         
