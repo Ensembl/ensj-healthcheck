@@ -98,7 +98,7 @@ public class Utils {
    * @param delim The delimiter to use.
    * @return A String containing the elements of a separated by delim. No trailing delimiter.
    */
-  public static String listToString(String[] a, String delim) {
+  public static String arrayToString(String[] a, String delim) {
     
     StringBuffer buf = new StringBuffer();
     for (int i = 0; i < a.length; i++) {
