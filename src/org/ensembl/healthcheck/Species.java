@@ -136,7 +136,7 @@ public final class Species {
         }
         
         assemblyPrefixToSpecies.put("RGSC",      RATTUS_NORVEGICUS);
-        assemblyPrefixToSpecies.put("DROM",      DROSOPHILA_MELANOGASTER);
+        assemblyPrefixToSpecies.put("BDGP",      DROSOPHILA_MELANOGASTER);
         assemblyPrefixToSpecies.put("ZFISH",     DANIO_RERIO);
         assemblyPrefixToSpecies.put("FUGU",      FUGU_RUBRIPES);
         assemblyPrefixToSpecies.put("MOZ",       ANOPHELES_GAMBIAE);
