@@ -73,6 +73,20 @@ public class TableInfo {
     this.columns = columns;
   }
   
+  // -------------------------------------------------------------------------
+  /**
+   * Check if this table has a particular column.
+   * @param col The column to check.
+   * @return true If this column is present (check is case insensitive)
+   */
+  public boolean hasColumn(String col) {
+    
+    return columns.contains(col);
+    
+  }
+  
+  // -------------------------------------------------------------------------
+
   public String toString() {
     
     StringBuffer buf = new StringBuffer();
