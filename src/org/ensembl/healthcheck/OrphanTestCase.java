@@ -34,9 +34,6 @@ import org.ensembl.healthcheck.util.*;
 
 public class OrphanTestCase extends EnsTestCase {
   
-
-  
-  /** Creates a new instance of OrphanTestCase */
   public OrphanTestCase() {
     databaseRegexp = "^homo_sapiens_core_12.*";
   }
@@ -50,7 +47,7 @@ public class OrphanTestCase extends EnsTestCase {
     while (it.hasNext()) {
       
       Connection con = (Connection)it.next();
-      int orphans = super.countOrphans(con, "gene", "gene_id", "gene_stable_id", "gene_id");
+      int orphans = super.countOrphans(con, "gene", "gene_id", "gene_stable_id", "gene_id", false);
       result &= (orphans == 0);
       
     }
