@@ -18,7 +18,7 @@
 
 /**
  * <p>Title: ClassFileFilenameFilter.java</p>
- * <p>Description: </p>
+ * <p>Description: Implementation of FilenameFilter that looks for class files.</p>
  * <p>Copyright: Copyright (c) 2003</p>
  * <p>Organisation: EMBL</p>
  * <p>Created on March 12, 2003, 10:11 AM</p>
@@ -32,10 +32,16 @@ import java.io.*;
 
 public class ClassFileFilenameFilter implements FilenameFilter {
   
+  /**
+   * Check if the filename ends in .class. The check is case insensitive.
+   * @param file The file object (not used)
+   * @param str The file name.
+   * @return True if str ends in .class (case insensitive).
+   */
   public boolean accept(java.io.File file, String str) {
       
-    return str.indexOf(".class") > -1 ? true : false;
+    return str.toLowerCase().indexOf(".class") > -1 ? true : false;
     
   } // accept
   
-}
+} //ClassFileFilenameFilter
