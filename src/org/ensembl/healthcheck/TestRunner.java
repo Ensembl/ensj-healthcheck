@@ -53,8 +53,8 @@ public class TestRunner {
 	/** Flag to determine whether repairs will be carried out if appropriate */
 	protected boolean doRepair = false;
 
-	private static final String SCHEMA_INFO_FILENAME = "schemas.ser";
-	private static final boolean GZIP_SCHEMA_INFO = true;
+	/** Where to start looking for testcase classes */
+  private static final String TESTCASE_SEARCH_PACKAGE = "org.ensembl.healthcheck";
 
 	// -------------------------------------------------------------------------
 	/** Creates a new instance of TestRunner */
@@ -64,8 +64,6 @@ public class TestRunner {
 		groupsToRun = new ArrayList();
 
 	} // TestRunner
-
-	// -------------------------------------------------------------------------
 	
 	// -------------------------------------------------------------------------
 	/**
@@ -178,12 +176,12 @@ public class TestRunner {
 		ArrayList allTests = new ArrayList();
 
 		// some variables that will come in useful later on
-		String thisClassName = this.getClass().getName();
-		String packageName = thisClassName.substring(0, thisClassName.lastIndexOf(".")) + ".testcase";
+ 
+		String packageName = TESTCASE_SEARCH_PACKAGE + ".testcase";
 		String directoryName = packageName.replace('.', File.separatorChar);
 		logger.finest("Package name: " + packageName + " Directory name: " + directoryName);
 		String runDir = System.getProperty("user.dir") + File.separator;
-
+System.out.println("Rundir is " + runDir);
 		// places to look
 		ArrayList locations = new ArrayList();
 		locations.add(runDir + "src" + File.separator + directoryName); // same directory as this class
