@@ -16,8 +16,6 @@
 
 package org.ensembl.healthcheck.testcase.generic;
 
-import java.util.*;
-
 import org.ensembl.healthcheck.*;
 import org.ensembl.healthcheck.testcase.*;
 

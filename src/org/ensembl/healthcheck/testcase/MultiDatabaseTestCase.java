@@ -53,8 +53,13 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
 	} // getSpeciesDatabaseMap
 
 	//---------------------------------------------------------------------
-	
-	public boolean checkTableAcrossSpecies(String table, DatabaseRegistry dbr) {
+	/**
+	 * Check that the same piece of SQL gives the same result across several species.
+	 * @param sql The SQL to check.
+	 * @param dbr The registry containing the databases to check.
+	 * @return true if SQL returns the same for all databases for each species in dbr.
+	 */
+	public boolean checkSQLAcrossSpecies(String sql, DatabaseRegistry dbr) {
 		
 		boolean result = true;
 
@@ -66,18 +71,29 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
 
 			Species species = (Species)it.next();
 
-			boolean allMatch = checkSameSQLResult("SELECT COUNT(*) FROM " + table, (DatabaseRegistryEntry[])speciesMap
-					.get(species));
-			if (!allMatch) {
-				result = false;
-				ReportManager.problem(this, species.toString(), "Differences in " + table + " table across species");
-			} else {
-				ReportManager.correct(this, species.toString(), "All " + table + " tables the same");
-			}
+			result &= checkSameSQLResult(sql, (DatabaseRegistryEntry[])speciesMap.get(species));
+			
 
 		} // foreach species
 
 		return result;
+	}
+	
+	//---------------------------------------------------------------------
+	
+	public boolean checkTableAcrossSpecies(String table, DatabaseRegistry dbr) {
+		
+		String sql = "SELECT COUNT(*) FROM " + table;
+		boolean result = checkSQLAcrossSpecies(sql, dbr);
+		
+		if (!result) {
+			ReportManager.problem(this, "", "Differences in " + table + " table across species");
+		} else {
+			ReportManager.correct(this, "", "All " + table + " tables the same");
+		}
+		
+		return result;
+		
 	}
 	
 	//---------------------------------------------------------------------

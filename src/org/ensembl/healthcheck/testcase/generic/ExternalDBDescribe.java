@@ -16,8 +16,9 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package org.ensembl.healthcheck.testcase;
+package org.ensembl.healthcheck.testcase.generic;
 
+import org.ensembl.healthcheck.testcase.*;
 import org.ensembl.healthcheck.*;
 
 /**
@@ -25,30 +26,24 @@ import org.ensembl.healthcheck.*;
  * query <code>DESCRIBE external_db</code> are the same for a set of databases.
  */
 
-public class ExternalDBDescribe extends EnsTestCase {
+public class ExternalDBDescribe extends MultiDatabaseTestCase {
 
-  /** Creates a new instance of ExternalDBDescriptionTestCase */
+  /** Creates a new instance of ExternalDBDescribe */
   public ExternalDBDescribe() {
+  	
     addToGroup("pre_release");
     setDescription("Check that the external_db table is the same in all databases.");
+    
   }
   
   /**
    * Check that the external_db tables are the same for each matched database.
    * @return Result.
    */
-  public TestResult run() {
+  public boolean run(DatabaseRegistry dbr) {
     
-    //boolean result = super.checkSameSQLResult("DESCRIBE external_db");
-    boolean result = super.checkSameSQLResult("SELECT * FROM external_db ORDER BY external_db_id");
+   return checkSQLAcrossSpecies("SELECT * FROM external_db ORDER BY external_db_id", dbr);
     
-    // XXX update when ReportManager can handle non database/test-specific reports
-    if (result) {
-      ReportManager.correct(this, "", "external_db table is the same in all databases");
-    } else {
-       ReportManager.problem(this, "", "external_db table is NOT the same in all databases");
-    } 
-    return new TestResult(getShortTestName(), result);
-  }
+  } // run
   
-}
+} // ExternalDBDescribe
