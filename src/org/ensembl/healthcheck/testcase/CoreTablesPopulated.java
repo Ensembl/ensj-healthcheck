@@ -27,12 +27,12 @@ import org.ensembl.healthcheck.util.*;
 /**
  * Verify that important tables in core DBs actually have data.
  */
-public class CheckCoreTablesHaveDataTestCase extends EnsTestCase {
+public class CoreTablesPopulated extends EnsTestCase {
   
   /**
    * Creates a new instance of CheckCoreTablesHaveDataTestCase
    */
-  public CheckCoreTablesHaveDataTestCase() {
+  public CoreTablesPopulated() {
     addToGroup("post_genebuild");
     setDescription("Verify that important tables in core DBs actually have data.");
   }
