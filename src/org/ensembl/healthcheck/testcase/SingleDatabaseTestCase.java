@@ -98,7 +98,7 @@ public abstract class SingleDatabaseTestCase extends EnsTestCase {
      * @param col2
      *          Column in table2 to check.
      * @param constraint1
-     *          additional constraint on col1
+     *          additional constraint on a column in table1
      * @return boolean
      *          true if everything is fine
      *          false otherwise
