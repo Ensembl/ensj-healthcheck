@@ -124,6 +124,9 @@ public class ChromosomeLengths extends EnsTestCase {
 			// -------------------------------------------
 		} // while connection
 		// ------------------------------------------
+		
 		return new TestResult(getShortTestName(), result);
+		
 	} // run
-} // CheckChromosomeLengthsTestCase
+	
+} // ChromosomeLengths
