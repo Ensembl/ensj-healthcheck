@@ -43,7 +43,7 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
   }
   
   /**
-   *
+   * Builds a cache of the translation lengths, then compares them with the values in the protein_features table.
    * @return Result.
    */
   
@@ -175,39 +175,66 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
   // ------------------------------------------
   // Implementation of Repair interface.
   
+  /**
+   * Delete any protein features that run past the end of the translation.
+   * <strong>CAUTION!</strong>Actually deletes the features from the protein_feature table.
+   */
   public void repair() {
     
     DatabaseConnectionIterator connectionIterator = getDatabaseConnectionIterator();
     while (connectionIterator.hasNext()) {
       Connection con = (Connection)connectionIterator.next();
       String sql = setupRepairSQL(con);
-      try {
-        Statement stmt = con.createStatement();
-        System.out.println("would have executed " + sql);
-        //stmt.execute(sql);
-        stmt.close();
-      } catch (SQLException se) {
-        se.printStackTrace();
+      if (sql.length() == 0) {
+        System.out.println("No invalid protein features were found in " + DBUtils.getShortDatabaseName(con));
+      } else {
+        try {
+          Statement stmt = con.createStatement();
+          System.out.println("would have executed " + sql);
+          //stmt.execute(sql);
+          stmt.close();
+        } catch (SQLException se) {
+          se.printStackTrace();
+        }
       }
     }
   }
   
+  
+  /**
+   * Show which protein features would be deleted by the repair method.
+   */
   public void show() {
     
     System.out.println("Candidates for repair:");
     DatabaseConnectionIterator connectionIterator = getDatabaseConnectionIterator();
     while (connectionIterator.hasNext()) {
       Connection con = (Connection)connectionIterator.next();
-      System.out.println(DBUtils.getShortDatabaseName(con) + ": " + setupRepairSQL(con));
+      String sql = setupRepairSQL(con);
+      if (sql.length() == 0) {
+        System.out.println("No invalid protein features were found in " + DBUtils.getShortDatabaseName(con));
+      } else {
+        System.out.println(DBUtils.getShortDatabaseName(con) + ": " + sql);
+      }
     }
     
   }
   
+  /**
+   * Set up the SQL to delete the offending protein features.
+   * @param con The database connection to use.
+   * @return The SQL to delete the incorrect protein features, or "" if there are no problems.
+   */
   private String setupRepairSQL(Connection con) {
     
     StringBuffer sql = new StringBuffer("DELETE FROM protein_feaure WHERE protein_feature_id IN (");
     
     List thisDBFeatures = (List)featuresToDelete.get(DBUtils.getShortDatabaseName(con));
+    
+    if (thisDBFeatures.size() == 0) {
+      return "";
+    }
+    
     Iterator featureIterator = thisDBFeatures.iterator();
     while (featureIterator.hasNext()) {
       sql.append(((Integer)featureIterator.next()).intValue());
