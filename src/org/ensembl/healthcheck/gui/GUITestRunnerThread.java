@@ -70,8 +70,7 @@ public class GUITestRunnerThread extends Thread {
       }
     }
     
-    // and then run the test
-    guiTestRunnerFrame.setTestButtonEnabled(testCase.getTestName(), true);
+    //TODO - highlight running test
     
     isRunning = true;
    
@@ -80,8 +79,6 @@ public class GUITestRunnerThread extends Thread {
     isRunning = false;
     
     Color c = tr ? new Color(0, 128, 0) : Color.RED;
-    
-    guiTestRunnerFrame.setTestButtonColour(testCase.getTestName(), c);
     
     guiTestRunnerFrame.setTestInfoWindowText(testCase.getTestName(), ReportManager.getReportsByTestCase(testCase.getTestName(), guiTestRunnerFrame.getOutputLevel()));
     

@@ -31,18 +31,13 @@ public class GuiTestRunner extends TestRunner implements Reporter {
 	/** The logger to use for this class */
 	protected static Logger logger = Logger.getLogger("HealthCheckLogger");
 
-	private GuiTestRunnerFrame gtrf;
-
 	/** Default maximum number of test threads to run at any one time */
 	protected int maxThreads = 4;
 
-	/** The schemas to act upon */
-	protected String[] selectedSchemas;
-
-	DatabaseRegistry databaseRegistry;
-
 	boolean debug = false;
 
+	private GuiTestRunnerFrame gtrf;
+	
 	// -------------------------------------------------------------------------
 	/**
 	 * Command-line entry point.
@@ -57,31 +52,25 @@ public class GuiTestRunner extends TestRunner implements Reporter {
 
 	//---------------------------------------------------------------------
 
-	private void run(String[] args) {
+	private void run(String[] args) {	
 
-		gtrf = new GuiTestRunnerFrame(this);
-
-		setupLogging();
+		ReportManager.setReporter(this);
 
 		parseCommandLine(args);
 
 		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
 
-		databaseRegistry = new DatabaseRegistry(".*");
+		DatabaseRegistry databaseRegistry = new DatabaseRegistry(".*");
 		if (databaseRegistry.getAll().length == 0) {
 			logger.warning("Warning: no databases found!");
 		}
-
-		ReportManager.setReporter(this);
-
-		List tests = new TestRegistry().findAllTests();
-
-		gtrf.initTestPanel(null, null);
-
-		gtrf.initGroupList(tests, listAllGroups(tests));
-
+		
+		gtrf = new GuiTestRunnerFrame(this, new TestRegistry(), databaseRegistry);
+		
+		setupLogging();
+		
 		gtrf.show();
-
+		
 	}
 
 	// -------------------------------------------------------------------------
@@ -120,36 +109,13 @@ public class GuiTestRunner extends TestRunner implements Reporter {
 	/**
 	 * Run all the tests in a list.
 	 * 
-	 * @param groups The groups to run (as Strings)
-	 * @param gtrf A reference to the GuiTestRunnerFrame to update as the tests run.
-	 * @param allTests The tests to run, as objects.
 	 */
-	protected void runAllTests(List allTests, List groups, GuiTestRunnerFrame gtrf) {
+	protected void runAllTests(List tests, DatabaseRegistryEntry[] dbre, GuiTestRunnerFrame gtrf) {
 
 		ThreadGroup testThreads = new ThreadGroup("test_threads");
 
-		Iterator it = allTests.iterator();
-		while (it.hasNext()) {
-
-			// TODO - handle MultiDatabaseTestCases as well
-			SingleDatabaseTestCase testCase = (SingleDatabaseTestCase)it.next();
-
-			if (testCase.inGroups(groups)) {
-
-				for (int i = 0; i < selectedSchemas.length; i++) {
-
-					// get the appropriate DatabaseRegistryEntry for this schema
-					DatabaseRegistryEntry dbre = databaseRegistry.getByExactName(selectedSchemas[i]);
-
-					GUITestRunnerThread t = new GUITestRunnerThread(testThreads, testCase, dbre, gtrf, maxThreads);
-					t.start(); // note that this will actually wait until < maxThreads are running
-										 // before calling run()
-
-				}
-			}
-
-		} // while it.hasNext()
-
+		// TODO implement
+		
 	} // runAllTests
 
 	// -------------------------------------------------------------------------
@@ -175,23 +141,6 @@ public class GuiTestRunner extends TestRunner implements Reporter {
 		return maxThreads;
 
 	} // getMaxThreads
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Set the schemas to run the tests on.
-	 * 
-	 * @param s An array of schema names, as objects since this is how they are returned
-	 *          from a JList.
-	 */
-	public void setSelectedSchemas(Object[] s) {
-
-		selectedSchemas = new String[s.length];
-		for (int i = 0; i < s.length; i++) {
-			selectedSchemas[i] = (String)s[i];
-			logger.finest("Added " + selectedSchemas[i] + " to list of schemas");
-		}
-
-	}
 
 	// -------------------------------------------------------------------------
 
