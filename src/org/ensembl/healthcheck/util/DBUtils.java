@@ -527,7 +527,7 @@ public class DBUtils {
   }
   
   // -------------------------------------------------------------------------
-  /** 
+  /**
    * List the columns in a particular table.
    * @param table The name of the table to list.
    * @param con The connection to use.
@@ -537,7 +537,7 @@ public class DBUtils {
     
     List result = new ArrayList();
     
-     try {
+    try {
       
       Statement stmt = con.createStatement();
       ResultSet rs = stmt.executeQuery("DESCRIBE " + table);
@@ -555,6 +555,36 @@ public class DBUtils {
     
     return result;
     
+  }
+  
+  // -------------------------------------------------------------------------
+  /**
+   * Execute SQL and writes results to ReportManager.info().
+   * @param testCase testCase which created the sql statement
+   * @param con connection to execute sql on.
+   * @param sql sql statement to execute.
+   */
+  public static void printRows(EnsTestCase testCase, Connection con, String sql) {
+    // TODO Auto-generated method stub
+    try {
+      ResultSet rs = con.createStatement().executeQuery( sql );
+      if ( rs.next() ) {
+        int nCols = rs.getMetaData().getColumnCount();
+        StringBuffer line = new StringBuffer();
+        do {
+          line.delete(0, line.length());
+          for(int i=1; i<=nCols; ++i) {
+            line.append( rs.getString(i) );
+            if ( i <nCols ) line.append("\t");
+            
+          }
+          ReportManager.info( testCase, con, line.toString() );
+        } while ( rs.next() );
+      }
+      
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
   }
   
   // -------------------------------------------------------------------------
