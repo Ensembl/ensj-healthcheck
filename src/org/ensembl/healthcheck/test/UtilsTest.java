@@ -34,7 +34,6 @@ public class UtilsTest extends TestCase {
   }
   
   public void setUp() {
-    // @todo - create a properties file here, read it in test, then remove in tearDown?
   }
   
   /** Test of readPropertiesFile method, of class org.ensembl.healthcheck.util.Utils. */
