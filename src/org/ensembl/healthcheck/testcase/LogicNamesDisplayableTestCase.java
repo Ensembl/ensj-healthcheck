@@ -207,11 +207,7 @@ public class LogicNamesDisplayableTestCase extends EnsTestCase {
     if(noProblems) {
         ReportManager.correct(this, con,"protein_feature analysis table "
                               + "entries look OK");
-    } else {
-        ReportManager.problem(this, con "protein_feature analysis table "
-                              + "entries look incorrect");
-    }
-
+    } 
 
     return noProblems;
   }
