@@ -22,6 +22,7 @@ import java.sql.Statement;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -39,7 +40,7 @@ public class GeneTranscriptStartEnd extends SingleDatabaseTestCase {
         setDescription("Checks that gene start/end agrees with transcript table");
 
     }
-    
+
     /**
      * Run the test.
      * 
@@ -58,7 +59,7 @@ public class GeneTranscriptStartEnd extends SingleDatabaseTestCase {
         // and that the highest transcript end of a gene's transcripts is the same as the gene's
         // end
         // the SQL below will return any where this is /not/ the case
-        String sql = "SELECT g.gene_id, g.seq_region_start AS gene_start, g.seq_region_end AS gene_end, MIN(tr.seq_region_start) AS min_transcript_start, MAX(tr.seq_region_end) AS max_transcript_end FROM gene g, transcript tr where tr.gene_id=g.gene_id GROUP BY tr.gene_id HAVING (gene_start <> min_transcript_start OR gene_end <> max_transcript_end)";
+        String sql = "SELECT g.gene_id, gsi.stable_id, g.seq_region_start AS gene_start, g.seq_region_end AS gene_end, MIN(tr.seq_region_start) AS min_transcript_start, MAX(tr.seq_region_end) AS max_transcript_end FROM gene g, transcript tr, gene_stable_id gsi WHERE tr.gene_id=g.gene_id AND gsi.gene_id = g.gene_id GROUP BY tr.gene_id HAVING (gene_start <> min_transcript_start OR gene_end <> max_transcript_end)";
 
         Connection con = dbre.getConnection();
 
@@ -67,33 +68,39 @@ public class GeneTranscriptStartEnd extends SingleDatabaseTestCase {
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
 
-            while (rs.next()) {
-                ReportManager.problem(this, con, "Gene ID " + rs.getLong(1)
-                        + " has start/end that does not agree with transcript start/end");
-                startEndResult = false;
-            }
-            rs.close();
-            
-            if (startEndResult) {
-                ReportManager.correct(this, con, "All gene/transcript start/end agree");
-            }
+            // gene GC32491 in drosophila is allowed to have all sorts of things wrong with it
+            if (dbre.getSpecies() != Species.DROSOPHILA_MELANOGASTER
+                    && !rs.getString("stable_id").equalsIgnoreCase("CG32491")) {
 
-            // also check that all gene's transcripts have the same strand as the gene
-            sql = "SELECT g.gene_id FROM gene g, transcript tr WHERE tr.gene_id=g.gene_id AND tr.seq_region_strand != g.seq_region_strand";
-            rs = stmt.executeQuery(sql);
+                while (rs.next()) {
+                    ReportManager.problem(this, con, "Gene ID " + rs.getLong(1)
+                            + " has start/end that does not agree with transcript start/end");
+                    startEndResult = false;
+                }
+                rs.close();
 
-            while (rs.next()) {
-                ReportManager.problem(this, con, "Gene ID " + rs.getLong(1)
-                        + " has strand that does not agree with transcript strand");
-                strandResult = false;
-            }
-            rs.close();
-            stmt.close();
-            
-            if (strandResult) {
-                ReportManager.correct(this, con, "All gene/transcript strands agree");
-            }
-            
+                if (startEndResult) {
+                    ReportManager.correct(this, con, "All gene/transcript start/end agree");
+                }
+
+                // also check that all gene's transcripts have the same strand as the gene
+                sql = "SELECT g.gene_id FROM gene g, transcript tr WHERE tr.gene_id=g.gene_id AND tr.seq_region_strand != g.seq_region_strand";
+                rs = stmt.executeQuery(sql);
+
+                while (rs.next()) {
+                    ReportManager.problem(this, con, "Gene ID " + rs.getLong(1)
+                            + " has strand that does not agree with transcript strand");
+                    strandResult = false;
+                }
+                rs.close();
+                stmt.close();
+
+                if (strandResult) {
+                    ReportManager.correct(this, con, "All gene/transcript strands agree");
+                }
+
+            } // if drosophila gene
+
         } catch (Exception e) {
             e.printStackTrace();
         }
