@@ -21,160 +21,181 @@ import org.ensembl.healthcheck.testcase.*;
 import org.ensembl.healthcheck.*;
 
 /**
- * An EnsEMBL Healthcheck test case which checks all exon of a gene are on the same
- * strand and in the correct order in their transcript.
+ * An EnsEMBL Healthcheck test case which checks all exon of a gene are on the same strand and in
+ * the correct order in their transcript.
  */
 
 public class ExonStrandOrder extends SingleDatabaseTestCase {
 
-	public static final int TRANSCRIPT_WARN_LENGTH = 2000000;
-	public static final int TRANSCRIPT_COUNT_LEVEL = 1000000;
+    public static final int TRANSCRIPT_WARN_LENGTH = 2000000;
 
-	/**
-		 * Constructor.
-		 */
-	public ExonStrandOrder() {
+    /**
+     * Constructor.
+     */
+    public ExonStrandOrder() {
 
-		addToGroup("post_genebuild");
-		addToGroup("release");
+        addToGroup("post_genebuild");
+        addToGroup("release");
+        setHintLongRunning(true);
 
-	}
+    }
 
-	/**
-		 * Check strand order of exons.
-		 * 
-		 * @return Result.
-		 */
+    /**
+     * Check strand order of exons.
+     * 
+     * @return Result.
+     */
 
-	public boolean run(DatabaseRegistryEntry dbre) {
+    public boolean run(DatabaseRegistryEntry dbre) {
 
-		boolean result = true;
+        boolean result = true;
 
-		int singleExonTranscripts = 0;
-		int transcriptCount = 0;
+        int singleExonTranscripts = 0;
+        int transcriptCount = 0;
 
-		String sql =
-			"SELECT t.gene_id, t.transcript_id, e.exon_id, t.seq_region_start, t.seq_region_end, "
-				+ "       a.ori*e.seq_region_strand, a.asm_seq_region_id, et.rank "
-				+ "FROM   transcript t, exon_transcript et, exon e, assembly a "
-				+ "WHERE  t.transcript_id = et.transcript_id "
-				+ "AND    et.exon_id = e.exon_id "
-				+ "AND    e.seq_region_id = a.cmp_seq_region_id "
-				+ "ORDER  BY t.gene_id, t.transcript_id, et.rank ";
+        String sql = "SELECT g.gene_id, g.seq_region_start, g.seq_region_end, g.seq_region_strand, tr.transcript_id, tr.seq_region_start, tr.seq_region_end, tr.seq_region_strand,e.exon_id, e.seq_region_start, e.seq_region_end, e.seq_region_strand, et.rank "
+                + "FROM   gene g, transcript tr, exon_transcript et, exon e "
+                + "WHERE  e.exon_id = et.exon_id "
+                + "AND    et.transcript_id = tr.transcript_id "
+                + "AND    tr.gene_id = g.gene_id "
+                + "ORDER BY et.transcript_id, et.rank"; 
 
-		//System.out.println(sql);
+        //System.out.println(sql);
 
-		Connection con = dbre.getConnection();
-		try {
-			Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
-			stmt.setFetchSize(Integer.MIN_VALUE);
-			ResultSet rs = stmt.executeQuery(sql);
-			int transcriptStart = 0;
-			int geneStart, lastStart;
+        Connection con = dbre.getConnection();
+        try {
+            Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
+            stmt.setFetchSize(Integer.MIN_VALUE);
+            ResultSet rs = stmt.executeQuery(sql);
 
-			int transcriptEnd = 0;
-			int lastTranscriptId = -1;
-			int lastGeneId = -1;
-			int lastRank = -1;
+            long lastTranscriptID = -1;
+            long lastExonStart = -1;
+            long lastExonEnd = -1;
+            long lastExonStrand = -2;
+            long lastExonID = -1;
+            int lastExonRank = 0;
 
-			int geneId, transcriptId, exonId, start, end, strand, chromosomeId, exonRank, currentStrand, currentChromosomeId;
-			geneStart = -1;
-			currentStrand = 0;
-			currentChromosomeId = -1;
-			lastStart = -1;
+            // ResultSet is ordered by transcript ID and rank, so we can loop through
+            // and look at the grouped exons for each transcript
 
-			while (rs.next()) {
+            while (rs.next()) {
 
-				// load the vars
-				geneId = rs.getInt(1);
-				transcriptId = rs.getInt(2);
-				exonId = rs.getInt(3);
-				start = rs.getInt(4);
-				end = rs.getInt(5);
-				strand = rs.getInt(6);
-				chromosomeId = rs.getInt(7);
-				exonRank = rs.getInt(8);
+                long geneID = rs.getLong(1);
+                long geneStart = rs.getLong(2);
+                long geneEnd = rs.getLong(3);
+                int geneStrand = rs.getInt(4);
+                long transcriptID = rs.getLong(5);
+                long transcriptStart = rs.getLong(6);
+                long transcriptEnd = rs.getLong(7);
+                int transcriptStrand = rs.getInt(8);
+                long exonID = rs.getLong(9);
+                long exonStart = rs.getLong(10);
+                long exonEnd = rs.getLong(11);
+                int exonStrand = rs.getInt(12);
+                int exonRank = rs.getInt(13);
 
-				if (transcriptId != lastTranscriptId) {
-					if (lastTranscriptId > 0) {
-						if (transcriptEnd - transcriptStart > TRANSCRIPT_WARN_LENGTH) {
-							ReportManager.warning(this, con, "Long transcript " + lastTranscriptId + " Length " + (transcriptEnd - transcriptStart));
-						}
-					}
-					lastTranscriptId = transcriptId;
-					if (lastRank == 1) {
-						singleExonTranscripts++;
-					}
+                if (transcriptID == lastTranscriptID) {
 
-					transcriptStart = start;
-					transcriptEnd = end;
+                    if (lastExonStrand < -1) { // first exon in "new" transcript
 
-					if (lastGeneId != geneId) {
-						geneStart = transcriptStart;
-						currentStrand = strand;
-						currentChromosomeId = chromosomeId;
+                        lastExonStrand = exonStrand;
+                        lastExonStart = exonStart;
+                        lastExonEnd = exonEnd;
+                        lastExonID = exonID;
+                        lastExonRank = exonRank;
 
-					} else {
-						//               if( strand == 1 ) {
-						//                 geneStart = transcriptStart < geneStart ?
-						//                 transcriptStart : geneStart;
-						//               } else {
-						//                 geneStart = transcriptStart > geneStart ?
-						//                 transcriptStart : geneStart;
-						//               }
-					}
-					lastRank = exonRank;
-					lastStart = start;
-					transcriptCount++;
-					//            continue;
-				}
+                    } else {
 
-				// strand or chromosome jumping in Gene
-				if (strand != currentStrand || chromosomeId != currentChromosomeId) {
-					ReportManager.problem(this, con, "Jumping strand or chromosome Exon " + exonId + " Transcript: " + transcriptId + " Gene: " + geneId);
-				}
+                        //System.out.println("Checking tr " + transcriptID + " strand " +
+                        // transcriptStrand + " exon " + exonID + " strand " + exonStrand);
 
-				// order of exons right test
-				if (strand == 1) {
-					if (lastStart > start) {
-						// test fails
-						ReportManager.problem(this, con, "Order wrong in Exon " + exonId + " Transcript: " + transcriptId + " Gene: " + geneId);
-						result = false;
-					}
-				} else {
-					if (lastStart < start) {
-						// test fails
-						ReportManager.problem(this, con, "Order wrong in Exon " + exonId + " Transcript: " + transcriptId + " Gene: " + geneId);
-						result = false;
-					}
-				}
+                        // check all exons in a transcript have the same strand
+                        if (exonStrand != lastExonStrand) {
+                            ReportManager.problem(this, con, "Exons in transcript " + transcriptID + " have different strands");
+                            result = false;
+                        }
 
-				if (exonRank - lastRank > 1) {
-					ReportManager.problem(this, con, "Exon rank jump in Exon " + exonId + " Transcript: " + transcriptId + " Gene: " + geneId);
-					result = false;
-				}
+                        // check all exons have the same strand as their transcript
+                        if (exonStrand != transcriptStrand) {
+                            ReportManager.problem(this, con, "Exons " + exonID + " in transcript " + transcriptID + " has strand "
+                                    + exonStrand + " but transcript's strand is " + transcriptStrand);
+                            result = false;
+                        }
 
-				if (strand == 1) {
-					transcriptEnd = end;
-				} else {
-					transcriptStart = start;
-				}
+                        // check that exon start/ends make sense
+                        if (exonStrand == 1) {
+                            if (lastExonEnd > exonStart) {
+                                ReportManager.problem(this, con, "Exons " + lastExonID + " and " + exonID + " in transcript "
+                                        + transcriptID + " appear to overlap (positive strand)");
+                                result = false;
+                            }
+                        } else if (exonStrand == -1) {
+                            if (lastExonStart < exonEnd) {
+                                ReportManager.problem(this, con, "Exons " + lastExonID + " and " + exonID + " in transcript "
+                                        + transcriptID + " appear to overlap (negative strand)");
+                                result = false;
+                            }
+                        }
 
-				lastRank = exonRank;
+                        // check for rank jumping
+                        if (exonRank - lastExonRank > 1) {
+                            ReportManager.problem(this, con, "Exon rank jump in exon " + exonID + " transcript: " + transcriptID
+                                    + " gene: " + geneID);
+                            result = false;
+                        }
 
-			} // while rs
-			rs.close();
-			stmt.close();
-			if ((double)singleExonTranscripts / transcriptCount > 0.2) {
-				ReportManager.warning(this, con, "High single exon transcript count. (" + singleExonTranscripts + "/" + transcriptCount + ")");
-			}
+                        // get ready for next exon
+                        lastExonStrand = exonStrand;
+                        lastExonStrand = exonStrand;
+                        lastExonStart = exonStart;
+                        lastExonEnd = exonEnd;
+                        lastExonID = exonID;
+                        lastExonRank = exonRank;
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+                    } // if first exon
 
-		return result;
+                } else {
 
-	}
+                    // check for single-exon transcripts (highest rank = 1)
+                    if (lastExonRank == 1) {
+                        singleExonTranscripts++;
+                    }
+
+                    // next
+                    lastTranscriptID = transcriptID;
+                    lastExonStrand = -2;
+                    lastExonStart = -1;
+                    lastExonEnd = -1;
+                    lastExonID = -1;
+                    lastExonRank = 0;
+
+                    // check for overlong transcripts
+                    if (transcriptEnd - transcriptStart > TRANSCRIPT_WARN_LENGTH) {
+                        ReportManager.warning(this, con, "Long transcript " + lastTranscriptID + " length "
+                                + (transcriptEnd - transcriptStart));
+                    }
+
+                    transcriptCount++;
+
+                }
+
+            } // while rs
+
+            rs.close();
+            stmt.close();
+            if ((double) singleExonTranscripts / transcriptCount > 0.2) {
+                ReportManager.warning(this, con, "High single exon transcript count. (" + singleExonTranscripts + "/"
+                        + transcriptCount + ")");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        ReportManager.correct(this, con, "Exon strand order seems OK");
+
+        return result;
+
+    }
 
 } // ExonStrandOrder
