@@ -40,29 +40,29 @@ public class Archive extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 		
 		logger.info("Checking deleted genes");
-		result = checkDeletedInGeneArchive(con, "gene", "G", 355) && result;
+		result &= checkDeletedInGeneArchive(con, "gene", "G", 355);
 		logger.info("Checking deleted transcripts");
-		result = checkDeletedInGeneArchive(con, "transcript", "T", 355) && result;
+		result &= checkDeletedInGeneArchive(con, "transcript", "T", 355);
 		logger.info("Checking deleted translations");
-		result = checkDeletedInGeneArchive(con, "translation", "P", 355) && result;
+		result &= checkDeletedInGeneArchive(con, "translation", "P", 355);
 		logger.info("Checking changed translations");
-		result = checkChangedInGeneArchive(con, "translation", "P", 355) && result;
+		result &= checkChangedInGeneArchive(con, "translation", "P", 355);
 		logger.info("Checking changed transcript");
-		result = checkChangedInGeneArchive(con, "transcript", "T", 355) && result;
+		result &= checkChangedInGeneArchive(con, "transcript", "T", 355);
 		logger.info("Checking changed genes");
-		result = checkChangedInGeneArchive(con, "gene", "G", 355) && result;
+		result &= checkChangedInGeneArchive(con, "gene", "G", 355);
 		logger.info("Checking deleted translations in peptide archive");
-		result = checkDeletedTranslationsInPeptideArchive(con, 355) && result;
+		result &= checkDeletedTranslationsInPeptideArchive(con, 355);
 		logger.info("Checking translations from peptide archive in gene archive");
-		result = checkTranslationsFromPeptideArchiveInGeneArchive(con) && result;
+		result &= checkTranslationsFromPeptideArchiveInGeneArchive(con);
 		logger.info("Checking no current translations in peptide archive");
-		result = checkNoCurrentTranslationsInPeptideArchive(con) && result;
+		result &= checkNoCurrentTranslationsInPeptideArchive(con);
 		logger.info("Checking gene propagation IDs are current");
-		result = checkPropagationIDsAreCurrent(con, "gene", "G");
+		result &= checkPropagationIDsAreCurrent(con, "gene", "G");
 		logger.info("Checking transcript propagation IDs are current");
-		result = checkPropagationIDsAreCurrent(con, "transcript", "T");
+		result &= checkPropagationIDsAreCurrent(con, "transcript", "T");
 		logger.info("Checking translation propagation IDs are current");
-		result = checkPropagationIDsAreCurrent(con, "translation", "P");
+		result &= checkPropagationIDsAreCurrent(con, "translation", "P");
 
 		return result;
 	}
@@ -130,6 +130,7 @@ public class Archive extends SingleDatabaseTestCase {
 		String[] rows = getColumnValues(con, sql);
 		if (rows.length > 0) {
 			StringBuffer msg = new StringBuffer();
+			msg.append("Translations from peptide archive in gene archive");
 			for (int i = 0; i < rows.length && rows.length < 10; i++) {
 				msg.append(rows[i]).append("\n");
 			}
@@ -151,6 +152,7 @@ public class Archive extends SingleDatabaseTestCase {
 		String[] rows = getColumnValues(con, sql);
 		if (rows.length > 0) {
 			StringBuffer msg = new StringBuffer();
+			msg.append("Current translations in peptide archive");
 			for (int i = 0; i < rows.length && rows.length < 10; i++) {
 				msg.append(rows[i]).append("\n");
 			}
@@ -176,6 +178,8 @@ public class Archive extends SingleDatabaseTestCase {
 				+ " WHERE ms.old_database_name=\"ALL\" " + "       AND sie.mapping_session_id = ms.mapping_session_id "
 				+ "       AND sie.new_stable_id like \"%" + filter + "%\" " + "       AND tsi.stable_id is NULL";
 
+		// TODO errrm
+		
 		return result;
 	}
 
