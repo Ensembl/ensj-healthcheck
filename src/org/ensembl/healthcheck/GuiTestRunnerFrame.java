@@ -126,7 +126,7 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
   public void callback(LogRecord logRecord) {
     
     setStatus(logRecord.getMessage());
-    statusLabel.repaint();
+    updateTestInfoWindow(logRecord);
     
   } // callback
   
@@ -280,6 +280,22 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
   
   // -------------------------------------------------------------------------
   
+  private void updateTestInfoWindow(LogRecord logRecord) {
+    
+    // try and figure out which window to update
+    String loggingClass = logRecord.getSourceClassName();
+    
+    TestInfoWindow infoWindow = (TestInfoWindow)testButtonInfoWindows.get(loggingClass);
+    if (infoWindow != null) {
+      infoWindow.append(logRecord.getMessage() + "\n");
+    } 
+    
+  } // updateTestRunnerWindow
+  
+  // -------------------------------------------------------------------------
+  
+  // -------------------------------------------------------------------------
+  
 } // GuiTestRunnerFrame
 
 // -------------------------------------------------------------------------
@@ -367,8 +383,8 @@ class TestInfoWindowOpener implements ActionListener {
   
   public void actionPerformed(ActionEvent e) {
     
-   infoWindow.setVisible(!infoWindow.isVisible()); // toggle
-   
+    infoWindow.setVisible(!infoWindow.isVisible()); // toggle
+    
   }
   
 } // TestInfoWindowOpener
