@@ -205,6 +205,8 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
 				ReportManager.problem(this, con, "Taxonomy ID " + dbTaxonID + " is not list of valid IDs");
 			}
 
+			// ------------------------------------------
+
 		} // while connection
 
 		// ------------------------------------------
