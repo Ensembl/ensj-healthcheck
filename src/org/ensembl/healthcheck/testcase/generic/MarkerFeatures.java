@@ -198,7 +198,7 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 		int rows = getRowCount(con, sql);
 		if (rows == 0) {
 			
-		    ReportManager.problem(this, con, "Chromosome " + seqRegionName + " (seq_region_id " + seqRegionID + ") has no markers");
+		    ReportManager.problem(this, con, "Chromosome " + seqRegionName + " (seq_region_id " + seqRegionID + ") has no entries in marker_map_location");
 		    result = false;
 			
 		} else {
