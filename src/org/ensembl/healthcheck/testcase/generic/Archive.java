@@ -143,7 +143,10 @@ public class Archive extends SingleDatabaseTestCase {
 
         String[] rows = getColumnValues(con, sql);
         if (rows.length > 0) {
-            ReportManager.problem(this, con, rows + " translations from peptide archive in gene archive");
+            ReportManager.problem(this, con, rows.length + " translations from peptide archive not in gene archive");
+            for (int i = 0; i < rows.length && i < 10; i++) {
+                System.out.println(rows[i]);
+            }
             result = false;
         }
 
