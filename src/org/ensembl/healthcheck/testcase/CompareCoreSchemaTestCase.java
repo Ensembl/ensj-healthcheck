@@ -35,7 +35,7 @@ public class CompareCoreSchemaTestCase extends EnsTestCase {
    */
   public CompareCoreSchemaTestCase() {
     addToGroup("dev");
-    setDatabaseRegexp(".*_(core|est|estgene)_.*");
+    setDatabaseRegexp(".*_(core|estgene)_\\d.*");
   }
   
   /**
@@ -69,7 +69,11 @@ public class CompareCoreSchemaTestCase extends EnsTestCase {
           
           String table = (String)tableIterator.next();
           
-          // TODO - check table exists
+          if (!checkTableExists(check_con, table)) {
+            ReportManager.problem(this, check_con, "Table " + table + " exists in table.sql but not in " + DBUtils.getShortDatabaseName(check_con));
+            continue;
+          }
+          
           String sql = "DESCRIBE " + table;
           ResultSet tableSQLRS = tableSQLStmt.executeQuery(sql);
           ResultSet dbRS = dbStmt.executeQuery(sql);
