@@ -80,7 +80,7 @@ import org.ensembl.healthcheck.util.*;
 public abstract class EnsTestCase {
   
   /** Regexp that, when combined with a species name, will match core databases */
-  protected static final String CORE_DB_REGEXP = "_(core|est|estgene|vega)_\\d.*";
+  protected static final String CORE_DB_REGEXP = ".*_(core|est|estgene|vega)_\\d.*";
   /** The TestRunner associated with this EnsTestCase */
   protected TestRunner testRunner;
   /** The regular expression to match the names of the databases that the test case will apply to. */
