@@ -25,7 +25,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Enumeration;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -542,6 +544,32 @@ public final class Utils {
 
     }
 
+    //---------------------------------------------------------------------
+    /**
+     * Format a time as hours, minutes and seconds.
+     */
+    public static String formatTimeString(long time) {
+        
+        String s = "";
+        
+        Calendar cal = new GregorianCalendar();
+        cal.setTimeInMillis(time);
+        
+        // TODO years etc
+        // Calendar.HOUR starts from 1
+        if (cal.get(Calendar.HOUR_OF_DAY) > 1) {
+            s += (cal.get(Calendar.HOUR_OF_DAY) - 1) + " hours ";
+        }
+        if (cal.get(Calendar.MINUTE) > 0) {
+            s += cal.get(Calendar.MINUTE) + " min ";
+        }
+        if (cal.get(Calendar.SECOND) > 0) {
+            s += cal.get(Calendar.SECOND) + "s ";
+        }
+        
+        return s;
+        
+    }
     // -------------------------------------------------------------------------
 
 } // Utils
