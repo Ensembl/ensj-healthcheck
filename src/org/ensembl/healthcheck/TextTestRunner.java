@@ -31,15 +31,20 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
 	private static String version = "$Id$";
 
-	private boolean forceDatabases = false;
-
+	private String databaseRegexp = null;
 	private boolean debug = false;
 
-	public ArrayList outputBuffer;
+	public ArrayList outputBuffer = new ArrayList();
 
 	private String lastDatabase = "";
 
 	private int outputLineLength = 65;
+
+	private TestRegistry testRegistry;
+	private DatabaseRegistry databaseRegistry;
+
+	private Species globalSpecies = null;
+	private DatabaseType globalType = null;
 
 	// -------------------------------------------------------------------------
 
@@ -50,68 +55,72 @@ public class TextTestRunner extends TestRunner implements Reporter {
 	 */
 	public static void main(String[] args) {
 
-		TextTestRunner ttr = new TextTestRunner();
+		new TextTestRunner().run(args);
 
-		System.out.println(ttr.getVersion());
+	} // main
+
+	// -----------------------------------------------------------------
+
+	private void run(String[] args) {
 
 		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
 
-		ttr.parseCommandLine(args);
-		ttr.outputBuffer = new ArrayList();
+		parseCommandLine(args);
 
-		ttr.setupLogging();
+		setupLogging();
 
-		ReportManager.setReporter(ttr);
+		ReportManager.setReporter(this);
 
-		ttr.runAllTests(ttr.findAllTests());
+		testRegistry = new TestRegistry();
+		databaseRegistry = new DatabaseRegistry(databaseRegexp);
+
+		if (globalSpecies != null) {
+			databaseRegistry.setSpeciesOfAll(globalSpecies);
+		}
+		if (globalType != null) {
+			databaseRegistry.setTypeOfAll(globalType);
+		}
+
+		runAllTests(databaseRegistry, testRegistry);
 
 		ConnectionPool.closeAll();
 
-	}
+	} // run
 
-	// main
 	// -------------------------------------------------------------------------
 	private void printUsage() {
 
 		System.out.println("\nUsage: TextTestRunner {options} {group1} {group2} ...\n");
 		System.out.println("Options:");
 		System.out.println("  -d regexp       Use the given regular expression to decide which databases to use.");
-		System.out.println("  -force          Run the named tests on the databases matched by -d, without ");
-		System.out
-				.println("                  taking into account the regular expressions built into the tests themselves.");
 		System.out.println("  -h              This message.");
 		System.out.println("  -output level   Set output level; level can be one of ");
 		System.out.println("                  none      nothing is printed");
 		System.out.println("                  problem   only problems are reported");
 		System.out.println("                  correct   only correct results (and problems) are reported");
-		System.out
-				.println("                  summary   only summary info (and problems, and correct reports) are reported");
+		System.out.println("                  summary   only summary info (and problems, and correct reports) are reported");
 		System.out.println("                  info      info (and problem, correct, summary) messages reported");
 		System.out.println("                  all       everything is printed");
-		System.out
-				.println("  -config file    Read config from file (in ensj-healthcheck dir) rather than database.properties");
+		System.out.println("  -species s      Use s as the species for all databases instead of trying to guess the species from the name");
+		System.out.println("  -type t         Use 2 as the type for all databases instead of trying to guess the type from the name");
 		System.out.println("  -debug          Print debugging info (for developers only)");
+		System.out.println("  -config file    Read configuration information from file instead of " + PROPERTIES_FILE);
 		System.out.println("  -repair         If appropriate, carry out repair methods on test cases that support it");
 		System.out.println("  -showrepair     Like -repair, but the repair is NOT carried out, just reported.");
-		System.out.println("  -length n       Break output lines at n columns; default is " + outputLineLength
-				+ ". 0 means never break");
-		System.out
-				.println("  -refreshschemas Rebuild the stored schema info; this is rather slow as every schema must be examined, but should be used when a schema structure change has occurred.");
+		System.out.println("  -length n       Break output lines at n columns; default is " + outputLineLength + ". 0 means never break");
 		System.out.println("  group1          Names of groups of test cases to run.");
-		System.out
-				.println("                  Note each test case is in a group of its own with the name of the test case.");
+		System.out.println("                  Note each test case is in a group of its own with the name of the test case.");
 		System.out.println("                  This allows individual tests to be run if required.");
 		System.out.println("");
-		System.out
-				.println("If no tests or test groups are specified, and a database regular expression is given with -d, the matching databases are shown. ");
+		System.out.println("If no tests or test groups are specified, and a database regular expression is given with -d, the matching databases are shown. ");
 		System.out.println("");
 		System.out.println("Currently available tests:");
 
-		List tests = findAllTests();
+		List tests = testRegistry.findAllTests();
 		Collections.sort(tests, new TestComparator());
 		Iterator it = tests.iterator();
 		while (it.hasNext()) {
-			EnsTestCase test = (EnsTestCase) it.next();
+			EnsTestCase test = (EnsTestCase)it.next();
 			System.out.print(test.getShortTestName() + " ");
 		}
 
@@ -151,64 +160,79 @@ public class TextTestRunner extends TestRunner implements Reporter {
 				} else if (args[i].equals("-output")) {
 
 					setOutputLevel(args[++i]);
-					// System.out.println("Set output level to " + outputLevel);
+					logger.finest("Set output level to " + outputLevel);
 
 				} else if (args[i].equals("-debug")) {
 
 					debug = true;
+					logger.finest("Running in debug mode");
 
 				} else if (args[i].equals("-repair")) {
 
 					doRepair = true;
+					logger.finest("Will do repairs if appropriate");
 
 				} else if (args[i].equals("-showrepair")) {
 
 					showRepair = true;
+					logger.finest("Will show repairs");
 
 				} else if (args[i].equals("-d")) {
 
 					i++;
-					preFilterRegexp = args[i];
-					// System.out.println("Will pre-filter database names on " +
-					// preFilterRegexp);
-
-				} else if (args[i].equals("-force")) {
-
-					forceDatabases = true;
-					// System.out.println("Will use ONLY databases specified by -d");
+					databaseRegexp = args[i];
+					logger.finest("Set database regular expression to " + databaseRegexp);
 
 				} else if (args[i].equals("-config")) {
 
 					i++;
 					PROPERTIES_FILE = args[i];
-					// System.out.println("Will read properties from " +
-					// propertiesFileName);
+					logger.finest("Will read properties from " + PROPERTIES_FILE);
 
 				} else if (args[i].equals("-length")) {
 
 					outputLineLength = Integer.parseInt(args[++i]);
-					//System.out.println("Will use output line length of " +
-					// outputLineLength);
+					logger.finest((outputLineLength > 0 ? "Will break output lines at column " + outputLineLength : "Will not break output lines"));
+
+				} else if (args[i].equals("-species")) {
+
+					String speciesStr = args[++i];
+					if (Species.resolveAlias(speciesStr) != Species.UNKNOWN) {
+						globalSpecies = Species.resolveAlias(speciesStr);
+						logger.finest("Will override guessed species with " + globalSpecies + " for all databases");
+					} else {
+						logger.severe("Argument " + speciesStr + " to -species argument not recognised");
+					}
+
+				} else if (args[i].equals("-type")) {
+
+					String typeStr = args[++i];
+					if (DatabaseType.resolveAlias(typeStr) != DatabaseType.UNKNOWN) {
+						globalType = DatabaseType.resolveAlias(typeStr);
+						logger.finest("Will override guessed database types with " + globalType + " for all databases");
+					} else {
+						logger.severe("Argument " + typeStr + " to -typeargument not recognised");
+					}
 
 				} else {
 
 					groupsToRun.add(args[i]);
-					// System.out.println("Will run tests in group " + args[i]);
+					logger.finest("Added " + args[i] + " to list of groups to run");
 
 				}
 
 			}
 
-			if (forceDatabases && (preFilterRegexp == null)) {
+			if (databaseRegexp == null) {
 
-				System.err.println("You have requested -force but not specified a database name regular expression with -d");
+				System.err.println("No databases specified!");
 				System.exit(1);
 
 			}
 
 			// print matching databases if no tests specified
-			if (groupsToRun.size() == 0 && preFilterRegexp != null) {
-				System.out.println("Databases that match the regular expression '" + preFilterRegexp + "':");
+			if (groupsToRun.size() == 0 && databaseRegexp != null) {
+				System.out.println("Databases that match the regular expression '" + databaseRegexp + "':");
 				String[] names = getListOfDatabaseNames(".*");
 				for (int i = 0; i < names.length; i++) {
 					System.out.println("  " + names[i]);
@@ -220,7 +244,9 @@ public class TextTestRunner extends TestRunner implements Reporter {
 	}
 
 	// parseCommandLine
+
 	// -------------------------------------------------------------------------
+
 	private void setupLogging() {
 
 		logger.setUseParentHandlers(false); // stop parent logger getting the message
@@ -272,8 +298,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 				break;
 		}
 
-		outputBuffer.add("    " + level + ":  "
-				+ lineBreakString(reportLine.getMessage(), outputLineLength, "              "));
+		outputBuffer.add("    " + level + ":  " + lineBreakString(reportLine.getMessage(), outputLineLength, "              "));
 	}
 
 	public void startTestCase(EnsTestCase testCase) {
@@ -291,7 +316,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 		lastDatabase = "";
 		Iterator it = outputBuffer.iterator();
 		while (it.hasNext()) {
-			System.out.println((String) it.next());
+			System.out.println((String)it.next());
 		}
 		outputBuffer.clear();
 
@@ -305,8 +330,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
 		int lastSpace = mesg.lastIndexOf(" ", maxLen);
 		if (lastSpace > 15) {
-			return mesg.substring(0, lastSpace) + "\n" + indent
-					+ lineBreakString(mesg.substring(lastSpace + 1), maxLen, indent);
+			return mesg.substring(0, lastSpace) + "\n" + indent + lineBreakString(mesg.substring(lastSpace + 1), maxLen, indent);
 		} else {
 			return mesg.substring(0, maxLen) + "\n" + indent + lineBreakString(mesg.substring(maxLen), maxLen, indent);
 		}
