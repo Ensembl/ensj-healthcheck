@@ -25,7 +25,7 @@ import org.ensembl.healthcheck.*;
 import org.ensembl.healthcheck.util.*;
 
 /**
- * Check that all transctipys have an associated translation.
+ * Check that all transcripts have an associated translation.
  */
 public class CheckTranscriptsTranslateTestCase extends EnsTestCase {
   
@@ -34,6 +34,7 @@ public class CheckTranscriptsTranslateTestCase extends EnsTestCase {
    */
   public CheckTranscriptsTranslateTestCase() {
     addToGroup("post_genebuild");
+    setDescription("Check that all transcripts have an associated translation");
   }
   
   /**

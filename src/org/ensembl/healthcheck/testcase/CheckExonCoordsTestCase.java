@@ -8,7 +8,7 @@
  
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNUsql
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
  
   You should have received a copy of the GNU Lesser General Public
@@ -34,12 +34,13 @@ public class CheckExonCoordsTestCase extends EnsTestCase {
    */
   public CheckExonCoordsTestCase() {
     addToGroup("post_genebuild");
+    setDescription("Check that exon co-ordinates are sensible.");
   }
   
   // -------------------------------------------------------------------------
   
   /**
-   * Check if there are any exons with invalide co-ordinates.
+   * Check if there are any exons with invalid co-ordinates.
    *
    */
   public TestResult run() {

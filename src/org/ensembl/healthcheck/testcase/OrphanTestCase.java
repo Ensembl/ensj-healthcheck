@@ -34,6 +34,7 @@ public class OrphanTestCase extends EnsTestCase {
    * Create an OrphanTestCase that applies to a specific set of databases.
    */
   public OrphanTestCase() {
+    setDescription("Check for broken foreign-key relationships in gene table.");
   }
   
   public TestResult run() {

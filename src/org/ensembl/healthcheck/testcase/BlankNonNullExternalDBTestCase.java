@@ -36,6 +36,7 @@ public class BlankNonNullExternalDBTestCase extends EnsTestCase {
    * Create a BlankNonNullExternalDBTestCase that matches a particular set of databases.
    */
   public BlankNonNullExternalDBTestCase() {
+    setDescription("Checks for columns in the external_db table that are marked as NON NULL but contain null or blank values");
   }
   
   /**

@@ -35,6 +35,7 @@ public class CoreForeignKeyTestCase extends EnsTestCase {
    */
   public CoreForeignKeyTestCase() {
     addToGroup("db_constraints");
+    setDescription("Check for broken foreign-key realtionships.");
   }
   
   public TestResult run() {

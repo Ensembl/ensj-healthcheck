@@ -8,7 +8,7 @@
  
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNUsql
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
  
   You should have received a copy of the GNU Lesser General Public
@@ -25,7 +25,7 @@ import org.ensembl.healthcheck.*;
 import org.ensembl.healthcheck.util.*;
 
 /**
- * Check that featuer co-ords make sense.
+ * Check that feature co-ords make sense.
  */
 public class CheckFeatureCoordsTestCase extends EnsTestCase {
   
@@ -34,6 +34,7 @@ public class CheckFeatureCoordsTestCase extends EnsTestCase {
    */
   public CheckFeatureCoordsTestCase() {
     addToGroup("post_genebuild");
+    setDescription("Check that feature co-ords (DNA and protein) make sense.");
   }
   
   /**

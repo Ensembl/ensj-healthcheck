@@ -34,6 +34,7 @@ public class CheckCoreTablesHaveDataTestCase extends EnsTestCase {
    */
   public CheckCoreTablesHaveDataTestCase() {
     addToGroup("db_constraints");
+    setDescription("Verify that important tables in core DBs actually have data.");
   }
   
   /**

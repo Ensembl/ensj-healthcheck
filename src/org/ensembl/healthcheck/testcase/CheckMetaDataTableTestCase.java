@@ -8,7 +8,7 @@
  
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNUsql
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
  
   You should have received a copy of the GNU Lesser General Public
@@ -36,6 +36,7 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
    */
   public CheckMetaDataTableTestCase() {
     addToGroup("db_constraints");
+    setDescription("Check that the meta table exists, has data, the entries correspond to the database name, and that the values in assembly.type match what's in the meta table");
   }
   
   /**
