@@ -28,77 +28,7 @@ import org.ensembl.healthcheck.*;
 import org.ensembl.healthcheck.util.*;
 
 /**
- * <p>
- * The EnsTestCase class is the base class for all test cases in the EnsEMBL
- * Healthcheck system. <em>It is not intended to be instantiated directly</em>;
- * subclasses should implement the <code>run()</code> method and use that to
- * provide test-case specific behaviour.
- * </p>
- * 
- * <p>
- * EnsTestCase provides a number of methods which are intended to make writing
- * test cases simple; in many cases an extension test case will involve little
- * more than calling one of the methods in this class and setting some return
- * value based on the result.
- * </p>
- * 
- * <p>
- * For example, the following test case gets a
- * {@link org.ensembl.healthcheck.util.DatabaseConnectionIterator DatabaseConnectionIterator},
- * then uses it to loop over each affected database and call the <code>countOrphans()</code>
- * method in EnsTestCase. In this particular situation, if there are any
- * orphans in any of the databases, the test fails.
- * </p>
- * 
- * <pre>
- *  public class OrphanTestCase extends EnsTestCase {
- *  
- *  	public OrphanTestCase() {
- *  		databaseRegexp = &quot;&circ;homo_sapiens_core_\\d.*&quot;;
- *  		addToGroup(&quot;group2&quot;);
- *  	}
- *  
- *  	TestResult run() {
- *  
- *  		boolean result = true;
- *  
- *  		DatabaseConnectionIterator it = getDatabaseConnectionIterator();
- *  
- *  		while (it.hasNext()) {
- *  
- *  			Connection con = (Connection) it.next();
- *  			int orphans = super.countOrphans(con, &quot;gene&quot;, &quot;gene_id&quot;, &quot;gene_stable_id&quot;, &quot;gene_id&quot;, false);
- *  			if (orphans == 0) {
- *  				ReportManager.correct(this, con, &quot;No orphans between gene and gene_stable_id&quot;);
- *  			} else {
- *  				ReportManager.problem(this, con, orphans + &quot; orphans between gene and gene_stable_id&quot;);
- *  			}
- *  			result &amp;= (orphans == 0);
- *  
- *  		}
- *  
- *  		return new TestResult(getShortTestName(), result, &quot;&quot;);
- *  
- *  	}
- *  
- *  } // OrphanTestCase
- * </pre>
- * 
- * <p>
- * Most test cases you write will take this form:
- * </p>
- * <ol>
- * <li>Set up the database regexp and any groups that this test case is a
- * member of; Note that all tests by default are members of a group called
- * "all". There is no need to explicitly add your new test to this group.</li>
- * <li>Implement the run() method; normally this will involve getting a
- * DatabaseConnectionIterator, calling one or more superclass methods on each
- * database connection.</li>
- * <li>Create and return a TestResult object according to the results of your
- * tests.</li>
- * </ol>
- * 
- *  
+ * Base class for all healthcheck tests.
  */
 
 public abstract class EnsTestCase {
@@ -1245,6 +1175,16 @@ public abstract class EnsTestCase {
 	public void setAppliesToTypes(List types) {
 
 		appliesToTypes = types;
+
+	}
+
+    // -----------------------------------------------------------------
+	/**
+	 * @return the list of database types that a test applies to.
+	 */
+	public DatabaseType[] getAppliesToTypes() {
+
+		return (DatabaseType[])appliesToTypes.toArray(new DatabaseType[appliesToTypes.size()]);
 
 	}
 
