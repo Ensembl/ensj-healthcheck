@@ -22,11 +22,11 @@ import org.ensembl.healthcheck.util.*;
 /**
  * Check that the chromosome lengths stored in various places are consistent.
  */
-public class CheckChromosomeLengthsTestCase extends EnsTestCase {
+public class ChromosomeLengths extends EnsTestCase {
 	/**
 	 * Creates a new instance of CheckChromosomeLengthsTestCase
 	 */
-	public CheckChromosomeLengthsTestCase() {
+	public ChromosomeLengths() {
 		addToGroup("post_genebuild");
 		setDescription("Check that the chromosome lengths from the seq_region table agree with both the assembly table and the karyotype table.");
 	}
