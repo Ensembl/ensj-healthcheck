@@ -20,7 +20,6 @@ package org.ensembl.healthcheck;
 
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
@@ -45,8 +44,6 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
     private static final String CONFIG_FILE = "web.properties";
 
-    private List outputBuffer = new ArrayList();
-
     private long startTime;
 
     //---------------------------------------------------------------------
@@ -70,6 +67,8 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
         Utils.readPropertiesFileIntoSystem(CONFIG_FILE);
 
+        parseProperties();
+        
         groupsToRun = getGroupsFromProperties();
 
         List databaseRegexps = getDatabasesFromProperties();
