@@ -25,7 +25,7 @@ import org.ensembl.healthcheck.*;
 import org.ensembl.healthcheck.util.*;
 
 /**
- * Checks the metadata table to make sure it is OK.
+ * Check that the chromosome lengths stored in various places are consistent.
  */
 public class CheckChromosomeLengthsTestCase extends EnsTestCase {
 
@@ -34,11 +34,10 @@ public class CheckChromosomeLengthsTestCase extends EnsTestCase {
 	 */
 	public CheckChromosomeLengthsTestCase() {
 		addToGroup("post_genebuild");
-		setDescription("Check that the chromosome lengths from the chromosome table agree with both the assembly table and the karyotype table.");
+		setDescription("Check that the chromosome lengths from the seq_region table agree with both the assembly table and the karyotype table.");
 	}
 
 	/** 
-	 * Check various aspects of the meta table.
 	 * @return The test case result.
 	 */
 	public TestResult run() {
@@ -67,10 +66,8 @@ public class CheckChromosomeLengthsTestCase extends EnsTestCase {
 			logger.finest("assembly.default from meta table: " + defaultAssembly);
 
 			// ---------------------------------------------------
-			// Find any chromosomes that have different lengths
-			// in chromosome & assembly, for the default assembly.
-			// NB chromosome length should always be equal to (or
-			// possibly greater than) the maximum assembly length
+			// Find any chromosomes that have different lengths in seq_region & assembly, for the default assembly.
+			// NB chromosome length should always be equal to (or possibly greater than) the maximum assembly length
 			// The SQL returns failures
 			// ----------------------------------------------------
 			String sql =
@@ -95,10 +92,8 @@ public class CheckChromosomeLengthsTestCase extends EnsTestCase {
 			}
 
 			// --------------------------------------------------
-			// Find any chromosomes that have different lengths
-			// in karyotype & chromosome tables.
-			// The chr.length and karyotype.length should always 
-			// be the same.
+			// Find any chromosomes that have different lengths in karyotype & chromosome tables.
+			// The seq_region.length and karyotype.length should always be the same.
 			// The SQL returns failures
 			// --------------------------------------------------
 			String karsql =
