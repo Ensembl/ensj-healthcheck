@@ -106,10 +106,10 @@ public class StableID extends SingleDatabaseTestCase {
         }
 
         // print a few rows so we can check by eye that the table looks ok
-        DBUtils.printRows(this, con, "select * from " + stableIDtable + " limit 10;");
+        //DBUtils.printRows(this, con, "select * from " + stableIDtable + " limit 10;");
 
         // look for orphans between type and type_stable_id tables
-        int orphans = countOrphans(con, typeName, typeName + "_id", typeName + "_stable_id", typeName + "_id", false);
+        int orphans = countOrphans(con, typeName, typeName + "_id", stableIDtable, typeName + "_id", false);
         if (orphans > 0) {
             ReportManager.problem(this, con, "Orphan references between " + typeName + " and " + typeName
                     + "_stable_id tables.");
@@ -125,6 +125,15 @@ public class StableID extends SingleDatabaseTestCase {
             result = false;
         }
 
+        // check for duplicate stable IDs (will be redundant when stable ID columns get a UNIQUE constraint)
+        int duplicates = getRowCount(con, "SELECT COUNT(stable_id)-COUNT(DISTINCT stable_id) FROM " + stableIDtable);
+        if (duplicates > 0) {
+            ReportManager.problem(this, con, stableIDtable + " has " + duplicates + " duplicate rows");
+            result = false;
+        } else {
+            ReportManager.correct(this, con, "No duplicate stable IDs in " + stableIDtable);
+        }
+        
         return result;
     }
 
