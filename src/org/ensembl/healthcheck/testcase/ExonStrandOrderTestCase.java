@@ -73,7 +73,8 @@ public class ExonStrandOrderTestCase extends EnsTestCase {
       
       Connection con = (Connection)it.next();
       try {
-        Statement stmt = con.createStatement();
+        Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
+        stmt.setFetchSize(Integer.MIN_VALUE);
         ResultSet rs = stmt.executeQuery(sql);
         int transcriptStart, geneStart, lastStart;
         int lastTranscriptId = -1;
