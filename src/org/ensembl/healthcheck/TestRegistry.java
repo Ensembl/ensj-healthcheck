@@ -27,8 +27,6 @@ import org.ensembl.healthcheck.testcase.*;
 import org.ensembl.healthcheck.util.ClassFileFilenameFilter;
 import org.ensembl.healthcheck.util.Utils;
 
-import com.sun.rsasign.t;
-
 /**
  * Hold information about tests. Can aldo find tests in a particular location.
  */
