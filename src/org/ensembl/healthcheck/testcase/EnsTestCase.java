@@ -57,6 +57,11 @@ import org.ensembl.healthcheck.util.*;
  *
  *       Connection con = (Connection)it.next();
  *       int orphans = super.countOrphans(con, "gene", "gene_id", "gene_stable_id", "gene_id", false);
+ *       if (orphans == 0) {
+ *         ReportManager.correct(this, con, "No orphans between gene and gene_stable_id");
+ *       } else {
+ *         ReportManager.problem(this, con, orphans + " orphans between gene and gene_stable_id");
+ *       }
  *       result &= (orphans == 0);
  *
  *     }
