@@ -24,8 +24,6 @@ import java.sql.*;
 import java.io.*;
 import java.util.regex.*;
 
-import junit.framework.*;
-
 import org.ensembl.healthcheck.testcase.*;
 
 import org.ensembl.healthcheck.util.*;
