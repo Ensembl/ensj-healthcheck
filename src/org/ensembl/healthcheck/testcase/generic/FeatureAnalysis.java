@@ -19,8 +19,7 @@ package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
 
-import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.*;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -39,6 +38,9 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 		addToGroup("release");
 		setDescription("Check that features exist for the expected analyses.");
 
+		// this testcase only applies to CORE and VEGA
+		removeAppliesToType(DatabaseType.EST);
+		removeAppliesToType(DatabaseType.ESTGENE);
 	}
 
 	public boolean run(DatabaseRegistryEntry dbre) {
