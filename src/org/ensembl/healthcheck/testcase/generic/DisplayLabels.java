@@ -53,6 +53,8 @@ public class DisplayLabels extends SingleDatabaseTestCase {
 
         boolean result = true;
 	
+	Connection con = dbre.getConnection();
+
 	result &= checkNoNulls(con, "prediction_transcript", "display_label");
 	result &= checkNoNulls(con, "simple_feature",        "display_label");
 	result &= checkNoNulls(con, "xref",                  "display_label");
