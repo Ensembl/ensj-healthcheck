@@ -19,6 +19,8 @@
 package org.ensembl.healthcheck;
 
 import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.logging.*;
 import java.sql.*;
 import java.io.*;
@@ -220,6 +222,7 @@ public class TestRunner {
 		ArrayList locations = new ArrayList();
 		locations.add(runDir + "src" + File.separator + directoryName); // same directory as this class
 		locations.add(runDir + "build" + File.separator + directoryName); // ../build/<packagename>
+		locations.add(runDir + "lib" + File.separator + "ensj-healthcheck.jar"); // ../lib
 
 		// look in each of the locations defined above
 		Iterator it = locations.iterator();
@@ -227,8 +230,7 @@ public class TestRunner {
 			String location = (String)it.next();
 			File dir = new File(location);
 			if (dir.exists()) {
-				if (location.lastIndexOf('.') > -1
-					&& location.substring(location.lastIndexOf('.')).equalsIgnoreCase("jar")) { // ToDo -check this
+				if (location.lastIndexOf('.') > -1 && location.substring(location.lastIndexOf('.') + 1).equalsIgnoreCase("jar")) {
 					addUniqueTests(allTests, findTestsInJar(location, packageName));
 				} else {
 					addUniqueTests(allTests, findTestsInDirectory(location, packageName));
@@ -384,7 +386,7 @@ public class TestRunner {
 			} catch (InstantiationException ie) {
 				// normally it is a BAD THING to just ignore exceptions
 				// however InstantiationExceptions may be thrown often in this case,
-				// so we deliberately chose to suppres this particular exception
+				// so we deliberately chose to suppress this particular exception
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -412,7 +414,51 @@ public class TestRunner {
 
 		ArrayList tests = new ArrayList();
 
-		//throw new NotImplementedException();
+		try {
+
+			JarFile jarFile = new JarFile(jarFileName);
+
+			for (Enumeration enum = jarFile.entries(); enum.hasMoreElements();) {
+
+				JarEntry entry = (JarEntry)enum.nextElement();
+				String entryName = entry.getName();
+
+				// if the entry is a class file in the right package, use it
+				// this should deal with sub-packages of org.ensembl.healthcheck.testcase too
+				String packagePathName = packageName.replaceAll("\\.", File.separator);
+
+				if (entryName != null && entryName.indexOf(".class") > -1 && entryName.indexOf(packagePathName) > -1) {
+
+					String baseClassName = entryName.substring(entryName.lastIndexOf(File.separator) + 1, entryName.lastIndexOf(".class"));
+
+					Object obj = new Object();
+
+					try {
+						Class newClass = Class.forName(packageName + "." + baseClassName);
+						String className = newClass.getName();
+						if (!className.equals("org.ensembl.healthcheck.testcase.EnsTestCase")) { // ignore JUnit tests
+							obj = newClass.newInstance();
+						}
+					} catch (InstantiationException ie) {
+						// normally it is a BAD THING to just ignore exceptions
+						// however InstantiationExceptions may be thrown often in this case,
+						// so we deliberately chose to suppress this particular exception
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					if (obj instanceof org.ensembl.healthcheck.testcase.EnsTestCase && !tests.contains(obj)) {
+						((org.ensembl.healthcheck.testcase.EnsTestCase)obj).init(this);
+						tests.add(obj); // note we store an INSTANCE of the test, not just its name
+						//logger.info("Added test case " + obj.getClass().getName());
+					}
+				}
+
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		return tests;
 
@@ -431,8 +477,7 @@ public class TestRunner {
 		while (it.hasNext()) {
 
 			EnsTestCase test = (EnsTestCase)it.next();
-			if (!testInList(test,
-				mainList)) { // can't really use List.contains() as the lists store objects which may be different
+			if (!testInList(test, mainList)) { // can't really use List.contains() as the lists store objects which may be different
 				mainList.add(test);
 				logger.fine("Added " + test.getShortTestName() + " to the list of tests");
 			} else {
