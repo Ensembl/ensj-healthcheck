@@ -1103,7 +1103,7 @@ public abstract class EnsTestCase {
   }
   
   // -------------------------------------------------------------------------
-
+  
   /**
    * Check if the current test has repair capability. Signified by implementing
    * the Repair interface.
@@ -1113,10 +1113,10 @@ public abstract class EnsTestCase {
     
     return (this instanceof Repair);
     
-  } 
+  }
   // -------------------------------------------------------------------------
-
-  /** 
+  
+  /**
    * Add a condition to the list.
    * @param cond The condition to add.
    */
@@ -1139,7 +1139,12 @@ public abstract class EnsTestCase {
   }
   
   // -------------------------------------------------------------------------
-
+  /**
+   * Run all the schema matching conditions defined in this test case against the
+   * known schemas to see which ones match.
+   * @return A DatabaseConnectionIterator that will give connections to any
+   * schemas that match <em>all</em> the conditions.
+   */
   public DatabaseConnectionIterator getMatchingSchemaIterator() {
     
     return new DatabaseConnectionIterator(System.getProperty("driver"),
@@ -1151,5 +1156,17 @@ public abstract class EnsTestCase {
   }
   
   // -------------------------------------------------------------------------
-
+  /**
+   * Check if a table has rows.
+   * @param con The connection to the database to use.
+   * @param table The table to check.
+   * @return true if the table has >0 rows, false otherwise.
+   */
+  public boolean tableHasRows(Connection con, String table) {
+    
+    return (getRowCount(con, "SELECT COUNT(*) FROM " + table) > 0);
+    
+  }
+  // -------------------------------------------------------------------------
+  
 } // EnsTestCase
