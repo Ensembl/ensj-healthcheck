@@ -206,7 +206,7 @@ public final class DatabaseType {
 	
 	if (in(lcAlias, "xref")) { 
 
-	    return xref; 
+	    return XREF; 
 
         }
 
