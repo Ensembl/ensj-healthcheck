@@ -136,6 +136,19 @@ public class MetaCoord extends SingleDatabaseTestCase {
             rs.close();
             stmt.close();
 
+	    // check that there are no null max_length entries
+	    int ml = getRowCount(con, "SELECT COUNT(*) FROM meta_coord WHERE max_length IS NULL");
+	    if (ml > 0) {
+
+		ReportManager.problem(this, con, ml + " rows in meta_coord have a null max_length");
+		result = false;
+
+	    } else {
+
+		ReportManager.correct(this, con, "No null max_lengths in meta_coord");
+
+	    }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
