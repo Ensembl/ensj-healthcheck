@@ -20,21 +20,18 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.sql.*;
 import org.ensembl.healthcheck.testcase.*;
 import org.ensembl.healthcheck.*;
-import org.ensembl.healthcheck.util.*;
 
 /**
- * Check that the chromosome lengths stored in various places are consistent.
+ * Check that the assembly table and seq_region table are consistent.
  */
-public class ChromosomeLengths extends SingleDatabaseTestCase {
+public class AssemblySeqregion extends SingleDatabaseTestCase {
 
-    /**
-     * Creates a new instance of CheckChromosomeLengthsTestCase
-     */
-    public ChromosomeLengths() {
+    public AssemblySeqregion() {
 
         addToGroup("post_genebuild");
         addToGroup("release");
         setDescription("Check that the chromosome lengths from the seq_region table agree with both the assembly table and the karyotype table.");
+    
     }
 
     /**
@@ -46,13 +43,8 @@ public class ChromosomeLengths extends SingleDatabaseTestCase {
 
         Connection con = dbre.getConnection();
 
-        AssemblyNameInfo assembly = new AssemblyNameInfo(con);
-        String defaultAssembly = assembly.getMetaTableAssemblyDefault();
-        logger.finest("assembly.default from meta table: " + defaultAssembly);
-
         // ---------------------------------------------------
-        // Find any seq_regions that have different lengths in seq_region & assembly, for the
-        // default assembly.
+        // Find any seq_regions that have different lengths in seq_region & assembly
         // NB seq_region length should always be equal to (or possibly greater than) the maximum
         // assembly length
         // The SQL returns failures
