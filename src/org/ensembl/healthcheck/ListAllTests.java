@@ -127,7 +127,7 @@ public class ListAllTests extends TestRunner {
 			System.out.println("Tests in group " + groupToList + ":");
 		}
 		
-		List tests = findAllTests();
+		List tests = new TestRegistry().findAllTests();
 
 		Iterator it = tests.iterator();
 		while (it.hasNext()) {
@@ -173,7 +173,7 @@ public class ListAllTests extends TestRunner {
 
 	private void showAllTestsByGroup() {
 
-		List allTests = findAllTests();
+		List allTests = new TestRegistry().findAllTests();
 		String[] groups = listAllGroups(allTests);
 		Arrays.sort(groups);
 
