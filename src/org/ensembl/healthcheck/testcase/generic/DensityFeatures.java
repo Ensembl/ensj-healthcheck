@@ -26,6 +26,7 @@ import java.sql.Statement;
 import java.sql.SQLException;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.Utils;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
@@ -234,15 +235,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 
 	    } else if (rows.length > 1) {
 		
-		String str = "Analysis " + logicName + " has " + rows.length + " associated density types (IDs ";
-		for (int j = 0; j < rows.length; j++) {
-		    str += rows[j];
-		    if (j+1 < rows.length) {
-			str += ",";
-		    }
-		}
-		str += ")";
-		ReportManager.problem(this, con, str);
+		ReportManager.problem(this, con, "Analysis " + logicName + " has " + rows.length + " associated density types (IDs " + Utils.arrayToString(rows, ",") + ")");
 		result = false;
 	
 	    }
