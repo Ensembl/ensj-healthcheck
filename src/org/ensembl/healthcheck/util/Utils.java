@@ -203,7 +203,7 @@ public final class Utils {
         StringBuffer buf = new StringBuffer();
         for (int i = 0; i < a.length; i++) {
             buf.append(a[i]);
-            if (i < a.length) {
+            if (i+1 < a.length) {
                 buf.append(delim);
             }
         }
