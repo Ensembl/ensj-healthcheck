@@ -66,6 +66,13 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
         
         Connection con = (Connection)it.next();
         
+        // check that the protein feature table actually has some rows - if not there's no point working out the translation lengths
+        // TODO - a case for a SchemaMatchCondition
+        if (getRowCount(con, "SELECT COUNT(*) FROM protein_feature") == 0) {
+          logger.warning("protein_feature table for " + DBUtils.getShortDatabaseName(con) + " has zero rows - skipping.");
+          continue;
+        }
+        
         // NOTE: By default the MM MySQL JDBC driver reads and stores *all* rows in the ResultSet.
         // Since this TestCase is likely to produce lots of output, we must use the "streaming"
         // mode where only one row of the ResultSet is stored at a time.
@@ -231,7 +238,7 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
     
     List thisDBFeatures = (List)featuresToDelete.get(DBUtils.getShortDatabaseName(con));
     
-    if (thisDBFeatures.size() == 0) {
+    if (thisDBFeatures == null || thisDBFeatures.size() == 0) {
       return "";
     }
     
