@@ -138,6 +138,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
         System.out.println("  -length n       Break output lines at n columns; default is " + outputLineLength
                 + ". 0 means never break");
         System.out.println("  -resultsbydb    Print results by databases as well as by test case.");
+        System.out.println("  -nofailuretext  Don't print failure hints.");
         System.out.println("  group1          Names of groups of test cases to run.");
         System.out.println("                  Note each test case is in a group of its own with the name of the test case.");
         System.out.println("                  This allows individual tests to be run if required.");
