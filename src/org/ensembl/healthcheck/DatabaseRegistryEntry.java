@@ -17,7 +17,10 @@
  */
 package org.ensembl.healthcheck;
 
+import java.sql.Connection;
 import java.util.logging.Logger;
+
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Container for information about a database that can be stored in a DatabaseRegistry.
@@ -28,18 +31,20 @@ public class DatabaseRegistryEntry {
 	String name;
 	Species species;
 	DatabaseType type;
+	Connection con;
 
 	protected static Logger logger = Logger.getLogger("HealthCheckLogger");
 
 	// -----------------------------------------------------------------
 	/**
-	 * Fully-qualified constructor.
+	 * Create a new DatabaseRegistryEntry. A connection to the named database is also created.
 	 */
 	public DatabaseRegistryEntry(String name, Species species, DatabaseType type) {
 
 		this.name = name;
 		this.species = species;
 		this.type = type;
+		this.con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System.getProperty("user"), System.getProperty("password"));
 
 	}
 
@@ -49,10 +54,12 @@ public class DatabaseRegistryEntry {
 	 * and type are estimated from the database name. Note these can be 
 	 * overridden later by setSpecies/setType if they are specified on the 
 	 * command-line.
+	 * A connection to the named database is also created.
 	 */
 	public DatabaseRegistryEntry(String name) {
 
 		this.name = name;
+		this.con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System.getProperty("user"), System.getProperty("password"));
 		species = setSpeciesFromName(name);
 		type = setTypeFromName(name);
 
@@ -178,6 +185,20 @@ public class DatabaseRegistryEntry {
 	 */
 	public void setType(DatabaseType type) {
 		this.type = type;
+	}
+
+	/**
+		 * @return Connection to the database.
+		 */
+	public Connection getConnection() {
+		return con;
+	}
+
+	/**
+	 * @param type New database connection.
+	 */
+	public void setConnection(Connection con) {
+		this.con = con;
 	}
 
 	// -----------------------------------------------------------------
