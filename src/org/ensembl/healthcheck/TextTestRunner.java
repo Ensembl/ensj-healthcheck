@@ -37,9 +37,7 @@ public class TextTestRunner extends TestRunner {
   private boolean forceDatabases = false;
   private boolean verbose = false;
   private boolean debug = false;
-  
-  private static Logger logger = Logger.getLogger("HealthCheckLogger");
-  
+    
   private static String version = "$Id$";
   
   // -------------------------------------------------------------------------
