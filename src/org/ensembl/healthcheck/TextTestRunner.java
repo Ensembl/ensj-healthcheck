@@ -18,17 +18,6 @@
 
 package org.ensembl.healthcheck;
 
-/**
- * <p>Title: TextTestRunner.java</p>
- * <p>Description: Subclass of TestRunner intended for running tests from the command line.</p>
- * <p>Copyright: Copyright (c) 2003</p>
- * <p>Organisation: EMBL</p>
- * <p>Created on March 21, 2003, 3:15 PM</p>
- * @author Glenn Proctor <glenn@ebi.ac.uk>
- * @version $Revision$
- */
-
-
 import java.util.*;
 import java.util.logging.*;
 import java.sql.*;
@@ -38,6 +27,10 @@ import java.util.regex.*;
 import junit.framework.*;
 
 import org.ensembl.healthcheck.util.*;
+
+/**
+ * Subclass of TestRunner intended for running tests from the command line.
+ */
 
 public class TextTestRunner extends TestRunner {
   
@@ -65,7 +58,7 @@ public class TextTestRunner extends TestRunner {
     
     ttr.readPropertiesFile();
     
-    ttr.runAllTests(ttr.findAllTests(), ttr.commandLineRegexp, ttr.forceDatabases);
+    ttr.runAllTests(ttr.findAllTests(), ttr.forceDatabases);
     
   } // main
   
