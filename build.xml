@@ -21,7 +21,7 @@
   <property name="test"                location="test"/>
   <property name="reports"             location="reports"/>
   <property name="reports.tests"       location="${reports}/tests"/>
-
+  <property name="web.javadoc.dir"     location="/homes/glenn/public_html/javadoc"/>
 
   <!-- ################################################################################## -->
   <!-- Targets -->
@@ -69,8 +69,6 @@
   <!-- ################################################################################## -->
 
   <target name="clean" description="Clean up" >
-    <delete dir="${build}"/>
-    <delete dir="${dist}" />
     <delete dir="${test}" />
     <delete dir="${reports}" />
     <delete dir="${doc}/javadoc" />
@@ -86,7 +84,7 @@
   <!-- Run targets -->
 
   <target name="runh" depends="compile">
-    <java classname="org.ensembl.healthcheck.TestRunner">
+    <java classname="org.ensembl.healthcheck.TextTestRunner">
       <arg value="-h"/> 
       <classpath>
         <pathelement path="${build}"/>
@@ -98,7 +96,7 @@
   </target>
   
   <target name="runall" depends="compile">
-    <java classname="org.ensembl.healthcheck.TestRunner">
+    <java classname="org.ensembl.healthcheck.TextTestRunner">
       <arg value="all"/> 
       <classpath>
         <pathelement path="${build}"/>
@@ -110,7 +108,7 @@
   </target>
 
   <!-- ################################################################################## -->
-  <target name="doc">
+  <target name="javadoc">
 
     <javadoc
       sourcepath="${src}"
@@ -120,11 +118,26 @@
       use="true"
       windowtitle="EnsEMBL HealthCheck"
       doctitle="EnsEMBL HealthCheck"
-      packagenames="org.ensembl.healthcheck, org.ensembl.healthcheck.*"
+      packagenames="org.ensembl.healthcheck, org.ensembl.healthcheck.util"
       >
     </javadoc>
   </target>
 
+  <target name="javadoc-tar" depends="javadoc">
+
+    <tar tarfile="${dist}/ensj-healthcheck-javadoc.tar.gz" basedir="${doc}/javadoc" compression="gzip"/>
+    
+  </target>
+  
+  <target name="javadoc-web" depends="javadoc">
+
+    <copy todir="${web.javadoc.dir}">
+      <fileset dir="${doc}/javadoc">
+        <include name="**/*.html"/>
+      </fileset>
+    </copy>
+  
+  </target>
   <!-- ################################################################################## -->
 
   <target name="test" depends="compile-test">
