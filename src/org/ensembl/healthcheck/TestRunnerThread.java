@@ -26,16 +26,28 @@ import org.ensembl.healthcheck.testcase.*;
 public class TestRunnerThread implements Runnable {
   
   private EnsTestCase testCase;
+  private ThreadGroup threadGroup;
+  private int maxThreads;
+  
   /**
    * Creates a new instance of TestRunnerThread
    */
-  public TestRunnerThread(EnsTestCase testCase) {
+  public TestRunnerThread(EnsTestCase testCase, ThreadGroup threadGroup, int maxThreads) {
     
     this.testCase = testCase;
+    this.threadGroup = threadGroup;
+    this.maxThreads = maxThreads;
+    
   }
   
   public void run() {
     
+    // wait until there aren't too many threads running
+    while (threadGroup.activeCount() > maxThreads) {
+      try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+    }
+    
+    // and then run the test
     TestResult tr = testCase.run();
     
   }

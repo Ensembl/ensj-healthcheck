@@ -25,26 +25,48 @@ import org.ensembl.healthcheck.testcase.*;
 /**
  * description
  */
-public class GUITestRunnerThread implements Runnable {
+public class GUITestRunnerThread extends Thread {
   
   private EnsTestCase testCase;
   private GuiTestRunnerFrame guiTestRunnerFrame;
+  private ThreadGroup threadGroup;
+  private int maxThreads;
+  private boolean isRunning = false;
   
   /**
    * Creates a new instance of GUITestRunnerThread
    */
-  public GUITestRunnerThread(EnsTestCase testCase, GuiTestRunnerFrame gtrf) {
+  public GUITestRunnerThread(ThreadGroup threadGroup, EnsTestCase testCase, GuiTestRunnerFrame gtrf, int maxThreads) {
+    
+    super(threadGroup, "");
     
     this.testCase = testCase;
     this.guiTestRunnerFrame = gtrf;
-    
+    this.threadGroup = threadGroup;
+    this.maxThreads = maxThreads;
+        
   }
   
   public void run() {
     
+    // wait until there aren't too many threads running
+    while (runningThreadCount() > maxThreads) {
+      try {
+        Thread.sleep(1000);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
+    
+    // and then run the test
+    
     guiTestRunnerFrame.setTestButtonEnabled(testCase.getTestName(), true);
     
+    isRunning = true;
+    
     TestResult tr = testCase.run();
+    
+    isRunning = false;
     
     Color c = tr.getResult() ? new Color(0, 128, 0) : Color.RED;
     
@@ -53,5 +75,36 @@ public class GUITestRunnerThread implements Runnable {
     guiTestRunnerFrame.repaint();
     
   }
+  
+  // -------------------------------------------------------------------------
+  
+  private int runningThreadCount() {
+    
+    int result = 0;
+
+    Thread[] allThreads = new Thread[threadGroup.activeCount()];
+    int allThreadCount = threadGroup.enumerate(allThreads);
+    
+    for (int i = 0; i < allThreadCount; i++) {
+      GUITestRunnerThread gtrt = (GUITestRunnerThread)allThreads[i];
+      if (gtrt.isRunning()) {
+       result++; 
+      }
+    }
+    
+    System.out.println(result + " threads running out of a total of " + threadGroup.activeCount());
+    return result;
+    
+  } // runningThreadCount
+  
+  // -------------------------------------------------------------------------
+
+  public boolean isRunning() {
+   
+    return isRunning;
+    
+  }
+  
+  // -------------------------------------------------------------------------
   
 } // GUITestRunnerThread

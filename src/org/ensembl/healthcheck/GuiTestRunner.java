@@ -32,7 +32,7 @@ public class GuiTestRunner extends TestRunner {
   protected static Logger logger = Logger.getLogger("HealthCheckLogger");
   private GuiTestRunnerFrame gtrf;
   
-  protected int maxThreads = 1;
+  protected int maxThreads = 4;
   
   protected boolean forceDatabases = false;
   
@@ -62,6 +62,8 @@ public class GuiTestRunner extends TestRunner {
     
     gtr.initFrame();
     
+    gtr.showFrame();
+    
   } // main
   
   // -------------------------------------------------------------------------
@@ -69,9 +71,15 @@ public class GuiTestRunner extends TestRunner {
   private void openFrame() {
     
     gtrf = new GuiTestRunnerFrame(this);
-    gtrf.show();
+    //gtrf.show();
     
   } // openFrame
+  
+   private void showFrame() {
+    
+    gtrf.show();
+    
+  } // showFrame
   
   // -------------------------------------------------------------------------
   
@@ -123,20 +131,10 @@ public class GuiTestRunner extends TestRunner {
     Iterator it = allTests.iterator();
     while (it.hasNext()) {
       
-      // wait for the number of threads to drop
-      while (testThreads.activeCount() > 1000) { // XXX
-        try {
-          Thread.yield();
-          Thread.sleep(100);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
-      }
       org.ensembl.healthcheck.testcase.EnsTestCase testCase = (org.ensembl.healthcheck.testcase.EnsTestCase)it.next();
       
       if (testCase.inGroups(groups)) {
         
-        gtrf.setStatus("Running " + testCase.getShortTestName());
         if (preFilterRegexp != null) {
           testCase.setPreFilterRegexp(preFilterRegexp);
         }
@@ -146,9 +144,8 @@ public class GuiTestRunner extends TestRunner {
           testCase.setDatabaseRegexp(preFilterRegexp);
         }
         
-        Thread t = new Thread(testThreads, new GUITestRunnerThread(testCase, gtrf));
-        System.out.println("active_count = " + testThreads.activeCount());
-        t.start();
+        GUITestRunnerThread t = new GUITestRunnerThread(testThreads, testCase, gtrf, maxThreads);
+        t.start(); // note that this will actually wait until < maxThreads are running before calling run()
         
       }
       

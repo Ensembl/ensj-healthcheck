@@ -26,7 +26,7 @@ public class TestInfoWindow extends javax.swing.JDialog {
    */
   private void initComponents() {//GEN-BEGIN:initComponents
     basePanel = new javax.swing.JPanel();
-    jLabel1 = new javax.swing.JLabel();
+    infoTextArea = new javax.swing.JTextArea();
     
     addWindowListener(new java.awt.event.WindowAdapter() {
       public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -34,8 +34,10 @@ public class TestInfoWindow extends javax.swing.JDialog {
       }
     });
     
-    jLabel1.setText("Test info");
-    basePanel.add(jLabel1);
+    infoTextArea.setColumns(40);
+    infoTextArea.setEditable(false);
+    infoTextArea.setRows(10);
+    basePanel.add(infoTextArea);
     
     getContentPane().add(basePanel, java.awt.BorderLayout.CENTER);
     
@@ -58,7 +60,19 @@ public class TestInfoWindow extends javax.swing.JDialog {
   
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JPanel basePanel;
-  private javax.swing.JLabel jLabel1;
+  private javax.swing.JTextArea infoTextArea;
   // End of variables declaration//GEN-END:variables
+ 
+  public void append(String s) {
+    
+    infoTextArea.append(s);
+    
+  } // append
+  
+  public void clear() {
+    
+   infoTextArea.setText("");
+   
+  }
   
 }
