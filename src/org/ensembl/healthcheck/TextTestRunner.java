@@ -201,7 +201,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 						globalSpecies = Species.resolveAlias(speciesStr);
 						logger.finest("Will override guessed species with " + globalSpecies + " for all databases");
 					} else {
-						logger.severe("Argument " + speciesStr + " to -species argument not recognised");
+						logger.severe("Argument " + speciesStr + " to -species not recognised");
 					}
 
 				} else if (args[i].equals("-type")) {
@@ -211,7 +211,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 						globalType = DatabaseType.resolveAlias(typeStr);
 						logger.finest("Will override guessed database types with " + globalType + " for all databases");
 					} else {
-						logger.severe("Argument " + typeStr + " to -type argument not recognised");
+						logger.severe("Argument " + typeStr + " to -type not recognised");
 					}
 
 				} else {
