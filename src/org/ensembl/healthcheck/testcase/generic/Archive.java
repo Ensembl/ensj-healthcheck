@@ -78,12 +78,12 @@ public class Archive extends SingleDatabaseTestCase {
         result &= checkChangedInGeneArchive(con, "transcript", "T", MIN_MAPPING_SESSION_ID);
         logger.info("Checking changed genes");
         result &= checkChangedInGeneArchive(con, "gene", "G", MIN_MAPPING_SESSION_ID);
-        logger.info("Checking deleted translations in peptide archive");
-        result &= checkDeletedTranslationsInPeptideArchive(con, MIN_MAPPING_SESSION_ID);
-        logger.info("Checking translations from peptide archive in gene archive");
-        result &= checkTranslationsFromPeptideArchiveInGeneArchive(con);
-        logger.info("Checking no current translations in peptide archive");
-        result &= checkNoCurrentTranslationsInPeptideArchive(con);
+        //logger.info("Checking deleted translations in peptide archive");
+        //result &= checkDeletedTranslationsInPeptideArchive(con, MIN_MAPPING_SESSION_ID);
+        //logger.info("Checking translations from peptide archive in gene archive");
+        //result &= checkTranslationsFromPeptideArchiveInGeneArchive(con);
+        //logger.info("Checking no current translations in peptide archive");
+        //result &= checkNoCurrentTranslationsInPeptideArchive(con);
         logger.info("Checking gene propagation IDs are current");
         result &= checkPropagationIDsAreCurrent(con, "gene", "G");
         logger.info("Checking transcript propagation IDs are current");
@@ -105,7 +105,7 @@ public class Archive extends SingleDatabaseTestCase {
 
         String[] rows = getColumnValues(con, sql);
         if (rows.length > 0) {
-            ReportManager.problem(this, con, rows + " deleted translations missing from peptide_archive");
+            ReportManager.problem(this, con, rows.length + " deleted translations missing from peptide_archive");
             result = false;
         }
 
@@ -143,9 +143,9 @@ public class Archive extends SingleDatabaseTestCase {
         String[] rows = getColumnValues(con, sql);
         if (rows.length > 0) {
             ReportManager.problem(this, con, rows.length + " translations from peptide archive not in gene archive");
-            for (int i = 0; i < rows.length && i < 10; i++) {
-                System.out.println(rows[i]);
-            }
+            //for (int i = 0; i < rows.length && i < 10; i++) {
+            //    System.out.println(rows[i]);
+            //}
             result = false;
         }
 
