@@ -41,6 +41,7 @@ public class AffyXrefs extends SingleDatabaseTestCase {
 
         addToGroup("post_genebuild");
         addToGroup("release");
+        addToGroup("xrefs");
         setDescription("Check Affymetrix xrefs");
         setHintLongRunning(true);
 

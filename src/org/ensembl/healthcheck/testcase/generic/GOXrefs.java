@@ -38,6 +38,7 @@ public class GOXrefs extends SingleDatabaseTestCase {
 
         addToGroup("post_genebuild");
         addToGroup("release");
+	addToGroup("xrefs");
         setDescription("Check that GO xrefs exist for certain species (human, mouse, rat, drosophila)");
 	
     }
@@ -65,8 +66,9 @@ public class GOXrefs extends SingleDatabaseTestCase {
         boolean result = true;
 
 	// only check for GO xrefs for human, mouse, rat & drosophila
-	if (dbre.getSpecies().equals(Species.HOMO_SAPIENS) || dbre.getSpecies().equals(Species.MUS_MUSCULUS) || dbre.getSpecies().equals(Species.RATTUS_NORVEGICUS) || dbre.getSpecies().equals(Species.DROSOPHILA_MELANOGASTER)) {
+	//	if (dbre.getSpecies().equals(Species.HOMO_SAPIENS) || dbre.getSpecies().equals(Species.MUS_MUSCULUS) || dbre.getSpecies().equals(Species.RATTUS_NORVEGICUS) || dbre.getSpecies().equals(Species.DROSOPHILA_MELANOGASTER)) {
 
+	if (true) {
 	    Connection con = dbre.getConnection();
 	    
 	    String sql = "SELECT COUNT(*) FROM external_db edb, xref x WHERE edb.db_name= 'go' AND edb.external_db_id = x.external_db_id";
