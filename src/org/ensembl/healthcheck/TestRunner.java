@@ -146,7 +146,7 @@ public class TestRunner {
     
     // some variables that will come in useful later on
     String thisClassName = this.getClass().getName();
-    String packageName = thisClassName.substring(0, thisClassName.lastIndexOf("."));
+    String packageName = thisClassName.substring(0, thisClassName.lastIndexOf(".")) + ".testcase";
     String directoryName = packageName.replace('.', File.separatorChar);
     logger.finest("Package name: " + packageName + " Directory name: " + directoryName);
     String runDir = System.getProperty("user.dir") + File.separator;
@@ -283,7 +283,7 @@ public class TestRunner {
       try {
         newClass = Class.forName(packageName + "." + baseClassName);
         String className = newClass.getName();
-        if (!className.equals("org.ensembl.healthcheck.EnsTestCase") &&
+        if (!className.equals("org.ensembl.healthcheck.testcase.EnsTestCase") &&
         !className.substring(className.length()-4).equals("Test")  ) {  // ignore JUnit tests
           obj = newClass.newInstance();
         }
