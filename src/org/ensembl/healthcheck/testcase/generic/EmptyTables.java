@@ -18,10 +18,13 @@
 
 package org.ensembl.healthcheck.testcase.generic;
 
-import java.sql.*;
+import java.sql.Connection;
 
-import org.ensembl.healthcheck.*;
-import org.ensembl.healthcheck.testcase.*;
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Species;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
  * Check that all tables have data.
@@ -45,7 +48,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
     /**
      * Define what tables are to be checked.
      */
-    private String[] getTablesToCheck(DatabaseRegistryEntry dbre) {
+    private String[] getTablesToCheck(final DatabaseRegistryEntry dbre) {
 
         String[] tables = getTableNames(dbre.getConnection());
         Species species = dbre.getSpecies();
@@ -55,16 +58,16 @@ public class EmptyTables extends SingleDatabaseTestCase {
         if (type == DatabaseType.CORE || type == DatabaseType.VEGA) {
 
             // the following tables are allowed to be empty
-            String[] allowedEmpty = { "alt_allele", "assembly_exception", "dnac", "density_feature", "density_type"};
+            String[] allowedEmpty = {"alt_allele", "assembly_exception", "dnac", "density_feature", "density_type"};
             tables = remove(tables, allowedEmpty);
 
             // ID mapping related tables are checked in a separate test case
-            String[] idMapping = { "gene_archive", "peptide_archive", "mapping_session", "stable_id_event"};
+            String[] idMapping = {"gene_archive", "peptide_archive", "mapping_session", "stable_id_event"};
             tables = remove(tables, idMapping);
 
             // only rat has entries in QTL tables
             if (species != Species.RATTUS_NORVEGICUS) {
-                String[] qtlTables = { "qtl", "qtl_feature", "qtl_synonym"};
+                String[] qtlTables = {"qtl", "qtl_feature", "qtl_synonym"};
                 tables = remove(tables, qtlTables);
             }
 
@@ -74,15 +77,16 @@ public class EmptyTables extends SingleDatabaseTestCase {
             }
 
             // map, marker etc
-            if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.RATTUS_NORVEGICUS
-                    && species != Species.DANIO_RERIO) {
-                String[] markerTables = { "map", "marker", "marker_map_location", "marker_synonym", "marker_feature"};
+            if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS
+                    && species != Species.RATTUS_NORVEGICUS && species != Species.DANIO_RERIO) {
+                String[] markerTables = {"map", "marker", "marker_map_location", "marker_synonym", "marker_feature"};
                 tables = remove(tables, markerTables);
             }
 
             // misc_feature etc
-            if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.ANOPHELES_GAMBIAE) {
-                String[] miscTables = { "misc_feature", "misc_feature_misc_set", "misc_set", "misc_attrib"};
+            if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS
+                    && species != Species.ANOPHELES_GAMBIAE) {
+                String[] miscTables = {"misc_feature", "misc_feature_misc_set", "misc_set", "misc_attrib"};
                 tables = remove(tables, miscTables);
             }
 
@@ -91,22 +95,27 @@ public class EmptyTables extends SingleDatabaseTestCase {
                 tables = remove(tables, "go_xref");
             }
 
-            // ----------------------------------------------------
+            // certain species can have empty karyotype table
+            if (species == Species.CAENORHABDITIS_BRIGGSAE || species == Species.CAENORHABDITIS_ELEGANS || species == Species.DANIO_RERIO || species == Species.FUGU_RUBRIPES) {
+                tables = remove(tables, "karyotype");
+            }
             
+            // ----------------------------------------------------
+
         } else if (type == DatabaseType.EST) {
 
             // Only a few tables need to be filled in EST
             String[] est = {"dna_align_feature", "meta_coord", "meta", "coord_system"};
             tables = est;
-            
-    		// ----------------------------------------------------
-            
+
+            // ----------------------------------------------------
+
         } else if (type == DatabaseType.ESTGENE) {
 
             // Only a few tables need to be filled in ESTGENE
             String[] estGene = {"gene", "transcript", "exon", "meta_coord", "coord_system"};
             tables = estGene;
-            
+
         }
 
         return tables;
@@ -117,6 +126,8 @@ public class EmptyTables extends SingleDatabaseTestCase {
 
     /**
      * Check that every table has more than 0 rows.
+     * @param dbre The database to check.
+     * @return true if the test passed.
      */
     public boolean run(DatabaseRegistryEntry dbre) {
 
@@ -124,6 +135,12 @@ public class EmptyTables extends SingleDatabaseTestCase {
 
         String[] tables = getTablesToCheck(dbre);
         Connection con = dbre.getConnection();
+        
+        // if there is only one coordinate system then there's no assembly
+        if (getRowCount(con, "SELECT COUNT(*) FROM coord_system") == 1) {
+            tables = remove(tables, "assembly");
+            logger.finest(dbre.getName() + " has only one coord_system, assembly table can be empty");
+        }
 
         for (int i = 0; i < tables.length; i++) {
 
@@ -144,7 +161,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 
     // -----------------------------------------------------------------
 
-    private String[] remove(String[] tables, String table) {
+    private String[] remove(final String[] tables, final String table) {
 
         String[] result = new String[tables.length - 1];
         int j = 0;
@@ -162,9 +179,9 @@ public class EmptyTables extends SingleDatabaseTestCase {
 
     }
 
-    //	-----------------------------------------------------------------
+    // -----------------------------------------------------------------
 
-    private String[] remove(String[] src, String[] tablesToRemove) {
+    private String[] remove(final String[] src, final String[] tablesToRemove) {
 
         String[] result = src;
 
