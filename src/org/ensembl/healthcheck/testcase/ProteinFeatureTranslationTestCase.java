@@ -105,7 +105,7 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
               inCodingRegion = true;
               // subtract seq_start
               int currentLength = ((Integer)translationLengths.get(id)).intValue();
-              currentLength -= rs.getInt("seq_start");
+              currentLength -= (rs.getInt("seq_start") - 1);
               translationLengths.put(id, new Integer(currentLength));
             }
           } // if !inCoding
