@@ -152,10 +152,12 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
                             boolean showCreateSame = DBUtils.compareResultSets(masterRS, dbRS, this, " [" + table + "]", false,
                                     false);
                             if (!showCreateSame) {
+
                                 // do more in-depth analysis of database structure
                                 compareTableStructures(masterCon, checkCon, table);
 
                             }
+
                             result &= showCreateSame;
 
                             masterRS.close();
@@ -279,6 +281,25 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
                     }
                 }
             }
+
+	    // and the other way around
+Iterator it2 = rows2.iterator();
+            while (it2.hasNext()) {
+                String row2 = (String) it2.next();
+                if (!rows1.contains(row2)) {
+                    result = false;
+                    String[] indices = row2.split(":");
+                    String table = indices[0];
+                    String index = indices[1];
+                    String seq = indices[4];
+                    if (seq.equals("1")) { // once per group of rows
+                        ReportManager.problem(this, "", DBUtils.getShortDatabaseName(con2) + " " + table + " has index " + index
+                                + " which is different or absent in " + DBUtils.getShortDatabaseName(con1));
+                    }
+                }
+            }
+
+
 
         } catch (SQLException se) {
             logger.severe(se.getMessage());
