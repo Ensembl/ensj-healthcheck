@@ -602,8 +602,9 @@ public class TestRunner {
    * Create and cache information about all the schemas that are available.
    * @param serialize If true, write schema information to file.
    * @param fileName Name of file to write List of SchemaInfo objects to.
+   * @param gzip If true, any output file is gzipped.
    */
-  public void buildSchemaList(boolean serialize, String fileName) {
+  public void buildSchemaList(boolean serialize, String fileName, boolean gzip) {
     
     // check props file loaded
     if (System.getProperty("driver") == null) {
@@ -628,7 +629,10 @@ public class TestRunner {
     }
     
     if (serialize) {
-      SchemaManager.serializeAllToSingleFile(fileName);
+      if (gzip) {
+        fileName += ".gz";
+      }
+      SchemaManager.serializeAllToSingleFile(fileName, gzip);
     }
     
   }
@@ -656,7 +660,11 @@ public class TestRunner {
    * If the .ser file for a particular schema does not exist or cannot be read,
    * the SchemaInfo object is created on the fly.
    */
-  public void readStoredSchemaInfo(String fileName) {
+  public void readStoredSchemaInfo(String fileName, boolean gzip) {
+    
+    if (gzip) {
+      fileName += ".gz"; 
+    }
     
     try {
       

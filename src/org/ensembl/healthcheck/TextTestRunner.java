@@ -38,6 +38,7 @@ public class TextTestRunner extends TestRunner {
   private boolean useSchemaInfo = true;
   private boolean rebuildSchemaInfo = false;
   private static final String SCHEMA_INFO_FILENAME = "schemas.ser";
+  private static final boolean GZIP_SCHEMA_INFO = true;
   
   // -------------------------------------------------------------------------
   
@@ -58,11 +59,11 @@ public class TextTestRunner extends TestRunner {
     ttr.readPropertiesFile();
     
     if (ttr.rebuildSchemaInfo) {
-      ttr.buildSchemaList(true, SCHEMA_INFO_FILENAME);
+      ttr.buildSchemaList(true, SCHEMA_INFO_FILENAME, GZIP_SCHEMA_INFO);
     }
     
     if (ttr.useSchemaInfo && !ttr.rebuildSchemaInfo) { // if buildSchemaList has been called, SchemaManager will already have been populated
-      ttr.readStoredSchemaInfo(SCHEMA_INFO_FILENAME);
+      ttr.readStoredSchemaInfo(SCHEMA_INFO_FILENAME, GZIP_SCHEMA_INFO);
     }
     
     ttr.runAllTests(ttr.findAllTests(), ttr.forceDatabases);
