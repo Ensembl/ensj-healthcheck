@@ -46,6 +46,8 @@ public class TestRunner {
   protected static Logger logger = Logger.getLogger("HealthCheckLogger");
   /** Output level used by ReportManager */
   protected int outputLevel = ReportLine.ALL;
+  /** The name of the file where configuration is stored */
+  protected String propertiesFileName = "database.properties";
   
   // -------------------------------------------------------------------------
   /** Creates a new instance of TestRunner */
@@ -63,7 +65,7 @@ public class TestRunner {
    */
   protected void readPropertiesFile() {
     
-    String propsFile = System.getProperty("user.dir") + System.getProperty("file.separator") + "database.properties";
+    String propsFile = System.getProperty("user.dir") + System.getProperty("file.separator") + propertiesFileName;
     Properties dbProps = Utils.readPropertiesFile(propsFile);
     logger.fine("Read database properties from " + propsFile);
     Enumeration e = dbProps.propertyNames();
