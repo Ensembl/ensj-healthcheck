@@ -41,6 +41,7 @@ public class EnsjTrialTestCase extends EnsTestCase {
    */
   public EnsjTrialTestCase() {
     addToGroup("ensj");
+    setDescription("An example of how to integrate ensj-core functionality. Checks that all genes on a chromosome have transcripts. For illustration only - not intended to be used in production.");
   }
   
   /**
