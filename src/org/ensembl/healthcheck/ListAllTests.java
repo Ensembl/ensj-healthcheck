@@ -169,6 +169,7 @@ public class ListAllTests extends TestRunner {
 
 		List allTests = findAllTests();
 		String[] groups = listAllGroups(allTests);
+		Arrays.sort(groups);
 
 		// each test is technically a member of the group with the same name as 
 		// the test; this isn't interesting here so these are filtered out
