@@ -26,7 +26,8 @@ import org.ensembl.healthcheck.*;
 import org.ensembl.healthcheck.util.*;
 
 /**
- * Check for presence and format of PFAM etc hits.
+ * Check for presence and format of PFAM etc hits. Also checks for protein features
+ * with not hit_id
  */
 
 public class AccessionTestCase extends EnsTestCase {
@@ -87,7 +88,16 @@ public class AccessionTestCase extends EnsTestCase {
         }
         
       }
-    }
+      
+      // check for protein features with no hit_id
+      int nullHitIDs = getRowCount(con, "SELECT COUNT(*) FROM protein_feature WHERE hit_id IS NULL OR hit_id=''");
+      if (nullHitIDs > 0) {
+        ReportManager.problem(this, con, nullHitIDs + " protein features have null or blank hit_ids");
+      } else {
+        ReportManager.correct(this, con, "No protein features have null or blank hit_ids");
+      }
+      
+    }    
     
     return new TestResult(getShortTestName(), result);
     
