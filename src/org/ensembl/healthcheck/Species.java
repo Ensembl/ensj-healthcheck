@@ -67,6 +67,12 @@ public final class Species {
     /** Specific type of species */
     public static final Species APIS_MELLIFERA = new Species("apis_mellifera");
 
+    /** Specific type of species */
+    public static final Species BOS_TAURUS = new Species("bos_taurus");
+
+    /** Specific type of species */
+    public static final Species CANIS_FAMILIARIS = new Species("canis_familiaris");
+
     /** Unknown species */
     public static final Species UNKNOWN = new Species("unknown");
 
@@ -110,6 +116,8 @@ public final class Species {
         taxonIDToSpecies.put("9031", GALLUS_GALLUS);
         taxonIDToSpecies.put("99883", TETRAODON_NIGROVIRIDIS);
         taxonIDToSpecies.put("7460", APIS_MELLIFERA);
+	taxonIDToSpecies.put("9913", BOS_TAURUS);
+	taxonIDToSpecies.put("9915", CANIS_FAMILIARIS);
 
         // and the other way around
         Iterator it = taxonIDToSpecies.keySet().iterator();
@@ -254,6 +262,22 @@ public final class Species {
         if (in(alias, "honeybee,honey_bee,apis,amellifera,apismellifera,apis_mellifera")) {
 
             return APIS_MELLIFERA;
+
+        }
+
+	// --------------------------------------
+
+        if (in(alias, "cow,btaurus,bostaurus,bos_taurus")) {
+
+            return BOS_TAURUS;
+
+        }
+
+	// --------------------------------------
+
+        if (in(alias, "dog,doggy,cfamiliaris,canisfamiliaris,canis_familiaris")) {
+
+            return CANIS_FAMILIARIS;
 
         }
 
