@@ -409,10 +409,11 @@ public class Utils {
 		File parentDirFile = new File(parentDir);
 
 		String[] filesAndDirs = parentDirFile.list();
+
 		if (filesAndDirs != null) {
 
 			for (int i = 0; i < filesAndDirs.length; i++) {
-				File f = new File(filesAndDirs[i]);
+				File f = new File(parentDir + File.separator + filesAndDirs[i]);
 				if (f.isDirectory()) {
 					dirs.add(filesAndDirs[i]);
 				}
@@ -422,8 +423,6 @@ public class Utils {
 		} else {
 			logger.severe(parentDir + " does not exist or is not a directory");
 		}
-
-		logger.finest("getSubDirs found 0 directories for " + parentDir);
 
 		return (String[])(dirs.toArray(new String[dirs.size()]));
 
