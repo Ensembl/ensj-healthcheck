@@ -24,11 +24,15 @@ import java.io.*;
 import java.util.regex.*;
 import java.util.logging.*;
 
+import org.ensembl.healthcheck.util.*;
+
 /**
  * Various database utilities.
  */
 
 public class DBUtils {
+  
+  private static final boolean USE_CONNECTION_POOLING = false;
   
   private static Logger logger = Logger.getLogger("HealthCheckLogger");
   
@@ -43,21 +47,29 @@ public class DBUtils {
    */
   public static Connection openConnection(String driverClassName, String databaseURL, String user, String password) {
     
-    Connection conn = null;
+    Connection con = null;
     
-    try {
+    if (USE_CONNECTION_POOLING) {
       
-      Class.forName(driverClassName);
-      conn = DriverManager.getConnection(databaseURL, user, password);
+      con = ConnectionPool.getConnection(driverClassName, databaseURL, user, password);
       
-    } catch (Exception e) {
+    } else {
       
-      e.printStackTrace();
-      System.exit(1);
+      try {
+        
+        Class.forName(driverClassName);
+        con = DriverManager.getConnection(databaseURL, user, password);
+        
+      } catch (Exception e) {
+        
+        e.printStackTrace();
+        System.exit(1);
+        
+      }
       
-    }
+    } // if use pooling
     
-    return conn;
+    return con;
     
   } // openConnection
   
@@ -82,7 +94,7 @@ public class DBUtils {
       ResultSet rs = stmt.executeQuery("SHOW DATABASES");
       
       while (rs.next()) {
-	dbNames.add(rs.getString(1));
+        dbNames.add(rs.getString(1));
       }
       
       rs.close();
@@ -136,14 +148,14 @@ public class DBUtils {
       matcher = pattern.matcher(allDBNames[i]);
       
       if (usePreFilter) {
-	preFilterMatcher = preFilterPattern.matcher(allDBNames[i]);
-	if (preFilterMatcher.matches() && matcher.matches()) {
-	  dbMatches.add(allDBNames[i]);
-	}
+        preFilterMatcher = preFilterPattern.matcher(allDBNames[i]);
+        if (preFilterMatcher.matches() && matcher.matches()) {
+          dbMatches.add(allDBNames[i]);
+        }
       } else { // not using preFilter
-	if (matcher.matches()) {
-	  dbMatches.add(allDBNames[i]);
-	}
+        if (matcher.matches()) {
+          dbMatches.add(allDBNames[i]);
+        }
       }
       
     } // for i
@@ -171,9 +183,9 @@ public class DBUtils {
     int size = resultSetGroup.size();
     for (int i = 0; i < size; i++) {
       for (int j = i+1; j < size; j++) {
-	ResultSet rsi = (ResultSet)resultSetGroup.get(i);
-	ResultSet rsj = (ResultSet)resultSetGroup.get(j);
-	same &= compareResultSets(rsi, rsj);
+        ResultSet rsi = (ResultSet)resultSetGroup.get(i);
+        ResultSet rsj = (ResultSet)resultSetGroup.get(j);
+        same &= compareResultSets(rsi, rsj);
       }
     }
     
@@ -210,18 +222,18 @@ public class DBUtils {
       ResultSetMetaData rsmd1 = rs1.getMetaData();
       ResultSetMetaData rsmd2 = rs2.getMetaData();
       if (rsmd1.getColumnCount() != rsmd2.getColumnCount()) {
-	logger.warning("Column counts differ -  " + name1 + ": " + rsmd1.getColumnCount() + " " + name2 + ": " + rsmd2.getColumnCount());
-	return false;  // Deliberate early return for performance reasons
+        logger.warning("Column counts differ -  " + name1 + ": " + rsmd1.getColumnCount() + " " + name2 + ": " + rsmd2.getColumnCount());
+        return false;  // Deliberate early return for performance reasons
       }
       for (int i=1; i <= rsmd1.getColumnCount(); i++) {                 // note columns indexed from 1
-	if (!((rsmd1.getColumnName(i)).equals(rsmd2.getColumnName(i)))) {
-	  logger.warning("Column names differ for column " + i + " - " + name1 + ": " + rsmd1.getColumnName(i) + " " + name2 + ": " + rsmd2.getColumnName(i));
-	  return false;  // Deliberate early return for performance reasons
-	}
-	if (rsmd1.getColumnType(i) != rsmd2.getColumnType(i)) {
-	  logger.warning("Column types differ for column " + i + " - " + name1 + ": " + rsmd1.getColumnType(i) + " " + name2 + ": " + rsmd2.getColumnType(i));
-	  return false;  // Deliberate early return for performance reasons
-	}
+        if (!((rsmd1.getColumnName(i)).equals(rsmd2.getColumnName(i)))) {
+          logger.warning("Column names differ for column " + i + " - " + name1 + ": " + rsmd1.getColumnName(i) + " " + name2 + ": " + rsmd2.getColumnName(i));
+          return false;  // Deliberate early return for performance reasons
+        }
+        if (rsmd1.getColumnType(i) != rsmd2.getColumnType(i)) {
+          logger.warning("Column types differ for column " + i + " - " + name1 + ": " + rsmd1.getColumnType(i) + " " + name2 + ": " + rsmd2.getColumnType(i));
+          return false;  // Deliberate early return for performance reasons
+        }
       } // for column
       
       // make sure both cursors are at the start of the ResultSet (default is before the start)
@@ -229,15 +241,17 @@ public class DBUtils {
       rs2.first();
       // if quick checks didn't cause return, try comparing row-wise
       while (rs1.next() && rs2.next()) {
-	
-	for (int j=1; j <= rsmd1.getColumnCount(); j++) {              // note columns indexed from 1
-	  if (compareColumns(rs1, rs2, j) == false) {
-	    System.out.print(name1 + " and " + name2 + " differ at column " + j + " (" + rsmd1.getColumnName(j) + ")");
-	    System.out.println(" Values: " + rs1.getString(j) + "\t" + rs2.getString(j));
-	    return false;  // Deliberate early return for performance reasons
-	  }
-	}
-	
+        
+        for (int j=1; j <= rsmd1.getColumnCount(); j++) {              // note columns indexed from 1
+          if (compareColumns(rs1, rs2, j) == false) {
+            logger.info(name1 + " and " + name2 + " differ at column " + j +
+            " (" + rsmd1.getColumnName(j) + ")" +
+            " Values: " + Utils.truncate(rs1.getString(j), 25, true) + ", " +
+            Utils.truncate(rs2.getString(j), 25, true));
+            return false;  // Deliberate early return for performance reasons
+          }
+        }
+        
       }
       
     } catch (SQLException se) {
@@ -262,37 +276,37 @@ public class DBUtils {
       
       ResultSetMetaData rsmd = rs1.getMetaData();
       
-       // Note deliberate early returns for performance reasons
+      // Note deliberate early returns for performance reasons
       switch (rsmd.getColumnType(i)) {
-	
-	case Types.INTEGER:
-	  return rs1.getInt(i) == rs2.getInt(i);
-	  
-	case Types.SMALLINT:
-	  return rs1.getInt(i) == rs2.getInt(i);
-	  
-	case Types.TINYINT:
-	  return rs1.getInt(i) == rs2.getInt(i);
-	  
-	case Types.VARCHAR:
-	  return rs1.getString(i).equals(rs2.getString(i));
-	  
-	case Types.FLOAT:
-	  return rs1.getFloat(i) == rs2.getFloat(i);
-	  
-	case Types.DOUBLE:
-	  return rs1.getDouble(i) == rs2.getDouble(i);
-	  
-	case Types.TIMESTAMP:
-	  return rs1.getTimestamp(i).equals(rs2.getTimestamp(i));
-	  
-	default:  // treat everything else as a String (should deal with ENUM and TEXT)
-	  if (rs1.getString(i) == null || rs2.getString(i) == null) {
-	    return true; // ????
-	  } else {
-	    return rs1.getString(i).equals(rs2.getString(i));
-	  }
-	  
+        
+        case Types.INTEGER:
+          return rs1.getInt(i) == rs2.getInt(i);
+          
+        case Types.SMALLINT:
+          return rs1.getInt(i) == rs2.getInt(i);
+          
+        case Types.TINYINT:
+          return rs1.getInt(i) == rs2.getInt(i);
+          
+        case Types.VARCHAR:
+          return rs1.getString(i).equals(rs2.getString(i));
+          
+        case Types.FLOAT:
+          return rs1.getFloat(i) == rs2.getFloat(i);
+          
+        case Types.DOUBLE:
+          return rs1.getDouble(i) == rs2.getDouble(i);
+          
+        case Types.TIMESTAMP:
+          return rs1.getTimestamp(i).equals(rs2.getTimestamp(i));
+          
+        default:  // treat everything else as a String (should deal with ENUM and TEXT)
+          if (rs1.getString(i) == null || rs2.getString(i) == null) {
+            return true; // ????
+          } else {
+            return rs1.getString(i).equals(rs2.getString(i));
+          }
+          
       } // switch
       
     } catch (SQLException se) {
@@ -304,7 +318,7 @@ public class DBUtils {
   } // compareColumns
   
   // -------------------------------------------------------------------------
-  /** 
+  /**
    * Print a ResultSet to standard out. Optionally limit the number of rows.
    * @param maxRows The maximum number of rows to print. -1 to print all rows.
    * @param rs The ResultSet to print.
@@ -317,13 +331,13 @@ public class DBUtils {
       ResultSetMetaData rsmd = rs.getMetaData();
       
       while (rs.next()) {
-	for (int i=1; i <= rsmd.getColumnCount(); i++) {
-	  System.out.print(rs.getString(i) + "\t");
-	}
-	System.out.println("");
-	if (maxRows != -1 && ++row >= maxRows) {
-	  break;
-	}
+        for (int i=1; i <= rsmd.getColumnCount(); i++) {
+          System.out.print(rs.getString(i) + "\t");
+        }
+        System.out.println("");
+        if (maxRows != -1 && ++row >= maxRows) {
+          break;
+        }
       }
     } catch (SQLException se) {
       se.printStackTrace();
@@ -350,6 +364,8 @@ public class DBUtils {
     return name;
     
   } // getShortDatabaseName
+  
+  // -------------------------------------------------------------------------
   
   // -------------------------------------------------------------------------
   
