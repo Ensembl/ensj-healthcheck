@@ -18,20 +18,25 @@
 
 package org.ensembl.healthcheck;
 
+import java.io.*;
 import java.util.*;
 import java.sql.*;
+import java.util.logging.*;
+
 import org.ensembl.healthcheck.util.*;
 
 /**
  * Store information about a database schema. Lighter-weight and simpler than
  * DatabaseMetaData.
  */
-public class SchemaInfo {
+public class SchemaInfo implements Serializable {
   
   /** The name of this schema */
   protected String name = "";
   /** A List of TableInfo objects representing the tables */
   protected List tables = new ArrayList();
+  /** The logger to use for this class */
+  protected static Logger logger = Logger.getLogger("HealthCheckLogger");
   
   /**
    * Creates a new instance of SchemaInfo.
@@ -101,7 +106,7 @@ public class SchemaInfo {
   }
   
   // -------------------------------------------------------------------------
-  /** 
+  /**
    * Generate a String representation of this SchemaInfo object.
    * @return A String containing the schema name and all the table names.
    */
@@ -156,9 +161,9 @@ public class SchemaInfo {
    * Get a particular table by name.
    * @param tableName The table to get.
    * @return The TableInfo object corresponding to tableName, or null.
-   */ 
-   public TableInfo getTable(String tableName) {
-     
+   */
+  public TableInfo getTable(String tableName) {
+    
     TableInfo result = null;
     
     Iterator it = tables.iterator();
@@ -171,7 +176,28 @@ public class SchemaInfo {
     
     return result;
     
-   }
+  }
+  
+  // -------------------------------------------------------------------------
+  /**
+   * Write this object to disk.
+   */
+  public void serialize() {
+    
+    String fileName = name + ".ser";
+    
+    logger.fine("Serializing " + name + " to " + fileName);
+    
+    try {
+      ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName));
+      out.writeObject(this);
+      out.close();
+    }
+    catch(IOException ex) {
+      ex.printStackTrace();
+    }
+    
+  }
   // -------------------------------------------------------------------------
   
 } // SchemaInfo
