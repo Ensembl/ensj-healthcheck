@@ -23,7 +23,7 @@ import java.awt.Color;
 import org.ensembl.healthcheck.testcase.*;
 
 /**
- * description
+ * Allows a GUI-controlled test to run in its own thread and update the GUI.
  */
 public class GUITestRunnerThread extends Thread {
   
@@ -32,7 +32,6 @@ public class GUITestRunnerThread extends Thread {
   private ThreadGroup threadGroup;
   private int maxThreads;
   private boolean isRunning = false;
-  
   /**
    * Creates a new instance of GUITestRunnerThread
    */
@@ -44,7 +43,7 @@ public class GUITestRunnerThread extends Thread {
     this.guiTestRunnerFrame = gtrf;
     this.threadGroup = threadGroup;
     this.maxThreads = maxThreads;
-        
+    
   }
   
   public void run() {
@@ -63,6 +62,7 @@ public class GUITestRunnerThread extends Thread {
     guiTestRunnerFrame.setTestButtonEnabled(testCase.getTestName(), true);
     
     isRunning = true;
+    //System.out.println("###In GUITestRunnerThread; preFilter=" + testCase.getPreFilterRegexp() + " databaseRegexp=" + testCase.getDatabaseRegexp());
     
     TestResult tr = testCase.run();
     
@@ -71,6 +71,8 @@ public class GUITestRunnerThread extends Thread {
     Color c = tr.getResult() ? new Color(0, 128, 0) : Color.RED;
     
     guiTestRunnerFrame.setTestButtonColour(testCase.getTestName(), c);
+    
+    guiTestRunnerFrame.setTestInfoWindowText(testCase.getTestName(), ReportManager.getReportsByTestCase(testCase.getTestName(), guiTestRunnerFrame.getOutputLevel()));
     
     guiTestRunnerFrame.repaint();
     

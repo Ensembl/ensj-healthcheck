@@ -8,7 +8,7 @@
  
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNUsql
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
  
   You should have received a copy of the GNU Lesser General Public
@@ -19,7 +19,6 @@
 package org.ensembl.healthcheck;
 
 import java.util.*;
-import java.awt.Color;
 import java.util.logging.*;
 
 import org.ensembl.healthcheck.util.*;
@@ -37,13 +36,7 @@ public class GuiTestRunner extends TestRunner {
   protected boolean forceDatabases = false;
   
   protected String preFilterRegexp = "";
-  
-  /**
-   * Creates a new instance of GuiTestRunner
-   */
-  public GuiTestRunner() {
-  }
-  
+ 
   // -------------------------------------------------------------------------
   /**
    *
@@ -75,7 +68,7 @@ public class GuiTestRunner extends TestRunner {
     
   } // openFrame
   
-   private void showFrame() {
+  private void showFrame() {
     
     gtrf.show();
     
@@ -102,7 +95,7 @@ public class GuiTestRunner extends TestRunner {
     
     logger.addHandler(new CallbackHandler(gtrf, new LogFormatter()));
     logger.addHandler(new MyStreamHandler(System.out, new LogFormatter()));
-
+    
     logger.setLevel(Level.ALL);
     
     logger.info("Ready");
@@ -151,8 +144,20 @@ public class GuiTestRunner extends TestRunner {
       
     } // while it.hasNext()
     
+    /*
+    // wait until all the tests have run, then print the sumamries
+    while (testThreads.activeCount() > 0) {
+      try {
+        Thread.sleep(1000);
+      } catch (InterruptedException ie) {
+        ie.printStackTrace();
+      }
+    }
     gtrf.setStatus("Done");
+    printReportsByTest(ReportLine.ALL);
     
+    printReportsByDatabase(ReportLine.ALL);
+    */
   }
   
   // runAllTests
@@ -199,5 +204,6 @@ public class GuiTestRunner extends TestRunner {
   } // getPreFilterRegexp
   
   // -------------------------------------------------------------------------
+  
   
 } // GuiTestRunner
