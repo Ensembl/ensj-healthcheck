@@ -135,7 +135,9 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
   } // setStatus
   
   // -------------------------------------------------------------------------
-  
+  /**
+   * Initialise various components.
+   */
   private void init() {
   
     String iconName = System.getProperty("user.dir") + File.separator + "images" + File.separator + "e-logo.gif"; 
@@ -158,8 +160,10 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
   } // callback
   
   // -------------------------------------------------------------------------
-  /**
+  /** 
    * Initialise the test panel with a list of tests to run.
+   * @param tests The tests to run (List of EnsTestCase subclasses)
+   * @param groupsToRun The names of the test groups to run (List of Strings)
    */
   public void initTestPanel(List tests, List groupsToRun) {
     
@@ -218,7 +222,11 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
   } // initTestPanel
   
   // -------------------------------------------------------------------------
-  
+  /**
+   * Set up the panel that shows the list of groups.
+   * @param tests A List of EnsTestCase objects for all the tests.
+   * @param groups The group names.
+   */ 
   public void initGroupList(List tests, String[] groups) {
     
     Arrays.sort(groups, new TestNameComparator());
@@ -274,7 +282,11 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
   } // initGroupList
   
   // -------------------------------------------------------------------------
-  
+  /**
+   * Set whether a particular test button is enabled, ie clickable.
+   * @param name The name of the test button.
+   * @param enabled True if the button can be clicked, false otherwise.
+   */
   public void setTestButtonEnabled(String name, boolean enabled) {
     
     JButton b  = (JButton)testButtons.get(name);
@@ -285,7 +297,11 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
   } // setTestButtonEnabled
   
   // -------------------------------------------------------------------------
-  
+  /** 
+   * Set the text colour of a particular test button.
+   * @param c The new text colour.
+   * @param name The name of the test button.
+   */
   public void setTestButtonColour(String name, Color c) {
     
     JButton b  = (JButton)testButtons.get(name);
@@ -297,7 +313,9 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
   
   // setTestButtonColor
   // -------------------------------------------------------------------------
-  
+  /**
+   * Open the window that allows the user to set various parameters.
+   */
   private void openSettingsDialog() {
     
     GuiTestRunnerSettings gtrs = new GuiTestRunnerSettings(this, guiTestRunner, true);
@@ -306,7 +324,10 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
   } // openSettingsDialog
   
   // -------------------------------------------------------------------------
-  
+  /**
+   * Append a log record to the info window.
+   * @param logRecord The record to append.
+   */
   private void updateTestInfoWindow(LogRecord logRecord) {
     
     // try and figure out which window to update
@@ -320,7 +341,11 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
   } // updateTestRunnerWindow
   
   // -------------------------------------------------------------------------
-  
+  /**
+   * Set the text of a particular info window.
+   * @param testClassName The name of the class sending the info. Used to decide which window to update.
+   * @param report The String to add.
+   */
   public void setTestInfoWindowText(String testClassName, String report) {
     
     TestInfoWindow infoWindow = (TestInfoWindow)testButtonInfoWindows.get(testClassName);
@@ -331,7 +356,11 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
   } // setTestInfoWindowText
   
   // -------------------------------------------------------------------------
-  
+   /**
+   * Set the text of a particular info window.
+   * @param testClassName The name of the class sending the info. Used to decide which window to update.
+   * @param lines A List of Strings to add to the window.
+   */
   public void setTestInfoWindowText(String testClassName, List lines) {
     
     TestInfoWindow infoWindow = (TestInfoWindow)testButtonInfoWindows.get(testClassName);
