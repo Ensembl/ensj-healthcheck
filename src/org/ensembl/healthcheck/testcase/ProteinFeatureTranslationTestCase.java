@@ -30,11 +30,16 @@ import org.ensembl.healthcheck.util.*;
 
 public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Repair {
   
+  // hash of lists of protein features to delete
+  // key - database name
+  Map featuresToDelete;
+  
   /**
    * Create an ProteinFeatureTranslationTestCase that applies to a specific set of databases.
    */
   public ProteinFeatureTranslationTestCase() {
     addToGroup("db_constraints");
+    featuresToDelete = new HashMap();
   }
   
   /**
@@ -60,9 +65,9 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
       try {
         
         Connection con = (Connection)it.next();
-
+        
         // NOTE: By default the MM MySQL JDBC driver reads and stores *all* rows in the ResultSet.
-        // Since this TestCase is likely to produce lots of output, we must use the "streaming" 
+        // Since this TestCase is likely to produce lots of output, we must use the "streaming"
         // mode where only one row of the ResultSet is stored at a time.
         // To do this, the following two lines are both necessary.
         // See the README file for the mm MySQL driver.
@@ -109,7 +114,7 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
             if (rs.getInt("exon_id") == rs.getInt("end_exon_id")) {
               // add seq_end
               int currentLength = ((Integer)translationLengths.get(id)).intValue();
-              currentLength += rs.getInt("seq_start");
+              currentLength += rs.getInt("seq_end");
               translationLengths.put(id, new Integer(currentLength));
               inCodingRegion = false;
             } else {
@@ -125,20 +130,31 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
         rs.close();
         stmt.close();
         stmt = null;
-
+        
         // Re-open the statement to make sure it's GC'd
         stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
         stmt.setFetchSize(Integer.MIN_VALUE);
-
+        
+        System.out.println("About to look at protein features");
+        
         // find protein features where seq_end is > than the length of the translation
-        rs = stmt.executeQuery("SELECT protein_feature_id, translation_id, seq_end FROM protein_feature");
+        List thisDBFeatures = new ArrayList();
+        rs = stmt.executeQuery("SELECT protein_feature_id, translation_id, seq_end FROM protein_feature LIMIT 1000");
         while (rs.next()) {
           Integer id = new Integer(rs.getInt("translation_id"));
           int minTranslationLength = (((Integer)translationLengths.get(id)).intValue() + 2) / 3; // some codons can only be 2 bp
           if (rs.getInt("seq_end")  > minTranslationLength) {
             ReportManager.problem(this, con, "Protein feature " + rs.getInt("protein_feature_id") + " claims to have length " + rs.getInt("seq_end") + " but translation is of length " + minTranslationLength);
             result = false;
+            thisDBFeatures.add(new Integer(rs.getInt("protein_feature_id")));
           }
+        }
+        
+        featuresToDelete.put(DBUtils.getShortDatabaseName(con), thisDBFeatures);
+        if (thisDBFeatures.size() > 0) {
+          ReportManager.problem(this, con, "protein_feature_table has " + thisDBFeatures.size() + " features that are longer than the translation");
+        } else {
+          ReportManager.correct(this, con, "protein_feature_table has no features that are longer than the translation");
         }
         
         rs.close();
@@ -158,9 +174,50 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
   // Implementation of Repair interface.
   
   public void repair() {
+    
+    System.out.println("##################### in repair");
+    DatabaseConnectionIterator connectionIterator = getDatabaseConnectionIterator();
+    while (connectionIterator.hasNext()) {
+      Connection con = (Connection)connectionIterator.next();
+      String sql = setupRepairSQL(con);
+      try {
+        Statement stmt = con.createStatement();
+        System.out.println("would have executed " + sql);
+        //stmt.execute(sql);
+        stmt.close();
+      } catch (SQLException se) {
+        se.printStackTrace();
+      }
+    }
   }
   
   public void show() {
+    
+    DatabaseConnectionIterator connectionIterator = getDatabaseConnectionIterator();
+    while (connectionIterator.hasNext()) {
+      Connection con = (Connection)connectionIterator.next();
+      System.out.println(DBUtils.getShortDatabaseName(con) + ": " + setupRepairSQL(con));
+    }
+    
+  }
+  
+  private String setupRepairSQL(Connection con) {
+    
+    StringBuffer sql = new StringBuffer("DELETE FROM protein_feaure WHERE protein_feature_id IN (");
+    
+    List thisDBFeatures = (List)featuresToDelete.get(DBUtils.getShortDatabaseName(con));
+    Iterator featureIterator = thisDBFeatures.iterator();
+    while (featureIterator.hasNext()) {
+      sql.append(((Integer)featureIterator.next()).intValue());
+      if (featureIterator.hasNext()) {
+        sql.append(",");
+      }      
+    }
+    sql.append(")");
+    
+    
+    return sql.toString();
+    
   }
   
   // -------------------------------------------------------------------------
