@@ -5,11 +5,11 @@ EnsEMBL HealthCheck
 REQUIREMENTS
 ============
 
-1. J2SDK 1.4 or later (see http://java.sun.com/ for downloads); this
-   is already installed on the Sanger system in /usr/opt/java141/.
-   Make sure that your JAVA_HOME environment variable is pointing to
-   the correct directory and that the *correct* Java executables are
-   in your path; put something like the following in your .cshrc:
+1. J2SDK 1.4 or later (see http://java.sun.com/ for downloads); this is already
+   installed on the Sanger system in /usr/opt/java141/.  Make sure that your
+   JAVA_HOME environment variable is pointing to the correct directory and that the
+   *correct* Java executables are in your path; put something like the following in
+   your .cshrc:
 
      setenv JAVA_HOME /usr/opt/java141
      setenv PATH ${JAVA_HOME}/bin:${PATH}
@@ -18,25 +18,23 @@ REQUIREMENTS
 INSTALLATION
 ============
 
-1. Obtain the source files by checking out the ensj-healthcheck module
-from CVS.  Use the -r option to check out a specific tag if required.
+1. Obtain the source files by checking out the ensj-healthcheck module from CVS.
+Use the -r option to check out a specific tag if required.
 
 2. cd ensj-healthcheck
 
-3. Edit database.properties to contain values that correspond to the
-database server which you want to connect to. Note that you only
-specify the *host* here - the actual databases are specified on the
-command line when running tests.
+3. Edit database.properties to contain values that correspond to the database
+server which you want to connect to. Note that you only specify the *host* here
+- the actual databases are specified on the command line when running tests.
 
 
 RUNNING
 =======
 
-A number of shell scripts (with a .sh extension) are provided to aid
-in running healthchecks. These are summarised below; the main one you
-will use is called run-healthcheck.sh; note that this script actually
-passes all of its command-line options through to the TextTestRunner
-class.
+A number of shell scripts (with a .sh extension) are provided to aid in running
+healthchecks. These are summarised below; the main one you will use is called
+run-healthcheck.sh; note that this script actually passes all of its
+command-line options through to the TextTestRunner class.
 
  Usage: TextTestRunner {options} {group1} {group2} ...
  
@@ -65,17 +63,16 @@ class.
                   Note each test case is in a group of its own with the name of the test case.
                   This allows individual tests to be run if required.
 
-If no tests or test groups are specified, and a database regular
-expression is given with -d, the matching databases are shown.
+If no tests or test groups are specified, and a database regular expression is
+given with -d, the matching databases are shown.
 
 Test Groups
 -----------
 
 There are a number of test groups which contain one or more tests,
-e.g. post_genebuild, release. Each test is also a member (in fact the
-only member) of a test group with the same name as the test case. This
-allows individual tests to be specified by name on the command line if
-necessary.
+e.g. post_genebuild, release. Each test is also a member (in fact the only
+member) of a test group with the same name as the test case. This allows
+individual tests to be specified by name on the command line if necessary.
 
 Other Utilities
 ---------------
@@ -83,74 +80,68 @@ Other Utilities
 Run each of these with the -h option to show usage.
    
   show-groups.sh 		
-  Shows all the groups and the tests belonging to them. No
-  command-line options required.
+  Shows all the groups and the tests belonging to them. No command-line options
+  required.
 
   database-name-matcher.sh
   Shows which database names match a particular regular expression.
   
   list-tests-in-group.sh
-  Shows all the tests in a particular group, with descriptions if
-  required.
+  Shows all the tests in a particular group, with descriptions if required.
 
   run-healthcheck-gui.sh
   Starts the healthcheck GUI. 
 
   compile-healthcheck.sh
-  Only used if you've made changes to the source, e.g. when writing
-  your own tests.
+  Only used if you've made changes to the source, e.g. when writing your own
+  tests.
 
 Running the GUI
 ---------------
 
-The GUI test runner can be started using the run-healthcheck-gui.sh
-script. 
+The GUI test runner can be started using the run-healthcheck-gui.sh script.
 
-On the left side of the test runner window, it presents a set
-of tabs, one for each type of database that the available tests apply
-to; within each tab tests and test groups are organised in a tree
-structure. 
+On the left side of the test runner window, it presents a set of tabs, one for
+each type of database that the available tests apply to; within each tab tests
+and test groups are organised in a tree structure.
 
-Clicking on the checkbox next to a test's name will toggle whether or
-not it is selected to run. Clicking on the checkbox next to a group's
-name will select or deselect all the tests in that group. Hovering the
-mouse over a test's name will show its description. If a test is
-likely to take a long time to run, it will have a yellow warning icon
-displayed beside its name.
+Clicking on the checkbox next to a test's name will toggle whether or not it is
+selected to run. Clicking on the checkbox next to a group's name will select or
+deselect all the tests in that group. Hovering the mouse over a test's name will
+show its description. If a test is likely to take a long time to run, it will
+have a yellow warning icon displayed beside its name.
 
-The right side of the test runner window shows a set of tabs, one for
-each type of database found; databases whose type cannot be determined
-are shown on the "unknown" tab.  Select the tests you want to run and
-the databases you want to run them on, then click the "Run"
-button. This will run each test on each database; a progress window
-will appear and update as each test completes.
+The right side of the test runner window shows a set of tabs, one for each type
+of database found; databases whose type cannot be determined are shown on the
+"unknown" tab.  Select the tests you want to run and the databases you want to
+run them on, then click the "Run" button. This will run each test on each
+database; a progress window will appear and update as each test completes.
 
-Results are organised in a tree format, by test. Tests are colored
-green if all the databases they were run on passed, red if any
-failed. Hovering the mouse over the root of the tree, any of the test
-names or any of the database names will give summary information. The
-test results can be saved to a file by clicking the "Save" button; the
-file is GuiTestRunner.txt and is located in the ensj-healthcheck root
-directory.
+Results are organised in a tree format, by test. Tests are colored green if all
+the databases they were run on passed, red if any failed. Hovering the mouse
+over the root of the tree, any of the test names or any of the database names
+will give summary information. The test results can be saved to a file by
+clicking the "Save" button; the file is GuiTestRunner.txt and is located in the
+ensj-healthcheck root directory.
 
-Note that test output is not filtered by default; if you want only
-certain results to be shown, set the output level by clicking on the
-"Settings" button in the main window.
+Note that test output is not filtered by default; if you want only certain
+results to be shown, set the output level by clicking on the "Settings" button
+in the main window.
 
 Running on Windows
 ------------------
 
-Most of the documentation assumes that the healthcheck system is being
-run on a Unix or Linux system. However it is written in Java so in
-theory can be run on any platform that supports J2SDK 1.4 or later. As
-a convenience, an equivalent Windows .bat file is provided in the
-util/ driectory for each of the .sh files mentioned above.
+Most of the documentation assumes that the healthcheck system is being run on a
+Unix or Linux system. However it is written in Java so in theory can be run on
+any platform that supports J2SDK 1.4 or later. As a convenience, an equivalent
+Windows .bat file is provided in the util/ driectory for each of the .sh files
+mentioned above.
 
 WRITING YOUR OWN TESTS
 ======================
 
-If you want to write your own healthchecks, rather than running the
-pre-defined ones, see the file README-writing-tests.txt.
+If you want to write your own healthchecks, rather than running the pre-defined
+ones, see the file README-writing-tests.txt.
 
 
 

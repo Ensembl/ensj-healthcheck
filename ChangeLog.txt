@@ -2,11 +2,12 @@ Changes in version 2:
 
 * Much more control over types and species that tests apply to.
 
-* Tests organised into hierarchy according to what database type(s) they apply to.
+* Tests organised into hierarchy according to what database type(s) they apply
+  to.
  
 * Tests are now one of three types - single database, multi-database or ordered.
 
-* All tests overhauled and improved to reduce number of false positives and 
+* All tests overhauled and improved to reduce number of false positives and
   improve accuracy.
   
 * ensj-healthcheck.jar file now in CVS so no compilation step is required after
@@ -16,21 +17,24 @@ Changes in version 2:
 
 * New WebTestRunner for batch running of tests and outputting results to HTML.
 
-* Added -length attribute to TextTestRunner (accessible from run-healthcheck.sh) 
+* Added -length attribute to TextTestRunner (accessible from run-healthcheck.sh)
   to allow length of output lines to be specified. Zero means never break lines.
   
-* Added -groups option to ListAllTests to show all tests by group. This is 
+* Added -groups option to ListAllTests to show all tests by group. This is
   accessible through show-groups.sh
   
 * Renamed many tests to remove redundant "Check" prefix and "TestCase" suffix
 
-* Can now set host, port etc separately in database.properties rather than having
-  to piece together a JDBC URL
+* Can now set host, port etc separately in database.properties rather than
+  having to piece together a JDBC URL.
 
-* INSTALL is now called README and contains information on obtaining, configuring
-  and running healthchecks. README-writing-tests.txt now contains the information 
-  on how to write your own tests.
+* INSTALL is now called README and contains information on obtaining,
+  configuring and running healthchecks. README-writing-tests.txt now contains
+  the information on how to write your own tests.
   
 * Javadoc now in CVS (doc/javadoc/ensj-healthcheck.zip)
 
-* Use of CheckStyle to make style and formatting consistent across whole project.
+* Use of CheckStyle to make style and formatting consistent across whole
+  project.
+
+* Many other small improvements, changes and tidying up.
