@@ -30,14 +30,14 @@ import org.ensembl.healthcheck.util.*;
  * Also checks for protein features with no hit_id.
  */
 
-public class AccessionTestCase extends EnsTestCase {
+public class Accession extends EnsTestCase {
   
   private HashMap formats = new HashMap();
  
   /**
    * Constructor.
    */
-  public AccessionTestCase() {
+  public Accession() {
     
     addToGroup("post_genebuild");
     setDescription("Check for presence and format of PFAM etc hits");
