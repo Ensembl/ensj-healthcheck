@@ -32,7 +32,7 @@ import org.ensembl.healthcheck.util.*;
 
 public class DBUtils {
   
-  private static final boolean USE_CONNECTION_POOLING = false;
+  private static final boolean USE_CONNECTION_POOLING = true;
   
   private static Logger logger = Logger.getLogger("HealthCheckLogger");
   
