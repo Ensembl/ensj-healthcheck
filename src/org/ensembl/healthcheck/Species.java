@@ -79,6 +79,9 @@ public final class Species {
     /** Specific type of species */
     public static final Species MONODELPHIS_DOMESTICA = new Species("monodelphis_domestica");
 
+    /** Specific type of species */
+    public static final Species SACCHAROMYCES_CEREVISIAE = new Species("saccharomyces_cerevisiae");
+
     /** Unknown species */
     public static final Species UNKNOWN = new Species("unknown");
 
@@ -126,6 +129,7 @@ public final class Species {
 	taxonIDToSpecies.put("9615",  CANIS_FAMILIARIS);
 	taxonIDToSpecies.put("8364",  XENOPUS_TROPICALIS);
 	taxonIDToSpecies.put("13616", MONODELPHIS_DOMESTICA);
+	taxonIDToSpecies.put("4932",  SACCHAROMYCES_CEREVISIAE);
 
         // and the other way around
         Iterator it = taxonIDToSpecies.keySet().iterator();
@@ -152,6 +156,7 @@ public final class Species {
         assemblyPrefixToSpecies.put("BROADD",    CANIS_FAMILIARIS);
 	assemblyPrefixToSpecies.put("JGI",       XENOPUS_TROPICALIS);
         assemblyPrefixToSpecies.put("BROADO",    MONODELPHIS_DOMESTICA);
+        assemblyPrefixToSpecies.put("SGD",       SACCHAROMYCES_CEREVISIAE);
 
 	// and the other way around
         it = assemblyPrefixToSpecies.keySet().iterator();
@@ -306,6 +311,15 @@ public final class Species {
         if (in(alias, "opossum,monodelphis,mdomestica,monodelphisdomestica,monodelphis_domestica")) {
 
             return MONODELPHIS_DOMESTICA;
+
+        }
+
+
+	// --------------------------------------
+
+        if (in(alias, "yeast,saccharomyces,scerevisiae,saccharomycescerevisiae,saccharomyces_cerevisiae")) {
+
+            return SACCHAROMYCES_CEREVISIAE;
 
         }
 
