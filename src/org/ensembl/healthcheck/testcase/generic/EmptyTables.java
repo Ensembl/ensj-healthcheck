@@ -95,7 +95,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
             }
 
             // certain species can have empty karyotype table
-            if (species == Species.CAENORHABDITIS_BRIGGSAE || species == Species.CAENORHABDITIS_ELEGANS || species == Species.DANIO_RERIO || species == Species.FUGU_RUBRIPES || species == Species.XENOPUS_TROPICALIS) {
+            if (species == Species.CAENORHABDITIS_BRIGGSAE || species == Species.CAENORHABDITIS_ELEGANS || species == Species.DANIO_RERIO || species == Species.FUGU_RUBRIPES || species == Species.XENOPUS_TROPICALIS || species == Species.APIS_MELLIFERA || species == Species.PAN_TROGLODYTES) {
                 tables = remove(tables, "karyotype");
             }
 
@@ -103,6 +103,26 @@ public class EmptyTables extends SingleDatabaseTestCase {
             if (species == Species.TETRAODON_NIGROVIRIDIS) {
                 tables = remove(tables, "supporting_feature");
             }
+
+	    // only look for Affy features in human, mouse, rat
+            if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.RATTUS_NORVEGICUS) {
+                tables = remove(tables, "affy_array");
+                tables = remove(tables, "affy_feature");
+                tables = remove(tables, "affy_probe");
+            }
+
+
+	    // only look for transcript & translation attribs in human, mouse, rat
+            if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.RATTUS_NORVEGICUS) {
+                tables = remove(tables, "transcript_attrib");
+                tables = remove(tables, "translation_attrib");
+            }
+
+	    // drosophila is imported, so no supporting features.
+            if (species == Species.DROSOPHILA_MELANOGASTER) {
+                tables = remove(tables, "supporting_feature");
+            }
+
             // ----------------------------------------------------
 
         } else if (type == DatabaseType.EST) {
