@@ -118,26 +118,6 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
     }
 
     // -------------------------------------------------------------------------
-    /**
-     * Generic way to check for orphan foreign key relationships.
-     * 
-     * @return true If there are no orphans.
-     */
-    private boolean checkForOrphans(Connection con, String table1, String key1, String table2, String key2,
-            boolean oneWay) {
-
-        int orphans = countOrphans(con, table1, key1, table2, key2, oneWay);
-        if (orphans > 0) {
-            ReportManager.problem(this, con, table1 + " <-> " + table2 + " has " + orphans + " unlinked entries");
-        } else {
-            ReportManager.correct(this, con, "All " + table1 + " <-> " + table2 + " relationships are OK");
-        }
-
-        return orphans == 0;
-
-    } // checkForOrphans
-
-    // -------------------------------------------------------------------------
     private boolean checkStableIDKeys(Connection con, String type) {
 
         if (tableHasRows(con, type + "_stable_id")) { 
