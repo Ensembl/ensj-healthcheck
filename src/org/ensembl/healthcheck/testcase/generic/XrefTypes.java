@@ -18,6 +18,9 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.SQLException;
+import java.sql.ResultSet;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
@@ -57,31 +60,50 @@ public class XrefTypes extends SingleDatabaseTestCase {
         
 	Connection con = dbre.getConnection();
 
-	String[] dbNames = getColumnValues(con, "SELECT DISTINCT(db_name) FROM external_db WHERE db_name NOT LIKE 'AFFY%'");
-											    
-	for (int i = 0; i < dbNames.length; i++) {
+	try {
 
-	    String dbName = dbNames[i];
-	    logger.fine("Checking object types for " + dbName);
-	    String sql = "SELECT DISTINCT(ox.ensembl_object_type) FROM external_db e, xref x, object_xref ox WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id AND e.db_name='" + dbName + "'";
-	    String[] objectTypes = getColumnValues(con, sql);
+	    Statement stmt = con.createStatement();
 
-	    // note that since the same external_db table is used across all databases
-	    // it is allowable for some external_db entries to have no associated xrefs
-	    if (objectTypes.length == 1) {
+	    // Query returns all external_db_id-object type relations
+	    // execute it and loop over each row checking for > 1 consecutive row with same ID
+	    
+	    ResultSet rs = stmt.executeQuery("SELECT x.external_db_id, ox.ensembl_object_type, COUNT(*) FROM xref x, object_xref ox WHERE x.xref_id = ox.xref_id GROUP BY x.external_db_id, ox.ensembl_object_type");
+	    
+	    long previousID = -1;
+	    String previousType = "";
 
-		ReportManager.correct(this, con, "Exactly one object type associated with " + dbName + " xrefs");
+	    while (rs != null && rs.next()) {
 		
-	    } else if (objectTypes.length > 1) {
+		long externalDBID = rs.getLong(1);
+		String objectType = rs.getString(2);
+		int count = rs.getInt(3);
+		
+		if (externalDBID == previousID) {
+		    
+		    ReportManager.problem(this, con, "External DB ID " + externalDBID + " is associated with " + objectType + " as well as " + previousType);
+		    result = false;
+		    
+		}
+		
+		previousType = objectType;
+		previousID = externalDBID;
 
-		ReportManager.problem(this, con, dbName + " xrefs are associated with " + objectTypes.length + " Ensembl object types (" + Utils.arrayToString(objectTypes, ",") + ") - should only be one");
-		result = false;
+	    } // while rs
+	 
 
-	    }
+	    stmt.close();
 
+	} catch (SQLException e) {
+            e.printStackTrace();
 	}
 
-        return result;
+	if (result) {
+
+	    ReportManager.correct(this, con, "All external dbs are only associated with one Ensembl object type");
+	    
+	}
+
+	return result;
 
     } // run
 
