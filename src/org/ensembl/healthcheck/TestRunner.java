@@ -16,16 +16,6 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/**
- * <p>Title: TestRunner.java</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2003</p>
- * <p>Organisation: EMBL</p>
- * <p>Created on March 11, 2003, 1:55 PM</p>
- * @author Glenn Proctor <glenn@ebi.ac.uk>
- * @version $Revision$
- */
-
 package org.ensembl.healthcheck;
 
 import java.util.*;
@@ -38,17 +28,19 @@ import junit.framework.*;
 
 import org.ensembl.healthcheck.util.*;
 
+/**
+ * <p>TestRunner is a base class that provides utilities for running tests - 
+ * logging, the ability to find and run tests from certain locations, etc.</p>
+ */
+
 public class TestRunner {
   
-  private static String version = "$Id$";
-  private ArrayList allTests;            // will hold an instance of each test
-  private ArrayList groupsToRun;
-  private Properties dbProps;
-  private String commandLineRegexp = null;
-  private boolean forceDatabases = false;
+  protected List allTests;            // will hold an instance of each test
+  protected List groupsToRun;
+  protected Properties dbProps;
   
   private static Logger logger = Logger.getLogger("HealthCheckLogger");
-  
+
   // -------------------------------------------------------------------------
   /** Creates a new instance of TestRunner */
   
@@ -60,27 +52,7 @@ public class TestRunner {
   
   // -------------------------------------------------------------------------
   
-  public static void main(String[] args) {
-    
-    TestRunner tr = new TestRunner();
-    
-    System.out.println(tr.getVersion());
-    
-    tr.parseCommandLine(args);
-    
-    tr.setupLogging();
-    
-    tr.readPropertiesFile();
-    
-    //tr.showDatabaseList();
-    
-    tr.runAllTests(tr.findAllTests());
-    
-  } // main
-  
-  // -------------------------------------------------------------------------
-  
-  private void readPropertiesFile() {
+  protected void readPropertiesFile() {
     
     String propsFile = System.getProperty("user.dir") + System.getProperty("file.separator") + "database.properties";
     dbProps = Utils.readPropertiesFile(propsFile);
@@ -94,89 +66,7 @@ public class TestRunner {
     
   } // readPropertiesFile
   
-  // -------------------------------------------------------------------------
-  
-  
-  private void parseCommandLine(String[] args) {
-    
-    if (args.length == 0) {
-      
-      printUsage();
-      System.exit(1);
-      
-    } else {
-      
-      for (int i=0; i < args.length; i++) {
-	
-	if (args[i].equals("-h")) {
-	  
-	  printUsage();
-	  System.exit(0);
-	  
-	} else if (args[i].equals("-d")) {
-	  
-	  i++;
-	  commandLineRegexp = args[i];
-	  System.out.println("Will pre-filter database names on " + commandLineRegexp);
-	  
-	} else if (args[i].equals("-force")) {
-	  
-	  forceDatabases = true;
-	  System.out.println("Will use ONLY databases specified by -d");
-	  
-	} else {
-	  groupsToRun.add(args[i]);
-	  System.out.println("Will run tests in group " + args[i]);
-	}
-      }
-      
-      if (forceDatabases && commandLineRegexp == null) {
-	System.err.println("You have requested -force but not specified a database name regular expression with -d");
-	System.exit(1);
-      }
-    }
-    
-  } // parseCommandLine
-  
-  // -------------------------------------------------------------------------
-  
-  private void setupLogging() {
-    
-    logger.setUseParentHandlers(false); // stop parent logger getting the message
-    Handler myHandler = new MyStreamHandler(System.out, new LogFormatter());
-    logger.addHandler(myHandler);
-    logger.setLevel(Level.FINEST);
-    logger.info("Set logging level to " + logger.getLevel().getName());
-    
-  } // setupLogging
-  
-  // -------------------------------------------------------------------------
-  
-  private void printUsage() {
-    
-    System.out.println("\nUsage: TestRunner {-d regexp} {-force} {group1} {group2} ...\n");
-    System.out.println("Options:");
-    System.out.println("  -d regexp  Use the given regular expression to decide which databases to use.");
-    System.out.println("  -force     Run the named tests on the databases matched by -d, without ");
-    System.out.println("             taking into account the regular expressions built into the tests themselves.");
-    System.out.println("  group1     Names of groups of test cases to run.");
-    System.out.println("             Note each test case is in a group of its own with the name of the test case.");
-    System.out.println("             This allows individual tests to be run if required.");
-    System.out.println("");
-    
-  } // printUsage
-  
-  // -------------------------------------------------------------------------
-  
-  public String getVersion() {
-    
-    // strip off first and last few chars of version since these are only used by CVS
-    return version.substring(5, version.length()-2);
-    
-  } // getVersion
-  
-  // -------------------------------------------------------------------------
-  
+ 
   public String[] getListOfDatabaseNames(String regexp, String preFilterRegexp) {
     
     Connection conn;
@@ -216,7 +106,7 @@ public class TestRunner {
   
   // -------------------------------------------------------------------------
   
-  private void showDatabaseList(String regexp, String preFilterRegexp) {
+  protected void showDatabaseList(String regexp, String preFilterRegexp) {
     
     logger.fine("Listing databases matching " + regexp + " :\n");
     
@@ -230,7 +120,7 @@ public class TestRunner {
   
   // -------------------------------------------------------------------------
   
-  private ArrayList findAllTests() {
+  protected List findAllTests() {
     
     ArrayList allTests = new ArrayList();
     
@@ -278,14 +168,11 @@ public class TestRunner {
   
   // -------------------------------------------------------------------------
   
-  private void runAllTests(ArrayList allTests) {
+  protected void runAllTests(List allTests, String preFilterRegexp, boolean forceDatabases) {
     
-    Pattern pattern;
-    Matcher matcher;
-    
-    // check if allTests() has been populated; if not, run findAllTests()
+    // check if allTests() has been populated
     if (allTests == null) {
-      allTests = findAllTests();
+      logger.warning("No tests to run! Call findAllTests() first?");
     }
     
     if (allTests.size() == 0) {
@@ -300,13 +187,13 @@ public class TestRunner {
       
       if (testCase.inGroups(groupsToRun)) {
 	logger.info("\tRunning test of type " + testCase.getClass().getName());
-	if (commandLineRegexp != null) {
-	  testCase.setPreFilterRegexp(commandLineRegexp);
+	if (preFilterRegexp != null) {
+	  testCase.setPreFilterRegexp(preFilterRegexp);
 	}
 	
 	if (forceDatabases) {
 	  // override built-in database regexp with the one specified on the command line
-	  testCase.setDatabaseRegexp(commandLineRegexp);
+	  testCase.setDatabaseRegexp(preFilterRegexp);
 	}
 	TestResult tr = testCase.run();
 	System.out.println("\n" + tr.getName() + " " + tr.getResult() + " " + tr.getMessage() + "\n");
@@ -330,7 +217,7 @@ public class TestRunner {
   
   // -------------------------------------------------------------------------
   
-  public ArrayList findTestsInDirectory(String dir, String packageName) {
+  public List findTestsInDirectory(String dir, String packageName) {
     
     logger.info("Looking for tests in " + dir);
     
@@ -379,7 +266,7 @@ public class TestRunner {
   
    // -------------------------------------------------------------------------
   
-  public ArrayList findTestsInJar(String jarFileName, String packageName) {
+  public List findTestsInJar(String jarFileName, String packageName) {
     
     ArrayList tests = new ArrayList();
     
@@ -393,7 +280,7 @@ public class TestRunner {
   /**
    * Add all tests in subList to mainList, <em>unless</em> the test is already a member of mainList.
    */
-  public void addUniqueTests(ArrayList mainList, ArrayList subList) {
+  public void addUniqueTests(List mainList, List subList) {
     
     Iterator it = subList.iterator();
     
@@ -412,7 +299,7 @@ public class TestRunner {
   
   // -------------------------------------------------------------------------
   
-  public boolean testInList(EnsTestCase test, ArrayList list) {
+  public boolean testInList(EnsTestCase test, List list) {
     
     boolean inList = false;
     
