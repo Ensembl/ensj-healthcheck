@@ -117,7 +117,7 @@ public class ExonStrandOrder extends SingleDatabaseTestCase {
 
                         // check all exons have the same strand as their transcript
                         if (exonStrand != transcriptStrand) {
-                            ReportManager.problem(this, con, "Exons " + exonID + " in transcript " + transcriptID + " has strand "
+                            ReportManager.problem(this, con, "Exon " + exonID + " in transcript " + transcriptID + " has strand "
                                     + exonStrand + " but transcript's strand is " + transcriptStrand);
                             result = false;
                         }
