@@ -48,40 +48,42 @@ public class CheckFeatureCoordsTestCase extends EnsTestCase {
       
       Connection con = (Connection)it.next();
       
-      logger.fine("Checking DNA align features ...");
-      
+      logger.info("Checking DNA align features ...");
       int rows = getRowCount(con, "select count(*) from dna_align_feature where contig_start > contig_end");
       if (rows > 0) {
         result = false;
         logger.warning(rows + " in " + DBUtils.getShortDatabaseName(con) + " have DNA align features where contig_start > contig_end");
       }
       
+      logger.info(".");
       rows = getRowCount(con, "select count(*) from dna_align_feature where contig_start < 1");
       if (rows > 0) {
         result = false;
         logger.warning(rows + " in " + DBUtils.getShortDatabaseName(con) + " have DNA align features where contig_start < 1");
       }
 
+      logger.info(".");
       rows = getRowCount(con, "select count(dna_align_feature_id) from dna_align_feature f, contig c where f.contig_id = c.contig_id and f.contig_end > c.length");
       if (rows > 0) {
         result = false;
         logger.warning(rows + " in " + DBUtils.getShortDatabaseName(con) + " have DNA align features where contig_length > contig_end");
       }
       
-      logger.fine("Checking protein align features ...");
-
+      logger.info("Checking protein align features ...");
       rows = getRowCount(con, "select count(*) from protein_align_feature where contig_start > contig_end");
       if (rows > 0) {
         result = false;
         logger.warning(rows + " in " + DBUtils.getShortDatabaseName(con) + " have protein align features where contig_start > contig_end");
       }
 
+      logger.info(".");
       rows = getRowCount(con, "select count(*) from protein_align_feature where contig_start < 1");
       if (rows > 0) {
         result = false;
         logger.warning(rows + " in " + DBUtils.getShortDatabaseName(con) + " have protein align features where contig_start < 1");
       }
       
+      logger.info(".");
       rows = getRowCount(con, "select count(protein_align_feature_id) from protein_align_feature f, contig c where f.contig_id = c.contig_id and f.contig_end > c.length");
       if (rows > 0) {
         result = false;
