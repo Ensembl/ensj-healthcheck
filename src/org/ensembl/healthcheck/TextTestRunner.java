@@ -59,6 +59,8 @@ public class TextTestRunner extends TestRunner {
     
     ttr.runAllTests(ttr.findAllTests(), ttr.forceDatabases);
     
+    ConnectionPool.closeAll();
+    
   } // main
   
   // -------------------------------------------------------------------------
