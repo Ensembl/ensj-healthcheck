@@ -145,6 +145,12 @@ public class LogicNamesDisplayableTestCase extends EnsTestCase {
       }
       rs.close();
       stmt.close();
+
+    
+      if(result == true) {
+          ReportManager.correct(this, con,"feature logic names look OK");
+      }
+
       return result;
   }
   
@@ -179,8 +185,8 @@ public class LogicNamesDisplayableTestCase extends EnsTestCase {
         if(!gffFeat.equals("DOMAIN")) {
           ReportManager.problem(this, con, "protein_feature"
           + " analysis with analysis_id = " + analysisId
-          + " and gffSource = " + gffSource
-          + " must have gffSource eq 'DOMAIN'");
+          + " and gff_source = '" + gffSource
+          + "' must have gff_feature = 'DOMAIN'");
           noProblems = false;
         }
       } else if(gffSource.equals("BLASTP") || gffSource.equals("SEG") || gffSource.equals("TMHMM")  || gffSource.equals("NCOILS") || gffSource.equals("SIGNALP")) {
@@ -189,8 +195,8 @@ public class LogicNamesDisplayableTestCase extends EnsTestCase {
         if(gffFeat.equals("DOMAIN")) {
           ReportManager.problem(this, con, "protein_feature"
           + " analysis with analysis_id = " + analysisId
-          + " and gffSource = " + gffSource
-          + " must have gffSource ne 'DOMAIN'");
+          + " and gff_source = '" + gffSource
+          + "' must have gff_feature != 'DOMAIN'");
           noProblems = false;
         }
       } else if(!gffSource.equals("SUPERFAMILY")) {
