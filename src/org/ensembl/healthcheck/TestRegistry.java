@@ -154,7 +154,7 @@ public class TestRegistry {
 	 * 
 	 * @return A List containing objects of the test case classes found.
 	 */
-	protected List findAllTests() {
+	public List findAllTests() {
 
 		ArrayList allTests = new ArrayList();
 
