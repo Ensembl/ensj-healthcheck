@@ -22,7 +22,7 @@ INSTALLATION
 3. Edit database.properties to contain values that correspond to the database server which you want to connect to. This file is in standard Java properties file format.
 
 4. Compile the source. This can be done in a number of ways:
-   a) Invoke javac on the command-line. A simple shell script, compile-healthcheck.sh, has been provided as a guide to setting the classpath etc.
+   a) Invoke javac on the command-line. A simple shell script, compile-healthcheck.sh, has been provided as a guide to setting the classpath etc. If you're having problems with this method, check your $PATH, $JAVA_HOME and $CLASSPATH variables.
    b) Use the Apache ANT build system (http://ant.apache.org) - this is highly recommended if you need to do non-trivial tasks such as compiling, building distributions etc. A sample build.xml file is included in the Healthcheck distribution.
    c) Use an IDE of your choice, e.g. NetBeans
 
@@ -31,16 +31,24 @@ RUNNING
 
 See the file run-healthcheck.sh for an example of how to set classpaths etc. Note that this script passes any of its command-line options through to the TextTestRunner class.
 
-  Usage: TextTestRunner {-d regexp} {-force} {group1} {group2} ...
-   
-  Options:
-    -d regexp  Use the given regular expression to decide which databases to use.
-    -force     Run the named tests on the databases matched by -d, without
-  	       taking into account the regular expressions built into the tests themselves.
-    group1     Names of groups of test cases to run.
-  	       Note each test case is in a group of its own with the name of the test case.
-  	       This allows individual tests to be run if required.
-
+    Usage: TextTestRunner {-d regexp} {-force} {-output none|problem|correct|summary|info|all} {group1} {group2} ...
+    Options:
+      -d regexp       Use the given regular expression to decide which databases to use.
+      -force          Run the named tests on the databases matched by -d, without 
+                      taking into account the regular expressions built into the tests themselves.
+      -h              This message.
+      -output level   Set output level; level can be one of 
+                      none      nothing is printed
+                      problem   only problems are reported
+                      correct   only correct results (and problems) are reported
+                      summary   only summary info (and problems, and correct reports) are reported
+                      info      info (and problem, correct, summary) messages reported
+                      all       everything is printed
+      -debug          Print debugging info (for developers only)
+      group1          Names of groups of test cases to run.
+                      Note each test case is in a group of its own with the name of the test case.
+                      This allows individual tests to be run if required.
+    
 There is also a script called run-healthcheck-gui.sh which will start the GUI version.
 
 Note that there is a special group called "all" which every test is a member of by default. Each test is also a member (in fact the only member) of a test group with the same name as the test case. This allows individual tests to be specified by name on the command line if necessary.
@@ -61,6 +69,8 @@ See the Javadoc documentation for more details, particularly for the following c
 
  EnsTestCase			Base class containing many methods that can be used in tests.
  TestResult			The object that the run() method can return after the test.
+ ReportManager                  Can be used to store information about the outcome of the tests.
+ ReportLine                     What ReportManager stores.
  DatabaseConnectionIterator     Implements java.lang.Iterator to facilitate obtaining database connections.
  DBUtils                        Various (static) methods for doing common database-oriented tasks.
  Utils				Non-database utilities.
@@ -73,7 +83,7 @@ public class OrphanTestCase extends EnsTestCase {
   
   public OrphanTestCase() {
     databaseRegexp = "^homo_sapiens_core_12.*";
-    addToGroup("group2");
+    addToGroup("group2
   }
   
   TestResult run() {
@@ -90,7 +100,7 @@ public class OrphanTestCase extends EnsTestCase {
       
     }
     
-    return new TestResult(getShortTestName(), result, "");
+    return new TestResult(getShortTestName(), result, "
     
   }
   
