@@ -28,6 +28,8 @@ import org.ensembl.healthcheck.*;
 
 public class ExternalDBDescribe extends MultiDatabaseTestCase {
 
+	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.EST, DatabaseType.ESTGENE, DatabaseType.VEGA};
+	
   /** Creates a new instance of ExternalDBDescribe */
   public ExternalDBDescribe() {
   	
@@ -42,7 +44,7 @@ public class ExternalDBDescribe extends MultiDatabaseTestCase {
    */
   public boolean run(DatabaseRegistry dbr) {
     
-   return checkSQLAcrossSpecies("SELECT * FROM external_db ORDER BY external_db_id", dbr);
+   return checkSQLAcrossSpecies("SELECT * FROM external_db ORDER BY external_db_id", dbr, types);
     
   } // run
   

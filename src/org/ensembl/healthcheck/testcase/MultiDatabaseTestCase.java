@@ -19,6 +19,7 @@ package org.ensembl.healthcheck.testcase;
 import java.util.*;
 
 import org.ensembl.healthcheck.*;
+import org.ensembl.healthcheck.util.Utils;
 
 /**
  * Subclass of EnsTestCase for tests that apply to <em>multiple</em> databases. Such
@@ -57,9 +58,10 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
 	 * Check that the same piece of SQL gives the same result across several species.
 	 * @param sql The SQL to check.
 	 * @param dbr The registry containing the databases to check.
+	 * @param types Only databases from the registry whose types are contined in this array will be used.
 	 * @return true if SQL returns the same for all databases for each species in dbr.
 	 */
-	public boolean checkSQLAcrossSpecies(String sql, DatabaseRegistry dbr) {
+	public boolean checkSQLAcrossSpecies(String sql, DatabaseRegistry dbr, DatabaseType[] types) {
 		
 		boolean result = true;
 
@@ -71,8 +73,10 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
 
 			Species species = (Species)it.next();
 
-			result &= checkSameSQLResult(sql, (DatabaseRegistryEntry[])speciesMap.get(species));
-			
+			DatabaseRegistryEntry[] dbsForSpecies = (DatabaseRegistryEntry[])speciesMap.get(species);
+			// filter by database type
+			DatabaseRegistryEntry[] filteredDBs = filterByType(dbsForSpecies, types);
+			result &= checkSameSQLResult(sql, filteredDBs);
 
 		} // foreach species
 
@@ -81,10 +85,10 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
 	
 	//---------------------------------------------------------------------
 	
-	public boolean checkTableAcrossSpecies(String table, DatabaseRegistry dbr) {
+	public boolean checkTableAcrossSpecies(String table, DatabaseRegistry dbr, DatabaseType[] types) {
 		
 		String sql = "SELECT COUNT(*) FROM " + table;
-		boolean result = checkSQLAcrossSpecies(sql, dbr);
+		boolean result = checkSQLAcrossSpecies(sql, dbr, types);
 		
 		if (!result) {
 			ReportManager.problem(this, "", "Differences in " + table + " table across species");
@@ -93,6 +97,28 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
 		}
 		
 		return result;
+		
+	}
+	
+	// -----------------------------------------------------------------
+	/**
+	 * Filter an array of DatabaseRegistryEntries.
+	 * @param The databases to check.
+	 * @param types The types to look for.
+	 * @return Those entries in databases that have a type that is in types.
+	 */
+	private DatabaseRegistryEntry[] filterByType(DatabaseRegistryEntry[] databases, DatabaseType[] types) {
+		
+		List filtered = new ArrayList();
+		
+		for (int i = 0; i < databases.length; i++) {
+			
+			if (Utils.objectInArray(databases[i].getType(), types)) {
+				filtered.add(databases[i]);
+			}
+		}
+		
+		return (DatabaseRegistryEntry[])filtered.toArray(new DatabaseRegistryEntry[filtered.size()]);
 		
 	}
 	

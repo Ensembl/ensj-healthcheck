@@ -25,23 +25,25 @@ import org.ensembl.healthcheck.*;
  * Check the DNA tables in a range of databases.
  */
 public class DNATablesAcrossSpecies extends MultiDatabaseTestCase {
-    
-  /**
-   * Creates a new instance of CheckDNATables
-   */
-  public DNATablesAcrossSpecies() {
-    addToGroup("pre_mart");
-    setDescription("Check that the DNA table exists, and all DBs for a particular species have the same entries.");
-  }
-  
-  /** 
-   * Make sure that the dna table has the same number of rows across species.
-   * @return True if dna has the same number of rows within species.
-   */
-  public boolean run(DatabaseRegistry dbr) {
-    
-    return checkTableAcrossSpecies("dna", dbr);
-    
-  } // run
-  
+
+	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.EST, DatabaseType.ESTGENE, DatabaseType.VEGA };
+
+	/**
+	 * Creates a new instance of CheckDNATables
+	 */
+	public DNATablesAcrossSpecies() {
+		addToGroup("pre_mart");
+		setDescription("Check that the DNA table exists, and all DBs for a particular species have the same entries.");
+	}
+
+	/** 
+	 * Make sure that the dna table has the same number of rows across species.
+	 * @return True if dna has the same number of rows within species.
+	 */
+	public boolean run(DatabaseRegistry dbr) {
+
+		return checkTableAcrossSpecies("dna", dbr, types);
+
+	} // run
+
 } // CheckDNATables

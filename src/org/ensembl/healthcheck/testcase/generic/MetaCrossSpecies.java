@@ -26,6 +26,8 @@ import org.ensembl.healthcheck.testcase.*;
 
 public class MetaCrossSpecies extends MultiDatabaseTestCase {
 
+	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.EST, DatabaseType.ESTGENE, DatabaseType.VEGA};
+	
 	public MetaCrossSpecies() {
 		addToGroup("post_genebuild");
 		setDescription("Check meta table species, classification and taxonomy_id is the same in all DBs for each species");
@@ -39,7 +41,7 @@ public class MetaCrossSpecies extends MultiDatabaseTestCase {
 	public boolean run(DatabaseRegistry dbr) {
 
 		boolean result = checkSQLAcrossSpecies(	"SELECT LCASE(meta_value) FROM meta WHERE meta_key LIKE \'species.%' ORDER BY meta_id",
-																						dbr);
+																						dbr, types);
 		if (!result) {
 			ReportManager.problem(this, "", "meta information not the same for some databases");
 		} else {
