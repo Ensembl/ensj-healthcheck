@@ -27,15 +27,13 @@ import org.ensembl.healthcheck.util.*;
 
 /**
  * Checks the metadata table to make sure it is OK.
+ * Only one meta table at a time is done here; checks for the consistency of the
+ * meta table across species are done in MetaCrossSpecies.
  */
 public class Meta extends EnsTestCase {
 
 	// update this array as necessary
 	private static final String[] validPrefixes = { "RGSC", "DROM", "ZFISH", "FUGU", "MOZ", "CEL", "CBR", "MGSC", "NCBI", "NCBIM" };
-
-	//these should be updated as necessary; an up-to-date list can be found in
-	// ensembl-compara/sql/taxon.txt
-	private static final String[] validTaxonIDs = { "9606", "10090", "10116", "31033", "7165", "7227", "6239", "6238", "7955" };
 
 	/**
 	 * Creates a new instance of CheckMetaDataTableTestCase
@@ -219,43 +217,24 @@ public class Meta extends EnsTestCase {
 			}
 
 			// -------------------------------------------
-			// Check that the taxonomy ID matches a known one. Note this will not catch cases
-			// where the taxonomy ID is valid for some other species!
-			// The array validTaxonIDs holds the "correct" ones - see top of this file
+			// Check that the taxonomy ID matches a known one. 
+			// The taxonomy ID-species mapping is held in the Species class.
+			
+			String dbSpeciesCommonName = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='species.common_name'");
+			Species species = Species.resolveAlias(dbSpeciesCommonName);
+			logger.finest("Species common name from database is " + dbSpeciesCommonName + " - resolves to " + species.toString());
 			String dbTaxonID = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='species.taxonomy_id'");
 			logger.finest("Taxonomy ID from database: " + dbTaxonID);
-			if (Utils.stringInArray(dbTaxonID, validTaxonIDs, false)) {
-				ReportManager.correct(this, con, "Taxonomy ID " + dbTaxonID + " is in list of valid IDs");
+			
+			if (dbTaxonID.equals(Species.getTaxonomyID(species))) {
+				ReportManager.correct(this, con, "Taxonomy ID " + dbTaxonID + " is correct for " + species.toString());
 			} else {
-				ReportManager.problem(this, con, "Taxonomy ID " + dbTaxonID + " is not list of valid IDs");
+				ReportManager.problem(this, con, "Taxonomy ID " + dbTaxonID + " in database is not correct - should be " + Species.getTaxonomyID(species) + " for " + species.toString());
 			}
 			// -------------------------------------------
 
 		} // while connection
-
-		// ------------------------------------------
-		// Check meta table species, classification and taxonomy_id is the same
-		// in all DBs for each species
-		String[] species = getListOfSpecies();
-
-		for (int i = 0; i < species.length; i++) {
-
-			String speciesRegexp = species[i] + CORE_DB_REGEXP;
-			logger.info("Checking meta tables in " + speciesRegexp);
-
-			boolean allMatch =
-				checkSameSQLResult("SELECT LCASE(meta_value) FROM meta WHERE meta_key LIKE \'species.%' ORDER BY meta_id", speciesRegexp);
-			if (!allMatch) {
-				result = false;
-				ReportManager.problem(this, speciesRegexp, "meta information not the same for all " + species[i] + " databases");
-			} else {
-				ReportManager.correct(this, speciesRegexp, "meta information is the same for all " + species[i] + " databases");
-			}
-
-		} // foreach species
-
-		// -------------------------------------------
-
+	
 		return new TestResult(getShortTestName(), result);
 
 	} // run
