@@ -145,16 +145,13 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
                             ResultSet masterRS = masterStmt.executeQuery(sql);
                             ResultSet dbRS = dbStmt.executeQuery(sql);
 
-                            boolean showCreateSame = DBUtils.compareResultSets(masterRS, dbRS, this, " [" + table + "]", false,
-                                    false);
+                            boolean showCreateSame = DBUtils.compareResultSets(masterRS, dbRS, this, " [" + table + "]", false, false);
                             if (!showCreateSame) {
 
                                 // do more in-depth analysis of database structure
-                                compareTableStructures(masterCon, checkCon, table);
+                                result &= compareTableStructures(masterCon, checkCon, table);
 
                             }
-
-                            result &= showCreateSame;
 
                             masterRS.close();
                             dbRS.close();
@@ -196,7 +193,9 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
 
     // -------------------------------------------------------------------------
 
-    private void compareTableStructures(Connection con1, Connection con2, String table) {
+    private boolean compareTableStructures(Connection con1, Connection con2, String table) {
+
+	boolean result = true;
 
         try {
 
@@ -206,10 +205,15 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
             // compare DESCRIBE <table>
             ResultSet rs1 = s1.executeQuery("DESCRIBE " + table);
             ResultSet rs2 = s2.executeQuery("DESCRIBE " + table);
-            DBUtils.compareResultSets(rs1, rs2, this, "", false, false);
+	    boolean describeSame = DBUtils.compareResultSets(rs1, rs2, this, "", false, false);
+	    if (!describeSame) {
+		ReportManager.problem(this, con1, "DESCRIBE table for " + table + " is different for " + DBUtils.getShortDatabaseName(con1) + " and " + DBUtils.getShortDatabaseName(con2) + ":");
+		DBUtils.compareResultSets(rs1, rs2, this, "", true, false); 
+	    }
+            result &= describeSame;
 
             // compare indicies via SHOW INDEX <table>
-            compareIndices(con1, table, con2, table);
+            result &= compareIndices(con1, table, con2, table);
 
             s1.close();
             s2.close();
@@ -217,6 +221,8 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
         } catch (SQLException se) {
             logger.severe(se.getMessage());
         }
+
+	return result;
     }
 
     // -------------------------------------------------------------------------
@@ -271,10 +277,11 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
                     String table = indices[0];
                     String index = indices[1];
                     String seq = indices[4];
-                    if (seq.equals("1")) { // once per group of rows
+		    System.out.println("##here 1");
+                    //if (seq.equals("1")) { // once per group of rows
                         ReportManager.problem(this, "", DBUtils.getShortDatabaseName(con1) + " " + table + " has index " + index
                                 + " which is different or absent in " + DBUtils.getShortDatabaseName(con2));
-                    }
+			//}
                 }
             }
 
@@ -288,10 +295,11 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
                     String table = indices[0];
                     String index = indices[1];
                     String seq = indices[4];
-                    if (seq.equals("1")) { // once per group of rows
+		    System.out.println("##here 2");
+                    //if (seq.equals("1")) { // once per group of rows
                         ReportManager.problem(this, "", DBUtils.getShortDatabaseName(con2) + " " + table + " has index " + index
                                 + " which is different or absent in " + DBUtils.getShortDatabaseName(con1));
-                    }
+			//}
                 }
             }
 
