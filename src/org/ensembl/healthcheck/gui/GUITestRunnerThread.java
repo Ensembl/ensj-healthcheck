@@ -28,11 +28,14 @@ import org.ensembl.healthcheck.testcase.*;
  */
 public class GUITestRunnerThread extends Thread {
   
-  private EnsTestCase testCase;
+  private SingleDatabaseTestCase testCase;
   private GuiTestRunnerFrame guiTestRunnerFrame;
   private ThreadGroup threadGroup;
   private int maxThreads;
   private boolean isRunning = false;
+  private DatabaseRegistryEntry databaseRegistryEntry;
+  
+  // TODO - handle MultiDatabaseTestCases as well
   
   /** 
    * Creates a new instance of GUITestRunnerThread
@@ -41,7 +44,7 @@ public class GUITestRunnerThread extends Thread {
    * @param gtrf A reference to the parent GuiTestRunnerFrame to update as the thread runs.
    * @param maxThreads The maximum number of threads to run at any one time.
    */
-  public GUITestRunnerThread(ThreadGroup threadGroup, EnsTestCase testCase, GuiTestRunnerFrame gtrf, int maxThreads) {
+  public GUITestRunnerThread(ThreadGroup threadGroup, SingleDatabaseTestCase testCase, DatabaseRegistryEntry dbre, GuiTestRunnerFrame gtrf, int maxThreads) {
     
     super(threadGroup, "");
     
@@ -49,6 +52,7 @@ public class GUITestRunnerThread extends Thread {
     this.guiTestRunnerFrame = gtrf;
     this.threadGroup = threadGroup;
     this.maxThreads = maxThreads;
+    this.databaseRegistryEntry = dbre;
     
   }
   
@@ -67,17 +71,15 @@ public class GUITestRunnerThread extends Thread {
     }
     
     // and then run the test
-    
     guiTestRunnerFrame.setTestButtonEnabled(testCase.getTestName(), true);
     
     isRunning = true;
-    //System.out.println("###In GUITestRunnerThread; preFilter=" + testCase.getPreFilterRegexp() + " databaseRegexp=" + testCase.getDatabaseRegexp());
-    
-    TestResult tr = testCase.run();
+   
+    boolean tr = testCase.run(databaseRegistryEntry);
     
     isRunning = false;
     
-    Color c = tr.getResult() ? new Color(0, 128, 0) : Color.RED;
+    Color c = tr ? new Color(0, 128, 0) : Color.RED;
     
     guiTestRunnerFrame.setTestButtonColour(testCase.getTestName(), c);
     
