@@ -458,10 +458,10 @@ public class DBUtils {
   /**
    * Get a list of all the table names.
    * @param con The database connection to use.
-   * @return A list of Strings representing the names of the tables, obtained
+   * @return An array of Strings representing the names of the tables, obtained
    * from the SHOW TABLES command.
    */
-  public static List getTableNames(Connection con) {
+  public static String[] getTableNames(Connection con) {
     
     List result = new ArrayList();
     
@@ -485,7 +485,7 @@ public class DBUtils {
       logger.severe(se.getMessage());
     }
     
-    return result;
+    return (String[])result.toArray(new String[result.size()]);
     
   }
   
@@ -494,9 +494,9 @@ public class DBUtils {
    * Get a list of the table names that match a particular SQL pattern.
    * @param con The database connection to use.
    * @param pattern The SQL pattern to match the table names against.
-   * @return A list of Strings representing the names of the tables.
+   * @return An array of Strings representing the names of the tables.
    */
-  public static List getTableNames(Connection con, String pattern) {
+  public static String[] getTableNames(Connection con, String pattern) {
     
     List result = new ArrayList();
     
@@ -520,7 +520,7 @@ public class DBUtils {
       logger.severe(se.getMessage());
     }
     
-    return result;
+    return (String[])result.toArray(new String[result.size()]);
     
   }
   
