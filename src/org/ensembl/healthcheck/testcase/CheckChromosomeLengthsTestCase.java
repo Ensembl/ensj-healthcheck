@@ -79,9 +79,12 @@ public class CheckChromosomeLengthsTestCase extends EnsTestCase {
 
       if (chrs.length > 0){
 	result = false;
-	ReportManager.problem(this, con, "chromosome lengths are shorter in the chromosome table than in the assembly table");
+	ReportManager.problem(this, con, "Chromosome lengths are shorter in the chromosome table than in the assembly table");
+	for( int i = 0 ; i<chrs.length && i<5; i++ ) {
+	    ReportManager.problem( this, con, " Chromosome " + chrs[i] + " is longer in assembly than in chromosome" );
+	}
       } else {
-	ReportManager.correct(this, con, "chromosome lengths are equal or greater in the chromosome table compared to the assembly table");
+	ReportManager.correct(this, con, "Chromosome lengths are equal or greater in the chromosome table compared to the assembly table");
       }
 
       // --------------------------------------------------
@@ -99,6 +102,9 @@ public class CheckChromosomeLengthsTestCase extends EnsTestCase {
       if (kars.length > 0){
 	result = false;
 	ReportManager.problem(this, con, "chromosome lengths differ between karyotype and chromosome tables");
+	for( int i = 0 ; i<kars.length && i<5; i++ ) {
+	    ReportManager.problem( this, con, " Chromosome " + kars[i] + " is different in karyotype and chromosome table" );
+	}
       } else {
 	ReportManager.correct(this, con, "chromosome lengths are the same in karyotype and chromosome tables");
       }
