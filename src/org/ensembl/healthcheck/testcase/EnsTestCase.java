@@ -435,7 +435,7 @@ public abstract class EnsTestCase {
   /**
    * Count the rows in a particular table or query.
    * @param con A connection to the database. Should already be open.
-   * @param sql The SQL to execute. Note that if possible this should begin with <code>SELECT COUNT(*) FROM</code>
+   * @param sql The SQL to execute. Note that if possible this should begin with <code>SELECT COUNT FROM</code>
    * since this is much quicker to execute. If a standard SELECT statement is used, a row-by-row count will
    * be performed, which may be slow if the table is large.
    * @return The number of matching rows, or -1 if the query did not execute for some reason.
@@ -447,14 +447,14 @@ public abstract class EnsTestCase {
     }
     int result = -1;
     
-    // check if the SQL starts with SELECT COUNT(*) - if so it's a lot quicker
-    if (sql.toLowerCase().indexOf("select count(*) from") >= 0) {
+    // check if the SQL starts with SELECT COUNT - if so it's a lot quicker
+    if (sql.toLowerCase().indexOf("select count") >= 0) {
       
       result = getRowCountFast(con, sql);
       
     } else {  // if not, do it row-by-row
       
-      logger.warning("getRowCount() executing SQL which does not appear to begin with SELECT COUNT(*) FROM - performing row-by-row count, which may take a long time if the table is large.");
+      logger.warning("getRowCount() executing SQL which does not appear to begin with SELECT COUNT - performing row-by-row count, which may take a long time if the table is large.");
       result = getRowCountSlow(con, sql);
       
     }
