@@ -8,9 +8,22 @@ package org.ensembl.healthcheck;
 
 import java.util.*;
 import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.border.*;
+
+import java.awt.Font;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.BorderLayout;
+
+import java.awt.event.*;
 
 import java.util.logging.*;
+
+import org.ensembl.healthcheck.util.*;
+
+import org.ensembl.healthcheck.testcase.*;
 
 /**
  *
@@ -19,10 +32,16 @@ import java.util.logging.*;
 public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTarget {
   
   HashMap testButtons = new HashMap();
+  HashMap testButtonInfoWindows = new HashMap();
+  
+  GuiTestRunner guiTestRunner;
+  
+  private static final Dimension PANEL_SIZE = new Dimension(300, 350);
   
   /** Creates new form GuiTestRunnerFrame */
-  public GuiTestRunnerFrame() {
+  public GuiTestRunnerFrame(GuiTestRunner gtr) {
     initComponents();
+    this.guiTestRunner = gtr;
   }
   
   /** This method is called from within the constructor to
@@ -36,6 +55,7 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
     testPanel = new javax.swing.JPanel();
     bottomPanel = new javax.swing.JPanel();
     statusLabel = new javax.swing.JLabel();
+    centrePanel = new javax.swing.JPanel();
     
     setTitle("EnsEMBL HealthCheck");
     addWindowListener(new java.awt.event.WindowAdapter() {
@@ -45,25 +65,29 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
     });
     
     topPanel.setBackground(new java.awt.Color(255, 255, 255));
-    titleLabel.setFont(new java.awt.Font("SansSerif", 1, 14));
+    titleLabel.setFont(new java.awt.Font("SansSerif", 1, 18));
     titleLabel.setIcon(new javax.swing.ImageIcon("/tmp_mnt/net_nfs6/vol1/homes/glenn/work/ensj-healthcheck/images/e-logo.gif"));
-    titleLabel.setText("EnsEMBL HealthCheck");
+    titleLabel.setText("HealthCheck");
     topPanel.add(titleLabel);
     
     getContentPane().add(topPanel, java.awt.BorderLayout.NORTH);
     
     testPanel.setLayout(new javax.swing.BoxLayout(testPanel, javax.swing.BoxLayout.Y_AXIS));
     
-    testPanel.setBackground(new java.awt.Color(255, 255, 255));
     getContentPane().add(testPanel, java.awt.BorderLayout.WEST);
     
     bottomPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
     
     bottomPanel.setBackground(new java.awt.Color(153, 153, 255));
+    statusLabel.setFont(new java.awt.Font("Dialog", 0, 12));
     statusLabel.setText("Status ...");
     bottomPanel.add(statusLabel);
     
     getContentPane().add(bottomPanel, java.awt.BorderLayout.SOUTH);
+    
+    centrePanel.setBackground(new java.awt.Color(255, 255, 255));
+    centrePanel.setBorder(new javax.swing.border.TitledBorder("Select groups / tests"));
+    getContentPane().add(centrePanel, java.awt.BorderLayout.CENTER);
     
     pack();
   }//GEN-END:initComponents
@@ -76,6 +100,7 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
   
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JPanel bottomPanel;
+  private javax.swing.JPanel centrePanel;
   private javax.swing.JLabel statusLabel;
   private javax.swing.JPanel testPanel;
   private javax.swing.JLabel titleLabel;
@@ -101,6 +126,7 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
   public void callback(LogRecord logRecord) {
     
     setStatus(logRecord.getMessage());
+    statusLabel.repaint();
     
   } // callback
   
@@ -110,17 +136,55 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
    */
   public void initTestPanel(List tests, List groupsToRun) {
     
-    Iterator it = tests.iterator();
-    while (it.hasNext()) {
-      EnsTestCase test = (EnsTestCase)it.next();
-      if (test.inGroups(groupsToRun)) {
-        JButton testButton = new JButton(test.getShortTestName());
-        testButton.setBackground(Color.WHITE);
-        testButtons.put(test.getTestName(), testButton);
-        testButton.setEnabled(false);
-        testPanel.add(testButton);
+    // remove any old buttons
+    testButtons.clear();   // HashMap of buttons
+    testPanel.removeAll(); // displayed buttons
+    testPanel.repaint();
+    
+    testPanel.setPreferredSize(PANEL_SIZE);
+    testPanel.setBorder(new TitledBorder(new EtchedBorder(), "Tests to be run"));
+    testPanel.setBackground(Color.WHITE);
+    
+    //testPanel.add(new JLabel("Tests to be run:"));
+    
+    if (tests != null) {
+      
+      // find the longest test name
+      int longest = -1;
+      String longestName = "";
+      
+      Iterator it = tests.iterator();
+      while (it.hasNext()) {
+        org.ensembl.healthcheck.testcase.EnsTestCase test = (org.ensembl.healthcheck.testcase.EnsTestCase)it.next();
+        if (test.inGroups(groupsToRun) && test.getShortTestName().length() > longestName.length()) {
+          longestName = test.getShortTestName();
+        }
       }
-    }
+      Dimension largestSize = new JButton(longestName).getSize();
+      
+      // now add the buttons, and their associated info windows
+      it = tests.iterator();
+      while (it.hasNext()) {
+        EnsTestCase test = (EnsTestCase)it.next();
+        if (test.inGroups(groupsToRun)) {
+          JButton testButton = new JButton(test.getShortTestName());
+          testButton.setFont(new Font("Dialog", Font.PLAIN, 12));
+          //testButton.setBackground(Color.WHITE);
+          testButton.setPreferredSize(largestSize);
+          testButtons.put(test.getTestName(), testButton);
+          testButton.setEnabled(false);
+          
+          TestInfoWindow infoWindow = new TestInfoWindow(this, test.getShortTestName(), false);
+          infoWindow.setVisible(false);
+          testButtonInfoWindows.put(test.getTestName(), infoWindow);
+          
+          testButton.addActionListener(new TestInfoWindowOpener(infoWindow));
+          
+          testPanel.add(testButton);
+        }
+      }
+      
+    } // if tests != null
     
     pack();
     
@@ -128,9 +192,68 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
   
   // -------------------------------------------------------------------------
   
+  public void initGroupList(List tests, String[] groups) {
+    
+    Arrays.sort(groups, new TestNameComparator());
+    final GuiTestRunnerFrame localGTRF = this;
+    
+    JList groupList = new JList(groups);
+    groupList.setFont(new Font("Dialog", Font.PLAIN, 12));
+    groupList.setVisibleRowCount(15);
+    
+    JButton runButton = new JButton("Run selected");
+    runButton.addActionListener(new RunButtonAction(groupList, tests, guiTestRunner, this));
+    runButton.setEnabled(false);
+    
+    JButton settingsButton = new JButton("Settings ...");
+    settingsButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        localGTRF.openSettingsDialog();
+      }
+    });
+    
+    JButton quitButton = new JButton("Quit");
+    quitButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        ConnectionPool.closeAll();
+        dispose();
+        System.exit(0);
+      }
+    });
+    
+    groupList.addListSelectionListener(new GroupListSelectionListener(tests, this, runButton));
+    
+    JScrollPane listPane = new JScrollPane(groupList);
+    
+    JPanel topCentrePanel = new JPanel();
+    topCentrePanel.setBackground(Color.WHITE);
+    topCentrePanel.setLayout(new BorderLayout());
+    //JLabel selectGroupsLabel = new JLabel("Select groups to run:");
+    //topCentrePanel.add(selectGroupsLabel, BorderLayout.WEST);
+    
+    JPanel buttonPanel = new JPanel(new BorderLayout());
+    buttonPanel.add(runButton,      BorderLayout.WEST);
+    buttonPanel.add(settingsButton, BorderLayout.CENTER);
+    buttonPanel.add(quitButton,     BorderLayout.EAST);
+    
+    centrePanel.setPreferredSize(PANEL_SIZE);
+    centrePanel.setLayout(new BoxLayout(centrePanel, BoxLayout.Y_AXIS));
+    centrePanel.add(topCentrePanel);
+    centrePanel.add(listPane);
+    centrePanel.add(buttonPanel);
+    
+    pack();
+    
+  } // initGroupList
+  
+  // -------------------------------------------------------------------------
+  
   public void setTestButtonEnabled(String name, boolean enabled) {
     
-    ((JButton)testButtons.get(name)).setEnabled(enabled);
+    JButton b  = (JButton)testButtons.get(name);
+    if (b != null) {
+      b.setEnabled(enabled);
+    }
     
   } // setTestButtonEnabled
   
@@ -138,9 +261,165 @@ public class GuiTestRunnerFrame extends javax.swing.JFrame implements CallbackTa
   
   public void setTestButtonColour(String name, Color c) {
     
-    ((JButton)testButtons.get(name)).setForeground(c);
+    JButton b  = (JButton)testButtons.get(name);
+    if (b != null) {
+      b.setForeground(c);
+    }
     
-  } // setTestButtonColor
+  }
+  
+  // setTestButtonColor
+  // -------------------------------------------------------------------------
+  
+  private void openSettingsDialog() {
+    
+    GuiTestRunnerSettings gtrs = new GuiTestRunnerSettings(this, guiTestRunner, true);
+    gtrs.show();
+    
+  } // openSettingsDialog
+  
   // -------------------------------------------------------------------------
   
 } // GuiTestRunnerFrame
+
+// -------------------------------------------------------------------------
+
+class RunButtonAction implements ActionListener {
+  
+  
+  JList list;
+  List tests;
+  GuiTestRunner guiTestRunner;
+  GuiTestRunnerFrame guiTestRunnerFrame;
+  
+  public RunButtonAction(JList list, List tests, GuiTestRunner gtr, GuiTestRunnerFrame gtrf) {
+    
+    this.list = list;
+    this.tests = tests;
+    this.guiTestRunner = gtr;
+    this.guiTestRunnerFrame = gtrf;
+    
+  }
+  
+  /**
+   * Implementation of ActionListener.
+   */
+  public void actionPerformed(ActionEvent e) {
+    
+    ArrayList groupsToRun = new ArrayList();
+    Object[] values = list.getSelectedValues();
+    String[] groups = new String[values.length];
+    for (int j = 0; j < values.length; j++) {
+      groups[j] = (String)values[j];
+    }
+    for (int i = 0; i < groups.length; i++) {
+      groupsToRun.add(groups[i]);
+    }
+    guiTestRunnerFrame.initTestPanel(tests, groupsToRun);
+    
+    guiTestRunner.runAllTests(tests, groupsToRun, guiTestRunnerFrame);
+    
+  } // actionPerformed
+  
+} // RunButtonAction
+
+// -------------------------------------------------------------------------
+
+class GroupListSelectionListener implements ListSelectionListener {
+  
+  private List tests;
+  private GuiTestRunnerFrame guiTestRunnerFrame;
+  private JButton runButton;
+  
+  public GroupListSelectionListener(List tests, GuiTestRunnerFrame gtrf, JButton runButton) {
+    
+    this.tests = tests;
+    this.guiTestRunnerFrame = gtrf;
+    this.runButton = runButton;
+  }
+  
+  public void valueChanged(ListSelectionEvent e) {
+    
+    runButton.setEnabled(true);
+    
+    ArrayList groupsToRun = new ArrayList();
+    JList jlist = (JList)e.getSource();
+    Object[] selectedObjects = jlist.getSelectedValues();
+    for (int i = 0; i < selectedObjects.length; i++) {
+      groupsToRun.add((String)selectedObjects[i]);
+    }
+    guiTestRunnerFrame.initTestPanel(tests, groupsToRun);
+  }
+  
+} // GroupListSelectionListener
+
+// -------------------------------------------------------------------------
+
+class TestInfoWindowOpener implements ActionListener {
+  
+  TestInfoWindow infoWindow;
+  
+  public TestInfoWindowOpener(TestInfoWindow infoWindow) {
+    
+    this.infoWindow = infoWindow;
+    
+  } // TestInfoWindowOpener
+  
+  public void actionPerformed(ActionEvent e) {
+    
+   infoWindow.setVisible(!infoWindow.isVisible()); // toggle
+   
+  }
+  
+} // TestInfoWindowOpener
+
+// -------------------------------------------------------------------------
+
+class TestNameComparator implements Comparator {
+  
+  public int compare(Object o1, Object o2) {
+    
+    // try and figure out which ones are groups and put them to the top.
+    // if it's all lowercase, it's probably a group.
+    
+    String s1 = (String)o1;
+    String s2 = (String)o2;
+    
+    int result = 0;
+    
+    if ((isLower(s1) && isLower(s2)) || (isMixed(s1) && isMixed(s2)) ) {     // if both are lowercase or both are mixed case, order is "natural"
+      result = s1.compareTo(s2);
+    } else if (isLower(s1)) {  // force all lower-case one to the start
+      result = -1;
+    } else if (isLower(s2)) {  // force all lower-case one to the start
+      result = 1;
+    }
+    return result;
+    
+  } // compare
+  
+  private boolean isUpper(String s) {
+    
+    return (s.toUpperCase().equals(s));
+    
+  }
+  
+  private boolean isLower(String s) {
+    
+    return (s.toLowerCase().equals(s));
+    
+  }
+  
+  private boolean isMixed(String s) {
+    
+    boolean result = false;
+    
+    if (!isLower(s) && !isUpper(s)) {
+      result = true;
+    }
+    
+    return result;
+    
+  }
+  
+} // TestNameComparator
