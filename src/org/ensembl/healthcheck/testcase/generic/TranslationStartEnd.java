@@ -25,7 +25,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
  * Check that if the start and end of translation is on the same exon, that
- * start < end.
+ * start < end. Also check that translation ends aren't beyond exon ends.
  */
 public class TranslationStartEnd extends SingleDatabaseTestCase {
 
@@ -35,7 +35,7 @@ public class TranslationStartEnd extends SingleDatabaseTestCase {
     public TranslationStartEnd() {
         addToGroup("post_genebuild");
         addToGroup("release");
-        setDescription("Check that if the start and end of translation is on the same exon, that start < end.");
+        setDescription("Check that if the start and end of translation is on the same exon, that start < end. Also check that translation ends aren't beyond exon ends.");
     }
 
     /**
@@ -57,17 +57,23 @@ public class TranslationStartEnd extends SingleDatabaseTestCase {
 
         boolean result = true;
 
+	// check start < end 
         Connection con = dbre.getConnection();
-        int rows = getRowCount(con,
-                "select count(translation_id) from translation where start_exon_id = end_exon_id and seq_start > seq_end");
+        int rows = getRowCount(con, "SELECT COUNT(translation_id) FROM translation WHERE start_exon_id = end_exon_id AND seq_start > seq_end");
         if (rows > 0) {
             result = false;
-            //logger.warning(rows + " translations in " +
-            // DBUtils.getShortDatabaseName(con) +
-            // " have start > end");
             ReportManager.problem(this, con, rows + " translations have start > end");
         } else {
             ReportManager.correct(this, con, "No translations have start > end");
+        }
+
+	// check no translations overrun their exons
+	rows = getRowCount(con, "SELECT COUNT(*) FROM translation t, exon e WHERE t.end_exon_id=e.exon_id AND e.seq_region_end-e.seq_region_start+1 < t.seq_end");
+        if (rows > 0) {
+            result = false;
+            ReportManager.problem(this, con, rows + " translations end beyond the end of their exons");
+        } else {
+            ReportManager.correct(this, con, "No translations overrun exons");
         }
 
         return result;
