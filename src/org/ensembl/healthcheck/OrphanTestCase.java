@@ -43,7 +43,7 @@ public class OrphanTestCase extends EnsTestCase {
     
     boolean result = true;
     
-    DatabaseConnectionIterator it = testRunner.getDatabaseConnectionIterator(getAffectedDatabases(databaseRegexp));
+    DatabaseConnectionIterator it = testRunner.getDatabaseConnectionIterator(getAffectedDatabases(databaseRegexp, preFilterRegexp));
         
     while (it.hasNext()) {
       
