@@ -95,7 +95,8 @@ public final class DatabaseType {
         String lcAlias = alias.toLowerCase();
 
 	// --------------------------------------
-	// needs to be before core since names are of the form homo_sapiens_core_expression_24_34e
+	// needs to be before core and est since names 
+	// are of the form homo_sapiens_core_expression_est_24_34e
         if (in(lcAlias, "expression")) { 
 
         return EXPRESSION; 
