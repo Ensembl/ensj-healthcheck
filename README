@@ -59,6 +59,8 @@ command-line options through to the TextTestRunner class.
   -repair         If appropriate, carry out repair methods on test cases that support it
   -showrepair     Like -repair, but the repair is NOT carried out, just reported.
   -length n       Break output lines at n columns; default is " + outputLineLength + ". 0 means never break
+  -nofailuretext  Don't print failure hints.
+  -skipslow       Don't run long-running tests.
   group1          Names of groups of test cases to run.
                   Note each test case is in a group of its own with the name of the test case.
                   This allows individual tests to be run if required.
