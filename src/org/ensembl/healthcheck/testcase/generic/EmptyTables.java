@@ -19,6 +19,7 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.*;
+import java.util.*;
 
 import org.ensembl.healthcheck.*;
 import org.ensembl.healthcheck.testcase.*;
@@ -26,48 +27,43 @@ import org.ensembl.healthcheck.testcase.*;
 /**
  * Check that all tables have data.
  */
-public class EmptyTables extends EnsTestCase {
+public class EmptyTables extends SingleDatabaseTestCase {
 
 	/**
 	 * Creates a new instance of EmptyTablesTestCase
 	 */
 	public EmptyTables() {
 
-		//addToGroup("post_genebuild");
+		addToGroup("post_genebuild");
+		// by default tests in the generic package apply to core, vega, est and estgene databases
+		removeAppliesToType(DatabaseType.EST);
+		removeAppliesToType(DatabaseType.ESTGENE);
 		setDescription("Checks that all tables have data");
 
 	}
 
 	//---------------------------------------------------------------------
 
-	public DatabaseType[] databaseTypes() {
-
-		DatabaseType[] types = { DatabaseType.CORE, DatabaseType.VEGA };
-		return types;
-
-	}
-
-	//---------------------------------------------------------------------
-	
-	public boolean isMultiDatabaseTest() {
-	
-		return false;
-		
-	}
-	
-	//---------------------------------------------------------------------
-
 	/**
-	 * Define what tables are to be checked. Can be overridden in subclasses
-	 * that want to check a subset of these.
-	 * 
-	 * @param con A database connection in case this method needs to query the
-	 *            list of tables.
-	 * @return An array of Strings representing the table names to be checked.
+	 * Define what tables are to be checked. 
 	 */
-	private String[] getTablesToCheck(Connection con) {
+	private String[] getTablesToCheck(DatabaseRegistryEntry dbre) {
 
-		return getTableNames(con);
+		String[] tables = getTableNames(dbre.getConnection());
+
+		// the following tables are allowed to be empty
+		String[] allowedEmpty = {"alt_allele", "assembly_exception", "dnac"};
+		tables = remove(tables, allowedEmpty);
+		
+		// only rat has entries in QTL tables
+		if (dbre.getSpecies() != Species.RATTUS_NORVEGICUS) {
+			String[] qtlTables = {"qtl", "qtl_feature", "qtl_synonym"};
+			tables = remove(tables, qtlTables);
+		}
+
+		// TODO more database type/species checks
+
+		return tables;
 
 	}
 
@@ -76,16 +72,17 @@ public class EmptyTables extends EnsTestCase {
 	/**
 	 * Check that every table has more than 0 rows.
 	 */
-	public boolean run(Connection con) {
+	public boolean run(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
 
-		String[] tables = getTablesToCheck(con);
+		String[] tables = getTablesToCheck(dbre);
+		Connection con = dbre.getConnection();
 
 		for (int i = 0; i < tables.length; i++) {
 
 			String table = tables[i];
-			logger.finest("Checking that " + table + " has rows");
+			//logger.finest("Checking that " + table + " has rows");
 
 			if (!tableHasRows(con, table)) {
 
@@ -98,5 +95,37 @@ public class EmptyTables extends EnsTestCase {
 		return result;
 
 	} // run
+
+	// -----------------------------------------------------------------
+
+	private String[] remove(String[] tables, String table) {
+
+		String[] result = new String[tables.length - 1];
+		int j = 0;
+		for (int i = 0; i < tables.length; i++) {
+			if (!tables[i].equalsIgnoreCase(table)) {
+				result[j++] = tables[i];
+			}
+		}
+
+		return result;
+
+	}
+
+	//	-----------------------------------------------------------------
+
+	private String[] remove(String[] src, String[] tablesToRemove) {
+
+		String[] result = src;
+
+		for (int i = 0; i < tablesToRemove.length; i++) {
+			result = remove(result, tablesToRemove[i]);
+		}
+
+		return result;
+
+	}
+
+	// -----------------------------------------------------------------
 
 } // EmptyTablesTestCase
