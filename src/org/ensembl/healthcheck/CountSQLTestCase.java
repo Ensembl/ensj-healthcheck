@@ -36,33 +36,25 @@ public class CountSQLTestCase extends EnsTestCase {
   
   /** Creates a new instance of CountSQLTestCase */
   public CountSQLTestCase() {
-    databaseRegexp = "^homo_sapiens_(core|est).*";
+    databaseRegexp = "^homo_sapiens_core_12.*";
   }
   
-  public TestResult run() {
-    
-    // some kind of db iterator method that takes a method pointer????
-    
+  TestResult run() {
+        
     DatabaseConnectionIterator it = testRunner.getDatabaseConnectionIterator(getAffectedDatabases(databaseRegexp));
     
-    Connection con;
+    boolean result = true;
+    
     while (it.hasNext()) {
-      con = (Connection)it.next();
-      try {
-	Statement stmt = con.createStatement();
-	ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM gene");
-	if (rs != null) {
-	  rs.next();
-	  System.out.println("gene table in " + it.getCurrentDatabaseName() + " has " + rs.getInt(1) + " rows.");
-	}
-	rs.close();
-	con.close();
-      } catch (Exception e) {
-	e.printStackTrace();
-      }
+      
+      Connection con = (Connection)it.next();
+      int rowCount = super.countRowsInTable(con, "gene");
+      result &= (rowCount > 0);
+      System.out.println("gene table in " + it.getCurrentDatabaseName() + " has " + rowCount + " rows.");
+      
     }
     
-    return new TestResult(getShortTestName(), true, "blank message");
+    return new TestResult(getShortTestName(), result, "");
     
   } // run
   
