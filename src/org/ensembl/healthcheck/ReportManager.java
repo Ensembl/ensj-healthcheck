@@ -51,7 +51,7 @@ public class ReportManager {
     }
   }
   
-  public static void finishTestCase( EnsTestCase testCase, TestResult result ) {
+  public static void finishTestCase( EnsTestCase testCase, boolean result ) {
     if( reporter != null ) {
       reporter.finishTestCase( testCase, result );
     }

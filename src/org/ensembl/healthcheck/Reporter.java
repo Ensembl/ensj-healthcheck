@@ -30,6 +30,6 @@ public interface Reporter {
   
   public void startTestCase( EnsTestCase testCase );
   
-  public void finishTestCase( EnsTestCase testCase, TestResult result );
+  public void finishTestCase( EnsTestCase testCase, boolean result );
 
 }
