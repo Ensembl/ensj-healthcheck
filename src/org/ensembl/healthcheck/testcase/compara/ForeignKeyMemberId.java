@@ -32,7 +32,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 public class ForeignKeyMemberId extends SingleDatabaseTestCase {
 
     /**
-     * Create an OrphanTestCase that applies to a specific set of databases.
+     * Create an ForeignKeyMemberId that applies to a specific set of databases.
      */
     public ForeignKeyMemberId() {
 
@@ -46,7 +46,7 @@ public class ForeignKeyMemberId extends SingleDatabaseTestCase {
      * 
      * @param dbre
      *          The database to use.
-     * @return true if the test pased.
+     * @return true if the test passed.
      *  
      */
     public boolean run(DatabaseRegistryEntry dbre) {
@@ -56,24 +56,14 @@ public class ForeignKeyMemberId extends SingleDatabaseTestCase {
         int orphans = 0;
 
         Connection con = dbre.getConnection();
-        // 1 test to check member_id used as foreign key
 
         if (tableHasRows(con, "member")) {
 
-            orphans = countOrphans(con, "family_member", "member_id", "member", "member_id", true);
-            result &= fillReportManager(con, orphans,"family_member", "member_id", "member", "member_id");
-
-            orphans = countOrphans(con, "member", "member_id", "family_member", "member_id", true);
-            result &= fillReportManager(con, orphans,"member", "member_id", "family_member", "member_id");
-
-            orphans = countOrphans(con, "homology_member", "member_id", "member", "member_id", true);
-            result &= fillReportManager(con, orphans,"homology_member", "member_id", "member", "member_id");
-
-            orphans = countOrphans(con, "homology_member", "peptide_member_id", "member", "member_id", true);
-            result &= fillReportManager(con, orphans,"homology_member", "peptide_member_id", "member", "member_id");
-            
-            orphans = countOrphans(con, "domain_member", "member_id", "member", "member_id", true);
-            result &= fillReportManager(con, orphans,"domain_member", "member_id", "member", "member_id");
+            result &= checkForOrphans(con, "family_member", "member_id", "member", "member_id");
+            result &= checkForOrphans(con, "member", "member_id", "family_member", "member_id");
+            result &= checkForOrphans(con, "homology_member", "member_id", "member", "member_id");
+            result &= checkForOrphans(con, "homology_member", "peptide_member_id", "member", "member_id");
+            result &= checkForOrphans(con, "domain_member", "member_id", "member", "member_id");
 
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in member table, so nothing to test IGNORED");
@@ -83,25 +73,4 @@ public class ForeignKeyMemberId extends SingleDatabaseTestCase {
 
     }
 
-    public boolean fillReportManager(Connection con, int orphans, String table1, String col1, String table2, String col2) {
-
-        boolean result = true;
-        
-        String sql = "SELECT " + table1 + "." + col1 + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
-
-        if (orphans == 0) {
-            ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + col1 + "("+col2+")" + " relationships");
-        } else if (orphans > 0) {
-            ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + col1 + "("+col2+")" + " relationships");
-            ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
-            ReportManager.problem(this, con, "USEFUL SQL: " + sql);
-            result = false;
-        } else {
-            ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1 + ", look at the StackTrace if any");
-            result = false;
-        }
-        
-        return result;
-    } //fillReportManager
-
-} // OrphanTestCase
+} // ForeignKeyMemberId

@@ -32,7 +32,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 public class ForeignKeySyntenyRegionId extends SingleDatabaseTestCase {
 
     /**
-     * Create an OrphanTestCase that applies to a specific set of databases.
+     * Create an ForeignKeySyntenyRegionId that applies to a specific set of databases.
      */
     public ForeignKeySyntenyRegionId() {
 
@@ -46,7 +46,7 @@ public class ForeignKeySyntenyRegionId extends SingleDatabaseTestCase {
      * 
      * @param dbre
      *          The database to use.
-     * @return true if the test pased.
+     * @return true if the test passed.
      *  
      */
     public boolean run(DatabaseRegistryEntry dbre) {
@@ -56,15 +56,11 @@ public class ForeignKeySyntenyRegionId extends SingleDatabaseTestCase {
         int orphans = 0;
 
         Connection con = dbre.getConnection();
-        // 1 test to check synteny_region_id used as foreign key
 
         if (tableHasRows(con, "synteny_region")) {
-            orphans = countOrphans(con, "dnafrag_region", "synteny_region_id", "synteny_region", "synteny_region_id", true);
-            result &= fillReportManager(con, orphans,"dnafrag_region", "synteny_region_id", "synteny_region", "synteny_region_id");
-            
-            orphans = countOrphans(con, "synteny_region", "synteny_region_id", "dnafrag_region", "synteny_region_id", true);
-            result &= fillReportManager(con, orphans,"synteny_region", "synteny_region_id", "dnafrag_region", "synteny_region_id");
 
+            result &= checkForOrphans(con, "dnafrag_region", "synteny_region_id", "synteny_region", "synteny_region_id");
+            result &= checkForOrphans(con, "synteny_region", "synteny_region_id", "dnafrag_region", "synteny_region_id");
             
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in synteny_region table, so nothing to test IGNORED");
@@ -74,25 +70,4 @@ public class ForeignKeySyntenyRegionId extends SingleDatabaseTestCase {
 
     }
 
-    public boolean fillReportManager(Connection con, int orphans, String table1, String col1, String table2, String col2) {
-
-        boolean result = true;
-        
-        String sql = "SELECT " + table1 + "." + col1 + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
-
-        if (orphans == 0) {
-            ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + col1 + "("+col2+")" + " relationships");
-        } else if (orphans > 0) {
-            ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + col1 + "("+col2+")" + " relationships");
-            ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
-            ReportManager.problem(this, con, "USEFUL SQL: " + sql);
-            result = false;
-        } else {
-            ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1 + ", look at the StackTrace if any");
-            result = false;
-        }
-        
-        return result;
-    } //fillReportManager
-
-} // OrphanTestCase
+} // ForeignKeySyntenyRegionId

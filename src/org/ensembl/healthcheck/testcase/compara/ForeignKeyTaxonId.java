@@ -32,7 +32,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 public class ForeignKeyTaxonId extends SingleDatabaseTestCase {
 
     /**
-     * Create an OrphanTestCase that applies to a specific set of databases.
+     * Create an ForeignKeyTaxonId that applies to a specific set of databases.
      */
     public ForeignKeyTaxonId() {
 
@@ -46,7 +46,7 @@ public class ForeignKeyTaxonId extends SingleDatabaseTestCase {
      * 
      * @param dbre
      *          The database to use.
-     * @return true if the test pased.
+     * @return true if the test passed.
      *  
      */
     public boolean run(DatabaseRegistryEntry dbre) {
@@ -58,11 +58,9 @@ public class ForeignKeyTaxonId extends SingleDatabaseTestCase {
         Connection con = dbre.getConnection();
 
         if (tableHasRows(con, "taxon")) {
-            orphans = countOrphans(con, "member", "taxon_id", "taxon", "taxon_id", true);
-            result &= fillReportManager(con, orphans,"member", "taxon_id", "taxon", "taxon_id");
 
-            orphans = countOrphans(con, "genome_db", "taxon_id", "taxon", "taxon_id", true);
-            result &= fillReportManager(con, orphans,"genome_db", "taxon_id", "taxon", "taxon_id");
+            result &= checkForOrphans(con, "member", "taxon_id", "taxon", "taxon_id");
+            result &= checkForOrphans(con, "genome_db", "taxon_id", "taxon", "taxon_id");
 
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in taxon table, so nothing to test IGNORED");
@@ -71,26 +69,5 @@ public class ForeignKeyTaxonId extends SingleDatabaseTestCase {
         return result;
 
     }
-
-    public boolean fillReportManager(Connection con, int orphans, String table1, String col1, String table2, String col2) {
-
-        boolean result = true;
-        
-        String sql = "SELECT " + table1 + "." + col1 + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
-
-        if (orphans == 0) {
-            ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + col1 + "("+col2+")" + " relationships");
-        } else if (orphans > 0) {
-            ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + col1 + "("+col2+")" + " relationships");
-            ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
-            ReportManager.problem(this, con, "USEFUL SQL: " + sql);
-            result = false;
-        } else {
-            ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1 + ", look at the StackTrace if any");
-            result = false;
-        }
-        
-        return result;
-    } //fillReportManager
 
 } // ForeignKeyTaxonId
