@@ -19,7 +19,6 @@ package org.ensembl.healthcheck.testcase;
 
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.TestResult;
-import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.DatabaseConnectionIterator;
 
 /**
