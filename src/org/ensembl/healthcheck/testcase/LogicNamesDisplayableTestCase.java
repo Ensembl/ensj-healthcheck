@@ -93,6 +93,11 @@ public class LogicNamesDisplayableTestCase extends EnsTestCase {
           // check each analysis ID
           for (int i = 0; i < analysisIDs.length; i++) {
             
+            // check that there is an entry in the analysis table with this ID (i.e. foreign key integrity check)
+            if (logicNamesByAnalID.get(analysisIDs[i]) == null) {
+              ReportManager.problem(this, con, "Feature table " + featureTableName + " refers to an entry with ID " + analysisIDs[i] + " - there is NO such entry");
+            }
+            
             // check that the logic name corresponding to this analysis id is valid
             String logicName = (String)logicNamesByAnalID.get(analysisIDs[i]);
             if (!Utils.stringInArray(logicName, allowedLogicNames, CASE_SENSITIVE)) {
