@@ -24,7 +24,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check for repeat features that have repeat_start > repeat_end. Note that seq_region_start/end are checked in FeatureCoords.
+ * Check for repeat features that have repeat_start > repeat_end, or start or end < 1. Note that seq_region_start/end are checked in FeatureCoords.
  */
 
 public class RepeatFeature extends SingleDatabaseTestCase {
@@ -36,7 +36,7 @@ public class RepeatFeature extends SingleDatabaseTestCase {
 
         addToGroup("post_genebuild");
         addToGroup("release");
-        setDescription("Check that repeat_start is not greater than repeat_end in repeat_feature");
+        setDescription("Check that repeat_start and repeat_end in repeat_feature make sense.");
 
     }
 
@@ -50,6 +50,8 @@ public class RepeatFeature extends SingleDatabaseTestCase {
     public boolean run(DatabaseRegistryEntry dbre) {
 
         boolean result = true;
+        
+        // check that start < end
         String sql = "SELECT COUNT(*) FROM repeat_feature WHERE repeat_start > repeat_end";
         Connection con = dbre.getConnection();
         int rows = getRowCount(con, sql);
@@ -60,6 +62,15 @@ public class RepeatFeature extends SingleDatabaseTestCase {
             result = false;
         }
 
+        // check start and end not < 1
+        sql = "SELECT COUNT(*) FROM repeat_feature WHERE repeat_start < 1 OR repeat_end < 1";
+        rows = getRowCount(con, sql);
+        if (rows == 0) {
+            ReportManager.correct(this, con, "All repeat_feature repeat_start and repeat_end < 1");
+        } else if (rows > 0) {
+            ReportManager.problem(this, con, rows + " rows in repeat_feature have repeat_start or repeat_end < 1");
+            result = false;
+        }
         return result;
 
     } // run
