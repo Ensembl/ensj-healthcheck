@@ -1,17 +1,17 @@
 /*
  * Copyright (C) 2004 EBI, GRL
  * 
- * This library is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free Software
- * Foundation; either version 2.1 of the License, or (at your option) any later version.
+ * This library is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU Lesser General Public License as published by the Free Software Foundation; either version
+ * 2.1 of the License, or (at your option) any later version.
  * 
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
  * 
- * You should have received a copy of the GNU Lesser General Public License along with
- * this library; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
- * Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU Lesser General Public License along with this library;
+ * if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+ * 02111-1307 USA
  */
 
 package org.ensembl.healthcheck.testcase.generic;
@@ -34,13 +34,16 @@ import org.ensembl.healthcheck.util.Utils;
 public class Meta extends SingleDatabaseTestCase {
 
     // update this array as necessary
-    private static final String[] VALIDPREFIXES = {"RGSC", "DROM", "ZFISH", "FUGU", "MOZ", "CEL", "CBR", "MGSC",
-            "NCBI", "NCBIM"};
+    private static final String[] VALIDPREFIXES = {"RGSC", "DROM", "ZFISH", "FUGU", "MOZ", "CEL", "CBR", "MGSC", "NCBI", "NCBIM"};
+
+    // format for genebuild.version
+    private static final String GBV_REGEXP = "[0-9]{4}[a-zA-Z]*";
 
     /**
      * Creates a new instance of CheckMetaDataTableTestCase
      */
     public Meta() {
+
         addToGroup("post_genebuild");
         addToGroup("release");
         setDescription("Check that the meta table exists, has data, the entries correspond to the "
@@ -50,8 +53,7 @@ public class Meta extends SingleDatabaseTestCase {
     /**
      * Check various aspects of the meta table.
      * 
-     * @param dbre
-     *          The database to check.
+     * @param dbre The database to check.
      * @return True if the test passed.
      */
     public boolean run(final DatabaseRegistryEntry dbre) {
@@ -71,6 +73,8 @@ public class Meta extends SingleDatabaseTestCase {
         result &= checkAssemblyMapping(con);
 
         result &= checkTaxonomyID(dbre);
+
+        result &= checkGenebuildVersion(con);
 
         // ----------------------------------------
         // Use an AssemblyNameInfo object to get te assembly information
@@ -116,8 +120,7 @@ public class Meta extends SingleDatabaseTestCase {
                 // is not valid");
                 ReportManager.problem(this, con, "Assembly prefix (" + metaTableAssemblyPrefix + ") is not valid");
             } else {
-                ReportManager.correct(this, con, "Meta table assembly prefix (" + metaTableAssemblyPrefix
-                        + ") is valid");
+                ReportManager.correct(this, con, "Meta table assembly prefix (" + metaTableAssemblyPrefix + ") is valid");
             }
         }
 
@@ -200,22 +203,19 @@ public class Meta extends SingleDatabaseTestCase {
         // species and genus
         // (in that order) from the meta table
 
-        if (metaTableSpeciesGenusArray != null && metaTableSpeciesGenusArray.length == 2
-                && metaTableSpeciesGenusArray[0] != null && metaTableSpeciesGenusArray[1] != null) {
+        if (metaTableSpeciesGenusArray != null && metaTableSpeciesGenusArray.length == 2 && metaTableSpeciesGenusArray[0] != null
+                && metaTableSpeciesGenusArray[1] != null) {
 
             String[] dbNameGenusSpeciesArray = dbName.split("_");
             String dbNameGenusSpecies = dbNameGenusSpeciesArray[0] + "_" + dbNameGenusSpeciesArray[1];
             String metaTableGenusSpecies = metaTableSpeciesGenusArray[1] + "_" + metaTableSpeciesGenusArray[0];
-            logger
-                    .finest("Classification from DB name:" + dbNameGenusSpecies + " Meta table: "
-                            + metaTableGenusSpecies);
+            logger.finest("Classification from DB name:" + dbNameGenusSpecies + " Meta table: " + metaTableGenusSpecies);
             if (!dbNameGenusSpecies.equalsIgnoreCase(metaTableGenusSpecies)) {
                 result = false;
                 //warn(con, "Database name does not correspond to
                 // species/genus data from meta
                 // table");
-                ReportManager.problem(this, con,
-                        "Database name does not correspond to species/genus data from meta table");
+                ReportManager.problem(this, con, "Database name does not correspond to species/genus data from meta table");
             } else {
                 ReportManager.correct(this, con, "Database name corresponds to species/genus data from meta table");
             }
@@ -249,8 +249,7 @@ public class Meta extends SingleDatabaseTestCase {
             Matcher matcher = assemblyMappingPattern.matcher(mappings[i]);
             if (!matcher.matches()) {
                 result = false;
-                ReportManager.problem(this, con, "Coordinate system mapping " + mappings[i]
-                        + " is not in the correct format");
+                ReportManager.problem(this, con, "Coordinate system mapping " + mappings[i] + " is not in the correct format");
             } else {
                 // if format is OK, check coord systems are valid
                 boolean valid = true;
@@ -259,13 +258,11 @@ public class Meta extends SingleDatabaseTestCase {
                 String cs3 = matcher.group(6);
                 if (!Utils.stringInArray(cs1, validCoordSystems, false)) {
                     valid = false;
-                    ReportManager.problem(this, con, "Source co-ordinate system " + cs1
-                            + " is not in the coord_system table");
+                    ReportManager.problem(this, con, "Source co-ordinate system " + cs1 + " is not in the coord_system table");
                 }
                 if (!Utils.stringInArray(cs2, validCoordSystems, false)) {
                     valid = false;
-                    ReportManager.problem(this, con, "Target co-ordinate system " + cs2
-                            + " is not in the coord_system table");
+                    ReportManager.problem(this, con, "Target co-ordinate system " + cs2 + " is not in the coord_system table");
                 }
                 // third coordinate system is optional
                 if (cs3 != null && !Utils.stringInArray(cs3, validCoordSystems, false)) {
@@ -305,6 +302,33 @@ public class Meta extends SingleDatabaseTestCase {
                     + Species.getTaxonomyID(species) + " for " + species.toString());
         }
         return result;
+
+    }
+
+    // -------------------------------------------------------------------------
+
+    private boolean checkGenebuildVersion(Connection con) {
+
+        String gbv = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.version'");
+        logger.finest("genebuild.version from database: " + gbv);
+
+        if (gbv == null || gbv.length() == 0) {
+
+            ReportManager.problem(this, con, "No genebuild.version entry in meta table");
+            return false;
+
+        } else {
+
+            if (!gbv.matches(GBV_REGEXP)) {
+
+                ReportManager.problem(this, con, "genebuild.version " + gbv + " is not in correct format - should match "
+                        + GBV_REGEXP);
+                return false;
+
+            }
+
+        }
+        return true;
 
     }
 
