@@ -33,13 +33,35 @@ public class SpeciesTest extends TestCase {
 
 	}
 
-	/*
-	 * Class to test for String toString()
-	 */
+	// -----------------------------------------------------------------
+	
 	public void testToString() {
 		
 		Species s = Species.HOMO_SAPIENS;
 		assertEquals("toString method not returning expected result", s.toString(), "homo_sapiens");
+		
+	}
+	
+	// -----------------------------------------------------------------
+	
+	public void testEquals() {
+		
+		assertEquals("equals method not working", Species.HOMO_SAPIENS, Species.HOMO_SAPIENS);
+		assertTrue("compare with == not working", Species.DANIO_RERIO == Species.DANIO_RERIO);
+		assertTrue("species that are the not the same are coming out equal", Species.FUGU_RUBRIPES != Species.CAENORHABDITIS_BRIGGSAE);
+		
+	}
+	
+	// -----------------------------------------------------------------
+	
+	public void testAlias() {
+		
+		// not an exhaustive list ...
+		assertEquals(Species.resolveAlias("human"),          Species.HOMO_SAPIENS);
+		assertEquals(Species.resolveAlias("rat"),            Species.RATTUS_NORVEGICUS);
+		assertEquals(Species.resolveAlias("mus_musculus"),   Species.MUS_MUSCULUS);
+		
+		assertEquals(Species.resolveAlias("littlegreenman"), Species.UNKNOWN);
 		
 	}
 
