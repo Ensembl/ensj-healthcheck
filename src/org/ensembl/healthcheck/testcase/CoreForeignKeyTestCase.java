@@ -144,22 +144,28 @@ public class CoreForeignKeyTestCase extends EnsTestCase {
         ReportManager.correct(this, con, "All xref -> external_db relationships OK");
       }
       result &= (orphans == 0);
-      
 
-
-      orphans = countOrphans( con, "contig", "dna_id", "dna", "dna_id", false);
+      orphans = countOrphans( con, "dna", "seq_region_id", "seq_region", "seq_region_id", true);
       if( orphans > 0) {
-        ReportManager.problem(this, con, "contig <-> dna has unlinked entries");
+        ReportManager.problem(this, con, "dna -> seq_region has unlinked entries");
       } else {
-        ReportManager.correct(this, con, "All contig <-> dna relationships OK");
+        ReportManager.correct(this, con, "All dna <-> seq_region relationships OK");
       }
       result &= (orphans == 0);
 
-      orphans = countOrphans( con, "assembly", "contig_id", "contig", "contig_id", true);
+      orphans = countOrphans( con, "seq_region", "coord_system_id", "coord_system", "coord_system_id", true);
       if( orphans > 0) {
-        ReportManager.problem(this, con, "assembly -> contig has unlinked entries");
+        ReportManager.problem(this, con, "seq_region -> coord_system has unlinked entries");
       } else {
-        ReportManager.correct(this, con, "All assembly -> contig relationships OK");
+        ReportManager.correct(this, con, "All seq_region <-> coord_system relationships OK");
+      }
+      result &= (orphans == 0);
+      
+      orphans = countOrphans( con, "assembly", "cmp_seq_region_id", "seq_region", "seq_region_id", true);
+      if( orphans > 0) {
+        ReportManager.problem(this, con, "assembly -> seq_region has unlinked entries");
+      } else {
+        ReportManager.correct(this, con, "All assembly -> seq_region relationships OK");
       }
       result &= (orphans == 0);
 
@@ -182,11 +188,11 @@ public class CoreForeignKeyTestCase extends EnsTestCase {
 
       for(int i = 0; i < featTabs.length; i++) {
           String featTab = featTabs[i];
-          orphans = countOrphans( con, featTab, "contig_id", "contig", "contig_id", true);
+          orphans = countOrphans( con, featTab, "seq_region_id", "seq_region", "seq_region_id", true);
           if( orphans > 0) {
-              ReportManager.problem(this, con, featTab + " -> contig has unlinked entries");
+              ReportManager.problem(this, con, featTab + " -> seq_region has unlinked entries");
           } else {
-              ReportManager.correct(this, con, "All " + featTab + " -> contig relationships OK");
+              ReportManager.correct(this, con, "All " + featTab + " -> seq_region relationships OK");
           }
           result &= (orphans == 0);
       }
