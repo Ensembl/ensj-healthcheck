@@ -39,7 +39,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
     private static String version = "$Id$";
 
-    private ArrayList databaseRegexps = new ArrayList(); 
+    private ArrayList databaseRegexps = new ArrayList();
 
     private boolean debug = false;
 
@@ -61,13 +61,14 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
     private boolean printResultsByDatabase = false;
 
+    private static final String CORE_DB_REGEXP = "[a-z]+_[a-z]+_(core|est|estgene|vega)";
+
     // -------------------------------------------------------------------------
 
     /**
      * Command-line run method.
      * 
-     * @param args
-     *          The command-line arguments.
+     * @param args The command-line arguments.
      */
     public static void main(String[] args) {
 
@@ -90,7 +91,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
         ReportManager.setReporter(this);
 
         databaseRegistry = new DatabaseRegistry(databaseRegexps);
-        if (databaseRegistry.getAll().length == 0) {
+        if (databaseRegistry.getEntryCount() == 0) {
             logger.warning("Warning: no database names matched any of the database regexps given");
         }
 
@@ -128,8 +129,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
         System.out.println("                    none      nothing is printed");
         System.out.println("                    problem   only problems are reported (this is the default)");
         System.out.println("                    correct   only correct results (and problems) are reported");
-        System.out
-                .println("                    summary   only summary info (and problems, and correct reports) are reported");
+        System.out.println("                    summary   only summary info (and problems, and correct reports) are reported");
         System.out.println("                    info      info (and problem, correct, summary) messages reported");
         System.out.println("                    all       everything is printed");
         System.out
@@ -144,8 +144,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
                 + ". 0 means never break");
         System.out.println("  -resultsbydb    Print results by databases as well as by test case.");
         System.out.println("  group1          Names of groups of test cases to run.");
-        System.out
-                .println("                  Note each test case is in a group of its own with the name of the test case.");
+        System.out.println("                  Note each test case is in a group of its own with the name of the test case.");
         System.out.println("                  This allows individual tests to be run if required.");
         System.out.println("");
         System.out
@@ -217,8 +216,10 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
                 } else if (args[i].equals("-d")) {
 
+                    // undocumented feature - if COREDBS appears in the -d argument, it is expanded
+                    // to the contents of CORE_DB_REGEXP
                     i++;
-                    databaseRegexps.add(args[i]);
+                    databaseRegexps.add(args[i].replaceAll("COREDBS", CORE_DB_REGEXP));
                     logger.finest("Added database regular expression " + args[i]);
 
                 } else if (args[i].equals("-config")) {
@@ -322,8 +323,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
     /**
      * Called when a message is to be stored in the report manager.
      * 
-     * @param reportLine
-     *          The message to store.
+     * @param reportLine The message to store.
      */
     public void message(ReportLine reportLine) {
 
@@ -332,9 +332,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
         System.out.print(".");
         System.out.flush();
 
-        if (reportLine.getLevel() < outputLevel) {
-            return;
-        }
+        if (reportLine.getLevel() < outputLevel) { return; }
 
         if (!reportLine.getDatabaseName().equals(lastDatabase)) {
             outputBuffer.add("  " + reportLine.getDatabaseName());
@@ -358,17 +356,14 @@ public class TextTestRunner extends TestRunner implements Reporter {
             level = "PROBLEM";
         }
 
-        outputBuffer.add("    " + level + ":  "
-                + lineBreakString(reportLine.getMessage(), outputLineLength, "              "));
+        outputBuffer.add("    " + level + ":  " + lineBreakString(reportLine.getMessage(), outputLineLength, "              "));
     }
 
     /**
      * Called just before a test case is run.
      * 
-     * @param testCase
-     *          The test case about to be run.
-     * @param dbre
-     *          The database which testCase is to be run on, or null of no/several databases.
+     * @param testCase The test case about to be run.
+     * @param dbre The database which testCase is to be run on, or null of no/several databases.
      */
     public void startTestCase(EnsTestCase testCase, DatabaseRegistryEntry dbre) {
 
@@ -385,12 +380,9 @@ public class TextTestRunner extends TestRunner implements Reporter {
     /**
      * Should be called just after a test case has been run.
      * 
-     * @param testCase
-     *          The test case that was run.
-     * @param result
-     *          The result of testCase.
-     * @param dbre
-     *          The database which testCase was run on, or null of no/several databases.
+     * @param testCase The test case that was run.
+     * @param result The result of testCase.
+     * @param dbre The database which testCase was run on, or null of no/several databases.
      */
     public void finishTestCase(EnsTestCase testCase, boolean result, DatabaseRegistryEntry dbre) {
 
@@ -403,14 +395,11 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
     private String lineBreakString(String mesg, int maxLen, String indent) {
 
-        if (mesg.length() <= maxLen || maxLen == 0) {
-            return mesg;
-        }
+        if (mesg.length() <= maxLen || maxLen == 0) { return mesg; }
 
         int lastSpace = mesg.lastIndexOf(" ", maxLen);
         if (lastSpace > 15) {
-            return mesg.substring(0, lastSpace) + "\n" + indent
-                    + lineBreakString(mesg.substring(lastSpace + 1), maxLen, indent);
+            return mesg.substring(0, lastSpace) + "\n" + indent + lineBreakString(mesg.substring(lastSpace + 1), maxLen, indent);
         } else {
             return mesg.substring(0, maxLen) + "\n" + indent + lineBreakString(mesg.substring(maxLen), maxLen, indent);
         }
