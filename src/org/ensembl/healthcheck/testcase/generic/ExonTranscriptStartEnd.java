@@ -47,13 +47,16 @@ public class ExonTranscriptStartEnd extends SingleDatabaseTestCase {
 
         try {
 
-            Statement stmt = con.createStatement();
+            Statement stmt = dbre.getConnection().createStatement();
             ResultSet rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
                ReportManager.problem(this, con, "Min/max exon start/ends do not agree with transcript start/end in transcript " + rs.getLong(1));
                 result = false;
             }    
+            
+            rs.close();
+            stmt.close();
             
         } catch (Exception e) {
             e.printStackTrace();

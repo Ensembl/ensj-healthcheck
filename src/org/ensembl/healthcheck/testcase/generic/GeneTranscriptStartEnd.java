@@ -58,7 +58,8 @@ public class GeneTranscriptStartEnd extends SingleDatabaseTestCase {
                         + " has start/end that does not agree with transcript start/end");
                 startEndResult = false;
             }
-
+            rs.close();
+            
             if (startEndResult) {
                 ReportManager.correct(this, con, "All gene/transcript start/end agree");
             }
@@ -72,7 +73,9 @@ public class GeneTranscriptStartEnd extends SingleDatabaseTestCase {
                         + " has strand that does not agree with transcript strand");
                 strandResult = false;
             }
-
+            rs.close();
+            stmt.close();
+            
             if (strandResult) {
                 ReportManager.correct(this, con, "All gene/transcript strands agree");
             }
