@@ -19,6 +19,10 @@
 /*
 
  $Log$
+ Revision 1.1  2003/11/18 17:01:12  dkeefe
+ Compare the _meta_table_info for old and new mart. So far just looks
+ for missing columns in new
+
 
 */
 
@@ -104,8 +108,19 @@ public class MartCompareOldNewTestCase extends EnsTestCase  {
 		Integer distinct = new Integer(rs1.getInt(3)); 
 		if(counts.containsKey(key)){ // does the new mart contain this column
 		    // if so compare the values
+                    Integer newCount = (Integer)counts.get(key);
+                    if(newCount.intValue() > distinct.intValue() * 2){
+			ReportManager.info(this, con, "SUDDEN INCREASE: "+key+" "
+                                                      +mart1+" "+distinct+" "+mart2+" "+newCount);
+		    }
+
+                    if(newCount.intValue() <  distinct.intValue() / 2){
+			ReportManager.info(this, con, "SUDDEN DECREASE: "+key+" "
+                                                      +mart1+" "+distinct+" "+mart2+" "+newCount);
+		    }
 
 		    // and remove the entry from the hash table
+                    counts.remove(key);
 		}else{
 		    // report the missing column as a problem
 		    ReportManager.problem(this, con, "MISSING COLUMN: "+key+" not in "+mart2);
