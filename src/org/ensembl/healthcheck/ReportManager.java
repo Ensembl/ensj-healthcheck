@@ -26,19 +26,20 @@ import org.ensembl.healthcheck.util.*;
 import org.ensembl.healthcheck.testcase.*;
 
 /**
- * Handles test reporting.
+ * ReportManager is the main class for reporting in the Ensj Healthcheck system. It provides methods
+ * for storing reports - single items of information - and retrieving them in various formats.
  */
 public class ReportManager {
   
   /** A hash of lists keyed on the test name. */
-  protected static Map reportsByTest = new HashMap();    
+  protected static Map reportsByTest = new HashMap();
   /** A hash of lists keyed on the database name */
-  protected static Map reportsByDatabase = new HashMap(); 
+  protected static Map reportsByDatabase = new HashMap();
   /** The logger to use for this class */
   protected static Logger logger = Logger.getLogger("HealthCheckLogger");
   
   // -------------------------------------------------------------------------
-  /** 
+  /**
    * Add a test case report.
    * @param report The ReportLine to add.
    */
@@ -97,7 +98,10 @@ public class ReportManager {
    */
   public static void report(EnsTestCase testCase, Connection con, int level, String message) {
     
-    add(new ReportLine(testCase.getTestName(), DBUtils.getShortDatabaseName(con), level, message));
+    // this may be called when there is no DB connection
+    String dbName = (con == null) ? "no_database" : DBUtils.getShortDatabaseName(con);
+    
+    add(new ReportLine(testCase.getTestName(), dbName, level, message));
     
   } // report
   
@@ -138,7 +142,7 @@ public class ReportManager {
     
   } // summary
   
-   /**
+  /**
    * Store a ReportLine with a level of ReportLine.CORRECT.
    * @param testCase The test case filing the report.
    * @param con The database connection involved.
@@ -159,7 +163,19 @@ public class ReportManager {
     
     return reportsByTest;
     
-  } // getReportsByTestCase
+  } // getAllReportsByTestCase
+  
+  // -------------------------------------------------------------------------
+  /**
+   * Get a HashMap of all the reports, keyed on test case name.
+   * @param level The ReportLine level (e.g. PROBLEM) to filter on.
+   * @return The HashMap of all the reports, keyed on test case name.
+   */
+  public static Map getAllReportsByTestCase(int level) {
+    
+    return filterMap(reportsByTest, level);
+    
+  } // getAllReportsByTestCase
   
   // -------------------------------------------------------------------------
   /**
@@ -171,6 +187,18 @@ public class ReportManager {
     return reportsByDatabase;
     
   } // getReportsByDatabase
+  
+  // -------------------------------------------------------------------------
+  /**
+   * Get a HashMap of all the reports, keyed on test case name.
+   * @param level The ReportLine level (e.g. PROBLEM) to filter on.
+   * @return The HashMap of all the reports, keyed on test case name.
+   */
+  public static Map getAllReportsByDatabase(int level) {
+    
+    return filterMap(reportsByDatabase, level);
+    
+  } // getAllReportsByTestCase
   
   // -------------------------------------------------------------------------
   /** Get a list of all the reports corresponding to a particular test case.
@@ -200,13 +228,13 @@ public class ReportManager {
   } // getReportsByDatabase
   
   // -------------------------------------------------------------------------
-  /** Filter a list or ReportLines so that only certain entries are returned.
+  /** Filter a list of ReportLines so that only certain entries are returned.
    * @param list The list to filter.
    * @param level All reports with a priority above this level will be returned.
    * @return A list of the ReportLines that have a level >= that specified.
    */
   public static List filterList(List list, int level) {
-    
+
     ArrayList result = new ArrayList();
     
     Iterator it = list.iterator();
@@ -215,6 +243,28 @@ public class ReportManager {
       if (line.getLevel() >= level) {
         result.add(line);
       }
+    }
+
+    return result;
+    
+  } // filterList
+  
+  // -------------------------------------------------------------------------
+  /** Filter a HashMap of lists of ReportLines so that only certain entries are returned.
+   * @param map The list to filter.
+   * @param level All reports with a priority above this level will be returned.
+   * @return A HashMap with the same keys as map, but with the lists filtered by level.
+   */
+  public static Map filterMap(Map map, int level) {
+
+    HashMap result = new HashMap();
+
+    Set keySet = map.keySet();
+    Iterator it = keySet.iterator();
+    while (it.hasNext()) {
+      String key = (String)it.next();
+      List list = (List)map.get(key);
+      result.put(key, filterList(list, level));
     }
     
     return result;

@@ -19,7 +19,9 @@
 package org.ensembl.healthcheck;
 
 /**
- * A single line of a report.
+ * A single line of a report. Each ReportLine stores the names of the test case and database (as Strings)
+ * a message, and a level. See the constants defined by this class for the different levels. Levels are
+ * represented as ints to allow easy comparison and setting of thresholds.
  */
 public class ReportLine {
   
@@ -45,7 +47,8 @@ public class ReportLine {
   /** Output level that is lower than all others */
   public static final int ALL     = 0;
   
-  /** Creates a new instance of ReportLine
+  /** 
+   * Creates a new instance of ReportLine
    * @param testCaseName The test case to refer to.
    * @param databaseName The database name involved.
    * @param level The level of this report.

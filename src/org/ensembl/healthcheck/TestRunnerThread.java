@@ -8,7 +8,7 @@
  
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNUsql
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
  
   You should have received a copy of the GNU Lesser General Public
@@ -29,8 +29,10 @@ public class TestRunnerThread implements Runnable {
   private ThreadGroup threadGroup;
   private int maxThreads;
   
-  /**
-   * Creates a new instance of TestRunnerThread
+  /** Creates a new instance of TestRunnerThread
+   * @param testCase The test case to run.
+   * @param threadGroup The ThreadGroup to run this test in.
+   * @param maxThreads The maximum number of threads to run.
    */
   public TestRunnerThread(EnsTestCase testCase, ThreadGroup threadGroup, int maxThreads) {
     
@@ -40,6 +42,11 @@ public class TestRunnerThread implements Runnable {
     
   }
   
+  // -------------------------------------------------------------------------
+
+  /**
+   * Implementation of Runnable; start the thread if there aren't too many running.
+   **/
   public void run() {
     
     // wait until there aren't too many threads running
@@ -48,8 +55,10 @@ public class TestRunnerThread implements Runnable {
     }
     
     // and then run the test
-    TestResult tr = testCase.run();
+    testCase.run();
     
   }
   
+  // -------------------------------------------------------------------------
+
 } // TestRunnerThread
