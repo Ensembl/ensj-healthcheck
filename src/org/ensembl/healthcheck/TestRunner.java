@@ -43,8 +43,10 @@ public class TestRunner {
   protected Properties dbProps;
   /** If set, database names are filtered with this regular expression before the regexp built into the tests. */
   protected String preFilterRegexp;
-  
+  /** The logger to use for this class */
   protected static Logger logger = Logger.getLogger("HealthCheckLogger");
+  /** Output level used by ReportManager */
+  protected int outputLevel = ReportLine.ALL;
   
   // -------------------------------------------------------------------------
   /** Creates a new instance of TestRunner */
@@ -195,6 +197,8 @@ public class TestRunner {
    */
   protected void runAllTests(List allTests, boolean forceDatabases) {
     
+    int numberOfTestsRun = 0;
+    
     // check if allTests() has been populated
     if (allTests == null) {
       logger.warning("No tests to run! Call findAllTests() first?");
@@ -223,10 +227,16 @@ public class TestRunner {
         
         TestResult tr = testCase.run();
         
+        numberOfTestsRun++;
+        
         String passFail = tr.getResult() ? "PASSED" : "FAILED";
-        logger.warning(tr.getName() + " " + passFail + " " + tr.getMessage());
+        logger.warning(tr.getName() + " " + passFail);
         
       }
+    }
+    
+    if (numberOfTestsRun == 0) {
+      logger.warning("Warning: no tests were run.");
     }
     
   } // runAllTests
@@ -396,7 +406,114 @@ public class TestRunner {
   } // listAllGroups
   
   // -------------------------------------------------------------------------
+  /**
+   * Print (to stdout) out a list of test reports, keyed by the test type.
+   */
+  public void printReportsByTest(int level) {
+    
+    System.out.println("\n---- RESULTS BY TEST CASE ----");
+    Map map = ReportManager.getAllReportsByTestCase(level);
+    Set keys = map.keySet();
+    Iterator it = keys.iterator();
+    while (it.hasNext()) {
+      String key = (String)it.next();
+      System.out.println("\n" + key);
+      List lines = (List)map.get(key);
+      Iterator it2 = lines.iterator();
+      while (it2.hasNext()) {
+        ReportLine reportLine = (ReportLine)it2.next();
+        if (reportLine.getLevel() >= level) {
+          String dbName = reportLine.getDatabaseName();
+          if (dbName.equals("no_database")) {
+            dbName = "";
+          } else {
+            dbName = reportLine.getDatabaseName() + ": ";
+          }
+          System.out.println("  " + dbName + reportLine.getMessage());
+        } // if level
+      } // while it2
+    } // while it
+    
+  } // printReportsByTest
   
+  // -------------------------------------------------------------------------
+  /**
+   * Print (to stdout) a list of test results, ordered by database.
+   */
+  public void printReportsByDatabase(int level) {
+    
+    System.out.println("\n---- RESULTS BY DATABASE ----");
+    Map map = ReportManager.getAllReportsByDatabase(level);
+    Set keys = map.keySet();
+    Iterator it = keys.iterator();
+    while (it.hasNext()) {
+      String key = (String)it.next();
+      System.out.println("\n" + key);
+      List lines = (List)map.get(key);
+      Iterator it2 = lines.iterator();
+      while (it2.hasNext()) {
+        ReportLine reportLine = (ReportLine)it2.next();
+        if (reportLine.getLevel() >= level) {
+          System.out.println(" " + reportLine.getShortTestCaseName() + ": " + reportLine.getMessage());
+        } // if level
+      } // while it2
+    } // while it
+    
+  } // printReportsByDatabase
+  
+  // -------------------------------------------------------------------------
+  /**
+   * Set the outputLevel variable based on an input string (probably from the command line)
+   * @param str The output level to use.
+   */
+  protected void setOutputLevel(String str) {
+    
+    str = str.toLowerCase();
+    
+    if (str.equals("all")) {
+      outputLevel = ReportLine.ALL;
+    } else if (str.equals("none")) {
+      outputLevel = ReportLine.NONE;
+    } else if (str.equals("problem")) {
+      outputLevel = ReportLine.PROBLEM;
+    }  else if (str.equals("correct")) {
+      outputLevel = ReportLine.CORRECT;
+    }  else if (str.equals("summary")) {
+      outputLevel = ReportLine.SUMMARY;
+    }  else if (str.equals("info")) {
+      outputLevel = ReportLine.INFO;
+    }  else {
+      logger.warning("Output level " + str + " not recognised; using 'all'");
+    }
+    
+  } // setOutputLevel
+  
+  // -------------------------------------------------------------------------
+  /**
+   * Set the output level.
+   * @param The new output level, e.g. ReportLine.PROBLEM.
+   */
+  public void setOutputLevel(int l) {
+    
+    outputLevel = l;
+    logger.finest("Set outputLevel to " + outputLevel);
+    
+  } // setOutputLevel
+  
+  // -------------------------------------------------------------------------
+
+  /**
+   * Get the current output level.
+   * @return The current output level. See ReportLine.
+   */
+  public int getOutputLevel() {
+    
+    return outputLevel;
+    
+  } // getOutputLevel
+  
+  // -------------------------------------------------------------------------
+
 } // TestRunner
 
 // -------------------------------------------------------------------------
