@@ -135,7 +135,7 @@ public class ProteinFeatureTranslationTestCase extends EnsTestCase implements Re
         stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
         stmt.setFetchSize(Integer.MIN_VALUE);
         
-        System.out.println("About to look at protein features");
+        logger.fine("Built translation length cache, about to look at protein features");
         
         // find protein features where seq_end is > than the length of the translation
         List thisDBFeatures = new ArrayList();
