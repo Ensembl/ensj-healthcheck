@@ -21,6 +21,7 @@ import java.sql.Statement;
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.HashMap;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
@@ -128,8 +129,7 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
                         if (!compareTablesInSchema(masterCon, checkCon)) {
                             // if not the same, this method will generate a
                             // report
-                            logger.info("Table name discrepancy detected, skipping rest of checks for "
-                                    + DBUtils.getShortDatabaseName(checkCon));
+                            ReportManager.problem(this, checkCon, "Table name discrepancy detected, skipping rest of checks");
                             continue;
                         }
 
@@ -140,17 +140,14 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
                         for (int j = 0; j < tableNames.length; j++) {
 
                             String table = tableNames[j];
-
                             String sql = "SHOW CREATE TABLE " + table;
                             ResultSet masterRS = masterStmt.executeQuery(sql);
                             ResultSet dbRS = dbStmt.executeQuery(sql);
-
-                            boolean showCreateSame = DBUtils.compareResultSets(masterRS, dbRS, this, " [" + table + "]", false, false);
+                            boolean showCreateSame = DBUtils.compareResultSets(masterRS, dbRS, this, " [" + table + "]", false, false, table);
                             if (!showCreateSame) {
 
                                 // do more in-depth analysis of database structure
                                 result &= compareTableStructures(masterCon, checkCon, table);
-
                             }
 
                             masterRS.close();
@@ -174,7 +171,7 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
 
         } finally {
 
-            // void leaving temporary DBs lying around if something bad happens
+            // avoid leaving temporary DBs lying around if something bad happens
             if (definitionFile == null && masterCon != null) {
                 // double-check to make sure the DB we're going to remove is a
                 // temp one
@@ -205,11 +202,8 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
             // compare DESCRIBE <table>
             ResultSet rs1 = s1.executeQuery("DESCRIBE " + table);
             ResultSet rs2 = s2.executeQuery("DESCRIBE " + table);
-	    boolean describeSame = DBUtils.compareResultSets(rs1, rs2, this, "", false, false);
-	    if (!describeSame) {
-		ReportManager.problem(this, con1, "DESCRIBE table for " + table + " is different for " + DBUtils.getShortDatabaseName(con1) + " and " + DBUtils.getShortDatabaseName(con2) + ":");
-		DBUtils.compareResultSets(rs1, rs2, this, "", true, false); 
-	    }
+	    boolean describeSame = DBUtils.compareResultSets(rs1, rs2, this, "", false, false, table);
+
             result &= describeSame;
 
             // compare indicies via SHOW INDEX <table>
@@ -267,6 +261,9 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
             s1.close();
             s2.close();
 
+	    HashMap problems1 = new HashMap();
+	    HashMap problems2 = new HashMap();
+
             // compare rows1 and rows2
             Iterator it1 = rows1.iterator();
             while (it1.hasNext()) {
@@ -277,12 +274,18 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
                     String table = indices[0];
                     String index = indices[1];
                     String seq = indices[4];
-                    //if (seq.equals("1")) { // once per group of rows
-                        ReportManager.problem(this, "", DBUtils.getShortDatabaseName(con1) + " " + table + " has index " + index
-                                + " which is different or absent in " + DBUtils.getShortDatabaseName(con2));
-			//}
+		    problems1.put(table + ":" + index, seq);
                 }
             }
+	    
+	    Iterator p1 = problems1.keySet().iterator();
+	    while (p1.hasNext()) {
+		String s = (String)p1.next();
+		String[] indices = s.split(":");
+		String table = indices[0];
+		String index = indices[1];
+		ReportManager.problem(this, "", DBUtils.getShortDatabaseName(con1) + " " + table + " has index " + index + " which is different or absent in " + DBUtils.getShortDatabaseName(con2));
+	    }
 
             // and the other way around
             Iterator it2 = rows2.iterator();
@@ -294,12 +297,18 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
                     String table = indices[0];
                     String index = indices[1];
                     String seq = indices[4];
-                    //if (seq.equals("1")) { // once per group of rows
-                        ReportManager.problem(this, "", DBUtils.getShortDatabaseName(con2) + " " + table + " has index " + index
-                                + " which is different or absent in " + DBUtils.getShortDatabaseName(con1));
-			//}
+		    problems1.put(table + ":" + index, seq);
                 }
             }
+
+	    Iterator p2 = problems2.keySet().iterator();
+	    while (p2.hasNext()) {
+		String s = (String)p2.next();
+		String[] indices = s.split(":");
+		String table = indices[0];
+		String index = indices[2];
+		ReportManager.problem(this, "", DBUtils.getShortDatabaseName(con2) + " " + table + " has index " + index + " which is different or absent in " + DBUtils.getShortDatabaseName(con1));
+	    }
 
         } catch (SQLException se) {
             logger.severe(se.getMessage());
