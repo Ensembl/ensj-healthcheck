@@ -55,7 +55,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
         addToGroup("post_genebuild");
         addToGroup("release");
         setDescription("Check that all top-level seq regions have some SNP/gene/knownGene density features, and that the values agree between the density_feature and seq_region attrib tables.");
-	setFailureText("May report count mismatches on HAP/PAR regions. ");
+	setFailureText("May report count mismatches on HAP/PAR regions.\nAlso, if a species has no SNP data, the 'No entry in density_type for analysis snpDensity' warning can be ignored. ");
 
 	logicNameToAttribCode.put("snpDensity", "SNPCount");
 	logicNameToAttribCode.put("geneDensity", "GeneCount");
