@@ -779,7 +779,7 @@ public abstract class EnsTestCase {
       while (rs.next()) {
         String columnValue = rs.getString(1);
         // should it be non-null?
-        if (rsmd.isNullable(1) == rsmd.columnNoNulls) {
+        if (rsmd.isNullable(1) == ResultSetMetaData.columnNoNulls) {
           if (columnValue == null || columnValue.equals("")) {
             blanks.add("" + rs.getRow());
           }
@@ -821,7 +821,7 @@ public abstract class EnsTestCase {
           String columnValue = rs.getString(i);
           String columnName = rsmd.getColumnName(i);
           // should it be non-null?
-          if (rsmd.isNullable(i) == rsmd.columnNoNulls) {
+          if (rsmd.isNullable(i) == ResultSetMetaData.columnNoNulls) {
             if (columnValue == null || columnValue.equals("")) {
               blanks++;
               logger.warning("Found blank non-null value in column " + columnName + " in " + table);
