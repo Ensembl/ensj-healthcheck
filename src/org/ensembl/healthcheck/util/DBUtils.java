@@ -366,6 +366,42 @@ public class DBUtils {
   } // getShortDatabaseName
   
   // -------------------------------------------------------------------------
+  /**
+   * Convert properties used by Healthcheck into properties suitable for ensj.
+   * ensj properties host, port, user, password are converted.
+   * Note ensj property database is <em>not</em> set.
+   * @param testRunnerProperties The Healthcheck-format properties to use.
+   * @return A Properties object containing host, port, user and password NOT database.
+   */
+  public static Properties convertHealthcheckToEnsjProperties(Properties testRunnerProps) {
+    
+    Properties props = new Properties();
+    
+    // user & password are straightforward
+    props.put("user"     , testRunnerProps.get("user"));
+    props.put("password" , testRunnerProps.get("password"));
+    
+    // get host and port from URL
+    // java.net.URL doesn't support JDBC URLs(!) so we have to hack things a bit
+    String dbUrl = (String)testRunnerProps.get("databaseURL");
+    java.net.URL url = null;
+    try {
+      url = new java.net.URL("http" + dbUrl.substring(10)); // strip off jdbc:mysql: and pretend it's http
+    } catch (java.net.MalformedURLException e) {
+      e.printStackTrace();
+    }
+    if (url != null) {
+      String host = url.getHost();
+      String port = "" + url.getPort();
+      props.put("host"      , host);
+      props.put("port"      , port);
+    } else {
+      logger.severe("Unable to get host/port from url");
+    }
+    
+    return props;
+    
+  } // convertHealthcheckToEnsjProperties
   
   // -------------------------------------------------------------------------
   
