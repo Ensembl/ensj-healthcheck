@@ -44,12 +44,9 @@ public class ForeignKeyHomologyId extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		DatabaseConnectionIterator it = getDatabaseConnectionIterator();
 		int orphans = 0;
 
-		while (it.hasNext()) {
-
-			Connection con = (Connection)it.next();
+			Connection con = dbre.getConnection();
 			// 1 test to check gene_relationship_id used as foreign key
 
 			if (tableHasRows(con, "homology")) {
@@ -66,8 +63,6 @@ public class ForeignKeyHomologyId extends SingleDatabaseTestCase {
 			}
 
 			result &= (orphans == 0);
-
-		}
 
 		return result;
 
