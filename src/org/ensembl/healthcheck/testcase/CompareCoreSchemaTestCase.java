@@ -46,10 +46,12 @@ public class CompareCoreSchemaTestCase extends EnsTestCase {
     
     boolean result = true;
     
+    Connection tableSQLCon = null;
+    
     try {
       
       logger.info("About to import " + definitionFile);
-      Connection tableSQLCon = importSchema(definitionFile);
+      tableSQLCon = importSchema(definitionFile);
       Statement tableSQLStmt = tableSQLCon.createStatement();
       logger.info("Got connection to " + DBUtils.getShortDatabaseName(tableSQLCon));
       
@@ -91,12 +93,17 @@ public class CompareCoreSchemaTestCase extends EnsTestCase {
       
       tableSQLStmt.close();
       
-      removeDatabase(tableSQLCon);
-      // commented-out for testing purposes
-      //logger.info("Removed " + DBUtils.getShortDatabaseName(con));
-      
     } catch (SQLException se) {
+      
       logger.severe(se.getMessage());
+      
+    } finally {  // avoid leaving temporary DBs lying around if something bad happens
+      
+      if (tableSQLCon != null) {
+        removeDatabase(tableSQLCon);
+        logger.info("Removed " + DBUtils.getShortDatabaseName(tableSQLCon));
+      }
+      
     }
     
     return new TestResult(getShortTestName(), result);
