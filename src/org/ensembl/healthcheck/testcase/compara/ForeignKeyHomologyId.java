@@ -22,7 +22,6 @@ import java.sql.*;
 
 import org.ensembl.healthcheck.*;
 import org.ensembl.healthcheck.testcase.*;
-import org.ensembl.healthcheck.util.*;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key relationships.
