@@ -34,7 +34,7 @@ public class CheckDuplicateExonsTestCase extends EnsTestCase {
    */
   public CheckDuplicateExonsTestCase() {
     addToGroup("post_genebuild");
-    setDescriptions("Check for duplicate exons.");
+    setDescription("Check for duplicate exons.");
   }
   
   /**
