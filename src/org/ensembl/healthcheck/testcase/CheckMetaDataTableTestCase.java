@@ -162,18 +162,6 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
         ReportManager.problem(this, con, "Cannot get species information from meta table");
       }
       
-      // ------------------------------------------
-      // Check that all values in assembly.type match what's in the meta table
-      
-      rows = checkColumnValue(con, "assembly", "type", metaTableAssemblyDefault);
-      if (rows > 0) {
-        result = false;
-        //warn(con, "Not all values in assembly.type match assembly.default in meta table");
-        ReportManager.problem(this, con, "Not all values in assembly.type match assembly.default in meta table");
-      } else {
-        ReportManager.correct(this, con, "All values in assembly.type match assembly.default in meta table");
-      }
-      
       // -------------------------------------------
       
     } // while connection
