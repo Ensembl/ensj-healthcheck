@@ -5,7 +5,7 @@
  * Created on March 13, 2003, 9:48 AM
  */
 
-package org.ensembl.healthcheck.util.test;
+package org.ensembl.healthcheck.test;
 
 import org.ensembl.healthcheck.util.*;
 
