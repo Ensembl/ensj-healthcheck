@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
@@ -44,7 +45,17 @@ public class DuplicateExons extends SingleDatabaseTestCase {
         addToGroup("release");
 
     }
+    
+    /**
+     * This test only applies to core and Vega databases.
+     */
+    public void types() {
 
+        removeAppliesToType(DatabaseType.EST);
+        removeAppliesToType(DatabaseType.ESTGENE);
+
+    }
+    
     /**
      * Check strand order of exons.
      * 
@@ -62,7 +73,10 @@ public class DuplicateExons extends SingleDatabaseTestCase {
 
         Connection con = dbre.getConnection();
         try {
-            Statement stmt = con.createStatement();
+            
+            Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY,
+                    java.sql.ResultSet.CONCUR_READ_ONLY);
+            stmt.setFetchSize(1000);
             ResultSet rs = stmt.executeQuery(sql);
 
             int exonStart, exonEnd, exonPhase, exonChromosome, exonId, exonEndPhase, exonStrand;
@@ -94,7 +108,7 @@ public class DuplicateExons extends SingleDatabaseTestCase {
                         duplicateExon++;
                         if (duplicateExon <= MAX_WARNINGS) {
                             ReportManager.warning(this, con, "Exon " + exonId + " is duplicated.");
-                        }
+                        } 
                     }
                 } else {
                     first = false;
@@ -106,10 +120,11 @@ public class DuplicateExons extends SingleDatabaseTestCase {
                 lastExonPhase = exonPhase;
                 lastExonEndPhase = exonEndPhase;
                 lastExonStrand = exonStrand;
-            }
+                
+            } // while rs
 
             if (duplicateExon > 0) {
-                ReportManager.problem(this, con, duplicateExon + " duplicated Exons.");
+                ReportManager.problem(this, con, "Has at least " + duplicateExon + " duplicated exons.");
                 result = false;
             }
             rs.close();
@@ -124,4 +139,4 @@ public class DuplicateExons extends SingleDatabaseTestCase {
 
     }
 
-} // ExonStrandOrder TestCase
+} // DuplicateExons
