@@ -29,6 +29,10 @@ import org.ensembl.healthcheck.util.*;
 
 public class ExonStrandOrderTestCase extends EnsTestCase {
   
+    public static final int TRANSCRIPT_WARN_LENGTH = 2000000;
+    public static final int TRANSCRIPT_COUNT_LEVEL = 1000000;
+
+
   /**
    * Create an OrphanTestCase that applies to a specific set of databases.
    */
@@ -76,7 +80,10 @@ public class ExonStrandOrderTestCase extends EnsTestCase {
         Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
         stmt.setFetchSize(Integer.MIN_VALUE);
         ResultSet rs = stmt.executeQuery(sql);
-        int transcriptStart, geneStart, lastStart;
+        int transcriptStart = 0;
+	int geneStart, lastStart;
+	
+	int transcriptEnd = 0;
         int lastTranscriptId = -1;
         int lastGeneId = -1;
         int lastRank = -1;
@@ -102,15 +109,19 @@ public class ExonStrandOrderTestCase extends EnsTestCase {
           
           
           if( transcriptId != lastTranscriptId ) {
+	    if( lastTranscriptId > 0 ) {
+		if( transcriptEnd - transcriptStart > TRANSCRIPT_WARN_LENGTH ) {
+		    ReportManager.warning( this, con, "Long transcript " + lastTranscriptId + " Length " +
+					   ( transcriptEnd - transcriptStart ));
+		}
+	    }
             lastTranscriptId = transcriptId;
             if( lastRank == 1 ) {
               singleExonTranscripts++;
             }
-            if( strand == 1 ) {
-              transcriptStart = start;
-            } else {
-              transcriptStart = end;
-            }
+
+	    transcriptStart = start;
+	    transcriptEnd = end;
             
             if( lastGeneId != geneId ) {
               geneStart = transcriptStart;
@@ -118,18 +129,18 @@ public class ExonStrandOrderTestCase extends EnsTestCase {
               currentChromosomeId = chromosomeId;
               
             } else {
-              if( strand == 1 ) {
-                geneStart = transcriptStart < geneStart ?
-                transcriptStart : geneStart;
-              } else {
-                geneStart = transcriptStart > geneStart ?
-                transcriptStart : geneStart;
-              }
+//               if( strand == 1 ) {
+//                 geneStart = transcriptStart < geneStart ?
+//                 transcriptStart : geneStart;
+//               } else {
+//                 geneStart = transcriptStart > geneStart ?
+//                 transcriptStart : geneStart;
+//               }
             }
             lastRank = exonRank;
             lastStart = start;
             transcriptCount++;
-            continue;
+//            continue;
           }
           
           // strand or chromosome jumping in Gene
@@ -166,7 +177,14 @@ public class ExonStrandOrderTestCase extends EnsTestCase {
             result = false;
           }
           
-          lastRank = exonRank;
+	  if( strand == 1 ) {
+              transcriptEnd = end;
+	  } else {
+              transcriptStart = start;
+	  }
+
+	  lastRank = exonRank;
+
         } // while rs
         rs.close();
         stmt.close();
