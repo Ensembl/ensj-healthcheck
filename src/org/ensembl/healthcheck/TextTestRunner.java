@@ -81,6 +81,7 @@ public class TextTestRunner extends TestRunner {
     System.out.println("                  summary   only summary info (and problems, and correct reports) are reported");
     System.out.println("                  info      info (and problem, correct, summary) messages reported");
     System.out.println("                  all       everything is printed");
+    System.out.println("  -config file    Read config from file (in ensj-healthcheck dir) rather than database.properties");
     System.out.println("  -debug          Print debugging info (for developers only)");
     System.out.println("  group1          Names of groups of test cases to run.");
     System.out.println("                  Note each test case is in a group of its own with the name of the test case.");
@@ -139,7 +140,13 @@ public class TextTestRunner extends TestRunner {
           
           forceDatabases = true;
           System.out.println("Will use ONLY databases specified by -d");
-          
+        
+        } else if (args[i].equals("-config")) {
+            
+          i++;
+            propertiesFileName = args[i];
+            System.out.println("Will read properties from " + propertiesFileName);
+            
         } else {
           groupsToRun.add(args[i]);
           System.out.println("Will run tests in group " + args[i]);
