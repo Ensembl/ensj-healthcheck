@@ -55,14 +55,12 @@ public class DuplicateExons extends EnsTestCase {
     "MAX( IF     (a.contig_ori=1,(e.contig_end+a.chr_start-a.contig_start), " +
     "                       (a.chr_start+a.contig_end-e.contig_start)))  as end, " +
     "       a.contig_ori*e.contig_strand as strand, " +
-    "       a.chromosome_id " +
+    "       a.chromosome_id, e.end_phase " +
     "FROM   exon e, assembly a " +
     "WHERE  e.contig_id = a.contig_id " +
     "GROUP  BY e.exon_id " +
-    "ORDER BY chromosome_id, strand, start, end, phase";
-	// + " LIMIT  100";
+    "ORDER BY chromosome_id, strand, start, end, phase, end_phase";
 
-    // System.out.println( sql );
 
     while (it.hasNext()) {
       
@@ -71,12 +69,13 @@ public class DuplicateExons extends EnsTestCase {
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
 
-        int exonStart,  exonEnd, exonPhase, exonStrand, exonChromosome, exonId;
+        int exonStart,  exonEnd, exonPhase, exonStrand, exonChromosome, exonId, exonEndPhase;
 	int lastExonStart = -1;
 	int lastExonEnd = -1;
 	int lastExonPhase = -1;
 	int lastExonStrand = -1;
 	int lastExonChromosome = -1;
+	int lastExonEndPhase = -1;
 	int duplicateExon = 0;
 
 	boolean first = true;
@@ -90,18 +89,21 @@ public class DuplicateExons extends EnsTestCase {
           exonEnd = rs.getInt(4);
           exonStrand = rs.getInt(5);
           exonChromosome = rs.getInt(6);
-          
+          exonEndPhase = rs.getInt(7);
+
           if( !first ) {
 	      if( lastExonChromosome == exonChromosome &&
 		  lastExonStart == exonStart &&
 		  lastExonEnd == exonEnd &&
 		  lastExonPhase == exonPhase &&
-		  lastExonStrand == exonStrand ) {
+		  lastExonStrand == exonStrand &&
+		  lastExonEndPhase == exonEndPhase ) {
 		  duplicateExon++;
 		  ReportManager.info( this, con, "Exon " + exonId + " is duplicated." );
 	      }
 	  } else {
 	      first = false ;
+	      ReportManager.info(this, con, "Running duplicate exon test");
 	  }
 	  
 	  lastExonStart = exonStart;
@@ -109,6 +111,7 @@ public class DuplicateExons extends EnsTestCase {
 	  lastExonChromosome = exonChromosome;
 	  lastExonStrand = exonStrand;
 	  lastExonPhase = exonPhase;
+	  lastExonEndPhase = exonEndPhase;
 	}
 
 	if( duplicateExon > 0 ) {
@@ -123,8 +126,9 @@ public class DuplicateExons extends EnsTestCase {
 	  e.printStackTrace();
       }
     } // while rs
-    
-    return new TestResult(getShortTestName(), result);
+ 
+
+    return new TestResult(getShortTestName(),result);
     
 }
   
