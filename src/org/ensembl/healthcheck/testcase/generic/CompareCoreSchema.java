@@ -277,7 +277,6 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
                     String table = indices[0];
                     String index = indices[1];
                     String seq = indices[4];
-		    System.out.println("##here 1");
                     //if (seq.equals("1")) { // once per group of rows
                         ReportManager.problem(this, "", DBUtils.getShortDatabaseName(con1) + " " + table + " has index " + index
                                 + " which is different or absent in " + DBUtils.getShortDatabaseName(con2));
@@ -295,7 +294,6 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
                     String table = indices[0];
                     String index = indices[1];
                     String seq = indices[4];
-		    System.out.println("##here 2");
                     //if (seq.equals("1")) { // once per group of rows
                         ReportManager.problem(this, "", DBUtils.getShortDatabaseName(con2) + " " + table + " has index " + index
                                 + " which is different or absent in " + DBUtils.getShortDatabaseName(con1));
