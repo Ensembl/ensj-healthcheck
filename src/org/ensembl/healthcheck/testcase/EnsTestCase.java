@@ -528,9 +528,9 @@ public abstract class EnsTestCase {
                 + col2 + " WHERE " + table2 + "." + col2 + " IS NULL";
 
         resultLeft = getRowCount(con, "SELECT COUNT(*)" + sql);
-	if (table1.equals("marker_synonym")) {
-	    System.out.println(sql);
-	}
+	//if (table1.equals("marker_synonym")) {
+	//    System.out.println(sql);
+	//}
 
         if (resultLeft > 0) {
             String[] values = getColumnValues(con, "SELECT " + table1 + "." + col1 + sql + " LIMIT 20");
