@@ -46,7 +46,11 @@ public class LogicNamesDisplayableTestCase extends EnsTestCase {
   }
   
   /**
-   * description
+   * Check each row in the logic_names column of the analysis table against the 
+   * list of logic names that are displayed by the web code; this list is currently at
+   * http://www.ensembl.org/Docs/wiki/html/EnsemblDocs/LogicNames.html
+   * Note that this test case actually uses the names from the file logicnames.txt
+   * which currently has to be manually created from the above URL.
    */
   public TestResult run() {
     
