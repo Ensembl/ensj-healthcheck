@@ -54,6 +54,7 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -208,8 +209,17 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
             public void actionPerformed(ActionEvent e) {
 
                 DatabaseRegistryEntry[] selectedDatabases = databaseTabbedPane.getSelectedDatabases();
+                if (selectedDatabases.length == 0) {
+                    JOptionPane.showMessageDialog((Component) e.getSource(), "No databases selected!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
                 EnsTestCase[] selectedTests = testTabbedPane.getSelectedTests();
-                guiTestRunner.runAllTests(selectedTests, selectedDatabases, localGTRF);
+                if (selectedTests.length == 0) {
+                    JOptionPane.showMessageDialog((Component) e.getSource(), "No tests selected!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
+                if (selectedTests.length > 0 && selectedDatabases.length > 0) {
+                    guiTestRunner.runAllTests(selectedTests, selectedDatabases, localGTRF);
+                }
 
             }
         });
