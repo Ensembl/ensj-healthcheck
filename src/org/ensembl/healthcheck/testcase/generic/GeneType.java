@@ -38,8 +38,8 @@ public class GeneType extends SingleDatabaseTestCase {
      * the valid combinations of gene-types/analisis names are definded for each
      * database-type in whitelist[][][] by their index position in the previous arrays.
      * If the index of a certain gene-type is listed in the array of a certain analysis
-     * (which is identified by it's positional index) in the array of a certain database
-     * (which again is identified by it's positional index), it is valid.
+     * (which is identified by its positional index) in the array of a certain database
+     * (which again is identified by its positional index), it is valid.
     */
 
     /*
@@ -58,7 +58,10 @@ public class GeneType extends SingleDatabaseTestCase {
 					   "flybase",               //2
 					   "est_exonerate",         //3
 					   "estgene",               //4
-					   "ncRNA"                  //5
+					   "ncRNA",                 //5
+    					   "CYT",                   //6
+					   "HOX",                   //7
+					   "GSTEN"                  //8
     };
 
     /*
@@ -84,8 +87,11 @@ public class GeneType extends SingleDatabaseTestCase {
 				       "est",                       //17
 				       "scRNA-pseudogene",          //18
 				       "rRNA-pseudogene",           //19
-				       "wormbase"                   //20
-    };
+				       "wormbase",                  //20
+				       "Genoscope_predicted",       //21
+				       "Genoscope_annotated"        //22
+
+    };  // XXX last 2 cause AIOOBE
 
 
     /*
@@ -95,12 +101,15 @@ public class GeneType extends SingleDatabaseTestCase {
      * example: whitelist[0][2][1] would be 
      *      ["core" database]["wormbase" analysis]["gene" gene type]
      */
-    private int[][][] whitelist =    {  {  {0,1,2},    //this block    //this array for "ensembl" analysis'
+    private int[][][] whitelist =    {  {  {0,1,2},    //this block    //this array for "ensembl" analysis' XXX here
 					   {1,10,20},  //for CORE      //this array for "wormbase" analysis'
 					   {1,10},     //databases     //this array for "flybase" analysis'
 					   {},         //
 					   {},         //
-					   {3,4,5,6,7,8,11,12,13,14,15,16,18,19}
+					   {3,4,5,6,7,8,11,12,13,14,15,16,18,19},
+					   {22},   // Allowed gene types for CYT
+					   {22},   // Allowed gene types for HOX
+					   {21}    // Allowed gene types for GSTEN
                                         },
 					{  {},         //this block
 					   {},         //for EST
