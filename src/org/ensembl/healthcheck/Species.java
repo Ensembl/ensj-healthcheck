@@ -73,6 +73,12 @@ public final class Species {
     /** Specific type of species */
     public static final Species CANIS_FAMILIARIS = new Species("canis_familiaris");
 
+    /** Specific type of species */
+    public static final Species XENOPUS_TROPICALIS = new Species("xenopus_tropicalis");
+
+    /** Specific type of species */
+    public static final Species MONODELPHIS_DOMESTICA = new Species("monodelphis_domestica");
+
     /** Unknown species */
     public static final Species UNKNOWN = new Species("unknown");
 
@@ -103,21 +109,23 @@ public final class Species {
     
     static {
 
-        taxonIDToSpecies.put("9606", HOMO_SAPIENS);
+        taxonIDToSpecies.put("9606",  HOMO_SAPIENS);
         taxonIDToSpecies.put("10090", MUS_MUSCULUS);
         taxonIDToSpecies.put("10116", RATTUS_NORVEGICUS);
         taxonIDToSpecies.put("31033", FUGU_RUBRIPES);
-        taxonIDToSpecies.put("7165", ANOPHELES_GAMBIAE);
-        taxonIDToSpecies.put("7227", DROSOPHILA_MELANOGASTER);
-        taxonIDToSpecies.put("6239", CAENORHABDITIS_ELEGANS);
-        taxonIDToSpecies.put("6238", CAENORHABDITIS_BRIGGSAE);
-        taxonIDToSpecies.put("7955", DANIO_RERIO);
-        taxonIDToSpecies.put("9598", PAN_TROGLODYTES);
-        taxonIDToSpecies.put("9031", GALLUS_GALLUS);
+        taxonIDToSpecies.put("7165",  ANOPHELES_GAMBIAE);
+        taxonIDToSpecies.put("7227",  DROSOPHILA_MELANOGASTER);
+        taxonIDToSpecies.put("6239",  CAENORHABDITIS_ELEGANS);
+        taxonIDToSpecies.put("6238",  CAENORHABDITIS_BRIGGSAE);
+        taxonIDToSpecies.put("7955",  DANIO_RERIO);
+        taxonIDToSpecies.put("9598",  PAN_TROGLODYTES);
+        taxonIDToSpecies.put("9031",  GALLUS_GALLUS);
         taxonIDToSpecies.put("99883", TETRAODON_NIGROVIRIDIS);
-        taxonIDToSpecies.put("7460", APIS_MELLIFERA);
-	taxonIDToSpecies.put("9913", BOS_TAURUS);
-	taxonIDToSpecies.put("9615", CANIS_FAMILIARIS);
+        taxonIDToSpecies.put("7460",  APIS_MELLIFERA);
+	taxonIDToSpecies.put("9913",  BOS_TAURUS);
+	taxonIDToSpecies.put("9615",  CANIS_FAMILIARIS);
+	taxonIDToSpecies.put("8364",  XENOPUS_TROPICALIS);
+	taxonIDToSpecies.put("13616", MONODELPHIS_DOMESTICA);
 
         // and the other way around
         Iterator it = taxonIDToSpecies.keySet().iterator();
@@ -127,22 +135,24 @@ public final class Species {
             speciesToTaxonID.put(species, taxonID);
         }
         
-        assemblyPrefixToSpecies.put("RGSC", RATTUS_NORVEGICUS);
-        assemblyPrefixToSpecies.put("DROM", DROSOPHILA_MELANOGASTER);
-        assemblyPrefixToSpecies.put("ZFISH", DANIO_RERIO);
-        assemblyPrefixToSpecies.put("FUGU", FUGU_RUBRIPES);
-        assemblyPrefixToSpecies.put("MOZ", ANOPHELES_GAMBIAE);
-        assemblyPrefixToSpecies.put("CEL", CAENORHABDITIS_ELEGANS);
-        assemblyPrefixToSpecies.put("CBR", CAENORHABDITIS_BRIGGSAE);
-        assemblyPrefixToSpecies.put("NCBI", HOMO_SAPIENS);
-        assemblyPrefixToSpecies.put("NCBIM", MUS_MUSCULUS);
+        assemblyPrefixToSpecies.put("RGSC",      RATTUS_NORVEGICUS);
+        assemblyPrefixToSpecies.put("DROM",      DROSOPHILA_MELANOGASTER);
+        assemblyPrefixToSpecies.put("ZFISH",     DANIO_RERIO);
+        assemblyPrefixToSpecies.put("FUGU",      FUGU_RUBRIPES);
+        assemblyPrefixToSpecies.put("MOZ",       ANOPHELES_GAMBIAE);
+        assemblyPrefixToSpecies.put("CEL",       CAENORHABDITIS_ELEGANS);
+        assemblyPrefixToSpecies.put("CBR",       CAENORHABDITIS_BRIGGSAE);
+        assemblyPrefixToSpecies.put("NCBI",      HOMO_SAPIENS);
+        assemblyPrefixToSpecies.put("NCBIM",     MUS_MUSCULUS);
         assemblyPrefixToSpecies.put("TETRAODON", TETRAODON_NIGROVIRIDIS);
-        assemblyPrefixToSpecies.put("AMEL", APIS_MELLIFERA);
-        assemblyPrefixToSpecies.put("CHIMP", PAN_TROGLODYTES);
-        assemblyPrefixToSpecies.put("WASHUC", GALLUS_GALLUS);
-        assemblyPrefixToSpecies.put("BTAU", BOS_TAURUS);
-        assemblyPrefixToSpecies.put("BROADD", CANIS_FAMILIARIS);
-     
+        assemblyPrefixToSpecies.put("AMEL",      APIS_MELLIFERA);
+        assemblyPrefixToSpecies.put("CHIMP",     PAN_TROGLODYTES);
+        assemblyPrefixToSpecies.put("WASHUC",    GALLUS_GALLUS);
+        assemblyPrefixToSpecies.put("BTAU",      BOS_TAURUS);
+        assemblyPrefixToSpecies.put("BROADD",    CANIS_FAMILIARIS);
+	assemblyPrefixToSpecies.put("JGI",       XENOPUS_TROPICALIS);
+        assemblyPrefixToSpecies.put("BROADO",    MONODELPHIS_DOMESTICA);
+
 	// and the other way around
         it = assemblyPrefixToSpecies.keySet().iterator();
         while (it.hasNext()) {
@@ -280,6 +290,22 @@ public final class Species {
         if (in(alias, "dog,doggy,cfamiliaris,canisfamiliaris,canis_familiaris")) {
 
             return CANIS_FAMILIARIS;
+
+        }
+
+	// --------------------------------------
+
+        if (in(alias, "pipid,pipidfrog,xenopus,xtropicalis,xenopustropicalis,xenopus_tropicalis")) {
+
+            return XENOPUS_TROPICALIS;
+
+        }
+
+	// --------------------------------------
+
+        if (in(alias, "opossum,monodelphis,mdomestica,monodelphisdomestica,monodelphis_domestica")) {
+
+            return MONODELPHIS_DOMESTICA;
 
         }
 
