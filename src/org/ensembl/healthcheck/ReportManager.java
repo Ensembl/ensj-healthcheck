@@ -161,7 +161,7 @@ public final class ReportManager {
             }
 
         } else {
-            logger.warning("Cannot add report with database name not set");
+            //logger.warning("Cannot add report with database name not set");
         }
 
         if (reporter != null) {
