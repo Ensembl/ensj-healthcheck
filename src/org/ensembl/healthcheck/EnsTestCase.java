@@ -31,6 +31,8 @@ package org.ensembl.healthcheck;
 import java.sql.*;
 import java.util.*;
 
+import org.ensembl.healthcheck.util.*;
+
 public abstract class EnsTestCase {
     
     protected TestRunner testRunner;
@@ -42,6 +44,9 @@ public abstract class EnsTestCase {
      * Creates a new instance of EnsTestCase
      */
     public EnsTestCase() {
+    
+      groups = new ArrayList();
+      addToGroup("all");             // everything is in all, by default
       
     } // EnsTestCase
     
@@ -90,10 +95,30 @@ public abstract class EnsTestCase {
       
     }   
 
+    public String getCommaSeparatedGroups() {
+
+      StringBuffer gString = new StringBuffer();
+      
+      Iterator it = groups.iterator();
+      while (it.hasNext()) {
+        gString.append((String)it.next());
+	if (it.hasNext()) {
+	  gString.append(",");
+	}
+      }
+      return gString.toString();
+    }   
+    
     public void setGroups(ArrayList s) {
       
 	groups = s;
     
+    }
+    
+    public void setGroups(String[] s) {
+      for (int i = 0; i < s.length; i++) {
+	groups.add(s[i]);
+      }
     }
     
     public void addToGroup(String newGroupName) {
@@ -116,6 +141,25 @@ public abstract class EnsTestCase {
       
     }
     
+    public boolean inGroup(String group) {
+     
+      return groups.contains(group);
+      
+    }
+    
+    public boolean inGroups(ArrayList checkGroups) {
+     
+      boolean result = false;
+      
+      Iterator it = checkGroups.iterator();
+      while (it.hasNext()) {
+	if (inGroup((String)it.next())) {
+	  result = true;
+	}
+      }
+      return result;
+      
+    }
     // -------------------------------------------------------------------------
     
     public String[] getAffectedDatabases(String databaseRegexp) {
@@ -149,7 +193,7 @@ public abstract class EnsTestCase {
       
       int result = -1;
       
-       try {
+      try {
 	Statement stmt = con.createStatement();
 	ResultSet rs = stmt.executeQuery(sql);
 	if (rs != null) {
@@ -195,6 +239,39 @@ public abstract class EnsTestCase {
       
       
     } // countOrphans
+    
+    // -------------------------------------------------------------------------
+    
+    public TestResult checkSameSQLResult(String sql, String dbRegexp) {
+      
+      TestResult tr = new TestResult();
+      ArrayList resultSetGroup = new ArrayList();
+      
+      DatabaseConnectionIterator it = testRunner.getDatabaseConnectionIterator(getAffectedDatabases(dbRegexp));
+      
+      while (it.hasNext()) {
+	
+	Connection con = (Connection)it.next();
+	
+	try {
+	  Statement stmt = con.createStatement();
+	  ResultSet rs = stmt.executeQuery(sql);
+	  if (rs != null) {
+	    resultSetGroup.add(rs);
+	  }
+	  rs.close();
+	  stmt.close();
+	  con.close();
+	} catch (Exception e) {
+	  e.printStackTrace();
+	}
+      }
+      
+      boolean same = DBUtils.compareResultSetGroup(resultSetGroup);
+      
+      return tr;
+    
+    } // checkSameSQLResult
     
     // -------------------------------------------------------------------------
     
