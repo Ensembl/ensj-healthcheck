@@ -18,6 +18,8 @@
 
 package org.ensembl.healthcheck.testcase;
 
+import org.ensembl.healthcheck.*;
+
 /**
  * EnsEMBL Healthcheck test case that ensures that the results of the SQL
  * query <code>DESCRIBE external_db</code> are the same for a set of databases.

@@ -19,6 +19,9 @@
 package org.ensembl.healthcheck.testcase;
 
 import java.sql.*;
+
+import org.ensembl.healthcheck.*;
+
 import org.ensembl.healthcheck.util.*;
 
 /**

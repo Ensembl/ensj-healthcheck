@@ -22,6 +22,8 @@ import java.util.*;
 import java.sql.*;
 import java.util.logging.*;
 
+import org.ensembl.healthcheck.*;
+
 import org.ensembl.healthcheck.util.*;
 
 /**
@@ -76,6 +78,8 @@ import org.ensembl.healthcheck.util.*;
  *
  *
  */
+
+import org.ensembl.healthcheck.*;
 
 public abstract class EnsTestCase {
   
