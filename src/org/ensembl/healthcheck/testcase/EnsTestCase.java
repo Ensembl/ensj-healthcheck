@@ -583,6 +583,16 @@ public abstract class EnsTestCase {
   
   // -------------------------------------------------------------------------
   /**
+   * Get the database regular expression that this test case is using.
+   */
+  public String getDatabaseRegexp() {
+      
+      return databaseRegexp;
+      
+  } // getDatabaseRegexp
+  
+  // -------------------------------------------------------------------------
+  /**
    * Get the regular expression that will be applied to database names before the built-in regular expression.
    * @return The value of preFilterRegexp
    */
