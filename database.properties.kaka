@@ -1,0 +1,4 @@
+driver=org.gjt.mm.mysql.Driver
+databaseURL=jdbc:mysql://kaka.sanger.ac.uk/
+user=anonymous
+password=
