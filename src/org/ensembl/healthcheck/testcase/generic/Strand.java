@@ -52,6 +52,8 @@ public class Strand extends SingleDatabaseTestCase {
      */
     public boolean run(DatabaseRegistryEntry dbre) {
 
+        boolean result = true;
+        
         for (int i = 0; i < tables.length; i++) {
 
             String table = tables[i];
@@ -63,10 +65,11 @@ public class Strand extends SingleDatabaseTestCase {
             } else if (rows > 0) {
                 ReportManager.problem(this, con, rows + " rows in " + table
                         + " have seq_region_strand not equal to 1 or -1");
+                result = false;
             }
         }
 
-        return true;
+        return result;
 
     } // run
 
