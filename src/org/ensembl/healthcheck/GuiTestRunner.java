@@ -22,11 +22,12 @@ import java.util.*;
 import java.util.logging.*;
 
 import org.ensembl.healthcheck.util.*;
+import org.ensembl.healthcheck.testcase.*;
 
 /**
  * Graphical test runner.
  */
-public class GuiTestRunner extends TestRunner {
+public class GuiTestRunner extends TestRunner implements Reporter {
   
   /** The logger to use for this class */
   protected static Logger logger = Logger.getLogger("HealthCheckLogger");
@@ -40,7 +41,7 @@ public class GuiTestRunner extends TestRunner {
   
   /** Pre-filter regexp; may be overridded on command line */
   protected String preFilterRegexp = "";
- 
+  
   // -------------------------------------------------------------------------
   /**
    * Command-line entry point.
@@ -57,6 +58,10 @@ public class GuiTestRunner extends TestRunner {
     gtr.parseCommandLine(args);
     
     gtr.readPropertiesFile();
+    
+    gtr.readStoredSchemaInfo();
+    
+    ReportManager.setReporter(gtr);
     
     gtr.initFrame();
     
@@ -116,7 +121,7 @@ public class GuiTestRunner extends TestRunner {
   } // parseCommandLine
   
   // -------------------------------------------------------------------------
-  /** 
+  /**
    * Run all the tests in a list.
    * @param groups The groups to run (as Strings)
    * @param gtrf A reference to the GuiTestRunnerFrame to update as the tests run.
@@ -160,14 +165,14 @@ public class GuiTestRunner extends TestRunner {
     }
     gtrf.setStatus("Done");
     printReportsByTest(ReportLine.ALL);
-    
+     
     printReportsByDatabase(ReportLine.ALL);
-    */
+     */
   }
   
   // runAllTests
   // -------------------------------------------------------------------------
-  /** 
+  /**
    * Set the maximum number of test threads to run at one time.
    * @param t The new number of threads.
    */
@@ -201,7 +206,7 @@ public class GuiTestRunner extends TestRunner {
     
   } // setForceDatabases
   
-  /** 
+  /**
    * Get whether or not to only use the pre-filter regexp.
    * @return True if the pre-filter regecp only is to be used.
    */
@@ -212,7 +217,7 @@ public class GuiTestRunner extends TestRunner {
   } // getforceDatabase
   
   // -------------------------------------------------------------------------
-  /** 
+  /**
    * Set the pre-filter regexp.
    * @param re The new pre-filter regexp.
    */
@@ -223,7 +228,7 @@ public class GuiTestRunner extends TestRunner {
     
   } // setPreFilterRegexp
   
-  /** 
+  /**
    * Get the value of the pre-filter regexp.
    * @return The pre-filter regexp (may be "")
    */
@@ -235,5 +240,26 @@ public class GuiTestRunner extends TestRunner {
   
   // -------------------------------------------------------------------------
   
+  // Implementation of Reporter interface
+  
+  public void message(ReportLine reportLine) {
+    
+    // TBC
+    
+  }
+  
+  public void startTestCase(EnsTestCase testCase) {
+    
+    // TBC
+    
+  }
+  
+  public void finishTestCase(EnsTestCase testCase, TestResult result) {
+    
+    // TBC
+    
+  }
+  
+  // -------------------------------------------------------------------------
   
 } // GuiTestRunner
