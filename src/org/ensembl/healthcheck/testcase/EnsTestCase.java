@@ -455,12 +455,13 @@ public abstract class EnsTestCase {
     }
     int result = -1;
     
-    // check if the SQL starts with SELECT COUNT - if so it's a lot quicker
+    // if the query starts with SELECT COUNT and does not include a GROUP BY clause
+    // we can execute it and just take the first result, which is the count
     if (sql.toLowerCase().indexOf("select count") >= 0 && sql.toLowerCase().indexOf("group by") < 0) {
       
       result = getRowCountFast(con, sql);
       
-    } else {  // if not, do it row-by-row
+    } else {  //  otherwise, do it row-by-row
       
       logger.warning("getRowCount() executing SQL which does not appear to begin with SELECT COUNT - performing row-by-row count, which may take a long time if the table is large.");
       result = getRowCountSlow(con, sql);
