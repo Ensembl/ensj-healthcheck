@@ -97,6 +97,9 @@ public abstract class EnsTestCase {
    * All tests are members of the group "all", and also of a group with the same name as the test. */
   protected List groups;
   
+  /** Description field */
+  protected String description;
+  
   /** Logger object to use */
   protected static Logger logger = Logger.getLogger("HealthCheckLogger");
   
@@ -109,6 +112,7 @@ public abstract class EnsTestCase {
     groups = new ArrayList();
     addToGroup("all");               // everything is in all, by default
     addToGroup(getShortTestName());  // each test is in a one-test group
+    setDescription("No description set for this test.");              
     
   } // EnsTestCase
   
@@ -819,6 +823,28 @@ public abstract class EnsTestCase {
     return (String[])list.toArray(dummy);
     
   }
+  
+  // -------------------------------------------------------------------------
+  /**
+   * Get the description.
+   * @return The description for this test.
+   */
+  protected String getDescription() {
+    
+    return description;
+    
+  } // getDescription
+  
+  // -------------------------------------------------------------------------
+  /**
+   * Set the text description of this test case. 
+   * @param The new description.
+   */
+  protected void setDescription(String s) {
+    
+   description = s;
+    
+  } // setDescription
   
   // -------------------------------------------------------------------------
   
