@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
@@ -41,6 +42,15 @@ public class GeneTranscriptStartEnd extends SingleDatabaseTestCase {
 
     }
 
+    /**
+     * This only applies to core and Vega databases.
+     */
+    public void types() {
+
+        removeAppliesToType(DatabaseType.EST);
+
+    }
+    
     /**
      * Run the test.
      * 

@@ -19,6 +19,7 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
@@ -37,6 +38,15 @@ public class TranslationStartEnd extends SingleDatabaseTestCase {
         setDescription("Check that if the start and end of translation is on the same exon, that start < end.");
     }
 
+    /**
+     * This only applies to core and Vega databases.
+     */
+    public void types() {
+
+        removeAppliesToType(DatabaseType.EST);
+
+    }
+    
     /**
      * Find any matching databases that have start > end.
      * @param dbre
