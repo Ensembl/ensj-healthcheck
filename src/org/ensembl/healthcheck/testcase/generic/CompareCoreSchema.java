@@ -278,8 +278,8 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
                 }
             }
 
-	    // and the other way around
-Iterator it2 = rows2.iterator();
+            // and the other way around
+            Iterator it2 = rows2.iterator();
             while (it2.hasNext()) {
                 String row2 = (String) it2.next();
                 if (!rows1.contains(row2)) {
@@ -294,8 +294,6 @@ Iterator it2 = rows2.iterator();
                     }
                 }
             }
-
-
 
         } catch (SQLException se) {
             logger.severe(se.getMessage());
