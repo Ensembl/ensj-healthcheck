@@ -134,8 +134,16 @@ public class WebTestRunner extends TestRunner implements Reporter {
         System.out.println("Options:");
         System.out.println("  -h              This message.");
         System.out.println("  -debug          Print debugging info");
-
-        // TODO - config file format
+        System.out.println();
+        System.out
+                .println("All configuration information is read from the files database.properties and web.properties. ");
+        System.out.println("web.properties should contain the following properties:");
+        System.out
+                .println("  webtestrunner.groups=       A comma-separated list of the groups, or individual tests, to run");
+        System.out.println("  webtestrunner.databases=    A comma-separated list of database regexps to match");
+        System.out.println("  webtestrunner.file=         The name of the output file to write to ");
+        System.out
+                .println("  webtestrunner.outputlevel=  How much output to write. Should be one of all, info, warning, correct or problem");
 
     }
 
@@ -184,8 +192,6 @@ public class WebTestRunner extends TestRunner implements Reporter {
      */
     public void startTestCase(EnsTestCase testCase, DatabaseRegistryEntry dbre) {
 
-        // TODO - implement
-
     }
 
     //---------------------------------------------------------------------
@@ -222,8 +228,6 @@ public class WebTestRunner extends TestRunner implements Reporter {
             System.err.println("No output file specified in " + CONFIG_FILE);
             System.exit(1);
         }
-
-        // TODO other properties
 
     }
 
@@ -298,6 +302,8 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
             printHeader(pw);
 
+            printExecutiveSummary(pw);
+
             printSummaryByDatabase(pw);
 
             printSummaryByTest(pw);
@@ -330,6 +336,8 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
         print(pw, "<h1>Healthcheck Report</h1>");
 
+        print(pw, "<hr>");
+
     }
 
     //---------------------------------------------------------------------
@@ -348,6 +356,8 @@ public class WebTestRunner extends TestRunner implements Reporter {
             String link = "<a name=\"" + database + "\">";
             print(pw, "<h3>" + link + database + "</a></h3>");
 
+            print(pw, "<p>");
+
             List reports = (List) reportsByDB.get(database);
             Iterator it2 = reports.iterator();
             String lastTest = "";
@@ -355,21 +365,21 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
                 ReportLine line = (ReportLine) it2.next();
                 String test = line.getShortTestCaseName();
-                
+
                 if (!lastTest.equals("") && !test.equals(lastTest)) {
-                    print(pw, "<p>");
+                    print(pw, "</p><p>");
                 }
                 lastTest = test;
-                
+
                 String linkTarget = "<a name=\"" + database + ":" + test + "\"></a> ";
                 String s = linkTarget + getFontForReport(line) + "<strong>" + test + ": </strong>" + line.getMessage()
                         + "</font>" + "<br>";
 
                 print(pw, s);
 
-               
-
             } // while it2
+
+            print(pw, "</p>");
 
         } // while it
 
@@ -391,6 +401,8 @@ public class WebTestRunner extends TestRunner implements Reporter {
             String link = "<a name=\"" + test + "\">";
             print(pw, "<h3>" + link + test + "</a></h3>");
 
+            print(pw, "<p>");
+
             List reports = (List) reportsByTC.get(test);
             Iterator it2 = reports.iterator();
             String lastDB = "";
@@ -398,12 +410,12 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
                 ReportLine line = (ReportLine) it2.next();
                 String database = line.getDatabaseName();
-                
+
                 if (!lastDB.equals("") && !database.equals(lastDB)) {
-                    print(pw, "<p>");
+                    print(pw, "</p><p>");
                 }
                 lastDB = database;
-                
+
                 String linkTarget = "<a name=\"" + line.getShortTestCaseName() + ":" + database + "\"></a> ";
                 String s = linkTarget + getFontForReport(line) + "<strong>" + database + ": </strong>"
                         + line.getMessage() + "</font>" + "<br>";
@@ -411,6 +423,9 @@ public class WebTestRunner extends TestRunner implements Reporter {
                 print(pw, s);
 
             } // while it2
+
+            print(pw, "</p>");
+
         } // while it
 
         print(pw, "<hr>");
@@ -474,7 +489,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
         print(pw, "<h2>Summary by database</h2>");
 
-        print(pw, "<table cellpadding='15' border='1'>");
+        print(pw, "<p><table cellpadding='15' border='1'>");
         print(pw, "<tr><th>Database</th><th>Passed</th><th>Failed</th></tr>");
 
         Map reportsByDB = ReportManager.getAllReportsByDatabase();
@@ -490,7 +505,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
             printTableLine(pw, t);
         }
 
-        print(pw, "</table>");
+        print(pw, "</table></p>");
 
         print(pw, "<hr>");
 
@@ -502,7 +517,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
         print(pw, "<h2>Summary by test</h2>");
 
-        print(pw, "<table cellpadding=\"10\" border=\"1\">");
+        print(pw, "<p><table cellpadding=\"10\" border=\"1\">");
         print(pw, "<tr><th>Test</th><th>Passed</th><th>Failed</th></tr>");
 
         Map reports = ReportManager.getAllReportsByTestCase();
@@ -518,7 +533,27 @@ public class WebTestRunner extends TestRunner implements Reporter {
             printTableLine(pw, t);
         }
 
-        print(pw, "</table>");
+        print(pw, "</table></p>");
+
+        print(pw, "<hr>");
+
+    }
+
+    //---------------------------------------------------------------------
+
+    private void printExecutiveSummary(PrintWriter pw) {
+
+        print(pw, "<h2>Summary</h2>");
+
+        int[] result = ReportManager.countPassesAndFailsAll();
+
+        StringBuffer s = new StringBuffer();
+        s.append("<p><strong>");
+        s.append(passFont() + result[0] + "</font> tests passed and ");
+        s.append(failFont() + result[1] + "</font> failed out of a total of ");
+        s.append((result[0] + result[1]) + " tests run.</strong></p>");
+
+        print(pw, s.toString());
 
         print(pw, "<hr>");
 
