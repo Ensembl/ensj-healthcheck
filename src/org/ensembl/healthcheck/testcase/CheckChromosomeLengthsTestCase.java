@@ -37,11 +37,12 @@ public class CheckChromosomeLengthsTestCase extends EnsTestCase {
 		boolean result = true;
 		DatabaseConnectionIterator it = getDatabaseConnectionIterator();
 		while (it.hasNext()) {
-			Connection con = (Connection) it.next();
+			Connection con = (Connection)it.next();
 			String dbName = DBUtils.getShortDatabaseName(con);
 			// check that there are some chromosomes
 			// of course this may not necessarily be a problem for some species
-			String chrSQL = "SELECT count(*) from seq_region sr, coord_system cs "
+			String chrSQL =
+				"SELECT count(*) from seq_region sr, coord_system cs "
 					+ "WHERE sr.coord_system_id=cs.coord_system_id AND cs.name='chromosome'";
 			int rows = getRowCount(con, chrSQL);
 			if (rows == 0) {
@@ -60,20 +61,28 @@ public class CheckChromosomeLengthsTestCase extends EnsTestCase {
 			// greater than) the maximum assembly length
 			// The SQL returns failures
 			// ----------------------------------------------------
-			String sql = "SELECT    sr.name, sr.length " + "FROM     seq_region sr, assembly ass "
-					+ "WHERE    ass.asm_seq_region_id = sr.seq_region_id " + "GROUP BY ass.asm_seq_region_id "
-					+ "HAVING   sr.length < MAX(ass.asm_end)";
+			String sql =
+				"SELECT sr.name, sr.length "
+					+ "FROM seq_region sr, assembly ass, coord_system cs "
+					+ "WHERE cs.name='chromosome' "
+					+ "AND sr.coord_system_id=cs.coord_system_id "
+					+ "AND ass.asm_seq_region_id = sr.seq_region_id "
+					+ "GROUP BY ass.asm_seq_region_id "
+					+ "HAVING sr.length < MAX(ass.asm_end)";
+			System.out.println(sql);
+
 			String[] chrs = getColumnValues(con, sql);
 			if (chrs.length > 0) {
 				result = false;
-				ReportManager.problem(this, con,
-						"Chromosome lengths are shorter in the seq_region table than in the assembly table");
+				ReportManager.problem(this, con, "Chromosome lengths are shorter in the seq_region table than in the assembly table:");
 				for (int i = 0; i < chrs.length && i < 50; i++) {
-					ReportManager.problem(this, con, " Chromosome " + chrs[i] + " is longer in assembly than in seq_region");
+					ReportManager.problem(this, con, " Chromosome " + chrs[i] + " is shorter in seq_region than in assembly");
 				}
 			} else {
-				ReportManager.correct(this, con,
-						"Chromosome lengths are equal or greater in the seq_region table compared to the assembly table");
+				ReportManager.correct(
+					this,
+					con,
+					"Chromosome lengths are equal or greater in the seq_region table compared to the assembly table");
 			}
 			// --------------------------------------------------
 			// Find any chromosomes that have different lengths in karyotype &
@@ -82,8 +91,11 @@ public class CheckChromosomeLengthsTestCase extends EnsTestCase {
 			// same.
 			// The SQL returns failures
 			// --------------------------------------------------
-			String karsql = "SELECT sr.name, max(kar.seq_region_end), sr.length " + "FROM seq_region sr, karyotype kar "
-					+ "WHERE sr.seq_region_id=kar.seq_region_id " + "GROUP BY kar.seq_region_id "
+			String karsql =
+				"SELECT sr.name, max(kar.seq_region_end), sr.length "
+					+ "FROM seq_region sr, karyotype kar "
+					+ "WHERE sr.seq_region_id=kar.seq_region_id "
+					+ "GROUP BY kar.seq_region_id "
 					+ "HAVING sr.length <> MAX(kar.seq_region_end)";
 			int count = 0;
 			try {
@@ -104,15 +116,24 @@ public class CheckChromosomeLengthsTestCase extends EnsTestCase {
 							bp = chrLen - karLen;
 							prob = "shorter";
 						}
-						ReportManager.problem(this, con, "Chromosome " + chrName + " is " + bp + "bp " + prob
-								+ " in the karyotype table than " + "in the chromosome table");
+						ReportManager.problem(
+							this,
+							con,
+							"Chromosome "
+								+ chrName
+								+ " is "
+								+ bp
+								+ "bp "
+								+ prob
+								+ " in the karyotype table than "
+								+ "in the seq_region table");
 					}
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 			if (count == 0) {
-				ReportManager.correct(this, con, "chromosome lengths are the same" + " in karyotype and chromosome tables");
+				ReportManager.correct(this, con, "Chromosome lengths are the same" + " in karyotype and seq_region tables");
 			}
 			// -------------------------------------------
 		} // while connection
