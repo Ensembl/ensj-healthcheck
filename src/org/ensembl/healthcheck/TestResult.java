@@ -31,8 +31,8 @@ public class TestResult {
   /** 
    * Create a new (no-args) TestResult object.
    **/
-  public TestResult() {
-  }
+    public TestResult() {
+    }
   
   // -------------------------------------------------------------------------
   /**

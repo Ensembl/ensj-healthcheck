@@ -27,12 +27,12 @@ import org.ensembl.healthcheck.testcase.*;
  * Subclass of TestRunner that lists all tests.
  */
 public class ListAllTests extends TestRunner {
-  
-  String groupToList = "";
-  boolean showGroups = false;
-  boolean showDesc = false;
-  
-  // -------------------------------------------------------------------------
+    
+    String groupToList = "";
+    boolean showGroups = false;
+    boolean showDesc = false;
+    
+    // -------------------------------------------------------------------------
   /**
    * Command-line run method.
    * @param args The command-line arguments.
