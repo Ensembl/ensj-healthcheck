@@ -50,8 +50,14 @@ public class CheckArchiveTestCase extends EnsTestCase {
 			result = checkNoNullStrings(con) && result;
 			System.out.println("Checking archive integrity");
 			result = checkArchiveIntegrity(con) && result;
+			System.out.println("Checking DB name format in mapping_session");
+			result = checkDBNameFormat(con) && result;
 			System.out.println("Checking mapping_session chaining");
 			result = checkMappingSessionChaining(con) && result;
+			System.out.println("Checking mapping_session/stable_id_event keys");
+			result = checkMappingSessionStableIDKeys(con) && result;
+			System.out.println("Checking that ALL/LATEST mapping session has most entries");
+			result = checkAllLatest(con) && result;
 
 			/*
 			System.out.println("Checking deleted genes");
@@ -404,7 +410,7 @@ public class CheckArchiveTestCase extends EnsTestCase {
 		//		#old_stable_id="NULL"
 
 		//		#update stable_id_event set new_stable_id=NULL where
-		//		#new_stable_id="NULL"		// TODO Auto-generated method stub
+		//		#new_stable_id="NULL"	
 
 		return result;
 	}
@@ -428,9 +434,93 @@ public class CheckArchiveTestCase extends EnsTestCase {
 		}
 
 		ReportManager.correct(this, con, "Old/new db name chaining in mapping_session seems OK");
-		
+
 		return result;
-		
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+	 * Check that all mapping_sessions have entries in stable_id_event and vice-versa.
+	 */
+	private boolean checkMappingSessionStableIDKeys(Connection con) {
+
+		boolean result = true;
+
+		int orphans = countOrphans(con, "mapping_session", "mapping_session_id", "stable_id_event", "mapping_session_id", false);
+		if (orphans > 0) {
+			ReportManager.problem(this, con, orphans + " dangling references between mapping_session and stable_id_event tables");
+			result = false;
+		} else {
+			ReportManager.correct(this, con, "All mapping_session/stable_id_event keys are OK");
+		}
+
+		return result;
+
+	}
+
+	// -----------------------------------------------------------------
+	/** 
+	 * Check that the ALL/LATEST mapping session has more entries than 
+	 * the others
+	 */
+	private boolean checkAllLatest(Connection con) {
+
+		boolean result = true;
+
+		// Following query should give one result - the ALL/LATEST one - if all is well
+		String sql =
+			"SELECT ms.old_db_name, ms.new_db_name, count(*) AS entries "
+				+ "FROM stable_id_event sie, mapping_session ms "
+				+ "WHERE sie.mapping_session_id=ms.mapping_session_id "
+				+ "GROUP BY ms.mapping_session_id ORDER BY entries DESC LIMIT 1";
+
+		String oldDBName = getRowColumnValue(con, sql);
+		if (!(oldDBName.equalsIgnoreCase("ALL"))) {
+			ReportManager.problem(this, con, "ALL/LATEST mapping session does not seem to have the most stable_id_event entries");
+			result = false;
+		} else {
+			ReportManager.correct(this, con, "ALL/LATEST mapping session seems to have the most stable_id_event entries");
+		}
+
+		return result;
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+	 * Check format of old/new DB names in mapping_session.
+	 */
+	private boolean checkDBNameFormat(Connection con) {
+
+		boolean result = true;
+		String dbNameRegexp = CORE_DB_REGEXP;
+
+		String[] sql =
+			{
+				"SELECT old_db_name from mapping_session WHERE old_db_name <> 'ALL'",
+				"SELECT new_db_name from mapping_session WHERE new_db_name <> 'LATEST'" };
+
+		for (int i = 0; i < sql.length; i++) {
+
+			String[] names = getColumnValues(con, sql[i]);
+			for (int j = 0; j < names.length; j++) {
+				if (!(names[j].matches(dbNameRegexp))) {
+					ReportManager.problem(
+						this,
+						con,
+						"Database name " + names[j] + " in mapping_session does not appear to be in the correct format");
+					result = false;
+				}
+			}
+
+		}
+
+		if (result == true) {
+			ReportManager.correct(this, con, "All database names in mapping_session appear to be in the correct format");
+		}
+
+		return result;
 	}
 
 	// -----------------------------------------------------------------
