@@ -44,6 +44,7 @@ import java.util.logging.LogRecord;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -56,6 +57,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTree;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
@@ -118,7 +120,8 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
         setSize(PANEL_SIZE);
 
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel("com.birosoft.liquid.LiquidLookAndFeel");
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -133,7 +136,7 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
             }
         });
 
-        setIconImage(new ImageIcon(this.getClass().getResource("e-logo-small.gif")).getImage());
+        //setIconImage(new ImageIcon(this.getClass().getResource("e-logo-small.gif")).getImage());
 
         // ----------------------------
         // Top panel - title
@@ -143,7 +146,7 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
         topPanel.setBackground(new Color(255, 255, 255));
         titleLabel.setFont(new Font("SansSerif", 1, 18));
         titleLabel.setText("HealthCheck");
-        titleLabel.setIcon(new ImageIcon(this.getClass().getResource("e-logo.gif")));
+        //titleLabel.setIcon(new ImageIcon(this.getClass().getResource("e-logo.gif")));
         topPanel.add(titleLabel);
 
         // ----------------------------
@@ -240,7 +243,10 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
 
         // ----------------------------
         // Create progress window
-        testProgressDialog = new TestProgressDialog("Running tests", "", 0, 100);
+        //testProgressDialog = new TestProgressDialog("Running tests", "", 0, 100);
+        TestProgressDialogThread tpdThread = new TestProgressDialogThread();
+        tpdThread.start();
+        testProgressDialog = tpdThread.getDialog();
 
     }
 
@@ -462,6 +468,7 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
 /**
  * ActionListener implementation to open a test info window.
  */
+
 class TestInfoWindowOpener implements ActionListener {
 
     private TestInfoWindow infoWindow;
@@ -583,14 +590,38 @@ class DatabaseListPanel extends JScrollPane {
 
         Iterator it = checkBoxes.iterator();
         while (it.hasNext()) {
-            panel.add((JCheckBox) it.next());
+            JPanel checkBoxPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+            checkBoxPanel.setBackground(Color.WHITE);
+            checkBoxPanel.add((DatabaseCheckBox) it.next());
+            panel.add(checkBoxPanel);
         }
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        buttonPanel.setBackground(Color.WHITE);
+        JButton toggleAllButton = new JButton("Toggle all");
+        final DatabaseListPanel localDBLP = this;
+        toggleAllButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+
+                localDBLP.toggleAll();
+
+            }
+        });
+
+        buttonPanel.add(toggleAllButton);
+        panel.add(Box.createVerticalGlue());
+        panel.add(buttonPanel);
 
         setViewportView(panel);
     }
 
     // -------------------------------------------------------------------------
-
+    /**
+     * Get the databases that are selected on this panel.
+     * 
+     * @return the selected databases.
+     */
     public DatabaseRegistryEntry[] getSelected() {
 
         List selected = new ArrayList();
@@ -606,6 +637,21 @@ class DatabaseListPanel extends JScrollPane {
         return (DatabaseRegistryEntry[]) selected.toArray(new DatabaseRegistryEntry[selected.size()]);
 
     } // getSelected
+
+    // -------------------------------------------------------------------------
+    /**
+     * Toggle the selections of the databases in this panel
+     */
+    public void toggleAll() {
+
+        Iterator it = checkBoxes.iterator();
+        while (it.hasNext()) {
+            DatabaseCheckBox dbcb = (DatabaseCheckBox) it.next();
+            dbcb.toggle();
+
+        }
+
+    } // toggleAll
 
     // -------------------------------------------------------------------------
 
@@ -642,6 +688,16 @@ class DatabaseCheckBox extends JCheckBox {
     public void setDatabase(DatabaseRegistryEntry database) {
 
         this.database = database;
+
+    }
+
+    /**
+     * Toggle the selected state of this checkbox.
+     */
+    public void toggle() {
+
+        setSelected(!isSelected());
+
     }
 
 } // DatabaseCheckBox
@@ -660,7 +716,7 @@ class TestTabbedPane extends JTabbedPane {
 
         DatabaseType[] types = testRegistry.getTypes();
         Arrays.sort(types, new DatabaseTypeGUIComparator());
-        
+
         for (int i = 0; i < types.length; i++) {
             addTab(types[i].toString(), new TestListPanel(types[i], testRegistry));
         }
@@ -715,14 +771,14 @@ class TestListPanel extends JScrollPane {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(Color.WHITE);
 
-        TestDefaultMutableTreeNode top = new TestDefaultMutableTreeNode("Select tests:");
+        TestTreeNode top = new TestTreeNode("Select tests:");
 
         String[] groups = testRegistry.getGroups(type);
         for (int i = 0; i < groups.length; i++) {
-            TestDefaultMutableTreeNode groupNode = new TestDefaultMutableTreeNode(groups[i]);
+            TestTreeNode groupNode = new TestTreeNode(groups[i]);
             EnsTestCase[] testCasesInGroup = testRegistry.getTestsInGroup(groups[i], type);
             for (int j = 0; j < testCasesInGroup.length; j++) {
-                groupNode.add(new TestDefaultMutableTreeNode(testCasesInGroup[j]));
+                groupNode.add(new TestTreeNode(testCasesInGroup[j]));
             }
             top.add(groupNode);
         }
@@ -745,10 +801,10 @@ class TestListPanel extends JScrollPane {
         List selected = new ArrayList();
 
         TreeModel model = tree.getModel();
-        TestDefaultMutableTreeNode root = (TestDefaultMutableTreeNode) model.getRoot();
+        TestTreeNode root = (TestTreeNode) model.getRoot();
         Enumeration children = root.breadthFirstEnumeration();
         while (children.hasMoreElements()) {
-            TestDefaultMutableTreeNode child = (TestDefaultMutableTreeNode) children.nextElement();
+            TestTreeNode child = (TestTreeNode) children.nextElement();
             if (!child.isGroup() && child.isSelected()) {
                 selected.add(child.getTest());
             }
@@ -766,16 +822,23 @@ class TestListPanel extends JScrollPane {
 /**
  * Custom cell renderer for a tree of groups and tests.
  */
+
 class TestTreeCellRenderer extends JComponent implements TreeCellRenderer {
 
     private JLabel label;
 
     private JCheckBox checkBox;
 
+    private Icon slowIcon;
+
     public TestTreeCellRenderer() {
+
+        slowIcon = null;
+        //slowIcon = new ImageIcon(this.getClass().getResource("hourglass-small.gif"));
 
         label = new JLabel();
         label.setBackground(Color.WHITE);
+        label.setHorizontalTextPosition(SwingConstants.LEADING);
         checkBox = new JCheckBox();
         checkBox.setBackground(Color.WHITE);
         setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -787,7 +850,7 @@ class TestTreeCellRenderer extends JComponent implements TreeCellRenderer {
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf,
             int row, boolean hasFocus) {
 
-        TestDefaultMutableTreeNode node = (TestDefaultMutableTreeNode) value;
+        TestTreeNode node = (TestTreeNode) value;
         if (node != null) {
 
             checkBox.setSelected(node.isSelected());
@@ -798,8 +861,14 @@ class TestTreeCellRenderer extends JComponent implements TreeCellRenderer {
                 label.setText(node.getGroupName());
                 label.setFont(new Font(defaultFontName, Font.BOLD, defaultFontSize));
             } else {
-                label.setText(node.getTest().getShortTestName());
+                EnsTestCase test = node.getTest();
+                label.setText(test.getShortTestName());
                 label.setFont(new Font(defaultFontName, Font.PLAIN, defaultFontSize));
+                if (test.isLongRunning()) {
+                    label.setIcon(slowIcon);
+                } else {
+                    label.setIcon(null);
+                }
             }
 
         }
@@ -819,7 +888,7 @@ class TestTreeCellRenderer extends JComponent implements TreeCellRenderer {
  * Subclass of DefaultMutableTreeNode that tracks whether it's selected or not.
  */
 
-class TestDefaultMutableTreeNode extends DefaultMutableTreeNode {
+class TestTreeNode extends DefaultMutableTreeNode {
 
     private boolean selected;
 
@@ -829,7 +898,7 @@ class TestDefaultMutableTreeNode extends DefaultMutableTreeNode {
 
     private boolean isGroup;
 
-    public TestDefaultMutableTreeNode(Object o) {
+    public TestTreeNode(Object o) {
 
         if (o instanceof String) {
             this.groupName = (String) o;
@@ -899,7 +968,7 @@ class TestTreeNodeSelectionListener extends MouseAdapter {
             // controls
 
             // which node was clicked?
-            TestDefaultMutableTreeNode node = (TestDefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+            TestTreeNode node = (TestTreeNode) tree.getLastSelectedPathComponent();
             if (node != null) {
 
                 node.toggle();
@@ -908,7 +977,7 @@ class TestTreeNodeSelectionListener extends MouseAdapter {
                 if (!node.isLeaf()) {
                     Enumeration children = node.children();
                     while (children.hasMoreElements()) {
-                        TestDefaultMutableTreeNode child = (TestDefaultMutableTreeNode) children.nextElement();
+                        TestTreeNode child = (TestTreeNode) children.nextElement();
                         child.setSelected(node.isSelected());
                     }
                 }
@@ -995,17 +1064,17 @@ class TestProgressDialog extends JDialog {
 /**
  * Fiddle things so that generic database types are moved to the front.
  */
+
 class DatabaseTypeGUIComparator implements Comparator {
-    
+
     public int compare(Object o1, Object o2) {
-        
-        if (!(o1 instanceof DatabaseType) || !(o2 instanceof DatabaseType)) {
-            throw new RuntimeException("Arguments to DatabaseTypeGUIComparator must be DatabaseType!");
-        }
-        
-        DatabaseType t1 = (DatabaseType)o1;
-        DatabaseType t2 = (DatabaseType)o2;
-        
+
+        if (!(o1 instanceof DatabaseType) || !(o2 instanceof DatabaseType)) { throw new RuntimeException(
+                "Arguments to DatabaseTypeGUIComparator must be DatabaseType!"); }
+
+        DatabaseType t1 = (DatabaseType) o1;
+        DatabaseType t2 = (DatabaseType) o2;
+
         if (t1.isGeneric() && !t2.isGeneric()) {
             return -1;
         } else if (!t1.isGeneric() && t2.isGeneric()) {
@@ -1014,6 +1083,29 @@ class DatabaseTypeGUIComparator implements Comparator {
             return t1.toString().compareTo(t2.toString());
         }
     }
-    
+
 }
+// -------------------------------------------------------------------------
+
+/**
+ * A thread to hold the test progress dialog so it doesn't block everything else.
+ */
+
+class TestProgressDialogThread extends Thread {
+
+    private TestProgressDialog dialog;
+
+    public TestProgressDialogThread() {
+
+        dialog = new TestProgressDialog("Running tests", "", 0, 100);
+
+    }
+
+    public TestProgressDialog getDialog() {
+
+        return dialog;
+
+    }
+}
+
 // -------------------------------------------------------------------------

@@ -66,22 +66,22 @@ public class GuiTestRunner extends TestRunner implements Reporter {
     private void run(String[] args) {
 
         ReportManager.setReporter(this);
-
+        
         parseCommandLine(args);
 
         Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
-
+        
         DatabaseRegistry databaseRegistry = new DatabaseRegistry(".*");
         if (databaseRegistry.getEntryCount() == 0) {
             logger.warning("Warning: no databases found!");
         }
-
+    
         gtrf = new GuiTestRunnerFrame(this, new TestRegistry(), databaseRegistry);
-
-        setupLogging();
 
         gtrf.show();
 
+        setupLogging();
+        
     }
 
     // -------------------------------------------------------------------------
