@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.Repair;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
@@ -57,6 +58,16 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
         featuresToDelete = new HashMap();
     }
 
+    /**
+     * This test only applies to core and Vega databases.
+     */
+    public void types() {
+
+        removeAppliesToType(DatabaseType.EST);
+        removeAppliesToType(DatabaseType.ESTGENE);
+
+    }
+    
     /**
      * Builds a cache of the translation lengths, then compares them with the
      * values in the protein_features table.
