@@ -26,15 +26,14 @@ import org.ensembl.healthcheck.*;
 import org.ensembl.healthcheck.util.*;
 
 /**
- * Check for presence and format of PFAM etc hits. Also checks for protein features
- * with not hit_id
+ * Check for presence and format of PFAM hits, and format of others.
+ * Also checks for protein features with no hit_id.
  */
 
 public class AccessionTestCase extends EnsTestCase {
   
   private HashMap formats = new HashMap();
-  
-  
+ 
   /**
    * Constructor.
    */
@@ -46,6 +45,8 @@ public class AccessionTestCase extends EnsTestCase {
     // add to this hash to check for other types and formats
     formats.put("pfam",        "PF_____");
     formats.put("prints",      "PR_____");
+    formats.put("prosite",     "PS_____");
+    formats.put("profile",     "PS_____");    
     formats.put("scanprosite", "PS_____");
     
   }
