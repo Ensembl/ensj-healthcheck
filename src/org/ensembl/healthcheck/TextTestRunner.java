@@ -20,6 +20,8 @@ package org.ensembl.healthcheck;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Handler;
@@ -141,24 +143,36 @@ public class TextTestRunner extends TestRunner implements Reporter {
                 + ". 0 means never break");
         System.out.println("  -resultsbydb    Print results by databases as well as by test case.");
         System.out.println("  -nofailuretext  Don't print failure hints.");
+        System.out.println("  -skipslow       Don't run long-running tests");
         System.out.println("  group1          Names of groups of test cases to run.");
         System.out.println("                  Note each test case is in a group of its own with the name of the test case.");
         System.out.println("                  This allows individual tests to be run if required.");
         System.out.println("");
         System.out
                 .println("If no tests or test groups are specified, and a database regular expression is given with -d, the matching databases are shown. ");
-        System.out.println("");
-        System.out.println("Currently available tests:");
+
+        System.out.println("\nCurrently available tests:");
 
         List tests = testRegistry.getAll();
+	Map groups = new HashMap();
         Collections.sort(tests, new TestComparator());
         Iterator it = tests.iterator();
         while (it.hasNext()) {
             EnsTestCase test = (EnsTestCase) it.next();
             System.out.print(test.getShortTestName() + " ");
+	    List testGroups = test.getGroups();
+	    Iterator it2 = testGroups.iterator();
+	    while (it2.hasNext()) {
+		String group = (String)it2.next();
+		if (group.equals(group.toLowerCase())) {
+		    groups.put(group, group);
+		}
+	    }
         }
 
-        System.out.println("");
+        System.out.println("\n\nCurrently available test groups (use show-groups.sh to show which tests are in which groups):");
+	System.out.println(Utils.listToString(new ArrayList(groups.keySet()), " "));
+
 
     }
 
