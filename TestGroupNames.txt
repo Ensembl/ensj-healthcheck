@@ -1,0 +1,10 @@
+This file contains a list of the currently-used test group names.
+
+Since group names are strings, it is possible to inadvertently create a new group when you meant to have a test be a member of an existing group by using the wrong group name, e.g "database_constraints" instead of "db_constraints".
+
+If you create a new group, please add it to this file, with a description if necesary, so that the group names can be kept consistent.
+
+all                     # default group name - all tests are a member of this group
+db_constraints         
+post_genebuild
+
