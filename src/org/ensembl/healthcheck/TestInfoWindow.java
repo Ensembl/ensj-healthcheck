@@ -26,6 +26,7 @@ public class TestInfoWindow extends javax.swing.JDialog {
    */
   private void initComponents() {//GEN-BEGIN:initComponents
     basePanel = new javax.swing.JPanel();
+    infoScrollPane = new javax.swing.JScrollPane();
     infoTextArea = new javax.swing.JTextArea();
     
     addWindowListener(new java.awt.event.WindowAdapter() {
@@ -37,7 +38,9 @@ public class TestInfoWindow extends javax.swing.JDialog {
     infoTextArea.setColumns(40);
     infoTextArea.setEditable(false);
     infoTextArea.setRows(10);
-    basePanel.add(infoTextArea);
+    infoScrollPane.setViewportView(infoTextArea);
+    
+    basePanel.add(infoScrollPane);
     
     getContentPane().add(basePanel, java.awt.BorderLayout.CENTER);
     
@@ -60,6 +63,7 @@ public class TestInfoWindow extends javax.swing.JDialog {
   
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JPanel basePanel;
+  private javax.swing.JScrollPane infoScrollPane;
   private javax.swing.JTextArea infoTextArea;
   // End of variables declaration//GEN-END:variables
  
