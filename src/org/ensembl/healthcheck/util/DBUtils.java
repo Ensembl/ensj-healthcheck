@@ -498,7 +498,7 @@ public class DBUtils {
    * @param the table to use.
    * @return A List of Strings representing the column names.
    */
-  public List getColumnsInTable(Connection con, String table) {
+  public static List getColumnsInTable(Connection con, String table) {
     
     List result = new ArrayList();
     
