@@ -514,6 +514,29 @@ public abstract class EnsTestCase {
   
   // -------------------------------------------------------------------------
   /**
+   * Check that all entries in column match a particular pattern.
+   * @param con The database connection to use.
+   * @param table The name of the table to examine.
+   * @param column The name of the column to look in.
+   * @param pattern The SQL pattern (can contain _,%) to look for.
+   * @return The number of columns that <em>DO NOT</em> match the pattern.
+   */
+  public int checkColumnPattern(Connection con, String table, String column, String pattern) {
+    
+    // @todo - what about NULLs?
+    
+    boolean result = false;
+
+    // cheat by looking for any rows that DO NOT match the pattern
+    String sql = "SELECT COUNT(*) FROM " + table + " WHERE " + column + " NOT LIKE \"" + pattern + "\"";
+    logger.fine(sql);
+    
+    return getRowCount(con, sql);
+        
+  } // checkColumnPattern
+  
+  // -------------------------------------------------------------------------
+  /**
    * Check if there are any blank entires in a column that is not supposed to be null.
    * @param con The database connection to use.
    * @param table The table to use.
