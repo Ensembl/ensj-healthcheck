@@ -152,7 +152,6 @@ public class TextTestRunner extends TestRunner implements Reporter {
         System.out.println("");
         System.out.println("Currently available tests:");
 
-        System.out.println("##testRegistry null: " + (testRegistry == null));
         List tests = testRegistry.getAll();
         Collections.sort(tests, new TestComparator());
         Iterator it = tests.iterator();
