@@ -84,6 +84,17 @@ public class TestRunner {
       logger.finer("\t" + name + " = " + value);
     }
     
+    // validate database URL - if it doesn't start with jdbc: this can cause confusion
+    String databaseURL = System.getProperty("databaseURL");
+    if (databaseURL == null || databaseURL.equals("")) {
+    	System.err.println("Error: databaseURL not specified in " + propsFile);	
+    } else {
+    	String prefix = databaseURL.substring(0, 5);
+    	if (!prefix.equalsIgnoreCase("jdbc:")) {
+    		System.err.println("WARNING - databaseURL property should start with jdbc: but it does not seem to. Check this if you experience problems loading the database driver");
+    	}	
+    }
+    
   } // readPropertiesFile
   
   // -------------------------------------------------------------------------
