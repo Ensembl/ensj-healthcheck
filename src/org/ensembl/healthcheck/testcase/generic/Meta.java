@@ -73,8 +73,10 @@ public class Meta extends SingleDatabaseTestCase {
 
         result &= checkGenebuildVersion(con);
 
+	result &= checkCoordSystemTableCases(con);
+
         // ----------------------------------------
-        // Use an AssemblyNameInfo object to get te assembly information
+        // Use an AssemblyNameInfo object to get the assembly information
         AssemblyNameInfo assembly = new AssemblyNameInfo(con);
 
         String metaTableAssemblyDefault = assembly.getMetaTableAssemblyDefault();
@@ -264,10 +266,69 @@ public class Meta extends SingleDatabaseTestCase {
                 if (valid) {
                     ReportManager.correct(this, con, "Coordinate system mapping " + mappings[i] + " is OK");
                 }
+		
+		result &= valid;
+
+		// check that coord systems are specified in lower-case
+		result &= checkCoordSystemCase(con, cs1, "meta assembly.mapping");
+		result &= checkCoordSystemCase(con, cs2, "meta assembly.mapping");
+		result &= checkCoordSystemCase(con, cs3, "meta assembly.mapping");
+
             }
         }
 
         return result;
+    }
+
+    // --------------------------------------------------------------------
+    /**
+     * @return true if cs is all lower case (or null), false otherwise.
+     */
+    private boolean checkCoordSystemCase(Connection con, String cs, String desc) {
+
+	if (cs == null) {
+
+	    return true;
+
+	}
+
+	boolean result = true;
+
+	if (cs.equals(cs.toLowerCase())) {
+
+	    ReportManager.correct(this, con, "Co-ordinate system name " + cs + " all lower case in " + desc);
+	    result = true;
+
+	} else {
+
+	    ReportManager.problem(this, con, "Co-ordinate system name " + cs + " is not all lower case in " + desc);
+	    result = false;
+
+	}
+
+	return true;
+
+    }
+
+    // --------------------------------------------------------------------
+    /**
+     * Check that all coord systems in the coord_system table are lower case.
+     */
+    private boolean checkCoordSystemTableCases(Connection con) {
+
+	// TODO - table name in report
+	boolean result = true;
+
+	String[] coordSystems = getColumnValues(con, "SELECT name FROM coord_system");
+
+	for (int i = 0; i < coordSystems.length; i++) {
+
+	    result &= checkCoordSystemCase(con, coordSystems[i], "coord_system");
+
+	}
+
+	return result;
+
     }
 
     //---------------------------------------------------------------------
