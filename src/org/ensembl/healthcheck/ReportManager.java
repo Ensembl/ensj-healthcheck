@@ -478,6 +478,78 @@ public final class ReportManager {
         return result;
 
     } // filterList
+
+    //---------------------------------------------------------------------
+    /**
+     * Count how many tests passed and failed for a particular database. A test is considered to
+     * have passed if there are no reports of level ReportLine.PROBLEM.
+     * 
+     * @param database
+     *          The database to check.
+     * @return An array giving the number of passes and then fails for this database.
+     */
+    public static int[] countPassesAndFailsDatabase(String database) {
+
+        int result[] = new int[2];
+
+        List testsRun = new ArrayList();
+        
+        // get all of them to build a list of the tests that were run
+        List reports = getReportsByDatabase(database, ReportLine.ALL);
+        Iterator it = reports.iterator();
+        while (it.hasNext()) {
+            ReportLine line = (ReportLine) it.next();
+            String test = line.getTestCaseName();
+            if (!testsRun.contains(test)) {
+                testsRun.add(test);
+            }
+        }
+        
+        // now just count the problems == passes
+        reports = getReportsByDatabase(database, ReportLine.PROBLEM);
+        result[1] = reports.size(); 
+        // if it didn't fail, it passed
+        result[0] = testsRun.size() - result[1];
+        
+        return result;
+
+    }
+
+//  ---------------------------------------------------------------------
+    /**
+     * Count how many databases passed a particular test. A test is considered to
+     * have passed if there are no reports of level ReportLine.PROBLEM.
+     * 
+     * @param test
+     *          The test to check.
+     * @return An array giving the number of databases that passed [0] and failed [1] this test.
+     */
+    public static int[] countPassesAndFailsTest(String test) {
+
+        int result[] = new int[2];
+
+        List allDBs = new ArrayList();
+        
+        // get all of them to build a list of the tests that were run
+        List reports = getReportsByTestCase(test, ReportLine.ALL);
+        Iterator it = reports.iterator();
+        while (it.hasNext()) {
+            ReportLine line = (ReportLine) it.next();
+            String database = line.getDatabaseName();
+            if (!allDBs.contains(database)) {
+                allDBs.add(database);
+            }
+        }
+        
+        // now just count the problems == passes
+        reports = getReportsByTestCase(test, ReportLine.PROBLEM);
+        result[1] = reports.size(); 
+        // if it didn't fail, it passed
+        result[0] = allDBs.size() - result[1];
+        
+        return result;
+
+    }
     // -------------------------------------------------------------------------
 
 } // ReportManager
