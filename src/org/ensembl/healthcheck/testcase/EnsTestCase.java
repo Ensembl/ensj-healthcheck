@@ -1064,5 +1064,21 @@ public abstract class EnsTestCase {
   }
   
   // -------------------------------------------------------------------------
+  /**
+   * Convenience method for getting a connection to a named schema.
+   * @param schema The name of the schema to connect to.
+   * @return A connection to schema.
+   */
+  public Connection getSchemaConnection(String schema) {
+    
+      Connection con = DBUtils.openConnection(System.getProperty("driver"),
+      System.getProperty("databaseURL") + schema,
+      System.getProperty("user"),
+      System.getProperty("password"));
+    
+      return con;
+  }
+  
+  // -------------------------------------------------------------------------
 
 } // EnsTestCase
