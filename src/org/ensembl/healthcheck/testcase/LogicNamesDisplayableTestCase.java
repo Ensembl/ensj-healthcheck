@@ -46,11 +46,12 @@ public class LogicNamesDisplayableTestCase extends EnsTestCase {
     addCondition(new HasTableColumnsCondition("analysis", cols));
     addToGroup("db_constraints");
     setDescription("Checks that all logic names in analysis are displayable");
+    setHintLongRunning(true);
   }
   
   /**
-   * Check each row in the logic_names column of the analysis table against the
-   * list of logic names that are displayed by the web code; this list is currently at
+   * Looks at analysis IDs in feature tables and checks the logic names they are associated with will be displayed by the web code.
+   * The list of valid logic names is currently at
    * http://www.ensembl.org/Docs/wiki/html/EnsemblDocs/LogicNames.html
    * Note that this test case actually uses the names from the file logicnames.txt
    * which currently has to be manually created from the above URL.
