@@ -77,7 +77,7 @@ public class Utils {
    * @param list The Strings to list.
    * @param delim The delimiter to use.
    */
-  public String listToString(List list, String delim) {
+  public static String listToString(List list, String delim) {
     
     StringBuffer buf = new StringBuffer();
     Iterator it = list.iterator();
