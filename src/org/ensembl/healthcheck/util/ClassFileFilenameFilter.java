@@ -23,7 +23,7 @@
  * <p>Organisation: EMBL</p>
  * <p>Created on March 12, 2003, 10:11 AM</p>
  * @author Glenn Proctor <glenn@ebi.ac.uk>
- * @version
+ * @version $Revision$
  */
 
 package org.ensembl.healthcheck.util;

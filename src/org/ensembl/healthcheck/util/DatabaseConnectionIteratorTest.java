@@ -13,7 +13,7 @@ import java.util.logging.*;
 import java.sql.*;
 
 /**
- *
+ * @version $Revision$
  * @author glenn
  */
 public class DatabaseConnectionIteratorTest extends TestCase {

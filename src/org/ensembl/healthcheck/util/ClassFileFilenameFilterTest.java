@@ -11,7 +11,7 @@ import junit.framework.*;
 import java.io.*;
 
 /**
- *
+ * @version $Revision$
  * @author glenn
  */
 public class ClassFileFilenameFilterTest extends TestCase {

@@ -13,7 +13,7 @@ import java.util.*;
 import java.io.*;
 
 /**
- *
+ * @version $Revision$
  * @author glenn
  */
 public class MyStreamHandlerTest extends TestCase {

@@ -14,7 +14,7 @@ import java.io.*;
 import java.util.regex.*;
 
 /**
- *
+ * @version $Revision$
  * @author glenn
  */
 public class DBUtilsTest extends TestCase {

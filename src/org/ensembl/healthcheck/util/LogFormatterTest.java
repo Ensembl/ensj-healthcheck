@@ -12,7 +12,7 @@ import java.util.logging.*;
 import java.util.*;
 
 /**
- *
+ * @version $Revision$
  * @author glenn
  */
 public class LogFormatterTest extends TestCase {

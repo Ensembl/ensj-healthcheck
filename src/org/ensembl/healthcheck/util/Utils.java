@@ -24,7 +24,7 @@ package org.ensembl.healthcheck.util;
  * <p>Copyright: Copyright (c) 2003</p>
  * <p>Organisation: EMBL</p>
  * @author Glenn Proctor <glenn@ebi.ac.uk>
- * @version 1.0
+ * @version $Revision$
  */
 
 import java.io.*;
