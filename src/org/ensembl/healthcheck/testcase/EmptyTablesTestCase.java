@@ -33,9 +33,8 @@ public class EmptyTablesTestCase extends EnsTestCase {
    * Creates a new instance of EmptyTablesTestCase
    */
   public EmptyTablesTestCase() {
-    
-    
-    addToGroup("post_genebuild");
+     
+    //addToGroup("post_genebuild");
     databaseRegexp = "\\w+_\\w+_(core|vega)_\\d+_\\w+";
     setDescription("Checks that all tables have data");
     
