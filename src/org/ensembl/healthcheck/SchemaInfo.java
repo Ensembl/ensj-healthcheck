@@ -97,4 +97,19 @@ public class SchemaInfo {
     this.tables = tables;
   }
   
+   public String toString() {
+    
+    StringBuffer buf = new StringBuffer();
+    buf.append("Schema: " );
+    buf.append(name);
+    buf.append(" Tables:\n");
+    Iterator it = tables.iterator();
+    while (it.hasNext()) {
+      buf.append(" " + ((TableInfo)it.next()).toString());
+      buf.append("\n");
+    }
+    
+    return buf.toString();
+    
+  }
 } // SchemaInfo

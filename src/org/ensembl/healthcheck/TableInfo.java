@@ -19,6 +19,7 @@
 package org.ensembl.healthcheck;
 
 import java.util.*;
+import org.ensembl.healthcheck.util.*;
 
 /**
  * Store information about a table.
@@ -70,6 +71,18 @@ public class TableInfo {
    */
   public void setColumns(java.util.List columns) {
     this.columns = columns;
+  }
+  
+  public String toString() {
+    
+    StringBuffer buf = new StringBuffer();
+    buf.append("Table: " );
+    buf.append(name);
+    buf.append(" Columns: ");
+    buf.append(Utils.listToString(columns, " "));
+    
+    return buf.toString();
+    
   }
   
 } // TableInfo
