@@ -492,6 +492,41 @@ public class DBUtils {
   }
   
   // -------------------------------------------------------------------------
+  /**
+   * Get a list of the table names that match a particular SQL pattern.
+   * @param con The database connection to use.
+   * @param pattern The SQL pattern to match the table names against.
+   * @return A list of Strings representing the names of the tables.
+   */
+  public static List getTableNames(Connection con, String pattern) {
+    
+    List result = new ArrayList();
+    
+    if (con == null) {
+      logger.severe("getTableNames(): Database connection is null");
+    }
+    
+    try {
+      
+      Statement stmt = con.createStatement();
+      ResultSet rs = stmt.executeQuery("SHOW TABLES LIKE '" + pattern + "'");
+      
+      while (rs.next()) {
+        result.add(rs.getString(1));
+      }
+      
+      rs.close();
+      stmt.close();
+      
+    } catch (SQLException se) {
+      logger.severe(se.getMessage());
+    }
+    
+    return result;
+    
+  }
+  
+  // -------------------------------------------------------------------------
   /** 
    * List the columns in a particular table.
    * @param table The name of the table to list.
