@@ -41,7 +41,7 @@ public class CountSQLTestCase extends EnsTestCase {
   
   TestResult run() {
         
-    DatabaseConnectionIterator it = testRunner.getDatabaseConnectionIterator(getAffectedDatabases(databaseRegexp, preFilterRegexp));
+    DatabaseConnectionIterator it = testRunner.getDatabaseConnectionIterator(getAffectedDatabases(databaseRegexp));
     
     boolean result = true;
     

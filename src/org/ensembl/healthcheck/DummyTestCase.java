@@ -45,7 +45,7 @@ public class DummyTestCase extends EnsTestCase {
   TestResult run() {
     
     System.out.println("In DummyTestCase; databaseRegexp=" + databaseRegexp);
-    super.printAffectedDatabases(databaseRegexp, preFilterRegexp);
+    super.printAffectedDatabases(databaseRegexp);
     
     System.out.println(getShortTestName() + " is a member of test groups: " + getCommaSeparatedGroups());
     

@@ -42,7 +42,7 @@ public class UnderscoreInAssemblyTypeTestCase extends EnsTestCase {
     
     boolean result = true;
     
-    DatabaseConnectionIterator it = testRunner.getDatabaseConnectionIterator(getAffectedDatabases(databaseRegexp, preFilterRegexp));
+    DatabaseConnectionIterator it = testRunner.getDatabaseConnectionIterator(getAffectedDatabases(databaseRegexp));
         
     while (it.hasNext()) {
       

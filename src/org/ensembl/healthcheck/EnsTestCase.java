@@ -233,26 +233,28 @@ public abstract class EnsTestCase {
   // -------------------------------------------------------------------------
   /**
    * Get a list of the databases matching a particular pattern.
+   * Uses pre-filter regexp if it is defined.
    * @param databaseRegexp The Regular Expression to match.
    * @param firstFilterRegexp A "pre-filter" regexp to match <em>before</em> databaseRegexp.
    * @return The list of database names matched.
    */
-  public String[] getAffectedDatabases(String databaseRegexp, String firstFilterRegexp) {
+  public String[] getAffectedDatabases(String databaseRegexp) {
     
-    return testRunner.getListOfDatabaseNames(databaseRegexp, firstFilterRegexp);
+    return testRunner.getListOfDatabaseNames(databaseRegexp, preFilterRegexp);
     
   } // getAffectedDatabases
   
   // -------------------------------------------------------------------------
   /**
    * Prints (to stdout) all the databases that match the current class' database regular expression.
+   * Uses pre-filter regexp if it is defined.
    * @param databaseRegexp The pattern of database names to match.
    * @param firstFilterRegexp A "pre-filter" regexp to match <em>before</em> databaseRegexp.
    */
-  public void printAffectedDatabases(String databaseRegexp, String firstFilterRegexp) {
+  public void printAffectedDatabases(String databaseRegexp) {
     
     System.out.println("Databases matching " + databaseRegexp + ":");
-    String[] databaseList = getAffectedDatabases(databaseRegexp, firstFilterRegexp);
+    String[] databaseList = getAffectedDatabases(databaseRegexp);
     for (int i = 0; i < databaseList.length; i++) {
       System.out.println("\t\t" + databaseList[i]);
     }
@@ -364,7 +366,7 @@ public abstract class EnsTestCase {
     ArrayList resultSetGroup = new ArrayList();
     ArrayList statements = new ArrayList();
     
-    DatabaseConnectionIterator dcit = testRunner.getDatabaseConnectionIterator(getAffectedDatabases(dbRegexp, preFilterRegexp));
+    DatabaseConnectionIterator dcit = testRunner.getDatabaseConnectionIterator(getAffectedDatabases(dbRegexp));
     
     while (dcit.hasNext()) {
       
