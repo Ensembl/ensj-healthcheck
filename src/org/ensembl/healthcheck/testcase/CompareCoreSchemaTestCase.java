@@ -26,6 +26,13 @@ import org.ensembl.healthcheck.util.*;
 
 /**
  * Temporary test case to check database importing.
+ * Has several ways of deciding which schema to use as the "master" to compare
+ * all the others against:<p>
+ * <ol>
+ * <li>If the property schema.file in database.properties exists, the table.sql file it points to</li>
+ * <li>If the schema.file property is not present, the schema named by the property schema.master is used</li>
+ * <li>If neither of the above properties are present, the (arbitrary) first schema is used as the master.</li>
+ * </ol>
  */
 public class CompareCoreSchemaTestCase extends EnsTestCase {
   
@@ -38,57 +45,87 @@ public class CompareCoreSchemaTestCase extends EnsTestCase {
   }
   
   /**
-   * Create a temproary database schema from the table.sql file and compare each database
-   * with it in turn.
+   * Compare each database with the master.
    */
   public TestResult run() {
     
     boolean result = true;
     
-    Connection tableSQLCon = null;
+    Connection masterCon = null;
+    Statement masterStmt = null;
     
-    String definitionFile = System.getProperty("schema.file");
+    String definitionFile = null;
+    String masterSchema = null;
+    
+    definitionFile = System.getProperty("schema.file");
     if (definitionFile == null) {
-      logger.warning("CompareCoreSchemaTestCase: No schema definition file found!");
+      logger.warning("CompareCoreSchemaTestCase: No schema definition file found! Set schema.file property in database.properties if you want to use a table.sql file or similar.");
+      
+      masterSchema = System.getProperty("master.schema");
+      if (masterSchema != null) {
+        logger.info("Will use " + masterSchema + " as specified master schema for comparisons.");
+      } else {
+        logger.warning("CompareCoreSchemaTestCase: No master schema defined file found! Set master.schema property in database.properties if you want to use a master schema.");
+      }
     } else {
-      logger.fine("Will use schema definition from " + definitionFile); 
+      logger.fine("Will use schema definition from " + definitionFile);
     }
     
     try {
       
-      logger.info("About to import " + definitionFile);
-      tableSQLCon = importSchema(definitionFile);
-      Statement tableSQLStmt = tableSQLCon.createStatement();
-      logger.info("Got connection to " + DBUtils.getShortDatabaseName(tableSQLCon));
-      
       DatabaseConnectionIterator it = getDatabaseConnectionIterator();
+      
+      if (definitionFile != null) {        // use a schema definition file to generate a temporary database
+        
+        logger.info("About to import " + definitionFile);
+        masterCon = importSchema(definitionFile);
+        logger.info("Got connection to " + DBUtils.getShortDatabaseName(masterCon));
+        
+      } else if (masterSchema != null) {  // use the defined schema name as the master
+        
+        // TODO check it exists
+        
+        // get connection to master schema
+        masterCon = getSchemaConnection(masterSchema);
+        logger.fine("Opened connection to master schema in " + DBUtils.getShortDatabaseName(masterCon));
+        
+      } else {                            // just use the first one to compare with all the others
+        
+        if (it.hasNext()) {
+          masterCon = (Connection)it.next();
+          logger.info("Using " + DBUtils.getShortDatabaseName(masterCon) + " as 'master' for comparisions.");
+        }
+        
+      }
+      
+      masterStmt = masterCon.createStatement();
       
       while (it.hasNext()) {
         
         Connection check_con = (Connection)it.next();
-        logger.info("Comparing " + DBUtils.getShortDatabaseName(tableSQLCon) + " with " + DBUtils.getShortDatabaseName(check_con));
+        logger.info("Comparing " + DBUtils.getShortDatabaseName(masterCon) + " with " + DBUtils.getShortDatabaseName(check_con));
         
         Statement dbStmt = check_con.createStatement();
         
         // check each table in turn
-        List tableNames = getTableNames(tableSQLCon);
+        List tableNames = getTableNames(masterCon);
         Iterator tableIterator = tableNames.iterator();
         while (tableIterator.hasNext()) {
           
           String table = (String)tableIterator.next();
           
           if (!checkTableExists(check_con, table)) {
-            ReportManager.problem(this, check_con, "Table " + table + " exists in table.sql but not in " + DBUtils.getShortDatabaseName(check_con));
+            ReportManager.problem(this, check_con, "Table " + table + " exists in master schema but not in " + DBUtils.getShortDatabaseName(check_con));
             continue;
           }
           
           String sql = "DESCRIBE " + table;
-          ResultSet tableSQLRS = tableSQLStmt.executeQuery(sql);
+          ResultSet masterRS = masterStmt.executeQuery(sql);
           ResultSet dbRS = dbStmt.executeQuery(sql);
           
-          result &= DBUtils.compareResultSets(tableSQLRS, dbRS, this, " [" + table + "]");
+          result &= DBUtils.compareResultSets(masterRS, dbRS, this, " [" + table + "]");
           
-          tableSQLRS.close();
+          masterRS.close();
           dbRS.close();
           
         } // while table
@@ -97,7 +134,7 @@ public class CompareCoreSchemaTestCase extends EnsTestCase {
         
       } // while database
       
-      tableSQLStmt.close();
+      masterStmt.close();
       
     } catch (SQLException se) {
       
@@ -105,9 +142,13 @@ public class CompareCoreSchemaTestCase extends EnsTestCase {
       
     } finally {  // avoid leaving temporary DBs lying around if something bad happens
       
-      if (tableSQLCon != null) {
-        removeDatabase(tableSQLCon);
-        logger.info("Removed " + DBUtils.getShortDatabaseName(tableSQLCon));
+      if (definitionFile == null && masterCon != null) {
+        // double-check to make sure the DB we're going to remove is a temp one
+        String dbName = DBUtils.getShortDatabaseName(masterCon);
+        if (dbName.indexOf("_temp_") > -1) {
+          removeDatabase(masterCon);
+          logger.info("Removed " + DBUtils.getShortDatabaseName(masterCon));
+        }
       }
       
     }
