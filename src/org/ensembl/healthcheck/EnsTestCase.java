@@ -25,23 +25,71 @@ import java.util.logging.*;
 import org.ensembl.healthcheck.util.*;
 
 /**
- * <p>The EnsTestCase class is the base class for all test cases in the EnsEMBL Healthcheck system. 
+ * <p>The EnsTestCase class is the base class for all test cases in the EnsEMBL Healthcheck system.
  * <em>It is not intended to be instantiated directly</em>; subclasses should implement the <code>run()</code>
  * method and use that to provide test-case specific behaviour.</p>
  *
  *<p>EnsTestCase provides a number of methods which are intended to make writing test cases simple; in many cases
- * an extension test case will involve little more than calling one of the methods in this class and 
+ * an extension test case will involve little more than calling one of the methods in this class and
  * setting some return value based on the result.</p>
+ *
+ * <p>For example, the following test case gets a {@link org.ensembl.healthcheck.util.DatabaseConnectionIterator DatabaseConnectionIterator}, then uses it to loop over each
+ * affected database and call the <code>countOrphans()</code> method in EnsTestCase. In this particular situation,
+ * if there are any orphans in any of the databases, the test fails.</p>
+ * <pre>
+ * public class OrphanTestCase extends EnsTestCase {
+ *
+ *   public OrphanTestCase() {
+ *     databaseRegexp = "^homo_sapiens_core_\\d.*";
+ *     addToGroup("group2");
+ *   }
+ *
+ *  TestResult run() {
+ *
+ *     boolean result = true;
+ *
+ *     DatabaseConnectionIterator it = getDatabaseConnectionIterator();
+ *
+ *     while (it.hasNext()) {
+ *
+ *       Connection con = (Connection)it.next();
+ *       int orphans = super.countOrphans(con, "gene", "gene_id", "gene_stable_id", "gene_id", false);
+ *       result &= (orphans == 0);
+ *
+ *     }
+ *
+ *     return new TestResult(getShortTestName(), result, "");
+ *
+ *   }
+ *
+ * } // OrphanTestCase
+ * </pre>
+ *
+ * <p>Most test cases you write will take this form:</p>
+ * <ol>
+ * <li>Set up the database regexp and any groups that this test case is a member of; Note that all tests by
+ * default are members of a group called "all". There is no need to explicitly add your new test to this group.</li>
+ * <li>Implement the run() method; normally this will involve getting a DatabaseConnectionIterator,
+ * calling one or more superclass methods on each database connection.</li>
+ * <li>Create and return a TestResult object according to the results of your tests.</li>
+ * </ol>
+ *
+ *
  */
 
 public abstract class EnsTestCase {
   
+  /** The TestRunner associated with this EnsTestCase */
   protected TestRunner testRunner;
+  /** The regular expression to match the names of the databases that the test case will apply to. */
   protected String databaseRegexp = "";
+  /** If set, this is applied to the database names before databaseRegexp. */
   protected String preFilterRegexp = "";
-  
+  /** A list of Strings representing the groups that this test is a member of.
+   * All tests are members of the group "all", and also of a group with the same name as the test. */
   protected List groups;
   
+  /** Logger object to use */
   protected static Logger logger = Logger.getLogger("HealthCheckLogger");
   
   // -------------------------------------------------------------------------
@@ -141,7 +189,7 @@ public abstract class EnsTestCase {
     while (it.hasNext()) {
       gString.append((String)it.next());
       if (it.hasNext()) {
-	gString.append(",");
+        gString.append(",");
       }
     }
     return gString.toString();
@@ -227,7 +275,7 @@ public abstract class EnsTestCase {
     java.util.Iterator it = checkGroups.iterator();
     while (it.hasNext()) {
       if (inGroup((String)it.next())) {
-	result = true;
+        result = true;
       }
     }
     return result;
@@ -238,27 +286,35 @@ public abstract class EnsTestCase {
   /**
    * Get a list of the databases matching a particular pattern.
    * Uses pre-filter regexp if it is defined.
-   * @param databaseRegexp The Regular Expression to match.
-   * @param firstFilterRegexp A "pre-filter" regexp to match <em>before</em> databaseRegexp.
    * @return The list of database names matched.
    */
-  public String[] getAffectedDatabases(String databaseRegexp) {
+  public String[] getAffectedDatabases() {
     
-    return testRunner.getListOfDatabaseNames(databaseRegexp, preFilterRegexp);
+    return testRunner.getListOfDatabaseNames(databaseRegexp);
     
   } // getAffectedDatabases
   
   // -------------------------------------------------------------------------
   /**
+   * Convenience method to return a DatabaseConnectionIterator from the
+   * parent TestRunner class, with the current database regular expression.
+   * @return A new DatabaseConnectionIterator.
+   */
+  public DatabaseConnectionIterator getDatabaseConnectionIterator() {
+    
+    return testRunner.getDatabaseConnectionIterator(databaseRegexp);
+    
+  }
+  // -------------------------------------------------------------------------
+  /**
    * Prints (to stdout) all the databases that match the current class' database regular expression.
    * Uses pre-filter regexp if it is defined.
-   * @param databaseRegexp The pattern of database names to match.
-   * @param firstFilterRegexp A "pre-filter" regexp to match <em>before</em> databaseRegexp.
    */
-  public void printAffectedDatabases(String databaseRegexp) {
+  public void printAffectedDatabases() {
     
     System.out.println("Databases matching " + databaseRegexp + ":");
-    String[] databaseList = getAffectedDatabases(databaseRegexp);
+    String[] databaseList = getAffectedDatabases();
+    Utils.printArray(databaseList);
     for (int i = 0; i < databaseList.length; i++) {
       System.out.println("\t\t" + databaseList[i]);
     }
@@ -301,8 +357,8 @@ public abstract class EnsTestCase {
       Statement stmt = con.createStatement();
       ResultSet rs = stmt.executeQuery(sql);
       if (rs != null) {
-	rs.next();
-	result = rs.getInt(1);
+        rs.next();
+        result = rs.getInt(1);
       }
       rs.close();
       stmt.close();
@@ -319,9 +375,9 @@ public abstract class EnsTestCase {
    * Verify foreign-key relations.
    * @param con A connection to the database to be tested. Should already be open.
    * @param table1 With col1, specifies the first key to check.
-   * @param col1
+   * @param col1 Column in table1 to check.
    * @param table2 With col2, specifies the second key to check.
-   * @param col2
+   * @param col2 Column in table2 to check.
    * @param oneWayOnly If false, only a "left join" is performed on table1 and table2. If false, the
    * @return The number of "orphans"
    */
@@ -354,42 +410,39 @@ public abstract class EnsTestCase {
     
     return resultLeft + resultRight;
     
-    
   } // countOrphans
   
   // -------------------------------------------------------------------------
-  /**
-   * Check that a particular SQL statement has the same result when executed
+  /** Check that a particular SQL statement has the same result when executed
    * on more than one database.
-   * @param sql The SQL query to execute.
-   * @param dbRegexp The regular expression to match database names.
    * @return True if all matched databases provide the same result, false otherwise.
+   * @param sql The SQL query to execute.
    */
-  public boolean checkSameSQLResult(String sql, String dbRegexp, String preFilterRegexp) {
+  public boolean checkSameSQLResult(String sql) {
     
     ArrayList resultSetGroup = new ArrayList();
     ArrayList statements = new ArrayList();
     
-    DatabaseConnectionIterator dcit = testRunner.getDatabaseConnectionIterator(getAffectedDatabases(dbRegexp));
+    DatabaseConnectionIterator dcit = this.getDatabaseConnectionIterator();
     
     while (dcit.hasNext()) {
       
       Connection con = (Connection)dcit.next();
       
       try {
-	Statement stmt = con.createStatement();
-	ResultSet rs = stmt.executeQuery(sql);
-	if (rs != null) {
-	  resultSetGroup.add(rs);
-	}
-	logger.fine("Added ResultSet for " + sql);
-	//DBUtils.printResultSet(rs, 100);
-	// note that the Statement can't be closed here as we use the ResultSet elsewhere
-	// so store a reference to it for closing later
-	statements.add(stmt);
-	con.close();
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        if (rs != null) {
+          resultSetGroup.add(rs);
+        }
+        logger.fine("Added ResultSet for " + sql);
+        //DBUtils.printResultSet(rs, 100);
+        // note that the Statement can't be closed here as we use the ResultSet elsewhere
+        // so store a reference to it for closing later
+        statements.add(stmt);
+        con.close();
       } catch (Exception e) {
-	e.printStackTrace();
+        e.printStackTrace();
       }
     }
     
@@ -399,9 +452,9 @@ public abstract class EnsTestCase {
     Iterator it = statements.iterator();
     while (it.hasNext()) {
       try {
-	((Statement)it.next()).close();
+        ((Statement)it.next()).close();
       } catch (Exception e) {
-	e.printStackTrace();
+        e.printStackTrace();
       }
     }
     
@@ -410,10 +463,10 @@ public abstract class EnsTestCase {
   } // checkSameSQLResult
   
   // -------------------------------------------------------------------------
-    /*
-     * Over-ride the database regular expression set in the subclass' constructor.
-     * @param re The new regular expression to use.
-     */
+  /**
+   * Over-ride the database regular expression set in the subclass' constructor.
+   * @param re The new regular expression to use.
+   */
   public void setDatabaseRegexp(String re) {
     
     databaseRegexp = re;
@@ -421,11 +474,18 @@ public abstract class EnsTestCase {
   } // setDatabaseRegexp
   
   // -------------------------------------------------------------------------
-  
+  /**
+   * Get the regular expression that will be applied to database names before the built-in regular expression.
+   * @return The value of preFilterRegexp
+   */  
   public String getPreFilterRegexp() {
     return preFilterRegexp;
   }
   
+  /** 
+   * Set the regular expression that will be applied to database names before the built-in regular expression.
+   * @param s The new value for preFilterRegexp.
+   **/
   public void setPreFilterRegexp(String s) {
     preFilterRegexp = s;
   }
@@ -474,13 +534,13 @@ public abstract class EnsTestCase {
       ResultSet rs = stmt.executeQuery(sql);
       ResultSetMetaData rsmd = rs.getMetaData();
       while (rs.next()) {
-	String columnValue = rs.getString(1);
-	// should it be non-null?
-	if (rsmd.isNullable(1) == rsmd.columnNoNulls) {
-	  if (columnValue == null || columnValue.equals("")) {
-	    blanks.add("" + rs.getRow());
-	  }
-	}
+        String columnValue = rs.getString(1);
+        // should it be non-null?
+        if (rsmd.isNullable(1) == rsmd.columnNoNulls) {
+          if (columnValue == null || columnValue.equals("")) {
+            blanks.add("" + rs.getRow());
+          }
+        }
       }
       rs.close();
       stmt.close();
@@ -514,17 +574,17 @@ public abstract class EnsTestCase {
       ResultSet rs = stmt.executeQuery(sql);
       ResultSetMetaData rsmd = rs.getMetaData();
       while (rs.next()) {
-	for (int i = 1; i <= rsmd.getColumnCount(); i++) {
-	  String columnValue = rs.getString(i);
-	  String columnName = rsmd.getColumnName(i);
-	  // should it be non-null?
-	  if (rsmd.isNullable(i) == rsmd.columnNoNulls) {
-	    if (columnValue == null || columnValue.equals("")) {
-	      blanks++;
-	      logger.warning("Found blank non-null value in column " + columnName + " in " + table);
-	    }
-	  }
-	} // for column
+        for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+          String columnValue = rs.getString(i);
+          String columnName = rsmd.getColumnName(i);
+          // should it be non-null?
+          if (rsmd.isNullable(i) == rsmd.columnNoNulls) {
+            if (columnValue == null || columnValue.equals("")) {
+              blanks++;
+              logger.warning("Found blank non-null value in column " + columnName + " in " + table);
+            }
+          }
+        } // for column
       } // while rs
       rs.close();
       stmt.close();
