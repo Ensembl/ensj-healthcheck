@@ -45,7 +45,6 @@ public class CoreForeignKeyTestCase extends EnsTestCase {
   public TestResult run() {
     
     boolean result = true;
-    
     DatabaseConnectionIterator it = getDatabaseConnectionIterator();
     int orphans = 0;
     
@@ -197,6 +196,63 @@ public class CoreForeignKeyTestCase extends EnsTestCase {
         }
         result &= (orphans == 0);
       }
+      
+      orphans = countOrphans( con, "seq_region_attrib", "seq_region_id", "seq_region", "seq_region_id", true);
+      if( orphans > 0) {
+        ReportManager.problem(this, con, "seq_region_attrib -> seq_region has unlinked entries");
+      } else {
+        ReportManager.correct(this, con, "All seq_region_attrib -> seq_region relationships OK");
+      }
+      result &= (orphans == 0);
+
+      orphans = countOrphans( con, "seq_region_attrib", "attrib_type_id", "attrib_type", "attrib_type_id", true);
+      if( orphans > 0) {
+        ReportManager.problem(this, con, "seq_region_attrib -> attrib_type has unlinked entries");
+      } else {
+        ReportManager.correct(this, con, "All seq_region_attrib -> attrib_type relationships OK");
+      }
+      result &= (orphans == 0);
+
+      orphans = countOrphans( con, "misc_feature_misc_set", "misc_feature_id", "misc_feature", "misc_feature_id", true);
+      if( orphans > 0) {
+        ReportManager.problem(this, con, "misc_feature_misc_set -> misc_feature has unlinked entries");
+      } else {
+        ReportManager.correct(this, con, "All misc_feature_misc_set -> misc_feature relationships OK");
+      }
+      result &= (orphans == 0);
+      
+      orphans = countOrphans( con, "misc_feature_misc_set", "misc_set_id", "misc_set", "misc_set_id", true);
+      if( orphans > 0) {
+        ReportManager.problem(this, con, "misc_feature_misc_set -> misc_set has unlinked entries");
+      } else {
+        ReportManager.correct(this, con, "All misc_feature_misc_set -> misc_set relationships OK");
+      }
+      result &= (orphans == 0);
+      
+      orphans = countOrphans( con, "misc_feature", "misc_feature_id", "misc_attrib", "misc_feature_id", true);
+      if( orphans > 0) {
+        ReportManager.problem(this, con, "misc_feature -> misc_attrib has unlinked entries");
+      } else {
+        ReportManager.correct(this, con, "All misc_feature -> misc_attrib relationships OK");
+      }
+      result &= (orphans == 0);
+
+      orphans = countOrphans( con, "misc_attrib", "attrib_type_id", "attrib_type", "attrib_type_id", true);
+      if( orphans > 0) {
+        ReportManager.problem(this, con, "misc_feature -> attrib_type has unlinked entries");
+      } else {
+        ReportManager.correct(this, con, "All misc_feature -> attrib_type relationships OK");
+      }
+      result &= (orphans == 0);
+      
+      orphans = countOrphans( con, "assembly_exception", "seq_region_id", "seq_region", "seq_region_id", true);
+      if( orphans > 0) {
+        ReportManager.problem(this, con, "assembly_exception -> seq_region_id has unlinked entries");
+      } else {
+        ReportManager.correct(this, con, "All assembly_exception -> seq_region_id relationships OK");
+      }
+      result &= (orphans == 0);
+
     }
     
     return new TestResult(getShortTestName(), result);
