@@ -31,7 +31,7 @@ import org.ensembl.healthcheck.util.*;
 public class MetaCoordTestCase extends EnsTestCase {
   
   /**
-   * Create an OrphanTestCase that applies to a specific set of databases.
+   * Constructor.
    */
   public MetaCoordTestCase() {
     addToGroup("post_genebuild");
