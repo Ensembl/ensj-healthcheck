@@ -53,8 +53,6 @@ public class Archive extends SingleDatabaseTestCase {
 		result = checkChangedInGeneArchive(con, "gene", "G", 355) && result;
 		logger.info("Checking deleted translations in peptide archive");
 		result = checkDeletedTranslationsInPeptideArchive(con, 355) && result;
-		logger.info("Checking deleted translations in peptide archive");
-		result = checkChangedTranslationsInPeptideArchive(con, 355) && result;
 		logger.info("Checking translations from peptide archive in gene archive");
 		result = checkTranslationsFromPeptideArchiveInGeneArchive(con) && result;
 		logger.info("Checking no current translations in peptide archive");
@@ -124,9 +122,9 @@ public class Archive extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		String sql = "SELECT CONCAT( pa.translation_stable_id, \".\", pa.translation_version) "
-				+ " FROM  peptide_archive pa LEFT JOIN gene_archive ga "
-				+ "                          ON  ga.translation_stable_id=pa.translation_stable_id "
-				+ "                              AND	 ga.translation_version=pa.translation_version "
+				+ " FROM peptide_archive pa LEFT JOIN gene_archive ga "
+				+ " ON ga.translation_stable_id=pa.translation_stable_id "
+				+ " AND	ga.translation_version=pa.translation_version "
 				+ " WHERE ga.translation_stable_id is NULL;";
 
 		String[] rows = getColumnValues(con, sql);
