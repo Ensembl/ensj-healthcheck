@@ -1103,6 +1103,7 @@ public abstract class EnsTestCase {
       String table = (String)it.next();
       if (!checkTableExists(schema2, table)) {
         ReportManager.problem(this, schema1, "Table " + table + " exists in " + name1 + " but not in " + name2);
+        result = false;
       }
     }
     // and now the other way
@@ -1112,6 +1113,7 @@ public abstract class EnsTestCase {
       String table = (String)it.next();
       if (!checkTableExists(schema1, table)) {
         ReportManager.problem(this, schema2, "Table " + table + " exists in " + name2 + " but not in " + name1);
+        result = false;
       }
     }
     
