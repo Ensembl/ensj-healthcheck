@@ -28,8 +28,9 @@ INSTALLATION
 
 4. Compile the source. This can be done in a number of ways:
    a) Invoke javac on the command-line. A simple shell script, compile-healthcheck.sh, has been provided 
-      as a guide to setting the classpath etc. If you're having problems with this method, check your 
-      $PATH, $JAVA_HOME and $CLASSPATH variables.
+      as a guide to setting the classpath etc. Ensure that your JAVA_HOME environment variable
+      points to the directory in which Java 1.4 is installed; on Sanger machines this is usually
+      /usr/opt/java141/
    b) Use the Apache ANT build system (http://ant.apache.org) - this is highly recommended if you need 
       to do non-trivial tasks such as compiling, building distributions etc. A sample build.xml file is 
       included in the Healthcheck distribution.
