@@ -30,6 +30,9 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  */
 public class AffyXrefs extends SingleDatabaseTestCase {
 
+    // if a database has more than this number of seq_regions in the chromosome coordinate system, it's ignored
+    private static final int MAX_CHROMOSOMES = 50;
+
     /**
      * Creates a new instance of FeatureAnalysis
      */
@@ -54,7 +57,7 @@ public class AffyXrefs extends SingleDatabaseTestCase {
         boolean result = true;
 
         Connection con = dbre.getConnection();
-        
+
         // First check whether there are any Affy xrefs
         String sql = "SELECT COUNT(*) FROM external_db edb, xref x WHERE edb.db_name LIKE \'AFFY%\' AND x.external_db_id=edb.external_db_id";
 
@@ -62,43 +65,52 @@ public class AffyXrefs extends SingleDatabaseTestCase {
 
             ReportManager.problem(this, con, "Has no Affy xrefs - may not be a problem for all databases");
             result = false;
-            
+
         } else {
 
             // Get a list of chromosomes, then check the number of Affy xrefs associated with each one
             // Note that this can't be done with a GROUP BY/HAVING clause as that would miss any chromosomes that had zero xrefs
             sql = "SELECT DISTINCT(sr.name) AS chromosome FROM seq_region sr, coord_system cs "
                     + "WHERE sr.coord_system_id=cs.coord_system_id AND cs.name='chromosome'";
-            
+
             String[] chrNames = getColumnValues(con, sql);
-            for (int i = 0; i < chrNames.length; i++) {
 
-                logger.fine("Counting Affy xrefs associated with chromosome " + chrNames[i]);
+            if (chrNames.length > MAX_CHROMOSOMES) {
 
-                sql = "SELECT DISTINCT(sr.name) AS chromosome, COUNT(x.xref_id) AS count "
-                        + "FROM xref x, external_db e, object_xref ox, translation tl, transcript ts, gene g, seq_region sr, coord_system cs "
-                        + "WHERE e.db_name LIKE \'AFFY%\' AND x.external_db_id=e.external_db_id "
-                        + "AND x.xref_id=ox.xref_id AND ox.ensembl_id=tl.translation_id "
-                        + "AND tl.transcript_id=ts.transcript_id AND ts.gene_id=g.gene_id "
-                        + "AND g.seq_region_id=sr.seq_region_id AND sr.coord_system_id=cs.coord_system_id "
-                        + "AND cs.name=\'chromosome\' AND sr.name='" + chrNames[i] + "\' GROUP BY chromosome";
+                ReportManager.problem(this, con, "Database has more than " + MAX_CHROMOSOMES + " seq_regions in 'chromosome' coordinate system (actually " + chrNames.length + ") - test skipped");
+                result = false;
+                
+            } else {
+                for (int i = 0; i < chrNames.length; i++) {
 
-                int count = -1;
-                try {
-                    ResultSet rs = con.createStatement().executeQuery(sql);
-                    rs.next();
-                    count = rs.getInt("count");
-                    rs.close();
-                } catch (SQLException se) {
-                    se.printStackTrace();
-                }
+                    logger.fine("Counting Affy xrefs associated with chromosome " + chrNames[i]);
 
-                if (count == 0) {
-                    ReportManager.problem(this, con, "Chromosome " + chrNames[i] + " has no associated Affy xrefs.");
-                } else if (count < 0) {
-                    logger.warning("Could not get count for chromosome " + chrNames[i]);
-                } else {
-                    ReportManager.correct(this, con, "Chromosome " + chrNames[i] + " has " + count + " associated Affy xrefs.");
+                    sql = "SELECT DISTINCT(sr.name) AS chromosome, COUNT(x.xref_id) AS count "
+                            + "FROM xref x, external_db e, object_xref ox, translation tl, transcript ts, gene g, seq_region sr, coord_system cs "
+                            + "WHERE e.db_name LIKE \'AFFY%\' AND x.external_db_id=e.external_db_id "
+                            + "AND x.xref_id=ox.xref_id AND ox.ensembl_id=tl.translation_id "
+                            + "AND tl.transcript_id=ts.transcript_id AND ts.gene_id=g.gene_id "
+                            + "AND g.seq_region_id=sr.seq_region_id AND sr.coord_system_id=cs.coord_system_id "
+                            + "AND cs.name=\'chromosome\' AND sr.name='" + chrNames[i] + "\' GROUP BY chromosome";
+
+                    int count = -1;
+                    try {
+                        ResultSet rs = con.createStatement().executeQuery(sql);
+                        rs.next();
+                        count = rs.getInt("count");
+                        rs.close();
+                    } catch (SQLException se) {
+                        se.printStackTrace();
+                    }
+
+                    if (count == 0) {
+                        ReportManager.problem(this, con, "Chromosome " + chrNames[i] + " has no associated Affy xrefs.");
+                        result = false;
+                    } else if (count < 0) {
+                        logger.warning("Could not get count for chromosome " + chrNames[i]);
+                    } else {
+                        ReportManager.correct(this, con, "Chromosome " + chrNames[i] + " has " + count + " associated Affy xrefs.");
+                    }
                 }
             }
 
