@@ -91,7 +91,7 @@ public class TestRunner {
   public String[] getAllSchemaNames() {
     
     Connection conn;
-
+    
     String[] schemaNames = null;
     
     // open connection
@@ -261,14 +261,6 @@ public class TestRunner {
       
       if (testCase.inGroups(groupsToRun)) {
         logger.warning("\nRunning test of type " + testCase.getClass().getName());
-        if (preFilterRegexp != null) {
-          testCase.setPreFilterRegexp(preFilterRegexp);
-        }
-        
-        if (forceDatabases) {
-          // override built-in database regexp with the one specified on the command line
-          testCase.setDatabaseRegexp(preFilterRegexp);
-        }
         
         TestResult tr = testCase.run();
         
@@ -297,6 +289,8 @@ public class TestRunner {
     
   } // runAllTests
   
+    // -------------------------------------------------------------------------
+ 
   // -------------------------------------------------------------------------
   /**
    * Get an iterator that will iterate over database connections whose names
@@ -603,12 +597,14 @@ public class TestRunner {
     if (System.getProperty("driver") == null) {
       logger.severe("driver is null - database functions will probably not work");
     }
-     if (System.getProperty("databaseURL") == null) {
+    if (System.getProperty("databaseURL") == null) {
       logger.severe("databaseURL is null - database functions will probably not work");
     }
-     if (System.getProperty("user") == null) {
+    if (System.getProperty("user") == null) {
       logger.severe("user is null - database functions will probably not work");
     }
+    
+    logger.warning("Building schema info ...");
     
     String[] schemas = getAllSchemaNames();
     
@@ -622,12 +618,39 @@ public class TestRunner {
       
       SchemaInfo si = new SchemaInfo(con);
       SchemaManager.addSchema(si);
-      logger.finest("Added " + si.toString());
+      logger.finest("Added schema info for " + si.getName());
       
     }
     
     
   }
+  
+  // -------------------------------------------------------------------------
+  /**
+   * Get an array of schema names that match a particular set of conditions.
+   * @param conditions A List of subclasses of SchemaMatchCondition to test.
+   * @return An array of Strings representing the names of the matching schemas. TODO return SchemaInfos?
+   */
+  public String[] getMatchingSchemas(List conditions) {
+    
+    List result = new ArrayList();
+    
+    List schemas = SchemaManager.getAllSchemas();
+    
+    Iterator schemaIterator = schemas.iterator();
+    while (schemaIterator.hasNext()) {
+      
+      SchemaInfo si = (SchemaInfo)schemaIterator.next();
+      if (si.matchesAll(conditions)) {
+        result.add(si.getName());
+      }
+      
+    }
+    
+   return (String[])result.toArray(new String[result.size()]);
+   
+  }
+  
   // -------------------------------------------------------------------------
   
   
