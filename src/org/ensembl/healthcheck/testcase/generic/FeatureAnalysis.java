@@ -21,7 +21,6 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.*;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.util.Utils;
 
 /**
  * Check that features exist for expected analysis types.
