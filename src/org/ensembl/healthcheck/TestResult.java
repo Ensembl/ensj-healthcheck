@@ -26,7 +26,6 @@ public class TestResult {
   
   private String name;
   private boolean result;
-  private String message;
   
   // -------------------------------------------------------------------------
   /** 
@@ -45,19 +44,7 @@ public class TestResult {
     this.name = name;
     this.result = result;
   }
-  
-  // -------------------------------------------------------------------------
-  /**
-   * Create a new TestResult.
-   * @param name The name of this test result.
-   * @param result Whether the test passed or failed.
-   * @param message An explanatory message.
-   */
-  public TestResult(String name, boolean result, String message) {
-    this(name, result);
-    this.message = message;
-  }
-  
+ 
   // -------------------------------------------------------------------------
   /**
    * Set the test result.
@@ -74,24 +61,6 @@ public class TestResult {
    */
   public boolean getResult() {
     return result;
-  }
-  
-  // -------------------------------------------------------------------------
-  /**
-   * Get the test result description message.
-   * @return The message.
-   */
-  public String getMessage() {
-    return message;
-  }
-  
-  // -------------------------------------------------------------------------
-  /**
-   * Set the result description.
-   * @param s The new message.
-   */
-  public void setMessage(String s) {
-    message = s;
   }
   
   // -------------------------------------------------------------------------
