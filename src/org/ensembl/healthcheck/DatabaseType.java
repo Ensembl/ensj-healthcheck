@@ -193,6 +193,22 @@ public final class DatabaseType {
         return (list.indexOf(alias) > -1);
 
     }
+    
+    // -------------------------------------------------------------------------
+    /**
+     * Check if a DatabaseType is generic (core, est, estgene, vega).
+     * @return true if t is core, est, estgene or vega.
+     */
+    public boolean isGeneric() {
+        
+        if (name.equals("core") || name.equals("est") || name.equals("estgene") || name.equals("estgene")) {
+            return true;
+        }
+        
+        return false;
+        
+    }
+    
     // -----------------------------------------------------------------
 
 } // DatabaseType
