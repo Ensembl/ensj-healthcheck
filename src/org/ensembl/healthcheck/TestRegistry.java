@@ -323,7 +323,7 @@ public class TestRegistry {
 			for (Enumeration enum = jarFile.entries(); enum.hasMoreElements();) {
 
 				JarEntry entry = (JarEntry)enum.nextElement();
-				String entryName = entry.getName().replaceAll(File.separator, ".");
+				String entryName = entry.getName().replace(File.separatorChar, '.');
 
 				Object obj = new Object();
 
