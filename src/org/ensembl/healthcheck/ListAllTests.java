@@ -33,7 +33,8 @@ public class ListAllTests extends TestRunner {
 	boolean showGroups = false;
 	boolean showDesc = false;
 	static boolean showGroupsOnly = false;
-
+	boolean listAllGroups = false;
+	
 	// -------------------------------------------------------------------------
 	/**
 	 * Command-line run method.
@@ -94,7 +95,7 @@ public class ListAllTests extends TestRunner {
 
 		if (groupToList.equals("")) {
 
-			groupToList = "all";
+			listAllGroups = true;
 
 		}
 
@@ -112,7 +113,7 @@ public class ListAllTests extends TestRunner {
 		System.out.println("  -groups    Shows a list of the test groups and which tests are in each");
 		System.out.println("  group1     List tests that are members of group1.");
 		System.out.println("");
-		System.out.println("If no groups are specified, the group 'all', which contains all tests, is listed.");
+		System.out.println("If no groups are specified all available tests are listed");
 
 	} // printUsage
 
@@ -120,13 +121,18 @@ public class ListAllTests extends TestRunner {
 
 	private void listAllTests() {
 
-		System.out.println("Tests in group " + groupToList + ":");
+		if (listAllGroups) {
+			System.out.println("All available tests:");
+		} else {
+			System.out.println("Tests in group " + groupToList + ":");
+		}
+		
 		List tests = findAllTests();
 
 		Iterator it = tests.iterator();
 		while (it.hasNext()) {
 			EnsTestCase test = (EnsTestCase)it.next();
-			if (test.inGroup(groupToList)) {
+			if (listAllGroups || test.inGroup(groupToList)) {
 				StringBuffer testline = new StringBuffer(test.getShortTestName());
 
 				if (test.canRepair()) {
