@@ -1,19 +1,14 @@
 /*
- Copyright (C) 2004 EBI, GRL
- 
- This library is free software; you can redistribute it and/or
- modify it under the terms of the GNU Lesser General Public
- License as published by the Free Software Foundation; either
- version 2.1 of the License, or (at your option) any later version.
- 
- This library is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- Lesser General Public License for more details.
- 
- You should have received a copy of the GNU Lesser General Public
- License along with this library; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Copyright (C) 2004 EBI, GRL
+ * 
+ * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free
+ * Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
 package org.ensembl.healthcheck.util;
@@ -47,20 +42,17 @@ public final class DBUtils {
 
     // hide constructor to stop instantiation
     private DBUtils() {
+
     }
 
     // -------------------------------------------------------------------------
     /**
      * Open a connection to the database.
      * 
-     * @param driverClassName
-     *          The class name of the driver to load.
-     * @param databaseURL
-     *          The URL of the database to connect to.
-     * @param user
-     *          The username to connect with.
-     * @param password
-     *          Password for user.
+     * @param driverClassName The class name of the driver to load.
+     * @param databaseURL The URL of the database to connect to.
+     * @param user The username to connect with.
+     * @param password Password for user.
      * @return A connection to the database, or null.
      */
     public static Connection openConnection(String driverClassName, String databaseURL, String user, String password) {
@@ -99,8 +91,7 @@ public final class DBUtils {
     /**
      * Get a list of the database names for a particular connection.
      * 
-     * @param con
-     *          The connection to query.
+     * @param con The connection to query.
      * @return An array of Strings containing the database names.
      */
 
@@ -140,13 +131,10 @@ public final class DBUtils {
 
     // -------------------------------------------------------------------------
     /**
-     * Get a list of the database names that match a certain pattern for a
-     * particular connection.
+     * Get a list of the database names that match a certain pattern for a particular connection.
      * 
-     * @param conn
-     *          The connection to query.
-     * @param regex
-     *          A regular expression to match.
+     * @param conn The connection to query.
+     * @param regex A regular expression to match.
      * @return An array of Strings containing the database names.
      */
     public static String[] listDatabases(Connection conn, String regex) {
@@ -182,16 +170,12 @@ public final class DBUtils {
 
     // -------------------------------------------------------------------------
     /**
-     * Compare a list of ResultSets to see if there are any differences. Note
-     * that if the ResultSets are large and/or there are many of them, this may
-     * take a long time!
+     * Compare a list of ResultSets to see if there are any differences. Note that if the ResultSets are large and/or there are many
+     * of them, this may take a long time!
      * 
      * @return The number of differences.
-     * @param testCase
-     *          The test case that is calling the comparison. Used for
-     *          ReportManager.
-     * @param resultSetGroup
-     *          The list of ResultSets to compare
+     * @param testCase The test case that is calling the comparison. Used for ReportManager.
+     * @param resultSetGroup The list of ResultSets to compare
      */
     public static boolean compareResultSetGroup(List resultSetGroup, EnsTestCase testCase) {
 
@@ -204,7 +188,7 @@ public final class DBUtils {
             for (int j = i + 1; j < size; j++) {
                 ResultSet rsi = (ResultSet) resultSetGroup.get(i);
                 ResultSet rsj = (ResultSet) resultSetGroup.get(j);
-                same &= compareResultSets(rsi, rsj, testCase, "");
+                same &= compareResultSets(rsi, rsj, testCase, "", true, true);
             }
         }
 
@@ -219,21 +203,16 @@ public final class DBUtils {
      * @return True if all the following are true:
      *         <ol>
      *         <li>rs1 and rs2 have the same number of columns</li>
-     *         <li>The name and type of each column in rs1 is equivalent to
-     *         the corresponding column in rs2.</li>
-     *         <li>All the rows in rs1 have the same type and value as the
-     *         corresponding rows in rs2.</li>
+     *         <li>The name and type of each column in rs1 is equivalent to the corresponding column in rs2.</li>
+     *         <li>All the rows in rs1 have the same type and value as the corresponding rows in rs2.</li>
      *         </ol>
-     * @param testCase
-     *          The test case calling the comparison; used in ReportManager.
-     * @param text
-     *          Additional text to put in any error reports.
-     * @param rs1
-     *          The first ResultSet to compare.
-     * @param rs2
-     *          The second ResultSet to compare.
+     * @param testCase The test case calling the comparison; used in ReportManager.
+     * @param text Additional text to put in any error reports.
+     * @param rs1 The first ResultSet to compare.
+     * @param rs2 The second ResultSet to compare.
+     * @param reportErrors If true, error details are stored in ReportManager as they are found.
      */
-    public static boolean compareResultSets(ResultSet rs1, ResultSet rs2, EnsTestCase testCase, String text) {
+    public static boolean compareResultSets(ResultSet rs1, ResultSet rs2, EnsTestCase testCase, String text, boolean reportErrors, boolean warnNull) {
 
         // quick tests first
         // Check for object equality
@@ -251,23 +230,29 @@ public final class DBUtils {
             ResultSetMetaData rsmd1 = rs1.getMetaData();
             ResultSetMetaData rsmd2 = rs2.getMetaData();
             if (rsmd1.getColumnCount() != rsmd2.getColumnCount()) {
-                ReportManager.problem(testCase, name1, "Column counts differ -  " + name1 + ": "
-                        + rsmd1.getColumnCount() + " " + name2 + ": " + rsmd2.getColumnCount());
+                
+                    ReportManager.problem(testCase, name1, "Column counts differ -  " + name1 + ": " + rsmd1.getColumnCount() + " "
+                            + name2 + ": " + rsmd2.getColumnCount());
+
                 return false; // Deliberate early return for performance
                 // reasons
             }
             for (int i = 1; i <= rsmd1.getColumnCount(); i++) {
                 //  note columns indexed from l
                 if (!((rsmd1.getColumnName(i)).equals(rsmd2.getColumnName(i)))) {
-                    ReportManager.problem(testCase, name1, "Column names differ for column " + i + " - " + name1 + ": "
-                            + rsmd1.getColumnName(i) + " " + name2 + ": " + rsmd2.getColumnName(i));
+                    
+                        ReportManager.problem(testCase, name1, "Column names differ for column " + i + " - " + name1 + ": "
+                                + rsmd1.getColumnName(i) + " " + name2 + ": " + rsmd2.getColumnName(i));
+                    
                     // Deliberate early return for performance reasons
-                    return false; 
+                    return false;
 
                 }
                 if (rsmd1.getColumnType(i) != rsmd2.getColumnType(i)) {
-                    ReportManager.problem(testCase, name1, "Column types differ for column " + i + " - " + name1 + ": "
-                            + rsmd1.getColumnType(i) + " " + name2 + ": " + rsmd2.getColumnType(i));
+                    
+                        ReportManager.problem(testCase, name1, "Column types differ for column " + i + " - " + name1 + ": "
+                                + rsmd1.getColumnType(i) + " " + name2 + ": " + rsmd2.getColumnType(i));
+                    
                     return false; // Deliberate early return for performance
                     // reasons
                 }
@@ -283,13 +268,14 @@ public final class DBUtils {
 
                 for (int j = 1; j <= rsmd1.getColumnCount(); j++) {
                     // note columns indexed from l
-                    if (!compareColumns(rs1, rs2, j)) {
+                    if (!compareColumns(rs1, rs2, j, warnNull)) {
                         String str = name1 + " and " + name2 + text + " differ at row " + row + " column " + j + " ("
-                                + rsmd1.getColumnName(j) + ")" + " Values: "
-                                + Utils.truncate(rs1.getString(j), 25, true) + ", "
+                                + rsmd1.getColumnName(j) + ")" + " Values: " + Utils.truncate(rs1.getString(j), 25, true) + ", "
                                 + Utils.truncate(rs2.getString(j), 25, true);
-                        ReportManager.problem(testCase, name1, str);
-                        return false; 
+                        if (reportErrors) {
+                            ReportManager.problem(testCase, name1, str);
+                        }
+                        return false;
                     }
                 }
                 row++;
@@ -300,10 +286,14 @@ public final class DBUtils {
             // both, i.e. .next()
             // should return false
             if (rs1.next()) {
-                ReportManager.problem(testCase, name1, name1 + " has additional rows that are not in " + name2);
+                if (reportErrors) {
+                    ReportManager.problem(testCase, name1, name1 + " has additional rows that are not in " + name2);
+                }
                 return false;
             } else if (rs2.next()) {
-                ReportManager.problem(testCase, name2, name2 + " has additional rows that are not in " + name1);
+                if (reportErrors) {
+                    ReportManager.problem(testCase, name2, name2 + " has additional rows that are not in " + name1);
+                }
                 return false;
             }
 
@@ -319,15 +309,12 @@ public final class DBUtils {
     /**
      * Compare a particular column in two ResultSets.
      * 
-     * @param rs1
-     *          The first ResultSet to compare.
-     * @param rs2
-     *          The second ResultSet to compare.
-     * @param i
-     *          The index of the column to compare.
+     * @param rs1 The first ResultSet to compare.
+     * @param rs2 The second ResultSet to compare.
+     * @param i The index of the column to compare.
      * @return True if the type and value of the columns match.
      */
-    public static boolean compareColumns(ResultSet rs1, ResultSet rs2, int i) {
+    public static boolean compareColumns(ResultSet rs1, ResultSet rs2, int i, boolean warnNull) {
 
         try {
 
@@ -337,12 +324,18 @@ public final class DBUtils {
             Connection con2 = rs2.getStatement().getConnection();
 
             if (rs1.getObject(i) == null) {
-                System.out.println("Column " + rsmd.getColumnName(i) + " is null in table " + rsmd.getTableName(i)
-                        + " in " + DBUtils.getShortDatabaseName(con1));
+                if (warnNull) {
+                System.out.println("Column " + rsmd.getColumnName(i) + " is null in table " + rsmd.getTableName(i) + " in "
+                        + DBUtils.getShortDatabaseName(con1));
+                }
+                return (rs2.getObject(i) == null); // true if both are null
             }
             if (rs2.getObject(i) == null) {
-                System.out.println("Column " + rsmd.getColumnName(i) + " is null in table " + rsmd.getTableName(i)
-                        + " in " + DBUtils.getShortDatabaseName(con2));
+                if (warnNull) {
+                System.out.println("Column " + rsmd.getColumnName(i) + " is null in table " + rsmd.getTableName(i) + " in "
+                        + DBUtils.getShortDatabaseName(con2));
+                }
+                return (rs1.getObject(i) == null); // true if both are null
             }
 
             // Note deliberate early returns for performance reasons
@@ -392,10 +385,8 @@ public final class DBUtils {
     /**
      * Print a ResultSet to standard out. Optionally limit the number of rows.
      * 
-     * @param maxRows
-     *          The maximum number of rows to print. -1 to print all rows.
-     * @param rs
-     *          The ResultSet to print.
+     * @param maxRows The maximum number of rows to print. -1 to print all rows.
+     * @param rs The ResultSet to print.
      */
     public static void printResultSet(ResultSet rs, int maxRows) {
 
@@ -423,10 +414,8 @@ public final class DBUtils {
     /**
      * Gets the database name, without the jdbc:// prefix.
      * 
-     * @param con
-     *          The Connection to query.
-     * @return The name of the database (everything after the last / in the
-     *         JDBC URL).
+     * @param con The Connection to query.
+     * @return The name of the database (everything after the last / in the JDBC URL).
      */
     public static String getShortDatabaseName(Connection con) {
 
@@ -445,15 +434,11 @@ public final class DBUtils {
 
     // -------------------------------------------------------------------------
     /**
-     * Convert properties used by Healthcheck into properties suitable for
-     * ensj; ensj properties host, port, user, password are converted. Note
-     * ensj property database is <em>not</em> set.
+     * Convert properties used by Healthcheck into properties suitable for ensj; ensj properties host, port, user, password are
+     * converted. Note ensj property database is <em>not</em> set.
      * 
-     * @return A Properties object containing host, port, user and password NOT
-     *         database.
-     * @param testRunnerProps
-     *          A set of properties in the format used by HealthCheck, e.g.
-     *          databaseURL etc.
+     * @return A Properties object containing host, port, user and password NOT database.
+     * @param testRunnerProps A set of properties in the format used by HealthCheck, e.g. databaseURL etc.
      */
     public static Properties convertHealthcheckToEnsjProperties(Properties testRunnerProps) {
 
@@ -491,13 +476,10 @@ public final class DBUtils {
 
     // -------------------------------------------------------------------------
     /**
-     * Convert properties used by Healthcheck into properties suitable for
-     * ensj; ensj properties host, port, user, password are converted. Note
-     * ensj property database is <em>not</em> set. Input properties are
-     * obtained from System.properties.
+     * Convert properties used by Healthcheck into properties suitable for ensj; ensj properties host, port, user, password are
+     * converted. Note ensj property database is <em>not</em> set. Input properties are obtained from System.properties.
      * 
-     * @return A Properties object containing host, port, user and password NOT
-     *         database.
+     * @return A Properties object containing host, port, user and password NOT database.
      */
     public static Properties convertHealthcheckToEnsjProperties() {
 
@@ -507,9 +489,8 @@ public final class DBUtils {
 
     // -------------------------------------------------------------------------
     /**
-     * Generate a name for a temporary database. Should be fairly unique; name
-     * is _temp_{user}_{time} where user is current user and time is current
-     * time in ms.
+     * Generate a name for a temporary database. Should be fairly unique; name is _temp_{user}_{time} where user is current user and
+     * time is current time in ms.
      * 
      * @return The temporary name. Will not have any spaces.
      */
@@ -531,10 +512,8 @@ public final class DBUtils {
     /**
      * Get a list of all the table names.
      * 
-     * @param con
-     *          The database connection to use.
-     * @return An array of Strings representing the names of the tables,
-     *         obtained from the SHOW TABLES command.
+     * @param con The database connection to use.
+     * @return An array of Strings representing the names of the tables, obtained from the SHOW TABLES command.
      */
     public static String[] getTableNames(Connection con) {
 
@@ -568,10 +547,8 @@ public final class DBUtils {
     /**
      * Get a list of the table names that match a particular SQL pattern.
      * 
-     * @param con
-     *          The database connection to use.
-     * @param pattern
-     *          The SQL pattern to match the table names against.
+     * @param con The database connection to use.
+     * @param pattern The SQL pattern to match the table names against.
      * @return An array of Strings representing the names of the tables.
      */
     public static String[] getTableNames(Connection con, String pattern) {
@@ -606,10 +583,8 @@ public final class DBUtils {
     /**
      * List the columns in a particular table.
      * 
-     * @param table
-     *          The name of the table to list.
-     * @param con
-     *          The connection to use.
+     * @param table The name of the table to list.
+     * @param con The connection to use.
      * @return A List of Strings representing the column names.
      */
     public static List getColumnsInTable(Connection con, String table) {
@@ -640,12 +615,9 @@ public final class DBUtils {
     /**
      * Execute SQL and writes results to ReportManager.info().
      * 
-     * @param testCase
-     *          testCase which created the sql statement
-     * @param con
-     *          connection to execute sql on.
-     * @param sql
-     *          sql statement to execute.
+     * @param testCase testCase which created the sql statement
+     * @param con connection to execute sql on.
+     * @param sql sql statement to execute.
      */
     public static void printRows(EnsTestCase testCase, Connection con, String sql) {
 

@@ -1,19 +1,14 @@
 /*
- Copyright (C) 2004 EBI, GRL
- 
- This library is free software; you can redistribute it and/or
- modify it under the terms of the GNU Lesser General Public
- License as published by the Free Software Foundation; either
- version 2.1 of the License, or (at your option) any later version.
- 
- This library is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- Lesser General Public License for more details.
- 
- You should have received a copy of the GNU Lesser General Public
- License along with this library; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Copyright (C) 2004 EBI, GRL
+ * 
+ * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free
+ * Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
 package org.ensembl.healthcheck.testcase.generic;
@@ -22,25 +17,30 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import java.sql.ResultSetMetaData;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Test case to compare table structures between several schemas.
  * 
- * Has several ways of deciding which schema to use as the "master" to compare
- * all the others against:
+ * Has several ways of deciding which schema to use as the "master" to compare all the others against:
  * <p>
  * <ol>
- * <li>If the property schema.file in database.properties exists, the
- * table.sql file it points to</li>
- * <li>If the schema.file property is not present, the schema named by the
- * property schema.master is used</li>
- * <li>If neither of the above properties are present, the (arbitrary) first
- * schema is used as the master.</li>
+ * <li>If the property schema.file in database.properties exists, the table.sql file it points to</li>
+ * <li>If the schema.file property is not present, the schema named by the property schema.master is used</li>
+ * <li>If neither of the above properties are present, the (arbitrary) first schema is used as the master.</li>
  * </ol>
  */
 
@@ -58,8 +58,7 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
     /**
      * Compare each database with the master.
      * 
-     * @param dbr
-     *          The database registry containing all the specified databases.
+     * @param dbr The database registry containing all the specified databases.
      * @return true if the test passed.
      */
     public boolean run(DatabaseRegistry dbr) {
@@ -150,7 +149,14 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
                             ResultSet masterRS = masterStmt.executeQuery(sql);
                             ResultSet dbRS = dbStmt.executeQuery(sql);
 
-                            result &= DBUtils.compareResultSets(masterRS, dbRS, this, " [" + table + "]");
+                            boolean showCreateSame = DBUtils.compareResultSets(masterRS, dbRS, this, " [" + table + "]", false,
+                                    false);
+                            if (!showCreateSame) {
+                                // do more in-depth analysis of database structure
+                                compareTableStructures(masterCon, checkCon, table);
+
+                            }
+                            result &= showCreateSame;
 
                             masterRS.close();
                             dbRS.close();
@@ -189,5 +195,97 @@ public class CompareCoreSchema extends MultiDatabaseTestCase {
         return result;
 
     } // run
+
+    // -------------------------------------------------------------------------
+
+    private void compareTableStructures(Connection con1, Connection con2, String table) {
+
+        try {
+
+            Statement s1 = con1.createStatement();
+            Statement s2 = con2.createStatement();
+
+            // compare DESCRIBE <table>
+            ResultSet rs1 = s1.executeQuery("DESCRIBE " + table);
+            ResultSet rs2 = s2.executeQuery("DESCRIBE " + table);
+            DBUtils.compareResultSets(rs1, rs2, this, "", false, false);
+
+            // compare indicies via SHOW INDEX <table>
+            compareIndices(con1, table, con2, table);
+
+            s1.close();
+            s2.close();
+
+        } catch (SQLException se) {
+            logger.severe(se.getMessage());
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    /**
+     * Compare the indices on 2 tables; order is not important.
+     */
+    private boolean compareIndices(Connection con1, String table1, Connection con2, String table2) {
+
+        boolean result = true;
+
+        try {
+
+            Statement s1 = con1.createStatement();
+            Statement s2 = con2.createStatement();
+
+            ResultSet rs1 = s1.executeQuery("SHOW INDEX FROM " + table1);
+            ResultSet rs2 = s2.executeQuery("SHOW INDEX FROM " + table2);
+            ResultSetMetaData rsmd = rs1.getMetaData();
+
+            // read ResultSets into concatenated Strings, then sort and compare
+            // this wouldn't be necessary if we could ORDER BY in SHOW INDEX
+            SortedSet rows1 = new TreeSet();
+            while (rs1.next()) {
+                if (rs1.getInt("Seq_in_index") >= 1) { // cuts down number of messages
+                    String str1 = table1 + ":" + rs1.getString("Key_name") + ":" + rs1.getString("Column_name") + ":"
+                            + rs1.getString("Non_unique") + ":" + rs1.getString("Seq_in_index");
+                    rows1.add(str1);
+                }
+            }
+
+            SortedSet rows2 = new TreeSet();
+            while (rs2.next()) {
+                if (rs2.getInt("Seq_in_index") >= 1) {
+                    String str2 = table2 + ":" + rs2.getString("Key_name") + ":" + rs2.getString("Column_name") + ":"
+                            + rs2.getString("Non_unique") + ":" + rs2.getString("Seq_in_index");
+                    rows2.add(str2);
+                }
+            }
+
+            rs1.close();
+            rs2.close();
+            s1.close();
+            s2.close();
+
+            // compare rows1 and rows2
+            Iterator it1 = rows1.iterator();
+            while (it1.hasNext()) {
+                String row1 = (String) it1.next();
+                if (!rows2.contains(row1)) {
+                    result = false;
+                    String[] indices = row1.split(":");
+                    String table = indices[0];
+                    String index = indices[1];
+                    String seq = indices[4];
+                    if (seq.equals("1")) { // once per group of rows
+                        ReportManager.problem(this, "", DBUtils.getShortDatabaseName(con1) + " " + table + " has index " + index
+                                + " which is different or absent in " + DBUtils.getShortDatabaseName(con2));
+                    }
+                }
+            }
+
+        } catch (SQLException se) {
+            logger.severe(se.getMessage());
+        }
+
+        return result;
+    }
+    // -------------------------------------------------------------------------
 
 } // CompareCoreSchema
