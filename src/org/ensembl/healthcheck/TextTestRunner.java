@@ -101,6 +101,19 @@ public class TextTestRunner extends TestRunner implements Reporter {
     System.out.println("                  Note each test case is in a group of its own with the name of the test case.");
     System.out.println("                  This allows individual tests to be run if required.");
     System.out.println("");
+    System.out.println("If no tests or test groups are specified, and a database regular expression is given with -d, the matching databases are shown. ");
+    System.out.println("");
+    System.out.println("Currently available tests:");
+    
+    List tests = findAllTests();
+    Collections.sort(tests, new TestComparator());
+    Iterator it = tests.iterator();
+    while (it.hasNext()) {
+      EnsTestCase test = (EnsTestCase)it.next();
+      System.out.print(test.getShortTestName() + " ");
+    }
+    
+    System.out.println("");
     
   }
   
