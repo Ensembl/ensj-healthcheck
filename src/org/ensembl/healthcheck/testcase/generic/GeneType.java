@@ -100,7 +100,7 @@ public class GeneType extends SingleDatabaseTestCase {
      * Define valid Analysis/Gene combinations
      * for the different Database types
      * syntax: {dbtype_index}{analyis-index}{type-index}
-     * example: whitelist[0][2][1] would be 
+     * example: whitelist[0][1][10] would be 
      *      ["core" database]["wormbase" analysis]["gene" gene type]
      */
     private int[][][] whitelist =    {  {  {0,1,2},    //this block    //this array for "ensembl" analysis' 
@@ -109,9 +109,9 @@ public class GeneType extends SingleDatabaseTestCase {
 					   {},         //
 					   {},         //
 					   {3,4,5,6,7,8,11,12,13,14,15,16,18,19,23,24},
-					   {22},   // Allowed gene types for CYT
-					   {22},   // Allowed gene types for HOX
-					   {21}    // Allowed gene types for GSTEN
+					   {22},       // Allowed gene types for CYT
+					   {22},       // Allowed gene types for HOX
+					   {21}        // Allowed gene types for GSTEN
                                         },
 					{  {},         //this block
 					   {},         //for EST
@@ -245,7 +245,7 @@ public class GeneType extends SingleDatabaseTestCase {
 		}
 		else{
 		    if( (analysisid < 0) && (typeid < 0) ){
-			ReportManager.problem(this, con, " gene type " + genetype + " and analysis " 
+			ReportManager.problem(this, con, "gene type " + genetype + " and analysis " 
 					      + analysisname + " are invalid names.");
 			result = false;
 		    }
