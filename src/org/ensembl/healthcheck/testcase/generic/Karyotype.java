@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
@@ -59,13 +60,24 @@ public class Karyotype extends SingleDatabaseTestCase {
 	// This test should fail if the karyotype table is empty
 	if (!tableHasRows(con, "karyotype")) {
 
-	    ReportManager.problem(this, con, "Karyotype table is empty");
-	    return false;
+	    // certain species are allowed to have empty karyotype tables
+	    Species species = dbre.getSpecies();
+	    if (species == Species.CAENORHABDITIS_BRIGGSAE || species == Species.CAENORHABDITIS_ELEGANS || species == Species.DANIO_RERIO || species == Species.FUGU_RUBRIPES || species == Species.XENOPUS_TROPICALIS) {
+	
+		ReportManager.correct(this, con, "Karyotype table is empty, but this is allowed for " + species.toString());
+		return true;
+		
+	    } else { // if it's not one of those species, it's a problem
+		
+		ReportManager.problem(this, con, "Karyotype table is empty");
+		return false;
+
+	    }
 
 	}
 
         // The seq_region.length and karyotype.length should always be the
-        // same.
+	// same.
         // The SQL returns failures
 
         String karsql = "SELECT sr.name, max(kar.seq_region_end), sr.length " + "FROM seq_region sr, karyotype kar "
