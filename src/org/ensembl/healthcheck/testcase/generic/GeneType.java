@@ -1,4 +1,4 @@
-n/*
+/*
  Copyright (C) 2004 Wellcome Trust Sanger Centre
  
  This library is free software; you can redistribute it and/or
