@@ -34,6 +34,7 @@ import org.ensembl.healthcheck.util.DBUtils;
  *  - that map_wieghts are set to non-zero values
  *  - all marker priorities are > 50
  *  - each chromosome has some marker features
+ *  - each chromosome has some marker_map_locations
  *
  * Currently only checks for human, mouse, rat and zebrafish.
  */
@@ -53,7 +54,7 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 
         addToGroup("post_genebuild");
         addToGroup("release");
-        setDescription("Checks that marker_features exist and that they have non-zero map_weights, that marker priorities are sensible and that all chromosomes have some marker features");
+        setDescription("Checks that marker_features exist and that they have non-zero map_weights, that marker priorities are sensible and that all chromosomes have some marker features and marker_map_locations");
 
     }
 
@@ -154,7 +155,7 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 
     // ----------------------------------------------------------------------
     /**
-     * Check that all chromomes have > 0 markers.
+     * Check that all chromomes have > 0 markers_map_locations and marker_features.
      */
     private boolean checkAllChromosomesHaveMarkers(Connection con) {
 
@@ -181,7 +182,8 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 	    
 	try {
 		
-	    // check each top-level seq_region (up to a limit) to see how many marker features there are
+	    // check each top-level seq_region (up to a limit) to see how many 
+	    // marker_map_locations and marker features there are
 	    Statement stmt = con.createStatement();
 		
 	    ResultSet rs = stmt.executeQuery("SELECT * FROM seq_region WHERE coord_system_id=" + topLevelCSID + " AND name NOT LIKE '%\\_%' AND name NOT LIKE '%.%' AND name NOT LIKE 'Un%' AND LENGTH(name) < 3 ORDER BY name" );
@@ -192,8 +194,10 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 
 		long seqRegionID = rs.getLong("seq_region_id");
 		String seqRegionName = rs.getString("name");
-		logger.fine("Counting marker features on chromosome " + seqRegionName);
-		    
+
+		// check marker_map_locations
+		logger.fine("Counting marker_map_locations on chromosome " + seqRegionName);
+		
 		sql = "SELECT COUNT(*) FROM marker_map_location WHERE chromosome_name='" + seqRegionName + "'";
 		int rows = getRowCount(con, sql);
 		if (rows == 0) {
@@ -203,7 +207,23 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 			
 		} else {
 			
-		    ReportManager.correct(this, con, "Chromosome " + seqRegionName + " has " + rows + " markers");
+		    ReportManager.correct(this, con, "Chromosome " + seqRegionName + " has " + rows + " marker_map_locations");
+
+		}
+		
+		// check marker_features
+		logger.fine("Counting marker_features on chromosome " + seqRegionName);
+		sql = "SELECT COUNT(*) FROM marker_feature WHERE seq_region_id=" + seqRegionID;
+		rows = getRowCount(con, sql);
+		if (rows == 0) {
+			
+		    ReportManager.problem(this, con, "Chromosome " + seqRegionName + " (seq_region_id " + seqRegionID + ") has no marker_features");
+		    result = false;
+			
+		} else {
+			
+		    ReportManager.correct(this, con, "Chromosome " + seqRegionName + " has " + rows + " marker_features");
+
 		}
 
 	    }
