@@ -30,7 +30,6 @@ public class CheckExonCoordsTestCase extends EnsTestCase {
    * Creates a new instance of CheckExonCoordsTestCase
    */
   public CheckExonCoordsTestCase() {
-    databaseRegexp = ".*_core_\\d.*";
     addToGroup("post_genebuild");
   }
   

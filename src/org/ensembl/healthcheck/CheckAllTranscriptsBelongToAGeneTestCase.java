@@ -31,7 +31,6 @@ public class CheckAllTranscriptsBelongToAGeneTestCase extends EnsTestCase {
    * Creates a new instance of CheckAllTranscriptsBelongToAGeneTestCase
    */
   public CheckAllTranscriptsBelongToAGeneTestCase() {
-    databaseRegexp = ".*_core_\\d.*";
     addToGroup("post_genebuild");
   }
   

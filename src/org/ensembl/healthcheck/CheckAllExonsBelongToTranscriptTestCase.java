@@ -31,7 +31,6 @@ public class CheckAllExonsBelongToTranscriptTestCase extends EnsTestCase {
    * Creates a new instance of CheckAllExonsBelongToTranscript
    */
   public CheckAllExonsBelongToTranscriptTestCase() {
-    databaseRegexp = ".*_core_\\d.*";
     addToGroup("post_genebuild");
   }
   

@@ -33,7 +33,6 @@ public class BlankNonNullExternalDBTestCase extends EnsTestCase {
    * Create a BlankNonNullExternalDBTestCase that matches a particular set of databases.
    */
   public BlankNonNullExternalDBTestCase() {
-    databaseRegexp = ".*_core_\\d.*";
   }
   
   /**

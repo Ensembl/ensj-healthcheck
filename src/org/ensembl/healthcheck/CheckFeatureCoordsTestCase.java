@@ -31,7 +31,6 @@ public class CheckFeatureCoordsTestCase extends EnsTestCase {
    * Creates a new instance of CheckFeatureCoordsTestCase
    */
   public CheckFeatureCoordsTestCase() {
-    databaseRegexp = ".*_core_\\d.*";
     addToGroup("post_genebuild");
   }
   

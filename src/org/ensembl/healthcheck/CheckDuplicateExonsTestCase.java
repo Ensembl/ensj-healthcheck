@@ -31,7 +31,6 @@ public class CheckDuplicateExonsTestCase extends EnsTestCase {
    * Creates a new instance of CheckDuplicateExonsTestCase
    */
   public CheckDuplicateExonsTestCase() {
-    databaseRegexp = ".*_core_\\d.*";
     addToGroup("post_genebuild");
   }
   

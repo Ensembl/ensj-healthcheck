@@ -33,7 +33,6 @@ public class CheckMetaDataTableTestCase extends EnsTestCase {
    * Creates a new instance of CheckMetaDataTableTestCase
    */
   public CheckMetaDataTableTestCase() {
-    databaseRegexp = ".*_core_\\d.*";
     addToGroup("db_constaints");
   }
   

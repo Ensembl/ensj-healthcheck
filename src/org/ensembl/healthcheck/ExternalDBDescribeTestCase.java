@@ -27,7 +27,6 @@ public class ExternalDBDescribeTestCase extends EnsTestCase {
   
   /** Creates a new instance of ExternalDBDescriptionTestCase */
   public ExternalDBDescribeTestCase() {
-    databaseRegexp = ".*_((core)|(estgene))_\\d.*";
   }
   
   TestResult run() {

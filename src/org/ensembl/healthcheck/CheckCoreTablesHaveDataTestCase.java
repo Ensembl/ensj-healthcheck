@@ -31,7 +31,6 @@ public class CheckCoreTablesHaveDataTestCase extends EnsTestCase {
    * Creates a new instance of CheckCoreTablesHaveDataTestCase
    */
   public CheckCoreTablesHaveDataTestCase() {
-    databaseRegexp = ".*_core_\\d.*";
     addToGroup("db_constraints");
   }
   

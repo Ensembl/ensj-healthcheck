@@ -30,7 +30,6 @@ public class UnderscoreInAssemblyTypeTestCase extends EnsTestCase {
   
   /** Creates a new instance of UnderscoreInAssemblyTypeTestCase */
   public UnderscoreInAssemblyTypeTestCase() {
-    databaseRegexp = "^homo_sapiens_core_\\d.*";
   }
   
   TestResult run() {

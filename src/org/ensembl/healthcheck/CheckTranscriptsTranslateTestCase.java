@@ -31,7 +31,6 @@ public class CheckTranscriptsTranslateTestCase extends EnsTestCase {
    * Creates a new instance of CheckTranscriptsTranslateTestCase
    */
   public CheckTranscriptsTranslateTestCase() {
-    databaseRegexp = ".*_core_\\d.*";
     addToGroup("post_genebuild");
   }
   

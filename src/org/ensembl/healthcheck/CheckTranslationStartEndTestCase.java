@@ -31,7 +31,6 @@ public class CheckTranslationStartEndTestCase extends EnsTestCase {
    * Creates a new instance of CheckTranslationStartEndTestCase
    */
   public CheckTranslationStartEndTestCase() {
-    databaseRegexp = ".*_core_\\d.*";
     addToGroup("post_genebuild");
   }
   

@@ -32,7 +32,6 @@ public class CoreForeignKeyTestCase extends EnsTestCase {
    * Create an OrphanTestCase that applies to a specific set of databases.
    */
   public CoreForeignKeyTestCase() {
-    databaseRegexp = "^.*_core_\\d.*";
     addToGroup("db_constraints");
   }
   

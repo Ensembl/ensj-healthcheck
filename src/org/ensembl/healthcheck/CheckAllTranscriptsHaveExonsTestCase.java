@@ -30,7 +30,6 @@ public class CheckAllTranscriptsHaveExonsTestCase extends EnsTestCase {
    * Creates a new instance of CheckAllTranscriptsHaveExonsTestCase
    */
   public CheckAllTranscriptsHaveExonsTestCase() {
-    databaseRegexp = ".*_core_\\d.*";
     addToGroup("post_genebuild");
   }
   

@@ -32,7 +32,6 @@ public class OrphanTestCase extends EnsTestCase {
    * Create an OrphanTestCase that applies to a specific set of databases.
    */
   public OrphanTestCase() {
-    databaseRegexp = "^homo_sapiens_core_\\d.*";
   }
   
   TestResult run() {
