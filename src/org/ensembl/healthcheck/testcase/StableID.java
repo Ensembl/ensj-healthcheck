@@ -81,7 +81,6 @@ public class StableID extends EnsTestCase {
 			result = false;
 		}
 
-		// TODO - add Craig's DBUtils.printRows method to head
 		// print a few rows so we can check by eye that the table looks ok
 		DBUtils.printRows(this, con, "select * from " + typeName + "_stable_id limit 10;");
 

@@ -87,7 +87,7 @@ public class DatabaseRegistryEntry {
 			}
 		}
 
-		// TODO other permutations?
+		// other permutations?
 
 		if (result.equals(Species.UNKNOWN)) {
 			logger.warning("Can't deduce species from database name " + name);
@@ -126,7 +126,7 @@ public class DatabaseRegistryEntry {
 			}
 		}
 
-		// TODO other permutations?
+		// other permutations?
 
 		if (result.equals(DatabaseType.UNKNOWN)) {
 			logger.warning("Can't deduce database type from database name " + name);

@@ -563,7 +563,7 @@ public class DBUtils {
    * @param sql sql statement to execute.
    */
   public static void printRows(EnsTestCase testCase, Connection con, String sql) {
-    // TODO Auto-generated method stub
+
     try {
       ResultSet rs = con.createStatement().executeQuery( sql );
       if ( rs.next() ) {

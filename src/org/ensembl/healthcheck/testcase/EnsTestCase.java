@@ -971,8 +971,6 @@ public abstract class EnsTestCase {
 			fnfe.printStackTrace();
 		}
 
-		// TODO exceptions?
-
 		// ----------------------------------------------------
 		// create the database
 
