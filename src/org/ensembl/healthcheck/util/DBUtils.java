@@ -259,6 +259,15 @@ public class DBUtils {
         
       }
       
+      // if both ResultSets are the same, then we should be at the end of both, i.e. .next() should return false
+      if (rs1.next() == true) {
+        ReportManager.problem(testCase, name1, text + " in " + name1 + " seems to have additional rows that are not in " + name2);
+        return false;
+      } else if (rs2.next() == true) {
+        ReportManager.problem(testCase, name2, text + " in " + name2 + " seems to have additional rows that are not in " + name1);
+        return false;
+      }
+      
     } catch (SQLException se) {
       se.printStackTrace();
     }
