@@ -102,3 +102,7 @@ EP1_H
 EP1_S
 ncRNA
 tRNA
+xlaevis_EST
+xlaevis_cDNA
+xtrop_cDNA
+xtrop_cluster
