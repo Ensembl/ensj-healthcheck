@@ -19,6 +19,8 @@
 package org.ensembl.healthcheck;
 
 import java.util.*;
+import java.sql.*;
+import org.ensembl.healthcheck.util.*;
 
 /**
  * Hold information about database schemas.
@@ -51,6 +53,12 @@ public class SchemaManager {
     
   }
   
+  // -------------------------------------------------------------------------
+  /**
+   * Get a schema from the cache by name.
+   * @param The name of the schema to return.
+   * @return The schema named name, or null
+   */
   public static SchemaInfo getSchema(String name) {
     
     SchemaInfo result = null;
@@ -68,4 +76,20 @@ public class SchemaManager {
     
   }
   
+  // -------------------------------------------------------------------------
+  /** 
+   * Get a schema that corresponds to the Connection. Note that this method
+   * retrieves the schema from the cache, it does <em>not</em> create it - see 
+   * the SchemaInfo(Connection con) constructor for that.
+   * @param con The connection relating to the schema required.
+   * @return The SchemaInfo object relating to con, or null if none is found.
+   */
+  public static SchemaInfo getSchema(Connection con) {
+    
+    return getSchema(DBUtils.getShortDatabaseName(con));
+    
+  }
+  
+  // -------------------------------------------------------------------------
+
 } // SchemaManager
