@@ -114,7 +114,7 @@ public class LogicNamesDisplayable extends SingleDatabaseTestCase {
                  */
                 if (logicNamesByAnalID.get(analysisIDs[i]) == null) {
                     ReportManager.problem(this, con, "Feature table " + featureTableName
-                            + " refers to non-existant analysis with ID " + analysisIDs[i]);
+                            + " refers to non-existent analysis with ID " + analysisIDs[i]);
                     result = false;
                 } else {
                     // check that logic name corresponding to this analysis id
