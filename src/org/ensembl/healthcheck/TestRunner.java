@@ -287,6 +287,10 @@ public class TestRunner {
         !className.substring(className.length()-4).equals("Test")  ) {  // ignore JUnit tests
           obj = newClass.newInstance();
         }
+      } catch (InstantiationException ie) {
+        // normally it is a BAD THING to just ignore exceptions
+        // however InstantiationExceptions may be thrown often in this case, 
+        // so we deliberately chose to suppres this particular exception
       } catch (Exception e) {
         e.printStackTrace();
       }
