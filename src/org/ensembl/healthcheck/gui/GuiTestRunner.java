@@ -50,8 +50,7 @@ public class GuiTestRunner extends TestRunner implements Reporter {
     /**
      * Command-line entry point.
      * 
-     * @param args
-     *          Command line arguments.
+     * @param args Command line arguments.
      */
     public static void main(String[] args) {
 
@@ -63,6 +62,8 @@ public class GuiTestRunner extends TestRunner implements Reporter {
 
     private void run(String[] args) {
 
+        outputLevel = ReportLine.ALL; // filtered later
+        
         ReportManager.setReporter(this);
 
         parseCommandLine(args);
@@ -117,12 +118,9 @@ public class GuiTestRunner extends TestRunner implements Reporter {
     /**
      * Run all the tests in a list.
      * 
-     * @param tests
-     *          The tests to run.
-     * @param databases
-     *          The databases to run the tests on.
-     * @param gtrf
-     *          The test runner frame in which to display the results.
+     * @param tests The tests to run.
+     * @param databases The databases to run the tests on.
+     * @param gtrf The test runner frame in which to display the results.
      */
     protected void runAllTests(EnsTestCase[] ltests, DatabaseRegistryEntry[] ldatabases, GuiTestRunnerFrame lgtrf) {
 
@@ -183,15 +181,14 @@ public class GuiTestRunner extends TestRunner implements Reporter {
 
                 gtrf.setTestProgressDialogVisibility(false);
 
-                printReportsByTest(outputLevel);
+                gtrf.setResultFrameVisibility(true);
 
             } // run
 
         }; // thread
 
         t.start();
-        
-        
+
     } // runAllTests
 
     // -------------------------------------------------------------------------
@@ -200,22 +197,47 @@ public class GuiTestRunner extends TestRunner implements Reporter {
     /**
      * Called when a message is to be stored in the report manager.
      * 
-     * @param reportLine
-     *          The message to store.
+     * @param reportLine The message to store.
      */
     public void message(ReportLine reportLine) {
 
-        // TBC
+        // TODO - remove debug
+        String level = "ODD    ";
+
+        System.out.print(".");
+        System.out.flush();
+
+        if (reportLine.getLevel() < outputLevel) {
+            System.out.println("## returning");
+            return;
+        }
+
+        switch (reportLine.getLevel()) {
+        case (ReportLine.PROBLEM):
+            level = "PROBLEM";
+            break;
+        case (ReportLine.WARNING):
+            level = "WARNING";
+            break;
+        case (ReportLine.INFO):
+            level = "INFO   ";
+            break;
+        case (ReportLine.CORRECT):
+            level = "CORRECT";
+            break;
+        default:
+            level = "PROBLEM";
+        }
+
+        System.out.println(reportLine.getDatabaseName() + " " + level + ":  " + reportLine.getMessage());
 
     }
 
     /**
      * Called just before a test case is run.
      * 
-     * @param testCase
-     *          The test case about to be run.
-     * @param dbre
-     *          The database which testCase is to be run on, or null of no/several databases.
+     * @param testCase The test case about to be run.
+     * @param dbre The database which testCase is to be run on, or null of no/several databases.
      */
     public void startTestCase(EnsTestCase testCase, DatabaseRegistryEntry dbre) {
 
@@ -226,12 +248,9 @@ public class GuiTestRunner extends TestRunner implements Reporter {
     /**
      * Should be called just after a test case has been run.
      * 
-     * @param testCase
-     *          The test case that was run.
-     * @param result
-     *          The result of testCase.
-     * @param dbre
-     *          The database which testCase was run on, or null of no/several databases.
+     * @param testCase The test case that was run.
+     * @param result The result of testCase.
+     * @param dbre The database which testCase was run on, or null of no/several databases.
      */
     public void finishTestCase(EnsTestCase testCase, boolean result, DatabaseRegistryEntry dbre) {
 

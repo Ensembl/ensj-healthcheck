@@ -73,7 +73,6 @@ import org.ensembl.healthcheck.CallbackTarget;
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
-import org.ensembl.healthcheck.ReportLine;
 import org.ensembl.healthcheck.TestRegistry;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.util.ConnectionPool;
@@ -94,6 +93,8 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
     private Map testButtonInfoWindows = new HashMap();
 
     private TestProgressDialog testProgressDialog;
+
+    private GuiTestResultWindow testResultWindow = null;
 
     private int testsRun = 0;
 
@@ -247,13 +248,19 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
         contentPane.add(centrePanel, BorderLayout.CENTER);
         contentPane.add(bottomPanel, BorderLayout.SOUTH);
 
+        // ----------------------------
+        // Center on screen
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        Rectangle frame = getBounds();
+        setLocation((screen.width - frame.width) / 2, (screen.height - frame.height) / 2);
+
+        // ----------------------------
         pack();
 
         // ----------------------------
         // Create progress window
-        testProgressDialog = new TestProgressDialog("Running tests", "", 0, 100);
-        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-        Rectangle frame = testProgressDialog.getBounds();
+        testProgressDialog = new TestProgressDialog("Running ...", "", 0, 100);
+        frame = testProgressDialog.getBounds();
         testProgressDialog.setLocation((screen.width - frame.width) / 2, (screen.height - frame.height) / 2);
 
     }
@@ -309,62 +316,6 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
         setCursor(defaultCursor);
 
     } // openSettingsDialog
-
-    // -------------------------------------------------------------------------
-    /**
-     * Append a log record to the info window.
-     * 
-     * @param logRecord The record to append.
-     */
-    private void updateTestInfoWindow(LogRecord logRecord) {
-
-        // try and figure out which window to update
-        String loggingClass = logRecord.getSourceClassName();
-
-        TestInfoWindow infoWindow = (TestInfoWindow) testButtonInfoWindows.get(loggingClass);
-        if (infoWindow != null) {
-            infoWindow.append(logRecord.getMessage() + "\n");
-        }
-
-    } // updateTestRunnerWindow
-
-    // -------------------------------------------------------------------------
-    /**
-     * Set the text of a particular info window.
-     * 
-     * @param testClassName The name of the class sending the info. Used to decide which window to
-     *            update.
-     * @param report The String to add.
-     */
-    public void setTestInfoWindowText(String testClassName, String report) {
-
-        TestInfoWindow infoWindow = (TestInfoWindow) testButtonInfoWindows.get(testClassName);
-        if (infoWindow != null) {
-            infoWindow.setText(report);
-        }
-
-    } // setTestInfoWindowText
-
-    // -------------------------------------------------------------------------
-    /**
-     * Set the text of a particular info window.
-     * 
-     * @param testClassName The name of the class sending the info. Used to decide which window to
-     *            update.
-     * @param lines A List of Strings to add to the window.
-     */
-    public void setTestInfoWindowText(String testClassName, List lines) {
-
-        TestInfoWindow infoWindow = (TestInfoWindow) testButtonInfoWindows.get(testClassName);
-        if (infoWindow != null) {
-            Iterator it = lines.iterator();
-            while (it.hasNext()) {
-                ReportLine line = (ReportLine) it.next();
-                infoWindow.append(line.getDatabaseName() + ": " + (String) line.getMessage() + "\n");
-            }
-        }
-
-    } // setTestInfoWindowText
 
     // -------------------------------------------------------------------------
     /**
@@ -470,30 +421,29 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
 
     // -------------------------------------------------------------------------
 
-} // GuiTestRunnerFrame
+    /**
+     * Show the result window. Create if necessary.
+     * 
+     * @param v true to create/show the result window, false to hide it.
+     */
+    public void setResultFrameVisibility(boolean v) {
 
-// -------------------------------------------------------------------------
-/**
- * ActionListener implementation to open a test info window.
- */
+        if (testResultWindow == null) {
 
-class TestInfoWindowOpener implements ActionListener {
+            testResultWindow = new GuiTestResultWindow(this);
+            testResultWindow.setVisible(v);
 
-    private TestInfoWindow infoWindow;
+        } else {
 
-    public TestInfoWindowOpener(TestInfoWindow infoWindow) {
+            testResultWindow.setVisible(v);
 
-        this.infoWindow = infoWindow;
-
-    } // TestInfoWindowOpener
-
-    public void actionPerformed(ActionEvent e) {
-
-        infoWindow.setVisible(!infoWindow.isVisible()); // toggle
+        }
 
     }
 
-} // TestInfoWindowOpener
+    // -------------------------------------------------------------------------
+
+} // GuiTestRunnerFrame
 
 // -------------------------------------------------------------------------
 /**
@@ -569,7 +519,6 @@ class TabChangeListener implements ChangeListener {
         int sel = jtp.getSelectedIndex();
         for (int i = 0; i < jtp.getTabCount(); i++) {
             //jtp.setBackgroundAt(i, (i == sel ? Color.LIGHT_GRAY : Color.WHITE));
-            // TODO - set font?
         }
 
     }
@@ -593,19 +542,23 @@ class DatabaseListPanel extends JScrollPane {
         setPreferredSize(new Dimension(300, 500));
 
         JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(Color.RED);
+        panel.setLayout(new BorderLayout());
+        panel.setBackground(Color.WHITE);
 
+        JPanel allDatabasesPanel = new JPanel();
+        allDatabasesPanel.setLayout(new BoxLayout(allDatabasesPanel, BoxLayout.Y_AXIS));
+        allDatabasesPanel.setBackground(Color.WHITE);
+        
         Iterator it = checkBoxes.iterator();
         while (it.hasNext()) {
             JPanel checkBoxPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-            checkBoxPanel.setBackground(Color.GREEN);
+            checkBoxPanel.setBackground(Color.WHITE);
             checkBoxPanel.add((DatabaseCheckBox) it.next());
-            panel.add(checkBoxPanel);
+            allDatabasesPanel.add(checkBoxPanel);
         }
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        buttonPanel.setBackground(Color.YELLOW);
+        buttonPanel.setBackground(Color.WHITE);
         JButton toggleAllButton = new JButton("Toggle all");
         final DatabaseListPanel localDBLP = this;
         toggleAllButton.addActionListener(new ActionListener() {
@@ -618,8 +571,8 @@ class DatabaseListPanel extends JScrollPane {
         });
 
         buttonPanel.add(toggleAllButton);
-        panel.add(Box.createVerticalGlue());
-        panel.add(buttonPanel);
+        panel.add(allDatabasesPanel, BorderLayout.CENTER);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
 
         setViewportView(panel);
     }
@@ -800,6 +753,7 @@ class TestListPanel extends JScrollPane {
         panel.add(tree);
 
         setViewportView(panel);
+
     }
 
     // -------------------------------------------------------------------------
@@ -841,7 +795,7 @@ class TestTreeCellRenderer extends JComponent implements TreeCellRenderer {
 
     public TestTreeCellRenderer() {
 
-        slowIcon = new ImageIcon(this.getClass().getResource("clock.gif"));
+        slowIcon = new ImageIcon(this.getClass().getResource("warning.gif"));
 
         label = new JLabel();
         label.setBackground(Color.WHITE);
@@ -856,7 +810,7 @@ class TestTreeCellRenderer extends JComponent implements TreeCellRenderer {
 
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf,
             int row, boolean hasFocus) {
-
+        
         TestTreeNode node = (TestTreeNode) value;
         if (node != null) {
 
@@ -882,7 +836,7 @@ class TestTreeCellRenderer extends JComponent implements TreeCellRenderer {
 
         return this;
     }
-
+    
     public Dimension getPreferredSize() {
 
         Dimension dim = new Dimension(550, 25);
@@ -1013,22 +967,30 @@ class TestProgressDialog extends JDialog {
 
     public TestProgressDialog(String message, String note, int min, int max) {
 
+        setTitle("Healthcheck progress");
+
         setSize(new Dimension(300, 100));
+        setBackground(Color.WHITE);
 
         JPanel progressPanel = new JPanel();
+        progressPanel.setBackground(Color.WHITE);
         progressPanel.setLayout(new BoxLayout(progressPanel, BoxLayout.Y_AXIS));
         messageLabel = new JLabel(message);
         messageLabel.setFont(new Font("Dialog", Font.BOLD, 12));
+        messageLabel.setBackground(Color.WHITE);
         noteLabel = new JLabel(message);
         noteLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
+        noteLabel.setBackground(Color.WHITE);
 
         progressBar = new JProgressBar(min, max);
+        progressBar.setBackground(Color.WHITE);
 
         progressPanel.add(messageLabel);
         progressPanel.add(noteLabel);
         progressPanel.add(progressBar);
 
         Container contentPane = getContentPane();
+        contentPane.setBackground(Color.WHITE);
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
         contentPane.add(progressPanel);
 
