@@ -53,9 +53,9 @@ public class CheckDNATables extends EnsTestCase {
       boolean allMatch = checkSameSQLResult("SELECT COUNT(*) FROM dna", speciesRegexp);
       if (!allMatch) {
         result = false;
-        ReportManager.problem(this, "", "Differences in dna table for " + speciesRegexp); // XXX null?
+        ReportManager.problem(this, "[see report text]", "Differences in dna table for " + speciesRegexp); // XXX null?
       } else {
-       ReportManager.correct(this, "", "All dna tables have the same number of rows for " + speciesRegexp);  // XXX null
+       ReportManager.correct(this, "[see report text]", "All dna tables have the same number of rows for " + speciesRegexp);  // XXX null
       }
       
     } // foreach species
