@@ -171,6 +171,24 @@ public class DatabaseRegistry {
 
 	}
 
+	//---------------------------------------------------------------------
+	/**
+	 * Get a single, named DatabaseRegistryEntry.
+	 * @param name The name to look for.
+	 * @return The matching DatabaseRegistryEntry, or null if none is found.
+	 */
+	public DatabaseRegistryEntry getByExactName(String name) {
+		
+		Iterator it = entries.iterator();
+		while (it.hasNext()) {
+			DatabaseRegistryEntry dbre = (DatabaseRegistryEntry)it.next();
+			if (dbre.getName().equals(name)) {
+				return dbre;
+			}
+		}
+		
+		return null;
+	}
 	// -----------------------------------------------------------------
 
 } // DatabaseRegistry
