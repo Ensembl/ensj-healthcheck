@@ -161,6 +161,14 @@ public final class DatabaseType {
 
         // --------------------------------------
 
+        if (in(lcAlias, "variation")) { 
+
+        return VARIATION; 
+
+        }
+
+        // --------------------------------------
+
         if (in(lcAlias, "disease")) { 
 
         return DISEASE; 
