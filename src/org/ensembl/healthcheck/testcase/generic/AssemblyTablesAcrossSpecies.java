@@ -20,11 +20,11 @@ import org.ensembl.healthcheck.*;
 import org.ensembl.healthcheck.testcase.*;
 
 /**
- * Check that the assembly table is present in all necessary databases.
+ * Check that the assembly table is the same in all necessary databases.
  */
 public class AssemblyTablesAcrossSpecies extends MultiDatabaseTestCase {
 
-	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.EST, DatabaseType.ESTGENE, DatabaseType.VEGA };
+	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.VEGA };
 
 	/**
 	 * Creates a new instance of AssemblyTablesAcrossSpecies
@@ -37,7 +37,7 @@ public class AssemblyTablesAcrossSpecies extends MultiDatabaseTestCase {
 	}
 
 	/**
-	 * Make sure that the assembly table has the same number of rows.
+	 * Make sure that the assembly tables are all the same.
 	 * 
 	 * @return True if the assembly table is the same across all the species in the registry.
 	 */

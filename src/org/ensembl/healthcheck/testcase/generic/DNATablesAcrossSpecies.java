@@ -26,7 +26,7 @@ import org.ensembl.healthcheck.*;
  */
 public class DNATablesAcrossSpecies extends MultiDatabaseTestCase {
 
-	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.EST, DatabaseType.ESTGENE, DatabaseType.VEGA };
+	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.VEGA };
 
 	/**
 	 * Creates a new instance of CheckDNATables
