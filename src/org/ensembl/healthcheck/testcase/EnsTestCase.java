@@ -1071,14 +1071,53 @@ public abstract class EnsTestCase {
    */
   public Connection getSchemaConnection(String schema) {
     
-      Connection con = DBUtils.openConnection(System.getProperty("driver"),
-      System.getProperty("databaseURL") + schema,
-      System.getProperty("user"),
-      System.getProperty("password"));
+    Connection con = DBUtils.openConnection(System.getProperty("driver"),
+    System.getProperty("databaseURL") + schema,
+    System.getProperty("user"),
+    System.getProperty("password"));
     
-      return con;
+    return con;
   }
   
   // -------------------------------------------------------------------------
-
+  /**
+   * Compare two schemas to see if they have the same tables.
+   * The comparison is done in both directions, so will return false if a table
+   * exists in schema1 but not in schema2, <em>or</em> if a table exists in schema2
+   * but not in schema2.
+   * @param schema1 The first schema to compare.
+   * @param schema2 The second schema to compare.
+   * @return true if all tables in schema1 exist in schema2, and vice-versa.
+   */
+  public boolean compareTablesInSchema(Connection schema1, Connection schema2) {
+    
+    boolean result = true;
+    
+    String name1 = DBUtils.getShortDatabaseName(schema1);
+    String name2 = DBUtils.getShortDatabaseName(schema2);
+    
+    // check each table in turn
+    List tables = getTableNames(schema1);
+    Iterator it = tables.iterator();
+    while (it.hasNext()) {
+      String table = (String)it.next();
+      if (!checkTableExists(schema2, table)) {
+        ReportManager.problem(this, schema1, "Table " + table + " exists in " + name1 + " but not in " + name2);
+      }
+    }
+    // and now the other way
+    tables = getTableNames(schema2);
+    it = tables.iterator();
+    while (it.hasNext()) {
+      String table = (String)it.next();
+      if (!checkTableExists(schema1, table)) {
+        ReportManager.problem(this, schema2, "Table " + table + " exists in " + name2 + " but not in " + name1);
+      }
+    }
+    
+    return result;
+    
+  }
+  // -------------------------------------------------------------------------
+  
 } // EnsTestCase
