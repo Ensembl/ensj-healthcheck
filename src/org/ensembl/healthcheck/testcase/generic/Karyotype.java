@@ -91,8 +91,7 @@ public class Karyotype extends SingleDatabaseTestCase {
                         prob = "shorter";
                     }
                     result = false;
-                    ReportManager.problem(this, con, "Chromosome " + chrName + " is " + bp + "bp " + prob
-                            + " in the karyotype table than " + "in the seq_region table");
+                    ReportManager.problem(this, con, "Chromosome " + chrName + " is " + bp + "bp " + prob + " in the karyotype table than " + "in the seq_region table");
                 }
             }
         } catch (SQLException e) {
