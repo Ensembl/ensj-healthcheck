@@ -36,7 +36,7 @@ import org.ensembl.healthcheck.util.MyStreamHandler;
 import org.ensembl.healthcheck.util.Utils;
 
 /**
- * TestRunner optimiesed for outputting results to HTML.
+ * TestRunner optimised for outputting results to HTML.
  */
 public class WebTestRunner extends TestRunner implements Reporter {
 
