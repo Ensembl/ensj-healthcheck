@@ -33,6 +33,8 @@ import java.util.*;
 import java.util.logging.*;
 import java.sql.*;
 
+import org.ensembl.healthcheck.*;
+
 public class DatabaseConnectionIterator implements Iterator {
   
   private int databaseIndex;
@@ -43,7 +45,14 @@ public class DatabaseConnectionIterator implements Iterator {
 
   // -------------------------------------------------------------------------
   
-  /** Creates a new instance of DatabaseConnectionIterator */
+  /** 
+   * Creates a new instance of DatabaseConnectionIterator 
+   * @param driverClassName The class name of the database driver to load.
+   * @param baseURL The base URL to use (does not include database name), e.g. jdbc:mysql://127.0.0.1:5000/
+   * @param user Username.
+   * @param password Password for user, if any
+   * @param databaseNames An array of names of databases to iterate over.
+   */
   public DatabaseConnectionIterator(String driverClassName, String baseURL, String user, String password, String[] databaseNames) {
   
     this.driverClassName = driverClassName;
@@ -57,7 +66,10 @@ public class DatabaseConnectionIterator implements Iterator {
   }
   
   // -------------------------------------------------------------------------
-  
+  /**
+   * Check if there are any more connections to return.
+   * @return true If there are any more connections after the current one.
+   */
   public boolean hasNext() {
     
     return (databaseIndex < databaseNames.length);
@@ -65,7 +77,11 @@ public class DatabaseConnectionIterator implements Iterator {
   } // hasNext
   
   // -------------------------------------------------------------------------
-  
+  /**
+   * Return the next Connection (as an Object) if there is one.
+   * @return The next object.
+   * @throws NoSuchElementException if there is no next object - use hasNext() to check this.
+   */
   public Object next() throws NoSuchElementException {
     
     Connection con;
@@ -88,16 +104,22 @@ public class DatabaseConnectionIterator implements Iterator {
   } // next
   
   // -------------------------------------------------------------------------
-  
+  /**
+   * Return the name of the database name of the current object.
+   * @return The name.
+   */
   public String getCurrentDatabaseName() {
     
     return databaseNames[databaseIndex-1];
     
   } // getCurrentDatabaseName
+
   // -------------------------------------------------------------------------
   
   public void remove() {
-     // not implemented
+     
+     throw new NotImplementedException("remove() method is not implemented for " + this.getClass().getName());
+     
   }
   
   // -------------------------------------------------------------------------
