@@ -34,6 +34,7 @@ public class CheckProteinFeatureCoordsTestCase extends EnsTestCase {
    */
   public CheckProteinFeatureCoordsTestCase() {
     setDescription("Check that protein annotation feature coords make sense and that all translation exist in the database");
+    addToGroup("post_genebuild");
   }
   
   /**
