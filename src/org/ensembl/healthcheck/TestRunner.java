@@ -82,7 +82,7 @@ public class TestRunner {
   public String[] getListOfDatabaseNames(String regexp) {
     
     Connection conn;
-    
+
     String[] databaseNames = null;
     
     // open connection
@@ -209,9 +209,9 @@ public class TestRunner {
     while (it.hasNext()) {
       
       EnsTestCase testCase = (EnsTestCase)it.next();
-      
+            
       if (testCase.inGroups(groupsToRun)) {
-        logger.info("\tRunning test of type " + testCase.getClass().getName());
+        logger.info("\nRunning test of type " + testCase.getClass().getName());
         if (preFilterRegexp != null) {
           testCase.setPreFilterRegexp(preFilterRegexp);
         }
@@ -223,7 +223,8 @@ public class TestRunner {
         
         TestResult tr = testCase.run();
         
-        System.out.println("\n" + tr.getName() + " " + tr.getResult() + " " + tr.getMessage() + "\n");
+        String passFail = tr.getResult() ? "PASSED" : "FAILED";
+        logger.warning("\n" + tr.getName() + " " + passFail + " " + tr.getMessage() + "\n");
 
       }
     }
@@ -314,9 +315,7 @@ public class TestRunner {
     ArrayList tests = new ArrayList();
     
     //throw new NotImplementedException();
-    
-    // @todo - implement findTestsInJar();
-    
+
     return tests;
     
   } // findTestsInJar
@@ -336,9 +335,9 @@ public class TestRunner {
       EnsTestCase test = (EnsTestCase)it.next();
       if (!testInList(test, mainList)) { // can't really use List.contains() as the lists store objects which may be different
         mainList.add(test);
-        logger.info("Added " + test.getShortTestName() + " to the list of tests to run");
+        logger.info("Added " + test.getShortTestName() + " to the list of tests");
       } else {
-        logger.fine("Skipped " + test.getShortTestName() + " as it is already in the list of tests to run");
+        logger.fine("Skipped " + test.getShortTestName() + " as it is already in the list of tests");
       }
     }
     
