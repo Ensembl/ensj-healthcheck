@@ -325,6 +325,19 @@ public class Meta extends SingleDatabaseTestCase {
                         + GBV_REGEXP);
                 return false;
 
+            } else {
+                
+                int year = Integer.parseInt(gbv.substring(0, 2));
+                if (year < 0 || year > 99) {
+                    ReportManager.problem(this, con, "Year part of genebuild.version (" + year + ") is incorrect");
+                    return false;
+                }
+                int month = Integer.parseInt(gbv.substring(2, 4));
+                if (month < 1 || month > 12) {
+                    ReportManager.problem(this, con, "Month part of genebuild.version (" + month + ") is incorrect");
+                    return false;
+                }
+                
             }
 
         }
