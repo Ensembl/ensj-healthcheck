@@ -57,6 +57,9 @@ public abstract class EnsTestCase {
     /** Description field */
     protected String description;
 
+    /** Optional text to be printed when the test fails **/
+    protected String failureText;
+
     /** Logger object to use */
     protected static Logger logger = Logger.getLogger("HealthCheckLogger");
 
@@ -80,6 +83,7 @@ public abstract class EnsTestCase {
         groups = new ArrayList();
         addToGroup(getShortTestName()); // each test is in a one-test group
         setDescription("No description set for this test.");
+	setFailureText("");
 
     } // EnsTestCase
 
@@ -984,6 +988,31 @@ public abstract class EnsTestCase {
         description = s;
 
     } // setDescription
+
+    // -------------------------------------------------------------------------
+    /**
+     * Get the failure text.
+     * 
+     * @return The failure text for this test.
+     */
+    public String getFailureText() {
+
+        return failureText;
+
+    } // getFailureText
+
+    // -------------------------------------------------------------------------
+    /**
+     * Set the text failure text of this test case.
+     * 
+     * @param s
+     *          The new failure text.
+     */
+    public void setFailureText(String s) {
+
+        failureText = s;
+
+    } // setFailureText
 
     // -------------------------------------------------------------------------
     /**
