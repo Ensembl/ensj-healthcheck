@@ -30,6 +30,18 @@ import java.util.logging.Logger;
 
 public class Species {
 
+	public static final Species HOMO_SAPIENS = new Species("homo_sapiens");
+	public static final Species ANOPHELES_GAMBIAE = new Species("anopheles_gambiae");
+	public static final Species CAENORHABDITIS_ELEGANS = new Species("caenorhabditis_elegans");
+	public static final Species CAENORHABDITIS_BRIGGSAE = new Species("caenorhabditis_briggsae");
+	public static final Species DANIO_RERIO = new Species("danio_rerio");
+	public static final Species DROSOPHILA_MELANOGASTER = new Species("drosophila_melanogaster");
+	public static final Species FUGU_RUBRIPES = new Species("fugu_rubripes");
+	public static final Species MUS_MUSCULUS = new Species("mus_musculus");
+	public static final Species RATTUS_NORVEGICUS = new Species("rattus_norvegicus");
+	// special type to indicate that this species is unknown
+	public static final Species UNKNOWN = new Species("unknown");
+	
 	private final String name;
 
 	protected static Logger logger = Logger.getLogger("HealthCheckLogger");
@@ -41,19 +53,6 @@ public class Species {
 	public String toString() {
 		return this.name;
 	}
-
-	public static final Species HOMO_SAPIENS = new Species("homo_sapiens");
-	public static final Species ANOPHELES_GAMBIAE = new Species("anopheles_gambiae");
-	public static final Species CAENORHABDITIS_ELEGANS = new Species("caenorhabditis_elegans");
-	public static final Species CAENORHABDITIS_BRIGGSAE = new Species("caenorhabditis_briggsae");
-	public static final Species DANIO_RERIO = new Species("danio_rerio");
-	public static final Species DROSOPHILA_MELANOGASTER = new Species("drosophila_melanogaster");
-	public static final Species FUGU_RUBRIPES = new Species("fugu_rubripes");
-	public static final Species MUS_MUSCULUS = new Species("mus_musculus");
-	public static final Species RATTUS_NORVEGICUS = new Species("rattus_norvegicus");
-
-	// special type to indicate that this species is unknown
-	public static final Species UNKNOWN = new Species("unknown");
 
 	// Taxonomy IDs - see ensembl-compara/sql/taxon.txt
 	private static Map taxonIDToSpecies = new HashMap();
