@@ -947,8 +947,9 @@ public abstract class EnsTestCase {
     String tempDBName = DBUtils.generateTempDatabaseName();
     
     // read properties file
-    Properties dbProps = Utils.readPropertiesFile("/homes/glenn/work/ensj-healthcheck/database.properties");
-    logger.fine("Read properties from database.properties");
+    String propsFile = System.getProperty("user.dir") + System.getProperty("file.separator") + "database.properties";
+    Properties dbProps = Utils.readPropertiesFile(propsFile);
+    logger.fine("Read database properties from " + propsFile);
     
     try {
       
