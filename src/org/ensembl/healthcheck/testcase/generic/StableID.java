@@ -54,7 +54,6 @@ public class StableID extends SingleDatabaseTestCase {
     public void types() {
 
         removeAppliesToType(DatabaseType.EST);
-        removeAppliesToType(DatabaseType.ESTGENE);
 
     }
     
