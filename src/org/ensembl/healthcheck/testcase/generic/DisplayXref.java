@@ -35,7 +35,7 @@ public class DisplayXref extends SingleDatabaseTestCase {
 
         addToGroup("post_genebuild");
         addToGroup("release");
-	addToGroup("xrefs");
+	addToGroup("core_xrefs");
         setDescription("Check that display_xrefs are set OK");
 
     }

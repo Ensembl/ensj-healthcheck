@@ -38,7 +38,7 @@ public class GOXrefs extends SingleDatabaseTestCase {
 
         addToGroup("post_genebuild");
         addToGroup("release");
-	addToGroup("xrefs");
+	addToGroup("core_xrefs");
         setDescription("Check that GO xrefs exist for certain species (human, mouse, rat, drosophila)");
 	
     }
