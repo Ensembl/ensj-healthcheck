@@ -25,13 +25,11 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.Utils;
 
 /**
- * Checks the metadata table to make sure it is OK. Only one meta table at a
- * time is done here; checks for the consistency of the meta table across
- * species are done in MetaCrossSpecies.
+ * Checks the metadata table to make sure it is OK. Only one meta table at a time is done here;
+ * checks for the consistency of the meta table across species are done in MetaCrossSpecies.
  */
 public class Meta extends SingleDatabaseTestCase {
 
@@ -51,7 +49,9 @@ public class Meta extends SingleDatabaseTestCase {
 
     /**
      * Check various aspects of the meta table.
-     * @param dbre The database to check.
+     * 
+     * @param dbre
+     *          The database to check.
      * @return True if the test passed.
      */
     public boolean run(final DatabaseRegistryEntry dbre) {
@@ -60,43 +60,18 @@ public class Meta extends SingleDatabaseTestCase {
 
         Connection con = dbre.getConnection();
 
-        String dbName = DBUtils.getShortDatabaseName(con);
+        result &= checkTableExists(con);
 
-        // ----------------------------------------
-        // Check that the meta table exists
-        if (!checkTableExists(con, "meta")) {
-            result = false;
-            //logger.severe(dbName + " does not have a meta table!");
-            ReportManager.problem(this, con, "Meta table not present");
-        } else {
-            ReportManager.correct(this, con, "Meta table present");
-        }
+        result &= tableHasRows(con);
 
-        // ----------------------------------------
-        // check meta table has > 0 rows
-        int rows = countRowsInTable(con, "meta");
-        if (rows == 0) {
-            result = false;
-            //warn(con, " has empty meta table");
-            ReportManager.problem(this, con, "meta table is empty");
-        } else {
-            ReportManager.correct(this, con, "meta table has data");
-        }
+        result &= checkKeysPresent(con);
 
-        // ----------------------------------------
-        // check that there are species, classification and taxonomy_id entries
-        String[] metaKeys = {"assembly.default", "species.classification", "species.common_name", "species.taxonomy_id"};
-        for (int i = 0; i < metaKeys.length; i++) {
-            String metaKey = metaKeys[i];
-            rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey + "'");
-            if (rows == 0) {
-                result = false;
-                //warn(con, "No entry in meta table for " + meta_key);
-                ReportManager.problem(this, con, "No entry in meta table for " + metaKey);
-            } else {
-                ReportManager.correct(this, con, metaKey + " entry present");
-            }
-        }
+        result &= checkSpeciesClassification(dbre);
+
+        result &= checkAssemblyMapping(con);
+
+        result &= checkTaxonomyID(dbre);
+
         // ----------------------------------------
         // Use an AssemblyNameInfo object to get te assembly information
         AssemblyNameInfo assembly = new AssemblyNameInfo(con);
@@ -116,11 +91,14 @@ public class Meta extends SingleDatabaseTestCase {
             ReportManager.problem(this, con, "Cannot get all information from meta table - check for null values");
 
         } else {
-            
-            // check that assembly.default matches the version of the coord_system with the lowest rank value
-            String lowestRankCS = getRowColumnValue(con, "SELECT version FROM coord_system WHERE version IS NOT NULL ORDER BY rank DESC LIMIT 1");
+
+            // check that assembly.default matches the version of the coord_system with the lowest
+            // rank value
+            String lowestRankCS = getRowColumnValue(con,
+                    "SELECT version FROM coord_system WHERE version IS NOT NULL ORDER BY rank DESC LIMIT 1");
             if (!lowestRankCS.equals(metaTableAssemblyDefault)) {
-                ReportManager.problem(this, con, "assembly.default from meta table is " + metaTableAssemblyDefault + " but lowest ranked coordinate system has version " + lowestRankCS);
+                ReportManager.problem(this, con, "assembly.default from meta table is " + metaTableAssemblyDefault
+                        + " but lowest ranked coordinate system has version " + lowestRankCS);
             }
 
             // ----------------------------------------
@@ -142,9 +120,80 @@ public class Meta extends SingleDatabaseTestCase {
                         + ") is valid");
             }
         }
-        // ----------------------------------------
-        // Check that species.classification matches database name
 
+        // -------------------------------------------
+
+        return result;
+
+    } // run
+
+    //---------------------------------------------------------------------
+
+    private boolean checkTableExists(Connection con) {
+
+        boolean result = true;
+
+        if (!checkTableExists(con, "meta")) {
+            result = false;
+            ReportManager.problem(this, con, "Meta table not present");
+        } else {
+            ReportManager.correct(this, con, "Meta table present");
+        }
+
+        return result;
+
+    }
+
+    //---------------------------------------------------------------------
+
+    private boolean tableHasRows(Connection con) {
+
+        boolean result = true;
+
+        int rows = countRowsInTable(con, "meta");
+        if (rows == 0) {
+            result = false;
+            ReportManager.problem(this, con, "meta table is empty");
+        } else {
+            ReportManager.correct(this, con, "meta table has data");
+        }
+
+        return result;
+
+    }
+
+    //---------------------------------------------------------------------
+
+    private boolean checkKeysPresent(Connection con) {
+
+        boolean result = true;
+
+        // check that there are species, classification and taxonomy_id entries
+        String[] metaKeys = {"assembly.default", "species.classification", "species.common_name", "species.taxonomy_id"};
+        for (int i = 0; i < metaKeys.length; i++) {
+            String metaKey = metaKeys[i];
+            int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey + "'");
+            if (rows == 0) {
+                result = false;
+                ReportManager.problem(this, con, "No entry in meta table for " + metaKey);
+            } else {
+                ReportManager.correct(this, con, metaKey + " entry present");
+            }
+        }
+
+        return result;
+    }
+
+    //---------------------------------------------------------------------
+
+    private boolean checkSpeciesClassification(DatabaseRegistryEntry dbre) {
+
+        boolean result = true;
+
+        String dbName = dbre.getName();
+        Connection con = dbre.getConnection();
+
+        // Check that species.classification matches database name
         String[] metaTableSpeciesGenusArray = getColumnValues(con,
                 "SELECT LCASE(meta_value) FROM meta WHERE meta_key='species.classification' ORDER BY meta_id LIMIT 2");
         // if all is well, metaTableSpeciesGenusArray should contain the
@@ -177,15 +226,20 @@ public class Meta extends SingleDatabaseTestCase {
             ReportManager.problem(this, con, "Cannot get species information from meta table");
         }
 
-        // -------------------------------------------
-        // Check formatting of assembly.mapping entries
-        // should be of format
+        return result;
+    }
+
+    //---------------------------------------------------------------------
+
+    private boolean checkAssemblyMapping(Connection con) {
+
+        boolean result = true;
+
+        // Check formatting of assembly.mapping entries; should be of format
         // coord_system1{:default}|coord_system2{:default} with optional third
-        // coordinate
-        // system
+        // coordinate system
         // and all coord systems should be valid from coord_system
-        //Pattern assemblyMappingPattern =
-        // Pattern.compile("^(\\w+)(:\\w+)?\\|(\\w+)(:\\w+)?(\\|(\\w+)(:\\w+)?)?$");
+
         Pattern assemblyMappingPattern = Pattern
                 .compile("^([a-zA-Z0-9.]+)(:[a-zA-Z0-9.]+)?\\|([a-zA-Z0-9.]+)(:[a-zA-Z0-9.]+)?(\\|([a-zA-Z0-9.]+)(:[a-zA-Z0-9.]+)?)?$");
         String[] validCoordSystems = getColumnValues(con, "SELECT name FROM coord_system");
@@ -225,7 +279,17 @@ public class Meta extends SingleDatabaseTestCase {
             }
         }
 
-        // -------------------------------------------
+        return result;
+    }
+
+    //---------------------------------------------------------------------
+
+    private boolean checkTaxonomyID(DatabaseRegistryEntry dbre) {
+
+        boolean result = true;
+
+        Connection con = dbre.getConnection();
+
         // Check that the taxonomy ID matches a known one.
         // The taxonomy ID-species mapping is held in the Species class.
 
@@ -240,10 +304,10 @@ public class Meta extends SingleDatabaseTestCase {
             ReportManager.problem(this, con, "Taxonomy ID " + dbTaxonID + " in database is not correct - should be "
                     + Species.getTaxonomyID(species) + " for " + species.toString());
         }
-        // -------------------------------------------
-
         return result;
 
-    } // run
+    }
+
+    //---------------------------------------------------------------------
 
 } // Meta
