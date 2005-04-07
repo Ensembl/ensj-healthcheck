@@ -41,6 +41,9 @@ public final class Species {
     public static final Species CAENORHABDITIS_BRIGGSAE = new Species("caenorhabditis_briggsae");
 
     /** Specific type of species */
+    public static final Species CIONA_INTESTINALIS = new Species("ciona_intestinalis");
+
+    /** Specific type of species */
     public static final Species DANIO_RERIO = new Species("danio_rerio");
 
     /** Specific type of species */
@@ -120,6 +123,7 @@ public final class Species {
         taxonIDToSpecies.put("7227",  DROSOPHILA_MELANOGASTER);
         taxonIDToSpecies.put("6239",  CAENORHABDITIS_ELEGANS);
         taxonIDToSpecies.put("6238",  CAENORHABDITIS_BRIGGSAE);
+        taxonIDToSpecies.put("7719",  CIONA_INTESTINALIS);
         taxonIDToSpecies.put("7955",  DANIO_RERIO);
         taxonIDToSpecies.put("9598",  PAN_TROGLODYTES);
         taxonIDToSpecies.put("9031",  GALLUS_GALLUS);
@@ -146,6 +150,7 @@ public final class Species {
         assemblyPrefixToSpecies.put("MOZ",       ANOPHELES_GAMBIAE);
         assemblyPrefixToSpecies.put("CEL",       CAENORHABDITIS_ELEGANS);
         assemblyPrefixToSpecies.put("CBR",       CAENORHABDITIS_BRIGGSAE);
+        assemblyPrefixToSpecies.put("CIN",       CIONA_INTESTINALIS);
         assemblyPrefixToSpecies.put("NCBI",      HOMO_SAPIENS);
         assemblyPrefixToSpecies.put("NCBIM",     MUS_MUSCULUS);
         assemblyPrefixToSpecies.put("TETRAODON", TETRAODON_NIGROVIRIDIS);
@@ -324,6 +329,17 @@ public final class Species {
         }
 
         // --------------------------------------
+
+    if (in(alias, "cionaintestinalis,ciona_intestinalis,ciona_int")) {
+
+            return CIONA_INTESTINALIS;
+
+        }
+
+        // --------------------------------------
+
+
+
 
         // default
         //logger.warning("Cannot resolve species alias " + alias + " to a
