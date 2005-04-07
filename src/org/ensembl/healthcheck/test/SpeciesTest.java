@@ -63,6 +63,7 @@ public class SpeciesTest extends TestCase {
         assertEquals(Species.resolveAlias("mus_musculus"), Species.MUS_MUSCULUS);
         assertEquals(Species.resolveAlias("tetraodon_nigroviridis"), Species.TETRAODON_NIGROVIRIDIS);
         assertEquals(Species.resolveAlias("apis_mellifera"), Species.APIS_MELLIFERA);
+        assertEquals(Species.resolveAlias("ciona_intestinalis"), Species.CIONA_INTESTINALIS);
         
         assertEquals(Species.resolveAlias("littlegreenman"), Species.UNKNOWN);
 
@@ -75,6 +76,7 @@ public class SpeciesTest extends TestCase {
         assertEquals(Species.getTaxonomyID(Species.HOMO_SAPIENS), "9606");
         assertEquals(Species.getTaxonomyID(Species.DANIO_RERIO), "7955");
         assertEquals(Species.getTaxonomyID(Species.TETRAODON_NIGROVIRIDIS), "99883");
+        assertEquals(Species.getTaxonomyID(Species.CIONA_INTESTINALIS), "7719");
         assertEquals(Species.getTaxonomyID(Species.APIS_MELLIFERA), "7460");
         
         assertEquals(Species.getSpeciesFromTaxonomyID("10090"), Species.MUS_MUSCULUS);
