@@ -100,6 +100,15 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
 	result &= checkForOrphans(con, "regulatory_feature", "regulatory_motif_id", "regulatory_motif", "regulatory_motif_id", true);
 
+	result &= checkForOrphans(con, "regulatory_feature", "regulatory_feature_id", "regulatory_feature_object", "regulatory_feature_id", true);
+
+	// ----------------------------
+	// Check regulatory features point to existing objects
+         String[] rfTypes = {"Gene", "Transcript", "Translation"};
+         for (int i = 0; i < rfTypes.length; i++) {
+             result &= checkRegulatoryFeatureKeys(con, rfTypes[i]);
+         }
+
          // ----------------------------
          // Check stable IDs all correspond to an existing object
          String[] stableIDtypes = {"gene", "transcript", "translation", "exon"};
@@ -128,11 +137,34 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
         if (tableHasRows(con, type + "_stable_id")) { 
 
-        return checkForOrphans(con, type, type + "_id", type + "_stable_id", type + "_id", false); }
+	    return checkForOrphans(con, type, type + "_id", type + "_stable_id", type + "_id", false); 
+
+	}
 
         return true;
 
     } // checkStableIDKeys
+
+    // -------------------------------------------------------------------------
+    private boolean checkRegulatoryFeatureKeys(Connection con, String type) {
+
+	String table = type.toLowerCase();
+
+	int rows = getRowCount(con, "SELECT COUNT(*) FROM regulatory_feature_object rfo LEFT JOIN " + table + " ON rfo.ensembl_object_id=" + table + "." + table + "_id WHERE rfo.ensembl_object_type=\'" + type + "\' AND rfo.ensembl_object_id IS NULL");
+
+	if (rows > 0) {
+
+	    ReportManager.problem(this, con, rows + " in regulatory_feature refer to non-existent " + table + "s");
+	    return false;
+
+	} else {
+
+	    ReportManager.correct(this, con, "All rows in regulatory_feature refer to valid " + table + "s");
+	    return true;
+	}
+
+
+    } // checkRegulatoryFeatureKeys
 
     // -------------------------------------------------------------------------
 
