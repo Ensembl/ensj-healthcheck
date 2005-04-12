@@ -98,6 +98,8 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 	
 	result &= checkForOrphans(con, "transcript_attrib", "transcript_id", "transcript", "transcript_id", true);
 
+	result &= checkForOrphans(con, "regulatory_feature", "regulatory_motif_id", "regulatory_motif", "regulatory_motif_id", true);
+
          // ----------------------------
          // Check stable IDs all correspond to an existing object
          String[] stableIDtypes = {"gene", "transcript", "translation", "exon"};
