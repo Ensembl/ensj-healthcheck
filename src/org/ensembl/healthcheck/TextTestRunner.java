@@ -300,6 +300,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
             // print matching databases if no tests specified
             if (groupsToRun.size() == 0 && databaseRegexps.size() > 0) {
 
+		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
                 Iterator it = databaseRegexps.iterator();
                 while (it.hasNext()) {
                     String databaseRegexp = (String) it.next();
