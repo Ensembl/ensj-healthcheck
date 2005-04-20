@@ -82,7 +82,8 @@ public class CheckTaxon extends MultiDatabaseTestCase {
         }
         Map speciesCons = new HashMap();
         for (int i = 0; i < allDBs.length; i++) {
-          if (i != comparaIndex) {
+          if ((i != comparaIndex) &&
+              (allDBs[i].getType().toString().equalsIgnoreCase("core"))) {
             Species s = allDBs[i].getSpecies();
             DatabaseRegistryEntry[] speciesDBs = dbr.getAll(s);
             logger.finest("Got " + speciesDBs.length + " databases for " + s.toString());
