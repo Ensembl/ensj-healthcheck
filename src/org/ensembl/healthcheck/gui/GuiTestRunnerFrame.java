@@ -78,6 +78,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportLine;
 import org.ensembl.healthcheck.TestRegistry;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
+import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.testcase.OrderedDatabaseTestCase;
 import org.ensembl.healthcheck.util.ConnectionPool;
 
@@ -828,11 +829,12 @@ class TestTreeCellRenderer extends JComponent implements TreeCellRenderer {
 
     private JCheckBox checkBox;
 
-    private Icon slowIcon;
+    private Icon slowIcon, multiIcon;
 
     public TestTreeCellRenderer() {
 
         slowIcon = new ImageIcon(this.getClass().getResource("warning.gif"));
+        multiIcon = new ImageIcon(this.getClass().getResource("multi.gif"));
 
         label = new JLabel();
         label.setBackground(Color.WHITE);
@@ -885,9 +887,12 @@ class TestTreeCellRenderer extends JComponent implements TreeCellRenderer {
                     if (test.isLongRunning()) {
                         label.setIcon(slowIcon);
                         toolTip += "<br><strong>Note this test may take a long time to run</strong>";
-                    } else {
-                        label.setIcon(null);
-                    }
+                    } else  if (test instanceof MultiDatabaseTestCase) {
+			label.setIcon(multiIcon);
+			toolTip += "<br>This is a multi-database test case.";
+		    } else {
+			label.setIcon(null);
+		    }
                     toolTip += "</html>";
                     setToolTipText(toolTip);
 
