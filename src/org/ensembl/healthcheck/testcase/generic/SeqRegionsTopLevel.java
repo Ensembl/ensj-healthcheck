@@ -26,6 +26,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
  * Check that all seq_regions comprising genes are marked as toplevel in seq_region_attrib.
+ * Also checks that there is at least one seq_region marked as toplevel (needed by compara).
  */
 
 public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
@@ -38,7 +39,7 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 
         addToGroup("post_genebuild");
         addToGroup("release");
-        setDescription("Check that all seq_regions comprising genes are marked as toplevel in seq_region_attrib");
+        setDescription("Check that all seq_regions comprising genes are marked as toplevel in seq_region_attrib, and that there is at least one toplevel seq_region.");
 
     }
 
@@ -87,6 +88,19 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 	    ReportManager.correct(this, con, "All " + geneSeqRegionIDs.length + " gene seq_regions have top_level attribute set");
 	}
 	
+	// check for at least one toplevel seq_region
+	int rows = getRowCount(con, "SELECT COUNT(*) FROM seq_region_attrib WHERE attrib_type_id=" + val);
+	if (rows == 0) {
+
+	    ReportManager.problem(this, con, "No seq_regions are marked as toplevel. This may cause problems for Compara");
+	    result = false;
+
+	} else {
+
+	    ReportManager.correct(this, con, rows + " seq_regions are marked as toplevel");
+
+	}
+
         return result;
 
     } // run
