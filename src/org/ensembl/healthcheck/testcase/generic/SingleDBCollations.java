@@ -43,7 +43,7 @@ public class SingleDBCollations extends SingleDatabaseTestCase {
 
         addToGroup("post_genebuild");
         addToGroup("release");
-        setDescription("Check for suspiciously long genes & exons");
+        setDescription("Check that all table collations are latin1_swedish_ci");
 	
     }
 
