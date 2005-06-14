@@ -185,8 +185,8 @@ public class GeneType extends SingleDatabaseTestCase {
 	
 	try {	
 	    
-	    String sql = "SELECT g.type, a.logic_name FROM gene g, analysis a "
-		+ "WHERE g.analysis_id=a.analysis_id GROUP BY g.type, a.logic_name;";
+	    String sql = "SELECT g.biotype, a.logic_name FROM gene g, analysis a "
+		+ "WHERE g.analysis_id=a.analysis_id GROUP BY g.biotype, a.logic_name;";
 
             Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY,
                     java.sql.ResultSet.CONCUR_READ_ONLY);
