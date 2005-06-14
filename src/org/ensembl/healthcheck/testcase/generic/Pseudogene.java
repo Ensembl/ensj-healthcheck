@@ -26,8 +26,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Healthcheck for the dna table.
- * Should be empty in an est database
+ * Check that there are no translations for pseudogenes.
  */
 
 public class Pseudogene extends SingleDatabaseTestCase {
@@ -57,8 +56,7 @@ public class Pseudogene extends SingleDatabaseTestCase {
 
         String qry = 
            "select translation.* from gene,transcript,translation " + 
-           "where gene.type in ('pseudogene','Processed_pseudogene'," +
-                               "'Unprocessed_pseudogene','Ig_Pseudogene_Segment','Pseudogene')" +
+           "where gene.biotype like '%pseudogene%'" +
             " and transcript.gene_id=gene.gene_id " +
             " and translation.transcript_id=transcript.transcript_id";
 

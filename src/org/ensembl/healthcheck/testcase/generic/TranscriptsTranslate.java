@@ -66,7 +66,7 @@ public class TranscriptsTranslate extends SingleDatabaseTestCase {
 
 	Connection con = dbre.getConnection();
 	    
-	String sql = "SELECT COUNT(*) FROM gene g, transcript tr LEFT JOIN translation t ON t.transcript_id=tr.transcript_id WHERE t.translation_id IS NULL AND g.gene_id=tr.gene_id and g.type=\'gene\'";
+	String sql = "SELECT COUNT(*) FROM gene g, transcript tr LEFT JOIN translation t ON t.transcript_id=tr.transcript_id WHERE t.translation_id IS NULL AND g.gene_id=tr.gene_id and g.biotype=\'protein_coding\'";
 	    
 	int rows = getRowCount(con, sql);
 	if (rows != 0) {
