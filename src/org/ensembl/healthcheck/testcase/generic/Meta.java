@@ -232,9 +232,10 @@ public class Meta extends SingleDatabaseTestCase {
         // coord_system1{:default}|coord_system2{:default} with optional third
         // coordinate system
         // and all coord systems should be valid from coord_system
+	// can also have # instead of | as used in unfinished contigs etc
 
         Pattern assemblyMappingPattern = Pattern
-                .compile("^([a-zA-Z0-9.]+)(:[a-zA-Z0-9.]+)?\\|([a-zA-Z0-9.]+)(:[a-zA-Z0-9.]+)?(\\|([a-zA-Z0-9.]+)(:[a-zA-Z0-9.]+)?)?$");
+                .compile("^([a-zA-Z0-9.]+)(:[a-zA-Z0-9.]+)?[\\|#]([a-zA-Z0-9.]+)(:[a-zA-Z0-9.]+)?([\\|#]([a-zA-Z0-9.]+)(:[a-zA-Z0-9.]+)?)?$");
         String[] validCoordSystems = getColumnValues(con, "SELECT name FROM coord_system");
 
         String[] mappings = getColumnValues(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.mapping'");
