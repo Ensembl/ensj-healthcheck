@@ -25,6 +25,7 @@ import java.util.HashMap;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -49,6 +50,15 @@ public class CompareSchema extends MultiDatabaseTestCase {
     public CompareSchema() {
 
         addToGroup("release");
+
+    }
+
+    /**
+     * Can also be used on variation databases (and maybe others)
+     */
+    public void types() {
+
+       addAppliesToType(DatabaseType.VARIATION);
 
     }
 
