@@ -105,8 +105,8 @@ public class GeneType extends SingleDatabaseTestCase {
      * example: whitelist[0][1][10] would be 
      *      ["core" database]["wormbase" analysis]["gene" gene type]
      */
-    private int[][][] whitelist =    {  {  {0,1,2},        //this block    //this array for "ensembl" analysis' 
-					   {1,10,20,25},   //for CORE      //this array for "wormbase" analysis'
+    private int[][][] whitelist =    {  {  {0,1,2,25},                //this block    //this array for "ensembl" analysis' 
+					   {1,10,20,25},              //for CORE      //this array for "wormbase" analysis'
 					   {1,3,4,6,7,10,25,26},      //databases     //this array for "flybase" analysis'
 					   {},         //
 					   {},         //
