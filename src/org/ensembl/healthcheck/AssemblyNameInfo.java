@@ -138,7 +138,7 @@ public class AssemblyNameInfo {
         // Split the assembly into prefix + version
         if (metaTableAssemblyDefault != null) {
 
-            metaTableAssemblyPrefix = metaTableAssemblyDefault.replaceAll("[0-9.]+$", "");
+            metaTableAssemblyPrefix = metaTableAssemblyDefault.replaceAll("[0-9._]+$", "");
             metaTableAssemblyVersion = metaTableAssemblyDefault.replaceAll("^\\D+", "");
 
             // -----------------------------------------
