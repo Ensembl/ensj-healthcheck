@@ -109,7 +109,7 @@ public class Meta extends SingleDatabaseTestCase {
             // Prefix is OK as long as it starts with the valid one
             Species dbSpecies = dbre.getSpecies();
             String correctPrefix = Species.getAssemblyPrefixForSpecies(dbSpecies);
-            if (!metaTableAssemblyPrefix.startsWith(correctPrefix)) {
+            if (!metaTableAssemblyPrefix.toUpperCase().startsWith(correctPrefix.toUpperCase())) {
                 ReportManager.problem(this, con, "Database species is " + dbSpecies + " but assembly prefix " + metaTableAssemblyPrefix + " should have prefix beginning with " + correctPrefix);
                 result = false;
             } else {
@@ -235,7 +235,7 @@ public class Meta extends SingleDatabaseTestCase {
 	// can also have # instead of | as used in unfinished contigs etc
 
         Pattern assemblyMappingPattern = Pattern
-                .compile("^([a-zA-Z0-9.]+)(:[a-zA-Z0-9.]+)?[\\|#]([a-zA-Z0-9.]+)(:[a-zA-Z0-9.]+)?([\\|#]([a-zA-Z0-9.]+)(:[a-zA-Z0-9.]+)?)?$");
+                .compile("^([a-zA-Z0-9.]+)(:[a-zA-Z0-9._]+)?[\\|#]([a-zA-Z0-9.]+)(:[a-zA-Z0-9.]+)?([\\|#]([a-zA-Z0-9.]+)(:[a-zA-Z0-9._]+)?)?$");
         String[] validCoordSystems = getColumnValues(con, "SELECT name FROM coord_system");
 
         String[] mappings = getColumnValues(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.mapping'");
