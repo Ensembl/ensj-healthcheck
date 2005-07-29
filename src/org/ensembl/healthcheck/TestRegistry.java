@@ -343,9 +343,9 @@ public class TestRegistry {
 
             JarFile jarFile = new JarFile(jarFileName);
 
-            for (Enumeration enum = jarFile.entries(); enum.hasMoreElements();) {
+            for (Enumeration en = jarFile.entries(); en.hasMoreElements();) {
 
-                JarEntry entry = (JarEntry) enum.nextElement();
+                JarEntry entry = (JarEntry) en.nextElement();
                 String entryName = entry.getName().replace(File.separatorChar, '.');
 
                 Object obj = new Object();
