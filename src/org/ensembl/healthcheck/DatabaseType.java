@@ -72,9 +72,6 @@ public final class DatabaseType {
 
     private final String name;
 
-    /** The logger to use */
-    private static Logger logger = Logger.getLogger("HealthCheckLogger");
-
     private DatabaseType(final String name) {
 
         this.name = name;
