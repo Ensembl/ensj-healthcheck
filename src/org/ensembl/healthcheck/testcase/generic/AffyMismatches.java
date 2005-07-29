@@ -19,6 +19,7 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
+import java.text.DecimalFormat;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
@@ -63,15 +64,22 @@ public class AffyMismatches extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM affy_feature WHERE mismatches IS NULL");
-		if (rows > 0) {
+		DecimalFormat df = new DecimalFormat("000.0%");
+
+		int rows = countRowsInTable(con, "affy_feature");
+		int nullRows = getRowCount(con,
+				"SELECT COUNT(*) FROM affy_feature WHERE mismatches IS NULL");
+		if (nullRows > 0) {
 			result = false;
+			float pc = (rows > 0) ? (nullRows / rows) : 0;
+
 			ReportManager.problem(this, con, "affy_features table has " + rows
-					+ " with null mismatches");
+					+ " with null mismatches (" + df.format(pc) + ")");
 		}
 
 		if (result) {
-			ReportManager.correct(this, con, "No null mismatches in affy_feature");
+			ReportManager.correct(this, con,
+					"No null mismatches in affy_feature");
 		}
 
 		return result;
