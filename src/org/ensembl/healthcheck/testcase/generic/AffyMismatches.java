@@ -74,7 +74,7 @@ public class AffyMismatches extends SingleDatabaseTestCase {
 			float pc = (rows > 0) ? (nullRows / rows) : 0;
 
 			ReportManager.problem(this, con, "affy_features table has " + rows
-					+ " with null mismatches (" + df.format(pc) + ")");
+					+ " features with null mismatches (" + df.format(pc) + ")");
 		}
 
 		if (result) {
