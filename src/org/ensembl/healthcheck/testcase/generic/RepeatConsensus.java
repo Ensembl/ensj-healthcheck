@@ -24,19 +24,19 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
-* Check that the repeat_type column of the repeat_consensus table is NOT populated.
+* Check that there are certain types in repeat_types.
 */
 
 public class RepeatConsensus extends SingleDatabaseTestCase {
-
+	
    /**
     * Create a new RepeatConsensus testcase.
     */
    public RepeatConsensus() {
 
        addToGroup("post_genebuild");
-       // note this table should be populated by web team, so this test is not in the release group
-       setDescription("Check that the repeat_type column of the repeat_consensus table is NOT populated.");
+       addToGroup("release");
+       setDescription("Check there certain types in repeat_consensus.repeat_type.");
 
    }
 
@@ -53,18 +53,17 @@ public class RepeatConsensus extends SingleDatabaseTestCase {
        boolean result = true;
        
        Connection con = dbre.getConnection();
+      
+       int rows = getRowCount(con, "SELECT COUNT(*) FROM repeat_consensus WHERE repeat_type in ('simple','')");
        
-       String sql = "SELECT COUNT(*) FROM repeat_consensus WHERE repeat_type IS NULL";
+       if (rows == 0) {
 
-       int rows = getRowCount(con, sql);
-       if (rows > 0) {
-
-           ReportManager.problem(this, con, "repeat_consensus table has " + rows + " rows where repeat_type is not populated.");
+           ReportManager.problem(this, con, "repeat_consensus table has no rows of repeat_type 'simple' or empty");
            result = false;
 
        } else {
 
-           ReportManager.correct(this, con, "repeat_consensus has repeat_type populated for all rows");
+           ReportManager.correct(this, con, "repeat_consensus appears to have valid repeat_types");
        }
 
        return result;
