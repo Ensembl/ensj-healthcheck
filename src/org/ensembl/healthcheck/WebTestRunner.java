@@ -31,7 +31,6 @@ import java.util.logging.Level;
 
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.util.ConnectionPool;
-import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.LogFormatter;
 import org.ensembl.healthcheck.util.MyStreamHandler;
 import org.ensembl.healthcheck.util.Utils;
