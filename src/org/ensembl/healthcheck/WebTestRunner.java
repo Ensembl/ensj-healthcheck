@@ -354,7 +354,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
 		print(pw, "#page ul li { list-style-type:none; list-style-image: none; margin-left: -2em }");
 		print(pw, "</style>");
 
-		print(pw, "<title>Healthcheck Results</title>");
+		print(pw, "<title>" + System.getProperty("webtestrunner.title") + "</title>");
 		print(pw, "</head>");
 		print(pw, "<body>");
 
