@@ -26,6 +26,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 
@@ -373,7 +375,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
 		Map reportsByDB = ReportManager.getAllReportsByDatabase();
 
-		Set dbs = reportsByDB.keySet();
+		TreeSet dbs = new TreeSet(reportsByDB.keySet());
 		Iterator it = dbs.iterator();
 		while (it.hasNext()) {
 
@@ -420,7 +422,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
 		print(pw, "<h2>Detailed reports by test case</h2>");
 
 		Map reportsByTC = ReportManager.getAllReportsByTestCase();
-		Set dbs = reportsByTC.keySet();
+		TreeSet dbs = new TreeSet(reportsByTC.keySet());
 		Iterator it = dbs.iterator();
 		while (it.hasNext()) {
 
@@ -534,7 +536,7 @@ private void printFooter(PrintWriter pw) {
 		print(pw, "<tr><th>Database</th><th>Passed</th><th>Failed</th></tr>");
 
 		Map reportsByDB = ReportManager.getAllReportsByDatabase();
-		Set databases = reportsByDB.keySet();
+		TreeSet databases = new TreeSet(reportsByDB.keySet());
 		Iterator it = databases.iterator();
 		while (it.hasNext()) {
 			String database = (String) it.next();
@@ -565,7 +567,7 @@ private void printFooter(PrintWriter pw) {
 		print(pw, "<tr><th>Test</th><th>Passed</th><th>Failed</th></tr>");
 
 		Map reports = ReportManager.getAllReportsByTestCase();
-		Set tests = reports.keySet();
+		TreeSet tests = new TreeSet(reports.keySet());
 		Iterator it = tests.iterator();
 		while (it.hasNext()) {
 			String test = (String) it.next();
@@ -628,7 +630,7 @@ private void printFooter(PrintWriter pw) {
 		print(pw, "<ul>");
 		
 		Map reportsByDB = ReportManager.getAllReportsByDatabase();
-		Set databases = reportsByDB.keySet();
+		TreeSet databases = new TreeSet(reportsByDB.keySet());
 		Iterator it = databases.iterator();
 		while (it.hasNext()) {
 			String database = (String) it.next();
@@ -641,7 +643,7 @@ private void printFooter(PrintWriter pw) {
 		print(pw, "<ul>");
 		
 		Map reports = ReportManager.getAllReportsByTestCase();
-		Set tests = reports.keySet();
+		TreeSet tests = new TreeSet(reports.keySet());
 		it = tests.iterator();
 		while (it.hasNext()) {
 			String test = (String)it.next();
