@@ -26,7 +26,7 @@
     <property name="scp-executable"      value="c:\cygwin\bin\scp.exe"/>
     <property name="scp-port"            value="2222"/>
     <property name="scp-target"
-              value="gp1@localhost:~/work/ensj-healthcheck-v2/lib"
+              value="gp1@localhost:~/work/ensj-healthcheck/lib"
      />
 
     <!-- ################################################################################## -->
