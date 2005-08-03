@@ -1,0 +1,1 @@
+1 0 * 8 * /nfs/acari/gp1/work/ensj-healthcheck/run-healthcheck-web.sh -debug > /nfs/acari/gp1/work/ensj-healthcheck/web.out
