@@ -556,7 +556,7 @@ public abstract class EnsTestCase {
             resultRight = 0;
         }
 
-        logger.finest("Left: " + resultLeft + " Right: " + resultRight);
+        //logger.finest("Left: " + resultLeft + " Right: " + resultRight);
 
         return resultLeft + resultRight;
 
