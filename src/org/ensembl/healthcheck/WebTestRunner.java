@@ -42,7 +42,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
 	private boolean debug = false;
 
-	private static final String CONFIG_FILE = "web.properties";
+	private String configFile = "web.properties";
 
 	private long startTime;
 
@@ -65,7 +65,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
 		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
 
-		Utils.readPropertiesFileIntoSystem(CONFIG_FILE);
+		Utils.readPropertiesFileIntoSystem(configFile);
 
 		parseProperties();
 
@@ -117,6 +117,10 @@ public class WebTestRunner extends TestRunner implements Reporter {
 				printUsage();
 				System.exit(0);
 
+			} else if (args[i].equals("-config")) {
+				
+				configFile = args[++i];
+				
 			} else if (args[i].equals("-debug")) {
 
 				debug = true;
@@ -133,6 +137,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
 		System.out.println("\nUsage: WebTestRunner {options} \n");
 		System.out.println("Options:");
+		System.out.println("  -config <file>  Properties file to use instead of web.properties");
 		System.out.println("  -h              This message.");
 		System.out.println("  -debug          Print debugging info");
 		System.out.println();
@@ -223,17 +228,17 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
 		if (System.getProperty("webtestrunner.groups") == null) {
 			System.err
-					.println("No tests or groups specified in " + CONFIG_FILE);
+					.println("No tests or groups specified in " + configFile);
 			System.exit(1);
 		}
 
 		if (System.getProperty("webtestrunner.databases") == null) {
-			System.err.println("No databases specified in " + CONFIG_FILE);
+			System.err.println("No databases specified in " + configFile);
 			System.exit(1);
 		}
 
 		if (System.getProperty("webtestrunner.file") == null) {
-			System.err.println("No output file specified in " + CONFIG_FILE);
+			System.err.println("No output file specified in " + configFile);
 			System.exit(1);
 		}
 
@@ -355,7 +360,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
 		print(pw, "<div id='page'><div id='i1'><div id='i2'><div class='sptop'>&nbsp;</div>");
 
-		print(pw, "<div id='release'>Healthcheck Results</div>");
+		print(pw, "<div id='release'>" + System.getProperty("webtestrunner.title") + "</div>");
 
 		print(pw, "<hr>");
 
