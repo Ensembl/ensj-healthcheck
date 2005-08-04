@@ -347,9 +347,8 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
 	private void printHeader(PrintWriter pw) {
 
-		print(pw, "<html>");
-		print(pw, "<head>");
-
+        print(pw, "<html>");
+        print(pw, "<head>");
 		print(pw, "<style type=\"text/css\" media=\"all\">");
 		print(pw, "@import url(http://www.ensembl.org/css/ensembl.css);");
 		print(pw, "@import url(http://www.ensembl.org/css/content.css);");
