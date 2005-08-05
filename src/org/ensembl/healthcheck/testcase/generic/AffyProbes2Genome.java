@@ -27,119 +27,129 @@ import java.util.Set;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.TextTestRunner;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
  * Check mappings from Affymetrix probes to genome.
  * 
- * Even though we *don't* provide Affymetrix data for all species the 
+ * Even though we *don't* provide Affymetrix data for all species the
  * healthcheck follows the convention of failing if the data is missing.
  */
 public class AffyProbes2Genome extends SingleDatabaseTestCase {
 
-  /**
-   * Runs test against a few databases on the server specified in
-   * database.properties.
-   * 
-   * @param args
-   *          ignored.
-   */
-  public static void main(String[] args) {
-    TextTestRunner.main(new String[] { "-d", "homo_sapiens_core_3.*", "-d",
-        "pan_troglodytes_core_3.*", "AffyProbes2Genome" });
-  }
+	/**
+	 * Runs test against a few databases on the server specified in
+	 * database.properties.
+	 * 
+	 * @param args
+	 *            ignored.
+	 */
+	public static void main(String[] args) {
+		TextTestRunner.main(new String[] { "-d", "homo_sapiens_core_3.*", "-d",
+				"pan_troglodytes_core_3.*", "AffyProbes2Genome" });
+	}
 
-  /**
-   * Creates a new instance of FeatureAnalysis
-   */
-  public AffyProbes2Genome() {
+	/**
+	 * Creates a new instance of FeatureAnalysis
+	 */
+	public AffyProbes2Genome() {
 
-    addToGroup("post_genebuild");
-    addToGroup("release");
+		addToGroup("post_genebuild");
+		addToGroup("release");
 
-  }
+	}
 
-  /**
-   * Run the test.
-   * 
-   * @param dbre
-   *          The database to use.
-   * @return true if the test pased.
-   *  
-   */
-  public boolean run(DatabaseRegistryEntry dbre) {
+	/**
+	 * Run the test.
+	 * 
+	 * @param dbre
+	 *            The database to use.
+	 * @return true if the test pased.
+	 * 
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-    Connection con = dbre.getConnection();
+		Connection con = dbre.getConnection();
 
-    if (testAffyTablesPopulated(con))
-      return testProbsetSizesSet(con) && testAffyArraysInExternalDB(con);
-    else
-      return false;
+		if (testAffyTablesPopulated(dbre)) {
+			return testProbsetSizesSet(con) && testAffyArraysInExternalDB(con);
+		} else {
+			return false;
+		}
 
-  }
+	}
 
-  private boolean testAffyArraysInExternalDB(Connection con) {
+	private boolean testAffyArraysInExternalDB(Connection con) {
 
-    boolean result = true;
+		boolean result = true;
 
-    // We have to do some guessing and pattern matching to find the
-    // external database corresponding to this AffyArray because the
-    // names used in external_db.db_name do not quite match affy_array.name.
+		// We have to do some guessing and pattern matching to find the
+		// external database corresponding to this AffyArray because the
+		// names used in external_db.db_name do not quite match affy_array.name.
 
-    // 1 - get set of external_db.db_names
-    String[] xdbNames = getColumnValues(con, "SELECT db_name FROM external_db");
-    Set xdbNamesSet = new HashSet();
-    for (int i = 0; i < xdbNames.length; i++)
-      xdbNamesSet.add(xdbNames[i].toLowerCase());
+		// 1 - get set of external_db.db_names
+		String[] xdbNames = getColumnValues(con,
+				"SELECT db_name FROM external_db");
+		Set xdbNamesSet = new HashSet();
+		for (int i = 0; i < xdbNames.length; i++)
+			xdbNamesSet.add(xdbNames[i].toLowerCase());
 
-    // 2 - check to see if every affy_array.name is in the set of
-    // external_db.db_names.
-    String[] affyArrayNames = getColumnValues(con,
-        "SELECT name FROM affy_array");
-    for (int i = 0; i < affyArrayNames.length; i++) {
+		// 2 - check to see if every affy_array.name is in the set of
+		// external_db.db_names.
+		String[] affyArrayNames = getColumnValues(con,
+				"SELECT name FROM affy_array");
+		for (int i = 0; i < affyArrayNames.length; i++) {
 
-      String name = affyArrayNames[i];
-      Set possibleExternalDBNames = new HashSet();
-      possibleExternalDBNames.add(name.toLowerCase());
-      possibleExternalDBNames.add(name.toLowerCase().replace('-', '_'));
-      possibleExternalDBNames.add(("affy_" + name).toLowerCase().replace('-',
-          '_'));
-      possibleExternalDBNames.add(("afyy_" + name).toLowerCase().replace('-',
-          '_'));
+			String name = affyArrayNames[i];
+			Set possibleExternalDBNames = new HashSet();
+			possibleExternalDBNames.add(name.toLowerCase());
+			possibleExternalDBNames.add(name.toLowerCase().replace('-', '_'));
+			possibleExternalDBNames.add(("affy_" + name).toLowerCase().replace(
+					'-', '_'));
+			possibleExternalDBNames.add(("afyy_" + name).toLowerCase().replace(
+					'-', '_'));
 
-      possibleExternalDBNames.retainAll(xdbNamesSet);
+			possibleExternalDBNames.retainAll(xdbNamesSet);
 
-      if (possibleExternalDBNames.size() == 0) {
-        ReportManager.problem(this, con, "AffyArray (affy_array.name) " + name
-            + " has no corresponding entry in external_db");
-        result = false;
-      }
+			if (possibleExternalDBNames.size() == 0) {
+				ReportManager.problem(this, con, "AffyArray (affy_array.name) "
+						+ name + " has no corresponding entry in external_db");
+				result = false;
+			}
 
-    }
+		}
 
-    return result;
-  }
+		return result;
+	}
 
-  /**
-   * Checks that all affy_* tables are populated.
-   * 
-   * If at least one is not then the test fails.
-   * 
-   * @param con
-   * @return true if all affy_* tables have rows, otherwise false.
-   */
+	/**
+	 * Checks that all affy_* tables are populated.
+	 * 
+	 * If at least one is not then the test fails.
+	 * 
+	 * @param con
+	 * @return true if all affy_* tables have rows, otherwise false.
+	 */
 
-  private boolean testAffyTablesPopulated(Connection con) {
+private boolean testAffyTablesPopulated(DatabaseRegistryEntry dbre) {
 
     List emptyTables = new ArrayList();
 
     String[] tables = { "affy_array", "affy_probe", "affy_feature" };
-    for (int i = 0; i < tables.length; i++)
+    
+    Species species = dbre.getSpecies();
+    Connection con = dbre.getConnection();
+    
+    if (species == Species.HOMO_SAPIENS || species == Species.MUS_MUSCULUS || species == Species.RATTUS_NORVEGICUS || species == Species.GALLUS_GALLUS) {
+
+      for (int i = 0; i < tables.length; i++)
       if (Integer.parseInt(getRowColumnValue(con, "SELECT count(*) from "
           + tables[i])) == 0)
         emptyTables.add(tables[i]);
 
+    }
     if (emptyTables.size() == 0)
       return true;
     else {
@@ -151,28 +161,27 @@ public class AffyProbes2Genome extends SingleDatabaseTestCase {
                   + emptyTables);
       return false;
     }
-  }
+  }	private boolean testProbsetSizesSet(Connection con) {
 
-  private boolean testProbsetSizesSet(Connection con) {
+		boolean result = true;
 
-    boolean result = true;
+		try {
+			String sql = "SELECT name, probe_setsize FROM affy_array";
+			for (ResultSet rs = con.createStatement().executeQuery(sql); rs
+					.next();) {
+				int probesetSize = rs.getInt("probe_setsize");
+				if (probesetSize < 1) {
+					ReportManager.problem(this, con,
+							"affy_array.probeset_size not set for "
+									+ rs.getString("name"));
+					result = false;
+				}
+			}
+		} catch (SQLException e) {
+			result = false;
+			e.printStackTrace();
+		}
 
-    try {
-      String sql = "SELECT name, probe_setsize FROM affy_array";
-      for (ResultSet rs = con.createStatement().executeQuery(sql); rs.next();) {
-        int probesetSize = rs.getInt("probe_setsize");
-        if (probesetSize < 1) {
-          ReportManager.problem(this, con,
-              "affy_array.probeset_size not set for " + rs.getString("name"));
-          result = false;
-        }
-      }
-    } catch (SQLException e) {
-      result = false;
-      e.printStackTrace();
-    }
-
-    return result;
-  }
+		return result;
+	}
 }
-
