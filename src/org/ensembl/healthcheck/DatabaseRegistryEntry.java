@@ -1,19 +1,14 @@
 /*
- Copyright (C) 2003 EBI, GRL
- 
- This library is free software; you can redistribute it and/or
- modify it under the terms of the GNU Lesser General Public
- License as published by the Free Software Foundation; either
- version 2.1 of the License, or (at your option) any later version.
- 
- This library is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- Lesser General Public License for more details.
- 
- You should have received a copy of the GNU Lesser General Public
- License along with this library; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Copyright (C) 2003 EBI, GRL
+ * 
+ * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation,
+ * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 package org.ensembl.healthcheck;
 
@@ -24,9 +19,9 @@ import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Container for information about a database that can be stored in a DatabaseRegistry.
- *  
+ * 
  */
-public class DatabaseRegistryEntry {
+public class DatabaseRegistryEntry implements Comparable {
 
     private String name;
 
@@ -41,13 +36,14 @@ public class DatabaseRegistryEntry {
 
     // -----------------------------------------------------------------
     /**
-     * Create a new DatabaseRegistryEntry. A connection to the named database is also created.
+     * Create a new DatabaseRegistryEntry. A connection to the named database is also created if required.
      * 
      * @param name The name of the database.
      * @param species The species that this database represents. If null, guess it from name.
      * @param type The type of this databse. If null, guess it from name.
+     * @param connect If true, open a connection to the database on the primary database server.
      */
-    public DatabaseRegistryEntry(String name, Species species, DatabaseType type) {
+    public DatabaseRegistryEntry(String name, Species species, DatabaseType type, boolean connect) {
 
         this.name = name;
         if (species != null) {
@@ -60,8 +56,12 @@ public class DatabaseRegistryEntry {
         } else {
             this.type = setTypeFromName(name);
         }
-        this.con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL") + name, System
-                .getProperty("user"), System.getProperty("password"));
+        if (connect) {
+            this.con = DBUtils.openConnection(System.getProperty("driver"),
+                                              System.getProperty("databaseURL") + name,
+                                              System.getProperty("user"),
+                                              System.getProperty("password"));
+        }
 
     }
 
@@ -84,30 +84,31 @@ public class DatabaseRegistryEntry {
         // homo_sapiens_core_20_34a
         if (bits.length >= 2) {
             alias = bits[0] + "_" + bits[1];
-            if (Species.resolveAlias(alias) != Species.UNKNOWN) { 
-		return Species.resolveAlias(alias); 
-	    }
+            if (Species.resolveAlias(alias) != Species.UNKNOWN) {
+                return Species.resolveAlias(alias);
+            }
         }
 
         // human_core_20, hsapiens_XXX
         if (bits.length > 1) {
             alias = bits[0];
-            if (Species.resolveAlias(alias) != Species.UNKNOWN) { 
-		return Species.resolveAlias(alias); 
-	    }
+            if (Species.resolveAlias(alias) != Species.UNKNOWN) {
+                return Species.resolveAlias(alias);
+            }
         }
 
         // compara, mart, go doesn't really have a species
-        if (bits.length >= 2
-                && (bits[1].equalsIgnoreCase("compara") || bits[1].equalsIgnoreCase("go") || bits[1].equalsIgnoreCase("mart"))) { return Species.UNKNOWN; }
+        if (bits.length >= 2 && (bits[1].equalsIgnoreCase("compara") || bits[1].equalsIgnoreCase("go") || bits[1].equalsIgnoreCase("mart"))) {
+            return Species.UNKNOWN;
+        }
 
-	// Vega naming convention e.g. vega_homo_sapiens_ext_20040821_v19
-	if (bits.length > 3 && bits[0].equalsIgnoreCase("vega")) {
-	    alias = bits[1] + "_" + bits[2];
-	    if (Species.resolveAlias(alias) != Species.UNKNOWN) { 
-		return Species.resolveAlias(alias); 
-	    }
-	}
+        // Vega naming convention e.g. vega_homo_sapiens_ext_20040821_v19
+        if (bits.length > 3 && bits[0].equalsIgnoreCase("vega")) {
+            alias = bits[1] + "_" + bits[2];
+            if (Species.resolveAlias(alias) != Species.UNKNOWN) {
+                return Species.resolveAlias(alias);
+            }
+        }
 
         // other permutations?
 
@@ -138,24 +139,23 @@ public class DatabaseRegistryEntry {
         // homo_sapiens_core_20_34a
         if (bits.length >= 4) {
             alias = bits[2];
-            if (DatabaseType.resolveAlias(alias) != DatabaseType.UNKNOWN) { 
-		return DatabaseType.resolveAlias(alias); 
-	    }
+            if (DatabaseType.resolveAlias(alias) != DatabaseType.UNKNOWN) {
+                return DatabaseType.resolveAlias(alias);
+            }
         }
 
         // human_core_20, ensembl_compara_20_1
         if (bits.length >= 3) {
             alias = bits[1];
-            if (DatabaseType.resolveAlias(alias) != DatabaseType.UNKNOWN) { 
-		return DatabaseType.resolveAlias(alias); 
-	    }
+            if (DatabaseType.resolveAlias(alias) != DatabaseType.UNKNOWN) {
+                return DatabaseType.resolveAlias(alias);
+            }
         }
 
-	// Vega naming convention e.g. vega_homo_sapiens_ext_20040821_v19
-	if (bits.length > 3 && bits[0].equalsIgnoreCase("vega")) {
-	    return DatabaseType.VEGA;
-	}
-
+        // Vega naming convention e.g. vega_homo_sapiens_ext_20040821_v19
+        if (bits.length > 3 && bits[0].equalsIgnoreCase("vega")) {
+            return DatabaseType.VEGA;
+        }
 
         // other permutations?
 
@@ -231,6 +231,14 @@ public class DatabaseRegistryEntry {
     public final void setConnection(final Connection con) {
 
         this.con = con;
+    }
+
+    // -----------------------------------------------------------------
+
+    public int compareTo(Object o) {
+
+        return getName().compareTo(((DatabaseRegistryEntry)o).getName());
+        
     }
 
     // -----------------------------------------------------------------
