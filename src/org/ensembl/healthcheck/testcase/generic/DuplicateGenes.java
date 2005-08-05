@@ -53,7 +53,8 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
     public void types() {
 
         removeAppliesToType(DatabaseType.EST);
-
+        removeAppliesToType(DatabaseType.CDNA);
+        
     }
     
     /**
