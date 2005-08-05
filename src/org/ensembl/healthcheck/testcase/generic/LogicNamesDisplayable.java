@@ -40,7 +40,7 @@ public class LogicNamesDisplayable extends SingleDatabaseTestCase {
 
     // a list of the tables to check the analysis_id in
     private String[] tablesWithAnalysisID = {"gene", "prediction_transcript", "dna_align_feature", "marker_feature", "protein_feature",
-            "qtl_feature", "repeat_feature", "simple_feature", "protein_align_feature"};
+            "qtl_feature", "repeat_feature", "simple_feature", "protein_align_feature", "regulatory_feature"};
 
     private static final String LOGIC_NAMES_FILE = "logicnames.txt";
 
