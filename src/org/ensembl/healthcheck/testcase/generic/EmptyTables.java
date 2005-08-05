@@ -147,6 +147,15 @@ public class EmptyTables extends SingleDatabaseTestCase {
             String[] estGene = {"gene", "transcript", "exon", "meta_coord", "coord_system", "gene_stable_id", "exon_stable_id", "translation_stable_id", "transcript_stable_id", "karyotype"};
             tables = estGene;
 
+            // ----------------------------------------------------
+            
+        } else if (type == DatabaseType.CDNA) {
+
+        	System.out.println("################ here");
+            // Only a few tables need to be filled in cDNA databases
+            String[] cdna = {"assembly", "dna_align_feature", "exon", "exon_transcript", "gene", "meta", "meta_coord", "seq_region", "seq_region_attrib", "supporting_feature", "transcript", "transcript_supporting_feature"};
+            tables = cdna;
+            
         }
 
         return tables;
