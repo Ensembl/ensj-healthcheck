@@ -104,8 +104,8 @@ public class EmptyTables extends SingleDatabaseTestCase {
                 tables = remove(tables, "supporting_feature");
             }
 
-	    // only look for Affy features in human, mouse, rat
-            if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.RATTUS_NORVEGICUS && species != Species.GALLUS_GALLUS) {
+	    // only look for Affy features in human, mouse, rat, chicken, danio
+            if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.RATTUS_NORVEGICUS && species != Species.GALLUS_GALLUS && species != Species.DANIO_RERIO) {
                 tables = remove(tables, "affy_array");
                 tables = remove(tables, "affy_feature");
                 tables = remove(tables, "affy_probe");
@@ -121,6 +121,14 @@ public class EmptyTables extends SingleDatabaseTestCase {
 	    // drosophila is imported, so no supporting features.
             if (species == Species.DROSOPHILA_MELANOGASTER) {
                 tables = remove(tables, "supporting_feature");
+            }
+
+            // most species don't have regulatory features yet
+            if (species != Species.HOMO_SAPIENS) {
+                tables = remove(tables, "regulatory_feature");
+                tables = remove(tables, "regulatory_factor");
+                tables = remove(tables, "regulatory_factor_transcript");
+                tables = remove(tables, "regulatory_feature_object");
             }
 
             // ----------------------------------------------------
