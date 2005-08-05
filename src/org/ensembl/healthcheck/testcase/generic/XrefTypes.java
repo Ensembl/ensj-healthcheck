@@ -25,7 +25,6 @@ import java.sql.ResultSet;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.util.Utils;
 
 /**
  * Check that all xrefs for a particular external_db map to one
