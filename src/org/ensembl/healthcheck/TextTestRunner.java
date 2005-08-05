@@ -20,7 +20,6 @@ package org.ensembl.healthcheck;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -69,7 +68,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
     private boolean skipSlow = false;
 
     private static final String CORE_DB_REGEXP = "[a-z]+_[a-z]+_(core|est|estgene|vega)";
-
+    
     private long startTime;
     
     // -------------------------------------------------------------------------
@@ -415,7 +414,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
      */
     public void finishTestCase(EnsTestCase testCase, boolean result, DatabaseRegistryEntry dbre) {
 
-    	long duration = (System.currentTimeMillis() - startTime) / 1000;
+    	//long duration = (System.currentTimeMillis() - startTime) / 1000;
     	
         System.out.println((result ? " PASSED" : " FAILED"));
         
