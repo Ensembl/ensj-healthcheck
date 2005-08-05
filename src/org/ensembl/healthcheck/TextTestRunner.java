@@ -20,6 +20,7 @@ package org.ensembl.healthcheck;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -69,6 +70,8 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
     private static final String CORE_DB_REGEXP = "[a-z]+_[a-z]+_(core|est|estgene|vega)";
 
+    private long startTime;
+    
     // -------------------------------------------------------------------------
 
     /**
@@ -398,6 +401,9 @@ public class TextTestRunner extends TestRunner implements Reporter {
             System.out.print("[" + dbre.getName() + "] ");
         }
         System.out.flush();
+        
+        startTime = System.currentTimeMillis();
+        
     }
 
     /**
@@ -409,11 +415,17 @@ public class TextTestRunner extends TestRunner implements Reporter {
      */
     public void finishTestCase(EnsTestCase testCase, boolean result, DatabaseRegistryEntry dbre) {
 
-        System.out.println(result ? " PASSED" : " FAILED");
+    	long duration = (System.currentTimeMillis() - startTime) / 1000;
+    	
+        System.out.println((result ? " PASSED" : " FAILED"));
+        
         /*
          * lastDatabase = ""; Iterator it = outputBuffer.iterator(); while (it.hasNext()) {
          * System.out.println((String)it.next()); } outputBuffer.clear();
          */
+        
+        
+        
     }
 
     private String lineBreakString(String mesg, int maxLen, String indent) {
