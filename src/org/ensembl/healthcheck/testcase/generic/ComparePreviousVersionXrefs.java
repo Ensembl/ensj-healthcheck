@@ -71,7 +71,6 @@ public class ComparePreviousVersionXrefs extends SingleDatabaseTestCase {
             if (currentXrefCounts.containsKey(externalDB)) {
 
                 int currentCount = ((Integer) (currentXrefCounts.get(externalDB))).intValue();
-                System.out.println("# " + externalDB + " " + secondaryCount + " " + currentCount);
                 if (currentCount < secondaryCount) { // TODO - some sort of threshold?
                     ReportManager.problem(this, dbre.getConnection(), sec.getName() + " contains " + secondaryCount + " xrefs of type " + externalDB
                             + " but " + dbre.getName() + " has none");
@@ -105,7 +104,7 @@ public class ComparePreviousVersionXrefs extends SingleDatabaseTestCase {
 
             while (rs != null && rs.next()) {
                 result.put(rs.getString("db_name"), new Integer(rs.getInt("count")));
-                System.out.println("# " + rs.getString("db_name") + " " + rs.getInt("count"));
+                //System.out.println("# " + rs.getString("db_name") + " " + rs.getInt("count"));
             }
 
             stmt.close();
