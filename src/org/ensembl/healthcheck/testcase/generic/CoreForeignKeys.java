@@ -117,9 +117,7 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
          // ----------------------------
          // Ensure that feature tables reference existing seq_regions
 
-         String[] featTabs = {"exon", "repeat_feature", "simple_feature", "dna_align_feature", "protein_align_feature",
-                 "marker_feature", "prediction_transcript", "prediction_exon", "gene", "qtl_feature", "transcript",
-                 "karyotype"};
+         String[] featTabs = getCoreFeatureTables();
 
          for (int i = 0; i < featTabs.length; i++) {
              String featTab = featTabs[i];

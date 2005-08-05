@@ -50,11 +50,7 @@ public class FeatureCoords extends SingleDatabaseTestCase {
 
         boolean result = true;
 
-        String[] featureTables = {"gene", "dna_align_feature", "protein_align_feature", 
-				    "exon", "repeat_feature", "prediction_transcript", 
-				    "prediction_exon", "simple_feature", "marker_feature", 
-				    "misc_feature", "qtl_feature","karyotype", "transcript",
-				    "density_feature", "regulatory_feature"};
+        String[] featureTables = getCoreFeatureTables();
 
         for (int tableIndex = 0; tableIndex < featureTables.length; tableIndex++) {
 

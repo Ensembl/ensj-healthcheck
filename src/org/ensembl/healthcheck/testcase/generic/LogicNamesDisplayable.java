@@ -39,8 +39,7 @@ import org.ensembl.healthcheck.util.Utils;
 public class LogicNamesDisplayable extends SingleDatabaseTestCase {
 
     // a list of the tables to check the analysis_id in
-    private String[] featureTables = {"gene", "prediction_transcript", "dna_align_feature", "marker_feature", "protein_feature",
-            "qtl_feature", "repeat_feature", "simple_feature", "protein_align_feature"};
+    private String[] featureTables = getCoreFeatureTables();
 
     private static final String LOGIC_NAMES_FILE = "logicnames.txt";
 

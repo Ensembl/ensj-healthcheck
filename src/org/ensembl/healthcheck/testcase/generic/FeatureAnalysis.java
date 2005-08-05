@@ -37,8 +37,8 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 public class FeatureAnalysis extends SingleDatabaseTestCase {
 
     // the following tables have an analysis_id column
-    String[] featureTables = {"gene", "protein_feature", "dna_align_feature", "protein_align_feature", "repeat_feature", "prediction_transcript", "simple_feature", "marker_feature", "qtl_feature", "density_type", "identity_xref", "affy_feature"};
-
+    String[] featureTables = getCoreFeatureTables();
+    
     private String[] proteinFeatureAnalyses = {"prints", "pfscan", "scanprosite", "signalp", "seg", "ncoils", "pfam", "tmhmm"};
 
     /**

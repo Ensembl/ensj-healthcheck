@@ -74,6 +74,15 @@ public abstract class EnsTestCase {
      */
     protected List appliesToTypes = new ArrayList();
 
+    /** 
+     * Names of tables in core schema that count as "feature" tables.
+     * Used in various healthchecks.
+     */
+    private String[] featureTables = {"affy_feature", "assembly_exception","gene", "exon", "dna_align_feature", 
+            "protein_align_feature", "repeat_feature", "prediction_transcript",
+            "prediction_exon", "simple_feature", "marker_feature", "misc_feature",
+            "qtl_feature", "karyotype", "transcript", "density_feature", "regulatory_feature"};
+    
     // -------------------------------------------------------------------------
     /**
      * Creates a new instance of EnsTestCase
@@ -1610,7 +1619,7 @@ public abstract class EnsTestCase {
      * @param con The database connection to use.
      * @param table The table name.
      * @param column The column to check.
-     * @return Ttrue if no columns are null, false otherwise.
+     * @return True if no columns are null, false otherwise.
      */
     public boolean checkNoNulls(Connection con, String table, String column) {
      
@@ -1632,6 +1641,17 @@ public abstract class EnsTestCase {
 	
     } // checkNoNulls
      
+    // ----------------------------------------------------------------------
+    /**
+     * Get a list of the tables in a core schema that conform to various 
+     * characteristics and count as "feature" tables.
+     * @return An array of feature tables.
+     */
+    public String[] getCoreFeatureTables() {
+    	
+    	return featureTables;
+    	
+    }
     // ----------------------------------------------------------------------
 
 } // EnsTestCase
