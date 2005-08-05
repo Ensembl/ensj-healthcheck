@@ -151,9 +151,8 @@ public class EmptyTables extends SingleDatabaseTestCase {
             
         } else if (type == DatabaseType.CDNA) {
 
-        	System.out.println("################ here");
             // Only a few tables need to be filled in cDNA databases
-            String[] cdna = {"assembly", "dna_align_feature", "exon", "exon_transcript", "gene", "meta", "meta_coord", "seq_region", "seq_region_attrib", "supporting_feature", "transcript", "transcript_supporting_feature"};
+            String[] cdna = {"assembly", "attrib_type", "dna_align_feature", "meta", "meta_coord", "seq_region", "seq_region_attrib"};
             tables = cdna;
             
         }
@@ -172,7 +171,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
      * @return true if the test passed.
      */
     public boolean run(DatabaseRegistryEntry dbre) {
-
+    	
         boolean result = true;
 
         String[] tables = getTablesToCheck(dbre);
