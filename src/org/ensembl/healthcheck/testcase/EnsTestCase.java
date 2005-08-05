@@ -79,10 +79,14 @@ public abstract class EnsTestCase {
      * Used in various healthchecks.
      */
     private String[] featureTables = {"affy_feature", "assembly_exception","gene", "exon", "dna_align_feature", 
-            "protein_align_feature", "repeat_feature", "prediction_transcript",
-            "prediction_exon", "simple_feature", "marker_feature", "misc_feature",
+            "protein_align_feature", "repeat_feature", "simple_feature", "marker_feature", "misc_feature",
             "qtl_feature", "karyotype", "transcript", "density_feature", "regulatory_feature"};
     
+    /**
+     * Tables that have an analysis ID.
+     */
+    private String[] tablesWithAnalysisID = {"gene", "protein_feature", "dna_align_feature", "protein_align_feature", "repeat_feature", "prediction_transcript", "simple_feature", "marker_feature", "qtl_feature", "density_type", "identity_xref", "affy_feature"};
+
     // -------------------------------------------------------------------------
     /**
      * Creates a new instance of EnsTestCase
@@ -1650,6 +1654,17 @@ public abstract class EnsTestCase {
     public String[] getCoreFeatureTables() {
     	
     	return featureTables;
+    	
+    }
+    
+//  ----------------------------------------------------------------------
+    /**
+     * Get a list of the tables in a core schema that have an analysis_id colmun.
+     * @return An array of table names.
+     */
+    public String[] getCoreTablesWithAnalysisID() {
+    	
+    	return tablesWithAnalysisID;
     	
     }
     // ----------------------------------------------------------------------
