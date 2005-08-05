@@ -142,7 +142,7 @@ private boolean testAffyTablesPopulated(DatabaseRegistryEntry dbre) {
     Species species = dbre.getSpecies();
     Connection con = dbre.getConnection();
     
-    if (species == Species.HOMO_SAPIENS || species == Species.MUS_MUSCULUS || species == Species.RATTUS_NORVEGICUS || species == Species.GALLUS_GALLUS) {
+    if (species == Species.HOMO_SAPIENS || species == Species.MUS_MUSCULUS || species == Species.RATTUS_NORVEGICUS || species == Species.GALLUS_GALLUS || species != Species.DANIO_RERIO) {
 
       for (int i = 0; i < tables.length; i++)
       if (Integer.parseInt(getRowColumnValue(con, "SELECT count(*) from "
