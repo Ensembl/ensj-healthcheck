@@ -105,7 +105,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
             }
 
 	    // only look for Affy features in human, mouse, rat
-            if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.RATTUS_NORVEGICUS) {
+            if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.RATTUS_NORVEGICUS && species != Species.GALLUS_GALLUS) {
                 tables = remove(tables, "affy_array");
                 tables = remove(tables, "affy_feature");
                 tables = remove(tables, "affy_probe");
