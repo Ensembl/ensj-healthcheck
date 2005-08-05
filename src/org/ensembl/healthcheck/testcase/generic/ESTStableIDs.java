@@ -50,7 +50,8 @@ public class ESTStableIDs extends SingleDatabaseTestCase {
 
         removeAppliesToType(DatabaseType.CORE);
         removeAppliesToType(DatabaseType.VEGA);
-
+        removeAppliesToType(DatabaseType.CDNA);
+        
     }
     
     /**

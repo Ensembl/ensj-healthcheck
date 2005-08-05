@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.TextTestRunner;
@@ -61,6 +62,16 @@ public class AffyProbes2Genome extends SingleDatabaseTestCase {
 
 	}
 
+	 /**
+     * This test only applies to core and Vega databases.
+     */
+    public void types() {
+
+        removeAppliesToType(DatabaseType.EST);
+        removeAppliesToType(DatabaseType.CDNA);
+        
+    }
+    
 	/**
 	 * Run the test.
 	 * 
