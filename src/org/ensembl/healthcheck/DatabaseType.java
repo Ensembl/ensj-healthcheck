@@ -17,7 +17,6 @@
  */
 package org.ensembl.healthcheck;
 
-import java.util.logging.Logger;
 
 /**
  * Typesafe "enum" to store information about the type of a database. Declared final since it only
