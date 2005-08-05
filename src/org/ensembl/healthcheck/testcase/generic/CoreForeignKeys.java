@@ -100,6 +100,14 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
 	result &= checkForOrphans(con, "regulatory_feature", "regulatory_feature_id", "regulatory_feature_object", "regulatory_feature_id", true);
 
+	result &= checkForOrphans(con, "regulatory_factor_transcript", "transcript_id", "transcript", "transcript_id", true);
+	
+	result &= checkForOrphans(con, "regulatory_factor_transcript", "regulatory_factor_id", "regulatory_factor", "regulatory_factor_id", true);
+
+	result &= checkForOrphans(con, "regulatory_feature", "regulatory_factor_id", "regulatory_factor", "regulatory_factor_id", true);
+
+	result &= checkForOrphans(con, "regulatory_feature", "analysis_id", "analysis", "analysis_id", true);
+
 	// ----------------------------
 	// Check regulatory features point to existing objects
          String[] rfTypes = {"Gene", "Transcript", "Translation"};
