@@ -35,7 +35,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 public class DuplicateGenes extends SingleDatabaseTestCase {
 
-    private static final int MAX_WARNINGS = 100000;
+    private static final int MAX_WARNINGS = 10;
 
     /**
      * Create an OrphanTestCase that applies to a specific set of databases.
