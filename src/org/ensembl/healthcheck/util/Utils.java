@@ -121,6 +121,37 @@ public final class Utils {
                         .println("WARNING - databaseURL property should start with jdbc: but it does not seem to. Check this if you experience problems loading the database driver");
             }
         }
+        
+        // similarly for secondary database URL	
+
+        String secondaryDatabaseURL = System.getProperty("secondary.databaseURL");
+
+        if (secondaryDatabaseURL == null || secondaryDatabaseURL.equals("")) {
+
+            // build it
+        	secondaryDatabaseURL = "jdbc:mysql://";
+
+            if (System.getProperty("secondary.host") != null) {
+                secondaryDatabaseURL += System.getProperty("secondary.host");
+            }
+
+            if (System.getProperty("secondary.port") != null) {
+                secondaryDatabaseURL += ":" + System.getProperty("secondary.port");
+            }
+
+            secondaryDatabaseURL += "/";
+            System.setProperty("secondary.databaseURL", secondaryDatabaseURL);
+
+        } else {
+
+            // validate secondary database URL - if it doesn't start with jdbc: this can
+            // cause confusion
+            String prefix = secondaryDatabaseURL.substring(0, 5);
+            if (!prefix.equalsIgnoreCase("jdbc:")) {
+                System.err
+                        .println("WARNING - secondary.databaseURL property should start with jdbc: but it does not seem to. Check this if you experience problems loading the database driver");
+            }
+        }
 
     } // readPropertiesFile
 
