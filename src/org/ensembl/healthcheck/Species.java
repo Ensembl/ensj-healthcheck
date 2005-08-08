@@ -368,7 +368,7 @@ public final class Species {
 
 		//		 --------------------------------------
 
-		if (in(alias, "macacamulatta,macacca_mulatta,rhesusmacaque,rhesus_macaque,macaque")) {
+		if (in(alias, "macacamulatta,macaca_mulatta,rhesusmacaque,rhesus_macaque,macaque")) {
 
 			return CIONA_INTESTINALIS;
 
