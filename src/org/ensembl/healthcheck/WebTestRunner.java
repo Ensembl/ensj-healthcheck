@@ -54,7 +54,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
      */
     private void run(String[] args) {
 
-        deleteTimingsFile();
+        //deleteTimingsFile();
         
         ReportManager.setReporter(this);
 
