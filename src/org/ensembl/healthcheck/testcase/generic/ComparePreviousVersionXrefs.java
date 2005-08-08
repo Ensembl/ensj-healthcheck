@@ -12,7 +12,6 @@
  */
 package org.ensembl.healthcheck.testcase.generic;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -65,6 +64,7 @@ public class ComparePreviousVersionXrefs extends SingleDatabaseTestCase {
         Iterator it = externalDBs.iterator();
         while (it.hasNext()) {
             String externalDB = (String) it.next();
+
             int secondaryCount = ((Integer) (secondaryXrefCounts.get(externalDB))).intValue();
 
             // check it exists at all
@@ -73,7 +73,7 @@ public class ComparePreviousVersionXrefs extends SingleDatabaseTestCase {
                 int currentCount = ((Integer) (currentXrefCounts.get(externalDB))).intValue();
                 if (currentCount < secondaryCount) { // TODO - some sort of threshold?
                     ReportManager.problem(this, dbre.getConnection(), sec.getName() + " contains " + secondaryCount + " xrefs of type " + externalDB
-                            + " but " + dbre.getName() + " has none");
+                            + " but " + dbre.getName() + " only has " + currentCount);
                     result = false;
                 }
 
@@ -99,12 +99,12 @@ public class ComparePreviousVersionXrefs extends SingleDatabaseTestCase {
 
             logger.finest("Getting xref counts for " + dbre.getName());
 
-            ResultSet rs = stmt.executeQuery("SELECT DISTINCT(e.db_name) AS db_name, COUNT(*) AS count"
-                    + " FROM external_db e, xref x WHERE e.external_db_id=x.external_db_id GROUP BY e.db_name");
+            ResultSet rs = stmt.executeQuery("SELECT DISTINCT(e.db_name) AS db_name, COUNT(*) AS count" + " FROM external_db e, xref x, object_xref ox"
+                    + " WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id " + " GROUP BY e.db_name");
 
             while (rs != null && rs.next()) {
                 result.put(rs.getString("db_name"), new Integer(rs.getInt("count")));
-                //System.out.println("# " + rs.getString("db_name") + " " + rs.getInt("count"));
+                // System.out.println("# " + rs.getString("db_name") + " " + rs.getInt("count"));
             }
 
             stmt.close();
