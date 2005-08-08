@@ -104,6 +104,9 @@ public final class Species {
     /** Non-ensembl database */
     public static final Species SYSTEM = new Species("system");
 
+    /** Help database */
+    public static final Species HELP = new Species("help");
+
 	/** Unknown species */
 	public static final Species UNKNOWN = new Species("unknown");
 
