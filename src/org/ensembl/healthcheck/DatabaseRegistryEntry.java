@@ -168,10 +168,18 @@ public class DatabaseRegistryEntry implements Comparable {
         // username_species_type_version_release
         if (bits.length > 3) {
             alias = bits[3];
-            if (Species.resolveAlias(alias) != Species.UNKNOWN) {
+            if (DatabaseType.resolveAlias(alias) != DatabaseType.UNKNOWN) {
                 return DatabaseType.resolveAlias(alias);
             }
         }
+        
+        // system/reserved databases
+        if (name.equals("mysql")){
+            
+            return DatabaseType.SYSTEM;
+            
+        }
+        
         // other permutations?
 
         if (result.equals(DatabaseType.UNKNOWN)) {
