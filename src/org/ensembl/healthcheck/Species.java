@@ -342,7 +342,7 @@ public final class Species {
 		// --------------------------------------
 
 		if (in(alias,
-				"opossum,monodelphis,mdomestica,monodelphisdomestica,monodelphis_domestica")) {
+				"opossum,monodelphis,mdomestica,mdomesticus,monodelphisdomestica,monodelphisdomesticus,monodelphis_domestica,monodelphis_domesticus")) {
 
 			return MONODELPHIS_DOMESTICA;
 
