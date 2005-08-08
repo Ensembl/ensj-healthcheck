@@ -101,6 +101,9 @@ public final class Species {
 	/** Specific type of species */
 	public static final Species MACACA_MULATTA = new Species("macaca_mulatta");
 
+    /** Non-ensembl database */
+    public static final Species SYSTEM = new Species("system");
+
 	/** Unknown species */
 	public static final Species UNKNOWN = new Species("unknown");
 
