@@ -9,6 +9,8 @@ cp=$cp:$home/lib/mysql-connector-java-3.0.15-ga-bin.jar
 
 cd $home
 
+rm -f timings.txt
+
 # comment/uncomment the ones to run
 
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_anopheles_gambiae.properties
