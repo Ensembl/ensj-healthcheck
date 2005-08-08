@@ -110,6 +110,14 @@ public class DatabaseRegistryEntry implements Comparable {
             }
         }
 
+        // username_species_type_version_release
+        if (bits.length > 3) {
+            alias = bits[1] + "_" + bits[2];
+            if (Species.resolveAlias(alias) != Species.UNKNOWN) {
+                return Species.resolveAlias(alias);
+            }
+        }
+        
         // other permutations?
 
         if (result.equals(Species.UNKNOWN)) {
@@ -157,6 +165,13 @@ public class DatabaseRegistryEntry implements Comparable {
             return DatabaseType.VEGA;
         }
 
+        // username_species_type_version_release
+        if (bits.length > 3) {
+            alias = bits[3];
+            if (Species.resolveAlias(alias) != Species.UNKNOWN) {
+                return DatabaseType.resolveAlias(alias);
+            }
+        }
         // other permutations?
 
         if (result.equals(DatabaseType.UNKNOWN)) {
