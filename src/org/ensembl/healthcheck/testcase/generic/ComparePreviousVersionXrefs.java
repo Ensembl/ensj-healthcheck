@@ -30,6 +30,8 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 public class ComparePreviousVersionXrefs extends SingleDatabaseTestCase {
 
+    private static final double THRESHOLD = 0.8; // if old/new xrefs less than this, fail
+    
     /**
      * Create a new XrefTypes testcase.
      */
@@ -71,10 +73,14 @@ public class ComparePreviousVersionXrefs extends SingleDatabaseTestCase {
             if (currentXrefCounts.containsKey(externalDB)) {
 
                 int currentCount = ((Integer) (currentXrefCounts.get(externalDB))).intValue();
-                if (currentCount < secondaryCount) { // TODO - some sort of threshold?
+                if (((double)currentCount / (double)secondaryCount) < THRESHOLD) { 
                     ReportManager.problem(this, dbre.getConnection(), sec.getName() + " contains " + secondaryCount + " xrefs of type " + externalDB
                             + " but " + dbre.getName() + " only has " + currentCount);
                     result = false;
+                } else {
+                    
+                    ReportManager.correct(this, dbre.getConnection(), sec.getName() + " contains " + secondaryCount + " xrefs of type " + externalDB
+                            + " and " + dbre.getName() + " has " + currentCount + " - greater or within tolderance");
                 }
 
             } else {
