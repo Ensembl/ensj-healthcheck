@@ -1,26 +1,19 @@
 /*
- Copyright (C) 2003 EBI, GRL
- 
- This library is free software; you can redistribute it and/or
- modify it under the terms of the GNU Lesser General Public
- License as published by the Free Software Foundation; either
- version 2.1 of the License, or (at your option) any later version.
- 
- This library is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- Lesser General Public License for more details.
- 
- You should have received a copy of the GNU Lesser General Public
- License along with this library; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Copyright (C) 2003 EBI, GRL
+ * 
+ * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation,
+ * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 package org.ensembl.healthcheck;
 
-
 /**
- * Typesafe "enum" to store information about the type of a database. Declared final since it only
- * has private constructors.
+ * Typesafe "enum" to store information about the type of a database. Declared final since it only has private constructors.
  */
 public final class DatabaseType {
 
@@ -56,15 +49,24 @@ public final class DatabaseType {
 
     /** A GO database */
     public static final DatabaseType GO = new DatabaseType("go");
-    
+
     /** An expression database */
     public static final DatabaseType EXPRESSION = new DatabaseType("expression");
-    
+
     /** An xref database */
     public static final DatabaseType XREF = new DatabaseType("xref");
-    
+
     /** An cDNA database */
     public static final DatabaseType CDNA = new DatabaseType("cdna");
+
+    /** A sequence database */
+    public static final DatabaseType SEQ = new DatabaseType("seq");
+
+    /** A help database */
+    public static final DatabaseType HELP = new DatabaseType("HELP");
+
+    /** A system database */
+    public static final DatabaseType SYSTEM = new DatabaseType("system");
 
     /** A database whos type has not been determined */
     public static final DatabaseType UNKNOWN = new DatabaseType("unknown");
@@ -89,136 +91,150 @@ public final class DatabaseType {
      * Resolve an alias to a DatabaseType object.
      * 
      * @param alias The alias (e.g. core).
-     * @return The DatabaseType object corresponding to alias, or DatabaseType.UNKNOWN if it cannot
-     *         be resolved.
+     * @return The DatabaseType object corresponding to alias, or DatabaseType.UNKNOWN if it cannot be resolved.
      */
     public static DatabaseType resolveAlias(final String alias) {
 
         String lcAlias = alias.toLowerCase();
 
-	// --------------------------------------
-	// needs to be before core and est since names 
-	// are of the form homo_sapiens_core_expression_est_24_34e
-        if (in(lcAlias, "expression")) { 
+        // --------------------------------------
+        // needs to be before core and est since names
+        // are of the form homo_sapiens_core_expression_est_24_34e
+        if (in(lcAlias, "expression")) {
 
-        return EXPRESSION; 
+            return EXPRESSION;
 
         }
 
         // --------------------------------------
 
-        if (in(lcAlias, "core")) { 
+        if (in(lcAlias, "core")) {
 
-        return CORE; 
-
-        }
-
-        // --------------------------------------
-
-        if (in(lcAlias, "est")) { 
-
-        return EST; 
+            return CORE;
 
         }
 
         // --------------------------------------
 
-        if (in(lcAlias, "estgene")) { 
+        if (in(lcAlias, "est")) {
 
-        return ESTGENE; 
-
-        }
-
-        // --------------------------------------
-
-        if (in(lcAlias, "compara")) { 
-
-        return COMPARA; 
+            return EST;
 
         }
 
         // --------------------------------------
 
-        if (in(lcAlias, "mart")) { 
+        if (in(lcAlias, "estgene")) {
 
-        return MART; 
-
-        }
-
-        // --------------------------------------
-
-        if (in(lcAlias, "vega")) { 
-
-        return VEGA; 
+            return ESTGENE;
 
         }
 
         // --------------------------------------
 
-        if (in(lcAlias, "variation")) { 
+        if (in(lcAlias, "compara")) {
 
-        return VARIATION; 
-
-        }
-
-        // --------------------------------------
-
-        if (in(lcAlias, "disease")) { 
-
-        return DISEASE; 
+            return COMPARA;
 
         }
 
         // --------------------------------------
 
-        if (in(lcAlias, "haplotype")) { 
+        if (in(lcAlias, "mart")) {
 
-        return HAPLOTYPE; 
+            return MART;
 
         }
 
         // --------------------------------------
 
-        if (in(lcAlias, "lite")) { 
+        if (in(lcAlias, "vega")) {
 
-        return LITE; 
+            return VEGA;
+
+        }
+
+        // --------------------------------------
+
+        if (in(lcAlias, "variation")) {
+
+            return VARIATION;
+
+        }
+
+        // --------------------------------------
+
+        if (in(lcAlias, "disease")) {
+
+            return DISEASE;
+
+        }
+
+        // --------------------------------------
+
+        if (in(lcAlias, "haplotype")) {
+
+            return HAPLOTYPE;
+
+        }
+
+        // --------------------------------------
+
+        if (in(lcAlias, "lite")) {
+
+            return LITE;
+
+        }
+
+        // --------------------------------------
+
+        if (in(lcAlias, "go")) {
+
+            return GO;
+
+        }
+
+        // --------------------------------------
+
+        if (in(lcAlias, "expression")) {
+
+            return EXPRESSION;
+
+        }
+
+        // --------------------------------------
+
+        if (in(lcAlias, "xref")) {
+
+            return XREF;
+
+        }
+
+        // --------------------------------------
+
+        if (in(lcAlias, "cdna")) {
+
+            return CDNA;
+
+        }
+
+        // --------------------------------------
+
+        if (in(lcAlias, "seq")) {
+
+            return SEQ;
 
         }
         
+        //      --------------------------------------
+
+        if (in(lcAlias, "help")) {
+
+            return HELP;
+
+        }
+
         // --------------------------------------
-
-        if (in(lcAlias, "go")) { 
-
-        return GO; 
-
-        }
-
-        // --------------------------------------
-	
-	if (in(lcAlias, "expression")) { 
-
-	    return EXPRESSION; 
-
-        }
-
-	// --------------------------------------
-	
-	if (in(lcAlias, "xref")) { 
-
-	    return XREF; 
-
-        }
-
-
-	// --------------------------------------
-	
-	if (in(lcAlias, "cdna")) { 
-
-	    return CDNA; 
-
-        }
-
-	// --------------------------------------
 
         // default case
         return UNKNOWN;
@@ -235,22 +251,23 @@ public final class DatabaseType {
         return (list.indexOf(alias) > -1);
 
     }
-    
+
     // -------------------------------------------------------------------------
     /**
      * Check if a DatabaseType is generic (core, est, estgene, vega).
+     * 
      * @return true if t is core, est, estgene or vega.
      */
     public boolean isGeneric() {
-        
+
         if (name.equals("core") || name.equals("est") || name.equals("estgene") || name.equals("vega") || name.equals("cdna")) {
             return true;
         }
-        
+
         return false;
-        
+
     }
-    
+
     // -----------------------------------------------------------------
 
 } // DatabaseType
