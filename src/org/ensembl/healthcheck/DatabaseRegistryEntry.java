@@ -117,7 +117,21 @@ public class DatabaseRegistryEntry implements Comparable {
                 return Species.resolveAlias(alias);
             }
         }
+
+        // ensembl help databases
+        if (name.startsWith("ensembl_help_")) {
+
+            return Species.HELP;
+
+        }
         
+        // system/reserved databases
+        if (name.equals("mysql")) {
+
+            return Species.SYSTEM;
+
+        }
+
         // other permutations?
 
         if (result.equals(Species.UNKNOWN)) {
@@ -172,14 +186,14 @@ public class DatabaseRegistryEntry implements Comparable {
                 return DatabaseType.resolveAlias(alias);
             }
         }
-        
+
         // system/reserved databases
-        if (name.equals("mysql")){
-            
+        if (name.equals("mysql")) {
+
             return DatabaseType.SYSTEM;
-            
+
         }
-        
+
         // other permutations?
 
         if (result.equals(DatabaseType.UNKNOWN)) {
@@ -260,8 +274,8 @@ public class DatabaseRegistryEntry implements Comparable {
 
     public int compareTo(Object o) {
 
-        return getName().compareTo(((DatabaseRegistryEntry)o).getName());
-        
+        return getName().compareTo(((DatabaseRegistryEntry) o).getName());
+
     }
 
     // -----------------------------------------------------------------
