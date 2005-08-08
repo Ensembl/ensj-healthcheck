@@ -1,24 +1,22 @@
 /*
- Copyright (C) 2002 EBI, GRL
-
- This library is free software; you can redistribute it and/or
- modify it under the terms of the GNU Lesser General Public
- License as published by the Free Software Foundation; either
- version 2.1 of the License, or (at your option) any later version.
-
- This library is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- Lesser General Public License for more details.
-
- You should have received a copy of the GNU Lesser General Public
- License along with this library; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Copyright (C) 2002 EBI, GRL
+ * 
+ * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation,
+ * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
 package org.ensembl.healthcheck;
 
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Date;
@@ -40,635 +38,614 @@ import org.ensembl.healthcheck.util.Utils;
  */
 public class WebTestRunner extends TestRunner implements Reporter {
 
-	private boolean debug = false;
+    private boolean debug = false;
 
-	private String configFile = "web.properties";
+    private String configFile = "web.properties";
 
-	private long startTime;
+    private long startTime;
 
-	// ---------------------------------------------------------------------
-	/**
-	 * Main run method.
-	 * 
-	 * @param args
-	 *            Command-line arguments.
-	 */
-	private void run(String[] args) {
+    private static String TIMINGS_FILE = "timings.txt";
+    
+    // ---------------------------------------------------------------------
+    /**
+     * Main run method.
+     * 
+     * @param args Command-line arguments.
+     */
+    private void run(String[] args) {
 
-		startTime = System.currentTimeMillis();
+        deleteTimingsFile();
+        
+        ReportManager.setReporter(this);
 
-		ReportManager.setReporter(this);
+        parseCommandLine(args);
 
-		parseCommandLine(args);
+        setupLogging();
 
-		setupLogging();
+        Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
 
-		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
+        Utils.readPropertiesFileIntoSystem(configFile);
 
-		Utils.readPropertiesFileIntoSystem(configFile);
+        parseProperties();
 
-		parseProperties();
+        groupsToRun = getGroupsFromProperties();
 
-		groupsToRun = getGroupsFromProperties();
+        List databaseRegexps = getDatabasesFromProperties();
 
-		List databaseRegexps = getDatabasesFromProperties();
+        outputLevel = setOutputLevelFromProperties();
 
-		outputLevel = setOutputLevelFromProperties();
+        TestRegistry testRegistry = new TestRegistry();
 
-		TestRegistry testRegistry = new TestRegistry();
+        DatabaseRegistry databaseRegistry = new DatabaseRegistry(databaseRegexps, null, null);
+        if (databaseRegistry.getAll().length == 0) {
+            logger.warning("Warning: no database names matched any of the database regexps given");
+        }
 
-		DatabaseRegistry databaseRegistry = new DatabaseRegistry(
-				databaseRegexps, null, null);
-		if (databaseRegistry.getAll().length == 0) {
-			logger
-					.warning("Warning: no database names matched any of the database regexps given");
-		}
+        runAllTests(databaseRegistry, testRegistry, false);
 
-		runAllTests(databaseRegistry, testRegistry, false);
+        printOutput();
 
-		printOutput();
+        ConnectionPool.closeAll();
 
-		ConnectionPool.closeAll();
+    } // run
 
-	} // run
+    // ---------------------------------------------------------------------
 
-	// ---------------------------------------------------------------------
+    /**
+     * Command-line entry point.
+     * 
+     * @param args Command line args.
+     */
+    public static void main(String[] args) {
 
-	/**
-	 * Command-line entry point.
-	 * 
-	 * @param args
-	 *            Command line args.
-	 */
-	public static void main(String[] args) {
+        new WebTestRunner().run(args);
 
-		new WebTestRunner().run(args);
+    } // main
 
-	} // main
+    // -------------------------------------------------------------------------
 
-	// -------------------------------------------------------------------------
+    private void parseCommandLine(String[] args) {
 
-	private void parseCommandLine(String[] args) {
+        for (int i = 0; i < args.length; i++) {
 
-		for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("-h")) {
 
-			if (args[i].equals("-h")) {
+                printUsage();
+                System.exit(0);
 
-				printUsage();
-				System.exit(0);
+            } else if (args[i].equals("-config")) {
 
-			} else if (args[i].equals("-config")) {
-				
-				configFile = args[++i];
-				
-			} else if (args[i].equals("-debug")) {
+                configFile = args[++i];
 
-				debug = true;
-				logger.finest("Running in debug mode");
+            } else if (args[i].equals("-debug")) {
 
-			}
-		}
+                debug = true;
+                logger.finest("Running in debug mode");
 
-	} // parseCommandLine
+            }
+        }
 
-	// -------------------------------------------------------------------------
+    } // parseCommandLine
 
-	private void printUsage() {
+    // -------------------------------------------------------------------------
 
-		System.out.println("\nUsage: WebTestRunner {options} \n");
-		System.out.println("Options:");
-		System.out.println("  -config <file>  Properties file to use instead of web.properties");
-		System.out.println("  -h              This message.");
-		System.out.println("  -debug          Print debugging info");
-		System.out.println();
-		System.out
-				.println("All configuration information is read from the files database.properties and web.properties. ");
-		System.out
-				.println("web.properties should contain the following properties:");
-		System.out
-				.println("  webtestrunner.groups=       A comma-separated list of the groups, or individual tests, to run");
-		System.out
-				.println("  webtestrunner.databases=    A comma-separated list of database regexps to match");
-		System.out
-				.println("  webtestrunner.file=         The name of the output file to write to ");
-		System.out
-				.println("  webtestrunner.outputlevel=  How much output to write. Should be one of all, info, warning, correct or problem");
-
-	}
+    private void printUsage() {
 
-	// ---------------------------------------------------------------------
+        System.out.println("\nUsage: WebTestRunner {options} \n");
+        System.out.println("Options:");
+        System.out.println("  -config <file>  Properties file to use instead of web.properties");
+        System.out.println("  -h              This message.");
+        System.out.println("  -debug          Print debugging info");
+        System.out.println();
+        System.out.println("All configuration information is read from the files database.properties and web.properties. ");
+        System.out.println("web.properties should contain the following properties:");
+        System.out.println("  webtestrunner.groups=       A comma-separated list of the groups, or individual tests, to run");
+        System.out.println("  webtestrunner.databases=    A comma-separated list of database regexps to match");
+        System.out.println("  webtestrunner.file=         The name of the output file to write to ");
+        System.out.println("  webtestrunner.outputlevel=  How much output to write. Should be one of all, info, warning, correct or problem");
 
-	private void setupLogging() {
+    }
 
-		// stop parent logger getting the message
-		logger.setUseParentHandlers(false);
+    // ---------------------------------------------------------------------
 
-		Handler myHandler = new MyStreamHandler(System.out, new LogFormatter());
+    private void setupLogging() {
 
-		logger.addHandler(myHandler);
-		logger.setLevel(Level.WARNING);
+        // stop parent logger getting the message
+        logger.setUseParentHandlers(false);
 
-		if (debug) {
+        Handler myHandler = new MyStreamHandler(System.out, new LogFormatter());
 
-			logger.setLevel(Level.FINEST);
+        logger.addHandler(myHandler);
+        logger.setLevel(Level.WARNING);
 
-		}
+        if (debug) {
 
-	} // setupLogging
+            logger.setLevel(Level.FINEST);
 
-	// -------------------------------------------------------------------------
-	// Implementation of Reporter interface
+        }
 
-	/**
-	 * Called when a message is to be stored in the report manager.
-	 * 
-	 * @param reportLine
-	 *            The message to store.
-	 */
-	public void message(ReportLine reportLine) {
+    } // setupLogging
 
-	}
+    // -------------------------------------------------------------------------
+    
+    private void deleteTimingsFile() {
+        
+        (new File(TIMINGS_FILE)).delete();
+        
+    }
+    
+    // -------------------------------------------------------------------------
+    // Implementation of Reporter interface
 
-	// ---------------------------------------------------------------------
+    /**
+     * Called when a message is to be stored in the report manager.
+     * 
+     * @param reportLine The message to store.
+     */
+    public void message(ReportLine reportLine) {
 
-	/**
-	 * Called just before a test case is run.
-	 * 
-	 * @param testCase
-	 *            The test case about to be run.
-	 * @param dbre
-	 *            The database which testCase is to be run on, or null of
-	 *            no/several databases.
-	 */
-	public void startTestCase(EnsTestCase testCase, DatabaseRegistryEntry dbre) {
+    }
 
-	}
+    // ---------------------------------------------------------------------
 
-	// ---------------------------------------------------------------------
+    /**
+     * Called just before a test case is run.
+     * 
+     * @param testCase The test case about to be run.
+     * @param dbre The database which testCase is to be run on, or null of no/several databases.
+     */
+    public void startTestCase(EnsTestCase testCase, DatabaseRegistryEntry dbre) {
 
-	/**
-	 * Should be called just after a test case has been run.
-	 * 
-	 * @param testCase
-	 *            The test case that was run.
-	 * @param result
-	 *            The result of testCase.
-	 * @param dbre
-	 *            The database which testCase was run on, or null of no/several
-	 *            databases.
-	 */
-	public void finishTestCase(EnsTestCase testCase, boolean result,
-			DatabaseRegistryEntry dbre) {
+        startTime = System.currentTimeMillis();
 
-	}
+    }
 
-	// ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
 
-	private void parseProperties() {
+    /**
+     * Should be called just after a test case has been run.
+     * 
+     * @param testCase The test case that was run.
+     * @param result The result of testCase.
+     * @param dbre The database which testCase was run on, or null of no/several databases.
+     */
+    public void finishTestCase(EnsTestCase testCase, boolean result, DatabaseRegistryEntry dbre) {
 
-		if (System.getProperty("webtestrunner.groups") == null) {
-			System.err
-					.println("No tests or groups specified in " + configFile);
-			System.exit(1);
-		}
+        long duration = System.currentTimeMillis() - startTime;
 
-		if (System.getProperty("webtestrunner.databases") == null) {
-			System.err.println("No databases specified in " + configFile);
-			System.exit(1);
-		}
+        String str = duration + "\t" + dbre.getName() + "\t" + testCase.getShortTestName() + "\t" + Utils.formatTimeString(duration);
 
-		if (System.getProperty("webtestrunner.file") == null) {
-			System.err.println("No output file specified in " + configFile);
-			System.exit(1);
-		}
+        Utils.writeStringToFile(TIMINGS_FILE, str, true, true);
+        
+    }
 
-	}
+    // ---------------------------------------------------------------------
 
-	// ---------------------------------------------------------------------
+    private void parseProperties() {
 
-	/**
-	 * Get a list of test groups by parsing the appropriate property.
-	 * 
-	 * @return the list of group or test names.
-	 */
-	private List getGroupsFromProperties() {
+        if (System.getProperty("webtestrunner.groups") == null) {
+            System.err.println("No tests or groups specified in " + configFile);
+            System.exit(1);
+        }
 
-		String[] groups = System.getProperty("webtestrunner.groups").split(",");
+        if (System.getProperty("webtestrunner.databases") == null) {
+            System.err.println("No databases specified in " + configFile);
+            System.exit(1);
+        }
 
-		return Arrays.asList(groups);
+        if (System.getProperty("webtestrunner.file") == null) {
+            System.err.println("No output file specified in " + configFile);
+            System.exit(1);
+        }
 
-	}
+    }
 
-	// ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
 
-	/**
-	 * Get a list of databases by parsing the appropriate property.
-	 * 
-	 * @return The list of database names or patterns.
-	 */
-	private List getDatabasesFromProperties() {
+    /**
+     * Get a list of test groups by parsing the appropriate property.
+     * 
+     * @return the list of group or test names.
+     */
+    private List getGroupsFromProperties() {
 
-		String[] dbs = System.getProperty("webtestrunner.databases").split(",");
+        String[] groups = System.getProperty("webtestrunner.groups").split(",");
 
-		return Arrays.asList(dbs);
+        return Arrays.asList(groups);
 
-	}
+    }
 
-	// ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
 
-	private int setOutputLevelFromProperties() {
+    /**
+     * Get a list of databases by parsing the appropriate property.
+     * 
+     * @return The list of database names or patterns.
+     */
+    private List getDatabasesFromProperties() {
 
-		String lstr = System.getProperty("webtestrunner.outputlevel")
-				.toLowerCase();
+        String[] dbs = System.getProperty("webtestrunner.databases").split(",");
 
-		if (lstr.equals("all")) {
-			outputLevel = ReportLine.ALL;
-		} else if (lstr.equals("none")) {
-			outputLevel = ReportLine.NONE;
-		} else if (lstr.equals("problem")) {
-			outputLevel = ReportLine.PROBLEM;
-		} else if (lstr.equals("correct")) {
-			outputLevel = ReportLine.CORRECT;
-		} else if (lstr.equals("warning")) {
-			outputLevel = ReportLine.WARNING;
-		} else if (lstr.equals("info")) {
-			outputLevel = ReportLine.INFO;
-		} else {
-			System.err.println("Output level " + lstr
-					+ " not recognised; using 'all'");
-		}
+        return Arrays.asList(dbs);
 
-		return outputLevel;
+    }
 
-	}
+    // ---------------------------------------------------------------------
 
-	// ---------------------------------------------------------------------
+    private int setOutputLevelFromProperties() {
 
-	/**
-	 * Print formatted output held in outputBuffer to file specified in System
-	 * property file.
-	 */
-	private void printOutput() {
+        String lstr = System.getProperty("webtestrunner.outputlevel").toLowerCase();
 
-		String file = System.getProperty("webtestrunner.file");
+        if (lstr.equals("all")) {
+            outputLevel = ReportLine.ALL;
+        } else if (lstr.equals("none")) {
+            outputLevel = ReportLine.NONE;
+        } else if (lstr.equals("problem")) {
+            outputLevel = ReportLine.PROBLEM;
+        } else if (lstr.equals("correct")) {
+            outputLevel = ReportLine.CORRECT;
+        } else if (lstr.equals("warning")) {
+            outputLevel = ReportLine.WARNING;
+        } else if (lstr.equals("info")) {
+            outputLevel = ReportLine.INFO;
+        } else {
+            System.err.println("Output level " + lstr + " not recognised; using 'all'");
+        }
 
-		try {
+        return outputLevel;
 
-			PrintWriter pw = new PrintWriter(new FileOutputStream(file));
+    }
 
-			printHeader(pw);
+    // ---------------------------------------------------------------------
 
-			printNavigation(pw);
-			
-			printExecutiveSummary(pw);
+    /**
+     * Print formatted output held in outputBuffer to file specified in System property file.
+     */
+    private void printOutput() {
 
-			printSummaryByDatabase(pw);
+        String file = System.getProperty("webtestrunner.file");
 
-			printSummaryByTest(pw);
+        try {
 
-			printReportsByDatabase(pw);
+            PrintWriter pw = new PrintWriter(new FileOutputStream(file));
 
-			printReportsByTest(pw);
+            printHeader(pw);
 
-			printFooter(pw);
-			
-			pw.close();
+            printNavigation(pw);
 
-		} catch (Exception e) {
-			System.err.println("Error writing to " + file);
-			e.printStackTrace();
-		}
+            printExecutiveSummary(pw);
 
-	}
+            printSummaryByDatabase(pw);
 
-	// ---------------------------------------------------------------------
+            printSummaryByTest(pw);
 
-	private void printHeader(PrintWriter pw) {
+            printReportsByDatabase(pw);
+
+            printReportsByTest(pw);
+
+            printFooter(pw);
+
+            pw.close();
+
+        } catch (Exception e) {
+            System.err.println("Error writing to " + file);
+            e.printStackTrace();
+        }
+
+    }
+
+    // ---------------------------------------------------------------------
+
+    private void printHeader(PrintWriter pw) {
 
         print(pw, "<html>");
         print(pw, "<head>");
-		print(pw, "<style type=\"text/css\" media=\"all\">");
-		print(pw, "@import url(http://www.ensembl.org/css/ensembl.css);");
-		print(pw, "@import url(http://www.ensembl.org/css/content.css);");
-		print(pw, "#page ul li { list-style-type:none; list-style-image: none; margin-left: -2em }");
-		print(pw, "</style>");
+        print(pw, "<style type=\"text/css\" media=\"all\">");
+        print(pw, "@import url(http://www.ensembl.org/css/ensembl.css);");
+        print(pw, "@import url(http://www.ensembl.org/css/content.css);");
+        print(pw, "#page ul li { list-style-type:none; list-style-image: none; margin-left: -2em }");
+        print(pw, "</style>");
 
-		print(pw, "<title>" + System.getProperty("webtestrunner.title") + "</title>");
-		print(pw, "</head>");
-		print(pw, "<body>");
+        print(pw, "<title>" + System.getProperty("webtestrunner.title") + "</title>");
+        print(pw, "</head>");
+        print(pw, "<body>");
 
-		print(pw, "<div id='page'><div id='i1'><div id='i2'><div class='sptop'>&nbsp;</div>");
+        print(pw, "<div id='page'><div id='i1'><div id='i2'><div class='sptop'>&nbsp;</div>");
 
-		print(pw, "<div id='release'>" + System.getProperty("webtestrunner.title") + "</div>");
+        print(pw, "<div id='release'>" + System.getProperty("webtestrunner.title") + "</div>");
 
-		print(pw, "<hr>");
+        print(pw, "<hr>");
 
-	}
+    }
 
-	// ---------------------------------------------------------------------
-	private void printReportsByDatabase(PrintWriter pw) {
+    // ---------------------------------------------------------------------
+    private void printReportsByDatabase(PrintWriter pw) {
 
-		print(pw, "<h2>Detailed reports by database</h2>");
+        print(pw, "<h2>Detailed reports by database</h2>");
 
-		Map reportsByDB = ReportManager.getAllReportsByDatabase();
+        Map reportsByDB = ReportManager.getAllReportsByDatabase();
 
-		TreeSet dbs = new TreeSet(reportsByDB.keySet());
-		Iterator it = dbs.iterator();
-		while (it.hasNext()) {
+        TreeSet dbs = new TreeSet(reportsByDB.keySet());
+        Iterator it = dbs.iterator();
+        while (it.hasNext()) {
 
-			String database = (String) it.next();
-			String link = "<a name=\"" + database + "\">";
-			print(pw, "<h3 class='boxed'>" + link + database + "</a></h3>");
+            String database = (String) it.next();
+            String link = "<a name=\"" + database + "\">";
+            print(pw, "<h3 class='boxed'>" + link + database + "</a></h3>");
 
-			print(pw, "<p>");
+            print(pw, "<p>");
 
-			List reports = (List) reportsByDB.get(database);
-			Iterator it2 = reports.iterator();
-			String lastTest = "";
-			while (it2.hasNext()) {
+            List reports = (List) reportsByDB.get(database);
+            Iterator it2 = reports.iterator();
+            String lastTest = "";
+            while (it2.hasNext()) {
 
-				ReportLine line = (ReportLine) it2.next();
-				String test = line.getShortTestCaseName();
+                ReportLine line = (ReportLine) it2.next();
+                String test = line.getShortTestCaseName();
 
-				if (!lastTest.equals("") && !test.equals(lastTest)) {
-					print(pw, "</p><p>");
-				}
-				lastTest = test;
+                if (!lastTest.equals("") && !test.equals(lastTest)) {
+                    print(pw, "</p><p>");
+                }
+                lastTest = test;
 
-				String linkTarget = "<a name=\"" + database + ":" + test
-						+ "\"></a> ";
-				String s = linkTarget + getFontForReport(line) + "<strong>"
-						+ test + ": </strong>" + line.getMessage() + "</font>"
-						+ "<br>";
+                String linkTarget = "<a name=\"" + database + ":" + test + "\"></a> ";
+                String s = linkTarget + getFontForReport(line) + "<strong>" + test + ": </strong>" + line.getMessage() + "</font>" + "<br>";
 
-				print(pw, s);
+                print(pw, s);
 
-			} // while it2
+            } // while it2
 
-			print(pw, "</p>");
+            print(pw, "</p>");
 
-		} // while it
+        } // while it
 
-		print(pw, "<hr>");
+        print(pw, "<hr>");
 
-	}
+    }
 
-	// ---------------------------------------------------------------------
-	private void printReportsByTest(PrintWriter pw) {
+    // ---------------------------------------------------------------------
+    private void printReportsByTest(PrintWriter pw) {
 
-		print(pw, "<h2>Detailed reports by test case</h2>");
+        print(pw, "<h2>Detailed reports by test case</h2>");
 
-		Map reportsByTC = ReportManager.getAllReportsByTestCase();
-		TreeSet dbs = new TreeSet(reportsByTC.keySet());
-		Iterator it = dbs.iterator();
-		while (it.hasNext()) {
+        Map reportsByTC = ReportManager.getAllReportsByTestCase();
+        TreeSet dbs = new TreeSet(reportsByTC.keySet());
+        Iterator it = dbs.iterator();
+        while (it.hasNext()) {
 
-			String test = (String) it.next();
-			String link = "<a name=\"" + test + "\">";
-			print(pw, "<h3 class='boxed'>" + link + test + "</a></h3>");
+            String test = (String) it.next();
+            String link = "<a name=\"" + test + "\">";
+            print(pw, "<h3 class='boxed'>" + link + test + "</a></h3>");
 
-			print(pw, "<p>");
+            print(pw, "<p>");
 
-			List reports = (List) reportsByTC.get(test);
-			Iterator it2 = reports.iterator();
-			String lastDB = "";
-			while (it2.hasNext()) {
+            List reports = (List) reportsByTC.get(test);
+            Iterator it2 = reports.iterator();
+            String lastDB = "";
+            while (it2.hasNext()) {
 
-				ReportLine line = (ReportLine) it2.next();
-				String database = line.getDatabaseName();
+                ReportLine line = (ReportLine) it2.next();
+                String database = line.getDatabaseName();
 
-				if (!lastDB.equals("") && !database.equals(lastDB)) {
-					print(pw, "</p><p>");
-				}
-				lastDB = database;
+                if (!lastDB.equals("") && !database.equals(lastDB)) {
+                    print(pw, "</p><p>");
+                }
+                lastDB = database;
 
-				String linkTarget = "<a name=\"" + line.getShortTestCaseName()
-						+ ":" + database + "\"></a> ";
-				String s = linkTarget + getFontForReport(line) + "<strong>"
-						+ database + ": </strong>" + line.getMessage()
-						+ "</font>" + "<br>";
+                String linkTarget = "<a name=\"" + line.getShortTestCaseName() + ":" + database + "\"></a> ";
+                String s = linkTarget + getFontForReport(line) + "<strong>" + database + ": </strong>" + line.getMessage() + "</font>" + "<br>";
 
-				print(pw, s);
+                print(pw, s);
 
-			} // while it2
+            } // while it2
 
-			print(pw, "</p>");
+            print(pw, "</p>");
 
-		} // while it
+        } // while it
 
-		print(pw, "<hr>");
-	}
+        print(pw, "<hr>");
+    }
 
-	// ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
 
-	private String getFontForReport(ReportLine line) {
+    private String getFontForReport(ReportLine line) {
 
-		String s1 = "";
+        String s1 = "";
 
-		switch (line.getLevel()) {
-		case (ReportLine.PROBLEM):
-			s1 = "<font color='red'>";
-			break;
-		case (ReportLine.WARNING):
-			s1 = "<font color='black'>";
-			break;
-		case (ReportLine.INFO):
-			s1 = "<font color='grey'>";
-			break;
-		case (ReportLine.CORRECT):
-			s1 = "<font color='green'>";
-			break;
-		default:
-			s1 = "<font color='black'>";
-		}
+        switch (line.getLevel()) {
+        case (ReportLine.PROBLEM):
+            s1 = "<font color='red'>";
+            break;
+        case (ReportLine.WARNING):
+            s1 = "<font color='black'>";
+            break;
+        case (ReportLine.INFO):
+            s1 = "<font color='grey'>";
+            break;
+        case (ReportLine.CORRECT):
+            s1 = "<font color='green'>";
+            break;
+        default:
+            s1 = "<font color='black'>";
+        }
 
-		return s1;
+        return s1;
 
-	}
+    }
 
-	// ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
 
-private void printFooter(PrintWriter pw) {
+    private void printFooter(PrintWriter pw) {
 
-		long runTime = System.currentTimeMillis() - startTime;
-		String runStr = Utils.formatTimeString(runTime);
-		print(pw, "<p>Test run was started at "
-				+ new Date(startTime).toString() + " and finished at "
-				+ new Date().toString() + "<br>");
-		print(pw, " Run time " + runStr + "</p>");
+        long runTime = System.currentTimeMillis() - startTime;
+        String runStr = Utils.formatTimeString(runTime);
+        print(pw, "<p>Test run was started at " + new Date(startTime).toString() + " and finished at " + new Date().toString() + "<br>");
+        print(pw, " Run time " + runStr + "</p>");
 
-		print(pw, "<h4>Configuration used:</h4>");
-		print(pw, "<pre>");
-		print(pw, "Tests/groups run:   " + System.getProperty("webtestrunner.groups")      + "<br>");
-		print(pw, "Database host:      " + System.getProperty("host") + ":" + System.getProperty("port") + "<br>");
-		print(pw, "Database names:     " + System.getProperty("webtestrunner.databases")   + "<br>");
-		print(pw, "Output file:        " + System.getProperty("webtestrunner.file")        + "<br>");
-		print(pw, "Output level:       " + System.getProperty("webtestrunner.outputlevel") + "<br>");
-		print(pw, "</pre>");
-		
-		print (pw, "</div>");
-		
-		print(pw, "</body>");
-		print(pw, "</html>");
+        print(pw, "<h4>Configuration used:</h4>");
+        print(pw, "<pre>");
+        print(pw, "Tests/groups run:   " + System.getProperty("webtestrunner.groups") + "<br>");
+        print(pw, "Database host:      " + System.getProperty("host") + ":" + System.getProperty("port") + "<br>");
+        print(pw, "Database names:     " + System.getProperty("webtestrunner.databases") + "<br>");
+        print(pw, "Output file:        " + System.getProperty("webtestrunner.file") + "<br>");
+        print(pw, "Output level:       " + System.getProperty("webtestrunner.outputlevel") + "<br>");
+        print(pw, "</pre>");
 
-		print(pw, "<hr>");
-		
-		
+        print(pw, "</div>");
 
-	}	// ---------------------------------------------------------------------
+        print(pw, "</body>");
+        print(pw, "</html>");
 
-	private void print(PrintWriter pw, String s) {
+        print(pw, "<hr>");
 
-		pw.write(s + "\n");
+    } // ---------------------------------------------------------------------
 
-	}
+    private void print(PrintWriter pw, String s) {
 
-	// ---------------------------------------------------------------------
+        pw.write(s + "\n");
 
-	private void printSummaryByDatabase(PrintWriter pw) {
+    }
 
-		print(pw, "<h2>Summary by database</h2>");
+    // ---------------------------------------------------------------------
 
-		print(pw, "<p><table class='ss'>");
-		print(pw, "<tr><th>Database</th><th>Passed</th><th>Failed</th></tr>");
+    private void printSummaryByDatabase(PrintWriter pw) {
 
-		Map reportsByDB = ReportManager.getAllReportsByDatabase();
-		TreeSet databases = new TreeSet(reportsByDB.keySet());
-		Iterator it = databases.iterator();
-		while (it.hasNext()) {
-			String database = (String) it.next();
-			String link = "<a href=\"#" + database + "\">";
-			int[] passesAndFails = ReportManager
-					.countPassesAndFailsDatabase(database);
-			String s = (passesAndFails[1] == 0) ? passFont() : failFont();
-			String[] t = {
-					link + s + database + "</font></a>",
-					passFont() + passesAndFails[0] + "</font>",
-					failFont() + passesAndFails[1] + "</font>" };
-			printTableLine(pw, t);
-		}
+        print(pw, "<h2>Summary by database</h2>");
 
-		print(pw, "</table></p>");
+        print(pw, "<p><table class='ss'>");
+        print(pw, "<tr><th>Database</th><th>Passed</th><th>Failed</th></tr>");
 
-		print(pw, "<hr>");
+        Map reportsByDB = ReportManager.getAllReportsByDatabase();
+        TreeSet databases = new TreeSet(reportsByDB.keySet());
+        Iterator it = databases.iterator();
+        while (it.hasNext()) {
+            String database = (String) it.next();
+            String link = "<a href=\"#" + database + "\">";
+            int[] passesAndFails = ReportManager.countPassesAndFailsDatabase(database);
+            String s = (passesAndFails[1] == 0) ? passFont() : failFont();
+            String[] t = { link + s + database + "</font></a>", passFont() + passesAndFails[0] + "</font>",
+                    failFont() + passesAndFails[1] + "</font>" };
+            printTableLine(pw, t);
+        }
 
-	}
-
-	// ---------------------------------------------------------------------
-
-	private void printSummaryByTest(PrintWriter pw) {
-
-		print(pw, "<h2>Summary by test</h2>");
+        print(pw, "</table></p>");
 
-		print(pw, "<p><table class='ss'>");
-		print(pw, "<tr><th>Test</th><th>Passed</th><th>Failed</th></tr>");
+        print(pw, "<hr>");
 
-		Map reports = ReportManager.getAllReportsByTestCase();
-		TreeSet tests = new TreeSet(reports.keySet());
-		Iterator it = tests.iterator();
-		while (it.hasNext()) {
-			String test = (String) it.next();
-			String link = "<a href=\"#" + test + "\">";
-			int[] passesAndFails = ReportManager.countPassesAndFailsTest(test);
-			String s = (passesAndFails[1] == 0) ? passFont() : failFont();
-			String[] t = {
-					link + s + test + "</font></a>",
-					passFont() + passesAndFails[0] + "</font>",
-					failFont() + passesAndFails[1] + "</font>" };
-			printTableLine(pw, t);
-		}
+    }
 
-		print(pw, "</table></p>");
+    // ---------------------------------------------------------------------
 
-		print(pw, "<hr>");
+    private void printSummaryByTest(PrintWriter pw) {
 
-	}
+        print(pw, "<h2>Summary by test</h2>");
 
-	// ---------------------------------------------------------------------
+        print(pw, "<p><table class='ss'>");
+        print(pw, "<tr><th>Test</th><th>Passed</th><th>Failed</th></tr>");
 
-	private void printExecutiveSummary(PrintWriter pw) {
+        Map reports = ReportManager.getAllReportsByTestCase();
+        TreeSet tests = new TreeSet(reports.keySet());
+        Iterator it = tests.iterator();
+        while (it.hasNext()) {
+            String test = (String) it.next();
+            String link = "<a href=\"#" + test + "\">";
+            int[] passesAndFails = ReportManager.countPassesAndFailsTest(test);
+            String s = (passesAndFails[1] == 0) ? passFont() : failFont();
+            String[] t = { link + s + test + "</font></a>", passFont() + passesAndFails[0] + "</font>", failFont() + passesAndFails[1] + "</font>" };
+            printTableLine(pw, t);
+        }
 
-		print(pw, "<h2>Summary</h2>");
+        print(pw, "</table></p>");
 
-		int[] result = ReportManager.countPassesAndFailsAll();
+        print(pw, "<hr>");
 
-		StringBuffer s = new StringBuffer();
-		s.append("<p><strong>");
-		s.append(passFont() + result[0] + "</font> tests passed and ");
-		s.append(failFont() + result[1] + "</font> failed out of a total of ");
-		s.append((result[0] + result[1]) + " tests run.</strong></p>");
+    }
 
-		print(pw, s.toString());
+    // ---------------------------------------------------------------------
 
-		print(pw, "<hr>");
+    private void printExecutiveSummary(PrintWriter pw) {
 
-	}
+        print(pw, "<h2>Summary</h2>");
 
-	// ---------------------------------------------------------------------
+        int[] result = ReportManager.countPassesAndFailsAll();
 
-	private void printTableLine(PrintWriter pw, String[] s) {
+        StringBuffer s = new StringBuffer();
+        s.append("<p><strong>");
+        s.append(passFont() + result[0] + "</font> tests passed and ");
+        s.append(failFont() + result[1] + "</font> failed out of a total of ");
+        s.append((result[0] + result[1]) + " tests run.</strong></p>");
 
-		pw.write("<tr>");
+        print(pw, s.toString());
 
-		for (int i = 0; i < s.length; i++) {
-			pw.write("<td>" + s[i] + "</td>");
-		}
-		pw.write("</tr>\n");
+        print(pw, "<hr>");
 
-	}
+    }
 
-	//	 ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
 
-	private void printNavigation(PrintWriter pw) {
-		
-		print(pw,"<div id='related'><div id='related-box'>");
-		
-		print(pw, "<h2>Results by database</h2>");
-		print(pw, "<ul>");
-		
-		Map reportsByDB = ReportManager.getAllReportsByDatabase();
-		TreeSet databases = new TreeSet(reportsByDB.keySet());
-		Iterator it = databases.iterator();
-		while (it.hasNext()) {
-			String database = (String) it.next();
-			String link = "<a href=\"#" + database + "\">";
-			print(pw, "<li>" + link + database + "</a></li>");
-		}
-		print(pw, "</ul>");
-		
-		print(pw, "<h2>Results by test</h2>");
-		print(pw, "<ul>");
-		
-		Map reports = ReportManager.getAllReportsByTestCase();
-		TreeSet tests = new TreeSet(reports.keySet());
-		it = tests.iterator();
-		while (it.hasNext()) {
-			String test = (String)it.next();
-			String name = test.substring(test.lastIndexOf('.') + 1);
-			String link = "<a href=\"#" + test + "\">";
-			print(pw, "<li>" + link + name + "</a></li>");
-		}
-		print(pw, "</ul>");
-		
-		print(pw, "</div></div>");
-	
-	}
-	
-	// ---------------------------------------------------------------------
+    private void printTableLine(PrintWriter pw, String[] s) {
 
-	private String passFont() {
+        pw.write("<tr>");
 
-		return "<font color='green'>";
+        for (int i = 0; i < s.length; i++) {
+            pw.write("<td>" + s[i] + "</td>");
+        }
+        pw.write("</tr>\n");
 
-	}
+    }
 
-	// ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
 
-	private String failFont() {
+    private void printNavigation(PrintWriter pw) {
 
-		return "<font color='red'>";
+        print(pw, "<div id='related'><div id='related-box'>");
 
-	}
-	// ---------------------------------------------------------------------
+        print(pw, "<h2>Results by database</h2>");
+        print(pw, "<ul>");
+
+        Map reportsByDB = ReportManager.getAllReportsByDatabase();
+        TreeSet databases = new TreeSet(reportsByDB.keySet());
+        Iterator it = databases.iterator();
+        while (it.hasNext()) {
+            String database = (String) it.next();
+            String link = "<a href=\"#" + database + "\">";
+            print(pw, "<li>" + link + database + "</a></li>");
+        }
+        print(pw, "</ul>");
+
+        print(pw, "<h2>Results by test</h2>");
+        print(pw, "<ul>");
+
+        Map reports = ReportManager.getAllReportsByTestCase();
+        TreeSet tests = new TreeSet(reports.keySet());
+        it = tests.iterator();
+        while (it.hasNext()) {
+            String test = (String) it.next();
+            String name = test.substring(test.lastIndexOf('.') + 1);
+            String link = "<a href=\"#" + test + "\">";
+            print(pw, "<li>" + link + name + "</a></li>");
+        }
+        print(pw, "</ul>");
+
+        print(pw, "</div></div>");
+
+    }
+
+    // ---------------------------------------------------------------------
+
+    private String passFont() {
+
+        return "<font color='green'>";
+
+    }
+
+    // ---------------------------------------------------------------------
+
+    private String failFont() {
+
+        return "<font color='red'>";
+
+    }
+    // ---------------------------------------------------------------------
 
 } // WebTestRunner
