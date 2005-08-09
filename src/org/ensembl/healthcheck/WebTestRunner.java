@@ -45,7 +45,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
     private long startTime;
 
     private static String TIMINGS_FILE = "timings.txt";
-    
+
     // ---------------------------------------------------------------------
     /**
      * Main run method.
@@ -54,8 +54,8 @@ public class WebTestRunner extends TestRunner implements Reporter {
      */
     private void run(String[] args) {
 
-        //deleteTimingsFile();
-        
+        // deleteTimingsFile();
+
         ReportManager.setReporter(this);
 
         parseCommandLine(args);
@@ -167,13 +167,13 @@ public class WebTestRunner extends TestRunner implements Reporter {
     } // setupLogging
 
     // -------------------------------------------------------------------------
-    
+
     private void deleteTimingsFile() {
-        
+
         (new File(TIMINGS_FILE)).delete();
-        
+
     }
-    
+
     // -------------------------------------------------------------------------
     // Implementation of Reporter interface
 
@@ -213,10 +213,12 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
         long duration = System.currentTimeMillis() - startTime;
 
-        String str = duration + "\t" + dbre.getName() + "\t" + testCase.getShortTestName() + "\t" + Utils.formatTimeString(duration);
+        String str = duration + "\t" + dbre.getName();
+        str += "\t" + testCase.getShortTestName();
+        str += "\t" + Utils.formatTimeString(duration);
 
         Utils.writeStringToFile(TIMINGS_FILE, str, true, true);
-        
+
     }
 
     // ---------------------------------------------------------------------
