@@ -213,9 +213,12 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
         long duration = System.currentTimeMillis() - startTime;
 
-        String str = duration + "\t" + dbre.getName();
-        str += "\t" + testCase.getShortTestName();
-        str += "\t" + Utils.formatTimeString(duration);
+        String str = duration + "\t";
+        if (dbre != null) {
+            str += dbre.getName() + "\t";
+        }
+        str += testCase.getShortTestName() + "\t";
+        str += Utils.formatTimeString(duration);
 
         Utils.writeStringToFile(TIMINGS_FILE, str, true, true);
 
