@@ -84,6 +84,11 @@ public class FeatureCoords extends SingleDatabaseTestCase {
             }
             
             // ------------------------
+            
+            // skip large tables as this test takes an inordinately long time
+            if (tableName.equals("protein_align_feature") || tableName.equals("dna_align_feature") || tableName.equals("repeat_feature")) {
+                continue;
+            }
             logger.info("Checking " + tableName + " for end > length");
             sql = "SELECT COUNT(*) FROM " + tableName + " f, seq_region s WHERE f.seq_region_id = s.seq_region_id AND f.seq_region_end > s.length";
             rows = getRowCount(con, sql);
@@ -93,7 +98,6 @@ public class FeatureCoords extends SingleDatabaseTestCase {
             } else {
                 ReportManager.correct(this, con, "All rows in " + tableName + " have sensible lengths");
             }
-            
             
         } // foreach table
 
