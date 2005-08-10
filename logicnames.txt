@@ -28,6 +28,7 @@ FirstEF
 flybase
 from
 gap
+geneDensity
 GeneFinder
 GENEWISE
 genomewise
@@ -37,6 +38,7 @@ human_cdna
 human_est
 human_refseq
 human_protein
+knownGeneDensity
 marker
 matepairs
 mouse_cdna
@@ -50,6 +52,8 @@ other_cdna
 other_est
 other_protein
 peptides_bdgp
+PercentageRepeat
+PercentageGC
 Pfam
 pfscan
 PRINTS
