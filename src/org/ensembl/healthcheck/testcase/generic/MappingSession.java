@@ -54,7 +54,8 @@ public class MappingSession extends SingleDatabaseTestCase {
         removeAppliesToType(DatabaseType.EST);
         removeAppliesToType(DatabaseType.ESTGENE);
         removeAppliesToType(DatabaseType.VEGA);
-
+        removeAppliesToType(DatabaseType.CDNA);
+        
     }
 
     /**
