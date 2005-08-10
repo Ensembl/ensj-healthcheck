@@ -28,9 +28,8 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * An EnsEMBL Healthcheck test case which checks if any genes
- * are obvious duplicates of each other (it might be all OK,
- * but it's worth a look!)
+ * An EnsEMBL Healthcheck test case which checks if any genes are obvious duplicates of each other (it might be all OK, but it's
+ * worth a look!)
  */
 
 public class DuplicateGenes extends SingleDatabaseTestCase {
@@ -46,7 +45,7 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
         addToGroup("release");
 
     }
-    
+
     /**
      * This test only applies to core and Vega databases.
      */
@@ -54,14 +53,14 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 
         removeAppliesToType(DatabaseType.EST);
         removeAppliesToType(DatabaseType.CDNA);
-        
+
     }
-    
+
     /**
      * Check for (strongly likely to be) duplicate genes.
      * 
      * @param dbre
-     *          The database to check.
+     *            The database to check.
      * @return True if the test passes.
      */
 
@@ -74,14 +73,13 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 
         Connection con = dbre.getConnection();
         try {
-            
-            Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY,
-                    java.sql.ResultSet.CONCUR_READ_ONLY);
+
+            Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
             stmt.setFetchSize(1000);
             ResultSet rs = stmt.executeQuery(sql);
 
             int geneStart, geneEnd, geneChromosome, geneId, geneStrand;
-            int lastGeneId=0;
+            int lastGeneId = 0;
             int lastGeneStart = -1;
             int lastGeneEnd = -1;
             int lastGeneChromosome = -1;
@@ -100,9 +98,12 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
                 geneStrand = rs.getInt(5);
 
                 if (!first) {
-                    if (lastGeneChromosome == geneChromosome && lastGeneStart == geneStart && lastGeneEnd == geneEnd && lastGeneStrand == geneStrand) {
+                    if (lastGeneChromosome == geneChromosome && lastGeneStart == geneStart && lastGeneEnd == geneEnd
+                            && lastGeneStrand == geneStrand) {
                         duplicateGene++;
-                        ReportManager.warning(this, con, "Gene " + geneId + " is duplicated - see gene "+lastGeneId);
+                        if (duplicateGene < MAX_WARNINGS) {
+                            ReportManager.warning(this, con, "Gene " + geneId + " is duplicated - see gene " + lastGeneId);
+                        }
                     }
                 } else {
                     first = false;
@@ -113,7 +114,7 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
                 lastGeneEnd = geneEnd;
                 lastGeneChromosome = geneChromosome;
                 lastGeneStrand = geneStrand;
-                
+
             } // while rs
 
             if (duplicateGene > 0) {
