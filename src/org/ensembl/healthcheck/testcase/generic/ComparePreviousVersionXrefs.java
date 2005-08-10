@@ -30,7 +30,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 public class ComparePreviousVersionXrefs extends SingleDatabaseTestCase {
 
-    private static final double THRESHOLD = 0.8; // if old/new xrefs less than this, fail
+    private static final double THRESHOLD = 0.78; // if old/new xrefs less than this, fail
     
     /**
      * Create a new XrefTypes testcase.
