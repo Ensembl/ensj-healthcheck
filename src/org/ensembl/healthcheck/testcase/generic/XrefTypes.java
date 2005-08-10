@@ -23,12 +23,12 @@ import java.sql.SQLException;
 import java.sql.ResultSet;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that all xrefs for a particular external_db map to one
- * and only one ensembl object type.
+ * Check that all xrefs for a particular external_db map to one and only one ensembl object type.
  */
 
 public class XrefTypes extends SingleDatabaseTestCase {
@@ -40,8 +40,18 @@ public class XrefTypes extends SingleDatabaseTestCase {
 
         addToGroup("post_genebuild");
         addToGroup("release");
-	addToGroup("core_xrefs");
+        addToGroup("core_xrefs");
         setDescription("Check that all xrefs only map to one ensembl object type.");
+
+    }
+
+    /**
+     * This only applies to core and Vega databases.
+     */
+    public void types() {
+
+        removeAppliesToType(DatabaseType.EST);
+        removeAppliesToType(DatabaseType.CDNA);
 
     }
 
@@ -49,61 +59,62 @@ public class XrefTypes extends SingleDatabaseTestCase {
      * Run the test.
      * 
      * @param dbre
-     *          The database to use.
+     *            The database to use.
      * @return true if the test pased.
-     *  
+     * 
      */
     public boolean run(DatabaseRegistryEntry dbre) {
 
         boolean result = true;
-        
-	Connection con = dbre.getConnection();
 
-	try {
+        Connection con = dbre.getConnection();
 
-	    Statement stmt = con.createStatement();
+        try {
 
-	    // Query returns all external_db_id-object type relations
-	    // execute it and loop over each row checking for > 1 consecutive row with same ID
-	    
-	    ResultSet rs = stmt.executeQuery("SELECT x.external_db_id, ox.ensembl_object_type, COUNT(*), e.db_name FROM xref x, object_xref ox, external_db e WHERE x.xref_id = ox.xref_id AND e.external_db_id = x.external_db_id GROUP BY x.external_db_id, ox.ensembl_object_type");
-	    
-	    long previousID = -1;
-	    String previousType = "";
+            Statement stmt = con.createStatement();
 
-	    while (rs != null && rs.next()) {
-		
-		long externalDBID = rs.getLong(1);
-		String objectType = rs.getString(2);
-		int count = rs.getInt(3);
-		String externalDBName = rs.getString(4);
+            // Query returns all external_db_id-object type relations
+            // execute it and loop over each row checking for > 1 consecutive row with same ID
 
-		if (externalDBID == previousID) {
-		    
-		    ReportManager.problem(this, con, "External DB with ID " + externalDBID + " (" + externalDBName + ") is associated with " + objectType + " as well as " + previousType);
-		    result = false;
-		    
-		}
-		
-		previousType = objectType;
-		previousID = externalDBID;
+            ResultSet rs = stmt
+                    .executeQuery("SELECT x.external_db_id, ox.ensembl_object_type, COUNT(*), e.db_name FROM xref x, object_xref ox, external_db e WHERE x.xref_id = ox.xref_id AND e.external_db_id = x.external_db_id GROUP BY x.external_db_id, ox.ensembl_object_type");
 
-	    } // while rs
-	 
+            long previousID = -1;
+            String previousType = "";
 
-	    stmt.close();
+            while (rs != null && rs.next()) {
 
-	} catch (SQLException e) {
+                long externalDBID = rs.getLong(1);
+                String objectType = rs.getString(2);
+                int count = rs.getInt(3);
+                String externalDBName = rs.getString(4);
+
+                if (externalDBID == previousID) {
+
+                    ReportManager.problem(this, con, "External DB with ID " + externalDBID + " (" + externalDBName
+                            + ") is associated with " + objectType + " as well as " + previousType);
+                    result = false;
+
+                }
+
+                previousType = objectType;
+                previousID = externalDBID;
+
+            } // while rs
+
+            stmt.close();
+
+        } catch (SQLException e) {
             e.printStackTrace();
-	}
+        }
 
-	if (result) {
+        if (result) {
 
-	    ReportManager.correct(this, con, "All external dbs are only associated with one Ensembl object type");
-	    
-	}
+            ReportManager.correct(this, con, "All external dbs are only associated with one Ensembl object type");
 
-	return result;
+        }
+
+        return result;
 
     } // run
 

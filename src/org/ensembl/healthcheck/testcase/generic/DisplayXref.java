@@ -35,7 +35,7 @@ public class DisplayXref extends SingleDatabaseTestCase {
 
         addToGroup("post_genebuild");
         addToGroup("release");
-	addToGroup("core_xrefs");
+        addToGroup("core_xrefs");
         setDescription("Check that display_xrefs are set OK");
 
     }
@@ -47,15 +47,17 @@ public class DisplayXref extends SingleDatabaseTestCase {
 
         removeAppliesToType(DatabaseType.EST);
         removeAppliesToType(DatabaseType.ESTGENE);
+        removeAppliesToType(DatabaseType.CDNA);
 
     }
 
     /**
      * Run the test.
      * 
-     * @param dbre The database to use.
+     * @param dbre
+     *            The database to use.
      * @return true if the test pased.
-     *  
+     * 
      */
     public boolean run(DatabaseRegistryEntry dbre) {
 
@@ -77,11 +79,11 @@ public class DisplayXref extends SingleDatabaseTestCase {
         }
 
         if (result) {
-        
+
             ReportManager.correct(this, con, "All display_xrefs OK");
-            
+
         }
-        
+
         return result;
 
     } // run

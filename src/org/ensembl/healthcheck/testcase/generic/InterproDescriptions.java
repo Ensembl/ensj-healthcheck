@@ -48,7 +48,8 @@ public class InterproDescriptions extends SingleDatabaseTestCase {
 
         removeAppliesToType(DatabaseType.EST);
         removeAppliesToType(DatabaseType.ESTGENE);
-
+        removeAppliesToType(DatabaseType.CDNA);
+        
     }
 
     /**

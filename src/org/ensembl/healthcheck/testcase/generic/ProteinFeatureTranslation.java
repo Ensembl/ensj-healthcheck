@@ -37,8 +37,7 @@ import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.IntegerComparator;
 
 /**
- * An EnsEMBL Healthcheck test case which checks that the protein_feature table
- * agrees with the translation table.
+ * An EnsEMBL Healthcheck test case which checks that the protein_feature table agrees with the translation table.
  */
 
 public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements Repair {
@@ -48,15 +47,14 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
     private Map featuresToDelete;
 
     /**
-     * Create an ProteinFeatureTranslationTestCase that applies to a specific
-     * set of databases.
+     * Create an ProteinFeatureTranslationTestCase that applies to a specific set of databases.
      */
     public ProteinFeatureTranslation() {
 
         addToGroup("post_genebuild");
         addToGroup("release");
         featuresToDelete = new HashMap();
-	setFailureText("Large numbers of features longer than the translation indicate something is wrong. A few is probably OK");
+        setFailureText("Large numbers of features longer than the translation indicate something is wrong. A few is probably OK");
 
     }
 
@@ -67,15 +65,15 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
 
         removeAppliesToType(DatabaseType.EST);
         removeAppliesToType(DatabaseType.ESTGENE);
+        removeAppliesToType(DatabaseType.CDNA);
 
     }
-    
+
     /**
-     * Builds a cache of the translation lengths, then compares them with the
-     * values in the protein_features table.
+     * Builds a cache of the translation lengths, then compares them with the values in the protein_features table.
      * 
      * @param dbre
-     *          The database to use.
+     *            The database to use.
      * @return Result.
      */
 
@@ -87,9 +85,9 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
         String sql = "SELECT t.transcript_id, e.exon_id, tl.start_exon_id, "
                 + "       tl.translation_id, tl.end_exon_id, tl.seq_start, "
                 + "       tl.seq_end, e.seq_region_start, e.seq_region_end "
-                + "FROM   transcript t, exon_transcript et, exon e, translation tl "
-                + "WHERE  t.transcript_id = et.transcript_id " + "AND    et.exon_id = e.exon_id "
-                + "AND    t.transcript_id = tl.transcript_id " + "ORDER  BY t.transcript_id, et.rank";
+                + "FROM   transcript t, exon_transcript et, exon e, translation tl " + "WHERE  t.transcript_id = et.transcript_id "
+                + "AND    et.exon_id = e.exon_id " + "AND    t.transcript_id = tl.transcript_id "
+                + "ORDER  BY t.transcript_id, et.rank";
 
         try {
 
@@ -113,8 +111,7 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
             // To do this, the following two lines are both necessary.
             // See the README file for the mm MySQL driver.
 
-            Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY,
-                    java.sql.ResultSet.CONCUR_READ_ONLY);
+            Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
             stmt.setFetchSize(1000);
 
             Map translationLengths = new HashMap();
@@ -161,7 +158,7 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
                         int currentLength = ((Integer) translationLengths.get(id)).intValue();
                         currentLength += (rs.getInt("seq_region_end") - rs.getInt("seq_region_start")) + 1;
                         translationLengths.put(id, new Integer(currentLength));
-                        //inCodingRegion = false;
+                        // inCodingRegion = false;
 
                     }
                 } // if inCoding
@@ -177,7 +174,7 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
             stmt.setFetchSize(1000);
 
             logger.fine("Built translation length cache, about to look at protein features");
-            //dumpTranslationLengths(con, translationLengths, 100);
+            // dumpTranslationLengths(con, translationLengths, 100);
 
             // find protein features where seq_end is > than the length of the
             // translation
@@ -192,16 +189,16 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
                 if (translationLengths.get(translationID) != null) {
                     // some codons can only be 2 bp
                     int minTranslationLength = (((Integer) translationLengths.get(translationID)).intValue() + 2) / 3;
-                    //int minTranslationLength = ((Integer)
+                    // int minTranslationLength = ((Integer)
                     // translationLengths.get(translationID)).intValue();
                     if (rs.getInt("seq_end") > minTranslationLength) {
                         result = false;
                         thisDBFeatures.add(proteinFeatureID);
-			//System.out.println("proteinFeatureID: " + proteinFeatureID);
+                        // System.out.println("proteinFeatureID: " + proteinFeatureID);
                     }
                 } else {
-                    ReportManager.problem(this, con, "Protein feature " + proteinFeatureID
-                            + " refers to non-existent translation " + translationID);
+                    ReportManager.problem(this, con, "Protein feature " + proteinFeatureID + " refers to non-existent translation "
+                            + translationID);
                 }
             }
 
@@ -210,8 +207,7 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
                 ReportManager.problem(this, con, "protein_feature table has " + thisDBFeatures.size()
                         + " features that are longer than the translation");
             } else {
-                ReportManager.correct(this, con,
-                        "protein_feature_table has no features that are longer than the translation");
+                ReportManager.correct(this, con, "protein_feature_table has no features that are longer than the translation");
             }
 
             rs.close();
@@ -229,12 +225,11 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
     // Implementation of Repair interface.
 
     /**
-     * Delete any protein features that run past the end of the translation.
-     * <strong>CAUTION! </strong>Actually deletes the features from the
-     * protein_feature table.
+     * Delete any protein features that run past the end of the translation. <strong>CAUTION! </strong>Actually deletes the features
+     * from the protein_feature table.
      * 
      * @param dbre
-     *          The database to use.
+     *            The database to use.
      */
     public void repair(DatabaseRegistryEntry dbre) {
 
@@ -247,7 +242,7 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
                 Statement stmt = con.createStatement();
                 System.out.println(DBUtils.getShortDatabaseName(con));
                 System.out.println(sql);
-                //stmt.execute(sql);
+                // stmt.execute(sql);
                 stmt.close();
             } catch (SQLException se) {
                 se.printStackTrace();
@@ -260,7 +255,7 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
      * Show which protein features would be deleted by the repair method.
      * 
      * @param dbre
-     *          The database to use.
+     *            The database to use.
      */
     public void show(DatabaseRegistryEntry dbre) {
 
@@ -280,9 +275,8 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
      * Set up the SQL to delete the offending protein features.
      * 
      * @param con
-     *          The database connection to use.
-     * @return The SQL to delete the incorrect protein features, or "" if there
-     *         are no problems.
+     *            The database connection to use.
+     * @return The SQL to delete the incorrect protein features, or "" if there are no problems.
      */
     private String setupRepairSQL(Connection con) {
 

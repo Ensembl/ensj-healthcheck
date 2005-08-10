@@ -25,9 +25,8 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Checks the *_stable_id tables to ensure they are populated, have no orphan
- * references, and have valid versions. Also prints some examples from the
- * table for checking by eye.
+ * Checks the *_stable_id tables to ensure they are populated, have no orphan references, and have valid versions. Also prints some
+ * examples from the table for checking by eye.
  * 
  * <p>
  * Group is <b>check_stable_ids </b>
@@ -54,16 +53,17 @@ public class StableID extends SingleDatabaseTestCase {
     public void types() {
 
         removeAppliesToType(DatabaseType.EST);
+        removeAppliesToType(DatabaseType.CDNA);
 
     }
-    
+
     /**
      * Run the test.
      * 
      * @param dbre
-     *          The database to use.
+     *            The database to use.
      * @return true if the test pased.
-     *  
+     * 
      */
     public boolean run(DatabaseRegistryEntry dbre) {
 
@@ -80,15 +80,14 @@ public class StableID extends SingleDatabaseTestCase {
     }
 
     /**
-     * Checks that the typeName_stable_id table is valid. The table is valid if
-     * it has >0 rows, and there are no orphan references between typeName
-     * table and typeName_stable_id. Also prints some example data from the
-     * typeName_stable_id table via ReportManager.info().
+     * Checks that the typeName_stable_id table is valid. The table is valid if it has >0 rows, and there are no orphan references
+     * between typeName table and typeName_stable_id. Also prints some example data from the typeName_stable_id table via
+     * ReportManager.info().
      * 
      * @param con
-     *          connection to run quries on.
+     *            connection to run quries on.
      * @param typeName
-     *          name of the type to check, e.g. "exon"
+     *            name of the type to check, e.g. "exon"
      * @return true if the table and references are valid, otherwise false.
      */
     public boolean checkStableIDs(Connection con, String typeName) {
@@ -105,13 +104,12 @@ public class StableID extends SingleDatabaseTestCase {
         }
 
         // print a few rows so we can check by eye that the table looks ok
-        //DBUtils.printRows(this, con, "select * from " + stableIDtable + " limit 10;");
+        // DBUtils.printRows(this, con, "select * from " + stableIDtable + " limit 10;");
 
         // look for orphans between type and type_stable_id tables
         int orphans = countOrphans(con, typeName, typeName + "_id", stableIDtable, typeName + "_id", false);
         if (orphans > 0) {
-            ReportManager.problem(this, con, "Orphan references between " + typeName + " and " + typeName
-                    + "_stable_id tables.");
+            ReportManager.problem(this, con, "Orphan references between " + typeName + " and " + typeName + "_stable_id tables.");
             result = false;
         }
 
@@ -136,7 +134,7 @@ public class StableID extends SingleDatabaseTestCase {
         } else {
             ReportManager.correct(this, con, "No duplicate stable IDs in " + stableIDtable);
         }
-        
+
         return result;
     }
 
