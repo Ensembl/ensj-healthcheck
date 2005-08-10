@@ -110,5 +110,7 @@ ncRNA
 tRNA
 xlaevis_EST
 xlaevis_cDNA
+XrefExonerateDNA
+XrefExonerateProtein
 xtrop_cDNA
 xtrop_cluster
