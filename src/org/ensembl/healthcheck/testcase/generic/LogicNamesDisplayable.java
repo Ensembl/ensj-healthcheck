@@ -119,7 +119,8 @@ public class LogicNamesDisplayable extends SingleDatabaseTestCase {
         for (int t = 0; t < tablesWithAnalysisID.length; t++) {
             String featureTableName = tablesWithAnalysisID[t];
             // skip large tables as this test takes an inordinately long time
-            if (featureTableName.equals("protein_align_feature") || featureTableName.equals("dna_align_feature") || featureTableName.equals("repeat_feature")) {
+            // also identity_xref which isn't really a feature table
+            if (featureTableName.equals("protein_align_feature") || featureTableName.equals("dna_align_feature") || featureTableName.equals("repeat_feature") || featureTableName.equals("identity_xref")) {
                 continue;
             }
             logger.finest("Analysing features in " + featureTableName);
