@@ -53,13 +53,14 @@ other_est
 other_protein
 peptides_bdgp
 PercentageRepeat
-PercentageGC
+PercentGC
 Pfam
 pfscan
 PRINTS
 PROFILE
 PROSITE
 pseudogene
+snpDensity
 wormbase
 qtl
 rat_cdna
