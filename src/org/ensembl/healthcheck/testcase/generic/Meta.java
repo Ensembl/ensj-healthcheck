@@ -100,8 +100,14 @@ public class Meta extends SingleDatabaseTestCase {
             String lowestRankCS = getRowColumnValue(con,
                     "SELECT version FROM coord_system WHERE version IS NOT NULL ORDER BY rank DESC LIMIT 1");
             if (!lowestRankCS.equals(metaTableAssemblyDefault)) {
+                if (lowestRankCS.length() > 0) {
                 ReportManager.problem(this, con, "assembly.default from meta table is " + metaTableAssemblyDefault
                         + " but lowest ranked coordinate system has version " + lowestRankCS);
+                } else {
+                    
+                    ReportManager.problem(this, con, "assembly.default from meta table is " + metaTableAssemblyDefault
+                            + " but lowest ranked coordinate system has blank or missing version");
+                }
             }
 
             // ----------------------------------------
