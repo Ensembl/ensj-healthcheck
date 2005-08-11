@@ -42,7 +42,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
     private String configFile = "web.properties";
 
-    private long startTime;
+    private long testStartTime, appStartTime;
 
     private static String TIMINGS_FILE = "timings.txt";
 
@@ -56,6 +56,8 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
         // deleteTimingsFile();
 
+        appStartTime = System.currentTimeMillis();
+        
         ReportManager.setReporter(this);
 
         parseCommandLine(args);
@@ -196,7 +198,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
      */
     public void startTestCase(EnsTestCase testCase, DatabaseRegistryEntry dbre) {
 
-        startTime = System.currentTimeMillis();
+        testStartTime = System.currentTimeMillis();
 
     }
 
@@ -211,7 +213,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
      */
     public void finishTestCase(EnsTestCase testCase, boolean result, DatabaseRegistryEntry dbre) {
 
-        long duration = System.currentTimeMillis() - startTime;
+        long duration = System.currentTimeMillis() - testStartTime;
 
         String str = duration + "\t";
         if (dbre != null) {
@@ -482,9 +484,9 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
     private void printFooter(PrintWriter pw) {
 
-        long runTime = System.currentTimeMillis() - startTime;
+        long runTime = System.currentTimeMillis() - appStartTime;
         String runStr = Utils.formatTimeString(runTime);
-        print(pw, "<p>Test run was started at " + new Date(startTime).toString() + " and finished at " + new Date().toString() + "<br>");
+        print(pw, "<p>Test run was started at " + new Date(testStartTime).toString() + " and finished at " + new Date().toString() + "<br>");
         print(pw, " Run time " + runStr + "</p>");
 
         print(pw, "<h4>Configuration used:</h4>");
