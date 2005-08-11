@@ -243,7 +243,6 @@ public class CompareSchema extends MultiDatabaseTestCase {
 
             ResultSet rs1 = s1.executeQuery("SHOW INDEX FROM " + table1);
             ResultSet rs2 = s2.executeQuery("SHOW INDEX FROM " + table2);
-            ResultSetMetaData rsmd = rs1.getMetaData();
 
             // read ResultSets into concatenated Strings, then sort and compare
             // this wouldn't be necessary if we could ORDER BY in SHOW INDEX
