@@ -1037,12 +1037,12 @@ public abstract class EnsTestCase {
         // Parse the file first in case there are problems
         SQLParser sqlParser = new SQLParser();
 
-        try {
-            List sqlCommands = sqlParser.parse(fileName);
-            // sqlParser.printLines();
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
-        }
+        // try {
+        // List sqlCommands = sqlParser.parse(fileName);
+        // // sqlParser.printLines();
+        // } catch (FileNotFoundException fnfe) {
+        // fnfe.printStackTrace();
+        //        }
 
         // ----------------------------------------------------
         // create the database
