@@ -21,12 +21,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
@@ -34,7 +32,6 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.Repair;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
-import org.ensembl.healthcheck.util.IntegerComparator;
 
 /**
  * An EnsEMBL Healthcheck test case which checks that the protein_feature table agrees with the translation table.
@@ -303,28 +300,28 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
 
     // -------------------------------------------------------------------------
 
-    private void dumpTranslationLengths(Connection con, Map lengths, int maxID) {
-
-        System.out.println("Translation lengths for " + DBUtils.getShortDatabaseName(con));
-
-        Set keySet = lengths.keySet();
-        List keyList = new ArrayList(keySet);
-        Collections.sort(keyList, new IntegerComparator());
-
-        Iterator it = keyList.iterator();
-        while (it.hasNext()) {
-
-            Integer iid = (Integer) it.next();
-            int id = iid.intValue();
-            if (id > maxID) {
-                break;
-            }
-            Integer iLength = (Integer) lengths.get(iid);
-            int length = iLength.intValue();
-            System.out.println("ID: " + id + "\tLength: " + length);
-        }
-
-    }
+    // private void dumpTranslationLengths(Connection con, Map lengths, int maxID) {
+    //
+    // System.out.println("Translation lengths for " + DBUtils.getShortDatabaseName(con));
+    //
+    // Set keySet = lengths.keySet();
+    // List keyList = new ArrayList(keySet);
+    // Collections.sort(keyList, new IntegerComparator());
+    //
+    // Iterator it = keyList.iterator();
+    // while (it.hasNext()) {
+    //
+    // Integer iid = (Integer) it.next();
+    // int id = iid.intValue();
+    // if (id > maxID) {
+    // break;
+    // }
+    // Integer iLength = (Integer) lengths.get(iid);
+    // int length = iLength.intValue();
+    // System.out.println("ID: " + id + "\tLength: " + length);
+    //        }
+    //
+    //    }
 
     // -------------------------------------------------------------------------
 
