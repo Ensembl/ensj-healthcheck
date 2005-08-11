@@ -1,17 +1,14 @@
 /*
  * Copyright (C) 2004 EBI, GRL
  * 
- * This library is free software; you can redistribute it and/or modify it under the terms of the
- * GNU Lesser General Public License as published by the Free Software Foundation; either version
- * 2.1 of the License, or (at your option) any later version.
+ * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.
  * 
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
  * 
- * You should have received a copy of the GNU Lesser General Public License along with this library;
- * if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
- * 02111-1307 USA
+ * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation,
+ * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
 package org.ensembl.healthcheck.testcase.generic;
@@ -28,8 +25,8 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.Utils;
 
 /**
- * Checks the metadata table to make sure it is OK. Only one meta table at a time is done here;
- * checks for the consistency of the meta table across species are done in MetaCrossSpecies.
+ * Checks the metadata table to make sure it is OK. Only one meta table at a time is done here; checks for the consistency of the meta table across
+ * species are done in MetaCrossSpecies.
  */
 public class Meta extends SingleDatabaseTestCase {
 
@@ -73,7 +70,7 @@ public class Meta extends SingleDatabaseTestCase {
 
         result &= checkGenebuildVersion(con);
 
-	result &= checkCoordSystemTableCases(con);
+        result &= checkCoordSystemTableCases(con);
 
         // ----------------------------------------
         // Use an AssemblyNameInfo object to get the assembly information
@@ -88,8 +85,7 @@ public class Meta extends SingleDatabaseTestCase {
         String metaTableAssemblyPrefix = assembly.getMetaTableAssemblyPrefix();
         logger.finest("meta table assembly prefix: " + metaTableAssemblyPrefix);
 
-        if (metaTableAssemblyVersion == null || metaTableAssemblyDefault == null || metaTableAssemblyPrefix == null
-                || dbNameAssemblyVersion == null) {
+        if (metaTableAssemblyVersion == null || metaTableAssemblyDefault == null || metaTableAssemblyPrefix == null || dbNameAssemblyVersion == null) {
 
             ReportManager.problem(this, con, "Cannot get all information from meta table - check for null values");
 
@@ -97,14 +93,13 @@ public class Meta extends SingleDatabaseTestCase {
 
             // check that assembly.default matches the version of the coord_system with the lowest
             // rank value
-            String lowestRankCS = getRowColumnValue(con,
-                    "SELECT version FROM coord_system WHERE version IS NOT NULL ORDER BY rank DESC LIMIT 1");
+            String lowestRankCS = getRowColumnValue(con, "SELECT version FROM coord_system WHERE version IS NOT NULL ORDER BY rank DESC LIMIT 1");
             if (!lowestRankCS.equals(metaTableAssemblyDefault)) {
                 if (lowestRankCS.length() > 0) {
-                ReportManager.problem(this, con, "assembly.default from meta table is " + metaTableAssemblyDefault
-                        + " but lowest ranked coordinate system has version " + lowestRankCS);
+                    ReportManager.problem(this, con, "assembly.default from meta table is " + metaTableAssemblyDefault
+                            + " but lowest ranked coordinate system has version " + lowestRankCS);
                 } else {
-                    
+
                     ReportManager.problem(this, con, "assembly.default from meta table is " + metaTableAssemblyDefault
                             + " but lowest ranked coordinate system has blank or missing version");
                 }
@@ -116,7 +111,8 @@ public class Meta extends SingleDatabaseTestCase {
             Species dbSpecies = dbre.getSpecies();
             String correctPrefix = Species.getAssemblyPrefixForSpecies(dbSpecies);
             if (!metaTableAssemblyPrefix.toUpperCase().startsWith(correctPrefix.toUpperCase())) {
-                ReportManager.problem(this, con, "Database species is " + dbSpecies + " but assembly prefix " + metaTableAssemblyPrefix + " should have prefix beginning with " + correctPrefix);
+                ReportManager.problem(this, con, "Database species is " + dbSpecies + " but assembly prefix " + metaTableAssemblyPrefix
+                        + " should have prefix beginning with " + correctPrefix);
                 result = false;
             } else {
                 ReportManager.correct(this, con, "Meta table assembly prefix (" + metaTableAssemblyPrefix + ") is correct for " + dbSpecies);
@@ -129,7 +125,7 @@ public class Meta extends SingleDatabaseTestCase {
 
     } // run
 
-    //---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
 
     private boolean checkTableExists(Connection con) {
 
@@ -146,7 +142,7 @@ public class Meta extends SingleDatabaseTestCase {
 
     }
 
-    //---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
 
     private boolean tableHasRows(Connection con) {
 
@@ -164,14 +160,14 @@ public class Meta extends SingleDatabaseTestCase {
 
     }
 
-    //---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
 
     private boolean checkKeysPresent(Connection con) {
 
         boolean result = true;
 
         // check that there are species, classification and taxonomy_id entries
-        String[] metaKeys = {"assembly.default", "species.classification", "species.common_name", "species.taxonomy_id"};
+        String[] metaKeys = { "assembly.default", "species.classification", "species.common_name", "species.taxonomy_id" };
         for (int i = 0; i < metaKeys.length; i++) {
             String metaKey = metaKeys[i];
             int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey + "'");
@@ -186,7 +182,7 @@ public class Meta extends SingleDatabaseTestCase {
         return result;
     }
 
-    //---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
 
     private boolean checkSpeciesClassification(DatabaseRegistryEntry dbre) {
 
@@ -197,7 +193,7 @@ public class Meta extends SingleDatabaseTestCase {
 
         // Check that species.classification matches database name
         String[] metaTableSpeciesGenusArray = getColumnValues(con,
-                "SELECT LCASE(meta_value) FROM meta WHERE meta_key='species.classification' ORDER BY meta_id LIMIT 2");
+                                                              "SELECT LCASE(meta_value) FROM meta WHERE meta_key='species.classification' ORDER BY meta_id LIMIT 2");
         // if all is well, metaTableSpeciesGenusArray should contain the
         // species and genus
         // (in that order) from the meta table
@@ -211,7 +207,7 @@ public class Meta extends SingleDatabaseTestCase {
             logger.finest("Classification from DB name:" + dbNameGenusSpecies + " Meta table: " + metaTableGenusSpecies);
             if (!dbNameGenusSpecies.equalsIgnoreCase(metaTableGenusSpecies)) {
                 result = false;
-                //warn(con, "Database name does not correspond to
+                // warn(con, "Database name does not correspond to
                 // species/genus data from meta
                 // table");
                 ReportManager.problem(this, con, "Database name does not correspond to species/genus data from meta table");
@@ -220,7 +216,7 @@ public class Meta extends SingleDatabaseTestCase {
             }
 
         } else {
-            //logger.warning("Cannot get species information from meta
+            // logger.warning("Cannot get species information from meta
             // table");
             ReportManager.problem(this, con, "Cannot get species information from meta table");
         }
@@ -228,7 +224,7 @@ public class Meta extends SingleDatabaseTestCase {
         return result;
     }
 
-    //---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
 
     private boolean checkAssemblyMapping(Connection con) {
 
@@ -238,10 +234,9 @@ public class Meta extends SingleDatabaseTestCase {
         // coord_system1{:default}|coord_system2{:default} with optional third
         // coordinate system
         // and all coord systems should be valid from coord_system
-	// can also have # instead of | as used in unfinished contigs etc
+        // can also have # instead of | as used in unfinished contigs etc
 
-        Pattern assemblyMappingPattern = Pattern
-                .compile("^([a-zA-Z0-9.]+)(:[a-zA-Z0-9._]+)?[\\|#]([a-zA-Z0-9.]+)(:[a-zA-Z0-9.]+)?([\\|#]([a-zA-Z0-9.]+)(:[a-zA-Z0-9._]+)?)?$");
+        Pattern assemblyMappingPattern = Pattern.compile("^([a-zA-Z0-9.]+)(:[a-zA-Z0-9._]+)?[\\|#]([a-zA-Z0-9.]+)(:[a-zA-Z0-9.]+)?([\\|#]([a-zA-Z0-9.]+)(:[a-zA-Z0-9._]+)?)?$");
         String[] validCoordSystems = getColumnValues(con, "SELECT name FROM coord_system");
 
         String[] mappings = getColumnValues(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.mapping'");
@@ -267,19 +262,18 @@ public class Meta extends SingleDatabaseTestCase {
                 // third coordinate system is optional
                 if (cs3 != null && !Utils.stringInArray(cs3, validCoordSystems, false)) {
                     valid = false;
-                    ReportManager.problem(this, con, "Third co-ordinate system in mapping (" + cs3
-                            + ") is not in the coord_system table");
+                    ReportManager.problem(this, con, "Third co-ordinate system in mapping (" + cs3 + ") is not in the coord_system table");
                 }
                 if (valid) {
                     ReportManager.correct(this, con, "Coordinate system mapping " + mappings[i] + " is OK");
                 }
-		
-		result &= valid;
 
-		// check that coord systems are specified in lower-case
-		result &= checkCoordSystemCase(con, cs1, "meta assembly.mapping");
-		result &= checkCoordSystemCase(con, cs2, "meta assembly.mapping");
-		result &= checkCoordSystemCase(con, cs3, "meta assembly.mapping");
+                result &= valid;
+
+                // check that coord systems are specified in lower-case
+                result &= checkCoordSystemCase(con, cs1, "meta assembly.mapping");
+                result &= checkCoordSystemCase(con, cs2, "meta assembly.mapping");
+                result &= checkCoordSystemCase(con, cs3, "meta assembly.mapping");
 
             }
         }
@@ -293,27 +287,27 @@ public class Meta extends SingleDatabaseTestCase {
      */
     private boolean checkCoordSystemCase(Connection con, String cs, String desc) {
 
-	if (cs == null) {
+        if (cs == null) {
 
-	    return true;
+            return true;
 
-	}
+        }
 
-	boolean result = true;
+        boolean result = true;
 
-	if (cs.equals(cs.toLowerCase())) {
+        if (cs.equals(cs.toLowerCase())) {
 
-	    ReportManager.correct(this, con, "Co-ordinate system name " + cs + " all lower case in " + desc);
-	    result = true;
+            ReportManager.correct(this, con, "Co-ordinate system name " + cs + " all lower case in " + desc);
+            result = true;
 
-	} else {
+        } else {
 
-	    ReportManager.problem(this, con, "Co-ordinate system name " + cs + " is not all lower case in " + desc);
-	    result = false;
+            ReportManager.problem(this, con, "Co-ordinate system name " + cs + " is not all lower case in " + desc);
+            result = false;
 
-	}
+        }
 
-	return true;
+        return result;
 
     }
 
@@ -323,22 +317,22 @@ public class Meta extends SingleDatabaseTestCase {
      */
     private boolean checkCoordSystemTableCases(Connection con) {
 
-	// TODO - table name in report
-	boolean result = true;
+        // TODO - table name in report
+        boolean result = true;
 
-	String[] coordSystems = getColumnValues(con, "SELECT name FROM coord_system");
+        String[] coordSystems = getColumnValues(con, "SELECT name FROM coord_system");
 
-	for (int i = 0; i < coordSystems.length; i++) {
+        for (int i = 0; i < coordSystems.length; i++) {
 
-	    result &= checkCoordSystemCase(con, coordSystems[i], "coord_system");
+            result &= checkCoordSystemCase(con, coordSystems[i], "coord_system");
 
-	}
+        }
 
-	return result;
+        return result;
 
     }
 
-    //---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
 
     private boolean checkTaxonomyID(DatabaseRegistryEntry dbre) {
 
@@ -357,8 +351,8 @@ public class Meta extends SingleDatabaseTestCase {
             ReportManager.correct(this, con, "Taxonomy ID " + dbTaxonID + " is correct for " + species.toString());
         } else {
             result = false;
-            ReportManager.problem(this, con, "Taxonomy ID " + dbTaxonID + " in database is not correct - should be "
-                    + Species.getTaxonomyID(species) + " for " + species.toString());
+            ReportManager.problem(this, con, "Taxonomy ID " + dbTaxonID + " in database is not correct - should be " + Species.getTaxonomyID(species)
+                    + " for " + species.toString());
         }
         return result;
 
@@ -380,12 +374,11 @@ public class Meta extends SingleDatabaseTestCase {
 
             if (!gbv.matches(GBV_REGEXP)) {
 
-                ReportManager.problem(this, con, "genebuild.version " + gbv + " is not in correct format - should match "
-                        + GBV_REGEXP);
+                ReportManager.problem(this, con, "genebuild.version " + gbv + " is not in correct format - should match " + GBV_REGEXP);
                 return false;
 
             } else {
-                
+
                 int year = Integer.parseInt(gbv.substring(0, 2));
                 if (year < 0 || year > 99) {
                     ReportManager.problem(this, con, "Year part of genebuild.version (" + year + ") is incorrect");
@@ -396,17 +389,17 @@ public class Meta extends SingleDatabaseTestCase {
                     ReportManager.problem(this, con, "Month part of genebuild.version (" + month + ") is incorrect");
                     return false;
                 }
-                
+
             }
 
         }
 
-	ReportManager.correct(this, con, "genebuild.version " + gbv + " is present & in a valid format");
+        ReportManager.correct(this, con, "genebuild.version " + gbv + " is present & in a valid format");
 
         return true;
 
     }
 
-    //---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
 
 } // Meta
