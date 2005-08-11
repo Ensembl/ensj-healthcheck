@@ -39,8 +39,6 @@ import java.util.logging.Logger;
 
 public final class Utils {
 
-    private static Logger logger = Logger.getLogger("HealthCheckLogger");
-
     // hide constuctor to prevent instantiation
     private Utils() {
 
