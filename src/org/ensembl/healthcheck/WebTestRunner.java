@@ -370,7 +370,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
         print(pw, "<h2>Detailed reports by database</h2>");
 
-        Map reportsByDB = ReportManager.getAllReportsByDatabase();
+        Map reportsByDB = ReportManager.getAllReportsByDatabase(outputLevel);
 
         TreeSet dbs = new TreeSet(reportsByDB.keySet());
         Iterator it = dbs.iterator();
@@ -415,7 +415,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
         print(pw, "<h2>Detailed reports by test case</h2>");
 
-        Map reportsByTC = ReportManager.getAllReportsByTestCase();
+        Map reportsByTC = ReportManager.getAllReportsByTestCase(outputLevel);
         TreeSet dbs = new TreeSet(reportsByTC.keySet());
         Iterator it = dbs.iterator();
         while (it.hasNext()) {
