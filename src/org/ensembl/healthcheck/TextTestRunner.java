@@ -69,8 +69,6 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
     private static final String CORE_DB_REGEXP = "[a-z]+_[a-z]+_(core|est|estgene|vega)";
     
-    private long startTime;
-    
     // -------------------------------------------------------------------------
 
     /**
@@ -400,8 +398,6 @@ public class TextTestRunner extends TestRunner implements Reporter {
             System.out.print("[" + dbre.getName() + "] ");
         }
         System.out.flush();
-        
-        startTime = System.currentTimeMillis();
         
     }
 

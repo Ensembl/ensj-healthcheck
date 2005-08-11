@@ -13,10 +13,7 @@
 
 package org.ensembl.healthcheck;
 
-import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Date;
@@ -167,14 +164,6 @@ public class WebTestRunner extends TestRunner implements Reporter {
         }
 
     } // setupLogging
-
-    // -------------------------------------------------------------------------
-
-    private void deleteTimingsFile() {
-
-        (new File(TIMINGS_FILE)).delete();
-
-    }
 
     // -------------------------------------------------------------------------
     // Implementation of Reporter interface
