@@ -13,7 +13,6 @@
 
 package org.ensembl.healthcheck.testcase;
 
-import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;

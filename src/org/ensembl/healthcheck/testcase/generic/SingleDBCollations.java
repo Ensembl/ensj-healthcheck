@@ -19,13 +19,11 @@ package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
-import org.ensembl.healthcheck.DatabaseType; 
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**

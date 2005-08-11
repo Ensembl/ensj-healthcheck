@@ -24,7 +24,6 @@ import java.util.Iterator;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.util.Utils;
 
 /**
  * Check for any xrefs that are listed as "KNOWN" in the external_db table

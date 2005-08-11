@@ -31,7 +31,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.jar.JarFile;
-import java.util.logging.Logger;
 
 /**
  * General utilities (not database-related). For database-related utilities, see {@link DBUtils DBUtils}.
