@@ -57,7 +57,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
         // deleteTimingsFile();
 
         appStartTime = System.currentTimeMillis();
-        
+
         ReportManager.setReporter(this);
 
         parseCommandLine(args);
@@ -377,32 +377,37 @@ public class WebTestRunner extends TestRunner implements Reporter {
         while (it.hasNext()) {
 
             String database = (String) it.next();
-            String link = "<a name=\"" + database + "\">";
-            print(pw, "<h3 class='boxed'>" + link + database + "</a></h3>");
-
-            print(pw, "<p>");
 
             List reports = (List) reportsByDB.get(database);
             Iterator it2 = reports.iterator();
-            String lastTest = "";
-            while (it2.hasNext()) {
 
-                ReportLine line = (ReportLine) it2.next();
-                String test = line.getShortTestCaseName();
+            if (!reports.isEmpty()) {
 
-                if (!lastTest.equals("") && !test.equals(lastTest)) {
-                    print(pw, "</p><p>");
-                }
-                lastTest = test;
+                String link = "<a name=\"" + database + "\">";
+                print(pw, "<h3 class='boxed'>" + link + database + "</a></h3>");
+                print(pw, "<p>");
 
-                String linkTarget = "<a name=\"" + database + ":" + test + "\"></a> ";
-                String s = linkTarget + getFontForReport(line) + "<strong>" + test + ": </strong>" + line.getMessage() + "</font>" + "<br>";
+                String lastTest = "";
+                while (it2.hasNext()) {
 
-                print(pw, s);
+                    ReportLine line = (ReportLine) it2.next();
+                    String test = line.getShortTestCaseName();
 
-            } // while it2
+                    if (!lastTest.equals("") && !test.equals(lastTest)) {
+                        print(pw, "</p><p>");
+                    }
+                    lastTest = test;
 
-            print(pw, "</p>");
+                    String linkTarget = "<a name=\"" + database + ":" + test + "\"></a> ";
+                    String s = linkTarget + getFontForReport(line) + "<strong>" + test + ": </strong>" + line.getMessage() + "</font>" + "<br>";
+
+                    print(pw, s);
+
+                } // while it2
+
+                print(pw, "</p>");
+
+            }
 
         } // while it
 
@@ -416,37 +421,44 @@ public class WebTestRunner extends TestRunner implements Reporter {
         print(pw, "<h2>Detailed reports by test case</h2>");
 
         Map reportsByTC = ReportManager.getAllReportsByTestCase(outputLevel);
+
         TreeSet dbs = new TreeSet(reportsByTC.keySet());
         Iterator it = dbs.iterator();
         while (it.hasNext()) {
 
             String test = (String) it.next();
-            String link = "<a name=\"" + test + "\">";
-            print(pw, "<h3 class='boxed'>" + link + test + "</a></h3>");
-
-            print(pw, "<p>");
-
+            
             List reports = (List) reportsByTC.get(test);
             Iterator it2 = reports.iterator();
-            String lastDB = "";
-            while (it2.hasNext()) {
 
-                ReportLine line = (ReportLine) it2.next();
-                String database = line.getDatabaseName();
+            if (!reports.isEmpty()) {
 
-                if (!lastDB.equals("") && !database.equals(lastDB)) {
-                    print(pw, "</p><p>");
-                }
-                lastDB = database;
+                String link = "<a name=\"" + test + "\">";
+                print(pw, "<h3 class='boxed'>" + link + test + "</a></h3>");
 
-                String linkTarget = "<a name=\"" + line.getShortTestCaseName() + ":" + database + "\"></a> ";
-                String s = linkTarget + getFontForReport(line) + "<strong>" + database + ": </strong>" + line.getMessage() + "</font>" + "<br>";
+                print(pw, "<p>");
 
-                print(pw, s);
+                String lastDB = "";
+                while (it2.hasNext()) {
 
-            } // while it2
+                    ReportLine line = (ReportLine) it2.next();
+                    String database = line.getDatabaseName();
 
-            print(pw, "</p>");
+                    if (!lastDB.equals("") && !database.equals(lastDB)) {
+                        print(pw, "</p><p>");
+                    }
+                    lastDB = database;
+
+                    String linkTarget = "<a name=\"" + line.getShortTestCaseName() + ":" + database + "\"></a> ";
+                    String s = linkTarget + getFontForReport(line) + "<strong>" + database + ": </strong>" + line.getMessage() + "</font>" + "<br>";
+
+                    print(pw, s);
+
+                } // while it2
+
+                print(pw, "</p>");
+
+            }
 
         } // while it
 
