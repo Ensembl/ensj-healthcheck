@@ -77,7 +77,7 @@ public class GuiTestRunner extends TestRunner implements Reporter {
 
         gtrf = new GuiTestRunnerFrame(this, new TestRegistry(), databaseRegistry);
 
-        gtrf.show();
+        gtrf.setVisible(true);
 
         setupLogging();
 

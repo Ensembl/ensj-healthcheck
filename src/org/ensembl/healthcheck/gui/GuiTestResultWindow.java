@@ -149,7 +149,7 @@ public class GuiTestResultWindow extends JFrame {
 
         GuiTestResultWindow gtrw = new GuiTestResultWindow(null);
         gtrw.pack();
-        gtrw.show();
+        gtrw.setVisible(true);
 
     }
 

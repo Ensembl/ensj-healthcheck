@@ -315,7 +315,7 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
 
         setCursor(waitCursor);
         GuiTestRunnerSettings gtrs = new GuiTestRunnerSettings(this, guiTestRunner, true);
-        gtrs.show();
+        gtrs.setVisible(true);
         setCursor(defaultCursor);
 
     } // openSettingsDialog
@@ -467,7 +467,7 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
      */
     public void createResultFrame() {
 
-        new GuiTestResultWindow(this).show();
+        new GuiTestResultWindow(this).setVisible(true);
 
     }
 
