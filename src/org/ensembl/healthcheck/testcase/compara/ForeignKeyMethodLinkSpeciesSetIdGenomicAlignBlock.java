@@ -53,8 +53,6 @@ public class ForeignKeyMethodLinkSpeciesSetIdGenomicAlignBlock extends SingleDat
 
         boolean result = true;
 
-        int orphans = 0;
-
         Connection con = dbre.getConnection();
 
         if (tableHasRows(con, "method_link_species_set")) {

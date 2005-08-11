@@ -53,9 +53,7 @@ public class ForeignKeyMethodLinkId extends SingleDatabaseTestCase {
 
         boolean result = true;
 
-        int orphans = 0;
-
-        Connection con = dbre.getConnection();
+      Connection con = dbre.getConnection();
 
         if (tableHasRows(con, "method_link")) {
 

@@ -140,8 +140,8 @@ public class CheckTaxon extends MultiDatabaseTestCase {
             compareQueries(con, sql1, (Connection) speciesCons.get(name), sql2);
             
             /* Check classification */
-            int depth = getRowCount((Connection) speciesCons.get(name),
-                "SELECT count(*) FROM meta WHERE meta_key = \"species.classification\"");
+            //int depth = getRowCount((Connection) speciesCons.get(name),
+            //    "SELECT count(*) FROM meta WHERE meta_key = \"species.classification\"");
             sql1 = "SELECT \"classification\", classification " +
                 " FROM taxon where taxon_id = " + taxon_id;
             /* It will be much better to run this using GROUP_CONCAT() but our MySQL server does not support it yet */

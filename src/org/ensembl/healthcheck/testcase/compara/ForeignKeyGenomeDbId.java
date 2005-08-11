@@ -53,8 +53,6 @@ public class ForeignKeyGenomeDbId extends SingleDatabaseTestCase {
 
         boolean result = true;
 
-        int orphans = 0;
-
         Connection con = dbre.getConnection();
 
         if (tableHasRows(con, "genome_db")) {
