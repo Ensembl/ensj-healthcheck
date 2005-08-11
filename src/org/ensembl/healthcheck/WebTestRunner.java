@@ -486,7 +486,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
         long runTime = System.currentTimeMillis() - appStartTime;
         String runStr = Utils.formatTimeString(runTime);
-        print(pw, "<p>Test run was started at " + new Date(testStartTime).toString() + " and finished at " + new Date().toString() + "<br>");
+        print(pw, "<p>Test run was started at " + new Date(appStartTime).toString() + " and finished at " + new Date().toString() + "<br>");
         print(pw, " Run time " + runStr + "</p>");
 
         print(pw, "<h4>Configuration used:</h4>");
