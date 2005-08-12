@@ -25,7 +25,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that the gene_stable_id table is populated in EST databases. 
+ * Check that the all genes have stable IDs in EST databases. 
  */
 
 public class ESTStableIDs extends SingleDatabaseTestCase {
@@ -38,7 +38,7 @@ public class ESTStableIDs extends SingleDatabaseTestCase {
 
         addToGroup("post_genebuild");
         addToGroup("release");
-        setDescription("Check the gene_stable_id table is populated in EST databases.");
+        setDescription("Check that the all genes have stable IDs in EST databases");
 
     }
 
@@ -67,13 +67,13 @@ public class ESTStableIDs extends SingleDatabaseTestCase {
         
 	Connection con = dbre.getConnection();
 	
-	int rows = getRowCount(con, "SELECT COUNT(*) FROM gene_stable_id");
+	int rows = getRowCount(con, "SELECT COUNT(*) FROM gene g LEFT JOIN gene_stable_id gs ON g.gene_id = gs.gene_id WHERE gs.gene_id IS NULL HAVING COUNT(g.gene_id) > 0");
 
-	if (rows == 0) {
-	    ReportManager.problem(this, con, "gene_stable_id is empty");
+	if (rows > 0) {
+	    ReportManager.problem(this, con, rows + " genes have no stable IDs");
 	    return false;
 	} else {
-	    ReportManager.correct(this, con, "gene_stable_id has " + rows + " rows");
+	    ReportManager.correct(this, con, "All genes have stable IDs");
 	}
 
         return result;
