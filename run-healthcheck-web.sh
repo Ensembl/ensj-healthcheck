@@ -1,6 +1,7 @@
 #!/bin/sh
 
 home=/nfs/acari/gp1/work/ensj-healthcheck
+web=/nfs/acari/gp1/WWW
 java=/usr/opt/java141/bin/java
 
 cp=$home
@@ -15,7 +16,7 @@ rm -f timings.txt
 
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_anopheles_gambiae.properties
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_apis_mellifera.properties
-$java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_bos_taurus_core.properties
+$java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_bos_taurus.properties
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_caenorhabditis_elegans.properties
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_canis_familiaris.properties
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_ciona_intestinalis.properties
@@ -30,3 +31,5 @@ $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config we
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_saccharomyces_cerevisiae.properties
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_tetraodon_nigroviridis.properties
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_xenopus_tropicalis.properties
+
+cp -f $home/*.html $web
