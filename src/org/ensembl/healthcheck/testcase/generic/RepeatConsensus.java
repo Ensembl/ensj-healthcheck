@@ -65,11 +65,12 @@ public class RepeatConsensus extends SingleDatabaseTestCase {
        
        Connection con = dbre.getConnection();
       
-       int rows = getRowCount(con, "SELECT COUNT(*) FROM repeat_consensus WHERE repeat_type in ('simple','')");
+       int rows = getRowCount(con, "SELECT COUNT(*) FROM repeat_consensus WHERE repeat_type ='Simple' OR repeat_type = ''");
        
-       if (rows == 0) {
+       if (rows > 0) {
 
-           ReportManager.problem(this, con, "repeat_consensus table has no rows of repeat_type 'simple' or empty");
+           ReportManager.problem(this, con, "repeat_consensus table has " + rows + " rows of repeat_type 'Simple' or empty");
+           ReportManager.problem(this, con, "This probably means the repeat-types.pl script was not run.");
            result = false;
 
        } else {
