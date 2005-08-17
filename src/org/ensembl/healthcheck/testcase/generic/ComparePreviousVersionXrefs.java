@@ -80,7 +80,7 @@ public class ComparePreviousVersionXrefs extends SingleDatabaseTestCase {
                 } else {
                     
                     ReportManager.correct(this, dbre.getConnection(), sec.getName() + " contains " + secondaryCount + " xrefs of type " + externalDB
-                            + " and " + dbre.getName() + " has " + currentCount + " - greater or within tolderance");
+                            + " and " + dbre.getName() + " has " + currentCount + " - greater or within tolerance");
                 }
 
             } else {
@@ -110,7 +110,7 @@ public class ComparePreviousVersionXrefs extends SingleDatabaseTestCase {
 
             while (rs != null && rs.next()) {
                 result.put(rs.getString("db_name"), new Integer(rs.getInt("count")));
-                // System.out.println("# " + rs.getString("db_name") + " " + rs.getInt("count"));
+                logger.finest(rs.getString("db_name") + " " + rs.getInt("count"));
             }
 
             stmt.close();
