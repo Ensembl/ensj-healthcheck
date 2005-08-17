@@ -41,8 +41,9 @@ public class Karyotype extends SingleDatabaseTestCase {
 
         removeAppliesToType(DatabaseType.EST);
         removeAppliesToType(DatabaseType.ESTGENE);
+        removeAppliesToType(DatabaseType.VEGA);
         removeAppliesToType(DatabaseType.CDNA);
-        
+
     }
     
     /**
