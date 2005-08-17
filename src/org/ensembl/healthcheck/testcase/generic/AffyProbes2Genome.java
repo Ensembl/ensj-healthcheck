@@ -1,19 +1,14 @@
 /*
- Copyright (C) 2003 EBI, GRL
-
- This library is free software; you can redistribute it and/or
- modify it under the terms of the GNU Lesser General Public
- License as published by the Free Software Foundation; either
- version 2.1 of the License, or (at your option) any later version.
-
- This library is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- Lesser General Public License for more details.
-
- You should have received a copy of the GNU Lesser General Public
- License along with this library; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Copyright (C) 2003 EBI, GRL
+ * 
+ * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation,
+ * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 package org.ensembl.healthcheck.testcase.generic;
 
@@ -35,19 +30,17 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 /**
  * Check mappings from Affymetrix probes to genome.
  * 
- * Even though we *don't* provide Affymetrix data for all species the healthcheck follows the convention of failing if the data is
- * missing.
+ * Even though we *don't* provide Affymetrix data for all species the healthcheck follows the convention of failing if the data is missing.
  */
 public class AffyProbes2Genome extends SingleDatabaseTestCase {
 
     /**
      * Runs test against a few databases on the server specified in database.properties.
      * 
-     * @param args
-     *            ignored.
+     * @param args ignored.
      */
     public static void main(String[] args) {
-        TextTestRunner.main(new String[] {"-d", "homo_sapiens_core_3.*", "-d", "pan_troglodytes_core_3.*", "AffyProbes2Genome"});
+        TextTestRunner.main(new String[] { "-d", "homo_sapiens_core_3.*", "-d", "pan_troglodytes_core_3.*", "AffyProbes2Genome" });
     }
 
     /**
@@ -61,20 +54,20 @@ public class AffyProbes2Genome extends SingleDatabaseTestCase {
     }
 
     /**
-     * This test only applies to core and Vega databases.
+     * This test only applies to core databases.
      */
     public void types() {
 
         removeAppliesToType(DatabaseType.EST);
         removeAppliesToType(DatabaseType.CDNA);
+        removeAppliesToType(DatabaseType.VEGA);
 
     }
 
     /**
      * Run the test.
      * 
-     * @param dbre
-     *            The database to use.
+     * @param dbre The database to use.
      * @return true if the test pased.
      * 
      */
@@ -119,8 +112,7 @@ public class AffyProbes2Genome extends SingleDatabaseTestCase {
             possibleExternalDBNames.retainAll(xdbNamesSet);
 
             if (possibleExternalDBNames.size() == 0) {
-                ReportManager.problem(this, con, "AffyArray (affy_array.name) " + name
-                        + " has no corresponding entry in external_db");
+                ReportManager.problem(this, con, "AffyArray (affy_array.name) " + name + " has no corresponding entry in external_db");
                 result = false;
             }
 
@@ -142,7 +134,7 @@ public class AffyProbes2Genome extends SingleDatabaseTestCase {
 
         List emptyTables = new ArrayList();
 
-        String[] tables = {"affy_array", "affy_probe", "affy_feature"};
+        String[] tables = { "affy_array", "affy_probe", "affy_feature" };
 
         Species species = dbre.getSpecies();
         Connection con = dbre.getConnection();
@@ -151,7 +143,8 @@ public class AffyProbes2Genome extends SingleDatabaseTestCase {
                 || species == Species.GALLUS_GALLUS || species == Species.DANIO_RERIO) {
 
             for (int i = 0; i < tables.length; i++)
-                if (Integer.parseInt(getRowColumnValue(con, "SELECT count(*) from " + tables[i])) == 0) emptyTables.add(tables[i]);
+                if (Integer.parseInt(getRowColumnValue(con, "SELECT count(*) from " + tables[i])) == 0)
+                    emptyTables.add(tables[i]);
 
         }
         if (emptyTables.size() == 0)
@@ -160,6 +153,7 @@ public class AffyProbes2Genome extends SingleDatabaseTestCase {
             ReportManager.problem(this, con, "Empty table(s): " + emptyTables);
             return false;
         }
+
     }
 
     private boolean testProbsetSizesSet(Connection con) {
