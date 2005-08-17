@@ -59,6 +59,7 @@ operon
 other_cdna
 other_est
 other_protein
+otter
 peptides_bdgp
 PercentageRepeat
 PercentGC
