@@ -96,7 +96,7 @@ public class StableID extends SingleDatabaseTestCase {
 
         String stableIDtable = typeName + "_stable_id";
         int nStableIDs = countRowsInTable(con, stableIDtable);
-        ReportManager.info(this, con, "Num " + typeName + "s stable ids = " + nStableIDs);
+        //ReportManager.info(this, con, "Num " + typeName + "s stable ids = " + nStableIDs);
 
         if (nStableIDs < 1) {
             ReportManager.problem(this, con, stableIDtable + " table is empty.");
