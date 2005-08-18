@@ -89,6 +89,7 @@ rodent_protein
 sanger
 scanprosite
 Seg
+SGD
 signal_peptide
 Signalp
 Snap
