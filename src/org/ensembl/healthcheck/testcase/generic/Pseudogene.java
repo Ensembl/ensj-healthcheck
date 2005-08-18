@@ -41,11 +41,10 @@ public class Pseudogene extends SingleDatabaseTestCase {
     }
 
     /**
-     * Check the data in the assembly_exception table. Note referential
-     * integrity checks are done in CoreForeignKeys.
+     * Check the data in the assembly_exception table. Note referential integrity checks are done in CoreForeignKeys.
      * 
      * @param dbre
-     *          The database to use.
+     *            The database to use.
      * @return Result.
      */
     public boolean run(DatabaseRegistryEntry dbre) {
@@ -54,19 +53,15 @@ public class Pseudogene extends SingleDatabaseTestCase {
 
         Connection con = dbre.getConnection();
 
-        String qry = 
-           "select translation.* from gene,transcript,translation " + 
-           "where gene.biotype like '%pseudogene%'" +
-            " and transcript.gene_id=gene.gene_id " +
-            " and translation.transcript_id=transcript.transcript_id";
+        String qry = "select translation.* from gene,transcript,translation " + "where gene.biotype like '%pseudogene%'"
+                + " and transcript.gene_id=gene.gene_id " + " and translation.transcript_id=transcript.transcript_id";
 
-        int rows = getRowCount(con,qry); 
+        int rows = getRowCount(con, qry);
         if (rows > 0) {
             result = false;
             ReportManager.problem(this, con, "Translation table contains " + rows
                     + " rows for pseudogene types - should contain none");
         }
-
 
         if (result) {
             ReportManager.correct(this, con, "No pseudogenes have translations");
@@ -83,8 +78,8 @@ public class Pseudogene extends SingleDatabaseTestCase {
 
         removeAppliesToType(DatabaseType.EST);
         removeAppliesToType(DatabaseType.ESTGENE);
-
+        removeAppliesToType(DatabaseType.VEGA);
+        
     }
-
 
 } // Pseudogene
