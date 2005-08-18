@@ -24,6 +24,7 @@ drosophila-peptides
 Dust
 enhancer
 ensembl
+ensembl_ncRNA
 Eponine
 EST_cluster_WashU
 EST_cluster_IMCB
@@ -72,6 +73,7 @@ PROSITE
 protein_binding_site
 pseudogene
 regulatory_region
+Slam
 snpDensity
 transcription_start_site
 wormbase
