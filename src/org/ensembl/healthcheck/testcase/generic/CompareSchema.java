@@ -137,6 +137,7 @@ public class CompareSchema extends MultiDatabaseTestCase {
                             // if not the same, this method will generate a
                             // report
                             ReportManager.problem(this, checkCon, "Table name discrepancy detected, skipping rest of checks");
+                            result = false;
                             continue;
                         }
 
