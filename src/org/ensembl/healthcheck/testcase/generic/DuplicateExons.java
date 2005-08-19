@@ -34,7 +34,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 public class DuplicateExons extends SingleDatabaseTestCase {
 
-    private static final int MAX_WARNINGS = 50;
+    private static final int MAX_WARNINGS = 10;
 
     /**
      * Create an OrphanTestCase that applies to a specific set of databases.
