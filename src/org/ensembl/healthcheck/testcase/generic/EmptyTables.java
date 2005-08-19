@@ -99,8 +99,8 @@ public class EmptyTables extends SingleDatabaseTestCase {
                 tables = remove(tables, "karyotype");
             }
 
-            // for tetraodon & yeast, supporting_feature is empty because they are imported gene sets
-            if (species == Species.TETRAODON_NIGROVIRIDIS || species == Species.SACCHAROMYCES_CEREVISIAE) {
+            // for imported gene sets, supporting_feature is empty 
+            if (species == Species.TETRAODON_NIGROVIRIDIS || species == Species.SACCHAROMYCES_CEREVISIAE || species == Species.CAENORHABDITIS_ELEGANS) {
                 tables = remove(tables, "supporting_feature");
             }
 
