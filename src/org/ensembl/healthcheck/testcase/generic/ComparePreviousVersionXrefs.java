@@ -65,8 +65,13 @@ public class ComparePreviousVersionXrefs extends SingleDatabaseTestCase {
         Set externalDBs = secondaryXrefCounts.keySet();
         Iterator it = externalDBs.iterator();
         while (it.hasNext()) {
+            
             String externalDB = (String) it.next();
 
+            if (externalDB.equalsIgnoreCase("PUBMED") || externalDB.equalsIgnoreCase("MEDLINE")) {
+                continue;
+            }
+            
             int secondaryCount = ((Integer) (secondaryXrefCounts.get(externalDB))).intValue();
 
             // check it exists at all
@@ -81,6 +86,7 @@ public class ComparePreviousVersionXrefs extends SingleDatabaseTestCase {
                     
                     ReportManager.correct(this, dbre.getConnection(), sec.getName() + " contains " + secondaryCount + " xrefs of type " + externalDB
                             + " and " + dbre.getName() + " has " + currentCount + " - greater or within tolerance");
+                  
                 }
 
             } else {
