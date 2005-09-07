@@ -15,8 +15,6 @@ package org.ensembl.healthcheck.testcase.generic;
 
 
 import java.sql.Connection;
-import java.util.HashMap;
-import java.util.Iterator;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
