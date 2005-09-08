@@ -127,7 +127,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
             if (species != Species.HOMO_SAPIENS) {
                 tables = remove(tables, "regulatory_feature");
                 tables = remove(tables, "regulatory_factor");
-                tables = remove(tables, "regulatory_factor_transcript");
+                tables = remove(tables, "regulatory_factor_coding");
                 tables = remove(tables, "regulatory_feature_object");
             }
 
