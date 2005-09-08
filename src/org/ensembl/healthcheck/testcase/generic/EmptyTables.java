@@ -165,7 +165,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
             String[] allowedEmpty = { "affy_array", "affy_feature", "affy_probe", "analysis_description", "dna", "external_synonym", "go_xref",
                     "identity_xref", "karyotype", "map", "marker", "marker_feature", "marker_map_location", "marker_synonym", "misc_attrib",
                     "misc_feature", "misc_feature_misc_set", "misc_set", "prediction_exon", "prediction_transcript", "regulatory_factor",
-                    "regulatory_factor_transcript", "regulatory_feature", "regulatory_feature_object", "repeat_consensus", "repeat_feature",
+                    "regulatory_factor_coding", "regulatory_feature", "regulatory_feature_object", "repeat_consensus", "repeat_feature",
                     "simple_feature", "transcript_attrib", "transcript_supporting_feature", "translation_attrib" };
             tables = remove(tables, allowedEmpty);
 
