@@ -39,1527 +39,1526 @@ import org.ensembl.healthcheck.util.Utils;
 
 public abstract class EnsTestCase {
 
-    /** The TestRunner associated with this EnsTestCase */
-    protected TestRunner testRunner;
+	/** The TestRunner associated with this EnsTestCase */
+	protected TestRunner testRunner;
 
-    /**
-     * A list of Strings representing the groups that this test is a member of. Every test is (at least) a member of a group with the same name as the
-     * test.
-     */
-    protected List groups;
+	/**
+   * A list of Strings representing the groups that this test is a member of. Every test is (at least) a member of a group with the same name as the
+   * test.
+   */
+	protected List groups;
 
-    /** Description field */
-    protected String description;
+	/** Description field */
+	protected String description;
 
-    /** Optional text to be printed when the test fails * */
-    protected String failureText;
+	/** Optional text to be printed when the test fails * */
+	protected String failureText;
 
-    /** Logger object to use */
-    protected static Logger logger = Logger.getLogger("HealthCheckLogger");
+	/** Logger object to use */
+	protected static Logger logger = Logger.getLogger("HealthCheckLogger");
 
-    /**
-     * Boolean variable that can be set if the test case is likely to take a long time to run
-     */
-    protected boolean hintLongRunning = false;
+	/**
+   * Boolean variable that can be set if the test case is likely to take a long time to run
+   */
+	protected boolean hintLongRunning = false;
 
-    /**
-     * Store a list of which types of database this test applies to.
-     */
-    protected List appliesToTypes = new ArrayList();
+	/**
+   * Store a list of which types of database this test applies to.
+   */
+	protected List appliesToTypes = new ArrayList();
 
-    /**
-     * Names of tables in core schema that count as "feature" tables. Used in various healthchecks.
-     */
-    private String[] featureTables = { "affy_feature", "assembly_exception", "gene", "exon", "dna_align_feature", "protein_align_feature",
-            "repeat_feature", "simple_feature", "marker_feature", "misc_feature", "qtl_feature", "karyotype", "transcript", "density_feature",
-            "regulatory_feature" };
+	/**
+   * Names of tables in core schema that count as "feature" tables. Used in various healthchecks.
+   */
+	private String[] featureTables = { "affy_feature", "assembly_exception", "gene", "exon", "dna_align_feature", "protein_align_feature",
+			"repeat_feature", "simple_feature", "marker_feature", "misc_feature", "qtl_feature", "karyotype", "transcript", "density_feature",
+			"regulatory_feature" };
 
-    /**
-     * Tables that have an analysis ID.
-     */
-    private String[] tablesWithAnalysisID = { "gene", "protein_feature", "dna_align_feature", "protein_align_feature", "repeat_feature",
-            "prediction_transcript", "simple_feature", "marker_feature", "qtl_feature", "density_type", "identity_xref", "affy_feature" };
+	/**
+   * Tables that have an analysis ID.
+   */
+	private String[] tablesWithAnalysisID = { "gene", "protein_feature", "dna_align_feature", "protein_align_feature", "repeat_feature",
+			"prediction_transcript", "simple_feature", "marker_feature", "qtl_feature", "density_type", "identity_xref", "affy_feature" };
 
-    // -------------------------------------------------------------------------
-    /**
-     * Creates a new instance of EnsTestCase
-     */
-    public EnsTestCase() {
+	// -------------------------------------------------------------------------
+	/**
+   * Creates a new instance of EnsTestCase
+   */
+	public EnsTestCase() {
 
-        groups = new ArrayList();
-        addToGroup(getShortTestName()); // each test is in a one-test group
-        setDescription("No description set for this test.");
-        setFailureText("");
+		groups = new ArrayList();
+		addToGroup(getShortTestName()); // each test is in a one-test group
+		setDescription("No description set for this test.");
+		setFailureText("");
 
-    } // EnsTestCase
+	} // EnsTestCase
 
-    // -------------------------------------------------------------------------
+	// -------------------------------------------------------------------------
 
-    /**
-     * Get the TestRunner that is controlling this EnsTestCase.
-     * 
-     * @return The parent TestRunner.
-     */
-    public TestRunner getTestRunner() {
+	/**
+   * Get the TestRunner that is controlling this EnsTestCase.
+   * 
+   * @return The parent TestRunner.
+   */
+	public TestRunner getTestRunner() {
 
-        return testRunner;
+		return testRunner;
 
-    } // getTestRunner
+	} // getTestRunner
 
-    // -------------------------------------------------------------------------
+	// -------------------------------------------------------------------------
 
-    /**
-     * Sets up this test. <B>Must </B> be called before the object is used.
-     * 
-     * @param tr The TestRunner to associate with this test. Usually just <CODE> this</CODE> if being called from the TestRunner.
-     */
-    public void init(TestRunner tr) {
-
-        this.testRunner = tr;
-
-    } // init
+	/**
+   * Sets up this test. <B>Must </B> be called before the object is used.
+   * 
+   * @param tr The TestRunner to associate with this test. Usually just <CODE> this</CODE> if being called from the TestRunner.
+   */
+	public void init(TestRunner tr) {
+
+		this.testRunner = tr;
+
+	} // init
 
-    // -------------------------------------------------------------------------
-
-    /**
-     * Gets the full name of this test.
-     * 
-     * @return The full name of the test, e.g. org.ensembl.healthcheck.EnsTestCase
-     */
-    public String getTestName() {
-
-        return this.getClass().getName();
-
-    }
-
-    // -------------------------------------------------------------------------
-
-    /**
-     * Gets the full name of this test.
-     * 
-     * @return The full name of the test, e.g. org.ensembl.healthcheck.EnsTestCase
-     */
-    public String getName() {
-
-        return this.getClass().getName();
-
-    }
-
-    // -------------------------------------------------------------------------
-    /**
-     * Get the short form of the test name, ie the name of the test class without the package qualifier.
-     * 
-     * @return The short test name, e.g. EnsTestCase
-     */
-    public String getShortTestName() {
-
-        String longName = getTestName();
-
-        return longName.substring(longName.lastIndexOf('.') + 1);
-
-    }
-
-    // -------------------------------------------------------------------------
-    /**
-     * Get the very short form of the test name; ie that returned by getShortTestName() without the trailing "TestCase"
-     * 
-     * @return The very short test name, e.g. CheckMetaTables
-     */
-    public String getVeryShortTestName() {
-
-        String name = getShortTestName();
-
-        return name.substring(0, name.lastIndexOf("TestCase"));
-
-    }
-
-    // -------------------------------------------------------------------------
-    /**
-     * Get a list of the names of the groups which this test case is a member of.
-     * 
-     * @return The list of names as Strings.
-     */
-    public List getGroups() {
-
-        return groups;
-
-    }
-
-    // -------------------------------------------------------------------------
-    /**
-     * Get a list of the groups that this test case is a member of, formatted for easy printing.
-     * 
-     * @return The comma-separated list of group names.
-     */
-    public String getCommaSeparatedGroups() {
-
-        StringBuffer gString = new StringBuffer();
-
-        java.util.Iterator it = groups.iterator();
-        while (it.hasNext()) {
-            gString.append((String) it.next());
-            if (it.hasNext()) {
-                gString.append(",");
-            }
-        }
-        return gString.toString();
-    }
-
-    // -------------------------------------------------------------------------
-    /**
-     * Convenience method for assigning this test case to several groups at once.
-     * 
-     * @param s A list of Strings containing the group names.
-     */
-    public void setGroups(List s) {
-
-        groups = s;
-
-    }
-
-    // -------------------------------------------------------------------------
-    /**
-     * Convenience method for assigning this test case to several groups at once.
-     * 
-     * @param s Array of group names.
-     */
-    public void setGroups(String[] s) {
-
-        for (int i = 0; i < s.length; i++) {
-            groups.add(s[i]);
-        }
-    }
-
-    // -------------------------------------------------------------------------
-    /**
-     * Add this test case to a new group. If the test case is already a member of the group, a warning is printed and it is not added again.
-     * 
-     * @param newGroupName The name of the new group.
-     */
-    public void addToGroup(String newGroupName) {
-
-        if (!groups.contains(newGroupName)) {
-            groups.add(newGroupName);
-        } else {
-            logger.warning(getTestName() + " is already a member of " + newGroupName + " not added again.");
-        }
-
-    } // addToGroup
-
-    // -------------------------------------------------------------------------
-    /**
-     * Remove this test case from the specified group. If the test case is not a member of the specified group, a warning is printed.
-     * 
-     * @param groupName The name of the group from which this test case is to be removed.
-     */
-    public void removeFromGroup(String groupName) {
-
-        if (groups.contains(groupName)) {
-            groups.remove(groupName);
-        } else {
-            logger.warning(getTestName() + " was not a memeber of " + groupName);
-        }
-
-    } // removeFromGroup
-
-    // -------------------------------------------------------------------------
-    /**
-     * Test if this test case is a member of a particular group.
-     * 
-     * @param group The name of the group to check.
-     * @return True if this test case is a member of the named group, false otherwise.
-     */
-    public boolean inGroup(String group) {
-
-        return groups.contains(group);
-
-    }
-
-    // -------------------------------------------------------------------------
-    /**
-     * Convenience method for checking if this test case belongs to any of several groups.
-     * 
-     * @param checkGroups The list of group names to check.
-     * @return True if this test case is in any of the groups, false if it is in none.
-     */
-    public boolean inGroups(List checkGroups) {
-
-        boolean result = false;
-
-        java.util.Iterator it = checkGroups.iterator();
-        while (it.hasNext()) {
-            if (inGroup((String) it.next())) {
-                result = true;
-            }
-        }
-        return result;
-
-    } // inGroups
-
-    // -------------------------------------------------------------------------
-    /**
-     * Count the number of rows in a table.
-     * 
-     * @param con The database connection to use. Should have been opened already.
-     * @param table The name of the table to analyse.
-     * @return The number of rows in the table.
-     */
-    public int countRowsInTable(Connection con, String table) {
-
-        if (con == null) {
-            logger.severe("countRowsInTable: Database connection is null");
-        }
-
-        return getRowCount(con, "SELECT COUNT(*) FROM " + table);
-
-    } // countRowsInTable
-
-    // -------------------------------------------------------------------------
-    /**
-     * Use SELECT COUNT(*) to get a row count.
-     */
-    private int getRowCountFast(Connection con, String sql) {
-
-        int result = -1;
-
-        try {
-            Statement stmt = con.createStatement();
-            // System.out.println("Executing " + sql);
-            ResultSet rs = stmt.executeQuery(sql);
-            if (rs != null) {
-                if (rs.first()) {
-                    result = rs.getInt(1);
-                } else {
-                    result = -1; // probably signifies an empty ResultSet
-                }
-            }
-            rs.close();
-            stmt.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return result;
-
-    } // getRowCountFast
-
-    // -------------------------------------------------------------------------
-    /**
-     * Use a row-by-row approach to counting the rows in a table.
-     */
-    private int getRowCountSlow(Connection con, String sql) {
-
-        int result = -1;
-
-        try {
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-            if (rs != null) {
-                if (rs.last()) {
-                    result = rs.getRow();
-                } else {
-                    result = 0; // probably signifies an empty ResultSet
-                }
-            }
-            rs.close();
-            stmt.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return result;
-
-    } // getRowCountSlow
-
-    // -------------------------------------------------------------------------
-    /**
-     * Count the rows in a particular table or query.
-     * 
-     * @param con A connection to the database. Should already be open.
-     * @param sql The SQL to execute. Note that if possible this should begin with <code>SELECT COUNT FROM</code> since this is much quicker to
-     *            execute. If a standard SELECT statement is used, a row-by-row count will be performed, which may be slow if the table is large.
-     * @return The number of matching rows, or -1 if the query did not execute for some reason.
-     */
-    public int getRowCount(Connection con, String sql) {
-
-        if (con == null) {
-            logger.severe("getRowCount: Database connection is null");
-        }
-        int result = -1;
-
-        // if the query starts with SELECT COUNT and does not include a GROUP
-        // BY clause
-        // we can execute it and just take the first result, which is the count
-        if (sql.toLowerCase().indexOf("select count") >= 0 && sql.toLowerCase().indexOf("group by") < 0) {
-
-            result = getRowCountFast(con, sql);
-
-        } else if (sql.toLowerCase().indexOf("select count") < 0) {
-            // otherwise, do it row-by-row
-
-            logger.fine("getRowCount() executing SQL which does not appear to begin with SELECT COUNT - performing row-by-row count, which may take a long time if the table is large.");
-            result = getRowCountSlow(con, sql);
-
-        }
-
-        return result;
-
-    } // getRowCount
-
-    // -------------------------------------------------------------------------
-    /**
-     * Execute a SQL statement and return the value of one column of one row. Only the FIRST row matched is returned.
-     * 
-     * @param con The Connection to use.
-     * @param sql The SQL to check; should return ONE value.
-     * @return The value returned by the SQL.
-     */
-    public String getRowColumnValue(Connection con, String sql) {
-
-        String result = "";
-
-        try {
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-            if (rs != null && rs.first()) {
-                result = rs.getString(1);
-            }
-            rs.close();
-            stmt.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return result;
-
-    } // getRowColumnValue
-
-    // -------------------------------------------------------------------------
-    /**
-     * Execute a SQL statement and return the values of one column of the result.
-     * 
-     * @param con The Connection to use.
-     * @param sql The SQL to check; should return ONE column.
-     * @return The value(s) making up the column, in the order that they were read.
-     */
-    public String[] getColumnValues(Connection con, String sql) {
-
-        ArrayList list = new ArrayList();
-
-        try {
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-            if (rs != null) {
-                while (rs.next()) {
-                    list.add(rs.getString(1));
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return (String[]) list.toArray(new String[list.size()]);
-
-    } // getRowColumnValue
-
-    // -------------------------------------------------------------------------
-    /**
-     * Verify foreign-key relations.
-     * 
-     * @param con A connection to the database to be tested. Should already be open.
-     * @param table1 With col1, specifies the first key to check.
-     * @param col1 Column in table1 to check.
-     * @param table2 With col2, specifies the second key to check.
-     * @param col2 Column in table2 to check.
-     * @param oneWayOnly If false, only a "left join" is performed on table1 and table2. If false, the
-     * @return The number of "orphans"
-     */
-    public int countOrphans(Connection con, String table1, String col1, String table2, String col2, boolean oneWayOnly) {
-
-        if (con == null) {
-            logger.severe("countOrphans: Database connection is null");
-        }
-
-        int resultLeft, resultRight;
-
-        String sql = " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2
-                + "." + col2 + " IS NULL";
-
-        resultLeft = getRowCount(con, "SELECT COUNT(*)" + sql);
-        // if (table1.equals("marker_synonym")) {
-        // System.out.println(sql);
-        // }
-
-        if (resultLeft > 0) {
-            String[] values = getColumnValues(con, "SELECT " + table1 + "." + col1 + sql + " LIMIT 20");
-            for (int i = 0; i < values.length; i++) {
-                ReportManager.info(this, con, table1 + "." + col1 + " " + values[i] + " is not linked.");
-            }
-        }
-
-        if (!oneWayOnly) {
-            // and the other way ... (a right join?)
-            sql = " FROM " + table2 + " LEFT JOIN " + table1 + " ON " + table2 + "." + col2 + " = " + table1 + "." + col1 + " WHERE " + table1 + "."
-                    + col1 + " IS NULL";
-
-            resultRight = getRowCount(con, "SELECT COUNT(*)" + sql);
-
-            if (resultRight > 0) {
-                String[] values = getColumnValues(con, "SELECT " + table2 + "." + col2 + sql + " LIMIT 20");
-                for (int i = 0; i < values.length; i++) {
-                    ReportManager.info(this, con, table2 + "." + col2 + " " + values[i] + " is not linked.");
-                }
-            }
-        } else {
-            resultRight = 0;
-        }
-
-        // logger.finest("Left: " + resultLeft + " Right: " + resultRight);
-
-        return resultLeft + resultRight;
-
-    } // countOrphans
-
-    // -------------------------------------------------------------------------
-    /**
-     * Verify foreign-key relations.
-     * 
-     * @param con A connection to the database to be tested. Should already be open.
-     * @param table1 With col1, specifies the first key to check.
-     * @param col1 Column in table1 to check.
-     * @param table2 With col2, specifies the second key to check.
-     * @param col2 Column in table2 to check.
-     * @param constraint1 additional constraint on col1
-     * @return The number of "orphans"
-     */
-    public int countOrphansWithConstraint(Connection con, String table1, String col1, String table2, String col2, String constraint1) {
-
-        if (con == null) {
-            logger.severe("countOrphans: Database connection is null");
-        }
-
-        int resultLeft;
-
-        String sql = " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2
-                + "." + col2 + " iS NULL";
-
-        sql = sql + " AND " + table1 + "." + constraint1;
-
-        resultLeft = getRowCount(con, "SELECT COUNT(*)" + sql);
-        if (resultLeft > 0) {
-            String[] values = getColumnValues(con, "SELECT " + table1 + "." + col1 + sql + " LIMIT 20");
-            for (int i = 0; i < values.length; i++) {
-                ReportManager.info(this, con, table1 + "." + col1 + " " + values[i] + " is not linked.");
-            }
-        }
-
-        logger.finest("Left: " + resultLeft);
-
-        return resultLeft;
-
-    } // countOrphans
-
-    // -------------------------------------------------------------------------
-    /**
-     * Generic way to check for orphan foreign key relationships.
-     * 
-     * @return true If there are no orphans.
-     */
-    public boolean checkForOrphans(Connection con, String table1, String key1, String table2, String key2, boolean oneWay) {
-
-        int orphans = countOrphans(con, table1, key1, table2, key2, oneWay);
-        if (orphans > 0) {
-            ReportManager.problem(this, con, table1 + " <-> " + table2 + " has " + orphans + " unlinked entries");
-        } else {
-            ReportManager.correct(this, con, "All " + table1 + " <-> " + table2 + " relationships are OK");
-        }
-
-        return orphans == 0;
-
-    } // checkForOrphans
-
-    // -------------------------------------------------------------------------
-    /**
-     * Verify multiple appearance of a given foreign key
-     * 
-     * @param con A connection to the database to be tested. Should already be open.
-     * @param table With col, specifies the foreign key to check.
-     * @param col Column in table to check.
-     * @return The number of "singles"
-     */
-    public int countSingles(Connection con, String table, String col) {
-
-        if (con == null) {
-            logger.severe("countSingles: Database connection is null");
-        }
-
-        int result = 0;
-
-        String sql = " FROM " + table + " GROUP BY (" + col + ") HAVING COUNT(*) = 1";
-
-        result = getRowCount(con, "SELECT *" + sql);
-
-        if (result > 0) {
-            String[] values = getColumnValues(con, "SELECT " + table + "." + col + sql + " LIMIT 20");
-            for (int i = 0; i < values.length; i++) {
-                ReportManager.info(this, con, table + "." + col + " " + values[i] + " is used only once.");
-            }
-        }
-
-        logger.finest("Singles: " + result);
-
-        return result;
-
-    } // countSingles
-
-    // -------------------------------------------------------------------------
-    /**
-     * Verify multiple appearance of a given foreign key
-     * 
-     * @param con A connection to the database to be tested. Should already be open.
-     * @param table With col, specifies the foreign key to check.
-     * @param col Column in table1 to check.
-     * @return boolean true if everything is fine false otherwise
-     */
-    public boolean checkForSingles(Connection con, String table, String col) {
-
-        int singles = 0;
-        boolean result = true;
-
-        singles = countSingles(con, table, col);
-
-        String useful_sql = "SELECT " + table + "." + col + " FROM " + table + " GROUP BY (" + col + ") HAVING COUNT(*) = 1";
-
-        if (singles == 0) {
-            ReportManager.correct(this, con, "PASSED " + table + "." + col + " is a FK for a 1 to many (>1) relationship");
-        } else if (singles > 0) {
-            ReportManager.problem(this, con, "FAILED " + table + "." + col + " is a FK for a 1 to many (>1) relationship");
-            ReportManager.problem(this, con, "FAILURE DETAILS: " + singles + " " + table + "." + col + " entries are used only once");
-            ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
-            result = false;
-        } else {
-            ReportManager.problem(this, con, "TEST NOT COMPLETED " + table + "." + col
-                    + " is a FK for a 1 to many (>1) relationship, look at the StackTrace if any");
-            ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
-            result = false;
-        }
-
-        return result;
-
-    } // checkForSingles
-
-    // -------------------------------------------------------------------------
-    /**
-     * Check that a particular SQL statement has the same result when executed on more than one database.
-     * 
-     * @return True if all matched databases provide the same result, false otherwise.
-     * @param sql The SQL query to execute.
-     * @param regexp A regexp matching the database names to check.
-     */
-    public boolean checkSameSQLResult(String sql, String regexp) {
-
-        ArrayList resultSetGroup = new ArrayList();
-        ArrayList statements = new ArrayList();
-
-        DatabaseConnectionIterator dcit = testRunner.getDatabaseConnectionIterator(regexp);
-
-        while (dcit.hasNext()) {
-
-            Connection con = (Connection) dcit.next();
-
-            try {
-                Statement stmt = con.createStatement();
-                ResultSet rs = stmt.executeQuery(sql);
-                if (rs != null) {
-                    resultSetGroup.add(rs);
-                }
-                logger.fine("Added ResultSet for " + DBUtils.getShortDatabaseName(con) + ": " + sql);
-                // DBUtils.printResultSet(rs, 100);
-                // note that the Statement can't be closed here as we use the
-                // ResultSet elsewhere
-                // so store a reference to it for closing later
-                statements.add(stmt);
-                // con.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        logger.finest("Number of ResultSets to compare: " + resultSetGroup.size());
-        boolean same = DBUtils.compareResultSetGroup(resultSetGroup, this);
-
-        Iterator it = statements.iterator();
-        while (it.hasNext()) {
-            try {
-                ((Statement) it.next()).close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        return same;
-
-    } // checkSameSQLResult
-
-    // -------------------------------------------------------------------------
-    /**
-     * Check that a particular SQL statement has the same result when executed on more than one database.
-     * 
-     * @return True if all matched databases provide the same result, false otherwise.
-     * @param sql The SQL query to execute.
-     * @param databases The DatabaseRegistryEntries on which to execute sql.
-     */
-    public boolean checkSameSQLResult(String sql, DatabaseRegistryEntry[] databases) {
-
-        ArrayList resultSetGroup = new ArrayList();
-        ArrayList statements = new ArrayList();
-
-        for (int i = 0; i < databases.length; i++) {
-
-            Connection con = databases[i].getConnection();
-
-            try {
-                Statement stmt = con.createStatement();
-                ResultSet rs = stmt.executeQuery(sql);
-                if (rs != null) {
-                    resultSetGroup.add(rs);
-                }
-                logger.fine("Added ResultSet for " + DBUtils.getShortDatabaseName(con) + ": " + sql);
-                // DBUtils.printResultSet(rs, 100);
-                // note that the Statement can't be closed here as we use the
-                // ResultSet elsewhere
-                // so store a reference to it for closing later
-                statements.add(stmt);
-                // con.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        logger.finest("Number of ResultSets to compare: " + resultSetGroup.size());
-        boolean same = DBUtils.compareResultSetGroup(resultSetGroup, this);
-
-        Iterator it = statements.iterator();
-        while (it.hasNext()) {
-            try {
-                ((Statement) it.next()).close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        return same;
-
-    } // checkSameSQLResult
-
-    // -------------------------------------------------------------------------
-    /**
-     * Check for the presence of a particular String in a table column.
-     * 
-     * @param con The database connection to use.
-     * @param table The name of the table to examine.
-     * @param column The name of the column to look in.
-     * @param str The string to search for; can use database wildcards (%, _) Note that if you want to search for one of these special characters, it
-     *            must be backslash-escaped.
-     * @return The number of times the string is matched.
-     */
-    public int findStringInColumn(Connection con, String table, String column, String str) {
-
-        if (con == null) {
-            logger.severe("findStringInColumn: Database connection is null");
-        }
-
-        String sql = "SELECT COUNT(*) FROM " + table + " WHERE " + column + " LIKE \"" + str + "\"";
-        logger.fine(sql);
-
-        return getRowCount(con, sql);
-
-    } // findStringInColumn
-
-    // -------------------------------------------------------------------------
-    /**
-     * Check that all entries in column match a particular pattern.
-     * 
-     * @param con The database connection to use.
-     * @param table The name of the table to examine.
-     * @param column The name of the column to look in.
-     * @param pattern The SQL pattern (can contain _,%) to look for.
-     * @return The number of columns that <em>DO NOT</em> match the pattern.
-     */
-    public int checkColumnPattern(Connection con, String table, String column, String pattern) {
-
-        // @todo - what about NULLs?
-
-        // cheat by looking for any rows that DO NOT match the pattern
-        String sql = "SELECT COUNT(*) FROM " + table + " WHERE " + column + " NOT LIKE \"" + pattern + "\"";
-        logger.fine(sql);
-
-        return getRowCount(con, sql);
-
-    } // checkColumnPattern
-
-    // -------------------------------------------------------------------------
-    /**
-     * Check that all entries in column match a particular value.
-     * 
-     * @param con The database connection to use.
-     * @param table The name of the table to examine.
-     * @param column The name of the column to look in.
-     * @param value The string to look for (not a pattern).
-     * @return The number of columns that <em>DO NOT</em> match value.
-     */
-    public int checkColumnValue(Connection con, String table, String column, String value) {
-
-        // @todo - what about NULLs?
-
-        // cheat by looking for any rows that DO NOT match the pattern
-        String sql = "SELECT COUNT(*) FROM " + table + " WHERE " + column + " != '" + value + "'";
-        logger.fine(sql);
-
-        return getRowCount(con, sql);
-
-    } // checkColumnPattern
-
-    // -------------------------------------------------------------------------
-    /**
-     * Check if there are any blank entires in a column that is not supposed to be null.
-     * 
-     * @param con The database connection to use.
-     * @param table The table to use.
-     * @param column The column to examine.
-     * @return An list of the row indices of any blank entries. Will be zero-length if there are none.
-     */
-    public List checkBlankNonNull(Connection con, String table, String column) {
-
-        if (con == null) {
-            logger.severe("checkBlankNonNull (column): Database connection is null");
-        }
-
-        ArrayList blanks = new ArrayList();
-
-        String sql = "SELECT " + column + " FROM " + table;
-        try {
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-            ResultSetMetaData rsmd = rs.getMetaData();
-            while (rs.next()) {
-                String columnValue = rs.getString(1);
-                // should it be non-null?
-                if (rsmd.isNullable(1) == ResultSetMetaData.columnNoNulls) {
-                    if (columnValue == null || columnValue.equals("")) {
-                        blanks.add("" + rs.getRow());
-                    }
-                }
-            }
-            rs.close();
-            stmt.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return blanks;
-
-    } // checkBlankNonNull
-
-    // -------------------------------------------------------------------------
-    /**
-     * Check all columns of a table for blank entires in columns that are marked as being NOT NULL.
-     * 
-     * @param con The database connection to use.
-     * @param table The table to use.
-     * @return The total number of blank null enums.
-     */
-    public int checkBlankNonNull(Connection con, String table) {
-
-        if (con == null) {
-            logger.severe("checkBlankNonNull (table): Database connection is null");
-        }
-
-        int blanks = 0;
-
-        String sql = "SELECT * FROM " + table;
-
-        try {
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-            ResultSetMetaData rsmd = rs.getMetaData();
-            while (rs.next()) {
-                for (int i = 1; i <= rsmd.getColumnCount(); i++) {
-                    String columnValue = rs.getString(i);
-                    String columnName = rsmd.getColumnName(i);
-                    // should it be non-null?
-                    if (rsmd.isNullable(i) == ResultSetMetaData.columnNoNulls) {
-                        if (columnValue == null || columnValue.equals("")) {
-                            blanks++;
-                            logger.warning("Found blank non-null value in column " + columnName + " in " + table);
-                        }
-                    }
-                } // for column
-            } // while rs
-            rs.close();
-            stmt.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return blanks;
-
-    } // checkBlankNonNull
-
-    // -------------------------------------------------------------------------
-    /**
-     * Check if a particular table exists in a database.
-     * 
-     * @param con The database connection to check.
-     * @param table The table to check for.
-     * @return true if the table exists in the database.
-     */
-    public boolean checkTableExists(Connection con, String table) {
-
-        String tables = getRowColumnValue(con, "SHOW TABLES LIKE '" + table + "'");
-
-        boolean result = false;
-        if (tables != null && tables.length() != 0) {
-            result = true;
-        }
-
-        return result;
-
-    } // checkTableExists
-
-    // -------------------------------------------------------------------------
-    /**
-     * Print a warning message about a specific database.
-     * 
-     * @param con The database connection involved.
-     * @param message The message to print.
-     */
-    protected void warn(Connection con, String message) {
-
-        logger.warning("Problem in " + DBUtils.getShortDatabaseName(con));
-        logger.warning(message);
-
-    } // warn
-
-    // -------------------------------------------------------------------------
-    /**
-     * Get a list of the databases which represent species. Filter out any which don't seem to represent species.
-     * 
-     * @return A list of the species; each species will occur only once, and be of the form homo_sapiens (no trailing _).
-     */
-    public String[] getListOfSpeciesDatabases() {
-
-        ArrayList list = new ArrayList();
-
-        DatabaseConnectionIterator dbci = testRunner.getDatabaseConnectionIterator(".*");
-        while (dbci.hasNext()) {
-
-            String dbName = DBUtils.getShortDatabaseName((Connection) dbci.next());
-
-            String[] bits = dbName.split("_");
-            if (bits.length > 2) {
-                String species = bits[0] + "_" + bits[1];
-                if (!list.contains(species)) {
-                    list.add(species);
-                }
-            } else {
-                logger.fine("Database " + dbName + " does not seem to represent a species; ignored");
-            }
-
-        }
-
-        return (String[]) list.toArray(new String[list.size()]);
-
-    }
-
-    // -------------------------------------------------------------------------
-    /**
-     * Get the description.
-     * 
-     * @return The description for this test.
-     */
-    public String getDescription() {
-
-        return description;
-
-    } // getDescription
-
-    // -------------------------------------------------------------------------
-    /**
-     * Set the text description of this test case.
-     * 
-     * @param s The new description.
-     */
-    public void setDescription(String s) {
-
-        description = s;
-
-    } // setDescription
-
-    // -------------------------------------------------------------------------
-    /**
-     * Get the failure text.
-     * 
-     * @return The failure text for this test.
-     */
-    public String getFailureText() {
-
-        return failureText;
-
-    } // getFailureText
-
-    // -------------------------------------------------------------------------
-    /**
-     * Set the text failure text of this test case.
-     * 
-     * @param s The new failure text.
-     */
-    public void setFailureText(String s) {
-
-        failureText = s;
-
-    } // setFailureText
-
-    // -------------------------------------------------------------------------
-    /**
-     * Read a database schema from a file and create a temporary database from it.
-     * 
-     * @param fileName The name of the schema to read.
-     * @return A connection to a database buit from the schema.
-     */
-    public Connection importSchema(String fileName) {
-
-        Connection con = null;
-
-        // ----------------------------------------------------
-        // Parse the file first in case there are problems
-        SQLParser sqlParser = new SQLParser();
-
-        // try {
-        // List sqlCommands = sqlParser.parse(fileName);
-        // // sqlParser.printLines();
-        // } catch (FileNotFoundException fnfe) {
-        // fnfe.printStackTrace();
-        //        }
-
-        // ----------------------------------------------------
-        // create the database
-
-        String tempDBName = DBUtils.generateTempDatabaseName();
-
-        // read properties file
-        String propsFile = System.getProperty("user.dir") + System.getProperty("file.separator") + "database.properties";
-        Utils.readPropertiesFileIntoSystem(propsFile);
-        logger.fine("Read database properties from " + propsFile);
-
-        try {
-
-            Class.forName(System.getProperty("driver"));
-            Connection tmpCon = DriverManager.getConnection(System.getProperty("databaseURL"),
-                                                            System.getProperty("user"),
-                                                            System.getProperty("password"));
-
-            String sql = "CREATE DATABASE " + tempDBName;
-            logger.finest(sql);
-            Statement stmt = tmpCon.createStatement();
-            stmt.execute(sql);
-            logger.fine("Database " + tempDBName + " created!");
-
-            // close the temporary connection and create a "real" one
-            tmpCon.close();
-            con = DriverManager.getConnection(System.getProperty("databaseURL") + tempDBName,
-                                              System.getProperty("user"),
-                                              System.getProperty("password"));
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            System.exit(1);
-
-        }
-
-        // ----------------------------------------------------
-        // Build the schema
-
-        try {
-
-            Statement stmt = con.createStatement();
-
-            // Fill the batch of SQL commands
-            stmt = sqlParser.populateBatch(stmt);
-
-            // execute the batch that has been built up previously
-            logger.info("Creating temporary database ...");
-            stmt.executeBatch();
-            logger.info("Done.");
-
-            // close statement
-            stmt.close();
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            System.exit(1);
-
-        }
-
-        return con;
-    }
-
-    // -------------------------------------------------------------------------
-    /**
-     * Remove a whole database. Generally should *only* be used with temporary databases. Use at your own risk!
-     * 
-     * @param con The connection pointing to the database to remove. Should be connected as a user that has sufficient permissions to remove it.
-     */
-    public void removeDatabase(Connection con) {
-
-        String dbName = DBUtils.getShortDatabaseName(con);
-
-        try {
-
-            String sql = "DROP DATABASE " + dbName;
-            logger.finest(sql);
-            Statement stmt = con.createStatement();
-            stmt.execute(sql);
-            logger.fine("Database " + dbName + " removed!");
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            System.exit(1);
-
-        }
-
-    }
-
-    // -------------------------------------------------------------------------
-    /**
-     * Get a list of all the table names.
-     * 
-     * @param con The database connection to use.
-     * @return An array of Strings representing the names of the tables, obtained from the SHOW TABLES command.
-     */
-    public String[] getTableNames(Connection con) {
-
-        return DBUtils.getTableNames(con);
-
-    }
-
-    // -------------------------------------------------------------------------
-    /**
-     * Get a list of the table names that match a particular pattern.
-     * 
-     * @param con The database connection to use.
-     * @param pattern The pattern to use - note that this is a <em>SQL</em> pattern, not a regexp.
-     * @return An array of Strings representing the names of the tables that match the pattern.
-     */
-    public String[] getTableNames(Connection con, String pattern) {
-
-        return DBUtils.getTableNames(con, pattern);
-
-    }
-
-    // -------------------------------------------------------------------------
-    /**
-     * Convenience method for getting a connection to a named schema.
-     * 
-     * @param schema The name of the schema to connect to.
-     * @return A connection to schema.
-     */
-    public Connection getSchemaConnection(String schema) {
-
-        Connection con = DBUtils.openConnection(System.getProperty("driver"),
-                                                System.getProperty("databaseURL") + schema,
-                                                System.getProperty("user"),
-                                                System.getProperty("password"));
-
-        return con;
-    }
-
-    // -------------------------------------------------------------------------
-    /**
-     * Compare two schemas to see if they have the same tables. The comparison is done in both directions, so will return false if a table exists in
-     * schema1 but not in schema2, <em>or</em> if a table exists in schema2 but not in schema2.
-     * 
-     * @param schema1 The first schema to compare.
-     * @param schema2 The second schema to compare.
-     * @return true if all tables in schema1 exist in schema2, and vice-versa.
-     */
-    public boolean compareTablesInSchema(Connection schema1, Connection schema2) {
-
-        boolean result = true;
-
-        String name1 = DBUtils.getShortDatabaseName(schema1);
-        String name2 = DBUtils.getShortDatabaseName(schema2);
-
-        // check each table in turn
-        String[] tables = getTableNames(schema1);
-        for (int i = 0; i < tables.length; i++) {
-            String table = tables[i];
-            if (!checkTableExists(schema2, table)) {
-                ReportManager.problem(this, schema1, "Table " + table + " exists in " + name1 + " but not in " + name2);
-                result = false;
-            }
-        }
-        // and now the other way
-        tables = getTableNames(schema2);
-        for (int i = 0; i < tables.length; i++) {
-            String table = tables[i];
-            if (!checkTableExists(schema1, table)) {
-                ReportManager.problem(this, schema2, "Table " + table + " exists in " + name2 + " but not in " + name1);
-                result = false;
-            }
-        }
-
-        return result;
-
-    }
-
-    // -------------------------------------------------------------------------
-
-    /**
-     * Check if the current test has repair capability. Signified by implementing the Repair interface.
-     * 
-     * @return True if this test implements Repair, false otherwise.
-     */
-    public boolean canRepair() {
-
-        return (this instanceof Repair);
-
-    }
-
-    // -------------------------------------------------------------------------
-    /**
-     * Check if a table has rows.
-     * 
-     * @param con The connection to the database to use.
-     * @param table The table to check.
-     * @return true if the table has >0 rows, false otherwise.
-     */
-    public boolean tableHasRows(Connection con, String table) {
-
-        return (getRowCount(con, "SELECT COUNT(*) FROM " + table) > 0);
-
-    }
-
-    // -------------------------------------------------------------------------
-    /**
-     * See if the "hintLongRunning" flag is set.
-     * 
-     * @return The value of the hintLongRunning flag.
-     */
-    public boolean isLongRunning() {
-
-        return hintLongRunning;
-
-    }
-
-    // -------------------------------------------------------------------------
-    /**
-     * Set the flag that indicates that this test may take a long time to run.
-     * 
-     * @param b The new value of the flag.
-     */
-    public void setHintLongRunning(boolean b) {
-
-        hintLongRunning = b;
-
-    }
-
-    // ---------------------------------------------------------------------
-    /**
-     * Check if this test case applies to a particular DatabaseType.
-     * 
-     * @param t The database type to check against.
-     * @return true if this test applies to databases of type t.
-     */
-    public boolean appliesToType(DatabaseType t) {
-
-        Iterator it = appliesToTypes.iterator();
-        while (it.hasNext()) {
-            DatabaseType type = (DatabaseType) it.next();
-            if (t.equals(type)) {
-                return true;
-            }
-        }
-
-        return false;
-
-    }
-
-    // -----------------------------------------------------------------
-    /**
-     * Add another database type to the list of types that this test case applies to.
-     * 
-     * @param t The new type.
-     */
-    public void addAppliesToType(DatabaseType t) {
-
-        appliesToTypes.add(t);
-
-    }
-
-    // -----------------------------------------------------------------
-    /**
-     * Remove a database type from the list of types that this test case applies to.
-     * 
-     * @param t The type to remove.
-     */
-    public void removeAppliesToType(DatabaseType t) {
-
-        appliesToTypes.remove(t);
-
-    }
-
-    // -----------------------------------------------------------------
-    /**
-     * Specify the database types that a test applies to.
-     * 
-     * @param types A List of DatabaseTypes - overwrites the current setting.
-     */
-    public void setAppliesToTypes(List types) {
-
-        appliesToTypes = types;
-
-    }
-
-    // -----------------------------------------------------------------
-    /**
-     * @return the list of database types that a test applies to.
-     */
-    public DatabaseType[] getAppliesToTypes() {
-
-        return (DatabaseType[]) appliesToTypes.toArray(new DatabaseType[appliesToTypes.size()]);
-
-    }
-
-    // -----------------------------------------------------------------
-    /**
-     * Set the database type(s) that this test applies to based upon the directory name. For directories called "generic", the type is set to core,
-     * est, estgene and vega. For all other directories the type is set based upon the directory name.
-     * 
-     * @param dirName The directory name to check.
-     */
-    public void setTypeFromDirName(String dirName) {
-
-        List types = new ArrayList();
-
-        if (dirName.equals("generic")) {
-
-            types.add(DatabaseType.CORE);
-            types.add(DatabaseType.VEGA);
-            types.add(DatabaseType.EST);
-            types.add(DatabaseType.ESTGENE);
-            types.add(DatabaseType.CDNA);
-            logger.finest("Set generic types for " + getName());
-
-        } else {
-
-            DatabaseType type = DatabaseType.resolveAlias(dirName);
-            if (type != DatabaseType.UNKNOWN) {
-
-                types.add(type);
-                logger.finest("Set type to " + type.toString() + " for " + getName());
-            } else {
-                logger.warning("Cannot deduce test type from directory name " + dirName + " for " + getName());
-            }
-        }
-
-        setAppliesToTypes(types);
-
-    }
-
-    // -------------------------------------------------------------------------
-
-    /**
-     * This method can be overridden in subclasses to define (via addAppliesToType/removeAppliesToType) which types of databases the test applies to.
-     */
-    public void types() {
-
-    }
-
-    // -------------------------------------------------------------------------
-    /**
-     * Verify foreign-key relations, and fills ReportManager with useful sql if necessary.
-     * 
-     * @param con A connection to the database to be tested. Should already be open.
-     * @param table1 With col1, specifies the first key to check.
-     * @param col1 Column in table1 to check.
-     * @param table2 With col2, specifies the second key to check.
-     * @param col2 Column in table2 to check.
-     * @return boolean true if everything is fine false otherwise
-     */
-    public boolean checkForOrphans(Connection con, String table1, String col1, String table2, String col2) {
-
-        int orphans = 0;
-        boolean result = true;
-
-        orphans = countOrphans(con, table1, col1, table2, col2, true);
-
-        String useful_sql = "SELECT " + table1 + "." + col1 + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = "
-                + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
-
-        if (orphans == 0) {
-            ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + col1 + "(" + col2 + ")" + " relationships");
-        } else if (orphans > 0) {
-            ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + col1 + "(" + col2 + ")" + " relationships");
-            ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
-            ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
-            result = false;
-        } else {
-            ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1
-                    + ", look at the StackTrace if any");
-            result = false;
-        }
-
-        return result;
-
-    } // checkForOrphans
-
-    // -------------------------------------------------------------------------
-    /**
-     * Verify foreign-key relations, and fills ReportManager with useful sql if necessary.
-     * 
-     * @param con A connection to the database to be tested. Should already be open.
-     * @param table1 With col1, specifies the first key to check.
-     * @param col1 Column in table1 to check.
-     * @param table2 With col2, specifies the second key to check.
-     * @param col2 Column in table2 to check.
-     * @param constraint1 additional constraint on a column in table1
-     * @return boolean true if everything is fine false otherwise
-     */
-    public boolean checkForOrphansWithConstraint(Connection con, String table1, String col1, String table2, String col2, String constraint1) {
-
-        int orphans = 0;
-        boolean result = true;
-
-        orphans = countOrphansWithConstraint(con, table1, col1, table2, col2, constraint1);
-
-        String useful_sql = "SELECT " + table1 + "." + col1 + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = "
-                + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
-
-        // System.out.println(table1 + "." + col1 + "." + table2 + "." + col2);
-
-        if (!constraint1.equals("")) {
-            useful_sql = useful_sql + " AND " + table1 + "." + constraint1;
-        }
-
-        if (orphans == 0) {
-            ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + col1 + "(" + col2 + ")" + " relationships");
-        } else if (orphans > 0) {
-            ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + col1 + "(" + col2 + ")" + " relationships");
-            ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
-            ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
-            result = false;
-        } else {
-            ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1
-                    + ", look at the StackTrace if any");
-            result = false;
-        }
-
-        return result;
-
-    } // checkForOrphansWithConstraint
-
-    // ----------------------------------------------------------------------
-    /**
-     * Check that a particular column has no null values. Problem or correct reports are generated via ReportManager.
-     * 
-     * @param con The database connection to use.
-     * @param table The table name.
-     * @param column The column to check.
-     * @return True if no columns are null, false otherwise.
-     */
-    public boolean checkNoNulls(Connection con, String table, String column) {
-
-        boolean result = true;
-
-        int nulls = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE " + column + " IS NULL");
-
-        if (nulls > 0) {
-
-            ReportManager.problem(this, con, nulls + " NULL values in " + table + "." + column);
-            result = false;
-
-        } else {
-
-            ReportManager.correct(this, con, "No NULL values in " + table + "." + column);
-        }
-
-        return result;
-
-    } // checkNoNulls
-
-    // ----------------------------------------------------------------------
-    /**
-     * Get a list of the tables in a core schema that conform to various characteristics and count as "feature" tables.
-     * 
-     * @return An array of feature tables.
-     */
-    public String[] getCoreFeatureTables() {
-
-        return featureTables;
-
-    }
-
-    // ----------------------------------------------------------------------
-    /**
-     * Get a list of the tables in a core schema that have an analysis_id colmun.
-     * 
-     * @return An array of table names.
-     */
-    public String[] getCoreTablesWithAnalysisID() {
-
-        return tablesWithAnalysisID;
-
-    }
-
-    // ----------------------------------------------------------------------
-    /**
-     * Get the equivalent database from the secondary database server. "equivalent" means: same database type and species. If more than one database
-     * on the secondary server has the same type and species, then the one with the highest version number is used. The returned
-     * DatabaseRegistryEntry's internal connection is opened.
-     * 
-     * @param dbre The database to find the equivalent for.
-     * @return The database on the secondary server with the same type and species, and the highest version number.
-     */
-    public DatabaseRegistryEntry getEquivalentFromSecondaryServer(DatabaseRegistryEntry dbre) {
-
-        // get connection to secondary server
-        Connection listCon = DBUtils.openConnection(System.getProperty("secondary.driver"),
-                                                    System.getProperty("secondary.databaseURL"),
-                                                    System.getProperty("secondary.user"),
-                                                    System.getProperty("secondary.password"));
-
-        // find any databases matching type and species
-        TreeSet matchingDBs = new TreeSet();           // get sorting for free
-        String[] dbs = DBUtils.listDatabases(listCon);
-        for (int i = 0; i < dbs.length; i++) {
-            DatabaseRegistryEntry secDBRE = new DatabaseRegistryEntry(dbs[i], null, null, false); // nulls will set type automatically
-            if (dbre.getType() == secDBRE.getType() && dbre.getSpecies() == secDBRE.getSpecies()) {
-                matchingDBs.add(secDBRE);
-                logger.finest("added " + secDBRE.getName() + " to list of databases to check for equivalent to " + dbre.getName());
-            }
-        }
-
-        if (matchingDBs.size() == 0) {
-            logger.severe("Could not find equvialent database to " + dbre.getName() + " on secondary server");
-        }
-        
-        // take the highest one
-        DatabaseRegistryEntry result = (DatabaseRegistryEntry) matchingDBs.last();
-
-        // initialise connection
-        Connection dbCon = DBUtils.openConnection(System.getProperty("secondary.driver"), System.getProperty("secondary.databaseURL")
-                + result.getName(), System.getProperty("secondary.user"), System.getProperty("secondary.password"));
-
-        result.setConnection(dbCon);
-
-        return result;
-
-    }
-    // ----------------------------------------------------------------------
+	// -------------------------------------------------------------------------
+
+	/**
+   * Gets the full name of this test.
+   * 
+   * @return The full name of the test, e.g. org.ensembl.healthcheck.EnsTestCase
+   */
+	public String getTestName() {
+
+		return this.getClass().getName();
+
+	}
+
+	// -------------------------------------------------------------------------
+
+	/**
+   * Gets the full name of this test.
+   * 
+   * @return The full name of the test, e.g. org.ensembl.healthcheck.EnsTestCase
+   */
+	public String getName() {
+
+		return this.getClass().getName();
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+   * Get the short form of the test name, ie the name of the test class without the package qualifier.
+   * 
+   * @return The short test name, e.g. EnsTestCase
+   */
+	public String getShortTestName() {
+
+		String longName = getTestName();
+
+		return longName.substring(longName.lastIndexOf('.') + 1);
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+   * Get the very short form of the test name; ie that returned by getShortTestName() without the trailing "TestCase"
+   * 
+   * @return The very short test name, e.g. CheckMetaTables
+   */
+	public String getVeryShortTestName() {
+
+		String name = getShortTestName();
+
+		return name.substring(0, name.lastIndexOf("TestCase"));
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+   * Get a list of the names of the groups which this test case is a member of.
+   * 
+   * @return The list of names as Strings.
+   */
+	public List getGroups() {
+
+		return groups;
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+   * Get a list of the groups that this test case is a member of, formatted for easy printing.
+   * 
+   * @return The comma-separated list of group names.
+   */
+	public String getCommaSeparatedGroups() {
+
+		StringBuffer gString = new StringBuffer();
+
+		java.util.Iterator it = groups.iterator();
+		while (it.hasNext()) {
+			gString.append((String) it.next());
+			if (it.hasNext()) {
+				gString.append(",");
+			}
+		}
+		return gString.toString();
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+   * Convenience method for assigning this test case to several groups at once.
+   * 
+   * @param s A list of Strings containing the group names.
+   */
+	public void setGroups(List s) {
+
+		groups = s;
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+   * Convenience method for assigning this test case to several groups at once.
+   * 
+   * @param s Array of group names.
+   */
+	public void setGroups(String[] s) {
+
+		for (int i = 0; i < s.length; i++) {
+			groups.add(s[i]);
+		}
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+   * Add this test case to a new group. If the test case is already a member of the group, a warning is printed and it is not added again.
+   * 
+   * @param newGroupName The name of the new group.
+   */
+	public void addToGroup(String newGroupName) {
+
+		if (!groups.contains(newGroupName)) {
+			groups.add(newGroupName);
+		} else {
+			logger.warning(getTestName() + " is already a member of " + newGroupName + " not added again.");
+		}
+
+	} // addToGroup
+
+	// -------------------------------------------------------------------------
+	/**
+   * Remove this test case from the specified group. If the test case is not a member of the specified group, a warning is printed.
+   * 
+   * @param groupName The name of the group from which this test case is to be removed.
+   */
+	public void removeFromGroup(String groupName) {
+
+		if (groups.contains(groupName)) {
+			groups.remove(groupName);
+		} else {
+			logger.warning(getTestName() + " was not a memeber of " + groupName);
+		}
+
+	} // removeFromGroup
+
+	// -------------------------------------------------------------------------
+	/**
+   * Test if this test case is a member of a particular group.
+   * 
+   * @param group The name of the group to check.
+   * @return True if this test case is a member of the named group, false otherwise.
+   */
+	public boolean inGroup(String group) {
+
+		return groups.contains(group);
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+   * Convenience method for checking if this test case belongs to any of several groups.
+   * 
+   * @param checkGroups The list of group names to check.
+   * @return True if this test case is in any of the groups, false if it is in none.
+   */
+	public boolean inGroups(List checkGroups) {
+
+		boolean result = false;
+
+		java.util.Iterator it = checkGroups.iterator();
+		while (it.hasNext()) {
+			if (inGroup((String) it.next())) {
+				result = true;
+			}
+		}
+		return result;
+
+	} // inGroups
+
+	// -------------------------------------------------------------------------
+	/**
+   * Count the number of rows in a table.
+   * 
+   * @param con The database connection to use. Should have been opened already.
+   * @param table The name of the table to analyse.
+   * @return The number of rows in the table.
+   */
+	public int countRowsInTable(Connection con, String table) {
+
+		if (con == null) {
+			logger.severe("countRowsInTable: Database connection is null");
+		}
+
+		return getRowCount(con, "SELECT COUNT(*) FROM " + table);
+
+	} // countRowsInTable
+
+	// -------------------------------------------------------------------------
+	/**
+   * Use SELECT COUNT(*) to get a row count.
+   */
+	private int getRowCountFast(Connection con, String sql) {
+
+		int result = -1;
+
+		try {
+			Statement stmt = con.createStatement();
+			// System.out.println("Executing " + sql);
+			ResultSet rs = stmt.executeQuery(sql);
+			if (rs != null) {
+				if (rs.first()) {
+					result = rs.getInt(1);
+				} else {
+					result = -1; // probably signifies an empty ResultSet
+				}
+			}
+			rs.close();
+			stmt.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return result;
+
+	} // getRowCountFast
+
+	// -------------------------------------------------------------------------
+	/**
+   * Use a row-by-row approach to counting the rows in a table.
+   */
+	private int getRowCountSlow(Connection con, String sql) {
+
+		int result = -1;
+
+		try {
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			if (rs != null) {
+				if (rs.last()) {
+					result = rs.getRow();
+				} else {
+					result = 0; // probably signifies an empty ResultSet
+				}
+			}
+			rs.close();
+			stmt.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return result;
+
+	} // getRowCountSlow
+
+	// -------------------------------------------------------------------------
+	/**
+   * Count the rows in a particular table or query.
+   * 
+   * @param con A connection to the database. Should already be open.
+   * @param sql The SQL to execute. Note that if possible this should begin with <code>SELECT COUNT FROM</code> since this is much quicker to
+   *          execute. If a standard SELECT statement is used, a row-by-row count will be performed, which may be slow if the table is large.
+   * @return The number of matching rows, or -1 if the query did not execute for some reason.
+   */
+	public int getRowCount(Connection con, String sql) {
+
+		if (con == null) {
+			logger.severe("getRowCount: Database connection is null");
+		}
+		int result = -1;
+
+		// if the query starts with SELECT COUNT and does not include a GROUP
+		// BY clause
+		// we can execute it and just take the first result, which is the count
+		if (sql.toLowerCase().indexOf("select count") >= 0 && sql.toLowerCase().indexOf("group by") < 0) {
+
+			result = getRowCountFast(con, sql);
+
+		} else if (sql.toLowerCase().indexOf("select count") < 0) {
+			// otherwise, do it row-by-row
+
+			logger.fine("getRowCount() executing SQL which does not appear to begin with SELECT COUNT - performing row-by-row count, which may take a long time if the table is large.");
+			result = getRowCountSlow(con, sql);
+
+		}
+
+		return result;
+
+	} // getRowCount
+
+	// -------------------------------------------------------------------------
+	/**
+   * Execute a SQL statement and return the value of one column of one row. Only the FIRST row matched is returned.
+   * 
+   * @param con The Connection to use.
+   * @param sql The SQL to check; should return ONE value.
+   * @return The value returned by the SQL.
+   */
+	public String getRowColumnValue(Connection con, String sql) {
+
+		String result = "";
+
+		try {
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			if (rs != null && rs.first()) {
+				result = rs.getString(1);
+			}
+			rs.close();
+			stmt.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return result;
+
+	} // getRowColumnValue
+
+	// -------------------------------------------------------------------------
+	/**
+   * Execute a SQL statement and return the values of one column of the result.
+   * 
+   * @param con The Connection to use.
+   * @param sql The SQL to check; should return ONE column.
+   * @return The value(s) making up the column, in the order that they were read.
+   */
+	public String[] getColumnValues(Connection con, String sql) {
+
+		ArrayList list = new ArrayList();
+
+		try {
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			if (rs != null) {
+				while (rs.next()) {
+					list.add(rs.getString(1));
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return (String[]) list.toArray(new String[list.size()]);
+
+	} // getRowColumnValue
+
+	// -------------------------------------------------------------------------
+	/**
+   * Verify foreign-key relations.
+   * 
+   * @param con A connection to the database to be tested. Should already be open.
+   * @param table1 With col1, specifies the first key to check.
+   * @param col1 Column in table1 to check.
+   * @param table2 With col2, specifies the second key to check.
+   * @param col2 Column in table2 to check.
+   * @param oneWayOnly If false, only a "left join" is performed on table1 and table2. If false, the
+   * @return The number of "orphans"
+   */
+	public int countOrphans(Connection con, String table1, String col1, String table2, String col2, boolean oneWayOnly) {
+
+		if (con == null) {
+			logger.severe("countOrphans: Database connection is null");
+		}
+
+		int resultLeft, resultRight;
+
+		String sql = " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2 + "."
+				+ col2 + " IS NULL";
+
+		resultLeft = getRowCount(con, "SELECT COUNT(*)" + sql);
+		// if (table1.equals("marker_synonym")) {
+		// System.out.println(sql);
+		// }
+
+		if (resultLeft > 0) {
+			String[] values = getColumnValues(con, "SELECT " + table1 + "." + col1 + sql + " LIMIT 20");
+			for (int i = 0; i < values.length; i++) {
+				ReportManager.info(this, con, table1 + "." + col1 + " " + values[i] + " is not linked.");
+			}
+		}
+
+		if (!oneWayOnly) {
+			// and the other way ... (a right join?)
+			sql = " FROM " + table2 + " LEFT JOIN " + table1 + " ON " + table2 + "." + col2 + " = " + table1 + "." + col1 + " WHERE " + table1 + "." + col1
+					+ " IS NULL";
+
+			resultRight = getRowCount(con, "SELECT COUNT(*)" + sql);
+
+			if (resultRight > 0) {
+				String[] values = getColumnValues(con, "SELECT " + table2 + "." + col2 + sql + " LIMIT 20");
+				for (int i = 0; i < values.length; i++) {
+					ReportManager.info(this, con, table2 + "." + col2 + " " + values[i] + " is not linked.");
+				}
+			}
+		} else {
+			resultRight = 0;
+		}
+
+		// logger.finest("Left: " + resultLeft + " Right: " + resultRight);
+
+		return resultLeft + resultRight;
+
+	} // countOrphans
+
+	// -------------------------------------------------------------------------
+	/**
+   * Verify foreign-key relations.
+   * 
+   * @param con A connection to the database to be tested. Should already be open.
+   * @param table1 With col1, specifies the first key to check.
+   * @param col1 Column in table1 to check.
+   * @param table2 With col2, specifies the second key to check.
+   * @param col2 Column in table2 to check.
+   * @param constraint1 additional constraint on col1
+   * @return The number of "orphans"
+   */
+	public int countOrphansWithConstraint(Connection con, String table1, String col1, String table2, String col2, String constraint1) {
+
+		if (con == null) {
+			logger.severe("countOrphans: Database connection is null");
+		}
+
+		int resultLeft;
+
+		String sql = " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2 + "."
+				+ col2 + " iS NULL";
+
+		sql = sql + " AND " + table1 + "." + constraint1;
+
+		resultLeft = getRowCount(con, "SELECT COUNT(*)" + sql);
+		if (resultLeft > 0) {
+			String[] values = getColumnValues(con, "SELECT " + table1 + "." + col1 + sql + " LIMIT 20");
+			for (int i = 0; i < values.length; i++) {
+				ReportManager.info(this, con, table1 + "." + col1 + " " + values[i] + " is not linked.");
+			}
+		}
+
+		logger.finest("Left: " + resultLeft);
+
+		return resultLeft;
+
+	} // countOrphans
+
+	// -------------------------------------------------------------------------
+	/**
+   * Generic way to check for orphan foreign key relationships.
+   * 
+   * @return true If there are no orphans.
+   */
+	public boolean checkForOrphans(Connection con, String table1, String key1, String table2, String key2, boolean oneWay) {
+
+		int orphans = countOrphans(con, table1, key1, table2, key2, oneWay);
+		if (orphans > 0) {
+			ReportManager.problem(this, con, table1 + " <-> " + table2 + " has " + orphans + " unlinked entries");
+		} else {
+			ReportManager.correct(this, con, "All " + table1 + " <-> " + table2 + " relationships are OK");
+		}
+
+		return orphans == 0;
+
+	} // checkForOrphans
+
+	// -------------------------------------------------------------------------
+	/**
+   * Verify multiple appearance of a given foreign key
+   * 
+   * @param con A connection to the database to be tested. Should already be open.
+   * @param table With col, specifies the foreign key to check.
+   * @param col Column in table to check.
+   * @return The number of "singles"
+   */
+	public int countSingles(Connection con, String table, String col) {
+
+		if (con == null) {
+			logger.severe("countSingles: Database connection is null");
+		}
+
+		int result = 0;
+
+		String sql = " FROM " + table + " GROUP BY (" + col + ") HAVING COUNT(*) = 1";
+
+		result = getRowCount(con, "SELECT *" + sql);
+
+		if (result > 0) {
+			String[] values = getColumnValues(con, "SELECT " + table + "." + col + sql + " LIMIT 20");
+			for (int i = 0; i < values.length; i++) {
+				ReportManager.info(this, con, table + "." + col + " " + values[i] + " is used only once.");
+			}
+		}
+
+		logger.finest("Singles: " + result);
+
+		return result;
+
+	} // countSingles
+
+	// -------------------------------------------------------------------------
+	/**
+   * Verify multiple appearance of a given foreign key
+   * 
+   * @param con A connection to the database to be tested. Should already be open.
+   * @param table With col, specifies the foreign key to check.
+   * @param col Column in table1 to check.
+   * @return boolean true if everything is fine false otherwise
+   */
+	public boolean checkForSingles(Connection con, String table, String col) {
+
+		int singles = 0;
+		boolean result = true;
+
+		singles = countSingles(con, table, col);
+
+		String useful_sql = "SELECT " + table + "." + col + " FROM " + table + " GROUP BY (" + col + ") HAVING COUNT(*) = 1";
+
+		if (singles == 0) {
+			ReportManager.correct(this, con, "PASSED " + table + "." + col + " is a FK for a 1 to many (>1) relationship");
+		} else if (singles > 0) {
+			ReportManager.problem(this, con, "FAILED " + table + "." + col + " is a FK for a 1 to many (>1) relationship");
+			ReportManager.problem(this, con, "FAILURE DETAILS: " + singles + " " + table + "." + col + " entries are used only once");
+			ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
+			result = false;
+		} else {
+			ReportManager.problem(this, con, "TEST NOT COMPLETED " + table + "." + col
+					+ " is a FK for a 1 to many (>1) relationship, look at the StackTrace if any");
+			ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
+			result = false;
+		}
+
+		return result;
+
+	} // checkForSingles
+
+	// -------------------------------------------------------------------------
+	/**
+   * Check that a particular SQL statement has the same result when executed on more than one database.
+   * 
+   * @return True if all matched databases provide the same result, false otherwise.
+   * @param sql The SQL query to execute.
+   * @param regexp A regexp matching the database names to check.
+   */
+	public boolean checkSameSQLResult(String sql, String regexp) {
+
+		ArrayList resultSetGroup = new ArrayList();
+		ArrayList statements = new ArrayList();
+
+		DatabaseConnectionIterator dcit = testRunner.getDatabaseConnectionIterator(regexp);
+
+		while (dcit.hasNext()) {
+
+			Connection con = (Connection) dcit.next();
+
+			try {
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(sql);
+				if (rs != null) {
+					resultSetGroup.add(rs);
+				}
+				logger.fine("Added ResultSet for " + DBUtils.getShortDatabaseName(con) + ": " + sql);
+				// DBUtils.printResultSet(rs, 100);
+				// note that the Statement can't be closed here as we use the
+				// ResultSet elsewhere
+				// so store a reference to it for closing later
+				statements.add(stmt);
+				// con.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		logger.finest("Number of ResultSets to compare: " + resultSetGroup.size());
+		boolean same = DBUtils.compareResultSetGroup(resultSetGroup, this);
+
+		Iterator it = statements.iterator();
+		while (it.hasNext()) {
+			try {
+				((Statement) it.next()).close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		return same;
+
+	} // checkSameSQLResult
+
+	// -------------------------------------------------------------------------
+	/**
+   * Check that a particular SQL statement has the same result when executed on more than one database.
+   * 
+   * @return True if all matched databases provide the same result, false otherwise.
+   * @param sql The SQL query to execute.
+   * @param databases The DatabaseRegistryEntries on which to execute sql.
+   */
+	public boolean checkSameSQLResult(String sql, DatabaseRegistryEntry[] databases) {
+
+		ArrayList resultSetGroup = new ArrayList();
+		ArrayList statements = new ArrayList();
+
+		for (int i = 0; i < databases.length; i++) {
+
+			Connection con = databases[i].getConnection();
+
+			try {
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(sql);
+				if (rs != null) {
+					resultSetGroup.add(rs);
+				}
+				logger.fine("Added ResultSet for " + DBUtils.getShortDatabaseName(con) + ": " + sql);
+				// DBUtils.printResultSet(rs, 100);
+				// note that the Statement can't be closed here as we use the
+				// ResultSet elsewhere
+				// so store a reference to it for closing later
+				statements.add(stmt);
+				// con.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		logger.finest("Number of ResultSets to compare: " + resultSetGroup.size());
+		boolean same = DBUtils.compareResultSetGroup(resultSetGroup, this);
+
+		Iterator it = statements.iterator();
+		while (it.hasNext()) {
+			try {
+				((Statement) it.next()).close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		return same;
+
+	} // checkSameSQLResult
+
+	// -------------------------------------------------------------------------
+	/**
+   * Check for the presence of a particular String in a table column.
+   * 
+   * @param con The database connection to use.
+   * @param table The name of the table to examine.
+   * @param column The name of the column to look in.
+   * @param str The string to search for; can use database wildcards (%, _) Note that if you want to search for one of these special characters, it
+   *          must be backslash-escaped.
+   * @return The number of times the string is matched.
+   */
+	public int findStringInColumn(Connection con, String table, String column, String str) {
+
+		if (con == null) {
+			logger.severe("findStringInColumn: Database connection is null");
+		}
+
+		String sql = "SELECT COUNT(*) FROM " + table + " WHERE " + column + " LIKE \"" + str + "\"";
+		logger.fine(sql);
+
+		return getRowCount(con, sql);
+
+	} // findStringInColumn
+
+	// -------------------------------------------------------------------------
+	/**
+   * Check that all entries in column match a particular pattern.
+   * 
+   * @param con The database connection to use.
+   * @param table The name of the table to examine.
+   * @param column The name of the column to look in.
+   * @param pattern The SQL pattern (can contain _,%) to look for.
+   * @return The number of columns that <em>DO NOT</em> match the pattern.
+   */
+	public int checkColumnPattern(Connection con, String table, String column, String pattern) {
+
+		// @todo - what about NULLs?
+
+		// cheat by looking for any rows that DO NOT match the pattern
+		String sql = "SELECT COUNT(*) FROM " + table + " WHERE " + column + " NOT LIKE \"" + pattern + "\"";
+		logger.fine(sql);
+
+		return getRowCount(con, sql);
+
+	} // checkColumnPattern
+
+	// -------------------------------------------------------------------------
+	/**
+   * Check that all entries in column match a particular value.
+   * 
+   * @param con The database connection to use.
+   * @param table The name of the table to examine.
+   * @param column The name of the column to look in.
+   * @param value The string to look for (not a pattern).
+   * @return The number of columns that <em>DO NOT</em> match value.
+   */
+	public int checkColumnValue(Connection con, String table, String column, String value) {
+
+		// @todo - what about NULLs?
+
+		// cheat by looking for any rows that DO NOT match the pattern
+		String sql = "SELECT COUNT(*) FROM " + table + " WHERE " + column + " != '" + value + "'";
+		logger.fine(sql);
+
+		return getRowCount(con, sql);
+
+	} // checkColumnPattern
+
+	// -------------------------------------------------------------------------
+	/**
+   * Check if there are any blank entires in a column that is not supposed to be null.
+   * 
+   * @param con The database connection to use.
+   * @param table The table to use.
+   * @param column The column to examine.
+   * @return An list of the row indices of any blank entries. Will be zero-length if there are none.
+   */
+	public List checkBlankNonNull(Connection con, String table, String column) {
+
+		if (con == null) {
+			logger.severe("checkBlankNonNull (column): Database connection is null");
+		}
+
+		ArrayList blanks = new ArrayList();
+
+		String sql = "SELECT " + column + " FROM " + table;
+		try {
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			ResultSetMetaData rsmd = rs.getMetaData();
+			while (rs.next()) {
+				String columnValue = rs.getString(1);
+				// should it be non-null?
+				if (rsmd.isNullable(1) == ResultSetMetaData.columnNoNulls) {
+					if (columnValue == null || columnValue.equals("")) {
+						blanks.add("" + rs.getRow());
+					}
+				}
+			}
+			rs.close();
+			stmt.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return blanks;
+
+	} // checkBlankNonNull
+
+	// -------------------------------------------------------------------------
+	/**
+   * Check all columns of a table for blank entires in columns that are marked as being NOT NULL.
+   * 
+   * @param con The database connection to use.
+   * @param table The table to use.
+   * @return The total number of blank null enums.
+   */
+	public int checkBlankNonNull(Connection con, String table) {
+
+		if (con == null) {
+			logger.severe("checkBlankNonNull (table): Database connection is null");
+		}
+
+		int blanks = 0;
+
+		String sql = "SELECT * FROM " + table;
+
+		try {
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			ResultSetMetaData rsmd = rs.getMetaData();
+			while (rs.next()) {
+				for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+					String columnValue = rs.getString(i);
+					String columnName = rsmd.getColumnName(i);
+					// should it be non-null?
+					if (rsmd.isNullable(i) == ResultSetMetaData.columnNoNulls) {
+						if (columnValue == null || columnValue.equals("")) {
+							blanks++;
+							logger.warning("Found blank non-null value in column " + columnName + " in " + table);
+						}
+					}
+				} // for column
+			} // while rs
+			rs.close();
+			stmt.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return blanks;
+
+	} // checkBlankNonNull
+
+	// -------------------------------------------------------------------------
+	/**
+   * Check if a particular table exists in a database.
+   * 
+   * @param con The database connection to check.
+   * @param table The table to check for.
+   * @return true if the table exists in the database.
+   */
+	public boolean checkTableExists(Connection con, String table) {
+
+		String tables = getRowColumnValue(con, "SHOW TABLES LIKE '" + table + "'");
+
+		boolean result = false;
+		if (tables != null && tables.length() != 0) {
+			result = true;
+		}
+
+		return result;
+
+	} // checkTableExists
+
+	// -------------------------------------------------------------------------
+	/**
+   * Print a warning message about a specific database.
+   * 
+   * @param con The database connection involved.
+   * @param message The message to print.
+   */
+	protected void warn(Connection con, String message) {
+
+		logger.warning("Problem in " + DBUtils.getShortDatabaseName(con));
+		logger.warning(message);
+
+	} // warn
+
+	// -------------------------------------------------------------------------
+	/**
+   * Get a list of the databases which represent species. Filter out any which don't seem to represent species.
+   * 
+   * @return A list of the species; each species will occur only once, and be of the form homo_sapiens (no trailing _).
+   */
+	public String[] getListOfSpeciesDatabases() {
+
+		ArrayList list = new ArrayList();
+
+		DatabaseConnectionIterator dbci = testRunner.getDatabaseConnectionIterator(".*");
+		while (dbci.hasNext()) {
+
+			String dbName = DBUtils.getShortDatabaseName((Connection) dbci.next());
+
+			String[] bits = dbName.split("_");
+			if (bits.length > 2) {
+				String species = bits[0] + "_" + bits[1];
+				if (!list.contains(species)) {
+					list.add(species);
+				}
+			} else {
+				logger.fine("Database " + dbName + " does not seem to represent a species; ignored");
+			}
+
+		}
+
+		return (String[]) list.toArray(new String[list.size()]);
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+   * Get the description.
+   * 
+   * @return The description for this test.
+   */
+	public String getDescription() {
+
+		return description;
+
+	} // getDescription
+
+	// -------------------------------------------------------------------------
+	/**
+   * Set the text description of this test case.
+   * 
+   * @param s The new description.
+   */
+	public void setDescription(String s) {
+
+		description = s;
+
+	} // setDescription
+
+	// -------------------------------------------------------------------------
+	/**
+   * Get the failure text.
+   * 
+   * @return The failure text for this test.
+   */
+	public String getFailureText() {
+
+		return failureText;
+
+	} // getFailureText
+
+	// -------------------------------------------------------------------------
+	/**
+   * Set the text failure text of this test case.
+   * 
+   * @param s The new failure text.
+   */
+	public void setFailureText(String s) {
+
+		failureText = s;
+
+	} // setFailureText
+
+	// -------------------------------------------------------------------------
+	/**
+   * Read a database schema from a file and create a temporary database from it.
+   * 
+   * @param fileName The name of the schema to read.
+   * @return A connection to a database buit from the schema.
+   */
+	public Connection importSchema(String fileName) {
+
+		Connection con = null;
+
+		// ----------------------------------------------------
+		// Parse the file first in case there are problems
+		SQLParser sqlParser = new SQLParser();
+
+		// try {
+		// List sqlCommands = sqlParser.parse(fileName);
+		// // sqlParser.printLines();
+		// } catch (FileNotFoundException fnfe) {
+		// fnfe.printStackTrace();
+		// }
+
+		// ----------------------------------------------------
+		// create the database
+
+		String tempDBName = DBUtils.generateTempDatabaseName();
+
+		// read properties file
+		String propsFile = System.getProperty("user.dir") + System.getProperty("file.separator") + "database.properties";
+		Utils.readPropertiesFileIntoSystem(propsFile);
+		logger.fine("Read database properties from " + propsFile);
+
+		try {
+
+			Class.forName(System.getProperty("driver"));
+			Connection tmpCon = DriverManager.getConnection(System.getProperty("databaseURL"), System.getProperty("user"), System.getProperty("password"));
+
+			String sql = "CREATE DATABASE " + tempDBName;
+			logger.finest(sql);
+			Statement stmt = tmpCon.createStatement();
+			stmt.execute(sql);
+			logger.fine("Database " + tempDBName + " created!");
+
+			// close the temporary connection and create a "real" one
+			tmpCon.close();
+			con = DriverManager.getConnection(System.getProperty("databaseURL") + tempDBName, System.getProperty("user"), System.getProperty("password"));
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			System.exit(1);
+
+		}
+
+		// ----------------------------------------------------
+		// Build the schema
+
+		try {
+
+			Statement stmt = con.createStatement();
+
+			// Fill the batch of SQL commands
+			stmt = sqlParser.populateBatch(stmt);
+
+			// execute the batch that has been built up previously
+			logger.info("Creating temporary database ...");
+			stmt.executeBatch();
+			logger.info("Done.");
+
+			// close statement
+			stmt.close();
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			System.exit(1);
+
+		}
+
+		return con;
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+   * Remove a whole database. Generally should *only* be used with temporary databases. Use at your own risk!
+   * 
+   * @param con The connection pointing to the database to remove. Should be connected as a user that has sufficient permissions to remove it.
+   */
+	public void removeDatabase(Connection con) {
+
+		String dbName = DBUtils.getShortDatabaseName(con);
+
+		try {
+
+			String sql = "DROP DATABASE " + dbName;
+			logger.finest(sql);
+			Statement stmt = con.createStatement();
+			stmt.execute(sql);
+			logger.fine("Database " + dbName + " removed!");
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			System.exit(1);
+
+		}
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+   * Get a list of all the table names.
+   * 
+   * @param con The database connection to use.
+   * @return An array of Strings representing the names of the tables, obtained from the SHOW TABLES command.
+   */
+	public String[] getTableNames(Connection con) {
+
+		return DBUtils.getTableNames(con);
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+   * Get a list of the table names that match a particular pattern.
+   * 
+   * @param con The database connection to use.
+   * @param pattern The pattern to use - note that this is a <em>SQL</em> pattern, not a regexp.
+   * @return An array of Strings representing the names of the tables that match the pattern.
+   */
+	public String[] getTableNames(Connection con, String pattern) {
+
+		return DBUtils.getTableNames(con, pattern);
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+   * Convenience method for getting a connection to a named schema.
+   * 
+   * @param schema The name of the schema to connect to.
+   * @return A connection to schema.
+   */
+	public Connection getSchemaConnection(String schema) {
+
+		Connection con = DBUtils.openConnection(System.getProperty("driver"),
+																						System.getProperty("databaseURL") + schema,
+																						System.getProperty("user"),
+																						System.getProperty("password"));
+
+		return con;
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+   * Compare two schemas to see if they have the same tables. The comparison is done in both directions, so will return false if a table exists in
+   * schema1 but not in schema2, <em>or</em> if a table exists in schema2 but not in schema2.
+   * 
+   * @param schema1 The first schema to compare.
+   * @param schema2 The second schema to compare.
+   * @return true if all tables in schema1 exist in schema2, and vice-versa.
+   */
+	public boolean compareTablesInSchema(Connection schema1, Connection schema2) {
+
+		boolean result = true;
+
+		String name1 = DBUtils.getShortDatabaseName(schema1);
+		String name2 = DBUtils.getShortDatabaseName(schema2);
+
+		// check each table in turn
+		String[] tables = getTableNames(schema1);
+		for (int i = 0; i < tables.length; i++) {
+			String table = tables[i];
+			if (!checkTableExists(schema2, table)) {
+				ReportManager.problem(this, schema1, "Table " + table + " exists in " + name1 + " but not in " + name2);
+				result = false;
+			}
+		}
+		// and now the other way
+		tables = getTableNames(schema2);
+		for (int i = 0; i < tables.length; i++) {
+			String table = tables[i];
+			if (!checkTableExists(schema1, table)) {
+				ReportManager.problem(this, schema2, "Table " + table + " exists in " + name2 + " but not in " + name1);
+				result = false;
+			}
+		}
+
+		return result;
+
+	}
+
+	// -------------------------------------------------------------------------
+
+	/**
+   * Check if the current test has repair capability. Signified by implementing the Repair interface.
+   * 
+   * @return True if this test implements Repair, false otherwise.
+   */
+	public boolean canRepair() {
+
+		return (this instanceof Repair);
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+   * Check if a table has rows.
+   * 
+   * @param con The connection to the database to use.
+   * @param table The table to check.
+   * @return true if the table has >0 rows, false otherwise.
+   */
+	public boolean tableHasRows(Connection con, String table) {
+
+		return (getRowCount(con, "SELECT COUNT(*) FROM " + table) > 0);
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+   * See if the "hintLongRunning" flag is set.
+   * 
+   * @return The value of the hintLongRunning flag.
+   */
+	public boolean isLongRunning() {
+
+		return hintLongRunning;
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+   * Set the flag that indicates that this test may take a long time to run.
+   * 
+   * @param b The new value of the flag.
+   */
+	public void setHintLongRunning(boolean b) {
+
+		hintLongRunning = b;
+
+	}
+
+	// ---------------------------------------------------------------------
+	/**
+   * Check if this test case applies to a particular DatabaseType.
+   * 
+   * @param t The database type to check against.
+   * @return true if this test applies to databases of type t.
+   */
+	public boolean appliesToType(DatabaseType t) {
+
+		Iterator it = appliesToTypes.iterator();
+		while (it.hasNext()) {
+			DatabaseType type = (DatabaseType) it.next();
+			if (t.equals(type)) {
+				return true;
+			}
+		}
+
+		return false;
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+   * Add another database type to the list of types that this test case applies to.
+   * 
+   * @param t The new type.
+   */
+	public void addAppliesToType(DatabaseType t) {
+
+		appliesToTypes.add(t);
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+   * Remove a database type from the list of types that this test case applies to.
+   * 
+   * @param t The type to remove.
+   */
+	public void removeAppliesToType(DatabaseType t) {
+
+		appliesToTypes.remove(t);
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+   * Specify the database types that a test applies to.
+   * 
+   * @param types A List of DatabaseTypes - overwrites the current setting.
+   */
+	public void setAppliesToTypes(List types) {
+
+		appliesToTypes = types;
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+   * @return the list of database types that a test applies to.
+   */
+	public DatabaseType[] getAppliesToTypes() {
+
+		return (DatabaseType[]) appliesToTypes.toArray(new DatabaseType[appliesToTypes.size()]);
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+   * Set the database type(s) that this test applies to based upon the directory name. For directories called "generic", the type is set to core, est,
+   * estgene and vega. For all other directories the type is set based upon the directory name.
+   * 
+   * @param dirName The directory name to check.
+   */
+	public void setTypeFromDirName(String dirName) {
+
+		List types = new ArrayList();
+
+		if (dirName.equals("generic")) {
+
+			types.add(DatabaseType.CORE);
+			types.add(DatabaseType.VEGA);
+			types.add(DatabaseType.EST);
+			types.add(DatabaseType.ESTGENE);
+			types.add(DatabaseType.CDNA);
+			logger.finest("Set generic types for " + getName());
+
+		} else {
+
+			DatabaseType type = DatabaseType.resolveAlias(dirName);
+			if (type != DatabaseType.UNKNOWN) {
+
+				types.add(type);
+				logger.finest("Set type to " + type.toString() + " for " + getName());
+			} else {
+				logger.warning("Cannot deduce test type from directory name " + dirName + " for " + getName());
+			}
+		}
+
+		setAppliesToTypes(types);
+
+	}
+
+	// -------------------------------------------------------------------------
+
+	/**
+   * This method can be overridden in subclasses to define (via addAppliesToType/removeAppliesToType) which types of databases the test applies to.
+   */
+	public void types() {
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+   * Verify foreign-key relations, and fills ReportManager with useful sql if necessary.
+   * 
+   * @param con A connection to the database to be tested. Should already be open.
+   * @param table1 With col1, specifies the first key to check.
+   * @param col1 Column in table1 to check.
+   * @param table2 With col2, specifies the second key to check.
+   * @param col2 Column in table2 to check.
+   * @return boolean true if everything is fine false otherwise
+   */
+	public boolean checkForOrphans(Connection con, String table1, String col1, String table2, String col2) {
+
+		int orphans = 0;
+		boolean result = true;
+
+		orphans = countOrphans(con, table1, col1, table2, col2, true);
+
+		String useful_sql = "SELECT " + table1 + "." + col1 + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2
+				+ "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
+
+		if (orphans == 0) {
+			ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + col1 + "(" + col2 + ")" + " relationships");
+		} else if (orphans > 0) {
+			ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + col1 + "(" + col2 + ")" + " relationships");
+			ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
+			ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
+			result = false;
+		} else {
+			ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1 + ", look at the StackTrace if any");
+			result = false;
+		}
+
+		return result;
+
+	} // checkForOrphans
+
+	// -------------------------------------------------------------------------
+	/**
+   * Verify foreign-key relations, and fills ReportManager with useful sql if necessary.
+   * 
+   * @param con A connection to the database to be tested. Should already be open.
+   * @param table1 With col1, specifies the first key to check.
+   * @param col1 Column in table1 to check.
+   * @param table2 With col2, specifies the second key to check.
+   * @param col2 Column in table2 to check.
+   * @param constraint1 additional constraint on a column in table1
+   * @return boolean true if everything is fine false otherwise
+   */
+	public boolean checkForOrphansWithConstraint(Connection con, String table1, String col1, String table2, String col2, String constraint1) {
+
+		int orphans = 0;
+		boolean result = true;
+
+		orphans = countOrphansWithConstraint(con, table1, col1, table2, col2, constraint1);
+
+		String useful_sql = "SELECT " + table1 + "." + col1 + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2
+				+ "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
+
+		// System.out.println(table1 + "." + col1 + "." + table2 + "." + col2);
+
+		if (!constraint1.equals("")) {
+			useful_sql = useful_sql + " AND " + table1 + "." + constraint1;
+		}
+
+		if (orphans == 0) {
+			ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + col1 + "(" + col2 + ")" + " relationships");
+		} else if (orphans > 0) {
+			ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + col1 + "(" + col2 + ")" + " relationships");
+			ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
+			ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
+			result = false;
+		} else {
+			ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1 + ", look at the StackTrace if any");
+			result = false;
+		}
+
+		return result;
+
+	} // checkForOrphansWithConstraint
+
+	// ----------------------------------------------------------------------
+	/**
+   * Check that a particular column has no null values. Problem or correct reports are generated via ReportManager.
+   * 
+   * @param con The database connection to use.
+   * @param table The table name.
+   * @param column The column to check.
+   * @return True if no columns are null, false otherwise.
+   */
+	public boolean checkNoNulls(Connection con, String table, String column) {
+
+		boolean result = true;
+
+		int nulls = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE " + column + " IS NULL");
+
+		if (nulls > 0) {
+
+			ReportManager.problem(this, con, nulls + " NULL values in " + table + "." + column);
+			result = false;
+
+		} else {
+
+			ReportManager.correct(this, con, "No NULL values in " + table + "." + column);
+		}
+
+		return result;
+
+	} // checkNoNulls
+
+	// ----------------------------------------------------------------------
+	/**
+   * Get a list of the tables in a core schema that conform to various characteristics and count as "feature" tables.
+   * 
+   * @return An array of feature tables.
+   */
+	public String[] getCoreFeatureTables() {
+
+		return featureTables;
+
+	}
+
+	// ----------------------------------------------------------------------
+	/**
+   * Get a list of the tables in a core schema that have an analysis_id colmun.
+   * 
+   * @return An array of table names.
+   */
+	public String[] getCoreTablesWithAnalysisID() {
+
+		return tablesWithAnalysisID;
+
+	}
+
+	// ----------------------------------------------------------------------
+	/**
+   * Get the equivalent database from the secondary database server. "equivalent" means: same database type and species. If more than one database on
+   * the secondary server has the same type and species, then the one with the highest version number is used. The returned DatabaseRegistryEntry's
+   * internal connection is opened.
+   * 
+   * @param dbre The database to find the equivalent for.
+   * @return The database on the secondary server with the same type and species, and the highest version number, or null if none is found.
+   */
+	public DatabaseRegistryEntry getEquivalentFromSecondaryServer(DatabaseRegistryEntry dbre) {
+
+		// get connection to secondary server
+		Connection listCon = DBUtils.openConnection(System.getProperty("secondary.driver"),
+																								System.getProperty("secondary.databaseURL"),
+																								System.getProperty("secondary.user"),
+																								System.getProperty("secondary.password"));
+
+		// find any databases matching type and species
+		TreeSet matchingDBs = new TreeSet(); // get sorting for free
+		String[] dbs = DBUtils.listDatabases(listCon);
+		for (int i = 0; i < dbs.length; i++) {
+			DatabaseRegistryEntry secDBRE = new DatabaseRegistryEntry(dbs[i], null, null, false); // nulls will set type automatically
+			if (dbre.getType() == secDBRE.getType() && dbre.getSpecies() == secDBRE.getSpecies()) {
+				matchingDBs.add(secDBRE);
+				logger.finest("added " + secDBRE.getName() + " to list of databases to check for equivalent to " + dbre.getName());
+			}
+		}
+
+		if (matchingDBs.size() == 0) {
+			logger.severe("Could not find equvialent database to " + dbre.getName() + " on secondary server");
+		}
+
+		// take the highest one, if available
+		DatabaseRegistryEntry result = null;
+		
+		if (matchingDBs.size() > 0) {
+			
+			result = (DatabaseRegistryEntry) matchingDBs.last();
+			// initialise connection
+			Connection dbCon = DBUtils.openConnection(System.getProperty("secondary.driver"), System.getProperty("secondary.databaseURL")
+					+ result.getName(), System.getProperty("secondary.user"), System.getProperty("secondary.password"));
+
+			result.setConnection(dbCon);
+			
+		}
+
+		return result;
+
+	}
+	// ----------------------------------------------------------------------
 
 } // EnsTestCase

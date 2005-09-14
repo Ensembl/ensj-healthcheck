@@ -23,6 +23,7 @@ import java.util.Set;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Compare the xrefs in the current database with those from the equivalent database on the secondary server.
@@ -56,6 +57,11 @@ public class ComparePreviousVersionXrefs extends SingleDatabaseTestCase {
 
         DatabaseRegistryEntry sec = getEquivalentFromSecondaryServer(dbre);
 
+        if (sec == null) {
+        	logger.warning("Can't get equivalent database for " + dbre.getName());
+        	return true;
+        }
+        
         logger.finest("Equivalent database on secondary server is " + sec.getName());
 
         Map currentXrefCounts = getXrefCounts(dbre);
