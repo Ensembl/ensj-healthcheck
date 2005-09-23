@@ -66,6 +66,7 @@ cbriggsae_est
 cbriggsae_mrna
 celegans_est
 celegans_mrna
+cisred
 cloneset
 drosophila-peptides
 enhancer
@@ -88,6 +89,7 @@ knownGeneDensity
 marker
 matepairs
 mature_peptide
+miranda
 mouse_cdna
 mouse_est
 mouse_protein
