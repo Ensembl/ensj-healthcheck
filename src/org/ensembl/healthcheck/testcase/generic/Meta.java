@@ -72,6 +72,8 @@ public class Meta extends SingleDatabaseTestCase {
 
         result &= checkCoordSystemTableCases(con);
 
+        result &= checkGenebuildID(con);
+        
         // ----------------------------------------
         // Use an AssemblyNameInfo object to get the assembly information
         AssemblyNameInfo assembly = new AssemblyNameInfo(con);
@@ -400,6 +402,31 @@ public class Meta extends SingleDatabaseTestCase {
 
     }
 
+    // ---------------------------------------------------------------------
+    
+    private boolean checkGenebuildID(Connection con) {
+
+      String gbid = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.id'");
+      logger.finest("genebuild.id from database: " + gbid);
+
+      if (gbid == null || gbid.length() == 0) {
+
+          ReportManager.problem(this, con, "No genebuild.id entry in meta table");
+          return false;
+
+      } else if (!gbid.matches("[0-9]+")) {
+
+        ReportManager.problem(this, con, "genebuild.id " + gbid + " is not numeric");
+        return false;
+          
+      }
+
+      ReportManager.correct(this, con, "genebuild.id " + gbid + " is present and numeric");
+
+      return true;
+
+  }
+    
     // ---------------------------------------------------------------------
 
 } // Meta
