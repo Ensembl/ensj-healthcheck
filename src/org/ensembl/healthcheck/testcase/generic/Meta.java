@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 
 import org.ensembl.healthcheck.AssemblyNameInfo;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
@@ -72,7 +73,9 @@ public class Meta extends SingleDatabaseTestCase {
 
         result &= checkCoordSystemTableCases(con);
 
-        result &= checkGenebuildID(con);
+        if (dbre.getType() == DatabaseType.CORE) {
+        	result &= checkGenebuildID(con);
+        }
         
         // ----------------------------------------
         // Use an AssemblyNameInfo object to get the assembly information
