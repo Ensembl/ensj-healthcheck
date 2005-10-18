@@ -93,9 +93,9 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
         result &= checkForOrphans(con, "regulatory_feature", "regulatory_feature_id", "regulatory_feature_object", "regulatory_feature_id", true);
 
-        result &= checkForOrphans(con, "regulatory_factor_coding", "transcript_id", "transcript", "transcript_id", true);
+        //result &= checkForOrphans(con, "regulatory_factor_coding", "transcript_id", "transcript", "transcript_id", true);
 
-        result &= checkForOrphans(con, "regulatory_factor_coding", "gene_id", "gene", "gene_id", true);
+        //result &= checkForOrphans(con, "regulatory_factor_coding", "gene_id", "gene", "gene_id", true);
 
         result &= checkForOrphans(con, "regulatory_factor_coding", "regulatory_factor_id", "regulatory_factor", "regulatory_factor_id", true);
 
