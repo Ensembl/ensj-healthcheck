@@ -101,6 +101,9 @@ public final class Species {
 	/** Specific type of species */
 	public static final Species MACACA_MULATTA = new Species("macaca_mulatta");
 
+	/** Specific type of species */
+	public static final Species LOXODONTA_AFRICANA = new Species("loxodonta_africana");
+
     /** Non-ensembl database */
     public static final Species SYSTEM = new Species("system");
 
@@ -158,6 +161,7 @@ public final class Species {
 		taxonIDToSpecies.put("13616", MONODELPHIS_DOMESTICA);
 		taxonIDToSpecies.put("4932", SACCHAROMYCES_CEREVISIAE);
 		taxonIDToSpecies.put("9544", MACACA_MULATTA);
+		taxonIDToSpecies.put("9785", LOXODONTA_AFRICANA);
 		
 		// and the other way around
 		Iterator it = taxonIDToSpecies.keySet().iterator();
@@ -187,6 +191,7 @@ public final class Species {
 		assemblyPrefixToSpecies.put("BROADO", MONODELPHIS_DOMESTICA);
 		assemblyPrefixToSpecies.put("SGD", SACCHAROMYCES_CEREVISIAE);
 		assemblyPrefixToSpecies.put("MM", MACACA_MULATTA);
+		assemblyPrefixToSpecies.put("BROADE", LOXODONTA_AFRICANA);
 		
 		// and the other way around
 		it = assemblyPrefixToSpecies.keySet().iterator();
@@ -376,9 +381,13 @@ public final class Species {
 
 		if (in(alias, "macacamulatta,macaca_mulatta,rhesusmacaque,rhesus_macaque,macaque")) {
 
-			return CIONA_INTESTINALIS;
+			return MACACA_MULATTA;
 
 		}
+		if (in(alias, "elephant,loxodonta_africana,nelly,loxodonta,african_elephant,african_savannah_elephant,african_bush_elephant")) {
+
+			return LOXODONTA_AFRICANA;
+                }
 
 		// --------------------------------------
 
