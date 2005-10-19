@@ -84,11 +84,6 @@ public class EmptyTables extends SingleDatabaseTestCase {
                 tables = remove(tables, miscTables);
             }
 
-            // go_xref only in human
-            if (species != Species.HOMO_SAPIENS) {
-                tables = remove(tables, "go_xref");
-            }
-
             // certain species can have empty karyotype table
             if (species == Species.CAENORHABDITIS_BRIGGSAE || species == Species.CAENORHABDITIS_ELEGANS || species == Species.DANIO_RERIO
                     || species == Species.FUGU_RUBRIPES || species == Species.XENOPUS_TROPICALIS || species == Species.APIS_MELLIFERA
