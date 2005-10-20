@@ -52,7 +52,7 @@ public class DatabaseRegistryEntryTest extends TestCase {
         String[] names = {"homo_sapiens_core_20_34", "human_core_20"};
 
         for (int i = 0; i < names.length; i++) {
-            DatabaseRegistryEntry dbre = new DatabaseRegistryEntry(names[i], null, null);
+            DatabaseRegistryEntry dbre = new DatabaseRegistryEntry(names[i], null, null, false);
             assertTrue(dbre.getSpecies() != Species.UNKNOWN);
             assertTrue(dbre.getType() != DatabaseType.UNKNOWN);
         }
