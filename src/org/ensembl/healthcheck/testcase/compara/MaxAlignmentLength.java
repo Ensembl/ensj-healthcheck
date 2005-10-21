@@ -85,10 +85,13 @@ public class MaxAlignmentLength extends SingleDatabaseTestCase implements Repair
         try {
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
+            // Add 2 to the dnafrag_end - dnafrag_start in order to get length + 1.
+            // Adding this at this point is probably faster than asking MySQL to add 2
+            // to every single row...
             while (rs.next()) {
-                MetaEntriesToAdd.put(rs.getString(1), rs.getString(2));
+                MetaEntriesToAdd.put(rs.getString(1), new Integer(rs.getInt(2) + 2).toString());
                 if (rs.getInt(2) > globalMaxAlignmentLength) {
-                    globalMaxAlignmentLength = rs.getInt(2);
+                    globalMaxAlignmentLength = rs.getInt(2) + 2;
                 }
             }
             rs.close();
