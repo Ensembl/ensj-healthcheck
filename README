@@ -6,12 +6,12 @@ REQUIREMENTS
 ============
 
 1. J2SDK 1.4 or later (see http://java.sun.com/ for downloads); this is already
-   installed on the Sanger system in /usr/opt/java141/.  Make sure that your
+   installed on the Sanger system in /usr/opt/java142/.  Make sure that your
    JAVA_HOME environment variable is pointing to the correct directory and that the
    *correct* Java executables are in your path; put something like the following in
    your .cshrc:
 
-     setenv JAVA_HOME /usr/opt/java141
+     setenv JAVA_HOME /usr/opt/java142
      setenv PATH ${JAVA_HOME}/bin:${PATH}
 
 
