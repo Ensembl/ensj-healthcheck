@@ -26,6 +26,7 @@ $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config we
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_gallus_gallus.properties
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_homo_sapiens.properties
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_monodelphis_domestica.properties
+$java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_macca_mulatta.properties
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_mus_musculus.properties
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_pan_troglodytes.properties
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_rattus_norvegicus.properties
