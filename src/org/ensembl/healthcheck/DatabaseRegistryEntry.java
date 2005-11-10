@@ -27,6 +27,8 @@ public class DatabaseRegistryEntry implements Comparable {
 
     private Species species;
 
+    private String schemaVersion, geneBuildVersion;
+    
     private DatabaseType type;
 
     private Connection con;
@@ -62,12 +64,13 @@ public class DatabaseRegistryEntry implements Comparable {
                                               System.getProperty("user"),
                                               System.getProperty("password"));
         }
-
+        
     }
 
     // -----------------------------------------------------------------
     /**
      * Attempt to figure out species from database name.
+     * Also set schema and genebuild versions as appropriate.
      * 
      * @param name The name to use.
      * @return The species corresponding to name, or Species.UNKNOWN.
@@ -84,17 +87,22 @@ public class DatabaseRegistryEntry implements Comparable {
         // homo_sapiens_core_20_34a
         if (bits.length >= 2) {
             alias = bits[0] + "_" + bits[1];
+            this.schemaVersion = bits[3];
+            this.geneBuildVersion = bits[4];
             if (Species.resolveAlias(alias) != Species.UNKNOWN) {
                 return Species.resolveAlias(alias);
             }
+            
         }
 
         // human_core_20, hsapiens_XXX
         if (bits.length > 1) {
             alias = bits[0];
+            this.schemaVersion = bits[2];
             if (Species.resolveAlias(alias) != Species.UNKNOWN) {
                 return Species.resolveAlias(alias);
             }
+            
         }
 
         // compara, mart, go doesn't really have a species
@@ -113,9 +121,12 @@ public class DatabaseRegistryEntry implements Comparable {
         // username_species_type_version_release
         if (bits.length > 3) {
             alias = bits[1] + "_" + bits[2];
+            this.schemaVersion = bits[3];
+            this.geneBuildVersion = bits[4];
             if (Species.resolveAlias(alias) != Species.UNKNOWN) {
                 return Species.resolveAlias(alias);
             }
+            
         }
 
         // ensembl help databases
@@ -277,6 +288,22 @@ public class DatabaseRegistryEntry implements Comparable {
         return getName().compareTo(((DatabaseRegistryEntry) o).getName());
 
     }
+
+		public String getSchemaVersion() {
+			return schemaVersion;
+		}
+
+		public void setSchemaVersion(String schemaVersion) {
+			this.schemaVersion = schemaVersion;
+		}
+
+		public String getGeneBuildVersion() {
+			return geneBuildVersion;
+		}
+
+		public void setGeneBuildVersion(String geneBuildVersion) {
+			this.geneBuildVersion = geneBuildVersion;
+		}
 
     // -----------------------------------------------------------------
 
