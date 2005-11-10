@@ -29,7 +29,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 public class AnalysisDescription extends SingleDatabaseTestCase {
 
-	String[] types = { "gene", "prediction_transcript" }; // add more here - must have analysis_id
+	String[] types = { "gene", "transcript", "prediction_transcript" }; // add more here - must have analysis_id
 
 	/**
    * Create a new AnalysisDescription testcase.
@@ -70,8 +70,14 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 		for (int i = 0; i < types.length; i++) {
 
 			// get analyses that are used
-			String[] analyses = getColumnValues(con, "SELECT DISTINCT(analysis_id) FROM " + types[i]);
+			// special case for transcripts - need to link to gene table and get analysis from there
+			String sql =  "SELECT DISTINCT(analysis_id) FROM " + types[i];
+			if (types[i].equals("transcript")) {
+				sql = "SELECT DISTINCT(g.analysis_id) FROM gene g, transcript t WHERE t.gene_id=g.gene_id";
+			}
+			String[] analyses = getColumnValues(con, sql);
 
+		
 			// check each one has an analysis_description
 			for (int j = 0; j < analyses.length; j++) {
 				int count = getRowCount(con, "SELECT COUNT(*) FROM analysis_description WHERE analysis_id=" + analyses[j]);
