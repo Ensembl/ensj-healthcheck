@@ -60,10 +60,9 @@ public class AffyXrefs extends SingleDatabaseTestCase {
 
         Connection con = dbre.getConnection();
 
-	// Check if there are any Affy features - if so there should be Affy Xrefs
-        String sql = "SELECT COUNT(*) FROM misc_set ms, misc_feature_misc_set mfms WHERE ms.code LIKE \'%AFFY%\' AND ms.misc_set_id=mfms.misc_set_id";
-	logger.fine("Counting Affy features");
-
+        // Check if there are any Affy features - if so there should be Affy Xrefs
+        String sql = "SELECT * FROM affy_array";
+	
         if (getRowCount(con, sql) > 0) {
 
             // Get a list of chromosomes, then check the number of Affy xrefs associated with each one
