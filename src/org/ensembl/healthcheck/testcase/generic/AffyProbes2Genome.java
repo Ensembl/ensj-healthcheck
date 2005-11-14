@@ -76,7 +76,7 @@ public class AffyProbes2Genome extends SingleDatabaseTestCase {
         Connection con = dbre.getConnection();
 
         if (testAffyTablesPopulated(dbre)) {
-            return testProbsetSizesSet(con) && testAffyArraysInExternalDB(con);
+            return testProbsetSizesSet(con) && testAffyArraysInExternalDB(con) && testAffyFeatureInMetaCoord(con);
         } else {
             return false;
         }
@@ -176,4 +176,20 @@ public class AffyProbes2Genome extends SingleDatabaseTestCase {
 
         return result;
     }
+    
+
+    private boolean testAffyFeatureInMetaCoord(Connection con) {
+
+      boolean result = true;
+
+      String sql = "select * from meta_coord where table_name='affy_feature'";
+      if (getRowCount(con, sql) == 0) {
+        ReportManager.problem(this, con, "no entry for affy_feature in meta_coord table. ");
+        result = false;
+      }
+      
+      return result;
+  }
+
+    
 }
