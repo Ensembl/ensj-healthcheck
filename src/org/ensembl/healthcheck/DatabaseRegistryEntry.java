@@ -176,6 +176,11 @@ public class DatabaseRegistryEntry implements Comparable {
 
 		// homo_sapiens_core_20_34a
 		if (bits.length >= 4) {
+			// Try to match homo_sapiens_core_expression_est_35_35h before
+			alias = bits[3];
+			if (DatabaseType.resolveAlias(alias) != DatabaseType.UNKNOWN) {
+				return DatabaseType.resolveAlias(alias);
+			}
 			alias = bits[2];
 			if (DatabaseType.resolveAlias(alias) != DatabaseType.UNKNOWN) {
 				return DatabaseType.resolveAlias(alias);
