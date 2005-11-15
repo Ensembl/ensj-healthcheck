@@ -76,7 +76,10 @@ public class AffyProbes2Genome extends SingleDatabaseTestCase {
         Connection con = dbre.getConnection();
 
         if (testAffyTablesPopulated(dbre)) {
-            return testProbsetSizesSet(con) && testAffyArraysInExternalDB(con) && testAffyFeatureInMetaCoord(con);
+            return testProbsetSizesSet(con) 
+            & testAffyArraysInExternalDB(con) 
+            & testAffyFeatureInMetaCoord(con)
+            & testNoExistingAffyXrefs(con);
         } else {
             return false;
         }
@@ -191,5 +194,20 @@ public class AffyProbes2Genome extends SingleDatabaseTestCase {
       return result;
   }
 
-    
+
+    private boolean testNoExistingAffyXrefs(Connection con) {
+
+      boolean result = true;
+
+      String sql = "select * from object_xref ox, xref x " +
+      		"where ox.xref_id=x.xref_id and external_db_id>3000 and external_db_id<3200 limit 1";
+      
+      if (getRowCount(con, sql) != 0) {
+        ReportManager.problem(this, con, "affy xrefs already exist in the xref and object_xref tables. Delete them.");
+        result = false;
+      }
+      
+      return result;
+  }
+
 }
