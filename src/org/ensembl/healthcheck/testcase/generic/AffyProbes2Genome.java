@@ -78,8 +78,7 @@ public class AffyProbes2Genome extends SingleDatabaseTestCase {
         if (testAffyTablesPopulated(dbre)) {
             return testProbsetSizesSet(con) 
             & testAffyArraysInExternalDB(con) 
-            & testAffyFeatureInMetaCoord(con)
-            & testNoExistingAffyXrefs(con);
+            & testAffyFeatureInMetaCoord(con);
         } else {
             return false;
         }
@@ -188,22 +187,6 @@ public class AffyProbes2Genome extends SingleDatabaseTestCase {
       String sql = "select * from meta_coord where table_name='affy_feature'";
       if (getRowCount(con, sql) == 0) {
         ReportManager.problem(this, con, "no entry for affy_feature in meta_coord table. ");
-        result = false;
-      }
-      
-      return result;
-  }
-
-
-    private boolean testNoExistingAffyXrefs(Connection con) {
-
-      boolean result = true;
-
-      String sql = "select * from object_xref ox, xref x " +
-      		"where ox.xref_id=x.xref_id and external_db_id>3000 and external_db_id<3200 limit 1";
-      
-      if (getRowCount(con, sql) != 0) {
-        ReportManager.problem(this, con, "affy xrefs already exist in the xref and object_xref tables. Delete them.");
         result = false;
       }
       
