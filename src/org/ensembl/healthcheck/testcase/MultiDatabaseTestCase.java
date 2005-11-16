@@ -58,11 +58,38 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
      */
     public Map getSpeciesDatabaseMap(DatabaseRegistry dbr) {
 
+        return getSpeciesDatabaseMap(dbr, false);
+
+    } // getSpeciesDatabaseMap
+
+    //---------------------------------------------------------------------
+    /**
+     * Build a hash of arrays of DatabaseRegistryEntries, one key for each species.
+     * 
+     * @param dbr
+     *          The DatabaseRegistry to use.
+     * @param fromSecondary
+     *          boolean value for getting species map from secondary server instead
+     *
+     * @return HashMap of DatabaseRegistryEntry[], one key/value pair for each Species.
+     */
+    public Map getSpeciesDatabaseMap(DatabaseRegistry dbr, boolean fromSecondary) {
+
         Map speciesMap = new HashMap();
-        DatabaseRegistryEntry[] allDBs = dbr.getAll();
+
+        DatabaseRegistryEntry[] allDBs, speciesDBs;
+        if (fromSecondary) {
+            allDBs = dbr.getAllSecondary();
+        } else {
+            allDBs = dbr.getAll();
+        }
         for (int i = 0; i < allDBs.length; i++) {
             Species s = allDBs[i].getSpecies();
-            DatabaseRegistryEntry[] speciesDBs = dbr.getAll(s);
+            if (fromSecondary) {
+                speciesDBs = dbr.getAllSecondary(s);
+            } else {
+                speciesDBs = dbr.getAll(s);
+            }
             logger.finest("Got " + speciesDBs.length + " databases for " + s.toString());
             if (!speciesMap.containsKey(s)) {
                 speciesMap.put(s, speciesDBs);
