@@ -23,6 +23,7 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 import java.util.Vector;
 
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
@@ -61,43 +62,37 @@ public class CheckTopLevelDnaFrag extends MultiDatabaseTestCase {
 
         boolean result = true;
 
-        DatabaseRegistryEntry[] allDBs = dbr.getAll();
-        DatabaseRegistryEntry comparaDB;
-        int comparaIndex = -1;
-        Connection con;
-        for (int i = 0; i < allDBs.length; i++) {
-          if (allDBs[i].getType().toString().equalsIgnoreCase("compara")) {
-              comparaIndex = i;
-          }
-        }
-        if (comparaIndex == -1) {
+        // Get compara DB connection
+        DatabaseRegistryEntry[] allComparaDBs = dbr.getAll(DatabaseType.COMPARA);
+        if (allComparaDBs.length == 0) {
           result = false;
           ReportManager.problem(this, "", "Cannot find compara database");
           usage();
           return false;
-        } else {
-          comparaDB = allDBs[comparaIndex];
-          con = comparaDB.getConnection();
         }
-        Map speciesCons = new HashMap();
-        for (int i = 0; i < allDBs.length; i++) {
-          if ((i != comparaIndex) &&
-              (allDBs[i].getType().toString().equalsIgnoreCase("core"))) {
-            Species s = allDBs[i].getSpecies();
-            DatabaseRegistryEntry[] speciesDBs = dbr.getAll(s);
-            logger.finest("Got " + speciesDBs.length + " databases for " + s.toString());
-            String name = s.toString().replace('_', ' ');
-            Connection speciesCon = allDBs[i].getConnection();
-            speciesCons.put(name.toLowerCase(), speciesCon);
-          }
+
+        Map speciesDbrs = getSpeciesDatabaseMap(dbr, true);
+
+        for (int i = 0; i < allComparaDBs.length; i++) {
+            result &= checkTopLelelDnaFrag(allComparaDBs[i], speciesDbrs);
         }
+        return result;
+    }
+
+
+    public boolean checkTopLelelDnaFrag(DatabaseRegistryEntry comparaDbre, Map speciesDbrs) {
+
+        boolean result = true;
+        Connection comparaCon = comparaDbre.getConnection();
+
+        // Get list of species in compara
         Vector comparaSpecies = new Vector();
-        String sql = "SELECT DISTINCT genome_db.name FROM dnafrag LEFT JOIN genome_db USING (genome_db_id)";
+        String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE assembly_default = 1";
         try {
-          Statement stmt = con.createStatement();
+          Statement stmt = comparaCon.createStatement();
           ResultSet rs = stmt.executeQuery(sql);
           while (rs.next()) {
-            comparaSpecies.add(rs.getString(1).toLowerCase());
+            comparaSpecies.add(Species.resolveAlias(rs.getString(1).toLowerCase().replace(' ', '_')));
           }
           rs.close();
           stmt.close();
@@ -107,20 +102,47 @@ public class CheckTopLevelDnaFrag extends MultiDatabaseTestCase {
         
         boolean allSpeciesFound = true;
         for (int i = 0; i < comparaSpecies.size(); i++) {
-          String name = (String) comparaSpecies.get(i);
-          if (speciesCons.get(name) != null) {
-            String sql1 = "SELECT dnafrag.coord_system_name, dnafrag.name" +
-                " FROM dnafrag LEFT JOIN genome_db USING (genome_db_id)" +
-                " WHERE genome_db.name = \"" + name + "\"";
-            String sql2 = "SELECT coord_system.name, seq_region.name" +
-                " FROM seq_region, coord_system, seq_region_attrib, attrib_type" +
-                " WHERE seq_region.coord_system_id = coord_system.coord_system_id " +
-                " AND seq_region.seq_region_id = seq_region_attrib.seq_region_id " +
-                " AND seq_region_attrib.attrib_type_id = attrib_type.attrib_type_id " +
-                " AND attrib_type.code = \"toplevel\"";
-            result &= compareQueries(con, sql1, (Connection) speciesCons.get(name), sql2);
+          Species species = (Species) comparaSpecies.get(i);
+          DatabaseRegistryEntry[] speciesDbr = (DatabaseRegistryEntry[]) speciesDbrs.get(species);
+          String name = species.toString().replace('_', ' ');
+          if (speciesDbr != null) {
+              Connection speciesCon = speciesDbr[0].getConnection();
+              int maxRows = 50000;
+              int rows = getRowCount(comparaCon, new String("SELECT COUNT(*) FROM" +
+                  " dnafrag LEFT JOIN genome_db USING (genome_db_id)" +
+                  " WHERE genome_db.name = \"" + name + "\""));
+              if (rows > maxRows) {
+                  // Divide and conquer approach for large sets
+                  for (int rowCount=0; rowCount<rows; rowCount+=maxRows) {
+                      String sql1 = "SELECT dnafrag.coord_system_name, dnafrag.name" +
+                          " FROM dnafrag LEFT JOIN genome_db USING (genome_db_id)" +
+                          " WHERE genome_db.name = \"" + name + "\"" +
+                          " ORDER BY (dnafrag.name)" +
+                          " LIMIT " + rowCount + ", " + maxRows;
+                      String sql2 = "SELECT coord_system.name, seq_region.name" +
+                          " FROM seq_region, coord_system, seq_region_attrib, attrib_type" +
+                          " WHERE seq_region.coord_system_id = coord_system.coord_system_id " +
+                          " AND seq_region.seq_region_id = seq_region_attrib.seq_region_id " +
+                          " AND seq_region_attrib.attrib_type_id = attrib_type.attrib_type_id " +
+                          " AND attrib_type.code = \"toplevel\"" +
+                          " ORDER BY (seq_region.name)" +
+                          " LIMIT " + rowCount + ", " + maxRows;
+                      result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
+                  }
+              } else {
+                  String sql1 = "SELECT dnafrag.coord_system_name, dnafrag.name" +
+                      " FROM dnafrag LEFT JOIN genome_db USING (genome_db_id)" +
+                      " WHERE genome_db.name = \"" + name + "\"";
+                  String sql2 = "SELECT coord_system.name, seq_region.name" +
+                      " FROM seq_region, coord_system, seq_region_attrib, attrib_type" +
+                      " WHERE seq_region.coord_system_id = coord_system.coord_system_id " +
+                      " AND seq_region.seq_region_id = seq_region_attrib.seq_region_id " +
+                      " AND seq_region_attrib.attrib_type_id = attrib_type.attrib_type_id " +
+                      " AND attrib_type.code = \"toplevel\"";
+                  result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
+              }
           } else {
-            ReportManager.problem(this, con, "No connection for " + comparaSpecies.get(i));
+            ReportManager.problem(this, comparaCon, "No connection for " + name);
             allSpeciesFound = false;
           }
         }
@@ -142,7 +164,7 @@ public class CheckTopLevelDnaFrag extends MultiDatabaseTestCase {
     private void usage() {
 
       ReportManager.problem(this, "USAGE", "run-healthcheck.sh -d ensembl_compara_.+ " + 
-          " -d .+_core_.+ CheckTopLevelDnaFrag");
+          " -d2 .+_core_.+ CheckTopLevelDnaFrag");
     }
     
 } // CheckTopLevelDnaFrag

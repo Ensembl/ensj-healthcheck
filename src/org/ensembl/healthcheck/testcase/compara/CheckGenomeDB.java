@@ -23,6 +23,7 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 import java.util.Vector;
 
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
@@ -62,43 +63,36 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
 
         boolean result = true;
 
-        DatabaseRegistryEntry[] allDBs = dbr.getAll();
-        DatabaseRegistryEntry comparaDB;
-        int comparaIndex = -1;
-        Connection con;
-        for (int i = 0; i < allDBs.length; i++) {
-          if (allDBs[i].getType().toString().equalsIgnoreCase("compara")) {
-              comparaIndex = i;
-          }
-        }
-        if (comparaIndex == -1) {
+        // Get compara DB connection
+        DatabaseRegistryEntry[] allComparaDBs = dbr.getAll(DatabaseType.COMPARA);
+        if (allComparaDBs.length == 0) {
           result = false;
           ReportManager.problem(this, "", "Cannot find compara database");
           usage();
           return false;
-        } else {
-          comparaDB = allDBs[comparaIndex];
-          con = comparaDB.getConnection();
         }
-        Map speciesCons = new HashMap();
-        for (int i = 0; i < allDBs.length; i++) {
-          if ((i != comparaIndex) &&
-              (allDBs[i].getType().toString().equalsIgnoreCase("core"))) {
-            Species s = allDBs[i].getSpecies();
-            DatabaseRegistryEntry[] speciesDBs = dbr.getAll(s);
-            logger.finest("Got " + speciesDBs.length + " databases for " + s.toString());
-            String name = s.toString().replace('_', ' ');
-            Connection speciesCon = allDBs[i].getConnection();
-            speciesCons.put(name.toLowerCase(), speciesCon);
-          }
+
+        Map speciesDbrs = getSpeciesDatabaseMap(dbr, true);
+
+        for (int i = 0; i < allComparaDBs.length; i++) {
+            result &= checkGenomeDB(allComparaDBs[i], speciesDbrs);
         }
+        return result;
+    }
+    
+    public boolean checkGenomeDB(DatabaseRegistryEntry comparaDbre, Map speciesDbrs) {
+
+        boolean result = true;
+        Connection comparaCon = comparaDbre.getConnection();
+
+        // Get list of species in compara
         Vector comparaSpecies = new Vector();
         String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE assembly_default = 1";
         try {
-          Statement stmt = con.createStatement();
+          Statement stmt = comparaCon.createStatement();
           ResultSet rs = stmt.executeQuery(sql);
           while (rs.next()) {
-            comparaSpecies.add(rs.getString(1).toLowerCase());
+            comparaSpecies.add(Species.resolveAlias(rs.getString(1).toLowerCase().replace(' ', '_')));
           }
           rs.close();
           stmt.close();
@@ -108,29 +102,32 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
         
         boolean allSpeciesFound = true;
         for (int i = 0; i < comparaSpecies.size(); i++) {
-          String name = (String) comparaSpecies.get(i);
-          if (speciesCons.get(name) != null) {
+          Species species = (Species) comparaSpecies.get(i);
+          DatabaseRegistryEntry[] speciesDbr = (DatabaseRegistryEntry[]) speciesDbrs.get(species);
+          String name = species.toString().replace('_', ' ');
+          if (speciesDbr != null) {
+            Connection speciesCon = speciesDbr[0].getConnection();
             /* Check taxon_id */
             String sql1, sql2;
             sql1 = "SELECT \"" + name + "\", \"taxon_id\", taxon_id FROM genome_db" +
                 " WHERE genome_db.name = \"" + name + "\" AND  assembly_default = 1";
             sql2 = "SELECT \"" + name + "\", \"taxon_id\", meta_value FROM meta" +
                 " WHERE meta_key = \"species.taxonomy_id\"";
-            result &= compareQueries(con, sql1, (Connection) speciesCons.get(name), sql2);
+            result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
             /* Check assembly */
             sql1 = "SELECT \"" + name + "\", \"assembly\", assembly FROM genome_db" +
                 " WHERE genome_db.name = \"" + name + "\" AND  assembly_default = 1";
             sql2 = "SELECT \"" + name + "\", \"assembly\", meta_value FROM meta" +
                 " WHERE meta_key = \"assembly.default\"";
-            result &= compareQueries(con, sql1, (Connection) speciesCons.get(name), sql2);
+            result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
             /* Check genebuild */
             sql1 = "SELECT \"" + name + "\", \"genebuild\", genebuild FROM genome_db" +
                 " WHERE genome_db.name = \"" + name + "\" AND  assembly_default = 1";
             sql2 = "SELECT \"" + name + "\", \"genebuild\", meta_value FROM meta" +
                 " WHERE meta_key = \"genebuild.version\"";
-            result &= compareQueries(con, sql1, (Connection) speciesCons.get(name), sql2);
+            result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
           } else {
-            ReportManager.problem(this, con, "No connection for " + comparaSpecies.get(i));
+            ReportManager.problem(this, comparaCon, "No connection for " + comparaSpecies.get(i));
             allSpeciesFound = false;
           }
         }
@@ -152,7 +149,7 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
     private void usage() {
 
       ReportManager.problem(this, "USAGE", "run-healthcheck.sh -d ensembl_compara_.+ " + 
-          " -d .+_core_.+ CheckGenomeDB");
+          " -d2 .+_core_.+ CheckGenomeDB");
     }
     
 } // CheckTopLevelDnaFrag
