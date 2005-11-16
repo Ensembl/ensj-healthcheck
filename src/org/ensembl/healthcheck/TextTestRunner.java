@@ -43,6 +43,8 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
     private ArrayList databaseRegexps = new ArrayList();
 
+    private ArrayList secondaryDatabaseRegexps = new ArrayList();
+
     private boolean debug = false;
 
     private ArrayList outputBuffer = new ArrayList();
@@ -96,7 +98,11 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
         ReportManager.setReporter(this);
 
-        databaseRegistry = new DatabaseRegistry(databaseRegexps, globalType, globalSpecies);
+        if (secondaryDatabaseRegexps.size() > 0) {
+            databaseRegistry = new DatabaseRegistry(databaseRegexps, secondaryDatabaseRegexps, globalType, globalSpecies);
+        } else {
+            databaseRegistry = new DatabaseRegistry(databaseRegexps, globalType, globalSpecies);
+        }
         if (databaseRegistry.getEntryCount() == 0) {
             logger.warning("Warning: no database names matched any of the database regexps given");
         }
@@ -121,6 +127,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
         System.out.println("\nUsage: TextTestRunner {options} {group1} {group2} ...\n");
         System.out.println("Options:");
         System.out.println("  -d regexp       Use the given regular expression to decide which databases to use.");
+        System.out.println("  -d2 regexp      Same for the secondary server.");
         System.out
                 .println("                  Note that more than one -d argument can be used; testcases that depend on the order of databases will be passed the databases in the order in which they appear on the command line");
         System.out.println("  -h              This message.");
@@ -233,6 +240,14 @@ public class TextTestRunner extends TestRunner implements Reporter {
                     i++;
                     databaseRegexps.add(args[i].replaceAll("COREDBS", CORE_DB_REGEXP));
                     logger.finest("Added database regular expression " + args[i]);
+
+                } else if (args[i].equals("-d2")) {
+
+                    // undocumented feature - if COREDBS appears in the -d argument, it is expanded
+                    // to the contents of CORE_DB_REGEXP
+                    i++;
+                    secondaryDatabaseRegexps.add(args[i].replaceAll("COREDBS", CORE_DB_REGEXP));
+                    logger.finest("Added database regular expression for secondary server " + args[i]);
 
                 } else if (args[i].equals("-config")) {
 
