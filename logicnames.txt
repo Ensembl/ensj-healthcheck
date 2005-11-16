@@ -6,6 +6,8 @@ BLASTX_HUM_GENSCAN
 BLASTX_SPROT
 BLASTX_TREMBL
 CDM
+cisred
+cisred_search
 CYT
 CollapseAffy
 CollapseAffyProbes
