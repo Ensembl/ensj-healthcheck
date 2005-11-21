@@ -55,13 +55,15 @@ public class ForeignKeyMethodLinkId extends SingleDatabaseTestCase {
 
       Connection con = dbre.getConnection();
 
-        if (tableHasRows(con, "method_link")) {
+        if (!tableHasRows(con, "method_link")) {
+            ReportManager.correct(this, con, "NO ENTRIES in method_link table, so nothing to test IGNORED");
 
-            result &= checkForOrphans(con, "method_link_species_set", "method_link_id", "method_link", "method_link_id");
-            result &= checkForOrphans(con, "method_link", "method_link_id", "method_link_species_set", "method_link_id");
+        } else if (!tableHasRows(con, "method_link_species_set")) {
+            ReportManager.correct(this, con, "NO ENTRIES in method_link_species_set table, so nothing to test IGNORED");
 
         } else {
-            ReportManager.correct(this, con, "NO ENTRIES in method_link table, so nothing to test IGNORED");
+            result &= checkForOrphans(con, "method_link_species_set", "method_link_id", "method_link", "method_link_id");
+            result &= checkForOrphans(con, "method_link", "method_link_id", "method_link_species_set", "method_link_id");
         }
 
         return result;
