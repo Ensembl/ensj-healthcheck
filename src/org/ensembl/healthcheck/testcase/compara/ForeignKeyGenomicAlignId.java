@@ -60,6 +60,18 @@ public class ForeignKeyGenomicAlignId extends SingleDatabaseTestCase {
 
             //            result &= checkForOrphans(con, "genomic_align", "genomic_align_id", "genomic_align_group", "genomic_align_id");
             result &= checkForOrphans(con, "genomic_align_group", "genomic_align_id", "genomic_align", "genomic_align_id");
+
+            // Check that all method_link_species_set_ids match the genomic_align_block table
+            int mismatches = getRowCount(con, "SELECT COUNT(*) FROM genomic_align ga LEFT JOIN genomic_align_block gab" +
+                " USING (genomic_align_block_id) WHERE ga.method_link_species_set_id != gab.method_link_species_set_id");
+            if (mismatches > 0) {
+                ReportManager.problem(this, con, mismatches + " entries in genomic_align table have a wrong" +
+                    " method_link_species_set_id according to genomic_align_block table");
+                result = false;
+            } else {
+                ReportManager.correct(this, con, "All entries in genomic_align table have a correct" +
+                    " method_link_species_set_id according to genomic_align_block table");
+            }
  
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in genomic_align_group or in genomic_align tables, so nothing to test IGNORED");
