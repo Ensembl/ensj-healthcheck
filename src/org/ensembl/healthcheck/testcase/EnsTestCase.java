@@ -531,7 +531,7 @@ public abstract class EnsTestCase {
    * @param col1 Column in table1 to check.
    * @param table2 With col2, specifies the second key to check.
    * @param col2 Column in table2 to check.
-   * @param constraint1 additional constraint on col1
+   * @param constraint1 additional constraint on a column in table1
    * @return The number of "orphans"
    */
 	public int countOrphansWithConstraint(Connection con, String table1, String col1, String table2, String col2, String constraint1) {
