@@ -80,6 +80,14 @@ public class DatabaseRegistryEntry implements Comparable {
 		String[] bits = name.split("_");
 		String alias;
 		
+		// schema version should be the first number (never the first bit though)
+		for (int i=1; i<bits.length; i++) {
+		    if (bits[i].matches("^[0-9]+$")) {
+		      this.schemaVersion = bits[i];
+		      break;
+		    }
+		}
+
 		// there are many different possibilities for database naming; the most
 		// likely are catered for here
 
@@ -87,7 +95,6 @@ public class DatabaseRegistryEntry implements Comparable {
 		if (bits.length >= 2) {
 			alias = bits[0] + "_" + bits[1];
 			if (bits.length == 5) {
-				this.schemaVersion = bits[3];
 				this.geneBuildVersion = bits[4];
 			}
 			if (Species.resolveAlias(alias) != Species.UNKNOWN) {
@@ -99,9 +106,6 @@ public class DatabaseRegistryEntry implements Comparable {
 		// human_core_20, hsapiens_XXX
 		if (bits.length > 1) {
 			alias = bits[0];
-			if (bits.length == 3) {
-				this.schemaVersion = bits[2];
-			}
 			if (Species.resolveAlias(alias) != Species.UNKNOWN) {
 				return Species.resolveAlias(alias);
 			}
@@ -125,7 +129,6 @@ public class DatabaseRegistryEntry implements Comparable {
 		if (bits.length > 3) {
 			alias = bits[1] + "_" + bits[2];
 			if (bits.length == 5) {
-				this.schemaVersion = bits[3];
 				this.geneBuildVersion = bits[4];
 			}
 			if (Species.resolveAlias(alias) != Species.UNKNOWN) {
