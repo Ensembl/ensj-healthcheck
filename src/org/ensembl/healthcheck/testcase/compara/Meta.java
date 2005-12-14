@@ -41,7 +41,7 @@ import org.ensembl.healthcheck.util.DBUtils;
  * relationships.
  */
 
-public class MaxAlignmentLength extends SingleDatabaseTestCase implements Repair {
+public class Meta extends SingleDatabaseTestCase implements Repair {
 
     private HashMap MetaEntriesToAdd = new HashMap();
     private HashMap MetaEntriesToRemove = new HashMap();
@@ -50,10 +50,11 @@ public class MaxAlignmentLength extends SingleDatabaseTestCase implements Repair
     /**
      * Create an ForeignKeyMethodLinkId that applies to a specific set of databases.
      */
-    public MaxAlignmentLength() {
+    public Meta() {
 
         addToGroup("compara_db_constraints");
         setDescription("Tests that proper max_alignment_length have been defined.");
+        setDescription("Check meta table for the right schema version and max alignment lengths");
 
     }
 
@@ -68,9 +69,75 @@ public class MaxAlignmentLength extends SingleDatabaseTestCase implements Repair
     public boolean run(DatabaseRegistryEntry dbre) {
 
         boolean result = true;
-        int globalMaxAlignmentLength = 0;
 
         Connection con = dbre.getConnection();
+
+        if (!checkTableExists(con, "meta")) {
+            result = false;
+            ReportManager.problem(this, con, "Meta table not present");
+            return result;
+        }
+
+        result &= checkMaxAlignmentLength(con);
+
+        result &= checkSchemaVersionDBName(dbre);
+
+        return result;
+    }
+
+
+    /**
+    * Check that the schema_version in the meta table is present and matches the database name.
+    */
+    private boolean checkSchemaVersionDBName(DatabaseRegistryEntry dbre) {
+
+        boolean result = true;
+
+        // get version from database name
+        String dbNameVersion = dbre.getSchemaVersion();
+
+        logger.finest("Schema version from database name: " + dbNameVersion);
+
+        // get version from meta table
+        Connection con = dbre.getConnection();
+
+        // Get current global value from the meta table (used for backwards compatibility)
+        String sql = new String("SELECT meta_key, meta_value" +
+            " FROM meta WHERE meta_key = \"schema_version\"");
+        try {
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            if (rs.first()) {
+                if (rs.getInt(2) != new Integer(dbNameVersion).intValue()) {
+                    MetaEntriesToUpdate.put(new String("schema_version"), new Integer(dbNameVersion));
+                    ReportManager.problem(this, con, "Update in meta: schema_version -- "
+                        + dbNameVersion);
+                    result = false;
+                }
+            } else {
+                MetaEntriesToAdd.put(new String("schema_version"), new Integer(dbNameVersion));
+                ReportManager.problem(this, con, "Add in meta: schema_version -- "
+                    + dbNameVersion);
+                result = false;
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+
+        return result;
+
+    } // ---------------------------------------------------------------------
+
+
+    /**
+    * Check the max_align_* and max_alignment_length in the meta table
+    */
+    private boolean checkMaxAlignmentLength(Connection con) {
+
+        boolean result = true;
+        int globalMaxAlignmentLength = 0;
 
         // Check whether tables are empty or not
         if (!tableHasRows(con, "meta") || !tableHasRows(con, "genomic_align")) {
