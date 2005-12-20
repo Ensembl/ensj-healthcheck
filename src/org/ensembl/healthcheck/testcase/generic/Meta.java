@@ -445,9 +445,14 @@ private boolean checkAssemblyMapping(Connection con) {
 		String dbNameVersion = dbre.getSchemaVersion();
 		logger.finest("Schema version from database name: " + dbNameVersion);
 
-		// get version from meta table
+		//	 get version from meta table
 		Connection con = dbre.getConnection();
 
+		if (dbNameVersion == null) {
+			ReportManager.warning(this, con, "Can't deduce schema version from database name.");
+			return false;
+		}
+		
 		String schemaVersion = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='schema_version'");
 		logger.finest("schema_version from meta table: " + schemaVersion);
 
