@@ -47,7 +47,8 @@ public class GeneType extends SingleDatabaseTestCase {
      */
     private String[] database_types = {"core",                      //0
 				       "est",                       //1
-				       "estgene"                    //2
+				       "estgene",                   //2
+                       "cdna"                       //3
     };
 
     /*
@@ -59,9 +60,10 @@ public class GeneType extends SingleDatabaseTestCase {
 					   "est_exonerate",         //3
 					   "estgene",               //4
 					   "ncRNA",                 //5
-    					   "CYT",                   //6
+                       "CYT",                   //6
 					   "HOX",                   //7
-					   "GSTEN"                  //8
+					   "GSTEN",                 //8
+					   "cDNA_update"            //9
     };
 
     /*
@@ -94,6 +96,7 @@ public class GeneType extends SingleDatabaseTestCase {
 				       "Mt-tRNA",                   //24
 				       "protein_coding",            //25
 				       "tRNA",                      //26
+					   "cDNA_update"                //27
 
     }; 
 
@@ -105,7 +108,8 @@ public class GeneType extends SingleDatabaseTestCase {
      * example: whitelist[0][1][10] would be 
      *      ["core" database]["wormbase" analysis]["gene" gene type]
      */
-    private int[][][] whitelist =    {  {  {0,1,2,25},                //this block    //this array for "ensembl" analysis' 
+    private int[][][] whitelist =    
+	             {  {  {0,1,2,25},                //this block    //this array for "ensembl" analysis' 
 					   {1,10,20,25},              //for CORE      //this array for "wormbase" analysis'
 					   {1,3,4,6,7,10,25,26},      //databases     //this array for "flybase" analysis'
 					   {},         //
@@ -113,20 +117,44 @@ public class GeneType extends SingleDatabaseTestCase {
 					   {3,4,5,6,7,8,11,12,13,14,15,16,18,19,23,24},
 					   {22},       // Allowed gene types for CYT
 					   {22},       // Allowed gene types for HOX
-					   {21}        // Allowed gene types for GSTEN
-                                        },
+					   {21},       // Allowed gene types for GSTEN
+					   {}
+                    },
 					{  {},         //this block
 					   {},         //for EST
 					   {},         //databases
-					   {17}        // ...
+					   {17},        // ...
+					   {},
+					   {},
+					   {},
+					   {},
+					   {},
+					   {}
 					},
-					{  {},
+					{  {},          // Block for estgene data
 					   {},
 					   {},
 					   {},
-					   {9}
+					   {9},
+					   {},
+					   {},
+					   {},
+					   {},
+					   {}
+					},
+					{
+					   {},           // Block for cdna update data
+					   {},
+					   {},
+					   {},
+					   {},
+					   {},
+					   {},
+					   {},
+					   {},  
+					   {27}
 					}
-    };
+                 };
 
 
     /**
