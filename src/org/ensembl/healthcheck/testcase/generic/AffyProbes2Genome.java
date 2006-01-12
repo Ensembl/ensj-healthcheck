@@ -184,7 +184,7 @@ public class AffyProbes2Genome extends SingleDatabaseTestCase {
 
       boolean result = true;
 
-      String sql = "select * from meta_coord where table_name='affy_feature'";
+      String sql = "select count(*) from meta_coord where table_name='affy_feature'";
       if (getRowCount(con, sql) == 0) {
         ReportManager.problem(this, con, "no entry for affy_feature in meta_coord table. ");
         result = false;
