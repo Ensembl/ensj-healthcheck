@@ -175,7 +175,7 @@ public final class Species {
 		assemblyPrefixToSpecies.put("BDGP", DROSOPHILA_MELANOGASTER);
 		assemblyPrefixToSpecies.put("ZFISH", DANIO_RERIO);
 		assemblyPrefixToSpecies.put("FUGU", FUGU_RUBRIPES);
-		assemblyPrefixToSpecies.put("MOZ", ANOPHELES_GAMBIAE);
+		assemblyPrefixToSpecies.put("AgamP", ANOPHELES_GAMBIAE);
 		assemblyPrefixToSpecies.put("CEL", CAENORHABDITIS_ELEGANS);
 		assemblyPrefixToSpecies.put("CBR", CAENORHABDITIS_BRIGGSAE);
 		assemblyPrefixToSpecies.put("CIN", CIONA_INTESTINALIS);
