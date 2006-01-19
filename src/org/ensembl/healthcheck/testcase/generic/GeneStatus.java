@@ -15,6 +15,7 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
@@ -25,8 +26,8 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 public class GeneStatus extends SingleDatabaseTestCase {
 
 	/**
-   * Create a new GeneStatus testcase.
-   */
+	 * Create a new GeneStatus testcase.
+	 */
 	public GeneStatus() {
 
 		addToGroup("post_genebuild");
@@ -36,12 +37,22 @@ public class GeneStatus extends SingleDatabaseTestCase {
 	}
 
 	/**
-   * Run the test.
-   * 
-   * @param dbre The database to use.
-   * @return true if the test pased.
-   * 
-   */
+	 * Don't try to run on cDNA databases.
+	 */
+	public void types() {
+
+		removeAppliesToType(DatabaseType.CDNA);
+
+	}
+
+	/**
+	 * Run the test.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return true if the test pased.
+	 * 
+	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
