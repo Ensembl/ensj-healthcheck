@@ -104,6 +104,8 @@ public final class Species {
 	/** Specific type of species */
 	public static final Species LOXODONTA_AFRICANA = new Species("loxodonta_africana");
 
+	public static final Species DASYPUS_NOVEMCINCTUS = new Species("dasypus_novemcinctus");
+
     /** Non-ensembl database */
     public static final Species SYSTEM = new Species("system");
 
@@ -162,6 +164,7 @@ public final class Species {
 		taxonIDToSpecies.put("4932", SACCHAROMYCES_CEREVISIAE);
 		taxonIDToSpecies.put("9544", MACACA_MULATTA);
 		taxonIDToSpecies.put("9785", LOXODONTA_AFRICANA);
+		taxonIDToSpecies.put("9361", DASYPUS_NOVEMCINCTUS);
 		
 		// and the other way around
 		Iterator it = taxonIDToSpecies.keySet().iterator();
@@ -192,6 +195,7 @@ public final class Species {
 		assemblyPrefixToSpecies.put("SGD", SACCHAROMYCES_CEREVISIAE);
 		assemblyPrefixToSpecies.put("MM", MACACA_MULATTA);
 		assemblyPrefixToSpecies.put("BROADE", LOXODONTA_AFRICANA);
+		assemblyPrefixToSpecies.put("ARMA", DASYPUS_NOVEMCINCTUS );
 		
 		// and the other way around
 		it = assemblyPrefixToSpecies.keySet().iterator();
@@ -387,6 +391,10 @@ public final class Species {
 		if (in(alias, "elephant,loxodonta_africana,nelly,loxodonta,african_elephant,african_savannah_elephant,african_bush_elephant")) {
 
 			return LOXODONTA_AFRICANA;
+                }
+		if (in(alias, "armadillo,dasypus_novemcinctus,daisy,dasypus,nine_banded_armadillo,nine-banded_armadillo,texas_armadillo")) {
+
+			return DASYPUS_NOVEMCINCTUS;
                 }
 
 		// --------------------------------------
