@@ -112,8 +112,10 @@ public class DatabaseRegistryEntry implements Comparable {
 
 		}
 
-		// compara, mart, go doesn't really have a species
-		if (bits.length >= 2 && (bits[1].equalsIgnoreCase("compara") || bits[1].equalsIgnoreCase("go") || bits[1].equalsIgnoreCase("mart"))) {
+		// compara, mart, go doesn't really have a species. It can be ensembl_type or username_ensembl_type
+		if (bits.length >= 2 && (bits[1].equalsIgnoreCase("compara") || bits[1].equalsIgnoreCase("go")
+				|| bits[1].equalsIgnoreCase("mart") || bits[2].equalsIgnoreCase("compara")
+				|| bits[2].equalsIgnoreCase("go") || bits[2].equalsIgnoreCase("mart"))) {
 			return Species.UNKNOWN;
 		}
 
