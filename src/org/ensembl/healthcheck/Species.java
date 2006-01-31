@@ -106,6 +106,9 @@ public final class Species {
 
 	public static final Species DASYPUS_NOVEMCINCTUS = new Species("dasypus_novemcinctus");
 
+	/** Specific type of species */
+	public static final Species ECHINOPS_TELFAIRI = new Species("echinops_telfairi");
+
     /** Non-ensembl database */
     public static final Species SYSTEM = new Species("system");
 
@@ -165,6 +168,7 @@ public final class Species {
 		taxonIDToSpecies.put("9544", MACACA_MULATTA);
 		taxonIDToSpecies.put("9785", LOXODONTA_AFRICANA);
 		taxonIDToSpecies.put("9361", DASYPUS_NOVEMCINCTUS);
+		taxonIDToSpecies.put("9371", ECHINOPS_TELFAIRI);
 		
 		// and the other way around
 		Iterator it = taxonIDToSpecies.keySet().iterator();
@@ -196,6 +200,7 @@ public final class Species {
 		assemblyPrefixToSpecies.put("MM", MACACA_MULATTA);
 		assemblyPrefixToSpecies.put("BROADE", LOXODONTA_AFRICANA);
 		assemblyPrefixToSpecies.put("ARMA", DASYPUS_NOVEMCINCTUS );
+		assemblyPrefixToSpecies.put("TENREC", ECHINOPS_TELFAIRI );
 		
 		// and the other way around
 		it = assemblyPrefixToSpecies.keySet().iterator();
@@ -395,6 +400,10 @@ public final class Species {
 		if (in(alias, "armadillo,dasypus_novemcinctus,daisy,dasypus,nine_banded_armadillo,nine-banded_armadillo,texas_armadillo")) {
 
 			return DASYPUS_NOVEMCINCTUS;
+                }
+		if (in(alias, "tenrec,echinops_telfairi,echinops,small_Madagascar_hedgehog,lesser_hedgehog_tenrec")) {
+
+			return ECHINOPS_TELFAIRI;
                 }
 
 		// --------------------------------------
