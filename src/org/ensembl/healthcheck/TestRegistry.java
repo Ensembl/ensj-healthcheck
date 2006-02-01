@@ -19,6 +19,7 @@ package org.ensembl.healthcheck;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -294,7 +295,9 @@ public class TestRegistry {
             try {
 
                 Class newClass = Class.forName(packageName + "." + baseClassName);
-                obj = newClass.newInstance();
+                if (!Modifier.isAbstract(newClass.getModifiers())) {
+                	obj = newClass.newInstance();
+                }
 
             } catch (InstantiationException ie) {
                 logger.warning(baseClassName + " does not seem to be a test case class");
@@ -361,7 +364,9 @@ public class TestRegistry {
                         try {
 
                             Class newClass = Class.forName(packageName + "." + dirName + "." + className);
-                            obj = newClass.newInstance();
+                            if (!Modifier.isAbstract(newClass.getModifiers())) {
+                            	obj = newClass.newInstance();
+                            }
 
                         } catch (InstantiationException ie) {
                             logger.warning(className + " does not seem to be a test case class");
