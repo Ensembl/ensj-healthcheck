@@ -32,7 +32,8 @@ public class HumanCCDS extends BaseCCDS {
 	public HumanCCDS() {
 
 		addToGroup("release");
-
+		addToGroup("id_mapping");
+		
 		setDescription("Check that all the transcripts in the human CCDS set are present.");
 
 	}
