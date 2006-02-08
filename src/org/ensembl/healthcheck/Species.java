@@ -108,6 +108,9 @@ public final class Species {
 
 	/** Specific type of species */
 	public static final Species ECHINOPS_TELFAIRI = new Species("echinops_telfairi");
+	
+	/** Specific type of species */
+	public static final Species ORYCTOLAGUS_CUNICULUS = new Species("oryctolagus_cuniculus");
 
     /** Non-ensembl database */
     public static final Species SYSTEM = new Species("system");
@@ -169,6 +172,7 @@ public final class Species {
 		taxonIDToSpecies.put("9785", LOXODONTA_AFRICANA);
 		taxonIDToSpecies.put("9361", DASYPUS_NOVEMCINCTUS);
 		taxonIDToSpecies.put("9371", ECHINOPS_TELFAIRI);
+		taxonIDToSpecies.put("9986", ORYCTOLAGUS_CUNICULUS);
 		
 		// and the other way around
 		Iterator it = taxonIDToSpecies.keySet().iterator();
@@ -201,6 +205,7 @@ public final class Species {
 		assemblyPrefixToSpecies.put("BROADE", LOXODONTA_AFRICANA);
 		assemblyPrefixToSpecies.put("ARMA", DASYPUS_NOVEMCINCTUS );
 		assemblyPrefixToSpecies.put("TENREC", ECHINOPS_TELFAIRI );
+		assemblyPrefixToSpecies.put("RABBIT", ORYCTOLAGUS_CUNICULUS );
 		
 		// and the other way around
 		it = assemblyPrefixToSpecies.keySet().iterator();
@@ -401,10 +406,15 @@ public final class Species {
 
 			return DASYPUS_NOVEMCINCTUS;
                 }
-		if (in(alias, "tenrec,echinops_telfairi,echinops,small_Madagascar_hedgehog,lesser_hedgehog_tenrec")) {
+		if (in(alias, "tenrec,echinops_telfairi,echinops,small_madagascar_hedgehog,lesser_hedgehog_tenrec")) {
 
 			return ECHINOPS_TELFAIRI;
                 }
+				
+		if (in(alias, "rabbit,oryctolagus_cuniculus,oryctolagus,domestic_rabbit,bunny,japanese_white_rabbit,european_rabbit")) {
+
+			return ORYCTOLAGUS_CUNICULUS;
+                }		
 
 		// --------------------------------------
 
