@@ -61,16 +61,14 @@ public class AffyXrefs extends SingleDatabaseTestCase {
         Connection con = dbre.getConnection();
 
         // Check if there are any Affy features - if so there should be Affy Xrefs
-        String sql = "SELECT * FROM affy_array";
-	
-        if (getRowCount(con, sql) > 0) {
+        if (getRowCount(con, "SELECT COUNT(*) FROM affy_array") > 0) {
 
             // Get a list of chromosomes, then check the number of Affy xrefs associated with each one
             // Note that this can't be done with a GROUP BY/HAVING clause as that would miss any chromosomes that had zero xrefs
-            sql = "SELECT DISTINCT(sr.name) AS chromosome FROM seq_region sr, coord_system cs "
+            String sql = "SELECT DISTINCT(sr.name) AS chromosome FROM seq_region sr, coord_system cs "
                     + "WHERE sr.coord_system_id=cs.coord_system_id AND cs.name='chromosome' AND sr.name NOT LIKE '%\\_%'";
 
-            String[] chrNames = getColumnValues(con, sql);
+            String[] chrNames = getColumnValues(con, "SELECT * FROM affy_array");
 
             if (chrNames.length > MAX_CHROMOSOMES) {
 
