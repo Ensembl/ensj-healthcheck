@@ -28,109 +28,116 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * An EnsEMBL Healthcheck test case which checks if any genes are obvious duplicates of each other (it might be all OK, but it's
- * worth a look!)
+ * An EnsEMBL Healthcheck test case which checks if any genes are obvious
+ * duplicates of each other (it might be all OK, but it's worth a look!)
  */
 
 public class DuplicateGenes extends SingleDatabaseTestCase {
 
-    private static final int MAX_WARNINGS = 10;
+	private static final int MAX_WARNINGS = 10;
 
-    /**
-     * Create an OrphanTestCase that applies to a specific set of databases.
-     */
-    public DuplicateGenes() {
+	/**
+	 * Create an OrphanTestCase that applies to a specific set of databases.
+	 */
+	public DuplicateGenes() {
 
-        addToGroup("post_genebuild");
-        addToGroup("release");
+		addToGroup("post_genebuild");
+		addToGroup("release");
 
-    }
+	}
 
-    /**
-     * This test only applies to core and Vega databases.
-     */
-    public void types() {
+	/**
+	 * This test only applies to core and Vega databases.
+	 */
+	public void types() {
 
-        removeAppliesToType(DatabaseType.EST);
-        removeAppliesToType(DatabaseType.CDNA);
+		removeAppliesToType(DatabaseType.EST);
+		removeAppliesToType(DatabaseType.CDNA);
 
-    }
+	}
 
-    /**
-     * Check for (strongly likely to be) duplicate genes.
-     * 
-     * @param dbre
-     *            The database to check.
-     * @return True if the test passes.
-     */
+	/**
+	 * Check for (strongly likely to be) duplicate genes.
+	 * 
+	 * @param dbre
+	 *          The database to check.
+	 * @return True if the test passes.
+	 */
 
-    public boolean run(DatabaseRegistryEntry dbre) {
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-        boolean result = true;
+		boolean result = true;
 
-        String sql = "SELECT g.gene_id, g.seq_region_start AS start, g.seq_region_end AS end, g.seq_region_id AS chromosome_id, g.seq_region_strand AS strand "
-                + "             FROM gene g ORDER BY chromosome_id, strand, start, end";
+		String sql = "SELECT g.gene_id, g.seq_region_start AS start, g.seq_region_end AS end, g.seq_region_id AS chromosome_id, g.seq_region_strand AS strand, g.biotype, gsi.stable_id "
+				+ "             FROM (gene g, gene_stable_id gsi) WHERE g.gene_id=gsi.gene_id ORDER BY chromosome_id, strand, start, end";
 
-        Connection con = dbre.getConnection();
-        try {
+		Connection con = dbre.getConnection();
+		try {
 
-            Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
-            stmt.setFetchSize(1000);
-            ResultSet rs = stmt.executeQuery(sql);
+			Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
+			stmt.setFetchSize(1000);
+			ResultSet rs = stmt.executeQuery(sql);
 
-            int geneStart, geneEnd, geneChromosome, geneId, geneStrand;
-            int lastGeneId = 0;
-            int lastGeneStart = -1;
-            int lastGeneEnd = -1;
-            int lastGeneChromosome = -1;
-            int lastGeneStrand = -1;
-            int duplicateGene = 0;
+			int geneStart, geneEnd, geneChromosome, geneId, geneStrand;
+			int lastGeneId = 0;
+			int lastGeneStart = -1;
+			int lastGeneEnd = -1;
+			int lastGeneChromosome = -1;
+			int lastGeneStrand = -1;
+			int duplicateGene = 0;
+			String geneBioType, geneStableID;
+			String lastGeneBioType = "";
+			String lastGeneStableID = "";
 
-            boolean first = true;
+			boolean first = true;
 
-            while (rs.next()) {
+			while (rs.next()) {
 
-                // load the vars
-                geneId = rs.getInt(1);
-                geneStart = rs.getInt(2);
-                geneEnd = rs.getInt(3);
-                geneChromosome = rs.getInt(4);
-                geneStrand = rs.getInt(5);
+				// load the vars
+				geneId = rs.getInt(1);
+				geneStart = rs.getInt(2);
+				geneEnd = rs.getInt(3);
+				geneChromosome = rs.getInt(4);
+				geneStrand = rs.getInt(5);
+				geneBioType = rs.getString(6);
+				geneStableID = rs.getString(7);
 
-                if (!first) {
-                    if (lastGeneChromosome == geneChromosome && lastGeneStart == geneStart && lastGeneEnd == geneEnd
-                            && lastGeneStrand == geneStrand) {
-                        duplicateGene++;
-                        if (duplicateGene < MAX_WARNINGS) {
-                            ReportManager.warning(this, con, "Gene " + geneId + " is duplicated - see gene " + lastGeneId);
-                        }
-                    }
-                } else {
-                    first = false;
-                }
+				if (!first) {
+					if (lastGeneChromosome == geneChromosome && lastGeneStart == geneStart && lastGeneEnd == geneEnd
+							&& lastGeneStrand == geneStrand) {
+						duplicateGene++;
+						if (duplicateGene < MAX_WARNINGS) {
+							ReportManager.warning(this, con, "Gene " + geneStableID + " (" + geneBioType + " ID " + geneId + ") is duplicated - see gene " + lastGeneStableID + " (" + lastGeneBioType + " ID " + lastGeneId + ")");
+						}
+					}
+				} else {
+					first = false;
+				}
 
-                lastGeneId = geneId;
-                lastGeneStart = geneStart;
-                lastGeneEnd = geneEnd;
-                lastGeneChromosome = geneChromosome;
-                lastGeneStrand = geneStrand;
+				lastGeneId = geneId;
+				lastGeneStart = geneStart;
+				lastGeneEnd = geneEnd;
+				lastGeneChromosome = geneChromosome;
+				lastGeneStrand = geneStrand;
+				lastGeneBioType = geneBioType;
+				lastGeneStableID = geneStableID;
+				
+			} // while rs
 
-            } // while rs
+			if (duplicateGene > 0) {
+				ReportManager.problem(this, con, "Has " + duplicateGene + " duplicated genes.");
+				result = false;
+			}
+			rs.close();
+			stmt.close();
 
-            if (duplicateGene > 0) {
-                ReportManager.problem(this, con, "Has " + duplicateGene + " duplicated genes.");
-                result = false;
-            }
-            rs.close();
-            stmt.close();
+		} catch (Exception e) {
+			result = false;
+			e.printStackTrace();
+		}
 
-        } catch (Exception e) {
-            result = false;
-            e.printStackTrace();
-        }
+		return result;
 
-        return result;
-
-    }
+	}
 
 } // DuplicateGenes
