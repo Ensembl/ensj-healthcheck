@@ -34,27 +34,22 @@ public final class Species {
 	public static final Species HOMO_SAPIENS = new Species("homo_sapiens");
 
 	/** Specific type of species */
-	public static final Species ANOPHELES_GAMBIAE = new Species(
-			"anopheles_gambiae");
+	public static final Species ANOPHELES_GAMBIAE = new Species("anopheles_gambiae");
 
 	/** Specific type of species */
-	public static final Species CAENORHABDITIS_ELEGANS = new Species(
-			"caenorhabditis_elegans");
+	public static final Species CAENORHABDITIS_ELEGANS = new Species("caenorhabditis_elegans");
 
 	/** Specific type of species */
-	public static final Species CAENORHABDITIS_BRIGGSAE = new Species(
-			"caenorhabditis_briggsae");
+	public static final Species CAENORHABDITIS_BRIGGSAE = new Species("caenorhabditis_briggsae");
 
 	/** Specific type of species */
-	public static final Species CIONA_INTESTINALIS = new Species(
-			"ciona_intestinalis");
+	public static final Species CIONA_INTESTINALIS = new Species("ciona_intestinalis");
 
 	/** Specific type of species */
 	public static final Species DANIO_RERIO = new Species("danio_rerio");
 
 	/** Specific type of species */
-	public static final Species DROSOPHILA_MELANOGASTER = new Species(
-			"drosophila_melanogaster");
+	public static final Species DROSOPHILA_MELANOGASTER = new Species("drosophila_melanogaster");
 
 	/** Specific type of species */
 	public static final Species FUGU_RUBRIPES = new Species("fugu_rubripes");
@@ -63,8 +58,7 @@ public final class Species {
 	public static final Species MUS_MUSCULUS = new Species("mus_musculus");
 
 	/** Specific type of species */
-	public static final Species RATTUS_NORVEGICUS = new Species(
-			"rattus_norvegicus");
+	public static final Species RATTUS_NORVEGICUS = new Species("rattus_norvegicus");
 
 	/** Specific type of species */
 	public static final Species PAN_TROGLODYTES = new Species("pan_troglodytes");
@@ -73,8 +67,7 @@ public final class Species {
 	public static final Species GALLUS_GALLUS = new Species("gallus_gallus");
 
 	/** Specific type of species */
-	public static final Species TETRAODON_NIGROVIRIDIS = new Species(
-			"tetraodon_nigroviridis");
+	public static final Species TETRAODON_NIGROVIRIDIS = new Species("tetraodon_nigroviridis");
 
 	/** Specific type of species */
 	public static final Species APIS_MELLIFERA = new Species("apis_mellifera");
@@ -83,20 +76,16 @@ public final class Species {
 	public static final Species BOS_TAURUS = new Species("bos_taurus");
 
 	/** Specific type of species */
-	public static final Species CANIS_FAMILIARIS = new Species(
-			"canis_familiaris");
+	public static final Species CANIS_FAMILIARIS = new Species("canis_familiaris");
 
 	/** Specific type of species */
-	public static final Species XENOPUS_TROPICALIS = new Species(
-			"xenopus_tropicalis");
+	public static final Species XENOPUS_TROPICALIS = new Species("xenopus_tropicalis");
 
 	/** Specific type of species */
-	public static final Species MONODELPHIS_DOMESTICA = new Species(
-			"monodelphis_domestica");
+	public static final Species MONODELPHIS_DOMESTICA = new Species("monodelphis_domestica");
 
 	/** Specific type of species */
-	public static final Species SACCHAROMYCES_CEREVISIAE = new Species(
-			"saccharomyces_cerevisiae");
+	public static final Species SACCHAROMYCES_CEREVISIAE = new Species("saccharomyces_cerevisiae");
 
 	/** Specific type of species */
 	public static final Species MACACA_MULATTA = new Species("macaca_mulatta");
@@ -104,19 +93,23 @@ public final class Species {
 	/** Specific type of species */
 	public static final Species LOXODONTA_AFRICANA = new Species("loxodonta_africana");
 
+	/** Specific type of species */
 	public static final Species DASYPUS_NOVEMCINCTUS = new Species("dasypus_novemcinctus");
 
 	/** Specific type of species */
+	public static final Species SUS_SCROFA = new Species("sus_scrofa");
+
+	/** Specific type of species */
 	public static final Species ECHINOPS_TELFAIRI = new Species("echinops_telfairi");
-	
+
 	/** Specific type of species */
 	public static final Species ORYCTOLAGUS_CUNICULUS = new Species("oryctolagus_cuniculus");
 
-    /** Non-ensembl database */
-    public static final Species SYSTEM = new Species("system");
+	/** Non-ensembl database */
+	public static final Species SYSTEM = new Species("system");
 
-    /** Help database */
-    public static final Species HELP = new Species("help");
+	/** Help database */
+	public static final Species HELP = new Species("help");
 
 	/** Unknown species */
 	public static final Species UNKNOWN = new Species("unknown");
@@ -173,7 +166,8 @@ public final class Species {
 		taxonIDToSpecies.put("9361", DASYPUS_NOVEMCINCTUS);
 		taxonIDToSpecies.put("9371", ECHINOPS_TELFAIRI);
 		taxonIDToSpecies.put("9986", ORYCTOLAGUS_CUNICULUS);
-		
+		taxonIDToSpecies.put("9823", SUS_SCROFA);
+
 		// and the other way around
 		Iterator it = taxonIDToSpecies.keySet().iterator();
 		while (it.hasNext()) {
@@ -203,10 +197,11 @@ public final class Species {
 		assemblyPrefixToSpecies.put("SGD", SACCHAROMYCES_CEREVISIAE);
 		assemblyPrefixToSpecies.put("MM", MACACA_MULATTA);
 		assemblyPrefixToSpecies.put("BROADE", LOXODONTA_AFRICANA);
-		assemblyPrefixToSpecies.put("ARMA", DASYPUS_NOVEMCINCTUS );
-		assemblyPrefixToSpecies.put("TENREC", ECHINOPS_TELFAIRI );
-		assemblyPrefixToSpecies.put("RABBIT", ORYCTOLAGUS_CUNICULUS );
-		
+		assemblyPrefixToSpecies.put("ARMA", DASYPUS_NOVEMCINCTUS);
+		assemblyPrefixToSpecies.put("TENREC", ECHINOPS_TELFAIRI);
+		assemblyPrefixToSpecies.put("RABBIT", ORYCTOLAGUS_CUNICULUS);
+		assemblyPrefixToSpecies.put("PIG", SUS_SCROFA);
+
 		// and the other way around
 		it = assemblyPrefixToSpecies.keySet().iterator();
 		while (it.hasNext()) {
@@ -221,9 +216,9 @@ public final class Species {
 	 * Resolve an alias to a Species object.
 	 * 
 	 * @param speciesAlias
-	 *            The alias (e.g. human, homosapiens, hsapiens).
-	 * @return The species object corresponding to alias, or Species.UNKNOWN if
-	 *         it cannot be resolved.
+	 *          The alias (e.g. human, homosapiens, hsapiens).
+	 * @return The species object corresponding to alias, or Species.UNKNOWN if it
+	 *         cannot be resolved.
 	 */
 	public static Species resolveAlias(String speciesAlias) {
 
@@ -239,8 +234,7 @@ public final class Species {
 
 		// -------------------------------------
 
-		if (in(alias,
-				"mosquito,anopheles,agambiae,anophelesgambiae,anopheles_gambiae")) {
+		if (in(alias, "mosquito,anopheles,agambiae,anophelesgambiae,anopheles_gambiae")) {
 
 			return ANOPHELES_GAMBIAE;
 
@@ -248,8 +242,7 @@ public final class Species {
 
 		// --------------------------------------
 
-		if (in(alias,
-				"elegans,celegans,caenorhabditiselegans,caenorhabditis_elegans")) {
+		if (in(alias, "elegans,celegans,caenorhabditiselegans,caenorhabditis_elegans")) {
 
 			return CAENORHABDITIS_ELEGANS;
 
@@ -257,8 +250,7 @@ public final class Species {
 
 		// --------------------------------------
 
-		if (in(alias,
-				"briggsae,cbriggsae,caenorhabditisbriggsae,caenorhabditis_briggsae")) {
+		if (in(alias, "briggsae,cbriggsae,caenorhabditisbriggsae,caenorhabditis_briggsae")) {
 
 			return CAENORHABDITIS_BRIGGSAE;
 
@@ -281,8 +273,7 @@ public final class Species {
 
 		// --------------------------------------
 
-		if (in(alias,
-				"drosophila,dmelongaster,drosophilamelanogaster,drosophila_melanogaster")) {
+		if (in(alias, "drosophila,dmelongaster,drosophilamelanogaster,drosophila_melanogaster")) {
 
 			return DROSOPHILA_MELANOGASTER;
 
@@ -306,8 +297,7 @@ public final class Species {
 
 		// --------------------------------------
 
-		if (in(alias,
-				"chimp,chimpanzee,ptroglodytes,pantroglodytes,pan_troglodytes")) {
+		if (in(alias, "chimp,chimpanzee,ptroglodytes,pantroglodytes,pan_troglodytes")) {
 
 			return PAN_TROGLODYTES;
 
@@ -323,8 +313,7 @@ public final class Species {
 
 		// --------------------------------------
 
-		if (in(alias,
-				"tetraodon,tnigroviridis,tetraodonnigroviridis,tetraodon_nigroviridis")) {
+		if (in(alias, "tetraodon,tnigroviridis,tetraodonnigroviridis,tetraodon_nigroviridis")) {
 
 			return TETRAODON_NIGROVIRIDIS;
 
@@ -332,8 +321,7 @@ public final class Species {
 
 		// --------------------------------------
 
-		if (in(alias,
-				"honeybee,honey_bee,apis,amellifera,apismellifera,apis_mellifera")) {
+		if (in(alias, "honeybee,honey_bee,apis,amellifera,apismellifera,apis_mellifera")) {
 
 			return APIS_MELLIFERA;
 
@@ -357,8 +345,7 @@ public final class Species {
 
 		// --------------------------------------
 
-		if (in(alias,
-				"pipid,pipidfrog,xenopus,xtropicalis,xenopustropicalis,xenopus_tropicalis")) {
+		if (in(alias, "pipid,pipidfrog,xenopus,xtropicalis,xenopustropicalis,xenopus_tropicalis")) {
 
 			return XENOPUS_TROPICALIS;
 
@@ -366,7 +353,8 @@ public final class Species {
 
 		// --------------------------------------
 
-		if (in(alias,
+		if (in(
+				alias,
 				"opossum,monodelphis,mdomestica,mdomesticus,monodelphisdomestica,monodelphisdomesticus,monodelphis_domestica,monodelphis_domesticus")) {
 
 			return MONODELPHIS_DOMESTICA;
@@ -375,9 +363,7 @@ public final class Species {
 
 		// --------------------------------------
 
-		if (in(
-				alias,
-				"yeast,saccharomyces,scerevisiae,saccharomycescerevisiae,saccharomyces_cerevisiae")) {
+		if (in(alias, "yeast,saccharomyces,scerevisiae,saccharomycescerevisiae,saccharomyces_cerevisiae")) {
 
 			return SACCHAROMYCES_CEREVISIAE;
 
@@ -391,30 +377,53 @@ public final class Species {
 
 		}
 
-		//		 --------------------------------------
+		// --------------------------------------
 
 		if (in(alias, "macacamulatta,macaca_mulatta,rhesusmacaque,rhesus_macaque,macaque")) {
 
 			return MACACA_MULATTA;
 
 		}
+
+		// --------------------------------------
+
 		if (in(alias, "elephant,loxodonta_africana,nelly,loxodonta,african_elephant,african_savannah_elephant,african_bush_elephant")) {
 
 			return LOXODONTA_AFRICANA;
-                }
+			
+		}
+
+		// --------------------------------------
+
 		if (in(alias, "armadillo,dasypus_novemcinctus,daisy,dasypus,nine_banded_armadillo,nine-banded_armadillo,texas_armadillo")) {
 
 			return DASYPUS_NOVEMCINCTUS;
-                }
+			
+		}
+
+		// --------------------------------------
+
 		if (in(alias, "tenrec,echinops_telfairi,echinops,small_madagascar_hedgehog,lesser_hedgehog_tenrec")) {
 
 			return ECHINOPS_TELFAIRI;
-                }
-				
+			
+		}
+
+		// --------------------------------------
+
 		if (in(alias, "rabbit,oryctolagus_cuniculus,oryctolagus,domestic_rabbit,bunny,japanese_white_rabbit,european_rabbit")) {
 
 			return ORYCTOLAGUS_CUNICULUS;
-                }		
+			
+		}
+		
+		// --------------------------------------
+
+		if (in(alias, "pig,boar,wildboar,wild_boar,susscrofa,sus_scrofa")) {
+
+			return SUS_SCROFA;
+			
+		}
 
 		// --------------------------------------
 
@@ -431,7 +440,7 @@ public final class Species {
 	 * Get the taxonomy ID associated with a particular species.
 	 * 
 	 * @param s
-	 *            The species to look up.
+	 *          The species to look up.
 	 * @return The taxonomy ID associated with s, or "" if none is found.
 	 */
 	public static String getTaxonomyID(Species s) {
@@ -452,9 +461,8 @@ public final class Species {
 	 * Get the species associated with a particular taxonomy ID.
 	 * 
 	 * @param t
-	 *            The taxonomy ID to look up.
-	 * @return The species associated with t, or Species.UNKNOWN if none is
-	 *         found.
+	 *          The taxonomy ID to look up.
+	 * @return The species associated with t, or Species.UNKNOWN if none is found.
 	 */
 	public static Species getSpeciesFromTaxonomyID(String t) {
 
@@ -463,8 +471,7 @@ public final class Species {
 		if (taxonIDToSpecies.containsKey(t)) {
 			result = (Species) taxonIDToSpecies.get(t);
 		} else {
-			logger.warning("Cannot get species for taxonomy ID " + t
-					+ " returning Species.UNKNOWN");
+			logger.warning("Cannot get species for taxonomy ID " + t + " returning Species.UNKNOWN");
 		}
 
 		return result;
@@ -486,7 +493,7 @@ public final class Species {
 	 * Return a Species object corresponding to a particular assembly prefix.
 	 * 
 	 * @param prefix
-	 *            The assembly prefix.
+	 *          The assembly prefix.
 	 * @return The Species corresponding to prefix, or Species.UNKNOWN.
 	 */
 	public static Species getSpeciesForAssemblyPrefix(String prefix) {
@@ -508,7 +515,7 @@ public final class Species {
 	 * Get the assembly prefix for a species.
 	 * 
 	 * @param s
-	 *            The species.
+	 *          The species.
 	 * @return The assembly prefix for s.
 	 */
 	public static String getAssemblyPrefixForSpecies(Species s) {
