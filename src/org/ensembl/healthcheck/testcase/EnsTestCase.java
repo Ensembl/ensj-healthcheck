@@ -72,7 +72,7 @@ public abstract class EnsTestCase {
    */
 	private String[] featureTables = { "affy_feature", "assembly_exception", "gene", "exon", "dna_align_feature", "protein_align_feature",
 			"repeat_feature", "simple_feature", "marker_feature", "misc_feature", "qtl_feature", "karyotype", "transcript", "density_feature",
-			"regulatory_feature" };
+			"regulatory_feature", "prediction_exon", "prediction_transcript" };
 
 	/**
    * Tables that have an analysis ID.
