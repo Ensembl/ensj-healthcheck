@@ -68,7 +68,7 @@ public class AffyXrefs extends SingleDatabaseTestCase {
             String sql = "SELECT DISTINCT(sr.name) AS chromosome FROM seq_region sr, coord_system cs "
                     + "WHERE sr.coord_system_id=cs.coord_system_id AND cs.name='chromosome' AND sr.name NOT LIKE '%\\_%'";
 
-            String[] chrNames = getColumnValues(con, "SELECT * FROM affy_array");
+            String[] chrNames = getColumnValues(con, "SELECT s.name FROM seq_region s, coord_system c WHERE c.coord_system_id=s.coord_system_id AND c.name='chromosome'");
 
             if (chrNames.length > MAX_CHROMOSOMES) {
 
@@ -88,7 +88,7 @@ public class AffyXrefs extends SingleDatabaseTestCase {
                             + "AND g.seq_region_id=sr.seq_region_id AND sr.coord_system_id=cs.coord_system_id "
                             + "AND cs.name=\'chromosome\' AND sr.name='" + chrNames[i] + "\' GROUP BY chromosome";
 
-                    int count = -1;
+                    int count = 0;
                     try {
                         ResultSet rs = con.createStatement().executeQuery(sql);
                         if (rs.next()) {
