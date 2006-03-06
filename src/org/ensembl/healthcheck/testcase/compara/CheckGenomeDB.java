@@ -47,7 +47,7 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
             " and genebuild) correspond to the meta data in the core DB and vice versa.");
 
     }
-    
+ 
     /**
      * Check that the properties of the genome_db table (taxon_id, assembly and genebuild)
      * correspond to the meta data in the core DB and vice versa.
@@ -75,11 +75,72 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
         Map speciesDbrs = getSpeciesDatabaseMap(dbr, true);
 
         for (int i = 0; i < allComparaDBs.length; i++) {
+            result &= checkAssemblies(allComparaDBs[i]);
             result &= checkGenomeDB(allComparaDBs[i], speciesDbrs);
         }
         return result;
     }
-    
+
+
+    public boolean checkAssemblies(DatabaseRegistryEntry comparaDbre) {
+
+        boolean result = true;
+        Connection comparaCon = comparaDbre.getConnection();
+
+        // Get list of species with more than 1 default assembly
+        String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE assembly_default = 1"
+            + " GROUP BY name HAVING count(*) <> 1";
+        try {
+          Statement stmt = comparaCon.createStatement();
+          ResultSet rs = stmt.executeQuery(sql);
+          while (rs.next()) {
+            ReportManager.problem(this, comparaCon, "There are more than 1 default assembly for "
+              + rs.getString(1));
+            result = false;
+          }
+          rs.close();
+          stmt.close();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+
+        // Get list of species with a non-default assembly
+        sql = "SELECT DISTINCT name FROM genome_db WHERE assembly_default = 0";
+        try {
+          Statement stmt = comparaCon.createStatement();
+          ResultSet rs = stmt.executeQuery(sql);
+          while (rs.next()) {
+            ReportManager.problem(this, comparaCon, "There is at least one non-default assembly for "
+              + rs.getString(1) + " (this should happen not in the release DB)");
+          }
+          rs.close();
+          stmt.close();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+
+        // Get list of species with no default assembly
+        sql = "SELECT DISTINCT gdb1.name FROM genome_db gdb1 LEFT JOIN genome_db gdb2"
+            + " ON (gdb1.name = gdb2.name and gdb1.assembly_default = 1 - gdb2.assembly_default)"
+            + " WHERE gdb1.assembly_default = 0 AND gdb2.name is null";
+        try {
+          Statement stmt = comparaCon.createStatement();
+          ResultSet rs = stmt.executeQuery(sql);
+          while (rs.next()) {
+            ReportManager.problem(this, comparaCon, "There is no default assembly for "
+              + rs.getString(1));
+            result = false;
+          }
+          rs.close();
+          stmt.close();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+
+        return result;
+    }
+
+
     public boolean checkGenomeDB(DatabaseRegistryEntry comparaDbre, Map speciesDbrs) {
 
         boolean result = true;
