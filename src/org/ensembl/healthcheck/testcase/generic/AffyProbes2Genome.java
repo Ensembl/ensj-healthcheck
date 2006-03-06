@@ -58,7 +58,7 @@ public class AffyProbes2Genome extends SingleDatabaseTestCase {
      */
     public void types() {
 
-        removeAppliesToType(DatabaseType.EST);
+        removeAppliesToType(DatabaseType.OTHERFEATURES);
         removeAppliesToType(DatabaseType.CDNA);
         removeAppliesToType(DatabaseType.VEGA);
 

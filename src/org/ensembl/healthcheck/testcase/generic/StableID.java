@@ -52,7 +52,7 @@ public class StableID extends SingleDatabaseTestCase {
      */
     public void types() {
 
-        removeAppliesToType(DatabaseType.EST);
+        removeAppliesToType(DatabaseType.OTHERFEATURES);
         removeAppliesToType(DatabaseType.CDNA);
 
     }

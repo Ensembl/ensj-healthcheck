@@ -43,7 +43,7 @@ public class TranslationStartEnd extends SingleDatabaseTestCase {
      */
     public void types() {
 
-        removeAppliesToType(DatabaseType.EST);
+        removeAppliesToType(DatabaseType.OTHERFEATURES);
 
     }
     

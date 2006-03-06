@@ -51,7 +51,7 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 	 */
 	public void types() {
 
-		removeAppliesToType(DatabaseType.EST);
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		removeAppliesToType(DatabaseType.CDNA);
 
 	}
@@ -104,7 +104,7 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 
 				if (!first) {
 					if (lastGeneChromosome == geneChromosome && lastGeneStart == geneStart && lastGeneEnd == geneEnd
-							&& lastGeneStrand == geneStrand) {
+							&& lastGeneStrand == geneStrand && geneBioType.equals(lastGeneBioType)) {
 						duplicateGene++;
 						if (duplicateGene < MAX_WARNINGS) {
 							ReportManager.warning(this, con, "Gene " + geneStableID + " (" + geneBioType + " ID " + geneId + ") is duplicated - see gene " + lastGeneStableID + " (" + lastGeneBioType + " ID " + lastGeneId + ")");

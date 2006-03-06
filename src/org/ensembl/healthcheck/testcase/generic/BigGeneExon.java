@@ -52,7 +52,7 @@ public class BigGeneExon extends SingleDatabaseTestCase {
      */
     public void types() {
 
-        removeAppliesToType(DatabaseType.EST);
+        removeAppliesToType(DatabaseType.OTHERFEATURES);
         removeAppliesToType(DatabaseType.ESTGENE);
         removeAppliesToType(DatabaseType.VEGA);
 

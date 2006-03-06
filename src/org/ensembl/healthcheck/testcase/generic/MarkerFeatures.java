@@ -59,7 +59,7 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
      */
     public void types() {
 
-        removeAppliesToType(DatabaseType.EST);
+        removeAppliesToType(DatabaseType.OTHERFEATURES);
         removeAppliesToType(DatabaseType.ESTGENE);
         removeAppliesToType(DatabaseType.VEGA);
         removeAppliesToType(DatabaseType.CDNA);
