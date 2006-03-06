@@ -65,6 +65,9 @@ public final class DatabaseType {
     /** A help database */
     public static final DatabaseType HELP = new DatabaseType("HELP");
 
+    /** An otherfeatures database */
+    public static final DatabaseType OTHERFEATURES = new DatabaseType("otherfeatures");
+    
     /** A system database */
     public static final DatabaseType SYSTEM = new DatabaseType("system");
 
@@ -233,6 +236,14 @@ public final class DatabaseType {
             return HELP;
 
         }
+        
+//      --------------------------------------
+
+        if (in(lcAlias, "otherfeatures")) {
+
+            return OTHERFEATURES;
+
+        }
 
         // --------------------------------------
 
@@ -256,11 +267,11 @@ public final class DatabaseType {
     /**
      * Check if a DatabaseType is generic (core, est, estgene, vega).
      * 
-     * @return true if t is core, est, estgene or vega.
+     * @return true if database is core, est, estgene or vega etc.
      */
     public boolean isGeneric() {
 
-        if (name.equals("core") || name.equals("est") || name.equals("estgene") || name.equals("vega") || name.equals("cdna")) {
+        if (name.equals("core") || name.equals("est") || name.equals("estgene") || name.equals("vega") || name.equals("cdna") || name.equals("otherfeatures")) {
             return true;
         }
 
