@@ -1350,6 +1350,7 @@ public abstract class EnsTestCase {
 			types.add(DatabaseType.EST);
 			types.add(DatabaseType.ESTGENE);
 			types.add(DatabaseType.CDNA);
+			types.add(DatabaseType.OTHERFEATURES);
 			logger.finest("Set generic types for " + getName());
 
 		} else {
