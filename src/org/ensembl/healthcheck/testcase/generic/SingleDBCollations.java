@@ -27,65 +27,67 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that all table collations in a particular database are latin1_swedish_ci.
+ * Check that all table collations in a particular database are
+ * latin1_swedish_ci.
  */
 
 public class SingleDBCollations extends SingleDatabaseTestCase {
 
-    private static String TARGET_COLLATION = "latin1_swedish_ci";
+	private static String TARGET_COLLATION = "latin1_swedish_ci";
 
-    /**
-     * Create a new SingleDBCollations testcase.
-     */
-    public SingleDBCollations() {
+	/**
+	 * Create a new SingleDBCollations testcase.
+	 */
+	public SingleDBCollations() {
 
-        addToGroup("post_genebuild");
-        addToGroup("release");
-        setDescription("Check that all table collations are latin1_swedish_ci");
-	
-    }
+		addToGroup("post_genebuild");
+		addToGroup("release");
+		setDescription("Check that all table collations are latin1_swedish_ci");
 
+	}
 
-    /**
-     * Run the test.
-     * 
-     * @param dbre The database to use.
-     * @return true if the test pased.
-     *  
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+	/**
+	 * Run the test.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return true if the test pased.
+	 * 
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-	boolean result = true;
+		boolean result = true;
 
-	Connection con = dbre.getConnection();
-	    
-	 try {
+		Connection con = dbre.getConnection();
 
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("SHOW TABLE STATUS");
+		try {
 
-            while (rs.next()) {
-                String table = rs.getString("name");
-		String collation = rs.getString("collation");
-		if (!collation.equals(TARGET_COLLATION)) {
-		    ReportManager.problem(this, con, table + " has a collation of '" + collation + "' which is not the same as the target " + TARGET_COLLATION);
-		    result = false;
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery("SHOW TABLE STATUS");
+
+			while (rs.next()) {
+				String table = rs.getString("name");
+				String collation = rs.getString("collation");
+				if (!collation.equals(TARGET_COLLATION)) {
+					ReportManager.problem(this, con, table + " has a collation of '" + collation + "' which is not the same as the target "
+							+ TARGET_COLLATION);
+					result = false;
+				}
+			}
+
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException se) {
+			se.printStackTrace();
 		}
-            }
 
-            rs.close();
-            stmt.close();
+		if (result) {
+			ReportManager.correct(this, con, "All tables have collation " + TARGET_COLLATION);
+		}
 
-	 } catch (SQLException se) {
-	    se.printStackTrace();
-	 }
-	 
-	 if (result) {
-	     ReportManager.correct(this, con, "All tables have collation " + TARGET_COLLATION);
-	 }
+		return result;
 
-	 return result;
+	} // run
 
-    } // run
-    
 } // SingleDBCollations
