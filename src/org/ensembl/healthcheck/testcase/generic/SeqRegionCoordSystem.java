@@ -86,12 +86,12 @@ public class SeqRegionCoordSystem extends SingleDatabaseTestCase {
 				if (same > 0) {
 
 					ReportManager.problem(this, con, "Co-ordinate systems " + csI + " and " + csJ + " have " + same
-							+ " identially-named seq_regions - this may cause problems for ID mapping");
+							+ " identically-named seq_regions - this may cause problems for ID mapping");
 					result = false;
 
 				} else {
 
-					ReportManager.correct(this, con, "Co-ordinate systems " + csI + " and " + csJ + " have no identially-named seq_regions");
+					ReportManager.correct(this, con, "Co-ordinate systems " + csI + " and " + csJ + " have no identically-named seq_regions");
 
 				}
 
