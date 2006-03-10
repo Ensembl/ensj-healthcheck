@@ -108,7 +108,7 @@ public class OligoProbes2Genome extends SingleDatabaseTestCase {
             Set possibleExternalDBNames = new HashSet();
             possibleExternalDBNames.add(name.toLowerCase());
             possibleExternalDBNames.add(name.toLowerCase().replace('-', '_'));
-            possibleExternalDBNames.add(("oligo_" + name).toLowerCase().replace('-', '_'));
+            possibleExternalDBNames.add(("Affy_" + name).toLowerCase().replace('-', '_'));
             possibleExternalDBNames.add(("afyy_" + name).toLowerCase().replace('-', '_'));
 
             possibleExternalDBNames.retainAll(xdbNamesSet);
