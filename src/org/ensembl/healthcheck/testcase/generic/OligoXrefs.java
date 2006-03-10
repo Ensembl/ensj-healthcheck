@@ -35,7 +35,7 @@ public class OligoXrefs extends SingleDatabaseTestCase {
     private static final int MAX_CHROMOSOMES = 50;
 
     /**
-     * Creates a new instance of FeatureAnalysis
+     * Creates a new instance of OligoXrefs
      */
     public OligoXrefs() {
 
