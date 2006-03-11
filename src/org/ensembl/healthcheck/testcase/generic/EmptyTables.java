@@ -102,9 +102,9 @@ public class EmptyTables extends SingleDatabaseTestCase {
             // only look for Affy features in human, mouse, rat, chicken, danio
             if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.RATTUS_NORVEGICUS
                     && species != Species.GALLUS_GALLUS && species != Species.DANIO_RERIO) {
-                tables = remove(tables, "affy_array");
-                tables = remove(tables, "affy_feature");
-                tables = remove(tables, "affy_probe");
+                tables = remove(tables, "oligo_array");
+                tables = remove(tables, "oligo_feature");
+                tables = remove(tables, "oligo_probe");
             }
 
             // only look for transcript & translation attribs in human, mouse, rat

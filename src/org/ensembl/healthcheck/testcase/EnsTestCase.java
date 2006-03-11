@@ -70,7 +70,7 @@ public abstract class EnsTestCase {
 	/**
    * Names of tables in core schema that count as "feature" tables. Used in various healthchecks.
    */
-	private String[] featureTables = { "affy_feature", "assembly_exception", "gene", "exon", "dna_align_feature", "protein_align_feature",
+	private String[] featureTables = { "oligo_feature", "assembly_exception", "gene", "exon", "dna_align_feature", "protein_align_feature",
 			"repeat_feature", "simple_feature", "marker_feature", "misc_feature", "qtl_feature", "karyotype", "transcript", "density_feature",
 			"regulatory_feature", "prediction_exon", "prediction_transcript" };
 
@@ -78,7 +78,7 @@ public abstract class EnsTestCase {
    * Tables that have an analysis ID.
    */
 	private String[] tablesWithAnalysisID = { "gene", "protein_feature", "dna_align_feature", "protein_align_feature", "repeat_feature",
-			"prediction_transcript", "simple_feature", "marker_feature", "qtl_feature", "density_type", "identity_xref", "affy_feature", 
+			"prediction_transcript", "simple_feature", "marker_feature", "qtl_feature", "density_type", "identity_xref", "oligo_feature", 
 			"regulatory_feature" };
 
 	// -------------------------------------------------------------------------

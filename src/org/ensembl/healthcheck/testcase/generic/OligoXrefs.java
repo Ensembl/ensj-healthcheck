@@ -78,7 +78,7 @@ public class OligoXrefs extends SingleDatabaseTestCase {
             } else {
                 for (int i = 0; i < chrNames.length; i++) {
 
-                    logger.fine("Counting Oligo xrefs associated with chromosome " + chrNames[i]);
+                    logger.fine("Counting Affy xrefs associated with chromosome " + chrNames[i]);
 
                     sql = "SELECT DISTINCT(sr.name) AS chromosome, COUNT(x.xref_id) AS count "
                             + "FROM xref x, external_db e, object_xref ox, translation tl, transcript ts, gene g, seq_region sr, coord_system cs "
