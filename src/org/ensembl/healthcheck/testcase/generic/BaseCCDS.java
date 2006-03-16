@@ -61,6 +61,8 @@ public abstract class BaseCCDS extends SingleDatabaseTestCase {
 
 		}
 		
+		logger.info("Using CCDS file " + ccdsFile);
+		
 		int notPresent = 0;
 
 		Connection con = dbre.getConnection();
