@@ -516,6 +516,9 @@ class DatabaseTabbedPane extends JTabbedPane {
             for (int j = 0; j < entries.length; j++) {
                 if (entries[j].getType() == types[i]) {
                     checkBoxesForTab.add(checkBoxMap.get(entries[j]));
+		    if (entries[j].getType().toString().matches("expression")) {
+			System.out.println("Adding " + entries[j].toString());
+		    }
                 }
             }
             addTab(types[i].toString(), new DatabaseListPanel(checkBoxesForTab));

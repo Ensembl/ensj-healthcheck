@@ -84,6 +84,7 @@ public class ComparePreviousVersionXrefs extends SingleDatabaseTestCase {
             if (currentXrefCounts.containsKey(externalDB)) {
 
                 int currentCount = ((Integer) (currentXrefCounts.get(externalDB))).intValue();
+		//System.out.println("" + ((double)currentCount / (double)secondaryCount));
                 if (((double)currentCount / (double)secondaryCount) < THRESHOLD) { 
                     ReportManager.problem(this, dbre.getConnection(), sec.getName() + " contains " + secondaryCount + " xrefs of type " + externalDB
                             + " but " + dbre.getName() + " only has " + currentCount);
@@ -92,7 +93,7 @@ public class ComparePreviousVersionXrefs extends SingleDatabaseTestCase {
                     
                     ReportManager.correct(this, dbre.getConnection(), sec.getName() + " contains " + secondaryCount + " xrefs of type " + externalDB
                             + " and " + dbre.getName() + " has " + currentCount + " - greater or within tolerance");
-                  
+		    //System.out.println(externalDB + " " + secondaryCount + " " + currentCount);
                 }
 
             } else {
