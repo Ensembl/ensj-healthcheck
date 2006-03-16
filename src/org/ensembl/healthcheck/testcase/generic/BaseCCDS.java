@@ -16,6 +16,7 @@
 
 package org.ensembl.healthcheck.testcase.generic;
 
+import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,13 +26,13 @@ import java.util.Iterator;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.Utils;
 
 /**
  * Check that all the transcripts in the a particular CCDS set are present.
- * CCDS_FILE should be defined by extending class.
+ * Looks for a file called ccds_{species_name}_{assembly_version}.txt
+ * e.g. ccds_homo_sapiens_35.txt
  */
 public abstract class BaseCCDS extends SingleDatabaseTestCase {
 
@@ -46,11 +47,20 @@ public abstract class BaseCCDS extends SingleDatabaseTestCase {
       removeAppliesToType(DatabaseType.CDNA);
       
   }
-
-	public boolean do_run(DatabaseRegistryEntry dbre, String ccdsFile) {
+  
+	public boolean doRun(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
 
+		String ccdsFile = "ccds_" + dbre.getSpecies() + "_" + dbre.getNumericGeneBuildVersion() + ".txt";
+		
+		if (!(new File(ccdsFile)).exists()) {
+			
+			logger.warning("CCDS healthcheck can't find corresponding file for " + dbre.getSpecies() + " assembly version " + dbre.getNumericGeneBuildVersion() + "; returning true");
+			return true;
+
+		}
+		
 		int notPresent = 0;
 
 		Connection con = dbre.getConnection();

@@ -17,14 +17,13 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.Species;
 
 /**
  * Check that all the transcripts in the human CCDS set are present.
  */
 public class HumanCCDS extends BaseCCDS {
-
-	private static final String CCDS_FILE = "ccds_human.txt";
 
 	/**
 	 * Creates a new instance of HumanCCDS.
@@ -51,12 +50,12 @@ public class HumanCCDS extends BaseCCDS {
 		// return true for any non-human databases
 		if (dbre.getSpecies() != Species.HOMO_SAPIENS) {
 			
-			logger.warning("Human CCDS healthcheck returning default of true for " + dbre.getSpecies());
+			logger.warning("Human CCDS healthcheck returning default of true for " + dbre.getSpecies() + " database type " + dbre.getType().toString());
 			return true;
 			
 		}
 		
-		return do_run(dbre, CCDS_FILE);
+		return doRun(dbre);
 		
 	} // run
 	
