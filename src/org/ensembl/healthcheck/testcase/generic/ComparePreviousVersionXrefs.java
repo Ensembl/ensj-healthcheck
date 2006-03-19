@@ -118,8 +118,10 @@ public class ComparePreviousVersionXrefs extends SingleDatabaseTestCase {
 
             logger.finest("Getting xref counts for " + dbre.getName());
 
+            String excludeProjectedSQL = getExcludeProjectedSQL(dbre);
+            
             ResultSet rs = stmt.executeQuery("SELECT DISTINCT(e.db_name) AS db_name, COUNT(*) AS count" + " FROM external_db e, xref x, object_xref ox"
-                    + " WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id " + " GROUP BY e.db_name");
+                    + " WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id " + excludeProjectedSQL + " GROUP BY e.db_name");
 
             while (rs != null && rs.next()) {
                 result.put(rs.getString("db_name"), new Integer(rs.getInt("count")));
@@ -136,5 +138,26 @@ public class ComparePreviousVersionXrefs extends SingleDatabaseTestCase {
     }
 
     // ----------------------------------------------------------------------
+
+    private String getExcludeProjectedSQL(DatabaseRegistryEntry dbre) {
+    	
+    	String sql = "";
+    	
+    		int schemaVersion = Integer.parseInt(dbre.getSchemaVersion());
+    		
+    		if (schemaVersion <= 37) {
+    			
+    			sql = " AND x.display_label NOT LIKE '%[from%'";
+    			
+    		} else {
+    			
+    			sql = " AND x.info_type IS NULL"; // should really be != 'PROJECTION'
+    			
+    		}
+    		
+    		return sql;
+    }
+    
+    	//  ----------------------------------------------------------------------
 
 } // XrefTypes
