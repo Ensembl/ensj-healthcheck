@@ -30,167 +30,173 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 /**
  * Check mappings from Oligometrix probes to genome.
  * 
- * Even though we *don't* provide oligo data for all species the healthcheck follows the convention of failing if the data is missing.
+ * Even though we *don't* provide oligo data for all species the healthcheck
+ * follows the convention of failing if the data is missing.
  */
 public class OligoProbes2Genome extends SingleDatabaseTestCase {
 
-    /**
-     * Runs test against a few databases on the server specified in database.properties.
-     * 
-     * @param args ignored.
-     */
-    public static void main(String[] args) {
-        TextTestRunner.main(new String[] { "-d", "homo_sapiens_core_3.*", "-d", "pan_troglodytes_core_3.*", "OligoProbes2Genome" });
-    }
+	/**
+	 * Runs test against a few databases on the server specified in
+	 * database.properties.
+	 * 
+	 * @param args
+	 *          ignored.
+	 */
+	public static void main(String[] args) {
+		TextTestRunner.main(new String[] { "-d", "homo_sapiens_core_3.*", "-d", "pan_troglodytes_core_3.*", "OligoProbes2Genome" });
+	}
 
-    /**
-     * Creates a new instance of FeatureAnalysis
-     */
-    public OligoProbes2Genome() {
+	/**
+	 * Creates a new instance of FeatureAnalysis
+	 */
+	public OligoProbes2Genome() {
 
-        addToGroup("post_genebuild");
-        addToGroup("release");
+		addToGroup("post_genebuild");
+		addToGroup("release");
 
-    }
+	}
 
-    /**
-     * This test only applies to core databases.
-     */
-    public void types() {
+	/**
+	 * This test only applies to core databases.
+	 */
+	public void types() {
 
-        removeAppliesToType(DatabaseType.OTHERFEATURES);
-        removeAppliesToType(DatabaseType.CDNA);
-        removeAppliesToType(DatabaseType.VEGA);
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.CDNA);
+		removeAppliesToType(DatabaseType.VEGA);
 
-    }
+	}
 
-    /**
-     * Run the test.
-     * 
-     * @param dbre The database to use.
-     * @return true if the test pased.
-     * 
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+	/**
+	 * Run the test.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return true if the test pased.
+	 * 
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-        Connection con = dbre.getConnection();
+		Connection con = dbre.getConnection();
 
-        if (testOligoTablesPopulated(dbre)) {
-            return testProbsetSizesSet(con) 
-            & testOligoArraysInExternalDB(con) 
-            & testOligoFeatureInMetaCoord(con);
-        } else {
-            return false;
-        }
+		if (testOligoTablesPopulated(dbre)) {
+			return testProbsetSizesSet(con) & testOligoArraysInExternalDB(con) & testOligoFeatureInMetaCoord(con);
+		} else {
+			return false;
+		}
 
-    }
+	}
 
-    private boolean testOligoArraysInExternalDB(Connection con) {
+	private boolean testOligoArraysInExternalDB(Connection con) {
 
-        boolean result = true;
+		boolean result = true;
 
-        // We have to do some guessing and pattern matching to find the
-        // external database corresponding to this OligoArray because the
-        // names used in external_db.db_name do not quite match oligo_array.name.
+		// We have to do some guessing and pattern matching to find the
+		// external database corresponding to this OligoArray because the
+		// names used in external_db.db_name do not quite match oligo_array.name.
 
-        // 1 - get set of external_db.db_names
-        String[] xdbNames = getColumnValues(con, "SELECT db_name FROM external_db");
-        Set xdbNamesSet = new HashSet();
-        for (int i = 0; i < xdbNames.length; i++)
-            xdbNamesSet.add(xdbNames[i].toLowerCase());
+		// 1 - get set of external_db.db_names
+		String[] xdbNames = getColumnValues(con, "SELECT db_name FROM external_db");
+		Set xdbNamesSet = new HashSet();
+		for (int i = 0; i < xdbNames.length; i++)
+			xdbNamesSet.add(xdbNames[i].toLowerCase());
 
-        // 2 - check to see if every oligo_array.name is in the set of
-        // external_db.db_names.
-        String[] oligoArrayNames = getColumnValues(con, "SELECT name FROM oligo_array");
-        for (int i = 0; i < oligoArrayNames.length; i++) {
+		// 2 - check to see if every oligo_array.name is in the set of
+		// external_db.db_names.
+		String[] oligoArrayNames = getColumnValues(con, "SELECT name FROM oligo_array");
+		for (int i = 0; i < oligoArrayNames.length; i++) {
 
-            String name = oligoArrayNames[i];
-            Set possibleExternalDBNames = new HashSet();
-            possibleExternalDBNames.add(name.toLowerCase());
-            possibleExternalDBNames.add(name.toLowerCase().replace('-', '_'));
-            possibleExternalDBNames.add(("Affy_" + name).toLowerCase().replace('-', '_'));
-            possibleExternalDBNames.add(("afyy_" + name).toLowerCase().replace('-', '_'));
+			String name = oligoArrayNames[i];
+			Set possibleExternalDBNames = new HashSet();
+			possibleExternalDBNames.add(name.toLowerCase());
+			possibleExternalDBNames.add(name.toLowerCase().replace('-', '_'));
+			possibleExternalDBNames.add(("Affy_" + name).toLowerCase().replace('-', '_'));
+			possibleExternalDBNames.add(("afyy_" + name).toLowerCase().replace('-', '_'));
 
-            possibleExternalDBNames.retainAll(xdbNamesSet);
+			possibleExternalDBNames.retainAll(xdbNamesSet);
 
-            if (possibleExternalDBNames.size() == 0) {
-                ReportManager.problem(this, con, "OligoArray (oligo_array.name) " + name + " has no corresponding entry in external_db");
-                result = false;
-            }
+			if (possibleExternalDBNames.size() == 0) {
+				ReportManager.problem(this, con, "OligoArray (oligo_array.name) " + name + " has no corresponding entry in external_db");
+				result = false;
+			}
 
-        }
+		}
 
-        return result;
-    }
+		return result;
+	}
 
-    /**
-     * Checks that all oligo_* tables are populated.
-     * 
-     * If at least one is not then the test fails.
-     * 
-     * @param con
-     * @return true if all oligo_* tables have rows, otherwise false.
-     */
+	/**
+	 * Checks that all oligo_* tables are populated.
+	 * 
+	 * If at least one is not then the test fails.
+	 * 
+	 * @param con
+	 * @return true if all oligo_* tables have rows, otherwise false.
+	 */
 
-    private boolean testOligoTablesPopulated(DatabaseRegistryEntry dbre) {
+	private boolean testOligoTablesPopulated(DatabaseRegistryEntry dbre) {
 
-        List emptyTables = new ArrayList();
+		List emptyTables = new ArrayList();
 
-        String[] tables = { "oligo_array", "oligo_probe", "oligo_feature" };
+		String[] tables = { "oligo_array", "oligo_probe", "oligo_feature" };
 
-        Species species = dbre.getSpecies();
-        Connection con = dbre.getConnection();
+		Species species = dbre.getSpecies();
+		Connection con = dbre.getConnection();
 
-        if (species == Species.HOMO_SAPIENS || species == Species.MUS_MUSCULUS || species == Species.RATTUS_NORVEGICUS
-                || species == Species.GALLUS_GALLUS || species == Species.DANIO_RERIO) {
+		if (species == Species.HOMO_SAPIENS || species == Species.MUS_MUSCULUS || species == Species.RATTUS_NORVEGICUS
+				|| species == Species.GALLUS_GALLUS || species == Species.DANIO_RERIO) {
 
-            for (int i = 0; i < tables.length; i++)
-                if (Integer.parseInt(getRowColumnValue(con, "SELECT count(*) from " + tables[i])) == 0)
-                    emptyTables.add(tables[i]);
+			for (int i = 0; i < tables.length; i++)
+				if (Integer.parseInt(getRowColumnValue(con, "SELECT count(*) from " + tables[i])) == 0)
+					emptyTables.add(tables[i]);
 
-        }
-        if (emptyTables.size() == 0)
-            return true;
-        else {
-            ReportManager.problem(this, con, "Empty table(s): " + emptyTables);
-            return false;
-        }
+		}
+		if (emptyTables.size() == 0)
+			return true;
+		else {
+			ReportManager.problem(this, con, "Empty table(s): " + emptyTables);
+			return false;
+		}
 
-    }
+	}
 
-    private boolean testProbsetSizesSet(Connection con) {
+	private boolean testProbsetSizesSet(Connection con) {
 
-        boolean result = true;
+		boolean result = true;
 
-        try {
-            String sql = "SELECT name, probe_setsize FROM oligo_array";
-            for (ResultSet rs = con.createStatement().executeQuery(sql); rs.next();) {
-                int probesetSize = rs.getInt("probe_setsize");
-                if (probesetSize < 1) {
-                    ReportManager.problem(this, con, "oligo_array.probeset_size not set for " + rs.getString("name"));
-                    result = false;
-                }
-            }
-        } catch (SQLException e) {
-            result = false;
-            e.printStackTrace();
-        }
+		try {
+			String sql = "SELECT name, probe_setsize FROM oligo_array";
+			for (ResultSet rs = con.createStatement().executeQuery(sql); rs.next();) {
+				int probesetSize = rs.getInt("probe_setsize");
+				if (probesetSize < 1) {
+					ReportManager.problem(this, con, "oligo_array.probeset_size not set for " + rs.getString("name"));
+					result = false;
+				}
+			}
+		} catch (SQLException e) {
+			result = false;
+			e.printStackTrace();
+		}
 
-        return result;
-    }
-    
+		return result;
+	}
 
-    private boolean testOligoFeatureInMetaCoord(Connection con) {
+	private boolean testOligoFeatureInMetaCoord(Connection con) {
 
-      boolean result = true;
+		boolean result = true;
 
-      String sql = "select count(*) from meta_coord where table_name='oligo_feature'";
-      if (getRowCount(con, sql) == 0) {
-        ReportManager.problem(this, con, "no entry for oligo_feature in meta_coord table. ");
-        result = false;
-      }
-      
-      return result;
-  }
+		int oligos = getRowCount(con, "SELECT COUNT(*) FROM oligo_feature");
+		if (oligos > 0) {
+			String sql = "select count(*) from meta_coord where table_name='oligo_feature'";
+			if (getRowCount(con, sql) == 0) {
+				ReportManager.problem(this, con, "No entry for oligo_feature in meta_coord table. ");
+				result = false;
+			}
+		} else {
+			ReportManager.info(this, con, "No rows in oligo_feature, so not checking for entry in meta_coord");
+		}
+
+		return result;
+	}
 
 }
