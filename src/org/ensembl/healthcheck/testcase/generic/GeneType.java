@@ -213,7 +213,7 @@ public class GeneType extends SingleDatabaseTestCase {
 				// check analysis logic name
 				for (i = 0; i < whitelist_analysis.length; i++) {
 					if (analysisname.equals(whitelist_analysis[i])) {
-						ReportManager.info(this, con, analysisname + " accepted as analysis logic name.");
+						logger.fine(analysisname + " accepted as analysis logic name.");
 						analysisid = i;
 					}
 				}
@@ -221,7 +221,7 @@ public class GeneType extends SingleDatabaseTestCase {
 				// check gene type
 				for (i = 0; i < whitelist_type.length; i++) {
 					if (genetype.equals(whitelist_type[i])) {
-						ReportManager.info(this, con, genetype + " accepted as gene type name.");
+						logger.fine(genetype + " accepted as gene type name.");
 						typeid = i;
 					}
 				}
