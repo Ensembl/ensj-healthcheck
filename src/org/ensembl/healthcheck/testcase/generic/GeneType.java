@@ -46,10 +46,9 @@ public class GeneType extends SingleDatabaseTestCase {
 	 * Define Database-Types
 	 */
 	private String[] database_types = { "core", // 0
-			"est", // 1
+			"otherfeatures", // 1
 			"estgene", // 2
-			"cdna", // 3
-			"otherfeatures" // 4
+			"cdna"  // 3
 	};
 
 	/*
