@@ -234,7 +234,7 @@ public class GeneType extends SingleDatabaseTestCase {
 						}
 					}
 					if (combination == true) {
-						ReportManager.info(this, con, " combination accepted.");
+						logger.fine("combination accepted.");
 					} else {
 						ReportManager.problem(this, con, genetype + " is not a valid gene type name for " + analysisname + ".");
 						result = false;
