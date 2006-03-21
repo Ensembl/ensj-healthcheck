@@ -108,7 +108,7 @@ public class Meta extends SingleDatabaseTestCase {
 				} else {
 
 					ReportManager.problem(this, con, "assembly.default from meta table is " + metaTableAssemblyDefault
-							+ " but lowest ranked coordinate system has blank or missing version");
+							+ " but lowest ranked coordinate system has blank or missing version. Note lowest ranked == has HIGHEST numerical rank value");
 				}
 			}
 
