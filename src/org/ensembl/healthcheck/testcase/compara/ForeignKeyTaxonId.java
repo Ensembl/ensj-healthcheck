@@ -37,6 +37,7 @@ public class ForeignKeyTaxonId extends SingleDatabaseTestCase {
     public ForeignKeyTaxonId() {
 
         addToGroup("compara_db_constraints");
+        addToGroup("protein_db_constraints");
         setDescription("Check for broken foreign-key relationships in ensembl_compara databases.");
 
     }
@@ -55,15 +56,22 @@ public class ForeignKeyTaxonId extends SingleDatabaseTestCase {
 
         Connection con = dbre.getConnection();
 
-        if (tableHasRows(con, "taxon")) {
+        if (tableHasRows(con, "ncbi_taxa_nodes")) {
 
-            result &= checkForOrphans(con, "member", "taxon_id", "taxon", "taxon_id");
-            result &= checkForOrphans(con, "genome_db", "taxon_id", "taxon", "taxon_id");
+            result &= checkForOrphans(con, "member", "taxon_id", "ncbi_taxa_nodes", "taxon_id");
+            result &= checkForOrphans(con, "genome_db", "taxon_id", "ncbi_taxa_nodes", "taxon_id");
 
         } else {
-            ReportManager.correct(this, con, "NO ENTRIES in taxon table, so nothing to test IGNORED");
+            ReportManager.correct(this, con, "NO ENTRIES in ncbi_taxa_nodes table, so nothing to test IGNORED");
         }
+        if (tableHasRows(con, "ncbi_taxa_names")) {
 
+            result &= checkForOrphans(con, "member", "taxon_id", "ncbi_taxa_names", "taxon_id");
+            result &= checkForOrphans(con, "genome_db", "taxon_id", "ncbi_taxa_names", "taxon_id");
+
+        } else {
+            ReportManager.correct(this, con, "NO ENTRIES in ncbi_taxa_names table, so nothing to test IGNORED");
+        }
         return result;
 
     }

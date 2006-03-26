@@ -37,6 +37,7 @@ public class ForeignKeySequenceId extends SingleDatabaseTestCase {
     public ForeignKeySequenceId() {
 
         addToGroup("compara_db_constraints");
+        addToGroup("protein_db_constraints");
         setDescription("Check for broken foreign-key relationships in ensembl_compara databases.");
 
     }
