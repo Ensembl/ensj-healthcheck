@@ -64,8 +64,8 @@ public class ForeignKeyMethodLinkSpeciesSetId extends SingleDatabaseTestCase {
             result &= checkForOrphans(con, "family", "method_link_species_set_id", "method_link_species_set", "method_link_species_set_id");
             result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "synteny_region", "method_link_species_set_id", "method_link_id = 101");
             result &= checkForOrphans(con, "synteny_region", "method_link_species_set_id", "method_link_species_set", "method_link_species_set_id");
-            result &= checkForOrphans(con, "method_link_species_set", "genome_db_id", "genome_db", "genome_db_id");
-            result &= checkForOrphans(con, "genome_db", "genome_db_id", "method_link_species_set", "genome_db_id");
+            result &= checkForOrphans(con, "method_link_species_set", "species_set_id", "species_set", "species_set_id");
+            result &= checkForOrphans(con, "species_set", "species_set_id", "method_link_species_set", "species_set_id");
 
 
         } else {
