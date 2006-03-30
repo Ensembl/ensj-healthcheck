@@ -12,152 +12,67 @@
  */
 package org.ensembl.healthcheck.testcase.generic;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Compare the xrefs in the current database with those from the equivalent database on the secondary server.
+ * Compare the xrefs in the current database with those from the equivalent
+ * database on the secondary server.
  */
 
-public class ComparePreviousVersionXrefs extends SingleDatabaseTestCase {
+public class ComparePreviousVersionXrefs extends ComparePreviousVersionBase {
 
-    private static final double THRESHOLD = 0.78; // if old/new xrefs less than this, fail
-    
-    /**
-     * Create a new XrefTypes testcase.
-     */
-    public ComparePreviousVersionXrefs() {
+	private static final double THRESHOLD = 0.78; // if old/new xrefs less than
 
-        addToGroup("release");
-        addToGroup("core_xrefs");
-        setDescription("Compare the xrefs in the current database with those from the equivalent database on the secondary server");
+	// this, fail
 
-    }
+	/**
+	 * Create a new XrefTypes testcase.
+	 */
+	public ComparePreviousVersionXrefs() {
 
-    /**
-     * Run the test.
-     * 
-     * @param dbre The database to use.
-     * @return true if the test pased.
-     * 
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+		addToGroup("release");
+		addToGroup("core_xrefs");
+		setDescription("Compare the xrefs in the current database with those from the equivalent database on the secondary server");
 
-        boolean result = true;
+	}
 
-        DatabaseRegistryEntry sec = getEquivalentFromSecondaryServer(dbre);
+	// ----------------------------------------------------------------------
 
-        if (sec == null) {
-        	logger.warning("Can't get equivalent database for " + dbre.getName());
-        	return true;
-        }
-        
-        logger.finest("Equivalent database on secondary server is " + sec.getName());
+	protected Map getCounts(DatabaseRegistryEntry dbre) {
 
-        Map currentXrefCounts = getXrefCounts(dbre);
-        Map secondaryXrefCounts = getXrefCounts(sec);
+		String sql = "SELECT DISTINCT(e.db_name) AS db_name, COUNT(*) AS count" + " FROM external_db e, xref x, object_xref ox"
+				+ " WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id " + getExcludeProjectedSQL(dbre)
+				+ " GROUP BY e.db_name";
 
-        // compare each of the secondary (previous release, probably) with current
-        Set externalDBs = secondaryXrefCounts.keySet();
-        Iterator it = externalDBs.iterator();
-        while (it.hasNext()) {
-            
-            String externalDB = (String) it.next();
+		return getCountsBySQL(dbre, sql);
 
-            if (externalDB.equalsIgnoreCase("PUBMED") || externalDB.equalsIgnoreCase("MEDLINE")) {
-                continue;
-            }
-            
-            int secondaryCount = ((Integer) (secondaryXrefCounts.get(externalDB))).intValue();
+	} // ------------------------------------------------------------------------
 
-            // check it exists at all
-            if (currentXrefCounts.containsKey(externalDB)) {
+	protected String description() {
 
-                int currentCount = ((Integer) (currentXrefCounts.get(externalDB))).intValue();
-		//System.out.println("" + ((double)currentCount / (double)secondaryCount));
-                if (((double)currentCount / (double)secondaryCount) < THRESHOLD) { 
-                    ReportManager.problem(this, dbre.getConnection(), sec.getName() + " contains " + secondaryCount + " xrefs of type " + externalDB
-                            + " but " + dbre.getName() + " only has " + currentCount);
-                    result = false;
-                } else {
-                    
-                    ReportManager.correct(this, dbre.getConnection(), sec.getName() + " contains " + secondaryCount + " xrefs of type " + externalDB
-                            + " and " + dbre.getName() + " has " + currentCount + " - greater or within tolerance");
-		    //System.out.println(externalDB + " " + secondaryCount + " " + currentCount);
-                }
+		return "xrefs";
 
-            } else {
-                ReportManager.problem(this, dbre.getConnection(), sec.getName() + " contains " + secondaryCount + " xrefs of type " + externalDB
-                        + " but " + dbre.getName() + " has none");
-                result = false;
-            }
-        }
-        return result;
+	}
 
-    } // run
+	// ------------------------------------------------------------------------
 
-    // ----------------------------------------------------------------------
+	protected double threshold() {
 
-    private Map getXrefCounts(DatabaseRegistryEntry dbre) {
+		return 0.78;
 
-        Map result = new HashMap();
+	}
 
-        try {
+	// ----------------------------------------------------------------------
 
-            Statement stmt = dbre.getConnection().createStatement();
+	private String getExcludeProjectedSQL(DatabaseRegistryEntry dbre) {
 
-            logger.finest("Getting xref counts for " + dbre.getName());
+		return Integer.parseInt(dbre.getSchemaVersion()) <= 37 ? " AND x.display_label NOT LIKE '%[from%'" : " AND x.info_type IS NULL"; // should really be != 'PROJECTION'
 
-            String excludeProjectedSQL = getExcludeProjectedSQL(dbre);
-            
-            ResultSet rs = stmt.executeQuery("SELECT DISTINCT(e.db_name) AS db_name, COUNT(*) AS count" + " FROM external_db e, xref x, object_xref ox"
-                    + " WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id " + excludeProjectedSQL + " GROUP BY e.db_name");
+	}
 
-            while (rs != null && rs.next()) {
-                result.put(rs.getString("db_name"), new Integer(rs.getInt("count")));
-                logger.finest(rs.getString("db_name") + " " + rs.getInt("count"));
-            }
-
-            stmt.close();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return result;
-    }
-
-    // ----------------------------------------------------------------------
-
-    private String getExcludeProjectedSQL(DatabaseRegistryEntry dbre) {
-    	
-    	String sql = "";
-    	
-    		int schemaVersion = Integer.parseInt(dbre.getSchemaVersion());
-    		
-    		if (schemaVersion <= 37) {
-    			
-    			sql = " AND x.display_label NOT LIKE '%[from%'";
-    			
-    		} else {
-    			
-    			sql = " AND x.info_type IS NULL"; // should really be != 'PROJECTION'
-    			
-    		}
-    		
-    		return sql;
-    }
-    
-    	//  ----------------------------------------------------------------------
+	// ----------------------------------------------------------------------
 
 } // ComparePreviousVersionXrefs
 
