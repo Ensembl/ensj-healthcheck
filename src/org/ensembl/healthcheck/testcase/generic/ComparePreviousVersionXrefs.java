@@ -23,7 +23,6 @@ import java.util.Set;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Compare the xrefs in the current database with those from the equivalent database on the secondary server.
@@ -160,4 +159,5 @@ public class ComparePreviousVersionXrefs extends SingleDatabaseTestCase {
     
     	//  ----------------------------------------------------------------------
 
-} // XrefTypes
+} // ComparePreviousVersionXrefs
+
