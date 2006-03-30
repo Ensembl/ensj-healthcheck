@@ -16,23 +16,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
  * Compare the biotypes in the current database with those from the equivalent
  * database on the secondary server.
  */
 
-public class ComparePreviousVersionBiotypes extends SingleDatabaseTestCase {
-
-	private static final double THRESHOLD = 0.78; // if old/new biotypes less than
-																								// this, fail
+public class ComparePreviousVersionBiotypes extends ComparePreviousVersionBase {
 
 	/**
 	 * Create a new XrefTypes testcase.
@@ -45,91 +38,28 @@ public class ComparePreviousVersionBiotypes extends SingleDatabaseTestCase {
 
 	}
 
-	/**
-	 * Run the test.
-	 * 
-	 * @param dbre
-	 *          The database to use.
-	 * @return true if the test pased.
-	 * 
-	 */
-	public boolean run(DatabaseRegistryEntry dbre) {
-
-		boolean result = true;
-
-		DatabaseRegistryEntry sec = getEquivalentFromSecondaryServer(dbre);
-
-		if (sec == null) {
-			logger.warning("Can't get equivalent database for " + dbre.getName());
-			return true;
-		}
-
-		logger.finest("Equivalent database on secondary server is " + sec.getName());
-
-		Map currentCounts = getCounts(dbre);
-		Map secondaryCounts = getCounts(sec);
-
-		// compare each of the secondary (previous release, probably) with current
-		Set externalDBs = secondaryCounts.keySet();
-		Iterator it = externalDBs.iterator();
-		while (it.hasNext()) {
-
-			String biotype = (String) it.next();
-
-			int secondaryCount = ((Integer) (secondaryCounts.get(biotype))).intValue();
-
-			// check it exists at all
-			if (currentCounts.containsKey(biotype)) {
-
-				int currentCount = ((Integer) (currentCounts.get(biotype))).intValue();
-
-				if (((double) currentCount / (double) secondaryCount) < THRESHOLD) {
-					ReportManager.problem(this, dbre.getConnection(), sec.getName() + " contains " + secondaryCount + " bioytypes of type "
-							+ biotype + " but " + dbre.getName() + " only has " + currentCount);
-					result = false;
-				} else {
-
-					ReportManager.correct(this, dbre.getConnection(), sec.getName() + " contains " + secondaryCount + " biotypes of type "
-							+ biotype + " and " + dbre.getName() + " has " + currentCount + " - greater or within tolerance");
-
-				}
-
-			} else {
-				ReportManager.problem(this, dbre.getConnection(), sec.getName() + " contains " + secondaryCount + " xrefs of type "
-						+ biotype + " but " + dbre.getName() + " has none");
-				result = false;
-			}
-		}
-		return result;
-
-	} // run
-
 	// ----------------------------------------------------------------------
 
-	private Map getCounts(DatabaseRegistryEntry dbre) {
+	protected Map getCounts(DatabaseRegistryEntry dbre) {
 
-		Map result = new HashMap();
+		return getCountsBySQL(dbre, "SELECT DISTINCT(biotype), COUNT(*) FROM gene GROUP BY biotype");
 
-		try {
+	}
 
-			Statement stmt = dbre.getConnection().createStatement();
+	// ------------------------------------------------------------------------
 
-			logger.finest("Getting biotype counts for " + dbre.getName());
+	protected String description() {
 
-			ResultSet rs = stmt.executeQuery("SELECT DISTINCT(biotype),COUNT(*) AS count FROM gene GROUP BY biotype;");
+		return "biotypes";
 
-			while (rs != null && rs.next()) {
-				result.put(rs.getString("biotype"), new Integer(rs.getInt("count")));
-				logger.finest(rs.getString("biotype") + " " + rs.getInt("count"));
-			}
+	}
 
-			stmt.close();
+	// ------------------------------------------------------------------------
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	protected double threshold() {
 
-		return result;
+		return 0.78;
+
 	}
 
 	// ------------------------------------------------------------------------
