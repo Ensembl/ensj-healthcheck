@@ -23,10 +23,6 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 
 public class ComparePreviousVersionXrefs extends ComparePreviousVersionBase {
 
-	private static final double THRESHOLD = 0.78; // if old/new xrefs less than
-
-	// this, fail
-
 	/**
 	 * Create a new XrefTypes testcase.
 	 */
