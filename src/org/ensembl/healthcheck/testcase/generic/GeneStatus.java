@@ -40,11 +40,11 @@ public class GeneStatus extends SingleDatabaseTestCase {
 	}
 
 	/**
-	 * Don't try to run on cDNA databases.
+	 * Don't try to run on Vega databases.
 	 */
 	public void types() {
 
-		removeAppliesToType(DatabaseType.CDNA);
+		removeAppliesToType(DatabaseType.VEGA);
 
 	}
 
