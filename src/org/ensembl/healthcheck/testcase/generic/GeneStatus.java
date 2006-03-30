@@ -20,7 +20,8 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that the number of KNOWN & NOVEL genes is within 20% in the new and previous databases.
+ * Check that the number of KNOWN & NOVEL genes is within 20% in the new and
+ * previous databases. Also check for unset statuses in genes & transcripts.
  */
 
 public class GeneStatus extends SingleDatabaseTestCase {
@@ -34,7 +35,7 @@ public class GeneStatus extends SingleDatabaseTestCase {
 	public GeneStatus() {
 
 		addToGroup("release");
-		setDescription("Check that the number of KNOWN genes is within 20% in the new and previous databases");
+		setDescription("Check that the number of KNOWN genes is within 20% in the new and previous databases. Also check for unset status.");
 
 	}
 
@@ -57,6 +58,18 @@ public class GeneStatus extends SingleDatabaseTestCase {
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 
+		boolean result = checkPrevious(dbre);
+
+		result &= checkNull(dbre);
+
+		return result;
+
+	} // run
+
+	// ----------------------------------------------------------------------
+
+	private boolean checkPrevious(DatabaseRegistryEntry dbre) {
+
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
@@ -70,7 +83,7 @@ public class GeneStatus extends SingleDatabaseTestCase {
 
 		logger.finest("Equivalent database on secondary server is " + sec.getName());
 
-		//String[] stats = { "KNOWN", "NOVEL" };
+		// String[] stats = { "KNOWN", "NOVEL" };
 		String[] stats = { "KNOWN" };
 
 		for (int i = 0; i < stats.length; i++) {
@@ -91,16 +104,16 @@ public class GeneStatus extends SingleDatabaseTestCase {
 
 			// otherwise check ratios
 			if (previous == 0) { // avoid division by zero
-			
+
 				ReportManager.warning(this, con, "Previous count of " + status + " genes is 0, skipping");
 				return false;
-				
-			}
-			
-			double difference = (double)(previous - current) / (double)previous;
 
-			//System.out.println(previous + " " + current + " " + difference);
-			
+			}
+
+			double difference = (double) (previous - current) / (double) previous;
+
+			// System.out.println(previous + " " + current + " " + difference);
+
 			if (difference > THRESHOLD) {
 
 				ReportManager.problem(this, con, "Only " + current + " genes have " + status
@@ -109,13 +122,42 @@ public class GeneStatus extends SingleDatabaseTestCase {
 
 			}
 
-			ReportManager.correct(this, con, "Current database has " + current + " genes of status " + status + " compared to " + previous + " in the previous database, which is within the allowed tollerance.");
-			
+			ReportManager.correct(this, con, "Current database has " + current + " genes of status " + status + " compared to "
+					+ previous + " in the previous database, which is within the allowed tollerance.");
+
 		}
-	
+
+		return result;
+	}
+
+	// ----------------------------------------------------------------------
+
+	private boolean checkNull(DatabaseRegistryEntry dbre) {
+
+		boolean result = true;
+
+		Connection con = dbre.getConnection();
+
+		String[] types = { "gene", "transcript" };
+
+		for (int i = 0; i < types.length; i++) {
+
+			int rows = getRowCount(con, "SELECT COUNT(*) FROM " + types[i] + " WHERE status IS NULL");
+
+			if (rows > 0) {
+
+				ReportManager.problem(this, con, rows + " " + types[i] + "s have null status");
+
+			} else {
+
+				ReportManager.correct(this, con, "No null status rows in " + types[i]);
+			}
+
+		}
+
 		return result;
 
-	} // run
+	}
 
 	// ----------------------------------------------------------------------
 
