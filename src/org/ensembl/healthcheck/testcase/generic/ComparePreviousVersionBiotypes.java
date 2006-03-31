@@ -12,10 +12,6 @@
  */
 package org.ensembl.healthcheck.testcase.generic;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
@@ -48,7 +44,7 @@ public class ComparePreviousVersionBiotypes extends ComparePreviousVersionBase {
 
 	// ------------------------------------------------------------------------
 
-	protected String description() {
+	protected String entityDescription() {
 
 		return "biotypes";
 
@@ -58,7 +54,7 @@ public class ComparePreviousVersionBiotypes extends ComparePreviousVersionBase {
 
 	protected double threshold() {
 
-		return 0.78;
+		return 0.75;
 
 	}
 

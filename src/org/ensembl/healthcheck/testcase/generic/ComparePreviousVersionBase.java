@@ -73,18 +73,18 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 				int currentCount = ((Integer) (currentCounts.get(key))).intValue();
 
 				if (((double) currentCount / (double) secondaryCount) < threshold()) {
-					ReportManager.problem(this, dbre.getConnection(), sec.getName() + " contains " + secondaryCount + " " + description()
+					ReportManager.problem(this, dbre.getConnection(), sec.getName() + " contains " + secondaryCount + " " + entityDescription()
 							+ " of type " + key + " but " + dbre.getName() + " only has " + currentCount);
 					result = false;
 				} else {
 
-					ReportManager.correct(this, dbre.getConnection(), sec.getName() + " contains " + secondaryCount + " " + description()
+					ReportManager.correct(this, dbre.getConnection(), sec.getName() + " contains " + secondaryCount + " " + entityDescription()
 							+ " of type " + key + " and " + dbre.getName() + " has " + currentCount + " - greater or within tolerance");
 
 				}
 
 			} else {
-				ReportManager.problem(this, dbre.getConnection(), sec.getName() + " contains " + secondaryCount + " " + description
+				ReportManager.problem(this, dbre.getConnection(), sec.getName() + " contains " + secondaryCount + " " + entityDescription()
 						+ " of type " + key + " but " + dbre.getName() + " has none");
 				result = false;
 			}
@@ -103,7 +103,7 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 
 			Statement stmt = dbre.getConnection().createStatement();
 
-			logger.finest("Getting " + description() + " counts for " + dbre.getName());
+			logger.finest("Getting " + entityDescription() + " counts for " + dbre.getName());
 
 			ResultSet rs = stmt.executeQuery(sql);
 
@@ -133,7 +133,7 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 	/**
 	 * Should return a text description of the type of entity being tested.
 	 */
-	protected abstract String description();
+	protected abstract String entityDescription();
 
 	// ------------------------------------------------------------------------
 	/**
