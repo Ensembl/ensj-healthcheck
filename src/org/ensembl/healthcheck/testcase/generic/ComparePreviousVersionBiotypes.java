@@ -46,7 +46,7 @@ public class ComparePreviousVersionBiotypes extends ComparePreviousVersionBase {
 
 	protected String entityDescription() {
 
-		return "biotypes";
+		return "biotypes of type";
 
 	}
 

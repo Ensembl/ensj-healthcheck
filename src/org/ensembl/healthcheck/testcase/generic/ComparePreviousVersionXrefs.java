@@ -48,7 +48,7 @@ public class ComparePreviousVersionXrefs extends ComparePreviousVersionBase {
 
 	protected String entityDescription() {
 
-		return "xrefs";
+		return "xrefs of type";
 
 	}
 

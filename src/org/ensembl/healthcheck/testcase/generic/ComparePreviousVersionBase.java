@@ -73,19 +73,19 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 				int currentCount = ((Integer) (currentCounts.get(key))).intValue();
 
 				if (((double) currentCount / (double) secondaryCount) < threshold()) {
-					ReportManager.problem(this, dbre.getConnection(), sec.getName() + " contains " + secondaryCount + " " + entityDescription()
-							+ " of type " + key + " but " + dbre.getName() + " only has " + currentCount);
+					ReportManager.problem(this, dbre.getConnection(), sec.getName() + " has " + secondaryCount + " " + entityDescription() 
+							+ " " + key + " but " + dbre.getName() + " only has " + currentCount);
 					result = false;
 				} else {
 
-					ReportManager.correct(this, dbre.getConnection(), sec.getName() + " contains " + secondaryCount + " " + entityDescription()
-							+ " of type " + key + " and " + dbre.getName() + " has " + currentCount + " - greater or within tolerance");
+					ReportManager.correct(this, dbre.getConnection(), sec.getName() + " has " + secondaryCount + " " + entityDescription()
+							+ " " + key + " and " + dbre.getName() + " has " + currentCount + " - greater or within tolerance");
 
 				}
 
 			} else {
 				ReportManager.problem(this, dbre.getConnection(), sec.getName() + " contains " + secondaryCount + " " + entityDescription()
-						+ " of type " + key + " but " + dbre.getName() + " has none");
+						+ " " + key + " but " + dbre.getName() + " has none");
 				result = false;
 			}
 		}
@@ -131,7 +131,7 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 
 	// ------------------------------------------------------------------------
 	/**
-	 * Should return a text description of the type of entity being tested.
+	 * Should return a description of what's being tested.
 	 */
 	protected abstract String entityDescription();
 
