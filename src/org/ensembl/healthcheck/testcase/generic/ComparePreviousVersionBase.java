@@ -67,13 +67,17 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 
 			int secondaryCount = ((Integer) (secondaryCounts.get(key))).intValue();
 
+			if (secondaryCount == 0) {
+				continue;
+			}
+
 			// check it exists at all
 			if (currentCounts.containsKey(key)) {
 
 				int currentCount = ((Integer) (currentCounts.get(key))).intValue();
 
 				if (((double) currentCount / (double) secondaryCount) < threshold()) {
-					ReportManager.problem(this, dbre.getConnection(), sec.getName() + " has " + secondaryCount + " " + entityDescription() 
+					ReportManager.problem(this, dbre.getConnection(), sec.getName() + " has " + secondaryCount + " " + entityDescription()
 							+ " " + key + " but " + dbre.getName() + " only has " + currentCount);
 					result = false;
 				} else {
@@ -84,7 +88,7 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 				}
 
 			} else {
-				ReportManager.problem(this, dbre.getConnection(), sec.getName() + " contains " + secondaryCount + " " + entityDescription()
+				ReportManager.problem(this, dbre.getConnection(), sec.getName() + " has " + secondaryCount + " " + entityDescription()
 						+ " " + key + " but " + dbre.getName() + " has none");
 				result = false;
 			}
@@ -93,7 +97,7 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 
 	} // run
 
-//----------------------------------------------------------------------
+	// ----------------------------------------------------------------------
 
 	protected Map getCountsBySQL(DatabaseRegistryEntry dbre, String sql) {
 
@@ -120,7 +124,7 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 
 		return result;
 	}
-	
+
 	// ----------------------------------------------------------------------
 
 	/**
