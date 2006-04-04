@@ -98,7 +98,8 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 
 		if (longIDs.length > 0) {
 
-			ReportManager.problem(this, con, longIDs.length + " genes are longer than " + GENE_ERROR + " bases");
+			String s = longIDs.length > 1 ? "s are " : " is ";
+			ReportManager.problem(this, con, longIDs.length + " gene" + s + "longer than " + GENE_ERROR + " bases");
 			printLongGeneDetails(con, longIDs);
 			result = false;
 
