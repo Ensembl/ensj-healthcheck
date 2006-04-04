@@ -36,7 +36,7 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 
 	private static long GENE_WARN = 1000000; // warn if length greater than this
 
-	private static long GENE_ERROR = 2000000; // throw if length greater than this
+	private static long GENE_ERROR = 3000000; // throw if length greater than this
 
 	private static long EXON_ERROR = 500000; // warn if length greater than this
 
