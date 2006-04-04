@@ -92,13 +92,14 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 		}
 
 		// gene - error
-		sql = "SELECT COUNT(*) FROM gene WHERE (seq_region_end-seq_region_start+1) >= " + GENE_ERROR;
+		sql = "SELECT gene_id FROM gene WHERE (seq_region_end-seq_region_start+1) >= " + GENE_ERROR;
 
-		rows = getRowCount(con, sql);
-		if (rows > 0) {
+		String[] longIDs = getColumnValues(con, sql);
 
-			ReportManager.problem(this, con, rows + " genes are longer than " + GENE_ERROR + " bases");
-			printLongGeneDetails(con);
+		if (longIDs.length > 0) {
+
+			ReportManager.problem(this, con, longIDs.length + " genes are longer than " + GENE_ERROR + " bases");
+			printLongGeneDetails(con, longIDs);
 			result = false;
 
 		} else {
@@ -128,20 +129,30 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 
 	// ------------------------------------------------------------------------------------
 
-	private void printLongGeneDetails(Connection con) {
+	private void printLongGeneDetails(Connection con, String[] longIDs) {
 
-		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT gsi.stable_id, x.display_label, g.description, (g.seq_region_end-g.seq_region_start+1) AS length "
-					+ "FROM gene g, seq_region s, gene_stable_id gsi, xref x "
-					+ "WHERE g.seq_region_id=s.seq_region_id AND g.gene_id=gsi.gene_id AND g.display_xref_id=x.xref_id HAVING length > "
-					+ GENE_ERROR);
-			while (rs.next()) {
-				ReportManager.problem(this, con, "Gene " + rs.getString("stable_id") + " (" + rs.getString("display_label") + ") has length "
-						+ rs.getString("length") + " (" + rs.getString("description") + ")");
+		for (int i = 0; i < longIDs.length; i++) {
+
+			String id = longIDs[i];
+
+			// can't do one single query as not all genes may have
+			// display_xrefs/descriptions
+			String length = getRowColumnValue(con, "SELECT (seq_region_end-seq_region_start+1) AS length FROM gene WHERE gene_id=" + id);
+			String stableID = getRowColumnValue(con, "SELECT stable_id FROM gene_stable_id WHERE gene_id=" + id);
+			String name = getRowColumnValue(con, "SELECT x.display_label FROM gene g, xref x WHERE x.xref_id=g.display_xref_id AND g.gene_id=" + id);
+			String description = getRowColumnValue(con, "SELECT description FROM gene WHERE gene_id=" + id);
+			
+			String str = "Gene " + stableID;
+			if (name != null && name.length() > 0) {
+				str += " (" + name + ")";
 			}
-		} catch (SQLException se) {
-			se.printStackTrace();
+			str += " has length " + length;
+			if (description != null && description.length() > 0) {
+				str += " (" + description + ")";
+			}
+			
+			ReportManager.problem(this, con, str);
+
 		}
 
 	}
