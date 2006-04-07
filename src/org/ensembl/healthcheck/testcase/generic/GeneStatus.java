@@ -83,47 +83,56 @@ public class GeneStatus extends SingleDatabaseTestCase {
 
 		logger.finest("Equivalent database on secondary server is " + sec.getName());
 
-		// String[] stats = { "KNOWN", "NOVEL" };
-		String[] stats = { "KNOWN" };
+		String[] types = { "gene", "transcript" };
 
-		for (int i = 0; i < stats.length; i++) {
+		for (int t = 0; t < types.length; t++) {
 
-			String status = stats[i];
+			String type = types[t];
 
-			String sql = "SELECT COUNT(*) FROM gene WHERE status='" + status + "'";
-			int current = getRowCount(dbre.getConnection(), sql);
-			int previous = getRowCount(sec.getConnection(), sql);
+			String[] stats = { "KNOWN" };
 
-			// if there are no KNOWN genes at all, fail
-			if (status.equals("KNOWN") && current == 0) {
+			for (int i = 0; i < stats.length; i++) {
 
-				ReportManager.problem(this, con, "No genes have status " + status);
-				return false;
+				String status = stats[i];
+
+				String sql = "SELECT COUNT(*) FROM " + type + " WHERE status='" + status + "'";
+				int current = getRowCount(dbre.getConnection(), sql);
+				int previous = getRowCount(sec.getConnection(), sql);
+
+				// if there are no KNOWN genes at all, fail
+				if (status.equals("KNOWN") && current == 0) {
+
+					ReportManager.problem(this, con, "No " + type + "s have status " + status);
+					return false;
+
+				}
+
+				// otherwise check ratios
+				if (previous == 0) { // avoid division by zero
+
+					ReportManager.warning(this, con, "Previous count of " + status + " " + type + "s is 0, skipping");
+					return false;
+
+				}
+
+				double difference = (double) (previous - current) / (double) previous;
+
+				// System.out.println(previous + " " + current + " " + difference);
+
+				if (difference > THRESHOLD) {
+
+					ReportManager.problem(this, con, "Only " + current + " " + type + "s have " + status
+							+ " status in the current database, compared with " + previous + " in the previous database");
+					result = false;
+
+				} else {
+
+					ReportManager.correct(this, con, "Current database has " + current + " " + type + "s of status " + status
+							+ " compared to " + previous + " in the previous database, which is within the allowed tollerance.");
+
+				}
 
 			}
-
-			// otherwise check ratios
-			if (previous == 0) { // avoid division by zero
-
-				ReportManager.warning(this, con, "Previous count of " + status + " genes is 0, skipping");
-				return false;
-
-			}
-
-			double difference = (double) (previous - current) / (double) previous;
-
-			// System.out.println(previous + " " + current + " " + difference);
-
-			if (difference > THRESHOLD) {
-
-				ReportManager.problem(this, con, "Only " + current + " genes have " + status
-						+ " status in the current database, compared with " + previous + " in the previous database");
-				result = false;
-
-			}
-
-			ReportManager.correct(this, con, "Current database has " + current + " genes of status " + status + " compared to "
-					+ previous + " in the previous database, which is within the allowed tollerance.");
 
 		}
 
