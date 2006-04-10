@@ -60,7 +60,7 @@ public class DuplicateAssembly extends SingleDatabaseTestCase {
 
 		if (rows > 0) {
 
-			ReportManager.problem(this, con, rows + " duplicate rows in assembly table");
+			ReportManager.problem(this, con, "At least " + rows + " duplicate rows in assembly table");
 			result = false;
 
 		} else {
