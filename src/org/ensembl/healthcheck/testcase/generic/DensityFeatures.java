@@ -337,7 +337,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		String[] types = { "GeneNo_knwCod", "GeneNo_novCod", "GeneNo_rRNA", "GeneNo_pseudo", "GeneNo_snRNA", "GeneNo_snoRNA",
-				"GeneNo_miRNA", "GeneNo_mscRNA", "GeneNo_scRNA", "SNPCount" };
+				"GeneNo_miRNA", "GeneNo_mscRNA", "GeneNo_scRNA", "SNPCount", "codon_table" };
 
 		for (int i = 0; i < types.length; i++) {
 
