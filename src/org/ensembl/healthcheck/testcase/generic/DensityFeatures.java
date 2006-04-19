@@ -66,14 +66,10 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 
 	// ----------------------------------------------------------------------
 
-	/**
-	 * This only really applies to core databases
-	 */
 	public void types() {
 
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		removeAppliesToType(DatabaseType.ESTGENE);
-		removeAppliesToType(DatabaseType.VEGA);
 		removeAppliesToType(DatabaseType.CDNA);
 
 	}
