@@ -26,7 +26,8 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.Utils;
 
 /**
- * Checks the metadata table to make sure it is OK. Only one meta table at a time is done here; checks for the consistency of the meta table across
+ * Checks the metadata table to make sure it is OK. Only one meta table at a
+ * time is done here; checks for the consistency of the meta table across
  * species are done in MetaCrossSpecies.
  */
 public class Meta extends SingleDatabaseTestCase {
@@ -35,8 +36,8 @@ public class Meta extends SingleDatabaseTestCase {
 	private static final String GBV_REGEXP = "[0-9]{4}[a-zA-Z]*";
 
 	/**
-   * Creates a new instance of CheckMetaDataTableTestCase
-   */
+	 * Creates a new instance of CheckMetaDataTableTestCase
+	 */
 	public Meta() {
 
 		addToGroup("post_genebuild");
@@ -46,11 +47,12 @@ public class Meta extends SingleDatabaseTestCase {
 	}
 
 	/**
-   * Check various aspects of the meta table.
-   * 
-   * @param dbre The database to check.
-   * @return True if the test passed.
-   */
+	 * Check various aspects of the meta table.
+	 * 
+	 * @param dbre
+	 *          The database to check.
+	 * @return True if the test passed.
+	 */
 	public boolean run(final DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
@@ -92,24 +94,35 @@ public class Meta extends SingleDatabaseTestCase {
 		String metaTableAssemblyPrefix = assembly.getMetaTableAssemblyPrefix();
 		logger.finest("meta table assembly prefix: " + metaTableAssemblyPrefix);
 
-		if (metaTableAssemblyVersion == null || metaTableAssemblyDefault == null || metaTableAssemblyPrefix == null || dbNameAssemblyVersion == null) {
+		if (metaTableAssemblyVersion == null || metaTableAssemblyDefault == null || metaTableAssemblyPrefix == null
+				|| dbNameAssemblyVersion == null) {
 
 			ReportManager.problem(this, con, "Cannot get all information from meta table - check for null values");
 
 		} else {
 
-			// check that assembly.default matches the version of the coord_system with the lowest
+			// check that assembly.default matches the version of the coord_system
+			// with the lowest
 			// rank value
-			String lowestRankCS = getRowColumnValue(con, "SELECT version FROM coord_system WHERE version IS NOT NULL ORDER BY rank DESC LIMIT 1");
+			String lowestRankCS = getRowColumnValue(con,
+					"SELECT version FROM coord_system WHERE version IS NOT NULL ORDER BY rank DESC LIMIT 1");
 			if (!lowestRankCS.equals(metaTableAssemblyDefault)) {
 				if (lowestRankCS.length() > 0) {
 					ReportManager.problem(this, con, "assembly.default from meta table is " + metaTableAssemblyDefault
 							+ " but lowest ranked coordinate system has version " + lowestRankCS);
 				} else {
 
-					ReportManager.problem(this, con, "assembly.default from meta table is " + metaTableAssemblyDefault
-							+ " but lowest ranked coordinate system has blank or missing version. Note lowest ranked == has HIGHEST numerical rank value");
+					ReportManager
+							.problem(
+									this,
+									con,
+									"assembly.default from meta table is "
+											+ metaTableAssemblyDefault
+											+ " but lowest ranked coordinate system has blank or missing version. Note lowest ranked == has HIGHEST numerical rank value");
 				}
+
+				result &= checkAssemblyVersion(con, dbNameAssemblyVersion, metaTableAssemblyVersion);
+
 			}
 
 			// ----------------------------------------
@@ -122,7 +135,8 @@ public class Meta extends SingleDatabaseTestCase {
 						+ " should have prefix beginning with " + correctPrefix);
 				result = false;
 			} else {
-				ReportManager.correct(this, con, "Meta table assembly prefix (" + metaTableAssemblyPrefix + ") is correct for " + dbSpecies);
+				ReportManager
+						.correct(this, con, "Meta table assembly prefix (" + metaTableAssemblyPrefix + ") is correct for " + dbSpecies);
 			}
 		}
 
@@ -200,7 +214,7 @@ public class Meta extends SingleDatabaseTestCase {
 
 		// Check that species.classification matches database name
 		String[] metaTableSpeciesGenusArray = getColumnValues(con,
-																													"SELECT LCASE(meta_value) FROM meta WHERE meta_key='species.classification' ORDER BY meta_id LIMIT 2");
+				"SELECT LCASE(meta_value) FROM meta WHERE meta_key='species.classification' ORDER BY meta_id LIMIT 2");
 		// if all is well, metaTableSpeciesGenusArray should contain the
 		// species and genus
 		// (in that order) from the meta table
@@ -233,7 +247,7 @@ public class Meta extends SingleDatabaseTestCase {
 
 	// ---------------------------------------------------------------------
 
-private boolean checkAssemblyMapping(Connection con) {
+	private boolean checkAssemblyMapping(Connection con) {
 
 		boolean result = true;
 
@@ -242,9 +256,10 @@ private boolean checkAssemblyMapping(Connection con) {
 		// coordinate system
 		// and all coord systems should be valid from coord_system
 		// can also have # instead of | as used in unfinished contigs etc
-		
-    Pattern assemblyMappingPattern = Pattern.compile("^([a-zA-Z0-9.]+)(:[a-zA-Z0-9._]+)?[\\|#]([a-zA-Z0-9._]+)(:[a-zA-Z0-9._]+)?([\\|#]([a-zA-Z0-9.]+)(:[a-zA-Z0-9._]+)?)?$");
-	String[] validCoordSystems = getColumnValues(con, "SELECT name FROM coord_system");
+
+		Pattern assemblyMappingPattern = Pattern
+				.compile("^([a-zA-Z0-9.]+)(:[a-zA-Z0-9._]+)?[\\|#]([a-zA-Z0-9._]+)(:[a-zA-Z0-9._]+)?([\\|#]([a-zA-Z0-9.]+)(:[a-zA-Z0-9._]+)?)?$");
+		String[] validCoordSystems = getColumnValues(con, "SELECT name FROM coord_system");
 
 		String[] mappings = getColumnValues(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.mapping'");
 		for (int i = 0; i < mappings.length; i++) {
@@ -286,10 +301,9 @@ private boolean checkAssemblyMapping(Connection con) {
 		}
 
 		return result;
-	}	
+	}
 
-
-  // -------------------------------------------------------------------- 
+	// --------------------------------------------------------------------
 	/**
 	 * @return true if cs is all lower case (or null), false otherwise.
 	 */
@@ -321,8 +335,8 @@ private boolean checkAssemblyMapping(Connection con) {
 
 	// --------------------------------------------------------------------
 	/**
-   * Check that all coord systems in the coord_system table are lower case.
-   */
+	 * Check that all coord systems in the coord_system table are lower case.
+	 */
 	private boolean checkCoordSystemTableCases(Connection con) {
 
 		// TODO - table name in report
@@ -359,8 +373,8 @@ private boolean checkAssemblyMapping(Connection con) {
 			ReportManager.correct(this, con, "Taxonomy ID " + dbTaxonID + " is correct for " + species.toString());
 		} else {
 			result = false;
-			ReportManager.problem(this, con, "Taxonomy ID " + dbTaxonID + " in database is not correct - should be " + Species.getTaxonomyID(species)
-					+ " for " + species.toString());
+			ReportManager.problem(this, con, "Taxonomy ID " + dbTaxonID + " in database is not correct - should be "
+					+ Species.getTaxonomyID(species) + " for " + species.toString());
 		}
 		return result;
 
@@ -435,8 +449,9 @@ private boolean checkAssemblyMapping(Connection con) {
 
 	// ---------------------------------------------------------------------
 	/**
-   * Check that the schema_version in the meta table is present and matches the database name.
-   */
+	 * Check that the schema_version in the meta table is present and matches the
+	 * database name.
+	 */
 	private boolean checkSchemaVersionDBName(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
@@ -445,14 +460,14 @@ private boolean checkAssemblyMapping(Connection con) {
 		String dbNameVersion = dbre.getSchemaVersion();
 		logger.finest("Schema version from database name: " + dbNameVersion);
 
-		//	 get version from meta table
+		// get version from meta table
 		Connection con = dbre.getConnection();
 
 		if (dbNameVersion == null) {
 			ReportManager.warning(this, con, "Can't deduce schema version from database name.");
 			return false;
 		}
-		
+
 		String schemaVersion = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='schema_version'");
 		logger.finest("schema_version from meta table: " + schemaVersion);
 
@@ -468,8 +483,8 @@ private boolean checkAssemblyMapping(Connection con) {
 
 		} else if (!dbNameVersion.equals(schemaVersion)) {
 
-			ReportManager.problem(this, con, "Meta schema_version " + schemaVersion + " does not match version inferred from database name ("
-					+ dbNameVersion + ")");
+			ReportManager.problem(this, con, "Meta schema_version " + schemaVersion
+					+ " does not match version inferred from database name (" + dbNameVersion + ")");
 			return false;
 
 		} else {
@@ -479,6 +494,38 @@ private boolean checkAssemblyMapping(Connection con) {
 		}
 		return result;
 
-	} // ---------------------------------------------------------------------
+	}
+
+	// ---------------------------------------------------------------------
+	/**
+	 * Check that the assembly_version in the meta table is present and matches
+	 * the database name.
+	 */
+	private boolean checkAssemblyVersion(Connection con, String dbNameAssemblyVersion, String metaTableAssemblyVersion) {
+
+		boolean result = true;
+
+		if (metaTableAssemblyVersion == null || metaTableAssemblyVersion.length() == 0) {
+
+			ReportManager.problem(this, con, "No assembly_version entry in meta table");
+			return false;
+
+		} else if (!dbNameAssemblyVersion.equals(metaTableAssemblyVersion)) {
+
+			ReportManager.problem(this, con, "Meta assembly_version " + metaTableAssemblyVersion
+					+ " does not match version inferred from database name (" + dbNameAssemblyVersion + ")");
+			return false;
+
+		} else {
+
+			ReportManager.correct(this, con, "assembly_version " + metaTableAssemblyVersion + " matches database name version "
+					+ dbNameAssemblyVersion);
+
+		}
+		return result;
+
+	}
+
+	// ---------------------------------------------------------------------
 
 } // Meta
