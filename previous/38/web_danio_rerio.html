@@ -1,0 +1,234 @@
+<html>
+<head>
+<style type="text/css" media="all">
+@import url(http://www.ensembl.org/css/ensembl.css);
+@import url(http://www.ensembl.org/css/content.css);
+#page ul li { list-style-type:none; list-style-image: none; margin-left: -2em }
+</style>
+<title>Healthcheck results for danio rerio databases</title>
+</head>
+<body>
+<div id='page'><div id='i1'><div id='i2'><div class='sptop'>&nbsp;</div>
+<div id='release'>Healthcheck results for danio rerio databases</div>
+<hr>
+<div id='related'><div id='related-box'>
+<h2>Results by database</h2>
+<ul>
+<li><a href="#danio_rerio_core_38_5e">danio_rerio_core_38_5e</a></li>
+<li><a href="#danio_rerio_otherfeatures_38_5e">danio_rerio_otherfeatures_38_5e</a></li>
+<li><a href="#master_schema_38">master_schema_38</a></li>
+</ul>
+<h2>Results by test</h2>
+<ul>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.Accession">Accession</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.AnalysisDescription">AnalysisDescription</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.AssemblyException">AssemblyException</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.AssemblySeqregion">AssemblySeqregion</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.AssemblyTablesAcrossSpecies">AssemblyTablesAcrossSpecies</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies">AttribTypeAcrossSpecies</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.BigGeneExon">BigGeneExon</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.Biotypes">Biotypes</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.BlankInfoType">BlankInfoType</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBiotypes">ComparePreviousVersionBiotypes</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionTableRows">ComparePreviousVersionTableRows</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionXrefs">ComparePreviousVersionXrefs</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.CompareSchema">CompareSchema</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.CoreForeignKeys">CoreForeignKeys</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.DNAEmpty">DNAEmpty</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.DNATablesAcrossSpecies">DNATablesAcrossSpecies</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.DensityFeatures">DensityFeatures</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.DisplayLabels">DisplayLabels</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.DisplayMarkerSynonyms">DisplayMarkerSynonyms</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.DisplayXref">DisplayXref</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.DuplicateAssembly">DuplicateAssembly</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ESTStableID">ESTStableID</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ESTStableIDs">ESTStableIDs</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.EmptyTables">EmptyTables</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ExonStrandOrder">ExonStrandOrder</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd">ExonTranscriptStartEnd</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName">ExternalDBDisplayName</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.FeatureAnalysis">FeatureAnalysis</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.FeatureCoords">FeatureCoords</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.GOXrefs">GOXrefs</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.GeneStatus">GeneStatus</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.GeneType">GeneType</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.InterproDescriptions">InterproDescriptions</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.Karyotype">Karyotype</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable">LogicNamesDisplayable</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.MappingSession">MappingSession</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.MarkerFeatures">MarkerFeatures</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.Meta">Meta</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.MetaCoord">MetaCoord</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies">MetaCrossSpecies</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.OligoMismatches">OligoMismatches</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.OligoXrefs">OligoXrefs</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.PredictedXrefs">PredictedXrefs</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation">ProteinFeatureTranslation</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ProteinFeatures">ProteinFeatures</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ProteinIDXrefsNoVersion">ProteinIDXrefsNoVersion</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.Pseudogene">Pseudogene</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.RepeatConsensus">RepeatConsensus</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.RepeatFeature">RepeatFeature</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionAttribAcrossSpecies">SeqRegionAttribAcrossSpecies</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem">SeqRegionCoordSystem</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel">SeqRegionsTopLevel</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.SingleDBCollations">SingleDBCollations</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.StableID">StableID</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.Strand">Strand</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate">TranscriptsTranslate</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.TranslationStartEnd">TranslationStartEnd</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.TranslationStartEndExon">TranslationStartEndExon</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.XrefTypes">XrefTypes</a></li>
+</ul>
+</div></div>
+<h2>Summary</h2>
+<p><strong><font color='green'>75</font> tests passed and <font color='red'>6</font> failed out of a total of 81 tests run.</strong></p>
+<hr>
+<h2>Summary by database</h2>
+<p><table class='ss'>
+<tr><th>Database</th><th>Passed</th><th>Failed</th></tr>
+<tr><td><a href="#danio_rerio_core_38_5e"><font color='red'>danio_rerio_core_38_5e</font></a></td><td><font color='green'>46</font></td><td><font color='red'>3</font></td></tr>
+<tr><td><a href="#danio_rerio_otherfeatures_38_5e"><font color='red'>danio_rerio_otherfeatures_38_5e</font></a></td><td><font color='green'>29</font></td><td><font color='red'>2</font></td></tr>
+<tr><td><a href="#master_schema_38"><font color='red'>master_schema_38</font></a></td><td><font color='green'>0</font></td><td><font color='red'>1</font></td></tr>
+</table></p>
+<hr>
+<h2>Summary by test</h2>
+<p><table class='ss'>
+<tr><th>Test</th><th>Passed</th><th>Failed</th></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Accession"><font color='green'>org.ensembl.healthcheck.testcase.generic.Accession</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AnalysisDescription"><font color='green'>org.ensembl.healthcheck.testcase.generic.AnalysisDescription</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AssemblyException"><font color='green'>org.ensembl.healthcheck.testcase.generic.AssemblyException</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AssemblySeqregion"><font color='green'>org.ensembl.healthcheck.testcase.generic.AssemblySeqregion</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AssemblyTablesAcrossSpecies"><font color='green'>org.ensembl.healthcheck.testcase.generic.AssemblyTablesAcrossSpecies</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies"><font color='green'>org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.BigGeneExon"><font color='green'>org.ensembl.healthcheck.testcase.generic.BigGeneExon</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Biotypes"><font color='green'>org.ensembl.healthcheck.testcase.generic.Biotypes</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.BlankInfoType"><font color='green'>org.ensembl.healthcheck.testcase.generic.BlankInfoType</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBiotypes"><font color='green'>org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBiotypes</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionTableRows"><font color='green'>org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionTableRows</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionXrefs"><font color='green'>org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionXrefs</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.CompareSchema"><font color='red'>org.ensembl.healthcheck.testcase.generic.CompareSchema</font></a></td><td><font color='green'>0</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.CoreForeignKeys"><font color='green'>org.ensembl.healthcheck.testcase.generic.CoreForeignKeys</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DNAEmpty"><font color='green'>org.ensembl.healthcheck.testcase.generic.DNAEmpty</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DNATablesAcrossSpecies"><font color='green'>org.ensembl.healthcheck.testcase.generic.DNATablesAcrossSpecies</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DensityFeatures"><font color='green'>org.ensembl.healthcheck.testcase.generic.DensityFeatures</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DisplayLabels"><font color='green'>org.ensembl.healthcheck.testcase.generic.DisplayLabels</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DisplayMarkerSynonyms"><font color='green'>org.ensembl.healthcheck.testcase.generic.DisplayMarkerSynonyms</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DisplayXref"><font color='green'>org.ensembl.healthcheck.testcase.generic.DisplayXref</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DuplicateAssembly"><font color='green'>org.ensembl.healthcheck.testcase.generic.DuplicateAssembly</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ESTStableID"><font color='green'>org.ensembl.healthcheck.testcase.generic.ESTStableID</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ESTStableIDs"><font color='green'>org.ensembl.healthcheck.testcase.generic.ESTStableIDs</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.EmptyTables"><font color='red'>org.ensembl.healthcheck.testcase.generic.EmptyTables</font></a></td><td><font color='green'>1</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ExonStrandOrder"><font color='green'>org.ensembl.healthcheck.testcase.generic.ExonStrandOrder</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd"><font color='green'>org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName"><font color='green'>org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.FeatureAnalysis"><font color='red'>org.ensembl.healthcheck.testcase.generic.FeatureAnalysis</font></a></td><td><font color='green'>0</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.FeatureCoords"><font color='green'>org.ensembl.healthcheck.testcase.generic.FeatureCoords</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.GOXrefs"><font color='green'>org.ensembl.healthcheck.testcase.generic.GOXrefs</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.GeneStatus"><font color='red'>org.ensembl.healthcheck.testcase.generic.GeneStatus</font></a></td><td><font color='green'>1</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.GeneType"><font color='red'>org.ensembl.healthcheck.testcase.generic.GeneType</font></a></td><td><font color='green'>0</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.InterproDescriptions"><font color='green'>org.ensembl.healthcheck.testcase.generic.InterproDescriptions</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Karyotype"><font color='green'>org.ensembl.healthcheck.testcase.generic.Karyotype</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable"><font color='green'>org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.MappingSession"><font color='red'>org.ensembl.healthcheck.testcase.generic.MappingSession</font></a></td><td><font color='green'>0</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.MarkerFeatures"><font color='green'>org.ensembl.healthcheck.testcase.generic.MarkerFeatures</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Meta"><font color='green'>org.ensembl.healthcheck.testcase.generic.Meta</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.MetaCoord"><font color='green'>org.ensembl.healthcheck.testcase.generic.MetaCoord</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies"><font color='green'>org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.OligoMismatches"><font color='green'>org.ensembl.healthcheck.testcase.generic.OligoMismatches</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.OligoXrefs"><font color='green'>org.ensembl.healthcheck.testcase.generic.OligoXrefs</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.PredictedXrefs"><font color='green'>org.ensembl.healthcheck.testcase.generic.PredictedXrefs</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation"><font color='green'>org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ProteinFeatures"><font color='green'>org.ensembl.healthcheck.testcase.generic.ProteinFeatures</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ProteinIDXrefsNoVersion"><font color='green'>org.ensembl.healthcheck.testcase.generic.ProteinIDXrefsNoVersion</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Pseudogene"><font color='green'>org.ensembl.healthcheck.testcase.generic.Pseudogene</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.RepeatConsensus"><font color='green'>org.ensembl.healthcheck.testcase.generic.RepeatConsensus</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.RepeatFeature"><font color='green'>org.ensembl.healthcheck.testcase.generic.RepeatFeature</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionAttribAcrossSpecies"><font color='green'>org.ensembl.healthcheck.testcase.generic.SeqRegionAttribAcrossSpecies</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem"><font color='green'>org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel"><font color='green'>org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SingleDBCollations"><font color='green'>org.ensembl.healthcheck.testcase.generic.SingleDBCollations</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.StableID"><font color='green'>org.ensembl.healthcheck.testcase.generic.StableID</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Strand"><font color='green'>org.ensembl.healthcheck.testcase.generic.Strand</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate"><font color='green'>org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.TranslationStartEnd"><font color='green'>org.ensembl.healthcheck.testcase.generic.TranslationStartEnd</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.TranslationStartEndExon"><font color='green'>org.ensembl.healthcheck.testcase.generic.TranslationStartEndExon</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.XrefTypes"><font color='green'>org.ensembl.healthcheck.testcase.generic.XrefTypes</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+</table></p>
+<hr>
+<h2>Detailed reports by database</h2>
+<h3 class='boxed'><a name="danio_rerio_core_38_5e">danio_rerio_core_38_5e</a></h3>
+<p>
+<a name="danio_rerio_core_38_5e:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>gene_attrib has zero rows</font><br>
+<a name="danio_rerio_core_38_5e:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>regulatory_search_region has zero rows</font><br>
+<a name="danio_rerio_core_38_5e:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>transcript_supporting_feature has zero rows</font><br>
+<a name="danio_rerio_core_38_5e:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>unmapped_object has zero rows</font><br>
+<a name="danio_rerio_core_38_5e:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>unmapped_reason has zero rows</font><br>
+</p><p>
+<a name="danio_rerio_core_38_5e:FeatureAnalysis"></a> <font color='red'><strong>FeatureAnalysis: </strong>Analysis with ID 53 is used in transcript as well as gene</font><br>
+<a name="danio_rerio_core_38_5e:FeatureAnalysis"></a> <font color='red'><strong>FeatureAnalysis: </strong>Analysis with ID 93 is used in transcript as well as gene</font><br>
+</p><p>
+<a name="danio_rerio_core_38_5e:MappingSession"></a> <font color='red'><strong>MappingSession: </strong>Empty table:gene_archive</font><br>
+<a name="danio_rerio_core_38_5e:MappingSession"></a> <font color='red'><strong>MappingSession: </strong>Empty table:peptide_archive</font><br>
+<a name="danio_rerio_core_38_5e:MappingSession"></a> <font color='red'><strong>MappingSession: </strong>Old/new names danio_rerio_core_31_4d danio_rerio_core_24_4 do not chain properly</font><br>
+</p>
+<h3 class='boxed'><a name="danio_rerio_otherfeatures_38_5e">danio_rerio_otherfeatures_38_5e</a></h3>
+<p>
+<a name="danio_rerio_otherfeatures_38_5e:GeneStatus"></a> <font color='red'><strong>GeneStatus: </strong>No genes have status KNOWN</font><br>
+</p><p>
+<a name="danio_rerio_otherfeatures_38_5e:GeneType"></a> <font color='red'><strong>GeneType: </strong>protein_coding is not a valid gene type name for estgene.</font><br>
+</p>
+<h3 class='boxed'><a name="master_schema_38">master_schema_38</a></h3>
+<p>
+<a name="master_schema_38:CompareSchema"></a> <font color='red'><strong>CompareSchema: </strong>master_schema_38 and danio_rerio_core_38_5e oligo_feature differ at row 8 column 2 (Type) Values: int(10) unsigned, int(11)</font><br>
+<a name="master_schema_38:CompareSchema"></a> <font color='red'><strong>CompareSchema: </strong>master_schema_38 and danio_rerio_otherfeatures_38_5e oligo_feature differ at row 8 column 2 (Type) Values: int(10) unsigned, int(11)</font><br>
+</p>
+<hr>
+<h2>Detailed reports by test case</h2>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.CompareSchema">org.ensembl.healthcheck.testcase.generic.CompareSchema</a></h3>
+<p>
+<a name="CompareSchema:master_schema_38"></a> <font color='red'><strong>master_schema_38: </strong>master_schema_38 and danio_rerio_core_38_5e oligo_feature differ at row 8 column 2 (Type) Values: int(10) unsigned, int(11)</font><br>
+<a name="CompareSchema:master_schema_38"></a> <font color='red'><strong>master_schema_38: </strong>master_schema_38 and danio_rerio_otherfeatures_38_5e oligo_feature differ at row 8 column 2 (Type) Values: int(10) unsigned, int(11)</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.EmptyTables">org.ensembl.healthcheck.testcase.generic.EmptyTables</a></h3>
+<p>
+<a name="EmptyTables:danio_rerio_core_38_5e"></a> <font color='red'><strong>danio_rerio_core_38_5e: </strong>gene_attrib has zero rows</font><br>
+<a name="EmptyTables:danio_rerio_core_38_5e"></a> <font color='red'><strong>danio_rerio_core_38_5e: </strong>regulatory_search_region has zero rows</font><br>
+<a name="EmptyTables:danio_rerio_core_38_5e"></a> <font color='red'><strong>danio_rerio_core_38_5e: </strong>transcript_supporting_feature has zero rows</font><br>
+<a name="EmptyTables:danio_rerio_core_38_5e"></a> <font color='red'><strong>danio_rerio_core_38_5e: </strong>unmapped_object has zero rows</font><br>
+<a name="EmptyTables:danio_rerio_core_38_5e"></a> <font color='red'><strong>danio_rerio_core_38_5e: </strong>unmapped_reason has zero rows</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.FeatureAnalysis">org.ensembl.healthcheck.testcase.generic.FeatureAnalysis</a></h3>
+<p>
+<a name="FeatureAnalysis:danio_rerio_core_38_5e"></a> <font color='red'><strong>danio_rerio_core_38_5e: </strong>Analysis with ID 53 is used in transcript as well as gene</font><br>
+<a name="FeatureAnalysis:danio_rerio_core_38_5e"></a> <font color='red'><strong>danio_rerio_core_38_5e: </strong>Analysis with ID 93 is used in transcript as well as gene</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.GeneStatus">org.ensembl.healthcheck.testcase.generic.GeneStatus</a></h3>
+<p>
+<a name="GeneStatus:danio_rerio_otherfeatures_38_5e"></a> <font color='red'><strong>danio_rerio_otherfeatures_38_5e: </strong>No genes have status KNOWN</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.GeneType">org.ensembl.healthcheck.testcase.generic.GeneType</a></h3>
+<p>
+<a name="GeneType:danio_rerio_otherfeatures_38_5e"></a> <font color='red'><strong>danio_rerio_otherfeatures_38_5e: </strong>protein_coding is not a valid gene type name for estgene.</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.MappingSession">org.ensembl.healthcheck.testcase.generic.MappingSession</a></h3>
+<p>
+<a name="MappingSession:danio_rerio_core_38_5e"></a> <font color='red'><strong>danio_rerio_core_38_5e: </strong>Empty table:gene_archive</font><br>
+<a name="MappingSession:danio_rerio_core_38_5e"></a> <font color='red'><strong>danio_rerio_core_38_5e: </strong>Empty table:peptide_archive</font><br>
+<a name="MappingSession:danio_rerio_core_38_5e"></a> <font color='red'><strong>danio_rerio_core_38_5e: </strong>Old/new names danio_rerio_core_31_4d danio_rerio_core_24_4 do not chain properly</font><br>
+</p>
+<hr>
+<p>Test run was started at Wed May 03 01:21:13 BST 2006 and finished at Wed May 03 01:41:04 BST 2006<br>
+ Run time 19 min 50s </p>
+<h4>Configuration used:</h4>
+<pre>
+Tests/groups run:   release<br>
+Database host:      ecs2:3364<br>
+Database names:     ^danio_rerio_(core|otherfeatures|cdna|vega)_[0-9]+_.*<br>
+Output file:        web_danio_rerio.html<br>
+Output level:       info<br>
+</pre>
+</div>
+</body>
+</html>
+<hr>

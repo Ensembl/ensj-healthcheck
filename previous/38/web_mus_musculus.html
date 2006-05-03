@@ -1,0 +1,530 @@
+<html>
+<head>
+<style type="text/css" media="all">
+@import url(http://www.ensembl.org/css/ensembl.css);
+@import url(http://www.ensembl.org/css/content.css);
+#page ul li { list-style-type:none; list-style-image: none; margin-left: -2em }
+</style>
+<title>Healthcheck results for mus musculus databases</title>
+</head>
+<body>
+<div id='page'><div id='i1'><div id='i2'><div class='sptop'>&nbsp;</div>
+<div id='release'>Healthcheck results for mus musculus databases</div>
+<hr>
+<div id='related'><div id='related-box'>
+<h2>Results by database</h2>
+<ul>
+<li><a href="#master_schema_38">master_schema_38</a></li>
+<li><a href="#mus_musculus_cdna_38_35">mus_musculus_cdna_38_35</a></li>
+<li><a href="#mus_musculus_core_38_35">mus_musculus_core_38_35</a></li>
+<li><a href="#mus_musculus_otherfeatures_38_35">mus_musculus_otherfeatures_38_35</a></li>
+<li><a href="#mus_musculus_vega_38_35">mus_musculus_vega_38_35</a></li>
+</ul>
+<h2>Results by test</h2>
+<ul>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.Accession">Accession</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.AnalysisDescription">AnalysisDescription</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.AssemblyException">AssemblyException</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.AssemblySeqregion">AssemblySeqregion</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.AssemblyTablesAcrossSpecies">AssemblyTablesAcrossSpecies</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies">AttribTypeAcrossSpecies</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.BigGeneExon">BigGeneExon</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.Biotypes">Biotypes</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.BlankInfoType">BlankInfoType</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBiotypes">ComparePreviousVersionBiotypes</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionTableRows">ComparePreviousVersionTableRows</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionXrefs">ComparePreviousVersionXrefs</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.CompareSchema">CompareSchema</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.CoreForeignKeys">CoreForeignKeys</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.DNAEmpty">DNAEmpty</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.DNATablesAcrossSpecies">DNATablesAcrossSpecies</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.DensityFeatures">DensityFeatures</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.DisplayLabels">DisplayLabels</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.DisplayMarkerSynonyms">DisplayMarkerSynonyms</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.DisplayXref">DisplayXref</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.DuplicateAssembly">DuplicateAssembly</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.DuplicateExons">DuplicateExons</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ESTStableID">ESTStableID</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ESTStableIDs">ESTStableIDs</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.EmptyTables">EmptyTables</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ExonStrandOrder">ExonStrandOrder</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd">ExonTranscriptStartEnd</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName">ExternalDBDisplayName</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.FeatureAnalysis">FeatureAnalysis</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.FeatureCoords">FeatureCoords</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.GOXrefs">GOXrefs</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.GeneStatus">GeneStatus</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.GeneType">GeneType</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.InterproDescriptions">InterproDescriptions</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.Karyotype">Karyotype</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable">LogicNamesDisplayable</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.MappingSession">MappingSession</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.MarkerFeatures">MarkerFeatures</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.Meta">Meta</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.MetaCoord">MetaCoord</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies">MetaCrossSpecies</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.OligoMismatches">OligoMismatches</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.OligoXrefs">OligoXrefs</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.PredictedXrefs">PredictedXrefs</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation">ProteinFeatureTranslation</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ProteinFeatures">ProteinFeatures</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ProteinIDXrefsNoVersion">ProteinIDXrefsNoVersion</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.Pseudogene">Pseudogene</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.RepeatConsensus">RepeatConsensus</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.RepeatFeature">RepeatFeature</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionAttribAcrossSpecies">SeqRegionAttribAcrossSpecies</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem">SeqRegionCoordSystem</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionName">SeqRegionName</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel">SeqRegionsTopLevel</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.SingleDBCollations">SingleDBCollations</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.StableID">StableID</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.Strand">Strand</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate">TranscriptsTranslate</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.TranslationStartEnd">TranslationStartEnd</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.TranslationStartEndExon">TranslationStartEndExon</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.XrefTypes">XrefTypes</a></li>
+</ul>
+</div></div>
+<h2>Summary</h2>
+<p><strong><font color='green'>138</font> tests passed and <font color='red'>30</font> failed out of a total of 168 tests run.</strong></p>
+<hr>
+<h2>Summary by database</h2>
+<p><table class='ss'>
+<tr><th>Database</th><th>Passed</th><th>Failed</th></tr>
+<tr><td><a href="#master_schema_38"><font color='red'>master_schema_38</font></a></td><td><font color='green'>0</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#mus_musculus_cdna_38_35"><font color='red'>mus_musculus_cdna_38_35</font></a></td><td><font color='green'>36</font></td><td><font color='red'>2</font></td></tr>
+<tr><td><a href="#mus_musculus_core_38_35"><font color='red'>mus_musculus_core_38_35</font></a></td><td><font color='green'>41</font></td><td><font color='red'>14</font></td></tr>
+<tr><td><a href="#mus_musculus_otherfeatures_38_35"><font color='red'>mus_musculus_otherfeatures_38_35</font></a></td><td><font color='green'>27</font></td><td><font color='red'>5</font></td></tr>
+<tr><td><a href="#mus_musculus_vega_38_35"><font color='red'>mus_musculus_vega_38_35</font></a></td><td><font color='green'>34</font></td><td><font color='red'>8</font></td></tr>
+</table></p>
+<hr>
+<h2>Summary by test</h2>
+<p><table class='ss'>
+<tr><th>Test</th><th>Passed</th><th>Failed</th></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Accession"><font color='green'>org.ensembl.healthcheck.testcase.generic.Accession</font></a></td><td><font color='green'>4</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AnalysisDescription"><font color='green'>org.ensembl.healthcheck.testcase.generic.AnalysisDescription</font></a></td><td><font color='green'>4</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AssemblyException"><font color='green'>org.ensembl.healthcheck.testcase.generic.AssemblyException</font></a></td><td><font color='green'>4</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AssemblySeqregion"><font color='green'>org.ensembl.healthcheck.testcase.generic.AssemblySeqregion</font></a></td><td><font color='green'>4</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AssemblyTablesAcrossSpecies"><font color='red'>org.ensembl.healthcheck.testcase.generic.AssemblyTablesAcrossSpecies</font></a></td><td><font color='green'>0</font></td><td><font color='red'>2</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies"><font color='red'>org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies</font></a></td><td><font color='green'>0</font></td><td><font color='red'>2</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.BigGeneExon"><font color='red'>org.ensembl.healthcheck.testcase.generic.BigGeneExon</font></a></td><td><font color='green'>1</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Biotypes"><font color='green'>org.ensembl.healthcheck.testcase.generic.Biotypes</font></a></td><td><font color='green'>4</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.BlankInfoType"><font color='green'>org.ensembl.healthcheck.testcase.generic.BlankInfoType</font></a></td><td><font color='green'>4</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBiotypes"><font color='green'>org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBiotypes</font></a></td><td><font color='green'>4</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionTableRows"><font color='green'>org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionTableRows</font></a></td><td><font color='green'>4</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionXrefs"><font color='green'>org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionXrefs</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.CompareSchema"><font color='red'>org.ensembl.healthcheck.testcase.generic.CompareSchema</font></a></td><td><font color='green'>0</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.CoreForeignKeys"><font color='green'>org.ensembl.healthcheck.testcase.generic.CoreForeignKeys</font></a></td><td><font color='green'>4</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DNAEmpty"><font color='green'>org.ensembl.healthcheck.testcase.generic.DNAEmpty</font></a></td><td><font color='green'>3</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DNATablesAcrossSpecies"><font color='red'>org.ensembl.healthcheck.testcase.generic.DNATablesAcrossSpecies</font></a></td><td><font color='green'>0</font></td><td><font color='red'>2</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DensityFeatures"><font color='red'>org.ensembl.healthcheck.testcase.generic.DensityFeatures</font></a></td><td><font color='green'>1</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DisplayLabels"><font color='green'>org.ensembl.healthcheck.testcase.generic.DisplayLabels</font></a></td><td><font color='green'>4</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DisplayMarkerSynonyms"><font color='green'>org.ensembl.healthcheck.testcase.generic.DisplayMarkerSynonyms</font></a></td><td><font color='green'>4</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DisplayXref"><font color='green'>org.ensembl.healthcheck.testcase.generic.DisplayXref</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DuplicateAssembly"><font color='green'>org.ensembl.healthcheck.testcase.generic.DuplicateAssembly</font></a></td><td><font color='green'>4</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DuplicateExons"><font color='red'>org.ensembl.healthcheck.testcase.generic.DuplicateExons</font></a></td><td><font color='green'>0</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ESTStableID"><font color='red'>org.ensembl.healthcheck.testcase.generic.ESTStableID</font></a></td><td><font color='green'>0</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ESTStableIDs"><font color='green'>org.ensembl.healthcheck.testcase.generic.ESTStableIDs</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.EmptyTables"><font color='red'>org.ensembl.healthcheck.testcase.generic.EmptyTables</font></a></td><td><font color='green'>2</font></td><td><font color='red'>2</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ExonStrandOrder"><font color='green'>org.ensembl.healthcheck.testcase.generic.ExonStrandOrder</font></a></td><td><font color='green'>3</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd"><font color='green'>org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd</font></a></td><td><font color='green'>3</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName"><font color='green'>org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName</font></a></td><td><font color='green'>4</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.FeatureAnalysis"><font color='red'>org.ensembl.healthcheck.testcase.generic.FeatureAnalysis</font></a></td><td><font color='green'>0</font></td><td><font color='red'>2</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.FeatureCoords"><font color='green'>org.ensembl.healthcheck.testcase.generic.FeatureCoords</font></a></td><td><font color='green'>4</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.GOXrefs"><font color='green'>org.ensembl.healthcheck.testcase.generic.GOXrefs</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.GeneStatus"><font color='red'>org.ensembl.healthcheck.testcase.generic.GeneStatus</font></a></td><td><font color='green'>1</font></td><td><font color='red'>2</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.GeneType"><font color='red'>org.ensembl.healthcheck.testcase.generic.GeneType</font></a></td><td><font color='green'>0</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.InterproDescriptions"><font color='green'>org.ensembl.healthcheck.testcase.generic.InterproDescriptions</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Karyotype"><font color='green'>org.ensembl.healthcheck.testcase.generic.Karyotype</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable"><font color='red'>org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable</font></a></td><td><font color='green'>3</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.MappingSession"><font color='red'>org.ensembl.healthcheck.testcase.generic.MappingSession</font></a></td><td><font color='green'>0</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.MarkerFeatures"><font color='green'>org.ensembl.healthcheck.testcase.generic.MarkerFeatures</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Meta"><font color='red'>org.ensembl.healthcheck.testcase.generic.Meta</font></a></td><td><font color='green'>3</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.MetaCoord"><font color='red'>org.ensembl.healthcheck.testcase.generic.MetaCoord</font></a></td><td><font color='green'>3</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies"><font color='red'>org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies</font></a></td><td><font color='green'>0</font></td><td><font color='red'>2</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.OligoMismatches"><font color='green'>org.ensembl.healthcheck.testcase.generic.OligoMismatches</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.OligoXrefs"><font color='red'>org.ensembl.healthcheck.testcase.generic.OligoXrefs</font></a></td><td><font color='green'>0</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.PredictedXrefs"><font color='green'>org.ensembl.healthcheck.testcase.generic.PredictedXrefs</font></a></td><td><font color='green'>4</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation"><font color='red'>org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation</font></a></td><td><font color='green'>1</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ProteinFeatures"><font color='green'>org.ensembl.healthcheck.testcase.generic.ProteinFeatures</font></a></td><td><font color='green'>3</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ProteinIDXrefsNoVersion"><font color='green'>org.ensembl.healthcheck.testcase.generic.ProteinIDXrefsNoVersion</font></a></td><td><font color='green'>4</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Pseudogene"><font color='green'>org.ensembl.healthcheck.testcase.generic.Pseudogene</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.RepeatConsensus"><font color='green'>org.ensembl.healthcheck.testcase.generic.RepeatConsensus</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.RepeatFeature"><font color='red'>org.ensembl.healthcheck.testcase.generic.RepeatFeature</font></a></td><td><font color='green'>3</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionAttribAcrossSpecies"><font color='red'>org.ensembl.healthcheck.testcase.generic.SeqRegionAttribAcrossSpecies</font></a></td><td><font color='green'>0</font></td><td><font color='red'>2</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem"><font color='red'>org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem</font></a></td><td><font color='green'>0</font></td><td><font color='red'>4</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionName"><font color='green'>org.ensembl.healthcheck.testcase.generic.SeqRegionName</font></a></td><td><font color='green'>4</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel"><font color='red'>org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel</font></a></td><td><font color='green'>3</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SingleDBCollations"><font color='green'>org.ensembl.healthcheck.testcase.generic.SingleDBCollations</font></a></td><td><font color='green'>4</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.StableID"><font color='red'>org.ensembl.healthcheck.testcase.generic.StableID</font></a></td><td><font color='green'>1</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Strand"><font color='green'>org.ensembl.healthcheck.testcase.generic.Strand</font></a></td><td><font color='green'>4</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate"><font color='green'>org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.TranslationStartEnd"><font color='green'>org.ensembl.healthcheck.testcase.generic.TranslationStartEnd</font></a></td><td><font color='green'>3</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.TranslationStartEndExon"><font color='green'>org.ensembl.healthcheck.testcase.generic.TranslationStartEndExon</font></a></td><td><font color='green'>3</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.XrefTypes"><font color='green'>org.ensembl.healthcheck.testcase.generic.XrefTypes</font></a></td><td><font color='green'>4</font></td><td><font color='red'>0</font></td></tr>
+</table></p>
+<hr>
+<h2>Detailed reports by database</h2>
+<h3 class='boxed'><a name="master_schema_38">master_schema_38</a></h3>
+<p>
+<a name="master_schema_38:CompareSchema"></a> <font color='red'><strong>CompareSchema: </strong>master_schema_38 and mus_musculus_core_38_35 marker_synonym differ at row 4 column 2 (Type) Values: varchar(30), varchar(50)</font><br>
+<a name="master_schema_38:CompareSchema"></a> <font color='red'><strong>CompareSchema: </strong>master_schema_38 and mus_musculus_core_38_35 oligo_feature differ at row 8 column 2 (Type) Values: int(10) unsigned, int(11)</font><br>
+<a name="master_schema_38:CompareSchema"></a> <font color='red'><strong>CompareSchema: </strong>master_schema_38 and mus_musculus_otherfeatures_38_35 oligo_feature differ at row 8 column 2 (Type) Values: int(10) unsigned, int(11)</font><br>
+<a name="master_schema_38:CompareSchema"></a> <font color='red'><strong>CompareSchema: </strong>master_schema_38 and mus_musculus_vega_38_35 oligo_feature differ at row 8 column 2 (Type) Values: int(10) unsigned, int(11)</font><br>
+</p>
+<h3 class='boxed'><a name="mus_musculus_cdna_38_35">mus_musculus_cdna_38_35</a></h3>
+<p>
+<a name="mus_musculus_cdna_38_35:BigGeneExon"></a> <font color='grey'><strong>BigGeneExon: </strong>76 genes are longer than 1000000 bases but less than 3000000 bases</font><br>
+</p><p>
+<a name="mus_musculus_cdna_38_35:GeneStatus"></a> <font color='red'><strong>GeneStatus: </strong>No genes have status KNOWN</font><br>
+</p><p>
+<a name="mus_musculus_cdna_38_35:SeqRegionCoordSystem"></a> <font color='red'><strong>SeqRegionCoordSystem: </strong>Co-ordinate systems clone:null and contig:null have 16070 identically-named seq_regions - this may cause problems for ID mapping</font><br>
+<a name="mus_musculus_cdna_38_35:SeqRegionCoordSystem"></a> <font color='red'><strong>SeqRegionCoordSystem: </strong>10824 seq_regions have the same name but different lengths</font><br>
+</p>
+<h3 class='boxed'><a name="mus_musculus_core_38_35">mus_musculus_core_38_35</a></h3>
+<p>
+<a name="mus_musculus_core_38_35:BigGeneExon"></a> <font color='grey'><strong>BigGeneExon: </strong>21 genes are longer than 1000000 bases but less than 3000000 bases</font><br>
+<a name="mus_musculus_core_38_35:BigGeneExon"></a> <font color='red'><strong>BigGeneExon: </strong>2 genes are longer than 3000000 bases</font><br>
+<a name="mus_musculus_core_38_35:BigGeneExon"></a> <font color='red'><strong>BigGeneExon: </strong>Gene ENSMUSG00000067356 NOVEL has length 3630481</font><br>
+<a name="mus_musculus_core_38_35:BigGeneExon"></a> <font color='red'><strong>BigGeneExon: </strong>Gene ENSMUSG00000067067 NOVEL has length 9070165</font><br>
+</p><p>
+<a name="mus_musculus_core_38_35:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>gene_attrib has zero rows</font><br>
+<a name="mus_musculus_core_38_35:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>regulatory_search_region has zero rows</font><br>
+</p><p>
+<a name="mus_musculus_core_38_35:ExonStrandOrder"></a> <font color='black'><strong>ExonStrandOrder: </strong>Long transcript 4120 length 2789945</font><br>
+<a name="mus_musculus_core_38_35:ExonStrandOrder"></a> <font color='black'><strong>ExonStrandOrder: </strong>Long transcript 4190 length 2060944</font><br>
+<a name="mus_musculus_core_38_35:ExonStrandOrder"></a> <font color='black'><strong>ExonStrandOrder: </strong>Long transcript 6517 length 2512299</font><br>
+<a name="mus_musculus_core_38_35:ExonStrandOrder"></a> <font color='black'><strong>ExonStrandOrder: </strong>Long transcript 11516 length 2435829</font><br>
+<a name="mus_musculus_core_38_35:ExonStrandOrder"></a> <font color='black'><strong>ExonStrandOrder: </strong>Long transcript 18917 length 2055882</font><br>
+<a name="mus_musculus_core_38_35:ExonStrandOrder"></a> <font color='black'><strong>ExonStrandOrder: </strong>Long transcript 20786 length 3630480</font><br>
+<a name="mus_musculus_core_38_35:ExonStrandOrder"></a> <font color='black'><strong>ExonStrandOrder: </strong>Long transcript 27675 length 9070164</font><br>
+</p><p>
+<a name="mus_musculus_core_38_35:FeatureAnalysis"></a> <font color='red'><strong>FeatureAnalysis: </strong>Analysis with ID 48 is used in transcript as well as gene</font><br>
+<a name="mus_musculus_core_38_35:FeatureAnalysis"></a> <font color='red'><strong>FeatureAnalysis: </strong>Analysis with ID 68 is used in transcript as well as gene</font><br>
+</p><p>
+<a name="mus_musculus_core_38_35:LogicNamesDisplayable"></a> <font color='red'><strong>LogicNamesDisplayable: </strong>Feature table protein_feature has features with logic name Smart which will not be drawn</font><br>
+<a name="mus_musculus_core_38_35:LogicNamesDisplayable"></a> <font color='red'><strong>LogicNamesDisplayable: </strong>Feature table protein_feature has features with logic name PIRSF which will not be drawn</font><br>
+<a name="mus_musculus_core_38_35:LogicNamesDisplayable"></a> <font color='red'><strong>LogicNamesDisplayable: </strong>Feature table protein_feature has features with logic name Tigrfam which will not be drawn</font><br>
+<a name="mus_musculus_core_38_35:LogicNamesDisplayable"></a> <font color='red'><strong>LogicNamesDisplayable: </strong>protein_feature analysis with analysis_id = 106 has unknown gff_source = 'SMART'</font><br>
+<a name="mus_musculus_core_38_35:LogicNamesDisplayable"></a> <font color='red'><strong>LogicNamesDisplayable: </strong>protein_feature analysis with analysis_id = 107 has unknown gff_source = 'PIRSF'</font><br>
+<a name="mus_musculus_core_38_35:LogicNamesDisplayable"></a> <font color='red'><strong>LogicNamesDisplayable: </strong>protein_feature analysis with analysis_id = 110 has unknown gff_source = 'TIGRFAM'</font><br>
+<a name="mus_musculus_core_38_35:LogicNamesDisplayable"></a> <font color='red'><strong>LogicNamesDisplayable: </strong>protein_feature analysis with analysis_id = 113 has unknown gff_source = 'PROSITE_PATTERN'</font><br>
+</p><p>
+<a name="mus_musculus_core_38_35:MappingSession"></a> <font color='red'><strong>MappingSession: </strong>Old/new names mus_musculus_core_31_33g mus_musculus_core_24_33 do not chain properly</font><br>
+<a name="mus_musculus_core_38_35:MappingSession"></a> <font color='red'><strong>MappingSession: </strong>Old/new names mus_musculus_core_36_34d mus_musculus_core_32_34 do not chain properly</font><br>
+</p><p>
+<a name="mus_musculus_core_38_35:OligoXrefs"></a> <font color='red'><strong>OligoXrefs: </strong>Chromosome MT has no associated Oligo xrefs.</font><br>
+</p><p>
+<a name="mus_musculus_core_38_35:ProteinFeatureTranslation"></a> <font color='red'><strong>ProteinFeatureTranslation: </strong>protein_feature table has 415 features that are longer than the translation</font><br>
+</p><p>
+<a name="mus_musculus_core_38_35:RepeatFeature"></a> <font color='red'><strong>RepeatFeature: </strong>132 rows in repeat_feature have repeat_start or repeat_end < 1</font><br>
+</p><p>
+<a name="mus_musculus_core_38_35:SeqRegionCoordSystem"></a> <font color='red'><strong>SeqRegionCoordSystem: </strong>Co-ordinate systems clone:null and contig:null have 16070 identically-named seq_regions - this may cause problems for ID mapping</font><br>
+<a name="mus_musculus_core_38_35:SeqRegionCoordSystem"></a> <font color='red'><strong>SeqRegionCoordSystem: </strong>10824 seq_regions have the same name but different lengths</font><br>
+</p><p>
+<a name="mus_musculus_core_38_35:AssemblyTablesAcrossSpecies"></a> <font color='red'><strong>AssemblyTablesAcrossSpecies: </strong>mus_musculus_core_38_35 and mus_musculus_vega_38_35  differ at row 1 column 1 (COUNT(*)) Values: 99414, 100613</font><br>
+</p><p>
+<a name="mus_musculus_core_38_35:AttribTypeAcrossSpecies"></a> <font color='red'><strong>AttribTypeAcrossSpecies: </strong>mus_musculus_core_38_35 and mus_musculus_vega_38_35  differ at row 1 column 1 (COUNT(*)) Values: 70, 58</font><br>
+</p><p>
+<a name="mus_musculus_core_38_35:DNATablesAcrossSpecies"></a> <font color='red'><strong>DNATablesAcrossSpecies: </strong>mus_musculus_core_38_35 and mus_musculus_vega_38_35  differ at row 1 column 1 (COUNT(*)) Values: 44028, 0</font><br>
+</p><p>
+<a name="mus_musculus_core_38_35:MetaCrossSpecies"></a> <font color='red'><strong>MetaCrossSpecies: </strong>mus_musculus_core_38_35 and mus_musculus_vega_38_35  differ at row 14 column 1 (LCASE(meta_value)) Values: muroidea, mus</font><br>
+</p><p>
+<a name="mus_musculus_core_38_35:SeqRegionAttribAcrossSpecies"></a> <font color='red'><strong>SeqRegionAttribAcrossSpecies: </strong>mus_musculus_core_38_35 and mus_musculus_vega_38_35  differ at row 1 column 1 (COUNT(*)) Values: 10500, 4850</font><br>
+</p>
+<h3 class='boxed'><a name="mus_musculus_otherfeatures_38_35">mus_musculus_otherfeatures_38_35</a></h3>
+<p>
+<a name="mus_musculus_otherfeatures_38_35:GeneStatus"></a> <font color='red'><strong>GeneStatus: </strong>No genes have status KNOWN</font><br>
+</p><p>
+<a name="mus_musculus_otherfeatures_38_35:GeneType"></a> <font color='red'><strong>GeneType: </strong>protein_coding is not a valid gene type name for estgene.</font><br>
+</p><p>
+<a name="mus_musculus_otherfeatures_38_35:MetaCoord"></a> <font color='red'><strong>MetaCoord: </strong>meta_coord has entry for coord_system ID 3 in dna_align_feature but this coordinate system is not actually used in dna_align_feature</font><br>
+</p><p>
+<a name="mus_musculus_otherfeatures_38_35:SeqRegionCoordSystem"></a> <font color='red'><strong>SeqRegionCoordSystem: </strong>Co-ordinate systems clone:null and contig:null have 16070 identically-named seq_regions - this may cause problems for ID mapping</font><br>
+<a name="mus_musculus_otherfeatures_38_35:SeqRegionCoordSystem"></a> <font color='red'><strong>SeqRegionCoordSystem: </strong>10824 seq_regions have the same name but different lengths</font><br>
+</p><p>
+<a name="mus_musculus_otherfeatures_38_35:ESTStableID"></a> <font color='red'><strong>ESTStableID: </strong>52052 translation stable IDs do not contain ESTP</font><br>
+<a name="mus_musculus_otherfeatures_38_35:ESTStableID"></a> <font color='red'><strong>ESTStableID: </strong>27235 gene stable IDs do not contain ESTG</font><br>
+<a name="mus_musculus_otherfeatures_38_35:ESTStableID"></a> <font color='red'><strong>ESTStableID: </strong>52052 transcript stable IDs do not contain ESTT</font><br>
+</p>
+<h3 class='boxed'><a name="mus_musculus_vega_38_35">mus_musculus_vega_38_35</a></h3>
+<p>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 1 (ID 6) has no density features</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 10 (ID 20) has no density features</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 11 (ID 1) has no density features</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 12 (ID 14) has no density features</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 13 (ID 9) has no density features</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 14 (ID 15) has no density features</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 15 (ID 16) has no density features</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 16 (ID 8) has no density features</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 17 (ID 4) has no density features</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 18 (ID 7) has no density features</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 19 (ID 19) has no density features</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 2 (ID 5) has no density features</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 3 (ID 12) has no density features</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 4 (ID 18) has no density features</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 5 (ID 21) has no density features</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 6 (ID 10) has no density features</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 7 (ID 2) has no density features</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 8 (ID 17) has no density features</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 9 (ID 13) has no density features</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region MT (ID 65198) has no density features</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region X (ID 11) has no density features</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region Y (ID 3) has no density features</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>No entry in density_type for analysis PercentGC</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>No entry in density_type for analysis PercentageRepeat</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>No entry in density_type for analysis knownGeneDensity</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>No entry in density_type for analysis geneDensity</font><br>
+<a name="mus_musculus_vega_38_35:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>No entry in density_type for analysis snpDensity</font><br>
+</p><p>
+<a name="mus_musculus_vega_38_35:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 38315 is duplicated.</font><br>
+<a name="mus_musculus_vega_38_35:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 38314 is duplicated.</font><br>
+<a name="mus_musculus_vega_38_35:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 38313 is duplicated.</font><br>
+<a name="mus_musculus_vega_38_35:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 38312 is duplicated.</font><br>
+<a name="mus_musculus_vega_38_35:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 26984 is duplicated.</font><br>
+<a name="mus_musculus_vega_38_35:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 26985 is duplicated.</font><br>
+<a name="mus_musculus_vega_38_35:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 28293 is duplicated.</font><br>
+<a name="mus_musculus_vega_38_35:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 28295 is duplicated.</font><br>
+<a name="mus_musculus_vega_38_35:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 28296 is duplicated.</font><br>
+<a name="mus_musculus_vega_38_35:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 28297 is duplicated.</font><br>
+<a name="mus_musculus_vega_38_35:DuplicateExons"></a> <font color='red'><strong>DuplicateExons: </strong>Has at least 49 duplicated exons.</font><br>
+</p><p>
+<a name="mus_musculus_vega_38_35:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>oligo_array has zero rows</font><br>
+<a name="mus_musculus_vega_38_35:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>oligo_feature has zero rows</font><br>
+<a name="mus_musculus_vega_38_35:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>oligo_probe has zero rows</font><br>
+<a name="mus_musculus_vega_38_35:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>regulatory_search_region has zero rows</font><br>
+</p><p>
+<a name="mus_musculus_vega_38_35:ExonStrandOrder"></a> <font color='black'><strong>ExonStrandOrder: </strong>Long transcript 2262 length 2072581</font><br>
+</p><p>
+<a name="mus_musculus_vega_38_35:FeatureAnalysis"></a> <font color='red'><strong>FeatureAnalysis: </strong>Analysis with ID 1 is used in transcript as well as gene</font><br>
+</p><p>
+<a name="mus_musculus_vega_38_35:Meta"></a> <font color='red'><strong>Meta: </strong>assembly.default from meta table is NCBIM35 but lowest ranked coordinate system has version VEGA</font><br>
+</p><p>
+<a name="mus_musculus_vega_38_35:SeqRegionCoordSystem"></a> <font color='red'><strong>SeqRegionCoordSystem: </strong>Co-ordinate systems clone:NCBIM35 and contig:NCBIM35 have 16070 identically-named seq_regions - this may cause problems for ID mapping</font><br>
+<a name="mus_musculus_vega_38_35:SeqRegionCoordSystem"></a> <font color='red'><strong>SeqRegionCoordSystem: </strong>Co-ordinate systems chromosome:NCBIM35 and chromosome:VEGA have 2 identically-named seq_regions - this may cause problems for ID mapping</font><br>
+<a name="mus_musculus_vega_38_35:SeqRegionCoordSystem"></a> <font color='red'><strong>SeqRegionCoordSystem: </strong>10828 seq_regions have the same name but different lengths</font><br>
+</p><p>
+<a name="mus_musculus_vega_38_35:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 1</font><br>
+<a name="mus_musculus_vega_38_35:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 6</font><br>
+<a name="mus_musculus_vega_38_35:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 9</font><br>
+<a name="mus_musculus_vega_38_35:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 12</font><br>
+<a name="mus_musculus_vega_38_35:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 18</font><br>
+<a name="mus_musculus_vega_38_35:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No seq_regions are marked as toplevel. This may cause problems for Compara</font><br>
+</p><p>
+<a name="mus_musculus_vega_38_35:StableID"></a> <font color='red'><strong>StableID: </strong>exon_stable_id has 772 duplicate stable IDs (versions not checked)</font><br>
+</p>
+<hr>
+<h2>Detailed reports by test case</h2>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.AssemblyTablesAcrossSpecies">org.ensembl.healthcheck.testcase.generic.AssemblyTablesAcrossSpecies</a></h3>
+<p>
+<a name="AssemblyTablesAcrossSpecies:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>mus_musculus_core_38_35 and mus_musculus_vega_38_35  differ at row 1 column 1 (COUNT(*)) Values: 99414, 100613</font><br>
+</p><p>
+<a name="AssemblyTablesAcrossSpecies:"></a> <font color='red'><strong>: </strong>Differences in assembly table across species</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies">org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies</a></h3>
+<p>
+<a name="AttribTypeAcrossSpecies:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>mus_musculus_core_38_35 and mus_musculus_vega_38_35  differ at row 1 column 1 (COUNT(*)) Values: 70, 58</font><br>
+</p><p>
+<a name="AttribTypeAcrossSpecies:"></a> <font color='red'><strong>: </strong>Differences in attrib_type table across species</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.BigGeneExon">org.ensembl.healthcheck.testcase.generic.BigGeneExon</a></h3>
+<p>
+<a name="BigGeneExon:mus_musculus_cdna_38_35"></a> <font color='grey'><strong>mus_musculus_cdna_38_35: </strong>76 genes are longer than 1000000 bases but less than 3000000 bases</font><br>
+</p><p>
+<a name="BigGeneExon:mus_musculus_core_38_35"></a> <font color='grey'><strong>mus_musculus_core_38_35: </strong>21 genes are longer than 1000000 bases but less than 3000000 bases</font><br>
+<a name="BigGeneExon:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>2 genes are longer than 3000000 bases</font><br>
+<a name="BigGeneExon:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>Gene ENSMUSG00000067356 NOVEL has length 3630481</font><br>
+<a name="BigGeneExon:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>Gene ENSMUSG00000067067 NOVEL has length 9070165</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.CompareSchema">org.ensembl.healthcheck.testcase.generic.CompareSchema</a></h3>
+<p>
+<a name="CompareSchema:master_schema_38"></a> <font color='red'><strong>master_schema_38: </strong>master_schema_38 and mus_musculus_core_38_35 marker_synonym differ at row 4 column 2 (Type) Values: varchar(30), varchar(50)</font><br>
+<a name="CompareSchema:master_schema_38"></a> <font color='red'><strong>master_schema_38: </strong>master_schema_38 and mus_musculus_core_38_35 oligo_feature differ at row 8 column 2 (Type) Values: int(10) unsigned, int(11)</font><br>
+<a name="CompareSchema:master_schema_38"></a> <font color='red'><strong>master_schema_38: </strong>master_schema_38 and mus_musculus_otherfeatures_38_35 oligo_feature differ at row 8 column 2 (Type) Values: int(10) unsigned, int(11)</font><br>
+<a name="CompareSchema:master_schema_38"></a> <font color='red'><strong>master_schema_38: </strong>master_schema_38 and mus_musculus_vega_38_35 oligo_feature differ at row 8 column 2 (Type) Values: int(10) unsigned, int(11)</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.DNATablesAcrossSpecies">org.ensembl.healthcheck.testcase.generic.DNATablesAcrossSpecies</a></h3>
+<p>
+<a name="DNATablesAcrossSpecies:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>mus_musculus_core_38_35 and mus_musculus_vega_38_35  differ at row 1 column 1 (COUNT(*)) Values: 44028, 0</font><br>
+</p><p>
+<a name="DNATablesAcrossSpecies:"></a> <font color='red'><strong>: </strong>Differences in dna table across species</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.DensityFeatures">org.ensembl.healthcheck.testcase.generic.DensityFeatures</a></h3>
+<p>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Top-level seq region 1 (ID 6) has no density features</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Top-level seq region 10 (ID 20) has no density features</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Top-level seq region 11 (ID 1) has no density features</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Top-level seq region 12 (ID 14) has no density features</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Top-level seq region 13 (ID 9) has no density features</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Top-level seq region 14 (ID 15) has no density features</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Top-level seq region 15 (ID 16) has no density features</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Top-level seq region 16 (ID 8) has no density features</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Top-level seq region 17 (ID 4) has no density features</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Top-level seq region 18 (ID 7) has no density features</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Top-level seq region 19 (ID 19) has no density features</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Top-level seq region 2 (ID 5) has no density features</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Top-level seq region 3 (ID 12) has no density features</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Top-level seq region 4 (ID 18) has no density features</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Top-level seq region 5 (ID 21) has no density features</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Top-level seq region 6 (ID 10) has no density features</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Top-level seq region 7 (ID 2) has no density features</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Top-level seq region 8 (ID 17) has no density features</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Top-level seq region 9 (ID 13) has no density features</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Top-level seq region MT (ID 65198) has no density features</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Top-level seq region X (ID 11) has no density features</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Top-level seq region Y (ID 3) has no density features</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>No entry in density_type for analysis PercentGC</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>No entry in density_type for analysis PercentageRepeat</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>No entry in density_type for analysis knownGeneDensity</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>No entry in density_type for analysis geneDensity</font><br>
+<a name="DensityFeatures:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>No entry in density_type for analysis snpDensity</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.DuplicateExons">org.ensembl.healthcheck.testcase.generic.DuplicateExons</a></h3>
+<p>
+<a name="DuplicateExons:mus_musculus_vega_38_35"></a> <font color='black'><strong>mus_musculus_vega_38_35: </strong>Exon 38315 is duplicated.</font><br>
+<a name="DuplicateExons:mus_musculus_vega_38_35"></a> <font color='black'><strong>mus_musculus_vega_38_35: </strong>Exon 38314 is duplicated.</font><br>
+<a name="DuplicateExons:mus_musculus_vega_38_35"></a> <font color='black'><strong>mus_musculus_vega_38_35: </strong>Exon 38313 is duplicated.</font><br>
+<a name="DuplicateExons:mus_musculus_vega_38_35"></a> <font color='black'><strong>mus_musculus_vega_38_35: </strong>Exon 38312 is duplicated.</font><br>
+<a name="DuplicateExons:mus_musculus_vega_38_35"></a> <font color='black'><strong>mus_musculus_vega_38_35: </strong>Exon 26984 is duplicated.</font><br>
+<a name="DuplicateExons:mus_musculus_vega_38_35"></a> <font color='black'><strong>mus_musculus_vega_38_35: </strong>Exon 26985 is duplicated.</font><br>
+<a name="DuplicateExons:mus_musculus_vega_38_35"></a> <font color='black'><strong>mus_musculus_vega_38_35: </strong>Exon 28293 is duplicated.</font><br>
+<a name="DuplicateExons:mus_musculus_vega_38_35"></a> <font color='black'><strong>mus_musculus_vega_38_35: </strong>Exon 28295 is duplicated.</font><br>
+<a name="DuplicateExons:mus_musculus_vega_38_35"></a> <font color='black'><strong>mus_musculus_vega_38_35: </strong>Exon 28296 is duplicated.</font><br>
+<a name="DuplicateExons:mus_musculus_vega_38_35"></a> <font color='black'><strong>mus_musculus_vega_38_35: </strong>Exon 28297 is duplicated.</font><br>
+<a name="DuplicateExons:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Has at least 49 duplicated exons.</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.ESTStableID">org.ensembl.healthcheck.testcase.generic.ESTStableID</a></h3>
+<p>
+<a name="ESTStableID:mus_musculus_otherfeatures_38_35"></a> <font color='red'><strong>mus_musculus_otherfeatures_38_35: </strong>52052 translation stable IDs do not contain ESTP</font><br>
+<a name="ESTStableID:mus_musculus_otherfeatures_38_35"></a> <font color='red'><strong>mus_musculus_otherfeatures_38_35: </strong>27235 gene stable IDs do not contain ESTG</font><br>
+<a name="ESTStableID:mus_musculus_otherfeatures_38_35"></a> <font color='red'><strong>mus_musculus_otherfeatures_38_35: </strong>52052 transcript stable IDs do not contain ESTT</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.EmptyTables">org.ensembl.healthcheck.testcase.generic.EmptyTables</a></h3>
+<p>
+<a name="EmptyTables:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>gene_attrib has zero rows</font><br>
+<a name="EmptyTables:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>regulatory_search_region has zero rows</font><br>
+</p><p>
+<a name="EmptyTables:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>oligo_array has zero rows</font><br>
+<a name="EmptyTables:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>oligo_feature has zero rows</font><br>
+<a name="EmptyTables:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>oligo_probe has zero rows</font><br>
+<a name="EmptyTables:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>regulatory_search_region has zero rows</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.ExonStrandOrder">org.ensembl.healthcheck.testcase.generic.ExonStrandOrder</a></h3>
+<p>
+<a name="ExonStrandOrder:mus_musculus_core_38_35"></a> <font color='black'><strong>mus_musculus_core_38_35: </strong>Long transcript 4120 length 2789945</font><br>
+<a name="ExonStrandOrder:mus_musculus_core_38_35"></a> <font color='black'><strong>mus_musculus_core_38_35: </strong>Long transcript 4190 length 2060944</font><br>
+<a name="ExonStrandOrder:mus_musculus_core_38_35"></a> <font color='black'><strong>mus_musculus_core_38_35: </strong>Long transcript 6517 length 2512299</font><br>
+<a name="ExonStrandOrder:mus_musculus_core_38_35"></a> <font color='black'><strong>mus_musculus_core_38_35: </strong>Long transcript 11516 length 2435829</font><br>
+<a name="ExonStrandOrder:mus_musculus_core_38_35"></a> <font color='black'><strong>mus_musculus_core_38_35: </strong>Long transcript 18917 length 2055882</font><br>
+<a name="ExonStrandOrder:mus_musculus_core_38_35"></a> <font color='black'><strong>mus_musculus_core_38_35: </strong>Long transcript 20786 length 3630480</font><br>
+<a name="ExonStrandOrder:mus_musculus_core_38_35"></a> <font color='black'><strong>mus_musculus_core_38_35: </strong>Long transcript 27675 length 9070164</font><br>
+</p><p>
+<a name="ExonStrandOrder:mus_musculus_vega_38_35"></a> <font color='black'><strong>mus_musculus_vega_38_35: </strong>Long transcript 2262 length 2072581</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.FeatureAnalysis">org.ensembl.healthcheck.testcase.generic.FeatureAnalysis</a></h3>
+<p>
+<a name="FeatureAnalysis:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>Analysis with ID 48 is used in transcript as well as gene</font><br>
+<a name="FeatureAnalysis:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>Analysis with ID 68 is used in transcript as well as gene</font><br>
+</p><p>
+<a name="FeatureAnalysis:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Analysis with ID 1 is used in transcript as well as gene</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.GeneStatus">org.ensembl.healthcheck.testcase.generic.GeneStatus</a></h3>
+<p>
+<a name="GeneStatus:mus_musculus_cdna_38_35"></a> <font color='red'><strong>mus_musculus_cdna_38_35: </strong>No genes have status KNOWN</font><br>
+</p><p>
+<a name="GeneStatus:mus_musculus_otherfeatures_38_35"></a> <font color='red'><strong>mus_musculus_otherfeatures_38_35: </strong>No genes have status KNOWN</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.GeneType">org.ensembl.healthcheck.testcase.generic.GeneType</a></h3>
+<p>
+<a name="GeneType:mus_musculus_otherfeatures_38_35"></a> <font color='red'><strong>mus_musculus_otherfeatures_38_35: </strong>protein_coding is not a valid gene type name for estgene.</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable">org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable</a></h3>
+<p>
+<a name="LogicNamesDisplayable:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>Feature table protein_feature has features with logic name Smart which will not be drawn</font><br>
+<a name="LogicNamesDisplayable:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>Feature table protein_feature has features with logic name PIRSF which will not be drawn</font><br>
+<a name="LogicNamesDisplayable:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>Feature table protein_feature has features with logic name Tigrfam which will not be drawn</font><br>
+<a name="LogicNamesDisplayable:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>protein_feature analysis with analysis_id = 106 has unknown gff_source = 'SMART'</font><br>
+<a name="LogicNamesDisplayable:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>protein_feature analysis with analysis_id = 107 has unknown gff_source = 'PIRSF'</font><br>
+<a name="LogicNamesDisplayable:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>protein_feature analysis with analysis_id = 110 has unknown gff_source = 'TIGRFAM'</font><br>
+<a name="LogicNamesDisplayable:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>protein_feature analysis with analysis_id = 113 has unknown gff_source = 'PROSITE_PATTERN'</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.MappingSession">org.ensembl.healthcheck.testcase.generic.MappingSession</a></h3>
+<p>
+<a name="MappingSession:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>Old/new names mus_musculus_core_31_33g mus_musculus_core_24_33 do not chain properly</font><br>
+<a name="MappingSession:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>Old/new names mus_musculus_core_36_34d mus_musculus_core_32_34 do not chain properly</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.Meta">org.ensembl.healthcheck.testcase.generic.Meta</a></h3>
+<p>
+<a name="Meta:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>assembly.default from meta table is NCBIM35 but lowest ranked coordinate system has version VEGA</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.MetaCoord">org.ensembl.healthcheck.testcase.generic.MetaCoord</a></h3>
+<p>
+<a name="MetaCoord:mus_musculus_otherfeatures_38_35"></a> <font color='red'><strong>mus_musculus_otherfeatures_38_35: </strong>meta_coord has entry for coord_system ID 3 in dna_align_feature but this coordinate system is not actually used in dna_align_feature</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies">org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies</a></h3>
+<p>
+<a name="MetaCrossSpecies:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>mus_musculus_core_38_35 and mus_musculus_vega_38_35  differ at row 14 column 1 (LCASE(meta_value)) Values: muroidea, mus</font><br>
+</p><p>
+<a name="MetaCrossSpecies:"></a> <font color='red'><strong>: </strong>meta information not the same for some databases</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.OligoXrefs">org.ensembl.healthcheck.testcase.generic.OligoXrefs</a></h3>
+<p>
+<a name="OligoXrefs:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>Chromosome MT has no associated Oligo xrefs.</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation">org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation</a></h3>
+<p>
+<a name="ProteinFeatureTranslation:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>protein_feature table has 415 features that are longer than the translation</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.RepeatFeature">org.ensembl.healthcheck.testcase.generic.RepeatFeature</a></h3>
+<p>
+<a name="RepeatFeature:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>132 rows in repeat_feature have repeat_start or repeat_end < 1</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.SeqRegionAttribAcrossSpecies">org.ensembl.healthcheck.testcase.generic.SeqRegionAttribAcrossSpecies</a></h3>
+<p>
+<a name="SeqRegionAttribAcrossSpecies:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>mus_musculus_core_38_35 and mus_musculus_vega_38_35  differ at row 1 column 1 (COUNT(*)) Values: 10500, 4850</font><br>
+</p><p>
+<a name="SeqRegionAttribAcrossSpecies:"></a> <font color='red'><strong>: </strong>Differences in seq_region_attrib table across species</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem">org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem</a></h3>
+<p>
+<a name="SeqRegionCoordSystem:mus_musculus_cdna_38_35"></a> <font color='red'><strong>mus_musculus_cdna_38_35: </strong>Co-ordinate systems clone:null and contig:null have 16070 identically-named seq_regions - this may cause problems for ID mapping</font><br>
+<a name="SeqRegionCoordSystem:mus_musculus_cdna_38_35"></a> <font color='red'><strong>mus_musculus_cdna_38_35: </strong>10824 seq_regions have the same name but different lengths</font><br>
+</p><p>
+<a name="SeqRegionCoordSystem:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>Co-ordinate systems clone:null and contig:null have 16070 identically-named seq_regions - this may cause problems for ID mapping</font><br>
+<a name="SeqRegionCoordSystem:mus_musculus_core_38_35"></a> <font color='red'><strong>mus_musculus_core_38_35: </strong>10824 seq_regions have the same name but different lengths</font><br>
+</p><p>
+<a name="SeqRegionCoordSystem:mus_musculus_otherfeatures_38_35"></a> <font color='red'><strong>mus_musculus_otherfeatures_38_35: </strong>Co-ordinate systems clone:null and contig:null have 16070 identically-named seq_regions - this may cause problems for ID mapping</font><br>
+<a name="SeqRegionCoordSystem:mus_musculus_otherfeatures_38_35"></a> <font color='red'><strong>mus_musculus_otherfeatures_38_35: </strong>10824 seq_regions have the same name but different lengths</font><br>
+</p><p>
+<a name="SeqRegionCoordSystem:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Co-ordinate systems clone:NCBIM35 and contig:NCBIM35 have 16070 identically-named seq_regions - this may cause problems for ID mapping</font><br>
+<a name="SeqRegionCoordSystem:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>Co-ordinate systems chromosome:NCBIM35 and chromosome:VEGA have 2 identically-named seq_regions - this may cause problems for ID mapping</font><br>
+<a name="SeqRegionCoordSystem:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>10828 seq_regions have the same name but different lengths</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel">org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel</a></h3>
+<p>
+<a name="SeqRegionsTopLevel:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>No top_level attribute set for seq_region_id 1</font><br>
+<a name="SeqRegionsTopLevel:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>No top_level attribute set for seq_region_id 6</font><br>
+<a name="SeqRegionsTopLevel:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>No top_level attribute set for seq_region_id 9</font><br>
+<a name="SeqRegionsTopLevel:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>No top_level attribute set for seq_region_id 12</font><br>
+<a name="SeqRegionsTopLevel:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>No top_level attribute set for seq_region_id 18</font><br>
+<a name="SeqRegionsTopLevel:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>No seq_regions are marked as toplevel. This may cause problems for Compara</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.StableID">org.ensembl.healthcheck.testcase.generic.StableID</a></h3>
+<p>
+<a name="StableID:mus_musculus_vega_38_35"></a> <font color='red'><strong>mus_musculus_vega_38_35: </strong>exon_stable_id has 772 duplicate stable IDs (versions not checked)</font><br>
+</p>
+<hr>
+<p>Test run was started at Wed May 03 03:25:44 BST 2006 and finished at Wed May 03 04:37:42 BST 2006<br>
+ Run time 1 hours 11 min 58s </p>
+<h4>Configuration used:</h4>
+<pre>
+Tests/groups run:   release<br>
+Database host:      ecs2:3364<br>
+Database names:     ^mus_musculus_(core|otherfeatures|cdna|vega)_[0-9]+_.*<br>
+Output file:        web_mus_musculus.html<br>
+Output level:       info<br>
+</pre>
+</div>
+</body>
+</html>
+<hr>

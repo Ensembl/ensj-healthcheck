@@ -1,0 +1,344 @@
+<html>
+<head>
+<style type="text/css" media="all">
+@import url(http://www.ensembl.org/css/ensembl.css);
+@import url(http://www.ensembl.org/css/content.css);
+#page ul li { list-style-type:none; list-style-image: none; margin-left: -2em }
+</style>
+<title>Healthcheck results for anopheles_gambiae databases</title>
+</head>
+<body>
+<div id='page'><div id='i1'><div id='i2'><div class='sptop'>&nbsp;</div>
+<div id='release'>Healthcheck results for anopheles_gambiae databases</div>
+<hr>
+<div id='related'><div id='related-box'>
+<h2>Results by database</h2>
+<ul>
+<li><a href="#anopheles_gambiae_core_38_3a">anopheles_gambiae_core_38_3a</a></li>
+<li><a href="#anopheles_gambiae_otherfeatures_38_3a">anopheles_gambiae_otherfeatures_38_3a</a></li>
+<li><a href="#master_schema_38">master_schema_38</a></li>
+</ul>
+<h2>Results by test</h2>
+<ul>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.Accession">Accession</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.AnalysisDescription">AnalysisDescription</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.AssemblyException">AssemblyException</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.AssemblySeqregion">AssemblySeqregion</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.AssemblyTablesAcrossSpecies">AssemblyTablesAcrossSpecies</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies">AttribTypeAcrossSpecies</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.BigGeneExon">BigGeneExon</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.Biotypes">Biotypes</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.BlankInfoType">BlankInfoType</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBiotypes">ComparePreviousVersionBiotypes</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionTableRows">ComparePreviousVersionTableRows</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionXrefs">ComparePreviousVersionXrefs</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.CompareSchema">CompareSchema</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.CoreForeignKeys">CoreForeignKeys</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.DNAEmpty">DNAEmpty</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.DNATablesAcrossSpecies">DNATablesAcrossSpecies</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.DensityFeatures">DensityFeatures</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.DisplayLabels">DisplayLabels</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.DisplayMarkerSynonyms">DisplayMarkerSynonyms</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.DisplayXref">DisplayXref</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.DuplicateAssembly">DuplicateAssembly</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ESTStableID">ESTStableID</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ESTStableIDs">ESTStableIDs</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.EmptyTables">EmptyTables</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ExonStrandOrder">ExonStrandOrder</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd">ExonTranscriptStartEnd</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName">ExternalDBDisplayName</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.FeatureAnalysis">FeatureAnalysis</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.FeatureCoords">FeatureCoords</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.GOXrefs">GOXrefs</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.GeneStatus">GeneStatus</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.GeneType">GeneType</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.InterproDescriptions">InterproDescriptions</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.Karyotype">Karyotype</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable">LogicNamesDisplayable</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.MappingSession">MappingSession</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.Meta">Meta</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.MetaCoord">MetaCoord</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies">MetaCrossSpecies</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.OligoMismatches">OligoMismatches</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.OligoProbes2Genome">OligoProbes2Genome</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.OligoXrefs">OligoXrefs</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.PredictedXrefs">PredictedXrefs</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation">ProteinFeatureTranslation</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ProteinFeatures">ProteinFeatures</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.ProteinIDXrefsNoVersion">ProteinIDXrefsNoVersion</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.Pseudogene">Pseudogene</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.RepeatConsensus">RepeatConsensus</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.RepeatFeature">RepeatFeature</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionAttribAcrossSpecies">SeqRegionAttribAcrossSpecies</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem">SeqRegionCoordSystem</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel">SeqRegionsTopLevel</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.SingleDBCollations">SingleDBCollations</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.StableID">StableID</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.Strand">Strand</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate">TranscriptsTranslate</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.TranslationStartEnd">TranslationStartEnd</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.TranslationStartEndExon">TranslationStartEndExon</a></li>
+<li><a href="#org.ensembl.healthcheck.testcase.generic.XrefTypes">XrefTypes</a></li>
+</ul>
+</div></div>
+<h2>Summary</h2>
+<p><strong><font color='green'>68</font> tests passed and <font color='red'>14</font> failed out of a total of 82 tests run.</strong></p>
+<hr>
+<h2>Summary by database</h2>
+<p><table class='ss'>
+<tr><th>Database</th><th>Passed</th><th>Failed</th></tr>
+<tr><td><a href="#anopheles_gambiae_core_38_3a"><font color='red'>anopheles_gambiae_core_38_3a</font></a></td><td><font color='green'>39</font></td><td><font color='red'>11</font></td></tr>
+<tr><td><a href="#anopheles_gambiae_otherfeatures_38_3a"><font color='red'>anopheles_gambiae_otherfeatures_38_3a</font></a></td><td><font color='green'>29</font></td><td><font color='red'>2</font></td></tr>
+<tr><td><a href="#master_schema_38"><font color='red'>master_schema_38</font></a></td><td><font color='green'>0</font></td><td><font color='red'>1</font></td></tr>
+</table></p>
+<hr>
+<h2>Summary by test</h2>
+<p><table class='ss'>
+<tr><th>Test</th><th>Passed</th><th>Failed</th></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Accession"><font color='green'>org.ensembl.healthcheck.testcase.generic.Accession</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AnalysisDescription"><font color='green'>org.ensembl.healthcheck.testcase.generic.AnalysisDescription</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AssemblyException"><font color='green'>org.ensembl.healthcheck.testcase.generic.AssemblyException</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AssemblySeqregion"><font color='green'>org.ensembl.healthcheck.testcase.generic.AssemblySeqregion</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AssemblyTablesAcrossSpecies"><font color='green'>org.ensembl.healthcheck.testcase.generic.AssemblyTablesAcrossSpecies</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies"><font color='green'>org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.BigGeneExon"><font color='green'>org.ensembl.healthcheck.testcase.generic.BigGeneExon</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Biotypes"><font color='green'>org.ensembl.healthcheck.testcase.generic.Biotypes</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.BlankInfoType"><font color='green'>org.ensembl.healthcheck.testcase.generic.BlankInfoType</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBiotypes"><font color='green'>org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBiotypes</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionTableRows"><font color='green'>org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionTableRows</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionXrefs"><font color='green'>org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionXrefs</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.CompareSchema"><font color='red'>org.ensembl.healthcheck.testcase.generic.CompareSchema</font></a></td><td><font color='green'>0</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.CoreForeignKeys"><font color='red'>org.ensembl.healthcheck.testcase.generic.CoreForeignKeys</font></a></td><td><font color='green'>1</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DNAEmpty"><font color='green'>org.ensembl.healthcheck.testcase.generic.DNAEmpty</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DNATablesAcrossSpecies"><font color='green'>org.ensembl.healthcheck.testcase.generic.DNATablesAcrossSpecies</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DensityFeatures"><font color='green'>org.ensembl.healthcheck.testcase.generic.DensityFeatures</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DisplayLabels"><font color='green'>org.ensembl.healthcheck.testcase.generic.DisplayLabels</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DisplayMarkerSynonyms"><font color='green'>org.ensembl.healthcheck.testcase.generic.DisplayMarkerSynonyms</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DisplayXref"><font color='green'>org.ensembl.healthcheck.testcase.generic.DisplayXref</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DuplicateAssembly"><font color='green'>org.ensembl.healthcheck.testcase.generic.DuplicateAssembly</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ESTStableID"><font color='green'>org.ensembl.healthcheck.testcase.generic.ESTStableID</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ESTStableIDs"><font color='green'>org.ensembl.healthcheck.testcase.generic.ESTStableIDs</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.EmptyTables"><font color='red'>org.ensembl.healthcheck.testcase.generic.EmptyTables</font></a></td><td><font color='green'>1</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ExonStrandOrder"><font color='green'>org.ensembl.healthcheck.testcase.generic.ExonStrandOrder</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd"><font color='green'>org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName"><font color='green'>org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.FeatureAnalysis"><font color='red'>org.ensembl.healthcheck.testcase.generic.FeatureAnalysis</font></a></td><td><font color='green'>0</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.FeatureCoords"><font color='green'>org.ensembl.healthcheck.testcase.generic.FeatureCoords</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.GOXrefs"><font color='red'>org.ensembl.healthcheck.testcase.generic.GOXrefs</font></a></td><td><font color='green'>0</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.GeneStatus"><font color='red'>org.ensembl.healthcheck.testcase.generic.GeneStatus</font></a></td><td><font color='green'>1</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.GeneType"><font color='red'>org.ensembl.healthcheck.testcase.generic.GeneType</font></a></td><td><font color='green'>0</font></td><td><font color='red'>2</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.InterproDescriptions"><font color='green'>org.ensembl.healthcheck.testcase.generic.InterproDescriptions</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Karyotype"><font color='green'>org.ensembl.healthcheck.testcase.generic.Karyotype</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable"><font color='red'>org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable</font></a></td><td><font color='green'>1</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.MappingSession"><font color='red'>org.ensembl.healthcheck.testcase.generic.MappingSession</font></a></td><td><font color='green'>0</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Meta"><font color='green'>org.ensembl.healthcheck.testcase.generic.Meta</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.MetaCoord"><font color='green'>org.ensembl.healthcheck.testcase.generic.MetaCoord</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies"><font color='green'>org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.OligoMismatches"><font color='green'>org.ensembl.healthcheck.testcase.generic.OligoMismatches</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.OligoProbes2Genome"><font color='red'>org.ensembl.healthcheck.testcase.generic.OligoProbes2Genome</font></a></td><td><font color='green'>0</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.OligoXrefs"><font color='red'>org.ensembl.healthcheck.testcase.generic.OligoXrefs</font></a></td><td><font color='green'>0</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.PredictedXrefs"><font color='green'>org.ensembl.healthcheck.testcase.generic.PredictedXrefs</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation"><font color='red'>org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation</font></a></td><td><font color='green'>0</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ProteinFeatures"><font color='red'>org.ensembl.healthcheck.testcase.generic.ProteinFeatures</font></a></td><td><font color='green'>0</font></td><td><font color='red'>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ProteinIDXrefsNoVersion"><font color='green'>org.ensembl.healthcheck.testcase.generic.ProteinIDXrefsNoVersion</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Pseudogene"><font color='green'>org.ensembl.healthcheck.testcase.generic.Pseudogene</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.RepeatConsensus"><font color='green'>org.ensembl.healthcheck.testcase.generic.RepeatConsensus</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.RepeatFeature"><font color='green'>org.ensembl.healthcheck.testcase.generic.RepeatFeature</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionAttribAcrossSpecies"><font color='green'>org.ensembl.healthcheck.testcase.generic.SeqRegionAttribAcrossSpecies</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem"><font color='green'>org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel"><font color='green'>org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SingleDBCollations"><font color='green'>org.ensembl.healthcheck.testcase.generic.SingleDBCollations</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.StableID"><font color='green'>org.ensembl.healthcheck.testcase.generic.StableID</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Strand"><font color='green'>org.ensembl.healthcheck.testcase.generic.Strand</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate"><font color='green'>org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.TranslationStartEnd"><font color='green'>org.ensembl.healthcheck.testcase.generic.TranslationStartEnd</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.TranslationStartEndExon"><font color='green'>org.ensembl.healthcheck.testcase.generic.TranslationStartEndExon</font></a></td><td><font color='green'>1</font></td><td><font color='red'>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.XrefTypes"><font color='green'>org.ensembl.healthcheck.testcase.generic.XrefTypes</font></a></td><td><font color='green'>2</font></td><td><font color='red'>0</font></td></tr>
+</table></p>
+<hr>
+<h2>Detailed reports by database</h2>
+<h3 class='boxed'><a name="anopheles_gambiae_core_38_3a">anopheles_gambiae_core_38_3a</a></h3>
+<p>
+<a name="anopheles_gambiae_core_38_3a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="anopheles_gambiae_core_38_3a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="anopheles_gambiae_core_38_3a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="anopheles_gambiae_core_38_3a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="anopheles_gambiae_core_38_3a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="anopheles_gambiae_core_38_3a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="anopheles_gambiae_core_38_3a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="anopheles_gambiae_core_38_3a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="anopheles_gambiae_core_38_3a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="anopheles_gambiae_core_38_3a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="anopheles_gambiae_core_38_3a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="anopheles_gambiae_core_38_3a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="anopheles_gambiae_core_38_3a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="anopheles_gambiae_core_38_3a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="anopheles_gambiae_core_38_3a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="anopheles_gambiae_core_38_3a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="anopheles_gambiae_core_38_3a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="anopheles_gambiae_core_38_3a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="anopheles_gambiae_core_38_3a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="anopheles_gambiae_core_38_3a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="anopheles_gambiae_core_38_3a:CoreForeignKeys"></a> <font color='red'><strong>CoreForeignKeys: </strong>xref <-> external_db has 12939 unlinked entries</font><br>
+</p><p>
+<a name="anopheles_gambiae_core_38_3a:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>gene_attrib has zero rows</font><br>
+<a name="anopheles_gambiae_core_38_3a:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>go_xref has zero rows</font><br>
+<a name="anopheles_gambiae_core_38_3a:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>regulatory_search_region has zero rows</font><br>
+<a name="anopheles_gambiae_core_38_3a:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>simple_feature has zero rows</font><br>
+<a name="anopheles_gambiae_core_38_3a:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>unmapped_object has zero rows</font><br>
+<a name="anopheles_gambiae_core_38_3a:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>unmapped_reason has zero rows</font><br>
+</p><p>
+<a name="anopheles_gambiae_core_38_3a:FeatureAnalysis"></a> <font color='red'><strong>FeatureAnalysis: </strong>Analysis with ID 1 is used in transcript as well as gene</font><br>
+<a name="anopheles_gambiae_core_38_3a:FeatureAnalysis"></a> <font color='red'><strong>FeatureAnalysis: </strong>Analysis with ID 116 is used in transcript as well as gene</font><br>
+<a name="anopheles_gambiae_core_38_3a:FeatureAnalysis"></a> <font color='red'><strong>FeatureAnalysis: </strong>Analysis with ID 117 is used in transcript as well as gene</font><br>
+<a name="anopheles_gambiae_core_38_3a:FeatureAnalysis"></a> <font color='red'><strong>FeatureAnalysis: </strong>Analysis with ID 27, logic name est_gene is not used in any feature table</font><br>
+<a name="anopheles_gambiae_core_38_3a:FeatureAnalysis"></a> <font color='red'><strong>FeatureAnalysis: </strong>Analysis with ID 125, logic name anopheles_cdna_est_all is not used in any feature table</font><br>
+<a name="anopheles_gambiae_core_38_3a:FeatureAnalysis"></a> <font color='red'><strong>FeatureAnalysis: </strong>Analysis with ID 5000, logic name CollapseAffyProbes is not used in any feature table</font><br>
+</p><p>
+<a name="anopheles_gambiae_core_38_3a:GOXrefs"></a> <font color='red'><strong>GOXrefs: </strong>No GO xrefs found.</font><br>
+</p><p>
+<a name="anopheles_gambiae_core_38_3a:GeneType"></a> <font color='red'><strong>GeneType: </strong>miRNA (miRNA) is not a valid analysis logic name.</font><br>
+<a name="anopheles_gambiae_core_38_3a:GeneType"></a> <font color='red'><strong>GeneType: </strong>tRNA (tRNA) is not a valid analysis logic name.</font><br>
+</p><p>
+<a name="anopheles_gambiae_core_38_3a:LogicNamesDisplayable"></a> <font color='red'><strong>LogicNamesDisplayable: </strong>Feature table gene has features with logic name miRNA which will not be drawn</font><br>
+<a name="anopheles_gambiae_core_38_3a:LogicNamesDisplayable"></a> <font color='red'><strong>LogicNamesDisplayable: </strong>Feature table protein_feature has features with logic name Tigrfam which will not be drawn</font><br>
+<a name="anopheles_gambiae_core_38_3a:LogicNamesDisplayable"></a> <font color='red'><strong>LogicNamesDisplayable: </strong>Feature table protein_feature has features with logic name Smart which will not be drawn</font><br>
+<a name="anopheles_gambiae_core_38_3a:LogicNamesDisplayable"></a> <font color='red'><strong>LogicNamesDisplayable: </strong>Feature table protein_feature has features with logic name PIRSF which will not be drawn</font><br>
+<a name="anopheles_gambiae_core_38_3a:LogicNamesDisplayable"></a> <font color='red'><strong>LogicNamesDisplayable: </strong>Feature table transcript has features with logic name miRNA which will not be drawn</font><br>
+<a name="anopheles_gambiae_core_38_3a:LogicNamesDisplayable"></a> <font color='red'><strong>LogicNamesDisplayable: </strong>protein_feature analysis with analysis_id = 109 has unknown gff_source = 'TIGRFAM'</font><br>
+<a name="anopheles_gambiae_core_38_3a:LogicNamesDisplayable"></a> <font color='red'><strong>LogicNamesDisplayable: </strong>protein_feature analysis with analysis_id = 111 has unknown gff_source = 'SMART'</font><br>
+<a name="anopheles_gambiae_core_38_3a:LogicNamesDisplayable"></a> <font color='red'><strong>LogicNamesDisplayable: </strong>protein_feature analysis with analysis_id = 112 has unknown gff_source = 'PIRSF'</font><br>
+</p><p>
+<a name="anopheles_gambiae_core_38_3a:MappingSession"></a> <font color='red'><strong>MappingSession: </strong>Old/new names anopheles_gambiae_core_35_2g anopheles_gambiae_core_19_2b do not chain properly</font><br>
+</p><p>
+<a name="anopheles_gambiae_core_38_3a:OligoProbes2Genome"></a> <font color='red'><strong>OligoProbes2Genome: </strong>OligoArray (oligo_array.name) AFFY_Plasmodium_Anopheles has no corresponding entry in external_db</font><br>
+</p><p>
+<a name="anopheles_gambiae_core_38_3a:OligoXrefs"></a> <font color='red'><strong>OligoXrefs: </strong>Database has more than 50 seq_regions in 'chromosome' coordinate system (actually 173) - test skipped</font><br>
+</p><p>
+<a name="anopheles_gambiae_core_38_3a:ProteinFeatureTranslation"></a> <font color='red'><strong>ProteinFeatureTranslation: </strong>protein_feature table has 341 features that are longer than the translation</font><br>
+</p><p>
+<a name="anopheles_gambiae_core_38_3a:ProteinFeatures"></a> <font color='red'><strong>ProteinFeatures: </strong>59 protein features have seq_start < 0</font><br>
+<a name="anopheles_gambiae_core_38_3a:ProteinFeatures"></a> <font color='red'><strong>ProteinFeatures: </strong>6 protein features have hit_start < 0</font><br>
+</p>
+<h3 class='boxed'><a name="anopheles_gambiae_otherfeatures_38_3a">anopheles_gambiae_otherfeatures_38_3a</a></h3>
+<p>
+<a name="anopheles_gambiae_otherfeatures_38_3a:GeneStatus"></a> <font color='red'><strong>GeneStatus: </strong>No genes have status KNOWN</font><br>
+</p><p>
+<a name="anopheles_gambiae_otherfeatures_38_3a:GeneType"></a> <font color='red'><strong>GeneType: </strong>protein_coding is not a valid gene type name for estgene.</font><br>
+</p>
+<h3 class='boxed'><a name="master_schema_38">master_schema_38</a></h3>
+<p>
+<a name="master_schema_38:CompareSchema"></a> <font color='red'><strong>CompareSchema: </strong>master_schema_38 and anopheles_gambiae_core_38_3a oligo_feature differ at row 8 column 2 (Type) Values: int(10) unsigned, int(11)</font><br>
+<a name="master_schema_38:CompareSchema"></a> <font color='red'><strong>CompareSchema: </strong>master_schema_38 and anopheles_gambiae_otherfeatures_38_3a oligo_feature differ at row 8 column 2 (Type) Values: int(10) unsigned, int(11)</font><br>
+</p>
+<hr>
+<h2>Detailed reports by test case</h2>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.CompareSchema">org.ensembl.healthcheck.testcase.generic.CompareSchema</a></h3>
+<p>
+<a name="CompareSchema:master_schema_38"></a> <font color='red'><strong>master_schema_38: </strong>master_schema_38 and anopheles_gambiae_core_38_3a oligo_feature differ at row 8 column 2 (Type) Values: int(10) unsigned, int(11)</font><br>
+<a name="CompareSchema:master_schema_38"></a> <font color='red'><strong>master_schema_38: </strong>master_schema_38 and anopheles_gambiae_otherfeatures_38_3a oligo_feature differ at row 8 column 2 (Type) Values: int(10) unsigned, int(11)</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.CoreForeignKeys">org.ensembl.healthcheck.testcase.generic.CoreForeignKeys</a></h3>
+<p>
+<a name="CoreForeignKeys:anopheles_gambiae_core_38_3a"></a> <font color='grey'><strong>anopheles_gambiae_core_38_3a: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="CoreForeignKeys:anopheles_gambiae_core_38_3a"></a> <font color='grey'><strong>anopheles_gambiae_core_38_3a: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="CoreForeignKeys:anopheles_gambiae_core_38_3a"></a> <font color='grey'><strong>anopheles_gambiae_core_38_3a: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="CoreForeignKeys:anopheles_gambiae_core_38_3a"></a> <font color='grey'><strong>anopheles_gambiae_core_38_3a: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="CoreForeignKeys:anopheles_gambiae_core_38_3a"></a> <font color='grey'><strong>anopheles_gambiae_core_38_3a: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="CoreForeignKeys:anopheles_gambiae_core_38_3a"></a> <font color='grey'><strong>anopheles_gambiae_core_38_3a: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="CoreForeignKeys:anopheles_gambiae_core_38_3a"></a> <font color='grey'><strong>anopheles_gambiae_core_38_3a: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="CoreForeignKeys:anopheles_gambiae_core_38_3a"></a> <font color='grey'><strong>anopheles_gambiae_core_38_3a: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="CoreForeignKeys:anopheles_gambiae_core_38_3a"></a> <font color='grey'><strong>anopheles_gambiae_core_38_3a: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="CoreForeignKeys:anopheles_gambiae_core_38_3a"></a> <font color='grey'><strong>anopheles_gambiae_core_38_3a: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="CoreForeignKeys:anopheles_gambiae_core_38_3a"></a> <font color='grey'><strong>anopheles_gambiae_core_38_3a: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="CoreForeignKeys:anopheles_gambiae_core_38_3a"></a> <font color='grey'><strong>anopheles_gambiae_core_38_3a: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="CoreForeignKeys:anopheles_gambiae_core_38_3a"></a> <font color='grey'><strong>anopheles_gambiae_core_38_3a: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="CoreForeignKeys:anopheles_gambiae_core_38_3a"></a> <font color='grey'><strong>anopheles_gambiae_core_38_3a: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="CoreForeignKeys:anopheles_gambiae_core_38_3a"></a> <font color='grey'><strong>anopheles_gambiae_core_38_3a: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="CoreForeignKeys:anopheles_gambiae_core_38_3a"></a> <font color='grey'><strong>anopheles_gambiae_core_38_3a: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="CoreForeignKeys:anopheles_gambiae_core_38_3a"></a> <font color='grey'><strong>anopheles_gambiae_core_38_3a: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="CoreForeignKeys:anopheles_gambiae_core_38_3a"></a> <font color='grey'><strong>anopheles_gambiae_core_38_3a: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="CoreForeignKeys:anopheles_gambiae_core_38_3a"></a> <font color='grey'><strong>anopheles_gambiae_core_38_3a: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="CoreForeignKeys:anopheles_gambiae_core_38_3a"></a> <font color='grey'><strong>anopheles_gambiae_core_38_3a: </strong>xref.external_db_id 3124 is not linked.</font><br>
+<a name="CoreForeignKeys:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>xref <-> external_db has 12939 unlinked entries</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.EmptyTables">org.ensembl.healthcheck.testcase.generic.EmptyTables</a></h3>
+<p>
+<a name="EmptyTables:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>gene_attrib has zero rows</font><br>
+<a name="EmptyTables:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>go_xref has zero rows</font><br>
+<a name="EmptyTables:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>regulatory_search_region has zero rows</font><br>
+<a name="EmptyTables:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>simple_feature has zero rows</font><br>
+<a name="EmptyTables:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>unmapped_object has zero rows</font><br>
+<a name="EmptyTables:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>unmapped_reason has zero rows</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.FeatureAnalysis">org.ensembl.healthcheck.testcase.generic.FeatureAnalysis</a></h3>
+<p>
+<a name="FeatureAnalysis:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>Analysis with ID 1 is used in transcript as well as gene</font><br>
+<a name="FeatureAnalysis:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>Analysis with ID 116 is used in transcript as well as gene</font><br>
+<a name="FeatureAnalysis:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>Analysis with ID 117 is used in transcript as well as gene</font><br>
+<a name="FeatureAnalysis:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>Analysis with ID 27, logic name est_gene is not used in any feature table</font><br>
+<a name="FeatureAnalysis:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>Analysis with ID 125, logic name anopheles_cdna_est_all is not used in any feature table</font><br>
+<a name="FeatureAnalysis:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>Analysis with ID 5000, logic name CollapseAffyProbes is not used in any feature table</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.GOXrefs">org.ensembl.healthcheck.testcase.generic.GOXrefs</a></h3>
+<p>
+<a name="GOXrefs:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>No GO xrefs found.</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.GeneStatus">org.ensembl.healthcheck.testcase.generic.GeneStatus</a></h3>
+<p>
+<a name="GeneStatus:anopheles_gambiae_otherfeatures_38_3a"></a> <font color='red'><strong>anopheles_gambiae_otherfeatures_38_3a: </strong>No genes have status KNOWN</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.GeneType">org.ensembl.healthcheck.testcase.generic.GeneType</a></h3>
+<p>
+<a name="GeneType:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>miRNA (miRNA) is not a valid analysis logic name.</font><br>
+<a name="GeneType:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>tRNA (tRNA) is not a valid analysis logic name.</font><br>
+</p><p>
+<a name="GeneType:anopheles_gambiae_otherfeatures_38_3a"></a> <font color='red'><strong>anopheles_gambiae_otherfeatures_38_3a: </strong>protein_coding is not a valid gene type name for estgene.</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable">org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable</a></h3>
+<p>
+<a name="LogicNamesDisplayable:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>Feature table gene has features with logic name miRNA which will not be drawn</font><br>
+<a name="LogicNamesDisplayable:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>Feature table protein_feature has features with logic name Tigrfam which will not be drawn</font><br>
+<a name="LogicNamesDisplayable:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>Feature table protein_feature has features with logic name Smart which will not be drawn</font><br>
+<a name="LogicNamesDisplayable:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>Feature table protein_feature has features with logic name PIRSF which will not be drawn</font><br>
+<a name="LogicNamesDisplayable:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>Feature table transcript has features with logic name miRNA which will not be drawn</font><br>
+<a name="LogicNamesDisplayable:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>protein_feature analysis with analysis_id = 109 has unknown gff_source = 'TIGRFAM'</font><br>
+<a name="LogicNamesDisplayable:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>protein_feature analysis with analysis_id = 111 has unknown gff_source = 'SMART'</font><br>
+<a name="LogicNamesDisplayable:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>protein_feature analysis with analysis_id = 112 has unknown gff_source = 'PIRSF'</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.MappingSession">org.ensembl.healthcheck.testcase.generic.MappingSession</a></h3>
+<p>
+<a name="MappingSession:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>Old/new names anopheles_gambiae_core_35_2g anopheles_gambiae_core_19_2b do not chain properly</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.OligoProbes2Genome">org.ensembl.healthcheck.testcase.generic.OligoProbes2Genome</a></h3>
+<p>
+<a name="OligoProbes2Genome:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>OligoArray (oligo_array.name) AFFY_Plasmodium_Anopheles has no corresponding entry in external_db</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.OligoXrefs">org.ensembl.healthcheck.testcase.generic.OligoXrefs</a></h3>
+<p>
+<a name="OligoXrefs:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>Database has more than 50 seq_regions in 'chromosome' coordinate system (actually 173) - test skipped</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation">org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation</a></h3>
+<p>
+<a name="ProteinFeatureTranslation:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>protein_feature table has 341 features that are longer than the translation</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.ProteinFeatures">org.ensembl.healthcheck.testcase.generic.ProteinFeatures</a></h3>
+<p>
+<a name="ProteinFeatures:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>59 protein features have seq_start < 0</font><br>
+<a name="ProteinFeatures:anopheles_gambiae_core_38_3a"></a> <font color='red'><strong>anopheles_gambiae_core_38_3a: </strong>6 protein features have hit_start < 0</font><br>
+</p>
+<hr>
+<p>Test run was started at Wed May 03 00:01:16 BST 2006 and finished at Wed May 03 00:05:44 BST 2006<br>
+ Run time 4 min 27s </p>
+<h4>Configuration used:</h4>
+<pre>
+Tests/groups run:   release<br>
+Database host:      ecs2:3364<br>
+Database names:     ^anopheles_gambiae_(core|otherfeatures|cdna|vega)_[0-9]+_.*<br>
+Output file:        web_anopheles_gambiae.html<br>
+Output level:       info<br>
+</pre>
+</div>
+</body>
+</html>
+<hr>
