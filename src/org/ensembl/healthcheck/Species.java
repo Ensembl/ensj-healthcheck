@@ -95,6 +95,9 @@ public final class Species {
 
 	/** Specific type of species */
 	public static final Species DASYPUS_NOVEMCINCTUS = new Species("dasypus_novemcinctus");
+	
+	/** Specific type of species */
+	public static final Species ORYZIAS_LATIPES = new Species("oryzias_latipes");
 
 	/** Specific type of species */
 	public static final Species SUS_SCROFA = new Species("sus_scrofa");
@@ -164,6 +167,7 @@ public final class Species {
 		taxonIDToSpecies.put("9544", MACACA_MULATTA);
 		taxonIDToSpecies.put("9785", LOXODONTA_AFRICANA);
 		taxonIDToSpecies.put("9361", DASYPUS_NOVEMCINCTUS);
+		taxonIDToSpecies.put("8090", ORYZIAS_LATIPES);		
 		taxonIDToSpecies.put("9371", ECHINOPS_TELFAIRI);
 		taxonIDToSpecies.put("9986", ORYCTOLAGUS_CUNICULUS);
 		taxonIDToSpecies.put("9823", SUS_SCROFA);
@@ -198,6 +202,7 @@ public final class Species {
 		assemblyPrefixToSpecies.put("MM", MACACA_MULATTA);
 		assemblyPrefixToSpecies.put("BROADE", LOXODONTA_AFRICANA);
 		assemblyPrefixToSpecies.put("ARMA", DASYPUS_NOVEMCINCTUS);
+		assemblyPrefixToSpecies.put("MEDAKA", ORYZIAS_LATIPES);		
 		assemblyPrefixToSpecies.put("TENREC", ECHINOPS_TELFAIRI);
 		assemblyPrefixToSpecies.put("RABBIT", ORYCTOLAGUS_CUNICULUS);
 		assemblyPrefixToSpecies.put("PIG", SUS_SCROFA);
@@ -400,7 +405,15 @@ public final class Species {
 			return DASYPUS_NOVEMCINCTUS;
 			
 		}
+		
+		// --------------------------------------
 
+		if (in(alias, "medaka,oryzias_latipes,oryzias,japanese_medaka,japanese_rice_fish,japanese_ricefish,japanese_killifish")) {
+
+			return ORYZIAS_LATIPES;
+			
+		}
+		
 		// --------------------------------------
 
 		if (in(alias, "tenrec,echinops_telfairi,echinops,small_madagascar_hedgehog,lesser_hedgehog_tenrec")) {
