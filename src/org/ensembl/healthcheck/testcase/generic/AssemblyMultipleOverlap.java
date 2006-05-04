@@ -79,14 +79,9 @@ public class AssemblyMultipleOverlap extends SingleDatabaseTestCase {
 			
 			while (rs.next()) {
 
-				String cmp_sr_name = rs.getString("cmp_sr_name");
-				String cmp_cs = rs.getString("cmp_cs");
-				String asm_sr_name = rs.getString("asm_sr_name");
-				String asm_cs = rs.getString("asm_cs");
 				long asm_seq_region_id = rs.getLong("asm_seq_region_id");
 				long cmp_seq_region_id = rs.getLong("cmp_seq_region_id");
-				int count = rs.getInt("count");
-
+	
 				// get start, end for each component
 				cmpStmt.setLong(1, asm_seq_region_id);
 				cmpStmt.setLong(2, cmp_seq_region_id);
@@ -120,6 +115,7 @@ public class AssemblyMultipleOverlap extends SingleDatabaseTestCase {
 
 							if (starts[j] < ends[i]) {
 								overlapCount++;
+								//System.out.println("Overlap: " + starts[i] + " " + starts[j] + " " + ends[i] + " " + ends[j]);
 							}
 						}
 
