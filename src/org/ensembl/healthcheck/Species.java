@@ -108,6 +108,9 @@ public final class Species {
 	/** Specific type of species */
 	public static final Species ORYCTOLAGUS_CUNICULUS = new Species("oryctolagus_cuniculus");
 
+	/** Specific type of species */
+	public static final Species GASTEROSTEUS_ACULEATUS = new Species("gasterosteus_aculeatus");
+
 	/** Non-ensembl database */
 	public static final Species SYSTEM = new Species("system");
 
@@ -171,6 +174,7 @@ public final class Species {
 		taxonIDToSpecies.put("9371", ECHINOPS_TELFAIRI);
 		taxonIDToSpecies.put("9986", ORYCTOLAGUS_CUNICULUS);
 		taxonIDToSpecies.put("9823", SUS_SCROFA);
+		taxonIDToSpecies.put("69293", GASTEROSTEUS_ACULEATUS);
 
 		// and the other way around
 		Iterator it = taxonIDToSpecies.keySet().iterator();
@@ -206,7 +210,8 @@ public final class Species {
 		assemblyPrefixToSpecies.put("TENREC", ECHINOPS_TELFAIRI);
 		assemblyPrefixToSpecies.put("RABBIT", ORYCTOLAGUS_CUNICULUS);
 		assemblyPrefixToSpecies.put("PIG", SUS_SCROFA);
-
+	        assemblyPrefixToSpecies.put("STICKLEBACK", GASTEROSTEUS_ACULEATUS);
+		
 		// and the other way around
 		it = assemblyPrefixToSpecies.keySet().iterator();
 		while (it.hasNext()) {
@@ -440,6 +445,13 @@ public final class Species {
 
 		// --------------------------------------
 
+		if (in(alias, "stickleback,gas_aculeatus")) {
+
+			return GASTEROSTEUS_ACULEATUS;
+			
+		}
+
+		// --------------------------------------
 		// default
 		// logger.warning("Cannot resolve species alias " + alias + " to a
 		// species - returning Species.UNKNOWN");
