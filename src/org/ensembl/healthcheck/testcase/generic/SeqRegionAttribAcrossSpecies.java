@@ -21,7 +21,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 /**
- * Check that the assembly table is the same in all necessary databases.
+ * Check that the seq_region_attrib table is the same in all necessary databases.
  */
 public class SeqRegionAttribAcrossSpecies extends MultiDatabaseTestCase {
 
