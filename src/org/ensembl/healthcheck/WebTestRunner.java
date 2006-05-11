@@ -665,7 +665,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
 	private String passFont() {
 
-		return "<font color='green'>";
+		return "<font color='green' size=-1>";
 
 	}
 
@@ -673,7 +673,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
 	private String failFont() {
 
-		return "<font color='red'>";
+		return "<font color='red' size=-1>";
 
 	}
 	// ---------------------------------------------------------------------
