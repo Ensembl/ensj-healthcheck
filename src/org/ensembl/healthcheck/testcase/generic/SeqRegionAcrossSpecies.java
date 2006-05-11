@@ -21,19 +21,19 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 /**
- * Check that the seq_region_attrib table is the same in all necessary databases.
+ * Check that the seq region table is the same in all necessary databases.
  */
-public class SeqRegionAttribAcrossSpecies extends MultiDatabaseTestCase {
+public class SeqRegionAcrossSpecies extends MultiDatabaseTestCase {
 
-    private DatabaseType[] types = {DatabaseType.CORE, DatabaseType.VEGA, DatabaseType.OTHERFEATURES};
+    private DatabaseType[] types = {DatabaseType.CORE, DatabaseType.CDNA, DatabaseType.VEGA, DatabaseType.OTHERFEATURES};
 
     /**
-     * Creates a new instance of SeqRegionAttribAcrossSpecies
+     * Creates a new instance of SeqRegionAcrossSpecies
      */
-    public SeqRegionAttribAcrossSpecies() {
+    public SeqRegionAcrossSpecies() {
 
         addToGroup("release");
-        setDescription("Check that the seq_region_attrib table is the same across all generic DBs");
+        setDescription("Check that the seq_region table is the same across all generic DBs");
 
     }
 
@@ -46,7 +46,7 @@ public class SeqRegionAttribAcrossSpecies extends MultiDatabaseTestCase {
      */
     public boolean run(DatabaseRegistry dbr) {
 
-        return checkTableAcrossSpecies("seq_region_attrib", dbr, types, "seq_region_attrib tables all the same", "seq_region_attribs are different");
+        return checkTableAcrossSpecies("seq_region", dbr, types, "All seq_region tables are the same", "seq_region tables are different");
 
     } // run
 

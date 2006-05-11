@@ -25,7 +25,7 @@ import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
  */
 public class AttribTypeAcrossSpecies extends MultiDatabaseTestCase {
 
-    private DatabaseType[] types = {DatabaseType.CORE, DatabaseType.EST, DatabaseType.ESTGENE, DatabaseType.VEGA};
+    private DatabaseType[] types = {DatabaseType.CORE, DatabaseType.OTHERFEATURES, DatabaseType.VEGA};
 
     /**
      * Creates a new instance of AttribTypeTablesAcrossSpecies
@@ -47,7 +47,7 @@ public class AttribTypeAcrossSpecies extends MultiDatabaseTestCase {
      */
     public boolean run(DatabaseRegistry dbr) {
 
-        return checkTableAcrossSpecies("attrib_type", dbr, types);
+        return checkTableAcrossSpecies("attrib_type", dbr, types, "attrib_type tables all the same", "attrib_type tables are different");
 
     } // run
 
