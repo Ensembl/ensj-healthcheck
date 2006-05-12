@@ -633,7 +633,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
 		while (it.hasNext()) {
 			String database = (String) it.next();
 			if (database.length() > 27) {
-				database = "<font size=-1>" + database + "</font>";
+				database = "<font size=-2>" + database + "</font>";
 			}
 			String link = "<a href=\"#" + database + "\">";
 			print(pw, "<li>" + link + database + "</a></li>");
@@ -650,7 +650,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
 			String test = (String) it.next();
 			String name = test.substring(test.lastIndexOf('.') + 1);
 			if (name.length() > 27) {
-				name = "<font size=-1>" + name + "</font>";
+				name = "<font size=-2>" + name + "</font>";
 			}
 			String link = "<a href=\"#" + test + "\">";
 			print(pw, "<li>" + link + name + "</a></li>");
