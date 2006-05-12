@@ -34,7 +34,9 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("id_mapping");
 		setDescription("Check for broken foreign-key relationships.");
+
 	}
 
 	/**
