@@ -15,7 +15,6 @@ rm -f timings.txt
 # comment/uncomment the ones to run
 
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_anopheles_gambiae.properties
-$java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_apis_mellifera.properties
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_bos_taurus.properties
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_caenorhabditis_elegans.properties
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_canis_familiaris.properties
