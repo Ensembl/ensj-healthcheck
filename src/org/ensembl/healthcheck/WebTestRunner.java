@@ -632,10 +632,8 @@ public class WebTestRunner extends TestRunner implements Reporter {
 		Iterator it = databases.iterator();
 		while (it.hasNext()) {
 			String database = (String) it.next();
-			if (database.length() > 27) {
-				database = "<font size=-2>" + database + "</font>";
-			}
-			String link = "<a href=\"#" + database + "\">";
+			
+			String link = "<a href=\"#" + truncateDatabaseName(database) + "\">";
 			print(pw, "<li>" + link + database + "</a></li>");
 		}
 		print(pw, "</ul>");
@@ -649,10 +647,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
 		while (it.hasNext()) {
 			String test = (String) it.next();
 			String name = test.substring(test.lastIndexOf('.') + 1);
-			if (name.length() > 27) {
-				name = "<font size=-2>" + name + "</font>";
-			}
-			String link = "<a href=\"#" + test + "\">";
+			String link = "<a href=\"#" + truncateTestName(test) + "\">";
 			print(pw, "<li>" + link + name + "</a></li>");
 		}
 		print(pw, "</ul>");
@@ -676,6 +671,35 @@ public class WebTestRunner extends TestRunner implements Reporter {
 		return "<font color='red' size=-1>";
 
 	}
-	// ---------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+private String truncateDatabaseName(String db) {
+
+	if (db.length() <= 27) {
+		return db;
+	}
+	
+	// change genus to single letter
+	int underscoreIndex = db.indexOf("_");
+	String genusLetter = db.substring(0, 1);
+	
+	return genusLetter + "_" + db.substring(underscoreIndex+1);
+	
+}
+
+//---------------------------------------------------------------------
+
+private String truncateTestName(String test) {
+	
+	if (test.length() <= 27) {
+		return test;
+	}
+	
+	return test.substring(0, 28);
+	
+}
+
+//---------------------------------------------------------------------
+
 
 } // WebTestRunner
