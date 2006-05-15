@@ -111,7 +111,7 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
           ResultSet rs = stmt.executeQuery(sql);
           while (rs.next()) {
             ReportManager.problem(this, comparaCon, "There is at least one non-default assembly for "
-              + rs.getString(1) + " (this should happen not in the release DB)");
+              + rs.getString(1) + " (this should not happen in the release DB)");
           }
           rs.close();
           stmt.close();
@@ -153,7 +153,13 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
           Statement stmt = comparaCon.createStatement();
           ResultSet rs = stmt.executeQuery(sql);
           while (rs.next()) {
-            comparaSpecies.add(Species.resolveAlias(rs.getString(1).toLowerCase().replace(' ', '_')));
+            Species species = Species.resolveAlias(rs.getString(1).toLowerCase().replace(' ', '_'));
+            if (species.toString() == "unknown") {
+              ReportManager.problem(this, comparaCon, "No species defined for " + rs.getString(1) +
+                  " in org.ensembl.healthcheck.Species");
+            } else {
+              comparaSpecies.add(species);
+            }
           }
           rs.close();
           stmt.close();
@@ -188,7 +194,7 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
                 " WHERE meta_key = \"genebuild.version\"";
             result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
           } else {
-            ReportManager.problem(this, comparaCon, "No connection for " + comparaSpecies.get(i));
+            ReportManager.problem(this, comparaCon, "No connection for " + name);
             allSpeciesFound = false;
           }
         }
