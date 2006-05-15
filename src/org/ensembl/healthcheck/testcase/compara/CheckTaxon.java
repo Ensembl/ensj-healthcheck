@@ -125,43 +125,63 @@ public class CheckTaxon extends MultiDatabaseTestCase {
             String taxon_id = getRowColumnValue(speciesCon,
                 "SELECT meta_value FROM meta WHERE meta_key = \"species.taxonomy_id\"");
             
-            /* Check genus */
-            sql1 = "SELECT \"genus\", genus " +
-                " FROM taxon where taxon_id = " + taxon_id;
-            sql2 = "SELECT \"genus\", meta_value FROM meta" +
-                " WHERE meta_key = \"species.classification\" ORDER BY meta_id LIMIT 1, 1";
-            result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
-            
-            /* Check species */
-            sql1 = "SELECT \"species\", species " +
-                " FROM taxon where taxon_id = " + taxon_id;
-            sql2 = "SELECT \"species\", meta_value FROM meta" +
-                " WHERE meta_key = \"species.classification\" ORDER BY meta_id LIMIT 0, 1";
+            /* Check name */
+            sql1 = "SELECT \"name\", name " +
+                " FROM ncbi_taxa_names WHERE name_class = \"scientific name\" AND taxon_id = " + taxon_id;
+            sql2 = "SELECT \"name\", GROUP_CONCAT(meta_value ORDER BY meta_id DESC SEPARATOR \" \") " +
+                " FROM (SELECT meta_id, meta_key, meta_value FROM meta " +
+                " WHERE meta_key = \"species.classification\" ORDER BY meta_id LIMIT 2) AS name " +
+                " GROUP BY meta_key";
             result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
             
             /* Check common_name */
-            sql1 = "SELECT \"common_name\", common_name " +
-                " FROM taxon where taxon_id = " + taxon_id;
+            sql1 = "SELECT \"common_name\", name " +
+                " FROM ncbi_taxa_names WHERE name_class = \"genbank common name\" AND taxon_id = " + taxon_id;
             sql2 = "SELECT \"common_name\", meta_value FROM meta" +
                 " WHERE meta_key = \"species.common_name\"";
             result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
             
             /* Check classification */
-            //int depth = getRowCount((Connection) speciesCons.get(name),
-            //    "SELECT count(*) FROM meta WHERE meta_key = \"species.classification\"");
-            sql1 = "SELECT \"classification\", classification " +
-                " FROM taxon where taxon_id = " + taxon_id;
-            /* It will be much better to run this using GROUP_CONCAT() but our MySQL server does not support it yet */
-            sql2 = "SELECT \"classification\", \"";
-            String[] values = getColumnValues(speciesCon,
-                    "SELECT meta_value FROM meta WHERE meta_key = \"species.classification\"" +
-                    " ORDER BY meta_id");
-            sql2 += values[0];
-            for (int a = 1; a < values.length; a++) {
-              sql2 += " " + values[a];
+            /* This check is quite complex as the axonomy is stored in very different ways in compara
+               and core DBs. In compara, the tree structure is stored in the ncbi_taxa_nodes table
+               while the names are in the ncbi_taxa_names table. In the core DB, the taxonomy is
+               stored in the meta table as values of the key "species.classification" and they
+               should be sorted by meta_id. In the core DB, only the abbreviated lineage is
+               described which means that we have to ignore ncbi_taxa_nodes with the
+               genbank_hidden_flag set. On top of that, we want to compare the classification
+               in one single SQL. Therefore, we are getting the results recursivelly and
+               then execute a dumb SQL query with result itself */
+            String comparaClassification = new String("");
+            String values1[] = getRowValues(comparaCon,
+                "SELECT rank, parent_id, genbank_hidden_flag FROM ncbi_taxa_nodes WHERE taxon_id = " + taxon_id);
+            if (values1.length == 0) {
+              /* if no rows are fetched, this taxon is missing from compara DB */
+              ReportManager.problem(this, comparaCon, "No taxon for " + species.toString());
+            } else {
+              String this_taxon_id = values1[1];
+              while (!this_taxon_id.equals("0")) {
+                values1 = getRowValues(comparaCon,
+                    "SELECT rank, parent_id, genbank_hidden_flag FROM ncbi_taxa_nodes WHERE taxon_id = " + this_taxon_id);
+                if (values1[2].equals("0") && !values1[1].equals("0")) {
+                  comparaClassification += " " + getRowColumnValue(comparaCon,
+                      "SELECT name FROM ncbi_taxa_names " +
+                      "WHERE name_class = \"scientific name\" AND taxon_id = " + this_taxon_id);
+                }
+                this_taxon_id = values1[1];
+              }
+              sql1 = "SELECT \"classification\", \"" + comparaClassification + "\"";
+              /* It will be much better to run this using GROUP_CONCAT() but our MySQL server does not support it yet */
+              sql2 = "SELECT \"classification\", \"";
+              String[] values2 = getColumnValues(speciesCon,
+                  "SELECT meta_value FROM meta WHERE meta_key = \"species.classification\"" +
+                  " ORDER BY meta_id");
+              /* Skip first value as it is part of the species name and not the lineage */
+              for (int a = 1; a < values2.length; a++) {
+                sql2 += " " + values2[a];
+              }
+              sql2 += "\"";
+              result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
             }
-            sql2 += "\"";
-            result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
           } else {
             ReportManager.problem(this, comparaCon, "No connection for " + species.toString());
             allSpeciesFound = false;
