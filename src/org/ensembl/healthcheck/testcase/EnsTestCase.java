@@ -437,6 +437,35 @@ public abstract class EnsTestCase {
 
 	// -------------------------------------------------------------------------
 	/**
+   * Execute a SQL statement and return the value of the columns of one row. Only the FIRST row matched is returned.
+   * 
+   * @param con The Connection to use.
+   * @param sql The SQL to check; can return several values.
+   * @return The value(s) returned by the SQL in an array of Strings.
+   */
+	public String[] getRowValues(Connection con, String sql) {
+
+		ArrayList list = new ArrayList();
+
+		try {
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			if (rs != null && rs.first()) {
+				for (int i=1; i<=rs.getMetaData().getColumnCount(); i++) {
+					list.add(rs.getString(i));
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return (String[]) list.toArray(new String[list.size()]);
+
+	} // getRowValues
+
+	// -------------------------------------------------------------------------
+	/**
    * Execute a SQL statement and return the values of one column of the result.
    * 
    * @param con The Connection to use.
