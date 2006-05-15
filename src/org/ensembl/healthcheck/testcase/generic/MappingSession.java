@@ -69,7 +69,7 @@ public class MappingSession extends SingleDatabaseTestCase {
 
         // there are several species where ID mapping is not done
         Species s = dbre.getSpecies();
-        if (s != Species.CAENORHABDITIS_ELEGANS && s != Species.DROSOPHILA_MELANOGASTER && s != Species.FUGU_RUBRIPES) {
+        if (s != Species.CAENORHABDITIS_ELEGANS && s != Species.DROSOPHILA_MELANOGASTER && s != Species.TAKIFUGU_RUBRIPES) {
 
             Connection con = dbre.getConnection();
 

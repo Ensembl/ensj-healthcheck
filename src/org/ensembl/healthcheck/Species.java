@@ -52,7 +52,7 @@ public final class Species {
 	public static final Species DROSOPHILA_MELANOGASTER = new Species("drosophila_melanogaster");
 
 	/** Specific type of species */
-	public static final Species FUGU_RUBRIPES = new Species("fugu_rubripes");
+	public static final Species TAKIFUGU_RUBRIPES = new Species("takifugu_rubripes");
 
 	/** Specific type of species */
 	public static final Species MUS_MUSCULUS = new Species("mus_musculus");
@@ -151,7 +151,7 @@ public final class Species {
 		taxonIDToSpecies.put("9606", HOMO_SAPIENS);
 		taxonIDToSpecies.put("10090", MUS_MUSCULUS);
 		taxonIDToSpecies.put("10116", RATTUS_NORVEGICUS);
-		taxonIDToSpecies.put("31033", FUGU_RUBRIPES);
+		taxonIDToSpecies.put("31033", TAKIFUGU_RUBRIPES);
 		taxonIDToSpecies.put("7165", ANOPHELES_GAMBIAE);
 		taxonIDToSpecies.put("7227", DROSOPHILA_MELANOGASTER);
 		taxonIDToSpecies.put("6239", CAENORHABDITIS_ELEGANS);
@@ -187,7 +187,7 @@ public final class Species {
 		assemblyPrefixToSpecies.put("RGSC", RATTUS_NORVEGICUS);
 		assemblyPrefixToSpecies.put("BDGP", DROSOPHILA_MELANOGASTER);
 		assemblyPrefixToSpecies.put("ZFISH", DANIO_RERIO);
-		assemblyPrefixToSpecies.put("FUGU", FUGU_RUBRIPES);
+		assemblyPrefixToSpecies.put("FUGU", TAKIFUGU_RUBRIPES);
 		assemblyPrefixToSpecies.put("AgamP", ANOPHELES_GAMBIAE);
 		assemblyPrefixToSpecies.put("CEL", CAENORHABDITIS_ELEGANS);
 		assemblyPrefixToSpecies.put("CBR", CAENORHABDITIS_BRIGGSAE);
@@ -275,9 +275,9 @@ public final class Species {
 		}
 
 		// --------------------------------------
-		if (in(alias, "pufferfish,fugu,frubripes,fugurubripes,fugu_rubripes")) {
+		if (in(alias, "pufferfish,fugu,frubripes,fugurubripes,fugu_rubripes,takifugu,trubripes,takifugurubripes,takifugu_rubripes")) {
 
-			return FUGU_RUBRIPES;
+			return TAKIFUGU_RUBRIPES;
 
 		}
 

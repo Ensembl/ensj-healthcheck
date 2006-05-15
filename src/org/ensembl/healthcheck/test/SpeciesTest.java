@@ -49,7 +49,7 @@ public class SpeciesTest extends TestCase {
         assertEquals("equals method not working", Species.HOMO_SAPIENS, Species.HOMO_SAPIENS);
         assertTrue("compare with == not working", Species.DANIO_RERIO == Species.DANIO_RERIO);
         assertTrue("species that are the not the same are coming out equal",
-                Species.FUGU_RUBRIPES != Species.CAENORHABDITIS_BRIGGSAE);
+                Species.TAKIFUGU_RUBRIPES != Species.CAENORHABDITIS_BRIGGSAE);
 
     }
 
