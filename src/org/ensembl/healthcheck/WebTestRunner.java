@@ -632,9 +632,9 @@ public class WebTestRunner extends TestRunner implements Reporter {
 		Iterator it = databases.iterator();
 		while (it.hasNext()) {
 			String database = (String) it.next();
-			
-			String link = "<a href=\"#" + truncateDatabaseName(database) + "\">";
-			print(pw, "<li>" + link + database + "</a></li>");
+
+			String link = "<a href=\"#" + database + "\">";
+			print(pw, "<li>" + link + truncateDatabaseName(database) + "</a></li>");
 		}
 		print(pw, "</ul>");
 
@@ -647,8 +647,8 @@ public class WebTestRunner extends TestRunner implements Reporter {
 		while (it.hasNext()) {
 			String test = (String) it.next();
 			String name = test.substring(test.lastIndexOf('.') + 1);
-			String link = "<a href=\"#" + truncateTestName(test) + "\">";
-			print(pw, "<li>" + link + name + "</a></li>");
+			String link = "<a href=\"#" + name + "\">";
+			print(pw, "<li>" + link + truncateTestName(name) + "</a></li>");
 		}
 		print(pw, "</ul>");
 
@@ -671,35 +671,31 @@ public class WebTestRunner extends TestRunner implements Reporter {
 		return "<font color='red' size=-1>";
 
 	}
-//---------------------------------------------------------------------
 
-private String truncateDatabaseName(String db) {
+	// ---------------------------------------------------------------------
 
-	if (db.length() <= 27) {
-		return db;
+	private String truncateDatabaseName(String db) {
+
+		if (db.length() <= 27) {
+			return db;
+		}
+
+		// change genus to single letter
+		int underscoreIndex = db.indexOf("_");
+		String genusLetter = db.substring(0, 1);
+
+		return genusLetter + "_" + db.substring(underscoreIndex + 1);
+
 	}
-	
-	// change genus to single letter
-	int underscoreIndex = db.indexOf("_");
-	String genusLetter = db.substring(0, 1);
-	
-	return genusLetter + "_" + db.substring(underscoreIndex+1);
-	
-}
 
-//---------------------------------------------------------------------
+	// ---------------------------------------------------------------------
 
-private String truncateTestName(String test) {
-	
-	if (test.length() <= 27) {
-		return test;
+	private String truncateTestName(String test) {
+
+		return (test.length() <= 27) ? test : test.substring(0, 28);
+
 	}
-	
-	return test.substring(0, 28);
-	
-}
 
-//---------------------------------------------------------------------
-
+	// ---------------------------------------------------------------------
 
 } // WebTestRunner
