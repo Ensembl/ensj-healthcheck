@@ -162,7 +162,7 @@ public class CheckTaxon extends MultiDatabaseTestCase {
               while (!this_taxon_id.equals("0")) {
                 values1 = getRowValues(comparaCon,
                     "SELECT rank, parent_id, genbank_hidden_flag FROM ncbi_taxa_nodes WHERE taxon_id = " + this_taxon_id);
-                if (values1[2].equals("0") && !values1[1].equals("0")) {
+                if (values1[2].equals("0") && !values1[1].equals("0") && !values1[0].equals("subgenus") && !values1[0].equals("subspecies")) {
                   comparaClassification += " " + getRowColumnValue(comparaCon,
                       "SELECT name FROM ncbi_taxa_names " +
                       "WHERE name_class = \"scientific name\" AND taxon_id = " + this_taxon_id);
