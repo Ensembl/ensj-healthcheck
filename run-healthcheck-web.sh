@@ -19,6 +19,7 @@ $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config we
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_caenorhabditis_elegans.properties
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_canis_familiaris.properties
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_ciona_intestinalis.properties
+$java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_ciona_savignyi.properties
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_danio_rerio.properties
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_drosophila_melanogaster.properties
 $java -server -classpath $cp org.ensembl.healthcheck.WebTestRunner $* -config web_fugu_rubripes.properties
