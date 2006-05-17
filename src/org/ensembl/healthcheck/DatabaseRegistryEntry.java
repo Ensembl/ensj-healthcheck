@@ -172,7 +172,7 @@ public class DatabaseRegistryEntry implements Comparable {
 		// other permutations?
 
 		if (result.equals(Species.UNKNOWN)) {
-			logger.info("Can't deduce species from database name " + name);
+			logger.warning("Can't deduce species from database name " + name);
 		}
 
 		return result;
