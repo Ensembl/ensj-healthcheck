@@ -240,7 +240,7 @@ public class DatabaseRegistryEntry implements Comparable {
 		// other permutations?
 
 		if (result.equals(DatabaseType.UNKNOWN)) {
-			logger.info("Can't deduce database type from database name " + name + "; use -type argument to specify it explicitly");
+			logger.warning("Can't deduce database type from database name " + name + "; use -type argument to specify it explicitly");
 		}
 
 		return result;
