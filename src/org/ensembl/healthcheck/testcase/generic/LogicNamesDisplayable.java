@@ -176,7 +176,8 @@ public class LogicNamesDisplayable extends SingleDatabaseTestCase {
             String gffSource = rs.getString(3).toUpperCase();
 
             if (gffSource.equals("PRINTS") || gffSource.equals("PFAM") || gffSource.equals("PROSITE")
-                    || gffSource.equals("PROFILE")) {
+                    || gffSource.equals("PROFILE") || gffSource.equals("TIGRFAM") || gffSource.equals("SMART") 
+                    || gffSource.equals("PROSITE_PATTERN") || gffSource.equals("PIRSF") ) { 
 
                 /* gff_feature must be domain */
                 if (!gffFeat.equals("DOMAIN")) {
