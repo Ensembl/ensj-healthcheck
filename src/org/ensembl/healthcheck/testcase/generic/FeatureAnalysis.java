@@ -112,9 +112,15 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
                 ResultSet rs = stmt.executeQuery("SELECT DISTINCT(analysis_id) FROM " + featureTable);
                 while (rs.next()) {
                     Integer analysisID = new Integer(rs.getInt("analysis_id"));
-                    if (analysesFromFeatureTables.containsKey(analysisID)) {
-                        ReportManager.problem(this, con, "Analysis with ID " + analysisID + " is used in " + featureTable + " as well as " + analysesFromFeatureTables.get(analysisID));
-                        result = false;
+                    if (analysesFromFeatureTables.containsKey(analysisID)) { 
+                   
+                        // don't complain if gene and transcript table contain the same analysiss-id 
+                        if ( featureTable.equals("transcript") && analysesFromFeatureTables.get(analysisID).equals("gene") ) { 
+                          result=true;
+                        } else { 
+                          ReportManager.problem(this, con, "Analysis with ID " + analysisID + " is used in " + featureTable + " as well as " + analysesFromFeatureTables.get(analysisID));
+                          result = false;
+                        }
                     } else {
                         analysesFromFeatureTables.put(analysisID, featureTable);
                     }
