@@ -1,3 +1,4 @@
+AlignAffy
 AlignAffyProbes
 BACends
 BLASTX_ENS_HUM
@@ -6,8 +7,6 @@ BLASTX_HUM_GENSCAN
 BLASTX_SPROT
 BLASTX_TREMBL
 CDM
-cisred
-cisred_search
 CYT
 CollapseAffy
 CollapseAffyProbes
@@ -35,6 +34,7 @@ GWS_S
 GeneFinder
 Genscan
 HOX
+PIRSF
 PRINTS
 PROFILE
 PROSITE
@@ -48,8 +48,10 @@ SGD
 Seg
 Signalp
 Slam
+Smart
 Snap
 TRF
+Tigrfam
 Tmhmm
 Unigene
 Uniprot
@@ -69,6 +71,8 @@ cbriggsae_mrna
 celegans_est
 celegans_mrna
 cisred
+cisred
+cisred_search
 cloneset
 drosophila-peptides
 enhancer
