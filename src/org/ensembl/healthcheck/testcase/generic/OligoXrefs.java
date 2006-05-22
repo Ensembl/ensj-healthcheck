@@ -68,7 +68,7 @@ public class OligoXrefs extends SingleDatabaseTestCase {
             String sql = "SELECT DISTINCT(sr.name) AS chromosome FROM seq_region sr, coord_system cs "
                     + "WHERE sr.coord_system_id=cs.coord_system_id AND cs.name='chromosome' AND sr.name NOT LIKE '%\\_%'";
 
-            String[] chrNames = getColumnValues(con, "SELECT s.name FROM seq_region s, coord_system c WHERE c.coord_system_id=s.coord_system_id AND c.name='chromosome'");
+            String[] chrNames = getColumnValues(con, "SELECT s.name FROM seq_region s, coord_system c WHERE c.coord_system_id=s.coord_system_id AND c.name='chromosome' and attrib='default_version '");
 
             if (chrNames.length > MAX_CHROMOSOMES) {
 
@@ -86,7 +86,7 @@ public class OligoXrefs extends SingleDatabaseTestCase {
                             + "AND x.xref_id=ox.xref_id AND ox.ensembl_id=tl.translation_id "
                             + "AND tl.transcript_id=ts.transcript_id AND ts.gene_id=g.gene_id "
                             + "AND g.seq_region_id=sr.seq_region_id AND sr.coord_system_id=cs.coord_system_id "
-                            + "AND cs.name=\'chromosome\' AND sr.name='" + chrNames[i] + "\' GROUP BY chromosome";
+                            + "AND cs.name=\'chromosome\' AND sr.name='" + chrNames[i] + "\'  and attrib='default_version ' GROUP BY chromosome";
 
                     int count = 0;
                     try {
