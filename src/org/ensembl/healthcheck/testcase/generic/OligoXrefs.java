@@ -20,6 +20,9 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
@@ -28,6 +31,9 @@ import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check Oligometrix xrefs: - that each chromosome has at least 1 Oligo xref
+ *
+ * Assumptions: oligo xrefs and transcripts are both in the default
+ * chromosome coordinate system. 
  */
 public class OligoXrefs extends SingleDatabaseTestCase {
 
@@ -48,77 +54,80 @@ public class OligoXrefs extends SingleDatabaseTestCase {
     }
 
     /**
-     * Run the test.
+     * Check all chromosomes have oligo xrefs.
      * 
+     * Get a list of chromosomes, then check the number of Oligo xrefs
+     * associated with each one.  Fail is any chromosome has 0 oligo xrefs.
+     *
      * @param dbre The database to use.
      * @return true if the test pased.
      *  
      */
-    public boolean run(DatabaseRegistryEntry dbre) {
+  public boolean run(DatabaseRegistryEntry dbre) {
 
-        boolean result = true;
+    boolean result = true;
+    Connection con = dbre.getConnection();
+    
+    try {
 
-        Connection con = dbre.getConnection();
+      // Check if there are any Oligo features - if so there should be Oligo Xrefs
+      if (getRowCount(con, "SELECT COUNT(*) FROM oligo_array") == 0) {
+        logger.info(DBUtils.getShortDatabaseName(con) + " has no Oligo features, not checking for Oligo xrefs");
+        return true;
+      }
 
-        // Check if there are any Oligo features - if so there should be Oligo Xrefs
-        if (getRowCount(con, "SELECT COUNT(*) FROM oligo_array") > 0) {
 
-            // Get a list of chromosomes, then check the number of Oligo xrefs associated with each one
-            // Note that this can't be done with a GROUP BY/HAVING clause as that would miss any chromosomes that had zero xrefs
-            String sql = "SELECT DISTINCT(sr.name) AS chromosome FROM seq_region sr, coord_system cs "
-                    + "WHERE sr.coord_system_id=cs.coord_system_id AND cs.name='chromosome' AND sr.name NOT LIKE '%\\_%'";
+      // find all chromosomes in default assembly coordinate system
+      Map srID2name = new HashMap();
+      ResultSet rs = con.createStatement().executeQuery("SELECT seq_region_id, s.name FROM seq_region s, coord_system c WHERE c.coord_system_id=s.coord_system_id AND c.name='chromosome' and attrib='default_version '");
+      while(rs.next()) 
+        srID2name.put(rs.getString(1),rs.getString(2));
+      rs.close();
+      if (srID2name.size() > MAX_CHROMOSOMES) {
+          ReportManager.problem(this, con, "Database has more than " + MAX_CHROMOSOMES + " seq_regions in 'chromosome' coordinate system (actually " + srID2name.size() + ") - test skipped");
+        return false;
+      }        
 
-            String[] chrNames = getColumnValues(con, "SELECT s.name FROM seq_region s, coord_system c WHERE c.coord_system_id=s.coord_system_id AND c.name='chromosome' and attrib='default_version '");
+        
+      // Count the number of oligo xrefs for each chr
+      Map srID2count = new HashMap();
+      // (Optimisation: faster to use "in list" of external_db_ids than SQL
+      // join.)
+      StringBuffer inList = new StringBuffer();
+      String[] exdbIDs = getColumnValues(con, "select external_db_id from external_db where db_name LIKE \'AFFY%\'");
+      for(int i=0; i<exdbIDs.length;i++) {
+        if (i>0)
+          inList.append(",");
+        inList.append(exdbIDs[i]);            
+      }
+      rs = con.createStatement().executeQuery("select seq_region_id, count(*) as count  from transcript t, object_xref ox, xref x where t.transcript_id=ox.ensembl_id and ensembl_object_type='Transcript' and ox.xref_id=x.xref_id and x.external_db_id in ("+inList+") GROUP BY seq_region_id");
+      while (rs.next()) 
+        srID2count.put(rs.getString("seq_region_id"), rs.getString("count")); 
+      rs.close();
 
-            if (chrNames.length > MAX_CHROMOSOMES) {
 
-                ReportManager.problem(this, con, "Database has more than " + MAX_CHROMOSOMES + " seq_regions in 'chromosome' coordinate system (actually " + chrNames.length + ") - test skipped");
-                result = false;
-                
-            } else {
-                for (int i = 0; i < chrNames.length; i++) {
-
-                    logger.fine("Counting Affy xrefs associated with chromosome " + chrNames[i]);
-
-                    sql = "SELECT DISTINCT(sr.name) AS chromosome, COUNT(x.xref_id) AS count "
-                            + "FROM xref x, external_db e, object_xref ox, translation tl, transcript ts, gene g, seq_region sr, coord_system cs "
-                            + "WHERE e.db_name LIKE \'AFFY%\' AND x.external_db_id=e.external_db_id "
-                            + "AND x.xref_id=ox.xref_id AND ox.ensembl_id=tl.translation_id "
-                            + "AND tl.transcript_id=ts.transcript_id AND ts.gene_id=g.gene_id "
-                            + "AND g.seq_region_id=sr.seq_region_id AND sr.coord_system_id=cs.coord_system_id "
-                            + "AND cs.name=\'chromosome\' AND sr.name='" + chrNames[i] + "\'  and attrib='default_version ' GROUP BY chromosome";
-
-                    int count = 0;
-                    try {
-                        ResultSet rs = con.createStatement().executeQuery(sql);
-                        if (rs.next()) {
-			    count = rs.getInt("count"); 
-			}
-                        rs.close();
-                    } catch (SQLException se) {
-                        se.printStackTrace();
-                    }
-
-                    if (count == 0) {
-                        ReportManager.problem(this, con, "Chromosome " + chrNames[i] + " has no associated Oligo xrefs.");
-                        result = false;
-                    } else if (count < 0) {
-                        logger.warning("Could not get count for chromosome " + chrNames[i]);
-                    } else {
-                        ReportManager.correct(this, con, "Chromosome " + chrNames[i] + " has " + count + " associated Oligo xrefs.");
-                    }
-                }
-            }
-
+      // check every chr has >0 oligo xrefs.
+      for (Iterator iter = srID2name.keySet().iterator(); iter.hasNext(); ) {
+        String srID = (String)iter.next();
+        String name = (String)srID2name.get(srID);
+        String label = name +"( seq_region_id="+srID+")";
+        long count = srID2count.containsKey(srID) ? Long.parseLong(srID2count.get(srID).toString()) : 0;
+        if ( count >0) {
+          ReportManager.correct(this, con, "Chromosome " + label + " has " + srID2count.get(srID) + " associated Oligo xrefs.");
         } else {
-	    
-	    logger.info(DBUtils.getShortDatabaseName(con) + " has no Oligo features, not checking for Oligo xrefs");
+          ReportManager.problem(this, con, "Chromosome " + label + " has no associated Oligo xrefs.");
+          result = false;
+        } 
 
-	}
-
-        return result;
-
-    } // run
+      }
+      
+    } catch (SQLException se) {
+      se.printStackTrace();
+      result = false;
+    }
+    return result;
+    
+  } // run
 
 } // OligoXrefs
 
