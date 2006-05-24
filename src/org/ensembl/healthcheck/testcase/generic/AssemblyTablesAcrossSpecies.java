@@ -25,7 +25,7 @@ import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
  */
 public class AssemblyTablesAcrossSpecies extends MultiDatabaseTestCase {
 
-    private DatabaseType[] types = {DatabaseType.CORE, DatabaseType.EST, DatabaseType.ESTGENE, DatabaseType.VEGA};
+    private DatabaseType[] types = {DatabaseType.CORE, DatabaseType.EST, DatabaseType.ESTGENE, DatabaseType.VEGA, DatabaseType.OTHERFEATURES};
 
     /**
      * Creates a new instance of AssemblyTablesAcrossSpecies
