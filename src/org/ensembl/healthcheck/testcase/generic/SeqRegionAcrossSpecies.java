@@ -33,7 +33,7 @@ public class SeqRegionAcrossSpecies extends MultiDatabaseTestCase {
     public SeqRegionAcrossSpecies() {
 
         addToGroup("release");
-        setDescription("Check that the seq_region table is the same across all generic DBs");
+        setDescription("Check that the seq_region table is the same across all generic DBs; if not it will cause problems on the website.");
 
     }
 
@@ -50,5 +50,5 @@ public class SeqRegionAcrossSpecies extends MultiDatabaseTestCase {
 
     } // run
 
-} // SeqRegionAttribAcrossSpecies
+} // SeqRegioAcrossSpecies
 
