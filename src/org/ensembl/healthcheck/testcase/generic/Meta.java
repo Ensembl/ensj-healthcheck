@@ -104,26 +104,27 @@ public class Meta extends SingleDatabaseTestCase {
 			// check that assembly.default matches the version of the coord_system
 			// with the lowest
 			// rank value
-			String lowestRankCS = getRowColumnValue(con,
-					"SELECT version FROM coord_system WHERE version IS NOT NULL ORDER BY rank DESC LIMIT 1");
-			if (!lowestRankCS.equals(metaTableAssemblyDefault)) {
-				if (lowestRankCS.length() > 0) {
-					ReportManager.problem(this, con, "assembly.default from meta table is " + metaTableAssemblyDefault
-							+ " but lowest ranked coordinate system has version " + lowestRankCS);
-				} else {
-
-					ReportManager
-							.problem(
-									this,
-									con,
-									"assembly.default from meta table is "
-											+ metaTableAssemblyDefault
-											+ " but lowest ranked coordinate system has blank or missing version. Note lowest ranked == has HIGHEST numerical rank value");
-				}
-
-				result &= checkAssemblyVersion(con, dbNameAssemblyVersion, metaTableAssemblyVersion);
-
-			}
+			
+//			String lowestRankCS = getRowColumnValue(con,
+//					"SELECT version FROM coord_system WHERE version IS NOT NULL ORDER BY rank DESC LIMIT 1");
+//			if (!lowestRankCS.equals(metaTableAssemblyDefault)) {
+//				if (lowestRankCS.length() > 0) {
+//					ReportManager.problem(this, con, "assembly.default from meta table is " + metaTableAssemblyDefault
+//							+ " but lowest ranked coordinate system has version " + lowestRankCS);
+//				} else {
+//
+//					ReportManager
+//							.problem(
+//									this,
+//									con,
+//									"assembly.default from meta table is "
+//											+ metaTableAssemblyDefault
+//											+ " but lowest ranked coordinate system has blank or missing version. Note lowest ranked == has HIGHEST numerical rank value");
+//				}
+//
+//				result &= checkAssemblyVersion(con, dbNameAssemblyVersion, metaTableAssemblyVersion);
+//
+//			}
 
 			// ----------------------------------------
 			// Check that assembly prefix is valid and corresponds to this species
