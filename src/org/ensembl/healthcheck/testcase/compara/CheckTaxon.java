@@ -127,7 +127,7 @@ public class CheckTaxon extends MultiDatabaseTestCase {
             
             /* Check name */
             sql1 = "SELECT \"name\", name " +
-                " FROM ncbi_taxa_names WHERE name_class = \"scientific name\" AND taxon_id = " + taxon_id;
+                " FROM ncbi_taxa_name WHERE name_class = \"scientific name\" AND taxon_id = " + taxon_id;
             sql2 = "SELECT \"name\", GROUP_CONCAT(meta_value ORDER BY meta_id DESC SEPARATOR \" \") " +
                 " FROM (SELECT meta_id, meta_key, meta_value FROM meta " +
                 " WHERE meta_key = \"species.classification\" ORDER BY meta_id LIMIT 2) AS name " +
@@ -136,24 +136,24 @@ public class CheckTaxon extends MultiDatabaseTestCase {
             
             /* Check common_name */
             sql1 = "SELECT \"common_name\", name " +
-                " FROM ncbi_taxa_names WHERE name_class = \"genbank common name\" AND taxon_id = " + taxon_id;
+                " FROM ncbi_taxa_name WHERE name_class = \"genbank common name\" AND taxon_id = " + taxon_id;
             sql2 = "SELECT \"common_name\", meta_value FROM meta" +
                 " WHERE meta_key = \"species.common_name\"";
             result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
             
             /* Check classification */
             /* This check is quite complex as the axonomy is stored in very different ways in compara
-               and core DBs. In compara, the tree structure is stored in the ncbi_taxa_nodes table
-               while the names are in the ncbi_taxa_names table. In the core DB, the taxonomy is
+               and core DBs. In compara, the tree structure is stored in the ncbi_taxa_node table
+               while the names are in the ncbi_taxa_name table. In the core DB, the taxonomy is
                stored in the meta table as values of the key "species.classification" and they
                should be sorted by meta_id. In the core DB, only the abbreviated lineage is
-               described which means that we have to ignore ncbi_taxa_nodes with the
+               described which means that we have to ignore ncbi_taxa_node with the
                genbank_hidden_flag set. On top of that, we want to compare the classification
                in one single SQL. Therefore, we are getting the results recursivelly and
                then execute a dumb SQL query with result itself */
             String comparaClassification = new String("");
             String values1[] = getRowValues(comparaCon,
-                "SELECT rank, parent_id, genbank_hidden_flag FROM ncbi_taxa_nodes WHERE taxon_id = " + taxon_id);
+                "SELECT rank, parent_id, genbank_hidden_flag FROM ncbi_taxa_node WHERE taxon_id = " + taxon_id);
             if (values1.length == 0) {
               /* if no rows are fetched, this taxon is missing from compara DB */
               ReportManager.problem(this, comparaCon, "No taxon for " + species.toString());
@@ -161,10 +161,10 @@ public class CheckTaxon extends MultiDatabaseTestCase {
               String this_taxon_id = values1[1];
               while (!this_taxon_id.equals("0")) {
                 values1 = getRowValues(comparaCon,
-                    "SELECT rank, parent_id, genbank_hidden_flag FROM ncbi_taxa_nodes WHERE taxon_id = " + this_taxon_id);
+                    "SELECT rank, parent_id, genbank_hidden_flag FROM ncbi_taxa_node WHERE taxon_id = " + this_taxon_id);
                 if (values1[2].equals("0") && !values1[1].equals("0") && !values1[0].equals("subgenus") && !values1[0].equals("subspecies")) {
                   comparaClassification += " " + getRowColumnValue(comparaCon,
-                      "SELECT name FROM ncbi_taxa_names " +
+                      "SELECT name FROM ncbi_taxa_name " +
                       "WHERE name_class = \"scientific name\" AND taxon_id = " + this_taxon_id);
                 }
                 this_taxon_id = values1[1];
