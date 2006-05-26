@@ -122,6 +122,8 @@ rodent_protein
 sanger
 scanprosite
 signal_peptide
+singapore_est
+singapore_protein
 snpDensity
 superctgs
 superfamily
