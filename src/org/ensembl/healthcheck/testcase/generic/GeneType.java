@@ -54,7 +54,8 @@ public class GeneType extends SingleDatabaseTestCase {
 	/*
 	 * Define valid Analysis-Types
 	 */
-	private String[] whitelist_analysis = { "ensembl", // 0
+	private String[] whitelist_analysis = { 
+                        "ensembl", // 0
 			"wormbase", // 1
 			"flybase", // 2
 			"est_exonerate", // 3
@@ -63,7 +64,9 @@ public class GeneType extends SingleDatabaseTestCase {
 			"CYT", // 6
 			"HOX", // 7
 			"GSTEN", // 8
-			"cDNA_update" // 9
+			"cDNA_update", // 9
+			"singapore_est", //10 
+			"singapore_protein" //11 
 	};
 
 	/*
@@ -96,7 +99,7 @@ public class GeneType extends SingleDatabaseTestCase {
 			"Mt-tRNA", // 24
 			"protein_coding", // 25
 			"tRNA", // 26
-			"cDNA_update" // 27
+			"cDNA_update", // 27
 
 	};
 
@@ -106,28 +109,67 @@ public class GeneType extends SingleDatabaseTestCase {
 	 * whitelist[0][1][10] would be ["core" database]["wormbase" analysis]["gene"
 	 * gene type]
 	 */
-	private int[][][] whitelist = { { { 0, 1, 2, 25 }, // this block //this array
-																											// for "ensembl" analysis'
-			{ 1, 10, 20, 25 }, // for CORE //this array for "wormbase" analysis'
-			{ 1, 3, 4, 6, 7, 10, 25, 26 }, // databases //this array for "flybase"
-																			// analysis'
-			{}, //
-			{}, //
-			{ 3, 4, 5, 6, 7, 8, 11, 12, 13, 14, 15, 16, 18, 19, 23, 24 }, { 22 }, // Allowed
-																																						// gene
-																																						// types
-																																						// for
-																																						// CYT
-			{ 22 }, // Allowed gene types for HOX
-			{ 21 }, // Allowed gene types for GSTEN
-			{} }, { {}, // this block
-			{}, // for EST
-			{}, // databases
-			{ 17 }, // ...
-			{}, {}, {}, {}, {}, {} }, { {}, // Block for estgene data
-			{}, {}, {}, { 9 }, {}, {}, {}, {}, {} }, { {}, // Block for cdna update
-																											// data
-			{}, {}, {}, {}, {}, {}, {}, {}, { 27 } } };
+	private int[][][] whitelist = { 
+                                         // Block for allowed analysis in CORE-databases 
+                                        {       
+                                          { 0, 1, 2, 25 },   // 0 - analysis 'ensembl' --> allowed gene_types : ensembl(0),pseudogene(1),protein_coding(25) ...
+			                  { 1, 10, 20, 25 }, // 1 - wormbase-analsyis" allowed types in CORE : pseudogene,gene,wormbase,protein_coding
+			                  { 1, 3, 4, 6, 7, 10, 25, 26 }, // 2 - allowed types for 'flybase'  
+                    		   	  {}, // 3 - est_exonerate   
+		                	  {}, // 4 - estgeene 
+			                  { 3, 4, 5, 6, 7, 8, 11, 12, 13, 14, 15, 16, 18, 19, 23, 24 }, { 22 }, // 5-Allowed ncRNA genetypes
+			                  { 22 }, // 6 - Allowed gene types for CYT 
+			                  { 21 }, // 7 - Allowed gene types for HOX
+			                  {} , // 8 - Allowed gene types for GSTEN
+			                  {} , // 9 - Allowed gene types for cDNA-update 
+			                  {} , // 10 - Allowed gene-types for singapore_est in CORE 
+			                  {}  // 11 -Allowed gene-types for singapore_est in CORE
+                                       }, 
+                                         // Block for allowed analysis OTHERFEATURE--databases 
+                                       { 
+                                         {},     // 0 ensembl
+			                 {},     // 1 wormbase 
+			                 {},     // 2 flybase 
+			                 { 17 }, // 3 est_exonerate 
+		                   	 {},     // 4 estgene 
+                                         {},     // 5 ncRNA 
+                                         {},     // 6  
+                                         {},     // 7  
+                                         {},     // 8  
+                                         {},     // 9  
+			                 { 25 }, // 10 Allowed gene-types analysis 'singapore_est' in OTHERFEATUERS db 
+			                 { 1,25 } // 11 Allowed gene-types for 'singapore_protein' in OTHERFEATURES db 
+                                      }, 
+                                      { 
+                                         // Block for allowed analysis/genetype-pairs in ESTGENE-db 
+                                         {},     // 0 ensembl
+			                 {},     // 1 wormbase 
+			                 {},     // 2 flybase 
+			                 {},     // 3 est_exonerate 
+                                         { 9 },  // 4 est_exonerate  
+                                         {}, 
+                                         {}, 
+                                         {}, 
+                                         {}, 
+                                         {}, 
+			                 {} , // Allowed gene-types analysis 'singapore_est' in ESTGENE-db 
+			                 {}  // Allowed gene-types for 'singapore_protein' in ESTGENE-db 
+                                      }, 
+                                      { 
+                                         // Block for CDNA_UPDATE dbs 
+                                         {}, 
+			                 {}, 
+                                         {}, 
+                                         {}, 
+                                         {}, 
+                                         {}, 
+                                         {}, 
+                                         {}, 
+                                         { 27 } ,  // cDNA_update is allowed for analyis cDNA_update in CDNA_UPDATE db's 
+			                 {} , // Allowed gene-types analysis 'singapore_est' in cDNA-UPDATE dbs 
+			                 {},  // Allowed gene-types for 'singapore_protein' in cDNA-UPDATE db's 
+                                      },
+                                  };
 
 	/**
 	 * Create a new testcase.
