@@ -58,7 +58,7 @@ public class DNAEmpty extends SingleDatabaseTestCase {
         if (rows > 0) {
             result = false;
             ReportManager.problem(this, con, "dna table contains " + rows
-                    + " - it should be empty");
+                    + " - it should be empty unless it's a core database ");
         }
 
 
