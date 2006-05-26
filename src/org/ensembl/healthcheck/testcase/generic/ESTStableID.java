@@ -55,10 +55,12 @@ public class ESTStableID extends SingleDatabaseTestCase {
 
 		types.add(DatabaseType.EST);
 		types.add(DatabaseType.OTHERFEATURES);
+                removeAppliesToType(DatabaseType.CORE);
 
 		setAppliesToTypes(types);
 
 	}
+
 
 	/**
 	 * Run the test.
