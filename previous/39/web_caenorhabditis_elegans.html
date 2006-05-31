@@ -1,0 +1,312 @@
+<html>
+<head>
+<style type="text/css" media="all">
+@import url(http://www.ensembl.org/css/ensembl.css);
+@import url(http://www.ensembl.org/css/content.css);
+#page ul li { list-style-type:none; list-style-image: none; margin-left: -2em }
+</style>
+<title>Healthcheck results for caenorhabditis elegans databases</title>
+</head>
+<body>
+<div id='page'><div id='i1'><div id='i2'><div class='sptop'>&nbsp;</div>
+<div id='release'>Healthcheck results for caenorhabditis elegans databases</div>
+<hr>
+<div id='related'><div id='related-box'>
+<h2>Results by database</h2>
+<ul>
+<li><a href="#caenorhabditis_elegans_core_39_150a">c_elegans_core_39_150a</a></li>
+<li><a href="#master_schema_39">master_schema_39</a></li>
+</ul>
+<h2>Results by test</h2>
+<ul>
+<li><a href="#Accession">Accession</a></li>
+<li><a href="#AnalysisDescription">AnalysisDescription</a></li>
+<li><a href="#AssemblyException">AssemblyException</a></li>
+<li><a href="#AssemblyMultipleOverlap">AssemblyMultipleOverlap</a></li>
+<li><a href="#AssemblySeqregion">AssemblySeqregion</a></li>
+<li><a href="#AssemblyTablesAcrossSpecies">AssemblyTablesAcrossSpecies</a></li>
+<li><a href="#AttribTypeAcrossSpecies">AttribTypeAcrossSpecies</a></li>
+<li><a href="#BigGeneExon">BigGeneExon</a></li>
+<li><a href="#Biotypes">Biotypes</a></li>
+<li><a href="#BlankInfoType">BlankInfoType</a></li>
+<li><a href="#ComparePreviousVersionBiotypes">ComparePreviousVersionBiotyp</a></li>
+<li><a href="#ComparePreviousVersionTableRows">ComparePreviousVersionTableR</a></li>
+<li><a href="#ComparePreviousVersionXrefs">ComparePreviousVersionXrefs</a></li>
+<li><a href="#CompareSchema">CompareSchema</a></li>
+<li><a href="#CoordSystemAcrossSpecies">CoordSystemAcrossSpecies</a></li>
+<li><a href="#CoreForeignKeys">CoreForeignKeys</a></li>
+<li><a href="#DNATablesAcrossSpecies">DNATablesAcrossSpecies</a></li>
+<li><a href="#DensityFeatures">DensityFeatures</a></li>
+<li><a href="#DisplayLabels">DisplayLabels</a></li>
+<li><a href="#DisplayMarkerSynonyms">DisplayMarkerSynonyms</a></li>
+<li><a href="#DisplayXref">DisplayXref</a></li>
+<li><a href="#DuplicateAssembly">DuplicateAssembly</a></li>
+<li><a href="#DuplicateExons">DuplicateExons</a></li>
+<li><a href="#DuplicateGenes">DuplicateGenes</a></li>
+<li><a href="#EmptyTables">EmptyTables</a></li>
+<li><a href="#ExonStrandOrder">ExonStrandOrder</a></li>
+<li><a href="#ExonTranscriptStartEnd">ExonTranscriptStartEnd</a></li>
+<li><a href="#ExternalDBDisplayName">ExternalDBDisplayName</a></li>
+<li><a href="#FeatureAnalysis">FeatureAnalysis</a></li>
+<li><a href="#FeatureCoords">FeatureCoords</a></li>
+<li><a href="#GOXrefs">GOXrefs</a></li>
+<li><a href="#GeneStatus">GeneStatus</a></li>
+<li><a href="#GeneType">GeneType</a></li>
+<li><a href="#InterproDescriptions">InterproDescriptions</a></li>
+<li><a href="#Karyotype">Karyotype</a></li>
+<li><a href="#LogicNamesDisplayable">LogicNamesDisplayable</a></li>
+<li><a href="#Meta">Meta</a></li>
+<li><a href="#MetaCoord">MetaCoord</a></li>
+<li><a href="#MetaCrossSpecies">MetaCrossSpecies</a></li>
+<li><a href="#OligoMismatches">OligoMismatches</a></li>
+<li><a href="#OligoXrefs">OligoXrefs</a></li>
+<li><a href="#PredictedXrefs">PredictedXrefs</a></li>
+<li><a href="#ProteinFeatureTranslation">ProteinFeatureTranslation</a></li>
+<li><a href="#ProteinFeatures">ProteinFeatures</a></li>
+<li><a href="#ProteinIDXrefsNoVersion">ProteinIDXrefsNoVersion</a></li>
+<li><a href="#Pseudogene">Pseudogene</a></li>
+<li><a href="#RepeatConsensus">RepeatConsensus</a></li>
+<li><a href="#RepeatFeature">RepeatFeature</a></li>
+<li><a href="#SeqRegionAcrossSpecies">SeqRegionAcrossSpecies</a></li>
+<li><a href="#SeqRegionAttribAcrossSpecies">SeqRegionAttribAcrossSpecies</a></li>
+<li><a href="#SeqRegionCoordSystem">SeqRegionCoordSystem</a></li>
+<li><a href="#SeqRegionsTopLevel">SeqRegionsTopLevel</a></li>
+<li><a href="#SingleDBCollations">SingleDBCollations</a></li>
+<li><a href="#StableID">StableID</a></li>
+<li><a href="#Strand">Strand</a></li>
+<li><a href="#TranscriptsTranslate">TranscriptsTranslate</a></li>
+<li><a href="#TranslationStartEnd">TranslationStartEnd</a></li>
+<li><a href="#TranslationStartEndExon">TranslationStartEndExon</a></li>
+<li><a href="#XrefTypes">XrefTypes</a></li>
+</ul>
+</div></div>
+<h2>Summary</h2>
+<p><strong><font color='green' size=-1>42</font> tests passed and <font color='red' size=-1>10</font> failed out of a total of 52 tests run.</strong></p>
+<hr>
+<h2>Summary by database</h2>
+<p><table class='ss'>
+<tr><th>Database</th><th>Passed</th><th>Failed</th></tr>
+<tr><td><a href="#caenorhabditis_elegans_core_39_150a"><font color='red' size=-1>caenorhabditis_elegans_core_39_150a</font></a></td><td><font color='green' size=-1>42</font></td><td><font color='red' size=-1>9</font></td></tr>
+<tr><td><a href="#master_schema_39"><font color='red' size=-1>master_schema_39</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>1</font></td></tr>
+</table></p>
+<hr>
+<h2>Summary by test</h2>
+<p><table class='ss'>
+<tr><th>Test</th><th>Passed</th><th>Failed</th></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Accession"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.Accession</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AnalysisDescription"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.AnalysisDescription</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AssemblyException"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.AssemblyException</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AssemblySeqregion"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.AssemblySeqregion</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AssemblyTablesAcrossSpecies"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.AssemblyTablesAcrossSpecies</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.BigGeneExon"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.BigGeneExon</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Biotypes"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.Biotypes</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.BlankInfoType"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.BlankInfoType</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBiotypes"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBiotypes</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionTableRows"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionTableRows</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionXrefs"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionXrefs</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.CompareSchema"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.CompareSchema</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.CoordSystemAcrossSpecies"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.CoordSystemAcrossSpecies</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.CoreForeignKeys"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.CoreForeignKeys</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DNATablesAcrossSpecies"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.DNATablesAcrossSpecies</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DensityFeatures"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.DensityFeatures</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DisplayLabels"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.DisplayLabels</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DisplayMarkerSynonyms"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.DisplayMarkerSynonyms</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DisplayXref"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.DisplayXref</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DuplicateAssembly"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.DuplicateAssembly</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DuplicateExons"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.DuplicateExons</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DuplicateGenes"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.DuplicateGenes</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.EmptyTables"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.EmptyTables</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ExonStrandOrder"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.ExonStrandOrder</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.FeatureAnalysis"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.FeatureAnalysis</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.FeatureCoords"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.FeatureCoords</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.GOXrefs"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.GOXrefs</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.GeneStatus"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.GeneStatus</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.GeneType"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.GeneType</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.InterproDescriptions"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.InterproDescriptions</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Karyotype"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.Karyotype</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Meta"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.Meta</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.MetaCoord"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.MetaCoord</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.OligoMismatches"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.OligoMismatches</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.OligoXrefs"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.OligoXrefs</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.PredictedXrefs"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.PredictedXrefs</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ProteinFeatures"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.ProteinFeatures</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ProteinIDXrefsNoVersion"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.ProteinIDXrefsNoVersion</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Pseudogene"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.Pseudogene</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.RepeatConsensus"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.RepeatConsensus</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.RepeatFeature"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.RepeatFeature</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionAcrossSpecies"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.SeqRegionAcrossSpecies</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionAttribAcrossSpecies"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.SeqRegionAttribAcrossSpecies</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SingleDBCollations"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.SingleDBCollations</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.StableID"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.StableID</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Strand"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.Strand</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.TranslationStartEnd"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.TranslationStartEnd</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.TranslationStartEndExon"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.TranslationStartEndExon</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.XrefTypes"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.XrefTypes</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+</table></p>
+<hr>
+<h2>Detailed reports by database</h2>
+<h3 class='boxed'><a name="caenorhabditis_elegans_core_39_150a">caenorhabditis_elegans_core_39_150a</a></h3>
+<p>
+<a name="caenorhabditis_elegans_core_39_150a:ComparePreviousVersionXrefs"></a> <font color='red'><strong>ComparePreviousVersionXrefs: </strong>caenorhabditis_elegans_core_38_150a has 663 xrefs of type Uniprot/Varsplic but caenorhabditis_elegans_core_39_150a has none</font><br>
+</p><p>
+<a name="caenorhabditis_elegans_core_39_150a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:CoreForeignKeys"></a> <font color='red'><strong>CoreForeignKeys: </strong>xref <-> external_db has 12923 unlinked entries</font><br>
+</p><p>
+<a name="caenorhabditis_elegans_core_39_150a:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 135802 is duplicated.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 39710 is duplicated.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 39709 is duplicated.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 39708 is duplicated.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 34162 is duplicated.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 34161 is duplicated.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 34160 is duplicated.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 34159 is duplicated.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 136153 is duplicated.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 137140 is duplicated.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:DuplicateExons"></a> <font color='red'><strong>DuplicateExons: </strong>Has at least 14 duplicated exons.</font><br>
+</p><p>
+<a name="caenorhabditis_elegans_core_39_150a:DuplicateGenes"></a> <font color='black'><strong>DuplicateGenes: </strong>Gene C52E12.t4 (pseudogene ID 20239) is duplicated - see gene C52E12.t1 (pseudogene ID 20134)</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:DuplicateGenes"></a> <font color='black'><strong>DuplicateGenes: </strong>Gene T25D1.t3 (pseudogene ID 20988) is duplicated - see gene T25D1.t1 (pseudogene ID 20997)</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:DuplicateGenes"></a> <font color='red'><strong>DuplicateGenes: </strong>Has 2 duplicated genes.</font><br>
+</p><p>
+<a name="caenorhabditis_elegans_core_39_150a:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>gene_attrib has zero rows</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>regulatory_search_region has zero rows</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>transcript_supporting_feature has zero rows</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>unmapped_object has zero rows</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>unmapped_reason has zero rows</font><br>
+</p><p>
+<a name="caenorhabditis_elegans_core_39_150a:GeneType"></a> <font color='red'><strong>GeneType: </strong>Mt_tRNA is not a valid gene type name.</font><br>
+<a name="caenorhabditis_elegans_core_39_150a:GeneType"></a> <font color='red'><strong>GeneType: </strong>rRNA is not a valid gene type name for wormbase.</font><br>
+</p><p>
+<a name="caenorhabditis_elegans_core_39_150a:Meta"></a> <font color='red'><strong>Meta: </strong>No entry in meta table for species.common_name</font><br>
+</p><p>
+<a name="caenorhabditis_elegans_core_39_150a:ProteinFeatureTranslation"></a> <font color='red'><strong>ProteinFeatureTranslation: </strong>protein_feature table has 15 features that are longer than the translation</font><br>
+</p><p>
+<a name="caenorhabditis_elegans_core_39_150a:ProteinFeatures"></a> <font color='red'><strong>ProteinFeatures: </strong>48 protein features have seq_start < 0</font><br>
+</p>
+<h3 class='boxed'><a name="master_schema_39">master_schema_39</a></h3>
+<p>
+<a name="master_schema_39:CompareSchema"></a> <font color='red'><strong>CompareSchema: </strong>master_schema_39 and caenorhabditis_elegans_core_39_150a oligo_feature differ at row 8 column 2 (Type) Values: int(10) unsigned, int(11)</font><br>
+</p>
+<hr>
+<h2>Detailed reports by test case</h2>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionXrefs">org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionXrefs</a></h3>
+<p>
+<a name="ComparePreviousVersionXrefs:caenorhabditis_elegans_core_39_150a"></a> <font color='red'><strong>caenorhabditis_elegans_core_39_150a: </strong>caenorhabditis_elegans_core_38_150a has 663 xrefs of type Uniprot/Varsplic but caenorhabditis_elegans_core_39_150a has none</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.CompareSchema">org.ensembl.healthcheck.testcase.generic.CompareSchema</a></h3>
+<p>
+<a name="CompareSchema:master_schema_39"></a> <font color='red'><strong>master_schema_39: </strong>master_schema_39 and caenorhabditis_elegans_core_39_150a oligo_feature differ at row 8 column 2 (Type) Values: int(10) unsigned, int(11)</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.CoreForeignKeys">org.ensembl.healthcheck.testcase.generic.CoreForeignKeys</a></h3>
+<p>
+<a name="CoreForeignKeys:caenorhabditis_elegans_core_39_150a"></a> <font color='grey'><strong>caenorhabditis_elegans_core_39_150a: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="CoreForeignKeys:caenorhabditis_elegans_core_39_150a"></a> <font color='grey'><strong>caenorhabditis_elegans_core_39_150a: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="CoreForeignKeys:caenorhabditis_elegans_core_39_150a"></a> <font color='grey'><strong>caenorhabditis_elegans_core_39_150a: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="CoreForeignKeys:caenorhabditis_elegans_core_39_150a"></a> <font color='grey'><strong>caenorhabditis_elegans_core_39_150a: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="CoreForeignKeys:caenorhabditis_elegans_core_39_150a"></a> <font color='grey'><strong>caenorhabditis_elegans_core_39_150a: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="CoreForeignKeys:caenorhabditis_elegans_core_39_150a"></a> <font color='grey'><strong>caenorhabditis_elegans_core_39_150a: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="CoreForeignKeys:caenorhabditis_elegans_core_39_150a"></a> <font color='grey'><strong>caenorhabditis_elegans_core_39_150a: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="CoreForeignKeys:caenorhabditis_elegans_core_39_150a"></a> <font color='grey'><strong>caenorhabditis_elegans_core_39_150a: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="CoreForeignKeys:caenorhabditis_elegans_core_39_150a"></a> <font color='grey'><strong>caenorhabditis_elegans_core_39_150a: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="CoreForeignKeys:caenorhabditis_elegans_core_39_150a"></a> <font color='grey'><strong>caenorhabditis_elegans_core_39_150a: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="CoreForeignKeys:caenorhabditis_elegans_core_39_150a"></a> <font color='grey'><strong>caenorhabditis_elegans_core_39_150a: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="CoreForeignKeys:caenorhabditis_elegans_core_39_150a"></a> <font color='grey'><strong>caenorhabditis_elegans_core_39_150a: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="CoreForeignKeys:caenorhabditis_elegans_core_39_150a"></a> <font color='grey'><strong>caenorhabditis_elegans_core_39_150a: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="CoreForeignKeys:caenorhabditis_elegans_core_39_150a"></a> <font color='grey'><strong>caenorhabditis_elegans_core_39_150a: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="CoreForeignKeys:caenorhabditis_elegans_core_39_150a"></a> <font color='grey'><strong>caenorhabditis_elegans_core_39_150a: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="CoreForeignKeys:caenorhabditis_elegans_core_39_150a"></a> <font color='grey'><strong>caenorhabditis_elegans_core_39_150a: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="CoreForeignKeys:caenorhabditis_elegans_core_39_150a"></a> <font color='grey'><strong>caenorhabditis_elegans_core_39_150a: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="CoreForeignKeys:caenorhabditis_elegans_core_39_150a"></a> <font color='grey'><strong>caenorhabditis_elegans_core_39_150a: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="CoreForeignKeys:caenorhabditis_elegans_core_39_150a"></a> <font color='grey'><strong>caenorhabditis_elegans_core_39_150a: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="CoreForeignKeys:caenorhabditis_elegans_core_39_150a"></a> <font color='grey'><strong>caenorhabditis_elegans_core_39_150a: </strong>xref.external_db_id 2450 is not linked.</font><br>
+<a name="CoreForeignKeys:caenorhabditis_elegans_core_39_150a"></a> <font color='red'><strong>caenorhabditis_elegans_core_39_150a: </strong>xref <-> external_db has 12923 unlinked entries</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.DuplicateExons">org.ensembl.healthcheck.testcase.generic.DuplicateExons</a></h3>
+<p>
+<a name="DuplicateExons:caenorhabditis_elegans_core_39_150a"></a> <font color='black'><strong>caenorhabditis_elegans_core_39_150a: </strong>Exon 135802 is duplicated.</font><br>
+<a name="DuplicateExons:caenorhabditis_elegans_core_39_150a"></a> <font color='black'><strong>caenorhabditis_elegans_core_39_150a: </strong>Exon 39710 is duplicated.</font><br>
+<a name="DuplicateExons:caenorhabditis_elegans_core_39_150a"></a> <font color='black'><strong>caenorhabditis_elegans_core_39_150a: </strong>Exon 39709 is duplicated.</font><br>
+<a name="DuplicateExons:caenorhabditis_elegans_core_39_150a"></a> <font color='black'><strong>caenorhabditis_elegans_core_39_150a: </strong>Exon 39708 is duplicated.</font><br>
+<a name="DuplicateExons:caenorhabditis_elegans_core_39_150a"></a> <font color='black'><strong>caenorhabditis_elegans_core_39_150a: </strong>Exon 34162 is duplicated.</font><br>
+<a name="DuplicateExons:caenorhabditis_elegans_core_39_150a"></a> <font color='black'><strong>caenorhabditis_elegans_core_39_150a: </strong>Exon 34161 is duplicated.</font><br>
+<a name="DuplicateExons:caenorhabditis_elegans_core_39_150a"></a> <font color='black'><strong>caenorhabditis_elegans_core_39_150a: </strong>Exon 34160 is duplicated.</font><br>
+<a name="DuplicateExons:caenorhabditis_elegans_core_39_150a"></a> <font color='black'><strong>caenorhabditis_elegans_core_39_150a: </strong>Exon 34159 is duplicated.</font><br>
+<a name="DuplicateExons:caenorhabditis_elegans_core_39_150a"></a> <font color='black'><strong>caenorhabditis_elegans_core_39_150a: </strong>Exon 136153 is duplicated.</font><br>
+<a name="DuplicateExons:caenorhabditis_elegans_core_39_150a"></a> <font color='black'><strong>caenorhabditis_elegans_core_39_150a: </strong>Exon 137140 is duplicated.</font><br>
+<a name="DuplicateExons:caenorhabditis_elegans_core_39_150a"></a> <font color='red'><strong>caenorhabditis_elegans_core_39_150a: </strong>Has at least 14 duplicated exons.</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.DuplicateGenes">org.ensembl.healthcheck.testcase.generic.DuplicateGenes</a></h3>
+<p>
+<a name="DuplicateGenes:caenorhabditis_elegans_core_39_150a"></a> <font color='black'><strong>caenorhabditis_elegans_core_39_150a: </strong>Gene C52E12.t4 (pseudogene ID 20239) is duplicated - see gene C52E12.t1 (pseudogene ID 20134)</font><br>
+<a name="DuplicateGenes:caenorhabditis_elegans_core_39_150a"></a> <font color='black'><strong>caenorhabditis_elegans_core_39_150a: </strong>Gene T25D1.t3 (pseudogene ID 20988) is duplicated - see gene T25D1.t1 (pseudogene ID 20997)</font><br>
+<a name="DuplicateGenes:caenorhabditis_elegans_core_39_150a"></a> <font color='red'><strong>caenorhabditis_elegans_core_39_150a: </strong>Has 2 duplicated genes.</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.EmptyTables">org.ensembl.healthcheck.testcase.generic.EmptyTables</a></h3>
+<p>
+<a name="EmptyTables:caenorhabditis_elegans_core_39_150a"></a> <font color='red'><strong>caenorhabditis_elegans_core_39_150a: </strong>gene_attrib has zero rows</font><br>
+<a name="EmptyTables:caenorhabditis_elegans_core_39_150a"></a> <font color='red'><strong>caenorhabditis_elegans_core_39_150a: </strong>regulatory_search_region has zero rows</font><br>
+<a name="EmptyTables:caenorhabditis_elegans_core_39_150a"></a> <font color='red'><strong>caenorhabditis_elegans_core_39_150a: </strong>transcript_supporting_feature has zero rows</font><br>
+<a name="EmptyTables:caenorhabditis_elegans_core_39_150a"></a> <font color='red'><strong>caenorhabditis_elegans_core_39_150a: </strong>unmapped_object has zero rows</font><br>
+<a name="EmptyTables:caenorhabditis_elegans_core_39_150a"></a> <font color='red'><strong>caenorhabditis_elegans_core_39_150a: </strong>unmapped_reason has zero rows</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.GeneType">org.ensembl.healthcheck.testcase.generic.GeneType</a></h3>
+<p>
+<a name="GeneType:caenorhabditis_elegans_core_39_150a"></a> <font color='red'><strong>caenorhabditis_elegans_core_39_150a: </strong>Mt_tRNA is not a valid gene type name.</font><br>
+<a name="GeneType:caenorhabditis_elegans_core_39_150a"></a> <font color='red'><strong>caenorhabditis_elegans_core_39_150a: </strong>rRNA is not a valid gene type name for wormbase.</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.Meta">org.ensembl.healthcheck.testcase.generic.Meta</a></h3>
+<p>
+<a name="Meta:caenorhabditis_elegans_core_39_150a"></a> <font color='red'><strong>caenorhabditis_elegans_core_39_150a: </strong>No entry in meta table for species.common_name</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation">org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation</a></h3>
+<p>
+<a name="ProteinFeatureTranslation:caenorhabditis_elegans_core_39_150a"></a> <font color='red'><strong>caenorhabditis_elegans_core_39_150a: </strong>protein_feature table has 15 features that are longer than the translation</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.ProteinFeatures">org.ensembl.healthcheck.testcase.generic.ProteinFeatures</a></h3>
+<p>
+<a name="ProteinFeatures:caenorhabditis_elegans_core_39_150a"></a> <font color='red'><strong>caenorhabditis_elegans_core_39_150a: </strong>48 protein features have seq_start < 0</font><br>
+</p>
+<hr>
+<p>Test run was started at Wed May 31 00:24:28 BST 2006 and finished at Wed May 31 00:29:26 BST 2006<br>
+ Run time 4 min 57s </p>
+<h4>Configuration used:</h4>
+<pre>
+Tests/groups run:   release<br>
+Database host:      ecs2:3364<br>
+Database names:     ^caenorhabditis_elegans_(core|otherfeatures|cdna|vega)_[0-9]+_.*<br>
+Output file:        web_caenorhabditis_elegans.html<br>
+Output level:       info<br>
+</pre>
+</div>
+</body>
+</html>
+<hr>

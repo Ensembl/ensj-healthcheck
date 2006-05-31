@@ -1,0 +1,1072 @@
+<html>
+<head>
+<style type="text/css" media="all">
+@import url(http://www.ensembl.org/css/ensembl.css);
+@import url(http://www.ensembl.org/css/content.css);
+#page ul li { list-style-type:none; list-style-image: none; margin-left: -2em }
+</style>
+<title>Healthcheck results for homo sapiens databases</title>
+</head>
+<body>
+<div id='page'><div id='i1'><div id='i2'><div class='sptop'>&nbsp;</div>
+<div id='release'>Healthcheck results for homo sapiens databases</div>
+<hr>
+<div id='related'><div id='related-box'>
+<h2>Results by database</h2>
+<ul>
+<li><a href="#homo_sapiens_cdna_39_36a">homo_sapiens_cdna_39_36a</a></li>
+<li><a href="#homo_sapiens_core_39_36a">homo_sapiens_core_39_36a</a></li>
+<li><a href="#homo_sapiens_otherfeatures_39_36a">h_sapiens_otherfeatures_39_36a</a></li>
+<li><a href="#homo_sapiens_vega_39_36a">homo_sapiens_vega_39_36a</a></li>
+<li><a href="#master_schema_39">master_schema_39</a></li>
+</ul>
+<h2>Results by test</h2>
+<ul>
+<li><a href="#Accession">Accession</a></li>
+<li><a href="#AnalysisDescription">AnalysisDescription</a></li>
+<li><a href="#AssemblyException">AssemblyException</a></li>
+<li><a href="#AssemblyMultipleOverlap">AssemblyMultipleOverlap</a></li>
+<li><a href="#AssemblySeqregion">AssemblySeqregion</a></li>
+<li><a href="#AssemblyTablesAcrossSpecies">AssemblyTablesAcrossSpecies</a></li>
+<li><a href="#AttribTypeAcrossSpecies">AttribTypeAcrossSpecies</a></li>
+<li><a href="#BigGeneExon">BigGeneExon</a></li>
+<li><a href="#Biotypes">Biotypes</a></li>
+<li><a href="#BlankInfoType">BlankInfoType</a></li>
+<li><a href="#ComparePreviousVersionBiotypes">ComparePreviousVersionBiotyp</a></li>
+<li><a href="#ComparePreviousVersionTableRows">ComparePreviousVersionTableR</a></li>
+<li><a href="#ComparePreviousVersionXrefs">ComparePreviousVersionXrefs</a></li>
+<li><a href="#CompareSchema">CompareSchema</a></li>
+<li><a href="#CoordSystemAcrossSpecies">CoordSystemAcrossSpecies</a></li>
+<li><a href="#CoreForeignKeys">CoreForeignKeys</a></li>
+<li><a href="#DNAEmpty">DNAEmpty</a></li>
+<li><a href="#DNATablesAcrossSpecies">DNATablesAcrossSpecies</a></li>
+<li><a href="#DensityFeatures">DensityFeatures</a></li>
+<li><a href="#DisplayLabels">DisplayLabels</a></li>
+<li><a href="#DisplayMarkerSynonyms">DisplayMarkerSynonyms</a></li>
+<li><a href="#DisplayXref">DisplayXref</a></li>
+<li><a href="#DuplicateAssembly">DuplicateAssembly</a></li>
+<li><a href="#DuplicateExons">DuplicateExons</a></li>
+<li><a href="#DuplicateGenes">DuplicateGenes</a></li>
+<li><a href="#ESTStableID">ESTStableID</a></li>
+<li><a href="#ESTStableIDs">ESTStableIDs</a></li>
+<li><a href="#EmptyTables">EmptyTables</a></li>
+<li><a href="#ExonStrandOrder">ExonStrandOrder</a></li>
+<li><a href="#ExonTranscriptStartEnd">ExonTranscriptStartEnd</a></li>
+<li><a href="#ExternalDBDisplayName">ExternalDBDisplayName</a></li>
+<li><a href="#FeatureAnalysis">FeatureAnalysis</a></li>
+<li><a href="#FeatureCoords">FeatureCoords</a></li>
+<li><a href="#GOXrefs">GOXrefs</a></li>
+<li><a href="#GeneStatus">GeneStatus</a></li>
+<li><a href="#GeneType">GeneType</a></li>
+<li><a href="#HumanCCDS">HumanCCDS</a></li>
+<li><a href="#InterproDescriptions">InterproDescriptions</a></li>
+<li><a href="#Karyotype">Karyotype</a></li>
+<li><a href="#LogicNamesDisplayable">LogicNamesDisplayable</a></li>
+<li><a href="#MappingSession">MappingSession</a></li>
+<li><a href="#MarkerFeatures">MarkerFeatures</a></li>
+<li><a href="#Meta">Meta</a></li>
+<li><a href="#MetaCoord">MetaCoord</a></li>
+<li><a href="#MetaCrossSpecies">MetaCrossSpecies</a></li>
+<li><a href="#OligoMismatches">OligoMismatches</a></li>
+<li><a href="#OligoXrefs">OligoXrefs</a></li>
+<li><a href="#PredictedXrefs">PredictedXrefs</a></li>
+<li><a href="#ProteinFeatureTranslation">ProteinFeatureTranslation</a></li>
+<li><a href="#ProteinFeatures">ProteinFeatures</a></li>
+<li><a href="#ProteinIDXrefsNoVersion">ProteinIDXrefsNoVersion</a></li>
+<li><a href="#Pseudogene">Pseudogene</a></li>
+<li><a href="#RepeatConsensus">RepeatConsensus</a></li>
+<li><a href="#RepeatFeature">RepeatFeature</a></li>
+<li><a href="#SeqRegionAcrossSpecies">SeqRegionAcrossSpecies</a></li>
+<li><a href="#SeqRegionAttribAcrossSpecies">SeqRegionAttribAcrossSpecies</a></li>
+<li><a href="#SeqRegionCoordSystem">SeqRegionCoordSystem</a></li>
+<li><a href="#SeqRegionName">SeqRegionName</a></li>
+<li><a href="#SeqRegionsTopLevel">SeqRegionsTopLevel</a></li>
+<li><a href="#SingleDBCollations">SingleDBCollations</a></li>
+<li><a href="#StableID">StableID</a></li>
+<li><a href="#Strand">Strand</a></li>
+<li><a href="#TranscriptsTranslate">TranscriptsTranslate</a></li>
+<li><a href="#TranslationStartEnd">TranslationStartEnd</a></li>
+<li><a href="#TranslationStartEndExon">TranslationStartEndExon</a></li>
+<li><a href="#XrefTypes">XrefTypes</a></li>
+</ul>
+</div></div>
+<h2>Summary</h2>
+<p><strong><font color='green' size=-1>132</font> tests passed and <font color='red' size=-1>52</font> failed out of a total of 184 tests run.</strong></p>
+<hr>
+<h2>Summary by database</h2>
+<p><table class='ss'>
+<tr><th>Database</th><th>Passed</th><th>Failed</th></tr>
+<tr><td><a href="#homo_sapiens_cdna_39_36a"><font color='red' size=-1>homo_sapiens_cdna_39_36a</font></a></td><td><font color='green' size=-1>34</font></td><td><font color='red' size=-1>7</font></td></tr>
+<tr><td><a href="#homo_sapiens_core_39_36a"><font color='red' size=-1>homo_sapiens_core_39_36a</font></a></td><td><font color='green' size=-1>36</font></td><td><font color='red' size=-1>25</font></td></tr>
+<tr><td><a href="#homo_sapiens_otherfeatures_39_36a"><font color='red' size=-1>homo_sapiens_otherfeatures_39_36a</font></a></td><td><font color='green' size=-1>28</font></td><td><font color='red' size=-1>8</font></td></tr>
+<tr><td><a href="#homo_sapiens_vega_39_36a"><font color='red' size=-1>homo_sapiens_vega_39_36a</font></a></td><td><font color='green' size=-1>34</font></td><td><font color='red' size=-1>11</font></td></tr>
+<tr><td><a href="#master_schema_39"><font color='red' size=-1>master_schema_39</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>1</font></td></tr>
+</table></p>
+<hr>
+<h2>Summary by test</h2>
+<p><table class='ss'>
+<tr><th>Test</th><th>Passed</th><th>Failed</th></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Accession"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.Accession</font></a></td><td><font color='green' size=-1>4</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AnalysisDescription"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.AnalysisDescription</font></a></td><td><font color='green' size=-1>4</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AssemblyException"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.AssemblyException</font></a></td><td><font color='green' size=-1>4</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>4</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AssemblySeqregion"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.AssemblySeqregion</font></a></td><td><font color='green' size=-1>4</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AssemblyTablesAcrossSpecies"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.AssemblyTablesAcrossSpecies</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>3</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>2</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.BigGeneExon"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.BigGeneExon</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Biotypes"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.Biotypes</font></a></td><td><font color='green' size=-1>4</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.BlankInfoType"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.BlankInfoType</font></a></td><td><font color='green' size=-1>4</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBiotypes"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBiotypes</font></a></td><td><font color='green' size=-1>3</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionTableRows"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionTableRows</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>4</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionXrefs"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionXrefs</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.CompareSchema"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.CompareSchema</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>3</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.CoordSystemAcrossSpecies"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.CoordSystemAcrossSpecies</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>4</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.CoreForeignKeys"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.CoreForeignKeys</font></a></td><td><font color='green' size=-1>3</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DNAEmpty"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.DNAEmpty</font></a></td><td><font color='green' size=-1>3</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DNATablesAcrossSpecies"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.DNATablesAcrossSpecies</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>2</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DensityFeatures"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.DensityFeatures</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>2</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DisplayLabels"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.DisplayLabels</font></a></td><td><font color='green' size=-1>4</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DisplayMarkerSynonyms"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.DisplayMarkerSynonyms</font></a></td><td><font color='green' size=-1>4</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DisplayXref"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.DisplayXref</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DuplicateAssembly"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.DuplicateAssembly</font></a></td><td><font color='green' size=-1>4</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DuplicateExons"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.DuplicateExons</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DuplicateGenes"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.DuplicateGenes</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ESTStableID"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.ESTStableID</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ESTStableIDs"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.ESTStableIDs</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.EmptyTables"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.EmptyTables</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>2</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ExonStrandOrder"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.ExonStrandOrder</font></a></td><td><font color='green' size=-1>3</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd</font></a></td><td><font color='green' size=-1>3</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName</font></a></td><td><font color='green' size=-1>4</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.FeatureAnalysis"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.FeatureAnalysis</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>2</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.FeatureCoords"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.FeatureCoords</font></a></td><td><font color='green' size=-1>3</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.GOXrefs"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.GOXrefs</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.GeneStatus"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.GeneStatus</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>2</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.GeneType"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.GeneType</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>2</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.HumanCCDS"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.HumanCCDS</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.InterproDescriptions"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.InterproDescriptions</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Karyotype"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.Karyotype</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>2</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.MappingSession"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.MappingSession</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.MarkerFeatures"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.MarkerFeatures</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Meta"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.Meta</font></a></td><td><font color='green' size=-1>4</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.MetaCoord"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.MetaCoord</font></a></td><td><font color='green' size=-1>4</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>2</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.OligoMismatches"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.OligoMismatches</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.OligoXrefs"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.OligoXrefs</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.PredictedXrefs"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.PredictedXrefs</font></a></td><td><font color='green' size=-1>4</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>2</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ProteinFeatures"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.ProteinFeatures</font></a></td><td><font color='green' size=-1>3</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ProteinIDXrefsNoVersion"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.ProteinIDXrefsNoVersion</font></a></td><td><font color='green' size=-1>4</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Pseudogene"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.Pseudogene</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.RepeatConsensus"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.RepeatConsensus</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.RepeatFeature"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.RepeatFeature</font></a></td><td><font color='green' size=-1>4</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionAcrossSpecies"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.SeqRegionAcrossSpecies</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>4</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionAttribAcrossSpecies"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.SeqRegionAttribAcrossSpecies</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>2</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>3</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionName"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.SeqRegionName</font></a></td><td><font color='green' size=-1>4</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel</font></a></td><td><font color='green' size=-1>3</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SingleDBCollations"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.SingleDBCollations</font></a></td><td><font color='green' size=-1>4</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.StableID"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.StableID</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Strand"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.Strand</font></a></td><td><font color='green' size=-1>4</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.TranslationStartEnd"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.TranslationStartEnd</font></a></td><td><font color='green' size=-1>3</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.TranslationStartEndExon"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.TranslationStartEndExon</font></a></td><td><font color='green' size=-1>3</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.XrefTypes"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.XrefTypes</font></a></td><td><font color='green' size=-1>4</font></td><td><font color='red' size=-1>0</font></td></tr>
+</table></p>
+<hr>
+<h2>Detailed reports by database</h2>
+<h3 class='boxed'><a name="homo_sapiens_cdna_39_36a">homo_sapiens_cdna_39_36a</a></h3>
+<p>
+<a name="homo_sapiens_cdna_39_36a:BigGeneExon"></a> <font color='grey'><strong>BigGeneExon: </strong>109 genes are longer than 1000000 bases but less than 3000000 bases</font><br>
+</p><p>
+<a name="homo_sapiens_cdna_39_36a:GeneStatus"></a> <font color='red'><strong>GeneStatus: </strong>No genes have status KNOWN</font><br>
+</p><p>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionCoordSystem"></a> <font color='red'><strong>SeqRegionCoordSystem: </strong>Co-ordinate systems chromosome:NCBI36 and chromosome:NCBI35 have 25 identically-named seq_regions - this may cause problems for ID mapping</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionCoordSystem"></a> <font color='red'><strong>SeqRegionCoordSystem: </strong>24 seq_regions have the same name but different lengths</font><br>
+</p><p>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 198155</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 198162</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 198220</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 198688</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 198710</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 198770</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 198841</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 198941</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 198960</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 199085</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 199107</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 199320</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 199397</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 199915</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 200030</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 200135</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 200236</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 200608</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 201467</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 201495</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 201671</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 202170</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 202453</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 202709</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 202864</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 203120</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 203147</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 203311</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 204129</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 204148</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 204165</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 204226</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 204475</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 204755</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 204950</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 205726</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 206269</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 206386</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 207733</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 207789</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 208116</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 208953</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 209144</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 209362</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 209367</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 209629</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 210290</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 210382</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 210577</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 210628</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 211187</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 211395</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 211401</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 211855</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 211881</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 212272</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 212587</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 214020</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 214828</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 214987</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 215510</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 216197</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 217502</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 217594</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 217709</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 217900</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 218237</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 218325</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 218606</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 218663</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 218721</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 218761</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 218812</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 219048</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 219081</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 219202</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 219270</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 219774</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 220094</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 220097</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 220923</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 221394</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 221507</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 221601</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 221742</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 222074</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 222592</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 223283</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 223641</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 223678</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 224120</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 224501</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 224597</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 224799</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionsTopLevel"></a> <font color='red'><strong>SeqRegionsTopLevel: </strong>No top_level attribute set for seq_region_id 224884</font><br>
+</p><p>
+<a name="homo_sapiens_cdna_39_36a:ComparePreviousVersionTableRows"></a> <font color='red'><strong>ComparePreviousVersionTableRows: </strong>homo_sapiens_cdna_38_36 has 233 rows in seq_region_attrib but homo_sapiens_cdna_39_36a only has 122</font><br>
+</p><p>
+<a name="homo_sapiens_cdna_39_36a:AssemblyMultipleOverlap"></a> <font color='red'><strong>AssemblyMultipleOverlap: </strong>499 instances of multiple overlapping assembled components</font><br>
+</p><p>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionAcrossSpecies"></a> <font color='red'><strong>SeqRegionAcrossSpecies: </strong>homo_sapiens_cdna_39_36a and homo_sapiens_otherfeatures_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 54695, 54584</font><br>
+<a name="homo_sapiens_cdna_39_36a:SeqRegionAcrossSpecies"></a> <font color='red'><strong>SeqRegionAcrossSpecies: </strong>homo_sapiens_cdna_39_36a and homo_sapiens_vega_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 54695, 54612</font><br>
+</p><p>
+<a name="homo_sapiens_cdna_39_36a:CoordSystemAcrossSpecies"></a> <font color='red'><strong>CoordSystemAcrossSpecies: </strong>homo_sapiens_cdna_39_36a and homo_sapiens_otherfeatures_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 5, 4</font><br>
+</p>
+<h3 class='boxed'><a name="homo_sapiens_core_39_36a">homo_sapiens_core_39_36a</a></h3>
+<p>
+<a name="homo_sapiens_core_39_36a:BigGeneExon"></a> <font color='grey'><strong>BigGeneExon: </strong>41 genes are longer than 1000000 bases but less than 3000000 bases</font><br>
+<a name="homo_sapiens_core_39_36a:BigGeneExon"></a> <font color='red'><strong>BigGeneExon: </strong>1 gene is longer than 3000000 bases</font><br>
+<a name="homo_sapiens_core_39_36a:BigGeneExon"></a> <font color='red'><strong>BigGeneExon: </strong>Gene ENSG00000173409 (ARV1) KNOWN has length 3346985 (Protein ARV1 (hARV1). [Source:Uniprot/SWISSPROT;Acc:Q9H2C2])</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:ComparePreviousVersionBiotypes"></a> <font color='red'><strong>ComparePreviousVersionBiotypes: </strong>homo_sapiens_core_38_36 has 34 biotypes of type scRNA but homo_sapiens_core_39_36a only has 1</font><br>
+<a name="homo_sapiens_core_39_36a:ComparePreviousVersionBiotypes"></a> <font color='red'><strong>ComparePreviousVersionBiotypes: </strong>homo_sapiens_core_38_36 has 819 biotypes of type snoRNA_pseudogene but homo_sapiens_core_39_36a only has 564</font><br>
+<a name="homo_sapiens_core_39_36a:ComparePreviousVersionBiotypes"></a> <font color='red'><strong>ComparePreviousVersionBiotypes: </strong>homo_sapiens_core_38_36 has 2 biotypes of type Mt_rRNA but homo_sapiens_core_39_36a only has 1</font><br>
+<a name="homo_sapiens_core_39_36a:ComparePreviousVersionBiotypes"></a> <font color='red'><strong>ComparePreviousVersionBiotypes: </strong>homo_sapiens_core_38_36 has 1866 biotypes of type snRNA_pseudogene but homo_sapiens_core_39_36a only has 632</font><br>
+<a name="homo_sapiens_core_39_36a:ComparePreviousVersionBiotypes"></a> <font color='red'><strong>ComparePreviousVersionBiotypes: </strong>homo_sapiens_core_38_36 has 1714 biotypes of type scRNA_pseudogene but homo_sapiens_core_39_36a only has 902</font><br>
+<a name="homo_sapiens_core_39_36a:ComparePreviousVersionBiotypes"></a> <font color='red'><strong>ComparePreviousVersionBiotypes: </strong>homo_sapiens_core_38_36 has 676 biotypes of type rRNA_pseudogene but homo_sapiens_core_39_36a only has 393</font><br>
+<a name="homo_sapiens_core_39_36a:ComparePreviousVersionBiotypes"></a> <font color='red'><strong>ComparePreviousVersionBiotypes: </strong>homo_sapiens_core_38_36 has 35 biotypes of type miRNA_pseudogene but homo_sapiens_core_39_36a only has 22</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:ComparePreviousVersionXrefs"></a> <font color='red'><strong>ComparePreviousVersionXrefs: </strong>homo_sapiens_core_38_36 has 21968 xrefs of type MIM but homo_sapiens_core_39_36a has none</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='red'><strong>CoreForeignKeys: </strong>object_xref <-> xref has 27 unlinked entries</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='grey'><strong>CoreForeignKeys: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="homo_sapiens_core_39_36a:CoreForeignKeys"></a> <font color='red'><strong>CoreForeignKeys: </strong>simple_feature <-> seq_region has 21940 unlinked entries</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Sum of values for snpDensity from density_feature (1583794) doesn't agree with value from seq_region_attrib (791897) for 1</font><br>
+<a name="homo_sapiens_core_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Sum of values for snpDensity from density_feature (1029932) doesn't agree with value from seq_region_attrib (514966) for 10</font><br>
+<a name="homo_sapiens_core_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Sum of values for snpDensity from density_feature (1007057) doesn't agree with value from seq_region_attrib (503528) for 11</font><br>
+<a name="homo_sapiens_core_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Sum of values for snpDensity from density_feature (936186) doesn't agree with value from seq_region_attrib (468093) for 12</font><br>
+<a name="homo_sapiens_core_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Sum of values for snpDensity from density_feature (726988) doesn't agree with value from seq_region_attrib (363494) for 13</font><br>
+<a name="homo_sapiens_core_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Sum of values for snpDensity from density_feature (581492) doesn't agree with value from seq_region_attrib (290746) for 14</font><br>
+<a name="homo_sapiens_core_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Sum of values for snpDensity from density_feature (564468) doesn't agree with value from seq_region_attrib (282234) for 15</font><br>
+<a name="homo_sapiens_core_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Sum of values for snpDensity from density_feature (641456) doesn't agree with value from seq_region_attrib (320728) for 16</font><br>
+<a name="homo_sapiens_core_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Sum of values for snpDensity from density_feature (513703) doesn't agree with value from seq_region_attrib (256851) for 17</font><br>
+<a name="homo_sapiens_core_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Sum of values for snpDensity from density_feature (534454) doesn't agree with value from seq_region_attrib (267227) for 18</font><br>
+<a name="homo_sapiens_core_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Sum of values for snpDensity from density_feature (412402) doesn't agree with value from seq_region_attrib (206201) for 19</font><br>
+<a name="homo_sapiens_core_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Sum of values for snpDensity from density_feature (1516058) doesn't agree with value from seq_region_attrib (758029) for 2</font><br>
+<a name="homo_sapiens_core_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Sum of values for snpDensity from density_feature (578174) doesn't agree with value from seq_region_attrib (289087) for 20</font><br>
+<a name="homo_sapiens_core_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Sum of values for snpDensity from density_feature (298152) doesn't agree with value from seq_region_attrib (149076) for 21</font><br>
+<a name="homo_sapiens_core_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Sum of values for snpDensity from density_feature (343174) doesn't agree with value from seq_region_attrib (171587) for 22</font><br>
+<a name="homo_sapiens_core_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Sum of values for snpDensity from density_feature (1271236) doesn't agree with value from seq_region_attrib (635618) for 3</font><br>
+<a name="homo_sapiens_core_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Sum of values for snpDensity from density_feature (1309291) doesn't agree with value from seq_region_attrib (654645) for 4</font><br>
+<a name="homo_sapiens_core_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Sum of values for snpDensity from density_feature (1137441) doesn't agree with value from seq_region_attrib (568720) for 5</font><br>
+<a name="homo_sapiens_core_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Sum of values for snpDensity from density_feature (1281156) doesn't agree with value from seq_region_attrib (640573) for 6</font><br>
+<a name="homo_sapiens_core_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Sum of values for snpDensity from density_feature (1092561) doesn't agree with value from seq_region_attrib (546279) for 7</font><br>
+<a name="homo_sapiens_core_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Sum of values for snpDensity from density_feature (974016) doesn't agree with value from seq_region_attrib (487008) for 8</font><br>
+<a name="homo_sapiens_core_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Sum of values for snpDensity from density_feature (995950) doesn't agree with value from seq_region_attrib (497975) for 9</font><br>
+<a name="homo_sapiens_core_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Sum of values for snpDensity from density_feature (785172) doesn't agree with value from seq_region_attrib (392586) for X</font><br>
+<a name="homo_sapiens_core_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Sum of values for snpDensity from density_feature (75382) doesn't agree with value from seq_region_attrib (36259) for Y</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>gene_attrib has zero rows</font><br>
+<a name="homo_sapiens_core_39_36a:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>regulatory_factor_coding has zero rows</font><br>
+<a name="homo_sapiens_core_39_36a:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>regulatory_search_region has zero rows</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:ExonStrandOrder"></a> <font color='black'><strong>ExonStrandOrder: </strong>Long transcript 19517 length 2092375</font><br>
+<a name="homo_sapiens_core_39_36a:ExonStrandOrder"></a> <font color='black'><strong>ExonStrandOrder: </strong>Long transcript 19766 length 2089393</font><br>
+<a name="homo_sapiens_core_39_36a:ExonStrandOrder"></a> <font color='black'><strong>ExonStrandOrder: </strong>Long transcript 22137 length 2298739</font><br>
+<a name="homo_sapiens_core_39_36a:ExonStrandOrder"></a> <font color='black'><strong>ExonStrandOrder: </strong>Long transcript 22141 length 2298739</font><br>
+<a name="homo_sapiens_core_39_36a:ExonStrandOrder"></a> <font color='black'><strong>ExonStrandOrder: </strong>Long transcript 22246 length 2054681</font><br>
+<a name="homo_sapiens_core_39_36a:ExonStrandOrder"></a> <font color='black'><strong>ExonStrandOrder: </strong>Long transcript 22285 length 2054111</font><br>
+<a name="homo_sapiens_core_39_36a:ExonStrandOrder"></a> <font color='black'><strong>ExonStrandOrder: </strong>Long transcript 47836 length 3346927</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:FeatureAnalysis"></a> <font color='red'><strong>FeatureAnalysis: </strong>Analysis with ID 5003, logic name miRNA_Registry is not used in any feature table</font><br>
+<a name="homo_sapiens_core_39_36a:FeatureAnalysis"></a> <font color='red'><strong>FeatureAnalysis: </strong>Analysis with ID 5004, logic name RFAM is not used in any feature table</font><br>
+<a name="homo_sapiens_core_39_36a:FeatureAnalysis"></a> <font color='red'><strong>FeatureAnalysis: </strong>Analysis with ID 5038, logic name selenocysteine is not used in any feature table</font><br>
+<a name="homo_sapiens_core_39_36a:FeatureAnalysis"></a> <font color='red'><strong>FeatureAnalysis: </strong>Analysis with ID 5079, logic name miRNA is not used in any feature table</font><br>
+<a name="homo_sapiens_core_39_36a:FeatureAnalysis"></a> <font color='red'><strong>FeatureAnalysis: </strong>Analysis with ID 5100, logic name cisred_search is not used in any feature table</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:FeatureCoords"></a> <font color='red'><strong>FeatureCoords: </strong>20525 rows in simple_feature have seq_region_start > seq_region_end</font><br>
+<a name="homo_sapiens_core_39_36a:FeatureCoords"></a> <font color='red'><strong>FeatureCoords: </strong>2 rows in misc_feature have seq_region_end > length in seq_region_table</font><br>
+<a name="homo_sapiens_core_39_36a:FeatureCoords"></a> <font color='red'><strong>FeatureCoords: </strong>5 rows in density_feature have seq_region_end > length in seq_region_table</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:GeneType"></a> <font color='red'><strong>GeneType: </strong>miRNA_pseudogene is not a valid gene type name.</font><br>
+<a name="homo_sapiens_core_39_36a:GeneType"></a> <font color='red'><strong>GeneType: </strong>misc_RNA_pseudogene is not a valid gene type name.</font><br>
+<a name="homo_sapiens_core_39_36a:GeneType"></a> <font color='red'><strong>GeneType: </strong>Mt_rRNA is not a valid gene type name.</font><br>
+<a name="homo_sapiens_core_39_36a:GeneType"></a> <font color='red'><strong>GeneType: </strong>Mt_tRNA is not a valid gene type name.</font><br>
+<a name="homo_sapiens_core_39_36a:GeneType"></a> <font color='red'><strong>GeneType: </strong>Mt_tRNA_pseudogene is not a valid gene type name.</font><br>
+<a name="homo_sapiens_core_39_36a:GeneType"></a> <font color='red'><strong>GeneType: </strong>ensembl_havana_gene (protein_coding) is not a valid analysis logic name.</font><br>
+<a name="homo_sapiens_core_39_36a:GeneType"></a> <font color='red'><strong>GeneType: </strong>havana (protein_coding) is not a valid analysis logic name.</font><br>
+<a name="homo_sapiens_core_39_36a:GeneType"></a> <font color='red'><strong>GeneType: </strong>rRNA_pseudogene is not a valid gene type name.</font><br>
+<a name="homo_sapiens_core_39_36a:GeneType"></a> <font color='red'><strong>GeneType: </strong>scRNA_pseudogene is not a valid gene type name.</font><br>
+<a name="homo_sapiens_core_39_36a:GeneType"></a> <font color='red'><strong>GeneType: </strong>snoRNA_pseudogene is not a valid gene type name.</font><br>
+<a name="homo_sapiens_core_39_36a:GeneType"></a> <font color='red'><strong>GeneType: </strong>snRNA_pseudogene is not a valid gene type name.</font><br>
+<a name="homo_sapiens_core_39_36a:GeneType"></a> <font color='red'><strong>GeneType: </strong>tRNA_pseudogene is not a valid gene type name.</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:Karyotype"></a> <font color='red'><strong>Karyotype: </strong>Chromosome 2 is 200000bp shorter in the karyotype table than in the seq_region table</font><br>
+<a name="homo_sapiens_core_39_36a:Karyotype"></a> <font color='red'><strong>Karyotype: </strong>Chromosome 17 is 120000bp shorter in the karyotype table than in the seq_region table</font><br>
+<a name="homo_sapiens_core_39_36a:Karyotype"></a> <font color='red'><strong>Karyotype: </strong>Chromosome 1 is 50000bp shorter in the karyotype table than in the seq_region table</font><br>
+<a name="homo_sapiens_core_39_36a:Karyotype"></a> <font color='red'><strong>Karyotype: </strong>Chromosome 16 is 5000bp shorter in the karyotype table than in the seq_region table</font><br>
+<a name="homo_sapiens_core_39_36a:Karyotype"></a> <font color='red'><strong>Karyotype: </strong>Chromosome 14 is 8000bp shorter in the karyotype table than in the seq_region table</font><br>
+<a name="homo_sapiens_core_39_36a:Karyotype"></a> <font color='red'><strong>Karyotype: </strong>Chromosome 22 is 100000bp shorter in the karyotype table than in the seq_region table</font><br>
+<a name="homo_sapiens_core_39_36a:Karyotype"></a> <font color='red'><strong>Karyotype: </strong>Chromosome 13 is 15000bp shorter in the karyotype table than in the seq_region table</font><br>
+<a name="homo_sapiens_core_39_36a:Karyotype"></a> <font color='red'><strong>Karyotype: </strong>Chromosome 6 is 3000bp shorter in the karyotype table than in the seq_region table</font><br>
+<a name="homo_sapiens_core_39_36a:Karyotype"></a> <font color='red'><strong>Karyotype: </strong>Chromosome 3 is 55000bp shorter in the karyotype table than in the seq_region table</font><br>
+<a name="homo_sapiens_core_39_36a:Karyotype"></a> <font color='red'><strong>Karyotype: </strong>Chromosome 12 is 60000bp shorter in the karyotype table than in the seq_region table</font><br>
+<a name="homo_sapiens_core_39_36a:Karyotype"></a> <font color='red'><strong>Karyotype: </strong>Chromosome 4 is 10000bp shorter in the karyotype table than in the seq_region table</font><br>
+<a name="homo_sapiens_core_39_36a:Karyotype"></a> <font color='red'><strong>Karyotype: </strong>Chromosome 19 is 5000bp shorter in the karyotype table than in the seq_region table</font><br>
+<a name="homo_sapiens_core_39_36a:Karyotype"></a> <font color='red'><strong>Karyotype: </strong>Chromosome 5 is 20000bp shorter in the karyotype table than in the seq_region table</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:LogicNamesDisplayable"></a> <font color='red'><strong>LogicNamesDisplayable: </strong>Feature table gene has features with logic name havana which will not be drawn</font><br>
+<a name="homo_sapiens_core_39_36a:LogicNamesDisplayable"></a> <font color='red'><strong>LogicNamesDisplayable: </strong>Feature table gene has features with logic name ensembl_havana_gene which will not be drawn</font><br>
+<a name="homo_sapiens_core_39_36a:LogicNamesDisplayable"></a> <font color='red'><strong>LogicNamesDisplayable: </strong>Feature table transcript has features with logic name havana which will not be drawn</font><br>
+<a name="homo_sapiens_core_39_36a:LogicNamesDisplayable"></a> <font color='red'><strong>LogicNamesDisplayable: </strong>Feature table transcript has features with logic name ensembl_havana_transcript which will not be drawn</font><br>
+<a name="homo_sapiens_core_39_36a:LogicNamesDisplayable"></a> <font color='red'><strong>LogicNamesDisplayable: </strong>protein_feature analysis with analysis_id = 12 has unknown gff_source = 'PROSITEPATTERN'</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:MappingSession"></a> <font color='red'><strong>MappingSession: </strong>Old/new names homo_sapiens_core_37_35j homo_sapiens_core_27_35a do not chain properly</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:OligoXrefs"></a> <font color='red'><strong>OligoXrefs: </strong>Chromosome c22_H2( seq_region_id=226066) has no associated Oligo xrefs.</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:ProteinFeatureTranslation"></a> <font color='red'><strong>ProteinFeatureTranslation: </strong>protein_feature table has 549 features that are longer than the translation</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:SeqRegionCoordSystem"></a> <font color='red'><strong>SeqRegionCoordSystem: </strong>Co-ordinate systems chromosome:NCBI36 and chromosome:NCBI35 have 25 identically-named seq_regions - this may cause problems for ID mapping</font><br>
+<a name="homo_sapiens_core_39_36a:SeqRegionCoordSystem"></a> <font color='red'><strong>SeqRegionCoordSystem: </strong>24 seq_regions have the same name but different lengths</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:ComparePreviousVersionTableRows"></a> <font color='red'><strong>ComparePreviousVersionTableRows: </strong>homo_sapiens_core_38_36 has 1 rows in pm2_misc_set but homo_sapiens_core_39_36a has none</font><br>
+<a name="homo_sapiens_core_39_36a:ComparePreviousVersionTableRows"></a> <font color='red'><strong>ComparePreviousVersionTableRows: </strong>homo_sapiens_core_38_36 has 44 rows in pm2_misc_feature_misc_set but homo_sapiens_core_39_36a has none</font><br>
+<a name="homo_sapiens_core_39_36a:ComparePreviousVersionTableRows"></a> <font color='red'><strong>ComparePreviousVersionTableRows: </strong>homo_sapiens_core_38_36 has 1003 rows in seq_region_attrib but homo_sapiens_core_39_36a only has 450</font><br>
+<a name="homo_sapiens_core_39_36a:ComparePreviousVersionTableRows"></a> <font color='red'><strong>ComparePreviousVersionTableRows: </strong>homo_sapiens_core_38_36 has 132 rows in pm2_misc_attrib but homo_sapiens_core_39_36a has none</font><br>
+<a name="homo_sapiens_core_39_36a:ComparePreviousVersionTableRows"></a> <font color='red'><strong>ComparePreviousVersionTableRows: </strong>homo_sapiens_core_38_36 has 393544 rows in regulatory_feature but homo_sapiens_core_39_36a only has 234111</font><br>
+<a name="homo_sapiens_core_39_36a:ComparePreviousVersionTableRows"></a> <font color='red'><strong>ComparePreviousVersionTableRows: </strong>homo_sapiens_core_38_36 has 17335 rows in regulatory_search_region but homo_sapiens_core_39_36a only has 0</font><br>
+<a name="homo_sapiens_core_39_36a:ComparePreviousVersionTableRows"></a> <font color='red'><strong>ComparePreviousVersionTableRows: </strong>homo_sapiens_core_38_36 has 44 rows in pm2_misc_feature but homo_sapiens_core_39_36a has none</font><br>
+<a name="homo_sapiens_core_39_36a:ComparePreviousVersionTableRows"></a> <font color='red'><strong>ComparePreviousVersionTableRows: </strong>homo_sapiens_core_38_36 has 393544 rows in regulatory_feature_object but homo_sapiens_core_39_36a only has 234111</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:AssemblyMultipleOverlap"></a> <font color='red'><strong>AssemblyMultipleOverlap: </strong>485 instances of multiple overlapping assembled components</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:AssemblyTablesAcrossSpecies"></a> <font color='red'><strong>AssemblyTablesAcrossSpecies: </strong>homo_sapiens_core_39_36a and homo_sapiens_otherfeatures_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 92969, 81103</font><br>
+<a name="homo_sapiens_core_39_36a:AssemblyTablesAcrossSpecies"></a> <font color='red'><strong>AssemblyTablesAcrossSpecies: </strong>homo_sapiens_core_39_36a and homo_sapiens_vega_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 92969, 83412</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:AttribTypeAcrossSpecies"></a> <font color='red'><strong>AttribTypeAcrossSpecies: </strong>homo_sapiens_core_39_36a and homo_sapiens_otherfeatures_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 74, 58</font><br>
+<a name="homo_sapiens_core_39_36a:AttribTypeAcrossSpecies"></a> <font color='red'><strong>AttribTypeAcrossSpecies: </strong>homo_sapiens_core_39_36a and homo_sapiens_vega_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 74, 58</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:CompareSchema"></a> <font color='red'><strong>CompareSchema: </strong>Table assembly_bak exists in homo_sapiens_core_39_36a but not in master_schema_39</font><br>
+<a name="homo_sapiens_core_39_36a:CompareSchema"></a> <font color='red'><strong>CompareSchema: </strong>Table chr2contig exists in homo_sapiens_core_39_36a but not in master_schema_39</font><br>
+<a name="homo_sapiens_core_39_36a:CompareSchema"></a> <font color='red'><strong>CompareSchema: </strong>Table clone2contig exists in homo_sapiens_core_39_36a but not in master_schema_39</font><br>
+<a name="homo_sapiens_core_39_36a:CompareSchema"></a> <font color='red'><strong>CompareSchema: </strong>Table coord_system_bak exists in homo_sapiens_core_39_36a but not in master_schema_39</font><br>
+<a name="homo_sapiens_core_39_36a:CompareSchema"></a> <font color='red'><strong>CompareSchema: </strong>Table meta_bak exists in homo_sapiens_core_39_36a but not in master_schema_39</font><br>
+<a name="homo_sapiens_core_39_36a:CompareSchema"></a> <font color='red'><strong>CompareSchema: </strong>Table oligo_feature_backup exists in homo_sapiens_core_39_36a but not in master_schema_39</font><br>
+<a name="homo_sapiens_core_39_36a:CompareSchema"></a> <font color='red'><strong>CompareSchema: </strong>Table sc2contig exists in homo_sapiens_core_39_36a but not in master_schema_39</font><br>
+<a name="homo_sapiens_core_39_36a:CompareSchema"></a> <font color='red'><strong>CompareSchema: </strong>Table seq_region_bak exists in homo_sapiens_core_39_36a but not in master_schema_39</font><br>
+<a name="homo_sapiens_core_39_36a:CompareSchema"></a> <font color='red'><strong>CompareSchema: </strong>Table name discrepancy detected, skipping rest of checks</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:DNATablesAcrossSpecies"></a> <font color='red'><strong>DNATablesAcrossSpecies: </strong>homo_sapiens_core_39_36a and homo_sapiens_vega_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 27093, 0</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:MetaCrossSpecies"></a> <font color='red'><strong>MetaCrossSpecies: </strong>homo_sapiens_core_39_36a and homo_sapiens_vega_39_36a  differ at row 9 column 1 (LCASE(meta_value)) Values: haplorrhini, hominidae</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:SeqRegionAttribAcrossSpecies"></a> <font color='red'><strong>SeqRegionAttribAcrossSpecies: </strong>homo_sapiens_core_39_36a and homo_sapiens_otherfeatures_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 450, 122</font><br>
+<a name="homo_sapiens_core_39_36a:SeqRegionAttribAcrossSpecies"></a> <font color='red'><strong>SeqRegionAttribAcrossSpecies: </strong>homo_sapiens_core_39_36a and homo_sapiens_vega_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 450, 122</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:SeqRegionAcrossSpecies"></a> <font color='red'><strong>SeqRegionAcrossSpecies: </strong>homo_sapiens_core_39_36a and homo_sapiens_otherfeatures_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 54695, 54584</font><br>
+<a name="homo_sapiens_core_39_36a:SeqRegionAcrossSpecies"></a> <font color='red'><strong>SeqRegionAcrossSpecies: </strong>homo_sapiens_core_39_36a and homo_sapiens_vega_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 54695, 54612</font><br>
+</p><p>
+<a name="homo_sapiens_core_39_36a:CoordSystemAcrossSpecies"></a> <font color='red'><strong>CoordSystemAcrossSpecies: </strong>homo_sapiens_core_39_36a and homo_sapiens_otherfeatures_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 5, 4</font><br>
+</p>
+<h3 class='boxed'><a name="homo_sapiens_otherfeatures_39_36a">homo_sapiens_otherfeatures_39_36a</a></h3>
+<p>
+<a name="homo_sapiens_otherfeatures_39_36a:GeneStatus"></a> <font color='red'><strong>GeneStatus: </strong>No genes have status KNOWN</font><br>
+<a name="homo_sapiens_otherfeatures_39_36a:GeneStatus"></a> <font color='red'><strong>GeneStatus: </strong>28639 genes have null status</font><br>
+<a name="homo_sapiens_otherfeatures_39_36a:GeneStatus"></a> <font color='red'><strong>GeneStatus: </strong>58916 transcripts have null status</font><br>
+</p><p>
+<a name="homo_sapiens_otherfeatures_39_36a:GeneType"></a> <font color='red'><strong>GeneType: </strong>genomewise (protein_coding) is not a valid analysis logic name.</font><br>
+</p><p>
+<a name="homo_sapiens_otherfeatures_39_36a:LogicNamesDisplayable"></a> <font color='red'><strong>LogicNamesDisplayable: </strong>Analysis with logic name 'sheep_bac_ends' has a blank db field - features of this type will have no label in ProtView</font><br>
+</p><p>
+<a name="homo_sapiens_otherfeatures_39_36a:ComparePreviousVersionTableRows"></a> <font color='red'><strong>ComparePreviousVersionTableRows: </strong>homo_sapiens_otherfeatures_38_36 has 466 rows in seq_region_attrib but homo_sapiens_otherfeatures_39_36a only has 122</font><br>
+</p><p>
+<a name="homo_sapiens_otherfeatures_39_36a:AssemblyMultipleOverlap"></a> <font color='red'><strong>AssemblyMultipleOverlap: </strong>14 instances of multiple overlapping assembled components</font><br>
+</p><p>
+<a name="homo_sapiens_otherfeatures_39_36a:AssemblyTablesAcrossSpecies"></a> <font color='red'><strong>AssemblyTablesAcrossSpecies: </strong>homo_sapiens_otherfeatures_39_36a and homo_sapiens_vega_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 81103, 83412</font><br>
+</p><p>
+<a name="homo_sapiens_otherfeatures_39_36a:SeqRegionAcrossSpecies"></a> <font color='red'><strong>SeqRegionAcrossSpecies: </strong>homo_sapiens_otherfeatures_39_36a and homo_sapiens_vega_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 54584, 54612</font><br>
+</p><p>
+<a name="homo_sapiens_otherfeatures_39_36a:CoordSystemAcrossSpecies"></a> <font color='red'><strong>CoordSystemAcrossSpecies: </strong>homo_sapiens_otherfeatures_39_36a and homo_sapiens_vega_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 4, 5</font><br>
+</p>
+<h3 class='boxed'><a name="homo_sapiens_vega_39_36a">homo_sapiens_vega_39_36a</a></h3>
+<p>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 1 (ID 226034) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 10 (ID 226043) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 11 (ID 226044) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 12 (ID 226056) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 13 (ID 226050) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 14 (ID 226039) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 15 (ID 226057) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 16 (ID 226036) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 17 (ID 226033) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 18 (ID 226035) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 19 (ID 226061) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 2 (ID 226032) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 20 (ID 226040) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 21 (ID 226028) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 22 (ID 226046) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 3 (ID 226053) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 4 (ID 226060) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 5 (ID 226062) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 6 (ID 226052) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 7 (ID 226030) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 8 (ID 226058) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region 9 (ID 226055) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region MT (ID 226038) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region X (ID 226054) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>Top-level seq region Y (ID 226031) has no density features</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>No entry in density_type for analysis PercentGC</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>No entry in density_type for analysis PercentageRepeat</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>No entry in density_type for analysis knownGeneDensity</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>No entry in density_type for analysis geneDensity</font><br>
+<a name="homo_sapiens_vega_39_36a:DensityFeatures"></a> <font color='red'><strong>DensityFeatures: </strong>No entry in density_type for analysis snpDensity</font><br>
+</p><p>
+<a name="homo_sapiens_vega_39_36a:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 197264 is duplicated.</font><br>
+<a name="homo_sapiens_vega_39_36a:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 197444 is duplicated.</font><br>
+<a name="homo_sapiens_vega_39_36a:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 77796 is duplicated.</font><br>
+<a name="homo_sapiens_vega_39_36a:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 77790 is duplicated.</font><br>
+<a name="homo_sapiens_vega_39_36a:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 77795 is duplicated.</font><br>
+<a name="homo_sapiens_vega_39_36a:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 77789 is duplicated.</font><br>
+<a name="homo_sapiens_vega_39_36a:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 77794 is duplicated.</font><br>
+<a name="homo_sapiens_vega_39_36a:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 77788 is duplicated.</font><br>
+<a name="homo_sapiens_vega_39_36a:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 77787 is duplicated.</font><br>
+<a name="homo_sapiens_vega_39_36a:DuplicateExons"></a> <font color='black'><strong>DuplicateExons: </strong>Exon 77816 is duplicated.</font><br>
+<a name="homo_sapiens_vega_39_36a:DuplicateExons"></a> <font color='red'><strong>DuplicateExons: </strong>Has at least 962 duplicated exons.</font><br>
+</p><p>
+<a name="homo_sapiens_vega_39_36a:DuplicateGenes"></a> <font color='black'><strong>DuplicateGenes: </strong>Gene OTTHUMG00000023670 (protein_coding ID 7182) is duplicated - see gene OTTHUMG00000119091 (protein_coding ID 7183)</font><br>
+<a name="homo_sapiens_vega_39_36a:DuplicateGenes"></a> <font color='black'><strong>DuplicateGenes: </strong>Gene OTTHUMG00000073451 (protein_coding ID 15748) is duplicated - see gene OTTHUMG00000128707 (protein_coding ID 15749)</font><br>
+<a name="homo_sapiens_vega_39_36a:DuplicateGenes"></a> <font color='black'><strong>DuplicateGenes: </strong>Gene OTTHUMG00000072969 (protein_coding ID 15955) is duplicated - see gene OTTHUMG00000090677 (protein_coding ID 15956)</font><br>
+<a name="homo_sapiens_vega_39_36a:DuplicateGenes"></a> <font color='black'><strong>DuplicateGenes: </strong>Gene OTTHUMG00000073578 (protein_coding ID 16027) is duplicated - see gene OTTHUMG00000048082 (protein_coding ID 16028)</font><br>
+<a name="homo_sapiens_vega_39_36a:DuplicateGenes"></a> <font color='black'><strong>DuplicateGenes: </strong>Gene OTTHUMG00000073463 (protein_coding ID 15811) is duplicated - see gene OTTHUMG00000090497 (protein_coding ID 15812)</font><br>
+<a name="homo_sapiens_vega_39_36a:DuplicateGenes"></a> <font color='black'><strong>DuplicateGenes: </strong>Gene OTTHUMG00000073467 (protein_coding ID 15966) is duplicated - see gene OTTHUMG00000090721 (protein_coding ID 15967)</font><br>
+<a name="homo_sapiens_vega_39_36a:DuplicateGenes"></a> <font color='black'><strong>DuplicateGenes: </strong>Gene OTTHUMG00000014526 (processed_pseudogene ID 5292) is duplicated - see gene OTTHUMG00000078409 (processed_pseudogene ID 5294)</font><br>
+<a name="homo_sapiens_vega_39_36a:DuplicateGenes"></a> <font color='red'><strong>DuplicateGenes: </strong>Has 7 duplicated genes.</font><br>
+</p><p>
+<a name="homo_sapiens_vega_39_36a:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>oligo_array has zero rows</font><br>
+<a name="homo_sapiens_vega_39_36a:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>oligo_feature has zero rows</font><br>
+<a name="homo_sapiens_vega_39_36a:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>oligo_probe has zero rows</font><br>
+<a name="homo_sapiens_vega_39_36a:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>regulatory_search_region has zero rows</font><br>
+</p><p>
+<a name="homo_sapiens_vega_39_36a:ExonStrandOrder"></a> <font color='black'><strong>ExonStrandOrder: </strong>Long transcript 20375 length 2299488</font><br>
+<a name="homo_sapiens_vega_39_36a:ExonStrandOrder"></a> <font color='black'><strong>ExonStrandOrder: </strong>Long transcript 20933 length 2084571</font><br>
+<a name="homo_sapiens_vega_39_36a:ExonStrandOrder"></a> <font color='black'><strong>ExonStrandOrder: </strong>Long transcript 41919 length 2054681</font><br>
+<a name="homo_sapiens_vega_39_36a:ExonStrandOrder"></a> <font color='black'><strong>ExonStrandOrder: </strong>Long transcript 46162 length 2092375</font><br>
+</p><p>
+<a name="homo_sapiens_vega_39_36a:FeatureAnalysis"></a> <font color='red'><strong>FeatureAnalysis: </strong>Analysis with ID 15, logic name otter_corf is not used in any feature table</font><br>
+</p><p>
+<a name="homo_sapiens_vega_39_36a:ProteinFeatureTranslation"></a> <font color='red'><strong>ProteinFeatureTranslation: </strong>protein_feature table has 11 features that are longer than the translation</font><br>
+</p><p>
+<a name="homo_sapiens_vega_39_36a:SeqRegionCoordSystem"></a> <font color='red'><strong>SeqRegionCoordSystem: </strong>Co-ordinate systems chromosome:NCBI36 and chromosome:VEGA have 24 identically-named seq_regions - this may cause problems for ID mapping</font><br>
+<a name="homo_sapiens_vega_39_36a:SeqRegionCoordSystem"></a> <font color='red'><strong>SeqRegionCoordSystem: </strong>38 seq_regions have the same name but different lengths</font><br>
+</p><p>
+<a name="homo_sapiens_vega_39_36a:StableID"></a> <font color='red'><strong>StableID: </strong>exon_stable_id has 736 duplicate stable IDs (versions not checked)</font><br>
+</p><p>
+<a name="homo_sapiens_vega_39_36a:ComparePreviousVersionTableRows"></a> <font color='red'><strong>ComparePreviousVersionTableRows: </strong>homo_sapiens_vega_38_36 has 237 rows in seq_region_attrib but homo_sapiens_vega_39_36a only has 122</font><br>
+</p><p>
+<a name="homo_sapiens_vega_39_36a:AssemblyMultipleOverlap"></a> <font color='red'><strong>AssemblyMultipleOverlap: </strong>14 instances of multiple overlapping assembled components</font><br>
+</p><p>
+<a name="homo_sapiens_vega_39_36a:CompareSchema"></a> <font color='red'><strong>CompareSchema: </strong>Table tmp_assembly exists in homo_sapiens_vega_39_36a but not in master_schema_39</font><br>
+<a name="homo_sapiens_vega_39_36a:CompareSchema"></a> <font color='red'><strong>CompareSchema: </strong>Table tmp_seq_region exists in homo_sapiens_vega_39_36a but not in master_schema_39</font><br>
+<a name="homo_sapiens_vega_39_36a:CompareSchema"></a> <font color='red'><strong>CompareSchema: </strong>Table name discrepancy detected, skipping rest of checks</font><br>
+</p>
+<h3 class='boxed'><a name="master_schema_39">master_schema_39</a></h3>
+<p>
+<a name="master_schema_39:CompareSchema"></a> <font color='red'><strong>CompareSchema: </strong>master_schema_39 and homo_sapiens_otherfeatures_39_36a oligo_feature differ at row 8 column 2 (Type) Values: int(10) unsigned, int(11)</font><br>
+</p>
+<hr>
+<h2>Detailed reports by test case</h2>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap">org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap</a></h3>
+<p>
+<a name="AssemblyMultipleOverlap:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>499 instances of multiple overlapping assembled components</font><br>
+</p><p>
+<a name="AssemblyMultipleOverlap:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>485 instances of multiple overlapping assembled components</font><br>
+</p><p>
+<a name="AssemblyMultipleOverlap:homo_sapiens_otherfeatures_39_36a"></a> <font color='red'><strong>homo_sapiens_otherfeatures_39_36a: </strong>14 instances of multiple overlapping assembled components</font><br>
+</p><p>
+<a name="AssemblyMultipleOverlap:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>14 instances of multiple overlapping assembled components</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.AssemblyTablesAcrossSpecies">org.ensembl.healthcheck.testcase.generic.AssemblyTablesAcrossSpecies</a></h3>
+<p>
+<a name="AssemblyTablesAcrossSpecies:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_39_36a and homo_sapiens_otherfeatures_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 92969, 81103</font><br>
+<a name="AssemblyTablesAcrossSpecies:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_39_36a and homo_sapiens_vega_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 92969, 83412</font><br>
+</p><p>
+<a name="AssemblyTablesAcrossSpecies:homo_sapiens_otherfeatures_39_36a"></a> <font color='red'><strong>homo_sapiens_otherfeatures_39_36a: </strong>homo_sapiens_otherfeatures_39_36a and homo_sapiens_vega_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 81103, 83412</font><br>
+</p><p>
+<a name="AssemblyTablesAcrossSpecies:"></a> <font color='red'><strong>: </strong>assembly tables different</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies">org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies</a></h3>
+<p>
+<a name="AttribTypeAcrossSpecies:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_39_36a and homo_sapiens_otherfeatures_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 74, 58</font><br>
+<a name="AttribTypeAcrossSpecies:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_39_36a and homo_sapiens_vega_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 74, 58</font><br>
+</p><p>
+<a name="AttribTypeAcrossSpecies:"></a> <font color='red'><strong>: </strong>attrib_type tables are different</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.BigGeneExon">org.ensembl.healthcheck.testcase.generic.BigGeneExon</a></h3>
+<p>
+<a name="BigGeneExon:homo_sapiens_cdna_39_36a"></a> <font color='grey'><strong>homo_sapiens_cdna_39_36a: </strong>109 genes are longer than 1000000 bases but less than 3000000 bases</font><br>
+</p><p>
+<a name="BigGeneExon:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>41 genes are longer than 1000000 bases but less than 3000000 bases</font><br>
+<a name="BigGeneExon:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>1 gene is longer than 3000000 bases</font><br>
+<a name="BigGeneExon:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Gene ENSG00000173409 (ARV1) KNOWN has length 3346985 (Protein ARV1 (hARV1). [Source:Uniprot/SWISSPROT;Acc:Q9H2C2])</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBiotypes">org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBiotypes</a></h3>
+<p>
+<a name="ComparePreviousVersionBiotypes:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_38_36 has 34 biotypes of type scRNA but homo_sapiens_core_39_36a only has 1</font><br>
+<a name="ComparePreviousVersionBiotypes:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_38_36 has 819 biotypes of type snoRNA_pseudogene but homo_sapiens_core_39_36a only has 564</font><br>
+<a name="ComparePreviousVersionBiotypes:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_38_36 has 2 biotypes of type Mt_rRNA but homo_sapiens_core_39_36a only has 1</font><br>
+<a name="ComparePreviousVersionBiotypes:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_38_36 has 1866 biotypes of type snRNA_pseudogene but homo_sapiens_core_39_36a only has 632</font><br>
+<a name="ComparePreviousVersionBiotypes:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_38_36 has 1714 biotypes of type scRNA_pseudogene but homo_sapiens_core_39_36a only has 902</font><br>
+<a name="ComparePreviousVersionBiotypes:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_38_36 has 676 biotypes of type rRNA_pseudogene but homo_sapiens_core_39_36a only has 393</font><br>
+<a name="ComparePreviousVersionBiotypes:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_38_36 has 35 biotypes of type miRNA_pseudogene but homo_sapiens_core_39_36a only has 22</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionTableRows">org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionTableRows</a></h3>
+<p>
+<a name="ComparePreviousVersionTableRows:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>homo_sapiens_cdna_38_36 has 233 rows in seq_region_attrib but homo_sapiens_cdna_39_36a only has 122</font><br>
+</p><p>
+<a name="ComparePreviousVersionTableRows:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_38_36 has 1 rows in pm2_misc_set but homo_sapiens_core_39_36a has none</font><br>
+<a name="ComparePreviousVersionTableRows:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_38_36 has 44 rows in pm2_misc_feature_misc_set but homo_sapiens_core_39_36a has none</font><br>
+<a name="ComparePreviousVersionTableRows:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_38_36 has 1003 rows in seq_region_attrib but homo_sapiens_core_39_36a only has 450</font><br>
+<a name="ComparePreviousVersionTableRows:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_38_36 has 132 rows in pm2_misc_attrib but homo_sapiens_core_39_36a has none</font><br>
+<a name="ComparePreviousVersionTableRows:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_38_36 has 393544 rows in regulatory_feature but homo_sapiens_core_39_36a only has 234111</font><br>
+<a name="ComparePreviousVersionTableRows:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_38_36 has 17335 rows in regulatory_search_region but homo_sapiens_core_39_36a only has 0</font><br>
+<a name="ComparePreviousVersionTableRows:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_38_36 has 44 rows in pm2_misc_feature but homo_sapiens_core_39_36a has none</font><br>
+<a name="ComparePreviousVersionTableRows:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_38_36 has 393544 rows in regulatory_feature_object but homo_sapiens_core_39_36a only has 234111</font><br>
+</p><p>
+<a name="ComparePreviousVersionTableRows:homo_sapiens_otherfeatures_39_36a"></a> <font color='red'><strong>homo_sapiens_otherfeatures_39_36a: </strong>homo_sapiens_otherfeatures_38_36 has 466 rows in seq_region_attrib but homo_sapiens_otherfeatures_39_36a only has 122</font><br>
+</p><p>
+<a name="ComparePreviousVersionTableRows:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>homo_sapiens_vega_38_36 has 237 rows in seq_region_attrib but homo_sapiens_vega_39_36a only has 122</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionXrefs">org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionXrefs</a></h3>
+<p>
+<a name="ComparePreviousVersionXrefs:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_38_36 has 21968 xrefs of type MIM but homo_sapiens_core_39_36a has none</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.CompareSchema">org.ensembl.healthcheck.testcase.generic.CompareSchema</a></h3>
+<p>
+<a name="CompareSchema:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Table assembly_bak exists in homo_sapiens_core_39_36a but not in master_schema_39</font><br>
+<a name="CompareSchema:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Table chr2contig exists in homo_sapiens_core_39_36a but not in master_schema_39</font><br>
+<a name="CompareSchema:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Table clone2contig exists in homo_sapiens_core_39_36a but not in master_schema_39</font><br>
+<a name="CompareSchema:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Table coord_system_bak exists in homo_sapiens_core_39_36a but not in master_schema_39</font><br>
+<a name="CompareSchema:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Table meta_bak exists in homo_sapiens_core_39_36a but not in master_schema_39</font><br>
+<a name="CompareSchema:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Table oligo_feature_backup exists in homo_sapiens_core_39_36a but not in master_schema_39</font><br>
+<a name="CompareSchema:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Table sc2contig exists in homo_sapiens_core_39_36a but not in master_schema_39</font><br>
+<a name="CompareSchema:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Table seq_region_bak exists in homo_sapiens_core_39_36a but not in master_schema_39</font><br>
+<a name="CompareSchema:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Table name discrepancy detected, skipping rest of checks</font><br>
+</p><p>
+<a name="CompareSchema:master_schema_39"></a> <font color='red'><strong>master_schema_39: </strong>master_schema_39 and homo_sapiens_otherfeatures_39_36a oligo_feature differ at row 8 column 2 (Type) Values: int(10) unsigned, int(11)</font><br>
+</p><p>
+<a name="CompareSchema:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Table tmp_assembly exists in homo_sapiens_vega_39_36a but not in master_schema_39</font><br>
+<a name="CompareSchema:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Table tmp_seq_region exists in homo_sapiens_vega_39_36a but not in master_schema_39</font><br>
+<a name="CompareSchema:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Table name discrepancy detected, skipping rest of checks</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.CoordSystemAcrossSpecies">org.ensembl.healthcheck.testcase.generic.CoordSystemAcrossSpecies</a></h3>
+<p>
+<a name="CoordSystemAcrossSpecies:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>homo_sapiens_cdna_39_36a and homo_sapiens_otherfeatures_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 5, 4</font><br>
+</p><p>
+<a name="CoordSystemAcrossSpecies:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_39_36a and homo_sapiens_otherfeatures_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 5, 4</font><br>
+</p><p>
+<a name="CoordSystemAcrossSpecies:homo_sapiens_otherfeatures_39_36a"></a> <font color='red'><strong>homo_sapiens_otherfeatures_39_36a: </strong>homo_sapiens_otherfeatures_39_36a and homo_sapiens_vega_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 4, 5</font><br>
+</p><p>
+<a name="CoordSystemAcrossSpecies:"></a> <font color='red'><strong>: </strong>coord_system tables are different</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.CoreForeignKeys">org.ensembl.healthcheck.testcase.generic.CoreForeignKeys</a></h3>
+<p>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>object_xref.xref_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>object_xref <-> xref has 27 unlinked entries</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='grey'><strong>homo_sapiens_core_39_36a: </strong>simple_feature.seq_region_id 0 is not linked.</font><br>
+<a name="CoreForeignKeys:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>simple_feature <-> seq_region has 21940 unlinked entries</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.DNATablesAcrossSpecies">org.ensembl.healthcheck.testcase.generic.DNATablesAcrossSpecies</a></h3>
+<p>
+<a name="DNATablesAcrossSpecies:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_39_36a and homo_sapiens_vega_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 27093, 0</font><br>
+</p><p>
+<a name="DNATablesAcrossSpecies:"></a> <font color='red'><strong>: </strong>dna tables are different</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.DensityFeatures">org.ensembl.healthcheck.testcase.generic.DensityFeatures</a></h3>
+<p>
+<a name="DensityFeatures:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Sum of values for snpDensity from density_feature (1583794) doesn't agree with value from seq_region_attrib (791897) for 1</font><br>
+<a name="DensityFeatures:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Sum of values for snpDensity from density_feature (1029932) doesn't agree with value from seq_region_attrib (514966) for 10</font><br>
+<a name="DensityFeatures:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Sum of values for snpDensity from density_feature (1007057) doesn't agree with value from seq_region_attrib (503528) for 11</font><br>
+<a name="DensityFeatures:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Sum of values for snpDensity from density_feature (936186) doesn't agree with value from seq_region_attrib (468093) for 12</font><br>
+<a name="DensityFeatures:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Sum of values for snpDensity from density_feature (726988) doesn't agree with value from seq_region_attrib (363494) for 13</font><br>
+<a name="DensityFeatures:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Sum of values for snpDensity from density_feature (581492) doesn't agree with value from seq_region_attrib (290746) for 14</font><br>
+<a name="DensityFeatures:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Sum of values for snpDensity from density_feature (564468) doesn't agree with value from seq_region_attrib (282234) for 15</font><br>
+<a name="DensityFeatures:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Sum of values for snpDensity from density_feature (641456) doesn't agree with value from seq_region_attrib (320728) for 16</font><br>
+<a name="DensityFeatures:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Sum of values for snpDensity from density_feature (513703) doesn't agree with value from seq_region_attrib (256851) for 17</font><br>
+<a name="DensityFeatures:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Sum of values for snpDensity from density_feature (534454) doesn't agree with value from seq_region_attrib (267227) for 18</font><br>
+<a name="DensityFeatures:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Sum of values for snpDensity from density_feature (412402) doesn't agree with value from seq_region_attrib (206201) for 19</font><br>
+<a name="DensityFeatures:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Sum of values for snpDensity from density_feature (1516058) doesn't agree with value from seq_region_attrib (758029) for 2</font><br>
+<a name="DensityFeatures:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Sum of values for snpDensity from density_feature (578174) doesn't agree with value from seq_region_attrib (289087) for 20</font><br>
+<a name="DensityFeatures:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Sum of values for snpDensity from density_feature (298152) doesn't agree with value from seq_region_attrib (149076) for 21</font><br>
+<a name="DensityFeatures:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Sum of values for snpDensity from density_feature (343174) doesn't agree with value from seq_region_attrib (171587) for 22</font><br>
+<a name="DensityFeatures:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Sum of values for snpDensity from density_feature (1271236) doesn't agree with value from seq_region_attrib (635618) for 3</font><br>
+<a name="DensityFeatures:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Sum of values for snpDensity from density_feature (1309291) doesn't agree with value from seq_region_attrib (654645) for 4</font><br>
+<a name="DensityFeatures:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Sum of values for snpDensity from density_feature (1137441) doesn't agree with value from seq_region_attrib (568720) for 5</font><br>
+<a name="DensityFeatures:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Sum of values for snpDensity from density_feature (1281156) doesn't agree with value from seq_region_attrib (640573) for 6</font><br>
+<a name="DensityFeatures:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Sum of values for snpDensity from density_feature (1092561) doesn't agree with value from seq_region_attrib (546279) for 7</font><br>
+<a name="DensityFeatures:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Sum of values for snpDensity from density_feature (974016) doesn't agree with value from seq_region_attrib (487008) for 8</font><br>
+<a name="DensityFeatures:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Sum of values for snpDensity from density_feature (995950) doesn't agree with value from seq_region_attrib (497975) for 9</font><br>
+<a name="DensityFeatures:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Sum of values for snpDensity from density_feature (785172) doesn't agree with value from seq_region_attrib (392586) for X</font><br>
+<a name="DensityFeatures:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Sum of values for snpDensity from density_feature (75382) doesn't agree with value from seq_region_attrib (36259) for Y</font><br>
+</p><p>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region 1 (ID 226034) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region 10 (ID 226043) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region 11 (ID 226044) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region 12 (ID 226056) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region 13 (ID 226050) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region 14 (ID 226039) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region 15 (ID 226057) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region 16 (ID 226036) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region 17 (ID 226033) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region 18 (ID 226035) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region 19 (ID 226061) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region 2 (ID 226032) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region 20 (ID 226040) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region 21 (ID 226028) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region 22 (ID 226046) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region 3 (ID 226053) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region 4 (ID 226060) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region 5 (ID 226062) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region 6 (ID 226052) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region 7 (ID 226030) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region 8 (ID 226058) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region 9 (ID 226055) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region MT (ID 226038) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region X (ID 226054) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Top-level seq region Y (ID 226031) has no density features</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>No entry in density_type for analysis PercentGC</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>No entry in density_type for analysis PercentageRepeat</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>No entry in density_type for analysis knownGeneDensity</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>No entry in density_type for analysis geneDensity</font><br>
+<a name="DensityFeatures:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>No entry in density_type for analysis snpDensity</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.DuplicateExons">org.ensembl.healthcheck.testcase.generic.DuplicateExons</a></h3>
+<p>
+<a name="DuplicateExons:homo_sapiens_vega_39_36a"></a> <font color='black'><strong>homo_sapiens_vega_39_36a: </strong>Exon 197264 is duplicated.</font><br>
+<a name="DuplicateExons:homo_sapiens_vega_39_36a"></a> <font color='black'><strong>homo_sapiens_vega_39_36a: </strong>Exon 197444 is duplicated.</font><br>
+<a name="DuplicateExons:homo_sapiens_vega_39_36a"></a> <font color='black'><strong>homo_sapiens_vega_39_36a: </strong>Exon 77796 is duplicated.</font><br>
+<a name="DuplicateExons:homo_sapiens_vega_39_36a"></a> <font color='black'><strong>homo_sapiens_vega_39_36a: </strong>Exon 77790 is duplicated.</font><br>
+<a name="DuplicateExons:homo_sapiens_vega_39_36a"></a> <font color='black'><strong>homo_sapiens_vega_39_36a: </strong>Exon 77795 is duplicated.</font><br>
+<a name="DuplicateExons:homo_sapiens_vega_39_36a"></a> <font color='black'><strong>homo_sapiens_vega_39_36a: </strong>Exon 77789 is duplicated.</font><br>
+<a name="DuplicateExons:homo_sapiens_vega_39_36a"></a> <font color='black'><strong>homo_sapiens_vega_39_36a: </strong>Exon 77794 is duplicated.</font><br>
+<a name="DuplicateExons:homo_sapiens_vega_39_36a"></a> <font color='black'><strong>homo_sapiens_vega_39_36a: </strong>Exon 77788 is duplicated.</font><br>
+<a name="DuplicateExons:homo_sapiens_vega_39_36a"></a> <font color='black'><strong>homo_sapiens_vega_39_36a: </strong>Exon 77787 is duplicated.</font><br>
+<a name="DuplicateExons:homo_sapiens_vega_39_36a"></a> <font color='black'><strong>homo_sapiens_vega_39_36a: </strong>Exon 77816 is duplicated.</font><br>
+<a name="DuplicateExons:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Has at least 962 duplicated exons.</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.DuplicateGenes">org.ensembl.healthcheck.testcase.generic.DuplicateGenes</a></h3>
+<p>
+<a name="DuplicateGenes:homo_sapiens_vega_39_36a"></a> <font color='black'><strong>homo_sapiens_vega_39_36a: </strong>Gene OTTHUMG00000023670 (protein_coding ID 7182) is duplicated - see gene OTTHUMG00000119091 (protein_coding ID 7183)</font><br>
+<a name="DuplicateGenes:homo_sapiens_vega_39_36a"></a> <font color='black'><strong>homo_sapiens_vega_39_36a: </strong>Gene OTTHUMG00000073451 (protein_coding ID 15748) is duplicated - see gene OTTHUMG00000128707 (protein_coding ID 15749)</font><br>
+<a name="DuplicateGenes:homo_sapiens_vega_39_36a"></a> <font color='black'><strong>homo_sapiens_vega_39_36a: </strong>Gene OTTHUMG00000072969 (protein_coding ID 15955) is duplicated - see gene OTTHUMG00000090677 (protein_coding ID 15956)</font><br>
+<a name="DuplicateGenes:homo_sapiens_vega_39_36a"></a> <font color='black'><strong>homo_sapiens_vega_39_36a: </strong>Gene OTTHUMG00000073578 (protein_coding ID 16027) is duplicated - see gene OTTHUMG00000048082 (protein_coding ID 16028)</font><br>
+<a name="DuplicateGenes:homo_sapiens_vega_39_36a"></a> <font color='black'><strong>homo_sapiens_vega_39_36a: </strong>Gene OTTHUMG00000073463 (protein_coding ID 15811) is duplicated - see gene OTTHUMG00000090497 (protein_coding ID 15812)</font><br>
+<a name="DuplicateGenes:homo_sapiens_vega_39_36a"></a> <font color='black'><strong>homo_sapiens_vega_39_36a: </strong>Gene OTTHUMG00000073467 (protein_coding ID 15966) is duplicated - see gene OTTHUMG00000090721 (protein_coding ID 15967)</font><br>
+<a name="DuplicateGenes:homo_sapiens_vega_39_36a"></a> <font color='black'><strong>homo_sapiens_vega_39_36a: </strong>Gene OTTHUMG00000014526 (processed_pseudogene ID 5292) is duplicated - see gene OTTHUMG00000078409 (processed_pseudogene ID 5294)</font><br>
+<a name="DuplicateGenes:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Has 7 duplicated genes.</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.EmptyTables">org.ensembl.healthcheck.testcase.generic.EmptyTables</a></h3>
+<p>
+<a name="EmptyTables:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>gene_attrib has zero rows</font><br>
+<a name="EmptyTables:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>regulatory_factor_coding has zero rows</font><br>
+<a name="EmptyTables:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>regulatory_search_region has zero rows</font><br>
+</p><p>
+<a name="EmptyTables:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>oligo_array has zero rows</font><br>
+<a name="EmptyTables:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>oligo_feature has zero rows</font><br>
+<a name="EmptyTables:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>oligo_probe has zero rows</font><br>
+<a name="EmptyTables:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>regulatory_search_region has zero rows</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.ExonStrandOrder">org.ensembl.healthcheck.testcase.generic.ExonStrandOrder</a></h3>
+<p>
+<a name="ExonStrandOrder:homo_sapiens_core_39_36a"></a> <font color='black'><strong>homo_sapiens_core_39_36a: </strong>Long transcript 19517 length 2092375</font><br>
+<a name="ExonStrandOrder:homo_sapiens_core_39_36a"></a> <font color='black'><strong>homo_sapiens_core_39_36a: </strong>Long transcript 19766 length 2089393</font><br>
+<a name="ExonStrandOrder:homo_sapiens_core_39_36a"></a> <font color='black'><strong>homo_sapiens_core_39_36a: </strong>Long transcript 22137 length 2298739</font><br>
+<a name="ExonStrandOrder:homo_sapiens_core_39_36a"></a> <font color='black'><strong>homo_sapiens_core_39_36a: </strong>Long transcript 22141 length 2298739</font><br>
+<a name="ExonStrandOrder:homo_sapiens_core_39_36a"></a> <font color='black'><strong>homo_sapiens_core_39_36a: </strong>Long transcript 22246 length 2054681</font><br>
+<a name="ExonStrandOrder:homo_sapiens_core_39_36a"></a> <font color='black'><strong>homo_sapiens_core_39_36a: </strong>Long transcript 22285 length 2054111</font><br>
+<a name="ExonStrandOrder:homo_sapiens_core_39_36a"></a> <font color='black'><strong>homo_sapiens_core_39_36a: </strong>Long transcript 47836 length 3346927</font><br>
+</p><p>
+<a name="ExonStrandOrder:homo_sapiens_vega_39_36a"></a> <font color='black'><strong>homo_sapiens_vega_39_36a: </strong>Long transcript 20375 length 2299488</font><br>
+<a name="ExonStrandOrder:homo_sapiens_vega_39_36a"></a> <font color='black'><strong>homo_sapiens_vega_39_36a: </strong>Long transcript 20933 length 2084571</font><br>
+<a name="ExonStrandOrder:homo_sapiens_vega_39_36a"></a> <font color='black'><strong>homo_sapiens_vega_39_36a: </strong>Long transcript 41919 length 2054681</font><br>
+<a name="ExonStrandOrder:homo_sapiens_vega_39_36a"></a> <font color='black'><strong>homo_sapiens_vega_39_36a: </strong>Long transcript 46162 length 2092375</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.FeatureAnalysis">org.ensembl.healthcheck.testcase.generic.FeatureAnalysis</a></h3>
+<p>
+<a name="FeatureAnalysis:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Analysis with ID 5003, logic name miRNA_Registry is not used in any feature table</font><br>
+<a name="FeatureAnalysis:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Analysis with ID 5004, logic name RFAM is not used in any feature table</font><br>
+<a name="FeatureAnalysis:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Analysis with ID 5038, logic name selenocysteine is not used in any feature table</font><br>
+<a name="FeatureAnalysis:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Analysis with ID 5079, logic name miRNA is not used in any feature table</font><br>
+<a name="FeatureAnalysis:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Analysis with ID 5100, logic name cisred_search is not used in any feature table</font><br>
+</p><p>
+<a name="FeatureAnalysis:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Analysis with ID 15, logic name otter_corf is not used in any feature table</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.FeatureCoords">org.ensembl.healthcheck.testcase.generic.FeatureCoords</a></h3>
+<p>
+<a name="FeatureCoords:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>20525 rows in simple_feature have seq_region_start > seq_region_end</font><br>
+<a name="FeatureCoords:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>2 rows in misc_feature have seq_region_end > length in seq_region_table</font><br>
+<a name="FeatureCoords:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>5 rows in density_feature have seq_region_end > length in seq_region_table</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.GeneStatus">org.ensembl.healthcheck.testcase.generic.GeneStatus</a></h3>
+<p>
+<a name="GeneStatus:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No genes have status KNOWN</font><br>
+</p><p>
+<a name="GeneStatus:homo_sapiens_otherfeatures_39_36a"></a> <font color='red'><strong>homo_sapiens_otherfeatures_39_36a: </strong>No genes have status KNOWN</font><br>
+<a name="GeneStatus:homo_sapiens_otherfeatures_39_36a"></a> <font color='red'><strong>homo_sapiens_otherfeatures_39_36a: </strong>28639 genes have null status</font><br>
+<a name="GeneStatus:homo_sapiens_otherfeatures_39_36a"></a> <font color='red'><strong>homo_sapiens_otherfeatures_39_36a: </strong>58916 transcripts have null status</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.GeneType">org.ensembl.healthcheck.testcase.generic.GeneType</a></h3>
+<p>
+<a name="GeneType:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>miRNA_pseudogene is not a valid gene type name.</font><br>
+<a name="GeneType:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>misc_RNA_pseudogene is not a valid gene type name.</font><br>
+<a name="GeneType:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Mt_rRNA is not a valid gene type name.</font><br>
+<a name="GeneType:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Mt_tRNA is not a valid gene type name.</font><br>
+<a name="GeneType:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Mt_tRNA_pseudogene is not a valid gene type name.</font><br>
+<a name="GeneType:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>ensembl_havana_gene (protein_coding) is not a valid analysis logic name.</font><br>
+<a name="GeneType:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>havana (protein_coding) is not a valid analysis logic name.</font><br>
+<a name="GeneType:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>rRNA_pseudogene is not a valid gene type name.</font><br>
+<a name="GeneType:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>scRNA_pseudogene is not a valid gene type name.</font><br>
+<a name="GeneType:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>snoRNA_pseudogene is not a valid gene type name.</font><br>
+<a name="GeneType:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>snRNA_pseudogene is not a valid gene type name.</font><br>
+<a name="GeneType:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>tRNA_pseudogene is not a valid gene type name.</font><br>
+</p><p>
+<a name="GeneType:homo_sapiens_otherfeatures_39_36a"></a> <font color='red'><strong>homo_sapiens_otherfeatures_39_36a: </strong>genomewise (protein_coding) is not a valid analysis logic name.</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.Karyotype">org.ensembl.healthcheck.testcase.generic.Karyotype</a></h3>
+<p>
+<a name="Karyotype:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Chromosome 2 is 200000bp shorter in the karyotype table than in the seq_region table</font><br>
+<a name="Karyotype:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Chromosome 17 is 120000bp shorter in the karyotype table than in the seq_region table</font><br>
+<a name="Karyotype:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Chromosome 1 is 50000bp shorter in the karyotype table than in the seq_region table</font><br>
+<a name="Karyotype:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Chromosome 16 is 5000bp shorter in the karyotype table than in the seq_region table</font><br>
+<a name="Karyotype:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Chromosome 14 is 8000bp shorter in the karyotype table than in the seq_region table</font><br>
+<a name="Karyotype:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Chromosome 22 is 100000bp shorter in the karyotype table than in the seq_region table</font><br>
+<a name="Karyotype:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Chromosome 13 is 15000bp shorter in the karyotype table than in the seq_region table</font><br>
+<a name="Karyotype:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Chromosome 6 is 3000bp shorter in the karyotype table than in the seq_region table</font><br>
+<a name="Karyotype:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Chromosome 3 is 55000bp shorter in the karyotype table than in the seq_region table</font><br>
+<a name="Karyotype:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Chromosome 12 is 60000bp shorter in the karyotype table than in the seq_region table</font><br>
+<a name="Karyotype:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Chromosome 4 is 10000bp shorter in the karyotype table than in the seq_region table</font><br>
+<a name="Karyotype:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Chromosome 19 is 5000bp shorter in the karyotype table than in the seq_region table</font><br>
+<a name="Karyotype:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Chromosome 5 is 20000bp shorter in the karyotype table than in the seq_region table</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable">org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable</a></h3>
+<p>
+<a name="LogicNamesDisplayable:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Feature table gene has features with logic name havana which will not be drawn</font><br>
+<a name="LogicNamesDisplayable:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Feature table gene has features with logic name ensembl_havana_gene which will not be drawn</font><br>
+<a name="LogicNamesDisplayable:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Feature table transcript has features with logic name havana which will not be drawn</font><br>
+<a name="LogicNamesDisplayable:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Feature table transcript has features with logic name ensembl_havana_transcript which will not be drawn</font><br>
+<a name="LogicNamesDisplayable:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>protein_feature analysis with analysis_id = 12 has unknown gff_source = 'PROSITEPATTERN'</font><br>
+</p><p>
+<a name="LogicNamesDisplayable:homo_sapiens_otherfeatures_39_36a"></a> <font color='red'><strong>homo_sapiens_otherfeatures_39_36a: </strong>Analysis with logic name 'sheep_bac_ends' has a blank db field - features of this type will have no label in ProtView</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.MappingSession">org.ensembl.healthcheck.testcase.generic.MappingSession</a></h3>
+<p>
+<a name="MappingSession:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Old/new names homo_sapiens_core_37_35j homo_sapiens_core_27_35a do not chain properly</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies">org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies</a></h3>
+<p>
+<a name="MetaCrossSpecies:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_39_36a and homo_sapiens_vega_39_36a  differ at row 9 column 1 (LCASE(meta_value)) Values: haplorrhini, hominidae</font><br>
+</p><p>
+<a name="MetaCrossSpecies:"></a> <font color='red'><strong>: </strong>meta information not the same for some databases</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.OligoXrefs">org.ensembl.healthcheck.testcase.generic.OligoXrefs</a></h3>
+<p>
+<a name="OligoXrefs:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Chromosome c22_H2( seq_region_id=226066) has no associated Oligo xrefs.</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation">org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation</a></h3>
+<p>
+<a name="ProteinFeatureTranslation:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>protein_feature table has 549 features that are longer than the translation</font><br>
+</p><p>
+<a name="ProteinFeatureTranslation:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>protein_feature table has 11 features that are longer than the translation</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.SeqRegionAcrossSpecies">org.ensembl.healthcheck.testcase.generic.SeqRegionAcrossSpecies</a></h3>
+<p>
+<a name="SeqRegionAcrossSpecies:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>homo_sapiens_cdna_39_36a and homo_sapiens_otherfeatures_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 54695, 54584</font><br>
+<a name="SeqRegionAcrossSpecies:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>homo_sapiens_cdna_39_36a and homo_sapiens_vega_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 54695, 54612</font><br>
+</p><p>
+<a name="SeqRegionAcrossSpecies:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_39_36a and homo_sapiens_otherfeatures_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 54695, 54584</font><br>
+<a name="SeqRegionAcrossSpecies:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_39_36a and homo_sapiens_vega_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 54695, 54612</font><br>
+</p><p>
+<a name="SeqRegionAcrossSpecies:homo_sapiens_otherfeatures_39_36a"></a> <font color='red'><strong>homo_sapiens_otherfeatures_39_36a: </strong>homo_sapiens_otherfeatures_39_36a and homo_sapiens_vega_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 54584, 54612</font><br>
+</p><p>
+<a name="SeqRegionAcrossSpecies:"></a> <font color='red'><strong>: </strong>seq_region tables are different</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.SeqRegionAttribAcrossSpecies">org.ensembl.healthcheck.testcase.generic.SeqRegionAttribAcrossSpecies</a></h3>
+<p>
+<a name="SeqRegionAttribAcrossSpecies:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_39_36a and homo_sapiens_otherfeatures_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 450, 122</font><br>
+<a name="SeqRegionAttribAcrossSpecies:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>homo_sapiens_core_39_36a and homo_sapiens_vega_39_36a  differ at row 1 column 1 (COUNT(*)) Values: 450, 122</font><br>
+</p><p>
+<a name="SeqRegionAttribAcrossSpecies:"></a> <font color='red'><strong>: </strong>seq_region_attribs are different</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem">org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem</a></h3>
+<p>
+<a name="SeqRegionCoordSystem:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>Co-ordinate systems chromosome:NCBI36 and chromosome:NCBI35 have 25 identically-named seq_regions - this may cause problems for ID mapping</font><br>
+<a name="SeqRegionCoordSystem:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>24 seq_regions have the same name but different lengths</font><br>
+</p><p>
+<a name="SeqRegionCoordSystem:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>Co-ordinate systems chromosome:NCBI36 and chromosome:NCBI35 have 25 identically-named seq_regions - this may cause problems for ID mapping</font><br>
+<a name="SeqRegionCoordSystem:homo_sapiens_core_39_36a"></a> <font color='red'><strong>homo_sapiens_core_39_36a: </strong>24 seq_regions have the same name but different lengths</font><br>
+</p><p>
+<a name="SeqRegionCoordSystem:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>Co-ordinate systems chromosome:NCBI36 and chromosome:VEGA have 24 identically-named seq_regions - this may cause problems for ID mapping</font><br>
+<a name="SeqRegionCoordSystem:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>38 seq_regions have the same name but different lengths</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel">org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel</a></h3>
+<p>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 198155</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 198162</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 198220</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 198688</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 198710</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 198770</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 198841</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 198941</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 198960</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 199085</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 199107</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 199320</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 199397</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 199915</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 200030</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 200135</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 200236</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 200608</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 201467</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 201495</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 201671</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 202170</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 202453</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 202709</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 202864</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 203120</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 203147</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 203311</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 204129</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 204148</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 204165</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 204226</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 204475</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 204755</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 204950</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 205726</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 206269</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 206386</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 207733</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 207789</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 208116</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 208953</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 209144</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 209362</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 209367</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 209629</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 210290</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 210382</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 210577</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 210628</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 211187</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 211395</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 211401</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 211855</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 211881</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 212272</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 212587</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 214020</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 214828</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 214987</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 215510</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 216197</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 217502</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 217594</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 217709</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 217900</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 218237</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 218325</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 218606</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 218663</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 218721</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 218761</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 218812</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 219048</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 219081</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 219202</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 219270</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 219774</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 220094</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 220097</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 220923</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 221394</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 221507</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 221601</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 221742</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 222074</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 222592</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 223283</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 223641</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 223678</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 224120</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 224501</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 224597</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 224799</font><br>
+<a name="SeqRegionsTopLevel:homo_sapiens_cdna_39_36a"></a> <font color='red'><strong>homo_sapiens_cdna_39_36a: </strong>No top_level attribute set for seq_region_id 224884</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.StableID">org.ensembl.healthcheck.testcase.generic.StableID</a></h3>
+<p>
+<a name="StableID:homo_sapiens_vega_39_36a"></a> <font color='red'><strong>homo_sapiens_vega_39_36a: </strong>exon_stable_id has 736 duplicate stable IDs (versions not checked)</font><br>
+</p>
+<hr>
+<p>Test run was started at Wed May 31 02:22:27 BST 2006 and finished at Wed May 31 03:47:57 BST 2006<br>
+ Run time 1 hours 25 min 29s </p>
+<h4>Configuration used:</h4>
+<pre>
+Tests/groups run:   release<br>
+Database host:      ecs2:3364<br>
+Database names:     ^homo_sapiens_(core|otherfeatures|cdna|vega)_[0-9]+_.*<br>
+Output file:        web_homo_sapiens.html<br>
+Output level:       info<br>
+</pre>
+</div>
+</body>
+</html>
+<hr>

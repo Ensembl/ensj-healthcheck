@@ -1,0 +1,310 @@
+<html>
+<head>
+<style type="text/css" media="all">
+@import url(http://www.ensembl.org/css/ensembl.css);
+@import url(http://www.ensembl.org/css/content.css);
+#page ul li { list-style-type:none; list-style-image: none; margin-left: -2em }
+</style>
+<title>Healthcheck results for bos taurus databases</title>
+</head>
+<body>
+<div id='page'><div id='i1'><div id='i2'><div class='sptop'>&nbsp;</div>
+<div id='release'>Healthcheck results for bos taurus databases</div>
+<hr>
+<div id='related'><div id='related-box'>
+<h2>Results by database</h2>
+<ul>
+<li><a href="#bos_taurus_core_39_2c">bos_taurus_core_39_2c</a></li>
+<li><a href="#bos_taurus_otherfeatures_39_2c">b_taurus_otherfeatures_39_2c</a></li>
+<li><a href="#master_schema_39">master_schema_39</a></li>
+</ul>
+<h2>Results by test</h2>
+<ul>
+<li><a href="#Accession">Accession</a></li>
+<li><a href="#AnalysisDescription">AnalysisDescription</a></li>
+<li><a href="#AssemblyException">AssemblyException</a></li>
+<li><a href="#AssemblyMultipleOverlap">AssemblyMultipleOverlap</a></li>
+<li><a href="#AssemblySeqregion">AssemblySeqregion</a></li>
+<li><a href="#AssemblyTablesAcrossSpecies">AssemblyTablesAcrossSpecies</a></li>
+<li><a href="#AttribTypeAcrossSpecies">AttribTypeAcrossSpecies</a></li>
+<li><a href="#BigGeneExon">BigGeneExon</a></li>
+<li><a href="#Biotypes">Biotypes</a></li>
+<li><a href="#BlankInfoType">BlankInfoType</a></li>
+<li><a href="#ComparePreviousVersionBiotypes">ComparePreviousVersionBiotyp</a></li>
+<li><a href="#ComparePreviousVersionTableRows">ComparePreviousVersionTableR</a></li>
+<li><a href="#ComparePreviousVersionXrefs">ComparePreviousVersionXrefs</a></li>
+<li><a href="#CompareSchema">CompareSchema</a></li>
+<li><a href="#CoordSystemAcrossSpecies">CoordSystemAcrossSpecies</a></li>
+<li><a href="#CoreForeignKeys">CoreForeignKeys</a></li>
+<li><a href="#DNAEmpty">DNAEmpty</a></li>
+<li><a href="#DNATablesAcrossSpecies">DNATablesAcrossSpecies</a></li>
+<li><a href="#DensityFeatures">DensityFeatures</a></li>
+<li><a href="#DisplayLabels">DisplayLabels</a></li>
+<li><a href="#DisplayMarkerSynonyms">DisplayMarkerSynonyms</a></li>
+<li><a href="#DisplayXref">DisplayXref</a></li>
+<li><a href="#DuplicateAssembly">DuplicateAssembly</a></li>
+<li><a href="#ESTStableID">ESTStableID</a></li>
+<li><a href="#ESTStableIDs">ESTStableIDs</a></li>
+<li><a href="#EmptyTables">EmptyTables</a></li>
+<li><a href="#ExonStrandOrder">ExonStrandOrder</a></li>
+<li><a href="#ExonTranscriptStartEnd">ExonTranscriptStartEnd</a></li>
+<li><a href="#ExternalDBDisplayName">ExternalDBDisplayName</a></li>
+<li><a href="#FeatureAnalysis">FeatureAnalysis</a></li>
+<li><a href="#FeatureCoords">FeatureCoords</a></li>
+<li><a href="#GOXrefs">GOXrefs</a></li>
+<li><a href="#GeneStatus">GeneStatus</a></li>
+<li><a href="#GeneTranscriptStartEnd">GeneTranscriptStartEnd</a></li>
+<li><a href="#GeneType">GeneType</a></li>
+<li><a href="#InterproDescriptions">InterproDescriptions</a></li>
+<li><a href="#Karyotype">Karyotype</a></li>
+<li><a href="#LogicNamesDisplayable">LogicNamesDisplayable</a></li>
+<li><a href="#MappingSession">MappingSession</a></li>
+<li><a href="#Meta">Meta</a></li>
+<li><a href="#MetaCoord">MetaCoord</a></li>
+<li><a href="#MetaCrossSpecies">MetaCrossSpecies</a></li>
+<li><a href="#OligoMismatches">OligoMismatches</a></li>
+<li><a href="#OligoXrefs">OligoXrefs</a></li>
+<li><a href="#PredictedXrefs">PredictedXrefs</a></li>
+<li><a href="#ProteinFeatureTranslation">ProteinFeatureTranslation</a></li>
+<li><a href="#ProteinFeatures">ProteinFeatures</a></li>
+<li><a href="#ProteinIDXrefsNoVersion">ProteinIDXrefsNoVersion</a></li>
+<li><a href="#Pseudogene">Pseudogene</a></li>
+<li><a href="#RepeatConsensus">RepeatConsensus</a></li>
+<li><a href="#RepeatFeature">RepeatFeature</a></li>
+<li><a href="#SeqRegionAcrossSpecies">SeqRegionAcrossSpecies</a></li>
+<li><a href="#SeqRegionAttribAcrossSpecies">SeqRegionAttribAcrossSpecies</a></li>
+<li><a href="#SeqRegionCoordSystem">SeqRegionCoordSystem</a></li>
+<li><a href="#SeqRegionsTopLevel">SeqRegionsTopLevel</a></li>
+<li><a href="#SingleDBCollations">SingleDBCollations</a></li>
+<li><a href="#StableID">StableID</a></li>
+<li><a href="#Strand">Strand</a></li>
+<li><a href="#TranscriptsTranslate">TranscriptsTranslate</a></li>
+<li><a href="#TranslationStartEnd">TranslationStartEnd</a></li>
+<li><a href="#TranslationStartEndExon">TranslationStartEndExon</a></li>
+<li><a href="#XrefTypes">XrefTypes</a></li>
+</ul>
+</div></div>
+<h2>Summary</h2>
+<p><strong><font color='green' size=-1>71</font> tests passed and <font color='red' size=-1>14</font> failed out of a total of 85 tests run.</strong></p>
+<hr>
+<h2>Summary by database</h2>
+<p><table class='ss'>
+<tr><th>Database</th><th>Passed</th><th>Failed</th></tr>
+<tr><td><a href="#bos_taurus_core_39_2c"><font color='red' size=-1>bos_taurus_core_39_2c</font></a></td><td><font color='green' size=-1>43</font></td><td><font color='red' size=-1>9</font></td></tr>
+<tr><td><a href="#bos_taurus_otherfeatures_39_2c"><font color='red' size=-1>bos_taurus_otherfeatures_39_2c</font></a></td><td><font color='green' size=-1>28</font></td><td><font color='red' size=-1>4</font></td></tr>
+<tr><td><a href="#master_schema_39"><font color='red' size=-1>master_schema_39</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>1</font></td></tr>
+</table></p>
+<hr>
+<h2>Summary by test</h2>
+<p><table class='ss'>
+<tr><th>Test</th><th>Passed</th><th>Failed</th></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Accession"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.Accession</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AnalysisDescription"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.AnalysisDescription</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AssemblyException"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.AssemblyException</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AssemblySeqregion"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.AssemblySeqregion</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AssemblyTablesAcrossSpecies"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.AssemblyTablesAcrossSpecies</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>2</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.BigGeneExon"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.BigGeneExon</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Biotypes"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.Biotypes</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.BlankInfoType"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.BlankInfoType</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBiotypes"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBiotypes</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionTableRows"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionTableRows</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionXrefs"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionXrefs</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.CompareSchema"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.CompareSchema</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.CoordSystemAcrossSpecies"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.CoordSystemAcrossSpecies</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.CoreForeignKeys"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.CoreForeignKeys</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DNAEmpty"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.DNAEmpty</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DNATablesAcrossSpecies"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.DNATablesAcrossSpecies</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DensityFeatures"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.DensityFeatures</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DisplayLabels"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.DisplayLabels</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DisplayMarkerSynonyms"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.DisplayMarkerSynonyms</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DisplayXref"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.DisplayXref</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.DuplicateAssembly"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.DuplicateAssembly</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ESTStableID"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.ESTStableID</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ESTStableIDs"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.ESTStableIDs</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.EmptyTables"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.EmptyTables</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ExonStrandOrder"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.ExonStrandOrder</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.FeatureAnalysis"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.FeatureAnalysis</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.FeatureCoords"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.FeatureCoords</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.GOXrefs"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.GOXrefs</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.GeneStatus"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.GeneStatus</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>2</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.GeneTranscriptStartEnd"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.GeneTranscriptStartEnd</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.GeneType"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.GeneType</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.InterproDescriptions"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.InterproDescriptions</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Karyotype"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.Karyotype</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.MappingSession"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.MappingSession</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Meta"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.Meta</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.MetaCoord"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.MetaCoord</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.OligoMismatches"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.OligoMismatches</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.OligoXrefs"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.OligoXrefs</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.PredictedXrefs"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.PredictedXrefs</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ProteinFeatures"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.ProteinFeatures</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.ProteinIDXrefsNoVersion"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.ProteinIDXrefsNoVersion</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Pseudogene"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.Pseudogene</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.RepeatConsensus"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.RepeatConsensus</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.RepeatFeature"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.RepeatFeature</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>1</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionAcrossSpecies"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.SeqRegionAcrossSpecies</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionAttribAcrossSpecies"><font color='red' size=-1>org.ensembl.healthcheck.testcase.generic.SeqRegionAttribAcrossSpecies</font></a></td><td><font color='green' size=-1>0</font></td><td><font color='red' size=-1>2</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.SingleDBCollations"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.SingleDBCollations</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.StableID"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.StableID</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.Strand"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.Strand</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.TranslationStartEnd"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.TranslationStartEnd</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.TranslationStartEndExon"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.TranslationStartEndExon</font></a></td><td><font color='green' size=-1>1</font></td><td><font color='red' size=-1>0</font></td></tr>
+<tr><td><a href="#org.ensembl.healthcheck.testcase.generic.XrefTypes"><font color='green' size=-1>org.ensembl.healthcheck.testcase.generic.XrefTypes</font></a></td><td><font color='green' size=-1>2</font></td><td><font color='red' size=-1>0</font></td></tr>
+</table></p>
+<hr>
+<h2>Detailed reports by database</h2>
+<h3 class='boxed'><a name="bos_taurus_core_39_2c">bos_taurus_core_39_2c</a></h3>
+<p>
+<a name="bos_taurus_core_39_2c:BigGeneExon"></a> <font color='grey'><strong>BigGeneExon: </strong>3 genes are longer than 1000000 bases but less than 3000000 bases</font><br>
+<a name="bos_taurus_core_39_2c:BigGeneExon"></a> <font color='red'><strong>BigGeneExon: </strong>1 gene is longer than 3000000 bases</font><br>
+<a name="bos_taurus_core_39_2c:BigGeneExon"></a> <font color='red'><strong>BigGeneExon: </strong>Gene ENSBTAG00000020900 (NP_001015616.1) KNOWN has length 4078502 (hypothetical protein LOC516934 [Source:RefSeq_peptide;Acc:NP_001015616])</font><br>
+</p><p>
+<a name="bos_taurus_core_39_2c:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>gene_attrib has zero rows</font><br>
+<a name="bos_taurus_core_39_2c:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>regulatory_search_region has zero rows</font><br>
+<a name="bos_taurus_core_39_2c:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>unmapped_object has zero rows</font><br>
+<a name="bos_taurus_core_39_2c:EmptyTables"></a> <font color='red'><strong>EmptyTables: </strong>unmapped_reason has zero rows</font><br>
+</p><p>
+<a name="bos_taurus_core_39_2c:ExonStrandOrder"></a> <font color='black'><strong>ExonStrandOrder: </strong>Long transcript 31366 length 4078501</font><br>
+<a name="bos_taurus_core_39_2c:ExonStrandOrder"></a> <font color='black'><strong>ExonStrandOrder: </strong>Long transcript 31367 length 4078283</font><br>
+<a name="bos_taurus_core_39_2c:ExonStrandOrder"></a> <font color='black'><strong>ExonStrandOrder: </strong>Long transcript 31369 length 4078210</font><br>
+</p><p>
+<a name="bos_taurus_core_39_2c:FeatureAnalysis"></a> <font color='red'><strong>FeatureAnalysis: </strong>Analysis with ID 102, logic name cow_est is not used in any feature table</font><br>
+<a name="bos_taurus_core_39_2c:FeatureAnalysis"></a> <font color='red'><strong>FeatureAnalysis: </strong>Analysis with ID 500, logic name estgene is not used in any feature table</font><br>
+<a name="bos_taurus_core_39_2c:FeatureAnalysis"></a> <font color='red'><strong>FeatureAnalysis: </strong>Analysis with ID 271, logic name Pseudogene is not used in any feature table</font><br>
+<a name="bos_taurus_core_39_2c:FeatureAnalysis"></a> <font color='red'><strong>FeatureAnalysis: </strong>Analysis with ID 12512, logic name miRNA is not used in any feature table</font><br>
+</p><p>
+<a name="bos_taurus_core_39_2c:GeneStatus"></a> <font color='red'><strong>GeneStatus: </strong>Only 6204 genes have KNOWN status in the current database, compared with 17273 in the previous database</font><br>
+</p><p>
+<a name="bos_taurus_core_39_2c:MappingSession"></a> <font color='red'><strong>MappingSession: </strong>Empty table:gene_archive</font><br>
+<a name="bos_taurus_core_39_2c:MappingSession"></a> <font color='red'><strong>MappingSession: </strong>Empty table:peptide_archive</font><br>
+<a name="bos_taurus_core_39_2c:MappingSession"></a> <font color='red'><strong>MappingSession: </strong>ALL/LATEST mapping session does not seem to have the most stable_id_event entries</font><br>
+</p><p>
+<a name="bos_taurus_core_39_2c:ProteinFeatures"></a> <font color='red'><strong>ProteinFeatures: </strong>115 protein features have seq_start < 0</font><br>
+</p><p>
+<a name="bos_taurus_core_39_2c:RepeatFeature"></a> <font color='red'><strong>RepeatFeature: </strong>443 rows in repeat_feature have repeat_start or repeat_end < 1</font><br>
+</p><p>
+<a name="bos_taurus_core_39_2c:AttribTypeAcrossSpecies"></a> <font color='red'><strong>AttribTypeAcrossSpecies: </strong>bos_taurus_core_39_2c and bos_taurus_otherfeatures_39_2c  differ at row 1 column 1 (COUNT(*)) Values: 70, 50</font><br>
+</p><p>
+<a name="bos_taurus_core_39_2c:SeqRegionAttribAcrossSpecies"></a> <font color='red'><strong>SeqRegionAttribAcrossSpecies: </strong>bos_taurus_core_39_2c and bos_taurus_otherfeatures_39_2c  differ at row 1 column 1 (COUNT(*)) Values: 103130, 98088</font><br>
+</p>
+<h3 class='boxed'><a name="bos_taurus_otherfeatures_39_2c">bos_taurus_otherfeatures_39_2c</a></h3>
+<p>
+<a name="bos_taurus_otherfeatures_39_2c:FeatureCoords"></a> <font color='red'><strong>FeatureCoords: </strong>807 rows in dna_align_feature have seq_region_start < 1</font><br>
+</p><p>
+<a name="bos_taurus_otherfeatures_39_2c:GeneStatus"></a> <font color='red'><strong>GeneStatus: </strong>No genes have status KNOWN</font><br>
+<a name="bos_taurus_otherfeatures_39_2c:GeneStatus"></a> <font color='red'><strong>GeneStatus: </strong>19767 genes have null status</font><br>
+<a name="bos_taurus_otherfeatures_39_2c:GeneStatus"></a> <font color='red'><strong>GeneStatus: </strong>36645 transcripts have null status</font><br>
+</p><p>
+<a name="bos_taurus_otherfeatures_39_2c:GeneType"></a> <font color='red'><strong>GeneType: </strong>protein_coding is not a valid gene type name for estgene.</font><br>
+</p><p>
+<a name="bos_taurus_otherfeatures_39_2c:LogicNamesDisplayable"></a> <font color='red'><strong>LogicNamesDisplayable: </strong>Analysis with logic name 'sheep_bac_ends' has a blank db field - features of this type will have no label in ProtView</font><br>
+</p>
+<h3 class='boxed'><a name="master_schema_39">master_schema_39</a></h3>
+<p>
+<a name="master_schema_39:CompareSchema"></a> <font color='red'><strong>CompareSchema: </strong>master_schema_39 and bos_taurus_core_39_2c oligo_feature differ at row 8 column 2 (Type) Values: int(10) unsigned, int(11)</font><br>
+<a name="master_schema_39:CompareSchema"></a> <font color='red'><strong>CompareSchema: </strong>master_schema_39 and bos_taurus_otherfeatures_39_2c oligo_feature differ at row 8 column 2 (Type) Values: int(10) unsigned, int(11)</font><br>
+</p>
+<hr>
+<h2>Detailed reports by test case</h2>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies">org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies</a></h3>
+<p>
+<a name="AttribTypeAcrossSpecies:bos_taurus_core_39_2c"></a> <font color='red'><strong>bos_taurus_core_39_2c: </strong>bos_taurus_core_39_2c and bos_taurus_otherfeatures_39_2c  differ at row 1 column 1 (COUNT(*)) Values: 70, 50</font><br>
+</p><p>
+<a name="AttribTypeAcrossSpecies:"></a> <font color='red'><strong>: </strong>attrib_type tables are different</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.BigGeneExon">org.ensembl.healthcheck.testcase.generic.BigGeneExon</a></h3>
+<p>
+<a name="BigGeneExon:bos_taurus_core_39_2c"></a> <font color='grey'><strong>bos_taurus_core_39_2c: </strong>3 genes are longer than 1000000 bases but less than 3000000 bases</font><br>
+<a name="BigGeneExon:bos_taurus_core_39_2c"></a> <font color='red'><strong>bos_taurus_core_39_2c: </strong>1 gene is longer than 3000000 bases</font><br>
+<a name="BigGeneExon:bos_taurus_core_39_2c"></a> <font color='red'><strong>bos_taurus_core_39_2c: </strong>Gene ENSBTAG00000020900 (NP_001015616.1) KNOWN has length 4078502 (hypothetical protein LOC516934 [Source:RefSeq_peptide;Acc:NP_001015616])</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.CompareSchema">org.ensembl.healthcheck.testcase.generic.CompareSchema</a></h3>
+<p>
+<a name="CompareSchema:master_schema_39"></a> <font color='red'><strong>master_schema_39: </strong>master_schema_39 and bos_taurus_core_39_2c oligo_feature differ at row 8 column 2 (Type) Values: int(10) unsigned, int(11)</font><br>
+<a name="CompareSchema:master_schema_39"></a> <font color='red'><strong>master_schema_39: </strong>master_schema_39 and bos_taurus_otherfeatures_39_2c oligo_feature differ at row 8 column 2 (Type) Values: int(10) unsigned, int(11)</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.EmptyTables">org.ensembl.healthcheck.testcase.generic.EmptyTables</a></h3>
+<p>
+<a name="EmptyTables:bos_taurus_core_39_2c"></a> <font color='red'><strong>bos_taurus_core_39_2c: </strong>gene_attrib has zero rows</font><br>
+<a name="EmptyTables:bos_taurus_core_39_2c"></a> <font color='red'><strong>bos_taurus_core_39_2c: </strong>regulatory_search_region has zero rows</font><br>
+<a name="EmptyTables:bos_taurus_core_39_2c"></a> <font color='red'><strong>bos_taurus_core_39_2c: </strong>unmapped_object has zero rows</font><br>
+<a name="EmptyTables:bos_taurus_core_39_2c"></a> <font color='red'><strong>bos_taurus_core_39_2c: </strong>unmapped_reason has zero rows</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.ExonStrandOrder">org.ensembl.healthcheck.testcase.generic.ExonStrandOrder</a></h3>
+<p>
+<a name="ExonStrandOrder:bos_taurus_core_39_2c"></a> <font color='black'><strong>bos_taurus_core_39_2c: </strong>Long transcript 31366 length 4078501</font><br>
+<a name="ExonStrandOrder:bos_taurus_core_39_2c"></a> <font color='black'><strong>bos_taurus_core_39_2c: </strong>Long transcript 31367 length 4078283</font><br>
+<a name="ExonStrandOrder:bos_taurus_core_39_2c"></a> <font color='black'><strong>bos_taurus_core_39_2c: </strong>Long transcript 31369 length 4078210</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.FeatureAnalysis">org.ensembl.healthcheck.testcase.generic.FeatureAnalysis</a></h3>
+<p>
+<a name="FeatureAnalysis:bos_taurus_core_39_2c"></a> <font color='red'><strong>bos_taurus_core_39_2c: </strong>Analysis with ID 102, logic name cow_est is not used in any feature table</font><br>
+<a name="FeatureAnalysis:bos_taurus_core_39_2c"></a> <font color='red'><strong>bos_taurus_core_39_2c: </strong>Analysis with ID 500, logic name estgene is not used in any feature table</font><br>
+<a name="FeatureAnalysis:bos_taurus_core_39_2c"></a> <font color='red'><strong>bos_taurus_core_39_2c: </strong>Analysis with ID 271, logic name Pseudogene is not used in any feature table</font><br>
+<a name="FeatureAnalysis:bos_taurus_core_39_2c"></a> <font color='red'><strong>bos_taurus_core_39_2c: </strong>Analysis with ID 12512, logic name miRNA is not used in any feature table</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.FeatureCoords">org.ensembl.healthcheck.testcase.generic.FeatureCoords</a></h3>
+<p>
+<a name="FeatureCoords:bos_taurus_otherfeatures_39_2c"></a> <font color='red'><strong>bos_taurus_otherfeatures_39_2c: </strong>807 rows in dna_align_feature have seq_region_start < 1</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.GeneStatus">org.ensembl.healthcheck.testcase.generic.GeneStatus</a></h3>
+<p>
+<a name="GeneStatus:bos_taurus_core_39_2c"></a> <font color='red'><strong>bos_taurus_core_39_2c: </strong>Only 6204 genes have KNOWN status in the current database, compared with 17273 in the previous database</font><br>
+</p><p>
+<a name="GeneStatus:bos_taurus_otherfeatures_39_2c"></a> <font color='red'><strong>bos_taurus_otherfeatures_39_2c: </strong>No genes have status KNOWN</font><br>
+<a name="GeneStatus:bos_taurus_otherfeatures_39_2c"></a> <font color='red'><strong>bos_taurus_otherfeatures_39_2c: </strong>19767 genes have null status</font><br>
+<a name="GeneStatus:bos_taurus_otherfeatures_39_2c"></a> <font color='red'><strong>bos_taurus_otherfeatures_39_2c: </strong>36645 transcripts have null status</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.GeneType">org.ensembl.healthcheck.testcase.generic.GeneType</a></h3>
+<p>
+<a name="GeneType:bos_taurus_otherfeatures_39_2c"></a> <font color='red'><strong>bos_taurus_otherfeatures_39_2c: </strong>protein_coding is not a valid gene type name for estgene.</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable">org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable</a></h3>
+<p>
+<a name="LogicNamesDisplayable:bos_taurus_otherfeatures_39_2c"></a> <font color='red'><strong>bos_taurus_otherfeatures_39_2c: </strong>Analysis with logic name 'sheep_bac_ends' has a blank db field - features of this type will have no label in ProtView</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.MappingSession">org.ensembl.healthcheck.testcase.generic.MappingSession</a></h3>
+<p>
+<a name="MappingSession:bos_taurus_core_39_2c"></a> <font color='red'><strong>bos_taurus_core_39_2c: </strong>Empty table:gene_archive</font><br>
+<a name="MappingSession:bos_taurus_core_39_2c"></a> <font color='red'><strong>bos_taurus_core_39_2c: </strong>Empty table:peptide_archive</font><br>
+<a name="MappingSession:bos_taurus_core_39_2c"></a> <font color='red'><strong>bos_taurus_core_39_2c: </strong>ALL/LATEST mapping session does not seem to have the most stable_id_event entries</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.ProteinFeatures">org.ensembl.healthcheck.testcase.generic.ProteinFeatures</a></h3>
+<p>
+<a name="ProteinFeatures:bos_taurus_core_39_2c"></a> <font color='red'><strong>bos_taurus_core_39_2c: </strong>115 protein features have seq_start < 0</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.RepeatFeature">org.ensembl.healthcheck.testcase.generic.RepeatFeature</a></h3>
+<p>
+<a name="RepeatFeature:bos_taurus_core_39_2c"></a> <font color='red'><strong>bos_taurus_core_39_2c: </strong>443 rows in repeat_feature have repeat_start or repeat_end < 1</font><br>
+</p>
+<h3 class='boxed'><a name="org.ensembl.healthcheck.testcase.generic.SeqRegionAttribAcrossSpecies">org.ensembl.healthcheck.testcase.generic.SeqRegionAttribAcrossSpecies</a></h3>
+<p>
+<a name="SeqRegionAttribAcrossSpecies:bos_taurus_core_39_2c"></a> <font color='red'><strong>bos_taurus_core_39_2c: </strong>bos_taurus_core_39_2c and bos_taurus_otherfeatures_39_2c  differ at row 1 column 1 (COUNT(*)) Values: 103130, 98088</font><br>
+</p><p>
+<a name="SeqRegionAttribAcrossSpecies:"></a> <font color='red'><strong>: </strong>seq_region_attribs are different</font><br>
+</p>
+<hr>
+<p>Test run was started at Wed May 31 00:06:54 BST 2006 and finished at Wed May 31 00:24:26 BST 2006<br>
+ Run time 17 min 32s </p>
+<h4>Configuration used:</h4>
+<pre>
+Tests/groups run:   release<br>
+Database host:      ecs2:3364<br>
+Database names:     ^bos_taurus_(core|otherfeatures|cdna|vega)_[0-9]+_.*<br>
+Output file:        web_bos_taurus.html<br>
+Output level:       info<br>
+</pre>
+</div>
+</body>
+</html>
+<hr>
