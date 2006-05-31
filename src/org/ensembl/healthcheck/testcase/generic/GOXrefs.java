@@ -120,7 +120,7 @@ public boolean run(DatabaseRegistryEntry dbre) {
 		}
 
 		// check that *only* GO xrefs have linkage types assigned
-		String[] dbs = getColumnValues(con, "SELECT DISTINCT(e.db_name) FROM external_db e, xref x, object_xref ox, go_xref g WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id AND ox.object_xref_id=g.object_xref_id AND e.external_db_id != 1000; ");
+		String[] dbs = getColumnValues(con, "SELECT DISTINCT(e.db_name) FROM external_db e, xref x, object_xref ox, go_xref g WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id AND ox.object_xref_id=g.object_xref_id AND e.db_name != 'GO' ");
 		if (dbs.length > 0) {
 
 			ReportManager.problem(this, con, "Some " + Utils.arrayToString(dbs, ", ") + " xrefs have entries in linkage_type - should only be GO xrefs");
