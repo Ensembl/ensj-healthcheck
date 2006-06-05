@@ -138,7 +138,7 @@ public class CheckTaxon extends MultiDatabaseTestCase {
             sql1 = "SELECT \"common_name\", name " +
                 " FROM ncbi_taxa_name WHERE name_class = \"genbank common name\" AND taxon_id = " + taxon_id;
             sql2 = "SELECT \"common_name\", meta_value FROM meta" +
-                " WHERE meta_key = \"species.common_name\"";
+                " WHERE meta_key = \"species.common_name\" and meta_value != \"\"";
             result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
             
             /* Check classification */
