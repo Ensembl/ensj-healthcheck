@@ -717,7 +717,6 @@ public final class DBUtils {
 				nameType[1] = rs.getString(2);
 				if (nameType[1].toLowerCase().startsWith(typeFilter)) {
 					result.add(nameType);
-					System.out.println(nameType[0] + " " + nameType[1]);
 				}
 			}
 
