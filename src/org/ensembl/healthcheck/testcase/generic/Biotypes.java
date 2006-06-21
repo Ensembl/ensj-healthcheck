@@ -17,6 +17,9 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
@@ -55,6 +58,7 @@ public class Biotypes extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 		result &= checkNull(con);
 		result &= checkEnsembl(con);
+		result &= checkGenesAndTranscripts(con);
 
 		return result;
 
@@ -107,5 +111,51 @@ public class Biotypes extends SingleDatabaseTestCase {
 	}
 
 	// -------------------------------------------------------------------------
+
+private boolean checkGenesAndTranscripts(Connection con) {
+
+		boolean result = true;
+
+		// be a bit mopre informative than just counting rows
+		
+		// get gene biotypes
+		String[] geneBiotypes = getColumnValues(con, "SELECT DISTINCT(biotype) FROM gene");
+		
+		// check transcript biotypes for each one
+		for (int i = 0; i < geneBiotypes.length; i++) {
+		
+				String geneBiotype = geneBiotypes[i];
+				String sql = "SELECT DISTINCT(t.biotype) AS biotype, COUNT(*) AS count FROM transcript t, gene g WHERE g.gene_id=t.gene_id AND g.biotype != t.biotype AND g.biotype='" + geneBiotype + "' GROUP BY t.biotype";
+				boolean thisBiotypeOK = true;
+				
+				try {
+					
+					Statement stmt = con.createStatement();
+					ResultSet rs = stmt.executeQuery(sql);
+					while (rs.next()) {
+						
+						int rows = rs.getInt("count");
+						String transcriptBiotype = rs.getString("biotype");
+						ReportManager.problem(this, con, rows + " genes of biotype " + geneBiotype + " have transcripts with biotype " + transcriptBiotype);
+						thisBiotypeOK = false;
+						result &= thisBiotypeOK;
+						
+					}
+					
+					if (thisBiotypeOK) {
+						ReportManager.correct(this, con, "All genes with biotype " + geneBiotype + " have transcripts with matching biotypes");
+					}
+					
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+				
+				
+		}
+		
+		
+		return result;
+
+	}	// -------------------------------------------------------------------------
 
 } // Biotypes
