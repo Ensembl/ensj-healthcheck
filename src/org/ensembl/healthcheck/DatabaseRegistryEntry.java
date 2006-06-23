@@ -34,6 +34,8 @@ public class DatabaseRegistryEntry implements Comparable {
 
 	private Connection con;
 
+	private DatabaseRegistry databaseRegistry;
+	
 	/** The logger to use */
 	private static Logger logger = Logger.getLogger("HealthCheckLogger");
 
@@ -349,6 +351,14 @@ public class DatabaseRegistryEntry implements Comparable {
 
 		return Integer.parseInt(bits[0]);
 
+	}
+
+	public DatabaseRegistry getDatabaseRegistry() {
+		return databaseRegistry;
+	}
+
+	public void setDatabaseRegistry(DatabaseRegistry databaseRegistry) {
+		this.databaseRegistry = databaseRegistry;
 	}
 
 	// -----------------------------------------------------------------
