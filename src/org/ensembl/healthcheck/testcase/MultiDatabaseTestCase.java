@@ -149,9 +149,9 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
      *          The DatabaseTypes to look at.
      * @return true if the table is the same across all species.
      */
-    public boolean checkTableAcrossSpecies(String table, DatabaseRegistry dbr, DatabaseType[] types, String correct, String problem) {
+    public boolean checkTableAcrossSpecies(String table, DatabaseRegistry dbr, DatabaseType[] types, String correct, String problem, String extraSQL) {
 
-        String sql = "SELECT COUNT(*) FROM " + table;
+        String sql = "SELECT COUNT(*) FROM " + table + " " + extraSQL;
         boolean result = checkSQLAcrossSpecies(sql, dbr, types);
 
         if (!result) {
