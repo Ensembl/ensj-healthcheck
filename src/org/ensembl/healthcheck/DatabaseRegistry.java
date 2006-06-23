@@ -173,6 +173,7 @@ public class DatabaseRegistry {
 
         for (int i = 0; i < names.length; i++) {
             DatabaseRegistryEntry dbre = new DatabaseRegistryEntry(names[i], globalSpecies, globalType, true);
+            dbre.setDatabaseRegistry(this);
             entries.add(dbre);
             logger.finest(dbre.getName() + " appears to be type " + dbre.getType() + " and species " + dbre.getSpecies());
             logger.finest("Added DatabaseRegistryEntry for " + names[i] + " to DatabaseRegistry");
@@ -186,6 +187,7 @@ public class DatabaseRegistry {
 
         for (int i = 0; i < names.length; i++) {
             DatabaseRegistryEntry dbre = new DatabaseRegistryEntry(names[i], null, null, false);
+            dbre.setDatabaseRegistry(this);
             Connection dbCon = DBUtils.openConnection(
                     System.getProperty("secondary.driver"),
                     System.getProperty("secondary.databaseURL") + dbre.getName(),
@@ -210,6 +212,7 @@ public class DatabaseRegistry {
     public final void add(final DatabaseRegistryEntry dbre) {
 
         entries.add(dbre);
+        dbre.setDatabaseRegistry(this);
 
     }
 
