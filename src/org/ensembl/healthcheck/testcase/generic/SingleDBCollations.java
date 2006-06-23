@@ -71,6 +71,7 @@ public class SingleDBCollations extends SingleDatabaseTestCase {
 				if (collation == null) {
 					ReportManager.problem(this, con, "Can't get collation for " + table);
 					result = false;
+					continue;
 				}
 				if (!collation.equals(TARGET_COLLATION)) {
 					ReportManager.problem(this, con, table + " has a collation of '" + collation + "' which is not the same as the target "
