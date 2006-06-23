@@ -46,7 +46,7 @@ public class DNATablesAcrossSpecies extends MultiDatabaseTestCase {
      */
     public boolean run(DatabaseRegistry dbr) {
 
-        return checkTableAcrossSpecies("dna", dbr, types, "dna tables are all the same", "dna tables are different");
+        return checkTableAcrossSpecies("dna", dbr, types, "dna tables are all the same", "dna tables are different", "");
 
     } // run
 

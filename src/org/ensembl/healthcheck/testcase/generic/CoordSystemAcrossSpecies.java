@@ -46,7 +46,7 @@ public class CoordSystemAcrossSpecies extends MultiDatabaseTestCase {
      */
     public boolean run(DatabaseRegistry dbr) {
 
-        return checkTableAcrossSpecies("coord_system", dbr, types, "All coord_system tables are the same", "coord_system tables are different");
+        return checkTableAcrossSpecies("coord_system", dbr, types, "All coord_system tables are the same", "coord_system tables are different", "");
 
     } // run
 
