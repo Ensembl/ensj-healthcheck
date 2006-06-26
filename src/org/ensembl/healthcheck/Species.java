@@ -123,6 +123,12 @@ public final class Species {
 	/** Help database */
 	public static final Species HELP = new Species("help");
 
+	 /** A taxonomy database */
+  public static final Species NCBI_TAXONOMY = new Species("ncbi_taxonomy");
+
+  /** An ensembl_website database */
+  public static final Species ENSEMBL_WEBSITE = new Species("ensembl_website");
+
 	/** Unknown species */
 	public static final Species UNKNOWN = new Species("unknown");
 
