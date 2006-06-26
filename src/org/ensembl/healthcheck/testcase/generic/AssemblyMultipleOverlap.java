@@ -115,7 +115,7 @@ public class AssemblyMultipleOverlap extends SingleDatabaseTestCase {
 
 							if (starts[j] < ends[i]) {
 								overlapCount++;
-								//System.out.println("Overlap: " + starts[i] + " " + starts[j] + " " + ends[i] + " " + ends[j]);
+								System.out.println("Overlap: " + starts[i] + " " + starts[j] + " " + ends[i] + " " + ends[j] + " cmp seq_region_id " + cmp_seq_region_id + " asm_seq_region_id " + asm_seq_region_id);
 							}
 						}
 

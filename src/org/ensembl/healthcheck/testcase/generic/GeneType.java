@@ -306,6 +306,11 @@ public class GeneType extends SingleDatabaseTestCase {
 			result = false;
 			e.printStackTrace();
 		}
+		
+		if (result) {
+			ReportManager.correct(this, con, "All GeneTypes correct");
+		}
+		
 		return result;
 
 	} // run

@@ -21,8 +21,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.Utils;
 
 /**
- * Check that GO xrefs exist for certain species, and that there are no blank or
- * null linkage types.
+ * Check that unrpoejcted GO xrefs exist, and that there are no blank or null linkage types.
  */
 
 public class GOXrefs extends SingleDatabaseTestCase {
@@ -35,7 +34,7 @@ public class GOXrefs extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		addToGroup("core_xrefs");
-		setDescription("Check that GO xrefs exist for certain species (human, mouse, rat, drosophila)");
+		setDescription("Check that unrpoejcted GO xrefs exist, and that there are no blank or null linkage types.");
 
 	}
 
@@ -74,17 +73,17 @@ public boolean run(DatabaseRegistryEntry dbre) {
 		if (true) {
 
 			// check that they exist in the xref table
-			String sql = "SELECT COUNT(*) FROM external_db edb, xref x WHERE edb.db_name= 'go' AND edb.external_db_id = x.external_db_id";
+			String sql = "SELECT COUNT(*) FROM external_db edb, xref x WHERE edb.db_name= 'go' AND edb.external_db_id = x.external_db_id AND x.info_type IS NULL";
 
 			int xref_rows = getRowCount(con, sql);
 			if (xref_rows == 0) {
 
-				ReportManager.problem(this, con, "No GO xrefs found.");
+				ReportManager.problem(this, con, "No unprojected GO xrefs found.");
 				result = false;
 
 			} else {
 
-				ReportManager.correct(this, con, "Found " + xref_rows + " GO xrefs");
+				ReportManager.correct(this, con, "Found " + xref_rows + " unprojected GO xrefs");
 
 				// if GO xrefs exist, check that the go_xref table is populated
 				int go_xref_rows = getRowCount(con, "SELECT COUNT(*) FROM go_xref");

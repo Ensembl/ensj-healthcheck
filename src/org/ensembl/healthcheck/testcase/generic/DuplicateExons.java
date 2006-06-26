@@ -100,7 +100,7 @@ public class DuplicateExons extends SingleDatabaseTestCase {
                 exonChromosome = rs.getInt(5);
                 exonEndPhase = rs.getInt(6);
                 exonStrand = rs.getInt(7);
-
+                	
                 if (!first) {
                     if (lastExonChromosome == exonChromosome && lastExonStart == exonStart && lastExonEnd == exonEnd
                             && lastExonPhase == exonPhase && lastExonStrand == exonStrand
