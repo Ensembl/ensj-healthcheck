@@ -114,6 +114,9 @@ public final class Species {
 	/** Specific type of species */
 	public static final Species GASTEROSTEUS_ACULEATUS = new Species("gasterosteus_aculeatus");
 
+	/** Specific type of species */
+	public static final Species AEDES_AEGYPTI = new Species("aedes_aegypti");
+
 	/** Non-ensembl database */
 	public static final Species SYSTEM = new Species("system");
 
@@ -179,7 +182,8 @@ public final class Species {
 		taxonIDToSpecies.put("9823", SUS_SCROFA);
 		taxonIDToSpecies.put("51511", CIONA_SAVIGNYI);
 		taxonIDToSpecies.put("69293", GASTEROSTEUS_ACULEATUS);
-
+		taxonIDToSpecies.put("7159", AEDES_AEGYPTI);
+		
 		// and the other way around
 		Iterator it = taxonIDToSpecies.keySet().iterator();
 		while (it.hasNext()) {
@@ -231,7 +235,7 @@ public final class Species {
 	 * Resolve an alias to a Species object.
 	 * 
 	 * @param speciesAlias
-	 *          The alias (e.g. human, homosapiens, hsapiens).
+	 *          The alias (e.g. human, homosapiens, hsapiens)
 	 * @return The species object corresponding to alias, or Species.UNKNOWN if it
 	 *         cannot be resolved.
 	 */
@@ -458,9 +462,17 @@ public final class Species {
 
 		// --------------------------------------
 
-		if (in(alias, "stickleback,gas_aculeatus")) {
+		if (in(alias, "stickleback,gas_aculeatus,gasaculeatus")) {
 
 			return GASTEROSTEUS_ACULEATUS;
+
+		}
+		
+		// --------------------------------------
+
+		if (in(alias, "aedes,aedes_aegypti,aedesaegypti")) {
+
+			return AEDES_AEGYPTI;
 
 		}
 
