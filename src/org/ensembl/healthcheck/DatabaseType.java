@@ -71,6 +71,12 @@ public final class DatabaseType {
     /** A system database */
     public static final DatabaseType SYSTEM = new DatabaseType("system");
 
+    /** A taxonomy database */
+    public static final DatabaseType NCBI_TAXONOMY = new DatabaseType("ncbi_taxonomy");
+
+    /** An ensembl_website database */
+    public static final DatabaseType ENSEMBL_WEBSITE = new DatabaseType("ensembl_website");
+
     /** A database whos type has not been determined */
     public static final DatabaseType UNKNOWN = new DatabaseType("unknown");
 
@@ -237,11 +243,27 @@ public final class DatabaseType {
 
         }
         
-//      --------------------------------------
+        //      --------------------------------------
 
         if (in(lcAlias, "otherfeatures")) {
 
             return OTHERFEATURES;
+
+        }
+
+//      --------------------------------------
+
+        if (in(lcAlias, "ensembl_website")) {
+
+            return ENSEMBL_WEBSITE;
+
+        }
+
+//      --------------------------------------
+
+        if (in(lcAlias, "ncbi_taxonomy")) {
+
+            return NCBI_TAXONOMY;
 
         }
 
