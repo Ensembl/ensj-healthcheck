@@ -107,12 +107,6 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 
 			Map analysesFromFeatureTables = new HashMap();
 
-			// some analyses may be listed in the analysis table but actually used in
-			// the otherfeatures database
-			// so go and get the lis of analyses from the feature tables in the
-			// otherfeatures database first
-			analysesFromFeatureTables = getAnalysesFromOtherDatabase(dbre, featureTables);
-
 			Connection con = dbre.getConnection();
 			// build cumulative list of analyses from feature tables
 			for (int t = 0; t < featureTables.length; t++) {
@@ -143,12 +137,19 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 
 			// look at each analysis ID *from the analysis table* to see if it's used
 			// somewhere
+      //	 some analyses may be listed in the analysis table but actually used in
+			// the otherfeatures database
+			// so go and get the lis of analyses from the feature tables in the
+			// otherfeatures database first
+			Map otherfeatureAnalyses = getAnalysesFromOtherDatabase(dbre, featureTables);
+
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT analysis_id, logic_name FROM analysis");
 			while (rs.next()) {
 				int analysisID = rs.getInt("analysis_id");
 				String logicName = rs.getString("logic_name");
-				if (!analysesFromFeatureTables.containsKey(new Integer(analysisID))) {
+				Integer anal = new Integer(analysisID);
+				if (!analysesFromFeatureTables.containsKey(anal) && !otherfeatureAnalyses.containsKey(anal)) {
 					ReportManager.problem(this, con, "Analysis with ID " + analysisID + ", logic name " + logicName
 							+ " is not used in any feature table");
 					result = false;
