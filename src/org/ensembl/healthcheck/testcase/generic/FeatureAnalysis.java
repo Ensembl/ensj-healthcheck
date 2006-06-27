@@ -103,11 +103,14 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
+		Connection con = dbre.getConnection();
+		
 		try {
 
 			Map analysesFromFeatureTables = new HashMap();
 
-			Connection con = dbre.getConnection();
+			Map analysesFromAnalysisTable = getLogicNamesFromAnalysisTable(con);
+			
 			// build cumulative list of analyses from feature tables
 			for (int t = 0; t < featureTables.length; t++) {
 				String featureTable = featureTables[t];
@@ -130,6 +133,13 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 					} else {
 						analysesFromFeatureTables.put(analysisID, featureTable);
 					}
+					
+					// check that each analysis actually exists in the analysis table 
+					if (!analysesFromAnalysisTable.containsKey(analysisID)) {
+						ReportManager.problem(this, con, "Analysis ID " + analysisID.intValue() + " is used in " + featureTable + " but is not present in the analysis table.");
+						result = false;
+					}
+					
 				}
 				rs.close();
 				stmt.close();
