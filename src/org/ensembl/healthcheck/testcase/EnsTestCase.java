@@ -17,10 +17,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
@@ -1589,6 +1592,30 @@ public abstract class EnsTestCase {
 
 		return result;
 
+	}
+	
+//----------------------------------------------------------------------
+/**
+ * Get a list of the logic names and analysis IDs from the analysis table.
+ * @param con The connection to use.
+ * @return A map of analysis IDs (keys) and logic names (values).
+ */
+	private Map getLogicNamesFromAnalysisTable(Connection con) {
+		
+		Map map = new HashMap();
+		
+		try {
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT analysis_id, logic_name FROM analysis");
+			while (rs.next()) {
+				map.put(rs.getString("analysis_id"), rs.getString("logic_name"));
+			}
+		} catch (SQLException se) {
+			se.printStackTrace();
+		}
+		
+		return map;
+		
 	}
 	// ----------------------------------------------------------------------
 
