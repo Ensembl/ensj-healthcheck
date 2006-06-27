@@ -1600,7 +1600,7 @@ public abstract class EnsTestCase {
  * @param con The connection to use.
  * @return A map of analysis IDs (keys) and logic names (values).
  */
-	private Map getLogicNamesFromAnalysisTable(Connection con) {
+	public Map getLogicNamesFromAnalysisTable(Connection con) {
 		
 		Map map = new HashMap();
 		
