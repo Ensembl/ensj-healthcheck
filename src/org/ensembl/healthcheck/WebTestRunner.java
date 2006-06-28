@@ -683,8 +683,15 @@ public class WebTestRunner extends TestRunner implements Reporter {
 		// change genus to single letter
 		int underscoreIndex = db.indexOf("_");
 		String genusLetter = db.substring(0, 1);
-
-		return genusLetter + "_" + db.substring(underscoreIndex + 1);
+		
+		String result =  genusLetter + "_" + db.substring(underscoreIndex + 1);
+		
+		// if length is *still* > 27, change long database type to an abbreviated version
+		if (result.length() > 27) {
+			result = result.replaceAll("otherfeatures", "other...");
+		}
+		
+		return result;
 
 	}
 
