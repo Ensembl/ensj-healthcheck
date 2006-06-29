@@ -22,7 +22,7 @@ CREATE TABLE report (
   session_id					INT(10) UNSIGNED NOT NULL,
   species					VARCHAR(255),
   testcase					VARCHAR(255),
-  result						ENUM("pass", "fail"),
+  result						ENUM("PROBLEM", "CORRECT", "WARNING", "INFO"),
   text						VARCHAR(255),
   
   PRIMARY KEY (report_id),
