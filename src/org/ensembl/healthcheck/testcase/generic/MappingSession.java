@@ -83,50 +83,12 @@ public class MappingSession extends SingleDatabaseTestCase {
             result = checkMappingSessionChaining(con) && result;
             logger.info("Checking mapping_session/stable_id_event keys");
             result = checkMappingSessionStableIDKeys(con) && result;
-            logger.info("Checking that ALL/LATEST mapping session has most entries");
-            result = checkAllLatest(con) && result;
 
         }
 
         return result;
 
     } // run
-
-    // -----------------------------------------------------------------
-    /**
-     * Check that the ALL/LATEST mapping session has more entries than the
-     * others
-     */
-    private boolean checkAllLatest(final Connection con) {
-
-        boolean result = true;
-
-	// don't bother checking if table is empty
-	if (countRowsInTable(con, "mapping_session") == 0) {
-	    return true;
-	}
-
-        // Following query should give one result - the ALL/LATEST one - if all
-        // is well
-        String sql = "SELECT ms.old_db_name, ms.new_db_name, count(*) AS entries "
-                + "FROM stable_id_event sie, mapping_session ms "
-                + "WHERE sie.mapping_session_id=ms.mapping_session_id "
-                + "GROUP BY ms.mapping_session_id ORDER BY entries DESC LIMIT 1";
-
-        String oldDBName = getRowColumnValue(con, sql);
-
-        if (!(oldDBName.equalsIgnoreCase("ALL"))) {
-            ReportManager.problem(this, con,
-                    "ALL/LATEST mapping session does not seem to have the most stable_id_event entries");
-            result = false;
-        } else {
-            ReportManager.correct(this, con,
-                    "ALL/LATEST mapping session seems to have the most stable_id_event entries");
-        }
-
-        return result;
-
-    }
 
     // -----------------------------------------------------------------
     /**
