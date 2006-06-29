@@ -135,7 +135,7 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 					}
 					
 					// check that each analysis actually exists in the analysis table 
-					if (!analysesFromAnalysisTable.containsKey(analysisID)) {
+					if (!analysesFromAnalysisTable.containsKey("" + analysisID.intValue())) {
 						int count = rs.getInt("count");
 						ReportManager.problem(this, con, "Analysis ID " + analysisID.intValue() + " is used in " + count + " rows in "+ featureTable + " but is not present in the analysis table.");
 						result = false;
