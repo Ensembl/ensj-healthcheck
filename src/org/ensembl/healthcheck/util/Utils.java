@@ -147,6 +147,38 @@ public final class Utils {
 			}
 		}
 
+		// ... and for output database URL
+
+		String outputDatabaseURL = System.getProperty("output.databaseURL");
+
+		if (outputDatabaseURL == null || outputDatabaseURL.equals("")) {
+
+			// build it
+			outputDatabaseURL = "jdbc:mysql://";
+
+			if (System.getProperty("output.host") != null) {
+				outputDatabaseURL += System.getProperty("output.host");
+			}
+
+			if (System.getProperty("output.port") != null) {
+				outputDatabaseURL += ":" + System.getProperty("output.port");
+			}
+
+			outputDatabaseURL += "/";
+			System.setProperty("output.databaseURL", outputDatabaseURL);
+
+		} else {
+
+			// validate output database URL - if it doesn't start with jdbc: this
+			// can
+			// cause confusion
+			String prefix = outputDatabaseURL.substring(0, 5);
+			if (!prefix.equalsIgnoreCase("jdbc:")) {
+				System.err
+						.println("WARNING - output.databaseURL property should start with jdbc: but it does not seem to. Check this if you experience problems loading the database driver");
+			}
+		}
+
 	} // readPropertiesFile
 
 	// -------------------------------------------------------------------------
