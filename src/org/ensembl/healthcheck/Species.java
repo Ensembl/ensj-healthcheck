@@ -117,6 +117,10 @@ public final class Species {
 	/** Specific type of species */
 	public static final Species AEDES_AEGYPTI = new Species("aedes_aegypti");
 
+ /** Specific type of speciesOrnithorhynchus anatinus */
+	public static final Species ORNITHORHYCHUS_ANATINUS = new Species("ornithorhychus_anatius");
+
+
 	/** Non-ensembl database */
 	public static final Species SYSTEM = new Species("system");
 
@@ -189,7 +193,7 @@ public final class Species {
 		taxonIDToSpecies.put("51511", CIONA_SAVIGNYI);
 		taxonIDToSpecies.put("69293", GASTEROSTEUS_ACULEATUS);
 		taxonIDToSpecies.put("7159", AEDES_AEGYPTI);
-		
+    taxonIDToSpecies.put("9258", ORNITHORHYCHUS_ANATINUS);	
 		// and the other way around
 		Iterator it = taxonIDToSpecies.keySet().iterator();
 		while (it.hasNext()) {
@@ -226,7 +230,7 @@ public final class Species {
 		assemblyPrefixToSpecies.put("PIG", SUS_SCROFA);
 		assemblyPrefixToSpecies.put("CSAV", CIONA_SAVIGNYI);
 		assemblyPrefixToSpecies.put("STICKLEBACK", GASTEROSTEUS_ACULEATUS);
-
+    assemblyPrefixToSpecies.put("OANA", ORNITHORHYCHUS_ANATINUS);
 		// and the other way around
 		it = assemblyPrefixToSpecies.keySet().iterator();
 		while (it.hasNext()) {
@@ -482,6 +486,14 @@ public final class Species {
 
 		}
 
+    
+    // --------------------------------------
+    
+		if (in(alias, "platypus,ornithorhychus_anatius,oanatius")) {
+        
+        return ORNITHORHYCHUS_ANATINUS;
+        
+		}
 		// --------------------------------------
 		// default
 		// logger.warning("Cannot resolve species alias " + alias + " to a
