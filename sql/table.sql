@@ -7,10 +7,8 @@ CREATE TABLE session (
   session_id					INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   start_time					DATETIME,
   end_time					DATETIME,
-  release					INT,
   
-  PRIMARY KEY (session_id),
-  KEY release_idx(release)
+  PRIMARY KEY (session_id)
   
 );
 
