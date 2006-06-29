@@ -43,6 +43,8 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
     // key - database name
     private Map featuresToDelete;
 
+    private static int THRESHOLD = 1000; // don't report a problem if there are less results than this
+    
     /**
      * Create an ProteinFeatureTranslationTestCase that applies to a specific set of databases.
      */
@@ -200,11 +202,13 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
             }
 
             featuresToDelete.put(DBUtils.getShortDatabaseName(con), thisDBFeatures);
-            if (thisDBFeatures.size() > 0) {
+            if (thisDBFeatures.size() > THRESHOLD) {
                 ReportManager.problem(this, con, "protein_feature table has " + thisDBFeatures.size()
                         + " features that are longer than the translation");
-            } else {
+            } else if (thisDBFeatures.size() == 0) {
                 ReportManager.correct(this, con, "protein_feature_table has no features that are longer than the translation");
+            } else {
+            	ReportManager.correct(this, con, "protein_feature_table has " + thisDBFeatures.size() + " features that are longer than the translation; this is less than the threshold of " + THRESHOLD);
             }
 
             rs.close();
