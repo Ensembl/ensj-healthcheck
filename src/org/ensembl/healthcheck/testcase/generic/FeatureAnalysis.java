@@ -116,7 +116,7 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 				String featureTable = featureTables[t];
 				logger.fine("Collecting analysis IDs from " + featureTable);
 				Statement stmt = con.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT DISTINCT(analysis_id) FROM " + featureTable);
+				ResultSet rs = stmt.executeQuery("SELECT DISTINCT(analysis_id), COUNT(*) AS count FROM " + featureTable + " GROUP BY analysis_id");
 				while (rs.next()) {
 					Integer analysisID = new Integer(rs.getInt("analysis_id"));
 					if (analysesFromFeatureTables.containsKey(analysisID)) {
@@ -136,7 +136,8 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 					
 					// check that each analysis actually exists in the analysis table 
 					if (!analysesFromAnalysisTable.containsKey(analysisID)) {
-						ReportManager.problem(this, con, "Analysis ID " + analysisID.intValue() + " is used in " + featureTable + " but is not present in the analysis table.");
+						int count = rs.getInt("count");
+						ReportManager.problem(this, con, "Analysis ID " + analysisID.intValue() + " is used in " + count + " rows in "+ featureTable + " but is not present in the analysis table.");
 						result = false;
 					}
 					
