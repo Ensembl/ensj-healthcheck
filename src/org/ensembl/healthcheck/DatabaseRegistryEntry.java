@@ -253,6 +253,19 @@ public class DatabaseRegistryEntry implements Comparable {
 
 		}
 
+		 //	 ensembl_website databases
+		if (name.startsWith("ensembl_website")) {
+
+			return DatabaseType.ENSEMBL_WEBSITE;
+
+		}
+		
+     //	 ncbi_taxonomy databases
+		if (name.startsWith("ncbi_taxonomy")) {
+
+			return DatabaseType.NCBI_TAXONOMY;
+
+		}
 		// other permutations?
 
 		if (result.equals(DatabaseType.UNKNOWN) && name.length() > 0) {
