@@ -172,14 +172,14 @@ public class DatabaseRegistryEntry implements Comparable {
 		}
 		
     //	 ensembl_website databases
-		if (name.equals("ensembl_website")) {
+		if (name.startsWith("ensembl_website")) {
 
 			return Species.ENSEMBL_WEBSITE;
 
 		}
 		
      //	 ncbi_taxonomy databases
-		if (name.equals("ncbi_taxonomy")) {
+		if (name.startsWith("ncbi_taxonomy")) {
 
 			return Species.NCBI_TAXONOMY;
 
