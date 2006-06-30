@@ -425,6 +425,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
 		Map reportsByTC = ReportManager.getAllReportsByTestCase(outputLevel);
 
 		TreeSet dbs = new TreeSet(reportsByTC.keySet());
+		
 		Iterator it = dbs.iterator();
 		while (it.hasNext()) {
 
