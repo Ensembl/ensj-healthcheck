@@ -46,7 +46,7 @@ public class SeqRegionAttribAcrossSpecies extends MultiDatabaseTestCase {
      */
     public boolean run(DatabaseRegistry dbr) {
 
-        return checkTableAcrossSpecies("seq_region_attrib", dbr, types, "seq_region_attrib tables all the same", "seq_region_attribs are different", "");
+        return checkTableAcrossSpecies("seq_region_attrib", dbr, types, "seq_region_attrib tables all the same", "seq_region_attribs are different", "WHERE code NOT LIKE 'GeneNo%'");
 
     } // run
 
