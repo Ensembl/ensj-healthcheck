@@ -726,6 +726,38 @@ public final class Utils {
 		return first + last;
 
 	}
+	
+	private String truncateDatabaseName(String db) {
+
+		if (db.length() <= 27) {
+			return db;
+		}
+
+		// change genus to single letter
+		int underscoreIndex = db.indexOf("_");
+		String genusLetter = db.substring(0, 1);
+		
+		String result =  genusLetter + "_" + db.substring(underscoreIndex + 1);
+		
+		// if length is *still* > 27, change long database type to an abbreviated version
+		if (result.length() > 27) {
+			result = result.replaceAll("otherfeatures", "other...");
+		}
+		
+		return result;
+
+	}
+
+	// ---------------------------------------------------------------------
+
+	private String truncateTestName(String test) {
+
+		return (test.length() <= 27) ? test : test.substring(0, 28);
+
+	}
+
+	// ---------------------------------------------------------------------
+
 
 	// -------------------------------------------------------------------------
 
