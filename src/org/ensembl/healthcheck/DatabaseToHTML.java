@@ -20,11 +20,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -429,10 +424,10 @@ public class DatabaseToHTML {
 			print(pw, "</ul>");
 
 			// results by test
-			print(pw, "<h2>Results by test</h2>");
+			print(pw, "<h2>Failures by test</h2>");
 			print(pw, "<ul>");
 
-			sql = "SELECT DISTINCT(testcase) FROM report WHERE species='" + species + "' AND session_id=" + sessionID;
+			sql = "SELECT DISTINCT(testcase) FROM report WHERE species='" + species + "' AND result IN ('PROBLEM','WARNING','INFO') AND session_id=" + sessionID;
 
 			rs = stmt.executeQuery(sql);
 
@@ -462,7 +457,7 @@ public class DatabaseToHTML {
 
 	private void printSummaryByDatabase(PrintWriter pw, String species, Connection con) {
 
-		print(pw, "<h2>Summary by database</h2>");
+		print(pw, "<h2>Summary of results by database</h2>");
 
 		print(pw, "<p><table class='ss'>");
 		print(pw, "<tr><th>Database</th><th>Passed</th><th>Failed</th></tr>");
@@ -582,14 +577,14 @@ public class DatabaseToHTML {
 	// ------
 	private void printSummaryByTest(PrintWriter pw, String species, Connection con) {
 
-		print(pw, "<h2>Summary by test</h2>");
+		print(pw, "<h2>Summary of failures by test</h2>");
 
 		print(pw, "<p><table class='ss'>");
 		print(pw, "<tr><th>Test</th><th>Result</th></tr>");
 
 		// group failed tests before passed ones via ORDER BY
 		String sql = "SELECT DISTINCT(testcase), result FROM report WHERE species='" + species + "' AND session_id=" + sessionID
-				+ " ORDER BY result";
+				+ " AND result IN ('PROBLEM','WARNING','INFO') ORDER BY result";
 
 		try {
 
@@ -626,7 +621,7 @@ public class DatabaseToHTML {
 	// ---------------------------------------------------------------------
 	private void printReportsByDatabase(PrintWriter pw, String species, Connection con) {
 
-		print(pw, "<h2>Detailed reports by database</h2>");
+		print(pw, "<h2>Detailed failure reports by database</h2>");
 
 		String sql = "SELECT database_name, testcase, result, text FROM report WHERE species='" + species + "' AND session_id="
 				+ sessionID + " AND result IN ('PROBLEM','WARNING','INFO')  ORDER BY database_name, testcase";
