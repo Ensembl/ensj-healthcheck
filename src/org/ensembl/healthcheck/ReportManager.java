@@ -823,7 +823,7 @@ public final class ReportManager {
 			logger.severe("No connection to output database!");
 		}
 
-		System.out.println(report.getDatabaseName() + " " + report.getTestCaseName() + " " + report.getLevelAsString() + " "
+		logger.fine(report.getDatabaseName() + " " + report.getTestCaseName() + " " + report.getLevelAsString() + " "
 				+ report.getMessage());
 
 		String sql = "INSERT INTO report (session_id, database_name, species, database_type, testcase, result, text) VALUES (?, ?, ?, ?, ?, ?, ?)";
