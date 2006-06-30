@@ -12,6 +12,6 @@ cd $home
 
 $java -server -classpath $cp -Xmx512m org.ensembl.healthcheck.DatabaseTestRunner
 
-$java -server -classpath $cp org.ensembl.healthcheck.DatabaseToHTML -output /nfs/WWWUsers/Users/gp1/WWW/new
+$java -server -classpath $cp org.ensembl.healthcheck.DatabaseToHTML -output /nfs/WWWUsers/Users/gp1/new
 
 
