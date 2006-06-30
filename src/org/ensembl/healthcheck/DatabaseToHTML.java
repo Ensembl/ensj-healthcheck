@@ -227,7 +227,7 @@ public class DatabaseToHTML {
 			printIntroPage(pwIntro, con);
 
 			// now loop over each species and print the detailed output
-			String sql = "SELECT DISTINCT(species) FROM report ORDER BY species WHERE session_id=" + sessionID;
+			String sql = "SELECT DISTINCT(species) FROM report WHERE session_id=" + sessionID + " ORDER BY species ";
 
 			try {
 
