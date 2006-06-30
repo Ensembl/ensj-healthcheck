@@ -7,6 +7,9 @@ CREATE TABLE session (
   session_id					INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   start_time					DATETIME,
   end_time					DATETIME,
+  host						VARCHAR(255),
+  groups						VARCHAR(255),
+  database_regexp			VARCHAR(255),
   
   PRIMARY KEY (session_id)
   
@@ -18,7 +21,9 @@ CREATE TABLE report (
 
   report_id					INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   session_id					INT(10) UNSIGNED NOT NULL,
-  species					VARCHAR(255),
+  database_name				VARCHAR(255),
+  species					VARCHAR(255),    # ENUM?
+  database_type				VARCHAR(255),    # ENUM?
   testcase					VARCHAR(255),
   result						ENUM("PROBLEM", "CORRECT", "WARNING", "INFO"),
   text						VARCHAR(255),
