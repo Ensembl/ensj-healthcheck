@@ -135,6 +135,7 @@ public class Meta extends SingleDatabaseTestCase {
 			// Prefix is OK as long as it starts with the valid one
 			Species dbSpecies = dbre.getSpecies();
 			String correctPrefix = Species.getAssemblyPrefixForSpecies(dbSpecies);
+			System.out.println("Correct prefix: " + correctPrefix);
 			if (metaTableAssemblyPrefix != null) {
 				if (!metaTableAssemblyPrefix.toUpperCase().startsWith(correctPrefix.toUpperCase())) {
 					ReportManager.problem(this, con, "Database species is " + dbSpecies + " but assembly prefix " + metaTableAssemblyPrefix
