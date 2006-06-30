@@ -67,10 +67,11 @@ public final class ReportManager {
 	private static long sessionID = -1;
 
 	private static DatabaseRegistryEntry dbre = new DatabaseRegistryEntry("", null, null, false); // just
-																																																// used
-																																																// for
-																																																// convenience
-																																																// methods
+
+	// used
+	// for
+	// convenience
+	// methods
 
 	// hide constructor to stop instantiation
 	private ReportManager() {
@@ -733,9 +734,11 @@ public final class ReportManager {
 	 * Create a new entry in the session table. Store the ID of the created
 	 * session in sessionID.
 	 */
-public static void createDatabaseSession() {
+	public static void createDatabaseSession() {
 
-		String sql = "INSERT INTO session (start_time, host, groups, database_regexp) VALUES (NOW(), '" + System.getProperty("host") + ":" + System.getProperty("port") + "','" + System.getProperty("output.groups") + "','" + System.getProperty("output.databases") + "')";
+		String sql = "INSERT INTO session (start_time, host, groups, database_regexp) VALUES (NOW(), '" + System.getProperty("host")
+				+ ":" + System.getProperty("port") + "','" + System.getProperty("output.groups") + "','"
+				+ System.getProperty("output.databases") + "')";
 
 		try {
 
@@ -745,23 +748,23 @@ public static void createDatabaseSession() {
 			if (rs.next()) {
 				sessionID = rs.getLong(1);
 				logger.fine("Created new session with ID " + sessionID);
-			}			
-			
+			}
+
 		} catch (SQLException e) {
 
 			System.err.println("Error executing:\n" + sql);
 			e.printStackTrace();
 
 		}
-		
+
 		if (sessionID == -1) {
 			logger.severe("Could not get new session ID");
 			logger.severe(sql);
 		}
 
 	}
-	
-  // -------------------------------------------------------------------------
+
+	// -------------------------------------------------------------------------
 	/**
 	 * End a database session. Write the end time into the database.
 	 */
@@ -783,27 +786,33 @@ public static void createDatabaseSession() {
 
 	}
 
-//-------------------------------------------------------------------------
+	// -------------------------------------------------------------------------
 	/**
 	 * Delete all previous data.
 	 */
 	public static void deletePrevious() {
 
-		String sql = "DELETE session, report, annotation FROM session, report, annotation";
+		String[] tables = { "session", "report", "annotation" };
 
-		try {
+		for (int i = 0; i < tables.length; i++) {
+			
+			String sql = "DELETE FROM " + tables[i];
+			
+			try {
 
-			Statement stmt = outputDatabaseConnection.createStatement();
-			stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+				Statement stmt = outputDatabaseConnection.createStatement();
+				stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
 
-		} catch (SQLException e) {
+			} catch (SQLException e) {
 
-			System.err.println("Error executing:\n" + sql);
-			e.printStackTrace();
+				System.err.println("Error executing:\n" + sql);
+				e.printStackTrace();
+
+			}
 
 		}
-
 	}
+
 	// -------------------------------------------------------------------------
 	/**
 	 * Store a report in the database.
