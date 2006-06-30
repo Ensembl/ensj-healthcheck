@@ -80,7 +80,7 @@ public class Meta extends SingleDatabaseTestCase {
 		}
 
 		result &= checkSchemaVersionDBName(dbre);
-
+		
 		// ----------------------------------------
 		// Use an AssemblyNameInfo object to get the assembly information
 		AssemblyNameInfo assembly = new AssemblyNameInfo(con);
@@ -189,7 +189,8 @@ public class Meta extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		// check that there are species, classification and taxonomy_id entries
-		String[] metaKeys = { "assembly.default", "species.classification", "species.common_name", "species.taxonomy_id" };
+		// also assembly.name, assembly.date, species.classification - needed by the website
+		String[] metaKeys = { "assembly.default", "species.classification", "species.common_name", "species.taxonomy_id", "assembly.name", "assembly.date", "species.description" };
 		for (int i = 0; i < metaKeys.length; i++) {
 			String metaKey = metaKeys[i];
 			int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey + "'");
@@ -526,6 +527,9 @@ public class Meta extends SingleDatabaseTestCase {
 		return result;
 
 	}
+
+	// ---------------------------------------------------------------------
+
 
 	// ---------------------------------------------------------------------
 
