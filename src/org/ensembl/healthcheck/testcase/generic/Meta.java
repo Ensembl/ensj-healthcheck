@@ -135,18 +135,21 @@ public class Meta extends SingleDatabaseTestCase {
 			// Prefix is OK as long as it starts with the valid one
 			Species dbSpecies = dbre.getSpecies();
 			String correctPrefix = Species.getAssemblyPrefixForSpecies(dbSpecies);
-			System.out.println("Correct prefix: " + correctPrefix);
-			if (metaTableAssemblyPrefix != null) {
-				if (!metaTableAssemblyPrefix.toUpperCase().startsWith(correctPrefix.toUpperCase())) {
-					ReportManager.problem(this, con, "Database species is " + dbSpecies + " but assembly prefix " + metaTableAssemblyPrefix
-							+ " should have prefix beginning with " + correctPrefix);
-					result = false;
-				} else {
-					ReportManager.correct(this, con, "Meta table assembly prefix (" + metaTableAssemblyPrefix + ") is correct for "
-							+ dbSpecies);
-				}
+			if (correctPrefix == null) {
+				logger.warning("Can't get correct assembly prefix for " + dbSpecies.toString());
 			} else {
-				ReportManager.problem(this, con, "Can't get assembly prefix from meta table");
+				if (metaTableAssemblyPrefix != null) {
+					if (!metaTableAssemblyPrefix.toUpperCase().startsWith(correctPrefix.toUpperCase())) {
+						ReportManager.problem(this, con, "Database species is " + dbSpecies + " but assembly prefix " + metaTableAssemblyPrefix
+								+ " should have prefix beginning with " + correctPrefix);
+						result = false;
+					} else {
+						ReportManager.correct(this, con, "Meta table assembly prefix (" + metaTableAssemblyPrefix + ") is correct for "
+								+ dbSpecies);
+					}
+				} else {
+					ReportManager.problem(this, con, "Can't get assembly prefix from meta table");
+				}
 			}
 		}
 
