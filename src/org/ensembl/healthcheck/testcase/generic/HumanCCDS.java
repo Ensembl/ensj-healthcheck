@@ -49,7 +49,7 @@ public class HumanCCDS extends BaseCCDS {
 		// return true for any non-human databases
 		if (dbre.getSpecies() != Species.HOMO_SAPIENS) {
 			
-			logger.warning("Human CCDS healthcheck returning default of true for " + dbre.getSpecies() + " database type " + dbre.getType().toString());
+			//logger.warning("Human CCDS healthcheck returning default of true for " + dbre.getSpecies() + " database type " + dbre.getType().toString());
 			return true;
 			
 		}
