@@ -713,5 +713,20 @@ public final class Utils {
 	}
 
 	// -------------------------------------------------------------------------
+	/**
+	 * Convert the first character of a string to upper case. Ignore the rest of
+	 * the string.
+	 */
+	public static String ucFirst(String str) {
+
+		String first = str.substring(0, 1).toUpperCase();
+
+		String last = str.substring(1);
+		
+		return first + last;
+
+	}
+
+	// -------------------------------------------------------------------------
 
 } // Utils
