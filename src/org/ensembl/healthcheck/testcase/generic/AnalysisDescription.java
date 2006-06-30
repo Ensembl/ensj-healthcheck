@@ -13,10 +13,6 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
@@ -56,17 +52,8 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		// cache logic_names by analysis_id
-		Map logicNamesByAnalID = new HashMap();
-		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT analysis_id, logic_name FROM analysis");
-			while (rs.next()) {
-				logicNamesByAnalID.put(rs.getString("analysis_id"), rs.getString("logic_name"));
-			}
-		} catch (SQLException se) {
-			se.printStackTrace();
-		}
-
+		Map logicNamesByAnalID =  getLogicNamesFromAnalysisTable(con);
+		
 		for (int i = 0; i < types.length; i++) {
 
 			// get analyses that are used
