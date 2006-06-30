@@ -80,7 +80,7 @@ public class Meta extends SingleDatabaseTestCase {
 		}
 
 		result &= checkSchemaVersionDBName(dbre);
-		
+
 		// ----------------------------------------
 		// Use an AssemblyNameInfo object to get the assembly information
 		AssemblyNameInfo assembly = new AssemblyNameInfo(con);
@@ -104,40 +104,48 @@ public class Meta extends SingleDatabaseTestCase {
 			// check that assembly.default matches the version of the coord_system
 			// with the lowest
 			// rank value
-			
-//			String lowestRankCS = getRowColumnValue(con,
-//					"SELECT version FROM coord_system WHERE version IS NOT NULL ORDER BY rank DESC LIMIT 1");
-//			if (!lowestRankCS.equals(metaTableAssemblyDefault)) {
-//				if (lowestRankCS.length() > 0) {
-//					ReportManager.problem(this, con, "assembly.default from meta table is " + metaTableAssemblyDefault
-//							+ " but lowest ranked coordinate system has version " + lowestRankCS);
-//				} else {
-//
-//					ReportManager
-//							.problem(
-//									this,
-//									con,
-//									"assembly.default from meta table is "
-//											+ metaTableAssemblyDefault
-//											+ " but lowest ranked coordinate system has blank or missing version. Note lowest ranked == has HIGHEST numerical rank value");
-//				}
-//
-//				result &= checkAssemblyVersion(con, dbNameAssemblyVersion, metaTableAssemblyVersion);
-//
-//			}
+
+			// String lowestRankCS = getRowColumnValue(con,
+			// "SELECT version FROM coord_system WHERE version IS NOT NULL ORDER BY
+			// rank DESC LIMIT 1");
+			// if (!lowestRankCS.equals(metaTableAssemblyDefault)) {
+			// if (lowestRankCS.length() > 0) {
+			// ReportManager.problem(this, con, "assembly.default from meta table is "
+			// + metaTableAssemblyDefault
+			// + " but lowest ranked coordinate system has version " + lowestRankCS);
+			// } else {
+			//
+			// ReportManager
+			// .problem(
+			// this,
+			// con,
+			// "assembly.default from meta table is "
+			// + metaTableAssemblyDefault
+			// + " but lowest ranked coordinate system has blank or missing version.
+			// Note lowest ranked == has HIGHEST numerical rank value");
+			// }
+			//
+			// result &= checkAssemblyVersion(con, dbNameAssemblyVersion,
+			// metaTableAssemblyVersion);
+			//
+			// }
 
 			// ----------------------------------------
 			// Check that assembly prefix is valid and corresponds to this species
 			// Prefix is OK as long as it starts with the valid one
 			Species dbSpecies = dbre.getSpecies();
 			String correctPrefix = Species.getAssemblyPrefixForSpecies(dbSpecies);
-			if (!metaTableAssemblyPrefix.toUpperCase().startsWith(correctPrefix.toUpperCase())) {
-				ReportManager.problem(this, con, "Database species is " + dbSpecies + " but assembly prefix " + metaTableAssemblyPrefix
-						+ " should have prefix beginning with " + correctPrefix);
-				result = false;
+			if (metaTableAssemblyPrefix != null) {
+				if (!metaTableAssemblyPrefix.toUpperCase().startsWith(correctPrefix.toUpperCase())) {
+					ReportManager.problem(this, con, "Database species is " + dbSpecies + " but assembly prefix " + metaTableAssemblyPrefix
+							+ " should have prefix beginning with " + correctPrefix);
+					result = false;
+				} else {
+					ReportManager.correct(this, con, "Meta table assembly prefix (" + metaTableAssemblyPrefix + ") is correct for "
+							+ dbSpecies);
+				}
 			} else {
-				ReportManager
-						.correct(this, con, "Meta table assembly prefix (" + metaTableAssemblyPrefix + ") is correct for " + dbSpecies);
+				ReportManager.problem(this, con, "Can't get assembly prefix from meta table");
 			}
 		}
 
@@ -189,8 +197,10 @@ public class Meta extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		// check that there are species, classification and taxonomy_id entries
-		// also assembly.name, assembly.date, species.classification - needed by the website
-		String[] metaKeys = { "assembly.default", "species.classification", "species.common_name", "species.taxonomy_id", "assembly.name", "assembly.date", "species.description" };
+		// also assembly.name, assembly.date, species.classification - needed by the
+		// website
+		String[] metaKeys = { "assembly.default", "species.classification", "species.common_name", "species.taxonomy_id",
+				"assembly.name", "assembly.date", "species.description" };
 		for (int i = 0; i < metaKeys.length; i++) {
 			String metaKey = metaKeys[i];
 			int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey + "'");
@@ -529,7 +539,6 @@ public class Meta extends SingleDatabaseTestCase {
 	}
 
 	// ---------------------------------------------------------------------
-
 
 	// ---------------------------------------------------------------------
 
