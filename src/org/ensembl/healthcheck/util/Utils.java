@@ -727,7 +727,7 @@ public final class Utils {
 
 	}
 	
-	private String truncateDatabaseName(String db) {
+	public String truncateDatabaseName(String db) {
 
 		if (db.length() <= 27) {
 			return db;
@@ -750,7 +750,7 @@ public final class Utils {
 
 	// ---------------------------------------------------------------------
 
-	private String truncateTestName(String test) {
+	public String truncateTestName(String test) {
 
 		return (test.length() <= 27) ? test : test.substring(0, 28);
 
