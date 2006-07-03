@@ -21,34 +21,38 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 /**
- * Check that the seq_region_attrib table is the same in all necessary databases.
+ * Check that the seq_region_attrib table is the same in all necessary
+ * databases.
  */
 public class SeqRegionAttribAcrossSpecies extends MultiDatabaseTestCase {
 
-    private DatabaseType[] types = {DatabaseType.CORE, DatabaseType.VEGA, DatabaseType.OTHERFEATURES};
+	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.VEGA, DatabaseType.OTHERFEATURES };
 
-    /**
-     * Creates a new instance of SeqRegionAttribAcrossSpecies
-     */
-    public SeqRegionAttribAcrossSpecies() {
+	/**
+	 * Creates a new instance of SeqRegionAttribAcrossSpecies
+	 */
+	public SeqRegionAttribAcrossSpecies() {
 
-        addToGroup("release");
-        setDescription("Check that the seq_region_attrib table is the same across all generic DBs");
+		addToGroup("release");
+		setDescription("Check that the seq_region_attrib table is the same across all generic DBs");
 
-    }
+	}
 
-    /**
-     * Make sure that the seq_region tables are all the same.
-     * 
-     * @param dbr The database registry containing all the specified databases.
-     * @return True if the seq_region_attrib table is the same across all the species in the
-     *         registry.
-     */
-    public boolean run(DatabaseRegistry dbr) {
+	/**
+	 * Make sure that the seq_region tables are all the same.
+	 * 
+	 * @param dbr
+	 *          The database registry containing all the specified databases.
+	 * @return True if the seq_region_attrib table is the same across all the
+	 *         species in the registry.
+	 */
+	public boolean run(DatabaseRegistry dbr) {
 
-        return checkTableAcrossSpecies("seq_region_attrib", dbr, types, "seq_region_attrib tables all the same", "seq_region_attribs are different", "WHERE code NOT LIKE 'GeneNo%'");
+		return checkSQLAcrossSpecies(
+				"SELECT COUNT(*) FROM seq_region_attrib sa, attrib_type at WHERE at.attrib_type_id=sa.attrib_type_id AND at.code NOT LIKE 'GeneNo%'",
+				dbr, types);
 
-    } // run
+	} // run
 
 } // SeqRegionAttribAcrossSpecies
 
