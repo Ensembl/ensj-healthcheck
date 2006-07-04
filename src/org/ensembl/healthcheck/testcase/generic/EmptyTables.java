@@ -124,6 +124,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
                 tables = remove(tables, "regulatory_factor");
                 tables = remove(tables, "regulatory_factor_coding");
                 tables = remove(tables, "regulatory_feature_object");
+                tables = remove(tables, "regulatory_search_region");
             }
 
             // ----------------------------------------------------
