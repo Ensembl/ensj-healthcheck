@@ -127,6 +127,12 @@ public class EmptyTables extends SingleDatabaseTestCase {
                 tables = remove(tables, "regulatory_search_region");
             }
 
+            // only human and mouse currently have ditag data
+            if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS) {
+                tables = remove(tables, "ditag");
+                tables = remove(tables, "ditag_feature");
+            }
+
             // ----------------------------------------------------
 
         } else if (type == DatabaseType.EST || type == DatabaseType.OTHERFEATURES) {
