@@ -659,16 +659,16 @@ public class DatabaseToHTML {
 					
 				}
 				
-				if (!lastTest.equals("") && !testcase.equals(lastTest)) {
-					print(pw, "<tr><td colspan='7'>&nbsp;</td></tr>");
-				}
-				lastTest = testcase;
-
-				String linkTarget = "<a name=\"" + database + ":" + testcase + "\"></a> ";
 				String f1 = getFontForResult(result, action);
 				String f2 = "</font>";
 				
-				String[] s = {linkTarget, f1 + "<strong>" + testcase + "</strong>" + f2, f1 + text + f2, f1 + person + f2, f1 + action + f2, f1 + reason + f2, f1 + comment + f2};
+				if (!testcase.equals(lastTest)) {
+					String linkTarget = "<a name=\"" + database + ":" + testcase + "\"></a> ";
+					print(pw, "<tr><td colspan='6'>" + linkTarget + f1 + "<strong>" + testcase + "</strong>" + f2 + "</td></tr>");
+				}
+				lastTest = testcase;
+				
+				String[] s = {"&nbsp;&nbsp;&nbsp;&nbsp;", f1 + text + f2, f1 + person + f2, f1 + action + f2, f1 + comment + f2};
 				
 				printTableLine(pw, s);
 				
