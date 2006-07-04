@@ -370,6 +370,7 @@ public class DatabaseToHTML {
 		print(pw, "@import url(http://www.ensembl.org/css/ensembl.css);");
 		print(pw, "@import url(http://www.ensembl.org/css/content.css);");
 		print(pw, "#page ul li { list-style-type:none; list-style-image: none; margin-left: -2em }");
+		print(pw, "td { font-size: 9pt}");
 		print(pw, "</style>");
 
 		print(pw, "<title>Healthcheck results for " + Utils.ucFirst(species) + "</title>");
@@ -623,9 +624,8 @@ public class DatabaseToHTML {
 
 		print(pw, "<h2>Detailed failure reports by database</h2>");
 
-		String sql = "SELECT database_name, testcase, result, text FROM report WHERE species='" + species + "' AND session_id="
-				+ sessionID + " AND result IN ('PROBLEM','WARNING','INFO')  ORDER BY database_name, testcase";
-
+		String sql = "SELECT r.report_id, r.database_name, r.testcase, r.result, r.text, a.person, a.action, a.reason, a.comment FROM report r LEFT JOIN annotation a ON r.report_id=a.report_id WHERE r.species='" + species + "' AND r.session_id=" + sessionID + " AND r.result IN ('PROBLEM','WARNING','INFO') ORDER BY r.database_name, r.testcase";
+		
 		try {
 
 			Statement stmt = con.createStatement();
@@ -640,27 +640,37 @@ public class DatabaseToHTML {
 				String testcase = rs.getString("testcase");
 				String result = rs.getString("result");
 				String text = rs.getString("text");
+				String person = stringOrBlank(rs.getString("person"));
+				String action = stringOrBlank(rs.getString("action"));
+				String reason = stringOrBlank(rs.getString("reason"));
+				String comment = stringOrBlank(rs.getString("comment"));
 				
 				if (!database.equals(lastDatabase)) {
 					
+					if (lastDatabase != "") {
+						print(pw, "</table>");
+					}
 					String link = "<a name=\"" + database + "\">";
 					print(pw, "<h3 class='boxed'>" + link + database + "</a></h3>");
-					print(pw, "<p>");
+					
+					print(pw, "<table>");
 					
 					lastDatabase = database;
 					
 				}
 				
 				if (!lastTest.equals("") && !testcase.equals(lastTest)) {
-					print(pw, "</p><p>");
+					print(pw, "<tr><td colspan='7'>&nbsp;</td></tr>");
 				}
 				lastTest = testcase;
 
 				String linkTarget = "<a name=\"" + database + ":" + testcase + "\"></a> ";
-				String s = linkTarget + getFontForResult(result) + "<strong>" + testcase + ": </strong>" + text + "</font>"
-						+ "<br>";
-
-				print(pw, s);
+				String f1 = getFontForResult(result, action);
+				String f2 = "</font>";
+				
+				String[] s = {linkTarget, f1 + "<strong>" + testcase + "</strong>" + f2, f1 + text + f2, f1 + person + f2, f1 + action + f2, f1 + reason + f2, f1 + comment + f2};
+				
+				printTableLine(pw, s);
 				
 			}
 		} catch (SQLException e) {
@@ -674,7 +684,7 @@ public class DatabaseToHTML {
 
 	// ---------------------------------------------------------------------
 
-	private String getFontForResult(String result) {
+	private String getFontForResult(String result, String action) {
 
 		String s1 = "<font color='black'>";
 
@@ -687,7 +697,7 @@ public class DatabaseToHTML {
 		}
 		
 		if (result.equals("INFO")) {
-			s1 = "<font color='grey'>";
+			s1 = "<font color='black'>";
 		}
 		
 		if (result.equals("CORRECT")) {
@@ -702,11 +712,25 @@ public class DatabaseToHTML {
 			s1 = "<font color='red'>";
 		}
 		
+		// override if there has been an annotation
+		if (action != null) {
+			if(action.equals("ignore") || action.equals("normal")) {
+				s1 = "<font color='grey'>";
+			}
+		}
+		
 		return s1;
 
 	}
 	
-
+	//---------------------------------------------------------------------
+	
+		private String stringOrBlank(String s) {
+			
+			return (s != null) ? s : "";
+			
+		}
+	
 	// ---------------------------------------------------------------------
 
 } // DatabaseToHTML
