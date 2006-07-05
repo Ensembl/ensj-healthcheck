@@ -110,7 +110,7 @@ public class GeneType extends SingleDatabaseTestCase {
 	 * gene type]
 	 */
 	private int[][][] whitelist = { 
-                                         // Block for allowed analysis in CORE-databases 
+                                         // Block 1 - for allowed analysis in CORE-databases 
                                         {       
                                           { 0, 1, 2, 25 },   // 0 - analysis 'ensembl' --> allowed gene_types : ensembl(0),pseudogene(1),protein_coding(25) ...
 			                  { 1, 10, 20, 25 }, // 1 - wormbase-analsyis" allowed types in CORE : pseudogene,gene,wormbase,protein_coding
@@ -125,13 +125,13 @@ public class GeneType extends SingleDatabaseTestCase {
 			                  {} , // 10 - Allowed gene-types for singapore_est in CORE 
 			                  {}  // 11 -Allowed gene-types for singapore_est in CORE
                                        }, 
-                                         // Block for allowed analysis OTHERFEATURE--databases 
+                                         // Block 2 - for allowed analysis OTHERFEATURE--databases 
                                        { 
                                          {},     // 0 ensembl
 			                 {},     // 1 wormbase 
 			                 {},     // 2 flybase 
 			                 { 17 }, // 3 est_exonerate 
-		                   	 {},     // 4 estgene 
+		                   	 { 25 }, // 4 estgene 
                                          {},     // 5 ncRNA 
                                          {},     // 6  
                                          {},     // 7  
@@ -141,7 +141,7 @@ public class GeneType extends SingleDatabaseTestCase {
 			                 { 1,25 } // 11 Allowed gene-types for 'singapore_protein' in OTHERFEATURES db 
                                       }, 
                                       { 
-                                         // Block for allowed analysis/genetype-pairs in ESTGENE-db 
+                                         // Block 3 - for allowed analysis/genetype-pairs in ESTGENE-db 
                                          {},     // 0 ensembl
 			                 {},     // 1 wormbase 
 			                 {},     // 2 flybase 
@@ -156,7 +156,7 @@ public class GeneType extends SingleDatabaseTestCase {
 			                 {}  // Allowed gene-types for 'singapore_protein' in ESTGENE-db 
                                       }, 
                                       { 
-                                         // Block for CDNA_UPDATE dbs 
+                                         // Block 4 - for CDNA_UPDATE dbs 
                                          {}, 
 			                 {}, 
                                          {}, 
