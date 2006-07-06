@@ -49,7 +49,7 @@ public class CompareSchema extends MultiDatabaseTestCase {
     public CompareSchema() {
 
         addToGroup("release");
-
+      
     }
 
     /**
