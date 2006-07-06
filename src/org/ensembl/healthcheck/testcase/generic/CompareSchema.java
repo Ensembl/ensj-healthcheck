@@ -57,7 +57,7 @@ public class CompareSchema extends MultiDatabaseTestCase {
      */
     public void types() {
 
-       addAppliesToType(DatabaseType.VARIATION);
+       //addAppliesToType(DatabaseType.VARIATION);
 
     }
 
