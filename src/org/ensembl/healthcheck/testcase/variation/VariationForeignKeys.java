@@ -31,81 +31,83 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 public class VariationForeignKeys extends SingleDatabaseTestCase {
 
-    /**
-     * Create an OrphanTestCase that applies to a specific set of databases.
-     */
-    public VariationForeignKeys() {
+	/**
+	 * Create an OrphanTestCase that applies to a specific set of databases.
+	 */
+	public VariationForeignKeys() {
 
-        addToGroup("release");
-        addToGroup("variation");
-        setDescription("Check for broken foreign-key relationships.");
-    }
-
-    /**
-     * Look for broken foreign key realtionships.
-     * @param dbre
-     *          The database to use.
-     * @return true Ff all foreign key relationships are valid.
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
-
-        boolean result = true;
-	int rows = 0;
-
-        Connection con = dbre.getConnection();
-
-        // ----------------------------
-
-       	result &= checkForOrphans(con, "allele", "sample_id", "sample", "sample_id", true);
-
-	result &= checkForOrphans(con, "allele_group", "sample_id", "sample", "sample_id", true);
-
-	result &= checkForOrphans(con, "individual", "sample_id", "sample", "sample_id", true);
-  
-	result &= checkForOrphans(con, "population", "sample_id", "sample", "sample_id", true);
-
-	result &= checkForOrphans(con, "population_genotype", "sample_id", "sample", "sample_id", true);
-
-	result &= checkForOrphans(con, "sample_synonym", "sample_id", "sample", "sample_id", true);
-
-	result &= checkForOrphans(con, "individual_genotype_multiple_bp", "sample_id", "sample", "sample_id", true);
-
-	result &= checkForOrphans(con, "tmp_individual_genotype_single_bp", "sample_id", "individual_population", "individual_sample_id", true);
-
-	result &= checkForOrphans(con, "individual_genotype_multiple_bp", "sample_id", "individual_population", "individual_sample_id", true);
-
-	result &= checkForOrphans(con, "read_coverage", "sample_id", "sample", "sample_id", true);
-
-	result &= checkForOrphans(con, "tagged_variation_feature", "sample_id", "sample", "sample_id", true);
-
-
-	result &= checkForOrphans(con, "allele", "variation_id", "variation", "variation_id", true);
-
-
-	result &= checkForOrphans(con, "population_genotype", "variation_id", "variation", "variation_id", true);
-
-	result &= checkForOrphans(con, "allele_group_allele", "variation_id", "variation", "variation_id", true);
-
-	result &= checkForOrphans(con, "variation_synonym", "variation_id", "variation", "variation_id", true);
-
-	result &= checkForOrphans(con, "flanking_sequence", "variation_id", "variation", "variation_id", false);
-
-	result &= checkForOrphans(con, "variation_feature", "variation_id", "flanking_sequence", "variation_id",true);
-	
-	result &= checkForOrphans(con, "variation_group_variation", "variation_id", "variation", "variation_id", true);
-
-	result &= checkForOrphans(con, "variation_feature", "variation_id", "variation", "variation_id", true);
-
-	result &= checkForOrphans(con, "transcript_variation", "variation_feature_id", "variation_feature", "variation_feature_id", true);
-
-	
-	rows = getRowCount(con,"SELECT COUNT(*) FROM compressed_genotype_single_bp c where c.seq_region_start not in (select vf.seq_region_start from variation_feature vf where c.seq_region_id = vf.seq_region_id)");
-	 if (rows > 0){
-	    ReportManager.problem(this, con, "Compressed genotype table corrupted: contains entries without variation features");
-	    result =  false;
+		addToGroup("release");
+		addToGroup("variation");
+		setDescription("Check for broken foreign-key relationships.");
 	}
-	
-	return result;
-    }
+
+	/**
+	 * Look for broken foreign key realtionships.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return true Ff all foreign key relationships are valid.
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
+
+		boolean result = true;
+		int rows = 0;
+
+		Connection con = dbre.getConnection();
+
+		// ----------------------------
+
+		result &= checkForOrphans(con, "allele", "sample_id", "sample", "sample_id", true);
+
+		result &= checkForOrphans(con, "allele_group", "sample_id", "sample", "sample_id", true);
+
+		result &= checkForOrphans(con, "individual", "sample_id", "sample", "sample_id", true);
+
+		result &= checkForOrphans(con, "population", "sample_id", "sample", "sample_id", true);
+
+		result &= checkForOrphans(con, "population_genotype", "sample_id", "sample", "sample_id", true);
+
+		result &= checkForOrphans(con, "sample_synonym", "sample_id", "sample", "sample_id", true);
+
+		result &= checkForOrphans(con, "individual_genotype_multiple_bp", "sample_id", "sample", "sample_id", true);
+
+		//result &= checkForOrphans(con, "tmp_individual_genotype_single_bp", "sample_id", "individual_population",individual_sample_id", true);
+
+		result &= checkForOrphans(con, "individual_genotype_multiple_bp", "sample_id", "individual_population", "individual_sample_id",
+				true);
+
+		result &= checkForOrphans(con, "read_coverage", "sample_id", "sample", "sample_id", true);
+
+		result &= checkForOrphans(con, "tagged_variation_feature", "sample_id", "sample", "sample_id", true);
+
+		result &= checkForOrphans(con, "allele", "variation_id", "variation", "variation_id", true);
+
+		result &= checkForOrphans(con, "population_genotype", "variation_id", "variation", "variation_id", true);
+
+		result &= checkForOrphans(con, "allele_group_allele", "variation_id", "variation", "variation_id", true);
+
+		result &= checkForOrphans(con, "variation_synonym", "variation_id", "variation", "variation_id", true);
+
+		result &= checkForOrphans(con, "flanking_sequence", "variation_id", "variation", "variation_id", false);
+
+		result &= checkForOrphans(con, "variation_feature", "variation_id", "flanking_sequence", "variation_id", true);
+
+		result &= checkForOrphans(con, "variation_group_variation", "variation_id", "variation", "variation_id", true);
+
+		result &= checkForOrphans(con, "variation_feature", "variation_id", "variation", "variation_id", true);
+
+		result &= checkForOrphans(con, "transcript_variation", "variation_feature_id", "variation_feature", "variation_feature_id",
+				true);
+
+		rows = getRowCount(
+				con,
+				"SELECT COUNT(*) FROM compressed_genotype_single_bp c where c.seq_region_start not in (select vf.seq_region_start from variation_feature vf where c.seq_region_id = vf.seq_region_id)");
+		if (rows > 0) {
+			ReportManager.problem(this, con, "Compressed genotype table corrupted: contains entries without variation features");
+			result = false;
+		}
+
+		return result;
+	}
 
 } // VariationForeignKeys
