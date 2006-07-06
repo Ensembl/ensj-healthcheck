@@ -23,10 +23,14 @@ EST_cluster_IMCB
 EST_cluster_WashU
 Eponine
 Expression_profile
+FANTOM_GSC_PET
+FANTOM_GIS_PET
+FANTOM_CAGE
 Fgenesh
 FirstEF
 GENEWISE
 GID
+GIS_PET_Encode
 GSC
 GSTEN
 GWS_H
