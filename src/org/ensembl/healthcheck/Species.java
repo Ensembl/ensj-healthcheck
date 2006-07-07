@@ -229,7 +229,7 @@ public final class Species {
 		assemblyPrefixToSpecies.put("RABBIT", ORYCTOLAGUS_CUNICULUS);
 		assemblyPrefixToSpecies.put("PIG", SUS_SCROFA);
 		assemblyPrefixToSpecies.put("CSAV", CIONA_SAVIGNYI);
-		assemblyPrefixToSpecies.put("STICKLEBACK", GASTEROSTEUS_ACULEATUS);
+		assemblyPrefixToSpecies.put("BROADS", GASTEROSTEUS_ACULEATUS);
     assemblyPrefixToSpecies.put("OANA", ORNITHORHYCHUS_ANATINUS);
 		// and the other way around
 		it = assemblyPrefixToSpecies.keySet().iterator();
