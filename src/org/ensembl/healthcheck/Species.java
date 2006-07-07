@@ -472,7 +472,7 @@ public final class Species {
 
 		// --------------------------------------
 
-		if (in(alias, "stickleback,gas_aculeatus,gasaculeatus")) {
+		if (in(alias, "stickleback,gas_aculeatus,gasaculeatus,gasterosteus_aculeatus,gasterosteusaculeatus")) {
 
 			return GASTEROSTEUS_ACULEATUS;
 
