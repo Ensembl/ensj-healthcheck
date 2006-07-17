@@ -77,6 +77,9 @@ public final class DatabaseType {
     /** An ensembl_website database */
     public static final DatabaseType ENSEMBL_WEBSITE = new DatabaseType("ensembl_website");
 
+    /** A healthcheck database */
+    public static final DatabaseType HEALTHCHECK = new DatabaseType("healthcheck");
+
     /** A database whos type has not been determined */
     public static final DatabaseType UNKNOWN = new DatabaseType("unknown");
 
@@ -264,6 +267,14 @@ public final class DatabaseType {
         if (in(lcAlias, "ncbi_taxonomy")) {
 
             return NCBI_TAXONOMY;
+
+        }
+        
+//      --------------------------------------
+
+        if (in(lcAlias, "healthcheck")) {
+
+            return HEALTHCHECK;
 
         }
 
