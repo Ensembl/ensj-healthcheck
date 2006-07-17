@@ -133,6 +133,9 @@ public final class Species {
   /** An ensembl_website database */
   public static final Species ENSEMBL_WEBSITE = new Species("ensembl_website");
 
+  /** An healthcheck database */
+  public static final Species HEALTHCHECK= new Species("healthcheck");
+
 	/** Unknown species */
 	public static final Species UNKNOWN = new Species("unknown");
 
