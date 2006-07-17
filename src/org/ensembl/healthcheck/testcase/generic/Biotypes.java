@@ -22,8 +22,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.Utils;
 
 /**
  * Check for null biotypes, and also for any 'ensembl' biotypes - should be
@@ -60,6 +62,8 @@ public class Biotypes extends SingleDatabaseTestCase {
 		result &= checkEnsembl(con);
 		result &= checkGenesAndTranscripts(con);
 
+		result &= checkTypesFromFile(dbre);
+		
 		return result;
 
 	} // run
@@ -112,50 +116,93 @@ public class Biotypes extends SingleDatabaseTestCase {
 
 	// -------------------------------------------------------------------------
 
-private boolean checkGenesAndTranscripts(Connection con) {
+	private boolean checkGenesAndTranscripts(Connection con) {
 
 		boolean result = true;
 
 		// be a bit mopre informative than just counting rows
-		
+
 		// get gene biotypes
 		String[] geneBiotypes = getColumnValues(con, "SELECT DISTINCT(biotype) FROM gene");
-		
+
 		// check transcript biotypes for each one
 		for (int i = 0; i < geneBiotypes.length; i++) {
-		
-				String geneBiotype = geneBiotypes[i];
-				String sql = "SELECT DISTINCT(t.biotype) AS biotype, COUNT(*) AS count FROM transcript t, gene g WHERE g.gene_id=t.gene_id AND g.biotype != t.biotype AND g.biotype='" + geneBiotype + "' GROUP BY t.biotype";
-				boolean thisBiotypeOK = true;
-				
-				try {
-					
-					Statement stmt = con.createStatement();
-					ResultSet rs = stmt.executeQuery(sql);
-					while (rs.next()) {
-						
-						int rows = rs.getInt("count");
-						String transcriptBiotype = rs.getString("biotype");
-						ReportManager.problem(this, con, rows + " genes of biotype " + geneBiotype + " have transcripts with biotype " + transcriptBiotype);
-						thisBiotypeOK = false;
-						result &= thisBiotypeOK;
-						
-					}
-					
-					if (thisBiotypeOK) {
-						ReportManager.correct(this, con, "All genes with biotype " + geneBiotype + " have transcripts with matching biotypes");
-					}
-					
-				} catch (SQLException se) {
-					se.printStackTrace();
+
+			String geneBiotype = geneBiotypes[i];
+			String sql = "SELECT DISTINCT(t.biotype) AS biotype, COUNT(*) AS count FROM transcript t, gene g WHERE g.gene_id=t.gene_id AND g.biotype != t.biotype AND g.biotype='"
+					+ geneBiotype + "' GROUP BY t.biotype";
+			boolean thisBiotypeOK = true;
+
+			try {
+
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(sql);
+				while (rs.next()) {
+
+					int rows = rs.getInt("count");
+					String transcriptBiotype = rs.getString("biotype");
+					ReportManager.problem(this, con, rows + " genes of biotype " + geneBiotype + " have transcripts with biotype "
+							+ transcriptBiotype);
+					thisBiotypeOK = false;
+					result &= thisBiotypeOK;
+
 				}
-				
-				
+
+				if (thisBiotypeOK) {
+					ReportManager.correct(this, con, "All genes with biotype " + geneBiotype + " have transcripts with matching biotypes");
+				}
+
+			} catch (SQLException se) {
+				se.printStackTrace();
+			}
+
 		}
-		
-		
+
 		return result;
 
-	}	// -------------------------------------------------------------------------
+	} // -------------------------------------------------------------------------
+
+	private boolean checkTypesFromFile(DatabaseRegistryEntry dbre) {
+		
+		boolean result = true;
+		
+		Connection con = dbre.getConnection();
+		
+		String file;
+		if (dbre.getType() == DatabaseType.CDNA) {
+			file = "biotypes_cdna.txt";
+		} else if (dbre.getType() == DatabaseType.VEGA) {
+			file = "biotypes_vega.txt";
+		} else {
+			file = "biotypes.txt";
+		}
+		
+		String[] allowedBiotypes = Utils.readTextFile(file);
+		
+		// check gene and transcript biotypes
+		String[] tables = { "gene", "transcript" };
+		
+		for (int i = 0; i < tables.length; i++) {
+			
+			String table = tables[i];
+			String[] biotypes = getColumnValues(con, "SELECT DISTINCT(biotype) FROM " + table);
+			
+			for (int j = 0; j < biotypes.length; j++) {
+				
+				String biotype = biotypes[j];
+				
+				if (!Utils.stringInArray(biotype, allowedBiotypes, false)) {
+					ReportManager.problem(this, con, table + " contains invalid biotype '" + biotype + "'");
+					result = false;
+				} 
+			}
+			
+		}
+		
+		return result;
+		
+	}
+	
+  // -------------------------------------------------------------------------
 
 } // Biotypes
