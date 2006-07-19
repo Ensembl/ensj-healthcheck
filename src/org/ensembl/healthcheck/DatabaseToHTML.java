@@ -222,7 +222,7 @@ public class DatabaseToHTML {
 
 		try {
 
-			PrintWriter pwIntro = new PrintWriter(new FileOutputStream(outputDir + File.separator + "healthcheck_summary.html"));
+			PrintWriter pwIntro = new PrintWriter(new FileOutputStream(outputDir + File.separator + "index.html"));
 
 			printIntroPage(pwIntro, con);
 
