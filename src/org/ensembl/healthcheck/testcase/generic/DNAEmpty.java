@@ -26,58 +26,53 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Healthcheck for the dna table.
- * Should be empty in an est database
+ * Healthcheck for the dna table. Should be empty in an est database
  */
 
 public class DNAEmpty extends SingleDatabaseTestCase {
 
-    /**
-     * Check the assembly_exception table.
-     */
-    public DNAEmpty() {
-        addToGroup("post_genebuild");
-        addToGroup("release");
-        setDescription("Check that dna table is empty");
-    }
-
-    /**
-     * Run the test.
-     * @param dbre
-     *          The database to use.
-     * @return Result.
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
-
-        boolean result = true;
-
-        Connection con = dbre.getConnection();
-
-        // check that seq_region_end > seq_region_start
-        int rows = getRowCount(con, "SELECT COUNT(*) FROM dna");
-        if (rows > 0) {
-            result = false;
-            ReportManager.problem(this, con, "dna table contains " + rows
-                    + " - it should be empty unless it's a core database ");
-        }
+	/**
+	 * Check the assembly_exception table.
+	 */
+	public DNAEmpty() {
+		addToGroup("post_genebuild");
+		addToGroup("release");
+		setDescription("Check that dna table is empty");
+	}
 
 
-        if (result) {
-            ReportManager.correct(this, con, "dna table is empty");
-        }
+	/**
+	 * This applies to all core schema databases apart from 'core'
+	 */
+	public void types() {
 
-        return result;
+		removeAppliesToType(DatabaseType.CORE);
 
-    }
+	}
+	
+	/**
+	 * Run the test.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return Result.
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-    /**
-     * This applies to all core schema databases apart from 'core'
-     */
-    public void types() {
+		boolean result = true;
 
-        removeAppliesToType(DatabaseType.CORE);
+		Connection con = dbre.getConnection();
 
-    }
+		int rows = getRowCount(con, "SELECT COUNT(*) FROM dna");
+		if (rows > 0) {
+			result = false;
+			ReportManager.problem(this, con, "dna table contains " + rows + " rows - it should be empty unless it's a core database ");
+		} else {
+			ReportManager.correct(this, con, "dna table is empty");
+		}
 
+		return result;
+
+	}
 
 } // DNAEmpty
