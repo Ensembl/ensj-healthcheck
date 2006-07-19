@@ -279,6 +279,7 @@ public class DatabaseToHTML {
 		// header
 		print(pw, "<html>");
 		print(pw, "<head>");
+		print(pw, "<!--#set var=\"decor\" value=\"none\"-->");
 		print(pw, "<style type='text/css' media='all'>");
 		print(pw, "@import url(http://www.ensembl.org/css/ensembl.css);");
 		print(pw, "@import url(http://www.ensembl.org/css/content.css);");
@@ -366,6 +367,7 @@ public class DatabaseToHTML {
 
 		print(pw, "<html>");
 		print(pw, "<head>");
+		print(pw, "<!--#set var=\"decor\" value=\"none\"-->");
 		print(pw, "<style type=\"text/css\" media=\"all\">");
 		print(pw, "@import url(http://www.ensembl.org/css/ensembl.css);");
 		print(pw, "@import url(http://www.ensembl.org/css/content.css);");
