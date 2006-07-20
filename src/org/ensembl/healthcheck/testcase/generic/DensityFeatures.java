@@ -70,6 +70,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		removeAppliesToType(DatabaseType.ESTGENE);
+		removeAppliesToType(DatabaseType.EST);
 		removeAppliesToType(DatabaseType.CDNA);
 
 	}
