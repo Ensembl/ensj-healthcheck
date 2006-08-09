@@ -322,6 +322,7 @@ public class DatabaseToHTML {
 		print(pw, "<h3>Previous releases</h3>");
 		print(pw, "");
 		print(pw, "<ul>");
+		print(pw, "<li><a href='previous/40/index.html'>40</a> (August 2006)</li>");
 		print(pw, "<li><a href='previous/39/web_healthcheck_summary.html'>39</a> (June 2006)</li>");
 		print(pw, "<li><a href='previous/38/web_healthcheck_summary.html'>38</a> (April 2006)</li>");
 		print(pw, "</ul>");
