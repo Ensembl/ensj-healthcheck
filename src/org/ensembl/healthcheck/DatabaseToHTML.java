@@ -222,7 +222,7 @@ public class DatabaseToHTML {
 
 		try {
 
-			PrintWriter pwIntro = new PrintWriter(new FileOutputStream(outputDir + File.separator + "healthcheck_summary.html"));
+			PrintWriter pwIntro = new PrintWriter(new FileOutputStream(outputDir + File.separator + "index.html"));
 
 			printIntroPage(pwIntro, con);
 
@@ -279,6 +279,7 @@ public class DatabaseToHTML {
 		// header
 		print(pw, "<html>");
 		print(pw, "<head>");
+		print(pw, "<!--#set var=\"decor\" value=\"none\"-->");
 		print(pw, "<style type='text/css' media='all'>");
 		print(pw, "@import url(http://www.ensembl.org/css/ensembl.css);");
 		print(pw, "@import url(http://www.ensembl.org/css/content.css);");
@@ -321,6 +322,7 @@ public class DatabaseToHTML {
 		print(pw, "<h3>Previous releases</h3>");
 		print(pw, "");
 		print(pw, "<ul>");
+		print(pw, "<li><a href='previous/40/index.html'>40</a> (August 2006)</li>");
 		print(pw, "<li><a href='previous/39/web_healthcheck_summary.html'>39</a> (June 2006)</li>");
 		print(pw, "<li><a href='previous/38/web_healthcheck_summary.html'>38</a> (April 2006)</li>");
 		print(pw, "</ul>");
@@ -366,6 +368,7 @@ public class DatabaseToHTML {
 
 		print(pw, "<html>");
 		print(pw, "<head>");
+		print(pw, "<!--#set var=\"decor\" value=\"none\"-->");
 		print(pw, "<style type=\"text/css\" media=\"all\">");
 		print(pw, "@import url(http://www.ensembl.org/css/ensembl.css);");
 		print(pw, "@import url(http://www.ensembl.org/css/content.css);");
