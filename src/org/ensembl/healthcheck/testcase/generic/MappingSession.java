@@ -275,10 +275,15 @@ public class MappingSession extends SingleDatabaseTestCase {
 
 			Statement stmt = con.createStatement();
 
-			ResultSet rs = stmt.executeQuery("SELECT mapping_session_id, old_db_name, new_db_name, old_release, new_release FROM mapping_session where old_release >= new_release;");
+			// nasty forced cast by adding 0 required since the columns are VARCHARS and need to be compared lexicographically
+			ResultSet rs = stmt.executeQuery("SELECT mapping_session_id, old_db_name, new_db_name, old_release, new_release FROM mapping_session WHERE old_release+0 >= new_release+0");
 
 			while (rs.next()) {
 
+				// ignore homo_sapiens_core_18_34 -> homo_sapiens_core_18_34a since this was when we didn't change numbers between releases
+				if (rs.getString("old_db_name").equals("homo_sapiens_core_18_34")) {
+					continue;
+				}
 				ReportManager.problem(this, con, "Mapping session with ID " + rs.getLong("mapping_session_id") + " (" + rs.getString("old_db_name") + " -> " + rs.getString("new_db_name") + ") has a new_release (" + rs.getInt("new_release") + ") that is not greater than the old release (" + rs.getInt("old_release") + ")");
 				result = false;
 				
