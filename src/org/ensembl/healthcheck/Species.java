@@ -120,6 +120,9 @@ public final class Species {
  /** Specific type of speciesOrnithorhynchus anatinus */
 	public static final Species ORNITHORHYCHUS_ANATINUS = new Species("ornithorhychus_anatius");
 
+        /** Specific type of species */
+	public static final Species FELIS_CATUS = new Species("felis_catus");
+
 
 	/** Non-ensembl database */
 	public static final Species SYSTEM = new Species("system");
