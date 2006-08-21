@@ -199,6 +199,7 @@ public final class Species {
 		taxonIDToSpecies.put("51511", CIONA_SAVIGNYI);
 		taxonIDToSpecies.put("69293", GASTEROSTEUS_ACULEATUS);
 		taxonIDToSpecies.put("7159", AEDES_AEGYPTI);
+		taxonIDToSpecies.put("9685", FELIS_CATUS);
     taxonIDToSpecies.put("9258", ORNITHORHYCHUS_ANATINUS);	
 		// and the other way around
 		Iterator it = taxonIDToSpecies.keySet().iterator();
@@ -236,6 +237,7 @@ public final class Species {
 		assemblyPrefixToSpecies.put("PIG", SUS_SCROFA);
 		assemblyPrefixToSpecies.put("CSAV", CIONA_SAVIGNYI);
 		assemblyPrefixToSpecies.put("BROADS", GASTEROSTEUS_ACULEATUS);
+		assemblyPrefixToSpecies.put("CAT", FELIS_CATUS);
     assemblyPrefixToSpecies.put("OANA", ORNITHORHYCHUS_ANATINUS);
 		// and the other way around
 		it = assemblyPrefixToSpecies.keySet().iterator();
@@ -457,6 +459,14 @@ public final class Species {
 		if (in(alias, "rabbit,oryctolagus_cuniculus,oryctolagus,domestic_rabbit,bunny,japanese_white_rabbit,european_rabbit")) {
 
 			return ORYCTOLAGUS_CUNICULUS;
+
+		}
+
+		// --------------------------------------
+
+		if (in(alias, "cat,felis_catus,fcatus,felis,domestic_cat")) {
+
+			return FELIS_CATUS;
 
 		}
 
