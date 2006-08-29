@@ -20,7 +20,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that all of certain types of objects have analysis_descriptions.
+ * Check that all of certain types of objects have analysis_descriptions. Also check that displayable field is set.
  */
 
 public class AnalysisDescription extends SingleDatabaseTestCase {
@@ -34,7 +34,7 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
-		setDescription("Check that all of certain types of objects have analysis_descriptions.");
+		setDescription("Check that all of certain types of objects have analysis_descriptions; also check that displayable field is set.");
 
 	}
 
@@ -49,6 +49,19 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
+		result &= checkDescriptions(dbre);
+		result &= checkDisplayable(dbre);
+		
+		return result;
+
+	} // run
+
+	// ------------------------------------------------------------------------------
+	
+	private boolean checkDescriptions(DatabaseRegistryEntry dbre) {
+		
+		boolean result = true;
+		
 		Connection con = dbre.getConnection();
 
 		// cache logic_names by analysis_id
@@ -81,7 +94,30 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 		}
 
 		return result;
+		
+	}
+	
+	// ------------------------------------------------------------------------------
+	
+	private boolean checkDisplayable(DatabaseRegistryEntry dbre) {
+		
+		boolean result = true;
+		
+		Connection con = dbre.getConnection();
+		
+		int rows = getRowCount(con, "SELECT COUNT(*) FROM analysis_description WHERE displayable IS NULL");
+		
+		if (rows > 0) {
+			ReportManager.problem(this, con, rows + " in analysis_descripion have null displayable flags");
+			result = false;
+		} else {
+			ReportManager.correct(this, con, "No null displayable flags in analysis_description.");
+		}
 
-	} // run
-
+		return result;
+		
+	}
+	
+	// ------------------------------------------------------------------------------
+	
 } // AnalysisDescription
