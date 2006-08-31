@@ -64,16 +64,16 @@ public class OligoMismatches extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		DecimalFormat df = new DecimalFormat("000.0%");
+		DecimalFormat df = new DecimalFormat("00.0%");
 
 		int rows = countRowsInTable(con, "oligo_feature");
 		int nullRows = getRowCount(con,
 				"SELECT COUNT(*) FROM oligo_feature WHERE mismatches IS NULL");
 		if (nullRows > 0) {
 			result = false;
-			float pc = (rows > 0) ? (nullRows / rows) : 0;
+			float pc = (rows > 0) ? ((float)nullRows / (float)rows) : 0;
 
-			ReportManager.problem(this, con, "oligo_features table has " + rows
+			ReportManager.problem(this, con, "oligo_features table has " + nullRows
 					+ " features with null mismatches (" + df.format(pc) + ")");
 		}
 
