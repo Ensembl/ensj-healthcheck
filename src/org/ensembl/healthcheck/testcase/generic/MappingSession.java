@@ -276,7 +276,7 @@ public class MappingSession extends SingleDatabaseTestCase {
 			Statement stmt = con.createStatement();
 
 			// nasty forced cast by adding 0 required since the columns are VARCHARS and need to be compared lexicographically
-			ResultSet rs = stmt.executeQuery("SELECT mapping_session_id, old_db_name, new_db_name, old_release, new_release FROM mapping_session WHERE old_release+0 >= new_release+0");
+			ResultSet rs = stmt.executeQuery("SELECT mapping_session_id, old_db_name, new_db_name, old_release, new_release FROM mapping_session WHERE old_release+0 > new_release+0");
 
 			while (rs.next()) {
 
