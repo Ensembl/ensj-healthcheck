@@ -63,7 +63,9 @@ public class Meta extends SingleDatabaseTestCase {
 
 		result &= tableHasRows(con);
 
-		result &= checkKeysPresent(con);
+		if (dbre.getType() == DatabaseType.CORE) {
+			result &= checkKeysPresent(con);
+		}
 
 		result &= checkSpeciesClassification(dbre);
 
@@ -136,7 +138,7 @@ public class Meta extends SingleDatabaseTestCase {
 			Species dbSpecies = dbre.getSpecies();
 			String correctPrefix = Species.getAssemblyPrefixForSpecies(dbSpecies);
 			if (correctPrefix == null) {
-				logger.warning("Can't get correct assembly prefix for " + dbSpecies.toString());
+				logger.info("Can't get correct assembly prefix for " + dbSpecies.toString());
 			} else {
 				if (metaTableAssemblyPrefix != null) {
 					if (!metaTableAssemblyPrefix.toUpperCase().startsWith(correctPrefix.toUpperCase())) {
