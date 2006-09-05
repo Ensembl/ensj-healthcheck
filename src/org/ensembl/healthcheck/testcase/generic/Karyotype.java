@@ -65,7 +65,7 @@ public class Karyotype extends SingleDatabaseTestCase {
 
 	    // certain species are allowed to have empty karyotype tables
 	    Species species = dbre.getSpecies();
-	    if (species == Species.CAENORHABDITIS_BRIGGSAE || species == Species.CAENORHABDITIS_ELEGANS || species == Species.DANIO_RERIO || species == Species.TAKIFUGU_RUBRIPES || species == Species.XENOPUS_TROPICALIS || species == Species.APIS_MELLIFERA || species == Species.PAN_TROGLODYTES || species == Species.SACCHAROMYCES_CEREVISIAE || species == Species.CANIS_FAMILIARIS || species == Species.BOS_TAURUS || species == Species.CIONA_INTESTINALIS || species == Species.TETRAODON_NIGROVIRIDIS || species == Species.GALLUS_GALLUS) {
+	    if (species == Species.CAENORHABDITIS_BRIGGSAE || species == Species.CAENORHABDITIS_ELEGANS || species == Species.DANIO_RERIO || species == Species.TAKIFUGU_RUBRIPES || species == Species.XENOPUS_TROPICALIS || species == Species.APIS_MELLIFERA || species == Species.PAN_TROGLODYTES || species == Species.SACCHAROMYCES_CEREVISIAE || species == Species.CANIS_FAMILIARIS || species == Species.BOS_TAURUS || species == Species.CIONA_INTESTINALIS || species == Species.TETRAODON_NIGROVIRIDIS || species == Species.GALLUS_GALLUS || species == Species.DASYPUS_NOVEMCINCTUS || species == Species.LOXODONTA_AFRICANA || species == Species.ECHINOPS_TELFAIRI || species == Species.ORNITHORHYCHUS_ANATINUS || species == Species.ORYCTOLAGUS_CUNICULUS || species == Species.ORYZIAS_LATIPES) {
 	
 		ReportManager.correct(this, con, "Karyotype table is empty, but this is allowed for " + species.toString());
 		return true;
