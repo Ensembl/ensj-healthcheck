@@ -123,6 +123,9 @@ public class EmptyTables extends SingleDatabaseTestCase {
                 tables = remove(tables, "ditag_feature");
             }
 
+            // we don't have many gene_attribs yet
+            tables = remove(tables, "gene_attrib");
+            
             // ----------------------------------------------------
 
         } else if (type == DatabaseType.EST || type == DatabaseType.OTHERFEATURES) {
