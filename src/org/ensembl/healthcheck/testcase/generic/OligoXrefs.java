@@ -38,7 +38,7 @@ import org.ensembl.healthcheck.util.DBUtils;
 public class OligoXrefs extends SingleDatabaseTestCase {
 
     // if a database has more than this number of seq_regions in the chromosome coordinate system, it's ignored
-    private static final int MAX_CHROMOSOMES = 50;
+    private static final int MAX_CHROMOSOMES = 75;
 
     /**
      * Creates a new instance of OligoXrefs
