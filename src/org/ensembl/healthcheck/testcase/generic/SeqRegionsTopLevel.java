@@ -70,7 +70,7 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 					+ " AND seq_region_id=" + geneSeqRegionIDs[i]);
 			if (numTopLevel == 0) {
 
-				ReportManager.problem(this, con, "No top_level attribute set for seq_region_id " + geneSeqRegionIDs[i]);
+				ReportManager.problem(this, con, "Non top_level seq_region_id " + geneSeqRegionIDs[i] + " has genes on it");
 				result = false;
 
 			}
