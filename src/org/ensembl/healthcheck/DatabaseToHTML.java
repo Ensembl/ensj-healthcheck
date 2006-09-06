@@ -293,8 +293,9 @@ public class DatabaseToHTML {
 		print(pw, "<hr>");
 		print(pw, "");
 		print(pw, "<h2>Results by species</h2>");
-		print(pw, "<ul>");
-
+		print(pw, "<table>");
+		print(pw, "<tr><th>Species</th><th>Relative results</th></tr>");
+		
 		// now loop over each species
 		String sql = "SELECT DISTINCT(species) FROM report WHERE session_id = " + sessionID + " ORDER BY species";
 
@@ -304,7 +305,8 @@ public class DatabaseToHTML {
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
 				String species = rs.getString("species");
-				print(pw, "<li><p><a href='" + species + ".html'>" + Utils.ucFirst(species) + "</a></p></li>");
+				String relativeProblems = countRelativeProblems(species, sessionID, con);
+				print(pw, "<tr><td width='500px'><a href='" + species + ".html'>" + Utils.ucFirst(species) + "</a></td><td>" + relativeProblems + "</td></tr>");
 			}
 
 		} catch (SQLException e) {
@@ -315,7 +317,7 @@ public class DatabaseToHTML {
 		}
 
 		// footer
-		print(pw, "</ul>");
+		print(pw, "</table>");
 		print(pw, "");
 		print(pw, "<hr>");
 		print(pw, "");
@@ -735,5 +737,43 @@ public class DatabaseToHTML {
 		}
 	
 	// ---------------------------------------------------------------------
+
+		private String countRelativeProblems(String species, long sessionID, Connection con) {
+			
+			String sqlCurrent = "SELECT COUNT(*) FROM report WHERE species='" + species + "' AND result='PROBLEM' AND session_id=" + sessionID;
+			String sqlPrevious = "SELECT COUNT(*) FROM report WHERE species='" + species + "' AND result='PROBLEM' AND session_id=" + (sessionID-1);
+		
+			int current = 0;
+			int previous = 0;
+			
+			try {
+
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(sqlCurrent);
+				if (rs.next()) {
+					current = rs.getInt(1);
+				}
+				rs = stmt.executeQuery(sqlPrevious);
+				if (rs.next()) {
+					previous = rs.getInt(1);
+				}
+
+			} catch (SQLException e) {
+
+				System.err.println("Error executing: SQL to count current/previous results\n");
+				e.printStackTrace();
+
+			}
+			
+			int difference = current - previous; // will be negative if there are less failures now
+			
+			String result = (difference <  0) ? passFont() : failFont();
+			result += difference + "</font>";
+			
+			return result;
+			
+		}
+		
+//	 ---------------------------------------------------------------------
 
 } // DatabaseToHTML
