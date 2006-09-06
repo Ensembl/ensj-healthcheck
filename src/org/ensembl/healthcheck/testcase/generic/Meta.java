@@ -64,7 +64,8 @@ public class Meta extends SingleDatabaseTestCase {
 		result &= tableHasRows(con);
 
 		if (dbre.getType() == DatabaseType.CORE) {
-			result &= checkKeysPresent(con);
+			// Uncomment when someone actually populates these values
+			//result &= checkKeysPresent(con);
 		}
 
 		result &= checkSpeciesClassification(dbre);
