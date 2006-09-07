@@ -64,8 +64,7 @@ public class Meta extends SingleDatabaseTestCase {
 		result &= tableHasRows(con);
 
 		if (dbre.getType() == DatabaseType.CORE) {
-			// Uncomment when someone actually populates these values
-			//result &= checkKeysPresent(con);
+			result &= checkKeysPresent(con);
 		}
 
 		result &= checkSpeciesClassification(dbre);
@@ -207,7 +206,7 @@ public class Meta extends SingleDatabaseTestCase {
 		// also assembly.name, assembly.date, species.classification - needed by the
 		// website
 		String[] metaKeys = { "assembly.default", "species.classification", "species.common_name", "species.taxonomy_id",
-				"assembly.name", "assembly.date", "species.description" };
+				"assembly.name", "assembly.date", "species.alias" };
 		for (int i = 0; i < metaKeys.length; i++) {
 			String metaKey = metaKeys[i];
 			int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey + "'");
