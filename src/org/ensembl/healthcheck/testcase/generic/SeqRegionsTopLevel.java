@@ -15,19 +15,21 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that all seq_regions comprising genes are marked as toplevel in seq_region_attrib. Also checks that there is at least one seq_region marked
+ * Check that all seq_regions comprising genes are marked as toplevel in
+ * seq_region_attrib. Also checks that there is at least one seq_region marked
  * as toplevel (needed by compara).
  */
 
 public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 
 	/**
-   * Create a new SeqRegionsTopLevel testcase.
-   */
+	 * Create a new SeqRegionsTopLevel testcase.
+	 */
 	public SeqRegionsTopLevel() {
 
 		addToGroup("post_genebuild");
@@ -36,13 +38,21 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 
 	}
 
+	public void types() {
+
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.CDNA);
+
+	}
+
 	/**
-   * Run the test.
-   * 
-   * @param dbre The database to use.
-   * @return true if the test pased.
-   * 
-   */
+	 * Run the test.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return true if the test pased.
+	 * 
+	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
@@ -107,7 +117,7 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 			result = false;
 
 		} else {
-			
+
 			ReportManager.correct(this, con, "One co-ordinate system has rank = 1");
 
 		}
