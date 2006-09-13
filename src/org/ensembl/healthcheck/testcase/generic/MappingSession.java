@@ -81,8 +81,8 @@ public class MappingSession extends SingleDatabaseTestCase {
 			result = checkTablesExistAndPopulated(dbre) && result;
 			logger.info("Checking for null strings");
 			result = checkNoNullStrings(con) && result;
-			logger.info("Checking DB name format in mapping_session");
-			result = checkDBNameFormat(con) && result;
+			//logger.info("Checking DB name format in mapping_session");
+			//result = checkDBNameFormat(con) && result;
 			// logger.info("Checking mapping_session chaining");
 			// result = checkMappingSessionChaining(con) && result;
 			logger.info("Checking mapping_session/stable_id_event keys");
