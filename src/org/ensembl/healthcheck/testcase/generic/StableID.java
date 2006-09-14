@@ -25,8 +25,9 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Checks the *_stable_id tables to ensure they are populated, have no orphan references, and have valid versions. Also prints some
- * examples from the table for checking by eye.
+ * Checks the *_stable_id tables to ensure they are populated, have no orphan
+ * references, and have valid versions. Also prints some examples from the table
+ * for checking by eye.
  * 
  * <p>
  * Group is <b>check_stable_ids </b>
@@ -38,104 +39,170 @@ import org.ensembl.healthcheck.util.DBUtils;
  */
 public class StableID extends SingleDatabaseTestCase {
 
-    /**
-     * Create a new instance of StableID.
-     */
-    public StableID() {
-        addToGroup("id_mapping");
-        addToGroup("release");
-        setDescription("Checks *_stable_id tables are valid.");
-    }
+	/**
+	 * Create a new instance of StableID.
+	 */
+	public StableID() {
+		addToGroup("id_mapping");
+		addToGroup("release");
+		setDescription("Checks *_stable_id tables are valid.");
+	}
 
-    /**
-     * This only applies to core and Vega databases.
-     */
-    public void types() {
+	/**
+	 * This only applies to core and Vega databases.
+	 */
+	public void types() {
 
-        removeAppliesToType(DatabaseType.OTHERFEATURES);
-        removeAppliesToType(DatabaseType.CDNA);
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.CDNA);
 
-    }
+	}
 
-    /**
-     * Run the test.
-     * 
-     * @param dbre
-     *            The database to use.
-     * @return true if the test pased.
-     * 
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+	/**
+	 * Run the test.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return true if the test pased.
+	 * 
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-        boolean result = true;
+		boolean result = true;
 
-        Connection con = dbre.getConnection();
+		Connection con = dbre.getConnection();
 
-        result &= checkStableIDs(con, "exon");
-        result &= checkStableIDs(con, "translation");
-        result &= checkStableIDs(con, "transcript");
-        result &= checkStableIDs(con, "gene");
+		result &= checkStableIDs(con, "exon");
+		result &= checkStableIDs(con, "translation");
+		result &= checkStableIDs(con, "transcript");
+		result &= checkStableIDs(con, "gene");
 
-        return result;
-    }
+		result &= checkStableIDEventTypes(con);
 
-    /**
-     * Checks that the typeName_stable_id table is valid. The table is valid if it has >0 rows, and there are no orphan references
-     * between typeName table and typeName_stable_id. Also prints some example data from the typeName_stable_id table via
-     * ReportManager.info().
-     * 
-     * @param con
-     *            connection to run quries on.
-     * @param typeName
-     *            name of the type to check, e.g. "exon"
-     * @return true if the table and references are valid, otherwise false.
-     */
-    public boolean checkStableIDs(Connection con, String typeName) {
+		return result;
+	}
 
-        boolean result = true;
+	/**
+	 * Checks that the typeName_stable_id table is valid. The table is valid if it
+	 * has >0 rows, and there are no orphan references between typeName table and
+	 * typeName_stable_id. Also prints some example data from the
+	 * typeName_stable_id table via ReportManager.info().
+	 * 
+	 * @param con
+	 *          connection to run quries on.
+	 * @param typeName
+	 *          name of the type to check, e.g. "exon"
+	 * @return true if the table and references are valid, otherwise false.
+	 */
+	public boolean checkStableIDs(Connection con, String typeName) {
 
-        String stableIDtable = typeName + "_stable_id";
-        int nStableIDs = countRowsInTable(con, stableIDtable);
-        //ReportManager.info(this, con, "Num " + typeName + "s stable ids = " + nStableIDs);
+		boolean result = true;
 
-        if (nStableIDs < 1) {
-            ReportManager.problem(this, con, stableIDtable + " table is empty.");
-            result = false;
-        }
+		String stableIDtable = typeName + "_stable_id";
+		int nStableIDs = countRowsInTable(con, stableIDtable);
+		// ReportManager.info(this, con, "Num " + typeName + "s stable ids = " +
+		// nStableIDs);
 
-        // print a few rows so we can check by eye that the table looks ok
-        // DBUtils.printRows(this, con, "select * from " + stableIDtable + " limit 10;");
+		if (nStableIDs < 1) {
+			ReportManager.problem(this, con, stableIDtable + " table is empty.");
+			result = false;
+		}
 
-        // look for orphans between type and type_stable_id tables
-        int orphans = countOrphans(con, typeName, typeName + "_id", stableIDtable, typeName + "_id", false);
-        if (orphans > 0) {
-            ReportManager.problem(this, con, "Orphan references between " + typeName + " and " + typeName + "_stable_id tables.");
-            result = false;
-        }
+		// print a few rows so we can check by eye that the table looks ok
+		// DBUtils.printRows(this, con, "select * from " + stableIDtable + " limit
+		// 10;");
 
-        int nInvalidVersions = getRowCount(con, "SELECT COUNT(*) AS " + typeName + "_with_invalid_version" + " FROM "
-                + stableIDtable + " WHERE version < 1;");
+		// look for orphans between type and type_stable_id tables
+		int orphans = countOrphans(con, typeName, typeName + "_id", stableIDtable, typeName + "_id", false);
+		if (orphans > 0) {
+			ReportManager.problem(this, con, "Orphan references between " + typeName + " and " + typeName + "_stable_id tables.");
+			result = false;
+		}
 
-        if (nInvalidVersions > 0) {
-            ReportManager.problem(this, con, "Invalid " + typeName + " versions in " + stableIDtable);
-            DBUtils.printRows(this, con, "SELECT DISTINCT(version) FROM " + stableIDtable);
-            result = false;
-        }
+		int nInvalidVersions = getRowCount(con, "SELECT COUNT(*) AS " + typeName + "_with_invalid_version" + " FROM " + stableIDtable
+				+ " WHERE version < 1;");
 
-        // check for duplicate stable IDs (will be redundant when stable ID columns get a UNIQUE constraint)
-        // to find which records are duplicated use
-        // SELECT exon_id, stable_id, COUNT(*) FROM exon_stable_id GROUP BY stable_id HAVING COUNT(*) > 1;
-        // this will give the internal IDs for *one* of each of the duplicates
-        // if there are only a few then reassign the stable IDs of one of the duplicates
-        int duplicates = getRowCount(con, "SELECT COUNT(stable_id)-COUNT(DISTINCT stable_id) FROM " + stableIDtable);
-        if (duplicates > 0) {
-            ReportManager.problem(this, con, stableIDtable + " has " + duplicates + " duplicate stable IDs (versions not checked)");
-            result = false;
-        } else {
-            ReportManager.correct(this, con, "No duplicate stable IDs in " + stableIDtable);
-        }
+		if (nInvalidVersions > 0) {
+			ReportManager.problem(this, con, "Invalid " + typeName + " versions in " + stableIDtable);
+			DBUtils.printRows(this, con, "SELECT DISTINCT(version) FROM " + stableIDtable);
+			result = false;
+		}
 
-        return result;
-    }
+		// check for duplicate stable IDs (will be redundant when stable ID columns
+		// get a UNIQUE constraint)
+		// to find which records are duplicated use
+		// SELECT exon_id, stable_id, COUNT(*) FROM exon_stable_id GROUP BY
+		// stable_id HAVING COUNT(*) > 1;
+		// this will give the internal IDs for *one* of each of the duplicates
+		// if there are only a few then reassign the stable IDs of one of the
+		// duplicates
+		int duplicates = getRowCount(con, "SELECT COUNT(stable_id)-COUNT(DISTINCT stable_id) FROM " + stableIDtable);
+		if (duplicates > 0) {
+			ReportManager.problem(this, con, stableIDtable + " has " + duplicates + " duplicate stable IDs (versions not checked)");
+			result = false;
+		} else {
+			ReportManager.correct(this, con, "No duplicate stable IDs in " + stableIDtable);
+		}
+
+		return result;
+	}
+
+	// -----------------------------------------------------------
+	/**
+	 * Check for any stable ID events where the 'type' column does not match the
+	 * identifier type.
+	 * 
+	 */
+	private boolean checkStableIDEventTypes(Connection con) {
+
+		boolean result = true;
+
+		String[] types = { "gene", "transcript", "translation" };
+
+		for (int i = 0; i < types.length; i++) {
+
+			String type = types[i];
+
+			String prefix = getPrefixForType(con, type);
+
+			String sql = "SELECT COUNT(*) FROM stable_id_event WHERE (old_stable_id LIKE '" + prefix + "%' OR new_stable_id LIKE '"
+					+ prefix + "%') AND type != '" + type + "'";
+			
+			int rows = getRowCount(con, sql);
+
+			if (rows > 0) {
+
+				ReportManager.problem(this, con, rows + " rows of type " + type + " (prefix " + prefix 
+						+ ") in stable_id_event have identifiers that do not correspond to " + type + "s");
+				result = false;
+
+			} else {
+
+				ReportManager.correct(this, con, "All types in stable_id_event correspond to identifiers");
+
+			}
+		}
+		return result;
+
+	}
+
+	// -----------------------------------------------------------
+
+	private String getPrefixForType(Connection con, String type) {
+
+		String prefix = "";
+
+		// hope the first row of the _type_stable_id table is correct
+		String stableID = getRowColumnValue(con, "SELECT stable_id FROM " + type + "_stable_id LIMIT 1");
+
+		prefix = stableID.replaceAll("[0-9]", "");
+
+		if (prefix.equals("")) {
+			System.err.println("Error, can't get prefix for " + type + " from stable ID " + stableID);
+		}
+
+		return prefix;
+
+	} // -----------------------------------------------------------
 
 }
