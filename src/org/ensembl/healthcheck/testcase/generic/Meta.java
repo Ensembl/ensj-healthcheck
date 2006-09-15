@@ -205,8 +205,8 @@ public class Meta extends SingleDatabaseTestCase {
 		// check that there are species, classification and taxonomy_id entries
 		// also assembly.name, assembly.date, species.classification - needed by the
 		// website
-		String[] metaKeys = { "assembly.default", "species.classification", "species.common_name", "species.taxonomy_id",
-				"assembly.name", "assembly.date", "species.alias" };
+		String[] metaKeys = { "assembly.default", "species.classification", "species.ensembl_common_name", "species.taxonomy_id",
+				"assembly.name", "assembly.date", "species.ensembl_alias_name", "repeat.analysis" };
 		for (int i = 0; i < metaKeys.length; i++) {
 			String metaKey = metaKeys[i];
 			int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey + "'");
