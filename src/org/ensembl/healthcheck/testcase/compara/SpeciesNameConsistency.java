@@ -63,14 +63,14 @@ public class SpeciesNameConsistency extends SingleDatabaseTestCase {
         }
 
         // check taxon table has > 0 rows
-        if (countRowsInTable(con, "taxon") == 0) {
+        if (countRowsInTable(con, "ncbi_taxa_name") == 0) {
             result = false;
-            ReportManager.problem(this, con, "taxon table is empty");
+            ReportManager.problem(this, con, "ncbi_taxa_name table is empty");
         } else {
-            ReportManager.correct(this, con, "taxon table has data");
+            ReportManager.correct(this, con, "ncbi_taxa_name table has data");
         }
 
-        String sql = "select gdb.taxon_id from taxon tx, genome_db gdb where tx.taxon_id=gdb.taxon_id and gdb.name != concat(tx.genus,\" \",tx.species)";
+        String sql = "select gdb.taxon_id from ncbi_taxa_name tx, genome_db gdb where tx.taxon_id=gdb.taxon_id and tx.name_class='scientific name' and gdb.name != tx.name";
 
         String[] taxonIDs = getColumnValues(con, sql);
 
@@ -80,10 +80,10 @@ public class SpeciesNameConsistency extends SingleDatabaseTestCase {
                     "Cases where genome_db and taxon table do not shared the same species names");
             for (int i = 0; i < taxonIDs.length; i++) {
                 ReportManager.problem(this, con, " taxon_id " + taxonIDs[i]
-                        + " have different species name between genome_db and taxon tables");
+                        + " have different species name between genome_db and ncbi_taxa_name tables");
             }
         } else {
-            ReportManager.correct(this, con, "PASSED genome_db and taxon table share the same species names");
+            ReportManager.correct(this, con, "PASSED genome_db and ncbi_taxa_name table share the same species names");
         }
 
         return result;
