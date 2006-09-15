@@ -65,6 +65,7 @@ public class Meta extends SingleDatabaseTestCase {
 
 		if (dbre.getType() == DatabaseType.CORE) {
 			result &= checkKeysPresent(con);
+			result &= checkKeysNotPresent(con);
 		}
 
 		result &= checkSpeciesClassification(dbre);
@@ -215,6 +216,27 @@ public class Meta extends SingleDatabaseTestCase {
 				ReportManager.problem(this, con, "No entry in meta table for " + metaKey);
 			} else {
 				ReportManager.correct(this, con, metaKey + " entry present");
+			}
+		}
+
+		return result;
+	}
+
+//---------------------------------------------------------------------
+
+	private boolean checkKeysNotPresent(Connection con) {
+
+		boolean result = true;
+
+		String[] metaKeys = { "species.alias_name" };
+		for (int i = 0; i < metaKeys.length; i++) {
+			String metaKey = metaKeys[i];
+			int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey + "'");
+			if (rows > 0) {
+				result = false;
+				ReportManager.problem(this, con, rows + " meta entries for " + metaKey + " when there shouldn't be any" );
+			} else {
+				ReportManager.correct(this, con, "No entry in meta table for " + metaKey);
 			}
 		}
 
