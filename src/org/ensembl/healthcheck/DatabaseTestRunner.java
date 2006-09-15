@@ -33,6 +33,10 @@ public class DatabaseTestRunner extends TestRunner implements Reporter {
 
 	private boolean deletePrevious = false;
 
+	private long testStartTime;
+
+	private static String TIMINGS_FILE = "timings.txt";
+
 	// ---------------------------------------------------------------------
 	/**
 	 * Main run method.
@@ -181,6 +185,8 @@ public class DatabaseTestRunner extends TestRunner implements Reporter {
 	 */
 	public void startTestCase(EnsTestCase testCase, DatabaseRegistryEntry dbre) {
 
+		testStartTime = System.currentTimeMillis();
+
 	}
 
 	// ---------------------------------------------------------------------
@@ -197,6 +203,17 @@ public class DatabaseTestRunner extends TestRunner implements Reporter {
 	 *          databases.
 	 */
 	public void finishTestCase(EnsTestCase testCase, boolean result, DatabaseRegistryEntry dbre) {
+
+		long duration = System.currentTimeMillis() - testStartTime;
+
+		String str = duration + "\t";
+		if (dbre != null) {
+			str += dbre.getName() + "\t";
+		}
+		str += testCase.getShortTestName() + "\t";
+		str += Utils.formatTimeString(duration);
+
+		Utils.writeStringToFile(TIMINGS_FILE, str, true, true);
 
 	}
 
