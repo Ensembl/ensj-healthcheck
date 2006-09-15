@@ -228,12 +228,13 @@ public class Meta extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		String[] metaKeys = { "species.alias_name" };
+		String[] metaKeys = { "species.alias" };
 		for (int i = 0; i < metaKeys.length; i++) {
 			String metaKey = metaKeys[i];
 			int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey + "'");
 			if (rows > 0) {
 				result = false;
+				System.out.println(rows + " meta entries for " + metaKey + " when there shouldn't be any");
 				ReportManager.problem(this, con, rows + " meta entries for " + metaKey + " when there shouldn't be any" );
 			} else {
 				ReportManager.correct(this, con, "No entry in meta table for " + metaKey);
