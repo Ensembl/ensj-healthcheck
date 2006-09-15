@@ -192,10 +192,7 @@ public class OligoProbes2Genome extends SingleDatabaseTestCase {
 				ReportManager.problem(this, con, "No entry for oligo_feature in meta_coord table. ");
 				result = false;
 			}
-		} else {
-			ReportManager.info(this, con, "No rows in oligo_feature, so not checking for entry in meta_coord");
-		}
-
+		} 
 		return result;
 	}
 
