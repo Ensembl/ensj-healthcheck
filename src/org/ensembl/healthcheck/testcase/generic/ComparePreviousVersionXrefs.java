@@ -64,7 +64,7 @@ public class ComparePreviousVersionXrefs extends ComparePreviousVersionBase {
 
 	private String getExcludeProjectedSQL(DatabaseRegistryEntry dbre) {
 
-		return Integer.parseInt(dbre.getSchemaVersion()) <= 37 ? " AND x.display_label NOT LIKE '%[from%'" : " AND x.info_type IS NULL"; // should really be != 'PROJECTION'
+		return Integer.parseInt(dbre.getSchemaVersion()) <= 37 ? " AND x.display_label NOT LIKE '%[from%'" : " AND (x.info_type != 'PROJECTION' OR x.info_type IS NULL)"; 
 
 	}
 
