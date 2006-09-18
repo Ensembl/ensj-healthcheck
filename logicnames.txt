@@ -15,6 +15,8 @@ Dust
 EG3_F
 EG3_H
 EG3_S
+ensembl_havana_gene
+ensembl_havana_transcript
 EP1_H
 EP1_S
 EP3_H
@@ -37,6 +39,7 @@ GWS_H
 GWS_S
 GeneFinder
 Genscan
+havana
 HOX
 PIRSF
 PRINTS
