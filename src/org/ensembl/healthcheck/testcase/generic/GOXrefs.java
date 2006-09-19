@@ -73,7 +73,7 @@ public boolean run(DatabaseRegistryEntry dbre) {
 		if (true) {
 
 			// check that they exist in the xref table
-			String sql = "SELECT COUNT(*) FROM external_db edb, xref x WHERE edb.db_name= 'go' AND edb.external_db_id = x.external_db_id AND x.info_type IS NULL";
+			String sql = "SELECT COUNT(*) FROM external_db edb, xref x WHERE edb.db_name= 'go' AND edb.external_db_id = x.external_db_id AND (x.info_type IS NULL OR x.info_type != 'PROJECTION')";
 
 			int xref_rows = getRowCount(con, sql);
 			if (xref_rows == 0) {
