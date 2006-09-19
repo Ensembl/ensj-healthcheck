@@ -189,8 +189,8 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 							if (sumSRA != null && sumSRA.length() > 0) {
 
 								long valueFromSeqRegionAttrib = Long.parseLong(sumSRA);
-
-								if (sumFromDensityFeature != valueFromSeqRegionAttrib) {
+								
+								if (Math.abs(sumFromDensityFeature - valueFromSeqRegionAttrib) > 1000) { // allow a bit of leeway
 
 									ReportManager.problem(this, con, "Sum of values for " + logicName + " from density_feature ("
 											+ sumFromDensityFeature + ") doesn't agree with value from seq_region_attrib (" + valueFromSeqRegionAttrib
