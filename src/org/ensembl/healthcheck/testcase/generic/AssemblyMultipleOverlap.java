@@ -34,6 +34,8 @@ import org.ensembl.healthcheck.util.Utils;
  */
 public class AssemblyMultipleOverlap extends SingleDatabaseTestCase {
 
+	private static final int MAX = 10; // maximum number of overlaps to print
+
 	/**
 	 * Creates a new instance of AssemblyMultipleOverlap.
 	 */
@@ -67,8 +69,8 @@ public class AssemblyMultipleOverlap extends SingleDatabaseTestCase {
 				+ "AND sr1.coord_system_id = cs1.coord_system_id AND sr2.coord_system_id = cs2.coord_system_id "
 				+ "GROUP BY asm_seq_region_id, cmp_seq_region_id, asm_start, cmp_start, ori HAVING count > 1;";
 
-		int  overlapCount = 0;
-		
+		int overlapCount = 0;
+
 		try {
 
 			Statement stmt = con.createStatement();
@@ -76,12 +78,12 @@ public class AssemblyMultipleOverlap extends SingleDatabaseTestCase {
 
 			PreparedStatement cmpStmt = con
 					.prepareStatement("SELECT asm_start, asm_end, ori FROM assembly WHERE asm_seq_region_id=? AND cmp_seq_region_id=? ORDER BY asm_start");
-			
+
 			while (rs.next()) {
 
 				long asm_seq_region_id = rs.getLong("asm_seq_region_id");
 				long cmp_seq_region_id = rs.getLong("cmp_seq_region_id");
-	
+
 				// get start, end for each component
 				cmpStmt.setLong(1, asm_seq_region_id);
 				cmpStmt.setLong(2, cmp_seq_region_id);
@@ -115,7 +117,10 @@ public class AssemblyMultipleOverlap extends SingleDatabaseTestCase {
 
 							if (starts[j] < ends[i]) {
 								overlapCount++;
-								System.out.println("Overlap: " + starts[i] + " " + starts[j] + " " + ends[i] + " " + ends[j] + " cmp seq_region_id " + cmp_seq_region_id + " asm_seq_region_id " + asm_seq_region_id);
+								if (overlapCount < MAX) {
+									System.out.println("Overlap: " + starts[i] + " " + starts[j] + " " + ends[i] + " " + ends[j]
+											+ " cmp seq_region_id " + cmp_seq_region_id + " asm_seq_region_id " + asm_seq_region_id);
+								}
 							}
 						}
 
@@ -133,16 +138,16 @@ public class AssemblyMultipleOverlap extends SingleDatabaseTestCase {
 		}
 
 		if (overlapCount > 0) {
-		
+
 			ReportManager.problem(this, con, overlapCount + " instances of multiple overlapping assembled components");
 			result = false;
-			
+
 		} else {
-			
+
 			ReportManager.correct(this, con, "No multiply-assembled overlapping components");
-			
+
 		}
-		
+
 		return result;
 
 	} // run
