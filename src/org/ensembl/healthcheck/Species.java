@@ -123,6 +123,8 @@ public final class Species {
         /** Specific type of species */
 	public static final Species FELIS_CATUS = new Species("felis_catus");
 
+        /** Specific type of species */
+	public static final Species OTOLEMUR_GARNETTII = new Species("otolemur_garnettii");
 
 	/** Non-ensembl database */
 	public static final Species SYSTEM = new Species("system");
@@ -200,7 +202,8 @@ public final class Species {
 		taxonIDToSpecies.put("69293", GASTEROSTEUS_ACULEATUS);
 		taxonIDToSpecies.put("7159", AEDES_AEGYPTI);
 		taxonIDToSpecies.put("9685", FELIS_CATUS);
-    taxonIDToSpecies.put("9258", ORNITHORHYCHUS_ANATINUS);	
+		taxonIDToSpecies.put("30611", OTOLEMUR_GARNETTII);
+                taxonIDToSpecies.put("9258", ORNITHORHYCHUS_ANATINUS);	
 		// and the other way around
 		Iterator it = taxonIDToSpecies.keySet().iterator();
 		while (it.hasNext()) {
@@ -238,7 +241,8 @@ public final class Species {
 		assemblyPrefixToSpecies.put("CSAV", CIONA_SAVIGNYI);
 		assemblyPrefixToSpecies.put("BROADS", GASTEROSTEUS_ACULEATUS);
 		assemblyPrefixToSpecies.put("CAT", FELIS_CATUS);
-    assemblyPrefixToSpecies.put("OANA", ORNITHORHYCHUS_ANATINUS);
+                assemblyPrefixToSpecies.put("BUSHBABY", OTOLEMUR_GARNETTII);
+                assemblyPrefixToSpecies.put("OANA", ORNITHORHYCHUS_ANATINUS);
 		// and the other way around
 		it = assemblyPrefixToSpecies.keySet().iterator();
 		while (it.hasNext()) {
@@ -469,6 +473,14 @@ public final class Species {
 			return FELIS_CATUS;
 
 		}
+
+                // --------------------------------------
+		
+	        if (in(alias, "bushbaby,bush_baby,galago,small_eared_galago,ogarnettii,otolemur_garnettii,otolemur")) {
+
+                        return OTOLEMUR_GARNETTII;
+
+                }
 
 		// --------------------------------------
 
