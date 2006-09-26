@@ -126,6 +126,12 @@ public final class Species {
         /** Specific type of species */
 	public static final Species OTOLEMUR_GARNETTII = new Species("otolemur_garnettii");
 
+        /** Specific type of species */
+        public static final Species MYOTIS_LUCIFUGUS = new Species("myotis_lucifugus");
+
+        /** Specific type of species */
+        public static final Species SOREX_ARANEUS = new Species("sorex_araneus");
+	
 	/** Non-ensembl database */
 	public static final Species SYSTEM = new Species("system");
 
@@ -203,6 +209,8 @@ public final class Species {
 		taxonIDToSpecies.put("7159", AEDES_AEGYPTI);
 		taxonIDToSpecies.put("9685", FELIS_CATUS);
 		taxonIDToSpecies.put("30611", OTOLEMUR_GARNETTII);
+		taxonIDToSpecies.put("59463", MYOTIS_LUCIFUGUS);
+		taxonIDToSpecies.put("42254", SOREX_ARANEUS);
                 taxonIDToSpecies.put("9258", ORNITHORHYCHUS_ANATINUS);	
 		// and the other way around
 		Iterator it = taxonIDToSpecies.keySet().iterator();
@@ -242,6 +250,8 @@ public final class Species {
 		assemblyPrefixToSpecies.put("BROADS", GASTEROSTEUS_ACULEATUS);
 		assemblyPrefixToSpecies.put("CAT", FELIS_CATUS);
                 assemblyPrefixToSpecies.put("BUSHBABY", OTOLEMUR_GARNETTII);
+		assemblyPrefixToSpecies.put("MICROBAT", MYOTIS_LUCIFUGUS);
+		assemblyPrefixToSpecies.put("COMMONSHREW", SOREX_ARANEUS);
                 assemblyPrefixToSpecies.put("OANA", ORNITHORHYCHUS_ANATINUS);
 		// and the other way around
 		it = assemblyPrefixToSpecies.keySet().iterator();
@@ -484,6 +494,22 @@ public final class Species {
 
 		// --------------------------------------
 
+	        if (in(alias, "microbat,little_brown_bat,mlucifugus,myotis_lucifugus,myotis")) {
+
+                        return MYOTIS_LUCIFUGUS;
+
+                }
+
+                // --------------------------------------
+
+                if (in(alias, "shrew,common_shrew,european_shrew,sorex_araneus,saraneus,sorex")) {
+
+                        return SOREX_ARANEUS;
+
+                }
+
+                // --------------------------------------
+ 
 		if (in(alias, "pig,boar,wildboar,wild_boar,susscrofa,sus_scrofa")) {
 
 			return SUS_SCROFA;
