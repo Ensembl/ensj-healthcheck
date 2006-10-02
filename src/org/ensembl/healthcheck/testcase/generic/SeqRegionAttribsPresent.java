@@ -29,7 +29,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  */
 public class SeqRegionAttribsPresent extends SingleDatabaseTestCase {
 
-	private String[] attribCodes = { "GeneNo_knwCod", "GeneNo_novCod" };
+	private String[] attribCodes = { "GeneNo_knwCod" };
 
 	/**
 	 * Create a new SeqRegionAttribsPresent healthcheck.
