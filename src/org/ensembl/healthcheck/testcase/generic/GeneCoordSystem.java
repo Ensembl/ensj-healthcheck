@@ -22,6 +22,7 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -38,7 +39,10 @@ public class GeneCoordSystem extends SingleDatabaseTestCase {
 
 		addToGroup("release");
 		setDescription("Check that no genes are on a sequence_level coord system.");
-
+		setPriority(Priority.AMBER);
+		setEffect("Having genes on a sequence_level co-ordinate system will slow down the mapper and affect website speed and dumping speed.");
+		setFix("Move affected genes off the sequence_level co-ordinate system");
+		
 	}
 
 	/**
