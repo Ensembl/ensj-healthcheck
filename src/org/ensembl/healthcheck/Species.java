@@ -251,7 +251,7 @@ public final class Species {
 		assemblyPrefixToSpecies.put("CAT", FELIS_CATUS);
                 assemblyPrefixToSpecies.put("BUSHBABY", OTOLEMUR_GARNETTII);
 		assemblyPrefixToSpecies.put("MICROBAT", MYOTIS_LUCIFUGUS);
-		assemblyPrefixToSpecies.put("COMMONSHREW", SOREX_ARANEUS);
+		assemblyPrefixToSpecies.put("COMMON_SHREW", SOREX_ARANEUS);
                 assemblyPrefixToSpecies.put("OANA", ORNITHORHYCHUS_ANATINUS);
 		// and the other way around
 		it = assemblyPrefixToSpecies.keySet().iterator();
@@ -502,7 +502,7 @@ public final class Species {
 
                 // --------------------------------------
 
-                if (in(alias, "shrew,common_shrew,european_shrew,sorex_araneus,saraneus,sorex")) {
+                if (in(alias, "shrew,common_shrew,commonShrew,european_shrew,sorex_araneus,saraneus,sorex")) {
 
                         return SOREX_ARANEUS;
 
