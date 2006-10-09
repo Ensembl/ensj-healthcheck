@@ -117,38 +117,38 @@ public final class Species {
 	/** Specific type of species */
 	public static final Species AEDES_AEGYPTI = new Species("aedes_aegypti");
 
- /** Specific type of speciesOrnithorhynchus anatinus */
+	/** Specific type of species */
 	public static final Species ORNITHORHYCHUS_ANATINUS = new Species("ornithorhychus_anatius");
 
-        /** Specific type of species */
+	/** Specific type of species */
 	public static final Species FELIS_CATUS = new Species("felis_catus");
 
-        /** Specific type of species */
+	/** Specific type of species */
 	public static final Species OTOLEMUR_GARNETTII = new Species("otolemur_garnettii");
 
-        /** Specific type of species */
-        public static final Species MYOTIS_LUCIFUGUS = new Species("myotis_lucifugus");
+	/** Specific type of species */
+	public static final Species MYOTIS_LUCIFUGUS = new Species("myotis_lucifugus");
 
-        /** Specific type of species */
-        public static final Species SOREX_ARANEUS = new Species("sorex_araneus");
-	
-        /** Specific type of species */
-        public static final Species ERINACEUS_EUROPAEUS = new Species("erinaceus_europaeus");
-	
+	/** Specific type of species */
+	public static final Species SOREX_ARANEUS = new Species("sorex_araneus");
+
+	/** Specific type of species */
+	public static final Species ERINACEUS_EUROPAEUS = new Species("erinaceus_europaeus");
+
 	/** Non-ensembl database */
 	public static final Species SYSTEM = new Species("system");
 
 	/** Help database */
 	public static final Species HELP = new Species("help");
 
-	 /** A taxonomy database */
-  public static final Species NCBI_TAXONOMY = new Species("ncbi_taxonomy");
+	/** A taxonomy database */
+	public static final Species NCBI_TAXONOMY = new Species("ncbi_taxonomy");
 
-  /** An ensembl_website database */
-  public static final Species ENSEMBL_WEBSITE = new Species("ensembl_website");
+	/** An ensembl_website database */
+	public static final Species ENSEMBL_WEBSITE = new Species("ensembl_website");
 
-  /** An healthcheck database */
-  public static final Species HEALTHCHECK= new Species("healthcheck");
+	/** An healthcheck database */
+	public static final Species HEALTHCHECK = new Species("healthcheck");
 
 	/** Unknown species */
 	public static final Species UNKNOWN = new Species("unknown");
@@ -214,8 +214,8 @@ public final class Species {
 		taxonIDToSpecies.put("30611", OTOLEMUR_GARNETTII);
 		taxonIDToSpecies.put("59463", MYOTIS_LUCIFUGUS);
 		taxonIDToSpecies.put("42254", SOREX_ARANEUS);
-                taxonIDToSpecies.put("9258", ORNITHORHYCHUS_ANATINUS);	
-                taxonIDToSpecies.put("9365", ERINACEUS_EUROPAEUS);	
+		taxonIDToSpecies.put("9258", ORNITHORHYCHUS_ANATINUS);
+		taxonIDToSpecies.put("9365", ERINACEUS_EUROPAEUS);
 		// and the other way around
 		Iterator it = taxonIDToSpecies.keySet().iterator();
 		while (it.hasNext()) {
@@ -253,11 +253,11 @@ public final class Species {
 		assemblyPrefixToSpecies.put("CSAV", CIONA_SAVIGNYI);
 		assemblyPrefixToSpecies.put("BROADS", GASTEROSTEUS_ACULEATUS);
 		assemblyPrefixToSpecies.put("CAT", FELIS_CATUS);
-                assemblyPrefixToSpecies.put("BUSHBABY", OTOLEMUR_GARNETTII);
+		assemblyPrefixToSpecies.put("BUSHBABY", OTOLEMUR_GARNETTII);
 		assemblyPrefixToSpecies.put("MICROBAT", MYOTIS_LUCIFUGUS);
 		assemblyPrefixToSpecies.put("COMMON_SHREW", SOREX_ARANEUS);
-                assemblyPrefixToSpecies.put("OANA", ORNITHORHYCHUS_ANATINUS);
-                assemblyPrefixToSpecies.put("ERIEUR", ERINACEUS_EUROPAEUS);
+		assemblyPrefixToSpecies.put("OANA", ORNITHORHYCHUS_ANATINUS);
+		assemblyPrefixToSpecies.put("ERIEUR", ERINACEUS_EUROPAEUS);
 		// and the other way around
 		it = assemblyPrefixToSpecies.keySet().iterator();
 		while (it.hasNext()) {
@@ -489,37 +489,37 @@ public final class Species {
 
 		}
 
-                // --------------------------------------
-		
-	        if (in(alias, "bushbaby,bush_baby,galago,small_eared_galago,ogarnettii,otolemur_garnettii,otolemur")) {
+		// --------------------------------------
 
-                        return OTOLEMUR_GARNETTII;
+		if (in(alias, "bushbaby,bush_baby,galago,small_eared_galago,ogarnettii,otolemur_garnettii,otolemur")) {
 
-                }
+			return OTOLEMUR_GARNETTII;
+
+		}
 
 		// --------------------------------------
 
-	        if (in(alias, "microbat,little_brown_bat,mlucifugus,myotis_lucifugus,myotis")) {
+		if (in(alias, "microbat,little_brown_bat,mlucifugus,myotis_lucifugus,myotis")) {
 
-                        return MYOTIS_LUCIFUGUS;
+			return MYOTIS_LUCIFUGUS;
 
-                }
+		}
 
-                // --------------------------------------
+		// --------------------------------------
 
-                if (in(alias, "shrew,common_shrew,commonShrew,european_shrew,sorex_araneus,saraneus,sorex")) {
+		if (in(alias, "shrew,common_shrew,commonShrew,european_shrew,sorex_araneus,saraneus,sorex")) {
 
-                        return SOREX_ARANEUS;
+			return SOREX_ARANEUS;
 
-                }
-                if (in(alias, "hedgehog,erinaceus_europaeus,european_hedgehog,eeuropaeus")) {
+		}
+		if (in(alias, "hedgehog,erinaceus_europaeus,european_hedgehog,eeuropaeus")) {
 
-                        return ERINACEUS_EUROPAEUS;
+			return ERINACEUS_EUROPAEUS;
 
-                }
+		}
 
-                // --------------------------------------
- 
+		// --------------------------------------
+
 		if (in(alias, "pig,boar,wildboar,wild_boar,susscrofa,sus_scrofa")) {
 
 			return SUS_SCROFA;
@@ -541,7 +541,7 @@ public final class Species {
 			return GASTEROSTEUS_ACULEATUS;
 
 		}
-		
+
 		// --------------------------------------
 
 		if (in(alias, "aedes,aedes_aegypti,aedesaegypti")) {
@@ -550,13 +550,12 @@ public final class Species {
 
 		}
 
-    
-    // --------------------------------------
-    
+		// --------------------------------------
+
 		if (in(alias, "platypus,ornithorhychus_anatius,oanatius")) {
-        
-        return ORNITHORHYCHUS_ANATINUS;
-        
+
+			return ORNITHORHYCHUS_ANATINUS;
+
 		}
 		// --------------------------------------
 		// default
@@ -616,7 +615,14 @@ public final class Species {
 	 */
 	private static boolean in(String alias, String list) {
 
-		return (list.indexOf(alias) > -1);
+		String[] aliases = list.split(",");
+		for (int i = 0; i < aliases.length; i++) {
+			if (alias.equals(aliases[i])) {
+				return true;
+			}
+		}
+
+		return false;
 
 	}
 
