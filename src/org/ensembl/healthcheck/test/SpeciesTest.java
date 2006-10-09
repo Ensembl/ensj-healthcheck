@@ -92,6 +92,7 @@ public class SpeciesTest extends TestCase {
     public void testSimilarNames() {
         
         assertTrue(!(Species.resolveAlias("hedgehog").equals(Species.ECHINOPS_TELFAIRI)));
+        assertTrue(Species.resolveAlias("hedgehog").equals(Species.ERINACEUS_EUROPAEUS));
         
     }
     
