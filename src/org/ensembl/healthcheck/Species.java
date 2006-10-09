@@ -132,6 +132,9 @@ public final class Species {
         /** Specific type of species */
         public static final Species SOREX_ARANEUS = new Species("sorex_araneus");
 	
+        /** Specific type of species */
+        public static final Species ERINACEUS_EUROPAEUS = new Species("erinaceus_europaeus");
+	
 	/** Non-ensembl database */
 	public static final Species SYSTEM = new Species("system");
 
@@ -212,6 +215,7 @@ public final class Species {
 		taxonIDToSpecies.put("59463", MYOTIS_LUCIFUGUS);
 		taxonIDToSpecies.put("42254", SOREX_ARANEUS);
                 taxonIDToSpecies.put("9258", ORNITHORHYCHUS_ANATINUS);	
+                taxonIDToSpecies.put("9365", ERINACEUS_EUROPAEUS);	
 		// and the other way around
 		Iterator it = taxonIDToSpecies.keySet().iterator();
 		while (it.hasNext()) {
@@ -253,6 +257,7 @@ public final class Species {
 		assemblyPrefixToSpecies.put("MICROBAT", MYOTIS_LUCIFUGUS);
 		assemblyPrefixToSpecies.put("COMMON_SHREW", SOREX_ARANEUS);
                 assemblyPrefixToSpecies.put("OANA", ORNITHORHYCHUS_ANATINUS);
+                assemblyPrefixToSpecies.put("ERIEUR", ERINACEUS_EUROPAEUS);
 		// and the other way around
 		it = assemblyPrefixToSpecies.keySet().iterator();
 		while (it.hasNext()) {
@@ -505,6 +510,11 @@ public final class Species {
                 if (in(alias, "shrew,common_shrew,commonShrew,european_shrew,sorex_araneus,saraneus,sorex")) {
 
                         return SOREX_ARANEUS;
+
+                }
+                if (in(alias, "hedgehog,erinaceus_europaeus,european_hedgehog,eeuropaeus")) {
+
+                        return ERINACEUS_EUROPAEUS;
 
                 }
 
