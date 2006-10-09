@@ -89,6 +89,14 @@ public class SpeciesTest extends TestCase {
 
     // -----------------------------------------------------------------
     
+    public void testSimilarNames() {
+        
+        assertTrue(!(Species.resolveAlias("hedgehog").equals(Species.ECHINOPS_TELFAIRI)));
+        
+    }
+    
+ // -----------------------------------------------------------------
+    
     public void testAssemblyPrefixes() {
         
         assertEquals(Species.getSpeciesForAssemblyPrefix("NCBI"), Species.HOMO_SAPIENS);
