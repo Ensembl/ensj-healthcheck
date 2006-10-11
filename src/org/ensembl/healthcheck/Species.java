@@ -257,7 +257,7 @@ public final class Species {
 		assemblyPrefixToSpecies.put("MICROBAT", MYOTIS_LUCIFUGUS);
 		assemblyPrefixToSpecies.put("COMMON_SHREW", SOREX_ARANEUS);
 		assemblyPrefixToSpecies.put("OANA", ORNITHORHYCHUS_ANATINUS);
-		assemblyPrefixToSpecies.put("ERIEUR", ERINACEUS_EUROPAEUS);
+		assemblyPrefixToSpecies.put("HEDGEHOG", ERINACEUS_EUROPAEUS);
 		// and the other way around
 		it = assemblyPrefixToSpecies.keySet().iterator();
 		while (it.hasNext()) {
