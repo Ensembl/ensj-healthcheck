@@ -135,6 +135,15 @@ public final class Species {
 	/** Specific type of species */
 	public static final Species ERINACEUS_EUROPAEUS = new Species("erinaceus_europaeus");
 
+	/** Specific type of species */
+	public static final Species CAVIA_PORCELLUS = new Species("cavia_porcellus");
+
+	/** Specific type of species */
+	public static final Species TUPAIA_BELANGERI = new Species("tupaia_belangeri");
+
+	/** Specific type of species */
+	public static final Species SPERMOPHILUS_TRIDECEMLINEATUS = new Species("spermophilus_tridecemlineatus");
+
 	/** Non-ensembl database */
 	public static final Species SYSTEM = new Species("system");
 
@@ -216,6 +225,9 @@ public final class Species {
 		taxonIDToSpecies.put("42254", SOREX_ARANEUS);
 		taxonIDToSpecies.put("9258", ORNITHORHYCHUS_ANATINUS);
 		taxonIDToSpecies.put("9365", ERINACEUS_EUROPAEUS);
+		taxonIDToSpecies.put("10141", CAVIA_PORCELLUS);
+		taxonIDToSpecies.put("37347", TUPAIA_BELANGERI);
+		taxonIDToSpecies.put("100392", SPERMOPHILUS_TRIDECEMLINEATUS);
 		// and the other way around
 		Iterator it = taxonIDToSpecies.keySet().iterator();
 		while (it.hasNext()) {
@@ -258,6 +270,9 @@ public final class Species {
 		assemblyPrefixToSpecies.put("COMMON_SHREW", SOREX_ARANEUS);
 		assemblyPrefixToSpecies.put("OANA", ORNITHORHYCHUS_ANATINUS);
 		assemblyPrefixToSpecies.put("HEDGEHOG", ERINACEUS_EUROPAEUS);
+		assemblyPrefixToSpecies.put("GUINEAPIG", CAVIA_PORCELLUS);
+		assemblyPrefixToSpecies.put("TREESHREW", TUPAIA_BELANGERI);
+		assemblyPrefixToSpecies.put("SQUIRREL", SPERMOPHILUS_TRIDECEMLINEATUS);
 		// and the other way around
 		it = assemblyPrefixToSpecies.keySet().iterator();
 		while (it.hasNext()) {
@@ -515,6 +530,21 @@ public final class Species {
 		if (in(alias, "hedgehog,erinaceus_europaeus,european_hedgehog,eeuropaeus")) {
 
 			return ERINACEUS_EUROPAEUS;
+
+		}
+		if (in(alias, "guineapig,guinea_pig,cavia_porcellus,cporcellus")) {
+
+			return CAVIA_PORCELLUS;
+
+		}
+		if (in(alias, "treeshrew,tbelangeri,tupaia_belangeri,northern_tree_shrew,common_tree_shrew")) {
+
+			return TUPAIA_BELANGERI;
+
+		}
+		if (in(alias, "squirrel,stridecemlineatus,thirteen-lined_ground_squirrel,spermophilus_tridecemlineatus,spermophilus_tridecemlineatus_arenicola")) {
+
+			return SPERMOPHILUS_TRIDECEMLINEATUS;
 
 		}
 
