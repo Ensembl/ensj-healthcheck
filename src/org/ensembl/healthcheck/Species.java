@@ -227,7 +227,7 @@ public final class Species {
 		taxonIDToSpecies.put("9365", ERINACEUS_EUROPAEUS);
 		taxonIDToSpecies.put("10141", CAVIA_PORCELLUS);
 		taxonIDToSpecies.put("37347", TUPAIA_BELANGERI);
-		taxonIDToSpecies.put("100392", SPERMOPHILUS_TRIDECEMLINEATUS);
+		taxonIDToSpecies.put("43179", SPERMOPHILUS_TRIDECEMLINEATUS);
 		// and the other way around
 		Iterator it = taxonIDToSpecies.keySet().iterator();
 		while (it.hasNext()) {
