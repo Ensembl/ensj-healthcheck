@@ -88,6 +88,8 @@ public class Ditag extends SingleDatabaseTestCase {
 
 	    result &= checkForSingles(con);
 
+	    result &= checkForMultis(con);
+
         }
 
         return result;
@@ -258,7 +260,7 @@ public class Ditag extends SingleDatabaseTestCase {
 	    //Check for ditag_ids that occur only once, ignore CAGE tags ("F")
 	    String sql = "SELECT COUNT(*) AS singles FROM (select count(*) as count from ditag_feature df where analysis_id IN("
 		+ analysis_ids
-		+ ") and df.ditag_side!='F' group by ditag_id, ditag_pair_id having count=1) as counter;";
+		+ ") and df.ditag_side!='F' group by ditag_id, ditag_pair_id having count=1) as counter LIMIT 5;";
 
 	    int count = 0;
 	    rs        = stmt.executeQuery(sql);
@@ -267,13 +269,66 @@ public class Ditag extends SingleDatabaseTestCase {
 
 	    if (count > 0) {
 
-		ReportManager.problem(this, con, " There are " + count 
-				      + " ditag_features without a partner (start/end)!");
+		ReportManager.problem(this, con, " There are ditag_features without a partner (start/end)!");
 		result = false;
 
 	    } else {
 
 		ReportManager.correct(this, con, "All ditag_features have ditag partners (start/end).");
+
+	    }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+
+        return result;
+    }
+
+    // ----------------------------------------------------------------------
+    /**
+     * Check that all ditags have not more than 2 ditag_features with the same ditag_id & ditag_pair_id
+     */
+
+    private boolean checkForMultis(Connection con) {
+
+        boolean result      = true;
+	String analysis_ids = "";
+
+        try {
+
+	    //Get the analysis ids of the ditags
+	    Statement stmt = con.createStatement();
+	    ResultSet rs   = stmt.executeQuery("SELECT DISTINCT analysis_id FROM ditag_feature;");
+
+	    while (rs.next()) {
+		String analysis_id = rs.getString("analysis_id");
+		if ( analysis_ids.length() > 0 ) {
+		    analysis_ids = analysis_ids + ", " + analysis_id;
+		}
+		else {
+		    analysis_ids = analysis_id + " ";
+		}
+	    }
+
+	    //Check for ditag_ids that occur only once, ignore CAGE tags ("F")
+	    String sql = "SELECT COUNT(*) AS singles FROM (select count(*) as count from ditag_feature df where analysis_id IN("
+		+ analysis_ids
+		+ ") and df.ditag_side!='F' group by ditag_id, ditag_pair_id having count>2) as counter LIMIT 5;";
+
+	    int count = 0;
+	    rs        = stmt.executeQuery(sql);
+	    rs.next();
+	    count     = rs.getInt("singles");
+
+	    if (count > 0) {
+
+		ReportManager.problem(this, con, " There are ditag_features with more than two features "
+				      + "in same (ditag_id/ditag_pair_id) group!");
+		result = false;
+
+	    } else {
+
+		ReportManager.correct(this, con, "All ditag_features groups have 2 partners (start/end).");
 
 	    }
         } catch (SQLException se) {
