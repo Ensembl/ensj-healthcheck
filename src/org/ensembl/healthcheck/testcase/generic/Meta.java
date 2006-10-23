@@ -84,6 +84,8 @@ public class Meta extends SingleDatabaseTestCase {
 
 		result &= checkSchemaVersionDBName(dbre);
 
+		result &= checkBuildLevel(dbre);
+
 		// ----------------------------------------
 		// Use an AssemblyNameInfo object to get the assembly information
 		AssemblyNameInfo assembly = new AssemblyNameInfo(con);
@@ -222,7 +224,7 @@ public class Meta extends SingleDatabaseTestCase {
 		return result;
 	}
 
-//---------------------------------------------------------------------
+	// ---------------------------------------------------------------------
 
 	private boolean checkKeysNotPresent(Connection con) {
 
@@ -234,7 +236,7 @@ public class Meta extends SingleDatabaseTestCase {
 			int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey + "'");
 			if (rows > 0) {
 				result = false;
-				ReportManager.problem(this, con, rows + " meta entries for " + metaKey + " when there shouldn't be any" );
+				ReportManager.problem(this, con, rows + " meta entries for " + metaKey + " when there shouldn't be any");
 			} else {
 				ReportManager.correct(this, con, "No entry in meta table for " + metaKey);
 			}
@@ -567,6 +569,26 @@ public class Meta extends SingleDatabaseTestCase {
 	}
 
 	// ---------------------------------------------------------------------
+	/**
+	 * Check that at least some sort of genebuild.level-type key is present.
+	 */
+	private boolean checkBuildLevel(DatabaseRegistryEntry dbre) {
+
+		boolean result = false;
+
+		Connection con = dbre.getConnection();
+
+		int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key LIKE '%build.level'");
+		if (rows == 0) {
+			ReportManager.problem(this, con, "No %build.level entries in the meta table");
+		} else {
+			ReportManager.correct(this, con, rows + " build.level rows present");
+			result = true;
+		}
+
+		return result;
+
+	}
 
 	// ---------------------------------------------------------------------
 
