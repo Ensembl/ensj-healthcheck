@@ -32,9 +32,6 @@ import org.ensembl.healthcheck.util.Utils;
  */
 public class Meta extends SingleDatabaseTestCase {
 
-	// format for genebuild.version
-	private static final String GBV_REGEXP = "[0-9]{4}[a-zA-Z]*";
-
 	/**
 	 * Creates a new instance of CheckMetaDataTableTestCase
 	 */
@@ -74,7 +71,7 @@ public class Meta extends SingleDatabaseTestCase {
 
 		result &= checkTaxonomyID(dbre);
 
-		result &= checkGenebuildVersion(con);
+		result &= checkGeneBuildVersionAndAssemblyDate(con);
 
 		result &= checkCoordSystemTableCases(con);
 
@@ -422,43 +419,77 @@ public class Meta extends SingleDatabaseTestCase {
 
 	}
 
-	// -------------------------------------------------------------------------
+	// ---------------------------------------------------------------------
 
-	private boolean checkGenebuildVersion(Connection con) {
+	private boolean checkGeneBuildVersionAndAssemblyDate(Connection con) {
 
-		String gbv = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.version'");
-		logger.finest("genebuild.version from database: " + gbv);
+		boolean result = true;
 
-		if (gbv == null || gbv.length() == 0) {
+		String[] keys = { "genebuild.version", "assembly.date" };
 
-			ReportManager.problem(this, con, "No genebuild.version entry in meta table");
-			return false;
+		String date = "[0-9]{4}_[0-9]{2}";
+		String[] regexps = { date + "_[a-zA-Z]*", date };
 
-		} else {
+		for (int i = 0; i < keys.length; i++) {
 
-			if (!gbv.matches(GBV_REGEXP)) {
+			String key = keys[i];
+			String regexp = regexps[i];
 
-				ReportManager.problem(this, con, "genebuild.version " + gbv + " is not in correct format - should match " + GBV_REGEXP);
+			String value = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='" + key + "'");
+			if (value == null || value.length() == 0) {
+
+				ReportManager.problem(this, con, "No " + key + " entry in meta table");
+				result = false;
+
+			}
+
+			result &= checkMetaKey(con, key, value, regexp);
+
+			if (result) {
+				result &= checkDateFormat(con, key, value);
+			}
+
+			if (result) {
+				ReportManager.correct(this, con, key + " is present & in a valid format");
+			}
+		}
+
+		return result;
+
+	}
+
+	// ---------------------------------------------------------------------
+
+	private boolean checkMetaKey(Connection con, String key, String s, String regexp) {
+
+		if (regexp != null) {
+
+			if (!s.matches(regexp)) {
+
+				ReportManager.problem(this, con, key + " " + s + " is not in correct format - should match " + regexp);
 				return false;
-
-			} else {
-
-				int year = Integer.parseInt(gbv.substring(0, 2));
-				if (year < 0 || year > 99) {
-					ReportManager.problem(this, con, "Year part of genebuild.version (" + year + ") is incorrect");
-					return false;
-				}
-				int month = Integer.parseInt(gbv.substring(2, 4));
-				if (month < 1 || month > 12) {
-					ReportManager.problem(this, con, "Month part of genebuild.version (" + month + ") is incorrect");
-					return false;
-				}
-
 			}
 
 		}
 
-		ReportManager.correct(this, con, "genebuild.version " + gbv + " is present & in a valid format");
+		return true;
+
+	}
+
+	// ---------------------------------------------------------------------
+
+	private boolean checkDateFormat(Connection con, String key, String s) {
+
+		int year = Integer.parseInt(s.substring(0, 4));
+		if (year < 2003 || year > 2010) {
+			ReportManager.problem(this, con, "Year part of " + key + " (" + year + ") is incorrect");
+			return false;
+		}
+		int month = Integer.parseInt(s.substring(5, 7));
+		if (month < 1 || month > 12) {
+			ReportManager.problem(this, con, "Month part of " + key + " (" + month + ") is incorrect");
+			return false;
+		}
 
 		return true;
 
