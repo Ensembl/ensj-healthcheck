@@ -118,8 +118,8 @@ public final class Species {
 	public static final Species AEDES_AEGYPTI = new Species("aedes_aegypti");
 
 	/** Specific type of species */
-	public static final Species ORNITHORHYCHUS_ANATINUS = new Species("ornithorhychus_anatius");
-
+	public static final Species ORNITHORHYNCHUS_ANATINUS = new Species("ornithorhynchus_anatius");
+	
 	/** Specific type of species */
 	public static final Species FELIS_CATUS = new Species("felis_catus");
 
@@ -223,7 +223,7 @@ public final class Species {
 		taxonIDToSpecies.put("30611", OTOLEMUR_GARNETTII);
 		taxonIDToSpecies.put("59463", MYOTIS_LUCIFUGUS);
 		taxonIDToSpecies.put("42254", SOREX_ARANEUS);
-		taxonIDToSpecies.put("9258", ORNITHORHYCHUS_ANATINUS);
+		taxonIDToSpecies.put("9258", ORNITHORHYNCHUS_ANATINUS);
 		taxonIDToSpecies.put("9365", ERINACEUS_EUROPAEUS);
 		taxonIDToSpecies.put("10141", CAVIA_PORCELLUS);
 		taxonIDToSpecies.put("37347", TUPAIA_BELANGERI);
@@ -268,11 +268,12 @@ public final class Species {
 		assemblyPrefixToSpecies.put("BUSHBABY", OTOLEMUR_GARNETTII);
 		assemblyPrefixToSpecies.put("MICROBAT", MYOTIS_LUCIFUGUS);
 		assemblyPrefixToSpecies.put("COMMON_SHREW", SOREX_ARANEUS);
-		assemblyPrefixToSpecies.put("OANA", ORNITHORHYCHUS_ANATINUS);
+		assemblyPrefixToSpecies.put("OANA", ORNITHORHYNCHUS_ANATINUS);
 		assemblyPrefixToSpecies.put("HEDGEHOG", ERINACEUS_EUROPAEUS);
 		assemblyPrefixToSpecies.put("GUINEAPIG", CAVIA_PORCELLUS);
 		assemblyPrefixToSpecies.put("TREESHREW", TUPAIA_BELANGERI);
 		assemblyPrefixToSpecies.put("SQUIRREL", SPERMOPHILUS_TRIDECEMLINEATUS);
+
 		// and the other way around
 		it = assemblyPrefixToSpecies.keySet().iterator();
 		while (it.hasNext()) {
@@ -582,9 +583,9 @@ public final class Species {
 
 		// --------------------------------------
 
-		if (in(alias, "platypus,ornithorhychus_anatius,oanatius")) {
+		if (in(alias, "platypus,ornithorhynchus_anatius,oanatius")) {
 
-			return ORNITHORHYCHUS_ANATINUS;
+			return ORNITHORHYNCHUS_ANATINUS;
 
 		}
 		// --------------------------------------
