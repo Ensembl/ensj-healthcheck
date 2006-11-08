@@ -80,6 +80,9 @@ public final class DatabaseType {
     /** A healthcheck database */
     public static final DatabaseType HEALTHCHECK = new DatabaseType("healthcheck");
 
+    /** A functional genomics database */
+    public static final DatabaseType FUNCGEN = new DatabaseType("funcgen");
+
     /** A database whos type has not been determined */
     public static final DatabaseType UNKNOWN = new DatabaseType("unknown");
 
@@ -275,6 +278,14 @@ public final class DatabaseType {
         if (in(lcAlias, "healthcheck")) {
 
             return HEALTHCHECK;
+
+        }
+
+//      --------------------------------------
+
+        if (in(lcAlias, "funcgen")) {
+
+            return FUNCGEN;
 
         }
 
