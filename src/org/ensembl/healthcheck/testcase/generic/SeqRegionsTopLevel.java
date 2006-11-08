@@ -59,8 +59,7 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		// can't do this all in one SQL statement, so get all gene seq_regions
-		// and check each one in turn
+		// check that all gene seq_regions have toplevel attributes
 		// pre-fetch correct attrib_type_id to save a join
 		String val = getRowColumnValue(con, "SELECT attrib_type_id FROM attrib_type WHERE code=\'toplevel\'");
 		if (val == null || val.equals("")) {
@@ -71,25 +70,22 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 
 		logger.info("attrib_type_id for toplevel: " + topLevelAttribType);
 
-		// now loop over each gene seq_region
-		String[] geneSeqRegionIDs = getColumnValues(con, "SELECT DISTINCT seq_region_id FROM gene");
-
-		for (int i = 0; i < geneSeqRegionIDs.length; i++) {
-
-			int numTopLevel = getRowCount(con, "SELECT COUNT(*) FROM seq_region_attrib WHERE attrib_type_id = " + topLevelAttribType
-					+ " AND seq_region_id=" + geneSeqRegionIDs[i]);
-			if (numTopLevel == 0) {
-
-				ReportManager.problem(this, con, "Non top_level seq_region_id " + geneSeqRegionIDs[i] + " has genes on it");
+			int numTopLevelGenes = getRowCount(con, "SELECT COUNT(*) FROM seq_region_attrib sra, gene g WHERE sra.attrib_type_id = " + topLevelAttribType
+					+ " AND sra.seq_region_id=g.seq_region_id");
+			int numGenes = getRowCount(con, "SELECT COUNT(*) FROM gene");
+			
+			int nonTopLevelGenes = numGenes - numTopLevelGenes;
+			
+			if (nonTopLevelGenes > 0) {
+				
+				ReportManager.problem(this, con, nonTopLevelGenes + " genes are on seq_regions which are not toplevel; this may cause problems for Compara and slow down the mapper.");
 				result = false;
-
+				
+			} else {
+				
+				ReportManager.correct(this, con, "All genes are on toplevel seq regions");
+				
 			}
-
-		}
-
-		if (result == true) {
-			ReportManager.correct(this, con, "All " + geneSeqRegionIDs.length + " gene seq_regions have top_level attribute set");
-		}
 
 		// check for at least one toplevel seq_region
 		int rows = getRowCount(con, "SELECT COUNT(*) FROM seq_region_attrib WHERE attrib_type_id=" + val);
