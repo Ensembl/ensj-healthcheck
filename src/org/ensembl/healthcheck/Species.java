@@ -583,7 +583,7 @@ public final class Species {
 
 		// --------------------------------------
 
-		if (in(alias, "platypus,ornithorhynchus_anatius,oanatius")) {
+		if (in(alias, "platypus,ornithorhynchus_anatinus,oanatius")) {
 
 			return ORNITHORHYNCHUS_ANATINUS;
 
