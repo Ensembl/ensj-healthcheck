@@ -71,7 +71,9 @@ public class Meta extends SingleDatabaseTestCase {
 
 		result &= checkTaxonomyID(dbre);
 
-		result &= checkGeneBuildVersionAndAssemblyDate(con);
+		if (dbre.getType() == DatabaseType.CORE) {
+			result &= checkGeneBuildVersionAndAssemblyDate(con);
+		}
 
 		result &= checkCoordSystemTableCases(con);
 
