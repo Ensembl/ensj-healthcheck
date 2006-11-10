@@ -427,8 +427,8 @@ public class Meta extends SingleDatabaseTestCase {
 
 		String[] keys = { "genebuild.version", "assembly.date" };
 
-		String date = "[0-9]{4}_[0-9]{2}";
-		String[] regexps = { date + "_[a-zA-Z]*", date };
+		String date = "[0-9]{4}-[0-9]{2}";
+		String[] regexps = { date + "-[a-zA-Z]*", date };
 
 		for (int i = 0; i < keys.length; i++) {
 
