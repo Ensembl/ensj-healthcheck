@@ -233,7 +233,7 @@ public class Ditag extends SingleDatabaseTestCase {
 
     // ----------------------------------------------------------------------
     /**
-     * Check that all ditags that are not CAGE have start AND end tags mapped.
+     * Check that all ditags (that are not CAGE tags) have start AND end tags mapped.
      */
 
     private boolean checkForSingles(Connection con) {
@@ -286,7 +286,7 @@ public class Ditag extends SingleDatabaseTestCase {
 
     // ----------------------------------------------------------------------
     /**
-     * Check that all ditags have not more than 2 ditag_features with the same ditag_id & ditag_pair_id
+     * Check that no ditags have more than 2 ditag_features with the same ditag_id & ditag_pair_id
      */
 
     private boolean checkForMultis(Connection con) {
@@ -311,19 +311,19 @@ public class Ditag extends SingleDatabaseTestCase {
 	    }
 
 	    //Check for ditag_ids that occur only once, ignore CAGE tags ("F")
-	    String sql = "SELECT COUNT(*) AS singles FROM (select count(*) as count from ditag_feature df where analysis_id IN("
+	    String sql = "SELECT COUNT(*) AS multis FROM (select count(*) as count from ditag_feature df where analysis_id IN("
 		+ analysis_ids
-		+ ") and df.ditag_side!='F' group by ditag_id, ditag_pair_id having count>2) as counter LIMIT 5;";
+		+ ") and df.ditag_side!='F' group by ditag_id, ditag_pair_id having count>2 LIMIT 1) as counter;";
 
 	    int count = 0;
 	    rs        = stmt.executeQuery(sql);
 	    rs.next();
-	    count     = rs.getInt("singles");
+	    count     = rs.getInt("multis");
 
 	    if (count > 0) {
 
 		ReportManager.problem(this, con, " There are ditag_features with more than two features "
-				      + "in same (ditag_id/ditag_pair_id) group!");
+				      + "in same (ditag_id/ditag_pair_id) group!.\n" + sql);
 		result = false;
 
 	    } else {
