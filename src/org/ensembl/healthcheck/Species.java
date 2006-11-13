@@ -118,7 +118,7 @@ public final class Species {
 	public static final Species AEDES_AEGYPTI = new Species("aedes_aegypti");
 
 	/** Specific type of species */
-	public static final Species ORNITHORHYNCHUS_ANATINUS = new Species("ornithorhynchus_anatius");
+	public static final Species ORNITHORHYNCHUS_ANATINUS = new Species("ornithorhynchus_anatinus");
 	
 	/** Specific type of species */
 	public static final Species FELIS_CATUS = new Species("felis_catus");
