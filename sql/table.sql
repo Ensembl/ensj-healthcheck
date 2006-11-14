@@ -41,9 +41,8 @@ CREATE TABLE annotation (
 
   annotation_id               INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   report_id					INT(10) UNSIGNED NOT NULL,
-  person						VARCHAR(255),
-  action						ENUM("ignore", "normal", "flag"),
-  reason						ENUM("not relevant", "will be fixed", "healthcheck bug"),
+  user_id 					VARCHAR(255),
+  action						ENUM("manual_ok", "under_review", "note", "irrelevant", "healthcheck_bug", "manual_ok_all_releases"),
   comment					VARCHAR(255),
   
   PRIMARY KEY (annotation_id)
