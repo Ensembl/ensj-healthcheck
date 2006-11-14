@@ -20,7 +20,8 @@ CREATE TABLE session (
 CREATE TABLE report (
 
   report_id					INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  session_id					INT(10) UNSIGNED NOT NULL,
+  first_session_id			INT(10) UNSIGNED NOT NULL,
+  last_session_id			INT(10) UNSIGNED NOT NULL,
   database_name				VARCHAR(255),
   species					VARCHAR(255),    # ENUM?
   database_type				VARCHAR(255),    # ENUM?
@@ -29,7 +30,8 @@ CREATE TABLE report (
   text						VARCHAR(255),
   
   PRIMARY KEY (report_id),
-  KEY session_idx(session_id)
+  KEY first_session_idx(first_session_id),
+  KEY last_session_idx(last_session_id)
   
 );
 
