@@ -68,6 +68,8 @@ public class TextTestRunner extends TestRunner implements Reporter {
 	private boolean printFailureText = true;
 
 	private boolean skipSlow = false;
+	
+	private boolean noLogging = false;
 
 	private static final String CORE_DB_REGEXP = "[a-z]+_[a-z]+_(core|est|estgene|vega|otherfeatures)";
 
@@ -151,6 +153,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 		System.out.println("  -resultsbydb    Print results by databases as well as by test case.");
 		System.out.println("  -nofailuretext  Don't print failure hints.");
 		System.out.println("  -skipslow       Don't run long-running tests");
+		System.out.println("  -nologging      Suppress logging info");
 		System.out.println("  group1          Names of groups of test cases to run.");
 		System.out.println("                  Note each test case is in a group of its own with the name of the test case.");
 		System.out.println("                  This allows individual tests to be run if required.");
@@ -297,6 +300,10 @@ public class TextTestRunner extends TestRunner implements Reporter {
 					skipSlow = true;
 					logger.finest("Will skip long-running tests.");
 
+				} else if (args[i].equals("-nologging")) {
+
+					noLogging = true;
+
 				} else {
 
 					groupsToRun.add(args[i]);
@@ -344,9 +351,17 @@ public class TextTestRunner extends TestRunner implements Reporter {
 		Handler myHandler = new MyStreamHandler(System.out, new LogFormatter());
 
 		logger.addHandler(myHandler);
-		logger.setLevel(Level.WARNING); // default - only print important
-		// messages
+		
+		if (noLogging) {
+			
+			logger.setLevel(Level.OFF);
+			
+		} else {
+			
+		logger.setLevel(Level.WARNING); // default - only print important messages
 
+		}
+		
 		if (debug) {
 
 			logger.setLevel(Level.FINEST);
