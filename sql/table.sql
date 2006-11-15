@@ -44,6 +44,7 @@ CREATE TABLE annotation (
   user_id 					VARCHAR(255),
   action						ENUM("manual_ok", "under_review", "note", "irrelevant", "healthcheck_bug", "manual_ok_all_releases"),
   comment					VARCHAR(255),
+  timestamp					DATETIME NOT NULL
   
   PRIMARY KEY (annotation_id)
   
