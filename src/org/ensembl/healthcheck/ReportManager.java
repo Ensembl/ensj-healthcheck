@@ -132,7 +132,7 @@ public final class ReportManager {
 
 		if (usingDatabase) {
 
-			addToDatabase(report);
+			checkAndAddToDatabase(report);
 			return;
 
 		}
@@ -795,9 +795,9 @@ public final class ReportManager {
 		String[] tables = { "session", "report", "annotation" };
 
 		for (int i = 0; i < tables.length; i++) {
-			
+
 			String sql = "DELETE FROM " + tables[i];
-			
+
 			try {
 
 				Statement stmt = outputDatabaseConnection.createStatement();
@@ -815,29 +815,101 @@ public final class ReportManager {
 
 	// -------------------------------------------------------------------------
 	/**
+	 * Update a report in the database. Two possible actions: 1. If the report
+	 * already exists and hasn't changed, just update it. 2. If the report is new,
+	 * add a new record.
+	 */
+	public static void checkAndAddToDatabase(ReportLine report) {
+
+		long reportID = reportExistsInDatabase(report);
+
+		if (reportID > -1) {
+
+			updateReportInDatabase(report, reportID);
+
+		} else {
+
+			addReportToDatabase(report);
+
+		}
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+	 * Check if a report exists (i.e. same database, testcase, result and text).
+	 * 
+	 * @return -1 if the report does not exist, report_id if it does.
+	 */
+	public static long reportExistsInDatabase(ReportLine report) {
+
+		String sql = "SELECT report_id FROM report WHERE database_name=? AND testcase=? AND result=? AND text=?";
+
+		long reportID = -1;
+
+		try {
+
+			PreparedStatement stmt = outputDatabaseConnection.prepareStatement(sql);
+			stmt.setString(1, report.getDatabaseName());
+			stmt.setString(2, report.getShortTestCaseName());
+			stmt.setString(3, report.getLevelAsString());
+			stmt.setString(4, report.getMessage());
+			ResultSet rs = stmt.executeQuery();
+			if (rs != null) {
+				if (rs.first()) {
+					reportID = rs.getLong(1);
+				} else {
+					reportID = -1; // probably signifies an empty ResultSet
+				}
+			}
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+
+			System.err.println("Error executing:\n" + sql);
+			e.printStackTrace();
+
+		}
+
+		if (reportID > -1) {
+			logger.fine("Report already exists (ID " + reportID + "): " + report.getDatabaseName() + " " + report.getTestCaseName() + " "
+					+ report.getLevelAsString() + " " + report.getMessage());
+		} else {
+			logger.fine("Report does not already exist: " + report.getDatabaseName() + " " + report.getTestCaseName() + " "
+					+ report.getLevelAsString() + " " + report.getMessage());
+		}
+
+		return reportID;
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
 	 * Store a report in the database.
 	 */
-	public static void addToDatabase(ReportLine report) {
+	public static void addReportToDatabase(ReportLine report) {
 
 		if (outputDatabaseConnection == null) {
 			logger.severe("No connection to output database!");
 		}
 
-		logger.fine(report.getDatabaseName() + " " + report.getTestCaseName() + " " + report.getLevelAsString() + " "
-				+ report.getMessage());
+		logger.fine("Adding report for: " + report.getDatabaseName() + " " + report.getTestCaseName() + " " + report.getLevelAsString()
+				+ " " + report.getMessage());
 
-		String sql = "INSERT INTO report (session_id, database_name, species, database_type, testcase, result, text) VALUES (?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO report (first_session_id, last_session_id, database_name, species, database_type, testcase, result, text) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
 		try {
 
 			PreparedStatement stmt = outputDatabaseConnection.prepareStatement(sql);
 			stmt.setLong(1, sessionID);
-			stmt.setString(2, report.getDatabaseName());
-			stmt.setString(3, (dbre.setSpeciesFromName(report.getDatabaseName())).toString());
-			stmt.setString(4, (dbre.setTypeFromName(report.getDatabaseName())).toString());
-			stmt.setString(5, report.getShortTestCaseName());
-			stmt.setString(6, report.getLevelAsString());
-			stmt.setString(7, report.getMessage());
+			stmt.setLong(2, sessionID);
+			stmt.setString(3, report.getDatabaseName());
+			stmt.setString(4, (dbre.setSpeciesFromName(report.getDatabaseName())).toString());
+			stmt.setString(5, (dbre.setTypeFromName(report.getDatabaseName())).toString());
+			stmt.setString(6, report.getShortTestCaseName());
+			stmt.setString(7, report.getLevelAsString());
+			stmt.setString(8, report.getMessage());
 			stmt.executeUpdate();
 
 		} catch (SQLException e) {
@@ -849,6 +921,36 @@ public final class ReportManager {
 
 	}
 
+	// -------------------------------------------------------------------------
+	/**
+	 * Update the last_session_id of a report in the database.
+	 */
+	public static void updateReportInDatabase(ReportLine report, long reportID) {
+
+		if (outputDatabaseConnection == null) {
+			logger.severe("No connection to output database!");
+		}
+
+		logger.fine("Updating report for: " + report.getDatabaseName() + " " + report.getTestCaseName() + " "
+				+ report.getLevelAsString() + " " + report.getMessage() + ", new last_session_id=" + sessionID);
+
+		String sql = "UPDATE report SET last_session_id=? WHERE report_id=?";
+
+		try {
+
+			PreparedStatement stmt = outputDatabaseConnection.prepareStatement(sql);
+			stmt.setLong(1, sessionID);
+			stmt.setLong(2, reportID);
+			stmt.executeUpdate();
+
+		} catch (SQLException e) {
+
+			System.err.println("Error executing:\n" + sql);
+			e.printStackTrace();
+
+		}
+
+	}
 	// -------------------------------------------------------------------------
 
 } // ReportManager
