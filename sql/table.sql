@@ -41,10 +41,13 @@ CREATE TABLE annotation (
 
   annotation_id               INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   report_id					INT(10) UNSIGNED NOT NULL,
-  user_id 					VARCHAR(255),
+  person 					VARCHAR(255),
   action						ENUM("manual_ok", "under_review", "note", "irrelevant", "healthcheck_bug", "manual_ok_all_releases"),
   comment					VARCHAR(255),
-  timestamp					DATETIME NOT NULL,
+  created_at                 	TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+  modified_at      			TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  created_by					VARCHAR(255),
+  modified_by				VARCHAR(255),
   
   PRIMARY KEY (annotation_id)
   
