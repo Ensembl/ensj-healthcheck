@@ -64,11 +64,11 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 	/*
 	SELECT COUNT(*) FROM allele LEFT JOIN sample ON allele.sample_id = sample.sample_id WHERE sample.sample_id is NULL;
 	*/
-	result &= checkForOrphans(con, "source", "source_id", "variation", "source_id", true);
+	result &= checkForOrphans(con, "variation", "source_id", "source", "source_id", true);
 
-	result &= checkForOrphans(con, "source", "source_id", "variation_synonym", "source_id", true);
+	result &= checkForOrphans(con, "variation_synonym", "source_id", "source", "source_id", true);
 
-	result &= checkForOrphans(con, "source", "source_id", "variation_feature", "source_id", true);
+	result &= checkForOrphans(con, "variation_feature", "source_id", "source", "source_id", true);
 
 	result &= checkForOrphans(con, "allele_group", "sample_id", "sample", "sample_id", true);
 	
@@ -102,7 +102,7 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 
 	result &= checkForOrphans(con, "variation_synonym", "variation_id", "variation", "variation_id", true);
 	
-	result &= checkForOrphans(con, "flanking_sequence", "variation_id", "variation", "variation_id", false);
+	result &= checkForOrphans(con, "flanking_sequence", "variation_id", "variation", "variation_id", true);
         
 	result &= checkForOrphans(con, "variation_feature", "variation_id", "flanking_sequence", "variation_id",true);
 	
