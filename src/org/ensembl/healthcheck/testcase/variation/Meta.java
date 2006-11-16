@@ -63,7 +63,7 @@ public class Meta extends SingleDatabaseTestCase {
 	    }
 	    if (dbre.getSpecies() == Species.MUS_MUSCULUS){
 		//find out if the entries in the Meta point to the strain information
-		String[] metaKeys = {"read_coverage.coverage_level","population.default_strain","source.default_source"};
+		String[] metaKeys = {"read_coverage.coverage_level","individual.default_strain","source.default_source"};
 		for (int i = 0; i < metaKeys.length; i++){
 		    metaKey = metaKeys[i];
 		    
