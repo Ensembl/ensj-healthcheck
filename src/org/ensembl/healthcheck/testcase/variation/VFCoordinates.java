@@ -39,7 +39,7 @@ public class VFCoordinates extends MultiDatabaseTestCase {
      */
     public VFCoordinates() {
 
-        addToGroup("variation");
+        addToGroup("variation-core");
 	setDescription("Check for possible wrong coordinates in Vf table, due to wrong length or outside range seq_region.");
 	setHintLongRunning(true);
 
@@ -94,6 +94,11 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 	    }
 	     else{
 		 ReportManager.problem(this,con,"Coordinates in VariationFeature in range in " + dbrvar.getName());
+	     }
+	     mc = getRowCount(con,"SELECT COUNT(*) FROM " + dbrvar.getName() + ".variation_feature vf WHERE vf.seq_region_start = 1 AND vf.seq_region_end > 1");
+	     if (mc > 0){
+		 ReportManager.problem(this, con, "Variation Features with coordinates = 1 " + dbrvar.getName());
+		 result = false;
 	     }
 	}
         return result;
