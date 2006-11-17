@@ -61,7 +61,7 @@ public class Meta extends SingleDatabaseTestCase {
 		result &= checkForOrphansWithConstraint(con,"meta","meta_value","sample","sample_id","meta_key = '" + metaKey + "'");
 
 	    }
-	    if (dbre.getSpecies() == Species.MUS_MUSCULUS){
+	    if (dbre.getSpecies() == Species.MUS_MUSCULUS || dbre.getSpecies() == Species.RATTUS_NORVEGICUS){
 		//find out if the entries in the Meta point to the strain information
 		String[] metaKeys = {"read_coverage.coverage_level","individual.default_strain","source.default_source"};
 		for (int i = 0; i < metaKeys.length; i++){
@@ -71,11 +71,23 @@ public class Meta extends SingleDatabaseTestCase {
 		    if (metaKey == "read_coverage.coverage_level"){
 			result &= checkForOrphansWithConstraint(con,"meta","meta_value","read_coverage","level","meta_key = '" + metaKey + "'");
 		    }
-		    else if (metaKey == "population.default_strain"){
+		    else if (metaKey == "individual.default_strain"){
 			result &= checkForOrphansWithConstraint(con,"meta","meta_value","sample","name","meta_key = '" + metaKey + "'");
 		    }
 		    else if (metaKey == "source.default_source"){
 			result &= checkForOrphansWithConstraint(con,"meta","meta_value","source","name","meta_key = '" + metaKey + "'");
+		    }
+		}
+	    }
+	    if (dbre.getSpecies() == Species.CANIS_FAMILIARIS){
+		//find out if the entries in the Meta point to the strain information
+		String[] metaKeys = {"individual.default_strain"};
+		for (int i = 0; i < metaKeys.length; i++){
+		    metaKey = metaKeys[i];
+		    
+		    result &= checkKeysPresent(con,metaKey);
+		    if (metaKey == "individual.default_strain"){
+			result &= checkForOrphansWithConstraint(con,"meta","meta_value","sample","name","meta_key = '" + metaKey + "'");
 		    }
 		}
 	    }
