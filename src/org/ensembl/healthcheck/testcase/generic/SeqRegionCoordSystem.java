@@ -24,11 +24,13 @@ import java.sql.Statement;
 import java.util.HashMap;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check for identically-named seq_regions in different co-ordinate systems. Also check that identically-named seq_regions have the same length.
+ * Check for identically-named seq_regions in different co-ordinate systems.
+ * Also check that identically-named seq_regions have the same length.
  */
 
 public class SeqRegionCoordSystem extends SingleDatabaseTestCase {
@@ -57,18 +59,20 @@ public class SeqRegionCoordSystem extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		result &= checkNames(dbre);
-		
+		if (dbre.getType() != DatabaseType.VEGA) {
+			result &= checkNames(dbre);
+		}
+
 		result &= checkLengths(dbre);
-		
+
 		return result;
-		
+
 	} // run
 
 	private boolean checkNames(DatabaseRegistryEntry dbre) {
-		
+
 		boolean result = true;
-		
+
 		Connection con = dbre.getConnection();
 
 		HashMap coordSystems = new HashMap();
@@ -87,13 +91,13 @@ public class SeqRegionCoordSystem extends SingleDatabaseTestCase {
 		// check each pair in turn
 		Long[] coordSystemIDs = (Long[]) coordSystems.keySet().toArray(new Long[coordSystems.size()]);
 		for (int i = 0; i < coordSystemIDs.length; i++) {
-			for (int j = i+1; j < coordSystemIDs.length; j++) {
+			for (int j = i + 1; j < coordSystemIDs.length; j++) {
 
 				String csI = (String) coordSystems.get(coordSystemIDs[i]);
 				String csJ = (String) coordSystems.get(coordSystemIDs[j]);
 
-				int same = getRowCount(con, "SELECT COUNT(*) FROM seq_region s1, seq_region s2 WHERE s1.coord_system_id=" + coordSystemIDs[i]
-						+ " AND s2.coord_system_id=" + coordSystemIDs[j] + " AND s1.name = s2.name");
+				int same = getRowCount(con, "SELECT COUNT(*) FROM seq_region s1, seq_region s2 WHERE s1.coord_system_id="
+						+ coordSystemIDs[i] + " AND s2.coord_system_id=" + coordSystemIDs[j] + " AND s1.name = s2.name");
 
 				if (same > 0) {
 
@@ -110,34 +114,35 @@ public class SeqRegionCoordSystem extends SingleDatabaseTestCase {
 			} // j
 
 		} // i
-		
+
 		return result;
-		
+
 	}
-	
-	
+
 	private boolean checkLengths(DatabaseRegistryEntry dbre) {
-		
+
 		boolean result = true;
-		
+
 		Connection con = dbre.getConnection();
-		
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM seq_region s1, seq_region s2 WHERE s1.name=s2.name AND s1.coord_system_id != s2.coord_system_id AND s1.length != s2.length");
-		
+
+		int rows = getRowCount(
+				con,
+				"SELECT COUNT(*) FROM seq_region s1, seq_region s2 WHERE s1.name=s2.name AND s1.coord_system_id != s2.coord_system_id AND s1.length != s2.length");
+
 		if (rows > 0) {
-			
+
 			ReportManager.problem(this, con, rows + " seq_regions have the same name but different lengths");
 			result = false;
-			
+
 		} else {
-			
+
 			ReportManager.correct(this, con, "All seq_region lengths match");
-			
+
 		}
-		
+
 		return result;
-		
+
 	}
-	
+
 } // SeqRegionCoordsystem
 
