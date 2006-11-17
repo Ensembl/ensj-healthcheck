@@ -60,10 +60,12 @@ public class Biotypes extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 		result &= checkNull(con);
 		result &= checkEnsembl(con);
-		result &= checkGenesAndTranscripts(con);
+		if (dbre.getType() != DatabaseType.VEGA) {
+			result &= checkGenesAndTranscripts(con);
+		}
 
 		result &= checkTypesFromFile(dbre);
-		
+
 		return result;
 
 	} // run
@@ -163,11 +165,11 @@ public class Biotypes extends SingleDatabaseTestCase {
 	} // -------------------------------------------------------------------------
 
 	private boolean checkTypesFromFile(DatabaseRegistryEntry dbre) {
-		
+
 		boolean result = true;
-		
+
 		Connection con = dbre.getConnection();
-		
+
 		String file;
 		if (dbre.getType() == DatabaseType.CDNA) {
 			file = "biotypes_cdna.txt";
@@ -176,33 +178,33 @@ public class Biotypes extends SingleDatabaseTestCase {
 		} else {
 			file = "biotypes.txt";
 		}
-		
+
 		String[] allowedBiotypes = Utils.readTextFile(file);
-		
+
 		// check gene and transcript biotypes
 		String[] tables = { "gene", "transcript" };
-		
+
 		for (int i = 0; i < tables.length; i++) {
-			
+
 			String table = tables[i];
 			String[] biotypes = getColumnValues(con, "SELECT DISTINCT(biotype) FROM " + table);
-			
+
 			for (int j = 0; j < biotypes.length; j++) {
-				
+
 				String biotype = biotypes[j];
-				
+
 				if (!Utils.stringInArray(biotype, allowedBiotypes, false)) {
 					ReportManager.problem(this, con, table + " contains invalid biotype '" + biotype + "'");
 					result = false;
-				} 
+				}
 			}
-			
+
 		}
-		
+
 		return result;
-		
+
 	}
-	
-  // -------------------------------------------------------------------------
+
+	// -------------------------------------------------------------------------
 
 } // Biotypes
