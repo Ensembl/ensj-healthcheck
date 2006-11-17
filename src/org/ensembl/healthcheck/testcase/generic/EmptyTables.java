@@ -139,6 +139,11 @@ public class EmptyTables extends SingleDatabaseTestCase {
 				tables = remove(tables, "ditag_feature");
 			}
 
+			// don't check for unconventional transcript associations in species other than human
+			if (species != Species.HOMO_SAPIENS) {
+				tables = remove(tables, "unconventional_transcript_association");
+			}
+			
 			// we don't have many gene_attribs yet
 			tables = remove(tables, "gene_attrib");
 
