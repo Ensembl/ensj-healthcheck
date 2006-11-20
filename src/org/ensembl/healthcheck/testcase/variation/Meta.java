@@ -51,6 +51,8 @@ public class Meta extends SingleDatabaseTestCase {
 	    Connection con = dbre.getConnection();
 	    String metaKey;
 
+	    result &= checkSchemaVersionDBName(dbre);
+
 	    //check the Meta table in Human: should contain the entry for the pairwise_ld
 	    if (dbre.getSpecies() == Species.HOMO_SAPIENS){
 		//find out if there is an entry for the default LD Population
@@ -109,6 +111,55 @@ public class Meta extends SingleDatabaseTestCase {
 		}
 
 		return result;
+	}
+
+	// ---------------------------------------------------------------------
+	/**
+	 * Check that the schema_version in the meta table is present and matches the
+	 * database name.
+	 */
+	private boolean checkSchemaVersionDBName(DatabaseRegistryEntry dbre) {
+
+		boolean result = true;
+
+		// get version from database name
+		String dbNameVersion = dbre.getSchemaVersion();
+		logger.finest("Schema version from database name: " + dbNameVersion);
+
+		// get version from meta table
+		Connection con = dbre.getConnection();
+
+		if (dbNameVersion == null) {
+			ReportManager.warning(this, con, "Can't deduce schema version from database name.");
+			return false;
+		}
+
+		String schemaVersion = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='schema_version'");
+		logger.finest("schema_version from meta table: " + schemaVersion);
+
+		if (schemaVersion == null || schemaVersion.length() == 0) {
+
+			ReportManager.problem(this, con, "No schema_version entry in meta table");
+			return false;
+
+		} else if (!schemaVersion.matches("[0-9]+")) {
+
+			ReportManager.problem(this, con, "Meta schema_version " + schemaVersion + " is not numeric");
+			return false;
+
+		} else if (!dbNameVersion.equals(schemaVersion)) {
+
+			ReportManager.problem(this, con, "Meta schema_version " + schemaVersion
+					+ " does not match version inferred from database name (" + dbNameVersion + ")");
+			return false;
+
+		} else {
+
+			ReportManager.correct(this, con, "schema_version " + schemaVersion + " matches database name version " + dbNameVersion);
+
+		}
+		return result;
+
 	}
     // ---------------------------------------------------------
 }
