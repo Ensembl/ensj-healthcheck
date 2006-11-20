@@ -110,12 +110,12 @@ public class OligoXrefs extends SingleDatabaseTestCase {
       for (Iterator iter = srID2name.keySet().iterator(); iter.hasNext(); ) {
         String srID = (String)iter.next();
         String name = (String)srID2name.get(srID);
-        String label = name +"( seq_region_id="+srID+")";
+        String label = name +" (seq_region_id="+srID+")";
         long count = srID2count.containsKey(srID) ? Long.parseLong(srID2count.get(srID).toString()) : 0;
         if ( count >0) {
-          ReportManager.correct(this, con, "Chromosome " + label + " has " + srID2count.get(srID) + " associated Oligo xrefs.");
+          ReportManager.correct(this, con, "Chromosome " + label + " has " + srID2count.get(srID) + " associated oligo xrefs.");
         } else {
-          ReportManager.problem(this, con, "Chromosome " + label + " has no associated Oligo xrefs.");
+          ReportManager.problem(this, con, "Chromosome " + label + " has no associated oligo xrefs.");
           result = false;
         } 
 
