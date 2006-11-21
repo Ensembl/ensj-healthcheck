@@ -50,9 +50,12 @@ nod_bacs
 ntctgs
 operon
 other_cdna
+otter_corf
 other_est
+otter_igsf
 other_mrna
 other_protein
+otter_external
 peptides_bdgp
 Pfam
 pfscan
@@ -91,3 +94,7 @@ z_dbest
 z_estgene
 zfish_cDNA
 zfish_EST
+
+ logic name in
+gene and transcript tables will not be drawn, but it is. Could you add
+this (and ) 
