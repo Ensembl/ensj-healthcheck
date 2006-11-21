@@ -139,11 +139,12 @@ public class EmptyTables extends SingleDatabaseTestCase {
 				tables = remove(tables, "ditag_feature");
 			}
 
-			// don't check for unconventional transcript associations in species other than human
+			// don't check for unconventional transcript associations in species other
+			// than human
 			if (species != Species.HOMO_SAPIENS) {
 				tables = remove(tables, "unconventional_transcript_association");
 			}
-			
+
 			// we don't have many gene_attribs yet
 			tables = remove(tables, "gene_attrib");
 
@@ -181,8 +182,9 @@ public class EmptyTables extends SingleDatabaseTestCase {
 			String[] allowedEmpty = { "affy_array", "affy_feature", "affy_probe", "analysis_description", "dna", "external_synonym",
 					"go_xref", "identity_xref", "karyotype", "map", "marker", "marker_feature", "marker_map_location", "marker_synonym",
 					"misc_attrib", "misc_feature", "misc_feature_misc_set", "misc_set", "prediction_exon", "prediction_transcript",
-					"regulatory_factor", "regulatory_factor_coding", "regulatory_feature", "regulatory_feature_object", "repeat_consensus",
-					"repeat_feature", "simple_feature", "transcript_attrib", "transcript_supporting_feature", "translation_attrib" };
+					"regulatory_factor", "regulatory_factor_coding", "regulatory_feature", "regulatory_feature_object",
+					"regulatory_search_region", "repeat_consensus", "repeat_feature", "simple_feature", "transcript_attrib",
+					"transcript_supporting_feature", "translation_attrib", "unconventional_transcript_association" };
 			tables = remove(tables, allowedEmpty);
 
 		}
