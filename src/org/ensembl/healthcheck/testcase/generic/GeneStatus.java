@@ -44,6 +44,7 @@ public class GeneStatus extends SingleDatabaseTestCase {
 	 */
 	public void types() {
 
+		removeAppliesToType(DatabaseType.CDNA);
 		removeAppliesToType(DatabaseType.VEGA);
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		
