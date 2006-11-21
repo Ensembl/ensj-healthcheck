@@ -2,6 +2,7 @@ Ambiguous_ORF
 Antisense
 Artifact
 Coding
+Disrupted_domain
 Expressed_pseudogene
 Ig_pseudogene_segment
 Ig_segment
@@ -20,4 +21,5 @@ processed_pseudogene
 processed_transcript
 protein_coding
 pseudogene
+TEC
 unprocessed_pseudogene
