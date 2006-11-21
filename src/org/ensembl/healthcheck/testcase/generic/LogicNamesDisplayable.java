@@ -33,8 +33,7 @@ import org.ensembl.healthcheck.util.Utils;
 
 /**
  * Check that the logic names in the analysis table are displayable. Currently reads the list of
- * displayable logc names from a text file. Current set of logic names is stored at
- * http://www.ensembl.org/Docs/wiki/html/EnsemblDocs/LogicNames.html
+ * displayable logc names from a text file. Current set of logic names is stored in logicnames.txt
  */
 public class LogicNamesDisplayable extends SingleDatabaseTestCase {
 
