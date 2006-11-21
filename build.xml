@@ -8,224 +8,184 @@
 
 <project default="compile" basedir=".">
 
-    <property name="name" value="ensj-healthcheck" />
-    <property name="version" value="" />
-    <property name="build.name" value="${name}" />
-    <property name="build.compiler" value="modern" />
+	<property name="name" value="ensj-healthcheck" />
+	<property name="version" value="" />
+	<property name="build.name" value="${name}" />
+	<property name="build.compiler" value="modern" />
 
-    <property name="src"                 location="src"/>
-    <property name="build"               location="build"/>
-    <property name="dist"                location="dist"/>
-    <property name="doc"                 location="doc"/>
-    <property name="lib"                 location="lib"/>
-    <property name="images"              location="images"/>
-    <property name="web.dir"             location="${user.home}/public_html"/>
-    <property name="web.javadoc.dir"     location="${web.dir}/javadoc"/>
-    <property name="web.mirror.dir"      location="${doc}/external_web_pages"/>
+	<property name="src" location="src" />
+	<property name="build" location="build" />
+	<property name="dist" location="dist" />
+	<property name="doc" location="doc" />
+	<property name="lib" location="lib" />
+	<property name="images" location="images" />
+	<property name="web.dir" location="${user.home}/public_html" />
+	<property name="web.javadoc.dir" location="${web.dir}/javadoc" />
+	<property name="web.mirror.dir" location="${doc}/external_web_pages" />
 
-    <property name="scp-executable"      value="c:\cygwin\bin\scp.exe"/>
-    <property name="scp-port"            value="2222"/>
-    <property name="scp-target"
-              value="gp1@localhost:~/work/ensj-healthcheck/lib"
-     />
+	<property name="scp-executable" value="c:\cygwin\bin\scp.exe" />
+	<property name="scp-port" value="2222" />
+	<property name="scp-target" value="gp1@localhost:~/work/ensj-healthcheck/lib" />
 
-    <!-- ################################################################################## -->
-    <!-- Targets -->
+	<!-- ################################################################################## -->
+	<!-- Targets -->
 
-    <target name="init">
-        <!-- Create the time stamp -->
-        <tstamp/>
-        <!-- Create the directory structure -->
-        <mkdir dir="${build}"/>
-        <mkdir dir="${dist}"/>
-    </target>
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp />
+		<!-- Create the directory structure -->
+		<mkdir dir="${build}" />
+		<mkdir dir="${dist}" />
+	</target>
 
-    <!-- ################################################################################## -->
+	<!-- ################################################################################## -->
 
-    <target name="java-version"
-            description="Print which version of Java is being used; hopefully will help to spot path problems"
-     >
-        <exec executable="java">
-            <arg value="-version"/>
-        </exec>
-    </target>
+	<target name="java-version" description="Print which version of Java is being used; hopefully will help to spot path problems">
+		<exec executable="java">
+			<arg value="-version" />
+		</exec>
+	</target>
 
-    <!-- ################################################################################## -->
+	<!-- ################################################################################## -->
 
-    <target name="compile"
-            depends="init, java-version"
-            description="Compile the source "
-     >
-        <javac srcdir="${src}"
-               destdir="${build}"
-               excludes="**/*Test.*"
-               debug="true"
-               debugLevel="lines,vars,source"
-         >
-            <classpath>
-                <fileset dir="lib">
-                    <include name="**/*.jar"/>
-                </fileset>
-            </classpath>
-        </javac>
-    </target>
+	<target name="compile" depends="init, java-version" description="Compile the source ">
+		<javac srcdir="${src}" destdir="${build}" excludes="**/*Test.*" debug="true" debugLevel="lines,vars,source">
+			<classpath>
+				<fileset dir="lib">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+	</target>
 
-    <!-- ################################################################################## -->
+	<!-- ################################################################################## -->
 
-    <target name="build-test-library" depends="compile">
-        <java classname="org.ensembl.healthcheck.BuildTestLibrary">
-            <arg value="${web.mirror.dir}/testlist_template.html"/>
-            <classpath>
-                <pathelement path="${build}"/>
-                <fileset dir="lib">
-                    <include name="**/*.jar"/>
-                </fileset>
-            </classpath>
-        </java>
-    </target>
+	<target name="build-test-library" depends="compile">
+		<java classname="org.ensembl.healthcheck.BuildTestLibrary">
+			<arg value="${web.mirror.dir}/testlist_template.html" />
+			<classpath>
+				<pathelement path="${build}" />
+				<fileset dir="lib">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+		</java>
+	</target>
 
 
-    <!-- ################################################################################## -->
+	<!-- ################################################################################## -->
 
-    <target name="copy-resources"
-            description="Copy images etc into appropriate directories"
-     >
-        <copy todir="${build}/org/ensembl/healthcheck/gui">
-            <fileset dir="${images}">
-                <include name="*.gif"/>
-                <include name="*.png"/>
-                <include name="*.jpg"/>
-            </fileset>
-        </copy>
-    </target>
+	<target name="copy-resources" description="Copy images etc into appropriate directories">
+		<copy todir="${build}/org/ensembl/healthcheck/gui">
+			<fileset dir="${images}">
+				<include name="*.gif" />
+				<include name="*.png" />
+				<include name="*.jpg" />
+			</fileset>
+		</copy>
+	</target>
 
-    <!-- ################################################################################## -->
+	<!-- ################################################################################## -->
 
-    <target name="jar"
-            depends="compile, copy-resources"
-            description="generate ensj-healthcheck.jar"
-     >
-        <jar jarfile="${lib}/${name}.jar">
-            <fileset dir="${build}/"/>
-        </jar>
-    </target>
+	<target name="jar" depends="compile, copy-resources" description="generate ensj-healthcheck.jar">
+		<jar jarfile="${lib}/${name}.jar">
+			<fileset dir="${build}/" />
+		</jar>
+	</target>
 
-    <!-- ################################################################################## -->
-    <!-- Transfer lib/ensj-healthcheck.jar to Sanger using scp over SSH tunnel
+	<!-- ################################################################################## -->
+	<!-- Transfer lib/ensj-healthcheck.jar to Sanger using scp over SSH tunnel
        Assumes local port 2222 is forwarded to port 22 on a Sanger machine                -->
 
-    <target name="scp-lib"
-            depends="jar"
-            description="scp jar file via SSH tunnel to Sanger"
-     >
-        <exec executable="${scp-executable}" dir="${lib}">
-            <arg value="-oPort=${scp-port}"/>
-            <arg value="${name}.jar"/>
-            <arg value="${scp-target}"/>
-        </exec>
-    </target>
+	<target name="scp-lib" depends="jar" description="scp jar file via SSH tunnel to Sanger">
+		<exec executable="${scp-executable}" dir="${lib}">
+			<arg value="-oPort=${scp-port}" />
+			<arg value="${name}.jar" />
+			<arg value="${scp-target}" />
+		</exec>
+	</target>
 
-    <!-- ################################################################################## -->
+	<!-- ################################################################################## -->
 
-    <target name="dist"
-            depends="compile"
-            description="generate the distribution"
-     >
-        <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
-        <jar jarfile="${dist}/${build.name}-${DSTAMP}.jar" basedir="${build}"/>
-        <!-- Current version -->
-        <copy file="${dist}/${build.name}-${DSTAMP}.jar"
-              tofile="${dist}/${name}.jar"
-         />
-        <!-- And the source -->
-        <jar jarfile="${dist}/${build.name}-src.jar" basedir="${src}"/>
-        <!-- Tar file containing everything -->
-        <tar tarfile="${dist}/${name}.tar.gz"
-             basedir="../"
-             includes="${name}/**"
-             excludes="**/*~, **/*.class, **/.nbattrs, **/.xvpics/*, **/dist/**"
-             compression="gzip"
-         />
-    </target>
+	<target name="dist" depends="compile" description="generate the distribution">
+		<!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
+		<jar jarfile="${dist}/${build.name}-${DSTAMP}.jar" basedir="${build}" />
+		<!-- Current version -->
+		<copy file="${dist}/${build.name}-${DSTAMP}.jar" tofile="${dist}/${name}.jar" />
+		<!-- And the source -->
+		<jar jarfile="${dist}/${build.name}-src.jar" basedir="${src}" />
+		<!-- Tar file containing everything -->
+		<tar tarfile="${dist}/${name}.tar.gz" basedir="../" includes="${name}/**" excludes="**/*~, **/*.class, **/.nbattrs, **/.xvpics/*, **/dist/**" compression="gzip" />
+	</target>
 
-    <target name="dist-web"
-            depends="javadoc-web, javadoc-tar, dist"
-            description="Copy distribution files to a web dir"
-     >
-        <copy todir="${web.dir}">
-            <fileset dir="${dist}">
-                <include name="**/*.jar"/>
-                <include name="**/*.tar.gz"/>
-            </fileset>
-            <fileset dir="${web.mirror.dir}">
-                <include name="**/*.html"/>
-            </fileset>
-        </copy>
-    </target>
+	<target name="dist-web" depends="javadoc-web, javadoc-tar, dist" description="Copy distribution files to a web dir">
+		<copy todir="${web.dir}">
+			<fileset dir="${dist}">
+				<include name="**/*.jar" />
+				<include name="**/*.tar.gz" />
+			</fileset>
+			<fileset dir="${web.mirror.dir}">
+				<include name="**/*.html" />
+			</fileset>
+		</copy>
+	</target>
 
-    <!-- ################################################################################## -->
+	<!-- ################################################################################## -->
 
-    <target name="clean" description="Clean up" >
-        <delete dir="${doc}/javadoc" />
-        <delete dir="${dist}" />
-        <delete file="${lib}/${name}.jar" />
-    </target>
+	<target name="clean" description="Clean up">
+		<delete dir="${doc}/javadoc" />
+		<delete dir="${dist}" />
+		<delete file="${lib}/${name}.jar" />
+	</target>
 
-    <target name="cleanall"
-            depends="clean"
-            description="Clean .class files out of src dir as well"
-     >
-        <delete>
-            <fileset dir=".">
-                <include name="**/*.class"/>
-            </fileset>
-        </delete>
-    </target>
+	<target name="cleanall" depends="clean" description="Clean .class files out of src dir as well">
+		<delete>
+			<fileset dir=".">
+				<include name="**/*.class" />
+			</fileset>
+		</delete>
+	</target>
 
-    <!-- ################################################################################## -->
-    <target name="javadoc">
+	<!-- ################################################################################## -->
+	<target name="javadoc">
 
-        <javadoc
-      destdir="${doc}/javadoc"
-      author="true"
-      version="true"
-      use="true"
-      windowtitle="EnsEMBL HealthCheck"
-      doctitle="EnsEMBL HealthCheck"
-      >
-            <packageset dir="${src}" defaultexcludes="yes">
-                <include name="org/ensembl/healthcheck/**" />
-                <exclude name="org/ensembl/healthcheck/test/**" />
-            </packageset>
+		<javadoc destdir="${doc}/javadoc" author="true" version="true" use="true" windowtitle="EnsEMBL HealthCheck" doctitle="EnsEMBL HealthCheck">
+			<packageset dir="${src}" defaultexcludes="yes">
+				<include name="org/ensembl/healthcheck/**" />
+				<exclude name="org/ensembl/healthcheck/test/**" />
+			</packageset>
 
-        </javadoc>
-    </target>
+		</javadoc>
+	</target>
 
-    <target name="javadoc-tar" depends="javadoc">
+	<target name="javadoc-tar" depends="javadoc">
 
-        <tar tarfile="${dist}/${name}-javadoc.tar.gz"
-             basedir="${doc}/javadoc"
-             compression="gzip"
-         />
+		<tar tarfile="${dist}/${name}-javadoc.tar.gz" basedir="${doc}/javadoc" compression="gzip" />
 
-    </target>
+	</target>
 
-    <target name="javadoc-zip" depends="javadoc">
+	<target name="javadoc-zip" depends="javadoc">
 
-        <zip destfile="${doc}/javadoc/${name}.zip" basedir="${doc}/javadoc" includes="**/*.html" excludes="**/*.zip"/>
+		<zip destfile="${doc}/javadoc/${name}.zip" basedir="${doc}/javadoc" includes="**/*.html" excludes="**/*.zip" />
 
-    </target>
+	</target>
 
-    <target name="javadoc-web" depends="javadoc">
+	<target name="javadoc-web" depends="javadoc">
 
-        <copy todir="${web.javadoc.dir}">
-            <fileset dir="${doc}/javadoc">
-                <include name="**/*.html"/>
-            </fileset>
-        </copy>
+		<copy todir="${web.javadoc.dir}">
+			<fileset dir="${doc}/javadoc">
+				<include name="**/*.html" />
+			</fileset>
+		</copy>
 
-    </target>
+	</target>
 
-    <!-- ################################################################################## -->
+	<!-- Commit jar file to CVS -->
+	<target name="commit" description="Commits the jar file to CVS." depends="jar">
+		<cvs command="commit -m '' lib/ensj-healthcheck.jar" />
+	</target>
+
+
+	<!-- ################################################################################## -->
 
 </project>
