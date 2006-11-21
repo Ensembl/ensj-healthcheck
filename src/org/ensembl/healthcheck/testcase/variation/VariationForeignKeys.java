@@ -119,6 +119,13 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 	    result =  false;
 	}
 		
+	if (getRowCount(con,"SHOW TABLES like 'tmp_individual%'") > 0){
+	    rows = getRowCount(con,"SELECT COUNT(*) FROM tmp_individual_genotype_single_bp where length(allele_1) >1 or length(allele_2) > 1");
+	    if (rows > 0){
+		ReportManager.problem(this,con,"The tmp_individual_genotype_single_bp table contains alleles with more than 1 bp");
+		result = false;
+	    }
+	}
 	return result;
 	
 	}
