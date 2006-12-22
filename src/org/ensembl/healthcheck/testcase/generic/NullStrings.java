@@ -39,6 +39,7 @@ public class NullStrings extends SingleDatabaseTestCase {
 	public NullStrings() {
 
 		addToGroup("post_genebuild");
+		addToGroup("id_mapping");
 		addToGroup("release");
 		setDescription("Check for rows that contain the *string* NULL - should probably be the database primitive NULL.");
 		

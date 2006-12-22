@@ -73,22 +73,20 @@ public class MappingSession extends SingleDatabaseTestCase {
 
 		// there are several species where ID mapping is not done
 		Species s = dbre.getSpecies();
-		if (s != Species.CAENORHABDITIS_ELEGANS && s != Species.DROSOPHILA_MELANOGASTER && s != Species.TAKIFUGU_RUBRIPES) {
+		if (s != Species.CAENORHABDITIS_ELEGANS && s != Species.DROSOPHILA_MELANOGASTER && s != Species.SACCHAROMYCES_CEREVISIAE) {
 
 			Connection con = dbre.getConnection();
 
 			logger.info("Checking tables exist and are populated");
-			result = checkTablesExistAndPopulated(dbre) && result;
-			logger.info("Checking for null strings");
-			result = checkNoNullStrings(con) && result;
-			//logger.info("Checking DB name format in mapping_session");
-			//result = checkDBNameFormat(con) && result;
+			result &= checkTablesExistAndPopulated(dbre);
+			logger.info("Checking DB name format in mapping_session");
+			result &= checkDBNameFormat(con);
 			// logger.info("Checking mapping_session chaining");
-			// result = checkMappingSessionChaining(con) && result;
-			logger.info("Checking mapping_session/stable_id_event keys");
-			result = checkMappingSessionStableIDKeys(con) && result;
+			// result &= checkMappingSessionChaining(con);
 			logger.info("Checking mapping_session old_release and new_release values");
-			result = checkOldAndNewReleases(con) && result;
+			result &= checkOldAndNewReleases(con);
+			logger.info("Checking for duplicates in stable_id_event");
+			result &= checkStableIdEventDuplicates(con);
 		}
 
 		return result;
@@ -152,6 +150,10 @@ public class MappingSession extends SingleDatabaseTestCase {
 				String table = tables[i];
 				boolean exists = checkTableExists(con, table);
 				if (exists) {
+					// gene_archive and peptide_archive can be empty
+					if (table.equals("gene_archive") || table.equals("peptide_archive")) {
+						continue;
+					}
 					if (countRowsInTable(con, table) == 0) {
 						ReportManager.problem(this, con, "Empty table:" + table);
 						result = false;
@@ -171,48 +173,6 @@ public class MappingSession extends SingleDatabaseTestCase {
 		return result;
 	}
 
-	// -----------------------------------------------------------------
-	/**
-	 * Check no "NULL" or "null" strings in stable_id_event.new_stable_id or
-	 * stable_id_event.oldable_id.
-	 * 
-	 * @param con
-	 * @return
-	 */
-	private boolean checkNoNullStrings(final Connection con) {
-
-		boolean result = true;
-
-		int rows = getRowCount(con, "select count(*) from stable_id_event sie where new_stable_id='NULL'");
-		if (rows > 0) {
-			ReportManager.problem(this, con, rows
-					+ " rows in stable_id_event.new_stable_id contains \"NULL\" string instead of NULL value.");
-			result = false;
-		}
-
-		rows = getRowCount(con, "select count(*) from stable_id_event sie where new_stable_id='null'");
-		if (rows > 0) {
-			ReportManager.problem(this, con, rows
-					+ " rows in stable_id_event.new_stable_id contains \"null\" string instead of NULL value.");
-			result = false;
-		}
-
-		rows = getRowCount(con, "select count(*) from stable_id_event sie where old_stable_id='NULL'");
-		if (rows > 0) {
-			ReportManager.problem(this, con, rows
-					+ " rows in stable_id_event.old_stable_id contains \"NULL\" string instead of NULL value.");
-			result = false;
-		}
-
-		rows = getRowCount(con, "select count(*) from stable_id_event sie where old_stable_id='null'");
-		if (rows > 0) {
-			ReportManager.problem(this, con, rows
-					+ " rows in stable_id_event.old_stable_id contains \"null\" string instead of NULL value.");
-			result = false;
-		}
-
-		return result;
-	}
 
 	// -----------------------------------------------------------------
 	/**
@@ -241,26 +201,6 @@ public class MappingSession extends SingleDatabaseTestCase {
 
 	}
 
-	// -----------------------------------------------------------------
-	/**
-	 * Check that all mapping_sessions have entries in stable_id_event and
-	 * vice-versa.
-	 */
-	private boolean checkMappingSessionStableIDKeys(final Connection con) {
-
-		boolean result = true;
-
-		int orphans = countOrphans(con, "mapping_session", "mapping_session_id", "stable_id_event", "mapping_session_id", false);
-		if (orphans > 0) {
-			ReportManager.problem(this, con, orphans + " dangling references between mapping_session and stable_id_event tables");
-			result = false;
-		} else {
-			ReportManager.correct(this, con, "All mapping_session/stable_id_event keys are OK");
-		}
-
-		return result;
-
-	}
 
 	// -----------------------------------------------------------------
 	/**
@@ -302,6 +242,27 @@ public class MappingSession extends SingleDatabaseTestCase {
 		return result;
 
 	}
+
+	// -----------------------------------------------------------------
+	/**
+	 * Check for duplicates in the stable_id_event table
+	 */
+    private boolean checkStableIdEventDuplicates(final Connection con) {
+
+        boolean result = true;
+
+        String sql = "SELECT mapping_session_id, COUNT(*) FROM stable_id_event " +
+        	"GROUP BY old_stable_id, old_version, new_stable_id, new_version, mapping_session_id, type, score " +
+        	"HAVING COUNT(*) > 1";
+
+        String[] rows = getColumnValues(con, sql);
+        if (rows.length > 0) {
+            ReportManager.problem(this, con, rows + " duplicates in stable_id_event");
+            result = false;
+        }
+
+        return result;
+    }
 
 	// -----------------------------------------------------------------
 	/**

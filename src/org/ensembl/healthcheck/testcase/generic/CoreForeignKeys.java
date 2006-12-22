@@ -115,6 +115,12 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
 		result &= checkForOrphans(con, "go_xref", "object_xref_id", "object_xref", "object_xref_id", true);
 
+		// stable ID archive
+		result &= checkForOrphansWithConstraint(con, "gene_archive", "peptide_archive_id", "peptide_archive", "peptide_archive_id", "peptide_archive_id != 0");
+		result &= checkForOrphans(con, "peptide_archive", "peptide_archive_id", "gene_archive", "peptide_archive_id", true);
+		result &= checkForOrphans(con, "stable_id_event", "mapping_session_id", "mapping_session", "mapping_session_id", false);
+		result &= checkForOrphans(con, "gene_archive", "mapping_session_id", "mapping_session", "mapping_session_id", true);
+
 		// ----------------------------
 		// Check regulatory features point to existing objects
 		String[] rfTypes = { "Gene", "Transcript", "Translation" };
