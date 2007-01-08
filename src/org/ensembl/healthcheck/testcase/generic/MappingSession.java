@@ -259,6 +259,8 @@ public class MappingSession extends SingleDatabaseTestCase {
         if (rows.length > 0) {
             ReportManager.problem(this, con, rows + " duplicates in stable_id_event");
             result = false;
+        } else {
+          ReportManager.correct(this, con, "No duplicates in stable_id_event");
         }
 
         return result;
