@@ -6,7 +6,7 @@
 
 -->
 
-<project default="compile" basedir=".">
+<project default="jar" basedir=".">
 
 	<property name="name" value="ensj-healthcheck" />
 	<property name="version" value="" />
