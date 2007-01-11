@@ -230,6 +230,11 @@ public class DatabaseTestRunner extends TestRunner implements Reporter {
 			System.err.println("No databases specified in " + PROPERTIES_FILE);
 			System.exit(1);
 		}
+		
+		if (System.getProperty("output.release") == null) {
+			System.err.println("No release specified in " + PROPERTIES_FILE + " - please add an output.release property");
+			System.exit(1);
+		}
 
 	}
 
