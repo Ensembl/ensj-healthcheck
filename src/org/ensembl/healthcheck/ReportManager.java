@@ -736,9 +736,9 @@ public final class ReportManager {
 	 */
 	public static void createDatabaseSession() {
 
-		String sql = "INSERT INTO session (start_time, host, groups, database_regexp) VALUES (NOW(), '" + System.getProperty("host")
+		String sql = "INSERT INTO session (start_time, host, groups, database_regexp, release) VALUES (NOW(), '" + System.getProperty("host")
 				+ ":" + System.getProperty("port") + "','" + System.getProperty("output.groups") + "','"
-				+ System.getProperty("output.databases") + "')";
+				+ System.getProperty("output.databases") + "', " + System.getProperty("output.release") + ")";
 
 		try {
 
