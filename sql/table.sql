@@ -5,6 +5,7 @@
 CREATE TABLE session (
 
   session_id					INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  release					INT(10) NOT NULL,
   start_time					DATETIME,
   end_time					DATETIME,
   host						VARCHAR(255),
