@@ -11,5 +11,4 @@ cd $dir
 
 $java -server -classpath $cp -Xmx512m org.ensembl.healthcheck.DatabaseTestRunner
 
-#$java -server -classpath $cp org.ensembl.healthcheck.DatabaseToHTML -output $dir/web_healthchecks
 
