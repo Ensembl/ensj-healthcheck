@@ -75,7 +75,7 @@ public class FrameshiftAttributes extends SingleDatabaseTestCase {
 
 		if (rows == 0) {
 
-			ReportManager.problem(this, con, "No transcript frameshift attributes found");
+			ReportManager.problem(this, con, "No transcript frameshift attributes found\n --> make sure you ran script ensembl/misc_scripts/frameshift_transcript_attribs.pl");
 			result = false;
 
 		} else {
