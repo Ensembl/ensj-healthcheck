@@ -18,3 +18,7 @@ snoRNA
 snoRNA_pseudogene
 tRNA
 tRNA_pseudogene
+V_segment
+J_segment
+D_segment
+C_segment
