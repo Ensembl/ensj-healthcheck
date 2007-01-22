@@ -87,6 +87,7 @@ drosophila-peptides
 enhancer
 ensembl
 ensembl_ncRNA
+ensembl_segment
 estgene
 external
 flybase
