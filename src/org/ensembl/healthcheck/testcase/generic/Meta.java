@@ -613,7 +613,7 @@ public class Meta extends SingleDatabaseTestCase {
 
 		int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key LIKE '%build.level'");
 		if (rows == 0) {
-			ReportManager.problem(this, con, "No %build.level entries in the meta table");
+			ReportManager.problem(this, con, "GB: No %build.level entries in the meta table - run ensembl/misc-scripts/meta_levels.pl");
 		} else {
 			ReportManager.correct(this, con, rows + " build.level rows present");
 			result = true;
