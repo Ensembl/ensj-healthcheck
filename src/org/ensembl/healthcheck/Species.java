@@ -144,6 +144,9 @@ public final class Species {
 	/** Specific type of species */
 	public static final Species SPERMOPHILUS_TRIDECEMLINEATUS = new Species("spermophilus_tridecemlineatus");
 
+	/** Specific type of species */
+	public static final Species EQUUS_CABALLUS = new Species("equus_caballus");
+
 	/** Non-ensembl database */
 	public static final Species SYSTEM = new Species("system");
 
@@ -228,6 +231,7 @@ public final class Species {
 		taxonIDToSpecies.put("10141", CAVIA_PORCELLUS);
 		taxonIDToSpecies.put("37347", TUPAIA_BELANGERI);
 		taxonIDToSpecies.put("43179", SPERMOPHILUS_TRIDECEMLINEATUS);
+		taxonIDToSpecies.put("9796", EQUUS_CABALLUS);
 		// and the other way around
 		Iterator it = taxonIDToSpecies.keySet().iterator();
 		while (it.hasNext()) {
@@ -273,6 +277,7 @@ public final class Species {
 		assemblyPrefixToSpecies.put("GUINEAPIG", CAVIA_PORCELLUS);
 		assemblyPrefixToSpecies.put("TREESHREW", TUPAIA_BELANGERI);
 		assemblyPrefixToSpecies.put("SQUIRREL", SPERMOPHILUS_TRIDECEMLINEATUS);
+		assemblyPrefixToSpecies.put("EQUUS", EQUUS_CABALLUS);
 
 		// and the other way around
 		it = assemblyPrefixToSpecies.keySet().iterator();
@@ -586,6 +591,14 @@ public final class Species {
 		if (in(alias, "platypus,ornithorhynchus_anatinus,oanatius")) {
 
 			return ORNITHORHYNCHUS_ANATINUS;
+
+		}
+
+		// --------------------------------------
+
+		if (in(alias, "horse,equus_caballus,equus,mr_ed,ecaballus")) {
+
+			return EQUUS_CABALLUS;
 
 		}
 		// --------------------------------------
