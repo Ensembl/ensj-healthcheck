@@ -265,7 +265,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 								&& species != Species.GALLUS_GALLUS && species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.RATTUS_NORVEGICUS)) {
 					continue;
 				}
-				ReportManager.problem(this, con, "No entry in density_type for analysis " + logicName);
+				ReportManager.problem(this, con, "RelCo: No entry in density_type for analysis " + logicName + " - run ensembl/misc-scripts/density_feature/* scripts");
 				result = false;
 
 			}
