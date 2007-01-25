@@ -662,6 +662,20 @@ public final class Utils {
 
 	// -------------------------------------------------------------------------
 	/**
+	 * Delete a file.
+	 * 
+	 * @param file
+	 *          The file to delete.
+	 */
+	public static void deleteFile(String file) {
+
+		File f = new File(file);
+		f.delete();
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
 	 * Write/append a string to a file.
 	 * 
 	 * @param file
@@ -722,11 +736,11 @@ public final class Utils {
 		String first = str.substring(0, 1).toUpperCase();
 
 		String last = str.substring(1);
-		
+
 		return first + last;
 
 	}
-	
+
 	public static String truncateDatabaseName(String db) {
 
 		if (db.length() <= 27) {
@@ -736,14 +750,15 @@ public final class Utils {
 		// change genus to single letter
 		int underscoreIndex = db.indexOf("_");
 		String genusLetter = db.substring(0, 1);
-		
-		String result =  genusLetter + "_" + db.substring(underscoreIndex + 1);
-		
-		// if length is *still* > 27, change long database type to an abbreviated version
+
+		String result = genusLetter + "_" + db.substring(underscoreIndex + 1);
+
+		// if length is *still* > 27, change long database type to an abbreviated
+		// version
 		if (result.length() > 27) {
 			result = result.replaceAll("otherfeatures", "other...");
 		}
-		
+
 		return result;
 
 	}
@@ -757,7 +772,6 @@ public final class Utils {
 	}
 
 	// ---------------------------------------------------------------------
-
 
 	// -------------------------------------------------------------------------
 
