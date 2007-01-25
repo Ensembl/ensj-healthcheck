@@ -403,6 +403,12 @@ public class TestRunner {
 				try {
 					EnsTestCase testObj = (EnsTestCase) (Class.forName(test).newInstance());
 					failureText = testObj.getFailureText();
+					if (testObj.getEffect() != null) {
+						failureText += testObj.getEffect() + "\n";
+					}
+					if (testObj.getFix() != null) {
+						failureText += testObj.getFix() + "\n";
+					}
 				} catch (Exception e) {
 					System.err.println("Error, can't instantiate object ");
 					e.printStackTrace();
