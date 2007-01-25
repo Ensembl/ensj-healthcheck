@@ -75,6 +75,8 @@ public class DatabaseTestRunner extends TestRunner implements Reporter {
 
 		ReportManager.createDatabaseSession();
 
+		Utils.deleteFile(TIMINGS_FILE);
+		
 		runAllTests(databaseRegistry, testRegistry, false);
 
 		ReportManager.endDatabaseSession();
