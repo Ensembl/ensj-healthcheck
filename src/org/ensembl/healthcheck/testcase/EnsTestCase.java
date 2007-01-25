@@ -1802,6 +1802,16 @@ public abstract class EnsTestCase {
 
 	// ----------------------------------------------------------------------
 	/**
+	 * Get the priority.
+	 */
+	public Priority getPriority() {
+
+		return priority;
+
+	}
+
+	// ----------------------------------------------------------------------
+	/**
 	 * Define how what will happen if databases which fail this healthcheck are
 	 * left unfixed.
 	 * 
@@ -1811,6 +1821,17 @@ public abstract class EnsTestCase {
 	public void setEffect(String e) {
 
 		effect = e;
+
+	}
+	
+//----------------------------------------------------------------------
+	/**
+	 * Return what will happen if databases which fail this healthcheck are
+	 * left unfixed.
+	 */
+	public String getEffect() {
+
+		return effect;
 
 	}
 
@@ -1825,6 +1846,17 @@ public abstract class EnsTestCase {
 	public void setFix(String f) {
 
 		fix = f;
+
+	}
+	
+	// ----------------------------------------------------------------------
+	/**
+	 * Get (as text) a possible fix for the problem causing this healthcheck
+	 * to fail.
+	 */
+	public String getFix() {
+
+		return fix;
 
 	}
 	// ----------------------------------------------------------------------
