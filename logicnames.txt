@@ -88,6 +88,7 @@ enhancer
 ensembl
 ensembl_ncRNA
 ensembl_segment
+ensembl_projection
 estgene
 external
 flybase
