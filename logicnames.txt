@@ -121,6 +121,7 @@ other_protein
 otter
 peptides_bdgp
 pfscan
+probe2transcript
 protein_binding_site
 pseudogene
 qtl
