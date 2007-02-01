@@ -127,9 +127,11 @@ other_cdna
 other_est
 other_protein
 otter
+otter_external
 oxford_FGU
 peptides_bdgp
 pfscan
+platypus_454_cdna
 probe2transcript
 protein_binding_site
 pseudogene
