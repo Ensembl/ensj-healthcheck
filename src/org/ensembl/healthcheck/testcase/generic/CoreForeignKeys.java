@@ -69,7 +69,7 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		result &= checkForOrphans(con, "seq_region", "coord_system_id", "coord_system", "coord_system_id", true);
 
 		result &= checkForOrphans(con, "assembly", "cmp_seq_region_id", "seq_region", "seq_region_id", true);
-
+                
 		result &= checkForOrphans(con, "marker_feature", "marker_id", "marker", "marker_id", true);
 
 		result &= checkForOrphans(con, "seq_region_attrib", "seq_region_id", "seq_region", "seq_region_id", true);
@@ -101,7 +101,11 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
 		result &= checkForOrphans(con, "regulatory_feature", "regulatory_factor_id", "regulatory_factor", "regulatory_factor_id", true);
 
+		/*
+		// now redundant (done for all tables with analysis_id)
 		result &= checkForOrphans(con, "regulatory_feature", "analysis_id", "analysis", "analysis_id", true);
+		result &= checkForOrphans(con, "transcript", "analysis_id", "analysis", "analysis_id", true);
+		*/
 
 		result &= checkForOrphans(con, "external_synonym", "xref_id", "xref", "xref_id", true);
 
@@ -110,8 +114,6 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		result &= checkForOrphans(con, "supporting_feature", "exon_id", "exon", "exon_id", true);
 
 		result &= checkForOrphans(con, "translation", "transcript_id", "transcript", "transcript_id", true);
-		
-		result &= checkForOrphans(con, "transcript", "analysis_id", "analysis", "analysis_id", true);
 
 		result &= checkForOrphans(con, "go_xref", "object_xref_id", "object_xref", "object_xref_id", true);
 
@@ -137,7 +139,6 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
 		// ----------------------------
 		// Ensure that feature tables reference existing seq_regions
-
 		String[] featTabs = getCoreFeatureTables();
 
 		for (int i = 0; i < featTabs.length; i++) {
@@ -148,6 +149,87 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 			}
 			result &= checkForOrphans(con, featTab, "seq_region_id", "seq_region", "seq_region_id", true);
 		}
+
+
+		// new tests (added by Patrick 07.02.2007)
+		
+		result &= checkForOrphans(con, "analysis_description", "analysis_id", "analysis", "analysis_id", true);
+
+		result &= checkForOrphans(con, "gene_attrib", "gene_id", "gene", "gene_id", true);
+		result &= checkForOrphans(con, "gene_attrib", "attrib_type_id", "attrib_type", "attrib_type_id", true);
+		result &= checkForOrphans(con, "transcript_attrib", "attrib_type_id", "attrib_type", "attrib_type_id", true);
+		result &= checkForOrphans(con, "translation_attrib", "attrib_type_id", "attrib_type", "attrib_type_id", true);
+
+		result &= checkForOrphans(con, "translation", "end_exon_id", "exon", "exon_id", true);
+		result &= checkForOrphans(con, "translation", "start_exon_id", "exon", "exon_id", true);
+
+		result &= checkForOrphans(con, "regulatory_factor_coding", "gene_id", "gene", "gene_id", true);
+		result &= checkForOrphans(con, "regulatory_factor_coding", "transcript_id", "transcript", "transcript_id", true);
+
+		result &= checkForOrphans(con, "alt_allele", "gene_id", "gene", "gene_id", true);
+
+		result &= checkForOrphans(con, "marker_map_location", "map_id", "map", "map_id", true);
+		result &= checkForOrphans(con, "marker_map_location", "marker_id", "marker", "marker_id", true);
+		result &= checkForOrphans(con, "marker_map_location", "marker_synonym_id", "marker_synonym", "marker_synonym_id", true);
+
+		result &= checkForOrphans(con, "qtl_feature", "qtl_id", "qtl", "qtl_id", true);
+		result &= checkForOrphans(con, "qtl_synonym", "qtl_id", "qtl", "qtl_id", true);
+
+		result &= checkForOrphans(con, "assembly", "asm_seq_region_id", "seq_region", "seq_region_id", true);
+
+		result &= checkForOrphans(con, "unmapped_object", "external_db_id", "external_db", "external_db_id", true);
+		result &= checkForOrphans(con, "unmapped_object", "unmapped_reason_id", "unmapped_reason", "unmapped_reason_id", true);
+
+		result &= checkForOrphans(con, "transcript_supporting_feature", "transcript_id", "transcript", "transcript_id", true);
+
+		result &= checkForOrphansWithConstraint(con, "supporting_feature", "feature_id", "dna_align_feature", "dna_align_feature_id",
+			"feature_type = 'dna_align_feature'");
+
+		result &= checkForOrphansWithConstraint(con, "supporting_feature", "feature_id", "protein_align_feature", "protein_align_feature_id",
+			"feature_type = 'protein_align_feature'");
+
+		result &= checkForOrphansWithConstraint(con, "transcript_supporting_feature", "feature_id", "dna_align_feature", "dna_align_feature_id",
+			"feature_type = 'dna_align_feature'");
+
+		result &= checkForOrphansWithConstraint(con, "transcript_supporting_feature", "feature_id", "protein_align_feature", "protein_align_feature_id",
+			"feature_type = 'protein_align_feature'");
+
+		result &= checkForOrphans(con, "oligo_feature", "oligo_probe_id", "oligo_probe", "oligo_probe_id", true);
+
+		result &= checkForOrphans(con, "oligo_probe", "oligo_array_id", "oligo_array", "oligo_array_id", true);
+
+		result &= checkForOrphans(con, "density_feature", "density_type_id", "density_type", "density_type_id");
+
+		result &= checkForOrphans(con, "prediction_exon", "prediction_transcript_id", "prediction_transcript", "prediction_transcript_id");
+
+		/* don't test
+
+		// too slow
+		result &= checkForOrphans(con, "repeat_feature", "repeat_consensus_id", "repeat_consensus", "repeat_consensus_id");
+
+		// relation not mandatory
+		result &= checkForOrphans(con, "qtl", "flank_marker_id_1", "marker", "marker_id", true);
+		result &= checkForOrphans(con, "qtl", "flank_marker_id_2", "marker", "marker_id", true);
+		result &= checkForOrphans(con, "qtl", "peak_marker_id", "marker", "marker_id", true);
+
+		*/
+
+		// ----------------------------
+		// Check tables which reference the analysis table
+		String[] analysisTabs = getCoreTablesWithAnalysisID();
+
+		for (int i = 0; i < analysisTabs.length; i++) {
+			String analysisTab = analysisTabs[i];
+			// skip large tables as this test takes an inordinately long time
+			if (analysisTab.equals("protein_align_feature") || analysisTab.equals("dna_align_feature") || analysisTab.equals("repeat_feature")) {
+				continue;
+			}
+			result &= checkForOrphans(con, analysisTab, "analysis_id", "analysis", "analysis_id", true);
+		}
+
+
+		// end new tests
+
 
 		return result;
 
