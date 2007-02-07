@@ -108,10 +108,6 @@ public class StableID extends SingleDatabaseTestCase {
 			result = false;
 		}
 
-		// print a few rows so we can check by eye that the table looks ok
-		// DBUtils.printRows(this, con, "select * from " + stableIDtable + " limit
-		// 10;");
-
 		// look for orphans between type and type_stable_id tables
 		int orphans = countOrphans(con, typeName, typeName + "_id", stableIDtable, typeName + "_id", false);
 		if (orphans > 0) {
@@ -120,7 +116,7 @@ public class StableID extends SingleDatabaseTestCase {
 		}
 
 		int nInvalidVersions = getRowCount(con, "SELECT COUNT(*) AS " + typeName + "_with_invalid_version" + " FROM " + stableIDtable
-				+ " WHERE version < 1;");
+				+ " WHERE version < 1 OR version IS NULL;");
 
 		if (nInvalidVersions > 0) {
 			ReportManager.problem(this, con, "Invalid " + typeName + " versions in " + stableIDtable);
