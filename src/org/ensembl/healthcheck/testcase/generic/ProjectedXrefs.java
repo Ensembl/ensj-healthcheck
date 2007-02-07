@@ -37,7 +37,7 @@ public class ProjectedXrefs extends MultiDatabaseTestCase {
 			Species.RATTUS_NORVEGICUS };
 
 	private Species[] projectedGOTermSpecies = { Species.HOMO_SAPIENS, Species.MUS_MUSCULUS, Species.RATTUS_NORVEGICUS,
-			Species.CANIS_FAMILIARIS };
+			Species.CANIS_FAMILIARIS, Species.BOS_TAURUS, Species.GALLUS_GALLUS };
 
 	/**
 	 * Creates a new instance of ProjectedXrefs.
