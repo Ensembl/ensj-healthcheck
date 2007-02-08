@@ -163,9 +163,6 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		result &= checkForOrphans(con, "translation", "end_exon_id", "exon", "exon_id", true);
 		result &= checkForOrphans(con, "translation", "start_exon_id", "exon", "exon_id", true);
 
-		result &= checkForOrphans(con, "regulatory_factor_coding", "gene_id", "gene", "gene_id", true);
-		result &= checkForOrphans(con, "regulatory_factor_coding", "transcript_id", "transcript", "transcript_id", true);
-
 		result &= checkForOrphans(con, "alt_allele", "gene_id", "gene", "gene_id", true);
 
 		result &= checkForOrphans(con, "marker_map_location", "map_id", "map", "map_id", true);
@@ -177,7 +174,6 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
 		result &= checkForOrphans(con, "assembly", "asm_seq_region_id", "seq_region", "seq_region_id", true);
 
-		result &= checkForOrphans(con, "unmapped_object", "external_db_id", "external_db", "external_db_id", true);
 		result &= checkForOrphans(con, "unmapped_object", "unmapped_reason_id", "unmapped_reason", "unmapped_reason_id", true);
 
 		result &= checkForOrphans(con, "transcript_supporting_feature", "transcript_id", "transcript", "transcript_id", true);
@@ -211,6 +207,9 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		result &= checkForOrphans(con, "qtl", "flank_marker_id_1", "marker", "marker_id", true);
 		result &= checkForOrphans(con, "qtl", "flank_marker_id_2", "marker", "marker_id", true);
 		result &= checkForOrphans(con, "qtl", "peak_marker_id", "marker", "marker_id", true);
+		result &= checkForOrphans(con, "regulatory_factor_coding", "gene_id", "gene", "gene_id", true);
+		result &= checkForOrphans(con, "regulatory_factor_coding", "transcript_id", "transcript", "transcript_id", true);
+		result &= checkForOrphans(con, "unmapped_object", "external_db_id", "external_db", "external_db_id", true);
 
 		*/
 
