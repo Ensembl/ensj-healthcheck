@@ -78,11 +78,35 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
             return result;
         }
 
+        // These methods return false if there is any problem with the test
         result &= checkMaxAlignmentLength(con);
 
         result &= checkSchemaVersionDBName(dbre);
 
         result &= checkConservationScoreLink(dbre);
+
+        // I still have to check if some entries have to be removed/inserted/updated
+        Iterator it = MetaEntriesToRemove.keySet().iterator();
+        while (it.hasNext()) {
+            Object next = it.next();
+            ReportManager.problem(this, con, "Remove from meta: " + next +
+                " -- " + MetaEntriesToRemove.get(next));
+            result = false;
+        }
+        it = MetaEntriesToAdd.keySet().iterator();
+        while (it.hasNext()) {
+            Object next = it.next();
+            ReportManager.problem(this, con, "Add in meta: " + next +
+                " -- " + MetaEntriesToAdd.get(next));
+            result = false;
+        }
+        it = MetaEntriesToUpdate.keySet().iterator();
+        while (it.hasNext()) {
+            Object next = it.next();
+            ReportManager.problem(this, con, "Update in meta: " + next +
+                " -- " + MetaEntriesToUpdate.get(next));
+            result = false;
+        }
 
         return result;
     }
@@ -115,17 +139,20 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
                 if (rs.getInt(5) > 1) {
                     ReportManager.problem(this, con, "MethodLinkSpeciesSet " + rs.getString(1) +
                         " links to several multiple alignments!");
+                    result = false;
                 } else if (rs.getString(3).equals("GERP_CONSERVATION_SCORE")) {
                     MetaEntriesToAdd.put("gerp_" + rs.getString(1), new Integer(rs.getInt(2) + 2).toString());
                 } else {
                     ReportManager.problem(this, con, "Using " + rs.getString(3) +
                         " method_link_type is not supported by this healthcheck");
+                    result = false;
                 }
             }
             rs.close();
             stmt.close();
         } catch (SQLException se) {
             se.printStackTrace();
+            result = false;
         }
 
         // get all the values currently stored in the DB
@@ -156,6 +183,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
             stmt.close();
         } catch (SQLException se) {
             se.printStackTrace();
+            result = false;
         }
 
         return result;
@@ -188,20 +216,15 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
             if (rs.first()) {
                 if (rs.getInt(2) != new Integer(dbNameVersion).intValue()) {
                     MetaEntriesToUpdate.put(new String("schema_version"), new Integer(dbNameVersion));
-                    ReportManager.problem(this, con, "Update in meta: schema_version -- "
-                        + dbNameVersion);
-                    result = false;
                 }
             } else {
                 MetaEntriesToAdd.put(new String("schema_version"), new Integer(dbNameVersion));
-                ReportManager.problem(this, con, "Add in meta: schema_version -- "
-                    + dbNameVersion);
-                result = false;
             }
             rs.close();
             stmt.close();
         } catch (SQLException se) {
             se.printStackTrace();
+            result = false;
         }
 
         return result;
@@ -215,11 +238,12 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
     private boolean checkMaxAlignmentLength(Connection con) {
 
         boolean result = true;
+
         int globalMaxAlignmentLength = 0;
 
         // Check whether tables are empty or not
-        if (!tableHasRows(con, "meta") || !tableHasRows(con, "genomic_align")) {
-            ReportManager.problem(this, con, "NO ENTRIES in meta or in genomic_align table");
+        if (!tableHasRows(con, "genomic_align")) {
+            ReportManager.problem(this, con, "NO ENTRIES in genomic_align table");
             return false;
         }
 
@@ -243,6 +267,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
             stmt.close();
         } catch (SQLException se) {
             se.printStackTrace();
+            result = false;
         }
 
         // Get values currently stored in the meta table
@@ -268,6 +293,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
             stmt.close();
         } catch (SQLException se) {
             se.printStackTrace();
+            result = false;
         }
 
         // Get current global value from the meta table (used for backwards compatibility)
@@ -289,27 +315,6 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
             stmt.close();
         } catch (SQLException se) {
             se.printStackTrace();
-        }
-
-        Iterator it = MetaEntriesToRemove.keySet().iterator();
-        while (it.hasNext()) {
-            Object next = it.next();
-            ReportManager.problem(this, con, "Remove from meta: " + next +
-                " -- " + MetaEntriesToRemove.get(next));
-            result = false;
-        }
-        it = MetaEntriesToAdd.keySet().iterator();
-        while (it.hasNext()) {
-            Object next = it.next();
-            ReportManager.problem(this, con, "Add in meta: " + next +
-                " -- " + MetaEntriesToAdd.get(next));
-            result = false;
-        }
-        it = MetaEntriesToUpdate.keySet().iterator();
-        while (it.hasNext()) {
-            Object next = it.next();
-            ReportManager.problem(this, con, "Update in meta: " + next +
-                " -- " + MetaEntriesToUpdate.get(next));
             result = false;
         }
 
