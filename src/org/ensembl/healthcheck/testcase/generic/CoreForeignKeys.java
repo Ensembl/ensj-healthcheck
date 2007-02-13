@@ -198,18 +198,18 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
 		result &= checkForOrphans(con, "prediction_exon", "prediction_transcript_id", "prediction_transcript", "prediction_transcript_id");
 
+		// optional relations
+		result &= checkOptionalRelation(con, "qtl", "flank_marker_id_1", "marker", "marker_id");
+		result &= checkOptionalRelation(con, "qtl", "flank_marker_id_2", "marker", "marker_id");
+		result &= checkOptionalRelation(con, "qtl", "peak_marker_id", "marker", "marker_id");
+		result &= checkOptionalRelation(con, "regulatory_factor_coding", "gene_id", "gene", "gene_id");
+		result &= checkOptionalRelation(con, "regulatory_factor_coding", "transcript_id", "transcript", "transcript_id");
+		result &= checkOptionalRelation(con, "unmapped_object", "external_db_id", "external_db", "external_db_id");
+
 		/* don't test
 
 		// too slow
 		result &= checkForOrphans(con, "repeat_feature", "repeat_consensus_id", "repeat_consensus", "repeat_consensus_id");
-
-		// relation not mandatory
-		result &= checkForOrphans(con, "qtl", "flank_marker_id_1", "marker", "marker_id", true);
-		result &= checkForOrphans(con, "qtl", "flank_marker_id_2", "marker", "marker_id", true);
-		result &= checkForOrphans(con, "qtl", "peak_marker_id", "marker", "marker_id", true);
-		result &= checkForOrphans(con, "regulatory_factor_coding", "gene_id", "gene", "gene_id", true);
-		result &= checkForOrphans(con, "regulatory_factor_coding", "transcript_id", "transcript", "transcript_id", true);
-		result &= checkForOrphans(con, "unmapped_object", "external_db_id", "external_db", "external_db_id", true);
 
 		*/
 

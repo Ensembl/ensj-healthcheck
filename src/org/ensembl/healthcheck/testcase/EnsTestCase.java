@@ -1644,6 +1644,29 @@ public abstract class EnsTestCase {
 
 	} // checkForOrphansWithConstraint
 
+	
+	// -------------------------------------------------------------------------
+	/**
+	 * Verify optional foreign-key relations.
+	 * The methods checks that non-NULL foreign keys point to valid primary keys.
+	 * 
+	 * @param con
+	 *          A connection to the database to be tested. Should already be open.
+	 * @param table1
+	 *          With col1, specifies the first key to check.
+	 * @param col1
+	 *          Column in table1 to check.
+	 * @param table2
+	 *          With col2, specifies the second key to check.
+	 * @param col2
+	 *          Column in table2 to check.
+	 * @return boolean true if everything is fine false otherwise
+	 */
+	public boolean checkOptionalRelation(Connection con, String table1, String col1, String table2, String col2) {
+		return checkForOrphansWithConstraint(con, table1, col1, table2, col2, col1 + " IS NOT NULL");
+	}
+	
+	
 	// ----------------------------------------------------------------------
 	/**
 	 * Check that a particular column has no null values. Problem or correct
