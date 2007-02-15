@@ -141,7 +141,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
                         " links to several multiple alignments!");
                     result = false;
                 } else if (rs.getString(3).equals("GERP_CONSERVATION_SCORE")) {
-                    MetaEntriesToAdd.put("gerp_" + rs.getString(1), new Integer(rs.getInt(2) + 2).toString());
+                    MetaEntriesToAdd.put("gerp_" + rs.getString(1), new Integer(rs.getInt(2)).toString());
                 } else {
                     ReportManager.problem(this, con, "Using " + rs.getString(3) +
                         " method_link_type is not supported by this healthcheck");
