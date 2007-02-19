@@ -155,12 +155,6 @@ public class StableID extends SingleDatabaseTestCase {
 	 * is defined by the stableid.prefix value in the meta table.
 	 */
 	private boolean checkPrefixes(DatabaseRegistryEntry dbre) {
-
-		// ignore imported species
-		Species s = dbre.getSpecies();
-		if (s.equals(Species.CAENORHABDITIS_ELEGANS) || s.equals(Species.DROSOPHILA_MELANOGASTER) || s.equals(Species.SACCHAROMYCES_CEREVISIAE) || s.equals(Species.TETRAODON_NIGROVIRIDIS)) {
-			return true;
-		}
 		
 		boolean result = true;
 
@@ -183,6 +177,9 @@ public class StableID extends SingleDatabaseTestCase {
 				ReportManager.problem(this, con, "Can't get stableid.prefix from meta table");
 				result = false;
 			} else {
+				if (prefix.equalsIgnoreCase("IGNORE")) {
+					return true;
+				}
 				String prefixLetter = prefix + (String) tableToLetter.get(type);
 				int wrong = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE stable_id NOT LIKE '" + prefixLetter + "%'");
 				if (wrong > 0) {
