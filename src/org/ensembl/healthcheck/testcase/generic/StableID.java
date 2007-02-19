@@ -18,11 +18,13 @@ package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
@@ -80,6 +82,8 @@ public class StableID extends SingleDatabaseTestCase {
 		result &= checkStableIDs(con, "gene");
 
 		result &= checkStableIDEventTypes(con);
+
+		result &= checkPrefixes(dbre);
 
 		return result;
 	}
@@ -142,30 +146,56 @@ public class StableID extends SingleDatabaseTestCase {
 			ReportManager.correct(this, con, "No duplicate stable IDs in " + stableIDtable);
 		}
 
-		// check that all stable IDs in the table have the correct prefix
-		// prefix is defined by the stableid.prefix value in the meta table
+		return result;
+	}
+
+	// -----------------------------------------------------------
+	/**
+	 * Check that all stable IDs in the table have the correct prefix. The prefix
+	 * is defined by the stableid.prefix value in the meta table.
+	 */
+	private boolean checkPrefixes(DatabaseRegistryEntry dbre) {
+
+		// ignore imported species
+		Species s = dbre.getSpecies();
+		if (s.equals(Species.CAENORHABDITIS_ELEGANS) || s.equals(Species.DROSOPHILA_MELANOGASTER) || s.equals(Species.SACCHAROMYCES_CEREVISIAE) || s.equals(Species.TETRAODON_NIGROVIRIDIS)) {
+			return true;
+		}
+		
+		boolean result = true;
+
+		Connection con = dbre.getConnection();
+
 		Map tableToLetter = new HashMap();
 		tableToLetter.put("gene", "G");
 		tableToLetter.put("transcript", "T");
-		tableToLetter.put("translation", "P"); 
+		tableToLetter.put("translation", "P");
 		tableToLetter.put("exon", "E");
-		
-		String prefix = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='stableid.prefix'");
-		if (prefix == null || prefix == "") {
-			ReportManager.problem(this, con, "Can't get stableid.prefix from meta table");
-			result = false;
-		} else {
-			String prefixLetter = prefix + (String)tableToLetter.get(typeName);
-			int wrong = getRowCount(con, "SELECT COUNT(*) FROM " + stableIDtable + " WHERE stable_id NOT LIKE '" + prefixLetter + "%'" );
-			if (wrong > 0) {
-				ReportManager.problem(this, con, wrong + " rows in " + stableIDtable + " do not have the correct (" + prefixLetter + ") prefix");
+
+		Iterator it = tableToLetter.keySet().iterator();
+		while (it.hasNext()) {
+
+			String type = (String) it.next();
+			String table = type + "_stable_id";
+
+			String prefix = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='stableid.prefix'");
+			if (prefix == null || prefix == "") {
+				ReportManager.problem(this, con, "Can't get stableid.prefix from meta table");
 				result = false;
 			} else {
-				ReportManager.correct(this, con, "All rows in " + stableIDtable + " have the correct prefix (" + prefixLetter + ")");
+				String prefixLetter = prefix + (String) tableToLetter.get(type);
+				int wrong = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE stable_id NOT LIKE '" + prefixLetter + "%'");
+				if (wrong > 0) {
+					ReportManager.problem(this, con, wrong + " rows in " + table + " do not have the correct (" + prefixLetter + ") prefix");
+					result = false;
+				} else {
+					ReportManager.correct(this, con, "All rows in " + table + " have the correct prefix (" + prefixLetter + ")");
+				}
 			}
 		}
-		
+
 		return result;
+
 	}
 
 	// -----------------------------------------------------------
@@ -188,12 +218,12 @@ public class StableID extends SingleDatabaseTestCase {
 
 			String sql = "SELECT COUNT(*) FROM stable_id_event WHERE (old_stable_id LIKE '" + prefix + "%' OR new_stable_id LIKE '"
 					+ prefix + "%') AND type != '" + type + "'";
-			
+
 			int rows = getRowCount(con, sql);
 
 			if (rows > 0) {
 
-				ReportManager.problem(this, con, rows + " rows of type " + type + " (prefix " + prefix 
+				ReportManager.problem(this, con, rows + " rows of type " + type + " (prefix " + prefix
 						+ ") in stable_id_event have identifiers that do not correspond to " + type + "s");
 				result = false;
 
