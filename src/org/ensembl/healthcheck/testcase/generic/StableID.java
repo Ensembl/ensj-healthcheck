@@ -140,6 +140,22 @@ public class StableID extends SingleDatabaseTestCase {
 			ReportManager.correct(this, con, "No duplicate stable IDs in " + stableIDtable);
 		}
 
+		// check that all stable IDs in the table have the correct prefix
+		// prefix is defined by the stableid.prefix value in the meta table
+		String prefix = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='stableid.prefix'");
+		if (prefix == null || prefix == "") {
+			ReportManager.problem(this, con, "Can't get stableid.prefix from meta table");
+			result = false;
+		} else {
+			int wrong = getRowCount(con, "SELECT COUNT(*) FROM " + stableIDtable + " WHERE stable_id NOT LIKE '" + prefix + "%'" );
+			if (wrong > 0) {
+				ReportManager.problem(this, con, wrong + " rows in " + stableIDtable + " do not have the correct (" + prefix + ") prefix");
+				result = false;
+			} else {
+				ReportManager.correct(this, con, "All rows in " + stableIDtable + " have the correct prefix (" + prefix + ")");
+			}
+		}
+		
 		return result;
 	}
 
