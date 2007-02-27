@@ -290,7 +290,7 @@ public final class Species {
 		}
 		
 		// stable ID prefixes
-		stableIDPrefix.put(AEDES_AEGYPTI, "AAEL");
+		stableIDPrefix.put(AEDES_AEGYPTI, "IGNORE");
 		stableIDPrefix.put(ANOPHELES_GAMBIAE, "ENSANG");
 		stableIDPrefix.put(BOS_TAURUS, "ENSBTA");
 		stableIDPrefix.put(CAENORHABDITIS_ELEGANS, "IGNORE");
