@@ -191,6 +191,8 @@ public final class Species {
 
 	private static Map speciesToAssemblyPrefix = new HashMap();
 
+	private static Map stableIDPrefix = new HashMap();
+	
 	static {
 
 		taxonIDToSpecies.put("9606", HOMO_SAPIENS);
@@ -286,6 +288,40 @@ public final class Species {
 			Species species = (Species) assemblyPrefixToSpecies.get(ap);
 			speciesToAssemblyPrefix.put(species, ap);
 		}
+		
+		// stable ID prefixes
+		stableIDPrefix.put(AEDES_AEGYPTI, "AAEL");
+		stableIDPrefix.put(ANOPHELES_GAMBIAE, "ENSANG");
+		stableIDPrefix.put(BOS_TAURUS, "ENSBTA");
+		stableIDPrefix.put(CAENORHABDITIS_ELEGANS, "IGNORE");
+		stableIDPrefix.put(CANIS_FAMILIARIS, "ENSCAF");
+		stableIDPrefix.put(CAVIA_PORCELLUS, "ENSCPO");
+		stableIDPrefix.put(CIONA_INTESTINALIS, "ENSCIN");
+		stableIDPrefix.put(CIONA_SAVIGNYI, "ENSCSAV");
+		stableIDPrefix.put(DANIO_RERIO, "ENSDAR");
+		stableIDPrefix.put(DASYPUS_NOVEMCINCTUS, "ENSDNO");
+		stableIDPrefix.put(DROSOPHILA_MELANOGASTER, "IGNORE");
+		stableIDPrefix.put(ECHINOPS_TELFAIRI, "ENSETE");
+		stableIDPrefix.put(ERINACEUS_EUROPAEUS, "ENSEEU");
+		stableIDPrefix.put(FELIS_CATUS, "ENSFCA");
+		stableIDPrefix.put(GALLUS_GALLUS, "ENSGAL");
+		stableIDPrefix.put(GASTEROSTEUS_ACULEATUS, "ENSGAC");
+		stableIDPrefix.put(HOMO_SAPIENS, "ENS");
+		stableIDPrefix.put(LOXODONTA_AFRICANA, "ENSLAF");
+		stableIDPrefix.put(MACACA_MULATTA, "ENSMMU");
+		stableIDPrefix.put(MONODELPHIS_DOMESTICA, "ENSMOD");
+		stableIDPrefix.put(MUS_MUSCULUS, "ENSMUS");
+		stableIDPrefix.put(ORNITHORHYNCHUS_ANATINUS, "ENSOAN");
+		stableIDPrefix.put(ORYCTOLAGUS_CUNICULUS, "ENSOCU");
+		stableIDPrefix.put(ORYZIAS_LATIPES, "ENSORL");
+		stableIDPrefix.put(PAN_TROGLODYTES, "ENSPTR");
+		stableIDPrefix.put(RATTUS_NORVEGICUS, "ENSRNO");
+		stableIDPrefix.put(SACCHAROMYCES_CEREVISIAE, "IGNORE");
+		stableIDPrefix.put(TAKIFUGU_RUBRIPES, "SINFRU");
+		stableIDPrefix.put(TETRAODON_NIGROVIRIDIS, "IGNORE");
+		stableIDPrefix.put(TUPAIA_BELANGERI, "ENSTBE");
+		stableIDPrefix.put(XENOPUS_TROPICALIS, "ENSXET");
+		
 	}
 
 	// -----------------------------------------------------------------
@@ -703,6 +739,20 @@ public final class Species {
 	public static String getAssemblyPrefixForSpecies(Species s) {
 
 		return (String) speciesToAssemblyPrefix.get(s);
+
+	}
+
+//-------------------------------------------------------------------------
+	/**
+	 * Get the stable ID prefix for a species.
+	 * 
+	 * @param s
+	 *          The species.
+	 * @return The stable ID prefix for s. Note "IGNORE" is used for imported species.
+	 */
+	public static String getStableIDPrefixForSpecies(Species s) {
+
+		return (String) stableIDPrefix.get(s);
 
 	}
 
