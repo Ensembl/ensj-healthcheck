@@ -172,9 +172,9 @@ public class StableID extends SingleDatabaseTestCase {
 			String type = (String) it.next();
 			String table = type + "_stable_id";
 
-			String prefix = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='stableid.prefix'");
+			String prefix = Species.getStableIDPrefixForSpecies(dbre.getSpecies());
 			if (prefix == null || prefix == "") {
-				ReportManager.problem(this, con, "Can't get stableid.prefix from meta table");
+				ReportManager.problem(this, con, "Can't get stable ID prefix for " + dbre.getSpecies().toString() + " - please add to Species.java");
 				result = false;
 			} else {
 				if (prefix.equalsIgnoreCase("IGNORE")) {
