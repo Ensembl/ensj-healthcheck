@@ -354,7 +354,7 @@ public abstract class EnsTestCase {
 	/**
 	 * Use SELECT COUNT(*) to get a row count.
 	 */
-	private int getRowCountFast(Connection con, String sql) {
+	public int getRowCountFast(Connection con, String sql) {
 
 		int result = -1;
 
