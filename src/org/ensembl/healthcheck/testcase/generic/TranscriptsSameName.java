@@ -18,15 +18,25 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.DecimalFormat;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check for genes with more than one transcript where all the transcripts have the same display_xref_id.
+ * Check for genes with more than one transcript where all the transcripts have
+ * the same display_xref_id.
  */
 
 public class TranscriptsSameName extends SingleDatabaseTestCase {
+
+	private static int THRESHOLD = 60; // give error if more than this percentage
+																			// of transcripts have the same name
 
 	/**
 	 * Create a new TranscriptsSameName testcase.
@@ -36,7 +46,9 @@ public class TranscriptsSameName extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription(" Check for genes with more than one transcript where all the transcripts have the same display_xref_id.");
-		
+		setPriority(Priority.AMBER);
+		setEffect("Web display and all other uses of xrefs are broken");
+		setFix("Recalculate display xrefs");
 	}
 
 	/**
@@ -53,23 +65,67 @@ public class TranscriptsSameName extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		// Find all genes with more than one transcript
-		String[] geneIDs = getColumnValues(con, 	"SELECT g.gene_id, COUNT(*) AS transcript_count FROM gene g, transcript t WHERE t.gene_id=g.gene_id GROUP BY g.gene_id HAVING transcript_count > 1");
-		
-		int sameNameCount = 0;
-		
-		for (int i = 0; i < geneIDs.length; i++) {
+		// first get total number of genes that have more than one transcript
+		// note we have to force the use getRowCountFast here because of the nature
+		// of the query
+		int totalGenes = getRowCountFast(
+				con,
+				"SELECT COUNT(1) FROM (SELECT g.gene_id FROM gene g, transcript t WHERE t.gene_id=g.gene_id GROUP BY g.gene_id HAVING COUNT(*) > 1) AS c");
+
+		try {
+
+			Statement stmt = con.createStatement();
+
+			ResultSet rs = stmt
+					.executeQuery("SELECT g.gene_id, t.transcript_id, t.display_xref_id FROM gene g, transcript t WHERE t.gene_id=g.gene_id AND t.display_xref_id IS NOT NULL ORDER BY g.gene_id");
+
+			long previousGeneID = -1;
+			long previousTranscriptID = -1;
+			long previousDisplayXrefID = -1;
+
+			long lastCountedGeneID = -1;
+
+			int sameNameTranscriptCount = 0;
+
+			while (rs != null && rs.next()) {
+
+				long geneID = rs.getLong(1);
+
+				long transcriptID = rs.getLong(2);
+				long displayXrefID = rs.getLong(3);
+
+				if (geneID == previousGeneID && displayXrefID == previousDisplayXrefID && lastCountedGeneID != geneID) {
+					sameNameTranscriptCount++;
+					lastCountedGeneID = geneID;
+				}
+
+				previousGeneID = geneID;
+				previousTranscriptID = transcriptID;
+				previousDisplayXrefID = displayXrefID;
+
+			} // while rs
+
+			stmt.close();
+
+			double percentage = 100 * ((double) sameNameTranscriptCount / (double) totalGenes);
+
+			String percentageStr = new DecimalFormat("##.#").format(percentage);
 			
-			int distinctCount = getRowCount(con, "SELECT COUNT(DISTINCT(display_xref_id)) FROM transcript t WHERE gene_id=" + geneIDs[i]);
-			if (distinctCount == 1) {
-				sameNameCount++;
+			if (percentage > THRESHOLD) {
+				ReportManager
+						.problem(this, con, percentageStr + "% of genes with more than one transcript have identically-named transcripts");
+				result = false;
+			} else {
+				ReportManager.correct(this, con, "Only " + percentageStr
+						+ "% genes with more than one transcript have identically-named transcripts");
 			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-		
-		System.out.println("Total genes with more than one transcript: " + geneIDs.length);
-		System.out.println("Total genes where all transcripts have same name: " + sameNameCount);
+
 		return result;
 
 	} // run
-	
+
 } // TranscriptsSameName
