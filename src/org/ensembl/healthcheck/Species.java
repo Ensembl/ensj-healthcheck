@@ -304,6 +304,7 @@ public final class Species {
 		stableIDPrefix.put(ECHINOPS_TELFAIRI, "ENSETE");
 		stableIDPrefix.put(ERINACEUS_EUROPAEUS, "ENSEEU");
 		stableIDPrefix.put(FELIS_CATUS, "ENSFCA");
+		stableIDPrefix.put(OTOLEMUR_GARNETTII, "ENSOGA");
 		stableIDPrefix.put(GALLUS_GALLUS, "ENSGAL");
 		stableIDPrefix.put(GASTEROSTEUS_ACULEATUS, "ENSGAC");
 		stableIDPrefix.put(HOMO_SAPIENS, "ENS");
