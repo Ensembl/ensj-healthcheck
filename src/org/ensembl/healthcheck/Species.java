@@ -322,6 +322,7 @@ public final class Species {
 		stableIDPrefix.put(TETRAODON_NIGROVIRIDIS, "IGNORE");
 		stableIDPrefix.put(TUPAIA_BELANGERI, "ENSTBE");
 		stableIDPrefix.put(XENOPUS_TROPICALIS, "ENSXET");
+		stableIDPrefix.put(SPERMOPHILUS_TRIDECEMLINEATUS, "ENSSTO");
 		
 	}
 
