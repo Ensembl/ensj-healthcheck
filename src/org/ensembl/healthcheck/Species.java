@@ -311,6 +311,7 @@ public final class Species {
 		stableIDPrefix.put(LOXODONTA_AFRICANA, "ENSLAF");
 		stableIDPrefix.put(MACACA_MULATTA, "ENSMMU");
 		stableIDPrefix.put(MONODELPHIS_DOMESTICA, "ENSMOD");
+		stableIDPrefix.put(MYOTIS_LUCIFUGUS, "ENSMLU");
 		stableIDPrefix.put(MUS_MUSCULUS, "ENSMUS");
 		stableIDPrefix.put(ORNITHORHYNCHUS_ANATINUS, "ENSOAN");
 		stableIDPrefix.put(ORYCTOLAGUS_CUNICULUS, "ENSOCU");
