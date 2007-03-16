@@ -260,7 +260,7 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
 		if (rows > 0) {
 
-			ReportManager.problem(this, con, rows + " in " + baseTable + " refer to non-existent " + table + "s");
+			ReportManager.problem(this, con, rows + " rows in " + baseTable + " refer to non-existent " + table + "s");
 			return false;
 
 		} else {
