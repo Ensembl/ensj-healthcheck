@@ -124,13 +124,13 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		result &= checkForOrphans(con, "gene_archive", "mapping_session_id", "mapping_session", "mapping_session_id", true);
 
     //	 ----------------------------
-		// Check regulatory features point to existing objects
-		String[] rfTypes = { "Gene", "Transcript", "Translation" };
-		for (int i = 0; i < rfTypes.length; i++) {
-			result &= checkRegulatoryFeatureKeys(con, rfTypes[i]);
+		// Check regulatory features and object xrefs point to existing objects
+		String[] types = { "Gene", "Transcript", "Translation" };
+		for (int i = 0; i < types.length; i++) {
+			result &= checkKeysByEnsemblObjectType(con, "regulatory_feature_object", types[i]);
+			result &= checkKeysByEnsemblObjectType(con, "object_xref", types[i]);
 		}
 		
-
 		// ----------------------------
 		// Check stable IDs all correspond to an existing object
 		String[] stableIDtypes = { "gene", "transcript", "translation", "exon" };
@@ -249,26 +249,27 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 	} // checkStableIDKeys
 
 	// -------------------------------------------------------------------------
-	private boolean checkRegulatoryFeatureKeys(Connection con, String type) {
+	private boolean checkKeysByEnsemblObjectType(Connection con, String baseTable, String type) {
 
 		String table = type.toLowerCase();
-
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM regulatory_feature_object rfo LEFT JOIN " + table
-				+ " ON rfo.ensembl_object_id=" + table + "." + table + "_id WHERE rfo.ensembl_object_type=\'" + type
+		String column = baseTable.equals("object_xref") ? "ensembl_id" : "ensembl_object_id";
+		
+		int rows = getRowCount(con, "SELECT COUNT(*) FROM " + baseTable + " x LEFT JOIN " + table
+				+ " ON x." + column + "=" + table + "." + table + "_id WHERE x.ensembl_object_type=\'" + type
 				+ "\' AND " + table + "." + table + "_id IS NULL");
 
 		if (rows > 0) {
 
-			ReportManager.problem(this, con, rows + " in regulatory_feature refer to non-existent " + table + "s");
+			ReportManager.problem(this, con, rows + " in " + baseTable + " refer to non-existent " + table + "s");
 			return false;
 
 		} else {
 
-			ReportManager.correct(this, con, "All rows in regulatory_feature refer to valid " + table + "s");
+			ReportManager.correct(this, con, "All rows in " + baseTable + " refer to valid " + table + "s");
 			return true;
 		}
 
-	} // checkRegulatoryFeatureKeys
+	} // checkKeysByEnsemblObjectType
 
 	// -------------------------------------------------------------------------
 
