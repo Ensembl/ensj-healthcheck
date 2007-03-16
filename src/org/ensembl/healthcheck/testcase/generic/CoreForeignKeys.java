@@ -123,12 +123,13 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		result &= checkForOrphans(con, "stable_id_event", "mapping_session_id", "mapping_session", "mapping_session_id", false);
 		result &= checkForOrphans(con, "gene_archive", "mapping_session_id", "mapping_session", "mapping_session_id", true);
 
-		// ----------------------------
+    //	 ----------------------------
 		// Check regulatory features point to existing objects
 		String[] rfTypes = { "Gene", "Transcript", "Translation" };
 		for (int i = 0; i < rfTypes.length; i++) {
 			result &= checkRegulatoryFeatureKeys(con, rfTypes[i]);
 		}
+		
 
 		// ----------------------------
 		// Check stable IDs all correspond to an existing object
@@ -254,7 +255,7 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
 		int rows = getRowCount(con, "SELECT COUNT(*) FROM regulatory_feature_object rfo LEFT JOIN " + table
 				+ " ON rfo.ensembl_object_id=" + table + "." + table + "_id WHERE rfo.ensembl_object_type=\'" + type
-				+ "\' AND rfo.ensembl_object_id IS NULL");
+				+ "\' AND " + table + "." + table + "_id IS NULL");
 
 		if (rows > 0) {
 
