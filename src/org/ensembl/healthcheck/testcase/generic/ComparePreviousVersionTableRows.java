@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.util.Utils;
 
 /**
  * Compare the counts of the number of rows in each table in this and the previous database.
@@ -44,6 +45,7 @@ public class ComparePreviousVersionTableRows extends ComparePreviousVersionBase 
 		Connection con = dbre.getConnection();
 		
 		String[] tables = getTableNames(con);
+		tables = Utils.removeStringFromArray(tables, "meta");
 		
 		for (int i = 0; i < tables.length; i++) {
 			
