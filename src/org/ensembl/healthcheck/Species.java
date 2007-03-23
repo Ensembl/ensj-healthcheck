@@ -324,7 +324,7 @@ public final class Species {
 		ensemblStableIDPrefix.put(TETRAODON_NIGROVIRIDIS, "IGNORE");
 		ensemblStableIDPrefix.put(TUPAIA_BELANGERI, "ENSTBE");
 		ensemblStableIDPrefix.put(XENOPUS_TROPICALIS, "ENSXET");
-		stableIDPrefix.put(SPERMOPHILUS_TRIDECEMLINEATUS, "ENSSTO");
+		ensemblStableIDPrefix.put(SPERMOPHILUS_TRIDECEMLINEATUS, "ENSSTO");
 		
 		// stable ID prefixes - Vega databases
 		vegaStableIDPrefix.put(HOMO_SAPIENS, "OTTHUM");
