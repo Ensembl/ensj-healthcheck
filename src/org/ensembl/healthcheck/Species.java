@@ -290,7 +290,6 @@ public final class Species {
 			speciesToAssemblyPrefix.put(species, ap);
 		}
 		
-<<<<<<< Species.java
 		// stable ID prefixes - ensembl databases
 		ensemblStableIDPrefix.put(AEDES_AEGYPTI, "IGNORE");
 		ensemblStableIDPrefix.put(ANOPHELES_GAMBIAE, "ENSANG");
