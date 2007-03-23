@@ -173,7 +173,7 @@ public class StableID extends SingleDatabaseTestCase {
 			String type = (String) it.next();
 			String table = type + "_stable_id";
 
-			String prefix = Species.getStableIDPrefixForSpecies(dbre.getSpecies());
+			String prefix = Species.getStableIDPrefixForSpecies(dbre.getSpecies(), dbre.getType());
 			if (prefix == null || prefix == "") {
 				ReportManager.problem(this, con, "Can't get stable ID prefix for " + dbre.getSpecies().toString() + " - please add to Species.java");
 				result = false;
