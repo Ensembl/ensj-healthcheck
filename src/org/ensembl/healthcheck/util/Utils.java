@@ -773,7 +773,7 @@ public final class Utils {
 
 	// ---------------------------------------------------------------------
 
-	private static String[] removeStringFromArray(String[] tables, String table) {
+	public static String[] removeStringFromArray(String[] tables, String table) {
 
 		String[] result = new String[tables.length - 1];
 		int j = 0;
