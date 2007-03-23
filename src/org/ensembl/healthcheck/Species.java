@@ -191,7 +191,8 @@ public final class Species {
 
 	private static Map speciesToAssemblyPrefix = new HashMap();
 
-	private static Map stableIDPrefix = new HashMap();
+	private static Map ensemblStableIDPrefix = new HashMap();
+	private static Map vegaStableIDPrefix = new HashMap();
 	
 	static {
 
@@ -247,7 +248,7 @@ public final class Species {
 		assemblyPrefixToSpecies.put("ZFISH", DANIO_RERIO);
 		assemblyPrefixToSpecies.put("FUGU", TAKIFUGU_RUBRIPES);
 		assemblyPrefixToSpecies.put("AgamP", ANOPHELES_GAMBIAE);
-		assemblyPrefixToSpecies.put("CEL", CAENORHABDITIS_ELEGANS);
+		assemblyPrefixToSpecies.put("WB", CAENORHABDITIS_ELEGANS);
 		assemblyPrefixToSpecies.put("CBR", CAENORHABDITIS_BRIGGSAE);
 		assemblyPrefixToSpecies.put("JGI", CIONA_INTESTINALIS);
 		assemblyPrefixToSpecies.put("NCBI", HOMO_SAPIENS);
@@ -289,42 +290,48 @@ public final class Species {
 			speciesToAssemblyPrefix.put(species, ap);
 		}
 		
-		// stable ID prefixes
-		stableIDPrefix.put(AEDES_AEGYPTI, "IGNORE");
-		stableIDPrefix.put(ANOPHELES_GAMBIAE, "ENSANG");
-		stableIDPrefix.put(BOS_TAURUS, "ENSBTA");
-		stableIDPrefix.put(CAENORHABDITIS_ELEGANS, "IGNORE");
-		stableIDPrefix.put(CANIS_FAMILIARIS, "ENSCAF");
-		stableIDPrefix.put(CAVIA_PORCELLUS, "ENSCPO");
-		stableIDPrefix.put(CIONA_INTESTINALIS, "ENSCIN");
-		stableIDPrefix.put(CIONA_SAVIGNYI, "ENSCSAV");
-		stableIDPrefix.put(DANIO_RERIO, "ENSDAR");
-		stableIDPrefix.put(DASYPUS_NOVEMCINCTUS, "ENSDNO");
-		stableIDPrefix.put(DROSOPHILA_MELANOGASTER, "IGNORE");
-		stableIDPrefix.put(ECHINOPS_TELFAIRI, "ENSETE");
-		stableIDPrefix.put(ERINACEUS_EUROPAEUS, "ENSEEU");
-		stableIDPrefix.put(FELIS_CATUS, "ENSFCA");
-		stableIDPrefix.put(OTOLEMUR_GARNETTII, "ENSOGA");
-		stableIDPrefix.put(GALLUS_GALLUS, "ENSGAL");
-		stableIDPrefix.put(GASTEROSTEUS_ACULEATUS, "ENSGAC");
-		stableIDPrefix.put(HOMO_SAPIENS, "ENS");
-		stableIDPrefix.put(LOXODONTA_AFRICANA, "ENSLAF");
-		stableIDPrefix.put(MACACA_MULATTA, "ENSMMU");
-		stableIDPrefix.put(MONODELPHIS_DOMESTICA, "ENSMOD");
-		stableIDPrefix.put(MYOTIS_LUCIFUGUS, "ENSMLU");
-		stableIDPrefix.put(MUS_MUSCULUS, "ENSMUS");
-		stableIDPrefix.put(ORNITHORHYNCHUS_ANATINUS, "ENSOAN");
-		stableIDPrefix.put(ORYCTOLAGUS_CUNICULUS, "ENSOCU");
-		stableIDPrefix.put(ORYZIAS_LATIPES, "ENSORL");
-		stableIDPrefix.put(PAN_TROGLODYTES, "ENSPTR");
-		stableIDPrefix.put(RATTUS_NORVEGICUS, "ENSRNO");
-		stableIDPrefix.put(SACCHAROMYCES_CEREVISIAE, "IGNORE");
-		stableIDPrefix.put(TAKIFUGU_RUBRIPES, "SINFRU");
-		stableIDPrefix.put(TETRAODON_NIGROVIRIDIS, "IGNORE");
-		stableIDPrefix.put(TUPAIA_BELANGERI, "ENSTBE");
-		stableIDPrefix.put(XENOPUS_TROPICALIS, "ENSXET");
+<<<<<<< Species.java
+		// stable ID prefixes - ensembl databases
+		ensemblStableIDPrefix.put(AEDES_AEGYPTI, "IGNORE");
+		ensemblStableIDPrefix.put(ANOPHELES_GAMBIAE, "ENSANG");
+		ensemblStableIDPrefix.put(BOS_TAURUS, "ENSBTA");
+		ensemblStableIDPrefix.put(CAENORHABDITIS_ELEGANS, "IGNORE");
+		ensemblStableIDPrefix.put(CANIS_FAMILIARIS, "ENSCAF");
+		ensemblStableIDPrefix.put(CAVIA_PORCELLUS, "ENSCPO");
+		ensemblStableIDPrefix.put(CIONA_INTESTINALIS, "ENSCIN");
+		ensemblStableIDPrefix.put(CIONA_SAVIGNYI, "ENSCSAV");
+		ensemblStableIDPrefix.put(DANIO_RERIO, "ENSDAR");
+		ensemblStableIDPrefix.put(DASYPUS_NOVEMCINCTUS, "ENSDNO");
+		ensemblStableIDPrefix.put(DROSOPHILA_MELANOGASTER, "IGNORE");
+		ensemblStableIDPrefix.put(ECHINOPS_TELFAIRI, "ENSETE");
+		ensemblStableIDPrefix.put(ERINACEUS_EUROPAEUS, "ENSEEU");
+		ensemblStableIDPrefix.put(FELIS_CATUS, "ENSFCA");
+		ensemblStableIDPrefix.put(GALLUS_GALLUS, "ENSGAL");
+		ensemblStableIDPrefix.put(GASTEROSTEUS_ACULEATUS, "ENSGAC");
+		ensemblStableIDPrefix.put(HOMO_SAPIENS, "ENS");
+		ensemblStableIDPrefix.put(LOXODONTA_AFRICANA, "ENSLAF");
+		ensemblStableIDPrefix.put(MACACA_MULATTA, "ENSMMU");
+		ensemblStableIDPrefix.put(MONODELPHIS_DOMESTICA, "ENSMOD");
+		ensemblStableIDPrefix.put(MUS_MUSCULUS, "ENSMUS");
+		ensemblStableIDPrefix.put(MYOTIS_LUCIFUGUS, "ENSMLU");
+		ensemblStableIDPrefix.put(ORNITHORHYNCHUS_ANATINUS, "ENSOAN");
+		ensemblStableIDPrefix.put(ORYCTOLAGUS_CUNICULUS, "ENSOCU");
+		ensemblStableIDPrefix.put(ORYZIAS_LATIPES, "ENSORL");
+		ensemblStableIDPrefix.put(OTOLEMUR_GARNETTII, "ENSOGA");
+		ensemblStableIDPrefix.put(PAN_TROGLODYTES, "ENSPTR");
+		ensemblStableIDPrefix.put(RATTUS_NORVEGICUS, "ENSRNO");
+		ensemblStableIDPrefix.put(SACCHAROMYCES_CEREVISIAE, "IGNORE");
+		ensemblStableIDPrefix.put(TAKIFUGU_RUBRIPES, "SINFRU");
+		ensemblStableIDPrefix.put(TETRAODON_NIGROVIRIDIS, "IGNORE");
+		ensemblStableIDPrefix.put(TUPAIA_BELANGERI, "ENSTBE");
+		ensemblStableIDPrefix.put(XENOPUS_TROPICALIS, "ENSXET");
 		stableIDPrefix.put(SPERMOPHILUS_TRIDECEMLINEATUS, "ENSSTO");
 		
+		// stable ID prefixes - Vega databases
+		vegaStableIDPrefix.put(HOMO_SAPIENS, "OTTHUM");
+		vegaStableIDPrefix.put(MUS_MUSCULUS, "OTTMUS");
+		vegaStableIDPrefix.put(CANIS_FAMILIARIS, "OTTCAN");
+
 	}
 
 	// -----------------------------------------------------------------
@@ -715,6 +722,7 @@ public final class Species {
 	 * 
 	 * @param prefix
 	 *          The assembly prefix.
+	 * 
 	 * @return The Species corresponding to prefix, or Species.UNKNOWN.
 	 */
 	public static Species getSpeciesForAssemblyPrefix(String prefix) {
@@ -751,11 +759,24 @@ public final class Species {
 	 * 
 	 * @param s
 	 *          The species.
+	 * @param t The type of database.
 	 * @return The stable ID prefix for s. Note "IGNORE" is used for imported species.
 	 */
-	public static String getStableIDPrefixForSpecies(Species s) {
+	public static String getStableIDPrefixForSpecies(Species s, DatabaseType t) {
 
-		return (String) stableIDPrefix.get(s);
+		String result = "";
+		
+		if (t.equals(DatabaseType.CORE)) {
+		result = (String) ensemblStableIDPrefix.get(s);
+		} else if (t.equals(DatabaseType.VEGA)) {
+			result = (String) vegaStableIDPrefix.get(s);
+		}
+		
+		if (result.equals("")) {
+			logger.warning("Can't get stable ID prefix for " +s.toString() + " " + t.toString() + " database");
+		}
+		
+		return result;
 
 	}
 
