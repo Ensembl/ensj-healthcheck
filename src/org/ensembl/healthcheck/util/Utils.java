@@ -773,6 +773,22 @@ public final class Utils {
 
 	// ---------------------------------------------------------------------
 
+	private static String[] removeStringFromArray(String[] tables, String table) {
+
+		String[] result = new String[tables.length - 1];
+		int j = 0;
+		for (int i = 0; i < tables.length; i++) {
+			if (!tables[i].equalsIgnoreCase(table)) {
+				if (j < result.length) {
+					result[j++] = tables[i];
+				} 
+			}
+		}
+
+		return result;
+
+	}
+
 	// -------------------------------------------------------------------------
 
 } // Utils
