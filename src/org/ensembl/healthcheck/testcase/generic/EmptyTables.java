@@ -20,6 +20,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.Utils;
 
 /**
  * Check that all tables have data.
@@ -68,7 +69,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 
 			// seq_region_attrib only filled in for human and mouse
 			if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS) {
-				tables = remove(tables, "seq_region_attrib");
+				tables = Utils.removeStringFromArray(tables, "seq_region_attrib");
 			}
 
 			// map, marker etc
@@ -96,57 +97,57 @@ public class EmptyTables extends SingleDatabaseTestCase {
 					|| species == Species.CIONA_SAVIGNYI || species == Species.GASTEROSTEUS_ACULEATUS || species == Species.MACACA_MULATTA
 					|| species == Species.MONODELPHIS_DOMESTICA) {
 
-				tables = remove(tables, "karyotype");
+				tables = Utils.removeStringFromArray(tables, "karyotype");
 			}
 
 			// for imported gene sets, supporting_feature is empty
 			if (species == Species.TETRAODON_NIGROVIRIDIS || species == Species.SACCHAROMYCES_CEREVISIAE
 					|| species == Species.CAENORHABDITIS_ELEGANS) {
-				tables = remove(tables, "supporting_feature");
+				tables = Utils.removeStringFromArray(tables, "supporting_feature");
 			}
 
 			// only look for Affy features in human, mouse, rat, chicken, danio
 			if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.RATTUS_NORVEGICUS
 					&& species != Species.GALLUS_GALLUS && species != Species.DANIO_RERIO || type == DatabaseType.VEGA) {
-				tables = remove(tables, "oligo_array");
-				tables = remove(tables, "oligo_feature");
-				tables = remove(tables, "oligo_probe");
+				tables = Utils.removeStringFromArray(tables, "oligo_array");
+				tables = Utils.removeStringFromArray(tables, "oligo_feature");
+				tables = Utils.removeStringFromArray(tables, "oligo_probe");
 			}
 
 			// only look for transcript & translation attribs in human, mouse, rat
 			if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.RATTUS_NORVEGICUS) {
-				tables = remove(tables, "transcript_attrib");
-				tables = remove(tables, "translation_attrib");
+				tables = Utils.removeStringFromArray(tables, "transcript_attrib");
+				tables = Utils.removeStringFromArray(tables, "translation_attrib");
 			}
 
 			// drosophila is imported, so no supporting features.
 			if (species == Species.DROSOPHILA_MELANOGASTER) {
-				tables = remove(tables, "supporting_feature");
+				tables = Utils.removeStringFromArray(tables, "supporting_feature");
 			}
 
 			// most species don't have regulatory features yet
 			if (species != Species.HOMO_SAPIENS) {
-				tables = remove(tables, "regulatory_feature");
-				tables = remove(tables, "regulatory_factor");
-				tables = remove(tables, "regulatory_factor_coding");
-				tables = remove(tables, "regulatory_feature_object");
-				tables = remove(tables, "regulatory_search_region");
+				tables = Utils.removeStringFromArray(tables, "regulatory_feature");
+				tables = Utils.removeStringFromArray(tables, "regulatory_factor");
+				tables = Utils.removeStringFromArray(tables, "regulatory_factor_coding");
+				tables = Utils.removeStringFromArray(tables, "regulatory_feature_object");
+				tables = Utils.removeStringFromArray(tables, "regulatory_search_region");
 			}
 
 			// only human and mouse currently have ditag data
 			if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS) {
-				tables = remove(tables, "ditag");
-				tables = remove(tables, "ditag_feature");
+				tables = Utils.removeStringFromArray(tables, "ditag");
+				tables = Utils.removeStringFromArray(tables, "ditag_feature");
 			}
 
 			// don't check for unconventional transcript associations in species other
 			// than human
 			if (species != Species.HOMO_SAPIENS) {
-				tables = remove(tables, "unconventional_transcript_association");
+				tables = Utils.removeStringFromArray(tables, "unconventional_transcript_association");
 			}
 
 			// we don't have many gene_attribs yet
-			tables = remove(tables, "gene_attrib");
+			tables = Utils.removeStringFromArray(tables, "gene_attrib");
 
 			// ----------------------------------------------------
 
@@ -211,7 +212,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 
 		// if there is only one coordinate system then there's no assembly
 		if (getRowCount(con, "SELECT COUNT(*) FROM coord_system") == 1) {
-			tables = remove(tables, "assembly");
+			tables = Utils.removeStringFromArray(tables, "assembly");
 			logger.finest(dbre.getName() + " has only one coord_system, assembly table can be empty");
 		}
 
@@ -236,26 +237,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 
 	} // run
 
-	// -----------------------------------------------------------------
-
-	private String[] remove(final String[] tables, final String table) {
-
-		String[] result = new String[tables.length - 1];
-		int j = 0;
-		for (int i = 0; i < tables.length; i++) {
-			if (!tables[i].equalsIgnoreCase(table)) {
-				if (j < result.length) {
-					result[j++] = tables[i];
-				} else {
-					logger.severe("Cannot remove " + table + " since it's not in the list!");
-				}
-			}
-		}
-
-		return result;
-
-	}
-
+	
 	// -----------------------------------------------------------------
 
 	private String[] remove(final String[] src, final String[] tablesToRemove) {
@@ -263,7 +245,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 		String[] result = src;
 
 		for (int i = 0; i < tablesToRemove.length; i++) {
-			result = remove(result, tablesToRemove[i]);
+			result = Utils.removeStringFromArray(result, tablesToRemove[i]);
 		}
 
 		return result;
