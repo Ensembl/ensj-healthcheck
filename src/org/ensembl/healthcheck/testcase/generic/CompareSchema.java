@@ -136,10 +136,10 @@ public class CompareSchema extends MultiDatabaseTestCase {
 
 					if (checkCon != masterCon) {
 
-						logger.info("Comparing " + DBUtils.getShortDatabaseName(masterCon) + " with " + DBUtils.getShortDatabaseName(checkCon));
+						logger.info("Comparing " + DBUtils.getShortDatabaseName(checkCon) + " with " + DBUtils.getShortDatabaseName(masterCon));
 
 						// check that both schemas have the same tables
-						if (!compareTablesInSchema(masterCon, checkCon)) {
+						if (!compareTablesInSchema(checkCon, masterCon)) {
 							// if not the same, this method will generate a
 							// report
 							ReportManager.problem(this, checkCon, "Table name discrepancy detected, skipping rest of checks");
@@ -157,11 +157,11 @@ public class CompareSchema extends MultiDatabaseTestCase {
 							String sql = "SHOW CREATE TABLE " + table;
 							ResultSet masterRS = masterStmt.executeQuery(sql);
 							ResultSet dbRS = dbStmt.executeQuery(sql);
-							boolean showCreateSame = DBUtils.compareResultSets(masterRS, dbRS, this, " [" + table + "]", false, false, table);
+							boolean showCreateSame = DBUtils.compareResultSets(dbRS, masterRS, this, " [" + table + "]", false, false, table);
 							if (!showCreateSame) {
 
 								// do more in-depth analysis of database structure
-								result &= compareTableStructures(masterCon, checkCon, table);
+								result &= compareTableStructures(checkCon, masterCon, table);
 
 							}
 
