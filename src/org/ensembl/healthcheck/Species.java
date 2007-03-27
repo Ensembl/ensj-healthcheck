@@ -318,6 +318,7 @@ public final class Species {
 		ensemblStableIDPrefix.put(ORYZIAS_LATIPES, "ENSORL");
 		ensemblStableIDPrefix.put(OTOLEMUR_GARNETTII, "ENSOGA");
 		ensemblStableIDPrefix.put(PAN_TROGLODYTES, "ENSPTR");
+		ensemblStableIDPrefix.put(SOREX_ARANEUS, "ENSSAR");
 		ensemblStableIDPrefix.put(RATTUS_NORVEGICUS, "ENSRNO");
 		ensemblStableIDPrefix.put(SACCHAROMYCES_CEREVISIAE, "IGNORE");
 		ensemblStableIDPrefix.put(TAKIFUGU_RUBRIPES, "SINFRU");
