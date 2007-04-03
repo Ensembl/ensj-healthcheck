@@ -46,8 +46,7 @@ public class GeneStatus extends SingleDatabaseTestCase {
 
 		removeAppliesToType(DatabaseType.CDNA);
 		removeAppliesToType(DatabaseType.VEGA);
-		removeAppliesToType(DatabaseType.OTHERFEATURES);
-		
+
 	}
 
 	/**
@@ -60,7 +59,11 @@ public class GeneStatus extends SingleDatabaseTestCase {
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 
-		boolean result = checkPrevious(dbre);
+		boolean result = true;
+		
+		if (dbre.getType() != DatabaseType.OTHERFEATURES) {
+			checkPrevious(dbre);
+		}
 
 		result &= checkNull(dbre);
 
