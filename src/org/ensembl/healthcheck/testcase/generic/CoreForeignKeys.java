@@ -199,6 +199,8 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
 		result &= checkForOrphans(con, "prediction_exon", "prediction_transcript_id", "prediction_transcript", "prediction_transcript_id");
 
+		result &= checkForOrphans(con, "marker", "display_marker_synonym_id", "marker_synonym", "marker_synonym_id");
+
 		// optional relations
 		result &= checkOptionalRelation(con, "qtl", "flank_marker_id_1", "marker", "marker_id");
 		result &= checkOptionalRelation(con, "qtl", "flank_marker_id_2", "marker", "marker_id");
