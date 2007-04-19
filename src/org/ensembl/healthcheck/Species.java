@@ -331,6 +331,7 @@ public final class Species {
 		vegaStableIDPrefix.put(HOMO_SAPIENS, "OTTHUM");
 		vegaStableIDPrefix.put(MUS_MUSCULUS, "OTTMUS");
 		vegaStableIDPrefix.put(CANIS_FAMILIARIS, "OTTCAN");
+		vegaStableIDPrefix.put(DANIO_RERIO, "OTTDAR");
 
 	}
 
@@ -772,7 +773,7 @@ public final class Species {
 			result = (String) vegaStableIDPrefix.get(s);
 		}
 		
-		if (result.equals("")) {
+		if (result == null || result.equals("")) {
 			logger.warning("Can't get stable ID prefix for " +s.toString() + " " + t.toString() + " database");
 		}
 		
