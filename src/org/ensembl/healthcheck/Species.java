@@ -133,6 +133,9 @@ public final class Species {
 	public static final Species SOREX_ARANEUS = new Species("sorex_araneus");
 
 	/** Specific type of species */
+	public static final Species OCHOTONA_PRINCEPS = new Species("ochotona_princeps");
+
+	/** Specific type of species */
 	public static final Species ERINACEUS_EUROPAEUS = new Species("erinaceus_europaeus");
 
 	/** Specific type of species */
@@ -229,6 +232,7 @@ public final class Species {
 		taxonIDToSpecies.put("30611", OTOLEMUR_GARNETTII);
 		taxonIDToSpecies.put("59463", MYOTIS_LUCIFUGUS);
 		taxonIDToSpecies.put("42254", SOREX_ARANEUS);
+		taxonIDToSpecies.put("9978", OCHOTONA_PRINCEPS);
 		taxonIDToSpecies.put("9258", ORNITHORHYNCHUS_ANATINUS);
 		taxonIDToSpecies.put("9365", ERINACEUS_EUROPAEUS);
 		taxonIDToSpecies.put("10141", CAVIA_PORCELLUS);
@@ -275,6 +279,7 @@ public final class Species {
 		assemblyPrefixToSpecies.put("BUSHBABY", OTOLEMUR_GARNETTII);
 		assemblyPrefixToSpecies.put("MICROBAT", MYOTIS_LUCIFUGUS);
 		assemblyPrefixToSpecies.put("COMMON_SHREW", SOREX_ARANEUS);
+		assemblyPrefixToSpecies.put("PIKA", OCHOTONA_PRINCEPS);
 		assemblyPrefixToSpecies.put("OANA", ORNITHORHYNCHUS_ANATINUS);
 		assemblyPrefixToSpecies.put("HEDGEHOG", ERINACEUS_EUROPAEUS);
 		assemblyPrefixToSpecies.put("GUINEAPIG", CAVIA_PORCELLUS);
@@ -313,6 +318,7 @@ public final class Species {
 		ensemblStableIDPrefix.put(MONODELPHIS_DOMESTICA, "ENSMOD");
 		ensemblStableIDPrefix.put(MUS_MUSCULUS, "ENSMUS");
 		ensemblStableIDPrefix.put(MYOTIS_LUCIFUGUS, "ENSMLU");
+		ensemblStableIDPrefix.put(OCHOTONA_PRINCEPS, "ENSOPR");
 		ensemblStableIDPrefix.put(ORNITHORHYNCHUS_ANATINUS, "ENSOAN");
 		ensemblStableIDPrefix.put(ORYCTOLAGUS_CUNICULUS, "ENSOCU");
 		ensemblStableIDPrefix.put(ORYZIAS_LATIPES, "ENSORL");
@@ -580,21 +586,31 @@ public final class Species {
 			return SOREX_ARANEUS;
 
 		}
+		// --------------------------------------
+                if (in(alias, "pika,Americanpika,American_pika,ochotona_princeps,oprinceps,ochotona")) {
+
+			return OCHOTONA_PRINCEPS;
+
+		}
+		// --------------------------------------
 		if (in(alias, "hedgehog,erinaceus_europaeus,european_hedgehog,eeuropaeus")) {
 
 			return ERINACEUS_EUROPAEUS;
 
 		}
+		// --------------------------------------
 		if (in(alias, "guineapig,guinea_pig,cavia_porcellus,cporcellus")) {
 
 			return CAVIA_PORCELLUS;
 
 		}
+		// --------------------------------------
 		if (in(alias, "treeshrew,tbelangeri,tupaia_belangeri,northern_tree_shrew,common_tree_shrew")) {
 
 			return TUPAIA_BELANGERI;
 
 		}
+		// --------------------------------------
 		if (in(alias, "squirrel,stridecemlineatus,thirteen-lined_ground_squirrel,spermophilus_tridecemlineatus,spermophilus_tridecemlineatus_arenicola")) {
 
 			return SPERMOPHILUS_TRIDECEMLINEATUS;
