@@ -417,7 +417,7 @@ public final class Utils {
 
 		String result = str;
 
-		if (str.length() > size) {
+		if (str != null && str.length() > size) {
 
 			result = str.substring(0, size);
 
