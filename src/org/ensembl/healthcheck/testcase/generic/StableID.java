@@ -154,8 +154,13 @@ public class StableID extends SingleDatabaseTestCase {
 
 		// make sure stable ID versions in the typeName_stable_id table matches those in stable_id_event
 		// for the latest mapping_session
-		String mappingSessionId = getRowColumnValue(con, "SELECT mapping_session_id FROM mapping_session " +
+                String mappingSessionId = getRowColumnValue(con, "SELECT mapping_session_id FROM mapping_session " +
 			"ORDER BY created DESC LIMIT 1");
+
+                if (mappingSessionId.equals("")) {
+                  ReportManager.warning(this, con, "No mapping_session found");
+                  return result;
+                }
 		
 		int nVersionMismatch = getRowCount(con, "SELECT COUNT(*) FROM stable_id_event sie, " + stableIDtable +
 			" si WHERE sie.mapping_session_id = " + Integer.parseInt(mappingSessionId) +
