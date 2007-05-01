@@ -27,6 +27,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.testcase.Priority;
 
 /**
  * Checks the *_stable_id tables to ensure they are populated, have no orphan
@@ -51,6 +52,9 @@ public class StableID extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription("Checks *_stable_id tables are valid.");
+		setPriority(Priority.RED);
+		setEffect("Compara will have invalid stable IDs.");
+		setFix("Re-run stable ID mapping or fix manually.");
 	}
 
 	/**
@@ -122,15 +126,6 @@ public class StableID extends SingleDatabaseTestCase {
 			result = false;
 		}
 
-		int nInvalidVersions = getRowCount(con, "SELECT COUNT(*) AS " + typeName + "_with_invalid_version" + " FROM " + stableIDtable
-				+ " WHERE version < 1 OR version IS NULL;");
-
-		if (nInvalidVersions > 0) {
-			ReportManager.problem(this, con, "Invalid " + typeName + " versions in " + stableIDtable);
-			DBUtils.printRows(this, con, "SELECT DISTINCT(version) FROM " + stableIDtable);
-			result = false;
-		}
-
 		// check for duplicate stable IDs (will be redundant when stable ID columns
 		// get a UNIQUE constraint)
 		// to find which records are duplicated use
@@ -145,6 +140,34 @@ public class StableID extends SingleDatabaseTestCase {
 			result = false;
 		} else {
 			ReportManager.correct(this, con, "No duplicate stable IDs in " + stableIDtable);
+		}
+		
+		// check for invalid or missing stable ID versions
+		int nInvalidVersions = getRowCount(con, "SELECT COUNT(*) AS " + typeName + "_with_invalid_version" + " FROM " + stableIDtable
+				+ " WHERE version < 1 OR version IS NULL;");
+
+		if (nInvalidVersions > 0) {
+			ReportManager.problem(this, con, "Invalid " + typeName + " versions in " + stableIDtable);
+			DBUtils.printRows(this, con, "SELECT DISTINCT(version) FROM " + stableIDtable);
+			result = false;
+		}
+
+		// make sure stable ID versions in the typeName_stable_id table matches those in stable_id_event
+		// for the latest mapping_session
+		String mappingSessionId = getRowColumnValue(con, "SELECT mapping_session_id FROM mapping_session " +
+			"ORDER BY created DESC LIMIT 1");
+		
+		int nVersionMismatch = getRowCount(con, "SELECT COUNT(*) FROM stable_id_event sie, " + stableIDtable +
+			" si WHERE sie.mapping_session_id = " + Integer.parseInt(mappingSessionId) +
+			" AND sie.new_stable_id = si.stable_id AND sie.new_version <> si.version");
+
+		if (nVersionMismatch > 0) {
+			ReportManager.problem(this, con, "Version mismatch between " + nVersionMismatch + " " + typeName + " versions in " +
+				stableIDtable + " and stable_id_event");
+			DBUtils.printRows(this, con, "SELECT si.stable_id FROM stable_id_event sie, " + stableIDtable +
+			    " si WHERE sie.mapping_session_id = " + Integer.parseInt(mappingSessionId) +
+			    " AND sie.new_stable_id = si.stable_id AND sie.new_version <> si.version");
+			result = false;
 		}
 
 		return result;
