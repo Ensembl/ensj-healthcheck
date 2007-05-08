@@ -150,6 +150,9 @@ public final class Species {
 	/** Specific type of species */
 	public static final Species EQUUS_CABALLUS = new Species("equus_caballus");
 
+	/** Specific type of species */
+	public static final Species PETROMYZON_MARINUS = new Species("petromyzon_marinus");
+
 	/** Non-ensembl database */
 	public static final Species SYSTEM = new Species("system");
 
@@ -239,6 +242,9 @@ public final class Species {
 		taxonIDToSpecies.put("37347", TUPAIA_BELANGERI);
 		taxonIDToSpecies.put("43179", SPERMOPHILUS_TRIDECEMLINEATUS);
 		taxonIDToSpecies.put("9796", EQUUS_CABALLUS);
+		taxonIDToSpecies.put("7757", PETROMYZON_MARINUS);
+		
+		
 		// and the other way around
 		Iterator it = taxonIDToSpecies.keySet().iterator();
 		while (it.hasNext()) {
@@ -286,6 +292,7 @@ public final class Species {
 		assemblyPrefixToSpecies.put("TREESHREW", TUPAIA_BELANGERI);
 		assemblyPrefixToSpecies.put("SQUIRREL", SPERMOPHILUS_TRIDECEMLINEATUS);
 		assemblyPrefixToSpecies.put("EQUUS", EQUUS_CABALLUS);
+		assemblyPrefixToSpecies.put("PMAR", PETROMYZON_MARINUS);
 
 		// and the other way around
 		it = assemblyPrefixToSpecies.keySet().iterator();
@@ -332,6 +339,7 @@ public final class Species {
 		ensemblStableIDPrefix.put(TUPAIA_BELANGERI, "ENSTBE");
 		ensemblStableIDPrefix.put(XENOPUS_TROPICALIS, "ENSXET");
 		ensemblStableIDPrefix.put(SPERMOPHILUS_TRIDECEMLINEATUS, "ENSSTO");
+		ensemblStableIDPrefix.put(PETROMYZON_MARINUS, "ENSPMA");
 		
 		// stable ID prefixes - Vega databases
 		vegaStableIDPrefix.put(HOMO_SAPIENS, "OTTHUM");
@@ -665,6 +673,12 @@ public final class Species {
 
 		}
 		// --------------------------------------
+
+		if (in(alias, "lamprey,sea_laprey,pmarinus,petromyzon")) {
+
+			return PETROMYZON_MARINUS;
+
+		}		// --------------------------------------
 		// default
 		// logger.warning("Cannot resolve species alias " + alias + " to a
 		// species - returning Species.UNKNOWN");
