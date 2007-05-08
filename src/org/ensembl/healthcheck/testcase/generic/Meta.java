@@ -14,6 +14,8 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -156,6 +158,10 @@ public class Meta extends SingleDatabaseTestCase {
 				}
 			}
 		}
+
+		// -------------------------------------------
+
+		result &= checkDuplicates(dbre);
 
 		// -------------------------------------------
 
@@ -617,6 +623,41 @@ public class Meta extends SingleDatabaseTestCase {
 		} else {
 			ReportManager.correct(this, con, rows + " build.level rows present");
 			result = true;
+		}
+
+		return result;
+
+	}
+
+	// ---------------------------------------------------------------------
+	/**
+	 * Check for duplicate entries in the meta table.
+	 */
+	private boolean checkDuplicates(DatabaseRegistryEntry dbre) {
+
+		boolean result = true;
+
+		Connection con = dbre.getConnection();
+
+		try {
+
+			Statement stmt = con.createStatement();
+
+			ResultSet rs = stmt.executeQuery("SELECT meta_key, meta_value FROM meta GROUP BY  meta_key, meta_value HAVING COUNT(*)>1");
+
+			while (rs.next()) {
+				
+				ReportManager.problem(this, con, "Key/value pair " + rs.getString(1) + "/" + rs.getString(2) + " appears more than once in the meta table");
+				result = false;
+				
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		if (result) {
+			ReportManager.correct(this, con, "No duplicates in the meta table");
 		}
 
 		return result;
