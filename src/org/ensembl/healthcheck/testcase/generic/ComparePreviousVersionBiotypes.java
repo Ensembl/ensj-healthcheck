@@ -24,7 +24,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 public class ComparePreviousVersionBiotypes extends ComparePreviousVersionBase {
 
 	/**
-	 * Create a new XrefTypes testcase.
+	 * Create a new testcase.
 	 */
 	public ComparePreviousVersionBiotypes() {
 
