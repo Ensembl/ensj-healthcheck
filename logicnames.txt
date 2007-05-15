@@ -112,6 +112,7 @@ knownGeneDensity
 marker
 matepairs
 mature_peptide
+medaka_5pSAGE
 miranda
 miRNA
 mouse_cdna
