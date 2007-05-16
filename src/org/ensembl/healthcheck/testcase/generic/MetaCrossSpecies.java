@@ -27,7 +27,7 @@ import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 public class MetaCrossSpecies extends MultiDatabaseTestCase {
 
-    private DatabaseType[] types = {DatabaseType.CORE, DatabaseType.EST, DatabaseType.ESTGENE, DatabaseType.VEGA};
+    private DatabaseType[] types = {DatabaseType.CORE, DatabaseType.CDNA, DatabaseType.OTHERFEATURES, DatabaseType.VEGA};
 
     /**
      * Create a new instance of MetaCrossSpecies
