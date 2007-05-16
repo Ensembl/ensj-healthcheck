@@ -71,7 +71,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 	
 	private boolean noLogging = false;
 
-	private static final String CORE_DB_REGEXP = "[a-z]+_[a-z]+_(core|est|estgene|vega|otherfeatures)";
+	private static final String CORE_DB_REGEXP = "[a-z]+_[a-z]+_(core|otherfeatures|cdna|vega|otherfeatures)";
 
 	// -------------------------------------------------------------------------
 
