@@ -54,17 +54,6 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 	}
 
 	/**
-	 * FeatureAnalysis only applies to core and Vega databases.
-	 */
-	public void types() {
-
-		removeAppliesToType(DatabaseType.OTHERFEATURES);
-		removeAppliesToType(DatabaseType.ESTGENE);
-		removeAppliesToType(DatabaseType.CDNA);
-
-	}
-
-	/**
 	 * Run the test.
 	 * 
 	 * @param dbre
