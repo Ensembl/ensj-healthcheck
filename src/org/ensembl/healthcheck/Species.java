@@ -133,9 +133,6 @@ public final class Species {
 	public static final Species SOREX_ARANEUS = new Species("sorex_araneus");
 
 	/** Specific type of species */
-	public static final Species OCHOTONA_PRINCEPS = new Species("ochotona_princeps");
-
-	/** Specific type of species */
 	public static final Species ERINACEUS_EUROPAEUS = new Species("erinaceus_europaeus");
 
 	/** Specific type of species */
@@ -149,9 +146,6 @@ public final class Species {
 
 	/** Specific type of species */
 	public static final Species EQUUS_CABALLUS = new Species("equus_caballus");
-
-	/** Specific type of species */
-	public static final Species PETROMYZON_MARINUS = new Species("petromyzon_marinus");
 
 	/** Non-ensembl database */
 	public static final Species SYSTEM = new Species("system");
@@ -235,16 +229,12 @@ public final class Species {
 		taxonIDToSpecies.put("30611", OTOLEMUR_GARNETTII);
 		taxonIDToSpecies.put("59463", MYOTIS_LUCIFUGUS);
 		taxonIDToSpecies.put("42254", SOREX_ARANEUS);
-		taxonIDToSpecies.put("9978", OCHOTONA_PRINCEPS);
 		taxonIDToSpecies.put("9258", ORNITHORHYNCHUS_ANATINUS);
 		taxonIDToSpecies.put("9365", ERINACEUS_EUROPAEUS);
 		taxonIDToSpecies.put("10141", CAVIA_PORCELLUS);
 		taxonIDToSpecies.put("37347", TUPAIA_BELANGERI);
 		taxonIDToSpecies.put("43179", SPERMOPHILUS_TRIDECEMLINEATUS);
 		taxonIDToSpecies.put("9796", EQUUS_CABALLUS);
-		taxonIDToSpecies.put("7757", PETROMYZON_MARINUS);
-		
-		
 		// and the other way around
 		Iterator it = taxonIDToSpecies.keySet().iterator();
 		while (it.hasNext()) {
@@ -285,14 +275,12 @@ public final class Species {
 		assemblyPrefixToSpecies.put("BUSHBABY", OTOLEMUR_GARNETTII);
 		assemblyPrefixToSpecies.put("MICROBAT", MYOTIS_LUCIFUGUS);
 		assemblyPrefixToSpecies.put("COMMON_SHREW", SOREX_ARANEUS);
-		assemblyPrefixToSpecies.put("PIKA", OCHOTONA_PRINCEPS);
 		assemblyPrefixToSpecies.put("OANA", ORNITHORHYNCHUS_ANATINUS);
 		assemblyPrefixToSpecies.put("HEDGEHOG", ERINACEUS_EUROPAEUS);
 		assemblyPrefixToSpecies.put("GUINEAPIG", CAVIA_PORCELLUS);
 		assemblyPrefixToSpecies.put("TREESHREW", TUPAIA_BELANGERI);
 		assemblyPrefixToSpecies.put("SQUIRREL", SPERMOPHILUS_TRIDECEMLINEATUS);
 		assemblyPrefixToSpecies.put("EQUUS", EQUUS_CABALLUS);
-		assemblyPrefixToSpecies.put("PMAR", PETROMYZON_MARINUS);
 
 		// and the other way around
 		it = assemblyPrefixToSpecies.keySet().iterator();
@@ -325,13 +313,11 @@ public final class Species {
 		ensemblStableIDPrefix.put(MONODELPHIS_DOMESTICA, "ENSMOD");
 		ensemblStableIDPrefix.put(MUS_MUSCULUS, "ENSMUS");
 		ensemblStableIDPrefix.put(MYOTIS_LUCIFUGUS, "ENSMLU");
-		ensemblStableIDPrefix.put(OCHOTONA_PRINCEPS, "ENSOPR");
 		ensemblStableIDPrefix.put(ORNITHORHYNCHUS_ANATINUS, "ENSOAN");
 		ensemblStableIDPrefix.put(ORYCTOLAGUS_CUNICULUS, "ENSOCU");
 		ensemblStableIDPrefix.put(ORYZIAS_LATIPES, "ENSORL");
 		ensemblStableIDPrefix.put(OTOLEMUR_GARNETTII, "ENSOGA");
 		ensemblStableIDPrefix.put(PAN_TROGLODYTES, "ENSPTR");
-		ensemblStableIDPrefix.put(SOREX_ARANEUS, "ENSSAR");
 		ensemblStableIDPrefix.put(RATTUS_NORVEGICUS, "ENSRNO");
 		ensemblStableIDPrefix.put(SACCHAROMYCES_CEREVISIAE, "IGNORE");
 		ensemblStableIDPrefix.put(TAKIFUGU_RUBRIPES, "SINFRU");
@@ -339,13 +325,11 @@ public final class Species {
 		ensemblStableIDPrefix.put(TUPAIA_BELANGERI, "ENSTBE");
 		ensemblStableIDPrefix.put(XENOPUS_TROPICALIS, "ENSXET");
 		ensemblStableIDPrefix.put(SPERMOPHILUS_TRIDECEMLINEATUS, "ENSSTO");
-		ensemblStableIDPrefix.put(PETROMYZON_MARINUS, "ENSPMA");
 		
 		// stable ID prefixes - Vega databases
 		vegaStableIDPrefix.put(HOMO_SAPIENS, "OTTHUM");
 		vegaStableIDPrefix.put(MUS_MUSCULUS, "OTTMUS");
 		vegaStableIDPrefix.put(CANIS_FAMILIARIS, "OTTCAN");
-		vegaStableIDPrefix.put(DANIO_RERIO, "OTTDAR");
 
 	}
 
@@ -594,31 +578,21 @@ public final class Species {
 			return SOREX_ARANEUS;
 
 		}
-		// --------------------------------------
-                if (in(alias, "pika,Americanpika,American_pika,ochotona_princeps,oprinceps,ochotona")) {
-
-			return OCHOTONA_PRINCEPS;
-
-		}
-		// --------------------------------------
 		if (in(alias, "hedgehog,erinaceus_europaeus,european_hedgehog,eeuropaeus")) {
 
 			return ERINACEUS_EUROPAEUS;
 
 		}
-		// --------------------------------------
 		if (in(alias, "guineapig,guinea_pig,cavia_porcellus,cporcellus")) {
 
 			return CAVIA_PORCELLUS;
 
 		}
-		// --------------------------------------
 		if (in(alias, "treeshrew,tbelangeri,tupaia_belangeri,northern_tree_shrew,common_tree_shrew")) {
 
 			return TUPAIA_BELANGERI;
 
 		}
-		// --------------------------------------
 		if (in(alias, "squirrel,stridecemlineatus,thirteen-lined_ground_squirrel,spermophilus_tridecemlineatus,spermophilus_tridecemlineatus_arenicola")) {
 
 			return SPERMOPHILUS_TRIDECEMLINEATUS;
@@ -673,12 +647,6 @@ public final class Species {
 
 		}
 		// --------------------------------------
-
-		if (in(alias, "lamprey,sea_laprey,pmarinus,petromyzon")) {
-
-			return PETROMYZON_MARINUS;
-
-		}		// --------------------------------------
 		// default
 		// logger.warning("Cannot resolve species alias " + alias + " to a
 		// species - returning Species.UNKNOWN");
@@ -803,7 +771,7 @@ public final class Species {
 			result = (String) vegaStableIDPrefix.get(s);
 		}
 		
-		if (result == null || result.equals("")) {
+		if (result.equals("")) {
 			logger.warning("Can't get stable ID prefix for " +s.toString() + " " + t.toString() + " database");
 		}
 		

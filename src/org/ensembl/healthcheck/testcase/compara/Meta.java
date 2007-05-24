@@ -78,118 +78,12 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
             return result;
         }
 
-        // These methods return false if there is any problem with the test
         result &= checkMaxAlignmentLength(con);
 
         result &= checkSchemaVersionDBName(dbre);
 
-        result &= checkConservationScoreLink(dbre);
-
-        // I still have to check if some entries have to be removed/inserted/updated
-        Iterator it = MetaEntriesToRemove.keySet().iterator();
-        while (it.hasNext()) {
-            Object next = it.next();
-            ReportManager.problem(this, con, "Remove from meta: " + next +
-                " -- " + MetaEntriesToRemove.get(next));
-            result = false;
-        }
-        it = MetaEntriesToAdd.keySet().iterator();
-        while (it.hasNext()) {
-            Object next = it.next();
-            ReportManager.problem(this, con, "Add in meta: " + next +
-                " -- " + MetaEntriesToAdd.get(next));
-            result = false;
-        }
-        it = MetaEntriesToUpdate.keySet().iterator();
-        while (it.hasNext()) {
-            Object next = it.next();
-            ReportManager.problem(this, con, "Update in meta: " + next +
-                " -- " + MetaEntriesToUpdate.get(next));
-            result = false;
-        }
-
         return result;
     }
-
-
-    /**
-    * Check that the each conservation score MethodLinkSpeciesSet obejct has a link to
-    * a multiple alignment MethodLinkSpeciesSet in the meta table.
-    */
-    private boolean checkConservationScoreLink(DatabaseRegistryEntry dbre) {
-
-        boolean result = true;
-
-        // get version from meta table
-        Connection con = dbre.getConnection();
-
-        // get all the links between conservation scores and multiple genomic alignments
-        String sql = new String("SELECT mlss1.method_link_species_set_id," +
-            " mlss2.method_link_species_set_id, ml1.type, ml2.type, count(*)" +
-            " FROM method_link ml1, method_link_species_set mlss1, method_link ml2," +
-            " method_link_species_set mlss2 WHERE mlss1.method_link_id = ml1.method_link_id " +
-            " AND ml1.class = \"ConservationScore.conservation_score\" "+
-            " AND mlss1.species_set_id = mlss2.species_set_id AND mlss2.method_link_id = ml2.method_link_id" +
-            " AND ml2.class = \"GenomicAlignBlock.multiple_alignment\" GROUP BY mlss1.method_link_species_set_id");
-
-        try {
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-            while (rs.next()) {
-                if (rs.getInt(5) > 1) {
-                    ReportManager.problem(this, con, "MethodLinkSpeciesSet " + rs.getString(1) +
-                        " links to several multiple alignments!");
-                    result = false;
-                } else if (rs.getString(3).equals("GERP_CONSERVATION_SCORE")) {
-                    MetaEntriesToAdd.put("gerp_" + rs.getString(1), new Integer(rs.getInt(2)).toString());
-                } else {
-                    ReportManager.problem(this, con, "Using " + rs.getString(3) +
-                        " method_link_type is not supported by this healthcheck");
-                    result = false;
-                }
-            }
-            rs.close();
-            stmt.close();
-        } catch (SQLException se) {
-            se.printStackTrace();
-            result = false;
-        }
-
-        // get all the values currently stored in the DB
-        sql = new String("SELECT meta_key, meta_value, count(*)" +
-            " FROM meta WHERE meta_key LIKE \"gerp_%\" GROUP BY meta_key");
-
-        try {
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-            while (rs.next()) {
-                if (rs.getInt(3) != 1) {
-                    // Delete all current entries. The right entry will be added
-                    MetaEntriesToRemove.put(rs.getString(1), rs.getString(2));
-                } else if (MetaEntriesToAdd.containsKey(rs.getString(1))) {
-                    // Entry matches one of the required entries. Update if needed.
-                    if (!MetaEntriesToAdd.get(rs.getString(1)).equals(rs.getString(2))) {
-                        MetaEntriesToUpdate.put(rs.getString(1),
-                            MetaEntriesToAdd.get(rs.getString(1)));
-                    }
-                    // Remove this entry from the set of entries to be added (as it already exits!)
-                    MetaEntriesToAdd.remove(rs.getString(1));
-                } else {
-                    // Entry is out-to-date
-                    MetaEntriesToRemove.put(rs.getString(1), rs.getString(2));
-                }
-            }
-            rs.close();
-            stmt.close();
-        } catch (SQLException se) {
-            se.printStackTrace();
-            result = false;
-        }
-
-        return result;
-
-    } // ---------------------------------------------------------------------
-
 
 
     /**
@@ -216,15 +110,20 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
             if (rs.first()) {
                 if (rs.getInt(2) != new Integer(dbNameVersion).intValue()) {
                     MetaEntriesToUpdate.put(new String("schema_version"), new Integer(dbNameVersion));
+                    ReportManager.problem(this, con, "Update in meta: schema_version -- "
+                        + dbNameVersion);
+                    result = false;
                 }
             } else {
                 MetaEntriesToAdd.put(new String("schema_version"), new Integer(dbNameVersion));
+                ReportManager.problem(this, con, "Add in meta: schema_version -- "
+                    + dbNameVersion);
+                result = false;
             }
             rs.close();
             stmt.close();
         } catch (SQLException se) {
             se.printStackTrace();
-            result = false;
         }
 
         return result;
@@ -238,12 +137,11 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
     private boolean checkMaxAlignmentLength(Connection con) {
 
         boolean result = true;
-
         int globalMaxAlignmentLength = 0;
 
         // Check whether tables are empty or not
-        if (!tableHasRows(con, "genomic_align")) {
-            ReportManager.problem(this, con, "NO ENTRIES in genomic_align table");
+        if (!tableHasRows(con, "meta") || !tableHasRows(con, "genomic_align")) {
+            ReportManager.problem(this, con, "NO ENTRIES in meta or in genomic_align table");
             return false;
         }
 
@@ -267,7 +165,6 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
             stmt.close();
         } catch (SQLException se) {
             se.printStackTrace();
-            result = false;
         }
 
         // Get values currently stored in the meta table
@@ -293,7 +190,6 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
             stmt.close();
         } catch (SQLException se) {
             se.printStackTrace();
-            result = false;
         }
 
         // Get current global value from the meta table (used for backwards compatibility)
@@ -315,6 +211,27 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
             stmt.close();
         } catch (SQLException se) {
             se.printStackTrace();
+        }
+
+        Iterator it = MetaEntriesToRemove.keySet().iterator();
+        while (it.hasNext()) {
+            Object next = it.next();
+            ReportManager.problem(this, con, "Remove from meta: " + next +
+                " -- " + MetaEntriesToRemove.get(next));
+            result = false;
+        }
+        it = MetaEntriesToAdd.keySet().iterator();
+        while (it.hasNext()) {
+            Object next = it.next();
+            ReportManager.problem(this, con, "Add in meta: " + next +
+                " -- " + MetaEntriesToAdd.get(next));
+            result = false;
+        }
+        it = MetaEntriesToUpdate.keySet().iterator();
+        while (it.hasNext()) {
+            Object next = it.next();
+            ReportManager.problem(this, con, "Update in meta: " + next +
+                " -- " + MetaEntriesToUpdate.get(next));
             result = false;
         }
 

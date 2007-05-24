@@ -257,15 +257,11 @@ public class Ditag extends SingleDatabaseTestCase {
 		}
 	    }
 
-	    if (analysis_ids.length() == 0) {
-		return true;
-	    }
-
 	    //Check for ditag_ids that occur only once, ignore CAGE tags ("F")
 	    String sql = "SELECT COUNT(*) AS singles FROM (select count(*) as count from ditag_feature df where analysis_id IN("
 		+ analysis_ids
 		+ ") and df.ditag_side!='F' group by ditag_id, ditag_pair_id having count=1) as counter LIMIT 5;";
-	    System.out.println(sql);
+
 	    int count = 0;
 	    rs        = stmt.executeQuery(sql);
 	    rs.next();
@@ -312,10 +308,6 @@ public class Ditag extends SingleDatabaseTestCase {
 		else {
 		    analysis_ids = analysis_id + " ";
 		}
-	    }
-
-	    if (analysis_ids.length() == 0) {
-		return true;
 	    }
 
 	    //Check for ditag_ids that occur only once, ignore CAGE tags ("F")
