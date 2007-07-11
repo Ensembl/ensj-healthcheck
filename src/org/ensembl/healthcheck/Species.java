@@ -246,7 +246,7 @@ public final class Species {
 		taxonIDToSpecies.put("43179", SPERMOPHILUS_TRIDECEMLINEATUS);
 		taxonIDToSpecies.put("9796", EQUUS_CABALLUS);
 		taxonIDToSpecies.put("7757", PETROMYZON_MARINUS);
-		taxonIDToSpecies.put("28377", PETROMYZON_MARINUS);
+		taxonIDToSpecies.put("28377", ANOLIS_CAROLINENSIS );
 		
 		
 		// and the other way around
