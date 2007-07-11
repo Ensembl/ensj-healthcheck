@@ -309,7 +309,7 @@ public final class Species {
 		
 		// stable ID prefixes - ensembl databases
 		ensemblStableIDPrefix.put(AEDES_AEGYPTI, "IGNORE");
-		ensemblStableIDPrefix.put(ANOPHELES_GAMBIAE, "ENSANG");
+		ensemblStableIDPrefix.put(ANOPHELES_GAMBIAE, "IGNORE");
 		ensemblStableIDPrefix.put(BOS_TAURUS, "ENSBTA");
 		ensemblStableIDPrefix.put(CAENORHABDITIS_ELEGANS, "IGNORE");
 		ensemblStableIDPrefix.put(CANIS_FAMILIARIS, "ENSCAF");
