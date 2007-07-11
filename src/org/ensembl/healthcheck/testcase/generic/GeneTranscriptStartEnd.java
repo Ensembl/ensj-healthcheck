@@ -74,14 +74,17 @@ public class GeneTranscriptStartEnd extends SingleDatabaseTestCase {
         Connection con = dbre.getConnection();
 
         try {
-
+	    
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
-
+	    
 	    rs.beforeFirst();
-
+	    
             // gene GC32491 in drosophila is allowed to have all sorts of things wrong with it
             if (rs != null && !rs.isAfterLast() && rs.next() && dbre.getSpecies() != Species.DROSOPHILA_MELANOGASTER && rs.getString("stable_id") != null && !rs.getString("stable_id").equalsIgnoreCase("CG32491")) {
+		
+		ReportManager.problem(this, con, "Gene ID " + rs.getLong(1) + " has start/end that does not agree with transcript start/end");
+		startEndResult = false;
 
                 while (rs.next()) {
                     ReportManager.problem(this, con, "Gene ID " + rs.getLong(1)
