@@ -80,7 +80,6 @@ public class TranscriptsSameName extends SingleDatabaseTestCase {
 					.executeQuery("SELECT g.gene_id, t.transcript_id, t.display_xref_id FROM gene g, transcript t WHERE t.gene_id=g.gene_id AND t.display_xref_id IS NOT NULL ORDER BY g.gene_id");
 
 			long previousGeneID = -1;
-			long previousTranscriptID = -1;
 			long previousDisplayXrefID = -1;
 
 			long lastCountedGeneID = -1;
@@ -91,7 +90,6 @@ public class TranscriptsSameName extends SingleDatabaseTestCase {
 
 				long geneID = rs.getLong(1);
 
-				long transcriptID = rs.getLong(2);
 				long displayXrefID = rs.getLong(3);
 
 				if (geneID == previousGeneID && displayXrefID == previousDisplayXrefID && lastCountedGeneID != geneID) {
@@ -100,7 +98,6 @@ public class TranscriptsSameName extends SingleDatabaseTestCase {
 				}
 
 				previousGeneID = geneID;
-				previousTranscriptID = transcriptID;
 				previousDisplayXrefID = displayXrefID;
 
 			} // while rs
