@@ -86,14 +86,13 @@ public class StableID extends SingleDatabaseTestCase {
 		result &= checkStableIDs(con, "transcript");
 		result &= checkStableIDs(con, "gene");
 
+		// there are several species where ID mapping is not done
+		Species s = dbre.getSpecies();
+		if (s != Species.CAENORHABDITIS_ELEGANS && s != Species.DROSOPHILA_MELANOGASTER &&
+			s != Species.SACCHAROMYCES_CEREVISIAE && s != Species.ANOPHELES_GAMBIAE) {
+			result &= checkPrefixes(dbre);
 			result &= checkStableIDEventTypes(con);
-
-	// there are several species where ID mapping is not done
-	Species s = dbre.getSpecies();
-	if (s != Species.CAENORHABDITIS_ELEGANS && s != Species.DROSOPHILA_MELANOGASTER &&
-		s != Species.SACCHAROMYCES_CEREVISIAE && s != Species.ANOPHELES_GAMBIAE) {
-		result &= checkPrefixes(dbre);
-	}
+		}
 
 		return result;
 	}
