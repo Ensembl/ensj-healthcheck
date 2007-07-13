@@ -72,7 +72,7 @@ public class StableID extends SingleDatabaseTestCase {
 	 * 
 	 * @param dbre
 	 *          The database to use.
-	 * @return true if the test pased.
+	 * @return true if the test passed.
 	 * 
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
@@ -104,7 +104,7 @@ public class StableID extends SingleDatabaseTestCase {
 	 * typeName_stable_id table via ReportManager.info().
 	 * 
 	 * @param con
-	 *          connection to run quries on.
+	 *          connection to run queries on.
 	 * @param typeName
 	 *          name of the type to check, e.g. "exon"
 	 * @return true if the table and references are valid, otherwise false.
