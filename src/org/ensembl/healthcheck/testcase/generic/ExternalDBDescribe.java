@@ -29,36 +29,39 @@ import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 public class ExternalDBDescribe extends MultiDatabaseTestCase {
 
-    private DatabaseType[] types = {DatabaseType.CORE, DatabaseType.VEGA};
+	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.VEGA };
 
-    /**
-     * Create a new ExternalDBDescribe test case.
-     */
-    public ExternalDBDescribe() {
+	/**
+	 * Create a new ExternalDBDescribe test case.
+	 */
+	public ExternalDBDescribe() {
 
-        addToGroup("release");
-        setDescription("Check that the external_db table is the same in all databases.");
+		addToGroup("release");
+		setDescription("Check that the external_db table is the same in all databases.");
 
-    }
+	}
 
-    /**
-     * Check that the external_db tables are the same for each matched
-     * database.
-     * 
-     * @param dbr
-     *          The database registry containing all the specified databases.
-     * @return Result.
-     */
-    public boolean run(DatabaseRegistry dbr) {
+	/**
+	 * Check that the external_db tables are the same for each matched database.
+	 * 
+	 * @param dbr
+	 *          The database registry containing all the specified databases.
+	 * @return Result.
+	 */
+	public boolean run(DatabaseRegistry dbr) {
 
-        boolean result = true;
+		boolean result = true;
 
-        for (int i = 0; i < types.length; i++) {
-            result &= checkSameSQLResult("SELECT * FROM external_db ORDER BY external_db_id", dbr.getAll(types[i]));
-        }
+		for (int i = 0; i < types.length; i++) {
+			// ignore db_release column as this is allowed to be different between
+			// species
+			result &= checkSameSQLResult(
+					"SELECT external_db_id, db_name, status, dbprimary_acc_linkable, display_label_linkable, priority, db_display_name, type FROM external_db ORDER BY external_db_id",
+					dbr.getAll(types[i]));
+		}
 
-        return result;
+		return result;
 
-    } // run
+	} // run
 
 } // ExternalDBDescribe
