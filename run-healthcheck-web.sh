@@ -1,5 +1,6 @@
 #!/bin/sh
 
+JAVA_HOME=/usr/bin/java
 dir=/nfs/acari/ensembl/ensj-healthcheck
 
 cp=$dir
