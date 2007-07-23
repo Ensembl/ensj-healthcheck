@@ -4,7 +4,7 @@
 # e.g. ~/dev/ensj-healthcheck/run-healthcheck.sh  -config `pwd`/db.properties -d my_database SOME_TEST
 
 home=`dirname $0`
-java=/software/bin/java
+java=/usr/opt/java/bin/java
 
 cp=$home
 cp=$cp:$home/build/classes
