@@ -36,7 +36,6 @@ public class MultipleGenomicAlignBlockIds extends SingleDatabaseTestCase {
      */
     public MultipleGenomicAlignBlockIds() {
 
-        addToGroup("compara_db_constraints");
         setDescription("Check that every genomic_align_block_id is linked to more than one single genomic_align_id.");
 
     }
