@@ -32,6 +32,7 @@ public class ExternalSynonymArray extends SingleDatabaseTestCase {
 
 		addToGroup("release");
 		addToGroup("post_genebuild");
+		addToGroup("core_xrefs");
 		setDescription("Check for ARRAY() entries in external_synonym.");
 
 	}
