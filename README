@@ -6,13 +6,20 @@ REQUIREMENTS
 ============
 
 1. J2SDK 1.4 or later (see http://java.sun.com/ for downloads); this is already
-   installed on the Sanger system in /usr/opt/java142/.  Make sure that your
+   installed on the Farm in /usr/opt/java/.  Make sure that your
    JAVA_HOME environment variable is pointing to the correct directory and that the
    *correct* Java executables are in your path; put something like the following in
    your .cshrc:
 
-     setenv JAVA_HOME /usr/opt/java142
+     setenv JAVA_HOME /usr/opt/java
      setenv PATH ${JAVA_HOME}/bin:${PATH}
+
+   Note that if you get errors indicating that the java executable can't be found,
+   check that $JAVA_HOME is set correctly by doing 
+
+     which java
+
+   and setting $JAVA_HOME to the directory in which bin/java resides.
 
 
 INSTALLATION
