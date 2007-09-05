@@ -266,7 +266,7 @@ public final class Species {
 		assemblyPrefixToSpecies.put("ZFISH", DANIO_RERIO);
 		assemblyPrefixToSpecies.put("FUGU", TAKIFUGU_RUBRIPES);
 		assemblyPrefixToSpecies.put("AgamP", ANOPHELES_GAMBIAE);
-		assemblyPrefixToSpecies.put("WB", CAENORHABDITIS_ELEGANS);
+		assemblyPrefixToSpecies.put("WS", CAENORHABDITIS_ELEGANS);
 		assemblyPrefixToSpecies.put("CBR", CAENORHABDITIS_BRIGGSAE);
 		assemblyPrefixToSpecies.put("JGI", CIONA_INTESTINALIS);
 		assemblyPrefixToSpecies.put("NCBI", HOMO_SAPIENS);
