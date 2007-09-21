@@ -8,6 +8,7 @@ misc_RNA_pseudogene
 ncRNA
 protein_coding
 pseudogene
+retrotransposed
 rRNA
 rRNA_pseudogene
 scRNA
