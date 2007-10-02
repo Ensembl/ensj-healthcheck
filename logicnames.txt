@@ -49,6 +49,7 @@ PROSITE
 PercentGC
 PercentageRepeat
 Pfam
+rRNA
 RNA_BEST
 RNAi
 RepeatMask
@@ -58,6 +59,9 @@ Signalp
 Slam
 Smart
 Snap
+snRNA
+snlRNA
+snoRNA
 TRF
 Tigrfam
 Tmhmm
