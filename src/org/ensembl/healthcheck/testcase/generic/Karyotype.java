@@ -74,7 +74,8 @@ public class Karyotype extends SingleDatabaseTestCase {
 					|| species == Species.ECHINOPS_TELFAIRI || species == Species.ORNITHORHYNCHUS_ANATINUS
 					|| species == Species.ORYCTOLAGUS_CUNICULUS || species == Species.ORYZIAS_LATIPES || species == Species.AEDES_AEGYPTI
 					|| species == Species.CIONA_SAVIGNYI || species == Species.GASTEROSTEUS_ACULEATUS || species == Species.MACACA_MULATTA
-					|| species == Species.MONODELPHIS_DOMESTICA) {
+					|| species == Species.MONODELPHIS_DOMESTICA || species == Species.ERINACEUS_EUROPAEUS || species == Species.FELIS_CATUS
+					|| species == Species.OTOLEMUR_GARNETTII) {
 
 				ReportManager.correct(this, con, "Karyotype table is empty, but this is allowed for " + species.toString());
 				return true;
