@@ -26,7 +26,7 @@ import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
  */
 public class SeqRegionAttribAcrossSpecies extends MultiDatabaseTestCase {
 
-	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.VEGA, DatabaseType.OTHERFEATURES };
+	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.OTHERFEATURES };
 
 	/**
 	 * Creates a new instance of SeqRegionAttribAcrossSpecies
