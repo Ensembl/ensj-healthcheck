@@ -159,6 +159,9 @@ public final class Species {
 	/** Specific type of species */
 	public static final Species MICROCEBUS_MURINUS = new Species("microcebus_murinus");
 
+	/** Specific type of species */
+	public static final Species CULEX_PIPIENS = new Species("culex_pipiens");
+
 	/** Non-ensembl database */
 	public static final Species SYSTEM = new Species("system");
 
@@ -251,8 +254,7 @@ public final class Species {
 		taxonIDToSpecies.put("7757", PETROMYZON_MARINUS);
 		taxonIDToSpecies.put("28377", ANOLIS_CAROLINENSIS );
 		taxonIDToSpecies.put("30608", MICROCEBUS_MURINUS );
-		
-		
+		taxonIDToSpecies.put("7175", CULEX_PIPIENS );
 		// and the other way around
 		Iterator it = taxonIDToSpecies.keySet().iterator();
 		while (it.hasNext()) {
@@ -303,7 +305,7 @@ public final class Species {
 		assemblyPrefixToSpecies.put("PMAR", PETROMYZON_MARINUS);
 		assemblyPrefixToSpecies.put("AnoCar", ANOLIS_CAROLINENSIS);
 		assemblyPrefixToSpecies.put("micMur", MICROCEBUS_MURINUS);
-
+		assemblyPrefixToSpecies.put("CpiJ", CULEX_PIPIENS);
 		// and the other way around
 		it = assemblyPrefixToSpecies.keySet().iterator();
 		while (it.hasNext()) {
@@ -352,7 +354,7 @@ public final class Species {
 		ensemblStableIDPrefix.put(PETROMYZON_MARINUS, "ENSPMA");
 		ensemblStableIDPrefix.put(ANOLIS_CAROLINENSIS, "ENSACA");
 		ensemblStableIDPrefix.put(MICROCEBUS_MURINUS, "ENSMIC");
-		
+		ensemblStableIDPrefix.put(CULEX_PIPIENS, "CPIJ");
 		// stable ID prefixes - Vega databases
 		vegaStableIDPrefix.put(HOMO_SAPIENS, "OTTHUM");
 		vegaStableIDPrefix.put(MUS_MUSCULUS, "OTTMUS");
@@ -429,6 +431,15 @@ public final class Species {
 
 		}
 
+		// --------------------------------------
+
+		if (in(alias, "culex,culex_pipiens,culexpipiens")) {
+
+			return CULEX_PIPIENS;
+
+		}
+
+	
 		// --------------------------------------
 
 		if (in(alias, "mouse,mmusculus,musmusculus,mus_musculus")) {
