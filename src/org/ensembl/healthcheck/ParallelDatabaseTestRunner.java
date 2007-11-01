@@ -174,8 +174,7 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 			// "healthcheck.err", "-q", "normal", "-m", "bc_hosts"};
 
 			// TODO: check paths
-			String[] cmd = { "/Users/glennproctor/work/ensj-healthcheck/run-healthcheck-node.sh", "-d", database, "-group", group,
-					"-session", "" + sessionID };
+			String[] cmd = {"bsub", "-o", "healthcheck.out", "-e", "healthcheck.err", "/nfs/acari/gp1/work/ensj-healthcheck/run-healthcheck-node.sh", "-d", database, "-group", group,	"-session", "" + sessionID };
 
 			try {
 				Runtime.getRuntime().exec(cmd);
