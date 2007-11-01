@@ -4,10 +4,10 @@
 
 CREATE TABLE session (
 
-  session_id					INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  session_id				INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   release					INT(10) NOT NULL,
   host						VARCHAR(255),
-  groups						VARCHAR(255),
+  groups					VARCHAR(255),
   database_regexp			VARCHAR(255),
   
   PRIMARY KEY (session_id)
@@ -27,7 +27,7 @@ CREATE TABLE report (
   start_time				DATETIME,
   end_time					DATETIME,
   testcase					VARCHAR(255),
-  result						ENUM("PROBLEM", "CORRECT", "WARNING", "INFO"),
+  result					ENUM("PROBLEM", "CORRECT", "WARNING", "INFO"),
   text						VARCHAR(255),
   
   PRIMARY KEY (report_id),
