@@ -4,15 +4,33 @@
 
 CREATE TABLE session (
 
+<<<<<<< table.sql
+  session_id				INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  release					INT(10) NOT NULL,
+  host						VARCHAR(255),
+  groups					VARCHAR(255),
+  database_regexp			VARCHAR(255),
+=======
   session_id                            INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   db_release                            INT(10) NOT NULL,
   host					VARCHAR(255),
   groups				VARCHAR(255),
   database_regexp			VARCHAR(255),
+>>>>>>> 1.16
   
   PRIMARY KEY (session_id)
   
 );
+# View for derived data about sessions 
+
+CREATE VIEW session_v AS 
+  SELECT s.*, 
+  MIN(r.start_time) AS start_time, 
+  MAX(r.end_time) AS end_time, 
+  TIMEDIFF(start_time, end_time) AS duration 
+  FROM session s, report r 
+  WHERE s.session_id=r.last_session_id 
+  GROUP BY r.last_session_id;
 
 # Individual healthcheck reports
 
@@ -35,6 +53,15 @@ CREATE TABLE report (
   KEY last_session_idx(last_session_id)
   
 );
+
+# View for derived data about reports
+
+CREATE VIEW report_v AS SELECT *, 
+
+  TIMEDIFF(start_time, end_time) 
+  AS duration
+  FROM report;
+
 
 # Store annotations about healthcheck results
 
