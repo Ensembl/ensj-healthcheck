@@ -773,7 +773,7 @@ public final class ReportManager {
 	public static void createDatabaseSession(long sessionID) {
 
 		String sql = "INSERT INTO session (session_id, start_time, host, groups, database_regexp, release) VALUES (" + sessionID
-				+ "NOW(), '" + System.getProperty("host") + ":" + System.getProperty("port") + "','" + System.getProperty("output.groups")
+				+ ", NOW(), '" + System.getProperty("host") + ":" + System.getProperty("port") + "','" + System.getProperty("output.groups")
 				+ "','" + System.getProperty("output.databases") + "', " + System.getProperty("output.release") + ")";
 
 		try {
@@ -979,5 +979,13 @@ public final class ReportManager {
 
 	}
 	// -------------------------------------------------------------------------
+
+	public static long getSessionID() {
+		return sessionID;
+	}
+
+	public static void setSessionID(long sessionID) {
+		ReportManager.sessionID = sessionID;
+	}
 
 } // ReportManager
