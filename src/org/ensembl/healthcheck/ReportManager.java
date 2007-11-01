@@ -736,12 +736,11 @@ public final class ReportManager {
 	 */
 	public static void createDatabaseSession() {
 
-		String sql = "INSERT INTO session (start_time, host, groups, database_regexp, release) VALUES (NOW(), '" + System.getProperty("host")
-				+ ":" + System.getProperty("port") + "','" + System.getProperty("output.groups") + "','"
+		String sql = "INSERT INTO session (start_time, host, groups, database_regexp, release) VALUES (NOW(), '"
+				+ System.getProperty("host") + ":" + System.getProperty("port") + "','" + System.getProperty("output.groups") + "','"
 				+ System.getProperty("output.databases") + "', " + System.getProperty("output.release") + ")";
 
 		try {
-
 			Statement stmt = outputDatabaseConnection.createStatement();
 			stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
 			ResultSet rs = stmt.getGeneratedKeys();
@@ -760,6 +759,34 @@ public final class ReportManager {
 		if (sessionID == -1) {
 			logger.severe("Could not get new session ID");
 			logger.severe(sql);
+		}
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+	 * Create a new entry in the session table, using a user-specified session ID.
+	 * 
+	 * @param sessionID
+	 *          The session ID to use.
+	 */
+	public static void createDatabaseSession(long sessionID) {
+
+		String sql = "INSERT INTO session (session_id, start_time, host, groups, database_regexp, release) VALUES (" + sessionID
+				+ "NOW(), '" + System.getProperty("host") + ":" + System.getProperty("port") + "','" + System.getProperty("output.groups")
+				+ "','" + System.getProperty("output.databases") + "', " + System.getProperty("output.release") + ")";
+
+		try {
+
+			Statement stmt = outputDatabaseConnection.createStatement();
+			stmt.executeUpdate(sql);
+			logger.fine("Created new session with ID " + sessionID);
+
+		} catch (SQLException e) {
+
+			System.err.println("Error executing:\n" + sql);
+			e.printStackTrace();
+
 		}
 
 	}
