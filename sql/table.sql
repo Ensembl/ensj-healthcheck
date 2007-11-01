@@ -7,9 +7,8 @@ CREATE TABLE session (
   session_id                            INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   db_release                            INT(10) NOT NULL,
   host					VARCHAR(255),
-  groups				VARCHAR(255),
-  database_regexp			VARCHAR(255),
-  
+  config                                VARCHAR(255),
+
   PRIMARY KEY (session_id)
   
 );
@@ -68,12 +67,12 @@ CREATE VIEW session_v AS
 
 # View for derived data about reports
 
-CREATE VIEW report_timings AS
+CREATE VIEW timings AS
 
-  SELECT report_id, first_session_id, last_session_id, database_name, species, database_type, testcase,
+  SELECT last_session_id, database_name, species, database_type, testcase,
   MIN(timestamp) AS start_time, 
   MAX(timestamp) AS end_time, 
   TIMEDIFF(MAX(timestamp), MIN(timestamp)) AS duration
   FROM report
-  GROUP BY last_session_id;
+  GROUP BY last_session_id, database_name, testcase;
 
