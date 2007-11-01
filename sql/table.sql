@@ -4,33 +4,15 @@
 
 CREATE TABLE session (
 
-<<<<<<< table.sql
-  session_id				INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  release					INT(10) NOT NULL,
-  host						VARCHAR(255),
-  groups					VARCHAR(255),
-  database_regexp			VARCHAR(255),
-=======
   session_id                            INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   db_release                            INT(10) NOT NULL,
   host					VARCHAR(255),
   groups				VARCHAR(255),
   database_regexp			VARCHAR(255),
->>>>>>> 1.16
   
   PRIMARY KEY (session_id)
   
 );
-# View for derived data about sessions 
-
-CREATE VIEW session_v AS 
-  SELECT s.*, 
-  MIN(r.start_time) AS start_time, 
-  MAX(r.end_time) AS end_time, 
-  TIMEDIFF(start_time, end_time) AS duration 
-  FROM session s, report r 
-  WHERE s.session_id=r.last_session_id 
-  GROUP BY r.last_session_id;
 
 # Individual healthcheck reports
 
@@ -42,8 +24,7 @@ CREATE TABLE report (
   database_name				VARCHAR(255),
   species				VARCHAR(255),    # ENUM?
   database_type				VARCHAR(255),    # ENUM?
-  start_time				DATETIME,
-  end_time				DATETIME,
+  timestamp				DATETIME,
   testcase				VARCHAR(255),
   result				ENUM("PROBLEM", "CORRECT", "WARNING", "INFO"),
   text					VARCHAR(255),
@@ -53,14 +34,6 @@ CREATE TABLE report (
   KEY last_session_idx(last_session_id)
   
 );
-
-# View for derived data about reports
-
-CREATE VIEW report_v AS SELECT *, 
-
-  TIMEDIFF(start_time, end_time) 
-  AS duration
-  FROM report;
 
 
 # Store annotations about healthcheck results
@@ -80,4 +53,27 @@ CREATE TABLE annotation (
   PRIMARY KEY (annotation_id)
   
 );
+
+
+# View for derived data about sessions 
+
+CREATE VIEW session_v AS 
+  SELECT s.*, 
+  MIN(r.timestamp) AS start_time, 
+  MAX(r.timestamp) AS end_time, 
+  TIMEDIFF(MAX(r.timestamp), MIN(r.timestamp)) AS duration 
+  FROM session s, report r 
+  WHERE s.session_id=r.last_session_id 
+  GROUP BY r.last_session_id;
+
+# View for derived data about reports
+
+CREATE VIEW report_timings AS
+
+  SELECT report_id, first_session_id, last_session_id, database_name, species, database_type, testcase,
+  MIN(timestamp) AS start_time, 
+  MAX(timestamp) AS end_time, 
+  TIMEDIFF(MAX(timestamp), MIN(timestamp)) AS duration
+  FROM report
+  GROUP BY last_session_id;
 
