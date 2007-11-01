@@ -8,7 +8,7 @@ CREATE TABLE session (
   release					INT(10) NOT NULL,
   host						VARCHAR(255),
   groups					VARCHAR(255),
-  database_regexp			VARCHAR(255),
+  database_regexp			VARCHAR(255)
   
   PRIMARY KEY (session_id)
   
