@@ -736,7 +736,7 @@ public final class ReportManager {
 	 */
 	public static void createDatabaseSession() {
 
-		String sql = "INSERT INTO session (start_time, host, groups, database_regexp, release) VALUES (NOW(), '"
+		String sql = "INSERT INTO session (start_time, host, groups, database_regexp, db_release) VALUES (NOW(), '"
 				+ System.getProperty("host") + ":" + System.getProperty("port") + "','" + System.getProperty("output.groups") + "','"
 				+ System.getProperty("output.databases") + "', " + System.getProperty("output.release") + ")";
 
@@ -772,7 +772,7 @@ public final class ReportManager {
 	 */
 	public static void createDatabaseSession(long sessionID) {
 
-		String sql = "INSERT INTO session (session_id, start_time, host, groups, database_regexp, release) VALUES (" + sessionID
+		String sql = "INSERT INTO session (session_id, start_time, host, groups, database_regexp, db_release) VALUES (" + sessionID
 				+ ", NOW(), '" + System.getProperty("host") + ":" + System.getProperty("port") + "','" + System.getProperty("output.groups")
 				+ "','" + System.getProperty("output.databases") + "', " + System.getProperty("output.release") + ")";
 
