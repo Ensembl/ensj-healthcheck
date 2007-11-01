@@ -4,11 +4,11 @@
 
 CREATE TABLE session (
 
-  session_id				INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  release					INT(10) NOT NULL,
-  host						VARCHAR(255),
-  groups					VARCHAR(255),
-  database_regexp			VARCHAR(255)
+  session_id                            INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  db_release                            INT(10) NOT NULL,
+  host					VARCHAR(255),
+  groups				VARCHAR(255),
+  database_regexp			VARCHAR(255),
   
   PRIMARY KEY (session_id)
   
@@ -18,17 +18,17 @@ CREATE TABLE session (
 
 CREATE TABLE report (
 
-  report_id					INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  report_id				INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   first_session_id			INT(10) UNSIGNED NOT NULL,
   last_session_id			INT(10) UNSIGNED NOT NULL,
   database_name				VARCHAR(255),
-  species					VARCHAR(255),    # ENUM?
+  species				VARCHAR(255),    # ENUM?
   database_type				VARCHAR(255),    # ENUM?
   start_time				DATETIME,
-  end_time					DATETIME,
-  testcase					VARCHAR(255),
-  result					ENUM("PROBLEM", "CORRECT", "WARNING", "INFO"),
-  text						VARCHAR(255),
+  end_time				DATETIME,
+  testcase				VARCHAR(255),
+  result				ENUM("PROBLEM", "CORRECT", "WARNING", "INFO"),
+  text					VARCHAR(255),
   
   PRIMARY KEY (report_id),
   KEY first_session_idx(first_session_id),
