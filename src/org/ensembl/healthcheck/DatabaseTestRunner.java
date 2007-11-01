@@ -29,7 +29,7 @@ import org.ensembl.healthcheck.util.Utils;
  */
 public class DatabaseTestRunner extends TestRunner implements Reporter {
 
-	private boolean debug = false;
+	protected boolean debug = false;
 
 	private boolean deletePrevious = false;
 
@@ -44,7 +44,7 @@ public class DatabaseTestRunner extends TestRunner implements Reporter {
 	 * @param args
 	 *          Command-line arguments.
 	 */
-	private void run(String[] args) {
+	protected void run(String[] args) {
 
 		ReportManager.setReporter(this);
 
@@ -143,7 +143,7 @@ public class DatabaseTestRunner extends TestRunner implements Reporter {
 
 	// ---------------------------------------------------------------------
 
-	private void setupLogging() {
+	protected void setupLogging() {
 
 		// stop parent logger getting the message
 		logger.setUseParentHandlers(false);

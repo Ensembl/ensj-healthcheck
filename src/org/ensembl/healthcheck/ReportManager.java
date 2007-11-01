@@ -736,8 +736,8 @@ public final class ReportManager {
 	 */
 	public static void createDatabaseSession() {
 
-		String sql = "INSERT INTO session (start_time, host, groups, database_regexp, db_release) VALUES (NOW(), '"
-				+ System.getProperty("host") + ":" + System.getProperty("port") + "','" + System.getProperty("output.groups") + "','"
+		String sql = "INSERT INTO session (host, config, db_release) VALUES ('"
+				+ System.getProperty("host") + ":" + System.getProperty("port") + "','"
 				+ System.getProperty("output.databases") + "', " + System.getProperty("output.release") + ")";
 
 		try {
@@ -924,7 +924,7 @@ public final class ReportManager {
 		logger.fine("Adding report for: " + report.getDatabaseName() + " " + report.getTestCaseName() + " " + report.getLevelAsString()
 				+ " " + report.getMessage());
 
-		String sql = "INSERT INTO report (first_session_id, last_session_id, database_name, species, database_type, testcase, result, text) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO report (first_session_id, last_session_id, database_name, species, database_type, testcase, result, text, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
 
 		try {
 

@@ -33,11 +33,13 @@ import org.ensembl.healthcheck.util.Utils;
  */
 public class NodeDatabaseTestRunner extends DatabaseTestRunner implements Reporter {
 
-	private boolean debug = false;
+	private boolean debug = true;
 
 	private boolean deletePrevious = false;
 
 	private List databaseRegexps;
+	
+	private long sessionID = -1;
 	
 	// ---------------------------------------------------------------------
 	/**
@@ -53,7 +55,9 @@ public class NodeDatabaseTestRunner extends DatabaseTestRunner implements Report
 		parseCommandLine(args);
 
 		setupLogging();
-
+		
+		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
+		
 		TestRegistry testRegistry = new TestRegistry();
 
 		DatabaseRegistry databaseRegistry = new DatabaseRegistry(databaseRegexps, null, null);
@@ -67,11 +71,7 @@ public class NodeDatabaseTestRunner extends DatabaseTestRunner implements Report
 			ReportManager.deletePrevious();
 		}
 
-		ReportManager.createDatabaseSession();
-		
 		runAllTests(databaseRegistry, testRegistry, false);
-
-		ReportManager.endDatabaseSession();
 
 		ConnectionPool.closeAll();
 
@@ -114,11 +114,17 @@ public class NodeDatabaseTestRunner extends DatabaseTestRunner implements Report
 				logger.finest("Added " + args[i] + " to group");
 				
 			} else if (args[i].equals("-d")) {
-				
 				i++;
 				databaseRegexps = new ArrayList();
 				databaseRegexps.add(args[i]);
 				logger.finest("Database regexp: " + args[i]);
+				
+			} else if (args[i].equals("-session")) {
+				
+				i++;
+				sessionID = Integer.parseInt(args[i]);
+				ReportManager.setSessionID(sessionID);
+				logger.finest("Will use session ID " + sessionID);
 				
 			}
 			
@@ -132,8 +138,9 @@ public class NodeDatabaseTestRunner extends DatabaseTestRunner implements Report
 
 		System.out.println("\nUsage: NodeDatabaseTestRunner {options} \n");
 		System.out.println("Options:");
-		System.out.println("  -d {regexp}     The databases on which to run the group of tests");
-		System.out.println("  -group {group}  The group of tests to run");
+		System.out.println("  -d {regexp}     The databases on which to run the group of tests (required)");
+		System.out.println("  -group {group}  The group of tests to run (required)");
+		System.out.println("  -session {id}   The session ID to use (required)");
 		System.out.println("  -h              This message.");
 		System.out.println("  -debug          Print debugging info");
 		System.out.println();
@@ -169,6 +176,7 @@ public class NodeDatabaseTestRunner extends DatabaseTestRunner implements Report
 	public void startTestCase(EnsTestCase testCase, DatabaseRegistryEntry dbre) {
 		
 		// TODO: write start time to database entry
+		ReportManager.info(testCase, dbre.getConnection(), "#Started");
 
 	}
 
@@ -188,7 +196,7 @@ public class NodeDatabaseTestRunner extends DatabaseTestRunner implements Report
 	public void finishTestCase(EnsTestCase testCase, boolean result, DatabaseRegistryEntry dbre) {
 
 		// TODO: write end time to database
-
+		ReportManager.info(testCase, dbre.getConnection(), "#Ended");
 	}
 
 	// ---------------------------------------------------------------------
