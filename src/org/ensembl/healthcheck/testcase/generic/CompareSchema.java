@@ -217,7 +217,7 @@ public class CompareSchema extends MultiDatabaseTestCase {
 			ResultSet rs1 = s1.executeQuery("DESCRIBE " + table);
 			ResultSet rs2 = s2.executeQuery("DESCRIBE " + table);
 			// DESC columns: 1: Field, 2: Type, 3: Allowed Null?, 4: Key, 5: Default, 6:Extra  
-			int[] columns = { 1, 2, 3, 5 };
+			int[] columns = { 1, 2, 3 };
 			boolean describeSame = DBUtils.compareResultSets(rs1, rs2, this, " table descriptions for", true, false, table, columns);
 
 			result &= describeSame;
