@@ -63,6 +63,7 @@ CREATE VIEW session_v AS
   TIMEDIFF(MAX(r.timestamp), MIN(r.timestamp)) AS duration 
   FROM session s, report r 
   WHERE s.session_id=r.last_session_id 
+  AND r.text LIKE '#%' 
   GROUP BY r.last_session_id;
 
 # View for derived data about reports
@@ -73,6 +74,7 @@ CREATE VIEW timings AS
   MIN(timestamp) AS start_time, 
   MAX(timestamp) AS end_time, 
   TIMEDIFF(MAX(timestamp), MIN(timestamp)) AS duration
-  FROM report
+  FROM report 
+  WHERE text LIKE '#%' 
   GROUP BY last_session_id, database_name, testcase;
 
