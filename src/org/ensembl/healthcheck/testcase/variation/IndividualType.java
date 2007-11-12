@@ -36,6 +36,8 @@ public class IndividualType extends SingleDatabaseTestCase {
 	public IndividualType() {
 
 		addToGroup("variation");
+addToGroup("release");
+
 		setDescription("Check that the individuals have the correct type for each specie");
 	}
 
