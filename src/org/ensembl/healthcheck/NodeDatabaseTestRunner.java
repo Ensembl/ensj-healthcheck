@@ -97,7 +97,7 @@ public class NodeDatabaseTestRunner extends DatabaseTestRunner implements Report
 
 		for (int i = 0; i < args.length; i++) {
 
-			if (args[i].equals("-h")) {
+			if (args[i].equals("-h") || args[i].equals("-help")) {
 
 				printUsage();
 				System.exit(0);
