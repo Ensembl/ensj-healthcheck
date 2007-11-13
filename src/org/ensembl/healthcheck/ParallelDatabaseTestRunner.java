@@ -169,15 +169,12 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 			String database = databaseAndGroup[0];
 			String group = databaseAndGroup[1];
 
-			System.out.println(database + " " + group + " " + sessionID);
-			// String[] cmd = {"bsub", "-o", "healthcheck.out", "-e",
-			// "healthcheck.err", "-q", "normal", "-m", "bc_hosts"};
-
 			// TODO: check paths
-			String[] cmd = {"bsub", "-o", "healthcheck.out", "-e", "healthcheck.err", "/nfs/acari/gp1/work/ensj-healthcheck/run-healthcheck-node.sh", "-d", database, "-group", group,	"-session", "" + sessionID };
+			String[] cmd = {"bsub", "-o", "healthcheck%J.out", "-e", "healthcheck%J.err", "/nfs/acari/gp1/work/ensj-healthcheck/run-healthcheck-node.sh", "-d", database, "-group", group,	"-session", "" + sessionID };
 
 			try {
 				Runtime.getRuntime().exec(cmd);
+				System.out.println("Submitted job with database regexp " + database + " and group " + group + ", session ID " + sessionID);
 			} catch (IOException ioe) {
 				System.err.println(ioe.getMessage());
 			}
