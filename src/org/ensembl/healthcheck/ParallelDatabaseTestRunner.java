@@ -13,6 +13,7 @@
 
 package org.ensembl.healthcheck;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -163,24 +164,25 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 
 	private void submitJobs(List databasesAndGroups, long sessionID) {
 
-		Iterator it = databasesAndGroups.iterator();
-		while (it.hasNext()) {
-			String[] databaseAndGroup = ((String) it.next()).split(":");
-			String database = databaseAndGroup[0];
-			String group = databaseAndGroup[1];
+	    String dir = System.getProperty("user.dir");
 
-			// TODO: check paths
-			String[] cmd = {"bsub", "-o", "healthcheck%J.out", "-e", "healthcheck%J.err", "/nfs/acari/gp1/work/ensj-healthcheck/run-healthcheck-node.sh", "-d", database, "-group", group,	"-session", "" + sessionID };
-
-			try {
-				Runtime.getRuntime().exec(cmd);
-				System.out.println("Submitted job with database regexp " + database + " and group " + group + ", session ID " + sessionID);
-			} catch (IOException ioe) {
-				System.err.println(ioe.getMessage());
-			}
+	    Iterator it = databasesAndGroups.iterator();
+	    while (it.hasNext()) {
+		String[] databaseAndGroup = ((String) it.next()).split(":");
+		String database = databaseAndGroup[0];
+		String group = databaseAndGroup[1];
+		
+		String[] cmd = {"bsub", "-o", "healthcheck_%J.out", "-e", "healthcheck_%J.err", dir + File.separator + "run-healthcheck-node.sh", "-d", database, "-group", group,	"-session", "" + sessionID };
+		
+		try {
+		    Runtime.getRuntime().exec(cmd);
+		    System.out.println("Submitted job with database regexp " + database + " and group " + group + ", session ID " + sessionID);
+		} catch (IOException ioe) {
+		    System.err.println(ioe.getMessage());
 		}
+	    }
 	}
-
-	// ---------------------------------------------------------------------
+    
+    // ---------------------------------------------------------------------
 
 } // ParallelDatabaseTestRunner
