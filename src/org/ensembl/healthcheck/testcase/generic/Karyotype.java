@@ -60,22 +60,8 @@ public class Karyotype extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		// don't check for empty karyotype table - this is done in EmptyTables.
-
-		// check for entry for karyotype in meta_coord; if this is missing,
-		// the karyotype won't be displayed on the web, even if the karyotype
-		// table is OK
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM meta_coord WHERE table_name='karyotype'");
-		if (rows == 0) {
-
-			ReportManager.problem(this, con, "No entry for karyotype in meta_coord; no karyotype will be displayed on the website");
-			result = false;
-
-		} else {
-
-			ReportManager.correct(this, con, "meta_coord has an entry for karyotype");
-
-		}
+		// don't check for empty karyotype table - this is done in EmptyTables
+		// meta_coord check also done in MetaCoord
 
 		// The seq_region.length and karyotype.length should always be the
 		// same.
