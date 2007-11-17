@@ -96,7 +96,9 @@ public class EmptyTables extends SingleDatabaseTestCase {
 					|| species == Species.ORYCTOLAGUS_CUNICULUS || species == Species.ORYZIAS_LATIPES || species == Species.AEDES_AEGYPTI
 					|| species == Species.CIONA_SAVIGNYI || species == Species.GASTEROSTEUS_ACULEATUS || species == Species.MACACA_MULATTA
 					|| species == Species.MONODELPHIS_DOMESTICA || species == Species.ERINACEUS_EUROPAEUS || species == Species.FELIS_CATUS
-					|| species == Species.OTOLEMUR_GARNETTII) {
+					|| species == Species.OTOLEMUR_GARNETTII || species == Species.MYOTIS_LUCIFUGUS || species == Species.CAVIA_PORCELLUS
+						|| species == Species.MICROCEBUS_MURINUS || species == Species.OCHOTONA_PRINCEPS || species == Species.SPERMOPHILUS_TRIDECEMLINEATUS
+						|| species == Species.TUPAIA_BELANGERI) {
 
 				tables = Utils.removeStringFromArray(tables, "karyotype");
 			}
