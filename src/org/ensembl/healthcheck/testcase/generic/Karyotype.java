@@ -60,34 +60,7 @@ public class Karyotype extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		// This test should fail if the karyotype table is empty
-		if (!tableHasRows(con, "karyotype")) {
-
-			// certain species are allowed to have empty karyotype tables
-			Species species = dbre.getSpecies();
-			if (species == Species.CAENORHABDITIS_BRIGGSAE || species == Species.CAENORHABDITIS_ELEGANS || species == Species.DANIO_RERIO
-					|| species == Species.TAKIFUGU_RUBRIPES || species == Species.XENOPUS_TROPICALIS || species == Species.APIS_MELLIFERA
-					|| species == Species.PAN_TROGLODYTES || species == Species.SACCHAROMYCES_CEREVISIAE
-					|| species == Species.CANIS_FAMILIARIS || species == Species.BOS_TAURUS || species == Species.CIONA_INTESTINALIS
-					|| species == Species.TETRAODON_NIGROVIRIDIS || species == Species.GALLUS_GALLUS
-					|| species == Species.DASYPUS_NOVEMCINCTUS || species == Species.LOXODONTA_AFRICANA
-					|| species == Species.ECHINOPS_TELFAIRI || species == Species.ORNITHORHYNCHUS_ANATINUS
-					|| species == Species.ORYCTOLAGUS_CUNICULUS || species == Species.ORYZIAS_LATIPES || species == Species.AEDES_AEGYPTI
-					|| species == Species.CIONA_SAVIGNYI || species == Species.GASTEROSTEUS_ACULEATUS || species == Species.MACACA_MULATTA
-					|| species == Species.MONODELPHIS_DOMESTICA || species == Species.ERINACEUS_EUROPAEUS || species == Species.FELIS_CATUS
-					|| species == Species.OTOLEMUR_GARNETTII) {
-
-				ReportManager.correct(this, con, "Karyotype table is empty, but this is allowed for " + species.toString());
-				return true;
-
-			} else { // if it's not one of those species, it's a problem
-
-				ReportManager.problem(this, con, "Karyotype table is empty");
-				return false;
-
-			}
-
-		}
+		// don't check for empty karyotype table - this is done in EmptyTables.
 
 		// check for entry for karyotype in meta_coord; if this is missing,
 		// the karyotype won't be displayed on the web, even if the karyotype
