@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
@@ -53,11 +54,22 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 	}
 
 	/**
+	 * This only applies to core and Vega databases.
+	 */
+	public void types() {
+
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.VEGA);
+		removeAppliesToType(DatabaseType.CDNA);
+
+	}
+
+	/**
 	 * Run the test.
 	 * 
 	 * @param dbre
 	 *          The database to use.
-	 * @return true if the test pased.
+	 * @return true if the test passed.
 	 * 
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
@@ -92,19 +104,20 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-		
+
 		try {
 
 			Map analysesFromFeatureTables = new HashMap();
 
 			Map analysesFromAnalysisTable = getLogicNamesFromAnalysisTable(con);
-			
+
 			// build cumulative list of analyses from feature tables
 			for (int t = 0; t < featureTables.length; t++) {
 				String featureTable = featureTables[t];
 				logger.fine("Collecting analysis IDs from " + featureTable);
 				Statement stmt = con.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT DISTINCT(analysis_id), COUNT(*) AS count FROM " + featureTable + " GROUP BY analysis_id");
+				ResultSet rs = stmt.executeQuery("SELECT DISTINCT(analysis_id), COUNT(*) AS count FROM " + featureTable
+						+ " GROUP BY analysis_id");
 				while (rs.next()) {
 					Integer analysisID = new Integer(rs.getInt("analysis_id"));
 					if (analysesFromFeatureTables.containsKey(analysisID)) {
@@ -124,14 +137,15 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 					} else {
 						analysesFromFeatureTables.put(analysisID, featureTable);
 					}
-					
-					// check that each analysis actually exists in the analysis table 
+
+					// check that each analysis actually exists in the analysis table
 					if (!analysesFromAnalysisTable.containsKey("" + analysisID.intValue())) {
 						int count = rs.getInt("count");
-						ReportManager.problem(this, con, "Analysis ID " + analysisID.intValue() + " is used in " + count + " rows in "+ featureTable + " but is not present in the analysis table.");
+						ReportManager.problem(this, con, "Analysis ID " + analysisID.intValue() + " is used in " + count + " rows in "
+								+ featureTable + " but is not present in the analysis table.");
 						result = false;
 					}
-					
+
 				}
 				rs.close();
 				stmt.close();
@@ -139,7 +153,7 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 
 			// look at each analysis ID *from the analysis table* to see if it's used
 			// somewhere
-      //	 some analyses may be listed in the analysis table but actually used in
+			// some analyses may be listed in the analysis table but actually used in
 			// the otherfeatures database
 			// so go and get the lis of analyses from the feature tables in the
 			// otherfeatures database first
@@ -228,7 +242,7 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 		} catch (SQLException se) {
 			se.printStackTrace();
 		}
-		
+
 		return analyses;
 
 	}
