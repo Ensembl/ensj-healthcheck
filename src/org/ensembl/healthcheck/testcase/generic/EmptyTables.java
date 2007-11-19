@@ -85,21 +85,9 @@ public class EmptyTables extends SingleDatabaseTestCase {
 				tables = remove(tables, miscTables);
 			}
 
-			// certain species can have empty karyotype table
-			if (species == Species.CAENORHABDITIS_BRIGGSAE || species == Species.CAENORHABDITIS_ELEGANS || species == Species.DANIO_RERIO
-					|| species == Species.TAKIFUGU_RUBRIPES || species == Species.XENOPUS_TROPICALIS || species == Species.APIS_MELLIFERA
-					|| species == Species.PAN_TROGLODYTES || species == Species.SACCHAROMYCES_CEREVISIAE
-					|| species == Species.CANIS_FAMILIARIS || species == Species.BOS_TAURUS || species == Species.CIONA_INTESTINALIS
-					|| species == Species.TETRAODON_NIGROVIRIDIS || species == Species.GALLUS_GALLUS
-					|| species == Species.DASYPUS_NOVEMCINCTUS || species == Species.LOXODONTA_AFRICANA
-					|| species == Species.ECHINOPS_TELFAIRI || species == Species.ORNITHORHYNCHUS_ANATINUS
-					|| species == Species.ORYCTOLAGUS_CUNICULUS || species == Species.ORYZIAS_LATIPES || species == Species.AEDES_AEGYPTI
-					|| species == Species.CIONA_SAVIGNYI || species == Species.GASTEROSTEUS_ACULEATUS || species == Species.MACACA_MULATTA
-					|| species == Species.MONODELPHIS_DOMESTICA || species == Species.ERINACEUS_EUROPAEUS || species == Species.FELIS_CATUS
-					|| species == Species.OTOLEMUR_GARNETTII || species == Species.MYOTIS_LUCIFUGUS || species == Species.CAVIA_PORCELLUS
-						|| species == Species.MICROCEBUS_MURINUS || species == Species.OCHOTONA_PRINCEPS || species == Species.SPERMOPHILUS_TRIDECEMLINEATUS
-						|| species == Species.TUPAIA_BELANGERI) {
-
+			// only certain species have a karyotype
+			if (species != Species.ANOPHELES_GAMBIAE && species != Species.DROSOPHILA_MELANOGASTER && species != Species.HOMO_SAPIENS
+					&& species != Species.MUS_MUSCULUS && species != Species.RATTUS_NORVEGICUS) {
 				tables = Utils.removeStringFromArray(tables, "karyotype");
 			}
 
