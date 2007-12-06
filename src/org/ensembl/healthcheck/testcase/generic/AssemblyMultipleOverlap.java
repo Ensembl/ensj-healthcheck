@@ -53,7 +53,7 @@ public class AssemblyMultipleOverlap extends SingleDatabaseTestCase {
 	 * 
 	 * @param dbre
 	 *          The database to use.
-	 * @return true if the test pased.
+	 * @return true if the test passed.
 	 * 
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
@@ -109,7 +109,7 @@ public class AssemblyMultipleOverlap extends SingleDatabaseTestCase {
 				long strands[] = Utils.listToArrayLong(strandsL);
 
 				// check pairs for overlaps
-				// note ORDER BY asm_start means we have less comparisions to do
+				// note ORDER BY asm_start means we have less comparisons to do
 				for (int i = 0; i < starts.length; i++) {
 					for (int j = i + 1; j < starts.length; j++) {
 
