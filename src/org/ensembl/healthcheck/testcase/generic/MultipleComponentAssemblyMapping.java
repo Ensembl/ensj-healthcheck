@@ -17,12 +17,9 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,7 +28,6 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.util.Utils;
 
 /**
  * Check for cases where components map to multiple parts of the assembly but
@@ -71,7 +67,7 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		// cache coord system name to ID
-		Map coordSystemNameToID = new HashMap();
+		Map coordSystemNameAndVersionToID = new HashMap();
 
 		Statement stmt = null;
 
@@ -82,8 +78,9 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 
 			while (rs.next()) {
 
-				coordSystemNameToID.put(rs.getString("name"), new Long(rs.getLong("coord_system_id")));
-
+				coordSystemNameAndVersionToID.put(rs.getString("name") + rs.getString("version"), new Long(rs.getLong("coord_system_id")));
+				logger.fine(rs.getString("name") + rs.getString("version") + " -> " + rs.getLong("coord_system_id"));
+				
 			}
 
 		} catch (Exception e) {
@@ -99,7 +96,7 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 				"SELECT meta_value FROM meta WHERE meta_key='assembly.mapping'  AND meta_value LIKE '%#%'");
 
 		Pattern assemblyMappingPattern = Pattern
-				.compile("^([a-zA-Z0-9.]+)(:[a-zA-Z0-9._]+)?[\\|#]([a-zA-Z0-9._]+)(:[a-zA-Z0-9._]+)?([\\|#]([a-zA-Z0-9.]+)(:[a-zA-Z0-9._]+)?)?$");
+				.compile("^([a-zA-Z0-9.]+):?([a-zA-Z0-9._]+)?[\\|#]([a-zA-Z0-9._]+):?([a-zA-Z0-9._]+)?([\\|#]([a-zA-Z0-9.]+):?([a-zA-Z0-9._]+)?)?$");
 
 		for (int i = 0; i < mappings.length; i++) {
 
@@ -108,13 +105,15 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 			if (matcher.matches()) {
 
 				String cs1 = matcher.group(1);
+				String v1 = matcher.group(2);
 				String cs2 = matcher.group(3);
-				String cs3 = matcher.group(6); 	// TODO - ignoring cs3 for now
-			
-				long csID1 = ((Long) (coordSystemNameToID.get(cs1))).longValue();
-				long csID2 = ((Long) (coordSystemNameToID.get(cs2))).longValue();
+				String v2 = matcher.group(4);
+				// TODO - ignoring third coordinate system for now
+				
+				long csID1 = ((Long) (coordSystemNameAndVersionToID.get(cs1 + v1))).longValue();
+				long csID2 = ((Long) (coordSystemNameAndVersionToID.get(cs2 + v2))).longValue();
 
-				logger.fine("Chained mapping for " + cs1 + " (ID " + csID1 + ") - " + cs2 + " (ID " + csID2 + ")");
+				logger.fine("Chained mapping for " + cs1 + ":" + v1 + " (ID " + csID1 + ") - " + cs2 + ":" + v2 + " (ID " + csID2 + ")");
 
 				constraint += "AND NOT ((s2.coord_system_id = " + csID1 + " AND s1.coord_system_id = " + csID2
 						+ ") OR (s2.coord_system_id = " + csID2 + " AND s1.coord_system_id = " + csID1 + "))";
@@ -157,13 +156,11 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 					String newValue = value + "," + asmID;
 
 					list.put(new Long(cmpID), newValue);
-					//ReportManager.problem(this, con, "Component with ID " + cmpID
-					//		+ " is linked to more than one assembly mapping for coord_system with ID " + coordSystemID + " (" + newValue + ")");
-					System.out.println("Component with ID " + cmpID
+					ReportManager.problem(this, con, "Component with ID " + cmpID
 							+ " is linked to more than one assembly mapping for coord_system with ID " + coordSystemID + " (" + newValue + ")");
 
 					result = false;
-					
+
 				} else {
 
 					list.put(LcmpID, "" + asmID);
@@ -181,7 +178,7 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 		if (result) {
 			ReportManager.correct(this, con, "No problems with assembly - meta table mismatches");
 		}
-		
+
 		return result;
 
 	} // run
