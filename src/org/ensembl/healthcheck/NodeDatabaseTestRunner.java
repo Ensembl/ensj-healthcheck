@@ -201,4 +201,24 @@ public class NodeDatabaseTestRunner extends DatabaseTestRunner implements Report
 
 	// ---------------------------------------------------------------------
 
+	protected void setupLogging() {
+
+		// stop parent logger getting the message
+		logger.setUseParentHandlers(false);
+
+		Handler myHandler = new MyStreamHandler(System.out, new LogFormatter());
+
+		logger.addHandler(myHandler);
+		logger.setLevel(Level.WARNING);
+
+		if (debug) {
+
+			logger.setLevel(Level.FINEST);
+
+		}
+
+	} // setupLogging
+
+	// ---------------------------------------------------------------------
+
 } // NodeDatabaseTestRunner
