@@ -7,7 +7,7 @@ CREATE TABLE session (
   session_id                            INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   db_release                            INT(10) NOT NULL,
   host					VARCHAR(255),
-  config                                VARCHAR(255),
+  config                                TEXT,
 
   PRIMARY KEY (session_id)
   
