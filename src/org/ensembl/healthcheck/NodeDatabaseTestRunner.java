@@ -175,8 +175,10 @@ public class NodeDatabaseTestRunner extends DatabaseTestRunner implements Report
 	 */
 	public void startTestCase(EnsTestCase testCase, DatabaseRegistryEntry dbre) {
 		
-		// TODO: write start time to database entry
+	    if (dbre != null) {
 		ReportManager.info(testCase, dbre.getConnection(), "#Started");
+	    }
+
 
 	}
 
@@ -195,8 +197,9 @@ public class NodeDatabaseTestRunner extends DatabaseTestRunner implements Report
 	 */
 	public void finishTestCase(EnsTestCase testCase, boolean result, DatabaseRegistryEntry dbre) {
 
-		// TODO: write end time to database
+	    if (dbre !=null) {
 		ReportManager.info(testCase, dbre.getConnection(), "#Ended");
+	    }
 	}
 
 	// ---------------------------------------------------------------------
