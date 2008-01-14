@@ -216,7 +216,7 @@ public class MappingSession extends SingleDatabaseTestCase {
 			Statement stmt = con.createStatement();
 
 			// nasty forced cast by adding 0 required since the columns are VARCHARS and need to be compared lexicographically
-			ResultSet rs = stmt.executeQuery("SELECT mapping_session_id, old_db_name, new_db_name, old_release, new_release FROM mapping_session WHERE old_release+0 > new_release+0");
+			ResultSet rs = stmt.executeQuery("SELECT mapping_session_id, old_db_name, new_db_name, old_release, new_release FROM mapping_session WHERE old_release+0 >= new_release+0");
 
 			while (rs.next()) {
 
@@ -224,7 +224,7 @@ public class MappingSession extends SingleDatabaseTestCase {
 				if (rs.getString("old_db_name").equals("homo_sapiens_core_18_34")) {
 					continue;
 				}
-				ReportManager.problem(this, con, "Mapping session with ID " + rs.getLong("mapping_session_id") + " (" + rs.getString("old_db_name") + " -> " + rs.getString("new_db_name") + ") has a new_release (" + rs.getInt("new_release") + ") that is not greater than the old release (" + rs.getInt("old_release") + ")");
+				ReportManager.problem(this, con, "Mapping session with ID " + rs.getLong("mapping_session_id") + " (" + rs.getString("old_db_name") + " -> " + rs.getString("new_db_name") + ") has a new_release (" + rs.getInt("new_release") + ") that is not greater than the old release (" + rs.getInt("old_release") + "). May cause problems with IDHistoryView.");
 				result = false;
 				
 			}
@@ -257,7 +257,7 @@ public class MappingSession extends SingleDatabaseTestCase {
 
         String[] rows = getColumnValues(con, sql);
         if (rows.length > 0) {
-            ReportManager.problem(this, con, rows + " duplicates in stable_id_event");
+            ReportManager.problem(this, con, rows[0] + " duplicates in stable_id_event");
             result = false;
         } else {
           ReportManager.correct(this, con, "No duplicates in stable_id_event");
