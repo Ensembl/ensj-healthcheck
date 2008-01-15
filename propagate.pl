@@ -177,7 +177,7 @@ sub propagate {
 	
 	# create new report
 	$insert_report_sth->execute($first_session_id, $propagation_session_id, $new_database, $database_type, $species, $timestamp, $testcase, $result, $text) || die "Error inserting report";
-	#my $report_id = $insert_report_sth->{'mysql_insertid'};
+	my $report_id = $insert_report_sth->{'mysql_insertid'};
 
 	# create new annotation
 	$insert_annotation_sth->execute($report_id, $person, $action, $comment, $created_at, $modified_at, $created_by, $modified_by) || die "Error inserting annotation";
