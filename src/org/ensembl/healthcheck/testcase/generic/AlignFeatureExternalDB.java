@@ -41,7 +41,7 @@ public class AlignFeatureExternalDB extends SingleDatabaseTestCase {
 		setDescription("Check that all DNA and protein align features have an external_db_id set.");
 		setPriority(Priority.AMBER);
 		setEffect("Needed for web display.");
-		setFix("Run genebuilder script to set values.");
+		setFix("Run ensembl-personal/searle/feature_dbs/scripts/assign_external_db_ids.pl to set values.");
 
 	}
 
