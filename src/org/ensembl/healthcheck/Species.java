@@ -351,7 +351,7 @@ public final class Species {
 		ensemblStableIDPrefix.put(SOREX_ARANEUS, "ENSSAR");
 		ensemblStableIDPrefix.put(RATTUS_NORVEGICUS, "ENSRNO");
 		ensemblStableIDPrefix.put(SACCHAROMYCES_CEREVISIAE, "IGNORE");
-		ensemblStableIDPrefix.put(TAKIFUGU_RUBRIPES, "SINFRU");
+		ensemblStableIDPrefix.put(TAKIFUGU_RUBRIPES, "ENSTRU");
 		ensemblStableIDPrefix.put(TETRAODON_NIGROVIRIDIS, "IGNORE");
 		ensemblStableIDPrefix.put(TUPAIA_BELANGERI, "ENSTBE");
 		ensemblStableIDPrefix.put(XENOPUS_TROPICALIS, "ENSXET");
