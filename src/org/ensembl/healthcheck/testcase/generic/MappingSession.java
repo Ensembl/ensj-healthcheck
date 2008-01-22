@@ -257,7 +257,7 @@ public class MappingSession extends SingleDatabaseTestCase {
 
         String[] rows = getColumnValues(con, sql);
         if (rows.length > 0) {
-            ReportManager.problem(this, con, rows[0] + " duplicates in stable_id_event");
+            ReportManager.problem(this, con, rows.length + " duplicates in stable_id_event");
             result = false;
         } else {
           ReportManager.correct(this, con, "No duplicates in stable_id_event");
