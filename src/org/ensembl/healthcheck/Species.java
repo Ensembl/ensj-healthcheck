@@ -305,7 +305,7 @@ public final class Species {
 		assemblyPrefixToSpecies.put("GUINEAPIG", CAVIA_PORCELLUS);
 		assemblyPrefixToSpecies.put("TREESHREW", TUPAIA_BELANGERI);
 		assemblyPrefixToSpecies.put("SQUIRREL", SPERMOPHILUS_TRIDECEMLINEATUS);
-		assemblyPrefixToSpecies.put("EQUUS", EQUUS_CABALLUS);
+		assemblyPrefixToSpecies.put("EquCab", EQUUS_CABALLUS);
 		assemblyPrefixToSpecies.put("PMAR", PETROMYZON_MARINUS);
 		assemblyPrefixToSpecies.put("AnoCar", ANOLIS_CAROLINENSIS);
 		assemblyPrefixToSpecies.put("micMur", MICROCEBUS_MURINUS);
@@ -333,6 +333,7 @@ public final class Species {
 		ensemblStableIDPrefix.put(DROSOPHILA_MELANOGASTER, "IGNORE");
 		ensemblStableIDPrefix.put(ECHINOPS_TELFAIRI, "ENSETE");
 		ensemblStableIDPrefix.put(ERINACEUS_EUROPAEUS, "ENSEEU");
+		ensemblStableIDPrefix.put(EQUUS_CABALLUS, "ENSECA");
 		ensemblStableIDPrefix.put(FELIS_CATUS, "ENSFCA");
 		ensemblStableIDPrefix.put(GALLUS_GALLUS, "ENSGAL");
 		ensemblStableIDPrefix.put(GASTEROSTEUS_ACULEATUS, "ENSGAC");
