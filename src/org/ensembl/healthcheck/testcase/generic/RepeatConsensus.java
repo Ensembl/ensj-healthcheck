@@ -70,7 +70,7 @@ public class RepeatConsensus extends SingleDatabaseTestCase {
        if (rows > 0) {
 
            ReportManager.problem(this, con, "repeat_consensus table has " + rows + " rows of repeat_type 'Simple' or empty");
-           ReportManager.problem(this, con, "This probably means the repeat-types.pl script was not run.");
+           ReportManager.problem(this, con, "This probably means the ensembl/misc-scripts/repeats/repeat-types.pl script was not run.");
            result = false;
 
        } else {
