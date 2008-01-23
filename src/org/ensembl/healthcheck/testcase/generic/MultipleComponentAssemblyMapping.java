@@ -76,12 +76,22 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 			stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM coord_system");
 
-			while (rs.next()) {
 
-				coordSystemNameAndVersionToID.put(rs.getString("name") + rs.getString("version"), new Long(rs.getLong("coord_system_id")));
-				logger.fine(rs.getString("name") + rs.getString("version") + " -> " + rs.getLong("coord_system_id"));
+                        while (rs.next()) {
+                                if ( "".equals(rs.getString("version") ) ) {  
+			           System.err.println( "\n\n Error ! Something seems to be wrong with your coord_system table.\n " +  
+                                        " The coord_system.version colum contains a string of length == 0\n" +  
+                                        " Only proper mysql-NULL values or strings with length > 0 are allowed.\n\n" ) ;  
+                                   throw new Exception()  ; 
+                                } 
+                                 
+				  coordSystemNameAndVersionToID.put(rs.getString("name") + rs.getString("version"), new Long(rs.getLong("coord_system_id")));
+				  logger.fine(rs.getString("name") + rs.getString("version") + " -> " + rs.getLong("coord_system_id"));  
+
 				
 			}
+
+
 
 		} catch (Exception e) {
 			result = false;
