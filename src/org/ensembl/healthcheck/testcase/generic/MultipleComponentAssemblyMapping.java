@@ -41,8 +41,8 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 	 */
 	public MultipleComponentAssemblyMapping() {
 
-		addToGroup("post_genebuild");
-		addToGroup("release");
+		//addToGroup("post_genebuild");
+		//addToGroup("release");
 
 		setDescription("Check for cases where components map to multiple parts of the assembly but the chained mapper is *not* specified for that pair of coordinate systems in the meta table.");
 
