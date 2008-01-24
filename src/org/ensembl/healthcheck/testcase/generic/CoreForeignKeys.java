@@ -95,14 +95,9 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
 		result &= checkForOrphans(con, "transcript_attrib", "transcript_id", "transcript", "transcript_id", true);
 
-		result &= checkForOrphans(con, "regulatory_factor_coding", "regulatory_factor_id", "regulatory_factor", "regulatory_factor_id",
-				true);
-
-		result &= checkForOrphans(con, "regulatory_feature", "regulatory_factor_id", "regulatory_factor", "regulatory_factor_id", true);
-
 		/*
 		// now redundant (done for all tables with analysis_id)
-		result &= checkForOrphans(con, "regulatory_feature", "analysis_id", "analysis", "analysis_id", true);
+		result &= checkForOrphans(con, "analysis_id", "analysis", "analysis_id", true);
 		result &= checkForOrphans(con, "transcript", "analysis_id", "analysis", "analysis_id", true);
 		*/
 
@@ -126,7 +121,6 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		// Check regulatory features and object xrefs point to existing objects
 		String[] types = { "Gene", "Transcript", "Translation" };
 		for (int i = 0; i < types.length; i++) {
-			result &= checkKeysByEnsemblObjectType(con, "regulatory_feature_object", types[i]);
 			result &= checkKeysByEnsemblObjectType(con, "object_xref", types[i]);
 		}
 		
@@ -204,8 +198,6 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		result &= checkOptionalRelation(con, "qtl", "flank_marker_id_1", "marker", "marker_id");
 		result &= checkOptionalRelation(con, "qtl", "flank_marker_id_2", "marker", "marker_id");
 		result &= checkOptionalRelation(con, "qtl", "peak_marker_id", "marker", "marker_id");
-		result &= checkOptionalRelation(con, "regulatory_factor_coding", "gene_id", "gene", "gene_id");
-		result &= checkOptionalRelation(con, "regulatory_factor_coding", "transcript_id", "transcript", "transcript_id");
 		result &= checkOptionalRelation(con, "unmapped_object", "external_db_id", "external_db", "external_db_id");
 
 		/* don't test

@@ -116,15 +116,6 @@ public class EmptyTables extends SingleDatabaseTestCase {
 				tables = Utils.removeStringFromArray(tables, "supporting_feature");
 			}
 
-			// most species don't have regulatory features yet
-			if (species != Species.HOMO_SAPIENS) {
-				tables = Utils.removeStringFromArray(tables, "regulatory_feature");
-				tables = Utils.removeStringFromArray(tables, "regulatory_factor");
-				tables = Utils.removeStringFromArray(tables, "regulatory_factor_coding");
-				tables = Utils.removeStringFromArray(tables, "regulatory_feature_object");
-				tables = Utils.removeStringFromArray(tables, "regulatory_search_region");
-			}
-
 			// only human and mouse currently have ditag data
 			if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS) {
 				tables = Utils.removeStringFromArray(tables, "ditag");
@@ -174,8 +165,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 			String[] allowedEmpty = { "affy_array", "affy_feature", "affy_probe", "analysis_description", "dna", "external_synonym",
 					"go_xref", "identity_xref", "karyotype", "map", "marker", "marker_feature", "marker_map_location", "marker_synonym",
 					"misc_attrib", "misc_feature", "misc_feature_misc_set", "misc_set", "prediction_exon", "prediction_transcript",
-					"regulatory_factor", "regulatory_factor_coding", "regulatory_feature", "regulatory_feature_object",
-					"regulatory_search_region", "repeat_consensus", "repeat_feature", "simple_feature", "transcript_attrib",
+					"repeat_consensus", "repeat_feature", "simple_feature", "transcript_attrib",
 					"transcript_supporting_feature", "translation_attrib", "unconventional_transcript_association" };
 			tables = remove(tables, allowedEmpty);
 
