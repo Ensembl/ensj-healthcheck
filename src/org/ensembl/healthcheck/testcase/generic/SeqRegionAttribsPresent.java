@@ -73,7 +73,7 @@ public class SeqRegionAttribsPresent extends SingleDatabaseTestCase {
 	
 			if (count == 0) {
 				
-				ReportManager.problem(this, con, "No seq_region_attribs of code " + code + " - there should be some. This may indicate that the seq_region_stats.pl script needs to be run.");
+				ReportManager.problem(this, con, "RelCo: No seq_region_attribs of code " + code + " - there should be some. This may indicate that the seq_region_stats.pl script needs to be run.");
 				result = false;
 				
 			} else {
