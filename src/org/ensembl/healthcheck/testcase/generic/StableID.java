@@ -162,7 +162,7 @@ public class StableID extends SingleDatabaseTestCase {
 			"ORDER BY created DESC LIMIT 1");
 
                 if (mappingSessionId.equals("")) {
-                  ReportManager.warning(this, con, "No mapping_session found");
+                  ReportManager.info(this, con, "No mapping_session found");
                   return result;
                 }
 		
