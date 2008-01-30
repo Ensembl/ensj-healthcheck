@@ -21,7 +21,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key
- * realtionships.
+ * relationships.
  */
 
 public class CoreForeignKeys extends SingleDatabaseTestCase {
@@ -39,11 +39,11 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 	}
 
 	/**
-	 * Look for broken foreign key realtionships.
+	 * Look for broken foreign key relationships.
 	 * 
 	 * @param dbre
 	 *          The database to use.
-	 * @return true Ff all foreign key relationships are valid.
+	 * @return true if all foreign key relationships are valid.
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 
