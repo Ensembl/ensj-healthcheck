@@ -34,7 +34,7 @@ public class FlankingUpDownSeq extends SingleDatabaseTestCase {
      */
     public FlankingUpDownSeq() {
         addToGroup("variation");
-        addToGroup("release");
+	//  addToGroup("release");
         setDescription("Check that if the up_seq or down_seq of flanking_sequence is null, that up_seq_region_start or down_seq_region_start should not be null.");
     }
 
@@ -68,6 +68,14 @@ public class FlankingUpDownSeq extends SingleDatabaseTestCase {
             ReportManager.correct(this, con, "No flanking_sequence have no down_seq and no down_seq_region_start");
         }
 
+        // check how many variation don't have flanking sequence
+        rows = getRowCount(con, "SELECT COUNT(*) FROM variation v LEFT JOIN flanking_sequence f ON v.variation_id=f.variation_id WHERE f.variation_id is NULL");
+        if (rows > 0) {
+            result = false;
+            ReportManager.problem(this, con, rows + " variations have no flanking sequence");
+        } else {
+                    ReportManager.correct(this, con, "All variations have flanking sequence");
+        }            
         return result;
 
     } // run
