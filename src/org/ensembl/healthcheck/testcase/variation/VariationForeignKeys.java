@@ -59,7 +59,8 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 
         // ----------------------------
  	      	
-	result &= checkForOrphans(con, "allele", "sample_id", "sample", "sample_id", true);
+	/*This is allowed allele can have null sample_id
+	  result &= checkForOrphans(con, "allele", "sample_id", "sample", "sample_id", true);*/
 
 	/*This is a sql to the above command
 	SELECT COUNT(*) FROM allele LEFT JOIN sample ON allele.sample_id = sample.sample_id WHERE sample.sample_id is NULL;
