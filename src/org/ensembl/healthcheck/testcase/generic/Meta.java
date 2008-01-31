@@ -165,6 +165,10 @@ public class Meta extends SingleDatabaseTestCase {
 
 		// -------------------------------------------
 
+		result &= checkArrays(dbre);
+
+		// -------------------------------------------
+
 		return result;
 
 	} // run
@@ -648,6 +652,41 @@ public class Meta extends SingleDatabaseTestCase {
 			while (rs.next()) {
 				
 				ReportManager.problem(this, con, "Key/value pair " + rs.getString(1) + "/" + rs.getString(2) + " appears more than once in the meta table");
+				result = false;
+				
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		if (result) {
+			ReportManager.correct(this, con, "No duplicates in the meta table");
+		}
+
+		return result;
+
+	}
+
+//---------------------------------------------------------------------
+	/**
+	 * Check for values containing the text ARRAY(.
+	 */
+	private boolean checkArrays(DatabaseRegistryEntry dbre) {
+
+		boolean result = true;
+
+		Connection con = dbre.getConnection();
+
+		try {
+
+			Statement stmt = con.createStatement();
+
+			ResultSet rs = stmt.executeQuery("SELECT meta_key, meta_value FROM meta WHERE meta_value LIKE 'ARRAY(%'");
+
+			while (rs.next()) {
+				
+				ReportManager.problem(this, con, "Meta table entry for key " + rs.getString(1) + " has value " + rs.getString(2) + " which is probably incorrect");
 				result = false;
 				
 			}
