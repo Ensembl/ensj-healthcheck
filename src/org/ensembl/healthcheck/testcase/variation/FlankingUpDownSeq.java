@@ -34,7 +34,7 @@ public class FlankingUpDownSeq extends SingleDatabaseTestCase {
      */
     public FlankingUpDownSeq() {
         addToGroup("variation");
-	//  addToGroup("release");
+	addToGroup("release");
         setDescription("Check that if the up_seq or down_seq of flanking_sequence is null, that up_seq_region_start or down_seq_region_start should not be null.");
     }
 

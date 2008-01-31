@@ -39,7 +39,7 @@ public class VFCoordinates extends MultiDatabaseTestCase {
      */
     public VFCoordinates() {
 
-        addToGroup("variation-core");
+        addToGroup("variation");
         addToGroup("release");
 	setDescription("Check for possible wrong coordinates in Vf table, due to wrong length or outside range seq_region.");
 	setHintLongRunning(true);
@@ -62,43 +62,43 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 	DatabaseRegistryEntry[] variationDBs = dbr.getAll(DatabaseType.VARIATION);
 	
 	for (int i = 0; i < variationDBs.length; i++){
-
+	    
 	    DatabaseRegistryEntry dbrvar = variationDBs[i];
 	    Species species = dbrvar.getSpecies();
-	    DatabaseRegistryEntry[] databases = dbr.getAll(DatabaseType.CORE,species); //for human, gets the core_expression too
-	    if (!databases[0].getName().matches(".*core_[0-9]+.*")){
+	    String variationName = dbrvar.getName();
+	    String coreName = variationName.replaceAll("variation","core");
+	    DatabaseRegistryEntry dbrcore = new DatabaseRegistryEntry(coreName,species,DatabaseType.CORE,true);
+	    if (dbrcore == null){
 		result = false;
-		logger.severe("Incorrect core database " + databases[0].getName() + " for " + dbrvar.getName());
+		logger.severe("Incorrect core database " + coreName + " for " + variationName);
 		return result;
 	    }
 
-	    DatabaseRegistryEntry dbrcore = databases[0]; // get the only core database
-
 	    Connection con = dbrcore.getConnection();
 	    
-	    System.out.println("Using " + dbrcore.getName() + " as core database and " + dbrvar.getName() + " as variation database");
+	    System.out.println("Using " + coreName + " as core database and " + variationName + " as variation database");
 
-	    int mc = getRowCount(con,"SELECT COUNT(*) FROM " + dbrvar.getName() + ".variation_feature WHERE length(allele_string) = 3 and seq_region_start<> seq_region_end and allele_string NOT LIKE '%-%'");
+	    int mc = getRowCount(con,"SELECT COUNT(*) FROM " + variationName + ".variation_feature WHERE length(allele_string) = 3 and seq_region_start<> seq_region_end and allele_string NOT LIKE '%-%'");
 	    
 	    if (mc > 0){
-		ReportManager.problem(this, con, "Wrong allele length !! (allele_string <> coordinates length) for " + dbrvar.getName());
+		ReportManager.problem(this, con, "Wrong allele length !! (allele_string <> coordinates length) for " + variationName);
 		result = false;
 	    }
 	    else{
-		ReportManager.problem(this, con, "SNPs have correct length in " + dbrvar.getName());
+		ReportManager.problem(this, con, "SNPs have correct length in " + variationName);
 	    }
 	    
-	    mc = getRowCount(con,"SELECT COUNT(*) FROM " + dbrcore.getName() + ".seq_region s, " + dbrvar.getName() + ".variation_feature vf WHERE vf.seq_region_id = s.seq_region_id AND vf.seq_region_end > s.length");
+	    mc = getRowCount(con,"SELECT COUNT(*) FROM " + coreName + ".seq_region s, " + variationName + ".variation_feature vf WHERE vf.seq_region_id = s.seq_region_id AND vf.seq_region_end > s.length");
 	     if (mc > 0){
-		ReportManager.problem(this, con, "Variation Features outside range in " + dbrvar.getName());
+		ReportManager.problem(this, con, "Variation Features outside range in " + variationName);
 		result = false;
 	    }
 	     else{
-		 ReportManager.problem(this,con,"Coordinates in VariationFeature in range in " + dbrvar.getName());
+		 ReportManager.problem(this,con,"Coordinates in VariationFeature in range in " + variationName);
 	     }
-	     mc = getRowCount(con,"SELECT COUNT(*) FROM " + dbrvar.getName() + ".variation_feature vf WHERE vf.seq_region_start = 1 AND vf.seq_region_end > 1");
+	     mc = getRowCount(con,"SELECT COUNT(*) FROM " + variationName + ".variation_feature vf WHERE vf.seq_region_start = 1 AND vf.seq_region_end > 1");
 	     if (mc > 0){
-		 ReportManager.problem(this, con, "Variation Features with coordinates = 1 " + dbrvar.getName());
+		 ReportManager.problem(this, con, "Variation Features with coordinates = 1 " + variationName);
 		 result = false;
 	     }
 	}

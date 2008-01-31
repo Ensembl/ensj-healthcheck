@@ -38,7 +38,7 @@ public class ForeignKeyCoreId extends MultiDatabaseTestCase {
      */
     public ForeignKeyCoreId() {
 
-        addToGroup("variation-core");
+        addToGroup("variation");
 	addToGroup("release");
         setDescription("Check for broken foreign-key relationships between variation and core databases.");
 	setHintLongRunning(true);
@@ -64,14 +64,15 @@ public class ForeignKeyCoreId extends MultiDatabaseTestCase {
 
 	    DatabaseRegistryEntry dbrvar = variationDBs[i];
 	    Species species = dbrvar.getSpecies();
-	    DatabaseRegistryEntry[] databases = dbr.getAll(DatabaseType.CORE,species); //for human, gets the core_expression too
-	    if (!databases[0].getName().matches(".*core_[0-9]+.*")){
+
+	    String variationName = dbrvar.getName();
+	    String coreName = variationName.replaceAll("variation","core");
+	    DatabaseRegistryEntry dbrcore = new DatabaseRegistryEntry(coreName,species,DatabaseType.CORE,true);
+	    if (dbrcore == null){
 		result = false;
-		logger.severe("Incorrect core database " + databases[0].getName() + " for " + dbrvar.getName());
+		logger.severe("Incorrect core database " + coreName + " for " + variationName);
 		return result;
 	    }
-
-	    DatabaseRegistryEntry dbrcore = databases[0]; // get the only core database
 
 	    Connection con = dbrcore.getConnection();
 	    
