@@ -248,7 +248,7 @@ public class StableID extends SingleDatabaseTestCase {
 
 			String sql = "SELECT COUNT(*) FROM stable_id_event WHERE (old_stable_id LIKE '" + prefix + "%' OR new_stable_id LIKE '"
 					+ prefix + "%') AND type != '" + type + "'";
-System.out.println(sql);
+
 			int rows = getRowCount(con, sql);
 
 			if (rows > 0) {
