@@ -185,7 +185,7 @@ public class StableID extends SingleDatabaseTestCase {
 	// -----------------------------------------------------------
 	/**
 	 * Check that all stable IDs in the table have the correct prefix. The prefix
-	 * is defined by the stableid.prefix value in the meta table.
+	 * is defined in Species.java
 	 */
 	private boolean checkPrefixes(DatabaseRegistryEntry dbre) {
 		
@@ -248,7 +248,7 @@ public class StableID extends SingleDatabaseTestCase {
 
 			String sql = "SELECT COUNT(*) FROM stable_id_event WHERE (old_stable_id LIKE '" + prefix + "%' OR new_stable_id LIKE '"
 					+ prefix + "%') AND type != '" + type + "'";
-
+System.out.println(sql);
 			int rows = getRowCount(con, sql);
 
 			if (rows > 0) {
