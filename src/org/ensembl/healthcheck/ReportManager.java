@@ -961,7 +961,7 @@ public final class ReportManager {
 		logger.fine("Updating report for: " + report.getDatabaseName() + " " + report.getTestCaseName() + " "
 				+ report.getLevelAsString() + " " + report.getMessage() + ", new last_session_id=" + sessionID);
 
-		String sql = "UPDATE report SET last_session_id=? WHERE report_id=?";
+		String sql = "UPDATE report SET last_session_id=?, timestamp=NOW() WHERE report_id=?";
 
 		try {
 
