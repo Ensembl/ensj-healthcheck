@@ -42,17 +42,29 @@ CREATE TABLE annotation (
   annotation_id               INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   report_id					INT(10) UNSIGNED NOT NULL,
   person 					VARCHAR(255),
-  action						ENUM("manual_ok", "under_review", "note", "healthcheck_bug", "manual_ok_all_releases"),
+  action						ENUM("manual_ok", "under_review", "note", "healthcheck_bug", "manual_ok_all_releases", "manual_ok_this_assembly"),
   comment					VARCHAR(255),
   created_at                 	TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
   modified_at      			TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   created_by					VARCHAR(255),
   modified_by				VARCHAR(255),
   
-  PRIMARY KEY (annotation_id)
+  PRIMARY KEY (annotation_id),
+  KEY action_idx (action)
   
 );
 
+# Most recent session
+CREATE VIEW recent_session AS 
+  SELECT s.*,
+	MIN(r.timestamp) AS start_time, 
+  	MAX(r.timestamp) AS end_time, 
+  	TIMEDIFF(MAX(r.timestamp), MIN(r.timestamp)) AS duration 
+   FROM session s, report r 
+  WHERE s.session_id=(SELECT MAX(session_id) FROM session)
+    AND r.last_session_id=s.session_id
+    AND r.text LIKE '#%'
+  GROUP BY r.last_session_id;
 
 # View for derived data about sessions 
 
