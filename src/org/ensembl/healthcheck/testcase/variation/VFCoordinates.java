@@ -85,7 +85,7 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 		result = false;
 	    }
 	    else{
-		ReportManager.problem(this, con, "SNPs have correct length in " + variationName);
+		ReportManager.info(this, con, "SNPs have correct length in " + variationName);
 	    }
 	    
 	    mc = getRowCount(con,"SELECT COUNT(*) FROM " + coreName + ".seq_region s, " + variationName + ".variation_feature vf WHERE vf.seq_region_id = s.seq_region_id AND vf.seq_region_end > s.length");
@@ -94,7 +94,7 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 		result = false;
 	    }
 	     else{
-		 ReportManager.problem(this,con,"Coordinates in VariationFeature in range in " + variationName);
+		 ReportManager.info(this,con,"Coordinates in VariationFeature in range in " + variationName);
 	     }
 	     mc = getRowCount(con,"SELECT COUNT(*) FROM " + variationName + ".variation_feature vf WHERE vf.seq_region_start = 1 AND vf.seq_region_end > 1");
 	     if (mc > 0){
