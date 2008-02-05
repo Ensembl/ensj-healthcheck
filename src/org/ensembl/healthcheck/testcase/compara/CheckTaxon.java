@@ -113,6 +113,18 @@ public class CheckTaxon extends MultiDatabaseTestCase {
           e.printStackTrace();
         }
         
+	//Check that don't have duplicate entries in the ncbi_taxa_name table
+	String useful_sql = "SELECT taxon_id,name,name_class,count(*) FROM ncbi_taxa_name GROUP BY taxon_id,name,name_class HAVING count(*) > 1;";
+	String[] failures = getColumnValues(comparaCon, useful_sql);
+	if (failures.length > 0) {
+	    ReportManager.problem(this, comparaCon, "FAILED ncbi_taxa_name contains duplicate entries ");
+	    ReportManager.problem(this, comparaCon, "FAILURE DETAILS: There are " + failures.length + " ncbi_taxa_names with more than 1 entry");
+	    ReportManager.problem(this, comparaCon, "USEFUL SQL: " + useful_sql);
+	    result = false;
+	} else {
+	    result = true;
+	}
+
         boolean allSpeciesFound = true;
         for (int i = 0; i < comparaSpecies.size(); i++) {
           Species species = (Species) comparaSpecies.get(i);
