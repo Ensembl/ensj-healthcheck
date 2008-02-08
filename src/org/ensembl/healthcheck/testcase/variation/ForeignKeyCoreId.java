@@ -25,6 +25,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
+import org.ensembl.healthcheck.ReportManager;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key
