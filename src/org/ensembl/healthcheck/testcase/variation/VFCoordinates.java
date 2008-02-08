@@ -105,5 +105,16 @@ public class VFCoordinates extends MultiDatabaseTestCase {
         return result;
 
     }
+    /**
+     * This only applies to variation databases.
+     */
+     public void types() {
+
+	 removeAppliesToType(DatabaseType.OTHERFEATURES);
+	 removeAppliesToType(DatabaseType.CDNA);
+	 removeAppliesToType(DatabaseType.CORE);
+	 removeAppliesToType(DatabaseType.VEGA);
+
+     }
 
 } // VFCoordinates
