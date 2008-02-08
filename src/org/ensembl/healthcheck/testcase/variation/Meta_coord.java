@@ -62,6 +62,10 @@ public class Meta_coord extends SingleDatabaseTestCase {
 		    result &= checkKeysPresent(con,tables[i]);
 		}
 	    }
+	    if (! result ){
+	    //if there were no problems, just inform for the interface to pick the HC
+		ReportManager.info(this,con,"MetaCoord table healthcheck passed without any problem");
+	    }
 	    return result;
 	} //run 
 
