@@ -54,13 +54,21 @@ public class CheckConservationScore extends SingleDatabaseTestCase {
 
         Connection con = dbre.getConnection();
 
-        if (tableHasRows(con, "conservation_score")) {
+	/**
+	 * Get all method_link_species_set_ids for method_link type of 
+	 * GERP_CONSERVATION_SCORE
+	 */
+	String[] method_link_species_set_ids = getColumnValues(con, "SELECT method_link_species_set_id FROM method_link_species_set LEFT JOIN method_link USING (method_link_id) WHERE type=\"GERP_CONSERVATION_SCORE\" OR class LIKE \"ConservationScore%\"");
 
-	    /**
-	     * Get all method_link_species_set_ids for method_link type of 
-	     * GERP_CONSERVATION_SCORE
+        if (method_link_species_set_ids.length > 0) {
+
+	    /** 
+	     * Check have entries in conservation_score table
 	     */
-	    String[] method_link_species_set_ids = getColumnValues(con, "SELECT method_link_species_set_id FROM method_link_species_set LEFT JOIN method_link USING (method_link_id) WHERE type=\"GERP_CONSERVATION_SCORE\"");
+	    if (!tableHasRows(con, "conservation_score")) {
+		ReportManager.problem(this, con, "FAILED: Database contains entry in the method_link_species_set table but the conservation_score table is empty"); 
+		return result;
+	    }
 
 	    for (int i = 0; i < method_link_species_set_ids.length; i++) {
 
@@ -100,8 +108,10 @@ public class CheckConservationScore extends SingleDatabaseTestCase {
 		}
 	    }
 	    
+        } else if (tableHasRows(con, "conservation_score")) {
+            ReportManager.problem(this, con, "FAILED: Database contains data in the conservation_score table but no corresponding entry in the method_link_species_set table.");
         } else {
-            ReportManager.correct(this, con, "NO ENTRIES in conservation_score table, so nothing to test IGNORED");
+            ReportManager.correct(this, con, "NO conservation scores in this database");
         }
 
         return result;
