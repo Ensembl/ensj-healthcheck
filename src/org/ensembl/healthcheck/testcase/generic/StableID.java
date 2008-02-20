@@ -94,6 +94,8 @@ public class StableID extends SingleDatabaseTestCase {
 			result &= checkStableIDEventTypes(con);
 		}
 
+		result = checkStableIDTimestamps(con);
+		
 		return result;
 	}
 
@@ -284,6 +286,39 @@ public class StableID extends SingleDatabaseTestCase {
 
 		return prefix;
 
-	} // -----------------------------------------------------------
+	} 
+//-----------------------------------------------------------
+	/**
+
+	 * 
+	 */
+	private boolean checkStableIDTimestamps(Connection con) {
+
+		boolean result = true;
+
+		String[] types = { "gene", "transcript", "translation" };
+
+		for (int i = 0; i < types.length; i++) {
+
+			String table = types[i] + "_stable_id";
+
+			String sql = "SELECT COUNT(*) FROM " + table + " WHERE created_date=0 OR modified_date=0";
+
+			int rows = getRowCount(con, sql);
+
+			if (rows > 0) {
+
+				ReportManager.problem(this, con, rows + " rows in " + table + " have created or modified dates of 0000-00-00 00:00:00");
+				result = false;
+
+			} else {
+
+				ReportManager.correct(this, con, "All entries in " + table + " have valid created/modified timestamps");
+
+			}
+		}
+		return result;
+
+	}
 
 }
