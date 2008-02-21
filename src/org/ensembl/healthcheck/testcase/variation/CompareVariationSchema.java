@@ -27,6 +27,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.Species;
 
 /**
  * Test case to compare table structures between several schemas.
@@ -69,7 +70,6 @@ public class CompareVariationSchema extends MultiDatabaseTestCase {
         String masterSchema = null;
 
         DatabaseRegistryEntry[] databases = dbr.getAll();
-
         definitionFile = System.getProperty("schema.file");
         if (definitionFile == null) {
             logger.info("CompareSchema: No schema definition file found! Set schema.file property in database.properties if you want to use a table.sql file or similar.");
@@ -116,28 +116,31 @@ public class CompareVariationSchema extends MultiDatabaseTestCase {
                 if (appliesToType(databases[i].getType())) {
 
                     Connection checkCon = databases[i].getConnection();
-
+		    Species species = databases[i].getSpecies();
                     if (checkCon != masterCon) {
 
                         logger.info("Comparing " + DBUtils.getShortDatabaseName(masterCon) + " with "
                                 + DBUtils.getShortDatabaseName(checkCon));
 
                         // check that both schemas have the same tables
-                        if (!compareTablesInSchema(masterCon, checkCon)) {
-                            // if not the same, this method will generate a
-                            // report
-                            ReportManager.problem(this, checkCon, "Table name discrepancy detected, skipping rest of checks");
-                            result = false;
-                            continue;
+                        if (!compareVariationTables(masterCon, checkCon, species)) {
+			    //if there is a problem in that species (eg rat), report error
+			    ReportManager.problem(this, checkCon, "Table name discrepancy detected, skipping rest of checks");
+			    result = false;
+			    continue;
                         }
 
                         Statement dbStmt = checkCon.createStatement();
 
                         // check each table in turn
                         String[] tableNames = getTableNames(masterCon);
+			// exclude the genotype table
                         for (int j = 0; j < tableNames.length; j++) {
-
                             String table = tableNames[j];
+			    if ((species == Species.HOMO_SAPIENS || species == Species.PAN_TROGLODYTES) && table.equals("tmp_individual_genotype_single_bp")){
+				//in human and chimp, ignore check of genotype table
+				continue;
+			    }	    
                             String sql = "SHOW CREATE TABLE " + table;
                             ResultSet masterRS = masterStmt.executeQuery(sql);
                             ResultSet dbRS = dbStmt.executeQuery(sql);
@@ -187,6 +190,40 @@ public class CompareVariationSchema extends MultiDatabaseTestCase {
     } // run
 
     // -------------------------------------------------------------------------
+
+    // Will return true if both schemas have the same tables (we have to consider the genotype)
+    private boolean compareVariationTables(Connection schema1, Connection schema2, Species species){
+	boolean result = true;
+	
+	String name1 = DBUtils.getShortDatabaseName(schema1);
+	String name2 = DBUtils.getShortDatabaseName(schema2);
+	
+	// check each table in turn
+	String[] tables = getTableNames(schema1);
+	//if the species is human or chimp, remove the genotype from the list of the master schema
+	for (int i = 0; i < tables.length; i++) {
+	    String table = tables[i];
+	    //if the table is the genotype for human or chimp, ignore it
+	    if ((species == Species.HOMO_SAPIENS || species == Species.PAN_TROGLODYTES) && table.equals("tmp_individual_genotype_single_bp")){
+		continue;
+	    }	    
+	    if (!checkTableExists(schema2, table)) {
+		ReportManager.problem(this, schema1, "Table " + table + " exists in " + name1 + " but not in " + name2);
+		result = false;
+	    }		
+	}
+	// and now the other way
+	tables = getTableNames(schema2);
+	for (int i = 0; i < tables.length; i++) {
+	    String table = tables[i];
+	    if (!checkTableExists(schema1, table)) {
+		ReportManager.problem(this, schema2, "Table " + table + " exists in " + name2 + " but not in " + name1);
+		result = false;
+	    }
+	}
+	
+	return result;
+    } //end method
 
     private boolean compareTableStructures(Connection con1, Connection con2, String table) {
 
