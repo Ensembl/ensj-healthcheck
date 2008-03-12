@@ -358,7 +358,7 @@ public abstract class EnsTestCase {
 
 		try {
 			Statement stmt = con.createStatement();
-			// System.out.println("Executing " + sql);
+			//System.out.println("Executing " + sql);
 			ResultSet rs = stmt.executeQuery(sql);
 			if (rs != null) {
 				if (rs.first()) {
@@ -755,7 +755,7 @@ public abstract class EnsTestCase {
 	 * @param regexp
 	 *          A regexp matching the database names to check.
 	 */
-	public boolean checkSameSQLResult(String sql, String regexp) {
+	public boolean checkSameSQLResult(String sql, String regexp, boolean comparingSchema) {
 
 		ArrayList resultSetGroup = new ArrayList();
 		ArrayList statements = new ArrayList();
@@ -785,7 +785,7 @@ public abstract class EnsTestCase {
 		}
 
 		logger.finest("Number of ResultSets to compare: " + resultSetGroup.size());
-		boolean same = DBUtils.compareResultSetGroup(resultSetGroup, this);
+		boolean same = DBUtils.compareResultSetGroup(resultSetGroup, this, comparingSchema);
 
 		Iterator it = statements.iterator();
 		while (it.hasNext()) {
@@ -812,7 +812,7 @@ public abstract class EnsTestCase {
 	 * @param databases
 	 *          The DatabaseRegistryEntries on which to execute sql.
 	 */
-	public boolean checkSameSQLResult(String sql, DatabaseRegistryEntry[] databases) {
+	public boolean checkSameSQLResult(String sql, DatabaseRegistryEntry[] databases, boolean comparingSchema) {
 
 		ArrayList resultSetGroup = new ArrayList();
 		ArrayList statements = new ArrayList();
@@ -841,7 +841,7 @@ public abstract class EnsTestCase {
 		}
 
 		logger.finest("Number of ResultSets to compare: " + resultSetGroup.size());
-		boolean same = DBUtils.compareResultSetGroup(resultSetGroup, this);
+		boolean same = DBUtils.compareResultSetGroup(resultSetGroup, this, comparingSchema);
 
 		Iterator it = statements.iterator();
 		while (it.hasNext()) {

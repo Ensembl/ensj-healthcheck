@@ -113,7 +113,7 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
      *          used.
      * @return true if SQL returns the same for all databases for each species in dbr.
      */
-    public boolean checkSQLAcrossSpecies(String sql, DatabaseRegistry dbr, DatabaseType[] types) {
+    public boolean checkSQLAcrossSpecies(String sql, DatabaseRegistry dbr, DatabaseType[] types, boolean comparingSchema) {
 
         boolean result = true;
 
@@ -128,7 +128,7 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
             DatabaseRegistryEntry[] dbsForSpecies = (DatabaseRegistryEntry[]) speciesMap.get(species);
             // filter by database type
             DatabaseRegistryEntry[] filteredDBs = filterByType(dbsForSpecies, types);
-            result &= checkSameSQLResult(sql, filteredDBs);
+            result &= checkSameSQLResult(sql, filteredDBs, comparingSchema);
 
         } // foreach species
 
@@ -152,7 +152,7 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
     public boolean checkTableAcrossSpecies(String table, DatabaseRegistry dbr, DatabaseType[] types, String correct, String problem, String extraSQL) {
 
         String sql = "SELECT COUNT(*) FROM " + table + " " + extraSQL;
-        boolean result = checkSQLAcrossSpecies(sql, dbr, types);
+        boolean result = checkSQLAcrossSpecies(sql, dbr, types, false);
 
         if (!result) {
             ReportManager.problem(this, "", problem);

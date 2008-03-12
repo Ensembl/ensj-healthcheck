@@ -189,7 +189,7 @@ public final class DBUtils {
 	 * @param resultSetGroup
 	 *          The list of ResultSets to compare
 	 */
-	public static boolean compareResultSetGroup(List resultSetGroup, EnsTestCase testCase) {
+	public static boolean compareResultSetGroup(List resultSetGroup, EnsTestCase testCase, boolean comparingSchema) {
 
 		boolean same = true;
 
@@ -200,7 +200,7 @@ public final class DBUtils {
 			for (int j = i + 1; j < size; j++) {
 				ResultSet rsi = (ResultSet) resultSetGroup.get(i);
 				ResultSet rsj = (ResultSet) resultSetGroup.get(j);
-				same &= compareResultSets(rsi, rsj, testCase, "", true, true, "");
+				same &= compareResultSets(rsi, rsj, testCase, "", true, true, "", comparingSchema);
 			}
 		}
 
@@ -237,12 +237,12 @@ public final class DBUtils {
 	 *          error text. Otherwise "".
 	 */
 	public static boolean compareResultSets(ResultSet rs1, ResultSet rs2, EnsTestCase testCase, String text, boolean reportErrors,
-			boolean warnNull, String singleTableName) {
-		return compareResultSets(rs1, rs2, testCase, text, reportErrors, warnNull, singleTableName, null);
+			boolean warnNull, String singleTableName, boolean comparingSchema) {
+		return compareResultSets(rs1, rs2, testCase, text, reportErrors, warnNull, singleTableName, null, comparingSchema);
 	}
 
 	public static boolean compareResultSets(ResultSet rs1, ResultSet rs2, EnsTestCase testCase, String text, boolean reportErrors,
-			boolean warnNull, String singleTableName, int[] columns) {
+			boolean warnNull, String singleTableName, int[] columns, boolean comparingSchema) {
 
 		// quick tests first
 		// Check for object equality
@@ -310,8 +310,7 @@ public final class DBUtils {
 				if (rs2.next()) {
 					for (int j = 0; j < columns.length; j++) {
 						int i = columns[j];
-
-						// note columns indexed from l
+					// note columns indexed from 1
 						if (!compareColumns(rs1, rs2, i, warnNull)) {
 							String str = name1 + " and " + name2 + text + " " + singleTableName + " differ at row " + row + " column " + i + " ("
 									+ rsmd1.getColumnName(i) + ")" + " Values: " + Utils.truncate(rs1.getString(i), 250, true) + ", "
@@ -335,17 +334,17 @@ public final class DBUtils {
 
 			// if both ResultSets are the same, then we should be at the end of
 			// both, i.e. .next() should return false
+			String extra = comparingSchema ? ". This means that there are missing columns in the table, rectify!" : "";
 			if (rs1.next()) {
 
 				if (reportErrors) {
-					ReportManager.problem(testCase, name1, name1 + " " + singleTableName + " has additional rows that are not in " + name2);
-
+					ReportManager.problem(testCase, name1, name1 + " " + singleTableName + " has additional rows that are not in " + name2 + extra);
 				}
 				return false;
 			} else if (rs2.next()) {
 
 				if (reportErrors) {
-					ReportManager.problem(testCase, name2, name2 + " " + singleTableName + " has additional rows that are not in " + name1);
+					ReportManager.problem(testCase, name2, name2 + " " + singleTableName + " has additional rows that are not in " + name1 + extra);
 
 				}
 				return false;

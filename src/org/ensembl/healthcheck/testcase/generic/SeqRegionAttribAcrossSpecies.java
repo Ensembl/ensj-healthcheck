@@ -50,7 +50,7 @@ public class SeqRegionAttribAcrossSpecies extends MultiDatabaseTestCase {
 
 		return checkSQLAcrossSpecies(
 				"SELECT COUNT(*) FROM seq_region_attrib sa, attrib_type at WHERE at.attrib_type_id=sa.attrib_type_id AND at.code NOT LIKE 'GeneNo%' AND at.code != 'SNPCount'",
-				dbr, types);
+				dbr, types, false);
 
 	} // run
 

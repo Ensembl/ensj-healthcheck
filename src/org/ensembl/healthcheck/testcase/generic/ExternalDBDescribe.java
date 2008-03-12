@@ -57,7 +57,7 @@ public class ExternalDBDescribe extends MultiDatabaseTestCase {
 			// species
 			result &= checkSameSQLResult(
 					"SELECT external_db_id, db_name, status, dbprimary_acc_linkable, display_label_linkable, priority, db_display_name, type FROM external_db ORDER BY external_db_id",
-					dbr.getAll(types[i]));
+					dbr.getAll(types[i]), false);
 		}
 
 		return result;

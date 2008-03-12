@@ -48,7 +48,7 @@ public class MetaCrossSpecies extends MultiDatabaseTestCase {
     public boolean run(DatabaseRegistry dbr) {
 
         boolean result = checkSQLAcrossSpecies(
-                "SELECT LCASE(meta_value) FROM meta WHERE meta_key ='species.classification' ORDER BY meta_id", dbr, types);
+                "SELECT LCASE(meta_value) FROM meta WHERE meta_key ='species.classification' ORDER BY meta_id", dbr, types, false);
         if (!result) {
             ReportManager.problem(this, "", "meta information not the same for some databases");
         } else {
