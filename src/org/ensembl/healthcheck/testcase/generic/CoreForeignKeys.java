@@ -118,7 +118,7 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		result &= checkForOrphans(con, "gene_archive", "mapping_session_id", "mapping_session", "mapping_session_id", true);
 
     //	 ----------------------------
-		// Check regulatory features and object xrefs point to existing objects
+		// Check object xrefs point to existing objects
 		String[] types = { "Gene", "Transcript", "Translation" };
 		for (int i = 0; i < types.length; i++) {
 			result &= checkKeysByEnsemblObjectType(con, "object_xref", types[i]);
@@ -144,9 +144,6 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 			result &= checkForOrphans(con, featTab, "seq_region_id", "seq_region", "seq_region_id", true);
 		}
 
-
-		// new tests (added by Patrick 07.02.2007)
-		
 		result &= checkForOrphans(con, "analysis_description", "analysis_id", "analysis", "analysis_id", true);
 
 		result &= checkForOrphans(con, "gene_attrib", "gene_id", "gene", "gene_id", true);
@@ -191,6 +188,8 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		result &= checkForOrphans(con, "density_feature", "density_type_id", "density_type", "density_type_id");
 
 		result &= checkForOrphans(con, "prediction_exon", "prediction_transcript_id", "prediction_transcript", "prediction_transcript_id");
+
+		result &= checkForOrphans(con, "prediction_exon", "prediction_exon_id", "exon", "exon_id");
 
 		result &= checkForOrphans(con, "marker", "display_marker_synonym_id", "marker_synonym", "marker_synonym_id");
 
