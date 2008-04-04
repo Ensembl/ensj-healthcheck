@@ -64,9 +64,12 @@ public abstract class EnsTestCase {
 	/** Fix field */
 	protected String fix = null;
 
-	/** Optional text to be printed when the test fails * */
+	/** Optional text to be printed when the test fails */
 	protected String failureText;
 
+	/** Which team is responsible for fixing this healthcheck */
+	protected String teamResponsible;
+	
 	/** Logger object to use */
 	protected static Logger logger = Logger.getLogger("HealthCheckLogger");
 
@@ -1878,6 +1881,18 @@ public abstract class EnsTestCase {
 		return fix;
 
 	}
+	// ----------------------------------------------------------------------
+
+	public String getTeamResponsible() {
+		return teamResponsible;
+	}
+
+	// ----------------------------------------------------------------------
+
+	public void setTeamResponsible(String teamResponsible) {
+		this.teamResponsible = teamResponsible;
+	}
+
 	// ----------------------------------------------------------------------
 
 } // EnsTestCase
