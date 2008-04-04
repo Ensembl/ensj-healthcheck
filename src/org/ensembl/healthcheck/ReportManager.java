@@ -211,7 +211,7 @@ public final class ReportManager {
 		// this may be called when there is no DB connection
 		String dbName = (con == null) ? "no_database" : DBUtils.getShortDatabaseName(con);
 
-		add(new ReportLine(testCase.getTestName(), dbName, level, message));
+		add(new ReportLine(testCase.getTestName(), dbName, level, message, testCase.getTeamResponsible()));
 
 	} // report
 
@@ -231,7 +231,7 @@ public final class ReportManager {
 	 */
 	public static void report(EnsTestCase testCase, String dbName, int level, String message) {
 
-		add(new ReportLine(testCase.getTestName(), dbName, level, message));
+		add(new ReportLine(testCase.getTestName(), dbName, level, message, testCase.getTeamResponsible()));
 
 	} // report
 
@@ -924,7 +924,7 @@ public final class ReportManager {
 		logger.fine("Adding report for: " + report.getDatabaseName() + " " + report.getTestCaseName() + " " + report.getLevelAsString()
 				+ " " + report.getMessage());
 
-		String sql = "INSERT INTO report (first_session_id, last_session_id, database_name, species, database_type, testcase, result, text, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+		String sql = "INSERT INTO report (first_session_id, last_session_id, database_name, species, database_type, testcase, result, text, timestamp, team_responsible) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?";
 
 		try {
 
@@ -937,6 +937,7 @@ public final class ReportManager {
 			stmt.setString(6, report.getShortTestCaseName());
 			stmt.setString(7, report.getLevelAsString());
 			stmt.setString(8, report.getMessage());
+			stmt.setString(9, report.getTeamResponsible());
 			stmt.executeUpdate();
 
 		} catch (SQLException e) {
