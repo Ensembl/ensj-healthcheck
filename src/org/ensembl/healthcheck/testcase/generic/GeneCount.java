@@ -39,7 +39,8 @@ public class GeneCount extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Causes incorrect display of gene counts and confusing contigview displays.");
 		setFix("Add/remove genes.");
-
+		setTeamResponsible("Genebuilders");
+		
 	}
 
 	/**

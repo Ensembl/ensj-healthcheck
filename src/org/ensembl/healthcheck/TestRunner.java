@@ -396,12 +396,18 @@ public class TestRunner {
 
 			if (lines.size() > 0) {
 
-				System.out.println("\n" + test);
+				System.out.print("\n" + test);
 
 				// print failure text if appropriate
 				String failureText = "";
 				try {
 					EnsTestCase testObj = (EnsTestCase) (Class.forName(test).newInstance());
+					String teamResponsible = testObj.getTeamResponsible();
+					if (teamResponsible == null) {
+						teamResponsible = "Not set";
+					}
+					System.out.println(" [Team responsible: " + teamResponsible + "]");
+					
 					failureText = testObj.getFailureText();
 					if (testObj.getEffect() != null) {
 						failureText += testObj.getEffect() + "\n";
