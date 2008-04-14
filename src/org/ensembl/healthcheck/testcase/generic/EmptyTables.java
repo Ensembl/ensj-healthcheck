@@ -37,6 +37,8 @@ public class EmptyTables extends SingleDatabaseTestCase {
 
 		setDescription("Checks that all tables have data");
 
+		setTeamResponsible("GeneBuilders");
+		
 	}
 
 	// ---------------------------------------------------------------------

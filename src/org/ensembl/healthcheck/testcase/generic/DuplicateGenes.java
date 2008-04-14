@@ -43,7 +43,8 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
-
+		setTeamResponsible("GeneBuilders");
+		
 	}
 
 	/**
