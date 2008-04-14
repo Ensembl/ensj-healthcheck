@@ -37,6 +37,8 @@ public class AssemblyException extends SingleDatabaseTestCase {
         addToGroup("post_genebuild");
         addToGroup("release");
         setDescription("Check assembly_exception table");
+        setTeamResponsible("GeneBuilders");
+    		
     }
 
     /**

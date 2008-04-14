@@ -42,7 +42,8 @@ public class AlignFeatureExternalDB extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Needed for web display.");
 		setFix("Run ensembl-personal/searle/feature_dbs/scripts/assign_external_db_ids.pl to set values.");
-
+		setTeamResponsible("GeneBuilders");
+		
 	}
 
 	/**

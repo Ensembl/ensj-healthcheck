@@ -45,7 +45,8 @@ public class Accession extends SingleDatabaseTestCase {
         addToGroup("post_genebuild");
         addToGroup("release");
         setDescription("Check for presence and format of PFAM etc hits");
-
+        setTeamResponsible("Genebuilders");
+        
         // add to this hash to check for other types and formats
         formats.put("pfam", "PF_____");
         formats.put("prints", "PR_____");

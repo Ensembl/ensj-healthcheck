@@ -40,7 +40,8 @@ public class Archive extends SingleDatabaseTestCase {
         addToGroup("release");
         setDescription("Checks the archive tables are up to date.");
         setHintLongRunning(true);
-
+        setTeamResponsible("Core");
+    		
     }
 
     /**
