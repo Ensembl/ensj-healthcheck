@@ -30,7 +30,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 public class HGNCMultipleGenes extends SingleDatabaseTestCase {
 
 	/**
-	 * Creates a new instance of Ditag.
+	 * Creates a new instance of HGNCMultipleGenes.
 	 */
 	public HGNCMultipleGenes() {
 
