@@ -57,7 +57,7 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
 		result &= checkForOrphans(con, "transcript", "transcript_id", "exon_transcript", "transcript_id", false);
 
-		result &= checkForOrphans(con, "gene", "gene_id", "transcript", "gene_id", false);
+		result &= checkForOrphans(con, "gene", "gene_id", "transcript", "gene_id", false);			
 
 		result &= checkForOrphans(con, "object_xref", "xref_id", "xref", "xref_id", true);
 
@@ -221,7 +221,11 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
 
 		// end new tests
-
+		
+		//added by dr2: check the canonical_transcript_id column points to a right transcript_id that belongs to that
+		//gene and there are no null values in this column
+		result &= checkCanonicalTranscriptIDKey(con);
+				
 
 		return result;
 
@@ -265,4 +269,25 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
 	// -------------------------------------------------------------------------
 
+	private boolean checkCanonicalTranscriptIDKey(Connection con){
+			boolean result = true;
+			
+			//check first if there are NULL values in the canonical_transcript_id column (there shouldn't, force
+			//by schema
+			result &= checkNoNulls(con,"gene","canonical_transcript_id");
+			//check the canonical_transcript_id column contains right transcript_id
+			result &= checkForOrphans(con,"gene","canonical_transcript_id","transcript","transcript_id",true);
+			//and finally check that all canonical_transcript_id belong to gene
+			int rows = getRowCount(con,"SELECT COUNT(*) FROM gene g, transcript t where g.canonical_transcript_id=" +
+					"t.transcript_id and g.gene_id <> t.gene_id");
+			if (rows>0){
+				//problem, the canonical transcript does not belong to the gene
+				String useful_sql = "SELECT g.gene_id,g.canonical_transcript_id FROM gene g, transcript t where g.canonical_transcript_id=" +
+					"t.transcript_id and g.gene_id <> t.gene_id";
+				ReportManager.problem(this,con,rows + " rows in gene have a canonical transcript it doesn't belong to the gene" +
+						" Try '" + useful_sql + "' to find out the offending genes");
+				result = false;
+			}
+			return result;
+	} //checkCanonicalTranscriptIDKey
 } // CoreForeignKeys
