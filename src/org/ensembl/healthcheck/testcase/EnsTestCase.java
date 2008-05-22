@@ -439,8 +439,7 @@ public abstract class EnsTestCase {
 		} else if (sql.toLowerCase().indexOf("select count") < 0) {
 			// otherwise, do it row-by-row
 
-			logger
-					.fine("getRowCount() executing SQL which does not appear to begin with SELECT COUNT - performing row-by-row count, which may take a long time if the table is large.");
+			logger.fine("getRowCount() executing SQL which does not appear to begin with SELECT COUNT - performing row-by-row count, which may take a long time if the table is large.");
 			result = getRowCountSlow(con, sql);
 
 		}
@@ -657,9 +656,32 @@ public abstract class EnsTestCase {
 	 * 
 	 * @return true If there are no orphans.
 	 */
-	public boolean checkForOrphans(Connection con, String table1, String key1, String table2, String key2, boolean oneWay) {
+	public boolean checkForOrphans(Connection con, String table1, String col1, String table2, String col2, boolean oneWay) {
 
-		int orphans = countOrphans(con, table1, key1, table2, key2, oneWay);
+		int orphans = countOrphans(con, table1, col1, table2, col2, oneWay);
+		
+		boolean result = true;
+		
+		String useful_sql = "SELECT " + table1 + "." + col1 + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1
+		+ " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
+
+		if (orphans == 0) {
+			ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + col1 + "(" + col2 + ")"
+			+ " relationships");
+		} else if (orphans > 0) {
+			ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + col1 + "(" + col2 + ")"
+					+ " relationships");
+			ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
+			ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
+			result = false;
+		} else {
+			ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1
+					+ ", look at the StackTrace if any");
+			result = false;
+		}
+
+		return result;	
+/*		
 		if (orphans > 0) {
 			ReportManager.problem(this, con, table1 + " <-> " + table2 + " has " + orphans + " unlinked entries");
 		} else {
@@ -667,7 +689,7 @@ public abstract class EnsTestCase {
 		}
 
 		return orphans == 0;
-
+*/
 	} // checkForOrphans
 
 	// -------------------------------------------------------------------------
@@ -1635,7 +1657,7 @@ public abstract class EnsTestCase {
 			result = false;
 		} else {
 			ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1
-					+ ", look at the StackTrace if any");
+					+ ", look at the StackTrace if any");		
 			result = false;
 		}
 
