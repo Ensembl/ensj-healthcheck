@@ -1,5 +1,6 @@
 AlignAffy
 AlignAffyProbes
+AlignOligoProbes
 BACends
 BLASTX_ENS_HUM
 BLASTX_ENS_MUS
@@ -8,6 +9,7 @@ BLASTX_SPROT
 BLASTX_TREMBL
 CDM
 CHIP_PET
+CHIP_PET_raw
 CYT
 CollapseAffy
 CollapseAffyProbes
@@ -26,12 +28,15 @@ Eponine
 Expression_profile
 FANTOM_GSC_PET
 FANTOM_GIS_PET
+FANTOM_GSC_PET_raw
+FANTOM_GIS_PET_raw
 FANTOM_CAGE
 Fgenesh
 FirstEF
 GENEWISE
 GID
 GIS_PET
+GIS_PET_raw
 GIS_PET_Encode
 GSC
 GSTEN
@@ -69,9 +74,11 @@ Unigene
 Uniprot
 Vertrna
 WORMBASE_EXPR_PROFILE
+XrefCoordinateMapping
 XrefExonerateDNA
 XrefExonerateProtein
 abberation_junction
+aberration_junction
 acc_bac_map
 allele
 assembly_contig
@@ -85,6 +92,7 @@ celegans_mrna
 cisred
 cisred_search
 cloneset
+deletion
 drosophila-peptides
 enhancer
 enhancer_positive
@@ -137,6 +145,7 @@ oxford_FGU
 peptides_bdgp
 pfscan
 platypus_454_cdna
+polyA_site
 probe2transcript
 protein_binding_site
 pseudogene
@@ -150,6 +159,7 @@ rodent_protein
 sanger
 scaffold
 scanprosite
+sequence_variant
 signal_peptide
 singapore_est
 singapore_protein
@@ -163,7 +173,10 @@ tRNAscan
 tilepath
 transcription_start_site
 transposable_element
+transposable_element_insertion
 transposable_element_insertion_site
+transposable_element_target_duplication
+uncharacterized_change_in_nucleotide_seq
 vectorbase
 vega
 wormbase
