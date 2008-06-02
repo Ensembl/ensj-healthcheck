@@ -35,8 +35,8 @@ public class Source extends SingleDatabaseTestCase {
    */
 	public Source() {
 
-		addToGroup("variation");
-		addToGroup("release");
+		/*addToGroup("variation");
+		addToGroup("release");*/
 		setDescription("Check that the source table contains the right entries for mouse");
 	}
 
