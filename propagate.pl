@@ -24,7 +24,7 @@ $user    = $user || "ensadmin";
 $pass    = $pass || "ensembl";
 $host    = $host || "ens-staging";
 $port    = $port ||  "3306";
-$dbname  = $dbname || "gp1_healthchecks";
+$dbname  = $dbname || "healthchecks";
 
 if (!($old_release && $new_release)) {
   print "Must specify -old_release and -new_release\n";
