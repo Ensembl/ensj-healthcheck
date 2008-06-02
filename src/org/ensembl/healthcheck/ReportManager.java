@@ -736,10 +736,10 @@ public final class ReportManager {
 	 */
 	public static void createDatabaseSession() {
 
-		String sql = "INSERT INTO session (host, config, db_release) VALUES ('"
-				+ System.getProperty("host") + ":" + System.getProperty("port") + "','"
-				+ System.getProperty("output.databases") + "', " + System.getProperty("output.release") + ")";
-
+	    String sql = "INSERT INTO session (host, config, db_release) VALUES ('"
+		+ System.getProperty("host") + ":" + System.getProperty("port") + "','"
+		+ System.getProperty("output.databases") + "', " + System.getProperty("output.release") + ")";
+	    
 		try {
 			Statement stmt = outputDatabaseConnection.createStatement();
 			stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
