@@ -78,7 +78,7 @@ public class CompareVariationSchema extends MultiDatabaseTestCase {
             if (masterSchema != null) {
                 logger.info("Will use " + masterSchema + " as specified master schema for comparisons.");
             } else {
-                logger.info("CompareSchema: No master schema defined file found! Set master.schema property in database.properties if you want to use a master schema.");
+                logger.info("CompareVariationSchema: No master schema defined file found! Set master.variation_schema property in database.properties if you want to use a master schema.");
             }
         } else {
             logger.fine("Will use schema definition from " + definitionFile);
