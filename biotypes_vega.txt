@@ -23,3 +23,5 @@ protein_coding
 pseudogene
 TEC
 unprocessed_pseudogene
+transcribed_pseudogene
+polymorphic
