@@ -1,1 +1,1 @@
-1 0 * * * /nfs/acari/ensembl/ensj-healthcheck/run-healthcheck-web.sh > /nfs/acari/ensembl/ensj-healthcheck/web.out
+1 0 * * * /nfs/acari/ensembl/ensj-healthcheck/run-healthcheck-web-parallel.sh > /nfs/acari/ensembl/ensj-healthcheck/web.out 2&>1
