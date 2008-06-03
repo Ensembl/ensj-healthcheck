@@ -25,6 +25,7 @@ import java.util.TreeSet;
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.Species;
@@ -50,7 +51,7 @@ public class CompareVariationSchema extends MultiDatabaseTestCase {
 
         addToGroup("variation");
         addToGroup("release");
-
+	setDescription("Will check if database schema is correct");
     }
 
     /**
@@ -165,6 +166,10 @@ public class CompareVariationSchema extends MultiDatabaseTestCase {
             } // for database
 
             masterStmt.close();
+	    if (result){
+	        //display some information the HC run with on problem
+		ReportManager.info(this,masterCon,"CompareVariationSchema run with no problem");
+	    }
 
         } catch (SQLException se) {
 
@@ -352,5 +357,17 @@ public class CompareVariationSchema extends MultiDatabaseTestCase {
         return result;
     }
     // -------------------------------------------------------------------------
+
+   /**
+     * This only applies to variation databases.
+     */
+     public void types() {
+
+	 removeAppliesToType(DatabaseType.OTHERFEATURES);
+	 removeAppliesToType(DatabaseType.CDNA);
+	 removeAppliesToType(DatabaseType.CORE);
+	 removeAppliesToType(DatabaseType.VEGA);
+
+     }
 
 } // CompareSchema
