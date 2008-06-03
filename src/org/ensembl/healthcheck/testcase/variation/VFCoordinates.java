@@ -40,7 +40,7 @@ public class VFCoordinates extends MultiDatabaseTestCase {
     public VFCoordinates() {
 
         addToGroup("variation");
-        addToGroup("release");
+	//        addToGroup("release");  removed from the release to reduce running time
 	setDescription("Check for possible wrong coordinates in Vf table, due to wrong length or outside range seq_region.");
 	setHintLongRunning(true);
 
