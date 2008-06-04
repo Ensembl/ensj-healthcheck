@@ -208,6 +208,7 @@ public class CompareVariationSchema extends MultiDatabaseTestCase {
 	//if the species is human or chimp, remove the genotype from the list of the master schema
 	for (int i = 0; i < tables.length; i++) {
 	    String table = tables[i];
+
 	    //if the table is the genotype for human or chimp, ignore it
 	    if ((species == Species.HOMO_SAPIENS || species == Species.PAN_TROGLODYTES) && table.equals("tmp_individual_genotype_single_bp")){
 		continue;
@@ -219,12 +220,21 @@ public class CompareVariationSchema extends MultiDatabaseTestCase {
 	}
 	// and now the other way
 	tables = getTableNames(schema2);
+	boolean strainTable = false;
 	for (int i = 0; i < tables.length; i++) {
 	    String table = tables[i];
+	    //ignore the srain_gtype_ploy table if present
+	    if (table.equals("strain_gtype_poly")){
+		strainTable = true;
+		continue;
+	    }
 	    if (!checkTableExists(schema1, table)) {
 		ReportManager.problem(this, schema2, "Table " + table + " exists in " + name2 + " but not in " + name1);
 		result = false;
 	    }
+	}
+	if (!strainTable && (species == Species.RATTUS_NORVEGICUS || species == Species.MUS_MUSCULUS)){
+	    ReportManager.info(this,schema2, " Table strain_gtype_poly NOT present in " + name2);
 	}
 	
 	return result;
