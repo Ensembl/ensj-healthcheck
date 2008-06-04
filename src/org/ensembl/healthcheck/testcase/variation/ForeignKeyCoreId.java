@@ -40,7 +40,7 @@ public class ForeignKeyCoreId extends MultiDatabaseTestCase {
     public ForeignKeyCoreId() {
 
         addToGroup("variation");
-	addToGroup("release");
+	addToGroup("variation-release");
         setDescription("Check for broken foreign-key relationships between variation and core databases.");
 	setHintLongRunning(true);
 

@@ -50,7 +50,7 @@ public class CompareVariationSchema extends MultiDatabaseTestCase {
     public CompareVariationSchema() {
 
         addToGroup("variation");
-        addToGroup("release");
+	addToGroup("variation-release");
 	setDescription("Will check if database schema is correct");
     }
 

@@ -36,7 +36,7 @@ public class Meta_coord extends SingleDatabaseTestCase {
 	public Meta_coord() {
 
 		addToGroup("variation");
-		addToGroup("release");
+		addToGroup("variation-release");
 		setDescription("Check that the meta_coord table contains the right entries for the different variation species");
 	}
 

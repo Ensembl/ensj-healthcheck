@@ -37,7 +37,7 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 	public VariationForeignKeys() {
 
 	    //		addToGroup("release"); removed to speed up cron job
-		addToGroup("variation");
+	    	addToGroup("variation");
 		setDescription("Check for broken foreign-key relationships.");
 	}
 

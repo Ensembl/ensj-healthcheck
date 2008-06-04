@@ -18,6 +18,7 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -31,7 +32,7 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 	public EmptyVariationTables() {
 
 		addToGroup("variation");
-		addToGroup("release");
+		addToGroup("variation-release");
 
 		setDescription("Checks that all tables have data");
 
@@ -140,5 +141,17 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 	}
 
 	// -----------------------------------------------------------------
+
+   /**
+     * This only applies to variation databases.
+     */
+     public void types() {
+
+	 removeAppliesToType(DatabaseType.OTHERFEATURES);
+	 removeAppliesToType(DatabaseType.CDNA);
+	 removeAppliesToType(DatabaseType.CORE);
+	 removeAppliesToType(DatabaseType.VEGA);
+
+     }
 
 } // EmptyVariationTablesTestCase
