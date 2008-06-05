@@ -162,7 +162,7 @@ public class CompareVariationSchema extends MultiDatabaseTestCase {
                     } // if checkCon != masterCon
 		    if (result){
 			//display some information the HC run with on problem
-			ReportManager.info(this,checkCon,"CompareVariationSchema run with no problem");
+			ReportManager.correct(this,checkCon,"CompareVariationSchema run with no problem");
 		    }
                 } // if appliesToType
 

@@ -137,7 +137,7 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 	}
 	if (! result ){
 	    //if there were no problems, just inform for the interface to pick the HC
-	    ReportManager.info(this,con,"VariationForeignKeys test passed without any problem");
+	    ReportManager.correct(this,con,"VariationForeignKeys test passed without any problem");
 	}
 	return result;
 	
