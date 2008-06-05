@@ -75,7 +75,7 @@ public class ForeignKeyCoreId extends MultiDatabaseTestCase {
 		return result;
 	    }
 
-	    Connection con = dbrcore.getConnection();
+	    Connection con = dbrvar.getConnection();
 	    
 	    System.out.println("Using " + dbrcore.getName() + " as core database and " + dbrvar.getName() + " as variation database");
 	    

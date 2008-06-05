@@ -74,7 +74,7 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 		return result;
 	    }
 
-	    Connection con = dbrcore.getConnection();
+	    Connection con = dbrvar.getConnection();
 	    
 	    System.out.println("Using " + coreName + " as core database and " + variationName + " as variation database");
 
