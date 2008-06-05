@@ -160,17 +160,16 @@ public class CompareVariationSchema extends MultiDatabaseTestCase {
                         dbStmt.close();
 
                     } // if checkCon != masterCon
-
+		    if (result){
+			//display some information the HC run with on problem
+			ReportManager.info(this,checkCon,"CompareVariationSchema run with no problem");
+		    }
                 } // if appliesToType
 
             } // for database
 
             masterStmt.close();
-	    if (result){
-	        //display some information the HC run with on problem
-		ReportManager.info(this,masterCon,"CompareVariationSchema run with no problem");
-	    }
-
+	  
         } catch (SQLException se) {
 
             logger.severe(se.getMessage());
