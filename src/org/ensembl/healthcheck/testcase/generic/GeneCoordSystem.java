@@ -70,20 +70,45 @@ public class GeneCoordSystem extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 		
-		// look for genes on sequence_level coord systems
-		// ignore situations where the sequence_level coord system is also the top level (rank = 1)
-		// such as yeast, as there is only one co-ordinate system
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM gene g, coord_system c, seq_region s WHERE g.seq_region_id = s.seq_region_id AND s.coord_system_id = c.coord_system_id AND c.attrib LIKE '%sequence_level%' AND c.rank > 1");
+		//check buil level in Meta table, flag toplevel should be set
 		
-		if (rows > 0) {
-			ReportManager.problem(this, con, rows + " genes are on a sequence_level coord system; this will slow down the mapper.");
-			result = false;
-		} else {
-			ReportManager.correct(this, con, "No genes on a sequence_level coord system");
+		result &= checkBuildLevel(dbre);
+		
+		//if flag set to toplevel, check all genes are in seq_region with attrib_type_id = toplevel
+		if (result){					
+			int rows = getRowCount(con, "select count(*) from gene where gene_id not in (select g.gene_id from gene g, seq_region_attrib sra, attrib_type a where g.seq_region_id = sra.seq_region_id and sra.attrib_type_id = a.attrib_type_id and a.code = 'toplevel')");
+		
+			if (rows > 0) {
+				ReportManager.problem(this, con, rows + " genes are not on toplevel seq_regions.");
+				result = false;
+			} else {
+				ReportManager.correct(this, con, "All genes on a top_level seq_regions");
+			}
 		}
 		return result;
 
 	} // run
+
+	/**
+	 * Check that at least some sort of genebuild.level-type key is present.
+	 */
+	private boolean checkBuildLevel(DatabaseRegistryEntry dbre) {
+
+		boolean result = false;
+
+		Connection con = dbre.getConnection();
+
+		int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key in ('genebuild.level','transcriptbuild.level','exonbuild.level')");
+		if (rows < 3) {
+			ReportManager.problem(this, con, "GB: No %build.level entries in the meta table in toplevel");
+		} else {
+			ReportManager.correct(this, con, " Toplevel flag set in %build.level in Meta table");
+			result = true;
+		}
+
+		return result;
+
+	}
 
 	// -----------------------------------------------------------------
 
