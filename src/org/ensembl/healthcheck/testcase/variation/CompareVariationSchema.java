@@ -234,7 +234,7 @@ public class CompareVariationSchema extends MultiDatabaseTestCase {
 	    }
 	}
 	if (!strainTable && (species == Species.RATTUS_NORVEGICUS || species == Species.MUS_MUSCULUS)){
-	    ReportManager.info(this,schema2, " Table strain_gtype_poly NOT present in " + name2);
+	    ReportManager.problem(this,schema2, " Table strain_gtype_poly NOT present in " + name2);
 	}
 	
 	return result;
