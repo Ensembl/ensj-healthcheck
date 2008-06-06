@@ -924,7 +924,7 @@ public final class ReportManager {
 		logger.fine("Adding report for: " + report.getDatabaseName() + " " + report.getTestCaseName() + " " + report.getLevelAsString()
 				+ " " + report.getMessage());
 
-		String sql = "INSERT INTO report (first_session_id, last_session_id, database_name, species, database_type, testcase, result, text, timestamp, team_responsible) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?";
+		String sql = "INSERT INTO report (first_session_id, last_session_id, database_name, species, database_type, testcase, result, text, timestamp, team_responsible) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)";
 
 		try {
 
