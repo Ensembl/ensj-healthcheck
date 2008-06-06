@@ -11,5 +11,5 @@ cp=$cp:$dir/lib/mysql-connector-java-3.0.15-ga-bin.jar
 
 cd $dir
 
-$JAVA_HOME/bin/java -server -classpath $cp -Xmx1700m org.ensembl.healthcheck.ParallelDatabaseTestRunner
+$JAVA_HOME/bin/java -server -classpath $cp org.ensembl.healthcheck.ParallelDatabaseTestRunner
 
