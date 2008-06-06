@@ -174,11 +174,11 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 		
 		String[] cmd = {"bsub", "-q","long","-o", "healthcheck_%J.out", "-e", "healthcheck_%J.err", dir + File.separator + "run-healthcheck-node.sh", "-d", database, "-group", group,	"-session", "" + sessionID };
 		
-		try {
+              try {
 		    Runtime.getRuntime().exec(cmd);
 		    System.out.println("Submitted job with database regexp " + database + " and group " + group + ", session ID " + sessionID);
 		} catch (IOException ioe) {
-		    System.err.println(ioe.getMessage());
+		    System.err.println("Error in head job " + ioe.getMessage());
 		}
 	    }
 	}
