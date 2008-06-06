@@ -64,7 +64,8 @@ public class IndividualType extends SingleDatabaseTestCase {
 		}
 	    }
 
-	    if (dbre.getSpecies() == Species.CANIS_FAMILIARIS || dbre.getSpecies() == Species.DANIO_RERIO || dbre.getSpecies() == Species.GALLUS_GALLUS || dbre.getSpecies() == Species.RATTUS_NORVEGICUS || dbre.getSpecies() == Species.ANOPHELES_GAMBIAE){		
+	    if (dbre.getSpecies() == Species.CANIS_FAMILIARIS || dbre.getSpecies() == Species.DANIO_RERIO || dbre.getSpecies() == Species.GALLUS_GALLUS || dbre.getSpecies() == Species.RATTUS_NORVEGICUS || dbre.getSpecies() == Species.ANOPHELES_GAMBIAE
+	    		|| dbre.getSpecies() == Species.BOS_TAURUS  || dbre.getSpecies() == Species.ORNITHORHYNCHUS_ANATINUS){		
 		int mc = getRowCount(con,"SELECT COUNT(*) FROM individual WHERE individual_type_id <> 2");    
 		if (mc > 0){
 		    ReportManager.problem(this, con, "Individual type incorrect in Individual table");
@@ -74,7 +75,7 @@ public class IndividualType extends SingleDatabaseTestCase {
 		    ReportManager.correct(this, con, "Individual type table correct in " + dbre.getSpecies());
 		}
 	    }
-	    if (dbre.getSpecies() == Species.HOMO_SAPIENS){		
+	    if (dbre.getSpecies() == Species.HOMO_SAPIENS || dbre.getSpecies() == Species.PAN_TROGLODYTES || dbre.getSpecies() == Species.TETRAODON_NIGROVIRIDIS || dbre.getSpecies() == Species.PONGO_PYGMAEUS){		
 		int mc = getRowCount(con,"SELECT COUNT(*) FROM individual WHERE individual_type_id <> 3");    
 		if (mc > 0){
 		    ReportManager.problem(this, con, "Individual type incorrect in Individual table");
