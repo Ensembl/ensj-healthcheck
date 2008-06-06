@@ -264,8 +264,11 @@ public class DatabaseTestRunner extends TestRunner implements Reporter {
 	 */
 	private List getDatabasesFromProperties() {
 
-		String[] dbs = System.getProperty("output.databases").split(",");
-
+		String[] dbs_and_groups = System.getProperty("output.databases").split(",");
+		String[] dbs = new String[dbs_and_groups.length];
+		for (int i=0;i < dbs_and_groups.length;i++){
+		    dbs[i] = dbs_and_groups[i].split(":")[0];
+		}
 		return Arrays.asList(dbs);
 
 	}
