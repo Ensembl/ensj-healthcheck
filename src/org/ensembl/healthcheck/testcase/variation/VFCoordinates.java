@@ -84,24 +84,21 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 		ReportManager.problem(this, con, "Wrong allele length !! (allele_string <> coordinates length) for " + variationName);
 		result = false;
 	    }
-	    else{
-		ReportManager.info(this, con, "SNPs have correct length in " + variationName);
-	    }
-	    
+	   	    
 	    mc = getRowCount(con,"SELECT COUNT(*) FROM " + coreName + ".seq_region s, " + variationName + ".variation_feature vf WHERE vf.seq_region_id = s.seq_region_id AND vf.seq_region_end > s.length");
 	     if (mc > 0){
 		ReportManager.problem(this, con, "Variation Features outside range in " + variationName);
 		result = false;
-	    }
-	     else{
-		 ReportManager.info(this,con,"Coordinates in VariationFeature in range in " + variationName);
-	     }
+	    }	     
 	     mc = getRowCount(con,"SELECT COUNT(*) FROM " + variationName + ".variation_feature vf WHERE vf.seq_region_start = 1 AND vf.seq_region_end > 1");
 	     if (mc > 0){
 		 ReportManager.problem(this, con, "Variation Features with coordinates = 1 " + variationName);
 		 result = false;
 	     }
-	}
+	 	if (result){
+	    	 ReportManager.info(this,con,"VFCoordinates run successfully");
+	     } 
+		}	  
         return result;
 
     }
