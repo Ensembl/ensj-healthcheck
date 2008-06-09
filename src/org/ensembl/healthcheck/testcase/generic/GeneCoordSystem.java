@@ -98,12 +98,12 @@ public class GeneCoordSystem extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key in ('genebuild.level','transcriptbuild.level','exonbuild.level')");
-		if (rows < 3) {
-			ReportManager.problem(this, con, "GB: No %build.level entries in the meta table in toplevel");
-		} else {
-			ReportManager.correct(this, con, " Toplevel flag set in %build.level in Meta table");
+		int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key = 'genebuild.level' and meta_value = 'toplevel'");
+		if (rows == 1) {
+			ReportManager.correct(this, con, " Toplevel flag set in genebuild.level in Meta table");
 			result = true;
+		} else {
+			ReportManager.problem(this, con, "GB: No genebuild.level entry in the meta table in toplevel");			
 		}
 
 		return result;
