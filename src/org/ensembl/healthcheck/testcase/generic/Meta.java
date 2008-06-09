@@ -617,18 +617,22 @@ public class Meta extends SingleDatabaseTestCase {
 	 */
 	private boolean checkBuildLevel(DatabaseRegistryEntry dbre) {
 
-		boolean result = false;
+		boolean result = true;
 
 		Connection con = dbre.getConnection();
-
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key LIKE '%build.level'");
-		if (rows == 0) {
-			ReportManager.problem(this, con, "GB: No %build.level entries in the meta table - run ensembl/misc-scripts/meta_levels.pl");
+		String keys = "(\'genebuild.level\', " + "\'transcriptbuild.level\',"+"\'exonbuild.level\',"+"\'repeat_feature.level\',"+
+				"\'dna_align_featurebuild.level\',"+ "\'protein_align_featurebuild.level\',"+ "\'simple_featurebuild.level\',"+
+				"\'prediction_transcriptbuild.level\',"+ "\'prediction_exonbuild.level\')";
+		
+		int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key IN " + keys);
+		ReportManager.info(this, con, rows + " %build.level rows present in Meta table");
+		/*if (rows != 9) {
+			ReportManager.problem(this, con, rows + " GB: No %build.level entries in the meta table - run ensembl/misc-scripts/meta_levels.pl");
 		} else {
 			ReportManager.correct(this, con, rows + " build.level rows present");
 			result = true;
 		}
-
+*/
 		return result;
 
 	}
