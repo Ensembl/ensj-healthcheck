@@ -41,7 +41,7 @@ public class AnalyseTables extends SingleDatabaseTestCase {
 		setEffect("Causes indices not to be used, making queries slow or unresponsive.");
 		setFix("Run ANALYSE TABLE x.");
 		setTeamResponsible("ReleaseCoordinator");
-		
+
 	}
 
 	/**
@@ -53,21 +53,25 @@ public class AnalyseTables extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-		
+
 		String[] tables = DBUtils.getTableNames(con);
 
 		for (int i = 0; i < tables.length; i++) {
 
 			String table = tables[i];
-			
+
 			int results = getRowCount(con, " SHOW INDEX FROM " + table + " WHERE CARDINALITY IS NULL");
-			
+
 			if (results > 0) {
-				ReportManager.problem(this, con, table + " needs to be analysed");
-				result = false;
+
+				// Don't complain if the table is empty
+				if (countRowsInTable(con, table) > 0) {
+					ReportManager.problem(this, con, table + " needs to be analysed");
+					result = false;
+				}
 			}
 		}
-		
+
 		return result;
 
 	} // run
