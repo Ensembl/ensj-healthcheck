@@ -56,7 +56,7 @@ public class FlankingUpDownSeq extends SingleDatabaseTestCase {
             result = false;
             ReportManager.problem(this, con, rows + " have no up_seq and no up_seq_region_start");
         } else {
-            ReportManager.info(this, con, "No flanking_sequence have no up_seq and no up_seq_region_start");
+      //      ReportManager.info(this, con, "No flanking_sequence have no up_seq and no up_seq_region_start");
         }
 
 	// check down_seq and down_seq_region_start
@@ -65,7 +65,7 @@ public class FlankingUpDownSeq extends SingleDatabaseTestCase {
             result = false;
             ReportManager.problem(this, con, rows + " have no down_seq and no down_seq_region_start");
         } else {
-            ReportManager.info(this, con, "No flanking_sequence have no down_seq and no down_seq_region_start");
+        //    ReportManager.info(this, con, "No flanking_sequence have no down_seq and no down_seq_region_start");
         }
 
         // check how many variation don't have flanking sequence
@@ -74,8 +74,11 @@ public class FlankingUpDownSeq extends SingleDatabaseTestCase {
             result = false;
             ReportManager.problem(this, con, rows + " variations have no flanking sequence");
         } else {
-            ReportManager.info(this, con, "All variations have flanking sequence");
-        }           
+          //  ReportManager.info(this, con, "All variations have flanking sequence");
+        }   
+        if (result){
+        	ReportManager.correct(this,con,"All variations have flanking sequence correct");
+        }
         return result;
 
     } // run
