@@ -92,8 +92,7 @@ public class CompareSchema extends MultiDatabaseTestCase {
 			if (masterSchema != null) {
 				logger.info("Will use " + masterSchema + " as specified master schema for comparisons.");
 			} else {
-				logger
-						.info("CompareSchema: No master schema defined file found! Set master.schema property in database.properties if you want to use a master schema.");
+				logger.info("CompareSchema: No master schema defined file found! Set master.schema property in database.properties if you want to use a master schema.");
 			}
 		} else {
 			logger.fine("Will use schema definition from " + definitionFile);
@@ -299,7 +298,7 @@ public class CompareSchema extends MultiDatabaseTestCase {
 				String[] indices = s.split(":");
 				String table = indices[0];
 				String index = indices[1];
-				ReportManager.problem(this, "", DBUtils.getShortDatabaseName(con1) + " " + table + " has index " + index
+				ReportManager.problem(this, con1, DBUtils.getShortDatabaseName(con1) + " " + table + " has index " + index
 						+ " which is different or absent in " + DBUtils.getShortDatabaseName(con2));
 			}
 
@@ -323,7 +322,7 @@ public class CompareSchema extends MultiDatabaseTestCase {
 				String[] indices = s.split(":");
 				String table = indices[0];
 				String index = indices[1];
-				ReportManager.problem(this, "", DBUtils.getShortDatabaseName(con2) + " " + table + " has index " + index
+				ReportManager.problem(this, con2, DBUtils.getShortDatabaseName(con2) + " " + table + " has index " + index
 						+ " which is different or absent in " + DBUtils.getShortDatabaseName(con1));
 			}
 
