@@ -24,3 +24,11 @@ V_segment
 J_segment
 D_segment
 C_segment
+unprocessed_pseudogene
+processed_pseudogene
+IG_V_gene
+IG_J_gene
+IG_C_gene
+IG_D_gene
+havana_pseudogene
+IG_pseudogene
