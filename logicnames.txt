@@ -42,6 +42,8 @@ GSC
 GSTEN
 GWS_H
 GWS_S
+GWS_UNI
+GadflyP
 GeneFinder
 Genscan
 HOX
@@ -85,6 +87,8 @@ assembly_contig
 bac_map
 bacs
 bacs_bands
+blastprodom
+brigpepP
 cbriggsae_est
 cbriggsae_mrna
 celegans_est
@@ -110,16 +114,19 @@ flyreg
 fosmid
 from
 gap
+gene3d
 geneDensity
 genomewise
 haplotype
 havana
+hmmpanther
 human_cdna
 human_ensembl_proteins
 human_est
 human_protein
 human_refseq
 insertion_site
+ipi_humanP
 knownGeneDensity
 marker
 matepairs
@@ -153,6 +160,7 @@ qtl
 rat_cdna
 refseq
 regulatory_region
+remaneiP
 rescue_fragment
 riken_prot
 rodent_protein
@@ -163,6 +171,8 @@ sequence_variant
 signal_peptide
 singapore_est
 singapore_protein
+slimswissprotP
+slimtremblP
 snpDensity
 superctgs
 superfamily
@@ -181,10 +191,12 @@ vectorbase
 vega
 wormbase
 wormpep
+wormpepP
 xlaevis_EST
 xlaevis_cDNA
 xtrop_cDNA
 xtrop_cluster
+yeastP
 z_dbest
 z_estgene
 zfish_EST
