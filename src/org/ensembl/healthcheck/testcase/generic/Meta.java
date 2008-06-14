@@ -625,7 +625,7 @@ public class Meta extends SingleDatabaseTestCase {
 				"\'prediction_transcriptbuild.level\',"+ "\'prediction_exonbuild.level\')";
 		
 		int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key IN " + keys);
-		ReportManager.info(this, con, rows + " %build.level rows present in Meta table");
+		//ReportManager.info(this, con, rows + " %build.level rows present in Meta table");
 		/*if (rows != 9) {
 			ReportManager.problem(this, con, rows + " GB: No %build.level entries in the meta table - run ensembl/misc-scripts/meta_levels.pl");
 		} else {
