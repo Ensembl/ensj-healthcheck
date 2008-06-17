@@ -61,7 +61,7 @@ public class ForeignKeyGenomeDbId extends SingleDatabaseTestCase {
             result &= checkForOrphans(con, "dnafrag", "genome_db_id", "genome_db", "genome_db_id");
             result &= checkForOrphansWithConstraint(con, "member", "genome_db_id", "genome_db", "genome_db_id", "genome_db_id != 0");
             result &= checkForOrphans(con, "species_set", "genome_db_id", "genome_db", "genome_db_id");
-            result &= checkForOrphans(con, "genome_db", "genome_db_id", "species_set", "genome_db_id");
+            result &= checkForOrphansWithConstraint(con, "genome_db", "genome_db_id", "species_set", "genome_db_id", "taxon_id != 0");
 
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in genome_db table, so nothing to test IGNORED");
