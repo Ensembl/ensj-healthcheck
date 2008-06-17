@@ -60,6 +60,11 @@ public class CheckConservationScore extends SingleDatabaseTestCase {
 	 */
 	String[] method_link_species_set_ids = getColumnValues(con, "SELECT method_link_species_set_id FROM method_link_species_set LEFT JOIN method_link USING (method_link_id) WHERE type=\"GERP_CONSERVATION_SCORE\" OR class LIKE \"ConservationScore%\"");
 
+	/**
+	 * Get Ancestral sequences genome_db_id
+	 */
+	String ancestral_seq_id = getRowColumnValue(con, "SELECT genome_db_id FROM genome_db WHERE name = \"Ancestral sequences\"");
+
         if (method_link_species_set_ids.length > 0) {
 
 	    /** 
@@ -79,8 +84,14 @@ public class CheckConservationScore extends SingleDatabaseTestCase {
 		} else {
 		    /** Find the multiple alignments gabs which have more than 3
 		     * species but don't have any conservation scores
+		     * Need to exclude gabs containing ancestral sequences
 		     */
-		    String useful_sql = new String("SELECT genomic_align_block.genomic_align_block_id FROM genomic_align_block LEFT JOIN genomic_align USING (genomic_align_block_id) LEFT JOIN conservation_score USING (genomic_align_block_id) WHERE genomic_align_block.method_link_species_set_id = " +  multi_align_mlss_id + " AND conservation_score.genomic_align_block_id IS NULL GROUP BY genomic_align_block.genomic_align_block_id HAVING count(*) > 3");
+		    String useful_sql;
+		    if (ancestral_seq_id == "") {
+			useful_sql = new String("SELECT genomic_align_block.genomic_align_block_id FROM genomic_align_block LEFT JOIN genomic_align USING (genomic_align_block_id) LEFT JOIN conservation_score USING (genomic_align_block_id) WHERE genomic_align_block.method_link_species_set_id = " +  multi_align_mlss_id + " AND conservation_score.genomic_align_block_id IS NULL GROUP BY genomic_align_block.genomic_align_block_id HAVING count(*) > 3");
+		    } else {
+			useful_sql = new String("SELECT genomic_align_block.genomic_align_block_id FROM genomic_align_block LEFT JOIN conservation_score USING (genomic_align_block_id) LEFT JOIN genomic_align USING (genomic_align_block_id) LEFT JOIN dnafrag USING (dnafrag_id) WHERE genomic_align_block.method_link_species_set_id = " + multi_align_mlss_id + " AND conservation_score.genomic_align_block_id IS NULL AND genome_db_id <> " + ancestral_seq_id + " GROUP BY genomic_align_block.genomic_align_block_id HAVING count(*) > 3");
+		    }
 
 		    String[] failures = getColumnValues(con, useful_sql); 
 		    if (failures.length > 0) {
