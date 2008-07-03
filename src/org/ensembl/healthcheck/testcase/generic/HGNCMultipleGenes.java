@@ -53,7 +53,7 @@ public class HGNCMultipleGenes extends SingleDatabaseTestCase {
 	}
 
 	/**
-	 * Test various things about ditag features.
+	 * Run the test.
 	 * 
 	 * @param dbre
 	 *          The database to use.
