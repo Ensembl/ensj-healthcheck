@@ -42,6 +42,7 @@ public class XrefLevels extends MultiDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Causes BioMart to require specific workarounds for each case.");
 		setFix("Manually fix affected xrefs.");
+		setTeamResponsible("core");
 
 	}
 
@@ -50,8 +51,6 @@ public class XrefLevels extends MultiDatabaseTestCase {
 	 * 
 	 * @param dbr
 	 *          The database registry containing all the specified databases.
-	 * @return True if the seq_region_attrib table is the same across all the
-	 *         species in the registry.
 	 */
 	public boolean run(DatabaseRegistry dbr) {
 
@@ -133,7 +132,7 @@ public class XrefLevels extends MultiDatabaseTestCase {
 			se.printStackTrace();
 		}
 
-		//dropTempTable(masterDBRE);
+		dropTempTable(masterDBRE);
 		
 		return result;
 
