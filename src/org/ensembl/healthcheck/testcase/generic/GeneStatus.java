@@ -35,7 +35,7 @@ public class GeneStatus extends SingleDatabaseTestCase {
 	public GeneStatus() {
 
 		addToGroup("release");
-		setDescription("Check that the number of KNOWN genes is within 20% in the new and previous databases. Also check for unset status.");
+		setDescription("Check that the number of KNOWN genes & transcripts is within 20% in the new and previous databases. Also check for unset status.");
 
 	}
 
@@ -54,7 +54,7 @@ public class GeneStatus extends SingleDatabaseTestCase {
 	 * 
 	 * @param dbre
 	 *          The database to use.
-	 * @return true if the test pased.
+	 * @return true if the test passed.
 	 * 
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
@@ -122,7 +122,7 @@ public class GeneStatus extends SingleDatabaseTestCase {
 
 				double difference = (double) (previous - current) / (double) previous;
 
-				// System.out.println(previous + " " + current + " " + difference);
+				logger.finest(type + ": previous " + previous + " current " + current + " difference ratio " + difference);
 
 				if (difference > THRESHOLD) {
 
