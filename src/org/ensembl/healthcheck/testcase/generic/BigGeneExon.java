@@ -35,6 +35,8 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 
 	private static long GENE_ERROR = 3000000; // throw if length greater than this
 
+	private static long GENE_ENORMOUS = 15000000; // really complain if length greater than this
+
 	private static long EXON_ERROR = 500000; // warn if length greater than this
 
 	/**
@@ -64,7 +66,7 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 	 * 
 	 * @param dbre
 	 *          The database to use.
-	 * @return true if the test pased.
+	 * @return true if the test passed.
 	 * 
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
@@ -106,6 +108,24 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 
 		}
 
+	// gene - really long
+		sql = "SELECT gene_id FROM gene WHERE (seq_region_end-seq_region_start+1) >= " + GENE_ENORMOUS;
+
+		longIDs = getColumnValues(con, sql);
+
+		if (longIDs.length > 0) {
+
+			String s = longIDs.length > 1 ? "s are " : " is ";
+			ReportManager.problem(this, con, longIDs.length + " gene" + s + "longer than " + GENE_ENORMOUS + " bases - this can't be right!");
+			printLongGeneDetails(con, longIDs);
+			result = false;
+
+		} else {
+
+			ReportManager.correct(this, con, "No genes longer than " + GENE_ENORMOUS + " bases");
+
+		}
+		
 		// exon - error
 		sql = "SELECT COUNT(*) FROM exon WHERE (seq_region_end-seq_region_start+1) >= " + EXON_ERROR;
 
