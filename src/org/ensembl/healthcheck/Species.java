@@ -302,7 +302,7 @@ public final class Species {
 		assemblyPrefixToSpecies.put("PIKA", OCHOTONA_PRINCEPS);
 		assemblyPrefixToSpecies.put("OANA", ORNITHORHYNCHUS_ANATINUS);
 		assemblyPrefixToSpecies.put("HEDGEHOG", ERINACEUS_EUROPAEUS);
-		assemblyPrefixToSpecies.put("GUINEAPIG", CAVIA_PORCELLUS);
+		assemblyPrefixToSpecies.put("cavPor", CAVIA_PORCELLUS);
 		assemblyPrefixToSpecies.put("TREESHREW", TUPAIA_BELANGERI);
 		assemblyPrefixToSpecies.put("SQUIRREL", SPERMOPHILUS_TRIDECEMLINEATUS);
 		assemblyPrefixToSpecies.put("EquCab", EQUUS_CABALLUS);
