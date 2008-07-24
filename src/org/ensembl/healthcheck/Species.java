@@ -165,6 +165,24 @@ public final class Species {
 	/** Specific type of species */
 	public static final Species PONGO_PYGMAEUS = new Species("pongo_pygmaeus");
 
+	/** Specific type of species */
+	public static final Species TURSIOPS_TRUNCATUS = new Species("tursiops_truncatus");
+
+	/** Specific type of species */
+	public static final Species PTEROPUS_VAMPYRUS = new Species("pteropus_vampyrus");
+
+	/** Specific type of species */
+	public static final Species PROCAVIA_CAPENSIS = new Species("procavia_capensis");
+
+	/** Specific type of species */
+	public static final Species DIPODOMYS_ORDII = new Species("dipodomys_ordii");
+
+	/** Specific type of species */
+	public static final Species TARSIUS_SYRICHTA = new Species("tarsius_syrichta");
+
+	/** Specific type of species */
+	public static final Species VICUGNA_PACOS = new Species("vicugna_pacos");
+
 	/** Non-ensembl database */
 	public static final Species SYSTEM = new Species("system");
 
@@ -259,6 +277,12 @@ public final class Species {
 		taxonIDToSpecies.put("30608", MICROCEBUS_MURINUS );
 		taxonIDToSpecies.put("7175", CULEX_PIPIENS );
 		taxonIDToSpecies.put("9600",  PONGO_PYGMAEUS);
+		taxonIDToSpecies.put("9739",  TURSIOPS_TRUNCATUS);
+		taxonIDToSpecies.put("30538",  VICUGNA_PACOS);
+		taxonIDToSpecies.put("132908",  PTEROPUS_VAMPYRUS);
+		taxonIDToSpecies.put("9813",  PROCAVIA_CAPENSIS);
+		taxonIDToSpecies.put("10020",  DIPODOMYS_ORDII);
+		taxonIDToSpecies.put("9478",  TARSIUS_SYRICHTA);
 		// and the other way around
 		Iterator it = taxonIDToSpecies.keySet().iterator();
 		while (it.hasNext()) {
@@ -311,6 +335,12 @@ public final class Species {
 		assemblyPrefixToSpecies.put("micMur", MICROCEBUS_MURINUS);
 		assemblyPrefixToSpecies.put("CpiJ", CULEX_PIPIENS);
 		assemblyPrefixToSpecies.put("PPYG", PONGO_PYGMAEUS);
+		assemblyPrefixToSpecies.put("turTru", TURSIOPS_TRUNCATUS);
+		assemblyPrefixToSpecies.put("vicPac", VICUGNA_PACOS);
+		assemblyPrefixToSpecies.put("pteVam", PTEROPUS_VAMPYRUS);
+		assemblyPrefixToSpecies.put("proCap", PROCAVIA_CAPENSIS);
+		assemblyPrefixToSpecies.put("dipOrd", DIPODOMYS_ORDII);
+		assemblyPrefixToSpecies.put("tarSyr", TARSIUS_SYRICHTA);
 		// and the other way around
 		it = assemblyPrefixToSpecies.keySet().iterator();
 		while (it.hasNext()) {
@@ -362,6 +392,12 @@ public final class Species {
 		ensemblStableIDPrefix.put(MICROCEBUS_MURINUS, "ENSMIC");
 		ensemblStableIDPrefix.put(CULEX_PIPIENS, "CPIJ");
 		ensemblStableIDPrefix.put(PONGO_PYGMAEUS, "ENSPPY");
+		ensemblStableIDPrefix.put(TURSIOPS_TRUNCATUS, "ENSTTR");
+		ensemblStableIDPrefix.put(VICUGNA_PACOS, "ENSVPA");
+		ensemblStableIDPrefix.put(PTEROPUS_VAMPYRUS, "ENSPVA");
+		ensemblStableIDPrefix.put(PROCAVIA_CAPENSIS, "ENSPCA");
+		ensemblStableIDPrefix.put(DIPODOMYS_ORDII, "ENSDOR");
+		ensemblStableIDPrefix.put(TARSIUS_SYRICHTA, "ENSTSY");
 		// stable ID prefixes - Vega databases
 		vegaStableIDPrefix.put(HOMO_SAPIENS, "OTTHUM");
 		vegaStableIDPrefix.put(MUS_MUSCULUS, "OTTMUS");
@@ -724,6 +760,36 @@ public final class Species {
 		if (in(alias, "orangutan,orang-utan,ppygmaeus,pongo_pygmaeus")) {
 
 			return PONGO_PYGMAEUS;
+
+		}
+		if (in(alias, "dolphin,tursiops_truncatus,ttruncatus")) {
+
+			return TURSIOPS_TRUNCATUS;
+
+		}
+		if (in(alias, "tarsier,tsyrichta,tarsier_syrichta")) {
+
+			return TARSIUS_SYRICHTA;
+
+		}
+		if (in(alias, "kangaroorat,kangaroo_rat,dordii,dipodomys_ordii")) {
+
+			return DIPODOMYS_ORDII;
+
+		}
+		if (in(alias, "hyrax,rock_hyrax,rockhyrax,pcapensis,procavia_capensis")) {
+
+			return PROCAVIA_CAPENSIS;
+
+		}
+		if (in(alias, "megabat,flying_fox,flyingfox,pvampyrus,pteropus_vampyrus")) {
+
+			return PTEROPUS_VAMPYRUS;
+
+		}
+		if (in(alias, "alpaca,lama_pacos,lpacos,vpacos,vicugna_pacos")) {
+
+			return VICUGNA_PACOS;
 
 		}
 		// --------------------------------------
