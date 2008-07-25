@@ -767,7 +767,7 @@ public final class Species {
 			return TURSIOPS_TRUNCATUS;
 
 		}
-		if (in(alias, "tarsier,tsyrichta,tarsier_syrichta")) {
+		if (in(alias, "tarsier,tsyrichta,tarsius_syrichta")) {
 
 			return TARSIUS_SYRICHTA;
 
