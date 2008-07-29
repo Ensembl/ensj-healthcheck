@@ -92,7 +92,7 @@ public class Accession extends SingleDatabaseTestCase {
 
             // check format of hits
             int badFormat = getRowCount(con, "SELECT COUNT(*) FROM protein_feature pf, analysis a WHERE a.logic_name='" + key
-                    + "' AND a.analysis_id=pf.analysis_id AND pf.hit_id NOT LIKE '" + formats.get(key) + "'");
+                    + "' AND a.analysis_id=pf.analysis_id AND pf.hit_name NOT LIKE '" + formats.get(key) + "'");
             if (badFormat > 0) {
                 result = false;
                 ReportManager.problem(this, con, badFormat + " " + key + " hit IDs are not in the correct format");
@@ -103,12 +103,12 @@ public class Accession extends SingleDatabaseTestCase {
         }
 
         // check for protein features with no hit_id
-        int nullHitIDs = getRowCount(con, "SELECT COUNT(*) FROM protein_feature WHERE hit_id IS NULL OR hit_id=''");
+        int nullHitIDs = getRowCount(con, "SELECT COUNT(*) FROM protein_feature WHERE hit_name IS NULL OR hit_name=''");
         if (nullHitIDs > 0) {
             result = false;
-            ReportManager.problem(this, con, nullHitIDs + " protein features have null or blank hit_ids");
+            ReportManager.problem(this, con, nullHitIDs + " protein features have null or blank hit_names");
         } else {
-            ReportManager.correct(this, con, "No protein features have null or blank hit_ids");
+            ReportManager.correct(this, con, "No protein features have null or blank hit_names");
         }
 
         return result;
