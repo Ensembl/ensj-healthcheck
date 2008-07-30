@@ -29,80 +29,83 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  */
 public class FeatureCoords extends SingleDatabaseTestCase {
 
-    /**
-     * Creates a new instance of CheckFeatureCoordsTestCase
-     */
-    public FeatureCoords() {
+	/**
+	 * Creates a new instance of CheckFeatureCoordsTestCase
+	 */
+	public FeatureCoords() {
 
-        addToGroup("post_genebuild");
-        addToGroup("release");
-        setDescription("Check that feature co-ords make sense.");
-        setHintLongRunning(true);
-    }
+		addToGroup("post_genebuild");
+		addToGroup("release");
+		setDescription("Check that feature co-ords make sense.");
+		setHintLongRunning(true);
+	}
 
-    /**
-     * Iterate over each affected database and perform various checks.
-     * 
-     * @param dbre The database to check.
-     * @return True if the test passed.
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+	/**
+	 * Iterate over each affected database and perform various checks.
+	 * 
+	 * @param dbre
+	 *          The database to check.
+	 * @return True if the test passed.
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-        boolean result = true;
+		boolean result = true;
 
-        String[] featureTables = getCoreFeatureTables();
+		String[] featureTables = getCoreFeatureTables();
 
-        for (int tableIndex = 0; tableIndex < featureTables.length; tableIndex++) {
+		for (int tableIndex = 0; tableIndex < featureTables.length; tableIndex++) {
 
-            String tableName = featureTables[tableIndex];
+			String tableName = featureTables[tableIndex];
 
-            Connection con = dbre.getConnection();
+			Connection con = dbre.getConnection();
 
-            // three separate queries to avoid using an OR
+			// three separate queries to avoid using an OR
 
-            // ------------------------
-            
-            logger.info("Checking " + tableName + " for start < 1");
-            String sql = "SELECT COUNT(*) FROM " + tableName + " WHERE seq_region_start < 1";
-            int rows = getRowCount(con, sql);
-            if (rows > 0) {
-                ReportManager.problem(this, con, rows + " rows in " + tableName + " have seq_region_start < 1");
-                result = false;
-            } else {
-                ReportManager.correct(this, con, "All rows in " + tableName + " have seq_region_start >= 1");
-            }
+			// ------------------------
 
-            // ------------------------
-            logger.info("Checking " + tableName + " for start > end");
-            sql = "SELECT COUNT(*) FROM " + tableName + " WHERE seq_region_start > seq_region_end";
-            rows = getRowCount(con, sql);
-            if (rows > 0) {
-                ReportManager.problem(this, con, rows + " rows in " + tableName + " have seq_region_start > seq_region_end");
-                result = false;
-            } else {
-                ReportManager.correct(this, con, "All rows in " + tableName + " have seq_region_start < seq_region_end");
-            }
-            
-            // ------------------------
-            
-            // skip large tables as this test takes an inordinately long time
-            if (tableName.equals("protein_align_feature") || tableName.equals("dna_align_feature") || tableName.equals("repeat_feature")) {
-                continue;
-            }
-            logger.info("Checking " + tableName + " for end > length");
-            sql = "SELECT COUNT(*) FROM " + tableName + " f, seq_region s WHERE f.seq_region_id = s.seq_region_id AND f.seq_region_end > s.length";
-            rows = getRowCount(con, sql);
-            if (rows > 0) {
-                ReportManager.problem(this, con, rows + " rows in " + tableName + " have seq_region_end > length in seq_region_table");
-                result = false;
-            } else {
-                ReportManager.correct(this, con, "All rows in " + tableName + " have sensible lengths");
-            }
-            
-        } // foreach table
+			logger.info("Checking " + tableName + " for start < 1");
+			String sql = "SELECT COUNT(*) FROM " + tableName + " WHERE seq_region_start < 1";
+			int rows = getRowCount(con, sql);
+			if (rows > 0) {
+				ReportManager.problem(this, con, rows + " rows in " + tableName + " have seq_region_start < 1");
+				result = false;
+			} else {
+				ReportManager.correct(this, con, "All rows in " + tableName + " have seq_region_start >= 1");
+			}
 
-        return result;
+			// ------------------------
+			logger.info("Checking " + tableName + " for start > end");
+			sql = "SELECT COUNT(*) FROM " + tableName + " WHERE seq_region_start > seq_region_end";
+			rows = getRowCount(con, sql);
+			if (rows > 0) {
+				ReportManager.problem(this, con, rows + " rows in " + tableName + " have seq_region_start > seq_region_end");
+				result = false;
+			} else {
+				ReportManager.correct(this, con, "All rows in " + tableName + " have seq_region_start < seq_region_end");
+			}
 
-    } // run
+			// ------------------------
+
+			/**
+			 * This section removed as it takes an inordinately long time for not much
+			 * useful result - can't find any combination of indices that avoid full table scan
+			 *  // skip large tables as this test takes an inordinately long time if
+			 * (tableName.equals("protein_align_feature") ||
+			 * tableName.equals("dna_align_feature") ||
+			 * tableName.equals("repeat_feature")) { continue; } logger.info("Checking " +
+			 * tableName + " for end > length"); sql = "SELECT COUNT(*) FROM " +
+			 * tableName + " f, seq_region s WHERE f.seq_region_id = s.seq_region_id
+			 * AND f.seq_region_end > s.length"; rows = getRowCount(con, sql); if
+			 * (rows > 0) { ReportManager.problem(this, con, rows + " rows in " +
+			 * tableName + " have seq_region_end > length in seq_region_table");
+			 * result = false; } else { ReportManager.correct(this, con, "All rows in " +
+			 * tableName + " have sensible lengths"); }
+			 */
+
+		} // foreach table
+
+		return result;
+
+	} // run
 
 } // FeatureCoords
