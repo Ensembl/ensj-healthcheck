@@ -900,10 +900,10 @@ public final class ReportManager {
 		}
 
 		if (reportID > -1) {
-			logger.fine("Report already exists (ID " + reportID + "): " + report.getDatabaseName() + " " + report.getTestCaseName() + " "
+			logger.finest("Report already exists (ID " + reportID + "): " + report.getDatabaseName() + " " + report.getTestCaseName() + " "
 					+ report.getLevelAsString() + " " + report.getMessage());
 		} else {
-			logger.fine("Report does not already exist: " + report.getDatabaseName() + " " + report.getTestCaseName() + " "
+			logger.finest("Report does not already exist: " + report.getDatabaseName() + " " + report.getTestCaseName() + " "
 					+ report.getLevelAsString() + " " + report.getMessage());
 		}
 
