@@ -13,8 +13,10 @@
 
 package org.ensembl.healthcheck;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -166,8 +168,12 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 
 		String dir = System.getProperty("user.dir");
 
+		String s = null;
+		
 		Iterator it = databasesAndGroups.iterator();
+		
 		while (it.hasNext()) {
+			
 			String[] databaseAndGroup = ((String) it.next()).split(":");
 			String database = databaseAndGroup[0];
 			String group = databaseAndGroup[1];
@@ -178,11 +184,24 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 			try {
 				Process p = Runtime.getRuntime().exec(cmd);
 				System.out.println("Submitted job with database regexp " + database + " and group " + group + ", session ID " + sessionID);
+				BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+				BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+
+				while ((s = stdInput.readLine()) != null) {
+					System.out.println(s);
+				}
+
+				while ((s = stdError.readLine()) != null) {
+					System.out.println(s);
+				}
+
+				p.waitFor();
+
 				int returnCode = p.exitValue();
-				if (returnCode > 0) {
+				if (returnCode != 0) {
 					System.err.println("Error: bsub returned code " + returnCode + " for " + database + ":" + group);
 				}
-			} catch (IOException ioe) {
+			} catch (Exception ioe) {
 				System.err.println("Error in head job " + ioe.getMessage());
 			}
 		}
