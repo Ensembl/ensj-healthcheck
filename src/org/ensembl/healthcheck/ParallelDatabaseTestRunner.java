@@ -182,8 +182,10 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 					dir + File.separator + "run-healthcheck-node.sh", "-d", database, "-group", group, "-session", "" + sessionID };
 
 			try {
+				
 				Process p = Runtime.getRuntime().exec(cmd);
 				System.out.println("Submitted job with database regexp " + database + " and group " + group + ", session ID " + sessionID);
+			
 				BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
 				BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 
