@@ -176,8 +176,12 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 					dir + File.separator + "run-healthcheck-node.sh", "-d", database, "-group", group, "-session", "" + sessionID };
 
 			try {
-				Runtime.getRuntime().exec(cmd);
+				Process p = Runtime.getRuntime().exec(cmd);
 				System.out.println("Submitted job with database regexp " + database + " and group " + group + ", session ID " + sessionID);
+				int returnCode = p.exitValue();
+				if (returnCode > 0) {
+					System.err.println("Error: bsub returned code " + returnCode + " for " + database + ":" + group);
+				}
 			} catch (IOException ioe) {
 				System.err.println("Error in head job " + ioe.getMessage());
 			}
