@@ -33,7 +33,7 @@ import org.ensembl.healthcheck.util.Utils;
  */
 public class NodeDatabaseTestRunner extends DatabaseTestRunner implements Reporter {
 
-	private boolean debug = true;
+	private boolean debug = false;
 
 	private boolean deletePrevious = false;
 
@@ -55,8 +55,6 @@ public class NodeDatabaseTestRunner extends DatabaseTestRunner implements Report
 		parseCommandLine(args);
 
 		setupLogging();
-
-		logger.setLevel(Level.FINEST);
 		
 		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
 		
