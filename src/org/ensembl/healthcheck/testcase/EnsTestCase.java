@@ -1545,7 +1545,7 @@ public abstract class EnsTestCase {
 				types.add(type);
 				logger.finest("Set type to " + type.toString() + " for " + getName());
 			} else {
-				logger.warning("Cannot deduce test type from directory name " + dirName + " for " + getName());
+				logger.finest("Cannot deduce test type from directory name " + dirName + " for " + getName());
 			}
 		}
 

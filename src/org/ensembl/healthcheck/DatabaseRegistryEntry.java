@@ -188,7 +188,7 @@ public class DatabaseRegistryEntry implements Comparable {
 		// other permutations?
 
 		if (result.equals(Species.UNKNOWN) && name.length() > 0) {
-			logger.warning("Can't deduce species from database name " + name);
+			logger.finest("Can't deduce species from database name " + name);
 		}
 
 		return result;
@@ -269,7 +269,7 @@ public class DatabaseRegistryEntry implements Comparable {
 		// other permutations?
 
 		if (result.equals(DatabaseType.UNKNOWN) && name.length() > 0) {
-			logger.warning("Can't deduce database type from database name " + name + "; use -type argument to specify it explicitly");
+			logger.finest("Can't deduce database type from database name " + name + "; use -type argument to specify it explicitly");
 		}
 
 		return result;
