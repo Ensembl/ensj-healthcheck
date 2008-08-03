@@ -178,7 +178,7 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 			String database = databaseAndGroup[0];
 			String group = databaseAndGroup[1];
 
-			String[] cmd = { "bsub", "-q", "normal", "-o", "healthcheck_%J.out", "-e", "healthcheck_%J.err",
+			String[] cmd = { "bsub", "-q", "long", "-o", "healthcheck_%J.out", "-e", "healthcheck_%J.err",
 					dir + File.separator + "run-healthcheck-node.sh", "-d", database, "-group", group, "-session", "" + sessionID };
 
 			try {
