@@ -27,11 +27,16 @@ CREATE TABLE report (
   testcase				VARCHAR(255),
   result				ENUM("PROBLEM", "CORRECT", "WARNING", "INFO"),
   text					VARCHAR(255),
+  team_responsible                      VARCHAR(255),
   
   PRIMARY KEY (report_id),
   KEY first_session_idx(first_session_id),
-  KEY last_session_idx(last_session_id)
-  
+  KEY last_session_idx(last_session_id),
+  KEY testcase_idx(testcase),
+  KEY database_name_idx(database_name),
+  KEY species_idx(species),
+  KEY result_idx(result)
+
 );
 
 
