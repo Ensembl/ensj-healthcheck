@@ -114,7 +114,7 @@ public final class DatabaseType {
 
         // --------------------------------------
         // needs to be before core and est since names
-        // are of the form homo_sapiens_core_expression_est_24_34e
+        // are of the form homo_sapiens_coreexpressionest_24_34e
         if (in(lcAlias, "expression")) {
 
             return EXPRESSION;
@@ -206,14 +206,6 @@ public final class DatabaseType {
         if (in(lcAlias, "go")) {
 
             return GO;
-
-        }
-
-        // --------------------------------------
-
-        if (in(lcAlias, "expression")) {
-
-            return EXPRESSION;
 
         }
 
