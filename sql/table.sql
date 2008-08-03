@@ -55,7 +55,8 @@ CREATE TABLE annotation (
   modified_by				VARCHAR(255),
   
   PRIMARY KEY (annotation_id),
-  KEY action_idx (action)
+  KEY action_idx (action),
+  KEY report_idx (report_id)
   
 );
 
