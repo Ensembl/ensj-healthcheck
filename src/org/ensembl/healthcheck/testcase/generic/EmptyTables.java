@@ -56,7 +56,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 		if (type == DatabaseType.CORE || type == DatabaseType.VEGA) {
 
 			// the following tables are allowed to be empty
-			String[] allowedEmpty = { "alt_allele", "assembly_exception", "dnac", "density_feature", "density_type" };
+			String[] allowedEmpty = { "alt_allele", "assembly_exception", "dnac", "density_feature", "density_type", "mapping_set", "seq_region_mapping", "unconventional_transcript_association" };
 			tables = remove(tables, allowedEmpty);
 
 			// ID mapping related tables are checked in a separate test case
