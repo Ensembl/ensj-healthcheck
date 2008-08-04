@@ -28,6 +28,7 @@ CREATE TABLE report (
   result				ENUM("PROBLEM", "CORRECT", "WARNING", "INFO"),
   text					VARCHAR(255),
   team_responsible                      VARCHAR(255),
+  created                               DATETIME,
   
   PRIMARY KEY (report_id),
   KEY first_session_idx(first_session_id),
@@ -35,7 +36,8 @@ CREATE TABLE report (
   KEY testcase_idx(testcase),
   KEY database_name_idx(database_name),
   KEY species_idx(species),
-  KEY result_idx(result)
+  KEY result_idx(result),
+  KEY text_idx(text)
 
 );
 
@@ -79,6 +81,14 @@ CREATE VIEW session_v AS
   MIN(r.timestamp) AS start_time, 
   MAX(r.timestamp) AS end_time, 
   TIMEDIFF(MAX(r.timestamp), MIN(r.timestamp)) AS duration 
+  FROM session s, report r 
+  WHERE s.session_id=r.last_session_id 
+  AND r.text LIKE '#%' 
+  GROUP BY r.last_session_id;
+
+CREATE VIEW session_v AS 
+ SELECT s.session_id, 
+  MAX(r.timestamp) AS end_time
   FROM session s, report r 
   WHERE s.session_id=r.last_session_id 
   AND r.text LIKE '#%' 
