@@ -22,6 +22,7 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.util.Vector;
+import java.util.regex.Pattern;
 
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.DatabaseRegistry;
@@ -29,6 +30,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.Species;
+import org.ensembl.healthcheck.util.DBUtils;
 
 
 /**
@@ -86,6 +88,7 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
 
         boolean result = true;
         Connection comparaCon = comparaDbre.getConnection();
+        String comparaDbName = (comparaCon == null) ? "no_database" : DBUtils.getShortDatabaseName(comparaCon);
 
         // Get list of species with more than 1 default assembly
         String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE assembly_default = 1"
@@ -106,17 +109,19 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
 
         // Get list of species with a non-default assembly
         sql = "SELECT DISTINCT name FROM genome_db WHERE assembly_default = 0";
-        try {
-          Statement stmt = comparaCon.createStatement();
-          ResultSet rs = stmt.executeQuery(sql);
-          while (rs.next()) {
-            ReportManager.problem(this, comparaCon, "There is at least one non-default assembly for "
-              + rs.getString(1) + " (this should not happen in the release DB)");
-          }
-          rs.close();
-          stmt.close();
-        } catch (Exception e) {
-          e.printStackTrace();
+        if (!Pattern.matches(".*master.*", comparaDbName)) {
+            try {
+              Statement stmt = comparaCon.createStatement();
+              ResultSet rs = stmt.executeQuery(sql);
+              while (rs.next()) {
+                ReportManager.problem(this, comparaCon, comparaDbName + " There is at least one non-default assembly for "
+                  + rs.getString(1) + " (this should not happen in the release DB)");
+              }
+              rs.close();
+              stmt.close();
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
         }
 
         // Get list of species with no default assembly
