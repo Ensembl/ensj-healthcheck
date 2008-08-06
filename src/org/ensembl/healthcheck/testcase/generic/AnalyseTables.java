@@ -39,7 +39,7 @@ public class AnalyseTables extends SingleDatabaseTestCase {
 		setDescription("Check whether tables need to be analysed.");
 		setPriority(Priority.AMBER);
 		setEffect("Causes indices not to be used, making queries slow or unresponsive.");
-		setFix("Run ANALYSE TABLE x.");
+		setFix("Run ANALYZE TABLE x.");
 		setTeamResponsible("ReleaseCoordinator");
 
 	}
