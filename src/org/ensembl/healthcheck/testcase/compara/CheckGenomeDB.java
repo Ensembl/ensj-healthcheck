@@ -148,7 +148,8 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
 
         // Get list of species in compara
         Vector comparaSpecies = new Vector();
-        String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE assembly_default = 1";
+        String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE assembly_default = 1"
+            + " name <> 'Ancestral sequences'";
         try {
           Statement stmt = comparaCon.createStatement();
           ResultSet rs = stmt.executeQuery(sql);
