@@ -47,6 +47,7 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
         addToGroup("compara_external_foreign_keys");
         setDescription("Check that the properties of the genome_db table (taxon_id, assembly" +
             " and genebuild) correspond to the meta data in the core DB and vice versa.");
+        setTeamResponsible("Compara");
 
     }
  

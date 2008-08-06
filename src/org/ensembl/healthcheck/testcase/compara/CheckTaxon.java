@@ -44,6 +44,7 @@ public class CheckTaxon extends MultiDatabaseTestCase {
         addToGroup("compara_external_foreign_keys");
         setDescription("Check that the attributes of the taxon table (genus, species," +
             " common_name and classification) correspond to the meta data in the core DB and vice versa.");
+        setTeamResponsible("Compara");
 
     }
     

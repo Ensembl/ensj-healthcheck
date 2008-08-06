@@ -44,7 +44,7 @@ public class CheckTopLevelDnaFrag extends MultiDatabaseTestCase {
 
         addToGroup("compara_external_foreign_keys");
         setDescription("Check that every dnafrag corresponds to a top_level seq_region in the core DB and vice versa.");
-
+        setTeamResponsible("Compara");
     }
     
     /**
@@ -87,7 +87,8 @@ public class CheckTopLevelDnaFrag extends MultiDatabaseTestCase {
 
         // Get list of species in compara
         Vector comparaSpecies = new Vector();
-        String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE assembly_default = 1";
+        String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE assembly_default = 1"
+            + " AND name <> 'Ancestral sequences'";
         try {
           Statement stmt = comparaCon.createStatement();
           ResultSet rs = stmt.executeQuery(sql);
