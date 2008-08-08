@@ -34,6 +34,7 @@ public class HGNCNumeric extends SingleDatabaseTestCase {
 	public HGNCNumeric() {
 
 		addToGroup("release");
+		addToGroup("core_xrefs");
 		setDescription("Check that no HGNC xrefs have dbprimary_acc=display_label");
 		setPriority(Priority.AMBER);
 		setFix("Remove HGNC xrefs and object_xrefs where dbprimary_acc=display_label. Set display_xref_ids of genes that were pointing to these to null.");
@@ -57,7 +58,7 @@ public class HGNCNumeric extends SingleDatabaseTestCase {
 	 * 
 	 * @param dbre
 	 *          The database to use.
-	 * @return true if the test pased.
+	 * @return true if the test passed.
 	 * 
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
@@ -66,7 +67,7 @@ public class HGNCNumeric extends SingleDatabaseTestCase {
 		
 		Connection con = dbre.getConnection();
 		
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM external_db e, xref x, object_xref ox, gene_stable_id gsi WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id AND ox.ensembl_object_type='Gene' AND ox.ensembl_id=gsi.gene_id AND e.db_name='HUGO'  and x.dbprimary_acc=x.display_label");
+		int rows = getRowCount(con, "SELECT COUNT(*) FROM external_db e, xref x, object_xref ox, gene_stable_id gsi WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id AND ox.ensembl_object_type='Gene' AND ox.ensembl_id=gsi.gene_id AND e.db_name LIKE 'HGNC%'  and x.dbprimary_acc=x.display_label");
 
 		if (rows > 0) {
 			

@@ -66,7 +66,7 @@ public class HGNCMultipleGenes extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		// this has to be done the slow way, don't think there's a way to do this all at once
-		int rows = getRowCount(con, "SELECT DISTINCT(x.display_label), COUNT(*) AS count FROM gene g, xref x, external_db e WHERE e.external_db_id=x.external_db_id AND e.db_name='HUGO' AND x.xref_id=g.display_xref_id GROUP BY x.display_label HAVING COUNT > 1");
+		int rows = getRowCount(con, "SELECT DISTINCT(x.display_label), COUNT(*) AS count FROM gene g, xref x, external_db e WHERE e.external_db_id=x.external_db_id AND e.db_name LIKE 'HGNC%' AND x.xref_id=g.display_xref_id GROUP BY x.display_label HAVING COUNT > 1");
 
 		if (rows > 0) {
 
