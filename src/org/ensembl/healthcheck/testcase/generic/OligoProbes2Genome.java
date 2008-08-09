@@ -24,11 +24,10 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
-import org.ensembl.healthcheck.TextTestRunner;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check mappings from Oligometrix probes to genome.
+ * Check mappings from oligo probes to genome.
  * 
  * Even though we *don't* provide oligo data for all species the healthcheck
  * follows the convention of failing if the data is missing.
@@ -36,18 +35,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 public class OligoProbes2Genome extends SingleDatabaseTestCase {
 
 	/**
-	 * Runs test against a few databases on the server specified in
-	 * database.properties.
-	 * 
-	 * @param args
-	 *          ignored.
-	 */
-	public static void main(String[] args) {
-		TextTestRunner.main(new String[] { "-d", "homo_sapiens_core_3.*", "-d", "pan_troglodytes_core_3.*", "OligoProbes2Genome" });
-	}
-
-	/**
-	 * Creates a new instance of FeatureAnalysis
+	 * Creates a new instance of OligoProbes2Genome
 	 */
 	public OligoProbes2Genome() {
 
@@ -72,7 +60,7 @@ public class OligoProbes2Genome extends SingleDatabaseTestCase {
 	 * 
 	 * @param dbre
 	 *          The database to use.
-	 * @return true if the test pased.
+	 * @return true if the test passed.
 	 * 
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
@@ -169,7 +157,7 @@ public class OligoProbes2Genome extends SingleDatabaseTestCase {
 			for (ResultSet rs = con.createStatement().executeQuery(sql); rs.next();) {
 				int probesetSize = rs.getInt("probe_setsize");
 				if (probesetSize < 1) {
-					ReportManager.problem(this, con, "oligo_array.probeset_size not set for " + rs.getString("name"));
+					ReportManager.problem(this, con, "oligo_array.probe_setsize not set for " + rs.getString("name"));
 					result = false;
 				}
 			}
@@ -192,7 +180,7 @@ public class OligoProbes2Genome extends SingleDatabaseTestCase {
 				ReportManager.problem(this, con, "No entry for oligo_feature in meta_coord table. ");
 				result = false;
 			}
-		} 
+		}
 		return result;
 	}
 
