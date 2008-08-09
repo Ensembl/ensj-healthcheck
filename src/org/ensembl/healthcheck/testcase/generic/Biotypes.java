@@ -50,7 +50,7 @@ public class Biotypes extends SingleDatabaseTestCase {
 	 * 
 	 * @param dbre
 	 *          The database to use.
-	 * @return true if the test pased.
+	 * @return true if the test passed.
 	 * 
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
@@ -122,7 +122,7 @@ public class Biotypes extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		// be a bit mopre informative than just counting rows
+		// be a bit more informative than just counting rows
 
 		// get gene biotypes
 		String[] geneBiotypes = getColumnValues(con, "SELECT DISTINCT(biotype) FROM gene");
