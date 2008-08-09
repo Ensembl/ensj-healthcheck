@@ -138,9 +138,9 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		for (int i = 0; i < featTabs.length; i++) {
 			String featTab = featTabs[i];
 			// skip large tables as this test takes an inordinately long time
-			if (featTab.equals("protein_align_feature") || featTab.equals("dna_align_feature") || featTab.equals("repeat_feature")) {
-				continue;
-			}
+			//if (featTab.equals("protein_align_feature") || featTab.equals("dna_align_feature") || featTab.equals("repeat_feature")) {
+				//continue;
+			//}
 			result &= checkForOrphans(con, featTab, "seq_region_id", "seq_region", "seq_region_id", true);
 		}
 
