@@ -45,6 +45,7 @@ public class ProjectedXrefs extends MultiDatabaseTestCase {
 	public ProjectedXrefs() {
 
 		addToGroup("release");
+		addToGroup("core_xrefs");
 
 		setDescription("Check that all species that should have projected xrefs do in fact have them.");
 

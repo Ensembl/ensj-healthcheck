@@ -36,6 +36,7 @@ public class HGNCMultipleGenes extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("core_xrefs");
 		setDescription("Check for HGNCs that have been assigned as display labels more than one gene.");
 
 	}

@@ -37,6 +37,7 @@ public class InterproDescriptions extends SingleDatabaseTestCase {
 
         addToGroup("post_genebuild");
         addToGroup("release");
+    		addToGroup("core_xrefs");
         setDescription("Check that the repeat_type column of the repeat_consensus table is NOT populated.");
 
     }

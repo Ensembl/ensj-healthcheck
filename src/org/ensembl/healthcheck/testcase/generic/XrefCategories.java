@@ -37,6 +37,7 @@ public class XrefCategories extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("core_xrefs");
 		setDescription("Check that all external_db entries have a type assigned.");
 		setPriority(Priority.AMBER);
 		setEffect("Web display of xrefs are broken");
