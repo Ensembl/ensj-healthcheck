@@ -65,7 +65,7 @@ public class ProjectedXrefs extends MultiDatabaseTestCase {
 	 * 
 	 * @param dbre
 	 *          The database to use.
-	 * @return true if the test pased.
+	 * @return true if the test passed.
 	 * 
 	 */
 	public boolean run(DatabaseRegistry dbr) {

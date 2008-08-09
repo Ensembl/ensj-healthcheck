@@ -44,7 +44,7 @@ public class RepeatFeature extends SingleDatabaseTestCase {
      * Run the test.
      * 
      * @param dbre The database to use.
-     * @return true if the test pased.
+     * @return true if the test passed.
      *  
      */
     public boolean run(DatabaseRegistryEntry dbre) {

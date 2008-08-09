@@ -44,7 +44,7 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
      * 
      * @param dbr
      *          The database registry containing all the matched databases.
-     * @return true if the test pased.
+     * @return true if the test passed.
      */
     public abstract boolean run(DatabaseRegistry dbr);
 

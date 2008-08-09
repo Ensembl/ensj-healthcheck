@@ -44,7 +44,7 @@ public class NullTranscripts extends SingleDatabaseTestCase {
 	 * 
 	 * @param dbre
 	 *          The database to use.
-	 * @return true if the test pased.
+	 * @return true if the test passed.
 	 * 
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {

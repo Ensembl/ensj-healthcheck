@@ -18,27 +18,27 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
+import java.util.Iterator;
+import java.util.List;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Check for blank or null versions in the xref table.
+ * Find occurrences of the string fatso.
  */
 
-public class XrefVersions extends SingleDatabaseTestCase {
+public class FatsoFinder extends SingleDatabaseTestCase {
 
-	/**
-	 * Create a new XrefVersions testcase.
-	 */
-	public XrefVersions() {
+	public FatsoFinder() {
 
 		addToGroup("post_genebuild");
+		addToGroup("id_mapping");
 		addToGroup("release");
-		addToGroup("core_xrefs");
-		setDescription("Check for blank or null versions in the xref table.");
-
+		setDescription("Find occurrences of the string fatso");
+		
 	}
 
 	/**
@@ -54,21 +54,35 @@ public class XrefVersions extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM xref WHERE version='' OR version IS NULL");
-		
-		if (rows > 0) {
+
+		String[] tables = DBUtils.getTableNames(con);
+
+		for (int i = 0; i < tables.length; i++) {
+
+			String table = tables[i];
 			
-			ReportManager.problem(this, con, rows + " rows in xref have blank or null versions.");
-			result = false;
-			
-		} else {
-			
-			ReportManager.correct(this, con, "No blank/null versions in xref");
+			List columnsAndTypes = DBUtils.getColumnsAndTypesInTable(con, table, "varchar");
+			Iterator it = columnsAndTypes.iterator();
+			while (it.hasNext()) {
+
+				String[] columnAndType = (String[]) it.next();
+				String column = columnAndType[0];
+				
+				int rows = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE " + column + " LIKE '%fatso%'");
+				
+				if (rows > 0) {
+					
+					ReportManager.problem(this, con, rows + " rows in " + table + "." + column + " have the string fatso");
+					result = false;
+					
+				} 
+				
+			}
 			
 		}
 
 		return result;
 
 	} // run
-
-} // XrefVersions
+	
+} // FatsoFinder
