@@ -361,7 +361,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
             while (it.hasNext()) {
                 Object next = it.next();
                 String sql = new String("INSERT INTO meta VALUES (NULL, \"" + next + "\", "
-                    + MetaEntriesToAdd.get(next) + ");");
+                    + MetaEntriesToAdd.get(next) + ", 1);");
                 int numRows = stmt.executeUpdate(sql);
                 if (numRows != 1) {
                     ReportManager.problem(this, con, "WARNING: " + numRows
