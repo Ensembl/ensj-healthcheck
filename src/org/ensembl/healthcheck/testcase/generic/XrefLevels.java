@@ -133,7 +133,7 @@ public class XrefLevels extends MultiDatabaseTestCase {
 			se.printStackTrace();
 		}
 
-		//dropTempTable(masterDBRE);
+		dropTempTable(masterDBRE);
 		
 		return result;
 
