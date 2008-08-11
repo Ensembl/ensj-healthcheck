@@ -71,7 +71,7 @@ public class HGNCNumeric extends SingleDatabaseTestCase {
 
 		if (rows > 0) {
 			
-			ReportManager.problem(this, con, rows + " HGNC xrefs with dbprimary_acc=display_label; this will cause genes to have numeric display names");
+			ReportManager.problem(this, con, rows + " HGNC xrefs with dbprimary_acc=display_label; this will cause genes to have numeric display names, or break hyperlinks");
 			result = false;
 			
 		} else {
