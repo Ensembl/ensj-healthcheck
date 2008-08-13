@@ -74,7 +74,7 @@ public class Meta extends SingleDatabaseTestCase {
 		result &= checkTaxonomyID(dbre);
 
 		if (dbre.getType() == DatabaseType.CORE) {
-			result &= checkGeneBuildVersionAndAssemblyDate(con);
+			result &= checkDates(con);
 		}
 
 		result &= checkCoordSystemTableCases(con);
@@ -433,14 +433,14 @@ public class Meta extends SingleDatabaseTestCase {
 
 	// ---------------------------------------------------------------------
 
-	private boolean checkGeneBuildVersionAndAssemblyDate(Connection con) {
+	private boolean checkDates(Connection con) {
 
 		boolean result = true;
 
-		String[] keys = { "genebuild.version", "assembly.date" };
+		String[] keys = { "genebuild.start_date", "assembly.date", "genebuild.initial_release_date", "genebuild.last_geneset_update" };
 
 		String date = "[0-9]{4}-[0-9]{2}";
-		String[] regexps = { date + "-[a-zA-Z]*", date };
+		String[] regexps = { date + "-[a-zA-Z]*", date, date, date };
 
 		for (int i = 0; i < keys.length; i++) {
 
