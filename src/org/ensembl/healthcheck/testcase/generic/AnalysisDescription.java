@@ -102,20 +102,7 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 	
 	private boolean checkDisplayable(DatabaseRegistryEntry dbre) {
 		
-		boolean result = true;
-		
-		Connection con = dbre.getConnection();
-		
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM analysis_description WHERE displayable IS NULL");
-		
-		if (rows > 0) {
-			ReportManager.problem(this, con, rows + " in analysis_descripion have null displayable flags");
-			result = false;
-		} else {
-			ReportManager.correct(this, con, "No null displayable flags in analysis_description.");
-		}
-
-		return result;
+		return checkNoNulls(dbre.getConnection(), "analysis_description", "displayable");
 		
 	}
 	

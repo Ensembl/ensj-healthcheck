@@ -55,20 +55,7 @@ public class XrefCategories extends SingleDatabaseTestCase {
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 
-		boolean result = true;
-
-		Connection con = dbre.getConnection();
-
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM external_db WHERE type IS NULL");
-
-		if (rows > 0) {
-			ReportManager.problem(this, con, rows + " rows in external_db have NULL types");
-			result = false;
-		} else {
-			ReportManager.correct(this, con, "All external_db entries have their types set");
-		}
-
-		return result;
+		return checkNoNulls(dbre.getConnection(), "external_db", "type");
 
 	} // run
 

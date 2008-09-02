@@ -32,127 +32,119 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that meta_coord table contains entries for all the coordinate systems that all the
- * features are stored in.
+ * Check that meta_coord table contains entries for all the coordinate systems
+ * that all the features are stored in.
  */
 public class MetaCoord extends SingleDatabaseTestCase {
 
-    private String[] featureTables = getCoreFeatureTables();
+	private String[] featureTables = getCoreFeatureTables();
 
-    /**
-     * Create a new instance of MetaCoord.
-     */
-    public MetaCoord() {
+	/**
+	 * Create a new instance of MetaCoord.
+	 */
+	public MetaCoord() {
 
-        addToGroup("release");
-        addToGroup("post_genebuild");
-        setDescription("Check that meta_coord table contains entries for all the coordinate systems that all the features are stored in");
+		addToGroup("release");
+		addToGroup("post_genebuild");
+		setDescription("Check that meta_coord table contains entries for all the coordinate systems that all the features are stored in");
 
-    }
+	}
 
-    /**
-     * Run the test.
-     * 
-     * @param dbre
-     *          The database to use.
-     * @return true if the test passed.
-     *  
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+	/**
+	 * Run the test.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return true if the test passed.
+	 * 
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-        boolean result = true;
+		boolean result = true;
 
-        Connection con = dbre.getConnection();
+		Connection con = dbre.getConnection();
 
-        // coordSystems is a hash of lists of coordinate systems that each feature table contains
-        Map coordSystems = new HashMap();
+		// coordSystems is a hash of lists of coordinate systems that each feature
+		// table contains
+		Map coordSystems = new HashMap();
 
-        try {
+		try {
 
-            Statement stmt = con.createStatement();
+			Statement stmt = con.createStatement();
 
-            // build up a list of all the coordinate systems that are in the various feature tables
-            for (int tableIndex = 0; tableIndex < featureTables.length; tableIndex++) {
+			// build up a list of all the coordinate systems that are in the various
+			// feature tables
+			for (int tableIndex = 0; tableIndex < featureTables.length; tableIndex++) {
 
-                String tableName = featureTables[tableIndex];
-                String sql = "SELECT DISTINCT(sr.coord_system_id) FROM seq_region sr, " + tableName
-                        + " f WHERE sr.seq_region_id = f.seq_region_id";
+				String tableName = featureTables[tableIndex];
+				String sql = "SELECT DISTINCT(sr.coord_system_id) FROM seq_region sr, " + tableName
+						+ " f WHERE sr.seq_region_id = f.seq_region_id";
 
-                logger.finest("Getting feature coordinate systems for " + tableName);
-                ResultSet rs = stmt.executeQuery(sql);
+				logger.finest("Getting feature coordinate systems for " + tableName);
+				ResultSet rs = stmt.executeQuery(sql);
 
-                while (rs.next()) {
-                    String coordSystemID = rs.getString(1);
-                    logger.finest("Added feature coordinate system for " + tableName + ": " + coordSystemID);
-                    // check that the meta_coord table has an entry corresponding to this
-                    int mc = getRowCount(con, "SELECT COUNT(*) FROM meta_coord WHERE coord_system_id=" + coordSystemID
-                            + " AND table_name='" + tableName + "'");
-                    if (mc == 0) {
-                        ReportManager.problem(this, con, "No entry for coordinate system with ID " + coordSystemID + " for "
-                                + tableName + " in meta_coord");
-                        result = false;
-                    } else if (mc > 1) {
-                        ReportManager.problem(this, con, "Coordinate system with ID " + coordSystemID + " duplicated for "
-                                + tableName + " in meta_coord");
-                        result = false;
-                    } else {
-                        ReportManager.correct(this, con, "Coordinate system with ID " + coordSystemID + " for table " + tableName
-                                + " has an entry in meta_coord");
-                    }
-                    
-                    // store in coordSystems map - create List if necessary
-                    List csList = (ArrayList) coordSystems.get(tableName);
-                    if (csList == null) {
-                        csList = new ArrayList();
-                    }
-                    csList.add(coordSystemID);
-                    coordSystems.put(tableName, csList);
-                }
+				while (rs.next()) {
+					String coordSystemID = rs.getString(1);
+					logger.finest("Added feature coordinate system for " + tableName + ": " + coordSystemID);
+					// check that the meta_coord table has an entry corresponding to this
+					int mc = getRowCount(con, "SELECT COUNT(*) FROM meta_coord WHERE coord_system_id=" + coordSystemID + " AND table_name='"
+							+ tableName + "'");
+					if (mc == 0) {
+						ReportManager.problem(this, con, "No entry for coordinate system with ID " + coordSystemID + " for " + tableName
+								+ " in meta_coord");
+						result = false;
+					} else if (mc > 1) {
+						ReportManager.problem(this, con, "Coordinate system with ID " + coordSystemID + " duplicated for " + tableName
+								+ " in meta_coord");
+						result = false;
+					} else {
+						ReportManager.correct(this, con, "Coordinate system with ID " + coordSystemID + " for table " + tableName
+								+ " has an entry in meta_coord");
+					}
 
-                rs.close();
+					// store in coordSystems map - create List if necessary
+					List csList = (ArrayList) coordSystems.get(tableName);
+					if (csList == null) {
+						csList = new ArrayList();
+					}
+					csList.add(coordSystemID);
+					coordSystems.put(tableName, csList);
+				}
 
-            }
+				rs.close();
 
-            // check that every meta_coord table entry refers to a coordinate system
-            // that is used in a feature
-            // if this isn't true it's not fatal but should be flagged
-            String sql = "SELECT * FROM meta_coord";
-            ResultSet rs = stmt.executeQuery(sql);
-            while (rs.next()) {
-                String tableName = rs.getString("table_name");
-                String csID = rs.getString("coord_system_id");
-                logger.finest("Checking for coord_system_id " + csID + " in " + tableName);
-                List featureCSs = (ArrayList) coordSystems.get(tableName);
-                if (featureCSs != null && !featureCSs.contains(csID)) {
-                    ReportManager.problem(this, con, "meta_coord has entry for coord_system ID " + csID + " in " + tableName
-                            + " but this coordinate system is not actually used in " + tableName);
-                    result = false;
-                }
+			}
 
-            }
+			// check that every meta_coord table entry refers to a coordinate system
+			// that is used in a feature
+			// if this isn't true it's not fatal but should be flagged
+			String sql = "SELECT * FROM meta_coord";
+			ResultSet rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				String tableName = rs.getString("table_name");
+				String csID = rs.getString("coord_system_id");
+				logger.finest("Checking for coord_system_id " + csID + " in " + tableName);
+				List featureCSs = (ArrayList) coordSystems.get(tableName);
+				if (featureCSs != null && !featureCSs.contains(csID)) {
+					ReportManager.problem(this, con, "meta_coord has entry for coord_system ID " + csID + " in " + tableName
+							+ " but this coordinate system is not actually used in " + tableName);
+					result = false;
+				}
 
-            rs.close();
-            stmt.close();
+			}
 
-	    // check that there are no null max_length entries
-	    int ml = getRowCount(con, "SELECT COUNT(*) FROM meta_coord WHERE max_length IS NULL");
-	    if (ml > 0) {
+			rs.close();
+			stmt.close();
 
-		ReportManager.problem(this, con, ml + " rows in meta_coord have a null max_length");
-		result = false;
+			// check that there are no null max_length entries
+			result &= checkNoNulls(con, "meta_coord", "max_length");
 
-	    } else {
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-		ReportManager.correct(this, con, "No null max_lengths in meta_coord");
+		return result;
 
-	    }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return result;
-
-    }
+	}
 
 }

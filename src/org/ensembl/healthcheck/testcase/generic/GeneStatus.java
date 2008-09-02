@@ -22,6 +22,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 /**
  * Check that the number of KNOWN & NOVEL genes is within 20% in the new and
  * previous databases. Also check for unset statuses in genes & transcripts.
+ * Also check that all KNOWN and KNOWN_BY_PROJECTION genes have display_srefs set
  */
 
 public class GeneStatus extends SingleDatabaseTestCase {
@@ -35,6 +36,7 @@ public class GeneStatus extends SingleDatabaseTestCase {
 	public GeneStatus() {
 
 		addToGroup("release");
+		addToGroup("core_xrefs");
 		setDescription("Check that the number of KNOWN genes & transcripts is within 20% in the new and previous databases. Also check for unset status.");
 
 	}
@@ -67,6 +69,8 @@ public class GeneStatus extends SingleDatabaseTestCase {
 
 		result &= checkNull(dbre);
 
+		result &= checkDisplayXrefs(dbre);
+		
 		return result;
 
 	} // run
@@ -156,15 +160,40 @@ public class GeneStatus extends SingleDatabaseTestCase {
 
 		for (int i = 0; i < types.length; i++) {
 
-			int rows = getRowCount(con, "SELECT COUNT(*) FROM " + types[i] + " WHERE status IS NULL");
+			result &= checkNoNulls(con, types[i], "status");
+			
+		}
+
+		return result;
+
+	}
+
+//----------------------------------------------------------------------
+
+	private boolean checkDisplayXrefs(DatabaseRegistryEntry dbre) {
+
+		boolean result = true;
+
+		Connection con = dbre.getConnection();
+
+		String[] statuses = { "KNOWN", "KNOWN_BY_PROJECTION" };
+
+		for (int i = 0; i < statuses.length; i++) {
+
+			String status = statuses[i];
+			
+			int total = getRowCount(con, "SELECT COUNT(*) FROM gene WHERE status='" + status + "'");
+
+			int rows = getRowCount(con, "SELECT COUNT(*) FROM gene WHERE status='" + status + "' AND display_xref_id IS NULL");
 
 			if (rows > 0) {
 
-				ReportManager.problem(this, con, rows + " " + types[i] + "s have null status");
-
+				ReportManager.problem(this, con, rows + " genes of status " + status + " have NULL display_xrefs (out of a total of " + total + ")");
+				result = false;
+				
 			} else {
 
-				ReportManager.correct(this, con, "No null status rows in " + types[i]);
+				ReportManager.correct(this, con, "No null display_xrefs of status " + status);
 			}
 
 		}

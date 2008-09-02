@@ -74,22 +74,7 @@ public class Biotypes extends SingleDatabaseTestCase {
 
 	private boolean checkNull(Connection con) {
 
-		boolean result = true;
-
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM gene WHERE biotype IS NULL");
-
-		if (rows > 0) {
-
-			ReportManager.problem(this, con, rows + " genes have null biotypes");
-			result = false;
-
-		} else {
-
-			ReportManager.correct(this, con, "No null biotypes in gene table");
-
-		}
-
-		return result;
+		return checkNoNulls(con, "gene", "biotype");
 
 	}
 

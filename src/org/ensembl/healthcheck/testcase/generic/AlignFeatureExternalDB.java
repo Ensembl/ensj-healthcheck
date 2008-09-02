@@ -75,16 +75,7 @@ public class AlignFeatureExternalDB extends SingleDatabaseTestCase {
 
 		for (int i = 0; i < tables.length; i++) {
 
-			String table = tables[i];
-
-			int rows = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE external_db_id IS NULL;");
-
-			if (rows > 0) {
-				ReportManager.problem(this, con, rows + " rows in " + table + " have NULL external_db_ids");
-				result = false;
-			} else {
-				ReportManager.correct(this, con, "All " + table + "s have external_db_ids set");
-			}
+			result &= checkNoNulls(con, tables[i], "external_db_id");
 
 		}
 
