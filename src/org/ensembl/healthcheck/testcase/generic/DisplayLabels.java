@@ -28,39 +28,40 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 public class DisplayLabels extends SingleDatabaseTestCase {
 
-    /**
-     * Create a new DisplayLabels testcase.
-     */
-    public DisplayLabels() {
+	/**
+	 * Create a new DisplayLabels testcase.
+	 */
+	public DisplayLabels() {
 
-        addToGroup("post_genebuild");
-        addToGroup("release");
-        setDescription("Check that certain tables have display_labels set");
+		addToGroup("post_genebuild");
+		addToGroup("release");
+		addToGroup("core_xrefs");
+		setDescription("Check that certain tables have display_labels set");
 
-    }
+	}
 
-    /**
-     * Run the test.
-     * 
-     * @param dbre
-     *          The database to use.
-     * @return true if the test passed.
-     *  
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+	/**
+	 * Run the test.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return true if the test passed.
+	 * 
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-        boolean result = true;
-	
-	Connection con = dbre.getConnection();
+		boolean result = true;
 
-	result &= checkNoNulls(con, "prediction_transcript", "display_label");
-	result &= checkNoNulls(con, "simple_feature",        "display_label");
-	result &= checkNoNulls(con, "xref",                  "display_label");
+		Connection con = dbre.getConnection();
 
-	return result;
+		result &= checkNoNulls(con, "prediction_transcript", "display_label");
+		result &= checkNoNulls(con, "simple_feature", "display_label");
+		result &= checkNoNulls(con, "xref", "display_label");
 
-    } // run
+		return result;
 
-    // ----------------------------------------------------------------------
+	} // run
+
+	// ----------------------------------------------------------------------
 
 } // DisplayLabels
