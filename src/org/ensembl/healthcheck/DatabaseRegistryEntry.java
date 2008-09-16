@@ -95,10 +95,13 @@ public class DatabaseRegistryEntry implements Comparable {
 		String[] bits = name.split("_");
 		String alias;
 
-		// schema version should be the first number (never the first bit though)
+		// schema version should be the first number (never the first bit though), ececpt in multi-species databases
 		for (int i = 1; i < bits.length; i++) {
 			if (bits[i].matches("^[0-9]+$")) {
 				this.schemaVersion = bits[i];
+				if (isMultiSpecies()) {
+					this.schemaVersion = bits[i+1];
+				}
 				break;
 			}
 		}
