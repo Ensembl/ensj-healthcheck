@@ -67,6 +67,9 @@ public final class Species {
 	public static final Species GALLUS_GALLUS = new Species("gallus_gallus");
 
 	/** Specific type of species */
+	public static final Species GORILLA_GORILLA = new Species("gorilla_gorilla");
+
+	/** Specific type of species */
 	public static final Species TETRAODON_NIGROVIRIDIS = new Species("tetraodon_nigroviridis");
 
 	/** Specific type of species */
@@ -243,7 +246,8 @@ public final class Species {
 		taxonIDToSpecies.put("7719", CIONA_INTESTINALIS);
 		taxonIDToSpecies.put("7955", DANIO_RERIO);
 		taxonIDToSpecies.put("9598", PAN_TROGLODYTES);
-		taxonIDToSpecies.put("9031", GALLUS_GALLUS);
+		taxonIDToSpecies.put("9031", GALLUS_GALLUS); 
+		taxonIDToSpecies.put("9593", GORILLA_GORILLA); 
 		taxonIDToSpecies.put("99883", TETRAODON_NIGROVIRIDIS);
 		taxonIDToSpecies.put("7460", APIS_MELLIFERA);
 		taxonIDToSpecies.put("9913", BOS_TAURUS);
@@ -305,6 +309,7 @@ public final class Species {
 		assemblyPrefixToSpecies.put("AMEL", APIS_MELLIFERA);
 		assemblyPrefixToSpecies.put("CHIMP", PAN_TROGLODYTES);
 		assemblyPrefixToSpecies.put("WASHUC", GALLUS_GALLUS);
+		assemblyPrefixToSpecies.put("gorGor", GORILLA_GORILLA);
 		assemblyPrefixToSpecies.put("BTAU", BOS_TAURUS);
 		assemblyPrefixToSpecies.put("BROADD", CANIS_FAMILIARIS);
 		assemblyPrefixToSpecies.put("JGI", XENOPUS_TROPICALIS);
@@ -366,6 +371,7 @@ public final class Species {
 		ensemblStableIDPrefix.put(EQUUS_CABALLUS, "ENSECA");
 		ensemblStableIDPrefix.put(FELIS_CATUS, "ENSFCA");
 		ensemblStableIDPrefix.put(GALLUS_GALLUS, "ENSGAL");
+		ensemblStableIDPrefix.put(GORILLA_GORILLA, "ENSGGO");
 		ensemblStableIDPrefix.put(GASTEROSTEUS_ACULEATUS, "ENSGAC");
 		ensemblStableIDPrefix.put(HOMO_SAPIENS, "ENS");
 		ensemblStableIDPrefix.put(LOXODONTA_AFRICANA, "ENSLAF");
@@ -513,7 +519,16 @@ public final class Species {
 
 			return GALLUS_GALLUS;
 
+		} 
+
+		// --------------------------------------
+
+		if (in(alias, "gorilla,gorilla_gorilla,ggor")) {
+
+			return GORILLA_GORILLA;
+
 		}
+
 
 		// --------------------------------------
 
