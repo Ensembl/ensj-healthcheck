@@ -70,22 +70,23 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 
 		logger.info("attrib_type_id for toplevel: " + topLevelAttribType);
 
-			int numTopLevelGenes = getRowCount(con, "SELECT COUNT(*) FROM seq_region_attrib sra, gene g WHERE sra.attrib_type_id = " + topLevelAttribType
-					+ " AND sra.seq_region_id=g.seq_region_id");
-			int numGenes = getRowCount(con, "SELECT COUNT(*) FROM gene");
-			
-			int nonTopLevelGenes = numGenes - numTopLevelGenes;
-			
-			if (nonTopLevelGenes > 0) {
-				
-				ReportManager.problem(this, con, nonTopLevelGenes + " genes are on seq_regions which are not toplevel; this may cause problems for Compara and slow down the mapper.");
-				result = false;
-				
-			} else {
-				
-				ReportManager.correct(this, con, "All genes are on toplevel seq regions");
-				
-			}
+		int numTopLevelGenes = getRowCount(con, "SELECT COUNT(*) FROM seq_region_attrib sra, gene g WHERE sra.attrib_type_id = "
+				+ topLevelAttribType + " AND sra.seq_region_id=g.seq_region_id");
+		int numGenes = getRowCount(con, "SELECT COUNT(*) FROM gene");
+
+		int nonTopLevelGenes = numGenes - numTopLevelGenes;
+
+		if (nonTopLevelGenes > 0) {
+
+			ReportManager.problem(this, con, nonTopLevelGenes
+					+ " genes are on seq_regions which are not toplevel; this may cause problems for Compara and slow down the mapper.");
+			result = false;
+
+		} else {
+
+			ReportManager.correct(this, con, "All genes are on toplevel seq regions");
+
+		}
 
 		// check for at least one toplevel seq_region
 		int rows = getRowCount(con, "SELECT COUNT(*) FROM seq_region_attrib WHERE attrib_type_id=" + val);
@@ -101,22 +102,26 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 		}
 
 		// check that there is one co-ordinate system with rank = 1
-		rows = getRowCount(con, "SELECT COUNT(*) FROM coord_system WHERE rank=1");
-		if (rows == 0) {
+		if (!dbre.isMultiSpecies()) {
 
-			ReportManager.problem(this, con, "No co-ordinate systems have rank = 1");
-			result = false;
+			rows = getRowCount(con, "SELECT COUNT(*) FROM coord_system WHERE rank=1");
+			if (rows == 0) {
 
-		} else if (rows > 1) {
+				ReportManager.problem(this, con, "No co-ordinate systems have rank = 1");
+				result = false;
 
-			ReportManager.problem(this, con, rows + " rows in coord_system have a rank of 1. There can be only one.");
-			result = false;
+			} else if (rows > 1) {
 
-		} else {
+				ReportManager.problem(this, con, rows + " rows in coord_system have a rank of 1. There can be only one.");
+				result = false;
 
-			ReportManager.correct(this, con, "One co-ordinate system has rank = 1");
+			} else {
 
+				ReportManager.correct(this, con, "One co-ordinate system has rank = 1");
+
+			}
 		}
+
 		return result;
 
 	} // run
