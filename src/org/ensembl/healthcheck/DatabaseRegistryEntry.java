@@ -32,6 +32,8 @@ public class DatabaseRegistryEntry implements Comparable {
 
 	private DatabaseType type;
 
+	private boolean isMultiSpecies;
+	
 	private Connection con;
 
 	private DatabaseRegistry databaseRegistry;
@@ -50,7 +52,7 @@ public class DatabaseRegistryEntry implements Comparable {
 	 *          The species that this database represents. If null, guess it from
 	 *          name.
 	 * @param type
-	 *          The type of this databse. If null, guess it from name.
+	 *          The type of this database. If null, guess it from name.
 	 * @param connect
 	 *          If true, open a connection to the database on the primary database
 	 *          server.
@@ -386,6 +388,14 @@ public class DatabaseRegistryEntry implements Comparable {
 
 	public void setDatabaseRegistry(DatabaseRegistry databaseRegistry) {
 		this.databaseRegistry = databaseRegistry;
+	}
+
+	public boolean isMultiSpecies() {
+		return isMultiSpecies;
+	}
+
+	public void setMultiSpecies(boolean isMultiSpecies) {
+		this.isMultiSpecies = isMultiSpecies;
 	}
 
 	// -----------------------------------------------------------------
