@@ -15,7 +15,6 @@ package org.ensembl.healthcheck;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -194,14 +193,6 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 				}
 
 				while ((s = stdError.readLine()) != null) {
-					System.out.println(s);
-				}
-
-				p.waitFor();
-
-				int returnCode = p.exitValue();
-				if (returnCode != 0) {
-					System.err.println("Error: bsub returned code " + returnCode + " for " + database + ":" + group);
 				}
 			} catch (Exception ioe) {
 				System.err.println("Error in head job " + ioe.getMessage());
