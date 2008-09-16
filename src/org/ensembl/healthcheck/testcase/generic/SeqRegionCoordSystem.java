@@ -59,6 +59,11 @@ public class SeqRegionCoordSystem extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
+		if (dbre.isMultiSpecies()) {
+			logger.finest("Skipping " + getShortTestName() + " healthcheck for multi-species database " + dbre.getName());
+			return true;
+		}
+		
 		if (dbre.getType() != DatabaseType.VEGA) {
 			result &= checkNames(dbre);
 		}
