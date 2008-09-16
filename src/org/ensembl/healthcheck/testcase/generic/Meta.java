@@ -263,6 +263,12 @@ public class Meta extends SingleDatabaseTestCase {
 		String dbName = dbre.getName();
 		Connection con = dbre.getConnection();
 
+		// no point checking this for multi-species databases as they don't have the
+		// genus & species in the database name
+		if (dbre.isMultiSpecies()) {
+			return true;
+		}
+
 		// Check that species.classification matches database name
 		String[] metaTableSpeciesGenusArray = getColumnValues(con,
 				"SELECT LCASE(meta_value) FROM meta WHERE meta_key='species.classification' ORDER BY meta_id LIMIT 2");
@@ -275,6 +281,8 @@ public class Meta extends SingleDatabaseTestCase {
 
 			String[] dbNameGenusSpeciesArray = dbName.split("_");
 			String dbNameGenusSpecies = dbNameGenusSpeciesArray[0] + "_" + dbNameGenusSpeciesArray[1];
+			;
+
 			String metaTableGenusSpecies = metaTableSpeciesGenusArray[1] + "_" + metaTableSpeciesGenusArray[0];
 			logger.finest("Classification from DB name:" + dbNameGenusSpecies + " Meta table: " + metaTableGenusSpecies);
 			if (!dbNameGenusSpecies.equalsIgnoreCase(metaTableGenusSpecies)) {
@@ -620,19 +628,20 @@ public class Meta extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-		String keys = "(\'genebuild.level\', " + "\'transcriptbuild.level\',"+"\'exonbuild.level\',"+"\'repeat_feature.level\',"+
-				"\'dna_align_featurebuild.level\',"+ "\'protein_align_featurebuild.level\',"+ "\'simple_featurebuild.level\',"+
-				"\'prediction_transcriptbuild.level\',"+ "\'prediction_exonbuild.level\')";
-		
+		String keys = "(\'genebuild.level\', " + "\'transcriptbuild.level\'," + "\'exonbuild.level\'," + "\'repeat_feature.level\',"
+				+ "\'dna_align_featurebuild.level\'," + "\'protein_align_featurebuild.level\'," + "\'simple_featurebuild.level\',"
+				+ "\'prediction_transcriptbuild.level\'," + "\'prediction_exonbuild.level\')";
+
 		int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key IN " + keys);
-		//ReportManager.info(this, con, rows + " %build.level rows present in Meta table");
-		/*if (rows != 9) {
-			ReportManager.problem(this, con, rows + " GB: No %build.level entries in the meta table - run ensembl/misc-scripts/meta_levels.pl");
-		} else {
-			ReportManager.correct(this, con, rows + " build.level rows present");
-			result = true;
-		}
-*/
+		// ReportManager.info(this, con, rows + " %build.level rows present in Meta
+		// table");
+		/*
+		 * if (rows != 9) { ReportManager.problem(this, con, rows + " GB: No
+		 * %build.level entries in the meta table - run
+		 * ensembl/misc-scripts/meta_levels.pl"); } else {
+		 * ReportManager.correct(this, con, rows + " build.level rows present");
+		 * result = true; }
+		 */
 		return result;
 
 	}
@@ -651,13 +660,14 @@ public class Meta extends SingleDatabaseTestCase {
 
 			Statement stmt = con.createStatement();
 
-			ResultSet rs = stmt.executeQuery("SELECT meta_key, meta_value FROM meta GROUP BY  meta_key, meta_value HAVING COUNT(*)>1");
+			ResultSet rs = stmt.executeQuery("SELECT meta_key, meta_value FROM meta GROUP BY meta_key, meta_value, species_id HAVING COUNT(*)>1");
 
 			while (rs.next()) {
-				
-				ReportManager.problem(this, con, "Key/value pair " + rs.getString(1) + "/" + rs.getString(2) + " appears more than once in the meta table");
+
+				ReportManager.problem(this, con, "Key/value pair " + rs.getString(1) + "/" + rs.getString(2)
+						+ " appears more than once in the meta table");
 				result = false;
-				
+
 			}
 
 		} catch (Exception e) {
@@ -672,7 +682,7 @@ public class Meta extends SingleDatabaseTestCase {
 
 	}
 
-//---------------------------------------------------------------------
+	// ---------------------------------------------------------------------
 	/**
 	 * Check for values containing the text ARRAY(.
 	 */
@@ -689,10 +699,11 @@ public class Meta extends SingleDatabaseTestCase {
 			ResultSet rs = stmt.executeQuery("SELECT meta_key, meta_value FROM meta WHERE meta_value LIKE 'ARRAY(%'");
 
 			while (rs.next()) {
-				
-				ReportManager.problem(this, con, "Meta table entry for key " + rs.getString(1) + " has value " + rs.getString(2) + " which is probably incorrect");
+
+				ReportManager.problem(this, con, "Meta table entry for key " + rs.getString(1) + " has value " + rs.getString(2)
+						+ " which is probably incorrect");
 				result = false;
-				
+
 			}
 
 		} catch (Exception e) {
