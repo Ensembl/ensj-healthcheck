@@ -81,6 +81,11 @@ public class GeneStatus extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
+		if (System.getProperty("ignore.previous.checks") != null) {
+			logger.finest("ignore.previous.checks is set in database.properties, skipping this test");
+			return true;
+		}
+		
 		Connection con = dbre.getConnection();
 
 		DatabaseRegistryEntry sec = getEquivalentFromSecondaryServer(dbre);
