@@ -62,21 +62,24 @@ public class DatabaseRegistryEntry implements Comparable {
 	public DatabaseRegistryEntry(String name, Species species, DatabaseType type, boolean connect) {
 
 		this.name = name;
-		if (species != null) {
-			this.species = species;
-		} else {
-			this.species = setSpeciesFromName(name);
-		}
-		if (type != null) {
-			this.type = type;
-		} else {
-			this.type = setTypeFromName(name);
-		}
+		
 		if (connect) {
 			this.con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL") + name, System
 					.getProperty("user"), System.getProperty("password"));
 			isMultiSpecies = checkMultiSpecies(con);
 		}
+		
+		if (species != null) {
+			this.species = species;
+		} else {
+			this.species = setSpeciesFromName(name);
+		}
+		
+		if (type != null) {
+			this.type = type;
+		} else {
+			this.type = setTypeFromName(name);
+		}	
 
 	}
 
@@ -95,13 +98,10 @@ public class DatabaseRegistryEntry implements Comparable {
 		String[] bits = name.split("_");
 		String alias;
 
-		// schema version should be the first number (never the first bit though), ececpt in multi-species databases
+		// schema version should be the first number (never the first bit though), except in multi-species databases
 		for (int i = 1; i < bits.length; i++) {
 			if (bits[i].matches("^[0-9]+$")) {
-				this.schemaVersion = bits[i];
-				if (isMultiSpecies()) {
-					this.schemaVersion = bits[i+1];
-				}
+				this.schemaVersion = isMultiSpecies() ? bits[i+1] : bits[i];
 				break;
 			}
 		}
