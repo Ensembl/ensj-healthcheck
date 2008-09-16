@@ -13,6 +13,8 @@
 package org.ensembl.healthcheck;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.logging.Logger;
 
 import org.ensembl.healthcheck.util.DBUtils;
@@ -32,12 +34,12 @@ public class DatabaseRegistryEntry implements Comparable {
 
 	private DatabaseType type;
 
-	private boolean isMultiSpecies;
-	
+	private boolean isMultiSpecies = false;
+
 	private Connection con;
 
 	private DatabaseRegistry databaseRegistry;
-	
+
 	/** The logger to use */
 	private static Logger logger = Logger.getLogger("HealthCheckLogger");
 
@@ -73,6 +75,7 @@ public class DatabaseRegistryEntry implements Comparable {
 		if (connect) {
 			this.con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL") + name, System
 					.getProperty("user"), System.getProperty("password"));
+			isMultiSpecies = checkMultiSpecies(con);
 		}
 
 	}
@@ -172,15 +175,15 @@ public class DatabaseRegistryEntry implements Comparable {
 			return Species.SYSTEM;
 
 		}
-		
-    //	 ensembl_website databases
+
+		// ensembl_website databases
 		if (name.startsWith("ensembl_website")) {
 
 			return Species.ENSEMBL_WEBSITE;
 
 		}
-		
-     //	 ncbi_taxonomy databases
+
+		// ncbi_taxonomy databases
 		if (name.startsWith("ncbi_taxonomy")) {
 
 			return Species.NCBI_TAXONOMY;
@@ -255,14 +258,14 @@ public class DatabaseRegistryEntry implements Comparable {
 
 		}
 
-		 //	 ensembl_website databases
+		// ensembl_website databases
 		if (name.startsWith("ensembl_website")) {
 
 			return DatabaseType.ENSEMBL_WEBSITE;
 
 		}
-		
-     //	 ncbi_taxonomy databases
+
+		// ncbi_taxonomy databases
 		if (name.startsWith("ncbi_taxonomy")) {
 
 			return DatabaseType.NCBI_TAXONOMY;
@@ -396,6 +399,38 @@ public class DatabaseRegistryEntry implements Comparable {
 
 	public void setMultiSpecies(boolean isMultiSpecies) {
 		this.isMultiSpecies = isMultiSpecies;
+	}
+
+	// -----------------------------------------------------------------
+	/**
+	 * Check if this database is a multi-species one or not
+	 */
+	public boolean checkMultiSpecies(Connection con) {
+
+		boolean result = false;
+
+		try {
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT COUNT(DISTINCT(species_id)) FROM coord_system");
+			if (rs != null) {
+				if (rs.first()) {
+					int speciesCount = rs.getInt(1);
+					if (speciesCount > 1) {
+						result = true;
+						logger.finest("Found a multi-species database, " + speciesCount + " species.");
+					}
+				} else {
+					result = false;
+				}
+			}
+			rs.close();
+			stmt.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return result;
+
 	}
 
 	// -----------------------------------------------------------------
