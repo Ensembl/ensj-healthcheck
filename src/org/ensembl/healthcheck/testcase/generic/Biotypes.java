@@ -155,14 +155,21 @@ public class Biotypes extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		String file;
+		String file = "biotypes.txt";
+		
+		// use different files for other database types
 		if (dbre.getType() == DatabaseType.CDNA) {
 			file = "biotypes_cdna.txt";
 		} else if (dbre.getType() == DatabaseType.VEGA) {
 			file = "biotypes_vega.txt";
-		} else {
-			file = "biotypes.txt";
-		}
+		} 
+		
+		// use a custom biotypes file if it's set in database.properties
+		String customFile = System.getProperty("biotypes.file");
+		if (customFile != null) {
+			logger.finest("Using custom biotypes file: " + customFile);
+			file = customFile;
+		} 
 
 		String[] allowedBiotypes = Utils.readTextFile(file);
 
