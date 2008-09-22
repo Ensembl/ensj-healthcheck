@@ -33,15 +33,16 @@ import org.ensembl.healthcheck.util.Utils;
 
 /**
  * Check that the logic names in the analysis table are displayable. Currently
- * reads the list of displayable logc names from a text file. Current set of
- * logic names is stored in logicnames.txt
+ * reads the list of displayable logic names from a text file. Current set of
+ * logic names is stored in logicnames.txt (or file specified by logicnames.file
+ * property)
  */
 public class LogicNamesDisplayable extends SingleDatabaseTestCase {
 
 	// a list of the tables to check the analysis_id in
 	private String[] tablesWithAnalysisID = getCoreTablesWithAnalysisID();
 
-	private static final String LOGIC_NAMES_FILE = "logicnames.txt";
+	private String logicNamesFile = "logicnames.txt";
 
 	private static final boolean CASE_SENSITIVE = false;
 
@@ -97,12 +98,20 @@ public class LogicNamesDisplayable extends SingleDatabaseTestCase {
 	private boolean checkLogicNames(Connection con) throws SQLException {
 
 		boolean result = true;
+
 		String message = CASE_SENSITIVE ? "Logic name comparison is case sensitive" : "Logic name comparison is NOT case sensitive";
 		logger.info(message);
 
-		// read the file containing the allowed logic names
-		String[] allowedLogicNames = Utils.readTextFile(LOGIC_NAMES_FILE);
-		logger.fine("Read " + allowedLogicNames.length + " logic names from " + LOGIC_NAMES_FILE);
+		// read the file containing the allowed logic names; use a custom file for
+		// logic names if it exists
+		String customFile = System.getProperty("logicnames.file");
+		if (customFile != null) {
+			logger.finest("Using custom logicnames file: " + customFile);
+			logicNamesFile = customFile;
+		}
+
+		String[] allowedLogicNames = Utils.readTextFile(logicNamesFile);
+		logger.fine("Read " + allowedLogicNames.length + " logic names from " + logicNamesFile);
 
 		// we don't want to complain about analyses that are defined in supporting
 		// features as
@@ -189,7 +198,7 @@ public class LogicNamesDisplayable extends SingleDatabaseTestCase {
 			if (gffSource == null) {
 				gffSource = "";
 			}
-			
+
 			if (gffSource.equals("PRINTS") || gffSource.equals("PFAM") || gffSource.equals("PROSITE") || gffSource.equals("PROFILE")
 					|| gffSource.equals("TIGRFAM") || gffSource.equals("SMART") || gffSource.equals("PROSITE_PATTERN")
 					|| gffSource.equals("PIRSF")) {
