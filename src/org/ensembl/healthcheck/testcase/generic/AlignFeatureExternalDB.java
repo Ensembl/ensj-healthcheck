@@ -32,7 +32,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 public class AlignFeatureExternalDB extends SingleDatabaseTestCase {
 
 	/**
-	 * Create a new XrefCategories testcase.
+	 * Create a new AlignFeatureExteralDB testcase.
 	 */
 	public AlignFeatureExternalDB() {
 
