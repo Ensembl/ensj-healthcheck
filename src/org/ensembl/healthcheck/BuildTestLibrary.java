@@ -53,7 +53,7 @@ public class BuildTestLibrary extends TestRunner {
 
         btl.parseCommandLine(args);
 
-        Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
+        Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE, false);
 
         btl.buildList();
 

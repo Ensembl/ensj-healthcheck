@@ -69,7 +69,7 @@ public class DatabaseToHTML {
 
 		setupLogging();
 
-		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
+		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE, false);
 
 		parseProperties();
 
@@ -648,7 +648,6 @@ public class DatabaseToHTML {
 				String text = rs.getString("text");
 				String person = stringOrBlank(rs.getString("person"));
 				String action = stringOrBlank(rs.getString("action"));
-				String reason = stringOrBlank(rs.getString("reason"));
 				String comment = stringOrBlank(rs.getString("comment"));
 				
 				if (!database.equals(lastDatabase)) {

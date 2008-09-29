@@ -62,9 +62,9 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
 		setupLogging();
 
-		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
+		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE, false);
 
-		Utils.readPropertiesFileIntoSystem(configFile);
+		Utils.readPropertiesFileIntoSystem(configFile, false);
 
 		parseProperties();
 

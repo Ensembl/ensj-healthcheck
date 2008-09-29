@@ -68,8 +68,18 @@ public class TextTestRunner extends TestRunner implements Reporter {
 	private boolean printFailureText = true;
 
 	private boolean skipSlow = false;
-	
+
 	private boolean noLogging = false;
+
+	// allow specification of custom database connection details on the command
+	// line
+	private String customHost = null;
+
+	private String customPort = null;
+
+	private String customUser = null;
+
+	private String customPass = null;
 
 	private static final String CORE_DB_REGEXP = "[a-z]+_[a-z]+_(core|otherfeatures|cdna|vega|otherfeatures)";
 
@@ -95,10 +105,14 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
 		parseCommandLine(args);
 
-		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
+		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE, true);
 
 		setupLogging();
+		
+		setCustomProperties();
 
+		Utils.buildDatabaseURLs();
+		
 		ReportManager.setReporter(this);
 
 		if (secondaryDatabaseRegexps.size() > 0) {
@@ -154,6 +168,10 @@ public class TextTestRunner extends TestRunner implements Reporter {
 		System.out.println("  -nofailuretext  Don't print failure hints.");
 		System.out.println("  -skipslow       Don't run long-running tests");
 		System.out.println("  -nologging      Suppress logging info");
+		System.out.println("  -host           Custom database connection information. Note that in most cases this should be set in the");
+		System.out.println("  -port           properties file and not on the command line.");
+		System.out.println("  -user           Note that, since the password is optional, if it is set in the properties file but not on");
+		System.out.println("  -pass           the command line, the one in the properties file will be used anyway, possibly leading to odd results.");
 		System.out.println("  group1          Names of groups of test cases to run.");
 		System.out.println("                  Note each test case is in a group of its own with the name of the test case.");
 		System.out.println("                  This allows individual tests to be run if required.");
@@ -304,6 +322,22 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
 					noLogging = true;
 
+				} else if (args[i].equals("-host")) {
+
+					customHost = args[++i];
+
+				} else if (args[i].equals("-port")) {
+
+					customPort = args[++i];
+
+				} else if (args[i].equals("-user")) {
+
+					customUser = args[++i];
+
+				} else if (args[i].equals("-pass")) {
+
+					customPass = args[++i];
+
 				} else {
 
 					groupsToRun.add(args[i]);
@@ -323,7 +357,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 			// print matching databases if no tests specified
 			if (groupsToRun.size() == 0 && databaseRegexps.size() > 0) {
 
-				Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
+				Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE, false);
 				Iterator it = databaseRegexps.iterator();
 				while (it.hasNext()) {
 					String databaseRegexp = (String) it.next();
@@ -351,17 +385,17 @@ public class TextTestRunner extends TestRunner implements Reporter {
 		Handler myHandler = new MyStreamHandler(System.out, new LogFormatter());
 
 		logger.addHandler(myHandler);
-		
+
 		if (noLogging) {
-			
+
 			logger.setLevel(Level.OFF);
-			
+
 		} else {
-			
-		logger.setLevel(Level.WARNING); // default - only print important messages
+
+			logger.setLevel(Level.WARNING); // default - only print important messages
 
 		}
-		
+
 		if (debug) {
 
 			logger.setLevel(Level.FINEST);
@@ -476,6 +510,46 @@ public class TextTestRunner extends TestRunner implements Reporter {
 			return mesg.substring(0, maxLen) + "\n" + indent + lineBreakString(mesg.substring(maxLen), maxLen, indent);
 		}
 	}
+
+	// --------------------------------------------------------------------------
+	/**
+	 * Check if custom* variables are set and if so, override settings read from
+	 * properties file.
+	 */
+	private void setCustomProperties() {
+
+		if (customHost != null) {
+
+			System.setProperty("host", customHost);
+			logger.finest("Set database host to " + customHost);
+
+		}
+
+		if (customPort != null) {
+
+			System.setProperty("port", customPort);
+			logger.finest("Set database port to " + customPort);
+
+		}
+
+		if (customUser != null) {
+
+			System.setProperty("user", customUser);
+			logger.finest("Set database user to " + customUser);
+
+		}
+
+		if (customPass != null) {
+
+			System.setProperty("password", customPass);
+			logger.finest("Set database password to " + customPass);
+
+		}
+
+	}
+	
+	// --------------------------------------------------------------------------
+
 }
 
 // TextTestRunner

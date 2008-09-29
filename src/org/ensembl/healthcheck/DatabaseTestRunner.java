@@ -52,7 +52,7 @@ public class DatabaseTestRunner extends TestRunner implements Reporter {
 
 		setupLogging();
 
-		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
+		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE, false);
 
 		parseProperties();
 

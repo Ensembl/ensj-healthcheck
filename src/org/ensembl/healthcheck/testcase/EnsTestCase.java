@@ -1184,7 +1184,7 @@ public abstract class EnsTestCase {
 	 * 
 	 * @param fileName
 	 *          The name of the schema to read.
-	 * @return A connection to a database buit from the schema.
+	 * @return A connection to a database built from the schema.
 	 */
 	public Connection importSchema(String fileName) {
 
@@ -1208,7 +1208,7 @@ public abstract class EnsTestCase {
 
 		// read properties file
 		String propsFile = System.getProperty("user.dir") + System.getProperty("file.separator") + "database.properties";
-		Utils.readPropertiesFileIntoSystem(propsFile);
+		Utils.readPropertiesFileIntoSystem(propsFile, false);
 		logger.fine("Read database properties from " + propsFile);
 
 		try {
@@ -1917,4 +1917,5 @@ public abstract class EnsTestCase {
 
 	// ----------------------------------------------------------------------
 
+	
 } // EnsTestCase

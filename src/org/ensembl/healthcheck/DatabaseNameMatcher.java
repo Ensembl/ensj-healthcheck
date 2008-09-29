@@ -76,7 +76,7 @@ public class DatabaseNameMatcher {
     private void readPropertiesFile() {
 
         String propsFile = "database.properties";
-        Utils.readPropertiesFileIntoSystem(propsFile);
+        Utils.readPropertiesFileIntoSystem(propsFile, false);
         System.out.println("Read database properties from " + propsFile);
         //Enumeration e = dbProps.propertyNames();
         //String propName;

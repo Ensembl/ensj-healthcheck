@@ -56,7 +56,7 @@ public class ListAllTests extends TestRunner {
 
         lat.parseCommandLine(args);
 
-        Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
+        Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE, false);
 
         if (showGroupsOnly) {
 
