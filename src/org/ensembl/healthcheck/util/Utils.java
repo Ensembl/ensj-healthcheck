@@ -51,7 +51,8 @@ public final class Utils {
 	 * @param propertiesFileName
 	 *          The properties file to read.
 	 * @param skipBuildDatabaseURLs
-	 *        Don't automatically build database URLs. Should generally be false.         
+	 *          Don't automatically build database URLs. Should generally be
+	 *          false.
 	 */
 	public static void readPropertiesFileIntoSystem(final String propertiesFileName, final boolean skipBuildDatabaseURLs) {
 
@@ -75,24 +76,13 @@ public final class Utils {
 
 		}
 
-		// check that properties that need to be set are set
-		String[] requiredProps = { "port", "host", "user" };
-		for (int i = 0; i < requiredProps.length; i++) {
-			if (System.getProperty(requiredProps[i]) == null) {
-				System.err.println("WARNING: " + requiredProps[i] + " is not set in " + propertiesFileName
-						+ " - cannot connect to database");
-				System.exit(1);
-			}
+		if (!skipBuildDatabaseURLs) {
+
+			buildDatabaseURLs();
+
 		}
 
-		if (!skipBuildDatabaseURLs) {
-			
-			buildDatabaseURLs();
-			
-		}
-		
 	} // readPropertiesFile
-	
 
 	/**
 	 * Build database URLs from system properties.
@@ -101,7 +91,7 @@ public final class Utils {
 	 *          The properties file to read.
 	 */
 	public static void buildDatabaseURLs() {
-		
+
 		// check if a databaseURL property has been specified; if so, use it
 		// if not, build the databaseURL property from host, port etc
 
@@ -109,6 +99,9 @@ public final class Utils {
 
 		if (databaseURL == null || databaseURL.equals("")) {
 
+			// check that required properties are set
+			checkProperties();
+			
 			// build it
 			databaseURL = "jdbc:mysql://";
 
@@ -198,8 +191,23 @@ public final class Utils {
 			}
 		}
 
-		
 	}
+
+	/**
+	 * Check that certain properties are set.
+	 */
+	private static void checkProperties() {
+
+		// check that properties that need to be set are set
+		String[] requiredProps = { "port", "host", "user" };
+		for (int i = 0; i < requiredProps.length; i++) {
+			if (System.getProperty(requiredProps[i]) == null) {
+				System.err.println("WARNING: " + requiredProps[i] + " is not set in config file or on command line - cannot connect to database");
+				System.exit(1);
+			}
+		}
+	}
+
 	// -------------------------------------------------------------------------
 	/**
 	 * Read a properties file.
@@ -800,7 +808,7 @@ public final class Utils {
 			if (!tables[i].equalsIgnoreCase(table)) {
 				if (j < result.length) {
 					result[j++] = tables[i];
-				} 
+				}
 			}
 		}
 
