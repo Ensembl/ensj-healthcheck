@@ -68,7 +68,7 @@ public class GuiTestRunner extends TestRunner implements Reporter {
 
         parseCommandLine(args);
 
-        Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE);
+        Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE, false);
 
         DatabaseRegistry databaseRegistry = new DatabaseRegistry(".*");
         if (databaseRegistry.getEntryCount() == 0) {
