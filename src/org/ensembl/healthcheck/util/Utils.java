@@ -50,8 +50,10 @@ public final class Utils {
 	 * 
 	 * @param propertiesFileName
 	 *          The properties file to read.
+	 * @param skipBuildDatabaseURLs
+	 *        Don't automatically build database URLs. Should generally be false.         
 	 */
-	public static void readPropertiesFileIntoSystem(final String propertiesFileName) {
+	public static void readPropertiesFileIntoSystem(final String propertiesFileName, final boolean skipBuildDatabaseURLs) {
 
 		String propsFile;
 
@@ -83,6 +85,23 @@ public final class Utils {
 			}
 		}
 
+		if (!skipBuildDatabaseURLs) {
+			
+			buildDatabaseURLs();
+			
+		}
+		
+	} // readPropertiesFile
+	
+
+	/**
+	 * Build database URLs from system properties.
+	 * 
+	 * @param propertiesFileName
+	 *          The properties file to read.
+	 */
+	public static void buildDatabaseURLs() {
+		
 		// check if a databaseURL property has been specified; if so, use it
 		// if not, build the databaseURL property from host, port etc
 
@@ -179,8 +198,8 @@ public final class Utils {
 			}
 		}
 
-	} // readPropertiesFile
-
+		
+	}
 	// -------------------------------------------------------------------------
 	/**
 	 * Read a properties file.
