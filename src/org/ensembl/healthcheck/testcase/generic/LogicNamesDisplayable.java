@@ -182,8 +182,9 @@ public class LogicNamesDisplayable extends SingleDatabaseTestCase {
 	private boolean checkProteinFeatureAnalysis(Connection con) throws SQLException {
 
 		Statement stmt = con.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT a.analysis_id, a.gff_feature, a.gff_source " + "FROM analysis a, protein_feature pf "
-				+ "WHERE a.analysis_id = pf.analysis_id " + "GROUP BY a.analysis_id");
+		ResultSet rs = stmt
+				.executeQuery("SELECT a.analysis_id, a.gff_feature, a.gff_source FROM analysis a, protein_feature pf WHERE a.analysis_id = pf.analysis_id "
+						+ "GROUP BY a.analysis_id");
 
 		boolean noProblems = true;
 
@@ -218,16 +219,16 @@ public class LogicNamesDisplayable extends SingleDatabaseTestCase {
 							+ gffSource + " must have gffSource ne 'DOMAIN'");
 					noProblems = false;
 				}
-			} else if (!gffSource.equals("SUPERFAMILY")) {
+			} else if (!gffSource.equals("SUPERFAMILY") && !gffSource.equals("")) {
 				/* problem... not a known gffsource */
-				ReportManager.problem(this, con, "protein_feature" + " analysis with analysis_id = " + analysisId
+				ReportManager.problem(this, con, "protein_feature analysis with analysis_id = " + analysisId
 						+ " has unknown gff_source = '" + gffSource + "'");
 				noProblems = false;
 			}
 		} // while rs
 
 		if (noProblems) {
-			ReportManager.correct(this, con, "protein_feature analysis table " + "entries look OK");
+			ReportManager.correct(this, con, "protein_feature analysis table entries look OK");
 		}
 
 		rs.close();
