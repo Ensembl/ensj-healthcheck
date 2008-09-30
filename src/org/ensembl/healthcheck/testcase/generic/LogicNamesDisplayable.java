@@ -219,11 +219,6 @@ public class LogicNamesDisplayable extends SingleDatabaseTestCase {
 							+ gffSource + " must have gffSource ne 'DOMAIN'");
 					noProblems = false;
 				}
-			} else if (!gffSource.equals("SUPERFAMILY") && !gffSource.equals("")) {
-				/* problem... not a known gffsource */
-				ReportManager.problem(this, con, "protein_feature analysis with analysis_id = " + analysisId
-						+ " has unknown gff_source = '" + gffSource + "'");
-				noProblems = false;
 			}
 		} // while rs
 
