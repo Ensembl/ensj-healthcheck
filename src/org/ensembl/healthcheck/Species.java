@@ -66,7 +66,7 @@ public enum Species
 	TARSIUS_SYRICHTA(9478,"TARSYR","ENSTSY","philippine_tarsier,philippinetarsier,tarsiussyrichta,tarsius_syrichta"),
 	TURSIOPS_TRUNCATUS(9739,"TURTRU","ENSTTR","bottlenosed_dolphin,dolphin,tursiopstruncatus,tursiops_truncatus"),
 	VICUGNA_PACOS(30538,"VICPAC","ENSVPA","alpaca,vicugnapacos,vicugna_pacos"),
-	DIPODOMYS_ORDII(10020,"DIPORD","ENSDOR","ords_kangaroo_rat,ordskangaroorat,kangaroo_rat,kangaroorat,dipodomys_ordii");			
+	DIPODOMYS_ORDII(10020,"DIPORD","ENSDOR","ords_kangaroo_rat,ordskangaroorat,kangaroo_rat, kangaroorat , dipodomys_ordii");			
 
 	// Taxonomy IDs - see ensembl-compara/sql/taxon.txt
 	private static Map<Integer,Species> taxonIDToSpecies = new HashMap<Integer,Species>();
@@ -175,9 +175,9 @@ public enum Species
 	 */
 	private static boolean in(String alias, String list) {
 
-		String[] aliases = list.split(",");
-		for (int i = 0; i < aliases.length; i++) {
-			if (alias.equals(aliases[i])) {
+		String[] aliases = list.split(",");		
+		for (int i = 0; i < aliases.length; i++) {			
+			if (alias.equals(aliases[i].trim())) {
 				return true;
 			}
 		}
