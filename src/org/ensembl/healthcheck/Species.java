@@ -10,6 +10,7 @@ public enum Species
 {
 	//defined new Species and properties: taxonomy_id, assemblyprefix, stableIDprefix, alias 
 
+        TAENIOPYGIA_GUTTATA(59729,"taeGut","ENSTGU","zebrafinch,zebra_finch,taeniopygia_guttata,taeniopygiaguttata,tguttata,poephila_guttata,taenopygia_guttata"),
 	ORYCTOLAGUS_CUNICULUS(9986,"RABBIT","ENSOCU","rabbit,oryctolagus,domestic_rabbit,bunny,japanese_white_rabbit,european_rabbit,oryctolagus_cuniculus"),
 	GALLUS_GALLUS(9031,"WASHUC","ENSGAL","chicken,chick,ggallus,gallusgallus,gallus_gallus"),
 	DANIO_RERIO(7955,"ZFISH","ENSDAR","zebrafish,danio,drerio,daniorerio,danio_rerio"),
