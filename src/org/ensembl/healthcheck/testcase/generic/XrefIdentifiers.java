@@ -23,7 +23,8 @@ import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that not all xrefs have the same identifier.
+ * Check that not all xrefs have the same identifier. Also check that there are
+ * no blank/null display_labels.
  */
 
 public class XrefIdentifiers extends SingleDatabaseTestCase {
@@ -57,6 +58,20 @@ public class XrefIdentifiers extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
+		result &= checkSame(con);
+
+		result &= checkBlank(con);
+
+		return result;
+
+	} // run
+
+	// ----------------------------------------------------------------------
+
+	private boolean checkSame(Connection con) {
+
+		boolean result = true;
+
 		// TODO - do this on a per-xref-type basis
 		try {
 
@@ -65,7 +80,7 @@ public class XrefIdentifiers extends SingleDatabaseTestCase {
 			ResultSet rs = stmt.executeQuery("SELECT COUNT(DISTINCT(dbprimary_acc)) FROM xref");
 
 			rs.next();
-			
+
 			int count = rs.getInt(1);
 			if (count == 1) {
 				ReportManager.problem(this, con, "All xrefs appear to have the same identifier.");
@@ -88,8 +103,36 @@ public class XrefIdentifiers extends SingleDatabaseTestCase {
 
 		return result;
 
-	} // run
+	}
 
+	// ----------------------------------------------------------------------
+
+	private boolean checkBlank(Connection con) {
+
+		boolean result = true;
+
+		String[] columns = { "dbprimary_acc", "display_label" };
+
+		for (String column : columns) {
+
+			int rows = getRowCount(con, "SELECT COUNT(*) FROM xref WHERE " + column + "='' OR " + column + " IS NULL");
+
+			if (rows > 0) {
+
+				ReportManager.problem(this, con, rows + " xrefs have blank or null " + column + "s");
+				result = false;
+
+			} else {
+
+				ReportManager.correct(this, con, "No blank xref " + column + "s");
+			}
+
+		}
+		
+		return result;
+		
+	}
+	
 	// ----------------------------------------------------------------------
 
 } // XrefIdentifiers
