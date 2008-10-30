@@ -249,6 +249,13 @@ public enum Species
 		return result;
 
 	}
+
+	
+	public String toString() {
+
+		return this.name().toLowerCase();
+	}
+
 	
 	// -----------------------------------------------------------------
 }
