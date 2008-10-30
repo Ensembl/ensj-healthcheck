@@ -115,8 +115,9 @@ public class DatabaseRegistryEntry implements Comparable {
 			if (bits.length == 5) {
 				this.geneBuildVersion = bits[4];
 			}
+
 			if (Species.resolveAlias(alias) != Species.UNKNOWN) {
-				return Species.resolveAlias(alias);
+			    return Species.resolveAlias(alias);
 			}
 		}
 
@@ -412,6 +413,9 @@ public class DatabaseRegistryEntry implements Comparable {
 
 		boolean result = false;
 
+		if (type == DatabaseType.VARIATION){
+		    return result;
+		}
 		try {
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT COUNT(DISTINCT(species_id)) FROM coord_system");
