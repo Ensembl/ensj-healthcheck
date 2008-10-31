@@ -198,7 +198,7 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
             sql1 = "SELECT \"" + name + "\", \"genebuild\", genebuild FROM genome_db" +
                 " WHERE genome_db.name = \"" + name + "\" AND  assembly_default = 1";
             sql2 = "SELECT \"" + name + "\", \"genebuild\", meta_value FROM meta" +
-                " WHERE meta_key = \"genebuild.version\"";
+                " WHERE meta_key = \"genebuild.start_date\"";
             result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
           } else {
             ReportManager.problem(this, comparaCon, "No connection for " + name);
