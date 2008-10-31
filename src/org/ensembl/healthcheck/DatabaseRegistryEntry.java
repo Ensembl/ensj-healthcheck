@@ -412,8 +412,8 @@ public class DatabaseRegistryEntry implements Comparable {
 	public boolean checkMultiSpecies(Connection con) {
 
 		boolean result = false;
-
-		if (type == DatabaseType.VARIATION){
+		//variation databases do not have coord_system table
+		if (name.matches("^.*_variation_.*$")){			
 		    return result;
 		}
 		try {
