@@ -54,7 +54,7 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 		tables = remove(tables, allowedEmpty);
 
 		// only rat has entries in QTL tables
-		if (species != Species.RATTUS_NORVEGICUS && species != Species.MUS_MUSCULUS && species != Species.HOMO_SAPIENS  ) {
+		if (species != Species.RATTUS_NORVEGICUS && species != Species.MUS_MUSCULUS && species != Species.PONGO_PYGMAEUS && species != Species.HOMO_SAPIENS  ) {
 		    tables = remove(tables, "read_coverage");
 		}
                 if (species != Species.HOMO_SAPIENS){
