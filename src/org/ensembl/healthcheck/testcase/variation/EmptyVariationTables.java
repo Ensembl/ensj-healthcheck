@@ -57,11 +57,17 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 		if (species != Species.RATTUS_NORVEGICUS && species != Species.MUS_MUSCULUS && species != Species.HOMO_SAPIENS  ) {
 		    tables = remove(tables, "read_coverage");
 		}
+                if (species != Species.HOMO_SAPIENS){
+                    tables = remove(tables,"variation_annotation");
+                }
+                if (species != Species.HOMO_SAPIENS){
+                    tables = remove(tables,"phenotype");
+                }
 
 		if (species != Species.HOMO_SAPIENS){
 		    tables = remove(tables,"tagged_variation_feature");
 		}
-		if (species == Species.ANOPHELES_GAMBIAE || species == Species.ORNITHORHYNCHUS_ANATINUS || species == Species.TETRAODON_NIGROVIRIDIS){
+		if (species == Species.ANOPHELES_GAMBIAE || species == Species.ORNITHORHYNCHUS_ANATINUS || species == Species.PONGO_PYGMAEUS || species == Species.TETRAODON_NIGROVIRIDIS){
 		    String[] sampleTables= {"population_genotype", "population_structure", "sample_synonym"};
 		    tables = remove(tables,sampleTables);
 		}
