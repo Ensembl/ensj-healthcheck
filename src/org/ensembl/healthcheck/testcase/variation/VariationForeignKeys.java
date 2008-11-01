@@ -117,7 +117,7 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 
 	result &= checkForOrphans(con, "transcript_variation", "variation_feature_id", "variation_feature", "variation_feature_id", true);
 	
-	rows = getRowCount(con,"SELECT COUNT(*) FROM variation_feature vf, flanking_sequence f where vf.variation_id=f.variation_id and vf.seq_region_id != f.seq_region_id and vf.map_weight=1 and vf.seq_region_id not in (226063,226064,226065,226066,226031,226054)");
+	rows = getRowCount(con,"SELECT COUNT(*) FROM variation_feature vf, flanking_sequence f where vf.variation_id=f.variation_id and vf.seq_region_id != f.seq_region_id and vf.map_weight=1 and vf.seq_region_id not in (226063,226064,226065,226066,226031,226054) and f.seq_region_id not in (226063,226064,226065,226066,226031,226054)");
 	if (rows > 0){
 	    ReportManager.problem(this, con, "flanking_sequence contains entries have same variation_id, but different seq_region_id compare with table variation features");
 	    result =  false;
