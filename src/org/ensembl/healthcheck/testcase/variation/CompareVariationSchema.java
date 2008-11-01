@@ -52,6 +52,7 @@ public class CompareVariationSchema extends MultiDatabaseTestCase {
         addToGroup("variation");
 	addToGroup("variation-release");
 	setDescription("Will check if database schema is correct");
+
     }
 
     /**
@@ -142,6 +143,10 @@ public class CompareVariationSchema extends MultiDatabaseTestCase {
 				//in human and chimp, ignore check of genotype table
 				continue;
 			    }	    
+                            if (species != Species.HOMO_SAPIENS && (table.equals("variation_annotation") || table.equals("phenotype"))) {
+                               //only human has these two tables
+                               continue;
+                            }
                             String sql = "SHOW CREATE TABLE " + table;
                             ResultSet masterRS = masterStmt.executeQuery(sql);
                             ResultSet dbRS = dbStmt.executeQuery(sql);
