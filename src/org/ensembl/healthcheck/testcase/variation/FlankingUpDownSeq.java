@@ -70,9 +70,13 @@ public class FlankingUpDownSeq extends SingleDatabaseTestCase {
 
         // check how many variation don't have flanking sequence
         rows = getRowCount(con, "SELECT COUNT(*) FROM variation v LEFT JOIN flanking_sequence f ON v.variation_id=f.variation_id WHERE f.variation_id is NULL");
+
+	// also check how many are in failed_variation for this shouldn't have entries in flanking_sequence table
+	int rows1 = getRowCount(con, "SELECT COUNT(*) FROM failed_variation");
         if (rows > 0) {
             result = false;
             ReportManager.problem(this, con, rows + " variations have no flanking sequence");
+	    ReportManager.problem(this, con, rows1 + " variations are in failed_variation");
         } else {
           //  ReportManager.info(this, con, "All variations have flanking sequence");
         }   
