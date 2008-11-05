@@ -84,6 +84,13 @@ public class ForeignKeyCoreId extends MultiDatabaseTestCase {
 	    result &= checkForOrphansWithConstraint(con, dbrvar.getName() + ".flanking_sequence", "seq_region_id", dbrcore.getName() + ".seq_region", "seq_region_id","seq_region_id IS NOT NULL");
 	    
 	    result &= checkForOrphansWithConstraint(con, dbrvar.getName() + ".variation_feature", "seq_region_id", dbrcore.getName() + ".seq_region", "seq_region_id","seq_region_id IS NOT NULL");
+
+	    int rows = getRowCount(con,"SELECT COUNT(*) FROM " + dbrvar.getName() + ".seq_region srv ," + dbrcore.getName() + ".seq_region src," + dbrcore.getName() + ".coord_system cs WHERE cs.attrib = 'default_version' AND cs.coord_system_id = src.coord_system_id AND src.name=srv.name AND src.seq_region_id != srv.seq_region_id");
+	    if (rows > 0) {
+		ReportManager.problem(this, con, rows + " rows seq_region in core has same name, but different seq_region_id comparing with seq_region in variation database");
+		result =  false;
+	    }
+
 	    if (! result ){
 	    //if there were no problems, just inform for the interface to pick the HC
 	    ReportManager.correct(this,con,"ForeignKeyCoreId test passed without any problem");
