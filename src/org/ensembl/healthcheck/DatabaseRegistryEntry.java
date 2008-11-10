@@ -275,6 +275,12 @@ public class DatabaseRegistryEntry implements Comparable {
 			return DatabaseType.NCBI_TAXONOMY;
 
 		}
+		
+		// ensembl genomes collection databases, e.g. hornead_escherichia_shigella_collection_core_0_52_1a or escherichia_shigella_collection_core_0_52_1a	
+		if (bits.length >= 3 && (bits[2].equals("collection") || bits[3].equals("collection"))) {
+			return DatabaseType.CORE;
+		}
+		
 		// other permutations?
 
 		if (result.equals(DatabaseType.UNKNOWN) && name.length() > 0) {
