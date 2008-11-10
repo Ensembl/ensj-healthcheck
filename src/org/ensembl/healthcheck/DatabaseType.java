@@ -83,6 +83,9 @@ public final class DatabaseType {
     /** A functional genomics database */
     public static final DatabaseType FUNCGEN = new DatabaseType("funcgen");
 
+    /** An Ensembl Genomes multi-species database */
+    public static final DatabaseType COLLECTION = new DatabaseType("collection");
+    
     /** A database whos type has not been determined */
     public static final DatabaseType UNKNOWN = new DatabaseType("unknown");
 
