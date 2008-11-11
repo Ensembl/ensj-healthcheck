@@ -277,7 +277,7 @@ public class DatabaseRegistryEntry implements Comparable {
 		}
 		
 		// ensembl genomes collection databases, e.g. hornead_escherichia_shigella_collection_core_0_52_1a or escherichia_shigella_collection_core_0_52_1a	
-		if (bits.length >= 3 && (bits[2].equals("collection") || bits[3].equals("collection"))) {
+		if (name.contains("collection")) {
 			return DatabaseType.CORE;
 		}
 		
