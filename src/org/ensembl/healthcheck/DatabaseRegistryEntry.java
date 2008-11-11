@@ -419,7 +419,7 @@ public class DatabaseRegistryEntry implements Comparable {
 
 		boolean result = false;
 		//variation databases do not have coord_system table
-		if (name.matches("^.*_variation_.*$")){			
+		if (name.matches("^.*_variation_.*$") || name.matches("^.*_compara_.*$")){			
 		    return result;
 		}
 		try {
