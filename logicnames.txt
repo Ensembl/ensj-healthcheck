@@ -104,6 +104,7 @@ enhancer_negative
 ensembl
 ensembl_havana_gene
 ensembl_havana_transcript
+ensembl_IG_gene
 ensembl_ncRNA
 ensembl_segment
 ensembl_projection
