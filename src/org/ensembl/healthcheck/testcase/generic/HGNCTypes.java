@@ -72,19 +72,6 @@ public class HGNCTypes extends SingleDatabaseTestCase {
 		result &= checkType(con, "HGNC_automatic_gene",      "Transcript");
 		result &= checkType(con, "HGNC_curated_transcript",  "Gene");
 		result &= checkType(con, "HGNC_curated_transcript", "Gene");
-		
-		// this has to be done the slow way, don't think there's a way to do this all at once
-		int rows = getRowCount(con, "SELECT DISTINCT(x.display_label), COUNT(*) AS count FROM gene g, xref x, external_db e WHERE e.external_db_id=x.external_db_id AND e.db_name LIKE 'HGNC%' AND x.xref_id=g.display_xref_id GROUP BY x.display_label HAVING COUNT > 1");
-
-		if (rows > 0) {
-
-			ReportManager.problem(this, con, rows + " HGNC symbols have been assigned to more than one gene");
-			result = false;
-
-		} else {
-
-			ReportManager.correct(this, con, "All HGNC symbols only assigned to one gene");
-		}
 
 		return result;
 
