@@ -46,6 +46,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
     private HashMap MetaEntriesToAdd = new HashMap();
     private HashMap MetaEntriesToRemove = new HashMap();
     private HashMap MetaEntriesToUpdate = new HashMap();
+    private HashMap SpeciesIdToUpdate = new HashMap();
 
     /**
      * Create an ForeignKeyMethodLinkId that applies to a specific set of databases.
@@ -84,6 +85,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
         result &= checkSchemaVersionDBName(dbre);
 
         result &= checkConservationScoreLink(dbre);
+        result &= checkSpeciesId(dbre);
 
         // I still have to check if some entries have to be removed/inserted/updated
         Iterator it = MetaEntriesToRemove.keySet().iterator();
@@ -108,7 +110,15 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
             result = false;
         }
 
-        return result;
+	it = SpeciesIdToUpdate.keySet().iterator();
+        while (it.hasNext()) {
+            Object next = it.next();
+            ReportManager.problem(this, con, "Update in meta: " + next +
+                " -- " + SpeciesIdToUpdate.get(next));
+            result = false;
+        }
+
+       return result;
     }
 
 
@@ -190,7 +200,42 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 
     } // ---------------------------------------------------------------------
 
+    /**
+    * Check that the species_id is 1 for everything except schema_version which should be NULL
+    */
+    private boolean checkSpeciesId(DatabaseRegistryEntry dbre) {
 
+        boolean result = true;
+
+        // get version from meta table
+        Connection con = dbre.getConnection();
+
+	String sql = new String("SELECT species_id, meta_key FROM meta");
+
+        try {
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+		if (rs.getString(2).equals("schema_version")) {
+		    if (rs.getInt(1) != 0) {
+			//set species_id of schema_version to NULL
+			SpeciesIdToUpdate.put(rs.getString(2), new String("NULL"));
+		    }
+		} else {
+		    if (rs.getInt(1) != 1) {
+			//set species_id of everything else to 1
+			SpeciesIdToUpdate.put(rs.getString(2), new Integer(1));
+		    }
+		}
+	    }            
+	    rs.close();
+            stmt.close();
+        } catch (SQLException se) {
+            se.printStackTrace();
+            result = false;
+        }
+	return result;
+    }
 
     /**
     * Check that the schema_version in the meta table is present and matches the database name.
@@ -335,7 +380,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
     public void repair(DatabaseRegistryEntry dbre) {
 
         if (MetaEntriesToAdd.isEmpty() && MetaEntriesToUpdate.isEmpty() &&
-                MetaEntriesToRemove.isEmpty()) {
+                MetaEntriesToRemove.isEmpty() && SpeciesIdToUpdate.isEmpty()) {
             System.out.println("No repair needed.");
             return;
         }
@@ -360,8 +405,11 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
             it = MetaEntriesToAdd.keySet().iterator();
             while (it.hasNext()) {
                 Object next = it.next();
-                String sql = new String("INSERT INTO meta VALUES (NULL, \"" + next + "\", "
-                    + MetaEntriesToAdd.get(next) + ", 1);");
+                //String sql = new String("INSERT INTO meta VALUES (NULL, \"" + next + "\", "
+		//   + MetaEntriesToAdd.get(next) + ", 1);");
+		String sql = new String("INSERT INTO meta VALUES (NULL, 1, \"" + next + "\", "
+                + MetaEntriesToAdd.get(next) + ");");
+		
                 int numRows = stmt.executeUpdate(sql);
                 if (numRows != 1) {
                     ReportManager.problem(this, con, "WARNING: " + numRows
@@ -374,6 +422,19 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
                 Object next = it.next();
                 String sql = new String("UPDATE meta SET meta_value = "
                     + MetaEntriesToUpdate.get(next) + " WHERE meta_key = \"" + next + "\";");
+                int numRows = stmt.executeUpdate(sql);
+                if (numRows != 1) {
+                    ReportManager.problem(this, con, "WARNING: " + numRows
+                        + " rows UPDATED for meta_key \"" + next
+                        + "\" while repairing meta");
+                }
+            }
+            it = SpeciesIdToUpdate.keySet().iterator();
+            while (it.hasNext()) {
+                Object next = it.next();
+
+                String sql = new String("UPDATE meta SET species_id = "
+                    + SpeciesIdToUpdate.get(next) + " WHERE meta_key = \"" + next + "\";");
                 int numRows = stmt.executeUpdate(sql);
                 if (numRows != 1) {
                     ReportManager.problem(this, con, "WARNING: " + numRows
@@ -399,7 +460,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
     public void show(DatabaseRegistryEntry dbre) {
 
         if (MetaEntriesToAdd.isEmpty() && MetaEntriesToUpdate.isEmpty() &&
-                MetaEntriesToRemove.isEmpty()) {
+                MetaEntriesToRemove.isEmpty() && SpeciesIdToUpdate.isEmpty()) {
             System.out.println("No repair needed.");
             return;
         }
@@ -414,7 +475,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
         it = MetaEntriesToAdd.keySet().iterator();
         while (it.hasNext()) {
             Object next = it.next();
-            System.out.println("  INSERT INTO meta VALUES (NULL, \"" + next + "\", "
+            System.out.println("  INSERT INTO meta VALUES (NULL, 1, \"" + next + "\", "
                 + MetaEntriesToAdd.get(next) + ");");
         }
         it = MetaEntriesToUpdate.keySet().iterator();
