@@ -69,7 +69,7 @@ public abstract class EnsTestCase {
 
 	/** Which team is responsible for fixing this healthcheck */
 	protected String teamResponsible;
-	
+
 	/** Logger object to use */
 	protected static Logger logger = Logger.getLogger("HealthCheckLogger");
 
@@ -132,7 +132,8 @@ public abstract class EnsTestCase {
 	 * 
 	 * @param tr
 	 *          The TestRunner to associate with this test. Usually just <CODE>
-	 *          this</CODE> if being called from the TestRunner.
+	 *          this</CODE>
+	 *          if being called from the TestRunner.
 	 */
 	public void init(TestRunner tr) {
 
@@ -361,7 +362,7 @@ public abstract class EnsTestCase {
 
 		try {
 			Statement stmt = con.createStatement();
-			//System.out.println("Executing " + sql);
+			// System.out.println("Executing " + sql);
 			ResultSet rs = stmt.executeQuery(sql);
 			if (rs != null) {
 				if (rs.first()) {
@@ -439,7 +440,8 @@ public abstract class EnsTestCase {
 		} else if (sql.toLowerCase().indexOf("select count") < 0) {
 			// otherwise, do it row-by-row
 
-			logger.fine("getRowCount() executing SQL which does not appear to begin with SELECT COUNT - performing row-by-row count, which may take a long time if the table is large.");
+			logger
+					.fine("getRowCount() executing SQL which does not appear to begin with SELECT COUNT - performing row-by-row count, which may take a long time if the table is large.");
 			result = getRowCountSlow(con, sql);
 
 		}
@@ -659,15 +661,15 @@ public abstract class EnsTestCase {
 	public boolean checkForOrphans(Connection con, String table1, String col1, String table2, String col2, boolean oneWay) {
 
 		int orphans = countOrphans(con, table1, col1, table2, col2, oneWay);
-		
+
 		boolean result = true;
-		
+
 		String useful_sql = "SELECT " + table1 + "." + col1 + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1
-		+ " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
+				+ " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
 
 		if (orphans == 0) {
 			ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + col1 + "(" + col2 + ")"
-			+ " relationships");
+					+ " relationships");
 		} else if (orphans > 0) {
 			ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + col1 + "(" + col2 + ")"
 					+ " relationships");
@@ -680,16 +682,15 @@ public abstract class EnsTestCase {
 			result = false;
 		}
 
-		return result;	
-/*		
-		if (orphans > 0) {
-			ReportManager.problem(this, con, table1 + " <-> " + table2 + " has " + orphans + " unlinked entries");
-		} else {
-			ReportManager.correct(this, con, "All " + table1 + " <-> " + table2 + " relationships are OK");
-		}
-
-		return orphans == 0;
-*/
+		return result;
+		/*
+		 * if (orphans > 0) { ReportManager.problem(this, con, table1 + " <-> " +
+		 * table2 + " has " + orphans + " unlinked entries"); } else {
+		 * ReportManager.correct(this, con, "All " + table1 + " <-> " + table2 +
+		 * " relationships are OK"); }
+		 * 
+		 * return orphans == 0;
+		 */
 	} // checkForOrphans
 
 	// -------------------------------------------------------------------------
@@ -848,7 +849,7 @@ public abstract class EnsTestCase {
 
 			try {
 				Statement stmt = con.createStatement();
-				//System.out.println(databases[i].getName() + " " + sql);
+				// System.out.println(databases[i].getName() + " " + sql);
 				ResultSet rs = stmt.executeQuery(sql);
 				if (rs != null) {
 					resultSetGroup.add(rs);
@@ -1315,8 +1316,8 @@ public abstract class EnsTestCase {
 	 * @param con
 	 *          The database connection to use.
 	 * @param pattern
-	 *          The pattern to use - note that this is a <em>SQL</em> pattern,
-	 *          not a regexp.
+	 *          The pattern to use - note that this is a <em>SQL</em> pattern, not
+	 *          a regexp.
 	 * @return An array of Strings representing the names of the tables that match
 	 *         the pattern.
 	 */
@@ -1657,7 +1658,7 @@ public abstract class EnsTestCase {
 			result = false;
 		} else {
 			ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1
-					+ ", look at the StackTrace if any");		
+					+ ", look at the StackTrace if any");
 			result = false;
 		}
 
@@ -1665,11 +1666,10 @@ public abstract class EnsTestCase {
 
 	} // checkForOrphansWithConstraint
 
-	
 	// -------------------------------------------------------------------------
 	/**
-	 * Verify optional foreign-key relations.
-	 * The methods checks that non-NULL foreign keys point to valid primary keys.
+	 * Verify optional foreign-key relations. The methods checks that non-NULL
+	 * foreign keys point to valid primary keys.
 	 * 
 	 * @param con
 	 *          A connection to the database to be tested. Should already be open.
@@ -1686,8 +1686,7 @@ public abstract class EnsTestCase {
 	public boolean checkOptionalRelation(Connection con, String table1, String col1, String table2, String col2) {
 		return checkForOrphansWithConstraint(con, table1, col1, table2, col2, col1 + " IS NOT NULL");
 	}
-	
-	
+
 	// ----------------------------------------------------------------------
 	/**
 	 * Check that a particular column has no null values. Problem or correct
@@ -1770,11 +1769,8 @@ public abstract class EnsTestCase {
 		TreeSet matchingDBs = new TreeSet(); // get sorting for free
 		String[] dbs = DBUtils.listDatabases(listCon);
 		for (int i = 0; i < dbs.length; i++) {
-			DatabaseRegistryEntry secDBRE = new DatabaseRegistryEntry(dbs[i], null, null, false); // nulls
-			// will
-			// set
-			// type
-			// automatically
+			// nulls will set type automatically
+			DatabaseRegistryEntry secDBRE = new DatabaseRegistryEntry(dbs[i], null, null, false);
 			if (dbre.getType() == secDBRE.getType() && dbre.getSpecies() == secDBRE.getSpecies()) {
 				matchingDBs.add(secDBRE);
 				logger.finest("added " + secDBRE.getName() + " to list of databases to check for equivalent to " + dbre.getName());
@@ -1785,12 +1781,15 @@ public abstract class EnsTestCase {
 			logger.severe("Could not find equvialent database to " + dbre.getName() + " on secondary server");
 		}
 
-		// take the highest one, if available
+		// take the highest one that doesn't have the same version number as our current one, if available
 		DatabaseRegistryEntry result = null;
 
+		matchingDBs.remove(dbre); // remove the current database from the list to avoid comparisons with itself
+		
 		if (matchingDBs.size() > 0) {
-
+			
 			result = (DatabaseRegistryEntry) matchingDBs.last();
+			
 			// initialise connection
 			Connection dbCon = DBUtils.openConnection(System.getProperty("secondary.driver"), System.getProperty("secondary.databaseURL")
 					+ result.getName(), System.getProperty("secondary.user"), System.getProperty("secondary.password"));
@@ -1867,11 +1866,11 @@ public abstract class EnsTestCase {
 		effect = e;
 
 	}
-	
-//----------------------------------------------------------------------
+
+	// ----------------------------------------------------------------------
 	/**
-	 * Return what will happen if databases which fail this healthcheck are
-	 * left unfixed.
+	 * Return what will happen if databases which fail this healthcheck are left
+	 * unfixed.
 	 */
 	public String getEffect() {
 
@@ -1892,17 +1891,18 @@ public abstract class EnsTestCase {
 		fix = f;
 
 	}
-	
+
 	// ----------------------------------------------------------------------
 	/**
-	 * Get (as text) a possible fix for the problem causing this healthcheck
-	 * to fail.
+	 * Get (as text) a possible fix for the problem causing this healthcheck to
+	 * fail.
 	 */
 	public String getFix() {
 
 		return fix;
 
 	}
+
 	// ----------------------------------------------------------------------
 
 	public String getTeamResponsible() {
@@ -1917,5 +1917,4 @@ public abstract class EnsTestCase {
 
 	// ----------------------------------------------------------------------
 
-	
 } // EnsTestCase
