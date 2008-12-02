@@ -12,6 +12,8 @@
  */
 package org.ensembl.healthcheck.testcase.generic;
 
+import java.sql.Connection;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
@@ -39,23 +41,39 @@ public class ComparePreviousVersionCCDS extends ComparePreviousVersionBase {
 
 	}
 
-//----------------------------------------------------------------------
-
-	/**
-   * This only applies to core databases.
-   */
-  public void types() {
-
-      removeAppliesToType(DatabaseType.OTHERFEATURES);
-      removeAppliesToType(DatabaseType.CDNA);
-      removeAppliesToType(DatabaseType.VEGA);
-
-  }
 	// ----------------------------------------------------------------------
 
-	protected Map getCounts(DatabaseRegistryEntry dbre) {
+	/**
+	 * This only applies to core databases.
+	 */
+	public void types() {
 
-		return getCountsBySQL(dbre, "SELECT 'CCDS', COUNT(*) FROM xref x, external_db e, object_xref ox WHERE e.external_db_id=x.external_db_id AND e.db_name='CCDS' AND ox.xref_id=x.xref_id");
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.CDNA);
+		removeAppliesToType(DatabaseType.VEGA);
+
+	}
+
+	// ----------------------------------------------------------------------
+
+	protected Map<String,Integer> getCounts(DatabaseRegistryEntry dbre) {
+
+		Connection con = dbre.getConnection();
+
+		Map<String, Integer> counts = new HashMap<String, Integer>();
+
+		// and total number of associations with genes, transcripts and translations
+		String sql = " FROM gene g, transcript tr, translation tl, object_xref ox, xref x, external_db e WHERE x.xref_id=ox.xref_id AND x.external_db_id=e.external_db_id AND e.db_name='CCDS' AND g.gene_id =tr.gene_id AND tl.translation_id=ox.ensembl_id AND ox.ensembl_object_type='Translation' and tl.transcript_id=tr.transcript_id";
+		int genes = getRowCount(con, "SELECT COUNT(DISTINCT(g.gene_id))" + sql);
+		counts.put("CCDS-gene associations", genes);
+
+		int transcripts = getRowCount(con, "SELECT COUNT(DISTINCT(tr.transcript_id))" + sql);
+		counts.put("CCDS-transcript associations", transcripts);
+
+		int translations = getRowCount(con, "SELECT COUNT(DISTINCT(tl.translation_id))" + sql);
+		counts.put("CCDS-translation associations", translations);
+
+		return counts;
 
 	}
 
