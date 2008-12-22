@@ -52,6 +52,10 @@ public class ComparePreviousVersionExonCoords extends SingleDatabaseTestCase {
 		Connection currentCon = current.getConnection();
 
 		DatabaseRegistryEntry previous = getEquivalentFromSecondaryServer(current);
+		if (previous == null) {
+			ReportManager.correct(this, currentCon, "Can't identify previous database - new species?");
+			return true;
+		}
 		Connection previousCon = previous.getConnection();
 
 		// build hashes of transcript stable id:exon start:exon end for both databases
