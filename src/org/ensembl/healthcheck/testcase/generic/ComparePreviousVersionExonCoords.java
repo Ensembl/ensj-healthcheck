@@ -27,7 +27,8 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
  * Compare the transcript stable IDs and exon coordinates between 2 releases. Note this is not comparing counts so doesn't extend
- * ComparePreviousVersionBase. Note this reads 2 complete exon sets into memory and so needs quite a bit of memory allocated. Suggest -Xmx1700m
+ * ComparePreviousVersionBase. Note this reads 2 complete exon sets into memory and so needs quite a bit of memory allocated.
+ * Suggest -Xmx1700m
  */
 
 public class ComparePreviousVersionExonCoords extends SingleDatabaseTestCase {
@@ -51,11 +52,19 @@ public class ComparePreviousVersionExonCoords extends SingleDatabaseTestCase {
 
 		Connection currentCon = current.getConnection();
 
+		// skip databases where there's no previous one (e.g. new species)
 		DatabaseRegistryEntry previous = getEquivalentFromSecondaryServer(current);
 		if (previous == null) {
 			ReportManager.correct(this, currentCon, "Can't identify previous database - new species?");
 			return true;
 		}
+
+		// and those where the genebuild version has changed - expect exon coords to change then
+		if (current.getNumericGeneBuildVersion() != previous.getNumericGeneBuildVersion()) {
+			ReportManager.correct(this, currentCon, "Genebuild version has changed since " + previous.getName() +", skipping");
+			return true;
+		}
+		
 		Connection previousCon = previous.getConnection();
 
 		// build hashes of transcript stable id:exon start:exon end for both databases
@@ -89,14 +98,16 @@ public class ComparePreviousVersionExonCoords extends SingleDatabaseTestCase {
 
 		if (inNewNotOld.size() > 0) {
 
-			ReportManager.problem(this, currentCon, inNewNotOld.size() + " exons in " + current.getName() + " have coordinates that are different from those in the same transcript in " + previous.getName());
+			ReportManager
+					.problem(this, currentCon, inNewNotOld.size() + " exons in " + current.getName() + " have coordinates that are different from those in the same transcript in " + previous.getName());
 			result = false;
 
 		}
 
 		if (inOldNotNew.size() > 0) {
 
-			ReportManager.problem(this, currentCon, inOldNotNew.size() + " exons in " + previous.getName() + " have coordinates that are different from those in the same transcript in " + current.getName());
+			ReportManager
+					.problem(this, currentCon, inOldNotNew.size() + " exons in " + previous.getName() + " have coordinates that are different from those in the same transcript in " + current.getName());
 			result = false;
 
 		}
@@ -106,7 +117,7 @@ public class ComparePreviousVersionExonCoords extends SingleDatabaseTestCase {
 			ReportManager.correct(this, currentCon, "All exons identical between databases");
 
 		}
-		
+
 		return result;
 
 	}
