@@ -21,6 +21,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
@@ -832,6 +833,15 @@ public final class Utils {
 
 	}
 
+//---------------------------------------------------------------------
+	/**
+	 * Convert an array to a HashMap, where the key and value of each map element is the same as each list element.
+	 */
+		public static HashMap<Object,Object> arrayToMap(Object[] array) {
+
+			return listToMap(Arrays.asList(array));
+
+		}
 	// -------------------------------------------------------------------------
 
 } // Utils
