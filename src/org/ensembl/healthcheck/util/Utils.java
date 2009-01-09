@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -813,6 +814,21 @@ public final class Utils {
 		}
 
 		return result;
+
+	}
+
+	// ---------------------------------------------------------------------
+/**
+ * Convert a list to a HashMap, where the key and value of each map element is the same as each list element.
+ */
+	public static HashMap<Object,Object> listToMap(List<Object> list) {
+
+		HashMap<Object,Object> map = new HashMap<Object,Object>();
+		for (Object o : list) {
+			map.put(o, o);
+		}
+
+		return map;
 
 	}
 
