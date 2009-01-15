@@ -24,6 +24,7 @@ import java.util.Map;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Compare the transcript stable IDs and exon coordinates between 2 releases. Note this is not comparing counts so doesn't extend
@@ -58,14 +59,19 @@ public class ComparePreviousVersionExonCoords extends SingleDatabaseTestCase {
 			ReportManager.correct(this, currentCon, "Can't identify previous database - new species?");
 			return true;
 		}
+		Connection previousCon = previous.getConnection();
 
 		// and those where the genebuild version has changed - expect exon coords to change then
 		if (current.getNumericGeneBuildVersion() != previous.getNumericGeneBuildVersion()) {
-			ReportManager.correct(this, currentCon, "Genebuild version has changed since " + previous.getName() +", skipping");
+			ReportManager.correct(this, currentCon, "Genebuild version has changed since " + previous.getName() + ", skipping");
 			return true;
 		}
-		
-		Connection previousCon = previous.getConnection();
+
+		// and those where the meta key genebuild.last_geneset_update has changed
+		if (!DBUtils.getMetaValue(currentCon, "genebuild.last_geneset_update").equals(DBUtils.getMetaValue(previousCon, "genebuild.last_geneset_update"))) {
+			ReportManager.correct(this, currentCon, "Meta entry genebuild.last_geneset_update has changed since " + previous.getName() + ", skipping");
+			return true;
+		}
 
 		// build hashes of transcript stable id:exon start:exon end for both databases
 		logger.finest("Building hash of current exon coords");
