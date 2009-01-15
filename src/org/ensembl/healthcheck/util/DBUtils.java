@@ -751,7 +751,7 @@ public final class DBUtils {
 	 */
 	public static String getMetaValue(Connection con, String key) {
 
-		String result = null;
+		String result = "";
 
 		try {
 			ResultSet rs = con.createStatement().executeQuery("SELECT meta_value FROM meta WHERE meta_key='" + key +"'");
