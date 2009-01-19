@@ -9,7 +9,7 @@ import java.util.EnumMap;
 public enum Species
 {
 	//defined new Species and properties: taxonomy_id, assemblyprefix, stableIDprefix, alias 
-        CHOLOEPUS_HOFFMANNI(9358,"choHof","ENSCHOG","Sloth,Two-toed_sloth,Hoffmans_two-fingered_sloth,choloepus_hoffmanni"),
+        CHOLOEPUS_HOFFMANNI(9358,"choHof","ENSCHO","Sloth,Two-toed_sloth,Hoffmans_two-fingered_sloth,choloepus_hoffmanni"),
         GORILLA_GORILLA(9593,"gorGor","ENSGGO","gorilla,gorilla_gorilla,ggor"),
         TAENIOPYGIA_GUTTATA(59729,"taeGut","ENSTGU","zebrafinch,zebra_finch,taeniopygia_guttata,taeniopygiaguttata,tguttata,poephila_guttata,taenopygia_guttata"),
 	ORYCTOLAGUS_CUNICULUS(9986,"RABBIT","ENSOCU","rabbit,oryctolagus,domestic_rabbit,bunny,japanese_white_rabbit,european_rabbit,oryctolagus_cuniculus"),
