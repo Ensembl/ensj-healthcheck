@@ -22,6 +22,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 //import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.Species;
 
 /**
  * Check that if the peptide_allele_string of transcript_variation is not >1. 
@@ -52,19 +53,20 @@ public class VariationSynonym extends SingleDatabaseTestCase {
 	// Check that Venter and Watson should have 3 million variations
 
         Connection con = dbre.getConnection();
-	for (int i = 0; i < individualNames.length; i++) {
-	    individualName = individualNames[i];
-	    int rows = getRowCount(con, "SELECT COUNT(*) FROM variation v, source s WHERE v.source_id=s.source_id and s.name like '%" + individualName + "'");
-	    int rows1 = getRowCount(con, "SELECT COUNT(*) FROM variation_synonym vs, source s WHERE vs.source_id=s.source_id and s.name like '%" + individualName + "'");
-	    int tot_rows = rows + rows1;
-	    if (tot_rows < 3000000) {
-		result = false;
-		ReportManager.problem(this, con, tot_rows + " with variations for " + individualName);
-	    } else {
-		//ReportManager.info(this, con, tot_rows + " with variation for " + individualName);
+	if (dbre.getSpecies() == Species.HOMO_SAPIENS){
+	    for (int i = 0; i < individualNames.length; i++) {
+		individualName = individualNames[i];
+		int rows = getRowCount(con, "SELECT COUNT(*) FROM variation v, source s WHERE v.source_id=s.source_id and s.name like '%" + individualName + "'");
+		int rows1 = getRowCount(con, "SELECT COUNT(*) FROM variation_synonym vs, source s WHERE vs.source_id=s.source_id and s.name like '%" + individualName + "'");
+		int tot_rows = rows + rows1;
+		if (tot_rows < 3000000) {
+		    result = false;
+		    ReportManager.problem(this, con, tot_rows + " with variations for " + individualName);
+		} else {
+		    //ReportManager.info(this, con, tot_rows + " with variation for " + individualName);
+		}
 	    }
 	}
-
         if (result){
         	ReportManager.correct(this,con,"Venter/Watson has more then 3 million variations");
         }
