@@ -63,15 +63,16 @@ public class VariationSynonym extends SingleDatabaseTestCase {
 		    result = false;
 		    ReportManager.problem(this, con, tot_rows + " with variations for " + individualName);
 		} else {
-		    //ReportManager.info(this, con, tot_rows + " with variation for " + individualName);
+		    ReportManager.correct(this,con,"Venter/Watson has more then 3 million variations");
 		}
 	    }
 	}
-        if (result){
-        	ReportManager.correct(this,con,"Venter/Watson has more then 3 million variations");
-        }
-        return result;
-
+	if (result){
+	    ReportManager.info(this,con,"This test is only for human at moment");
+	}
+	
+	return result;
+	
     } // run
 
 } // VariationSynonym
