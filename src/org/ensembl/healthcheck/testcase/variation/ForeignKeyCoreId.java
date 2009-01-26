@@ -91,7 +91,7 @@ public class ForeignKeyCoreId extends MultiDatabaseTestCase {
 		result =  false;
 	    }
 
-	    if (! result ){
+	    if ( result ){
 	    //if there were no problems, just inform for the interface to pick the HC
 	    ReportManager.correct(this,con,"ForeignKeyCoreId test passed without any problem");
 	}

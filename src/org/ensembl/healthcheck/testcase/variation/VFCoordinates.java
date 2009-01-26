@@ -42,7 +42,7 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 		addToGroup("variation");
 		addToGroup("variation-release");
 		setDescription("Check for possible wrong coordinates in Vf table, due to wrong length or outside range seq_region.");
-		setHintLongRunning(true);
+//		setHintLongRunning(true);
 
 	}
 
@@ -100,6 +100,9 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 			if (mc > 0) {
 				ReportManager.problem(this, con, "Variation Features with coordinates = 1 " + variationName);
 				result = false;
+			}
+			if (result){
+			    ReportManager.correct(this,con,"VFCoordinates test run successfully");
 			}
 			
 		}

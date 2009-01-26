@@ -101,9 +101,9 @@ public class Meta extends SingleDatabaseTestCase {
 		    }
 		}
 	    }
-	    if (! result ){
+	    if ( result ){
 	    //if there were no problems, just inform for the interface to pick the HC
-		ReportManager.info(this,con,"Meta test passed without any problem");
+		ReportManager.correct(this,con,"Meta test passed without any problem");
 	    }
 	    return result;
 	} // run
