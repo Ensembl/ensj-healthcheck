@@ -113,7 +113,8 @@ public class CheckSynteny extends SingleDatabaseTestCase {
                 "SELECT dnafrag_id FROM dnafrag WHERE genome_db_id = " + genome_db_ids[i]
                 + " AND coord_system_name = 'chromosome'"
                 + " AND name NOT LIKE '%\\_%'"
-                + " AND name NOT IN ('MT', 'Un') AND length > 1000000"
+                + " AND name NOT LIKE '%Un%'"
+                + " AND name NOT IN ('MT') AND length > 1000000"
                 );
             for (int j = 0; j < these_dnafrag_ids.length; j++) {
                 int count = getRowCountFast(con, "SELECT count(*) FROM synteny_region "
