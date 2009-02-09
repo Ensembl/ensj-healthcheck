@@ -59,9 +59,17 @@ public class TranscriptVariation extends SingleDatabaseTestCase {
       //      ReportManager.info(this, con, "No transcript_variation have peptide_allele_string >1);
         }
 
-        if (result){
-        	ReportManager.correct(this,con,"transcript_variation have no peptide_allele_string >1");
+	int rows1 = getRowCount(con, "SELECT COUNT(*) FROM transcript_variation WHERE consequence_type=''");
+        if (rows1 >=1) {
+            result = false;
+            ReportManager.problem(this, con, rows1 + " with consequence_type a empty string");
+        } else {
+      //      ReportManager.info(this, con, "No transcript_variation have consequence_type a empty string");
         }
+        if (result){
+        	ReportManager.correct(this,con,"transcript_variation have no peptide_allele_string >1 or consequence_type a empty string");
+        }
+
         return result;
 
     } // run
