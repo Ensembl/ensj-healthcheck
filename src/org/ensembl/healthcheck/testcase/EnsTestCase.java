@@ -665,7 +665,7 @@ public abstract class EnsTestCase {
 		boolean result = true;
 
 		String useful_sql = "SELECT " + table1 + "." + col1 + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1
-				+ " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
+				+ " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " IS NULL";
 
 		if (orphans == 0) {
 			ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + col1 + "(" + col2 + ")"
@@ -675,6 +675,11 @@ public abstract class EnsTestCase {
 					+ " relationships");
 			ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
 			ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
+			if (!oneWay) {
+				String useful_sql2 = "SELECT " + table2 + "." + col2 + " FROM " + table2 + " LEFT JOIN " + table1 + " ON " + table2 + "." + col2
+				+ " = " + table1 + "." + col1 + " WHERE " + table1 + "." + col1 + " IS NULL";
+				ReportManager.problem(this, con, "alternate useful SQL: " + useful_sql2);
+			}
 			result = false;
 		} else {
 			ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1
