@@ -1,2 +1,4 @@
-1 0 * * * /nfs/acari/ensembl/ensj-healthcheck/run-healthcheck-web-parallel.sh > /nfs/acari/ensembl/ensj-healthcheck/web.out
+JAVA_HOME=/software/jdk
+LSB_DEFAULTPROJECT=ensembl-core
+1 0 * * * /nfs/acari/ensembl/ensj-healthcheck/run-healthcheck-web-parallel.sh > /nfs/acari/ensembl/ensj-healthcheck/web.out 2>&1
 
