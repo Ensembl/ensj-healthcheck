@@ -75,7 +75,7 @@ public class SeqRegionAttribsPresent extends SingleDatabaseTestCase {
 
 		for (String chr : topLevelChrNames) {
 
-			if (chr.matches("^Un.*") || chr.matches("^NT_.*") ||chr.matches(".*_random")) {
+			if (chr.matches("^Un.*") || chr.matches("^NT_.*") || chr.matches(".*_random") || chr.matches(".*_hap_.*")) {
 				continue;
 			}
 
