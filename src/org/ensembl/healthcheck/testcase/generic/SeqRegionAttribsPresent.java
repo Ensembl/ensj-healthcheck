@@ -18,11 +18,14 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
+import java.util.List;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+
+import com.sun.tools.javac.util.Name;
 
 /**
  * Check that certain seq_region_attribs are present.
@@ -37,8 +40,10 @@ public class SeqRegionAttribsPresent extends SingleDatabaseTestCase {
 	public SeqRegionAttribsPresent() {
 
 		addToGroup("release");
-		setDescription("Check that certain seq_region_attribs are present.");
-
+		setDescription("Check that certain seq_region_attribs are present on each chromosome");
+		setEffect("Webiste gene counts will be wrong");
+		setFix("Check and re-run seq_region_attribs.pl script");
+		
 	}
 
 	/**
@@ -65,21 +70,30 @@ public class SeqRegionAttribsPresent extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-		
-		for (int i = 0; i < attribCodes.length; i++) {
-			
-			String code = attribCodes[i];
-			int count = getRowCount(con, "SELECT COUNT(*) FROM attrib_type at, seq_region_attrib sa WHERE sa.attrib_type_id=at.attrib_type_id AND at.code='" + code + "'");
-	
-			if (count == 0) {
-				
-				ReportManager.problem(this, con, "RelCo: No seq_region_attribs of code " + code + " - there should be some. This may indicate that the seq_region_stats.pl script needs to be run.");
-				result = false;
-				
-			} else {
-				
-				ReportManager.correct(this, con, count + " seq_region_attrib entries for " + code);
-				
+
+		List<String> topLevelChrNames = getTopLevelChromosomeNames(con); // Note we only check chromosome names - won't work for species that don't have chromosomes
+
+		for (String chr : topLevelChrNames) {
+
+			if (chr.matches("^Un.*") || chr.matches("^NT_.*") ||chr.matches(".*_random")) {
+				continue;
+			}
+
+			for (int i = 0; i < attribCodes.length; i++) {
+
+				String code = attribCodes[i];
+				int count = getRowCount(con, "SELECT COUNT(*) FROM seq_region sr, attrib_type at, seq_region_attrib sra WHERE sr.seq_region_id=sra.seq_region_id AND sra.attrib_type_id=at.attrib_type_id AND at.code='" + code + "' AND sr.name='" + chr + "'");
+
+				if (count == 0) {
+
+					ReportManager.problem(this, con, "No seq_region_attribs of code " + code + "on toplevel seq region " + chr + " - there should be some. ");
+					result = false;
+
+				} else {
+
+					ReportManager.correct(this, con, count + " seq_region_attrib entries for " + code);
+
+				}
 			}
 		}
 
