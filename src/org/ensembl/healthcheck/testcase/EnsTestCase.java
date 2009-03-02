@@ -1869,6 +1869,27 @@ public abstract class EnsTestCase {
 
 	}
 
+	/**
+	 * Get the names of the top level seq_regions that are called chromosomes.
+	 */
+	public List<String> getTopLevelChromosomeNames(Connection con) {
+
+		List<String> names = new ArrayList<String>();
+
+		try {
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt
+					.executeQuery("SELECT sr.name FROM seq_region sr, seq_region_attrib sra, attrib_type at, coord_system cs WHERE cs.coord_system_id=sr.coord_system_id AND sra.seq_region_id=sr.seq_region_id AND sra.attrib_type_id=at.attrib_type_id AND at.code='toplevel' AND cs.name='chromosome' AND cs.attrib LIKE '%default_version%'");
+			while (rs.next()) {
+				names.add(rs.getString(1));
+			}
+		} catch (SQLException se) {
+			se.printStackTrace();
+		}
+
+		return names;
+
+	}
 	// ----------------------------------------------------------------------
 
 } // EnsTestCase
