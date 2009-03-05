@@ -28,9 +28,8 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.Utils;
 
 /**
- * Checks the metadata table to make sure it is OK. Only one meta table at a
- * time is done here; checks for the consistency of the meta table across
- * species are done in MetaCrossSpecies.
+ * Checks the metadata table to make sure it is OK. Only one meta table at a time is done here; checks for the consistency of the
+ * meta table across species are done in MetaCrossSpecies.
  */
 public class Meta extends SingleDatabaseTestCase {
 
@@ -41,8 +40,7 @@ public class Meta extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
-		setDescription("Check that the meta table exists, has data, the entries correspond to the "
-				+ "database name, and that the values in assembly.type match what's in the meta table");
+		setDescription("Check that the meta table exists, has data, the entries correspond to the " + "database name, and that the values in assembly.type match what's in the meta table");
 	}
 
 	/**
@@ -100,8 +98,7 @@ public class Meta extends SingleDatabaseTestCase {
 		String metaTableAssemblyPrefix = assembly.getMetaTableAssemblyPrefix();
 		logger.finest("meta table assembly prefix: " + metaTableAssemblyPrefix);
 
-		if (metaTableAssemblyVersion == null || metaTableAssemblyDefault == null || metaTableAssemblyPrefix == null
-				|| dbNameAssemblyVersion == null) {
+		if (metaTableAssemblyVersion == null || metaTableAssemblyDefault == null || metaTableAssemblyPrefix == null || dbNameAssemblyVersion == null) {
 
 			ReportManager.problem(this, con, "Cannot get all information from meta table - check for null values");
 
@@ -146,12 +143,10 @@ public class Meta extends SingleDatabaseTestCase {
 			} else {
 				if (metaTableAssemblyPrefix != null) {
 					if (!metaTableAssemblyPrefix.toUpperCase().startsWith(correctPrefix.toUpperCase())) {
-						ReportManager.problem(this, con, "Database species is " + dbSpecies + " but assembly prefix " + metaTableAssemblyPrefix
-								+ " should have prefix beginning with " + correctPrefix);
+						ReportManager.problem(this, con, "Database species is " + dbSpecies + " but assembly prefix " + metaTableAssemblyPrefix + " should have prefix beginning with " + correctPrefix);
 						result = false;
 					} else {
-						ReportManager.correct(this, con, "Meta table assembly prefix (" + metaTableAssemblyPrefix + ") is correct for "
-								+ dbSpecies);
+						ReportManager.correct(this, con, "Meta table assembly prefix (" + metaTableAssemblyPrefix + ") is correct for " + dbSpecies);
 					}
 				} else {
 					ReportManager.problem(this, con, "Can't get assembly prefix from meta table");
@@ -166,6 +161,14 @@ public class Meta extends SingleDatabaseTestCase {
 		// -------------------------------------------
 
 		result &= checkArrays(dbre);
+
+		// -------------------------------------------
+
+		result &= checkSpacesInSpeciesClassification(dbre);
+
+		// -------------------------------------------
+
+		result &= checkGenebuildMethod(dbre);
 
 		// -------------------------------------------
 
@@ -214,11 +217,9 @@ public class Meta extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		// check that there are species, classification and taxonomy_id entries
-		// also assembly.name, assembly.date, species.classification - needed by the
-		// website
-		String[] metaKeys = { "assembly.default", "species.classification", "species.ensembl_common_name", "species.taxonomy_id",
-				"assembly.name", "assembly.date", "species.ensembl_alias_name", "repeat.analysis", "marker.priority" };
+		// check that certain keys exist
+		String[] metaKeys = { "assembly.default", "species.classification", "species.ensembl_common_name", "species.taxonomy_id", "assembly.name", "assembly.date", "species.ensembl_alias_name",
+				"repeat.analysis", "marker.priority", "assembly.coverage_depth", "assembly.num_toplevel_seqs" };
 		for (int i = 0; i < metaKeys.length; i++) {
 			String metaKey = metaKeys[i];
 			int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey + "'");
@@ -270,14 +271,12 @@ public class Meta extends SingleDatabaseTestCase {
 		}
 
 		// Check that species.classification matches database name
-		String[] metaTableSpeciesGenusArray = getColumnValues(con,
-				"SELECT LCASE(meta_value) FROM meta WHERE meta_key='species.classification' ORDER BY meta_id LIMIT 2");
+		String[] metaTableSpeciesGenusArray = getColumnValues(con, "SELECT LCASE(meta_value) FROM meta WHERE meta_key='species.classification' ORDER BY meta_id LIMIT 2");
 		// if all is well, metaTableSpeciesGenusArray should contain the
 		// species and genus
 		// (in that order) from the meta table
 
-		if (metaTableSpeciesGenusArray != null && metaTableSpeciesGenusArray.length == 2 && metaTableSpeciesGenusArray[0] != null
-				&& metaTableSpeciesGenusArray[1] != null) {
+		if (metaTableSpeciesGenusArray != null && metaTableSpeciesGenusArray.length == 2 && metaTableSpeciesGenusArray[0] != null && metaTableSpeciesGenusArray[1] != null) {
 
 			String[] dbNameGenusSpeciesArray = dbName.split("_");
 			String dbNameGenusSpecies = dbNameGenusSpeciesArray[0] + "_" + dbNameGenusSpeciesArray[1];
@@ -316,8 +315,7 @@ public class Meta extends SingleDatabaseTestCase {
 		// and all coord systems should be valid from coord_system
 		// can also have # instead of | as used in unfinished contigs etc
 
-		Pattern assemblyMappingPattern = Pattern
-				.compile("^([a-zA-Z0-9.]+)(:[a-zA-Z0-9._]+)?[\\|#]([a-zA-Z0-9._]+)(:[a-zA-Z0-9._]+)?([\\|#]([a-zA-Z0-9.]+)(:[a-zA-Z0-9._]+)?)?$");
+		Pattern assemblyMappingPattern = Pattern.compile("^([a-zA-Z0-9.]+)(:[a-zA-Z0-9._]+)?[\\|#]([a-zA-Z0-9._]+)(:[a-zA-Z0-9._]+)?([\\|#]([a-zA-Z0-9.]+)(:[a-zA-Z0-9._]+)?)?$");
 		String[] validCoordSystems = getColumnValues(con, "SELECT name FROM coord_system");
 
 		String[] mappings = getColumnValues(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.mapping'");
@@ -432,8 +430,7 @@ public class Meta extends SingleDatabaseTestCase {
 			ReportManager.correct(this, con, "Taxonomy ID " + dbTaxonID + " is correct for " + species.toString());
 		} else {
 			result = false;
-			ReportManager.problem(this, con, "Taxonomy ID " + dbTaxonID + " in database is not correct - should be "
-					+ Species.getTaxonomyID(species) + " for " + species.toString());
+			ReportManager.problem(this, con, "Taxonomy ID " + dbTaxonID + " in database is not correct - should be " + Species.getTaxonomyID(species) + " for " + species.toString());
 		}
 		return result;
 
@@ -542,8 +539,7 @@ public class Meta extends SingleDatabaseTestCase {
 
 	// ---------------------------------------------------------------------
 	/**
-	 * Check that the schema_version in the meta table is present and matches the
-	 * database name.
+	 * Check that the schema_version in the meta table is present and matches the database name.
 	 */
 	private boolean checkSchemaVersionDBName(DatabaseRegistryEntry dbre) {
 
@@ -576,8 +572,7 @@ public class Meta extends SingleDatabaseTestCase {
 
 		} else if (!dbNameVersion.equals(schemaVersion)) {
 
-			ReportManager.problem(this, con, "Meta schema_version " + schemaVersion
-					+ " does not match version inferred from database name (" + dbNameVersion + ")");
+			ReportManager.problem(this, con, "Meta schema_version " + schemaVersion + " does not match version inferred from database name (" + dbNameVersion + ")");
 			return false;
 
 		} else {
@@ -591,8 +586,7 @@ public class Meta extends SingleDatabaseTestCase {
 
 	// ---------------------------------------------------------------------
 	/**
-	 * Check that the assembly_version in the meta table is present and matches
-	 * the database name.
+	 * Check that the assembly_version in the meta table is present and matches the database name.
 	 */
 	private boolean checkAssemblyVersion(Connection con, String dbNameAssemblyVersion, String metaTableAssemblyVersion) {
 
@@ -605,14 +599,12 @@ public class Meta extends SingleDatabaseTestCase {
 
 		} else if (!dbNameAssemblyVersion.equals(metaTableAssemblyVersion)) {
 
-			ReportManager.problem(this, con, "Meta assembly_version " + metaTableAssemblyVersion
-					+ " does not match version inferred from database name (" + dbNameAssemblyVersion + ")");
+			ReportManager.problem(this, con, "Meta assembly_version " + metaTableAssemblyVersion + " does not match version inferred from database name (" + dbNameAssemblyVersion + ")");
 			return false;
 
 		} else {
 
-			ReportManager.correct(this, con, "assembly_version " + metaTableAssemblyVersion + " matches database name version "
-					+ dbNameAssemblyVersion);
+			ReportManager.correct(this, con, "assembly_version " + metaTableAssemblyVersion + " matches database name version " + dbNameAssemblyVersion);
 
 		}
 		return result;
@@ -628,19 +620,16 @@ public class Meta extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-		String keys = "(\'genebuild.level\', " + "\'transcriptbuild.level\'," + "\'exonbuild.level\'," + "\'repeat_feature.level\',"
-				+ "\'dna_align_featurebuild.level\'," + "\'protein_align_featurebuild.level\'," + "\'simple_featurebuild.level\',"
-				+ "\'prediction_transcriptbuild.level\'," + "\'prediction_exonbuild.level\')";
+		String keys = "(\'genebuild.level\', " + "\'transcriptbuild.level\'," + "\'exonbuild.level\'," + "\'repeat_feature.level\'," + "\'dna_align_featurebuild.level\',"
+				+ "\'protein_align_featurebuild.level\'," + "\'simple_featurebuild.level\'," + "\'prediction_transcriptbuild.level\'," + "\'prediction_exonbuild.level\')";
 
 		int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key IN " + keys);
 		// ReportManager.info(this, con, rows + " %build.level rows present in Meta
 		// table");
 		/*
-		 * if (rows != 9) { ReportManager.problem(this, con, rows + " GB: No
-		 * %build.level entries in the meta table - run
-		 * ensembl/misc-scripts/meta_levels.pl"); } else {
-		 * ReportManager.correct(this, con, rows + " build.level rows present");
-		 * result = true; }
+		 * if (rows != 9) { ReportManager.problem(this, con, rows + " GB: No %build.level entries in the meta table - run
+		 * ensembl/misc-scripts/meta_levels.pl"); } else { ReportManager.correct(this, con, rows + " build.level rows present"); result
+		 * = true; }
 		 */
 		return result;
 
@@ -664,8 +653,7 @@ public class Meta extends SingleDatabaseTestCase {
 
 			while (rs.next()) {
 
-				ReportManager.problem(this, con, "Key/value pair " + rs.getString(1) + "/" + rs.getString(2)
-						+ " appears more than once in the meta table");
+				ReportManager.problem(this, con, "Key/value pair " + rs.getString(1) + "/" + rs.getString(2) + " appears more than once in the meta table");
 				result = false;
 
 			}
@@ -700,8 +688,7 @@ public class Meta extends SingleDatabaseTestCase {
 
 			while (rs.next()) {
 
-				ReportManager.problem(this, con, "Meta table entry for key " + rs.getString(1) + " has value " + rs.getString(2)
-						+ " which is probably incorrect");
+				ReportManager.problem(this, con, "Meta table entry for key " + rs.getString(1) + " has value " + rs.getString(2) + " which is probably incorrect");
 				result = false;
 
 			}
@@ -718,6 +705,58 @@ public class Meta extends SingleDatabaseTestCase {
 
 	}
 
+	// ---------------------------------------------------------------------
+	/**
+	 * Check for species.classification entries that contain spaces.
+	 */
+	private boolean checkSpacesInSpeciesClassification(DatabaseRegistryEntry dbre) {
+
+		boolean result = true;
+
+		Connection con = dbre.getConnection();
+
+		int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='species.classification' AND meta_value LIKE '% %'");
+
+		if (rows > 0) {
+			ReportManager.problem(this, con, rows + " species.classification entries have values with spaces");
+			result = false;
+		} else {
+			ReportManager.correct(this, con, "No species.classification entries contain spaces");
+		}
+
+		return result;
+
+	}
+
+	// ---------------------------------------------------------------------
+
+	/**
+	 * Check that the genebuild.method entry exists and has one of the allowed values.
+	 */
+	private boolean checkGenebuildMethod(DatabaseRegistryEntry dbre) {
+
+		boolean result = true;
+
+		String[] allowedMethods = { "full_genebuild", "projection_build", "import", "mixed_strategy_build" };
+
+		Connection con = dbre.getConnection();
+		String method = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.method'");
+
+		if (method.equals("")) {
+			ReportManager.problem(this, con, "No genebuild.method entry present in Meta table");
+			return false;
+		}
+
+		if (!Utils.stringInArray(method, allowedMethods, true)) {
+			ReportManager.problem(this, con, "genebuild.method value " + method + " is not in list of allowed methods");
+			result = false;
+		} else {	
+			ReportManager.problem(this, con, "genebuild.method " + method + " is valid");
+		}
+		
+		return result;
+
+	}
 	// ---------------------------------------------------------------------
 
 } // Meta
