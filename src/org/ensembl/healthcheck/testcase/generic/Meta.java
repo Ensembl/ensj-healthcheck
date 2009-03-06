@@ -248,7 +248,7 @@ public class Meta extends SingleDatabaseTestCase {
 				result = false;
 				ReportManager.problem(this, con, rows + " meta entries for " + metaKey + " when there shouldn't be any");
 			} else {
-				ReportManager.correct(this, con, "No entry in meta table for " + metaKey);
+				ReportManager.correct(this, con, "No entry in meta table for " + metaKey + " - this is correct");
 			}
 		}
 
