@@ -256,8 +256,7 @@ sub get_latest_session_id{
     my ($dbi,$new_release) = @_;
     #get latest session_id for the new release
     my $sth_session_id = $dbi->prepare("SELECT max(session_id) FROM session WHERE db_release = ?");
-    #$sth_session_id->execute($new_release);
-    $sth_session_id->execute();
+    $sth_session_id->execute($new_release);
     my $latest_session_id = $sth_session_id->fetch();
     if ($latest_session_id->[0]){
 	return $latest_session_id->[0];
