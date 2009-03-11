@@ -751,7 +751,7 @@ public class Meta extends SingleDatabaseTestCase {
 			ReportManager.problem(this, con, "genebuild.method value " + method + " is not in list of allowed methods");
 			result = false;
 		} else {	
-			ReportManager.problem(this, con, "genebuild.method " + method + " is valid");
+			ReportManager.correct(this, con, "genebuild.method " + method + " is valid");
 		}
 		
 		return result;
