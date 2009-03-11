@@ -14,7 +14,7 @@ public enum Species
         TAENIOPYGIA_GUTTATA(59729,"taeGut","ENSTGU","zebrafinch,zebra_finch,taeniopygia_guttata,taeniopygiaguttata,tguttata,poephila_guttata,taenopygia_guttata"),
 	ORYCTOLAGUS_CUNICULUS(9986,"RABBIT","ENSOCU","rabbit,oryctolagus,domestic_rabbit,bunny,japanese_white_rabbit,european_rabbit,oryctolagus_cuniculus"),
 	GALLUS_GALLUS(9031,"WASHUC","ENSGAL","chicken,chick,ggallus,gallusgallus,gallus_gallus"),
-	DANIO_RERIO(7955,"ZFISH","ENSDAR","zebrafish,danio,drerio,daniorerio,danio_rerio"),
+	DANIO_RERIO(7955,"Zv","ENSDAR","zebrafish,danio,drerio,daniorerio,danio_rerio"),
 	CULEX_PIPIENS(7175,"CpiJ","CPIJ","culex,culexpipiens,culex_pipiens"),
 	TAKIFUGU_RUBRIPES(31033,"FUGU","ENSTRU","pufferfish,fugu,frubripes,fugurubripes,fugu_rubripes,takifugu,trubripes,takifugurubripes,takifugu_rubripes"),
 	CAENORHABDITIS_BRIGGSAE(6238,"CBR","","briggsae,cbriggsae,caenorhabditisbriggsae,caenorhabditis_briggsae"),
