@@ -25,3 +25,10 @@ TEC
 unprocessed_pseudogene
 transcribed_pseudogene
 polymorphic
+transcribed_unprocessed_pseudogene
+unitary_pseudogene
+polymorphic_pseudogene
+transcribed_unitary_pseudogene
+IG_gene
+IG_pseudogene
+transcribed_processed_pseudogene
