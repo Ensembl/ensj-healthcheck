@@ -737,6 +737,11 @@ public class Meta extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
+		// only valid for core databases
+		if (dbre.getType() != DatabaseType.CORE) {
+			return true;
+		}
+		
 		String[] allowedMethods = { "full_genebuild", "projection_build", "import", "mixed_strategy_build" };
 
 		Connection con = dbre.getConnection();
