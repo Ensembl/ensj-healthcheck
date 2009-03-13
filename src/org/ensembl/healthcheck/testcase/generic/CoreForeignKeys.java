@@ -217,7 +217,12 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 			if (analysisTab.equals("protein_align_feature") || analysisTab.equals("dna_align_feature") || analysisTab.equals("repeat_feature")) {
 				continue;
 			}
-			result &= checkForOrphans(con, analysisTab, "analysis_id", "analysis", "analysis_id", true);
+
+			if (countOrphansWithConstraint(con, analysisTab, "analysis_id", "analysis", "analysis_id", "analysis_id IS NOT NULL") > 0) {
+				ReportManager.problem(this, con, "FAILED object_xref -> analysis using FK analysis_id relationships");
+				result = false;
+			}
+			
 		}
 
 
