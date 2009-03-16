@@ -139,6 +139,11 @@ public class LogicNamesDisplayable extends SingleDatabaseTestCase {
 				continue;
 			}
 
+			// skip object_xref as it's allowed to have null analysis_ids
+			if (featureTableName.equals("object_xref")){
+				continue;
+			}
+			
 			logger.finest("Analysing features in " + featureTableName);
 
 			// get analysis IDs
