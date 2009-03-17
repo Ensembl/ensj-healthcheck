@@ -126,7 +126,7 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 						// analysis-id
 						if (featureTable.equals("transcript") && analysesFromFeatureTables.get(analysisID).equals("gene")) {
 							result = true;
-							// ditto for unmapped_object and identity_xref
+							// ditto for unmapped_object and object_xref
 						} else if (featureTable.equals("unmapped_object") && analysesFromFeatureTables.get(analysisID).equals("object_xref")) {
 							result = true;
 						} else {
