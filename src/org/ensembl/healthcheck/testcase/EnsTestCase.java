@@ -1878,9 +1878,10 @@ public abstract class EnsTestCase {
 
 		try {
 			Statement stmt = con.createStatement();
-			ResultSet rs = stmt
-					.executeQuery("SELECT sr.name FROM seq_region sr, seq_region_attrib sra, attrib_type at, coord_system cs WHERE cs.coord_system_id=sr.coord_system_id AND sra.seq_region_id=sr.seq_region_id AND sra.attrib_type_id=at.attrib_type_id AND at.code='toplevel' AND cs.name='chromosome' AND cs.attrib LIKE '%default_version%'");
-			while (rs.next()) {
+			//ResultSet rs = stmt
+			    //				.executeQuery("SELECT sr.name FROM seq_region sr, seq_region_attrib sra, attrib_type at, coord_system cs WHERE cs.coord_system_id=sr.coord_system_id AND sra.seq_region_id=sr.seq_region_id AND sra.attrib_type_id=at.attrib_type_id AND at.code='toplevel' AND cs.name='chromosome' AND cs.attrib LIKE '%default_version%'");
+			ResultSet rs = stmt.executeQuery("SELECT sr.name FROM seq_region sr, seq_region_attrib sra, attrib_type at, coord_system cs WHERE cs.coord_system_id=sr.coord_system_id AND sra.seq_region_id=sr.seq_region_id AND sra.attrib_type_id=at.attrib_type_id AND at.code='toplevel' AND cs.name='chromosome' AND cs.attrib LIKE '%default_version%' and sr.seq_region_id not in (select sr2.seq_region_id from seq_region sr2, seq_region_attrib sra1, attrib_type at1 where sr2.seq_region_id = sra1.seq_region_id and sra1.attrib_type_id = at1.attrib_type_id and at1.code = 'non_ref')");
+			    while (rs.next()) {
 				names.add(rs.getString(1));
 			}
 		} catch (SQLException se) {
