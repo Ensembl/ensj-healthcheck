@@ -21,6 +21,7 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
@@ -53,8 +54,8 @@ public class GeneCount extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		// MT chromosome should have 13 protein coding genes
-		if (dbre.getSpecies() == Species.HOMO_SAPIENS) {
+		// MT chromosome should have 13 protein coding genes, only applies to core database
+			if (dbre.getSpecies() == Species.HOMO_SAPIENS && dbre.getType() == DatabaseType.CORE) {
 			result &= countMTGenes(dbre.getConnection());
 		}
 
