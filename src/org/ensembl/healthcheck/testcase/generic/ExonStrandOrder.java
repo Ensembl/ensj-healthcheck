@@ -68,12 +68,13 @@ public class ExonStrandOrder extends SingleDatabaseTestCase {
 
         int singleExonTranscripts = 0, transcriptCount = 0;
 
-        String sql = "SELECT g.gene_id, g.seq_region_start, g.seq_region_end, g.seq_region_strand, tr.transcript_id, tr.seq_region_start, tr.seq_region_end, tr.seq_region_strand,e.exon_id, e.seq_region_start, e.seq_region_end, e.seq_region_strand, et.rank, gsi.stable_id "
-                + "FROM   gene g, transcript tr, exon_transcript et, exon e, gene_stable_id gsi "
+        String sql = "SELECT g.gene_id, g.seq_region_start, g.seq_region_end, g.seq_region_strand, tr.transcript_id, tr.seq_region_start, tr.seq_region_end, tr.seq_region_strand,e.exon_id, e.seq_region_start, e.seq_region_end, e.seq_region_strand, et.rank, gsi.stable_id, tsi.stable_id "
+                + "FROM   gene g, transcript tr, exon_transcript et, exon e, gene_stable_id gsi, transcript_stable_id tsi "
                 + "WHERE  e.exon_id = et.exon_id "
                 + "AND    et.transcript_id = tr.transcript_id "
                 + "AND    tr.gene_id = g.gene_id "
                 + "AND    g.gene_id = gsi.gene_id "
+                + "AND    tr.transcript_id=tsi.transcript_id "
                 + "ORDER BY et.transcript_id, et.rank";
 
         Connection con = dbre.getConnection();
@@ -108,7 +109,8 @@ public class ExonStrandOrder extends SingleDatabaseTestCase {
                 int exonStrand = rs.getInt(12);
                 int exonRank = rs.getInt(13);
                 String geneStableID = rs.getString(14);
-
+                String transcriptStableID = rs.getString(15);
+                
                 if (geneStableID.equalsIgnoreCase("CG32491")) {
                     continue;
                 }
@@ -188,7 +190,7 @@ public class ExonStrandOrder extends SingleDatabaseTestCase {
 
                     // check for overlong transcripts
                     if (transcriptEnd - transcriptStart > TRANSCRIPT_WARN_LENGTH) {
-                        ReportManager.warning(this, con, "Long transcript " + lastTranscriptID + " length "
+                        ReportManager.warning(this, con, "Long transcript " + transcriptStableID + " length "
                                 + (transcriptEnd - transcriptStart));
                     }
 
