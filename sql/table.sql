@@ -26,7 +26,7 @@ CREATE TABLE report (
   timestamp				DATETIME,
   testcase				VARCHAR(255),
   result				ENUM("PROBLEM", "CORRECT", "WARNING", "INFO"),
-  text					VARCHAR(255),
+  text					TEXT,
   team_responsible                      VARCHAR(255),
   created                               DATETIME,
   
