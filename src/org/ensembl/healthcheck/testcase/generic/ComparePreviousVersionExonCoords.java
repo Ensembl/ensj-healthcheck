@@ -51,6 +51,11 @@ public class ComparePreviousVersionExonCoords extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
+		if (System.getProperty("ignore.previous.checks") != null) {
+			logger.finest("ignore.previous.checks is set in database.properties, skipping this test");
+			return true;
+		}
+		
 		Connection currentCon = current.getConnection();
 
 		// skip databases where there's no previous one (e.g. new species)
