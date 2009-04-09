@@ -141,7 +141,7 @@ public class ListAllTests extends TestRunner {
         Iterator it = tests.iterator();
         while (it.hasNext()) {
             EnsTestCase test = (EnsTestCase) it.next();
-            if (listAllGroups || test.inGroup(groupToList)) {
+            if (listAllGroups || test.inGroup(groupToList) || test.getShortTestName().toLowerCase().equals(groupToList.toLowerCase())) {
                 StringBuffer testline = new StringBuffer(test.getShortTestName());
 
                 if (test.canRepair()) {
