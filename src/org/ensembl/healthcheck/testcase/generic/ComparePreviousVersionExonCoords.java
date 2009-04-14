@@ -67,7 +67,11 @@ public class ComparePreviousVersionExonCoords extends SingleDatabaseTestCase {
 		Connection previousCon = previous.getConnection();
 
 		// and those where the genebuild version has changed - expect exon coords to change then
-		if (current.getNumericGeneBuildVersion() != previous.getNumericGeneBuildVersion()) {
+		// if we can't get the genebuild version (due to a non-standard database name for example, check anyway)
+		int currentVersion = current.getNumericGeneBuildVersion();
+		int previousVersion = previous.getNumericGeneBuildVersion();
+		
+		if (currentVersion > 0 && previousVersion > 0 && currentVersion != previousVersion) {
 			ReportManager.correct(this, currentCon, "Genebuild version has changed since " + previous.getName() + ", skipping");
 			return true;
 		}
