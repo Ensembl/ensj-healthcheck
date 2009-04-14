@@ -20,8 +20,7 @@ import java.util.logging.Logger;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Container for information about a database that can be stored in a
- * DatabaseRegistry.
+ * Container for information about a database that can be stored in a DatabaseRegistry.
  * 
  */
 public class DatabaseRegistryEntry implements Comparable {
@@ -45,48 +44,43 @@ public class DatabaseRegistryEntry implements Comparable {
 
 	// -----------------------------------------------------------------
 	/**
-	 * Create a new DatabaseRegistryEntry. A connection to the named database is
-	 * also created if required.
+	 * Create a new DatabaseRegistryEntry. A connection to the named database is also created if required.
 	 * 
 	 * @param name
 	 *          The name of the database.
 	 * @param species
-	 *          The species that this database represents. If null, guess it from
-	 *          name.
+	 *          The species that this database represents. If null, guess it from name.
 	 * @param type
 	 *          The type of this database. If null, guess it from name.
 	 * @param connect
-	 *          If true, open a connection to the database on the primary database
-	 *          server.
+	 *          If true, open a connection to the database on the primary database server.
 	 */
 	public DatabaseRegistryEntry(String name, Species species, DatabaseType type, boolean connect) {
 
 		this.name = name;
-		
+
 		if (connect) {
-			this.con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL") + name, System
-					.getProperty("user"), System.getProperty("password"));
+			this.con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL") + name, System.getProperty("user"), System.getProperty("password"));
 			isMultiSpecies = checkMultiSpecies(con);
 		}
-		
+
 		if (species != null) {
 			this.species = species;
 		} else {
 			this.species = setSpeciesFromName(name);
 		}
-		
+
 		if (type != null) {
 			this.type = type;
 		} else {
 			this.type = setTypeFromName(name);
-		}	
+		}
 
 	}
 
 	// -----------------------------------------------------------------
 	/**
-	 * Attempt to figure out species from database name. Also set schema and
-	 * genebuild versions as appropriate.
+	 * Attempt to figure out species from database name. Also set schema and genebuild versions as appropriate.
 	 * 
 	 * @param name
 	 *          The name to use.
@@ -101,7 +95,7 @@ public class DatabaseRegistryEntry implements Comparable {
 		// schema version should be the first number (never the first bit though), except in multi-species databases
 		for (int i = 1; i < bits.length; i++) {
 			if (bits[i].matches("^[0-9]+$")) {
-				this.schemaVersion = isMultiSpecies() ? bits[i+1] : bits[i];
+				this.schemaVersion = isMultiSpecies() ? bits[i + 1] : bits[i];
 				break;
 			}
 		}
@@ -117,7 +111,7 @@ public class DatabaseRegistryEntry implements Comparable {
 			}
 
 			if (Species.resolveAlias(alias) != Species.UNKNOWN) {
-			    return Species.resolveAlias(alias);
+				return Species.resolveAlias(alias);
 			}
 		}
 
@@ -141,8 +135,8 @@ public class DatabaseRegistryEntry implements Comparable {
 		// compara, mart, go doesn't really have a species. It can be ensembl_type
 		// or username_ensembl_type
 		if (bits.length >= 2
-				&& (bits[1].equalsIgnoreCase("compara") || bits[1].equalsIgnoreCase("go") || bits[1].equalsIgnoreCase("mart")
-						|| bits[1].equalsIgnoreCase("compara") || bits[1].equalsIgnoreCase("go") || bits[1].equalsIgnoreCase("mart"))) {
+				&& (bits[1].equalsIgnoreCase("compara") || bits[1].equalsIgnoreCase("go") || bits[1].equalsIgnoreCase("mart") || bits[1].equalsIgnoreCase("compara") || bits[1].equalsIgnoreCase("go") || bits[1]
+						.equalsIgnoreCase("mart"))) {
 			return Species.UNKNOWN;
 		}
 
@@ -275,12 +269,13 @@ public class DatabaseRegistryEntry implements Comparable {
 			return DatabaseType.NCBI_TAXONOMY;
 
 		}
-		
-		// ensembl genomes collection databases, e.g. hornead_escherichia_shigella_collection_core_0_52_1a or escherichia_shigella_collection_core_0_52_1a	
+
+		// ensembl genomes collection databases, e.g. hornead_escherichia_shigella_collection_core_0_52_1a or
+		// escherichia_shigella_collection_core_0_52_1a
 		if (name.contains("collection")) {
 			return DatabaseType.CORE;
 		}
-		
+
 		// other permutations?
 
 		if (result.equals(DatabaseType.UNKNOWN) && name.length() > 0) {
@@ -386,8 +381,13 @@ public class DatabaseRegistryEntry implements Comparable {
 	}
 
 	// -----------------------------------------------------------------
+	// Return the numeric genebuild version, or -1 if this cannot be deduced (e.g. from a non-standard database name)
 
 	public int getNumericGeneBuildVersion() {
+
+		if (geneBuildVersion == null) {
+			return -1;
+		}
 
 		String[] bits = geneBuildVersion.split("[a-zA-Z]");
 
@@ -418,9 +418,9 @@ public class DatabaseRegistryEntry implements Comparable {
 	public boolean checkMultiSpecies(Connection con) {
 
 		boolean result = false;
-		//variation databases do not have coord_system table
-		if (name.matches("^.*_variation_.*$") || name.matches("^.*_compara_.*$")){			
-		    return result;
+		// variation databases do not have coord_system table
+		if (name.matches("^.*_variation_.*$") || name.matches("^.*_compara_.*$")) {
+			return result;
 		}
 		try {
 			Statement stmt = con.createStatement();
