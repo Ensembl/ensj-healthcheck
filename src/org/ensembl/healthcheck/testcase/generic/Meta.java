@@ -60,6 +60,8 @@ public class Meta extends SingleDatabaseTestCase {
 
 		result &= tableHasRows(con);
 
+		result &= checkOverlappingRegions(con);
+
 		if (dbre.getType() == DatabaseType.CORE) {
 			result &= checkKeysPresent(con);
 			result &= checkKeysNotPresent(con);
@@ -211,6 +213,39 @@ public class Meta extends SingleDatabaseTestCase {
 
 	}
 
+    // ---------------------------------------------------------------------
+
+    //this HC will check the Meta table contains the assembly.overlapping_regions and 
+    //that it is set to false (so no overlapping regions in the genome)
+	private boolean checkOverlappingRegions(Connection con) {
+
+		boolean result = true;
+
+		// check that certain keys exist
+		String[] metaKeys = { "assembly.overlapping_regions"};
+		for (int i = 0; i < metaKeys.length; i++) {
+			String metaKey = metaKeys[i];
+			int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey + "'");
+			if (rows == 0) {
+				result = false;
+				ReportManager.problem(this, con, "No entry in meta table for " + metaKey + ". It might need to run the misc-scripts/overlapping_regions.pl script");
+			} else {
+			    String[] metaValue = getColumnValues(con,"SELECT meta_value FROM meta WHERE meta_key='" + metaKey + "'");
+			    if (metaValue[0].equals("1")){
+				//there are overlapping regions !! API might behave odly
+				ReportManager.problem(this,con,"There are overlapping regions in the database (e.g. two versions of the same chromosomes). The API" +
+						      " migth have unexpected results when trying to map features to that coordinate system.");
+				result = false;
+			    }
+			    else{
+				ReportManager.correct(this, con, metaKey + " entry present");
+			    }
+			}
+		}
+
+		return result;
+	}
+
 	// ---------------------------------------------------------------------
 
 	private boolean checkKeysPresent(Connection con) {
@@ -218,8 +253,7 @@ public class Meta extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		// check that certain keys exist
-		String[] metaKeys = { "assembly.default", "species.classification", "species.ensembl_common_name", "species.taxonomy_id", "assembly.name", "assembly.date", "species.ensembl_alias_name",
-				"repeat.analysis", "marker.priority", "assembly.coverage_depth", "assembly.num_toplevel_seqs" };
+		String[] metaKeys = { "assembly.default", "species.classification", "species.ensembl_common_name", "species.taxonomy_id", "assembly.name", "assembly.date", "species.ensembl_alias_name", "repeat.analysis", "marker.priority", "assembly.coverage_depth", "assembly.num_toplevel_seqs"};
 		for (int i = 0; i < metaKeys.length; i++) {
 			String metaKey = metaKeys[i];
 			int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey + "'");
