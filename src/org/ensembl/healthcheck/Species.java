@@ -8,7 +8,8 @@ import java.util.EnumMap;
 
 public enum Species
 {
-	//defined new Species and properties: taxonomy_id, assemblyprefix, stableIDprefix, alias 
+	//defined new Species and properties: taxonomy_id, assemblyprefix, stableIDprefix, alias
+	 CALLITHRIX_JACCHUS(9483, "callJacc", "CALJAC","marmoset,white-tufted-ear marmoset,callithrix_jacchus,callithrix jacchus,Callithrix_jacchus,Callithrix jacchus,callithrix"),
         CHOLOEPUS_HOFFMANNI(9358,"choHof","ENSCHO","Sloth,Two-toed_sloth,Hoffmans_two-fingered_sloth,choloepus_hoffmanni"),
         GORILLA_GORILLA(9593,"gorGor","ENSGGO","gorilla,gorilla_gorilla,ggor"),
         TAENIOPYGIA_GUTTATA(59729,"taeGut","ENSTGU","zebrafinch,zebra_finch,taeniopygia_guttata,taeniopygiaguttata,tguttata,poephila_guttata,taenopygia_guttata"),
