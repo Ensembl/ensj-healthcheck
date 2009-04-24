@@ -25,8 +25,6 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
-import com.sun.tools.javac.util.Name;
-
 /**
  * Check that certain seq_region_attribs are present.
  */
