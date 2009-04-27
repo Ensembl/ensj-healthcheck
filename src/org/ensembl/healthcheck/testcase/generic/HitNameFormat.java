@@ -61,7 +61,7 @@ public class HitNameFormat extends SingleDatabaseTestCase {
 			int rows = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE hit_name LIKE '%|%'");
 
 			if (rows > 0) {
-				ReportManager.problem(this, con, rows + " " + table + "s appear to have incorrectly formatted hit_names");
+				ReportManager.problem(this, con, rows + " " + table + "s appear to have incorrectly formatted hit_names (containing a '|' symbol)");
 				ReportManager.problem(this, con, "USEFUL SQL: SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(hit_name,'|',-2),'|',1) FROM dna_align_feature WHERE hit_name LIKE 'gi%|%'");
 				ReportManager.problem(this, con, "UPDATE protein_align_feature SET hit_name = SUBSTRING_INDEX(SUBSTRING_INDEX(hit_name,'|',-2),'|',1) WHERE hit_name LIKE 'gi|%'");
 				result = false;
