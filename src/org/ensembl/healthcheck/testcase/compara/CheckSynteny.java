@@ -133,7 +133,8 @@ public class CheckSynteny extends SingleDatabaseTestCase {
                         + " AND ga1.method_link_species_set_id = " + alignment_mlss_id[k]
                         + " AND ga1.dnafrag_id <> ga2.dnafrag_id GROUP BY ga2.dnafrag_id "
                         + " ORDER BY count(*) DESC LIMIT 1");
-                        if (Integer.valueOf(aln_result[1]).intValue() > aln_count) {
+
+                        if (aln_result.length > 0 && Integer.valueOf(aln_result[1]).intValue() > aln_count) {
                             aln_count = Integer.valueOf(aln_result[1]).intValue();
                             aln_name = aln_result[0];
                             aln_mlss_id = alignment_mlss_id[k];
