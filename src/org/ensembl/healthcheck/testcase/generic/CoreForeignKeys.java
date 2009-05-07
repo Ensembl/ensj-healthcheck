@@ -232,7 +232,9 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		//gene and there are no null values in this column
 		result &= checkCanonicalTranscriptIDKey(con);
 				
-
+		//added by dr2: check that the foreign key display_marker_synonym_id points to a synonym
+		//for the marker
+		result &= checkDisplayMarkerSynonymID(con);
 		return result;
 
 	}
@@ -296,4 +298,22 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 			}
 			return result;
 	} //checkCanonicalTranscriptIDKey
+	
+	private boolean checkDisplayMarkerSynonymID(Connection con){
+		boolean result = true;
+		
+		//the foreign key has been checked before, but might not point to a marker_synonym
+		//of this markers=
+		int rows = getRowCount(con,"select count(*) from marker m where m.display_marker_synonym_id not in " +
+				"(select ms.marker_synonym_id from marker_synonym ms where m.marker_id = ms.marker_id)");
+		if (rows>0){
+			//problem, there are markers that have display_marker_synonym_id that is not part of the
+			//synonyms for the marker
+			String useful_sql = "select m.marker_id, m.display_marker_synonym_id, ms1.marker_synonym_id, ms1.name from marker m, marker_synonym ms1 where m.marker_id = ms1.marker_id and m.display_marker_synonym_id not in (select ms.marker_synonym_id from marker_synonym ms where m.marker_id = ms.marker_id)";
+			ReportManager.problem(this,con,rows + " rows in marker table have a display_marker_synonym that is not part of the synonyms for this marker" +
+						" Try '" + useful_sql + "' to find out the offending markers");
+			result = false;
+		}
+		return result;
+} //checkDisplayMarkerSynonymID
 } // CoreForeignKeys
