@@ -681,7 +681,9 @@ public final class DBUtils {
 
 		List<String[]> result = new ArrayList<String[]>();
 
-		typeFilter = typeFilter.toLowerCase();
+		if (typeFilter != null) {
+			typeFilter = typeFilter.toLowerCase();
+		}
 
 		try {
 
@@ -693,7 +695,7 @@ public final class DBUtils {
 				for (int i = 0; i < 6; i++) {
 					info[i] = rs.getString(i+1);
 				}
-				if (info[1].toLowerCase().startsWith(typeFilter)) {
+				if (typeFilter == null || info[1].toLowerCase().startsWith(typeFilter)) {
 					result.add(info);
 				}
 			}
