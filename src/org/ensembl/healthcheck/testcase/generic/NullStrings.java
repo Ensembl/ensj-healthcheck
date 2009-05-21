@@ -66,7 +66,7 @@ public class NullStrings extends SingleDatabaseTestCase {
 			String table = tables[i];
 			boolean thisTableProblem = false;
 			
-			List columnsAndTypes = DBUtils.getColumnsAndTypesInTable(con, table, "varchar");
+			List columnsAndTypes = DBUtils.getTableInfo(con, table, "varchar");
 			Iterator it = columnsAndTypes.iterator();
 			while (it.hasNext()) {
 

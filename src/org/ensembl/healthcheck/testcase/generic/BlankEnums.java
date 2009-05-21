@@ -66,7 +66,7 @@ public class BlankEnums extends SingleDatabaseTestCase {
 
 			String table = tables[i];
 			
-			List columnsAndTypes = DBUtils.getColumnsAndTypesInTable(con, table, "enum");
+			List columnsAndTypes = DBUtils.getTableInfo(con, table, "enum");
 			Iterator it = columnsAndTypes.iterator();
 			while (it.hasNext()) {
 
