@@ -170,7 +170,8 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
 
             // Re-open the statement to make sure it's GC'd
             stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
-            stmt.setFetchSize(1000);
+            //stmt.setFetchSize(1000);
+	    stmt.setFetchSize(Integer.MIN_VALUE);
 
             logger.fine("Built translation length cache, about to look at protein features");
             // dumpTranslationLengths(con, translationLengths, 100);
