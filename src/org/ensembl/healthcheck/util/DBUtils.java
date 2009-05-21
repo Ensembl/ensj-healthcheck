@@ -667,7 +667,7 @@ public final class DBUtils {
 
 	// -------------------------------------------------------------------------
 	/**
-	 * List the columns and their types in a particular table.
+	 * List the column information in a table - names, types, defaults etc.
 	 * 
 	 * @param table
 	 *          The name of the table to list.
@@ -675,11 +675,11 @@ public final class DBUtils {
 	 *          The connection to use.
 	 * @param typeFilter
 	 *          If not null, only return columns whose types start with this string (case insensitive).
-	 * @return A List of 2-element String[] arrays representing the column names and their types.
+	 * @return A List of 6-element String[] arrays representing: 0: Column name 1: Type 2: Null? 3: Key 4: Default 5: Extra
 	 */
-	public static List getColumnsAndTypesInTable(Connection con, String table, String typeFilter) {
+	public static List<String[]> getTableInfo(Connection con, String table, String typeFilter) {
 
-		List result = new ArrayList();
+		List<String[]> result = new ArrayList<String[]>();
 
 		typeFilter = typeFilter.toLowerCase();
 
@@ -689,11 +689,12 @@ public final class DBUtils {
 			ResultSet rs = stmt.executeQuery("DESCRIBE " + table);
 
 			while (rs.next()) {
-				String[] nameType = new String[2];
-				nameType[0] = rs.getString(1);
-				nameType[1] = rs.getString(2);
-				if (nameType[1].toLowerCase().startsWith(typeFilter)) {
-					result.add(nameType);
+				String[] info = new String[6];
+				for (int i = 0; i < 6; i++) {
+					info[i] = rs.getString(i+1);
+				}
+				if (info[1].toLowerCase().startsWith(typeFilter)) {
+					result.add(info);
 				}
 			}
 
@@ -745,7 +746,7 @@ public final class DBUtils {
 	}
 
 	// ---------------------------------------------------------------------
-	
+
 	/**
 	 * Get the meta_value for a named key in the meta table.
 	 */
@@ -754,7 +755,7 @@ public final class DBUtils {
 		String result = "";
 
 		try {
-			ResultSet rs = con.createStatement().executeQuery("SELECT meta_value FROM meta WHERE meta_key='" + key +"'");
+			ResultSet rs = con.createStatement().executeQuery("SELECT meta_value FROM meta WHERE meta_key='" + key + "'");
 			if (rs.next()) {
 				result = rs.getString(1);
 			}
