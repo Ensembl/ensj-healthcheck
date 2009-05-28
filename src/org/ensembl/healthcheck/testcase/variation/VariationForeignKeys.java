@@ -119,19 +119,19 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 	
 	rows = getRowCount(con,"SELECT COUNT(*) FROM variation_feature vf, flanking_sequence f where vf.variation_id=f.variation_id and vf.seq_region_id != f.seq_region_id and vf.map_weight=1 and vf.seq_region_id not in (27795,27796,27797,27798,27799,27800,27801,27802,27803) and f.seq_region_id not in (27795,27796,27797,27798,27799,27800,27801,27802,27803)");
 	if (rows > 0){
-	    ReportManager.problem(this, con, "flanking_sequence contains entries have same variation_id, but different seq_region_id compare with table variation features");
+	    ReportManager.problem(this, con, rows + "entries in flanking_sequence have same variation_id, but different seq_region_id compare with table variation features");
 	    result =  false;
 	}
 	rows = getRowCount(con,"SELECT COUNT(*) FROM compressed_genotype_single_bp c where c.seq_region_start not in (select vf.seq_region_start from variation_feature vf where c.seq_region_id = vf.seq_region_id)");
 	if (rows > 0){
-	    ReportManager.problem(this, con, "Compressed genotype table corrupted: contains entries without variation features");
+	    ReportManager.problem(this, con, rows + "entries in Compressed genotype table without variation features");
 	    result =  false;
 	}
 		
 	if (getRowCount(con,"SHOW TABLES like 'tmp_individual%'") > 0){
 	    rows = getRowCount(con,"SELECT COUNT(*) FROM tmp_individual_genotype_single_bp where length(allele_1) >1 or length(allele_2) > 1");
 	    if (rows > 0){
-		ReportManager.problem(this,con,"The tmp_individual_genotype_single_bp table contains alleles with more than 1 bp");
+		ReportManager.problem(this,con,rows + "entries in The tmp_individual_genotype_single_bp table contains alleles with more than 1 bp");
 		result = false;
 	    }
 	}
