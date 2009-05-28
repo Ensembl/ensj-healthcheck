@@ -63,7 +63,7 @@ public class HitNameFormat extends SingleDatabaseTestCase {
 			if (rows > 0) {
 				ReportManager.problem(this, con, rows + " " + table + "s appear to have incorrectly formatted hit_names (containing a '|' symbol)");
 				ReportManager.problem(this, con, "USEFUL SQL: SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(hit_name,'|',-2),'|',1) FROM " + table + " WHERE hit_name LIKE 'gi%|%'");
-				ReportManager.problem(this, con, "UPDATE protein_align_feature SET hit_name = SUBSTRING_INDEX(SUBSTRING_INDEX(hit_name,'|',-2),'|',1) WHERE hit_name LIKE 'gi|%'");
+				ReportManager.problem(this, con, "UPDATE " + table + " SET hit_name = SUBSTRING_INDEX(SUBSTRING_INDEX(hit_name,'|',-2),'|',1) WHERE hit_name LIKE 'gi|%'");
 				result = false;
 			} else {
 				ReportManager.correct(this, con, "All " + table + "s have correctly formatted hit_names");
