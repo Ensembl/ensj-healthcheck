@@ -72,7 +72,7 @@ public class SeqRegionAttribsPresent extends SingleDatabaseTestCase {
 		
 		if (count > 0) {
 		
-			String str = count + " seq_regions with known, protein_coding genes do not have the GeneNo_knwCod attribute associated\n";
+			String str = count + " seq_regions with known, protein_coding genes do not have the GeneNo_knwCod attribute associated";
 			//str += "USEFUL SQL: SELECT DISTINCT(g.seq_region_id)" + sql;
 			ReportManager.problem(this, con, str);
 			result = false;
