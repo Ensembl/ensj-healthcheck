@@ -18,7 +18,6 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
-import java.util.List;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
@@ -26,11 +25,9 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that certain seq_region_attribs are present.
+ * Check that certain seq_regions that have known, protein_coding genes have the GeneNo_knwCod attribute associated with them.
  */
 public class SeqRegionAttribsPresent extends SingleDatabaseTestCase {
-
-	private String[] attribCodes = { "GeneNo_knwCod" };
 
 	/**
 	 * Create a new SeqRegionAttribsPresent healthcheck.
@@ -38,7 +35,7 @@ public class SeqRegionAttribsPresent extends SingleDatabaseTestCase {
 	public SeqRegionAttribsPresent() {
 
 		addToGroup("release");
-		setDescription("Check that certain seq_region_attribs are present on each chromosome");
+		setDescription("Check that certain seq_regions that have known, protein_coding genes have the GeneNo_knwCod attribute associated with them.");
 		setEffect("Webiste gene counts will be wrong");
 		setFix("Check and re-run seq_region_attribs.pl script");
 		
@@ -69,32 +66,23 @@ public class SeqRegionAttribsPresent extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		List<String> topLevelChrNames = getTopLevelChromosomeNames(con); // Note we only check chromosome names - won't work for species that don't have chromosomes
-
-		for (String chr : topLevelChrNames) {
-
-			if (chr.matches("^Un.*") || chr.matches("^NT_.*") || chr.matches(".*_random") || chr.matches(".*_hap_.*")) {
-				continue;
-			}
-
-			for (int i = 0; i < attribCodes.length; i++) {
-
-				String code = attribCodes[i];
-				int count = getRowCount(con, "SELECT COUNT(*) FROM seq_region sr, attrib_type at, seq_region_attrib sra WHERE sr.seq_region_id=sra.seq_region_id AND sra.attrib_type_id=at.attrib_type_id AND at.code='" + code + "' AND sr.name='" + chr + "'");
-
-				if (count == 0) {
-
-					ReportManager.problem(this, con, "No seq_region_attribs of code " + code + "on toplevel seq region " + chr + " - there should be some. ");
-					result = false;
-
-				} else {
-
-					ReportManager.correct(this, con, count + " seq_region_attrib entries for " + code);
-
-				}
-			}
+		String sql = " FROM gene g WHERE g.biotype='protein_coding' AND g.status='KNOWN' AND g.seq_region_id NOT IN (SELECT DISTINCT(g.seq_region_id) FROM gene g LEFT JOIN seq_region_attrib sra ON g.seq_region_id=sra.seq_region_id WHERE g.biotype='protein_coding' AND g.status='KNOWN' AND sra.attrib_type_id=64 AND sra.seq_region_id IS NOT NULL)";
+		
+		int count = getRowCount(con, "SELECT COUNT(DISTINCT(g.seq_region_id))" + sql);
+		
+		if (count > 0) {
+		
+			String str = count + " seq_regions with known, protein_coding genes do not have the GeneNo_knwCod attribute associated\n";
+			//str += "USEFUL SQL: SELECT DISTINCT(g.seq_region_id)" + sql;
+			ReportManager.problem(this, con, str);
+			result = false;
+			
+		} else {
+			
+			ReportManager.correct(this, con, "All seq_regions with known, protein_coding genes have a GeneNo_knwCod attribute associated with them");
+			
 		}
-
+		
 		return result;
 
 	} // run
