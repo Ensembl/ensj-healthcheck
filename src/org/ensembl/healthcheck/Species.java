@@ -36,7 +36,7 @@ public enum Species
 	MACACA_MULATTA(9544,"MM","ENSMMU","macacamulatta,rhesusmacaque,rhesus_macaque,macaque,macaca_mulatta"),
 	CAENORHABDITIS_ELEGANS(6239,"WS","IGNORE","elegans,celegans,caenorhabditiselegans,caenorhabditis_elegans"),
 	SOREX_ARANEUS(42254,"COMMON_SHREW","ENSSAR","shrew,common_shrew,commonShrew,european_shrew,saraneus,sorex,sorex_araneus"),
-	HOMO_SAPIENS(9606,"NCBI","ENS","human,hsapiens,homosapiens,homo_sapiens"),
+	HOMO_SAPIENS(9606,"GRCh","ENS","human,hsapiens,homosapiens,homo_sapiens"),
 	ORYZIAS_LATIPES(8090,"MEDAKA","ENSORL","medaka,oryzias,japanese_medaka,japanese_rice_fish,japanese_ricefish,japanese_killifish,oryzias_latipes"),
 	AEDES_AEGYPTI(7159,"","IGNORE","aedes,aedesaegypti,aedes_aegypti"),
 	APIS_MELLIFERA(7460,"AMEL","","honeybee,honey_bee,apis,amellifera,apismellifera,apis_mellifera"),
