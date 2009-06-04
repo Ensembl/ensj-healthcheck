@@ -56,7 +56,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 		if (type == DatabaseType.CORE || type == DatabaseType.VEGA) {
 
 			// the following tables are allowed to be empty
-			String[] allowedEmpty = { "alt_allele", "assembly_exception", "dnac", "density_feature", "density_type", "mapping_set", "seq_region_mapping", "unconventional_transcript_association" };
+			String[] allowedEmpty = { "alt_allele", "assembly_exception", "dnac", "density_feature", "density_type", "mapping_set", "seq_region_mapping", "unconventional_transcript_association", "oligo_array", "oligo_feature", "oligo_probe" };
 			tables = remove(tables, allowedEmpty);
 
 			// ID mapping related tables are checked in a separate test case
@@ -97,14 +97,6 @@ public class EmptyTables extends SingleDatabaseTestCase {
 			if (species == Species.TETRAODON_NIGROVIRIDIS || species == Species.SACCHAROMYCES_CEREVISIAE
 					|| species == Species.CAENORHABDITIS_ELEGANS) {
 				tables = Utils.removeStringFromArray(tables, "supporting_feature");
-			}
-
-			// only look for Affy features in human, mouse, rat, chicken, danio
-			if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.RATTUS_NORVEGICUS
-					&& species != Species.GALLUS_GALLUS && species != Species.DANIO_RERIO || type == DatabaseType.VEGA) {
-				tables = Utils.removeStringFromArray(tables, "oligo_array");
-				tables = Utils.removeStringFromArray(tables, "oligo_feature");
-				tables = Utils.removeStringFromArray(tables, "oligo_probe");
 			}
 
 			// only look for transcript & translation attribs in human, mouse, rat
