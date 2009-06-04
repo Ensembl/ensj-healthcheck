@@ -31,6 +31,8 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  * 
  * Even though we *don't* provide oligo data for all species the healthcheck
  * follows the convention of failing if the data is missing.
+ * 
+ * Note - currently disabled (doesn't apply to any dbs), may be migrated to eFG eventually.
  */
 public class OligoProbes2Genome extends SingleDatabaseTestCase {
 
@@ -49,6 +51,7 @@ public class OligoProbes2Genome extends SingleDatabaseTestCase {
 	 */
 	public void types() {
 
+		removeAppliesToType(DatabaseType.CORE);
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		removeAppliesToType(DatabaseType.CDNA);
 		removeAppliesToType(DatabaseType.VEGA);
