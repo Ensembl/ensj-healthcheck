@@ -644,9 +644,7 @@ public abstract class EnsTestCase {
 		String useful_sql = "SELECT " + table1 + "." + col1 + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2
 				+ " IS NULL";
 
-		if (orphans == 0) {
-			ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + col1 + "(" + col2 + ")" + " relationships");
-		} else if (orphans > 0) {
+		if (orphans > 0) {
 			ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + col1 + "(" + col2 + ")" + " relationships");
 			ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
 			ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
@@ -656,7 +654,7 @@ public abstract class EnsTestCase {
 				ReportManager.problem(this, con, "alternate useful SQL: " + useful_sql2);
 			}
 			result = false;
-		} else {
+		} else if (orphans < 0){
 			ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1 + ", look at the StackTrace if any");
 			result = false;
 		}
@@ -728,14 +726,12 @@ public abstract class EnsTestCase {
 
 		String useful_sql = "SELECT " + table + "." + col + " FROM " + table + " GROUP BY (" + col + ") HAVING COUNT(*) = 1";
 
-		if (singles == 0) {
-			ReportManager.correct(this, con, "PASSED " + table + "." + col + " is a FK for a 1 to many (>1) relationship");
-		} else if (singles > 0) {
+		if (singles > 0) {
 			ReportManager.problem(this, con, "FAILED " + table + "." + col + " is a FK for a 1 to many (>1) relationship");
 			ReportManager.problem(this, con, "FAILURE DETAILS: " + singles + " " + table + "." + col + " entries are used only once");
 			ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
 			result = false;
-		} else {
+		} else if (singles < 0){
 			ReportManager.problem(this, con, "TEST NOT COMPLETED " + table + "." + col + " is a FK for a 1 to many (>1) relationship, look at the StackTrace if any");
 			ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
 			result = false;
@@ -1542,14 +1538,12 @@ public abstract class EnsTestCase {
 		String useful_sql = "SELECT " + table1 + "." + col1 + " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2
 				+ " iS NULL";
 
-		if (orphans == 0) {
-			ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + col1 + "(" + col2 + ")" + " relationships");
-		} else if (orphans > 0) {
+		if (orphans > 0) {
 			ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + col1 + "(" + col2 + ")" + " relationships");
 			ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
 			ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
 			result = false;
-		} else {
+		} else if (orphans < 0){
 			ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1 + ", look at the StackTrace if any");
 			result = false;
 		}
@@ -1592,14 +1586,12 @@ public abstract class EnsTestCase {
 			useful_sql = useful_sql + " AND " + table1 + "." + constraint1;
 		}
 
-		if (orphans == 0) {
-			ReportManager.correct(this, con, "PASSED " + table1 + " -> " + table2 + " using FK " + col1 + "(" + col2 + ")" + " relationships");
-		} else if (orphans > 0) {
+		if (orphans > 0) {
 			ReportManager.problem(this, con, "FAILED " + table1 + " -> " + table2 + " using FK " + col1 + "(" + col2 + ")" + " relationships");
 			ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
 			ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
 			result = false;
-		} else {
+		} else if (orphans < 0){
 			ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1 + ", look at the StackTrace if any");
 			result = false;
 		}
