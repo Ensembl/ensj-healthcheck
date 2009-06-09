@@ -161,7 +161,7 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
           ResultSet rs = stmt.executeQuery(sql);
           while (rs.next()) {
             Species species = Species.resolveAlias(rs.getString(1).toLowerCase().replace(' ', '_'));
-            if (species.toString() == "unknown") {
+	     if (species.toString().equals("unknown")) {
               ReportManager.problem(this, comparaCon, "No species defined for " + rs.getString(1) +
                   " in org.ensembl.healthcheck.Species");
             } else {
@@ -183,6 +183,7 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
             Connection speciesCon = speciesDbr[0].getConnection();
             /* Check taxon_id */
             String sql1, sql2;
+
             sql1 = "SELECT \"" + name + "\", \"taxon_id\", taxon_id FROM genome_db" +
                 " WHERE genome_db.name = \"" + name + "\" AND  assembly_default = 1";
             sql2 = "SELECT \"" + name + "\", \"taxon_id\", meta_value FROM meta" +
