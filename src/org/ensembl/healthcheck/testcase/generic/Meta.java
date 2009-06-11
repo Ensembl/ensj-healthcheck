@@ -253,7 +253,8 @@ public class Meta extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		// check that certain keys exist
-		String[] metaKeys = { "assembly.default", "species.classification", "species.ensembl_common_name", "species.taxonomy_id", "assembly.name", "assembly.date", "species.ensembl_alias_name", "repeat.analysis", "marker.priority", "assembly.coverage_depth", "assembly.num_toplevel_seqs"};
+		String[] metaKeys = { "assembly.default", "species.classification", "species.ensembl_common_name", "species.taxonomy_id", "assembly.name", "assembly.date", "species.ensembl_alias_name",
+				"repeat.analysis", "marker.priority", "assembly.coverage_depth", "assembly.num_toplevel_seqs", "species.three_letter_code" };
 		for (int i = 0; i < metaKeys.length; i++) {
 			String metaKey = metaKeys[i];
 			int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey + "'");
