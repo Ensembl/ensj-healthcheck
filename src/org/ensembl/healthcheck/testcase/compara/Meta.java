@@ -315,6 +315,35 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
             result = false;
         }
 
+	//Calculate max_align_ for constrained elements
+	if (!tableHasRows(con, "constrained_element")) {
+            ReportManager.problem(this, con, "NO ENTRIES in constrained_element table");
+            return false;
+        }
+
+        // Calculate current max_alignment_length by method_link_species_set
+        String sql_ce = new String("SELECT CONCAT('max_align_', method_link_species_set_id)," +
+            " MAX(dnafrag_end - dnafrag_start) FROM constrained_element" +
+            " GROUP BY method_link_species_set_id");
+        try {
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(sql_ce);
+            // Add 2 to the dnafrag_end - dnafrag_start in order to get length + 1.
+            // Adding this at this point is probably faster than asking MySQL to add 2
+            // to every single row...
+            while (rs.next()) {
+                MetaEntriesToAdd.put(rs.getString(1), new Integer(rs.getInt(2) + 2).toString());
+                if (rs.getInt(2) > globalMaxAlignmentLength) {
+                    globalMaxAlignmentLength = rs.getInt(2) + 2;
+                }
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException se) {
+            se.printStackTrace();
+            result = false;
+        }
+
         // Get values currently stored in the meta table
         sql = new String("SELECT meta_key, meta_value, count(*)" +
             " FROM meta WHERE meta_key LIKE \"max\\_align\\_%\" GROUP BY meta_key");
