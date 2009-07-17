@@ -34,7 +34,7 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
-		setDescription("Check that all seq_regions comprising genes are marked as toplevel in seq_region_attrib, and that there is at least one toplevel seq_region. Also check that all toplevel seq regions are marked as such, and no seq regions that are marked as toplevel are not toplevel");
+		setDescription("Check that all seq_regions comprising genes are marked as toplevel in seq_region_attrib, and that there is at least one toplevel seq_region. Also check that all toplevel seq regions are marked as such, and no seq regions that are marked as toplevel are not toplevel. Will check as well if the toplevel seqregions have information in the assembly table");
 
 	}
 
@@ -69,6 +69,8 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 		result &= check_one_seq_region(con, topLevelAttribTypeID);
 
 		result &= checkRankOne(dbre);
+
+		result &= checkAssemblyTable(con, topLevelAttribTypeID);
 
 		return result;
 
@@ -171,6 +173,33 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 		return result;
 
 	}
+
+    private boolean checkAssemblyTable(Connection con, int topLevelAttribTypeID){
+	boolean result = true;
+	
+
+	int rows = getRowCount(con,"SELECT count(*) FROM seq_region_attrib sra LEFT JOIN assembly a on sra.seq_region_id = a.asm_seq_region_id, seq_region s, coord_system c " + 
+			       "where a.asm_seq_region_id is null and sra.attrib_type_id =" + topLevelAttribTypeID + " and c.coord_system_id = s.coord_system_id " + 
+			       " and s.seq_region_id = sra.seq_region_id and c.attrib not like '%sequence_level%'");
+
+	 if (rows > 0){
+
+	     ReportManager.problem(this,con,"There are toplevel regions in the database with no assembly information.Try the query to get the regions: " + 
+				  "SELECT s.name FROM seq_region_attrib sra LEFT JOIN assembly a ON sra.seq_region_id = a.asm_seq_region_id, seq_region s, " +
+				  "coord_system c where sra.attrib_type_id = " + topLevelAttribTypeID + 
+				   " AND sra.seq_region_id = s.seq_region_id and a.asm_seq_region_id is null " +
+				   "and c.coord_system_id = s.coord_system_id and c.attrib not like '%sequence_level%'");
+
+	     result = false;
+	 }
+	 else{
+	     ReportManager.correct(this,con,"All toplevel regions have assembly information");
+	 }
+	
+
+	return result;
+    
+    }
 
 	// --------------------------------------------------------------------------
 
