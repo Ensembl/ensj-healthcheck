@@ -266,6 +266,17 @@ public class Meta extends SingleDatabaseTestCase {
 			}
 		}
 
+		// check that there are some species.alias entries
+		int MIN_ALIASES = 3;
+		
+		int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='species.alias'");
+		if (rows < MIN_ALIASES) {
+			result = false;
+			ReportManager.problem(this, con, "Only " + rows + " species.alias entries, should be at least " + MIN_ALIASES);
+		} else {
+			ReportManager.correct(this, con, rows + " species.alias entries present");
+		}
+		
 		return result;
 	}
 
