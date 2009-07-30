@@ -25,7 +25,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that all transcripts of genes of type 'gene' translate.
+ * Check that all transcripts of genes of protein coding genes translate.
  */
 
 public class TranscriptsTranslate extends SingleDatabaseTestCase {
@@ -37,7 +37,7 @@ public class TranscriptsTranslate extends SingleDatabaseTestCase {
 
         addToGroup("post_genebuild");
         addToGroup("release");
-        setDescription("Check that all transcripts of genes of type \'gene\' translate");
+        setDescription("Check that all transcripts of protein_coding genes translate");
 	
     }
 
@@ -47,7 +47,7 @@ public class TranscriptsTranslate extends SingleDatabaseTestCase {
     public void types() {
 
         removeAppliesToType(DatabaseType.OTHERFEATURES);
-        removeAppliesToType(DatabaseType.ESTGENE);
+        removeAppliesToType(DatabaseType.CDNA);
         removeAppliesToType(DatabaseType.VEGA);
 
     }
@@ -70,12 +70,12 @@ public class TranscriptsTranslate extends SingleDatabaseTestCase {
 	int rows = getRowCount(con, sql);
 	if (rows != 0) {
 	    
-	    ReportManager.problem(this, con, rows + " transcript(s) in genes of type 'gene' do not have translations.");
+	    ReportManager.problem(this, con, rows + " transcript(s) in protein_coding genes do not have translations.");
 	    result = false;
 		
 	} else {
 	    
-	    ReportManager.correct(this, con, "All transcripts have translations");
+	    ReportManager.correct(this, con, "All transcripts of protein_coding genes have translations");
 	    
 	}
 	    
