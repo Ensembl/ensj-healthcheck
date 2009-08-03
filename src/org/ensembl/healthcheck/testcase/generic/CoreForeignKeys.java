@@ -182,10 +182,6 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		result &= checkForOrphansWithConstraint(con, "transcript_supporting_feature", "feature_id", "protein_align_feature", "protein_align_feature_id",
 			"feature_type = 'protein_align_feature'");
 
-		result &= checkForOrphans(con, "oligo_feature", "oligo_probe_id", "oligo_probe", "oligo_probe_id", true);
-
-		result &= checkForOrphans(con, "oligo_probe", "oligo_array_id", "oligo_array", "oligo_array_id", true);
-
 		result &= checkForOrphans(con, "density_feature", "density_type_id", "density_type", "density_type_id");
 
 		result &= checkForOrphans(con, "prediction_exon", "prediction_transcript_id", "prediction_transcript", "prediction_transcript_id");
