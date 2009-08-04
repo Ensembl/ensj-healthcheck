@@ -162,6 +162,8 @@ public class Biotypes extends SingleDatabaseTestCase {
 			file = "biotypes_cdna.txt";
 		} else if (dbre.getType() == DatabaseType.VEGA) {
 			file = "biotypes_vega.txt";
+		} else if (dbre.getType() == DatabaseType.OTHERFEATURES ) {
+			file = "biotypes_otherfeatures.txt";
 		} 
 		
 		// use a custom biotypes file if it's set in database.properties
