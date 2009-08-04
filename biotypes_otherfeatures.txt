@@ -1,0 +1,3 @@
+cdna_alignment
+est_alignment
+protein_coding
