@@ -9,7 +9,8 @@ import java.util.EnumMap;
 public enum Species
 {
 	//defined new Species and properties: taxonomy_id, assemblyprefix, stableIDprefix, alias
-	MACROPUS_EUGENII(9315,"Meug","ENSMEU","wallaby,tammar_wallaby,macropuseugenii,m_eugenii,tammarwallaby,macropus_eugenii"),
+
+	MACROPUS_EUGENII(9315,"Meug","ENSMEU","wallaby,tammar_wallaby,macropuseugenii,m_eugenii,tammarwallaby,Macropus eugenii,macropus_eugenii"),
 	CALLITHRIX_JACCHUS(9483, "calJac", "ENSCJA","marmoset,white-tufted-ear marmoset,callithrix_jacchus,callithrix jacchus,Callithrix_jacchus,Callithrix jacchus,callithrix"),
         CHOLOEPUS_HOFFMANNI(9358,"choHof","ENSCHO","Sloth,Two-toed_sloth,Hoffmans_two-fingered_sloth,choloepus_hoffmanni"),
         GORILLA_GORILLA(9593,"gorGor","ENSGGO","gorilla,gorilla_gorilla,ggor"),
@@ -23,7 +24,7 @@ public enum Species
 	FELIS_CATUS(9685,"CAT","ENSFCA","cat,fcatus,felis,domestic_cat,felis_catus"),
 	MUS_MUSCULUS(10090,"NCBIM","ENSMUS","mouse,mmusculus,musmusculus,mus_musculus"),
 	SPERMOPHILUS_TRIDECEMLINEATUS(43179,"SQUIRREL","ENSSTO","squirrel,stridecemlineatus,thirteen-lined_ground_squirrel,spermophilus_tridecemlineatus_arenicola,spermophilus_tridecemlineatus"),
-	SUS_SCROFA(9823,"PIG","","pig,boar,wildboar,wild_boar,susscrofa,sus_scrofa"),
+	SUS_SCROFA(9823,"PIG","ENSSSC","pig,boar,wildboar,wild_boar,susscrofa,sus_scrofa"),
 	ERINACEUS_EUROPAEUS(9365,"HEDGEHOG","ENSEEU","hedgehog,european_hedgehog,eeuropaeus,erinaceus_europaeus"),
 	MONODELPHIS_DOMESTICA(13616,"BROADO","ENSMOD","opossum,monodelphis,mdomestica,mdomesticus,monodelphisdomestica,monodelphisdomesticus,monodelphis_domesticus,monodelphis_domestica"),
 	RATTUS_NORVEGICUS(10116,"RGSC","ENSRNO","rat,rnovegicus,rattusnorvegicus,rattus_norvegicus"),
