@@ -136,9 +136,6 @@
 		<delete dir="${doc}/javadoc" />
 		<delete dir="${dist}" />
 		<delete file="${lib}/${name}.jar" />
-	</target>
-
-	<target name="cleanall" depends="clean" description="Clean .class files out of src dir as well">
 		<delete>
 			<fileset dir=".">
 				<include name="**/*.class" />
