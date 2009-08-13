@@ -70,6 +70,12 @@ public class BlanksInsteadOfNulls extends SingleDatabaseTestCase {
 
 				String[] columnInfo = (String[]) it.next();
 				String column = columnInfo[0];
+				
+				// display_labels should be neither blank nor null
+				if (column.equals("display_label")) {
+					continue;
+				}
+				
 				String allowedNull = columnInfo[2];
 				String columnDefault = columnInfo[4];
 				if (columnDefault != null && !columnDefault.toLowerCase().equals("null")) {
