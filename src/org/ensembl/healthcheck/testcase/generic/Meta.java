@@ -517,6 +517,28 @@ public class Meta extends SingleDatabaseTestCase {
 			}
 		}
 
+		// some more checks for sanity of dates
+		int startDate = Integer.valueOf(getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.start_date'").replaceAll("[^0-9]", "")).intValue();
+		int initialReleaseDate = Integer.valueOf(getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.initial_release_date'").replaceAll("-", "")).intValue();
+		int lastGenesetUpdate = Integer.valueOf(getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.last_geneset_update'").replaceAll("-", "")).intValue();
+		
+		// check for genebuild.start_date >= genebuild.initial_release_date (not allowed as we cannot release a gene set before downloaded the evidence)
+		if (startDate >= initialReleaseDate) {
+			result = false;
+			ReportManager.problem(this, con, "genebuild.start_date is greater than or equal to genebuild.initial_release_date");
+		}
+		
+		// check for genebuild.initial_release_date > genebuild.last_geneset_update (not allowed as we cannot update a gene set before its initial public release)
+		if (initialReleaseDate > lastGenesetUpdate) {
+			result = false;
+			ReportManager.problem(this, con, "genebuild.initial_release_date is greater than or equal to genebuild.last_geneset_update");
+		}
+		
+		// check for current genebuild.last_geneset_update <= previous release genebuild.last_geneset_update
+		// AND the number of genes or transcripts or exons between the two releases has changed
+		// If the gene set has changed in any way since the previous release then the date should have been updated.
+
+		
 		return result;
 
 	}
