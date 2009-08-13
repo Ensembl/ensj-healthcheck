@@ -286,7 +286,7 @@ public class Meta extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		String[] metaKeys = { "species.alias" };
+		String[] metaKeys = { };
 		for (int i = 0; i < metaKeys.length; i++) {
 			String metaKey = metaKeys[i];
 			int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey + "'");
