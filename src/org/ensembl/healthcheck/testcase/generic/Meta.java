@@ -520,8 +520,8 @@ public class Meta extends SingleDatabaseTestCase {
 
 		// some more checks for sanity of dates
 		int startDate = Integer.valueOf(getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.start_date'").replaceAll("[^0-9]", "")).intValue();
-		int initialReleaseDate = Integer.valueOf(getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.initial_release_date'").replaceAll("-", "")).intValue();
-		int lastGenesetUpdate = Integer.valueOf(getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.last_geneset_update'").replaceAll("-", "")).intValue();
+		int initialReleaseDate = Integer.valueOf(getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.initial_release_date'").replaceAll("[^0-9]", "")).intValue();
+		int lastGenesetUpdate = Integer.valueOf(getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.last_geneset_update'").replaceAll("[^0-9]", "")).intValue();
 
 		// check for genebuild.start_date >= genebuild.initial_release_date (not allowed as we cannot release a gene set before
 		// downloaded the evidence)
