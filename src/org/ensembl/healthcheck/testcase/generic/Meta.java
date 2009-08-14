@@ -74,7 +74,7 @@ public class Meta extends SingleDatabaseTestCase {
 		result &= checkTaxonomyID(dbre);
 
 		if (dbre.getType() == DatabaseType.CORE) {
-			result &= checkDates(con);
+			result &= checkDates(dbre);
 		}
 
 		result &= checkCoordSystemTableCases(con);
@@ -213,16 +213,16 @@ public class Meta extends SingleDatabaseTestCase {
 
 	}
 
-    // ---------------------------------------------------------------------
+	// ---------------------------------------------------------------------
 
-    //this HC will check the Meta table contains the assembly.overlapping_regions and 
-    //that it is set to false (so no overlapping regions in the genome)
+	// this HC will check the Meta table contains the assembly.overlapping_regions and
+	// that it is set to false (so no overlapping regions in the genome)
 	private boolean checkOverlappingRegions(Connection con) {
 
 		boolean result = true;
 
 		// check that certain keys exist
-		String[] metaKeys = { "assembly.overlapping_regions"};
+		String[] metaKeys = { "assembly.overlapping_regions" };
 		for (int i = 0; i < metaKeys.length; i++) {
 			String metaKey = metaKeys[i];
 			int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey + "'");
@@ -230,16 +230,15 @@ public class Meta extends SingleDatabaseTestCase {
 				result = false;
 				ReportManager.problem(this, con, "No entry in meta table for " + metaKey + ". It might need to run the misc-scripts/overlapping_regions.pl script");
 			} else {
-			    String[] metaValue = getColumnValues(con,"SELECT meta_value FROM meta WHERE meta_key='" + metaKey + "'");
-			    if (metaValue[0].equals("1")){
-				//there are overlapping regions !! API might behave odly
-				ReportManager.problem(this,con,"There are overlapping regions in the database (e.g. two versions of the same chromosomes). The API" +
-						      " migth have unexpected results when trying to map features to that coordinate system.");
-				result = false;
-			    }
-			    else{
-				ReportManager.correct(this, con, metaKey + " entry present");
-			    }
+				String[] metaValue = getColumnValues(con, "SELECT meta_value FROM meta WHERE meta_key='" + metaKey + "'");
+				if (metaValue[0].equals("1")) {
+					// there are overlapping regions !! API might behave odly
+					ReportManager.problem(this, con, "There are overlapping regions in the database (e.g. two versions of the same chromosomes). The API"
+							+ " migth have unexpected results when trying to map features to that coordinate system.");
+					result = false;
+				} else {
+					ReportManager.correct(this, con, metaKey + " entry present");
+				}
 			}
 		}
 
@@ -268,7 +267,7 @@ public class Meta extends SingleDatabaseTestCase {
 
 		// check that there are some species.alias entries
 		int MIN_ALIASES = 3;
-		
+
 		int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='species.alias'");
 		if (rows < MIN_ALIASES) {
 			result = false;
@@ -276,7 +275,7 @@ public class Meta extends SingleDatabaseTestCase {
 		} else {
 			ReportManager.correct(this, con, rows + " species.alias entries present");
 		}
-		
+
 		return result;
 	}
 
@@ -286,7 +285,7 @@ public class Meta extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		String[] metaKeys = { };
+		String[] metaKeys = {};
 		for (int i = 0; i < metaKeys.length; i++) {
 			String metaKey = metaKeys[i];
 			int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey + "'");
@@ -484,10 +483,12 @@ public class Meta extends SingleDatabaseTestCase {
 
 	// ---------------------------------------------------------------------
 
-	private boolean checkDates(Connection con) {
+	private boolean checkDates(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
 
+		Connection con = dbre.getConnection();
+		
 		String[] keys = { "genebuild.start_date", "assembly.date", "genebuild.initial_release_date", "genebuild.last_geneset_update" };
 
 		String date = "[0-9]{4}-[0-9]{2}";
@@ -521,23 +522,50 @@ public class Meta extends SingleDatabaseTestCase {
 		int startDate = Integer.valueOf(getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.start_date'").replaceAll("[^0-9]", "")).intValue();
 		int initialReleaseDate = Integer.valueOf(getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.initial_release_date'").replaceAll("-", "")).intValue();
 		int lastGenesetUpdate = Integer.valueOf(getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.last_geneset_update'").replaceAll("-", "")).intValue();
-		
-		// check for genebuild.start_date >= genebuild.initial_release_date (not allowed as we cannot release a gene set before downloaded the evidence)
+
+		// check for genebuild.start_date >= genebuild.initial_release_date (not allowed as we cannot release a gene set before
+		// downloaded the evidence)
 		if (startDate >= initialReleaseDate) {
 			result = false;
 			ReportManager.problem(this, con, "genebuild.start_date is greater than or equal to genebuild.initial_release_date");
 		}
-		
-		// check for genebuild.initial_release_date > genebuild.last_geneset_update (not allowed as we cannot update a gene set before its initial public release)
+
+		// check for genebuild.initial_release_date > genebuild.last_geneset_update (not allowed as we cannot update a gene set before
+		// its initial public release)
 		if (initialReleaseDate > lastGenesetUpdate) {
 			result = false;
 			ReportManager.problem(this, con, "genebuild.initial_release_date is greater than or equal to genebuild.last_geneset_update");
 		}
-		
+
 		// check for current genebuild.last_geneset_update <= previous release genebuild.last_geneset_update
 		// AND the number of genes or transcripts or exons between the two releases has changed
 		// If the gene set has changed in any way since the previous release then the date should have been updated.
+		DatabaseRegistryEntry previous = getEquivalentFromSecondaryServer(dbre);
+		if (previous == null){
+		    return result;
+		}
+		
+		Connection previousCon = previous.getConnection();
 
+		int previousLastGenesetUpdate = Integer.valueOf(getRowColumnValue(previousCon, "SELECT meta_value FROM meta WHERE meta_key='genebuild.last_geneset_update'").replaceAll("-", "")).intValue();
+
+		if (lastGenesetUpdate <= previousLastGenesetUpdate) {
+			
+			int currentGeneCount = getRowCount(con, "SELECT COUNT(*) FROM gene");
+			int currentTranscriptCount = getRowCount(con, "SELECT COUNT(*) FROM transcript");
+			int currentExonCount = getRowCount(con, "SELECT COUNT(*) FROM exon");
+
+			int previousGeneCount = getRowCount(previousCon, "SELECT COUNT(*) FROM gene");
+			int previousTranscriptCount = getRowCount(previousCon, "SELECT COUNT(*) FROM transcript");
+			int previousExonCount = getRowCount(previousCon, "SELECT COUNT(*) FROM exon");
+
+			if (currentGeneCount != previousGeneCount || currentTranscriptCount != previousTranscriptCount || currentExonCount != previousExonCount) {
+	
+				ReportManager.problem(this, con, "Last geneset update entry is the same or older than the equivalent entry in the previous release and the number of genes, transcripts or exons has changed.");
+				result = false;
+	
+			}
+		}
 		
 		return result;
 
@@ -809,7 +837,7 @@ public class Meta extends SingleDatabaseTestCase {
 		if (dbre.getType() != DatabaseType.CORE) {
 			return true;
 		}
-		
+
 		String[] allowedMethods = { "full_genebuild", "projection_build", "import", "mixed_strategy_build" };
 
 		Connection con = dbre.getConnection();
@@ -823,10 +851,10 @@ public class Meta extends SingleDatabaseTestCase {
 		if (!Utils.stringInArray(method, allowedMethods, true)) {
 			ReportManager.problem(this, con, "genebuild.method value " + method + " is not in list of allowed methods");
 			result = false;
-		} else {	
+		} else {
 			ReportManager.correct(this, con, "genebuild.method " + method + " is valid");
 		}
-		
+
 		return result;
 
 	}
