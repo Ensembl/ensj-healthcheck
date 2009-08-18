@@ -64,7 +64,7 @@ public class SeqRegionCoordSystem extends SingleDatabaseTestCase {
 			return true;
 		}
 		
-		if (dbre.getType() != DatabaseType.VEGA) {
+		if (dbre.getType() == DatabaseType.CORE) {
 			result &= checkNames(dbre);
 		}
 
