@@ -37,7 +37,7 @@ public class SeqRegionAttribsPresent extends SingleDatabaseTestCase {
 		addToGroup("release");
 		setDescription("Check that certain seq_regions that have known, protein_coding genes have the GeneNo_knwCod attribute associated with them.");
 		setEffect("Webiste gene counts will be wrong");
-		setFix("Re-run ensembl/misc-scripts/density_feature/seq_region_stats.pl script");
+		setFix("Check and re-run seq_region_attribs.pl script");
 		
 	}
 
