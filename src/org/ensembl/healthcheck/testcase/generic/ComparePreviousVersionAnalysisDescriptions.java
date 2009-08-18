@@ -26,12 +26,10 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Compare the analysis_descriptions in the current database with those from the
- * equivalent database on the secondary server. Note only certain columns are
- * checked.
+ * Compare the analysis_descriptions in the current database with those from the equivalent database on the secondary server. Note
+ * only certain columns are checked.
  * 
- * Note this is not comparing counts so doesn't extend
- * ComparePreviousVersionBase.
+ * Note this is not comparing counts so doesn't extend ComparePreviousVersionBase.
  */
 
 public class ComparePreviousVersionAnalysisDescriptions extends SingleDatabaseTestCase {
@@ -55,8 +53,8 @@ public class ComparePreviousVersionAnalysisDescriptions extends SingleDatabaseTe
 		Connection currentCon = dbre.getConnection();
 
 		DatabaseRegistryEntry previous = getEquivalentFromSecondaryServer(dbre);
-		if (previous == null){
-		    return result;
+		if (previous == null) {
+			return result;
 		}
 		Connection previousCon = previous.getConnection();
 
@@ -78,7 +76,7 @@ public class ComparePreviousVersionAnalysisDescriptions extends SingleDatabaseTe
 				String currentDisplayLabel = currentRS.getString(2);
 				int currentDisplayable = currentRS.getInt(3);
 				String currentWebData = currentRS.getString(4);
-				
+
 				previousStmt.setString(1, logicName);
 				ResultSet previousRS = previousStmt.executeQuery();
 				if (previousRS == null) {
@@ -87,84 +85,80 @@ public class ComparePreviousVersionAnalysisDescriptions extends SingleDatabaseTe
 				if (!previousRS.next()) {
 					continue;
 				}
-				if (currentDisplayLabel == null){
-				    continue;
+				if (currentDisplayLabel == null) {
+					continue;
 				}
 				String previousDisplayLabel = previousRS.getString(1);
 				int previousDisplayable = previousRS.getInt(2);
 				String previousWebData = previousRS.getString(3);
 				if (!currentDisplayLabel.equals(previousDisplayLabel)) {
-				    ReportManager.problem(this, currentCon, "Display label for logic name " + logicName + " differs; \ncurrent: '" + currentDisplayLabel + "' \nprevious: '" + previousDisplayLabel + "'");
-				    result = false;
+					ReportManager.problem(this, currentCon, "Display label for logic name " + logicName + " differs; \ncurrent: '" + currentDisplayLabel + "' \nprevious: '" + previousDisplayLabel + "'");
+					result = false;
 				} else {
-				    ReportManager.correct(this, currentCon, "Display labels identical between releases for " + logicName);
+					ReportManager.correct(this, currentCon, "Display labels identical between releases for " + logicName);
 				}
-				
+
 				if (currentDisplayable != previousDisplayable) {
-				    ReportManager.problem(this, currentCon, "Displayable flag for logic name " + logicName + " differs; \ncurrent: '" + currentDisplayable + "' \nprevious: '" + previousDisplayable + "'");
+					ReportManager.problem(this, currentCon, "Displayable flag for logic name " + logicName + " differs; \ncurrent: '" + currentDisplayable + "' \nprevious: '" + previousDisplayable + "'");
 					result = false;
 				} else {
 					ReportManager.correct(this, currentCon, "Displayable flags identical between releases for " + logicName);
 				}
-				
+
 				if (currentWebData != null && !currentWebData.equals("") && previousWebData != null && !previousWebData.equals("")) {
-				    //ignore whitespaces in web_data column
-				    String currentWebNoWhite = currentWebData.replaceAll(" ","");
-				    String previousWebNoWhite = previousWebData.replaceAll(" ","");
-				    //remove initial and final {} and split into a char
-				    String[] currentWeb = currentWebNoWhite.substring(1,currentWebNoWhite.length()-1).split("");
-				    String[] previousWeb = previousWebNoWhite.substring(1,previousWebNoWhite.length()-1).split("");
-				    //each position will be key=>value
-				    String[] currentWebKeyValue = splitWebDataString(currentWeb);
-				    String[] previousWebKeyValue = splitWebDataString(previousWeb);
-				    //the hashes to store the data
-				    Map<String,String> currentWebHashValueString =  new HashMap<String,String>();
-				    Map<String,String> previousWebHashValueString = new HashMap<String,String>();
-				    Map<String,Map> currentWebHashValueHash =  new HashMap<String,Map>();
-				    Map<String,Map> previousWebHashValueHash = new HashMap<String,Map>();
-				    //need to create the different hashes
-				    for (int i=0; i<currentWebKeyValue.length;i++){
-					//first value will be the key of the hash
-					if (currentWeb[i].startsWith("{")){
-					    //need to return a Map<String,Map>
-					    createHashWebData(currentWebKeyValue[i],currentWebHashValueHash);
+					// ignore whitespaces in web_data column
+					String currentWebNoWhite = currentWebData.replaceAll(" ", "");
+					String previousWebNoWhite = previousWebData.replaceAll(" ", "");
+					// remove initial and final {} and split into a char
+					String[] currentWeb = currentWebNoWhite.substring(1, currentWebNoWhite.length() - 1).split("");
+					String[] previousWeb = previousWebNoWhite.substring(1, previousWebNoWhite.length() - 1).split("");
+					// each position will be key=>value
+					String[] currentWebKeyValue = splitWebDataString(currentWeb);
+					String[] previousWebKeyValue = splitWebDataString(previousWeb);
+					// the hashes to store the data
+					Map<String, String> currentWebHashValueString = new HashMap<String, String>();
+					Map<String, String> previousWebHashValueString = new HashMap<String, String>();
+					Map<String, Map> currentWebHashValueHash = new HashMap<String, Map>();
+					Map<String, Map> previousWebHashValueHash = new HashMap<String, Map>();
+					// need to create the different hashes
+					for (int i = 0; i < currentWebKeyValue.length; i++) {
+						// first value will be the key of the hash
+						if (currentWeb[i].startsWith("{")) {
+							// need to return a Map<String,Map>
+							createHashWebData(currentWebKeyValue[i], currentWebHashValueHash);
+						} else {
+							// need to return a Map<String,String>
+							createHashWebData(currentWebKeyValue[i], currentWebHashValueString);
+						}
 					}
-					else{
-					    //need to return a Map<String,String>
-					    createHashWebData(currentWebKeyValue[i],currentWebHashValueString);
+					for (int i = 0; i < previousWebKeyValue.length; i++) {
+						if (previousWeb[i].startsWith("{")) {
+							// need to return a Map<String,Map>
+							createHashWebData(previousWebKeyValue[i], previousWebHashValueHash);
+						} else {
+							// need to return a Map<String,String>
+							createHashWebData(previousWebKeyValue[i], previousWebHashValueString);
+						}
 					}
-				    }
-				    for (int i=0;i<previousWebKeyValue.length;i++){
-					if (previousWeb[i].startsWith("{")){
-					    //need to return a Map<String,Map>
-					    createHashWebData(previousWebKeyValue[i], previousWebHashValueHash);
+
+					// and finally compare them
+					if (currentWebHashValueString.equals(previousWebHashValueString) && currentWebHashValueHash.equals(previousWebHashValueHash)) {
+						ReportManager.correct(this, currentCon, "Web data identical between releases for " + logicName);
+					} else {
+						ReportManager.problem(this, currentCon, "Web data for logic name " + logicName + " differs; \ncurrent: '" + currentWebData + "' \nprevious: '" + previousWebData + "'");
+						result = false;
 					}
-					else{
-					    //need to return a Map<String,String>
-					    createHashWebData(previousWebKeyValue[i],previousWebHashValueString);
-					}
-				    }
-				    
-				    //and finally compare them
-				    if (currentWebHashValueString.equals(previousWebHashValueString) && currentWebHashValueHash.equals(previousWebHashValueHash)){
-					ReportManager.correct(this, currentCon, "Web data identical between releases for " + logicName);
-				    }
-				    else{
-					ReportManager.problem(this, currentCon, "Web data for logic name " + logicName + " differs; \ncurrent: '" + currentWebData + "' \nprevious: '" + previousWebData + "'");
-					result = false;
-				    }
-				    //
+					//
 				}
-				
+
 				previousRS.close();
-				
+
 			}
-			
+
 			currentRS.close();
 
 			currentStmt.close();
 			previousStmt.close();
-			
 
 		} catch (SQLException e) {
 
@@ -177,59 +171,60 @@ public class ComparePreviousVersionAnalysisDescriptions extends SingleDatabaseTe
 
 	}
 
-	//will create the key->value hash from the string
-	//{'label_key' => '[text_label] [display_label]','default' => {'contigviewbottom' => 'transcript_label','contigviewtop' => 'gene_label','cytoview' => 'gene_label'}}   
-	//{'label_key' => '[text_label] [display_label]','default' => {'contigviewbottom' => 'transcript_label','contigviewtop' => 'gene_label','cytoview' => 'gene_label'}}
+	// will create the key->value hash from the string
+	// {'label_key' => '[text_label] [display_label]','default' => {'contigviewbottom' => 'transcript_label','contigviewtop' =>
+	// 'gene_label','cytoview' => 'gene_label'}}
+	// {'label_key' => '[text_label] [display_label]','default' => {'contigviewbottom' => 'transcript_label','contigviewtop' =>
+	// 'gene_label','cytoview' => 'gene_label'}}
 
-    private static String[] splitWebDataString(String[] webData){
-	
-	List<String> keyValues = new ArrayList<String>();
-	boolean subHash = false;
-	String keyValue = "";
-	//each position is one char, concatenate them until we find a ',' not between {}
-	for (int i=0;i<webData.length;i++){
-	    if (webData[i].equals("{")){
-		subHash = true;
-	    }
-	    if (webData[i].equals("}")){
-		subHash = false;
-	    }
-	    //if we have a comma in a subHash, ignore
-	    if (webData[i].equals(",") && !subHash){
+	private static String[] splitWebDataString(String[] webData) {
+
+		List<String> keyValues = new ArrayList<String>();
+		boolean subHash = false;
+		String keyValue = "";
+		// each position is one char, concatenate them until we find a ',' not between {}
+		for (int i = 0; i < webData.length; i++) {
+			if (webData[i].equals("{")) {
+				subHash = true;
+			}
+			if (webData[i].equals("}")) {
+				subHash = false;
+			}
+			// if we have a comma in a subHash, ignore
+			if (webData[i].equals(",") && !subHash) {
+				keyValues.add(keyValue);
+				keyValue = "";
+				continue;
+			}
+			keyValue = keyValue.concat(webData[i]);
+		}
+		// add last key-value pair
 		keyValues.add(keyValue);
-		keyValue = "";
-		continue;
-	    }
-	   keyValue = keyValue.concat(webData[i]);
+		String[] returnString = new String[keyValues.size()];
+		keyValues.toArray(returnString);
+		return returnString;
 	}
-	//add last key-value pair
-	keyValues.add(keyValue);
-	String[] returnString = new String[keyValues.size()];
-	keyValues.toArray(returnString);
-	return  returnString;
-    }
-    
-    private static void createHashWebData(String webColumn, Map webData){
-	//split in the =>, there might be easier ways to do it 	
-	String[] keyValue = webColumn.replaceFirst("=>",":").split(":");
-	
-	if (keyValue[1].startsWith("{")){
-	    //we have another hash 'default' => {'contigviewbottom' => 'transcript_label','contigviewtop' => 'gene_label','cytoview' => 'gene_label'}
-	    //remove {}
-	    String[] keyValues = keyValue[1].substring(1,keyValue[1].length()-1).split(",");
-	    Map<String,String> subHash = new HashMap<String,String>();
-	    for (int i=0;i<keyValues.length;i++){
-		createHashWebData(keyValues[i],subHash);
-	    }
-	    webData.put(keyValue[0],subHash);
+
+	private static void createHashWebData(String webColumn, Map webData) {
+		// split in the =>, there might be easier ways to do it
+		String[] keyValue = webColumn.replaceFirst("=>", ":").split(":");
+
+		if (keyValue.length > 0 && keyValue[1].startsWith("{")) {
+			// we have another hash 'default' => {'contigviewbottom' => 'transcript_label','contigviewtop' => 'gene_label','cytoview' =>
+			// 'gene_label'}
+			// remove {}
+			String[] keyValues = keyValue[1].substring(1, keyValue[1].length() - 1).split(",");
+			Map<String, String> subHash = new HashMap<String, String>();
+			for (int i = 0; i < keyValues.length; i++) {
+				createHashWebData(keyValues[i], subHash);
+			}
+			webData.put(keyValue[0], subHash);
+		} else {
+			webData.put(keyValue[0], keyValue[1]);
+		}
 	}
-	else{
-	    webData.put(keyValue[0],keyValue[1]);	
-	}
-    }
-    
-  
-    // ----------------------------------------------------------------------
+
+	// ----------------------------------------------------------------------
 
 } // ComparePreviousVersionAnalysisDescriptions
 
