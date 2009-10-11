@@ -32,10 +32,10 @@ public class DatabaseRegistry {
 
     // Entries is explicitly specified as an ArrayList rather than the list
     // because the order is important
-    private ArrayList entries = new ArrayList();
+    private ArrayList<DatabaseRegistryEntry> entries = new ArrayList<DatabaseRegistryEntry>();
 
     // Entries in the secondary server
-    private ArrayList secondaryEntries = new ArrayList();
+    private ArrayList<DatabaseRegistryEntry> secondaryEntries = new ArrayList<DatabaseRegistryEntry>();
 
     // these global settings override guessing if they are specified
     private Species globalSpecies = null;
@@ -71,7 +71,7 @@ public class DatabaseRegistry {
      * @param regexps
      *            The regular expressions matching the databases to use.
      */
-    public DatabaseRegistry(final List regexps, DatabaseType globalType, Species globalSpecies) {
+    public DatabaseRegistry(final List<String> regexps, DatabaseType globalType, Species globalSpecies) {
 
         this.globalType = globalType;
         this.globalSpecies = globalSpecies;
@@ -79,7 +79,7 @@ public class DatabaseRegistry {
         Connection con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System
                 .getProperty("user"), System.getProperty("password"));
 
-        Iterator it = regexps.iterator();
+        Iterator<String> it = regexps.iterator();
         while (it.hasNext()) {
 
             String[] names = DBUtils.listDatabases(con, (String) it.next());
@@ -99,7 +99,7 @@ public class DatabaseRegistry {
      * @param regexps2
      *            The regular expressions matching the databases to use in the secondary server.
      */
-    public DatabaseRegistry(final List regexps, final List regexps2, DatabaseType globalType, Species globalSpecies) {
+    public DatabaseRegistry(final List<String> regexps, final List<String> regexps2, DatabaseType globalType, Species globalSpecies) {
 
         this.globalType = globalType;
         this.globalSpecies = globalSpecies;
@@ -107,10 +107,10 @@ public class DatabaseRegistry {
         Connection con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System
                 .getProperty("user"), System.getProperty("password"));
 
-        Iterator it = regexps.iterator();
+        Iterator<String> it = regexps.iterator();
         while (it.hasNext()) {
 
-            String[] names = DBUtils.listDatabases(con, (String) it.next());
+            String[] names = DBUtils.listDatabases(con, it.next());
             addEntriesToRegistry(names);
 
         }
@@ -125,7 +125,7 @@ public class DatabaseRegistry {
         it = regexps2.iterator();
         while (it.hasNext()) {
 
-            String[] names = DBUtils.listDatabases(con2, (String) it.next());
+            String[] names = DBUtils.listDatabases(con2, it.next());
             addSecondaryEntriesToRegistry(names);
 
         }
@@ -156,12 +156,12 @@ public class DatabaseRegistry {
      * @param dbres
      *            The entries to use.
      */
-    public DatabaseRegistry(List dbres) {
+    public DatabaseRegistry(List<DatabaseRegistryEntry> dbres) {
 
-        Iterator it = dbres.iterator();
+        Iterator<DatabaseRegistryEntry> it = dbres.iterator();
         while (it.hasNext()) {
 
-            entries.add((DatabaseRegistryEntry)it.next());
+            entries.add(it.next());
 
         }
 
@@ -238,10 +238,10 @@ public class DatabaseRegistry {
      */
     public final DatabaseRegistryEntry[] getAll(final Species species) {
 
-        List result = new ArrayList();
-        Iterator it = entries.iterator();
+        List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
+        Iterator<DatabaseRegistryEntry> it = entries.iterator();
         while (it.hasNext()) {
-            DatabaseRegistryEntry dbre = (DatabaseRegistryEntry) it.next();
+            DatabaseRegistryEntry dbre = it.next();
             if (dbre.getSpecies().equals(species)) {
                 result.add(dbre);
             }
@@ -261,10 +261,10 @@ public class DatabaseRegistry {
      */
     public final DatabaseRegistryEntry[] getAll(final DatabaseType type) {
 
-        List result = new ArrayList();
-        Iterator it = entries.iterator();
+        List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
+        Iterator<DatabaseRegistryEntry> it = entries.iterator();
         while (it.hasNext()) {
-            DatabaseRegistryEntry dbre = (DatabaseRegistryEntry) it.next();
+            DatabaseRegistryEntry dbre = it.next();
             if (dbre.getType().equals(type)) {
                 result.add(dbre);
             }
@@ -286,10 +286,10 @@ public class DatabaseRegistry {
      */
     public final DatabaseRegistryEntry[] getAll(final DatabaseType type, final Species species) {
 
-        List result = new ArrayList();
-        Iterator it = entries.iterator();
+        List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
+        Iterator<DatabaseRegistryEntry> it = entries.iterator();
         while (it.hasNext()) {
-            DatabaseRegistryEntry dbre = (DatabaseRegistryEntry) it.next();
+            DatabaseRegistryEntry dbre = it.next();
             if (dbre.getType().equals(type) && dbre.getSpecies().equals(species)) {
                 result.add(dbre);
             }
@@ -322,10 +322,10 @@ public class DatabaseRegistry {
      */
     public final DatabaseRegistryEntry[] getAllSecondary(final Species species) {
 
-        List result = new ArrayList();
-        Iterator it = secondaryEntries.iterator();
+        List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
+        Iterator<DatabaseRegistryEntry> it = secondaryEntries.iterator();
         while (it.hasNext()) {
-            DatabaseRegistryEntry dbre = (DatabaseRegistryEntry) it.next();
+            DatabaseRegistryEntry dbre = it.next();
             if (dbre.getSpecies().equals(species)) {
                 result.add(dbre);
             }
@@ -346,10 +346,10 @@ public class DatabaseRegistry {
      */
     public final DatabaseRegistryEntry[] getAllSecondary(final DatabaseType type) {
 
-        List result = new ArrayList();
-        Iterator it = secondaryEntries.iterator();
+        List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
+        Iterator<DatabaseRegistryEntry> it = secondaryEntries.iterator();
         while (it.hasNext()) {
-            DatabaseRegistryEntry dbre = (DatabaseRegistryEntry) it.next();
+            DatabaseRegistryEntry dbre = it.next();
             if (dbre.getType().equals(type)) {
                 result.add(dbre);
             }
@@ -372,10 +372,10 @@ public class DatabaseRegistry {
      */
     public final DatabaseRegistryEntry[] getAllSecondary(final DatabaseType type, final Species species) {
 
-        List result = new ArrayList();
-        Iterator it = secondaryEntries.iterator();
+        List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
+        Iterator<DatabaseRegistryEntry> it = secondaryEntries.iterator();
         while (it.hasNext()) {
-            DatabaseRegistryEntry dbre = (DatabaseRegistryEntry) it.next();
+            DatabaseRegistryEntry dbre = it.next();
             if (dbre.getType().equals(type) && dbre.getSpecies().equals(species)) {
                 result.add(dbre);
             }
@@ -394,9 +394,9 @@ public class DatabaseRegistry {
      */
     public final void setTypeOfAll(final DatabaseType type) {
 
-        Iterator it = entries.iterator();
+        Iterator<DatabaseRegistryEntry> it = entries.iterator();
         while (it.hasNext()) {
-            DatabaseRegistryEntry dbre = (DatabaseRegistryEntry) it.next();
+            DatabaseRegistryEntry dbre = it.next();
             dbre.setType(type);
         }
 
@@ -411,9 +411,9 @@ public class DatabaseRegistry {
      */
     public final void setSpeciesOfAll(final Species species) {
 
-        Iterator it = entries.iterator();
+        Iterator<DatabaseRegistryEntry> it = entries.iterator();
         while (it.hasNext()) {
-            DatabaseRegistryEntry dbre = (DatabaseRegistryEntry) it.next();
+            DatabaseRegistryEntry dbre = it.next();
             dbre.setSpecies(species);
         }
 
@@ -429,9 +429,9 @@ public class DatabaseRegistry {
      */
     public final DatabaseRegistryEntry getByExactName(final String name) {
 
-        Iterator it = entries.iterator();
+        Iterator<DatabaseRegistryEntry> it = entries.iterator();
         while (it.hasNext()) {
-            DatabaseRegistryEntry dbre = (DatabaseRegistryEntry) it.next();
+            DatabaseRegistryEntry dbre = it.next();
             if (dbre.getName().equals(name)) {
                 return dbre;
             }
@@ -448,11 +448,11 @@ public class DatabaseRegistry {
      */
     public final DatabaseType[] getTypes() {
 
-        List types = new ArrayList();
+        List<DatabaseType> types = new ArrayList<DatabaseType>();
 
-        Iterator it = entries.iterator();
+        Iterator<DatabaseRegistryEntry> it = entries.iterator();
         while (it.hasNext()) {
-            DatabaseRegistryEntry dbre = (DatabaseRegistryEntry) it.next();
+            DatabaseRegistryEntry dbre = it.next();
             if (!types.contains(dbre.getType())) {
                 types.add(dbre.getType());
             }
@@ -470,11 +470,11 @@ public class DatabaseRegistry {
      */
     public final Species[] getSpecies() {
 
-        List species = new ArrayList();
+        List<Species> species = new ArrayList<Species>();
 
-        Iterator it = entries.iterator();
+        Iterator<DatabaseRegistryEntry> it = entries.iterator();
         while (it.hasNext()) {
-            DatabaseRegistryEntry dbre = (DatabaseRegistryEntry) it.next();
+            DatabaseRegistryEntry dbre = it.next();
             if (!species.contains(dbre.getSpecies())) {
                 species.add(dbre.getSpecies());
             }
@@ -504,14 +504,14 @@ public class DatabaseRegistry {
      * @param species The species to match.
      * @return A new DatabaseRegistry
      */
-    public DatabaseRegistry getSecondaryDatabaseRegistry(List regexps, DatabaseType type, Species species) {
+    public DatabaseRegistry getSecondaryDatabaseRegistry(List<String> regexps, DatabaseType type, Species species) {
 
         Connection con = DBUtils.openConnection(System.getProperty("driver"), 
         		System.getProperty("secondary.databaseURL"), System.getProperty("secondary.user"), System.getProperty("secondary.password"));
 
-        List dbres = new ArrayList();
+        List<DatabaseRegistryEntry> dbres = new ArrayList<DatabaseRegistryEntry>();
         
-        Iterator it = regexps.iterator();
+        Iterator<String> it = regexps.iterator();
         while (it.hasNext()) {
 
             String[] names = DBUtils.listDatabases(con, (String) it.next());

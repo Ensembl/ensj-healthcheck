@@ -23,7 +23,7 @@ import org.ensembl.healthcheck.util.DBUtils;
  * Container for information about a database that can be stored in a DatabaseRegistry.
  * 
  */
-public class DatabaseRegistryEntry implements Comparable {
+public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> {
 
 	private String name;
 
@@ -358,9 +358,9 @@ public class DatabaseRegistryEntry implements Comparable {
 
 	// -----------------------------------------------------------------
 
-	public int compareTo(Object o) {
+	public int compareTo(DatabaseRegistryEntry dbre) {
 
-		return getName().compareTo(((DatabaseRegistryEntry) o).getName());
+		return getName().compareTo(dbre.getName());
 
 	}
 
