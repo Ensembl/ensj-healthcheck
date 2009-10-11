@@ -14,15 +14,12 @@
 package org.ensembl.healthcheck.util;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -37,8 +34,6 @@ import org.ensembl.healthcheck.testcase.EnsTestCase;
  */
 
 public final class DBUtils {
-
-	private static final boolean USE_CONNECTION_POOLING = true;
 
 	private static Logger logger = Logger.getLogger("HealthCheckLogger");
 
@@ -63,33 +58,7 @@ public final class DBUtils {
 	 */
 	public static Connection openConnection(String driverClassName, String databaseURL, String user, String password) {
 
-		Connection con = null;
-
-		if (USE_CONNECTION_POOLING) {
-
-			con = ConnectionPool.getConnection(driverClassName, databaseURL, user, password);
-
-		} else {
-
-			try {
-
-				Class.forName(driverClassName);
-				Properties props = new Properties();
-				props.put("user", user);
-				props.put("password", password);
-				props.put("maxRows", "" + 100);
-				con = DriverManager.getConnection(databaseURL, props);
-
-			} catch (Exception e) {
-
-				e.printStackTrace();
-				System.exit(1);
-
-			}
-
-		} // if use pooling
-
-		return con;
+		return ConnectionPool.getConnection(driverClassName, databaseURL, user, password);
 
 	} // openConnection
 
@@ -108,7 +77,7 @@ public final class DBUtils {
 			logger.severe("Database connection is null");
 		}
 
-		ArrayList dbNames = new ArrayList();
+		ArrayList<String> dbNames = new ArrayList<String>();
 
 		try {
 
@@ -155,7 +124,7 @@ public final class DBUtils {
 			logger.severe("Database connection is null");
 		}
 
-		ArrayList dbMatches = new ArrayList();
+		ArrayList<String> dbMatches = new ArrayList<String>();
 
 		pattern = Pattern.compile(regex);
 
@@ -188,7 +157,7 @@ public final class DBUtils {
 	 * @param resultSetGroup
 	 *          The list of ResultSets to compare
 	 */
-	public static boolean compareResultSetGroup(List resultSetGroup, EnsTestCase testCase, boolean comparingSchema) {
+	public static boolean compareResultSetGroup(List<ResultSet> resultSetGroup, EnsTestCase testCase, boolean comparingSchema) {
 
 		boolean same = true;
 
@@ -197,8 +166,8 @@ public final class DBUtils {
 		int size = resultSetGroup.size();
 		for (int i = 0; i < size; i++) {
 			for (int j = i + 1; j < size; j++) {
-				ResultSet rsi = (ResultSet) resultSetGroup.get(i);
-				ResultSet rsj = (ResultSet) resultSetGroup.get(j);
+				ResultSet rsi = resultSetGroup.get(i);
+				ResultSet rsj = resultSetGroup.get(j);
 				same &= compareResultSets(rsi, rsj, testCase, "", true, true, "", comparingSchema);
 			}
 		}
@@ -567,7 +536,7 @@ public final class DBUtils {
 	 */
 	public static String[] getTableNames(Connection con) {
 
-		List result = new ArrayList();
+		List<String> result = new ArrayList<String>();
 
 		if (con == null) {
 			logger.severe("getTableNames(): Database connection is null");
@@ -605,7 +574,7 @@ public final class DBUtils {
 	 */
 	public static String[] getTableNames(Connection con, String pattern) {
 
-		List result = new ArrayList();
+		List<String> result = new ArrayList<String>();
 
 		if (con == null) {
 			logger.severe("getTableNames(): Database connection is null");
@@ -641,9 +610,9 @@ public final class DBUtils {
 	 *          The connection to use.
 	 * @return A List of Strings representing the column names.
 	 */
-	public static List getColumnsInTable(Connection con, String table) {
+	public static List<String> getColumnsInTable(Connection con, String table) {
 
-		List result = new ArrayList();
+		List<String> result = new ArrayList<String>();
 
 		try {
 
