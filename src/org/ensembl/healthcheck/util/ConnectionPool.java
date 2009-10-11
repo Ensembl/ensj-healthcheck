@@ -35,7 +35,7 @@ public final class ConnectionPool {
     private static Logger logger = Logger.getLogger("HealthCheckLogger");
 
     // store connections; key = database URL (as String), Connection object
-    private static Map pool = new HashMap();
+    private static Map<String, Connection> pool = new HashMap<String, Connection>();
 
     // hide constructor to stop people instantiating this
     private ConnectionPool() { }
@@ -91,8 +91,8 @@ public final class ConnectionPool {
      */
     public static void closeAll() {
 
-        Set keys = pool.keySet();
-        Iterator it = keys.iterator();
+        Set<String> keys = pool.keySet();
+        Iterator<String> it = keys.iterator();
 
         while (it.hasNext()) {
             try {
