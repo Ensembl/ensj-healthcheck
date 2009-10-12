@@ -21,11 +21,12 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.ensembl.healthcheck.DatabaseRegistry;
+import org.ensembl.healthcheck.DatabaseServer;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 
@@ -36,6 +37,14 @@ import org.ensembl.healthcheck.testcase.EnsTestCase;
 public final class DBUtils {
 
 	private static Logger logger = Logger.getLogger("HealthCheckLogger");
+
+	private static List<DatabaseServer> mainDatabaseServers;
+
+	private static List<DatabaseServer> secondaryDatabaseServers;
+
+	private static DatabaseRegistry mainDatabaseRegistry;
+
+	private static DatabaseRegistry secondaryDatabaseRegistry;
 
 	// hide constructor to stop instantiation
 	private DBUtils() {
@@ -451,62 +460,6 @@ public final class DBUtils {
 
 	// -------------------------------------------------------------------------
 	/**
-	 * Convert properties used by Healthcheck into properties suitable for ensj; ensj properties host, port, user, password are
-	 * converted. Note ensj property database is <em>not</em> set.
-	 * 
-	 * @return A Properties object containing host, port, user and password NOT database.
-	 * @param testRunnerProps
-	 *          A set of properties in the format used by HealthCheck, e.g. databaseURL etc.
-	 */
-	public static Properties convertHealthcheckToEnsjProperties(Properties testRunnerProps) {
-
-		Properties props = new Properties();
-
-		// user & password are straightforward
-		props.put("user", testRunnerProps.get("user"));
-		props.put("password", testRunnerProps.get("password"));
-
-		// get host and port from URL
-		// java.net.URL doesn't support JDBC URLs(!) so we have to hack things
-		// a bit
-		String dbUrl = (String) testRunnerProps.get("databaseURL");
-		java.net.URL url = null;
-		try {
-			url = new java.net.URL("http" + dbUrl.substring(10)); // strip off
-			// jdbc:mysql:
-			// and
-			// pretend it's http
-		} catch (java.net.MalformedURLException e) {
-			e.printStackTrace();
-		}
-		if (url != null) {
-			String host = url.getHost();
-			String port = "" + url.getPort();
-			props.put("host", host);
-			props.put("port", port);
-		} else {
-			logger.severe("Unable to get host/port from url");
-		}
-
-		return props;
-
-	} // convertHealthcheckToEnsjProperties
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Convert properties used by Healthcheck into properties suitable for ensj; ensj properties host, port, user, password are
-	 * converted. Note ensj property database is <em>not</em> set. Input properties are obtained from System.properties.
-	 * 
-	 * @return A Properties object containing host, port, user and password NOT database.
-	 */
-	public static Properties convertHealthcheckToEnsjProperties() {
-
-		return convertHealthcheckToEnsjProperties(System.getProperties());
-
-	}
-
-	// -------------------------------------------------------------------------
-	/**
 	 * Generate a name for a temporary database. Should be fairly unique; name is _temp_{user}_{time} where user is current user and
 	 * time is current time in ms.
 	 * 
@@ -662,7 +615,7 @@ public final class DBUtils {
 			while (rs.next()) {
 				String[] info = new String[6];
 				for (int i = 0; i < 6; i++) {
-					info[i] = rs.getString(i+1);
+					info[i] = rs.getString(i + 1);
 				}
 				if (typeFilter == null || info[1].toLowerCase().startsWith(typeFilter)) {
 					result.add(info);
@@ -739,6 +692,87 @@ public final class DBUtils {
 
 	}
 
+	// -------------------------------------------------------------------------
+	/**
+	 * Get main database server list - build if necessary. Assumes properties file already read.
+	 */
+	public static List<DatabaseServer> getMainDatabaseServers() {
+
+		Utils.readPropertiesFileIntoSystem("database.properties", false);
+		
+		if (mainDatabaseServers == null) {
+
+			mainDatabaseServers = new ArrayList<DatabaseServer>();
+
+			checkAndAddDatabaseServer(mainDatabaseServers, "host", "port", "user", "password", "driver");
+
+			checkAndAddDatabaseServer(mainDatabaseServers, "host1", "port1", "user1", "password1", "driver1");
+
+			checkAndAddDatabaseServer(mainDatabaseServers, "host2", "port2", "user2", "password2", "driver2");
+			
+		}
+
+	logger.fine("Number of main database servers found: " + mainDatabaseServers.size());
+		
+		return mainDatabaseServers;
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+	 * Look for secondary database servers.
+	 */
+	public static List<DatabaseServer> getSecondaryDatabaseServers() {
+
+		Utils.readPropertiesFileIntoSystem("database.properties", false);
+
+		if (secondaryDatabaseServers == null) {
+
+			secondaryDatabaseServers = new ArrayList<DatabaseServer>();
+
+			checkAndAddDatabaseServer(secondaryDatabaseServers, "secondary.host", "secondary.port", "secondary.user", "secondary.password", "secondary.driver");
+			
+			checkAndAddDatabaseServer(secondaryDatabaseServers, "secondary.host1", "secondary.port1", "secondary.user1", "secondary.password1", "secondary.driver1");
+			
+			checkAndAddDatabaseServer(secondaryDatabaseServers, "secondary.host2", "secondary.port2", "secondary.user2", "secondary.password2", "secondary.driver2");
+
+		}
+
+		System.out.println("Number of secondary database servers found: " + secondaryDatabaseServers.size());
+
+		return secondaryDatabaseServers;
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+	 * Check for the existence of a particular database server. Assumes properties file has already been read in. If it exists, add it to the list.
+	 */
+	private static void checkAndAddDatabaseServer(List<DatabaseServer> servers, String hostProp, String portProp, String userProp, String passwordProp, String driverProp) {
+
+		if (System.getProperty(hostProp) != null && System.getProperty(portProp) != null && System.getProperty(userProp) != null) {
+
+			DatabaseServer server = new DatabaseServer(System.getProperty(hostProp), System.getProperty(portProp), System.getProperty(userProp), System.getProperty(passwordProp), System.getProperty(driverProp));
+			servers.add(server);
+			logger.fine("Added server: " + server.toString());
+
+		}
+
+	}
+
+	// -------------------------------------------------------------------------
+
+	public static DatabaseRegistry getSecondaryDatabaseRegistry() {
+
+		if (secondaryDatabaseRegistry == null) {
+
+			secondaryDatabaseRegistry = new DatabaseRegistry(null, null, null, true);
+
+		}
+
+		return secondaryDatabaseRegistry;
+
+	}
 	// -------------------------------------------------------------------------
 
 } // DBUtils

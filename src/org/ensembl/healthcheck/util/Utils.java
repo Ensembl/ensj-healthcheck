@@ -94,73 +94,8 @@ public final class Utils {
 	 */
 	public static void buildDatabaseURLs() {
 
-		// check if a databaseURL property has been specified; if so, use it
-		// if not, build the databaseURL property from host, port etc
-
-		String databaseURL = System.getProperty("databaseURL");
-
-		if (databaseURL == null || databaseURL.equals("")) {
-
-			// check that required properties are set
-			checkProperties();
-			
-			// build it
-			databaseURL = "jdbc:mysql://";
-
-			if (System.getProperty("host") != null) {
-				databaseURL += System.getProperty("host");
-			}
-
-			if (System.getProperty("port") != null) {
-				databaseURL += ":" + System.getProperty("port");
-			}
-
-			databaseURL += "/";
-			System.setProperty("databaseURL", databaseURL);
-
-		} else {
-
-			// validate database URL - if it doesn't start with jdbc: this can
-			// cause confusion
-			String prefix = databaseURL.substring(0, 5);
-			if (!prefix.equalsIgnoreCase("jdbc:")) {
-				System.err
-						.println("WARNING - databaseURL property should start with jdbc: but it does not seem to. Check this if you experience problems loading the database driver");
-			}
-		}
-
-		// similarly for secondary database URL
-
-		String secondaryDatabaseURL = System.getProperty("secondary.databaseURL");
-
-		if (secondaryDatabaseURL == null || secondaryDatabaseURL.equals("")) {
-
-			// build it
-			secondaryDatabaseURL = "jdbc:mysql://";
-
-			if (System.getProperty("secondary.host") != null) {
-				secondaryDatabaseURL += System.getProperty("secondary.host");
-			}
-
-			if (System.getProperty("secondary.port") != null) {
-				secondaryDatabaseURL += ":" + System.getProperty("secondary.port");
-			}
-
-			secondaryDatabaseURL += "/";
-			System.setProperty("secondary.databaseURL", secondaryDatabaseURL);
-
-		} else {
-
-			// validate secondary database URL - if it doesn't start with jdbc: this
-			// can
-			// cause confusion
-			String prefix = secondaryDatabaseURL.substring(0, 5);
-			if (!prefix.equalsIgnoreCase("jdbc:")) {
-				System.err
-						.println("WARNING - secondary.databaseURL property should start with jdbc: but it does not seem to. Check this if you experience problems loading the database driver");
-			}
-		}
-
+		// others done in DatabaseServer
+		
 		// ... and for output database URL
 
 		String outputDatabaseURL = System.getProperty("output.databaseURL");
@@ -842,6 +777,7 @@ public final class Utils {
 			return listToMap(Arrays.asList(array));
 
 		}
+		
 	// -------------------------------------------------------------------------
 
 } // Utils

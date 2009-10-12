@@ -16,6 +16,8 @@
 
 package org.ensembl.healthcheck.gui;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -70,7 +72,10 @@ public class GuiTestRunner extends TestRunner implements Reporter {
 
         Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE, false);
 
-        DatabaseRegistry databaseRegistry = new DatabaseRegistry(".*");
+        List<String> regexps = new ArrayList<String>();
+        regexps.add(".*");
+        
+        DatabaseRegistry databaseRegistry = new DatabaseRegistry(regexps, null, null, false);
         if (databaseRegistry.getEntryCount() == 0) {
             logger.warning("Warning: no databases found!");
         }

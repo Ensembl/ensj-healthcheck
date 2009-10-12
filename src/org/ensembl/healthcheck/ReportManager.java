@@ -35,9 +35,8 @@ import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * ReportManager is the main class for reporting in the Ensj Healthcheck system.
- * It provides methods for storing reports - single items of information - and
- * retrieving them in various formats.
+ * ReportManager is the main class for reporting in the Ensj Healthcheck system. It provides methods for storing reports - single
+ * items of information - and retrieving them in various formats.
  */
 public final class ReportManager {
 
@@ -51,8 +50,7 @@ public final class ReportManager {
 	protected static Logger logger = Logger.getLogger("HealthCheckLogger");
 
 	/**
-	 * The maximum number of lines to store to prevent very verbose test cases
-	 * causing memory problems
+	 * The maximum number of lines to store to prevent very verbose test cases causing memory problems
 	 */
 	protected static final int MAX_BUFFER_SIZE = 2000;
 
@@ -66,12 +64,7 @@ public final class ReportManager {
 
 	private static long sessionID = -1;
 
-	private static DatabaseRegistryEntry dbre = new DatabaseRegistryEntry("", null, null, false); // just
-
-	// used
-	// for
-	// convenience
-	// methods
+	private static DatabaseRegistryEntry dbre = new DatabaseRegistryEntry(); // just used for convenience methods
 
 	// hide constructor to stop instantiation
 	private ReportManager() {
@@ -156,8 +149,7 @@ public final class ReportManager {
 				// prevent the buffer getting too big
 				if (lines.size() > MAX_BUFFER_SIZE) {
 					if (!bufferSizeWarningPrinted) {
-						System.err.println("\n\nReportManager has reached its maximum buffer size (" + MAX_BUFFER_SIZE
-								+ " lines) - no more output will be stored\n");
+						System.err.println("\n\nReportManager has reached its maximum buffer size (" + MAX_BUFFER_SIZE + " lines) - no more output will be stored\n");
 						bufferSizeWarningPrinted = true;
 					}
 				} else {
@@ -194,8 +186,7 @@ public final class ReportManager {
 
 	// -------------------------------------------------------------------------
 	/**
-	 * Convenience method for storing reports, intended to be easy to call from an
-	 * EnsTestCase.
+	 * Convenience method for storing reports, intended to be easy to call from an EnsTestCase.
 	 * 
 	 * @param testCase
 	 *          The test case filing the report.
@@ -217,8 +208,7 @@ public final class ReportManager {
 
 	// -------------------------------------------------------------------------
 	/**
-	 * Convenience method for storing reports, intended to be easy to call from an
-	 * EnsTestCase.
+	 * Convenience method for storing reports, intended to be easy to call from an EnsTestCase.
 	 * 
 	 * @param testCase
 	 *          The test case filing the report.
@@ -480,15 +470,13 @@ public final class ReportManager {
 
 	// -------------------------------------------------------------------------
 	/**
-	 * Filter a HashMap of lists of ReportLines so that only certain entries are
-	 * returned.
+	 * Filter a HashMap of lists of ReportLines so that only certain entries are returned.
 	 * 
 	 * @param map
 	 *          The list to filter.
 	 * @param level
 	 *          All reports with a priority above this level will be returned.
-	 * @return A HashMap with the same keys as map, but with the lists filtered by
-	 *         level.
+	 * @return A HashMap with the same keys as map, but with the lists filtered by level.
 	 */
 	public static Map filterMap(Map map, int level) {
 
@@ -508,14 +496,12 @@ public final class ReportManager {
 
 	// ---------------------------------------------------------------------
 	/**
-	 * Count how many tests passed and failed for a particular database. A test is
-	 * considered to have passed if there are no reports of level
-	 * ReportLine.PROBLEM.
+	 * Count how many tests passed and failed for a particular database. A test is considered to have passed if there are no reports
+	 * of level ReportLine.PROBLEM.
 	 * 
 	 * @param database
 	 *          The database to check.
-	 * @return An array giving the number of passes and then fails for this
-	 *         database.
+	 * @return An array giving the number of passes and then fails for this database.
 	 */
 	public static int[] countPassesAndFailsDatabase(String database) {
 
@@ -556,13 +542,12 @@ public final class ReportManager {
 
 	// ---------------------------------------------------------------------
 	/**
-	 * Count how many databases passed a particular test. A test is considered to
-	 * have passed if there are no reports of level ReportLine.PROBLEM.
+	 * Count how many databases passed a particular test. A test is considered to have passed if there are no reports of level
+	 * ReportLine.PROBLEM.
 	 * 
 	 * @param test
 	 *          The test to check.
-	 * @return An array giving the number of databases that passed [0] and failed
-	 *         [1] this test.
+	 * @return An array giving the number of databases that passed [0] and failed [1] this test.
 	 */
 	public static int[] countPassesAndFailsTest(String test) {
 
@@ -604,8 +589,8 @@ public final class ReportManager {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Count how many tests passed and failed. A test is considered to have passed
-	 * if there are no reports of level ReportLine.PROBLEM.
+	 * Count how many tests passed and failed. A test is considered to have passed if there are no reports of level
+	 * ReportLine.PROBLEM.
 	 * 
 	 * @return An array giving the number of passes and then fails.
 	 */
@@ -659,8 +644,7 @@ public final class ReportManager {
 	 * 
 	 * @param test
 	 *          The test to check.
-	 * @return true if none of the databases failed this test (i.e. had no
-	 *         problems)
+	 * @return true if none of the databases failed this test (i.e. had no problems)
 	 */
 	public static boolean allDatabasesPassed(String test) {
 
@@ -675,11 +659,9 @@ public final class ReportManager {
 
 	// -------------------------------------------------------------------------
 	/**
-	 * Get a list of all the reports corresponding to a particular database and
-	 * test case.
+	 * Get a list of all the reports corresponding to a particular database and test case.
 	 * 
-	 * @return A List of the results (as a list) corresponding to test and
-	 *         database.
+	 * @return A List of the results (as a list) corresponding to test and database.
 	 * @param test
 	 *          The test case to filter by.
 	 * @param database
@@ -719,11 +701,11 @@ public final class ReportManager {
 	 */
 	public static void connectToOutputDatabase() {
 
-		outputDatabaseConnection = DBUtils.openConnection(System.getProperty("output.driver"), System.getProperty("output.databaseURL")
-				+ System.getProperty("output.database"), System.getProperty("output.user"), System.getProperty("output.password"));
+		outputDatabaseConnection = DBUtils.openConnection(System.getProperty("output.driver"), System.getProperty("output.databaseURL") + System.getProperty("output.database"), System
+				.getProperty("output.user"), System.getProperty("output.password"));
 
-		logger.fine("Connecting to " + System.getProperty("output.databaseURL") + System.getProperty("output.database") + " as "
-				+ System.getProperty("output.user") + " password " + System.getProperty("output.password"));
+		logger.fine("Connecting to " + System.getProperty("output.databaseURL") + System.getProperty("output.database") + " as " + System.getProperty("output.user") + " password "
+				+ System.getProperty("output.password"));
 
 		usingDatabase = true;
 
@@ -731,15 +713,13 @@ public final class ReportManager {
 
 	// -------------------------------------------------------------------------
 	/**
-	 * Create a new entry in the session table. Store the ID of the created
-	 * session in sessionID.
+	 * Create a new entry in the session table. Store the ID of the created session in sessionID.
 	 */
 	public static void createDatabaseSession() {
 
-	    String sql = "INSERT INTO session (host, config, db_release) VALUES ('"
-		+ System.getProperty("host") + ":" + System.getProperty("port") + "','"
-		+ System.getProperty("output.databases") + "', " + System.getProperty("output.release") + ")";
-	    
+		String sql = "INSERT INTO session (host, config, db_release) VALUES ('" + System.getProperty("host") + ":" + System.getProperty("port") + "','" + System.getProperty("output.databases") + "', "
+				+ System.getProperty("output.release") + ")";
+
 		try {
 			Statement stmt = outputDatabaseConnection.createStatement();
 			stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
@@ -772,9 +752,8 @@ public final class ReportManager {
 	 */
 	public static void createDatabaseSession(long sessionID) {
 
-		String sql = "INSERT INTO session (session_id, start_time, host, groups, database_regexp, db_release) VALUES (" + sessionID
-				+ ", NOW(), '" + System.getProperty("host") + ":" + System.getProperty("port") + "','" + System.getProperty("output.groups")
-				+ "','" + System.getProperty("output.databases") + "', " + System.getProperty("output.release") + ")";
+		String sql = "INSERT INTO session (session_id, start_time, host, groups, database_regexp, db_release) VALUES (" + sessionID + ", NOW(), '" + System.getProperty("host") + ":"
+				+ System.getProperty("port") + "','" + System.getProperty("output.groups") + "','" + System.getProperty("output.databases") + "', " + System.getProperty("output.release") + ")";
 
 		try {
 
@@ -842,9 +821,8 @@ public final class ReportManager {
 
 	// -------------------------------------------------------------------------
 	/**
-	 * Update a report in the database. Two possible actions: 1. If the report
-	 * already exists and hasn't changed, just update it. 2. If the report is new,
-	 * add a new record.
+	 * Update a report in the database. Two possible actions: 1. If the report already exists and hasn't changed, just update it. 2.
+	 * If the report is new, add a new record.
 	 */
 	public static void checkAndAddToDatabase(ReportLine report) {
 
@@ -900,11 +878,9 @@ public final class ReportManager {
 		}
 
 		if (reportID > -1) {
-			logger.finest("Report already exists (ID " + reportID + "): " + report.getDatabaseName() + " " + report.getTestCaseName() + " "
-					+ report.getLevelAsString() + " " + report.getMessage());
+			logger.finest("Report already exists (ID " + reportID + "): " + report.getDatabaseName() + " " + report.getTestCaseName() + " " + report.getLevelAsString() + " " + report.getMessage());
 		} else {
-			logger.finest("Report does not already exist: " + report.getDatabaseName() + " " + report.getTestCaseName() + " "
-					+ report.getLevelAsString() + " " + report.getMessage());
+			logger.finest("Report does not already exist: " + report.getDatabaseName() + " " + report.getTestCaseName() + " " + report.getLevelAsString() + " " + report.getMessage());
 		}
 
 		return reportID;
@@ -921,8 +897,7 @@ public final class ReportManager {
 			logger.severe("No connection to output database!");
 		}
 
-		logger.fine("Adding report for: " + report.getDatabaseName() + " " + report.getTestCaseName() + " " + report.getLevelAsString()
-				+ " " + report.getMessage());
+		logger.fine("Adding report for: " + report.getDatabaseName() + " " + report.getTestCaseName() + " " + report.getLevelAsString() + " " + report.getMessage());
 
 		String sql = "INSERT INTO report (first_session_id, last_session_id, database_name, species, database_type, testcase, result, text, timestamp, team_responsible, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, NOW())";
 
@@ -959,8 +934,8 @@ public final class ReportManager {
 			logger.severe("No connection to output database!");
 		}
 
-		logger.fine("Updating report for: " + report.getDatabaseName() + " " + report.getTestCaseName() + " "
-				+ report.getLevelAsString() + " " + report.getMessage() + ", new last_session_id=" + sessionID);
+		logger.fine("Updating report for: " + report.getDatabaseName() + " " + report.getTestCaseName() + " " + report.getLevelAsString() + " " + report.getMessage() + ", new last_session_id="
+				+ sessionID);
 
 		String sql = "UPDATE report SET last_session_id=?, timestamp=NOW() WHERE report_id=?";
 
@@ -979,6 +954,7 @@ public final class ReportManager {
 		}
 
 	}
+
 	// -------------------------------------------------------------------------
 
 	public static long getSessionID() {

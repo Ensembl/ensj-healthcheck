@@ -76,7 +76,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
 		TestRegistry testRegistry = new TestRegistry();
 
-		DatabaseRegistry databaseRegistry = new DatabaseRegistry(databaseRegexps, null, null);
+		DatabaseRegistry databaseRegistry = new DatabaseRegistry(databaseRegexps, null, null, false);
 		if (databaseRegistry.getAll().length == 0) {
 			logger.warning("Warning: no database names matched any of the database regexps given");
 		}

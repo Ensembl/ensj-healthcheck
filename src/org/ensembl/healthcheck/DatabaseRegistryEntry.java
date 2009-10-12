@@ -35,34 +35,35 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 
 	private boolean isMultiSpecies = false;
 
-	private Connection con;
+	private DatabaseServer server;
 
 	private DatabaseRegistry databaseRegistry;
 
+	private Connection connection;
+	
 	/** The logger to use */
 	private static Logger logger = Logger.getLogger("HealthCheckLogger");
 
 	// -----------------------------------------------------------------
 	/**
-	 * Create a new DatabaseRegistryEntry. A connection to the named database is also created if required.
+	 * Create a new DatabaseRegistryEntry. 
 	 * 
+	 * @param server
+	 *          The database server where this database resides.
 	 * @param name
 	 *          The name of the database.
 	 * @param species
 	 *          The species that this database represents. If null, guess it from name.
 	 * @param type
 	 *          The type of this database. If null, guess it from name.
-	 * @param connect
-	 *          If true, open a connection to the database on the primary database server.
 	 */
-	public DatabaseRegistryEntry(String name, Species species, DatabaseType type, boolean connect) {
+	public DatabaseRegistryEntry(DatabaseServer server, String name, Species species, DatabaseType type) {
 
 		this.name = name;
 
-		if (connect) {
-			this.con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL") + name, System.getProperty("user"), System.getProperty("password"));
-			isMultiSpecies = checkMultiSpecies(con);
-		}
+		connection = server.getDatabaseConnection(name);
+		
+		isMultiSpecies = checkMultiSpecies(connection);
 
 		if (species != null) {
 			this.species = species;
@@ -78,7 +79,12 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 
 	}
 
+	public DatabaseRegistryEntry() {
+		
+	}
+	
 	// -----------------------------------------------------------------
+	
 	/**
 	 * Attempt to figure out species from database name. Also set schema and genebuild versions as appropriate.
 	 * 
@@ -339,23 +345,6 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 		this.type = type;
 	}
 
-	/**
-	 * @return Connection to the database.
-	 */
-	public final Connection getConnection() {
-
-		return con;
-	}
-
-	/**
-	 * @param con
-	 *          New database connection.
-	 */
-	public final void setConnection(final Connection con) {
-
-		this.con = con;
-	}
-
 	// -----------------------------------------------------------------
 
 	public int compareTo(DatabaseRegistryEntry dbre) {
@@ -444,6 +433,20 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 
 		return result;
 
+	}
+
+	public DatabaseServer getDatabaseServer() {
+		return server;
+	}
+
+	public void setDatabaseServer(DatabaseServer server) {
+		this.server = server;
+	}
+	
+	public Connection getConnection() {
+		
+		return connection;
+		
 	}
 
 	// -----------------------------------------------------------------

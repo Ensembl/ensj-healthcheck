@@ -30,510 +30,418 @@ import org.ensembl.healthcheck.util.DBUtils;
  */
 public class DatabaseRegistry {
 
-    // Entries is explicitly specified as an ArrayList rather than the list
-    // because the order is important
-    private ArrayList<DatabaseRegistryEntry> entries = new ArrayList<DatabaseRegistryEntry>();
+	// Entries is explicitly specified as an ArrayList rather than the list
+	// because the order is important
+	private ArrayList<DatabaseRegistryEntry> entries = new ArrayList<DatabaseRegistryEntry>();
 
-    // Entries in the secondary server
-    private ArrayList<DatabaseRegistryEntry> secondaryEntries = new ArrayList<DatabaseRegistryEntry>();
-
-    // these global settings override guessing if they are specified
-    private Species globalSpecies = null;
-    private DatabaseType globalType = null;
-    
-    /** The logger to use */
-    private static Logger logger = Logger.getLogger("HealthCheckLogger");
-
-    // -----------------------------------------------------------------
-    /**
-     * Create a new DatabaseRegistry. DatabaseRegistryEntry objects for the databases matching regexp are created and added to the
-     * registry.
-     * 
-     * @param regexp
-     *            The regular expression matching the databases to use.
-     */
-    public DatabaseRegistry(final String regexp) {
+	// Entries in the secondary server
+	private ArrayList<DatabaseRegistryEntry> secondaryEntries = new ArrayList<DatabaseRegistryEntry>();
 
-        Connection con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System
-                .getProperty("user"), System.getProperty("password"));
-
-        String[] names = DBUtils.listDatabases(con, regexp);
+	// these global settings override guessing if they are specified
+	private Species globalSpecies = null;
 
-        addEntriesToRegistry(names);
-
-    }
+	private DatabaseType globalType = null;
 
-    // -----------------------------------------------------------------
-    /**
-     * Create a new DatabaseRegistry. DatabaseRegistryEntry objects for the databases matching regexp are created and added to the
-     * registry.
-     * 
-     * @param regexps
-     *            The regular expressions matching the databases to use.
-     */
-    public DatabaseRegistry(final List<String> regexps, DatabaseType globalType, Species globalSpecies) {
+	/** The logger to use */
+	private static Logger logger = Logger.getLogger("HealthCheckLogger");
 
-        this.globalType = globalType;
-        this.globalSpecies = globalSpecies;
+	// -----------------------------------------------------------------
+	/**
+	 * Create a new DatabaseRegistry. DatabaseRegistryEntry objects for the databases matching regexp are created and added to the
+	 * registry.
+	 * 
+	 * @param regexps
+	 *          The regular expressions matching the databases to use. If null, match everything.
+	 * @param isSecondary
+	 *          If true, this is a secondary database registry.
+	 */
+	public DatabaseRegistry(List<String> regexps, DatabaseType globalType, Species globalSpecies, boolean isSecondary) {
+		
+		this.globalType = globalType;
+		this.globalSpecies = globalSpecies;
 
-        Connection con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System
-                .getProperty("user"), System.getProperty("password"));
+		if (regexps == null) {
+			regexps = new ArrayList<String>();
+			regexps.add(".");
+		}
 
-        Iterator<String> it = regexps.iterator();
-        while (it.hasNext()) {
+		List<DatabaseServer> servers = isSecondary ? DBUtils.getSecondaryDatabaseServers() : DBUtils.getMainDatabaseServers();
 
-            String[] names = DBUtils.listDatabases(con, (String) it.next());
-            addEntriesToRegistry(names);
+		for (DatabaseServer server : servers) {
 
-        }
+			Iterator<String> it = regexps.iterator();
+			while (it.hasNext()) {
 
-    }
+				String[] names = DBUtils.listDatabases(server.getServerConnection(), it.next());
+				addEntriesToRegistry(server, names);
 
-    // -------------------------------------------------------------------------
-    /**
-     * Create a new DatabaseRegistry. DatabaseRegistryEntry objects for the databases matching regexp are created and added to the
-     * registry.
-     * 
-     * @param regexps
-     *            The regular expressions matching the databases to use.
-     * @param regexps2
-     *            The regular expressions matching the databases to use in the secondary server.
-     */
-    public DatabaseRegistry(final List<String> regexps, final List<String> regexps2, DatabaseType globalType, Species globalSpecies) {
+			}
+		}
 
-        this.globalType = globalType;
-        this.globalSpecies = globalSpecies;
+	}
 
-        Connection con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System
-                .getProperty("user"), System.getProperty("password"));
+	// -------------------------------------------------------------------------
+	/**
+	 * Create a new DatabaseRegistry from an array of DatabaseRegistryEntries.
+	 * 
+	 * @param dbres
+	 *          The entries to use.
+	 */
+	public DatabaseRegistry(final DatabaseRegistryEntry[] dbres) {
+
+		for (int i = 0; i < dbres.length; i++) {
 
-        Iterator<String> it = regexps.iterator();
-        while (it.hasNext()) {
-
-            String[] names = DBUtils.listDatabases(con, it.next());
-            addEntriesToRegistry(names);
-
-        }
-
-        Connection con2 = DBUtils.openConnection(
-                System.getProperty("driver"),
-                System.getProperty("secondary.databaseURL"),
-                System.getProperty("secondary.user"),
-                System.getProperty("secondary.password")
-            );
-
-        it = regexps2.iterator();
-        while (it.hasNext()) {
-
-            String[] names = DBUtils.listDatabases(con2, it.next());
-            addSecondaryEntriesToRegistry(names);
-
-        }
-
-    }
-
-    // -------------------------------------------------------------------------
-    /**
-     * Create a new DatabaseRegistry from an array of DatabaseRegistryEntries.
-     * 
-     * @param dbres
-     *            The entries to use.
-     */
-    public DatabaseRegistry(final DatabaseRegistryEntry[] dbres) {
-
-        for (int i = 0; i < dbres.length; i++) {
-
-            entries.add(dbres[i]);
-
-        }
-
-    }
-
-    // -------------------------------------------------------------------------
-    /**
-     * Create a new DatabaseRegistry from a list of DatabaseRegistryEntries.
-     * 
-     * @param dbres
-     *            The entries to use.
-     */
-    public DatabaseRegistry(List<DatabaseRegistryEntry> dbres) {
-
-        Iterator<DatabaseRegistryEntry> it = dbres.iterator();
-        while (it.hasNext()) {
-
-            entries.add(it.next());
-
-        }
-
-    }
-
-    // -----------------------------------------------------------------
-
-    private void addEntriesToRegistry(final String[] names) {
-
-        for (int i = 0; i < names.length; i++) {
-            DatabaseRegistryEntry dbre = new DatabaseRegistryEntry(names[i], globalSpecies, globalType, true);
-            dbre.setDatabaseRegistry(this);
-            entries.add(dbre);
-            logger.finest(dbre.getName() + " appears to be type " + dbre.getType() + " and species " + dbre.getSpecies());
-            logger.finest("Added DatabaseRegistryEntry for " + names[i] + " to DatabaseRegistry");
-        }
-
-    }
-
-    // -----------------------------------------------------------------
-
-    private void addSecondaryEntriesToRegistry(final String[] names) {
-
-        for (int i = 0; i < names.length; i++) {
-            DatabaseRegistryEntry dbre = new DatabaseRegistryEntry(names[i], null, null, false);
-            dbre.setDatabaseRegistry(this);
-            Connection dbCon = DBUtils.openConnection(
-                    System.getProperty("secondary.driver"),
-                    System.getProperty("secondary.databaseURL") + dbre.getName(),
-                    System.getProperty("secondary.user"),
-                    System.getProperty("secondary.password"));
-
-            dbre.setConnection(dbCon);
-            secondaryEntries.add(dbre);
-            logger.finest(dbre.getName() + " appears to be type " + dbre.getType() + " and species " + dbre.getSpecies());
-            logger.finest("Added DatabaseRegistryEntry for " + names[i] + " to DatabaseRegistry");
-        }
-
-    }
-
-    // -----------------------------------------------------------------
-    /**
-     * Add a new DatabaseRegistryEntry to this registry.
-     * 
-     * @param dbre
-     *            The new DatabaseRegistryEntry.
-     */
-    public final void add(final DatabaseRegistryEntry dbre) {
-
-        entries.add(dbre);
-        dbre.setDatabaseRegistry(this);
-
-    }
-
-    // -----------------------------------------------------------------
-    /**
-     * Get all of the DatabaseRegistryEntries stored in this DatabaseRegistry.
-     * 
-     * @return The DatabaseRegistryEntries stored in this DatabaseRegistry.
-     */
-    public final DatabaseRegistryEntry[] getAll() {
-
-        return (DatabaseRegistryEntry[]) entries.toArray(new DatabaseRegistryEntry[entries.size()]);
-
-    }
-
-    // -----------------------------------------------------------------
-    /**
-     * Get all of the DatabaseRegistryEntries for a particular species
-     * 
-     * @param species
-     *            The species to look for.
-     * @return The DatabaseRegistryEntries for species..
-     */
-    public final DatabaseRegistryEntry[] getAll(final Species species) {
-
-        List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
-        Iterator<DatabaseRegistryEntry> it = entries.iterator();
-        while (it.hasNext()) {
-            DatabaseRegistryEntry dbre = it.next();
-            if (dbre.getSpecies().equals(species)) {
-                result.add(dbre);
-            }
-        }
-
-        return (DatabaseRegistryEntry[]) result.toArray(new DatabaseRegistryEntry[result.size()]);
-
-    }
-
-    // -----------------------------------------------------------------
-    /**
-     * Get all of the DatabaseRegistryEntries for a particular database type.
-     * 
-     * @param type
-     *            The type to look for.
-     * @return The DatabaseRegistryEntries for type.
-     */
-    public final DatabaseRegistryEntry[] getAll(final DatabaseType type) {
-
-        List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
-        Iterator<DatabaseRegistryEntry> it = entries.iterator();
-        while (it.hasNext()) {
-            DatabaseRegistryEntry dbre = it.next();
-            if (dbre.getType().equals(type)) {
-                result.add(dbre);
-            }
-        }
-
-        return (DatabaseRegistryEntry[]) result.toArray(new DatabaseRegistryEntry[result.size()]);
-
-    }
-
-    // -----------------------------------------------------------------
-    /**
-     * Get all of the DatabaseRegistryEntries for a particular database type and species.
-     * 
-     * @param type
-     *            The type to look for.
-     * @param species
-     *            The Species to look for.
-     * @return The DatabaseRegistryEntries that match type and species..
-     */
-    public final DatabaseRegistryEntry[] getAll(final DatabaseType type, final Species species) {
-
-        List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
-        Iterator<DatabaseRegistryEntry> it = entries.iterator();
-        while (it.hasNext()) {
-            DatabaseRegistryEntry dbre = it.next();
-            if (dbre.getType().equals(type) && dbre.getSpecies().equals(species)) {
-                result.add(dbre);
-            }
-        }
-
-        return (DatabaseRegistryEntry[]) result.toArray(new DatabaseRegistryEntry[result.size()]);
-
-    }
-
-    // -----------------------------------------------------------------
-    /**
-     * Get all of the DatabaseRegistryEntries stored in the secondary DatabaseRegistry.
-     * 
-     * @return The DatabaseRegistryEntries stored in this DatabaseRegistry.
-     */
-    public final DatabaseRegistryEntry[] getAllSecondary() {
-
-        return (DatabaseRegistryEntry[]) secondaryEntries.toArray(new DatabaseRegistryEntry[secondaryEntries.size()]);
-
-    }
-
-    // -----------------------------------------------------------------
-    /**
-     * Get all of the DatabaseRegistryEntries stored in the secondary DatabaseRegistry
-     * for a particular species
-     * 
-     * @param species
-     *            The species to look for.
-     * @return The DatabaseRegistryEntries for species..
-     */
-    public final DatabaseRegistryEntry[] getAllSecondary(final Species species) {
-
-        List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
-        Iterator<DatabaseRegistryEntry> it = secondaryEntries.iterator();
-        while (it.hasNext()) {
-            DatabaseRegistryEntry dbre = it.next();
-            if (dbre.getSpecies().equals(species)) {
-                result.add(dbre);
-            }
-        }
-
-        return (DatabaseRegistryEntry[]) result.toArray(new DatabaseRegistryEntry[result.size()]);
-
-    }
-
-    // -----------------------------------------------------------------
-    /**
-     * Get all of the DatabaseRegistryEntries stored in the secondary DatabaseRegistry
-     * for a particular database type.
-     * 
-     * @param type
-     *            The type to look for.
-     * @return The DatabaseRegistryEntries for type.
-     */
-    public final DatabaseRegistryEntry[] getAllSecondary(final DatabaseType type) {
-
-        List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
-        Iterator<DatabaseRegistryEntry> it = secondaryEntries.iterator();
-        while (it.hasNext()) {
-            DatabaseRegistryEntry dbre = it.next();
-            if (dbre.getType().equals(type)) {
-                result.add(dbre);
-            }
-        }
-
-        return (DatabaseRegistryEntry[]) result.toArray(new DatabaseRegistryEntry[result.size()]);
-
-    }
-
-    // -----------------------------------------------------------------
-    /**
-     * Get all of the DatabaseRegistryEntries stored in the secondary DatabaseRegistry
-     * for a particular database type and species.
-     * 
-     * @param type
-     *            The type to look for.
-     * @param species
-     *            The Species to look for.
-     * @return The DatabaseRegistryEntries that match type and species..
-     */
-    public final DatabaseRegistryEntry[] getAllSecondary(final DatabaseType type, final Species species) {
-
-        List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
-        Iterator<DatabaseRegistryEntry> it = secondaryEntries.iterator();
-        while (it.hasNext()) {
-            DatabaseRegistryEntry dbre = it.next();
-            if (dbre.getType().equals(type) && dbre.getSpecies().equals(species)) {
-                result.add(dbre);
-            }
-        }
-
-        return (DatabaseRegistryEntry[]) result.toArray(new DatabaseRegistryEntry[result.size()]);
-
-    }
-
-    // -----------------------------------------------------------------
-    /**
-     * Sets the type of every DatabaseRegistryEntry.
-     * 
-     * @param type
-     *            The type to set.
-     */
-    public final void setTypeOfAll(final DatabaseType type) {
-
-        Iterator<DatabaseRegistryEntry> it = entries.iterator();
-        while (it.hasNext()) {
-            DatabaseRegistryEntry dbre = it.next();
-            dbre.setType(type);
-        }
-
-    }
-
-    // -----------------------------------------------------------------
-    /**
-     * Sets the species of every DatabaseRegistryEntry.
-     * 
-     * @param species
-     *            The species to set.
-     */
-    public final void setSpeciesOfAll(final Species species) {
-
-        Iterator<DatabaseRegistryEntry> it = entries.iterator();
-        while (it.hasNext()) {
-            DatabaseRegistryEntry dbre = it.next();
-            dbre.setSpecies(species);
-        }
-
-    }
-
-    //---------------------------------------------------------------------
-    /**
-     * Get a single, named DatabaseRegistryEntry.
-     * 
-     * @param name
-     *            The name to look for.
-     * @return The matching DatabaseRegistryEntry, or null if none is found.
-     */
-    public final DatabaseRegistryEntry getByExactName(final String name) {
-
-        Iterator<DatabaseRegistryEntry> it = entries.iterator();
-        while (it.hasNext()) {
-            DatabaseRegistryEntry dbre = it.next();
-            if (dbre.getName().equals(name)) {
-                return dbre;
-            }
-        }
-
-        return null;
-    }
-
-    // -------------------------------------------------------------------------
-    /**
-     * Get a list of the types of databases in the registry.
-     * 
-     * @return An array containing each DatabaseType found in the registry.
-     */
-    public final DatabaseType[] getTypes() {
-
-        List<DatabaseType> types = new ArrayList<DatabaseType>();
-
-        Iterator<DatabaseRegistryEntry> it = entries.iterator();
-        while (it.hasNext()) {
-            DatabaseRegistryEntry dbre = it.next();
-            if (!types.contains(dbre.getType())) {
-                types.add(dbre.getType());
-            }
-        }
-
-        return (DatabaseType[]) types.toArray(new DatabaseType[types.size()]);
-
-    }
-
-    // -------------------------------------------------------------------------
-    /**
-     * Get a list of the species in the registry.
-     * 
-     * @return An array containing each Species found in the registry.
-     */
-    public final Species[] getSpecies() {
-
-        List<Species> species = new ArrayList<Species>();
-
-        Iterator<DatabaseRegistryEntry> it = entries.iterator();
-        while (it.hasNext()) {
-            DatabaseRegistryEntry dbre = it.next();
-            if (!species.contains(dbre.getSpecies())) {
-                species.add(dbre.getSpecies());
-            }
-        }
-
-        return (Species[]) species.toArray(new Species[species.size()]);
-
-    }
-
-    // -----------------------------------------------------------------
-    /**
-     * @return The number of DatabaseRegistryEntries in this registry.
-     */
-    public final int getEntryCount() {
-
-        return entries.size();
-
-    }
-
-//  -----------------------------------------------------------------
-    /**
-     * Create a new DatabaseRegistry on the <em>secondary</em> server. 
-     * 
-     * @param regexps
-     *            The regular expressions matching the databases to use.
-     * @param type The type of database to match
-     * @param species The species to match.
-     * @return A new DatabaseRegistry
-     */
-    public DatabaseRegistry getSecondaryDatabaseRegistry(List<String> regexps, DatabaseType type, Species species) {
-
-        Connection con = DBUtils.openConnection(System.getProperty("driver"), 
-        		System.getProperty("secondary.databaseURL"), System.getProperty("secondary.user"), System.getProperty("secondary.password"));
-
-        List<DatabaseRegistryEntry> dbres = new ArrayList<DatabaseRegistryEntry>();
-        
-        Iterator<String> it = regexps.iterator();
-        while (it.hasNext()) {
-
-            String[] names = DBUtils.listDatabases(con, (String) it.next());
-            for (int i = 0; i < names.length; i++) {
-                DatabaseRegistryEntry dbre = new DatabaseRegistryEntry(names[i], null, null, false);
-                if (dbre.getSpecies() == species && dbre.getType() == type) {
-                    Connection dbCon = DBUtils.openConnection(
-                            System.getProperty("secondary.driver"),
-                            System.getProperty("secondary.databaseURL") + dbre.getName(),
-                            System.getProperty("secondary.user"),
-                            System.getProperty("secondary.password"));
-
-                    dbre.setConnection(dbCon);
-                    dbres.add(dbre);
-                }
-            }
-
-        }
-
-        return new DatabaseRegistry(dbres);
-        
-    }
-    // -------------------------------------------------------------------------
+			entries.add(dbres[i]);
+
+		}
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+	 * Create a new DatabaseRegistry from a list of DatabaseRegistryEntries.
+	 * 
+	 * @param dbres
+	 *          The entries to use.
+	 */
+	public DatabaseRegistry(List<DatabaseRegistryEntry> dbres) {
+
+		Iterator<DatabaseRegistryEntry> it = dbres.iterator();
+		while (it.hasNext()) {
+
+			entries.add(it.next());
+
+		}
+
+	}
+
+	// -----------------------------------------------------------------
+
+	private void addEntriesToRegistry(DatabaseServer server, final String[] names) {
+
+		for (int i = 0; i < names.length; i++) {
+			DatabaseRegistryEntry dbre = new DatabaseRegistryEntry(server, names[i], globalSpecies, globalType);
+			dbre.setDatabaseRegistry(this);
+			entries.add(dbre);
+			logger.finest(dbre.getName() + " appears to be type " + dbre.getType() + " and species " + dbre.getSpecies());
+			logger.finest("Added DatabaseRegistryEntry for " + names[i] + " to DatabaseRegistry");
+		}
+
+	}
+
+	// -----------------------------------------------------------------
+
+	private void addSecondaryEntriesToRegistry(final String[] names) {
+
+		// TODO - modify this to just call method above?
+		DatabaseServer secondaryServer = new DatabaseServer(System.getProperty("secondary.driver"), System.getProperty("secondary.driver"), System.getProperty("secondary.databaseURL"), // XXX
+																																																																																											// +
+																																																																																											// name
+																																																																																											// needed
+																																																																																											// here?
+				System.getProperty("secondary.user"), System.getProperty("secondary.password"));
+
+		for (int i = 0; i < names.length; i++) {
+			DatabaseRegistryEntry dbre = new DatabaseRegistryEntry(secondaryServer, names[i], null, null);
+			dbre.setDatabaseRegistry(this);
+
+			dbre.setDatabaseServer(secondaryServer);
+			secondaryEntries.add(dbre);
+			logger.finest(dbre.getName() + " appears to be type " + dbre.getType() + " and species " + dbre.getSpecies());
+			logger.finest("Added DatabaseRegistryEntry for " + names[i] + " to DatabaseRegistry");
+		}
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+	 * Add a new DatabaseRegistryEntry to this registry.
+	 * 
+	 * @param dbre
+	 *          The new DatabaseRegistryEntry.
+	 */
+	public final void add(final DatabaseRegistryEntry dbre) {
+
+		entries.add(dbre);
+		dbre.setDatabaseRegistry(this);
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+	 * Get all of the DatabaseRegistryEntries stored in this DatabaseRegistry.
+	 * 
+	 * @return The DatabaseRegistryEntries stored in this DatabaseRegistry.
+	 */
+	public final DatabaseRegistryEntry[] getAll() {
+
+		return (DatabaseRegistryEntry[]) entries.toArray(new DatabaseRegistryEntry[entries.size()]);
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+	 * Get all of the DatabaseRegistryEntries for a particular species
+	 * 
+	 * @param species
+	 *          The species to look for.
+	 * @return The DatabaseRegistryEntries for species..
+	 */
+	public final DatabaseRegistryEntry[] getAll(final Species species) {
+
+		List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
+		Iterator<DatabaseRegistryEntry> it = entries.iterator();
+		while (it.hasNext()) {
+			DatabaseRegistryEntry dbre = it.next();
+			if (dbre.getSpecies().equals(species)) {
+				result.add(dbre);
+			}
+		}
+
+		return (DatabaseRegistryEntry[]) result.toArray(new DatabaseRegistryEntry[result.size()]);
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+	 * Get all of the DatabaseRegistryEntries for a particular database type.
+	 * 
+	 * @param type
+	 *          The type to look for.
+	 * @return The DatabaseRegistryEntries for type.
+	 */
+	public final DatabaseRegistryEntry[] getAll(final DatabaseType type) {
+
+		List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
+		Iterator<DatabaseRegistryEntry> it = entries.iterator();
+		while (it.hasNext()) {
+			DatabaseRegistryEntry dbre = it.next();
+			if (dbre.getType().equals(type)) {
+				result.add(dbre);
+			}
+		}
+
+		return (DatabaseRegistryEntry[]) result.toArray(new DatabaseRegistryEntry[result.size()]);
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+	 * Get all of the DatabaseRegistryEntries for a particular database type and species.
+	 * 
+	 * @param type
+	 *          The type to look for.
+	 * @param species
+	 *          The Species to look for.
+	 * @return The DatabaseRegistryEntries that match type and species..
+	 */
+	public final DatabaseRegistryEntry[] getAll(final DatabaseType type, final Species species) {
+
+		List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
+		Iterator<DatabaseRegistryEntry> it = entries.iterator();
+		while (it.hasNext()) {
+			DatabaseRegistryEntry dbre = it.next();
+			if (dbre.getType().equals(type) && dbre.getSpecies().equals(species)) {
+				result.add(dbre);
+			}
+		}
+
+		return (DatabaseRegistryEntry[]) result.toArray(new DatabaseRegistryEntry[result.size()]);
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+	 * Get all of the DatabaseRegistryEntries stored in the secondary DatabaseRegistry.
+	 * 
+	 * @return The DatabaseRegistryEntries stored in this DatabaseRegistry.
+	 */
+	public final DatabaseRegistryEntry[] getAllSecondary() {
+
+		return (DatabaseRegistryEntry[]) secondaryEntries.toArray(new DatabaseRegistryEntry[secondaryEntries.size()]);
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+	 * Get all of the DatabaseRegistryEntries stored in the secondary DatabaseRegistry for a particular species
+	 * 
+	 * @param species
+	 *          The species to look for.
+	 * @return The DatabaseRegistryEntries for species..
+	 */
+	public final DatabaseRegistryEntry[] getAllSecondary(final Species species) {
+
+		List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
+		Iterator<DatabaseRegistryEntry> it = secondaryEntries.iterator();
+		while (it.hasNext()) {
+			DatabaseRegistryEntry dbre = it.next();
+			if (dbre.getSpecies().equals(species)) {
+				result.add(dbre);
+			}
+		}
+
+		return (DatabaseRegistryEntry[]) result.toArray(new DatabaseRegistryEntry[result.size()]);
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+	 * Get all of the DatabaseRegistryEntries stored in the secondary DatabaseRegistry for a particular database type.
+	 * 
+	 * @param type
+	 *          The type to look for.
+	 * @return The DatabaseRegistryEntries for type.
+	 */
+	public final DatabaseRegistryEntry[] getAllSecondary(final DatabaseType type) {
+
+		List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
+		Iterator<DatabaseRegistryEntry> it = secondaryEntries.iterator();
+		while (it.hasNext()) {
+			DatabaseRegistryEntry dbre = it.next();
+			if (dbre.getType().equals(type)) {
+				result.add(dbre);
+			}
+		}
+
+		return (DatabaseRegistryEntry[]) result.toArray(new DatabaseRegistryEntry[result.size()]);
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+	 * Get all of the DatabaseRegistryEntries stored in the secondary DatabaseRegistry for a particular database type and species.
+	 * 
+	 * @param type
+	 *          The type to look for.
+	 * @param species
+	 *          The Species to look for.
+	 * @return The DatabaseRegistryEntries that match type and species..
+	 */
+	public final DatabaseRegistryEntry[] getAllSecondary(final DatabaseType type, final Species species) {
+
+		List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
+		Iterator<DatabaseRegistryEntry> it = secondaryEntries.iterator();
+		while (it.hasNext()) {
+			DatabaseRegistryEntry dbre = it.next();
+			if (dbre.getType().equals(type) && dbre.getSpecies().equals(species)) {
+				result.add(dbre);
+			}
+		}
+
+		return (DatabaseRegistryEntry[]) result.toArray(new DatabaseRegistryEntry[result.size()]);
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+	 * Sets the type of every DatabaseRegistryEntry.
+	 * 
+	 * @param type
+	 *          The type to set.
+	 */
+	public final void setTypeOfAll(final DatabaseType type) {
+
+		Iterator<DatabaseRegistryEntry> it = entries.iterator();
+		while (it.hasNext()) {
+			DatabaseRegistryEntry dbre = it.next();
+			dbre.setType(type);
+		}
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+	 * Sets the species of every DatabaseRegistryEntry.
+	 * 
+	 * @param species
+	 *          The species to set.
+	 */
+	public final void setSpeciesOfAll(final Species species) {
+
+		Iterator<DatabaseRegistryEntry> it = entries.iterator();
+		while (it.hasNext()) {
+			DatabaseRegistryEntry dbre = it.next();
+			dbre.setSpecies(species);
+		}
+
+	}
+
+	// ---------------------------------------------------------------------
+	/**
+	 * Get a single, named DatabaseRegistryEntry.
+	 * 
+	 * @param name
+	 *          The name to look for.
+	 * @return The matching DatabaseRegistryEntry, or null if none is found.
+	 */
+	public final DatabaseRegistryEntry getByExactName(final String name) {
+
+		Iterator<DatabaseRegistryEntry> it = entries.iterator();
+		while (it.hasNext()) {
+			DatabaseRegistryEntry dbre = it.next();
+			if (dbre.getName().equals(name)) {
+				return dbre;
+			}
+		}
+
+		return null;
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+	 * Get a list of the types of databases in the registry.
+	 * 
+	 * @return An array containing each DatabaseType found in the registry.
+	 */
+	public final DatabaseType[] getTypes() {
+
+		List<DatabaseType> types = new ArrayList<DatabaseType>();
+
+		Iterator<DatabaseRegistryEntry> it = entries.iterator();
+		while (it.hasNext()) {
+			DatabaseRegistryEntry dbre = it.next();
+			if (!types.contains(dbre.getType())) {
+				types.add(dbre.getType());
+			}
+		}
+
+		return (DatabaseType[]) types.toArray(new DatabaseType[types.size()]);
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+	 * Get a list of the species in the registry.
+	 * 
+	 * @return An array containing each Species found in the registry.
+	 */
+	public final Species[] getSpecies() {
+
+		List<Species> species = new ArrayList<Species>();
+
+		Iterator<DatabaseRegistryEntry> it = entries.iterator();
+		while (it.hasNext()) {
+			DatabaseRegistryEntry dbre = it.next();
+			if (!species.contains(dbre.getSpecies())) {
+				species.add(dbre.getSpecies());
+			}
+		}
+
+		return (Species[]) species.toArray(new Species[species.size()]);
+
+	}
+
+	// -----------------------------------------------------------------
+	/**
+	 * @return The number of DatabaseRegistryEntries in this registry.
+	 */
+	public final int getEntryCount() {
+
+		return entries.size();
+
+	}
+
+	// -----------------------------------------------------------------
 
 } // DatabaseRegistry

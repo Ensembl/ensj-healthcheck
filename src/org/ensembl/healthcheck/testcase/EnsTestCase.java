@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
+import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
@@ -86,15 +87,17 @@ public abstract class EnsTestCase {
 	 * Names of tables in core schema that count as "feature" tables. Used in various healthchecks.
 	 */
 
-   	private String[] featureTables = { "assembly_exception", "gene", "exon", "dna_align_feature", "protein_align_feature", "repeat_feature", "simple_feature", "marker_feature",
-			"misc_feature", "qtl_feature", "karyotype", "transcript", "density_feature", "prediction_exon", "prediction_transcript", "ditag_feature" };
+	private String[] featureTables = { "assembly_exception", "gene", "exon", "dna_align_feature", "protein_align_feature", "repeat_feature", "simple_feature", "marker_feature", "misc_feature",
+			"qtl_feature", "karyotype", "transcript", "density_feature", "prediction_exon", "prediction_transcript", "ditag_feature" };
 
 	/**
 	 * Tables that have an analysis ID.
 	 */
 
-   	private String[] tablesWithAnalysisID = { "gene", "protein_feature", "dna_align_feature", "protein_align_feature", "repeat_feature", "prediction_transcript", "simple_feature", "marker_feature",
-			"qtl_feature", "density_type", "object_xref",  "transcript", "unmapped_object", "ditag_feature" };
+	private String[] tablesWithAnalysisID = { "gene", "protein_feature", "dna_align_feature", "protein_align_feature", "repeat_feature", "prediction_transcript", "simple_feature", "marker_feature",
+			"qtl_feature", "density_type", "object_xref", "transcript", "unmapped_object", "ditag_feature" };
+
+	private DatabaseRegistry secondaryDatabaseRegistry = DBUtils.getSecondaryDatabaseRegistry();
 
 	// -------------------------------------------------------------------------
 	/**
@@ -656,7 +659,7 @@ public abstract class EnsTestCase {
 				ReportManager.problem(this, con, "alternate useful SQL: " + useful_sql2);
 			}
 			result = false;
-		} else if (orphans < 0){
+		} else if (orphans < 0) {
 			ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1 + ", look at the StackTrace if any");
 			result = false;
 		}
@@ -733,7 +736,7 @@ public abstract class EnsTestCase {
 			ReportManager.problem(this, con, "FAILURE DETAILS: " + singles + " " + table + "." + col + " entries are used only once");
 			ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
 			result = false;
-		} else if (singles < 0){
+		} else if (singles < 0) {
 			ReportManager.problem(this, con, "TEST NOT COMPLETED " + table + "." + col + " is a FK for a 1 to many (>1) relationship, look at the StackTrace if any");
 			ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
 			result = false;
@@ -1545,7 +1548,7 @@ public abstract class EnsTestCase {
 			ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
 			ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
 			result = false;
-		} else if (orphans < 0){
+		} else if (orphans < 0) {
 			ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1 + ", look at the StackTrace if any");
 			result = false;
 		}
@@ -1593,7 +1596,7 @@ public abstract class EnsTestCase {
 			ReportManager.problem(this, con, "FAILURE DETAILS: " + orphans + " " + table1 + " entries are not linked to " + table2);
 			ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
 			result = false;
-		} else if (orphans < 0){
+		} else if (orphans < 0) {
 			ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1 + ", look at the StackTrace if any");
 			result = false;
 		}
@@ -1682,7 +1685,6 @@ public abstract class EnsTestCase {
 	/**
 	 * Get the equivalent database from the secondary database server. "equivalent" means: same database type and species. If more
 	 * than one database on the secondary server has the same type and species, then the one with the highest version number is used.
-	 * The returned DatabaseRegistryEntry's internal connection is opened.
 	 * 
 	 * @param dbre
 	 *          The database to find the equivalent for.
@@ -1691,16 +1693,12 @@ public abstract class EnsTestCase {
 	 */
 	public DatabaseRegistryEntry getEquivalentFromSecondaryServer(DatabaseRegistryEntry dbre) {
 
-		// get connection to secondary server
-		Connection listCon = DBUtils.openConnection(System.getProperty("secondary.driver"), System.getProperty("secondary.databaseURL"), System.getProperty("secondary.user"), System
-				.getProperty("secondary.password"));
-
 		// find any databases matching type and species
-		TreeSet matchingDBs = new TreeSet(); // get sorting for free
-		String[] dbs = DBUtils.listDatabases(listCon);
-		for (int i = 0; i < dbs.length; i++) {
+		TreeSet<DatabaseRegistryEntry> matchingDBs = new TreeSet<DatabaseRegistryEntry>(); // get sorting for free
+
+		for (DatabaseRegistryEntry secDBRE : secondaryDatabaseRegistry.getAll()) {
+
 			// nulls will set type automatically
-			DatabaseRegistryEntry secDBRE = new DatabaseRegistryEntry(dbs[i], null, null, false);
 			if (dbre.getType() == secDBRE.getType() && dbre.getSpecies() == secDBRE.getSpecies()) {
 				matchingDBs.add(secDBRE);
 				logger.finest("added " + secDBRE.getName() + " to list of databases to check for equivalent to " + dbre.getName());
@@ -1719,12 +1717,6 @@ public abstract class EnsTestCase {
 		if (matchingDBs.size() > 0) {
 
 			result = (DatabaseRegistryEntry) matchingDBs.last();
-
-			// initialise connection
-			Connection dbCon = DBUtils.openConnection(System.getProperty("secondary.driver"), System.getProperty("secondary.databaseURL") + result.getName(), System.getProperty("secondary.user"), System
-					.getProperty("secondary.password"));
-
-			result.setConnection(dbCon);
 
 		}
 
@@ -1872,10 +1864,11 @@ public abstract class EnsTestCase {
 
 		try {
 			Statement stmt = con.createStatement();
-			//ResultSet rs = stmt
-			    //				.executeQuery("SELECT sr.name FROM seq_region sr, seq_region_attrib sra, attrib_type at, coord_system cs WHERE cs.coord_system_id=sr.coord_system_id AND sra.seq_region_id=sr.seq_region_id AND sra.attrib_type_id=at.attrib_type_id AND at.code='toplevel' AND cs.name='chromosome' AND cs.attrib LIKE '%default_version%'");
-			ResultSet rs = stmt.executeQuery("SELECT sr.name FROM seq_region sr, seq_region_attrib sra, attrib_type at, coord_system cs WHERE cs.coord_system_id=sr.coord_system_id AND sra.seq_region_id=sr.seq_region_id AND sra.attrib_type_id=at.attrib_type_id AND at.code='toplevel' AND cs.name='chromosome' AND cs.attrib LIKE '%default_version%' and sr.seq_region_id not in (select sr2.seq_region_id from seq_region sr2, seq_region_attrib sra1, attrib_type at1 where sr2.seq_region_id = sra1.seq_region_id and sra1.attrib_type_id = at1.attrib_type_id and at1.code = 'non_ref')");
-			    while (rs.next()) {
+			// ResultSet rs = stmt
+			// .executeQuery("SELECT sr.name FROM seq_region sr, seq_region_attrib sra, attrib_type at, coord_system cs WHERE cs.coord_system_id=sr.coord_system_id AND sra.seq_region_id=sr.seq_region_id AND sra.attrib_type_id=at.attrib_type_id AND at.code='toplevel' AND cs.name='chromosome' AND cs.attrib LIKE '%default_version%'");
+			ResultSet rs = stmt
+					.executeQuery("SELECT sr.name FROM seq_region sr, seq_region_attrib sra, attrib_type at, coord_system cs WHERE cs.coord_system_id=sr.coord_system_id AND sra.seq_region_id=sr.seq_region_id AND sra.attrib_type_id=at.attrib_type_id AND at.code='toplevel' AND cs.name='chromosome' AND cs.attrib LIKE '%default_version%' and sr.seq_region_id not in (select sr2.seq_region_id from seq_region sr2, seq_region_attrib sra1, attrib_type at1 where sr2.seq_region_id = sra1.seq_region_id and sra1.attrib_type_id = at1.attrib_type_id and at1.code = 'non_ref')");
+			while (rs.next()) {
 				names.add(rs.getString(1));
 			}
 		} catch (SQLException se) {

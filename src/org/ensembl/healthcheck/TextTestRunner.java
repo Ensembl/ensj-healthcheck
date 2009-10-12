@@ -41,13 +41,13 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
 	private static String version = "$Id$";
 
-	private ArrayList databaseRegexps = new ArrayList();
+	private ArrayList<String> databaseRegexps = new ArrayList<String> ();
 
-	private ArrayList secondaryDatabaseRegexps = new ArrayList();
+	private ArrayList<String>  secondaryDatabaseRegexps = new ArrayList<String> ();
 
 	private boolean debug = false;
 
-	private ArrayList outputBuffer = new ArrayList();
+	private ArrayList<String> outputBuffer = new ArrayList<String> ();
 
 	private String lastDatabase = "";
 
@@ -55,12 +55,14 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
 	private TestRegistry testRegistry;
 
-	private DatabaseRegistry databaseRegistry;
+	private DatabaseRegistry mainDatabaseRegistry;
+
+	private DatabaseRegistry secondaryDatabaseRegistry;
 
 	private Species globalSpecies = null;
 
 	private DatabaseType globalType = null;
-
+	
 	private boolean printResultsByTest = true;
 
 	private boolean printResultsByDatabase = false;
@@ -115,16 +117,17 @@ public class TextTestRunner extends TestRunner implements Reporter {
 		
 		ReportManager.setReporter(this);
 
+		mainDatabaseRegistry = new DatabaseRegistry(databaseRegexps, globalType, globalSpecies, false);
+
 		if (secondaryDatabaseRegexps.size() > 0) {
-			databaseRegistry = new DatabaseRegistry(databaseRegexps, secondaryDatabaseRegexps, globalType, globalSpecies);
-		} else {
-			databaseRegistry = new DatabaseRegistry(databaseRegexps, globalType, globalSpecies);
-		}
-		if (databaseRegistry.getEntryCount() == 0) {
+			secondaryDatabaseRegistry = new DatabaseRegistry(secondaryDatabaseRegexps, globalType, globalSpecies, true);
+		} 
+		
+		if (mainDatabaseRegistry.getEntryCount() == 0) {
 			logger.warning("Warning: no database names matched any of the database regexps given");
 		}
 
-		runAllTests(databaseRegistry, testRegistry, skipSlow);
+		runAllTests(mainDatabaseRegistry, testRegistry, skipSlow);
 
 		if (printResultsByDatabase) {
 			printReportsByDatabase(outputLevel);
