@@ -18,117 +18,84 @@
 
 package org.ensembl.healthcheck;
 
-import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.Utils;
 
 /**
- * Utility to aid in debugging database regular expressions by listing which
- * databases match a regular expression given on the command line.
+ * Utility to aid in debugging database regular expressions by listing which databases match a regular expression given on the
+ * command line.
  */
 
 public class DatabaseNameMatcher {
 
-    private String databaseRegexp = "";
+	private String databaseRegexp = "";
 
-    // -------------------------------------------------------------------------
-    /**
-     * Command-line entry point.
-     * 
-     * @param args
-     *          Arguments.
-     */
-    public static void main(final String[] args) {
+	// -------------------------------------------------------------------------
+	/**
+	 * Command-line entry point.
+	 * 
+	 * @param args
+	 *          Arguments.
+	 */
+	public static void main(final String[] args) {
 
-        DatabaseNameMatcher dnm = new DatabaseNameMatcher();
+		DatabaseNameMatcher dnm = new DatabaseNameMatcher();
 
-        dnm.parseCommandLine(args);
+		dnm.parseCommandLine(args);
 
-        dnm.readPropertiesFile();
+		Utils.readPropertiesFileIntoSystem("database.properties", false);
 
-        dnm.showMatches();
+		dnm.showMatches();
 
-    } // main
+	} // main
 
-    // -------------------------------------------------------------------------
-    private void parseCommandLine(final String[] args) {
+	// -------------------------------------------------------------------------
+	private void parseCommandLine(final String[] args) {
 
-        if (args.length == 0) {
-            printUsage();
-            System.exit(1);
-        } else {
-            databaseRegexp = args[0];
-        }
+		if (args.length == 0) {
+			
+			System.out.println("\nUsage: DatabaseNameMatcher regexp\n");
+			System.exit(1);
+			
+		} else {
+			
+			databaseRegexp = args[0];
+			
+		}
 
-    } // parseCommandLine
+	} // parseCommandLine
 
-    // -------------------------------------------------------------------------
+	// -------------------------------------------------------------------------
+	/**
+	 * Show the databases that have names that match the regexp.
+	 */
+	public final void showMatches() {
 
-    private void printUsage() {
+		List<String> regexps = new ArrayList<String>();
+		regexps.add(databaseRegexp);
 
-        System.out.println("\nUsage: DatabaseNameMatcher regexp\n");
+		DatabaseRegistry registry = new DatabaseRegistry(regexps, null, null, false);
 
-    } // printUsage
+		DatabaseRegistryEntry[] databases = registry.getAll();
 
-    // -------------------------------------------------------------------------
+		if (databases.length > 0) {
+			
+			System.out.println("\n" + databases.length + " database names matched " + databaseRegexp + " :");
+			
+			for (DatabaseRegistryEntry dbre : databases) {
+				System.out.println("\t" + dbre.getName());
+			}
+			
+		} else {
+			
+			System.out.println("Warning: No database names matched");
+			
+		}
 
-    private void readPropertiesFile() {
+	} // showMatches
 
-        String propsFile = "database.properties";
-        Utils.readPropertiesFileIntoSystem(propsFile, false);
-        System.out.println("Read database properties from " + propsFile);
-        //Enumeration e = dbProps.propertyNames();
-        //String propName;
-        //while (e.hasMoreElements()) {
-        //  propName = (String)e.nextElement();
-        //  System.out.println("\t" + propName + " = " +
-        // dbProps.getProperty(propName));
-        //}
+	// -------------------------------------------------------------------------
 
-    } // readPropertiesFile
-
-    // -------------------------------------------------------------------------
-    /**
-     * Show the databases that have names that match the regexp.
-     */
-    public final void showMatches() {
-
-        Connection con;
-
-        String[] databaseNames = null;
-
-        try {
-
-            con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System
-                    .getProperty("user"), System.getProperty("password"));
-
-            databaseNames = DBUtils.listDatabases(con, databaseRegexp);
-
-            con.close();
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            System.exit(1);
-
-        }
-
-        if (databaseNames.length > 0) {
-            System.out.println("\n" + databaseNames.length + " database names matched " + databaseRegexp + " :");
-            for (int i = 0; i < databaseNames.length; i++) {
-                System.out.println("\t" + databaseNames[i]);
-            }
-        } else {
-            System.out.println("Warning: No database names matched");
-        }
-
-    } // showMatches
-
-    // -------------------------------------------------------------------------
-
-    // -------------------------------------------------------------------------
-
-    // -------------------------------------------------------------------------
-
-} // listDatabaseMatching
+} // DatabaseNameMatcher
