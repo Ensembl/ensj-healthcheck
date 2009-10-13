@@ -215,29 +215,24 @@ public class TestRegistry {
         
         // --------------------------------------
         // Look for class files located in the appropriate package in the build/ directory.
-        System.out.println("a");
 
         // find all subdirectories
         String startDir = System.getProperty("user.dir") + File.separator + "build" + File.separator
                 + BASE_TESTCASE_PACKAGE.replace('.', File.separatorChar);
         String[] subdirs = Utils.getSubDirs(startDir);
-        System.out.println("b");
 
         // look for tests in each
         for (int i = 0; i < subdirs.length; i++) {
 
             String subdir = subdirs[i];
-            System.out.println("c " + subdir);
 
             // check dir corresponds to a known database type
             if (!subdir.equals("multi") && subdir.equalsIgnoreCase("generic")
                     || DatabaseType.resolveAlias(subdir) != DatabaseType.UNKNOWN) {
-              System.out.println("d");
 
                 String directoryName = startDir + File.separator + subdir;
                 String packageName = BASE_TESTCASE_PACKAGE + "." + subdir;
                 addUniqueTests(allTests, findTestsInDirectory(directoryName, packageName));
-                System.out.println("e");
 
             } else {
 
@@ -257,7 +252,6 @@ public class TestRegistry {
         if ((new File(jarFileName)).exists()) {
             addUniqueTests(allTests, findTestsInJar(jarFileName, BASE_TESTCASE_PACKAGE));
         }
-        System.out.println("f");
 
         // --------------------------------------
 

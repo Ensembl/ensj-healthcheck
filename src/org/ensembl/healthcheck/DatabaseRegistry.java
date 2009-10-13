@@ -64,21 +64,17 @@ public class DatabaseRegistry {
 		for (DatabaseServer server : servers) {
 
 			if (regexps == null) {
+				
 				String[] names = DBUtils.listDatabases(server.getServerConnection(), null);
-				if (isSecondary) {
-					System.out.println("--> Adding to secondary " + names.length + " host " + server.getHost() + " port " + server.getPort() + " all");
-				}
 				addEntriesToRegistry(server, names, isSecondary);
 
 			} else {
 
 				Iterator<String> it = regexps.iterator();
 				while (it.hasNext()) {
+					
 					String regexp = it.next();
 					String[] names = DBUtils.listDatabases(server.getServerConnection(), regexp);
-					if (isSecondary) {
-						System.out.println("--> Adding to secondary " + names.length + " host " + server.getHost() + " port " + server.getPort() + " regexp " + regexp);
-					}
 					addEntriesToRegistry(server, names, isSecondary);
 
 				}

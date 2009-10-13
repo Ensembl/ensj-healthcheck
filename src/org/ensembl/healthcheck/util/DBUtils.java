@@ -121,33 +121,28 @@ public final class DBUtils {
 	 * @param conn
 	 *          The connection to query.
 	 * @param regex
-	 *          A regular expression to match.
+	 *          A regular expression to match. If null, match all.
 	 * @return An array of Strings containing the database names.
 	 */
-	public static String[] listDatabases(Connection conn, String regex) {
-
-		Pattern pattern = null;
-		Matcher matcher = null;
-
-		if (conn == null) {
-			logger.severe("Database connection is null");
-		}
+	public static String[] listDatabases(Connection con, String regex) {
 
 		ArrayList<String> dbMatches = new ArrayList<String>();
+		
+		String[] allDBNames = listDatabases(con);
 
-		pattern = Pattern.compile(regex);
+		for (String name : allDBNames) {
 
-		String[] allDBNames = listDatabases(conn);
+			if (regex == null) {
+				
+				dbMatches.add(name);
+				
+			} else if (name.matches(regex)) {
+				
+				dbMatches.add(name);
 
-		for (int i = 0; i < allDBNames.length; i++) {
-
-			matcher = pattern.matcher(allDBNames[i]);
-
-			if (matcher.matches()) {
-				dbMatches.add(allDBNames[i]);
 			}
 
-		} // for i
+		} 
 
 		String[] ret = new String[dbMatches.size()];
 
@@ -738,7 +733,7 @@ public final class DBUtils {
 
 		}
 
-		System.out.println("Number of secondary database servers found: " + secondaryDatabaseServers.size());
+		logger.fine("Number of secondary database servers found: " + secondaryDatabaseServers.size());
 
 		return secondaryDatabaseServers;
 
@@ -764,6 +759,7 @@ public final class DBUtils {
 
 	public static DatabaseRegistry getSecondaryDatabaseRegistry() {
 
+		System.out.println("Getting secondary");
 		if (secondaryDatabaseRegistry == null) {
 
 			secondaryDatabaseRegistry = new DatabaseRegistry(null, null, null, true);
@@ -777,6 +773,8 @@ public final class DBUtils {
 //-------------------------------------------------------------------------
 
 	public static DatabaseRegistry getMainDatabaseRegistry() {
+
+		System.out.println("Getting main");
 
 		if (mainDatabaseRegistry == null) {
 
