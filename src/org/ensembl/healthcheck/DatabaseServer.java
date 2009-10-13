@@ -1,6 +1,7 @@
 package org.ensembl.healthcheck;
 
 import java.sql.Connection;
+import java.util.logging.Logger;
 
 import org.ensembl.healthcheck.util.DBUtils;
 
@@ -25,6 +26,8 @@ public class DatabaseServer {
 	String pass;
 
 	Connection connection; // connection to this server, not a specific named database - use getDatabaseConnection for that
+
+	private static Logger logger = Logger.getLogger("HealthCheckLogger");
 
 	public DatabaseServer(String host, String port, String user, String pass, String driver) {
 
@@ -66,7 +69,7 @@ public class DatabaseServer {
 
 		databaseURL = "jdbc:mysql://" + host + ":" + port + "/";
 
-		System.out.println("Database URL: " + databaseURL);
+		logger.fine("Database URL: " + databaseURL);
 
 		return databaseURL;
 
