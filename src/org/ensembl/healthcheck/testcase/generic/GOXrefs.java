@@ -99,12 +99,7 @@ public boolean run(DatabaseRegistryEntry dbre) {
 				}
 			}
 
-		} else {
-
-			logger.info("Not checking for GO xrefs in " + dbre.getSpecies());
-			return true;
-
-		}
+		} 
 
 		// check for blank or null linkage_type
 		int blank = getRowCount(con, "SELECT COUNT(*) FROM go_xref WHERE linkage_type IS NULL OR linkage_type=''");
