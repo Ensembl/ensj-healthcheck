@@ -225,17 +225,5 @@ public class GuiTestRunner extends TestRunner implements Reporter {
     }
 
     // -------------------------------------------------------------------------
-    /**
-     * Get a list of all the schemas. Used to produce the JList in the GUI.
-     * 
-     * @return An array of the schema names.
-     */
-    public String[] getSchemaList() {
-
-        return getListOfDatabaseNames(".*");
-
-    }
-
-    // -------------------------------------------------------------------------
 
 } // GuiTestRunner
