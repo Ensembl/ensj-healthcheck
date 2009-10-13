@@ -22,13 +22,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that analyses (e.g. havana) and their associated xref types (e.g. OTTT)
- * exist, and vice versa.
+ * Check that analyses (e.g. havana) and their associated xref types (e.g. OTTT) exist, and vice versa.
  */
 public class AnalysisXrefs extends SingleDatabaseTestCase {
 
@@ -44,6 +44,16 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
 		setEffect("Will cause prblems/miscoloring on web display.");
 		setFix("Possibly indicates a problem with the Havana/Ensembl merge pipeline");
 		setTeamResponsible("genebuilders");
+
+	}
+
+	/**
+	 * This only applies to core and Vega databases.
+	 */
+	public void types() {
+
+		removeAppliesToType(DatabaseType.ESTGENE);
+		removeAppliesToType(DatabaseType.CDNA);
 
 	}
 
@@ -105,8 +115,7 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
 
 			if (rows > 0) {
 				result = false;
-				ReportManager.problem(this, con, rows + " " + table + "s with analysis " + analysis
-						+ " do not have any associated xrefs of type " + source);
+				ReportManager.problem(this, con, rows + " " + table + "s with analysis " + analysis + " do not have any associated xrefs of type " + source);
 			} else {
 				ReportManager.correct(this, con, "All " + table + "s with analysis " + analysis + " have associated " + source + " xrefs");
 			}
@@ -146,8 +155,7 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
 
 			if (rows > 0) {
 				result = false;
-				ReportManager.problem(this, con, rows + " " + table + "s with " + source
-						+ " xrefs do not have an analysis named " + analysis);
+				ReportManager.problem(this, con, rows + " " + table + "s with " + source + " xrefs do not have an analysis named " + analysis);
 			} else {
 				ReportManager.correct(this, con, "All " + table + "s with " + source + " xrefs have " + analysis + " analyses");
 			}
