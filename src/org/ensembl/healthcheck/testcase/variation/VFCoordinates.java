@@ -28,8 +28,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 /**
- * An EnsEMBL Healthcheck test case that looks for broken foreign-key
- * relationships between core and variation database.
+ * An EnsEMBL Healthcheck test case that looks for broken foreign-key relationships between core and variation database.
  */
 
 public class VFCoordinates extends MultiDatabaseTestCase {
@@ -42,7 +41,7 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 		addToGroup("variation");
 		addToGroup("variation-release");
 		setDescription("Check for possible wrong coordinates in Vf table, due to wrong length or outside range seq_region.");
-//		setHintLongRunning(true);
+		// setHintLongRunning(true);
 
 	}
 
@@ -51,8 +50,7 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 	 * 
 	 * @param databases
 	 *          The databases to check, in order core->variation
-	 * @return true if same transcripts and seq_regions in core and variation are
-	 *         the same.
+	 * @return true if same transcripts and seq_regions in core and variation are the same.
 	 * 
 	 */
 	public boolean run(DatabaseRegistry dbr) {
@@ -67,7 +65,7 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 			Species species = dbrvar.getSpecies();
 			String variationName = dbrvar.getName();
 			String coreName = variationName.replaceAll("variation", "core");
-			DatabaseRegistryEntry dbrcore = new DatabaseRegistryEntry(coreName, species, DatabaseType.CORE, true);
+			DatabaseRegistryEntry dbrcore = dbr.getByExactName(coreName);
 			if (dbrcore == null) {
 				result = false;
 				logger.severe("Incorrect core database " + coreName + " for " + variationName);
@@ -78,33 +76,27 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 
 			System.out.println("Using " + coreName + " as core database and " + variationName + " as variation database");
 
-			int mc = getRowCount(
-					con,
-					"SELECT COUNT(*) FROM "
-							+ variationName
-							+ ".variation_feature WHERE length(allele_string) = 3 and seq_region_start<> seq_region_end and allele_string NOT LIKE '%-%'");
+			int mc = getRowCount(con, "SELECT COUNT(*) FROM " + variationName + ".variation_feature WHERE length(allele_string) = 3 and seq_region_start<> seq_region_end and allele_string NOT LIKE '%-%'");
 
 			if (mc > 0) {
 				ReportManager.problem(this, con, "Wrong allele length !! (allele_string <> coordinates length) for " + variationName);
 				result = false;
 			}
 
-			mc = getRowCount(con, "SELECT COUNT(*) FROM " + coreName + ".seq_region s, " + variationName
-					+ ".variation_feature vf WHERE vf.seq_region_id = s.seq_region_id AND vf.seq_region_end > s.length");
+			mc = getRowCount(con, "SELECT COUNT(*) FROM " + coreName + ".seq_region s, " + variationName + ".variation_feature vf WHERE vf.seq_region_id = s.seq_region_id AND vf.seq_region_end > s.length");
 			if (mc > 0) {
 				ReportManager.problem(this, con, "Variation Features outside range in " + variationName);
 				result = false;
 			}
-			mc = getRowCount(con, "SELECT COUNT(*) FROM " + variationName
-					+ ".variation_feature vf WHERE vf.seq_region_start = 1 AND vf.seq_region_end > 1");
+			mc = getRowCount(con, "SELECT COUNT(*) FROM " + variationName + ".variation_feature vf WHERE vf.seq_region_start = 1 AND vf.seq_region_end > 1");
 			if (mc > 0) {
 				ReportManager.problem(this, con, "Variation Features with coordinates = 1 " + variationName);
 				result = false;
 			}
-			if (result){
-			    ReportManager.correct(this,con,"VFCoordinates test run successfully");
+			if (result) {
+				ReportManager.correct(this, con, "VFCoordinates test run successfully");
 			}
-			
+
 		}
 		return result;
 
