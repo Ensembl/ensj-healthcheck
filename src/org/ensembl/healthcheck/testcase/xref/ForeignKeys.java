@@ -31,83 +31,80 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 public class ForeignKeys extends SingleDatabaseTestCase {
 
-    /**
-     * Create a new ForeignKeys testcase.
-     */
-    public ForeignKeys() {
+	/**
+	 * Create a new ForeignKeys testcase.
+	 */
+	public ForeignKeys() {
 
-        addToGroup("post_genebuild");
-        addToGroup("release");
-        addToGroup("xrefs");
-        setDescription("Check foreign key constraints in xref databases.");
+		addToGroup("post_genebuild");
+		addToGroup("release");
+		addToGroup("xrefs");
+		setDescription("Check foreign key constraints in xref databases.");
 
-    }
+	}
 
-    // ----------------------------------------------------------------------
+	// ----------------------------------------------------------------------
 
-    /**
-     * This only applies to xref databases
-     */
-    public void types() {
+	/**
+	 * This only applies to xref databases
+	 */
+	public void types() {
 
-	List types = new ArrayList();
-	types.add(DatabaseType.XREF);
-        setAppliesToTypes(types);
+		List<DatabaseType> types = new ArrayList<DatabaseType>();
+		types.add(DatabaseType.XREF);
+		setAppliesToTypes(types);
 
-    }
+	}
 
-    // ----------------------------------------------------------------------
-    /**
-     * Run the test.
-     * 
-     * @param dbre
-     *          The database to use.
-     * @return true if the test pased.
-     *  
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+	// ----------------------------------------------------------------------
+	/**
+	 * Run the test.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return true if the test passed.
+	 * 
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-        boolean result = true;
+		boolean result = true;
 
-	Connection con = dbre.getConnection();
+		Connection con = dbre.getConnection();
 
-	result &= check(con, "xref", "source", "source_id");
+		result &= check(con, "xref", "source", "source_id");
 
-	result &= check(con, "xref", "species", "species_id");
+		result &= check(con, "xref", "species", "species_id");
 
-	result &= check(con, "primary_xref", "xref", "xref_id");
+		result &= check(con, "primary_xref", "xref", "xref_id");
 
-	result &= check(con, "synonym", "xref", "xref_id");
+		result &= check(con, "synonym", "xref", "xref_id");
 
-	result &= check(con, "source_url", "source", "source_id");
+		result &= check(con, "source_url", "source", "source_id");
 
-	result &= check(con, "source_url", "species", "species_id");
+		result &= check(con, "source_url", "species", "species_id");
 
-	result &= checkForOrphans(con, "direct_xref", "general_xref_id", "xref", "xref_id", true);
+		result &= checkForOrphans(con, "direct_xref", "general_xref_id", "xref", "xref_id", true);
 
-	result &= checkForOrphans(con, "dependent_xref", "master_xref_id", "xref", "xref_id", true);
+		result &= checkForOrphans(con, "dependent_xref", "master_xref_id", "xref", "xref_id", true);
 
-	result &= checkForOrphans(con, "dependent_xref", "dependent_xref_id", "xref", "xref_id", true);
+		result &= checkForOrphans(con, "dependent_xref", "dependent_xref_id", "xref", "xref_id", true);
 
-	result &= checkForOrphans(con, "dependent_xref", "linkage_source_id", "source", "source_id", true);
+		result &= checkForOrphans(con, "dependent_xref", "linkage_source_id", "source", "source_id", true);
 
+		return result;
 
+	} // run
 
-	return result;
+	// ----------------------------------------------------------------------
+	/**
+	 * Shortened version of checkForOrphans; assumes column to be checked is same in both tables, and check is only "one way".
+	 */
+	private boolean check(Connection con, String table1, String table2, String column) {
 
-    } // run
+		return checkForOrphans(con, table1, column, table2, column, true);
 
-    // ----------------------------------------------------------------------
-    /**
-     * Shortened version of checkForOrphans; assumes column to be checked is
-     * same in both tables, and check is only "one way".
-     */
-    private boolean check(Connection con, String table1, String table2, String column) {
+	}
 
-	return checkForOrphans(con, table1, column, table2, column, true);
-
-    }
-
-    // ----------------------------------------------------------------------
+	// ----------------------------------------------------------------------
 
 } // ForeignKeys
