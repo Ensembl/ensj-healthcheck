@@ -59,12 +59,10 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	 */
 	public DatabaseRegistryEntry(DatabaseServer server, String name, Species species, DatabaseType type) {
 
-		this.name = name;
-
-		connection = server.getDatabaseConnection(name);
+		this.server = server;
 		
-		isMultiSpecies = checkMultiSpecies(connection);
-
+		this.name = name;
+		
 		if (species != null) {
 			this.species = species;
 		} else {
@@ -76,6 +74,8 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 		} else {
 			this.type = setTypeFromName(name);
 		}
+
+		isMultiSpecies = checkMultiSpecies(connection, species, type);
 
 	}
 
@@ -404,13 +404,15 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	/**
 	 * Check if this database is a multi-species one or not
 	 */
-	public boolean checkMultiSpecies(Connection con) {
+	public boolean checkMultiSpecies(Connection con, Species species, DatabaseType type) {
 
 		boolean result = false;
-		// variation databases do not have coord_system table
-		if (name.matches("^.*_variation_.*$") || name.matches("^.*_compara_.*$")) {
-			return result;
+
+		// only generic databases have a coord_system table
+		if (type == null || !type.isGeneric()) {
+			return false;
 		}
+		
 		try {
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT COUNT(DISTINCT(species_id)) FROM coord_system");
@@ -444,6 +446,12 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	}
 	
 	public Connection getConnection() {
+		
+		if (connection == null) {
+		
+			connection = server.getDatabaseConnection(name);
+		
+		}
 		
 		return connection;
 		
