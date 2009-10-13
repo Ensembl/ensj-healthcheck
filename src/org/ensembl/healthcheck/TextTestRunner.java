@@ -103,9 +103,13 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
 	private void run(String[] args) {
 
+    System.out.println("1");
+
 		testRegistry = new TestRegistry();
+    System.out.println("2");
 
 		parseCommandLine(args);
+    System.out.println("3");
 
 		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE, true);
 
@@ -380,6 +384,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
 	private void setupLogging() {
 
+		System.out.println("here " + debug);
 		logger.setUseParentHandlers(false); // stop parent logger getting the
 		// message
 

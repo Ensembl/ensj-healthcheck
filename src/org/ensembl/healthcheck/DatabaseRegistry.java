@@ -59,21 +59,29 @@ public class DatabaseRegistry {
 		this.globalType = globalType;
 		this.globalSpecies = globalSpecies;
 
-		if (regexps == null) {
-			regexps = new ArrayList<String>();
-			regexps.add(".");
-		}
-
 		List<DatabaseServer> servers = isSecondary ? DBUtils.getSecondaryDatabaseServers() : DBUtils.getMainDatabaseServers();
 
 		for (DatabaseServer server : servers) {
 
-			Iterator<String> it = regexps.iterator();
-			while (it.hasNext()) {
+			if (regexps == null) {
+				String[] names = DBUtils.listDatabases(server.getServerConnection(), null);
+				if (isSecondary) {
+					System.out.println("--> Adding to secondary " + names.length + " host " + server.getHost() + " port " + server.getPort() + " all");
+				}
+				addEntriesToRegistry(server, names, isSecondary);
 
-				String[] names = DBUtils.listDatabases(server.getServerConnection(), it.next());
-				addEntriesToRegistry(server, names);
+			} else {
 
+				Iterator<String> it = regexps.iterator();
+				while (it.hasNext()) {
+					String regexp = it.next();
+					String[] names = DBUtils.listDatabases(server.getServerConnection(), regexp);
+					if (isSecondary) {
+						System.out.println("--> Adding to secondary " + names.length + " host " + server.getHost() + " port " + server.getPort() + " regexp " + regexp);
+					}
+					addEntriesToRegistry(server, names, isSecondary);
+
+				}
 			}
 		}
 
@@ -116,23 +124,23 @@ public class DatabaseRegistry {
 
 	// -----------------------------------------------------------------
 
-	private void addEntriesToRegistry(DatabaseServer server, final String[] names) {
+	private void addEntriesToRegistry(DatabaseServer server, final String[] names, boolean isSecondary) {
 
 		for (String name : names) {
 
 			DatabaseRegistryEntry dbre = new DatabaseRegistryEntry(server, name, globalSpecies, globalType);
-	
+
 			if (!this.contains(dbre)) {
 
 				dbre.setDatabaseRegistry(this);
 				entries.add(dbre);
 				logger.finest(dbre.getName() + " appears to be type " + dbre.getType() + " and species " + dbre.getSpecies());
-				logger.finest("Added DatabaseRegistryEntry for " + name + " to DatabaseRegistry");
+				logger.finest("Added DatabaseRegistryEntry for " + name + " to " + (isSecondary ? "secondary" : "main") + " DatabaseRegistry");
 
 			} else {
-				
-				logger.finest("Registry already contains an entry for "+ dbre.getName() + ", skipping");
-				
+
+				logger.finest("Registry already contains an entry for " + dbre.getName() + ", skipping");
+
 			}
 		}
 
@@ -427,39 +435,41 @@ public class DatabaseRegistry {
 
 	}
 
-//-----------------------------------------------------------------
+	// -----------------------------------------------------------------
 	/**
-	 * @return True if this registry contains a particular DatabaseRegistryEntry (note equals() method in DatabaseRegistryEntry determines this behaviour).
+	 * @return True if this registry contains a particular DatabaseRegistryEntry (note equals() method in DatabaseRegistryEntry
+	 *         determines this behaviour).
 	 */
 	public boolean contains(DatabaseRegistryEntry dbre) {
-		
+
 		for (DatabaseRegistryEntry entry : entries) {
-			
+
 			if (entry.equals(dbre)) {
 				return true;
 			}
 		}
-		
+
 		return false;
 
 	}
-	
-//-----------------------------------------------------------------
+
+	// -----------------------------------------------------------------
 	/**
-	 * @return List of entries from this registry that match a regexp. Note that this will be a subset of the entries that the registry was created from (based on another regexp!)
+	 * @return List of entries from this registry that match a regexp. Note that this will be a subset of the entries that the
+	 *         registry was created from (based on another regexp!)
 	 */
 	public List<DatabaseRegistryEntry> getMatching(String regexp) {
-		
+
 		List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
 
 		for (DatabaseRegistryEntry entry : entries) {
-			
+
 			if (entry.getName().matches(regexp)) {
 				result.add(entry);
 			}
-			
+
 		}
-		
+
 		return result;
 
 	}
