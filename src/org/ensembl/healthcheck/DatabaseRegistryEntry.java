@@ -448,6 +448,17 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 		return connection;
 		
 	}
+	
+	/**
+	 * Test if this entry is equal to another. Comparison is currently only on database name.
+	 * @param dbre
+	 * @return true if names are the same.
+	 */
+	public boolean equals(DatabaseRegistryEntry dbre) {
+	
+		return (dbre.getName().equals(name));
+	
+	}
 
 	// -----------------------------------------------------------------
 
