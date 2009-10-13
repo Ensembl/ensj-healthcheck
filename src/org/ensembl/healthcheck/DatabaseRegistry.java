@@ -17,7 +17,6 @@
  */
 package org.ensembl.healthcheck;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -56,7 +55,7 @@ public class DatabaseRegistry {
 	 *          If true, this is a secondary database registry.
 	 */
 	public DatabaseRegistry(List<String> regexps, DatabaseType globalType, Species globalSpecies, boolean isSecondary) {
-		
+
 		this.globalType = globalType;
 		this.globalSpecies = globalSpecies;
 
@@ -119,36 +118,22 @@ public class DatabaseRegistry {
 
 	private void addEntriesToRegistry(DatabaseServer server, final String[] names) {
 
-		for (int i = 0; i < names.length; i++) {
-			DatabaseRegistryEntry dbre = new DatabaseRegistryEntry(server, names[i], globalSpecies, globalType);
-			dbre.setDatabaseRegistry(this);
-			entries.add(dbre);
-			logger.finest(dbre.getName() + " appears to be type " + dbre.getType() + " and species " + dbre.getSpecies());
-			logger.finest("Added DatabaseRegistryEntry for " + names[i] + " to DatabaseRegistry");
-		}
+		for (String name : names) {
 
-	}
+			DatabaseRegistryEntry dbre = new DatabaseRegistryEntry(server, name, globalSpecies, globalType);
+	
+			if (!this.contains(dbre)) {
 
-	// -----------------------------------------------------------------
+				dbre.setDatabaseRegistry(this);
+				entries.add(dbre);
+				logger.finest(dbre.getName() + " appears to be type " + dbre.getType() + " and species " + dbre.getSpecies());
+				logger.finest("Added DatabaseRegistryEntry for " + name + " to DatabaseRegistry");
 
-	private void addSecondaryEntriesToRegistry(final String[] names) {
-
-		// TODO - modify this to just call method above?
-		DatabaseServer secondaryServer = new DatabaseServer(System.getProperty("secondary.driver"), System.getProperty("secondary.driver"), System.getProperty("secondary.databaseURL"), // XXX
-																																																																																											// +
-																																																																																											// name
-																																																																																											// needed
-																																																																																											// here?
-				System.getProperty("secondary.user"), System.getProperty("secondary.password"));
-
-		for (int i = 0; i < names.length; i++) {
-			DatabaseRegistryEntry dbre = new DatabaseRegistryEntry(secondaryServer, names[i], null, null);
-			dbre.setDatabaseRegistry(this);
-
-			dbre.setDatabaseServer(secondaryServer);
-			secondaryEntries.add(dbre);
-			logger.finest(dbre.getName() + " appears to be type " + dbre.getType() + " and species " + dbre.getSpecies());
-			logger.finest("Added DatabaseRegistryEntry for " + names[i] + " to DatabaseRegistry");
+			} else {
+				
+				logger.finest("Registry already contains an entry for "+ dbre.getName() + ", skipping");
+				
+			}
 		}
 
 	}
@@ -439,6 +424,23 @@ public class DatabaseRegistry {
 	public final int getEntryCount() {
 
 		return entries.size();
+
+	}
+
+//-----------------------------------------------------------------
+	/**
+	 * @return True if this registry contains a particular DatabaseRegistryEntry (note equals() method in DatabaseRegistryEntry determines this behaviour).
+	 */
+	public boolean contains(DatabaseRegistryEntry dbre) {
+		
+		for (DatabaseRegistryEntry entry : entries) {
+			
+			if (entry.equals(dbre)) {
+				return true;
+			}
+		}
+		
+		return false;
 
 	}
 
