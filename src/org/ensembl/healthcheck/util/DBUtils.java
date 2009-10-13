@@ -759,7 +759,6 @@ public final class DBUtils {
 
 	public static DatabaseRegistry getSecondaryDatabaseRegistry() {
 
-		System.out.println("Getting secondary");
 		if (secondaryDatabaseRegistry == null) {
 
 			secondaryDatabaseRegistry = new DatabaseRegistry(null, null, null, true);
@@ -773,8 +772,6 @@ public final class DBUtils {
 //-------------------------------------------------------------------------
 
 	public static DatabaseRegistry getMainDatabaseRegistry() {
-
-		System.out.println("Getting main");
 
 		if (mainDatabaseRegistry == null) {
 
