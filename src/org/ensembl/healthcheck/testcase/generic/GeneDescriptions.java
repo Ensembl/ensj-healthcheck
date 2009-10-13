@@ -71,7 +71,7 @@ public class GeneDescriptions extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 		
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM gene WHERE description like '%Uniprot/SWISSPROT%'");
+		int rows = getRowCount(con, "SELECT COUNT(*) FROM gene WHERE description like '%Uniprot%' COLLATE latin1_general_cs");
 
 		if (rows > 0) {
 			ReportManager.problem(this, con, rows + " descriptions have incorrect spelling/capitalisation of Uniprot attribution");
