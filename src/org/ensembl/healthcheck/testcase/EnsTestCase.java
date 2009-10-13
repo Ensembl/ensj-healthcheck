@@ -33,11 +33,8 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.TestRunner;
 import org.ensembl.healthcheck.util.DBUtils;
-import org.ensembl.healthcheck.util.DatabaseConnectionIterator;
 import org.ensembl.healthcheck.util.SQLParser;
 import org.ensembl.healthcheck.util.Utils;
-
-import com.sun.tools.javah.MainDoclet;
 
 /**
  * Base class for all healthcheck tests.
@@ -52,7 +49,7 @@ public abstract class EnsTestCase {
 	 * A list of Strings representing the groups that this test is a member of. Every test is (at least) a member of a group with the
 	 * same name as the test.
 	 */
-	protected List groups;
+	protected List<String> groups;
 
 	/** Description field */
 	protected String description;
@@ -83,7 +80,7 @@ public abstract class EnsTestCase {
 	/**
 	 * Store a list of which types of database this test applies to.
 	 */
-	protected List appliesToTypes = new ArrayList();
+	protected List<DatabaseType> appliesToTypes = new ArrayList<DatabaseType>();
 
 	/**
 	 * Names of tables in core schema that count as "feature" tables. Used in various healthchecks.
@@ -762,14 +759,12 @@ public abstract class EnsTestCase {
 	 */
 	public boolean checkSameSQLResult(String sql, String regexp, boolean comparingSchema) {
 
-		ArrayList resultSetGroup = new ArrayList();
-		ArrayList statements = new ArrayList();
+		ArrayList<ResultSet> resultSetGroup = new ArrayList<ResultSet>();
+		ArrayList<Statement> statements = new ArrayList<Statement>();
 
-		DatabaseConnectionIterator dcit = testRunner.getDatabaseConnectionIterator(regexp);
+		for (DatabaseRegistryEntry dbre : mainDatabaseRegistry.getMatching(regexp)) {
 
-		while (dcit.hasNext()) {
-
-			Connection con = (Connection) dcit.next();
+			Connection con = dbre.getConnection();
 
 			try {
 				Statement stmt = con.createStatement();
@@ -778,12 +773,10 @@ public abstract class EnsTestCase {
 					resultSetGroup.add(rs);
 				}
 				logger.fine("Added ResultSet for " + DBUtils.getShortDatabaseName(con) + ": " + sql);
-				// DBUtils.printResultSet(rs, 100);
-				// note that the Statement can't be closed here as we use the
-				// ResultSet elsewhere
-				// so store a reference to it for closing later
+				// note that the Statement can't be closed here as we use the ResultSet elsewhere so store a reference to it for closing
+				// later
 				statements.add(stmt);
-				// con.close();
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -792,10 +785,9 @@ public abstract class EnsTestCase {
 		logger.finest("Number of ResultSets to compare: " + resultSetGroup.size());
 		boolean same = DBUtils.compareResultSetGroup(resultSetGroup, this, comparingSchema);
 
-		Iterator it = statements.iterator();
-		while (it.hasNext()) {
+		for (Iterator<Statement> it = statements.iterator(); it.hasNext();) {
 			try {
-				((Statement) it.next()).close();
+				it.next().close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1068,37 +1060,6 @@ public abstract class EnsTestCase {
 		logger.warning(message);
 
 	} // warn
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Get a list of the databases which represent species. Filter out any which don't seem to represent species.
-	 * 
-	 * @return A list of the species; each species will occur only once, and be of the form homo_sapiens (no trailing _).
-	 */
-	public String[] getListOfSpeciesDatabases() {
-
-		ArrayList list = new ArrayList();
-
-		DatabaseConnectionIterator dbci = testRunner.getDatabaseConnectionIterator(".*");
-		while (dbci.hasNext()) {
-
-			String dbName = DBUtils.getShortDatabaseName((Connection) dbci.next());
-
-			String[] bits = dbName.split("_");
-			if (bits.length > 2) {
-				String species = bits[0] + "_" + bits[1];
-				if (!list.contains(species)) {
-					list.add(species);
-				}
-			} else {
-				logger.fine("Database " + dbName + " does not seem to represent a species; ignored");
-			}
-
-		}
-
-		return (String[]) list.toArray(new String[list.size()]);
-
-	}
 
 	// -------------------------------------------------------------------------
 	/**

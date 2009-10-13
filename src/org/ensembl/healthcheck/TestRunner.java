@@ -30,7 +30,6 @@ import org.ensembl.healthcheck.testcase.OrderedDatabaseTestCase;
 import org.ensembl.healthcheck.testcase.Repair;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
-import org.ensembl.healthcheck.util.DatabaseConnectionIterator;
 
 /**
  * <p>
@@ -70,87 +69,6 @@ public class TestRunner {
 		groupsToRun = new ArrayList();
 
 	} // TestRunner
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Get a list of all the schema names .
-	 * 
-	 * @return An array of the schema names.
-	 */
-	public String[] getAllSchemaNames() {
-
-		Connection conn;
-		String[] schemaNames = null;
-
-		// open connection
-		try {
-			conn = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System.getProperty("user"),
-					System.getProperty("password"));
-			logger.fine("Opened connection to " + System.getProperty("databaseURL") + " as " + System.getProperty("user"));
-			schemaNames = DBUtils.listDatabases(conn);
-			logger.fine("Connection closed");
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-
-		return schemaNames;
-
-	}
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Get a list of database names that match a particular regular expression.
-	 * 
-	 * @param regexp
-	 *          The regular expression to match.
-	 * @return An array of the matching database names (may be empty if none
-	 *         matched).
-	 */
-	public String[] getListOfDatabaseNames(String regexp) {
-
-		Connection conn;
-		String[] databaseNames = null;
-
-		// open connection
-		try {
-			conn = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System.getProperty("user"),
-					System.getProperty("password"));
-			System.out.println("Opened connection to " + System.getProperty("databaseURL") + " as " + System.getProperty("user"));
-			databaseNames = DBUtils.listDatabases(conn, regexp);
-			if (databaseNames.length == 0) {
-				logger.info("No database names matched");
-			}
-
-			// conn.close();
-
-			logger.fine("Connection closed");
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-
-		return databaseNames;
-
-	} // getDatabaseList
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Prints, to stdout, a list of the database names that match a given regular
-	 * expression.
-	 * 
-	 * @param regexp
-	 *          The regular expression to match.
-	 */
-	protected void showDatabaseList(String regexp) {
-
-		logger.fine("Listing databases matching " + regexp + " :\n");
-		String[] databaseList = getListOfDatabaseNames(regexp);
-		for (int i = 0; i < databaseList.length; i++) {
-			logger.fine("\t" + databaseList[i]);
-		}
-
-	} // showDatabaseList
 
 	// -------------------------------------------------------------------------
 	/**
@@ -286,37 +204,7 @@ public class TestRunner {
 		}
 
 	} // checkRepair
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Get a connection to a particular database.
-	 * 
-	 * @return A connection to database.
-	 */
-	public Connection getDatabaseConnection() {
-
-		return DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL"), System.getProperty("user"),
-				System.getProperty("password"));
-
-	} // getDatabaseConnection
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Get an iterator that will iterate over database connections whose names
-	 * match a particular regular expression.
-	 * 
-	 * @param databaseRegexp
-	 *          The regular expression to match.
-	 * @return A DatabaseConnectionIterator object that will iterate over database
-	 *         Connections for databases whose names match the regular expression.
-	 */
-	public DatabaseConnectionIterator getDatabaseConnectionIterator(String databaseRegexp) {
-
-		return new DatabaseConnectionIterator(System.getProperty("driver"), System.getProperty("databaseURL"), System
-				.getProperty("user"), System.getProperty("password"), getListOfDatabaseNames(databaseRegexp));
-
-	} // getDatabaseConnectionIterator
-
+	
 	// -------------------------------------------------------------------------
 	/**
 	 * Get the union of all the test groups.
@@ -326,15 +214,15 @@ public class TestRunner {
 	 * @return An array containing the names of all the groups that any member of
 	 *         tests is a member of.
 	 */
-	public String[] listAllGroups(List tests) {
+	public String[] listAllGroups(List<EnsTestCase> tests) {
 
-		ArrayList g = new ArrayList();
-		Iterator it = tests.iterator();
+		ArrayList<String> g = new ArrayList<String>();
+		Iterator<EnsTestCase> it = tests.iterator();
 		while (it.hasNext()) {
-			List thisTestsGroups = ((EnsTestCase) it.next()).getGroups();
-			Iterator it2 = thisTestsGroups.iterator();
+			List<String> thisTestsGroups = it.next().getGroups();
+			Iterator<String> it2 = thisTestsGroups.iterator();
 			while (it2.hasNext()) {
-				String group = (String) it2.next();
+				String group = it2.next();
 				if (!g.contains(group)) {
 					g.add(group);
 				}

@@ -443,6 +443,26 @@ public class DatabaseRegistry {
 		return false;
 
 	}
+	
+//-----------------------------------------------------------------
+	/**
+	 * @return List of entries from this registry that match a regexp. Note that this will be a subset of the entries that the registry was created from (based on another regexp!)
+	 */
+	public List<DatabaseRegistryEntry> getMatching(String regexp) {
+		
+		List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
+
+		for (DatabaseRegistryEntry entry : entries) {
+			
+			if (entry.getName().matches(regexp)) {
+				result.add(entry);
+			}
+			
+		}
+		
+		return result;
+
+	}
 
 	// -----------------------------------------------------------------
 
