@@ -773,6 +773,20 @@ public final class DBUtils {
 		return secondaryDatabaseRegistry;
 
 	}
+	
+//-------------------------------------------------------------------------
+
+	public static DatabaseRegistry getMainDatabaseRegistry() {
+
+		if (mainDatabaseRegistry == null) {
+
+			mainDatabaseRegistry = new DatabaseRegistry(null, null, null, false);
+
+		}
+
+		return mainDatabaseRegistry;
+
+	}
 	// -------------------------------------------------------------------------
 
 } // DBUtils
