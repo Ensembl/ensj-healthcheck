@@ -37,6 +37,8 @@ import org.ensembl.healthcheck.util.DatabaseConnectionIterator;
 import org.ensembl.healthcheck.util.SQLParser;
 import org.ensembl.healthcheck.util.Utils;
 
+import com.sun.tools.javah.MainDoclet;
+
 /**
  * Base class for all healthcheck tests.
  */
@@ -96,6 +98,8 @@ public abstract class EnsTestCase {
 
 	private String[] tablesWithAnalysisID = { "gene", "protein_feature", "dna_align_feature", "protein_align_feature", "repeat_feature", "prediction_transcript", "simple_feature", "marker_feature",
 			"qtl_feature", "density_type", "object_xref", "transcript", "unmapped_object", "ditag_feature" };
+
+	private DatabaseRegistry mainDatabaseRegistry = DBUtils.getMainDatabaseRegistry();
 
 	private DatabaseRegistry secondaryDatabaseRegistry = DBUtils.getSecondaryDatabaseRegistry();
 
@@ -1298,9 +1302,8 @@ public abstract class EnsTestCase {
 	 */
 	public Connection getSchemaConnection(String schema) {
 
-		Connection con = DBUtils.openConnection(System.getProperty("driver"), System.getProperty("databaseURL") + schema, System.getProperty("user"), System.getProperty("password"));
+		return DBUtils.getMainDatabaseRegistry().getByExactName(schema).getConnection();
 
-		return con;
 	}
 
 	// -------------------------------------------------------------------------
