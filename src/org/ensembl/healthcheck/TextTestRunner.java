@@ -41,13 +41,13 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
 	private static String version = "$Id$";
 
-	private ArrayList<String> databaseRegexps = new ArrayList<String> ();
+	private ArrayList<String> databaseRegexps = new ArrayList<String>();
 
-	private ArrayList<String>  secondaryDatabaseRegexps = new ArrayList<String> ();
+	private ArrayList<String> secondaryDatabaseRegexps = new ArrayList<String>();
 
 	private boolean debug = false;
 
-	private ArrayList<String> outputBuffer = new ArrayList<String> ();
+	private ArrayList<String> outputBuffer = new ArrayList<String>();
 
 	private String lastDatabase = "";
 
@@ -62,7 +62,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 	private Species globalSpecies = null;
 
 	private DatabaseType globalType = null;
-	
+
 	private boolean printResultsByTest = true;
 
 	private boolean printResultsByDatabase = false;
@@ -110,19 +110,19 @@ public class TextTestRunner extends TestRunner implements Reporter {
 		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE, true);
 
 		setupLogging();
-		
+
 		setCustomProperties();
 
 		Utils.buildDatabaseURLs();
-		
+
 		ReportManager.setReporter(this);
 
 		mainDatabaseRegistry = new DatabaseRegistry(databaseRegexps, globalType, globalSpecies, false);
 
 		if (secondaryDatabaseRegexps.size() > 0) {
 			secondaryDatabaseRegistry = new DatabaseRegistry(secondaryDatabaseRegexps, globalType, globalSpecies, true);
-		} 
-		
+		}
+
 		if (mainDatabaseRegistry.getEntryCount() == 0) {
 			logger.warning("Warning: no database names matched any of the database regexps given");
 		}
@@ -158,15 +158,13 @@ public class TextTestRunner extends TestRunner implements Reporter {
 		System.out.println("                    summary   only summary info (and problems, and correct reports) are reported");
 		System.out.println("                    info      info (and problem, correct, summary) messages reported");
 		System.out.println("                    all       everything is printed");
-		System.out
-				.println("  -species s      Use s as the species for all databases instead of trying to guess the species from the name");
+		System.out.println("  -species s      Use s as the species for all databases instead of trying to guess the species from the name");
 		System.out.println("  -type t         Use t as the type for all databases instead of trying to guess the type from the name");
 		System.out.println("  -debug          Print debugging info (for developers only)");
 		System.out.println("  -config file    Read configuration information from file instead of " + PROPERTIES_FILE);
 		System.out.println("  -repair         If appropriate, carry out repair methods on test cases that support it");
 		System.out.println("  -showrepair     Like -repair, but the repair is NOT carried out, just reported.");
-		System.out.println("  -length n       Break output lines at n columns; default is " + outputLineLength
-				+ ". 0 means never break");
+		System.out.println("  -length n       Break output lines at n columns; default is " + outputLineLength + ". 0 means never break");
 		System.out.println("  -resultsbydb    Print results by databases as well as by test case.");
 		System.out.println("  -nofailuretext  Don't print failure hints.");
 		System.out.println("  -skipslow       Don't run long-running tests");
@@ -180,8 +178,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 		System.out.println("                  Note each test case is in a group of its own with the name of the test case.");
 		System.out.println("                  This allows individual tests to be run if required.");
 		System.out.println("");
-		System.out
-				.println("If no tests or test groups are specified, and a database regular expression is given with -d, the matching databases are shown. ");
+		System.out.println("If no tests or test groups are specified, and a database regular expression is given with -d, the matching databases are shown. ");
 
 		System.out.println("\nCurrently available tests:");
 
@@ -284,8 +281,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 				} else if (args[i].equals("-length")) {
 
 					outputLineLength = Integer.parseInt(args[++i]);
-					logger.finest((outputLineLength > 0 ? "Will break output lines at column " + outputLineLength
-							: "Will not break output lines"));
+					logger.finest((outputLineLength > 0 ? "Will break output lines at column " + outputLineLength : "Will not break output lines"));
 
 				} else if (args[i].equals("-species")) {
 
@@ -362,13 +358,14 @@ public class TextTestRunner extends TestRunner implements Reporter {
 			if (groupsToRun.size() == 0 && databaseRegexps.size() > 0) {
 
 				Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE, false);
-				Iterator it = databaseRegexps.iterator();
-				while (it.hasNext()) {
-					String databaseRegexp = (String) it.next();
+
+				for (Iterator<String> it = databaseRegexps.iterator(); it.hasNext();) {
+
+					String databaseRegexp = it.next();
 					System.out.println("Databases that match the regular expression " + databaseRegexp + ":");
-					String[] names = getListOfDatabaseNames(databaseRegexp);
-					for (int i = 0; i < names.length; i++) {
-						System.out.println("  " + names[i]);
+
+					for (DatabaseRegistryEntry entry : mainDatabaseRegistry.getAll()) {
+						System.out.println("  " + entry);
 					}
 				}
 			}
@@ -460,8 +457,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 	 * @param testCase
 	 *          The test case about to be run.
 	 * @param dbre
-	 *          The database which testCase is to be run on, or null of no/several
-	 *          databases.
+	 *          The database which testCase is to be run on, or null of no/several databases.
 	 */
 	public void startTestCase(EnsTestCase testCase, DatabaseRegistryEntry dbre) {
 
@@ -484,8 +480,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 	 * @param result
 	 *          The result of testCase.
 	 * @param dbre
-	 *          The database which testCase was run on, or null of no/several
-	 *          databases.
+	 *          The database which testCase was run on, or null of no/several databases.
 	 */
 	public void finishTestCase(EnsTestCase testCase, boolean result, DatabaseRegistryEntry dbre) {
 
@@ -494,8 +489,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 		System.out.println((result ? " PASSED" : " FAILED"));
 
 		/*
-		 * lastDatabase = ""; Iterator it = outputBuffer.iterator(); while
-		 * (it.hasNext()) { System.out.println((String)it.next()); }
+		 * lastDatabase = ""; Iterator it = outputBuffer.iterator(); while (it.hasNext()) { System.out.println((String)it.next()); }
 		 * outputBuffer.clear();
 		 */
 
@@ -517,8 +511,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
 	// --------------------------------------------------------------------------
 	/**
-	 * Check if custom* variables are set and if so, override settings read from
-	 * properties file.
+	 * Check if custom* variables are set and if so, override settings read from properties file.
 	 */
 	private void setCustomProperties() {
 
@@ -551,7 +544,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 		}
 
 	}
-	
+
 	// --------------------------------------------------------------------------
 
 }
