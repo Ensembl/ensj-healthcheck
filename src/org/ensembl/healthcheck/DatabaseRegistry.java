@@ -364,7 +364,7 @@ public class DatabaseRegistry {
 	 *          The name to look for.
 	 * @return The matching DatabaseRegistryEntry, or null if none is found.
 	 */
-	public final DatabaseRegistryEntry getByExactName(final String name) {
+	public final DatabaseRegistryEntry getByExactName(String name) {
 
 		Iterator<DatabaseRegistryEntry> it = entries.iterator();
 		while (it.hasNext()) {
@@ -374,6 +374,8 @@ public class DatabaseRegistry {
 			}
 		}
 
+		logger.warning("Can't find database matching name " + name);
+		
 		return null;
 	}
 
