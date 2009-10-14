@@ -16,6 +16,7 @@
 
 package org.ensembl.healthcheck.testcase.generic;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -27,8 +28,7 @@ import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.testcase.Priority;
 
 /**
- * Check that all xrefs from a certain source (e.g. HGNC, EntrezGene) are
- * consistently assigned to the same Ensembl object type.
+ * Check that all xrefs from a certain source (e.g. HGNC, EntrezGene) are consistently assigned to the same Ensembl object type.
  */
 public class XrefLevels extends MultiDatabaseTestCase {
 
@@ -62,31 +62,48 @@ public class XrefLevels extends MultiDatabaseTestCase {
 		// create a temporary table in the first database we come to to hold the
 		// master list of species, sources and objects
 		DatabaseRegistryEntry masterDBRE = null;
+		PreparedStatement masterPrep = null;
+
 		String masterTable = "";
 
 		DatabaseRegistryEntry[] dbres = dbr.getAll();
 
-		for (int i = 0; i < dbres.length; i++) {
-
-			DatabaseRegistryEntry dbre = dbres[i];
+		for (DatabaseRegistryEntry dbre : dbres) {
 
 			if (masterDBRE == null) {
+
 				createTempTable(dbre);
 				masterDBRE = dbre;
 				masterTable = dbre.getName() + ".healthcheck_xref";
+
+				try {
+
+					masterPrep = masterDBRE.getConnection().prepareStatement("INSERT INTO " + masterTable + " (species, source, object) VALUES (?,?,?)");
+
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+
 			}
 
 			// fill with the list of sources and object types from each species
 			logger.fine("Adding sources and objects for " + dbre.getName());
 
 			try {
+
 				Statement stmt = dbre.getConnection().createStatement();
-				stmt
-						.execute("INSERT INTO "
-								+ masterTable
-								+ " SELECT '"
-								+ dbre.getSpecies()
-								+ "', e.db_name, ox.ensembl_object_type FROM external_db e, xref x, object_xref ox WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id GROUP BY e.db_name, ox.ensembl_object_type");
+
+				// can't do this in one query as the databases being written to and read from might be on separate servers
+				ResultSet rs = stmt
+						.executeQuery("SELECT e.db_name, ox.ensembl_object_type FROM external_db e, xref x, object_xref ox WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id GROUP BY e.db_name, ox.ensembl_object_type");
+
+				while (rs.next()) {
+					masterPrep.setString(1, dbre.getSpecies().toString());
+					masterPrep.setString(2, rs.getString("db_name"));
+					masterPrep.setString(3, rs.getString("ensembl_object_type"));
+					masterPrep.execute();
+				}
+
 				stmt.close();
 			} catch (SQLException se) {
 				se.printStackTrace();
@@ -100,24 +117,24 @@ public class XrefLevels extends MultiDatabaseTestCase {
 		try {
 			Statement stmt = masterDBRE.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM " + masterTable + " GROUP BY source, object");
-			
+
 			String source = "";
 			String object = "";
 			String species = "";
-			
+
 			String lastSource = "";
 			String lastObject = "";
 			String lastSpecies = "";
-			
+
 			while (rs.next()) {
-				
+
 				source = rs.getString("source");
 				object = rs.getString("object");
 				species = rs.getString("species");
-				
+
 				if (!source.equals("")) { // first time around is a special case
-					
-					if (source.equals(lastSource) &&  !species.equals(lastSpecies) && !object.equals(lastObject)) {
+
+					if (source.equals(lastSource) && !species.equals(lastSpecies) && !object.equals(lastObject)) {
 						result = false;
 						ReportManager.problem(this, "", source + " is on " + object + " in some species (e.g. " + species + ") and " + lastObject + " in others (e.g." + lastSpecies + ")");
 					} else {
@@ -127,14 +144,14 @@ public class XrefLevels extends MultiDatabaseTestCase {
 				lastSource = source;
 				lastObject = object;
 				lastSpecies = species;
-				
+
 			}
 		} catch (SQLException se) {
 			se.printStackTrace();
 		}
 
 		dropTempTable(masterDBRE);
-		
+
 		return result;
 
 	} // run
@@ -154,9 +171,9 @@ public class XrefLevels extends MultiDatabaseTestCase {
 		}
 
 	}
-	
+
 	// -----------------------------------------------------------------------
-		
+
 	private void dropTempTable(DatabaseRegistryEntry dbre) {
 
 		try {
