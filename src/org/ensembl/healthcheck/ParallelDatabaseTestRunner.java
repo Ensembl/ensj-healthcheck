@@ -55,7 +55,7 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 
 		ReportManager.createDatabaseSession();
 
-		List databasesAndGroups = getDatabasesAndGroups();
+		List<String> databasesAndGroups = getDatabasesAndGroups();
 
 		submitJobs(databasesAndGroups, ReportManager.getSessionID());
 
@@ -81,14 +81,14 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 
 	private void parseCommandLine(String[] args) {
 
-		for (int i = 0; i < args.length; i++) {
+		for (String arg : args) {
 
-			if (args[i].equals("-h")) {
+			if (arg.equals("-h")) {
 
 				printUsage();
 				System.exit(0);
 
-			} else if (args[i].equals("-debug")) {
+			} else if (arg.equals("-debug")) {
 
 				debug = true;
 				logger.finest("Running in debug mode");
@@ -155,7 +155,7 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 	 * output.databases property, which should be of the form
 	 * regexp1:group1,regexp2:group2 etc
 	 */
-	private List getDatabasesAndGroups() {
+	private List<String> getDatabasesAndGroups() {
 
 		return Arrays.asList(System.getProperty("output.databases").split(","));
 
@@ -163,17 +163,15 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 
 	// ---------------------------------------------------------------------
 
-	private void submitJobs(List databasesAndGroups, long sessionID) {
+	private void submitJobs(List<String> databasesAndGroups, long sessionID) {
 
 		String dir = System.getProperty("user.dir");
 
 		String s = null;
 		
-		Iterator it = databasesAndGroups.iterator();
-		
-		while (it.hasNext()) {
+		for (Iterator<String> it = databasesAndGroups.iterator(); it.hasNext();) {
 			
-			String[] databaseAndGroup = ((String) it.next()).split(":");
+			String[] databaseAndGroup = it.next().split(":");
 			String database = databaseAndGroup[0];
 			String group = databaseAndGroup[1];
 

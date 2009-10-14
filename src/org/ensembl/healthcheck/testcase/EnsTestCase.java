@@ -96,17 +96,13 @@ public abstract class EnsTestCase {
 	private String[] tablesWithAnalysisID = { "gene", "protein_feature", "dna_align_feature", "protein_align_feature", "repeat_feature", "prediction_transcript", "simple_feature", "marker_feature",
 			"qtl_feature", "density_type", "object_xref", "transcript", "unmapped_object", "ditag_feature" };
 
-	private DatabaseRegistry mainDatabaseRegistry = DBUtils.getMainDatabaseRegistry();
-
-	private DatabaseRegistry secondaryDatabaseRegistry = DBUtils.getSecondaryDatabaseRegistry();
-
 	// -------------------------------------------------------------------------
 	/**
 	 * Creates a new instance of EnsTestCase
 	 */
 	public EnsTestCase() {
 
-		groups = new ArrayList();
+		groups = new ArrayList<String>();
 		addToGroup(getShortTestName()); // each test is in a one-test group
 		setDescription("No description set for this test.");
 		setFailureText("");
@@ -762,6 +758,8 @@ public abstract class EnsTestCase {
 		ArrayList<ResultSet> resultSetGroup = new ArrayList<ResultSet>();
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 
+		DatabaseRegistry mainDatabaseRegistry = DBUtils.getMainDatabaseRegistry();
+		
 		for (DatabaseRegistryEntry dbre : mainDatabaseRegistry.getMatching(regexp)) {
 
 			Connection con = dbre.getConnection();
@@ -1657,11 +1655,12 @@ public abstract class EnsTestCase {
 	 */
 	public DatabaseRegistryEntry getEquivalentFromSecondaryServer(DatabaseRegistryEntry dbre) {
 
+		DatabaseRegistry secondaryDatabaseRegistry = DBUtils.getSecondaryDatabaseRegistry();
+
 		// find any databases matching type and species
 		TreeSet<DatabaseRegistryEntry> matchingDBs = new TreeSet<DatabaseRegistryEntry>(); // get sorting for free
 
 		for (DatabaseRegistryEntry secDBRE : secondaryDatabaseRegistry.getAll()) {
-
 			// nulls will set type automatically
 			if (dbre.getType() == secDBRE.getType() && dbre.getSpecies() == secDBRE.getSpecies()) {
 				matchingDBs.add(secDBRE);
@@ -1670,7 +1669,7 @@ public abstract class EnsTestCase {
 		}
 
 		if (matchingDBs.size() == 0) {
-			logger.severe("Could not find equvialent database to " + dbre.getName() + " on secondary server");
+			logger.severe("Could not find equivalent database to " + dbre.getName() + " on secondary server");
 		}
 
 		// take the highest one that doesn't have the same version number as our current one, if available

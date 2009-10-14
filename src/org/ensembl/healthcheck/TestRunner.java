@@ -44,7 +44,7 @@ public class TestRunner {
 	protected List allTests;
 
 	/** The List of group names (as Strings) that will be run. */
-	protected List groupsToRun;
+	protected List<String> groupsToRun;
 
 	/** The logger to use for this class */
 	protected static Logger logger = Logger.getLogger("HealthCheckLogger");
@@ -66,7 +66,7 @@ public class TestRunner {
 
 	public TestRunner() {
 
-		groupsToRun = new ArrayList();
+		groupsToRun = new ArrayList<String>();
 
 	} // TestRunner
 
