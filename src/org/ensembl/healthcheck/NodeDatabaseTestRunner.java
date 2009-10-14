@@ -14,7 +14,6 @@
 package org.ensembl.healthcheck;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -37,7 +36,7 @@ public class NodeDatabaseTestRunner extends DatabaseTestRunner implements Report
 
 	private boolean deletePrevious = false;
 
-	private List databaseRegexps;
+	private List<String> databaseRegexps;
 	
 	private long sessionID = -1;
 	
@@ -60,8 +59,9 @@ public class NodeDatabaseTestRunner extends DatabaseTestRunner implements Report
 		
 		TestRegistry testRegistry = new TestRegistry();
 
-		DatabaseRegistry databaseRegistry = new DatabaseRegistry(databaseRegexps, null, null, false);
-		if (databaseRegistry.getAll().length == 0) {
+		DatabaseRegistry mainDatabaseRegistry = new DatabaseRegistry(databaseRegexps, null, null, false);
+
+		if (mainDatabaseRegistry.getEntryCount() == 0) {
 			logger.warning("Warning: no database names matched any of the database regexps given");
 		}
 
@@ -71,7 +71,7 @@ public class NodeDatabaseTestRunner extends DatabaseTestRunner implements Report
 			ReportManager.deletePrevious();
 		}
 
-		runAllTests(databaseRegistry, testRegistry, false);
+		runAllTests(mainDatabaseRegistry, testRegistry, false);
 
 		ConnectionPool.closeAll();
 
@@ -115,7 +115,7 @@ public class NodeDatabaseTestRunner extends DatabaseTestRunner implements Report
 				
 			} else if (args[i].equals("-d")) {
 				i++;
-				databaseRegexps = new ArrayList();
+				databaseRegexps = new ArrayList<String>();
 				databaseRegexps.add(args[i]);
 				logger.finest("Database regexp: " + args[i]);
 				
