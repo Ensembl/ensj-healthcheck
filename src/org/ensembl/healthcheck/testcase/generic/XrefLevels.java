@@ -74,7 +74,7 @@ public class XrefLevels extends MultiDatabaseTestCase {
 
 				createTempTable(dbre);
 				masterDBRE = dbre;
-				masterTable = dbre.getName() + ".healthcheck_xref";
+				masterTable = "healthcheck_xref";
 
 				try {
 
@@ -115,8 +115,8 @@ public class XrefLevels extends MultiDatabaseTestCase {
 		// find situations where the source is the same but the species and object
 		// are different
 		try {
-			Statement stmt = masterDBRE.getConnection().createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM " + masterTable + " GROUP BY source, object");
+
+			ResultSet rs = masterPrep.executeQuery("SELECT * FROM " + masterTable + " GROUP BY source, object");
 
 			String source = "";
 			String object = "";
