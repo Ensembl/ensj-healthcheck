@@ -1261,13 +1261,9 @@ public abstract class EnsTestCase {
 	 */
 	public Connection getSchemaConnection(String schema) {
 
-		//return DBUtils.getMainDatabaseRegistry().getByExactName(schema).getConnection();
-
 		DatabaseRegistryEntry dbre = DBUtils.getMainDatabaseRegistry().getByExactName(schema);
-		
-		Connection con = dbre.getConnection();
-		
-		return con;
+			
+		return dbre.getConnection();
 		
 	}
 
