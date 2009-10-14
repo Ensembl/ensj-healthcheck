@@ -209,18 +209,20 @@ public class ComparePreviousVersionAnalysisDescriptions extends SingleDatabaseTe
 		// split in the =>, there might be easier ways to do it
 		String[] keyValue = webColumn.replaceFirst("=>", ":").split(":");
 
-		if (keyValue.length > 0 && keyValue[1].startsWith("{")) {
-			// we have another hash 'default' => {'contigviewbottom' => 'transcript_label','contigviewtop' => 'gene_label','cytoview' =>
-			// 'gene_label'}
-			// remove {}
-			String[] keyValues = keyValue[1].substring(1, keyValue[1].length() - 1).split(",");
-			Map<String, String> subHash = new HashMap<String, String>();
-			for (int i = 0; i < keyValues.length; i++) {
-				createHashWebData(keyValues[i], subHash);
+		if (keyValue.length > 1) {
+			if (keyValue.length > 1 && keyValue[1].startsWith("{")) {
+				// we have another hash 'default' => {'contigviewbottom' => 'transcript_label','contigviewtop' => 'gene_label','cytoview' =>
+				// 'gene_label'}
+				// remove {}
+				String[] keyValues = keyValue[1].substring(1, keyValue[1].length() - 1).split(",");
+				Map<String, String> subHash = new HashMap<String, String>();
+				for (int i = 0; i < keyValues.length; i++) {
+					createHashWebData(keyValues[i], subHash);
+				}
+				webData.put(keyValue[0], subHash);
+			} else {
+				webData.put(keyValue[0], keyValue[1]);
 			}
-			webData.put(keyValue[0], subHash);
-		} else {
-			webData.put(keyValue[0], keyValue[1]);
 		}
 	}
 
