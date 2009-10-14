@@ -701,11 +701,11 @@ public final class ReportManager {
 	 */
 	public static void connectToOutputDatabase() {
 
-		outputDatabaseConnection = DBUtils.openConnection(System.getProperty("output.driver"), System.getProperty("output.databaseURL") + System.getProperty("output.database"), System
-				.getProperty("output.user"), System.getProperty("output.password"));
-
 		logger.fine("Connecting to " + System.getProperty("output.databaseURL") + System.getProperty("output.database") + " as " + System.getProperty("output.user") + " password "
 				+ System.getProperty("output.password"));
+
+		outputDatabaseConnection = DBUtils.openConnection(System.getProperty("output.driver"), System.getProperty("output.databaseURL") + System.getProperty("output.database"), System
+				.getProperty("output.user"), System.getProperty("output.password"));
 
 		usingDatabase = true;
 
