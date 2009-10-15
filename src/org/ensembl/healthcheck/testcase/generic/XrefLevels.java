@@ -23,6 +23,7 @@ import java.sql.Statement;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.testcase.Priority;
@@ -44,6 +45,16 @@ public class XrefLevels extends MultiDatabaseTestCase {
 		setEffect("Causes BioMart to require specific workarounds for each case.");
 		setFix("Manually fix affected xrefs.");
 		setTeamResponsible("core");
+
+	}
+	
+	/**
+	 * This only applies to core and Vega databases.
+	 */
+	public void types() {
+
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.CDNA);
 
 	}
 
