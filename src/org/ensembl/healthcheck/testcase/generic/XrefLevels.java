@@ -79,6 +79,10 @@ public class XrefLevels extends MultiDatabaseTestCase {
 
 		DatabaseRegistryEntry[] dbres = dbr.getAll();
 
+		if (dbres.length == 0) {
+			return true;
+		}
+		
 		for (DatabaseRegistryEntry dbre : dbres) {
 
 			if (masterDBRE == null) {
