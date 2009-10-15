@@ -124,6 +124,13 @@ public class EmptyTables extends SingleDatabaseTestCase {
 
 			// we don't have many gene_attribs yet
 			tables = Utils.removeStringFromArray(tables, "gene_attrib");
+			
+			// only have splicing events in human
+			if (species != Species.HOMO_SAPIENS) {
+				tables = Utils.removeStringFromArray(tables, "splicing_event");
+				tables = Utils.removeStringFromArray(tables, "splicing_event_feature");
+				tables = Utils.removeStringFromArray(tables, "splicing_transcript_pair");
+			}
 
 			// ----------------------------------------------------
 
