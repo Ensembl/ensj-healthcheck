@@ -122,7 +122,13 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 	    ReportManager.problem(this, con, rows + "entries in flanking_sequence have same variation_id, but different seq_region_id compare with table variation features");
 	    result =  false;
 	}
-	rows = getRowCount(con,"SELECT COUNT(*) FROM compressed_genotype_single_bp c where c.seq_region_start not in (select vf.seq_region_start from variation_feature vf where c.seq_region_id = vf.seq_region_id)");
+	rows = getRowCount(con,"SELECT COUNT(*) FROM variation_feature vf, flanking_sequence f where vf.variation_id=f.variation_id and vf.seq_region_strand != f.seq_region_strand and vf.map_weight=1 and vf.seq_region_id not in (27795,27796,27797,27798,27799,27800,27801,27802,27803) and f.seq_region_id not in (27795,27796,27797,27798,27799,27800,27801,27802,27803)");
+        if (rows > 0){
+            ReportManager.problem(this, con, rows + "entries in flanking_sequence have same variation_id, but different seq_region_strand compare with table variation features");
+           result =  false;
+        }
+
+        rows = getRowCount(con,"SELECT COUNT(*) FROM compressed_genotype_single_bp c where c.seq_region_start not in (select vf.seq_region_start from variation_feature vf where c.seq_region_id = vf.seq_region_id)");
 	if (rows > 0){
 	    ReportManager.problem(this, con, rows + "entries in Compressed genotype table without variation features");
 	    result =  false;
