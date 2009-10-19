@@ -37,7 +37,7 @@ CREATE TABLE report (
   KEY database_name_idx(database_name),
   KEY species_idx(species),
   KEY result_idx(result),
-  KEY text_idx(text)
+  KEY text_idx(text(255))
 
 );
 
@@ -86,7 +86,7 @@ CREATE VIEW session_v AS
   AND r.text LIKE '#%' 
   GROUP BY r.last_session_id;
 
-CREATE VIEW session_v AS 
+CREATE VIEW session_v2 AS 
  SELECT s.session_id, 
   MAX(r.timestamp) AS end_time
   FROM session s, report r 
