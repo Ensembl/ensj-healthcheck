@@ -9,7 +9,7 @@ import java.util.EnumMap;
 public enum Species
 {
 	//defined new Species and properties: taxonomy_id, assemblyprefix, stableIDprefix, alias
-
+	PAPIO_HAMADRYAS(9557,"Pham","ENSPHA","baboon,Papio_hamadryas,papio_hamadryas,papio_hamadryas,sacred_baboon,western_baboon,red_baboon"),
         MELEAGRIS_GALLOPAVO(9103,"UMD2","ENSMGA","turkey,common turkey,wild turkey,meleagris_gallopavo, meleagris_gallopavo"),
 	MACROPUS_EUGENII(9315,"Meug","ENSMEU","wallaby,tammar_wallaby,macropuseugenii,m_eugenii,tammarwallaby,Macropus eugenii,macropus_eugenii"),
 	CALLITHRIX_JACCHUS(9483, "calJac", "ENSCJA","marmoset,white-tufted-ear marmoset,callithrix_jacchus,callithrix jacchus,Callithrix_jacchus,Callithrix jacchus,callithrix"),
