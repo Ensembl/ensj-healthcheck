@@ -17,9 +17,8 @@ import java.util.Map;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 
 /**
- * Compare the go xrefs in the current database with those from the equivalent
- * database on the secondary server, the species projected from in previous
- * release should appear in current as well.
+ * Compare the go xrefs in the current database with those from the equivalent database on the secondary server, the species
+ * projected from in previous release should appear in current as well.
  */
 
 public class ComparePreviousVersionGOXrefs extends ComparePreviousVersionBase {
@@ -39,17 +38,17 @@ public class ComparePreviousVersionGOXrefs extends ComparePreviousVersionBase {
 
 	protected Map getCounts(DatabaseRegistryEntry dbre) {
 
-		String sql = "SELECT substring_index(substring_index(info_text,' ',2),' ',-1) as species, count(*)" + " FROM xref x"
-				+ " WHERE info_type = 'projection' "
-				+ " GROUP BY species";
-		//System.out.println(sql);
+		String sql = "SELECT substring_index(substring_index(info_text,' ',2),' ',-1) AS species, count(*) FROM xref x WHERE info_type = 'projection' GROUP BY species";
+
 		return getCountsBySQL(dbre, sql);
 
-	} // ------------------------------------------------------------------------
+	}
+
+	// ------------------------------------------------------------------------
 
 	protected String entityDescription() {
 
-		return "go xrefs by specie";
+		return "go xrefs by species";
 
 	}
 
@@ -60,8 +59,6 @@ public class ComparePreviousVersionGOXrefs extends ComparePreviousVersionBase {
 		return 0.1;
 
 	}
-
-	
 
 	// ----------------------------------------------------------------------
 
