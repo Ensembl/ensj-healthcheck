@@ -61,7 +61,7 @@ public class CheckTopLevelDnaFrag extends MultiDatabaseTestCase {
     public boolean run(DatabaseRegistry dbr) {
 
         boolean result = true;
-
+        
         // Get compara DB connection
         DatabaseRegistryEntry[] allComparaDBs = dbr.getAll(DatabaseType.COMPARA);
         if (allComparaDBs.length == 0) {
@@ -74,13 +74,13 @@ public class CheckTopLevelDnaFrag extends MultiDatabaseTestCase {
         Map speciesDbrs = getSpeciesDatabaseMap(dbr, true);
 
         for (int i = 0; i < allComparaDBs.length; i++) {
-            result &= checkTopLelelDnaFrag(allComparaDBs[i], speciesDbrs);
+            result &= checkTopLevelDnaFrag(allComparaDBs[i], speciesDbrs);
         }
         return result;
     }
 
 
-    public boolean checkTopLelelDnaFrag(DatabaseRegistryEntry comparaDbre, Map speciesDbrs) {
+    public boolean checkTopLevelDnaFrag(DatabaseRegistryEntry comparaDbre, Map speciesDbrs) {
 
         boolean result = true;
         Connection comparaCon = comparaDbre.getConnection();

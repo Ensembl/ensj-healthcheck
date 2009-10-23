@@ -1,3 +1,0 @@
-cdna
-est
-protein_coding
