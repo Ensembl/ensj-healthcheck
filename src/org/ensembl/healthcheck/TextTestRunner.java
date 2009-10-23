@@ -29,6 +29,7 @@ import java.util.logging.Level;
 
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.util.ConnectionPool;
+import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.LogFormatter;
 import org.ensembl.healthcheck.util.MyStreamHandler;
 import org.ensembl.healthcheck.util.TestComparator;
@@ -118,10 +119,10 @@ public class TextTestRunner extends TestRunner implements Reporter {
 		ReportManager.setReporter(this);
 
 		mainDatabaseRegistry = new DatabaseRegistry(databaseRegexps, globalType, globalSpecies, false);
-
-		if (secondaryDatabaseRegexps.size() > 0) {
-			secondaryDatabaseRegistry = new DatabaseRegistry(secondaryDatabaseRegexps, globalType, globalSpecies, true);
-		}
+		DBUtils.setMainDatabaseRegistry(mainDatabaseRegistry);
+		
+		secondaryDatabaseRegistry = new DatabaseRegistry(secondaryDatabaseRegexps, globalType, globalSpecies, true);
+		DBUtils.setSecondaryDatabaseRegistry(secondaryDatabaseRegistry);
 
 		if (mainDatabaseRegistry.getEntryCount() == 0) {
 			logger.warning("Warning: no database names matched any of the database regexps given");

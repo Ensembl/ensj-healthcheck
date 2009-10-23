@@ -125,22 +125,22 @@ public final class DBUtils {
 	public static String[] listDatabases(Connection con, String regex) {
 
 		ArrayList<String> dbMatches = new ArrayList<String>();
-		
+
 		String[] allDBNames = listDatabases(con);
 
 		for (String name : allDBNames) {
 
 			if (regex == null) {
-				
+
 				dbMatches.add(name);
-				
+
 			} else if (name.matches(regex)) {
-				
+
 				dbMatches.add(name);
 
 			}
 
-		} 
+		}
 
 		String[] ret = new String[dbMatches.size()];
 
@@ -692,7 +692,7 @@ public final class DBUtils {
 	public static List<DatabaseServer> getMainDatabaseServers() {
 
 		Utils.readPropertiesFileIntoSystem("database.properties", false);
-		
+
 		if (mainDatabaseServers == null) {
 
 			mainDatabaseServers = new ArrayList<DatabaseServer>();
@@ -702,11 +702,11 @@ public final class DBUtils {
 			checkAndAddDatabaseServer(mainDatabaseServers, "host1", "port1", "user1", "password1", "driver1");
 
 			checkAndAddDatabaseServer(mainDatabaseServers, "host2", "port2", "user2", "password2", "driver2");
-			
+
 		}
 
-	logger.fine("Number of main database servers found: " + mainDatabaseServers.size());
-		
+		logger.fine("Number of main database servers found: " + mainDatabaseServers.size());
+
 		return mainDatabaseServers;
 
 	}
@@ -724,9 +724,9 @@ public final class DBUtils {
 			secondaryDatabaseServers = new ArrayList<DatabaseServer>();
 
 			checkAndAddDatabaseServer(secondaryDatabaseServers, "secondary.host", "secondary.port", "secondary.user", "secondary.password", "secondary.driver");
-			
+
 			checkAndAddDatabaseServer(secondaryDatabaseServers, "secondary.host1", "secondary.port1", "secondary.user1", "secondary.password1", "secondary.driver1");
-			
+
 			checkAndAddDatabaseServer(secondaryDatabaseServers, "secondary.host2", "secondary.port2", "secondary.user2", "secondary.password2", "secondary.driver2");
 
 		}
@@ -739,13 +739,15 @@ public final class DBUtils {
 
 	// -------------------------------------------------------------------------
 	/**
-	 * Check for the existence of a particular database server. Assumes properties file has already been read in. If it exists, add it to the list.
+	 * Check for the existence of a particular database server. Assumes properties file has already been read in. If it exists, add it
+	 * to the list.
 	 */
 	private static void checkAndAddDatabaseServer(List<DatabaseServer> servers, String hostProp, String portProp, String userProp, String passwordProp, String driverProp) {
 
 		if (System.getProperty(hostProp) != null && System.getProperty(portProp) != null && System.getProperty(userProp) != null) {
 
-			DatabaseServer server = new DatabaseServer(System.getProperty(hostProp), System.getProperty(portProp), System.getProperty(userProp), System.getProperty(passwordProp), System.getProperty(driverProp));
+			DatabaseServer server = new DatabaseServer(System.getProperty(hostProp), System.getProperty(portProp), System.getProperty(userProp), System.getProperty(passwordProp), System
+					.getProperty(driverProp));
 			servers.add(server);
 			logger.fine("Added server: " + server.toString());
 
@@ -766,8 +768,16 @@ public final class DBUtils {
 		return secondaryDatabaseRegistry;
 
 	}
-	
-//-------------------------------------------------------------------------
+
+	// -------------------------------------------------------------------------
+
+	public static void setMainDatabaseRegistry(DatabaseRegistry dbr) {
+
+		mainDatabaseRegistry = dbr;
+
+	}
+
+	// -------------------------------------------------------------------------
 
 	public static DatabaseRegistry getMainDatabaseRegistry() {
 
@@ -778,6 +788,14 @@ public final class DBUtils {
 		}
 
 		return mainDatabaseRegistry;
+
+	}
+
+	// -------------------------------------------------------------------------
+	
+	public static void setSecondaryDatabaseRegistry(DatabaseRegistry dbr) {
+
+		secondaryDatabaseRegistry = dbr;
 
 	}
 	// -------------------------------------------------------------------------

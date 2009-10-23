@@ -33,9 +33,6 @@ public class DatabaseRegistry {
 	// because the order is important
 	private ArrayList<DatabaseRegistryEntry> entries = new ArrayList<DatabaseRegistryEntry>();
 
-	// Entries in the secondary server
-	private ArrayList<DatabaseRegistryEntry> secondaryEntries = new ArrayList<DatabaseRegistryEntry>();
-
 	// these global settings override guessing if they are specified
 	private Species globalSpecies = null;
 
@@ -63,7 +60,7 @@ public class DatabaseRegistry {
 
 		for (DatabaseServer server : servers) {
 
-			if (regexps == null) {
+			if (regexps == null || regexps.size() == 0) {
 				
 				String[] names = DBUtils.listDatabases(server.getServerConnection(), null);
 				addEntriesToRegistry(server, names, isSecondary);
@@ -75,6 +72,7 @@ public class DatabaseRegistry {
 					
 					String regexp = it.next();
 					String[] names = DBUtils.listDatabases(server.getServerConnection(), regexp);
+
 					addEntriesToRegistry(server, names, isSecondary);
 
 				}
@@ -128,9 +126,12 @@ public class DatabaseRegistry {
 
 			if (!this.contains(dbre)) {
 
+				//logger.finest(dbre.getName() + " appears to be type " + dbre.getType() + " and species " + dbre.getSpecies());
+
 				dbre.setDatabaseRegistry(this);
+				
 				entries.add(dbre);
-				logger.finest(dbre.getName() + " appears to be type " + dbre.getType() + " and species " + dbre.getSpecies());
+				
 				logger.finest("Added DatabaseRegistryEntry for " + name + " to " + (isSecondary ? "secondary" : "main") + " DatabaseRegistry");
 
 			} else {
@@ -239,89 +240,7 @@ public class DatabaseRegistry {
 
 	}
 
-	// -----------------------------------------------------------------
-	/**
-	 * Get all of the DatabaseRegistryEntries stored in the secondary DatabaseRegistry.
-	 * 
-	 * @return The DatabaseRegistryEntries stored in this DatabaseRegistry.
-	 */
-	public final DatabaseRegistryEntry[] getAllSecondary() {
-
-		return (DatabaseRegistryEntry[]) secondaryEntries.toArray(new DatabaseRegistryEntry[secondaryEntries.size()]);
-
-	}
-
-	// -----------------------------------------------------------------
-	/**
-	 * Get all of the DatabaseRegistryEntries stored in the secondary DatabaseRegistry for a particular species
-	 * 
-	 * @param species
-	 *          The species to look for.
-	 * @return The DatabaseRegistryEntries for species..
-	 */
-	public final DatabaseRegistryEntry[] getAllSecondary(final Species species) {
-
-		List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
-		Iterator<DatabaseRegistryEntry> it = secondaryEntries.iterator();
-		while (it.hasNext()) {
-			DatabaseRegistryEntry dbre = it.next();
-			if (dbre.getSpecies().equals(species)) {
-				result.add(dbre);
-			}
-		}
-
-		return (DatabaseRegistryEntry[]) result.toArray(new DatabaseRegistryEntry[result.size()]);
-
-	}
-
-	// -----------------------------------------------------------------
-	/**
-	 * Get all of the DatabaseRegistryEntries stored in the secondary DatabaseRegistry for a particular database type.
-	 * 
-	 * @param type
-	 *          The type to look for.
-	 * @return The DatabaseRegistryEntries for type.
-	 */
-	public final DatabaseRegistryEntry[] getAllSecondary(final DatabaseType type) {
-
-		List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
-		Iterator<DatabaseRegistryEntry> it = secondaryEntries.iterator();
-		while (it.hasNext()) {
-			DatabaseRegistryEntry dbre = it.next();
-			if (dbre.getType().equals(type)) {
-				result.add(dbre);
-			}
-		}
-
-		return (DatabaseRegistryEntry[]) result.toArray(new DatabaseRegistryEntry[result.size()]);
-
-	}
-
-	// -----------------------------------------------------------------
-	/**
-	 * Get all of the DatabaseRegistryEntries stored in the secondary DatabaseRegistry for a particular database type and species.
-	 * 
-	 * @param type
-	 *          The type to look for.
-	 * @param species
-	 *          The Species to look for.
-	 * @return The DatabaseRegistryEntries that match type and species..
-	 */
-	public final DatabaseRegistryEntry[] getAllSecondary(final DatabaseType type, final Species species) {
-
-		List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
-		Iterator<DatabaseRegistryEntry> it = secondaryEntries.iterator();
-		while (it.hasNext()) {
-			DatabaseRegistryEntry dbre = it.next();
-			if (dbre.getType().equals(type) && dbre.getSpecies().equals(species)) {
-				result.add(dbre);
-			}
-		}
-
-		return (DatabaseRegistryEntry[]) result.toArray(new DatabaseRegistryEntry[result.size()]);
-
-	}
-
+	
 	// -----------------------------------------------------------------
 	/**
 	 * Sets the type of every DatabaseRegistryEntry.
