@@ -48,7 +48,7 @@ public class ComparePreviousVersionGOXrefs extends ComparePreviousVersionBase {
 
 	protected String entityDescription() {
 
-		return "go xrefs by species";
+		return "GO xrefs projected from";
 
 	}
 
