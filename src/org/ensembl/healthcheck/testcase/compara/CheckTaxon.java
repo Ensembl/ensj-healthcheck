@@ -180,7 +180,9 @@ public class CheckTaxon extends MultiDatabaseTestCase {
                   String taxonName = getRowColumnValue(comparaCon,
                       "SELECT name FROM ncbi_taxa_name " +
                       "WHERE name_class = \"scientific name\" AND taxon_id = " + this_taxon_id);
-                  if (!taxonName.equals("Fungi/Metazoa group")) {
+                        
+                        // spaces within taxa are not allowed by the script that loads taxonomy into core:
+                  if (taxonName.indexOf(' ')==-1) {
                     comparaClassification += " " + taxonName;
                   }
                 }
