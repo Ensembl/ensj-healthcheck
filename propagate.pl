@@ -5,6 +5,9 @@ use DBI;
 use Getopt::Long;
 use IO::File;
 use File::Basename;
+use Data::Dumper;
+
+$Data::Dumper::Sortkeys = 1;
 
 my ($host1, $port1, $user1, $pass1, $host2, $port2, $user2, $pass2, $dbname, $old_release, $new_release, $quiet, $new_dbname);
 
@@ -34,7 +37,7 @@ $host2    = $host2 || "ens-staging2";
 $port2    = $port2 || "3306";
 
 # Note healthchecks db ($dbname) is assumed to be on $host1
-$dbname  = $dbname || "healthchecks";
+$dbname  = $dbname || "gp1_healthchecks"; # XXX
 
 if (!($old_release && $new_release)) {
   print "Must specify -old_release and -new_release\n";
@@ -61,8 +64,10 @@ if (!$new_dbname) {
 
   # add second database server list if required
   if ($host2) {
+
     my $second_server_dbs = create_db_name_cache($dbi1, $dbi2, $old_release, $new_release);
-    $old_to_new_db_name = \(%$old_to_new_db_name, %$second_server_dbs);
+    $old_to_new_db_name = { %$old_to_new_db_name, %$second_server_dbs }; # note use of {} since we're dealing with references
+
   }
 
   # create new session for new release
@@ -148,17 +153,9 @@ sub create_db_name_cache {
       print "$old_db -> $new_db\n" unless ($quiet);
       $cache{$old_db} = $new_db;
 
-    } else {
-      print STDERR "Can't find equivalent new database for $old_db\n";
-      #    $missing = 1;
     }
 
   }
-  #you still want to propagate other databases even if some of the new ones are not ready yet 
-  #if ($missing) {
-  # print STDERR "Can't find mappings for all old databases, exiting\n";
-  # exit(1);
-  #}
 
   return \%cache;
 
