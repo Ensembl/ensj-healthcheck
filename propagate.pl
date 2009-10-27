@@ -37,7 +37,7 @@ $host2    = $host2 || "ens-staging2";
 $port2    = $port2 || "3306";
 
 # Note healthchecks db ($dbname) is assumed to be on $host1
-$dbname  = $dbname || "gp1_healthchecks"; # XXX
+$dbname  = $dbname || "healthchecks";
 
 if (!($old_release && $new_release)) {
   print "Must specify -old_release and -new_release\n";
