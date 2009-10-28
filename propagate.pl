@@ -77,6 +77,14 @@ if (!$new_dbname) {
 
   # we are propagating a single database
   $old_to_new_db_name = create_db_name_cache($dbi1, $old_release, $new_release, $new_dbname);
+
+  # add second database server list if required
+  if ($host2) {
+    my $second_server_dbs = create_db_name_cache($dbi1, $dbi2, $old_release, $new_release);
+    $old_to_new_db_name = { %$old_to_new_db_name, %$second_server_dbs }; # note use of {} since we're dealing with references
+
+  }
+
   # we will use the latest session_id (if it has already been created)
   $session_id = get_latest_session_id($dbi1, $new_release);
   if ($session_id < 0) {
