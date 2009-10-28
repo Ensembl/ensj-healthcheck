@@ -50,7 +50,7 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 
 		// ----------------------------------------------------
 		// the following tables are allowed to be empty
-		String[] allowedEmpty = { "allele_group", "allele_group_allele","httag","variation_group","variation_group_feature","variation_group_variation", "individual_genotype_multiple_bp","variation_synonym", "structural_variation_feature" };
+		String[] allowedEmpty = { "allele_group", "allele_group_allele","httag","variation_group","variation_group_feature","variation_group_variation", "individual_genotype_multiple_bp","variation_synonym", "structural_variation" };
 		tables = remove(tables, allowedEmpty);
 
 		// only rat has entries in QTL tables
@@ -61,7 +61,7 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 			tables = remove(tables,"variation_annotation");
 			tables = remove(tables,"phenotype");
 			tables = remove(tables,"tagged_variation_feature");
-			tables = remove(tables,"structural_variation_feature");
+			tables = remove(tables,"structural_variation");
 		}
 		if (species == Species.ANOPHELES_GAMBIAE || species == Species.ORNITHORHYNCHUS_ANATINUS || species == Species.PONGO_PYGMAEUS || species == Species.TETRAODON_NIGROVIRIDIS){
 		    String[] sampleTables= {"population_genotype", "population_structure", "sample_synonym"};
