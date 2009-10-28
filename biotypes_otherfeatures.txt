@@ -1,3 +1,6 @@
 cdna
 est
 protein_coding
+pseudogene
+misc_RNA
+snoRNA
