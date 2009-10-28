@@ -234,7 +234,7 @@ public class Meta extends SingleDatabaseTestCase {
 				if (metaValue[0].equals("1")) {
 					// there are overlapping regions !! API might behave odly
 					ReportManager.problem(this, con, "There are overlapping regions in the database (e.g. two versions of the same chromosomes). The API"
-							+ " migth have unexpected results when trying to map features to that coordinate system.");
+							+ " might have unexpected results when trying to map features to that coordinate system.");
 					result = false;
 				} else {
 					ReportManager.correct(this, con, metaKey + " entry present");
