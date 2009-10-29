@@ -57,6 +57,9 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 		if (species != Species.RATTUS_NORVEGICUS && species != Species.MUS_MUSCULUS && species != Species.PONGO_PYGMAEUS && species != Species.HOMO_SAPIENS  ) {
 		    tables = remove(tables, "read_coverage");
 		}
+		if(species == Species.HOMO_SAPIENS){
+			tables = remove(tables,"structural_variation");
+		}
 		if (species != Species.HOMO_SAPIENS){
 			tables = remove(tables,"variation_annotation");
 			tables = remove(tables,"phenotype");
