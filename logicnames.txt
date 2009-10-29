@@ -160,6 +160,7 @@ pseudogene
 qtl
 rat_cdna
 refseq
+refseq_human_import
 regulatory_region
 remaneiP
 rescue_fragment
