@@ -61,7 +61,6 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 			tables = remove(tables,"variation_annotation");
 			tables = remove(tables,"phenotype");
 			tables = remove(tables,"tagged_variation_feature");
-			tables = remove(tables,"structural_variation");
 		}
 		if (species == Species.ANOPHELES_GAMBIAE || species == Species.ORNITHORHYNCHUS_ANATINUS || species == Species.PONGO_PYGMAEUS || species == Species.TETRAODON_NIGROVIRIDIS){
 		    String[] sampleTables= {"population_genotype", "population_structure", "sample_synonym"};
