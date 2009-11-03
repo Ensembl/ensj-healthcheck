@@ -35,6 +35,7 @@ public class AnalyseTables extends SingleDatabaseTestCase {
 	public AnalyseTables() {
 
 		addToGroup("release");
+		addToGroup("funcgen-release");
 		setDescription("Check whether tables need to be analysed.");
 		setPriority(Priority.AMBER);
 		setEffect("Causes indices not to be used, making queries slow or unresponsive.");
