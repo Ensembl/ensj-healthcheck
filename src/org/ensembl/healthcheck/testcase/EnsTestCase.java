@@ -86,8 +86,8 @@ public abstract class EnsTestCase {
 	 * Names of tables in core schema that count as "feature" tables. Used in various healthchecks.
 	 */
 
-	private String[] featureTables = { "assembly_exception", "gene", "exon", "dna_align_feature", "protein_align_feature", "repeat_feature", "simple_feature", "marker_feature", "misc_feature",
-			"qtl_feature", "karyotype", "transcript", "density_feature", "prediction_exon", "prediction_transcript", "ditag_feature" };
+	private String[] featureTables = { "assembly_exception", "gene", "exon", "dna_align_feature", "protein_align_feature", "repeat_feature", "simple_feature", "marker_feature", "misc_feature", "qtl_feature", "karyotype", "transcript", "density_feature", "prediction_exon", "prediction_transcript", "ditag_feature" };
+
 
 	/**
 	 * Tables that have an analysis ID.
@@ -95,6 +95,22 @@ public abstract class EnsTestCase {
 
 	private String[] tablesWithAnalysisID = { "gene", "protein_feature", "dna_align_feature", "protein_align_feature", "repeat_feature", "prediction_transcript", "simple_feature", "marker_feature",
 			"qtl_feature", "density_type", "object_xref", "transcript", "unmapped_object", "ditag_feature" };
+
+
+		/**
+	 * Names of tables in funcgen schema that count as "feature" tables. Used in various healthchecks.
+	 */
+
+	private String[] funcgenFeatureTables = { "probe_feature", "annotated_feature", "regulatory_feature", "external_feature"};
+
+
+	/**
+	 * Funcgen tables that have an analysis ID.
+	 */
+
+	private String[] funcgenTablesWithAnalysisID = { "probe_feature", "annotated_feature", "regulatory_feature", "external_feature", "object_xref", "unmapped_object", "feature_set", "result_set"};
+
+
 
 	// -------------------------------------------------------------------------
 	/**
@@ -1644,6 +1660,34 @@ public abstract class EnsTestCase {
 		return tablesWithAnalysisID;
 
 	}
+
+	// ----------------------------------------------------------------------
+	/**
+	 * Get a list of the tables in a funcgen schema that conform to various characteristics and count as "feature" tables.
+	 * 
+	 * @return An array of feature tables.
+	 */
+	public String[] getFuncgenFeatureTables() {
+
+		return funcgenFeatureTables;
+
+	}
+
+	// ----------------------------------------------------------------------
+	/**
+	 * Get a list of the tables in a funcgen schema that have an analysis_id colmun.
+	 * 
+	 * @return An array of table names.
+	 */
+	public String[] getFuncgenTablesWithAnalysisID() {
+
+		return funcgenTablesWithAnalysisID;
+
+	}
+
+
+
+
 
 	// ----------------------------------------------------------------------
 	/**
