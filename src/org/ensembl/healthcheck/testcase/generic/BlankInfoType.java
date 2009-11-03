@@ -36,6 +36,9 @@ public class BlankInfoType extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("funcgen-release");
+		addToGroup("funcgen");
+
 		setDescription("Check for any xref.info_type that are blank ('') - they should be NULL for various other things to work.");
 
 	}
