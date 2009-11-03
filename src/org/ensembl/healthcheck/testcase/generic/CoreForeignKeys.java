@@ -48,8 +48,29 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 	public boolean run(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
-		
+
 		Connection con = dbre.getConnection();
+
+		// ----------------------------
+		// Check stable IDs all correspond to an existing object
+		String[] stableIDtypes = { "gene", "transcript", "translation", "exon" };
+		for (String stableIDType : stableIDtypes) {
+
+			// exception for gene-gene_stable_id relations in otherfeatures databases as some non-genes are stored in the gene table
+			if (dbre.getType() == DatabaseType.OTHERFEATURES) {
+
+				if (stableIDType.equals("gene")) {
+
+					result &= checkForOrphansWithConstraint(con, "gene", "gene_id", "gene_stable_id", "gene_id", "biotype NOT IN ('est','cdna')");
+
+				}
+
+			} else {
+
+				result &= checkStableIDKeys(con, stableIDType);
+
+			}
+		}
 
 		// ----------------------------
 
@@ -121,19 +142,6 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		String[] types = { "Gene", "Transcript", "Translation" };
 		for (int i = 0; i < types.length; i++) {
 			result &= checkKeysByEnsemblObjectType(con, "object_xref", types[i]);
-		}
-
-	// ----------------------------
-		// Check stable IDs all correspond to an existing object
-		String[] stableIDtypes = { "gene", "transcript", "translation", "exon" };
-		for (String stableIDType : stableIDtypes) {
-
-			// don't check gene-gene_stable_id relations in otherfeatures databases as some non-genes are stored in the gene table
-			if (dbre.getType() == DatabaseType.OTHERFEATURES && stableIDType.equals("gene")) {
-				continue;
-			}
-
-			result &= checkStableIDKeys(con, stableIDType);
 		}
 
 		// ----------------------------
@@ -247,6 +255,21 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		return true;
 
 	} // checkStableIDKeys
+
+	// -------------------------------------------------------------------------
+	/**
+	 * Gene table in otherfeatures databases can contain genes and ... other things, so need to do it differently depending on
+	 * analysis
+	 */
+	private boolean checkOtherfeaturesGeneStableIDs(DatabaseRegistryEntry dbre) {
+
+		boolean result = true;
+
+		String sql = "SELECT COUNT(*) FROM gene g LEFT JOIN gene_sta"; // XXX
+
+		return result;
+
+	} // checkOtherfeaturesGeneStableIDs
 
 	// -------------------------------------------------------------------------
 	private boolean checkKeysByEnsemblObjectType(Connection con, String baseTable, String type) {
