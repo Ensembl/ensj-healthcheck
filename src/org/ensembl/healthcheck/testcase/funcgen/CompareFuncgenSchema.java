@@ -49,7 +49,7 @@ public class CompareFuncgenSchema extends MultiDatabaseTestCase {
 	/**
 	 * Creates a new instance of CompareSchemaTestCase.
 	 */
-	public CompareSchema() {
+	public CompareFuncgenSchema() {
 		// can we set this dynamically give the dbtype?
 		// This could be generated from the meta table?
 		addToGroup("funcgen");
@@ -90,13 +90,13 @@ public class CompareFuncgenSchema extends MultiDatabaseTestCase {
 		definitionFile = System.getProperty("schema.file");
 		if (definitionFile == null) {
 			logger
-					.info("CompareSchema: No schema definition file found! Set schema.file property in database.properties if you want to use a table.sql file or similar.");
+					.info("CompareFuncgenSchema: No schema definition file found! Set schema.file property in database.properties if you want to use a table.sql file or similar.");
 
 			masterSchema = System.getProperty("master.funcgen_schema");
 			if (masterSchema != null) {
 				logger.info("Will use " + masterSchema + " as specified master schema for comparisons.");
 			} else {
-				logger.info("CompareSchema: No master schema defined file found! Set master.schema property in database.properties if you want to use a master schema.");
+				logger.info("CompareFuncgenSchema: No master schema defined file found! Set master.schema property in database.properties if you want to use a master schema.");
 			}
 		} else {
 			logger.fine("Will use schema definition from " + definitionFile);
@@ -338,4 +338,4 @@ public class CompareFuncgenSchema extends MultiDatabaseTestCase {
 	}
 	// -------------------------------------------------------------------------
 
-} // CompareSchema
+} // CompareFuncgenSchema
