@@ -33,6 +33,8 @@ public class ExternalDBDisplayName extends SingleDatabaseTestCase {
 
 		addToGroup("release");
 		addToGroup("core_xrefs");
+		addToGroup("funcgen");
+		addToGroup("funcgen-release");
 		setDescription("Check that there are no blank db_display_name fields in external_db");
 
 	}
