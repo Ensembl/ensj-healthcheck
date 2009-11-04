@@ -38,11 +38,12 @@ public class SpeciesID extends SingleDatabaseTestCase {
 	public SpeciesID() {
 
 		addToGroup("release");
+		addToGroup("funcgen-release");
 		setDescription("Check that the species_id column in the meta table is set consistently.");
 		setPriority(Priority.AMBER);
 		setEffect("Could cause problems in multi-species databases");
 		setFix("Manually fix affected keys, e.g. UPDATE TABLE meta SET species_id = NULL WHERE meta_key IN ( 'patch', 'schema_version' );");
-		setTeamResponsible("core");
+		setTeamResponsible("core"); //No longer valid for funcgen 
 
 	}
 
