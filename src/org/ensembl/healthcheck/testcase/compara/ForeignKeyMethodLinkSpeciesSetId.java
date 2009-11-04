@@ -62,8 +62,9 @@ public class ForeignKeyMethodLinkSpeciesSetId extends SingleDatabaseTestCase {
             result &= checkForOrphans(con,
                 "method_link_species_set", "species_set_id",
                 "species_set", "species_set_id");
-            result &= checkForOrphans(con, "species_set", "species_set_id",
-                "method_link_species_set", "species_set_id");
+            result &= checkForOrphansWithConstraint(con, "species_set", "species_set_id",
+                "method_link_species_set", "species_set_id",
+                "species_set_id not in (SELECT distinct species_set_id from species_set_tag)");
 
             /* Check method_link_species_set <-> synteny_region */
             /* All method_link for syntenies must have an internal ID between 101 and 199 */
