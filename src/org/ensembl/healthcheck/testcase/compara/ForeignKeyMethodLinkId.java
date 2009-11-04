@@ -39,6 +39,7 @@ public class ForeignKeyMethodLinkId extends SingleDatabaseTestCase {
         addToGroup("compara_db_constraints");
         addToGroup("protein_db_constraints");
         setDescription("Check for broken foreign-key relationships in ensembl_compara databases.");
+        setTeamResponsible("compara");
 
     }
 
@@ -64,7 +65,7 @@ public class ForeignKeyMethodLinkId extends SingleDatabaseTestCase {
 
         } else {
             result &= checkForOrphans(con, "method_link_species_set", "method_link_id", "method_link", "method_link_id");
-            result &= checkForOrphans(con, "method_link", "method_link_id", "method_link_species_set", "method_link_id");
+//             result &= checkForOrphans(con, "method_link", "method_link_id", "method_link_species_set", "method_link_id");
         }
 
         return result;
