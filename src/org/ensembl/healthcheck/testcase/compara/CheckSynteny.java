@@ -41,6 +41,7 @@ public class CheckSynteny extends SingleDatabaseTestCase {
 
         addToGroup("compara_db_constraints");
         setDescription("Check for missing syntenies in the compara database.");
+        setTeamResponsible("compara");
 
     }
 

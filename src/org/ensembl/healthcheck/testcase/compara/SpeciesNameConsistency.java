@@ -37,6 +37,7 @@ public class SpeciesNameConsistency extends SingleDatabaseTestCase {
 
         addToGroup("compara_db_constraints");
         setDescription("Check for species name inconsistancies in ensembl_compara databases.");
+        setTeamResponsible("compara");
 
     }
 

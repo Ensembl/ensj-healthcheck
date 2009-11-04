@@ -56,6 +56,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
         addToGroup("compara_db_constraints");
         setDescription("Tests that proper max_alignment_length have been defined.");
         setDescription("Check meta table for the right schema version and max alignment lengths");
+        setTeamResponsible("compara");
 
     }
 

@@ -38,6 +38,7 @@ public class ForeignKeyGenomicAlignBlockId extends SingleDatabaseTestCase {
 
         addToGroup("compara_db_constraints");
         setDescription("Check for broken foreign-key relationships in ensembl_compara databases.");
+        setTeamResponsible("compara");
 
     }
 

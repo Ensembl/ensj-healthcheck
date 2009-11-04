@@ -42,6 +42,7 @@ public class SingleDBCollations extends SingleDatabaseTestCase {
 
         addToGroup("compara_db_constraints");
         setDescription("Check that all table collations are " + TARGET_COLLATION);
+        setTeamResponsible("compara");
 	
     }
 

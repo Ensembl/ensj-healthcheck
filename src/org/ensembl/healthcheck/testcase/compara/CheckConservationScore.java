@@ -37,6 +37,7 @@ public class CheckConservationScore extends SingleDatabaseTestCase {
 
         addToGroup("compara_db_constraints");
         setDescription("Check the conservation_score table in ensembl_compara databases.");
+        setTeamResponsible("compara");
 
     }
 
