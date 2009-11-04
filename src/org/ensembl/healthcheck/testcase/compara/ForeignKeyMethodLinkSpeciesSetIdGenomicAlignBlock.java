@@ -58,8 +58,13 @@ public class ForeignKeyMethodLinkSpeciesSetIdGenomicAlignBlock extends SingleDat
 
         if (tableHasRows(con, "method_link_species_set")) {
 
-            result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "genomic_align_block", "method_link_species_set_id", "method_link_id < 100");
-            result &= checkForOrphans(con, "genomic_align_block", "method_link_species_set_id", "method_link_species_set", "method_link_species_set_id");
+            result &= checkForOrphansWithConstraint(con,
+                "method_link_species_set", "method_link_species_set_id",
+                "genomic_align_block", "method_link_species_set_id",
+                "method_link_id in (SELECT method_link_id FROM method_link WHERE class like 'GenomicAlign%')");
+            result &= checkForOrphans(con,
+                "genomic_align_block", "method_link_species_set_id",
+                "method_link_species_set", "method_link_species_set_id");
 /*              This is now checked in the ForeignKeyGenomicAlignId healthcheck
               result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id",
                   "genomic_align", "method_link_species_set_id", "method_link_id < 100");
