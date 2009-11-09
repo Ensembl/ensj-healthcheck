@@ -18,10 +18,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.DatabaseServer;
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
@@ -54,17 +57,24 @@ public class CompareFuncgenSchema extends MultiDatabaseTestCase {
 		// This could be generated from the meta table?
 		addToGroup("funcgen");
 		addToGroup("funcgen-release");
+		addToGroup("release");
+		addToGroup("compara_db_constraints");
+		
 		setDescription("Compare two databases (table names, column names and types, and indexes. Note that there are occasionally pipeline tables (such as runnable, job, job_status etc) that are still present. It is wise to check that they are no longer needed before removing them.");
 
 	}
 
 	/**
-	 * Can also be used on variation databases (and maybe others)
+	 * Can also be used on variation databases (and maybe others) as well as generic
 	 */
 	public void types() {
 
-		// addAppliesToType(DatabaseType.VARIATION);
-
+		//addAppliesToType(DatabaseType.VARIATION);
+		//CompareVariationSchema has species specific tests and tables
+		//which would need further integration here
+		addAppliesToType(DatabaseType.FUNCGEN);
+		addAppliesToType(DatabaseType.COMPARA);
+		//Can we have mart here too?  Or is dynamic nature of mart to0 variable for this test?
 	}
 
 	/**
@@ -85,121 +95,195 @@ public class CompareFuncgenSchema extends MultiDatabaseTestCase {
 		String masterSchema = null;
 
 		DatabaseRegistryEntry[] databases = dbr.getAll();
+		
 
-		// Need to change this to funcgen_schema.file?
-		definitionFile = System.getProperty("schema.file");
-		if (definitionFile == null) {
-			logger
-					.info("CompareFuncgenSchema: No schema definition file found! Set schema.file property in database.properties if you want to use a table.sql file or similar.");
+		//Iterate through the DBs firs to check we are testing against the same schema type
+		DatabaseType dbType = null;
 
-			masterSchema = System.getProperty("master.funcgen_schema");
-			if (masterSchema != null) {
-				logger.info("Will use " + masterSchema + " as specified master schema for comparisons.");
-			} else {
-				logger.info("CompareFuncgenSchema: No master schema defined file found! Set master.schema property in database.properties if you want to use a master schema.");
+		for (int i = 0; i < databases.length; i++) {
+
+			if (dbType == null) {
+				dbType = databases[i].getType();
 			}
-		} else {
-			logger.fine("Will use schema definition from " + definitionFile);
+			else if(dbType.toString() != databases[i].getType().toString()){
+				logger.warning("Found mixed schema types in database list(" +
+							   dbType.toString() + " & " + databases[i].getType().toString() + "). Please amend your -d regex");
+				//Really need to exit here ?
+				result = false;
+				dbType = null;
+				break;
+			}
 		}
 
-		try {
 
-			if (definitionFile != null) { // use a schema definition file to
-				// generate a temporary database
+		if (dbType != null){
 
-				logger.info("About to import " + definitionFile);
-				masterCon = importSchema(definitionFile);
-				logger.info("Got connection to " + DBUtils.getShortDatabaseName(masterCon));
-
-			} else if (masterSchema != null) {
-				// use the defined schema name as the master
-				// get connection to master schema
-				masterCon = getSchemaConnection(masterSchema);
-				logger.fine("Opened connection to master schema in " + DBUtils.getShortDatabaseName(masterCon));
-
+			if (dbType.isGeneric()) {
+				definitionFile = System.getProperty("schema.file");
+				masterSchema = System.getProperty("master.schema");
 			} else {
-				// just use the first one to compare with all the others
-				if (databases.length > 0) {
-					masterCon = databases[0].getConnection();
-					logger.info("Using " + DBUtils.getShortDatabaseName(masterCon) + " as 'master' for comparisions.");
-				} else {
-					logger.warning("Can't find any databases to check against");
-				}
-
+				definitionFile = System.getProperty(dbType.toString() + "_schema.file");
+				masterSchema = System.getProperty("master_" + dbType.toString() + ".schema");
 			}
 
-			masterStmt = masterCon.createStatement();
+			if (definitionFile == null) {
+				logger.info("CompareFuncgenSchema: No schema definition file found! Set " + definitionFile + " property in database.properties if you want to use a table.sql file or similar.");
+				
+				//masterSchema = System.getProperty("master.funcgen_schema");
+				if (masterSchema != null) {
+				logger.info("Will use " + masterSchema + " as specified master schema for comparisons.");
+				} else {
+					logger.info("CompareFuncgenSchema: No master schema defined file found! Set " + masterSchema + " property in database.properties if you want to use a master schema.");
+				}
+			} else {
+				logger.fine("Will use schema definition from " + definitionFile);
+			}
+			
+			try {
+				
+				if (definitionFile != null) { // use a schema definition file to
+					// generate a temporary database
+					
+					logger.info("About to import " + definitionFile);
+					//This will import on the host set in database.properties
+					masterCon = importSchema(definitionFile);
+					logger.info("Got connection to " + DBUtils.getShortDatabaseName(masterCon));
 
-			for (int i = 0; i < databases.length; i++) {
+				} else if (masterSchema != null) {
+					// use the defined schema name as the master
+					// get connection to master schema
 
-				if (appliesToType(databases[i].getType())) {
+					// the problem here is that the -d option causes filtering of available DBs
+					// so this needs to use direct access rather than what is in registry
+					// not quite sure how this worked originally??
+					
+					// masterCon = getSchemaConnection(masterSchema);
+					// We should make this look at database.properties for the dbhost and 
+					// filter list from DBUtils.getMainDatabaseServers()
+					// See DatabaseRegistry for example loop
+					//Need to access DatabaseServer directly here to get connection
 
-					Connection checkCon = databases[i].getConnection();
+					List<DatabaseServer> servers = DBUtils.getMainDatabaseServers();
 
-					if (checkCon != masterCon) {
+					//try/catch for each server
+					//doesn't matter which host we use for masterSchema
+					
+					for (DatabaseServer server : servers) {
+				
+						
+						//Do we even need to try this?
+						//The ConnectionPool is handling the exception quietly
 
-						logger.info("Comparing " + DBUtils.getShortDatabaseName(checkCon) + " with " + DBUtils.getShortDatabaseName(masterCon));
-
-						// check that both schemas have the same tables
-						if (!compareTablesInSchema(checkCon, masterCon)) {
-							// if not the same, this method will generate a
-							// report
-							ReportManager.problem(this, checkCon, "Table name discrepancy detected, skipping rest of checks");
-							result = false;
-							continue;
+						if(masterCon == null){
+							masterCon = server.getDatabaseConnection(masterSchema);
 						}
 
-						Statement dbStmt = checkCon.createStatement();
+						/* try{
+							masterCon = dbr.getDatabaseServer().getDatabaseConnection(masterSchema);
+							// This ultimately calls ConnectionPool.getConnection
+							//which generates the connection using DriverManager.getConnection
+							} catch (Exception e) {
+							logger.warning(e.getMessage());
+							} */
+					}
 
-						// check each table in turn
-						String[] tableNames = getTableNames(masterCon);
-						for (int j = 0; j < tableNames.length; j++) {
 
-							String table = tableNames[j];
-							String sql = "SHOW CREATE TABLE " + table;
-							ResultSet masterRS = masterStmt.executeQuery(sql);
-							ResultSet dbRS = dbStmt.executeQuery(sql);
-							boolean showCreateSame = DBUtils.compareResultSets(dbRS, masterRS, this, " [" + table + "]", false, false, table, true);
-							if (!showCreateSame) {
-
-								// do more in-depth analysis of database structure
-								result &= compareTableStructures(checkCon, masterCon, table);
-
-							}
-
-							masterRS.close();
-							dbRS.close();
-
-						} // while table
-
-						dbStmt.close();
-
-					} // if checkCon != masterCon
-
-				} // if appliesToType
-
-			} // for database
-
-			masterStmt.close();
-
-		} catch (SQLException se) {
-
-			logger.severe(se.getMessage());
-
-		} finally {
-
-			// avoid leaving temporary DBs lying around if something bad happens
-			if (definitionFile == null && masterCon != null) {
-				// double-check to make sure the DB we're going to remove is a
-				// temp one
-				String dbName = DBUtils.getShortDatabaseName(masterCon);
-				if (dbName.indexOf("_temp_") > -1) {
-					removeDatabase(masterCon);
-					logger.info("Removed " + DBUtils.getShortDatabaseName(masterCon));
+					if(masterCon == null){
+						logger.severe("Can't find master schema (" + masterSchema + ") to compare databases against");
+					}
+					else{
+						logger.fine("Opened connection to master schema in " + DBUtils.getShortDatabaseName(masterCon));
+					}
+					
+				} else {
+					// just use the first one to compare with all the others
+					if (databases.length > 0) {
+						masterCon = databases[0].getConnection();
+						logger.info("Using " + DBUtils.getShortDatabaseName(masterCon) + " as 'master' for comparisions.");
+					} else {
+						logger.warning("Can't find any databases to check against");
+					}
+					
 				}
-			}
+				
 
+				if(masterCon != null){
+
+					masterStmt = masterCon.createStatement();
+				
+					for (int i = 0; i < databases.length; i++) {
+					
+						if (appliesToType(databases[i].getType())) {
+							
+							Connection checkCon = databases[i].getConnection();
+						
+							if (checkCon != masterCon) {
+								
+								logger.info("Comparing " + DBUtils.getShortDatabaseName(checkCon) + " with " + DBUtils.getShortDatabaseName(masterCon));
+								
+								// check that both schemas have the same tables
+								if (!compareTablesInSchema(checkCon, masterCon)) {
+									// if not the same, this method will generate a
+									// report
+									ReportManager.problem(this, checkCon, "Table name discrepancy detected, skipping rest of checks");
+									result = false;
+									continue;
+								}
+
+								Statement dbStmt = checkCon.createStatement();
+
+								// check each table in turn
+								String[] tableNames = getTableNames(masterCon);
+								for (int j = 0; j < tableNames.length; j++) {
+
+									String table = tableNames[j];
+									String sql = "SHOW CREATE TABLE " + table;
+									ResultSet masterRS = masterStmt.executeQuery(sql);
+									ResultSet dbRS = dbStmt.executeQuery(sql);
+									boolean showCreateSame = DBUtils.compareResultSets(dbRS, masterRS, this, " [" + table + "]", false, false, table, true);
+									if (!showCreateSame) {
+
+										// do more in-depth analysis of database structure
+										result &= compareTableStructures(checkCon, masterCon, table);
+
+									}
+
+									masterRS.close();
+									dbRS.close();
+
+								} // while table
+
+								dbStmt.close();
+
+							} // if checkCon != masterCon
+
+						} // if appliesToType
+
+					} // for database
+
+					masterStmt.close();
+				} // if masterCon != null
+
+			} catch (SQLException se) {
+
+				logger.severe(se.getMessage());
+
+			} finally {
+
+				// avoid leaving temporary DBs lying around if something bad happens
+				if (definitionFile == null && masterCon != null) {
+					// double-check to make sure the DB we're going to remove is a
+					// temp one
+					String dbName = DBUtils.getShortDatabaseName(masterCon);
+					if (dbName.indexOf("_temp_") > -1) {
+						removeDatabase(masterCon);
+						logger.info("Removed " + DBUtils.getShortDatabaseName(masterCon));
+					}
+				}
+
+			}
 		}
+		
 
 		return result;
 
