@@ -47,6 +47,7 @@ retained_intron
 TEC
 transcribed_processed_pseudogene
 transcribed_unprocessed_pseudogene
+TR_gene
 TR_pseudogene
 unitary_pseudogene
 unprocessed_pseudogene
