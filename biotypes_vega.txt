@@ -31,4 +31,6 @@ polymorphic_pseudogene
 transcribed_unitary_pseudogene
 IG_gene
 IG_pseudogene
+TR_gene
+TR_pseudogene
 transcribed_processed_pseudogene
