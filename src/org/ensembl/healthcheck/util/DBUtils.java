@@ -14,6 +14,7 @@
 package org.ensembl.healthcheck.util;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -792,12 +793,59 @@ public final class DBUtils {
 	}
 
 	// -------------------------------------------------------------------------
-	
+
 	public static void setSecondaryDatabaseRegistry(DatabaseRegistry dbr) {
 
 		secondaryDatabaseRegistry = dbr;
 
 	}
+
+	// -------------------------------------------------------------------------
+
+	public static boolean tableExists(Connection con, String table) {
+
+		boolean result = false;
+
+		try {
+
+			DatabaseMetaData dbm = con.getMetaData();
+			ResultSet rs = dbm.getTables(null, null, table, null);
+
+			if (rs.next()) {
+				result = true;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return result;
+
+	}
+	
+//-------------------------------------------------------------------------
+
+	public static boolean columnExists(Connection con, String table, String column) {
+
+		boolean result = false;
+
+		try {
+
+			DatabaseMetaData dbm = con.getMetaData();
+			ResultSet rs = dbm.getColumns(null, null, table, column);
+
+			if (rs.next()) {
+				result = true;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return result;
+
+	}
+
 	// -------------------------------------------------------------------------
 
 } // DBUtils
