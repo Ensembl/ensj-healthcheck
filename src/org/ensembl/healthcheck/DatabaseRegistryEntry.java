@@ -40,13 +40,13 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	private DatabaseRegistry databaseRegistry;
 
 	private Connection connection;
-	
+
 	/** The logger to use */
 	private static Logger logger = Logger.getLogger("HealthCheckLogger");
 
 	// -----------------------------------------------------------------
 	/**
-	 * Create a new DatabaseRegistryEntry. 
+	 * Create a new DatabaseRegistryEntry.
 	 * 
 	 * @param server
 	 *          The database server where this database resides.
@@ -60,9 +60,9 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	public DatabaseRegistryEntry(DatabaseServer server, String name, Species species, DatabaseType type) {
 
 		this.server = server;
-		
+
 		this.name = name;
-		
+
 		if (species != null) {
 			this.species = species;
 		} else {
@@ -75,16 +75,20 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 			this.type = setTypeFromName(name);
 		}
 
+		if (connection == null) {
+			connection = getConnection();
+		}
+
 		isMultiSpecies = checkMultiSpecies(connection, species, type);
 
 	}
 
 	public DatabaseRegistryEntry() {
-		
+
 	}
-	
+
 	// -----------------------------------------------------------------
-	
+
 	/**
 	 * Attempt to figure out species from database name. Also set schema and genebuild versions as appropriate.
 	 * 
@@ -412,25 +416,31 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 		if (type == null || !type.isGeneric()) {
 			return false;
 		}
-		
-		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT COUNT(DISTINCT(species_id)) FROM coord_system");
-			if (rs != null) {
-				if (rs.first()) {
-					int speciesCount = rs.getInt(1);
-					if (speciesCount > 1) {
-						result = true;
-						logger.finest("Found a multi-species database, " + speciesCount + " species.");
+
+		// now actually see if the table exists, and has a species_id column
+		if (DBUtils.columnExists(con, "coord_system", "species_id")) {
+
+			// if so, see if there's more than one species_id defined
+			try {
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery("SELECT COUNT(DISTINCT(species_id)) FROM coord_system");
+				if (rs != null) {
+					if (rs.first()) {
+						int speciesCount = rs.getInt(1);
+						if (speciesCount > 1) {
+							result = true;
+							logger.finest("Found a multi-species database, " + speciesCount + " species.");
+						}
+					} else {
+						result = false;
 					}
-				} else {
-					result = false;
 				}
+				rs.close();
+				stmt.close();
+			} catch (Exception e) {
+				System.out.println(DBUtils.getShortDatabaseName(con) + " " + species +" " + type);
+				e.printStackTrace();
 			}
-			rs.close();
-			stmt.close();
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 
 		return result;
@@ -444,28 +454,29 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	public void setDatabaseServer(DatabaseServer server) {
 		this.server = server;
 	}
-	
+
 	public Connection getConnection() {
-		
+
 		if (connection == null) {
-		
+
 			connection = server.getDatabaseConnection(name);
-		
+
 		}
-		
+
 		return connection;
-		
+
 	}
-	
+
 	/**
 	 * Test if this entry is equal to another. Comparison is currently only on database name.
+	 * 
 	 * @param dbre
 	 * @return true if names are the same.
 	 */
 	public boolean equals(DatabaseRegistryEntry dbre) {
-	
+
 		return (dbre.getName().equals(name));
-	
+
 	}
 
 	// -----------------------------------------------------------------
