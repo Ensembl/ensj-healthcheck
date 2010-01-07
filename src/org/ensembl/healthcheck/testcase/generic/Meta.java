@@ -547,8 +547,28 @@ public class Meta extends SingleDatabaseTestCase {
 		
 		Connection previousCon = previous.getConnection();
 
-		int previousLastGenesetUpdate = Integer.valueOf(getRowColumnValue(previousCon, "SELECT meta_value FROM meta WHERE meta_key='genebuild.last_geneset_update'").replaceAll("-", "")).intValue();
+		String previousLastGenesetUpdateString = getRowColumnValue(previousCon, "SELECT meta_value FROM meta WHERE meta_key='genebuild.last_geneset_update'").replaceAll("-", "");
+		
+		if (previousLastGenesetUpdateString == null || previousLastGenesetUpdateString.length() == 0) {
 
+			ReportManager.problem(this, con, "Problem parsing last geneset update entry from previous database.");
+			return false;
+			
+		}
+		
+		int previousLastGenesetUpdate;
+		
+		try {
+			
+			previousLastGenesetUpdate = Integer.valueOf(previousLastGenesetUpdateString).intValue();
+			
+		} catch (NumberFormatException e) {
+			
+			ReportManager.problem(this, con, "Problem parsing last geneset update entry from previous database: " + e.getStackTrace());
+			return false;
+			
+		}
+		
 		if (lastGenesetUpdate <= previousLastGenesetUpdate) {
 			
 			int currentGeneCount = getRowCount(con, "SELECT COUNT(*) FROM gene");
