@@ -53,15 +53,19 @@ public class DatabaseRegistry {
 	 */
 	public DatabaseRegistry(List<String> regexps, DatabaseType globalType, Species globalSpecies, boolean isSecondary) {
 
-		this.globalType = globalType;
-		this.globalSpecies = globalSpecies;
+		if (!isSecondary) {
+
+			this.globalType = globalType;
+			this.globalSpecies = globalSpecies;
+
+		}
 
 		List<DatabaseServer> servers = isSecondary ? DBUtils.getSecondaryDatabaseServers() : DBUtils.getMainDatabaseServers();
 
 		for (DatabaseServer server : servers) {
 
 			if (regexps == null || regexps.size() == 0) {
-				
+
 				String[] names = DBUtils.listDatabases(server.getServerConnection(), null);
 				addEntriesToRegistry(server, names, isSecondary);
 
@@ -69,7 +73,7 @@ public class DatabaseRegistry {
 
 				Iterator<String> it = regexps.iterator();
 				while (it.hasNext()) {
-					
+
 					String regexp = it.next();
 					String[] names = DBUtils.listDatabases(server.getServerConnection(), regexp);
 
@@ -126,12 +130,12 @@ public class DatabaseRegistry {
 
 			if (!this.contains(dbre)) {
 
-				//logger.finest(dbre.getName() + " appears to be type " + dbre.getType() + " and species " + dbre.getSpecies());
+				// logger.finest(dbre.getName() + " appears to be type " + dbre.getType() + " and species " + dbre.getSpecies());
 
 				dbre.setDatabaseRegistry(this);
-				
+
 				entries.add(dbre);
-				
+
 				logger.finest("Added DatabaseRegistryEntry for " + name + " to " + (isSecondary ? "secondary" : "main") + " DatabaseRegistry");
 
 			} else {
@@ -240,7 +244,6 @@ public class DatabaseRegistry {
 
 	}
 
-	
 	// -----------------------------------------------------------------
 	/**
 	 * Sets the type of every DatabaseRegistryEntry.
@@ -294,7 +297,7 @@ public class DatabaseRegistry {
 		}
 
 		logger.warning("Can't find database matching name " + name);
-		
+
 		return null;
 	}
 
