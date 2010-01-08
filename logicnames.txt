@@ -49,6 +49,7 @@ Genscan
 HOX
 Medaka_Genome_Project
 Medaka_TranscriptCoalescer
+MT_genbank_import
 PIRSF
 PRINTS
 PROFILE
@@ -98,6 +99,7 @@ cisred_search
 cloneset
 deletion
 drosophila-peptides
+unmapped_encode_regions
 enhancer
 enhancer_positive
 enhancer_negative
