@@ -99,7 +99,6 @@ cisred_search
 cloneset
 deletion
 drosophila-peptides
-unmapped_encode_regions
 enhancer
 enhancer_positive
 enhancer_negative
