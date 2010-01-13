@@ -2,8 +2,8 @@
 
 . /software/lsf/conf/profile.lsf
 
-JAVA_HOME=/usr/opt/java
-dir=/nfs/acari/ensembl/ensj-healthcheck
+#JAVA_HOME=/usr/opt/java
+dir=$HOME/ensj-healthcheck
 
 cp=$dir
 cp=$cp:$dir/lib/ensj-healthcheck.jar
