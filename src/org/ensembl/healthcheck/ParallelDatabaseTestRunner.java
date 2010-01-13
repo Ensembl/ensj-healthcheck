@@ -175,8 +175,21 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 			String database = databaseAndGroup[0];
 			String group = databaseAndGroup[1];
 
-			String[] cmd = { "bsub", "-q", "long", "-o", "healthcheck_%J.out", "-e", "healthcheck_%J.err",
-					dir + File.separator + "run-healthcheck-node.sh", "-d", database, "-group", group, "-session", "" + sessionID };
+			String[] cmd = { "bsub",
+        "-q", "long",
+        "-R", "select[myens_staging1<=500]",
+        "-R", "select[myens_staging2<=500]",
+        "-R", "select[myens_livemirror<=500]",
+        "-R", "select[lustre && linux]",
+        "-R", "order[ut:mem]",
+        "-R", "rusage[myens_staging1=10:myens_staging1=10:myens_livemirror=10]",
+        "-o", "healthcheck_%J.out",
+        "-e", "healthcheck_%J.err",
+				dir + File.separator + "run-healthcheck-node.sh",
+        "-d", database,
+        "-group", group,
+        "-session", "" + sessionID
+      };
 
 			try {
 				
