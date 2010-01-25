@@ -1,0 +1,3 @@
+
+sh run-healthcheck.sh -d mus_musculus_core_57_37j -type core -species mus_musculus -output all post_genebuild
+
