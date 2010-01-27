@@ -18,11 +18,14 @@
 
 package org.ensembl.healthcheck;
 
+import org.ensembl.healthcheck.DatabaseRegistryEntry.DatabaseInfo;
+
 /**
  * A single line of a report. Each ReportLine stores the names of the test case
  * and database (as Strings) a message, and a level. See the constants defined
  * by this class for the different levels. Levels are represented as ints to
  * allow easy comparison and setting of thresholds.
+ * EG: For improved report tracing, include DatabaseInfo and Species in ReportLine
  */
 public class ReportLine {
 
@@ -34,6 +37,8 @@ public class ReportLine {
 
 	/** The database name that this report refers to */
 	protected String databaseName;
+	protected Species species;
+	protected DatabaseType type;
 
 	/** The message that this report contains */
 	protected String message;
@@ -74,10 +79,13 @@ public class ReportLine {
 	 * @param message
 	 *          The message to report.
 	 */
-	public ReportLine(String testCaseName, String databaseName, int level, String message, String teamResponsible) {
+	public ReportLine(String testCaseName, String name, int level, String message, String teamResponsible) {
 
 		this.testCaseName = testCaseName;
-		this.databaseName = databaseName;
+		DatabaseInfo info = DatabaseRegistryEntry.getInfoFromName(name);
+		this.databaseName = info.getName();
+		this.species = info.getSpecies();
+		this.type = info.getType();
 		this.level = level;
 		this.message = message;
 		this.teamResponsible = teamResponsible;
@@ -231,6 +239,22 @@ public class ReportLine {
 
 	public void setTeamResponsible(String teamResponsible) {
 		this.teamResponsible = teamResponsible;
+	}
+
+	public Species getSpecies() {
+		return species;
+	}
+
+	public void setSpecies(Species species) {
+		this.species = species;
+	}
+
+	public DatabaseType getType() {
+		return type;
+	}
+
+	public void setType(DatabaseType type) {
+		this.type = type;
 	}
 
 	// -------------------------------------------------------------------------
