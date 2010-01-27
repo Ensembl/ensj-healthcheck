@@ -65,7 +65,7 @@ public class DatabaseRegistry {
 		for (DatabaseServer server : servers) {
 
 			if (regexps == null || regexps.size() == 0) {
-
+				
 				String[] names = DBUtils.listDatabases(server.getServerConnection(), null);
 				addEntriesToRegistry(server, names, isSecondary);
 
@@ -73,7 +73,7 @@ public class DatabaseRegistry {
 
 				Iterator<String> it = regexps.iterator();
 				while (it.hasNext()) {
-
+					
 					String regexp = it.next();
 					String[] names = DBUtils.listDatabases(server.getServerConnection(), regexp);
 
@@ -130,14 +130,14 @@ public class DatabaseRegistry {
 
 			if (!this.contains(dbre)) {
 
-				// logger.finest(dbre.getName() + " appears to be type " + dbre.getType() + " and species " + dbre.getSpecies());
+				//logger.finest(dbre.getName() + " appears to be type " + dbre.getType() + " and species " + dbre.getSpecies());
 
 				dbre.setDatabaseRegistry(this);
-
+				
 				entries.add(dbre);
-
+				
 				logger.finest("Added DatabaseRegistryEntry for " + name + " to " + (isSecondary ? "secondary" : "main") + " DatabaseRegistry");
-
+				
 			} else {
 
 				logger.finest("Registry already contains an entry for " + dbre.getName() + ", skipping");
@@ -244,40 +244,6 @@ public class DatabaseRegistry {
 
 	}
 
-	// -----------------------------------------------------------------
-	/**
-	 * Sets the type of every DatabaseRegistryEntry.
-	 * 
-	 * @param type
-	 *          The type to set.
-	 */
-	public final void setTypeOfAll(final DatabaseType type) {
-
-		Iterator<DatabaseRegistryEntry> it = entries.iterator();
-		while (it.hasNext()) {
-			DatabaseRegistryEntry dbre = it.next();
-			dbre.setType(type);
-		}
-
-	}
-
-	// -----------------------------------------------------------------
-	/**
-	 * Sets the species of every DatabaseRegistryEntry.
-	 * 
-	 * @param species
-	 *          The species to set.
-	 */
-	public final void setSpeciesOfAll(final Species species) {
-
-		Iterator<DatabaseRegistryEntry> it = entries.iterator();
-		while (it.hasNext()) {
-			DatabaseRegistryEntry dbre = it.next();
-			dbre.setSpecies(species);
-		}
-
-	}
-
 	// ---------------------------------------------------------------------
 	/**
 	 * Get a single, named DatabaseRegistryEntry.
@@ -297,7 +263,7 @@ public class DatabaseRegistry {
 		}
 
 		logger.warning("Can't find database matching name " + name);
-
+		
 		return null;
 	}
 
