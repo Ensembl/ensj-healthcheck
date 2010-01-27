@@ -224,6 +224,36 @@ public class VariationSet extends SingleDatabaseTestCase {
 		    msg += new String("No unused variation sets\n");
 		}
 		
+		// Check that no subset has more than one parent
+		query = new String(
+		    "SELECT DISTINCT "+
+		    "  vss.variation_set_sub "+
+		    "FROM "+
+		    "  variation_set_structure vss "+
+		    "WHERE "+
+		    "  EXISTS ("+
+		    "    SELECT "+
+		    "      * "+
+		    "    FROM "+
+		    "      variation_set_structure vss2 "+
+		    "    WHERE "+
+		    "      vss2.variation_set_sub = vss.variation_set_sub AND "+
+		    "      vss2.variation_set_super != vss.variation_set_super"+
+		    "  )"
+		);
+		if ((rs = stmt.executeQuery(query)) != null && (fetch = rs.next())) {		    
+		    String sets = new String();
+		    while (fetch) {
+			sets += "[" + this.getVariationSetName(rs.getInt(1),con) + "], ";
+			fetch = rs.next();
+		    }
+		    ReportManager.problem(this,con,"Variation sets " + sets.substring(0,sets.length()-2) + " have more than one super set");
+		    result = false;
+		}
+		else {
+		    msg += new String("No variation sets have more than one super set\n");
+		}
+		
 		// Check that no variation set is a subset of itself
 		query = new String(
 		  "SELECT DISTINCT "+
