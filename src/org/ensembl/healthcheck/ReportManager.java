@@ -35,8 +35,9 @@ import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * ReportManager is the main class for reporting in the Ensj Healthcheck system. It provides methods for storing reports - single
- * items of information - and retrieving them in various formats.
+ * ReportManager is the main class for reporting in the Ensj Healthcheck system.
+ * It provides methods for storing reports - single items of information - and
+ * retrieving them in various formats.
  */
 public final class ReportManager {
 
@@ -50,7 +51,8 @@ public final class ReportManager {
 	protected static Logger logger = Logger.getLogger("HealthCheckLogger");
 
 	/**
-	 * The maximum number of lines to store to prevent very verbose test cases causing memory problems
+	 * The maximum number of lines to store to prevent very verbose test cases
+	 * causing memory problems
 	 */
 	protected static final int MAX_BUFFER_SIZE = 2000;
 
@@ -64,8 +66,6 @@ public final class ReportManager {
 
 	private static long sessionID = -1;
 
-	private static DatabaseRegistryEntry dbre = new DatabaseRegistryEntry(); // just used for convenience methods
-
 	// hide constructor to stop instantiation
 	private ReportManager() {
 
@@ -75,7 +75,7 @@ public final class ReportManager {
 	 * Set the reporter for this ReportManager.
 	 * 
 	 * @param rep
-	 *          The Reporter to set.
+	 *            The Reporter to set.
 	 */
 	public static void setReporter(Reporter rep) {
 
@@ -86,11 +86,12 @@ public final class ReportManager {
 	 * Should be called before a test case is run.
 	 * 
 	 * @param testCase
-	 *          The testcase to be run.
+	 *            The testcase to be run.
 	 * @param dbre
-	 *          The database that testCase will run on.
+	 *            The database that testCase will run on.
 	 */
-	public static void startTestCase(EnsTestCase testCase, DatabaseRegistryEntry dbre) {
+	public static void startTestCase(EnsTestCase testCase,
+			DatabaseRegistryEntry dbre) {
 
 		if (reporter != null) {
 			reporter.startTestCase(testCase, dbre);
@@ -101,13 +102,14 @@ public final class ReportManager {
 	 * Should be called immediately after a test case has run.
 	 * 
 	 * @param testCase
-	 *          The testcase that was run.
+	 *            The testcase that was run.
 	 * @param result
-	 *          The result of the test case.
+	 *            The result of the test case.
 	 * @param dbre
-	 *          The database which the test case was run on.
+	 *            The database which the test case was run on.
 	 */
-	public static void finishTestCase(EnsTestCase testCase, boolean result, DatabaseRegistryEntry dbre) {
+	public static void finishTestCase(EnsTestCase testCase, boolean result,
+			DatabaseRegistryEntry dbre) {
 
 		if (reporter != null) {
 			reporter.finishTestCase(testCase, result, dbre);
@@ -119,7 +121,7 @@ public final class ReportManager {
 	 * Add a test case report.
 	 * 
 	 * @param report
-	 *          The ReportLine to add.
+	 *            The ReportLine to add.
 	 */
 	public static void add(ReportLine report) {
 
@@ -149,7 +151,10 @@ public final class ReportManager {
 				// prevent the buffer getting too big
 				if (lines.size() > MAX_BUFFER_SIZE) {
 					if (!bufferSizeWarningPrinted) {
-						System.err.println("\n\nReportManager has reached its maximum buffer size (" + MAX_BUFFER_SIZE + " lines) - no more output will be stored\n");
+						System.err
+								.println("\n\nReportManager has reached its maximum buffer size ("
+										+ MAX_BUFFER_SIZE
+										+ " lines) - no more output will be stored\n");
 						bufferSizeWarningPrinted = true;
 					}
 				} else {
@@ -186,42 +191,49 @@ public final class ReportManager {
 
 	// -------------------------------------------------------------------------
 	/**
-	 * Convenience method for storing reports, intended to be easy to call from an EnsTestCase.
+	 * Convenience method for storing reports, intended to be easy to call from
+	 * an EnsTestCase.
 	 * 
 	 * @param testCase
-	 *          The test case filing the report.
+	 *            The test case filing the report.
 	 * @param con
-	 *          The database connection involved.
+	 *            The database connection involved.
 	 * @param level
-	 *          The level of this report.
+	 *            The level of this report.
 	 * @param message
-	 *          The message to be reported.
+	 *            The message to be reported.
 	 */
-	public static void report(EnsTestCase testCase, Connection con, int level, String message) {
+	public static void report(EnsTestCase testCase, Connection con, int level,
+			String message) {
 
 		// this may be called when there is no DB connection
-		String dbName = (con == null) ? "no_database" : DBUtils.getShortDatabaseName(con);
+		String dbName = (con == null) ? "no_database" : DBUtils
+				.getShortDatabaseName(con);
 
-		add(new ReportLine(testCase.getTestName(), dbName, level, message, testCase.getTeamResponsible()));
+		add(new ReportLine(testCase.getTestName(), dbName, level, message,
+				testCase.getTeamResponsible()));
 
 	} // report
 
 	// -------------------------------------------------------------------------
 	/**
-	 * Convenience method for storing reports, intended to be easy to call from an EnsTestCase.
+	 * Convenience method for storing reports, intended to be easy to call from
+	 * an EnsTestCase.
 	 * 
 	 * @param testCase
-	 *          The test case filing the report.
+	 *            The test case filing the report.
 	 * @param dbName
-	 *          The name of the database involved.
+	 *            The name of the database involved.
 	 * @param level
-	 *          The level of this report.
+	 *            The level of this report.
 	 * @param message
-	 *          The message to be reported.
+	 *            The message to be reported.
 	 */
-	public static void report(EnsTestCase testCase, String dbName, int level, String message) {
+	public static void report(EnsTestCase testCase, String dbName, int level,
+			String message) {
 
-		add(new ReportLine(testCase.getTestName(), dbName, level, message, testCase.getTeamResponsible()));
+		add(new ReportLine(testCase.getTestName(), dbName, level, message,
+				testCase.getTeamResponsible()));
 
 	} // report
 
@@ -230,13 +242,14 @@ public final class ReportManager {
 	 * Store a ReportLine with a level of ReportLine.INFO.
 	 * 
 	 * @param testCase
-	 *          The test case filing the report.
+	 *            The test case filing the report.
 	 * @param con
-	 *          The database connection involved.
+	 *            The database connection involved.
 	 * @param message
-	 *          The message to be reported.
+	 *            The message to be reported.
 	 */
-	public static void problem(EnsTestCase testCase, Connection con, String message) {
+	public static void problem(EnsTestCase testCase, Connection con,
+			String message) {
 
 		report(testCase, con, ReportLine.PROBLEM, message);
 
@@ -246,13 +259,14 @@ public final class ReportManager {
 	 * Store a ReportLine with a level of ReportLine.PROBLEM.
 	 * 
 	 * @param testCase
-	 *          The test case filing the report.
+	 *            The test case filing the report.
 	 * @param dbName
-	 *          The name of the database involved.
+	 *            The name of the database involved.
 	 * @param message
-	 *          The message to be reported.
+	 *            The message to be reported.
 	 */
-	public static void problem(EnsTestCase testCase, String dbName, String message) {
+	public static void problem(EnsTestCase testCase, String dbName,
+			String message) {
 
 		report(testCase, dbName, ReportLine.PROBLEM, message);
 
@@ -262,11 +276,11 @@ public final class ReportManager {
 	 * Store a ReportLine with a level of ReportLine.INFO.
 	 * 
 	 * @param testCase
-	 *          The test case filing the report.
+	 *            The test case filing the report.
 	 * @param con
-	 *          The database connection involved.
+	 *            The database connection involved.
 	 * @param message
-	 *          The message to be reported.
+	 *            The message to be reported.
 	 */
 	public static void info(EnsTestCase testCase, Connection con, String message) {
 
@@ -278,11 +292,11 @@ public final class ReportManager {
 	 * Store a ReportLine with a level of ReportLine.INFO.
 	 * 
 	 * @param testCase
-	 *          The test case filing the report.
+	 *            The test case filing the report.
 	 * @param dbName
-	 *          The name of the database involved.
+	 *            The name of the database involved.
 	 * @param message
-	 *          The message to be reported.
+	 *            The message to be reported.
 	 */
 	public static void info(EnsTestCase testCase, String dbName, String message) {
 
@@ -294,13 +308,14 @@ public final class ReportManager {
 	 * Store a ReportLine with a level of ReportLine.SUMMARY.
 	 * 
 	 * @param testCase
-	 *          The test case filing the report.
+	 *            The test case filing the report.
 	 * @param con
-	 *          The database connection involved.
+	 *            The database connection involved.
 	 * @param message
-	 *          The message to be reported.
+	 *            The message to be reported.
 	 */
-	public static void warning(EnsTestCase testCase, Connection con, String message) {
+	public static void warning(EnsTestCase testCase, Connection con,
+			String message) {
 
 		report(testCase, con, ReportLine.WARNING, message);
 
@@ -310,13 +325,14 @@ public final class ReportManager {
 	 * Store a ReportLine with a level of ReportLine.SUMMARY.
 	 * 
 	 * @param testCase
-	 *          The test case filing the report.
+	 *            The test case filing the report.
 	 * @param dbName
-	 *          The name of the database involved.
+	 *            The name of the database involved.
 	 * @param message
-	 *          The message to be reported.
+	 *            The message to be reported.
 	 */
-	public static void warning(EnsTestCase testCase, String dbName, String message) {
+	public static void warning(EnsTestCase testCase, String dbName,
+			String message) {
 
 		report(testCase, dbName, ReportLine.WARNING, message);
 
@@ -326,13 +342,14 @@ public final class ReportManager {
 	 * Store a ReportLine with a level of ReportLine.CORRECT.
 	 * 
 	 * @param testCase
-	 *          The test case filing the report.
+	 *            The test case filing the report.
 	 * @param con
-	 *          The database connection involved.
+	 *            The database connection involved.
 	 * @param message
-	 *          The message to be reported.
+	 *            The message to be reported.
 	 */
-	public static void correct(EnsTestCase testCase, Connection con, String message) {
+	public static void correct(EnsTestCase testCase, Connection con,
+			String message) {
 
 		report(testCase, con, ReportLine.CORRECT, message);
 
@@ -342,13 +359,14 @@ public final class ReportManager {
 	 * Store a ReportLine with a level of ReportLine.CORRECT.
 	 * 
 	 * @param testCase
-	 *          The test case filing the report.
+	 *            The test case filing the report.
 	 * @param dbName
-	 *          The name of the database involved.
+	 *            The name of the database involved.
 	 * @param message
-	 *          The message to be reported.
+	 *            The message to be reported.
 	 */
-	public static void correct(EnsTestCase testCase, String dbName, String message) {
+	public static void correct(EnsTestCase testCase, String dbName,
+			String message) {
 
 		report(testCase, dbName, ReportLine.CORRECT, message);
 
@@ -371,7 +389,7 @@ public final class ReportManager {
 	 * Get a HashMap of all the reports, keyed on test case name.
 	 * 
 	 * @param level
-	 *          The ReportLine level (e.g. PROBLEM) to filter on.
+	 *            The ReportLine level (e.g. PROBLEM) to filter on.
 	 * @return The HashMap of all the reports, keyed on test case name.
 	 */
 	public static Map getAllReportsByTestCase(int level) {
@@ -397,7 +415,7 @@ public final class ReportManager {
 	 * Get a HashMap of all the reports, keyed on test case name.
 	 * 
 	 * @param level
-	 *          The ReportLine level (e.g. PROBLEM) to filter on.
+	 *            The ReportLine level (e.g. PROBLEM) to filter on.
 	 * @return The HashMap of all the reports, keyed on test case name.
 	 */
 	public static Map getAllReportsByDatabase(int level) {
@@ -412,9 +430,9 @@ public final class ReportManager {
 	 * 
 	 * @return A List of the results (as a list) corresponding to test.
 	 * @param testCaseName
-	 *          The test case to filter by.
+	 *            The test case to filter by.
 	 * @param level
-	 *          The minimum level of report to include, e.g. ReportLine.INFO
+	 *            The minimum level of report to include, e.g. ReportLine.INFO
 	 */
 	public static List getReportsByTestCase(String testCaseName, int level) {
 
@@ -429,9 +447,9 @@ public final class ReportManager {
 	 * Get a list of all the reports corresponding to a particular database.
 	 * 
 	 * @param databaseName
-	 *          The database to report on.
+	 *            The database to report on.
 	 * @param level
-	 *          The minimum level of report to include, e.g. ReportLine.INFO
+	 *            The minimum level of report to include, e.g. ReportLine.INFO
 	 * @return A List of the ReportLines corresponding to database.
 	 */
 	public static List getReportsByDatabase(String databaseName, int level) {
@@ -445,9 +463,9 @@ public final class ReportManager {
 	 * Filter a list of ReportLines so that only certain entries are returned.
 	 * 
 	 * @param list
-	 *          The list to filter.
+	 *            The list to filter.
 	 * @param level
-	 *          All reports with a priority above this level will be returned.
+	 *            All reports with a priority above this level will be returned.
 	 * @return A list of the ReportLines that have a level >= that specified.
 	 */
 	public static List filterList(List list, int level) {
@@ -470,13 +488,15 @@ public final class ReportManager {
 
 	// -------------------------------------------------------------------------
 	/**
-	 * Filter a HashMap of lists of ReportLines so that only certain entries are returned.
+	 * Filter a HashMap of lists of ReportLines so that only certain entries are
+	 * returned.
 	 * 
 	 * @param map
-	 *          The list to filter.
+	 *            The list to filter.
 	 * @param level
-	 *          All reports with a priority above this level will be returned.
-	 * @return A HashMap with the same keys as map, but with the lists filtered by level.
+	 *            All reports with a priority above this level will be returned.
+	 * @return A HashMap with the same keys as map, but with the lists filtered
+	 *         by level.
 	 */
 	public static Map filterMap(Map map, int level) {
 
@@ -496,12 +516,14 @@ public final class ReportManager {
 
 	// ---------------------------------------------------------------------
 	/**
-	 * Count how many tests passed and failed for a particular database. A test is considered to have passed if there are no reports
-	 * of level ReportLine.PROBLEM.
+	 * Count how many tests passed and failed for a particular database. A test
+	 * is considered to have passed if there are no reports of level
+	 * ReportLine.PROBLEM.
 	 * 
 	 * @param database
-	 *          The database to check.
-	 * @return An array giving the number of passes and then fails for this database.
+	 *            The database to check.
+	 * @return An array giving the number of passes and then fails for this
+	 *         database.
 	 */
 	public static int[] countPassesAndFailsDatabase(String database) {
 
@@ -542,12 +564,13 @@ public final class ReportManager {
 
 	// ---------------------------------------------------------------------
 	/**
-	 * Count how many databases passed a particular test. A test is considered to have passed if there are no reports of level
-	 * ReportLine.PROBLEM.
+	 * Count how many databases passed a particular test. A test is considered
+	 * to have passed if there are no reports of level ReportLine.PROBLEM.
 	 * 
 	 * @param test
-	 *          The test to check.
-	 * @return An array giving the number of databases that passed [0] and failed [1] this test.
+	 *            The test to check.
+	 * @return An array giving the number of databases that passed [0] and
+	 *         failed [1] this test.
 	 */
 	public static int[] countPassesAndFailsTest(String test) {
 
@@ -589,8 +612,8 @@ public final class ReportManager {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Count how many tests passed and failed. A test is considered to have passed if there are no reports of level
-	 * ReportLine.PROBLEM.
+	 * Count how many tests passed and failed. A test is considered to have
+	 * passed if there are no reports of level ReportLine.PROBLEM.
 	 * 
 	 * @return An array giving the number of passes and then fails.
 	 */
@@ -618,9 +641,9 @@ public final class ReportManager {
 	 * Check if all the a particular database passed a particular test.
 	 * 
 	 * @param test
-	 *          The test to check.
+	 *            The test to check.
 	 * @param database
-	 *          The database to check.
+	 *            The database to check.
 	 * @return true if database passed test (i.e. had no problems).
 	 */
 	public static boolean databasePassed(String test, String database) {
@@ -643,8 +666,9 @@ public final class ReportManager {
 	 * Check if all the databases passed a particular test.
 	 * 
 	 * @param test
-	 *          The test to check.
-	 * @return true if none of the databases failed this test (i.e. had no problems)
+	 *            The test to check.
+	 * @return true if none of the databases failed this test (i.e. had no
+	 *         problems)
 	 */
 	public static boolean allDatabasesPassed(String test) {
 
@@ -659,13 +683,15 @@ public final class ReportManager {
 
 	// -------------------------------------------------------------------------
 	/**
-	 * Get a list of all the reports corresponding to a particular database and test case.
+	 * Get a list of all the reports corresponding to a particular database and
+	 * test case.
 	 * 
-	 * @return A List of the results (as a list) corresponding to test and database.
+	 * @return A List of the results (as a list) corresponding to test and
+	 *         database.
 	 * @param test
-	 *          The test case to filter by.
+	 *            The test case to filter by.
 	 * @param database
-	 *          The database.
+	 *            The database.
 	 */
 	public static List getReports(String test, String database) {
 
@@ -701,11 +727,17 @@ public final class ReportManager {
 	 */
 	public static void connectToOutputDatabase() {
 
-		logger.fine("Connecting to " + System.getProperty("output.databaseURL") + System.getProperty("output.database") + " as " + System.getProperty("output.user") + " password "
+		logger.fine("Connecting to " + System.getProperty("output.databaseURL")
+				+ System.getProperty("output.database") + " as "
+				+ System.getProperty("output.user") + " password "
 				+ System.getProperty("output.password"));
 
-		outputDatabaseConnection = DBUtils.openConnection(System.getProperty("output.driver"), System.getProperty("output.databaseURL") + System.getProperty("output.database"), System
-				.getProperty("output.user"), System.getProperty("output.password"));
+		outputDatabaseConnection = DBUtils.openConnection(System
+				.getProperty("output.driver"), System
+				.getProperty("output.databaseURL")
+				+ System.getProperty("output.database"), System
+				.getProperty("output.user"), System
+				.getProperty("output.password"));
 
 		usingDatabase = true;
 
@@ -713,11 +745,14 @@ public final class ReportManager {
 
 	// -------------------------------------------------------------------------
 	/**
-	 * Create a new entry in the session table. Store the ID of the created session in sessionID.
+	 * Create a new entry in the session table. Store the ID of the created
+	 * session in sessionID.
 	 */
 	public static void createDatabaseSession() {
 
-		String sql = "INSERT INTO session (host, config, db_release) VALUES ('" + System.getProperty("host") + ":" + System.getProperty("port") + "','" + System.getProperty("output.databases") + "', "
+		String sql = "INSERT INTO session (host, config, db_release) VALUES ('"
+				+ System.getProperty("host") + ":" + System.getProperty("port")
+				+ "','" + System.getProperty("output.databases") + "', "
 				+ System.getProperty("output.release") + ")";
 
 		try {
@@ -745,15 +780,26 @@ public final class ReportManager {
 
 	// -------------------------------------------------------------------------
 	/**
-	 * Create a new entry in the session table, using a user-specified session ID.
+	 * Create a new entry in the session table, using a user-specified session
+	 * ID.
 	 * 
 	 * @param sessionID
-	 *          The session ID to use.
+	 *            The session ID to use.
 	 */
 	public static void createDatabaseSession(long sessionID) {
 
-		String sql = "INSERT INTO session (session_id, start_time, host, groups, database_regexp, db_release) VALUES (" + sessionID + ", NOW(), '" + System.getProperty("host") + ":"
-				+ System.getProperty("port") + "','" + System.getProperty("output.groups") + "','" + System.getProperty("output.databases") + "', " + System.getProperty("output.release") + ")";
+		String sql = "INSERT INTO session (session_id, start_time, host, groups, database_regexp, db_release) VALUES ("
+				+ sessionID
+				+ ", NOW(), '"
+				+ System.getProperty("host")
+				+ ":"
+				+ System.getProperty("port")
+				+ "','"
+				+ System.getProperty("output.groups")
+				+ "','"
+				+ System.getProperty("output.databases")
+				+ "', "
+				+ System.getProperty("output.release") + ")";
 
 		try {
 
@@ -776,7 +822,8 @@ public final class ReportManager {
 	 */
 	public static void endDatabaseSession() {
 
-		String sql = "UPDATE session SET end_time=NOW() WHERE session_id=" + sessionID;
+		String sql = "UPDATE session SET end_time=NOW() WHERE session_id="
+				+ sessionID;
 
 		try {
 
@@ -821,8 +868,9 @@ public final class ReportManager {
 
 	// -------------------------------------------------------------------------
 	/**
-	 * Update a report in the database. Two possible actions: 1. If the report already exists and hasn't changed, just update it. 2.
-	 * If the report is new, add a new record.
+	 * Update a report in the database. Two possible actions: 1. If the report
+	 * already exists and hasn't changed, just update it. 2. If the report is
+	 * new, add a new record.
 	 */
 	public static void checkAndAddToDatabase(ReportLine report) {
 
@@ -854,7 +902,8 @@ public final class ReportManager {
 
 		try {
 
-			PreparedStatement stmt = outputDatabaseConnection.prepareStatement(sql);
+			PreparedStatement stmt = outputDatabaseConnection
+					.prepareStatement(sql);
 			stmt.setString(1, report.getDatabaseName());
 			stmt.setString(2, report.getShortTestCaseName());
 			stmt.setString(3, report.getLevelAsString());
@@ -878,9 +927,15 @@ public final class ReportManager {
 		}
 
 		if (reportID > -1) {
-			logger.finest("Report already exists (ID " + reportID + "): " + report.getDatabaseName() + " " + report.getTestCaseName() + " " + report.getLevelAsString() + " " + report.getMessage());
+			logger.finest("Report already exists (ID " + reportID + "): "
+					+ report.getDatabaseName() + " " + report.getTestCaseName()
+					+ " " + report.getLevelAsString() + " "
+					+ report.getMessage());
 		} else {
-			logger.finest("Report does not already exist: " + report.getDatabaseName() + " " + report.getTestCaseName() + " " + report.getLevelAsString() + " " + report.getMessage());
+			logger.finest("Report does not already exist: "
+					+ report.getDatabaseName() + " " + report.getTestCaseName()
+					+ " " + report.getLevelAsString() + " "
+					+ report.getMessage());
 		}
 
 		return reportID;
@@ -897,18 +952,22 @@ public final class ReportManager {
 			logger.severe("No connection to output database!");
 		}
 
-		logger.fine("Adding report for: " + report.getDatabaseName() + " " + report.getTestCaseName() + " " + report.getLevelAsString() + " " + report.getMessage());
+		logger.fine("Adding report for: " + report.getDatabaseName() + " "
+				+ report.getTestCaseName() + " " + report.getLevelAsString()
+				+ " " + report.getMessage());
 
 		String sql = "INSERT INTO report (first_session_id, last_session_id, database_name, species, database_type, testcase, result, text, timestamp, team_responsible, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, NOW())";
 
 		try {
 
-			PreparedStatement stmt = outputDatabaseConnection.prepareStatement(sql);
+			PreparedStatement stmt = outputDatabaseConnection
+					.prepareStatement(sql);
 			stmt.setLong(1, sessionID);
 			stmt.setLong(2, sessionID);
 			stmt.setString(3, report.getDatabaseName());
-			stmt.setString(4, (dbre.setSpeciesFromName(report.getDatabaseName())).toString());
-			stmt.setString(5, (dbre.setTypeFromName(report.getDatabaseName())).toString());
+			// EG Store species name and db type from explicit report line, not from database
+			stmt.setString(4, report.getSpecies().toString());
+			stmt.setString(5, report.getType().toString());
 			stmt.setString(6, report.getShortTestCaseName());
 			stmt.setString(7, report.getLevelAsString());
 			stmt.setString(8, report.getMessage());
@@ -934,14 +993,17 @@ public final class ReportManager {
 			logger.severe("No connection to output database!");
 		}
 
-		logger.fine("Updating report for: " + report.getDatabaseName() + " " + report.getTestCaseName() + " " + report.getLevelAsString() + " " + report.getMessage() + ", new last_session_id="
+		logger.fine("Updating report for: " + report.getDatabaseName() + " "
+				+ report.getTestCaseName() + " " + report.getLevelAsString()
+				+ " " + report.getMessage() + ", new last_session_id="
 				+ sessionID);
 
 		String sql = "UPDATE report SET last_session_id=?, timestamp=NOW() WHERE report_id=?";
 
 		try {
 
-			PreparedStatement stmt = outputDatabaseConnection.prepareStatement(sql);
+			PreparedStatement stmt = outputDatabaseConnection
+					.prepareStatement(sql);
 			stmt.setLong(1, sessionID);
 			stmt.setLong(2, reportID);
 			stmt.executeUpdate();
