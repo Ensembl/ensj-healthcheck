@@ -4,8 +4,9 @@
 dir=$HOME/ensj-healthcheck
 
 cp=$dir
-cp=$cp:$dir/lib/ensj-healthcheck.jar
-cp=$cp:$dir/lib/mysql-connector-java-3.0.15-ga-bin.jar
+for jar in $dir/lib/*.jar; do
+    cp=$jar:$cp
+done
 
 cd $dir
 

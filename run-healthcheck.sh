@@ -4,11 +4,10 @@
 # e.g. ~/dev/ensj-healthcheck/run-healthcheck.sh  -config `pwd`/db.properties -d my_database SOME_TEST
 
 home=`dirname $0`
-
-cp=$home
-cp=$cp:$home/build/classes
-cp=$cp:$home/lib/ensj-healthcheck.jar
-cp=$cp:$home/lib/mysql-connector-java-3.0.15-ga-bin.jar
+cp=$home:$home/build/classes
+for jar in $home/lib/*.jar; do
+    cp=$jar:$cp
+done
 
 $JAVA_HOME/bin/java -Duser.dir=$home -cp $cp -Xmx1500m org.ensembl.healthcheck.TextTestRunner $*
 
