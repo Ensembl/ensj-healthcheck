@@ -120,8 +120,12 @@ public class DatabaseTestRunner extends TestRunner implements Reporter {
 				deletePrevious = true;
 				logger.finest("Will delete previous data");
 
+			} else if (args[i].equals("-config")) {
+                // EG: Added config file switch for greater control
+				i++;
+				PROPERTIES_FILE = args[i];
+				logger.finest("Will read properties from " + PROPERTIES_FILE);
 			}
-
 		}
 
 	} // parseCommandLine
