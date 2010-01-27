@@ -50,7 +50,7 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 
 		// ----------------------------------------------------
 		// the following tables are allowed to be empty
-		String[] allowedEmpty = { "allele_group", "allele_group_allele","httag","variation_group","variation_group_feature","variation_group_variation", "individual_genotype_multiple_bp","variation_synonym", "structural_variation" };
+		String[] allowedEmpty = { "allele_group", "allele_group_allele","httag","variation_group","variation_group_feature","variation_group_variation", "individual_genotype_multiple_bp","variation_synonym", "structural_variation","variation_set", "variation_set_variation", "variation_set_structure" };
 		tables = remove(tables, allowedEmpty);
 
 		// only rat has entries in QTL tables
@@ -59,6 +59,9 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 		}
 		if(species == Species.HOMO_SAPIENS){
 			tables = remove(tables,"structural_variation");
+			tables = remove(tables,"variation_set");
+			tables = remove(tables,"variation_set_structure");
+			tables = remove(tables,"variation_set_variation");
 		}
 		if (species != Species.HOMO_SAPIENS){
 			tables = remove(tables,"variation_annotation");
