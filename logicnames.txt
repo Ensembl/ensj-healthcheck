@@ -2,6 +2,7 @@ AlignAffy
 AlignAffyProbes
 AlignOligoProbes
 BACends
+BLASTPRODOM
 BLASTX_ENS_HUM
 BLASTX_ENS_MUS
 BLASTX_HUM_GENSCAN
@@ -33,6 +34,7 @@ FANTOM_GIS_PET_raw
 FANTOM_CAGE
 Fgenesh
 FirstEF
+GENE3D
 GENEWISE
 GID
 GIS_PET
@@ -46,6 +48,7 @@ GWS_UNI
 GadflyP
 GeneFinder
 Genscan
+HMMPANTHER
 HOX
 Medaka_Genome_Project
 Medaka_TranscriptCoalescer
@@ -89,6 +92,7 @@ bac_map
 bacs
 bacs_bands
 blastprodom
+brepepP
 brigpepP
 cbriggsae_est
 cbriggsae_mrna
@@ -129,6 +133,7 @@ human_protein
 human_refseq
 insertion_site
 ipi_humanP
+jappepP
 knownGeneDensity
 marker
 matepairs
@@ -155,6 +160,7 @@ peptides_bdgp
 pfscan
 platypus_454_cdna
 polyA_site
+ppapepP
 probe2transcript
 protein_binding_site
 pseudogene
