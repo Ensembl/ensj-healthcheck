@@ -14,8 +14,8 @@
 package org.ensembl.healthcheck.util;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseServer;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.TestRunner;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 
 /**
@@ -692,7 +693,8 @@ public final class DBUtils {
 	 */
 	public static List<DatabaseServer> getMainDatabaseServers() {
 
-		Utils.readPropertiesFileIntoSystem("database.properties", false);
+        // EG replace literal reference to file with variable
+		Utils.readPropertiesFileIntoSystem(TestRunner.PROPERTIES_FILE, false);
 
 		if (mainDatabaseServers == null) {
 
@@ -793,7 +795,7 @@ public final class DBUtils {
 	}
 
 	// -------------------------------------------------------------------------
-
+	
 	public static void setSecondaryDatabaseRegistry(DatabaseRegistry dbr) {
 
 		secondaryDatabaseRegistry = dbr;
@@ -845,7 +847,6 @@ public final class DBUtils {
 		return result;
 
 	}
-
 	// -------------------------------------------------------------------------
 
 } // DBUtils
