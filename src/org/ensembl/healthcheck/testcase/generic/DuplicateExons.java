@@ -134,7 +134,8 @@ public class DuplicateExons extends SingleDatabaseTestCase {
 			result = false;
 			e.printStackTrace();
 		}
-
+		// EG write correct report line if all OK
+		if(result) ReportManager.correct(this, con, "No duplicate exons found");
 		return result;
 
 	}

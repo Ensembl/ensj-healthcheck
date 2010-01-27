@@ -71,7 +71,9 @@ public class AnalyseTables extends SingleDatabaseTestCase {
 				}
 			}
 		}
-
+		// Return a correct report line to make it easier to read report
+		if(result) ReportManager.correct(this, con, "No tables need analysis");
+		
 		return result;
 
 	} // run

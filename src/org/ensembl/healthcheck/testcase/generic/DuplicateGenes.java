@@ -44,7 +44,7 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setTeamResponsible("GeneBuilders");
-		
+
 	}
 
 	/**
@@ -61,7 +61,7 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 	 * Check for (strongly likely to be) duplicate genes.
 	 * 
 	 * @param dbre
-	 *          The database to check.
+	 *            The database to check.
 	 * @return True if the test passes.
 	 */
 
@@ -75,7 +75,9 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 		try {
 
-			Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
+			Statement stmt = con.createStatement(
+					java.sql.ResultSet.TYPE_FORWARD_ONLY,
+					java.sql.ResultSet.CONCUR_READ_ONLY);
 			stmt.setFetchSize(1000);
 			ResultSet rs = stmt.executeQuery(sql);
 
@@ -104,11 +106,19 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 				geneStableID = rs.getString(7);
 
 				if (!first) {
-					if (lastGeneChromosome == geneChromosome && lastGeneStart == geneStart && lastGeneEnd == geneEnd
-							&& lastGeneStrand == geneStrand && geneBioType.equals(lastGeneBioType)) {
+					if (lastGeneChromosome == geneChromosome
+							&& lastGeneStart == geneStart
+							&& lastGeneEnd == geneEnd
+							&& lastGeneStrand == geneStrand
+							&& geneBioType.equals(lastGeneBioType)) {
 						duplicateGene++;
 						if (duplicateGene < MAX_WARNINGS) {
-							ReportManager.warning(this, con, "Gene " + geneStableID + " (" + geneBioType + " ID " + geneId + ") is duplicated - see gene " + lastGeneStableID + " (" + lastGeneBioType + " ID " + lastGeneId + ")");
+							ReportManager.warning(this, con, "Gene "
+									+ geneStableID + " (" + geneBioType
+									+ " ID " + geneId
+									+ ") is duplicated - see gene "
+									+ lastGeneStableID + " (" + lastGeneBioType
+									+ " ID " + lastGeneId + ")");
 						}
 					}
 				} else {
@@ -122,11 +132,12 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 				lastGeneStrand = geneStrand;
 				lastGeneBioType = geneBioType;
 				lastGeneStableID = geneStableID;
-				
+
 			} // while rs
 
 			if (duplicateGene > 0) {
-				ReportManager.problem(this, con, "Has " + duplicateGene + " duplicated genes.");
+				ReportManager.problem(this, con, "Has " + duplicateGene
+						+ " duplicated genes.");
 				result = false;
 			}
 			rs.close();
@@ -136,7 +147,9 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 			result = false;
 			e.printStackTrace();
 		}
-
+		// EG return correct report line if all is OK
+		if (result)
+			ReportManager.correct(this, con, "No duplicate exons found");
 		return result;
 
 	}
