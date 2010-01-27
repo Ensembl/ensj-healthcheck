@@ -15,27 +15,211 @@ package org.ensembl.healthcheck;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.List;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.ensembl.healthcheck.util.DBUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.ensembl.healthcheck.util.CollectionUtils;
 
 /**
- * Container for information about a database that can be stored in a DatabaseRegistry.
- * 
+ * Container for information about a database that can be stored in a
+ * DatabaseRegistry.
  */
 public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> {
 
-	private String name;
+	/**
+	 * Simple read-only bean to store pertinent information about a database.
+	 * Objects of this type are held by the {@link DatabaseRegistryEntry} and
+	 * attached to {@link ReportLine} objects to improve reporting
+	 * 
+	 * @author dstaines
+	 */
+	public static class DatabaseInfo {
 
-	private Species species;
+		private final String name;
+		private final String alias;
+		private final Species species;
+		private final DatabaseType type;
+		private final String schemaVersion;
+		private final String genebuildVersion;
 
-	private String schemaVersion, geneBuildVersion;
+		/**
+		 * Constructor to set up key properties of {@link DatabaseInfo}
+		 * 
+		 * @param name
+		 * @param species
+		 * @param type
+		 * @param schemaVersion
+		 */
+		public DatabaseInfo(String name, String alias, Species species,
+				DatabaseType type, String schemaVersion, String genebuildVersion) {
+			this.name = name;
+			this.alias = alias;
+			this.species = species;
+			this.type = type;
+			this.schemaVersion = schemaVersion;
+			this.genebuildVersion = genebuildVersion;
+		}
 
-	private DatabaseType type;
+		public String getName() {
+			return name;
+		}
 
-	private boolean isMultiSpecies = false;
+		public String getAlias() {
+			return alias;
+		}
 
-	private DatabaseServer server;
+		public Species getSpecies() {
+			return species;
+		}
+
+		public DatabaseType getType() {
+			return type;
+		}
+
+		public String getSchemaVersion() {
+			return schemaVersion;
+		}
+
+		public String getGenebuildVersion() {
+			return genebuildVersion;
+		}
+
+		public String toString() {
+			return ReflectionToStringBuilder.toString(this);
+		}
+
+	}
+
+	// e.g. neurospora_crassa_core_4_56_1a
+	protected final static Pattern EG_DB = Pattern
+			.compile("^([a-z_]+)_([a-z]+)_[0-9]+_([0-9]+)_([0-9A-Za-z]+)");
+	// e.g. homo_sapiens_core_56_37a
+	protected final static Pattern E_DB = Pattern
+			.compile("^([^_]+_[^_]+)_([a-z]+)_([0-9]+)_([0-9A-Za-z]+)");
+	// human_core_20, hsapiens_XXX
+	protected final static Pattern EEL_DB = Pattern
+			.compile("^([^_]+)_([a-z]+)_([0-9A-Za-z]+)");
+	// ensembl_compara_bacteria_3_56
+	protected final static Pattern EGC_DB = Pattern
+			.compile("^(ensembl)_(compara)_([a-z]+)_[0-9]+_([0-9]+)");
+	// ensembl_compara_56
+	protected final static Pattern EC_DB = Pattern
+			.compile("^(ensembl)_(compara)_([0-9]+)");
+	// ensembl_mart_56
+	protected final static Pattern EM_DB = Pattern
+			.compile("^([a-z_]+)_(mart)_([0-9])+");
+	// username_species_type_version_release
+	protected final static Pattern V_DB = Pattern
+			.compile("vega_([^_]+_[^_]+)_[^_]+_([^_]+)_([^_]+)");
+	protected final static Pattern EE_DB = Pattern
+			.compile("^([^_]+_[^_]+)_[a-z]+_([a-z]+)_[a-z]+_([0-9]+)_([0-9A-Za-z]+)");
+	// username_species_type_version_release
+	protected final static Pattern U_DB = Pattern
+			.compile("^username_([^_]+_[^_]+)_([a-z]+)_([0-9]+)_([0-9A-Za-z]+)");
+	protected final static Pattern HELP_DB = Pattern
+			.compile("^(ensembl)_(help)_([0-9]+)");
+	protected final static Pattern EW_DB = Pattern
+			.compile("^(ensembl)_(website)_([0-9]+)");
+	protected final static Pattern TAX_DB = Pattern
+			.compile("^(ncbi)_(taxonomy)_([0-9]+)");
+	protected final static Pattern UD_DB = Pattern
+			.compile("^([a-z_]+)_(userdata)");
+	protected final static Pattern BLAST_DB = Pattern
+			.compile("^([a-z_]+)_(blast)");
+	protected final static Pattern MYSQL_DB = Pattern
+			.compile("^(mysql|information_schema)");
+
+	protected final static Pattern[] patterns = {
+
+	EG_DB, E_DB, EC_DB, EGC_DB, EM_DB, EE_DB, EEL_DB, U_DB, V_DB, MYSQL_DB,
+			BLAST_DB, UD_DB, TAX_DB, EW_DB, HELP_DB
+
+	};
+
+	/**
+	 * Utility for building a {@link DatabaseInfo} object given a name
+	 * 
+	 * @param name
+	 * @return object containing information about a database
+	 */
+	public static DatabaseInfo getInfoFromName(String name) {
+		return getInfoFromName(name, null, null);
+	}
+
+	/**
+	 * Utility for building a {@link DatabaseInfo} object given a name plus
+	 * optional {@link Species} and {@link DatabaseType} to use explicitly
+	 * 
+	 * @param name
+	 * @param species
+	 *            (optional)
+	 * @param type
+	 *            (optional)
+	 * @return object containing information about a database
+	 */
+	public static DatabaseInfo getInfoFromName(String name, Species species,
+			DatabaseType type) {
+
+		String schemaVersion = null;
+		String genebuildVersion = null;
+		String alias = null;
+		String typeStr = null;
+
+		Matcher m;
+
+		for (Pattern p : patterns) {
+			m = p.matcher(name);
+			if (m.matches()) {
+				// group 1 = alias
+				alias = m.group(1);
+				if (m.groupCount() > 1) {
+					// group 2 = type
+					typeStr = m.group(2);
+					if (m.groupCount() > 2) {
+						// group 3 = schema_version
+						schemaVersion = m.group(3);
+						if (m.groupCount() > 3) {
+							// group 4 = gb_version
+							genebuildVersion = m.group(4);
+						}
+					}
+				}
+				break;
+			}
+		}
+
+		if (species == null) {
+			if (!StringUtils.isEmpty(alias)) {
+				species = Species.resolveAlias(alias);
+			} else {
+				species = Species.UNKNOWN;
+			}
+		}
+
+		if (type == null) {
+			if (!StringUtils.isEmpty(typeStr)) {
+				type = DatabaseType.resolveAlias(typeStr);
+			} else {
+				type = DatabaseType.UNKNOWN;
+			}
+		}
+
+		DatabaseInfo info = new DatabaseInfo(name, alias, species, type,
+				schemaVersion, genebuildVersion);
+
+		return info;
+
+	}
+
+	private final DatabaseInfo info;
+
+	private List<Integer> speciesIds;
+
+	private final DatabaseServer server;
 
 	private DatabaseRegistry databaseRegistry;
 
@@ -49,250 +233,20 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	 * Create a new DatabaseRegistryEntry.
 	 * 
 	 * @param server
-	 *          The database server where this database resides.
+	 *            The database server where this database resides.
 	 * @param name
-	 *          The name of the database.
+	 *            The name of the database.
 	 * @param species
-	 *          The species that this database represents. If null, guess it from name.
+	 *            The species that this database represents. If null, derive it
+	 *            from name.
 	 * @param type
-	 *          The type of this database. If null, guess it from name.
+	 *            The type of this database. If null, derive it from name.
 	 */
-	public DatabaseRegistryEntry(DatabaseServer server, String name, Species species, DatabaseType type) {
+	public DatabaseRegistryEntry(DatabaseServer server, String name,
+			Species species, DatabaseType type) {
 
 		this.server = server;
-
-		this.name = name;
-
-		if (species != null) {
-			this.species = species;
-		} else {
-			this.species = setSpeciesFromName(name);
-		}
-
-		if (type != null) {
-			this.type = type;
-		} else {
-			this.type = setTypeFromName(name);
-		}
-
-		if (connection == null) {
-			connection = getConnection();
-		}
-
-		isMultiSpecies = checkMultiSpecies(connection, species, type);
-
-	}
-
-	public DatabaseRegistryEntry() {
-
-	}
-
-	// -----------------------------------------------------------------
-
-	/**
-	 * Attempt to figure out species from database name. Also set schema and genebuild versions as appropriate.
-	 * 
-	 * @param name
-	 *          The name to use.
-	 * @return The species corresponding to name, or Species.UNKNOWN.
-	 */
-	public final Species setSpeciesFromName(final String name) {
-
-		Species result = Species.UNKNOWN;
-		String[] bits = name.split("_");
-		String alias;
-
-		// schema version should be the first number (never the first bit though), except in multi-species databases
-		for (int i = 1; i < bits.length; i++) {
-			if (bits[i].matches("^[0-9]+$")) {
-				this.schemaVersion = isMultiSpecies() ? bits[i + 1] : bits[i];
-				break;
-			}
-		}
-
-		// there are many different possibilities for database naming; the most
-		// likely are catered for here
-
-		// homo_sapiens_core_20_34a
-		if (bits.length >= 2) {
-			alias = bits[0] + "_" + bits[1];
-			if (bits.length == 5) {
-				this.geneBuildVersion = bits[4];
-			}
-
-			if (Species.resolveAlias(alias) != Species.UNKNOWN) {
-				return Species.resolveAlias(alias);
-			}
-		}
-
-		// homo_sapiens_core_expression_est_37_35j
-		if (bits.length >= 7) {
-			alias = bits[0] + "_" + bits[1];
-			this.geneBuildVersion = bits[6];
-			if (Species.resolveAlias(alias) != Species.UNKNOWN) {
-				return Species.resolveAlias(alias);
-			}
-		}
-
-		// human_core_20, hsapiens_XXX
-		if (bits.length > 1) {
-			alias = bits[0];
-			if (Species.resolveAlias(alias) != Species.UNKNOWN) {
-				return Species.resolveAlias(alias);
-			}
-		}
-
-		// compara, mart, go doesn't really have a species. It can be ensembl_type
-		// or username_ensembl_type
-		if (bits.length >= 2
-				&& (bits[1].equalsIgnoreCase("compara") || bits[1].equalsIgnoreCase("go") || bits[1].equalsIgnoreCase("mart") || bits[1].equalsIgnoreCase("compara") || bits[1].equalsIgnoreCase("go") || bits[1]
-						.equalsIgnoreCase("mart"))) {
-			return Species.UNKNOWN;
-		}
-
-		// Vega naming convention e.g. vega_homo_sapiens_ext_20040821_v19
-		if (bits.length > 3 && bits[0].equalsIgnoreCase("vega")) {
-			alias = bits[1] + "_" + bits[2];
-			if (Species.resolveAlias(alias) != Species.UNKNOWN) {
-				return Species.resolveAlias(alias);
-			}
-		}
-
-		// username_species_type_version_release
-		if (bits.length > 3) {
-			alias = bits[1] + "_" + bits[2];
-			if (bits.length == 5) {
-				this.geneBuildVersion = bits[4];
-			}
-			if (Species.resolveAlias(alias) != Species.UNKNOWN) {
-				return Species.resolveAlias(alias);
-			}
-
-		}
-
-		// ensembl help databases
-		if (name.startsWith("ensembl_help_")) {
-
-			return Species.HELP;
-
-		}
-
-		// system/reserved databases
-		if (name.equals("mysql")) {
-
-			return Species.SYSTEM;
-
-		}
-
-		// ensembl_website databases
-		if (name.startsWith("ensembl_website")) {
-
-			return Species.ENSEMBL_WEBSITE;
-
-		}
-
-		// ncbi_taxonomy databases
-		if (name.startsWith("ncbi_taxonomy")) {
-
-			return Species.NCBI_TAXONOMY;
-
-		}
-
-		// other permutations?
-
-		if (result.equals(Species.UNKNOWN) && name.length() > 0) {
-			logger.finest("Can't deduce species from database name " + name);
-		}
-
-		return result;
-
-	}
-
-	// -----------------------------------------------------------------
-	/**
-	 * Attempt to figure out database type from database name.
-	 * 
-	 * @param name
-	 *          The database name to use.
-	 * @return The database type corresponding to name, or DatabaseType.UNKNOWN.
-	 */
-	public final DatabaseType setTypeFromName(final String name) {
-
-		DatabaseType result = DatabaseType.UNKNOWN;
-		String[] bits = name.split("_");
-		String alias;
-
-		// there are many different possibilities for database naming; the most
-		// likely are catered for here
-
-		// homo_sapiens_core_20_34a
-		if (bits.length >= 4) {
-			// Try to match homo_sapiens_core_expression_est_35_35h before
-			alias = bits[3];
-			if (DatabaseType.resolveAlias(alias) != DatabaseType.UNKNOWN) {
-				return DatabaseType.resolveAlias(alias);
-			}
-			alias = bits[2];
-			if (DatabaseType.resolveAlias(alias) != DatabaseType.UNKNOWN) {
-				return DatabaseType.resolveAlias(alias);
-			}
-		}
-
-		// human_core_20, ensembl_compara_20_1
-		if (bits.length >= 3) {
-			alias = bits[1];
-			if (DatabaseType.resolveAlias(alias) != DatabaseType.UNKNOWN) {
-				return DatabaseType.resolveAlias(alias);
-			}
-		}
-
-		// Vega naming convention e.g. vega_homo_sapiens_ext_20040821_v19
-		if (bits.length > 3 && bits[0].equalsIgnoreCase("vega")) {
-			return DatabaseType.VEGA;
-		}
-
-		// username_species_type_version_release
-		if (bits.length > 3) {
-			alias = bits[3];
-			if (DatabaseType.resolveAlias(alias) != DatabaseType.UNKNOWN) {
-				return DatabaseType.resolveAlias(alias);
-			}
-		}
-
-		// system/reserved databases
-		if (name.equals("mysql")) {
-
-			return DatabaseType.SYSTEM;
-
-		}
-
-		// ensembl_website databases
-		if (name.startsWith("ensembl_website")) {
-
-			return DatabaseType.ENSEMBL_WEBSITE;
-
-		}
-
-		// ncbi_taxonomy databases
-		if (name.startsWith("ncbi_taxonomy")) {
-
-			return DatabaseType.NCBI_TAXONOMY;
-
-		}
-
-		// ensembl genomes collection databases, e.g. hornead_escherichia_shigella_collection_core_0_52_1a or
-		// escherichia_shigella_collection_core_0_52_1a
-		if (name.contains("collection")) {
-			return DatabaseType.CORE;
-		}
-
-		// other permutations?
-
-		if (result.equals(DatabaseType.UNKNOWN) && name.length() > 0) {
-			logger.finest("Can't deduce database type from database name " + name + "; use -type argument to specify it explicitly");
-		}
-
-		return result;
+		this.info = getInfoFromName(name, species, type);
 
 	}
 
@@ -302,17 +256,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	 * @return Database name.
 	 */
 	public final String getName() {
-
-		return name;
-	}
-
-	/**
-	 * @param name
-	 *          New database name.
-	 */
-	public final void setName(final String name) {
-
-		this.name = name;
+		return info.getName();
 	}
 
 	/**
@@ -320,33 +264,14 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	 */
 	public final Species getSpecies() {
 
-		return species;
-	}
-
-	/**
-	 * @param species
-	 *          New Species.
-	 */
-	public final void setSpecies(final Species species) {
-
-		this.species = species;
+		return info.getSpecies();
 	}
 
 	/**
 	 * @return Database type (core, est etc)
 	 */
 	public final DatabaseType getType() {
-
-		return type;
-	}
-
-	/**
-	 * @param type
-	 *          New database type (core, est etc)
-	 */
-	public final void setType(final DatabaseType type) {
-
-		this.type = type;
+		return info.getType();
 	}
 
 	// -----------------------------------------------------------------
@@ -358,31 +283,24 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	}
 
 	public String getSchemaVersion() {
-		return schemaVersion;
-	}
-
-	public void setSchemaVersion(String schemaVersion) {
-		this.schemaVersion = schemaVersion;
+		return info.getSchemaVersion();
 	}
 
 	public String getGeneBuildVersion() {
-		return geneBuildVersion;
-	}
-
-	public void setGeneBuildVersion(String geneBuildVersion) {
-		this.geneBuildVersion = geneBuildVersion;
+		return info.getGenebuildVersion();
 	}
 
 	// -----------------------------------------------------------------
-	// Return the numeric genebuild version, or -1 if this cannot be deduced (e.g. from a non-standard database name)
+	// Return the numeric genebuild version, or -1 if this cannot be deduced
+	// (e.g. from a non-standard database name)
 
 	public int getNumericGeneBuildVersion() {
 
-		if (geneBuildVersion == null) {
+		if (getGeneBuildVersion() == null) {
 			return -1;
 		}
 
-		String[] bits = geneBuildVersion.split("[a-zA-Z]");
+		String[] bits = getGeneBuildVersion().split("[a-zA-Z]");
 
 		return Integer.parseInt(bits[0]);
 
@@ -396,70 +314,65 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 		this.databaseRegistry = databaseRegistry;
 	}
 
-	public boolean isMultiSpecies() {
-		return isMultiSpecies;
-	}
-
-	public void setMultiSpecies(boolean isMultiSpecies) {
-		this.isMultiSpecies = isMultiSpecies;
-	}
-
-	// -----------------------------------------------------------------
 	/**
-	 * Check if this database is a multi-species one or not
+	 * Check if the database has multiple species
+	 * 
+	 * @return true if the database contains more than one species
 	 */
-	public boolean checkMultiSpecies(Connection con, Species species, DatabaseType type) {
+	public boolean isMultiSpecies() {
+		return getSpeciesIds().size() > 1;
+	}
 
-		boolean result = false;
+	/**
+	 * Utility method to determine list of species IDs found within a core
+	 * database
+	 * 
+	 * @param con
+	 * @param species
+	 * @param type
+	 * @return list of numeric IDs
+	 */
+	public static List<Integer> getSpeciesIds(Connection con, Species species,
+			DatabaseType type) {
+
+		List<Integer> speciesId = CollectionUtils.createArrayList();
 
 		// only generic databases have a coord_system table
 		if (type == null || !type.isGeneric()) {
-			return false;
+			return speciesId;
 		}
 
-		// now actually see if the table exists, and has a species_id column
-		if (DBUtils.columnExists(con, "coord_system", "species_id")) {
-
-			// if so, see if there's more than one species_id defined
-			try {
-				Statement stmt = con.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT COUNT(DISTINCT(species_id)) FROM coord_system");
-				if (rs != null) {
-					if (rs.first()) {
-						int speciesCount = rs.getInt(1);
-						if (speciesCount > 1) {
-							result = true;
-							logger.finest("Found a multi-species database, " + speciesCount + " species.");
-						}
-					} else {
-						result = false;
-					}
+		try {
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt
+					.executeQuery("SELECT DISTINCT(species_id) FROM meta where species_id is not null");
+			if (rs != null) {
+				while (rs.next()) {
+					speciesId.add(rs.getInt(1));
 				}
-				rs.close();
-				stmt.close();
-			} catch (Exception e) {
-				System.out.println(DBUtils.getShortDatabaseName(con) + " " + species +" " + type);
-				e.printStackTrace();
 			}
+			rs.close();
+			stmt.close();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
-		return result;
+		return speciesId;
 
 	}
 
+	/**
+	 * @return information about the server that this database is found on
+	 */
 	public DatabaseServer getDatabaseServer() {
 		return server;
-	}
-
-	public void setDatabaseServer(DatabaseServer server) {
-		this.server = server;
 	}
 
 	public Connection getConnection() {
 
 		if (connection == null) {
 
-			connection = server.getDatabaseConnection(name);
+			connection = server.getDatabaseConnection(getName());
 
 		}
 
@@ -468,15 +381,37 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	}
 
 	/**
-	 * Test if this entry is equal to another. Comparison is currently only on database name.
+	 * Test if this entry is equal to another. Comparison is currently only on
+	 * database name.
 	 * 
 	 * @param dbre
 	 * @return true if names are the same.
 	 */
 	public boolean equals(DatabaseRegistryEntry dbre) {
 
-		return (dbre.getName().equals(name));
+		return (dbre.getName().equals(getName()));
 
+	}
+
+	public String getAlias() {
+		return info.getAlias();
+	}
+
+	/**
+	 * Utility method to determine list of species IDs found within the attached
+	 * database
+	 * 
+	 * @return list of numeric IDs
+	 */
+	public List<Integer> getSpeciesIds() {
+		if (speciesIds == null) {
+			speciesIds = getSpeciesIds(connection, getSpecies(), getType());
+		}
+		return speciesIds;
+	}
+
+	public String toString() {
+		return getName();
 	}
 
 	// -----------------------------------------------------------------
