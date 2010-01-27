@@ -720,7 +720,7 @@ public final class DBUtils {
 	 */
 	public static List<DatabaseServer> getSecondaryDatabaseServers() {
 
-		Utils.readPropertiesFileIntoSystem("database.properties", false);
+		Utils.readPropertiesFileIntoSystem(TestRunner.PROPERTIES_FILE, false);
 
 		if (secondaryDatabaseServers == null) {
 
