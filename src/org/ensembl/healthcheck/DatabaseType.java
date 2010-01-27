@@ -125,8 +125,8 @@ public final class DatabaseType {
 		}
 
 		// --------------------------------------
-
-		if (in(lcAlias, "core")) {
+        // EG: treat eg_core as core dbs as well
+		if (in(lcAlias, "core") || in(lcAlias,"eg_core")) {
 
 			return CORE;
 
