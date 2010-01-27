@@ -16,7 +16,6 @@
 
 package org.ensembl.healthcheck;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -29,7 +28,6 @@ import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.testcase.OrderedDatabaseTestCase;
 import org.ensembl.healthcheck.testcase.Repair;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * <p>
@@ -52,8 +50,9 @@ public class TestRunner {
 	/** Output level used by ReportManager */
 	protected int outputLevel = ReportLine.PROBLEM;
 
+    // EG change to public to allow Database runner to modify this
 	/** The name of the file where configuration is stored */
-	protected static String PROPERTIES_FILE = "database.properties";
+	public static String PROPERTIES_FILE = "database.properties";
 
 	/** Flag to determine whether repairs will be shown if appropriate */
 	protected boolean showRepair = false;
@@ -73,16 +72,18 @@ public class TestRunner {
 	// -------------------------------------------------------------------------
 	/**
 	 * Run appropriate tests against databases. Also run show/repair methods if
-	 * the test implements the Repair interface and the appropriate flags are set.
+	 * the test implements the Repair interface and the appropriate flags are
+	 * set.
 	 * 
 	 * @param databaseRegistry
-	 *          The DatabaseRegistry to use.
+	 *            The DatabaseRegistry to use.
 	 * @param testRegistry
-	 *          The TestRegistry to use.
+	 *            The TestRegistry to use.
 	 * @param skipSlow
-	 *          If true, skip long-running tests.
+	 *            If true, skip long-running tests.
 	 */
-	protected void runAllTests(DatabaseRegistry databaseRegistry, TestRegistry testRegistry, boolean skipSlow) {
+	protected void runAllTests(DatabaseRegistry databaseRegistry,
+			TestRegistry testRegistry, boolean skipSlow) {
 
 		int numberOfTestsRun = 0;
 
@@ -95,28 +96,41 @@ public class TestRunner {
 		for (int i = 0; i < databases.length; i++) {
 
 			DatabaseRegistryEntry database = databases[i];
-			List allSingleDatabaseTests = testRegistry.getAllSingle(groupsToRun, database.getType());
+			List allSingleDatabaseTests = testRegistry.getAllSingle(
+					groupsToRun, database.getType());
 
 			for (Iterator it = allSingleDatabaseTests.iterator(); it.hasNext();) {
 
-				SingleDatabaseTestCase testCase = (SingleDatabaseTestCase) it.next();
+				SingleDatabaseTestCase testCase = (SingleDatabaseTestCase) it
+						.next();
 
-				if (!testCase.isLongRunning() || (testCase.isLongRunning() && !skipSlow)) {
+				if (!testCase.isLongRunning()
+						|| (testCase.isLongRunning() && !skipSlow)) {
 
 					ReportManager.startTestCase(testCase, databases[i]);
 
-					boolean result = testCase.run(database);
+					try {
+						boolean result = testCase.run(database);
 
-					ReportManager.finishTestCase(testCase, result, databases[i]);
-					logger.info(testCase.getName() + " [" + databases[i].getName() + "]" + (result ? "PASSED" : "FAILED"));
+						ReportManager.finishTestCase(testCase, result,
+								databases[i]);
+						logger.info(testCase.getName() + " ["
+								+ databases[i].getName() + "]"
+								+ (result ? "PASSED" : "FAILED"));
 
-					numberOfTestsRun++;
+						numberOfTestsRun++;
 
-					checkRepair(testCase, database);
-
+						checkRepair(testCase, database);
+					} catch (Throwable e) {
+						logger.warning("Could not execute test "
+								+ testCase.getName() + " on "
+								+ databases[i].getName() + ": "
+								+ e.getMessage());
+					}
 				} else {
 
-					logger.info("Skipping long-running test " + testCase.getName());
+					logger.info("Skipping long-running test "
+							+ testCase.getName());
 
 				}
 
@@ -136,17 +150,24 @@ public class TestRunner {
 
 			MultiDatabaseTestCase testCase = (MultiDatabaseTestCase) it.next();
 
-			if (!testCase.isLongRunning() || (testCase.isLongRunning() && !skipSlow)) {
+			if (!testCase.isLongRunning()
+					|| (testCase.isLongRunning() && !skipSlow)) {
 
-				ReportManager.startTestCase(testCase, null);
+				try {
+					ReportManager.startTestCase(testCase, null);
 
-				boolean result = testCase.run(databaseRegistry);
+					boolean result = testCase.run(databaseRegistry);
 
-				ReportManager.finishTestCase(testCase, result, null);
-				logger.info(testCase.getName() + " " + (result ? "PASSED" : "FAILED"));
+					ReportManager.finishTestCase(testCase, result, null);
+					logger.info(testCase.getName() + " "
+							+ (result ? "PASSED" : "FAILED"));
 
-				numberOfTestsRun++;
-
+					numberOfTestsRun++;
+				} catch (Throwable e) {
+				    // catch and log unexpected exceptions
+					logger.warning("Could not execute test "
+							+ testCase.getName() + ": " + e.getMessage());
+				}
 			} else {
 
 				logger.info("Skipping long-running test " + testCase.getName());
@@ -166,14 +187,16 @@ public class TestRunner {
 
 		for (Iterator it = allOrderedDatabaseTests.iterator(); it.hasNext();) {
 
-			OrderedDatabaseTestCase testCase = (OrderedDatabaseTestCase) it.next();
+			OrderedDatabaseTestCase testCase = (OrderedDatabaseTestCase) it
+					.next();
 
 			ReportManager.startTestCase(testCase, null);
 
 			boolean result = testCase.run(orderedDatabases);
 
 			ReportManager.finishTestCase(testCase, result, null);
-			logger.info(testCase.getName() + " " + (result ? "PASSED" : "FAILED"));
+			logger.info(testCase.getName() + " "
+					+ (result ? "PASSED" : "FAILED"));
 
 			numberOfTestsRun++;
 
@@ -191,7 +214,8 @@ public class TestRunner {
 	/**
 	 * Check if the given testcase can repair errors on the given database.
 	 */
-	private void checkRepair(EnsTestCase testCase, DatabaseRegistryEntry database) {
+	private void checkRepair(EnsTestCase testCase,
+			DatabaseRegistryEntry database) {
 
 		// check for show/do repair
 		if (testCase.canRepair()) {
@@ -204,15 +228,15 @@ public class TestRunner {
 		}
 
 	} // checkRepair
-	
+
 	// -------------------------------------------------------------------------
 	/**
 	 * Get the union of all the test groups.
 	 * 
 	 * @param tests
-	 *          The tests to check.
-	 * @return An array containing the names of all the groups that any member of
-	 *         tests is a member of.
+	 *            The tests to check.
+	 * @return An array containing the names of all the groups that any member
+	 *         of tests is a member of.
 	 */
 	public String[] listAllGroups(List<EnsTestCase> tests) {
 
@@ -238,10 +262,11 @@ public class TestRunner {
 	 * List all the tests in a particular group.
 	 * 
 	 * @param tests
-	 *          The tests to check.
+	 *            The tests to check.
 	 * @param group
-	 *          The group name to check.
-	 * @return An array containing the names whatever tests are a member of group.
+	 *            The group name to check.
+	 * @return An array containing the names whatever tests are a member of
+	 *         group.
 	 */
 	public String[] listTestsInGroup(List tests, String group) {
 
@@ -263,10 +288,10 @@ public class TestRunner {
 	 * Print (to stdout) out a list of test reports, keyed by the test type.
 	 * 
 	 * @param level
-	 *          The lowest report level (see ReportLine) to print. Reports with a
-	 *          level lower than this are not printed.
+	 *            The lowest report level (see ReportLine) to print. Reports
+	 *            with a level lower than this are not printed.
 	 * @param printFailureText
-	 *          If true, print result of getFailureText() for each test.
+	 *            If true, print result of getFailureText() for each test.
 	 */
 	public void printReportsByTest(int level, boolean printFailureText) {
 
@@ -288,13 +313,15 @@ public class TestRunner {
 				// print failure text if appropriate
 				String failureText = "";
 				try {
-					EnsTestCase testObj = (EnsTestCase) (Class.forName(test).newInstance());
+					EnsTestCase testObj = (EnsTestCase) (Class.forName(test)
+							.newInstance());
 					String teamResponsible = testObj.getTeamResponsible();
 					if (teamResponsible == null) {
 						teamResponsible = "Not set";
 					}
-					System.out.println(" [Team responsible: " + teamResponsible + "]");
-					
+					System.out.println(" [Team responsible: " + teamResponsible
+							+ "]");
+
 					failureText = testObj.getFailureText();
 					if (testObj.getEffect() != null) {
 						failureText += testObj.getEffect() + "\n";
@@ -320,7 +347,8 @@ public class TestRunner {
 						} else {
 							dbName = reportLine.getDatabaseName() + ": ";
 						}
-						System.out.println("  " + dbName + reportLine.getMessage());
+						System.out.println("  " + dbName
+								+ reportLine.getMessage());
 					} // if level
 				} // while it2
 			} // if lines
@@ -334,8 +362,8 @@ public class TestRunner {
 	 * Print (to stdout) a list of test results, ordered by database.
 	 * 
 	 * @param level
-	 *          The minimum level of report to print - see ReportLine. Reports
-	 *          below this level are not printed.
+	 *            The minimum level of report to print - see ReportLine. Reports
+	 *            below this level are not printed.
 	 */
 	public void printReportsByDatabase(int level) {
 
@@ -357,7 +385,9 @@ public class TestRunner {
 				while (it2.hasNext()) {
 					ReportLine reportLine = (ReportLine) it2.next();
 					if (reportLine.getLevel() >= level) {
-						System.out.println(" " + reportLine.getShortTestCaseName() + ": " + reportLine.getMessage());
+						System.out.println(" "
+								+ reportLine.getShortTestCaseName() + ": "
+								+ reportLine.getMessage());
 					} // if level
 				} // while it2
 			} // if nProblems
@@ -371,7 +401,7 @@ public class TestRunner {
 	 * command line)
 	 * 
 	 * @param str
-	 *          The output level to use.
+	 *            The output level to use.
 	 */
 	protected void setOutputLevel(String str) {
 
@@ -389,7 +419,8 @@ public class TestRunner {
 		} else if (lstr.equals("info")) {
 			outputLevel = ReportLine.INFO;
 		} else {
-			logger.warning("Output level " + str + " not recognised; using 'all'");
+			logger.warning("Output level " + str
+					+ " not recognised; using 'all'");
 		}
 
 	} // setOutputLevel
@@ -399,7 +430,7 @@ public class TestRunner {
 	 * Set the output level.
 	 * 
 	 * @param l
-	 *          The new output level.
+	 *            The new output level.
 	 */
 	public void setOutputLevel(int l) {
 
