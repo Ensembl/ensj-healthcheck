@@ -1,0 +1,10 @@
+amino_acid_sub
+starts_met
+has_stop_codon
+AvgResWeight
+NumResidues
+Charge
+initial_met
+MolecularWeight
+IsoPoint
+_selenocysteine
