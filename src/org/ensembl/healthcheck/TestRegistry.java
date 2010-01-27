@@ -298,7 +298,9 @@ public class TestRegistry {
                 if (!Modifier.isAbstract(newClass.getModifiers())) {
                 	obj = newClass.newInstance();
                 }
-
+            } catch (IllegalAccessException ie) {
+                // EG: Catch and log reflection warnings
+                logger.warning(baseClassName + " does not seem to be a test case class");
             } catch (InstantiationException ie) {
                 logger.warning(baseClassName + " does not seem to be a test case class");
             } catch (Exception e) {
