@@ -31,6 +31,7 @@ import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.TestRunner;
 import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.SQLParser;
@@ -1707,10 +1708,18 @@ public abstract class EnsTestCase {
 		TreeSet<DatabaseRegistryEntry> matchingDBs = new TreeSet<DatabaseRegistryEntry>(); // get sorting for free
 
 		for (DatabaseRegistryEntry secDBRE : secondaryDatabaseRegistry.getAll()) {
-			// nulls will set type automatically
-			if (dbre.getType() == secDBRE.getType() && dbre.getSpecies() == secDBRE.getSpecies()) {
-				matchingDBs.add(secDBRE);
-				logger.finest("added " + secDBRE.getName() + " to list of databases to check for equivalent to " + dbre.getName());
+			if(dbre.getSpecies()==Species.UNKNOWN) {
+			    // EG where we don't know the species, use type and alias matching instead
+				if(dbre.getType() == secDBRE.getType() &&  dbre.getAlias().equals(secDBRE.getAlias())) {
+					matchingDBs.add(secDBRE);
+					logger.finest("added " + secDBRE.getName() + " to list of databases to check for equivalent to " + dbre.getName());					
+				}
+			} else {
+				// nulls will set type automatically
+				if (dbre.getType() == secDBRE.getType() && dbre.getSpecies() == secDBRE.getSpecies()) {
+					matchingDBs.add(secDBRE);
+					logger.finest("added " + secDBRE.getName() + " to list of databases to check for equivalent to " + dbre.getName());
+				}
 			}
 		}
 
