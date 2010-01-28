@@ -87,7 +87,7 @@ public abstract class EnsTestCase {
 	 * Names of tables in core schema that count as "feature" tables. Used in various healthchecks.
 	 */
 
-	private String[] featureTables = { "assembly_exception", "gene", "exon", "dna_align_feature", "protein_align_feature", "repeat_feature", "simple_feature", "marker_feature", "misc_feature", "qtl_feature", "karyotype", "transcript", "density_feature", "prediction_exon", "prediction_transcript", "ditag_feature" };
+	private String[] featureTables = { "assembly_exception", "gene", "exon", "dna_align_feature", "protein_align_feature", "repeat_feature", "simple_feature", "marker_feature", "misc_feature", "qtl_feature", "karyotype", "transcript", "density_feature", "prediction_exon", "prediction_transcript", "ditag_feature", "splicing_event" };
 
 
 	/**
