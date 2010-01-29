@@ -37,7 +37,7 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 
 		addToGroup("release");
 		addToGroup("post_genebuild");
-		setDescription("Check if protein_coding genes have a canonical transcript that has a valid translation. See also canonical_transcript checks in CoreForeignKeys.");
+		setDescription("Check if protein_coding genes have a canonical transcript that has a valid translation. Also check than number of canonical transcripts is correct. See also canonical_transcript checks in CoreForeignKeys.");
 		setTeamResponsible("compara");
 
 	}
@@ -56,6 +56,7 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
+		// check if protein_coding genes have a canonical transcript that has a valid translation
 		int rows = getRowCount(con, "SELECT COUNT(*) FROM gene g LEFT JOIN translation tr ON g.canonical_transcript_id=tr.transcript_id WHERE g.biotype='protein_coding' AND tr.transcript_id IS NULL");
 
 		if (rows > 0) {
@@ -68,6 +69,22 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 			ReportManager.correct(this, con, "All protein_coding genes have canonical_transcripts that translate");
 		}
 
+		// check that the number of canonical translations is correct
+		int numCanonical = getRowCount(con, "SELECT COUNT(*) FROM transcript t1, translation p, transcript t2 WHERE t1.canonical_translation_id = p.translation_id AND p.transcript_id = t2.transcript_id");
+		
+		int numTotal = getRowCount(con, "SELECT COUNT(*) FROM translation p, transcript t WHERE t.transcript_id = p.transcript_id");
+	
+		if (numCanonical != numTotal) {
+
+			result = false;
+			ReportManager.problem(this, con, "Number of canonical translations (" + numCanonical + ") is different from the total number of translations (" + numTotal + ")");
+
+		} else {
+
+			ReportManager.correct(this, con, "Number of canonical translations is correct.");
+		}
+
+		
 		return result;
 
 	} // run
