@@ -90,6 +90,9 @@
 	<target name="jar" depends="compile, copy-resources" description="generate ensj-healthcheck.jar">
 		<jar jarfile="${lib}/${name}.jar">
 			<fileset dir="${build}/" />
+			<fileset dir="${src}">
+				<include name="**/*.txt" />
+			</fileset>
 		</jar>
 	</target>
 
