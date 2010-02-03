@@ -14,6 +14,7 @@ package org.ensembl.healthcheck;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.logging.Logger;
@@ -23,6 +24,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.ensembl.healthcheck.util.CollectionUtils;
+import org.ensembl.healthcheck.util.UtilUncheckedException;
 
 /**
  * Container for information about a database that can be stored in a
@@ -105,7 +107,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 			.compile("^([^_]+)_([a-z]+)_([0-9A-Za-z]+)");
 	// ensembl_compara_bacteria_3_56
 	protected final static Pattern EGC_DB = Pattern
-			.compile("^(ensembl)_(compara)_([a-z]+)_[0-9]+_([0-9]+)");
+			.compile("^(ensembl)_(compara)_[a-z_]+_[0-9]+_([0-9]+)");
 	// ensembl_compara_56
 	protected final static Pattern EC_DB = Pattern
 			.compile("^(ensembl)_(compara)_([0-9]+)");
@@ -134,10 +136,8 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 			.compile("^(mysql|information_schema)");
 
 	protected final static Pattern[] patterns = {
-
-	EG_DB, E_DB, EC_DB, EGC_DB, EM_DB, EE_DB, EEL_DB, U_DB, V_DB, MYSQL_DB,
+		EC_DB, EGC_DB, EG_DB, E_DB, EM_DB, EE_DB, EEL_DB, U_DB, V_DB, MYSQL_DB,
 			BLAST_DB, UD_DB, TAX_DB, EW_DB, HELP_DB
-
 	};
 
 	/**
@@ -353,8 +353,9 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 			}
 			rs.close();
 			stmt.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (SQLException e) {
+			throw new UtilUncheckedException(
+					"Problem obtaining list of species IDs", e);
 		}
 
 		return speciesId;
