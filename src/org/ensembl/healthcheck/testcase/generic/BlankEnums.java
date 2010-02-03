@@ -42,6 +42,7 @@ public class BlankEnums extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("funcgen-release");
 		addToGroup("funcgen");
+		addToGroup("compara-ancestral");
 		
 		setDescription("Check for columns of type ENUM that have blank values - probably means there was a problem importing them.");
 		setPriority(Priority.AMBER);

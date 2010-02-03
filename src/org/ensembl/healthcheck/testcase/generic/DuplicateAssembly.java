@@ -36,6 +36,7 @@ public class DuplicateAssembly extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("compara-ancestral");
 		setDescription("Check that there are no duplicates in the assembly table");
 
 	}

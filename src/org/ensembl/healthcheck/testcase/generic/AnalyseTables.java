@@ -36,6 +36,7 @@ public class AnalyseTables extends SingleDatabaseTestCase {
 
 		addToGroup("release");
 		addToGroup("funcgen-release");
+		addToGroup("compara-ancestral");
 		setDescription("Check whether tables need to be analysed.");
 		setPriority(Priority.AMBER);
 		setEffect("Causes indices not to be used, making queries slow or unresponsive.");

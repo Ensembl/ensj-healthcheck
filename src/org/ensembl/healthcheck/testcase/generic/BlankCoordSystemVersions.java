@@ -38,6 +38,7 @@ public class BlankCoordSystemVersions extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("funcgen");
 		addToGroup("funcgen-release");
+		addToGroup("compara-ancestral");
 		setDescription("Check for any coord_system.version that are blank ('') - they should be NULL.");
 		setTeamResponsible("Genebuilders");//this is now inaccurate for funcgen usecase
 

@@ -42,6 +42,7 @@ public class BlanksInsteadOfNulls extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("funcgen-release");
 		addToGroup("funcgen");
+		addToGroup("compara-ancestral");
 		setDescription("Check for text columns that have the default NULL but which actually contain blanks ('') which is probably wrong");
 
 	}

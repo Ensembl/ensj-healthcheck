@@ -42,6 +42,7 @@ public class SingleDBCollations extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("compara-ancestral");
 		setDescription("Check that all table collations are latin1_swedish_ci");
 
 	}

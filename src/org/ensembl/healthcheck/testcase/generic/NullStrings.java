@@ -43,6 +43,7 @@ public class NullStrings extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("funcgen-release");
 		addToGroup("funcgen");
+		addToGroup("compara-ancestral");
 
 		setDescription("Check for rows that contain the *string* NULL - should probably be the database primitive NULL.");
 		
