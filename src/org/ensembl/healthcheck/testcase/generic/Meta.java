@@ -40,6 +40,7 @@ public class Meta extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("compara-ancestral");
 		setDescription("Check that the meta table exists, has data, the entries correspond to the " + "database name, and that the values in assembly.type match what's in the meta table");
 	}
 
@@ -56,9 +57,18 @@ public class Meta extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
+		Species species = dbre.getSpecies();
+
 		result &= checkTableExists(con);
 
 		result &= tableHasRows(con);
+
+		result &= checkSchemaVersionDBName(dbre);
+
+		if (species == Species.ANCESTRAL_SEQUENCES) {
+			// The rest of the tests are not relevant for the ancestral sequences DB
+			return result;
+		}
 
 		result &= checkOverlappingRegions(con);
 
@@ -82,8 +92,6 @@ public class Meta extends SingleDatabaseTestCase {
 		if (dbre.getType() == DatabaseType.CORE) {
 			result &= checkGenebuildID(con);
 		}
-
-		result &= checkSchemaVersionDBName(dbre);
 
 		result &= checkBuildLevel(dbre);
 

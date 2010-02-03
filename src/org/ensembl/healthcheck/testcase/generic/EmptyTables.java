@@ -34,6 +34,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("compara-ancestral");
 
 		setDescription("Checks that all tables have data");
 
@@ -53,7 +54,13 @@ public class EmptyTables extends SingleDatabaseTestCase {
 		DatabaseType type = dbre.getType();
 
 		// ----------------------------------------------------
-		if (type == DatabaseType.CORE || type == DatabaseType.VEGA) {
+		if (species == Species.ANCESTRAL_SEQUENCES) {
+
+			// Only a few tables need to be filled in ancestral databases
+			String[] ancestral = { "meta", "coord_system", "dna", "seq_region", "assembly" };
+			tables = ancestral;
+
+		} else if (type == DatabaseType.CORE || type == DatabaseType.VEGA) {
 
 			// the following tables are allowed to be empty
 			String[] allowedEmpty = { "alt_allele", "assembly_exception", "dnac", "density_feature", "density_type", "mapping_set", "seq_region_mapping", "unconventional_transcript_association" };

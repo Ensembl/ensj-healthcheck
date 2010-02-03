@@ -37,6 +37,7 @@ public class SeqRegionName extends SingleDatabaseTestCase {
 
         addToGroup("post_genebuild");
         addToGroup("release");
+        addToGroup("compara-ancestral");
         setDescription("Check that seq_region names for human and mouse are in the right format.");
 
     }
@@ -61,6 +62,12 @@ public class SeqRegionName extends SingleDatabaseTestCase {
 
 	    result &= seqRegionNameCheck(con, "clone",  "^[a-zA-Z]+[0-9]+\\.[0-9]+$");
 	    result &= seqRegionNameCheck(con, "contig", "^[a-zA-Z]+[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+$");
+
+	} else if (s.equals(Species.ANCESTRAL_SEQUENCES)) {
+
+	    Connection con = dbre.getConnection();
+
+		result &= seqRegionNameCheck(con, "ancestralsegment",  "Ancestor_[0-9]+_[0-9]+$");
 
 	}
 
