@@ -12,6 +12,11 @@ REQUIREMENTS
    your .cshrc:
 
      setenv JAVA_HOME /usr/opt/java
+     setenv PATH ${JAVA_HOME}/bin:${PATH} 
+
+   At Sanger : 
+
+     setenv JAVA_HOME /software/jdk/
      setenv PATH ${JAVA_HOME}/bin:${PATH}
 
    Note that if you get errors indicating that the java executable can't be found,
@@ -74,6 +79,10 @@ command-line options through to the TextTestRunner class.
 
 If no tests or test groups are specified, and a database regular expression is
 given with -d, the matching databases are shown.
+
+Here is an example commandline : 
+
+      sh run-healthcheck.sh -d <DATABASE_NAME>    -type core -species homo_sapiens -output problem  post_genebuild
 
 Test Groups
 -----------
