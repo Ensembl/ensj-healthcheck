@@ -1,0 +1,5 @@
+AvgResWeight
+NumResidues
+Charge
+MolecularWeight
+IsoPoint
