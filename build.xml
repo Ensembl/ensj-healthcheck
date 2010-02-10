@@ -48,7 +48,7 @@
 
 	<!-- ################################################################################## -->
 
-	<target name="compile" depends="init, java-version" description="Compile the source ">
+	<target name="compile" depends="init" description="Compile the source ">
 		<javac srcdir="${src}" destdir="${build}" excludes="**/*Test.*" debug="true" debugLevel="lines,vars,source">
 			<classpath>
 				<fileset dir="lib">
@@ -187,5 +187,45 @@
 
 
 	<!-- ################################################################################## -->
+	<!-- Execution targets to replace old run-*.sh -->
+
+	<!-- Runs the command-line healthchecks -->
+	<target name="run" description="Runs the command-line healthchecks" depends="jar">
+		<java classname="org.ensembl.healthcheck.TextTestRunner" fork="true" failonerror="true" maxmemory="1500m">
+			<arg line="${args}" />
+			<classpath>
+				<fileset dir="lib">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+		</java>
+	</target>
+
+	<!-- Check for matching database names -->
+	<target name="run-database-name-matcher" description="Check for matching database names" depends="jar">
+		<java classname="org.ensembl.healthcheck.DatabaseNameMatcher" fork="true" failonerror="true">
+			<arg line="${args}" />
+			<classpath>
+				<fileset dir="lib">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+		</java>
+	</target>
+
+	<!-- List all tests in a group -->
+	<target name="run-list-all-tests" description="List all tests in a group" depends="jar">
+		<java classname="org.ensembl.healthcheck.ListAllTests" fork="true" failonerror="true">
+			<arg line="${args}" />
+			<classpath>
+				<fileset dir="lib">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+		</java>
+	</target>
+	
+	<!-- ################################################################################## -->
+
 
 </project>
