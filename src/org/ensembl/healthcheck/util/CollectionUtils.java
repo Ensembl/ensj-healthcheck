@@ -149,5 +149,22 @@ public class CollectionUtils {
 		}
 		return elem;
 	}
+	
+	public static <T> T getFirstElement(Collection<T> collection, T defaultValue) {
+		T elem = defaultValue;
+		if (collection != null && !collection.isEmpty()) {
+			if (List.class.isAssignableFrom(collection.getClass())) {
+				elem = ((List<T>) collection).get(0);
+			} else {
+				for (T item : collection) {
+					elem = item;
+					break;
+				}
+			}
+		}
+		return elem;
+	}
+	
+
 
 }
