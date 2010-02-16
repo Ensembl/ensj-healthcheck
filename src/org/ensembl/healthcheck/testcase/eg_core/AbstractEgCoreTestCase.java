@@ -25,7 +25,8 @@ import org.ensembl.healthcheck.util.MapRowMapper;
 import org.ensembl.healthcheck.util.SqlTemplate;
 
 /**
- * Base class for EnsemblGenomes healthchecks including some new helpers 
+ * Base class for EnsemblGenomes healthchecks including some new helpers
+ * 
  * @author dstaines
  * 
  */
@@ -51,14 +52,42 @@ public abstract class AbstractEgCoreTestCase extends SingleDatabaseTestCase {
 				throws SQLException {
 			String value = resultSet.getString(2);
 			if (StringUtils.isEmpty(value)) {
-				throw new RuntimeException("Meta key " + getKey(resultSet)
+				throw new RuntimeException("Key " + getKey(resultSet)
 						+ " has empty value");
 			}
 			return value;
 		}
 
 	};
-	private static final String SPECIES_ID_QUERY = "select distinct(species_id) from meta where species_id is not null order by species_id";
+
+	public static final MapRowMapper<String, Integer> countMapper = new MapRowMapper<String, Integer>() {
+
+		public void existingObject(Integer currentValue, ResultSet resultSet,
+				int position) throws SQLException {
+			throw new RuntimeException("Duplicate key found for "
+					+ getKey(resultSet));
+		}
+
+		public String getKey(ResultSet resultSet) throws SQLException {
+			return resultSet.getString(1);
+		}
+
+		public Map<String, Integer> getMap() {
+			return CollectionUtils.createHashMap();
+		}
+
+		public Integer mapRow(ResultSet resultSet, int position)
+				throws SQLException {
+			Integer value = resultSet.getInt(2);
+			if (value == null) {
+				throw new RuntimeException("Key " + getKey(resultSet)
+						+ " has empty value");
+			}
+			return value;
+		}
+
+	};
+
 	public final static String EG_GROUP = "ensembl_genomes";
 	private final static String BINOMIAL_QUERY = "select meta_value from meta where meta_key='species.classification' and species_id=? order by meta_id limit 2";
 
@@ -98,7 +127,14 @@ public abstract class AbstractEgCoreTestCase extends SingleDatabaseTestCase {
 	}
 
 	public static String resourceToInList(String resourceName, boolean quoted) {
-		List<String> ss = resourceToStringList(resourceName);
+		return listToInList(resourceToStringList(resourceName), quoted);
+	}
+
+	public static String listToInList(List<String> ss) {
+		return listToInList(ss, true);
+	}
+
+	public static String listToInList(List<String> ss, boolean quoted) {
 		if (quoted) {
 			ss = quoteList(ss);
 		}
