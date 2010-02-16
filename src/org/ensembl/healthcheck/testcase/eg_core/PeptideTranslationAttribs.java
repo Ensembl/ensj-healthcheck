@@ -33,6 +33,7 @@ public class PeptideTranslationAttribs extends AbstractEgCoreTestCase {
 		res = resourceToStringList("/org/ensembl/healthcheck/testcase/eg_core/peptide_translation_attribs.txt");
 		query = TemplateBuilder.template(QUERY, "inlist", listToInList(res));
 	}
+	
 
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
 		boolean passes = true;

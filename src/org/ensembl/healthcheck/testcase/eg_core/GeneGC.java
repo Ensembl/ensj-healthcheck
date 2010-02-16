@@ -22,7 +22,7 @@ import org.ensembl.healthcheck.util.SqlTemplate;
  * 
  */
 public class GeneGC extends AbstractEgCoreTestCase {
-	
+
 	private static final String ATTRIB_TYPE_QUERY = "SELECT attrib_type_id FROM attrib_type WHERE code='GeneGC'";
 	private final static String GC_QUERY = "select attrib_type_id,count(*) from gene "
 			+ "join gene_attrib using (gene_id) join attrib_type using (attrib_type_id) "
