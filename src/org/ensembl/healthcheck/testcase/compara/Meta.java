@@ -316,13 +316,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
             result = false;
         }
 
-	//Calculate max_align_ for constrained elements
-	if (!tableHasRows(con, "constrained_element")) {
-            ReportManager.problem(this, con, "NO ENTRIES in constrained_element table");
-            return false;
-        }
-
-        // Calculate current max_alignment_length by method_link_species_set
+        // Calculate current max_align_ by method_link_species_set for constrained elements
         String sql_ce = new String("SELECT CONCAT('max_align_', method_link_species_set_id)," +
             " MAX(dnafrag_end - dnafrag_start) FROM constrained_element" +
             " GROUP BY method_link_species_set_id");
