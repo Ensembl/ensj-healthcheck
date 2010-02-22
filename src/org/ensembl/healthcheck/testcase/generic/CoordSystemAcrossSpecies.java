@@ -25,7 +25,7 @@ import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
  */
 public class CoordSystemAcrossSpecies extends MultiDatabaseTestCase {
 
-    private DatabaseType[] types = {DatabaseType.CORE, DatabaseType.CDNA, DatabaseType.VEGA, DatabaseType.OTHERFEATURES};
+    private DatabaseType[] types = {DatabaseType.CORE, DatabaseType.CDNA, DatabaseType.OTHERFEATURES};
 
     /**
      * Creates a new instance of CoordSystemAcrossSpecies

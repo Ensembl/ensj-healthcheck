@@ -104,9 +104,9 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 
 	// ----------------------------------------------------------------------
 
-	protected Map getCountsBySQL(DatabaseRegistryEntry dbre, String sql) {
+	protected Map<String, Integer> getCountsBySQL(DatabaseRegistryEntry dbre, String sql) {
 
-		Map result = new HashMap();
+		Map<String, Integer> result = new HashMap<String, Integer>();
 
 		try {
 
