@@ -35,8 +35,7 @@ public class ForeignKeyFamilyId extends SingleDatabaseTestCase {
      */
     public ForeignKeyFamilyId() {
 
-        addToGroup("compara_db_constraints");
-        addToGroup("protein_db_constraints");
+        addToGroup("compara_homology");
         setDescription("Check for broken foreign-key relationships in ensembl_compara databases.");
         setTeamResponsible("compara");
 

@@ -44,7 +44,7 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
      */
     public CheckSpeciesSetTag() {
 
-        addToGroup("protein_db_constraints");
+        addToGroup("compara_homology");
         setDescription("Check the content of the species_set_tag table");
         setTeamResponsible("compara");
 

@@ -36,7 +36,7 @@ public class ForeignKeyGenomicAlignId extends SingleDatabaseTestCase {
      */
     public ForeignKeyGenomicAlignId() {
 
-        addToGroup("compara_db_constraints");
+        addToGroup("compara_genomic");
         setDescription("Check for broken foreign-key relationships in ensembl_compara databases.");
         setTeamResponsible("compara");
 

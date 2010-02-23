@@ -36,8 +36,7 @@ public class ForeignKeyHomologyId extends SingleDatabaseTestCase {
      */
     public ForeignKeyHomologyId() {
 
-        addToGroup("compara_db_constraints");
-        addToGroup("protein_db_constraints");
+        addToGroup("compara_homology");
         setDescription("Check for broken foreign-key relationships in ensembl_compara databases.");
         setTeamResponsible("compara");
 

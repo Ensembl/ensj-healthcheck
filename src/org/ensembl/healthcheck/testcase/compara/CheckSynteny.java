@@ -39,7 +39,7 @@ public class CheckSynteny extends SingleDatabaseTestCase {
      */
     public CheckSynteny() {
 
-        addToGroup("compara_db_constraints");
+        addToGroup("compara_genomic");
         setDescription("Check for missing syntenies in the compara database.");
         setTeamResponsible("compara");
 

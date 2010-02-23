@@ -36,7 +36,7 @@ public class ForeignKeyDnafragId extends SingleDatabaseTestCase {
      */
     public ForeignKeyDnafragId() {
 
-        addToGroup("compara_db_constraints");
+        addToGroup("compara_genomic");
         setDescription("Check for broken foreign-key relationships in ensembl_compara databases.");
         setTeamResponsible("compara");
     }

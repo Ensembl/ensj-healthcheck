@@ -40,7 +40,8 @@ public class SingleDBCollations extends SingleDatabaseTestCase {
      */
     public SingleDBCollations() {
 
-        addToGroup("compara_db_constraints");
+        addToGroup("compara_genomic");
+        addToGroup("compara_homology");
         setDescription("Check that all table collations are " + TARGET_COLLATION);
         setTeamResponsible("compara");
 	

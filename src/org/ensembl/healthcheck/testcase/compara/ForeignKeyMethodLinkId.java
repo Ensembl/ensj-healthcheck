@@ -36,8 +36,8 @@ public class ForeignKeyMethodLinkId extends SingleDatabaseTestCase {
      */
     public ForeignKeyMethodLinkId() {
 
-        addToGroup("compara_db_constraints");
-        addToGroup("protein_db_constraints");
+        addToGroup("compara_genomic");
+        addToGroup("compara_homology");
         setDescription("Check for broken foreign-key relationships in ensembl_compara databases.");
         setTeamResponsible("compara");
 

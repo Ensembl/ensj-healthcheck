@@ -36,7 +36,7 @@ public class CheckGenomicAlignGenomeDBs extends SingleDatabaseTestCase {
      */
     public CheckGenomicAlignGenomeDBs() {
 
-        addToGroup("compara_db_constraints");
+        addToGroup("compara_genomic");
         setDescription("Check the genome_dbs for a method_link_species_set are present in the genomic_aligns");
         setTeamResponsible("compara");
 

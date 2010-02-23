@@ -53,7 +53,8 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
      */
     public Meta() {
 
-        addToGroup("compara_db_constraints");
+        addToGroup("compara_genomic");
+        addToGroup("compara_homology");
         setDescription("Tests that proper max_alignment_length have been defined.");
         setDescription("Check meta table for the right schema version and max alignment lengths");
         setTeamResponsible("compara");
@@ -289,8 +290,8 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 
         // Check whether tables are empty or not
         if (!tableHasRows(con, "genomic_align")) {
-            ReportManager.problem(this, con, "NO ENTRIES in genomic_align table");
-            return false;
+            ReportManager.correct(this, con, "NO ENTRIES in genomic_align table");
+            return true;
         }
 
         // Calculate current max_alignment_length by method_link_species_set
