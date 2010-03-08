@@ -66,8 +66,14 @@ public class TranscriptVariation extends SingleDatabaseTestCase {
         } else {
       //      ReportManager.info(this, con, "No transcript_variation have consequence_type a empty string");
         }
-        if (result){
-        	ReportManager.correct(this,con,"transcript_variation have no peptide_allele_string >1 or consequence_type a empty string");
+	
+	int rows2 = getRowCount(con, "SELECT COUNT(*) FROM variation_feature vf WHERE NOT EXISTS (SELECT * FROM transcript_variation tv WHERE tv.variation_feature_id = vf.variation_feature_id) AND vf.consequence_type != 'INTERGENIC'");
+        if (rows2 >=1) {
+	    result = false;
+	    ReportManager.problem(this, con, rows2 + " with consequence_type != 'INTERGENIC' and there is no corresponding transcript exists in transcript_variation table");
+	}
+	if (result){
+        	ReportManager.correct(this,con,"transcript_variation have peptide_allele_string >1, indicating column shift, peptide_allele_string become a number or consequence_type a empty string or consequence_type is not a INTERGENIC where there is no transcript exists");
         }
 
         return result;
