@@ -84,7 +84,10 @@ public final class DatabaseType {
 	/** A functional genomics database */
 	public static final DatabaseType FUNCGEN = new DatabaseType("funcgen");
 
-	/** A database whos type has not been determined */
+	/** A production database */
+	public static final DatabaseType PRODUCTION = new DatabaseType("production");
+	
+	/** A database whose type has not been determined */
 	public static final DatabaseType UNKNOWN = new DatabaseType("unknown");
 
 	private final String name;
@@ -283,6 +286,15 @@ public final class DatabaseType {
 			return FUNCGEN;
 
 		}
+		
+		// --------------------------------------
+
+		if (in(lcAlias, "ensembl_production")) {
+
+			return PRODUCTION;
+
+		}
+
 
 		// --------------------------------------
 		// treat ensembl genomes collection databases as core
