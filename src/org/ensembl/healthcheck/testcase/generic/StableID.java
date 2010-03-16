@@ -88,13 +88,12 @@ public class StableID extends SingleDatabaseTestCase {
 
 		// there are several species where ID mapping is not done
 		Species s = dbre.getSpecies();
-		if (s != Species.CAENORHABDITIS_ELEGANS && s != Species.DROSOPHILA_MELANOGASTER &&
+		if (s!=null && s != Species.CAENORHABDITIS_ELEGANS && s != Species.DROSOPHILA_MELANOGASTER &&
 			s != Species.SACCHAROMYCES_CEREVISIAE && s != Species.ANOPHELES_GAMBIAE && s != Species.UNKNOWN) {
 			result &= checkPrefixes(dbre);
 			result &= checkStableIDEventTypes(con);
+			result = checkStableIDTimestamps(con);
 		}
-
-		result = checkStableIDTimestamps(con);
 		
 		return result;
 	}
