@@ -10,14 +10,14 @@ package org.ensembl.healthcheck.testcase.eg_core;
  * @author dstaines
  * 
  */
-public class EgMeta extends AbstractEgMeta {
+public class SuggestedEgMeta extends AbstractEgMeta {
 
 	/**
 	 * @param metaKeys
 	 */
-	public EgMeta() {
+	public SuggestedEgMeta() {
 		super(
-				resourceToStringList("/org/ensembl/healthcheck/testcase/eg_core/required_meta_keys.txt"));
+				resourceToStringList("/org/ensembl/healthcheck/testcase/eg_core/meta_keys.txt"));
 	}
 
 }
