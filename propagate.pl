@@ -76,11 +76,11 @@ if (!$new_dbname) {
 } else {
 
   # we are propagating a single database
-  $old_to_new_db_name = create_db_name_cache($dbi1, $old_release, $new_release, $new_dbname);
+  $old_to_new_db_name = create_db_name_cache($dbi1, $db1, $old_release, $new_release, $new_dbname);
 
   # add second database server list if required
   if ($host2) {
-    my $second_server_dbs = create_db_name_cache($dbi1, $dbi2, $old_release, $new_release);
+    my $second_server_dbs = create_db_name_cache($dbi1, $dbi2, $old_release, $new_release, $new_dbname);
     $old_to_new_db_name = { %$old_to_new_db_name, %$second_server_dbs }; # note use of {} since we're dealing with references
 
   }
