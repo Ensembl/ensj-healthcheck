@@ -1,4 +1,4 @@
-JAVA_HOME=/software/jdk
+JAVA_HOME=/software/jdk1.6.0_01
 LSB_DEFAULTPROJECT=ensembl-core
 
 1 0 * * * $HOME/ensj-healthcheck/run-healthcheck-web-parallel.sh > $HOME/ensj-healthcheck/web.out 2>&1
