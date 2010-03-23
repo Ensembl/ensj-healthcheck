@@ -37,7 +37,7 @@ $host2    = $host2 || "ens-staging2";
 $port2    = $port2 || "3306";
 
 # Note healthchecks db ($dbname) is assumed to be on $host1
-$dbname  = $dbname || "healthchecks";
+$dbname  = $dbname || "gp1_healthchecks";
 
 if (!($old_release && $new_release)) {
   print "Must specify -old_release and -new_release\n";
@@ -76,7 +76,7 @@ if (!$new_dbname) {
 } else {
 
   # we are propagating a single database
-  $old_to_new_db_name = create_db_name_cache($dbi1, $db1, $old_release, $new_release, $new_dbname);
+  $old_to_new_db_name = create_db_name_cache($dbi1, $dbi1, $old_release, $new_release, $new_dbname);
 
   # add second database server list if required
   if ($host2) {
