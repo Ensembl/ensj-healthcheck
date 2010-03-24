@@ -290,7 +290,7 @@ public final class DBUtils {
 
 				} else {
 					// rs1 has more rows than rs2
-					ReportManager.problem(testCase, name1, singleTableName + " (or definition) has more rows in " + name1 + " than in " + name2);
+					ReportManager.problem(testCase, name1, singleTableName + " has more rows in " + name1 + " than in " + name2);
 					return false;
 				}
 
