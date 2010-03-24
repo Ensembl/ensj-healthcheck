@@ -87,8 +87,8 @@ public abstract class EnsTestCase {
 	 * Names of tables in core schema that count as "feature" tables. Used in various healthchecks.
 	 */
 
-	private String[] featureTables = { "assembly_exception", "gene", "exon", "dna_align_feature", "protein_align_feature", "repeat_feature", "simple_feature", "marker_feature", "misc_feature", "qtl_feature", "karyotype", "transcript", "density_feature", "prediction_exon", "prediction_transcript", "ditag_feature", "splicing_event" };
-
+	private String[] featureTables = { "assembly_exception", "gene", "exon", "dna_align_feature", "protein_align_feature", "repeat_feature", "simple_feature", "marker_feature", "misc_feature",
+			"qtl_feature", "karyotype", "transcript", "density_feature", "prediction_exon", "prediction_transcript", "ditag_feature", "splicing_event" };
 
 	/**
 	 * Tables that have an analysis ID.
@@ -97,22 +97,23 @@ public abstract class EnsTestCase {
 	private String[] tablesWithAnalysisID = { "gene", "protein_feature", "dna_align_feature", "protein_align_feature", "repeat_feature", "prediction_transcript", "simple_feature", "marker_feature",
 			"qtl_feature", "density_type", "object_xref", "transcript", "unmapped_object", "ditag_feature" };
 
-
-		/**
+	/**
 	 * Names of tables in funcgen schema that count as "feature" tables. Used in various healthchecks.
 	 */
 
-	private String[] funcgenFeatureTables = { "probe_feature", "annotated_feature", "regulatory_feature", "external_feature"};
-
+	private String[] funcgenFeatureTables = { "probe_feature", "annotated_feature", "regulatory_feature", "external_feature" };
 
 	/**
 	 * Funcgen tables that have an analysis ID.
 	 */
 
-	private String[] funcgenTablesWithAnalysisID = { "probe_feature", "annotated_feature", "regulatory_feature", "external_feature", "object_xref", "unmapped_object", "feature_set", "result_set"};
+	private String[] funcgenTablesWithAnalysisID = { "probe_feature", "annotated_feature", "regulatory_feature", "external_feature", "object_xref", "unmapped_object", "feature_set", "result_set" };
 
-
-
+	/**
+	 * A DatabaseRegistryEntry pointing to the production database.
+	 */
+	DatabaseRegistryEntry productionDBRE = null;
+	
 	// -------------------------------------------------------------------------
 	/**
 	 * Creates a new instance of EnsTestCase
@@ -776,7 +777,7 @@ public abstract class EnsTestCase {
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 
 		DatabaseRegistry mainDatabaseRegistry = DBUtils.getMainDatabaseRegistry();
-		
+
 		for (DatabaseRegistryEntry dbre : mainDatabaseRegistry.getMatching(regexp)) {
 
 			Connection con = dbre.getConnection();
@@ -1279,11 +1280,95 @@ public abstract class EnsTestCase {
 	public Connection getSchemaConnection(String schema) {
 
 		DatabaseRegistryEntry dbre = DBUtils.getMainDatabaseRegistry().getByExactName(schema);
-			
+
 		return dbre.getConnection();
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+	 * Get a whole table as a ResultSet
+	 * 
+	 * @param table
+	 *          The name of the schema to connect to.
+	 * @return A ResultSet containing the contents of the table.
+	 */
+	public ResultSet getWholeTable(Connection con, String table) {
+
+		ResultSet rs = null;
+
+		// TODO - is full ResultSet always returned?
+		try {
+
+			Statement stmt = con.createStatement();
+			rs = stmt.executeQuery("SELECT * FROM " + table);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return rs;
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+	 * Get a connection to the production database.
+	 * 
+	 * @param table
+	 *          The name of the schema to connect to.
+	 * @return A ResultSet containing the contents of the table.
+	 */
+	public DatabaseRegistryEntry getProductionDatabase() {
+
+		// return existing one if we already have it
+		if (productionDBRE != null) {
+			
+			return productionDBRE;
+		
+		} else {
+			
+			// create it
+			List<String> list = new ArrayList<String>();
+			list.add("ensembl_production_\\d+");
+
+			DatabaseRegistry productionDBR = new DatabaseRegistry(list, null, null, false);
+
+			if (productionDBR.getEntryCount() == 0) {
+
+				logger.warning("Can't connect to production database. Skipping.");
+				return null;
+
+			} else if (productionDBR.getEntryCount() > 1) {
+
+				logger.warning("Found " + productionDBR.getEntryCount() + " production databases, only need one. Skipping.");
+				return null;
+
+			}
+
+			productionDBRE = productionDBR.getAll()[0];
+			logger.finest("Got production db: " + productionDBRE.getName());
+			
+		}
+		
+		return productionDBRE;
 		
 	}
 
+	// -------------------------------------------------------------------------
+	/**
+	 * Compare the contents of a table in the production database with one in another database.
+	 */
+	public boolean compareProductionTable(DatabaseRegistryEntry dbre, String tableName, String productionTableName) {
+		
+		Connection con = dbre.getConnection();
+
+		DatabaseRegistryEntry productionDBRE = getProductionDatabase();
+		
+		return DBUtils.compareResultSets(getWholeTable(con, tableName), getWholeTable(productionDBRE.getConnection(), productionTableName), this, "", true, false, tableName, null, false);
+		
+	}
+	
 	// -------------------------------------------------------------------------
 	/**
 	 * Compare two schemas to see if they have the same tables. The comparison is done in both directions, so will return false if a
@@ -1686,10 +1771,6 @@ public abstract class EnsTestCase {
 
 	}
 
-
-
-
-
 	// ----------------------------------------------------------------------
 	/**
 	 * Get the equivalent database from the secondary database server. "equivalent" means: same database type and species. If more
@@ -1708,11 +1789,11 @@ public abstract class EnsTestCase {
 		TreeSet<DatabaseRegistryEntry> matchingDBs = new TreeSet<DatabaseRegistryEntry>(); // get sorting for free
 
 		for (DatabaseRegistryEntry secDBRE : secondaryDatabaseRegistry.getAll()) {
-			if(dbre.getSpecies()==Species.UNKNOWN) {
-			    // EG where we don't know the species, use type and alias matching instead
-				if(dbre.getType() == secDBRE.getType() &&  dbre.getAlias().equals(secDBRE.getAlias())) {
+			if (dbre.getSpecies() == Species.UNKNOWN) {
+				// EG where we don't know the species, use type and alias matching instead
+				if (dbre.getType() == secDBRE.getType() && dbre.getAlias().equals(secDBRE.getAlias())) {
 					matchingDBs.add(secDBRE);
-					logger.finest("added " + secDBRE.getName() + " to list of databases to check for equivalent to " + dbre.getName());					
+					logger.finest("added " + secDBRE.getName() + " to list of databases to check for equivalent to " + dbre.getName());
 				}
 			} else {
 				// nulls will set type automatically
