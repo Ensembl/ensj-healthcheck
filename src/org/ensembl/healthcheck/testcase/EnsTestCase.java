@@ -20,6 +20,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -545,7 +546,25 @@ public abstract class EnsTestCase {
 
 		return (String[]) list.toArray(new String[list.size()]);
 
-	} // getRowColumnValue
+	} // getColumnValues
+	
+//-------------------------------------------------------------------------
+	/**
+	 * Execute a SQL statement and return the values of one column of the result.
+	 * 
+	 * @param con
+	 *          The Connection to use.
+	 * @param sql
+	 *          The SQL to check; should return ONE column.
+	 * @return The value(s) making up the column, in the order that they were read.
+	 */
+	public List<String> getColumnValuesList(Connection con, String sql) {
+
+		return Arrays.asList(getColumnValues(con, sql));
+		
+	} // getColumnValues
+	
+	
 
 	// -------------------------------------------------------------------------
 	/**
