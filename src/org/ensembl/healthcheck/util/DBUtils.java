@@ -345,13 +345,13 @@ public final class DBUtils {
 
 			if (rs1.getObject(i) == null) {
 				if (warnNull) {
-					logger.warning("Column " + rsmd.getColumnName(i) + " is null in table " + rsmd.getTableName(i) + " in " + DBUtils.getShortDatabaseName(con1));
+					logger.fine("Column " + rsmd.getColumnName(i) + " is null in table " + rsmd.getTableName(i) + " in " + DBUtils.getShortDatabaseName(con1));
 				}
 				return (rs2.getObject(i) == null); // true if both are null
 			}
 			if (rs2.getObject(i) == null) {
 				if (warnNull) {
-					logger.warning("Column " + rsmd.getColumnName(i) + " is null in table " + rsmd.getTableName(i) + " in " + DBUtils.getShortDatabaseName(con2));
+					logger.fine("Column " + rsmd.getColumnName(i) + " is null in table " + rsmd.getTableName(i) + " in " + DBUtils.getShortDatabaseName(con2));
 				}
 				return (rs1.getObject(i) == null); // true if both are null
 			}
