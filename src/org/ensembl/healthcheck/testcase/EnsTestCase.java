@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
@@ -1290,18 +1291,48 @@ public abstract class EnsTestCase {
 	 * Get a whole table as a ResultSet
 	 * 
 	 * @param table
-	 *          The name of the schema to connect to.
+	 *          The table to get.
 	 * @return A ResultSet containing the contents of the table.
 	 */
 	public ResultSet getWholeTable(Connection con, String table) {
 
 		ResultSet rs = null;
 
-		// TODO - is full ResultSet always returned?
 		try {
 
 			Statement stmt = con.createStatement();
 			rs = stmt.executeQuery("SELECT * FROM " + table);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return rs;
+
+	}
+
+//-------------------------------------------------------------------------
+	/**
+	 * Get all the rows from certain columns of a table, specifying which ones to ignore.
+	 * 
+	 * @param table
+	 *          The table to query.
+	 *          @param exceptionColumns A list of columns to ignore.
+	 * @return A ResultSet containing the contents of the table, minus the columns in question.
+	 */
+	public ResultSet getWholeTableExceptSomeColumns(Connection con, String table, List<String> exceptionColumns) {
+
+		ResultSet rs = null;
+		
+		List<String> allColumns = DBUtils.getColumnsInTable(con, table);
+		allColumns.removeAll(exceptionColumns);
+		
+		String columns = StringUtils.join(allColumns, ",");
+		
+		try {
+
+			Statement stmt = con.createStatement();
+			rs = stmt.executeQuery("SELECT " + columns + " FROM " + table);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1369,6 +1400,19 @@ public abstract class EnsTestCase {
 		
 	}
 	
+//-------------------------------------------------------------------------
+	/**
+	 * Compare the contents of a table in the production database with one in another database, but ignore certain columns.
+	 */
+	public boolean compareProductionTableWithExceptions(DatabaseRegistryEntry dbre, String tableName, String productionTableName, List<String> exceptionColumns) {
+		
+		Connection con = dbre.getConnection();
+
+		DatabaseRegistryEntry productionDBRE = getProductionDatabase();
+		
+		return DBUtils.compareResultSets(getWholeTableExceptSomeColumns(con, tableName, exceptionColumns), getWholeTableExceptSomeColumns(productionDBRE.getConnection(), productionTableName, exceptionColumns), this, "", true, false, tableName, null, false);
+		
+	}
 	// -------------------------------------------------------------------------
 	/**
 	 * Compare two schemas to see if they have the same tables. The comparison is done in both directions, so will return false if a
