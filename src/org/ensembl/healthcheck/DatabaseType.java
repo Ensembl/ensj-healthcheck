@@ -105,6 +105,13 @@ public final class DatabaseType {
 		return this.name;
 	}
 
+	/**
+	 * @return a String representation of this DatabaseType object.
+	 */
+	public String getName() {
+
+		return this.name;
+	}
 	// -----------------------------------------------------------------
 	/**
 	 * Resolve an alias to a DatabaseType object.
