@@ -64,6 +64,8 @@ public class Biotypes extends SingleDatabaseTestCase {
 			result &= checkGenesAndTranscripts(con);
 		}
 
+		result &= checkTypesFromFile(dbre);
+
 		return result;
 
 	} // run
@@ -145,8 +147,58 @@ public class Biotypes extends SingleDatabaseTestCase {
 
 		return result;
 
+	} // -------------------------------------------------------------------------
+
+	private boolean checkTypesFromFile(DatabaseRegistryEntry dbre) {
+
+		boolean result = true;
+
+		Connection con = dbre.getConnection();
+
+		String file = "biotypes.txt";
+		
+		// use different files for other database types
+		if (dbre.getType() == DatabaseType.CDNA) {
+			file = "biotypes_cdna.txt";
+		} else if (dbre.getType() == DatabaseType.VEGA) {
+			file = "biotypes_vega.txt";
+		} else if (dbre.getType() == DatabaseType.OTHERFEATURES ) {
+			file = "biotypes_otherfeatures.txt";
+		} 
+		
+		// use a custom biotypes file if it's set in database.properties
+		String customFile = System.getProperty("biotypes.file");
+		if (customFile != null) {
+			logger.finest("Using custom biotypes file: " + customFile);
+			file = customFile;
+		} 
+
+		String[] allowedBiotypes = Utils.readTextFile(file);
+
+		// check gene and transcript biotypes
+		String[] tables = { "gene", "transcript" };
+
+		for (int i = 0; i < tables.length; i++) {
+
+			String table = tables[i];
+			String[] biotypes = getColumnValues(con, "SELECT DISTINCT(biotype) FROM " + table);
+
+			for (int j = 0; j < biotypes.length; j++) {
+
+				String biotype = biotypes[j];
+
+				if (!Utils.stringInArray(biotype, allowedBiotypes, false)) {
+					ReportManager.problem(this, con, table + " contains invalid biotype '" + biotype + "'");
+					result = false;
+				}
+			}
+
+		}
+
+		return result;
+
 	}
-	
+
 	// -------------------------------------------------------------------------
 
 } // Biotypes
