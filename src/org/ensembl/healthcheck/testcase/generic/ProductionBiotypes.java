@@ -56,6 +56,9 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
+		// we'll use a different query depending on the database type
+		String databaseType = dbre.getType().getName(); // will be core, otherfeatures etc
+		
 		String[] tables = { "gene", "transcript" };
 
 		Connection con = dbre.getConnection();
@@ -66,8 +69,8 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
 
 			List<String> dbBiotypes = getColumnValuesList(con, "SELECT DISTINCT(biotype) FROM " + table);
 
-			List<String> productionBiotypes = getColumnValuesList(productionCon, "SELECT name FROM biotype WHERE object_type='" + table + "' AND is_current = 1");
-
+			List<String> productionBiotypes = getColumnValuesList(productionCon, "SELECT name FROM biotype WHERE object_type='" + table + "' AND is_current = 1 AND FIND_IN_SET('" + databaseType + "', db_type) > 0");
+			
 			// remove the list of valid biotypes from the list of biotypes in the database, the remainder (if any) are invalid
 			Collection<String> dbOnly = CollectionUtils.subtract(dbBiotypes, productionBiotypes);
 
