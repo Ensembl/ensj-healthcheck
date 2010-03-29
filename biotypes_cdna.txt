@@ -1,2 +1,0 @@
-cDNA_update
-protein_coding
