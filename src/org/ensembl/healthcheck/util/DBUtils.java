@@ -847,6 +847,26 @@ public final class DBUtils {
 		return result;
 
 	}
+	
+	public static void closeQuietly(ResultSet rs) {
+		if(rs!=null) {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				// ignore 
+			}
+		}
+	}
+	public static void closeQuietly(Statement st) {
+		if(st!=null) {
+			try {
+				st.close();
+			} catch (SQLException e) {
+				// ignore 
+			}
+		}
+	}
+	
 	// -------------------------------------------------------------------------
 
 } // DBUtils
