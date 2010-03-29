@@ -16,9 +16,11 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.AssemblyNameInfo;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
@@ -240,7 +242,7 @@ public class Meta extends SingleDatabaseTestCase {
 			} else {
 				String[] metaValue = getColumnValues(con, "SELECT meta_value FROM meta WHERE meta_key='" + metaKey + "'");
 				if (metaValue[0].equals("1")) {
-					// there are overlapping regions !! API might behave odly
+					// there are overlapping regions !! API might behave oddly
 					ReportManager.problem(this, con, "There are overlapping regions in the database (e.g. two versions of the same chromosomes). The API"
 							+ " might have unexpected results when trying to map features to that coordinate system.");
 					result = false;
@@ -268,9 +270,7 @@ public class Meta extends SingleDatabaseTestCase {
 			if (rows == 0) {
 				result = false;
 				ReportManager.problem(this, con, "No entry in meta table for " + metaKey);
-			} else {
-				ReportManager.correct(this, con, metaKey + " entry present");
-			}
+			} 
 		}
 
 		// check that there are some species.alias entries
@@ -368,7 +368,7 @@ public class Meta extends SingleDatabaseTestCase {
 		// and all coord systems should be valid from coord_system
 		// can also have # instead of | as used in unfinished contigs etc
 
-		Pattern assemblyMappingPattern = Pattern.compile("^([a-zA-Z0-9.]+)(:[a-zA-Z0-9._]+)?[\\|#]([a-zA-Z0-9._]+)(:[a-zA-Z0-9._]+)?([\\|#]([a-zA-Z0-9.]+)(:[a-zA-Z0-9._]+)?)?$");
+		Pattern assemblyMappingPattern = Pattern.compile("^([a-zA-Z0-9.]+):?([a-zA-Z0-9._]+)?[\\|#]([a-zA-Z0-9._]+):?([a-zA-Z0-9._]+)?([\\|#]([a-zA-Z0-9.]+):?([a-zA-Z0-9._]+)?)?$");
 		String[] validCoordSystems = getColumnValues(con, "SELECT name FROM coord_system");
 
 		String[] mappings = getColumnValues(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.mapping'");
@@ -381,8 +381,12 @@ public class Meta extends SingleDatabaseTestCase {
 				// if format is OK, check coord systems are valid
 				boolean valid = true;
 				String cs1 = matcher.group(1);
+				String assembly1 = matcher.group(2);
 				String cs2 = matcher.group(3);
+				String assembly2 = matcher.group(4);
 				String cs3 = matcher.group(6);
+				String assembly3 = matcher.group(7);
+
 				if (!Utils.stringInArray(cs1, validCoordSystems, false)) {
 					valid = false;
 					ReportManager.problem(this, con, "Source co-ordinate system " + cs1 + " is not in the coord_system table");
@@ -402,6 +406,9 @@ public class Meta extends SingleDatabaseTestCase {
 
 				result &= valid;
 
+				// check that coord_system:version pairs listed here exist in the coord_system table
+				result &= checkCoordSystemVersionPairs(con, cs1, assembly1, cs2, assembly2, cs3, assembly3);
+				
 				// check that coord systems are specified in lower-case
 				result &= checkCoordSystemCase(con, cs1, "meta assembly.mapping");
 				result &= checkCoordSystemCase(con, cs2, "meta assembly.mapping");
@@ -411,6 +418,51 @@ public class Meta extends SingleDatabaseTestCase {
 		}
 
 		return result;
+	}
+
+//---------------------------------------------------------------------
+	/**
+	 * Check that coordinate system:assembly pairs in assembly.mappings match what's in the coord system table
+	 */
+	private boolean checkCoordSystemVersionPairs(Connection con, String cs1, String assembly1, String cs2, String assembly2, String cs3, String assembly3) {
+
+		boolean result = true;
+
+		List<String> coordSystemsAndVersions = getColumnValuesList(con, "SELECT CONCAT_WS(':',name,version) FROM coord_system");
+		
+		result &= checkCoordSystemPairInList(con, cs1, assembly1, coordSystemsAndVersions);
+		
+		result &= checkCoordSystemPairInList(con, cs2, assembly2, coordSystemsAndVersions);
+
+		if (cs3 != null) {
+			
+			result &= checkCoordSystemPairInList(con, cs3, assembly3, coordSystemsAndVersions);
+
+		}
+		
+		return result;
+
+	}
+	
+//---------------------------------------------------------------------
+	/**
+	 * Check if a particular coordinate system:version pair is in a list. Deal with nulls appropriately.
+	 */
+	private boolean checkCoordSystemPairInList(Connection con, String cs, String assembly, List<String> coordSystems) {
+
+		boolean result = true;
+
+		String toCompare = (assembly != null) ? cs + ":" + assembly : cs;
+		
+		if (!coordSystems.contains(toCompare)) {
+		
+			ReportManager.problem(this, con, "Coordinate system name/version " + toCompare + " in assembly.mapping does not appear in coord_system table.");
+			result = false;
+			
+		} 
+		
+		return result;
+
 	}
 
 	// --------------------------------------------------------------------
@@ -496,7 +548,7 @@ public class Meta extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-		
+
 		String[] keys = { "genebuild.start_date", "assembly.date", "genebuild.initial_release_date", "genebuild.last_geneset_update" };
 
 		String date = "[0-9]{4}-[0-9]{2}";
@@ -549,36 +601,36 @@ public class Meta extends SingleDatabaseTestCase {
 		// AND the number of genes or transcripts or exons between the two releases has changed
 		// If the gene set has changed in any way since the previous release then the date should have been updated.
 		DatabaseRegistryEntry previous = getEquivalentFromSecondaryServer(dbre);
-		if (previous == null){
-		    return result;
+		if (previous == null) {
+			return result;
 		}
-		
+
 		Connection previousCon = previous.getConnection();
 
 		String previousLastGenesetUpdateString = getRowColumnValue(previousCon, "SELECT meta_value FROM meta WHERE meta_key='genebuild.last_geneset_update'").replaceAll("-", "");
-		
+
 		if (previousLastGenesetUpdateString == null || previousLastGenesetUpdateString.length() == 0) {
 
 			ReportManager.problem(this, con, "Problem parsing last geneset update entry from previous database.");
 			return false;
-			
+
 		}
-		
+
 		int previousLastGenesetUpdate;
-		
+
 		try {
-			
+
 			previousLastGenesetUpdate = Integer.valueOf(previousLastGenesetUpdateString).intValue();
-			
+
 		} catch (NumberFormatException e) {
-			
+
 			ReportManager.problem(this, con, "Problem parsing last geneset update entry from previous database: " + e.getStackTrace());
 			return false;
-			
+
 		}
-		
+
 		if (lastGenesetUpdate <= previousLastGenesetUpdate) {
-			
+
 			int currentGeneCount = getRowCount(con, "SELECT COUNT(*) FROM gene");
 			int currentTranscriptCount = getRowCount(con, "SELECT COUNT(*) FROM transcript");
 			int currentExonCount = getRowCount(con, "SELECT COUNT(*) FROM exon");
@@ -588,13 +640,13 @@ public class Meta extends SingleDatabaseTestCase {
 			int previousExonCount = getRowCount(previousCon, "SELECT COUNT(*) FROM exon");
 
 			if (currentGeneCount != previousGeneCount || currentTranscriptCount != previousTranscriptCount || currentExonCount != previousExonCount) {
-	
+
 				ReportManager.problem(this, con, "Last geneset update entry is the same or older than the equivalent entry in the previous release and the number of genes, transcripts or exons has changed.");
 				result = false;
-	
+
 			}
 		}
-		
+
 		return result;
 
 	}
