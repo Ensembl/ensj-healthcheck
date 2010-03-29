@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.util.SqlTemplate;
+import org.ensembl.healthcheck.util.TestCaseUtils;
 
 /**
  * Test for whether EnsemblGenomes species are correctly named
@@ -45,25 +46,28 @@ public class AliasAndNaming extends AbstractEgCoreTestCase {
 			SqlTemplate template, int speciesId) {
 		boolean passes = true;
 
-		String binomialName = getBinomialName(template, speciesId);
 		List<String> aliases = template.queryForDefaultObjectList(META_QUERY,
 				String.class, ALIAS, speciesId);
+		String binomialName = null;
 		if (dbre.isMultiSpecies()) {
+			binomialName = TestCaseUtils.getBinomialNameMulti(template, speciesId);
 			List<String> dbNames = template.queryForDefaultObjectList(
 					META_QUERY, String.class, DB_NAME, speciesId);
 			if (dbNames.size() != 1) {
 				passes = false;
 				ReportManager.problem(this, dbre.getConnection(),
-						"There should be exactly one " + DB_NAME
+						"There should be exactly one " + ALIAS
 								+ " meta value for species " + speciesId);
-			} else if (!dbNames.get(0).equals(binomialName)) {
+			}
+			if (!dbNames.contains(binomialName) && !aliases.contains(binomialName)) {
 				passes = false;
 				ReportManager.problem(this, dbre.getConnection(),
-						"There should be exactly one " + DB_NAME
-								+ " meta value that matches name "
+						"There should be one " + ALIAS
+								+ " or "+DB_NAME+" meta value that matches name "
 								+ binomialName + " for species " + speciesId);
 			}
 		} else {
+			binomialName = TestCaseUtils.getBinomialName(template, speciesId);
 			if (!aliases.contains(binomialName)) {
 				passes = false;
 				ReportManager.problem(this, dbre.getConnection(), "No " + ALIAS
@@ -81,7 +85,8 @@ public class AliasAndNaming extends AbstractEgCoreTestCase {
 			}
 		}
 
-		if (dbre.isMultiSpecies() || !isValidBinomial(binomialName)) {
+		if (dbre.isMultiSpecies()
+				|| !TestCaseUtils.isValidBinomial(binomialName)) {
 
 			String comparaName = template.queryForDefaultObject(META_QUERY,
 					String.class, COMPARA_NAME, speciesId);

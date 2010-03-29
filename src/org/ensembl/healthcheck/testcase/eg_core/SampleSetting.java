@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.util.SqlTemplate;
+import org.ensembl.healthcheck.util.TestCaseUtils;
 import org.ensembl.healthcheck.util.ConnectionBasedSqlTemplateImpl.SqlTemplateUncheckedException;
 
 /**
@@ -49,7 +50,7 @@ public class SampleSetting extends AbstractEgCoreTestCase {
 			ReportManager.info(this, dbre.getConnection(),
 					"Testing meta for species " + speciesId);
 			Map<String, String> sampleKeys = template.queryForMap(META_QUERY,
-					singleValueMapper, speciesId);
+					TestCaseUtils.singleValueMapper, speciesId);
 			// 2. check expected keys
 			for (String key : expectedKeys) {
 				String val = sampleKeys.get(key);

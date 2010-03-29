@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.util.TemplateBuilder;
+import org.ensembl.healthcheck.util.TestCaseUtils;
 
 /**
  * Check that translation_attribs are valid
@@ -30,15 +31,15 @@ public class PeptideTranslationAttribs extends AbstractEgCoreTestCase {
 
 	public PeptideTranslationAttribs() {
 		super();
-		res = resourceToStringList("/org/ensembl/healthcheck/testcase/eg_core/peptide_translation_attribs.txt");
-		query = TemplateBuilder.template(QUERY, "inlist", listToInList(res));
+		res = TestCaseUtils.resourceToStringList("/org/ensembl/healthcheck/testcase/eg_core/peptide_translation_attribs.txt");
+		query = TemplateBuilder.template(QUERY, "inlist", TestCaseUtils.listToInList(res));
 	}
 	
 
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
 		boolean passes = true;
 		Map<String, String> attribs = getTemplate(dbre).queryForMap(query,
-				singleValueMapper);
+				TestCaseUtils.singleValueMapper);
 		for (String exp : res) {
 			String cnt = attribs.get(exp);
 			if (StringUtils.isEmpty(cnt) || !StringUtils.isNumeric(cnt)

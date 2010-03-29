@@ -17,6 +17,7 @@ import org.ensembl.healthcheck.util.CollectionUtils;
 import org.ensembl.healthcheck.util.MapRowMapper;
 import org.ensembl.healthcheck.util.SqlTemplate;
 import org.ensembl.healthcheck.util.TemplateBuilder;
+import org.ensembl.healthcheck.util.TestCaseUtils;
 
 
 /**
@@ -60,7 +61,7 @@ public class InterproFeature extends AbstractEgCoreTestCase {
 	private final String feature_query;
 	public InterproFeature() {
 		super();
-		feature_query = TemplateBuilder.template(GET_FEATURES, "inlist", resourceToInList("/org/ensembl/healthcheck/testcase/eg_core/interpro_names.txt"));
+		feature_query = TemplateBuilder.template(GET_FEATURES, "inlist", TestCaseUtils.resourceToInList("/org/ensembl/healthcheck/testcase/eg_core/interpro_names.txt"));
 	}
 
 

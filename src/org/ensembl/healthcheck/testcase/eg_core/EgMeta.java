@@ -6,6 +6,8 @@
  */
 package org.ensembl.healthcheck.testcase.eg_core;
 
+import org.ensembl.healthcheck.util.TestCaseUtils;
+
 /**
  * @author dstaines
  * 
@@ -17,7 +19,7 @@ public class EgMeta extends AbstractEgMeta {
 	 */
 	public EgMeta() {
 		super(
-				resourceToStringList("/org/ensembl/healthcheck/testcase/eg_core/required_meta_keys.txt"));
+				TestCaseUtils.resourceToStringList("/org/ensembl/healthcheck/testcase/eg_core/required_meta_keys.txt"));
 	}
 
 }

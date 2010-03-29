@@ -16,6 +16,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.util.CollectionUtils;
 import org.ensembl.healthcheck.util.SqlTemplate;
 import org.ensembl.healthcheck.util.TemplateBuilder;
+import org.ensembl.healthcheck.util.TestCaseUtils;
 
 /**
  * 
@@ -70,7 +71,7 @@ public class GenesDisplayable extends AbstractEgCoreTestCase {
 		SqlTemplate template = getTemplate(dbre);
 		for (String table : TABLES) {
 			Map<String, String> webdatas = template.queryForMap(TemplateBuilder
-					.template(QUERY, "table", table), singleValueMapper);
+					.template(QUERY, "table", table), TestCaseUtils.singleValueMapper);
 			if (webdatas.size() == 0) {
 				ReportManager.problem(this, dbre.getConnection(),
 						"No analysis types found for table " + table);

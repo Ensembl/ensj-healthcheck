@@ -12,6 +12,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.util.CollectionUtils;
 import org.ensembl.healthcheck.util.TemplateBuilder;
+import org.ensembl.healthcheck.util.TestCaseUtils;
 
 /**
  * Check that translation_attribs are valid
@@ -32,7 +33,7 @@ public class TranslationAttribType extends AbstractEgCoreTestCase {
 				.template(
 						QUERY,
 						"inlist",
-						resourceToInList("/org/ensembl/healthcheck/testcase/eg_core/translation_attribs.txt"));
+						TestCaseUtils.resourceToInList("/org/ensembl/healthcheck/testcase/eg_core/translation_attribs.txt"));
 	}
 
 	protected boolean runTest(DatabaseRegistryEntry dbre) {

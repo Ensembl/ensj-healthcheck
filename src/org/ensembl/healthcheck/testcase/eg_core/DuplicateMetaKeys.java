@@ -17,6 +17,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.util.CollectionUtils;
 import org.ensembl.healthcheck.util.MapRowMapper;
 import org.ensembl.healthcheck.util.SqlTemplate;
+import org.ensembl.healthcheck.util.TestCaseUtils;
 
 /**
  * Test to find duplicate meta key entries
@@ -52,7 +53,7 @@ public class DuplicateMetaKeys extends AbstractEgCoreTestCase {
 	};
 
 	public DuplicateMetaKeys() {
-		metaKeys = resourceToStringList("/org/ensembl/healthcheck/testcase/eg_core/duplicate_meta_keys.txt");
+		metaKeys = TestCaseUtils.resourceToStringList("/org/ensembl/healthcheck/testcase/eg_core/duplicate_meta_keys.txt");
 	}
 
 	protected boolean runTest(DatabaseRegistryEntry dbre) {

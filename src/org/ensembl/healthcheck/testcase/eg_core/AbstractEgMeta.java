@@ -18,6 +18,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.util.CollectionUtils;
 import org.ensembl.healthcheck.util.MapRowMapper;
 import org.ensembl.healthcheck.util.SqlTemplate;
+import org.ensembl.healthcheck.util.TestCaseUtils;
 
 /**
  * Test to check whether the meta table contains the expected keys
@@ -64,7 +65,7 @@ public abstract class AbstractEgMeta extends AbstractEgCoreTestCase {
 	public AbstractEgMeta(List<String> metaKeys) {
 		super();
 		this.metaKeys = metaKeys;
-		metaKeys = resourceToStringList("/org/ensembl/healthcheck/testcase/eg_core/meta_keys.txt");
+		metaKeys = TestCaseUtils.resourceToStringList("/org/ensembl/healthcheck/testcase/eg_core/meta_keys.txt");
 	}
 
 	protected boolean runTest(DatabaseRegistryEntry dbre) {

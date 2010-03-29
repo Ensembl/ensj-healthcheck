@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.util.TestCaseUtils;
 
 /**
  * Test to see if expected identity xrefs are set
@@ -27,7 +28,7 @@ public class IdentityXref extends AbstractEgCoreTestCase {
 
 	public IdentityXref() {
 		super();
-		identityXrefDbs = resourceToStringList("/org/ensembl/healthcheck/testcase/eg_core/identity_xref_dbs.txt");
+		identityXrefDbs = TestCaseUtils.resourceToStringList("/org/ensembl/healthcheck/testcase/eg_core/identity_xref_dbs.txt");
 	}
 
 	protected boolean runTest(DatabaseRegistryEntry dbre) {

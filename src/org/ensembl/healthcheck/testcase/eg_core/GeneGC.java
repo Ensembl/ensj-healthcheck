@@ -14,6 +14,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.util.CollectionUtils;
 import org.ensembl.healthcheck.util.SqlTemplate;
+import org.ensembl.healthcheck.util.TestCaseUtils;
 
 /**
  * Test to find duplicate meta key entries
@@ -59,7 +60,7 @@ public class GeneGC extends AbstractEgCoreTestCase {
 
 		for (int speciesId : dbre.getSpeciesIds()) {
 			Map<String, Integer> count = template.queryForMap(GC_QUERY,
-					countMapper, speciesId);
+					TestCaseUtils.countMapper, speciesId);
 			if (count.size() > 1) {
 				ReportManager.problem(this, dbre.getConnection(),
 						"More than one GeneGC count attrib found for genes on species "
