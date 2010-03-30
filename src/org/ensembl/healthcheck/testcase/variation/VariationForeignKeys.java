@@ -121,12 +121,13 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 
 	result &= checkForOrphans(con, "transcript_variation", "variation_feature_id", "variation_feature", "variation_feature_id", true);
 	
-	rows = getRowCount(con,"SELECT COUNT(*) FROM variation_feature vf, flanking_sequence f where vf.variation_id=f.variation_id and vf.seq_region_id != f.seq_region_id and vf.map_weight=1 and vf.seq_region_id not in (27795,27796,27797,27798,27799,27800,27801,27802,27803) and f.seq_region_id not in (27795,27796,27797,27798,27799,27800,27801,27802,27803)");
+	/*haplotype seq_region_id in chimp 506737 and in human 27795,27796,27797,27798,27799,27800,27801,27802,27803 hard coded here*/
+        rows = getRowCount(con,"SELECT COUNT(*) FROM variation_feature vf, flanking_sequence f where vf.variation_id=f.variation_id and vf.seq_region_id != f.seq_region_id and vf.map_weight=1 and vf.seq_region_id not in (506737,27795,27796,27797,27798,27799,27800,27801,27802,27803) and f.seq_region_id not in (506737,27795,27796,27797,27798,27799,27800,27801,27802,27803)");
 	if (rows > 0){
 	    ReportManager.problem(this, con, rows + "entries in flanking_sequence have same variation_id, but different seq_region_id compare with table variation features");
 	    result =  false;
 	}
-	rows = getRowCount(con,"SELECT COUNT(*) FROM variation_feature vf, flanking_sequence f where vf.variation_id=f.variation_id and vf.seq_region_strand != f.seq_region_strand and vf.map_weight=1 and vf.seq_region_id not in (27795,27796,27797,27798,27799,27800,27801,27802,27803) and f.seq_region_id not in (27795,27796,27797,27798,27799,27800,27801,27802,27803)");
+	rows = getRowCount(con,"SELECT COUNT(*) FROM variation_feature vf, flanking_sequence f where vf.variation_id=f.variation_id and vf.seq_region_strand != f.seq_region_strand and vf.map_weight=1 and vf.seq_region_id not in (506737,27795,27796,27797,27798,27799,27800,27801,27802,27803) and f.seq_region_id not in (506737,27795,27796,27797,27798,27799,27800,27801,27802,27803)");
         if (rows > 0){
             ReportManager.problem(this, con, rows + "entries in flanking_sequence have same variation_id, but different seq_region_strand compare with table variation features");
            result =  false;
