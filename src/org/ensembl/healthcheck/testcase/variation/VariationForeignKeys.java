@@ -73,6 +73,8 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 
         result &= checkForOrphans(con, "variation_synonym", "variation_id", "variation", "variation_id", true);
         
+        result &= checkForOrphans(con, "variation_annotation", "variation_id", "variation", "variation_id", true);
+        
         result &= checkForOrphans(con, "variation_feature", "source_id", "source", "source_id", true);
 
 	result &= checkForOrphans(con, "allele_group", "sample_id", "sample", "sample_id", true);
