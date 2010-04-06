@@ -46,7 +46,7 @@ public class SeqRegionAcrossSpecies extends MultiDatabaseTestCase {
      */
     public boolean run(DatabaseRegistry dbr) {
 
-        return checkTableAcrossSpecies("seq_region", dbr, types, "All seq_region tables are the same", "seq_region tables are different", "");
+        return checkTableAcrossSpecies("seq_region", dbr, types, "All seq_region tables are the same", "seq_region tables are different", " WHERE NAME NOT LIKE 'LRG%'");
 
     } // run
 
