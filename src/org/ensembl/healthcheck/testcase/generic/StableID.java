@@ -194,13 +194,13 @@ public class StableID extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		Map tableToLetter = new HashMap();
+		Map<String, String> tableToLetter = new HashMap<String, String>();
 		tableToLetter.put("gene", "G");
 		tableToLetter.put("transcript", "T");
 		tableToLetter.put("translation", "P");
 		tableToLetter.put("exon", "E");
 
-		Iterator it = tableToLetter.keySet().iterator();
+		Iterator<String> it = tableToLetter.keySet().iterator();
 		while (it.hasNext()) {
 
 			String type = (String) it.next();
@@ -215,7 +215,7 @@ public class StableID extends SingleDatabaseTestCase {
 					return true;
 				}
 				String prefixLetter = prefix + (String) tableToLetter.get(type);
-				int wrong = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE stable_id NOT LIKE '" + prefixLetter + "%'");
+				int wrong = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE stable_id NOT LIKE '" + prefixLetter + "%' AND stable_id NOT LIKE 'LRG%'");
 				if (wrong > 0) {
 					ReportManager.problem(this, con, wrong + " rows in " + table + " do not have the correct (" + prefixLetter + ") prefix");
 					result = false;
