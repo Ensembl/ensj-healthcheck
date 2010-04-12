@@ -125,6 +125,7 @@ public class CheckTopLevelDnaFrag extends MultiDatabaseTestCase {
                           " WHERE seq_region.coord_system_id = coord_system.coord_system_id " +
                           " AND seq_region.seq_region_id = seq_region_attrib.seq_region_id " +
                           " AND seq_region_attrib.attrib_type_id = attrib_type.attrib_type_id " +
+                          " AND coord_system.name <> 'lrg' " +
                           " AND attrib_type.code = \"toplevel\"" +
                           " ORDER BY (seq_region.name)" +
                           " LIMIT " + rowCount + ", " + maxRows;
@@ -139,6 +140,7 @@ public class CheckTopLevelDnaFrag extends MultiDatabaseTestCase {
                       " WHERE seq_region.coord_system_id = coord_system.coord_system_id " +
                       " AND seq_region.seq_region_id = seq_region_attrib.seq_region_id " +
                       " AND seq_region_attrib.attrib_type_id = attrib_type.attrib_type_id " +
+                      " AND coord_system.name <> 'lrg' " +
                       " AND attrib_type.code = \"toplevel\"";
                   result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
               }
