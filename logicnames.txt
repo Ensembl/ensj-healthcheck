@@ -124,6 +124,7 @@ gap
 gene3d
 geneDensity
 genomewise
+gorilla_RNA-Seq
 haplotype
 havana
 hmmpanther
