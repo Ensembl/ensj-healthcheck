@@ -98,14 +98,9 @@ public class ForeignKeyMethodLinkSpeciesSetId extends SingleDatabaseTestCase {
                 "method_link_species_set", "method_link_species_set_id");
 
             /* Check method_link_species_set <-> protein_tree_member */
-            /* All method_link for protein trees must have an internal ID between 401 and 499 */
-            result &= checkForOrphansWithConstraint(con,
-                "method_link_species_set", "method_link_species_set_id",
-                "protein_tree_member", "method_link_species_set_id",
-                "method_link_id >= 401 and method_link_id < 500");
-            result &= checkForOrphans(con,
-                "protein_tree_member", "method_link_species_set_id",
-                "method_link_species_set", "method_link_species_set_id");
+            result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "protein_tree_member", "method_link_species_set_id", "method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'ProteinTree.%')");
+            result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "nc_tree_member", "method_link_species_set_id", "method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'NCTree.%')");
+            result &= checkForOrphans(con, "protein_tree_member", "method_link_species_set_id", "method_link_species_set", "method_link_species_set_id");
 
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in method_link_species_set table, so nothing to test IGNORED");
