@@ -58,8 +58,11 @@ public class ForeignKeyMemberId extends SingleDatabaseTestCase {
 
         if (tableHasRows(con, "member")) {
 
+                // Had to invent this tricky workaround because "gene members" and "non-gene members" are held in the same table:
+            result &= checkForOrphansWithConstraint(con, "member", "member_id", "family_member", "member_id", "source_name in ('Uniprot/SWISSPROT', 'Uniprot/SPTREMBL', 'ENSEMBLPEP')");
+            result &= checkForOrphansWithConstraint(con, "member", "member_id", "family_member", "member_id", "source_name='ENSEMBLGENE' and member.member_id in (SELECT gene_member_id FROM member m2 WHERE m2.source_name='ENSEMBLPEP')");
+
             result &= checkForOrphans(con, "family_member", "member_id", "member", "member_id");
-            result &= checkForOrphans(con, "member", "member_id", "family_member", "member_id");
             result &= checkForOrphans(con, "homology_member", "member_id", "member", "member_id");
             result &= checkForOrphans(con, "homology_member", "peptide_member_id", "member", "member_id");
             result &= checkForOrphans(con, "domain_member", "member_id", "member", "member_id");
