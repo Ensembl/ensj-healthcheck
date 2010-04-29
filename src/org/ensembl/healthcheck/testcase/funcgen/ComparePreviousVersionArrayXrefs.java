@@ -37,8 +37,8 @@ public class ComparePreviousVersionArrayXrefs extends ComparePreviousVersionBase
 		addToGroup("release");
 		addToGroup("funcgen");
 		addToGroup("funcgen-release");
-		setHintLongRunning(true);// ?
-
+		//setHintLongRunning(true);// ?Only take about 10 mins for mouse
+		setTeamResponsible("funcgen");
 		setDescription("Compare the Arrays xrefs in the current database with those from the equivalent database on the secondary server");
 	}
 
@@ -140,6 +140,13 @@ public class ComparePreviousVersionArrayXrefs extends ComparePreviousVersionBase
 		return 0.95;
 
 	}
+
+	// ----------------------------------------------------------------------
+
+	protected boolean testUpperThreshold(){
+		return true;
+	}
+
 
 	// ----------------------------------------------------------------------
 
