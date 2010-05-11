@@ -29,6 +29,11 @@ import java.util.Map;
  * The default implementation always uses $ to delimit placeholder positions
  * but there is nothing to prevent you from using another value such as &#35;
  * or &quot;.
+ * 
+ * <p>
+ * The code also allows you to setup the template once, bind placeholders 
+ * generate the String and then call {@link #clearPlaceholders()} to
+ * start binding a new set of parameters.
  *
  * <p>
  * If this implementation does not work then perhaps you need something with
@@ -96,6 +101,10 @@ public class TemplateBuilder {
 		this.placeHolders.putAll(placeHolders);
 	}
 
+	/**
+	 * Removes all the currently set placeholders. Useful if you want to
+	 * reuse the same template object
+	 */
 	public void clearPlaceholders() {
 		this.placeHolders.clear();
 	}
