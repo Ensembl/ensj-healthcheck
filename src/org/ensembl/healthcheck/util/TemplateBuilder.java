@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Simple naive implementation of a templating builder class which attempts
  * to be a {@link java.text.MessageFormat} with named parameters. Each parameter
- * is evaluated and replaed with the String representation of the value. e.g.
+ * is evaluated and replaced with the String representation of the value. e.g.
  *
  * <h5>Template</h5>
  * <code>
@@ -33,7 +33,7 @@ import java.util.Map;
  * <p>
  * If this implementation does not work then perhaps you need something with
  * a bit more welly like Velocity or StringTemplate. Both of these solutions
- * allow you to define macros & more advanced filtering/manipulation techinques
+ * allow you to define macros & more advanced filtering/manipulation techniques
  * as part of your template rather than having to do the manipulation in Java
  * code.
  *
@@ -51,7 +51,7 @@ public class TemplateBuilder {
 
 	/**
 	 * Used when you want to generate a template quickly but do not
-	 * want to go through the hassel of creating one of these objects
+	 * want to go through the hassle of creating one of these objects
 	 * and setting the holders. You can use it as:
 	 *
 	 * <code>
@@ -103,7 +103,7 @@ public class TemplateBuilder {
 	/**
 	 * Works in the same way the Perl array to hash code works where every
 	 * odd element is a key and every even element is the value. It's a very
-	 * cheaky way of encoding this information but it does allow us to populate
+	 * un-Java way of encoding this information but it does allow us to populate
 	 * a template quickly.
 	 */
 	public void addPlaceHolders(Object... params) {
@@ -119,7 +119,7 @@ public class TemplateBuilder {
 
 	/**
 	 * Performs the generating procedure by looping through all the given
-	 * key value pairs and perfoming String replace operations.
+	 * key value pairs and performing String replace operations.
 	 */
 	public String generate() {
 		String output = template;
