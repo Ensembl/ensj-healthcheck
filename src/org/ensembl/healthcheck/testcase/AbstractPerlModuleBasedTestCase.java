@@ -16,7 +16,7 @@ import org.ensembl.healthcheck.util.TemplateBuilder;
  */
 public abstract class AbstractPerlModuleBasedTestCase extends AbstractPerlBasedTestCase {
 
-	private static final String SCRIPT = "./perl/run_healthcheck.pl -host $host$ -port $port$ -user $user$ -pass $password$ -dbname $dbname$ -module $module$";
+	private static final String SCRIPT = "./perl/run_healthcheck.pl -host $host$ -port $port$ -user $user$ -pass $pass$ -dbname $dbname$ -species_id $species_id$ -module $module$";
 	
 	public AbstractPerlModuleBasedTestCase() {
 		super();
@@ -33,7 +33,7 @@ public abstract class AbstractPerlModuleBasedTestCase extends AbstractPerlBasedT
 		return TemplateBuilder.template(SCRIPT, "host", srv.getHost(),
 				"port", srv.getPort(),
 				"user", srv.getUser(),
-				"password", srv.getPass(),
+				"pass", srv.getPass(),
 				"dbname", dbre.getName(),
 				"module", getModule(),
 				"species_id", speciesId);
