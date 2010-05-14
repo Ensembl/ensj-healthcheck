@@ -1361,6 +1361,42 @@ public abstract class EnsTestCase {
 
 	}
 
+	
+	// -------------------------------------------------------------------------
+	/**
+	 * Get a connection to a new database given a pattern.
+	 * 
+	 * @param dbPattern - a String pattern to identify the required database
+	 *        
+	 * @return A DatabaseRegistryEntry.
+	 */
+	public DatabaseRegistryEntry getDatabaseRegistryEntryByPattern(String dbPattern) {
+
+		// create it
+		List<String> list = new ArrayList<String>();
+		list.add(dbPattern);
+		DatabaseRegistryEntry newDBRE = null;	 
+
+		DatabaseRegistry newDBR = new DatabaseRegistry(list, null, null, false);
+
+		if (newDBR.getEntryCount() == 0) {
+
+			logger.warning("Can't connect to database " + dbPattern + ". Skipping.");
+			return null;
+
+		} else if (newDBR.getEntryCount() > 1) {
+
+			logger.warning("Found " + newDBR.getEntryCount() + " databases matching pattern " + dbPattern + ". Only one expected. Skipping.");
+			return null;
+		}
+
+		newDBRE = newDBR.getAll()[0];
+		logger.finest("Got new db: " + newDBRE.getName());
+		return newDBRE;	
+	}
+
+	
+	
 	// -------------------------------------------------------------------------
 	/**
 	 * Get a connection to the production database.
