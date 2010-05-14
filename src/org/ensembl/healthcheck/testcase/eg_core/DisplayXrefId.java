@@ -6,8 +6,7 @@
  */
 package org.ensembl.healthcheck.testcase.eg_core;
 
-import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.testcase.AbstractRowCountTestCase;
 
 /**
  * Test to find genes where display_xref_id is not set
@@ -15,19 +14,35 @@ import org.ensembl.healthcheck.ReportManager;
  * @author dstaines
  * 
  */
-public class DisplayXrefId extends AbstractEgCoreTestCase {
+public class DisplayXrefId extends AbstractRowCountTestCase {
 
-	private final static String QUERY = "select gene_id from gene where display_xref_id is null";
+	public DisplayXrefId() {
+		super();
+		addToGroup(AbstractEgCoreTestCase.EG_GROUP);
+	}
 
-	protected boolean runTest(DatabaseRegistryEntry dbre) {
-		boolean passes = true;
-		for (String id : getTemplate(dbre).queryForDefaultObjectList(QUERY,
-				String.class)) {
-			passes = false;
-			ReportManager.problem(this, dbre.getConnection(), "Gene " + id
-					+ " has no display xref ID");
-		}
-		return passes;
+	private final static String QUERY = "select count(*) from gene where display_xref_id is null";
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.ensembl.healthcheck.testcase.AbstractRowCountTestCase#getExpectedCount
+	 * ()
+	 */
+	@Override
+	protected int getExpectedCount() {
+		return 0;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.ensembl.healthcheck.testcase.AbstractIntegerTestCase#getSql()
+	 */
+	@Override
+	protected String getSql() {
+		return QUERY;
 	}
 
 }
