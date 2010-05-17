@@ -1407,37 +1407,8 @@ public abstract class EnsTestCase {
 	 */
 	public DatabaseRegistryEntry getProductionDatabase() {
 
-		// return existing one if we already have it
-		if (productionDBRE != null) {
-			
-			return productionDBRE;
-		
-		} else {
-			
-			// create it
-			List<String> list = new ArrayList<String>();
-			list.add("ensembl_production_\\d+");
-
-			DatabaseRegistry productionDBR = new DatabaseRegistry(list, null, null, false);
-
-			if (productionDBR.getEntryCount() == 0) {
-
-				logger.warning("Can't connect to production database. Skipping.");
-				return null;
-
-			} else if (productionDBR.getEntryCount() > 1) {
-
-				logger.warning("Found " + productionDBR.getEntryCount() + " production databases, only need one. Skipping.");
-				return null;
-
-			}
-
-			productionDBRE = productionDBR.getAll()[0];
-			logger.finest("Got production db: " + productionDBRE.getName());
-			
-		}
-		
-		return productionDBRE;
+		// return existing one if we already have it, otherwise use method above to find it
+		return productionDBRE != null ? productionDBRE : getDatabaseRegistryEntryByPattern("ensembl_production_\\d+");
 		
 	}
 
