@@ -47,7 +47,7 @@ public class AssemblyTablesAcrossSpecies extends MultiDatabaseTestCase {
      */
     public boolean run(DatabaseRegistry dbr) {
 
-        return checkTableAcrossSpecies("assembly", dbr, types, "assembly tables all the same", "assembly tables different", "");
+        return checkTableAcrossSpecies("assembly", dbr, types, "assembly tables all the same", "assembly tables different", " a, seq_region s WHERE a.asm_seq_region_id=s.seq_region_id AND s.name NOT LIKE 'LRG%'");
 
     } // run
 

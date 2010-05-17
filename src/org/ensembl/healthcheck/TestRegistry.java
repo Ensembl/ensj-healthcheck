@@ -363,6 +363,12 @@ public class TestRegistry {
 					String className = bits[bits.length - 2];
 					String dirName = bits[bits.length - 3];
 					String extension = bits[bits.length - 1];
+					
+					if (className.indexOf("$") > 0) {
+						logger.finest("Skipping " + className + " since it appears to be an auto-generated anonymous inner class");
+						continue;
+					}
+					
 					if (extension.equalsIgnoreCase("class") && !dirName.equals("testcase")) {
 						try {
 

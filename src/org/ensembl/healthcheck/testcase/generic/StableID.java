@@ -88,13 +88,12 @@ public class StableID extends SingleDatabaseTestCase {
 
 		// there are several species where ID mapping is not done
 		Species s = dbre.getSpecies();
-		if (s != Species.CAENORHABDITIS_ELEGANS && s != Species.DROSOPHILA_MELANOGASTER &&
+		if (s!=null && s != Species.CAENORHABDITIS_ELEGANS && s != Species.DROSOPHILA_MELANOGASTER &&
 			s != Species.SACCHAROMYCES_CEREVISIAE && s != Species.ANOPHELES_GAMBIAE && s != Species.UNKNOWN) {
 			result &= checkPrefixes(dbre);
 			result &= checkStableIDEventTypes(con);
+			result = checkStableIDTimestamps(con);
 		}
-
-		result = checkStableIDTimestamps(con);
 		
 		return result;
 	}
@@ -195,13 +194,13 @@ public class StableID extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		Map tableToLetter = new HashMap();
+		Map<String, String> tableToLetter = new HashMap<String, String>();
 		tableToLetter.put("gene", "G");
 		tableToLetter.put("transcript", "T");
 		tableToLetter.put("translation", "P");
 		tableToLetter.put("exon", "E");
 
-		Iterator it = tableToLetter.keySet().iterator();
+		Iterator<String> it = tableToLetter.keySet().iterator();
 		while (it.hasNext()) {
 
 			String type = (String) it.next();
@@ -216,7 +215,7 @@ public class StableID extends SingleDatabaseTestCase {
 					return true;
 				}
 				String prefixLetter = prefix + (String) tableToLetter.get(type);
-				int wrong = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE stable_id NOT LIKE '" + prefixLetter + "%'");
+				int wrong = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE stable_id NOT LIKE '" + prefixLetter + "%' AND stable_id NOT LIKE 'LRG%'");
 				if (wrong > 0) {
 					ReportManager.problem(this, con, wrong + " rows in " + table + " do not have the correct (" + prefixLetter + ") prefix");
 					result = false;

@@ -58,7 +58,6 @@ public class CompareFuncgenSchema extends MultiDatabaseTestCase {
 		addToGroup("funcgen");
 		addToGroup("funcgen-release");
 		addToGroup("release");
-		addToGroup("compara_db_constraints");
 		
 		setDescription("Compare two databases (table names, column names and types, and indexes. Note that there are occasionally pipeline tables (such as runnable, job, job_status etc) that are still present. It is wise to check that they are no longer needed before removing them.");
 

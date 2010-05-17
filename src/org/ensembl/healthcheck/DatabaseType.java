@@ -84,7 +84,10 @@ public final class DatabaseType {
 	/** A functional genomics database */
 	public static final DatabaseType FUNCGEN = new DatabaseType("funcgen");
 
-	/** A database whos type has not been determined */
+	/** A production database */
+	public static final DatabaseType PRODUCTION = new DatabaseType("production");
+	
+	/** A database whose type has not been determined */
 	public static final DatabaseType UNKNOWN = new DatabaseType("unknown");
 
 	private final String name;
@@ -102,6 +105,13 @@ public final class DatabaseType {
 		return this.name;
 	}
 
+	/**
+	 * @return a String representation of this DatabaseType object.
+	 */
+	public String getName() {
+
+		return this.name;
+	}
 	// -----------------------------------------------------------------
 	/**
 	 * Resolve an alias to a DatabaseType object.
@@ -126,7 +136,7 @@ public final class DatabaseType {
 
 		// --------------------------------------
         // EG: treat eg_core as core dbs as well
-		if (in(lcAlias, "core") || in(lcAlias,"eg_core")) {
+		if (in(lcAlias, "core") || in(lcAlias,"eg_core") || in(lcAlias,"ancestral")) {
 
 			return CORE;
 
@@ -283,6 +293,15 @@ public final class DatabaseType {
 			return FUNCGEN;
 
 		}
+		
+		// --------------------------------------
+
+		if (in(lcAlias, "ensembl_production")) {
+
+			return PRODUCTION;
+
+		}
+
 
 		// --------------------------------------
 		// treat ensembl genomes collection databases as core

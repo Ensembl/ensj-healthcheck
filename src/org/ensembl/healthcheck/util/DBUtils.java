@@ -290,7 +290,7 @@ public final class DBUtils {
 
 				} else {
 					// rs1 has more rows than rs2
-					ReportManager.problem(testCase, name1, singleTableName + " (or definition) has more rows in " + name1 + " than in " + name2);
+					ReportManager.problem(testCase, name1, singleTableName + " has more rows in " + name1 + " than in " + name2);
 					return false;
 				}
 
@@ -345,13 +345,13 @@ public final class DBUtils {
 
 			if (rs1.getObject(i) == null) {
 				if (warnNull) {
-					System.out.println("Column " + rsmd.getColumnName(i) + " is null in table " + rsmd.getTableName(i) + " in " + DBUtils.getShortDatabaseName(con1));
+					logger.fine("Column " + rsmd.getColumnName(i) + " is null in table " + rsmd.getTableName(i) + " in " + DBUtils.getShortDatabaseName(con1));
 				}
 				return (rs2.getObject(i) == null); // true if both are null
 			}
 			if (rs2.getObject(i) == null) {
 				if (warnNull) {
-					System.out.println("Column " + rsmd.getColumnName(i) + " is null in table " + rsmd.getTableName(i) + " in " + DBUtils.getShortDatabaseName(con2));
+					logger.fine("Column " + rsmd.getColumnName(i) + " is null in table " + rsmd.getTableName(i) + " in " + DBUtils.getShortDatabaseName(con2));
 				}
 				return (rs1.getObject(i) == null); // true if both are null
 			}

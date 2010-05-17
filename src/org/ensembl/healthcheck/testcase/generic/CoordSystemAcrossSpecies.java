@@ -25,7 +25,7 @@ import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
  */
 public class CoordSystemAcrossSpecies extends MultiDatabaseTestCase {
 
-    private DatabaseType[] types = {DatabaseType.CORE, DatabaseType.CDNA, DatabaseType.VEGA, DatabaseType.OTHERFEATURES};
+    private DatabaseType[] types = {DatabaseType.CORE, DatabaseType.CDNA, DatabaseType.OTHERFEATURES};
 
     /**
      * Creates a new instance of CoordSystemAcrossSpecies
@@ -46,7 +46,7 @@ public class CoordSystemAcrossSpecies extends MultiDatabaseTestCase {
      */
     public boolean run(DatabaseRegistry dbr) {
 
-        return checkTableAcrossSpecies("coord_system", dbr, types, "All coord_system tables are the same", "coord_system tables are different", "");
+        return checkTableAcrossSpecies("coord_system", dbr, types, "All coord_system tables are the same", "coord_system tables are different", " WHERE name !='lrg'");
 
     } // run
 
