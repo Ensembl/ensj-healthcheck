@@ -19,6 +19,14 @@ import org.ensembl.healthcheck.util.DBUtils;
  * Assumptions: Array Probe/ProbeSet xrefs and transcripts are both in the default chromosome coordinate system.
  * 
  */
+
+
+/**
+ * To do
+ * 1 Add support for Probe level xrefs
+ * 2 Group counts by array? This is already done in ComparePreviousVersionArraysXrefs? 
+ */
+
 public class ArrayXrefs extends SingleDatabaseTestCase {
 
 	// if a database has more than this number of seq_regions in the chromosome coordinate system, it's ignored
@@ -79,6 +87,10 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 								  " has no EXPRESSION Arrays, not checking for probe2transcript xrefs");
 			return false;
 		}
+		else{
+			ReportManager.correct(this, efgCon, DBUtils.getShortDatabaseName(efgCon) + " has " + expressionArrays +
+						" EXPRESSION|CGH arrays");
+		}
 		
 		
 		
@@ -108,6 +120,11 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 			if(hiddenArrays.length() != 0){
 				result = false;
 				ReportManager.problem(this, efgCon, "Database contains non-DISPLAYABLE EXPRESSION Arrays:\t" + hiddenArrays);			
+			}
+			else{
+				ReportManager.correct(this, efgCon, "All EXPRESSION|CGH arrays in " + DBUtils.getShortDatabaseName(efgCon) + 
+						" are DISPLAYABLE");
+				
 			}
 			
 		} catch (SQLException se) {	
