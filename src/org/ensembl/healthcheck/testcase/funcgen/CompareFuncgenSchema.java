@@ -116,23 +116,28 @@ public class CompareFuncgenSchema extends MultiDatabaseTestCase {
 
 
 		if (dbType != null){
-
-			if (dbType.isGeneric()) {
-				definitionFile = System.getProperty("schema.file");
-				masterSchema = System.getProperty("master.schema");
-			} else {
-				definitionFile = System.getProperty(dbType.toString() + "_schema.file");
-				masterSchema = System.getProperty("master_" + dbType.toString() + ".schema");
+			String masterSchemaVar = new String("master.schema");
+			String definitionFileVar = new String("schema.file");
+			
+			if (! dbType.isGeneric()) {
+				masterSchemaVar = "master." + dbType.toString() + "_schema";
+				definitionFileVar = dbType.toString() + "_schema.file";
 			}
-
+		
+			definitionFile = System.getProperty(definitionFileVar);
+			masterSchema = System.getProperty(masterSchemaVar);
+		
 			if (definitionFile == null) {
-				logger.info("CompareFuncgenSchema: No schema definition file found! Set " + definitionFile + " property in database.properties if you want to use a table.sql file or similar.");
+				logger.info("CompareFuncgenSchema: No schema definition file found! Set " + definitionFileVar + " property in database.properties if you want to use a table.sql file or similar.");
 				
 				//masterSchema = System.getProperty("master.funcgen_schema");
+				
+				System.out.println("masterSchemaVar is " + masterSchemaVar);
+				
 				if (masterSchema != null) {
 				logger.info("Will use " + masterSchema + " as specified master schema for comparisons.");
 				} else {
-					logger.info("CompareFuncgenSchema: No master schema defined file found! Set " + masterSchema + " property in database.properties if you want to use a master schema.");
+					logger.info("CompareFuncgenSchema: No master schema defined! Set " + masterSchemaVar + " property in database.properties if you want to use a master schema.");
 				}
 			} else {
 				logger.fine("Will use schema definition from " + definitionFile);
