@@ -68,14 +68,20 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 		// cache logic_names by analysis_id
 		Map logicNamesByAnalID =  getLogicNamesFromAnalysisTable(con);
 		
-		for (int i = 0; i < types.length; i++) {
-
+		String[] tableTypes = tableNames();
+		
+		for (int i = 0; i < tableTypes.length; i++) {
+			logger.finest("type is " + tableTypes[i]);
 			// get analyses that are used
 			// special case for transcripts - need to link to gene table and get analysis from there
-			String sql =  "SELECT DISTINCT(analysis_id) FROM " + types[i];
-			if (types[i].equals("transcript")) {
+			String sql =  "SELECT DISTINCT(analysis_id) FROM " + tableTypes[i];
+						
+			if (tableTypes[i].equals("transcript")) {
 				sql = "SELECT DISTINCT(g.analysis_id) FROM gene g, transcript t WHERE t.gene_id=g.gene_id";
 			}
+			
+			System.out.println(sql);
+			
 			String[] analyses = getColumnValues(con, sql);
 
 		
@@ -83,11 +89,11 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 			for (int j = 0; j < analyses.length; j++) {
 				int count = getRowCount(con, "SELECT COUNT(*) FROM analysis_description WHERE analysis_id=" + analyses[j]);
 				if (count == 0) {
-					ReportManager.problem(this, con, "Analysis " + logicNamesByAnalID.get(analyses[j]) + " is used in " + types[i]
+					ReportManager.problem(this, con, "Analysis " + logicNamesByAnalID.get(analyses[j]) + " is used in " + tableTypes[i]
 							+ " but has no entry in analysis_description");
 					result = false;
 				} else {
-					ReportManager.correct(this, con, "Analysis " + logicNamesByAnalID.get(analyses[j]) + " is used in " + types[i]
+					ReportManager.correct(this, con, "Analysis " + logicNamesByAnalID.get(analyses[j]) + " is used in " + tableTypes[i]
 							+ " and has an entry in analysis_description");
 				}
 
@@ -107,5 +113,13 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 	}
 	
 	// ------------------------------------------------------------------------------
+	
+	
+	protected String[] tableNames() {
+
+		return types;
+
+	}
+	
 	
 } // AnalysisDescription
