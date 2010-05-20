@@ -84,7 +84,8 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 						
 		result &= checkForOrphans(con, "data_set", "data_set_id", "supporting_set", "data_set_id", false);
 		
-		result &= checkForOrphans(con, "data_set", "feature_set_id", "feature_set", "feature_set_id", false);
+		//result &= checkForOrphans(con, "data_set", "feature_set_id", "feature_set", "feature_set_id", false);
+		result &= checkForOrphansWithConstraint(con, "data_set", "feature_set_id", "feature_set", "feature_set_id", "feature_set_id != 0");
 		//This may fail as it's not necessary to have a feature_set_id in a data_set?
 		
 		//design_type?
