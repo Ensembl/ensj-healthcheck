@@ -109,8 +109,9 @@ public abstract class EnsTestCase {
 	 * Funcgen tables that have an analysis ID.
 	 */
 
-	private String[] funcgenTablesWithAnalysisID = { "probe_feature", "annotated_feature", "regulatory_feature", "external_feature", "object_xref", "unmapped_object", "feature_set", "result_set" };
-
+	private String[] funcgenTablesWithAnalysisID = { "probe_feature", "object_xref", "unmapped_object", "feature_set", "result_set" };
+	//do we need to add analysis_description here?
+	
 	/**
 	 * A DatabaseRegistryEntry pointing to the production database.
 	 */
@@ -595,7 +596,9 @@ public abstract class EnsTestCase {
 		String sql = " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " IS NULL";
 
 		resultLeft = getRowCount(con, "SELECT COUNT(*)" + sql);
-
+		
+		logger.finest("Left: " + resultLeft);
+		
 		if (resultLeft > 0) {
 			String[] values = getColumnValues(con, "SELECT " + table1 + "." + col1 + sql + " LIMIT 20");
 			for (int i = 0; i < values.length; i++) {
@@ -615,6 +618,9 @@ public abstract class EnsTestCase {
 					ReportManager.info(this, con, table2 + "." + col2 + " " + values[i] + " is not linked.");
 				}
 			}
+			
+			 logger.finest("Right: " + resultRight);
+			
 		} else {
 			resultRight = 0;
 		}
@@ -651,7 +657,8 @@ public abstract class EnsTestCase {
 
 		int resultLeft;
 
-		String sql = " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
+		String sql = " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + 
+		" WHERE " + table2 + "." + col2 + " iS NULL";
 
 		sql = sql + " AND " + table1 + "." + constraint1;
 
@@ -677,6 +684,8 @@ public abstract class EnsTestCase {
 	 */
 	public boolean checkForOrphans(Connection con, String table1, String col1, String table2, String col2, boolean oneWay) {
 
+		logger.finest("Checking for orphans with:\t" + table1 + "." + col1 + " " + table2 + "." + col2 +". oneWay is " + oneWay );
+		
 		int orphans = countOrphans(con, table1, col1, table2, col2, oneWay);
 
 		boolean result = true;
@@ -1735,7 +1744,10 @@ public abstract class EnsTestCase {
 		} else if (orphans < 0) {
 			ReportManager.problem(this, con, "TEST NOT COMPLETED " + table1 + " -> " + table2 + " using FK " + col1 + ", look at the StackTrace if any");
 			result = false;
+		} else {
+			ReportManager.correct(this, con, "SUCCESS: All rows in " + table1 + " (constraint is: " + constraint1 + ") refer to valid " + table2 + "s");
 		}
+		
 
 		return result;
 
