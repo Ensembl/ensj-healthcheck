@@ -78,15 +78,14 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 		result &= checkForOrphans(con, "input_set", "cell_type_id", "cell_type", "cell_type_id", true);
 		
 		result &= checkForOrphans(con, "result_set", "cell_type_id", "cell_type", "cell_type_id", true);
-		//This may fail as it's not necessary to have a cell_type_id in a result_set?
+		//This may fail as it's not necessary to have a cell_type_id in a result_set???
 		
 		result &= checkForOrphans(con, "channel", "experimental_chip_id", "experimental_chip", "experimental_chip_id", false);
 						
 		result &= checkForOrphans(con, "data_set", "data_set_id", "supporting_set", "data_set_id", false);
 		
-		//result &= checkForOrphans(con, "data_set", "feature_set_id", "feature_set", "feature_set_id", false);
 		result &= checkForOrphansWithConstraint(con, "data_set", "feature_set_id", "feature_set", "feature_set_id", "feature_set_id != 0");
-		//This may fail as it's not necessary to have a feature_set_id in a data_set?
+		
 		
 		//design_type?
 		
@@ -99,7 +98,7 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 		//experimental design?
 		
 		result &= checkForOrphans(con, "experiment", "experimental_group_id", "experimental_group", "experimental_group_id", true);
-		
+		result &= checkForOrphansWithConstraint(con, "experiment", "mage_xml_id", "mage_xml", "mage_xml_id", "mage_xml_id is NOT NULL");
 		//experimental variable?
 		
 		result &= checkForOrphans(con, "external_feature", "feature_set_id", "feature_set", "feature_set_id", true);
@@ -116,14 +115,19 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 		
 		result &= checkForOrphans(con, "input_set", "input_set_id", "input_subset", "input_set_id", false);
 		
-		result &= checkForOrphans(con, "mage_xml", "mage_xml_id", "experiment", "mage_xml_id", false);
-		//possible failures to to null exp.mage_xml_ids
-		
+		result &= checkForOrphans(con, "mage_xml", "mage_xml_id", "experiment", "mage_xml_id", true);
+				
 		result &= checkForOrphans(con, "probe", "array_chip_id", "array_chip", "array_chip_id", false);
 		
-		result &= checkForOrphans(con, "probe", "probe_set_id", "probe_set", "probe_set_id", false);
+		//result &= checkForOrphans(con, "probe", "probe_set_id", "probe_set", "probe_set_id", false);
+		result &= checkForOrphansWithConstraint(con, "probe", "probe_set_id", "probe_set", "probe_set_id", "probe_set_id is NOT NULL");
 		
-		result &= checkForOrphans(con, "probe", "probe_id", "probe_feature", "probe_id", false);
+		result &= checkForOrphans(con, "probe_set", "probe_set_id", "probe", "probe_set_id");
+		
+		//result &= checkForOrphans(con, "probe", "probe_id", "probe_feature", "probe_id", false);
+		//Can have unmapped probes or arrays
+		
+		result &= checkForOrphans(con, "probe_feature", "probe_id", "probe", "probe_id", true);
 		
 		result &= checkForOrphans(con, "probe_feature", "analysis_id", "analysis", "analysis_id", true);
 		
