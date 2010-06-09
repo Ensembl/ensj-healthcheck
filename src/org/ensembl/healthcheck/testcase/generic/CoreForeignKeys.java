@@ -32,7 +32,7 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 	public CoreForeignKeys() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
+		//addToGroup("release");//already a member
 		addToGroup("compara-ancestral");
 		addToGroup("id_mapping");
 		setDescription("Check for broken foreign-key relationships.");
@@ -273,14 +273,26 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 	} // checkOtherfeaturesGeneStableIDs
 
 	// -------------------------------------------------------------------------
-	private boolean checkKeysByEnsemblObjectType(Connection con, String baseTable, String type) {
+	public boolean checkKeysByEnsemblObjectType(Connection con, String baseTable, String type) {
 
-		String table = type.toLowerCase();
+		//Need to handle under scores in tables here
+		//e.g. ProbeFeature > probe_feature
+		String table = type.replaceAll("([a-z])([A-Z])", "$1_$2");
+		table = table.toLowerCase();
+		
+		//Where is ensembl_object_id used?
 		String column = baseTable.equals("object_xref") ? "ensembl_id" : "ensembl_object_id";
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM " + baseTable + " x LEFT JOIN " + table + " ON x." + column + "=" + table + "." + table + "_id WHERE x.ensembl_object_type=\'" + type + "\' AND "
-				+ table + "." + table + "_id IS NULL");
+		return checkForOrphansWithConstraint(con, baseTable, column, table, table + "_id", "ensembl_object_type=\'" + type + "\'");
+		
+		
+		/**Is this not just checkForOrphansWithConstraint?
+		
+	
+		//int rows = getRowCount(con, "SELECT COUNT(*) FROM " + baseTable + " x LEFT JOIN " + table + " ON x." + column + "=" + table + "." + table + 
+		//		"_id WHERE x.ensembl_object_type=\'" + type + "\' AND " + table + "." + table + "_id IS NULL");
 
+				
 		if (rows > 0) {
 
 			ReportManager.problem(this, con, rows + " rows in " + baseTable + " refer to non-existent " + table + "s");
@@ -291,11 +303,16 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 			ReportManager.correct(this, con, "All rows in " + baseTable + " refer to valid " + table + "s");
 			return true;
 		}
+		**/
 
 	} // checkKeysByEnsemblObjectType
 
 	// -------------------------------------------------------------------------
 
+	
+	
+	
+	
 	private boolean checkCanonicalTranscriptIDKey(Connection con) {
 		boolean result = true;
 
