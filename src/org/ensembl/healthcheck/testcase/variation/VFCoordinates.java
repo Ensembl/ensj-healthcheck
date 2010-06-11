@@ -19,6 +19,7 @@
 package org.ensembl.healthcheck.testcase.variation;
 
 import java.sql.Connection;
+import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
@@ -91,6 +92,18 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 			mc = getRowCount(con, "SELECT COUNT(*) FROM " + variationName + ".variation_feature vf WHERE vf.seq_region_start = 1 AND vf.seq_region_end > 1");
 			if (mc > 0) {
 				ReportManager.problem(this, con, "Variation Features with coordinates = 1 " + variationName);
+				result = false;
+			}
+			// Check that no VFs are on the negative strand, unless they have map_weight > 1 and/or are located on non-reference seq_regions
+			String vfId = getRowColumnValue(con, "SELECT vf.variation_feature_id FROM " + variationName + ".variation_feature vf WHERE vf.seq_region_strand = -1 AND vf.map_weight = 1 AND NOT EXISTS (SELECT * FROM " + coreName + ".seq_region_attrib sra JOIN " + coreName + ".attrib_type at USING (attrib_type_id) WHERE sra.seq_region_id = vf.seq_region_id AND at.code = 'non_ref') LIMIT 1");
+			if (vfId.length() > 0) {
+				ReportManager.problem(this, con, "Variation Features on the negative strand (e.g. variation_feature_id = " + vfId + ") in " + variationName);
+				result = false;
+			}
+			// Check that no VFs are duplicated
+			mc = getRowCount(con, "SELECT COUNT(DISTINCT vf1.variation_id) FROM " + variationName + ".variation_feature vf1 JOIN " + variationName + ".variation_feature vf2 USING (variation_id,seq_region_id,seq_region_start,seq_region_end,seq_region_strand) WHERE vf1.variation_feature_id < vf2.variation_feature_id");
+			if (mc > 0) {
+				ReportManager.problem(this, con, "There are duplicated Variation Features for " + String.valueOf(mc) + " variations in " + variationName);
 				result = false;
 			}
 			if (result) {
