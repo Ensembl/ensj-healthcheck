@@ -39,7 +39,7 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 	// the following tables have an analysis_id column
 	String[] featureTables = getCoreTablesWithAnalysisID();
 
-	private String[] proteinFeatureAnalyses = { "prints", "pfscan", "scanprosite", "signalp", "seg", "ncoils", "pfam", "tmhmm" };
+	private String[] proteinFeatureAnalyses = { "prints", "pfscan", "signalp", "seg", "ncoils", "pfam", "tmhmm" };
 
 	/**
 	 * Creates a new instance of FeatureAnalysis
