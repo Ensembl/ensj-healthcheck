@@ -94,8 +94,8 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 				ReportManager.problem(this, con, "Variation Features with coordinates = 1 " + variationName);
 				result = false;
 			}
-			// Check that no VFs are on the negative strand, unless they have map_weight > 1 and/or are located on non-reference seq_regions
-			String vfId = getRowColumnValue(con, "SELECT vf.variation_feature_id FROM " + variationName + ".variation_feature vf WHERE vf.seq_region_strand = -1 AND vf.map_weight = 1 AND NOT EXISTS (SELECT * FROM " + coreName + ".seq_region_attrib sra JOIN " + coreName + ".attrib_type at USING (attrib_type_id) WHERE sra.seq_region_id = vf.seq_region_id AND at.code = 'non_ref') LIMIT 1");
+			// Check that no VFs are on the negative strand, unless they have map_weight > 1 and/or are located on non-reference seq_regions or correspond to CNV probes
+			String vfId = getRowColumnValue(con, "SELECT vf.variation_feature_id FROM " + variationName + ".variation_feature vf WHERE vf.seq_region_strand = -1 AND vf.map_weight = 1 AND vf.allele_string NOT LIKE 'CNV_PROBE' AND NOT EXISTS (SELECT * FROM " + coreName + ".seq_region_attrib sra JOIN " + coreName + ".attrib_type at USING (attrib_type_id) WHERE sra.seq_region_id = vf.seq_region_id AND at.code = 'non_ref') LIMIT 1");
 			if (vfId.length() > 0) {
 				ReportManager.problem(this, con, "Variation Features on the negative strand (e.g. variation_feature_id = " + vfId + ") in " + variationName);
 				result = false;
