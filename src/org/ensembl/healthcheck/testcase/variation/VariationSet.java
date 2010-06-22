@@ -294,7 +294,6 @@ public class VariationSet extends SingleDatabaseTestCase {
 	    if (result) {
 	        ReportManager.correct(this, con, msg);
 	    }
-	    System.out.println(msg);
 	    return result;
 
 	} // run
