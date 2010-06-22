@@ -50,7 +50,7 @@ public class Meta_coord extends SingleDatabaseTestCase {
 	    boolean result = true;
 
 	    Connection con = dbre.getConnection();
-	    String[] tables = {"variation_feature","flanking_sequence","compressed_genotype_single_bp","transcript_variation","read_coverage","variation_group_feature","structural_variation_feature"};
+	    String[] tables = {"variation_feature","flanking_sequence","compressed_genotype_single_bp","transcript_variation","read_coverage","variation_group_feature","structural_variation"};
 	    /* Will check the presence of the variation_feature, transcript_variation, compressed_genotype,
 	       flanking_sequence, read_coverage and variation_group_feature entries in the meta_coord,
 	       when data present in those tables
