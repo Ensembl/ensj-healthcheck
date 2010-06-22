@@ -54,12 +54,15 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 	};
 	// Get variations with allele/genotype frequencies that don't add up to 1 for the same variation_id, subsnp_id and sample_id
 	for (int i=0; i<tables.length; i++) {
-	    String stmt = "SELECT q.variation_id FROM (SELECT a.variation_id, a.subsnp_id, a.sample_id, ROUND(SUM(a.frequency),2) AS sum FROM " + tables[i] + " a WHERE a.frequency IS NOT NULL GROUP BY a.variation_id, a.subsnp_id, a.sample_id) AS q WHERE q.sum != 1 LIMIT 1";
+	    String stmt = "SELECT q.problem FROM (SELECT CONCAT('variation_id = ',a.variation_id,', subsnp_id = ',a.subsnp_id,', sample_id = ',a.sample_id,', sum is: ',ROUND(SUM(a.frequency),2)) AS problem, ROUND(SUM(a.frequency),2) AS sum FROM " + tables[i] + " a WHERE a.frequency IS NOT NULL GROUP BY a.variation_id, a.subsnp_id, a.sample_id) AS q WHERE q.sum != 1 LIMIT 1";
 	    String vfId = getRowColumnValue(con,stmt);
-	    if (vfId.length() > 0) {
-		ReportManager.problem(this, con, "There are variations in " + tables[i] + " where the frequencies don't add up to 1 (e.g. variation_id = " + vfId + ")");
+	    if (vfId != null && vfId.length() > 0) {
+		ReportManager.problem(this, con, "There are variations in " + tables[i] + " where the frequencies don't add up to 1 (e.g. " + vfId + ")");
 		result = false;
 	    }
+	}
+	if ( result ){
+	    ReportManager.correct(this,con,"Allele/Genotype frequency healthcheck passed without any problem");
 	}
         return result;
 
