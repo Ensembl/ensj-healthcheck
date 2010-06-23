@@ -69,7 +69,7 @@ public class GeneCount extends SingleDatabaseTestCase {
 
 		boolean result = true;
 		
-		int genes = getRowCount(con, "SELECT COUNT(*) FROM coord_system cs, seq_region sr, gene g WHERE cs.coord_system_id=sr.coord_system_id AND cs.name='chromosome' AND cs.version='NCBI36' AND sr.name='MT' and g.seq_region_id=sr.seq_region_id AND g.biotype='protein_coding'");
+		int genes = getRowCount(con, "SELECT COUNT(*) FROM coord_system cs, seq_region sr, gene g WHERE cs.coord_system_id=sr.coord_system_id AND cs.name='chromosome' AND cs.version='GRCh37' AND sr.name='MT' and g.seq_region_id=sr.seq_region_id AND g.biotype='protein_coding'");
 
 		if (genes != 13) {
 			
