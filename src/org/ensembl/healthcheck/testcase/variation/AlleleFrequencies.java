@@ -33,7 +33,6 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
      */
     public AlleleFrequencies() {
         addToGroup("variation");
-	addToGroup("variation-release");
         setDescription("Check that the allele frequencies add up to 1");
     }
 
