@@ -17,8 +17,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -91,7 +93,12 @@ public class CompareSchema extends MultiDatabaseTestCase {
 
 			masterSchema = System.getProperty("master.schema");
 			if (masterSchema != null) {
+				
+				// add the named master schema to the master registry so that it can be accessed
+				DatabaseRegistry masterDBR = new DatabaseRegistry(masterSchema);
+				dbr.add(masterDBR.getByExactName(masterSchema));
 				logger.info("Will use " + masterSchema + " as specified master schema for comparisons.");
+				
 			} else {
 				logger.info("CompareSchema: No master schema defined file found! Set master.schema property in database.properties if you want to use a master schema.");
 			}
