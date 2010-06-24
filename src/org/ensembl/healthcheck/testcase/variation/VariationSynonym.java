@@ -67,7 +67,7 @@ public class VariationSynonym extends SingleDatabaseTestCase {
 		}
 	    }
 	}
-	if (result){
+	if (result && dbre.getSpecies() != Species.HOMO_SAPIENS) {
 	    ReportManager.info(this,con,"This test is only for human at moment");
 	}
 	
