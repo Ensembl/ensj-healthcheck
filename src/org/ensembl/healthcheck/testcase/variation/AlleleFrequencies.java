@@ -17,6 +17,8 @@
 package org.ensembl.healthcheck.testcase.variation;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 //import org.ensembl.healthcheck.DatabaseType;
@@ -51,14 +53,80 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 	    "population_genotype",
 	    "allele"
 	};
-	// Get variations with allele/genotype frequencies that don't add up to 1 for the same variation_id, subsnp_id and sample_id
-	for (int i=0; i<tables.length; i++) {
-	    String stmt = "SELECT q.problem FROM (SELECT CONCAT('variation_id = ',a.variation_id,', subsnp_id = ',a.subsnp_id,', sample_id = ',a.sample_id,', sum is: ',ROUND(SUM(a.frequency),2)) AS problem, ROUND(SUM(a.frequency),2) AS sum FROM " + tables[i] + " a WHERE a.frequency IS NOT NULL GROUP BY a.variation_id, a.subsnp_id, a.sample_id) AS q WHERE q.sum != 1 LIMIT 1";
-	    String vfId = getRowColumnValue(con,stmt);
-	    if (vfId != null && vfId.length() > 0) {
-		ReportManager.problem(this, con, "There are variations in " + tables[i] + " where the frequencies don't add up to 1 (e.g. " + vfId + ")");
-		result = false;
+	// Tolerance for the deviation from 1.0
+	float tol = 0.005f;
+	// Get the results in batches (determined by the variation_id)
+	int chunk = 1000000;
+	
+	try {
+		
+	    Statement stmt = con.createStatement();
+	    
+	    // Get variations with allele/genotype frequencies that don't add up to 1 for the same variation_id, subsnp_id and sample_id
+	    for (int i=0; i<tables.length; i++) {
+		// The query to get the data
+		String sql = "SELECT s.variation_id, s.subsnp_id, s.sample_id, s.frequency FROM " + tables[i] + " s USE INDEX (variation_idx,subsnp_idx) ORDER BY s.variation_id, s.subsnp_id, s.sample_id LIMIT ";
+		int offset = 0;
+		int leftover = 1;
+		boolean noFail = true;
+		// Loop until we've reached the maximum variation_id or hit a fail condition
+		while (leftover > 0 && noFail) {
+		    ResultSet rs = stmt.executeQuery(sql + new String(String.valueOf(offset) + "," + String.valueOf(chunk)));
+		    offset += chunk;
+		    
+		    int lastVid = 0;
+		    int lastSSid = 0;
+		    int lastSid = 0;
+		    int curVid;
+		    int curSSid;
+		    int curSid;
+		    float freq;
+		    float sum = 1.f;
+		    leftover = 0;
+		    
+		    while (rs.next()) {
+			curVid = rs.getInt(1);
+			curSSid = rs.getInt(2);
+			curSid = rs.getInt(3);
+			freq = rs.getFloat(4);
+			
+			// If any of the values was NULL, skip processing the row
+			if (curVid != 0 && curSSid != 0 && curSid != 0 && !rs.wasNull()) {
+			    // If any of the ids is different from the last one, stop summing and check the sum of the latest variation
+			    if (curVid != lastVid || curSSid != lastSSid || curSid != lastSid) {
+				if (Math.abs(1.f - sum) > tol) {
+				    ReportManager.problem(this, con, "There are variations in " + tables[i] + " where the frequencies don't add up to 1 (e.g. variation_id = " + String.valueOf(lastVid) + ", subsnp_id = " + String.valueOf(lastSSid) + ", sample_id = " + String.valueOf(lastSid) + ", sum is " + String.valueOf(sum));
+				    noFail = false;
+				    result = false;
+				    break;
+				}
+				// Set the last ids to this one and reset the sum
+				lastVid = curVid;
+				lastSSid = curSSid;
+				lastSid = curSid;
+				sum = 0.f;
+				// The previous variation is completely processed so reset the leftover counter
+				leftover = 0;
+			    }
+			    // Add the frequency to the sum
+			    sum += freq;
+			}
+			leftover++;
+		    }
+		    
+		    // Roll back the offset with the leftover count so that we don't skip any variations (will also take care of the very last variation)
+		    offset -= leftover;
+		    
+		    rs.close();
+		}
+		if (noFail) {
+		    ReportManager.correct(this,con,"Frequencies in " + tables[i] + " all add up to 1");
+		}
 	    }
+	    stmt.close();
+	} catch (Exception e) {
+	    result = false;
+	    e.printStackTrace();
 	}
 	if ( result ){
 	    ReportManager.correct(this,con,"Allele/Genotype frequency healthcheck passed without any problem");
