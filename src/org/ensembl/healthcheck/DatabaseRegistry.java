@@ -85,6 +85,19 @@ public class DatabaseRegistry {
 
 	}
 
+//-----------------------------------------------------------------
+	/**
+	 * Convenience method for creating a registry from a single regexp.
+	 * 
+	 */
+	public DatabaseRegistry(String regexp) {
+
+		List<String> regexps = new ArrayList<String>();
+		regexps.add(regexp);
+		
+		new DatabaseRegistry(regexps, null, null, false);
+		
+	}
 	// -------------------------------------------------------------------------
 	/**
 	 * Create a new DatabaseRegistry from an array of DatabaseRegistryEntries.
