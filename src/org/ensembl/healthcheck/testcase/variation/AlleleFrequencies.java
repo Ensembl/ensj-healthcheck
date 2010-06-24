@@ -45,14 +45,19 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
      * @return Result.
      */
     public boolean run(DatabaseRegistryEntry dbre) {
-
         boolean result = true;
-
+    
         Connection con = dbre.getConnection();
 	String[] tables = new String[] {
 	    "population_genotype",
 	    "allele"
 	};
+	
+	
+	// Don't run this until speed issues have been fixed
+	ReportManager.info(this,con,"Healthcheck not run");
+	/*
+	
 	// Tolerance for the deviation from 1.0
 	float tol = 0.005f;
 	// Get the results in batches (determined by the variation_id)
@@ -131,6 +136,7 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 	if ( result ){
 	    ReportManager.correct(this,con,"Allele/Genotype frequency healthcheck passed without any problem");
 	}
+	*/
         return result;
 
     } // run
