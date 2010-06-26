@@ -93,10 +93,16 @@ public class CompareSchema extends MultiDatabaseTestCase {
 
 			masterSchema = System.getProperty("master.schema");
 			if (masterSchema != null) {
-				
 				// add the named master schema to the master registry so that it can be accessed
-				DatabaseRegistry masterDBR = new DatabaseRegistry(masterSchema);
-				dbr.add(masterDBR.getByExactName(masterSchema));
+				List<String> regexps = new ArrayList<String>();
+				regexps.add(masterSchema);
+				DatabaseRegistry masterDBR = new DatabaseRegistry(regexps, null, null, false);
+				DatabaseRegistryEntry masterDBRE = masterDBR.getByExactName(masterSchema);
+				if (masterDBRE == null) {
+					logger.warning("Couldn't find database matching " + masterSchema);
+				}
+				dbr.add(masterDBRE);
+
 				logger.info("Will use " + masterSchema + " as specified master schema for comparisons.");
 				
 			} else {
