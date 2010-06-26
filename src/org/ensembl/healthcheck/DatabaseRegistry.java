@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.Utils;
 
 /**
  * Class that stores information about which databases are available.
@@ -72,32 +73,30 @@ public class DatabaseRegistry {
 			} else {
 
 				Iterator<String> it = regexps.iterator();
+				boolean found = false;
 				while (it.hasNext()) {
 					
 					String regexp = it.next();
 					String[] names = DBUtils.listDatabases(server.getServerConnection(), regexp);
+					System.out.println("regexp: " + regexp);
+Utils.printArray(names);
 
+					if (names.length > 0) {
+						found = true;
+					}
+					
 					addEntriesToRegistry(server, names, isSecondary);
 
+				}
+				
+				if (found == false) {
+					logger.warning("No databases matched any of the regexps supplied");
 				}
 			}
 		}
 
 	}
 
-//-----------------------------------------------------------------
-	/**
-	 * Convenience method for creating a registry from a single regexp.
-	 * 
-	 */
-	public DatabaseRegistry(String regexp) {
-
-		List<String> regexps = new ArrayList<String>();
-		regexps.add(regexp);
-		
-		new DatabaseRegistry(regexps, null, null, false);
-		
-	}
 	// -------------------------------------------------------------------------
 	/**
 	 * Create a new DatabaseRegistry from an array of DatabaseRegistryEntries.
