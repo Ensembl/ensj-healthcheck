@@ -41,7 +41,7 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
 		addToGroup("core_xrefs");
 		setDescription("Check that analyses (e.g. havana) and their associated xref types (e.g. OTTT) exist, and vice versa");
 		setPriority(Priority.AMBER);
-		setEffect("Will cause prblems/miscoloring on web display.");
+		setEffect("Will cause problems/miscoloring on web display.");
 		setFix("Possibly indicates a problem with the Havana/Ensembl merge pipeline");
 		setTeamResponsible("genebuilders");
 
