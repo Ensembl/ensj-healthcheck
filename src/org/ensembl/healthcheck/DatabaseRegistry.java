@@ -73,25 +73,15 @@ public class DatabaseRegistry {
 			} else {
 
 				Iterator<String> it = regexps.iterator();
-				boolean found = false;
 				while (it.hasNext()) {
 					
 					String regexp = it.next();
 					String[] names = DBUtils.listDatabases(server.getServerConnection(), regexp);
-					System.out.println("regexp: " + regexp);
-Utils.printArray(names);
-
-					if (names.length > 0) {
-						found = true;
-					}
 					
 					addEntriesToRegistry(server, names, isSecondary);
 
 				}
 				
-				if (found == false) {
-					logger.warning("No databases matched any of the regexps supplied");
-				}
 			}
 		}
 
