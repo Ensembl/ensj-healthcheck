@@ -25,7 +25,7 @@ public class AliasAndNaming extends AbstractEgCoreTestCase {
 
 	private final static String META_QUERY = "select meta_value from meta where meta_key=? and species_id=?";
 	private static final Pattern VALID_PRODUCTION_NAME = Pattern
-			.compile("^[0-9A-Za-z_ ]+$");
+			.compile("^[0-9a-z_]+$");
 
 	private static final Pattern INVALID_PRODUCTION_NAME2 = Pattern
 			.compile("__+");
