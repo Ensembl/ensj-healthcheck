@@ -35,6 +35,8 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
      */
     public AlleleFrequencies() {
         addToGroup("variation");
+        addToGroup("variation-release");
+	setHintLongRunning(true);
         setDescription("Check that the allele frequencies add up to 1");
     }
 
@@ -52,32 +54,45 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 	    "population_genotype",
 	    "allele"
 	};
-	
-	
-	// Don't run this until speed issues have been fixed
-	ReportManager.info(this,con,"Healthcheck not run");
-	/*
-	
+		
 	// Tolerance for the deviation from 1.0
 	float tol = 0.005f;
 	// Get the results in batches (determined by the variation_id)
-	int chunk = 1000000;
+	int chunk = 250000;
 	
+	// long mainStart = System.currentTimeMillis();
 	try {
 		
 	    Statement stmt = con.createStatement();
 	    
 	    // Get variations with allele/genotype frequencies that don't add up to 1 for the same variation_id, subsnp_id and sample_id
 	    for (int i=0; i<tables.length; i++) {
+		// long subStart = System.currentTimeMillis();
+		
+		// Get the maximum variation id
+		String sql = "SELECT MAX(s.variation_id) FROM " + tables[i] + " s";
+		int maxId = Integer.parseInt(getRowColumnValue(con,sql));
+		
 		// The query to get the data
-		String sql = "SELECT s.variation_id, s.subsnp_id, s.sample_id, s.frequency FROM " + tables[i] + " s USE INDEX (variation_idx,subsnp_idx) ORDER BY s.variation_id, s.subsnp_id, s.sample_id LIMIT ";
-		int offset = 0;
-		int leftover = 1;
+		sql = "SELECT s.variation_id, s.subsnp_id, s.sample_id, s.frequency FROM " + tables[i] + " s USE INDEX (variation_idx,subsnp_idx) WHERE s.variation_id BETWEEN VIDLOWER AND VIDUPPER ORDER BY s.variation_id, s.subsnp_id, s.sample_id";
+		int offset = 1;
+		
+		// A flag to indicate that no fail condition has been encountered
 		boolean noFail = true;
+		
 		// Loop until we've reached the maximum variation_id or hit a fail condition
-		while (leftover > 0 && noFail) {
-		    ResultSet rs = stmt.executeQuery(sql + new String(String.valueOf(offset) + "," + String.valueOf(chunk)));
-		    offset += chunk;
+		while (offset <= maxId && noFail) {
+		    
+		    // long s = System.currentTimeMillis();
+		    
+		    // Replace the offsets in the SQL query
+		    ResultSet rs = stmt.executeQuery(sql.replaceFirst("VIDLOWER",String.valueOf(offset)).replaceFirst("VIDUPPER",String.valueOf(offset+chunk)));
+		    
+		    // long e = System.currentTimeMillis();
+		    // System.out.println("Got " + String.valueOf(chunk) + " variations in " + String.valueOf(((e-s)/1000)) + " seconds. Offset is " + String.valueOf(offset));
+		    
+		    // Increase the offset with the chunk size and add 1
+		    offset += chunk+1;
 		    
 		    int lastVid = 0;
 		    int lastSSid = 0;
@@ -87,56 +102,65 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 		    int curSid;
 		    float freq;
 		    float sum = 1.f;
-		    leftover = 0;
+		    int count = 0;
 		    
 		    while (rs.next()) {
+			
+			// Get the variation_id, subsnp_id, sample_id and frequency. If any of these are NULL, they will be returned as 0 
 			curVid = rs.getInt(1);
 			curSSid = rs.getInt(2);
 			curSid = rs.getInt(3);
 			freq = rs.getFloat(4);
 			
-			// If any of the values was NULL, skip processing the row
+			// If any of the values was NULL, skip processing the row. For the frequency, we have to use the wasNull() function to check this. The ids it is sufficient to check if they were 0 
 			if (curVid != 0 && curSSid != 0 && curSid != 0 && !rs.wasNull()) {
+			    
 			    // If any of the ids is different from the last one, stop summing and check the sum of the latest variation
 			    if (curVid != lastVid || curSSid != lastSSid || curSid != lastSid) {
+				// See if the sum of the frequencies deviates from 1 more than what we tolerate. In that case, report the error and break
 				if (Math.abs(1.f - sum) > tol) {
 				    ReportManager.problem(this, con, "There are variations in " + tables[i] + " where the frequencies don't add up to 1 (e.g. variation_id = " + String.valueOf(lastVid) + ", subsnp_id = " + String.valueOf(lastSSid) + ", sample_id = " + String.valueOf(lastSid) + ", sum is " + String.valueOf(sum));
 				    noFail = false;
 				    result = false;
 				    break;
 				}
+				
 				// Set the last ids to this one and reset the sum
 				lastVid = curVid;
 				lastSSid = curSSid;
 				lastSid = curSid;
 				sum = 0.f;
-				// The previous variation is completely processed so reset the leftover counter
-				leftover = 0;
 			    }
 			    // Add the frequency to the sum
 			    sum += freq;
 			}
-			leftover++;
+			count++;
 		    }
 		    
-		    // Roll back the offset with the leftover count so that we don't skip any variations (will also take care of the very last variation)
-		    offset -= leftover;
-		    
 		    rs.close();
+		    
+		    // s = System.currentTimeMillis();
+		    // System.out.println("Processed " + String.valueOf(count) + " rows in " + String.valueOf(((s-e)/1000)) + " seconds");
 		}
 		if (noFail) {
+		    // Report that the current table is ok
 		    ReportManager.correct(this,con,"Frequencies in " + tables[i] + " all add up to 1");
 		}
+		// long subEnd = System.currentTimeMillis();
+		// System.out.println("Time for healthcheck on " + tables[i] + " (~" + String.valueOf(maxId) + " variations) was " + String.valueOf(((subEnd-subStart)/1000)) + " seconds");
 	    }
 	    stmt.close();
 	} catch (Exception e) {
 	    result = false;
 	    e.printStackTrace();
 	}
+	
+	// long mainEnd = System.currentTimeMillis();
+	// System.out.println("Total time for healthcheck was " + String.valueOf(((mainEnd-mainStart)/1000)) + " seconds");
+	
 	if ( result ){
 	    ReportManager.correct(this,con,"Allele/Genotype frequency healthcheck passed without any problem");
 	}
-	*/
         return result;
 
     } // run
