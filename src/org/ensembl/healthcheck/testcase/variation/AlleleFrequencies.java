@@ -56,7 +56,7 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 	};
 		
 	// Tolerance for the deviation from 1.0
-	float tol = 0.005f;
+	float tol = 0.025f;
 	// Get the results in batches (determined by the variation_id)
 	int chunk = 250000;
 	
@@ -119,7 +119,7 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 			    if (curVid != lastVid || curSSid != lastSSid || curSid != lastSid) {
 				// See if the sum of the frequencies deviates from 1 more than what we tolerate. In that case, report the error and break
 				if (Math.abs(1.f - sum) > tol) {
-				    ReportManager.problem(this, con, "There are variations in " + tables[i] + " where the frequencies don't add up to 1 (e.g. variation_id = " + String.valueOf(lastVid) + ", subsnp_id = " + String.valueOf(lastSSid) + ", sample_id = " + String.valueOf(lastSid) + ", sum is " + String.valueOf(sum));
+				    ReportManager.problem(this, con, "There are variations in " + tables[i] + " where the frequencies don't add up to 1 +/- " + String.valueOf(tol) + " (e.g. variation_id = " + String.valueOf(lastVid) + ", subsnp_id = " + String.valueOf(lastSSid) + ", sample_id = " + String.valueOf(lastSid) + ", sum is " + String.valueOf(sum));
 				    noFail = false;
 				    result = false;
 				    break;
