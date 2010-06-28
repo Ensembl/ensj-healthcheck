@@ -24,13 +24,15 @@ import org.ensembl.healthcheck.util.TestCaseUtils;
 public class AliasAndNaming extends AbstractEgCoreTestCase {
 
 	private final static String META_QUERY = "select meta_value from meta where meta_key=? and species_id=?";
-	private static final Pattern VALID_SQL_NAME = Pattern
+	private static final Pattern VALID_PRODUCTION_NAME = Pattern
 			.compile("^[0-9A-Za-z_ ]+$");
 
-	private static final Pattern INVALID_SQL_NAME2 = Pattern.compile("__+");
+	private static final Pattern INVALID_PRODUCTION_NAME2 = Pattern
+			.compile("__+");
 
-	private static final String COMPARA_NAME = "species.compara_name";
+	private static final String PRODUCTION_NAME = "species.production_name";
 	private static final String DB_NAME = "species.db_name";
+	private static final String SCI_NAME = "species.scientific_name";
 	private static final String ALIAS = "species.alias";
 
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
@@ -42,37 +44,47 @@ public class AliasAndNaming extends AbstractEgCoreTestCase {
 		return passes;
 	}
 
+	private String getName(DatabaseRegistryEntry dbre, SqlTemplate template,
+			int speciesId, String key) {
+		List<String> sciNames = template.queryForDefaultObjectList(META_QUERY,
+				String.class, key, speciesId);
+		if (sciNames.size() != 1) {
+			ReportManager.problem(this, dbre.getConnection(),
+					"Expect exactly one name for key " + key
+							+ " for species ID " + speciesId);
+			return null;
+		} else {
+			return sciNames.get(0);
+		}
+	}
+
 	private boolean checkNames(DatabaseRegistryEntry dbre,
 			SqlTemplate template, int speciesId) {
 		boolean passes = true;
 
 		List<String> aliases = template.queryForDefaultObjectList(META_QUERY,
 				String.class, ALIAS, speciesId);
+		String sciName = getName(dbre, template, speciesId, SCI_NAME);
 		String binomialName = null;
 		if (dbre.isMultiSpecies()) {
-			binomialName = TestCaseUtils.getBinomialNameMulti(template, speciesId);
-			List<String> dbNames = template.queryForDefaultObjectList(
-					META_QUERY, String.class, DB_NAME, speciesId);
-			if (dbNames.size() != 1) {
+			binomialName = TestCaseUtils.getBinomialNameMulti(template,
+					speciesId);
+			String dbName = getName(dbre, template, speciesId, DB_NAME);
+			if (!binomialName.equals(sciName) && !binomialName.equals(dbName)
+					&& !aliases.contains(binomialName)) {
 				passes = false;
 				ReportManager.problem(this, dbre.getConnection(),
-						"There should be exactly one " + ALIAS
-								+ " meta value for species " + speciesId);
-			}
-			if (!dbNames.contains(binomialName) && !aliases.contains(binomialName)) {
-				passes = false;
-				ReportManager.problem(this, dbre.getConnection(),
-						"There should be one " + ALIAS
-								+ " or "+DB_NAME+" meta value that matches name "
-								+ binomialName + " for species " + speciesId);
+						"There should be one " + ALIAS + " or " + DB_NAME
+								+ " meta value that matches name '"
+								+ binomialName + "' for species " + speciesId);
 			}
 		} else {
 			binomialName = TestCaseUtils.getBinomialName(template, speciesId);
 			if (!aliases.contains(binomialName)) {
 				passes = false;
 				ReportManager.problem(this, dbre.getConnection(), "No " + ALIAS
-						+ " meta value found that matches name " + binomialName
-						+ " for species " + speciesId);
+						+ " meta value found that matches name '"
+						+ binomialName + "' for species " + speciesId);
 				ReportManager
 						.problem(
 								this,
@@ -85,49 +97,26 @@ public class AliasAndNaming extends AbstractEgCoreTestCase {
 			}
 		}
 
-		if (dbre.isMultiSpecies()
-				|| !TestCaseUtils.isValidBinomial(binomialName)) {
-
-			String comparaName = template.queryForDefaultObject(META_QUERY,
-					String.class, COMPARA_NAME, speciesId);
-			if (StringUtils.isEmpty(comparaName)) {
-				passes = false;
-				ReportManager.problem(this, dbre.getConnection(),
-						"Meta value for " + COMPARA_NAME
-								+ " is not set for species " + speciesId);
-			} else if (!VALID_SQL_NAME.matcher(comparaName).matches()) {
-				passes = false;
-				ReportManager.problem(this, dbre.getConnection(), "Meta value "
-						+ comparaName + " for key  " + COMPARA_NAME
-						+ " does not match the required value for species "
-						+ speciesId);
-			} else if (INVALID_SQL_NAME2.matcher(comparaName).matches()) {
-				passes = false;
-				ReportManager.problem(this, dbre.getConnection(), "Meta value "
-						+ comparaName + " for key  " + COMPARA_NAME
-						+ " does not match the required value for species "
-						+ speciesId);
-			}
-			if (passes) {
-				// 2. is there an alias set to this value
-				if (!aliases.contains(comparaName)) {
-					passes = false;
-					ReportManager.problem(this, dbre.getConnection(), "No "
-							+ ALIAS
-							+ " meta value found that matches compara name "
-							+ comparaName + " for species " + speciesId);
-					ReportManager
-							.problem(
-									this,
-									dbre.getConnection(),
-									"INSERT INTO "
-											+ dbre.getName()
-											+ ".meta(species_id,meta_key,meta_value) VALUES("
-											+ speciesId + ",'species.alias','"
-											+ comparaName + "');");
-				}
-			}
+		String productionName = template.queryForDefaultObject(META_QUERY,
+				String.class, PRODUCTION_NAME, speciesId);
+		if (StringUtils.isEmpty(productionName)) {
+			passes = false;
+			ReportManager.problem(this, dbre.getConnection(), "Meta value for "
+					+ PRODUCTION_NAME + " is not set for species " + speciesId);
+		} else if (!VALID_PRODUCTION_NAME.matcher(productionName).matches()) {
+			passes = false;
+			ReportManager.problem(this, dbre.getConnection(), "Meta value "
+					+ productionName + " for key  " + PRODUCTION_NAME
+					+ " does not match the required value for species "
+					+ speciesId);
+		} else if (INVALID_PRODUCTION_NAME2.matcher(productionName).matches()) {
+			passes = false;
+			ReportManager.problem(this, dbre.getConnection(), "Meta value "
+					+ productionName + " for key  " + PRODUCTION_NAME
+					+ " does not match the required value for species "
+					+ speciesId);
 		}
+
 		return passes;
 	}
 

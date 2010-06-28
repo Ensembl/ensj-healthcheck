@@ -1,0 +1,5 @@
+species.ensembl_alias_name
+species.ensembl_common_name
+species.sql_name
+species.compara_name
+species.file_name

@@ -13,6 +13,8 @@ sample.location_text
 sample.transcript_param
 sample.transcript_text
 species.classification
-species.ensembl_alias_name
+species.production_name
+species.scientific_name
+species.short_name
 species.taxonomy_id
 species.division

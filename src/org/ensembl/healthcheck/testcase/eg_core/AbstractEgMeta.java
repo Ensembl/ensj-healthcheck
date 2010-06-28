@@ -22,14 +22,15 @@ import org.ensembl.healthcheck.util.TestCaseUtils;
 
 /**
  * Test to check whether the meta table contains the expected keys
+ * 
  * @author dstaines
- *
+ * 
  */
 public abstract class AbstractEgMeta extends AbstractEgCoreTestCase {
 
-	private final static String META_QUERY = "select meta_key,meta_value from meta where species_id=?";
+	protected final static String META_QUERY = "select meta_key,meta_value from meta where species_id=?";
 
-	private final static String SPECIES_ID_QUERY = "select distinct(species_id) from meta where species_id>0 order by species_id";
+	protected final static String SPECIES_ID_QUERY = "select distinct(species_id) from meta where species_id>0 order by species_id";
 
 	private final MapRowMapper<String, List<String>> mapper = new MapRowMapper<String, List<String>>() {
 
@@ -37,8 +38,8 @@ public abstract class AbstractEgMeta extends AbstractEgCoreTestCase {
 				ResultSet resultSet, int position) throws SQLException {
 			String string = resultSet.getString(2);
 			if (StringUtils.isEmpty(string)) {
-				throw new RuntimeException("Meta key "
-						+ resultSet.getString(1) + " has empty value");
+				throw new RuntimeException("Meta key " + resultSet.getString(1)
+						+ " has empty value");
 			}
 			currentValue.add(string);
 		}
@@ -65,7 +66,8 @@ public abstract class AbstractEgMeta extends AbstractEgCoreTestCase {
 	public AbstractEgMeta(List<String> metaKeys) {
 		super();
 		this.metaKeys = metaKeys;
-		metaKeys = TestCaseUtils.resourceToStringList("/org/ensembl/healthcheck/testcase/eg_core/meta_keys.txt");
+		metaKeys = TestCaseUtils
+				.resourceToStringList("/org/ensembl/healthcheck/testcase/eg_core/meta_keys.txt");
 	}
 
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
@@ -75,22 +77,36 @@ public abstract class AbstractEgMeta extends AbstractEgCoreTestCase {
 				SPECIES_ID_QUERY, Integer.class)) {
 			ReportManager.info(this, dbre.getConnection(),
 					"Testing meta for species " + speciesId);
-			Map<String, Boolean> metaKeyOut = CollectionUtils.createHashMap();
-			for (String key : metaKeys) {
-				metaKeyOut.put(key, false);
-			}
-			for (Entry<String, List<String>> meta : template.queryForMap(
-					META_QUERY, mapper, speciesId).entrySet()) {
+			Map<String, Boolean> metaKeyOut = getKeys(template, speciesId);
+			passes &= testKeys(dbre, speciesId, metaKeyOut);
+		}
+		return passes;
+	}
+
+	protected Map<String, Boolean> getKeys(SqlTemplate template, int speciesId) {
+		Map<String, Boolean> metaKeyOut = CollectionUtils.createHashMap();
+		for (String key : metaKeys) {
+			metaKeyOut.put(key, false);
+		}
+		for (Entry<String, List<String>> meta : template.queryForMap(
+				META_QUERY, mapper, speciesId).entrySet()) {
+			if (metaKeyOut.containsKey(meta.getKey())) {
 				metaKeyOut.put(meta.getKey(), true);
 			}
-			for (Entry<String, Boolean> e : metaKeyOut.entrySet()) {
-				if (!e.getValue()) {
-					passes = false;
-					ReportManager.problem(this, dbre.getConnection(),
-							"Meta table for " + speciesId
-									+ " does not contain a value for "
-									+ e.getKey());
-				}
+		}
+		return metaKeyOut;
+	}
+
+	protected boolean testKeys(DatabaseRegistryEntry dbre, int speciesId,
+			Map<String, Boolean> metaKeyOut) {
+		boolean passes = true;
+		for (Entry<String, Boolean> e : metaKeyOut.entrySet()) {
+			if (!e.getValue()) {
+				passes = false;
+				ReportManager
+						.problem(this, dbre.getConnection(), "Meta table for "
+								+ speciesId + " does not contain a value for "
+								+ e.getKey());
 			}
 		}
 		return passes;
