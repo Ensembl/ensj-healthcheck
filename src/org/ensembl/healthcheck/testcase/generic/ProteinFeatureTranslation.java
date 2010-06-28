@@ -45,6 +45,8 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
 
     private static int THRESHOLD = 1000; // don't report a problem if there are less results than this
     
+    private static int OUTPUT_LIMIT = 20; // only complain about this many missing translations
+
     /**
      * Create an ProteinFeatureTranslationTestCase that applies to a specific set of databases.
      */
@@ -79,6 +81,8 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
     public boolean run(DatabaseRegistryEntry dbre) {
 
         boolean result = true;
+
+	int problems = 0;
 
         // get list of transcripts
         String sql = "SELECT t.transcript_id, e.exon_id, tl.start_exon_id, "
@@ -197,8 +201,10 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
                         // System.out.println("proteinFeatureID: " + proteinFeatureID);
                     }
                 } else {
-                    ReportManager.problem(this, con, "Protein feature " + proteinFeatureID + " refers to non-existent translation "
-                            + translationID);
+		    if (problems++ < OUTPUT_LIMIT) {
+			ReportManager.problem(this, con, "Protein feature " + proteinFeatureID + " refers to non-existent translation "
+					      + translationID);
+		    }
                 }
             }
 
@@ -214,6 +220,10 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
 
             rs.close();
             stmt.close();
+
+	    if (problems >= OUTPUT_LIMIT) {
+		ReportManager.problem(this, con, "Note that only " + OUTPUT_LIMIT + " missing translation IDs were notified, there may be more");
+	    }
 
         } catch (Exception e) {
             e.printStackTrace();
