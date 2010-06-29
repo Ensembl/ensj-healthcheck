@@ -27,9 +27,12 @@ public final class DatabaseType {
 	/** An ESTgene database */
 	public static final DatabaseType ESTGENE = new DatabaseType("estgene");
 
-	/** A Vega database */
+	/** A Vega database - note this actually refers to the Ensembl Vega database*/
 	public static final DatabaseType VEGA = new DatabaseType("vega");
 
+	/** A Sanger Vega database - note this is different from the Ensembl Vega database*/
+	public static final DatabaseType SANGER_VEGA = new DatabaseType("sanger_vega");
+	
 	/** A Compara database */
 	public static final DatabaseType COMPARA = new DatabaseType("compara");
 
@@ -339,7 +342,7 @@ public final class DatabaseType {
 	public boolean isGeneric() {
 
 		if (name.equals("core") || name.equals("est") || name.equals("estgene") || name.equals("vega") || name.equals("cdna")
-				|| name.equals("otherfeatures")) {
+				|| name.equals("otherfeatures") || name.equals("sanger_vega")) {
 			return true;
 		}
 
