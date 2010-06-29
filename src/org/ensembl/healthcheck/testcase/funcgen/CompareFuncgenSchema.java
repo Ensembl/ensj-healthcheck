@@ -132,7 +132,7 @@ public class CompareFuncgenSchema extends MultiDatabaseTestCase {
 				
 				//masterSchema = System.getProperty("master.funcgen_schema");
 				
-				System.out.println("masterSchemaVar is " + masterSchemaVar);
+				//System.out.println("masterSchemaVar is " + masterSchemaVar + " = " + masterSchema);
 				
 				if (masterSchema != null) {
 				logger.info("Will use " + masterSchema + " as specified master schema for comparisons.");
