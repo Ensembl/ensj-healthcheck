@@ -79,9 +79,8 @@ public class SchemaType extends SingleDatabaseTestCase {
 		
 		
 		// check that the value matches the type of the database
-		String type = dbre.getType().getName();
-		if (!type.equals(key)) {
-			ReportManager.problem(this, con, "schema_type value " + key + " in meta table does not match database type (" + type + ")");
+		if (!typeMatches(dbre.getType(), key)) {
+			ReportManager.problem(this, con, "schema_type value " + key + " in meta table does not match database type (" + dbre.getType().getName() + ")");
 			result = false;
 		}
 		
@@ -89,5 +88,22 @@ public class SchemaType extends SingleDatabaseTestCase {
 
 	} // run
 
+	
+	/**
+	 * Check if the key in the meta table matches the database type. Note that all generic (CDNA, core, otherfeatures, vega) dbs should have schema_type of "core"
+	 */
+	private boolean typeMatches(DatabaseType type, String key) {
+		
+		boolean result = false;
+		
+		if (type.isGeneric() && key.equals("core")) {
+			result = true;
+		} else if (type.getName().equals(key)){
+			result = true;
+		}
+		
+		return result;
+	}
+	
 } // SchemaType
 
