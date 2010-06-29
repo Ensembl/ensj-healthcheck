@@ -25,7 +25,9 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 public class AnalysisDescription extends SingleDatabaseTestCase {
 
-	String[] types = { "regulatory_feature", "external_feature" }; // annotated_feature?
+
+	
+	String[] types = {"probe_feature", "feature_set", "result_set"}; // annotated_feature?
 
 	/**
    * Create a new AnalysisDescription testcase.
@@ -72,7 +74,9 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 
 			// get analyses that are used
 			// special case for transcripts - need to link to gene table and get analysis from there
+
 			String sql =  "SELECT DISTINCT(analysis_id) FROM " + types[i];
+			//System.out.println(sql);
 			//if (types[i].equals("transcript")) {
 			//	sql = "SELECT DISTINCT(g.analysis_id) FROM gene g, transcript t WHERE t.gene_id=g.gene_id";
 			//}
