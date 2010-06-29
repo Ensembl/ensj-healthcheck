@@ -77,11 +77,13 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 		sql = "SELECT s.variation_id, s.subsnp_id, s.sample_id, s.frequency FROM " + tables[i] + " s USE INDEX (variation_idx,subsnp_idx) WHERE s.variation_id BETWEEN VIDLOWER AND VIDUPPER ORDER BY s.variation_id, s.subsnp_id, s.sample_id";
 		int offset = 1;
 		
-		// A flag to indicate that no fail condition has been encountered
-		boolean noFail = true;
+		// Count the number of failed
+		int failed = 0;
+		// Keep an example
+		String example = new String();
 		
-		// Loop until we've reached the maximum variation_id or hit a fail condition
-		while (offset <= maxId && noFail) {
+		// Loop until we've reached the maximum variation_id
+		while (offset <= maxId) {
 		    
 		    // long s = System.currentTimeMillis();
 		    
@@ -117,12 +119,13 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 			    
 			    // If any of the ids is different from the last one, stop summing and check the sum of the latest variation
 			    if (curVid != lastVid || curSSid != lastSSid || curSid != lastSid) {
-				// See if the sum of the frequencies deviates from 1 more than what we tolerate. In that case, report the error and break
+				// See if the sum of the frequencies deviates from 1 more than what we tolerate. In that case, count it as a failed
 				if (Math.abs(1.f - sum) > tol) {
-				    ReportManager.problem(this, con, "There are variations in " + tables[i] + " where the frequencies don't add up to 1 +/- " + String.valueOf(tol) + " (e.g. variation_id = " + String.valueOf(lastVid) + ", subsnp_id = " + String.valueOf(lastSSid) + ", sample_id = " + String.valueOf(lastSid) + ", sum is " + String.valueOf(sum));
-				    noFail = false;
-				    result = false;
-				    break;
+				    if (failed == 0) {
+					// Keep an example
+					example = "variation_id = " + String.valueOf(lastVid) + ", subsnp_id = " + String.valueOf(lastSSid) + ", sample_id = " + String.valueOf(lastSid) + ", sum is " + String.valueOf(sum);
+				    }
+				    failed++;
 				}
 				
 				// Set the last ids to this one and reset the sum
@@ -142,9 +145,13 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 		    // s = System.currentTimeMillis();
 		    // System.out.println("Processed " + String.valueOf(count) + " rows in " + String.valueOf(((s-e)/1000)) + " seconds");
 		}
-		if (noFail) {
+		if (failed == 0) {
 		    // Report that the current table is ok
 		    ReportManager.correct(this,con,"Frequencies in " + tables[i] + " all add up to 1");
+		}
+		else {
+		    ReportManager.problem(this, con, "There are " + String.valueOf(failed) + " variations in " + tables[i] + " where the frequencies don't add up to 1 +/- " + String.valueOf(tol) + " (e.g. " + example + ")");
+		    result = false;
 		}
 		// long subEnd = System.currentTimeMillis();
 		// System.out.println("Time for healthcheck on " + tables[i] + " (~" + String.valueOf(maxId) + " variations) was " + String.valueOf(((subEnd-subStart)/1000)) + " seconds");
