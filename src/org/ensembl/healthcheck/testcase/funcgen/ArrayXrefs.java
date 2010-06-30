@@ -170,8 +170,8 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 		if ((currentSchemaBuilds.length != 1) ||
 			(! currentSchemaBuilds[0].equals(schemaBuild))){
 			
-			ReportManager.problem(this, efgCon, "perform chromosome xref counts as efg and core DB are not on the same DatabaseServer:\t" +
-								  "core " + coreDbre.getDatabaseServer().getDatabaseURL() + "\tefg " + dbre.getDatabaseServer().getDatabaseURL());
+			
+			ReportManager.problem(this, efgCon, "Could not identify a unique current coord_system.schema_build to match " + schemaBuild);
 			return false;	
 		}
 		
@@ -204,12 +204,22 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 			StringBuffer inList   = new StringBuffer();
 			String       edbName = dbre.getSpecies() + "_core_Transcript";
 
-				//We really need to match the genebuild between the edb and the schema_build
+			//We really need to match the genebuild between the edb and the schema_build
 			//otherwise we have out of date data?
-			//Not enirely true, altho a genebuild increment should mean that the xrefs needs redoing
+			//Not enirely true, altho a genebuild increment should strictly mean that the xrefs needs redoing
 			//There should only be 1 edb ID, but we have duplicates at the moment, so handle this
 			String[] exdbIDs = getColumnValues(efgCon, "select external_db_id from external_db where db_name='" + edbName 
 											   + "' and db_release='" + schemaBuild + "'");
+
+
+			//Catch absent edbs
+
+			if(exdbIDs.length == 0){
+				ReportManager.problem(this, efgCon, "Could not identify external_db " + edbName + " with db_release " + schemaBuild);
+				return false;
+			}
+
+
 
 			for (int i = 0; i < exdbIDs.length; i++) {
 				if (i > 0)
@@ -219,12 +229,11 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 
 
 
-			//We need to restrict this to the core_coord_system_ids for the specific DB
+			//Restrict this to the core_coord_system_ids for the specific DB
 			//other wise we may get odd counts where core_coord_system_ids have changed between releases on the same assembly
 
 			//Need to do this for Probe and ProbeSet arrays
-	
-			
+				
 			ResultSet xrefCounts = efgCon
 					.createStatement()
 					.executeQuery(
