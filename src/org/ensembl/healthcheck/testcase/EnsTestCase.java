@@ -218,7 +218,7 @@ public abstract class EnsTestCase {
 	 * 
 	 * @return The list of names as Strings.
 	 */
-	public List getGroups() {
+	public List<String> getGroups() {
 
 		return groups;
 
@@ -1308,6 +1308,8 @@ public abstract class EnsTestCase {
 	 */
 	public Connection getSchemaConnection(String schema) {
 
+		DatabaseRegistry reg = DBUtils.getMainDatabaseRegistry();
+		
 		DatabaseRegistryEntry dbre = DBUtils.getMainDatabaseRegistry().getByExactName(schema);
 
 		return dbre.getConnection();
@@ -1617,23 +1619,23 @@ public abstract class EnsTestCase {
 	// -----------------------------------------------------------------
 	/**
 	 * Set the database type(s) that this test applies to based upon the directory name. For directories called "generic", the type is
-	 * set to core, est, estgene and vega. For all other directories the type is set based upon the directory name.
+	 * set to core, otherfeatures, cdna, vega and sanger_vega. For all other directories the type is set based upon the directory name.
 	 * 
 	 * @param dirName
 	 *          The directory name to check.
 	 */
 	public void setTypeFromDirName(String dirName) {
 
-		List types = new ArrayList();
+		List<DatabaseType> types = new ArrayList<DatabaseType>();
 
 		if (dirName.equals("generic")) {
 
 			types.add(DatabaseType.CORE);
 			types.add(DatabaseType.VEGA);
-			types.add(DatabaseType.EST);
-			types.add(DatabaseType.ESTGENE);
 			types.add(DatabaseType.CDNA);
 			types.add(DatabaseType.OTHERFEATURES);
+			types.add(DatabaseType.SANGER_VEGA);
+
 			logger.finest("Set generic types for " + getName());
 
 		} else {
