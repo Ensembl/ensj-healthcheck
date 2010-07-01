@@ -18,6 +18,7 @@ import java.util.List;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.DatabaseType;
 
 /**
  * Check that the content of the master_* tables in the production databases matches the equivalent table in this database.
@@ -38,6 +39,13 @@ public class ProductionMasterTables extends SingleDatabaseTestCase {
 		setFix("Resync tables");
 		setTeamResponsible("Release coordinator");
 
+	}
+
+    /**
+	 * This test Does not apply to sanger_vega dbs
+	 */
+	public void types() {
+		removeAppliesToType(DatabaseType.SANGER_VEGA);
 	}
 
 	/**

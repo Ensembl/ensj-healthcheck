@@ -24,6 +24,7 @@ import java.util.List;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.DatabaseType;
 
 /**
  * Compare the analysis_descriptions in the current database with those from the equivalent database on the secondary server. Note
@@ -44,6 +45,14 @@ public class ComparePreviousVersionAnalysisDescriptions extends SingleDatabaseTe
 		setDescription("Compare the analysis_descriptions in the current database with those from the equivalent database on the secondary server. Note only certain columns are checked.");
 
 	}
+
+    /**
+	 * This test Does not apply to sanger_vega dbs
+	 */
+	public void types() {
+		removeAppliesToType(DatabaseType.SANGER_VEGA);
+	}
+
 
 	// ----------------------------------------------------------------------
 

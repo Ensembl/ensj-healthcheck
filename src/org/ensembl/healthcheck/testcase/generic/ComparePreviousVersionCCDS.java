@@ -19,6 +19,7 @@ import java.util.Map;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.testcase.Priority;
+import org.ensembl.healthcheck.DatabaseType;
 
 /**
  * Compare the CCDS in the current database with those from the equivalent
@@ -51,7 +52,7 @@ public class ComparePreviousVersionCCDS extends ComparePreviousVersionBase {
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		removeAppliesToType(DatabaseType.CDNA);
 		removeAppliesToType(DatabaseType.VEGA);
-
+		removeAppliesToType(DatabaseType.SANGER_VEGA);
 	}
 
 	// ----------------------------------------------------------------------

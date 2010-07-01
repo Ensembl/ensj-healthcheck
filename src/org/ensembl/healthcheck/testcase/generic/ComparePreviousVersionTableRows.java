@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.util.Utils;
+import org.ensembl.healthcheck.DatabaseType;
 
 /**
  * Compare the counts of the number of rows in each table in this and the previous database.
@@ -36,6 +37,12 @@ public class ComparePreviousVersionTableRows extends ComparePreviousVersionBase 
 
 	}
 
+    /**
+	 * This test Does not apply to sanger_vega dbs
+	 */
+	public void types() {
+		removeAppliesToType(DatabaseType.SANGER_VEGA);
+	}	
 	// ----------------------------------------------------------------------
 
 	protected Map getCounts(DatabaseRegistryEntry dbre) {

@@ -34,7 +34,7 @@ import org.ensembl.healthcheck.util.Utils;
  * meta table across species are done in MetaCrossSpecies.
  */
 public class Meta extends SingleDatabaseTestCase {
-
+	private boolean isSangerVega=false; 
 	/**
 	 * Creates a new instance of CheckMetaDataTableTestCase
 	 */
@@ -54,7 +54,7 @@ public class Meta extends SingleDatabaseTestCase {
 	 * @return True if the test passed.
 	 */
 	public boolean run(final DatabaseRegistryEntry dbre) {
-
+		isSangerVega = dbre.getType()==DatabaseType.SANGER_VEGA;
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
@@ -150,18 +150,21 @@ public class Meta extends SingleDatabaseTestCase {
 			// Prefix is OK as long as it starts with the valid one
 			Species dbSpecies = dbre.getSpecies();
 			String correctPrefix = Species.getAssemblyPrefixForSpecies(dbSpecies);
-			if (correctPrefix == null) {
-				logger.info("Can't get correct assembly prefix for " + dbSpecies.toString());
-			} else {
-				if (metaTableAssemblyPrefix != null) {
-					if (!metaTableAssemblyPrefix.toUpperCase().startsWith(correctPrefix.toUpperCase())) {
-						ReportManager.problem(this, con, "Database species is " + dbSpecies + " but assembly prefix " + metaTableAssemblyPrefix + " should have prefix beginning with " + correctPrefix);
-						result = false;
-					} else {
-						ReportManager.correct(this, con, "Meta table assembly prefix (" + metaTableAssemblyPrefix + ") is correct for " + dbSpecies);
-					}
+			
+			if (!isSangerVega){//do not check this for sanger_vega
+				if (correctPrefix == null) {
+					logger.info("Can't get correct assembly prefix for " + dbSpecies.toString());
 				} else {
-					ReportManager.problem(this, con, "Can't get assembly prefix from meta table");
+					if (metaTableAssemblyPrefix != null) {
+						if (!metaTableAssemblyPrefix.toUpperCase().startsWith(correctPrefix.toUpperCase())) {
+							ReportManager.problem(this, con, "Database species is " + dbSpecies + " but assembly prefix " + metaTableAssemblyPrefix + " should have prefix beginning with " + correctPrefix);
+							result = false;
+						} else {
+							ReportManager.correct(this, con, "Meta table assembly prefix (" + metaTableAssemblyPrefix + ") is correct for " + dbSpecies);
+						}
+					} else {
+						ReportManager.problem(this, con, "Can't get assembly prefix from meta table");
+					}
 				}
 			}
 		}
@@ -337,14 +340,17 @@ public class Meta extends SingleDatabaseTestCase {
 
 			String metaTableGenusSpecies = metaTableSpeciesGenusArray[1] + "_" + metaTableSpeciesGenusArray[0];
 			logger.finest("Classification from DB name:" + dbNameGenusSpecies + " Meta table: " + metaTableGenusSpecies);
-			if (!dbNameGenusSpecies.equalsIgnoreCase(metaTableGenusSpecies)) {
-				result = false;
-				// warn(con, "Database name does not correspond to
-				// species/genus data from meta
-				// table");
-				ReportManager.problem(this, con, "Database name does not correspond to species/genus data from meta table");
-			} else {
-				ReportManager.correct(this, con, "Database name corresponds to species/genus data from meta table");
+
+			if (!isSangerVega) {//do not check this for sanger_vega
+				if (!dbNameGenusSpecies.equalsIgnoreCase(metaTableGenusSpecies)) {
+					result = false;
+					// warn(con, "Database name does not correspond to
+					// species/genus data from meta
+					// table");
+					ReportManager.problem(this, con, "Database name does not correspond to species/genus data from meta table");
+				} else {
+					ReportManager.correct(this, con, "Database name corresponds to species/genus data from meta table");
+				}
 			}
 
 		} else {
@@ -720,7 +726,6 @@ public class Meta extends SingleDatabaseTestCase {
 	private boolean checkSchemaVersionDBName(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
-
 		// get version from database name
 		String dbNameVersion = dbre.getSchemaVersion();
 		logger.finest("Schema version from database name: " + dbNameVersion);
@@ -746,7 +751,7 @@ public class Meta extends SingleDatabaseTestCase {
 			ReportManager.problem(this, con, "Meta schema_version " + schemaVersion + " is not numeric");
 			return false;
 
-		} else if (!dbNameVersion.equals(schemaVersion)) {
+		} else if (!dbNameVersion.equals(schemaVersion) && !isSangerVega) {//do not report for sanger_vega
 
 			ReportManager.problem(this, con, "Meta schema_version " + schemaVersion + " does not match version inferred from database name (" + dbNameVersion + ")");
 			return false;

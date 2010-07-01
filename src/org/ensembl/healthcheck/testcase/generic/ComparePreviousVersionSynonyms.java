@@ -15,6 +15,7 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 
 /**
  * Compare the xref synonyms in the current database with those from the equivalent
@@ -32,6 +33,13 @@ public class ComparePreviousVersionSynonyms extends ComparePreviousVersionBase {
 		addToGroup("core_xrefs");
 		setDescription("Compare the xref synonyms in the current database with those from the equivalent database on the secondary server");
 
+	}
+
+    /**
+	 * This test Does not apply to sanger_vega dbs
+	 */
+	public void types() {
+		removeAppliesToType(DatabaseType.SANGER_VEGA);
 	}
 
 	// ----------------------------------------------------------------------

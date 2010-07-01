@@ -69,7 +69,7 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		String sql = "SELECT g.gene_id, g.seq_region_start AS start, g.seq_region_end AS end, g.seq_region_id AS chromosome_id, g.seq_region_strand AS strand, g.biotype, gsi.stable_id "
+		String sql = "SELECT g.gene_id, g.seq_region_start AS start, g.seq_region_end AS end, g.seq_region_id AS chromosome_id, g.seq_region_strand AS strand, g.biotype, gsi.stable_id, g.analysis_id, g.display_xref_id, g.source, g.status, g.description, g.is_current, g.canonical_transcript_id, g.canonical_annotation "
 				+ "             FROM (gene g, gene_stable_id gsi) WHERE g.gene_id=gsi.gene_id ORDER BY chromosome_id, strand, start, end";
 
 		Connection con = dbre.getConnection();
@@ -88,9 +88,29 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 			int lastGeneChromosome = -1;
 			int lastGeneStrand = -1;
 			int duplicateGene = 0;
+
+			int geneAnalysis=-1;
+			int geneDisplayXref=-1;
+			String geneSource="";
+			String geneStatus="";
+			String geneDescription="";
+			int geneIsCurrent=-1;
+			int geneCanonicalTranscript=-1;
+			String geneCanonicalAnnotation="";
+
+			
 			String geneBioType, geneStableID;
 			String lastGeneBioType = "";
-			String lastGeneStableID = "";
+			String lastGeneStableID = "";			
+
+			int lastGeneAnalysis=-1;
+			int lastGeneDisplayXref=-1;
+			String lastGeneSource="";
+			String lastGeneStatus="";
+			String lastGeneDescription="";
+			int lastGeneIsCurrent=-1;
+			int lastGeneCanonicalTranscript=-1;
+			String lastGeneCanonicalAnnotation="";
 
 			boolean first = true;
 
@@ -104,21 +124,39 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 				geneStrand = rs.getInt(5);
 				geneBioType = rs.getString(6);
 				geneStableID = rs.getString(7);
+				
+				geneAnalysis=rs.getInt(8);
+				geneDisplayXref=rs.getInt(9);
+				geneSource=rs.getString(10);
+				geneStatus=rs.getString(11);
+				geneDescription=rs.getString(12);
+				geneIsCurrent=rs.getInt(13);
+				geneCanonicalTranscript=rs.getInt(14);
+				geneCanonicalAnnotation=rs.getString(15);
+				
 
-				if (!first) {
+				if (!first) {                          //for sanger_vega, we only want to report true duplicates (i.e. genes that have all fields identical)
 					if (lastGeneChromosome == geneChromosome
 							&& lastGeneStart == geneStart
 							&& lastGeneEnd == geneEnd
 							&& lastGeneStrand == geneStrand
-							&& geneBioType.equals(lastGeneBioType)) {
+							&& geneBioType.equals(lastGeneBioType)
+							&& ( dbre.getType()!=DatabaseType.SANGER_VEGA || 
+									( lastGeneAnalysis==geneAnalysis && lastGeneDisplayXref==geneDisplayXref && lastGeneSource==geneSource
+									  && lastGeneStatus==geneStatus && lastGeneDescription==geneDescription && lastGeneIsCurrent==geneIsCurrent 
+									  && lastGeneCanonicalTranscript==geneCanonicalTranscript && lastGeneCanonicalAnnotation==geneCanonicalAnnotation											
+									)
+								)
+							) {
+	
 						duplicateGene++;
 						if (duplicateGene < MAX_WARNINGS) {
-							ReportManager.warning(this, con, "Gene "
-									+ geneStableID + " (" + geneBioType
-									+ " ID " + geneId
-									+ ") is duplicated - see gene "
-									+ lastGeneStableID + " (" + lastGeneBioType
-									+ " ID " + lastGeneId + ")");
+						  ReportManager.warning(this, con, "Gene "
+								  + geneStableID + " (" + geneBioType
+								  + " ID " + geneId
+								  + ") is duplicated - see gene "
+								  + lastGeneStableID + " (" + lastGeneBioType
+								  + " ID " + lastGeneId + ")");
 						}
 					}
 				} else {
@@ -132,6 +170,15 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 				lastGeneStrand = geneStrand;
 				lastGeneBioType = geneBioType;
 				lastGeneStableID = geneStableID;
+				
+				lastGeneAnalysis=geneAnalysis;
+				lastGeneDisplayXref=geneDisplayXref;
+				lastGeneSource=geneSource;
+				lastGeneStatus=geneStatus;
+				lastGeneDescription=geneDescription;
+				lastGeneIsCurrent=geneIsCurrent;
+				lastGeneCanonicalTranscript=geneCanonicalTranscript;
+				lastGeneCanonicalAnnotation=geneCanonicalAnnotation;				
 
 			} // while rs
 

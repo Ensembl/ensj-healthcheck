@@ -15,6 +15,7 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 
 /**
  * Compare the xrefs in the current database with those from the equivalent
@@ -34,6 +35,12 @@ public class ComparePreviousVersionXrefs extends ComparePreviousVersionBase {
 
 	}
 
+    /**
+	 * This test Does not apply to sanger_vega dbs
+	 */
+	public void types() {
+		removeAppliesToType(DatabaseType.SANGER_VEGA);
+	}	
 	// ----------------------------------------------------------------------
 
 	protected Map<String, Integer> getCounts(DatabaseRegistryEntry dbre) {

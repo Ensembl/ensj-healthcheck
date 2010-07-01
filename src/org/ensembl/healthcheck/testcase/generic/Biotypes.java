@@ -60,7 +60,7 @@ public class Biotypes extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 		result &= checkNull(con);
 		result &= checkEnsembl(con);
-		if (dbre.getType() != DatabaseType.VEGA) {
+		if (dbre.getType() != DatabaseType.VEGA && dbre.getType() != DatabaseType.SANGER_VEGA) {
 			result &= checkGenesAndTranscripts(con);
 		}
 

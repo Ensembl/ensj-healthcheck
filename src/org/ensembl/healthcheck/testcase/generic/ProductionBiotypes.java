@@ -23,6 +23,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.DatabaseType;
 
 /**
  * Check that the gene and transcript biotypes match the valid current ones in the production database.
@@ -42,6 +43,13 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
 		setEffect("Unknown/incorrect biotypes.");
 		setTeamResponsible("Release coordinator");
 
+	}
+
+    /**
+	 * This test Does not apply to sanger_vega dbs
+	 */
+	public void types() {
+		removeAppliesToType(DatabaseType.SANGER_VEGA);
 	}
 
 	/**

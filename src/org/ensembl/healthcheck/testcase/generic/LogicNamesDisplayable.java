@@ -30,6 +30,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.Utils;
+import org.ensembl.healthcheck.DatabaseType;
 
 /**
  * Check that the logic names in the analysis table are displayable. Currently
@@ -58,6 +59,14 @@ public class LogicNamesDisplayable extends SingleDatabaseTestCase {
 		setHintLongRunning(true);
 
 	}
+
+    /**
+	 * This test Does not apply to sanger_vega dbs
+	 */
+	public void types() {
+		removeAppliesToType(DatabaseType.SANGER_VEGA);
+	}
+
 
 	/**
 	 * Run the test.

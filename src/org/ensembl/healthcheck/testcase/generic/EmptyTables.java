@@ -167,15 +167,26 @@ public class EmptyTables extends SingleDatabaseTestCase {
 		}
 
 		// -----------------------------------------------------
-		// many tables are allowed to be empty in vega databases
+		// many tables are allowed to be empty in vega  and sanger_vega databases
 		if (type == DatabaseType.VEGA) {
 
-			String[] allowedEmpty = { "affy_array", "affy_feature", "affy_probe", "analysis_description", "dna", "external_synonym",
-					"go_xref", "identity_xref", "karyotype", "map", "marker", "marker_feature", "marker_map_location", "marker_synonym",
+			String[] allowedEmpty = { "affy_array", "affy_feature", "affy_probe", "dna", "external_synonym",
+					"identity_xref", "map", "marker", "marker_feature", "marker_map_location", "marker_synonym",
 					"misc_attrib", "misc_feature", "misc_feature_misc_set", "misc_set", "prediction_exon", "prediction_transcript",
 					"repeat_consensus", "repeat_feature", "simple_feature", "transcript_attrib",
-					"transcript_supporting_feature", "translation_attrib", "unconventional_transcript_association" };
+					"unconventional_transcript_association" };
 			tables = remove(tables, allowedEmpty);
+
+		}else if (type == DatabaseType.SANGER_VEGA) {
+
+			String[] allowedEmpty = { "affy_array", "affy_feature", "affy_probe", "identity_xref", "unconventional_transcript_association" };
+			tables = remove(tables, allowedEmpty);
+			//remove backup tables, starting with backup_ they are allowed to be empty
+			for (String table : tables){
+				if (table.startsWith("backup_") ){
+					tables = remove(tables, new String[] {table});
+				}
+			}
 
 		}
 

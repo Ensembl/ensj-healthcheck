@@ -23,6 +23,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.DatabaseType;
 
 /**
  * Check that all the non-optional meta keys listed in the production database are present, and that all the meta keys are valid.
@@ -43,6 +44,14 @@ public class ProductionMeta extends SingleDatabaseTestCase {
 		setTeamResponsible("Release coordinator");
 
 	}
+
+    /**
+	 * This test Does not apply to sanger_vega dbs
+	 */
+	public void types() {
+		removeAppliesToType(DatabaseType.SANGER_VEGA);
+	}
+
 
 	/**
 	 * Run the test.

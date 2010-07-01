@@ -25,6 +25,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.DatabaseType;
 
 /**
  * Compare the transcript stable IDs and exon coordinates between 2 releases. Note this is not comparing counts so doesn't extend
@@ -45,6 +46,12 @@ public class ComparePreviousVersionExonCoords extends SingleDatabaseTestCase {
 
 	}
 
+    /**
+	 * This test Does not apply to sanger_vega dbs
+	 */
+	public void types() {
+		removeAppliesToType(DatabaseType.SANGER_VEGA);
+	}	
 	// ----------------------------------------------------------------------
 
 	public boolean run(DatabaseRegistryEntry current) {
