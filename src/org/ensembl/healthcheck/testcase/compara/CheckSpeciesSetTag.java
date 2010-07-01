@@ -22,6 +22,8 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Vector;
 import java.sql.SQLException;
 
@@ -31,6 +33,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key
@@ -63,22 +66,84 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
         boolean result = true;
 
         // Get compara DB connection
-        DatabaseRegistryEntry[] allComparaDBs = dbr.getAll(DatabaseType.COMPARA);
-        if (allComparaDBs.length == 0) {
+        DatabaseRegistryEntry[] allPrimaryComparaDBs = DBUtils.getMainDatabaseRegistry().getAll(DatabaseType.COMPARA);
+        if (allPrimaryComparaDBs.length == 0) {
           result = false;
           ReportManager.problem(this, "", "Cannot find compara database");
           usage();
           return false;
         }
 
+        DatabaseRegistryEntry[] allSecondaryComparaDBs = DBUtils.getSecondaryDatabaseRegistry().getAll(DatabaseType.COMPARA);
+
         Map speciesDbrs = getSpeciesDatabaseMap(dbr, true);
 
         // For each compara connection...
-        for (int i = 0; i < allComparaDBs.length; i++) {
+        for (int i = 0; i < allPrimaryComparaDBs.length; i++) {
             // ... check the entries with a taxon id
-            result &= checkSpeciesSetByTaxon(allComparaDBs[i]);
+            result &= checkSpeciesSetByTaxon(allPrimaryComparaDBs[i]);
             // ... check the entriy for low-coverage genomes
-            result &= checkLowCoverageSpecies(allComparaDBs[i], speciesDbrs);
+            result &= checkLowCoverageSpecies(allPrimaryComparaDBs[i], speciesDbrs);
+
+            if (allSecondaryComparaDBs.length == 0) {
+              result = false;
+              ReportManager.problem(this, allPrimaryComparaDBs[i].getConnection(), "Cannot find the compara database in the secondary server");
+              usage();
+            }
+            for (int j = 0; j < allSecondaryComparaDBs.length; j++) {
+                // Check vs previous compara DB.
+                result &= checkSetOfSpeciesSets(allPrimaryComparaDBs[i], allSecondaryComparaDBs[j]);
+            }
+        }
+
+        return result;
+    }
+
+
+
+    public boolean checkSetOfSpeciesSets(DatabaseRegistryEntry primaryComparaDbre, DatabaseRegistryEntry secondaryComparaDbre) {
+
+        boolean result = true;
+        Connection con1 = primaryComparaDbre.getConnection();
+        Connection con2 = secondaryComparaDbre.getConnection();
+        HashMap primarySets = new HashMap();
+        HashMap secondarySets = new HashMap();
+        
+        // Get list of species_set sets in the secondary server
+        String sql = "SELECT value, count(*) FROM species_set_tag WHERE tag = 'name' GROUP BY value";
+        try {
+          Statement stmt1 = con1.createStatement();
+          ResultSet rs1 = stmt1.executeQuery(sql);
+          while (rs1.next()) {
+              primarySets.put(rs1.getString(1), rs1.getInt(2)); 
+          }
+          rs1.close();
+          stmt1.close();
+
+          Statement stmt2 = con2.createStatement();
+          ResultSet rs2 = stmt2.executeQuery(sql);
+          while (rs2.next()) {
+              secondarySets.put(rs2.getString(1), rs2.getInt(2)); 
+          }
+          rs2.close();
+          stmt2.close();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+
+        Iterator it = secondarySets.keySet().iterator();
+        while (it.hasNext()) {
+            Object next = it.next();
+            Integer primaryValue = new Integer(primarySets.get(next).toString());
+            Integer secondaryValue = new Integer(secondarySets.get(next).toString());
+            if (primaryValue == null) {
+                ReportManager.problem(this, con1, "Species set \"" + next.toString() + "\" is missing.");
+                result = false;
+            } else if (primaryValue < secondaryValue) {
+                ReportManager.problem(this, con1, "Species set \"" + next.toString() + "\" is present only " + primaryValue +
+                    " times instead of " + secondaryValue + " as in " + DBUtils.getShortDatabaseName(con2));
+                result = false;
+            }
         }
 
         return result;
@@ -92,14 +157,16 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
         Connection con = comparaDbre.getConnection();
 
         // Get list of species (assembly_default) in compara
+        Vector comparaSpeciesStr = new Vector();
         Vector comparaSpecies = new Vector();
         Vector comparaGenomeDBids = new Vector();
         String sql2 = "SELECT DISTINCT genome_db.genome_db_id, genome_db.name FROM genome_db WHERE assembly_default = 1"
-            + " AND name <> 'Ancestral sequences' ORDER BY genome_db.genome_db_id";
+            + " AND name <> 'Ancestral sequences' AND name <> 'ancestral_sequences' ORDER BY genome_db.genome_db_id";
         try {
           Statement stmt = con.createStatement();
           ResultSet rs = stmt.executeQuery(sql2);
           while (rs.next()) {
+            comparaSpeciesStr.add(rs.getString(2));
             comparaSpecies.add(Species.resolveAlias(rs.getString(2).toLowerCase().replace(' ', '_')));
             comparaGenomeDBids.add(rs.getString(1));
           }
@@ -127,7 +194,7 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
                     lowCoverageGenomeDdIds.add(comparaGenomeDBids.get(i));
                 }
             } else {
-                ReportManager.problem(this, con, "No connection for " + species.toString());
+                ReportManager.problem(this, con, "No connection for " + comparaSpeciesStr.get(i).toString());
                 allSpeciesFound = false;
             }
         }
@@ -235,7 +302,7 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
     private void usage() {
 
       ReportManager.problem(this, "USAGE", "run-healthcheck.sh -d ensembl_compara_.+ " + 
-          " -d2 .+_core_.+ SpeciesSetTag");
+          " -d2 .+_core_.+ -d2 .+_compara_.+ CheckSpeciesSetTag");
     }
 
 } // CheckSpeciesSetTag
