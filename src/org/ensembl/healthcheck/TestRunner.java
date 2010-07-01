@@ -96,8 +96,7 @@ public class TestRunner {
 		for (int i = 0; i < databases.length; i++) {
 
 			DatabaseRegistryEntry database = databases[i];
-			List allSingleDatabaseTests = testRegistry.getAllSingle(
-					groupsToRun, database.getType());
+			List allSingleDatabaseTests = testRegistry.getAllSingle(groupsToRun, database.getType());
 
 			for (Iterator it = allSingleDatabaseTests.iterator(); it.hasNext();) {
 
