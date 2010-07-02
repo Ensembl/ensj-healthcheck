@@ -32,7 +32,7 @@ public class Archive extends SingleDatabaseTestCase {
     private static final int MIN_MAPPING_SESSION_ID = 355;
     
     /**
-     * Create a new Archvive test case.
+     * Create a new Archive test case.
      */
     public Archive() {
 
