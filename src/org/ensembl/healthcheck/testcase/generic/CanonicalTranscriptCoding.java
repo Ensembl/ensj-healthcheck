@@ -102,10 +102,10 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 
 		// --------------------------------
 		// All canonical transcripts with a translation should belong to a gene with a biotype of 'protein_coding',
-		// 'IG_C_gene','IG_D_gene','IG_J_gene' or'IG_V_gene'
+		// 'IG_C_gene','IG_D_gene','IG_J_gene', 'IG_V_gene' or 'RNA-Seq_gene'
 		rows = getRowCount(
 				con,
-				"SELECT COUNT(*) FROM gene g WHERE g.canonical_transcript_id IN (SELECT tr.transcript_id FROM transcript tr, translation tl WHERE tr.transcript_id=tl.transcript_id) AND g.biotype NOT IN ('rRNA','retrotransposed','protein_coding','IG_C_gene','IG_D_gene','IG_J_gene','IG_V_gene')");
+				"SELECT COUNT(*) FROM gene g WHERE g.canonical_transcript_id IN (SELECT tr.transcript_id FROM transcript tr, translation tl WHERE tr.transcript_id=tl.transcript_id) AND g.biotype NOT IN ('rRNA','retrotransposed','protein_coding','IG_C_gene','IG_D_gene','IG_J_gene','IG_V_gene','RNA-Seq_gene')");
 
 		if (rows > 0) {
 
