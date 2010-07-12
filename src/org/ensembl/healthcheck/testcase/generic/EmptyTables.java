@@ -179,15 +179,13 @@ public class EmptyTables extends SingleDatabaseTestCase {
 
 		}else if (type == DatabaseType.SANGER_VEGA) {
 
-			String[] allowedEmpty = { "affy_array", "affy_feature", "affy_probe", "identity_xref", "unconventional_transcript_association" };
-			tables = remove(tables, allowedEmpty);
+			tables = remove(tables, new String[]{ "affy_array", "affy_feature", "affy_probe", "identity_xref", "unconventional_transcript_association", "dependent_xref", "ditag", "ditag_feature", "dnac", "vega_homo_sapiens_20100414_v58_GRCh37: external_synonym", "gene_archive", "map", "mapping_session", "mapping_set", "peptide_archive", "qtl", "qtl_feature", "qtl_synonym", "seq_region_mapping", "splicing_event", "splicing_event_feature", "splicing_transcript_pair", "stable_id_event", "supporting_feature", "misc_attrib" } );			
 			//remove backup tables, starting with backup_ they are allowed to be empty
 			for (String table : tables){
 				if (table.startsWith("backup_") ){
-					tables = remove(tables, new String[] {table});
+					tables = remove(tables,new String[] {table});
 				}
 			}
-
 		}
 
 		return tables;

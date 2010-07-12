@@ -81,8 +81,8 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 
         // only check for human, mouse, rat and zebrafish
         Species s = dbre.getSpecies();
-        if (s.equals(Species.HOMO_SAPIENS) || s.equals(Species.MUS_MUSCULUS) || s.equals(Species.RATTUS_NORVEGICUS)
-                || s.equals(Species.DANIO_RERIO)) {
+        if(  (dbre.getType()!=DatabaseType.SANGER_VEGA && (s.equals(Species.HOMO_SAPIENS) || s.equals(Species.MUS_MUSCULUS) || s.equals(Species.RATTUS_NORVEGICUS) ))
+              || s.equals(Species.DANIO_RERIO)){ //for sanger_vega only run the test for zebrafish
 
             result &= checkFeaturesAndMapWeights(con);
 

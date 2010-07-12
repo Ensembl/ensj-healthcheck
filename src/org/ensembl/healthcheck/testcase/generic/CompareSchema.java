@@ -26,7 +26,9 @@ import java.util.TreeSet;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
@@ -140,7 +142,7 @@ public class CompareSchema extends MultiDatabaseTestCase {
 
 			masterStmt = masterCon.createStatement();
 
-			for (int i = 0; i < databases.length; i++) {
+			for (int i = 0; i < databases.length; i++) {			
 
 				if (appliesToType(databases[i].getType())) {
 
@@ -149,41 +151,42 @@ public class CompareSchema extends MultiDatabaseTestCase {
 					if (checkCon != masterCon) {
 
 						logger.info("Comparing " + DBUtils.getShortDatabaseName(checkCon) + " with " + DBUtils.getShortDatabaseName(masterCon));
-
+						
 						// check that both schemas have the same tables
-						if (!compareTablesInSchema(checkCon, masterCon)) {
+						int directionFlag = databases[i].getType()==DatabaseType.SANGER_VEGA ? EnsTestCase.COMPARE_RIGHT: EnsTestCase.COMPARE_BOTH; //for sanger_vega do a right compare
+						boolean isSangerVega=databases[i].getType()==DatabaseType.SANGER_VEGA; 
+						if (!compareTablesInSchema(checkCon, masterCon, isSangerVega,directionFlag)) {//for sanger_vega, ignore backup tables
 							// if not the same, this method will generate a
 							// report
 							ReportManager.problem(this, checkCon, "Table name discrepancy detected, skipping rest of checks");
 							result = false;
 							continue;
 						}
-
+	
 						Statement dbStmt = checkCon.createStatement();
-
+	
 						// check each table in turn
 						String[] tableNames = getTableNames(masterCon);
-						for (int j = 0; j < tableNames.length; j++) {
-
+						for (int j = 0; j < tableNames.length; j++) {					
+	
 							String table = tableNames[j];
+										
 							String sql = "SHOW CREATE TABLE " + table;
 							ResultSet masterRS = masterStmt.executeQuery(sql);
 							ResultSet dbRS = dbStmt.executeQuery(sql);
 							boolean showCreateSame = DBUtils.compareResultSets(dbRS, masterRS, this, " [" + table + "]", false, false, table, true);
 							if (!showCreateSame) {
-
+		
 								// do more in-depth analysis of database structure
 								result &= compareTableStructures(checkCon, masterCon, table);
-
+		
 							}
-
+		
 							masterRS.close();
 							dbRS.close();
-
 						} // while table
-
+	
 						dbStmt.close();
-
 					} // if checkCon != masterCon
 
 				} // if appliesToType
