@@ -66,7 +66,13 @@ public class SeqRegionAttribsPresent extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		String sql = " FROM gene g WHERE g.biotype='protein_coding' AND g.status='KNOWN' AND g.seq_region_id NOT IN (SELECT DISTINCT(g.seq_region_id) FROM gene g LEFT JOIN seq_region_attrib sra ON g.seq_region_id=sra.seq_region_id WHERE g.biotype='protein_coding' AND g.status='KNOWN' AND sra.attrib_type_id=64 AND sra.seq_region_id IS NOT NULL)";
+		String code;
+		if(dbre.getType()==DatabaseType.SANGER_VEGA){
+			code="'KnwnPCCount'";
+		}else{
+			code ="'GeneNo_knwCod'";
+		}
+		String sql = " FROM gene g WHERE g.biotype='protein_coding' AND g.status='KNOWN' AND g.seq_region_id NOT IN (SELECT DISTINCT(g.seq_region_id) FROM gene g LEFT JOIN seq_region_attrib sra ON g.seq_region_id=sra.seq_region_id WHERE g.biotype='protein_coding' AND g.status='KNOWN' AND sra.attrib_type_id=(select attrib_type_id from attrib_type where code = "+code+") AND sra.seq_region_id IS NOT NULL)";		
 		
 		int count = getRowCount(con, "SELECT COUNT(DISTINCT(g.seq_region_id))" + sql);
 		
