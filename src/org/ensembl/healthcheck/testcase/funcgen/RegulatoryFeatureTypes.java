@@ -88,10 +88,11 @@ public class RegulatoryFeatureTypes extends SingleDatabaseTestCase {
 				
 				if (! ftypeClass.equals("Regulatory Feature")){
 					ReportManager.problem(this, con, DBUtils.getShortDatabaseName(con) + " has regulatory FeatureSet " + fsetName + " which contains RegulatoryFeatures " +
-								"with invalid FeatureType class:\t" + ftypeName + " " + ftypeClass);
+										  "with invalid FeatureType class:\t" + ftypeName + " " + ftypeClass);
 					result = false; 
 				}
-				else if(ftypeName.equals("RegulatoryFeature")){
+				else if((ftypeName.equals("RegulatoryFeature")) &&
+						(! fsetName.equals("RegulatoryFeatures:MultiCell"))){
 					ReportManager.problem(this, con, DBUtils.getShortDatabaseName(con) + " has regulatory FeatureSet " + fsetName + " which still contains basic " +
 										"'RegulatoryFeature' type. RegulatoryFeature feature types need updating for this set");
 					result = false; 	
