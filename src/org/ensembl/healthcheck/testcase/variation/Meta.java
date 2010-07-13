@@ -102,6 +102,35 @@ public class Meta extends SingleDatabaseTestCase {
 		    }
 		}
 	    }
+
+	    // Check that the required meta keys exist
+	    String[] metaKeys = new String[] {
+		"schema_version",
+		"schema_type"
+	    };
+	    for (int i=0; i<metaKeys.length; i++) {
+		if (!checkKeysPresent(con,metaKeys[i])) {
+		    result = false;
+		    ReportManager.problem(this, con, "Missing required meta_key '" + metaKeys[i] + "'");
+		}
+	    }
+	    
+	    // List the keys that affects the schema
+	    metaKeys = new String[] {
+		"schema_version",
+		"schema_type",
+		"patch"
+	    };
+	    // Check that the species_id column is NULL for meta entries that concerns the schema
+	    for (int i=0; i<metaKeys.length; i++) {
+		String sql = new String("SELECT meta_id FROM meta WHERE meta_key = '" + metaKeys[i] + "' AND species_id IS NOT NULL");
+		String[] violations = getColumnValues(con,sql);
+		for (int j=0; j<violations.length; j++) {
+		    result = false;
+		    ReportManager.problem(this, con, "Meta entry for meta_key '" + metaKeys[i] + "' with meta_id = " + violations[j] + " has species_id not set to NULL");
+		}
+	    }
+	    
 	    if ( result ){
 	    //if there were no problems, just inform for the interface to pick the HC
 		ReportManager.correct(this,con,"Meta test passed without any problem");
