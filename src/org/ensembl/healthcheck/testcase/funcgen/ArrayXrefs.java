@@ -175,12 +175,14 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 			return false;	
 		}
 		
-		
+
+	
 		try {
+		
 			ResultSet rs = efgCon.createStatement().executeQuery("SELECT s.seq_region_id, s.name, s.core_seq_region_id FROM seq_region s, coord_system cs " +
 					"WHERE cs.coord_system_id=s.coord_system_id AND cs.name='chromosome' and cs.attrib='default_version' and " +
 							"cs.schema_build='" + schemaBuild + "' group by s.seq_region_id");
-			
+	
 
 			//Do we even need this core_seq_region_id translation?
 			//Just link via the sr.name!
@@ -201,79 +203,122 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 			Map<String, String> coreSrIDcounts = new HashMap<String, String>();
 			// (Optimisation: faster to use "in list" of external_db_ids than SQL
 			// join.)
-			StringBuffer inList   = new StringBuffer();
-			String       edbName = dbre.getSpecies() + "_core_Transcript";
+			StringBuffer inList        = new StringBuffer();
+			String       edbName       = dbre.getSpecies() + "_core_Transcript";
+			String[]     assemblyBuild = schemaBuild.split("_");
+			String       xrefQuery     = new String();
+			String       edbClause     = new String();
 
 			//We really need to match the genebuild between the edb and the schema_build
 			//otherwise we have out of date data?
 			//Not enirely true, altho a genebuild increment should strictly mean that the xrefs needs redoing
-			//There should only be 1 edb ID, but we have duplicates at the moment, so handle this
+			
+					
 			String[] exdbIDs = getColumnValues(efgCon, "select external_db_id from external_db where db_name='" + edbName 
-											   + "' and db_release='" + schemaBuild + "'");
-
+											   + "' and db_release like '%\\_" + assemblyBuild[1] + "'");
 
 			//Catch absent edbs
 
 			if(exdbIDs.length == 0){
-				ReportManager.problem(this, efgCon, "Could not identify external_db " + edbName + " with db_release " + schemaBuild);
-				return false;
-			}
-
-
-
-			for (int i = 0; i < exdbIDs.length; i++) {
-				if (i > 0)
-					inList.append(",");
-				inList.append(exdbIDs[i]);
-			}
-
-
-
-			//Restrict this to the core_coord_system_ids for the specific DB
-			//other wise we may get odd counts where core_coord_system_ids have changed between releases on the same assembly
-
-			//Need to do this for Probe and ProbeSet arrays
+				ReportManager.problem(this, efgCon, "Could not identify external_db " + edbName + " with db_release like " + assemblyBuild);
 				
-			ResultSet xrefCounts = efgCon
-					.createStatement()
-					.executeQuery(
-							"select t.seq_region_id, count(*) as count  from " + coreDBName + ".transcript t," + 
-							coreDBName + ".transcript_stable_id ts," + " object_xref ox, xref x " +
-							"where t.transcript_id=ts.transcript_id and ts.stable_id=x.dbprimary_acc " +
-							"and ox.ensembl_object_type='ProbeSet' and ox.xref_id=x.xref_id and " + 
-							"x.external_db_id in ("	+ inList + ") GROUP BY t.seq_region_id");
-			
-			while (xrefCounts.next())
-				coreSrIDcounts.put(xrefCounts.getString(1), xrefCounts.getString(2));
-			rs.close();
+				//Do we really want to return here, as this maybe valid and we want to run the rest of the tests.
 
+				result = false;
+			}
+			else{
+
+				for (int i = 0; i < exdbIDs.length; i++) {
+					if (i > 0)
+						inList.append(",");
+					inList.append(exdbIDs[i]);
+				}
+
+				edbClause = "x.external_db_id in ("	+ inList + ")";
+			}
+		
+
+			//Set which objects we are looking for
+			//i.e. Probe or ProbeSets
+
+			int[] xrefObjects = new int[2];
 			
-			//Need to check we actually have some results here	
+		
 			
-			// check every chr has >0 xrefs.
-			for (Iterator<String> iter = coreSrIDcounts.keySet().iterator(); iter.hasNext();) {
-				String coreSrID = (String) iter.next();
-				String efgSrID  = (String) coreSrID2efg.get(coreSrID);
-				String name = (String) srID2name.get(efgSrID);
-				//System.out.println("core " + coreSrID + " efg " + efgSrID + " name " + name);	
+			xrefObjects[0] = getRowCount(efgCon, "select count(*) from array where vendor='AFFY'");
+			xrefObjects[1] = getRowCount(efgCon, "select count(*) from array where vendor!='AFFY'");
 				
-				//Skip nulls as these won't be chromosomes
-				//But may have xrefs
-				if ( name != null ){
-					String label = name + " (seq_region_id=" + efgSrID + ")";
-					long count = coreSrIDcounts.containsKey(coreSrID) ? Long.parseLong(coreSrIDcounts.get(coreSrID).toString()) : 0;
+			
+			for (int i = 0; i <= 1; i++) {
+				String xrefObj = (i == 0) ? "ProbeSet" : "Probe";
+				String arrayVendor = (i == 0) ? "Affy" : "Non-Affy";
+				
+				if(xrefObjects[i] == 0){
 					
-					//System.out.println(label + " " + count);
+					ReportManager.problem(this, efgCon, "Has no " + arrayVendor + " arrays. " +
+										  " " + xrefObj + " xref counts will be skipped");
+					//result = false;
+				}
+				else{
+
+					xrefQuery = "select t.seq_region_id, count(*) as count  from " + coreDBName + ".transcript t, " + 
+						coreDBName + ".transcript_stable_id ts," + " object_xref ox, xref x " +
+						"where t.transcript_id=ts.transcript_id and ts.stable_id=x.dbprimary_acc " +
+						"and ox.ensembl_object_type='" + xrefObj + "' and ox.xref_id=x.xref_id and " + 
+						edbClause + " GROUP BY t.seq_region_id";
+					//Restrict this to the core_coord_system_ids for the specific DB
+					//other wise we may get odd counts where core_coord_system_ids have changed between releases on the same assembly
+										
+					ResultSet xrefCounts = efgCon
+						.createStatement()
+						.executeQuery(xrefQuery);
 					
-					if (count > 0) {
-						ReportManager.correct(this, efgCon, "Chromosome " + label + " has " + coreSrIDcounts.get(coreSrID) + " associated array xrefs.");
-					} else {
-						ReportManager.problem(this, efgCon, "Chromosome " + label + " has no associated array xrefs.");
+					
+					
+					//Capture empty set her
+					boolean seenResults = false;
+					
+					while (xrefCounts.next()){
+						seenResults = true;	
+						coreSrIDcounts.put(xrefCounts.getString(1), xrefCounts.getString(2));
+					}	
+					rs.close();
+						
+					if(seenResults == false){
 						result = false;
+						ReportManager.problem(this, efgCon, "Found " + arrayVendor + " " + xrefObj + 
+									" arrays but no associated transcript xrefs");
 					}
-				}	
+					else{
+					
+						// check every chr has >0 xrefs.
+						for (Iterator<String> iter = coreSrIDcounts.keySet().iterator(); iter.hasNext();) {
+							String coreSrID = (String) iter.next();
+							String efgSrID  = (String) coreSrID2efg.get(coreSrID);
+							String name = (String) srID2name.get(efgSrID);
+						//System.out.println("core " + coreSrID + " efg " + efgSrID + " name " + name);	
+							
+						//Skip nulls as these won't be chromosomes
+						//But may have xrefs
+						if ( name != null ){
+							String label = name + " (seq_region_id=" + efgSrID + ")";
+							long count = coreSrIDcounts.containsKey(coreSrID) ? Long.parseLong(coreSrIDcounts.get(coreSrID).toString()) : 0;
+							
+							//System.out.println(label + " " + count);
+							
+							if (count > 0) {
+								ReportManager.correct(this, efgCon, "Chromosome " + label + " has " + coreSrIDcounts.get(coreSrID) + 
+											" associated " + xrefObj + " array xrefs.");
+							} else {
+								ReportManager.problem(this, efgCon, "Chromosome " + label + " has no associated " +
+											xrefObj + " array xrefs.");
+								result = false;
+							}
+						}	
+					}
+					}
+				}
 			}
-
 		} catch (SQLException se) {
 			se.printStackTrace();
 			result = false;
