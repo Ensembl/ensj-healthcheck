@@ -61,7 +61,6 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 		logicNameToAttribCode.put("snpDensity", "SNPCount");
 		logicNameToAttribCode.put("geneDensity", "GeneCount");
 		logicNameToAttribCode.put("knownGeneDensity", "knownGeneCount");
-
 	}
 
 	// ----------------------------------------------------------------------
@@ -85,6 +84,12 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 	 * 
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
+		if(dbre.getType()==DatabaseType.SANGER_VEGA){
+			logicNameToAttribCode.put("PCodDensity", "knownGeneCount");			
+			logicNameToAttribCode.remove("snpDensity");
+			logicNameToAttribCode.remove("geneDensity");
+			logicNameToAttribCode.remove("knownGeneDensity");
+		}		
 
 		boolean result = true;
 
@@ -242,8 +247,12 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 		Species species = dbre.getSpecies();
-
-		String[] logicNames = { "PercentGC", "PercentageRepeat", "knownGeneDensity", "geneDensity", "snpDensity" };
+		String[] logicNames;
+		if(dbre.getType()==DatabaseType.SANGER_VEGA){
+			logicNames = new String []{ "PCodDensity" };			
+		}else{
+			logicNames = new String[] { "PercentGC", "PercentageRepeat", "knownGeneDensity", "geneDensity", "snpDensity" };			
+		}
 
 		// check that each analysis_id is only used by one density_type
 		for (int i = 0; i < logicNames.length; i++) {

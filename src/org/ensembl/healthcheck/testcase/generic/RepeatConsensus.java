@@ -76,7 +76,11 @@ public class RepeatConsensus extends SingleDatabaseTestCase {
         	   report+=" OR 'Simple'";
            }
            ReportManager.problem(this, con, report);
-           ReportManager.problem(this, con, "This probably means the ensembl/misc-scripts/repeats/repeat-types.pl script was not run.");
+           if(dbre.getType()==DatabaseType.SANGER_VEGA){
+        	   ReportManager.problem(this, con, "This probably means the .../sanger-plugins/vega/utils//vega_repeat_libraries.pl script was not run.");        	   
+           }else{
+        	   ReportManager.problem(this, con, "This probably means the ensembl/misc-scripts/repeats/repeat-types.pl script was not run.");
+           }
            result = false;
 
        } else {
