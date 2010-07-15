@@ -72,7 +72,9 @@ public class Meta extends SingleDatabaseTestCase {
 			return result;
 		}
 
-		result &= checkOverlappingRegions(con);
+		if(!isSangerVega){//do not check for sanger_vega
+			result &= checkOverlappingRegions(con);
+		}
 
 		if (dbre.getType() == DatabaseType.CORE) {
 			result &= checkKeysPresent(con);
