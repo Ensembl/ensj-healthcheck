@@ -39,305 +39,300 @@ import org.ensembl.healthcheck.util.DBUtils;
 
 public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements Repair {
 
-    // hash of lists of protein features to delete
-    // key - database name
-    private Map featuresToDelete;
+	// hash of lists of protein features to delete
+	// key - database name
+	private Map featuresToDelete;
 
-    private static int THRESHOLD = 1000; // don't report a problem if there are less results than this
-    
-    private static int OUTPUT_LIMIT = 20; // only complain about this many missing translations
+	private static int THRESHOLD = 1000; // don't report a problem if there are less results than this
 
-    /**
-     * Create an ProteinFeatureTranslationTestCase that applies to a specific set of databases.
-     */
-    public ProteinFeatureTranslation() {
+	private static int OUTPUT_LIMIT = 20; // only complain about this many missing translations or long translations
 
-        addToGroup("post_genebuild");
-        addToGroup("release");
-        featuresToDelete = new HashMap();
-        setFailureText("Large numbers of features longer than the translation indicate something is wrong. A few is probably OK");
-        setHintLongRunning(true);
-    }
+	/**
+	 * Create an ProteinFeatureTranslationTestCase that applies to a specific set of databases.
+	 */
+	public ProteinFeatureTranslation() {
 
-    /**
-     * This test only applies to core and Vega databases.
-     */
-    public void types() {
+		addToGroup("post_genebuild");
+		addToGroup("release");
+		featuresToDelete = new HashMap();
+		setFailureText("Large numbers of features longer than the translation indicate something is wrong. A few is probably OK");
+		setHintLongRunning(true);
+	}
 
-        removeAppliesToType(DatabaseType.OTHERFEATURES);
-        removeAppliesToType(DatabaseType.ESTGENE);
-        removeAppliesToType(DatabaseType.CDNA);
+	/**
+	 * This test only applies to core and Vega databases.
+	 */
+	public void types() {
 
-    }
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.ESTGENE);
+		removeAppliesToType(DatabaseType.CDNA);
 
-    /**
-     * Builds a cache of the translation lengths, then compares them with the values in the protein_features table.
-     * 
-     * @param dbre
-     *            The database to use.
-     * @return Result.
-     */
+	}
 
-    public boolean run(DatabaseRegistryEntry dbre) {
+	/**
+	 * Builds a cache of the translation lengths, then compares them with the values in the protein_features table.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return Result.
+	 */
 
-        boolean result = true;
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-	int problems = 0;
+		boolean result = true;
 
-        // get list of transcripts
-        String sql = "SELECT t.transcript_id, e.exon_id, tl.start_exon_id, "
-                + "       tl.translation_id, tl.end_exon_id, tl.seq_start, "
-                + "       tl.seq_end, e.seq_region_start, e.seq_region_end "
-                + "FROM   transcript t, exon_transcript et, exon e, translation tl " + "WHERE  t.transcript_id = et.transcript_id "
-                + "AND    et.exon_id = e.exon_id " + "AND    t.transcript_id = tl.transcript_id "
-                + "ORDER  BY t.transcript_id, et.rank";
+		int problems = 0;
 
-        try {
+		// get list of transcripts
+		String sql = "SELECT t.transcript_id, e.exon_id, tl.start_exon_id, " + "       tl.translation_id, tl.end_exon_id, tl.seq_start, " + "       tl.seq_end, e.seq_region_start, e.seq_region_end "
+				+ "FROM   transcript t, exon_transcript et, exon e, translation tl " + "WHERE  t.transcript_id = et.transcript_id " + "AND    et.exon_id = e.exon_id "
+				+ "AND    t.transcript_id = tl.transcript_id " + "ORDER  BY t.transcript_id, et.rank";
 
-            Connection con = dbre.getConnection();
+		try {
 
-            // check that the protein feature table actually has some rows - if
-            // not there's
-            // no point working out the translation lengths
-            if (!tableHasRows(con, "protein_feature")) {
-                ReportManager.problem(this, con, "protein_feature table is empty");
-                return false; // shoud we return true or false in this case?
-            }
+			Connection con = dbre.getConnection();
 
-            // NOTE: By default the MM MySQL JDBC driver reads and stores *all*
-            // rows in the
-            // ResultSet.
-            // Since this TestCase is likely to produce lots of output, we must
-            // use the
-            // "streaming"
-            // mode where only one row of the ResultSet is stored at a time.
-            // To do this, the following two lines are both necessary.
-            // See the README file for the mm MySQL driver.
+			// check that the protein feature table actually has some rows - if
+			// not there's
+			// no point working out the translation lengths
+			if (!tableHasRows(con, "protein_feature")) {
+				ReportManager.problem(this, con, "protein_feature table is empty");
+				return false; // shoud we return true or false in this case?
+			}
 
-            Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
-            stmt.setFetchSize(1000);
+			// NOTE: By default the MM MySQL JDBC driver reads and stores *all*
+			// rows in the
+			// ResultSet.
+			// Since this TestCase is likely to produce lots of output, we must
+			// use the
+			// "streaming"
+			// mode where only one row of the ResultSet is stored at a time.
+			// To do this, the following two lines are both necessary.
+			// See the README file for the mm MySQL driver.
 
-            Map translationLengths = new HashMap();
+			Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
+			stmt.setFetchSize(1000);
 
-            // now calculate and store the translation lengths
-            ResultSet rs = stmt.executeQuery(sql);
-            rs.setFetchDirection(ResultSet.FETCH_FORWARD);
+			Map translationLengths = new HashMap();
 
-            boolean inCodingRegion = false;
+			// now calculate and store the translation lengths
+			ResultSet rs = stmt.executeQuery(sql);
+			rs.setFetchDirection(ResultSet.FETCH_FORWARD);
 
-            while (rs.next()) {
+			boolean inCodingRegion = false;
 
-                int currentTranslationID = rs.getInt("translation_id");
-                Integer id = new Integer(currentTranslationID);
-                // initialise if necessary
-                if (translationLengths.get(id) == null) {
-                    translationLengths.put(id, new Integer(0));
-                }
+			while (rs.next()) {
 
-                if (!inCodingRegion) {
-                    if (rs.getInt("start_exon_id") == rs.getInt("exon_id")) {
-                        // single-exon-translations
-                        if (rs.getInt("start_exon_id") == rs.getInt("end_exon_id")) {
-                            int length = (rs.getInt("seq_end") - rs.getInt("seq_start")) + 1;
-                            translationLengths.put(id, new Integer(length));
-                            continue;
-                        }
-                        inCodingRegion = true;
-                        // subtract seq_start
-                        int currentLength = ((Integer) translationLengths.get(id)).intValue();
-                        currentLength -= (rs.getInt("seq_start") - 1);
-                        translationLengths.put(id, new Integer(currentLength));
-                    }
-                } // if !inCoding
+				int currentTranslationID = rs.getInt("translation_id");
+				Integer id = new Integer(currentTranslationID);
+				// initialise if necessary
+				if (translationLengths.get(id) == null) {
+					translationLengths.put(id, new Integer(0));
+				}
 
-                if (inCodingRegion) {
-                    if (rs.getInt("exon_id") == rs.getInt("end_exon_id")) {
-                        // add seq_end
-                        int currentLength = ((Integer) translationLengths.get(id)).intValue();
-                        currentLength += rs.getInt("seq_end");
-                        translationLengths.put(id, new Integer(currentLength));
-                        inCodingRegion = false;
-                    } else {
-                        int currentLength = ((Integer) translationLengths.get(id)).intValue();
-                        currentLength += (rs.getInt("seq_region_end") - rs.getInt("seq_region_start")) + 1;
-                        translationLengths.put(id, new Integer(currentLength));
-                        // inCodingRegion = false;
+				if (!inCodingRegion) {
+					if (rs.getInt("start_exon_id") == rs.getInt("exon_id")) {
+						// single-exon-translations
+						if (rs.getInt("start_exon_id") == rs.getInt("end_exon_id")) {
+							int length = (rs.getInt("seq_end") - rs.getInt("seq_start")) + 1;
+							translationLengths.put(id, new Integer(length));
+							continue;
+						}
+						inCodingRegion = true;
+						// subtract seq_start
+						int currentLength = ((Integer) translationLengths.get(id)).intValue();
+						currentLength -= (rs.getInt("seq_start") - 1);
+						translationLengths.put(id, new Integer(currentLength));
+					}
+				} // if !inCoding
 
-                    }
-                } // if inCoding
+				if (inCodingRegion) {
+					if (rs.getInt("exon_id") == rs.getInt("end_exon_id")) {
+						// add seq_end
+						int currentLength = ((Integer) translationLengths.get(id)).intValue();
+						currentLength += rs.getInt("seq_end");
+						translationLengths.put(id, new Integer(currentLength));
+						inCodingRegion = false;
+					} else {
+						int currentLength = ((Integer) translationLengths.get(id)).intValue();
+						currentLength += (rs.getInt("seq_region_end") - rs.getInt("seq_region_start")) + 1;
+						translationLengths.put(id, new Integer(currentLength));
+						// inCodingRegion = false;
 
-            } // while rs
+					}
+				} // if inCoding
 
-            rs.close();
-            stmt.close();
-            stmt = null;
+			} // while rs
 
-            // Re-open the statement to make sure it's GC'd
-            stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
-            //stmt.setFetchSize(1000);
-	    stmt.setFetchSize(Integer.MIN_VALUE);
+			rs.close();
+			stmt.close();
+			stmt = null;
 
-            logger.fine("Built translation length cache, about to look at protein features");
-            // dumpTranslationLengths(con, translationLengths, 100);
+			// Re-open the statement to make sure it's GC'd
+			stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
+			// stmt.setFetchSize(1000);
+			stmt.setFetchSize(Integer.MIN_VALUE);
 
-            // find protein features where seq_end is > than the length of the
-            // translation
-            List thisDBFeatures = new ArrayList();
-            rs = stmt.executeQuery("SELECT protein_feature_id, translation_id, seq_end FROM protein_feature");
+			logger.fine("Built translation length cache, about to look at protein features");
+			// dumpTranslationLengths(con, translationLengths, 100);
 
-            while (rs.next()) {
+			// find protein features where seq_end is > than the length of the
+			// translation
+			List thisDBFeatures = new ArrayList();
+			rs = stmt.executeQuery("SELECT protein_feature_id, translation_id, seq_end FROM protein_feature");
 
-                Integer translationID = new Integer(rs.getInt("translation_id"));
-                Integer proteinFeatureID = new Integer(rs.getInt("protein_feature_id"));
+			while (rs.next()) {
 
-                if (translationLengths.get(translationID) != null) {
-                    // some codons can only be 2 bp
-                    int minTranslationLength = (((Integer) translationLengths.get(translationID)).intValue() + 2) / 3;
-                    // int minTranslationLength = ((Integer)
-                    // translationLengths.get(translationID)).intValue();
-                    if (rs.getInt("seq_end") > minTranslationLength) {
-                        result = false;
-                        thisDBFeatures.add(proteinFeatureID);
-                        // System.out.println("proteinFeatureID: " + proteinFeatureID);
-                    }
-                } else {
-		    if (problems++ < OUTPUT_LIMIT) {
-			ReportManager.problem(this, con, "Protein feature " + proteinFeatureID + " refers to non-existent translation "
-					      + translationID);
-		    }
-                }
-            }
+				Integer translationID = new Integer(rs.getInt("translation_id"));
+				Integer proteinFeatureID = new Integer(rs.getInt("protein_feature_id"));
 
-            featuresToDelete.put(DBUtils.getShortDatabaseName(con), thisDBFeatures);
-            if (thisDBFeatures.size() > THRESHOLD) {
-                ReportManager.problem(this, con, "protein_feature table has " + thisDBFeatures.size()
-                        + " features that are longer than the translation");
-            } else if (thisDBFeatures.size() == 0) {
-                ReportManager.correct(this, con, "protein_feature_table has no features that are longer than the translation");
-            } else {
-            	ReportManager.correct(this, con, "protein_feature_table has " + thisDBFeatures.size() + " features that are longer than the translation; this is less than the threshold of " + THRESHOLD);
-            }
+				if (translationLengths.get(translationID) != null) {
+					// some codons can only be 2 bp
+					int minTranslationLength = (((Integer) translationLengths.get(translationID)).intValue() + 2) / 3;
+					// int minTranslationLength = ((Integer)
+					// translationLengths.get(translationID)).intValue();
+					if (rs.getInt("seq_end") > minTranslationLength) {
+						thisDBFeatures.add(proteinFeatureID);
+						// System.out.println("proteinFeatureID: " + proteinFeatureID);
+					}
+				} else {
+					if (problems++ < OUTPUT_LIMIT) {
+						ReportManager.problem(this, con, "Protein feature " + proteinFeatureID + " refers to non-existent translation " + translationID);
+					}
+				}
+			}
+			
+			featuresToDelete.put(DBUtils.getShortDatabaseName(con), thisDBFeatures);
+			if (thisDBFeatures.size() > THRESHOLD) {
+				ReportManager.problem(this, con, "protein_feature table has " + thisDBFeatures.size() + " features that are longer than the translation");
+				result = false;
+			} else if (thisDBFeatures.size() == 0) {
+				ReportManager.correct(this, con, "protein_feature table has no features that are longer than the translation");
+			} else {
+				ReportManager.correct(this, con, "protein_feature table has " + thisDBFeatures.size() + " features that are longer than the translation; this is less than the threshold of " + THRESHOLD);
+			}
 
-            rs.close();
-            stmt.close();
+			rs.close();
+			stmt.close();
 
-	    if (problems >= OUTPUT_LIMIT) {
-		ReportManager.problem(this, con, "Note that only " + OUTPUT_LIMIT + " missing translation IDs were notified, there may be more");
-	    }
+			if (problems >= OUTPUT_LIMIT) {
+				ReportManager.problem(this, con, "Note that only " + OUTPUT_LIMIT + " missing translation IDs were notified, there may be more");
+			}
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-        return result;
+		return result;
 
-    }
+	}
 
-    // ------------------------------------------
-    // Implementation of Repair interface.
+	// ------------------------------------------
+	// Implementation of Repair interface.
 
-    /**
-     * Delete any protein features that run past the end of the translation. <strong>CAUTION! </strong>Actually deletes the features
-     * from the protein_feature table.
-     * 
-     * @param dbre
-     *            The database to use.
-     */
-    public void repair(DatabaseRegistryEntry dbre) {
+	/**
+	 * Delete any protein features that run past the end of the translation. <strong>CAUTION! </strong>Actually deletes the features
+	 * from the protein_feature table.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 */
+	public void repair(DatabaseRegistryEntry dbre) {
 
-        Connection con = dbre.getConnection();
-        String sql = setupRepairSQL(con);
-        if (sql.length() == 0) {
-            System.out.println("No invalid protein features were found in " + DBUtils.getShortDatabaseName(con));
-        } else {
-            try {
-                Statement stmt = con.createStatement();
-                System.out.println(DBUtils.getShortDatabaseName(con));
-                System.out.println(sql);
-                // stmt.execute(sql);
-                stmt.close();
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }
-        }
+		Connection con = dbre.getConnection();
+		String sql = setupRepairSQL(con);
+		if (sql.length() == 0) {
+			System.out.println("No invalid protein features were found in " + DBUtils.getShortDatabaseName(con));
+		} else {
+			try {
+				Statement stmt = con.createStatement();
+				System.out.println(DBUtils.getShortDatabaseName(con));
+				System.out.println(sql);
+				// stmt.execute(sql);
+				stmt.close();
+			} catch (SQLException se) {
+				se.printStackTrace();
+			}
+		}
 
-    }
+	}
 
-    /**
-     * Show which protein features would be deleted by the repair method.
-     * 
-     * @param dbre
-     *            The database to use.
-     */
-    public void show(DatabaseRegistryEntry dbre) {
+	/**
+	 * Show which protein features would be deleted by the repair method.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 */
+	public void show(DatabaseRegistryEntry dbre) {
 
-        System.out.println("Candidate for repair:");
+		System.out.println("Candidate for repair:");
 
-        Connection con = dbre.getConnection();
-        String sql = setupRepairSQL(con);
-        if (sql.length() == 0) {
-            System.out.println("No invalid protein features were found in " + DBUtils.getShortDatabaseName(con));
-        } else {
-            System.out.println(DBUtils.getShortDatabaseName(con) + ": " + sql);
-        }
+		Connection con = dbre.getConnection();
+		String sql = setupRepairSQL(con);
+		if (sql.length() == 0) {
+			System.out.println("No invalid protein features were found in " + DBUtils.getShortDatabaseName(con));
+		} else {
+			System.out.println(DBUtils.getShortDatabaseName(con) + ": " + sql);
+		}
 
-    }
+	}
 
-    /**
-     * Set up the SQL to delete the offending protein features.
-     * 
-     * @param con
-     *            The database connection to use.
-     * @return The SQL to delete the incorrect protein features, or "" if there are no problems.
-     */
-    private String setupRepairSQL(Connection con) {
+	/**
+	 * Set up the SQL to delete the offending protein features.
+	 * 
+	 * @param con
+	 *          The database connection to use.
+	 * @return The SQL to delete the incorrect protein features, or "" if there are no problems.
+	 */
+	private String setupRepairSQL(Connection con) {
 
-        StringBuffer sql = new StringBuffer("DELETE FROM protein_feature WHERE protein_feature_id IN (");
+		StringBuffer sql = new StringBuffer("DELETE FROM protein_feature WHERE protein_feature_id IN (");
 
-        List thisDBFeatures = (List) featuresToDelete.get(DBUtils.getShortDatabaseName(con));
+		List thisDBFeatures = (List) featuresToDelete.get(DBUtils.getShortDatabaseName(con));
 
-        if (thisDBFeatures == null || thisDBFeatures.size() == 0) {
-            return "";
-        }
+		if (thisDBFeatures == null || thisDBFeatures.size() == 0) {
+			return "";
+		}
 
-        Iterator featureIterator = thisDBFeatures.iterator();
-        while (featureIterator.hasNext()) {
-            sql.append(((Integer) featureIterator.next()).intValue());
-            if (featureIterator.hasNext()) {
-                sql.append(",");
-            }
-        }
-        sql.append(")");
+		Iterator featureIterator = thisDBFeatures.iterator();
+		while (featureIterator.hasNext()) {
+			sql.append(((Integer) featureIterator.next()).intValue());
+			if (featureIterator.hasNext()) {
+				sql.append(",");
+			}
+		}
+		sql.append(")");
 
-        return sql.toString();
+		return sql.toString();
 
-    }
+	}
 
-    // -------------------------------------------------------------------------
+	// -------------------------------------------------------------------------
 
-    // private void dumpTranslationLengths(Connection con, Map lengths, int maxID) {
-    //
-    // System.out.println("Translation lengths for " + DBUtils.getShortDatabaseName(con));
-    //
-    // Set keySet = lengths.keySet();
-    // List keyList = new ArrayList(keySet);
-    // Collections.sort(keyList, new IntegerComparator());
-    //
-    // Iterator it = keyList.iterator();
-    // while (it.hasNext()) {
-    //
-    // Integer iid = (Integer) it.next();
-    // int id = iid.intValue();
-    // if (id > maxID) {
-    // break;
-    // }
-    // Integer iLength = (Integer) lengths.get(iid);
-    // int length = iLength.intValue();
-    // System.out.println("ID: " + id + "\tLength: " + length);
-    //        }
-    //
-    //    }
+	// private void dumpTranslationLengths(Connection con, Map lengths, int maxID) {
+	//
+	// System.out.println("Translation lengths for " + DBUtils.getShortDatabaseName(con));
+	//
+	// Set keySet = lengths.keySet();
+	// List keyList = new ArrayList(keySet);
+	// Collections.sort(keyList, new IntegerComparator());
+	//
+	// Iterator it = keyList.iterator();
+	// while (it.hasNext()) {
+	//
+	// Integer iid = (Integer) it.next();
+	// int id = iid.intValue();
+	// if (id > maxID) {
+	// break;
+	// }
+	// Integer iLength = (Integer) lengths.get(iid);
+	// int length = iLength.intValue();
+	// System.out.println("ID: " + id + "\tLength: " + length);
+	// }
+	//
+	// }
 
-    // -------------------------------------------------------------------------
+	// -------------------------------------------------------------------------
 
 } // ProteinFeatureTranslationTestCase
