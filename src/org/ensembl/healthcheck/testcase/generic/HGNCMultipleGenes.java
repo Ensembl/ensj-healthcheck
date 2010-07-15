@@ -69,7 +69,7 @@ public class HGNCMultipleGenes extends SingleDatabaseTestCase {
 		// this has to be done the slow way, don't think there's a way to do this all at once
 		String sql="SELECT DISTINCT(x.display_label), COUNT(*) AS count FROM gene g, xref x, external_db e WHERE e.external_db_id=x.external_db_id AND e.db_name LIKE 'HGNC%' AND x.xref_id=g.display_xref_id ";
 		if(dbre.getType()==DatabaseType.SANGER_VEGA){//for sanger_vega do not consider duplicates for the haplotypes
-			sql+="and g.seq_region_id NOT in(select seq_region_id from seq_region_attrib sa join attrib_type at on sa.attrib_type_id=at.attrib_type_id where code ='vega_ref_chrom') ";
+			sql+="and g.seq_region_id NOT in(select seq_region_id from seq_region_attrib sa join attrib_type at on sa.attrib_type_id=at.attrib_type_id where code ='vega_ref_chrom') and (g.source='havana' or g.source='WU') ";
 		}
 		sql+=" GROUP BY x.display_label";
 		if(dbre.getType()==DatabaseType.SANGER_VEGA){//for sanger_vega only count the ones for which the source is the same
