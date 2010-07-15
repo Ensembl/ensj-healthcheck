@@ -179,7 +179,11 @@ public class EmptyTables extends SingleDatabaseTestCase {
 
 		}else if (type == DatabaseType.SANGER_VEGA) {
 
-			tables = remove(tables, new String[]{ "affy_array", "affy_feature", "affy_probe", "identity_xref", "unconventional_transcript_association", "dependent_xref", "ditag", "ditag_feature", "dnac", "vega_homo_sapiens_20100414_v58_GRCh37: external_synonym", "gene_archive", "map", "mapping_session", "mapping_set", "peptide_archive", "qtl", "qtl_feature", "qtl_synonym", "seq_region_mapping", "splicing_event", "splicing_event_feature", "splicing_transcript_pair", "stable_id_event", "supporting_feature", "misc_attrib" } );			
+			tables = remove(tables, new String[]{ "affy_array", "affy_feature", "affy_probe", "identity_xref", "unconventional_transcript_association", "dependent_xref", "ditag", "ditag_feature", "dnac", "vega_homo_sapiens_20100414_v58_GRCh37: external_synonym", "gene_archive", "map", "mapping_session", "mapping_set", "peptide_archive", "qtl", "qtl_feature", "qtl_synonym", "seq_region_mapping", "splicing_event", "splicing_event_feature", "splicing_transcript_pair", "stable_id_event", "supporting_feature", "misc_attrib" } );
+			if(species!=Species.DANIO_RERIO){//for all Species except zebrafish, the following tables can also be empty
+				tables = remove(tables, new String[]{"external_synonym", "marker", "marker_feature", "marker_map_location", "marker_synonym"} );
+			}
+			  
 			//remove backup tables, starting with backup_ they are allowed to be empty
 			for (String table : tables){
 				if (table.startsWith("backup_") ){
