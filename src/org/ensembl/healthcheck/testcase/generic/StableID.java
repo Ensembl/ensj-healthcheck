@@ -90,9 +90,7 @@ public class StableID extends SingleDatabaseTestCase {
 		Species s = dbre.getSpecies();
 		if (s!=null && s != Species.CAENORHABDITIS_ELEGANS && s != Species.DROSOPHILA_MELANOGASTER &&
 			s != Species.SACCHAROMYCES_CEREVISIAE && s != Species.ANOPHELES_GAMBIAE && s != Species.UNKNOWN) {
-			if(dbre.getType()!=DatabaseType.SANGER_VEGA){//for sanger_vega, do not check the prefixes
-				result &= checkPrefixes(dbre);
-			}
+			result &= checkPrefixes(dbre);
 			result &= checkStableIDEventTypes(con);
 			result = checkStableIDTimestamps(con);
 		}

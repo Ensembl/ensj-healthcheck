@@ -66,20 +66,6 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 		// compare each of the secondary (previous release, probably) with current
 		Set externalDBs = secondaryCounts.keySet();
 		Iterator it = externalDBs.iterator();
-		String successText = new String ();
-
-
-		//show % tolerance here?
-		double tolerance = (100 - ((threshold() / 1) * 100 ));
-
-		if(testUpperThreshold()){
-			successText = " - within tolerance +/-" + tolerance + "%";
-
-		}else{
-			successText = " - greater or within tolerance";
-		}
-
-
 		while (it.hasNext()) {
 
 			String key = (String) it.next();
@@ -94,21 +80,15 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 			if (currentCounts.containsKey(key)) {
 
 				int currentCount = ((Integer) (currentCounts.get(key))).intValue();
-				
+
 				if (((double) currentCount / (double) secondaryCount) < threshold()) {
 					ReportManager.problem(this, dbre.getConnection(), sec.getName() + " has " + secondaryCount + " " + entityDescription()
 							+ " " + key + " but " + dbre.getName() + " only has " + currentCount);
 					result = false;
-				}
-				else if (testUpperThreshold() &&
-						 ((1 - (double) secondaryCount / (double) currentCount)) > threshold()) {
-					ReportManager.problem(this, dbre.getConnection(), sec.getName() + " only has " + secondaryCount + " " + entityDescription()
-										  + " " + key + " but " + dbre.getName() + " has " + currentCount);
-					result = false;
-				} 
-				else {
+				} else {
+
 					ReportManager.correct(this, dbre.getConnection(), sec.getName() + " has " + secondaryCount + " " + entityDescription()
-							+ " " + key + " and " + dbre.getName() + " has " + currentCount + successText);
+							+ " " + key + " and " + dbre.getName() + " has " + currentCount + " - greater or within tolerance");
 
 				}
 
@@ -172,11 +152,5 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 	protected abstract double threshold();
 
 	// ------------------------------------------------------------------------
-
-
-	protected boolean testUpperThreshold(){
-		return false;
-	}
-	
 
 } // ComparePreviousVersionBase

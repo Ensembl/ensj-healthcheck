@@ -187,7 +187,7 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		result &= checkForOrphans(con, "unmapped_object", "unmapped_reason_id", "unmapped_reason", "unmapped_reason_id", true);
 		result &= checkForOrphans(con, "unmapped_object", "analysis_id", "analysis", "analysis_id", true);
 
-		result &= checkForOrphans(con, "transcript_supporting_feature", "transcript_id", "transcript", "transcript_id", true);
+		result &= checkForOrphans(con, "transcript_supporting_feature", "transcript_id", "transcript", "transcript_id", false);
 
 		result &= checkForOrphansWithConstraint(con, "supporting_feature", "feature_id", "dna_align_feature", "dna_align_feature_id", "feature_type = 'dna_align_feature'");
 

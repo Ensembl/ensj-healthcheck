@@ -1,12 +1,11 @@
 #!/bin/sh
 
-#JAVA_HOME=/usr/opt/java
-dir=$HOME/ensj-healthcheck
+JAVA_HOME=/usr/opt/java
+dir=/nfs/acari/ensembl/ensj-healthcheck
 
 cp=$dir
-for jar in $dir/lib/*.jar; do
-    cp=$jar:$cp
-done
+cp=$cp:$dir/lib/ensj-healthcheck.jar
+cp=$cp:$dir/lib/mysql-connector-java-3.0.15-ga-bin.jar
 
 cd $dir
 

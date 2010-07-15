@@ -64,18 +64,12 @@ public class RepeatConsensus extends SingleDatabaseTestCase {
        boolean result = true;
        
        Connection con = dbre.getConnection();
-       String query =  "SELECT COUNT(*) FROM repeat_consensus WHERE repeat_type = ''";
-       if(dbre.getType()!=DatabaseType.SANGER_VEGA){//for sanger_vega, simple is fine
-    	   query+=" OR repeat_type ='Simple'";
-       }
-       int rows = getRowCount(con, query);
+      
+       int rows = getRowCount(con, "SELECT COUNT(*) FROM repeat_consensus WHERE repeat_type ='Simple' OR repeat_type = ''");
        
        if (rows > 0) {
-    	   String report= "repeat_consensus table has " + rows + " rows of repeat_type empty"; 
-           if(dbre.getType()!=DatabaseType.SANGER_VEGA){//for sanger_vega, simple is fine
-        	   report+=" OR 'Simple'";
-           }
-           ReportManager.problem(this, con, report);
+
+           ReportManager.problem(this, con, "repeat_consensus table has " + rows + " rows of repeat_type 'Simple' or empty");
            ReportManager.problem(this, con, "This probably means the ensembl/misc-scripts/repeats/repeat-types.pl script was not run.");
            result = false;
 
