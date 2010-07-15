@@ -87,19 +87,14 @@ public class CheckFlatProteinTrees extends AbstractTemplatedTestCase {
 			}
 		}
 
-		if (flatMembersWithInternalStructure.isEmpty()
-				&& flatTreesStructure.isEmpty()) {
-			ReportManager.correct(this, dbre.getConnection(), "PASSED ");
+		if (!flatMembersWithInternalStructure.isEmpty()) {
+			reportProblem(dbre, flatMembersWithInternalStructure, totalTreesCount,
+					"have more than one member joined to the root and a well formed internal tree structure");
+			passed = false;
 		}
-		else {
-			if (!flatMembersWithInternalStructure.isEmpty()) {
-				reportProblem(dbre, flatMembersWithInternalStructure, totalTreesCount,
-						"have more than one member joined to the root and a well formed internal tree structure");
-			}
-			if (!flatTreesStructure.isEmpty()) {
-				reportProblem(dbre, flatTreesStructure, totalTreesCount,
-						"are flat with more than 2 members");
-			}
+		if (!flatTreesStructure.isEmpty()) {
+			reportProblem(dbre, flatTreesStructure, totalTreesCount,
+					"are flat with more than 2 members");
 			passed = false;
 		}
 
