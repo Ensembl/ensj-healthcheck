@@ -49,8 +49,8 @@ public class Pseudogene extends SingleDatabaseTestCase {
 
         String qry = "select count(*) from gene,transcript,translation " + "where gene.biotype like '%pseudogene%'"
                 + " and transcript.gene_id=gene.gene_id " + " and translation.transcript_id=transcript.transcript_id";
-        if(dbre.getType()==DatabaseType.SANGER_VEGA){//for sanger_vega ignore genes that do not have source havana or WU
-        	qry +=" and (gene.source='havana' or gene.source='WU')";
+        if(dbre.getType()==DatabaseType.SANGER_VEGA){//for sanger_vega ignore genes that do not have source havana or WU and allow polymorphic_pseudogene to have translations
+        	qry +=" and gene.biotype!= 'polymorphic_pseudogene' and (gene.source='havana' or gene.source='WU')";
 		}
 
         int rows = getRowCount(con, qry);
