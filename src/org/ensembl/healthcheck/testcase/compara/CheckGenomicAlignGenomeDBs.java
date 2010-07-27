@@ -19,6 +19,8 @@
 package org.ensembl.healthcheck.testcase.compara;
 
 import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.ResultSet;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
@@ -116,6 +118,45 @@ public class CheckGenomicAlignGenomeDBs extends SingleDatabaseTestCase {
 		}
 	    }
 	}
+
+        result &= checkAlignmentsOnMT(con);
+
+        return result;
+
+    }
+
+    public boolean checkAlignmentsOnMT(Connection comparaCon) {
+        
+        boolean result = true;
+        
+        String sql1 = "SELECT method_link_species_set.name, genome_db.name, method_link_species_set_id, dnafrag_id"
+             + " FROM method_link_species_set LEFT JOIN method_link USING (method_link_id)"
+             + " LEFT JOIN species_set USING (species_set_id)"
+             + " LEFT JOIN genome_db USING (genome_db_id)"
+             + " LEFT JOIN dnafrag ON (genome_db.genome_db_id = dnafrag.genome_db_id AND dnafrag.name = 'MT')"
+             + " WHERE (class LIKE 'GenomicAlignTree%' OR class LIKE 'GenomicAlign%multiple%') AND dnafrag.name = 'MT'";
+        try {
+            Statement stmt1 = comparaCon.createStatement();
+            ResultSet rs1 = stmt1.executeQuery(sql1);
+            while (rs1.next()) {
+                String sql2 = "SELECT count(*) FROM genomic_align WHERE method_link_species_set_id = "
+                    + rs1.getInt(3) + " AND dnafrag_id = " + rs1.getInt(4);
+                Statement stmt2 = comparaCon.createStatement();
+                ResultSet rs2 = stmt2.executeQuery(sql2);
+                while (rs2.next()) {
+                    if (rs2.getInt(1) == 0) {
+                        result = false;
+                        ReportManager.problem(this, comparaCon, "The MT chromosome from " + rs1.getString(2)
+                            + " is not present in the " + rs1.getString(1) + " alignments");
+                    }
+                }
+            }
+            rs1.close();
+            stmt1.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
         return result;
 
