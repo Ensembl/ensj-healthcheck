@@ -62,6 +62,21 @@ public class CheckHomology extends SingleDatabaseTestCase {
         } else {
             ReportManager.problem(this, con, "NO ENTRIES in homology or homology_member tables");
         }
+        
+        String sql_main = "SELECT hm1.member_id member_id1, hm2.member_id member_id2, COUNT(*) num, GROUP_CONCAT(h1.description order by h1.description) descs" +
+             " FROM homology h1 CROSS JOIN homology_member hm1 USING (homology_id)" +
+             " CROSS JOIN homology_member hm2 USING (homology_id)" +
+             " WHERE hm1.member_id < hm2.member_id" +
+             " GROUP BY hm1.member_id, hm2.member_id HAVING COUNT(*) > 1";
+        String sql_count = sql_main;
+        String sql_summary = "SELECT descs, num, count(*) FROM (" + sql_main + ") tt1 GROUP BY descs, num";
+        int numRows = getRowCount(con, sql_count);
+        if (numRows > 0) {
+            ReportManager.problem(this, con, "FAILED homology contains redundant entries");
+            ReportManager.problem(this, con, "FAILURE DETAILS: There are " + numRows + " redundant homology relationships in the DB");
+            ReportManager.problem(this, con, "USEFUL SQL: " + sql_summary);
+            result = false;
+        }
 
         return result;
 
