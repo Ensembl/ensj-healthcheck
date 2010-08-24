@@ -8,6 +8,9 @@ BLASTX_ENS_MUS
 BLASTX_HUM_GENSCAN
 BLASTX_SPROT
 BLASTX_TREMBL
+BGI_Genscan_geneset
+BGI_Genewise_geneset
+BGI_Augustus_geneset
 CDM
 CHIP_PET
 CHIP_PET_raw
