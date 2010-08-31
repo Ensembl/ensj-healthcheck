@@ -220,7 +220,7 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 			//Catch absent edbs
 
 			if(exdbIDs.length == 0){
-				ReportManager.problem(this, efgCon, "Could not identify external_db " + edbName + " with db_release like " + assemblyBuild);
+				ReportManager.problem(this, efgCon, "Could not identify external_db " + edbName + " with db_release like " + assemblyBuild[1]);
 				
 				//Do we really want to return here, as this maybe valid and we want to run the rest of the tests.
 
@@ -234,7 +234,7 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 					inList.append(exdbIDs[i]);
 				}
 
-				edbClause = "x.external_db_id in ("	+ inList + ")";
+				edbClause = "and x.external_db_id in ("	+ inList + ")";
 			}
 		
 
@@ -264,8 +264,11 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 					xrefQuery = "select t.seq_region_id, count(*) as count  from " + coreDBName + ".transcript t, " + 
 						coreDBName + ".transcript_stable_id ts," + " object_xref ox, xref x " +
 						"where t.transcript_id=ts.transcript_id and ts.stable_id=x.dbprimary_acc " +
-						"and ox.ensembl_object_type='" + xrefObj + "' and ox.xref_id=x.xref_id and " + 
+						"and ox.ensembl_object_type='" + xrefObj + "' and ox.xref_id=x.xref_id " + 
 						edbClause + " GROUP BY t.seq_region_id";
+
+
+					//System.out.println(xrefQuery);
 					//Restrict this to the core_coord_system_ids for the specific DB
 					//other wise we may get odd counts where core_coord_system_ids have changed between releases on the same assembly
 										
