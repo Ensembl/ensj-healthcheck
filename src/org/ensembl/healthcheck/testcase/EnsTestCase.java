@@ -1643,7 +1643,7 @@ public abstract class EnsTestCase {
 	// -----------------------------------------------------------------
 	/**
 	 * Set the database type(s) that this test applies to based upon the directory name. For directories called "generic", the type is
-	 * set to core, otherfeatures, cdna, vega and sanger_vega. For all other directories the type is set based upon the directory name.
+	 * set to core, otherfeatures, cdna, rnaseq, vega and sanger_vega. For all other directories the type is set based upon the directory name.
 	 * 
 	 * @param dirName
 	 *          The directory name to check.
@@ -1659,6 +1659,7 @@ public abstract class EnsTestCase {
 			types.add(DatabaseType.CDNA);
 			types.add(DatabaseType.OTHERFEATURES);
 			types.add(DatabaseType.SANGER_VEGA);
+			types.add(DatabaseType.RNASEQ);
 
 			logger.finest("Set generic types for " + getName());
 
