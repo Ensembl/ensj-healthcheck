@@ -54,6 +54,7 @@ public class DuplicateExons extends SingleDatabaseTestCase {
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		removeAppliesToType(DatabaseType.CDNA);
 		removeAppliesToType(DatabaseType.SANGER_VEGA);
+		removeAppliesToType(DatabaseType.RNASEQ);
 
 	}
 

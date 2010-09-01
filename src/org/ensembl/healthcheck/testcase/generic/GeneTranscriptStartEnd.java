@@ -48,6 +48,7 @@ public class GeneTranscriptStartEnd extends SingleDatabaseTestCase {
 	public void types() {
 
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.RNASEQ);
 
 	}
 

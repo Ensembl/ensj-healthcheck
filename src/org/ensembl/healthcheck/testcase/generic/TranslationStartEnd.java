@@ -24,60 +24,62 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that if the start and end of translation is on the same exon, that
- * start < end. Also check that translation ends aren't beyond exon ends.
+ * Check that if the start and end of translation is on the same exon, that start < end. Also check that translation ends aren't
+ * beyond exon ends.
  */
 public class TranslationStartEnd extends SingleDatabaseTestCase {
 
-    /**
-     * Creates a new instance of CheckTranslationStartEnd
-     */
-    public TranslationStartEnd() {
-        addToGroup("post_genebuild");
-        addToGroup("release");
-        setDescription("Check that if the start and end of translation is on the same exon, that start < end. Also check that translation ends aren't beyond exon ends.");
-    }
+	/**
+	 * Creates a new instance of CheckTranslationStartEnd
+	 */
+	public TranslationStartEnd() {
+		addToGroup("post_genebuild");
+		addToGroup("release");
+		setDescription("Check that if the start and end of translation is on the same exon, that start < end. Also check that translation ends aren't beyond exon ends.");
+	}
 
-    /**
-     * This only applies to core and Vega databases.
-     */
-    public void types() {
+	/**
+	 * This only applies to core and Vega databases.
+	 */
+	public void types() {
 
-        removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.RNASEQ);
 
-    }
-    
-    /**
-     * Find any matching databases that have start > end.
-     * @param dbre
-     *          The database to use.
-     * @return Result.
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+	}
 
-        boolean result = true;
+	/**
+	 * Find any matching databases that have start > end.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return Result.
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-	// check start < end 
-        Connection con = dbre.getConnection();
-        int rows = getRowCount(con, "SELECT COUNT(translation_id) FROM translation WHERE start_exon_id = end_exon_id AND seq_start > seq_end");
-        if (rows > 0) {
-            result = false;
-            ReportManager.problem(this, con, rows + " translations have start > end");
-        } else {
-            ReportManager.correct(this, con, "No translations have start > end");
-        }
+		boolean result = true;
 
-	// check no translations overrun their exons
-	rows = getRowCount(con, "SELECT COUNT(*) FROM translation t, exon e WHERE t.end_exon_id=e.exon_id AND e.seq_region_end-e.seq_region_start+1 < t.seq_end");
-        if (rows > 0) {
-            result = false;
-            ReportManager.problem(this, con, rows + " translations end beyond the end of their exons");
-        } else {
-            ReportManager.correct(this, con, "No translations overrun exons");
-        }
+		// check start < end
+		Connection con = dbre.getConnection();
+		int rows = getRowCount(con, "SELECT COUNT(translation_id) FROM translation WHERE start_exon_id = end_exon_id AND seq_start > seq_end");
+		if (rows > 0) {
+			result = false;
+			ReportManager.problem(this, con, rows + " translations have start > end");
+		} else {
+			ReportManager.correct(this, con, "No translations have start > end");
+		}
 
-        return result;
+		// check no translations overrun their exons
+		rows = getRowCount(con, "SELECT COUNT(*) FROM translation t, exon e WHERE t.end_exon_id=e.exon_id AND e.seq_region_end-e.seq_region_start+1 < t.seq_end");
+		if (rows > 0) {
+			result = false;
+			ReportManager.problem(this, con, rows + " translations end beyond the end of their exons");
+		} else {
+			ReportManager.correct(this, con, "No translations overrun exons");
+		}
 
-    } // run
+		return result;
+
+	} // run
 
 } // TranslationStartEnd

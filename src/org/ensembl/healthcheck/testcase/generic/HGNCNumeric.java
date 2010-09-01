@@ -51,7 +51,8 @@ public class HGNCNumeric extends SingleDatabaseTestCase {
 		removeAppliesToType(DatabaseType.CDNA);
 		removeAppliesToType(DatabaseType.VEGA);
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
-		
+		removeAppliesToType(DatabaseType.RNASEQ);
+
 	}
 
 	/**

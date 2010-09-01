@@ -51,6 +51,7 @@ public class Archive extends SingleDatabaseTestCase {
 
         removeAppliesToType(DatabaseType.OTHERFEATURES);
         removeAppliesToType(DatabaseType.ESTGENE);
+    		removeAppliesToType(DatabaseType.RNASEQ);
 
     }
     

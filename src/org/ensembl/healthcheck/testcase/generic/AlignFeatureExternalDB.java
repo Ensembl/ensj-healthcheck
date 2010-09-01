@@ -54,6 +54,7 @@ public class AlignFeatureExternalDB extends SingleDatabaseTestCase {
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		removeAppliesToType(DatabaseType.ESTGENE);
 		removeAppliesToType(DatabaseType.CDNA);
+		removeAppliesToType(DatabaseType.RNASEQ);
 
 	}
 

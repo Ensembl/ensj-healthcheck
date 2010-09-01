@@ -64,7 +64,7 @@ public class GeneStatus extends SingleDatabaseTestCase {
 
 		boolean result = true;
 		
-		if (dbre.getType() != DatabaseType.OTHERFEATURES) {
+		if (dbre.getType() != DatabaseType.OTHERFEATURES &&dbre.getType() != DatabaseType.RNASEQ) {
 			checkPrevious(dbre);
 		}
 

@@ -31,8 +31,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that features exist for expected analysis types, and that all analysis
- * types have features.
+ * Check that features exist for expected analysis types, and that all analysis types have features.
  */
 public class FeatureAnalysis extends SingleDatabaseTestCase {
 
@@ -61,6 +60,7 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		removeAppliesToType(DatabaseType.VEGA);
 		removeAppliesToType(DatabaseType.CDNA);
+		removeAppliesToType(DatabaseType.RNASEQ);
 
 	}
 
@@ -96,8 +96,7 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 	// ---------------------------------------------------------------------
 
 	/**
-	 * Check that all the analyses in the analysis table have some features
-	 * associated.
+	 * Check that all the analyses in the analysis table have some features associated.
 	 */
 	private boolean checkAnalysesHaveFeatures(DatabaseRegistryEntry dbre, String[] featureTables) {
 
@@ -116,8 +115,7 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 				String featureTable = featureTables[t];
 				logger.fine("Collecting analysis IDs from " + featureTable);
 				Statement stmt = con.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT DISTINCT(analysis_id), COUNT(*) AS count FROM " + featureTable
-						+ " GROUP BY analysis_id");
+				ResultSet rs = stmt.executeQuery("SELECT DISTINCT(analysis_id), COUNT(*) AS count FROM " + featureTable + " GROUP BY analysis_id");
 				while (rs.next()) {
 					Integer analysisID = new Integer(rs.getInt("analysis_id"));
 					if (analysesFromFeatureTables.containsKey(analysisID)) {
@@ -130,8 +128,7 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 						} else if (featureTable.equals("unmapped_object") && analysesFromFeatureTables.get(analysisID).equals("object_xref")) {
 							result = true;
 						} else {
-							ReportManager.problem(this, con, "Analysis with ID " + analysisID + " is used in " + featureTable + " as well as "
-									+ analysesFromFeatureTables.get(analysisID));
+							ReportManager.problem(this, con, "Analysis with ID " + analysisID + " is used in " + featureTable + " as well as " + analysesFromFeatureTables.get(analysisID));
 							result = false;
 						}
 					} else {
@@ -141,8 +138,7 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 					// check that each analysis actually exists in the analysis table
 					if (!analysesFromAnalysisTable.containsKey("" + analysisID.intValue()) && !featureTable.equals("object_xref")) {
 						int count = rs.getInt("count");
-						ReportManager.problem(this, con, "Analysis ID " + analysisID.intValue() + " is used in " + count + " rows in "
-								+ featureTable + " but is not present in the analysis table.");
+						ReportManager.problem(this, con, "Analysis ID " + analysisID.intValue() + " is used in " + count + " rows in " + featureTable + " but is not present in the analysis table.");
 						result = false;
 					}
 
@@ -166,12 +162,10 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 				String logicName = rs.getString("logic_name");
 				Integer anal = new Integer(analysisID);
 				if (!analysesFromFeatureTables.containsKey(anal) && !otherfeatureAnalyses.containsKey(anal)) {
-					ReportManager.problem(this, con, "Analysis with ID " + analysisID + ", logic name " + logicName
-							+ " is not used in any feature table");
+					ReportManager.problem(this, con, "Analysis with ID " + analysisID + ", logic name " + logicName + " is not used in any feature table");
 					result = false;
 				} else {
-					ReportManager.correct(this, con, "Analysis with ID " + analysisID + ", logic name " + logicName + " is used in "
-							+ analysesFromFeatureTables.get(new Integer(analysisID)));
+					ReportManager.correct(this, con, "Analysis with ID " + analysisID + ", logic name " + logicName + " is used in " + analysesFromFeatureTables.get(new Integer(analysisID)));
 				}
 			}
 			rs.close();
@@ -195,8 +189,7 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 
 		for (int i = 0; i < analyses.length; i++) {
 
-			String sql = "SELECT COUNT(*) FROM " + table + ", analysis a WHERE LCASE(a.logic_name)='" + analyses[i]
-					+ "' AND a.analysis_id=" + table + ".analysis_id";
+			String sql = "SELECT COUNT(*) FROM " + table + ", analysis a WHERE LCASE(a.logic_name)='" + analyses[i] + "' AND a.analysis_id=" + table + ".analysis_id";
 			Connection con = dbre.getConnection();
 			int rows = getRowCount(con, sql);
 			if (rows == 0) {

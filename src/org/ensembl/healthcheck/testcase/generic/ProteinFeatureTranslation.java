@@ -67,6 +67,8 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		removeAppliesToType(DatabaseType.ESTGENE);
 		removeAppliesToType(DatabaseType.CDNA);
+		removeAppliesToType(DatabaseType.RNASEQ);
+
 
 	}
 

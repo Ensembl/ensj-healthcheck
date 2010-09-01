@@ -44,6 +44,7 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		removeAppliesToType(DatabaseType.CDNA);
+		removeAppliesToType(DatabaseType.RNASEQ);
 
 	}
 

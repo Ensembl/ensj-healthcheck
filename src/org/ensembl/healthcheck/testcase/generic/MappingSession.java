@@ -58,6 +58,7 @@ public class MappingSession extends SingleDatabaseTestCase {
 		removeAppliesToType(DatabaseType.VEGA);
 		removeAppliesToType(DatabaseType.SANGER_VEGA);		
 		removeAppliesToType(DatabaseType.CDNA);
+		removeAppliesToType(DatabaseType.RNASEQ);
 
 	}
 

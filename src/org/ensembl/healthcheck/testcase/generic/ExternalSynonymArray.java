@@ -45,7 +45,8 @@ public class ExternalSynonymArray extends SingleDatabaseTestCase {
 		removeAppliesToType(DatabaseType.CDNA);
 		removeAppliesToType(DatabaseType.VEGA);
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
-		
+		removeAppliesToType(DatabaseType.RNASEQ);
+
 	}
 
 	/**
@@ -59,24 +60,24 @@ public class ExternalSynonymArray extends SingleDatabaseTestCase {
 	public boolean run(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
-		
+
 		Connection con = dbre.getConnection();
-		
+
 		int rows = getRowCount(con, "SELECT COUNT(*) FROM external_synonym WHERE synonym LIKE 'ARRAY(%)'");
 
 		if (rows > 0) {
-			
+
 			ReportManager.problem(this, con, rows + " rows in external_synonym have ARRAY() names");
 			result = false;
-		
+
 		} else {
-			
+
 			ReportManager.correct(this, con, "No ARRAY() synonyms");
-			
+
 		}
-		
+
 		return result;
-		
+
 	} // run
 
 	// ----------------------------------------------------------------------

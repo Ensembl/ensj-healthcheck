@@ -141,7 +141,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 
 			// ----------------------------------------------------
 
-		} else if (type == DatabaseType.EST || type == DatabaseType.OTHERFEATURES) {
+		} else if (type == DatabaseType.EST || type == DatabaseType.OTHERFEATURES || type == DatabaseType.RNASEQ) {
 
 			// Only a few tables need to be filled in EST
 			String[] est = { "dna_align_feature", "meta_coord", "meta", "coord_system" };

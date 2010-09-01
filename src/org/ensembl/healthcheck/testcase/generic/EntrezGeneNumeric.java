@@ -47,7 +47,8 @@ public class EntrezGeneNumeric extends SingleDatabaseTestCase {
 		removeAppliesToType(DatabaseType.CDNA);
 		removeAppliesToType(DatabaseType.VEGA);
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
-		
+		removeAppliesToType(DatabaseType.RNASEQ);
+
 	}
 
 	/**

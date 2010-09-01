@@ -30,72 +30,70 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  */
 public class ExonTranscriptStartEnd extends SingleDatabaseTestCase {
 
-    /**
-     * Create a new ExonTranscriptStartEnd test case.
-     */
-    public ExonTranscriptStartEnd() {
+	/**
+	 * Create a new ExonTranscriptStartEnd test case.
+	 */
+	public ExonTranscriptStartEnd() {
 
-        addToGroup("post_genebuild");
-        addToGroup("release");
-        setDescription("Checks that exon and transcript start/end agree");
+		addToGroup("post_genebuild");
+		addToGroup("release");
+		setDescription("Checks that exon and transcript start/end agree");
 
-    }
+	}
 
-    /**
-     * This only applies to core and Vega databases.
-     */
-    public void types() {
+	/**
+	 * This only applies to core and Vega databases.
+	 */
+	public void types() {
 
-        removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.RNASEQ);
 
-    }
-    
-    /**
-     * Run the test.
-     * 
-     * @param dbre
-     *          The database to check.
-     * @return true if the test passed.
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+	}
 
-        boolean result = true;
+	/**
+	 * Run the test.
+	 * 
+	 * @param dbre
+	 *          The database to check.
+	 * @return true if the test passed.
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-        // Check that the minimum exon seq_region_start in a transcript is the same as the
-        // transcript's start
-        // and that the maximum exon seq_region_start in a transcript it the same as the
-        // transcript's end
-        // The SQL below will return cases where this is not true
-        String sql = " SELECT tr.transcript_id, e.exon_id, tr.seq_region_start AS transcript_start, tr.seq_region_end AS transcript_end, MIN(e.seq_region_start) as min_exon_start, MAX(e.seq_region_end) AS max_exon_end FROM exon e, transcript tr, exon_transcript et WHERE e.exon_id=et.exon_id AND et.transcript_id=tr.transcript_id GROUP BY et.transcript_id HAVING min_exon_start != transcript_start OR max_exon_end != transcript_end ";
+		boolean result = true;
 
-        Connection con = dbre.getConnection();
+		// Check that the minimum exon seq_region_start in a transcript is the same as the
+		// transcript's start
+		// and that the maximum exon seq_region_start in a transcript it the same as the
+		// transcript's end
+		// The SQL below will return cases where this is not true
+		String sql = " SELECT tr.transcript_id, e.exon_id, tr.seq_region_start AS transcript_start, tr.seq_region_end AS transcript_end, MIN(e.seq_region_start) as min_exon_start, MAX(e.seq_region_end) AS max_exon_end FROM exon e, transcript tr, exon_transcript et WHERE e.exon_id=et.exon_id AND et.transcript_id=tr.transcript_id GROUP BY et.transcript_id HAVING min_exon_start != transcript_start OR max_exon_end != transcript_end ";
 
-        try {
+		Connection con = dbre.getConnection();
 
-            Statement stmt = dbre.getConnection().createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
+		try {
 
-            while (rs.next()) {
-                ReportManager
-                        .problem(this, con,
-                                "Min/max exon start/ends do not agree with transcript start/end in transcript "
-                                        + rs.getLong(1));
-                result = false;
-            }
+			Statement stmt = dbre.getConnection().createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
 
-            rs.close();
-            stmt.close();
+			while (rs.next()) {
+				ReportManager.problem(this, con, "Min/max exon start/ends do not agree with transcript start/end in transcript " + rs.getLong(1));
+				result = false;
+			}
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+			rs.close();
+			stmt.close();
 
-        if (result) {
-            ReportManager.correct(this, con, "All exon/transcript start/ends agree");
-        }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-        return result;
+		if (result) {
+			ReportManager.correct(this, con, "All exon/transcript start/ends agree");
+		}
 
-    }
+		return result;
+
+	}
 
 }

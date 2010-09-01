@@ -54,6 +54,7 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		removeAppliesToType(DatabaseType.CDNA);
+		removeAppliesToType(DatabaseType.RNASEQ);
 
 	}
 

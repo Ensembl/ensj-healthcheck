@@ -49,7 +49,9 @@ public class ProductionMeta extends SingleDatabaseTestCase {
 	 * This test Does not apply to sanger_vega dbs
 	 */
 	public void types() {
+		
 		removeAppliesToType(DatabaseType.SANGER_VEGA);
+	
 	}
 
 

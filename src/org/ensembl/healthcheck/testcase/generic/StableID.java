@@ -30,9 +30,8 @@ import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.testcase.Priority;
 
 /**
- * Checks the *_stable_id tables to ensure they are populated, have no orphan
- * references, and have valid versions. Also prints some examples from the table
- * for checking by eye.
+ * Checks the *_stable_id tables to ensure they are populated, have no orphan references, and have valid versions. Also prints some
+ * examples from the table for checking by eye.
  * 
  * <p>
  * Group is <b>check_stable_ids </b>
@@ -64,6 +63,7 @@ public class StableID extends SingleDatabaseTestCase {
 
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		removeAppliesToType(DatabaseType.CDNA);
+		removeAppliesToType(DatabaseType.RNASEQ);
 
 	}
 
@@ -88,23 +88,21 @@ public class StableID extends SingleDatabaseTestCase {
 
 		// there are several species where ID mapping is not done
 		Species s = dbre.getSpecies();
-		if (s!=null && s != Species.CAENORHABDITIS_ELEGANS && s != Species.DROSOPHILA_MELANOGASTER &&
-			s != Species.SACCHAROMYCES_CEREVISIAE && s != Species.ANOPHELES_GAMBIAE && s != Species.UNKNOWN) {
-			if(dbre.getType()!=DatabaseType.SANGER_VEGA){//for sanger_vega, do not check the prefixes
+		if (s != null && s != Species.CAENORHABDITIS_ELEGANS && s != Species.DROSOPHILA_MELANOGASTER && s != Species.SACCHAROMYCES_CEREVISIAE && s != Species.ANOPHELES_GAMBIAE && s != Species.UNKNOWN) {
+			if (dbre.getType() != DatabaseType.SANGER_VEGA) {// for sanger_vega, do not check the prefixes
 				result &= checkPrefixes(dbre);
 			}
 			result &= checkStableIDEventTypes(con);
 			result = checkStableIDTimestamps(con);
 		}
-		
+
 		return result;
 	}
 
 	/**
-	 * Checks that the typeName_stable_id table is valid. The table is valid if it
-	 * has >0 rows, and there are no orphan references between typeName table and
-	 * typeName_stable_id. Also prints some example data from the
-	 * typeName_stable_id table via ReportManager.info().
+	 * Checks that the typeName_stable_id table is valid. The table is valid if it has >0 rows, and there are no orphan references
+	 * between typeName table and typeName_stable_id. Also prints some example data from the typeName_stable_id table via
+	 * ReportManager.info().
 	 * 
 	 * @param con
 	 *          connection to run queries on.
@@ -148,10 +146,9 @@ public class StableID extends SingleDatabaseTestCase {
 		} else {
 			ReportManager.correct(this, con, "No duplicate stable IDs in " + stableIDtable);
 		}
-		
+
 		// check for invalid or missing stable ID versions
-		int nInvalidVersions = getRowCount(con, "SELECT COUNT(*) AS " + typeName + "_with_invalid_version" + " FROM " + stableIDtable
-				+ " WHERE version < 1 OR version IS NULL;");
+		int nInvalidVersions = getRowCount(con, "SELECT COUNT(*) AS " + typeName + "_with_invalid_version" + " FROM " + stableIDtable + " WHERE version < 1 OR version IS NULL;");
 
 		if (nInvalidVersions > 0) {
 			ReportManager.problem(this, con, "Invalid " + typeName + " versions in " + stableIDtable);
@@ -161,24 +158,20 @@ public class StableID extends SingleDatabaseTestCase {
 
 		// make sure stable ID versions in the typeName_stable_id table matches those in stable_id_event
 		// for the latest mapping_session
-                String mappingSessionId = getRowColumnValue(con, "SELECT mapping_session_id FROM mapping_session " +
-			"ORDER BY created DESC LIMIT 1");
+		String mappingSessionId = getRowColumnValue(con, "SELECT mapping_session_id FROM mapping_session " + "ORDER BY created DESC LIMIT 1");
 
-                if (mappingSessionId.equals("")) {
-                  ReportManager.info(this, con, "No mapping_session found");
-                  return result;
-                }
-		
-		int nVersionMismatch = getRowCount(con, "SELECT COUNT(*) FROM stable_id_event sie, " + stableIDtable +
-			" si WHERE sie.mapping_session_id = " + Integer.parseInt(mappingSessionId) +
-			" AND sie.new_stable_id = si.stable_id AND sie.new_version <> si.version");
+		if (mappingSessionId.equals("")) {
+			ReportManager.info(this, con, "No mapping_session found");
+			return result;
+		}
+
+		int nVersionMismatch = getRowCount(con, "SELECT COUNT(*) FROM stable_id_event sie, " + stableIDtable + " si WHERE sie.mapping_session_id = " + Integer.parseInt(mappingSessionId)
+				+ " AND sie.new_stable_id = si.stable_id AND sie.new_version <> si.version");
 
 		if (nVersionMismatch > 0) {
-			ReportManager.problem(this, con, "Version mismatch between " + nVersionMismatch + " " + typeName + " versions in " +
-				stableIDtable + " and stable_id_event");
-			DBUtils.printRows(this, con, "SELECT si.stable_id FROM stable_id_event sie, " + stableIDtable +
-			    " si WHERE sie.mapping_session_id = " + Integer.parseInt(mappingSessionId) +
-			    " AND sie.new_stable_id = si.stable_id AND sie.new_version <> si.version");
+			ReportManager.problem(this, con, "Version mismatch between " + nVersionMismatch + " " + typeName + " versions in " + stableIDtable + " and stable_id_event");
+			DBUtils.printRows(this, con, "SELECT si.stable_id FROM stable_id_event sie, " + stableIDtable + " si WHERE sie.mapping_session_id = " + Integer.parseInt(mappingSessionId)
+					+ " AND sie.new_stable_id = si.stable_id AND sie.new_version <> si.version");
 			result = false;
 		}
 
@@ -187,11 +180,10 @@ public class StableID extends SingleDatabaseTestCase {
 
 	// -----------------------------------------------------------
 	/**
-	 * Check that all stable IDs in the table have the correct prefix. The prefix
-	 * is defined in Species.java
+	 * Check that all stable IDs in the table have the correct prefix. The prefix is defined in Species.java
 	 */
 	private boolean checkPrefixes(DatabaseRegistryEntry dbre) {
-		
+
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
@@ -233,8 +225,7 @@ public class StableID extends SingleDatabaseTestCase {
 
 	// -----------------------------------------------------------
 	/**
-	 * Check for any stable ID events where the 'type' column does not match the
-	 * identifier type.
+	 * Check for any stable ID events where the 'type' column does not match the identifier type.
 	 * 
 	 */
 	private boolean checkStableIDEventTypes(Connection con) {
@@ -249,15 +240,13 @@ public class StableID extends SingleDatabaseTestCase {
 
 			String prefix = getPrefixForType(con, type);
 
-			String sql = "SELECT COUNT(*) FROM stable_id_event WHERE (old_stable_id LIKE '" + prefix + "%' OR new_stable_id LIKE '"
-					+ prefix + "%') AND type != '" + type + "'";
+			String sql = "SELECT COUNT(*) FROM stable_id_event WHERE (old_stable_id LIKE '" + prefix + "%' OR new_stable_id LIKE '" + prefix + "%') AND type != '" + type + "'";
 
 			int rows = getRowCount(con, sql);
 
 			if (rows > 0) {
 
-				ReportManager.problem(this, con, rows + " rows of type " + type + " (prefix " + prefix
-						+ ") in stable_id_event have identifiers that do not correspond to " + type + "s");
+				ReportManager.problem(this, con, rows + " rows of type " + type + " (prefix " + prefix + ") in stable_id_event have identifiers that do not correspond to " + type + "s");
 				result = false;
 
 			} else {
@@ -287,8 +276,9 @@ public class StableID extends SingleDatabaseTestCase {
 
 		return prefix;
 
-	} 
-//-----------------------------------------------------------
+	}
+
+	// -----------------------------------------------------------
 	/**
 
 	 * 

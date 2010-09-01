@@ -55,6 +55,7 @@ public class XrefLevels extends MultiDatabaseTestCase {
 
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		removeAppliesToType(DatabaseType.CDNA);
+		removeAppliesToType(DatabaseType.RNASEQ);
 
 	}
 
