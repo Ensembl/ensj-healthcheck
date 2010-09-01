@@ -84,7 +84,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
 	private String customPass = null;
 
-	private static final String CORE_DB_REGEXP = "[a-z]+_[a-z]+_(core|otherfeatures|cdna|vega|otherfeatures)";
+	private static final String CORE_DB_REGEXP = "[a-z]+_[a-z]+_(core|otherfeatures|cdna|vega|otherfeatures|sanger_vega|rnaseq)";
 
 	// -------------------------------------------------------------------------
 
