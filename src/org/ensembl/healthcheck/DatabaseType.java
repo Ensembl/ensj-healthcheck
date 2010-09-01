@@ -89,6 +89,9 @@ public final class DatabaseType {
 	/** A production database */
 	public static final DatabaseType PRODUCTION = new DatabaseType("production");
 
+	/** An rnaseq database */
+	public static final DatabaseType RNASEQ = new DatabaseType("rnaseq");
+
 	/** A database whose type has not been determined */
 	public static final DatabaseType UNKNOWN = new DatabaseType("unknown");
 
@@ -301,6 +304,14 @@ public final class DatabaseType {
 		if (in(lcAlias, "ensembl_production")) {
 
 			return PRODUCTION;
+
+		}
+		
+	// --------------------------------------
+
+		if (in(lcAlias, "rnaseq")) {
+
+			return RNASEQ;
 
 		}
 
