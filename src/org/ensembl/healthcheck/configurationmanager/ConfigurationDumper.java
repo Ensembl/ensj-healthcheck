@@ -1,0 +1,57 @@
+package org.ensembl.healthcheck.configurationmanager;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
+import uk.co.flamingpenguin.jewel.cli.OptionNotPresentException;
+
+/**
+ * Class for dumping the parameters in configuration objects.
+ *
+ */
+public class ConfigurationDumper<T> extends ConfigurationProcessor<T> {
+
+	/**
+	 * 
+	 * This method will iterate over the getMethods defined in T and call
+	 * them on the configurationObject. The results are summarised in a table
+	 * which is returned as a string.
+	 * 
+	 * @param configurationObject
+	 * @return A string summarising the contents of the configuration object.
+	 * 
+	 */
+	public String dump(T configurationObject) {
+		
+		Class<T> configurationClass = (Class<T>) configurationObject.getClass();
+		List<Method> methods = getGetMethods(configurationClass);
+
+		StringBuffer out = new StringBuffer();
+		for (Method method : methods) {
+
+			out.append(String.format(
+					"%1$-20s"
+					, 
+					method.getName().substring(3)
+			) + " :   ");
+			try {
+				out.append(method.invoke(configurationObject, (Object[]) null).toString());
+			} catch (OptionNotPresentException e) {
+				// This should be thrown for every options that has not 
+				// been set,
+				//
+				out.append("- not set -");
+			} catch (InvocationTargetException e) {
+				// But instead this is. How odd.
+				//
+				out.append("- not set -");
+			} catch (IllegalArgumentException e) { throw new RuntimeException(e); }
+			  catch (IllegalAccessException   e) { throw new RuntimeException(e); }
+
+			  out.append("\n");
+		}		
+		return out.toString();
+	}
+}
