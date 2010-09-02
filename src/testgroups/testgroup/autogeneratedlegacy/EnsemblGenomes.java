@@ -9,12 +9,10 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.eg_core.DuplicateXref </li> 
  *   <li> org.ensembl.healthcheck.testcase.eg_core.ExonBoundary </li> 
  *   <li> org.ensembl.healthcheck.testcase.eg_core.DisplayXrefId </li> 
- *   <li> org.ensembl.healthcheck.testcase.eg_core.AssemblyMapping </li> 
  *   <li> org.ensembl.healthcheck.testcase.eg_core.MetaForCompara </li> 
- *   <li> org.ensembl.healthcheck.testcase.eg_core.LowerCaseAnalysisName </li> 
  *   <li> org.ensembl.healthcheck.testcase.eg_core.GenesDisplayable </li> 
- *   <li> org.ensembl.healthcheck.testcase.eg_core.SeqRegionName </li> 
  *   <li> org.ensembl.healthcheck.testcase.eg_core.DeprecatedEgMeta </li> 
+ *   <li> org.ensembl.healthcheck.testcase.eg_core.SeqRegionName </li> 
  *   <li> org.ensembl.healthcheck.testcase.eg_core.GeneGC </li> 
  *   <li> org.ensembl.healthcheck.testcase.eg_core.AliasAndNaming </li> 
  *   <li> org.ensembl.healthcheck.testcase.eg_core.GeneDescription </li> 
@@ -49,12 +47,10 @@ public class EnsemblGenomes extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.eg_core.DuplicateXref.class,
 			org.ensembl.healthcheck.testcase.eg_core.ExonBoundary.class,
 			org.ensembl.healthcheck.testcase.eg_core.DisplayXrefId.class,
-			org.ensembl.healthcheck.testcase.eg_core.AssemblyMapping.class,
 			org.ensembl.healthcheck.testcase.eg_core.MetaForCompara.class,
-			org.ensembl.healthcheck.testcase.eg_core.LowerCaseAnalysisName.class,
 			org.ensembl.healthcheck.testcase.eg_core.GenesDisplayable.class,
-			org.ensembl.healthcheck.testcase.eg_core.SeqRegionName.class,
 			org.ensembl.healthcheck.testcase.eg_core.DeprecatedEgMeta.class,
+			org.ensembl.healthcheck.testcase.eg_core.SeqRegionName.class,
 			org.ensembl.healthcheck.testcase.eg_core.GeneGC.class,
 			org.ensembl.healthcheck.testcase.eg_core.AliasAndNaming.class,
 			org.ensembl.healthcheck.testcase.eg_core.GeneDescription.class,

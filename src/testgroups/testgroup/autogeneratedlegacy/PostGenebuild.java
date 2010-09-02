@@ -16,8 +16,8 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.DNAEmpty </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.BlankEnums </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.IsCurrent </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionTableRows </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.TranslationStartEndExon </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionTableRows </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.Strand </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.MTCodonTable </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.TranscriptsSameName </li> 
@@ -34,11 +34,12 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.MarkerFeatures </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ExternalSynonymArray </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.HitNameFormat </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.Retrotransposed </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.Pseudogene </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyException </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.DescriptionNewlines </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.DescriptionNewlines </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyException </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.IdentityXrefCigarLines </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblySeqregion </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd </li> 
@@ -54,23 +55,23 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.ExonRank </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ExonStrandOrder </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.BlanksInsteadOfNulls </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.XrefIdentifiers </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.HGNCMultipleGenes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.InterproDescriptions </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.GeneTranscriptStartEnd </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.XrefPrefixes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.Karyotype </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.RepeatFeature </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.RepeatFeature </li> 
  *   <li> org.ensembl.healthcheck.testcase.xref.ForeignKeys </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.FeatureAnalysis </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.Ditag </li> 
  *   <li> org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionArrayXrefs </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.DisplayXref </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.FeatureCoords </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.HGNCTypes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.TranslationStartEnd </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.HGNCTypes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.RepeatConsensus </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.DuplicateAttributes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ESTStableID </li> 
@@ -102,8 +103,8 @@ public class PostGenebuild extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.DNAEmpty.class,
 			org.ensembl.healthcheck.testcase.generic.BlankEnums.class,
 			org.ensembl.healthcheck.testcase.generic.IsCurrent.class,
-			org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionTableRows.class,
 			org.ensembl.healthcheck.testcase.generic.TranslationStartEndExon.class,
+			org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionTableRows.class,
 			org.ensembl.healthcheck.testcase.generic.Strand.class,
 			org.ensembl.healthcheck.testcase.generic.MTCodonTable.class,
 			org.ensembl.healthcheck.testcase.generic.TranscriptsSameName.class,
@@ -120,11 +121,12 @@ public class PostGenebuild extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.MarkerFeatures.class,
 			org.ensembl.healthcheck.testcase.generic.ExternalSynonymArray.class,
 			org.ensembl.healthcheck.testcase.generic.HitNameFormat.class,
+			org.ensembl.healthcheck.testcase.generic.Retrotransposed.class,
 			org.ensembl.healthcheck.testcase.generic.Pseudogene.class,
 			org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable.class,
-			org.ensembl.healthcheck.testcase.generic.AssemblyException.class,
-			org.ensembl.healthcheck.testcase.generic.DescriptionNewlines.class,
 			org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies.class,
+			org.ensembl.healthcheck.testcase.generic.DescriptionNewlines.class,
+			org.ensembl.healthcheck.testcase.generic.AssemblyException.class,
 			org.ensembl.healthcheck.testcase.generic.IdentityXrefCigarLines.class,
 			org.ensembl.healthcheck.testcase.generic.AssemblySeqregion.class,
 			org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd.class,
@@ -140,23 +142,23 @@ public class PostGenebuild extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.ExonRank.class,
 			org.ensembl.healthcheck.testcase.generic.ExonStrandOrder.class,
 			org.ensembl.healthcheck.testcase.generic.BlanksInsteadOfNulls.class,
-			org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel.class,
 			org.ensembl.healthcheck.testcase.generic.XrefIdentifiers.class,
+			org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel.class,
 			org.ensembl.healthcheck.testcase.generic.HGNCMultipleGenes.class,
 			org.ensembl.healthcheck.testcase.generic.InterproDescriptions.class,
 			org.ensembl.healthcheck.testcase.generic.GeneTranscriptStartEnd.class,
 			org.ensembl.healthcheck.testcase.generic.XrefPrefixes.class,
 			org.ensembl.healthcheck.testcase.generic.Karyotype.class,
-			org.ensembl.healthcheck.testcase.generic.RepeatFeature.class,
 			org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem.class,
+			org.ensembl.healthcheck.testcase.generic.RepeatFeature.class,
 			org.ensembl.healthcheck.testcase.xref.ForeignKeys.class,
 			org.ensembl.healthcheck.testcase.generic.FeatureAnalysis.class,
 			org.ensembl.healthcheck.testcase.generic.Ditag.class,
 			org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionArrayXrefs.class,
 			org.ensembl.healthcheck.testcase.generic.DisplayXref.class,
 			org.ensembl.healthcheck.testcase.generic.FeatureCoords.class,
-			org.ensembl.healthcheck.testcase.generic.HGNCTypes.class,
 			org.ensembl.healthcheck.testcase.generic.TranslationStartEnd.class,
+			org.ensembl.healthcheck.testcase.generic.HGNCTypes.class,
 			org.ensembl.healthcheck.testcase.generic.RepeatConsensus.class,
 			org.ensembl.healthcheck.testcase.generic.DuplicateAttributes.class,
 			org.ensembl.healthcheck.testcase.generic.ESTStableID.class,

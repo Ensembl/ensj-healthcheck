@@ -16,7 +16,6 @@ public class AllEGCore extends GroupOfTests {
 
 		addTest(
 				AliasAndNaming.class,
-				AssemblyMapping.class,
 				DisplayXrefId.class,
 				DuplicateMetaKeys.class,
 				DuplicateProteinId.class,
@@ -33,7 +32,6 @@ public class AllEGCore extends GroupOfTests {
 				IdentityXref.class,
 				IgiXref.class,
 				InterproFeature.class,
-				LowerCaseAnalysisName.class,
 				MetaForCompara.class,
 				PeptideTranslationAttribs.class,
 				ProteinCodingGene.class,

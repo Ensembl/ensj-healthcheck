@@ -25,8 +25,8 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.XrefIdentifiers </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.HGNCMultipleGenes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.InterproDescriptions </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.HGNCNumeric </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.XrefPrefixes </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.HGNCNumeric </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.XrefLevels </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.DisplayXref </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.HGNCTypes </li> 
@@ -62,8 +62,8 @@ public class CoreXrefs extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.XrefIdentifiers.class,
 			org.ensembl.healthcheck.testcase.generic.HGNCMultipleGenes.class,
 			org.ensembl.healthcheck.testcase.generic.InterproDescriptions.class,
-			org.ensembl.healthcheck.testcase.generic.HGNCNumeric.class,
 			org.ensembl.healthcheck.testcase.generic.XrefPrefixes.class,
+			org.ensembl.healthcheck.testcase.generic.HGNCNumeric.class,
 			org.ensembl.healthcheck.testcase.generic.XrefLevels.class,
 			org.ensembl.healthcheck.testcase.generic.DisplayXref.class,
 			org.ensembl.healthcheck.testcase.generic.HGNCTypes.class,
