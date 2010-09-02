@@ -45,6 +45,14 @@ import org.ensembl.healthcheck.util.Utils;
 
 public abstract class EnsTestCase {
 
+	/**the string that is contained in the name of backup tables*/
+	public static final String backupIdentifier ="backup_"; 
+
+	/*comparison flags*/
+	public static final int COMPARE_LEFT=0;
+	public static final int COMPARE_RIGHT=1;
+	public static final int COMPARE_BOTH=2;
+	
 	/** The TestRunner associated with this EnsTestCase */
 	protected TestRunner testRunner;
 
@@ -218,7 +226,7 @@ public abstract class EnsTestCase {
 	 * 
 	 * @return The list of names as Strings.
 	 */
-	public List getGroups() {
+	public List<String> getGroups() {
 
 		return groups;
 
@@ -1308,6 +1316,8 @@ public abstract class EnsTestCase {
 	 */
 	public Connection getSchemaConnection(String schema) {
 
+		DatabaseRegistry reg = DBUtils.getMainDatabaseRegistry();
+		
 		DatabaseRegistryEntry dbre = DBUtils.getMainDatabaseRegistry().getByExactName(schema);
 
 		return dbre.getConnection();
@@ -1460,9 +1470,32 @@ public abstract class EnsTestCase {
 	 * @return true if all tables in schema1 exist in schema2, and vice-versa.
 	 */
 	public boolean compareTablesInSchema(Connection schema1, Connection schema2) {
+		return compareTablesInSchema(schema1, schema2, false, COMPARE_BOTH);
+	}
+
+	/**
+	 * Compare two schemas to see if they have the same tables. The comparison can be done in in one direction or both directions.
+	 * 
+	 * @param schema1
+	 *          The first schema to compare.
+	 * @param schema2
+	 *          The second schema to compare.
+	 * @param ignoreBackupTables
+	 *          Should backup tables be excluded form this check?          
+	 * @param directionFlag
+	 *          The direction to perform comparison in, either EnsTestCase.COMPARE_RIGHT, EnsTestCase.COMPARE_LEFT or EnsTestCase.COMPARE_BOTH
+	 * @return for left comparison: all tables in schema1 exist in schema2 
+	 * for right comparison: all tables in schema1 exist in schema2 
+	 * for both: if all tables in schema1 exist in schema2, and vice-versa
+	 */
+	public boolean compareTablesInSchema(Connection schema1, Connection schema2, boolean ignoreBackupTables, int directionFlag) {	
 
 		boolean result = true;
+		if (directionFlag==COMPARE_RIGHT || directionFlag==COMPARE_BOTH){//perfom right compare if required
+			result=compareTablesInSchema(schema2, schema1, ignoreBackupTables,COMPARE_LEFT);
+		}
 
+		if (directionFlag==COMPARE_LEFT || directionFlag==COMPARE_BOTH){//perform left compare if required
 		String name1 = DBUtils.getShortDatabaseName(schema1);
 		String name2 = DBUtils.getShortDatabaseName(schema2);
 
@@ -1470,18 +1503,12 @@ public abstract class EnsTestCase {
 		String[] tables = getTableNames(schema1);
 		for (int i = 0; i < tables.length; i++) {
 			String table = tables[i];
+				if (!ignoreBackupTables||!table.contains(backupIdentifier)){
 			if (!checkTableExists(schema2, table)) {
 				ReportManager.problem(this, schema1, "Table " + table + " exists in " + name1 + " but not in " + name2);
 				result = false;
 			}
 		}
-		// and now the other way
-		tables = getTableNames(schema2);
-		for (int i = 0; i < tables.length; i++) {
-			String table = tables[i];
-			if (!checkTableExists(schema1, table)) {
-				ReportManager.problem(this, schema2, "Table " + table + " exists in " + name2 + " but not in " + name1);
-				result = false;
 			}
 		}
 
@@ -1624,17 +1651,15 @@ public abstract class EnsTestCase {
 	 */
 	public void setTypeFromDirName(String dirName) {
 
-		List types = new ArrayList();
+		List<DatabaseType> types = new ArrayList<DatabaseType>();
 
 		if (dirName.equals("generic")) {
 
 			types.add(DatabaseType.CORE);
 			types.add(DatabaseType.VEGA);
-			types.add(DatabaseType.EST);
-			types.add(DatabaseType.ESTGENE);
 			types.add(DatabaseType.CDNA);
 			types.add(DatabaseType.OTHERFEATURES);
-			//types.add(DatabaseType.SANGER_VEGA);
+			types.add(DatabaseType.SANGER_VEGA);
 			types.add(DatabaseType.RNASEQ);
 
 			logger.finest("Set generic types for " + getName());
