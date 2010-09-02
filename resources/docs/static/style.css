@@ -1,0 +1,17 @@
+div#toc ul {
+    list-style: none;
+}
+
+div#toc ul li ul {
+    margin-bottom: 0.75em;
+}
+
+div#toc ul li ul li ul {
+    margin-bottom: 0.25em;
+}
+
+ul.cssfloat li {
+    float: left;
+    list-style: none;
+    margin: 0 10px;
+}
