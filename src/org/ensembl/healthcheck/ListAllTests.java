@@ -56,7 +56,7 @@ public class ListAllTests extends TestRunner {
 
         lat.parseCommandLine(args);
 
-        Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE, false);
+        Utils.readPropertiesFileIntoSystem("database.defaults.properties", false);
 
         if (showGroupsOnly) {
 
@@ -136,7 +136,7 @@ public class ListAllTests extends TestRunner {
             System.out.println("Tests in group " + groupToList + ":");
         }
 
-        List tests = new TestRegistry().findAllTests();
+        List tests = new DiscoveryBasedTestRegistry().findAllTests();
 
         Iterator it = tests.iterator();
         while (it.hasNext()) {
@@ -182,7 +182,7 @@ public class ListAllTests extends TestRunner {
 
     private void showAllTestsByGroup() {
 
-        List allTests = new TestRegistry().findAllTests();
+        List allTests = new DiscoveryBasedTestRegistry().findAllTests();
         String[] groups = listAllGroups(allTests);
         Arrays.sort(groups);
 

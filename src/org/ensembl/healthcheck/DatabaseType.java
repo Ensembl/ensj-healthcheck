@@ -13,7 +13,8 @@
 package org.ensembl.healthcheck;
 
 /**
- * Typesafe "enum" to store information about the type of a database. Declared final since it only has private constructors.
+ * Typesafe "enum" to store information about the type of a database. Declared
+ * final since it only has private constructors.
  */
 public final class DatabaseType {
 
@@ -26,11 +27,8 @@ public final class DatabaseType {
 	/** An ESTgene database */
 	public static final DatabaseType ESTGENE = new DatabaseType("estgene");
 
-	/** A Vega database - note this actually refers to the Ensembl Vega database */
+	/** A Vega database */
 	public static final DatabaseType VEGA = new DatabaseType("vega");
-
-	/** A Sanger Vega database - note this is different from the Ensembl Vega database */
-	public static final DatabaseType SANGER_VEGA = new DatabaseType("sanger_vega");
 
 	/** A Compara database */
 	public static final DatabaseType COMPARA = new DatabaseType("compara");
@@ -117,14 +115,14 @@ public final class DatabaseType {
 
 		return this.name;
 	}
-
 	// -----------------------------------------------------------------
 	/**
 	 * Resolve an alias to a DatabaseType object.
 	 * 
 	 * @param alias
 	 *          The alias (e.g. core).
-	 * @return The DatabaseType object corresponding to alias, or DatabaseType.UNKNOWN if it cannot be resolved.
+	 * @return The DatabaseType object corresponding to alias, or
+	 *         DatabaseType.UNKNOWN if it cannot be resolved.
 	 */
 	public static DatabaseType resolveAlias(final String alias) {
 
@@ -140,8 +138,8 @@ public final class DatabaseType {
 		}
 
 		// --------------------------------------
-		// EG: treat eg_core as core dbs as well
-		if (in(lcAlias, "core") || in(lcAlias, "eg_core") || in(lcAlias, "ancestral")) {
+        // EG: treat eg_core as core dbs as well
+		if (in(lcAlias, "core") || in(lcAlias,"eg_core") || in(lcAlias,"ancestral")) {
 
 			return CORE;
 
@@ -298,7 +296,7 @@ public final class DatabaseType {
 			return FUNCGEN;
 
 		}
-
+		
 		// --------------------------------------
 
 		if (in(lcAlias, "ensembl_production")) {
@@ -315,21 +313,13 @@ public final class DatabaseType {
 
 		}
 
+
 		// --------------------------------------
 		// treat ensembl genomes collection databases as core
-
-		if (in(lcAlias, "collection")) {
+		
+	if (in(lcAlias, "collection")) {
 
 			return CORE;
-
-		}
-
-		// --------------------------------------
-		// and sanger_vega (generally specified via -type)
-
-		if (in(lcAlias, "sanger_vega")) {
-
-			return SANGER_VEGA;
 
 		}
 
@@ -359,7 +349,8 @@ public final class DatabaseType {
 	 */
 	public boolean isGeneric() {
 
-		if (name.equals("core") || name.equals("est") || name.equals("estgene") || name.equals("vega") || name.equals("cdna") || name.equals("otherfeatures") || name.equals("sanger_vega")) {
+		if (name.equals("core") || name.equals("est") || name.equals("estgene") || name.equals("vega") || name.equals("cdna")
+				|| name.equals("otherfeatures")) {
 			return true;
 		}
 

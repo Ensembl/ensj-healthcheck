@@ -28,6 +28,7 @@ import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseServer;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.TestRunner;
+import org.ensembl.healthcheck.configuration.ConfigureHost;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 
 /**
@@ -45,6 +46,17 @@ public final class DBUtils {
 	private static DatabaseRegistry mainDatabaseRegistry;
 
 	private static DatabaseRegistry secondaryDatabaseRegistry;
+
+	private static ConfigureHost hostConfiguration;
+
+	
+	public static ConfigureHost getHostConfiguration() {
+		return hostConfiguration;
+	}
+
+	public static void setHostConfiguration(ConfigureHost hostConfiguration) {
+		DBUtils.hostConfiguration = hostConfiguration;
+	}
 
 	// hide constructor to stop instantiation
 	private DBUtils() {
@@ -689,38 +701,132 @@ public final class DBUtils {
 
 	// -------------------------------------------------------------------------
 	/**
+	 * <p>
 	 * Get main database server list - build if necessary. Assumes properties file already read.
+	 * </p>
+	 * 
+	 * <p>
+	 * Depends on system properties being set by a call like 
+	 * </p>
+	 * 
+	 * <pre>
+	 * Utils.readPropertiesFileIntoSystem(getPropertiesFile(), false);
+	 * </pre>
+	 * 
+	 * <p>
+	 * New code should use the method getMainDatabaseServersConf which gets 
+	 * configuration information from a configuration object. If all goes well,
+	 * this method will eventually become deprecated.
+	 * </p>
+	 * 
 	 */
 	public static List<DatabaseServer> getMainDatabaseServers() {
+		
+		if (DBUtils.hostConfiguration==null) {
+			return getMainDatabaseServersProperties();
+		} else {
+			return getMainDatabaseServersConf();
+		}
+	}
+	public static List<DatabaseServer> getMainDatabaseServersProperties() {
 
         // EG replace literal reference to file with variable
-		Utils.readPropertiesFileIntoSystem(TestRunner.PROPERTIES_FILE, false);
+		Utils.readPropertiesFileIntoSystem(TestRunner.getPropertiesFile(), false);
 
 		if (mainDatabaseServers == null) {
 
 			mainDatabaseServers = new ArrayList<DatabaseServer>();
 
 			checkAndAddDatabaseServer(mainDatabaseServers, "host", "port", "user", "password", "driver");
-
 			checkAndAddDatabaseServer(mainDatabaseServers, "host1", "port1", "user1", "password1", "driver1");
-
 			checkAndAddDatabaseServer(mainDatabaseServers, "host2", "port2", "user2", "password2", "driver2");
-
 		}
 
 		logger.fine("Number of main database servers found: " + mainDatabaseServers.size());
 
 		return mainDatabaseServers;
-
 	}
 
+	public static List<DatabaseServer> getMainDatabaseServersConf() {
+
+		if (DBUtils.hostConfiguration==null) {
+			throw new NullPointerException("hostConfiguration is null, so was probably never set!");
+		}
+
+		if (mainDatabaseServers == null) {
+
+			mainDatabaseServers = new ArrayList<DatabaseServer>();
+
+			boolean primaryHostConfigured 
+				= DBUtils.hostConfiguration.isHost()
+				&& DBUtils.hostConfiguration.isPort()
+				&& DBUtils.hostConfiguration.isUser()
+				&& DBUtils.hostConfiguration.isPassword()
+				&& DBUtils.hostConfiguration.isDriver();
+			
+			if (primaryHostConfigured) {
+			
+				checkAndAddDatabaseServerConf(
+					mainDatabaseServers, 
+					DBUtils.hostConfiguration.getHost(), 
+					DBUtils.hostConfiguration.getPort(), 
+					DBUtils.hostConfiguration.getUser(), 
+					DBUtils.hostConfiguration.getPassword(), 
+					DBUtils.hostConfiguration.getDriver()
+				);
+			}
+		}
+		return mainDatabaseServers;
+	}
+	
+	// -------------------------------------------------------------------------
+	/**
+	 * 
+	 * <p>
+	 * Check for the existence of a particular database server. Assumes properties file has already been read in. If it exists, add it
+	 * to the list.
+	 * </p>
+	 * 
+	 * <p>
+	 * Gets called by getMainDatabaseServers() and should not be used any 
+	 * further, because it uses system properties.
+	 * </p>
+	 * 
+	 */
+	private static void checkAndAddDatabaseServer(List<DatabaseServer> servers, String hostProp, String portProp, String userProp, String passwordProp, String driverProp) {
+
+		if (
+			   System.getProperty(hostProp) != null 
+			&& System.getProperty(portProp) != null 
+			&& System.getProperty(userProp) != null
+		) {
+			DatabaseServer server = new DatabaseServer(
+				System.getProperty(hostProp), 
+				System.getProperty(portProp), 
+				System.getProperty(userProp), 
+				System.getProperty(passwordProp), 
+				System.getProperty(driverProp)
+			);
+			servers.add(server);
+			logger.fine("Added server: " + server.toString());
+		}
+	}
+
+	public static List<DatabaseServer> getSecondaryDatabaseServers() {
+		if (DBUtils.hostConfiguration==null) {
+			return getSecondaryDatabaseServersProperties();
+		} else {
+			return getSecondaryDatabaseServersConf();
+		}
+	}
+	
 	// -------------------------------------------------------------------------
 	/**
 	 * Look for secondary database servers.
 	 */
-	public static List<DatabaseServer> getSecondaryDatabaseServers() {
+	public static List<DatabaseServer> getSecondaryDatabaseServersProperties() {
 
-		Utils.readPropertiesFileIntoSystem(TestRunner.PROPERTIES_FILE, false);
+		Utils.readPropertiesFileIntoSystem(TestRunner.getPropertiesFile(), false);
 
 		if (secondaryDatabaseServers == null) {
 
@@ -739,23 +845,84 @@ public final class DBUtils {
 		return secondaryDatabaseServers;
 
 	}
-
+	// -------------------------------------------------------------------------
+	
 	// -------------------------------------------------------------------------
 	/**
-	 * Check for the existence of a particular database server. Assumes properties file has already been read in. If it exists, add it
-	 * to the list.
+	 * 
+	 * Look for secondary database servers.
+	 * 
 	 */
-	private static void checkAndAddDatabaseServer(List<DatabaseServer> servers, String hostProp, String portProp, String userProp, String passwordProp, String driverProp) {
+	public static List<DatabaseServer> getSecondaryDatabaseServersConf() {
 
-		if (System.getProperty(hostProp) != null && System.getProperty(portProp) != null && System.getProperty(userProp) != null) {
+		if (secondaryDatabaseServers == null) {
 
-			DatabaseServer server = new DatabaseServer(System.getProperty(hostProp), System.getProperty(portProp), System.getProperty(userProp), System.getProperty(passwordProp), System
-					.getProperty(driverProp));
-			servers.add(server);
-			logger.fine("Added server: " + server.toString());
+			secondaryDatabaseServers = new ArrayList<DatabaseServer>();
 
+			boolean secondaryHostConfigured 
+			     = DBUtils.hostConfiguration.isSecondaryHost()
+				&& DBUtils.hostConfiguration.isSecondaryPort()
+				&& DBUtils.hostConfiguration.isSecondaryUser()
+				&& DBUtils.hostConfiguration.isSecondaryPassword()
+				&& DBUtils.hostConfiguration.isSecondaryDriver();
+			
+			if (secondaryHostConfigured) {
+
+				logger.config("Adding database " + DBUtils.hostConfiguration.getSecondaryHost());
+				
+				checkAndAddDatabaseServerConf(
+						secondaryDatabaseServers, 
+						DBUtils.hostConfiguration.getSecondaryHost(), 
+						DBUtils.hostConfiguration.getSecondaryPort(), 
+						DBUtils.hostConfiguration.getSecondaryUser(), 
+						DBUtils.hostConfiguration.getSecondaryPassword(), 
+						DBUtils.hostConfiguration.getSecondaryDriver()
+					);
+			} else {
+				
+				logger.config("No secondary database configured.");
+			}
 		}
 
+		logger.fine("Number of secondary database servers found: " + secondaryDatabaseServers.size());
+
+		return secondaryDatabaseServers;
+	}
+
+
+	/**
+	 * 
+	 * <p>
+	 * Adds a DatabaseServer object to the List<DatabaseServer> passed as the 
+	 * first argument. 
+	 * </p>
+	 * 
+	 * @param servers
+	 * @param host
+	 * @param port
+	 * @param user
+	 * @param password
+	 * @param driver
+	 * 
+	 */
+	private static void checkAndAddDatabaseServerConf(
+		List<DatabaseServer> servers, 
+		String host, 
+		String port, 
+		String user, 
+		String password, 
+		String driver
+	) {
+
+		DatabaseServer server = new DatabaseServer(
+			host, 
+			port, 
+			user, 
+			password, 
+			driver
+		);
+		servers.add(server);
+		logger.fine("Added server: " + server.toString());
 	}
 
 	// -------------------------------------------------------------------------

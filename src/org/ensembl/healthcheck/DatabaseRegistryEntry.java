@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.ensembl.healthcheck.util.CollectionUtils;
+import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.UtilUncheckedException;
 
 /**
@@ -98,7 +99,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 
 	// e.g. neurospora_crassa_core_4_56_1a
 	protected final static Pattern EG_DB = Pattern
-			.compile("^([a-z_]+)_([a-z]+)_[0-9]+_([0-9]+)_([0-9A-Za-z]+)");
+			.compile("^([a-z0-9_]+)_([a-z]+)_[0-9]+_([0-9]+)_([0-9A-Za-z]+)");
 	// e.g. homo_sapiens_core_56_37a
 	protected final static Pattern E_DB = Pattern
 			.compile("^([^_]+_[^_]+)_([a-z]+)_([0-9]+)_([0-9A-Za-z]+)");
@@ -356,21 +357,23 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 		if (type == null || !type.isGeneric()) {
 			return speciesId;
 		}
-
+		Statement stmt = null;
+		ResultSet rs = null;
 		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt
+			stmt = con.createStatement();
+			rs = stmt
 					.executeQuery("SELECT DISTINCT(species_id) FROM meta where species_id is not null");
 			if (rs != null) {
 				while (rs.next()) {
 					speciesId.add(rs.getInt(1));
 				}
 			}
-			rs.close();
-			stmt.close();
 		} catch (SQLException e) {
 			throw new UtilUncheckedException(
 					"Problem obtaining list of species IDs", e);
+		} finally {
+			DBUtils.closeQuietly(rs);
+			DBUtils.closeQuietly(stmt);
 		}
 
 		return speciesId;
@@ -421,7 +424,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	 */
 	public List<Integer> getSpeciesIds() {
 		if (speciesIds == null) {
-			speciesIds = getSpeciesIds(connection, getSpecies(), getType());
+			speciesIds = getSpeciesIds(getConnection(), getSpecies(), getType());
 		}
 		return speciesIds;
 	}

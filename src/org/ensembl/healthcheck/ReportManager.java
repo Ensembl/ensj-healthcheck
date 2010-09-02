@@ -39,7 +39,7 @@ import org.ensembl.healthcheck.util.DBUtils;
  * It provides methods for storing reports - single items of information - and
  * retrieving them in various formats.
  */
-public final class ReportManager {
+public class ReportManager {
 
 	/** A hash of lists keyed on the test name. */
 	protected static Map reportsByTest = new HashMap();
@@ -727,7 +727,7 @@ public final class ReportManager {
 	 */
 	public static void connectToOutputDatabase() {
 
-		logger.fine("Connecting to " + System.getProperty("output.databaseURL")
+		logger.info("Connecting to " + System.getProperty("output.databaseURL")
 				+ System.getProperty("output.database") + " as "
 				+ System.getProperty("output.user") + " password "
 				+ System.getProperty("output.password"));

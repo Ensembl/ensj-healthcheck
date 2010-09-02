@@ -18,6 +18,7 @@
 
 package org.ensembl.healthcheck;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
@@ -27,6 +28,8 @@ import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 
+import org.ensembl.healthcheck.configuration.ConfigureHost;
+import org.ensembl.healthcheck.configurationmanager.ConfigurationByProperties;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.util.ConnectionPool;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -104,11 +107,25 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
 	private void run(String[] args) {
 
-		testRegistry = new TestRegistry();
+		testRegistry = new DiscoveryBasedTestRegistry();
 		
 		parseCommandLine(args);
 
-		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE, true);
+		ConfigureHost conf;
+		String propertiesFile = getPropertiesFile();
+
+		Utils.readPropertiesFileIntoSystem(propertiesFile, true);
+		
+//		try {
+//			conf = (ConfigureHost) ConfigurationByProperties.newInstance(
+//					ConfigureHost.class, 
+//					propertiesFile
+//			);
+//		} catch(IOException e) {
+//			throw new RuntimeException("Error reading " + propertiesFile + "!\n\n", e);
+//		}
+//		
+//		DBUtils.hostConfiguration = conf;
 
 		setupLogging();
 
@@ -162,7 +179,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 		System.out.println("  -species s      Use s as the species for all databases instead of trying to guess the species from the name");
 		System.out.println("  -type t         Use t as the type for all databases instead of trying to guess the type from the name");
 		System.out.println("  -debug          Print debugging info (for developers only)");
-		System.out.println("  -config file    Read configuration information from file instead of " + PROPERTIES_FILE);
+		System.out.println("  -config file    Read configuration information from file instead of " + getPropertiesFile());
 		System.out.println("  -repair         If appropriate, carry out repair methods on test cases that support it");
 		System.out.println("  -showrepair     Like -repair, but the repair is NOT carried out, just reported.");
 		System.out.println("  -length n       Break output lines at n columns; default is " + outputLineLength + ". 0 means never break");
@@ -276,8 +293,9 @@ public class TextTestRunner extends TestRunner implements Reporter {
 				} else if (args[i].equals("-config")) {
 
 					i++;
-					PROPERTIES_FILE = args[i];
-					logger.finest("Will read properties from " + PROPERTIES_FILE);
+					//PROPERTIES_FILE = args[i];
+					setPropertiesFile(args[i]);
+					logger.finest("Will read properties from " + getPropertiesFile());
 
 				} else if (args[i].equals("-length")) {
 
@@ -358,7 +376,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 			// print matching databases if no tests specified
 			if (groupsToRun.size() == 0 && databaseRegexps.size() > 0) {
 
-				Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE, false);
+				Utils.readPropertiesFileIntoSystem(getPropertiesFile(), false);
 
 				for (Iterator<String> it = databaseRegexps.iterator(); it.hasNext();) {
 
@@ -379,7 +397,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
 	// -------------------------------------------------------------------------
 
-	private void setupLogging() {
+	protected void setupLogging() {
 
 		logger.setUseParentHandlers(false); // stop parent logger getting the message
 

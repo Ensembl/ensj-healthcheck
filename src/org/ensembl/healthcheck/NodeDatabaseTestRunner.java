@@ -55,9 +55,9 @@ public class NodeDatabaseTestRunner extends DatabaseTestRunner implements Report
 
 		setupLogging();
 		
-		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE, false);
+		Utils.readPropertiesFileIntoSystem(getPropertiesFile(), false);
 		
-		TestRegistry testRegistry = new TestRegistry();
+		TestRegistry testRegistry = new DiscoveryBasedTestRegistry();
 
 		DatabaseRegistry mainDatabaseRegistry = new DatabaseRegistry(databaseRegexps, null, null, false);
 

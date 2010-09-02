@@ -33,6 +33,9 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.jar.JarFile;
+import java.util.logging.Logger;
+
+import org.ensembl.healthcheck.ConfigurableTestRunner;
 
 /**
  * General utilities (not database-related). For database-related utilities, see
@@ -41,7 +44,9 @@ import java.util.jar.JarFile;
 
 public final class Utils {
 
-	// hide constuctor to prevent instantiation
+	static final Logger log = Logger.getLogger(Utils.class.getCanonicalName());
+	
+	// hide constructor to prevent instantiation
 	private Utils() {
 
 	}
@@ -70,13 +75,16 @@ public final class Utils {
 		Properties dbProps = Utils.readSimplePropertiesFile(propsFile);
 		Enumeration e = dbProps.propertyNames();
 		String name, value;
+		log.fine("\n---------------------------------------------------\n");
 		while (e.hasMoreElements()) {
 			name = (String) e.nextElement();
 			value = dbProps.getProperty(name);
+			
+			log.fine("name = " + name + " value = " + value);
 			// add to System
 			System.setProperty(name, value);
-
 		}
+		log.fine("\n---------------------------------------------------\n");
 
 		if (!skipBuildDatabaseURLs) {
 

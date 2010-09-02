@@ -53,7 +53,7 @@ public class BuildTestLibrary extends TestRunner {
 
         btl.parseCommandLine(args);
 
-        Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE, false);
+        Utils.readPropertiesFileIntoSystem(getPropertiesFile(), false);
 
         btl.buildList();
 
@@ -147,7 +147,7 @@ public class BuildTestLibrary extends TestRunner {
 
         StringBuffer buf = new StringBuffer();
 
-        List tests = new TestRegistry().findAllTests();
+        List tests = new DiscoveryBasedTestRegistry().findAllTests();
 
         Iterator it = tests.iterator();
         while (it.hasNext()) {
@@ -186,7 +186,7 @@ public class BuildTestLibrary extends TestRunner {
 
         StringBuffer buf = new StringBuffer();
 
-        List allTests = new TestRegistry().findAllTests();
+        List allTests = new DiscoveryBasedTestRegistry().findAllTests();
         String[] groups = listAllGroups(allTests);
 
         for (int i = 0; i < groups.length; i++) {

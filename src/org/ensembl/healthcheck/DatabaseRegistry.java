@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.ensembl.healthcheck.util.DBUtils;
-import org.ensembl.healthcheck.util.Utils;
 
 /**
  * Class that stores information about which databases are available.
@@ -77,11 +76,10 @@ public class DatabaseRegistry {
 					
 					String regexp = it.next();
 					String[] names = DBUtils.listDatabases(server.getServerConnection(), regexp);
-					
+
 					addEntriesToRegistry(server, names, isSecondary);
 
 				}
-				
 			}
 		}
 

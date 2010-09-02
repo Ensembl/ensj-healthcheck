@@ -52,7 +52,7 @@ public class DatabaseTestRunner extends TestRunner implements Reporter {
 
 		setupLogging();
 
-		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE, false);
+		Utils.readPropertiesFileIntoSystem(getPropertiesFile(), false);
 
 		parseProperties();
 
@@ -60,8 +60,8 @@ public class DatabaseTestRunner extends TestRunner implements Reporter {
 
 		List databaseRegexps = getDatabasesFromProperties();
 
-		TestRegistry testRegistry = new TestRegistry();
-
+		TestRegistry testRegistry = new DiscoveryBasedTestRegistry();
+		
 		DatabaseRegistry databaseRegistry = new DatabaseRegistry(databaseRegexps, null, null, false);
 		if (databaseRegistry.getAll().length == 0) {
 			logger.warning("Warning: no database names matched any of the database regexps given");
@@ -123,8 +123,9 @@ public class DatabaseTestRunner extends TestRunner implements Reporter {
 			} else if (args[i].equals("-config")) {
                 // EG: Added config file switch for greater control
 				i++;
-				PROPERTIES_FILE = args[i];
-				logger.finest("Will read properties from " + PROPERTIES_FILE);
+				//propertiesFile = args[i];
+				setPropertiesFile(args[i]);
+				logger.finest("Will read properties from " + getPropertiesFile());
 			}
 		}
 
@@ -228,17 +229,17 @@ public class DatabaseTestRunner extends TestRunner implements Reporter {
 	private void parseProperties() {
 
 		if (System.getProperty("output.groups") == null) {
-			System.err.println("No tests or groups specified in " + PROPERTIES_FILE);
+			System.err.println("No tests or groups specified in " + getPropertiesFile());
 			System.exit(1);
 		}
 
 		if (System.getProperty("output.databases") == null) {
-			System.err.println("No databases specified in " + PROPERTIES_FILE);
+			System.err.println("No databases specified in " + getPropertiesFile());
 			System.exit(1);
 		}
 		
 		if (System.getProperty("output.release") == null) {
-			System.err.println("No release specified in " + PROPERTIES_FILE + " - please add an output.release property");
+			System.err.println("No release specified in " + getPropertiesFile() + " - please add an output.release property");
 			System.exit(1);
 		}
 
@@ -266,7 +267,7 @@ public class DatabaseTestRunner extends TestRunner implements Reporter {
 	 * 
 	 * @return The list of database names or patterns.
 	 */
-	private List getDatabasesFromProperties() {
+	protected List getDatabasesFromProperties() {
 
 		String[] dbs_and_groups = System.getProperty("output.databases").split(",");
 		String[] dbs = new String[dbs_and_groups.length];

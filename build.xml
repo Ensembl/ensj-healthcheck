@@ -6,19 +6,11 @@
 
 -->
 
-<project default="jar" basedir=".">
+<project name="healthchecks" default="jar" basedir=".">
 
-	<property name="name" value="ensj-healthcheck" />
-	<property name="version" value="" />
-	<property name="build.name" value="${name}" />
-	<property name="build.compiler" value="modern" />
+	<property file = "buildfiles/build.configurable_testrunner.properties" />
+	<import   file = "buildfiles/build.configurable_testrunner.xml"       />
 
-	<property name="src" location="src" />
-	<property name="build" location="build" />
-	<property name="dist" location="dist" />
-	<property name="doc" location="doc" />
-	<property name="lib" location="lib" />
-	<property name="images" location="images" />
 	<property name="web.dir" location="${user.home}/public_html" />
 	<property name="web.javadoc.dir" location="${web.dir}/javadoc" />
 	<property name="web.mirror.dir" location="${doc}/external_web_pages" />
@@ -56,6 +48,7 @@
 				</fileset>
 			</classpath>
 		</javac>
+		<echo>Run &quot;ant jar&quot; so the compiled classes are used by the command line scripts.</echo>
 	</target>
 
 	<!-- ################################################################################## -->

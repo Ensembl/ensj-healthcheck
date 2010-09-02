@@ -62,7 +62,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
 		setupLogging();
 
-		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE, false);
+		Utils.readPropertiesFileIntoSystem(getPropertiesFile(), false);
 
 		Utils.readPropertiesFileIntoSystem(configFile, false);
 
@@ -74,7 +74,7 @@ public class WebTestRunner extends TestRunner implements Reporter {
 
 		outputLevel = setOutputLevelFromProperties();
 
-		TestRegistry testRegistry = new TestRegistry();
+		TestRegistry testRegistry = new DiscoveryBasedTestRegistry();
 
 		DatabaseRegistry databaseRegistry = new DatabaseRegistry(databaseRegexps, null, null, false);
 		if (databaseRegistry.getAll().length == 0) {

@@ -47,7 +47,7 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 
 		setupLogging();
 
-		Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE, false);
+		Utils.readPropertiesFileIntoSystem(getPropertiesFile(), false);
 
 		parseProperties();
 
@@ -138,12 +138,12 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 	private void parseProperties() {
 
 		if (System.getProperty("output.databases") == null) {
-			System.err.println("No databases specified in " + PROPERTIES_FILE);
+			System.err.println("No databases specified in " + getPropertiesFile());
 			System.exit(1);
 		}
 
 		if (System.getProperty("output.release") == null) {
-			System.err.println("No release specified in " + PROPERTIES_FILE + " - please add an output.release property");
+			System.err.println("No release specified in " + getPropertiesFile() + " - please add an output.release property");
 			System.exit(1);
 		}
 
@@ -175,6 +175,7 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 			String database = databaseAndGroup[0];
 			String group = databaseAndGroup[1];
 
+//TODO EG: Need to push out LSF commands into separate file if we want to use them
 			String[] cmd = { "bsub",
         "-q", "long",
         "-R", "select[myens_staging1<=800]",
@@ -190,7 +191,6 @@ public class ParallelDatabaseTestRunner extends TestRunner {
         "-group", group,
         "-session", "" + sessionID
       };
-
 			try {
 				
 				Process p = Runtime.getRuntime().exec(cmd);

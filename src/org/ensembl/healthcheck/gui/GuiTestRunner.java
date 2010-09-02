@@ -16,6 +16,7 @@
 
 package org.ensembl.healthcheck.gui;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -23,15 +24,19 @@ import java.util.logging.Logger;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DiscoveryBasedTestRegistry;
 import org.ensembl.healthcheck.ReportLine;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Reporter;
 import org.ensembl.healthcheck.TestRegistry;
 import org.ensembl.healthcheck.TestRunner;
+import org.ensembl.healthcheck.configuration.ConfigureHost;
+import org.ensembl.healthcheck.configurationmanager.ConfigurationByProperties;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.CallbackHandler;
+import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.LogFormatter;
 import org.ensembl.healthcheck.util.MyStreamHandler;
 import org.ensembl.healthcheck.util.Utils;
@@ -70,7 +75,21 @@ public class GuiTestRunner extends TestRunner implements Reporter {
 
         parseCommandLine(args);
 
-        Utils.readPropertiesFileIntoSystem(PROPERTIES_FILE, false);
+		ConfigureHost conf;
+		String propertiesFile = getPropertiesFile();
+
+		Utils.readPropertiesFileIntoSystem(propertiesFile, true);
+		
+//		try {
+//			conf = (ConfigureHost) ConfigurationByProperties.newInstance(
+//					ConfigureHost.class, 
+//					propertiesFile
+//			);
+//		} catch(IOException e) {
+//			throw new RuntimeException("Error reading " + propertiesFile + "!\n\n", e);
+//		}
+//		
+//		DBUtils.hostConfiguration = conf;
 
         List<String> regexps = new ArrayList<String>();
         regexps.add(".*");
@@ -80,7 +99,7 @@ public class GuiTestRunner extends TestRunner implements Reporter {
             logger.warning("Warning: no databases found!");
         }
 
-        gtrf = new GuiTestRunnerFrame(this, new TestRegistry(), databaseRegistry);
+        gtrf = new GuiTestRunnerFrame(this, new DiscoveryBasedTestRegistry(), databaseRegistry);
 
         gtrf.setVisible(true);
 

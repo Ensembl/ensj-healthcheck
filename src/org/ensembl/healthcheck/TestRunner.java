@@ -52,7 +52,17 @@ public class TestRunner {
 
     // EG change to public to allow Database runner to modify this
 	/** The name of the file where configuration is stored */
-	public static String PROPERTIES_FILE = "database.properties";
+	//public static String propertiesFile = "";
+	
+	private static String propertiesFile = "database.properties";
+	
+	public static String getPropertiesFile() {
+		return propertiesFile;
+	}
+	public void setPropertiesFile(String propertiesFile) {
+		this.propertiesFile = propertiesFile;
+	}
+
 
 	/** Flag to determine whether repairs will be shown if appropriate */
 	protected boolean showRepair = false;
@@ -96,7 +106,8 @@ public class TestRunner {
 		for (int i = 0; i < databases.length; i++) {
 
 			DatabaseRegistryEntry database = databases[i];
-			List allSingleDatabaseTests = testRegistry.getAllSingle(groupsToRun, database.getType());
+			List allSingleDatabaseTests = testRegistry.getAllSingle(
+					groupsToRun, database.getType());
 
 			for (Iterator it = allSingleDatabaseTests.iterator(); it.hasNext();) {
 
@@ -154,6 +165,8 @@ public class TestRunner {
 
 				try {
 					ReportManager.startTestCase(testCase, null);
+
+					logger.info("Starting test " + testCase.getName() + " ");
 
 					boolean result = testCase.run(databaseRegistry);
 
