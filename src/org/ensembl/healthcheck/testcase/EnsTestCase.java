@@ -2062,6 +2062,18 @@ public abstract class EnsTestCase {
 		return names;
 
 	}
+	
+	/**
+	 * Return the list of views and tables that are required to be present in the funcgen database before Biomart can run, but should be removed afterwards.
+	 */
+	public String[] getBiomartFuncgenTablesAndViews() {
+	
+		String[] t = { "cs_sr_view", "fs_displayable_view", "regulatory_feature_view", "external_feature_ox_view", "external_feature_view", "annotated_feature_view", "feature_set_view", "probestuff_helper_tmp" };
+
+		return t;
+		
+	}
+	
 	// ----------------------------------------------------------------------
 
 } // EnsTestCase
