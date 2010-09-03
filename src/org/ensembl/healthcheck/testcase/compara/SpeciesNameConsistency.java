@@ -72,7 +72,7 @@ public class SpeciesNameConsistency extends SingleDatabaseTestCase {
             ReportManager.correct(this, con, "ncbi_taxa_name table has data");
         }
 
-        String sql = "select gdb.taxon_id from ncbi_taxa_name tx, genome_db gdb where tx.taxon_id=gdb.taxon_id and tx.name_class='scientific name' and gdb.name != tx.name";
+        String sql = "select gdb.taxon_id from ncbi_taxa_name tx, genome_db gdb where tx.taxon_id=gdb.taxon_id and tx.name_class='scientific name' and gdb.name != replace(lower(tx.name),' ','_')";
 
         String[] taxonIDs = getColumnValues(con, sql);
 
