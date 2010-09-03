@@ -88,7 +88,7 @@ public class CheckTopLevelDnaFrag extends MultiDatabaseTestCase {
         // Get list of species in compara
         Vector comparaSpecies = new Vector();
         String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE assembly_default = 1"
-            + " AND name <> 'Ancestral sequences'";
+            + " AND name <> 'ancestral_sequences'";
         try {
           Statement stmt = comparaCon.createStatement();
           ResultSet rs = stmt.executeQuery(sql);
@@ -104,20 +104,21 @@ public class CheckTopLevelDnaFrag extends MultiDatabaseTestCase {
         boolean allSpeciesFound = true;
         for (int i = 0; i < comparaSpecies.size(); i++) {
           Species species = (Species) comparaSpecies.get(i);
+	  
           DatabaseRegistryEntry[] speciesDbr = (DatabaseRegistryEntry[]) speciesDbrs.get(species);
-          String name = species.toString().replace('_', ' ');
+
           if (speciesDbr != null) {
               Connection speciesCon = speciesDbr[0].getConnection();
               int maxRows = 50000;
               int rows = getRowCount(comparaCon, new String("SELECT COUNT(*) FROM" +
                   " dnafrag LEFT JOIN genome_db USING (genome_db_id)" +
-                  " WHERE genome_db.name = \"" + name + "\" AND assembly_default = 1"));
+                  " WHERE genome_db.name = \"" + species + "\" AND assembly_default = 1"));
               if (rows > maxRows) {
                   // Divide and conquer approach for large sets
                   for (int rowCount=0; rowCount<rows; rowCount+=maxRows) {
                       String sql1 = "SELECT dnafrag.coord_system_name, dnafrag.name, dnafrag.length" +
                           " FROM dnafrag LEFT JOIN genome_db USING (genome_db_id)" +
-                          " WHERE genome_db.name = \"" + name + "\" AND assembly_default = 1" +
+                          " WHERE genome_db.name = \"" + species + "\" AND assembly_default = 1" +
                           " ORDER BY (dnafrag.name)" +
                           " LIMIT " + rowCount + ", " + maxRows;
                       String sql2 = "SELECT coord_system.name, seq_region.name, seq_region.length" +
@@ -134,7 +135,7 @@ public class CheckTopLevelDnaFrag extends MultiDatabaseTestCase {
               } else {
                   String sql1 = "SELECT dnafrag.coord_system_name, dnafrag.name, dnafrag.length" +
                       " FROM dnafrag LEFT JOIN genome_db USING (genome_db_id)" +
-                      " WHERE genome_db.name = \"" + name + "\" AND assembly_default = 1";
+                      " WHERE genome_db.name = \"" + species + "\" AND assembly_default = 1";
                   String sql2 = "SELECT coord_system.name, seq_region.name, seq_region.length" +
                       " FROM seq_region, coord_system, seq_region_attrib, attrib_type" +
                       " WHERE seq_region.coord_system_id = coord_system.coord_system_id " +
@@ -145,7 +146,7 @@ public class CheckTopLevelDnaFrag extends MultiDatabaseTestCase {
                   result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
               }
           } else {
-            ReportManager.problem(this, comparaCon, "No connection for " + name);
+            ReportManager.problem(this, comparaCon, "No connection for " + species);
             allSpeciesFound = false;
           }
         }

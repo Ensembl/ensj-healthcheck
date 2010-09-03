@@ -155,7 +155,7 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
         // Get list of species in compara
         Vector comparaSpecies = new Vector();
         String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE assembly_default = 1"
-            + " AND name <> 'Ancestral sequences'";
+            + " AND name <> 'ancestral_sequences'";
         try {
           Statement stmt = comparaCon.createStatement();
           ResultSet rs = stmt.executeQuery(sql);
@@ -178,31 +178,30 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
         for (int i = 0; i < comparaSpecies.size(); i++) {
           Species species = (Species) comparaSpecies.get(i);
           DatabaseRegistryEntry[] speciesDbr = (DatabaseRegistryEntry[]) speciesDbrs.get(species);
-          String name = species.toString().replace('_', ' ');
           if (speciesDbr != null) {
             Connection speciesCon = speciesDbr[0].getConnection();
             /* Check taxon_id */
             String sql1, sql2;
 
-            sql1 = "SELECT \"" + name + "\", \"taxon_id\", taxon_id FROM genome_db" +
-                " WHERE genome_db.name = \"" + name + "\" AND  assembly_default = 1";
-            sql2 = "SELECT \"" + name + "\", \"taxon_id\", meta_value FROM meta" +
+            sql1 = "SELECT \"" + species + "\", \"taxon_id\", taxon_id FROM genome_db" +
+                " WHERE genome_db.name = \"" + species + "\" AND  assembly_default = 1";
+            sql2 = "SELECT \"" + species + "\", \"taxon_id\", meta_value FROM meta" +
                 " WHERE meta_key = \"species.taxonomy_id\"";
             result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
             /* Check assembly */
-            sql1 = "SELECT \"" + name + "\", \"assembly\", assembly FROM genome_db" +
-                " WHERE genome_db.name = \"" + name + "\" AND  assembly_default = 1";
-            sql2 = "SELECT \"" + name + "\", \"assembly\", meta_value FROM meta" +
+            sql1 = "SELECT \"" + species + "\", \"assembly\", assembly FROM genome_db" +
+                " WHERE genome_db.name = \"" + species + "\" AND  assembly_default = 1";
+            sql2 = "SELECT \"" + species + "\", \"assembly\", meta_value FROM meta" +
                 " WHERE meta_key = \"assembly.default\"";
             result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
             /* Check genebuild */
-            sql1 = "SELECT \"" + name + "\", \"genebuild\", genebuild FROM genome_db" +
-                " WHERE genome_db.name = \"" + name + "\" AND  assembly_default = 1";
-            sql2 = "SELECT \"" + name + "\", \"genebuild\", meta_value FROM meta" +
+            sql1 = "SELECT \"" + species + "\", \"genebuild\", genebuild FROM genome_db" +
+                " WHERE genome_db.name = \"" + species + "\" AND  assembly_default = 1";
+            sql2 = "SELECT \"" + species + "\", \"genebuild\", meta_value FROM meta" +
                 " WHERE meta_key = \"genebuild.start_date\"";
             result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
           } else {
-            ReportManager.problem(this, comparaCon, "No connection for " + name);
+            ReportManager.problem(this, comparaCon, "No connection for " + species);
             allSpeciesFound = false;
           }
         }
