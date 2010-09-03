@@ -64,7 +64,7 @@ public class CheckConservationScore extends SingleDatabaseTestCase {
 	/**
 	 * Get Ancestral sequences genome_db_id
 	 */
-	String ancestral_seq_id = getRowColumnValue(con, "SELECT genome_db_id FROM genome_db WHERE name = \"Ancestral sequences\"");
+	String ancestral_seq_id = getRowColumnValue(con, "SELECT genome_db_id FROM genome_db WHERE name = \"ancestral_sequences\"");
 
         if (method_link_species_set_ids.length > 0) {
 
