@@ -67,6 +67,19 @@ public class TestsInGroups {
 		return c.getCanonicalName();
 	}
 	
+//	private static List<String> removeElement(List<String> list, String element) {
+//		
+//		List<String> result = new ArrayList<String>();
+//		
+//		for (String groupName : list) {
+//			if (!element.equals(groupName)) {
+//				result.add(groupName);
+//			}
+//		}
+//		
+//		return result;
+//	}
+	
 	/**
 	 * 
 	 * Creates a map from a name of a testcase group to a list of names of 
@@ -89,8 +102,16 @@ public class TestsInGroups {
 				 if (EnsTestCase.class.isAssignableFrom(c)) {
 					 
 					 EnsTestCase etc = (EnsTestCase) c.newInstance();
+
+					 List<String> groups = etc.getGroups();
+
+					 // By default, every testcase is a member of its own 
+					 // group. This leads to a multitude of groups comprising
+					 // only of a single test with the same name.
+					 //
+					 groups.remove(etc.getShortTestName());
 					 
-					 for (String groupName : (List<String>) etc.getGroups()) {
+					 for (String groupName : groups) {
 
 						 if (testcasegroupToMembers.containsKey(groupName)) {
 							 
