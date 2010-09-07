@@ -86,16 +86,16 @@ public boolean run(DatabaseRegistryEntry dbre) {
 
 				ReportManager.correct(this, con, "Found " + xref_rows + " unprojected GO xrefs");
 
-				// if GO xrefs exist, check that the go_xref table is populated
-				int go_xref_rows = getRowCount(con, "SELECT COUNT(*) FROM go_xref");
-				if (go_xref_rows == 0) {
+				// if GO xrefs exist, check that the ontology_xref table is populated
+				int ontology_xref_rows = getRowCount(con, "SELECT COUNT(*) FROM ontology_xref");
+				if (ontology_xref_rows == 0) {
 
-					ReportManager.problem(this, con, "Found " + xref_rows + " GO xrefs in xref table but go_xref table is empty");
+					ReportManager.problem(this, con, "Found " + xref_rows + " GO xrefs in xref table but ontology_xref table is empty");
 					result = false;
 
 				} else {
 
-					ReportManager.correct(this, con, "go_xref table has " + go_xref_rows + " rows");
+					ReportManager.correct(this, con, "ontology_xref table has " + ontology_xref_rows + " rows");
 
 				}
 			}
@@ -103,19 +103,19 @@ public boolean run(DatabaseRegistryEntry dbre) {
 		} 
 
 		// check for blank or null linkage_type
-		int blank = getRowCount(con, "SELECT COUNT(*) FROM go_xref WHERE linkage_type IS NULL OR linkage_type=''");
+		int blank = getRowCount(con, "SELECT COUNT(*) FROM ontology_xref WHERE linkage_type IS NULL OR linkage_type=''");
 		if (blank > 0) {
 
-			ReportManager.problem(this, con, blank + " rows in go_xref have null or blank ('') linkage_type");
+			ReportManager.problem(this, con, blank + " rows in ontology_xref have null or blank ('') linkage_type");
 			result = false;
 
 		} else {
 
-			ReportManager.correct(this, con, "No blank or null linkage_types in go_xref");
+			ReportManager.correct(this, con, "No blank or null linkage_types in ontology_xref");
 		}
 
 		// check that *only* GO xrefs have linkage types assigned
-		String[] dbs = getColumnValues(con, "SELECT DISTINCT(e.db_name) FROM external_db e, xref x, object_xref ox, go_xref g WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id AND ox.object_xref_id=g.object_xref_id AND e.db_name != 'GO' ");
+		String[] dbs = getColumnValues(con, "SELECT DISTINCT(e.db_name) FROM external_db e, xref x, object_xref ox, ontology_xref g WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id AND ox.object_xref_id=g.object_xref_id AND e.db_name != 'GO' ");
 		if (dbs.length > 0) {
 
 			ReportManager.problem(this, con, "Some " + Utils.arrayToString(dbs, ", ") + " xrefs have entries in linkage_type - should only be GO xrefs");
