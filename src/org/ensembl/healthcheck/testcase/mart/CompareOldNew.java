@@ -19,6 +19,9 @@
 /*
  * 
  * $Log$
+ * Revision 1.3  2004/03/31 11:48:18  gp1
+ * Removed unused variables.
+ *
  * Revision 1.2  2004/03/25 13:47:41  gp1
  * Merged v2 branch into HEAD.
  *
@@ -72,7 +75,7 @@ public class CompareOldNew extends OrderedDatabaseTestCase {
      */
     public CompareOldNew() {
 
-        addToGroup("post_ensmartbuild");
+        addToGroup("post_martbuild");
         setDescription("Compares the _meta_table_info for two marts and reports big differences");
 
     }

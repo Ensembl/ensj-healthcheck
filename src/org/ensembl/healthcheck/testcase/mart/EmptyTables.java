@@ -19,6 +19,9 @@
 /*
  * 
  * $Log$
+ * Revision 1.2  2004/03/25 13:47:41  gp1
+ * Merged v2 branch into HEAD.
+ *
  * Revision 1.1.2.2  2004/03/17 17:31:53  gp1
  * Changes to nearly every file in the project; many are stylistic only, but many remove potential errors (e.g. tab characters in SQL) or improve performance (removal of use of on-demand imports)
  * Revision 1.1.2.1 2004/03/01 09:42:08 gp1 Moved
@@ -53,7 +56,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
      */
     public EmptyTables() {
 
-        addToGroup("post_ensmartbuild");
+        addToGroup("post_martbuild");
         setDescription("Checks that all tables which must be filled, have data");
 
     }

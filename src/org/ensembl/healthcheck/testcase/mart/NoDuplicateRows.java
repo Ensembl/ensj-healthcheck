@@ -19,6 +19,9 @@
 /*
  * 
  * $Log$
+ * Revision 1.2  2004/03/25 13:47:41  gp1
+ * Merged v2 branch into HEAD.
+ *
  * Revision 1.1.2.3  2004/03/18 14:19:46  gp1
  * Corrected Javdoc. 
  * 
@@ -42,8 +45,8 @@
 package org.ensembl.healthcheck.testcase.mart;
 
 import java.sql.Connection;
-import java.util.Iterator;
 
+import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
@@ -54,64 +57,57 @@ import org.ensembl.healthcheck.util.DBUtils;
  */
 public class NoDuplicateRows extends SingleDatabaseTestCase {
 
-    /**
-     * Creates a new instance of MartNoDuplicateRowsTestCase
-     */
-    public NoDuplicateRows() {
+	/**
+	 * Creates a new instance of NoDuplicateRows
+	 */
+	public NoDuplicateRows() {
 
-        addToGroup("post_ensmartbuild");
-        setDescription("Checks that all rows in tables are distinct");
+		addToGroup("post_martbuild");
+		setDescription("Checks that all rows in tables are distinct");
 
-    }
+	}
 
-    /**
-     * For each schema, check that every table has #rows = #distinct rows.
-     * @param dbre
-     *          The database to use.
-     * @return true if the test passed.
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+	/**
+	 * For each schema, check that every table has #rows = #distinct rows.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return true if the test passed.
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-        boolean result = true;
+		boolean result = true;
 
-        Connection con = dbre.getConnection();
+		Connection con = dbre.getConnection();
 
-        String[] tableNames = getTableNames(con);
-        for (int i = 0; i < tableNames.length; i++) {
+		for (String table : getTableNames(con)) {
 
-            String table = tableNames[i];
-            logger.finest("Checking that " + table + " has all distinct rows");
+			if (!table.startsWith("a")) {
+				continue;
+			}
 
-            int total = getRowCount(con, "select count(*) from " + table);
-            int distinct = total; // ie not a problem in the total > distinct
-                                  // test below
+			logger.finest("Checking that " + table + " has all distinct rows");
 
-            if (total > 0) {
-                // create a String listing the cols for this table
-                java.util.List colList = DBUtils.getColumnsInTable(con, table);
-                Iterator colIterator = colList.iterator();
-                String colTxt = "";
-                while (colIterator.hasNext()) {
-                    if (colTxt.length() > 0) {
-                        colTxt = colTxt + ",";
-                    }
-                    colTxt = colTxt + ((String) colIterator.next());
-                }
-                //System.out.print(colTxt + "\n");
-                // query does group by all columns to simulate count distinct *
-                distinct = getRowCount(con, "select count(*) from " + table + " group by " + colTxt);
+			int total = countRowsInTable(con, table);
+			int distinct = total; // i.e. not a problem in the total > distinct test below
 
-            }
-            if (total > distinct) {
+			if (total > 0) {
+				// create a String listing the columns for this table
+				String colTxt = StringUtils.join(DBUtils.getColumnsInTable(con, table), ',');
+System.out.println(colTxt);
+				// query does group by all columns to simulate count distinct *
+				distinct = getRowCount(con, "SELECT COUNT(*) FROM " + table + " GROUP BY " + colTxt);
 
-                ReportManager.problem(this, con, table + " has " + total + " rows but only " + distinct
-                        + " distinct rows");
-                result = false;
-            }
-        }
+			}
+			if (total > distinct) {
 
-        return result;
+				ReportManager.problem(this, con, table + " has " + total + " rows but only " + distinct + " distinct rows");
+				result = false;
+			}
+		}
 
-    } // run
+		return result;
+
+	} // run
 
 } // NoDuplicateRows
