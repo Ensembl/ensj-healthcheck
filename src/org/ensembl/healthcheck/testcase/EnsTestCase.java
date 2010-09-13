@@ -111,7 +111,7 @@ public abstract class EnsTestCase {
 	 * Names of tables in funcgen schema that count as "feature" tables. Used in various healthchecks.
 	 */
 
-	private String[] funcgenFeatureTables = { "probe_feature", "annotated_feature", "regulatory_feature", "external_feature" };
+	private String[] funcgenFeatureTables = { "probe_feature", "annotated_feature", "regulatory_feature", "external_feature", "motif_feature" };
 
 	/**
 	 * Funcgen tables that have an analysis ID.
@@ -380,7 +380,7 @@ public abstract class EnsTestCase {
 
 		try {
 			Statement stmt = con.createStatement();
-			// System.out.println("Executing " + sql);
+			//System.out.println("Executing " + sql);
 			ResultSet rs = stmt.executeQuery(sql);
 			if (rs != null) {
 				if (rs.first()) {
@@ -395,6 +395,8 @@ public abstract class EnsTestCase {
 			e.printStackTrace();
 		}
 
+		
+		
 		return result;
 
 	} // getRowCountFast
@@ -461,6 +463,7 @@ public abstract class EnsTestCase {
 
 		}
 
+		
 		return result;
 
 	} // getRowCount
