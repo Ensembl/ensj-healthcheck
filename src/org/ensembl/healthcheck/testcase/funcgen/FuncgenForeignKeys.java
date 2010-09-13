@@ -14,6 +14,8 @@
 package org.ensembl.healthcheck.testcase.funcgen;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
@@ -64,11 +66,24 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 	
 		result &= checkForOrphans(con, "associated_feature_type", "feature_type_id", "feature_type", "feature_type_id", true);
 		
-		for (int i = 0; i < featTabs.length; i++) {
-			String type = featTabs[i].replaceAll("_feature", "");
-			result &= checkForOrphansWithConstraint(con, "associated_feature_type", "feature_id", featTabs[i], featTabs[i] + "_id", "feature_table='" + type + "'");
-		}
+		// Get table_names from associated_feature_type
+
+		try {
+			ResultSet rs = con.createStatement().executeQuery("SELECT distinct(table_name) from associated_feature_type");
+
+			while (rs.next()){
+				String tableName   = rs.getString(1); 
+				result &= checkForOrphansWithConstraint(con, "associated_feature_type", "table_id", tableName, tableName + "_id", "table_name='" + tableName + "'");
+			}
 		
+			rs.close();
+		}
+		catch (SQLException se) {	
+			se.printStackTrace();
+			return false;
+		}
+
+
 		//Need a constraint here where fs.cell_type_id is NOT NULL
 		//result &= checkForOrphans(con, "feature_set", "cell_type_id", "cell_type", "cell_type_id", true);
 		result &= checkForOrphansWithConstraint(con, "feature_set", "cell_type_id", "cell_type", "cell_type_id", "cell_type_id IS NOT NULL");
@@ -114,6 +129,9 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 		result &= checkForOrphans(con, "input_set", "feature_type_id", "feature_type", "feature_type_id", true);
 		
 		result &= checkForOrphans(con, "input_set", "input_set_id", "input_subset", "input_set_id", false);
+
+		//Need to check for input_sets which are nor present in supporting_set and result_set_input
+		//reverse is already done, but we need this logical && test
 		
 		result &= checkForOrphans(con, "mage_xml", "mage_xml_id", "experiment", "mage_xml_id", true);
 				
@@ -133,6 +151,9 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 		
 		result &= checkForOrphans(con, "regulatory_attribute", "regulatory_feature_id", "regulatory_feature", "regulatory_feature_id", true);
 		
+
+		
+
 		for (int i = 0; i < featTabs.length; i++) {
 			
 			if(! featTabs[i].equals("regulatory_feature")){
@@ -160,24 +181,42 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 		//Don't check for result_set_id in supporting set as this is nor mandatory
 		
 		//No valid enum'd table list for status, so just test what we have currently 
-		String[] statusTables = {"array", "array_chip", "experimental_chip", "channel", "input_set", "input_subset", "result_set", "data_set", "feature_set"};
-		
-		for (int i = 0; i < statusTables.length; i++) {
-			result &= checkForOrphansWithConstraint(con, "status", "table_id", statusTables[i], statusTables[i] + "_id", "table_name='" + statusTables[i] + "'");
+		try {
+			ResultSet rs = con.createStatement().executeQuery("SELECT distinct(table_name) from status");
+			
+			while (rs.next()){
+				String tableName   = rs.getString(1); 
+				result &= checkForOrphansWithConstraint(con, "status", "table_id", tableName, tableName + "_id", "table_name='" + tableName + "'");
+			}
+			
+			rs.close();
 		}
+		catch (SQLException se) {	
+			se.printStackTrace();
+			return false;
+		}
+		
 		
 		result &= checkForOrphans(con, "status", "status_name_id", "status_name", "status_name_id", true);
 		
-		String[] supportingTypes = {"result", "feature", "input"};
-		
+			
 		//This only checks for table_ids which have been orphaned by the input table
-	
-		for (int i = 0; i < supportingTypes.length; i++) {
-			result &= checkForOrphansWithConstraint(con, "supporting_set", "supporting_set_id", supportingTypes[i] + "_set",  supportingTypes[i] + "_set_id", "type='" + supportingTypes[i] + "'");
+		try {
+			ResultSet rs = con.createStatement().executeQuery("SELECT distinct(type) from supporting_set");
+			
+			while (rs.next()){
+				String setType   = rs.getString(1); 
+				result &= checkForOrphansWithConstraint(con, "supporting_set", "supporting_set_id", setType + "_set",  setType + "_set_id", "type='" + setType + "'");
+			}
+			
+			rs.close();
 		}
-
-		
-		
+		catch (SQLException se) {	
+			se.printStackTrace();
+			return false;
+		}
+	
+			
 		
 		result &= checkForOrphans(con, "object_xref", "xref_id", "xref", "xref_id", true);//shouldn't this be false?
 
@@ -190,11 +229,22 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 
 		// ----------------------------
 		// Check object xrefs point to existing objects
-		String[] types = { "Probe", "ProbeFeature", "ProbeSet" };
-		//This will fail as we need to insert an _
-		for (int i = 0; i < types.length; i++) {
-			result &= checkKeysByEnsemblObjectType(con, "object_xref", types[i]);
+		try {
+			ResultSet rs = con.createStatement().executeQuery("SELECT distinct(ensembl_object_type) from object_xref");
+			
+			while (rs.next()){
+				String objType   = rs.getString(1); 
+				result &= checkKeysByEnsemblObjectType(con, "object_xref", objType);
+			}
+			
+			rs.close();
 		}
+		catch (SQLException se) {	
+			se.printStackTrace();
+			return false;
+		}
+			
+	
 
 		// ----------------------------
 		// Ensure that feature tables reference existing seq_regions
