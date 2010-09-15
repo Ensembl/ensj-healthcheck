@@ -61,11 +61,12 @@ public class ProductionMasterTables extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		// compare all columns of some tables
-		String[] tables = { "attrib_type", "misc_set", "unmapped_reason" };
+		String[] tables = { "attrib_type", "misc_set" };
 
 		for (String table : tables) {
 
-			result &= compareProductionTable(dbre, table, "master_" + table);
+			String key = table + "_id";
+			result &= compareProductionTable(dbre, table, key, "master_" + table, key);
 
 		}
 		
@@ -73,7 +74,7 @@ public class ProductionMasterTables extends SingleDatabaseTestCase {
 		List<String> exceptions = new ArrayList<String>();
 		exceptions.add("db_release");
 		
-		result &= compareProductionTableWithExceptions(dbre, "external_db", "master_external_db", exceptions);
+		result &= compareProductionTableWithExceptions(dbre, "external_db", "external_db_id", "master_external_db", "external_db_id", exceptions);
 		
 		return result;
 
