@@ -68,6 +68,11 @@ public class PreMartTables extends SingleDatabaseTestCase {
 			
 		}
 		
+		// in the case of probestuff_helper_tmp, check that it has rows
+		if (checkTableExists(con, "probestuff_helper_tmp") && !tableHasRows(con, "probestuff_helper_tmp")) {
+			ReportManager.problem(this, con, "probestuff_helper_tmp is empty");
+		}
+		
 		return result;
 
 	} // run
