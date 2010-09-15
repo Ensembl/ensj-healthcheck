@@ -45,14 +45,16 @@ import org.ensembl.healthcheck.util.Utils;
 
 public abstract class EnsTestCase {
 
-	/**the string that is contained in the name of backup tables*/
-	public static final String backupIdentifier ="backup_"; 
+	/** the string that is contained in the name of backup tables */
+	public static final String backupIdentifier = "backup_";
 
-	/*comparison flags*/
-	public static final int COMPARE_LEFT=0;
-	public static final int COMPARE_RIGHT=1;
-	public static final int COMPARE_BOTH=2;
-	
+	/* comparison flags */
+	public static final int COMPARE_LEFT = 0;
+
+	public static final int COMPARE_RIGHT = 1;
+
+	public static final int COMPARE_BOTH = 2;
+
 	/** The TestRunner associated with this EnsTestCase */
 	protected TestRunner testRunner;
 
@@ -118,13 +120,14 @@ public abstract class EnsTestCase {
 	 */
 
 	private String[] funcgenTablesWithAnalysisID = { "probe_feature", "object_xref", "unmapped_object", "feature_set", "result_set" };
-	//do we need to add analysis_description here?
-	
+
+	// do we need to add analysis_description here?
+
 	/**
 	 * A DatabaseRegistryEntry pointing to the production database.
 	 */
 	DatabaseRegistryEntry productionDBRE = null;
-	
+
 	// -------------------------------------------------------------------------
 	/**
 	 * Creates a new instance of EnsTestCase
@@ -559,8 +562,8 @@ public abstract class EnsTestCase {
 		return (String[]) list.toArray(new String[list.size()]);
 
 	} // getColumnValues
-	
-//-------------------------------------------------------------------------
+
+	// -------------------------------------------------------------------------
 	/**
 	 * Execute a SQL statement and return the values of one column of the result.
 	 * 
@@ -573,10 +576,8 @@ public abstract class EnsTestCase {
 	public List<String> getColumnValuesList(Connection con, String sql) {
 
 		return Arrays.asList(getColumnValues(con, sql));
-		
+
 	} // getColumnValues
-	
-	
 
 	// -------------------------------------------------------------------------
 	/**
@@ -607,9 +608,9 @@ public abstract class EnsTestCase {
 		String sql = " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " IS NULL";
 
 		resultLeft = getRowCount(con, "SELECT COUNT(*)" + sql);
-		
+
 		logger.finest("Left: " + resultLeft);
-		
+
 		if (resultLeft > 0) {
 			String[] values = getColumnValues(con, "SELECT " + table1 + "." + col1 + sql + " LIMIT 20");
 			for (int i = 0; i < values.length; i++) {
@@ -629,9 +630,9 @@ public abstract class EnsTestCase {
 					ReportManager.info(this, con, table2 + "." + col2 + " " + values[i] + " is not linked.");
 				}
 			}
-			
-			 logger.finest("Right: " + resultRight);
-			
+
+			logger.finest("Right: " + resultRight);
+
 		} else {
 			resultRight = 0;
 		}
@@ -668,8 +669,7 @@ public abstract class EnsTestCase {
 
 		int resultLeft;
 
-		String sql = " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + 
-		" WHERE " + table2 + "." + col2 + " iS NULL";
+		String sql = " FROM " + table1 + " LEFT JOIN " + table2 + " ON " + table1 + "." + col1 + " = " + table2 + "." + col2 + " WHERE " + table2 + "." + col2 + " iS NULL";
 
 		sql = sql + " AND " + table1 + "." + constraint1;
 
@@ -695,8 +695,8 @@ public abstract class EnsTestCase {
 	 */
 	public boolean checkForOrphans(Connection con, String table1, String col1, String table2, String col2, boolean oneWay) {
 
-		logger.finest("Checking for orphans with:\t" + table1 + "." + col1 + " " + table2 + "." + col2 +". oneWay is " + oneWay );
-		
+		logger.finest("Checking for orphans with:\t" + table1 + "." + col1 + " " + table2 + "." + col2 + ". oneWay is " + oneWay);
+
 		int orphans = countOrphans(con, table1, col1, table2, col2, oneWay);
 
 		boolean result = true;
@@ -1320,7 +1320,7 @@ public abstract class EnsTestCase {
 	public Connection getSchemaConnection(String schema) {
 
 		DatabaseRegistry reg = DBUtils.getMainDatabaseRegistry();
-		
+
 		DatabaseRegistryEntry dbre = DBUtils.getMainDatabaseRegistry().getByExactName(schema);
 
 		return dbre.getConnection();
@@ -1335,14 +1335,14 @@ public abstract class EnsTestCase {
 	 *          The table to get.
 	 * @return A ResultSet containing the contents of the table.
 	 */
-	public ResultSet getWholeTable(Connection con, String table) {
+	public ResultSet getWholeTable(Connection con, String table, String key) {
 
 		ResultSet rs = null;
 
 		try {
 
 			Statement stmt = con.createStatement();
-			rs = stmt.executeQuery("SELECT * FROM " + table);
+			rs = stmt.executeQuery("SELECT * FROM " + table + " ORDER BY " + key);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1352,28 +1352,29 @@ public abstract class EnsTestCase {
 
 	}
 
-//-------------------------------------------------------------------------
+	// -------------------------------------------------------------------------
 	/**
 	 * Get all the rows from certain columns of a table, specifying which ones to ignore.
 	 * 
 	 * @param table
 	 *          The table to query.
-	 *          @param exceptionColumns A list of columns to ignore.
+	 * @param exceptionColumns
+	 *          A list of columns to ignore.
 	 * @return A ResultSet containing the contents of the table, minus the columns in question.
 	 */
-	public ResultSet getWholeTableExceptSomeColumns(Connection con, String table, List<String> exceptionColumns) {
+	public ResultSet getWholeTableExceptSomeColumns(Connection con, String table, String key, List<String> exceptionColumns) {
 
 		ResultSet rs = null;
-		
+
 		List<String> allColumns = DBUtils.getColumnsInTable(con, table);
 		allColumns.removeAll(exceptionColumns);
-		
+
 		String columns = StringUtils.join(allColumns, ",");
-		
+
 		try {
 
 			Statement stmt = con.createStatement();
-			rs = stmt.executeQuery("SELECT " + columns + " FROM " + table);
+			rs = stmt.executeQuery("SELECT " + columns + " FROM " + table + " ORDER BY " + key);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1383,13 +1384,13 @@ public abstract class EnsTestCase {
 
 	}
 
-	
 	// -------------------------------------------------------------------------
 	/**
 	 * Get a connection to a new database given a pattern.
 	 * 
-	 * @param dbPattern - a String pattern to identify the required database
-	 *        
+	 * @param dbPattern
+	 *          - a String pattern to identify the required database
+	 * 
 	 * @return A DatabaseRegistryEntry.
 	 */
 	public DatabaseRegistryEntry getDatabaseRegistryEntryByPattern(String dbPattern) {
@@ -1397,7 +1398,7 @@ public abstract class EnsTestCase {
 		// create it
 		List<String> list = new ArrayList<String>();
 		list.add(dbPattern);
-		DatabaseRegistryEntry newDBRE = null;	 
+		DatabaseRegistryEntry newDBRE = null;
 
 		DatabaseRegistry newDBR = new DatabaseRegistry(list, null, null, false);
 
@@ -1414,11 +1415,9 @@ public abstract class EnsTestCase {
 
 		newDBRE = newDBR.getAll()[0];
 		logger.finest("Got new db: " + newDBRE.getName());
-		return newDBRE;	
+		return newDBRE;
 	}
 
-	
-	
 	// -------------------------------------------------------------------------
 	/**
 	 * Get a connection to the production database.
@@ -1431,36 +1430,39 @@ public abstract class EnsTestCase {
 
 		// return existing one if we already have it, otherwise use method above to find it
 		return productionDBRE != null ? productionDBRE : getDatabaseRegistryEntryByPattern("ensembl_production_\\d+");
-		
+
 	}
 
 	// -------------------------------------------------------------------------
 	/**
 	 * Compare the contents of a table in the production database with one in another database.
 	 */
-	public boolean compareProductionTable(DatabaseRegistryEntry dbre, String tableName, String productionTableName) {
-		
+	public boolean compareProductionTable(DatabaseRegistryEntry dbre, String tableName, String tableKey, String productionTableName, String productionKey) {
+
 		Connection con = dbre.getConnection();
 
 		DatabaseRegistryEntry productionDBRE = getProductionDatabase();
-		
-		return DBUtils.compareResultSets(getWholeTable(con, tableName), getWholeTable(productionDBRE.getConnection(), productionTableName), this, "", true, false, tableName, null, false);
-		
+
+		return DBUtils.compareResultSets(getWholeTable(con, tableName, tableKey), getWholeTable(productionDBRE.getConnection(), productionTableName, productionKey), this, "", true, false, tableName,
+				null, false);
+
 	}
-	
-//-------------------------------------------------------------------------
+
+	// -------------------------------------------------------------------------
 	/**
 	 * Compare the contents of a table in the production database with one in another database, but ignore certain columns.
 	 */
-	public boolean compareProductionTableWithExceptions(DatabaseRegistryEntry dbre, String tableName, String productionTableName, List<String> exceptionColumns) {
-		
+	public boolean compareProductionTableWithExceptions(DatabaseRegistryEntry dbre, String tableName, String tableKey, String productionTableName, String productionKey, List<String> exceptionColumns) {
+
 		Connection con = dbre.getConnection();
 
 		DatabaseRegistryEntry productionDBRE = getProductionDatabase();
-		
-		return DBUtils.compareResultSets(getWholeTableExceptSomeColumns(con, tableName, exceptionColumns), getWholeTableExceptSomeColumns(productionDBRE.getConnection(), productionTableName, exceptionColumns), this, "", true, false, tableName, null, false);
-		
+
+		return DBUtils.compareResultSets(getWholeTableExceptSomeColumns(con, tableName, tableKey, exceptionColumns), getWholeTableExceptSomeColumns(productionDBRE.getConnection(), productionTableName, productionKey,
+				exceptionColumns), this, "", true, false, tableName, null, false);
+
 	}
+
 	// -------------------------------------------------------------------------
 	/**
 	 * Compare two schemas to see if they have the same tables. The comparison is done in both directions, so will return false if a
@@ -1484,34 +1486,34 @@ public abstract class EnsTestCase {
 	 * @param schema2
 	 *          The second schema to compare.
 	 * @param ignoreBackupTables
-	 *          Should backup tables be excluded form this check?          
+	 *          Should backup tables be excluded form this check?
 	 * @param directionFlag
-	 *          The direction to perform comparison in, either EnsTestCase.COMPARE_RIGHT, EnsTestCase.COMPARE_LEFT or EnsTestCase.COMPARE_BOTH
-	 * @return for left comparison: all tables in schema1 exist in schema2 
-	 * for right comparison: all tables in schema1 exist in schema2 
-	 * for both: if all tables in schema1 exist in schema2, and vice-versa
+	 *          The direction to perform comparison in, either EnsTestCase.COMPARE_RIGHT, EnsTestCase.COMPARE_LEFT or
+	 *          EnsTestCase.COMPARE_BOTH
+	 * @return for left comparison: all tables in schema1 exist in schema2 for right comparison: all tables in schema1 exist in
+	 *         schema2 for both: if all tables in schema1 exist in schema2, and vice-versa
 	 */
-	public boolean compareTablesInSchema(Connection schema1, Connection schema2, boolean ignoreBackupTables, int directionFlag) {	
+	public boolean compareTablesInSchema(Connection schema1, Connection schema2, boolean ignoreBackupTables, int directionFlag) {
 
 		boolean result = true;
-		if (directionFlag==COMPARE_RIGHT || directionFlag==COMPARE_BOTH){//perfom right compare if required
-			result=compareTablesInSchema(schema2, schema1, ignoreBackupTables,COMPARE_LEFT);
+		if (directionFlag == COMPARE_RIGHT || directionFlag == COMPARE_BOTH) {// perfom right compare if required
+			result = compareTablesInSchema(schema2, schema1, ignoreBackupTables, COMPARE_LEFT);
 		}
 
-		if (directionFlag==COMPARE_LEFT || directionFlag==COMPARE_BOTH){//perform left compare if required
-		String name1 = DBUtils.getShortDatabaseName(schema1);
-		String name2 = DBUtils.getShortDatabaseName(schema2);
+		if (directionFlag == COMPARE_LEFT || directionFlag == COMPARE_BOTH) {// perform left compare if required
+			String name1 = DBUtils.getShortDatabaseName(schema1);
+			String name2 = DBUtils.getShortDatabaseName(schema2);
 
-		// check each table in turn
-		String[] tables = getTableNames(schema1);
-		for (int i = 0; i < tables.length; i++) {
-			String table = tables[i];
-				if (!ignoreBackupTables||!table.contains(backupIdentifier)){
-			if (!checkTableExists(schema2, table)) {
-				ReportManager.problem(this, schema1, "Table " + table + " exists in " + name1 + " but not in " + name2);
-				result = false;
-			}
-		}
+			// check each table in turn
+			String[] tables = getTableNames(schema1);
+			for (int i = 0; i < tables.length; i++) {
+				String table = tables[i];
+				if (!ignoreBackupTables || !table.contains(backupIdentifier)) {
+					if (!checkTableExists(schema2, table)) {
+						ReportManager.problem(this, schema1, "Table " + table + " exists in " + name1 + " but not in " + name2);
+						result = false;
+					}
+				}
 			}
 		}
 
@@ -1647,7 +1649,8 @@ public abstract class EnsTestCase {
 	// -----------------------------------------------------------------
 	/**
 	 * Set the database type(s) that this test applies to based upon the directory name. For directories called "generic", the type is
-	 * set to core, otherfeatures, cdna, rnaseq, vega and sanger_vega. For all other directories the type is set based upon the directory name.
+	 * set to core, otherfeatures, cdna, rnaseq, vega and sanger_vega. For all other directories the type is set based upon the
+	 * directory name.
 	 * 
 	 * @param dirName
 	 *          The directory name to check.
@@ -1778,7 +1781,6 @@ public abstract class EnsTestCase {
 		} else {
 			ReportManager.correct(this, con, "SUCCESS: All rows in " + table1 + " (constraint is: " + constraint1 + ") refer to valid " + table2 + "s");
 		}
-		
 
 		return result;
 
@@ -2090,18 +2092,20 @@ public abstract class EnsTestCase {
 		return names;
 
 	}
-	
+
 	/**
-	 * Return the list of views and tables that are required to be present in the funcgen database before Biomart can run, but should be removed afterwards.
+	 * Return the list of views and tables that are required to be present in the funcgen database before Biomart can run, but should
+	 * be removed afterwards.
 	 */
 	public String[] getBiomartFuncgenTablesAndViews() {
-	
-		String[] t = { "cs_sr_view", "fs_displayable_view", "regulatory_feature_view", "external_feature_ox_view", "external_feature_view", "annotated_feature_view", "feature_set_view", "probestuff_helper_tmp" };
+
+		String[] t = { "cs_sr_view", "fs_displayable_view", "regulatory_feature_view", "external_feature_ox_view", "external_feature_view", "annotated_feature_view", "feature_set_view",
+				"probestuff_helper_tmp" };
 
 		return t;
-		
+
 	}
-	
+
 	// ----------------------------------------------------------------------
 
 } // EnsTestCase
