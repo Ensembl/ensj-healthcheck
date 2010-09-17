@@ -69,7 +69,7 @@ public class XrefTables extends SingleDatabaseTestCase {
 			// check that a BioMart table for each entry exists
 			for (String externalDB : externalDBs) {
 
-				externalDB = externalDB.replace("/", ""); 
+				externalDB = externalDB.replace("/", ""); // e.g. Uniprot/SWISSPROT
 				
 				String tableName = String.format("%s_gene_ensembl__ox_%s__dm", speciesRoot, externalDB);
 
