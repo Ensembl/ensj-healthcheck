@@ -2,6 +2,7 @@
 <project name="ConfigurableTestRunner" default="compile" basedir="..">
 
 	<property file="buildfiles/build.properties" />
+	<import   file = "build.checkoutDependencies.xml"       />
 
         <path id="compile.classpath">
                 <pathelement location="${class.dir}" />
@@ -30,6 +31,23 @@
 		description = "Creates technical documentation for the testgroups."
 		depends     = "doc_overview, javadoc.api"
 	/>	
+
+        <target name="checkoutPerlDependencies" description="">
+
+		<property name="perlDependencyCheckoutDir" value="perlcodeTest" />
+		<property name="ensemblRevisionOption"     value="-r branch-ensembl-59" />
+		<property name="ensemblCvsRoot"            value=":pserver:cvsuser:CVSUSER@cvs.sanger.ac.uk:/cvsroot/ensembl" />
+
+		<mkdir dir="${perlDependencyCheckoutDir}"/>
+		<cvs 
+			cvsRoot="${ensemblCvsRoot}" 
+			command="checkout -d ${perlDependencyCheckoutDir}/ensembl ${ensemblRevisionOption} ensembl"
+		/>
+		<cvs 
+			cvsRoot="${ensemblCvsRoot}" 
+			command="checkout -d ${perlDependencyCheckoutDir}/ensembl-variation ${ensemblRevisionOption} ensembl-variation"
+		/>
+	</target>
 
         <target name="publish" description="Copies this directory to the public_html directory. More a kind of backup.">
 		<delete dir="/homes/mnuhn/public_html/configurableTestRunner.old" />
