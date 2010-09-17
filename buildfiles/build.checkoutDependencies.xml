@@ -73,7 +73,7 @@ to delete the directory with the checkouts.
 		-->
 
 		<exec dir="." executable="svn" os="Linux">
-		  <arg line="checkout http://svn.github.com/bioperl/bioperl-live.git perlcodeTest/bioperl-live"/>
+		  <arg line="checkout http://svn.github.com/bioperl/bioperl-live.git ${perlDependencyCheckoutDir}/bioperl-live"/>
 		</exec>
 
 	</target>
