@@ -22,7 +22,7 @@ to delete the directory with the checkouts.
         <target 
 		name        = "checkoutPerlDependencies" 
 		description = "" 
-		depends     = "checkoutEnsemblDependency,checkoutBioperlDependency"
+		depends     = "checkoutBioperlDependency, checkoutEnsemblDependency"
 	/>
 
 	<!--
