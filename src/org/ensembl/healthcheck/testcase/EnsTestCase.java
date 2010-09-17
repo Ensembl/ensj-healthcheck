@@ -1417,6 +1417,25 @@ public abstract class EnsTestCase {
 		logger.finest("Got new db: " + newDBRE.getName());
 		return newDBRE;
 	}
+	
+//-------------------------------------------------------------------------
+	/**
+	 * Get a new DatabaseRegistry given a pattern.
+	 * 
+	 * @param dbPattern
+	 *          - a String pattern to identify the required databases
+	 * 
+	 * @return A DatabaseRegistry.
+	 */
+	public DatabaseRegistry getDatabaseRegistryByPattern(String dbPattern) {
+
+		// create it
+		List<String> list = new ArrayList<String>();
+		list.add(dbPattern);
+
+		return new DatabaseRegistry(list, null, null, false);
+
+	}
 
 	// -------------------------------------------------------------------------
 	/**
