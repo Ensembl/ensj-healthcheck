@@ -17,7 +17,7 @@ to delete the directory with the checkouts.
 	<!--
 		Directory where checkout will be placed
 	-->
-	<property name="perlDependencyCheckoutDir" value="perlcodeTest" />
+	<property name="perlDependencyCheckoutDir" value="perlcode" />
 
         <target 
 		name        = "checkoutPerlDependencies" 
