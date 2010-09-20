@@ -46,7 +46,7 @@ public class AutoIncrement extends SingleDatabaseTestCase {
 	 */
 	public AutoIncrement() {
 
-		setTeamResponsible("genebuilders");
+		setTeamResponsible("core");
 		addToGroup("post_genebuild");
 		addToGroup("release");
 
