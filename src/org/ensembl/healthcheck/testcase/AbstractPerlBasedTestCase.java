@@ -24,6 +24,11 @@ public abstract class AbstractPerlBasedTestCase extends SingleDatabaseTestCase {
 	public static final String PERLOPTS = "perlopts";
 	public static final String PERL = "perl";
 
+	/**
+	 * 
+	 * Internal class that holds perl configurations
+	 *
+	 */
 	public class PerlScriptConfig {
 
 		private final String perlBinary;
@@ -41,15 +46,16 @@ public abstract class AbstractPerlBasedTestCase extends SingleDatabaseTestCase {
 		public String getPerlOptions() {
 			return perlOptions;
 		}
-
 	};
 
 	protected PerlScriptConfig config;
 
 	protected PerlScriptConfig getConfig() {
 		if(config==null) {
-			config = new PerlScriptConfig(System.getProperty(PERL), System
-					.getProperty(PERLOPTS));
+			config = new PerlScriptConfig(
+					System.getProperty(PERL), 
+					System.getProperty(PERLOPTS)
+			);
 		}
 		return config;
 	}
@@ -91,8 +97,9 @@ public abstract class AbstractPerlBasedTestCase extends SingleDatabaseTestCase {
 	public boolean run(DatabaseRegistryEntry dbre) {
 		boolean passes = true;
 		for (int speciesId : dbre.getSpeciesIds()) {
-			String commandLine = getConfig().getPerlBinary() + " "
-					+ config.getPerlOptions() + " " + getPerlScript(dbre, speciesId);
+			String commandLine = getPerlScript(dbre, speciesId);
+//			String commandLine = getConfig().getPerlBinary() + " "
+//			+ config.getPerlOptions() + " " + getPerlScript(dbre, speciesId);
 			StringBuffer out = new StringBuffer();
 			StringBuffer err = new StringBuffer();
 			try {
@@ -115,5 +122,4 @@ public abstract class AbstractPerlBasedTestCase extends SingleDatabaseTestCase {
 		}
 		return passes;
 	}
-
 }

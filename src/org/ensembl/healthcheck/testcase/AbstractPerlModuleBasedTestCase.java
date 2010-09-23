@@ -22,13 +22,23 @@ public abstract class AbstractPerlModuleBasedTestCase extends AbstractPerlBasedT
 		super();
 	}
 	
+	/**
+	 * 
+	 * Returns the name of the perl module with the healthcheck test.
+	 * 
+	 * @return
+	 * 
+	 */
 	protected abstract String getModule();
 
 	/* (non-Javadoc)
 	 * @see org.ensembl.healthcheck.testcase.AbstractPerlBasedTestCase#getPerlScript()
 	 */
 	@Override
-	protected String getPerlScript(DatabaseRegistryEntry dbre, int speciesId) {
+	protected String getPerlScript(
+			DatabaseRegistryEntry dbre, 
+			int speciesId
+	) {
 		DatabaseServer srv = dbre.getDatabaseServer();
 		return TemplateBuilder.template(SCRIPT, "host", srv.getHost(),
 				"port", srv.getPort(),
