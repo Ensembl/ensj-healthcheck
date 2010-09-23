@@ -30,81 +30,81 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 public class SeqRegionName extends SingleDatabaseTestCase {
 
-    /**
-     * Create a new SeqRegionName testcase.
-     */
-    public SeqRegionName() {
+	/**
+	 * Create a new SeqRegionName testcase.
+	 */
+	public SeqRegionName() {
 
-        addToGroup("post_genebuild");
-        addToGroup("release");
-        addToGroup("compara-ancestral");
-        setDescription("Check that seq_region names for human and mouse are in the right format.");
-
-    }
-
-    /**
-     * Run the test.
-     * 
-     * @param dbre
-     *          The database to use.
-     * @return true if the test passed.
-     *  
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
-
-        boolean result = true;
-
-	// only do this for human and mouse
-        Species s = dbre.getSpecies();
-	if (s.equals(Species.HOMO_SAPIENS) || s.equals(Species.MUS_MUSCULUS)) {
-
-	    Connection con = dbre.getConnection();
-
-	    result &= seqRegionNameCheck(con, "clone",  "^[a-zA-Z]+[0-9]+\\.[0-9]+$");
-	    result &= seqRegionNameCheck(con, "contig", "^[a-zA-Z]+[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+$");
-
-	} else if (s.equals(Species.ANCESTRAL_SEQUENCES)) {
-
-	    Connection con = dbre.getConnection();
-
-		result &= seqRegionNameCheck(con, "ancestralsegment",  "Ancestor_[0-9]+_[0-9]+$");
+		addToGroup("post_genebuild");
+		addToGroup("release");
+		addToGroup("compara-ancestral");
+		setDescription("Check that seq_region names for human and mouse are in the right format.");
 
 	}
 
-	return result;
+	/**
+	 * Run the test.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return true if the test passed.
+	 * 
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-    } // run
+		boolean result = true;
 
+		// only do this for human and mouse
+		Species s = dbre.getSpecies();
+		if (s.equals(Species.HOMO_SAPIENS) || s.equals(Species.MUS_MUSCULUS)) {
 
-    // ----------------------------------------------------------------------
-    /** 
-     * Check that seq regions of a particualar coordinate system are named 
-     * appropriately.
-     * @return True if all seq_region names match the regexp.
-     */
+			Connection con = dbre.getConnection();
 
-    private boolean seqRegionNameCheck(Connection con, String coordinateSystem, String regexp) {
+			result &= seqRegionNameCheck(con, "clone", "^[a-zA-Z]+[0-9]+\\.[0-9]+$");
+			result &= seqRegionNameCheck(con, "contig", "^[a-zA-Z]+[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+$");
 
-	boolean result = true;
+		} else if (s.equals(Species.ANCESTRAL_SEQUENCES)) {
 
-	int rows = getRowCount(con, "SELECT COUNT(*) FROM seq_region sr, coord_system cs WHERE sr.coord_system_id=cs.coord_system_id AND cs.name='" + coordinateSystem + "' AND sr.name NOT REGEXP '" + regexp + "'");
+			Connection con = dbre.getConnection();
 
-	if (rows > 0) {
+			result &= seqRegionNameCheck(con, "ancestralsegment", "Ancestor_[0-9]+_[0-9]+$");
 
-	    ReportManager.problem(this, con, rows + " seq_regions in coordinate system " + coordinateSystem + " have names that are not of the correct format");
-	    result = false;
+		}
 
-	} else {
+		return result;
 
-	    ReportManager.correct(this, con, "All seq_regions in coordinate system " + coordinateSystem + " have names in the correct format");
-	    result = true;
+	} // run
+
+	// ----------------------------------------------------------------------
+	/**
+	 * Check that seq regions of a particular coordinate system are named appropriately.
+	 * 
+	 * @return True if all seq_region names match the regexp.
+	 */
+
+	private boolean seqRegionNameCheck(Connection con, String coordinateSystem, String regexp) {
+
+		boolean result = true;
+
+		int rows = getRowCount(con, String.format(
+				"SELECT COUNT(*) FROM seq_region sr, coord_system cs WHERE sr.coord_system_id=cs.coord_system_id AND cs.name='%s' AND sr.name NOT LIKE 'LRG%%' AND sr.name NOT REGEXP '%s' ", coordinateSystem,
+				regexp));
+
+		if (rows > 0) {
+
+			ReportManager.problem(this, con, String.format("%d seq_regions in coordinate system %s have names that are not of the correct format", rows, coordinateSystem));
+			result = false;
+
+		} else {
+
+			ReportManager.correct(this, con, String.format("All seq_regions in coordinate system %s have names in the correct format", coordinateSystem));
+
+		}
+
+		return result;
 
 	}
 
-	return result;
-
-    }
-
-    // ----------------------------------------------------------------------
+	// ----------------------------------------------------------------------
 
 } // SeqRegionName
