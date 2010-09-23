@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+-->
+<project name="setPermissions" default="setPermissions" basedir="..">
+
+	<!--
+	-->
+        <target name="setPermissions" description="" depends="">
+
+		<chmod file="perl/run_healthcheck.pl" perm="u+x"/>
+
+	</target>
+</project>
