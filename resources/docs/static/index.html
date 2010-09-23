@@ -270,6 +270,118 @@
 	The sql file should be correct sql. In particular it should not contain hashes &quot;#&quot; for starting comments. (Which it does by default.)
 </p>
 
+<h2 id="Troubleshooting">Troubleshooting</h2>
+
+<p>
+	Note that the healthcheck code used by the testrunners is in the jar file lib/ensj-healthcheck.jar. Recompiling the code with &quot;ant compile&quot; will only produce code in the build directory but not update the lib/ensj-healthcheck.jar file. So afterwards the code will behave just like before. 
+</p>
+
+<p>
+	For changes in the code to take effect, run
+</p>
+
+<pre>
+ant jar
+</pre>
+
+<p>
+	which runs the compile task as well, but will then also rebuild the lib/ensj-healthcheck.jar file. So the next time you run a testrunner, the new code will be used.
+</p>
+
+<h2 id="Getting_started">Getting started</h2>
+
+<h3 id="checkout">Checkout</h3>
+
+<pre>
+mkdir myhealthechecks
+cd myhealthechecks
+</pre>
+
+<p>
+	Checkout from Sanger CVS either anonymous: 
+</p>
+
+<pre>
+cvs -d :pserver:cvsuser:CVSUSER@cvsro.sanger.ac.uk:/cvsroot/ensembl checkout ensj-healthcheck
+</pre>
+
+<p>
+	or with your username, if you plan on changing things: 
+</p>
+
+<pre>
+cvs -d :ext:mn1@cvs.sanger.ac.uk:/cvsroot/ensembl checkout ensj-healthcheck
+</pre>
+
+<p>
+(change mn1 to whatever your username is) then
+</p>
+
+<pre>
+cd ensj-healthcheck/
+</pre>
+
+<h3 id="docs">Docs (optional)</h3>
+
+<p>
+Type
+</p>
+
+<pre>
+ant docs
+</pre>
+
+<p>
+to generate the current version of this documentation for the configurable testrunner. Then type 
+</p>
+
+<pre>
+firefox docs/index.html
+# (does not work on the ebi-xxx machines)
+</pre>
+
+<p>
+to look at it or go to the newly created directory docs/ and open index.html in your browser. 
+</p>
+
+<h3 id="checkout_perl_dependencies">Checkout perl dependencies (optional)</h3>
+
+<p>
+	This is only necessary, if you want to run tests that use the perl API.
+</p>
+
+<p>
+	Checkout perl dependencies like this:
+</p>
+<pre>
+ant checkoutPerlDependencies
+</pre>
+
+<h3 id="environment">Environment</h3>
+
+<p>
+What works well on the ebi-xxx machines is:
+</p>
+
+<pre>
+export JAVA_HOME=/sw/arch/pkg/jdk1.6/ 
+export perl=/homes/integr8/production/perl/binaries/bin/perl5.8.9
+export PERL5LIB=perlcode/ensembl/modules/:perl/:perlcode/bioperl-live/:perlcode/ensembl-variation/modules:/homes/integr8/production/perl/cpan/lib/perl5/
+</pre>
+
+<p>
+On a default Ubuntu installation try this:
+</p>
+
+<pre>
+export JAVA_HOME=/usr/lib/jvm/java-6-openjdk/jre/
+export PERL5LIB=perlcode/ensembl/modules/:perl/:perlcode/bioperl-live/:perlcode/ensembl-variation/modules
+</pre>
+
+<p>
+Note that on the ebi-xxx machines this is not the java version that is used by default. So it can be necessary
+</p>
+
 <h2 id="Javadocs">Javadocs</h2>
 
 <p>
