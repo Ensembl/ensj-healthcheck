@@ -49,15 +49,7 @@ my $healthcheck = $module->new( dba => $dba );
 my $healthcheck_passed = $healthcheck->run();
 
 if ($healthcheck_passed) {
-	print "Healthcheck passed\n";
 	exit 0;
 } else {
-	print "Healthcheck failed\n";
 	exit 1;
 }
-
-#my $status = $result==1?0:1;
-#exit $status;
-
-
-
