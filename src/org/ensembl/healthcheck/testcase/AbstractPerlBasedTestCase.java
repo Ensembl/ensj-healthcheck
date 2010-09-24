@@ -7,9 +7,12 @@
 package org.ensembl.healthcheck.testcase;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.logging.Logger;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.configurationmanager.ConfigurationByCascading;
 import org.ensembl.healthcheck.util.ProcessExec;
 
 /**
@@ -20,6 +23,8 @@ import org.ensembl.healthcheck.util.ProcessExec;
  * 
  */
 public abstract class AbstractPerlBasedTestCase extends SingleDatabaseTestCase {
+
+	static final Logger log = Logger.getLogger(AbstractPerlBasedTestCase.class.getCanonicalName());
 
 	public static final String PERLOPTS = "perlopts";
 	public static final String PERL = "perl";
@@ -96,10 +101,24 @@ public abstract class AbstractPerlBasedTestCase extends SingleDatabaseTestCase {
 	@Override
 	public boolean run(DatabaseRegistryEntry dbre) {
 		boolean passes = true;
-		for (int speciesId : dbre.getSpeciesIds()) {
+		
+		List<Integer> dbre_speciesIds = dbre.getSpeciesIds();
+		
+		// Make sure species ids were configured. If not, the perl test will 
+		// not be run. The warning message may be overlooked by a user, 
+		// therefore the test is set to fail in order to get attention.
+		//
+		if (dbre_speciesIds.size() == 0) {
+			
+			log.warning(
+				"No species ids! Perhaps no databases were configured?"
+				+ " This test will not be run."
+			);
+			passes = false;
+		}
+		
+		for (int speciesId : dbre_speciesIds) {
 			String commandLine = getPerlScript(dbre, speciesId);
-//			String commandLine = getConfig().getPerlBinary() + " "
-//			+ config.getPerlOptions() + " " + getPerlScript(dbre, speciesId);
 			StringBuffer out = new StringBuffer();
 			StringBuffer err = new StringBuffer();
 			try {
