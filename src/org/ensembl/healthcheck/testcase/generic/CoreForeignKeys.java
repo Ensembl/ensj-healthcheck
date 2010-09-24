@@ -32,7 +32,7 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 	public CoreForeignKeys() {
 
 		addToGroup("post_genebuild");
-		//addToGroup("release");//already a member
+		addToGroup("release");
 		addToGroup("compara-ancestral");
 		addToGroup("id_mapping");
 		setDescription("Check for broken foreign-key relationships.");
