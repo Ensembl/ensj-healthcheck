@@ -8,7 +8,6 @@ import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.testcase.OrderedDatabaseTestCase;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import java.lang.Exception;
 
 /**
  * A test registry that returns tests based on a configuration file instead of
@@ -110,7 +109,7 @@ public class ConfigurationBasedTestRegistry implements TestRegistry {
 		
 		// TODO: Must make this configurable
 		String packageWithHealthchecks = "org.ensembl.healthcheck.testcase";
-		String packageWithTestgroups   = "testgroup";
+		String packageWithTestgroups   = "org.ensembl.healthcheck.testgroup";
 		
 		GroupOfTests userDefinedGroupOfTests = new GroupOfTests();
 		TestInstantiator testInstantiator    = new TestInstantiator(
@@ -253,18 +252,15 @@ public class ConfigurationBasedTestRegistry implements TestRegistry {
 	}
 
 	public String[] getGroups(DatabaseType type) {
-		// TODO Auto-generated method stub
 		throw new RuntimeException("getGroups has not been implemented yet!");
 		//return null;
 	}
 
 	public EnsTestCase[] getTestsInGroup(String string, DatabaseType type) {
-		// TODO Auto-generated method stub
 		throw new RuntimeException("getTestsInGroup has not been implemented yet!");
 	}
 
 	public DatabaseType[] getTypes() {
-		// TODO Auto-generated method stub
 		throw new RuntimeException("getTypes has not been implemented yet!");
 	}
 }
