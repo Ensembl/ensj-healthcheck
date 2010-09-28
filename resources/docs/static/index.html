@@ -244,19 +244,54 @@
 
 <pre>
 ./run-configurable-testrunner.sh \
-	--group AllEGCore \
+	--group CoreXrefs \
 	--conf  \
 		config/healthchecks/database.sg2.properties \
 		<b>config/healthchecks/database.output.cp1.properties</b> \
 	--output.databases plasmodium_berghei_core_6_59_1 \
-	<b>--reporterType Database</b>
+	<b>--reporterType Database</b> \
 	--output.database healthchecks_for_plasmodium_berghei_core_6_59_1
-
 </pre>
 
 <p>
 	&quot;--reporterType Database&quot; selects the database reporter which will write the results from testcases to the database. The above statement selects cluster production 1 as the database server to which the reporter will connect and healthchecks_for_plasmodium_berghei_core_6_59_1 as the database to which it will write.
 </p>
+
+<p>
+	The destination is selected with these parameters:
+</p>
+
+<pre>
+#
+# Contents of database.output.cp1.properties
+#
+output.host       = mysql-cluster-eg-prod-1.ebi.ac.uk
+output.port       = 4238
+output.user       = ensrw
+output.password   = *passworddeletedfromhere*
+</pre>
+
+<p>
+	In the above example they are passed to the configurable testrunner in the config/healthchecks/database.output.cp1.properties file. As usual they could have been given as command line options as well.
+</p>
+
+<pre>
+#
+# Does the same as the above command. Database details are now passed over the
+# command line instead of specifying a configuration file.
+#
+./run-configurable-testrunner.sh \
+	--group CoreXrefs \
+	--conf  \
+		config/healthchecks/database.sg2.properties \
+	--output.databases plasmodium_berghei_core_6_59_1 \
+	<b>--reporterType Database</b> \
+	<b>--output.database healthchecks_for_plasmodium_berghei_core_6_59_1 \
+	--output.host     mysql-cluster-eg-prod-1.ebi.ac.uk \
+	--output.port     4238 \
+	--output.user     ensrw \
+	--output.password *passworddeletedfromhere*</b>
+</pre>
 
 <p>
 	<strong>If the database does not exist, the configurable testrunner will create an empty database for you. If the database already exists, it will be dropped and recreated.</strong>
