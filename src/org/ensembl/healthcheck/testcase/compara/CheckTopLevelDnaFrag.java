@@ -101,7 +101,7 @@ public class CheckTopLevelDnaFrag extends MultiDatabaseTestCase {
           e.printStackTrace();
         }
         
-        boolean allSpeciesFound = true;
+        String speciesNotFound = "";
         for (int i = 0; i < comparaSpecies.size(); i++) {
           Species species = (Species) comparaSpecies.get(i);
 	  
@@ -116,42 +116,53 @@ public class CheckTopLevelDnaFrag extends MultiDatabaseTestCase {
               if (rows > maxRows) {
                   // Divide and conquer approach for large sets
                   for (int rowCount=0; rowCount<rows; rowCount+=maxRows) {
-                      String sql1 = "SELECT dnafrag.coord_system_name, dnafrag.name, dnafrag.length" +
+                      String sql1 = "SELECT dnafrag.coord_system_name, dnafrag.name, CONCAT('length=', dnafrag.length), CONCAT('is_ref=', dnafrag.is_reference)" +
                           " FROM dnafrag LEFT JOIN genome_db USING (genome_db_id)" +
                           " WHERE genome_db.name = \"" + species + "\" AND assembly_default = 1" +
                           " ORDER BY (dnafrag.name)" +
                           " LIMIT " + rowCount + ", " + maxRows;
-                      String sql2 = "SELECT coord_system.name, seq_region.name, seq_region.length" +
-                          " FROM seq_region, coord_system, seq_region_attrib, attrib_type" +
-                          " WHERE seq_region.coord_system_id = coord_system.coord_system_id " +
-                          " AND seq_region.seq_region_id = seq_region_attrib.seq_region_id " +
-                          " AND seq_region_attrib.attrib_type_id = attrib_type.attrib_type_id " +
-                          " AND coord_system.name <> 'lrg' " +
-                          " AND attrib_type.code = \"toplevel\"" +
+                      String sql2 = "SELECT coord_system.name, seq_region.name, CONCAT('length=', seq_region.length),"+
+                          " CONCAT('is_ref=', IF(non_ref_seq_region.seq_region_id is not null, 0, 1))" +
+                          " FROM seq_region" +
+                          " JOIN coord_system USING (coord_system_id)" +
+                          " JOIN seq_region_attrib USING (seq_region_id)" +
+                          " JOIN attrib_type USING (attrib_type_id)" +
+                          " LEFT JOIN (SELECT seq_region_id FROM seq_region_attrib JOIN attrib_type USING (attrib_type_id) WHERE attrib_type.code = 'non_ref') non_ref_seq_region USING (seq_region_id)" +
+                          " WHERE coord_system.name <> 'lrg' " +
+                          " AND attrib_type.code = 'toplevel'" +
                           " ORDER BY (seq_region.name)" +
                           " LIMIT " + rowCount + ", " + maxRows;
                       result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
                   }
               } else {
-                  String sql1 = "SELECT dnafrag.coord_system_name, dnafrag.name, dnafrag.length" +
+                  String sql1 = "SELECT dnafrag.coord_system_name, dnafrag.name, CONCAT('length=', dnafrag.length), CONCAT('is_ref=', dnafrag.is_reference)" +
                       " FROM dnafrag LEFT JOIN genome_db USING (genome_db_id)" +
                       " WHERE genome_db.name = \"" + species + "\" AND assembly_default = 1";
-                  String sql2 = "SELECT coord_system.name, seq_region.name, seq_region.length" +
-                      " FROM seq_region, coord_system, seq_region_attrib, attrib_type" +
-                      " WHERE seq_region.coord_system_id = coord_system.coord_system_id " +
-                      " AND seq_region.seq_region_id = seq_region_attrib.seq_region_id " +
-                      " AND seq_region_attrib.attrib_type_id = attrib_type.attrib_type_id " +
-                      " AND coord_system.name <> 'lrg' " +
-                      " AND attrib_type.code = \"toplevel\"";
+                  String sql2 = "SELECT coord_system.name, seq_region.name, CONCAT('length=', seq_region.length),"+
+                      " CONCAT('is_ref=', IF(non_ref_seq_region.seq_region_id is not null, 0, 1))" +
+                      " FROM seq_region" +
+                      " JOIN coord_system USING (coord_system_id)" +
+                      " JOIN seq_region_attrib USING (seq_region_id)" +
+                      " JOIN attrib_type USING (attrib_type_id)" +
+                      " LEFT JOIN (SELECT seq_region_id FROM seq_region_attrib JOIN attrib_type USING (attrib_type_id) WHERE attrib_type.code = 'non_ref') non_ref_seq_region USING (seq_region_id)" +
+                      " WHERE coord_system.name <> 'lrg' " +
+                      " AND attrib_type.code = 'toplevel'";
                   result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
               }
           } else {
-            ReportManager.problem(this, comparaCon, "No connection for " + species);
-            allSpeciesFound = false;
+              // This will trigger the warning about missing species
+              if (speciesNotFound == "") {
+                  speciesNotFound = "" + species;
+              } else {
+                  speciesNotFound += ", " + species;
+              }
           }
         }
-        if (!allSpeciesFound) {
-          usage();
+        
+        // Warning about missing species
+        if (speciesNotFound != "") {
+            ReportManager.problem(this, comparaCon, "No connection for " + speciesNotFound);
+            usage();
         }
 
         return result;
