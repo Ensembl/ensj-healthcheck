@@ -37,10 +37,22 @@ public class DatabaseReporter implements Reporter {
 
 	}
 
-	@Override
+	/**
+	 * 
+	 * This never gets called, because the ReportManager has the lines
+	 * 
+	 * 	if (usingDatabase) {
+	 * 
+	 * 	   checkAndAddToDatabase(report);
+	 *     return;
+	 * 
+	 *  }
+	 * 
+	 * before it.
+	 * 
+	 */
 	public void message(ReportLine reportLine) {
-		// TODO Auto-generated method stub
-		
+		throw new RuntimeException("This should never be called!");
 	}
 
 	/**
