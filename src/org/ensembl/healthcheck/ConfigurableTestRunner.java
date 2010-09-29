@@ -190,7 +190,7 @@ public class ConfigurableTestRunner extends TestRunner {
 	 */
 	protected static ConfigurationUserParameters createConfigurationObj(String[] args) {
 
-		// A temporary configuration file for accessing the command line  
+		// A temporary configuration object for accessing the command line  
 		// parameters in which the user configures where the configuration
 		// files are located. Since only this information is of interest at
 		// this point the configuration object is subcast to the
