@@ -1,5 +1,7 @@
 package org.ensembl.healthcheck.configuration;
 
+import uk.co.flamingpenguin.jewel.cli.Option;
+
 /**
  * <p>
  * Defines command line interface options for configuring the tests to be
@@ -37,4 +39,8 @@ public interface ConfigurationUserParameters
 		ConfigureHealthcheckDatabase,
 		ConfigureCompareSchema,
 		ConfigureMiscProperties {
+	
+	@Option(helpRequest = true, description = "display help", shortName = "h")
+	boolean getHelp();
+	
 }
