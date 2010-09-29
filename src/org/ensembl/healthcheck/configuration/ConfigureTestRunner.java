@@ -12,11 +12,18 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  */
 public interface ConfigureTestRunner {
 
-	@Option
+	@Option(
+		description = "Specify the type of test registry that will be used. "
+			+ "The allowed options are \"Discoverybased\" and "
+			+ "\"ConfigurationBased\""
+	)
 	String getTestRegistryType();
 	boolean isTestRegistryType();
 	
-	@Option
+	@Option(
+			description = "Specify the reporter type that will be used. "
+				+ "The allowed options are \"Database\" and \"Text\"."
+		)
 	String getReporterType();
 	boolean isReporterType();
 }
