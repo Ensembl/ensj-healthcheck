@@ -14,7 +14,10 @@ public interface ConfigureMiscProperties {
 	//
 	// org.ensembl.healthcheck.testcase.generic.Biotypes
 	//
-	@Option(longName="biotypes.file")
+	@Option(
+		longName    = "biotypes.file",
+		description = "Parameter used only in the test org.ensembl.healthcheck.testcase.generic.Biotypes" 
+	)
 	String getBiotypesFile();
 	boolean isBiotypesFile();
 	
@@ -24,7 +27,13 @@ public interface ConfigureMiscProperties {
 	// org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase
 	// org.ensembl.healthcheck.testcase.generic.GeneStatus
 	//
-	@Option(longName="ignore.previous.checks")
+	@Option(
+		longName    = "ignore.previous.checks",
+		description = "Parameter used only in "
+			+ "org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionExonCoords, "
+			+ "org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase "
+			+ "and org.ensembl.healthcheck.testcase.generic.GeneStatus"
+	)
 	String getIgnorePreviousChecks();
 	boolean isIgnorePreviousChecks();
 
@@ -34,7 +43,13 @@ public interface ConfigureMiscProperties {
 	// org.ensembl.healthcheck.testcase.variation.CompareVariationSchema
 	// org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema
 	//
-	@Option(longName="schema.file")
+	@Option(
+		longName    = "schema.file",
+		description = "Parameter used only in "
+			+ "org.ensembl.healthcheck.testcase.generic.CompareSchema, "
+			+ "org.ensembl.healthcheck.testcase.variation.CompareVariationSchema "
+			+ "and org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema"
+	)
 	String getSchemaFile();
 	boolean isSchemaFile();
 
@@ -43,7 +58,12 @@ public interface ConfigureMiscProperties {
 	// org.ensembl.healthcheck.testcase.generic.CompareSchema
 	// org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema
 	//
-	@Option(longName="master.schema")
+	@Option(
+		longName    = "master.schema",
+		description = "Parameter used only in "
+			+ "org.ensembl.healthcheck.testcase.generic.CompareSchema, "
+			+ "and org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema"
+	)
 	String getMasterSchema();
 	boolean isMasterSchema();
 
@@ -51,7 +71,11 @@ public interface ConfigureMiscProperties {
 	//
 	// org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable
 	//
-	@Option(longName="logicnames.file")
+	@Option(
+		longName    = "logicnames.file",
+		description = "Parameter used only in "
+			+ "org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable"
+	)
 	String getLogicnamesFile();
 	boolean isLogicnamesFile();
 
@@ -59,17 +83,23 @@ public interface ConfigureMiscProperties {
 	//
 	// org.ensembl.healthcheck.testcase.AbstractPerlBasedTestCase
 	//
-	@Option(longName="perl")
+	@Option(
+		longName    = "perl",
+		description = "Parameter used only in "
+			+ "org.ensembl.healthcheck.testcase.AbstractPerlBasedTestCase"
+	)
 	String getPerl();
 	boolean isPerl();
-
-	//config = new PerlScriptConfig(System.getProperty(PERL), System
 
 	// Used in:
 	//
 	// org.ensembl.healthcheck.testcase.variation.CompareVariationSchema
 	//
-	@Option(longName="master.variation_schema")
+	@Option(
+		longName    = "master.variation_schema",
+		description = "Parameter used only in "
+			+ "master.variation_schema"
+	)
 	String getMasterVariationSchema();
 	boolean isMasterVariationSchema();
 
@@ -77,7 +107,11 @@ public interface ConfigureMiscProperties {
 	//
 	// org.ensembl.healthcheck.testcase.EnsTestCase
 	//
-	@Option(longName="user.dir")
+	@Option(
+		longName    = "user.dir",
+		description = "Parameter used in "
+			+ "org.ensembl.healthcheck.testcase.EnsTestCase"
+	)
 	String getUserDir();
 	boolean isUserDir();
 	
@@ -85,7 +119,11 @@ public interface ConfigureMiscProperties {
 	//
 	// org.ensembl.healthcheck.testcase.EnsTestCase
 	//
-	@Option(longName="file.separator")
+	@Option(
+		longName    = "file.separator",
+		description = "Parameter used in "
+			+ "org.ensembl.healthcheck.testcase.EnsTestCase"
+	)
 	String getFileSeparator();
 	boolean isFileSeparator();
 
@@ -93,7 +131,11 @@ public interface ConfigureMiscProperties {
 	//
 	// org.ensembl.healthcheck.testcase.EnsTestCase
 	//
-	@Option(longName="driver")
+	@Option(
+		longName    = "driver",
+		description = "Parameter used in "
+			+ "org.ensembl.healthcheck.testcase.EnsTestCase"
+	)
 	String getDriver();
 	boolean isDriver();
 
@@ -101,7 +143,11 @@ public interface ConfigureMiscProperties {
 	//
 	// org.ensembl.healthcheck.testcase.EnsTestCase
 	//
-	@Option(longName="databaseURL")
+	@Option(
+		longName    = "databaseURL",
+		description = "Parameter used in "
+			+ "org.ensembl.healthcheck.testcase.EnsTestCase"
+	)
 	String getDatabaseURL();
 	boolean isDatabaseURL();
 
@@ -109,7 +155,11 @@ public interface ConfigureMiscProperties {
 	//
 	// org.ensembl.healthcheck.testcase.EnsTestCase
 	//
-	@Option(longName="user")
+	@Option(
+		longName    = "user",
+		description = "Parameter used in "
+			+ "org.ensembl.healthcheck.testcase.EnsTestCase"
+	)
 	String getUser();
 	boolean isUser();
 
@@ -117,7 +167,11 @@ public interface ConfigureMiscProperties {
 	//
 	// org.ensembl.healthcheck.testcase.EnsTestCase
 	//
-	@Option(longName="password")
+	@Option(
+		longName    = "password",
+		description = "Parameter used in "
+			+ "org.ensembl.healthcheck.testcase.EnsTestCase"
+	)
 	String getPassword();
 	boolean isPassword();
 
@@ -125,7 +179,11 @@ public interface ConfigureMiscProperties {
 	//
 	// org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema
 	//
-	@Option(longName="master.funcgen_schema")
+	@Option(
+		longName    = "master.funcgen_schema",
+		description = "Parameter used in "
+			+ "org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema"
+	)
 	String getMasterFuncgenSchema();
 	boolean isMasterFuncgenSchema();
 }
