@@ -15,7 +15,11 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 public interface ConfigureConfiguration {
 
 	// A list of names of configuration files
-	@Option(shortName="c") 
+	@Option(shortName="c", description = "Name of one or many configuration "
+		+ "files. Parameters in configuration files override each other. If a"
+		+ " parameter is provided in more than one file, the first occurrence "
+		+ " is used."
+	) 
 	List<File> getConf();
 	boolean isConf();
 	
