@@ -277,8 +277,8 @@ public class ConfigurableTestRunner extends TestRunner {
 
 		} catch (ConfigurationException e) {
 			
-			ConfigurableTestRunner.logger.log(Level.INFO,   e.getMessage());
-			ConfigurableTestRunner.logger.log(Level.CONFIG, e.getMessage(), e);
+			//ConfigurableTestRunner.logger.log(Level.CONFIG, e.getMessage(), e);
+			ConfigurableTestRunner.logger.log(Level.CONFIG, e.getMessage());
 		}
 	}
 	
