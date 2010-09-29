@@ -211,10 +211,6 @@ public class ConfigurableTestRunner extends TestRunner {
 		//
 		if (conf.isConf()) {
 			propertyFileNames.addAll(conf.getConf());
-			
-			//for (File propertyFileName : conf.getConf()) {				
-				//propertyFileNames.add(propertyFileName);
-			//}
 		}
 		propertyFileNames.add(new File(DEFAULT_PROPERTIES_FILE));
 		
@@ -277,7 +273,6 @@ public class ConfigurableTestRunner extends TestRunner {
 
 		} catch (ConfigurationException e) {
 			
-			//ConfigurableTestRunner.logger.log(Level.CONFIG, e.getMessage(), e);
 			ConfigurableTestRunner.logger.log(Level.CONFIG, e.getMessage());
 		}
 	}
