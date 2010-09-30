@@ -278,9 +278,17 @@ public class ConfigurationProcessor<T> {
 		// These get methods are not about configuration parameters.
 		Set<String> specialGetMethodNames = new HashSet<String>();
 		
+		// Java methods that start with get, but have nothing to do with
+		// accessing parameters.
+		//
 		specialGetMethodNames.add("getInvocationHandler");
 		specialGetMethodNames.add("getProxyClass");
 		specialGetMethodNames.add("getClass");
+		//
+		// Special method, when called and delegated to jewelcli causes it to 
+		// autogenerate a help message. It doese not provide access to  
+		// parameters so should be ignored when dealing with them.
+		//
 		specialGetMethodNames.add("getHelp");
 		
 		List<Method> methodList = new ArrayList<Method>();
