@@ -173,6 +173,7 @@ public class ConfigurationProcessor<T> {
 			}
 			
 			if (returnTypeExpected==null) {
+				
 				throw new RuntimeException(
 					"Unknown return type " + getMethod.getReturnType().getName() + " for "+getMethod.getName()+"!"
 				);
@@ -280,6 +281,7 @@ public class ConfigurationProcessor<T> {
 		specialGetMethodNames.add("getInvocationHandler");
 		specialGetMethodNames.add("getProxyClass");
 		specialGetMethodNames.add("getClass");
+		specialGetMethodNames.add("getHelp");
 		
 		List<Method> methodList = new ArrayList<Method>();
 		
