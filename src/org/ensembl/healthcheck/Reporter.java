@@ -28,6 +28,9 @@ public interface Reporter {
     /**
      * Called when a message needs to be stored.
      * 
+     * (Comment mnuhn: This gets called in the ReportManager, line 188 when
+     * public static void add(ReportLine report) is called.)
+     * 
      * @param reportLine
      *          The report to store.
      */
