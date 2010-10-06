@@ -44,6 +44,21 @@
 			excludepackagenames = "org.ensembl.healthcheck.test.*"
 			windowtitle   = "EG Healthchecks">
 			<fileset dir="${src.java.dir}" defaultexcludes="yes" />
+		</javadoc>
+	</target>
+
+        <target name="javadoc.uml.api" description="An alternative to javadoc.api that creates javadoc documentation with uml inheritance diagrams. Requires the program dot to be installed.">
+		<mkdir dir="docs/api"/>
+		<javadoc
+			destdir       = "docs/api"
+			author        = "true"
+			version       = "true"
+			use           = "true"
+			sourcepathref = "sourcepath.code"
+			classpathref  = "compile.classpath"
+			excludepackagenames = "org.ensembl.healthcheck.test.*"
+			windowtitle   = "EG Healthchecks">
+			<fileset dir="${src.java.dir}" defaultexcludes="yes" />
 			<doclet  name="org.umlgraph.doclet.UmlGraphDoc" path="${lib.dir.devel}/UmlGraph-5.3.jar" >
 				<param name="-inferrel" />
 				<param name="-inferdep" />
