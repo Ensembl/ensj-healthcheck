@@ -33,9 +33,9 @@
 	/>	
 
         <target name="javadoc.api" description="Creates javadoc documentation.">	
-		<mkdir dir="docs/api"/>
+		<mkdir dir="${automatic_documentation}/api"/>
 		<javadoc
-			destdir       = "docs/api"
+			destdir       = "${automatic_documentation}/api"
 			author        = "true"
 			version       = "true"
 			use           = "true"
@@ -48,7 +48,7 @@
 	</target>
 
         <target name="javadoc.uml.api" description="An alternative to javadoc.api that creates javadoc documentation with uml inheritance diagrams. Requires the program dot to be installed.">
-		<mkdir dir="docs/api"/>
+		<mkdir dir="${automatic_documentation}/api"/>
 		<javadoc
 			destdir       = "docs/api"
 			author        = "true"
