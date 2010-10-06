@@ -28,9 +28,29 @@ public interface ConfigureHost {
 	String getPassword();
 	boolean isPassword();
 
-	@Option	(description = "The driver to be used for connecting to the database server")
+	@Option	(description = "")
 	String getDriver();
 	boolean isDriver();
+
+	@Option	(description = "")
+	String getHost2();
+	boolean isHost2();
+
+	@Option	(description = "")	
+	String getPort2();
+	boolean isPort2();
+	
+	@Option	(description = "")	
+	String getUser2();
+	boolean isUser2();
+	
+	@Option	(description = "")	
+	String getPassword2();
+	boolean isPassword2();
+
+	@Option	(description = "")
+	String getDriver2();
+	boolean isDriver2();
 
 	@Option(
 			longName    = "secondary.host",
