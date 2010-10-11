@@ -966,7 +966,7 @@ public class ReportManager {
 			stmt.setLong(2, sessionID);
 			stmt.setString(3, report.getDatabaseName());
 			// EG Store species name and db type from explicit report line, not from database
-			stmt.setString(4, report.getSpecies().toString());
+			stmt.setString(4, report.getSpeciesName());
 			stmt.setString(5, report.getType().toString());
 			stmt.setString(6, report.getShortTestCaseName());
 			stmt.setString(7, report.getLevelAsString());

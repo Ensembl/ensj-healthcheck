@@ -24,8 +24,8 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry.DatabaseInfo;
  * A single line of a report. Each ReportLine stores the names of the test case
  * and database (as Strings) a message, and a level. See the constants defined
  * by this class for the different levels. Levels are represented as ints to
- * allow easy comparison and setting of thresholds.
- * EG: For improved report tracing, include DatabaseInfo and Species in ReportLine
+ * allow easy comparison and setting of thresholds. EG: For improved report
+ * tracing, include DatabaseInfo and Species in ReportLine
  */
 public class ReportLine {
 
@@ -37,12 +37,12 @@ public class ReportLine {
 
 	/** The database name that this report refers to */
 	protected String databaseName;
-	protected Species species;
+	protected String speciesName;
 	protected DatabaseType type;
 
 	/** The message that this report contains */
 	protected String message;
-	
+
 	/** The team responsible for this report */
 	protected String teamResponsible;
 
@@ -71,20 +71,25 @@ public class ReportLine {
 	 * Creates a new instance of ReportLine
 	 * 
 	 * @param testCaseName
-	 *          The test case to refer to.
+	 *            The test case to refer to.
 	 * @param databaseName
-	 *          The database name involved.
+	 *            The database name involved.
 	 * @param level
-	 *          The level of this report.
+	 *            The level of this report.
 	 * @param message
-	 *          The message to report.
+	 *            The message to report.
 	 */
-	public ReportLine(String testCaseName, String name, int level, String message, String teamResponsible) {
+	public ReportLine(String testCaseName, String name, int level,
+			String message, String teamResponsible) {
 
 		this.testCaseName = testCaseName;
 		DatabaseInfo info = DatabaseRegistryEntry.getInfoFromName(name);
 		this.databaseName = info.getName();
-		this.species = info.getSpecies();
+		if (info.getSpecies() != Species.UNKNOWN) {
+			speciesName = info.getSpecies().toString();
+		} else {
+			speciesName = info.getAlias();
+		}
 		this.type = info.getType();
 		this.level = level;
 		this.message = message;
@@ -108,7 +113,7 @@ public class ReportLine {
 	 * Set the level of this report.
 	 * 
 	 * @param l
-	 *          The new level.
+	 *            The new level.
 	 */
 	public void setLevel(int l) {
 
@@ -131,7 +136,7 @@ public class ReportLine {
 	 * Set the report message.
 	 * 
 	 * @param s
-	 *          The new message.
+	 *            The new message.
 	 */
 	public void setMessage(String s) {
 
@@ -154,7 +159,7 @@ public class ReportLine {
 	 * Set the name of the test case that this report is associated with.
 	 * 
 	 * @param s
-	 *          The new name.
+	 *            The new name.
 	 */
 	public void setTestCaseName(String s) {
 
@@ -177,7 +182,7 @@ public class ReportLine {
 	 * Set the name of the database that this report line is associated with.
 	 * 
 	 * @param s
-	 *          The new name.
+	 *            The new name.
 	 */
 	public void setDatabaseName(String s) {
 
@@ -225,10 +230,11 @@ public class ReportLine {
 			result = "NONE";
 			break;
 		default:
-			System.err.println("Can't get text equivalent for report level " + level);
+			System.err.println("Can't get text equivalent for report level "
+					+ level);
 			break;
 		}
-		
+
 		return result;
 
 	} // getLevelAsString
@@ -241,12 +247,12 @@ public class ReportLine {
 		this.teamResponsible = teamResponsible;
 	}
 
-	public Species getSpecies() {
-		return species;
+	public String getSpeciesName() {
+		return speciesName;
 	}
 
-	public void setSpecies(Species species) {
-		this.species = species;
+	public void setSpecies(String species) {
+		this.speciesName = species;
 	}
 
 	public DatabaseType getType() {
