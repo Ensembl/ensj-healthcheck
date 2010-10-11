@@ -29,12 +29,12 @@
 <pre>
 
 ./run-configurable-testrunner.sh \
-	--group testgroup.AllComparaTests \
-	--less testgroup.ProblemTests testgroup.ExpectedToFailOnEGComparaBacteria  \
+	--group ComparaHomology \
+	--less ComparaGenomic  \
 	--conf  \
 		config/healthchecks/database.external_db.properties \
 		config/healthchecks/database.secondary.external_db.properties \
-	--output.databases ensembl_compara_bacteria_5_58 \
+	--test.databases ensembl_compara_bacteria_5_58 \
 	--output.database healthchecks_mnuhn \
 	--reporterType Database
 
