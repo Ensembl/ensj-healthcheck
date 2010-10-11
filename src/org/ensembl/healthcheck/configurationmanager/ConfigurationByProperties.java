@@ -35,8 +35,11 @@ public class ConfigurationByProperties<T> extends AbstractAliasAwareWithStanardI
 	 * found in the property will be split on the value in 
 	 * the listSeparatorInProperyFile variable to generate a list of values.
 	 * 
+	 * Update 11/10/2010: Changed from comma (",") to space (" ") as requested
+	 * by Dan
+	 * 
 	 */
-	final static String listSeparatorInProperyFile = ","; 
+	final static String listSeparatorInProperyFile = " "; 
 	
 	// Awesome for debugging
 	private final String type = "My type is ConfigurationByProperties.";
