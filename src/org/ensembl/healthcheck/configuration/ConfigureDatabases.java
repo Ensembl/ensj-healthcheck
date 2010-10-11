@@ -15,12 +15,16 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 public interface ConfigureDatabases {
 
 	// The databases on which healthchecks will be run
+	//
+	// Update 11/10/2010: Changed from output.databases to test.databases in  
+	// order to prevent confusion as requested by Dan
+	//
 	@Option(
-		longName    = "output.databases",
-		description = "Name of database that should be tested (e.g.: "
-			+ "ensembl_compara_bacteria_5_58). Any configured tests will "
-			+ "be run on this database. Not to be confused with "
-			+ "--output.database."
+		longName    = "test.databases",
+		description = "Name of databases that should be tested (e.g.: "
+			+ "ensembl_compara_bacteria_5_58). If there is more than one "
+			+ "database, separate with spaces. Any configured tests will "
+			+ "be run on these databases. Formerly known as output.databases."
 	)
 	List<String> getOutputDatabases();
 	boolean isOutputDatabases();
