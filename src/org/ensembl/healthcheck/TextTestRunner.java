@@ -372,6 +372,10 @@ public class TextTestRunner extends TestRunner implements Reporter {
 				System.exit(1);
 
 			}
+			
+			if (groupsToRun.size() == 0) {
+				System.err.println("No testcase names or groups specified");
+			}
 
 			// print matching databases if no tests specified
 			if (groupsToRun.size() == 0 && databaseRegexps.size() > 0) {
