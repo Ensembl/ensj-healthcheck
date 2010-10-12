@@ -67,6 +67,17 @@ public class ForeignKeyMethodLinkSpeciesSetId extends SingleDatabaseTestCase {
                 "method_link_species_set", "species_set_id",
                 "species_set_id not in (SELECT distinct species_set_id from species_set_tag)");
 
+            /* Check uniqueness of species_set entries */
+            int numOfDuplicatedSpeciesSets = getRowCount(con,
+                "SELECT gdbs, count(*) num, GROUP_CONCAT(species_set_id) species_set_ids FROM ("+
+                "SELECT species_set_id, GROUP_CONCAT(genome_db_id) gdbs FROM species_set GROUP by species_set_id) t1 GROUP BY gdbs HAVING COUNT(*)>1");
+            if (numOfDuplicatedSpeciesSets > 0) {
+                ReportManager.problem(this, con, "FAILED species_set table contains " + numOfDuplicatedSpeciesSets + " duplicated entries");
+                ReportManager.problem(this, con, "USEFUL SQL: SELECT gdbs, count(*) num, GROUP_CONCAT(species_set_id) species_set_ids FROM ("+
+                    "SELECT species_set_id, GROUP_CONCAT(genome_db_id) gdbs FROM species_set GROUP by species_set_id) t1 GROUP BY gdbs HAVING COUNT(*)>1");
+                result = false;
+            }
+
             /* Check method_link_species_set <-> synteny_region */
             /* All method_link for syntenies must have an internal ID between 101 and 199 */
             result &= checkForOrphansWithConstraint(con,
