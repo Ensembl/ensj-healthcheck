@@ -54,7 +54,7 @@ public class MicroArrayDimensionTables extends SingleDatabaseTestCase {
 
 		Connection martCon = martDbre.getConnection();
 
-		// get the list of species, and find the xref types in each one
+		// get the list of species, and find the microarray types in each one
 		DatabaseRegistryEntry[] funcgenDBs = getDatabaseRegistryByPattern(".*_funcgen_.*").getAll();
 
 		for (DatabaseRegistryEntry funcgenDB : funcgenDBs) {
