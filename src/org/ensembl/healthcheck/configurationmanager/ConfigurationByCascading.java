@@ -44,9 +44,6 @@ public class ConfigurationByCascading<T> extends AbstractConfigurationBacking {
 	
 	private List<T> configurationObjects;
 
-	// Awesome for debugging
-	private final String type = "My type is ConfigurationByCascading.";
-
 	/**
 	 * @param configurationObjects
 	 * 
@@ -83,7 +80,7 @@ public class ConfigurationByCascading<T> extends AbstractConfigurationBacking {
 	 */
 	public String toString() {
 		
-		StringBuffer toString = new StringBuffer(type + " comprising of: ");
+		StringBuffer toString = new StringBuffer(this.getClass().getSimpleName() + " comprising of: ");
 		
 		int order = 1;
 		
