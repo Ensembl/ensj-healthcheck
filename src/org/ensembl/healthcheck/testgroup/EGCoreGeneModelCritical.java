@@ -1,6 +1,7 @@
 package org.ensembl.healthcheck.testgroup;
 
 import org.ensembl.healthcheck.GroupOfTests;
+import org.ensembl.healthcheck.testcase.eg_core.DuplicateTopLevel;
 import org.ensembl.healthcheck.testcase.eg_core.PeptideTranslationAttribs;
 import org.ensembl.healthcheck.testcase.eg_core.ProteinCodingGene;
 import org.ensembl.healthcheck.testcase.generic.AssemblyException;
@@ -13,7 +14,6 @@ import org.ensembl.healthcheck.testcase.generic.DuplicateAssembly;
 import org.ensembl.healthcheck.testcase.generic.ExonRank;
 import org.ensembl.healthcheck.testcase.generic.ExonStrandOrder;
 import org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd;
-import org.ensembl.healthcheck.testcase.generic.FeatureCoords;
 import org.ensembl.healthcheck.testcase.generic.GeneCoordSystem;
 import org.ensembl.healthcheck.testcase.generic.Karyotype;
 import org.ensembl.healthcheck.testcase.generic.NullTranscripts;
@@ -39,9 +39,10 @@ public class EGCoreGeneModelCritical extends GroupOfTests {
 		addTest(AssemblyException.class, AssemblyMultipleOverlap.class,
 				AssemblySeqregion.class, CanonicalTranscriptCoding.class,
 				CompareSchema.class, CoreForeignKeys.class,
-				DuplicateAssembly.class, ExonRank.class, ExonStrandOrder.class,
-				ExonTranscriptStartEnd.class, 
-				GeneCoordSystem.class, Karyotype.class, NullTranscripts.class,
+				DuplicateAssembly.class, DuplicateTopLevel.class,
+				ExonRank.class, ExonStrandOrder.class,
+				ExonTranscriptStartEnd.class, GeneCoordSystem.class,
+				Karyotype.class, NullTranscripts.class,
 				PeptideTranslationAttribs.class, ProteinCodingGene.class,
 				SeqRegionAttribsPresent.class, SeqRegionCoordSystem.class,
 				SeqRegionsTopLevel.class, StableID.class, Strand.class,
