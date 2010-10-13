@@ -9,6 +9,7 @@ package org.ensembl.healthcheck.testcase.eg_core;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
@@ -97,8 +98,8 @@ public class AliasAndNaming extends AbstractEgCoreTestCase {
 			}
 		}
 
-		String productionName = template.queryForDefaultObject(META_QUERY,
-				String.class, PRODUCTION_NAME, speciesId);
+		String productionName = org.ensembl.healthcheck.util.CollectionUtils.getFirstElement(template.queryForDefaultObjectList(META_QUERY,
+				String.class, PRODUCTION_NAME, speciesId),null);
 		if (StringUtils.isEmpty(productionName)) {
 			passes = false;
 			ReportManager.problem(this, dbre.getConnection(), "Meta value for "
