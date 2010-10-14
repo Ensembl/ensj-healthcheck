@@ -10,7 +10,7 @@ public class ReporterFactory {
 	 *
 	 */
 	public static enum ReporterType {
-		Text, Database
+		TEXT, DATABASE
 	}
 
 	/**
@@ -23,10 +23,10 @@ public class ReporterFactory {
 
 		Reporter r = null;
 		
-		if (reporterType == ReporterType.Text) {
+		if (reporterType == ReporterType.TEXT) {
 			r = new TextReporter();
 		}
-		if (reporterType == ReporterType.Database) {
+		if (reporterType == ReporterType.DATABASE) {
 			r = new DatabaseReporter();
 		}		
 		return r;

@@ -16,41 +16,45 @@ public interface ConfigureTestGroups {
 	// Specify one or many groups of tests that will be run.
 	@Option(
 		shortName   = "g",
+		longName   = "include_groups",
 		description = "Specify which groups of tests should be run. Fully "
 			+ "qualified class names can be used as well as their short "
 			+ "names."
 	) 
-	List<String> getGroup();
-	boolean isGroup();
+	List<String> getGroups();
+	boolean isGroups();
 
 	// A list of names of groups of tests that should not be run
 	// although they may be referenced in a test group
 	@Option(
-		shortName   = "l",
+			shortName   = "G",
+			longName   = "exclude_groups",
 		description = "Specify which groups of tests should not be run. Fully "
 			+ "qualified class names can be used as well as their short "
 			+ "names."
 	) 
-	List<String> getLess();
-	boolean isLess();
+	List<String> getExcludeGroups();
+	boolean isExcludeGroups();
 
 	// A list of individual tests that should be run
 	@Option(
 		shortName="t",
+		longName = "include_tests",
 		description = "Specify which tests should be run. Fully "
 			+ "qualified class names can be used as well as their short "
 			+ "names."
 	) 
-	List<String> getTest();
-	boolean isTest();
+	List<String> getTests();
+	boolean isTests();
 
 	// A list of individual tests that should not be run
 	@Option(
-		shortName="n",
+		shortName="T",
+		longName = "exclude_tests",
 		description = "Specify which tests should not be run. Fully "
 			+ "qualified class names can be used as well as their short "
 			+ "names."
 	) 
-	List<String> getNotest();
-	boolean isNotest();
+	List<String> getExcludeTests();
+	boolean isExcludeTests();
 }

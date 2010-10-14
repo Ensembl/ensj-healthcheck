@@ -103,7 +103,7 @@ public class ConfigurableTestRunner extends TestRunner {
 		ReporterType r;
 		
 		try {
-			r = ReporterType.valueOf(reporterType);
+			r = ReporterType.valueOf(reporterType.toUpperCase());
 		} catch(IllegalArgumentException e) {
 			throw new ConfigurationException(
 				"Parameter reportertype has been set to an illegal value: "
@@ -301,12 +301,12 @@ public class ConfigurableTestRunner extends TestRunner {
 		
 		List<DatabaseRegistryEntry> databasesToTestList = new ArrayList<DatabaseRegistryEntry>();
 
-		if (!configuration.isOutputDatabases()) {
+		if (!configuration.isTestDatabases()) {
 			throw new ConfigurationException("Parameter output.databases has not been set!");
 		}
 		
 		// Create a DatabaseRegistryEntry for every database the user specified 
-		for(String databaseToTest : configuration.getOutputDatabases()) {
+		for(String databaseToTest : configuration.getTestDatabases()) {
 
 			DatabaseRegistryEntry currentDatabaseToTest = new DatabaseRegistryEntry(ds, databaseToTest, null, null);
 			databasesToTestList.add(currentDatabaseToTest);
@@ -319,7 +319,7 @@ public class ConfigurableTestRunner extends TestRunner {
 			logger.warning("Warning: no databases configured!");
 		}
 
-		if (this.reporterType == ReporterType.Database) {
+		if (this.reporterType == ReporterType.DATABASE) {
 		
 			// Create the database to which tests will be written
 			CreateHealthCheckDB c = new CreateHealthCheckDB((ConfigureHealthcheckDatabase) configuration);
@@ -352,7 +352,7 @@ public class ConfigurableTestRunner extends TestRunner {
 
 		printReportsByTest(outputLevel, printFailureText);
 
-		if (this.reporterType == ReporterType.Database) {
+		if (this.reporterType == ReporterType.DATABASE) {
 			// Commented out, because all it does is try to update a column
 			// in the database that doesn't exist.
 			

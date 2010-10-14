@@ -131,32 +131,32 @@ public class ConfigurationBasedTestRegistry implements TestRegistry {
 		// Which would make params.isTest() to be true, but the following
 		// attempt to load the class "" fail.
 		
-		if (params.isGroup() && !isEmptyList(params.getGroup())) {
-			for (String groupName : params.getGroup()) {				
+		if (params.isGroups() && !isEmptyList(params.getGroups())) {
+			for (String groupName : params.getGroups()) {				
 				//GroupOfTests groupOfTests = (GroupOfTests) Class.forName(groupName).newInstance();
 				GroupOfTests groupOfTests = (GroupOfTests) testInstantiator.forName(groupName).newInstance();
 				userDefinedGroupOfTests.addTest(groupOfTests);
 			}
 		}
 		
-		if (params.isTest() && !isEmptyList(params.getTest())) {
-			for (String testName : params.getTest()) {
+		if (params.isTests() && !isEmptyList(params.getTests())) {
+			for (String testName : params.getTests()) {
 				//Class<EnsTestCase> singleTestClass = (Class<EnsTestCase>) Class.forName(testName);
 				Class<EnsTestCase> singleTestClass = (Class<EnsTestCase>) testInstantiator.forName(testName);
 				userDefinedGroupOfTests.addTest(singleTestClass);
 			}
 		}
 		
-		if (params.isLess() && !isEmptyList(params.getLess())) {
-			for (String groupName : params.getLess()) {				
+		if (params.isExcludeGroups() && !isEmptyList(params.getExcludeGroups())) {
+			for (String groupName : params.getExcludeGroups()) {				
 				//GroupOfTests groupOfTests = (GroupOfTests) Class.forName(groupName).newInstance();
 				GroupOfTests groupOfTests = (GroupOfTests) testInstantiator.forName(groupName).newInstance();
 				userDefinedGroupOfTests.removeTest(groupOfTests);
 			}
 		}
 	
-		if (params.isNotest() && !isEmptyList(params.getNotest())) {
-			for (String testName : params.getNotest()) {				
+		if (params.isExcludeTests() && !isEmptyList(params.getExcludeTests())) {
+			for (String testName : params.getExcludeTests()) {				
 				//Class<EnsTestCase> singleTestClass = (Class<EnsTestCase>) Class.forName(testName);
 				Class<EnsTestCase> singleTestClass = (Class<EnsTestCase>) testInstantiator.forName(testName);
 				userDefinedGroupOfTests.removeTest(singleTestClass);
