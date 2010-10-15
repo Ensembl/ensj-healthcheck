@@ -101,10 +101,11 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
 		result &= checkForOrphans(con, "misc_feature_misc_set", "misc_set_id", "misc_set", "misc_set_id", true);
 
-		//for a sanger_vega db, ignore misc_featres whcih have no annotation
+		// for a sanger_vega db, ignore misc_featres whcih have no annotation
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {
-			result &= checkForOrphansWithConstraint(con, "misc_feature", "misc_feature_id", "misc_attrib", "misc_feature_id", "misc_feature_id NOT IN (select mfms.misc_feature_id from misc_feature_misc_set as mfms join misc_set as ms on mfms.misc_set_id=ms.misc_set_id and ms.code='noAnnotation')");
-		}else{
+			result &= checkForOrphansWithConstraint(con, "misc_feature", "misc_feature_id", "misc_attrib", "misc_feature_id",
+					"misc_feature_id NOT IN (select mfms.misc_feature_id from misc_feature_misc_set as mfms join misc_set as ms on mfms.misc_set_id=ms.misc_set_id and ms.code='noAnnotation')");
+		} else {
 			result &= checkForOrphans(con, "misc_feature", "misc_feature_id", "misc_attrib", "misc_feature_id", true);
 		}
 
@@ -187,8 +188,6 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		result &= checkForOrphans(con, "unmapped_object", "unmapped_reason_id", "unmapped_reason", "unmapped_reason_id", true);
 		result &= checkForOrphans(con, "unmapped_object", "analysis_id", "analysis", "analysis_id", true);
 
-		result &= checkForOrphans(con, "transcript_supporting_feature", "transcript_id", "transcript", "transcript_id", false);
-
 		result &= checkForOrphansWithConstraint(con, "supporting_feature", "feature_id", "dna_align_feature", "dna_align_feature_id", "feature_type = 'dna_align_feature'");
 
 		result &= checkForOrphansWithConstraint(con, "supporting_feature", "feature_id", "protein_align_feature", "protein_align_feature_id", "feature_type = 'protein_align_feature'");
@@ -245,6 +244,39 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		// added by dr2: check that the foreign key display_marker_synonym_id points to a synonym
 		// for the marker
 		result &= checkDisplayMarkerSynonymID(con);
+
+		// check for transcript_supporting_feature - transcript links, but transcripts from certain logic names are allowed to not have
+		// supporting features
+		result &= checkTranscriptSupportingFeatures(con);
+
+		return result;
+
+	}
+
+	// -------------------------------------------------------------------------
+	private boolean checkTranscriptSupportingFeatures(Connection con) {
+
+		boolean result = true;
+
+		// list of transcript analysis logic_names which are allowed to not have supporting features
+		String allowedNoSupporting = "('BGI_Augustus_geneset', 'BGI_Genewise_geneset', 'BGI_Genscan_geneset', 'zfish_RNASeq', 'gorilla_RNASeq', 'ccds_import', 'refseq_human_import',"
+				+ " 'Medaka_Genome_Project', 'oxford_FGU', 'MT_genbank_import', 'LRG_import', 'ncRNA')";
+
+		String sql = "SELECT COUNT(*) FROM transcript t LEFT JOIN transcript_supporting_feature tsf ON t.transcript_id = tsf.transcript_id JOIN analysis a ON a.analysis_id=t.analysis_id WHERE a.analysis_id=t.analysis_id and tsf.transcript_id IS NULL AND a.logic_name NOT IN "
+				+ allowedNoSupporting;
+
+		int rows = getRowCount(con, sql);
+		
+		if (rows > 0) {
+			
+			ReportManager.problem(this, con, rows + " transcripts which should have transcript_supporting_features do not have them");
+			result = false;
+			
+		} else {
+		
+			ReportManager.correct(this, con, "All transcripts that require supporting features have them");
+		}
+		
 		return result;
 
 	}
@@ -280,44 +312,37 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 	// -------------------------------------------------------------------------
 	public boolean checkKeysByEnsemblObjectType(Connection con, String baseTable, String type) {
 
-		//Need to handle under scores in tables here
-		//e.g. ProbeFeature > probe_feature
+		// Need to handle under scores in tables here
+		// e.g. ProbeFeature > probe_feature
 		String table = type.replaceAll("([a-z])([A-Z])", "$1_$2");
 		table = table.toLowerCase();
-		
-		//Where is ensembl_object_id used?
+
+		// Where is ensembl_object_id used?
 		String column = baseTable.equals("object_xref") ? "ensembl_id" : "ensembl_object_id";
 
 		return checkForOrphansWithConstraint(con, baseTable, column, table, table + "_id", "ensembl_object_type=\'" + type + "\'");
-		
-		
-		/**Is this not just checkForOrphansWithConstraint?
-		
-	
-		//int rows = getRowCount(con, "SELECT COUNT(*) FROM " + baseTable + " x LEFT JOIN " + table + " ON x." + column + "=" + table + "." + table + 
-		//		"_id WHERE x.ensembl_object_type=\'" + type + "\' AND " + table + "." + table + "_id IS NULL");
 
-				
-		if (rows > 0) {
-
-			ReportManager.problem(this, con, rows + " rows in " + baseTable + " refer to non-existent " + table + "s");
-			return false;
-
-		} else {
-
-			ReportManager.correct(this, con, "All rows in " + baseTable + " refer to valid " + table + "s");
-			return true;
-		}
-		**/
+		/**
+		 * Is this not just checkForOrphansWithConstraint?
+		 * 
+		 * 
+		 * //int rows = getRowCount(con, "SELECT COUNT(*) FROM " + baseTable + " x LEFT JOIN " + table + " ON x." + column + "=" + table
+		 * + "." + table + // "_id WHERE x.ensembl_object_type=\'" + type + "\' AND " + table + "." + table + "_id IS NULL");
+		 * 
+		 * 
+		 * if (rows > 0) {
+		 * 
+		 * ReportManager.problem(this, con, rows + " rows in " + baseTable + " refer to non-existent " + table + "s"); return false;
+		 * 
+		 * } else {
+		 * 
+		 * ReportManager.correct(this, con, "All rows in " + baseTable + " refer to valid " + table + "s"); return true; }
+		 **/
 
 	} // checkKeysByEnsemblObjectType
 
 	// -------------------------------------------------------------------------
 
-	
-	
-	
-	
 	private boolean checkCanonicalTranscriptIDKey(Connection con) {
 		boolean result = true;
 
