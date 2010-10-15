@@ -269,7 +269,7 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		
 		if (rows > 0) {
 			
-			ReportManager.problem(this, con, rows + " transcripts which should have transcript_supporting_features do not have them");
+			ReportManager.problem(this, con, rows + " transcripts which should have transcript_supporting_features do not have them\nUseful SQL: " + sql);
 			result = false;
 			
 		} else {
