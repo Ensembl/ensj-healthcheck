@@ -29,8 +29,8 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check for identically-named seq_regions in different co-ordinate systems.
- * Also check that identically-named seq_regions have the same length.
+ * Check for identically-named seq_regions in different co-ordinate systems. Also check that identically-named seq_regions have the
+ * same length.
  */
 
 public class SeqRegionCoordSystem extends SingleDatabaseTestCase {
@@ -52,7 +52,7 @@ public class SeqRegionCoordSystem extends SingleDatabaseTestCase {
 	 * Run the test.
 	 * 
 	 * @param dbre
-	 *            The database to use.
+	 *          The database to use.
 	 * @return true if the test passed.
 	 * 
 	 */
@@ -61,9 +61,7 @@ public class SeqRegionCoordSystem extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		if (dbre.isMultiSpecies()) {
-			logger.finest("Skipping " + getShortTestName()
-					+ " healthcheck for multi-species database "
-					+ dbre.getName());
+			logger.finest("Skipping " + getShortTestName() + " healthcheck for multi-species database " + dbre.getName());
 			return true;
 		}
 
@@ -83,7 +81,7 @@ public class SeqRegionCoordSystem extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-        // EG add loop to support multispecies databases
+		// EG add loop to support multispecies databases
 		for (int speciesId : dbre.getSpeciesIds()) {
 
 			HashMap coordSystems = new HashMap();
@@ -91,54 +89,33 @@ public class SeqRegionCoordSystem extends SingleDatabaseTestCase {
 			// build hash of co-ord system IDs to names & versions
 			try {
 				Statement stmt = con.createStatement();
-				ResultSet rs = stmt
-						.executeQuery("SELECT coord_system_id, name, version FROM coord_system where species_id="
-								+ speciesId);
+				ResultSet rs = stmt.executeQuery("SELECT coord_system_id, name, version FROM coord_system where species_id=" + speciesId);
 				while (rs.next()) {
-					coordSystems.put(new Long(rs.getLong("coord_system_id")),
-							rs.getString("name") + ":"
-									+ rs.getString("version"));
+					coordSystems.put(new Long(rs.getLong("coord_system_id")), rs.getString("name") + ":" + rs.getString("version"));
 				}
 			} catch (SQLException se) {
 				se.printStackTrace();
 			}
 
 			// check each pair in turn
-			Long[] coordSystemIDs = (Long[]) coordSystems.keySet().toArray(
-					new Long[coordSystems.size()]);
+			Long[] coordSystemIDs = (Long[]) coordSystems.keySet().toArray(new Long[coordSystems.size()]);
 			for (int i = 0; i < coordSystemIDs.length; i++) {
 				for (int j = i + 1; j < coordSystemIDs.length; j++) {
 
 					String csI = (String) coordSystems.get(coordSystemIDs[i]);
 					String csJ = (String) coordSystems.get(coordSystemIDs[j]);
 
-					int same = getRowCount(con,
-							"SELECT COUNT(*) FROM seq_region s1, seq_region s2 WHERE s1.coord_system_id="
-									+ coordSystemIDs[i]
-									+ " AND s2.coord_system_id="
-									+ coordSystemIDs[j]
-									+ " AND s1.name = s2.name");
+					int same = getRowCount(con, "SELECT COUNT(*) FROM seq_region s1, seq_region s2 WHERE s1.coord_system_id=" + coordSystemIDs[i] + " AND s2.coord_system_id=" + coordSystemIDs[j]
+							+ " AND s1.name = s2.name");
 
 					if (same > 0) {
 
-						ReportManager
-								.problem(
-										this,
-										con,
-										"Co-ordinate systems "
-												+ csI
-												+ " and "
-												+ csJ
-												+ " have "
-												+ same
-												+ " identically-named seq_regions - this may cause problems for ID mapping");
+						ReportManager.problem(this, con, "Co-ordinate systems " + csI + " and " + csJ + " have " + same + " identically-named seq_regions - this may cause problems for ID mapping");
 						result = false;
 
 					} else {
 
-						ReportManager.correct(this, con, "Co-ordinate systems "
-								+ csI + " and " + csJ
-								+ " have no identically-named seq_regions");
+						ReportManager.correct(this, con, "Co-ordinate systems " + csI + " and " + csJ + " have no identically-named seq_regions");
 
 					}
 
@@ -156,36 +133,24 @@ public class SeqRegionCoordSystem extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-        // EG add special code for dealing with multispecies databases
+		// EG add special code for dealing with multispecies databases
 		for (int speciesId : dbre.getSpeciesIds()) {
 
-			String query="SELECT COUNT(*) FROM seq_region s1, seq_region s2, coord_system c1, coord_system c2 " +
-			"WHERE s1.name=s2.name AND s1.coord_system_id != s2.coord_system_id " +
-			"AND c1.coord_system_id=s1.coord_system_id AND c2.coord_system_id=s2.coord_system_id " +
-			"AND s1.length != s2.length and c1.species_id="
-			+ speciesId + " and c2.species_id=" + speciesId;
-			//for vega, only report if they are on the same assembly
-			if(dbre.getType()==DatabaseType.SANGER_VEGA){
-				query+=" and c1.version=c2.version";
+			String query = "SELECT COUNT(*) FROM seq_region s1, seq_region s2, coord_system c1, coord_system c2 " + "WHERE s1.name=s2.name AND s1.coord_system_id != s2.coord_system_id "
+					+ "AND c1.coord_system_id=s1.coord_system_id AND c2.coord_system_id=s2.coord_system_id " + "AND s1.length != s2.length and c1.species_id=" + speciesId + " and c2.species_id=" + speciesId;
+			// for vega, only report if they are on the same assembly
+			if (dbre.getType() == DatabaseType.SANGER_VEGA || dbre.getType() == DatabaseType.VEGA) {
+				query += " and c1.version=c2.version";
 			}
-			int rows = getRowCount(con,query);
+			int rows = getRowCount(con, query);
 			if (rows > 0) {
 
-				ReportManager
-						.problem(
-								this,
-								con,
-								rows
-										+ " seq_regions have the same name but different lengths for species "
-										+ speciesId);
+				ReportManager.problem(this, con, rows + " seq_regions have the same name but different lengths for species " + speciesId);
 				result = false;
 
 			} else {
 
-				ReportManager
-						.correct(this, con,
-								"All seq_region lengths match for species "
-										+ speciesId);
+				ReportManager.correct(this, con, "All seq_region lengths match for species " + speciesId);
 
 			}
 		}
