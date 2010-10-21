@@ -51,11 +51,13 @@ GWS_UNI
 GadflyP
 GeneFinder
 Genscan
+havana_IG_gene
 HMMPANTHER
 HOX
 Medaka_Genome_Project
 Medaka_TranscriptCoalescer
 MT_genbank_import
+ncRNA_pseudogene
 PIRSF
 PRINTS
 PROFILE
