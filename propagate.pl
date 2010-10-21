@@ -9,20 +9,16 @@ use Data::Dumper;
 
 $Data::Dumper::Sortkeys = 1;
 
-my ($host1, $port1, $user1, $pass1, $host2, $port2, $user2, $pass2, $host_prev, $port_prev, $user_prev, $pass_prev, $dbname, $old_release, $new_release, $quiet, $new_dbname);
+my ($host1, $port1, $user1, $pass1, $host2, $port2, $user2, $pass2, $dbname, $old_release, $new_release, $quiet, $new_dbname);
 
-GetOptions('user1=s'           => \$user1,
-	   'pass1=s'           => \$pass2,
-	   'host1=s'           => \$host1,
-	   'port1=i'           => \$port1,
-	   'user2=s'           => \$user2,
-	   'pass2=s'           => \$pass2,
-	   'host2=s'           => \$host2,
-	   'port2=i'           => \$port2,
-	   'user_prev=s'       => \$user_prev,
-	   'pass_prev=s'       => \$pass_prev,
-	   'host_prev=s'       => \$host_prev,
-	   'port_prev=i'       => \$port_prev,
+GetOptions('user1=s'            => \$user1,
+	   'pass1=s'            => \$pass2,
+	   'host1=s'            => \$host1,
+	   'port1=i'            => \$port1,
+	   'user2=s'            => \$user2,
+	   'pass2=s'            => \$pass2,
+	   'host2=s'            => \$host2,
+	   'port2=i'            => \$port2,
 	   'dbname=s'          => \$dbname,
            'old_release=i'     => \$old_release,
 	   'new_release=i'     => \$new_release,
@@ -40,11 +36,6 @@ $pass2    = $pass2 || "ensembl";
 $host2    = $host2 || "ens-staging2";
 $port2    = $port2 || "3306";
 
-$user_prev = $user_prev || "ensadmin";
-$pass_prev = $pass_prev || "ensembl";
-$host_prev = $host_prev || "ens-livemirror";
-$port_prev = $port_prev || "3306";
-
 # Note healthchecks db ($dbname) is assumed to be on $host1
 $dbname  = $dbname || "healthchecks";
 
@@ -61,9 +52,6 @@ my $dbi2 = undef;
 if ($host2) {
  $dbi2 =  DBI->connect("DBI:mysql:host=$host2:port=$port2;", $user2, $pass2, {'RaiseError' => 1}) || die "Can't connect to secondary database on $host2:port2\n";
 }
-
-# connect to server where previous release databases should be
-my $dbi_prev = DBI->connect("DBI:mysql:host=$host_prev:port=$port_prev", $user_prev, $pass_prev, {'RaiseError' => 1}) || die "Can't connect to previous release database server\n";
 
 # cache database name mappings
 my $old_to_new_db_name;
@@ -88,11 +76,11 @@ if (!$new_dbname) {
 } else {
 
   # we are propagating a single database
-  $old_to_new_db_name = create_db_name_cache($dbi1, $dbi1, $old_release, $new_release, $new_dbname);
+  $old_to_new_db_name = create_db_name_cache($dbi1, $old_release, $new_release, $new_dbname);
 
   # add second database server list if required
   if ($host2) {
-    my $second_server_dbs = create_db_name_cache($dbi1, $dbi2, $old_release, $new_release, $new_dbname);
+    my $second_server_dbs = create_db_name_cache($dbi1, $dbi2, $old_release, $new_release);
     $old_to_new_db_name = { %$old_to_new_db_name, %$second_server_dbs }; # note use of {} since we're dealing with references
 
   }
@@ -106,12 +94,8 @@ if (!$new_dbname) {
   }
 }
 
-# cache genebuild.start_date entries for all databases
-my $meta_cache = create_meta_cache($dbi1, $dbi2, $dbi_prev);
-
-
 # propagate! propagate!
-propagate($dbi1, $dbi_prev, $old_release, $new_release, $session_id, $old_to_new_db_name, $meta_cache);
+propagate($dbi1, $old_release, $new_release, $session_id, $old_to_new_db_name);
 
 # --------------------------------------------------------------------------------
 
@@ -238,9 +222,9 @@ sub create_session {
 
 sub propagate {
 
-  my ($dbi, $dbi_prev, $old_release, $new_release, $propagation_session_id, $old_to_new_db_name, $meta_cache) = @_;
+  my ($dbi, $old_release, $new_release, $propagation_session_id, $old_to_new_db_name) = @_;
 
-  my @types = qw(manual_ok_all_releases manual_ok_this_assembly manual_ok_this_genebuild);
+  my @types = qw(manual_ok_all_releases manual_ok_this_assembly);
 
   my $select_sth = $dbi->prepare("SELECT r.first_session_id, r.species, r.database_type, r.timestamp, r.testcase, r.result, r.text, a.person, a.action,a.comment,a.created_at, a.modified_at, a.created_by, a.modified_by FROM report r, annotation a WHERE a.report_id=r.report_id AND r.database_name=? AND a.action=?");
 
@@ -272,20 +256,9 @@ sub propagate {
 
 	if ($type eq 'manual_ok_this_assembly') {
 	  # compare the assembly component from the database name
-	  my $is_new_assembly = new_assembly($old_database, $new_database);
+	  my $is_new_assembly = new_assembly($old_database,$new_database);
 	  # if it is a new assembly, do not propagate this HC
 	  next if $is_new_assembly;
-	}
-
-	# type eq manual_ok_this_genebuild
-	# will only need to propagate if it is the same genebuild
-	# i.e. if genebuild.start_date values in meta table are the same
-	# so skip propagation if they are not the same
-
-	if ($type eq 'manual_ok_this_genebuild') {
-
-	  next if ($meta_cache->{$old_database} ne $meta_cache->{$new_database});
-
 	}
 
 	# create new report
@@ -301,7 +274,6 @@ sub propagate {
       print "\t$old_database\t$count\n" if (!$quiet && $count > 0);
 
     }
-
     print "Propagated " . $counts{$type} . " $type reports\n" unless ($quiet);
 
   } # foreach type
@@ -313,7 +285,7 @@ sub propagate {
 # this method will return true if it is a new species assembly, false otherwise
 # will check the number in the name. e.g. homo_sapiens_core_53_(36)o
 
-sub new_assembly {
+sub new_assembly{
 
   my $old_database = shift;
   my $new_database = shift;
@@ -329,7 +301,7 @@ sub new_assembly {
 
 # method that will return the latest session_id in the database for the new_release
 
-sub get_latest_session_id {
+sub get_latest_session_id{
 
   my ($dbi,$new_release) = @_;
   #get latest session_id for the new release
@@ -341,45 +313,5 @@ sub get_latest_session_id {
   } else {
     return -1;
   }
-
-}
-
-# --------------------------------------------------------------------------------
-# Cache all the genebuild.start_date entries in all databases
-# Note all databases = all on $dbi_prev, $dbi1, $dbi2, e.g. all on ens-livemirror, ens-staging1, ens-staging2
-
-sub create_meta_cache {
-
-  my ($dbi1, $dbi2, $dbi_prev) = @_;
-
-  print "Caching genebuild.start_date meta entries\n" unless ($quiet);
-
-  my %cache;
-
-  foreach my $dbi ($dbi1, $dbi2, $dbi_prev) {
-
-    my $list_sth = $dbi->prepare("SHOW DATABASES LIKE ?");
-
-    # get all core databases on this server whose names are in the (could be optimised by just looking at the ones we need)
-    $list_sth->execute("%\\_core\\_%");
-
-    my $dbname;
-    $list_sth->bind_columns(\$dbname);
-
-    while ($list_sth->fetch()) {
-
-      my $meta_sth = $dbi->prepare("SELECT meta_value FROM $dbname.meta WHERE meta_key='genebuild.start_date'"); # can't do this with a prepared statemen
-
-      $meta_sth->execute();
-
-      my $start_date = ($meta_sth->fetchrow_array())[0] || die "Error getting genebuild.start_date from $dbname";
-
-      $cache{$dbname} = $start_date;
-
-    }
-
-  }
-
-  return \%cache;
 
 }
