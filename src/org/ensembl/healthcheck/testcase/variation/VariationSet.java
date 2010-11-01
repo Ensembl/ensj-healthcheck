@@ -339,7 +339,7 @@ public class VariationSet extends SingleDatabaseTestCase {
 	    ResultSet rs;
 	    
 	    // As long as there are sub sets, get all subsets for each of them
-	    if (!seen && pStmt.execute()) {
+	    if (pStmt.execute()) {
 		rs = pStmt.getResultSet();
 		while (rs.next()) {
 		    // Add the child's subtree
