@@ -2,6 +2,7 @@ package org.ensembl.healthcheck.reporter;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportLine;
+import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Reporter;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.util.Utils;
@@ -34,6 +35,13 @@ public class DatabaseReporter implements Reporter {
 		str += Utils.formatTimeString(duration);
 
 		Utils.writeStringToFile(TIMINGS_FILE, str, true, true);
+		
+		// Copied over from the NodeDatabaseTestRunner so we have the markers
+		// in the database that the webcode needs
+		//
+	    if (dbre !=null) {
+			ReportManager.info(testCase, dbre.getConnection(), "#Ended");
+	    }
 
 	}
 
@@ -67,7 +75,13 @@ public class DatabaseReporter implements Reporter {
 	public void startTestCase(EnsTestCase testCase, DatabaseRegistryEntry dbre) {
 
 		testStartTime = System.currentTimeMillis();
-
+		
+		// Copied over from the NodeDatabaseTestRunner so we have the markers
+		// in the database that the webcode needs
+		//
+	    if (dbre != null) {
+			ReportManager.info(testCase, dbre.getConnection(), "#Started");
+		}
 	}
 
 }
