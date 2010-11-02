@@ -1,13 +1,17 @@
 package org.ensembl.healthcheck;
 
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
 import org.ensembl.healthcheck.configuration.ConfigureTestGroups;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.testcase.OrderedDatabaseTestCase;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.CollectionUtils;
 
 /**
  * A test registry that returns tests based on a configuration file instead of
@@ -16,6 +20,9 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  */
 public class ConfigurationBasedTestRegistry implements TestRegistry {
 
+	
+	/** The logger to use for this class */
+	protected static Logger logger = Logger.getLogger("HealthCheckLogger");
 	//
 	// Begin getters and setters
 	//
@@ -214,15 +221,15 @@ public class ConfigurationBasedTestRegistry implements TestRegistry {
 		
 		StringBuffer result = new StringBuffer();
 		
-		result.append( "DatabaseTestCaseList: \n"        + ListToString(this.getDatabaseTestCaseList()) + "\n" );
-		result.append( "Single database testcases: \n"   + ListToString(this.getAllSingle(null, null))  + "\n" );
-		result.append( "Multi database testcases: \n"    + ListToString(this.getAllMulti(null))         + "\n" );
-		result.append( "Ordered database testcases: \n"  + ListToString(this.getAllOrdered(null))       + "\n" );
+		result.append( "DatabaseTestCaseList: \n"        + listToString(this.getDatabaseTestCaseList()) + "\n" );
+		result.append( "Single database testcases: \n"   + listToString(this.getAllSingle(null, null))  + "\n" );
+		result.append( "Multi database testcases: \n"    + listToString(this.getAllMulti(null))         + "\n" );
+		result.append( "Ordered database testcases: \n"  + listToString(this.getAllOrdered(null))       + "\n" );
 		
 		return result.toString();
 	}
 	
-	protected String ListToString(List<EnsTestCase> l) {
+	protected String listToString(List<? extends EnsTestCase> l) {
 
 		StringBuffer s = new StringBuffer(); 
 		
@@ -238,29 +245,61 @@ public class ConfigurationBasedTestRegistry implements TestRegistry {
 		return new ArrayList<EnsTestCase>(this.getUserDefinedGroupOfTests().getTests());
 	}
 
-	public List<EnsTestCase> getAllMulti(List<String> groupsToRun) {
-		return new ArrayList<EnsTestCase>(this.getMultiDatabaseTestCaseList());
+	public List<MultiDatabaseTestCase> getAllMulti(List<String> groupsToRun) {
+		return new ArrayList<MultiDatabaseTestCase>(this.getMultiDatabaseTestCaseList());
 	}
 
-	public List<EnsTestCase> getAllOrdered(List<String> groups) {
-		return new ArrayList<EnsTestCase>(this.getOrderedDatabaseTestCaseList());
+	public List<OrderedDatabaseTestCase> getAllOrdered(List<String> groups) {
+		return new ArrayList<OrderedDatabaseTestCase>(this.getOrderedDatabaseTestCaseList());
 	}
 
-	public List<EnsTestCase> getAllSingle(List<String> groupsToRun,
+	public List<SingleDatabaseTestCase> getAllSingle(List<String> groupsToRun,
 			DatabaseType type) {
-		return new ArrayList<EnsTestCase>(this.getSingleDatabaseTestCaseList());
+		if(groupsToRun!=null && groupsToRun.size()>0) {
+			throw new UnsupportedOperationException("Group selection not supported for "+this.getClass().getName()+".getAllSingle()");
+		}
+		return getSingle(type);
+	}
+	
+	private Map<DatabaseType,List<SingleDatabaseTestCase>> singleTestsByType;
+	protected Map<DatabaseType,List<SingleDatabaseTestCase>> getSingleTestsByType() {
+		if(singleTestsByType==null) {
+			singleTestsByType = CollectionUtils.createHashMap();
+			for(SingleDatabaseTestCase test: this.getSingleDatabaseTestCaseList()) {
+				for(DatabaseType type: test.getAppliesToTypes()) {
+					List<SingleDatabaseTestCase> tests = singleTestsByType.get(type);
+					if(tests==null) {
+						tests = CollectionUtils.createArrayList();
+						singleTestsByType.put(type,tests);
+					}
+					tests.add(test);
+				} 
+			}
+		}
+		return singleTestsByType;
+	}
+	public List<SingleDatabaseTestCase> getSingle(DatabaseType type) {
+		if(type==null) {
+			return this.getSingleDatabaseTestCaseList();
+		} else {
+			List<SingleDatabaseTestCase> ts = getSingleTestsByType().get(type);
+			if(ts==null) {
+				logger.warning("Couldn't find any tests for database type "+type.getName());
+				ts = CollectionUtils.createArrayList();
+			}
+			return ts;
+		}
 	}
 
 	public String[] getGroups(DatabaseType type) {
-		throw new RuntimeException("getGroups has not been implemented yet!");
-		//return null;
+		throw new UnsupportedOperationException(this.getClass().getName()+".getGroups() not yet implemented");
 	}
 
 	public EnsTestCase[] getTestsInGroup(String string, DatabaseType type) {
-		throw new RuntimeException("getTestsInGroup has not been implemented yet!");
+		throw new UnsupportedOperationException(this.getClass().getName()+".getTestsInGroup() not yet implemented");
 	}
 
 	public DatabaseType[] getTypes() {
-		throw new RuntimeException("getTypes has not been implemented yet!");
+		throw new UnsupportedOperationException(this.getClass().getName()+".getTypes() not yet implemented");
 	}
 }
