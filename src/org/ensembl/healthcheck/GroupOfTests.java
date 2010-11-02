@@ -128,7 +128,10 @@ public class GroupOfTests {
 		Set<EnsTestCase> tests = new HashSet<EnsTestCase>();
 		for(Class<? extends EnsTestCase> clazz: this.setOfTests) {
 			try {
-				tests.add(clazz.newInstance());
+				EnsTestCase test = clazz.newInstance();
+				test.setTypeFromPackageName();
+				test.types();
+				tests.add(test);
 			} catch (InstantiationException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
