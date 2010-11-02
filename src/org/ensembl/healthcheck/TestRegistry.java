@@ -20,6 +20,9 @@ package org.ensembl.healthcheck;
 import java.util.List;
 
 import org.ensembl.healthcheck.testcase.EnsTestCase;
+import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
+import org.ensembl.healthcheck.testcase.OrderedDatabaseTestCase;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
  * Hold information about tests. Can also find tests in a particular location.
@@ -30,20 +33,20 @@ public interface TestRegistry {
 	 * @param type
 	 * @return
 	 */
-	public List<EnsTestCase> getAllSingle(List<String> groupsToRun,
+	public List<SingleDatabaseTestCase> getAllSingle(List<String> groupsToRun,
 			DatabaseType type);
 
 	/**
 	 * @param groupsToRun
 	 * @return list of tests belonging to those groups
 	 */
-	public List<EnsTestCase> getAllMulti(List<String> groupsToRun);
+	public List<MultiDatabaseTestCase> getAllMulti(List<String> groupsToRun);
 
 	/**
 	 * @param groups list of group names
 	 * @return list of tests belonging to those groups
 	 */
-	public List<EnsTestCase> getAllOrdered(List<String> groups);
+	public List<OrderedDatabaseTestCase> getAllOrdered(List<String> groups);
 
 	/**
 	 * @return all tests in the registry

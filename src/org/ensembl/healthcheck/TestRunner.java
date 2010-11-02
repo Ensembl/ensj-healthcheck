@@ -50,19 +50,19 @@ public class TestRunner {
 	/** Output level used by ReportManager */
 	protected int outputLevel = ReportLine.PROBLEM;
 
-    // EG change to public to allow Database runner to modify this
+	// EG change to public to allow Database runner to modify this
 	/** The name of the file where configuration is stored */
-	//public static String propertiesFile = "";
-	
+	// public static String propertiesFile = "";
+
 	private static String propertiesFile = "database.properties";
-	
+
 	public static String getPropertiesFile() {
 		return propertiesFile;
 	}
+
 	public void setPropertiesFile(String propertiesFile) {
 		this.propertiesFile = propertiesFile;
 	}
-
 
 	/** Flag to determine whether repairs will be shown if appropriate */
 	protected boolean showRepair = false;
@@ -100,45 +100,38 @@ public class TestRunner {
 		// --------------------------------
 		// Single-database tests
 
-		DatabaseRegistryEntry[] databases = databaseRegistry.getAll();
-
 		// run the appropriate tests on each of them
-		for (int i = 0; i < databases.length; i++) {
+		for (DatabaseRegistryEntry database : databaseRegistry.getAll()) {
 
-			DatabaseRegistryEntry database = databases[i];
-			List allSingleDatabaseTests = testRegistry.getAllSingle(
-					groupsToRun, database.getType());
-
-			for (Iterator it = allSingleDatabaseTests.iterator(); it.hasNext();) {
-
-				SingleDatabaseTestCase testCase = (SingleDatabaseTestCase) it
-						.next();
+			for (SingleDatabaseTestCase testCase : testRegistry.getAllSingle(
+					groupsToRun, database.getType())) {
 
 				if (!testCase.isLongRunning()
 						|| (testCase.isLongRunning() && !skipSlow)) {
 
-					ReportManager.startTestCase(testCase, databases[i]);
-
 					try {
+						ReportManager.startTestCase(testCase, database);
+						logger.info("Running " + testCase.getName() + " ["
+								+ database.getName() + "]");
+
 						boolean result = testCase.run(database);
 
-						ReportManager.finishTestCase(testCase, result,
-								databases[i]);
+						ReportManager
+								.finishTestCase(testCase, result, database);
 						logger.info(testCase.getName() + " ["
-								+ databases[i].getName() + "]"
+								+ database.getName() + "]"
 								+ (result ? "PASSED" : "FAILED"));
 
+						checkRepair(testCase, database);
 						numberOfTestsRun++;
 
-						checkRepair(testCase, database);
 					} catch (Throwable e) {
 						logger.warning("Could not execute test "
 								+ testCase.getName() + " on "
-								+ databases[i].getName() + ": "
-								+ e.getMessage());
+								+ database.getName() + ": " + e.getMessage());
 					}
+					
 				} else {
-
 					logger.info("Skipping long-running test "
 							+ testCase.getName());
 
@@ -154,15 +147,10 @@ public class TestRunner {
 		// here we just pass the whole DatabaseRegistry to each test
 		// and let the test decide what to do
 
-		List allMultiDatabaseTests = testRegistry.getAllMulti(groupsToRun);
-
-		for (Iterator it = allMultiDatabaseTests.iterator(); it.hasNext();) {
-
-			MultiDatabaseTestCase testCase = (MultiDatabaseTestCase) it.next();
+		for (MultiDatabaseTestCase testCase: testRegistry.getAllMulti(groupsToRun)) {
 
 			if (!testCase.isLongRunning()
 					|| (testCase.isLongRunning() && !skipSlow)) {
-
 				try {
 					ReportManager.startTestCase(testCase, null);
 
@@ -176,7 +164,7 @@ public class TestRunner {
 
 					numberOfTestsRun++;
 				} catch (Throwable e) {
-				    // catch and log unexpected exceptions
+					// catch and log unexpected exceptions
 					logger.warning("Could not execute test "
 							+ testCase.getName() + ": " + e.getMessage());
 				}
@@ -195,12 +183,7 @@ public class TestRunner {
 		// on the command line
 		DatabaseRegistryEntry[] orderedDatabases = databaseRegistry.getAll();
 
-		List allOrderedDatabaseTests = testRegistry.getAllOrdered(groupsToRun);
-
-		for (Iterator it = allOrderedDatabaseTests.iterator(); it.hasNext();) {
-
-			OrderedDatabaseTestCase testCase = (OrderedDatabaseTestCase) it
-					.next();
+		for (OrderedDatabaseTestCase testCase: testRegistry.getAllOrdered(groupsToRun)) {
 
 			ReportManager.startTestCase(testCase, null);
 
