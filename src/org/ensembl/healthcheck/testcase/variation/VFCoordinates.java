@@ -56,12 +56,13 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 	 */
 	public boolean run(DatabaseRegistry dbr) {
 
-		boolean result = true;
+		boolean allResult = true;
 
 		DatabaseRegistryEntry[] variationDBs = dbr.getAll(DatabaseType.VARIATION);
 
 		for (int i = 0; i < variationDBs.length; i++) {
 
+			boolean result = true;
 			DatabaseRegistryEntry dbrvar = variationDBs[i];
 			String variationName = dbrvar.getName();
 			
@@ -115,9 +116,10 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 			if (result) {
 				ReportManager.correct(this, con, "VFCoordinates test run successfully");
 			}
+			allResult = (allResult && result);
 
 		}
-		return result;
+		return allResult;
 
 	}
 
