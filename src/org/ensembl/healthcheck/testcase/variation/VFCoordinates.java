@@ -19,12 +19,12 @@
 package org.ensembl.healthcheck.testcase.variation;
 
 import java.sql.Connection;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
@@ -63,14 +63,20 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 		for (int i = 0; i < variationDBs.length; i++) {
 
 			DatabaseRegistryEntry dbrvar = variationDBs[i];
-			Species species = dbrvar.getSpecies();
 			String variationName = dbrvar.getName();
+			
+			// the database registry parameter dbr only contains the databases matching the regular expression passed on the command line
+			// so create a database registry containing all the core databases and find the one we want
+			List<String> coreRegexps = new ArrayList<String>();
+			coreRegexps.add(".*_core_.*");
+			
+			DatabaseRegistry allDBR = new DatabaseRegistry(coreRegexps, null, null, false);
+			
 			String coreName = variationName.replaceAll("variation", "core");
-			DatabaseRegistryEntry dbrcore = dbr.getByExactName(coreName);
+			DatabaseRegistryEntry dbrcore = allDBR.getByExactName(coreName);
 			if (dbrcore == null) {
-				result = false;
 				logger.severe("Incorrect core database " + coreName + " for " + variationName);
-				return result;
+				return false;
 			}
 
 			Connection con = dbrvar.getConnection();
