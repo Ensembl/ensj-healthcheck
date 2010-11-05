@@ -82,8 +82,11 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
         for (int i = 0; i < allPrimaryComparaDBs.length; i++) {
             // ... check the entries with a taxon id
             result &= checkSpeciesSetByTaxon(allPrimaryComparaDBs[i]);
-            // ... check the entriy for low-coverage genomes
+            // ... check the entry for low-coverage genomes
             result &= checkLowCoverageSpecies(allPrimaryComparaDBs[i], speciesDbrs);
+
+            // ... check that we have one name tag for every MSA
+            result &= checkNameTagForMultipleAlignments(allPrimaryComparaDBs[i]);
 
             if (allSecondaryComparaDBs.length == 0) {
               result = false;
@@ -134,12 +137,12 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
         Iterator it = secondarySets.keySet().iterator();
         while (it.hasNext()) {
             Object next = it.next();
-            Integer primaryValue = new Integer(primarySets.get(next).toString());
+            Object primaryValue = primarySets.get(next);
             Integer secondaryValue = new Integer(secondarySets.get(next).toString());
             if (primaryValue == null) {
                 ReportManager.problem(this, con1, "Species set \"" + next.toString() + "\" is missing.");
                 result = false;
-            } else if (primaryValue < secondaryValue) {
+            } else if (new Integer(primaryValue.toString()) < secondaryValue) {
                 ReportManager.problem(this, con1, "Species set \"" + next.toString() + "\" is present only " + primaryValue +
                     " times instead of " + secondaryValue + " as in " + DBUtils.getShortDatabaseName(con2));
                 result = false;
@@ -239,6 +242,64 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
     
     
 
+
+    public boolean checkNameTagForMultipleAlignments(DatabaseRegistryEntry dbre) {
+
+        boolean result = true;
+
+        Connection con = dbre.getConnection();
+        HashMap allSetsWithAName = new HashMap();
+        HashMap allSetsForMultipleAlignments = new HashMap();
+
+        if (tableHasRows(con, "species_set_tag")) {
+
+            // Get list of species_set sets in the secondary server
+            String sql1 = "SELECT species_set_id, value FROM species_set_tag WHERE tag = 'name'";
+
+            // Find all the species_set_ids for multiple alignments
+            String sql2 = new String("SELECT species_set_id, name FROM method_link_species_set JOIN method_link USING (method_link_id) WHERE" +
+                 " class LIKE '%multiple_alignment%' OR class LIKE '%tree_alignment%' OR class LIKE '%ancestral_alignment%'");
+
+            try {
+                Statement stmt1 = con.createStatement();
+                ResultSet rs1 = stmt1.executeQuery(sql1);
+                while (rs1.next()) {
+                    allSetsWithAName.put(rs1.getInt(1), rs1.getString(2)); 
+                }
+                rs1.close();
+                stmt1.close();
+
+                Statement stmt2 = con.createStatement();
+                ResultSet rs2 = stmt2.executeQuery(sql2);
+                while (rs2.next()) {
+                    allSetsForMultipleAlignments.put(rs2.getInt(1), rs2.getString(2)); 
+                }
+                rs2.close();
+                stmt2.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            Iterator it = allSetsForMultipleAlignments.keySet().iterator();
+            while (it.hasNext()) {
+                Object next = it.next();
+                Object setName = allSetsWithAName.get(next);
+                String multipleAlignmentName = allSetsForMultipleAlignments.get(next).toString();
+                if (setName == null) {
+                    ReportManager.problem(this, con, "There is no name entry in species_set_tag for MSA \"" + multipleAlignmentName + "\".");
+                    result = false;
+                }
+            }
+
+        } else {
+            ReportManager.problem(this, con, "species_set_tag table is empty. There will be no aliases for multiple alignments");
+            result = false;
+        }
+
+
+        return result;
+
+    }
 
     public boolean checkSpeciesSetByTaxon(DatabaseRegistryEntry dbre) {
 
