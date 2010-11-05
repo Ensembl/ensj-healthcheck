@@ -75,8 +75,6 @@ public abstract class AbstractEgMeta extends AbstractEgCoreTestCase {
 		SqlTemplate template = getTemplate(dbre);
 		for (int speciesId : template.queryForDefaultObjectList(
 				SPECIES_ID_QUERY, Integer.class)) {
-			ReportManager.info(this, dbre.getConnection(),
-					"Testing meta for species " + speciesId);
 			Map<String, Boolean> metaKeyOut = getKeys(template, speciesId);
 			passes &= testKeys(dbre, speciesId, metaKeyOut);
 		}

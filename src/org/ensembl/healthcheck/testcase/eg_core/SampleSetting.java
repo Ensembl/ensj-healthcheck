@@ -47,8 +47,6 @@ public class SampleSetting extends AbstractEgCoreTestCase {
 
 		for (int speciesId : dbre.getSpeciesIds()) {
 			// 1. get map of samples
-			ReportManager.info(this, dbre.getConnection(),
-					"Testing meta for species " + speciesId);
 			Map<String, String> sampleKeys = template.queryForMap(META_QUERY,
 					TestCaseUtils.singleValueMapper, speciesId);
 			// 2. check expected keys
