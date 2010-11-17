@@ -28,8 +28,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.Utils;
 
 /**
- * Check for null biotypes, and also for any 'ensembl' biotypes - should be
- * 'protein_coding'
+ * Check for null biotypes, and also for any 'ensembl' biotypes - should be 'protein_coding'
  */
 public class Biotypes extends SingleDatabaseTestCase {
 
@@ -116,31 +115,25 @@ public class Biotypes extends SingleDatabaseTestCase {
 		for (int i = 0; i < geneBiotypes.length; i++) {
 
 			String geneBiotype = geneBiotypes[i];
-			String sql = "SELECT DISTINCT(t.biotype) AS biotype, COUNT(*) AS count FROM transcript t, gene g WHERE g.gene_id=t.gene_id AND g.biotype != t.biotype AND g.biotype='"
-					+ geneBiotype + "' GROUP BY t.biotype";
-			boolean thisBiotypeOK = true;
 
-			try {
+			String[] mismatchedBiotypes = getColumnValues(con, String.format("SELECT DISTINCT(t.biotype) FROM transcript t, gene g WHERE g.gene_id=t.gene_id AND g.biotype != t.biotype AND g.biotype='%s'",
+					geneBiotype));
 
-				Statement stmt = con.createStatement();
-				ResultSet rs = stmt.executeQuery(sql);
-				while (rs.next()) {
-
-					int rows = rs.getInt("count");
-					String transcriptBiotype = rs.getString("biotype");
-					ReportManager.problem(this, con, rows + " genes of biotype " + geneBiotype + " have transcripts with biotype "
-							+ transcriptBiotype);
-					thisBiotypeOK = false;
-					result &= thisBiotypeOK;
-
+			if (mismatchedBiotypes.length > 0) {
+				
+				result &= false;
+				
+				// get count for each one
+				for (String transcriptBiotype : mismatchedBiotypes) {
+					
+					int rows = getRowCount(con, String.format("SELECT COUNT(DISTINCT g.gene_id) FROM transcript t, gene g WHERE g.gene_id=t.gene_id AND g.biotype='%s' AND t.biotype='%s'", geneBiotype, transcriptBiotype));
+					ReportManager.problem(this, con, rows + " genes of biotype " + geneBiotype + " have transcripts with biotype " + transcriptBiotype);
+					
 				}
+				
 
-				if (thisBiotypeOK) {
-					ReportManager.correct(this, con, "All genes with biotype " + geneBiotype + " have transcripts with matching biotypes");
-				}
-
-			} catch (SQLException se) {
-				se.printStackTrace();
+			} else {
+				ReportManager.correct(this, con, "All genes with biotype " + geneBiotype + " have transcripts with matching biotypes");
 			}
 
 		}
