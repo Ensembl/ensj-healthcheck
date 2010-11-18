@@ -71,7 +71,8 @@ public class DuplicateExons extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		String sql = "SELECT e.exon_id, e.phase, e.seq_region_start AS start, e.seq_region_end AS end, e.seq_region_id AS chromosome_id, e.end_phase, e.seq_region_strand AS strand "
-				+ "             FROM exon e ORDER BY chromosome_id, strand, start, end, phase, end_phase";
+				+ ", t.gene_id AS gene_id " + "  FROM exon e, exon_transcript et, transcript t " + " WHERE e.exon_id=et.exon_id and et.transcript_id = t.transcript_id "
+				+ " ORDER BY chromosome_id, gene_id, strand, start, end, phase, end_phase";
 
 		Connection con = dbre.getConnection();
 		try {
@@ -80,7 +81,7 @@ public class DuplicateExons extends SingleDatabaseTestCase {
 			stmt.setFetchSize(1000);
 			ResultSet rs = stmt.executeQuery(sql);
 
-			int exonStart, exonEnd, exonPhase, exonChromosome, exonID, exonEndPhase, exonStrand;
+			int exonStart, exonEnd, exonPhase, exonChromosome, exonID, exonEndPhase, exonStrand, exonGeneId;
 			int lastExonStart = -1;
 			int lastExonEnd = -1;
 			int lastExonPhase = -1;
@@ -88,6 +89,7 @@ public class DuplicateExons extends SingleDatabaseTestCase {
 			int lastExonEndPhase = -1;
 			int lastExonStrand = -1;
 			int lastExonID = -1;
+			int lastExonGeneId = -1;
 			int duplicateExon = 0;
 
 			boolean first = true;
@@ -95,20 +97,21 @@ public class DuplicateExons extends SingleDatabaseTestCase {
 			while (rs.next()) {
 
 				// load the vars
-				exonID = rs.getInt(1);
-				exonPhase = rs.getInt(2);
-				exonStart = rs.getInt(3);
-				exonEnd = rs.getInt(4);
-				exonChromosome = rs.getInt(5);
-				exonEndPhase = rs.getInt(6);
-				exonStrand = rs.getInt(7);
+				exonID = rs.getInt("exon_id");
+				exonPhase = rs.getInt("phase");
+				exonStart = rs.getInt("start");
+				exonEnd = rs.getInt("end");
+				exonChromosome = rs.getInt("chromosome_id");
+				exonEndPhase = rs.getInt("end_phase");
+				exonStrand = rs.getInt("strand");
+				exonGeneId = rs.getInt("gene_id");
 
 				if (!first) {
 					if (lastExonChromosome == exonChromosome && lastExonStart == exonStart && lastExonEnd == exonEnd && lastExonPhase == exonPhase && lastExonStrand == exonStrand
-							&& lastExonEndPhase == exonEndPhase) {
+							&& lastExonEndPhase == exonEndPhase && lastExonGeneId != exonGeneId) {
 						duplicateExon++;
 						if (duplicateExon <= MAX_WARNINGS) {
-							ReportManager.warning(this, con, "Exon " + exonID + " is a duplicate of exon " + lastExonID);
+							ReportManager.warning(this, con, "Exon " + exonID + " in gene " + exonGeneId + " is a duplicate of exon " + lastExonID);
 						}
 					}
 				} else {
@@ -122,7 +125,8 @@ public class DuplicateExons extends SingleDatabaseTestCase {
 				lastExonEndPhase = exonEndPhase;
 				lastExonStrand = exonStrand;
 				lastExonID = exonID;
-				
+				lastExonGeneId = exonGeneId;
+
 			} // while rs
 
 			if (duplicateExon > 0) {
@@ -137,7 +141,10 @@ public class DuplicateExons extends SingleDatabaseTestCase {
 			e.printStackTrace();
 		}
 		// EG write correct report line if all OK
-		if(result) ReportManager.correct(this, con, "No duplicate exons found");
+		if (result) {
+			ReportManager.correct(this, con, "No duplicate exons found");
+		}
+
 		return result;
 
 	}
