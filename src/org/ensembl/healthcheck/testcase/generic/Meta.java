@@ -682,7 +682,7 @@ public class Meta extends SingleDatabaseTestCase {
 	private boolean checkDateFormat(Connection con, String key, String s) {
 
 		int year = Integer.parseInt(s.substring(0, 4));
-		if (year < 2003 || year > 2010) {
+		if (year < 2003 || year > 2050) {
 			ReportManager.problem(this, con, "Year part of " + key + " (" + year + ") is incorrect");
 			return false;
 		}
