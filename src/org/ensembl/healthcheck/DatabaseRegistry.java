@@ -18,9 +18,11 @@
 package org.ensembl.healthcheck;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -293,7 +295,7 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 	// using a Set here gets uniqueness for free
 		Set<DatabaseType> types = new HashSet<DatabaseType>();
 
-		for (DatabaseRegistryEntry dbre : this.entries) {
+		for (DatabaseRegistryEntry dbre : entries) {
 			types.add(dbre.getType());
 		}
 
@@ -326,7 +328,7 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 		// using a Set here gets uniqueness for free
 		Set<Species> species = new HashSet<Species>();
 
-		for (DatabaseRegistryEntry dbre : this.entries) {
+		for (DatabaseRegistryEntry dbre : entries) {
 			species.add(dbre.getSpecies());
 		}
 
@@ -348,6 +350,35 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 
 	}
 
+//-------------------------------------------------------------------------
+	/**
+	 * Get a Map containing the list of types for each species.
+	 * 
+	 * @return A map (key:Species, value:Set of DatabaseTypes).
+	 */
+	public final Map<Species, Set<DatabaseType>> getSpeciesTypeMap() {
+
+		Map<Species, Set<DatabaseType>> result = new HashMap<Species, Set<DatabaseType>>();
+		
+		for (DatabaseRegistryEntry dbre : entries) {
+			
+			Species species = dbre.getSpecies();
+			
+			// add species with empty Set of types if required
+			if (!result.containsKey(species)) {
+				result.put(species, new HashSet<DatabaseType>());
+			}
+		
+			// add type to set of types
+			Set<DatabaseType> types = result.get(species);
+			types.add(dbre.getType());
+			
+		}
+		
+		return result;
+	}
+
+	
 	// -----------------------------------------------------------------
 	/**
 	 * @return The number of DatabaseRegistryEntries in this registry.
