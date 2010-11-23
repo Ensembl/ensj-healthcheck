@@ -27,7 +27,7 @@ import org.ensembl.healthcheck.util.DBUtils;
 /**
  * Class that stores information about which databases are available.
  */
-public class DatabaseRegistry {
+public class DatabaseRegistry implements Iterable {
 
 	// Entries is explicitly specified as an ArrayList rather than the list
 	// because the order is important
@@ -173,6 +173,17 @@ public class DatabaseRegistry {
 
 	}
 
+	// -----------------------------------------------------------------
+	/**
+	 * Get a list of all of the DatabaseRegistryEntries stored in this DatabaseRegistry.
+	 * 
+	 * @return The DatabaseRegistryEntries stored in this DatabaseRegistry.
+	 */
+	public final List<DatabaseRegistryEntry> getAllEntries() {
+
+		return entries;
+
+	}
 	// -----------------------------------------------------------------
 	/**
 	 * Get all of the DatabaseRegistryEntries for a particular species
@@ -358,6 +369,15 @@ public class DatabaseRegistry {
 
 		return result;
 
+	}
+
+	/**
+	 * Implement Iterable interface
+	 */
+	public Iterator<DatabaseRegistryEntry> iterator() {
+		
+		return new DatabaseRegistryIterator(this);
+		
 	}
 
 	// -----------------------------------------------------------------
