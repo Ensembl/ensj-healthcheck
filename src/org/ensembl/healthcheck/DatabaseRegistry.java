@@ -27,7 +27,7 @@ import org.ensembl.healthcheck.util.DBUtils;
 /**
  * Class that stores information about which databases are available.
  */
-public class DatabaseRegistry implements Iterable {
+public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 
 	// Entries is explicitly specified as an ArrayList rather than the list
 	// because the order is important
@@ -332,6 +332,15 @@ public class DatabaseRegistry implements Iterable {
 
 	}
 
+//-----------------------------------------------------------------
+	/**
+	 * @return true if this registry is empty.
+	 */
+	public final boolean isEmpty(){
+
+		return entries.size() == 0;
+
+	}
 	// -----------------------------------------------------------------
 	/**
 	 * @return True if this registry contains a particular DatabaseRegistryEntry (note equals() method in DatabaseRegistryEntry
@@ -376,7 +385,7 @@ public class DatabaseRegistry implements Iterable {
 	 */
 	public Iterator<DatabaseRegistryEntry> iterator() {
 		
-		return new DatabaseRegistryIterator(this);
+		return entries.iterator();
 		
 	}
 
