@@ -18,8 +18,10 @@
 package org.ensembl.healthcheck;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.ensembl.healthcheck.util.DBUtils;
@@ -65,7 +67,7 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 		for (DatabaseServer server : servers) {
 
 			if (regexps == null || regexps.size() == 0) {
-				
+
 				String[] names = DBUtils.listDatabases(server.getServerConnection(), null);
 				addEntriesToRegistry(server, names, isSecondary);
 
@@ -73,7 +75,7 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 
 				Iterator<String> it = regexps.iterator();
 				while (it.hasNext()) {
-					
+
 					String regexp = it.next();
 					String[] names = DBUtils.listDatabases(server.getServerConnection(), regexp);
 
@@ -130,14 +132,14 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 
 			if (!this.contains(dbre)) {
 
-				//logger.finest(dbre.getName() + " appears to be type " + dbre.getType() + " and species " + dbre.getSpecies());
+				// logger.finest(dbre.getName() + " appears to be type " + dbre.getType() + " and species " + dbre.getSpecies());
 
 				dbre.setDatabaseRegistry(this);
-				
+
 				entries.add(dbre);
-				
+
 				logger.finest("Added DatabaseRegistryEntry for " + name + " to " + (isSecondary ? "secondary" : "main") + " DatabaseRegistry");
-				
+
 			} else {
 
 				logger.finest("Registry already contains an entry for " + dbre.getName() + ", skipping");
@@ -184,6 +186,7 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 		return entries;
 
 	}
+
 	// -----------------------------------------------------------------
 	/**
 	 * Get all of the DatabaseRegistryEntries for a particular species
@@ -274,8 +277,28 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 		}
 
 		logger.warning("Can't find database matching name " + name);
-		
+
 		return null;
+	}
+
+	// -------------------------------------------------------------------------
+	/**
+	 * Get a list of the types of databases in the registry.
+	 * 
+	 * @return A Set containing each DatabaseType found in the registry, each type only once.
+	 */
+	public final Set<DatabaseType> getUniqueTypes() {
+
+		
+	// using a Set here gets uniqueness for free
+		Set<DatabaseType> types = new HashSet<DatabaseType>();
+
+		for (DatabaseRegistryEntry dbre : this.entries) {
+			types.add(dbre.getType());
+		}
+
+		return types;
+
 	}
 
 	// -------------------------------------------------------------------------
@@ -286,15 +309,7 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 	 */
 	public final DatabaseType[] getTypes() {
 
-		List<DatabaseType> types = new ArrayList<DatabaseType>();
-
-		Iterator<DatabaseRegistryEntry> it = entries.iterator();
-		while (it.hasNext()) {
-			DatabaseRegistryEntry dbre = it.next();
-			if (!types.contains(dbre.getType())) {
-				types.add(dbre.getType());
-			}
-		}
+		Set <DatabaseType> types = getUniqueTypes();
 
 		return (DatabaseType[]) types.toArray(new DatabaseType[types.size()]);
 
@@ -306,17 +321,28 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 	 * 
 	 * @return An array containing each Species found in the registry.
 	 */
+	public final Set<Species> getUniqueSpecies() {
+
+		// using a Set here gets uniqueness for free
+		Set<Species> species = new HashSet<Species>();
+
+		for (DatabaseRegistryEntry dbre : this.entries) {
+			species.add(dbre.getSpecies());
+		}
+
+		return species;
+
+}	
+
+	// -------------------------------------------------------------------------
+	/**
+	 * Get a list of the species in the registry.
+	 * 
+	 * @return An array containing each Species found in the registry.
+	 */
 	public final Species[] getSpecies() {
 
-		List<Species> species = new ArrayList<Species>();
-
-		Iterator<DatabaseRegistryEntry> it = entries.iterator();
-		while (it.hasNext()) {
-			DatabaseRegistryEntry dbre = it.next();
-			if (!species.contains(dbre.getSpecies())) {
-				species.add(dbre.getSpecies());
-			}
-		}
+		Set<Species> species = getUniqueSpecies();
 
 		return (Species[]) species.toArray(new Species[species.size()]);
 
@@ -332,15 +358,16 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 
 	}
 
-//-----------------------------------------------------------------
+	// -----------------------------------------------------------------
 	/**
 	 * @return true if this registry is empty.
 	 */
-	public final boolean isEmpty(){
+	public final boolean isEmpty() {
 
 		return entries.size() == 0;
 
 	}
+
 	// -----------------------------------------------------------------
 	/**
 	 * @return True if this registry contains a particular DatabaseRegistryEntry (note equals() method in DatabaseRegistryEntry
@@ -384,9 +411,9 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 	 * Implement Iterable interface
 	 */
 	public Iterator<DatabaseRegistryEntry> iterator() {
-		
+
 		return entries.iterator();
-		
+
 	}
 
 	// -----------------------------------------------------------------
