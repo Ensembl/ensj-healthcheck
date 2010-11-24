@@ -18,6 +18,7 @@ package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
 
+import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
@@ -27,56 +28,63 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  */
 public class LRG extends SingleDatabaseTestCase {
 
-    /**
-     * Creates a new instance of LRG healthcheck
-     */
-    public LRG() {
-        addToGroup("release");
-        addToGroup("lrg");
-        setDescription("Healthcheck for LRGs");
-    }
+	/**
+	 * Creates a new instance of LRG healthcheck
+	 */
+	public LRG() {
+		
+		addToGroup("release");
+		addToGroup("lrg");
+		setDescription("Healthcheck for LRGs");
+		
+	}
 
-    /**
-     * Check that all seq_regions on the lrg coordinate system have gene and transcripts associated with them
-     * @param dbre
-     *          The database to use.
-     * @return Result.
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
-        boolean result = true;
-    
-        Connection con = dbre.getConnection();
-	
-	// Get all seq_region_ids on the lrg coordinate system
-	String stmt = new String("SELECT sr.seq_region_id FROM seq_region sr JOIN coord_system cs ON sr.coord_system_id = cs.coord_system_id WHERE cs.name LIKE 'lrg' ORDER BY sr.seq_region_id ASC");
-	String[] seq_regions = getColumnValues(con,stmt);
-	String idList = new String();
-	for (int i=0; i<seq_regions.length; i++) {
-		idList += seq_regions[i] + ",";
-	}
-	idList = idList.substring(0,idList.length()-1);
-	
-	// Check that gene annotations exist	
-	stmt = new String("SELECT g.seq_region_id, COUNT(*) FROM gene g WHERE g.seq_region_id IN (" + idList + ") GROUP BY g.seq_region_id");
-	int count = (seq_regions.length - getRowCount(con,stmt));
-	if (count != 0) {
-		ReportManager.problem(this, con, String.valueOf(count) + " LRG seq_regions do not have any gene annotations");
-		result = false;
-	}
-	
-	// Check that transcript annotations exist
-	stmt = new String("SELECT t.seq_region_id, COUNT(*) FROM transcript t WHERE t.seq_region_id IN (" + idList + ") GROUP BY t.seq_region_id");
-	count = (seq_regions.length - getRowCount(con,stmt));
-	if (count != 0) {
-		ReportManager.problem(this, con, String.valueOf(count) + " LRG seq_regions do not have any transcript annotations");
-		result = false;
-	}
-	
-	if ( result ){
-	    ReportManager.correct(this,con,"LRG healthcheck passed without any problem");
-	}
-        return result;
+	/**
+	 * Check that all seq_regions on the lrg coordinate system have gene and transcripts associated with them
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return Result.
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
+		
+		boolean result = true;
 
-    } // run
+		Connection con = dbre.getConnection();
+
+		// Get all seq_region_ids on the lrg coordinate system
+		String stmt = new String("SELECT sr.seq_region_id FROM seq_region sr JOIN coord_system cs ON sr.coord_system_id = cs.coord_system_id WHERE cs.name LIKE 'lrg' ORDER BY sr.seq_region_id ASC");
+		String[] seq_regions = getColumnValues(con, stmt);
+		
+		if (seq_regions.length == 0) {
+			logger.finest("No LRG seq_regions found, skipping test");
+			return true;
+		}
+		
+		String idList = StringUtils.join(seq_regions, ",");
+		
+		// Check that gene annotations exist
+		// TODO - this SQL may fail if there are a large number of LRGs, IN list might be exceeded
+		stmt = new String("SELECT g.seq_region_id, COUNT(*) FROM gene g WHERE g.seq_region_id IN (" + idList + ") GROUP BY g.seq_region_id");
+		int count = (seq_regions.length - getRowCount(con, stmt));
+		if (count != 0) {
+			ReportManager.problem(this, con, String.valueOf(count) + " LRG seq_regions do not have any gene annotations");
+			result = false;
+		}
+
+		// Check that transcript annotations exist
+		stmt = new String("SELECT t.seq_region_id, COUNT(*) FROM transcript t WHERE t.seq_region_id IN (" + idList + ") GROUP BY t.seq_region_id");
+		count = (seq_regions.length - getRowCount(con, stmt));
+		if (count != 0) {
+			ReportManager.problem(this, con, String.valueOf(count) + " LRG seq_regions do not have any transcript annotations");
+			result = false;
+		}
+
+		if (result) {
+			ReportManager.correct(this, con, "LRG healthcheck passed without any problem");
+		}
+		return result;
+
+	} // run
 
 } // LRG
