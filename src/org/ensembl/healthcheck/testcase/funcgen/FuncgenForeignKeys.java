@@ -33,8 +33,6 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 	 */
 	public FuncgenForeignKeys() {
 
-		//addToGroup("post_regbuild");
-		addToGroup("release");
 		addToGroup("funcgen-release");
 		addToGroup("funcgen");
 		setDescription("Check for broken foreign-key relationships.");
