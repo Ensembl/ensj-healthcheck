@@ -28,98 +28,100 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 	String[] types = { "gene", "transcript", "prediction_transcript" }; // add more here - must have analysis_id
 
 	/**
-   * Create a new AnalysisDescription testcase.
-   */
+	 * Create a new AnalysisDescription testcase.
+	 */
 	public AnalysisDescription() {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription("Check that all of certain types of objects have analysis_descriptions; also check that displayable field is set.");
 		setTeamResponsible("GeneBuilders");
-		
+
 	}
 
 	/**
-   * Run the test.
-   * 
-   * @param dbre The database to use.
-   * @return true if the test passed.
-   * 
-   */
+	 * Run the test.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return true if the test passed.
+	 * 
+	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
 
 		result &= checkDescriptions(dbre);
 		result &= checkDisplayable(dbre);
-		
+
 		return result;
 
 	} // run
 
 	// ------------------------------------------------------------------------------
-	
+
 	private boolean checkDescriptions(DatabaseRegistryEntry dbre) {
-		
+
 		boolean result = true;
-		
+
 		Connection con = dbre.getConnection();
 
 		// cache logic_names by analysis_id
-		Map logicNamesByAnalID =  getLogicNamesFromAnalysisTable(con);
-		
+		Map<String,String> logicNamesByAnalID = getLogicNamesFromAnalysisTable(con);
+
 		String[] tableTypes = tableNames();
-		
-		for (int i = 0; i < tableTypes.length; i++) {
-			logger.finest("type is " + tableTypes[i]);
+
+		for (String tableType : tableTypes) {
+			
+			logger.finest("type is " + tableTypes);
+			
 			// get analyses that are used
 			// special case for transcripts - need to link to gene table and get analysis from there
-			String sql =  "SELECT DISTINCT(analysis_id) FROM " + tableTypes[i];
-						
-			if (tableTypes[i].equals("transcript")) {
+			String sql = String.format("SELECT DISTINCT(analysis_id) FROM %s", tableType);
+
+			if (tableType.equals("transcript")) {
 				sql = "SELECT DISTINCT(g.analysis_id) FROM gene g, transcript t WHERE t.gene_id=g.gene_id";
 			}
-			
-			System.out.println(sql);
-			
+
 			String[] analyses = getColumnValues(con, sql);
 
-		
 			// check each one has an analysis_description
-			for (int j = 0; j < analyses.length; j++) {
-				int count = getRowCount(con, "SELECT COUNT(*) FROM analysis_description WHERE analysis_id=" + analyses[j]);
+			for (String analysis : analyses) {
+				
+				int count = getRowCount(con, String.format("SELECT COUNT(*) FROM analysis_description WHERE analysis_id=%s", analysis));
+		
 				if (count == 0) {
-					ReportManager.problem(this, con, "Analysis " + logicNamesByAnalID.get(analyses[j]) + " is used in " + tableTypes[i]
-							+ " but has no entry in analysis_description");
+					
+					ReportManager.problem(this, con, String.format("Analysis %s is used in %s but has no entry in analysis_description", logicNamesByAnalID.get(analysis), tableType));
 					result = false;
+		
 				} else {
-					ReportManager.correct(this, con, "Analysis " + logicNamesByAnalID.get(analyses[j]) + " is used in " + tableTypes[i]
-							+ " and has an entry in analysis_description");
+					
+					ReportManager.correct(this, con, String.format("Analysis %s is used in %s and has an entry in analysis_description", logicNamesByAnalID.get(analysis), tableType));
+					
 				}
 
 			}
 		}
 
 		return result;
-		
+
 	}
-	
+
 	// ------------------------------------------------------------------------------
-	
+
 	private boolean checkDisplayable(DatabaseRegistryEntry dbre) {
-		
+
 		return checkNoNulls(dbre.getConnection(), "analysis_description", "displayable");
-		
+
 	}
-	
+
 	// ------------------------------------------------------------------------------
-	
-	
+
 	protected String[] tableNames() {
 
 		return types;
 
 	}
-	
-	
+
 } // AnalysisDescription
