@@ -1989,9 +1989,9 @@ public abstract class EnsTestCase {
 	 *          The connection to use.
 	 * @return A map of analysis IDs (keys) and logic names (values).
 	 */
-	public Map getLogicNamesFromAnalysisTable(Connection con) {
+	public Map<String,String> getLogicNamesFromAnalysisTable(Connection con) {
 
-		Map map = new HashMap();
+		Map<String,String> map = new HashMap<String,String>();
 
 		try {
 			Statement stmt = con.createStatement();
