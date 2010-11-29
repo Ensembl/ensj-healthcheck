@@ -30,6 +30,6 @@ public class EGVariation extends GroupOfTests {
 				ForeignKeyCoreId.class, IndividualType.class, Meta_coord.class,
 				Meta.class, StructuralVariation.class,
 				TranscriptVariation.class, VariationForeignKeys.class,
-				VariationSet.class, VariationSynonym.class, VFCoordinates.class);
+				VariationSet.class, VFCoordinates.class);
 	}
 }
