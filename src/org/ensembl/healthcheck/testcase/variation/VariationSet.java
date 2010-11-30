@@ -34,6 +34,9 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  */
 public class VariationSet extends SingleDatabaseTestCase {
 
+	// The maximum variation_set_id value that we can store in the set construct in the variation_feature table
+	private static final int MAX_VARIATION_SET_ID = 64;
+
 	/**
 	 * Creates a new instance of VariationSetTestCase
 	 */
@@ -48,6 +51,62 @@ public class VariationSet extends SingleDatabaseTestCase {
 
 	// ---------------------------------------------------------------------
 
+        /**
+         * Store the SQL queries in a Properties object.
+         */
+        private Properties getSQLQueries() {
+            
+            // Store all the needed SQL statements in a Properties object
+            Properties sqlQueries = new Properties();
+            String query;
+            
+	    // Query checking for orphan variation sets in variation_set_variation table
+	    query = new String("SELECT DISTINCT vsv.variation_set_id FROM variation_set_variation vsv LEFT JOIN variation_set vs ON (vs.variation_set_id = vsv.variation_set_id) WHERE vs.variation_set_id IS NULL");
+	    sqlQueries.setProperty(new String("orphanVariation"),query);
+	    
+	    // Query checking for orphan variation sets in the variation_set_structure table
+	    query = new String("SELECT DISTINCT IF (sup.variation_set_id IS NULL, vss.variation_set_super, vss.variation_set_sub) FROM variation_set_structure vss LEFT JOIN variation_set sup ON (sup.variation_set_id = vss.variation_set_super) LEFT JOIN variation_set sub ON (sub.variation_set_id = vss.variation_set_sub) WHERE sup.variation_set_id IS NULL OR sub.variation_set_id IS NULL");
+	    sqlQueries.setProperty(new String("orphanStructure"),query);
+	    
+	    // Query checking for unused variation sets
+	    query = new String("SELECT DISTINCT vs.variation_set_id FROM variation_set vs LEFT JOIN variation_set_variation vsv ON (vsv.variation_set_id = vs.variation_set_id) LEFT JOIN variation_set_structure vss ON (vss.variation_set_super = vs.variation_set_id OR vss.variation_set_sub = vs.variation_set_id) WHERE vsv.variation_set_id IS NULL AND vss.variation_set_super IS NULL");
+	    sqlQueries.setProperty(new String("unusedSets"),query);
+	    
+	    // Query checking that all variations in sets are present in variation table
+	    query = new String("SELECT vsv.variation_set_id, COUNT(*) FROM variation_set_variation vsv LEFT JOIN variation v ON (v.variation_id = vsv.variation_id) WHERE v.variation_id IS NULL GROUP BY vsv.variation_set_id");
+	    sqlQueries.setProperty(new String("orphanVarId"),query);
+	    
+	    // Query checking that no variations belonging to a set is failed
+	    query = new String("SELECT vsv.variation_set_id, COUNT(*) FROM variation_set_variation vsv JOIN failed_variation fv ON (fv.variation_id = vsv.variation_id) GROUP BY vsv.variation_set_id");
+	    sqlQueries.setProperty(new String("failedVariation"),query);
+	    
+	    // Query checking that no variation set has more than one parent
+	    query = new String("SELECT DISTINCT vss1.variation_set_sub FROM variation_set_structure vss1 JOIN variation_set_structure vss2 ON (vss2.variation_set_sub = vss1.variation_set_sub AND vss2.variation_set_super != vss1.variation_set_super)");
+	    sqlQueries.setProperty(new String("multiParent"),query);
+	    
+	    // Query getting all parent variation sets
+	    query = new String("SELECT DISTINCT vss.variation_set_super FROM variation_set_structure vss");
+	    sqlQueries.setProperty(new String("parentSets"),query);
+	    
+	    // Query getting the name for a variation set id
+	    query = new String("SELECT vs.name FROM variation_set vs WHERE vs.variation_set_id = ? LIMIT 1");
+	    sqlQueries.setProperty(new String("setName"),query);
+	    
+	    // Query getting the subsets for a parent variation set id
+	    query = new String("SELECT vss.variation_set_sub FROM variation_set_structure vss WHERE vss.variation_set_super = ?");
+	    sqlQueries.setProperty(new String("subSet"),query);
+	    
+	    // Query getting all combinations of variation sets that contain at least one common variation. These can be checked that none of them have a (grand)parent-child relationship
+	    query = new String("SELECT DISTINCT vsv1.variation_set_id, vsv2.variation_set_id FROM variation_set_variation vsv1 JOIN variation_set_variation vsv2 ON (vsv2.variation_id = vsv1.variation_id AND vsv2.variation_set_id > vsv1.variation_set_id)");
+	    sqlQueries.setProperty(new String("setCombos"),query);
+	    
+	    // Query for checking that the primary keys of all variation sets will fit into the variation_set_id set column in variation_feature
+	    query = new String("SELECT COUNT(*) FROM variation_set vs WHERE vs.variation_set_id > ?");
+	    sqlQueries.setProperty(new String("variationSetIds"),query);
+	    
+            return sqlQueries;
+        }
+	
 	/**
 	 * Check that the variation set data makes sense and has a valid tree structure.
 	 * 
@@ -64,49 +123,7 @@ public class VariationSet extends SingleDatabaseTestCase {
 	    try {
 		
 		// Store all the needed SQL statements in a Properties object
-		Properties sqlQueries = new Properties();
-		String query;
-		
-		// Query checking for orphan variation sets in variation_set_variation table
-		query = new String("SELECT DISTINCT vsv.variation_set_id FROM variation_set_variation vsv LEFT JOIN variation_set vs ON (vs.variation_set_id = vsv.variation_set_id) WHERE vs.variation_set_id IS NULL");
-		sqlQueries.setProperty(new String("orphanVariation"),query);
-		
-		// Query checking for orphan variation sets in the variation_set_structure table
-		query = new String("SELECT DISTINCT IF (sup.variation_set_id IS NULL, vss.variation_set_super, vss.variation_set_sub) FROM variation_set_structure vss LEFT JOIN variation_set sup ON (sup.variation_set_id = vss.variation_set_super) LEFT JOIN variation_set sub ON (sub.variation_set_id = vss.variation_set_sub) WHERE sup.variation_set_id IS NULL OR sub.variation_set_id IS NULL");
-		sqlQueries.setProperty(new String("orphanStructure"),query);
-		
-		// Query checking for unused variation sets
-		query = new String("SELECT DISTINCT vs.variation_set_id FROM variation_set vs LEFT JOIN variation_set_variation vsv ON (vsv.variation_set_id = vs.variation_set_id) LEFT JOIN variation_set_structure vss ON (vss.variation_set_super = vs.variation_set_id OR vss.variation_set_sub = vs.variation_set_id) WHERE vsv.variation_set_id IS NULL AND vss.variation_set_super IS NULL");
-		sqlQueries.setProperty(new String("unusedSets"),query);
-		
-		// Query checking that all variations in sets are present in variation table
-		query = new String("SELECT vsv.variation_set_id, COUNT(*) FROM variation_set_variation vsv LEFT JOIN variation v ON (v.variation_id = vsv.variation_id) WHERE v.variation_id IS NULL GROUP BY vsv.variation_set_id");
-		sqlQueries.setProperty(new String("orphanVarId"),query);
-		
-		// Query checking that no variations belonging to a set is failed
-		query = new String("SELECT vsv.variation_set_id, COUNT(*) FROM variation_set_variation vsv JOIN failed_variation fv ON (fv.variation_id = vsv.variation_id) GROUP BY vsv.variation_set_id");
-		sqlQueries.setProperty(new String("failedVariation"),query);
-		
-		// Query checking that no variation set has more than one parent
-		query = new String("SELECT DISTINCT vss1.variation_set_sub FROM variation_set_structure vss1 JOIN variation_set_structure vss2 ON (vss2.variation_set_sub = vss1.variation_set_sub AND vss2.variation_set_super != vss1.variation_set_super)");
-		sqlQueries.setProperty(new String("multiParent"),query);
-		
-		// Query getting all parent variation sets
-		query = new String("SELECT DISTINCT vss.variation_set_super FROM variation_set_structure vss");
-		sqlQueries.setProperty(new String("parentSets"),query);
-		
-		// Query getting the name for a variation set id
-		query = new String("SELECT vs.name FROM variation_set vs WHERE vs.variation_set_id = ? LIMIT 1");
-		sqlQueries.setProperty(new String("setName"),query);
-		
-		// Query getting the subsets for a parent variation set id
-		query = new String("SELECT vss.variation_set_sub FROM variation_set_structure vss WHERE vss.variation_set_super = ?");
-		sqlQueries.setProperty(new String("subSet"),query);
-		
-		// Query getting all combinations of variation sets that contain at least one common variation. These can be checked that none of them have a (grand)parent-child relationship
-		query = new String("SELECT DISTINCT vsv1.variation_set_id, vsv2.variation_set_id FROM variation_set_variation vsv1 JOIN variation_set_variation vsv2 ON (vsv2.variation_id = vsv1.variation_id AND vsv2.variation_set_id > vsv1.variation_set_id)");
-		sqlQueries.setProperty(new String("setCombos"),query);
-		
+		Properties sqlQueries = getSQLQueries();		
 		Statement stmt = con.createStatement();
 		ResultSet rs;
 		boolean fetch;
@@ -250,6 +267,20 @@ public class VariationSet extends SingleDatabaseTestCase {
 		else {
 		    msg += new String("No variations in variation sets have validation_status 'failed'\n");
 		}
+		
+		// Prepare a statement for checking the variation_set_ids
+		PreparedStatement vsIds = con.prepareStatement(sqlQueries.getProperty("variationSetIds"));
+		vsIds.setInt(1,MAX_VARIATION_SET_ID);
+		rs = vsIds.executeQuery();
+		
+		// Check the returned count, it should be 0
+		rs.next();
+		int count = rs.getInt(1);
+		if (count > 0) {
+		    result = false;
+		    ReportManager.problem(this,con,"There are " + String.valueOf(count) + " variation set(s) whose primary key 'variation_set_id' is too large to be stored in the variation_set_id column in the variation_feature table");
+		}
+		
 	    } catch (Exception e) {
 		ReportManager.problem(this,con,"Exception occured during healthcheck: " + e.toString());
 		result = false;
