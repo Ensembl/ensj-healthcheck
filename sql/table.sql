@@ -50,7 +50,7 @@ CREATE TABLE annotation (
   report_id					INT(10) UNSIGNED NOT NULL,
   person 					VARCHAR(255),
   action						ENUM("manual_ok", "under_review", "note", "healthcheck_bug", "manual_ok_all_releases", "manual_ok_this_assembly", "manual_ok_this_genebuild"),
-  comment					VARCHAR(255),
+  comment					TEXT,
   created_at                 	TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
   modified_at      			TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   created_by					VARCHAR(255),
