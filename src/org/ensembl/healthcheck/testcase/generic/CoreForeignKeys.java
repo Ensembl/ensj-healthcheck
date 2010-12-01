@@ -246,8 +246,10 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		result &= checkDisplayMarkerSynonymID(con);
 
 		// check for transcript_supporting_feature - transcript links, but transcripts from certain logic names are allowed to not have
-		// supporting features
-		result &= checkTranscriptSupportingFeatures(con);
+		// supporting features. Not required in otherfeatures databases.
+		if (dbre.getType() != DatabaseType.OTHERFEATURES) {
+			result &= checkTranscriptSupportingFeatures(con);
+		}
 
 		return result;
 
@@ -266,17 +268,17 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 				+ allowedNoSupporting;
 
 		int rows = getRowCount(con, sql);
-		
+
 		if (rows > 0) {
-			
+
 			ReportManager.problem(this, con, rows + " transcripts which should have transcript_supporting_features do not have them\nUseful SQL: " + sql);
 			result = false;
-			
+
 		} else {
-		
+
 			ReportManager.correct(this, con, "All transcripts that require supporting features have them");
 		}
-		
+
 		return result;
 
 	}
