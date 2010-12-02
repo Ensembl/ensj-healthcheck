@@ -246,10 +246,8 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		result &= checkDisplayMarkerSynonymID(con);
 
 		// check for transcript_supporting_feature - transcript links, but transcripts from certain logic names are allowed to not have
-		// supporting features. Not required in otherfeatures databases.
-		if (dbre.getType() != DatabaseType.OTHERFEATURES) {
-			result &= checkTranscriptSupportingFeatures(con);
-		}
+		// supporting features.
+		result &= checkTranscriptSupportingFeatures(con);
 
 		return result;
 
