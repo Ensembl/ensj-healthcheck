@@ -7,14 +7,14 @@ import java.util.EnumMap;
 
 public enum Species {
 	// defined new Species and properties: taxonomy_id, assemblyprefix, stableIDprefix, alias
-	SARCOPHILUS_HARRISII(9305, "devil", "ENSSHA", "devil,Sarcophilus_harrisii,sarcophilus_harrisii,tasmanian_devil,taz"), AILUROPODA_MELANOLEUCA(9646, "ailMel1", "ENSAME",
+	SARCOPHILUS_HARRISII(9305, "devil", "ENSSHA", "devil,Sarcophilus_harrisii,sarcophilus_harrisii,tasmanian_devil,taz"), AILUROPODA_MELANOLEUCA(9646, "ailMel", "ENSAME",
 			"panda,giant panda,ailuropoda melanoleuca,ailuropoda_melanoleuca"), PAPIO_HAMADRYAS(9557, "Pham", "ENSPHA",
-			"baboon,Papio_hamadryas,papio_hamadryas,papio_hamadryas,sacred_baboon,western_baboon,red_baboon"), MELEAGRIS_GALLOPAVO(9103, "UMD2", "ENSMGA",
+			"baboon,Papio_hamadryas,papio_hamadryas,papio_hamadryas,sacred_baboon,western_baboon,red_baboon"), MELEAGRIS_GALLOPAVO(9103, "UMD", "ENSMGA",
 			"turkey,common turkey,wild turkey,meleagris_gallopavo, meleagris_gallopavo"), MACROPUS_EUGENII(9315, "Meug", "ENSMEU",
 			"wallaby,tammar_wallaby,macropuseugenii,m_eugenii,tammarwallaby,Macropus eugenii,macropus_eugenii"), CALLITHRIX_JACCHUS(9483, "C_jacchus", "ENSCJA",
 			"marmoset,white-tufted-ear marmoset,callithrix_jacchus,callithrix jacchus,Callithrix_jacchus,Callithrix jacchus,callithrix"), CHOLOEPUS_HOFFMANNI(9358, "choHof", "ENSCHO",
 			"Sloth,Two-toed_sloth,Hoffmans_two-fingered_sloth,choloepus_hoffmanni"), GORILLA_GORILLA(9593, "gorGor", "ENSGGO", "gorilla,gorilla_gorilla,ggor"), TAENIOPYGIA_GUTTATA(59729, "taeGut",
-			"ENSTGU", "zebrafinch,zebra_finch,taeniopygia_guttata,taeniopygiaguttata,tguttata,poephila_guttata,taenopygia_guttata"), ORYCTOLAGUS_CUNICULUS(9986, "oryCun2", "ENSOCU",
+			"ENSTGU", "zebrafinch,zebra_finch,taeniopygia_guttata,taeniopygiaguttata,tguttata,poephila_guttata,taenopygia_guttata"), ORYCTOLAGUS_CUNICULUS(9986, "oryCun", "ENSOCU",
 			"rabbit,oryctolagus,domestic_rabbit,bunny,japanese_white_rabbit,european_rabbit,oryctolagus_cuniculus"), GALLUS_GALLUS(9031, "WASHUC", "ENSGAL",
 			"chicken,chick,ggallus,gallusgallus,gallus_gallus"), DANIO_RERIO(7955, "Zv", "ENSDAR", "zebrafish,danio,drerio,daniorerio,danio_rerio"), CULEX_PIPIENS(7175, "CpiJ", "CPIJ",
 			"culex,culexpipiens,culex_pipiens"), TAKIFUGU_RUBRIPES(31033, "FUGU", "ENSTRU", "pufferfish,fugu,frubripes,fugurubripes,fugu_rubripes,takifugu,trubripes,takifugurubripes,takifugu_rubripes"), CAENORHABDITIS_BRIGGSAE(
