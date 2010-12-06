@@ -84,7 +84,7 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
 
 			if (!dbOnly.isEmpty()) {
 				
-				ReportManager.problem(this, con, dbre.getName() + " contains the following biotypes which are missing from " + getProductionDatabase().getName() + ": " + StringUtils.join(dbOnly, ","));
+				ReportManager.problem(this, con, String.format("%ss in %s have the following biotypes which are missing from %s: %s", StringUtils.capitalize(table), dbre.getName(), getProductionDatabase().getName(), StringUtils.join(dbOnly, ",")));
 				result = false;
 	
 			} else {
