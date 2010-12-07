@@ -97,12 +97,16 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 
 	}
 
+	
 	// e.g. neurospora_crassa_core_4_56_1a
 	protected final static Pattern EG_DB = Pattern
 			.compile("^([a-z0-9_]+)_([a-z]+)_[0-9]+_([0-9]+)_([0-9A-Za-z]+)");
 	// e.g. homo_sapiens_core_56_37a
 	protected final static Pattern E_DB = Pattern
 			.compile("^([^_]+_[^_]+)_([a-z]+)_([0-9]+)_([0-9A-Za-z]+)");
+	// e.g. prefix_homo_sapiens_funcgen_60_37e
+	protected final static Pattern PE_DB = Pattern
+			.compile("^[^_]+_([^_]+_[^_]+)_([a-z]+)_([0-9]+)_([0-9A-Za-z]+)");
 	// human_core_20, hsapiens_XXX
 	protected final static Pattern EEL_DB = Pattern
 			.compile("^([^_]+)_([a-z]+)_([0-9A-Za-z]+)");
@@ -149,8 +153,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 			.compile("^(mysql|information_schema)");
 
 	protected final static Pattern[] patterns = {
-		EC_DB, UA_DB, UC_DB, UCM_DB, EA_DB, EGC_DB, EG_DB, E_DB, EM_DB, EE_DB, EEL_DB, V_DB, U_DB,  MYSQL_DB,
-			BLAST_DB, UD_DB, TAX_DB, EW_DB, HELP_DB
+		EC_DB, UA_DB, UC_DB, UCM_DB, EA_DB, EGC_DB, EG_DB, E_DB, PE_DB, EM_DB, EE_DB, EEL_DB, U_DB, V_DB, MYSQL_DB,BLAST_DB, UD_DB, TAX_DB, EW_DB, HELP_DB
 	};
 
 	/**
@@ -183,7 +186,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 		String typeStr = null;
 
 		Matcher m;
-
+	
 		for (Pattern p : patterns) {
 			m = p.matcher(name);
 			if (m.matches()) {
