@@ -52,8 +52,8 @@ public class LogicNamesDisplayable extends SingleDatabaseTestCase {
 	 */
 	public LogicNamesDisplayable() {
 
-		addToGroup("post_genebuild");
-		addToGroup("release");
+		//addToGroup("post_genebuild");
+		//addToGroup("release");
 
 		setDescription("Checks that all logic names in analysis are displayable");
 		setHintLongRunning(true);
