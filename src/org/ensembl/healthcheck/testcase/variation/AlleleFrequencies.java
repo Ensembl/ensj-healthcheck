@@ -71,7 +71,11 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 		
 		// Get the maximum variation id
 		String sql = "SELECT MAX(s.variation_id) FROM " + tables[i] + " s";
-		int maxId = Integer.parseInt(getRowColumnValue(con,sql));
+		sql = getRowColumnValue(con,sql);
+		if (sql.length() == 0) {
+		    sql = new String("0");
+		}
+		int maxId = Integer.parseInt(sql);
 		
 		// The query to get the data
 		sql = "SELECT s.variation_id, s.subsnp_id, s.sample_id, s.frequency FROM " + tables[i] + " s USE INDEX (variation_idx,subsnp_idx) WHERE s.variation_id BETWEEN VIDLOWER AND VIDUPPER ORDER BY s.variation_id, s.subsnp_id, s.sample_id";
