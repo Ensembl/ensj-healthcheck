@@ -260,7 +260,7 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
 		// list of transcript analysis logic_names which are allowed to not have supporting features
 		String allowedNoSupporting = "('BGI_Augustus_geneset', 'BGI_Genewise_geneset', 'BGI_Genscan_geneset', 'zfish_RNASeq', 'gorilla_RNASeq', 'ccds_import', 'refseq_human_import',"
-				+ " 'Medaka_Genome_Project', 'oxford_FGU', 'MT_genbank_import', 'LRG_import', 'ncRNA', 'havana', 'havana_ig_gene')";
+				+ " 'Medaka_Genome_Project', 'oxford_FGU','singapore_gene','singapore_est' 'MT_genbank_import', 'LRG_import', 'ncRNA', 'havana', 'havana_ig_gene')";
 
 		String sql = "SELECT COUNT(*) FROM transcript t LEFT JOIN transcript_supporting_feature tsf ON t.transcript_id = tsf.transcript_id JOIN analysis a ON a.analysis_id=t.analysis_id WHERE a.analysis_id=t.analysis_id and tsf.transcript_id IS NULL AND a.logic_name NOT IN "
 				+ allowedNoSupporting;
