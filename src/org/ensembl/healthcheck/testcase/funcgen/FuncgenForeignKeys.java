@@ -33,6 +33,7 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 	 */
 	public FuncgenForeignKeys() {
 
+		addToGroup("post_regbuild");
 		addToGroup("funcgen-release");
 		addToGroup("funcgen");
 		setDescription("Check for broken foreign-key relationships.");
@@ -136,7 +137,7 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 		result &= checkForOrphans(con, "probe", "array_chip_id", "array_chip", "array_chip_id", false);
 		
 		//result &= checkForOrphans(con, "probe", "probe_set_id", "probe_set", "probe_set_id", false);
-		result &= checkForOrphansWithConstraint(con, "probe", "probe_set_id", "probe_set", "probe_set_id", "probe_set_id is NOT NULL");
+		result &= checkForOrphansWithConstraint(con, "probe", "probe_set_id", "probe_set", "probe_set_id", "probe_set_id !=0");
 		
 		result &= checkForOrphans(con, "probe_set", "probe_set_id", "probe", "probe_set_id");
 		
