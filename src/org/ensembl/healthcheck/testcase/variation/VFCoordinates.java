@@ -87,7 +87,7 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 			int mc = getRowCount(con, "SELECT COUNT(*) FROM " + variationName + ".variation_feature vf LEFT JOIN " + variationName + ".failed_variation f ON vf.variation_id = f.variation_id WHERE f.variation_id IS NULL AND length(vf.allele_string) = 3 and vf.seq_region_start<> vf.seq_region_end and vf.allele_string NOT LIKE '%-%'");
 
 			if (mc > 0) {
-				ReportManager.problem(this, con, "Wrong allele length !! (allele_string <> coordinates length) for " + variationName);
+				ReportManager.problem(this, con, "Wrong allele length !! (allele_string <> coordinates length) for " + mc + " entries in " + variationName);
 				result = false;
 			}
 
