@@ -20,6 +20,7 @@ import java.sql.Connection;
 
 import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
@@ -38,6 +39,18 @@ public class LRG extends SingleDatabaseTestCase {
 		setDescription("Healthcheck for LRGs");
 		
 	}
+	
+  /**
+   * This only applies to core databases.
+   */
+  public void types() {
+
+      removeAppliesToType(DatabaseType.OTHERFEATURES);
+      removeAppliesToType(DatabaseType.VEGA);
+      removeAppliesToType(DatabaseType.SANGER_VEGA);
+  		removeAppliesToType(DatabaseType.RNASEQ);
+
+  }
 
 	/**
 	 * Check that all seq_regions on the lrg coordinate system have gene and transcripts associated with them
