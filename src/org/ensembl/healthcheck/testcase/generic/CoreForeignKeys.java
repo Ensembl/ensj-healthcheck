@@ -247,7 +247,9 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
 		// check for transcript_supporting_feature - transcript links, but transcripts from certain logic names are allowed to not have
 		// supporting features.
-		result &= checkTranscriptSupportingFeatures(con);
+		if (dbre.getType() != DatabaseType.VEGA && dbre.getType() != DatabaseType.SANGER_VEGA) {
+			result &= checkTranscriptSupportingFeatures(con);
+		}
 
 		return result;
 
