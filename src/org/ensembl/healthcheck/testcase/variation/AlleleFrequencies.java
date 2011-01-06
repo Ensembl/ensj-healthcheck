@@ -34,7 +34,6 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
      * Creates a new instance of Check Allele Frequencies
      */
     public AlleleFrequencies() {
-        addToGroup("variation");
         addToGroup("variation-long");
 	setHintLongRunning(true);
         setDescription("Check that the allele frequencies add up to 1");
