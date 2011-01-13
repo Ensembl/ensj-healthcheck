@@ -14,7 +14,6 @@ import org.ensembl.healthcheck.testcase.variation.TranscriptVariation;
 import org.ensembl.healthcheck.testcase.variation.VFCoordinates;
 import org.ensembl.healthcheck.testcase.variation.VariationForeignKeys;
 import org.ensembl.healthcheck.testcase.variation.VariationSet;
-import org.ensembl.healthcheck.testcase.variation.VariationSynonym;
 
 /**
  * Group of tests for variation databases
@@ -31,5 +30,6 @@ public class EGVariation extends GroupOfTests {
 				Meta.class, StructuralVariation.class,
 				TranscriptVariation.class, VariationForeignKeys.class,
 				VariationSet.class, VFCoordinates.class);
+		addTest(new EGCommon());
 	}
 }

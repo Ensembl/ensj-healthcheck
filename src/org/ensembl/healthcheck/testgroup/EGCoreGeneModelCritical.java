@@ -4,6 +4,7 @@ import org.ensembl.healthcheck.GroupOfTests;
 import org.ensembl.healthcheck.testcase.eg_core.DuplicateTopLevel;
 import org.ensembl.healthcheck.testcase.eg_core.PeptideTranslationAttribs;
 import org.ensembl.healthcheck.testcase.eg_core.ProteinCodingGene;
+import org.ensembl.healthcheck.testcase.eg_core.ProteinTranslation;
 import org.ensembl.healthcheck.testcase.generic.AssemblyException;
 import org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap;
 import org.ensembl.healthcheck.testcase.generic.AssemblySeqregion;
@@ -47,7 +48,7 @@ public class EGCoreGeneModelCritical extends GroupOfTests {
 				SeqRegionAttribsPresent.class, SeqRegionCoordSystem.class,
 				SeqRegionsTopLevel.class, StableID.class, Strand.class,
 				TranscriptsTranslate.class, TranslationStartEnd.class,
-				TranslationStartEndExon.class);
+				TranslationStartEndExon.class, ProteinTranslation.class);
 	}
 
 }

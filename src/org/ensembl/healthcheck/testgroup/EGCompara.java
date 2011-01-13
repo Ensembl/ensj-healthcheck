@@ -55,5 +55,6 @@ public class EGCompara extends GroupOfTests {
 				ForeignKeyTaxonId.class, Meta.class,
 				MultipleGenomicAlignBlockIds.class, SingleDBCollations.class,
 				SpeciesNameConsistency.class);
+		addTest(new EGCommon());
 	}
 }

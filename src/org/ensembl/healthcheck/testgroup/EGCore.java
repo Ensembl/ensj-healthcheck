@@ -16,6 +16,7 @@ public class EGCore extends GroupOfTests {
 		addTest(new EGCoreMeta());
 		addTest(new EGCoreAnnotation());
 		addTest(new EGCoreCompare());
+		addTest(new EGCommon());
 	}
 
 }
