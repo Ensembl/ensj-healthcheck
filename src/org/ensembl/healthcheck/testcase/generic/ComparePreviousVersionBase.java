@@ -101,7 +101,8 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 					result = false;
 				}
 				else if (testUpperThreshold() &&
-						 ((1 - (double) secondaryCount / (double) currentCount)) > threshold()) {
+						 //((1 -(double) secondaryCount / (double) currentCount)) > threshold()) {
+						(((double) currentCount / (double) secondaryCount)) > (1 / threshold())) {
 					ReportManager.problem(this, dbre.getConnection(), sec.getName() + " only has " + secondaryCount + " " + entityDescription()
 										  + " " + key + " but " + dbre.getName() + " has " + currentCount);
 					result = false;
