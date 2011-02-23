@@ -58,8 +58,24 @@ public class ProductionMasterTables extends SingleDatabaseTestCase {
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 
+
 		boolean result = true;
 
+		String[] tables = { "attrib_type", "misc_set", "external_db" };
+
+		List<String> exceptions = new ArrayList<String>();
+		exceptions.add("is_current");
+		exceptions.add("created_by");
+		exceptions.add("created_at");
+		exceptions.add("modified_by");
+		exceptions.add("modified_at");
+
+		for (String table : tables) {
+			String key = table + "_id";
+			result &= compareProductionTableWithExceptions(dbre, table, key, "master_" + table, key, exceptions);
+		}
+
+		/*
 		// compare all columns of some tables
 		String[] tables = { "attrib_type", "misc_set" };
 
@@ -75,7 +91,8 @@ public class ProductionMasterTables extends SingleDatabaseTestCase {
 		exceptions.add("db_release");
 		
 		result &= compareProductionTableWithExceptions(dbre, "external_db", "external_db_id", "master_external_db", "external_db_id", exceptions);
-		
+		*/
+
 		return result;
 
 	} // run
