@@ -175,6 +175,7 @@ qtl
 rat_cdna
 refseq
 refseq_human_import
+refseq_mouse_import
 regulatory_region
 remaneiP
 rescue_fragment
