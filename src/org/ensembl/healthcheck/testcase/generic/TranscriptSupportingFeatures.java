@@ -66,6 +66,7 @@ public class TranscriptSupportingFeatures extends SingleDatabaseTestCase {
 		allowedNoSupporting.add("oxford_FGU");
 		allowedNoSupporting.add("prostate_rnaseq");
 		allowedNoSupporting.add("refseq_human_import");
+		allowedNoSupporting.add("refseq_mouse_import");
 		allowedNoSupporting.add("singapore_est");
 		allowedNoSupporting.add("singapore_gene");
 		allowedNoSupporting.add("skeletal_rnaseq");
