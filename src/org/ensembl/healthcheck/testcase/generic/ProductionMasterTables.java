@@ -61,7 +61,7 @@ public class ProductionMasterTables extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		String[] tables = { "attrib_type", "misc_set", "external_db" };
+		String[] tables = { "attrib_type", "misc_set", "external_db", "unmapped_reason" };
 
 		List<String> exceptions = new ArrayList<String>();
 		exceptions.add("is_current");
