@@ -38,6 +38,7 @@ public class GeneStatus extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		setDescription("Check that the number of KNOWN genes & transcripts is within 20% in the new and previous databases. Also check for unset status.");
+                setTeamResponsible("Core Genebuild");
 
 	}
 
