@@ -61,6 +61,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 		logicNameToAttribCode.put("snpDensity", "SNPCount");
 		logicNameToAttribCode.put("geneDensity", "GeneCount");
 		logicNameToAttribCode.put("knownGeneDensity", "knownGeneCount");
+                setTeamResponsible("ReleaseCoordinator");
 	}
 
 	// ----------------------------------------------------------------------
