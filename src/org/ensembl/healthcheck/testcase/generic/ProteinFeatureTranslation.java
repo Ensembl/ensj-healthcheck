@@ -57,6 +57,7 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
 		featuresToDelete = new HashMap();
 		setFailureText("Large numbers of features longer than the translation indicate something is wrong. A few is probably OK");
 		setHintLongRunning(true);
+                setTeamResponsible("GeneBuilders"); 
 	}
 
 	/**

@@ -37,7 +37,7 @@ public class Retrotransposed extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription("Check for any retrotransposed transcripts that have translations (shouldn't be any).");
-
+                setTeamResponsible("GeneBuilders");
 	}
 
 	/**

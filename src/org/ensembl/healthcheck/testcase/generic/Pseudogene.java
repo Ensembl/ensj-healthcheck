@@ -33,6 +33,7 @@ public class Pseudogene extends SingleDatabaseTestCase {
         addToGroup("post_genebuild");
         addToGroup("release");
         setDescription("Check that there are no translations for pseudogenes");
+        setTeamResponsible("GeneBuilders"); 
     }
 
     /**

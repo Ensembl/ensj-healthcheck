@@ -43,7 +43,7 @@ public class ComparePreviousVersionExonCoords extends SingleDatabaseTestCase {
 		addToGroup("release");
 		setDescription("Compare the transcript stable IDs and exon coordinates for each exon across releases to ensure that protein sequences are the same.");
 		setEffect("Causes problems for Compara if proteins are not identical");
-
+                setTeamResponsible("Core GeneBuilders");
 	}
 
     /**

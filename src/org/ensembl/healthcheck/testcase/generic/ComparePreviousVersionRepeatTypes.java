@@ -32,6 +32,7 @@ public class ComparePreviousVersionRepeatTypes extends ComparePreviousVersionBas
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription("Compare the types of repeat features in the current database with those from the equivalent database on the secondary server");
+                setTeamResponsible("GeneBuilders");
 
 	}
 

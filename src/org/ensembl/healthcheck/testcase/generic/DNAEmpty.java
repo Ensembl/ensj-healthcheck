@@ -38,6 +38,7 @@ public class DNAEmpty extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription("Check that dna table is empty");
+                setTeamResponsible("Genebuilders");
 	}
 
 

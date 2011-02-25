@@ -36,6 +36,7 @@ public class TranslationStartEndExon extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription("Check if the start- and end-exon mentioned in the translation-table exist in the database, too. ");
+                setTeamResponsible("GeneBuilders");
 	}
 
 	/**

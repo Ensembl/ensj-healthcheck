@@ -37,6 +37,7 @@ public class RepeatFeature extends SingleDatabaseTestCase {
         addToGroup("post_genebuild");
         addToGroup("release");
         setDescription("Check that repeat_start and repeat_end in repeat_feature make sense.");
+        setTeamResponsible("GeneBuilders");
 
     }
 
