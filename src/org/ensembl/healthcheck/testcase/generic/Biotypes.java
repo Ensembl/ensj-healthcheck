@@ -39,7 +39,7 @@ public class Biotypes extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
-
+                setTeamResponsible("Genebuilders");
 		setDescription("Check for null biotypes, and also for any 'ensembl' biotypes - should be 'protein_coding'");
 
 	}
