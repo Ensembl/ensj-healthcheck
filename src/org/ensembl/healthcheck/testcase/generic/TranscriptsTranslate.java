@@ -38,6 +38,7 @@ public class TranscriptsTranslate extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription("Check that all transcripts of protein_coding genes translate");
+                setTeamResponsible("Genebuilders");
 
 	}
 
