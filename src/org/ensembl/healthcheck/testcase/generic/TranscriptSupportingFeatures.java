@@ -40,6 +40,7 @@ public class TranscriptSupportingFeatures extends SingleDatabaseTestCase {
 		addToGroup("release");
 		setDescription("Check that transcripts which need supporting features have them.");
 		setPriority(Priority.AMBER);
+                setTeamResponsible("GeneBuilders");
 
 		allowedNoSupporting.add("BGI_Augustus_geneset");
 		allowedNoSupporting.add("BGI_Genewise_geneset");
