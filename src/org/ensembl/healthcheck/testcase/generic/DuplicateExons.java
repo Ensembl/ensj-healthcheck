@@ -43,6 +43,7 @@ public class DuplicateExons extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
+                setTeamResponsible("Genebuilders");
 
 	}
 
