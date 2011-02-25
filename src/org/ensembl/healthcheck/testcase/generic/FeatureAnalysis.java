@@ -49,7 +49,7 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 		addToGroup("release");
 		setHintLongRunning(true);
 		setDescription("Check that features exist for the expected analyses.");
-
+                setTeamResponsible("Genebuilders");
 	}
 
 	/**
