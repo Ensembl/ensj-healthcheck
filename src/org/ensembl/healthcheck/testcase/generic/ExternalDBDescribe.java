@@ -23,8 +23,8 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 /**
- * EnsEMBL Healthcheck test case that ensures that the results of the SQL query
- * <code>DESCRIBE external_db</code> are the same for a set of databases.
+ * EnsEMBL Healthcheck test case that ensures that the results of the SQL query <code>DESCRIBE external_db</code> are the same for a
+ * set of databases.
  */
 
 public class ExternalDBDescribe extends MultiDatabaseTestCase {
@@ -56,9 +56,8 @@ public class ExternalDBDescribe extends MultiDatabaseTestCase {
 		for (int i = 0; i < types.length; i++) {
 			// ignore db_release column as this is allowed to be different between
 			// species
-			result &= checkSameSQLResult(
-					"SELECT external_db_id, db_name, status, dbprimary_acc_linkable, display_label_linkable, priority, db_display_name, type FROM external_db ORDER BY external_db_id",
-					dbr.getAll(types[i]), false);
+			result &= checkSameSQLResult("SELECT external_db_id, db_name, status, dbprimary_acc_linkable, priority, db_display_name, type FROM external_db ORDER BY external_db_id", dbr.getAll(types[i]),
+					false);
 		}
 
 		return result;
