@@ -839,7 +839,8 @@ public class Meta extends SingleDatabaseTestCase {
                         }
                 }
                 if (count == Tables.length) {
-                        ReportManager.problem(this, con, "Toplevel flags correctly set"); result = true ; 
+                        ReportManager.info(this, con, "Toplevel flags correctly set"); 
+                        result = true ; 
                 }
 		return result;
 
