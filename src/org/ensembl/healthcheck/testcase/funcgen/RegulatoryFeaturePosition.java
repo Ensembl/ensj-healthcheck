@@ -3,6 +3,8 @@ package org.ensembl.healthcheck.testcase.funcgen;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
@@ -14,7 +16,7 @@ public class RegulatoryFeaturePosition extends SingleDatabaseTestCase {
 
 	
 	/**
-	 * Create a new instance of StableID.
+	 * Create a new instance
 	 */
 	public RegulatoryFeaturePosition() {
 		addToGroup("post_regulatorybuild");
@@ -75,26 +77,86 @@ public class RegulatoryFeaturePosition extends SingleDatabaseTestCase {
 			return false;	
 		}		
 				
+
+		//Could do this on same server in one request
+		//USEFUL SQL would have to be on same server?
+		//Or can we build the SQL from the data we fetch?
+		//Need fix SQL here too, would have to account for bound and core regions
+		//Probably don't need to do this? Just fix in pipeline?
+
 		//Get existing distinct seq_region_id and their limits from the core DB
-		String sql = "select distinct sr.core_seq_region_id from seq_region sr, regulatory_feature rf where rf.seq_region_id=sr.seq_region_id";
-		String[] coreSeqRegionId = getColumnValues(efgCon,sql); 
-		Connection coreCon = coreDbre.getConnection();
+		//This needs to be restricted to the schemaBuild otherwise we may be using the wrong seq_region
+		//No need for schemaBuild restriction here due to reg_feat join
+		//Could still have problems if we have archived sets on older assembly. Unlikely to happen
+		//Need to get name here so we can safely do sr join in feature count
+		String sql = "select sr.core_seq_region_id, sr.name, sr.seq_region_id from seq_region sr, regulatory_feature rf where rf.seq_region_id=sr.seq_region_id group by sr.name";
+		HashMap<String, String> coreSeqRegionIDName    = new HashMap<String, String>(); 
+		HashMap<String, String> nameFuncgenSeqRegionID = new HashMap<String, String>(); 
 		
-		HashMap<String, String> seqRegionLen = new HashMap<String, String>(); 
-		for (int i = 0; i < coreSeqRegionId.length; i++){
-			seqRegionLen.put(coreSeqRegionId[i], getRowColumnValue(coreCon, "select length from seq_region where seq_region_id="+coreSeqRegionId[i]));
+
+		try {
+			ResultSet rs = efgCon.createStatement().executeQuery(sql);
+
+			while (rs.next()){
+				coreSeqRegionIDName.put(rs.getString(1), rs.getString(2));
+				nameFuncgenSeqRegionID.put(rs.getString(2), rs.getString(3));
+			}
+		}
+		catch (SQLException se) {	
+			se.printStackTrace();
+			return false;
+		}
+		
+			
+		Connection coreCon = coreDbre.getConnection();
+		HashMap<String, String> seqRegionLen      = new HashMap<String, String>(); 
+			
+		for (Iterator<String> iter = coreSeqRegionIDName.keySet().iterator(); iter.hasNext();) {
+			String coreSrID = (String) iter.next();
+			seqRegionLen.put(coreSrID, getRowColumnValue(coreCon, "select length from seq_region where seq_region_id=" + coreSrID) );
 		}
 		
 		//Now check, for each core seq region, if boundaries are passed
 		Iterator<String> it = seqRegionLen.keySet().iterator();
+	
 		while(it.hasNext()){
-			String coreRegionId = it.next();
-			String kh = "select rf.regulatory_feature_id from regulatory_feature rf, seq_region sr where "+
-			" sr.seq_region_id=rf.seq_region_id and sr.core_seq_region_id="+coreRegionId+" and "+
-			" ((rf.seq_region_start <= 0) or (rf.seq_region_end > "+seqRegionLen.get(coreRegionId)+"))";
-			if(getRowCount(efgCon,kh) > 0){
-				ReportManager.problem(this, efgCon, "There are regulatory features that go over the limit of the genomic region where they are");
+			String coreRegionId    = it.next();
+			String srName          = coreSeqRegionIDName.get(coreRegionId);
+			String funcgenRegionID = nameFuncgenSeqRegionID.get(srName);
+			String srLength        = seqRegionLen.get(coreRegionId);
+			//Using efg sr_id removes need for use of schema_build and sr join
+
+			sql = "select count(regulatory_feature_id) from regulatory_feature " + 
+				"WHERE seq_region_id=" + funcgenRegionID + 
+				" AND  ((seq_region_start <= 0) OR (bound_seq_region_start <= 0) " +
+				"OR (bound_seq_region_end > " + srLength + ") OR (seq_region_end > " + srLength + "))";
+			//<= 0 should never happen as it is an insigned field!
+   
+			Integer featCount = getRowCount(efgCon, sql); 	
+			//This is already being 'caught' higher in the stack, but no exit
+			//but still shows as 'PASSED' as result is true by default!
+			//featCount is -1 not null if sql failed
+
+			if(featCount == -1){
+				ReportManager.problem(this, efgCon, "SQL Failed:\t" + sql);
 				return false;
+			}
+			
+			if(featCount > 0){
+				String usefulSQL = "UPDATE regulatory_feature set bound_seq_region_end=" + srLength +  
+					" WHERE seq_region_id=" + funcgenRegionID + 
+					" AND bound_seq_region_end > " + srLength + ";\n" +
+					"UPDATE regulatory_feature set seq_region_end=" + srLength +  
+					" WHERE seq_region_id=" + funcgenRegionID + 
+					" AND seq_region_end > " + srLength + ";\n";
+				//Omit start <0 for now as it should never happen
+			
+				//Will executing the fix screw the API as the underlying feats have not been patched?
+				//Should we also test for start>end?
+
+				ReportManager.problem(this, efgCon, "SeqRegion " + srName + " has " + featCount + 
+									  " features exceeding seq_region bounds\nUSEFUL SQL:\n" + usefulSQL);
+				result =  false;
 			}
 		}
 		
