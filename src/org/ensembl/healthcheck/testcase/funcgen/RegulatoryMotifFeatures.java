@@ -83,14 +83,14 @@ public class RegulatoryMotifFeatures extends SingleDatabaseTestCase {
 			ReportManager.problem
 				( this,  con, "The number of motif features associated to regulatory features (" + regMFs +
 				  ") does not correspond to the number of motif features within its associated annotated features (" +regAMFs + ")\n" +
-				  "USEFUL SQL:\tSELECT amf.motif_feature_id from regulatory_attribute ra " +
+				  "USEFUL SQL:\tSELECT distinct(amf.motif_feature_id) from regulatory_attribute ra " +
 				  "JOIN (associated_motif_feature amf JOIN annotated_feature af on af.annotated_feature_id=amf.annotated_feature_id " +
 				  "AND (af.seq_region_end - af.seq_region_start +1) <= " + fmaxLength + " 2000 " +
 				  "LEFT JOIN regulatory_attribute ra1 on amf.motif_feature_id=ra1.attribute_feature_id AND attribute_feature_table='motif') " + 
 				  "ON amf.annotated_feature_id=ra.attribute_feature_id " +
 				  "where ra.attribute_feature_table='annotated' and ra1.attribute_feature_id is NULL"
 				  );	
-			
+			//This SQL takes ~ 30-60 mins
 			result = false;
 		}
 		
