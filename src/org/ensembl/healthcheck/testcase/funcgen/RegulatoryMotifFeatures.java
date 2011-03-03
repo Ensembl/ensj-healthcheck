@@ -63,12 +63,34 @@ public class RegulatoryMotifFeatures extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
+
 		int regMFs = getRowCount(con, "SELECT COUNT(distinct attribute_feature_id) from regulatory_attribute where attribute_feature_table='motif'");
-		int regAMFs = getRowCount(con, "SELECT COUNT(distinct motif_feature_id) from associated_motif_feature amf join regulatory_attribute ra on amf.annotated_feature_id=attribute_feature_id where ra.attribute_feature_table='annotated'");
+
+		//Nested join now accounts for focus_max_length
+		int fmaxLength = 2000;  // Should add this as attribute to FuncgenSingleDatabaseTestCase?
+
+		int regAMFs = getRowCount
+			( con, "SELECT COUNT(distinct amf.motif_feature_id) from regulatory_attribute ra JOIN " +
+			  "(associated_motif_feature amf JOIN annotated_feature af on af.annotated_feature_id=amf.annotated_feature_id " +
+			  "AND (af.seq_region_end - af.seq_region_start +1) <= " + fmaxLength + ") " + 
+			  "on amf.annotated_feature_id=ra.attribute_feature_id " + 
+			  "where ra.attribute_feature_table='annotated'"
+			 );
+
+
 		
 		if(regMFs != regAMFs){
-			ReportManager.problem(this, con, "The number of motif features associated to regulatory features ("+regMFs+
-					") does not correspond to the number of motif features within its associated annotated features ("+regAMFs+")");	
+			ReportManager.problem
+				( this,  con, "The number of motif features associated to regulatory features (" + regMFs +
+				  ") does not correspond to the number of motif features within its associated annotated features (" +regAMFs + ")\n" +
+				  "USEFUL SQL:\tSELECT amf.motif_feature_id from regulatory_attribute ra " +
+				  "JOIN (associated_motif_feature amf JOIN annotated_feature af on af.annotated_feature_id=amf.annotated_feature_id " +
+				  "AND (af.seq_region_end - af.seq_region_start +1) <= " + fmaxLength + " 2000 " +
+				  "LEFT JOIN regulatory_attribute ra1 on amf.motif_feature_id=ra1.attribute_feature_id AND attribute_feature_table='motif') " + 
+				  "ON amf.annotated_feature_id=ra.attribute_feature_id " +
+				  "where ra.attribute_feature_table='annotated' and ra1.attribute_feature_id is NULL"
+				  );	
+			
 			result = false;
 		}
 		
