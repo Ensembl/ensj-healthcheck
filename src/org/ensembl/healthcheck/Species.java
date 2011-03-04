@@ -51,7 +51,7 @@ public enum Species {
 			"cape_rock_hyrax,caperockhyrax,procaviacapensis,procavia_capensis"), PTEROPUS_VAMPYRUS(132908, "PTEVAM", "ENSPVA", "large_flying_fox,largeflyingfox,pteropusvampyrus,pteropus_vampyrus"), TARSIUS_SYRICHTA(
 			9478, "TARSYR", "ENSTSY", "philippine_tarsier,philippinetarsier,tarsiussyrichta,tarsius_syrichta"), TURSIOPS_TRUNCATUS(9739, "TURTRU", "ENSTTR",
 			"bottlenosed_dolphin,dolphin,tursiopstruncatus,tursiops_truncatus"), VICUGNA_PACOS(30538, "VICPAC", "ENSVPA", "alpaca,vicugnapacos,vicugna_pacos"), DIPODOMYS_ORDII(10020, "DIPORD", "ENSDOR",
-			"ords_kangaroo_rat,ordskangaroorat,kangaroo_rat, kangaroorat , dipodomys_ordii"), NOMASCUS_LEUCOGENYS(61853, "NLEU", "ENSLE","gibbon,nleu,nomleu,nleugogenys,nomascus_leucogenys"), ANCESTRAL_SEQUENCES(0, "", "", "ancestral,ancestor");
+			"ords_kangaroo_rat,ordskangaroorat,kangaroo_rat, kangaroorat , dipodomys_ordii"), NOMASCUS_LEUCOGENYS(61853, "NLEU", "ENSNLE","gibbon,nleu,nomleu,nleugogenys,nomascus_leucogenys"), ANCESTRAL_SEQUENCES(0, "", "", "ancestral,ancestor");
 
 	// Taxonomy IDs - see ensembl-compara/sql/taxon.txt
 	private static Map<Integer, Species> taxonIDToSpecies = new HashMap<Integer, Species>();
