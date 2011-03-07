@@ -59,9 +59,10 @@ public class TranscriptSupportingFeatures extends SingleDatabaseTestCase {
 		allowedNoSupporting.add("havana");
 		allowedNoSupporting.add("havana_ig_gene");
 		allowedNoSupporting.add("heart_rnaseq");
-		allowedNoSupporting.add("kindey_rnaseq");
+		allowedNoSupporting.add("kidney_rnaseq");
 		allowedNoSupporting.add("lung_rnaseq");
 		allowedNoSupporting.add("lymph_rnaseq");
+		allowedNoSupporting.add("liver_rnaseq");
 		allowedNoSupporting.add("ncRNA");
 		allowedNoSupporting.add("ovary_rnaseq");
 		allowedNoSupporting.add("oxford_FGU");
