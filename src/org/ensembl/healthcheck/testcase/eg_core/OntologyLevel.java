@@ -73,6 +73,7 @@ public class OntologyLevel extends AbstractEgCoreTestCase {
 										+ " or "
 										+ TRANSLATION
 										+ ": this will not be displayed in the current web interface");
+				passes = false;
 			}
 		}
 		return passes;
