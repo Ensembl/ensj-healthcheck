@@ -44,7 +44,7 @@ sub run {
 				
 				my $sequence = $seq->seq();
 				
-				if ( $sequence =~ m/\*.+/ ) {
+				if ( $sequence =~ m/\*/ ) {
 					
 					$passes = 0;
 					
