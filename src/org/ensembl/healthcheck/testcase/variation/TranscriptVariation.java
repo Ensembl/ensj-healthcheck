@@ -51,7 +51,7 @@ public class TranscriptVariation extends SingleDatabaseTestCase {
 	// check peptide_allele_string not filled with numbers
 
         Connection con = dbre.getConnection();
-        int rows = getRowCount(con, "SELECT COUNT(*) FROM transcript_variation WHERE peptide_allele_string >1");
+        int rows = getRowCount(con, "SELECT COUNT(*) FROM transcript_variation WHERE pep_allele_string >1");
         if (rows >=1) {
             result = false;
             ReportManager.problem(this, con, rows + " with peptide_allele_string >1");
@@ -59,21 +59,21 @@ public class TranscriptVariation extends SingleDatabaseTestCase {
       //      ReportManager.info(this, con, "No transcript_variation have peptide_allele_string >1);
         }
 
-	int rows1 = getRowCount(con, "SELECT COUNT(*) FROM transcript_variation WHERE consequence_type=''");
+	int rows1 = getRowCount(con, "SELECT COUNT(*) FROM transcript_variation WHERE consequence_types=''");
         if (rows1 >=1) {
             result = false;
-            ReportManager.problem(this, con, rows1 + " with consequence_type a empty string");
+            ReportManager.problem(this, con, rows1 + " with consequence_types a empty string");
         } else {
       //      ReportManager.info(this, con, "No transcript_variation have consequence_type a empty string");
         }
-	
-	int rows2 = getRowCount(con, "SELECT COUNT(*) FROM variation_feature vf WHERE NOT EXISTS (SELECT * FROM transcript_variation tv WHERE tv.variation_feature_id = vf.variation_feature_id) AND vf.consequence_type != 'INTERGENIC' AND vf.consequence_type != 'HGMD_MUTATION'");
+        
+	int rows2 = getRowCount(con, "SELECT COUNT(*) FROM variation_feature vf WHERE NOT FIND_IN_SET('intergenic_variant',vf.consequence_type) AND NOT EXISTS (SELECT * FROM transcript_variation tv WHERE tv.variation_feature_id = vf.variation_feature_id)");
         if (rows2 >=1) {
 	    result = false;
-	    ReportManager.problem(this, con, rows2 + " with consequence_type != 'INTERGENIC' and there is no corresponding transcript exists in transcript_variation table");
+	    ReportManager.problem(this, con, rows2 + " with consequence_type != 'intergenic_variant' and there is no corresponding transcript exists in transcript_variation table");
 	}
 	if (result){
-        	ReportManager.correct(this,con,"transcript_variation have peptide_allele_string >1, indicating column shift, peptide_allele_string become a number or consequence_type a empty string or consequence_type is not a INTERGENIC where there is no transcript exists");
+        	ReportManager.correct(this,con,"transcript_variation have peptide_allele_string >1, indicating column shift, peptide_allele_string become a number or consequence_type a empty string or consequence_type is not a intergenic_variant where there is no transcript exists");
         }
 
         return result;
