@@ -76,8 +76,8 @@ public class VariationSet extends SingleDatabaseTestCase {
 	    query = new String("SELECT vsv.variation_set_id, COUNT(*) FROM variation_set_variation vsv LEFT JOIN variation v ON (v.variation_id = vsv.variation_id) WHERE v.variation_id IS NULL GROUP BY vsv.variation_set_id");
 	    sqlQueries.setProperty(new String("orphanVarId"),query);
 	    
-	    // Query checking that no variations belonging to a set is failed
-	    query = new String("SELECT vsv.variation_set_id, COUNT(*) FROM variation_set_variation vsv JOIN failed_variation fv ON (fv.variation_id = vsv.variation_id) GROUP BY vsv.variation_set_id");
+	    // Query checking that no variations belonging to a set is failed. This check should no longer be performed since failed data is kept.
+	     query = new String("SELECT vsv.variation_set_id, COUNT(*) FROM variation_set_variation vsv JOIN failed_variation fv ON (fv.variation_id = vsv.variation_id) GROUP BY vsv.variation_set_id");
 	    sqlQueries.setProperty(new String("failedVariation"),query);
 	    
 	    // Query checking that no variation set has more than one parent
@@ -87,10 +87,14 @@ public class VariationSet extends SingleDatabaseTestCase {
 	    // Query getting all parent variation sets
 	    query = new String("SELECT DISTINCT vss.variation_set_super FROM variation_set_structure vss");
 	    sqlQueries.setProperty(new String("parentSets"),query);
-	    
+
 	    // Query getting the name for a variation set id
 	    query = new String("SELECT vs.name FROM variation_set vs WHERE vs.variation_set_id = ? LIMIT 1");
 	    sqlQueries.setProperty(new String("setName"),query);
+
+	    // Query getting the id for a variation set name
+	    query = new String("SELECT vs.variation_set_id FROM variation_set vs WHERE vs.name = ? LIMIT 1");
+	    sqlQueries.setProperty(new String("setId"),query);
 	    
 	    // Query getting the subsets for a parent variation set id
 	    query = new String("SELECT vss.variation_set_sub FROM variation_set_structure vss WHERE vss.variation_set_super = ?");
@@ -99,10 +103,14 @@ public class VariationSet extends SingleDatabaseTestCase {
 	    // Query getting all combinations of variation sets that contain at least one common variation. These can be checked that none of them have a (grand)parent-child relationship
 	    query = new String("SELECT DISTINCT vsv1.variation_set_id, vsv2.variation_set_id FROM variation_set_variation vsv1 JOIN variation_set_variation vsv2 ON (vsv2.variation_id = vsv1.variation_id AND vsv2.variation_set_id > vsv1.variation_set_id)");
 	    sqlQueries.setProperty(new String("setCombos"),query);
-	    
+
 	    // Query for checking that the primary keys of all variation sets will fit into the variation_set_id set column in variation_feature
 	    query = new String("SELECT COUNT(*) FROM variation_set vs WHERE vs.variation_set_id > ?");
 	    sqlQueries.setProperty(new String("variationSetIds"),query);
+
+	    // Query for checking that all variations in the failed variation sets are really failed. This is a slight cheat because we use the variation_set_id column in variation_feature. Variations without a mapping will not be accounted for when doing this.
+	    query = new String("SELECT COUNT(*) FROM variation_feature vf LEFT JOIN failed_variation fv ON (fv.variation_id = vf.variation_id) WHERE FIND_IN_SET(?,vf.variation_set_id) AND fv.variation_id IS NULL");
+	    sqlQueries.setProperty(new String("failedVariationSet"),query);
 	    
             return sqlQueries;
         }
@@ -127,9 +135,11 @@ public class VariationSet extends SingleDatabaseTestCase {
 		Statement stmt = con.createStatement();
 		ResultSet rs;
 		boolean fetch;
-		
+
 		// Prepare a statement for getting the variation set name from an id
 		PreparedStatement setName = con.prepareStatement(sqlQueries.getProperty("setName"));
+		// Prepare a statement for getting the variation set id from a name
+		PreparedStatement setId = con.prepareStatement(sqlQueries.getProperty("setId"));
 		// Prepare a statement for getting the variation subsets for an id
 		PreparedStatement subSet = con.prepareStatement(sqlQueries.getProperty("subSet"));
 		 
@@ -256,7 +266,8 @@ public class VariationSet extends SingleDatabaseTestCase {
 		    msg += new String("All variations in variation sets have entries in the variation table\n");
 		}
 		
-		// Check that no variations that are mapped to sets are failed
+		// Check that no variations that are mapped to sets are failed. Skip this since from e!61, we keep failed data
+		/*
 		if ((rs = stmt.executeQuery(sqlQueries.getProperty("failedVariation"))) != null && (fetch = rs.next())) {
 		    while (fetch) {
 			ReportManager.problem(this,con,"There are " + String.valueOf(rs.getInt(2)) + " variations in variation set '" + this.getVariationSetName(rs.getInt(1),setName) + "' that have validation status 'failed'");
@@ -267,6 +278,7 @@ public class VariationSet extends SingleDatabaseTestCase {
 		else {
 		    msg += new String("No variations in variation sets have validation_status 'failed'\n");
 		}
+		*/
 		
 		// Prepare a statement for checking the variation_set_ids
 		PreparedStatement vsIds = con.prepareStatement(sqlQueries.getProperty("variationSetIds"));
@@ -279,6 +291,26 @@ public class VariationSet extends SingleDatabaseTestCase {
 		if (count > 0) {
 		    result = false;
 		    ReportManager.problem(this,con,"There are " + String.valueOf(count) + " variation set(s) whose primary key 'variation_set_id' is too large to be stored in the variation_set_id column in the variation_feature table");
+		}
+		
+		// Check that all variations in the failed variation set is also failed in the failed_variation table
+		vsIds = con.prepareStatement(sqlQueries.getProperty("failedVariationSet"));
+		// Get the variation_set_id for the 'Failed variations' set
+		int vsId = this.getVariationSetId("Failed variations",setId);
+		if (vsId < 0) {
+		    result = false;
+		    ReportManager.problem(this,con,"The variation_set_id for the variation set 'Failed variations' could not be found");
+		}
+		else {
+			vsIds.setString(1,String.valueOf(vsId));
+			rs = vsIds.executeQuery();
+			// Check the returned count, it should be 0
+			rs.next();
+			count = rs.getInt(1);
+			if (count > 0) {
+			    result = false;
+			    ReportManager.problem(this,con,"There are " + String.valueOf(count) + " variations belonging to the set 'Failed variations' that don't have an entry in the failed_variation table");
+			}
 		}
 		
 	    } catch (Exception e) {
@@ -306,6 +338,20 @@ public class VariationSet extends SingleDatabaseTestCase {
 	    
 	    return name;
 	} // getVariationSetName
+
+	// -----------------------------------------------------------------
+
+	private int getVariationSetId(String variationSetName, PreparedStatement pStmt) throws Exception {
+	    pStmt.setString(1,variationSetName);
+	    ResultSet rs = pStmt.executeQuery();
+	        
+	    int id = -1;
+	    if (rs.next()) {
+		id = rs.getInt(1);
+	    }
+	    
+	    return id;
+	} // getVariationSetId
 
 	// -----------------------------------------------------------------
 	
