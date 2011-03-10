@@ -256,15 +256,34 @@ public final class Utils {
 	 * @param m
 	 *          The map to use.
 	 */
-	public static void printKeys(Map m) {
+	public static void printKeys(Map<String, String> m) {
 
-		Set s = m.keySet();
-		Iterator it = s.iterator();
-		while (it.hasNext()) {
-			System.out.println((String) it.next());
+		for (String s : m.keySet()) {
+			
+			System.out.println(s);
+			
 		}
 
 	} // printKeys
+	
+//-------------------------------------------------------------------------
+	/**
+	 * Print the keys and values in a HashMap.
+	 * 
+	 * @param m
+	 *          The map to use.
+	 */
+	public static void printMap(Map<String, String> m) {
+
+		Set<Map.Entry<String, String>> set = m.entrySet();
+
+		for (Map.Entry<String, String> e : set) {
+			
+			System.out.println(String.format("%s %s", e.getKey(), e.getValue()));
+			
+		}
+		
+	} // printMap
 
 	// -------------------------------------------------------------------------
 	/**
