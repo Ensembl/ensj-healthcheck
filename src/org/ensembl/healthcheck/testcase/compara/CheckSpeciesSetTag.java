@@ -140,7 +140,7 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
             Object primaryValue = primarySets.get(next);
             Integer secondaryValue = new Integer(secondarySets.get(next).toString());
             if (primaryValue == null) {
-                ReportManager.problem(this, con1, "Species set \"" + next.toString() + "\" is missing.");
+                ReportManager.problem(this, con1, "Species set \"" + next.toString() + "\" is missing (it appears " + secondaryValue + " time(s) in " + DBUtils.getShortDatabaseName(con2)+ ")");
                 result = false;
             } else if (new Integer(primaryValue.toString()) < secondaryValue) {
                 ReportManager.problem(this, con1, "Species set \"" + next.toString() + "\" is present only " + primaryValue +
