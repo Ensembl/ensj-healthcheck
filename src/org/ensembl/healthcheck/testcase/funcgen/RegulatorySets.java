@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.sql.Array;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
@@ -190,17 +191,32 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 				count = 0;
 				String[] metaFsetIDs  = ((String) fsInfo.get("feature_set_ids")).split(",");
 				String[] metaFtypeIDs = ((String) fsInfo.get("feature_type_ids")).split(",");
-				String[] ssFsetIDs    = (String[])((Array) rsDsetSupport.getArray("ss_feature_set_id")).getArray();
-				String[] fsFsetIDs    = (String[])((Array) rsDsetSupport.getArray("fs_feature_set_id")).getArray();
-				String[] dsDsetIDs    = (String[])((Array) rsDsetSupport.getArray("ds_data_set_id")).getArray();
-				String[] ssRsetIDs    = (String[])((Array) rsDsetSupport.getArray("ss_result_set_id")).getArray();
+				
+				//String[] ssFsetIDs    = (String[])((Array) rsDsetSupport.getArray("ss_feature_set_id")).getArray();
+				//String[] fsFsetIDs    = (String[])((Array) rsDsetSupport.getArray("fs_feature_set_id")).getArray();
+				//String[] dsDsetIDs    = (String[])((Array) rsDsetSupport.getArray("ds_data_set_id")).getArray();
+				//String[] ssRsetIDs    = (String[])((Array) rsDsetSupport.getArray("ss_result_set_id")).getArray();
+			
+		
+				ArrayList<String> ssFsetIDs = new ArrayList<String>();				
+				ArrayList<String> fsFsetIDs = new ArrayList<String>();
+				ArrayList<String> dsDsetIDs = new ArrayList<String>();
+				ArrayList<String> ssRsetIDs = new ArrayList<String>();
+	
+				while(rsDsetSupport.next()){
+					ssFsetIDs.add(rsDsetSupport.getString("ss_feature_set_id"));
+					fsFsetIDs.add(rsDsetSupport.getString("fs_feature_set_id"));
+					dsDsetIDs.add(rsDsetSupport.getString("ds_data_set_id"));
+					ssRsetIDs.add(rsDsetSupport.getString("ss_result_set_id"));
+				}
+		
 				
 				//CHECK META KEY feature_set_ids
 				boolean sqlSafe = true;
 				
 				for(int i=0; i < metaFsetIDs.length; i++){
-									
-					if(! Arrays.asList(ssFsetIDs).contains(metaFsetIDs[i])){
+				
+					if(! ssFsetIDs.contains(metaFsetIDs[i])){
 						ReportManager.problem(this, efgCon, "Found feature_set_id in meta_key:\t" +
 								"regbuild." + fsInfo.get("cell_type") + ".feature_set_ids which is not " +
 								"present as a supporting_set_id for DataSet " + fsInfo.get("name"));
@@ -235,7 +251,7 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 				}
 		
 				//CHECK META SIZE
-				if(ssFsetIDs.length != count){
+				if(ssFsetIDs.size() != count){
 					ReportManager.problem(this, efgCon, "");
 					result = false;	
 					sqlSafe = false;
@@ -276,7 +292,7 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 				String[] rsetStates  = {"DISPLAYABLE", "DAS_DISPLAYABLE"}; //Conditional test for RESULT_FEATURE_SET is below
 				String[] fsetStates  = {"DISPLAYABLE", "DAS_DISPLAYABLE", "MART_DISPLAYABLE"};
 				//String[] windowSizes = {};//leave file test this to Collection test?
-				String[] absentStates; 
+				ArrayList<String> absentStates = new ArrayList<String>(); 
 			
 				
 				
@@ -285,57 +301,61 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 				//Yes these are unsafe until the the meta_keys/supporting_sets are corrected! 
 				//Change INSERT IGNORE into just select to encourage the HC checker to look at the output first
 				
-				for(int i=0; i < fsFsetIDs.length; i++){
+				//Will at the get call in the output strings need toStringing? Or will this be done automatically due to the string context?
+				
+				
+				for(int i=0; i < fsFsetIDs.size(); i++){
 			
-					if(fsFsetIDs[i].equals(null)){ //fset check
+					if(fsFsetIDs.get(i).equals(null)){ //fset check
 						ReportManager.problem(this, efgCon, "RegulatoryFeatures:" + fsInfo.get("cell_type") +
-								" has absent supporting FeatureSet\t" + ssFsetIDs[i]);
+								" has absent supporting FeatureSet\t" + ssFsetIDs.get(i));
 						result = false;	
 						continue;						
 					}
 					else{ //fset status checks here						
-						absentStates = getAbsentStates(efgCon, fsetStates, "feature_set", fsFsetIDs[i]);
+						absentStates = getAbsentStates(efgCon, fsetStates, "feature_set", fsFsetIDs.get(i).toString());
 						
-						if(absentStates.length != 0){
+						if(absentStates.size() != 0){
 						
 							if(sqlSafe){
 								usefulSQL = "\nUSEFUL SQL:\tINSERT IGNORE INTO status SELECT fs.feature_set_id, 'feature_set', sn.name from feature_set fs, status_name sn " +
 								"WHERE sn.name in (" + Arrays.toString(dsetStates).replaceAll("[\\[\\]]", "") + ") AND fs.feature_set_id IN (" + 
-								Arrays.toString(fsFsetIDs).replaceAll("[\\[\\]]", "") + ")";
+								fsFsetIDs.toString().replaceAll("[\\[\\]]", "") + ")";
 							}
 							
-							ReportManager.problem(this, efgCon, "Found absent states for supporting FeatureSet:\t" + fsFsetIDs[i] + "\t" +
-									Arrays.toString(absentStates).replaceAll("[\\[\\]]", "") + "\n" + usefulSQL);
+							ReportManager.problem(this, efgCon, "Found absent states for supporting FeatureSet:\t" + fsFsetIDs.get(i) + "\t" +
+									absentStates.toString().replaceAll("[\\[\\]]", "") + "\n" + usefulSQL);
 							result = false;							
 						}
 						
 						
-						if(dsDsetIDs[i].equals(null)){ //dset check
+						if(dsDsetIDs.get(i).equals(null)){ //dset check
 							ReportManager.problem(this, efgCon, "RegulatoryFeatures:" + fsInfo.get("cell_type") +
-									" has absent DataSet for supporting FeatureSet\t" + fsFsetIDs[i]);
+									" has absent DataSet for supporting FeatureSet\t" + fsFsetIDs.get(i));
 							result = false;	
 							continue;									
 						}
 						else{ //dset status checks here
-							absentStates = getAbsentStates(efgCon, dsetStates, "data_set", dsDsetIDs[i]);
+							absentStates = getAbsentStates(efgCon, dsetStates, "data_set", dsDsetIDs.get(i).toString());
 							
-							if(absentStates.length != 0){
+							if(absentStates.size() != 0){
 								//do this for whole set of supporting dsets?
 								if(sqlSafe){
 									usefulSQL = "\nUSEFUL SQL:\tINSERT IGNORE INTO status SELECT , 'data_set', sn.name from data_set set, status_name sn " +
-									"WHERE sn.name in (" + Arrays.toString(dsetStates).replaceAll("[\\[\\]]", "") + ") AND ds.data_set_id IN (" + Arrays.toString(dsDsetIDs).replaceAll("[\\[\\]]", "") + ")";
+									"WHERE sn.name in (" + dsetStates.toString().replaceAll("[\\[\\]]", "") + ") " +
+									"AND ds.data_set_id IN (" +	dsDsetIDs.toString().replaceAll("[\\[\\]]", "") + ")";
 								}
 									
 								ReportManager.problem(this, efgCon, "Found absent states for supporting DataSet:\t" 
-										+ dsDsetIDs[i] + "\t" + Arrays.toString(absentStates).replaceAll("[\\[\\]]", "") + "\n" + usefulSQL);
+										+ dsDsetIDs.get(i) + "\t" + absentStates.toString().replaceAll("[\\[\\]]", "") + "\n" + usefulSQL);
 								result = false;		
 								
 							}
 							
 							
-							if(ssRsetIDs[i].equals(null)){
-								ReportManager.problem(this, efgCon, "RegulatoryFeatures:" + fsInfo.get("cell_type") +
-										" has absent supporting_set ResultSet for supporting DataSet\t" + dsDsetIDs[i]);
+							if(ssRsetIDs.get(i).equals(null)){
+								ReportManager.problem(this, efgCon, "RegulatoryFeatures:" + fsInfo.get("cell_type") 
+										+ " has absent supporting_set ResultSet for supporting DataSet\t" + dsDsetIDs.get(i));
 								result = false;	
 								continue;										
 							}
@@ -347,11 +367,11 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 										"s.status_name_id=sn.status_name_id AND sn.name='RESULT_FEATURE_SET') " +
 										"ON rs.result_set_id=s.table_id AND s.table_name='result_set' " + 
 										"LEFT JOIN dbfile_registry dbr ON rs.result_set_id=dbr.table_id AND dbr.table_name='result_set' " +
-										"WHERE rs.result_set_id=" + ssRsetIDs[i]);
+										"WHERE rs.result_set_id=" + ssRsetIDs.get(i));
 								
 								if(! rs.next()){
 									ReportManager.problem(this, efgCon, "RegulatoryFeatures:" + fsInfo.get("cell_type") +
-											" supporting DataSet has absent supporting ResultSet:\t" + ssRsetIDs[i]);
+											" supporting DataSet has absent supporting ResultSet:\t" + ssRsetIDs.get(i));
 									result = false;
 								}
 								else{	
@@ -366,7 +386,7 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 											
 											ReportManager.problem(this, efgCon, 
 														"Could not find dbfile_registry entry for ResultSet which is " +
-														"not a RESULT_FEATURE_SET:\t" + ssRsetIDs[i]);
+														"not a RESULT_FEATURE_SET:\t" + ssRsetIDs.get(i));
 											result = false;
 										}
 										else if(! dbfPath.matches(rs.getString("rs_name") + "/*")){//rset_name matches path?
@@ -377,22 +397,22 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 										}
 									}
 									
-									absentStates = getAbsentStates(efgCon, rsetStates, "result_set", ssRsetIDs[i]);
+									absentStates = getAbsentStates(efgCon, rsetStates, "result_set", ssRsetIDs.get(i).toString());
 									
-									if(absentStates.length != 0){
+									if(absentStates.size() != 0){
 										//do this for whole set of supporting rsets?
 									
 										if(sqlSafe){
 										
 											usefulSQL = "\nUSEFUL SQL:\tINSERT IGNORE INTO status SELECT, 'result_set', sn.name from result_set rs, status_name sn " +
-												"WHERE sn.name in (" + Arrays.toString(rsetStates).replaceAll("[\\[\\]]", "") +
-												") AND rs.data_set_id IN (" + Arrays.toString(ssRsetIDs).replaceAll("[\\[\\]]", "") + ")";		
+												"WHERE sn.name in (" + rsetStates.toString().replaceAll("[\\[\\]]", "") +
+												") AND rs.data_set_id IN (" + ssRsetIDs.toString().replaceAll("[\\[\\]]", "") + ")";		
 										}		
 										
 							
 										ReportManager.problem(this, efgCon, "RegulatoryFeatures:" + fsInfo.get("cell_type") +
-											" supporting DataSet supporting ResultSet with absent states:\t" + ssRsetIDs[i] + "\t" + 
-											 Arrays.toString(absentStates).replaceAll("[\\[\\]]", "") + "\n" + usefulSQL);
+											" supporting DataSet supporting ResultSet with absent states:\t" + ssRsetIDs.get(i) + "\t" + 
+											 absentStates.toString().replaceAll("[\\[\\]]", "") + "\n" + usefulSQL);
 										result = false;
 										
 									}
@@ -414,8 +434,8 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 	}		
 	
 	//Move this to SingleFuncgenTestCase?
-	public String[] getAbsentStates(Connection efgCon, String[] statusNames, String tableName, String tableID){
-		String[] absentStates = null;
+	public ArrayList getAbsentStates(Connection efgCon, String[] statusNames, String tableName, String tableID){
+		ArrayList<String> absentStates = new ArrayList<String>();
 		
 		try{
 			Statement stmt = efgCon.createStatement();
@@ -431,10 +451,14 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 			}
 			
 			//Now remove first UNION
-			sqlCmd = sqlCmd.replaceFirst("^ UNION ", "");
-			ResultSet  rs = stmt.executeQuery(sqlCmd);	
-			absentStates  = (String[])((Array) rs.getArray("absent_state")).getArray();
+			sqlCmd       = sqlCmd.replaceFirst("^ UNION ", "");
+			ResultSet rs = stmt.executeQuery(sqlCmd);	
+				
+			while(rs.next()){
+				absentStates.add(rs.getString("absent_state"));
+			}
 					
+			
 		}catch (SQLException se) {
 			//Does this exit and return false?
 			se.printStackTrace();
