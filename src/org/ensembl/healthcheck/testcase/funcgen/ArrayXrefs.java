@@ -137,7 +137,7 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 		//Assume we have the standard name for the core DB and it is on the same host
 		
 		String schemaBuild = dbre.getSchemaVersion() + "_" + dbre.getGeneBuildVersion();
-		String coreDBName = dbre.getSpecies() + "_core_" + schemaBuild;
+		String coreDBName = getCoreDbName(dbre, schemaBuild);
 		//Never get's loaded if we specify a pattern
 		//DatabaseRegistryEntry coreDbre = dbre.getDatabaseRegistry().getByExactName(coreDBName);
 		DatabaseRegistryEntry coreDbre = getDatabaseRegistryEntryByPattern(coreDBName);
@@ -330,6 +330,12 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 		return result;
 
 	} // run
+
+	protected String getCoreDbName(DatabaseRegistryEntry dbre,
+			String schemaBuild) {
+		String coreDBName = dbre.getSpecies() + "_core_" + schemaBuild;
+		return coreDBName;
+	}
 
 } // ArrayXrefs
 	
