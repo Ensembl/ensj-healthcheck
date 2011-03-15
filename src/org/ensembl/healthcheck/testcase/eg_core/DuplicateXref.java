@@ -24,12 +24,12 @@ public class DuplicateXref extends AbstractEgCoreTestCase {
 		int nDupX =  getTemplate(dbre).queryForDefaultObject(DUPLICATE_XREF, Integer.class);
 		if(nDupX>0) {
 			passes = false;
-			ReportManager.problem(this, dbre.getConnection(), nDupX+" duplicates found in xref");
+			ReportManager.problem(this, dbre.getConnection(), nDupX+" duplicates found in xref: "+DUPLICATE_XREF);
 		}
 		int nDupOX =  getTemplate(dbre).queryForDefaultObject(DUPLICATE_OBJ_XREF, Integer.class);
 		if(nDupOX>0) {
 			passes = false;
-			ReportManager.problem(this, dbre.getConnection(), nDupOX+" duplicates found in object_xref");
+			ReportManager.problem(this, dbre.getConnection(), nDupOX+" duplicates found in object_xref: "+DUPLICATE_OBJ_XREF);
 		}
 		return passes;
 	}

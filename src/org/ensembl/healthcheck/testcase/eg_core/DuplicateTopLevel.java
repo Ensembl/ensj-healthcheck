@@ -47,4 +47,9 @@ public class DuplicateTopLevel extends AbstractRowCountTestCase {
 		return QUERY;
 	}
 
+	@Override
+	protected String getErrorMessage() {
+		return "$actual$ seq regions found with duplicate top level attribs";
+	}
+
 }

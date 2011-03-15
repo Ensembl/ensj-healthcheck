@@ -21,7 +21,7 @@ public class DisplayXrefId extends AbstractRowCountTestCase {
 		addToGroup(AbstractEgCoreTestCase.EG_GROUP);
 	}
 
-	private final static String QUERY = "select count(*) from gene where display_xref_id is null";
+	private final static String QUERY = "select count(*) from gene where status<>'NOVEL' display_xref_id is null";
 
 	/*
 	 * (non-Javadoc)
@@ -44,5 +44,11 @@ public class DisplayXrefId extends AbstractRowCountTestCase {
 	protected String getSql() {
 		return QUERY;
 	}
+
+	@Override
+	protected String getErrorMessage() {
+		return "$actual$ genes with non-novel status found with null display_xref_id";
+	}
+	
 
 }

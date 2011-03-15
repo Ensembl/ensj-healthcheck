@@ -7,6 +7,8 @@
 package org.ensembl.healthcheck.testcase;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.util.TemplateBuilder;
 
 /**
  * Base class for testing number returned by a query against an exact expected
@@ -32,7 +34,12 @@ public abstract class AbstractIntegerTestCase extends AbstractTemplatedTestCase 
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
 		int count = getTemplate(dbre).queryForDefaultObject(getSql(),
 				Integer.class);
-		return testValue(count);
+		if(testValue(count)) {
+			return true;
+		} else {
+			ReportManager.problem(this, dbre.getConnection(), TemplateBuilder.template(getErrorMessage(), "actual", count));
+			return false;
+		}
 	}
 
 	/**
@@ -48,5 +55,7 @@ public abstract class AbstractIntegerTestCase extends AbstractTemplatedTestCase 
 	 * @return true if number meets criteria for success
 	 */
 	protected abstract boolean testValue(int value);
+	
+	protected abstract String getErrorMessage();
 
 }

@@ -44,5 +44,10 @@ public class GeneDescription extends AbstractRowCountTestCase {
 	protected String getSql() {
 		return QUERY;
 	}
+	
+	@Override
+	protected String getErrorMessage() {
+		return "$actual$ genes found with null descriptions";
+	}
 
 }
