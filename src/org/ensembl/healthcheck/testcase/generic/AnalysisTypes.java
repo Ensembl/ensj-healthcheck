@@ -120,7 +120,7 @@ public class AnalysisTypes extends SingleDatabaseTestCase {
 
 					} else {
 
-						ReportManager.correct(this, con, String.format("Chromosome %s has no genes with logic name %s", seqRegion, logicName));
+						ReportManager.correct(this, con, String.format("Chromosome %s has some genes with logic name %s", seqRegion, logicName));
 					}
 
 					rs.close();
