@@ -16,7 +16,7 @@ public class EGCoreMetaCritical extends GroupOfTests {
 		//AliasAndNaming.class,	
 		EgMeta.class,
 		DuplicateMetaKeys.class,	
-		GenesDisplayable.class,	
+		//GenesDisplayable.class,	
 		GeneGC.class,	
 		MetaCoord.class,	
 		SampleSetting.class);	
