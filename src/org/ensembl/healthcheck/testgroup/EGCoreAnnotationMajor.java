@@ -3,6 +3,7 @@ package org.ensembl.healthcheck.testgroup;
 import org.ensembl.healthcheck.GroupOfTests;
 import org.ensembl.healthcheck.testcase.eg_core.DuplicateXref;
 import org.ensembl.healthcheck.testcase.eg_core.IgiXref;
+import org.ensembl.healthcheck.testcase.eg_core.UniProtKB_DisplayXrefIds;
 import org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions;
 import org.ensembl.healthcheck.testcase.generic.BlankEnums;
 import org.ensembl.healthcheck.testcase.generic.BlankInfoType;
@@ -25,7 +26,7 @@ public class EGCoreAnnotationMajor extends GroupOfTests {
 				DuplicateXref.class, IgiXref.class, InterproDescriptions.class,
 				IsCurrent.class, NullStrings.class, XrefCategories.class,
 				XrefHTML.class, XrefIdentifiers.class, XrefLevels.class,
-				XrefTypes.class, XrefVersions.class);
+				XrefTypes.class, XrefVersions.class, UniProtKB_DisplayXrefIds.class);
 	}
 
 }
