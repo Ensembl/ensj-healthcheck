@@ -86,9 +86,9 @@ public class AnalysisTypes extends SingleDatabaseTestCase {
 
 		String[] logicNames = { "ensembl", "havana", "ensembl_havana_gene" };
 
-		// get all chromosomes
+		// get all chromosomes, ignore LRG and MT
 		String[] seqRegionNames = getColumnValues(con,
-				"SELECT s.name FROM seq_region s, coord_system cs WHERE s.coord_system_id=cs.coord_system_id AND cs.name='chromosome' AND cs.version='GRCh37' AND s.name NOT LIKE 'LRG%'");
+				"SELECT s.name FROM seq_region s, coord_system cs WHERE s.coord_system_id=cs.coord_system_id AND cs.name='chromosome' AND cs.version='GRCh37' AND s.name NOT LIKE 'LRG%' AND s.name != 'MT'");
 
 		// filter out patches
 		String[] patches = getColumnValues(con, "SELECT sr.name FROM seq_region sr, assembly_exception ae WHERE sr.seq_region_id=ae.seq_region_id AND ae.exc_type IN ('PATCH_NOVEL', 'PATCH_FIX')");
