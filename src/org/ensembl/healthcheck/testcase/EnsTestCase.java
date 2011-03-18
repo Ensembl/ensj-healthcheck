@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -1360,20 +1361,20 @@ public abstract class EnsTestCase {
 	 *          A list of columns to ignore.
 	 * @return A ResultSet containing the contents of the table, minus the columns in question.
 	 */
-	public ResultSet getWholeTableExceptSomeColumns(Connection con, String table, String key, List<String> exceptionColumns) {
+	public ResultSet getWholeTableExceptSomeColumns(Connection con, String table, String key, List<String> exceptionColumns, String whereClause) {
 
 		ResultSet rs = null;
 
 		List<String> allColumns = DBUtils.getColumnsInTable(con, table);
 		allColumns.removeAll(exceptionColumns);
-
+		
 		String columns = StringUtils.join(allColumns, ",");
 
 		try {
 
 			Statement stmt = con.createStatement();
-			rs = stmt.executeQuery("SELECT " + columns + " FROM " + table + " ORDER BY " + key);
-
+			rs = stmt.executeQuery(String.format("SELECT %s FROM %s %s ORDER BY %s", columns, table, whereClause, key));
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1476,8 +1477,8 @@ public abstract class EnsTestCase {
 
 		DatabaseRegistryEntry productionDBRE = getProductionDatabase();
 
-		return DBUtils.compareResultSets(getWholeTableExceptSomeColumns(con, tableName, tableKey, exceptionColumns), getWholeTableExceptSomeColumns(productionDBRE.getConnection(), productionTableName,
-				productionKey, exceptionColumns), this, "", true, false, tableName, null, false);
+		return DBUtils.compareResultSets(getWholeTableExceptSomeColumns(con, tableName, tableKey, exceptionColumns, ""), getWholeTableExceptSomeColumns(productionDBRE.getConnection(), productionTableName,
+				productionKey, exceptionColumns, "WHERE is_current=1"), this, "", true, false, tableName, null, false);
 
 	}
 
