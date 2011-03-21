@@ -72,21 +72,18 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 		Connection efgCon = dbre.getConnection();
 		//Test for other meta keys here: reg build version?
 
-		
-
 		HashMap fsetInfo    = new HashMap<String, HashMap>(); 
-		//sqlString = "SELECT feature_set_id, name from feature_set where type='regulatory'";
 		String[] metaKeys  = {"feature_set_ids", "focus_feature_set_ids", "feature_type_ids"};	
-		String[] cellTypes = new String[100]; //Not likely to have > 100 cell types?
-		int count = 0;
-	
-		
+				
 		try {
+			int regSetCount = getRowCount(efgCon, "SELECT count(*) from feature_set where type='regulatory'");
+			String[] cellTypes = new String[regSetCount];
+			int count = 0;
+			
 			Statement stmt = efgCon.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT feature_set_id, name from feature_set where type='regulatory'");
 			
-			while (rs.next()) {
-				
+			while (rs.next()) {			
 				HashMap fsInfo    = new HashMap<String, HashMap>(); 
 				String fsetName = rs.getString("name");
 				
@@ -127,7 +124,7 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 
 			// TEST FOR OLD/ANOMALOUS META_KEYS		
 			stmt = efgCon.createStatement();
-			rs = stmt.executeQuery("SELECT meta_key from meta where meta_key like 'regbuild%'");
+			rs = stmt.executeQuery("SELECT meta_key from meta where meta_key like 'regbuild%ids%'");
 			
 			while (rs.next()) {
 				String metaKey = rs.getString("meta_key");
@@ -139,10 +136,10 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 					continue;
 				}
 			
-				String metaTmp   = metaKey.replaceAll("regbuild", "");				
-				String cellType  = metaTmp.replaceAll(".*_ids", ""); //will this work without compiling a pattern
-				String keyType   = metaTmp.replaceAll(cellType + "\\.", ""); //Will this escape properly?
-				
+				String metaTmp   = metaKey.replaceAll("regbuild.", "");		
+				String cellType  = metaTmp.replaceAll("\\..*_ids", ""); //will this work without compiling a pattern
+				String keyType   = metaTmp.replaceAll(cellType + ".*\\.", ""); //Will this escape properly?
+		
 				if(! Arrays.asList(cellTypes).contains(cellType)){
 					ReportManager.problem(this, efgCon, "Found cell type meta_key which is not represented as a " + 
 							"FeatureSet:\t" + metaKey);
@@ -299,14 +296,17 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 				
 				//Could these usefulSql status commands be using IDs which are not valid or null?
 				//Yes these are unsafe until the the meta_keys/supporting_sets are corrected! 
-				//Change INSERT IGNORE into just select to encourage the HC checker to look at the output first
-				
-				//Will at the get call in the output strings need toStringing? Or will this be done automatically due to the string context?
+				//Change INSERT IGNORE into just select to encourage the HC checker to look at the output first?
+			
+				//Set up ArrayLists so we can report once for each set after the main loop
+				ArrayList<String> problemSupportingFsets = new ArrayList<String>();
+				ArrayList<String> problemSupportingDsets = new ArrayList<String>();
+				ArrayList<String> problemSupportingRsets = new ArrayList<String>();
 				
 				
 				for(int i=0; i < fsFsetIDs.size(); i++){
-			
-					if(fsFsetIDs.get(i).equals(null)){ //fset check
+								
+					if(fsFsetIDs.get(i) == null){ //fset check
 						ReportManager.problem(this, efgCon, "RegulatoryFeatures:" + fsInfo.get("cell_type") +
 								" has absent supporting FeatureSet\t" + ssFsetIDs.get(i));
 						result = false;	
@@ -316,20 +316,11 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 						absentStates = getAbsentStates(efgCon, fsetStates, "feature_set", fsFsetIDs.get(i).toString());
 						
 						if(absentStates.size() != 0){
-						
-							if(sqlSafe){
-								usefulSQL = "\nUSEFUL SQL:\tINSERT IGNORE INTO status SELECT fs.feature_set_id, 'feature_set', sn.name from feature_set fs, status_name sn " +
-								"WHERE sn.name in (" + Arrays.toString(dsetStates).replaceAll("[\\[\\]]", "") + ") AND fs.feature_set_id IN (" + 
-								fsFsetIDs.toString().replaceAll("[\\[\\]]", "") + ")";
-							}
-							
-							ReportManager.problem(this, efgCon, "Found absent states for supporting FeatureSet:\t" + fsFsetIDs.get(i) + "\t" +
-									absentStates.toString().replaceAll("[\\[\\]]", "") + "\n" + usefulSQL);
-							result = false;							
+							problemSupportingFsets.add(fsFsetIDs.get(i));
 						}
 						
 						
-						if(dsDsetIDs.get(i).equals(null)){ //dset check
+						if(dsDsetIDs.get(i) == null){ //dset check
 							ReportManager.problem(this, efgCon, "RegulatoryFeatures:" + fsInfo.get("cell_type") +
 									" has absent DataSet for supporting FeatureSet\t" + fsFsetIDs.get(i));
 							result = false;	
@@ -339,21 +330,12 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 							absentStates = getAbsentStates(efgCon, dsetStates, "data_set", dsDsetIDs.get(i).toString());
 							
 							if(absentStates.size() != 0){
-								//do this for whole set of supporting dsets?
-								if(sqlSafe){
-									usefulSQL = "\nUSEFUL SQL:\tINSERT IGNORE INTO status SELECT , 'data_set', sn.name from data_set set, status_name sn " +
-									"WHERE sn.name in (" + dsetStates.toString().replaceAll("[\\[\\]]", "") + ") " +
-									"AND ds.data_set_id IN (" +	dsDsetIDs.toString().replaceAll("[\\[\\]]", "") + ")";
-								}
-									
-								ReportManager.problem(this, efgCon, "Found absent states for supporting DataSet:\t" 
-										+ dsDsetIDs.get(i) + "\t" + absentStates.toString().replaceAll("[\\[\\]]", "") + "\n" + usefulSQL);
-								result = false;		
-								
+								problemSupportingDsets.add(dsDsetIDs.get(i));
 							}
+									
+													
 							
-							
-							if(ssRsetIDs.get(i).equals(null)){
+							if(ssRsetIDs.get(i) == null){
 								ReportManager.problem(this, efgCon, "RegulatoryFeatures:" + fsInfo.get("cell_type") 
 										+ " has absent supporting_set ResultSet for supporting DataSet\t" + dsDsetIDs.get(i));
 								result = false;	
@@ -375,13 +357,14 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 									result = false;
 								}
 								else{	
-								
-									if(rs.getString("sn_name").equals(null)){ //Should be a Collection
+																		
+									if(rs.getString("sn_name") == null){ //Should be a Collection
 										//Test dbfile_registry entries match rset name
 										//Leave file tests to separate HC which only deals with the dbfile_registry table and files
 										String dbfPath = rs.getString("path");
+																	
 										
-										if(dbfPath.equals(null)){
+										if(dbfPath == null){
 											//test result_set_input type too!
 											
 											ReportManager.problem(this, efgCon, 
@@ -389,37 +372,67 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 														"not a RESULT_FEATURE_SET:\t" + ssRsetIDs.get(i));
 											result = false;
 										}
-										else if(! dbfPath.matches(rs.getString("rs_name") + "/*")){//rset_name matches path?
+										else if(! dbfPath.matches(".*" + rs.getString("rs_name") + "/*")){//rset_name matches path?
 											ReportManager.problem(this, efgCon, 
 													"Found mismatch between ResultSet name and dbfile_registry.path:\t" +
 													rs.getString("rs_name") + " vs " + dbfPath);
-										result = false;
+											result = false;
 										}
 									}
 									
+								
 									absentStates = getAbsentStates(efgCon, rsetStates, "result_set", ssRsetIDs.get(i).toString());
 									
 									if(absentStates.size() != 0){
 										//do this for whole set of supporting rsets?
-									
-										if(sqlSafe){
-										
-											usefulSQL = "\nUSEFUL SQL:\tINSERT IGNORE INTO status SELECT, 'result_set', sn.name from result_set rs, status_name sn " +
-												"WHERE sn.name in (" + rsetStates.toString().replaceAll("[\\[\\]]", "") +
-												") AND rs.data_set_id IN (" + ssRsetIDs.toString().replaceAll("[\\[\\]]", "") + ")";		
-										}		
-										
-							
-										ReportManager.problem(this, efgCon, "RegulatoryFeatures:" + fsInfo.get("cell_type") +
-											" supporting DataSet supporting ResultSet with absent states:\t" + ssRsetIDs.get(i) + "\t" + 
-											 absentStates.toString().replaceAll("[\\[\\]]", "") + "\n" + usefulSQL);
-										result = false;
-										
+										problemSupportingRsets.add(ssRsetIDs.get(i));								
 									}
 								}
-							}
+							}//end of if(ssRsetIDs.get(i) == null){ else
 						}
+					}// end of if(fsFsetIDs.get(i) == null){ else
+				}//end of for loop
+		
+				
+				if(problemSupportingFsets.size() > 0){
+					
+					if(sqlSafe){
+						usefulSQL = "\nUSEFUL SQL:\tINSERT IGNORE INTO status SELECT fs.feature_set_id, 'feature_set', sn.name from feature_set fs, status_name sn " +
+						"WHERE sn.name in (" + Arrays.toString(fsetStates).replaceAll("[\\[\\]]", "") + ") AND fs.feature_set_id IN (" + 
+						problemSupportingFsets.toString().replaceAll("[\\[\\]]", "") + ")";
 					}
+					
+					ReportManager.problem(this, efgCon, "Found absent states (from " + Arrays.toString(fsetStates) + 
+							") for supporting FeatureSets:\t" + problemSupportingFsets.toString() + usefulSQL);
+					result = false;							
+				}
+				
+				
+				if(problemSupportingDsets.size() > 0){
+			
+					if(sqlSafe){
+						usefulSQL = "\nUSEFUL SQL:\tINSERT IGNORE INTO status SELECT , 'data_set', sn.name from data_set set, status_name sn " +
+						"WHERE sn.name in (" + Arrays.toString(dsetStates).replaceAll("[\\[\\]]", "") + ") " +
+						"AND ds.data_set_id IN (" +	problemSupportingDsets.toString().replaceAll("[\\[\\]]", "") + ")";
+					}	
+					
+					ReportManager.problem(this, efgCon, "Found absent states (from " + Arrays.toString(dsetStates).replaceAll("[\\[\\]]", "") 
+							+ ") for supporting DataSet:\t" + problemSupportingDsets.toString() + usefulSQL);
+					result = false;					
+				}		
+				
+				if(problemSupportingRsets.size() > 0){
+
+					if(sqlSafe){					
+						usefulSQL = "\nUSEFUL SQL:\tINSERT IGNORE INTO status SELECT, 'result_set', sn.name from result_set rs, status_name sn " +
+						"WHERE sn.name in (" + Arrays.toString(rsetStates).replaceAll("[\\[\\]]", "") +
+						") AND rs.data_set_id IN (" + problemSupportingRsets.toString().replaceAll("[\\[\\]]", "") + ")";		
+					}		
+				
+					ReportManager.problem(this, efgCon, "RegulatoryFeatures:" + fsInfo.get("cell_type") +
+							" supporting DataSet supporting ResultSet with absent states ( from" + absentStates.toString().replaceAll("[\\[\\]]", "") + 
+							"):\t" + problemSupportingDsets.toString() + usefulSQL);
+					result = false;
 				}
 			}			
 		}catch (SQLException se) {
@@ -441,23 +454,18 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 			Statement stmt = efgCon.createStatement();
 			String sqlCmd = "";
 			
-			//String sqlCmd = Arrays.toString(statusNames).replace(", ", " ");
-			
 			for (int i = 0; i< statusNames.length; i++){
-				//Do a union here as I don't think we can get the a not in clause to return the absent value from a sub select join
-				sqlCmd += " UNION SELECT '" + statusNames[i] + "' as absent_state FROM status s " +
-					"LEFT JOIN status_name sn ON s.status_name_id=sn.status_name_id AND sn.name='" + statusNames[i] +
-					" WHERE s.table_name='" + tableName + "' AND table_id=" + tableID + " AND sn.name IS NULL";
-			}
-			
-			//Now remove first UNION
-			sqlCmd       = sqlCmd.replaceFirst("^ UNION ", "");
-			ResultSet rs = stmt.executeQuery(sqlCmd);	
 				
-			while(rs.next()){
-				absentStates.add(rs.getString("absent_state"));
+				ResultSet rs = stmt.executeQuery("SELECT s.table_id from status s join status_name sn " +
+						"ON s.status_name_id=sn.status_name_id WHERE sn.name='" + statusNames[i] +
+						"' AND s.table_name='" + tableName + "' AND s.table_id=" + tableID);	
+				
+				if(! rs.next()){
+					absentStates.add(statusNames[i]);
+				}
 			}
-					
+		
+			
 			
 		}catch (SQLException se) {
 			//Does this exit and return false?
