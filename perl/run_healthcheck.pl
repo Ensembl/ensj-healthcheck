@@ -1,5 +1,4 @@
-#!/usr/bin/perl
-#!/bin/env perl
+#!/usr/bin/env perl
 # $Source$
 # $Revision$
 # $Date$
@@ -14,22 +13,27 @@ use Log::Log4perl qw(:easy);
 use Bio::EnsEMBL::DBSQL::DBAdaptor;
 use Bio::EnsEMBL::Utils::ScriptUtils qw(inject);
 use Carp;
+
 my ( $host, $user, $pass, $port, $dbname, $species_id, $module );
+
 GetOptions(
-	"host=s",     \$host,   "user=s",       \$user,
-	"pass=s", \$pass,   "port=i",       \$port,
-	"dbname=s",   \$dbname, "species_id=s", \$species_id,
-	"module=s",   \$module
+	"host=s",       \$host,   
+	"user=s",       \$user,
+	"pass:s",       \$pass,   
+	"port=i",       \$port,
+	"dbname=s",     \$dbname, 
+	"species_id=s", \$species_id,
+	"module=s",     \$module
 );
 
 if (   !defined $host
 	|| !defined $port
 	|| !defined $user
 	|| !defined $module
-	|| !defined $dbname )
-{
-	croak
-"Usage: $0 -host host -port port -user user [-password pass] -dbname db [-species_id species_id] -module module";
+	|| !defined $dbname ) {
+	croak (
+		"Usage: $0 -host host -port port -user user [-pass password] -dbname db [-species_id species_id] -module module"
+	);
 }
 my %args = (
 	-HOST   => $host,
