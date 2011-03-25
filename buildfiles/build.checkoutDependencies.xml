@@ -44,7 +44,7 @@ to delete the directory with the checkouts.
 	-->
         <target name="checkoutEnsemblDependency" description="" depends="createPerlDependencyDir">
 
-		<property name="ensemblRevisionOption"     value="-r branch-ensembl-60" />
+		<property name="ensemblRevisionOption"     value="-r branch-ensembl-62" />
 		<property name="ensemblCvsRoot"            value=":pserver:cvsuser:CVSUSER@cvs.sanger.ac.uk:/cvsroot/ensembl" />
 
 		<cvs 
@@ -64,20 +64,16 @@ to delete the directory with the checkouts.
 
 		<mkdir dir="${perlDependencyCheckoutDir}"/>
 
-		<!--
-		<property name="bioperlRoot"            value=":pserver:cvs@code.open-bio.org:/home/repository/bioperl" />
-		<cvs 
-			cvsRoot="${bioperlRoot}" 
-			command="checkout -d ${bioperlRoot}/bioperl-live -r bioperl-release-1-2-3 bioperl-live"
-		/>
-		-->
-
 		<exec dir="." executable="wget" os="Linux">
-		  <arg line="bioperl.org/DIST/old_releases/bioperl-1.2.3.tar.gz"/>
+		  <arg line="bioperl.org/DIST/old_releases/bioperl-1.2.3.tar.gz" />
 		</exec>
 
 		<exec dir="." executable="tar" os="Linux">
-		  <arg line="--directory perlcode/ -xzvf bioperl-1.2.3.tar.gz"/>
+		  <arg line="--directory perlcode/ -xzvf bioperl-1.2.3.tar.gz" />
+		</exec>
+
+		<exec dir="." executable="mv" os="Linux">
+		  <arg line="perlcode/bioperl-1.2.3/ perlcode/bioperl" />
 		</exec>
 
 	</target>
