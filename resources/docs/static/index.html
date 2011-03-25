@@ -435,8 +435,8 @@ What works well on the ebi-xxx machines is:
 
 <pre>
 export JAVA_HOME=/sw/arch/pkg/jdk1.6/ 
-export perl=/homes/integr8/production/perl/binaries/bin/perl5.8.9
-export PERL5LIB=perlcode/ensembl/modules/:perl/:perlcode/bioperl-live/:perlcode/ensembl-variation/modules:/homes/integr8/production/perl/cpan/lib/perl5/
+. /nfs/panda/ensemblgenomes/perl/cpan/setup-perl-5.8.9.sh
+export PERL5LIB=${PERL5LIB}perlcode/ensembl/modules/:perl/:perlcode/bioperl/:perlcode/ensembl-variation/modules:
 </pre>
 
 <p>
@@ -453,7 +453,7 @@ On a default Ubuntu installation try this:
 
 <pre>
 export JAVA_HOME=/usr/lib/jvm/java-6-openjdk/jre/
-export PERL5LIB=perlcode/ensembl/modules/:perl/:perlcode/bioperl-live/:perlcode/ensembl-variation/modules
+export PERL5LIB=perlcode/ensembl/modules/:perl/:perlcode/bioperl/:perlcode/ensembl-variation/modules
 </pre>
 
 <p>
