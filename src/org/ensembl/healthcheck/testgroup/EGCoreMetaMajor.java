@@ -11,11 +11,11 @@ public class EGCoreMetaMajor extends GroupOfTests {
 
 	public EGCoreMetaMajor() {
 		addTest(
-				Biotypes.class,
-				AnalysisDescription.class,	
-				MetaForCompara.class,
-				TranslationAttribType.class,
-				DuplicateTaxonomyIds.class);	
+			Biotypes.class,
+			AnalysisDescription.class,	
+			MetaForCompara.class,
+			TranslationAttribType.class,
+			DuplicateTaxonomyIds.class
+		);	
 	}
-
 }

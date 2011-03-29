@@ -14,10 +14,16 @@ import org.ensembl.healthcheck.testcase.generic.TranscriptsSameName;
 public class EGCoreAnnotationCritical extends GroupOfTests {
 
 	public EGCoreAnnotationCritical() {
-		addTest(DescriptionNewlines.class, DisplayLabels.class,
-				DisplayXref.class, DisplayXrefId.class, GeneDescriptions.class,
-				GeneDescriptionSource.class, SharedDisplayXref.class,
-				TranscriptsSameName.class, OntologyLevel.class);
+		addTest(
+			DescriptionNewlines.class, 
+			DisplayLabels.class,
+			DisplayXref.class, 
+			DisplayXrefId.class, 
+			GeneDescriptions.class,
+			GeneDescriptionSource.class, 
+			SharedDisplayXref.class,
+			TranscriptsSameName.class, 
+			OntologyLevel.class
+		);
 	}
-
 }

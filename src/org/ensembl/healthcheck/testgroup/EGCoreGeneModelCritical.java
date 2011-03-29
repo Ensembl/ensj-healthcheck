@@ -37,18 +37,32 @@ import org.ensembl.healthcheck.testcase.generic.TranslationStartEndExon;
 public class EGCoreGeneModelCritical extends GroupOfTests {
 
 	public EGCoreGeneModelCritical() {
-		addTest(AssemblyException.class, AssemblyMultipleOverlap.class,
-				AssemblySeqregion.class, CanonicalTranscriptCoding.class,
-				CompareSchema.class, CoreForeignKeys.class,
-				DuplicateAssembly.class, DuplicateTopLevel.class,
-				ExonRank.class, ExonStrandOrder.class,
-				ExonTranscriptStartEnd.class, GeneCoordSystem.class,
-				Karyotype.class, NullTranscripts.class,
-				PeptideTranslationAttribs.class, ProteinCodingGene.class,
-				SeqRegionAttribsPresent.class, SeqRegionCoordSystem.class,
-				SeqRegionsTopLevel.class, StableID.class, Strand.class,
-				TranscriptsTranslate.class, TranslationStartEnd.class,
-				TranslationStartEndExon.class, ProteinTranslation.class);
+		addTest(
+			AssemblyException.class, 
+			AssemblyMultipleOverlap.class,
+			AssemblySeqregion.class, 
+			CanonicalTranscriptCoding.class,
+			CompareSchema.class, 
+			CoreForeignKeys.class,
+			DuplicateAssembly.class, 
+			DuplicateTopLevel.class,
+			ExonRank.class, 
+			ExonStrandOrder.class,
+			ExonTranscriptStartEnd.class, 
+			GeneCoordSystem.class,
+			Karyotype.class, 
+			NullTranscripts.class,
+			PeptideTranslationAttribs.class, 
+			ProteinCodingGene.class,
+			SeqRegionAttribsPresent.class, 
+			SeqRegionCoordSystem.class,
+			SeqRegionsTopLevel.class, 
+			StableID.class, 
+			Strand.class,
+			TranscriptsTranslate.class, 
+			TranslationStartEnd.class,
+			TranslationStartEndExon.class, 
+			ProteinTranslation.class
+		);
 	}
-
 }

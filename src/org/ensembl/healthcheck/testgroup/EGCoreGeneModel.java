@@ -12,8 +12,9 @@ import org.ensembl.healthcheck.GroupOfTests;
 public class EGCoreGeneModel extends GroupOfTests {
 
 	public EGCoreGeneModel() {
-		addTest(new EGCoreGeneModelCritical());
-		addTest(new EGCoreGeneModelMajor());
+		addTest(
+			EGCoreGeneModelCritical.class,
+			EGCoreGeneModelMajor.class
+		);
 	}
-
 }

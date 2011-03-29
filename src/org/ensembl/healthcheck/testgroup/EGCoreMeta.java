@@ -12,8 +12,9 @@ import org.ensembl.healthcheck.GroupOfTests;
 public class EGCoreMeta extends GroupOfTests {
 
 	public EGCoreMeta() {
-		addTest(new EGCoreMetaCritical());
-		addTest(new EGCoreMetaMajor());
+		addTest(
+			EGCoreMetaCritical.class,
+			EGCoreMetaMajor.class
+		);
 	}
-
 }

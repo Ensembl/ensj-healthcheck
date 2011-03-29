@@ -13,13 +13,11 @@ public class EGCoreMetaCritical extends GroupOfTests {
 
 	public EGCoreMetaCritical() {
 		addTest(
-		//AliasAndNaming.class,	
-		EgMeta.class,
-		DuplicateMetaKeys.class,	
-		//GenesDisplayable.class,	
-		GeneGC.class,	
-		MetaCoord.class,	
-		SampleSetting.class);	
+			EgMeta.class,
+			DuplicateMetaKeys.class,	
+			GeneGC.class,	
+			MetaCoord.class,	
+			SampleSetting.class
+		);	
 	}
-
 }

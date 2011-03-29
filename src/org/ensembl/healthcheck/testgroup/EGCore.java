@@ -12,11 +12,12 @@ import org.ensembl.healthcheck.GroupOfTests;
 public class EGCore extends GroupOfTests {
 
 	public EGCore() {
-		addTest(new EGCoreGeneModel());
-		addTest(new EGCoreMeta());
-		addTest(new EGCoreAnnotation());
-		addTest(new EGCoreCompare());
-		addTest(new EGCommon());
+		addTest(
+			EGCoreGeneModel.class,
+			EGCoreMeta.class,
+			EGCoreAnnotation.class,
+			EGCoreCompare.class,
+			EGCommon.class
+		);
 	}
-
 }

@@ -24,14 +24,24 @@ public class EGFuncgen extends GroupOfTests {
 
 	public EGFuncgen() {
 
-		addTest(BlankEnums.class, BlankInfoType.class, MetaCoord.class,
-				ExternalDBDisplayName.class, EGArrayXrefs.class,
-				FuncgenForeignKeys.class, BlankCoordSystemVersions.class,
-				BlanksInsteadOfNulls.class, RegulatoryFeatureTypes.class,
-				ComparePreviousVersionArrayXrefs.class,
-				AnalysisDescription.class, FuncgenStableID.class,
-				NullStrings.class, CompareFuncgenSchema.class);
-		addTest(new EGCommon());
+		addTest(
 
+			EGCommon.class,
+			
+			BlankEnums.class, 
+			BlankInfoType.class, 
+			MetaCoord.class,
+			ExternalDBDisplayName.class, 
+			EGArrayXrefs.class,
+			FuncgenForeignKeys.class, 
+			BlankCoordSystemVersions.class,
+			BlanksInsteadOfNulls.class, 
+			RegulatoryFeatureTypes.class,
+			ComparePreviousVersionArrayXrefs.class,
+			AnalysisDescription.class, 
+			FuncgenStableID.class,
+			NullStrings.class, 
+			CompareFuncgenSchema.class
+		);
 	}
 }

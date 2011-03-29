@@ -12,8 +12,9 @@ import org.ensembl.healthcheck.GroupOfTests;
 public class EGCoreAnnotation extends GroupOfTests {
 
 	public EGCoreAnnotation() {
-		addTest(new EGCoreAnnotationCritical());
-		addTest(new EGCoreAnnotationMajor());
+		addTest(
+			EGCoreAnnotationCritical.class,
+			EGCoreAnnotationMajor.class
+		);
 	}
-
 }

@@ -24,12 +24,22 @@ import org.ensembl.healthcheck.testcase.variation.VariationSet;
 public class EGVariation extends GroupOfTests {
 
 	public EGVariation() {
-		addTest(AlleleFrequencies.class, CompareVariationSchema.class,
-				EmptyVariationTables.class, FlankingUpDownSeq.class,
-				ForeignKeyCoreId.class, IndividualType.class, Meta_coord.class,
-				Meta.class, StructuralVariation.class,
-				TranscriptVariation.class, VariationForeignKeys.class,
-				VariationSet.class, VFCoordinates.class);
-		addTest(new EGCommon());
+		addTest(
+			EGCommon.class,
+
+			AlleleFrequencies.class, 
+			CompareVariationSchema.class,
+			EmptyVariationTables.class, 
+			FlankingUpDownSeq.class,
+			ForeignKeyCoreId.class, 
+			IndividualType.class, 
+			Meta_coord.class,
+			Meta.class, 
+			StructuralVariation.class,
+			TranscriptVariation.class, 
+			VariationForeignKeys.class,
+			VariationSet.class, 
+			VFCoordinates.class
+		);
 	}
 }

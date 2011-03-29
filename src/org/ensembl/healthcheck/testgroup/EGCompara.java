@@ -39,22 +39,38 @@ import org.ensembl.healthcheck.testcase.compara.SpeciesNameConsistency;
 public class EGCompara extends GroupOfTests {
 
 	public EGCompara() {
-		addTest(CheckConservationScore.class, CheckFlatProteinTrees.class,
-				CheckGenomeDB.class, CheckGenomicAlignGenomeDBs.class,
-				CheckHomology.class, CheckSequenceTable.class,
-				CheckSpeciesSetTag.class, CheckSynteny.class, CheckTaxon.class,
-				CheckTopLevelDnaFrag.class, DuplicateGenomeDb.class,
-				ForeignKeyDnafragId.class, ForeignKeyFamilyId.class,
-				ForeignKeyGenomeDbId.class,
-				ForeignKeyGenomicAlignBlockId.class,
-				ForeignKeyGenomicAlignId.class, ForeignKeyHomologyId.class,
-				ForeignKeyMemberId.class, ForeignKeyMethodLinkId.class,
-				ForeignKeyMethodLinkSpeciesSetId.class,
-				ForeignKeyMethodLinkSpeciesSetIdGenomicAlignBlock.class,
-				ForeignKeySequenceId.class, ForeignKeySyntenyRegionId.class,
-				ForeignKeyTaxonId.class, Meta.class,
-				MultipleGenomicAlignBlockIds.class, SingleDBCollations.class,
-				SpeciesNameConsistency.class);
-		addTest(new EGCommon());
+		addTest(
+				
+			EGCommon.class,
+				
+			CheckConservationScore.class, 
+			CheckFlatProteinTrees.class,
+			CheckGenomeDB.class, 
+			CheckGenomicAlignGenomeDBs.class,
+			CheckHomology.class, 
+			CheckSequenceTable.class,
+			CheckSpeciesSetTag.class, 
+			CheckSynteny.class, 
+			CheckTaxon.class,
+			CheckTopLevelDnaFrag.class, 
+			DuplicateGenomeDb.class,
+			ForeignKeyDnafragId.class, 
+			ForeignKeyFamilyId.class,
+			ForeignKeyGenomeDbId.class,
+			ForeignKeyGenomicAlignBlockId.class,
+			ForeignKeyGenomicAlignId.class, 
+			ForeignKeyHomologyId.class,
+			ForeignKeyMemberId.class, 
+			ForeignKeyMethodLinkId.class,
+			ForeignKeyMethodLinkSpeciesSetId.class,
+			ForeignKeyMethodLinkSpeciesSetIdGenomicAlignBlock.class,
+			ForeignKeySequenceId.class, 
+			ForeignKeySyntenyRegionId.class,
+			ForeignKeyTaxonId.class, 
+			Meta.class,
+			MultipleGenomicAlignBlockIds.class, 
+			SingleDBCollations.class,
+			SpeciesNameConsistency.class
+		);
 	}
 }

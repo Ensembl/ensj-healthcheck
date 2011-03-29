@@ -20,9 +20,15 @@ import org.ensembl.healthcheck.testcase.generic.SpeciesID;
 public class EGCoreGeneModelMajor extends GroupOfTests {
 
 	public EGCoreGeneModelMajor() {
-		addTest(DuplicateExons.class, DuplicateGenes.class, ExonBoundary.class,
-				GeneCoordSystem.class, Pseudogene.class, SpeciesID.class,
-				FeatureCoords.class, InappropriateTranslation.class);
+		addTest(
+			DuplicateExons.class, 
+			DuplicateGenes.class, 
+			ExonBoundary.class,
+			GeneCoordSystem.class, 
+			Pseudogene.class, 
+			SpeciesID.class,
+			FeatureCoords.class, 
+			InappropriateTranslation.class
+		);
 	}
-
 }
