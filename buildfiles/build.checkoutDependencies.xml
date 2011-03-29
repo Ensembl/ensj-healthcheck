@@ -44,7 +44,7 @@ to delete the directory with the checkouts.
 	-->
         <target name="checkoutEnsemblDependency" description="" depends="createPerlDependencyDir">
 
-		<property name="ensemblRevisionOption"     value="-r branch-ensembl-62" />
+		<property name="ensemblRevisionOption"     value="-r branch-ensembl-61" />
 		<property name="ensemblCvsRoot"            value=":pserver:cvsuser:CVSUSER@cvs.sanger.ac.uk:/cvsroot/ensembl" />
 
 		<cvs 
