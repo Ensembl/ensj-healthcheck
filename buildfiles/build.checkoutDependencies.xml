@@ -20,9 +20,16 @@ to delete the directory with the checkouts.
 	<property name="perlDependencyCheckoutDir" value="perlcode" />
 
         <target 
+		name        = "setPermissions" 
+		description = "Adds run permissions to th perl/run_healthcheck.pl program which is necessary for running perl based healthchecks." 
+	>
+		<chmod file="./perl/run_healthcheck.pl" perm="u+x" />
+	</target>
+
+        <target 
 		name        = "checkoutPerlDependencies" 
 		description = "" 
-		depends     = "checkoutBioperlDependency, checkoutEnsemblDependency"
+		depends     = "checkoutBioperlDependency, checkoutEnsemblDependency, setPermissions"
 	/>
 
 	<!--
@@ -44,7 +51,7 @@ to delete the directory with the checkouts.
 	-->
         <target name="checkoutEnsemblDependency" description="" depends="createPerlDependencyDir">
 
-		<property name="ensemblRevisionOption"     value="-r branch-ensembl-61" />
+		<property name="ensemblRevisionOption"     value="-r branch-ensembl-62" />
 		<property name="ensemblCvsRoot"            value=":pserver:cvsuser:CVSUSER@cvs.sanger.ac.uk:/cvsroot/ensembl" />
 
 		<cvs 
