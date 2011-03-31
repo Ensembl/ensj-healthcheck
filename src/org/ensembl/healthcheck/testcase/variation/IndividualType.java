@@ -75,7 +75,7 @@ public class IndividualType extends SingleDatabaseTestCase {
 		    ReportManager.correct(this, con, "Individual type table correct in " + dbre.getSpecies());
 		}
 	    }
-	    if (dbre.getSpecies() == Species.HOMO_SAPIENS || dbre.getSpecies() == Species.PAN_TROGLODYTES || dbre.getSpecies() == Species.TETRAODON_NIGROVIRIDIS || dbre.getSpecies() == Species.PONGO_PYGMAEUS){		
+	    if (dbre.getSpecies() == Species.HOMO_SAPIENS || dbre.getSpecies() == Species.PAN_TROGLODYTES || dbre.getSpecies() == Species.TETRAODON_NIGROVIRIDIS || dbre.getSpecies() == Species.PONGO_ABELII){		
 		int mc = getRowCount(con,"SELECT COUNT(*) FROM individual WHERE individual_type_id <> 3");    
 		if (mc > 0){
 		    ReportManager.problem(this, con, "Individual type incorrect in Individual table");

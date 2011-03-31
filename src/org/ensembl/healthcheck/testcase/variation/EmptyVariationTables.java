@@ -54,7 +54,7 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 		tables = remove(tables, allowedEmpty);
 
 		// only rat has entries in QTL tables
-		if (species != Species.RATTUS_NORVEGICUS && species != Species.MUS_MUSCULUS && species != Species.PONGO_PYGMAEUS && species != Species.HOMO_SAPIENS  ) {
+		if (species != Species.RATTUS_NORVEGICUS && species != Species.MUS_MUSCULUS && species != Species.PONGO_ABELII && species != Species.HOMO_SAPIENS  ) {
 		    tables = remove(tables, "read_coverage");
 		}
 		if(species == Species.HOMO_SAPIENS){
@@ -68,7 +68,7 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 			tables = remove(tables,"phenotype");
 			tables = remove(tables,"tagged_variation_feature");
 		}
-		if (species == Species.ANOPHELES_GAMBIAE || species == Species.ORNITHORHYNCHUS_ANATINUS || species == Species.PONGO_PYGMAEUS || species == Species.TETRAODON_NIGROVIRIDIS){
+		if (species == Species.ANOPHELES_GAMBIAE || species == Species.ORNITHORHYNCHUS_ANATINUS || species == Species.PONGO_ABELII || species == Species.TETRAODON_NIGROVIRIDIS){
 		    String[] sampleTables= {"population_genotype", "population_structure", "sample_synonym"};
 		    tables = remove(tables,sampleTables);
 		}

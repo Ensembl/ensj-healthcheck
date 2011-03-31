@@ -19,6 +19,7 @@ package org.ensembl.healthcheck.testcase.variation;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 //import org.ensembl.healthcheck.DatabaseType;
@@ -34,7 +35,6 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
      * Creates a new instance of Check Allele Frequencies
      */
     public AlleleFrequencies() {
-        addToGroup("variation");
         addToGroup("variation-long");
 	setHintLongRunning(true);
         setDescription("Check that the allele frequencies add up to 1");
@@ -71,7 +71,11 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 		
 		// Get the maximum variation id
 		String sql = "SELECT MAX(s.variation_id) FROM " + tables[i] + " s";
-		int maxId = Integer.parseInt(getRowColumnValue(con,sql));
+		sql = getRowColumnValue(con,sql);
+		if (sql.length() == 0) {
+		    sql = new String("0");
+		}
+		int maxId = Integer.parseInt(sql);
 		
 		// The query to get the data
 		sql = "SELECT s.variation_id, s.subsnp_id, s.sample_id, s.frequency FROM " + tables[i] + " s USE INDEX (variation_idx,subsnp_idx) WHERE s.variation_id BETWEEN VIDLOWER AND VIDUPPER ORDER BY s.variation_id, s.subsnp_id, s.sample_id";
@@ -79,8 +83,8 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 		
 		// Count the number of failed
 		int failed = 0;
-		// Keep an example
-		String example = new String();
+		// Keep the failed entries
+		ArrayList failedEntries = new ArrayList();
 		
 		// Loop until we've reached the maximum variation_id
 		while (offset <= maxId) {
@@ -121,10 +125,8 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 			    if (curVid != lastVid || curSSid != lastSSid || curSid != lastSid) {
 				// See if the sum of the frequencies deviates from 1 more than what we tolerate. In that case, count it as a failed
 				if (Math.abs(1.f - sum) > tol) {
-				    if (failed == 0) {
-					// Keep an example
-					example = "variation_id = " + String.valueOf(lastVid) + ", subsnp_id = " + String.valueOf(lastSSid) + ", sample_id = " + String.valueOf(lastSid) + ", sum is " + String.valueOf(sum);
-				    }
+				    // Store the failed data in failedEntries
+				    failedEntries.add(new int[] {lastVid,lastSSid,lastSid,Math.round(1000*sum)});
 				    failed++;
 				}
 				
@@ -150,8 +152,17 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 		    ReportManager.correct(this,con,"Frequencies in " + tables[i] + " all add up to 1");
 		}
 		else {
+		    // Get an example and print it
+		    int[] entry = (int[]) failedEntries.get(0);
+		    String example = "variation_id = " + String.valueOf(entry[0]) + ", subsnp_id = " + String.valueOf(entry[1]) + ", sample_id = " + String.valueOf(entry[2]) + ", sum is " + String.valueOf((0.001f*entry[3]));
 		    ReportManager.problem(this, con, "There are " + String.valueOf(failed) + " variations in " + tables[i] + " where the frequencies don't add up to 1 +/- " + String.valueOf(tol) + " (e.g. " + example + ")");
 		    result = false;
+		    
+		    // Loop over the failed entries and print a list of variation_id, subsnp_id, sample_id and summed frequency to stdout
+		    for (int j=0; j<failedEntries.size(); j++) {
+			entry = (int[]) failedEntries.get(j);
+			System.out.println(String.valueOf(entry[0]) + "\t" + String.valueOf(entry[1]) + "\t" + String.valueOf(entry[2]) + "\t" + String.valueOf((0.001f*entry[3])));
+		    }
 		}
 		// long subEnd = System.currentTimeMillis();
 		// System.out.println("Time for healthcheck on " + tables[i] + " (~" + String.valueOf(maxId) + " variations) was " + String.valueOf(((subEnd-subStart)/1000)) + " seconds");

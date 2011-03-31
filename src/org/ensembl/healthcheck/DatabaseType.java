@@ -12,6 +12,8 @@
  */
 package org.ensembl.healthcheck;
 
+import org.ensembl.healthcheck.util.Utils;
+
 /**
  * Typesafe "enum" to store information about the type of a database. Declared final since it only has private constructors.
  */
@@ -359,11 +361,9 @@ public final class DatabaseType {
 	 */
 	public boolean isGeneric() {
 
-		if (name.equals("core") || name.equals("est") || name.equals("estgene") || name.equals("vega") || name.equals("cdna") || name.equals("otherfeatures") || name.equals("sanger_vega")) {
-			return true;
-		}
+		String[] genericTypes = {"core", "est", "estgene", "vega", "cdna", "otherfeatures", "sanger_vega", "rnaseq"};
 
-		return false;
+		return Utils.stringInArray(name, genericTypes, false);
 
 	}
 

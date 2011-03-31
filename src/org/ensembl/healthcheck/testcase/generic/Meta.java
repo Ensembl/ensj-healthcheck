@@ -803,17 +803,44 @@ public class Meta extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-		String keys = "(\'genebuild.level\', " + "\'transcriptbuild.level\'," + "\'exonbuild.level\'," + "\'repeat_feature.level\'," + "\'dna_align_featurebuild.level\',"
-				+ "\'protein_align_featurebuild.level\'," + "\'simple_featurebuild.level\'," + "\'prediction_transcriptbuild.level\'," + "\'prediction_exonbuild.level\')";
+		String[] Tables = {"gene",  "transcript", "exon", "repeat_feature", "dna_align_feature",
+				 "protein_align_feature", "simple_feature", "prediction_transcript", "prediction_exon"};
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key IN " + keys);
-		// ReportManager.info(this, con, rows + " %build.level rows present in Meta
-		// table");
-		/*
-		 * if (rows != 9) { ReportManager.problem(this, con, rows + " GB: No %build.level entries in the meta table - run
-		 * ensembl/misc-scripts/meta_levels.pl"); } else { ReportManager.correct(this, con, rows + " build.level rows present"); result
-		 * = true; }
-		 */
+                int exists = getRowCount(con, "SELECT COUNT(*) FROM meta where meta_key like '%build.level'") ;
+                if (exists == 0) {
+                        ReportManager.problem(this, con,  "GB: No %build.level entries in the meta table - run ensembl/misc-scripts/meta_levels.pl");
+                }
+                int count = 0 ;
+                for (int i = 0; i < Tables.length; i++) {
+                        String Table = Tables[i];
+                        int rows = getRowCount(con, "SELECT COUNT(*) FROM " + Table );
+                        int key = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key = '" + Table + "build.level' ") ;
+                        int toplevel = getRowCount(con, "SELECT COUNT(*) FROM " + Table + " t, seq_region_attrib sra, attrib_type at WHERE t.seq_region_id = sra.seq_region_id AND sra.attrib_type_id = at.attrib_type_id AND at.code = 'toplevel' ") ;
+                        if (rows != 0) {
+                                if (key == 0) {
+                                        if (rows == toplevel) {
+                                                ReportManager.problem(this, con, "Table " + Table + " should have a toplevel flag - run ensembl/misc-scripts/meta_levels.pl");
+                                        } else {
+                                               count++ ; 
+                                        }
+                                } else {
+                                        if (rows != toplevel) {
+                                                ReportManager.problem(this, con, "Table " + Table + " has some non toplevel regions, should not have a toplevel flag - run ensembl/misc-scripts/meta_levels.pl");
+                                        } else {
+                                                count++ ;
+                                        }
+                                }
+                        } else {
+                                if (key != 0) {
+                                        ReportManager.problem(this, con, "Empty table " + Table + " should not have a toplevel flag - run ensembl/misc-scripts/meta_levels.pl");
+                                } else {
+                                        count++ ;
+                                }
+                        }
+                }
+                if (count == Tables.length) {
+                        ReportManager.problem(this, con, "Toplevel flags correctly set"); result = true ; 
+                }
 		return result;
 
 	}

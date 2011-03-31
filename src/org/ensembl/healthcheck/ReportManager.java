@@ -750,10 +750,15 @@ public class ReportManager {
 	 */
 	public static void createDatabaseSession() {
 
-		String sql = "INSERT INTO session (host, config, db_release) VALUES ('"
-				+ System.getProperty("host") + ":" + System.getProperty("port")
-				+ "','" + System.getProperty("output.databases") + "', "
-				+ System.getProperty("output.release") + ")";
+		String hosts = "";
+		
+		for (DatabaseServer server : DBUtils.getMainDatabaseServers()) {
+			
+			hosts = String.format("%s, %s:%s", hosts, server.getHost(), server.getPort());
+			
+		}
+		
+		String sql = String.format("INSERT INTO session (host, config, db_release) VALUES (%s,%s,%s)", hosts, System.getProperty("output.databases"), System.getProperty("output.release"));
 
 		try {
 			Statement stmt = outputDatabaseConnection.createStatement();
@@ -774,44 +779,6 @@ public class ReportManager {
 		if (sessionID == -1) {
 			logger.severe("Could not get new session ID");
 			logger.severe(sql);
-		}
-
-	}
-
-	// -------------------------------------------------------------------------
-	/**
-	 * Create a new entry in the session table, using a user-specified session
-	 * ID.
-	 * 
-	 * @param sessionID
-	 *            The session ID to use.
-	 */
-	public static void createDatabaseSession(long sessionID) {
-
-		String sql = "INSERT INTO session (session_id, start_time, host, groups, database_regexp, db_release) VALUES ("
-				+ sessionID
-				+ ", NOW(), '"
-				+ System.getProperty("host")
-				+ ":"
-				+ System.getProperty("port")
-				+ "','"
-				+ System.getProperty("output.groups")
-				+ "','"
-				+ System.getProperty("output.databases")
-				+ "', "
-				+ System.getProperty("output.release") + ")";
-
-		try {
-
-			Statement stmt = outputDatabaseConnection.createStatement();
-			stmt.executeUpdate(sql);
-			logger.fine("Created new session with ID " + sessionID);
-
-		} catch (SQLException e) {
-
-			System.err.println("Error executing:\n" + sql);
-			e.printStackTrace();
-
 		}
 
 	}

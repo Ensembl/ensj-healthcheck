@@ -24,7 +24,10 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.ensembl.healthcheck.util.CollectionUtils;
+import org.ensembl.healthcheck.util.ConnectionBasedSqlTemplateImpl;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.RowMapper;
+import org.ensembl.healthcheck.util.SqlTemplate;
 import org.ensembl.healthcheck.util.UtilUncheckedException;
 
 /**
@@ -97,7 +100,6 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 
 	}
 
-	
 	// e.g. neurospora_crassa_core_4_56_1a
 	protected final static Pattern EG_DB = Pattern
 			.compile("^([a-z0-9_]+)_([a-z]+)_[0-9]+_([0-9]+)_([0-9A-Za-z]+)");
@@ -116,12 +118,12 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	// ensembl_compara_56
 	protected final static Pattern EC_DB = Pattern
 			.compile("^(ensembl)_(compara)_([0-9]+)");
-    // username_ensembl_compara_57
-    protected final static Pattern UC_DB = Pattern
-            .compile("^[^_]+_(ensembl)_(compara)_([0-9]+)");
-    // username_ensembl_compara_57
-    protected final static Pattern UCM_DB = Pattern
-            .compile("^[^_]+_(ensembl)_(compara)_master");
+	// username_ensembl_compara_57
+	protected final static Pattern UC_DB = Pattern
+			.compile("^[^_]+_(ensembl)_(compara)_([0-9]+)");
+	// username_ensembl_compara_57
+	protected final static Pattern UCM_DB = Pattern
+			.compile("^[^_]+_(ensembl)_(compara)_master");
 	// username_ensembl_ancestral_57
 	protected final static Pattern EA_DB = Pattern
 			.compile("^(ensembl)_(ancestral)_([0-9]+)");
@@ -152,9 +154,9 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	protected final static Pattern MYSQL_DB = Pattern
 			.compile("^(mysql|information_schema)");
 
-	protected final static Pattern[] patterns = {
-		EC_DB, UA_DB, UC_DB, UCM_DB, EA_DB, EGC_DB, EG_DB, E_DB, PE_DB, EM_DB, EE_DB, EEL_DB, U_DB, V_DB, MYSQL_DB,BLAST_DB, UD_DB, TAX_DB, EW_DB, HELP_DB
-	};
+	protected final static Pattern[] patterns = { EC_DB, UA_DB, UC_DB, UCM_DB,
+			EA_DB, EGC_DB, EG_DB, E_DB, PE_DB, EM_DB, EE_DB, EEL_DB, U_DB,
+			V_DB, MYSQL_DB, BLAST_DB, UD_DB, TAX_DB, EW_DB, HELP_DB };
 
 	/**
 	 * Utility for building a {@link DatabaseInfo} object given a name
@@ -164,6 +166,31 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	 */
 	public static DatabaseInfo getInfoFromName(String name) {
 		return getInfoFromName(name, null, null);
+	}
+
+	public static DatabaseInfo getInfoFromDatabase(DatabaseServer server,
+			final String name) {
+		SqlTemplate template = new ConnectionBasedSqlTemplateImpl(
+				server.getDatabaseConnection(name));
+		DatabaseInfo info = null;
+		if (template.queryForDefaultObjectList("show tables like 'meta'",
+				String.class).size() ==1 ) {
+			List<DatabaseInfo> dbInfos = template
+					.queryForList(
+							"select m1.meta_value, m2.meta_value from meta m1 join meta m2 where m1.meta_key='schema_type' and m2.meta_key='schema_version'",
+							new RowMapper<DatabaseInfo>() {
+								public DatabaseInfo mapRow(ResultSet resultSet,
+										int position) throws SQLException {
+									return new DatabaseInfo(name, null,
+											Species.UNKNOWN, DatabaseType
+													.resolveAlias(resultSet
+															.getString(1)),
+											resultSet.getString(2), null);
+								}
+							});
+			info = CollectionUtils.getFirstElement(dbInfos, info);
+		}
+		return info;
 	}
 
 	/**
@@ -186,7 +213,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 		String typeStr = null;
 
 		Matcher m;
-	
+
 		for (Pattern p : patterns) {
 			m = p.matcher(name);
 			if (m.matches()) {
@@ -227,10 +254,8 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 			}
 		}
 
-		DatabaseInfo info = new DatabaseInfo(name, alias, species, type,
-				schemaVersion, genebuildVersion);
-
-		return info;
+		return new DatabaseInfo(name, alias, species, type, schemaVersion,
+				genebuildVersion);
 
 	}
 
@@ -263,10 +288,16 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	 */
 	public DatabaseRegistryEntry(DatabaseServer server, String name,
 			Species species, DatabaseType type) {
-
 		this.server = server;
-		this.info = getInfoFromName(name, species, type);
-
+		DatabaseInfo info = getInfoFromName(name, species, type);
+		if (info.getType() == DatabaseType.UNKNOWN) {
+			// try and get the info from the database
+			DatabaseInfo dbInfo = getInfoFromDatabase(server, name);
+			if (dbInfo != null) {
+				info = dbInfo;
+			}
+		}
+		this.info = info;
 	}
 
 	// -----------------------------------------------------------------

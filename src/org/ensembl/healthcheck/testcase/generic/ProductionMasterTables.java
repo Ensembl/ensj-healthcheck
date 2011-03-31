@@ -60,22 +60,20 @@ public class ProductionMasterTables extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		// compare all columns of some tables
-		String[] tables = { "attrib_type", "misc_set" };
+		String[] tables = { "attrib_type", "misc_set", "external_db", "unmapped_reason" };
+
+		List<String> exceptions = new ArrayList<String>();
+		exceptions.add("is_current");
+		exceptions.add("created_by");
+		exceptions.add("created_at");
+		exceptions.add("modified_by");
+		exceptions.add("modified_at");
 
 		for (String table : tables) {
-
 			String key = table + "_id";
-			result &= compareProductionTable(dbre, table, key, "master_" + table, key);
-
+			result &= compareProductionTableWithExceptions(dbre, table, key, "master_" + table, key, exceptions);
 		}
-		
-		// external_db is an exception as we don't want to consider db_release
-		List<String> exceptions = new ArrayList<String>();
-		exceptions.add("db_release");
-		
-		result &= compareProductionTableWithExceptions(dbre, "external_db", "external_db_id", "master_external_db", "external_db_id", exceptions);
-		
+
 		return result;
 
 	} // run

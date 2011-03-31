@@ -18,9 +18,10 @@ package org.ensembl.healthcheck.testcase.generic;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
+import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistry;
-import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
@@ -42,8 +43,6 @@ public class ComparePreviousDatabases extends MultiDatabaseTestCase {
 	}
 
 	/**
-	 * Check various aspects of the meta table.
-	 * 
 	 * @param dbr
 	 *          The database registry containing all the specified databases.
 	 * @return True if the meta information is consistent within species.
@@ -55,8 +54,11 @@ public class ComparePreviousDatabases extends MultiDatabaseTestCase {
 		// look at all databases on the secondary server, check that we have an equivalent
 		DatabaseRegistry secondaryDBR = DBUtils.getSecondaryDatabaseRegistry();
 
+		// need a full registry of all primary databases
+		DatabaseRegistry primaryDBR = new DatabaseRegistry(null, null, null, false);
+		
 		// get the map of species, with associated set of types, for both primary and secondary servers
-		Map<Species, Set<DatabaseType>> primarySpeciesAndTypes = dbr.getSpeciesTypeMap();
+		Map<Species, Set<DatabaseType>> primarySpeciesAndTypes = primaryDBR.getSpeciesTypeMap();
 		Map<Species, Set<DatabaseType>> secondarySpeciesAndTypes = secondaryDBR.getSpeciesTypeMap();
 
 		for (Species s : secondarySpeciesAndTypes.keySet()) {
@@ -68,7 +70,8 @@ public class ComparePreviousDatabases extends MultiDatabaseTestCase {
 			// fail at once if there are no databases on the main server for this species at all
 			if (!primarySpeciesAndTypes.containsKey(s)) {
 
-				ReportManager.problem(this, "", String.format("Secondary server contains at least one database for %s (e.g. %s) but there are none on the primary server", s, (secondaryDBR.getAll(s))[0].getName()));
+				ReportManager.problem(this, "", String.format("Secondary server contains at least one database for %s (e.g. %s) but there are none on the primary server", s, (secondaryDBR.getAll(s))[0]
+						.getName()));
 				result = false;
 
 			} else {
@@ -77,12 +80,12 @@ public class ComparePreviousDatabases extends MultiDatabaseTestCase {
 				for (DatabaseType t : secondarySpeciesAndTypes.get(s)) {
 
 					Set<DatabaseType> primaryTypes = primarySpeciesAndTypes.get(s);
-					
+
 					if (!primaryTypes.contains(t)) {
-					
+
 						ReportManager.problem(this, "", String.format("Secondary server has a %s database for %s but there is no equivalent on the primary server", t, s));
 						result = false;
-						
+
 					}
 				}
 

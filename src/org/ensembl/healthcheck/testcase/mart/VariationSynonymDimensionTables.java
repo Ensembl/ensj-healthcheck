@@ -54,8 +54,10 @@ public class VariationSynonymDimensionTables extends SingleDatabaseTestCase {
 
 		Connection martCon = martDbre.getConnection();
 
+		// TODO - get Mart version and only look for matching variation dbs
+		
 		// get the list of species, and find the variation synonyms in each one
-		DatabaseRegistryEntry[] variationDBs = getDatabaseRegistryByPattern(".*_variation_59.*").getAll(); //XXX
+		DatabaseRegistryEntry[] variationDBs = getDatabaseRegistryByPattern(".*_variation_[0-9].*").getAll();
 
 		for (DatabaseRegistryEntry variationDB : variationDBs) {
 
@@ -63,7 +65,7 @@ public class VariationSynonymDimensionTables extends SingleDatabaseTestCase {
 			
 			logger.finest(String.format("Getting list of variation synonyms used in %s (BioMart equivalent %s)", variationDB.getName(), speciesRoot));
 
-			String[] sourceNames = getColumnValues(variationDB.getConnection(),"SELECT DISTINCT(name) FROM source WHERE somatic=0");
+			String[] sourceNames = getColumnValues(variationDB.getConnection(),"SELECT DISTINCT(name) FROM source WHERE somatic = 0");
 			
 		
 			// check that a BioMart table for each entry exists

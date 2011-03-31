@@ -33,10 +33,7 @@ import org.ensembl.healthcheck.util.DBUtils;
  */
 
 public class Ditag extends SingleDatabaseTestCase {
-
-    // max allowed mappings per ditag
-    private static final int MAX_DITAG_NUMBER  = 4;
-
+	
     // max number of top-level seq regions to check
     private static final int MAX_TOP_LEVEL = 100;
 
