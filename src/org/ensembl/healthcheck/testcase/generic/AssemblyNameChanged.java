@@ -65,11 +65,11 @@ public class AssemblyNameChanged extends SingleDatabaseTestCase {
 
 		// get assembly names from previous and current databases
 		Connection currentCon = currentDBRE.getConnection();
-		String currentAssemblyName = getRowColumnValue(currentCon, "SELECT meta_value FROM meta WHERE meta_key='assembly.name'");
+		String currentAssemblyName = DBUtils.getMetaValue(currentCon, "assembly.name");
 
 		DatabaseRegistryEntry previousDBRE = getEquivalentFromSecondaryServer(currentDBRE);
 		Connection previousCon = previousDBRE.getConnection();
-		String previousAssemblyName = getRowColumnValue(previousCon, "SELECT meta_value FROM meta WHERE meta_key='assembly.name'");
+		String previousAssemblyName = DBUtils.getMetaValue(previousCon, "assembly.name");
 
 		// compare assembly_exception tables (patches only) from each database
 		try {
