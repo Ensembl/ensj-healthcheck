@@ -1,6 +1,7 @@
 package org.ensembl.healthcheck;
 
-import org.ensembl.healthcheck.reporter.*;
+import org.ensembl.healthcheck.reporter.DatabaseReporter;
+import org.ensembl.healthcheck.reporter.TextReporter;
 
 public class ReporterFactory {
 
