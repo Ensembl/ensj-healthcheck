@@ -49,7 +49,6 @@ public final class DBUtils {
 
 	private static ConfigureHost hostConfiguration;
 
-	
 	public static ConfigureHost getHostConfiguration() {
 		return hostConfiguration;
 	}
@@ -240,7 +239,10 @@ public final class DBUtils {
 			ResultSetMetaData rsmd2 = rs2.getMetaData();
 			if (rsmd1.getColumnCount() != rsmd2.getColumnCount() && columns == null) {
 
-				ReportManager.problem(testCase, name1, "Column counts differ " + singleTableName + " " + name1 + ": " + rsmd1.getColumnCount() + " " + name2 + ": " + rsmd2.getColumnCount());
+				if (reportErrors) {
+
+					ReportManager.problem(testCase, name1, "Column counts differ " + singleTableName + " " + name1 + ": " + rsmd1.getColumnCount() + " " + name2 + ": " + rsmd2.getColumnCount());
+				}
 
 				return false; // Deliberate early return for performance
 				// reasons
@@ -259,8 +261,11 @@ public final class DBUtils {
 				// note columns indexed from l
 				if (!((rsmd1.getColumnName(i)).equals(rsmd2.getColumnName(i)))) {
 
-					ReportManager.problem(testCase, name1, "Column names differ for " + singleTableName + " column " + i + " - " + name1 + ": " + rsmd1.getColumnName(i) + " " + name2 + ": "
-							+ rsmd2.getColumnName(i));
+					if (reportErrors) {
+
+						ReportManager.problem(testCase, name1, "Column names differ for " + singleTableName + " column " + i + " - " + name1 + ": " + rsmd1.getColumnName(i) + " " + name2 + ": "
+								+ rsmd2.getColumnName(i));
+					}
 
 					// Deliberate early return for performance reasons
 					return false;
@@ -268,9 +273,11 @@ public final class DBUtils {
 				}
 				if (rsmd1.getColumnType(i) != rsmd2.getColumnType(i)) {
 
-					ReportManager.problem(testCase, name1, "Column types differ for " + singleTableName + " column " + i + " - " + name1 + ": " + rsmd1.getColumnType(i) + " " + name2 + ": "
-							+ rsmd2.getColumnType(i));
+					if (reportErrors) {
 
+						ReportManager.problem(testCase, name1, "Column types differ for " + singleTableName + " column " + i + " - " + name1 + ": " + rsmd1.getColumnType(i) + " " + name2 + ": "
+								+ rsmd2.getColumnType(i));
+					}
 					return false; // Deliberate early return for performance
 					// reasons
 				}
@@ -302,7 +309,9 @@ public final class DBUtils {
 
 				} else {
 					// rs1 has more rows than rs2
-					ReportManager.problem(testCase, name1, singleTableName + " has more rows in " + name1 + " than in " + name2);
+					if (reportErrors) {
+						ReportManager.problem(testCase, name1, singleTableName + " has more rows in " + name1 + " than in " + name2);
+					}
 					return false;
 				}
 
@@ -706,7 +715,7 @@ public final class DBUtils {
 	 * </p>
 	 * 
 	 * <p>
-	 * Depends on system properties being set by a call like 
+	 * Depends on system properties being set by a call like
 	 * </p>
 	 * 
 	 * <pre>
@@ -714,23 +723,23 @@ public final class DBUtils {
 	 * </pre>
 	 * 
 	 * <p>
-	 * New code should use the method getMainDatabaseServersConf which gets 
-	 * configuration information from a configuration object. If all goes well,
-	 * this method will eventually become deprecated.
+	 * New code should use the method getMainDatabaseServersConf which gets configuration information from a configuration object. If
+	 * all goes well, this method will eventually become deprecated.
 	 * </p>
 	 * 
 	 */
 	public static List<DatabaseServer> getMainDatabaseServers() {
-		
-		if (DBUtils.hostConfiguration==null) {
+
+		if (DBUtils.hostConfiguration == null) {
 			return getMainDatabaseServersProperties();
 		} else {
 			return getMainDatabaseServersConf();
 		}
 	}
+
 	public static List<DatabaseServer> getMainDatabaseServersProperties() {
 
-        // EG replace literal reference to file with variable
+		// EG replace literal reference to file with variable
 		Utils.readPropertiesFileIntoSystem(TestRunner.getPropertiesFile(), false);
 
 		if (mainDatabaseServers == null) {
@@ -749,7 +758,7 @@ public final class DBUtils {
 
 	public static List<DatabaseServer> getMainDatabaseServersConf() {
 
-		if (DBUtils.hostConfiguration==null) {
+		if (DBUtils.hostConfiguration == null) {
 			throw new NullPointerException("hostConfiguration is null, so was probably never set!");
 		}
 
@@ -757,28 +766,18 @@ public final class DBUtils {
 
 			mainDatabaseServers = new ArrayList<DatabaseServer>();
 
-			boolean primaryHostConfigured 
-				= DBUtils.hostConfiguration.isHost()
-				&& DBUtils.hostConfiguration.isPort()
-				&& DBUtils.hostConfiguration.isUser()
-				&& DBUtils.hostConfiguration.isPassword()
-				&& DBUtils.hostConfiguration.isDriver();
-			
+			boolean primaryHostConfigured = DBUtils.hostConfiguration.isHost() && DBUtils.hostConfiguration.isPort() && DBUtils.hostConfiguration.isUser() && DBUtils.hostConfiguration.isPassword()
+					&& DBUtils.hostConfiguration.isDriver();
+
 			if (primaryHostConfigured) {
-			
-				checkAndAddDatabaseServerConf(
-					mainDatabaseServers, 
-					DBUtils.hostConfiguration.getHost(), 
-					DBUtils.hostConfiguration.getPort(), 
-					DBUtils.hostConfiguration.getUser(), 
-					DBUtils.hostConfiguration.getPassword(), 
-					DBUtils.hostConfiguration.getDriver()
-				);
+
+				checkAndAddDatabaseServerConf(mainDatabaseServers, DBUtils.hostConfiguration.getHost(), DBUtils.hostConfiguration.getPort(), DBUtils.hostConfiguration.getUser(), DBUtils.hostConfiguration
+						.getPassword(), DBUtils.hostConfiguration.getDriver());
 			}
 		}
 		return mainDatabaseServers;
 	}
-	
+
 	// -------------------------------------------------------------------------
 	/**
 	 * 
@@ -788,38 +787,28 @@ public final class DBUtils {
 	 * </p>
 	 * 
 	 * <p>
-	 * Gets called by getMainDatabaseServers() and should not be used any 
-	 * further, because it uses system properties.
+	 * Gets called by getMainDatabaseServers() and should not be used any further, because it uses system properties.
 	 * </p>
 	 * 
 	 */
 	private static void checkAndAddDatabaseServer(List<DatabaseServer> servers, String hostProp, String portProp, String userProp, String passwordProp, String driverProp) {
 
-		if (
-			   System.getProperty(hostProp) != null 
-			&& System.getProperty(portProp) != null 
-			&& System.getProperty(userProp) != null
-		) {
-			DatabaseServer server = new DatabaseServer(
-				System.getProperty(hostProp), 
-				System.getProperty(portProp), 
-				System.getProperty(userProp), 
-				System.getProperty(passwordProp), 
-				System.getProperty(driverProp)
-			);
+		if (System.getProperty(hostProp) != null && System.getProperty(portProp) != null && System.getProperty(userProp) != null) {
+			DatabaseServer server = new DatabaseServer(System.getProperty(hostProp), System.getProperty(portProp), System.getProperty(userProp), System.getProperty(passwordProp), System
+					.getProperty(driverProp));
 			servers.add(server);
 			logger.fine("Added server: " + server.toString());
 		}
 	}
 
 	public static List<DatabaseServer> getSecondaryDatabaseServers() {
-		if (DBUtils.hostConfiguration==null) {
+		if (DBUtils.hostConfiguration == null) {
 			return getSecondaryDatabaseServersProperties();
 		} else {
 			return getSecondaryDatabaseServersConf();
 		}
 	}
-	
+
 	// -------------------------------------------------------------------------
 	/**
 	 * Look for secondary database servers.
@@ -845,8 +834,9 @@ public final class DBUtils {
 		return secondaryDatabaseServers;
 
 	}
+
 	// -------------------------------------------------------------------------
-	
+
 	// -------------------------------------------------------------------------
 	/**
 	 * 
@@ -859,27 +849,17 @@ public final class DBUtils {
 
 			secondaryDatabaseServers = new ArrayList<DatabaseServer>();
 
-			boolean secondaryHostConfigured 
-			     = DBUtils.hostConfiguration.isSecondaryHost()
-				&& DBUtils.hostConfiguration.isSecondaryPort()
-				&& DBUtils.hostConfiguration.isSecondaryUser()
-				&& DBUtils.hostConfiguration.isSecondaryPassword()
-				&& DBUtils.hostConfiguration.isSecondaryDriver();
-			
+			boolean secondaryHostConfigured = DBUtils.hostConfiguration.isSecondaryHost() && DBUtils.hostConfiguration.isSecondaryPort() && DBUtils.hostConfiguration.isSecondaryUser()
+					&& DBUtils.hostConfiguration.isSecondaryPassword() && DBUtils.hostConfiguration.isSecondaryDriver();
+
 			if (secondaryHostConfigured) {
 
 				logger.config("Adding database " + DBUtils.hostConfiguration.getSecondaryHost());
-				
-				checkAndAddDatabaseServerConf(
-						secondaryDatabaseServers, 
-						DBUtils.hostConfiguration.getSecondaryHost(), 
-						DBUtils.hostConfiguration.getSecondaryPort(), 
-						DBUtils.hostConfiguration.getSecondaryUser(), 
-						DBUtils.hostConfiguration.getSecondaryPassword(), 
-						DBUtils.hostConfiguration.getSecondaryDriver()
-					);
+
+				checkAndAddDatabaseServerConf(secondaryDatabaseServers, DBUtils.hostConfiguration.getSecondaryHost(), DBUtils.hostConfiguration.getSecondaryPort(), DBUtils.hostConfiguration
+						.getSecondaryUser(), DBUtils.hostConfiguration.getSecondaryPassword(), DBUtils.hostConfiguration.getSecondaryDriver());
 			} else {
-				
+
 				logger.config("No secondary database configured.");
 			}
 		}
@@ -889,12 +869,10 @@ public final class DBUtils {
 		return secondaryDatabaseServers;
 	}
 
-
 	/**
 	 * 
 	 * <p>
-	 * Adds a DatabaseServer object to the List<DatabaseServer> passed as the 
-	 * first argument. 
+	 * Adds a DatabaseServer object to the List<DatabaseServer> passed as the first argument.
 	 * </p>
 	 * 
 	 * @param servers
@@ -905,22 +883,9 @@ public final class DBUtils {
 	 * @param driver
 	 * 
 	 */
-	private static void checkAndAddDatabaseServerConf(
-		List<DatabaseServer> servers, 
-		String host, 
-		String port, 
-		String user, 
-		String password, 
-		String driver
-	) {
+	private static void checkAndAddDatabaseServerConf(List<DatabaseServer> servers, String host, String port, String user, String password, String driver) {
 
-		DatabaseServer server = new DatabaseServer(
-			host, 
-			port, 
-			user, 
-			password, 
-			driver
-		);
+		DatabaseServer server = new DatabaseServer(host, port, user, password, driver);
 		servers.add(server);
 		logger.fine("Added server: " + server.toString());
 	}
@@ -962,7 +927,7 @@ public final class DBUtils {
 	}
 
 	// -------------------------------------------------------------------------
-	
+
 	public static void setSecondaryDatabaseRegistry(DatabaseRegistry dbr) {
 
 		secondaryDatabaseRegistry = dbr;
@@ -991,8 +956,8 @@ public final class DBUtils {
 		return result;
 
 	}
-	
-//-------------------------------------------------------------------------
+
+	// -------------------------------------------------------------------------
 
 	public static boolean columnExists(Connection con, String table, String column) {
 
@@ -1014,26 +979,27 @@ public final class DBUtils {
 		return result;
 
 	}
-	
+
 	public static void closeQuietly(ResultSet rs) {
-		if(rs!=null) {
+		if (rs != null) {
 			try {
 				rs.close();
 			} catch (SQLException e) {
-				// ignore 
+				// ignore
 			}
 		}
 	}
+
 	public static void closeQuietly(Statement st) {
-		if(st!=null) {
+		if (st != null) {
 			try {
 				st.close();
 			} catch (SQLException e) {
-				// ignore 
+				// ignore
 			}
 		}
 	}
-	
+
 	// -------------------------------------------------------------------------
 
 } // DBUtils
