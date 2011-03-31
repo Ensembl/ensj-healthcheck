@@ -29,7 +29,8 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Check whether the assembly.name meta entry changes between releases, and if so, check that the assembly_exception table (patches only) has changed. Currently only for human.
+ * Check whether the assembly.name meta entry changes between releases, and if so, check that the assembly_exception table (patches
+ * only) has changed. Currently only for human.
  */
 
 public class AssemblyNameChanged extends SingleDatabaseTestCase {
@@ -62,6 +63,7 @@ public class AssemblyNameChanged extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
+		// get assembly names from previous and current databases
 		Connection currentCon = currentDBRE.getConnection();
 		String currentAssemblyName = getRowColumnValue(currentCon, "SELECT meta_value FROM meta WHERE meta_key='assembly.name'");
 
@@ -69,39 +71,59 @@ public class AssemblyNameChanged extends SingleDatabaseTestCase {
 		Connection previousCon = previousDBRE.getConnection();
 		String previousAssemblyName = getRowColumnValue(previousCon, "SELECT meta_value FROM meta WHERE meta_key='assembly.name'");
 
-		// if the assembly name has changed, then the assembly_exception table should have changed as well
-		if (!previousAssemblyName.equals(currentAssemblyName)) {
+		// compare assembly_exception tables (patches only) from each database
+		try {
 
-			logger.finest(String.format("Previous assembly name %s differs from current assembly name %s, checking whether assembly_exception table has changed ...", previousAssemblyName,
-					currentAssemblyName));
+			Statement previousStmt = previousCon.createStatement();
+			Statement currentStmt = currentCon.createStatement();
 
-			try {
+			String sql = "SELECT * FROM assembly_exception WHERE exc_type LIKE ('PATCH_%') ORDER BY assembly_exception_id";
+			ResultSet previousRS = previousStmt.executeQuery(sql);
+			ResultSet currentRS = currentStmt.executeQuery(sql);
 
-				Statement previousStmt = previousCon.createStatement();
-				Statement currentStmt = currentCon.createStatement();
+			boolean assExSame = DBUtils.compareResultSets(currentRS, previousRS, this, "", false, false, "assembly_exception", false);
 
-				String sql = "SELECT * FROM assembly_exception WHERE exc_type LIKE ('PATCH_%') ORDER BY assembly_exception_id";
-				ResultSet previousRS = previousStmt.executeQuery(sql);
-				ResultSet currentRS = currentStmt.executeQuery(sql);
+			currentRS.close();
+			previousRS.close();
+			currentStmt.close();
+			previousStmt.close();
 
-				boolean assExSame = DBUtils.compareResultSets(currentRS, previousRS, this, "", false, false, "assembly_exception", false);
+			// if the assembly name has changed, then the assembly_exception table should have changed as well
+			if (!previousAssemblyName.equals(currentAssemblyName)) {
 
 				if (assExSame) {
+
+					ReportManager.problem(this, currentCon, String.format("Assembly name has changed from previous database (%s -> %s) but assembly_exception table does not contain different patches",
+							previousAssemblyName, currentAssemblyName));
+					result = false;
+
+				} else {
+
+					ReportManager.correct(this, currentCon, "Assembly names have changed, but so have assembly_exception tables.");
+
+				}
+
+			} else {
+
+				// if we are here, the assembly names are the SAME, and assembly_exception patches should be the same as well
+				if (!assExSame) {
 					
-					ReportManager.problem(this, currentCon, String.format("Assembly name has changed from previous database (%s -> %s) but assembly_exception table does not contain different patches", previousAssemblyName, currentAssemblyName));
+					ReportManager.problem(this, currentCon, String.format("Assembly name (%s)is the same as the previous release, but assembly_exception tables contain different patches", currentAssemblyName));
 					result = false;
 					
 				} else {
 					
-					ReportManager.correct(this, previousCon, "Assembly names have changed, but so have assembly_exception tables.");
+					ReportManager.correct(this, currentCon, "Assembly names and assembly_exception patches are the same.");
+
 					
 				}
-				
-			} catch (SQLException e) {
-				e.printStackTrace();
+
 			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-		
+
 		return result;
 
 	} // run
