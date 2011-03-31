@@ -150,7 +150,7 @@ public class CompareVariationSchema extends MultiDatabaseTestCase {
                             String sql = "SHOW CREATE TABLE " + table;
                             ResultSet masterRS = masterStmt.executeQuery(sql);
                             ResultSet dbRS = dbStmt.executeQuery(sql);
-                            boolean showCreateSame = DBUtils.compareResultSets(masterRS, dbRS, this, " [" + table + "]", false, false, table, true);
+                            boolean showCreateSame = DBUtils.compareResultSets(masterRS, dbRS, this, " [" + table + "]", true, false, table, true);
                             if (!showCreateSame) {
 
                                 // do more in-depth analysis of database structure

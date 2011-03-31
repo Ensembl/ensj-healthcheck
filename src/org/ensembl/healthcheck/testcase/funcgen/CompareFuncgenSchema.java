@@ -244,7 +244,7 @@ public class CompareFuncgenSchema extends MultiDatabaseTestCase {
 									String sql = "SHOW CREATE TABLE " + table;
 									ResultSet masterRS = masterStmt.executeQuery(sql);
 									ResultSet dbRS = dbStmt.executeQuery(sql);
-									boolean showCreateSame = DBUtils.compareResultSets(dbRS, masterRS, this, " [" + table + "]", false, false, table, true);
+									boolean showCreateSame = DBUtils.compareResultSets(dbRS, masterRS, this, " [" + table + "]", true, false, table, true);
 									if (!showCreateSame) {
 
 										// do more in-depth analysis of database structure
