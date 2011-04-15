@@ -39,7 +39,7 @@ public class SeqRegionName extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("compara-ancestral");
 		setDescription("Check that seq_region names for human and mouse are in the right format.");
-
+                setTeamResponsible("GeneBuilders");
 	}
 
 	/**

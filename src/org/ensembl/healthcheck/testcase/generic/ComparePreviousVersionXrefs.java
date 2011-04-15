@@ -32,6 +32,7 @@ public class ComparePreviousVersionXrefs extends ComparePreviousVersionBase {
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		setDescription("Compare the xrefs in the current database with those from the equivalent database on the secondary server");
+                setTeamResponsible("Core and GeneBuilders");
 
 	}
 

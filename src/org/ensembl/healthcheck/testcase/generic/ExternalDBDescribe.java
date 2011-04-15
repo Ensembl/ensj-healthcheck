@@ -39,6 +39,7 @@ public class ExternalDBDescribe extends MultiDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		setDescription("Check that the external_db table is the same in all databases.");
+               setTeamResponsible("Release Coordinator");
 
 	}
 

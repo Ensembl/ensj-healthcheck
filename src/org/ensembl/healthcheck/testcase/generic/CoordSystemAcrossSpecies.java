@@ -34,6 +34,7 @@ public class CoordSystemAcrossSpecies extends MultiDatabaseTestCase {
 
         addToGroup("release");
         setDescription("Check that the coord_system table is the same across all generic DBs; if not it will cause problems on the website.");
+        setTeamResponsible("GeneBuilders");
 
     }
 

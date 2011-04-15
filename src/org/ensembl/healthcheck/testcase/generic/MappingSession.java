@@ -45,6 +45,7 @@ public class MappingSession extends SingleDatabaseTestCase {
 		addToGroup("id_mapping");
 		addToGroup("release");
 		setDescription("Checks the mapping session and stable ID tables.");
+                setTeamResponsible("Core and GeneBuilders");
 
 	}
 

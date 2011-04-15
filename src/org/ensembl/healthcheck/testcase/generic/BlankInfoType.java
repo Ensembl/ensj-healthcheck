@@ -40,6 +40,7 @@ public class BlankInfoType extends SingleDatabaseTestCase {
 		addToGroup("funcgen");
 
 		setDescription("Check for any xref.info_type that are blank ('') - they should be NULL for various other things to work.");
+                setTeamResponsible("Core and GeneBuilders");
 
 	}
 

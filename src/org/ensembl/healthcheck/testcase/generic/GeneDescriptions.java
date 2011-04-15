@@ -42,6 +42,7 @@ public class GeneDescriptions extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Capitalisation of Uniprot will be wrong in gene descriptions.");
 		setFix("Re-run xref system or manually fix affected xrefs.");
+                setTeamResponsible("Core and GeneBuilders");
 
 	}
 

@@ -38,7 +38,7 @@ public class RepeatConsensus extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription("Check there certain types in repeat_consensus.repeat_type.");
-
+                setTeamResponsible("GeneBuilders");
 	}
 
 	/**

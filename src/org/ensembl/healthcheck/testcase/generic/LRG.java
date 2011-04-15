@@ -37,6 +37,7 @@ public class LRG extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("lrg");
 		setDescription("Healthcheck for LRGs");
+                setTeamResponsible("Variation");
 		
 	}
 	

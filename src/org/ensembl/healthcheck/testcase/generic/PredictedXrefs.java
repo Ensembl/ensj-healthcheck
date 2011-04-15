@@ -35,7 +35,7 @@ public class PredictedXrefs extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		setDescription("Check for predicted xrefs erroneously classed as KNOWN.");
-
+                setTeamResponsible("Core and GeneBuilders");
 	}
 
 	/**

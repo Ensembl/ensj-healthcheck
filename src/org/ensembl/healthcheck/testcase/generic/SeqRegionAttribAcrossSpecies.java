@@ -35,6 +35,7 @@ public class SeqRegionAttribAcrossSpecies extends MultiDatabaseTestCase {
 
 		addToGroup("release");
 		setDescription("Check that the seq_region_attrib table is the same across all generic DBs");
+                setTeamResponsible("Release Coordinator");
 
 	}
 

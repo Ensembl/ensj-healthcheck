@@ -35,7 +35,7 @@ public class GOXrefs extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		setDescription("Check that unrpoejcted GO xrefs exist, and that there are no blank or null linkage types.");
-
+                setTeamResponsible("GeneBuilders");
 	}
 
 	/**

@@ -39,6 +39,7 @@ public class XrefCategories extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Web display of xrefs are broken");
 		setFix("Fix type column in external_db by re-importing file.");
+                setTeamResponsible("Core and GeneBuilders");
 
 	}
 

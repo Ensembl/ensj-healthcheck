@@ -43,7 +43,7 @@ public class AssemblyNameChanged extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription("Check whether the assembly.name meta entry changes between releases, and if so, check that the assembly_exception table (patches only) has changed. Currently only for human.");
-
+                setTeamResponsible("GeneBuilders");
 	}
 
 	/**

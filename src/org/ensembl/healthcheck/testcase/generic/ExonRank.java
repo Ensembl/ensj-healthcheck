@@ -33,7 +33,7 @@ public class ExonRank extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("post_genebuild");
 		setDescription("Look for entries in the exon_transcript table that are duplicates apart from the rank.");
-
+                setTeamResponsible("GeneBuilders");
 	}
 
 	/**

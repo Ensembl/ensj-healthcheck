@@ -36,6 +36,7 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		addToGroup("compara-ancestral");
 		addToGroup("id_mapping");
 		setDescription("Check for broken foreign-key relationships.");
+                setTeamResponsible("Core and GeneBuilders");
 
 	}
 

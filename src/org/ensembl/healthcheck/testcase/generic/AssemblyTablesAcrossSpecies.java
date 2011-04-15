@@ -34,7 +34,7 @@ public class AssemblyTablesAcrossSpecies extends MultiDatabaseTestCase {
 
         addToGroup("release");
         setDescription("Check that the assembly table contains the same information for all databases with the same species.");
-
+        setTeamResponsible("GeneBuilders");
     }
 
     /**

@@ -41,6 +41,7 @@ public class XrefIdentifiers extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Web display and all other uses of xrefs are broken");
 		setFix("Re-import or recalculate xrefs");
+                setTeamResponsible("Core and GeneBuilders");
 
 	}
 

@@ -54,6 +54,7 @@ public class StableID extends SingleDatabaseTestCase {
 		setPriority(Priority.RED);
 		setEffect("Compara will have invalid stable IDs.");
 		setFix("Re-run stable ID mapping or fix manually.");
+                setTeamResponsible("Core and GeneBuilders");
 	}
 
 	/**

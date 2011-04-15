@@ -45,7 +45,7 @@ public class SeqRegionCoordSystem extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("compara-ancestral");
 		setDescription("Check for identically-named seq_regions in different co-ordinate systems. Also check that identically-named seq_regions have the same length.");
-
+                setTeamResponsible("GeneBuilders");
 	}
 
 	/**

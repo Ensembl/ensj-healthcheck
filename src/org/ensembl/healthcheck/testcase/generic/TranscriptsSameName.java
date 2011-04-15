@@ -49,6 +49,7 @@ public class TranscriptsSameName extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Web display and all other uses of xrefs are broken");
 		setFix("Recalculate display xrefs");
+                setTeamResponsible("Core");
 	}
 
 	/**

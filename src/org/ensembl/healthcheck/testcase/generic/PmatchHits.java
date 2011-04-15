@@ -36,9 +36,9 @@ public class PmatchHits extends SingleDatabaseTestCase {
      */
     public PmatchHits() {
 
-        addToGroup("post_pmatch");
+        addToGroup("post_genebuild");
         setDescription("Checks the number of hits produced by pmatch and warns if too many.");
-
+        setTeamResponsible("GeneBuilders");
     }
     
     /**

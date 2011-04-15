@@ -43,6 +43,7 @@ public class Meta extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		addToGroup("compara-ancestral");
+                setTeamResponsible("Relco and GeneBuilders");
 		setDescription("Check that the meta table exists, has data, the entries correspond to the " + "database name, and that the values in assembly.type match what's in the meta table");
 	}
 

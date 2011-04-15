@@ -55,6 +55,7 @@ public class LogicNamesDisplayable extends SingleDatabaseTestCase {
 		//addToGroup("post_genebuild");
 		//addToGroup("release");
 
+                setTeamResponsible("Relco and GeneBuilders");
 		setDescription("Checks that all logic names in analysis are displayable");
 		setHintLongRunning(true);
 

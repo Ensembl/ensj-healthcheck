@@ -38,6 +38,7 @@ public class XrefVersions extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		setDescription("Check for blank or null versions in the xref table.");
+                setTeamResponsible("Core and GeneBuilders");
 
 	}
 

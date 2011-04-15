@@ -46,7 +46,7 @@ public class AssemblyMultipleOverlap extends SingleDatabaseTestCase {
 		addToGroup("compara-ancestral");
 
 		setDescription("Check for multiple components which overlap and are assembled to the same thing.");
-
+                setTeamResponsible("Core and GeneBuilders");
 	}
 
 	/**

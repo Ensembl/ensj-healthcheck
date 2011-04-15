@@ -39,6 +39,7 @@ public class InterproDescriptions extends SingleDatabaseTestCase {
         addToGroup("release");
     		addToGroup("core_xrefs");
         setDescription("Check that there are Interpro descriptions, that each one has an xref, and that the xref has a description.");
+        setTeamResponsible("GeneBuilders");
 
     }
 

@@ -34,6 +34,7 @@ public class ExternalSynonymArray extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("core_xrefs");
 		setDescription("Check for ARRAY() entries in external_synonym.");
+                setTeamResponsible("Relco and GeneBuilders");
 
 	}
 

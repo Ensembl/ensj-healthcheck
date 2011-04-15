@@ -43,6 +43,7 @@ public class ComparePreviousVersionAnalysisDescriptions extends SingleDatabaseTe
 		addToGroup("release");
 		addToGroup("funcgen-release");
 		setDescription("Compare the analysis_descriptions in the current database with those from the equivalent database on the secondary server. Note only certain columns are checked.");
+                setTeamResponsible("GeneBuilders and FuncGen");
 
 	}
 

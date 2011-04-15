@@ -31,6 +31,7 @@ public class Karyotype extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription("Check that karyotype and seq_region tables agree");
+                setTeamResponsible("Core");
 
 	}
 

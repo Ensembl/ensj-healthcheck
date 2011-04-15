@@ -34,6 +34,7 @@ public class AttribTypeAcrossSpecies extends MultiDatabaseTestCase {
 
         addToGroup("release");
         setDescription("Check that the attrib_type table contains the same information for all databases with the same species.");
+        setTeamResponsible("Release Coordinator");
 
     }
 

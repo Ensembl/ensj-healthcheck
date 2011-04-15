@@ -34,7 +34,7 @@ public class NullTranscripts extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
-
+                setTeamResponsible("GeneBuilders");
 		setDescription("Check for null transcripts");
 
 	}

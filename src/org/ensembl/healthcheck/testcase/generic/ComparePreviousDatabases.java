@@ -40,6 +40,7 @@ public class ComparePreviousDatabases extends MultiDatabaseTestCase {
 	public ComparePreviousDatabases() {
 		addToGroup("release");
 		setDescription("Check that all species and database types in the previous release are represented in the current release.");
+                setTeamResponsible("Release Coordinator");
 	}
 
 	/**

@@ -36,7 +36,7 @@ public class IsCurrent extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
-
+                setTeamResponsible("Core and GeneBuilders");
 		setDescription("Check for genes, transcripts and exons where the is_current column is anything other than 1.");
 
 	}

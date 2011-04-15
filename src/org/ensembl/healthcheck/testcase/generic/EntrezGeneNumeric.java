@@ -36,6 +36,7 @@ public class EntrezGeneNumeric extends SingleDatabaseTestCase {
 		setDescription("Check that no genes are named after numeric EntrezGene identifiers.");
 		setPriority(Priority.AMBER);
 		setEffect("Causes genes to be displayed with numeric EntrezGene 'names', which is potentially confusing.");
+                setTeamResponsible("Core and GeneBuilders");
 		
 	}
 

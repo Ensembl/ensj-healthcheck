@@ -37,7 +37,7 @@ public class DisplayLabels extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		setDescription("Check that certain tables have display_labels set");
-
+                setTeamResponsible("Core and GeneBuilders");
 	}
 
 	/**

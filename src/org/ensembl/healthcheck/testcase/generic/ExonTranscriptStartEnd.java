@@ -38,7 +38,7 @@ public class ExonTranscriptStartEnd extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription("Checks that exon and transcript start/end agree");
-
+                setTeamResponsible("GeneBuilders");
 	}
 
 	/**

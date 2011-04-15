@@ -38,6 +38,7 @@ public class FeatureCoords extends SingleDatabaseTestCase {
 		addToGroup("release");
 		setDescription("Check that feature co-ords make sense.");
 		setHintLongRunning(true);
+                setTeamResponsible("GeneBuilders");
 	}
 
 	/**

@@ -40,7 +40,7 @@ public class HGNCNumeric extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setFix("Remove HGNC xrefs and object_xrefs where dbprimary_acc=display_label. Set display_xref_ids of genes that were pointing to these to null.");
 		setEffect("Causes genes to be displayed with numeric HGNC symbols, and some dbprimary_acc=display_label for HGNC when they're not supposed to be, which confuses Mart.");
-		
+                setTeamResponsible("Core");		
 	}
 
 	/**

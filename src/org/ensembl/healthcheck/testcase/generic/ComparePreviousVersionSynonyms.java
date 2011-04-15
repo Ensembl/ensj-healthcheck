@@ -32,7 +32,8 @@ public class ComparePreviousVersionSynonyms extends ComparePreviousVersionBase {
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		setDescription("Compare the xref synonyms in the current database with those from the equivalent database on the secondary server");
-
+                setTeamResponsible("Core and GeneBuilders");
+                 
 	}
 
     /**

@@ -34,7 +34,7 @@ public class ComparePreviousVersionTableRows extends ComparePreviousVersionBase 
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription("Compare the counts of the number of rows in each table in this and the previous database");
-
+                setTeamResponsible("Core and GeneBuilders");
 	}
 
     /**

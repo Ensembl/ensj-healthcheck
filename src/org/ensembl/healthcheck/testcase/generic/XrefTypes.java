@@ -36,7 +36,7 @@ public class XrefTypes extends SingleDatabaseTestCase {
         addToGroup("release");
         addToGroup("core_xrefs");
         setDescription("Check that all xrefs only map to one ensembl object type.");
-
+        setTeamResponsible("Core and GeneBuilders");
     }
 
     /**

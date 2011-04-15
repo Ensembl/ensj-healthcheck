@@ -57,6 +57,7 @@ public class CompareSchema extends MultiDatabaseTestCase {
 
 		addToGroup("release");
 		setDescription("Compare two databases (table names, column names and types, and indexes. Note that, int the case of core databases, there are occasionally tables (such as runnable, job, job_status etc) that are still present after the genebuild handover because pipelines are still running. The genebuilders are responsible for deleting these before the release.");
+                setTeamResponsible("Release Coordinator");
 
 	}
 

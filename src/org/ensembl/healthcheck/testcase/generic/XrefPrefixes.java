@@ -43,7 +43,7 @@ public class XrefPrefixes extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Web display of xrefs will be broken");
 		setFix("Re-run xref system or manually fix affected xrefs.");
-
+                setTeamResponsible("Core and GeneBuilders");
 	}
 
 	/**
