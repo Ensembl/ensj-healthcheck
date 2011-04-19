@@ -891,7 +891,7 @@ public class ReportManager {
 			stmt.setString(6, report.getShortTestCaseName());
 			stmt.setString(7, report.getLevelAsString());
 			stmt.setString(8, report.getMessage());
-			stmt.setString(9, report.getTeamResponsible().toString());
+			stmt.setString(9, report.getPrintableTeamResponsibleString());
 			stmt.executeUpdate();
 
 		} catch (SQLException e) {

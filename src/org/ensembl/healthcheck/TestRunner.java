@@ -310,7 +310,7 @@ public class TestRunner {
 				try {
 					EnsTestCase testObj = (EnsTestCase) (Class.forName(test)
 							.newInstance());
-					String teamResponsible = testObj.getTeamResponsible().toString();
+					String teamResponsible = testObj.getPrintableTeamResponsibleString();
 					if (teamResponsible == null) {
 						teamResponsible = "Not set";
 					}
