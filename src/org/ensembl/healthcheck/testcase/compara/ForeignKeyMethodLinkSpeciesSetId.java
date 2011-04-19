@@ -27,6 +27,7 @@ import java.util.regex.Matcher;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -44,7 +45,7 @@ public class ForeignKeyMethodLinkSpeciesSetId extends SingleDatabaseTestCase {
         addToGroup("compara_genomic");
         addToGroup("compara_homology");
         setDescription("Check for broken foreign-key relationships in ensembl_compara databases.");
-        setTeamResponsible("compara");
+        setTeamResponsible(Team.COMPARA);
 
     }
 

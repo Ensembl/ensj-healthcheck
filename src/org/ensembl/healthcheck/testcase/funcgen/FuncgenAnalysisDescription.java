@@ -16,6 +16,7 @@ package org.ensembl.healthcheck.testcase.funcgen;
 //import java.util.Map;
 //import org.ensembl.healthcheck.DatabaseRegistryEntry;
 //import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.generic.AnalysisDescription;
 
 /**
@@ -35,7 +36,7 @@ public class FuncgenAnalysisDescription extends AnalysisDescription {
 		//addToGroup("funcgen");
 		//addToGroup("funcgen-release");
 		setDescription("Check that all of certain types of objects have analysis_descriptions; also check that displayable field is set.");
-		setTeamResponsible("Funcgen");
+		setTeamResponsible(Team.FUNCGEN);
 		
 	}
 	

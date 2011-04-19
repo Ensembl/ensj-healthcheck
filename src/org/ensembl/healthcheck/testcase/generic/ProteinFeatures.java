@@ -21,6 +21,7 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
@@ -30,75 +31,76 @@ import org.ensembl.healthcheck.util.DBUtils;
 public class ProteinFeatures extends SingleDatabaseTestCase {
 
 	private static int THRESHOLD = 1000;
-	
-    /**
-     * Creates a new instance of CheckFeatureCoordsTestCase
-     */
-    public ProteinFeatures() {
-        setDescription("Check that protein annotation feature coords make sense and that all translations exist in the database");
-        addToGroup("post_genebuild");
-        addToGroup("release");
-        setTeamResponsible("GeneBuilders");
-    }
 
-    /**
-     * This only applies to core and Vega databases.
-     */
-    public void types() {
+	/**
+	 * Creates a new instance of CheckFeatureCoordsTestCase
+	 */
+	public ProteinFeatures() {
+		setDescription("Check that protein annotation feature coords make sense and that all translations exist in the database");
+		addToGroup("post_genebuild");
+		addToGroup("release");
+		setTeamResponsible(Team.GENEBUILD);
+	}
 
-        removeAppliesToType(DatabaseType.OTHERFEATURES);
-    		removeAppliesToType(DatabaseType.RNASEQ);
+	/**
+	 * This only applies to core and Vega databases.
+	 */
+	public void types() {
 
-    }
-    
-    /**
-     * Iterate over each affected database and perform various checks.
-     * @param dbre
-     *          The database to use.
-     * @return true if the test passes.
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.RNASEQ);
 
-        boolean result = true;
+	}
 
-        Connection con = dbre.getConnection();
+	/**
+	 * Iterate over each affected database and perform various checks.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return true if the test passes.
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-        logger.info("Checking protein features for " + DBUtils.getShortDatabaseName(con) + " ...");
-        int rows = getRowCount(con, "SELECT COUNT(*) FROM protein_feature WHERE seq_start > seq_end");
-        if (rows > THRESHOLD) {
-            result = false;
-            ReportManager.problem(this, con, rows + " protein features have seq_start > seq_end");
-        } else {
-            ReportManager.correct(this, con, "No protein features where seq_start > seq_end");
-        }
+		boolean result = true;
 
-        logger.info("Checking protein features for " + DBUtils.getShortDatabaseName(con) + " ...");
-        rows = getRowCount(con, "SELECT COUNT(*) from protein_feature WHERE seq_start < 0");
-        if (rows > THRESHOLD) {
-            ReportManager.problem(this, con, rows + " protein features have seq_start < 0");
-        } else {
-            ReportManager.correct(this, con, "No protein features where seq_start < 0");
-        }
+		Connection con = dbre.getConnection();
 
-        logger.info("Checking protein features for " + DBUtils.getShortDatabaseName(con) + " ...");
-        rows = getRowCount(con, "SELECT COUNT(*) FROM protein_feature WHERE hit_start < 0");
-        if (rows > THRESHOLD) {
-            ReportManager.problem(this, con, rows + " protein features have hit_start < 0");
-        } else {
-            ReportManager.correct(this, con, "No protein features where hit_start < 0");
-        }
+		logger.info("Checking protein features for " + DBUtils.getShortDatabaseName(con) + " ...");
+		int rows = getRowCount(con, "SELECT COUNT(*) FROM protein_feature WHERE seq_start > seq_end");
+		if (rows > THRESHOLD) {
+			result = false;
+			ReportManager.problem(this, con, rows + " protein features have seq_start > seq_end");
+		} else {
+			ReportManager.correct(this, con, "No protein features where seq_start > seq_end");
+		}
 
-        logger.info("Checking protein features for " + DBUtils.getShortDatabaseName(con) + " ...");
-        rows = getRowCount(con, "SELECT COUNT(*) from protein_feature WHERE hit_start > hit_end");
-        if (rows > THRESHOLD) {
-            result = false;
-            ReportManager.problem(this, con, rows + " protein features have hit_start > hit_end");
-        } else {
-            ReportManager.correct(this, con, "No protein features where hit_start > hit_end");
-        }
+		logger.info("Checking protein features for " + DBUtils.getShortDatabaseName(con) + " ...");
+		rows = getRowCount(con, "SELECT COUNT(*) from protein_feature WHERE seq_start < 0");
+		if (rows > THRESHOLD) {
+			ReportManager.problem(this, con, rows + " protein features have seq_start < 0");
+		} else {
+			ReportManager.correct(this, con, "No protein features where seq_start < 0");
+		}
 
-        return result;
+		logger.info("Checking protein features for " + DBUtils.getShortDatabaseName(con) + " ...");
+		rows = getRowCount(con, "SELECT COUNT(*) FROM protein_feature WHERE hit_start < 0");
+		if (rows > THRESHOLD) {
+			ReportManager.problem(this, con, rows + " protein features have hit_start < 0");
+		} else {
+			ReportManager.correct(this, con, "No protein features where hit_start < 0");
+		}
 
-    } // run
+		logger.info("Checking protein features for " + DBUtils.getShortDatabaseName(con) + " ...");
+		rows = getRowCount(con, "SELECT COUNT(*) from protein_feature WHERE hit_start > hit_end");
+		if (rows > THRESHOLD) {
+			result = false;
+			ReportManager.problem(this, con, rows + " protein features have hit_start > hit_end");
+		} else {
+			ReportManager.correct(this, con, "No protein features where hit_start > hit_end");
+		}
+
+		return result;
+
+	} // run
 
 } // ProteinFeatures

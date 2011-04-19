@@ -17,20 +17,20 @@
 package org.ensembl.healthcheck.testcase.funcgen;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.sql.Statement;
-import java.sql.SQLException;
-import java.sql.ResultSet;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
-import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
  * Checks the *_stable_id tables to ensure they are populated, have no orphan
@@ -57,7 +57,7 @@ public class FuncgenStableID extends SingleDatabaseTestCase {
 		addToGroup("funcgen");//do we need this group and the funcgen-release group?
 		addToGroup("funcgen-release");
 		//setHintLongRunning(true);// ?Only take about 10 mins for mouse
-		setTeamResponsible("funcgen");
+		setTeamResponsible(Team.FUNCGEN);
 
 		setDescription("Checks regulatory_feature stable_id fields are valid.");
 		setPriority(Priority.RED);

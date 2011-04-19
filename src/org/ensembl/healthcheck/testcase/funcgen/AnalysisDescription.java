@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -37,7 +38,7 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 		addToGroup("funcgen");
 		addToGroup("funcgen-release");
 		setDescription("Check that all of certain types of objects have analysis_descriptions; also check that displayable field is set.");
-		setTeamResponsible("Funcgen");
+		setTeamResponsible(Team.FUNCGEN);
 		
 	}
 

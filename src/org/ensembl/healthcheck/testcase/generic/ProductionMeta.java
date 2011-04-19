@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
@@ -40,19 +41,18 @@ public class ProductionMeta extends SingleDatabaseTestCase {
 		setDescription("Check that all the non-optional meta keys listed in the production database are present, and that all the meta keys are valid.");
 		setPriority(Priority.AMBER);
 		setEffect("Unknown/incorrect meta keys.");
-		setTeamResponsible("Release coordinator");
+		setTeamResponsible(Team.RELEASE_COORDINATOR);
 
 	}
 
-    /**
+	/**
 	 * This test Does not apply to sanger_vega dbs
 	 */
 	public void types() {
-		
-		removeAppliesToType(DatabaseType.SANGER_VEGA);
-	
-	}
 
+		removeAppliesToType(DatabaseType.SANGER_VEGA);
+
+	}
 
 	/**
 	 * Run the test.
@@ -72,12 +72,13 @@ public class ProductionMeta extends SingleDatabaseTestCase {
 
 		// we'll use a different query depending on the database type; also some keys are only for certain species
 		String databaseType = dbre.getType().getName(); // will be core, otherfeatures etc
-		String species = dbre.getSpecies().toString();  // will be homo_sapiens etc
+		String species = dbre.getSpecies().toString(); // will be homo_sapiens etc
 
 		List<String> dbMetaKeys = getColumnValuesList(con, "SELECT DISTINCT(meta_key) FROM meta");
 
 		// First check that keys present in database are all valid and current
-		List<String> productionMetaKeys = getColumnValuesList(productionCon, "SELECT name FROM meta_key WHERE is_current = 1 AND FIND_IN_SET('" + databaseType + "', db_type) > 0 AND (FIND_IN_SET('" + species + "', only_for_species) > 0 OR only_for_species IS NULL)");
+		List<String> productionMetaKeys = getColumnValuesList(productionCon, "SELECT name FROM meta_key WHERE is_current = 1 AND FIND_IN_SET('" + databaseType + "', db_type) > 0 AND (FIND_IN_SET('"
+				+ species + "', only_for_species) > 0 OR only_for_species IS NULL)");
 
 		// remove the list of valid keys from the list of keys in the database, the remainder (if any) are invalid
 		Collection<String> dbOnly = CollectionUtils.subtract(dbMetaKeys, productionMetaKeys);
@@ -92,13 +93,15 @@ public class ProductionMeta extends SingleDatabaseTestCase {
 			ReportManager.correct(this, con, "Set of meta keys matches the current valid list in the production database.");
 
 		}
-		
+
 		// now check that all non-optional keys in production database appear here
 		dbMetaKeys = getColumnValuesList(con, "SELECT DISTINCT(meta_key) FROM meta");
 
-		productionMetaKeys = getColumnValuesList(productionCon, "SELECT name FROM meta_key WHERE is_current = 1 AND is_optional = 0 AND FIND_IN_SET('" + databaseType + "', db_type) > 0 AND (FIND_IN_SET('" + species + "', only_for_species) > 0 OR only_for_species IS NULL)");
-		
-		// remove the keys in the database from the non-optional list, any remaining in the non-optional list are missing from the database
+		productionMetaKeys = getColumnValuesList(productionCon, "SELECT name FROM meta_key WHERE is_current = 1 AND is_optional = 0 AND FIND_IN_SET('" + databaseType
+				+ "', db_type) > 0 AND (FIND_IN_SET('" + species + "', only_for_species) > 0 OR only_for_species IS NULL)");
+
+		// remove the keys in the database from the non-optional list, any remaining in the non-optional list are missing from the
+		// database
 		Collection<String> productionOnly = CollectionUtils.subtract(productionMetaKeys, dbMetaKeys);
 
 		if (!productionOnly.isEmpty()) {

@@ -19,11 +19,12 @@
 package org.ensembl.healthcheck.testcase.compara;
 
 import java.sql.Connection;
-import java.sql.Statement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -40,7 +41,7 @@ public class CheckGenomicAlignGenomeDBs extends SingleDatabaseTestCase {
 
         addToGroup("compara_genomic");
         setDescription("Check the genome_dbs for a method_link_species_set are present in the genomic_aligns");
-        setTeamResponsible("compara");
+        setTeamResponsible(Team.COMPARA);
 
     }
 

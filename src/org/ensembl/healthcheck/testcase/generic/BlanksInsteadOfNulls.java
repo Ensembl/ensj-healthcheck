@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
@@ -44,7 +45,7 @@ public class BlanksInsteadOfNulls extends SingleDatabaseTestCase {
 		addToGroup("funcgen");
 		addToGroup("compara-ancestral");
 		setDescription("Check for text columns that have the default NULL but which actually contain blanks ('') which is probably wrong");
-                setTeamResponsible("Relco");
+		setTeamResponsible(Team.RELEASE_COORDINATOR);
 
 	}
 
@@ -74,12 +75,12 @@ public class BlanksInsteadOfNulls extends SingleDatabaseTestCase {
 
 				String[] columnInfo = (String[]) it.next();
 				String column = columnInfo[0];
-				
+
 				// display_labels should be neither blank nor null
 				if (column.equals("display_label")) {
 					continue;
 				}
-				
+
 				String allowedNull = columnInfo[2];
 				String columnDefault = columnInfo[4];
 				if (columnDefault != null && !columnDefault.toLowerCase().equals("null")) {

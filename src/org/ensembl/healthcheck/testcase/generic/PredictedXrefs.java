@@ -18,33 +18,37 @@ import java.util.Iterator;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check for any xrefs that are listed as "KNOWN" in the external_db table but are actually predictions. Currently only RefSeq XP/XM xrefs.
+ * Check for any xrefs that are listed as "KNOWN" in the external_db table but are actually predictions. Currently only RefSeq XP/XM
+ * xrefs.
  */
 
 public class PredictedXrefs extends SingleDatabaseTestCase {
 
 	/**
-   * Create a new PredictedXrefs testcase.
-   */
+	 * Create a new PredictedXrefs testcase.
+	 */
 	public PredictedXrefs() {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		setDescription("Check for predicted xrefs erroneously classed as KNOWN.");
-                setTeamResponsible("Core and GeneBuilders");
+		setTeamResponsible(Team.CORE);
+		setSecondTeamResponsible(Team.GENEBUILD);
 	}
 
 	/**
-   * Run the test.
-   * 
-   * @param dbre The database to use.
-   * @return true if the test passed.
-   * 
-   */
+	 * Run the test.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return true if the test passed.
+	 * 
+	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
@@ -66,8 +70,8 @@ public class PredictedXrefs extends SingleDatabaseTestCase {
 
 			logger.info("Checking for " + externalDBName + " xrefs matching " + pattern);
 
-			int rows = getRowCount(con, "SELECT COUNT(*) FROM xref x, external_db e WHERE x.external_db_id=e.external_db_id AND e.db_name='"
-					+ externalDBName + "' AND x.dbprimary_acc LIKE '" + pattern + "'");
+			int rows = getRowCount(con, "SELECT COUNT(*) FROM xref x, external_db e WHERE x.external_db_id=e.external_db_id AND e.db_name='" + externalDBName + "' AND x.dbprimary_acc LIKE '" + pattern
+					+ "'");
 
 			if (rows > 0) {
 

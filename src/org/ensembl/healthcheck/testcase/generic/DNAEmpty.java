@@ -21,8 +21,9 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -38,9 +39,8 @@ public class DNAEmpty extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription("Check that dna table is empty");
-                setTeamResponsible("Genebuilders");
+		setTeamResponsible(Team.GENEBUILD);
 	}
-
 
 	/**
 	 * This applies to all core schema databases apart from 'core' and 'sanger_vega'
@@ -48,10 +48,10 @@ public class DNAEmpty extends SingleDatabaseTestCase {
 	public void types() {
 
 		removeAppliesToType(DatabaseType.CORE);
-		removeAppliesToType(DatabaseType.SANGER_VEGA);		
+		removeAppliesToType(DatabaseType.SANGER_VEGA);
 
 	}
-	
+
 	/**
 	 * Run the test.
 	 * 

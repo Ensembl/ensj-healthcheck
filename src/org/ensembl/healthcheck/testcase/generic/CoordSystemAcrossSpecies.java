@@ -18,6 +18,7 @@ package org.ensembl.healthcheck.testcase.generic;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 /**
@@ -25,31 +26,31 @@ import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
  */
 public class CoordSystemAcrossSpecies extends MultiDatabaseTestCase {
 
-    private DatabaseType[] types = {DatabaseType.CORE, DatabaseType.CDNA, DatabaseType.OTHERFEATURES};
+	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.CDNA, DatabaseType.OTHERFEATURES };
 
-    /**
-     * Creates a new instance of CoordSystemAcrossSpecies
-     */
-    public CoordSystemAcrossSpecies() {
+	/**
+	 * Creates a new instance of CoordSystemAcrossSpecies
+	 */
+	public CoordSystemAcrossSpecies() {
 
-        addToGroup("release");
-        setDescription("Check that the coord_system table is the same across all generic DBs; if not it will cause problems on the website.");
-        setTeamResponsible("GeneBuilders");
+		addToGroup("release");
+		setDescription("Check that the coord_system table is the same across all generic DBs; if not it will cause problems on the website.");
+		setTeamResponsible(Team.GENEBUILD);
 
-    }
+	}
 
-    /**
-     * Make sure that the seq_region tables are all the same.
-     * 
-     * @param dbr The database registry containing all the specified databases.
-     * @return True if the seq_region_attrib table is the same across all the species in the
-     *         registry.
-     */
-    public boolean run(DatabaseRegistry dbr) {
+	/**
+	 * Make sure that the seq_region tables are all the same.
+	 * 
+	 * @param dbr
+	 *          The database registry containing all the specified databases.
+	 * @return True if the seq_region_attrib table is the same across all the species in the registry.
+	 */
+	public boolean run(DatabaseRegistry dbr) {
 
-        return checkTableAcrossSpecies("coord_system", dbr, types, "All coord_system tables are the same", "coord_system tables are different", " WHERE name !='lrg'");
+		return checkTableAcrossSpecies("coord_system", dbr, types, "All coord_system tables are the same", "coord_system tables are different", " WHERE name !='lrg'");
 
-    } // run
+	} // run
 
 } // CoordSystemAcrossSpecies
 

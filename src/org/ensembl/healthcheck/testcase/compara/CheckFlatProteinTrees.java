@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase;
 import org.ensembl.healthcheck.util.DefaultMapRowMapper;
 import org.ensembl.healthcheck.util.MapRowMapper;
@@ -31,7 +31,7 @@ public class CheckFlatProteinTrees extends AbstractTemplatedTestCase {
 	public CheckFlatProteinTrees() {
 		addToGroup("compara_homology");
 		setDescription("Look for trees which have internal nodes but all members' parent is the root");
-		setTeamResponsible("compara");
+		setTeamResponsible(Team.COMPARA);
 	}
 
 	/**

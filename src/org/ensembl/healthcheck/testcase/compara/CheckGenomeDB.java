@@ -16,20 +16,20 @@
 
 package org.ensembl.healthcheck.testcase.compara;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.sql.Connection;
-import java.sql.Statement;
 import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Map;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
-import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.Species;
+import org.ensembl.healthcheck.Team;
+import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 
@@ -47,7 +47,7 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
         addToGroup("compara_external_foreign_keys");
         setDescription("Check that the properties of the genome_db table (taxon_id, assembly" +
             " and genebuild) correspond to the meta data in the core DB and vice versa.");
-        setTeamResponsible("Compara");
+        setTeamResponsible(Team.COMPARA);
 
     }
  

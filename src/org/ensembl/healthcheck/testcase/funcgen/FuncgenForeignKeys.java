@@ -18,7 +18,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.generic.CoreForeignKeys;
 

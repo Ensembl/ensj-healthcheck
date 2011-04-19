@@ -20,6 +20,7 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
@@ -41,7 +42,7 @@ public class DescriptionNewlines extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Will cause problems for TSV file dumping and importing");
 		setFix("Remove newlines and tabs; useful SQL for identifying affected genes:\nSELECT g.gene_id, gsi.stable_id, g.description FROM gene g, gene_stable_id gsi WHERE g.gene_id=gsi.gene_id AND (LOCATE('\\n', g.description) > 0 or LOCATE('\\t', g.description) > 0);");
-                setTeamResponsible("Core");
+		setTeamResponsible(Team.CORE);
 
 	}
 
@@ -60,16 +61,16 @@ public class DescriptionNewlines extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		int rows = getRowCount(con, "SELECT COUNT(*) FROM gene g, gene_stable_id gsi WHERE g.gene_id=gsi.gene_id AND (LOCATE('\n', g.description) > 0 OR LOCATE('\t', g.description) > 0)");
-		
+
 		if (rows > 0) {
-			
+
 			result = false;
 			ReportManager.problem(this, con, rows + " genes have newlines and/or tabs in their descriptions");
-			
+
 		} else {
-			
+
 			ReportManager.correct(this, con, "No genes have newlines or tabs in their descriptions");
-			
+
 		}
 		return result;
 

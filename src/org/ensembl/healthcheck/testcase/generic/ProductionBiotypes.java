@@ -13,17 +13,17 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.DatabaseType;
 
 /**
  * Check that the gene and transcript biotypes match the valid current ones in the production database.
@@ -41,11 +41,11 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
 		setDescription("Check that the gene and transcript biotypes match the valid current ones in the production database.");
 		setPriority(Priority.AMBER);
 		setEffect("Unknown/incorrect biotypes.");
-		setTeamResponsible("Release coordinator");
+		setTeamResponsible(Team.RELEASE_COORDINATOR);
 
 	}
 
-    /**
+	/**
 	 * This test Does not apply to sanger_vega dbs
 	 */
 	public void types() {
@@ -66,7 +66,7 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
 
 		// we'll use a different query depending on the database type
 		String databaseType = dbre.getType().getName(); // will be core, otherfeatures etc
-		
+
 		String[] tables = { "gene", "transcript" };
 
 		Connection con = dbre.getConnection();
@@ -77,20 +77,22 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
 
 			List<String> dbBiotypes = getColumnValuesList(con, "SELECT DISTINCT(biotype) FROM " + table);
 
-			List<String> productionBiotypes = getColumnValuesList(productionCon, "SELECT name FROM biotype WHERE object_type='" + table + "' AND is_current = 1 AND FIND_IN_SET('" + databaseType + "', db_type) > 0");
-			
+			List<String> productionBiotypes = getColumnValuesList(productionCon, "SELECT name FROM biotype WHERE object_type='" + table + "' AND is_current = 1 AND FIND_IN_SET('" + databaseType
+					+ "', db_type) > 0");
+
 			// remove the list of valid biotypes from the list of biotypes in the database, the remainder (if any) are invalid
 			Collection<String> dbOnly = CollectionUtils.subtract(dbBiotypes, productionBiotypes);
 
 			if (!dbOnly.isEmpty()) {
-				
-				ReportManager.problem(this, con, String.format("%ss in %s have the following biotypes which are missing from %s: %s", StringUtils.capitalize(table), dbre.getName(), getProductionDatabase().getName(), StringUtils.join(dbOnly, ",")));
+
+				ReportManager.problem(this, con, String.format("%ss in %s have the following biotypes which are missing from %s: %s", StringUtils.capitalize(table), dbre.getName(), getProductionDatabase()
+						.getName(), StringUtils.join(dbOnly, ",")));
 				result = false;
-	
+
 			} else {
-				
+
 				ReportManager.correct(this, con, "Set of " + table + " biotypes matches the current valid list in the production database.");
-				
+
 			}
 
 		}

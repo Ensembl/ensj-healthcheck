@@ -23,12 +23,12 @@ import java.util.List;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Check for rows that contain the *string* NULL - should probably be the
- * database primitive NULL.
+ * Check for rows that contain the *string* NULL - should probably be the database primitive NULL.
  */
 
 public class NullStrings extends SingleDatabaseTestCase {
@@ -44,9 +44,9 @@ public class NullStrings extends SingleDatabaseTestCase {
 		addToGroup("funcgen-release");
 		addToGroup("funcgen");
 		addToGroup("compara-ancestral");
-                setTeamResponsible("Relco to decide");
+		setTeamResponsible(Team.RELEASE_COORDINATOR);
 		setDescription("Check for rows that contain the *string* NULL - should probably be the database primitive NULL.");
-		
+
 	}
 
 	/**
@@ -69,35 +69,35 @@ public class NullStrings extends SingleDatabaseTestCase {
 
 			String table = tables[i];
 			boolean thisTableProblem = false;
-			
+
 			List columnsAndTypes = DBUtils.getTableInfo(con, table, "varchar");
 			Iterator it = columnsAndTypes.iterator();
 			while (it.hasNext()) {
 
 				String[] columnAndType = (String[]) it.next();
 				String column = columnAndType[0];
-				
+
 				int rows = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE " + column + "='NULL'");
-				
+
 				if (rows > 0) {
-					
+
 					ReportManager.problem(this, con, rows + " rows in " + table + "." + column + " have the string value NULL, not a proper NULL value");
 					result = false;
 					thisTableProblem = true;
-					
-				} 
-				
+
+				}
+
 			}
-			
+
 			// only store one correct report per table to avoid swamping output
 			if (!thisTableProblem) {
 				ReportManager.correct(this, con, "No columns with NULL strings in " + table);
 			}
-			
+
 		}
 
 		return result;
 
 	} // run
-	
+
 } // NullStrings

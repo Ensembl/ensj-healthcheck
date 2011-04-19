@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -35,7 +36,8 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription("Check that all of certain types of objects have analysis_descriptions; also check that displayable field is set.");
-		setTeamResponsible("Relco and GeneBuilders");
+		setTeamResponsible(Team.RELEASE_COORDINATOR);
+		setSecondTeamResponsible(Team.GENEBUILD);
 
 	}
 
@@ -67,14 +69,14 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		// cache logic_names by analysis_id
-		Map<String,String> logicNamesByAnalID = getLogicNamesFromAnalysisTable(con);
+		Map<String, String> logicNamesByAnalID = getLogicNamesFromAnalysisTable(con);
 
 		String[] tableTypes = tableNames();
 
 		for (String tableType : tableTypes) {
-			
+
 			logger.finest("type is " + tableTypes);
-			
+
 			// get analyses that are used
 			// special case for transcripts - need to link to gene table and get analysis from there
 			String sql = String.format("SELECT DISTINCT(analysis_id) FROM %s", tableType);
@@ -87,18 +89,18 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 
 			// check each one has an analysis_description
 			for (String analysis : analyses) {
-				
+
 				int count = getRowCount(con, String.format("SELECT COUNT(*) FROM analysis_description WHERE analysis_id=%s", analysis));
-		
+
 				if (count == 0) {
-					
+
 					ReportManager.problem(this, con, String.format("Analysis %s is used in %s but has no entry in analysis_description", logicNamesByAnalID.get(analysis), tableType));
 					result = false;
-		
+
 				} else {
-					
+
 					ReportManager.correct(this, con, String.format("Analysis %s is used in %s and has an entry in analysis_description", logicNamesByAnalID.get(analysis), tableType));
-					
+
 				}
 
 			}

@@ -21,6 +21,7 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -34,7 +35,8 @@ public class VariationSynonymDimensionTables extends SingleDatabaseTestCase {
 	 */
 	public VariationSynonymDimensionTables() {
 
-		setTeamResponsible("biomart");
+		setTeamResponsible(Team.PRODUCTION);
+
 		addToGroup("post_martbuild");
 		setDescription("Check that the correct variation synonym dimension tables exist in the SNP mart.");
 
@@ -55,51 +57,50 @@ public class VariationSynonymDimensionTables extends SingleDatabaseTestCase {
 		Connection martCon = martDbre.getConnection();
 
 		// TODO - get Mart version and only look for matching variation dbs
-		
+
 		// get the list of species, and find the variation synonyms in each one
 		DatabaseRegistryEntry[] variationDBs = getDatabaseRegistryByPattern(".*_variation_[0-9].*").getAll();
 
 		for (DatabaseRegistryEntry variationDB : variationDBs) {
 
 			String speciesRoot = variationDB.getSpecies().getBioMartRoot();
-			
+
 			logger.finest(String.format("Getting list of variation synonyms used in %s (BioMart equivalent %s)", variationDB.getName(), speciesRoot));
 
-			String[] sourceNames = getColumnValues(variationDB.getConnection(),"SELECT DISTINCT(name) FROM source WHERE somatic = 0");
-			
-		
+			String[] sourceNames = getColumnValues(variationDB.getConnection(), "SELECT DISTINCT(name) FROM source WHERE somatic = 0");
+
 			// check that a BioMart table for each entry exists
 			for (String source : sourceNames) {
-				
+
 				// if more than one "word" (space delimited), just use the first one, followed by any number
 				source = source.replaceAll("^([^ ]+)[^0-9]*([0-9]*).*$", "$1$2");
-				
+
 				// and remove non-word characters
 				source = source.replaceAll("\\W", "");
 
 				// build table name and check it
 				String table = String.format("%s_snp__variation_synonym_%s__dm", speciesRoot, source);
-				
+
 				if (!checkTableExists(martCon, table)) {
-					
+
 					ReportManager.problem(this, martCon, String.format("Variation named %s in species %s (%s) is missing", table, variationDB.getSpecies().toString(), speciesRoot));
 					result = false;
 
-				} else if (!tableHasRows(martCon, table)){
+				} else if (!tableHasRows(martCon, table)) {
 
 					ReportManager.problem(this, martCon, String.format("Variation table named %s in species %s (%s) exists but has zero rows", table, variationDB.getSpecies().toString(), speciesRoot));
 					result = false;
-					
+
 				}
-				
+
 			}
-			
+
 			ReportManager.correct(this, martCon, String.format("All expected variation dimension tables from %s are present and populated", variationDB.getName()));
-			
+
 		}
 
 		return result;
 
 	} // run
 
-} //  VariationSynonymDimensionTables
+} // VariationSynonymDimensionTables

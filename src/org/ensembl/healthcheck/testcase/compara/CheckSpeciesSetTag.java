@@ -19,19 +19,20 @@
 package org.ensembl.healthcheck.testcase.compara;
 
 import java.sql.Connection;
-import java.sql.Statement;
 import java.sql.ResultSet;
-import java.util.Map;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
-import java.sql.SQLException;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
@@ -49,7 +50,7 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 
         addToGroup("compara_homology");
         setDescription("Check the content of the species_set_tag table");
-        setTeamResponsible("compara");
+        setTeamResponsible(Team.COMPARA);
 
     }
 

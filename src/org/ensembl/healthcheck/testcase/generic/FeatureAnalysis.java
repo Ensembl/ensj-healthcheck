@@ -28,6 +28,7 @@ import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -49,7 +50,7 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 		addToGroup("release");
 		setHintLongRunning(true);
 		setDescription("Check that features exist for the expected analyses.");
-                setTeamResponsible("Genebuilders");
+		setTeamResponsible(Team.GENEBUILD);
 	}
 
 	/**

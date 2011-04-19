@@ -21,6 +21,7 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -38,8 +39,8 @@ public class HGNCTypes extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		setDescription("Check that HGNC_curated_genes xrefs are on genes, _transcript are on transcript etc");
-		setTeamResponsible("Core");
-		
+		setTeamResponsible(Team.CORE);
+
 	}
 
 	/**
@@ -67,11 +68,11 @@ public class HGNCTypes extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-		
-    // note these are looking for the *wrong* assignments
-		result &= checkType(con, "HGNC_curated_gene",        "Transcript");
-		result &= checkType(con, "HGNC_automatic_gene",      "Transcript");
-		result &= checkType(con, "HGNC_curated_transcript",  "Gene");
+
+		// note these are looking for the *wrong* assignments
+		result &= checkType(con, "HGNC_curated_gene", "Transcript");
+		result &= checkType(con, "HGNC_automatic_gene", "Transcript");
+		result &= checkType(con, "HGNC_curated_transcript", "Gene");
 		result &= checkType(con, "HGNC_curated_transcript", "Gene");
 
 		return result;
@@ -81,10 +82,11 @@ public class HGNCTypes extends SingleDatabaseTestCase {
 	// ----------------------------------------------------------------------
 
 	private boolean checkType(Connection con, String source, String wrongObject) {
-		
+
 		boolean result = true;
-		
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM xref x, external_db e, object_xref ox WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id AND e.db_name='" + source + "' AND ox.ensembl_object_type='" + wrongObject + "'");
+
+		int rows = getRowCount(con, "SELECT COUNT(*) FROM xref x, external_db e, object_xref ox WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id AND e.db_name='" + source
+				+ "' AND ox.ensembl_object_type='" + wrongObject + "'");
 
 		if (rows > 0) {
 
@@ -97,11 +99,9 @@ public class HGNCTypes extends SingleDatabaseTestCase {
 		}
 
 		return result;
-		
+
 	}
-	
+
 	// ----------------------------------------------------------------------
 
-
-	
 }

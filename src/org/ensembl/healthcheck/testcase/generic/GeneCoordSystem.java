@@ -22,18 +22,17 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that no genes are on a sequence_level coord system. Single-coord system
- * species are ignored.
+ * Check that no genes are on a sequence_level coord system. Single-coord system species are ignored.
  */
 public class GeneCoordSystem extends SingleDatabaseTestCase {
 
-	
 	/**
-	 *  Check that no genes are on a sequence_level coord system.
+	 * Check that no genes are on a sequence_level coord system.
 	 */
 	public GeneCoordSystem() {
 
@@ -43,8 +42,8 @@ public class GeneCoordSystem extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Having genes on a sequence_level co-ordinate system will slow down the mapper and affect website speed and dumping speed.");
 		setFix("Move affected genes off the sequence_level co-ordinate system");
-                setTeamResponsible("GeneBuilders");
-		
+		setTeamResponsible(Team.GENEBUILD);
+
 	}
 
 	/**
@@ -72,15 +71,17 @@ public class GeneCoordSystem extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-		
-		//check buil level in Meta table, flag toplevel should be set
-		
+
+		// check buil level in Meta table, flag toplevel should be set
+
 		result &= checkBuildLevel(dbre);
-		
-		//if flag set to toplevel, check all genes are in seq_region with attrib_type_id = toplevel
-		if (result){					
-			int rows = getRowCount(con, "select count(*) from gene where gene_id not in (select g.gene_id from gene g, seq_region_attrib sra, attrib_type a where g.seq_region_id = sra.seq_region_id and sra.attrib_type_id = a.attrib_type_id and a.code = 'toplevel')");
-		
+
+		// if flag set to toplevel, check all genes are in seq_region with attrib_type_id = toplevel
+		if (result) {
+			int rows = getRowCount(
+					con,
+					"select count(*) from gene where gene_id not in (select g.gene_id from gene g, seq_region_attrib sra, attrib_type a where g.seq_region_id = sra.seq_region_id and sra.attrib_type_id = a.attrib_type_id and a.code = 'toplevel')");
+
 			if (rows > 0) {
 				ReportManager.problem(this, con, rows + " genes are not on toplevel seq_regions.");
 				result = false;
@@ -106,7 +107,7 @@ public class GeneCoordSystem extends SingleDatabaseTestCase {
 			ReportManager.correct(this, con, " Toplevel flag set in genebuild.level in Meta table");
 			result = true;
 		} else {
-			ReportManager.problem(this, con, "No genebuild.level key in the meta table with a value of toplevel");			
+			ReportManager.problem(this, con, "No genebuild.level key in the meta table with a value of toplevel");
 		}
 
 		return result;

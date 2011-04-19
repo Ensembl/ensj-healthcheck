@@ -16,10 +16,10 @@ import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.Team;
 
 /**
- * Compare the biotypes in the current database with those from the equivalent
- * database on the secondary server.
+ * Compare the biotypes in the current database with those from the equivalent database on the secondary server.
  */
 
 public class ComparePreviousVersionBiotypes extends ComparePreviousVersionBase {
@@ -32,10 +32,10 @@ public class ComparePreviousVersionBiotypes extends ComparePreviousVersionBase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription("Compare the biotypes in the current database with those from the equivalent database on the secondary server");
-                setTeamResponsible("Genebuilders");
+		setTeamResponsible(Team.GENEBUILD);
 	}
 
-    /**
+	/**
 	 * This test Does not apply to sanger_vega dbs
 	 */
 	public void types() {

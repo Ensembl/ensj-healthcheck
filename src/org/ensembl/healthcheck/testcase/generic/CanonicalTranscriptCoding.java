@@ -21,9 +21,10 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
  * Check if protein_coding genes have a canonical transcript that has a valid translation. See also canonical_transcript checks in
@@ -39,7 +40,7 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("post_genebuild");
 		setDescription("Check if protein_coding genes have a canonical transcript that has a valid translation. Also check than number of canonical transcripts is correct. See also canonical_transcript checks in CoreForeignKeys.");
-		setTeamResponsible("compara");
+		setTeamResponsible(Team.COMPARA);
 
 	}
 
@@ -61,7 +62,7 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 		// A gene that has at least one transcript.biotype='protein_coding' should have gene.biotype='protein_coding'
 		String sql = "SELECT COUNT(*) FROM gene g WHERE g.gene_id IN (SELECT tr.gene_id FROM transcript tr WHERE tr.biotype='protein_coding') AND g.biotype!='protein_coding'";
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sanger_vega ignore genes that do not have source havana or WU
-			sql +="AND g.biotype!='polymorphic' AND g.biotype!='polymorphic_pseudogene' and (g.source='havana' or g.source='WU')";
+			sql += "AND g.biotype!='polymorphic' AND g.biotype!='polymorphic_pseudogene' and (g.source='havana' or g.source='WU')";
 		}
 		int rows = getRowCount(con, sql);
 
@@ -69,10 +70,10 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 
 			result = false;
 			String report = " genes with at least one protein_coding transcript do not have biotype protein_coding";
-			if(dbre.getType()==DatabaseType.SANGER_VEGA){
-				report+=" or polymorphic_pseudogene";	
+			if (dbre.getType() == DatabaseType.SANGER_VEGA) {
+				report += " or polymorphic_pseudogene";
 			}
-			ReportManager.problem(this, con, rows + report );
+			ReportManager.problem(this, con, rows + report);
 
 		} else {
 
@@ -82,9 +83,9 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 
 		// --------------------------------
 		// Protein_coding transcripts should all have translations
-		sql="SELECT count(*) FROM transcript tr join gene g on tr.gene_id=g.gene_id WHERE tr.biotype='protein_coding' AND tr.transcript_id NOT IN (SELECT transcript_id from translation)";
-		if (dbre.getType()==DatabaseType.SANGER_VEGA){
-			sql+=" and (g.source='havana' or g.source='WU')";
+		sql = "SELECT count(*) FROM transcript tr join gene g on tr.gene_id=g.gene_id WHERE tr.biotype='protein_coding' AND tr.transcript_id NOT IN (SELECT transcript_id from translation)";
+		if (dbre.getType() == DatabaseType.SANGER_VEGA) {
+			sql += " and (g.source='havana' or g.source='WU')";
 		}
 		rows = getRowCount(con, sql);
 		if (rows > 0) {
@@ -119,12 +120,12 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 		// --------------------------------
 		// All canonical transcripts with a translation should belong to a gene with a biotype of 'protein_coding',
 		// 'IG_C_gene','IG_D_gene','IG_J_gene', 'IG_V_gene' or 'RNA-Seq_gene'
-				
-		sql="SELECT COUNT(*) FROM gene g WHERE g.canonical_transcript_id IN (SELECT tr.transcript_id FROM transcript tr, translation tl WHERE tr.transcript_id=tl.transcript_id) AND g.biotype NOT IN ('rRNA','retrotransposed','protein_coding','IG_C_gene','IG_D_gene','IG_J_gene','IG_V_gene','RNA-Seq_gene','polymorphic_pseudogene','TR_C_gene','TR_J_gene','TR_V_gene', 'LRG_gene'";
+
+		sql = "SELECT COUNT(*) FROM gene g WHERE g.canonical_transcript_id IN (SELECT tr.transcript_id FROM transcript tr, translation tl WHERE tr.transcript_id=tl.transcript_id) AND g.biotype NOT IN ('rRNA','retrotransposed','protein_coding','IG_C_gene','IG_D_gene','IG_J_gene','IG_V_gene','RNA-Seq_gene','polymorphic_pseudogene','TR_C_gene','TR_J_gene','TR_V_gene', 'LRG_gene'";
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sanger_vega ignore genes that do not have source havana or WU
-			sql +=", 'polymorphic','IG_gene','TR_gene') and (g.source='havana' or g.source='WU')";
-		}else{
-			sql +=")";			
+			sql += ", 'polymorphic','IG_gene','TR_gene') and (g.source='havana' or g.source='WU')";
+		} else {
+			sql += ")";
 		}
 		rows = getRowCount(con, sql);
 
@@ -142,11 +143,11 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 		// --------------------------------
 		// None of the transcripts that have a translation and have a biotype different to
 		// ('protein_coding','IG_C_gene','IG_D_gene','IG_J_gene','IG_V_gene')) should be canonical transcripts to any gene.
-		sql="SELECT COUNT(*) FROM gene g WHERE g.canonical_transcript_id IN (select tr.transcript_id FROM transcript tr, translation tl WHERE tr.transcript_id=tl.transcript_id AND tr.biotype NOT IN ('rRNA','retrotransposed','protein_coding','IG_C_gene','IG_D_gene','IG_J_gene','IG_V_gene'";
+		sql = "SELECT COUNT(*) FROM gene g WHERE g.canonical_transcript_id IN (select tr.transcript_id FROM transcript tr, translation tl WHERE tr.transcript_id=tl.transcript_id AND tr.biotype NOT IN ('rRNA','retrotransposed','protein_coding','IG_C_gene','IG_D_gene','IG_J_gene','IG_V_gene'";
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sanger_vega ignore genes that do not have source havana or WU
-				sql +=", 'polymorphic_pseudogene','polymorphic','IG_gene','TR_gene')) and (g.source='havana' or g.source='WU')";
-		}else{
-			sql +="))";			
+			sql += ", 'polymorphic_pseudogene','polymorphic','IG_gene','TR_gene')) and (g.source='havana' or g.source='WU')";
+		} else {
+			sql += "))";
 		}
 		rows = getRowCount(con, sql);
 
@@ -182,7 +183,8 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 		}
 
 		// --------------------------------
-		// If a gene is gene.biotype='protein_coding' but has no transcripts that are transcript.biotype='protein_coding', at least one of the transcripts has to have a translation.
+		// If a gene is gene.biotype='protein_coding' but has no transcripts that are transcript.biotype='protein_coding', at least one
+		// of the transcripts has to have a translation.
 		sql = "SELECT count(*) FROM gene g JOIN transcript t USING (gene_id) JOIN translation p ON (t.canonical_translation_id = p.translation_id) WHERE g.biotype = 'protein_coding' AND g.gene_id NOT IN (SELECT gene_id FROM transcript WHERE biotype = 'protein_coding')";
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sanger_vega ignore genes that do not have source havana or WU
 			sql += " and (g.source='havana' or g.source='WU')";

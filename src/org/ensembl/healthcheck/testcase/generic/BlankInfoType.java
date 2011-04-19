@@ -21,6 +21,7 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -40,7 +41,8 @@ public class BlankInfoType extends SingleDatabaseTestCase {
 		addToGroup("funcgen");
 
 		setDescription("Check for any xref.info_type that are blank ('') - they should be NULL for various other things to work.");
-                setTeamResponsible("Core and GeneBuilders");
+		setTeamResponsible(Team.CORE);
+		setSecondTeamResponsible(Team.GENEBUILD);
 
 	}
 
@@ -59,18 +61,18 @@ public class BlankInfoType extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		int rows = getRowCount(con, "SELECT COUNT(*) FROM xref WHERE info_type = ''");
-		
+
 		if (rows > 0) {
-			
+
 			ReportManager.problem(this, con, rows + " rows in xref have a blank info_type - should be set to null");
 			result = false;
-			
+
 		} else {
-			
+
 			ReportManager.correct(this, con, "No blank info_types in xref");
-		
+
 		}
-		
+
 		return result;
 
 	} // run

@@ -24,6 +24,7 @@ import java.sql.Statement;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -37,7 +38,7 @@ public class DuplicateGenomeDb extends SingleDatabaseTestCase {
 
         addToGroup("compara_homology"); 
         setDescription("Searches for species where assembly_default has been set to true more than once for the same name. This seems to happen when the contents of the GenomeDB table is copied from the master to the pan compara database. ");
-        setTeamResponsible("Ensembl Genomes");
+        setTeamResponsible(Team.ENSEMBL_GENOMES);
 
     }
 

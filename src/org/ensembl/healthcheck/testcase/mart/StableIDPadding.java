@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -30,21 +31,23 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  */
 
 public class StableIDPadding extends SingleDatabaseTestCase {
-	
+
 	String column = "stable_id_1051";
-	Map<String,Integer> tablePaddingLength;
+
+	Map<String, Integer> tablePaddingLength;
 
 	/**
 	 * Constructor.
 	 */
 	public StableIDPadding() {
 
-		setTeamResponsible("biomart");
+		setTeamResponsible(Team.PRODUCTION);
+
 		addToGroup("post_martbuild");
 		setDescription("Check the padding in the stable_id_1051 column in certain species.");
 
-		tablePaddingLength = new HashMap<String,Integer>();
-		tablePaddingLength.put("hsapiens_functional_genomics__regulatory_feature__dm",  15);
+		tablePaddingLength = new HashMap<String, Integer>();
+		tablePaddingLength.put("hsapiens_functional_genomics__regulatory_feature__dm", 15);
 		tablePaddingLength.put("mmusculus_functional_genomics__regulatory_feature__dm", 18);
 
 	}
@@ -62,25 +65,25 @@ public class StableIDPadding extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-		
+
 		for (String table : tablePaddingLength.keySet()) {
-		
+
 			int paddingLength = tablePaddingLength.get(table);
-			
+
 			int rows = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE LENGTH(" + column + ") != " + paddingLength);
-			
+
 			if (rows > 0) {
-	
+
 				ReportManager.problem(this, con, rows + " rows in " + table + " do not have padded stable IDs of required length (" + paddingLength + ")");
 				result = false;
-				
+
 			} else {
-				
+
 				ReportManager.correct(this, con, "All rows in " + table + " have padded stable IDs of required length (" + paddingLength + ")");
 
 			}
 		}
-		
+
 		return result;
 
 	} // run

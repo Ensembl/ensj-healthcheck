@@ -27,6 +27,7 @@ import java.util.Map;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
@@ -46,7 +47,7 @@ public class TranscriptNames extends SingleDatabaseTestCase {
 		setDescription("Check for certain combinations of logic name and transcript name.");
 		setPriority(Priority.AMBER);
 		setEffect("Transcript names do not match the logic names.");
-                setTeamResponsible("Core");
+		setTeamResponsible(Team.CORE);
 	}
 
 	/**
@@ -66,25 +67,26 @@ public class TranscriptNames extends SingleDatabaseTestCase {
 		if (!(s.equals(Species.HOMO_SAPIENS) || s.equals(Species.MUS_MUSCULUS) || s.equals(Species.DANIO_RERIO))) {
 			return true;
 		}
-		
+
 		// Hash of logic_names to the patterns that transcript names should match
 		Map<String, String> logicNameRegexp = new HashMap<String, String>();
-		logicNameRegexp.put("ensembl",                   "-2[0-9][0-9]$");
+		logicNameRegexp.put("ensembl", "-2[0-9][0-9]$");
 		logicNameRegexp.put("ensembl_havana_transcript", "-0[0-9][0-9]$");
-		logicNameRegexp.put("havana",                    "-0[0-9][0-9]$");
-		logicNameRegexp.put("ncrna",                     "-2[0-9][0-9]$");
-		logicNameRegexp.put("ensembl_ig_gene",           "-2[0-9][0-9]$");
-		logicNameRegexp.put("havana_ig_gene",            "-0[0-9][0-9]$");
-		logicNameRegexp.put("ncrna_pseudogene",          "-2[0-9][0-9]$");
-		logicNameRegexp.put("mt_genbank_import",         "-2[0-9][0-9]$");
-		logicNameRegexp.put("lrg_import",                "-2[0-9][0-9]$");
-		logicNameRegexp.put("ensembl_lincrna",           "-2[0-9][0-9]$");
+		logicNameRegexp.put("havana", "-0[0-9][0-9]$");
+		logicNameRegexp.put("ncrna", "-2[0-9][0-9]$");
+		logicNameRegexp.put("ensembl_ig_gene", "-2[0-9][0-9]$");
+		logicNameRegexp.put("havana_ig_gene", "-0[0-9][0-9]$");
+		logicNameRegexp.put("ncrna_pseudogene", "-2[0-9][0-9]$");
+		logicNameRegexp.put("mt_genbank_import", "-2[0-9][0-9]$");
+		logicNameRegexp.put("lrg_import", "-2[0-9][0-9]$");
+		logicNameRegexp.put("ensembl_lincrna", "-2[0-9][0-9]$");
 
 		Connection con = dbre.getConnection();
 
 		try {
 
-			PreparedStatement stmt = con.prepareStatement("SELECT COUNT(*) FROM analysis a, transcript_stable_id tsi, transcript t, xref x WHERE a.analysis_id=t.analysis_id AND t.transcript_id=tsi.transcript_id AND t.display_xref_id=x.xref_id AND a.logic_name=? AND x.display_label NOT REGEXP ?");
+			PreparedStatement stmt = con
+					.prepareStatement("SELECT COUNT(*) FROM analysis a, transcript_stable_id tsi, transcript t, xref x WHERE a.analysis_id=t.analysis_id AND t.transcript_id=tsi.transcript_id AND t.display_xref_id=x.xref_id AND a.logic_name=? AND x.display_label NOT REGEXP ?");
 
 			for (String logicName : logicNameRegexp.keySet()) {
 
@@ -96,18 +98,18 @@ public class TranscriptNames extends SingleDatabaseTestCase {
 
 				rs.first();
 				int rows = rs.getInt(1);
-				
+
 				if (rows > 0) {
-					
+
 					result = false;
 					ReportManager.problem(this, con, String.format("%d transcripts with logic name %s have names which don't match the required pattern (%s)", rows, logicName, regexp));
-					
+
 				} else {
-					
+
 					ReportManager.correct(this, con, String.format("All transcripts with logic name %s have correct names", logicName));
-					
+
 				}
-				
+
 				rs.close();
 
 			}
@@ -115,7 +117,7 @@ public class TranscriptNames extends SingleDatabaseTestCase {
 		} catch (SQLException se) {
 			se.printStackTrace();
 		}
-		
+
 		return result;
 
 	}

@@ -22,6 +22,7 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -39,6 +40,8 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 		addToGroup("variation");
 		addToGroup("variation-release");
 		setDescription("Check for broken foreign-key relationships.");
+		setTeamResponsible(Team.VARIATION);
+
 	}
 
 	/**

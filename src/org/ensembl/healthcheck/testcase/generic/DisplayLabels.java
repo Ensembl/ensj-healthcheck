@@ -20,6 +20,7 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -37,7 +38,8 @@ public class DisplayLabels extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		setDescription("Check that certain tables have display_labels set");
-                setTeamResponsible("Core and GeneBuilders");
+		setTeamResponsible(Team.CORE);
+		setSecondTeamResponsible(Team.GENEBUILD);
 	}
 
 	/**

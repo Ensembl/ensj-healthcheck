@@ -25,12 +25,13 @@ import java.util.List;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.Utils;
 
 /**
- * Check for multiple components which overlap and are assembled to the same
- * thing. Note that multiple assembly is OK, overlapping components is not.
+ * Check for multiple components which overlap and are assembled to the same thing. Note that multiple assembly is OK, overlapping
+ * components is not.
  */
 public class AssemblyMultipleOverlap extends SingleDatabaseTestCase {
 
@@ -46,7 +47,8 @@ public class AssemblyMultipleOverlap extends SingleDatabaseTestCase {
 		addToGroup("compara-ancestral");
 
 		setDescription("Check for multiple components which overlap and are assembled to the same thing.");
-                setTeamResponsible("Core and GeneBuilders");
+		setTeamResponsible(Team.CORE);
+		setSecondTeamResponsible(Team.GENEBUILD);
 	}
 
 	/**
@@ -65,10 +67,8 @@ public class AssemblyMultipleOverlap extends SingleDatabaseTestCase {
 
 		// get list of all multiply-assembled components
 		String sql = "SELECT sr1.name AS cmp_sr_name, cs1.name AS cmp_cs, sr2.name AS asm_sr_name, cs2.name AS asm_cs, a.asm_seq_region_id, a.cmp_seq_region_id, COUNT(*) AS count "
-				+ "FROM assembly a, seq_region sr1, seq_region sr2, coord_system cs1, coord_system cs2 "
-				+ "WHERE a.cmp_seq_region_id = sr1.seq_region_id AND a.asm_seq_region_id = sr2.seq_region_id "
-				+ "AND sr1.coord_system_id = cs1.coord_system_id AND sr2.coord_system_id = cs2.coord_system_id "
-				+ "GROUP BY asm_seq_region_id, cmp_seq_region_id, asm_start, cmp_start, ori HAVING count > 1;";
+				+ "FROM assembly a, seq_region sr1, seq_region sr2, coord_system cs1, coord_system cs2 " + "WHERE a.cmp_seq_region_id = sr1.seq_region_id AND a.asm_seq_region_id = sr2.seq_region_id "
+				+ "AND sr1.coord_system_id = cs1.coord_system_id AND sr2.coord_system_id = cs2.coord_system_id " + "GROUP BY asm_seq_region_id, cmp_seq_region_id, asm_start, cmp_start, ori HAVING count > 1;";
 
 		int overlapCount = 0;
 
@@ -77,8 +77,7 @@ public class AssemblyMultipleOverlap extends SingleDatabaseTestCase {
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 
-			PreparedStatement cmpStmt = con
-					.prepareStatement("SELECT asm_start, asm_end, ori FROM assembly WHERE asm_seq_region_id=? AND cmp_seq_region_id=? ORDER BY asm_start");
+			PreparedStatement cmpStmt = con.prepareStatement("SELECT asm_start, asm_end, ori FROM assembly WHERE asm_seq_region_id=? AND cmp_seq_region_id=? ORDER BY asm_start");
 
 			while (rs.next()) {
 
@@ -119,7 +118,8 @@ public class AssemblyMultipleOverlap extends SingleDatabaseTestCase {
 							if (starts[j] < ends[i]) {
 								overlapCount++;
 								if (overlapCount < MAX) {
-								    //System.out.println("Overlap: cmp " + cmp_seq_region_id + " asm " + asm_seq_region_id + " " + starts[i] + " " + ends[i] + " " + starts[j] + " " + ends[j]);
+									// System.out.println("Overlap: cmp " + cmp_seq_region_id + " asm " + asm_seq_region_id + " " + starts[i] + " " +
+									// ends[i] + " " + starts[j] + " " + ends[j]);
 								}
 							}
 						}

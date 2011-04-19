@@ -25,6 +25,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 /**
@@ -32,12 +33,10 @@ import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
  */
 public class ProjectedXrefs extends MultiDatabaseTestCase {
 
-	private Species[] projectedDisplayXrefSpecies = { Species.CANIS_FAMILIARIS, Species.BOS_TAURUS, Species.PAN_TROGLODYTES,
-			Species.MACACA_MULATTA, Species.GALLUS_GALLUS, Species.XENOPUS_TROPICALIS, Species.MONODELPHIS_DOMESTICA,
-			Species.RATTUS_NORVEGICUS };
+	private Species[] projectedDisplayXrefSpecies = { Species.CANIS_FAMILIARIS, Species.BOS_TAURUS, Species.PAN_TROGLODYTES, Species.MACACA_MULATTA, Species.GALLUS_GALLUS, Species.XENOPUS_TROPICALIS,
+			Species.MONODELPHIS_DOMESTICA, Species.RATTUS_NORVEGICUS };
 
-	private Species[] projectedGOTermSpecies = { Species.HOMO_SAPIENS, Species.MUS_MUSCULUS, Species.RATTUS_NORVEGICUS,
-			Species.CANIS_FAMILIARIS, Species.BOS_TAURUS, Species.GALLUS_GALLUS };
+	private Species[] projectedGOTermSpecies = { Species.HOMO_SAPIENS, Species.MUS_MUSCULUS, Species.RATTUS_NORVEGICUS, Species.CANIS_FAMILIARIS, Species.BOS_TAURUS, Species.GALLUS_GALLUS };
 
 	/**
 	 * Creates a new instance of ProjectedXrefs.
@@ -48,7 +47,7 @@ public class ProjectedXrefs extends MultiDatabaseTestCase {
 		addToGroup("core_xrefs");
 
 		setDescription("Check that all species that should have projected xrefs do in fact have them.");
-                setTeamResponsible("Core");
+		setTeamResponsible(Team.CORE);
 
 	}
 
@@ -84,8 +83,7 @@ public class ProjectedXrefs extends MultiDatabaseTestCase {
 
 				String species = projectedDisplayXrefSpecies[i].toString();
 
-				int rows = getRowCount(con,
-						"SELECT COUNT(*) FROM gene g, xref x WHERE g.display_xref_id=x.xref_id AND x.info_type='PROJECTION'");
+				int rows = getRowCount(con, "SELECT COUNT(*) FROM gene g, xref x WHERE g.display_xref_id=x.xref_id AND x.info_type='PROJECTION'");
 
 				if (rows == 0) {
 
@@ -115,9 +113,7 @@ public class ProjectedXrefs extends MultiDatabaseTestCase {
 
 				String species = projectedGOTermSpecies[k].toString();
 
-				int rows = getRowCount(
-						con,
-						"SELECT COUNT(*) FROM xref x, external_db e WHERE e.external_db_id=x.external_db_id AND e.db_name='GO' AND x.info_type='PROJECTION'");
+				int rows = getRowCount(con, "SELECT COUNT(*) FROM xref x, external_db e WHERE e.external_db_id=x.external_db_id AND e.db_name='GO' AND x.info_type='PROJECTION'");
 
 				if (rows == 0) {
 

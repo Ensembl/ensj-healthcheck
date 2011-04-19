@@ -17,8 +17,9 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
-import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
  * Check that the structural variations do not contain anomalities
@@ -34,6 +35,7 @@ public class StructuralVariation extends SingleDatabaseTestCase {
 		addToGroup("variation-release");
 
 		setDescription("Checks that the structural variation tables make sense");
+		setTeamResponsible(Team.VARIATION);
 
 	}
 
@@ -48,32 +50,31 @@ public class StructuralVariation extends SingleDatabaseTestCase {
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 
-	    Connection con = dbre.getConnection();
+		Connection con = dbre.getConnection();
 
-	    boolean result = true;
-	    result = (checkCountIsZero(con,"structural_variation","(seq_region_start < bound_start OR seq_region_end > bound_end)") && result);
-	    result = (checkCountIsZero(con,"structural_variation","seq_region_start = seq_region_end") && result);
-	    
-	    if (!result) {
-		ReportManager.problem(this, con, "NOTE: In total, structural_variation contains " + String.valueOf(countRowsInTable(con,"structural_variation")) + " entries");
-	    }
-	    return result;
+		boolean result = true;
+		result = (checkCountIsZero(con, "structural_variation", "(seq_region_start < bound_start OR seq_region_end > bound_end)") && result);
+		result = (checkCountIsZero(con, "structural_variation", "seq_region_start = seq_region_end") && result);
+
+		if (!result) {
+			ReportManager.problem(this, con, "NOTE: In total, structural_variation contains " + String.valueOf(countRowsInTable(con, "structural_variation")) + " entries");
+		}
+		return result;
 
 	} // run
 
 	// -----------------------------------------------------------------
 
+	/**
+	 * This only applies to variation databases.
+	 */
+	public void types() {
 
-   /**
-     * This only applies to variation databases.
-     */
-     public void types() {
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.CDNA);
+		removeAppliesToType(DatabaseType.CORE);
+		removeAppliesToType(DatabaseType.VEGA);
 
-	 removeAppliesToType(DatabaseType.OTHERFEATURES);
-	 removeAppliesToType(DatabaseType.CDNA);
-	 removeAppliesToType(DatabaseType.CORE);
-	 removeAppliesToType(DatabaseType.VEGA);
-
-     }
+	}
 
 } // StructuralVariation

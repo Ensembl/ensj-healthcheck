@@ -24,6 +24,7 @@ import java.sql.Statement;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -31,82 +32,76 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  */
 public class PmatchHits extends SingleDatabaseTestCase {
 
-    /**
-     * Create a new testcase.
-     */
-    public PmatchHits() {
+	/**
+	 * Create a new testcase.
+	 */
+	public PmatchHits() {
 
-        addToGroup("post_genebuild");
-        setDescription("Checks the number of hits produced by pmatch and warns if too many.");
-        setTeamResponsible("GeneBuilders");
-    }
-    
-    /**
-     * Maximum of pmatch hits before a warning is produced.
-     * Current value: 9
-     */
-    public static int max_allowed = 9;
-
-    /**
-     * Run the test.
-     * 
-     * @param dbre
-     *          The database to use.
-     * @return true if the test passed.
-     *  
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
-    
-	boolean result = true;
-
-	Connection con = dbre.getConnection();
-		    
-	int internal_id = 0;
-	String protein_id = "";
-	int currcount = 0;
-	
-	try {	
-	    
-	    String sql = "SELECT p.protein_internal_id, p.protein_id, count(a.protein_internal_id) "
-		+ "FROM protein p, pmatch_feature a WHERE p.protein_internal_id=a.protein_internal_id "
-		+ "GROUP BY p.protein_internal_id ORDER BY 3 DESC;";
-
-            Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY,
-                    java.sql.ResultSet.CONCUR_READ_ONLY);
-            stmt.setFetchSize(1000);
-            ResultSet rs = stmt.executeQuery(sql);
-
-            while (rs.next()) {
-
-                // load the vars
-		internal_id = rs.getInt(1);
-		protein_id = rs.getString(2);
-		currcount = rs.getInt(3);
-
-		ReportManager.info(this, con, " " + protein_id + " (" + internal_id
-				   + ") has " + currcount + " hits.");
-
-		//quit when the low counts start
-		if(currcount <= max_allowed){
-		    return result;
-		}
-		else{
-		    result = false;
-		    ReportManager.problem(this, con, protein_id + " (" + internal_id
-					  + ") has " + currcount + " hits.");
-		}
-	    
-	    } // while rs
-	
-	    rs.close();
-	    stmt.close();
-
-	} catch (Exception e) {
-            result = false;
-            e.printStackTrace();
+		addToGroup("post_genebuild");
+		setDescription("Checks the number of hits produced by pmatch and warns if too many.");
+		setTeamResponsible(Team.GENEBUILD);
 	}
-	return result;
-	
-    } // run
+
+	/**
+	 * Maximum of pmatch hits before a warning is produced. Current value: 9
+	 */
+	public static int max_allowed = 9;
+
+	/**
+	 * Run the test.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return true if the test passed.
+	 * 
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
+
+		boolean result = true;
+
+		Connection con = dbre.getConnection();
+
+		int internal_id = 0;
+		String protein_id = "";
+		int currcount = 0;
+
+		try {
+
+			String sql = "SELECT p.protein_internal_id, p.protein_id, count(a.protein_internal_id) " + "FROM protein p, pmatch_feature a WHERE p.protein_internal_id=a.protein_internal_id "
+					+ "GROUP BY p.protein_internal_id ORDER BY 3 DESC;";
+
+			Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
+			stmt.setFetchSize(1000);
+			ResultSet rs = stmt.executeQuery(sql);
+
+			while (rs.next()) {
+
+				// load the vars
+				internal_id = rs.getInt(1);
+				protein_id = rs.getString(2);
+				currcount = rs.getInt(3);
+
+				ReportManager.info(this, con, " " + protein_id + " (" + internal_id + ") has " + currcount + " hits.");
+
+				// quit when the low counts start
+				if (currcount <= max_allowed) {
+					return result;
+				} else {
+					result = false;
+					ReportManager.problem(this, con, protein_id + " (" + internal_id + ") has " + currcount + " hits.");
+				}
+
+			} // while rs
+
+			rs.close();
+			stmt.close();
+
+		} catch (Exception e) {
+			result = false;
+			e.printStackTrace();
+		}
+		return result;
+
+	} // run
 
 } // PmatchHits

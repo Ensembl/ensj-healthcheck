@@ -23,9 +23,10 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
-import org.ensembl.healthcheck.Species;
-import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Species;
+import org.ensembl.healthcheck.Team;
+import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key relationships between core and variation database.
@@ -42,6 +43,7 @@ public class ForeignKeyCoreId extends MultiDatabaseTestCase {
 		addToGroup("variation-release");
 		setDescription("Check for broken foreign-key relationships between variation and core databases.");
 		setHintLongRunning(true);
+		setTeamResponsible(Team.VARIATION);
 
 	}
 
@@ -84,8 +86,8 @@ public class ForeignKeyCoreId extends MultiDatabaseTestCase {
 			result &= checkForOrphansWithConstraint(con, dbrvar.getName() + ".variation_feature", "seq_region_id", dbrcore.getName() + ".seq_region", "seq_region_id", "seq_region_id IS NOT NULL");
 
 			result &= checkForOrphansWithConstraint(con, dbrvar.getName() + ".read_coverage", "seq_region_id", dbrcore.getName() + ".seq_region", "seq_region_id", "seq_region_id IS NOT NULL");
-                        
-                        result &= checkForOrphansWithConstraint(con, dbrvar.getName() + ".structural_variation", "seq_region_id", dbrcore.getName() + ".seq_region", "seq_region_id", "seq_region_id IS NOT NULL");
+
+			result &= checkForOrphansWithConstraint(con, dbrvar.getName() + ".structural_variation", "seq_region_id", dbrcore.getName() + ".seq_region", "seq_region_id", "seq_region_id IS NOT NULL");
 
 			int rows = getRowCount(con, "SELECT COUNT(*) FROM " + dbrvar.getName() + ".seq_region srv ," + dbrcore.getName() + ".seq_region src," + dbrcore.getName()
 					+ ".coord_system cs WHERE cs.attrib = 'default_version' AND cs.coord_system_id = src.coord_system_id AND src.name=srv.name AND src.seq_region_id != srv.seq_region_id");

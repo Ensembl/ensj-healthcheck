@@ -16,10 +16,10 @@ import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.Team;
 
 /**
- * Compare the xrefs in the current database with those from the equivalent
- * database on the secondary server.
+ * Compare the xrefs in the current database with those from the equivalent database on the secondary server.
  */
 
 public class ComparePreviousVersionXrefs extends ComparePreviousVersionBase {
@@ -32,24 +32,25 @@ public class ComparePreviousVersionXrefs extends ComparePreviousVersionBase {
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		setDescription("Compare the xrefs in the current database with those from the equivalent database on the secondary server");
-                setTeamResponsible("Core and GeneBuilders");
+		setTeamResponsible(Team.CORE);
+		setSecondTeamResponsible(Team.GENEBUILD);
 
 	}
 
-    /**
+	/**
 	 * This test Does not apply to sanger_vega dbs
 	 */
 	public void types() {
 		removeAppliesToType(DatabaseType.SANGER_VEGA);
-	}	
+	}
+
 	// ----------------------------------------------------------------------
 
 	protected Map<String, Integer> getCounts(DatabaseRegistryEntry dbre) {
 
-		String sql = "SELECT DISTINCT(e.db_name) AS db_name, COUNT(*) AS count" + " FROM external_db e, xref x, object_xref ox"
-				+ " WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id " + getExcludeProjectedSQL(dbre)
-				+ " GROUP BY e.db_name";
-		//System.out.println(sql);
+		String sql = "SELECT DISTINCT(e.db_name) AS db_name, COUNT(*) AS count" + " FROM external_db e, xref x, object_xref ox" + " WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id "
+				+ getExcludeProjectedSQL(dbre) + " GROUP BY e.db_name";
+		// System.out.println(sql);
 		return getCountsBySQL(dbre, sql);
 
 	} // ------------------------------------------------------------------------
@@ -76,11 +77,11 @@ public class ComparePreviousVersionXrefs extends ComparePreviousVersionBase {
 		if (dbre.getSchemaVersion() == null) { // guess if we can't get the schema version
 			sql = " AND (x.info_type != 'PROJECTION' OR x.info_type IS NULL)";
 		} else {
-			sql = Integer.parseInt(dbre.getSchemaVersion()) <= 37 ? " AND x.display_label NOT LIKE '%[from%'" : " AND (x.info_type != 'PROJECTION' OR x.info_type IS NULL)"; 
+			sql = Integer.parseInt(dbre.getSchemaVersion()) <= 37 ? " AND x.display_label NOT LIKE '%[from%'" : " AND (x.info_type != 'PROJECTION' OR x.info_type IS NULL)";
 		}
-		
+
 		return sql;
-		
+
 	}
 
 	// ----------------------------------------------------------------------

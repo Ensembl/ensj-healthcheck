@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -33,25 +34,25 @@ public class LRG extends SingleDatabaseTestCase {
 	 * Creates a new instance of LRG healthcheck
 	 */
 	public LRG() {
-		
+
 		addToGroup("release");
 		addToGroup("lrg");
 		setDescription("Healthcheck for LRGs");
-                setTeamResponsible("Variation");
-		
+		setTeamResponsible(Team.VARIATION);
+
 	}
-	
-  /**
-   * This only applies to core databases.
-   */
-  public void types() {
 
-      removeAppliesToType(DatabaseType.OTHERFEATURES);
-      removeAppliesToType(DatabaseType.VEGA);
-      removeAppliesToType(DatabaseType.SANGER_VEGA);
-  		removeAppliesToType(DatabaseType.RNASEQ);
+	/**
+	 * This only applies to core databases.
+	 */
+	public void types() {
 
-  }
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.VEGA);
+		removeAppliesToType(DatabaseType.SANGER_VEGA);
+		removeAppliesToType(DatabaseType.RNASEQ);
+
+	}
 
 	/**
 	 * Check that all seq_regions on the lrg coordinate system have gene and transcripts associated with them
@@ -61,7 +62,7 @@ public class LRG extends SingleDatabaseTestCase {
 	 * @return Result.
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
-		
+
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
@@ -69,14 +70,14 @@ public class LRG extends SingleDatabaseTestCase {
 		// Get all seq_region_ids on the lrg coordinate system
 		String stmt = new String("SELECT sr.seq_region_id FROM seq_region sr JOIN coord_system cs ON sr.coord_system_id = cs.coord_system_id WHERE cs.name LIKE 'lrg' ORDER BY sr.seq_region_id ASC");
 		String[] seq_regions = getColumnValues(con, stmt);
-		
+
 		if (seq_regions.length == 0) {
 			logger.finest("No LRG seq_regions found, skipping test");
 			return true;
 		}
-		
+
 		String idList = StringUtils.join(seq_regions, ",");
-		
+
 		// Check that gene annotations exist
 		// TODO - this SQL may fail if there are a large number of LRGs, IN list might be exceeded
 		stmt = new String("SELECT g.seq_region_id, COUNT(*) FROM gene g WHERE g.seq_region_id IN (" + idList + ") GROUP BY g.seq_region_id");

@@ -25,9 +25,10 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
+import org.ensembl.healthcheck.Team;
+import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
-import org.ensembl.healthcheck.testcase.Priority;
 
 /**
  * Checks the *_stable_id tables to ensure they are populated, have no orphan references, and have valid versions. Also prints some
@@ -54,7 +55,8 @@ public class StableID extends SingleDatabaseTestCase {
 		setPriority(Priority.RED);
 		setEffect("Compara will have invalid stable IDs.");
 		setFix("Re-run stable ID mapping or fix manually.");
-                setTeamResponsible("Core and GeneBuilders");
+		setTeamResponsible(Team.CORE);
+		setSecondTeamResponsible(Team.GENEBUILD);
 	}
 
 	/**

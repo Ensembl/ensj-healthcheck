@@ -18,6 +18,7 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
@@ -39,7 +40,8 @@ public class XrefCategories extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Web display of xrefs are broken");
 		setFix("Fix type column in external_db by re-importing file.");
-                setTeamResponsible("Core and GeneBuilders");
+		setTeamResponsible(Team.CORE);
+		setSecondTeamResponsible(Team.GENEBUILD);
 
 	}
 

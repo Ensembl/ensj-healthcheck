@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
@@ -43,7 +44,7 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Will cause problems/miscoloring on web display.");
 		setFix("Possibly indicates a problem with the Havana/Ensembl merge pipeline");
-		setTeamResponsible("genebuilders");
+		setTeamResponsible(Team.GENEBUILD);
 
 	}
 

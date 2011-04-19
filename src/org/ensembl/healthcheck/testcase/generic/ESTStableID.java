@@ -27,6 +27,7 @@ import java.util.Map;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -43,7 +44,7 @@ public class ESTStableID extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription("Check that EST genes/transcripts/translations have EST in the stable ID.");
-                setTeamResponsible("GeneBuilders");
+		setTeamResponsible(Team.GENEBUILD);
 
 	}
 

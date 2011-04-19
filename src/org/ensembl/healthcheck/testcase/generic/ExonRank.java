@@ -17,6 +17,7 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -33,7 +34,7 @@ public class ExonRank extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("post_genebuild");
 		setDescription("Look for entries in the exon_transcript table that are duplicates apart from the rank.");
-                setTeamResponsible("GeneBuilders");
+		setTeamResponsible(Team.GENEBUILD);
 	}
 
 	/**
@@ -42,7 +43,7 @@ public class ExonRank extends SingleDatabaseTestCase {
 	public void types() {
 
 		removeAppliesToType(DatabaseType.CDNA);
-		
+
 	}
 
 	/**
@@ -56,24 +57,24 @@ public class ExonRank extends SingleDatabaseTestCase {
 	public boolean run(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
-		
+
 		Connection con = dbre.getConnection();
-		
+
 		int rows = getRowCount(con, "SELECT COUNT(*) FROM exon_transcript et1, exon_transcript et2 WHERE et1.exon_id=et2.exon_id AND et1.transcript_id=et2.transcript_id AND et1.rank != et2.rank");
 
 		if (rows > 0) {
-			
+
 			ReportManager.problem(this, con, rows + " rows in exon_transcript specify the same exon more than once in a transcript with a different rank");
 			result = false;
-		
+
 		} else {
-			
+
 			ReportManager.correct(this, con, "All ranks OK");
-			
+
 		}
-		
+
 		return result;
-		
+
 	} // run
 
 	// ----------------------------------------------------------------------

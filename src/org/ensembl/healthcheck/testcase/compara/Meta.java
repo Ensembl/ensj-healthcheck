@@ -19,22 +19,18 @@
 package org.ensembl.healthcheck.testcase.compara;
 
 
-import java.lang.Integer;
-
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Repair;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.util.Utils;
-import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key
@@ -57,7 +53,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
         addToGroup("compara_homology");
         setDescription("Tests that proper max_alignment_length have been defined.");
         setDescription("Check meta table for the right schema version and max alignment lengths");
-        setTeamResponsible("compara");
+        setTeamResponsible(Team.COMPARA);
 
     }
 

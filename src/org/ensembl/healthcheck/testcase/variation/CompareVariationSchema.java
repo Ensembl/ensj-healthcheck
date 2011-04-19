@@ -24,11 +24,12 @@ import java.util.TreeSet;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Species;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
-import org.ensembl.healthcheck.Species;
 
 /**
  * Test case to compare table structures between several schemas.
@@ -44,344 +45,344 @@ import org.ensembl.healthcheck.Species;
 
 public class CompareVariationSchema extends MultiDatabaseTestCase {
 
-    /**
-     * Creates a new instance of CompareSchemaTestCase.
-     */
-    public CompareVariationSchema() {
+	/**
+	 * Creates a new instance of CompareSchemaTestCase.
+	 */
+	public CompareVariationSchema() {
 
-        addToGroup("variation");
-	addToGroup("variation-release");
-	setDescription("Will check if database schema is correct");
+		addToGroup("variation");
+		addToGroup("variation-release");
+		setDescription("Will check if database schema is correct");
+		setTeamResponsible(Team.VARIATION);
 
-    }
+	}
 
-    /**
-     * Compare each database with the master.
-     * 
-     * @param dbr The database registry containing all the specified databases.
-     * @return true if the test passed.
-     */
-    public boolean run(DatabaseRegistry dbr) {
+	/**
+	 * Compare each database with the master.
+	 * 
+	 * @param dbr
+	 *          The database registry containing all the specified databases.
+	 * @return true if the test passed.
+	 */
+	public boolean run(DatabaseRegistry dbr) {
 
-        boolean result = true;
+		boolean result = true;
 
-        Connection masterCon = null;
-        Statement masterStmt = null;
+		Connection masterCon = null;
+		Statement masterStmt = null;
 
-        String definitionFile = null;
-        String masterSchema = null;
+		String definitionFile = null;
+		String masterSchema = null;
 
-        DatabaseRegistryEntry[] databases = dbr.getAll();
-        definitionFile = System.getProperty("schema.file");
-        if (definitionFile == null) {
-            logger.info("CompareSchema: No schema definition file found! Set schema.file property in database.properties if you want to use a table.sql file or similar.");
+		DatabaseRegistryEntry[] databases = dbr.getAll();
+		definitionFile = System.getProperty("schema.file");
+		if (definitionFile == null) {
+			logger.info("CompareSchema: No schema definition file found! Set schema.file property in database.properties if you want to use a table.sql file or similar.");
 
-            masterSchema = System.getProperty("master.variation_schema");
-            if (masterSchema != null) {
-                logger.info("Will use " + masterSchema + " as specified master schema for comparisons.");
-            } else {
-                logger.info("CompareVariationSchema: No master schema defined file found! Set master.variation_schema property in database.properties if you want to use a master schema.");
-            }
-        } else {
-            logger.fine("Will use schema definition from " + definitionFile);
-        }
+			masterSchema = System.getProperty("master.variation_schema");
+			if (masterSchema != null) {
+				logger.info("Will use " + masterSchema + " as specified master schema for comparisons.");
+			} else {
+				logger.info("CompareVariationSchema: No master schema defined file found! Set master.variation_schema property in database.properties if you want to use a master schema.");
+			}
+		} else {
+			logger.fine("Will use schema definition from " + definitionFile);
+		}
 
-        try {
+		try {
 
-            if (definitionFile != null) { // use a schema definition file to
-                // generate a temporary database
-                logger.info("About to import " + definitionFile);
-                masterCon = importSchema(definitionFile);
-                logger.info("Got connection to " + DBUtils.getShortDatabaseName(masterCon));
+			if (definitionFile != null) { // use a schema definition file to
+				// generate a temporary database
+				logger.info("About to import " + definitionFile);
+				masterCon = importSchema(definitionFile);
+				logger.info("Got connection to " + DBUtils.getShortDatabaseName(masterCon));
 
-            } else if (masterSchema != null) {
-                // use the defined schema name as the master
-                // get connection to master schema
-                masterCon = getSchemaConnection(masterSchema);
-                logger.fine("Opened connection to master schema in " + DBUtils.getShortDatabaseName(masterCon));
+			} else if (masterSchema != null) {
+				// use the defined schema name as the master
+				// get connection to master schema
+				masterCon = getSchemaConnection(masterSchema);
+				logger.fine("Opened connection to master schema in " + DBUtils.getShortDatabaseName(masterCon));
 
-            } else {
-                // just use the first one to compare with all the others
-                if (databases.length > 0) {
-                    masterCon = databases[0].getConnection();
-                    logger.info("Using " + DBUtils.getShortDatabaseName(masterCon) + " as 'master' for comparisions.");
-                } else {
-                    logger.warning("Can't find any databases to check against");
-                }
+			} else {
+				// just use the first one to compare with all the others
+				if (databases.length > 0) {
+					masterCon = databases[0].getConnection();
+					logger.info("Using " + DBUtils.getShortDatabaseName(masterCon) + " as 'master' for comparisions.");
+				} else {
+					logger.warning("Can't find any databases to check against");
+				}
 
-            }
+			}
 
-            masterStmt = masterCon.createStatement();
+			masterStmt = masterCon.createStatement();
 
-            for (int i = 0; i < databases.length; i++) {
+			for (int i = 0; i < databases.length; i++) {
 
-                if (appliesToType(databases[i].getType())) {
+				if (appliesToType(databases[i].getType())) {
 
-                    Connection checkCon = databases[i].getConnection();
-		    Species species = databases[i].getSpecies();
-                    if (checkCon != masterCon) {
+					Connection checkCon = databases[i].getConnection();
+					Species species = databases[i].getSpecies();
+					if (checkCon != masterCon) {
 
-                        logger.info("Comparing " + DBUtils.getShortDatabaseName(masterCon) + " with "
-                                + DBUtils.getShortDatabaseName(checkCon));
+						logger.info("Comparing " + DBUtils.getShortDatabaseName(masterCon) + " with " + DBUtils.getShortDatabaseName(checkCon));
 
-                        // check that both schemas have the same tables
-                        if (!compareVariationTables(masterCon, checkCon, species)) {
-			    //if there is a problem in that species (eg rat), report error
-			    ReportManager.problem(this, checkCon, "Table name discrepancy detected, skipping rest of checks");
-			    result = false;
-			    continue;
-                        }
+						// check that both schemas have the same tables
+						if (!compareVariationTables(masterCon, checkCon, species)) {
+							// if there is a problem in that species (eg rat), report error
+							ReportManager.problem(this, checkCon, "Table name discrepancy detected, skipping rest of checks");
+							result = false;
+							continue;
+						}
 
-                        Statement dbStmt = checkCon.createStatement();
+						Statement dbStmt = checkCon.createStatement();
 
-                        // check each table in turn
-                        String[] tableNames = getTableNames(masterCon);
-			// exclude the genotype table
-                        for (int j = 0; j < tableNames.length; j++) {
-                            String table = tableNames[j];
-			    if ((species == Species.HOMO_SAPIENS || species == Species.PAN_TROGLODYTES) && table.equals("tmp_individual_genotype_single_bp")){
-				//in human and chimp, ignore check of genotype table
+						// check each table in turn
+						String[] tableNames = getTableNames(masterCon);
+						// exclude the genotype table
+						for (int j = 0; j < tableNames.length; j++) {
+							String table = tableNames[j];
+							if ((species == Species.HOMO_SAPIENS || species == Species.PAN_TROGLODYTES) && table.equals("tmp_individual_genotype_single_bp")) {
+								// in human and chimp, ignore check of genotype table
+								continue;
+							}
+							if (species != Species.HOMO_SAPIENS && (table.equals("variation_annotation") || table.equals("phenotype"))) {
+								// only human has these two tables
+								continue;
+							}
+							String sql = "SHOW CREATE TABLE " + table;
+							ResultSet masterRS = masterStmt.executeQuery(sql);
+							ResultSet dbRS = dbStmt.executeQuery(sql);
+							boolean showCreateSame = DBUtils.compareResultSets(masterRS, dbRS, this, " [" + table + "]", true, false, table, true);
+							if (!showCreateSame) {
+
+								// do more in-depth analysis of database structure
+								result &= compareTableStructures(masterCon, checkCon, table);
+							}
+
+							masterRS.close();
+							dbRS.close();
+
+						} // while table
+
+						dbStmt.close();
+
+					} // if checkCon != masterCon
+					if (result) {
+						// display some information the HC run with on problem
+						ReportManager.correct(this, checkCon, "CompareVariationSchema run with no problem");
+					}
+				} // if appliesToType
+
+			} // for database
+
+			masterStmt.close();
+
+		} catch (SQLException se) {
+
+			logger.severe(se.getMessage());
+
+		} finally {
+
+			// avoid leaving temporary DBs lying around if something bad happens
+			if (definitionFile == null && masterCon != null) {
+				// double-check to make sure the DB we're going to remove is a
+				// temp one
+				String dbName = DBUtils.getShortDatabaseName(masterCon);
+				if (dbName.indexOf("_temp_") > -1) {
+					removeDatabase(masterCon);
+					logger.info("Removed " + DBUtils.getShortDatabaseName(masterCon));
+				}
+			}
+
+		}
+
+		return result;
+
+	} // run
+
+	// -------------------------------------------------------------------------
+
+	// Will return true if both schemas have the same tables (we have to consider the genotype)
+	private boolean compareVariationTables(Connection schema1, Connection schema2, Species species) {
+		boolean result = true;
+
+		String name1 = DBUtils.getShortDatabaseName(schema1);
+		String name2 = DBUtils.getShortDatabaseName(schema2);
+
+		// check each table in turn
+		String[] tables = getTableNames(schema1);
+		// if the species is human or chimp, remove the genotype from the list of the master schema
+		for (int i = 0; i < tables.length; i++) {
+			String table = tables[i];
+
+			// if the table is the genotype for human or chimp, ignore it
+			if ((species == Species.HOMO_SAPIENS || species == Species.PAN_TROGLODYTES) && table.equals("tmp_individual_genotype_single_bp")) {
 				continue;
-			    }	    
-                            if (species != Species.HOMO_SAPIENS && (table.equals("variation_annotation") || table.equals("phenotype"))) {
-                               //only human has these two tables
-                               continue;
-                            }
-                            String sql = "SHOW CREATE TABLE " + table;
-                            ResultSet masterRS = masterStmt.executeQuery(sql);
-                            ResultSet dbRS = dbStmt.executeQuery(sql);
-                            boolean showCreateSame = DBUtils.compareResultSets(masterRS, dbRS, this, " [" + table + "]", true, false, table, true);
-                            if (!showCreateSame) {
+			}
+			if (!checkTableExists(schema2, table)) {
+				ReportManager.problem(this, schema1, "Table " + table + " exists in " + name1 + " but not in " + name2);
+				result = false;
+			}
+		}
+		// and now the other way
+		tables = getTableNames(schema2);
+		boolean strainTable = false;
+		for (int i = 0; i < tables.length; i++) {
+			String table = tables[i];
+			// ignore the srain_gtype_ploy table if present
+			if (table.equals("strain_gtype_poly")) {
+				strainTable = true;
+				continue;
+			}
+			if (!checkTableExists(schema1, table)) {
+				ReportManager.problem(this, schema2, "Table " + table + " exists in " + name2 + " but not in " + name1);
+				result = false;
+			}
+		}
+		if (!strainTable && (species == Species.RATTUS_NORVEGICUS || species == Species.MUS_MUSCULUS)) {
+			ReportManager.problem(this, schema2, " Table strain_gtype_poly NOT present in " + name2);
+		}
 
-                                // do more in-depth analysis of database structure
-                                result &= compareTableStructures(masterCon, checkCon, table);
-                            }
+		return result;
+	} // end method
 
-                            masterRS.close();
-                            dbRS.close();
+	private boolean compareTableStructures(Connection con1, Connection con2, String table) {
 
-                        } // while table
+		boolean result = true;
 
-                        dbStmt.close();
+		try {
 
-                    } // if checkCon != masterCon
-		    if (result){
-			//display some information the HC run with on problem
-			ReportManager.correct(this,checkCon,"CompareVariationSchema run with no problem");
-		    }
-                } // if appliesToType
+			Statement s1 = con1.createStatement();
+			Statement s2 = con2.createStatement();
 
-            } // for database
+			// compare DESCRIBE <table>
+			ResultSet rs1 = s1.executeQuery("DESCRIBE " + table);
+			ResultSet rs2 = s2.executeQuery("DESCRIBE " + table);
+			int[] columns = { 1, 2 };
+			boolean describeSame = DBUtils.compareResultSets(rs1, rs2, this, "", true, false, table, columns, true);
 
-            masterStmt.close();
-	  
-        } catch (SQLException se) {
+			result &= describeSame;
 
-            logger.severe(se.getMessage());
+			// compare indicies via SHOW INDEX <table>
+			result &= compareIndices(con1, table, con2, table);
 
-        } finally {
+			s1.close();
+			s2.close();
 
-            // avoid leaving temporary DBs lying around if something bad happens
-            if (definitionFile == null && masterCon != null) {
-                // double-check to make sure the DB we're going to remove is a
-                // temp one
-                String dbName = DBUtils.getShortDatabaseName(masterCon);
-                if (dbName.indexOf("_temp_") > -1) {
-                    removeDatabase(masterCon);
-                    logger.info("Removed " + DBUtils.getShortDatabaseName(masterCon));
-                }
-            }
+		} catch (SQLException se) {
+			logger.severe(se.getMessage());
+		}
 
-        }
-
-        return result;
-
-    } // run
-
-    // -------------------------------------------------------------------------
-
-    // Will return true if both schemas have the same tables (we have to consider the genotype)
-    private boolean compareVariationTables(Connection schema1, Connection schema2, Species species){
-	boolean result = true;
-	
-	String name1 = DBUtils.getShortDatabaseName(schema1);
-	String name2 = DBUtils.getShortDatabaseName(schema2);
-	
-	// check each table in turn
-	String[] tables = getTableNames(schema1);
-	//if the species is human or chimp, remove the genotype from the list of the master schema
-	for (int i = 0; i < tables.length; i++) {
-	    String table = tables[i];
-
-	    //if the table is the genotype for human or chimp, ignore it
-	    if ((species == Species.HOMO_SAPIENS || species == Species.PAN_TROGLODYTES) && table.equals("tmp_individual_genotype_single_bp")){
-		continue;
-	    }	    
-	    if (!checkTableExists(schema2, table)) {
-		ReportManager.problem(this, schema1, "Table " + table + " exists in " + name1 + " but not in " + name2);
-		result = false;
-	    }		
+		return result;
 	}
-	// and now the other way
-	tables = getTableNames(schema2);
-	boolean strainTable = false;
-	for (int i = 0; i < tables.length; i++) {
-	    String table = tables[i];
-	    //ignore the srain_gtype_ploy table if present
-	    if (table.equals("strain_gtype_poly")){
-		strainTable = true;
-		continue;
-	    }
-	    if (!checkTableExists(schema1, table)) {
-		ReportManager.problem(this, schema2, "Table " + table + " exists in " + name2 + " but not in " + name1);
-		result = false;
-	    }
+
+	// -------------------------------------------------------------------------
+	/**
+	 * Compare the indices on 2 tables; order is not important.
+	 */
+	private boolean compareIndices(Connection con1, String table1, Connection con2, String table2) {
+
+		boolean result = true;
+
+		try {
+
+			Statement s1 = con1.createStatement();
+			Statement s2 = con2.createStatement();
+
+			ResultSet rs1 = s1.executeQuery("SHOW INDEX FROM " + table1);
+			ResultSet rs2 = s2.executeQuery("SHOW INDEX FROM " + table2);
+
+			// read ResultSets into concatenated Strings, then sort and compare
+			// this wouldn't be necessary if we could ORDER BY in SHOW INDEX
+			SortedSet rows1 = new TreeSet();
+			while (rs1.next()) {
+				if (rs1.getInt("Seq_in_index") >= 1) { // cuts down number of messages
+					String str1 = table1 + ":" + rs1.getString("Key_name") + ":" + rs1.getString("Column_name") + ":" + rs1.getString("Non_unique") + ":" + rs1.getString("Seq_in_index");
+					rows1.add(str1);
+				}
+			}
+
+			SortedSet rows2 = new TreeSet();
+			while (rs2.next()) {
+				if (rs2.getInt("Seq_in_index") >= 1) {
+					String str2 = table2 + ":" + rs2.getString("Key_name") + ":" + rs2.getString("Column_name") + ":" + rs2.getString("Non_unique") + ":" + rs2.getString("Seq_in_index");
+					rows2.add(str2);
+				}
+			}
+
+			rs1.close();
+			rs2.close();
+			s1.close();
+			s2.close();
+
+			HashMap problems1 = new HashMap();
+			HashMap problems2 = new HashMap();
+
+			// compare rows1 and rows2
+			Iterator it1 = rows1.iterator();
+			while (it1.hasNext()) {
+				String row1 = (String) it1.next();
+				if (!rows2.contains(row1)) {
+					result = false;
+					String[] indices = row1.split(":");
+					String table = indices[0];
+					String index = indices[1];
+					String seq = indices[4];
+					problems1.put(table + ":" + index, seq);
+				}
+			}
+
+			Iterator p1 = problems1.keySet().iterator();
+			while (p1.hasNext()) {
+				String s = (String) p1.next();
+				String[] indices = s.split(":");
+				String table = indices[0];
+				String index = indices[1];
+				ReportManager.problem(this, "", DBUtils.getShortDatabaseName(con1) + " " + table + " has index " + index + " which is different or absent in " + DBUtils.getShortDatabaseName(con2));
+			}
+
+			// and the other way around
+			Iterator it2 = rows2.iterator();
+			while (it2.hasNext()) {
+				String row2 = (String) it2.next();
+				if (!rows1.contains(row2)) {
+					result = false;
+					String[] indices = row2.split(":");
+					String table = indices[0];
+					String index = indices[1];
+					String seq = indices[4];
+					problems2.put(table + ":" + index, seq);
+				}
+			}
+
+			Iterator p2 = problems2.keySet().iterator();
+			while (p2.hasNext()) {
+				String s = (String) p2.next();
+				String[] indices = s.split(":");
+				String table = indices[0];
+				String index = indices[1];
+				ReportManager.problem(this, "", DBUtils.getShortDatabaseName(con2) + " " + table + " has index " + index + " which is different or absent in " + DBUtils.getShortDatabaseName(con1));
+			}
+
+		} catch (SQLException se) {
+			logger.severe(se.getMessage());
+		}
+
+		return result;
 	}
-	if (!strainTable && (species == Species.RATTUS_NORVEGICUS || species == Species.MUS_MUSCULUS)){
-	    ReportManager.problem(this,schema2, " Table strain_gtype_poly NOT present in " + name2);
+
+	// -------------------------------------------------------------------------
+
+	/**
+	 * This only applies to variation databases.
+	 */
+	public void types() {
+
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.CDNA);
+		removeAppliesToType(DatabaseType.CORE);
+		removeAppliesToType(DatabaseType.VEGA);
+
 	}
-	
-	return result;
-    } //end method
-
-    private boolean compareTableStructures(Connection con1, Connection con2, String table) {
-
-	boolean result = true;
-
-        try {
-
-            Statement s1 = con1.createStatement();
-            Statement s2 = con2.createStatement();
-
-            // compare DESCRIBE <table>
-            ResultSet rs1 = s1.executeQuery("DESCRIBE " + table);
-            ResultSet rs2 = s2.executeQuery("DESCRIBE " + table);
-	    int[] columns = { 1,2 };
-	    boolean describeSame = DBUtils.compareResultSets(rs1, rs2, this, "", true, false, table, columns, true);
-
-            result &= describeSame;
-
-            // compare indicies via SHOW INDEX <table>
-            result &= compareIndices(con1, table, con2, table);
-
-            s1.close();
-            s2.close();
-
-        } catch (SQLException se) {
-            logger.severe(se.getMessage());
-        }
-
-	return result;
-    }
-
-    // -------------------------------------------------------------------------
-    /**
-     * Compare the indices on 2 tables; order is not important.
-     */
-    private boolean compareIndices(Connection con1, String table1, Connection con2, String table2) {
-
-        boolean result = true;
-
-        try {
-
-            Statement s1 = con1.createStatement();
-            Statement s2 = con2.createStatement();
-
-            ResultSet rs1 = s1.executeQuery("SHOW INDEX FROM " + table1);
-            ResultSet rs2 = s2.executeQuery("SHOW INDEX FROM " + table2);
-
-            // read ResultSets into concatenated Strings, then sort and compare
-            // this wouldn't be necessary if we could ORDER BY in SHOW INDEX
-            SortedSet rows1 = new TreeSet();
-            while (rs1.next()) {
-                if (rs1.getInt("Seq_in_index") >= 1) { // cuts down number of messages
-                    String str1 = table1 + ":" + rs1.getString("Key_name") + ":" + rs1.getString("Column_name") + ":"
-                            + rs1.getString("Non_unique") + ":" + rs1.getString("Seq_in_index");
-                    rows1.add(str1);
-                }
-            }
-
-            SortedSet rows2 = new TreeSet();
-            while (rs2.next()) {
-                if (rs2.getInt("Seq_in_index") >= 1) {
-                    String str2 = table2 + ":" + rs2.getString("Key_name") + ":" + rs2.getString("Column_name") + ":"
-                            + rs2.getString("Non_unique") + ":" + rs2.getString("Seq_in_index");
-                    rows2.add(str2);
-                }
-            }
-
-            rs1.close();
-            rs2.close();
-            s1.close();
-            s2.close();
-
-	    HashMap problems1 = new HashMap();
-	    HashMap problems2 = new HashMap();
-
-            // compare rows1 and rows2
-            Iterator it1 = rows1.iterator();
-            while (it1.hasNext()) {
-                String row1 = (String) it1.next();
-                if (!rows2.contains(row1)) {
-                    result = false;
-                    String[] indices = row1.split(":");
-                    String table = indices[0];
-                    String index = indices[1];
-                    String seq = indices[4];
-		    problems1.put(table + ":" + index, seq);
-                }
-            }
-	    
-	    Iterator p1 = problems1.keySet().iterator();
-	    while (p1.hasNext()) {
-		String s = (String)p1.next();
-		String[] indices = s.split(":");
-		String table = indices[0];
-		String index = indices[1];
-		ReportManager.problem(this, "", DBUtils.getShortDatabaseName(con1) + " " + table + " has index " + index + " which is different or absent in " + DBUtils.getShortDatabaseName(con2));
-	    }
-
-            // and the other way around
-            Iterator it2 = rows2.iterator();
-            while (it2.hasNext()) {
-                String row2 = (String) it2.next();
-                if (!rows1.contains(row2)) {
-                    result = false;
-                    String[] indices = row2.split(":");
-                    String table = indices[0];
-                    String index = indices[1];
-                    String seq = indices[4];
-		    problems2.put(table + ":" + index, seq);
-                }
-            }
-
-	    Iterator p2 = problems2.keySet().iterator();
-	    while (p2.hasNext()) {
-		String s = (String)p2.next();
-		String[] indices = s.split(":");
-		String table = indices[0];
-		String index = indices[1];
-		ReportManager.problem(this, "", DBUtils.getShortDatabaseName(con2) + " " + table + " has index " + index + " which is different or absent in " + DBUtils.getShortDatabaseName(con1));
-	    }
-
-        } catch (SQLException se) {
-            logger.severe(se.getMessage());
-        }
-
-        return result;
-    }
-    // -------------------------------------------------------------------------
-
-   /**
-     * This only applies to variation databases.
-     */
-     public void types() {
-
-	 removeAppliesToType(DatabaseType.OTHERFEATURES);
-	 removeAppliesToType(DatabaseType.CDNA);
-	 removeAppliesToType(DatabaseType.CORE);
-	 removeAppliesToType(DatabaseType.VEGA);
-
-     }
 
 } // CompareSchema

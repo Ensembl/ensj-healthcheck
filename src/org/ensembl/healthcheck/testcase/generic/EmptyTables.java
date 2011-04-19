@@ -19,6 +19,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.Utils;
 
@@ -38,8 +39,8 @@ public class EmptyTables extends SingleDatabaseTestCase {
 
 		setDescription("Checks that all tables have data");
 
-		setTeamResponsible("GeneBuilders");
-		
+		setTeamResponsible(Team.GENEBUILD);
+
 	}
 
 	// ---------------------------------------------------------------------
@@ -82,8 +83,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 			}
 
 			// map, marker etc
-			if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.RATTUS_NORVEGICUS
-					&& species != Species.DANIO_RERIO) {
+			if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.RATTUS_NORVEGICUS && species != Species.DANIO_RERIO) {
 				String[] markerTables = { "map", "marker", "marker_map_location", "marker_synonym", "marker_feature" };
 				tables = remove(tables, markerTables);
 			}
@@ -95,14 +95,13 @@ public class EmptyTables extends SingleDatabaseTestCase {
 			}
 
 			// only certain species have a karyotype
-			if (species != Species.ANOPHELES_GAMBIAE && species != Species.DROSOPHILA_MELANOGASTER && species != Species.HOMO_SAPIENS
-					&& species != Species.MUS_MUSCULUS && species != Species.RATTUS_NORVEGICUS) {
+			if (species != Species.ANOPHELES_GAMBIAE && species != Species.DROSOPHILA_MELANOGASTER && species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS
+					&& species != Species.RATTUS_NORVEGICUS) {
 				tables = Utils.removeStringFromArray(tables, "karyotype");
 			}
 
 			// for imported gene sets, supporting_feature is empty
-			if (species == Species.TETRAODON_NIGROVIRIDIS || species == Species.SACCHAROMYCES_CEREVISIAE
-					|| species == Species.CAENORHABDITIS_ELEGANS) {
+			if (species == Species.TETRAODON_NIGROVIRIDIS || species == Species.SACCHAROMYCES_CEREVISIAE || species == Species.CAENORHABDITIS_ELEGANS) {
 				tables = Utils.removeStringFromArray(tables, "supporting_feature");
 			}
 
@@ -131,7 +130,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 
 			// we don't have many gene_attribs yet
 			tables = Utils.removeStringFromArray(tables, "gene_attrib");
-			
+
 			// only have splicing events in human
 			if (species != Species.HOMO_SAPIENS) {
 				tables = Utils.removeStringFromArray(tables, "splicing_event");
@@ -152,8 +151,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 		} else if (type == DatabaseType.ESTGENE) {
 
 			// Only a few tables need to be filled in ESTGENE
-			String[] estGene = { "gene", "transcript", "exon", "meta_coord", "coord_system", "gene_stable_id", "exon_stable_id",
-					"translation_stable_id", "transcript_stable_id", "karyotype" };
+			String[] estGene = { "gene", "transcript", "exon", "meta_coord", "coord_system", "gene_stable_id", "exon_stable_id", "translation_stable_id", "transcript_stable_id", "karyotype" };
 			tables = estGene;
 
 			// ----------------------------------------------------
@@ -167,27 +165,27 @@ public class EmptyTables extends SingleDatabaseTestCase {
 		}
 
 		// -----------------------------------------------------
-		// many tables are allowed to be empty in vega  and sanger_vega databases
+		// many tables are allowed to be empty in vega and sanger_vega databases
 		if (type == DatabaseType.VEGA) {
 
-			String[] allowedEmpty = { "affy_array", "affy_feature", "affy_probe", "ditag", "ditag_feature", "dna", "external_synonym",
-					"identity_xref", "map", "mapping_session", "marker", "marker_feature", "marker_map_location", "marker_synonym",
-					"misc_attrib", "misc_feature", "misc_feature_misc_set", "misc_set", "prediction_exon", "prediction_transcript",
-					"repeat_consensus", "repeat_feature", "simple_feature", "supporting_feature", "transcript_attrib",
-					"unconventional_transcript_association" };
+			String[] allowedEmpty = { "affy_array", "affy_feature", "affy_probe", "ditag", "ditag_feature", "dna", "external_synonym", "identity_xref", "map", "mapping_session", "marker", "marker_feature",
+					"marker_map_location", "marker_synonym", "misc_attrib", "misc_feature", "misc_feature_misc_set", "misc_set", "prediction_exon", "prediction_transcript", "repeat_consensus",
+					"repeat_feature", "simple_feature", "supporting_feature", "transcript_attrib", "unconventional_transcript_association" };
 			tables = remove(tables, allowedEmpty);
 
-		}else if (type == DatabaseType.SANGER_VEGA) {
+		} else if (type == DatabaseType.SANGER_VEGA) {
 
-			tables = remove(tables, new String[]{ "affy_array", "affy_feature", "affy_probe", "identity_xref", "unconventional_transcript_association", "dependent_xref", "ditag", "ditag_feature", "dnac", "vega_homo_sapiens_20100414_v58_GRCh37: external_synonym", "gene_archive", "map", "mapping_session", "mapping_set", "peptide_archive", "qtl", "qtl_feature", "qtl_synonym", "seq_region_mapping", "splicing_event", "splicing_event_feature", "splicing_transcript_pair", "stable_id_event", "supporting_feature", "misc_attrib" } );
-			if(species!=Species.DANIO_RERIO){//for all Species except zebrafish, the following tables can also be empty
-				tables = remove(tables, new String[]{"external_synonym", "marker", "marker_feature", "marker_map_location", "marker_synonym"} );
+			tables = remove(tables, new String[] { "affy_array", "affy_feature", "affy_probe", "identity_xref", "unconventional_transcript_association", "dependent_xref", "ditag", "ditag_feature", "dnac",
+					"vega_homo_sapiens_20100414_v58_GRCh37: external_synonym", "gene_archive", "map", "mapping_session", "mapping_set", "peptide_archive", "qtl", "qtl_feature", "qtl_synonym",
+					"seq_region_mapping", "splicing_event", "splicing_event_feature", "splicing_transcript_pair", "stable_id_event", "supporting_feature", "misc_attrib" });
+			if (species != Species.DANIO_RERIO) {// for all Species except zebrafish, the following tables can also be empty
+				tables = remove(tables, new String[] { "external_synonym", "marker", "marker_feature", "marker_map_location", "marker_synonym" });
 			}
-			  
-			//remove backup tables, starting with backup_ they are allowed to be empty
-			for (String table : tables){
-				if (table.startsWith("backup_") ){
-					tables = remove(tables,new String[] {table});
+
+			// remove backup tables, starting with backup_ they are allowed to be empty
+			for (String table : tables) {
+				if (table.startsWith("backup_")) {
+					tables = remove(tables, new String[] { table });
 				}
 			}
 		}
@@ -239,7 +237,6 @@ public class EmptyTables extends SingleDatabaseTestCase {
 
 	} // run
 
-	
 	// -----------------------------------------------------------------
 
 	private String[] remove(final String[] src, final String[] tablesToRemove) {

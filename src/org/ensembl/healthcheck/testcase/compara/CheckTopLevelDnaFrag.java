@@ -16,19 +16,19 @@
 
 package org.ensembl.healthcheck.testcase.compara;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.sql.Connection;
-import java.sql.Statement;
 import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Map;
 import java.util.Vector;
 
-import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.Species;
+import org.ensembl.healthcheck.Team;
+import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 
 /**
@@ -44,7 +44,7 @@ public class CheckTopLevelDnaFrag extends MultiDatabaseTestCase {
 
         addToGroup("compara_external_foreign_keys");
         setDescription("Check that every dnafrag corresponds to a top_level seq_region in the core DB and vice versa.");
-        setTeamResponsible("Compara");
+        setTeamResponsible(Team.COMPARA);
     }
     
     /**

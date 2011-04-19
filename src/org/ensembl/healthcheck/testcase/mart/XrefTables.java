@@ -21,6 +21,7 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -34,7 +35,8 @@ public class XrefTables extends SingleDatabaseTestCase {
 	 */
 	public XrefTables() {
 
-		setTeamResponsible("biomart");
+		setTeamResponsible(Team.PRODUCTION);
+
 		addToGroup("post_martbuild");
 		setDescription("Check that there is a table (e.g. hsapiens_gene_ensembl__ox_UniprotSWISSPROT__dm) corresponding to each species and xref type.");
 
@@ -60,7 +62,7 @@ public class XrefTables extends SingleDatabaseTestCase {
 		for (DatabaseRegistryEntry coreDB : coreDBs) {
 
 			String speciesRoot = coreDB.getSpecies().getBioMartRoot();
-			
+
 			logger.finest(String.format("Getting list of external DB names used in %s (BioMart equivalent %s)", coreDB.getName(), speciesRoot));
 
 			String[] externalDBs = getColumnValues(coreDB.getConnection(),
@@ -70,25 +72,26 @@ public class XrefTables extends SingleDatabaseTestCase {
 			for (String externalDB : externalDBs) {
 
 				externalDB = externalDB.replace("/", ""); // e.g. Uniprot/SWISSPROT
-				
+
 				String tableName = String.format("%s_gene_ensembl__ox_%s__dm", speciesRoot, externalDB);
 
 				if (!checkTableExists(martCon, tableName)) {
-					
+
 					ReportManager.problem(this, martCon, String.format("Table named %s for xref type %s in species %s (%s) is missing", tableName, externalDB, coreDB.getSpecies().toString(), speciesRoot));
 					result = false;
 
-				} else if (!tableHasRows(martCon, tableName)){
+				} else if (!tableHasRows(martCon, tableName)) {
 
-					ReportManager.problem(this, martCon, String.format("Table named %s for xref type %s in species %s (%s) exists but has zero rows", tableName, externalDB, coreDB.getSpecies().toString(), speciesRoot));
+					ReportManager.problem(this, martCon, String.format("Table named %s for xref type %s in species %s (%s) exists but has zero rows", tableName, externalDB, coreDB.getSpecies().toString(),
+							speciesRoot));
 					result = false;
-					
+
 				}
-				
+
 			}
-			
+
 			ReportManager.correct(this, martCon, String.format("All expected xref dimension tables from %s are present and populated", coreDB.getName()));
-			
+
 		}
 
 		return result;

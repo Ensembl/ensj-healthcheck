@@ -18,6 +18,7 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -36,7 +37,8 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		addToGroup("compara-ancestral");
 		addToGroup("id_mapping");
 		setDescription("Check for broken foreign-key relationships.");
-                setTeamResponsible("Core and GeneBuilders");
+		setTeamResponsible(Team.CORE);
+		setSecondTeamResponsible(Team.GENEBUILD);
 
 	}
 
@@ -249,8 +251,6 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		return result;
 
 	}
-
-	
 
 	// -------------------------------------------------------------------------
 	private boolean checkStableIDKeys(Connection con, String type) {

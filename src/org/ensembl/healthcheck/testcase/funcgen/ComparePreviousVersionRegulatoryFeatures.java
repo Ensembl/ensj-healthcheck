@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.Team;
 
 /**
  * Compare the xrefs in the current database with those from the equivalent
@@ -39,7 +40,7 @@ public class ComparePreviousVersionRegulatoryFeatures extends ComparePreviousVer
 		addToGroup("funcgen");
 		addToGroup("funcgen-release");
 		//setHintLongRunning(true);// ?Only take about 10 mins for mouse
-		setTeamResponsible("funcgen");
+		setTeamResponsible(Team.FUNCGEN);
 		setDescription("Compare the numbers of Regulatory Features (and the underlying support features) in the current database with those from the equivalent database on the secondary server");
 	}
 

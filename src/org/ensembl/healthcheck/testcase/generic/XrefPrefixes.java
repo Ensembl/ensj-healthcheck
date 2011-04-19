@@ -21,12 +21,12 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that all xrefs of particular types have the correct prefix for
- * dbprimary_acc and/or display_label.
+ * Check that all xrefs of particular types have the correct prefix for dbprimary_acc and/or display_label.
  */
 
 public class XrefPrefixes extends SingleDatabaseTestCase {
@@ -43,7 +43,8 @@ public class XrefPrefixes extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Web display of xrefs will be broken");
 		setFix("Re-run xref system or manually fix affected xrefs.");
-                setTeamResponsible("Core and GeneBuilders");
+		setTeamResponsible(Team.CORE);
+		setSecondTeamResponsible(Team.GENEBUILD);
 	}
 
 	/**
@@ -62,9 +63,7 @@ public class XrefPrefixes extends SingleDatabaseTestCase {
 
 		// --------------------------------
 		// MGI - dbprimary_acc should have MGI: prefix
-		int rows = getRowCount(
-				con,
-				"SELECT COUNT(*) FROM external_db e, xref x WHERE x.external_db_id=e.external_db_id AND e.db_name='MGI' AND x.dbprimary_acc NOT LIKE 'MGI:%'");
+		int rows = getRowCount(con, "SELECT COUNT(*) FROM external_db e, xref x WHERE x.external_db_id=e.external_db_id AND e.db_name='MGI' AND x.dbprimary_acc NOT LIKE 'MGI:%'");
 
 		if (rows > 0) {
 			ReportManager.problem(this, con, rows + " MGI xrefs do not have MGI: prefixes in the dbprimary_acc column");
@@ -75,13 +74,11 @@ public class XrefPrefixes extends SingleDatabaseTestCase {
 
 		// --------------------------------
 		// GO - dbprimary_acc and display_label should have GO: prefix
-		rows = getRowCount(
-				con,
+		rows = getRowCount(con,
 				"SELECT COUNT(*) FROM external_db e, xref x WHERE x.external_db_id=e.external_db_id AND e.db_name='GO' AND (x.dbprimary_acc NOT LIKE 'GO:%' OR x.display_label NOT LIKE 'GO:%')");
 
 		if (rows > 0) {
-			ReportManager.problem(this, con, rows
-					+ " GO xrefs do not have GO: prefixes in the dbprimary_acc and/or display_label columns");
+			ReportManager.problem(this, con, rows + " GO xrefs do not have GO: prefixes in the dbprimary_acc and/or display_label columns");
 			result = false;
 		} else {
 			ReportManager.correct(this, con, "All GO xrefs have the correct prefix");
@@ -89,13 +86,10 @@ public class XrefPrefixes extends SingleDatabaseTestCase {
 
 		// --------------------------------
 		// ZFIN - dbprimary_acc should begin with ZDB
-		rows = getRowCount(
-				con,
-				"SELECT COUNT(*) FROM external_db e, xref x WHERE x.external_db_id=e.external_db_id AND e.db_name='ZFIN_ID' AND x.dbprimary_acc NOT LIKE 'ZDB%'");
+		rows = getRowCount(con, "SELECT COUNT(*) FROM external_db e, xref x WHERE x.external_db_id=e.external_db_id AND e.db_name='ZFIN_ID' AND x.dbprimary_acc NOT LIKE 'ZDB%'");
 
 		if (rows > 0) {
-			ReportManager.problem(this, con, rows
-					+ " GO xrefs do not have GO: prefixes in the dbprimary_acc and/or display_label columns");
+			ReportManager.problem(this, con, rows + " GO xrefs do not have GO: prefixes in the dbprimary_acc and/or display_label columns");
 			result = false;
 		} else {
 			ReportManager.correct(this, con, "All GO xrefs have the correct prefix");

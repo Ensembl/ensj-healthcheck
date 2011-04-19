@@ -22,6 +22,7 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -38,7 +39,7 @@ public class SeqRegionAttribsPresent extends SingleDatabaseTestCase {
 		setDescription("Check that certain seq_regions that have known, protein_coding genes have the GeneNo_knwCod attribute associated with them.");
 		setEffect("Website gene counts will be wrong");
 		setFix("Re-run ensembl/misc-scripts/density_feature/seq_region_stats.pl script");
-                setTeamResponsible("Release Coordinator");		
+		setTeamResponsible(Team.RELEASE_COORDINATOR);
 	}
 
 	/**
@@ -68,28 +69,29 @@ public class SeqRegionAttribsPresent extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		String code;
-		if(dbre.getType()==DatabaseType.SANGER_VEGA){
-			code="'KnwnPCCount'";
-		}else{
-			code ="'GeneNo_knwCod'";
+		if (dbre.getType() == DatabaseType.SANGER_VEGA) {
+			code = "'KnwnPCCount'";
+		} else {
+			code = "'GeneNo_knwCod'";
 		}
-		String sql = " FROM gene g WHERE g.biotype='protein_coding' AND g.status='KNOWN' AND g.seq_region_id NOT IN (SELECT DISTINCT(g.seq_region_id) FROM gene g LEFT JOIN seq_region_attrib sra ON g.seq_region_id=sra.seq_region_id WHERE g.biotype='protein_coding' AND g.status='KNOWN' AND sra.attrib_type_id=(select attrib_type_id from attrib_type where code = "+code+") AND sra.seq_region_id IS NOT NULL)";		
-		
+		String sql = " FROM gene g WHERE g.biotype='protein_coding' AND g.status='KNOWN' AND g.seq_region_id NOT IN (SELECT DISTINCT(g.seq_region_id) FROM gene g LEFT JOIN seq_region_attrib sra ON g.seq_region_id=sra.seq_region_id WHERE g.biotype='protein_coding' AND g.status='KNOWN' AND sra.attrib_type_id=(select attrib_type_id from attrib_type where code = "
+				+ code + ") AND sra.seq_region_id IS NOT NULL)";
+
 		int count = getRowCount(con, "SELECT COUNT(DISTINCT(g.seq_region_id))" + sql);
-		
+
 		if (count > 0) {
-		
+
 			String str = count + " seq_regions with known, protein_coding genes do not have the GeneNo_knwCod attribute associated";
-			//str += "USEFUL SQL: SELECT DISTINCT(g.seq_region_id)" + sql;
+			// str += "USEFUL SQL: SELECT DISTINCT(g.seq_region_id)" + sql;
 			ReportManager.problem(this, con, str);
 			result = false;
-			
+
 		} else {
-			
+
 			ReportManager.correct(this, con, "All seq_regions with known, protein_coding genes have a GeneNo_knwCod attribute associated with them");
-			
+
 		}
-		
+
 		return result;
 
 	} // run

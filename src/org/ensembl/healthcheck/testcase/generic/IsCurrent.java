@@ -20,12 +20,12 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check for genes, transcripts and exons where the is_current column is
- * anything other than 1. Any value other than 1 will cause problems for Ensembl
- * databases.
+ * Check for genes, transcripts and exons where the is_current column is anything other than 1. Any value other than 1 will cause
+ * problems for Ensembl databases.
  */
 public class IsCurrent extends SingleDatabaseTestCase {
 
@@ -36,7 +36,8 @@ public class IsCurrent extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
-                setTeamResponsible("Core and GeneBuilders");
+		setTeamResponsible(Team.CORE);
+		setTeamResponsible(Team.GENEBUILD);
 		setDescription("Check for genes, transcripts and exons where the is_current column is anything other than 1.");
 
 	}

@@ -22,6 +22,7 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -30,45 +31,47 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 public class ProjectedXrefGenes extends SingleDatabaseTestCase {
 
-    /**
-     * Constructor.
-     */
-    public ProjectedXrefGenes() {
+	/**
+	 * Constructor.
+	 */
+	public ProjectedXrefGenes() {
 
-        addToGroup("post_genebuild");
-        addToGroup("release");
-        setDescription("Check that only genes have projected xrefs");
-        setTeamResponsible("Core");
-      
-    }
+		addToGroup("post_genebuild");
+		addToGroup("release");
+		setDescription("Check that only genes have projected xrefs");
+		setTeamResponsible(Team.CORE);
 
-    /**
-     * Run the test for each database.
-     * @param dbre The database to check.
-     * @return Result.
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+	}
 
-        boolean result = true;
+	/**
+	 * Run the test for each database.
+	 * 
+	 * @param dbre
+	 *          The database to check.
+	 * @return Result.
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-        Connection con = dbre.getConnection();
-    			
-    			String sql = "SELECT COUNT(*) FROM external_db e, xref x, object_xref ox, transcript t WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id AND ox.ensembl_object_type='Transcript' AND ox.ensembl_id=t.transcript_id AND x.info_type='PROJECTION'";
-    			
-    			int rows = getRowCount(con, sql);
-    			
-    			if (rows > 0) {
-    				
-    				ReportManager.problem(this, con, "There are " + rows + " projected xrefs linked to transcripts however only genes and translations should have them.");
-    				result = false;
-    				
-    			} else {
-    				
-    				ReportManager.correct(this, con, "No projected xrefs associated with transcripts");
-    				
-    			}
+		boolean result = true;
 
-        return result;
-    }
+		Connection con = dbre.getConnection();
+
+		String sql = "SELECT COUNT(*) FROM external_db e, xref x, object_xref ox, transcript t WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id AND ox.ensembl_object_type='Transcript' AND ox.ensembl_id=t.transcript_id AND x.info_type='PROJECTION'";
+
+		int rows = getRowCount(con, sql);
+
+		if (rows > 0) {
+
+			ReportManager.problem(this, con, "There are " + rows + " projected xrefs linked to transcripts however only genes and translations should have them.");
+			result = false;
+
+		} else {
+
+			ReportManager.correct(this, con, "No projected xrefs associated with transcripts");
+
+		}
+
+		return result;
+	}
 
 } // ProjectedXrefGenes

@@ -20,6 +20,7 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
@@ -28,10 +29,10 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  */
 public class DuplicateAttributes extends SingleDatabaseTestCase {
 
-	double THRESHOLD = 0.0; // fraction of non-unique rows must be greater than this for a warning to occur  
-	
-	String[] attribs = { "gene", "transcript", "translation", "seq_region", "misc"  };
-	
+	double THRESHOLD = 0.0; // fraction of non-unique rows must be greater than this for a warning to occur
+
+	String[] attribs = { "gene", "transcript", "translation", "seq_region", "misc" };
+
 	/**
 	 * Creates a new instance of DuplicateAttributes
 	 */
@@ -43,7 +44,7 @@ public class DuplicateAttributes extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Many duplicates can cause serious performance problems.");
 		setFix("Remove duplicated rows if appropriate.");
-		setTeamResponsible("genebuilders");
+		setTeamResponsible(Team.GENEBUILD);
 
 	}
 
@@ -60,34 +61,34 @@ public class DuplicateAttributes extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		for (String attrib : attribs) {
-		
+
 			String table = attrib + "_attrib";
-			String column = attrib.equals("misc") ? "misc_feature_id": attrib + "_id";
-			
+			String column = attrib.equals("misc") ? "misc_feature_id" : attrib + "_id";
+
 			logger.finest("Checking " + table);
-			
+
 			int totalRows = getRowCount(con, "SELECT COUNT(*) FROM " + table);
-			
+
 			if (totalRows == 0) { // avoid division by zero
 				continue;
 			}
-			
+
 			int uniqueRows = getRowCount(con, "SELECT COUNT(DISTINCT " + column + ", attrib_type_id, value) FROM " + table);
-			
+
 			int duplicates = totalRows - uniqueRows;
-			
-			if ((double)duplicates / (double)totalRows > THRESHOLD ) {
-				
+
+			if ((double) duplicates / (double) totalRows > THRESHOLD) {
+
 				ReportManager.problem(this, con, table + " has " + totalRows + " rows in total but only " + uniqueRows + " are unique");
 				result = false;
-				
+
 			} else {
-				
+
 				ReportManager.correct(this, con, "No duplicated rows in " + table);
-				
+
 			}
 		}
-		
+
 		return result;
 
 	} // run

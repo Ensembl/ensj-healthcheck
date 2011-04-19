@@ -22,11 +22,12 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check for any genes/exons that are suspiciously large; > 2Mb for genes, >
- * 0.5Mb for exons. Length assumed to be end-start+1, i.e. including introns.
+ * Check for any genes/exons that are suspiciously large; > 2Mb for genes, > 0.5Mb for exons. Length assumed to be end-start+1, i.e.
+ * including introns.
  */
 
 public class BigGeneExon extends SingleDatabaseTestCase {
@@ -47,7 +48,7 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription("Check for suspiciously long genes & exons");
-                setTeamResponsible("Genebuilders");
+		setTeamResponsible(Team.GENEBUILD);
 
 	}
 
@@ -78,10 +79,9 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		// gene - warning
-		String sql = "SELECT COUNT(*) FROM gene WHERE (seq_region_end-seq_region_start+1) >= " + GENE_WARN
-				+ " AND (seq_region_end-seq_region_start+1) < " + GENE_ERROR;
-		if(dbre.getType()==DatabaseType.SANGER_VEGA){//for sanger_vega ignore genes that do not have source havana or WU
-			sql +=" and (source='havana' or source='WU')";
+		String sql = "SELECT COUNT(*) FROM gene WHERE (seq_region_end-seq_region_start+1) >= " + GENE_WARN + " AND (seq_region_end-seq_region_start+1) < " + GENE_ERROR;
+		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sanger_vega ignore genes that do not have source havana or WU
+			sql += " and (source='havana' or source='WU')";
 		}
 		int rows = getRowCount(con, sql);
 		if (rows > 0) {
@@ -96,9 +96,9 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 
 		// gene - error
 		sql = "SELECT gene_id FROM gene WHERE (seq_region_end-seq_region_start+1) >= " + GENE_ERROR;
-		if(dbre.getType()==DatabaseType.SANGER_VEGA){//for sanger_vega ignore genes that do not have source havana or WU
-			sql +=" and (source='havana' or source='WU')";
-		}		
+		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sanger_vega ignore genes that do not have source havana or WU
+			sql += " and (source='havana' or source='WU')";
+		}
 
 		String[] longIDs = getColumnValues(con, sql);
 
@@ -115,10 +115,10 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 
 		}
 
-	// gene - really long
+		// gene - really long
 		sql = "SELECT gene_id FROM gene WHERE (seq_region_end-seq_region_start+1) >= " + GENE_ENORMOUS;
-		if(dbre.getType()==DatabaseType.SANGER_VEGA){//for sanger_vega ignore genes that do not have source havana or WU
-			sql +=" and (source='havana' or source='WU')";
+		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sanger_vega ignore genes that do not have source havana or WU
+			sql += " and (source='havana' or source='WU')";
 		}
 
 		longIDs = getColumnValues(con, sql);
@@ -135,7 +135,7 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 			ReportManager.correct(this, con, "No genes longer than " + GENE_ENORMOUS + " bases");
 
 		}
-		
+
 		// exon - error
 		sql = "SELECT COUNT(*) FROM exon WHERE (seq_region_end-seq_region_start+1) >= " + EXON_ERROR;
 
@@ -170,7 +170,7 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 			String name = getRowColumnValue(con, "SELECT x.display_label FROM gene g, xref x WHERE x.xref_id=g.display_xref_id AND g.gene_id=" + id);
 			String description = getRowColumnValue(con, "SELECT description FROM gene WHERE gene_id=" + id);
 			String status = getRowColumnValue(con, "SELECT status FROM gene WHERE gene_id=" + id);
-			
+
 			String str = "Gene " + stableID;
 			if (name != null && name.length() > 0) {
 				str += " (" + name + ")";
@@ -180,7 +180,7 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 			if (description != null && description.length() > 0) {
 				str += " (" + description + ")";
 			}
-			
+
 			ReportManager.problem(this, con, str);
 
 		}

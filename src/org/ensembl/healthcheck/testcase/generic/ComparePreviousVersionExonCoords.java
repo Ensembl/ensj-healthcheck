@@ -22,10 +22,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
-import org.ensembl.healthcheck.DatabaseType;
 
 /**
  * Compare the transcript stable IDs and exon coordinates between 2 releases. Note this is not comparing counts so doesn't extend
@@ -43,15 +44,18 @@ public class ComparePreviousVersionExonCoords extends SingleDatabaseTestCase {
 		addToGroup("release");
 		setDescription("Compare the transcript stable IDs and exon coordinates for each exon across releases to ensure that protein sequences are the same.");
 		setEffect("Causes problems for Compara if proteins are not identical");
-                setTeamResponsible("Core GeneBuilders");
+		setTeamResponsible(Team.CORE);
+		setSecondTeamResponsible(Team.GENEBUILD);
+
 	}
 
-    /**
+	/**
 	 * This test Does not apply to sanger_vega dbs
 	 */
 	public void types() {
 		removeAppliesToType(DatabaseType.SANGER_VEGA);
-	}	
+	}
+
 	// ----------------------------------------------------------------------
 
 	public boolean run(DatabaseRegistryEntry current) {
@@ -62,7 +66,7 @@ public class ComparePreviousVersionExonCoords extends SingleDatabaseTestCase {
 			logger.finest("ignore.previous.checks is set in database.properties, skipping this test");
 			return true;
 		}
-		
+
 		Connection currentCon = current.getConnection();
 
 		// skip databases where there's no previous one (e.g. new species)
@@ -77,7 +81,7 @@ public class ComparePreviousVersionExonCoords extends SingleDatabaseTestCase {
 		// if we can't get the genebuild version (due to a non-standard database name for example, check anyway)
 		int currentVersion = current.getNumericGeneBuildVersion();
 		int previousVersion = previous.getNumericGeneBuildVersion();
-		
+
 		if (currentVersion > 0 && previousVersion > 0 && currentVersion != previousVersion) {
 			ReportManager.correct(this, currentCon, "Genebuild version has changed since " + previous.getName() + ", skipping");
 			return true;

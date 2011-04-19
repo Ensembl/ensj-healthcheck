@@ -22,6 +22,7 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -39,7 +40,7 @@ public class SeqRegionName extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("compara-ancestral");
 		setDescription("Check that seq_region names for human and mouse are in the right format.");
-                setTeamResponsible("GeneBuilders");
+		setTeamResponsible(Team.GENEBUILD);
 	}
 
 	/**

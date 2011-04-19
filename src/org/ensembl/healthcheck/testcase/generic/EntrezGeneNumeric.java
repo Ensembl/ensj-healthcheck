@@ -17,6 +17,7 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
@@ -26,7 +27,6 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 public class EntrezGeneNumeric extends SingleDatabaseTestCase {
 
-	
 	/**
 	 * Create a new EntrezGeneNumeric testcase.
 	 */
@@ -36,8 +36,9 @@ public class EntrezGeneNumeric extends SingleDatabaseTestCase {
 		setDescription("Check that no genes are named after numeric EntrezGene identifiers.");
 		setPriority(Priority.AMBER);
 		setEffect("Causes genes to be displayed with numeric EntrezGene 'names', which is potentially confusing.");
-                setTeamResponsible("Core and GeneBuilders");
-		
+		setTeamResponsible(Team.CORE);
+		setSecondTeamResponsible(Team.GENEBUILD);
+
 	}
 
 	/**
@@ -63,27 +64,28 @@ public class EntrezGeneNumeric extends SingleDatabaseTestCase {
 	public boolean run(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
-		
+
 		Connection con = dbre.getConnection();
-		
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM gene g, external_db e, xref x WHERE g.display_xref_id=x.xref_id AND e.external_db_id=x.external_db_id AND e.db_name='EntrezGene' AND x.display_label REGEXP '^[0-9]+$'");
+
+		int rows = getRowCount(con,
+				"SELECT COUNT(*) FROM gene g, external_db e, xref x WHERE g.display_xref_id=x.xref_id AND e.external_db_id=x.external_db_id AND e.db_name='EntrezGene' AND x.display_label REGEXP '^[0-9]+$'");
 
 		if (rows > 0) {
-			
+
 			ReportManager.problem(this, con, rows + " genes are named after numeric EntrezGene identifiers");
 			result = false;
-			
+
 		} else {
-			
+
 			ReportManager.correct(this, con, "No genes are named after numeric EntrezGene identifiers");
-			
+
 		}
-		
+
 		return result;
-		
+
 	} // run
 
-	//----------------------------------------------------------------------
+	// ----------------------------------------------------------------------
 
 } // EntrezGeneNumeric
 

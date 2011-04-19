@@ -16,10 +16,8 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.DatabaseType;
-import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.util.Utils;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key relationships.
@@ -33,7 +31,7 @@ public class AncestralSequencesExtraChecks extends SingleDatabaseTestCase {
 	public AncestralSequencesExtraChecks() {
 
 		addToGroup("compara-ancestral");
-		setTeamResponsible("compara");
+		setTeamResponsible(Team.COMPARA);
 		setDescription("Additional checks for the ancestral sequences database (from compara).");
 
 	}
@@ -58,9 +56,7 @@ public class AncestralSequencesExtraChecks extends SingleDatabaseTestCase {
 		result &= checkForOrphansWithConstraint(con, "seq_region", "seq_region_id", "dna", "seq_region_id",
 				"coord_system_id = (SELECT coord_system_id FROM coord_system WHERE attrib LIKE '%sequence_level%')");
 
-
 		return result;
 	}
-
 
 } // AncestralSequencesExtraChecks

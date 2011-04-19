@@ -21,6 +21,7 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.Utils;
@@ -31,7 +32,7 @@ import org.ensembl.healthcheck.util.Utils;
 public class SchemaType extends SingleDatabaseTestCase {
 
 	String[] allowedKeys = { "core", "compara", "funcgen", "variation" };
-	
+
 	/**
 	 * Creates a new instance of SchemaType
 	 */
@@ -41,7 +42,7 @@ public class SchemaType extends SingleDatabaseTestCase {
 		setDescription("Check that the schema_type meta key is present and correct.");
 		setPriority(Priority.AMBER);
 		setFix("Set schema_type meta key.");
-		setTeamResponsible("genebuilders");
+		setTeamResponsible(Team.GENEBUILD);
 
 	}
 
@@ -51,7 +52,7 @@ public class SchemaType extends SingleDatabaseTestCase {
 		addAppliesToType(DatabaseType.FUNCGEN);
 
 	}
-	
+
 	/**
 	 * Run the test.
 	 * 
@@ -76,34 +77,33 @@ public class SchemaType extends SingleDatabaseTestCase {
 			ReportManager.problem(this, con, "schema_type value " + key + " in meta table is not one of the allowed values (" + Utils.arrayToString(allowedKeys, ",") + ")");
 			return false;
 		}
-		
-		
+
 		// check that the value matches the type of the database
 		if (!typeMatches(dbre.getType(), key)) {
 			ReportManager.problem(this, con, "schema_type value " + key + " in meta table does not match database type (" + dbre.getType().getName() + ")");
 			result = false;
 		}
-		
+
 		return result;
 
 	} // run
 
-	
 	/**
-	 * Check if the key in the meta table matches the database type. Note that all generic (CDNA, core, otherfeatures, vega) dbs should have schema_type of "core"
+	 * Check if the key in the meta table matches the database type. Note that all generic (CDNA, core, otherfeatures, vega) dbs
+	 * should have schema_type of "core"
 	 */
 	private boolean typeMatches(DatabaseType type, String key) {
-		
+
 		boolean result = false;
-		
+
 		if (type.isGeneric() && key.equals("core")) {
 			result = true;
-		} else if (type.getName().equals(key)){
+		} else if (type.getName().equals(key)) {
 			result = true;
 		}
-		
+
 		return result;
 	}
-	
+
 } // SchemaType
 

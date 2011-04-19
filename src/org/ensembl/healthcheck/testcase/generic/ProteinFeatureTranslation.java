@@ -29,6 +29,7 @@ import java.util.Map;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Repair;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -57,7 +58,7 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
 		featuresToDelete = new HashMap();
 		setFailureText("Large numbers of features longer than the translation indicate something is wrong. A few is probably OK");
 		setHintLongRunning(true);
-                setTeamResponsible("GeneBuilders"); 
+		setTeamResponsible(Team.GENEBUILD);
 	}
 
 	/**
@@ -69,7 +70,6 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
 		removeAppliesToType(DatabaseType.ESTGENE);
 		removeAppliesToType(DatabaseType.CDNA);
 		removeAppliesToType(DatabaseType.RNASEQ);
-
 
 	}
 
@@ -205,7 +205,7 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
 					}
 				}
 			}
-			
+
 			featuresToDelete.put(DBUtils.getShortDatabaseName(con), thisDBFeatures);
 			if (thisDBFeatures.size() > THRESHOLD) {
 				ReportManager.problem(this, con, "protein_feature table has " + thisDBFeatures.size() + " features that are longer than the translation");

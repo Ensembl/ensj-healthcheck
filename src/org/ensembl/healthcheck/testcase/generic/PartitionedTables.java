@@ -22,6 +22,7 @@ import java.sql.Statement;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
@@ -39,7 +40,7 @@ public class PartitionedTables extends SingleDatabaseTestCase {
 		setDescription("Check whether tables have been partitioned.");
 		setPriority(Priority.AMBER);
 		setEffect("Tables should only be partitioned if the partitions are defined in table.sql.");
-		setTeamResponsible("ReleaseCoordinator");
+		setTeamResponsible(Team.RELEASE_COORDINATOR);
 
 	}
 
@@ -59,11 +60,11 @@ public class PartitionedTables extends SingleDatabaseTestCase {
 			ResultSet rs = stmt.executeQuery("SHOW TABLE STATUS WHERE create_options LIKE '%partitioned%'");
 
 			while (rs.next()) {
-				
+
 				String table = rs.getString(1);
 				ReportManager.problem(this, con, table + " is partitioned but shouldn't be.");
 				result = false;
-				
+
 			}
 
 			rs.close();
@@ -78,10 +79,10 @@ public class PartitionedTables extends SingleDatabaseTestCase {
 		}
 
 		if (result == true) {
-		
+
 			ReportManager.correct(this, con, "No tables are partitioned");
 		}
-		
+
 		return result;
 
 	} // run

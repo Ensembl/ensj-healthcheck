@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -43,12 +44,13 @@ public class BlankEnums extends SingleDatabaseTestCase {
 		addToGroup("funcgen-release");
 		addToGroup("funcgen");
 		addToGroup("compara-ancestral");
-		
+
 		setDescription("Check for columns of type ENUM that have blank values - probably means there was a problem importing them.");
 		setPriority(Priority.AMBER);
 		setEffect("Will have blank values where NULL or one of the enum values is expected.");
 		setFix("Re-import after identifying source of problem - possibly the word NULL in import files instead of \\N");
-                setTeamResponsible("Relco and GeneBuilders");
+		setTeamResponsible(Team.RELEASE_COORDINATOR);
+		setSecondTeamResponsible(Team.GENEBUILD);
 	}
 
 	/**
@@ -70,29 +72,29 @@ public class BlankEnums extends SingleDatabaseTestCase {
 		for (int i = 0; i < tables.length; i++) {
 
 			String table = tables[i];
-			
+
 			List columnsAndTypes = DBUtils.getTableInfo(con, table, "enum");
 			Iterator it = columnsAndTypes.iterator();
 			while (it.hasNext()) {
 
 				String[] columnAndType = (String[]) it.next();
 				String column = columnAndType[0];
-				
+
 				int rows = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE " + column + "=''");
-				
+
 				if (rows > 0) {
-					
+
 					ReportManager.problem(this, con, rows + " rows in " + table + "." + column + " are blank, should be NULL or one of the ENUM values");
 					result = false;
 
-				} 
-				
+				}
+
 			}
-			
+
 		}
 
 		return result;
 
 	} // run
-	
+
 } // BlankEnums

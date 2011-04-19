@@ -28,6 +28,7 @@ import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -35,16 +36,12 @@ import org.ensembl.healthcheck.util.DBUtils;
 /**
  * Test case to compare table structures between several schemas.
  * 
- * Has several ways of deciding which schema to use as the "master" to compare
- * all the others against:
+ * Has several ways of deciding which schema to use as the "master" to compare all the others against:
  * <p>
  * <ol>
- * <li>If the property schema.file in database.properties exists, the table.sql
- * file it points to</li>
- * <li>If the schema.file property is not present, the schema named by the
- * property schema.master is used</li>
- * <li>If neither of the above properties are present, the (arbitrary) first
- * schema is used as the master.</li>
+ * <li>If the property schema.file in database.properties exists, the table.sql file it points to</li>
+ * <li>If the schema.file property is not present, the schema named by the property schema.master is used</li>
+ * <li>If neither of the above properties are present, the (arbitrary) first schema is used as the master.</li>
  * </ol>
  */
 
@@ -57,7 +54,7 @@ public class CompareSchema extends MultiDatabaseTestCase {
 
 		addToGroup("release");
 		setDescription("Compare two databases (table names, column names and types, and indexes. Note that, int the case of core databases, there are occasionally tables (such as runnable, job, job_status etc) that are still present after the genebuild handover because pipelines are still running. The genebuilders are responsible for deleting these before the release.");
-                setTeamResponsible("Release Coordinator");
+		setTeamResponsible(Team.RELEASE_COORDINATOR);
 
 	}
 
@@ -91,8 +88,7 @@ public class CompareSchema extends MultiDatabaseTestCase {
 
 		definitionFile = System.getProperty("schema.file");
 		if (definitionFile == null) {
-			logger
-					.info("CompareSchema: No schema definition file found! Set schema.file property in database.properties if you want to use a table.sql file or similar.");
+			logger.info("CompareSchema: No schema definition file found! Set schema.file property in database.properties if you want to use a table.sql file or similar.");
 
 			masterSchema = System.getProperty("master.schema");
 			if (masterSchema != null) {
@@ -107,7 +103,7 @@ public class CompareSchema extends MultiDatabaseTestCase {
 				dbr.add(masterDBRE);
 
 				logger.info("Will use " + masterSchema + " as specified master schema for comparisons.");
-				
+
 			} else {
 				logger.info("CompareSchema: No master schema defined file found! Set master.schema property in database.properties if you want to use a master schema.");
 			}
@@ -143,7 +139,7 @@ public class CompareSchema extends MultiDatabaseTestCase {
 
 			masterStmt = masterCon.createStatement();
 
-			for (int i = 0; i < databases.length; i++) {			
+			for (int i = 0; i < databases.length; i++) {
 
 				if (appliesToType(databases[i].getType())) {
 
@@ -152,41 +148,46 @@ public class CompareSchema extends MultiDatabaseTestCase {
 					if (checkCon != masterCon) {
 
 						logger.info("Comparing " + DBUtils.getShortDatabaseName(checkCon) + " with " + DBUtils.getShortDatabaseName(masterCon));
-						
+
 						// check that both schemas have the same tables
-						int directionFlag = databases[i].getType()==DatabaseType.SANGER_VEGA ? EnsTestCase.COMPARE_RIGHT: EnsTestCase.COMPARE_BOTH; //for sanger_vega do a right compare
-						boolean isSangerVega=databases[i].getType()==DatabaseType.SANGER_VEGA; 
-						if (!compareTablesInSchema(checkCon, masterCon, isSangerVega,directionFlag)) {//for sanger_vega, ignore backup tables
+						int directionFlag = databases[i].getType() == DatabaseType.SANGER_VEGA ? EnsTestCase.COMPARE_RIGHT : EnsTestCase.COMPARE_BOTH; // for
+																																																																						// sanger_vega
+																																																																						// do
+																																																																						// a
+																																																																						// right
+																																																																						// compare
+						boolean isSangerVega = databases[i].getType() == DatabaseType.SANGER_VEGA;
+						if (!compareTablesInSchema(checkCon, masterCon, isSangerVega, directionFlag)) {// for sanger_vega, ignore backup tables
 							// if not the same, this method will generate a
 							// report
 							ReportManager.problem(this, checkCon, "Table name discrepancy detected, skipping rest of checks");
 							result = false;
 							continue;
 						}
-	
+
 						Statement dbStmt = checkCon.createStatement();
-	
+
 						// check each table in turn
 						String[] tableNames = getTableNames(masterCon);
-						for (int j = 0; j < tableNames.length; j++) {					
-	
+						for (int j = 0; j < tableNames.length; j++) {
+
 							String table = tableNames[j];
-										
+
 							String sql = "SHOW CREATE TABLE " + table;
 							ResultSet masterRS = masterStmt.executeQuery(sql);
 							ResultSet dbRS = dbStmt.executeQuery(sql);
 							boolean showCreateSame = DBUtils.compareResultSets(dbRS, masterRS, this, " [" + table + "]", true, false, table, true);
 							if (!showCreateSame) {
-		
+
 								// do more in-depth analysis of database structure
 								result &= compareTableStructures(checkCon, masterCon, table);
-		
+
 							}
-		
+
 							masterRS.close();
 							dbRS.close();
 						} // while table
-	
+
 						dbStmt.close();
 					} // if checkCon != masterCon
 
@@ -233,7 +234,7 @@ public class CompareSchema extends MultiDatabaseTestCase {
 			// compare DESCRIBE <table>
 			ResultSet rs1 = s1.executeQuery("DESCRIBE " + table);
 			ResultSet rs2 = s2.executeQuery("DESCRIBE " + table);
-			// DESC columns: 1: Field, 2: Type, 3: Allowed Null?, 4: Key, 5: Default, 6:Extra  
+			// DESC columns: 1: Field, 2: Type, 3: Allowed Null?, 4: Key, 5: Default, 6:Extra
 			int[] columns = { 1, 2, 3 };
 			boolean describeSame = DBUtils.compareResultSets(rs1, rs2, this, " table descriptions for", true, false, table, columns, true);
 
@@ -273,8 +274,7 @@ public class CompareSchema extends MultiDatabaseTestCase {
 			SortedSet rows1 = new TreeSet();
 			while (rs1.next()) {
 				if (rs1.getInt("Seq_in_index") >= 1) { // cuts down number of messages
-					String str1 = table1 + ":" + rs1.getString("Key_name") + ":" + rs1.getString("Column_name") + ":"
-							+ rs1.getString("Non_unique") + ":" + rs1.getString("Seq_in_index");
+					String str1 = table1 + ":" + rs1.getString("Key_name") + ":" + rs1.getString("Column_name") + ":" + rs1.getString("Non_unique") + ":" + rs1.getString("Seq_in_index");
 					rows1.add(str1);
 				}
 			}
@@ -282,8 +282,7 @@ public class CompareSchema extends MultiDatabaseTestCase {
 			SortedSet rows2 = new TreeSet();
 			while (rs2.next()) {
 				if (rs2.getInt("Seq_in_index") >= 1) {
-					String str2 = table2 + ":" + rs2.getString("Key_name") + ":" + rs2.getString("Column_name") + ":"
-							+ rs2.getString("Non_unique") + ":" + rs2.getString("Seq_in_index");
+					String str2 = table2 + ":" + rs2.getString("Key_name") + ":" + rs2.getString("Column_name") + ":" + rs2.getString("Non_unique") + ":" + rs2.getString("Seq_in_index");
 					rows2.add(str2);
 				}
 			}
@@ -316,8 +315,7 @@ public class CompareSchema extends MultiDatabaseTestCase {
 				String[] indices = s.split(":");
 				String table = indices[0];
 				String index = indices[1];
-				ReportManager.problem(this, con1, DBUtils.getShortDatabaseName(con1) + " " + table + " has index " + index
-						+ " which is different or absent in " + DBUtils.getShortDatabaseName(con2));
+				ReportManager.problem(this, con1, DBUtils.getShortDatabaseName(con1) + " " + table + " has index " + index + " which is different or absent in " + DBUtils.getShortDatabaseName(con2));
 			}
 
 			// and the other way around
@@ -340,8 +338,7 @@ public class CompareSchema extends MultiDatabaseTestCase {
 				String[] indices = s.split(":");
 				String table = indices[0];
 				String index = indices[1];
-				ReportManager.problem(this, con2, DBUtils.getShortDatabaseName(con2) + " " + table + " has index " + index
-						+ " which is different or absent in " + DBUtils.getShortDatabaseName(con1));
+				ReportManager.problem(this, con2, DBUtils.getShortDatabaseName(con2) + " " + table + " has index " + index + " which is different or absent in " + DBUtils.getShortDatabaseName(con1));
 			}
 
 		} catch (SQLException se) {

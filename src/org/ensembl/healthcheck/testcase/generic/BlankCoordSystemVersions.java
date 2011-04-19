@@ -21,6 +21,7 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -40,7 +41,7 @@ public class BlankCoordSystemVersions extends SingleDatabaseTestCase {
 		addToGroup("funcgen-release");
 		addToGroup("compara-ancestral");
 		setDescription("Check for any coord_system.version that are blank ('') - they should be NULL.");
-		setTeamResponsible("Genebuilders");//this is now inaccurate for funcgen usecase
+		setTeamResponsible(Team.GENEBUILD);// this is now inaccurate for funcgen usecase
 
 	}
 
@@ -59,18 +60,18 @@ public class BlankCoordSystemVersions extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		int rows = getRowCount(con, "SELECT COUNT(*) FROM coord_system WHERE version = ''");
-		
+
 		if (rows > 0) {
-			
+
 			ReportManager.problem(this, con, rows + " rows in coord_system have a blank versions - should be set to null");
 			result = false;
-			
+
 		} else {
-			
+
 			ReportManager.correct(this, con, "No blank versions in coord_system");
-		
+
 		}
-		
+
 		return result;
 
 	} // run

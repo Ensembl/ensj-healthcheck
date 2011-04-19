@@ -20,12 +20,13 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
  * Check that the number of entries in the seq_region_attrib table specifying that the MT chromosome should use codon table 2
- * matches the number of MT chromosomes (may be several different assemblies) 
+ * matches the number of MT chromosomes (may be several different assemblies)
  */
 public class MTCodonTable extends SingleDatabaseTestCase {
 
@@ -39,7 +40,7 @@ public class MTCodonTable extends SingleDatabaseTestCase {
 		setDescription("Check that the number of entries in the seq_region_attrib table specifying that the MT chromosome should use codon table 2 matches the number of MT chromosomes (may be several different assemblies)");
 		setPriority(Priority.AMBER);
 		setFix("Add seq_region_attribs");
-		setTeamResponsible("Genebuilders");
+		setTeamResponsible(Team.GENEBUILD);
 
 	}
 
@@ -54,15 +55,17 @@ public class MTCodonTable extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		int numMTs = getRowCount(con, "SELECT COUNT(DISTINCT(seq_region_id)) FROM seq_region WHERE name = 'MT'");
-		
-		int numAttribs = getRowCount(con, "SELECT COUNT(DISTINCT(sra.seq_region_id)) FROM seq_region sr, seq_region_attrib sra, attrib_type att WHERE sr.seq_region_id=sra.seq_region_id AND sra.attrib_type_id=att.attrib_type_id AND att.code = 'codon_table' AND sra.value = '2' AND sr.name = 'MT'");
-		
+
+		int numAttribs = getRowCount(
+				con,
+				"SELECT COUNT(DISTINCT(sra.seq_region_id)) FROM seq_region sr, seq_region_attrib sra, attrib_type att WHERE sr.seq_region_id=sra.seq_region_id AND sra.attrib_type_id=att.attrib_type_id AND att.code = 'codon_table' AND sra.value = '2' AND sr.name = 'MT'");
+
 		if (numMTs != numAttribs) {
-			
+
 			ReportManager.problem(this, con, "There are " + numMTs + " seq_region entries named 'MT' but " + numAttribs + " seq_region_attribs specifying that they should use codon table 2");
 			result = false;
 		}
-		
+
 		return result;
 
 	} // run

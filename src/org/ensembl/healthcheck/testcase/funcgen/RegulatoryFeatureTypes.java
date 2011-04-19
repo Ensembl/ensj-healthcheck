@@ -17,16 +17,17 @@
 package org.ensembl.healthcheck.testcase.funcgen;
 
 import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
+import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
-import org.ensembl.healthcheck.testcase.Priority;
 
 /**
  * Checks the FeatureTypes for the RegulatoryFeatures have been updated
@@ -42,7 +43,7 @@ public class RegulatoryFeatureTypes extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("funcgen");//do we need this group and the funcgen-release group?
 		addToGroup("funcgen-release");
-		setTeamResponsible("funcgen");
+		setTeamResponsible(Team.FUNCGEN);
 
 		setDescription("Checks regulatory_feature feature_types have been updated.");
 		setPriority(Priority.RED);

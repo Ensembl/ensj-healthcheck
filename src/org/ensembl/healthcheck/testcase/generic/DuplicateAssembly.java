@@ -21,6 +21,7 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -38,7 +39,7 @@ public class DuplicateAssembly extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("compara-ancestral");
 		setDescription("Check that there are no duplicates in the assembly table");
-                setTeamResponsible("GeneBuilders");
+		setTeamResponsible(Team.GENEBUILD);
 
 	}
 
@@ -56,9 +57,7 @@ public class DuplicateAssembly extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		int rows = getRowCount(
-				con,
-				"SELECT *, COUNT(*) AS c FROM assembly GROUP BY asm_seq_region_id, cmp_seq_region_id, asm_start, asm_end, cmp_start, cmp_end, ori HAVING c > 1");
+		int rows = getRowCount(con, "SELECT *, COUNT(*) AS c FROM assembly GROUP BY asm_seq_region_id, cmp_seq_region_id, asm_start, asm_end, cmp_start, cmp_end, ori HAVING c > 1");
 
 		if (rows > 0) {
 
@@ -76,16 +75,12 @@ public class DuplicateAssembly extends SingleDatabaseTestCase {
 	} // run
 
 	/**
-	 * Note more details can be obtained via: 
+	 * Note more details can be obtained via:
 	 * 
-	 * SELECT a.*, sr1.name, cs1.name, sr2.name, cs2.name, COUNT(*) AS c 
-	 * FROM assembly a, seq_region sr1, seq_region sr2, coord_system cs1, coord_system cs2 
-	 * WHERE a.cmp_seq_region_id = sr1.seq_region_id AND
-	 *       sr1.coord_system_id = cs1.coord_system_id AND
-	 *       a.asm_seq_region_id = sr2.seq_region_id AND
-	 *       sr2.coord_system_id = cs2.coord_system_id 
-	 * GROUP BY asm_seq_region_id,  cmp_seq_region_id, asm_start, asm_end, cmp_start, cmp_end, ori
-	 * HAVING c > 1;
+	 * SELECT a.*, sr1.name, cs1.name, sr2.name, cs2.name, COUNT(*) AS c FROM assembly a, seq_region sr1, seq_region sr2, coord_system
+	 * cs1, coord_system cs2 WHERE a.cmp_seq_region_id = sr1.seq_region_id AND sr1.coord_system_id = cs1.coord_system_id AND
+	 * a.asm_seq_region_id = sr2.seq_region_id AND sr2.coord_system_id = cs2.coord_system_id GROUP BY asm_seq_region_id,
+	 * cmp_seq_region_id, asm_start, asm_end, cmp_start, cmp_end, ori HAVING c > 1;
 	 */
-	
+
 } // DuplicateAssembly

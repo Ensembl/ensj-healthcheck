@@ -19,60 +19,62 @@ package org.ensembl.healthcheck.testcase.variation;
 import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
-//import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.Species;
+import org.ensembl.healthcheck.Team;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that if the peptide_allele_string of transcript_variation is not >1. 
- * It should out >1, unless it filled with numbers
+ * Check that if the peptide_allele_string of transcript_variation is not >1. It should out >1, unless it filled with numbers
  */
 public class VariationSynonym extends SingleDatabaseTestCase {
 
-    /**
-     * Creates a new instance of Check Variation Synonym
-     */
-    public VariationSynonym() {
-        addToGroup("variation");
-	addToGroup("variation-release");
-        setDescription("Check that Venter and Watson should have 3 million variations");
-    }
+	/**
+	 * Creates a new instance of Check Variation Synonym
+	 */
+	public VariationSynonym() {
+		addToGroup("variation");
+		addToGroup("variation-release");
+		setDescription("Check that Venter and Watson should have 3 million variations");
+		setTeamResponsible(Team.VARIATION);
 
-    /**
-     * Run the test
-     * @param dbre
-     *          The database to use.
-     * @return Result.
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+	}
 
-        boolean result = true;
-	String[] individualNames = {"Venter","Watson"};
-	String individualName;
-	// Check that Venter and Watson should have 3 million variations
+	/**
+	 * Run the test
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return Result.
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-        Connection con = dbre.getConnection();
-	if (dbre.getSpecies() == Species.HOMO_SAPIENS){
-	    for (int i = 0; i < individualNames.length; i++) {
-		individualName = individualNames[i];
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM variation v, source s WHERE v.source_id=s.source_id and s.name like '%" + individualName + "'");
-		int rows1 = getRowCount(con, "SELECT COUNT(*) FROM variation_synonym vs, source s WHERE vs.source_id=s.source_id and s.name like '%" + individualName + "'");
-		int tot_rows = rows + rows1;
-		if (tot_rows < 3000000) {
-		    result = false;
-		    ReportManager.problem(this, con, tot_rows + " with variations for " + individualName);
-		} else {
-		    ReportManager.correct(this,con,"Venter/Watson has more then 3 million variations");
+		boolean result = true;
+		String[] individualNames = { "Venter", "Watson" };
+		String individualName;
+		// Check that Venter and Watson should have 3 million variations
+
+		Connection con = dbre.getConnection();
+		if (dbre.getSpecies() == Species.HOMO_SAPIENS) {
+			for (int i = 0; i < individualNames.length; i++) {
+				individualName = individualNames[i];
+				int rows = getRowCount(con, "SELECT COUNT(*) FROM variation v, source s WHERE v.source_id=s.source_id and s.name like '%" + individualName + "'");
+				int rows1 = getRowCount(con, "SELECT COUNT(*) FROM variation_synonym vs, source s WHERE vs.source_id=s.source_id and s.name like '%" + individualName + "'");
+				int tot_rows = rows + rows1;
+				if (tot_rows < 3000000) {
+					result = false;
+					ReportManager.problem(this, con, tot_rows + " with variations for " + individualName);
+				} else {
+					ReportManager.correct(this, con, "Venter/Watson has more then 3 million variations");
+				}
+			}
 		}
-	    }
-	}
-	if (result && dbre.getSpecies() != Species.HOMO_SAPIENS) {
-	    ReportManager.info(this,con,"This test is only for human at moment");
-	}
-	
-	return result;
-	
-    } // run
+		if (result && dbre.getSpecies() != Species.HOMO_SAPIENS) {
+			ReportManager.info(this, con, "This test is only for human at moment");
+		}
+
+		return result;
+
+	} // run
 
 } // VariationSynonym

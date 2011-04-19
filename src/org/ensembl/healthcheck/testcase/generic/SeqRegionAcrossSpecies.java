@@ -18,6 +18,7 @@ package org.ensembl.healthcheck.testcase.generic;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 /**
@@ -25,30 +26,30 @@ import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
  */
 public class SeqRegionAcrossSpecies extends MultiDatabaseTestCase {
 
-    private DatabaseType[] types = {DatabaseType.CORE, DatabaseType.CDNA, DatabaseType.OTHERFEATURES};
+	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.CDNA, DatabaseType.OTHERFEATURES };
 
-    /**
-     * Creates a new instance of SeqRegionAcrossSpecies
-     */
-    public SeqRegionAcrossSpecies() {
+	/**
+	 * Creates a new instance of SeqRegionAcrossSpecies
+	 */
+	public SeqRegionAcrossSpecies() {
 
-        addToGroup("release");
-        setDescription("Check that the seq_region table is the same across all generic DBs; if not it will cause problems on the website.");
-        setTeamResponsible("GeneBuilders");
-    }
+		addToGroup("release");
+		setDescription("Check that the seq_region table is the same across all generic DBs; if not it will cause problems on the website.");
+		setTeamResponsible(Team.GENEBUILD);
+	}
 
-    /**
-     * Make sure that the seq_region tables are all the same.
-     * 
-     * @param dbr The database registry containing all the specified databases.
-     * @return True if the seq_region_attrib table is the same across all the species in the
-     *         registry.
-     */
-    public boolean run(DatabaseRegistry dbr) {
+	/**
+	 * Make sure that the seq_region tables are all the same.
+	 * 
+	 * @param dbr
+	 *          The database registry containing all the specified databases.
+	 * @return True if the seq_region_attrib table is the same across all the species in the registry.
+	 */
+	public boolean run(DatabaseRegistry dbr) {
 
-        return checkTableAcrossSpecies("seq_region", dbr, types, "All seq_region tables are the same", "seq_region tables are different", " WHERE NAME NOT LIKE 'LRG%'");
+		return checkTableAcrossSpecies("seq_region", dbr, types, "All seq_region tables are the same", "seq_region tables are different", " WHERE NAME NOT LIKE 'LRG%'");
 
-    } // run
+	} // run
 
 } // SeqRegioAcrossSpecies
 

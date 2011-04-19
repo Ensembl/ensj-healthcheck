@@ -25,6 +25,7 @@ import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.testcase.Priority;
 
@@ -44,10 +45,10 @@ public class XrefLevels extends MultiDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Causes BioMart to require specific workarounds for each case.");
 		setFix("Manually fix affected xrefs.");
-		setTeamResponsible("core");
+		setTeamResponsible(Team.CORE);
 
 	}
-	
+
 	/**
 	 * This only applies to core and Vega databases.
 	 */
@@ -83,7 +84,7 @@ public class XrefLevels extends MultiDatabaseTestCase {
 		if (dbres.length == 0) {
 			return true;
 		}
-		
+
 		for (DatabaseRegistryEntry dbre : dbres) {
 
 			if (masterDBRE == null) {

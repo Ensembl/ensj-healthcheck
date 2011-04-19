@@ -19,6 +19,7 @@ package org.ensembl.healthcheck.testcase.generic;
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 /**
@@ -27,37 +28,37 @@ import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 public class MetaCrossSpecies extends MultiDatabaseTestCase {
 
-    private DatabaseType[] types = {DatabaseType.CORE, DatabaseType.CDNA, DatabaseType.OTHERFEATURES, DatabaseType.VEGA, DatabaseType.RNASEQ};
+	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.CDNA, DatabaseType.OTHERFEATURES, DatabaseType.VEGA, DatabaseType.RNASEQ };
 
-    /**
-     * Create a new instance of MetaCrossSpecies
-     */
-    public MetaCrossSpecies() {
-        addToGroup("post_genebuild");
-        addToGroup("release");
-        setDescription("Check meta table species, classification and taxonomy_id is the same in all DBs for each species");
-        setTeamResponsible("Relco and GeneBuilders");
-    }
+	/**
+	 * Create a new instance of MetaCrossSpecies
+	 */
+	public MetaCrossSpecies() {
+		addToGroup("post_genebuild");
+		addToGroup("release");
+		setDescription("Check meta table species, classification and taxonomy_id is the same in all DBs for each species");
+		setTeamResponsible(Team.RELEASE_COORDINATOR);
+		setSecondTeamResponsible(Team.GENEBUILD);
+	}
 
-    /**
-     * Check various aspects of the meta table.
-     * 
-     * @param dbr
-     *          The database registry containing all the specified databases.
-     * @return True if the meta information is consistent within species.
-     */
-    public boolean run(DatabaseRegistry dbr) {
+	/**
+	 * Check various aspects of the meta table.
+	 * 
+	 * @param dbr
+	 *          The database registry containing all the specified databases.
+	 * @return True if the meta information is consistent within species.
+	 */
+	public boolean run(DatabaseRegistry dbr) {
 
-        boolean result = checkSQLAcrossSpecies(
-                "SELECT LCASE(meta_value) FROM meta WHERE meta_key ='species.classification' ORDER BY meta_id", dbr, types, false);
-        if (!result) {
-            ReportManager.problem(this, "", "meta information not the same for some databases");
-        } else {
-            ReportManager.correct(this, "", "meta information is the same for all databases for all species");
-        }
+		boolean result = checkSQLAcrossSpecies("SELECT LCASE(meta_value) FROM meta WHERE meta_key ='species.classification' ORDER BY meta_id", dbr, types, false);
+		if (!result) {
+			ReportManager.problem(this, "", "meta information not the same for some databases");
+		} else {
+			ReportManager.correct(this, "", "meta information is the same for all databases for all species");
+		}
 
-        return result;
+		return result;
 
-    }
+	}
 
 } // MetaCrossSpecies

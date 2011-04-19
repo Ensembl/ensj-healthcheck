@@ -14,12 +14,13 @@ package org.ensembl.healthcheck.testcase.variation;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
+
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.Team;
+import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
 
 /**
- * Compare the number of genotypes between the current database and the
- * database on the secondary server.
+ * Compare the number of genotypes between the current database and the database on the secondary server.
  */
 
 public class ComparePreviousVersionGenotypes extends ComparePreviousVersionBase {
@@ -32,20 +33,22 @@ public class ComparePreviousVersionGenotypes extends ComparePreviousVersionBase 
 		addToGroup("variation");
 		addToGroup("variation-release");
 		setDescription("Compare the number of genotypes in the current database with those from the equivalent database on the secondary server");
+		setTeamResponsible(Team.VARIATION);
+
 	}
 
 	protected Map getCounts(DatabaseRegistryEntry dbre) {
-            
-            Map<String, Integer> counts = new HashMap<String, Integer>();
-            
-            // Count genotypes in population_genotype
-            counts.putAll(getCountsBySQL(dbre, "SELECT 'population_genotype', COUNT(*) FROM population_genotype"));
-            // Count genotypes in compressed_genotype_single_bp
-            counts.putAll(getCountsBySQL(dbre, "SELECT 'compressed_genotype_single_bp', COUNT(*) FROM compressed_genotype_single_bp"));
-            // Count genotypes in individual_genotype_multiple_bp
-            counts.putAll(getCountsBySQL(dbre, "SELECT 'individual_genotype_multiple_bp', COUNT(*) FROM individual_genotype_multiple_bp"));
-            
-            return counts;
+
+		Map<String, Integer> counts = new HashMap<String, Integer>();
+
+		// Count genotypes in population_genotype
+		counts.putAll(getCountsBySQL(dbre, "SELECT 'population_genotype', COUNT(*) FROM population_genotype"));
+		// Count genotypes in compressed_genotype_single_bp
+		counts.putAll(getCountsBySQL(dbre, "SELECT 'compressed_genotype_single_bp', COUNT(*) FROM compressed_genotype_single_bp"));
+		// Count genotypes in individual_genotype_multiple_bp
+		counts.putAll(getCountsBySQL(dbre, "SELECT 'individual_genotype_multiple_bp', COUNT(*) FROM individual_genotype_multiple_bp"));
+
+		return counts;
 	}
 
 	// ------------------------------------------------------------------------

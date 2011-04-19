@@ -25,11 +25,10 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Base class to compare a certain set of things (e.g. biotypes, xrefs) from on
- * database with the equivalent things in the previous database.
+ * Base class to compare a certain set of things (e.g. biotypes, xrefs) from on database with the equivalent things in the previous
+ * database.
  * 
- * Extending classes should implement the description, threshold and getCounts()
- * methods. See individual Javadocs for details.
+ * Extending classes should implement the description, threshold and getCounts() methods. See individual Javadocs for details.
  */
 
 public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase {
@@ -50,7 +49,7 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 			logger.finest("ignore.previous.checks is set in database.properties, skipping this test");
 			return true;
 		}
-		
+
 		DatabaseRegistryEntry sec = getEquivalentFromSecondaryServer(dbre);
 
 		if (sec == null) {
@@ -66,19 +65,17 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 		// compare each of the secondary (previous release, probably) with current
 		Set externalDBs = secondaryCounts.keySet();
 		Iterator it = externalDBs.iterator();
-		String successText = new String ();
+		String successText = new String();
 
+		// show % tolerance here?
+		double tolerance = (100 - ((threshold() / 1) * 100));
 
-		//show % tolerance here?
-		double tolerance = (100 - ((threshold() / 1) * 100 ));
-
-		if(testUpperThreshold()){
+		if (testUpperThreshold()) {
 			successText = " - within tolerance +/-" + tolerance + "%";
 
-		}else{
+		} else {
 			successText = " - greater or within tolerance";
 		}
-
 
 		while (it.hasNext()) {
 
@@ -94,28 +91,23 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 			if (currentCounts.containsKey(key)) {
 
 				int currentCount = ((Integer) (currentCounts.get(key))).intValue();
-				
+
 				if (((double) currentCount / (double) secondaryCount) < threshold()) {
-					ReportManager.problem(this, dbre.getConnection(), sec.getName() + " has " + secondaryCount + " " + entityDescription()
-							+ " " + key + " but " + dbre.getName() + " only has " + currentCount);
+					ReportManager.problem(this, dbre.getConnection(), sec.getName() + " has " + secondaryCount + " " + entityDescription() + " " + key + " but " + dbre.getName() + " only has " + currentCount);
 					result = false;
-				}
-				else if (testUpperThreshold() &&
-						 //((1 -(double) secondaryCount / (double) currentCount)) > threshold()) {
+				} else if (testUpperThreshold() &&
+				// ((1 -(double) secondaryCount / (double) currentCount)) > threshold()) {
 						(((double) currentCount / (double) secondaryCount)) > (1 / threshold())) {
-					ReportManager.problem(this, dbre.getConnection(), sec.getName() + " only has " + secondaryCount + " " + entityDescription()
-										  + " " + key + " but " + dbre.getName() + " has " + currentCount);
+					ReportManager.problem(this, dbre.getConnection(), sec.getName() + " only has " + secondaryCount + " " + entityDescription() + " " + key + " but " + dbre.getName() + " has " + currentCount);
 					result = false;
-				} 
-				else {
-					ReportManager.correct(this, dbre.getConnection(), sec.getName() + " has " + secondaryCount + " " + entityDescription()
-							+ " " + key + " and " + dbre.getName() + " has " + currentCount + successText);
+				} else {
+					ReportManager.correct(this, dbre.getConnection(), sec.getName() + " has " + secondaryCount + " " + entityDescription() + " " + key + " and " + dbre.getName() + " has " + currentCount
+							+ successText);
 
 				}
 
 			} else {
-				ReportManager.problem(this, dbre.getConnection(), sec.getName() + " has " + secondaryCount + " " + entityDescription()
-						+ " " + key + " but " + dbre.getName() + " has none");
+				ReportManager.problem(this, dbre.getConnection(), sec.getName() + " has " + secondaryCount + " " + entityDescription() + " " + key + " but " + dbre.getName() + " has none");
 				result = false;
 			}
 		}
@@ -154,8 +146,8 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 	// ----------------------------------------------------------------------
 
 	/**
-	 * Should return a map where the keys are the names of the entities being
-	 * tested (e.g. biotypes) and the values are the counts of each type.
+	 * Should return a map where the keys are the names of the entities being tested (e.g. biotypes) and the values are the counts of
+	 * each type.
 	 */
 	protected abstract Map getCounts(DatabaseRegistryEntry dbre);
 
@@ -167,17 +159,14 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 
 	// ------------------------------------------------------------------------
 	/**
-	 * Should return the fraction (0-1) of old/new below which a warning is
-	 * generated.
+	 * Should return the fraction (0-1) of old/new below which a warning is generated.
 	 */
 	protected abstract double threshold();
 
 	// ------------------------------------------------------------------------
 
-
-	protected boolean testUpperThreshold(){
+	protected boolean testUpperThreshold() {
 		return false;
 	}
-	
 
 } // ComparePreviousVersionBase

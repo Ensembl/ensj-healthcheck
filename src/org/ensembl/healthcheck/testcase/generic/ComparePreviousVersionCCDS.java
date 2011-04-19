@@ -18,12 +18,11 @@ import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
-import org.ensembl.healthcheck.DatabaseType;
 
 /**
- * Compare the CCDS in the current database with those from the equivalent
- * database on the secondary server.
+ * Compare the CCDS in the current database with those from the equivalent database on the secondary server.
  */
 
 public class ComparePreviousVersionCCDS extends ComparePreviousVersionBase {
@@ -39,7 +38,8 @@ public class ComparePreviousVersionCCDS extends ComparePreviousVersionBase {
 		setDescription("Compare the CCDS in the current database with those from the equivalent database on the secondary server");
 		setPriority(Priority.AMBER);
 		setEffect("Indicates that the CCDS object xrefs have changed between releases; may be due to a problem, or be expected, in which case the result should be annotated appropritately");
-        setTeamResponsible("Core Genebuilders");	
+		setTeamResponsible(Team.CORE);
+		setSecondTeamResponsible(Team.GENEBUILD);
 
 	}
 
@@ -60,7 +60,7 @@ public class ComparePreviousVersionCCDS extends ComparePreviousVersionBase {
 
 	// ----------------------------------------------------------------------
 
-	protected Map<String,Integer> getCounts(DatabaseRegistryEntry dbre) {
+	protected Map<String, Integer> getCounts(DatabaseRegistryEntry dbre) {
 
 		Connection con = dbre.getConnection();
 

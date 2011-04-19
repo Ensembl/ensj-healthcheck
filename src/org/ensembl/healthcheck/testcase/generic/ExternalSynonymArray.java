@@ -17,6 +17,7 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -34,7 +35,8 @@ public class ExternalSynonymArray extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("core_xrefs");
 		setDescription("Check for ARRAY() entries in external_synonym.");
-                setTeamResponsible("Relco and GeneBuilders");
+		setTeamResponsible(Team.RELEASE_COORDINATOR);
+		setSecondTeamResponsible(Team.GENEBUILD);
 
 	}
 

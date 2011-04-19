@@ -17,8 +17,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.util.Utils;
 import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.Team;
+import org.ensembl.healthcheck.util.Utils;
 
 /**
  * Compare the counts of the number of rows in each table in this and the previous database.
@@ -34,35 +35,37 @@ public class ComparePreviousVersionTableRows extends ComparePreviousVersionBase 
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription("Compare the counts of the number of rows in each table in this and the previous database");
-                setTeamResponsible("Core and GeneBuilders");
+		setTeamResponsible(Team.CORE);
+		setSecondTeamResponsible(Team.GENEBUILD);
 	}
 
-    /**
+	/**
 	 * This test Does not apply to sanger_vega dbs
 	 */
 	public void types() {
 		removeAppliesToType(DatabaseType.SANGER_VEGA);
-	}	
+	}
+
 	// ----------------------------------------------------------------------
 
 	protected Map getCounts(DatabaseRegistryEntry dbre) {
 
 		Map rowCounts = new HashMap();
-		
+
 		Connection con = dbre.getConnection();
-		
+
 		String[] tables = getTableNames(con);
 		tables = Utils.removeStringFromArray(tables, "meta");
-		//we need a different query for xref, and only compare those that are not projected
+		// we need a different query for xref, and only compare those that are not projected
 		tables = Utils.removeStringFromArray(tables, "external_synonym");
-		
+
 		for (int i = 0; i < tables.length; i++) {
-			
+
 			rowCounts.put(tables[i], new Integer(getRowCount(con, "SELECT COUNT(*) FROM " + tables[i])));
-			
+
 		}
-		rowCounts.put("external_synonym",new Integer(getRowCount(con,"SELECT COUNT(*) FROM external_synonym e, xref x WHERE e.xref_id = x.xref_id AND x.info_type <> 'PROJECTION'")));
-		
+		rowCounts.put("external_synonym", new Integer(getRowCount(con, "SELECT COUNT(*) FROM external_synonym e, xref x WHERE e.xref_id = x.xref_id AND x.info_type <> 'PROJECTION'")));
+
 		return rowCounts;
 
 	}

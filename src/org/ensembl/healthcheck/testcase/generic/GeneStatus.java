@@ -17,12 +17,12 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that the number of KNOWN & NOVEL genes is within 20% in the new and
- * previous databases. Also check for unset statuses in genes & transcripts.
- * Also check that all KNOWN and KNOWN_BY_PROJECTION genes have display_srefs set
+ * Check that the number of KNOWN & NOVEL genes is within 20% in the new and previous databases. Also check for unset statuses in
+ * genes & transcripts. Also check that all KNOWN and KNOWN_BY_PROJECTION genes have display_srefs set
  */
 
 public class GeneStatus extends SingleDatabaseTestCase {
@@ -38,7 +38,8 @@ public class GeneStatus extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		setDescription("Check that the number of KNOWN genes & transcripts is within 20% in the new and previous databases. Also check for unset status.");
-                setTeamResponsible("Core Genebuild");
+		setTeamResponsible(Team.CORE);
+		setSecondTeamResponsible(Team.GENEBUILD);
 
 	}
 
@@ -64,15 +65,15 @@ public class GeneStatus extends SingleDatabaseTestCase {
 	public boolean run(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
-		
-		if (dbre.getType() != DatabaseType.OTHERFEATURES &&dbre.getType() != DatabaseType.RNASEQ) {
+
+		if (dbre.getType() != DatabaseType.OTHERFEATURES && dbre.getType() != DatabaseType.RNASEQ) {
 			checkPrevious(dbre);
 		}
 
 		result &= checkNull(dbre);
 
 		result &= checkDisplayXrefs(dbre);
-		
+
 		return result;
 
 	} // run
@@ -87,7 +88,7 @@ public class GeneStatus extends SingleDatabaseTestCase {
 			logger.finest("ignore.previous.checks is set in database.properties, skipping this test");
 			return true;
 		}
-		
+
 		Connection con = dbre.getConnection();
 
 		DatabaseRegistryEntry sec = getEquivalentFromSecondaryServer(dbre);
@@ -137,14 +138,13 @@ public class GeneStatus extends SingleDatabaseTestCase {
 
 				if (difference > THRESHOLD) {
 
-					ReportManager.problem(this, con, "Only " + current + " " + type + "s have " + status
-							+ " status in the current database, compared with " + previous + " in the previous database");
+					ReportManager.problem(this, con, "Only " + current + " " + type + "s have " + status + " status in the current database, compared with " + previous + " in the previous database");
 					result = false;
 
 				} else {
 
-					ReportManager.correct(this, con, "Current database has " + current + " " + type + "s of status " + status
-							+ " compared to " + previous + " in the previous database, which is within the allowed tollerance.");
+					ReportManager.correct(this, con, "Current database has " + current + " " + type + "s of status " + status + " compared to " + previous
+							+ " in the previous database, which is within the allowed tollerance.");
 
 				}
 
@@ -168,14 +168,14 @@ public class GeneStatus extends SingleDatabaseTestCase {
 		for (int i = 0; i < types.length; i++) {
 
 			result &= checkNoNulls(con, types[i], "status");
-			
+
 		}
 
 		return result;
 
 	}
 
-//----------------------------------------------------------------------
+	// ----------------------------------------------------------------------
 
 	private boolean checkDisplayXrefs(DatabaseRegistryEntry dbre) {
 
@@ -188,7 +188,7 @@ public class GeneStatus extends SingleDatabaseTestCase {
 		for (int i = 0; i < statuses.length; i++) {
 
 			String status = statuses[i];
-			
+
 			int total = getRowCount(con, "SELECT COUNT(*) FROM gene WHERE status='" + status + "'");
 
 			int rows = getRowCount(con, "SELECT COUNT(*) FROM gene WHERE status='" + status + "' AND display_xref_id IS NULL");
@@ -197,7 +197,7 @@ public class GeneStatus extends SingleDatabaseTestCase {
 
 				ReportManager.problem(this, con, rows + " genes of status " + status + " have NULL display_xrefs (out of a total of " + total + ")");
 				result = false;
-				
+
 			} else {
 
 				ReportManager.correct(this, con, "No null display_xrefs of status " + status);

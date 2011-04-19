@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -40,6 +41,7 @@ public class ForeignKeys extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("xrefs");
 		setDescription("Check foreign key constraints in xref databases.");
+		setTeamResponsible(Team.CORE);
 
 	}
 

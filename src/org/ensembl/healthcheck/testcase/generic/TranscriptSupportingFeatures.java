@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
@@ -30,7 +31,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 public class TranscriptSupportingFeatures extends SingleDatabaseTestCase {
 
 	List<String> allowedNoSupporting = new ArrayList<String>();
-	
+
 	/**
 	 * Create a new TranscriptSupportingFeatures testcase.
 	 */
@@ -40,7 +41,7 @@ public class TranscriptSupportingFeatures extends SingleDatabaseTestCase {
 		addToGroup("release");
 		setDescription("Check that transcripts which need supporting features have them.");
 		setPriority(Priority.AMBER);
-                setTeamResponsible("GeneBuilders");
+		setTeamResponsible(Team.GENEBUILD);
 
 		allowedNoSupporting.add("BGI_Augustus_geneset");
 		allowedNoSupporting.add("BGI_Genewise_geneset");
@@ -77,9 +78,9 @@ public class TranscriptSupportingFeatures extends SingleDatabaseTestCase {
 		allowedNoSupporting.add("zfish_RNASeq");
 
 	}
-	
+
 	public void types() {
-		
+
 		removeAppliesToType(DatabaseType.VEGA);
 		removeAppliesToType(DatabaseType.SANGER_VEGA);
 
@@ -99,26 +100,28 @@ public class TranscriptSupportingFeatures extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-			// list of transcript analysis logic_names which are allowed to not have supporting features
-			String allowed = "'" + StringUtils.join(allowedNoSupporting, "','") + "'";
+		// list of transcript analysis logic_names which are allowed to not have supporting features
+		String allowed = "'" + StringUtils.join(allowedNoSupporting, "','") + "'";
 
-			String sql = String.format("SELECT COUNT(*) FROM transcript t LEFT JOIN transcript_supporting_feature tsf ON t.transcript_id = tsf.transcript_id JOIN analysis a ON a.analysis_id=t.analysis_id WHERE a.analysis_id=t.analysis_id and tsf.transcript_id IS NULL AND a.logic_name NOT IN (%s) AND t.biotype NOT IN ('rRNA')", allowed);
-			
-			int rows = getRowCount(con, sql);
+		String sql = String
+				.format(
+						"SELECT COUNT(*) FROM transcript t LEFT JOIN transcript_supporting_feature tsf ON t.transcript_id = tsf.transcript_id JOIN analysis a ON a.analysis_id=t.analysis_id WHERE a.analysis_id=t.analysis_id and tsf.transcript_id IS NULL AND a.logic_name NOT IN (%s) AND t.biotype NOT IN ('rRNA')",
+						allowed);
 
-			if (rows > 0) {
+		int rows = getRowCount(con, sql);
 
-				ReportManager.problem(this, con, rows + " transcripts which should have transcript_supporting_features do not have them\nUseful SQL: " + sql);
-				result = false;
+		if (rows > 0) {
 
-			} else {
+			ReportManager.problem(this, con, rows + " transcripts which should have transcript_supporting_features do not have them\nUseful SQL: " + sql);
+			result = false;
 
-				ReportManager.correct(this, con, "All transcripts that require supporting features have them");
-			}
+		} else {
 
+			ReportManager.correct(this, con, "All transcripts that require supporting features have them");
+		}
 
 		return result;
 
 	} // run
-	
+
 } // TranscriptSupportingFeatures

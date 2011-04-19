@@ -24,6 +24,7 @@ import java.sql.Statement;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -40,7 +41,7 @@ public class SequenceLevel extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription("Check for DNA that is not stored on the sequence-level coordinate system.");
-                setTeamResponsible("GeneBuilders");
+		setTeamResponsible(Team.GENEBUILD);
 	}
 
 	/**
@@ -74,14 +75,14 @@ public class SequenceLevel extends SingleDatabaseTestCase {
 
 					String coordSystem = rs.getString(1);
 					int rows = rs.getInt(2);
-					
+
 					ReportManager.problem(this, con, String.format("Coordinate system %s has %d seq regions containing sequence, but it does not have the sequence_level attribute", coordSystem, rows));
 					result = false;
 
 				}
 
 			}
-			
+
 		} catch (SQLException e) {
 			System.err.println("Error executing: " + sql);
 			e.printStackTrace();

@@ -18,13 +18,12 @@ package org.ensembl.healthcheck.testcase.generic;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
-import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
@@ -40,7 +39,7 @@ public class ComparePreviousDatabases extends MultiDatabaseTestCase {
 	public ComparePreviousDatabases() {
 		addToGroup("release");
 		setDescription("Check that all species and database types in the previous release are represented in the current release.");
-                setTeamResponsible("Release Coordinator");
+		setTeamResponsible(Team.RELEASE_COORDINATOR);
 	}
 
 	/**
@@ -57,7 +56,7 @@ public class ComparePreviousDatabases extends MultiDatabaseTestCase {
 
 		// need a full registry of all primary databases
 		DatabaseRegistry primaryDBR = new DatabaseRegistry(null, null, null, false);
-		
+
 		// get the map of species, with associated set of types, for both primary and secondary servers
 		Map<Species, Set<DatabaseType>> primarySpeciesAndTypes = primaryDBR.getSpeciesTypeMap();
 		Map<Species, Set<DatabaseType>> secondarySpeciesAndTypes = secondaryDBR.getSpeciesTypeMap();

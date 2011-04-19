@@ -19,6 +19,9 @@
 /*
  * 
  * $Log$
+ * Revision 1.3  2010-09-09 09:52:46  gp1
+ * Rationalise group names
+ *
  * Revision 1.2  2004/03/25 13:47:41  gp1
  * Merged v2 branch into HEAD.
  *
@@ -49,6 +52,7 @@ import java.sql.Connection;
 import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
@@ -64,6 +68,7 @@ public class NoDuplicateRows extends SingleDatabaseTestCase {
 
 		addToGroup("post_martbuild");
 		setDescription("Checks that all rows in tables are distinct");
+		setTeamResponsible(Team.PRODUCTION);
 
 	}
 
@@ -94,7 +99,7 @@ public class NoDuplicateRows extends SingleDatabaseTestCase {
 			if (total > 0) {
 				// create a String listing the columns for this table
 				String colTxt = StringUtils.join(DBUtils.getColumnsInTable(con, table), ',');
-System.out.println(colTxt);
+				System.out.println(colTxt);
 				// query does group by all columns to simulate count distinct *
 				distinct = getRowCount(con, "SELECT COUNT(*) FROM " + table + " GROUP BY " + colTxt);
 

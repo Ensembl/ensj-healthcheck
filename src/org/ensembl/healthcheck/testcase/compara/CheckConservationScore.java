@@ -22,6 +22,7 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -37,7 +38,7 @@ public class CheckConservationScore extends SingleDatabaseTestCase {
 
         addToGroup("compara_genomic");
         setDescription("Check the conservation_score table in ensembl_compara databases.");
-        setTeamResponsible("compara");
+        setTeamResponsible(Team.COMPARA);
 
     }
 

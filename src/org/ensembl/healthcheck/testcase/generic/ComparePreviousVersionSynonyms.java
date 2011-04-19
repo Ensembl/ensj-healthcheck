@@ -16,10 +16,10 @@ import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.Team;
 
 /**
- * Compare the xref synonyms in the current database with those from the equivalent
- * database on the secondary server.
+ * Compare the xref synonyms in the current database with those from the equivalent database on the secondary server.
  */
 
 public class ComparePreviousVersionSynonyms extends ComparePreviousVersionBase {
@@ -32,11 +32,12 @@ public class ComparePreviousVersionSynonyms extends ComparePreviousVersionBase {
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		setDescription("Compare the xref synonyms in the current database with those from the equivalent database on the secondary server");
-                setTeamResponsible("Core and GeneBuilders");
-                 
+		setTeamResponsible(Team.CORE);
+		setSecondTeamResponsible(Team.GENEBUILD);
+
 	}
 
-    /**
+	/**
 	 * This test Does not apply to sanger_vega dbs
 	 */
 	public void types() {

@@ -21,6 +21,7 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
@@ -42,7 +43,8 @@ public class GeneDescriptions extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Capitalisation of Uniprot will be wrong in gene descriptions.");
 		setFix("Re-run xref system or manually fix affected xrefs.");
-                setTeamResponsible("Core and GeneBuilders");
+		setTeamResponsible(Team.CORE);
+		setSecondTeamResponsible(Team.GENEBUILD);
 
 	}
 
@@ -65,13 +67,13 @@ public class GeneDescriptions extends SingleDatabaseTestCase {
 	} // run
 
 	// --------------------------------------------------------------------------
-	
+
 	private boolean checkSwissprot(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-		
+
 		int rows = getRowCount(con, "SELECT COUNT(*) FROM gene WHERE description like '%Uniprot%' COLLATE latin1_general_cs");
 
 		if (rows > 0) {

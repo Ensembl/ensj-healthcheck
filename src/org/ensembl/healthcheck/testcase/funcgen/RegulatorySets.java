@@ -14,6 +14,7 @@ import java.sql.Array;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
@@ -27,11 +28,8 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 		addToGroup("post_regulatorybuild");
 		addToGroup("funcgen");//do we need this group and the funcgen-release group?
 		addToGroup("funcgen-release");
-		
-		//setHintLongRunning(true); // should be relatively fast
-		
-		//Are there constants to identify teams?
-		setTeamResponsible("funcgen");
+
+		setTeamResponsible(Team.FUNCGEN);
 
 		setDescription("Checks if sets have appropriate associations and statues entries");
 		setPriority(Priority.AMBER);

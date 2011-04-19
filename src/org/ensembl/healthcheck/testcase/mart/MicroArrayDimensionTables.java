@@ -21,10 +21,12 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that there is a table (e.g. hsapiens_gene_ensembl__eFG_PHALANX_OneArray__dm) corresponding to each species and microarray type in the funcgen databases.
+ * Check that there is a table (e.g. hsapiens_gene_ensembl__eFG_PHALANX_OneArray__dm) corresponding to each species and microarray
+ * type in the funcgen databases.
  */
 
 public class MicroArrayDimensionTables extends SingleDatabaseTestCase {
@@ -34,7 +36,8 @@ public class MicroArrayDimensionTables extends SingleDatabaseTestCase {
 	 */
 	public MicroArrayDimensionTables() {
 
-		setTeamResponsible("biomart");
+		setTeamResponsible(Team.PRODUCTION);
+
 		addToGroup("post_martbuild");
 		setDescription("Check that there is a table (e.g. hsapiens_gene_ensembl__eFG_PHALANX_OneArray__dm) corresponding to each species and microarray type in the funcgen databases.");
 
@@ -60,35 +63,35 @@ public class MicroArrayDimensionTables extends SingleDatabaseTestCase {
 		for (DatabaseRegistryEntry funcgenDB : funcgenDBs) {
 
 			String speciesRoot = funcgenDB.getSpecies().getBioMartRoot();
-			
+
 			logger.finest(String.format("Getting list of microarray names used in %s (BioMart equivalent %s)", funcgenDB.getName(), speciesRoot));
 
-			String[] tables = getColumnValues(funcgenDB.getConnection(),
-					String.format("SELECT DISTINCT(CONCAT('%s_gene_ensembl__eFG_',vendor,'_',REPLACE(name,'-','_'),'__dm')) FROM array WHERE format = 'EXPRESSION'", speciesRoot));
+			String[] tables = getColumnValues(funcgenDB.getConnection(), String.format(
+					"SELECT DISTINCT(CONCAT('%s_gene_ensembl__eFG_',vendor,'_',REPLACE(name,'-','_'),'__dm')) FROM array WHERE format = 'EXPRESSION'", speciesRoot));
 
 			// check that a BioMart table for each entry exists
 			for (String table : tables) {
-				
+
 				if (!checkTableExists(martCon, table)) {
-					
+
 					ReportManager.problem(this, martCon, String.format("Microarray table named %s in species %s (%s) is missing", table, funcgenDB.getSpecies().toString(), speciesRoot));
 					result = false;
 
-				} else if (!tableHasRows(martCon, table)){
+				} else if (!tableHasRows(martCon, table)) {
 
 					ReportManager.problem(this, martCon, String.format("Microarray table named %s in species %s (%s) exists but has zero rows", table, funcgenDB.getSpecies().toString(), speciesRoot));
 					result = false;
-					
+
 				}
-				
+
 			}
-			
+
 			ReportManager.correct(this, martCon, String.format("All expected microarray dimension tables from %s are present and populated", funcgenDB.getName()));
-			
+
 		}
 
 		return result;
 
 	} // run
 
-} //  MicroArrayDimensionTables
+} // MicroArrayDimensionTables

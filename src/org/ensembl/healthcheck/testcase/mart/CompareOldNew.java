@@ -19,6 +19,9 @@
 /*
  * 
  * $Log$
+ * Revision 1.4  2010-09-09 09:52:14  gp1
+ * Rationalise group names
+ *
  * Revision 1.3  2004/03/31 11:48:18  gp1
  * Removed unused variables.
  *
@@ -63,6 +66,7 @@ import java.util.Hashtable;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.OrderedDatabaseTestCase;
 
 /**
@@ -70,93 +74,92 @@ import org.ensembl.healthcheck.testcase.OrderedDatabaseTestCase;
  */
 public class CompareOldNew extends OrderedDatabaseTestCase {
 
-    /**
-     * Creates a new instance of MartCompareOldNewTestCase
-     */
-    public CompareOldNew() {
+	/**
+	 * Creates a new instance of MartCompareOldNewTestCase
+	 */
+	public CompareOldNew() {
 
-        addToGroup("post_martbuild");
-        setDescription("Compares the _meta_table_info for two marts and reports big differences");
+		addToGroup("post_martbuild");
+		setDescription("Compares the _meta_table_info for two marts and reports big differences");
+		setTeamResponsible(Team.PRODUCTION);
 
-    }
+	}
 
-    /**
-     * Compare the _meta_table_info for two marts and report big differences.
-     * 
-     * @param databases
-     *          The databases to check, in order old->new
-     * @return true if the test passes.
-     */
-    public boolean run(DatabaseRegistryEntry[] databases) {
+	/**
+	 * Compare the _meta_table_info for two marts and report big differences.
+	 * 
+	 * @param databases
+	 *          The databases to check, in order old->new
+	 * @return true if the test passes.
+	 */
+	public boolean run(DatabaseRegistryEntry[] databases) {
 
-        boolean result = true;
+		boolean result = true;
 
-        // first check we got acceptable input from user
-        // check we have 2 and only 2 databases
-        if (databases.length != 2) {
-            result = false;
-            logger.severe("Incorrect number of marts specified");
-            return result;
-        }
+		// first check we got acceptable input from user
+		// check we have 2 and only 2 databases
+		if (databases.length != 2) {
+			result = false;
+			logger.severe("Incorrect number of marts specified");
+			return result;
+		}
 
-        DatabaseRegistryEntry mart1 = databases[0];
-        DatabaseRegistryEntry mart2 = databases[1];
-        System.out.println("Using " + mart1.getName() + " as mart one and " + mart2.getName() + " as mart 2");
+		DatabaseRegistryEntry mart1 = databases[0];
+		DatabaseRegistryEntry mart2 = databases[1];
+		System.out.println("Using " + mart1.getName() + " as mart one and " + mart2.getName() + " as mart 2");
 
-        String query = "select table_column, column_non_null_value_count,column_distinct_non_null_value_count from _meta_table_info ";
+		String query = "select table_column, column_non_null_value_count,column_distinct_non_null_value_count from _meta_table_info ";
 
-        try {
+		try {
 
-            Connection con1 = mart1.getConnection();
-            ResultSet rs1 = con1.createStatement().executeQuery(query);
+			Connection con1 = mart1.getConnection();
+			ResultSet rs1 = con1.createStatement().executeQuery(query);
 
-            // put results for new mart in a hash
-            Connection con2 = mart2.getConnection();
-            ResultSet rs2 = con2.createStatement().executeQuery(query);
-            Hashtable counts = new Hashtable();
-            while (rs2.next()) {
-                String key = rs2.getString(1);
-                Integer distinct = new Integer(rs2.getInt(3));
-                counts.put(key, distinct);
-                //System.out.print(key+" "+distinct+"\n");
-            }
+			// put results for new mart in a hash
+			Connection con2 = mart2.getConnection();
+			ResultSet rs2 = con2.createStatement().executeQuery(query);
+			Hashtable counts = new Hashtable();
+			while (rs2.next()) {
+				String key = rs2.getString(1);
+				Integer distinct = new Integer(rs2.getInt(3));
+				counts.put(key, distinct);
+				// System.out.print(key+" "+distinct+"\n");
+			}
 
-            while (rs1.next()) {
-                String key = rs1.getString(1);
-                Integer distinct = new Integer(rs1.getInt(3));
-                if (counts.containsKey(key)) {
-                    // does the new mart contain this column
-                    // if so compare the values
-                    Integer newCount = (Integer) counts.get(key);
-                    if (newCount.intValue() > distinct.intValue() * 2) {
-                        ReportManager.info(this, con2, "SUDDEN INCREASE: " + key + " " + mart1.getName() + " "
-                                + distinct + " " + mart2.getName() + " " + newCount);
-                    }
+			while (rs1.next()) {
+				String key = rs1.getString(1);
+				Integer distinct = new Integer(rs1.getInt(3));
+				if (counts.containsKey(key)) {
+					// does the new mart contain this column
+					// if so compare the values
+					Integer newCount = (Integer) counts.get(key);
+					if (newCount.intValue() > distinct.intValue() * 2) {
+						ReportManager.info(this, con2, "SUDDEN INCREASE: " + key + " " + mart1.getName() + " " + distinct + " " + mart2.getName() + " " + newCount);
+					}
 
-                    if (newCount.intValue() < distinct.intValue() / 2) {
-                        ReportManager.info(this, con2, "SUDDEN DECREASE: " + key + " " + mart1.getName() + " "
-                                + distinct + " " + mart2.getName() + " " + newCount);
-                    }
+					if (newCount.intValue() < distinct.intValue() / 2) {
+						ReportManager.info(this, con2, "SUDDEN DECREASE: " + key + " " + mart1.getName() + " " + distinct + " " + mart2.getName() + " " + newCount);
+					}
 
-                    // and remove the entry from the hash table
-                    counts.remove(key);
-                } else {
-                    // report the missing column as a problem
-                    ReportManager.problem(this, con2, "MISSING COLUMN: " + key + " not in " + mart2.getName());
-                    result = false;
-                }
+					// and remove the entry from the hash table
+					counts.remove(key);
+				} else {
+					// report the missing column as a problem
+					ReportManager.problem(this, con2, "MISSING COLUMN: " + key + " not in " + mart2.getName());
+					result = false;
+				}
 
-                // look at what is left in the hash table - ie new stuff in new
-                // mart
+				// look at what is left in the hash table - ie new stuff in new
+				// mart
 
-            }
+			}
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-        return result;
+		return result;
 
-    } // run
+	} // run
 
 } // CompareOldNew

@@ -5,6 +5,7 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
@@ -20,9 +21,7 @@ public class RegulatoryMotifFeatures extends SingleDatabaseTestCase {
 		addToGroup("funcgen-release");
 		
 		//setHintLongRunning(true); // should be relatively fast
-		
-		//Are there constants to identify teams?
-		setTeamResponsible("funcgen");
+		setTeamResponsible(Team.FUNCGEN);
 
 		setDescription("Checks if all motifs from annotated features are associated to their respective regulatory features.");
 		setPriority(Priority.AMBER);

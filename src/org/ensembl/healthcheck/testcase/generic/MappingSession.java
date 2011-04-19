@@ -26,8 +26,9 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
-import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check various things about ID mapping-related tables.
@@ -45,7 +46,8 @@ public class MappingSession extends SingleDatabaseTestCase {
 		addToGroup("id_mapping");
 		addToGroup("release");
 		setDescription("Checks the mapping session and stable ID tables.");
-                setTeamResponsible("Core and GeneBuilders");
+		setTeamResponsible(Team.CORE);
+		setSecondTeamResponsible(Team.GENEBUILD);
 
 	}
 
@@ -57,7 +59,7 @@ public class MappingSession extends SingleDatabaseTestCase {
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		removeAppliesToType(DatabaseType.ESTGENE);
 		removeAppliesToType(DatabaseType.VEGA);
-		removeAppliesToType(DatabaseType.SANGER_VEGA);		
+		removeAppliesToType(DatabaseType.SANGER_VEGA);
 		removeAppliesToType(DatabaseType.CDNA);
 		removeAppliesToType(DatabaseType.RNASEQ);
 
@@ -105,16 +107,14 @@ public class MappingSession extends SingleDatabaseTestCase {
 		boolean result = true;
 		String dbNameRegexp = "[A-Za-z]+_[A-Za-z]+_(core|est|estgene|vega)_\\d+_\\d+[A-Za-z]?.*";
 
-		String[] sql = { "SELECT old_db_name from mapping_session WHERE old_db_name <> 'ALL'",
-				"SELECT new_db_name from mapping_session WHERE new_db_name <> 'LATEST'" };
+		String[] sql = { "SELECT old_db_name from mapping_session WHERE old_db_name <> 'ALL'", "SELECT new_db_name from mapping_session WHERE new_db_name <> 'LATEST'" };
 
 		for (int i = 0; i < sql.length; i++) {
 
 			String[] names = getColumnValues(con, sql[i]);
 			for (int j = 0; j < names.length; j++) {
 				if (!(names[j].matches(dbNameRegexp)) && !ignoreName(names[j])) {
-					ReportManager.problem(this, con, "Database name " + names[j]
-							+ " in mapping_session does not appear to be in the correct format");
+					ReportManager.problem(this, con, "Database name " + names[j] + " in mapping_session does not appear to be in the correct format");
 					result = false;
 				}
 			}
@@ -132,8 +132,7 @@ public class MappingSession extends SingleDatabaseTestCase {
 	// -----------------------------------------------------------------
 
 	/**
-	 * Checks tables exist and have >0 rows. Doesn't check population for
-	 * first-build databases.
+	 * Checks tables exist and have >0 rows. Doesn't check population for first-build databases.
 	 * 
 	 * @param con
 	 * @return True when all ID mapping-related tables exist and have > 0 rows.
@@ -176,7 +175,6 @@ public class MappingSession extends SingleDatabaseTestCase {
 		return result;
 	}
 
-
 	// -----------------------------------------------------------------
 	/**
 	 * Check that the old_db_name and new_db_name columns "chain" together.
@@ -186,8 +184,7 @@ public class MappingSession extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		String[] oldNames = getColumnValues(con, "SELECT old_db_name FROM mapping_session WHERE old_db_name <> 'ALL' ORDER BY created");
-		String[] newNames = getColumnValues(con,
-				"SELECT new_db_name FROM mapping_session WHERE new_db_name <> 'LATEST' ORDER BY created");
+		String[] newNames = getColumnValues(con, "SELECT new_db_name FROM mapping_session WHERE new_db_name <> 'LATEST' ORDER BY created");
 
 		for (int i = 1; i < oldNames.length; i++) {
 			if (!(oldNames[i].equalsIgnoreCase(newNames[i - 1]))) {
@@ -204,11 +201,9 @@ public class MappingSession extends SingleDatabaseTestCase {
 
 	}
 
-
 	// -----------------------------------------------------------------
 	/**
-	 * Check that all mapping_sessions have new releases that are greater than the
-	 * old releases.
+	 * Check that all mapping_sessions have new releases that are greater than the old releases.
 	 */
 	private boolean checkOldAndNewReleases(final Connection con) {
 
@@ -227,21 +222,22 @@ public class MappingSession extends SingleDatabaseTestCase {
 				if (rs.getString("old_db_name").equals("homo_sapiens_core_18_34")) {
 					continue;
 				}
-				ReportManager.problem(this, con, "Mapping session with ID " + rs.getLong("mapping_session_id") + " (" + rs.getString("old_db_name") + " -> " + rs.getString("new_db_name") + ") has a new_release (" + rs.getInt("new_release") + ") that is not greater than the old release (" + rs.getInt("old_release") + "). May cause problems with IDHistoryView.");
+				ReportManager.problem(this, con, "Mapping session with ID " + rs.getLong("mapping_session_id") + " (" + rs.getString("old_db_name") + " -> " + rs.getString("new_db_name")
+						+ ") has a new_release (" + rs.getInt("new_release") + ") that is not greater than the old release (" + rs.getInt("old_release") + "). May cause problems with IDHistoryView.");
 				result = false;
-				
+
 			}
-			
+
 		} catch (SQLException se) {
 			se.printStackTrace();
 		}
 
 		if (result) {
-			
+
 			ReportManager.correct(this, con, "All new_release values are greater than old_release.");
-			
+
 		}
-		
+
 		return result;
 
 	}
@@ -250,29 +246,27 @@ public class MappingSession extends SingleDatabaseTestCase {
 	/**
 	 * Check for duplicates in the stable_id_event table
 	 */
-    private boolean checkStableIdEventDuplicates(final Connection con) {
+	private boolean checkStableIdEventDuplicates(final Connection con) {
 
-        boolean result = true;
+		boolean result = true;
 
-        String sql = "SELECT mapping_session_id, COUNT(*) FROM stable_id_event " +
-        	"GROUP BY old_stable_id, old_version, new_stable_id, new_version, mapping_session_id, type, score " +
-        	"HAVING COUNT(*) > 1";
+		String sql = "SELECT mapping_session_id, COUNT(*) FROM stable_id_event " + "GROUP BY old_stable_id, old_version, new_stable_id, new_version, mapping_session_id, type, score "
+				+ "HAVING COUNT(*) > 1";
 
-        String[] rows = getColumnValues(con, sql);
-        if (rows.length > 0) {
-            ReportManager.problem(this, con, rows.length + " duplicates in stable_id_event");
-            result = false;
-        } else {
-          ReportManager.correct(this, con, "No duplicates in stable_id_event");
-        }
+		String[] rows = getColumnValues(con, sql);
+		if (rows.length > 0) {
+			ReportManager.problem(this, con, rows.length + " duplicates in stable_id_event");
+			result = false;
+		} else {
+			ReportManager.correct(this, con, "No duplicates in stable_id_event");
+		}
 
-        return result;
-    }
+		return result;
+	}
 
 	// -----------------------------------------------------------------
 	/**
-	 * Certain historical names don't match the new format and should be ignored
-	 * to prevent constant failures.
+	 * Certain historical names don't match the new format and should be ignored to prevent constant failures.
 	 */
 	private boolean ignoreName(String name) {
 

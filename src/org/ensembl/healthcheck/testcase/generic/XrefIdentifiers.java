@@ -19,12 +19,12 @@ import java.sql.Statement;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that not all xrefs have the same identifier. Also check that there are
- * no blank/null display_labels.
+ * Check that not all xrefs have the same identifier. Also check that there are no blank/null display_labels.
  */
 
 public class XrefIdentifiers extends SingleDatabaseTestCase {
@@ -41,7 +41,8 @@ public class XrefIdentifiers extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Web display and all other uses of xrefs are broken");
 		setFix("Re-import or recalculate xrefs");
-                setTeamResponsible("Core and GeneBuilders");
+		setTeamResponsible(Team.CORE);
+		setSecondTeamResponsible(Team.GENEBUILD);
 
 	}
 
@@ -129,11 +130,11 @@ public class XrefIdentifiers extends SingleDatabaseTestCase {
 			}
 
 		}
-		
+
 		return result;
-		
+
 	}
-	
+
 	// ----------------------------------------------------------------------
 
 } // XrefIdentifiers

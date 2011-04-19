@@ -18,6 +18,7 @@ package org.ensembl.healthcheck.testcase.generic;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 /**
@@ -25,30 +26,30 @@ import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
  */
 public class AssemblyTablesAcrossSpecies extends MultiDatabaseTestCase {
 
-    private DatabaseType[] types = {DatabaseType.CORE, DatabaseType.OTHERFEATURES};
+	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.OTHERFEATURES };
 
-    /**
-     * Creates a new instance of AssemblyTablesAcrossSpecies
-     */
-    public AssemblyTablesAcrossSpecies() {
+	/**
+	 * Creates a new instance of AssemblyTablesAcrossSpecies
+	 */
+	public AssemblyTablesAcrossSpecies() {
 
-        addToGroup("release");
-        setDescription("Check that the assembly table contains the same information for all databases with the same species.");
-        setTeamResponsible("GeneBuilders");
-    }
+		addToGroup("release");
+		setDescription("Check that the assembly table contains the same information for all databases with the same species.");
+		setTeamResponsible(Team.GENEBUILD);
+	}
 
-    /**
-     * Make sure that the assembly tables are all the same.
-     * 
-     * @param dbr
-     *          The database registry containing all the specified databases.
-     * @return True if the assembly table is the same across all the species in
-     *         the registry.
-     */
-    public boolean run(DatabaseRegistry dbr) {
+	/**
+	 * Make sure that the assembly tables are all the same.
+	 * 
+	 * @param dbr
+	 *          The database registry containing all the specified databases.
+	 * @return True if the assembly table is the same across all the species in the registry.
+	 */
+	public boolean run(DatabaseRegistry dbr) {
 
-        return checkTableAcrossSpecies("assembly", dbr, types, "assembly tables all the same", "assembly tables different", " a, seq_region s WHERE a.asm_seq_region_id=s.seq_region_id AND s.name NOT LIKE 'LRG%'");
+		return checkTableAcrossSpecies("assembly", dbr, types, "assembly tables all the same", "assembly tables different",
+				" a, seq_region s WHERE a.asm_seq_region_id=s.seq_region_id AND s.name NOT LIKE 'LRG%'");
 
-    } // run
+	} // run
 
 } // AssemblyTablesAcrossSpecies

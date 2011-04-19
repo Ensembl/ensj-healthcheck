@@ -19,6 +19,9 @@
 /*
  * 
  * $Log$
+ * Revision 1.3  2010-09-09 09:52:27  gp1
+ * Rationalise group names
+ *
  * Revision 1.2  2004/03/25 13:47:41  gp1
  * Merged v2 branch into HEAD.
  *
@@ -44,6 +47,7 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -51,58 +55,61 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  */
 public class EmptyTables extends SingleDatabaseTestCase {
 
-    /**
-     * Creates a new instance of EmptyTablesTestCase
-     */
-    public EmptyTables() {
+	/**
+	 * Creates a new instance of EmptyTablesTestCase
+	 */
+	public EmptyTables() {
 
-        addToGroup("post_martbuild");
-        setDescription("Checks that all tables which must be filled, have data");
+		addToGroup("post_martbuild");
+		setDescription("Checks that all tables which must be filled, have data");
+		setTeamResponsible(Team.PRODUCTION);
 
-    }
+	}
 
-    // a small number of tables are allowed to be empty so mustBeFilled is
-    // false
-    private boolean mustBeFilled(final String table) {
+	// a small number of tables are allowed to be empty so mustBeFilled is
+	// false
+	private boolean mustBeFilled(final String table) {
 
-        //if (table.equals("")){return false;}
-        if (table.equals("hsapiens_expression_gnf_pathology_support")) {
-            return false;
-        }
-        if (table.equals("hsapiens_expression_gnf_preparation_support")) {
-            return false;
-        }
-        return true;
+		// if (table.equals("")){return false;}
+		if (table.equals("hsapiens_expression_gnf_pathology_support")) {
+			return false;
+		}
+		if (table.equals("hsapiens_expression_gnf_preparation_support")) {
+			return false;
+		}
+		return true;
 
-    } // mustBeFilled
+	} // mustBeFilled
 
-    /**
-     * For each schema, check that every table has more than 0 rows.
-     * @param dbre The database to check.
-     * @return True if the test passed.
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+	/**
+	 * For each schema, check that every table has more than 0 rows.
+	 * 
+	 * @param dbre
+	 *          The database to check.
+	 * @return True if the test passed.
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-        boolean result = true;
+		boolean result = true;
 
-        Connection con = dbre.getConnection();
+		Connection con = dbre.getConnection();
 
-        String[] tables = getTableNames(con);
-        for (int i = 0; i < tables.length; i++) {
+		String[] tables = getTableNames(con);
+		for (int i = 0; i < tables.length; i++) {
 
-            String table = tables[i];
-            logger.finest("Checking that " + table + " has rows");
+			String table = tables[i];
+			logger.finest("Checking that " + table + " has rows");
 
-            if (!tableHasRows(con, table) && mustBeFilled(table)) {
+			if (!tableHasRows(con, table) && mustBeFilled(table)) {
 
-                ReportManager.problem(this, con, table + " has zero rows");
-                result = false;
+				ReportManager.problem(this, con, table + " has zero rows");
+				result = false;
 
-            }
-        }
+			}
+		}
 
-        return result;
+		return result;
 
-    } // run
+	} // run
 
 } // EmptyTables

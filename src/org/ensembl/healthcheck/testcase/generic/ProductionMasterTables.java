@@ -16,9 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.DatabaseType;
 
 /**
  * Check that the content of the master_* tables in the production databases matches the equivalent table in this database.
@@ -37,11 +38,11 @@ public class ProductionMasterTables extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Discrepancies between tables can cause problems.");
 		setFix("Resync tables");
-		setTeamResponsible("Release coordinator");
+		setTeamResponsible(Team.RELEASE_COORDINATOR);
 
 	}
 
-    /**
+	/**
 	 * This test Does not apply to sanger_vega dbs
 	 */
 	public void types() {

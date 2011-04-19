@@ -22,6 +22,7 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -35,7 +36,8 @@ public class VegaMartDimensionTables extends SingleDatabaseTestCase {
 	 */
 	public VegaMartDimensionTables() {
 
-		setTeamResponsible("biomart");
+		setTeamResponsible(Team.PRODUCTION);
+
 		addToGroup("post_martbuild");
 		setDescription("Check that certain tables for protein features and object xrefs exist in the Vega Biomart.");
 

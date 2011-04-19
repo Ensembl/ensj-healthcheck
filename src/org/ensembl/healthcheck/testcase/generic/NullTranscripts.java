@@ -20,6 +20,7 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -34,7 +35,7 @@ public class NullTranscripts extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
-                setTeamResponsible("GeneBuilders");
+		setTeamResponsible(Team.GENEBUILD);
 		setDescription("Check for null transcripts");
 
 	}
@@ -65,7 +66,7 @@ public class NullTranscripts extends SingleDatabaseTestCase {
 			ReportManager.correct(this, con, "No null transcripts");
 
 		}
-		
+
 		return result;
 
 	} // run

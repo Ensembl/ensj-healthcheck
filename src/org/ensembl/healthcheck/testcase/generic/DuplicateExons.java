@@ -25,6 +25,7 @@ import java.sql.Statement;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -43,7 +44,7 @@ public class DuplicateExons extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
-                setTeamResponsible("Genebuilders");
+		setTeamResponsible(Team.GENEBUILD);
 
 	}
 

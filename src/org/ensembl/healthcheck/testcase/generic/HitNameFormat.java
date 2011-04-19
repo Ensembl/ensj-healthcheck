@@ -20,6 +20,7 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
@@ -38,7 +39,7 @@ public class HitNameFormat extends SingleDatabaseTestCase {
 		setDescription("Check that there are no incorrectly formatted hit_names");
 		setPriority(Priority.AMBER);
 		setFix("Manually fix affected values.");
-		setTeamResponsible("genebuild");
+		setTeamResponsible(Team.GENEBUILD);
 
 	}
 

@@ -20,6 +20,7 @@ package org.ensembl.healthcheck.testcase.generic;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 /**
@@ -39,7 +40,7 @@ public class ExternalDBDescribe extends MultiDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		setDescription("Check that the external_db table is the same in all databases.");
-               setTeamResponsible("Release Coordinator");
+		setTeamResponsible(Team.RELEASE_COORDINATOR);
 
 	}
 

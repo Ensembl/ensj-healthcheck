@@ -21,6 +21,7 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -29,49 +30,48 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 public class Strand extends SingleDatabaseTestCase {
 
-    private String[] tables = {"prediction_transcript", "prediction_exon", "transcript", "gene", "exon"};
+	private String[] tables = { "prediction_transcript", "prediction_exon", "transcript", "gene", "exon" };
 
-    /**
-     * Create a new Strand testcase.
-     */
-    public Strand() {
+	/**
+	 * Create a new Strand testcase.
+	 */
+	public Strand() {
 
-        addToGroup("post_genebuild");
-        addToGroup("release");
-        setDescription("Check that seq_region_strand is +/-1 in several tables.");
-        setTeamResponsible("GeneBuilders");
+		addToGroup("post_genebuild");
+		addToGroup("release");
+		setDescription("Check that seq_region_strand is +/-1 in several tables.");
+		setTeamResponsible(Team.GENEBUILD);
 
-    }
+	}
 
-    /**
-     * Run the test.
-     * 
-     * @param dbre
-     *          The database to use.
-     * @return true if the test passed.
-     *  
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+	/**
+	 * Run the test.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return true if the test passed.
+	 * 
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-        boolean result = true;
-        
-        for (int i = 0; i < tables.length; i++) {
+		boolean result = true;
 
-            String table = tables[i];
-            String sql = "SELECT COUNT(*) FROM " + table + " WHERE seq_region_strand NOT IN (1,-1)";
-            Connection con = dbre.getConnection();
-            int rows = getRowCount(con, sql);
-            if (rows == 0) {
-                ReportManager.correct(this, con, "All seq_region_strand in " + table + " are 1 or -1");
-            } else if (rows > 0) {
-                ReportManager.problem(this, con, rows + " rows in " + table
-                        + " have seq_region_strand not equal to 1 or -1");
-                result = false;
-            }
-        }
+		for (int i = 0; i < tables.length; i++) {
 
-        return result;
+			String table = tables[i];
+			String sql = "SELECT COUNT(*) FROM " + table + " WHERE seq_region_strand NOT IN (1,-1)";
+			Connection con = dbre.getConnection();
+			int rows = getRowCount(con, sql);
+			if (rows == 0) {
+				ReportManager.correct(this, con, "All seq_region_strand in " + table + " are 1 or -1");
+			} else if (rows > 0) {
+				ReportManager.problem(this, con, rows + " rows in " + table + " have seq_region_strand not equal to 1 or -1");
+				result = false;
+			}
+		}
 
-    } // run
+		return result;
+
+	} // run
 
 } // Strand

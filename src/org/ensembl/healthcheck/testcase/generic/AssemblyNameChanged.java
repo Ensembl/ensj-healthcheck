@@ -25,6 +25,7 @@ import java.sql.Statement;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
@@ -43,7 +44,7 @@ public class AssemblyNameChanged extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription("Check whether the assembly.name meta entry changes between releases, and if so, check that the assembly_exception table (patches only) has changed. Currently only for human.");
-                setTeamResponsible("GeneBuilders");
+		setTeamResponsible(Team.GENEBUILD);
 	}
 
 	/**
@@ -107,15 +108,14 @@ public class AssemblyNameChanged extends SingleDatabaseTestCase {
 
 				// if we are here, the assembly names are the SAME, and assembly_exception patches should be the same as well
 				if (!assExSame) {
-					
+
 					ReportManager.problem(this, currentCon, String.format("Assembly name (%s)is the same as the previous release, but assembly_exception tables contain different patches", currentAssemblyName));
 					result = false;
-					
+
 				} else {
-					
+
 					ReportManager.correct(this, currentCon, "Assembly names and assembly_exception patches are the same.");
 
-					
 				}
 
 			}

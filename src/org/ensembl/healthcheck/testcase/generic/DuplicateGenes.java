@@ -25,11 +25,12 @@ import java.sql.Statement;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * An EnsEMBL Healthcheck test case which checks if any genes are obvious
- * duplicates of each other (it might be all OK, but it's worth a look!)
+ * An EnsEMBL Healthcheck test case which checks if any genes are obvious duplicates of each other (it might be all OK, but it's
+ * worth a look!)
  */
 
 public class DuplicateGenes extends SingleDatabaseTestCase {
@@ -43,7 +44,7 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
-		setTeamResponsible("GeneBuilders");
+		setTeamResponsible(Team.GENEBUILD);
 
 	}
 
@@ -62,7 +63,7 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 	 * Check for (strongly likely to be) duplicate genes.
 	 * 
 	 * @param dbre
-	 *            The database to check.
+	 *          The database to check.
 	 * @return True if the test passes.
 	 */
 
@@ -76,9 +77,7 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 		try {
 
-			Statement stmt = con.createStatement(
-					java.sql.ResultSet.TYPE_FORWARD_ONLY,
-					java.sql.ResultSet.CONCUR_READ_ONLY);
+			Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
 			stmt.setFetchSize(1000);
 			ResultSet rs = stmt.executeQuery(sql);
 
@@ -90,28 +89,27 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 			int lastGeneStrand = -1;
 			int duplicateGene = 0;
 
-			int geneAnalysis=-1;
-			int geneDisplayXref=-1;
-			String geneSource="";
-			String geneStatus="";
-			String geneDescription="";
-			int geneIsCurrent=-1;
-			int geneCanonicalTranscript=-1;
-			String geneCanonicalAnnotation="";
+			int geneAnalysis = -1;
+			int geneDisplayXref = -1;
+			String geneSource = "";
+			String geneStatus = "";
+			String geneDescription = "";
+			int geneIsCurrent = -1;
+			int geneCanonicalTranscript = -1;
+			String geneCanonicalAnnotation = "";
 
-			
 			String geneBioType, geneStableID;
 			String lastGeneBioType = "";
-			String lastGeneStableID = "";			
+			String lastGeneStableID = "";
 
-			int lastGeneAnalysis=-1;
-			int lastGeneDisplayXref=-1;
-			String lastGeneSource="";
-			String lastGeneStatus="";
-			String lastGeneDescription="";
-			int lastGeneIsCurrent=-1;
-			int lastGeneCanonicalTranscript=-1;
-			String lastGeneCanonicalAnnotation="";
+			int lastGeneAnalysis = -1;
+			int lastGeneDisplayXref = -1;
+			String lastGeneSource = "";
+			String lastGeneStatus = "";
+			String lastGeneDescription = "";
+			int lastGeneIsCurrent = -1;
+			int lastGeneCanonicalTranscript = -1;
+			String lastGeneCanonicalAnnotation = "";
 
 			boolean first = true;
 
@@ -125,39 +123,29 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 				geneStrand = rs.getInt(5);
 				geneBioType = rs.getString(6);
 				geneStableID = rs.getString(7);
-				
-				geneAnalysis=rs.getInt(8);
-				geneDisplayXref=rs.getInt(9);
-				geneSource=rs.getString(10);
-				geneStatus=rs.getString(11);
-				geneDescription=rs.getString(12);
-				geneIsCurrent=rs.getInt(13);
-				geneCanonicalTranscript=rs.getInt(14);
-				geneCanonicalAnnotation=rs.getString(15);
-				
 
-				if (!first) {                          //for sanger_vega, we only want to report true duplicates (i.e. genes that have all fields identical)
+				geneAnalysis = rs.getInt(8);
+				geneDisplayXref = rs.getInt(9);
+				geneSource = rs.getString(10);
+				geneStatus = rs.getString(11);
+				geneDescription = rs.getString(12);
+				geneIsCurrent = rs.getInt(13);
+				geneCanonicalTranscript = rs.getInt(14);
+				geneCanonicalAnnotation = rs.getString(15);
+
+				if (!first) { // for sanger_vega, we only want to report true duplicates (i.e. genes that have all fields identical)
 					if (lastGeneChromosome == geneChromosome
 							&& lastGeneStart == geneStart
 							&& lastGeneEnd == geneEnd
 							&& lastGeneStrand == geneStrand
 							&& geneBioType.equals(lastGeneBioType)
-							&& ( dbre.getType()!=DatabaseType.SANGER_VEGA || 
-									( lastGeneAnalysis==geneAnalysis && lastGeneDisplayXref==geneDisplayXref && lastGeneSource==geneSource
-									  && lastGeneStatus==geneStatus && lastGeneDescription==geneDescription && lastGeneIsCurrent==geneIsCurrent 
-									  && lastGeneCanonicalTranscript==geneCanonicalTranscript && lastGeneCanonicalAnnotation==geneCanonicalAnnotation											
-									)
-								)
-							) {
-	
+							&& (dbre.getType() != DatabaseType.SANGER_VEGA || (lastGeneAnalysis == geneAnalysis && lastGeneDisplayXref == geneDisplayXref && lastGeneSource == geneSource
+									&& lastGeneStatus == geneStatus && lastGeneDescription == geneDescription && lastGeneIsCurrent == geneIsCurrent && lastGeneCanonicalTranscript == geneCanonicalTranscript && lastGeneCanonicalAnnotation == geneCanonicalAnnotation))) {
+
 						duplicateGene++;
 						if (duplicateGene < MAX_WARNINGS) {
-						  ReportManager.warning(this, con, "Gene "
-								  + geneStableID + " (" + geneBioType
-								  + " ID " + geneId
-								  + ") is duplicated - see gene "
-								  + lastGeneStableID + " (" + lastGeneBioType
-								  + " ID " + lastGeneId + ")");
+							ReportManager.warning(this, con, "Gene " + geneStableID + " (" + geneBioType + " ID " + geneId + ") is duplicated - see gene " + lastGeneStableID + " (" + lastGeneBioType + " ID "
+									+ lastGeneId + ")");
 						}
 					}
 				} else {
@@ -171,21 +159,20 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 				lastGeneStrand = geneStrand;
 				lastGeneBioType = geneBioType;
 				lastGeneStableID = geneStableID;
-				
-				lastGeneAnalysis=geneAnalysis;
-				lastGeneDisplayXref=geneDisplayXref;
-				lastGeneSource=geneSource;
-				lastGeneStatus=geneStatus;
-				lastGeneDescription=geneDescription;
-				lastGeneIsCurrent=geneIsCurrent;
-				lastGeneCanonicalTranscript=geneCanonicalTranscript;
-				lastGeneCanonicalAnnotation=geneCanonicalAnnotation;				
+
+				lastGeneAnalysis = geneAnalysis;
+				lastGeneDisplayXref = geneDisplayXref;
+				lastGeneSource = geneSource;
+				lastGeneStatus = geneStatus;
+				lastGeneDescription = geneDescription;
+				lastGeneIsCurrent = geneIsCurrent;
+				lastGeneCanonicalTranscript = geneCanonicalTranscript;
+				lastGeneCanonicalAnnotation = geneCanonicalAnnotation;
 
 			} // while rs
 
 			if (duplicateGene > 0) {
-				ReportManager.problem(this, con, "Has " + duplicateGene
-						+ " duplicated genes.");
+				ReportManager.problem(this, con, "Has " + duplicateGene + " duplicated genes.");
 				result = false;
 			}
 			rs.close();

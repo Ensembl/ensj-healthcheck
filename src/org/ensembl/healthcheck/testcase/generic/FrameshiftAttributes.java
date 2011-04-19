@@ -24,6 +24,7 @@ import java.util.List;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -40,7 +41,7 @@ public class FrameshiftAttributes extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription("Check that transcript frameshift attributes have been calculated.");
-                setTeamResponsible("Release Coordinator");
+		setTeamResponsible(Team.RELEASE_COORDINATOR);
 	}
 
 	/**
@@ -70,8 +71,7 @@ public class FrameshiftAttributes extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		int rows = getRowCount(con,
-				"SELECT COUNT(*) FROM attrib_type at, transcript_attrib ta WHERE at.attrib_type_id=ta.attrib_type_id AND at.code='Frameshift'");
+		int rows = getRowCount(con, "SELECT COUNT(*) FROM attrib_type at, transcript_attrib ta WHERE at.attrib_type_id=ta.attrib_type_id AND at.code='Frameshift'");
 
 		if (rows == 0) {
 

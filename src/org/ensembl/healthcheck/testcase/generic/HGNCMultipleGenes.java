@@ -21,6 +21,7 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -38,7 +39,7 @@ public class HGNCMultipleGenes extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		setDescription("Check for HGNCs that have been assigned as display labels more than one gene.");
-                setTeamResponsible("Core");
+		setTeamResponsible(Team.CORE);
 	}
 
 	/**
@@ -68,16 +69,16 @@ public class HGNCMultipleGenes extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		// this has to be done the slow way, don't think there's a way to do this all at once
-		String sql="SELECT DISTINCT(x.display_label), COUNT(*) AS count FROM gene g, xref x, external_db e WHERE e.external_db_id=x.external_db_id AND e.db_name LIKE 'HGNC%' AND x.xref_id=g.display_xref_id ";
-		if(dbre.getType()==DatabaseType.SANGER_VEGA){//for sanger_vega do not consider duplicates for the haplotypes
-			sql+="and g.seq_region_id NOT in(select seq_region_id from seq_region_attrib sa join attrib_type at on sa.attrib_type_id=at.attrib_type_id where code ='vega_ref_chrom') and (g.source='havana' or g.source='WU') ";
+		String sql = "SELECT DISTINCT(x.display_label), COUNT(*) AS count FROM gene g, xref x, external_db e WHERE e.external_db_id=x.external_db_id AND e.db_name LIKE 'HGNC%' AND x.xref_id=g.display_xref_id ";
+		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sanger_vega do not consider duplicates for the haplotypes
+			sql += "and g.seq_region_id NOT in(select seq_region_id from seq_region_attrib sa join attrib_type at on sa.attrib_type_id=at.attrib_type_id where code ='vega_ref_chrom') and (g.source='havana' or g.source='WU') ";
 		}
-		sql+=" GROUP BY x.display_label";
-		if(dbre.getType()==DatabaseType.SANGER_VEGA){//for sanger_vega only count the ones for which the source is the same
-			sql+=", g.source ";
+		sql += " GROUP BY x.display_label";
+		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sanger_vega only count the ones for which the source is the same
+			sql += ", g.source ";
 		}
-		sql+=" HAVING COUNT > 1";
-		
+		sql += " HAVING COUNT > 1";
+
 		int rows = getRowCount(con, sql);
 
 		if (rows > 0) {

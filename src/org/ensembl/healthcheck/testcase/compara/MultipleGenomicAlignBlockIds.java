@@ -22,6 +22,7 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -37,7 +38,7 @@ public class MultipleGenomicAlignBlockIds extends SingleDatabaseTestCase {
     public MultipleGenomicAlignBlockIds() {
 
         setDescription("Check that every genomic_align_block_id is linked to more than one single genomic_align_id.");
-        setTeamResponsible("compara");
+        setTeamResponsible(Team.COMPARA);
 
     }
 

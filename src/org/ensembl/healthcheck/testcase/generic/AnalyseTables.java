@@ -20,6 +20,7 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -41,7 +42,7 @@ public class AnalyseTables extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Causes indices not to be used, making queries slow or unresponsive.");
 		setFix("Run ANALYZE TABLE x.");
-		setTeamResponsible("ReleaseCoordinator");
+		setTeamResponsible(Team.RELEASE_COORDINATOR);
 
 	}
 
@@ -73,8 +74,9 @@ public class AnalyseTables extends SingleDatabaseTestCase {
 			}
 		}
 		// Return a correct report line to make it easier to read report
-		if(result) ReportManager.correct(this, con, "No tables need analysis");
-		
+		if (result)
+			ReportManager.correct(this, con, "No tables need analysis");
+
 		return result;
 
 	} // run

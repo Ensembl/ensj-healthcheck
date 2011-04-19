@@ -25,6 +25,7 @@ import java.sql.Statement;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -46,7 +47,7 @@ public class AutoIncrement extends SingleDatabaseTestCase {
 	 */
 	public AutoIncrement() {
 
-		setTeamResponsible("core");
+		setTeamResponsible(Team.CORE);
 		addToGroup("post_genebuild");
 		addToGroup("release");
 
@@ -71,25 +72,25 @@ public class AutoIncrement extends SingleDatabaseTestCase {
 		try {
 
 			Statement stmt = con.createStatement();
-			
+
 			for (String tableColumn : columns) {
 
 				String[] tableAndColumn = tableColumn.split("\\.");
 				String table = tableAndColumn[0];
 				String column = tableAndColumn[1];
-				
+
 				ResultSet rs = stmt.executeQuery(String.format("SELECT %s FROM %s LIMIT 1", column, table));
 
 				rs.first();
 				ResultSetMetaData rsmd = rs.getMetaData();
-				
+
 				if (!rsmd.isAutoIncrement(1)) {
-					
+
 					ReportManager.problem(this, con, String.format("Column %s in %s should have the AUTO_INCREMENT flag set, but does not", column, table));
 					result = false;
-					
+
 				}
-				
+
 				rs.close();
 
 			}

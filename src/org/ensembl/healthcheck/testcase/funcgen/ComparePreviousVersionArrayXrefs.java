@@ -12,14 +12,15 @@
  */
 package org.ensembl.healthcheck.testcase.funcgen;
 
-import java.util.Map;
 import java.sql.ResultSet;
-import java.util.HashMap;
-import java.sql.Statement;
 import java.sql.SQLException;
-import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
+import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.Team;
+import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
 
 /**
  * Compare the xrefs in the current database with those from the equivalent
@@ -38,7 +39,7 @@ public class ComparePreviousVersionArrayXrefs extends ComparePreviousVersionBase
 		addToGroup("funcgen");
 		addToGroup("funcgen-release");
 		//setHintLongRunning(true);// ?Only take about 10 mins for mouse
-		setTeamResponsible("funcgen");
+		setTeamResponsible(Team.FUNCGEN);
 		setDescription("Compare the Arrays xrefs in the current database with those from the equivalent database on the secondary server");
 	}
 

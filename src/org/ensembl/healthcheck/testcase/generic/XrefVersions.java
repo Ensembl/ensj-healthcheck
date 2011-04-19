@@ -21,6 +21,7 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -38,7 +39,8 @@ public class XrefVersions extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		setDescription("Check for blank or null versions in the xref table.");
-                setTeamResponsible("Core and GeneBuilders");
+		setTeamResponsible(Team.CORE);
+		setSecondTeamResponsible(Team.GENEBUILD);
 
 	}
 
@@ -56,16 +58,16 @@ public class XrefVersions extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 		int rows = getRowCount(con, "SELECT COUNT(*) FROM xref WHERE version='' OR version IS NULL");
-		
+
 		if (rows > 0) {
-			
+
 			ReportManager.problem(this, con, rows + " rows in xref have blank or null versions.");
 			result = false;
-			
+
 		} else {
-			
+
 			ReportManager.correct(this, con, "No blank/null versions in xref");
-			
+
 		}
 
 		return result;

@@ -24,11 +24,11 @@ import java.sql.Statement;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that all table collations in a particular database are
- * latin1_swedish_ci.
+ * Check that all table collations in a particular database are latin1_swedish_ci.
  */
 
 public class SingleDBCollations extends SingleDatabaseTestCase {
@@ -44,7 +44,8 @@ public class SingleDBCollations extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("compara-ancestral");
 		setDescription("Check that all table collations are latin1_swedish_ci");
-                setTeamResponsible("Relco and Core");
+		setTeamResponsible(Team.RELEASE_COORDINATOR);
+		setSecondTeamResponsible(Team.CORE);
 
 	}
 
@@ -76,8 +77,7 @@ public class SingleDBCollations extends SingleDatabaseTestCase {
 					continue;
 				}
 				if (!collation.equals(TARGET_COLLATION)) {
-					ReportManager.problem(this, con, table + " has a collation of '" + collation + "' which is not the same as the target "
-							+ TARGET_COLLATION);
+					ReportManager.problem(this, con, table + " has a collation of '" + collation + "' which is not the same as the target " + TARGET_COLLATION);
 					result = false;
 				}
 			}

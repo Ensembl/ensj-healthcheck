@@ -25,18 +25,19 @@ import java.text.DecimalFormat;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check for genes with more than one transcript where all the transcripts have
- * the same display_xref_id.
+ * Check for genes with more than one transcript where all the transcripts have the same display_xref_id.
  */
 
 public class TranscriptsSameName extends SingleDatabaseTestCase {
 
 	private static int THRESHOLD = 60; // give error if more than this percentage
-																			// of transcripts have the same name
+
+	// of transcripts have the same name
 
 	/**
 	 * Create a new TranscriptsSameName testcase.
@@ -49,7 +50,7 @@ public class TranscriptsSameName extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Web display and all other uses of xrefs are broken");
 		setFix("Recalculate display xrefs");
-                setTeamResponsible("Core");
+		setTeamResponsible(Team.CORE);
 	}
 
 	/**
@@ -69,16 +70,13 @@ public class TranscriptsSameName extends SingleDatabaseTestCase {
 		// first get total number of genes that have more than one transcript
 		// note we have to force the use getRowCountFast here because of the nature
 		// of the query
-		int totalGenes = getRowCountFast(
-				con,
-				"SELECT COUNT(1) FROM (SELECT g.gene_id FROM gene g, transcript t WHERE t.gene_id=g.gene_id GROUP BY g.gene_id HAVING COUNT(*) > 1) AS c");
+		int totalGenes = getRowCountFast(con, "SELECT COUNT(1) FROM (SELECT g.gene_id FROM gene g, transcript t WHERE t.gene_id=g.gene_id GROUP BY g.gene_id HAVING COUNT(*) > 1) AS c");
 
 		try {
 
 			Statement stmt = con.createStatement();
 
-			ResultSet rs = stmt
-					.executeQuery("SELECT g.gene_id, t.transcript_id, t.display_xref_id FROM gene g, transcript t WHERE t.gene_id=g.gene_id AND t.display_xref_id IS NOT NULL ORDER BY g.gene_id");
+			ResultSet rs = stmt.executeQuery("SELECT g.gene_id, t.transcript_id, t.display_xref_id FROM gene g, transcript t WHERE t.gene_id=g.gene_id AND t.display_xref_id IS NOT NULL ORDER BY g.gene_id");
 
 			long previousGeneID = -1;
 			long previousDisplayXrefID = -1;
@@ -108,14 +106,12 @@ public class TranscriptsSameName extends SingleDatabaseTestCase {
 			double percentage = 100 * ((double) sameNameTranscriptCount / (double) totalGenes);
 
 			String percentageStr = new DecimalFormat("##.#").format(percentage);
-			
+
 			if (percentage > THRESHOLD) {
-				ReportManager
-						.problem(this, con, percentageStr + "% of genes with more than one transcript have identically-named transcripts");
+				ReportManager.problem(this, con, percentageStr + "% of genes with more than one transcript have identically-named transcripts");
 				result = false;
 			} else {
-				ReportManager.correct(this, con, "Only " + percentageStr
-						+ "% genes with more than one transcript have identically-named transcripts");
+				ReportManager.correct(this, con, "Only " + percentageStr + "% genes with more than one transcript have identically-named transcripts");
 			}
 
 		} catch (SQLException e) {

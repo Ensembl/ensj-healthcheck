@@ -16,8 +16,9 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -26,58 +27,60 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 public class Pseudogene extends SingleDatabaseTestCase {
 
-    /**
-     * Check the assembly_exception table.
-     */
-    public Pseudogene() {
-        addToGroup("post_genebuild");
-        addToGroup("release");
-        setDescription("Check that there are no translations for pseudogenes");
-        setTeamResponsible("GeneBuilders"); 
-    }
+	/**
+	 * Check the assembly_exception table.
+	 */
+	public Pseudogene() {
+		addToGroup("post_genebuild");
+		addToGroup("release");
+		setDescription("Check that there are no translations for pseudogenes");
+		setTeamResponsible(Team.GENEBUILD);
+	}
 
-    /**
-     * Check the data in the assembly_exception table. Note referential integrity checks are done in CoreForeignKeys.
-     * 
-     * @param dbre The database to use.
-     * @return Result.
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+	/**
+	 * Check the data in the assembly_exception table. Note referential integrity checks are done in CoreForeignKeys.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return Result.
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-        boolean result = true;
+		boolean result = true;
 
-        Connection con = dbre.getConnection();
+		Connection con = dbre.getConnection();
 
-        String qry = "select count(*) from gene,transcript,translation " + "where gene.biotype like '%pseudogene%'"
-                + " and transcript.gene_id=gene.gene_id " + " and translation.transcript_id=transcript.transcript_id";
-        if(dbre.getType()==DatabaseType.SANGER_VEGA){//for sanger_vega ignore genes that do not have source havana or WU and allow polymorphic_pseudogene to have translations
-        	qry +=" and gene.biotype!= 'polymorphic_pseudogene' and (gene.source='havana' or gene.source='WU')";
+		String qry = "select count(*) from gene,transcript,translation " + "where gene.biotype like '%pseudogene%'" + " and transcript.gene_id=gene.gene_id "
+				+ " and translation.transcript_id=transcript.transcript_id";
+		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sanger_vega ignore genes that do not have source havana or WU and allow
+																											// polymorphic_pseudogene to have translations
+			qry += " and gene.biotype!= 'polymorphic_pseudogene' and (gene.source='havana' or gene.source='WU')";
 		}
 
-        int rows = getRowCount(con, qry);
-        if (rows > 0) {
-            result = false;
-            ReportManager.problem(this, con, "Translation table contains " + rows + " rows for pseudogene types - should contain none");
-        }
+		int rows = getRowCount(con, qry);
+		if (rows > 0) {
+			result = false;
+			ReportManager.problem(this, con, "Translation table contains " + rows + " rows for pseudogene types - should contain none");
+		}
 
-        if (result) {
-            ReportManager.correct(this, con, "No pseudogenes have translations");
-        }
+		if (result) {
+			ReportManager.correct(this, con, "No pseudogenes have translations");
+		}
 
-        return result;
+		return result;
 
-    }
+	}
 
-    /**
-     * This applies to 'core and 'vega' core schema databases
-     */
-    public void types() {
+	/**
+	 * This applies to 'core and 'vega' core schema databases
+	 */
+	public void types() {
 
-        removeAppliesToType(DatabaseType.OTHERFEATURES);
-        removeAppliesToType(DatabaseType.ESTGENE);
-        removeAppliesToType(DatabaseType.VEGA);
-    		removeAppliesToType(DatabaseType.RNASEQ);
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.ESTGENE);
+		removeAppliesToType(DatabaseType.VEGA);
+		removeAppliesToType(DatabaseType.RNASEQ);
 
-    }
+	}
 
 } // Pseudogene

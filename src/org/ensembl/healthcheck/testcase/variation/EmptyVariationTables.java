@@ -16,9 +16,10 @@ package org.ensembl.healthcheck.testcase.variation;
 import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
-import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -35,6 +36,7 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 		addToGroup("variation-release");
 
 		setDescription("Checks that all tables have data");
+		setTeamResponsible(Team.VARIATION);
 
 	}
 
@@ -50,29 +52,30 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 
 		// ----------------------------------------------------
 		// the following tables are allowed to be empty
-		String[] allowedEmpty = { "allele_group", "allele_group_allele","httag","variation_group","variation_group_feature","variation_group_variation", "individual_genotype_multiple_bp","variation_synonym", "structural_variation","variation_set", "variation_set_variation", "variation_set_structure" };
+		String[] allowedEmpty = { "allele_group", "allele_group_allele", "httag", "variation_group", "variation_group_feature", "variation_group_variation", "individual_genotype_multiple_bp",
+				"variation_synonym", "structural_variation", "variation_set", "variation_set_variation", "variation_set_structure" };
 		tables = remove(tables, allowedEmpty);
 
 		// only rat has entries in QTL tables
-		if (species != Species.RATTUS_NORVEGICUS && species != Species.MUS_MUSCULUS && species != Species.PONGO_ABELII && species != Species.HOMO_SAPIENS  ) {
-		    tables = remove(tables, "read_coverage");
+		if (species != Species.RATTUS_NORVEGICUS && species != Species.MUS_MUSCULUS && species != Species.PONGO_ABELII && species != Species.HOMO_SAPIENS) {
+			tables = remove(tables, "read_coverage");
 		}
-		if(species == Species.HOMO_SAPIENS){
-			tables = remove(tables,"structural_variation");
-			tables = remove(tables,"variation_set");
-			tables = remove(tables,"variation_set_structure");
-			tables = remove(tables,"variation_set_variation");
+		if (species == Species.HOMO_SAPIENS) {
+			tables = remove(tables, "structural_variation");
+			tables = remove(tables, "variation_set");
+			tables = remove(tables, "variation_set_structure");
+			tables = remove(tables, "variation_set_variation");
 		}
-		if (species != Species.HOMO_SAPIENS){
-			tables = remove(tables,"variation_annotation");
-			tables = remove(tables,"phenotype");
-			tables = remove(tables,"tagged_variation_feature");
+		if (species != Species.HOMO_SAPIENS) {
+			tables = remove(tables, "variation_annotation");
+			tables = remove(tables, "phenotype");
+			tables = remove(tables, "tagged_variation_feature");
 		}
-		if (species == Species.ANOPHELES_GAMBIAE || species == Species.ORNITHORHYNCHUS_ANATINUS || species == Species.PONGO_ABELII || species == Species.TETRAODON_NIGROVIRIDIS){
-		    String[] sampleTables= {"population_genotype", "population_structure", "sample_synonym"};
-		    tables = remove(tables,sampleTables);
+		if (species == Species.ANOPHELES_GAMBIAE || species == Species.ORNITHORHYNCHUS_ANATINUS || species == Species.PONGO_ABELII || species == Species.TETRAODON_NIGROVIRIDIS) {
+			String[] sampleTables = { "population_genotype", "population_structure", "sample_synonym" };
+			tables = remove(tables, sampleTables);
 		}
-		return tables;	       
+		return tables;
 	}
 
 	// ---------------------------------------------------------------------
@@ -90,7 +93,6 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 
 		String[] tables = getTablesToCheck(dbre);
 		Connection con = dbre.getConnection();
-
 
 		for (int i = 0; i < tables.length; i++) {
 
@@ -149,16 +151,16 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 
 	// -----------------------------------------------------------------
 
-   /**
-     * This only applies to variation databases.
-     */
-     public void types() {
+	/**
+	 * This only applies to variation databases.
+	 */
+	public void types() {
 
-	 removeAppliesToType(DatabaseType.OTHERFEATURES);
-	 removeAppliesToType(DatabaseType.CDNA);
-	 removeAppliesToType(DatabaseType.CORE);
-	 removeAppliesToType(DatabaseType.VEGA);
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.CDNA);
+		removeAppliesToType(DatabaseType.CORE);
+		removeAppliesToType(DatabaseType.VEGA);
 
-     }
+	}
 
 } // EmptyVariationTablesTestCase

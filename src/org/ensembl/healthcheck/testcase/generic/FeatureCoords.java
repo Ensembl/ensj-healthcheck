@@ -22,6 +22,7 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -38,7 +39,7 @@ public class FeatureCoords extends SingleDatabaseTestCase {
 		addToGroup("release");
 		setDescription("Check that feature co-ords make sense.");
 		setHintLongRunning(true);
-                setTeamResponsible("GeneBuilders");
+		setTeamResponsible(Team.GENEBUILD);
 	}
 
 	/**
@@ -88,19 +89,14 @@ public class FeatureCoords extends SingleDatabaseTestCase {
 			// ------------------------
 
 			/**
-			 * This section removed as it takes an inordinately long time for not much
-			 * useful result - can't find any combination of indices that avoid full table scan
-			 *  // skip large tables as this test takes an inordinately long time if
-			 * (tableName.equals("protein_align_feature") ||
-			 * tableName.equals("dna_align_feature") ||
-			 * tableName.equals("repeat_feature")) { continue; } logger.info("Checking " +
-			 * tableName + " for end > length"); sql = "SELECT COUNT(*) FROM " +
-			 * tableName + " f, seq_region s WHERE f.seq_region_id = s.seq_region_id
-			 * AND f.seq_region_end > s.length"; rows = getRowCount(con, sql); if
-			 * (rows > 0) { ReportManager.problem(this, con, rows + " rows in " +
-			 * tableName + " have seq_region_end > length in seq_region_table");
-			 * result = false; } else { ReportManager.correct(this, con, "All rows in " +
-			 * tableName + " have sensible lengths"); }
+			 * This section removed as it takes an inordinately long time for not much useful result - can't find any combination of
+			 * indices that avoid full table scan // skip large tables as this test takes an inordinately long time if
+			 * (tableName.equals("protein_align_feature") || tableName.equals("dna_align_feature") || tableName.equals("repeat_feature"))
+			 * { continue; } logger.info("Checking " + tableName + " for end > length"); sql = "SELECT COUNT(*) FROM " + tableName + " f,
+			 * seq_region s WHERE f.seq_region_id = s.seq_region_id AND f.seq_region_end > s.length"; rows = getRowCount(con, sql); if
+			 * (rows > 0) { ReportManager.problem(this, con, rows + " rows in " + tableName +
+			 * " have seq_region_end > length in seq_region_table"); result = false; } else { ReportManager.correct(this, con,
+			 * "All rows in " + tableName + " have sensible lengths"); }
 			 */
 
 		} // foreach table

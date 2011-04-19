@@ -26,13 +26,13 @@ import java.util.regex.Pattern;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check for cases where components map to multiple parts of the assembly but
- * the chained mapper is *not* specified for that pair of coordinate systems in
- * the meta table.
+ * Check for cases where components map to multiple parts of the assembly but the chained mapper is *not* specified for that pair of
+ * coordinate systems in the meta table.
  */
 public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 
@@ -41,15 +41,16 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 	 */
 	public MultipleComponentAssemblyMapping() {
 
-		//addToGroup("post_genebuild");
-		//addToGroup("release");
+		// addToGroup("post_genebuild");
+		// addToGroup("release");
 
 		setDescription("Check for cases where components map to multiple parts of the assembly but the chained mapper is *not* specified for that pair of coordinate systems in the meta table.");
 
 		setPriority(Priority.AMBER);
 		setEffect("Will cause problems with sequence retrieval for the affected region, and possibly website crashes.");
 		setFix("Specify the chained mapper (#) in the assembly.mapping entry for these two coordinate systems.");
-                setTeamResponsible("Core and GeneBuilders");
+		setTeamResponsible(Team.CORE);
+		setSecondTeamResponsible(Team.GENEBUILD);
 	}
 
 	/**
@@ -76,22 +77,17 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 			stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM coord_system");
 
+			while (rs.next()) {
+				if ("".equals(rs.getString("version"))) {
+					System.err.println("\n\n Error ! Something seems to be wrong with your coord_system table.\n " + " The coord_system.version colum contains a string of length == 0\n"
+							+ " Only proper mysql-NULL values or strings with length > 0 are allowed.\n\n");
+					throw new Exception();
+				}
 
-                        while (rs.next()) {
-                                if ( "".equals(rs.getString("version") ) ) {  
-			           System.err.println( "\n\n Error ! Something seems to be wrong with your coord_system table.\n " +  
-                                        " The coord_system.version colum contains a string of length == 0\n" +  
-                                        " Only proper mysql-NULL values or strings with length > 0 are allowed.\n\n" ) ;  
-                                   throw new Exception()  ; 
-                                } 
-                                 
-				  coordSystemNameAndVersionToID.put(rs.getString("name") + rs.getString("version"), new Long(rs.getLong("coord_system_id")));
-				  logger.fine(rs.getString("name") + rs.getString("version") + " -> " + rs.getLong("coord_system_id"));  
+				coordSystemNameAndVersionToID.put(rs.getString("name") + rs.getString("version"), new Long(rs.getLong("coord_system_id")));
+				logger.fine(rs.getString("name") + rs.getString("version") + " -> " + rs.getLong("coord_system_id"));
 
-				
 			}
-
-
 
 		} catch (Exception e) {
 			result = false;
@@ -102,11 +98,9 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 		// chained mapper
 		String constraint = "";
 
-		String[] mappings = getColumnValues(con,
-				"SELECT meta_value FROM meta WHERE meta_key='assembly.mapping'  AND meta_value LIKE '%#%'");
+		String[] mappings = getColumnValues(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.mapping'  AND meta_value LIKE '%#%'");
 
-		Pattern assemblyMappingPattern = Pattern
-				.compile("^([a-zA-Z0-9.]+):?([a-zA-Z0-9._]+)?[\\|#]([a-zA-Z0-9._]+):?([a-zA-Z0-9._]+)?([\\|#]([a-zA-Z0-9.]+):?([a-zA-Z0-9._]+)?)?$");
+		Pattern assemblyMappingPattern = Pattern.compile("^([a-zA-Z0-9.]+):?([a-zA-Z0-9._]+)?[\\|#]([a-zA-Z0-9._]+):?([a-zA-Z0-9._]+)?([\\|#]([a-zA-Z0-9.]+):?([a-zA-Z0-9._]+)?)?$");
 
 		for (int i = 0; i < mappings.length; i++) {
 
@@ -119,14 +113,13 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 				String cs2 = matcher.group(3);
 				String v2 = matcher.group(4);
 				// TODO - ignoring third coordinate system for now
-				
+
 				long csID1 = ((Long) (coordSystemNameAndVersionToID.get(cs1 + v1))).longValue();
 				long csID2 = ((Long) (coordSystemNameAndVersionToID.get(cs2 + v2))).longValue();
 
 				logger.fine("Chained mapping for " + cs1 + ":" + v1 + " (ID " + csID1 + ") - " + cs2 + ":" + v2 + " (ID " + csID2 + ")");
 
-				constraint += "AND NOT ((s2.coord_system_id = " + csID1 + " AND s1.coord_system_id = " + csID2
-						+ ") OR (s2.coord_system_id = " + csID2 + " AND s1.coord_system_id = " + csID1 + "))";
+				constraint += "AND NOT ((s2.coord_system_id = " + csID1 + " AND s1.coord_system_id = " + csID2 + ") OR (s2.coord_system_id = " + csID2 + " AND s1.coord_system_id = " + csID1 + "))";
 			}
 		}
 
@@ -134,10 +127,8 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 
 		// now find components that map to multiple assemblies but whose coordinate
 		// systems are not using a chained mapper
-		String sql = "SELECT a.cmp_seq_region_id, a.asm_seq_region_id, s1.coord_system_id "
-				+ "FROM assembly a, seq_region s1, seq_region s2 "
-				+ "WHERE a.asm_seq_region_id=s1.seq_region_id AND a.cmp_seq_region_id = s2.seq_region_id " + constraint
-				+ "ORDER BY s1.coord_system_id, a.cmp_seq_region_id";
+		String sql = "SELECT a.cmp_seq_region_id, a.asm_seq_region_id, s1.coord_system_id " + "FROM assembly a, seq_region s1, seq_region s2 "
+				+ "WHERE a.asm_seq_region_id=s1.seq_region_id AND a.cmp_seq_region_id = s2.seq_region_id " + constraint + "ORDER BY s1.coord_system_id, a.cmp_seq_region_id";
 
 		try {
 
@@ -166,8 +157,7 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 					String newValue = value + "," + asmID;
 
 					list.put(new Long(cmpID), newValue);
-					ReportManager.problem(this, con, "Component with ID " + cmpID
-							+ " is linked to more than one assembly mapping for coord_system with ID " + coordSystemID + " (" + newValue + ")");
+					ReportManager.problem(this, con, "Component with ID " + cmpID + " is linked to more than one assembly mapping for coord_system with ID " + coordSystemID + " (" + newValue + ")");
 
 					result = false;
 

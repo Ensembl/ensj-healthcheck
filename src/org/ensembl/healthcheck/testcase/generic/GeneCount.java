@@ -19,9 +19,10 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
-import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
@@ -40,8 +41,8 @@ public class GeneCount extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Causes incorrect display of gene counts and confusing contigview displays.");
 		setFix("Add/remove genes.");
-		setTeamResponsible("Genebuilders");
-		
+		setTeamResponsible(Team.GENEBUILD);
+
 	}
 
 	/**
@@ -55,7 +56,7 @@ public class GeneCount extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		// MT chromosome should have 13 protein coding genes, only applies to core database
-			if (dbre.getSpecies() == Species.HOMO_SAPIENS && dbre.getType() == DatabaseType.CORE) {
+		if (dbre.getSpecies() == Species.HOMO_SAPIENS && dbre.getType() == DatabaseType.CORE) {
 			result &= countMTGenes(dbre.getConnection());
 		}
 
@@ -68,22 +69,24 @@ public class GeneCount extends SingleDatabaseTestCase {
 	private boolean countMTGenes(Connection con) {
 
 		boolean result = true;
-		
-		int genes = getRowCount(con, "SELECT COUNT(*) FROM coord_system cs, seq_region sr, gene g WHERE cs.coord_system_id=sr.coord_system_id AND cs.name='chromosome' AND cs.version='GRCh37' AND sr.name='MT' and g.seq_region_id=sr.seq_region_id AND g.biotype='protein_coding'");
+
+		int genes = getRowCount(
+				con,
+				"SELECT COUNT(*) FROM coord_system cs, seq_region sr, gene g WHERE cs.coord_system_id=sr.coord_system_id AND cs.name='chromosome' AND cs.version='GRCh37' AND sr.name='MT' and g.seq_region_id=sr.seq_region_id AND g.biotype='protein_coding'");
 
 		if (genes != 13) {
-			
+
 			ReportManager.problem(this, con, "Human MT chromosome should have 13 protein coding genes, actually has " + genes);
 			result = false;
-			
+
 		} else {
-			
+
 			ReportManager.correct(this, con, "Human MT chromosome has 13 protein coding genes.");
-			
+
 		}
-		
+
 		return result;
-		
+
 	}
 
 	// -----------------------------------------------------------------------

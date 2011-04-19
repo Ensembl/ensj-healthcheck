@@ -16,6 +16,7 @@ package org.ensembl.healthcheck.testcase.production;
 import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -31,7 +32,7 @@ public class ProductionForeignKeys extends SingleDatabaseTestCase {
 
 		addToGroup("release");
 		setDescription("Check for broken foreign-key relationships in the production database.");
-    setTeamResponsible("Core");
+    setTeamResponsible(Team.CORE);
 
 
 	}

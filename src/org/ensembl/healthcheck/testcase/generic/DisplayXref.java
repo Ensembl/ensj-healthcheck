@@ -17,11 +17,11 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that some display_xrefs are set. Also check for numeric EntrezGenes
- * being used as display xrefs.
+ * Check that some display_xrefs are set. Also check for numeric EntrezGenes being used as display xrefs.
  */
 
 public class DisplayXref extends SingleDatabaseTestCase {
@@ -35,7 +35,8 @@ public class DisplayXref extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		setDescription("Check that display_xrefs are set OK");
-                setTeamResponsible("Core and GeneBuilders");
+		setTeamResponsible(Team.CORE);
+		setSecondTeamResponsible(Team.GENEBUILD);
 	}
 
 	/**
@@ -93,13 +94,12 @@ public class DisplayXref extends SingleDatabaseTestCase {
 			// can't use countOrphans() here as we need to rule out cases where both
 			// are null
 
-			int orphans = getRowCount(con, "SELECT COUNT(*) FROM " + types[i] + " LEFT JOIN xref ON " + types[i]
-					+ ".display_xref_id=xref.xref_id WHERE " + types[i] + ".display_xref_id IS NOT NULL AND xref.xref_id IS NULL");
+			int orphans = getRowCount(con, "SELECT COUNT(*) FROM " + types[i] + " LEFT JOIN xref ON " + types[i] + ".display_xref_id=xref.xref_id WHERE " + types[i]
+					+ ".display_xref_id IS NOT NULL AND xref.xref_id IS NULL");
 
 			if (orphans > 0) {
 
-				ReportManager.problem(this, con, orphans + " " + types[i] + "s (out of a total of " + total
-						+ ") have display_xref_ids pointing to non-existent xrefs.");
+				ReportManager.problem(this, con, orphans + " " + types[i] + "s (out of a total of " + total + ") have display_xref_ids pointing to non-existent xrefs.");
 				result = false;
 
 			}
@@ -107,8 +107,7 @@ public class DisplayXref extends SingleDatabaseTestCase {
 		}
 
 		// check for numeric EntrezGenes being used as display_xrefs
-		int numeric = getRowCount(
-				con,
+		int numeric = getRowCount(con,
 				"SELECT COUNT(*) FROM gene g, xref x, external_db e WHERE e.external_db_id=x.external_db_id AND g.display_xref_id=x.xref_id AND e.db_name='EntrezGene' AND x.display_label REGEXP '^[0-9]+$'");
 
 		if (numeric > 0) {

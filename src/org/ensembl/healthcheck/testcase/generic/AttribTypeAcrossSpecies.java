@@ -18,6 +18,7 @@ package org.ensembl.healthcheck.testcase.generic;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 /**
@@ -25,31 +26,30 @@ import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
  */
 public class AttribTypeAcrossSpecies extends MultiDatabaseTestCase {
 
-    private DatabaseType[] types = {DatabaseType.CORE, DatabaseType.OTHERFEATURES, DatabaseType.VEGA};
+	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.OTHERFEATURES, DatabaseType.VEGA };
 
-    /**
-     * Creates a new instance of AttribTypeTablesAcrossSpecies
-     */
-    public AttribTypeAcrossSpecies() {
+	/**
+	 * Creates a new instance of AttribTypeTablesAcrossSpecies
+	 */
+	public AttribTypeAcrossSpecies() {
 
-        addToGroup("release");
-        setDescription("Check that the attrib_type table contains the same information for all databases with the same species.");
-        setTeamResponsible("Release Coordinator");
+		addToGroup("release");
+		setDescription("Check that the attrib_type table contains the same information for all databases with the same species.");
+		setTeamResponsible(Team.RELEASE_COORDINATOR);
 
-    }
+	}
 
-    /**
-     * Make sure that the assembly tables are all the same.
-     * 
-     * @param dbr
-     *          The database registry containing all the specified databases.
-     * @return True if the assembly table is the same across all the species in
-     *         the registry.
-     */
-    public boolean run(DatabaseRegistry dbr) {
+	/**
+	 * Make sure that the assembly tables are all the same.
+	 * 
+	 * @param dbr
+	 *          The database registry containing all the specified databases.
+	 * @return True if the assembly table is the same across all the species in the registry.
+	 */
+	public boolean run(DatabaseRegistry dbr) {
 
-        return checkTableAcrossSpecies("attrib_type", dbr, types, "attrib_type tables all the same", "attrib_type tables are different", "WHERE code NOT LIKE 'GeneNo%' AND code NOT LIKE '%LRG%'");
+		return checkTableAcrossSpecies("attrib_type", dbr, types, "attrib_type tables all the same", "attrib_type tables are different", "WHERE code NOT LIKE 'GeneNo%' AND code NOT LIKE '%LRG%'");
 
-    } // run
+	} // run
 
 } // AttribTypeTablesAcrossSpecies

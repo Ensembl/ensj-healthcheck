@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -39,7 +40,7 @@ public class GeneTranscriptStartEnd extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription("Checks that gene start/end agrees with transcript table");
-                setTeamResponsible("GeneBuilders");
+		setTeamResponsible(Team.GENEBUILD);
 	}
 
 	/**
@@ -85,16 +86,14 @@ public class GeneTranscriptStartEnd extends SingleDatabaseTestCase {
 
 			// gene GC32491 in drosophila is allowed to have all sorts of things wrong
 			// with it
-			if (rs != null && !rs.isAfterLast() && rs.next() && dbre.getSpecies() != Species.DROSOPHILA_MELANOGASTER
-					&& rs.getString("stable_id") != null && !rs.getString("stable_id").equalsIgnoreCase("CG32491")) {
+			if (rs != null && !rs.isAfterLast() && rs.next() && dbre.getSpecies() != Species.DROSOPHILA_MELANOGASTER && rs.getString("stable_id") != null
+					&& !rs.getString("stable_id").equalsIgnoreCase("CG32491")) {
 
-				ReportManager.problem(this, con, "Gene ID " + rs.getLong(1)
-						+ " has start/end that does not agree with transcript start/end");
+				ReportManager.problem(this, con, "Gene ID " + rs.getLong(1) + " has start/end that does not agree with transcript start/end");
 				startEndResult = false;
 
 				while (rs.next()) {
-					ReportManager.problem(this, con, "Gene ID " + rs.getLong(1)
-							+ " has start/end that does not agree with transcript start/end");
+					ReportManager.problem(this, con, "Gene ID " + rs.getLong(1) + " has start/end that does not agree with transcript start/end");
 					startEndResult = false;
 				}
 				rs.close();

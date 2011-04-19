@@ -20,11 +20,12 @@ package org.ensembl.healthcheck.testcase.compara;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -43,7 +44,7 @@ public class SingleDBCollations extends SingleDatabaseTestCase {
         addToGroup("compara_genomic");
         addToGroup("compara_homology");
         setDescription("Check that all table collations are " + TARGET_COLLATION);
-        setTeamResponsible("compara");
+        setTeamResponsible(Team.COMPARA);
 	
     }
 

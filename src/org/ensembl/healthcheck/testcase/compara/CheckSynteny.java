@@ -19,12 +19,11 @@
 package org.ensembl.healthcheck.testcase.compara;
 
 import java.sql.Connection;
-import java.util.HashMap;
 import java.util.ArrayList;
-import java.lang.Integer;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -41,7 +40,7 @@ public class CheckSynteny extends SingleDatabaseTestCase {
 
         addToGroup("compara_genomic");
         setDescription("Check for missing syntenies in the compara database.");
-        setTeamResponsible("compara");
+        setTeamResponsible(Team.COMPARA);
 
     }
 

@@ -17,6 +17,7 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.Utils;
 
@@ -35,7 +36,7 @@ public class GOXrefs extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		setDescription("Check that unrpoejcted GO xrefs exist, and that there are no blank or null linkage types.");
-                setTeamResponsible("GeneBuilders");
+		setTeamResponsible(Team.GENEBUILD);
 	}
 
 	/**
@@ -59,7 +60,7 @@ public class GOXrefs extends SingleDatabaseTestCase {
 	 * @return true if the test passed.
 	 * 
 	 */
-public boolean run(DatabaseRegistryEntry dbre) {
+	public boolean run(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
 
@@ -100,7 +101,7 @@ public boolean run(DatabaseRegistryEntry dbre) {
 				}
 			}
 
-		} 
+		}
 
 		// check for blank or null linkage_type
 		int blank = getRowCount(con, "SELECT COUNT(*) FROM ontology_xref WHERE linkage_type IS NULL OR linkage_type=''");
@@ -115,7 +116,9 @@ public boolean run(DatabaseRegistryEntry dbre) {
 		}
 
 		// check that *only* GO xrefs have linkage types assigned
-		String[] dbs = getColumnValues(con, "SELECT DISTINCT(e.db_name) FROM external_db e, xref x, object_xref ox, ontology_xref g WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id AND ox.object_xref_id=g.object_xref_id AND e.db_name != 'GO' ");
+		String[] dbs = getColumnValues(
+				con,
+				"SELECT DISTINCT(e.db_name) FROM external_db e, xref x, object_xref ox, ontology_xref g WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id AND ox.object_xref_id=g.object_xref_id AND e.db_name != 'GO' ");
 		if (dbs.length > 0) {
 
 			ReportManager.problem(this, con, "Some " + Utils.arrayToString(dbs, ", ") + " xrefs have entries in linkage_type - should only be GO xrefs");
@@ -124,9 +127,9 @@ public boolean run(DatabaseRegistryEntry dbre) {
 		} else {
 
 			ReportManager.correct(this, con, "No non-GO xrefs have linkage types assigned");
-			
+
 		}
-		
+
 		return result;
 
 	} // run

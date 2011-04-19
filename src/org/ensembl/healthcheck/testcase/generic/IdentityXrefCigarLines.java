@@ -21,12 +21,12 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that cigar lines in the identity_xref table are in the same format as
- * they are in the alignment tables, i.e. start with a number rather than a
- * letter.
+ * Check that cigar lines in the identity_xref table are in the same format as they are in the alignment tables, i.e. start with a
+ * number rather than a letter.
  */
 
 public class IdentityXrefCigarLines extends SingleDatabaseTestCase {
@@ -40,7 +40,8 @@ public class IdentityXrefCigarLines extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		setDescription("Check that cigar lines in the identity_xref table are in the same format, as they are in the alignment tables, i.e. start with a number rather than a letter");
-                setTeamResponsible("Core and GeneBuilders");
+		setTeamResponsible(Team.CORE);
+		setSecondTeamResponsible(Team.GENEBUILD);
 
 	}
 

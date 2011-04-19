@@ -22,6 +22,7 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
@@ -30,88 +31,89 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 public class InterproDescriptions extends SingleDatabaseTestCase {
 
-    /**
-     * Create a new InterproDescriptions testcase.
-     */
-    public InterproDescriptions() {
+	/**
+	 * Create a new InterproDescriptions testcase.
+	 */
+	public InterproDescriptions() {
 
-        addToGroup("post_genebuild");
-        addToGroup("release");
-    		addToGroup("core_xrefs");
-        setDescription("Check that there are Interpro descriptions, that each one has an xref, and that the xref has a description.");
-        setTeamResponsible("GeneBuilders");
+		addToGroup("post_genebuild");
+		addToGroup("release");
+		addToGroup("core_xrefs");
+		setDescription("Check that there are Interpro descriptions, that each one has an xref, and that the xref has a description.");
+		setTeamResponsible(Team.GENEBUILD);
 
-    }
+	}
 
-    /**
-     * This only really applies to core & vega databases
-     */
-    public void types() {
+	/**
+	 * This only really applies to core & vega databases
+	 */
+	public void types() {
 
-        removeAppliesToType(DatabaseType.OTHERFEATURES);
-        removeAppliesToType(DatabaseType.ESTGENE);
-        removeAppliesToType(DatabaseType.CDNA);
-    		removeAppliesToType(DatabaseType.RNASEQ);
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.ESTGENE);
+		removeAppliesToType(DatabaseType.CDNA);
+		removeAppliesToType(DatabaseType.RNASEQ);
 
-    }
+	}
 
-    /**
-     * Run the test.
-     * 
-     * @param dbre The database to use.
-     * @return true if the test passed.
-     *  
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+	/**
+	 * Run the test.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return true if the test passed.
+	 * 
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-        boolean result = true;
+		boolean result = true;
 
-        Connection con = dbre.getConnection();
+		Connection con = dbre.getConnection();
 
-        // check that the interpro table has some rows
-        String sql = "SELECT COUNT(*) FROM interpro";
+		// check that the interpro table has some rows
+		String sql = "SELECT COUNT(*) FROM interpro";
 
-        int rows = getRowCount(con, sql);
-        if (rows == 0) {
+		int rows = getRowCount(con, sql);
+		if (rows == 0) {
 
-            ReportManager.problem(this, con, "Interpro table is empty (no xref checks done).");
-            return false;
+			ReportManager.problem(this, con, "Interpro table is empty (no xref checks done).");
+			return false;
 
-        } else {
+		} else {
 
-            ReportManager.correct(this, con, "Interpro table not empty");
-        }
+			ReportManager.correct(this, con, "Interpro table not empty");
+		}
 
-        // check that there are no Interpro accessions without xrefs
-        sql = "SELECT count(*) FROM interpro i LEFT JOIN xref x ON i.interpro_ac=x.dbprimary_acc WHERE x.dbprimary_acc IS NULL";
+		// check that there are no Interpro accessions without xrefs
+		sql = "SELECT count(*) FROM interpro i LEFT JOIN xref x ON i.interpro_ac=x.dbprimary_acc WHERE x.dbprimary_acc IS NULL";
 
-        rows = getRowCount(con, sql);
-        if (rows > 0) {
+		rows = getRowCount(con, sql);
+		if (rows > 0) {
 
-            ReportManager.problem(this, con, "There are " + rows + " rows in the interpro table that have no associated xref");
-            result = false;
+			ReportManager.problem(this, con, "There are " + rows + " rows in the interpro table that have no associated xref");
+			result = false;
 
-        } else {
+		} else {
 
-            ReportManager.correct(this, con, "All Interpro accessions have xrefs");
-        }
+			ReportManager.correct(this, con, "All Interpro accessions have xrefs");
+		}
 
-        // check that the description field is populated for all of them
-        sql = "SELECT COUNT(*) FROM interpro i, xref x WHERE i.interpro_ac=x.dbprimary_acc AND x.description IS NULL";
+		// check that the description field is populated for all of them
+		sql = "SELECT COUNT(*) FROM interpro i, xref x WHERE i.interpro_ac=x.dbprimary_acc AND x.description IS NULL";
 
-        rows = getRowCount(con, sql);
-        if (rows > 0) {
+		rows = getRowCount(con, sql);
+		if (rows > 0) {
 
-            ReportManager.problem(this, con, "There are " + rows + " Interpro xrefs with missing descriptions");
-            result = false;
+			ReportManager.problem(this, con, "There are " + rows + " Interpro xrefs with missing descriptions");
+			result = false;
 
-        } else {
+		} else {
 
-            ReportManager.correct(this, con, "All Interpro accessions have xref descriptions");
-        }
-        
-        return result;
+			ReportManager.correct(this, con, "All Interpro accessions have xref descriptions");
+		}
 
-    } // run
-    
+		return result;
+
+	} // run
+
 } // InterproDescriptions

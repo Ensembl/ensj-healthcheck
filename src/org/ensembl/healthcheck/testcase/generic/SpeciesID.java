@@ -23,12 +23,12 @@ import java.sql.SQLException;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that the species_id column in the meta table (and others) is set
- * consistently.
+ * Check that the species_id column in the meta table (and others) is set consistently.
  */
 public class SpeciesID extends SingleDatabaseTestCase {
 
@@ -44,7 +44,7 @@ public class SpeciesID extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Could cause problems in multi-species databases");
 		setFix("Manually fix affected keys, e.g. UPDATE TABLE meta SET species_id = NULL WHERE meta_key IN ( 'patch', 'schema_version' );");
-		setTeamResponsible("core"); //No longer valid for funcgen 
+		setTeamResponsible(Team.CORE); // No longer valid for funcgen
 
 	}
 
@@ -77,14 +77,14 @@ public class SpeciesID extends SingleDatabaseTestCase {
 
 				rs.first();
 				int rows = rs.getInt(1);
-				
+
 				if (rows > 0) {
 					result = false;
 					ReportManager.problem(this, con, "Meta table has " + rows + " rows where " + key + " has a non-NULL value");
 				} else {
 					ReportManager.correct(this, con, "All " + key + " rows in meta table have null values");
 				}
-				
+
 				rs.close();
 
 			}

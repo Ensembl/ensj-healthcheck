@@ -14,12 +14,13 @@ package org.ensembl.healthcheck.testcase.variation;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
+
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.Team;
+import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
 
 /**
- * Compare the number of variation annotations between the current database and the
- * database on the secondary server.
+ * Compare the number of variation annotations between the current database and the database on the secondary server.
  */
 
 public class ComparePreviousVersionVariationAnnotations extends ComparePreviousVersionBase {
@@ -32,18 +33,20 @@ public class ComparePreviousVersionVariationAnnotations extends ComparePreviousV
 		addToGroup("variation");
 		addToGroup("variation-release");
 		setDescription("Compare the number of variation annotations in the current database with those from the equivalent database on the secondary server");
+		setTeamResponsible(Team.VARIATION);
+
 	}
 
 	protected Map getCounts(DatabaseRegistryEntry dbre) {
-            
-            Map<String, Integer> counts = new HashMap<String, Integer>();
-            
-            // Count variation annotations by source
-            counts.putAll(getCountsBySQL(dbre, "SELECT s.name, COUNT(*) FROM variation_annotation va JOIN source s ON (s.source_id = va.source_id) GROUP BY s.name"));
-            // Count total number of variations
-            counts.putAll(getCountsBySQL(dbre, "SELECT 'all sources', COUNT(*) FROM variation_annotation"));
-            
-            return counts;
+
+		Map<String, Integer> counts = new HashMap<String, Integer>();
+
+		// Count variation annotations by source
+		counts.putAll(getCountsBySQL(dbre, "SELECT s.name, COUNT(*) FROM variation_annotation va JOIN source s ON (s.source_id = va.source_id) GROUP BY s.name"));
+		// Count total number of variations
+		counts.putAll(getCountsBySQL(dbre, "SELECT 'all sources', COUNT(*) FROM variation_annotation"));
+
+		return counts;
 	}
 
 	// ------------------------------------------------------------------------

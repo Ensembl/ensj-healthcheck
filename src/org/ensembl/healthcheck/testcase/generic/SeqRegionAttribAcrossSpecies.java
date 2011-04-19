@@ -18,11 +18,11 @@ package org.ensembl.healthcheck.testcase.generic;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 /**
- * Check that the seq_region_attrib table is the same in all necessary
- * databases.
+ * Check that the seq_region_attrib table is the same in all necessary databases.
  */
 public class SeqRegionAttribAcrossSpecies extends MultiDatabaseTestCase {
 
@@ -35,7 +35,7 @@ public class SeqRegionAttribAcrossSpecies extends MultiDatabaseTestCase {
 
 		addToGroup("release");
 		setDescription("Check that the seq_region_attrib table is the same across all generic DBs");
-                setTeamResponsible("Release Coordinator");
+		setTeamResponsible(Team.RELEASE_COORDINATOR);
 
 	}
 
@@ -44,8 +44,7 @@ public class SeqRegionAttribAcrossSpecies extends MultiDatabaseTestCase {
 	 * 
 	 * @param dbr
 	 *          The database registry containing all the specified databases.
-	 * @return True if the seq_region_attrib table is the same across all the
-	 *         species in the registry.
+	 * @return True if the seq_region_attrib table is the same across all the species in the registry.
 	 */
 	public boolean run(DatabaseRegistry dbr) {
 

@@ -16,10 +16,10 @@ import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.Team;
 
 /**
- * Compare the RepeatTypes in the current database with those from the equivalent
- * database on the secondary server.
+ * Compare the RepeatTypes in the current database with those from the equivalent database on the secondary server.
  */
 
 public class ComparePreviousVersionRepeatTypes extends ComparePreviousVersionBase {
@@ -32,11 +32,11 @@ public class ComparePreviousVersionRepeatTypes extends ComparePreviousVersionBas
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		setDescription("Compare the types of repeat features in the current database with those from the equivalent database on the secondary server");
-                setTeamResponsible("GeneBuilders");
+		setTeamResponsible(Team.GENEBUILD);
 
 	}
 
-    /**
+	/**
 	 * This test Does not apply to sanger_vega dbs
 	 */
 	public void types() {

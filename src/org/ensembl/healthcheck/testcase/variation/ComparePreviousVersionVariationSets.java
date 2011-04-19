@@ -12,14 +12,14 @@
  */
 package org.ensembl.healthcheck.testcase.variation;
 
-import java.util.HashMap;
 import java.util.Map;
-import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
+
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.Team;
+import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
 
 /**
- * Compare the number of variation sets between the current database and the
- * database on the secondary server.
+ * Compare the number of variation sets between the current database and the database on the secondary server.
  */
 
 public class ComparePreviousVersionVariationSets extends ComparePreviousVersionBase {
@@ -32,13 +32,15 @@ public class ComparePreviousVersionVariationSets extends ComparePreviousVersionB
 		addToGroup("variation");
 		addToGroup("variation-release");
 		setDescription("Compare the number of variation sets in the current database with those from the equivalent database on the secondary server");
+		setTeamResponsible(Team.VARIATION);
+
 	}
 
 	protected Map getCounts(DatabaseRegistryEntry dbre) {
-            
-            // Count variation sets by set name
-            return getCountsBySQL(dbre, "SELECT vs.name, COUNT(*) FROM variation_set_variation vsv JOIN variation_set vs ON (vs.variation_set_id = vsv.variation_set_id) GROUP BY vs.name");
-            
+
+		// Count variation sets by set name
+		return getCountsBySQL(dbre, "SELECT vs.name, COUNT(*) FROM variation_set_variation vsv JOIN variation_set vs ON (vs.variation_set_id = vsv.variation_set_id) GROUP BY vs.name");
+
 	}
 
 	// ------------------------------------------------------------------------

@@ -17,13 +17,11 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.Utils;
 
@@ -39,7 +37,7 @@ public class Biotypes extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
-                setTeamResponsible("Genebuilders");
+		setTeamResponsible(Team.GENEBUILD);
 		setDescription("Check for null biotypes, and also for any 'ensembl' biotypes - should be 'protein_coding'");
 
 	}
@@ -120,17 +118,17 @@ public class Biotypes extends SingleDatabaseTestCase {
 					geneBiotype));
 
 			if (mismatchedBiotypes.length > 0) {
-				
+
 				result &= false;
-				
+
 				// get count for each one
 				for (String transcriptBiotype : mismatchedBiotypes) {
-					
-					int rows = getRowCount(con, String.format("SELECT COUNT(DISTINCT g.gene_id) FROM transcript t, gene g WHERE g.gene_id=t.gene_id AND g.biotype='%s' AND t.biotype='%s'", geneBiotype, transcriptBiotype));
+
+					int rows = getRowCount(con, String.format("SELECT COUNT(DISTINCT g.gene_id) FROM transcript t, gene g WHERE g.gene_id=t.gene_id AND g.biotype='%s' AND t.biotype='%s'", geneBiotype,
+							transcriptBiotype));
 					ReportManager.problem(this, con, rows + " genes of biotype " + geneBiotype + " have transcripts with biotype " + transcriptBiotype);
-					
+
 				}
-				
 
 			} else {
 				ReportManager.correct(this, con, "All genes with biotype " + geneBiotype + " have transcripts with matching biotypes");

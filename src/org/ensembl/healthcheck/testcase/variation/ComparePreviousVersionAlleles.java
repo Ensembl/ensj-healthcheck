@@ -13,12 +13,13 @@
 package org.ensembl.healthcheck.testcase.variation;
 
 import java.util.Map;
-import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
+
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.Team;
+import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
 
 /**
- * Compare the number of alleles between the current database and the
- * database on the secondary server.
+ * Compare the number of alleles between the current database and the database on the secondary server.
  */
 
 public class ComparePreviousVersionAlleles extends ComparePreviousVersionBase {
@@ -31,6 +32,8 @@ public class ComparePreviousVersionAlleles extends ComparePreviousVersionBase {
 		addToGroup("variation");
 		addToGroup("variation-release");
 		setDescription("Compare the number of alleles in the current database with those from the equivalent database on the secondary server");
+		setTeamResponsible(Team.VARIATION);
+
 	}
 
 	protected Map getCounts(DatabaseRegistryEntry dbre) {

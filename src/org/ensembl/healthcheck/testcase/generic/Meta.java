@@ -20,12 +20,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.AssemblyNameInfo;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.Utils;
 
@@ -34,7 +34,8 @@ import org.ensembl.healthcheck.util.Utils;
  * meta table across species are done in MetaCrossSpecies.
  */
 public class Meta extends SingleDatabaseTestCase {
-	private boolean isSangerVega=false; 
+	private boolean isSangerVega = false;
+
 	/**
 	 * Creates a new instance of CheckMetaDataTableTestCase
 	 */
@@ -43,7 +44,8 @@ public class Meta extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		addToGroup("compara-ancestral");
-                setTeamResponsible("Relco and GeneBuilders");
+		setTeamResponsible(Team.RELEASE_COORDINATOR);
+		setSecondTeamResponsible(Team.GENEBUILD);
 		setDescription("Check that the meta table exists, has data, the entries correspond to the " + "database name, and that the values in assembly.type match what's in the meta table");
 	}
 
@@ -55,7 +57,7 @@ public class Meta extends SingleDatabaseTestCase {
 	 * @return True if the test passed.
 	 */
 	public boolean run(final DatabaseRegistryEntry dbre) {
-		isSangerVega = dbre.getType()==DatabaseType.SANGER_VEGA;
+		isSangerVega = dbre.getType() == DatabaseType.SANGER_VEGA;
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
@@ -73,7 +75,7 @@ public class Meta extends SingleDatabaseTestCase {
 			return result;
 		}
 
-		if(!isSangerVega){//do not check for sanger_vega
+		if (!isSangerVega) {// do not check for sanger_vega
 			result &= checkOverlappingRegions(con);
 		}
 
@@ -153,8 +155,8 @@ public class Meta extends SingleDatabaseTestCase {
 			// Prefix is OK as long as it starts with the valid one
 			Species dbSpecies = dbre.getSpecies();
 			String correctPrefix = Species.getAssemblyPrefixForSpecies(dbSpecies);
-			
-			if (!isSangerVega){//do not check this for sanger_vega
+
+			if (!isSangerVega) {// do not check this for sanger_vega
 				if (correctPrefix == null) {
 					logger.info("Can't get correct assembly prefix for " + dbSpecies.toString());
 				} else {
@@ -276,7 +278,7 @@ public class Meta extends SingleDatabaseTestCase {
 			if (rows == 0) {
 				result = false;
 				ReportManager.problem(this, con, "No entry in meta table for " + metaKey);
-			} 
+			}
 		}
 
 		// check that there are some species.alias entries
@@ -344,7 +346,7 @@ public class Meta extends SingleDatabaseTestCase {
 			String metaTableGenusSpecies = metaTableSpeciesGenusArray[1] + "_" + metaTableSpeciesGenusArray[0];
 			logger.finest("Classification from DB name:" + dbNameGenusSpecies + " Meta table: " + metaTableGenusSpecies);
 
-			if (!isSangerVega) {//do not check this for sanger_vega
+			if (!isSangerVega) {// do not check this for sanger_vega
 				if (!dbNameGenusSpecies.equalsIgnoreCase(metaTableGenusSpecies)) {
 					result = false;
 					// warn(con, "Database name does not correspond to
@@ -417,7 +419,7 @@ public class Meta extends SingleDatabaseTestCase {
 
 				// check that coord_system:version pairs listed here exist in the coord_system table
 				result &= checkCoordSystemVersionPairs(con, cs1, assembly1, cs2, assembly2, cs3, assembly3);
-				
+
 				// check that coord systems are specified in lower-case
 				result &= checkCoordSystemCase(con, cs1, "meta assembly.mapping");
 				result &= checkCoordSystemCase(con, cs2, "meta assembly.mapping");
@@ -429,7 +431,7 @@ public class Meta extends SingleDatabaseTestCase {
 		return result;
 	}
 
-//---------------------------------------------------------------------
+	// ---------------------------------------------------------------------
 	/**
 	 * Check that coordinate system:assembly pairs in assembly.mappings match what's in the coord system table
 	 */
@@ -438,22 +440,22 @@ public class Meta extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		List<String> coordSystemsAndVersions = getColumnValuesList(con, "SELECT CONCAT_WS(':',name,version) FROM coord_system");
-		
+
 		result &= checkCoordSystemPairInList(con, cs1, assembly1, coordSystemsAndVersions);
-		
+
 		result &= checkCoordSystemPairInList(con, cs2, assembly2, coordSystemsAndVersions);
 
 		if (cs3 != null) {
-			
+
 			result &= checkCoordSystemPairInList(con, cs3, assembly3, coordSystemsAndVersions);
 
 		}
-		
+
 		return result;
 
 	}
-	
-//---------------------------------------------------------------------
+
+	// ---------------------------------------------------------------------
 	/**
 	 * Check if a particular coordinate system:version pair is in a list. Deal with nulls appropriately.
 	 */
@@ -462,14 +464,14 @@ public class Meta extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		String toCompare = (assembly != null) ? cs + ":" + assembly : cs;
-		
+
 		if (!coordSystems.contains(toCompare)) {
-		
+
 			ReportManager.problem(this, con, "Coordinate system name/version " + toCompare + " in assembly.mapping does not appear in coord_system table.");
 			result = false;
-			
-		} 
-		
+
+		}
+
 		return result;
 
 	}
@@ -754,7 +756,7 @@ public class Meta extends SingleDatabaseTestCase {
 			ReportManager.problem(this, con, "Meta schema_version " + schemaVersion + " is not numeric");
 			return false;
 
-		} else if (!dbNameVersion.equals(schemaVersion) && !isSangerVega) {//do not report for sanger_vega
+		} else if (!dbNameVersion.equals(schemaVersion) && !isSangerVega) {// do not report for sanger_vega
 
 			ReportManager.problem(this, con, "Meta schema_version " + schemaVersion + " does not match version inferred from database name (" + dbNameVersion + ")");
 			return false;
@@ -804,45 +806,45 @@ public class Meta extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-		String[] Tables = {"gene",  "transcript", "exon", "repeat_feature", "dna_align_feature",
-				 "protein_align_feature", "simple_feature", "prediction_transcript", "prediction_exon"};
+		String[] Tables = { "gene", "transcript", "exon", "repeat_feature", "dna_align_feature", "protein_align_feature", "simple_feature", "prediction_transcript", "prediction_exon" };
 
-                int exists = getRowCount(con, "SELECT COUNT(*) FROM meta where meta_key like '%build.level'") ;
-                if (exists == 0) {
-                        ReportManager.problem(this, con,  "GB: No %build.level entries in the meta table - run ensembl/misc-scripts/meta_levels.pl");
-                }
-                int count = 0 ;
-                for (int i = 0; i < Tables.length; i++) {
-                        String Table = Tables[i];
-                        int rows = getRowCount(con, "SELECT COUNT(*) FROM " + Table );
-                        int key = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key = '" + Table + "build.level' ") ;
-                        int toplevel = getRowCount(con, "SELECT COUNT(*) FROM " + Table + " t, seq_region_attrib sra, attrib_type at WHERE t.seq_region_id = sra.seq_region_id AND sra.attrib_type_id = at.attrib_type_id AND at.code = 'toplevel' ") ;
-                        if (rows != 0) {
-                                if (key == 0) {
-                                        if (rows == toplevel) {
-                                                ReportManager.problem(this, con, "Table " + Table + " should have a toplevel flag - run ensembl/misc-scripts/meta_levels.pl");
-                                        } else {
-                                               count++ ; 
-                                        }
-                                } else {
-                                        if (rows != toplevel) {
-                                                ReportManager.problem(this, con, "Table " + Table + " has some non toplevel regions, should not have a toplevel flag - run ensembl/misc-scripts/meta_levels.pl");
-                                        } else {
-                                                count++ ;
-                                        }
-                                }
-                        } else {
-                                if (key != 0) {
-                                        ReportManager.problem(this, con, "Empty table " + Table + " should not have a toplevel flag - run ensembl/misc-scripts/meta_levels.pl");
-                                } else {
-                                        count++ ;
-                                }
-                        }
-                }
-                if (count == Tables.length) {
-                        ReportManager.info(this, con, "Toplevel flags correctly set"); 
-                        result = true ; 
-                }
+		int exists = getRowCount(con, "SELECT COUNT(*) FROM meta where meta_key like '%build.level'");
+		if (exists == 0) {
+			ReportManager.problem(this, con, "GB: No %build.level entries in the meta table - run ensembl/misc-scripts/meta_levels.pl");
+		}
+		int count = 0;
+		for (int i = 0; i < Tables.length; i++) {
+			String Table = Tables[i];
+			int rows = getRowCount(con, "SELECT COUNT(*) FROM " + Table);
+			int key = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key = '" + Table + "build.level' ");
+			int toplevel = getRowCount(con, "SELECT COUNT(*) FROM " + Table
+					+ " t, seq_region_attrib sra, attrib_type at WHERE t.seq_region_id = sra.seq_region_id AND sra.attrib_type_id = at.attrib_type_id AND at.code = 'toplevel' ");
+			if (rows != 0) {
+				if (key == 0) {
+					if (rows == toplevel) {
+						ReportManager.problem(this, con, "Table " + Table + " should have a toplevel flag - run ensembl/misc-scripts/meta_levels.pl");
+					} else {
+						count++;
+					}
+				} else {
+					if (rows != toplevel) {
+						ReportManager.problem(this, con, "Table " + Table + " has some non toplevel regions, should not have a toplevel flag - run ensembl/misc-scripts/meta_levels.pl");
+					} else {
+						count++;
+					}
+				}
+			} else {
+				if (key != 0) {
+					ReportManager.problem(this, con, "Empty table " + Table + " should not have a toplevel flag - run ensembl/misc-scripts/meta_levels.pl");
+				} else {
+					count++;
+				}
+			}
+		}
+		if (count == Tables.length) {
+			ReportManager.info(this, con, "Toplevel flags correctly set");
+			result = true;
+		}
 		return result;
 
 	}
