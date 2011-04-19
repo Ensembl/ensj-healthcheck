@@ -44,8 +44,9 @@ public class ReportLine {
 	protected String message;
 
 	/** The team responsible for this report */
-	protected String teamResponsible;
-
+	protected Team teamResponsible;
+	protected Team secondTeamResponsible;
+	
 	/** Output level that is higher than all the others */
 	public static final int NONE = 2000;
 
@@ -80,7 +81,7 @@ public class ReportLine {
 	 *            The message to report.
 	 */
 	public ReportLine(String testCaseName, String name, int level,
-			String message, String teamResponsible) {
+			String message, Team teamResponsible, Team secondTeamResponsible) {
 
 		this.testCaseName = testCaseName;
 		DatabaseInfo info = DatabaseRegistryEntry.getInfoFromName(name);
@@ -94,6 +95,7 @@ public class ReportLine {
 		this.level = level;
 		this.message = message;
 		this.teamResponsible = teamResponsible;
+this.secondTeamResponsible = secondTeamResponsible;
 
 	} // constructor
 
@@ -239,11 +241,11 @@ public class ReportLine {
 
 	} // getLevelAsString
 
-	public String getTeamResponsible() {
+	public Team getTeamResponsible() {
 		return teamResponsible;
 	}
 
-	public void setTeamResponsible(String teamResponsible) {
+	public void setTeamResponsible(Team teamResponsible) {
 		this.teamResponsible = teamResponsible;
 	}
 
