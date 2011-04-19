@@ -21,7 +21,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +34,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.TestRunner;
 import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.SQLParser;
@@ -81,7 +81,10 @@ public abstract class EnsTestCase {
 	protected String failureText;
 
 	/** Which team is responsible for fixing this healthcheck */
-	protected String teamResponsible;
+	protected Team teamResponsible;
+
+	/** Sometimes more than one team can be responsible */
+	protected Team secondTeamResponsible;
 
 	/** Logger object to use */
 	protected static Logger logger = Logger.getLogger("HealthCheckLogger");
@@ -246,7 +249,7 @@ public abstract class EnsTestCase {
 
 		StringBuffer gString = new StringBuffer();
 
-		java.util.Iterator it = groups.iterator();
+		Iterator<String> it = groups.iterator();
 		while (it.hasNext()) {
 			gString.append((String) it.next());
 			if (it.hasNext()) {
@@ -263,7 +266,7 @@ public abstract class EnsTestCase {
 	 * @param s
 	 *          A list of Strings containing the group names.
 	 */
-	public void setGroups(List s) {
+	public void setGroups(List<String> s) {
 
 		groups = s;
 
@@ -340,11 +343,11 @@ public abstract class EnsTestCase {
 	 *          The list of group names to check.
 	 * @return True if this test case is in any of the groups, false if it is in none.
 	 */
-	public boolean inGroups(List checkGroups) {
+	public boolean inGroups(List<String> checkGroups) {
 
 		boolean result = false;
 
-		java.util.Iterator it = checkGroups.iterator();
+		Iterator<String> it = checkGroups.iterator();
 		while (it.hasNext()) {
 			if (inGroup((String) it.next())) {
 				result = true;
@@ -511,7 +514,7 @@ public abstract class EnsTestCase {
 	 */
 	public String[] getRowValues(Connection con, String sql) {
 
-		ArrayList list = new ArrayList();
+		ArrayList<String> list = new ArrayList<String>();
 
 		try {
 			Statement stmt = con.createStatement();
@@ -542,7 +545,7 @@ public abstract class EnsTestCase {
 	 */
 	public String[] getColumnValues(Connection con, String sql) {
 
-		ArrayList list = new ArrayList();
+		ArrayList<String> list = new ArrayList<String>();
 
 		try {
 			Statement stmt = con.createStatement();
@@ -1318,8 +1321,6 @@ public abstract class EnsTestCase {
 	 */
 	public Connection getSchemaConnection(String schema) {
 
-		DatabaseRegistry reg = DBUtils.getMainDatabaseRegistry();
-
 		DatabaseRegistryEntry dbre = DBUtils.getMainDatabaseRegistry().getByExactName(schema);
 
 		return dbre.getConnection();
@@ -1612,7 +1613,7 @@ public abstract class EnsTestCase {
 	 */
 	public boolean appliesToType(DatabaseType t) {
 
-		Iterator it = appliesToTypes.iterator();
+		Iterator<DatabaseType> it = appliesToTypes.iterator();
 		while (it.hasNext()) {
 			DatabaseType type = (DatabaseType) it.next();
 			if (t.equals(type)) {
@@ -1657,7 +1658,7 @@ public abstract class EnsTestCase {
 	 * @param types
 	 *          A List of DatabaseTypes - overwrites the current setting.
 	 */
-	public void setAppliesToTypes(List types) {
+	public void setAppliesToTypes(List<DatabaseType> types) {
 
 		appliesToTypes = types;
 
@@ -2080,14 +2081,26 @@ public abstract class EnsTestCase {
 
 	// ----------------------------------------------------------------------
 
-	public String getTeamResponsible() {
+	public Team getTeamResponsible() {
 		return teamResponsible;
 	}
 
 	// ----------------------------------------------------------------------
 
-	public void setTeamResponsible(String teamResponsible) {
+	public void setTeamResponsible(Team teamResponsible) {
 		this.teamResponsible = teamResponsible;
+	}
+
+//----------------------------------------------------------------------
+
+	public Team getSecondTeamResponsible() {
+		return secondTeamResponsible;
+	}
+
+	// ----------------------------------------------------------------------
+
+	public void setSecondTeamResponsible(Team secondTeamResponsible) {
+		this.secondTeamResponsible = secondTeamResponsible;
 	}
 
 	// ----------------------------------------------------------------------
