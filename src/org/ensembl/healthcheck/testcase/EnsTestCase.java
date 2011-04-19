@@ -2104,6 +2104,20 @@ public abstract class EnsTestCase {
 	}
 
 	// ----------------------------------------------------------------------
+	
+	public String getPrintableTeamResponsibleString() {
+	
+		String team = getTeamResponsible().toString();
+		
+		if (getSecondTeamResponsible() != null) {
+			team += " and " + getSecondTeamResponsible();
+		}
+		
+		return team;
+		
+	}
+	
+	// ----------------------------------------------------------------------
 	/**
 	 * Get the names of the top level seq_regions.
 	 */

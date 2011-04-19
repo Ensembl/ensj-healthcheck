@@ -249,6 +249,26 @@ this.secondTeamResponsible = secondTeamResponsible;
 		this.teamResponsible = teamResponsible;
 	}
 
+	public Team getSecondTeamResponsible() {
+		return secondTeamResponsible;
+	}
+
+	public void setSecondTeamResponsible(Team teamResponsible) {
+		this.secondTeamResponsible = teamResponsible;
+	}
+	
+	public String getPrintableTeamResponsibleString() {
+	
+		String team = getTeamResponsible().toString();
+		
+		if (getSecondTeamResponsible() != null) {
+			team += " and " + getSecondTeamResponsible();
+		}
+		
+		return team;
+		
+	}
+	
 	public String getSpeciesName() {
 		return speciesName;
 	}
