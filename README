@@ -5,7 +5,7 @@ EnsEMBL HealthCheck
 REQUIREMENTS
 ============
 
-1. J2SDK 1.4 or later (see http://java.sun.com/ for downloads); this is already
+1. Java 6 JDK (v1.6 or later - see http://java.com/en/download/); this is already
    installed on the Farm in /usr/opt/java/.  Make sure that your
    JAVA_HOME environment variable is pointing to the correct directory and that the
    *correct* Java executables are in your path; put something like the following in
