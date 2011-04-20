@@ -95,9 +95,9 @@ public class AssemblyMultipleOverlap extends SingleDatabaseTestCase {
 				List strandsL = new ArrayList();
 				while (cmpRS.next()) {
 
-					startsL.add(new Long(cmpRS.getLong("asm_start")));
-					endsL.add(new Long(cmpRS.getLong("asm_end")));
-					strandsL.add(new Long(cmpRS.getLong("ori")));
+					startsL.add(cmpRS.getLong("asm_start"));
+					endsL.add(cmpRS.getLong("asm_end"));
+					strandsL.add(cmpRS.getLong("ori"));
 
 				}
 

@@ -130,7 +130,7 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 			ResultSet rs = stmt.executeQuery(sql);
 
 			while (rs != null && rs.next()) {
-				result.put(rs.getString(1), new Integer(rs.getInt(2)));
+				result.put(rs.getString(1), rs.getInt(2));
 				logger.finest(rs.getString(1) + " " + rs.getInt(2));
 			}
 
