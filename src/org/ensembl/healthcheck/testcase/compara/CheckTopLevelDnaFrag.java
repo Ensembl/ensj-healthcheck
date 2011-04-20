@@ -110,9 +110,9 @@ public class CheckTopLevelDnaFrag extends MultiDatabaseTestCase {
           if (speciesDbr != null) {
               Connection speciesCon = speciesDbr[0].getConnection();
               int maxRows = 50000;
-              int rows = getRowCount(comparaCon, new String("SELECT COUNT(*) FROM" +
+              int rows = getRowCount(comparaCon, "SELECT COUNT(*) FROM" +
                   " dnafrag LEFT JOIN genome_db USING (genome_db_id)" +
-                  " WHERE genome_db.name = \"" + species + "\" AND assembly_default = 1"));
+                  " WHERE genome_db.name = \"" + species + "\" AND assembly_default = 1");
               if (rows > maxRows) {
                   // Divide and conquer approach for large sets
                   for (int rowCount=0; rowCount<rows; rowCount+=maxRows) {

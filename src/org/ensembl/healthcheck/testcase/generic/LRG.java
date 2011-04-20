@@ -88,7 +88,7 @@ public class LRG extends SingleDatabaseTestCase {
 		}
 
 		// Check that transcript annotations exist
-		stmt = new String("SELECT t.seq_region_id, COUNT(*) FROM transcript t WHERE t.seq_region_id IN (" + idList + ") GROUP BY t.seq_region_id");
+		stmt = "SELECT t.seq_region_id, COUNT(*) FROM transcript t WHERE t.seq_region_id IN (" + idList + ") GROUP BY t.seq_region_id";
 		count = (seq_regions.length - getRowCount(con, stmt));
 		if (count != 0) {
 			ReportManager.problem(this, con, String.valueOf(count) + " LRG seq_regions do not have any transcript annotations");
