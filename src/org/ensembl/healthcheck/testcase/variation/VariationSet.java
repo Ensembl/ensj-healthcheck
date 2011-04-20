@@ -273,7 +273,7 @@ public class VariationSet extends SingleDatabaseTestCase {
 					fetch = rs.next();
 				}
 			} else {
-				msg += new String("No variations in variation sets have validation_status 'failed'\n");
+				msg += "No variations in variation sets have validation_status 'failed'\n";
 			}
 
 			// Prepare a statement for checking the variation_set_ids
