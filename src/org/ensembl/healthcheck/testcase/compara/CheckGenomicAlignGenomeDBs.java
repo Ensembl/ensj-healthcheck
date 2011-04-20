@@ -87,7 +87,7 @@ public class CheckGenomicAlignGenomeDBs extends SingleDatabaseTestCase {
 		 */
 		
 		
-		String gdb_sql = new String("SELECT COUNT(*) FROM species_set LEFT JOIN method_link_species_set USING (species_set_id) WHERE method_link_species_set_id = " + method_link_species_set_ids[i]);
+		String gdb_sql = "SELECT COUNT(*) FROM species_set LEFT JOIN method_link_species_set USING (species_set_id) WHERE method_link_species_set_id = " + method_link_species_set_ids[i];
 		String[] num_genome_db_ids = getColumnValues(con, gdb_sql);
 		
 

@@ -46,11 +46,11 @@ public class ComparePreviousVersionValidationStatus extends ComparePreviousVersi
 		String query;
 
 		// Query getting the structure of the validation_status column
-		query = new String("DESCRIBE variation validation_status");
-		sqlQueries.setProperty(new String("describeValidationStatus"), query);
+		query = "DESCRIBE variation validation_status";
+		sqlQueries.setProperty("describeValidationStatus", query);
 
 		// Query counting the number of variations with a particular validation_status
-		query = new String("SELECT SET_ELEMENT, COUNT(*) FROM variation v WHERE FIND_IN_SET(SET_ELEMENT,validation_status)");
+		query = "SELECT SET_ELEMENT, COUNT(*) FROM variation v WHERE FIND_IN_SET(SET_ELEMENT,validation_status)";
 		sqlQueries.setProperty("countVariationsByValidationStatus", query);
 
 		return sqlQueries;

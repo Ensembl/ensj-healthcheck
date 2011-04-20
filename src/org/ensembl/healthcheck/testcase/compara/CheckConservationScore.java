@@ -90,9 +90,9 @@ public class CheckConservationScore extends SingleDatabaseTestCase {
 		     */
 		    String useful_sql;
 		    if (ancestral_seq_id == "") {
-			useful_sql = new String("SELECT genomic_align_block.genomic_align_block_id FROM genomic_align_block LEFT JOIN genomic_align USING (genomic_align_block_id) LEFT JOIN conservation_score USING (genomic_align_block_id) WHERE genomic_align_block.method_link_species_set_id = " +  multi_align_mlss_id + " AND conservation_score.genomic_align_block_id IS NULL GROUP BY genomic_align_block.genomic_align_block_id HAVING count(*) > 3");
+			useful_sql = "SELECT genomic_align_block.genomic_align_block_id FROM genomic_align_block LEFT JOIN genomic_align USING (genomic_align_block_id) LEFT JOIN conservation_score USING (genomic_align_block_id) WHERE genomic_align_block.method_link_species_set_id = " +  multi_align_mlss_id + " AND conservation_score.genomic_align_block_id IS NULL GROUP BY genomic_align_block.genomic_align_block_id HAVING count(*) > 3";
 		    } else {
-			useful_sql = new String("SELECT genomic_align_block.genomic_align_block_id FROM genomic_align_block LEFT JOIN conservation_score USING (genomic_align_block_id) LEFT JOIN genomic_align USING (genomic_align_block_id) LEFT JOIN dnafrag USING (dnafrag_id) WHERE genomic_align_block.method_link_species_set_id = " + multi_align_mlss_id + " AND conservation_score.genomic_align_block_id IS NULL AND genome_db_id <> " + ancestral_seq_id + " GROUP BY genomic_align_block.genomic_align_block_id HAVING count(*) > 3");
+			useful_sql = "SELECT genomic_align_block.genomic_align_block_id FROM genomic_align_block LEFT JOIN conservation_score USING (genomic_align_block_id) LEFT JOIN genomic_align USING (genomic_align_block_id) LEFT JOIN dnafrag USING (dnafrag_id) WHERE genomic_align_block.method_link_species_set_id = " + multi_align_mlss_id + " AND conservation_score.genomic_align_block_id IS NULL AND genome_db_id <> " + ancestral_seq_id + " GROUP BY genomic_align_block.genomic_align_block_id HAVING count(*) > 3";
 		    }
 
 		    String[] failures = getColumnValues(con, useful_sql); 

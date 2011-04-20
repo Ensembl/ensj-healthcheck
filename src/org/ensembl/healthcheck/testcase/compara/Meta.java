@@ -128,10 +128,10 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 		Connection con = dbre.getConnection();
 
 		// get all the links between conservation scores and multiple genomic alignments
-		String sql = new String("SELECT mlss1.method_link_species_set_id," + " mlss2.method_link_species_set_id, ml1.type, ml2.type, count(*)"
+		String sql = "SELECT mlss1.method_link_species_set_id," + " mlss2.method_link_species_set_id, ml1.type, ml2.type, count(*)"
 				+ " FROM method_link ml1, method_link_species_set mlss1, method_link ml2," + " method_link_species_set mlss2 WHERE mlss1.method_link_id = ml1.method_link_id "
 				+ " AND ml1.class = \"ConservationScore.conservation_score\" " + " AND mlss1.species_set_id = mlss2.species_set_id AND mlss2.method_link_id = ml2.method_link_id"
-				+ " AND (ml2.class = \"GenomicAlignBlock.multiple_alignment\" OR ml2.class LIKE \"GenomicAlignTree.%\") GROUP BY mlss1.method_link_species_set_id");
+				+ " AND (ml2.class = \"GenomicAlignBlock.multiple_alignment\" OR ml2.class LIKE \"GenomicAlignTree.%\") GROUP BY mlss1.method_link_species_set_id";
 
 		try {
 			Statement stmt = con.createStatement();
@@ -246,10 +246,10 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 			ResultSet rs = stmt.executeQuery(sql);
 			if (rs.first()) {
 				if (rs.getInt(2) != new Integer(dbNameVersion).intValue()) {
-					MetaEntriesToUpdate.put(new String("schema_version"), new Integer(dbNameVersion));
+					MetaEntriesToUpdate.put("schema_version", new Integer(dbNameVersion));
 				}
 			} else {
-				MetaEntriesToAdd.put(new String("schema_version"), new Integer(dbNameVersion));
+				MetaEntriesToAdd.put("schema_version", new Integer(dbNameVersion));
 			}
 			rs.close();
 			stmt.close();
@@ -350,10 +350,10 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 			ResultSet rs = stmt.executeQuery(sql);
 			if (rs.first()) {
 				if (rs.getInt(2) != globalMaxAlignmentLength) {
-					MetaEntriesToUpdate.put(new String("max_alignment_length"), new Integer(globalMaxAlignmentLength).toString());
+					MetaEntriesToUpdate.put("max_alignment_length", new Integer(globalMaxAlignmentLength).toString());
 				}
 			} else {
-				MetaEntriesToAdd.put(new String("max_alignment_length"), new Integer(globalMaxAlignmentLength).toString());
+				MetaEntriesToAdd.put("max_alignment_length", new Integer(globalMaxAlignmentLength).toString());
 			}
 			rs.close();
 			stmt.close();
@@ -422,7 +422,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 			while (it.hasNext()) {
 				Object next = it.next();
 
-				String sql = new String("UPDATE meta SET species_id = " + SpeciesIdToUpdate.get(next) + " WHERE meta_key = \"" + next + "\";");
+				String sql = "UPDATE meta SET species_id = " + SpeciesIdToUpdate.get(next) + " WHERE meta_key = \"" + next + "\";";
 				int numRows = stmt.executeUpdate(sql);
 				if (numRows != 1) {
 					ReportManager.problem(this, con, "WARNING: " + numRows + " rows UPDATED for meta_key \"" + next + "\" while repairing meta");

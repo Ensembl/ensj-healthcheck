@@ -186,7 +186,7 @@ public class VariationSet extends SingleDatabaseTestCase {
 
 			// Check that no subset has more than one parent
 			if ((rs = stmt.executeQuery(sqlQueries.getProperty("multiParent"))) != null && (fetch = rs.next())) {
-				String sets = new String();
+				String sets = "";
 				while (fetch) {
 					sets += "[" + this.getVariationSetName(rs.getInt(1), setName) + "], ";
 					fetch = rs.next();

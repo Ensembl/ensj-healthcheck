@@ -80,7 +80,7 @@ public class LRG extends SingleDatabaseTestCase {
 
 		// Check that gene annotations exist
 		// TODO - this SQL may fail if there are a large number of LRGs, IN list might be exceeded
-		stmt = new String("SELECT g.seq_region_id, COUNT(*) FROM gene g WHERE g.seq_region_id IN (" + idList + ") GROUP BY g.seq_region_id");
+		stmt = "SELECT g.seq_region_id, COUNT(*) FROM gene g WHERE g.seq_region_id IN (" + idList + ") GROUP BY g.seq_region_id";
 		int count = (seq_regions.length - getRowCount(con, stmt));
 		if (count != 0) {
 			ReportManager.problem(this, con, String.valueOf(count) + " LRG seq_regions do not have any gene annotations");

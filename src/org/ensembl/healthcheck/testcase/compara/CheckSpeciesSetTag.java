@@ -248,8 +248,8 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 			String sql1 = "SELECT species_set_id, value FROM species_set_tag WHERE tag = 'name'";
 
 			// Find all the species_set_ids for multiple alignments
-			String sql2 = new String("SELECT species_set_id, name FROM method_link_species_set JOIN method_link USING (method_link_id) WHERE"
-					+ " class LIKE '%multiple_alignment%' OR class LIKE '%tree_alignment%' OR class LIKE '%ancestral_alignment%'");
+			String sql2 = "SELECT species_set_id, name FROM method_link_species_set JOIN method_link USING (method_link_id) WHERE"
+					+ " class LIKE '%multiple_alignment%' OR class LIKE '%tree_alignment%' OR class LIKE '%ancestral_alignment%'";
 
 			try {
 				Statement stmt1 = con.createStatement();
@@ -312,7 +312,7 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 							+ " LEFT JOIN ncbi_taxa_node nod2 ON (nod1.left_index < nod2.left_index and nod1.right_index > nod2.left_index)" + " LEFT JOIN genome_db ON (nod2.taxon_id = genome_db.taxon_id)"
 							+ " WHERE nod1.taxon_id = '" + rs_tag.getInt(2) + "'" + " AND genome_db_id IS NOT NULL AND genome_db.assembly_default = 1");
 					// 2. genome_db_ids from the species_set table
-					String sql_sset = new String("SELECT GROUP_CONCAT(genome_db_id ORDER BY genome_db_id)" + " FROM species_set WHERE species_set_id = " + rs_tag.getInt(1));
+					String sql_sset = "SELECT GROUP_CONCAT(genome_db_id ORDER BY genome_db_id)" + " FROM species_set WHERE species_set_id = " + rs_tag.getInt(1);
 					Statement stmt_taxon = con.createStatement();
 					ResultSet rs_taxon = stmt_taxon.executeQuery(sql_taxon);
 					Statement stmt_sset = con.createStatement();
