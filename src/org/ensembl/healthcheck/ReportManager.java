@@ -894,6 +894,8 @@ public class ReportManager {
 			stmt.setString(9, report.getPrintableTeamResponsibleString());
 			stmt.executeUpdate();
 
+			stmt.close();
+
 		} catch (SQLException e) {
 
 			System.err.println("Error executing:\n" + sql);
