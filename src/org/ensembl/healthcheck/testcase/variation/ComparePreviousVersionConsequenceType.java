@@ -47,36 +47,36 @@ public class ComparePreviousVersionConsequenceType extends ComparePreviousVersio
 		String query;
 
 		// Query getting the structure of the transcript_variation consequence_types column
-		query = new String("DESCRIBE transcript_variation_allele consequence_types");
-		sqlQueries.setProperty(new String("describeTranscriptVariation"), query);
+		query = "DESCRIBE transcript_variation_allele consequence_types";
+		sqlQueries.setProperty("describeTranscriptVariation", query);
 
 		// Query counting the total number of transcript_variation alleles and assigning the number to the variable @total
-		query = new String("SELECT COUNT(*) FROM transcript_variation_allele tva INTO @total");
-		sqlQueries.setProperty(new String("countTranscriptVariations"), query);
+		query = "SELECT COUNT(*) FROM transcript_variation_allele tva INTO @total";
+		sqlQueries.setProperty("countTranscriptVariations", query);
 
 		// Query counting the number of transcript_variation for a particular consequence type
-		query = new String("SELECT 'SET_ELEMENT', COUNT(*) FROM transcript_variation_allele tva WHERE FIND_IN_SET('SET_ELEMENT',tva.consequence_types)");
-		sqlQueries.setProperty(new String("countTranscriptVariationsByConsequence"), query);
+		query = "SELECT 'SET_ELEMENT', COUNT(*) FROM transcript_variation_allele tva WHERE FIND_IN_SET('SET_ELEMENT',tva.consequence_types)";
+		sqlQueries.setProperty("countTranscriptVariationsByConsequence", query);
 
 		// Query counting the proportional number of transcript_variation for a particular consequence type
-		query = new String("SELECT 'SET_ELEMENT (percentage)', ROUND(100*COUNT(*)/@total) FROM transcript_variation_allele tva WHERE FIND_IN_SET('SET_ELEMENT',tva.consequence_types)");
-		sqlQueries.setProperty(new String("countTranscriptVariationProportionsByConsequence"), query);
+		query = "SELECT 'SET_ELEMENT (percentage)', ROUND(100*COUNT(*)/@total) FROM transcript_variation_allele tva WHERE FIND_IN_SET('SET_ELEMENT',tva.consequence_types)";
+		sqlQueries.setProperty("countTranscriptVariationProportionsByConsequence", query);
 
 		// Query getting the structure of the regulatory_region_variation consequence_types column
-		query = new String("DESCRIBE regulatory_region_variation_allele consequence_types");
-		sqlQueries.setProperty(new String("describeRegulatoryRegionVariation"), query);
+		query = "DESCRIBE regulatory_region_variation_allele consequence_types";
+		sqlQueries.setProperty("describeRegulatoryRegionVariation", query);
 
 		// Query counting the total number of transcript_variation alleles and assigning the number to the variable @total
-		query = new String("SELECT COUNT(*) FROM regulatory_region_variation_allele rrva INTO @total");
-		sqlQueries.setProperty(new String("countRegulatoryRegionVariations"), query);
+		query = "SELECT COUNT(*) FROM regulatory_region_variation_allele rrva INTO @total";
+		sqlQueries.setProperty("countRegulatoryRegionVariations", query);
 
 		// Query counting the number of transcript_variation for a particular consequence type
-		query = new String("SELECT 'SET_ELEMENT', COUNT(*) FROM regulatory_region_variation_allele rrva WHERE FIND_IN_SET('SET_ELEMENT',rrva.consequence_types)");
-		sqlQueries.setProperty(new String("countRegulatoryRegionVariationsByConsequence"), query);
+		query = "SELECT 'SET_ELEMENT', COUNT(*) FROM regulatory_region_variation_allele rrva WHERE FIND_IN_SET('SET_ELEMENT',rrva.consequence_types)";
+		sqlQueries.setProperty("countRegulatoryRegionVariationsByConsequence", query);
 
 		// Query counting the proportional number of transcript_variation for a particular consequence type
-		query = new String("SELECT 'SET_ELEMENT (percentage)', ROUND(100*COUNT(*)/@total) FROM regulatory_region_variation_allele rrva WHERE FIND_IN_SET('SET_ELEMENT',rrva.consequence_types)");
-		sqlQueries.setProperty(new String("countRegulatoryRegionVariationProportionsByConsequence"), query);
+		query = "SELECT 'SET_ELEMENT (percentage)', ROUND(100*COUNT(*)/@total) FROM regulatory_region_variation_allele rrva WHERE FIND_IN_SET('SET_ELEMENT',rrva.consequence_types)";
+		sqlQueries.setProperty("countRegulatoryRegionVariationProportionsByConsequence", query);
 
 		return sqlQueries;
 	}

@@ -337,7 +337,7 @@ public class VariationSet extends SingleDatabaseTestCase {
 		path.add(new Integer(parent));
 
 		if (seen) {
-			path.add(new String("(!)"));
+			path.add("(!)");
 			return path;
 		}
 
