@@ -111,7 +111,7 @@ public class VariationSet extends SingleDatabaseTestCase {
 		// Query for checking that the primary keys of all variation sets will fit into the variation_set_id set column in
 		// variation_feature
 		query = new String("SELECT COUNT(*) FROM variation_set vs WHERE vs.variation_set_id > ?");
-		sqlQueries.setProperty(new String("variationSetIds"), query);
+		sqlQueries.setProperty("variationSetIds", query);
 
 		return sqlQueries;
 	}
