@@ -308,7 +308,7 @@ public class VariationSet extends SingleDatabaseTestCase {
 		pStmt.setInt(1, variationSetId);
 		ResultSet rs = pStmt.executeQuery();
 
-		String name = new String();
+		String name = "";
 		if (rs.next()) {
 			name = rs.getString(1);
 		}

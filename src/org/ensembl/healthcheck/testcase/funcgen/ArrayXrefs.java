@@ -206,8 +206,8 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 			StringBuffer inList        = new StringBuffer();
 			String       edbName       = dbre.getSpecies() + "_core_Transcript";
 			String[]     assemblyBuild = schemaBuild.split("_");
-			String       xrefQuery     = new String();
-			String       edbClause     = new String();
+			String       xrefQuery     = "";
+			String       edbClause     = "";
 
 			//We really need to match the genebuild between the edb and the schema_build
 			//otherwise we have out of date data?
