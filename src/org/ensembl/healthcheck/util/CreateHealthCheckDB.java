@@ -57,7 +57,6 @@ public class CreateHealthCheckDB {
 		Set databasesOnServer = new HashSet<String>();
 		
 		try {
-	        Statement stmt = con.createStatement();
 	        
 	        DatabaseMetaData metadata = con.getMetaData();
 	        ResultSet catalogs = metadata.getCatalogs();

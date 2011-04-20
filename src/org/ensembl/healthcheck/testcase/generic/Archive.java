@@ -81,19 +81,7 @@ public class Archive extends SingleDatabaseTestCase {
 		result &= checkChangedInGeneArchive(con, "transcript", "T", MIN_MAPPING_SESSION_ID);
 		logger.info("Checking changed genes");
 		result &= checkChangedInGeneArchive(con, "gene", "G", MIN_MAPPING_SESSION_ID);
-		// logger.info("Checking deleted translations in peptide archive");
-		// result &= checkDeletedTranslationsInPeptideArchive(con, MIN_MAPPING_SESSION_ID);
-		// logger.info("Checking translations from peptide archive in gene archive");
-		// result &= checkTranslationsFromPeptideArchiveInGeneArchive(con);
-		// logger.info("Checking no current translations in peptide archive");
-		// result &= checkNoCurrentTranslationsInPeptideArchive(con);
-		logger.info("Checking gene propagation IDs are current");
-		result &= checkPropagationIDsAreCurrent(con, "gene", "G");
-		logger.info("Checking transcript propagation IDs are current");
-		result &= checkPropagationIDsAreCurrent(con, "transcript", "T");
-		logger.info("Checking translation propagation IDs are current");
-		result &= checkPropagationIDsAreCurrent(con, "translation", "P");
-
+	
 		return result;
 	}
 
@@ -158,25 +146,6 @@ public class Archive extends SingleDatabaseTestCase {
 			ReportManager.problem(this, con, rows.length + " current translations in peptide archive");
 			result = false;
 		}
-
-		return result;
-	}
-
-	/** this quite a slow query, about 1min to hopefulyy return nothing. */
-	private boolean checkPropagationIDsAreCurrent(final Connection con, final String type, final String filter) {
-		// select * from stable_id_event sie left join gene_stable_id gsi on
-		// sie.new_stable_id = gsi.stable_id where mapping_session_id = 348 and
-		// sie.new_stable_id like "ENSG%" and gsi.stable_id is null String
-		// type, String
-		// filter) {
-
-		boolean result = true;
-
-		String sql = "SELECT sie.new_stable_id " + "FROM stable_id_event sie " + "         LEFT_JOIN " + type + "_stable_id tsi " + "         ON sie.new_stable_id = tsi.stable_id "
-				+ "         mapping_session ms " + " WHERE ms.old_database_name=\"ALL\" " + "       AND sie.mapping_session_id = ms.mapping_session_id " + "       AND sie.new_stable_id like \"%" + filter
-				+ "%\" " + "       AND tsi.stable_id is NULL";
-
-		// TODO errrm
 
 		return result;
 	}
