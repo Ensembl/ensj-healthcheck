@@ -162,13 +162,13 @@ public enum Species {
 	 *          The taxonomy ID to look up.
 	 * @return The species associated with t, or Species.UNKNOWN if none is found.
 	 */
-	public static Species getSpeciesFromTaxonomyID(String t) {
+	public static Species getSpeciesFromTaxonomyID(int taxon) {
 		Species result = UNKNOWN;
 
-		if (taxonIDToSpecies.containsKey(t)) {
-			result = (Species) taxonIDToSpecies.get(t);
+		if (taxonIDToSpecies.containsKey(taxon)) {
+			result = (Species) taxonIDToSpecies.get(taxon);
 		} else {
-			logger.warning("Cannot get species for taxonomy ID " + t + " returning Species.UNKNOWN");
+			logger.warning("Cannot get species for taxonomy ID " + taxon + " returning Species.UNKNOWN");
 		}
 
 		return result;
