@@ -351,7 +351,7 @@ public class VariationSet extends SingleDatabaseTestCase {
 			while (rs.next() && !seen) {
 				int id = rs.getInt(1);
 				subPath = this.getAllSubsets(id, new ArrayList(path), pStmt);
-				seen = subPath.contains(new String("(!)"));
+				seen = subPath.contains("(!)");
 			}
 		}
 
