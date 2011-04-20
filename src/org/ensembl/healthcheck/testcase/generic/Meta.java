@@ -16,6 +16,7 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -635,7 +636,7 @@ public class Meta extends SingleDatabaseTestCase {
 
 		} catch (NumberFormatException e) {
 
-			ReportManager.problem(this, con, "Problem parsing last geneset update entry from previous database: " + e.getStackTrace());
+			ReportManager.problem(this, con, "Problem parsing last geneset update entry from previous database: " + Arrays.toString(e.getStackTrace()));
 			return false;
 
 		}
