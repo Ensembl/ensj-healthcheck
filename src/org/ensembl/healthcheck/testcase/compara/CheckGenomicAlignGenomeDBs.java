@@ -104,7 +104,7 @@ public class CheckGenomicAlignGenomeDBs extends SingleDatabaseTestCase {
 		 * expected genome_db_ids.
 		 */
 		String useful_sql;
-		useful_sql = new String("SELECT COUNT(DISTINCT genome_db_id) FROM (SELECT * FROM genomic_align_block WHERE method_link_species_set_id = " + method_link_species_set_ids[i] + " limit 100) t1 LEFT JOIN genomic_align USING (genomic_align_block_id) LEFT JOIN dnafrag USING (dnafrag_id) HAVING COUNT(DISTINCT genome_db_id) >= (SELECT COUNT(*) FROM species_set LEFT JOIN method_link_species_set USING (species_set_id) WHERE method_link_species_set_id = " + method_link_species_set_ids[i] + " );");
+		useful_sql = "SELECT COUNT(DISTINCT genome_db_id) FROM (SELECT * FROM genomic_align_block WHERE method_link_species_set_id = " + method_link_species_set_ids[i] + " limit 100) t1 LEFT JOIN genomic_align USING (genomic_align_block_id) LEFT JOIN dnafrag USING (dnafrag_id) HAVING COUNT(DISTINCT genome_db_id) >= (SELECT COUNT(*) FROM species_set LEFT JOIN method_link_species_set USING (species_set_id) WHERE method_link_species_set_id = " + method_link_species_set_ids[i] + " )";
 		String[] success = getColumnValues(con, useful_sql); 
 
 		if (success.length > 0) {

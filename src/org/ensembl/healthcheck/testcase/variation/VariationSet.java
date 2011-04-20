@@ -206,7 +206,7 @@ public class VariationSet extends SingleDatabaseTestCase {
 					// If the tree structure is invalid, the path will contain "(!)"
 					if (path.contains(new String("(!)"))) {
 						// Translate the dbIDs of the nodes to the corresponding names stored in the variation_set table
-						String nodes = new String();
+						String nodes = "";
 						for (int i = 0; i < (path.size() - 1); i++) {
 							nodes += "[" + this.getVariationSetName(((Integer) path.get(i)).intValue(), setName) + "]->";
 						}

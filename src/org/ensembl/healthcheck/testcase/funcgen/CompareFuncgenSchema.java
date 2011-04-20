@@ -116,8 +116,8 @@ public class CompareFuncgenSchema extends MultiDatabaseTestCase {
 
 
 		if (dbType != null){
-			String masterSchemaVar = new String("master.schema");
-			String definitionFileVar = new String("schema.file");
+			String masterSchemaVar = "master.schema";
+			String definitionFileVar = "schema.file";
 			
 			if (! dbType.isGeneric()) {
 				masterSchemaVar = "master." + dbType.toString() + "_schema";

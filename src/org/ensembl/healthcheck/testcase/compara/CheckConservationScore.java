@@ -103,7 +103,7 @@ public class CheckConservationScore extends SingleDatabaseTestCase {
 			 * one of cow or dog and still not get above the
 			 * min_rej_sub score (default=0.5)
 			 */
-			String useful_sql4 = new String("SELECT genomic_align_block.genomic_align_block_id FROM genomic_align_block LEFT JOIN genomic_align USING (genomic_align_block_id) LEFT JOIN conservation_score USING (genomic_align_block_id) WHERE genomic_align_block.method_link_species_set_id = " +  multi_align_mlss_id + " AND conservation_score.genomic_align_block_id IS NULL GROUP BY genomic_align_block.genomic_align_block_id HAVING count(*) = 4");
+			String useful_sql4 = "SELECT genomic_align_block.genomic_align_block_id FROM genomic_align_block LEFT JOIN genomic_align USING (genomic_align_block_id) LEFT JOIN conservation_score USING (genomic_align_block_id) WHERE genomic_align_block.method_link_species_set_id = " +  multi_align_mlss_id + " AND conservation_score.genomic_align_block_id IS NULL GROUP BY genomic_align_block.genomic_align_block_id HAVING count(*) = 4";
 			String[] failures4 = getColumnValues(con, useful_sql4);
 			if (failures.length == failures4.length) {
 			    ReportManager.problem(this, con, "WARNING conservation_score -> multiple alignments which have more than 3 species but don't have any conservation scores");

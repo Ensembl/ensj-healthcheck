@@ -118,7 +118,7 @@ public class Meta extends SingleDatabaseTestCase {
 		metaKeys = new String[] { "schema_version", "schema_type", "patch" };
 		// Check that the species_id column is NULL for meta entries that concerns the schema
 		for (int i = 0; i < metaKeys.length; i++) {
-			String sql = new String("SELECT meta_id FROM meta WHERE meta_key = '" + metaKeys[i] + "' AND species_id IS NOT NULL");
+			String sql = "SELECT meta_id FROM meta WHERE meta_key = '" + metaKeys[i] + "' AND species_id IS NOT NULL";
 			String[] violations = getColumnValues(con, sql);
 			for (int j = 0; j < violations.length; j++) {
 				result = false;

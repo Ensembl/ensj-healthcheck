@@ -72,7 +72,7 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 				String sql = "SELECT MAX(s.variation_id) FROM " + tables[i] + " s";
 				sql = getRowColumnValue(con, sql);
 				if (sql.length() == 0) {
-					sql = new String("0");
+					sql = "0";
 				}
 				int maxId = Integer.parseInt(sql);
 

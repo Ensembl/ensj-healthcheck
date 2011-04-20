@@ -165,7 +165,7 @@ public class CheckTaxon extends MultiDatabaseTestCase {
                genbank_hidden_flag set. On top of that, we want to compare the classification
                in one single SQL. Therefore, we are getting the results recursivelly and
                then execute a dumb SQL query with result itself */
-            String comparaClassification = new String("");
+            String comparaClassification = "";
             String values1[] = getRowValues(comparaCon,
                 "SELECT rank, parent_id, genbank_hidden_flag FROM ncbi_taxa_node WHERE taxon_id = " + taxon_id);
             if (values1.length == 0) {

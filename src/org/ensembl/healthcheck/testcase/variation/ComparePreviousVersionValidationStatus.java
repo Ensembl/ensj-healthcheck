@@ -19,8 +19,8 @@ import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 
 /**
- * Compare the number of variations having each validation status between
- * the current database and the database on the secondary server.
+ * Compare the number of variations having each validation status between the current database and the database on the secondary
+ * server.
  */
 
 public class ComparePreviousVersionValidationStatus extends ComparePreviousVersionBase {
@@ -36,49 +36,49 @@ public class ComparePreviousVersionValidationStatus extends ComparePreviousVersi
 		setDescription("Compare the number of variations having each validation status in the current database with those from the equivalent database on the secondary server");
 	}
 
-        /**
-         * Store the SQL queries in a Properties object.
-         */
-        private Properties getSQLQueries() {
-            
-            // Store all the needed SQL statements in a Properties object
-            Properties sqlQueries = new Properties();
-            String query;
-            
-	    // Query getting the structure of the validation_status column
-	    query = new String("DESCRIBE variation validation_status");
-	    sqlQueries.setProperty(new String("describeValidationStatus"),query);
-	    
-	    // Query counting the number of variations with a particular validation_status
-	    query = new String("SELECT SET_ELEMENT, COUNT(*) FROM variation v WHERE FIND_IN_SET(SET_ELEMENT,validation_status)");
-	    sqlQueries.setProperty(new String("countVariationsByValidationStatus"),query);
-	    
-	    return sqlQueries;
+	/**
+	 * Store the SQL queries in a Properties object.
+	 */
+	private Properties getSQLQueries() {
+
+		// Store all the needed SQL statements in a Properties object
+		Properties sqlQueries = new Properties();
+		String query;
+
+		// Query getting the structure of the validation_status column
+		query = new String("DESCRIBE variation validation_status");
+		sqlQueries.setProperty(new String("describeValidationStatus"), query);
+
+		// Query counting the number of variations with a particular validation_status
+		query = new String("SELECT SET_ELEMENT, COUNT(*) FROM variation v WHERE FIND_IN_SET(SET_ELEMENT,validation_status)");
+		sqlQueries.setProperty("countVariationsByValidationStatus", query);
+
+		return sqlQueries;
 	}
-	
+
 	protected Map getCounts(DatabaseRegistryEntry dbre) {
-            
-            Map<String, Integer> counts = new HashMap<String, Integer>();
-            
-	    // Get all the needed SQL statements in a Properties object
-	    Properties sqlQueries = getSQLQueries();
-	    
-	    // First, get the structure of the validation_status
-	    String[] description = getRowValues(dbre.getConnection(), sqlQueries.getProperty("describeValidationStatus"));
-	    
-	    // The second column contains the type, strip out the individual, comma-separated set elements
-	    String[] setElements = description[1].split(",");
-	    
-	    // Loop over the set elements and count the number for each
-	    for (int i=0; i<setElements.length; i++) {
-		
-		// We need to strip away any 'set(' or ')' strings from the set element
-		setElements[i] = setElements[i].replaceAll("set\\(|\\)","");
-		
-		// Replace the 'SET_ELEMENT' placeholder with the current validation_status and do the query
-		counts.putAll(getCountsBySQL(dbre, sqlQueries.getProperty("countVariationsByValidationStatus").replaceAll("SET_ELEMENT",setElements[i])));
-	    }
-            return counts;
+
+		Map<String, Integer> counts = new HashMap<String, Integer>();
+
+		// Get all the needed SQL statements in a Properties object
+		Properties sqlQueries = getSQLQueries();
+
+		// First, get the structure of the validation_status
+		String[] description = getRowValues(dbre.getConnection(), sqlQueries.getProperty("describeValidationStatus"));
+
+		// The second column contains the type, strip out the individual, comma-separated set elements
+		String[] setElements = description[1].split(",");
+
+		// Loop over the set elements and count the number for each
+		for (int i = 0; i < setElements.length; i++) {
+
+			// We need to strip away any 'set(' or ')' strings from the set element
+			setElements[i] = setElements[i].replaceAll("set\\(|\\)", "");
+
+			// Replace the 'SET_ELEMENT' placeholder with the current validation_status and do the query
+			counts.putAll(getCountsBySQL(dbre, sqlQueries.getProperty("countVariationsByValidationStatus").replaceAll("SET_ELEMENT", setElements[i])));
+		}
+		return counts;
 	}
 
 	// ------------------------------------------------------------------------
