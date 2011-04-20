@@ -79,11 +79,11 @@ public class SpeciesTest extends TestCase {
         assertEquals(Species.getTaxonomyID(Species.CIONA_INTESTINALIS), "7719");
         assertEquals(Species.getTaxonomyID(Species.APIS_MELLIFERA), "7460");
         
-        assertEquals(Species.getSpeciesFromTaxonomyID("10090"), Species.MUS_MUSCULUS);
-        assertEquals(Species.getSpeciesFromTaxonomyID("10116"), Species.RATTUS_NORVEGICUS);
+        assertEquals(Species.getSpeciesFromTaxonomyID(10090), Species.MUS_MUSCULUS);
+        assertEquals(Species.getSpeciesFromTaxonomyID(10116), Species.RATTUS_NORVEGICUS);
 
         assertEquals(Species.getTaxonomyID(Species.UNKNOWN), "");
-        assertEquals(Species.getSpeciesFromTaxonomyID("-1"), Species.UNKNOWN);
+        assertEquals(Species.getSpeciesFromTaxonomyID(-1), Species.UNKNOWN);
 
     }
 
