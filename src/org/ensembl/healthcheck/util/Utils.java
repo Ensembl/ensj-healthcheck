@@ -661,8 +661,11 @@ public final class Utils {
 	public static void deleteFile(String file) {
 
 		File f = new File(file);
-		f.delete();
+		boolean retVal = f.delete();
 
+		if (!retVal) {
+			System.err.println(String.format("Error - could not delete %s", file));
+		}
 	}
 
 	// -------------------------------------------------------------------------
