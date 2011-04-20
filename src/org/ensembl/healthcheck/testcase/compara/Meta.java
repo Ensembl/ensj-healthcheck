@@ -197,7 +197,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 		// get version from meta table
 		Connection con = dbre.getConnection();
 
-		String sql = new String("SELECT species_id, meta_key FROM meta");
+		String sql = "SELECT species_id, meta_key FROM meta";
 
 		try {
 			Statement stmt = con.createStatement();
@@ -206,7 +206,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 				if (rs.getString(2).equals("schema_version")) {
 					if (rs.getInt(1) != 0) {
 						// set species_id of schema_version to NULL
-						SpeciesIdToUpdate.put(rs.getString(2), new String("NULL"));
+						SpeciesIdToUpdate.put(rs.getString(2), "NULL");
 					}
 				} else {
 					if (rs.getInt(1) != 1) {
@@ -240,7 +240,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 		Connection con = dbre.getConnection();
 
 		// Get current global value from the meta table (used for backwards compatibility)
-		String sql = new String("SELECT meta_key, meta_value" + " FROM meta WHERE meta_key = \"schema_version\"");
+		String sql = "SELECT meta_key, meta_value" + " FROM meta WHERE meta_key = \"schema_version\"";
 		try {
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
@@ -278,7 +278,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 		}
 
 		// Calculate current max_alignment_length by method_link_species_set
-		String sql = new String("SELECT CONCAT('max_align_', method_link_species_set_id)," + " MAX(dnafrag_end - dnafrag_start) FROM genomic_align" + " GROUP BY method_link_species_set_id");
+		String sql = "SELECT CONCAT('max_align_', method_link_species_set_id)," + " MAX(dnafrag_end - dnafrag_start) FROM genomic_align" + " GROUP BY method_link_species_set_id";
 		try {
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
@@ -299,7 +299,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 		}
 
 		// Calculate current max_align_ by method_link_species_set for constrained elements
-		String sql_ce = new String("SELECT CONCAT('max_align_', method_link_species_set_id)," + " MAX(dnafrag_end - dnafrag_start) FROM constrained_element" + " GROUP BY method_link_species_set_id");
+		String sql_ce = "SELECT CONCAT('max_align_', method_link_species_set_id)," + " MAX(dnafrag_end - dnafrag_start) FROM constrained_element" + " GROUP BY method_link_species_set_id";
 		try {
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(sql_ce);
@@ -320,7 +320,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 		}
 
 		// Get values currently stored in the meta table
-		sql = new String("SELECT meta_key, meta_value, count(*)" + " FROM meta WHERE meta_key LIKE \"max\\_align\\_%\" GROUP BY meta_key");
+		sql = "SELECT meta_key, meta_value, count(*)" + " FROM meta WHERE meta_key LIKE \"max\\_align\\_%\" GROUP BY meta_key";
 		try {
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
@@ -344,7 +344,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 		}
 
 		// Get current global value from the meta table (used for backwards compatibility)
-		sql = new String("SELECT meta_key, meta_value" + " FROM meta WHERE meta_key = \"max_alignment_length\"");
+		sql = "SELECT meta_key, meta_value" + " FROM meta WHERE meta_key = \"max_alignment_length\"";
 		try {
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
@@ -391,7 +391,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 			Iterator it = MetaEntriesToRemove.keySet().iterator();
 			while (it.hasNext()) {
 				Object next = it.next();
-				String sql = new String("DELETE FROM meta WHERE meta_key = \"" + next + "\";");
+				String sql = "DELETE FROM meta WHERE meta_key = \"" + next + "\";";
 				int numRows = stmt.executeUpdate(sql);
 				if (numRows != 1) {
 					ReportManager.problem(this, con, "WARNING: " + numRows + " rows DELETED for meta_key \"" + next + "\" while repairing meta");
@@ -400,9 +400,9 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 			it = MetaEntriesToAdd.keySet().iterator();
 			while (it.hasNext()) {
 				Object next = it.next();
-				// String sql = new String("INSERT INTO meta VALUES (NULL, \"" + next + "\", "
+				// String sql = "INSERT INTO meta VALUES (NULL, \"" + next + "\", "
 				// + MetaEntriesToAdd.get(next) + ", 1);");
-				String sql = new String("INSERT INTO meta VALUES (NULL, 1, \"" + next + "\", " + MetaEntriesToAdd.get(next) + ");");
+				String sql = "INSERT INTO meta VALUES (NULL, 1, \"" + next + "\", " + MetaEntriesToAdd.get(next) + ");";
 
 				int numRows = stmt.executeUpdate(sql);
 				if (numRows != 1) {
@@ -412,7 +412,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 			it = MetaEntriesToUpdate.keySet().iterator();
 			while (it.hasNext()) {
 				Object next = it.next();
-				String sql = new String("UPDATE meta SET meta_value = " + MetaEntriesToUpdate.get(next) + " WHERE meta_key = \"" + next + "\";");
+				String sql = "UPDATE meta SET meta_value = " + MetaEntriesToUpdate.get(next) + " WHERE meta_key = \"" + next + "\";";
 				int numRows = stmt.executeUpdate(sql);
 				if (numRows != 1) {
 					ReportManager.problem(this, con, "WARNING: " + numRows + " rows UPDATED for meta_key \"" + next + "\" while repairing meta");

@@ -68,7 +68,7 @@ public class LRG extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		// Get all seq_region_ids on the lrg coordinate system
-		String stmt = new String("SELECT sr.seq_region_id FROM seq_region sr JOIN coord_system cs ON sr.coord_system_id = cs.coord_system_id WHERE cs.name LIKE 'lrg' ORDER BY sr.seq_region_id ASC");
+		String stmt = "SELECT sr.seq_region_id FROM seq_region sr JOIN coord_system cs ON sr.coord_system_id = cs.coord_system_id WHERE cs.name LIKE 'lrg' ORDER BY sr.seq_region_id ASC";
 		String[] seq_regions = getColumnValues(con, stmt);
 
 		if (seq_regions.length == 0) {
