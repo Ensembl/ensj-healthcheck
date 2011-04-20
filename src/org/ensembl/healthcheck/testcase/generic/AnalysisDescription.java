@@ -75,7 +75,7 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 
 		for (String tableType : tableTypes) {
 
-			logger.finest("type is " + tableTypes);
+			logger.finest("type is " + tableType);
 
 			// get analyses that are used
 			// special case for transcripts - need to link to gene table and get analysis from there

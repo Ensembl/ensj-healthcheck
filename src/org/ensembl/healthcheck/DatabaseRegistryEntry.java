@@ -448,6 +448,9 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 
 	public boolean equals(Object o) {
 
+		if (o == null) {
+			return false;
+		}
 		return (((DatabaseRegistryEntry)o).getName().equals(getName()));
 
 	}
