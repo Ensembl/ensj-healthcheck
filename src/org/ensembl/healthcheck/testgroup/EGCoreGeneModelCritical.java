@@ -5,7 +5,7 @@ import org.ensembl.healthcheck.testcase.eg_core.DuplicateTopLevel;
 import org.ensembl.healthcheck.testcase.eg_core.PeptideTranslationAttribs;
 import org.ensembl.healthcheck.testcase.eg_core.ProteinCodingGene;
 import org.ensembl.healthcheck.testcase.eg_core.ProteinTranslation;
-import org.ensembl.healthcheck.testcase.generic.AssemblyException;
+import org.ensembl.healthcheck.testcase.generic.AssemblyExceptions;
 import org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap;
 import org.ensembl.healthcheck.testcase.generic.AssemblySeqregion;
 import org.ensembl.healthcheck.testcase.generic.CanonicalTranscriptCoding;
@@ -38,7 +38,7 @@ public class EGCoreGeneModelCritical extends GroupOfTests {
 
 	public EGCoreGeneModelCritical() {
 		addTest(
-			AssemblyException.class, 
+			AssemblyExceptions.class, 
 			AssemblyMultipleOverlap.class,
 			AssemblySeqregion.class, 
 			CanonicalTranscriptCoding.class,
