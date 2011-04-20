@@ -104,7 +104,7 @@ public class CompareFuncgenSchema extends MultiDatabaseTestCase {
 			if (dbType == null) {
 				dbType = databases[i].getType();
 			}
-			else if(dbType.toString() != databases[i].getType().toString()){
+			else if(!dbType.toString().equals(databases[i].getType().toString())){
 				logger.warning("Found mixed schema types in database list(" +
 							   dbType.toString() + " & " + databases[i].getType().toString() + "). Please amend your -d regex");
 				//Really need to exit here ?
