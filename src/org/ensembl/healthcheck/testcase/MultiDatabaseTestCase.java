@@ -235,18 +235,21 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
 	 *          SQL query to run in database
 	 * @return Map where the keys are the rows (cols are concatenated with "::").
 	 */
-	private Map runQuery(Connection con, String sql) {
-		Map values = new HashMap();
+	private Map<String,String> runQuery(Connection con, String sql) {
+		
+		Map<String,String> values = new HashMap<String,String>();
+		
 		try {
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 
 			while (rs.next()) {
-				String thisValue = rs.getString(1);
+				StringBuffer buf = new StringBuffer(rs.getString(1));
 				for (int a = 2; a <= rs.getMetaData().getColumnCount(); a++) {
-					thisValue += "::" + rs.getString(a);
+					buf.append("::");
+					buf.append(rs.getString(a));
 				}
-				values.put(thisValue, "1");
+				values.put(buf.toString(), "1");
 			}
 			rs.close();
 			stmt.close();
@@ -254,7 +257,9 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 		return values;
+		
 	}
 
 }
