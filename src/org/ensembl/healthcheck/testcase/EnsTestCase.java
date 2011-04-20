@@ -1005,6 +1005,7 @@ public abstract class EnsTestCase {
 
 		if (con == null) {
 			logger.severe("checkBlankNonNull (column): Database connection is null");
+			return null;
 		}
 
 		ArrayList blanks = new ArrayList();
@@ -1047,6 +1048,7 @@ public abstract class EnsTestCase {
 
 		if (con == null) {
 			logger.severe("checkBlankNonNull (table): Database connection is null");
+			return 0;
 		}
 
 		int blanks = 0;

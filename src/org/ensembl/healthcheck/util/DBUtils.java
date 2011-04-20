@@ -95,6 +95,8 @@ public final class DBUtils {
 
 		if (con == null) {
 			logger.severe("Database connection is null");
+			String[] s = {};
+			return s;
 		}
 
 		ArrayList<String> dbNames = new ArrayList<String>();

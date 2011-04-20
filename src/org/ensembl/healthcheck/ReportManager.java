@@ -877,6 +877,7 @@ public class ReportManager {
 
 		if (outputDatabaseConnection == null) {
 			logger.severe("No connection to output database!");
+			return;
 		}
 
 		logger.fine("Adding report for: " + report.getDatabaseName() + " " + report.getTestCaseName() + " " + report.getLevelAsString() + " " + report.getMessage());
@@ -917,6 +918,7 @@ public class ReportManager {
 
 		if (outputDatabaseConnection == null) {
 			logger.severe("No connection to output database!");
+			return;
 		}
 
 		logger.fine("Updating report for: " + report.getDatabaseName() + " " + report.getTestCaseName() + " " + report.getLevelAsString() + " " + report.getMessage() + ", new last_session_id="
