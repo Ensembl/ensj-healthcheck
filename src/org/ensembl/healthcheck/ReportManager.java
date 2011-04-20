@@ -761,6 +761,7 @@ public class ReportManager {
 
 			Statement stmt = outputDatabaseConnection.createStatement();
 			stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+			stmt.close();
 
 		} catch (SQLException e) {
 
@@ -787,6 +788,8 @@ public class ReportManager {
 
 				Statement stmt = outputDatabaseConnection.createStatement();
 				stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+
+				stmt.close();
 
 			} catch (SQLException e) {
 
@@ -927,6 +930,7 @@ public class ReportManager {
 			stmt.setLong(1, sessionID);
 			stmt.setLong(2, reportID);
 			stmt.executeUpdate();
+			stmt.close();
 
 		} catch (SQLException e) {
 
