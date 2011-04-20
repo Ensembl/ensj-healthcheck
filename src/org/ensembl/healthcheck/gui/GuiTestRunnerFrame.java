@@ -34,6 +34,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -1135,7 +1136,7 @@ class DatabaseTypeGUIComparator implements Comparator {
  * Compare test cases based on short name (i.e. without package name).
  */
 
-class EnsTestCaseNameComparator implements Comparator {
+class EnsTestCaseNameComparator implements Comparator, Serializable {
 
     public int compare(Object o1, Object o2) {
 
