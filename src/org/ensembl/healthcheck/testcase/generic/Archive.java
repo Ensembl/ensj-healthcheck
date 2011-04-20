@@ -110,7 +110,7 @@ public class Archive extends SingleDatabaseTestCase {
 
 		String[] rows = getColumnValues(con, sql);
 		if (rows.length > 0) {
-			ReportManager.problem(this, con, rows + " updated translations missing from peptide_archive");
+			ReportManager.problem(this, con, rows.length + " updated translations missing from peptide_archive");
 			result = false;
 		}
 
