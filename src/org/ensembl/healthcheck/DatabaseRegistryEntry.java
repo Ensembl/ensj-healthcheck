@@ -446,6 +446,12 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 
 	}
 
+	public boolean equals(Object o) {
+
+		return (((DatabaseRegistryEntry)o).getName().equals(getName()));
+
+	}
+	
 	public String getAlias() {
 		return info.getAlias();
 	}

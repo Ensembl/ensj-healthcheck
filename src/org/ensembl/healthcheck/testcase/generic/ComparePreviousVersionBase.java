@@ -65,7 +65,7 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 		// compare each of the secondary (previous release, probably) with current
 		Set externalDBs = secondaryCounts.keySet();
 		Iterator it = externalDBs.iterator();
-		String successText = new String();
+		String successText = "";
 
 		// show % tolerance here?
 		double tolerance = (100 - ((threshold() / 1) * 100));
