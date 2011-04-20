@@ -18,13 +18,14 @@
 
 package org.ensembl.healthcheck.util;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
  * Implementation of Comparator for comparing Integer objects.
  */
 
-public class IntegerComparator implements Comparator {
+public class IntegerComparator implements Comparator, Serializable {
 
     /**
      * Implementation of Compare interface. Natural order for o1 and o2.

@@ -1108,7 +1108,7 @@ class TestProgressDialog extends JDialog {
  * Fiddle things so that generic database types are moved to the front.
  */
 
-class DatabaseTypeGUIComparator implements Comparator {
+class DatabaseTypeGUIComparator implements Comparator, Serializable {
 
     public int compare(Object o1, Object o2) {
 

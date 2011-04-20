@@ -18,6 +18,7 @@
 
 package org.ensembl.healthcheck.util;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import org.ensembl.healthcheck.testcase.EnsTestCase;
@@ -26,7 +27,7 @@ import org.ensembl.healthcheck.testcase.EnsTestCase;
  * Implementation of Comparator for comparing EnsTestCase objects.
  */
 
-public class TestComparator implements Comparator {
+public class TestComparator implements Comparator, Serializable {
 
     /**
      * Implementation of Compare interface. Compares on test name.
