@@ -205,6 +205,10 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 
 				while ((s = stdError.readLine()) != null) {
 				}
+				
+				stdInput.close();
+				stdError.close();
+				
 			} catch (Exception ioe) {
 				System.err.println("Error in head job " + ioe.getMessage());
 			}
