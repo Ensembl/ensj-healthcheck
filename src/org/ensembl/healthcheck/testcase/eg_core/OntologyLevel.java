@@ -33,7 +33,8 @@ public class OntologyLevel extends AbstractEgCoreTestCase {
 			+ "group by e.db_name,ox.ensembl_object_type";
 
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
-		boolean passes = true;		Map<String, List<String>> names = getTemplate(dbre).queryForMap(QUERY,
+		boolean passes = true;
+		Map<String, List<String>> names = getTemplate(dbre).queryForMap(QUERY,
 				new MapRowMapper<String, List<String>>() {
 
 					public List<String> mapRow(ResultSet resultSet, int position)
@@ -59,7 +60,6 @@ public class OntologyLevel extends AbstractEgCoreTestCase {
 					}
 				});
 		for (Entry<String, List<String>> e : names.entrySet()) {
-			System.out.println(e.getKey()+":"+e.getValue());
 			if (!e.getValue().contains(TRANSCRIPT)
 					&& !e.getValue().contains(TRANSLATION)) {
 				ReportManager
