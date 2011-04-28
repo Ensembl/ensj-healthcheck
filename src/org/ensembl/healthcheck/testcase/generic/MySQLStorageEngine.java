@@ -1,6 +1,7 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase;
 
@@ -14,13 +15,24 @@ public class MySQLStorageEngine extends AbstractTemplatedTestCase {
 
 	private final static String MYISAM = "MyISAM";
 
-	private final static String ENGINE_QUERY = "select count(*) from information_schema.tables where table_schema=? and engine<>'" + MYISAM + "'";
+	private final static String ENGINE_QUERY = "select count(*) from information_schema.tables where table_schema=? and engine<>'"
+			+ MYISAM + "'";
+
+	public void types() {
+		this.addAppliesToType(DatabaseType.CORE);
+		this.addAppliesToType(DatabaseType.VARIATION);
+		this.addAppliesToType(DatabaseType.FUNCGEN);
+		this.addAppliesToType(DatabaseType.COMPARA);
+	}
 
 	@Override
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
-		int count = getTemplate(dbre).queryForDefaultObject(ENGINE_QUERY, Integer.class, dbre.getName());
+		int count = getTemplate(dbre).queryForDefaultObject(ENGINE_QUERY,
+				Integer.class, dbre.getName());
 		if (count > 0) {
-			ReportManager.problem(this, dbre.getConnection(), count + " tables from " + dbre.getName() + " do not use " + MYISAM);
+			ReportManager.problem(this, dbre.getConnection(), count
+					+ " tables from " + dbre.getName() + " do not use "
+					+ MYISAM);
 			return false;
 		} else {
 			return true;
