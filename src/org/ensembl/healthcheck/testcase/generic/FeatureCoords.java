@@ -75,15 +75,8 @@ public class FeatureCoords extends SingleDatabaseTestCase {
 				ReportManager.correct(this, con, "All rows in " + tableName + " have seq_region_start >= 1");
 			}
 
-			// ------------------------
-			logger.info("Checking " + tableName + " for start > end");
-			sql = "SELECT COUNT(*) FROM " + tableName + " WHERE seq_region_start > seq_region_end";
-			rows = getRowCount(con, sql);
-			if (rows > 0) {
-				ReportManager.problem(this, con, rows + " rows in " + tableName + " have seq_region_start > seq_region_end");
+			if(!checkStartEnd(tableName, con)) {
 				result = false;
-			} else {
-				ReportManager.correct(this, con, "All rows in " + tableName + " have seq_region_start < seq_region_end");
 			}
 
 			// ------------------------
@@ -104,5 +97,29 @@ public class FeatureCoords extends SingleDatabaseTestCase {
 		return result;
 
 	} // run
+
+	/**
+	 * Subroutine to carry out a check on whether the start is after the end. This is to allow EG to skip this check for circular molecules
+	 * @param tableName
+	 * @param con
+	 * @return
+	 */
+	protected boolean checkStartEnd(String tableName,
+			Connection con) {
+		String sql;
+		int rows;
+		boolean result = true;
+		// ------------------------
+		logger.info("Checking " + tableName + " for start > end");
+		sql = "SELECT COUNT(*) FROM " + tableName + " WHERE seq_region_start > seq_region_end";
+		rows = getRowCount(con, sql);
+		if (rows > 0) {
+			ReportManager.problem(this, con, rows + " rows in " + tableName + " have seq_region_start > seq_region_end");
+			result = false;
+		} else {
+			ReportManager.correct(this, con, "All rows in " + tableName + " have seq_region_start < seq_region_end");
+		}
+		return result;
+	}
 
 } // FeatureCoords
