@@ -17,7 +17,8 @@ public class EGCore extends GroupOfTests {
 			EGCoreMeta.class,
 			EGCoreAnnotation.class,
 			EGCoreCompare.class,
-			EGCommon.class
+			EGCommon.class,
+			EGCoreMulti.class
 		);
 	}
 }
