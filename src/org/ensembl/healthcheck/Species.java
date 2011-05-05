@@ -38,7 +38,7 @@ public enum Species {
 			"drosophila,pseudoobscura,drosophilapseudoobscura,drosophila_pseudoobscura,dpse"), DROSOPHILA_ANANASSAE(7217, "dana", "IGNORE",
 			"drosophila,ananassae,drosophilaananassae,drosophila_ananassae,dana"), DROSOPHILA_YAKUBA(7245, "dyak", "IGNORE", "drosophila,yakuba,drosophilayakuba,drosophila_yakuba,dyak"), DROSOPHILA_GRIMSHAWI(
 			7222, "dgri", "IGNORE", "drosophila,grimshawi,drosophilagrimshawi,drosophila_grimshawi,dgri"), DROSOPHILA_WILLISTONI(7260, "dwil", "IGNORE",
-			"drosophila,willistoni,drosophilawillistonii,drosophila_willistoni,dwil"), MYOTIS_LUCIFUGUS(59463, "MICROBAT", "ENSMLU", "microbat,little_brown_bat,mlucifugus,myotis,myotis_lucifugus"), NCBI_TAXONOMY(
+			"drosophila,willistoni,drosophilawillistonii,drosophila_willistoni,dwil"), MYOTIS_LUCIFUGUS(59463, "Myoluc", "ENSMLU", "microbat,little_brown_bat,mlucifugus,myotis,myotis_lucifugus"), NCBI_TAXONOMY(
 			0, "", "", ""), SYSTEM(0, "", "", ""), CIONA_SAVIGNYI(51511, "CSAV", "ENSCSAV", "savignyi,cionasavignyi,csavignyi,ciona_savignyi"), TUPAIA_BELANGERI(37347, "TREESHREW", "ENSTBE",
 			"treeshrew,tbelangeri,northern_tree_shrew,common_tree_shrew,tupaia_belangeri"), PAN_TROGLODYTES(9598, "CHIMP", "ENSPTR", "chimp,chimpanzee,ptroglodytes,pantroglodytes,pan_troglodytes"), GASTEROSTEUS_ACULEATUS(
 			69293, "BROADS", "ENSGAC", "stickleback,gas_aculeatus,gasaculeatus,gasterosteusaculeatus,gasterosteus_aculeatus"), ENSEMBL_WEBSITE(0, "", "", ""), ECHINOPS_TELFAIRI(9371, "TENREC", "ENSETE",
