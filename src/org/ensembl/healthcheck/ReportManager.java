@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -715,20 +716,46 @@ public class ReportManager {
 	 */
 	public static void createDatabaseSession() {
 
-		String hosts = "";
-
-		for (DatabaseServer server : DBUtils.getMainDatabaseServers()) {
-
-			hosts = String.format("%s, %s:%s", hosts, server.getHost(), server.getPort());
-
+		List<DatabaseServer> serverList = DBUtils.getMainDatabaseServers();		
+		ListIterator<DatabaseServer> i = serverList.listIterator();
+		StringBuffer hosts = new StringBuffer();
+		
+		while(i.hasNext()) {
+			
+			DatabaseServer currentServer = i.next();
+			hosts.append(
+					String.format(
+						"%s:%s", 
+						currentServer.getHost(), 
+						currentServer.getPort())
+			);
 		}
 
-		String sql = String.format("INSERT INTO session (host, config, db_release) VALUES (%s,%s,%s)", hosts, System.getProperty("output.databases"), System.getProperty("output.release"));
+		String outputDatabases = System.getProperty("output.databases");
+		String outputRelease   = System.getProperty("output.release");
+		
+		//String sql = String.format("INSERT INTO session (host, config, db_release, start_time) VALUES (?, ?, ?, NOW())");
+		
+		String sql = String.format(
+			"INSERT INTO session (host, config, db_release, start_time) VALUES ("
+				+ "\"" + hosts.toString() + "\", "  
+				+ "\"" + outputDatabases  + "\", "
+				+ "\"" + outputRelease    + "\", "
+				+ "NOW())"
+		);
 
 		try {
-			Statement stmt = outputDatabaseConnection.createStatement();
+			
+			PreparedStatement stmt = outputDatabaseConnection.prepareStatement(sql);
+			
+//			stmt.setString(1, hosts.toString());
+//			stmt.setString(2, outputDatabases);
+//			stmt.setString(3, outputRelease);
+			
 			stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+			
 			ResultSet rs = stmt.getGeneratedKeys();
+			
 			if (rs.next()) {
 				sessionID = rs.getLong(1);
 				logger.fine("Created new session with ID " + sessionID);
@@ -737,7 +764,14 @@ public class ReportManager {
 
 		} catch (SQLException e) {
 
-			System.err.println("Error executing:\n" + sql);
+			System.err.println(
+				"Error executing:"    + "\n"
+				+ sql                 + "\n"
+				+ " with parameters:" + "\n"
+				+ hosts.toString()    + "\n"
+				+ outputDatabases     + "\n"
+				+ outputRelease       + "\n\n"
+			);
 			e.printStackTrace();
 
 		}
