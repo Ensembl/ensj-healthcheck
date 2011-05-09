@@ -1,19 +1,21 @@
-# Table structure for healthcheck output database
+-- Table structure for healthcheck output database
 
-# Healthcheck running sessions.
+-- Healthcheck running sessions.
 
 CREATE TABLE session (
 
   session_id                            INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   db_release                            INT(10) NOT NULL,
-  host					VARCHAR(255),
+  start_time							DATETIME,
+  end_time								DATETIME,
+  host									VARCHAR(255),
   config                                TEXT,
 
   PRIMARY KEY (session_id)
   
 );
 
-# Individual healthcheck reports
+-- Individual healthcheck reports
 
 CREATE TABLE report (
 
@@ -42,7 +44,7 @@ CREATE TABLE report (
 );
 
 
-# Store annotations about healthcheck results
+-- Store annotations about healthcheck results
 
 CREATE TABLE annotation (
 
@@ -62,25 +64,21 @@ CREATE TABLE annotation (
   
 );
 
-# Most recent session
-CREATE VIEW recent_session AS 
+-- Most recent session
+CREATE VIEW recent_session AS
   SELECT s.*,
-	MIN(r.timestamp) AS start_time, 
-  	MAX(r.timestamp) AS end_time, 
-  	TIMEDIFF(MAX(r.timestamp), MIN(r.timestamp)) AS duration 
+  	TIMEDIFF(end_time, start_time) AS duration 
    FROM session s, report r 
   WHERE s.session_id=(SELECT MAX(session_id) FROM session)
     AND r.last_session_id=s.session_id
     AND r.text LIKE '#%'
   GROUP BY r.last_session_id;
 
-# View for derived data about sessions 
+-- View for derived data about sessions 
 
 CREATE VIEW session_v AS 
   SELECT s.*, 
-  MIN(r.timestamp) AS start_time, 
-  MAX(r.timestamp) AS end_time, 
-  TIMEDIFF(MAX(r.timestamp), MIN(r.timestamp)) AS duration 
+  TIMEDIFF(end_time, start_time) AS duration 
   FROM session s, report r 
   WHERE s.session_id=r.last_session_id 
   AND r.text LIKE '#%' 
@@ -94,7 +92,7 @@ CREATE VIEW session_v2 AS
   AND r.text LIKE '#%' 
   GROUP BY r.last_session_id;
 
-# View for derived data about reports
+-- View for derived data about reports
 
 CREATE VIEW timings AS
 
