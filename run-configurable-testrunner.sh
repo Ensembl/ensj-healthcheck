@@ -12,5 +12,5 @@ echo ---------------------------
 echo $cp
 echo ---------------------------
 
-java -cp $cp:resources/runtime/ -Xmx1500m -Djava.util.logging.config.file=config/logger/logging.properties org.ensembl.healthcheck.ConfigurableTestRunner $*
+java -cp $cp:sql/ -Xmx1500m -Djava.util.logging.config.file=config/logger/logging.properties org.ensembl.healthcheck.ConfigurableTestRunner $*
 
