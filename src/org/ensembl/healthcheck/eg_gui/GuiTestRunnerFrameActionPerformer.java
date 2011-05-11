@@ -52,7 +52,7 @@ public class GuiTestRunnerFrameActionPerformer {
 			DatabaseTabbedPane databaseTabbedPane,
 			ConfigureHost dbDetails
 	) {
-		DBUtils.resetDBUtils();
+		DBUtils.initialise();
 		DBUtils.setHostConfiguration(dbDetails);
 		
 		List<String> regexps = new ArrayList<String>();
