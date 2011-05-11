@@ -38,9 +38,9 @@ public class Jar {
 	
 	public static List<String> findAllClassesInJar(String jarFile) {
 		List<String> classesInJar =
-			FileNameFilter.mapClassFilesToClassName(
-				FileNameFilter.filterForClassFiles(
-					FileNameFilter.noInnerClassFiles(
+			ClassFileFilter.mapClassFilesToClassName(
+				ClassFileFilter.filterForClassFiles(
+					ClassFileFilter.noInnerClassFiles(
 						Jar.findAllFilesInJar(
 								jarFile
 						)
