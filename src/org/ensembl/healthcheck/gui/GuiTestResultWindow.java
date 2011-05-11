@@ -63,7 +63,7 @@ public class GuiTestResultWindow extends JFrame {
      * 
      * @param gtrf The frame that opened this window.
      */
-    public GuiTestResultWindow(GuiTestRunnerFrame gtrf) {
+    public GuiTestResultWindow(String outputLevelAsString, int outputLevel) {
 
         super("Healthcheck Results");
 
@@ -72,7 +72,7 @@ public class GuiTestResultWindow extends JFrame {
 
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBackground(Color.RED);
-        ResultTreePanel resultTreePanel = new ResultTreePanel(gtrf);
+        ResultTreePanel resultTreePanel = new ResultTreePanel(outputLevelAsString, outputLevel);
         topPanel.add(resultTreePanel, BorderLayout.CENTER);
 
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -147,7 +147,7 @@ public class GuiTestResultWindow extends JFrame {
      */
     public static void main(String[] args) {
 
-        GuiTestResultWindow gtrw = new GuiTestResultWindow(null);
+        GuiTestResultWindow gtrw = new GuiTestResultWindow("", 0);
         gtrw.pack();
         gtrw.setVisible(true);
 
@@ -167,17 +167,19 @@ class ResultTreePanel extends JScrollPane {
 
     private JTree tree;
 
-    public ResultTreePanel(GuiTestRunnerFrame gtrf) {
+    //public ResultTreePanel(GuiTestRunnerFrame gtrf) {
+    public ResultTreePanel(String outputLevelAsString, int outputLevel) {
+    	
 
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         panel.setBackground(Color.GREEN);
 
-        String title = "Test Results - minimum output level: " + gtrf.getOutputLevelAsString().toLowerCase();
+        String title = "Test Results - minimum output level: " + outputLevelAsString.toLowerCase();
 
         DefaultMutableTreeNode top = new DefaultMutableTreeNode(new ResultNode(title, false, false, false, false));
 
-        Map reportsByTest = ReportManager.getAllReportsByTestCase(gtrf.getOutputLevel());
+        Map reportsByTest = ReportManager.getAllReportsByTestCase(outputLevel);
         Set tests = reportsByTest.keySet();
         Iterator it = tests.iterator();
         while (it.hasNext()) {
