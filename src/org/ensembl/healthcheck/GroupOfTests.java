@@ -1,11 +1,15 @@
 package org.ensembl.healthcheck;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.Iterator;
+
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 
 /**
@@ -20,7 +24,46 @@ public class GroupOfTests {
 	
 	final protected List<GroupOfTests> sourceGroups;
 	
+	/**
+	 * <p>
+	 * 	The name of this group of tests. By default getName() will return the
+	 * name of the class, but if this is set, then the value of "name" is 
+	 * returned instead.
+	 * </p>
+	 * 
+	 * <p>
+	 * 	The name is used for the GUI.
+	 * </p>
+	 * 
+	 * <p>
+	 * 	Setting it explicitly is necessary when groups are created on the fly. 
+	 * Otherwise any group created on the fly would have the name 
+	 * "GroupOfTests".
+	 * </p>
+	 */
+	protected String name = "";
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * 
+	 * If name attribute is not set, will return the simple name of the class.
+	 * 
+	 */
+	public String getName() {
+
+		if (name.isEmpty()) {
+			return this.getClass().getSimpleName();
+		} else {
+			return name;
+		}
+	}
+
 	public List<GroupOfTests> getSourceGroups() {
+		
+		Collections.sort(sourceGroups, new GroupOfTestsComparator());
 		return sourceGroups;
 	}
 
@@ -30,19 +73,20 @@ public class GroupOfTests {
 		return setOfTests;
 	}
 
-	public String getShortName() {		
-		return this.getClass().getSimpleName();		
-	}
-	
 	public GroupOfTests() {
 		this.setOfTests   = new HashSet<Class<? extends EnsTestCase>>();
 		this.sourceGroups = new ArrayList<GroupOfTests>();
+	}
+	
+	public boolean hasTest(Class<? extends EnsTestCase> ensTestCase) {
+		
+		return setOfTests.contains(ensTestCase);	
 	}
 
 	public Set<Class<? extends EnsTestCase>> getTestClasses() {
 		return setOfTests;
 	}
-
+	
 	/**
 	 * <p>
 	 * 	Creates and returns a list of testclasses that are in this testgroup.
@@ -63,6 +107,7 @@ public class GroupOfTests {
 			Class<? extends EnsTestCase> etc = i.next();
 			list.add(etc);
 		}
+		Collections.sort(list, new EnsTestCaseComparator());
 		return list;
 	}
 
@@ -127,6 +172,11 @@ public class GroupOfTests {
 		sourceGroups.add(g);		
 		addTest(g);
 	}
+	
+	public void addTest(List<Class<EnsTestCase>> listOfTestClasses) {
+		
+		addTest( listOfTestClasses.toArray(new Class[]{}) );
+	}
 
 	/**
 	 * <p>
@@ -156,7 +206,13 @@ public class GroupOfTests {
 				}
 				if (EnsTestCase.class.isAssignableFrom(testCaseOrGroupOfTests)) {
 					
-					setOfTests.add(testCaseOrGroupOfTests);
+					// Make sure we are not adding abstract classes. We only 
+					// want tests that can be run. 
+					//
+					if (!Modifier.isAbstract(testCaseOrGroupOfTests.getModifiers())) {
+						
+						setOfTests.add(testCaseOrGroupOfTests);
+					}
 					canHandleThisClass = true;
 				}
 				if (!canHandleThisClass) {
@@ -245,7 +301,12 @@ public class GroupOfTests {
 	}	
 }
 
-
+class EnsTestCaseComparator implements Comparator<Class<? extends EnsTestCase>> {
+	
+	public int compare(Class<? extends EnsTestCase> arg0, Class<? extends EnsTestCase> arg1) {				
+		return arg0.getSimpleName().compareTo(arg1.getSimpleName());
+	}
+}
 
 
 
