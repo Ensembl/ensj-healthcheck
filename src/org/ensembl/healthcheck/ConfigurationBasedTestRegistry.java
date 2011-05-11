@@ -140,15 +140,16 @@ public class ConfigurationBasedTestRegistry implements TestRegistry {
 		
 		if (params.isGroups() && !isEmptyList(params.getGroups())) {
 			for (String groupName : params.getGroups()) {				
-				//GroupOfTests groupOfTests = (GroupOfTests) Class.forName(groupName).newInstance();
-				GroupOfTests groupOfTests = (GroupOfTests) testInstantiator.forName(groupName).newInstance();
+
+				//GroupOfTests groupOfTests = (GroupOfTests) testInstantiator.forName(groupName).newInstance();
+				GroupOfTests groupOfTests = testInstantiator.instanceByName(groupName, GroupOfTests.class);
 				userDefinedGroupOfTests.addTest(groupOfTests);
 			}
 		}
 		
 		if (params.isTests() && !isEmptyList(params.getTests())) {
 			for (String testName : params.getTests()) {
-				//Class<EnsTestCase> singleTestClass = (Class<EnsTestCase>) Class.forName(testName);
+				
 				Class<EnsTestCase> singleTestClass = (Class<EnsTestCase>) testInstantiator.forName(testName);
 				userDefinedGroupOfTests.addTest(singleTestClass);
 			}
@@ -156,15 +157,16 @@ public class ConfigurationBasedTestRegistry implements TestRegistry {
 		
 		if (params.isExcludeGroups() && !isEmptyList(params.getExcludeGroups())) {
 			for (String groupName : params.getExcludeGroups()) {				
-				//GroupOfTests groupOfTests = (GroupOfTests) Class.forName(groupName).newInstance();
-				GroupOfTests groupOfTests = (GroupOfTests) testInstantiator.forName(groupName).newInstance();
+
+				//GroupOfTests groupOfTests = (GroupOfTests) testInstantiator.forName(groupName).newInstance();
+				GroupOfTests groupOfTests = testInstantiator.instanceByName(groupName, GroupOfTests.class);
 				userDefinedGroupOfTests.removeTest(groupOfTests);
 			}
 		}
 	
 		if (params.isExcludeTests() && !isEmptyList(params.getExcludeTests())) {
 			for (String testName : params.getExcludeTests()) {				
-				//Class<EnsTestCase> singleTestClass = (Class<EnsTestCase>) Class.forName(testName);
+
 				Class<EnsTestCase> singleTestClass = (Class<EnsTestCase>) testInstantiator.forName(testName);
 				userDefinedGroupOfTests.removeTest(singleTestClass);
 			}
