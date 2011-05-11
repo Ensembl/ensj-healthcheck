@@ -67,19 +67,6 @@ public class TestsInGroups {
 		return c.getCanonicalName();
 	}
 	
-//	private static List<String> removeElement(List<String> list, String element) {
-//		
-//		List<String> result = new ArrayList<String>();
-//		
-//		for (String groupName : list) {
-//			if (!element.equals(groupName)) {
-//				result.add(groupName);
-//			}
-//		}
-//		
-//		return result;
-//	}
-	
 	/**
 	 * 
 	 * Creates a map from a name of a testcase group to a list of names of 
