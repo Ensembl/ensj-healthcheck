@@ -51,6 +51,28 @@
 		<echo>Run &quot;ant jar&quot; so the compiled classes are used by the command line scripts.</echo>
 	</target>
 
+	<target 
+		name        = "eg_gui" 
+		description = "Starts up the EG Gui for the healthchecks." 
+		depends     = "jar"
+	>
+		<java 
+			classname   = "org.ensembl.healthcheck.eg_gui.GuiStarter" 
+			fork        = "true" 
+			failonerror = "true" 
+			maxmemory   = "1500m"
+		>
+			<arg line="" />
+			<classpath>
+				<fileset dir="../ensj-healthcheck/lib">
+					<include name="**/*.jar" />
+				</fileset>
+				<pathelement path="build/"/>
+
+			</classpath>
+		</java>
+	</target>
+
 	<!-- ################################################################################## -->
 
 	<target name="build-test-library" depends="compile">
