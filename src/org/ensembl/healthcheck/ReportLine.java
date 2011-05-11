@@ -19,6 +19,7 @@
 package org.ensembl.healthcheck;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry.DatabaseInfo;
+import org.ensembl.healthcheck.testcase.EnsTestCase;
 
 /**
  * A single line of a report. Each ReportLine stores the names of the test case
@@ -34,6 +35,16 @@ public class ReportLine {
 
 	/** The test case that this report refers to */
 	protected String testCaseName;
+	
+	public EnsTestCase getTestCase() {
+		return testCase;
+	}
+
+	public void setTestCase(EnsTestCase testCase) {
+		this.testCase = testCase;
+	}
+
+	protected EnsTestCase testCase;
 
 	/** The database name that this report refers to */
 	protected String databaseName;
@@ -80,10 +91,11 @@ public class ReportLine {
 	 * @param message
 	 *            The message to report.
 	 */
-	public ReportLine(String testCaseName, String name, int level,
+	public ReportLine(EnsTestCase testCase, String name, int level,
 			String message, Team teamResponsible, Team secondTeamResponsible) {
 
-		this.testCaseName = testCaseName;
+		this.testCase     = testCase;
+		this.testCaseName = testCase.getTestName();
 		DatabaseInfo info = DatabaseRegistryEntry.getInfoFromName(name);
 		this.databaseName = info.getName();
 		if (info.getSpecies() != Species.UNKNOWN) {
@@ -95,7 +107,7 @@ public class ReportLine {
 		this.level = level;
 		this.message = message;
 		this.teamResponsible = teamResponsible;
-this.secondTeamResponsible = secondTeamResponsible;
+		this.secondTeamResponsible = secondTeamResponsible;
 
 	} // constructor
 
