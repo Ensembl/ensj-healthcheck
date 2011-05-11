@@ -29,33 +29,19 @@ public abstract class AbstractPerlBasedTestCase extends SingleDatabaseTestCase {
 	public static final String PERLOPTS = "perlopts";
 	public static final String PERL = "perl";
 
-	/**
-	 * 
-	 * Internal class that holds perl configurations
-	 *
-	 */
-	public class PerlScriptConfig {
+	protected String PERL5LIB = null;
+	
+	public String getPERL5LIB() {
+		return PERL5LIB;
+	}
 
-		private final String perlBinary;
-		private final String perlOptions;
-
-		public PerlScriptConfig(String perlBinary, String perlOptions) {
-			this.perlBinary = perlBinary;
-			this.perlOptions = perlOptions;
-		}
-
-		public String getPerlBinary() {
-			return perlBinary;
-		}
-
-		public String getPerlOptions() {
-			return perlOptions;
-		}
-	};
+	public void setPERL5LIB(String pERL5LIB) {
+		PERL5LIB = pERL5LIB;
+	}
 
 	protected PerlScriptConfig config;
 
-	protected PerlScriptConfig getConfig() {
+	public PerlScriptConfig getConfig() {
 		if(config==null) {
 			config = new PerlScriptConfig(
 					System.getProperty(PERL), 
@@ -65,7 +51,7 @@ public abstract class AbstractPerlBasedTestCase extends SingleDatabaseTestCase {
 		return config;
 	}
 
-	protected void setConfig(PerlScriptConfig config) {
+	public void setConfig(PerlScriptConfig config) {
 		this.config = config;
 	}
 
@@ -118,11 +104,43 @@ public abstract class AbstractPerlBasedTestCase extends SingleDatabaseTestCase {
 		}
 		
 		for (int speciesId : dbre_speciesIds) {
+			
 			String commandLine = getPerlScript(dbre, speciesId);
+			
+			if (config!=null) {
+				
+				if (!config.getPerlBinary().isEmpty()) {
+					
+					if (config.getPerlOptions().isEmpty()) {
+						
+						commandLine = config.getPerlBinary() + " " + commandLine;
+						
+					} else {
+						
+						commandLine = config.getPerlBinary() +  " " + config.getPerlOptions() + " " + commandLine;
+					}
+				}
+			}
+			
 			StringBuffer out = new StringBuffer();
 			StringBuffer err = new StringBuffer();
 			try {
-				int exit = ProcessExec.exec(commandLine, out, err);
+				
+				int exit;
+				
+				if (getPERL5LIB() == null) {
+					exit = ProcessExec.exec(commandLine, out, err);
+				} else {
+					exit = ProcessExec.exec(
+						commandLine, 
+						out, 
+						err, 
+						new String[] { 
+							"PERL5LIB=" + getPERL5LIB() 
+						}
+					);
+				}
+				
 				processOutput(out.toString(), err.toString());
 				if (exit == 0) {
 					ReportManager.correct(this, dbre.getConnection(), "Script "
