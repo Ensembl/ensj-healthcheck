@@ -511,6 +511,8 @@ public final class DBUtils {
 
 		if (con == null) {
 			logger.severe("getTableNames(): Database connection is null");
+			String[] s = {};
+			return s;
 		}
 
 		try {
@@ -549,6 +551,8 @@ public final class DBUtils {
 
 		if (con == null) {
 			logger.severe("getTableNames(): Database connection is null");
+			String[] s = {};
+			return s;
 		}
 
 		try {
