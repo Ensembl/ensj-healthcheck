@@ -468,7 +468,12 @@ public class GuiTestRunnerFrame extends JFrame implements CallbackTarget {
      */
     public void createResultFrame() {
 
-        new GuiTestResultWindow(this).setVisible(true);
+        //new GuiTestResultWindow(this).setVisible(true);
+    	new GuiTestResultWindow(
+    		getOutputLevelAsString(), 
+    		getOutputLevel()
+    	).setVisible(true);
+        
 
     }
 
@@ -1026,82 +1031,6 @@ class TestTreeNodeSelectionListener extends MouseAdapter {
 }
 
 // -------------------------------------------------------------------------
-/**
- * Progress dialog displayed when tests are being run.
- */
-
-class TestProgressDialog extends JDialog {
-
-    private JProgressBar progressBar;
-
-    private JLabel messageLabel;
-
-    private JLabel noteLabel;
-
-    public TestProgressDialog(String message, String note, int min, int max) {
-
-        setTitle("Healthcheck progress");
-
-        setSize(new Dimension(300, 100));
-        setBackground(Color.WHITE);
-
-        JPanel progressPanel = new JPanel();
-        progressPanel.setBackground(Color.WHITE);
-        progressPanel.setLayout(new BoxLayout(progressPanel, BoxLayout.Y_AXIS));
-        messageLabel = new JLabel(message);
-        messageLabel.setFont(new Font("Dialog", Font.BOLD, 12));
-        messageLabel.setBackground(Color.WHITE);
-        noteLabel = new JLabel(note);
-        noteLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
-        noteLabel.setBackground(Color.WHITE);
-
-        progressBar = new JProgressBar(min, max);
-        progressBar.setBackground(Color.WHITE);
-
-        progressPanel.add(messageLabel);
-        progressPanel.add(noteLabel);
-        progressPanel.add(progressBar);
-
-        Container contentPane = getContentPane();
-        contentPane.setBackground(Color.WHITE);
-        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
-        contentPane.add(progressPanel);
-
-        //pack();
-
-    }
-
-    public void setMaximum(int max) {
-
-        progressBar.setMaximum(max);
-
-    }
-
-    public int getMaximum() {
-
-        return progressBar.getMaximum();
-
-    }
-
-    public void setProgress(int p) {
-
-        progressBar.setValue(p);
-
-    }
-
-    public void setNote(String s) {
-
-        noteLabel.setText(s);
-
-    }
-
-    public void update(String s, int p) {
-
-        setNote(s);
-        setProgress(p);
-
-    }
-}
 
 // -------------------------------------------------------------------------
 /**
