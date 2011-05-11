@@ -12,7 +12,7 @@ $Data::Dumper::Sortkeys = 1;
 my ($host1, $port1, $user1, $pass1, $host2, $port2, $user2, $pass2, $host_prev, $port_prev, $user_prev, $pass_prev, $dbname, $old_release, $new_release, $quiet, $new_dbname);
 
 GetOptions('user1=s'           => \$user1,
-	   'pass1=s'           => \$pass2,
+	   'pass1=s'           => \$pass1,
 	   'host1=s'           => \$host1,
 	   'port1=i'           => \$port1,
 	   'user2=s'           => \$user2,
