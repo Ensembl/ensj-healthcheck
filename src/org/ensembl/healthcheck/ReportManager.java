@@ -41,6 +41,25 @@ import org.ensembl.healthcheck.util.DBUtils;
  */
 public class ReportManager {
 
+	/**
+	 * <p>
+	 * 	Resets attributes of the ReportManager. This way the ReportManager can
+	 * be used for running more than one session. (Not at the same time) 
+	 * Before starting a new session, calling ReportManager.initialise()
+	 * will put the ReportManager back into a state in which it can be used
+	 * again.
+	 * </p>
+	 * 
+	 */
+	public static void initialise() {
+		
+		reportsByTest     = new HashMap();
+		reportsByDatabase = new HashMap();
+		
+		outputDatabaseConnection = null;
+		sessionID = -1;
+	}
+	
 	/** A hash of lists keyed on the test name. */
 	protected static Map reportsByTest = new HashMap();
 
@@ -201,7 +220,7 @@ public class ReportManager {
 		// this may be called when there is no DB connection
 		String dbName = (con == null) ? "no_database" : DBUtils.getShortDatabaseName(con);
 
-		add(new ReportLine(testCase.getTestName(), dbName, level, message, testCase.getTeamResponsible(), testCase.getSecondTeamResponsible()));
+		add(new ReportLine(testCase, dbName, level, message, testCase.getTeamResponsible(), testCase.getSecondTeamResponsible()));
 
 	} // report
 
@@ -220,7 +239,7 @@ public class ReportManager {
 	 */
 	public static void report(EnsTestCase testCase, String dbName, int level, String message) {
 
-		add(new ReportLine(testCase.getTestName(), dbName, level, message, testCase.getTeamResponsible(), testCase.getSecondTeamResponsible()));
+		add(new ReportLine(testCase, dbName, level, message, testCase.getTeamResponsible(), testCase.getSecondTeamResponsible()));
 
 	} // report
 
