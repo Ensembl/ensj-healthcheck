@@ -28,9 +28,9 @@ class StreamGobbler extends Thread {
 
 	boolean discard = false;
 
-	StringBuffer out;
+	Appendable out;
 
-	StreamGobbler(InputStream is, StringBuffer out, boolean discard) {
+	StreamGobbler(InputStream is, Appendable out, boolean discard) {
 		this.is = is;
 		this.out = out;
 		this.discard = discard;
@@ -45,13 +45,15 @@ class StreamGobbler extends Thread {
 				streamToBuffer(is, out);
 			}
 		} catch (IOException ioe) {
-			ioe.printStackTrace();
+			
+			throw new RuntimeException(ioe);
+			
 		} finally {
 			InputOutputUtils.closeQuietly(is);
 		}
 	}
 
-	public static void streamToBuffer(InputStream is, StringBuffer out)
+	public static void streamToBuffer(InputStream is, Appendable out)
 			throws IOException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 		String line = null;
@@ -93,6 +95,11 @@ public class ProcessExec {
 	public static int exec(String command, StringBuffer out, StringBuffer err)
 			throws IOException {
 		return exec(command, out, err, false);
+	}
+
+	public static int exec(String command, StringBuffer out, StringBuffer err, String[] environment)
+			throws IOException {
+		return exec(command, out, err, false, environment);
 	}
 
     /**
@@ -147,6 +154,24 @@ public class ProcessExec {
 			boolean discard) throws IOException {
 		Runtime rt = Runtime.getRuntime();
 		Process proc = rt.exec(command);
+		
+		return waitForProcess(out, err, discard, proc);
+	}
+
+	private static int exec(
+			String command, 
+			StringBuffer out, 
+			StringBuffer err,
+			boolean discard, 
+			String[] environment
+	) throws IOException {
+		
+		Runtime rt = Runtime.getRuntime();
+		
+		Process proc = rt.exec(
+				command, 
+				environment
+		);		
 		return waitForProcess(out, err, discard, proc);
 	}
 
@@ -160,7 +185,7 @@ public class ProcessExec {
 	 * @return
 	 * @throws Exception
 	 */
-	private static int exec(String[] commandarray, StringBuffer out, StringBuffer err,
+	private static int exec(String[] commandarray, Appendable out, Appendable err,
 			boolean discard) throws IOException {
 		Runtime rt = Runtime.getRuntime();
 		Process proc = rt.exec(commandarray);
@@ -174,8 +199,12 @@ public class ProcessExec {
 	 * @return
 	 * @throws Exception
 	 */
-	public static int execShell(String command, StringBuffer out,
-			StringBuffer err) throws IOException {
+	public static int execShell(
+			String command, 
+			Appendable out,
+			Appendable err
+		) throws IOException {
+		
 		return execShell(command, out, err, false);
 	}
 
@@ -187,47 +216,118 @@ public class ProcessExec {
 	 * @throws Exception
 	 */
 	public static int execShell(String command) throws IOException {
-		return execShell(command, null, null, true);
+		return execShell(command, (StringBuffer) null, (StringBuffer) null, true);
 	}
-
-	private static int execShell(String command, StringBuffer out,
-			StringBuffer err, boolean discard) throws IOException {
+	
+	private static Process createShellProcessObject(String command) throws IOException {
+		
 		Runtime rt = Runtime.getRuntime();
 		Process proc = rt.exec(new String[] { SHELL, SHELL_FLAGS, command });
-		return waitForProcess(out, err, discard, proc);
+		return proc;
 	}
 
-	private static int waitForProcess(StringBuffer out, StringBuffer err,
-			boolean discard, Process proc) {
-		// any error message?
-		StreamGobbler errorGobbler = new StreamGobbler(proc.getErrorStream(),
-				err, discard);
+	private static int execShell(
+			String command, 
+			Appendable out,
+			Appendable err, 
+			boolean discard
+		) throws IOException {
+		
+		return waitForProcess(out, err, discard, createShellProcessObject(command));
+	}
 
-		// any output?
-		StreamGobbler outputGobbler = new StreamGobbler(proc.getInputStream(),
-				out, discard);
+	private static int execShell(
+			String command, 
+			Thread outputGobbler, 
+			Thread errorGobbler,
+			boolean discard
+		) throws IOException {
+		
+		return waitForProcess(outputGobbler, errorGobbler, discard, createShellProcessObject(command));
+	}
 
+	private static int waitForProcess(
+			Thread outputGobbler, 
+			Thread errorGobbler,
+			boolean discard, 
+			Process proc
+		) {
+		
 		// kick them off
 		errorGobbler.start();
 		outputGobbler.start();
 
 		// return exit status
 		try {
+
 			// get the exit status of the command once finished
+			//
 			int exit = proc.waitFor();
+			
 			// now wait for the output and error to be read with a suitable
 			// timeout
+			//
 			outputGobbler.join(TIMEOUT);
 			errorGobbler.join(TIMEOUT);
 			return exit;
+
 		} catch (InterruptedException e) {
+
+			// While the Process is running, the Thread is in the state 
+			// called "WAITING". If an interrupt has been requested and caught
+			// within the thread, reinterrupting is requested.
+			//
+			// See
+			// http://download.oracle.com/javase/1,5.0/docs/guide/misc/threadPrimitiveDeprecation.html
+			// chapter
+			// Section "How do I stop a thread that waits for long periods (e.g., for input)?"
+			// for more details on this.
+			// 
+			Thread.currentThread().interrupt();
+			
 			return -1;
-		} finally{
+
+		} finally {
+			
 			// to make sure the all streams are closed to avoid open file handles
+			//
 			IOUtils.closeQuietly(proc.getErrorStream());
 			IOUtils.closeQuietly(proc.getInputStream());
 			IOUtils.closeQuietly(proc.getOutputStream());
+			
+			// Otherwise we will be waiting for the process to terminate on 
+			// its own instead of interrupting as the user has requested.
+			//
+			proc.destroy();
 		}
+	}
+	
+	private static int waitForProcess(
+			Appendable out, 
+			Appendable err,
+			boolean discard, 
+			Process proc
+		) {
+		// any error message?
+		StreamGobbler errorGobbler = new StreamGobbler(
+				proc.getErrorStream(),
+				err, 
+				discard
+		);
+
+		// any output?
+		StreamGobbler outputGobbler = new StreamGobbler(
+				proc.getInputStream(),
+				out, 
+				discard
+		);
+
+		return waitForProcess(
+				outputGobbler,
+				errorGobbler,
+				discard,
+				proc
+		);
 	}
 
 	/**
