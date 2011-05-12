@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 import org.ensembl.healthcheck.GroupOfTests;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.util.Clazz;
-import org.ensembl.healthcheck.util.FileNameFilter;
+import org.ensembl.healthcheck.util.ClassFileFilter;
 import org.ensembl.healthcheck.util.Jar;
 
 
@@ -33,7 +33,7 @@ public class GuiStarter {
 		List<String> classesInJar = Jar.findAllClassesInJar(jarFile);
 		
 		List<GroupOfTests> testGroupList = Clazz.instantiateListOfTestGroups(
-			FileNameFilter.filterForTrueSubclassesOf(
+			ClassFileFilter.filterForTrueSubclassesOf(
 					classesInJar,
 					GroupOfTests.class
 			)
@@ -46,7 +46,7 @@ public class GuiStarter {
 		List<String> classesInJar = Jar.findAllClassesInJar(jarFile);
 		
 		List<Class<EnsTestCase>> testGroupList = Clazz.classloadListOfClasses(
-				FileNameFilter.filterForTrueSubclassesOf(
+				ClassFileFilter.filterForTrueSubclassesOf(
 						classesInJar,
 						EnsTestCase.class
 				)
