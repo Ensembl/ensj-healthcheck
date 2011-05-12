@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -247,8 +248,18 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 			
 			if (currentDir.exists() && currentDir.canRead() && currentDir.isDirectory()) {
 
-				for (File f : currentDir.listFiles()) {
-					
+				for (
+					File f : currentDir.listFiles(
+
+						// Only use ini files. 
+						//
+						new FilenameFilter() {
+							public boolean accept(File arg0, String arg1) {								
+								return arg1.endsWith(".ini");
+							}
+						}
+					)
+				) {
 					ConfigureHost configuration = getHostConfiguration(f);			
 					dbDetails.add(configuration);
 				}
