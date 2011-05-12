@@ -76,6 +76,7 @@ public class TranscriptSupportingFeatures extends SingleDatabaseTestCase {
 		allowedNoSupporting.add("testes_rnaseq");
 		allowedNoSupporting.add("thyroid_rnaseq");
 		allowedNoSupporting.add("zfish_RNASeq");
+		allowedNoSupporting.add("ncRNA_pseudogene");
 
 	}
 
