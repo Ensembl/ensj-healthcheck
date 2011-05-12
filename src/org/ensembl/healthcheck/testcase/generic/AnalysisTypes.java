@@ -61,6 +61,8 @@ public class AnalysisTypes extends SingleDatabaseTestCase {
 		removeAppliesToType(DatabaseType.CDNA);
 		removeAppliesToType(DatabaseType.VEGA);
 		removeAppliesToType(DatabaseType.SANGER_VEGA);
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.RNASEQ);
 
 	}
 
