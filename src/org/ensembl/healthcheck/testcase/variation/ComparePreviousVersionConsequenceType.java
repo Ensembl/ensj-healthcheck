@@ -31,10 +31,13 @@ public class ComparePreviousVersionConsequenceType extends ComparePreviousVersio
 	 */
 	public ComparePreviousVersionConsequenceType() {
 
+		/*
 		addToGroup("variation");
 		addToGroup("variation-release");
 		addToGroup("variation-post-import");
+		*/
 		setDescription("Compare the number of transcript_variation alleles having each consequence type status in the current database with those from the equivalent database on the secondary server");
+		setTeamResponsible(Team.VARIATION);
 	}
 
 	/**
