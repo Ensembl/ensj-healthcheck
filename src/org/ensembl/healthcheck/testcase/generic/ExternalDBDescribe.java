@@ -58,7 +58,7 @@ public class ExternalDBDescribe extends MultiDatabaseTestCase {
 		for (int i = 0; i < types.length; i++) {
 			// ignore db_release column as this is allowed to be different between
 			// species
-			result &= checkSameSQLResult("SELECT external_db_id, db_name, status, dbprimary_acc_linkable, priority, db_display_name, type FROM external_db ORDER BY external_db_id", dbr.getAll(types[i]),
+			result &= checkSameSQLResult("SELECT external_db_id, db_name, status, priority, db_display_name, type FROM external_db ORDER BY external_db_id", dbr.getAll(types[i]),
 					false);
 		}
 
