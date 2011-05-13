@@ -33,6 +33,7 @@ import java.util.logging.Logger;
 
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.Utils;
 
 /**
  * ReportManager is the main class for reporting in the Ensj Healthcheck system. It provides methods for storing reports - single
@@ -715,14 +716,23 @@ public class ReportManager {
 	 */
 	public static void createDatabaseSession() {
 
-		String hosts = "";
 
-		for (DatabaseServer server : DBUtils.getMainDatabaseServers()) {
-
-			hosts = String.format("%s, %s:%s", hosts, server.getHost(), server.getPort());
-
+		// build comma-separated list of hosts
+		StringBuffer buf = new StringBuffer();
+		Iterator<DatabaseServer> it = DBUtils.getMainDatabaseServers().iterator();
+		
+		while (it.hasNext()) {
+		
+			DatabaseServer server = (DatabaseServer)it.next();
+			buf.append(String.format("%s:%s", server.getHost(), server.getPort()));
+			if (it.hasNext()) {
+				buf.append(",");
+			}
+		
 		}
-
+		
+		String hosts = buf.toString();
+		
 		String sql = String.format("INSERT INTO session (host, config, db_release) VALUES (%s,%s,%s)", hosts, System.getProperty("output.databases"), System.getProperty("output.release"));
 
 		try {
