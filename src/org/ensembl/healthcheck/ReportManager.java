@@ -731,10 +731,9 @@ public class ReportManager {
 		
 		}
 		
-		String hosts = String.format("\'%s\'", buf.toString());
+		String hosts = buf.toString();
 		
-		String sql = String.format("INSERT INTO session (host, config, db_release) VALUES (%s,%s,%s)", hosts, System.getProperty("output.databases"), System.getProperty("output.release"));
-
+		String sql = String.format("INSERT INTO session (host, config, db_release) VALUES (\'%s\',\'%s\',\'%s\')", hosts, System.getProperty("output.databases"), System.getProperty("output.release"));
 
 		try {
 			Statement stmt = outputDatabaseConnection.createStatement();
