@@ -726,14 +726,15 @@ public class ReportManager {
 			DatabaseServer server = (DatabaseServer)it.next();
 			buf.append(String.format("%s:%s", server.getHost(), server.getPort()));
 			if (it.hasNext()) {
-				buf.append(" ");
+				buf.append(",");
 			}
 		
 		}
 		
-		String hosts = buf.toString();
+		String hosts = String.format("\'%s\'", buf.toString());
 		
 		String sql = String.format("INSERT INTO session (host, config, db_release) VALUES (%s,%s,%s)", hosts, System.getProperty("output.databases"), System.getProperty("output.release"));
+
 
 		try {
 			Statement stmt = outputDatabaseConnection.createStatement();
