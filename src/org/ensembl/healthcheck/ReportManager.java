@@ -726,7 +726,7 @@ public class ReportManager {
 			DatabaseServer server = (DatabaseServer)it.next();
 			buf.append(String.format("%s:%s", server.getHost(), server.getPort()));
 			if (it.hasNext()) {
-				buf.append(",");
+				buf.append(" ");
 			}
 		
 		}
