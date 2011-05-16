@@ -261,6 +261,16 @@ public abstract class EnsTestCase {
 
 	// -------------------------------------------------------------------------
 	/**
+	 * Remove a test from all groups.
+	 */
+	public void removeFromAllGroups() {
+
+		groups = new ArrayList<String>();
+
+	}
+
+	// -------------------------------------------------------------------------
+	/**
 	 * Convenience method for assigning this test case to several groups at once.
 	 * 
 	 * @param s
@@ -1370,14 +1380,14 @@ public abstract class EnsTestCase {
 
 		List<String> allColumns = DBUtils.getColumnsInTable(con, table);
 		allColumns.removeAll(exceptionColumns);
-		
+
 		String columns = StringUtils.join(allColumns, ",");
 
 		try {
 
 			Statement stmt = con.createStatement();
 			rs = stmt.executeQuery(String.format("SELECT %s FROM %s %s ORDER BY %s", columns, table, whereClause, key));
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1480,8 +1490,8 @@ public abstract class EnsTestCase {
 
 		DatabaseRegistryEntry productionDBRE = getProductionDatabase();
 
-		return DBUtils.compareResultSets(getWholeTableExceptSomeColumns(con, tableName, tableKey, exceptionColumns, ""), getWholeTableExceptSomeColumns(productionDBRE.getConnection(), productionTableName,
-				productionKey, exceptionColumns, "WHERE is_current=1"), this, "", true, false, tableName, null, false);
+		return DBUtils.compareResultSets(getWholeTableExceptSomeColumns(con, tableName, tableKey, exceptionColumns, ""),
+				getWholeTableExceptSomeColumns(productionDBRE.getConnection(), productionTableName, productionKey, exceptionColumns, "WHERE is_current=1"), this, "", true, false, tableName, null, false);
 
 	}
 
@@ -1993,9 +2003,9 @@ public abstract class EnsTestCase {
 	 *          The connection to use.
 	 * @return A map of analysis IDs (keys) and logic names (values).
 	 */
-	public Map<String,String> getLogicNamesFromAnalysisTable(Connection con) {
+	public Map<String, String> getLogicNamesFromAnalysisTable(Connection con) {
 
-		Map<String,String> map = new HashMap<String,String>();
+		Map<String, String> map = new HashMap<String, String>();
 
 		try {
 			Statement stmt = con.createStatement();
@@ -2093,7 +2103,7 @@ public abstract class EnsTestCase {
 		this.teamResponsible = teamResponsible;
 	}
 
-//----------------------------------------------------------------------
+	// ----------------------------------------------------------------------
 
 	public Team getSecondTeamResponsible() {
 		return secondTeamResponsible;
@@ -2106,19 +2116,19 @@ public abstract class EnsTestCase {
 	}
 
 	// ----------------------------------------------------------------------
-	
+
 	public String getPrintableTeamResponsibleString() {
-	
+
 		String team = getTeamResponsible().toString();
-		
+
 		if (getSecondTeamResponsible() != null) {
 			team += " and " + getSecondTeamResponsible();
 		}
-		
+
 		return team;
-		
+
 	}
-	
+
 	// ----------------------------------------------------------------------
 	/**
 	 * Get the names of the top level seq_regions.
