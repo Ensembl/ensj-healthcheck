@@ -7,6 +7,7 @@ public class EGArrayXrefs extends ArrayXrefs {
 
 	public EGArrayXrefs() {
 		super();
+		removeFromAllGroups();
 	}
 
 	@Override
