@@ -71,7 +71,7 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
 		// --------------------------------
 		// havana/OTTT
 
-		result &= checkAnalysisAndSource(dbre, "Transcript", "havana", "OTTT");
+		result &= checkAnalysisAndSource(dbre, "Transcript", "havana", "ensembl_havana_transcript", "OTTT");
 
 		// --------------------------------
 		// other pairs here
@@ -84,7 +84,7 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
 
 	// --------------------------------------------------------------------------
 
-	private boolean checkAnalysisAndSource(DatabaseRegistryEntry dbre, String objectType, String analysis, String source) {
+	private boolean checkAnalysisAndSource(DatabaseRegistryEntry dbre, String objectType, String analysis1, String analysis2, String source) {
 
 		boolean result = true;
 
@@ -105,7 +105,7 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
 
 			PreparedStatement stmt = con.prepareStatement(sql);
 
-			stmt.setString(1, analysis);
+			stmt.setString(1, analysis1);
 			stmt.setString(2, source);
 			stmt.setString(3, objectType);
 
@@ -116,9 +116,9 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
 
 			if (rows > 0) {
 				result = false;
-				ReportManager.problem(this, con, rows + " " + table + "s with analysis " + analysis + " do not have any associated xrefs of type " + source);
+				ReportManager.problem(this, con, rows + " " + table + "s with analysis " + analysis1 + " do not have any associated xrefs of type " + source);
 			} else {
-				ReportManager.correct(this, con, "All " + table + "s with analysis " + analysis + " have associated " + source + " xrefs");
+				ReportManager.correct(this, con, "All " + table + "s with analysis " + analysis1 + " have associated " + source + " xrefs");
 			}
 
 			rs.close();
@@ -135,19 +135,20 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
 		// and vice-versa - check for objects that have particular types of xref but
 		// are the wrong analysis
 		// e.g. all transcripts that have an OTTT xref should be of analysis type
-		// 'havana'
+		// 'havana' or 'ensembl_havana_transcript'.
 
 		sql = "SELECT COUNT(DISTINCT(t." + table + "_id)) FROM xref x, object_xref ox, external_db e, " + table
 				+ " t, analysis a WHERE x.xref_id=ox.xref_id AND x.external_db_id=e.external_db_id AND ox.ensembl_id=t." + table
-				+ "_id AND a.logic_name != ? AND e.db_name=? AND t.analysis_id=a.analysis_id  AND ox.ensembl_object_type=?";
+				+ "_id AND a.logic_name not in (?, ?) AND e.db_name=? AND t.analysis_id=a.analysis_id  AND ox.ensembl_object_type=?";
 
 		try {
 
 			PreparedStatement stmt = con.prepareStatement(sql);
 
-			stmt.setString(1, analysis);
-			stmt.setString(2, source);
-			stmt.setString(3, objectType);
+			stmt.setString(1, analysis1);
+			stmt.setString(2, analysis2);
+			stmt.setString(3, source);
+			stmt.setString(4, objectType);
 
 			ResultSet rs = stmt.executeQuery();
 
@@ -156,9 +157,9 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
 
 			if (rows > 0) {
 				result = false;
-				ReportManager.problem(this, con, rows + " " + table + "s with " + source + " xrefs do not have an analysis named " + analysis);
+				ReportManager.problem(this, con, rows + " " + table + "s with " + source + " xrefs do not have an analysis named " + analysis1 + " or " + analysis2);
 			} else {
-				ReportManager.correct(this, con, "All " + table + "s with " + source + " xrefs have " + analysis + " analyses");
+				ReportManager.correct(this, con, "All " + table + "s with " + source + " xrefs have either " + analysis1 + " or " + analysis2 + " analyses");
 			}
 
 			rs.close();
