@@ -392,7 +392,12 @@ public final class DBUtils {
 				return rs1.getInt(i) == rs2.getInt(i);
 
 			case Types.VARCHAR:
-				return rs1.getString(i).equals(rs2.getString(i));
+				String s1 = rs1.getString(i);
+				String s2 = rs2.getString(i);
+				// ignore "AUTO_INCREMENT=" part in final part of table definition
+				s1 = s1.replaceAll("AUTO_INCREMENT=[0-9]+ ", "");
+				s2 = s2.replaceAll("AUTO_INCREMENT=[0-9]+ ", "");
+				return s1.equals(s2);
 
 			case Types.FLOAT:
 				return rs1.getFloat(i) == rs2.getFloat(i);
