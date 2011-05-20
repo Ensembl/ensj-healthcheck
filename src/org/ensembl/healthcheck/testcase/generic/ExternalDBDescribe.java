@@ -18,7 +18,11 @@
 
 package org.ensembl.healthcheck.testcase.generic;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ensembl.healthcheck.DatabaseRegistry;
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
@@ -55,11 +59,22 @@ public class ExternalDBDescribe extends MultiDatabaseTestCase {
 
 		boolean result = true;
 
-		for (int i = 0; i < types.length; i++) {
-			// ignore db_release column as this is allowed to be different between
-			// species
-			result &= checkSameSQLResult("SELECT external_db_id, db_name, status, priority, db_display_name, type FROM external_db ORDER BY external_db_id", dbr.getAll(types[i]),
-					false);
+		for (DatabaseType type : types) {
+
+			// build the list of databases to check; currently this is just so that the master_schema.*databases can be ignored
+			List<DatabaseRegistryEntry> databases = new ArrayList<DatabaseRegistryEntry>();
+
+			for (DatabaseRegistryEntry dbre : dbr.getAll(type)) {
+				if (dbre.getName().matches("master_schema.*")) {
+					continue;
+				}
+
+				databases.add(dbre);
+			}
+
+			// ignore db_release column as this is allowed to be different between species
+			result &= checkSameSQLResult("SELECT external_db_id, db_name, status, priority, db_display_name, type FROM external_db ORDER BY external_db_id", databases.toArray(new DatabaseRegistryEntry[databases.size()]), false);
+	
 		}
 
 		return result;
