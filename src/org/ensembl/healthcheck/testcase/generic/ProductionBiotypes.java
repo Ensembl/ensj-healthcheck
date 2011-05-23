@@ -38,6 +38,9 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
 
 		addToGroup("production");
 		addToGroup("release");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Check that the gene and transcript biotypes match the valid current ones in the production database.");
 		setPriority(Priority.AMBER);
 		setEffect("Unknown/incorrect biotypes.");

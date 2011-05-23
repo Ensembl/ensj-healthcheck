@@ -38,6 +38,9 @@ public class ExonTranscriptStartEnd extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Checks that exon and transcript start/end agree");
 		setTeamResponsible(Team.GENEBUILD);
 	}

@@ -44,6 +44,9 @@ public class NullStrings extends SingleDatabaseTestCase {
 		addToGroup("funcgen-release");
 		addToGroup("funcgen");
 		addToGroup("compara-ancestral");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setTeamResponsible(Team.RELEASE_COORDINATOR);
 		setDescription("Check for rows that contain the *string* NULL - should probably be the database primitive NULL.");
 

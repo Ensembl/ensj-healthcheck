@@ -37,6 +37,9 @@ public class GeneCount extends SingleDatabaseTestCase {
 	public GeneCount() {
 
 		addToGroup("release");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Check that certain regions have a specific gene count.");
 		setPriority(Priority.AMBER);
 		setEffect("Causes incorrect display of gene counts and confusing contigview displays.");

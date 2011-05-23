@@ -29,6 +29,8 @@ public class Karyotype extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Check that karyotype and seq_region tables agree");
 		setTeamResponsible(Team.CORE);
 

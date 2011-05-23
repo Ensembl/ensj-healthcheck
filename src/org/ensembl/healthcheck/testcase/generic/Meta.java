@@ -45,6 +45,9 @@ public class Meta extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		addToGroup("compara-ancestral");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setTeamResponsible(Team.RELEASE_COORDINATOR);
 		setSecondTeamResponsible(Team.GENEBUILD);
 		setDescription("Check that the meta table exists, has data, the entries correspond to the " + "database name, and that the values in assembly.type match what's in the meta table");

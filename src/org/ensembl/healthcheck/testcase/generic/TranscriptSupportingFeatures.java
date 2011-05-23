@@ -39,6 +39,9 @@ public class TranscriptSupportingFeatures extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Check that transcripts which need supporting features have them.");
 		setPriority(Priority.AMBER);
 		setTeamResponsible(Team.GENEBUILD);

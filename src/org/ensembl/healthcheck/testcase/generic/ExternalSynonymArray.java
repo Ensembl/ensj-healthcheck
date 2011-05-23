@@ -34,6 +34,8 @@ public class ExternalSynonymArray extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("post_genebuild");
 		addToGroup("core_xrefs");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Check for ARRAY() entries in external_synonym.");
 		setTeamResponsible(Team.RELEASE_COORDINATOR);
 		setSecondTeamResponsible(Team.GENEBUILD);

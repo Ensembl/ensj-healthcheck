@@ -48,9 +48,13 @@ public class StableID extends SingleDatabaseTestCase {
 	 * Create a new instance of StableID.
 	 */
 	public StableID() {
+		
 		addToGroup("id_mapping");
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Checks *_stable_id tables are valid.");
 		setPriority(Priority.RED);
 		setEffect("Compara will have invalid stable IDs.");

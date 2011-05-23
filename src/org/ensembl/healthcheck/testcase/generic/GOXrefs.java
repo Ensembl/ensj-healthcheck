@@ -35,6 +35,8 @@ public class GOXrefs extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		addToGroup("core_xrefs");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Check that unrpoejcted GO xrefs exist, and that there are no blank or null linkage types.");
 		setTeamResponsible(Team.GENEBUILD);
 	}

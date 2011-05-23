@@ -36,9 +36,13 @@ public class ProteinFeatures extends SingleDatabaseTestCase {
 	 * Creates a new instance of CheckFeatureCoordsTestCase
 	 */
 	public ProteinFeatures() {
+		
 		setDescription("Check that protein annotation feature coords make sense and that all translations exist in the database");
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setTeamResponsible(Team.GENEBUILD);
 	}
 

@@ -47,6 +47,9 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Check for suspiciously long genes & exons");
 		setTeamResponsible(Team.GENEBUILD);
 

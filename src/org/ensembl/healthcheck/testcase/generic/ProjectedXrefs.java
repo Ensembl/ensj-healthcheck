@@ -45,7 +45,8 @@ public class ProjectedXrefs extends MultiDatabaseTestCase {
 
 		addToGroup("release");
 		addToGroup("core_xrefs");
-
+		addToGroup("post-compara-handover");
+		
 		setDescription("Check that all species that should have projected xrefs do in fact have them.");
 		setTeamResponsible(Team.CORE);
 

@@ -39,6 +39,8 @@ public class Archive extends SingleDatabaseTestCase {
 
 		addToGroup("id_mapping");
 		addToGroup("release");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
 		setDescription("Checks the archive tables are up to date.");
 		setHintLongRunning(true);
 		setTeamResponsible(Team.CORE);
@@ -81,7 +83,7 @@ public class Archive extends SingleDatabaseTestCase {
 		result &= checkChangedInGeneArchive(con, "transcript", "T", MIN_MAPPING_SESSION_ID);
 		logger.info("Checking changed genes");
 		result &= checkChangedInGeneArchive(con, "gene", "G", MIN_MAPPING_SESSION_ID);
-	
+
 		return result;
 	}
 

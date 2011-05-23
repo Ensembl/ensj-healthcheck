@@ -45,6 +45,8 @@ public class AssemblyMultipleOverlap extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		addToGroup("compara-ancestral");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
 
 		setDescription("Check for multiple components which overlap and are assembled to the same thing.");
 		setTeamResponsible(Team.CORE);

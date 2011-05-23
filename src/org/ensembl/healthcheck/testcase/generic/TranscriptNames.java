@@ -44,6 +44,9 @@ public class TranscriptNames extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Check for certain combinations of logic name and transcript name.");
 		setPriority(Priority.AMBER);
 		setEffect("Transcript names do not match the logic names.");

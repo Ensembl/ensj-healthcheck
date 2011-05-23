@@ -36,6 +36,8 @@ public class XrefTypes extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		addToGroup("core_xrefs");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Check that all xrefs only map to one ensembl object type.");
 		setTeamResponsible(Team.CORE);
 		setTeamResponsible(Team.GENEBUILD);

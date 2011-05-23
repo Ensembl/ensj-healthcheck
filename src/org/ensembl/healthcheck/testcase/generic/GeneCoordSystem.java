@@ -38,6 +38,9 @@ public class GeneCoordSystem extends SingleDatabaseTestCase {
 
 		addToGroup("release");
 		addToGroup("post_genebuild");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Check that no genes are on a sequence_level coord system.");
 		setPriority(Priority.AMBER);
 		setEffect("Having genes on a sequence_level co-ordinate system will slow down the mapper and affect website speed and dumping speed.");

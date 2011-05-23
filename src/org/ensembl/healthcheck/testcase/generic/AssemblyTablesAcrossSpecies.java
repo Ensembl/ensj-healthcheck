@@ -34,6 +34,9 @@ public class AssemblyTablesAcrossSpecies extends MultiDatabaseTestCase {
 	public AssemblyTablesAcrossSpecies() {
 
 		addToGroup("release");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Check that the assembly table contains the same information for all databases with the same species.");
 		setTeamResponsible(Team.GENEBUILD);
 	}

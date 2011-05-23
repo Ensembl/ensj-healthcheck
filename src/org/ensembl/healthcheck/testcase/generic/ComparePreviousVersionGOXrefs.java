@@ -32,6 +32,8 @@ public class ComparePreviousVersionGOXrefs extends ComparePreviousVersionBase {
 
 		addToGroup("release");
 		addToGroup("core_xrefs");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Compare the GO xrefs in the current database with those from the equivalent database on the secondary server");
 		setTeamResponsible(Team.CORE);
 		setSecondTeamResponsible(Team.GENEBUILD);

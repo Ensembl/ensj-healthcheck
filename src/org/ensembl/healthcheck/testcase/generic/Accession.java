@@ -44,6 +44,8 @@ public class Accession extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Check for presence and format of PFAM etc hits");
 		setTeamResponsible(Team.GENEBUILD);
 

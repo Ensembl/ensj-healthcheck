@@ -36,6 +36,8 @@ public class HitNameFormat extends SingleDatabaseTestCase {
 
 		addToGroup("release");
 		addToGroup("post_genebuild");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Check that there are no incorrectly formatted hit_names");
 		setPriority(Priority.AMBER);
 		setFix("Manually fix affected values.");

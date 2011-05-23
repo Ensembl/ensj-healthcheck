@@ -38,6 +38,8 @@ public class HGNCTypes extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		addToGroup("core_xrefs");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Check that HGNC_curated_genes xrefs are on genes, _transcript are on transcript etc");
 		setTeamResponsible(Team.CORE);
 

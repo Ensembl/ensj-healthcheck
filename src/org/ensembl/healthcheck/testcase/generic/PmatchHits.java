@@ -38,6 +38,9 @@ public class PmatchHits extends SingleDatabaseTestCase {
 	public PmatchHits() {
 
 		addToGroup("post_genebuild");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Checks the number of hits produced by pmatch and warns if too many.");
 		setTeamResponsible(Team.GENEBUILD);
 	}

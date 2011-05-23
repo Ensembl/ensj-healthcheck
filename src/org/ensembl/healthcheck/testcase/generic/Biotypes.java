@@ -37,6 +37,9 @@ public class Biotypes extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+
 		setTeamResponsible(Team.GENEBUILD);
 		setDescription("Check for null biotypes, and also for any 'ensembl' biotypes - should be 'protein_coding'");
 
@@ -114,8 +117,8 @@ public class Biotypes extends SingleDatabaseTestCase {
 
 			String geneBiotype = geneBiotypes[i];
 
-			String[] mismatchedBiotypes = getColumnValues(con, String.format("SELECT DISTINCT(t.biotype) FROM transcript t, gene g WHERE g.gene_id=t.gene_id AND g.biotype != t.biotype AND g.biotype='%s'",
-					geneBiotype));
+			String[] mismatchedBiotypes = getColumnValues(con,
+					String.format("SELECT DISTINCT(t.biotype) FROM transcript t, gene g WHERE g.gene_id=t.gene_id AND g.biotype != t.biotype AND g.biotype='%s'", geneBiotype));
 
 			if (mismatchedBiotypes.length > 0) {
 
@@ -124,8 +127,8 @@ public class Biotypes extends SingleDatabaseTestCase {
 				// get count for each one
 				for (String transcriptBiotype : mismatchedBiotypes) {
 
-					int rows = getRowCount(con, String.format("SELECT COUNT(DISTINCT g.gene_id) FROM transcript t, gene g WHERE g.gene_id=t.gene_id AND g.biotype='%s' AND t.biotype='%s'", geneBiotype,
-							transcriptBiotype));
+					int rows = getRowCount(con,
+							String.format("SELECT COUNT(DISTINCT g.gene_id) FROM transcript t, gene g WHERE g.gene_id=t.gene_id AND g.biotype='%s' AND t.biotype='%s'", geneBiotype, transcriptBiotype));
 					ReportManager.problem(this, con, rows + " genes of biotype " + geneBiotype + " have transcripts with biotype " + transcriptBiotype);
 
 				}

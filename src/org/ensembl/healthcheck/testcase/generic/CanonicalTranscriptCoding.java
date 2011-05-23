@@ -39,6 +39,9 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 
 		addToGroup("release");
 		addToGroup("post_genebuild");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+
 		setDescription("Check if protein_coding genes have a canonical transcript that has a valid translation. Also check than number of canonical transcripts is correct. See also canonical_transcript checks in CoreForeignKeys.");
 		setTeamResponsible(Team.COMPARA);
 

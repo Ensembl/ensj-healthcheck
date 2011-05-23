@@ -34,6 +34,9 @@ public class SeqRegionAcrossSpecies extends MultiDatabaseTestCase {
 	public SeqRegionAcrossSpecies() {
 
 		addToGroup("release");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Check that the seq_region table is the same across all generic DBs; if not it will cause problems on the website.");
 		setTeamResponsible(Team.GENEBUILD);
 	}

@@ -33,6 +33,9 @@ public class ExonRank extends SingleDatabaseTestCase {
 
 		addToGroup("release");
 		addToGroup("post_genebuild");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Look for entries in the exon_transcript table that are duplicates apart from the rank.");
 		setTeamResponsible(Team.GENEBUILD);
 	}

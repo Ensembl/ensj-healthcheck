@@ -36,7 +36,10 @@ public class FeatureCoords extends SingleDatabaseTestCase {
 	public FeatureCoords() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
+		addToGroup("release");		
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Check that feature co-ords make sense.");
 		setHintLongRunning(true);
 		setTeamResponsible(Team.GENEBUILD);

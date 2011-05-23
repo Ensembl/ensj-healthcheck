@@ -39,6 +39,9 @@ public class GeneTranscriptStartEnd extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Checks that gene start/end agrees with transcript table");
 		setTeamResponsible(Team.GENEBUILD);
 	}

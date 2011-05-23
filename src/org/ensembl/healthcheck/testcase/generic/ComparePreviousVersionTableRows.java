@@ -34,6 +34,9 @@ public class ComparePreviousVersionTableRows extends ComparePreviousVersionBase 
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Compare the counts of the number of rows in each table in this and the previous database");
 		setTeamResponsible(Team.CORE);
 		setSecondTeamResponsible(Team.GENEBUILD);

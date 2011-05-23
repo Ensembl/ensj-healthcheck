@@ -31,6 +31,9 @@ public class ComparePreviousVersionXrefs extends ComparePreviousVersionBase {
 
 		addToGroup("release");
 		addToGroup("core_xrefs");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Compare the xrefs in the current database with those from the equivalent database on the secondary server");
 		setTeamResponsible(Team.CORE);
 		setSecondTeamResponsible(Team.GENEBUILD);

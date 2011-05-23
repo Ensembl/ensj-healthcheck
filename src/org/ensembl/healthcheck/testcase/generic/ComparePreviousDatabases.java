@@ -37,7 +37,11 @@ public class ComparePreviousDatabases extends MultiDatabaseTestCase {
 	 * Create a new instance of ComparePreviousDatabases
 	 */
 	public ComparePreviousDatabases() {
+
 		addToGroup("release");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+
 		setDescription("Check that all species and database types in the previous release are represented in the current release.");
 		setTeamResponsible(Team.RELEASE_COORDINATOR);
 	}
@@ -70,8 +74,8 @@ public class ComparePreviousDatabases extends MultiDatabaseTestCase {
 			// fail at once if there are no databases on the main server for this species at all
 			if (!primarySpeciesAndTypes.containsKey(s)) {
 
-				ReportManager.problem(this, "", String.format("Secondary server contains at least one database for %s (e.g. %s) but there are none on the primary server", s, (secondaryDBR.getAll(s))[0]
-						.getName()));
+				ReportManager.problem(this, "",
+						String.format("Secondary server contains at least one database for %s (e.g. %s) but there are none on the primary server", s, (secondaryDBR.getAll(s))[0].getName()));
 				result = false;
 
 			} else {

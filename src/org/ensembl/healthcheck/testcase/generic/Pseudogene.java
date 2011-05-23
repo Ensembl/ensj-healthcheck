@@ -31,8 +31,12 @@ public class Pseudogene extends SingleDatabaseTestCase {
 	 * Check the assembly_exception table.
 	 */
 	public Pseudogene() {
+		
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Check that there are no translations for pseudogenes");
 		setTeamResponsible(Team.GENEBUILD);
 	}

@@ -39,6 +39,9 @@ public class Strand extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Check that seq_region_strand is +/-1 in several tables.");
 		setTeamResponsible(Team.GENEBUILD);
 

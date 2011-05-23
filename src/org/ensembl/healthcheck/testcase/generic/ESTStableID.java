@@ -43,6 +43,8 @@ public class ESTStableID extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Check that EST genes/transcripts/translations have EST in the stable ID.");
 		setTeamResponsible(Team.GENEBUILD);
 

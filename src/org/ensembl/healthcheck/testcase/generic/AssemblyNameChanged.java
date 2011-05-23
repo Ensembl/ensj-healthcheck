@@ -43,6 +43,9 @@ public class AssemblyNameChanged extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+
 		setDescription("Check whether the assembly.name meta entry changes between releases, and if so, check that the assembly_exception table (patches only) has changed. Currently only for human.");
 		setTeamResponsible(Team.GENEBUILD);
 	}
@@ -94,8 +97,8 @@ public class AssemblyNameChanged extends SingleDatabaseTestCase {
 
 				if (assExSame) {
 
-					ReportManager.problem(this, currentCon, String.format("Assembly name has changed from previous database (%s -> %s) but assembly_exception table does not contain different patches",
-							previousAssemblyName, currentAssemblyName));
+					ReportManager.problem(this, currentCon,
+							String.format("Assembly name has changed from previous database (%s -> %s) but assembly_exception table does not contain different patches", previousAssemblyName, currentAssemblyName));
 					result = false;
 
 				} else {

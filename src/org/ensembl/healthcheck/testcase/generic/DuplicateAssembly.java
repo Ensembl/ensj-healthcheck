@@ -38,6 +38,9 @@ public class DuplicateAssembly extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		addToGroup("compara-ancestral");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Check that there are no duplicates in the assembly table");
 		setTeamResponsible(Team.GENEBUILD);
 

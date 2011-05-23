@@ -38,6 +38,8 @@ public class PartitionedTables extends SingleDatabaseTestCase {
 
 		addToGroup("release");
 		setDescription("Check whether tables have been partitioned.");
+		addToGroup("post-compara-handover");
+		
 		setPriority(Priority.AMBER);
 		setEffect("Tables should only be partitioned if the partitions are defined in table.sql.");
 		setTeamResponsible(Team.RELEASE_COORDINATOR);

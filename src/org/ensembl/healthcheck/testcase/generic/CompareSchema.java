@@ -53,6 +53,9 @@ public class CompareSchema extends MultiDatabaseTestCase {
 	public CompareSchema() {
 
 		addToGroup("release");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Compare two databases (table names, column names and types, and indexes. Note that, int the case of core databases, there are occasionally tables (such as runnable, job, job_status etc) that are still present after the genebuild handover because pipelines are still running. The genebuilders are responsible for deleting these before the release.");
 		setTeamResponsible(Team.RELEASE_COORDINATOR);
 
@@ -176,7 +179,7 @@ public class CompareSchema extends MultiDatabaseTestCase {
 							String sql = "SHOW CREATE TABLE " + table;
 							ResultSet masterRS = masterStmt.executeQuery(sql);
 							ResultSet dbRS = dbStmt.executeQuery(sql);
-							boolean showCreateSame = DBUtils.compareResultSets(dbRS, masterRS, this, " [" + table + "]", true, false, table, true);
+							boolean showCreateSame = DBUtils.compareResultSets(dbRS, masterRS, this, " [" + table + "]", false, false, table, true);
 							if (!showCreateSame) {
 
 								// do more in-depth analysis of database structure

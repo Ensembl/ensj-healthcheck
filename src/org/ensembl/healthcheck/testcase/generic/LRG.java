@@ -37,6 +37,8 @@ public class LRG extends SingleDatabaseTestCase {
 
 		addToGroup("release");
 		addToGroup("lrg");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Healthcheck for LRGs");
 		setTeamResponsible(Team.VARIATION);
 

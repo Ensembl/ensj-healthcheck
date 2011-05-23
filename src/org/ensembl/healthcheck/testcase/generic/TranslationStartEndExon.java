@@ -34,8 +34,12 @@ public class TranslationStartEndExon extends SingleDatabaseTestCase {
 	 * Creates a new instance of CheckTranslationStartEndExon
 	 */
 	public TranslationStartEndExon() {
+		
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Check if the start- and end-exon mentioned in the translation-table exist in the database, too. ");
 		setTeamResponsible(Team.GENEBUILD);
 	}

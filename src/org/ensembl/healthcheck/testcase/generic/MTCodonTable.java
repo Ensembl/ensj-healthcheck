@@ -37,6 +37,9 @@ public class MTCodonTable extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Check that the number of entries in the seq_region_attrib table specifying that the MT chromosome should use codon table 2 matches the number of MT chromosomes (may be several different assemblies)");
 		setPriority(Priority.AMBER);
 		setFix("Add seq_region_attribs");

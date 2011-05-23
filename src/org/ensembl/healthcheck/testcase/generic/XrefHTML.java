@@ -36,6 +36,8 @@ public class XrefHTML extends SingleDatabaseTestCase {
 
 		addToGroup("release");
 		addToGroup("core_xrefs");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Check that there are no xrefs with HTML markup");
 		setPriority(Priority.AMBER);
 		setEffect("Causes HTML markup to be displayed unrendered");

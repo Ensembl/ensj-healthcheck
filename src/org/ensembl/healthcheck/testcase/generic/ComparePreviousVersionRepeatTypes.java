@@ -31,6 +31,9 @@ public class ComparePreviousVersionRepeatTypes extends ComparePreviousVersionBas
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		
 		setDescription("Compare the types of repeat features in the current database with those from the equivalent database on the secondary server");
 		setTeamResponsible(Team.GENEBUILD);
 
