@@ -28,7 +28,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  * be null.
  */
 public class FlankingUpDownSeq extends SingleDatabaseTestCase {
-
+	
 	/**
 	 * Creates a new instance of CheckFlankingUpDownSeq
 	 */
@@ -39,7 +39,7 @@ public class FlankingUpDownSeq extends SingleDatabaseTestCase {
 		setTeamResponsible(Team.VARIATION);
 
 	}
-
+	
 	/**
 	 * Find any matching databases that have both no up_seq and up_seq_region_start.
 	 * 
@@ -54,36 +54,23 @@ public class FlankingUpDownSeq extends SingleDatabaseTestCase {
 		// check up_seq and up_seq_region_start
 
 		Connection con = dbre.getConnection();
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM flanking_sequence WHERE up_seq is null AND up_seq_region_start is null");
-		if (rows > 0) {
+		
+		try {
+			
+			// Verify that entries in flanking_sequence have only one of [up|down]_seq and [up|down]_seq_region_[start|end] set
+			result &= checkCountIsZero(con, "flanking_sequence", 
+					"(up_seq IS NULL AND (up_seq_region_start IS NULL OR up_seq_region_end IS NULL)) OR " +
+					"(up_seq IS NOT NULL AND (up_seq_region_start IS NOT NULL OR up_seq_region_end IS NOT NULL))");
+			result &= checkCountIsZero(con, "flanking_sequence", 
+					"(down_seq IS NULL AND (down_seq_region_start IS NULL OR down_seq_region_end IS NULL)) OR " +
+					"(down_seq IS NOT NULL AND (down_seq_region_start IS NOT NULL OR down_seq_region_end IS NOT NULL))");
+							
+		} catch (Exception e) {
 			result = false;
-			ReportManager.problem(this, con, rows + " have no up_seq and no up_seq_region_start");
-		} else {
-			// ReportManager.info(this, con, "No flanking_sequence have no up_seq and no up_seq_region_start");
+			ReportManager.problem(this, con, "HealthCheck generated an exception: " + e.getMessage());
 		}
-
-		// check down_seq and down_seq_region_start
-		rows = getRowCount(con, "SELECT COUNT(*) FROM flanking_sequence WHERE down_seq is null AND down_seq_region_start is null");
-		if (rows > 0) {
-			result = false;
-			ReportManager.problem(this, con, rows + " have no down_seq and no down_seq_region_start");
-		} else {
-			// ReportManager.info(this, con, "No flanking_sequence have no down_seq and no down_seq_region_start");
-		}
-
-		// check how many variation don't have flanking sequence
-		rows = getRowCount(con, "SELECT COUNT(*) FROM variation v LEFT JOIN flanking_sequence f ON v.variation_id=f.variation_id WHERE f.variation_id is NULL");
-
-		// also check how many are in failed_variation for this shouldn't have entries in flanking_sequence table
-		int rows1 = getRowCount(con, "SELECT COUNT(*) FROM failed_variation");
-		if (rows > 0) {
-			result = false;
-			ReportManager.problem(this, con, rows + " variations have no flanking sequence");
-			ReportManager.problem(this, con, rows1 + " variations are in failed_variation");
-		} else {
-			// ReportManager.info(this, con, "All variations have flanking sequence");
-		}
-		if (result) {
+		
+ 		if (result) {
 			ReportManager.correct(this, con, "All variations have flanking sequence correct");
 		}
 		return result;
