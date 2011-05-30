@@ -18,10 +18,14 @@ package org.ensembl.healthcheck.testcase.variation;
 
 import java.sql.Connection;
 
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 //import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+
+// This HC seems a bit useless with Graham's new consequence pipeline. I'll disable it for now and we'll have to discuss what 
+// we want checked before enabling it again.
 
 /**
  * Check that if the peptide_allele_string of transcript_variation is not >1. 
@@ -33,9 +37,10 @@ public class TranscriptVariation extends SingleDatabaseTestCase {
      * Creates a new instance of Check Transcript Variation
      */
     public TranscriptVariation() {
-        addToGroup("variation");
-	addToGroup("variation-release");
+        //addToGroup("variation");
+    	//addToGroup("variation-release");
         setDescription("Check that if the peptide_allele_string of transcript_variation is not >1. It should out >1, unless it filled with numbers");
+		setTeamResponsible(Team.VARIATION);
     }
 
     /**
