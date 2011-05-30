@@ -54,6 +54,8 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 		String[] tables = new String[] { "population_genotype", "allele" };
 
+		// Set this flag to true if we want to count ALL failed frequencies and not just break as soon as we've found one
+		boolean countAll = false;
 		// Tolerance for the deviation from 1.0
 		float tol = 0.025f;
 		// Get the results in batches (determined by the variation_id)
@@ -142,6 +144,11 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 							sum += freq;
 						}
 						count++;
+						
+						// Break if we've encountered a failed frequency (unless flagged not to)
+						if (failed > 0 && !countAll) {
+							break;
+						}
 					}
 
 					rs.close();
@@ -162,10 +169,12 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 					result = false;
 
 					// Loop over the failed entries and print a list of variation_id, subsnp_id, sample_id and summed frequency to stdout
+					/*
 					for (int j = 0; j < failedEntries.size(); j++) {
 						entry = (int[]) failedEntries.get(j);
 						System.out.println(String.valueOf(entry[0]) + "\t" + String.valueOf(entry[1]) + "\t" + String.valueOf(entry[2]) + "\t" + String.valueOf((0.001f * entry[3])));
 					}
+					*/
 				}
 				// long subEnd = System.currentTimeMillis();
 				// System.out.println("Time for healthcheck on " + tables[i] + " (~" + String.valueOf(maxId) + " variations) was " +
