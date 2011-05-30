@@ -31,10 +31,8 @@ public class StructuralVariation extends SingleDatabaseTestCase {
 	 */
 	public StructuralVariation() {
 
-		/*
 		addToGroup("variation");
 		addToGroup("variation-release");
-		*/
 		
 		setDescription("Checks that the structural variation tables make sense");
 		setTeamResponsible(Team.VARIATION);
@@ -53,13 +51,19 @@ public class StructuralVariation extends SingleDatabaseTestCase {
 	public boolean run(DatabaseRegistryEntry dbre) {
 
 		Connection con = dbre.getConnection();
-
 		boolean result = true;
-		result = (checkCountIsZero(con, "structural_variation", "(seq_region_start < bound_start OR seq_region_end > bound_end)") && result);
-		result = (checkCountIsZero(con, "structural_variation", "seq_region_start = seq_region_end") && result);
-
-		if (!result) {
-			ReportManager.problem(this, con, "NOTE: In total, structural_variation contains " + String.valueOf(countRowsInTable(con, "structural_variation")) + " entries");
+		
+		try {
+	
+			result = (checkCountIsZero(con, "structural_variation", "(seq_region_start < inner_start OR seq_region_end > inner_end)") && result);
+			result = (checkCountIsZero(con, "structural_variation", "seq_region_start = seq_region_end") && result);
+	
+			if (!result) {
+				ReportManager.problem(this, con, "NOTE: In total, structural_variation contains " + String.valueOf(countRowsInTable(con, "structural_variation")) + " entries");
+			}
+		} catch (Exception e) {
+			ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
+			result = false;
 		}
 		return result;
 
