@@ -143,6 +143,7 @@ public class VariationSet extends SingleDatabaseTestCase {
 			PreparedStatement subSet = con.prepareStatement(sqlQueries.getProperty("subSet"));
 
 			// Check that there are no variation mappings to orphan variation sets
+			/* Moved to VariationForeignKeys.java 
 			if ((rs = stmt.executeQuery(sqlQueries.getProperty("orphanVariation"))) != null && (fetch = rs.next())) {
 				while (fetch) {
 					ReportManager.problem(this, con, "There are variations mapped to a variation set with variation_set_id '" + String.valueOf(rs.getInt(1))
@@ -153,9 +154,11 @@ public class VariationSet extends SingleDatabaseTestCase {
 			} else {
 				msg += "No orphan variation sets in variation_set_variation\n";
 			}
-
+			*/
+			
 			// Check that no variation sets in the variation_set_structure table without an entry in variation_set
 			String ids = "";
+			/* Moved to VariationForeignKeys.java 
 			if ((rs = stmt.executeQuery(sqlQueries.getProperty("orphanStructure"))) != null && (fetch = rs.next())) {
 				while (fetch) {
 					ids += String.valueOf(rs.getInt(1)) + ", ";
@@ -169,9 +172,12 @@ public class VariationSet extends SingleDatabaseTestCase {
 			} else {
 				msg += "No orphan variation sets in variation_set_struncture\n";
 			}
-
+			*/
+			
 			// Check if variation sets that are not used (neither in variation_set_variation nor variation_set_structure) are present in
 			// variation_set table
+
+			/* Moved to VariationForeignKeys.java
 			if ((rs = stmt.executeQuery(sqlQueries.getProperty("unusedSets"))) != null && (fetch = rs.next())) {
 				String sets = "";
 				while (fetch) {
@@ -183,7 +189,8 @@ public class VariationSet extends SingleDatabaseTestCase {
 			} else {
 				msg += "No unused variation sets\n";
 			}
-
+			*/
+			
 			// Check that no subset has more than one parent
 			if ((rs = stmt.executeQuery(sqlQueries.getProperty("multiParent"))) != null && (fetch = rs.next())) {
 				String sets = "";
@@ -253,6 +260,7 @@ public class VariationSet extends SingleDatabaseTestCase {
 			}
 
 			// Check that all variations included in sets have an entry in the variation table
+			/* Moved to VariationForeignKeys.java
 			if ((rs = stmt.executeQuery(sqlQueries.getProperty("orphanVarId"))) != null && (fetch = rs.next())) {
 				while (fetch) {
 					ReportManager.problem(this, con, "There are " + String.valueOf(rs.getInt(2)) + " variations in variation set '" + this.getVariationSetName(rs.getInt(1), setName)
@@ -263,7 +271,8 @@ public class VariationSet extends SingleDatabaseTestCase {
 			} else {
 				msg += "All variations in variation sets have entries in the variation table\n";
 			}
-
+			*/
+			
 			// Check that no variations that are mapped to sets are failed
 
 			/*
