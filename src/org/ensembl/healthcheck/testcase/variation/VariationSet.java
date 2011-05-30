@@ -265,6 +265,12 @@ public class VariationSet extends SingleDatabaseTestCase {
 			}
 
 			// Check that no variations that are mapped to sets are failed
+
+			/*
+			 This check is no longer performed since we no longer delete failed data. Instead the
+			 behaviour is specified on the DBAdaptor object but the failed variations should still
+			 be included in the variation sets.
+			 
 			if ((rs = stmt.executeQuery(sqlQueries.getProperty("failedVariation"))) != null && (fetch = rs.next())) {
 				while (fetch) {
 					ReportManager.problem(this, con, "There are " + String.valueOf(rs.getInt(2)) + " variations in variation set '" + this.getVariationSetName(rs.getInt(1), setName)
@@ -275,7 +281,8 @@ public class VariationSet extends SingleDatabaseTestCase {
 			} else {
 				msg += "No variations in variation sets have validation_status 'failed'\n";
 			}
-
+			 */
+			
 			// Prepare a statement for checking the variation_set_ids
 			PreparedStatement vsIds = con.prepareStatement(sqlQueries.getProperty("variationSetIds"));
 			vsIds.setInt(1, MAX_VARIATION_SET_ID);
