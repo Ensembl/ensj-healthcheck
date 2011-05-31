@@ -14,7 +14,8 @@ package org.ensembl.healthcheck.testcase.variation;
 
 import java.util.HashMap;
 import java.util.Map;
-
+import java.sql.Connection;
+import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
@@ -40,6 +41,7 @@ public class ComparePreviousVersionVariations extends ComparePreviousVersionBase
 	protected Map getCounts(DatabaseRegistryEntry dbre) {
 
 		Map<String, Integer> counts = new HashMap<String, Integer>();
+		Connection con = dbre.getConnection();
 
 		try {
 			
