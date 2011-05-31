@@ -30,10 +30,9 @@ public class ComparePreviousVersionVariationAnnotations extends ComparePreviousV
 	 */
 	public ComparePreviousVersionVariationAnnotations() {
 
-		/*
 		addToGroup("variation");
 		addToGroup("variation-release");
-		*/
+
 		setDescription("Compare the number of variation annotations in the current database with those from the equivalent database on the secondary server");
 		setTeamResponsible(Team.VARIATION);
 
@@ -43,11 +42,15 @@ public class ComparePreviousVersionVariationAnnotations extends ComparePreviousV
 
 		Map<String, Integer> counts = new HashMap<String, Integer>();
 
-		// Count variation annotations by source
-		counts.putAll(getCountsBySQL(dbre, "SELECT s.name, COUNT(*) FROM variation_annotation va JOIN source s ON (s.source_id = va.source_id) GROUP BY s.name"));
-		// Count total number of variations
-		counts.putAll(getCountsBySQL(dbre, "SELECT 'all sources', COUNT(*) FROM variation_annotation"));
-
+		try {
+			// Count variation annotations by source
+			counts.putAll(getCountsBySQL(dbre, "SELECT s.name, COUNT(*) FROM variation_annotation va JOIN study st ON (st.study_id = va.study_id) JOIN source s ON (s.source_id = st.source_id) GROUP BY s.name"));
+			// Count total number of variations
+			counts.putAll(getCountsBySQL(dbre, "SELECT 'all sources', COUNT(*) FROM variation_annotation"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		return counts;
 	}
 
