@@ -24,7 +24,7 @@ public enum Species {
 			"pig,boar,wildboar,wild_boar,susscrofa,sus_scrofa"), ERINACEUS_EUROPAEUS(9365, "HEDGEHOG", "ENSEEU", "hedgehog,european_hedgehog,eeuropaeus,erinaceus_europaeus"), MONODELPHIS_DOMESTICA(13616,
 			"BROADO", "ENSMOD", "opossum,monodelphis,mdomestica,mdomesticus,monodelphisdomestica,monodelphisdomesticus,monodelphis_domesticus,monodelphis_domestica"), RATTUS_NORVEGICUS(10116, "RGSC",
 			"ENSRNO", "rat,rnovegicus,rattusnorvegicus,rattus_norvegicus"), TETRAODON_NIGROVIRIDIS(99883, "TETRAODON", "IGNORE", "tetraodon,tnigroviridis,tetraodonnigroviridis,tetraodon_nigroviridis"), PONGO_ABELII(
-			9600, "PPYG", "ENSPPY", "orangutan,orang-utan,pabellii,pongo_abelii"), HEALTHCHECK(0, "", "", ""), EQUUS_CABALLUS(9796, "EquCab", "ENSECA", "horse,equus,mr_ed,ecaballus,equus_caballus"), XENOPUS_TROPICALIS(
+			9601, "PPYG", "ENSPPY", "orangutan,orang-utan,pabellii,pongo_abelii"), HEALTHCHECK(0, "", "", ""), EQUUS_CABALLUS(9796, "EquCab", "ENSECA", "horse,equus,mr_ed,ecaballus,equus_caballus"), XENOPUS_TROPICALIS(
 			8364, "JGI", "ENSXET", "pipid,pipidfrog,xenopus,xtropicalis,xenopustropicalis,xenopus_tropicalis"), SACCHAROMYCES_CEREVISIAE(4932, "SGD", "IGNORE",
 			"yeast,saccharomyces,scerevisiae,saccharomycescerevisiae,saccharomyces_cerevisiae"), MACACA_MULATTA(9544, "MM", "ENSMMU", "macacamulatta,rhesusmacaque,rhesus_macaque,macaque,macaca_mulatta"), CAENORHABDITIS_ELEGANS(
 			6239, "WS", "IGNORE", "elegans,celegans,caenorhabditiselegans,caenorhabditis_elegans"), SOREX_ARANEUS(42254, "COMMON_SHREW", "ENSSAR",
