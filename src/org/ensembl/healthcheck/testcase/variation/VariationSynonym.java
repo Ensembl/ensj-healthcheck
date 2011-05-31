@@ -49,14 +49,25 @@ public class VariationSynonym extends SingleDatabaseTestCase {
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 
-		boolean result = true;
-		String[] individualNames = { "Venter", "Watson" };
-		String individualName;
-		// Check that Venter and Watson should have 3 million variations
-
 		Connection con = dbre.getConnection();
-		if (dbre.getSpecies() == Species.HOMO_SAPIENS) {
+		
+		if (dbre.getSpecies() != Species.HOMO_SAPIENS) {
+			ReportManager.info(this, con, "This test is only for human at moment");
+			return true;
+		}
+		
+		boolean overallResult = true;
+		
+		try {
+		
+			String[] individualNames = { "Venter", "Watson" };
+			String individualName;
+			
+			// Check that Venter and Watson should have 3 million variations
+	
 			for (int i = 0; i < individualNames.length; i++) {
+				
+				boolean result = true; 
 				individualName = individualNames[i];
 				int rows = getRowCount(con, "SELECT COUNT(*) FROM variation v, source s WHERE v.source_id=s.source_id and s.name like '%" + individualName + "'");
 				int rows1 = getRowCount(con, "SELECT COUNT(*) FROM variation_synonym vs, source s WHERE vs.source_id=s.source_id and s.name like '%" + individualName + "'");
@@ -67,13 +78,15 @@ public class VariationSynonym extends SingleDatabaseTestCase {
 				} else {
 					ReportManager.correct(this, con, "Venter/Watson has more then 3 million variations");
 				}
+				overallResult &= result;
 			}
+			
+		} catch (Exception e) {
+			ReportManager.problem(this, con, "HealthCheck generated an error: " + e.getMessage());
+			overallResult = false;
 		}
-		if (result && dbre.getSpecies() != Species.HOMO_SAPIENS) {
-			ReportManager.info(this, con, "This test is only for human at moment");
-		}
-
-		return result;
+				
+		return overallResult;
 
 	} // run
 
