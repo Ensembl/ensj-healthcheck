@@ -53,16 +53,22 @@ public class Meta_coord extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 		String[] tables = { "variation_feature", "flanking_sequence", "compressed_genotype_single_bp", "transcript_variation", "read_coverage", "variation_group_feature", "structural_variation" };
-		/*
-		 * Will check the presence of the variation_feature, transcript_variation, compressed_genotype, flanking_sequence, read_coverage
-		 * and variation_group_feature entries in the meta_coord, when data present in those tables
-		 */
-		for (int i = 0; i < tables.length; i++) {
-			int rows = getRowCount(con, "SELECT COUNT(*) FROM " + tables[i]); // count if table has data
-			if (rows > 0) {
-				// the meta_coord table should contain entry
-				result &= checkKeysPresent(con, tables[i]);
+		
+		try {
+			/*
+			 * Will check the presence of the variation_feature, transcript_variation, compressed_genotype, flanking_sequence, read_coverage
+			 * and variation_group_feature entries in the meta_coord, when data present in those tables
+			 */
+			for (int i = 0; i < tables.length; i++) {
+				int rows = getRowCount(con, "SELECT COUNT(*) FROM " + tables[i]); // count if table has data
+				if (rows > 0) {
+					// the meta_coord table should contain entry
+					result &= checkKeysPresent(con, tables[i]);
+				}
 			}
+		} catch (Exception e) {
+			ReportManager.problem(this, con, "HealthCheck generated an exception: " + e.getMessage());
+			result = false;
 		}
 		if (result) {
 			// if there were no problems, just inform for the interface to pick the HC
