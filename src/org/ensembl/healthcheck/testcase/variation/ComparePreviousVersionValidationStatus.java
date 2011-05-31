@@ -80,7 +80,7 @@ public class ComparePreviousVersionValidationStatus extends ComparePreviousVersi
 				counts.putAll(getCountsBySQL(dbre, sqlQueries.getProperty("countVariationsByValidationStatus").replaceAll("SET_ELEMENT", setElements[i])));
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
 		}
 		
 		return counts;

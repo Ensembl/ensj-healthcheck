@@ -51,7 +51,7 @@ public class ComparePreviousVersionGenotypes extends ComparePreviousVersionBase 
 			counts.putAll(getCountsBySQL(dbre, "SELECT 'individual_genotype_multiple_bp', COUNT(*) FROM individual_genotype_multiple_bp"));
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
 		}
 		
 		return counts;

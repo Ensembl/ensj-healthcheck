@@ -48,7 +48,7 @@ public class ComparePreviousVersionVariationAnnotations extends ComparePreviousV
 			// Count total number of variations
 			counts.putAll(getCountsBySQL(dbre, "SELECT 'all sources', COUNT(*) FROM variation_annotation"));
 		} catch (Exception e) {
-			e.printStackTrace();
+			ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
 		}
 		
 		return counts;

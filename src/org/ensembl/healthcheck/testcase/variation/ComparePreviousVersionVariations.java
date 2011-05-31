@@ -41,11 +41,17 @@ public class ComparePreviousVersionVariations extends ComparePreviousVersionBase
 
 		Map<String, Integer> counts = new HashMap<String, Integer>();
 
-		// Count variations by source
-		counts.putAll(getCountsBySQL(dbre, "SELECT s.name, COUNT(*) FROM variation v JOIN source s ON (s.source_id = v.source_id) GROUP BY s.name"));
-		// Count total number of variations
-		counts.putAll(getCountsBySQL(dbre, "SELECT 'all sources', COUNT(*) FROM variation"));
+		try {
+			
+			// Count variations by source
+			counts.putAll(getCountsBySQL(dbre, "SELECT s.name, COUNT(*) FROM variation v JOIN source s ON (s.source_id = v.source_id) GROUP BY s.name"));
+			// Count total number of variations
+			counts.putAll(getCountsBySQL(dbre, "SELECT 'all sources', COUNT(*) FROM variation"));
 
+		} catch (Exception e) {
+			ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
+		}
+		
 		return counts;
 	}
 
