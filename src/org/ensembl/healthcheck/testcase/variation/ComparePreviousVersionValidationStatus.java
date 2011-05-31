@@ -60,24 +60,29 @@ public class ComparePreviousVersionValidationStatus extends ComparePreviousVersi
 
 		Map<String, Integer> counts = new HashMap<String, Integer>();
 
-		// Get all the needed SQL statements in a Properties object
-		Properties sqlQueries = getSQLQueries();
-
-		// First, get the structure of the validation_status
-		String[] description = getRowValues(dbre.getConnection(), sqlQueries.getProperty("describeValidationStatus"));
-
-		// The second column contains the type, strip out the individual, comma-separated set elements
-		String[] setElements = description[1].split(",");
-
-		// Loop over the set elements and count the number for each
-		for (int i = 0; i < setElements.length; i++) {
-
-			// We need to strip away any 'set(' or ')' strings from the set element
-			setElements[i] = setElements[i].replaceAll("set\\(|\\)", "");
-
-			// Replace the 'SET_ELEMENT' placeholder with the current validation_status and do the query
-			counts.putAll(getCountsBySQL(dbre, sqlQueries.getProperty("countVariationsByValidationStatus").replaceAll("SET_ELEMENT", setElements[i])));
+		try {
+			// Get all the needed SQL statements in a Properties object
+			Properties sqlQueries = getSQLQueries();
+	
+			// First, get the structure of the validation_status
+			String[] description = getRowValues(dbre.getConnection(), sqlQueries.getProperty("describeValidationStatus"));
+	
+			// The second column contains the type, strip out the individual, comma-separated set elements
+			String[] setElements = description[1].split(",");
+	
+			// Loop over the set elements and count the number for each
+			for (int i = 0; i < setElements.length; i++) {
+	
+				// We need to strip away any 'set(' or ')' strings from the set element
+				setElements[i] = setElements[i].replaceAll("set\\(|\\)", "");
+	
+				// Replace the 'SET_ELEMENT' placeholder with the current validation_status and do the query
+				counts.putAll(getCountsBySQL(dbre, sqlQueries.getProperty("countVariationsByValidationStatus").replaceAll("SET_ELEMENT", setElements[i])));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		
 		return counts;
 	}
 

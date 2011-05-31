@@ -41,13 +41,19 @@ public class ComparePreviousVersionGenotypes extends ComparePreviousVersionBase 
 
 		Map<String, Integer> counts = new HashMap<String, Integer>();
 
-		// Count genotypes in population_genotype
-		counts.putAll(getCountsBySQL(dbre, "SELECT 'population_genotype', COUNT(*) FROM population_genotype"));
-		// Count genotypes in compressed_genotype_single_bp
-		counts.putAll(getCountsBySQL(dbre, "SELECT 'compressed_genotype_single_bp', COUNT(*) FROM compressed_genotype_single_bp"));
-		// Count genotypes in individual_genotype_multiple_bp
-		counts.putAll(getCountsBySQL(dbre, "SELECT 'individual_genotype_multiple_bp', COUNT(*) FROM individual_genotype_multiple_bp"));
+		try {
+			
+			// Count genotypes in population_genotype
+			counts.putAll(getCountsBySQL(dbre, "SELECT 'population_genotype', COUNT(*) FROM population_genotype"));
+			// Count genotypes in compressed_genotype_single_bp
+			counts.putAll(getCountsBySQL(dbre, "SELECT 'compressed_genotype_single_bp', COUNT(*) FROM compressed_genotype_single_bp"));
+			// Count genotypes in individual_genotype_multiple_bp
+			counts.putAll(getCountsBySQL(dbre, "SELECT 'individual_genotype_multiple_bp', COUNT(*) FROM individual_genotype_multiple_bp"));
 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		return counts;
 	}
 
