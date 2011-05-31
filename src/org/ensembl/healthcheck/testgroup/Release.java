@@ -50,7 +50,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.DescriptionNewlines </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyException </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyExceptions </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.IdentityXrefCigarLines </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblySeqregion </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd </li> 
@@ -173,7 +173,7 @@ public class Release extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable.class,
 			org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies.class,
 			org.ensembl.healthcheck.testcase.generic.DescriptionNewlines.class,
-			org.ensembl.healthcheck.testcase.generic.AssemblyException.class,
+			org.ensembl.healthcheck.testcase.generic.AssemblyExceptions.class,
 			org.ensembl.healthcheck.testcase.generic.IdentityXrefCigarLines.class,
 			org.ensembl.healthcheck.testcase.generic.AssemblySeqregion.class,
 			org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd.class,

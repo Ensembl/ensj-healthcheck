@@ -33,7 +33,7 @@ public class ComparaAncestral extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.CoreForeignKeys.class,
 			org.ensembl.healthcheck.testcase.generic.BlankEnums.class,
 			org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap.class,
-			org.ensembl.healthcheck.testcase.generic.AssemblyException.class,
+			org.ensembl.healthcheck.testcase.generic.AssemblyExceptions.class,
 			org.ensembl.healthcheck.testcase.generic.AssemblySeqregion.class,
 			org.ensembl.healthcheck.testcase.generic.AncestralSequencesExtraChecks.class,
 			org.ensembl.healthcheck.testcase.funcgen.FuncgenForeignKeys.class,

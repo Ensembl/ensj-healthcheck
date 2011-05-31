@@ -126,7 +126,7 @@ public class PostGenebuild extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable.class,
 			org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies.class,
 			org.ensembl.healthcheck.testcase.generic.DescriptionNewlines.class,
-			org.ensembl.healthcheck.testcase.generic.AssemblyException.class,
+			org.ensembl.healthcheck.testcase.generic.AssemblyExceptions.class,
 			org.ensembl.healthcheck.testcase.generic.IdentityXrefCigarLines.class,
 			org.ensembl.healthcheck.testcase.generic.AssemblySeqregion.class,
 			org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd.class,

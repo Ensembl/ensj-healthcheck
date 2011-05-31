@@ -18,6 +18,8 @@ import java.util.Properties;
 import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
+
 
 /**
  * Compare the number of transcript_variation alleles having each consequence type between the current database and the database on
