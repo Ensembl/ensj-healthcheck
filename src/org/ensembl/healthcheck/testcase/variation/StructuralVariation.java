@@ -55,12 +55,11 @@ public class StructuralVariation extends SingleDatabaseTestCase {
 		
 		try {
 	
-			result = (checkCountIsZero(con, "structural_variation", "(seq_region_start < inner_start OR seq_region_end > inner_end)") && result);
-			result = (checkCountIsZero(con, "structural_variation", "seq_region_start = seq_region_end") && result);
+			result &= checkCountIsZero(con, "structural_variation", "(inner_start < seq_region_start OR inner_end > seq_region_end)");
+
+			// At the moment, this is ok since that means an insertion relative to the reference. In the future, we should probably represent these Ensembl-style (start = end+1)
+			// result &= checkCountIsZero(con, "structural_variation", "inner_start = inner_end");
 	
-			if (!result) {
-				ReportManager.problem(this, con, "NOTE: In total, structural_variation contains " + String.valueOf(countRowsInTable(con, "structural_variation")) + " entries");
-			}
 		} catch (Exception e) {
 			ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
 			result = false;
