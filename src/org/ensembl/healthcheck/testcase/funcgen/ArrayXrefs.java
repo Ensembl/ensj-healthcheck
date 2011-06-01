@@ -12,6 +12,8 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.Team;
+
 
 /**
  * Check Array xrefs: - that each chromosome has at least 1 Probe/Set xref
@@ -37,11 +39,11 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 	 */
 	public ArrayXrefs() {
 
-		addToGroup("post_genebuild");
+		//addToGroup("post_genebuild");
 		addToGroup("release");
 		addToGroup("funcgen");
 		addToGroup("funcgen-release");
-
+		setTeamResponsible(Team.FUNCGEN);
 		setDescription("Check Array probe2transcript xrefs");
 		setHintLongRunning(true);
 
@@ -72,6 +74,13 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 		boolean result = true;
 		Connection efgCon = dbre.getConnection();
 
+
+		/** To do
+		 *  Change xref counting to include all db versions, warn if more than one and fail if some are missing
+		 *  Write perl script to log counts?
+		 */
+
+
 	
 		// Check if there are any DISPLAYABLE Arrays - if so there should be  Xrefs
 		// Checks EPXRESSION and CGH arrays only
@@ -80,7 +89,7 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 //		Integer displayableArrays = getRowCount(efgCon, "SELECT COUNT(*) FROM array a, status s, status_name sn where sn.name='DISPLAYABLE' and " +
 //														"sn.status_name_id=s.status_name_id and s.table_name='array' and s.table_id=a.array_id");
 	
-		Integer expressionArrays = getRowCount(efgCon, "SELECT COUNT(*) FROM array a where (format='EXPRESSION' OR format='CGH')");
+		int expressionArrays = getRowCount(efgCon, "SELECT COUNT(*) FROM array a where (format='EXPRESSION' OR format='CGH')");
 		
 		if ( expressionArrays == 0) { //Assume we should always have EXPRESSION arrays
 			ReportManager.problem(this, efgCon, DBUtils.getShortDatabaseName(efgCon) + 
@@ -135,16 +144,21 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 				
 		//Get the matching core dbre to do the cross DB join
 		//Assume we have the standard name for the core DB and it is on the same host
-		
-		String schemaBuild = dbre.getSchemaVersion() + "_" + dbre.getGeneBuildVersion();
+		String schemaBuild = dbre.getSchemaVersion() + "_" + dbre.getGeneBuildVersion();	
 		String coreDBName = getCoreDbName(dbre, schemaBuild);
+
 		//Never get's loaded if we specify a pattern
 		//DatabaseRegistryEntry coreDbre = dbre.getDatabaseRegistry().getByExactName(coreDBName);
+		
+		System.out.println("Getting DBRE by pattern:\t" + coreDBName);
+		
 		DatabaseRegistryEntry coreDbre = getDatabaseRegistryEntryByPattern(coreDBName);
 		
+		//This may still not be on the same server if database.properties has two servers configured
+				
 		
 		if (coreDbre == null){
-			ReportManager.problem(this, efgCon, "Could not access default core DB:\t" + coreDBName);
+			ReportManager.problem(this, efgCon, "Could not default core DB:\t" + coreDBName);
 			return false;	
 		}
 		
@@ -171,7 +185,7 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 			(! currentSchemaBuilds[0].equals(schemaBuild))){
 			
 			
-			ReportManager.problem(this, efgCon, "Could not identify a unique current coord_system.schema_build to match " + schemaBuild);
+			ReportManager.problem(this, efgCon, "Could not identify a unique current chromosome coord_system.schema_build to match " + schemaBuild);
 			return false;	
 		}
 		
@@ -211,7 +225,7 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 
 			//We really need to match the genebuild between the edb and the schema_build
 			//otherwise we have out of date data?
-			//Not enirely true, altho a genebuild increment should strictly mean that the xrefs needs redoing
+			//Not enirely true, there are plenty of data changes which can cause a version bump which don't affect array mapping
 			
 					
 			String[] exdbIDs = getColumnValues(efgCon, "select external_db_id from external_db where db_name='" + edbName 
@@ -220,9 +234,13 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 			//Catch absent edbs
 
 			if(exdbIDs.length == 0){
-				ReportManager.problem(this, efgCon, "Could not identify external_db " + edbName + " with db_release like " + assemblyBuild[1]);
+				ReportManager.problem(this, efgCon, "Could not identify external_db " + edbName + " with db_release like " + assemblyBuild[1] +
+									  "\nXrefs on older db_versions will still be reported as failed if absent");
 				
 				//Do we really want to return here, as this maybe valid and we want to run the rest of the tests.
+				//Will will still catch no xrefs later
+				//as we don't restrict to a particular edb db_version
+				//we should really catch db versions which don't match the assembly
 
 				result = false;
 			}
@@ -278,7 +296,7 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 					
 					
 					
-					//Capture empty set her
+					//Capture empty set here
 					boolean seenResults = false;
 					
 					while (xrefCounts.next()){
@@ -289,8 +307,16 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 						
 					if(seenResults == false){
 						result = false;
+
+						//Change this to info and remove false?
+
+						//This maybe that the new external_db exists, but the xrefs were loaded using an old version
 						ReportManager.problem(this, efgCon, "Found " + arrayVendor + " " + xrefObj + 
-									" arrays but no associated transcript xrefs");
+									" arrays but no associated transcript xrefs for external_db like " + assemblyBuild[1] +
+											  "\nXrefs maybe present on a previous version");
+
+						//redo this without assembly build clause, or just select and group by it in the first query and test in loop
+
 					}
 					else{
 					
