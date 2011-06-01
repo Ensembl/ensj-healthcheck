@@ -257,9 +257,18 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 				
 				
 				for(int i=0; i < metaFFsetIDs.length; i++){
+				
+					if(metaFFsetIDs[i].equals("")){
+						//List of single empty value indicates empty meta_value i.e. projection build
+						ReportManager.problem(this, efgCon, "Found empty regbuild." + fsInfo.get("cell_type") 
+											  + ".focus_feature_set_ids meta_value. Is this really a projection build?");
+						result = false;
+						continue;
+					}
+
 					
 					if(! Arrays.asList(metaFsetIDs).contains(metaFFsetIDs[i])){
-						ReportManager.problem(this, efgCon, "Found feature_set_id in meta_key:\t" +
+						ReportManager.problem(this, efgCon, "Found feature_set_id(" + metaFFsetIDs[i] + ") in meta_key:\t" +
 								"regbuild." + fsInfo.get("cell_type") + ".focus_feature_set_ids which is not " +
 								"present in regbuild." + fsInfo.get("cell_type") + ".feature_set_ids");
 						result = false;	
@@ -395,7 +404,7 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 				if(problemSupportingFsets.size() > 0){
 					
 					if(sqlSafe){
-						usefulSQL = "\nUSEFUL SQL:\tINSERT IGNORE INTO status SELECT fs.feature_set_id, 'feature_set', sn.name from feature_set fs, status_name sn " +
+						usefulSQL = "\nUSEFUL SQL:\tINSERT IGNORE INTO status SELECT fs.feature_set_id, 'feature_set', sn.status_name_id from feature_set fs, status_name sn " +
 						"WHERE sn.name in (" + Arrays.toString(fsetStates).replaceAll("[\\[\\]]", "") + ") AND fs.feature_set_id IN (" + 
 						problemSupportingFsets.toString().replaceAll("[\\[\\]]", "") + ")";
 					}
@@ -409,7 +418,7 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 				if(problemSupportingDsets.size() > 0){
 			
 					if(sqlSafe){
-						usefulSQL = "\nUSEFUL SQL:\tINSERT IGNORE INTO status SELECT , 'data_set', sn.name from data_set set, status_name sn " +
+						usefulSQL = "\nUSEFUL SQL:\tINSERT IGNORE INTO status SELECT ds.data_set_id, 'data_set', sn.status_name_id from data_set ds, status_name sn " +
 						"WHERE sn.name in (" + Arrays.toString(dsetStates).replaceAll("[\\[\\]]", "") + ") " +
 						"AND ds.data_set_id IN (" +	problemSupportingDsets.toString().replaceAll("[\\[\\]]", "") + ")";
 					}	
@@ -422,7 +431,7 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 				if(problemSupportingRsets.size() > 0){
 
 					if(sqlSafe){					
-						usefulSQL = "\nUSEFUL SQL:\tINSERT IGNORE INTO status SELECT, 'result_set', sn.name from result_set rs, status_name sn " +
+						usefulSQL = "\nUSEFUL SQL:\tINSERT IGNORE INTO status SELECT rs.result_set_id, 'result_set', sn.status_name_id from result_set rs, status_name sn " +
 						"WHERE sn.name in (" + Arrays.toString(rsetStates).replaceAll("[\\[\\]]", "") +
 						") AND rs.data_set_id IN (" + problemSupportingRsets.toString().replaceAll("[\\[\\]]", "") + ")";		
 					}		
