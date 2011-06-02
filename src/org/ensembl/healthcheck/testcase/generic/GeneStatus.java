@@ -197,7 +197,7 @@ public class GeneStatus extends SingleDatabaseTestCase {
 
 			if (rows > 0) {
 
-				ReportManager.problem(this, con, rows + " genes of status " + status + " have NULL display_xrefs (out of a total of " + total + ")");
+				ReportManager.problem(this, con, rows + " genes of status " + status + " have NULL display_xrefs (out of a total of " + total + ")\nUSEFUL SQL: select count(*),logic_name from gene g, analysis a WHERE g.analysis_id=a.analysis_id and g.status= '" + status + "' AND display_xref_id is NULL group by logic_name; ");
 				result = false;
 
 			} else {

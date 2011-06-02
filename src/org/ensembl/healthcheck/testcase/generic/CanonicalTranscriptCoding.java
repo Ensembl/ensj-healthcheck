@@ -94,7 +94,7 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 		if (rows > 0) {
 
 			result = false;
-			ReportManager.problem(this, con, rows + " protein_coding transcripts do not have translations");
+			ReportManager.problem(this, con, rows + " protein_coding transcripts do not have translations\nUSEFUL SQL: SELECT transcript.transcript_id,transcript.analysis_id FROM transcript LEFT JOIN translation ON transcript.transcript_id = translation.transcript_id WHERE transcript.biotype = 'protein_coding' and translation.transcript_id IS NULL; ");
 
 		} else {
 

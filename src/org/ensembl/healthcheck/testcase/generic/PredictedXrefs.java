@@ -77,7 +77,7 @@ public class PredictedXrefs extends SingleDatabaseTestCase {
 
 			if (rows > 0) {
 
-				ReportManager.problem(this, con, rows + " " + externalDBName + " xrefs seem to be predictions (match " + pattern + ")");
+				ReportManager.problem(this, con, rows + " " + externalDBName + " xrefs seem to be predictions (match " + pattern + ")\nUSEFUL SQL:select count(*),t.analysis_id from transcript t, object_xref ox, xref x, external_db e where t.transcript_id=ox.ensembl_id and ox.ensembl_object_type='Transcript' and ox.xref_id=x.xref_id and x.external_db_id=e.external_db_id and e.db_name ='RefSeq_dna' and x.display_label like 'XM%' group by t.analysis_id;");
 				result = false;
 
 			} else {
