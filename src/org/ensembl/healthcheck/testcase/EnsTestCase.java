@@ -2115,6 +2115,12 @@ public abstract class EnsTestCase {
 		this.secondTeamResponsible = secondTeamResponsible;
 	}
 
+
+	public void removeSecondTeamResponsible(){
+		this.secondTeamResponsible = null;
+	}
+
+
 	// ----------------------------------------------------------------------
 
 	public String getPrintableTeamResponsibleString() {
