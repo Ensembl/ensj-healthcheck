@@ -12,15 +12,18 @@ import org.ensembl.PackageScan;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 
 /**
+ * <p>
+ * 	A class for instantiating tests and groups of tests.
+ * </p>
  * 
- * A class for instantiating tests and groups of tests.
- * 
- * Tests can be referred to by the user by their class name or by an 
+ * </p>
+ * 	Tests can be referred to by the user by their class name or by an 
  * alias. That is why the name can't be passed directly to the the
  * classloader for instantiation. This class creates a map that maps
  * the possible names of tests to their classname. This is what
  * the public "forName" method uses to create instances of tests or
  * testgroups. 
+ * </p>
  *
  */
 public class TestInstantiator {
@@ -28,21 +31,22 @@ public class TestInstantiator {
 	static final Logger log = Logger.getLogger(TestInstantiator.class.getCanonicalName());
 	
 	/**
-	 * 
-	 * An array of packages that will be scanned to find testcases. Testcases 
+	 * <p>
+	 * 	An array of packages that will be scanned to find testcases. Testcases 
 	 * are classes which inherit from EnsTestCase.
-	 * 
+	 * </p>
 	 */
 	private final String[] packageToScan;
 
 	/**
+	 * <p>
 	 * A map that maps the names of testcases to their class names. Testcases
 	 * can be known under different names. The names under which they are 
 	 * known are the ones as which they register themselves. The default 
 	 * behaviour is to use the classes simple name which is inherited from
 	 * EnsTestCase. Any testcase can overwrite that, so to find the names, 
 	 * each testcase must be instantiated.
-	 *  
+	 * </p>
 	 */
 	private final Map<String,String> aliasToClassName;
 	
@@ -61,15 +65,18 @@ public class TestInstantiator {
 	}
 
 	/**
-	 * 
+	 * <p>
 	 * Takes a testName as a parameter and returns the class for which it
-	 * stands. 
+	 * stands.
+	 * </p> 
 	 * 
+	 * <p>
 	 * The testName can be the full name of a class. This method tries to load
 	 * such a method using Class.forName(testName). If that fails, it checks,
 	 * if testName is an alias and tries to instantiate the class to which the
 	 * alias maps. If this succeeds, the class is returned, if this fails too,
 	 * a RuntimeException is thrown.
+	 * </p>
 	 * 
 	 * @param testName
 	 * @return Class<EnsTestCase>
@@ -77,10 +84,10 @@ public class TestInstantiator {
 	 */
 	public Class<?> forName(String testName) {
 		
-		Class<EnsTestCase> testClass = null;
+		Class<?> testClass = null;
 		
 		try {
-			testClass = (Class<EnsTestCase>) Class.forName(testName);
+			testClass = (Class<?>) Class.forName(testName);
 			log.fine(testName + " is a class name, was able to instantiate it directly.");
 			
 		} catch (ClassNotFoundException e) {
@@ -95,7 +102,7 @@ public class TestInstantiator {
 			log.fine(testName + " maps to " + className.getClass().getName());
 			
 			try {
-				testClass = (Class<EnsTestCase>) Class.forName(className);
+				testClass = (Class<?>) Class.forName(className);
 			} catch (ClassNotFoundException f) {
 				throw new RuntimeException(f);
 			}
@@ -110,8 +117,79 @@ public class TestInstantiator {
 	
 	/**
 	 * 
-	 * Returns a list of names as which the given class registers.
+	 * <p>
+	 * 	Creates a new instance of a class. Catches exceptions and rethrows
+	 * them as RuntimeExceptions.
+	 * </p>
 	 * 
+	 * @param <T>
+	 * @param loadedClass
+	 * @return
+	 * 
+	 */
+	protected <T> T newInstance(Class<T> loadedClass) {
+		
+		T testcase = null;
+		
+		try {
+			testcase = loadedClass.newInstance();
+			
+		} catch (InstantiationException e) { throw new RuntimeException(e);				
+		} catch (IllegalAccessException e) { throw new RuntimeException(e);
+		}
+		
+		return testcase;
+	}
+	
+	/**
+	 * <p>
+	 * 	Loads a test class denoted by testName and instantiates it. Does no 
+	 * type checking of the loaded class. If you want type checking, use
+	 * </p>
+	 * 
+	 * <code>
+	 * instanceByName(String testName, Class<T> expectedType)
+	 * </code>
+	 * 
+	 * <p>
+	 * 	instead.
+	 * </p>
+	 * 
+	 * @param <T>
+	 * @param testName
+	 * @return
+	 */
+	public <T> T instanceByName(String testName) {
+		
+		Class<T> loadedClass = (Class<T>) forName(testName);
+		return newInstance(loadedClass);
+	}
+	
+	/**
+	 * <p>
+	 * 	Loads a test class denoted by testName and instantiates it. Checks,
+	 * if the loaded class is of the expectedType or a subclass of it.
+	 * </p>
+	 * 
+	 * @param <T>
+	 * @param testName
+	 * @param expectedType
+	 * @return
+	 */
+	public <T> T instanceByName(String testName, Class<T> expectedType) {
+		
+		Class<T> loadedClass = (Class<T>) forName(testName);
+		
+		if (expectedType.isAssignableFrom(loadedClass)) {			
+			return instanceByName(testName);
+		}
+		throw new RuntimeException(testName + " is not a test case!");
+	}
+	
+	/**
+	 * <p>
+	 * 	Returns a list of names as which the given class registers.
+	 * </p>
 	 */
 	protected static List<String> knownNamesFor(Class<?> s) {
 		
@@ -149,10 +227,10 @@ public class TestInstantiator {
 	}
 	
 	/**
-	 * 
-	 * Groups of tests can be called with their short class names. So this 
+	 * <p>
+	 * 	Groups of tests can be called with their short class names. So this 
 	 * class returns just that short name.
-	 * 
+	 * </p> 
 	 */
 	protected static List<String> knownNamesForGroupOfTests(GroupOfTests g) {
 		
@@ -162,18 +240,17 @@ public class TestInstantiator {
 			return result;
 		}
 			
-		result.add(g.getShortName());
+		result.add(g.getName());
 		
 		return result;
-
 	}
 
 	/**
-	 * 
-	 * Returns a list of names as which this testcase can be called. The names
+	 * <p>
+	 * 	Returns a list of names as which this testcase can be called. The names
 	 * are found by calling the getShortTestName and the getVeryShortTestName
 	 * methods on the test.
-	 * 
+	 * </p>
 	 */
 	protected static List<String> knownNamesForEnsTestCase(EnsTestCase etc) {
 		
@@ -217,13 +294,16 @@ public class TestInstantiator {
 	}
 	
 	/**
-	 * 
+	 * <p>
 	 * Adds a {@see: keyValuePair} to a map like the aliasToClassName 
 	 * attribute of this class.
+	 * </p>
 	 * 
+	 * <p>
 	 * It checks, if the keyValuePair has already been added and if so, if
 	 * it contradicts what has already been stored. If so, prints out a 
-	 * warning, but adds it anyway. 
+	 * warning, but adds it anyway.
+	 * </p> 
 	 * 
 	 */
 	public static void addToMapWithCheck(Map simpleNameToClass, keyValuePair currentKeyValuePair) {
@@ -254,9 +334,10 @@ public class TestInstantiator {
 	}
 	
 	/**
-	 * 
+	 * <p>
 	 * Scans an array of packages for classes that are subclasses of 
-	 * EnsTestCase.
+	 * EnsTestCase or GroupsOfTests.
+	 * </p>
 	 * 
 	 */
 	public static Map<String,String> createMap(String[] packagesToScan) {
