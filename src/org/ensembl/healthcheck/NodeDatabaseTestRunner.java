@@ -35,6 +35,8 @@ public class NodeDatabaseTestRunner extends DatabaseTestRunner implements Report
 	private boolean debug = false;
 
 	private boolean deletePrevious = false;
+	
+	private boolean endDbSession = false;
 
 	private List<String> databaseRegexps;
 	
@@ -71,6 +73,12 @@ public class NodeDatabaseTestRunner extends DatabaseTestRunner implements Report
 			ReportManager.deletePrevious();
 		}
 
+		if (endDbSession) {
+			
+			ReportManager.endDatabaseSession();
+			
+		}
+		
 		runAllTests(mainDatabaseRegistry, testRegistry, false);
 
 		ConnectionPool.closeAll();
@@ -125,6 +133,11 @@ public class NodeDatabaseTestRunner extends DatabaseTestRunner implements Report
 				sessionID = Integer.parseInt(args[i]);
 				ReportManager.setSessionID(sessionID);
 				logger.finest("Will use session ID " + sessionID);
+				
+			} else if (args[i].equals("-endDbSession")) {
+				
+				endDbSession = true;
+				logger.finest("Will end session");
 				
 			}
 			
