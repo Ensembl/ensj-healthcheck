@@ -113,6 +113,8 @@ my $meta_cache = create_meta_cache($dbi1, $dbi2, $dbi_prev);
 # propagate! propagate!
 propagate($dbi1, $dbi_prev, $old_release, $new_release, $session_id, $old_to_new_db_name, $meta_cache);
 
+set_end_time($dbi1, $session_id);
+
 # --------------------------------------------------------------------------------
 
 sub create_db_name_cache {
@@ -223,7 +225,7 @@ sub create_session {
 
   my ($dbi, $old_release, $new_release) = @_;
 
-  my $sth = $dbi->prepare("INSERT INTO session (db_release,config) VALUES (?,?)");
+  my $sth = $dbi->prepare("INSERT INTO session (db_release,config,start_time) VALUES (?,?,NOW())");
   $sth->execute($new_release, "Propagation of entries from release $old_release to release $new_release") || die "Error creating new session\n";
 
   my $session_id = $sth->{'mysql_insertid'};
@@ -381,5 +383,18 @@ sub create_meta_cache {
   }
 
   return \%cache;
+
+}
+
+# --------------------------------------------------------------------------------
+
+sub set_end_time {
+
+  my ($dbi,$session_id) = @_;
+
+  my $sth = $dbi->prepare("UPDATE session SET end_time=NOW() WHERE session_id=?");
+  $sth->execute($session_id) || die "Error setting end time\n";
+
+  print "Set end time for session\n" unless $quiet;
 
 }
