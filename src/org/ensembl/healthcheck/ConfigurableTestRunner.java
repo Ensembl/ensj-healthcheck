@@ -353,10 +353,8 @@ public class ConfigurableTestRunner extends TestRunner {
 		printReportsByTest(outputLevel, printFailureText);
 
 		if (this.reporterType == ReporterType.DATABASE) {
-			// Commented out, because all it does is try to update a column
-			// in the database that doesn't exist.
 			
-			// ReportManager.endDatabaseSession();
+			ReportManager.endDatabaseSession();
 		}
 	}
 }

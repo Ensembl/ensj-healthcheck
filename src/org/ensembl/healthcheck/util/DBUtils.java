@@ -40,14 +40,49 @@ public final class DBUtils {
 	private static Logger logger = Logger.getLogger("HealthCheckLogger");
 
 	private static List<DatabaseServer> mainDatabaseServers;
-
 	private static List<DatabaseServer> secondaryDatabaseServers;
-
+	
 	private static DatabaseRegistry mainDatabaseRegistry;
-
 	private static DatabaseRegistry secondaryDatabaseRegistry;
-
+	
 	private static ConfigureHost hostConfiguration;
+
+	/**
+	 * <p>
+	 * 	Initialises all attributes of DBUtils.
+	 * </p>
+	 * 
+	 * <p>
+	 * 	This can be necessary in the GUI, if the user wants to change the 
+	 * database server. In that case the user calls
+	 * </p>
+	 * 
+	 * <code>
+	 * 	DBUtils.initialise();
+	 * 	DBUtils.setHostConfiguration(newHostConfiguration);
+	 * </code>
+	 * 
+	 * <p>
+	 * 	then things like
+	 * </p>
+	 * 
+	 * <code>
+	 * 	DatabaseRegistry databaseRegistry = new DatabaseRegistry(regexps, null, null, false);
+	 * <code>
+	 * 
+	 * <p>
+	 * 	will work as expected.
+	 * </p>
+	 * 
+	 */
+	public static void initialise() {
+
+		mainDatabaseServers       = null;
+		secondaryDatabaseServers  = null;
+		mainDatabaseRegistry      = null;
+		secondaryDatabaseRegistry = null;
+		hostConfiguration         = null;
+	}
 
 	public static ConfigureHost getHostConfiguration() {
 		return hostConfiguration;

@@ -1,22 +1,4 @@
-/*
- Copyright (C) 2004 EBI, GRL
-
- This library is free software; you can redistribute it and/or
- modify it under the terms of the GNU Lesser General Public
- License as published by the Free Software Foundation; either
- version 2.1 of the License, or (at your option) any later version.
-
- This library is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- Lesser General Public License for more details.
-
- You should have received a copy of the GNU Lesser General Public
- License along with this library; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
-
-package org.ensembl.healthcheck.gui;
+package org.ensembl.healthcheck.eg_gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -50,11 +32,21 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 
 import org.ensembl.healthcheck.ReportLine;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.eg_gui.GuiTestResultWindowTab;
+import org.ensembl.healthcheck.eg_gui.JLabelTreeCellRenderer;
+import org.ensembl.healthcheck.eg_gui.ResultNode;
+import org.ensembl.healthcheck.eg_gui.ResultTreePanel;
 
 /**
+ * <p>
+ * 	This is mostly the same as org.ensembl.healthcheck.gui.GuiTestResultWindow
+ * with some minor changes so it can appear in the eg_gui for people who want 
+ * to view the test results in the format to which they are used.
+ * </p>
+ * 
  * Display the results of a test run.
  */
-public class GuiTestResultWindow extends JFrame {
+public class GuiTestResultWindowTab extends JPanel {
 
     private static final String OUTPUT_FILE = "GuiTestRunner.txt";
 
@@ -63,12 +55,13 @@ public class GuiTestResultWindow extends JFrame {
      * 
      * @param gtrf The frame that opened this window.
      */
-    public GuiTestResultWindow(String outputLevelAsString, int outputLevel) {
+    //public GuiTestResultWindow(GuiTestRunnerFrame gtrf) {
+    public GuiTestResultWindowTab(String outputLevelAsString, int outputLevel) {
 
-        super("Healthcheck Results");
+        //super("Healthcheck Results");
 
-        Container contentPane = getContentPane();
-        contentPane.setLayout(new BorderLayout());
+        //Container contentPane = getContentPane();
+        this.setLayout(new BorderLayout());
 
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBackground(Color.RED);
@@ -78,7 +71,8 @@ public class GuiTestResultWindow extends JFrame {
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         bottomPanel.setBackground(Color.WHITE);
 
-        JButton saveButton = new JButton("Save", new ImageIcon(this.getClass().getResource("save.gif")));
+        //JButton saveButton = new JButton("Save", new ImageIcon(this.getClass().getResource("save.gif")));
+        JButton saveButton = new JButton("Save");
         saveButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -114,23 +108,23 @@ public class GuiTestResultWindow extends JFrame {
             }
         });
 
-        JButton closeButton = new JButton("Close", new ImageIcon(this.getClass().getResource("close.gif")));
-        closeButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-
-                dispose();
-
-            }
-        });
+//        JButton closeButton = new JButton("Close", new ImageIcon(this.getClass().getResource("close.gif")));
+//        closeButton.addActionListener(new ActionListener() {
+//
+//            public void actionPerformed(ActionEvent e) {
+//
+//                dispose();
+//
+//            }
+//        });
 
         bottomPanel.add(saveButton);
-        bottomPanel.add(closeButton);
+//        bottomPanel.add(closeButton);
 
-        contentPane.add(topPanel, BorderLayout.CENTER);
-        contentPane.add(bottomPanel, BorderLayout.SOUTH);
+        this.add(topPanel, BorderLayout.CENTER);
+        this.add(bottomPanel, BorderLayout.SOUTH);
 
-        pack();
+        //pack();
 
         // Centre on screen
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -147,8 +141,8 @@ public class GuiTestResultWindow extends JFrame {
      */
     public static void main(String[] args) {
 
-        GuiTestResultWindow gtrw = new GuiTestResultWindow("", 0);
-        gtrw.pack();
+        GuiTestResultWindowTab gtrw = new GuiTestResultWindowTab("", 0);
+//gtrw.pack();
         gtrw.setVisible(true);
 
     }
@@ -287,13 +281,13 @@ class ResultTreePanel extends JScrollPane {
 
 class JLabelTreeCellRenderer extends DefaultTreeCellRenderer {
 
-    private ImageIcon smallCross = new ImageIcon(this.getClass().getResource("small_cross.gif"));
-
-    private ImageIcon smallTick = new ImageIcon(this.getClass().getResource("small_tick.gif"));
-
-    private ImageIcon listPass = new ImageIcon(this.getClass().getResource("list_pass.gif"));
-
-    private ImageIcon listFail = new ImageIcon(this.getClass().getResource("list_fail.gif"));
+//    private ImageIcon smallCross = new ImageIcon(this.getClass().getResource("small_cross.gif"));
+//
+//    private ImageIcon smallTick = new ImageIcon(this.getClass().getResource("small_tick.gif"));
+//
+//    private ImageIcon listPass = new ImageIcon(this.getClass().getResource("list_pass.gif"));
+//
+//    private ImageIcon listFail = new ImageIcon(this.getClass().getResource("list_fail.gif"));
 
     private Color green = new Color(0, 192, 0);
 
@@ -328,10 +322,10 @@ class JLabelTreeCellRenderer extends DefaultTreeCellRenderer {
             setFont(new Font(defaultFontName, Font.BOLD, defaultFontSize));
             if (node.passed()) {
                 setForeground(green);
-                setIcon(listPass);
+                //setIcon(listPass);
             } else {
                 setForeground(red);
-                setIcon(listFail);
+                //setIcon(listFail);
             }
             int[] passesFails = ReportManager.countPassesAndFailsTest(node.getText());
             setToolTipText(passesFails[0] + " databases passed, " + passesFails[1] + " databases failed");
@@ -340,10 +334,10 @@ class JLabelTreeCellRenderer extends DefaultTreeCellRenderer {
 
             if (node.passed()) {
                 setForeground(green);
-                setIcon(smallTick);
+                //setIcon(smallTick);
             } else {
                 setForeground(red);
-                setIcon(smallCross);
+                //setIcon(smallCross);
             }
             int[] passesFails = ReportManager.countPassesAndFailsDatabase(node.getText());
             setToolTipText(node.getText() + " passed a total of " + passesFails[0] + " tests and failed a total of "
