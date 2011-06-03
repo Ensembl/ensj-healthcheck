@@ -295,7 +295,7 @@ public final class DatabaseType {
 
 		// --------------------------------------
 
-		if (in(lcAlias, "funcgen")) {
+		if (in(lcAlias, "funcgen") || in(lcAlias, "eg_funcgen")) {
 
 			return FUNCGEN;
 
