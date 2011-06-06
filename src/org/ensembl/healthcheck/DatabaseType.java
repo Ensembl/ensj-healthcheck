@@ -167,7 +167,7 @@ public final class DatabaseType {
 
 		// --------------------------------------
 
-		if (in(lcAlias, "compara")) {
+		if (in(lcAlias, "compara") || in(lcAlias, "eg_compara")) {
 
 			return COMPARA;
 
