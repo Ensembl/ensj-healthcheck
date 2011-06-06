@@ -60,10 +60,6 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 
 		List<String> databasesAndGroups = getDatabasesAndGroups();
 
-		Utils.printList(databasesAndGroups);
-
-		System.exit(0);
-
 		submitJobs(databasesAndGroups, ReportManager.getSessionID());
 
 		ConnectionPool.closeAll();
@@ -170,7 +166,7 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 
 		Properties props = System.getProperties();
 
-		for (Enumeration en = props.propertyNames(); en.hasMoreElements();) {
+		for (Enumeration<?> en = props.propertyNames(); en.hasMoreElements();) {
 
 			String key = (String) en.nextElement();
 
