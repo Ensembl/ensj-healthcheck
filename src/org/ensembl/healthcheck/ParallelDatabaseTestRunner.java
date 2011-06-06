@@ -160,7 +160,7 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 	 * </p>
 	 * 
 	 * <code>
-	 * 	bsub -w 'ended("Job_0") && ended("Job_1")' /homes/mnuhn/workspaceDeleteMeWhenDone/ensj-healthcheck-session/run-healthcheck-node.sh -endDbSession -session 18
+	 * 	bsub -o healthcheck_session_918.out -e healthcheck_session_918.err -w 'ended("Job_0") && ended("Job_1")' /homes/mnuhn/workspaceDeleteMeWhenDone/ensj-healthcheck-session/run-healthcheck-node.sh -endDbSession -session 18
 	 * </code>
 	 * 
 	 * @param jobNames
@@ -168,9 +168,9 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 	 * @return
 	 * 
 	 */
-	protected String createSessionEndTimeCmd(final List<String> jobNames, String runNodeDBTestRunnerScript) {
+	protected String[] createSessionEndTimeCmd(final List<String> jobNames, String runNodeDBTestRunnerScript) {
 
-		StringBuffer bsubConditionClause = new StringBuffer();
+		StringBuffer bsubConditionClause = new StringBuffer("'");
 		Iterator<String> jobNameIterator = jobNames.iterator();
 
 		while (jobNameIterator.hasNext()) {
@@ -183,7 +183,14 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 			}
 		}
 
-		String finalJob = "bsub -w " + "'" + bsubConditionClause + "' " + runNodeDBTestRunnerScript + " -endDbSession -session " + ReportManager.getSessionID();
+                bsubConditionClause.append("'");
+
+                String session = "" + ReportManager.getSessionID();
+
+                String out = String.format("healthcheck_session_%s.out", session);
+                String err = String.format("healthcheck_session_%s.err", session);
+
+		String[] finalJob = { "bsub", "-o", out, "-e", err, "-w", bsubConditionClause.toString(), runNodeDBTestRunnerScript, "-endDbSession", "-session", session };
 
 		return finalJob;
 	}
@@ -218,8 +225,11 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 
 		}
 
-		String sessionEndTimeCmd = createSessionEndTimeCmd(jobNames, runNodeDBTestRunnerScript);
+		String[] sessionEndTimeCmd = createSessionEndTimeCmd(jobNames, runNodeDBTestRunnerScript);
+                //System.out.println(Utils.arrayToString(sessionEndTimeCmd, " "));
+
 		execCmd(sessionEndTimeCmd);
+                System.out.println("Submitted session dependency job for session " + sessionID);
 
 	}
 
