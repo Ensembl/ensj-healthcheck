@@ -18,10 +18,12 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.Properties;
 
 import org.ensembl.healthcheck.util.ConnectionPool;
 import org.ensembl.healthcheck.util.LogFormatter;
@@ -57,6 +59,10 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 		ReportManager.createDatabaseSession();
 
 		List<String> databasesAndGroups = getDatabasesAndGroups();
+
+		Utils.printList(databasesAndGroups);
+
+		System.exit(0);
 
 		submitJobs(databasesAndGroups, ReportManager.getSessionID());
 
@@ -152,23 +158,41 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 
 	// ---------------------------------------------------------------------
 	/**
-	 * Create a list; of database regexps and test case groups Parsed from the
-	 * output.databases property, which should be of the form
-	 * regexp1:group1,regexp2:group2 etc
+	 * Create a list of databases and groups from the properties file. Multiple properties can be used as long as they start with
+	 * output.databases, e.g. <code>
+	 * output.databases1 = ^[a-k].*_core_63.*:release 
+	 * output.databases2 = ^[l-z].*_core_63.*:release 
+	 * </code> Individual properties can also contain multiple comma-separated sets.
 	 */
 	private List<String> getDatabasesAndGroups() {
 
-		return Arrays.asList(System.getProperty("output.databases").split(","));
+		List<String> list = new ArrayList<String>();
+
+		Properties props = System.getProperties();
+
+		for (Enumeration en = props.propertyNames(); en.hasMoreElements();) {
+
+			String key = (String) en.nextElement();
+
+			if (key.startsWith("output.databases")) {
+				
+				String value = props.getProperty(key);
+				list.addAll(Arrays.asList(value.split(",")));
+				
+			}
+
+		}
+
+		return list;
 
 	}
 
 	/**
 	 * <p>
-	 * 	Creates the bsub comand that sets the end_time columns in the database
-	 * indicating when the session has ended. It will create something looking 
-	 * like this:
+	 * Creates the bsub comand that sets the end_time columns in the database indicating when the session has ended. It will create
+	 * something looking like this:
 	 * </p>
-	 *
+	 * 
 	 * <code>
 	 * 	bsub -w 'ended("Job_0") && ended("Job_1")' /homes/mnuhn/workspaceDeleteMeWhenDone/ensj-healthcheck-session/run-healthcheck-node.sh -endDbSession -session 18
 	 * </code>
@@ -178,31 +202,26 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 	 * @return
 	 * 
 	 */
-	protected String createSessionEndTimeCmd(
-			final List<String> jobNames, 
-			String runNodeDBTestRunnerScript
-		) {
-		
+	protected String createSessionEndTimeCmd(final List<String> jobNames, String runNodeDBTestRunnerScript) {
+
 		StringBuffer bsubConditionClause = new StringBuffer();
 		Iterator<String> jobNameIterator = jobNames.iterator();
-		
+
 		while (jobNameIterator.hasNext()) {
-			
+
 			String currentJobName = jobNameIterator.next();
 			bsubConditionClause.append("ended(\"" + currentJobName + "\")");
-			
+
 			if (jobNameIterator.hasNext()) {
 				bsubConditionClause.append(" && ");
 			}
 		}
-		
-		String finalJob = "bsub -w " 
-			+ "'" + bsubConditionClause + "' "
-			+ runNodeDBTestRunnerScript + " -endDbSession -session " + ReportManager.getSessionID();
-		
+
+		String finalJob = "bsub -w " + "'" + bsubConditionClause + "' " + runNodeDBTestRunnerScript + " -endDbSession -session " + ReportManager.getSessionID();
+
 		return finalJob;
 	}
-	
+
 	// ---------------------------------------------------------------------
 
 	private void submitJobs(List<String> databasesAndGroups, long sessionID) {
@@ -212,51 +231,38 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 
 		int jobNumber = 0;
 		List<String> jobNames = new ArrayList<String>();
-		
+
 		for (Iterator<String> it = databasesAndGroups.iterator(); it.hasNext(); jobNumber++) {
-			
+
 			String[] databaseAndGroup = it.next().split(":");
 			String database = databaseAndGroup[0];
 			String group = databaseAndGroup[1];
 
 			String currentJobName = "Job_" + jobNumber;
-			
-//TODO EG: Need to push out LSF commands into separate file if we want to use them
-			String[] cmd = { "bsub",
-				"-J", currentJobName,
-		        "-q", "long",
-		        "-R", "select[myens_staging1<=800]",
-		        "-R", "select[myens_staging2<=800]",
-		        "-R", "select[myens_livemirror<=300]",
-		        "-R", "select[lustre && linux]",
-		        "-R", "order[ut:mem]",
-		        "-R", "rusage[myens_staging1=10:myens_staging1=10:myens_livemirror=50]",
-		        "-o", "healthcheck_%J.out",
-		        "-e", "healthcheck_%J.err",
-		        	runNodeDBTestRunnerScript,
-		        "-d", database,
-		        "-group", group,
-		        "-session", "" + sessionID
-			};
-			
+
+			// TODO EG: Need to push out LSF commands into separate file if we want to use them
+			String[] cmd = { "bsub", "-J", currentJobName, "-q", "long", "-R", "select[myens_staging1<=800]", "-R", "select[myens_staging2<=800]", "-R", "select[myens_livemirror<=300]", "-R",
+					"select[lustre && linux]", "-R", "order[ut:mem]", "-R", "rusage[myens_staging1=10:myens_staging1=10:myens_livemirror=50]", "-o", "healthcheck_%J.out", "-e", "healthcheck_%J.err",
+					runNodeDBTestRunnerScript, "-d", database, "-group", group, "-session", "" + sessionID };
+
 			jobNames.add(currentJobName);
-			
+
 			System.out.println(join(cmd));
-			
+
 			boolean submitJobsToLSF = false;
-			
+
 			if (submitJobsToLSF) {
-				
+
 				execCmd(cmd);
 				System.out.println("Submitted job with database regexp " + database + " and group " + group + ", session ID " + sessionID);
 			}
 		}
-		
-		String  sessionEndTimeCmd = createSessionEndTimeCmd(jobNames, runNodeDBTestRunnerScript);
+
+		String sessionEndTimeCmd = createSessionEndTimeCmd(jobNames, runNodeDBTestRunnerScript);
 		execCmd(sessionEndTimeCmd);
 
 	}
-	
+
 	/**
 	 * Used for executing bsub commands.
 	 * 
@@ -264,56 +270,56 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 	 * 
 	 */
 	protected void execCmd(String... cmd) {
-		
+
 		// Set for debugging purposes. Commands will only be printed
 		// but not executed.
 		boolean onlyPrintCmd = true;
-		
+
 		if (onlyPrintCmd) {
 			System.out.println(join(cmd));
 			return;
 		}
-		
+
 		try {
-			
-			Process p = Runtime.getRuntime().exec(cmd);			
-		
+
+			Process p = Runtime.getRuntime().exec(cmd);
+
 			BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 
 			String s = null;
-			
+
 			while ((s = stdInput.readLine()) != null) {
 				System.out.println(s);
 			}
 
 			while ((s = stdError.readLine()) != null) {
 			}
-			
+
 			stdInput.close();
 			stdError.close();
-			
+
 		} catch (Exception ioe) {
 			System.err.println("Error in head job " + ioe.getMessage());
 		}
 	}
-	
+
 	protected String join(String[] s) {
 		return join(s, " ");
 	}
-	
+
 	protected String join(String[] s, String delimiter) {
-		
+
 		StringBuffer sb = new StringBuffer();
-		
+
 		for (String item : s) {
 			sb.append(item);
 			sb.append(delimiter);
 		}
-		
+
 		return sb.toString();
 	}
-	
+
 	// ---------------------------------------------------------------------
 
 } // ParallelDatabaseTestRunner
