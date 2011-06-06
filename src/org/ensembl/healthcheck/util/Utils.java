@@ -808,6 +808,37 @@ public final class Utils {
 
 		}
 		
-	// -------------------------------------------------------------------------
+	// ---------------------------------------------------------------------
+		/**
+		 * Create a list of databases and groups from the properties file. Multiple properties can be used as long as they start with
+		 * output.databases, e.g. <code>
+		 * output.databases1 = ^[a-k].*_core_63.*:release 
+		 * output.databases2 = ^[l-z].*_core_63.*:release 
+		 * </code> Individual properties can also contain multiple comma-separated sets.
+		 */
+		public static List<String> getDatabasesAndGroups() {
+
+			List<String> list = new ArrayList<String>();
+
+			Properties props = System.getProperties();
+
+			for (Enumeration<?> en = props.propertyNames(); en.hasMoreElements();) {
+
+				String key = (String) en.nextElement();
+
+				if (key.startsWith("output.databases")) {
+
+					String value = props.getProperty(key);
+					list.addAll(Arrays.asList(value.split(",")));
+
+				}
+
+			}
+
+			return list;
+
+		}
+		
+		// -------------------------------------------------------------------------
 
 } // Utils
