@@ -171,10 +171,10 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 			String key = (String) en.nextElement();
 
 			if (key.startsWith("output.databases")) {
-				
+
 				String value = props.getProperty(key);
 				list.addAll(Arrays.asList(value.split(",")));
-				
+
 			}
 
 		}
@@ -243,15 +243,9 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 
 			jobNames.add(currentJobName);
 
-			System.out.println(join(cmd));
+			execCmd(cmd);
+			System.out.println("Submitted job with database regexp " + database + " and group " + group + ", session ID " + sessionID);
 
-			boolean submitJobsToLSF = false;
-
-			if (submitJobsToLSF) {
-
-				execCmd(cmd);
-				System.out.println("Submitted job with database regexp " + database + " and group " + group + ", session ID " + sessionID);
-			}
 		}
 
 		String sessionEndTimeCmd = createSessionEndTimeCmd(jobNames, runNodeDBTestRunnerScript);
