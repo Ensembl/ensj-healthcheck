@@ -746,37 +746,37 @@ public class ReportManager {
 				buf.append(",");
 			}
 
-			String hosts = buf.toString();
+		}
 
-			String outputDatabases = Utils.listToString(Utils.getDatabasesAndGroups(), ",");
+		String hosts = buf.toString();
 
-			String outputRelease = System.getProperty("output.release");
+		String outputDatabases = Utils.listToString(Utils.getDatabasesAndGroups(), ",");
 
-			String sql = String.format("INSERT INTO session (host, config, db_release, start_time) VALUES (" + "\"" + hosts.toString() + "\", " + "\"" + outputDatabases + "\", " + "\"" + outputRelease
-					+ "\", " + "NOW())");
+		String outputRelease = System.getProperty("output.release");
 
-			try {
-				Statement stmt = outputDatabaseConnection.createStatement();
-				stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
-				ResultSet rs = stmt.getGeneratedKeys();
-				if (rs.next()) {
-					sessionID = rs.getLong(1);
-					logger.fine("Created new session with ID " + sessionID);
-				}
-				stmt.close();
+		String sql = String.format("INSERT INTO session (host, config, db_release, start_time) VALUES (" + "\"" + hosts.toString() + "\", " + "\"" + outputDatabases + "\", " + "\"" + outputRelease
+				+ "\", " + "NOW())");
 
-			} catch (SQLException e) {
-
-				System.err.println("Error executing:\n" + sql);
-				e.printStackTrace();
-
+		try {
+			Statement stmt = outputDatabaseConnection.createStatement();
+			stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+			ResultSet rs = stmt.getGeneratedKeys();
+			if (rs.next()) {
+				sessionID = rs.getLong(1);
+				logger.fine("Created new session with ID " + sessionID);
 			}
+			stmt.close();
 
-			if (sessionID == -1) {
-				logger.severe("Could not get new session ID");
-				logger.severe(sql);
-			}
+		} catch (SQLException e) {
 
+			System.err.println("Error executing:\n" + sql);
+			e.printStackTrace();
+
+		}
+
+		if (sessionID == -1) {
+			logger.severe("Could not get new session ID");
+			logger.severe(sql);
 		}
 
 	}
