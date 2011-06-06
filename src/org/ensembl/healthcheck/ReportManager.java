@@ -44,23 +44,21 @@ public class ReportManager {
 
 	/**
 	 * <p>
-	 * 	Resets attributes of the ReportManager. This way the ReportManager can
-	 * be used for running more than one session. (Not at the same time) 
-	 * Before starting a new session, calling ReportManager.initialise()
-	 * will put the ReportManager back into a state in which it can be used
-	 * again.
+	 * Resets attributes of the ReportManager. This way the ReportManager can be used for running more than one session. (Not at the
+	 * same time) Before starting a new session, calling ReportManager.initialise() will put the ReportManager back into a state in
+	 * which it can be used again.
 	 * </p>
 	 * 
 	 */
 	public static void initialise() {
-		
-		reportsByTest     = new HashMap();
+
+		reportsByTest = new HashMap();
 		reportsByDatabase = new HashMap();
-		
+
 		outputDatabaseConnection = null;
 		sessionID = -1;
 	}
-	
+
 	/** A hash of lists keyed on the test name. */
 	protected static Map reportsByTest = new HashMap();
 
@@ -736,45 +734,49 @@ public class ReportManager {
 	 */
 	public static void createDatabaseSession() {
 
-
 		// build comma-separated list of hosts
 		StringBuffer buf = new StringBuffer();
 		Iterator<DatabaseServer> it = DBUtils.getMainDatabaseServers().iterator();
-		
+
 		while (it.hasNext()) {
-		
-			DatabaseServer server = (DatabaseServer)it.next();
+
+			DatabaseServer server = (DatabaseServer) it.next();
 			buf.append(String.format("%s:%s", server.getHost(), server.getPort()));
 			if (it.hasNext()) {
 				buf.append(",");
 			}
-		
-		}
-		
-		String hosts = buf.toString();
-		
-		String sql = String.format("INSERT INTO session (host, config, db_release) VALUES (\'%s\',\'%s\',\'%s\')", hosts, System.getProperty("output.databases"), System.getProperty("output.release"));
 
-		try {
-			Statement stmt = outputDatabaseConnection.createStatement();
-			stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
-			ResultSet rs = stmt.getGeneratedKeys();
-			if (rs.next()) {
-				sessionID = rs.getLong(1);
-				logger.fine("Created new session with ID " + sessionID);
+			String hosts = buf.toString();
+
+			String outputDatabases = Utils.listToString(Utils.getDatabasesAndGroups(), ",");
+
+			String outputRelease = System.getProperty("output.release");
+
+			String sql = String.format("INSERT INTO session (host, config, db_release, start_time) VALUES (" + "\"" + hosts.toString() + "\", " + "\"" + outputDatabases + "\", " + "\"" + outputRelease
+					+ "\", " + "NOW())");
+
+			try {
+				Statement stmt = outputDatabaseConnection.createStatement();
+				stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+				ResultSet rs = stmt.getGeneratedKeys();
+				if (rs.next()) {
+					sessionID = rs.getLong(1);
+					logger.fine("Created new session with ID " + sessionID);
+				}
+				stmt.close();
+
+			} catch (SQLException e) {
+
+				System.err.println("Error executing:\n" + sql);
+				e.printStackTrace();
+
 			}
-			stmt.close();
 
-		} catch (SQLException e) {
+			if (sessionID == -1) {
+				logger.severe("Could not get new session ID");
+				logger.severe(sql);
+			}
 
-			System.err.println("Error executing:\n" + sql);
-			e.printStackTrace();
-
-		}
-
-		if (sessionID == -1) {
-			logger.severe("Could not get new session ID");
-			logger.severe(sql);
 		}
 
 	}
