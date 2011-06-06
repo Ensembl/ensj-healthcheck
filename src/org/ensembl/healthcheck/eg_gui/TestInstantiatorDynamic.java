@@ -59,7 +59,7 @@ public class TestInstantiatorDynamic extends TestInstantiator {
 		if (nameToDynamicClassMap.containsKey(testName)) {			
 			return (T) nameToDynamicClassMap.get(testName);
 		}		
-		return super.instanceByName(testName);
+		return (T) super.instanceByName(testName);
 	}
 	
 	public <T> T instanceByName(String testName, Class<T> expectedType) {
@@ -68,6 +68,6 @@ public class TestInstantiatorDynamic extends TestInstantiator {
 			
 			return (T) instanceByName(testName);
 		}
-		return super.instanceByName(testName);
+		return (T) super.instanceByName(testName);
 	}
 }

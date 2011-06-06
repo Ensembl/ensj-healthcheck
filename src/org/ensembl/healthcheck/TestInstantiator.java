@@ -181,7 +181,7 @@ public class TestInstantiator {
 		Class<T> loadedClass = (Class<T>) forName(testName);
 		
 		if (expectedType.isAssignableFrom(loadedClass)) {			
-			return instanceByName(testName);
+			return (T)instanceByName(testName);
 		}
 		throw new RuntimeException(testName + " is not a test case!");
 	}
