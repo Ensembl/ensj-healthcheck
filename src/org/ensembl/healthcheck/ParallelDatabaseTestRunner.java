@@ -261,15 +261,6 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 	 */
 	protected void execCmd(String... cmd) {
 
-		// Set for debugging purposes. Commands will only be printed
-		// but not executed.
-		boolean onlyPrintCmd = true;
-
-		if (onlyPrintCmd) {
-			System.out.println(join(cmd));
-			return;
-		}
-
 		try {
 
 			Process p = Runtime.getRuntime().exec(cmd);
