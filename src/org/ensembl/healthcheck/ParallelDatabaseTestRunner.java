@@ -170,7 +170,7 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 	 */
 	protected String[] createSessionEndTimeCmd(final List<String> jobNames, String runNodeDBTestRunnerScript) {
 
-		StringBuffer bsubConditionClause = new StringBuffer("'");
+		StringBuffer bsubConditionClause = new StringBuffer();
 		Iterator<String> jobNameIterator = jobNames.iterator();
 
 		while (jobNameIterator.hasNext()) {
@@ -183,14 +183,14 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 			}
 		}
 
-                bsubConditionClause.append("'");
-
                 String session = "" + ReportManager.getSessionID();
 
                 String out = String.format("healthcheck_session_%s.out", session);
                 String err = String.format("healthcheck_session_%s.err", session);
 
-		String[] finalJob = { "bsub", "-o", out, "-e", err, "-w", bsubConditionClause.toString(), runNodeDBTestRunnerScript, "-endDbSession", "-session", session };
+                String jobName = String.format("hc_%s", session);
+
+		String[] finalJob = { "bsub", "-o", out, "-e", err, "-J", jobName, "-w", bsubConditionClause.toString(), runNodeDBTestRunnerScript, "-endDbSession", "-session", session };
 
 		return finalJob;
 	}
@@ -239,7 +239,7 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 	 * @param cmd
 	 * 
 	 */
-	protected void execCmd(String... cmd) {
+	protected void execCmd(String[] cmd) {
 
 		try {
 
@@ -255,6 +255,7 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 			}
 
 			while ((s = stdError.readLine()) != null) {
+				System.out.println(s);
 			}
 
 			stdInput.close();
