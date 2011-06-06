@@ -17,6 +17,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.SortedSet;
@@ -44,7 +45,9 @@ import org.ensembl.healthcheck.util.DBUtils;
  */
 
 public class CompareVariationSchema extends MultiDatabaseTestCase {
-
+	
+	private HashMap exceptions;
+	
 	/**
 	 * Creates a new instance of CompareSchemaTestCase.
 	 */
@@ -54,9 +57,109 @@ public class CompareVariationSchema extends MultiDatabaseTestCase {
 		addToGroup("variation-release");
 		setDescription("Will check if database schema is correct");
 		setTeamResponsible(Team.VARIATION);
-
+		this.defineExceptions();
 	}
 
+	/**
+	 * Define a few exceptions for species
+	 */
+	private void defineExceptions() {
+		
+		HashMap speciesExceptions;
+		ArrayList tables;
+		this.exceptions = new HashMap();
+		
+		// Define the exceptions by species and the relationship with the master schema
+		
+		/*
+		 * Exceptions common for all species
+		 */
+		speciesExceptions = new HashMap();
+		this.exceptions.put(new String("all"),speciesExceptions);
+		
+		// Tables that are missing from master schema but required to be present in species
+		tables = new ArrayList();
+		tables.add("subsnp_map");
+		speciesExceptions.put("requiredInSpecies",tables);
+
+		/** 
+		 * Exceptions for human
+		 */
+		speciesExceptions = new HashMap();
+		this.exceptions.put(Species.HOMO_SAPIENS,speciesExceptions);
+		
+		// Tables that are in the master schema but may be missing from the species
+		tables = new ArrayList();
+		tables.add("tmp_individual_genotype_single_bp");
+		speciesExceptions.put(new String("notRequiredInSpecies"),tables);
+
+		/** 
+		 * Exceptions for chimp
+		 */
+		speciesExceptions = new HashMap();
+		this.exceptions.put(Species.PAN_TROGLODYTES,speciesExceptions);
+		
+		// Tables that are in the master schema but may be missing from the species
+		tables = new ArrayList();
+		tables.add("tmp_individual_genotype_single_bp");
+		speciesExceptions.put(new String("notRequiredInSpecies"),tables);
+
+		/** 
+		 * Exceptions for mouse
+		 */
+		speciesExceptions = new HashMap();
+		this.exceptions.put(Species.MUS_MUSCULUS,speciesExceptions);
+		
+		// Tables that are missing from master schema but required to be present in species
+		tables = new ArrayList();
+		tables.add("strain_gtype_poly");
+		speciesExceptions.put(new String("requiredInSpecies"),tables);
+
+		/** 
+		 * Exceptions for rat
+		 */
+		speciesExceptions = new HashMap();
+		this.exceptions.put(Species.RATTUS_NORVEGICUS,speciesExceptions);
+		
+		// Tables that are missing from master schema but required to be present in species
+		tables = new ArrayList();
+		tables.add("strain_gtype_poly");
+		speciesExceptions.put(new String("requiredInSpecies"),tables);
+		
+	}
+	
+	private boolean isExcepted(Species sp, String table, String condition) {
+		// Get the excepted tables for this species and condition and check whether the supplied table is excepted
+		ArrayList tables = this.getExceptionTables(sp,condition);
+		return tables.contains(table);
+	}
+	
+	private ArrayList getExceptionTables(Species sp, String condition) {
+		
+		ArrayList tables = new ArrayList();
+		if (this.exceptions == null) {
+			return tables;
+		}
+		
+		// Check the exceptions that concerns all species as well as the species-specific ones 
+		Object[] excKey = new Object[] {new String("all"),sp};
+
+		HashMap speciesExceptions;
+		for (int i=0; i<excKey.length; i++) {
+		
+			speciesExceptions = (HashMap) this.exceptions.get(excKey[i]);
+			if (speciesExceptions != null) {				
+				ArrayList aL = (ArrayList) speciesExceptions.get(condition);
+				if (aL != null) {
+					tables.addAll(aL);
+				}
+			}
+		}
+		
+		return tables;
+		
+	}
+	
 	/**
 	 * Compare each database with the master.
 	 * 
@@ -122,6 +225,7 @@ public class CompareVariationSchema extends MultiDatabaseTestCase {
 
 					Connection checkCon = databases[i].getConnection();
 					Species species = databases[i].getSpecies();
+					
 					if (checkCon != masterCon) {
 
 						logger.info("Comparing " + DBUtils.getShortDatabaseName(masterCon) + " with " + DBUtils.getShortDatabaseName(checkCon));
@@ -141,14 +245,19 @@ public class CompareVariationSchema extends MultiDatabaseTestCase {
 						// exclude the genotype table
 						for (int j = 0; j < tableNames.length; j++) {
 							String table = tableNames[j];
-							if ((species == Species.HOMO_SAPIENS || species == Species.PAN_TROGLODYTES) && table.equals("tmp_individual_genotype_single_bp")) {
-								// in human and chimp, ignore check of genotype table
+							
+							// Check if this table is in the list of exceptions
+							if (isExcepted(species,table,"notRequiredInSpecies")) {
+								ReportManager.info(this, checkCon, "Table " + table + " is in the list of 'notRequiredInSpecies' exceptions for " + species.getAlias() + ", will not check table structure.");
 								continue;
 							}
+							
+							/*
 							if (species != Species.HOMO_SAPIENS && (table.equals("variation_annotation") || table.equals("phenotype"))) {
 								// only human has these two tables
 								continue;
 							}
+							*/
 							String sql = "SHOW CREATE TABLE " + table;
 							ResultSet masterRS = masterStmt.executeQuery(sql);
 							ResultSet dbRS = dbStmt.executeQuery(sql);
@@ -215,12 +324,13 @@ public class CompareVariationSchema extends MultiDatabaseTestCase {
 		for (int i = 0; i < tables.length; i++) {
 			String table = tables[i];
 
-			// if the table is the genotype for human or chimp, ignore it
-			if ((species == Species.HOMO_SAPIENS || species == Species.PAN_TROGLODYTES) && table.equals("tmp_individual_genotype_single_bp")) {
+			// if the table is in the list of exceptions, skip it
+			if (isExcepted(species,table,"notRequiredInSpecies")) {
+				ReportManager.info(this, schema2, "Table " + table + " is in the list of 'notRequiredInSpecies' exceptions for " + species.getAlias() + ", will not check presence.");
 				continue;
 			}
 			if (!checkTableExists(schema2, table)) {
-				ReportManager.problem(this, schema1, "Table " + table + " exists in " + name1 + " but not in " + name2);
+				ReportManager.problem(this, schema2, "Table " + table + " exists in " + name1 + " but not in " + name2);
 				result = false;
 			}
 		}
@@ -229,20 +339,27 @@ public class CompareVariationSchema extends MultiDatabaseTestCase {
 		boolean strainTable = false;
 		for (int i = 0; i < tables.length; i++) {
 			String table = tables[i];
-			// ignore the srain_gtype_ploy table if present
-			if (table.equals("strain_gtype_poly")) {
-				strainTable = true;
-				continue;
-			}
-			if (!checkTableExists(schema1, table)) {
+			
+			// Don't report the table as missing if it is in the exception list of required tables not in master schema 
+			if (!checkTableExists(schema1, table) && !isExcepted(species,table,"requiredInSpecies")) {
 				ReportManager.problem(this, schema2, "Table " + table + " exists in " + name2 + " but not in " + name1);
 				result = false;
 			}
 		}
-		if (!strainTable && (species == Species.RATTUS_NORVEGICUS || species == Species.MUS_MUSCULUS)) {
-			ReportManager.problem(this, schema2, " Table strain_gtype_poly NOT present in " + name2);
+		
+		// Check the required tables that are not listed in the master schema
+		ArrayList requiredTables = this.getExceptionTables(species,"requiredInSpecies");
+		for (int i=0; i<requiredTables.size(); i++) {
+			
+			String table = (String) requiredTables.get(i);
+			if (!checkTableExists(schema2, table)) {
+				
+				ReportManager.problem(this, schema2, "Table " + table + " does not exist in " + name2);
+				result = false;
+				
+			}
 		}
-
+		
 		return result;
 	} // end method
 
