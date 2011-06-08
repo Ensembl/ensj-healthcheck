@@ -205,7 +205,7 @@ samaxesJS.toc = function() {
             var headers = [];
             var context = (options && options.context) ? document.getElementById(options.context) : document.body;
             var nodes = context.getElementsByTagName('*');
-            var exclude = (!options || options.exclude === undefined) ? 'h1, h5, h6' : options.exclude;
+            var exclude = (!options || options.exclude === undefined) ? 'h5, h6' : options.exclude;
             for (var node in nodes) {
                 if (/h\d/i.test(nodes[node].nodeName) && !exclude.match(new RegExp(nodes[node].nodeName, 'i'))) {
                     headers.push(nodes[node]);
