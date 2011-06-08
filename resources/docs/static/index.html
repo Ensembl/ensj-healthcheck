@@ -10,9 +10,141 @@
 
 <body>
 
-<h1>Manual for configurable healthchecks</h1>
+<h1 id="Manuals_for_healthchecks">Manuals for healthchecks</h1>
 
 <div id="toc"></div>
+
+<h1 id="General">General</h1>
+
+<h2 id="Getting_started">Getting started</h2>
+
+<h3 id="checkout">Checkout</h3>
+
+<pre>
+mkdir myhealthechecks
+cd myhealthechecks
+</pre>
+
+<p>
+	Checkout from Sanger CVS either anonymous: 
+</p>
+
+<pre>
+cvs -d :pserver:cvsuser:CVSUSER@cvsro.sanger.ac.uk:/cvsroot/ensembl checkout -P ensj-healthcheck
+</pre>
+
+<p>
+	or with your username, if you plan on changing things: 
+</p>
+
+<pre>
+cvs -d :ext:mn1@cvs.sanger.ac.uk:/cvsroot/ensembl checkout -P ensj-healthcheck
+</pre>
+
+<p>
+(change mn1 to whatever your username is) then
+</p>
+
+<pre>
+cd ensj-healthcheck/
+</pre>
+
+<h3 id="docs">Docs (optional)</h3>
+
+<p>
+Type
+</p>
+
+<pre>
+ant docs
+</pre>
+
+<p>
+to generate the current version of this documentation for the configurable testrunner. Then type 
+</p>
+
+<pre>
+firefox docs/index.html
+# (does not work on the ebi-xxx machines)
+</pre>
+
+<p>
+to look at it or go to the newly created directory docs/ and open index.html in your browser. 
+</p>
+
+<h1 id="Manual_for_EG_Gui">Manual for EG Gui</h1>
+
+<h2 id="Start_EG_GUI">Start</h2>
+
+<h3 id="Get_Code">Get the code</h2>
+
+<p>
+	<a href="#checkout">Checkout the healthcheck project<a> and cd into the directory.
+</p>
+
+<h3 id="Get_Code">Get the configuration files</h2>
+
+<p>
+	The EG Gui needs configuration files with connection details for the datbase servers to which you want to connect. They are not in CVS, because they have passwords in them. Go to Michael (mnuhn@ebi.ac.uk) to get a zip file with these configuration files or ask someone who already has them to send them to you. If you have your own servers, you can also <a href="#How_to_make_a_configuration_file_for_the_EG_Gui">make these configuration files on your own</a>.
+</p>
+
+<p>
+	On startup the EG Gui will search for these configuration files in "~/.ensj". This directory is hardcoded in the EG Gui code. So please create the directory ".ensj" in your home directory and put the configuration files there.
+</p>
+
+<h3 id="Get_Code">Start the EG Gui</h2>
+
+<p>
+	Type
+</p>
+
+<pre>
+ant eg_gui
+</pre>
+
+or
+
+<pre>
+./run-healthcheck-eg_gui.sh
+</pre>
+
+<p>
+	and press Enter to startup the GUI.
+</p>
+
+<h3 id="Running_perl_based_healthchecks">Running perl based healthchecks</h2>
+
+<p>
+	If you want to run perl based healthchecks, then you will need to install the perl libraries on which these tests depend.
+</p>
+
+<p>
+	In order to do this, go the the Admin tab.  Press the button "Checkout perl dependencies". (For developers: This will call the "ant checkoutPerlDependencies" in org.ensembl.healthcheck.eg_gui.AdminTabActionListener) This will create the directory perlcode, download bioperl and unpack it into the perlcode directory and checkout a few ensembl libraries into this directory as well.
+</p>
+
+<p>
+	You should see in the PERL5LIB settings of the admin tab that these libraries are included in the PERL5LIB. They will appear there by default. If you have set you PERL5LIB to something else before starting the GUI, then the value of PERL5LIB will be replaced by whatever you have set it to. If the user has set PERL5LIB, then his setting takes precedence over the default value.
+</p>
+
+<h2 id="How_to_make_a_configuration_file_for_the_EG_Gui">How to make a configuration file for the EG Gui</h2>
+
+<p>
+	A configuration file for the EG Gui must be in the "~/.ensj" directory and end with ".ini" or it won't be found. One configuration file holds connection details for one database server. It must have the following structure:
+</p>
+
+<pre>
+host     = mysql.ebi.ac.uk
+port     = 4157
+user     = anonymous
+password = 
+driver   = org.gjt.mm.mysql.Driver
+</pre>
+
+<p>
+	Apart from the extension being ".ini" the name of the file does not matter. On startup the EG Gui will scan the "~/.ensj" directory for ini files and present the servers as options to the user.
+</p>
+
+<h1 id="Manual_for_configurable_testrunner">Manual for configurable testrunner</h1>
 
 <h2 id="run-configurable-testrunner">run-configurable-testrunner.sh</h2>
 
@@ -81,7 +213,7 @@
 
 </pre>
 
-<h3 id="run-configurable-testrunner_Options">Options:</h3>
+<h3 id="run-configurable-testrunner_Options">Options</h3>
 
 <p>
 	<b>--conf or -c</b>: Specify one or many property files from which settings will be read. database.defaults.properties is always included. When the program needs a parameter, it will search for it first on the command line, then from any property files given in the order they were specified. If it can't find a parameter there, it will take it from <a href="../database.defaults.properties">database.defaults.properties</a>.
@@ -344,61 +476,7 @@ ant jar
 	which runs the compile task as well, but will then also rebuild the lib/ensj-healthcheck.jar file. So the next time you run a testrunner, the new code will be used.
 </p>
 
-<h2 id="Getting_started">Getting started</h2>
 
-<h3 id="checkout">Checkout</h3>
-
-<pre>
-mkdir myhealthechecks
-cd myhealthechecks
-</pre>
-
-<p>
-	Checkout from Sanger CVS either anonymous: 
-</p>
-
-<pre>
-cvs -d :pserver:cvsuser:CVSUSER@cvsro.sanger.ac.uk:/cvsroot/ensembl checkout -P ensj-healthcheck
-</pre>
-
-<p>
-	or with your username, if you plan on changing things: 
-</p>
-
-<pre>
-cvs -d :ext:mn1@cvs.sanger.ac.uk:/cvsroot/ensembl checkout -P ensj-healthcheck
-</pre>
-
-<p>
-(change mn1 to whatever your username is) then
-</p>
-
-<pre>
-cd ensj-healthcheck/
-</pre>
-
-<h3 id="docs">Docs (optional)</h3>
-
-<p>
-Type
-</p>
-
-<pre>
-ant docs
-</pre>
-
-<p>
-to generate the current version of this documentation for the configurable testrunner. Then type 
-</p>
-
-<pre>
-firefox docs/index.html
-# (does not work on the ebi-xxx machines)
-</pre>
-
-<p>
-to look at it or go to the newly created directory docs/ and open index.html in your browser. 
-</p>
 
 <h3 id="all_options">All options of the configurable testrunner</h3>
 
@@ -460,7 +538,7 @@ export PERL5LIB=perlcode/ensembl/modules/:perl/:perlcode/bioperl/:perlcode/ensem
 Note that on the ebi-xxx machines this is not the java version that is used by default. So it can be necessary
 </p>
 
-<h2 id="Javadocs">Javadocs</h2>
+<h1 id="Javadocs">Javadocs</h2>
 
 <p>
 	There are <a href="api/index.html">Javadocs for the API</a>.
