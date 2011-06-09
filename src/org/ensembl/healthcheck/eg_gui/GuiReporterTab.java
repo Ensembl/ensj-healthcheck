@@ -172,9 +172,9 @@ class ReportPanel extends JPanel implements ActionListener {
 		
 		Box singleLineInfo = Box.createVerticalBox();
 		
-		level           = new JTextField("Level");
-		teamResponsible = new JTextField("Team Responsible");
-		speciesName     = new JTextField("Species Name");
+		level           = new JPopupTextField("Level");
+		teamResponsible = new JPopupTextField("Team Responsible");
+		speciesName     = new JPopupTextField("Species Name");
 		message         = new JPopupTextArea ();
 		
 		singleLineInfo.add(level);
