@@ -22,6 +22,7 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -44,7 +45,7 @@ import org.ensembl.healthcheck.eg_gui.Constants;
 import org.ensembl.healthcheck.eg_gui.DatabaseTabbedPane;
 import org.ensembl.healthcheck.eg_gui.GuiReporterTab;
 import org.ensembl.healthcheck.eg_gui.TestInstantiatorDynamic;
-import org.ensembl.healthcheck.gui.TestProgressDialog;
+import org.ensembl.healthcheck.eg_gui.TestProgressDialog;
 import org.ensembl.healthcheck.testcase.PerlScriptConfig;
 import org.ensembl.healthcheck.util.DBUtils;
 
@@ -160,7 +161,10 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 				}
 				currentGuiReporter = new GuiReporterTab();
 
+				testProgressDialog = new TestProgressDialog("", 0, 100);
+				
 				tabResults.setLayout(new BorderLayout());
+				tabResults.add(testProgressDialog, BorderLayout.SOUTH);
 				tabResults.add(currentGuiReporter, BorderLayout.CENTER);
 				
 				tab.setEnabledAt(tabResultsTabIndex,       true);
@@ -305,7 +309,7 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		);
 
 		rmSelectedTests  = GuiTestRunnerFrameComponentBuilder.createRemoveSelectedTestsButton(defaultAL);
-		runAllTests         = GuiTestRunnerFrameComponentBuilder.createRunAllTestsButton(defaultAL);
+		runAllTests      = GuiTestRunnerFrameComponentBuilder.createRunAllTestsButton(defaultAL);
 		runSelectedTests = GuiTestRunnerFrameComponentBuilder.createRunSelectedTestsButton(defaultAL);
 
 		tabSetup = new JPanel();
@@ -469,15 +473,6 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 		Rectangle frame = getBounds();
 		setLocation(
-				(screen.width  - frame.width)  / 2,
-				(screen.height - frame.height) / 2
-		);
-
-		// ----------------------------
-		// Create progress window
-		testProgressDialog = new TestProgressDialog("Running ...", "", 0, 100);
-		frame = testProgressDialog.getBounds();
-		testProgressDialog.setLocation(
 				(screen.width  - frame.width)  / 2,
 				(screen.height - frame.height) / 2
 		);

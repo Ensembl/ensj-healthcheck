@@ -14,7 +14,7 @@ import javax.swing.ListModel;
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.configuration.ConfigureHost;
-import org.ensembl.healthcheck.gui.TestProgressDialog;
+import org.ensembl.healthcheck.eg_gui.TestProgressDialog;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.testcase.PerlScriptConfig;
 import org.ensembl.healthcheck.util.DBUtils;

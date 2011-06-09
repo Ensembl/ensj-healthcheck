@@ -12,7 +12,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportLine;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.eg_gui.GuiTestResultWindowTab;
-import org.ensembl.healthcheck.gui.TestProgressDialog;
+import org.ensembl.healthcheck.eg_gui.TestProgressDialog;
 import org.ensembl.healthcheck.testcase.AbstractPerlBasedTestCase;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
