@@ -103,7 +103,6 @@ public class GuiReporterTab extends JPanel implements Reporter {
 		);
 	}
 	
-	
 	@Override
 	public void message(final ReportLine reportLine) {
 		
