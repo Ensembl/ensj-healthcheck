@@ -64,7 +64,7 @@
 		>
 			<arg line="" />
 			<classpath>
-				<fileset dir="../ensj-healthcheck/lib">
+				<fileset dir="lib">
 					<include name="**/*.jar" />
 				</fileset>
 				<pathelement path="build/"/>
