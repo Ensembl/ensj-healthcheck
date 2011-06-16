@@ -11,6 +11,8 @@ use strict;
 use Carp;
 use Log::Log4perl qw(get_logger);
 
+$|=1;
+
 sub new {
 	my ($class) = shift;
 	$class = ref($class) || $class;
