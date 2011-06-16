@@ -12,8 +12,9 @@ import java.util.logging.Logger;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.configurationmanager.ConfigurationByCascading;
 import org.ensembl.healthcheck.util.ProcessExec;
+
+import java.sql.Connection;;
 
 /**
  * Base class for invoking a perl script to carry out the test and parse the
@@ -66,16 +67,16 @@ public abstract class AbstractPerlBasedTestCase extends SingleDatabaseTestCase {
 	protected abstract String getPerlScript(DatabaseRegistryEntry dbre, int speciesId);
 
 	/**
-	 * Process the output and error from the script specified in
-	 * {@link AbstractPerlBasedTestCase#getPerlScript()} and invoke the
-	 * {@link ReportManager} accordingly
+	 * Creates an Appendable object to which Stdout is delegated
 	 * 
-	 * @param output
-	 *            string containing standard output from script
-	 * @param error
-	 *            string containing error from script
 	 */
-	protected abstract void processOutput(String output, String error);
+	protected abstract Appendable createStdoutProcessor(EnsTestCase e, Connection c);
+
+	/**
+	 * Creates an Appendable object to which Stderr is delegated
+	 * 
+	 */
+	protected abstract Appendable createStderrProcessor(EnsTestCase e, Connection c);
 
 	/*
 	 * (non-Javadoc)
@@ -85,7 +86,7 @@ public abstract class AbstractPerlBasedTestCase extends SingleDatabaseTestCase {
 	 * .healthcheck.DatabaseRegistryEntry)
 	 */
 	@Override
-	public boolean run(DatabaseRegistryEntry dbre) {
+	public boolean run(final DatabaseRegistryEntry dbre) {
 		boolean passes = true;
 		
 		List<Integer> dbre_speciesIds = dbre.getSpeciesIds();
@@ -122,8 +123,11 @@ public abstract class AbstractPerlBasedTestCase extends SingleDatabaseTestCase {
 				}
 			}
 			
-			StringBuffer out = new StringBuffer();
-			StringBuffer err = new StringBuffer();
+			final EnsTestCase currentTestCase = this;
+			
+			Appendable out = createStdoutProcessor(currentTestCase, dbre.getConnection());
+			Appendable err = createStderrProcessor(currentTestCase, dbre.getConnection());
+			
 			try {
 				
 				int exit;
@@ -141,7 +145,6 @@ public abstract class AbstractPerlBasedTestCase extends SingleDatabaseTestCase {
 					);
 				}
 				
-				processOutput(out.toString(), err.toString());
 				if (exit == 0) {
 					ReportManager.correct(this, dbre.getConnection(), "Script "
 							+ commandLine + " completed successfully");
@@ -160,3 +163,8 @@ public abstract class AbstractPerlBasedTestCase extends SingleDatabaseTestCase {
 		return passes;
 	}
 }
+
+interface ReportManagerCaller {
+	abstract public void report(String message); 
+}
+
