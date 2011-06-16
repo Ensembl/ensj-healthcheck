@@ -7,8 +7,11 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -32,6 +35,8 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTree;
 import javax.swing.border.Border;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
@@ -46,6 +51,7 @@ import org.ensembl.healthcheck.eg_gui.DatabaseTabbedPane;
 import org.ensembl.healthcheck.eg_gui.GuiReporterTab;
 import org.ensembl.healthcheck.eg_gui.TestInstantiatorDynamic;
 import org.ensembl.healthcheck.eg_gui.TestProgressDialog;
+import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.testcase.PerlScriptConfig;
 import org.ensembl.healthcheck.util.DBUtils;
 
@@ -106,14 +112,40 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 	final protected JTabbedPane tab;
 	final protected JPanel      tabSetup;
 	      protected int         tabSetupTabIndex;
+	      protected String      tabSetupName = "Setup";
 	      protected JPanel      tabResults;
 	      protected int         tabResultsTabIndex;
+	      protected String      tabResultsName = "Results";
 	      protected JPanel      tabResultsLegacy;
 	      protected int         tabResultsLegacyTabIndex;
 	      protected AdminTab    tabAdmin;
 	      protected int         tabAdminTabIndex;
 
+	      // Holds a reference to the gui reporter. It is a component of the
+	      // JPanel tabResults.
+	      //
 	      protected GuiReporterTab currentGuiReporter;
+	      
+	      protected Thread currentGuiTestRunnerThread;
+	
+	      protected JLabel      perlDependencyWarning = new JLabel("Gaaa perl dependencies!");
+
+
+	protected void processWindowEvent(WindowEvent e) {
+		
+		if (e.getID() == WindowEvent.WINDOW_CLOSING) {
+
+			// If a healthcheck session is currently running, terminate this.
+			// Perl based healthchecks don't automatically terminate when the
+			// window closes, so this is done here explicitly.
+			//
+			if (currentGuiTestRunnerThread != null) {		
+	    		currentGuiTestRunnerThread.interrupt();
+	       	}
+			
+		}
+		super.processWindowEvent(e);
+	}
 	      
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
@@ -182,7 +214,7 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 				
 				if (cmd.equals(Constants.RUN_SELECTED_TESTS)) {
 					
-					GuiTestRunnerFrameActionPerformer.runSelectedTests(
+					currentGuiTestRunnerThread = GuiTestRunnerFrameActionPerformer.runSelectedTests(
 						listOfTestsToBeRun, 
 						selectedDatabases,
 						testProgressDialog,
@@ -193,7 +225,7 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 				}
 				if (cmd.equals(Constants.RUN_ALL_TESTS)) {
 					
-					GuiTestRunnerFrameActionPerformer.runAllTests(
+					currentGuiTestRunnerThread = GuiTestRunnerFrameActionPerformer.runAllTests(
 						listOfTestsToBeRun, 
 						selectedDatabases,
 						testProgressDialog,
@@ -287,7 +319,7 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 	) {
 
 		final ActionListener defaultAL = this;
-
+		
 		final JPopupMenu popupMenuList = GuiTestRunnerFrameComponentBuilder
 				.createListOfTestsToBeExecutedPopupMenu(defaultAL);
 
@@ -392,16 +424,17 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		);
 
 		tabSetup.add(dbServerSelector, BorderLayout.NORTH);
+		tabSetup.add(perlDependencyWarning, BorderLayout.SOUTH);		
 		
 		tabAdmin = new AdminTab();
 		
 		tabResults       = new JPanel();
 		tabResultsLegacy = new JPanel();
 		
-		tab.add("Setup",   tabSetup);
+		tab.add(tabSetupName,   tabSetup);
 		tabSetupTabIndex = 0;
 		
-		tab.add("Results", tabResults);
+		tab.add(tabResultsName, tabResults);
 		tabResultsTabIndex = 1;
 		
 		tab.add("Legacy", tabResultsLegacy);
@@ -477,4 +510,5 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 				(screen.height - frame.height) / 2
 		);
 	}
+
 }
