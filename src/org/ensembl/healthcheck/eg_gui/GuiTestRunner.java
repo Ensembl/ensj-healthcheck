@@ -44,7 +44,7 @@ public class GuiTestRunner {
     			ReportManager.correct(
     				e, 
     				(Connection) null, 
-    				ReportLine.CORRECT
+    				logRecord.getLevel()
     				+ ": " 
     				+ logRecord.getSourceClassName() 
     				+ ":\n" 
