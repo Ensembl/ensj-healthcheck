@@ -20,8 +20,49 @@ import org.ensembl.healthcheck.testcase.OrderedDatabaseTestCase;
 import org.ensembl.healthcheck.testcase.PerlScriptConfig;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
+import com.mysql.jdbc.Connection;
+
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
+
 public class GuiTestRunner {
 
+	/**
+	 * <p>
+	 * 	Sets a logger for a test which forwards anything logged to the 
+	 * ReportManager instead to the console where it would probably be
+	 * ignored.
+	 * </p>
+	 * 
+	 */
+	protected static void setLoggingForTest(final EnsTestCase e) {
+	
+		Handler guiLoggingHandler = new Handler() {
+    		public void publish(LogRecord logRecord) {
+  	    	  
+    			ReportManager.correct(
+    				e, 
+    				(Connection) null, 
+    				ReportLine.CORRECT
+    				+ ": " 
+    				+ logRecord.getSourceClassName() 
+    				+ ":\n" 
+    				+ logRecord.getSourceMethodName() 
+    				+ ": " 
+    				+ logRecord.getMessage() + "\n" 
+    			);
+    		}
+
+			@Override public void close() throws SecurityException {}
+			@Override public void flush() {}
+    	};
+    	
+    	Logger logger = Logger.getLogger("HealthCheckLogger");
+    	logger.addHandler(guiLoggingHandler);
+    	e.setLogger(logger);
+	}
+	
     /**
      * <p>
      * 	Run all the tests in a list.
@@ -31,7 +72,7 @@ public class GuiTestRunner {
      * @param ldatabases The databases to run the tests on.
      * @param lgtrf The test runner frame in which to display the results.
      */
-    public static void runAllTests(
+    public static Thread runAllTests(
     		final List<Class<? extends EnsTestCase>> tests,
     		final DatabaseRegistryEntry[] databases,
     		final TestProgressDialog testProgressDialog,
@@ -39,6 +80,7 @@ public class GuiTestRunner {
     		final String PERL5LIB,
     		final PerlScriptConfig psc
     ) {
+
 
         // Tests are run in a separate thread
         //
@@ -68,7 +110,7 @@ public class GuiTestRunner {
                 	if (isInterrupted()) {
                 		break;
                 	}
-
+                	
                     EnsTestCase testCase = null;
 					try {
 						testCase = currentTest.newInstance();
@@ -79,6 +121,8 @@ public class GuiTestRunner {
 						throw new RuntimeException(e); 
 					}
 
+					setLoggingForTest(testCase);
+					
 					// If PERL5LIB parameter has been set and this is a perl 
 					// based test case, then set the PERL5LIB attribute.
 					//
@@ -206,5 +250,6 @@ public class GuiTestRunner {
         };
         testProgressDialog.setRunner(t);
         t.start();
+        return t;
     }
 }
