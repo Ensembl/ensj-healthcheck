@@ -87,6 +87,11 @@ public class CompareSchema extends MultiDatabaseTestCase {
 		String definitionFile = null;
 		String masterSchema = null;
 
+		// Make sure that something is tested at some point. Don't allow a
+		// database to weasel through this healthcheck without having been
+		// checked.
+		boolean somethingWasCompared = false;
+		
 		DatabaseRegistryEntry[] databases = dbr.getAll();
 
 		definitionFile = System.getProperty("schema.file");
@@ -133,7 +138,7 @@ public class CompareSchema extends MultiDatabaseTestCase {
 				// just use the first one to compare with all the others
 				if (databases.length > 0) {
 					masterCon = databases[0].getConnection();
-					logger.info("Using " + DBUtils.getShortDatabaseName(masterCon) + " as 'master' for comparisions.");
+					logger.info("Using " + DBUtils.getShortDatabaseName(masterCon) + " as 'master' for comparisons.");
 				} else {
 					logger.warning("Can't find any databases to check against");
 				}
@@ -141,7 +146,7 @@ public class CompareSchema extends MultiDatabaseTestCase {
 			}
 
 			masterStmt = masterCon.createStatement();
-
+			
 			for (int i = 0; i < databases.length; i++) {
 
 				if (appliesToType(databases[i].getType())) {
@@ -155,9 +160,7 @@ public class CompareSchema extends MultiDatabaseTestCase {
 						// check that both schemas have the same tables
 						int directionFlag = databases[i].getType() == DatabaseType.SANGER_VEGA ? EnsTestCase.COMPARE_RIGHT : EnsTestCase.COMPARE_BOTH; // for
 																																																																						// sanger_vega
-																																																																						// do
-																																																																						// a
-																																																																						// right
+						somethingWasCompared = true;																																																											// a
 																																																																						// compare
 						boolean isSangerVega = databases[i].getType() == DatabaseType.SANGER_VEGA;
 						if (!compareTablesInSchema(checkCon, masterCon, isSangerVega, directionFlag)) {// for sanger_vega, ignore backup tables
@@ -219,6 +222,13 @@ public class CompareSchema extends MultiDatabaseTestCase {
 
 		}
 
+		if (!somethingWasCompared) {
+			
+			ReportManager.problem(this, (Connection) null, "No schema was compared. Please make sure you have configured this test correctly.");
+			return false;
+			
+		}
+		
 		return result;
 
 	} // run
