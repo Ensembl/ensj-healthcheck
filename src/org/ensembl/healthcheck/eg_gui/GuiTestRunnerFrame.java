@@ -128,7 +128,7 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 	      
 	      protected Thread currentGuiTestRunnerThread;
 	
-	      protected JLabel      perlDependencyWarning = new JLabel("Gaaa perl dependencies!");
+	      //protected JLabel      perlDependencyWarning = new JLabel("Gaaa perl dependencies!");
 
 
 	protected void processWindowEvent(WindowEvent e) {
@@ -424,7 +424,7 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		);
 
 		tabSetup.add(dbServerSelector, BorderLayout.NORTH);
-		tabSetup.add(perlDependencyWarning, BorderLayout.SOUTH);		
+		//tabSetup.add(perlDependencyWarning, BorderLayout.SOUTH);		
 		
 		tabAdmin = new AdminTab();
 		

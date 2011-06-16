@@ -71,13 +71,13 @@ public class GuiTestRunnerFrameActionPerformer {
 		databaseTabbedPane.repaint();
 	}
 
-	public static void runTests(
+	public static Thread runTests(
 			final JList listOfTestsToBeRun,
 			final DatabaseRegistryEntry[] databases,
 			final TestProgressDialog testProgressDialog,
 			final JComponent resultDisplayComponent
 	) {
-		runSelectedTests(
+		return runSelectedTests(
 			listOfTestsToBeRun, 
 			databases, 
 			testProgressDialog, 
@@ -97,7 +97,7 @@ public class GuiTestRunnerFrameActionPerformer {
 	 * @param testProgressDialog
 	 * 
 	 */
-	public static void runSelectedTests(
+	public static Thread runSelectedTests(
 			final JList listOfTestsToBeRun,
 			final DatabaseRegistryEntry[] databases,
 			final TestProgressDialog testProgressDialog,
@@ -118,7 +118,7 @@ public class GuiTestRunnerFrameActionPerformer {
 			TestClassListItemList.add((TestClassListItem) somethingNotEasilyCasted);
 		}
 		
-		runListOfTestItems(
+		return runListOfTestItems(
 			TestClassListItemList,
 			databases,
 			testProgressDialog,
@@ -128,7 +128,7 @@ public class GuiTestRunnerFrameActionPerformer {
 		);
 	}
 	
-	public static void runAllTests(
+	public static Thread runAllTests(
 			final JList listOfTestsToBeRun,
 			final DatabaseRegistryEntry[] databases,
 			final TestProgressDialog testProgressDialog,
@@ -145,7 +145,7 @@ public class GuiTestRunnerFrameActionPerformer {
 			TestClassListItemList.add((TestClassListItem) lm.getElementAt(i));
 		}
 		
-		runListOfTestItems(
+		return runListOfTestItems(
 			TestClassListItemList,
 			databases,
 			testProgressDialog,
@@ -155,7 +155,7 @@ public class GuiTestRunnerFrameActionPerformer {
 		);
 	}
 	
-	public static void runListOfTestItems(
+	public static Thread runListOfTestItems(
 			final List<TestClassListItem> TestClassListItemList,
 			final DatabaseRegistryEntry[] databases,
 			final TestProgressDialog testProgressDialog,
@@ -173,7 +173,7 @@ public class GuiTestRunnerFrameActionPerformer {
 			Class<? extends EnsTestCase> ensTestCaseClass = currentTestClassListItem.getTestClass();				
 			selectedTests.add(ensTestCaseClass);
 		}
-		GuiTestRunner.runAllTests(
+		return GuiTestRunner.runAllTests(
 			selectedTests, 
 			databases, 
 			testProgressDialog, 
