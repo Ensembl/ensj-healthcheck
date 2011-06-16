@@ -153,6 +153,7 @@
 	<target name="clean" description="Clean up">
 		<delete dir="${doc}/javadoc" />
 		<delete dir="${dist}" />
+		<delete dir="${build}" />
 		<delete file="${lib}/${name}.jar" />
 		<delete>
 			<fileset dir=".">
