@@ -3,8 +3,14 @@
 # $Date$
 # $Author$
 #
-# Object for loading data into an ensembl database
-#
+=head1 Bio::EnsEMBL::Healthcheck::Translation
+
+Protein tanslation healthcheck
+
+Iterates over all protein coding genes of a core database, checks every gene,
+if it contains stop codons or comprises only of Xs. Fails, if it finds such a gene. 
+
+=cut
 package Bio::EnsEMBL::Healthcheck::Translation;
 use warnings;
 use strict;
@@ -22,20 +28,28 @@ sub new {
 =head2 run
 
 	Iterates over all protein coding genes, checks if there is a stop codon 
-	in them.
+	in them or if the sequence comprises only of Xs.
 	
-	If there were genes with internal stop codons, returns a table with all
+	If there were genes with problems, returns a table with all
 	transcripts and all their stop codons.
 
 =cut
 sub run {
 	my ($self) = @_;
+	
+	# Indicates whether or not the test has passed.
+	#
 	my $passes = 1;
 	$self->log()->debug("Getting all protein coding genes");
 	my $genes = $self->dba()->get_GeneAdaptor()->fetch_all_by_biotype("protein_coding");
 	
-	my $problem_report_tabular_all;
-	my $table_header;
+	my $problem_report_stop_codons_tabular_all;
+	my $table_header_report_stop_codons;
+	
+	my $num_of_genes = @{$genes};
+	my $genes_tested = 0;
+	my $num_genes_until_lifesign_printed = 50;
+	my $num_genes_until_printed_since_last_lifesign = 0;
 	
 	for my $gene ( @{$genes} ) {
 		for my $transcript ( @{ $gene->get_all_Transcripts() } ) {
@@ -44,6 +58,16 @@ sub run {
 				
 				my $sequence = $seq->seq();
 				
+				if ($self->sequence_comprises_only_of_Xs($sequence)) {
+					
+					$self->problem( "Transcript for "
+						  . "\ndbID:"                   . $transcript->dbID
+						  . "\ndisplay_id:"             . $transcript->display_id
+						  . "\ntranscript stable_id: "  . $transcript->stable_id
+						  . "\ncomprises only of X's.:\n"
+					);
+				}
+				
 				if ( $sequence =~ m/\*/ ) {
 					
 					$passes = 0;
@@ -51,9 +75,9 @@ sub run {
 					my $problem_report_tabular;
 					my $recommended_fixes;
 
-					($problem_report_tabular, $table_header) = $self->_report_problem_for_transcript($transcript);
+					($problem_report_tabular, $table_header_report_stop_codons) = $self->report_problem_for_transcript($transcript);
 
-					$problem_report_tabular_all .= $problem_report_tabular; 		
+					$problem_report_stop_codons_tabular_all .= $problem_report_tabular; 		
 
 					$self->problem( "Transcript for "
 						  . "\ndbID:"                   . $transcript->dbID
@@ -64,13 +88,21 @@ sub run {
 					# Reporting all coordinates of stop codons during the run 
 					# is too verbose, hence commented out.
 					#
-					#$self->problem($table_header . "\n" . $problem_report_tabular);
+					#$self->problem($table_header_report_stop_codons . "\n" . $problem_report_tabular);
 										
 				}
 			} else {
 				$self->problem( "No translation found for transcript ID "
 					  . $transcript->dbID );
 			}
+		}
+		$genes_tested++;
+		$num_genes_until_printed_since_last_lifesign++;
+		
+		if ($num_genes_until_printed_since_last_lifesign>=$num_genes_until_lifesign_printed) {
+			
+			$self->correct("Tested $genes_tested out of $num_of_genes genes.");
+			$num_genes_until_printed_since_last_lifesign = 0;
 		}
 	}
 	#
@@ -80,22 +112,34 @@ sub run {
 		$self->problem(
 			  "\n\n---------------- problems: -------------------\n\n"
 			  
-			. $table_header . "\n" . $problem_report_tabular_all				  
+			. $table_header_report_stop_codons . "\n" . $problem_report_stop_codons_tabular_all				  
 			  
 		);
 	}
-	
 	return $passes;
 }
 
-=head2 _report_problem_for_transcript
+=head2 sequence_comprises_only_of_Xs
+
+	Checks whether a protein sequence comprises only of Xs.
+
+=cut
+sub sequence_comprises_only_of_Xs {
+
+	my $self                  = shift;
+	my $translation_sequence  = shift;
+	
+	return $translation_sequence =~ /^X+$/;	
+}
+
+=head2 report_problem_for_transcript
 
 	Finds all stop codons in the the protein sequence of a 
 	Bio::EnsEMBL::Transcript and returns them as a tab separated table. The 
 	second return value is a string with the headers in tab separated format.
 
 =cut
-sub _report_problem_for_transcript {
+sub report_problem_for_transcript {
 
 	my $self        = shift;
 	my $transcript  = shift;
