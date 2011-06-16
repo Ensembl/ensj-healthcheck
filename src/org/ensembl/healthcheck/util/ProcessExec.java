@@ -84,7 +84,7 @@ public class ProcessExec {
 
 	/**
 	 * Execute the command, capturing the output and error streams to
-	 * StringBuffers
+	 * Appendables
 	 *
 	 * @param command
 	 * @param out
@@ -92,19 +92,19 @@ public class ProcessExec {
 	 * @return
 	 * @throws Exception
 	 */
-	public static int exec(String command, StringBuffer out, StringBuffer err)
+	public static int exec(String command, Appendable out, Appendable err)
 			throws IOException {
 		return exec(command, out, err, false);
 	}
 
-	public static int exec(String command, StringBuffer out, StringBuffer err, String[] environment)
+	public static int exec(String command, Appendable out, Appendable err, String[] environment)
 			throws IOException {
 		return exec(command, out, err, false, environment);
 	}
 
     /**
 	 * Execute the command, capturing the output and error streams to
-	 * StringBuffers
+	 * Appendables
 	 *
 	 * @param commandarray
 	 * @param out
@@ -112,7 +112,7 @@ public class ProcessExec {
 	 * @return
 	 * @throws Exception
 	 */
-	public static int exec(String[] commandarray, StringBuffer out, StringBuffer err)
+	public static int exec(String[] commandarray, Appendable out, Appendable err)
 			throws IOException {
 		return exec(commandarray, out, err, false);
 	}
@@ -150,7 +150,7 @@ public class ProcessExec {
 	 * @return
 	 * @throws Exception
 	 */
-	private static int exec(String command, StringBuffer out, StringBuffer err,
+	private static int exec(String command, Appendable out, Appendable err,
 			boolean discard) throws IOException {
 		Runtime rt = Runtime.getRuntime();
 		Process proc = rt.exec(command);
@@ -160,8 +160,8 @@ public class ProcessExec {
 
 	private static int exec(
 			String command, 
-			StringBuffer out, 
-			StringBuffer err,
+			Appendable out, 
+			Appendable err,
 			boolean discard, 
 			String[] environment
 	) throws IOException {
@@ -216,7 +216,7 @@ public class ProcessExec {
 	 * @throws Exception
 	 */
 	public static int execShell(String command) throws IOException {
-		return execShell(command, (StringBuffer) null, (StringBuffer) null, true);
+		return execShell(command, (Appendable) null, (Appendable) null, true);
 	}
 	
 	private static Process createShellProcessObject(String command) throws IOException {
@@ -333,7 +333,7 @@ public class ProcessExec {
 	/**
 	 * Execute the command and discard the output and error. If the process is
 	 * timeconsuming, please use
-	 * {@link #exec(String, StringBuffer, StringBuffer)} to avoid hangups
+	 * {@link #exec(String, Appendable, Appendable)} to avoid hangups
 	 *
 	 * @param command
 	 * @return
@@ -346,7 +346,7 @@ public class ProcessExec {
 	/**
 	 * Execute the command and capture the output and error. If the process is
 	 * timeconsuming, please use
-	 * {@link #exec(String, StringBuffer, StringBuffer)} to avoid hangups
+	 * {@link #exec(String, Appendable, Appendable)} to avoid hangups
 	 *
 	 * @param command
 	 * @param out
@@ -354,8 +354,8 @@ public class ProcessExec {
 	 * @return
 	 * @throws IOException
 	 */
-	public static int execDirect(String command, StringBuffer out,
-			StringBuffer err) throws IOException {
+	public static int execDirect(String command, Appendable out,
+			Appendable err) throws IOException {
 		return execDirect(command, out, err, true);
 	}
 
@@ -367,8 +367,8 @@ public class ProcessExec {
 	 * @return
 	 * @throws IOException
 	 */
-	private static int execDirect(String command, StringBuffer out,
-			StringBuffer err, boolean discard) throws IOException {
+	private static int execDirect(String command, Appendable out,
+			Appendable err, boolean discard) throws IOException {
 
 		// return exit status
 		try {
