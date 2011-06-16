@@ -121,7 +121,7 @@ public class GuiTestRunner {
 						throw new RuntimeException(e); 
 					}
 
-					setLoggingForTest(testCase);
+					//setLoggingForTest(testCase);
 					
 					// If PERL5LIB parameter has been set and this is a perl 
 					// based test case, then set the PERL5LIB attribute.
