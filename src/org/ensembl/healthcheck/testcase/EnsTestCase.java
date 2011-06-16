@@ -89,6 +89,14 @@ public abstract class EnsTestCase {
 	/** Logger object to use */
 	protected static Logger logger = Logger.getLogger("HealthCheckLogger");
 
+	public static Logger getLogger() {
+		return logger;
+	}
+
+	public static void setLogger(Logger logger) {
+		EnsTestCase.logger = logger;
+	}
+
 	/**
 	 * Boolean variable that can be set if the test case is likely to take a long time to run
 	 */
