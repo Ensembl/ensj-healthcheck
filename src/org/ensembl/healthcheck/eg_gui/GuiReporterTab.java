@@ -33,25 +33,33 @@ import org.ensembl.healthcheck.eg_gui.ReportPanel;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 
 public class GuiReporterTab extends JPanel implements Reporter {
-
-	//final protected Map<String,List<ReportLine>> report;
 	
 	final protected Map<Class<? extends EnsTestCase>,List<ReportLine>> report;
 
 	final protected JList                       testList;
 	final protected JScrollPane                 testListScrollPane;
-	//final protected DefaultListModel listModel;
 	final protected TestClassListModel          listModel;
 	final protected ReportPanel                 reportPanel;
 	final protected TestCaseColoredCellRenderer testCaseCellRenderer;
 	
+	public void selectDefaultListItem() {
+		
+		if (testList.isSelectionEmpty()) {
+			selectLastListItem();
+		}
+	}
+	
+	public void selectLastListItem() {
+		
+		if (listModel.getSize()>0) {
+			testList.setSelectedIndex(listModel.getSize()-1);
+		}
+	}
+	
 	public GuiReporterTab() {
 
-		//report      = new HashMap<String,List<ReportLine>>();
 		report      = new HashMap<Class<? extends EnsTestCase>,List<ReportLine>>();
-		
 		testList    = new JList();		
-		//listModel   = new DefaultListModel();
 		listModel   = new TestClassListModel();
 		reportPanel = new ReportPanel();
 		
@@ -92,7 +100,6 @@ public class GuiReporterTab extends JPanel implements Reporter {
 					
 					if (!arg0.getValueIsAdjusting()) {
 						reportPanel.setData(
-							//report.get(listModel.get(testList.getSelectedIndex()))
 							report.get(
 									( (TestClassListItem) listModel.getElementAt(testList.getSelectedIndex()) ).getTestClass()
 							)
@@ -106,12 +113,10 @@ public class GuiReporterTab extends JPanel implements Reporter {
 	@Override
 	public void message(final ReportLine reportLine) {
 		
-		//final String currentKey = reportLine.getShortTestCaseName();
 		final Class<? extends EnsTestCase> currentKey = reportLine.getTestCase().getClass();
 		
 		if (!report.containsKey(currentKey)) {
 			
-			//report.put(currentKey, new ArrayList<ReportLine>());
 			report.put(currentKey, new ArrayList<ReportLine>());
 			
 			testCaseCellRenderer.setOutcome(currentKey, null);
@@ -122,16 +127,51 @@ public class GuiReporterTab extends JPanel implements Reporter {
 			SwingUtilities.invokeLater(
 					new Runnable() {
 						@Override public void run() {
-							//listModel.addElement(currentKey);
+
 							listModel.addTest(currentKey);
+
+							// If nothing has been selected, then select 
+							// something so the user is not staring at an
+							// empty report.
+							//
+							if (testList.isSelectionEmpty()) {
+								selectDefaultListItem();
+							}
+							
+
 						}
 					}
 				);
 		}
+		
+		// Save the new reportline in the report hashmap
+		//
 		report.get(currentKey).add(reportLine);
 		
+		// If anything was reported as a problem, the outcome is false.
+		//
 		if (reportLine.getLevel()==ReportLine.PROBLEM) {
 			testCaseCellRenderer.setOutcome(currentKey, false);
+		}
+
+		// If a testcase has been selected, then display the new data in the 
+		// GUI so the user can see the new line in real time.
+		//
+		if (!testList.isSelectionEmpty()) {
+
+			SwingUtilities.invokeLater(
+					new Runnable() {
+						@Override public void run() {
+							
+							reportPanel.setData(
+	
+									report.get(
+											( (TestClassListItem) listModel.getElementAt(testList.getSelectedIndex()) ).getTestClass()
+									)
+								);
+						}
+					}
+			);
 		}
 	}
 
@@ -164,7 +204,6 @@ class ReportPanel extends JPanel implements ActionListener {
 	final protected JTextField teamResponsible;
 	final protected JTextField speciesName;
 	final protected JPopupTextArea  message;
-	//protected JEditorPane  message;
 	
 	final String copy_selected_text_action = "copy_selected_text_action";
 	
@@ -190,7 +229,6 @@ class ReportPanel extends JPanel implements ActionListener {
 		
 		message.add(GuiTestRunnerFrameComponentBuilder.makeMenuItem("Copy selected text", this, copy_selected_text_action));
 		
-		//this.add(popup);
 		message.setComponentPopupMenu(popup);
 		
 		add(singleLineInfo,           BorderLayout.NORTH);
@@ -199,29 +237,35 @@ class ReportPanel extends JPanel implements ActionListener {
 	
 	public void setData(List<ReportLine> report) {
 		
-		ReportLine firstReportLine = report.get(0);
+		// It is possible that there is no report for a test, when it has not
+		// created a message yet.
+		//
+		if (report.size()>0) {
 		
-		level.setText           ( firstReportLine.getLevelAsString()          );
-		speciesName.setText     ( firstReportLine.getSpeciesName()            );
-		
-		if (firstReportLine.getTeamResponsible()!=null) {
+			ReportLine firstReportLine = report.get(0);
 			
-			teamResponsible.setText ( firstReportLine.getTeamResponsible().name() );
+			level.setText           ( firstReportLine.getLevelAsString()          );
+			speciesName.setText     ( firstReportLine.getSpeciesName()            );
+			
+			if (firstReportLine.getTeamResponsible()!=null) {			
+				teamResponsible.setText ( firstReportLine.getTeamResponsible().name() );			
+			} else {			
+				teamResponsible.setText ( "No team set." );			
+			}
+			
+			StringBuffer messageText = new StringBuffer(); 
+			for (ReportLine currentReportLine : report) {
+			
+				messageText.append(currentReportLine.getMessage());
+				messageText.append("\n");
+			}
+			message.setText( messageText.toString()  );
 			
 		} else {
 			
-			teamResponsible.setText ( "No team set." );
+			message.setText( "Nothing has been reported yet."  );
 			
 		}
-		
-		StringBuffer messageText = new StringBuffer(); 
-		for (ReportLine currentReportLine : report) {
-		
-			messageText.append(currentReportLine.getMessage());
-			messageText.append("\n");
-		}
-		message.setText( messageText.toString()  );
-
 	}
 
 	@Override
@@ -236,15 +280,4 @@ class ReportPanel extends JPanel implements ActionListener {
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
 
