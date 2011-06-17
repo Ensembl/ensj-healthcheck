@@ -30,14 +30,41 @@ public class GuiTestRunner {
 
 	/**
 	 * <p>
-	 * 	Sets a logger for a test which forwards anything logged to the 
-	 * ReportManager instead to the console where it would probably be
-	 * ignored.
+	 * 	Creates a logger that will forward any logged messages to the Report
+	 * Manager.
 	 * </p>
 	 * 
+	 * @param e
+	 * @return Logger
+	 * 
 	 */
-	protected static void setLoggingForTest(final EnsTestCase e) {
-	
+	protected static Logger createGuiLogger(final EnsTestCase e) {
+		
+		Logger logger = Logger.getAnonymousLogger();
+		
+		for (Handler currentHandler : logger.getHandlers()) {
+			logger.removeHandler(currentHandler);
+		}
+
+		// Otherwise messages will be sent to the screen.
+		//
+		logger.setUseParentHandlers(false);
+		logger.addHandler(createLogHandlerToReportManager(e));		
+		return logger;
+	}
+
+	/**
+	 * <p>
+	 * 	Creates a Handler for a logger that will forward everything to the
+	 * ReportManager.
+	 * </p>
+	 * 
+	 * @param e
+	 * @return Handler
+	 * 
+	 */
+	protected static Handler createLogHandlerToReportManager(final EnsTestCase e) {
+		
 		Handler guiLoggingHandler = new Handler() {
     		public void publish(LogRecord logRecord) {
   	    	  
@@ -57,10 +84,7 @@ public class GuiTestRunner {
 			@Override public void close() throws SecurityException {}
 			@Override public void flush() {}
     	};
-    	
-    	Logger logger = Logger.getLogger("HealthCheckLogger");
-    	logger.addHandler(guiLoggingHandler);
-    	e.setLogger(logger);
+    	return guiLoggingHandler;
 	}
 	
     /**
@@ -80,7 +104,6 @@ public class GuiTestRunner {
     		final String PERL5LIB,
     		final PerlScriptConfig psc
     ) {
-
 
         // Tests are run in a separate thread
         //
@@ -121,7 +144,13 @@ public class GuiTestRunner {
 						throw new RuntimeException(e); 
 					}
 
-					//setLoggingForTest(testCase);
+					// Inject a logger that will forward all logging messages 
+					// to the gui.
+					//
+					Logger savedLogger = testCase.getLogger();
+					Logger guiLogger   = createGuiLogger(testCase);
+
+					testCase.setLogger(guiLogger);
 					
 					// If PERL5LIB parameter has been set and this is a perl 
 					// based test case, then set the PERL5LIB attribute.
@@ -215,6 +244,11 @@ public class GuiTestRunner {
                             JOptionPane.ERROR_MESSAGE
                          );
                     }
+                    
+                    // Retore the original logger. Actually unnecessary, 
+                    // because the testcase will not be used anymore.
+                    //
+                    testCase.setLogger(savedLogger);
                     
                     boolean currentTestReportedNoProblems 
                     	= ReportManager.getReportsByTestCase(
