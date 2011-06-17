@@ -1,6 +1,8 @@
 package org.ensembl.healthcheck.eg_gui;
 
 import java.awt.BorderLayout;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -110,6 +112,8 @@ public class GuiTestRunner {
         Thread t = new Thread() {
 
         	public void run() {
+        		
+        		PrintStream stderrSaved = System.err;
 
         		testProgressDialog.reset();
             	testProgressDialog.setVisible(true);
@@ -151,6 +155,12 @@ public class GuiTestRunner {
 					Logger guiLogger   = createGuiLogger(testCase);
 
 					testCase.setLogger(guiLogger);
+					
+					// Stack traces are written to stderr. They indicate a 
+					// serious error. They are rerouted to the ReportManager
+					// as problems and the test fails.
+					//
+					System.setErr(new ReporterPrintStream(testCase));
 					
 					// If PERL5LIB parameter has been set and this is a perl 
 					// based test case, then set the PERL5LIB attribute.
@@ -250,6 +260,10 @@ public class GuiTestRunner {
                     //
                     testCase.setLogger(savedLogger);
                     
+                    // Restore stderr
+                    //
+                    System.setErr(stderrSaved);
+                    
                     boolean currentTestReportedNoProblems 
                     	= ReportManager.getReportsByTestCase(
                     		testCase.getTestName(), 
@@ -286,4 +300,47 @@ public class GuiTestRunner {
         t.start();
         return t;
     }
+}
+
+/**
+ * 
+ * <p>
+ * 	A PrintStream that forwards print statements to the ReportManager as 
+ * problems which will make the current test fail.
+ * </p>
+ * 
+ * <p>
+ * 	Used to capture printStackTraceEvents that happen during testruns and 
+ * would be ignored otherwise.
+ * </p>
+ * 
+ * @author michael
+ *
+ */
+class ReporterPrintStream extends PrintStream {
+
+	protected EnsTestCase e;
+	
+	public ReporterPrintStream(EnsTestCase e) {
+		super(System.out);
+		this.e = e;
+	}
+	
+	public void print(String s) {		
+		ReportManager.problem(e, (Connection) null, s);
+	}
+
+	public void println(String s) {		
+
+		// No newline added, messages to the ReportManager don't need
+		// a newline.
+		//
+		this.print(s);
+	}
+	public void println() {
+		
+		// Explicit newlines will be added.
+		//
+		this.print("\n");
+	}
 }
