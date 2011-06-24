@@ -78,6 +78,9 @@ public class ReportLine {
 
 	/** Output level that is lower than all others */
 	public static final int ALL = 0;
+	
+	/** For log messages. */
+	public static final int LOG_MESSAGE = -10;
 
 	/**
 	 * Creates a new instance of ReportLine
@@ -242,6 +245,9 @@ public class ReportLine {
 			break;
 		case NONE:
 			result = "NONE";
+			break;
+		case LOG_MESSAGE:
+			result = "LOG_MESSAGE";
 			break;
 		default:
 			System.err.println("Can't get text equivalent for report level "

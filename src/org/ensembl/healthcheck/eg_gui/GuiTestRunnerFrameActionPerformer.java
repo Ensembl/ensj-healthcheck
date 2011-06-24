@@ -71,22 +71,6 @@ public class GuiTestRunnerFrameActionPerformer {
 		databaseTabbedPane.repaint();
 	}
 
-	public static Thread runTests(
-			final JList listOfTestsToBeRun,
-			final DatabaseRegistryEntry[] databases,
-			final TestProgressDialog testProgressDialog,
-			final JComponent resultDisplayComponent
-	) {
-		return runSelectedTests(
-			listOfTestsToBeRun, 
-			databases, 
-			testProgressDialog, 
-			resultDisplayComponent,
-			null,
-			null
-		);
-	}
-
 	/**
 	 * <p>
 	 * 	Finds out which tests the user wants to run and runs them.
@@ -103,7 +87,8 @@ public class GuiTestRunnerFrameActionPerformer {
 			final TestProgressDialog testProgressDialog,
 			final JComponent resultDisplayComponent,
 			final String PERL5LIB,
-			final PerlScriptConfig psc
+			final PerlScriptConfig psc,
+			final GuiLogHandler guiLogHandler
 	) {
 		
 		Object[] whatsthis = listOfTestsToBeRun.getSelectedValues();
@@ -124,7 +109,8 @@ public class GuiTestRunnerFrameActionPerformer {
 			testProgressDialog,
 			resultDisplayComponent,
 			PERL5LIB,
-			psc
+			psc,
+			guiLogHandler
 		);
 	}
 	
@@ -134,7 +120,8 @@ public class GuiTestRunnerFrameActionPerformer {
 			final TestProgressDialog testProgressDialog,
 			final JComponent resultDisplayComponent,
 			final String PERL5LIB,
-			final PerlScriptConfig psc
+			final PerlScriptConfig psc,
+			final GuiLogHandler guiLogHandler
 	) {
 		
 		ListModel lm = listOfTestsToBeRun.getModel();		
@@ -151,7 +138,8 @@ public class GuiTestRunnerFrameActionPerformer {
 			testProgressDialog,
 			resultDisplayComponent,
 			PERL5LIB,
-			psc
+			psc,
+			guiLogHandler
 		);
 	}
 	
@@ -161,7 +149,8 @@ public class GuiTestRunnerFrameActionPerformer {
 			final TestProgressDialog testProgressDialog,
 			final JComponent resultDisplayComponent,
 			final String PERL5LIB,
-			final PerlScriptConfig psc
+			final PerlScriptConfig psc,
+			final GuiLogHandler guiLogHandler
 	) {
 		
 		List<Class<? extends EnsTestCase>> selectedTests = new ArrayList();
@@ -179,7 +168,8 @@ public class GuiTestRunnerFrameActionPerformer {
 			testProgressDialog, 
 			resultDisplayComponent, 
 			PERL5LIB,
-			psc
+			psc,
+			guiLogHandler
 		);
 	}
 	

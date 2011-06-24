@@ -1,9 +1,17 @@
 package org.ensembl.healthcheck.eg_gui;
 
 import java.awt.Color;
+import java.util.logging.Level;
 
 public class Constants {
 
+	/**
+	 * If nothing has been set explicitly use fine logging when running the
+	 * healthchecks in the gui.
+	 *  
+	 */
+	protected static Level defaultLogLevel = Level.FINE;
+	
 	public static final String RUN_ALL_TESTS          = "RUN_ALL_TESTS";
 	public static final String RUN_SELECTED_TESTS     = "RUN_SELECTED_TESTS";
 	public static final String REMOVE_SELECTED_TESTS  = "REMOVE_SELECTED_TESTS";

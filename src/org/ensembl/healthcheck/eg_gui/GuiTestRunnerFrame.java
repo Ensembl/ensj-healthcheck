@@ -18,7 +18,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Formatter;
+import java.util.logging.Handler;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -127,8 +130,9 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 	      protected GuiReporterTab currentGuiReporter;
 	      
 	      protected Thread currentGuiTestRunnerThread;
+	      
+	      protected GuiLogHandler guiLogHandler;
 	
-	      //protected JLabel      perlDependencyWarning = new JLabel("Gaaa perl dependencies!");
 
 
 	protected void processWindowEvent(WindowEvent e) {
@@ -146,7 +150,7 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		}
 		super.processWindowEvent(e);
 	}
-	      
+
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 
@@ -192,6 +196,31 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 					tabResults.remove(currentGuiReporter);
 				}
 				currentGuiReporter = new GuiReporterTab();
+				
+				guiLogHandler = new GuiLogHandler();				
+				guiLogHandler.setReporter(currentGuiReporter);
+				
+				// Set the formatter for EnsTestcases to what the user 
+				// configured them to look like. 
+				//
+
+				// Check, if a formatter was configured. If so, then use
+				// this formatter, otherwise create a new one.
+				//
+				Handler[] configuredHandler = Logger.getLogger(
+						EnsTestCase.class.getCanonicalName()
+				).getHandlers();
+				
+				Formatter configuredFormatter;
+				
+				if (configuredHandler.length == 0) {
+					configuredFormatter = new SimpleFormatter();
+				} else {
+					configuredFormatter = configuredHandler[0].getFormatter();
+				}
+				
+				// Set the formatter.
+				guiLogHandler.setFormatter(configuredFormatter);
 
 				testProgressDialog = new TestProgressDialog("", 0, 100);
 				
@@ -220,7 +249,8 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 						testProgressDialog,
 						tabResultsLegacy,
 						tabAdmin.getPerl5Lib(),
-						psc
+						psc,
+						guiLogHandler
 					);
 				}
 				if (cmd.equals(Constants.RUN_ALL_TESTS)) {
@@ -231,7 +261,8 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 						testProgressDialog,
 						tabResultsLegacy,
 						tabAdmin.getPerl5Lib(),
-						psc
+						psc,
+						guiLogHandler
 					);
 				}
 			}
@@ -424,7 +455,6 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		);
 
 		tabSetup.add(dbServerSelector, BorderLayout.NORTH);
-		//tabSetup.add(perlDependencyWarning, BorderLayout.SOUTH);		
 		
 		tabAdmin = new AdminTab();
 		

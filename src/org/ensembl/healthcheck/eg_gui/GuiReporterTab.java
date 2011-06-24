@@ -137,8 +137,6 @@ public class GuiReporterTab extends JPanel implements Reporter {
 							if (testList.isSelectionEmpty()) {
 								selectDefaultListItem();
 							}
-							
-
 						}
 					}
 				);
