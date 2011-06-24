@@ -5,10 +5,11 @@
 #
 =head1 Bio::EnsEMBL::Healthcheck::Translation
 
-Protein tanslation healthcheck
+	Protein tanslation healthcheck
 
-Iterates over all protein coding genes of a core database, checks every gene,
-if it contains stop codons or comprises only of Xs. Fails, if it finds such a gene. 
+	Iterates over all protein coding genes of a core database, checks every 
+	gene, if it contains stop codons or comprises only of Xs. Fails, if it 
+	finds such a gene. 
 
 =cut
 package Bio::EnsEMBL::Healthcheck::Translation;
@@ -23,6 +24,8 @@ sub new {
 	my $caller = shift;
 	my $class  = ref($caller) || $caller;
 	my $self   = $class->SUPER::new(@_);
+	
+	return $self;
 }
 
 =head2 run
@@ -40,7 +43,9 @@ sub run {
 	# Indicates whether or not the test has passed.
 	#
 	my $passes = 1;
+
 	$self->log()->debug("Getting all protein coding genes");
+	
 	my $genes = $self->dba()->get_GeneAdaptor()->fetch_all_by_biotype("protein_coding");
 	
 	my $problem_report_stop_codons_tabular_all;
@@ -51,7 +56,17 @@ sub run {
 	my $num_genes_until_lifesign_printed = 50;
 	my $num_genes_until_printed_since_last_lifesign = 0;
 	
+	# Used for testing so a run of this testcase doesn't take forever.
+	#
+	my $max_genes_to_test  = 100;
+	my $only_test_upto_max = 0; 
+	
 	for my $gene ( @{$genes} ) {
+		
+		if ($only_test_upto_max && $genes_tested>$max_genes_to_test) {
+			return $passes;
+		}
+		
 		for my $transcript ( @{ $gene->get_all_Transcripts() } ) {
 			my $seq = $transcript->translate();
 			if ($seq) {
@@ -101,7 +116,7 @@ sub run {
 		
 		if ($num_genes_until_printed_since_last_lifesign>=$num_genes_until_lifesign_printed) {
 			
-			$self->correct("Tested $genes_tested out of $num_of_genes genes.");
+			$self->progress("Tested $genes_tested out of $num_of_genes genes.");
 			$num_genes_until_printed_since_last_lifesign = 0;
 		}
 	}
