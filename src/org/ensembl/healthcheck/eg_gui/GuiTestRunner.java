@@ -1,13 +1,11 @@
 package org.ensembl.healthcheck.eg_gui;
 
 import java.awt.BorderLayout;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
@@ -25,7 +23,6 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import com.mysql.jdbc.Connection;
 
 import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 public class GuiTestRunner {
@@ -40,7 +37,7 @@ public class GuiTestRunner {
 	 * @return Logger
 	 * 
 	 */
-	protected static Logger createGuiLogger(final EnsTestCase e) {
+	protected static Logger createGuiLogger(Handler h) {
 		
 		Logger logger = Logger.getAnonymousLogger();
 		
@@ -51,44 +48,16 @@ public class GuiTestRunner {
 		// Otherwise messages will be sent to the screen.
 		//
 		logger.setUseParentHandlers(false);
-		logger.addHandler(createLogHandlerToReportManager(e));		
+		logger.addHandler(h);
+		
+
+		if (logger.getLevel()==null) {
+			logger.setLevel(Constants.defaultLogLevel);
+		}
+		
 		return logger;
 	}
 
-	/**
-	 * <p>
-	 * 	Creates a Handler for a logger that will forward everything to the
-	 * ReportManager.
-	 * </p>
-	 * 
-	 * @param e
-	 * @return Handler
-	 * 
-	 */
-	protected static Handler createLogHandlerToReportManager(final EnsTestCase e) {
-		
-		Handler guiLoggingHandler = new Handler() {
-    		public void publish(LogRecord logRecord) {
-  	    	  
-    			ReportManager.correct(
-    				e, 
-    				(Connection) null, 
-    				logRecord.getLevel()
-    				+ ": " 
-    				+ logRecord.getSourceClassName() 
-    				+ ":\n" 
-    				+ logRecord.getSourceMethodName() 
-    				+ ": " 
-    				+ logRecord.getMessage() + "\n" 
-    			);
-    		}
-
-			@Override public void close() throws SecurityException {}
-			@Override public void flush() {}
-    	};
-    	return guiLoggingHandler;
-	}
-	
     /**
      * <p>
      * 	Run all the tests in a list.
@@ -104,7 +73,8 @@ public class GuiTestRunner {
     		final TestProgressDialog testProgressDialog,
     		final JComponent resultDisplayComponent,
     		final String PERL5LIB,
-    		final PerlScriptConfig psc
+    		final PerlScriptConfig psc,
+    		final GuiLogHandler guiLogHandler
     ) {
 
         // Tests are run in a separate thread
@@ -137,6 +107,16 @@ public class GuiTestRunner {
                 	if (isInterrupted()) {
                 		break;
                 	}
+					
+					// Create a logger with this handler
+					Logger guiLogger   = createGuiLogger(guiLogHandler);
+
+					// Inject into the current testcase. The logger property 
+					// is static. It should be set before instantiation in
+					// case something is done with the logger in the 
+					// constructor. (As in AbstractPerlModuleBasedTestCase)
+					//
+					EnsTestCase.setLogger(guiLogger);
                 	
                     EnsTestCase testCase = null;
 					try {
@@ -152,9 +132,11 @@ public class GuiTestRunner {
 					// to the gui.
 					//
 					Logger savedLogger = testCase.getLogger();
-					Logger guiLogger   = createGuiLogger(testCase);
-
-					testCase.setLogger(guiLogger);
+					
+					// Tell the guiloghandler to associate all log messages 
+					// with the current testcase.
+					//
+					guiLogHandler.setEnsTestCase(testCase);
 					
 					// Stack traces are written to stderr. They indicate a 
 					// serious error. They are rerouted to the ReportManager
@@ -184,27 +166,29 @@ public class GuiTestRunner {
                         	
                             String message = testCase.getShortTestName() + ": " + currentDbre.getName();
                             
+                            ReportManager.startTestCase(testCase, currentDbre);
+                            
                             testProgressDialog.setNote(message);
                             
-                            ((SingleDatabaseTestCase) testCase).run(currentDbre);
+                            boolean passed = ((SingleDatabaseTestCase) testCase).run(currentDbre);
                             
                             // If a test has not reported anything to the 
                             // report manager, there will not be any report. 
                             // The user may think that the test was not run.
-                            // So in this case a standard line is generated
-                            // to show that the test has probably completed
-                            // and all is well.
+                            // So in this case a standard line is generated.
                             //
                             boolean testHasReportedSomething = ReportManager.getAllReportsByTestCase().containsKey(testCase.getTestName()); 
                             
-                            if (!testHasReportedSomething) {
+                            if (passed && !testHasReportedSomething) {
                             	ReportManager.report(
                             			testCase, 
                             			currentDbre.getConnection(), 
                             			ReportLine.INFO,
-                            			testCase.getShortTestName() + " did not produce any output. This usually means that there were no problems."
+                            			testCase.getShortTestName() + " did not produce any output, but reported that the database has passed."
                             	);
                             }
+                            
+                            ReportManager.finishTestCase(testCase, passed, currentDbre);
                             
                             testsRun += 1;
                             
@@ -216,27 +200,29 @@ public class GuiTestRunner {
 
                         DatabaseRegistry dbr = new DatabaseRegistry(databases);
                         
+                        ReportManager.startTestCase(testCase, null);
+                        
                         String message = testCase.getShortTestName() + " ( " + dbr.getEntryCount() + " databases)";
                         
                         testProgressDialog.setNote(message);
                         
-                        ((MultiDatabaseTestCase) testCase).run(dbr);
+                        boolean passed = ((MultiDatabaseTestCase) testCase).run(dbr);
 
+                        ReportManager.finishTestCase(testCase, passed, null);
+                        
                         // If a test has not reported anything to the 
                         // report manager, there will not be any report. 
                         // The user may think that the test was not run.
-                        // So in this case a standard line is generated
-                        // to show that the test has probably completed
-                        // and all is well.
+                        // So in this case a standard line is generated.
                         //
                         boolean testHasReportedSomething = ReportManager.getAllReportsByTestCase().containsKey(testCase.getTestName()); 
                         
-                        if (!testHasReportedSomething) {
+                        if (passed && !testHasReportedSomething) {
                         	ReportManager.report(
                         			testCase, 
                         			dbr.getAll()[0].getConnection(), 
                         			ReportLine.INFO,
-                        			testCase.getShortTestName() + " did not produce any output. This usually means that there were no problems."
+                        			testCase.getShortTestName() + " did not produce any output, but reported that the database has passed."
                         	);
                         }
 
