@@ -8,7 +8,7 @@ package org.ensembl.healthcheck.testcase;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Logger;
+
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
@@ -25,10 +25,8 @@ import java.sql.Connection;;
  */
 public abstract class AbstractPerlBasedTestCase extends SingleDatabaseTestCase {
 
-	static final Logger log = Logger.getLogger(AbstractPerlBasedTestCase.class.getCanonicalName());
-
 	public static final String PERLOPTS = "perlopts";
-	public static final String PERL = "perl";
+	public static final String PERL     = "perl";
 
 	protected String PERL5LIB = null;
 	
@@ -56,9 +54,8 @@ public abstract class AbstractPerlBasedTestCase extends SingleDatabaseTestCase {
 		this.config = config;
 	}
 
-	public AbstractPerlBasedTestCase() {
-	}
-
+	public AbstractPerlBasedTestCase() {}
+	
 	/**
 	 * @return String perl script and relevant arguments to invoke with perl
 	 *         binary and options from
@@ -87,6 +84,7 @@ public abstract class AbstractPerlBasedTestCase extends SingleDatabaseTestCase {
 	 */
 	@Override
 	public boolean run(final DatabaseRegistryEntry dbre) {
+		
 		boolean passes = true;
 		
 		List<Integer> dbre_speciesIds = dbre.getSpeciesIds();
@@ -97,7 +95,7 @@ public abstract class AbstractPerlBasedTestCase extends SingleDatabaseTestCase {
 		//
 		if (dbre_speciesIds.size() == 0) {
 			
-			log.warning(
+			logger.warning(
 				"No species ids! Perhaps no databases were configured?"
 				+ " This test will not be run."
 			);
@@ -158,13 +156,9 @@ public abstract class AbstractPerlBasedTestCase extends SingleDatabaseTestCase {
 						"Could not execute " + commandLine + ": "
 								+ e.getMessage());
 				passes = false;
-			}
+			} 
 		}
 		return passes;
 	}
-}
-
-interface ReportManagerCaller {
-	abstract public void report(String message); 
 }
 

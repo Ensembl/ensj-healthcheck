@@ -14,6 +14,8 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.util.TemplateBuilder;
 
 import java.sql.Connection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
@@ -32,6 +34,8 @@ public abstract class AbstractPerlModuleBasedTestCase extends AbstractPerlBasedT
 	private static final String SCRIPT = "./perl/run_healthcheck.pl -host $host$ -port $port$ -user $user$ -pass $pass$ -dbname $dbname$ -species_id $species_id$ -module $module$";
 	private final LogMapper logMapper;
 	private final Formatter perlLogMessagesFormatter;
+
+	protected Map<Handler, Formatter> savedFormatter = new HashMap<Handler, Formatter>();
 
 	public AbstractPerlModuleBasedTestCase() {
 		super();
