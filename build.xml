@@ -62,7 +62,7 @@
 			failonerror = "true" 
 			maxmemory   = "1500m"
 		>
-			<arg line="" />
+			<arg line="-Djava.util.logging.config.file=config/logger/logging.properties" />
 			<classpath>
 				<fileset dir="lib">
 					<include name="**/*.jar" />
