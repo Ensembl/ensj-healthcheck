@@ -87,7 +87,7 @@ public abstract class EnsTestCase {
 	protected Team secondTeamResponsible;
 
 	/** Logger object to use */
-	protected static Logger logger = Logger.getLogger("HealthCheckLogger");
+	protected static Logger logger = Logger.getLogger(EnsTestCase.class.getCanonicalName());
 
 	public static Logger getLogger() {
 		return logger;
@@ -2133,6 +2133,11 @@ public abstract class EnsTestCase {
 
 	public String getPrintableTeamResponsibleString() {
 
+		if (getTeamResponsible()==null) {
+			
+			return "The team responsible has not been set.";
+		}
+		
 		String team = getTeamResponsible().toString();
 
 		if (getSecondTeamResponsible() != null) {
