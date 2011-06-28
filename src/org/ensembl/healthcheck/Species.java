@@ -30,7 +30,7 @@ public enum Species {
 			6239, "WS", "IGNORE", "elegans,celegans,caenorhabditiselegans,caenorhabditis_elegans"), SOREX_ARANEUS(42254, "COMMON_SHREW", "ENSSAR",
 			"shrew,common_shrew,commonShrew,european_shrew,saraneus,sorex,sorex_araneus"), HOMO_SAPIENS(9606, "GRCh", "ENS", "human,hsapiens,homosapiens,homo_sapiens"), ORYZIAS_LATIPES(8090, "MEDAKA",
 			"ENSORL", "medaka,oryzias,japanese_medaka,japanese_rice_fish,japanese_ricefish,japanese_killifish,oryzias_latipes"), AEDES_AEGYPTI(7159, "", "IGNORE", "aedes,aedesaegypti,aedes_aegypti"), APIS_MELLIFERA(
-			7460, "AMEL", "", "honeybee,honey_bee,apis,amellifera,apismellifera,apis_mellifera"), PETROMYZON_MARINUS(7757, "PMAR", "ENSPMA", "lamprey,sea_laprey,pmarinus,petromyzon,petromyzon_marinus"), CIONA_INTESTINALIS(
+			7460, "AMEL", "", "honeybee,honey_bee,apis,amellifera,apismellifera,apis_mellifera"), PETROMYZON_MARINUS(7757, "petromyzon_marinus", "ENSPMA", "lamprey,sea_lamprey,pmarinus,petromyzon,petromyzon_marinus"), CIONA_INTESTINALIS(
 			7719, "JGI", "ENSCIN", "cionaintestinalis,ciona_int,ciona_intestinalis"), OTOLEMUR_GARNETTII(30611, "BUSHBABY", "ENSOGA",
 			"bushbaby,bush_baby,galago,small_eared_galago,ogarnettii,otolemur,otolemur_garnettii"), CANIS_FAMILIARIS(9615, "BROADD", "ENSCAF", "dog,doggy,cfamiliaris,canisfamiliaris,canis_familiaris"), HELP(
 			0, "", "", ""), ANOPHELES_GAMBIAE(7165, "AgamP", "IGNORE", "mosquito,anopheles,agambiae,anophelesgambiae,anopheles_gambiae"), DROSOPHILA_MELANOGASTER(7227, "BDGP", "IGNORE",
