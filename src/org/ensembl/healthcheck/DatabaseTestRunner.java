@@ -55,10 +55,8 @@ public class DatabaseTestRunner extends TestRunner implements Reporter {
 		Utils.readPropertiesFileIntoSystem(getPropertiesFile(), false);
 
 		parseProperties();
-
-		groupsToRun = getGroupsFromProperties();
-
-		List databaseRegexps = getDatabasesFromProperties();
+		
+		List<String> databaseRegexps = getDatabasesFromProperties();
 
 		TestRegistry testRegistry = new DiscoveryBasedTestRegistry();
 		
@@ -228,11 +226,6 @@ public class DatabaseTestRunner extends TestRunner implements Reporter {
 
 	private void parseProperties() {
 
-		if (System.getProperty("output.groups") == null) {
-			System.err.println("No tests or groups specified in " + getPropertiesFile());
-			System.exit(1);
-		}
-
 		if (System.getProperty("output.databases") == null) {
 			System.err.println("No databases specified in " + getPropertiesFile());
 			System.exit(1);
@@ -242,21 +235,6 @@ public class DatabaseTestRunner extends TestRunner implements Reporter {
 			System.err.println("No release specified in " + getPropertiesFile() + " - please add an output.release property");
 			System.exit(1);
 		}
-
-	}
-
-	// ---------------------------------------------------------------------
-
-	/**
-	 * Get a list of test groups by parsing the appropriate property.
-	 * 
-	 * @return the list of group or test names.
-	 */
-	private List getGroupsFromProperties() {
-
-		String[] groups = System.getProperty("output.groups").split(",");
-
-		return Arrays.asList(groups);
 
 	}
 
