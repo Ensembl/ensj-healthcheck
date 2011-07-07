@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
@@ -51,6 +52,15 @@ public class NonGTACNSequence extends SingleDatabaseTestCase {
 
 	}
 
+	/**
+	 * Only applies to core databases
+	 */
+	public void types() {
+		
+		setAppliesToType(DatabaseType.CORE);
+		
+	}
+	
 	/**
 	 * Run the test.
 	 * 
