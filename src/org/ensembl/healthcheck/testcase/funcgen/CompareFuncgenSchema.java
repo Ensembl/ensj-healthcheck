@@ -73,6 +73,9 @@ public class CompareFuncgenSchema extends MultiDatabaseTestCase {
 		//which would need further integration here
 		addAppliesToType(DatabaseType.FUNCGEN);
 		addAppliesToType(DatabaseType.COMPARA);
+		removeAppliesToType(DatabaseType.VEGA);
+		removeAppliesToType(DatabaseType.SANGER_VEGA);
+
 		//Can we have mart here too?  Or is dynamic nature of mart to0 variable for this test?
 	}
 
