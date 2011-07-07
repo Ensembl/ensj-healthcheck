@@ -1684,6 +1684,20 @@ public abstract class EnsTestCase {
 
 	}
 
+//-----------------------------------------------------------------
+	/**
+	 * Convenience method for specifying that a test only applies to one type.
+	 * 
+	 * @param type
+	 *          A DatabaseType - overwrites the current setting.
+	 */
+	public void setAppliesToType(DatabaseType type) {
+
+		List<DatabaseType> types = new ArrayList<DatabaseType>();
+		types.add(type);
+		appliesToTypes = types;
+
+	}
 	// -----------------------------------------------------------------
 	/**
 	 * @return the list of database types that a test applies to.
