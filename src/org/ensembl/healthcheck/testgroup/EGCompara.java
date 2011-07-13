@@ -9,6 +9,7 @@ import org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkId;
 import org.ensembl.healthcheck.testcase.compara.ForeignKeyTaxonId;
 import org.ensembl.healthcheck.testcase.compara.MultipleGenomicAlignBlockIds;
 import org.ensembl.healthcheck.testcase.eg_compara.EGCheckEmptyLocators;
+import org.ensembl.healthcheck.testcase.eg_compara.EGCheckNoTreeStableIds;
 import org.ensembl.healthcheck.testcase.eg_compara.EGCheckSynteny;
 import org.ensembl.healthcheck.testcase.eg_compara.EGForeignKeyMethodLinkSpeciesSetId;
 
@@ -34,6 +35,7 @@ public class EGCompara extends GroupOfTests {
 			ForeignKeyMethodLinkId.class,
 			ForeignKeyTaxonId.class,
 			EGCheckEmptyLocators.class,
+			EGCheckNoTreeStableIds.class,
 			
 			MultipleGenomicAlignBlockIds.class
 		);
