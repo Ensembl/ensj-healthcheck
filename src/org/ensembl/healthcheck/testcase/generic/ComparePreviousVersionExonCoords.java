@@ -125,21 +125,30 @@ public class ComparePreviousVersionExonCoords extends SingleDatabaseTestCase {
 		// now previousHash will only contain keys that were in the old but not in the new
 		List<String> inOldNotNew = new ArrayList<String>(previousHash.keySet());
 
-		if (inNewNotOld.size() > 0) {
+    if (inNewNotOld.size() > 0 && inOldNotNew.size() == 0 ) {
 
-			ReportManager
-					.problem(this, currentCon, inNewNotOld.size() + " exons in " + current.getName() + " have coordinates that are different from those in the same transcript in " + previous.getName());
-			result = false;
+            ReportManager
+                             .problem(this, currentCon, inNewNotOld.size() + " exons in " + current.getName() + " are not in " + previous.getName());
+            result = false;
 
-		}
+    }
 
-		if (inOldNotNew.size() > 0) {
+    if (inNewNotOld.size() == 0 && inOldNotNew.size() > 0 ) {
 
-			ReportManager
-					.problem(this, currentCon, inOldNotNew.size() + " exons in " + previous.getName() + " have coordinates that are different from those in the same transcript in " + current.getName());
-			result = false;
+            ReportManager
+                             .problem(this, currentCon, inOldNotNew.size() + " exons in " + previous.getName() + " are not in " + current.getName());
+            result = false;
 
-		}
+    }
+
+    if (inNewNotOld.size() > 0 && inOldNotNew.size() > 0 ) {
+
+             ReportManager
+                             .problem(this, currentCon, inOldNotNew.size() + " exons in " + previous.getName() + " have coordinates that are different from those in the same transcript in " + current.getName());
+             result = false;
+
+    }
+
 
 		if (inOldNotNew.size() == 0 && inNewNotOld.size() == 0) {
 
