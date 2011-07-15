@@ -47,7 +47,7 @@ public enum Species {
 			"lizard,anole,anolis_lizard,anolis,anolis_carolinensis"), ORNITHORHYNCHUS_ANATINUS(9258, "OANA", "ENSOAN", "platypus,oanatius,ornithorhynchus_anatinus"), DASYPUS_NOVEMCINCTUS(9361, "DasNov",
 			"ENSDNO", "armadillo,daisy,dasypus,nine_banded_armadillo,nine-banded_armadillo,texas_armadillo,dasypus_novemcinctus"), OCHOTONA_PRINCEPS(9978, "PIKA", "ENSOPR",
 			"pika,Americanpika,American_pika,oprinceps,ochotona,ochotona_princeps"), UNKNOWN(0, "", "", ""), MICROCEBUS_MURINUS(30608, "micMur", "ENSMIC",
-			"mouse_lemur,mouselemur,microcebus,microcebus_murinus"), BOS_TAURUS(9913, "BTAU", "ENSBTA", "cow,btaurus,bostaurus,bos_taurus"), PROCAVIA_CAPENSIS(9813, "PROCAP", "ENSPCA",
+			"mouse_lemur,mouselemur,microcebus,microcebus_murinus"), BOS_TAURUS(9913, "UMD", "ENSBTA", "cow,btaurus,bostaurus,bos_taurus"), PROCAVIA_CAPENSIS(9813, "PROCAP", "ENSPCA",
 			"cape_rock_hyrax,caperockhyrax,procaviacapensis,procavia_capensis"), PTEROPUS_VAMPYRUS(132908, "PTEVAM", "ENSPVA", "large_flying_fox,largeflyingfox,pteropusvampyrus,pteropus_vampyrus"), TARSIUS_SYRICHTA(
 			9478, "TARSYR", "ENSTSY", "philippine_tarsier,philippinetarsier,tarsiussyrichta,tarsius_syrichta"), TURSIOPS_TRUNCATUS(9739, "TURTRU", "ENSTTR",
 			"bottlenosed_dolphin,dolphin,tursiopstruncatus,tursiops_truncatus"), VICUGNA_PACOS(30538, "VICPAC", "ENSVPA", "alpaca,vicugnapacos,vicugna_pacos"), DIPODOMYS_ORDII(10020, "DIPORD", "ENSDOR",
