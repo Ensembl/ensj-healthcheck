@@ -16,17 +16,18 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * An EnsEMBL Healthcheck test case that looks for broken foreign-key relationships.
+ * Additional checks for the ancestral sequences database (from compara).
  */
 
 public class AncestralSequencesExtraChecks extends SingleDatabaseTestCase {
 
 	/**
-	 * Create an OrphanTestCase that applies to a specific set of databases.
+	 * Constructor.
 	 */
 	public AncestralSequencesExtraChecks() {
 
@@ -38,8 +39,20 @@ public class AncestralSequencesExtraChecks extends SingleDatabaseTestCase {
 
 	}
 
+	
 	/**
-	 * Look for broken foreign key relationships.
+	 * Only applies to core databases
+	 */
+	public void types() {
+		
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.VEGA);
+		removeAppliesToType(DatabaseType.SANGER_VEGA);
+
+	}
+	
+	/**
+	 * Run the test.
 	 * 
 	 * @param dbre
 	 *          The database to use.
@@ -50,10 +63,6 @@ public class AncestralSequencesExtraChecks extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-
-		// ----------------------------
-		// Adapted from CoreForeignKeys.java
-		// ----------------------------
 
 		result &= checkForOrphansWithConstraint(con, "seq_region", "seq_region_id", "dna", "seq_region_id",
 				"coord_system_id = (SELECT coord_system_id FROM coord_system WHERE attrib LIKE '%sequence_level%')");
