@@ -76,7 +76,7 @@ public class TranscriptNames extends SingleDatabaseTestCase {
 		logicNameRegexp.put("ensembl", "-2[0-9][0-9]$");
 		logicNameRegexp.put("ensembl_havana_transcript", "-0[0-9][0-9]$");
 		logicNameRegexp.put("havana", "-0[0-9][0-9]$");
-		logicNameRegexp.put("ncrna", "-2[0-9][0-9]$");
+		//logicNameRegexp.put("ncrna", "-2[0-9][0-9]$");
 		logicNameRegexp.put("ensembl_ig_gene", "-2[0-9][0-9]$");
 		logicNameRegexp.put("havana_ig_gene", "-0[0-9][0-9]$");
 		logicNameRegexp.put("ncrna_pseudogene", "-2[0-9][0-9]$");
