@@ -47,6 +47,12 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 
 	}
 
+        public void types() {
+
+                removeAppliesToType(DatabaseType.SANGER_VEGA);
+
+        }
+
 	/**
 	 * Run the test.
 	 * 
