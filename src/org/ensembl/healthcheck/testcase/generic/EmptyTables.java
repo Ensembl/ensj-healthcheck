@@ -132,7 +132,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 			String[] allowedEmpty = { "affy_array", "affy_feature", "affy_probe", "ditag", "ditag_feature", "dna", "external_synonym", "identity_xref", "map", "mapping_session", "marker", "marker_feature",
 					"marker_map_location", "marker_synonym", "misc_attrib", "misc_feature", "misc_feature_misc_set", "misc_set", "prediction_exon", "prediction_transcript", "repeat_consensus",
 					"repeat_feature", "simple_feature", "supporting_feature", "transcript_attrib", "unconventional_transcript_association", "splicing_transcript_pair", "splicing_event_feature",
-          "splicing_event", "dependent_xref", "seq_region_synonym", "density_feature", "mapping_set" };
+          "splicing_event", "dependent_xref", "seq_region_synonym", "density_feature", "mapping_set", "density_type" };
 			tables = remove(tables, allowedEmpty);
                         if (species == Species.DANIO_RERIO) {// for zebrafish, the following tables are also allowed to be empty
                                 tables = remove(tables, new String[] { "ontology_xref" });
