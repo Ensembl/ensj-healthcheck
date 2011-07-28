@@ -140,11 +140,6 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 
 	private void parseProperties() {
 
-		if (System.getProperty("output.databases") == null) {
-			System.err.println("No databases specified in " + getPropertiesFile());
-			System.exit(1);
-		}
-
 		if (System.getProperty("output.release") == null) {
 			System.err.println("No release specified in " + getPropertiesFile() + " - please add an output.release property");
 			System.exit(1);
