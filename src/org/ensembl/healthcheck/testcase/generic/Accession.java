@@ -50,7 +50,7 @@ public class Accession extends SingleDatabaseTestCase {
 		setTeamResponsible(Team.GENEBUILD);
 
 		// add to this hash to check for other types and formats
-		formats.put("pfam", "PF_____");
+		formats.put("pfam", "PF_____%");
 		formats.put("prints", "PR_____");
 		formats.put("prosite", "PS_____");
 		formats.put("profile", "PS_____");
