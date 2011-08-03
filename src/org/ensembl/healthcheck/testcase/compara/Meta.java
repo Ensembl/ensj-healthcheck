@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Iterator;
+import org.apache.commons.lang.StringUtils;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
@@ -79,11 +80,14 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 		}
 
 		// These methods return false if there is any problem with the test
-		result &= checkMaxAlignmentLength(con);
+// 		result &= checkMaxAlignmentLength(con);
 
 		result &= checkSchemaVersionDBName(dbre);
 
 		result &= checkConservationScoreLink(dbre);
+
+		result &= checkSpeciesTreesArePresent(dbre);
+
 		result &= checkSpeciesId(dbre);
 
 		// I still have to check if some entries have to be removed/inserted/updated
@@ -156,6 +160,91 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 
 		// get all the values currently stored in the DB
 		sql = "SELECT meta_key, meta_value, count(*) FROM meta WHERE meta_key LIKE \"gerp_%\" GROUP BY meta_key";
+
+		try {
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				if (rs.getInt(3) != 1) {
+					// Delete all current entries. The right entry will be added
+					MetaEntriesToRemove.put(rs.getString(1), rs.getString(2));
+				} else if (MetaEntriesToAdd.containsKey(rs.getString(1))) {
+					// Entry matches one of the required entries. Update if needed.
+					if (!MetaEntriesToAdd.get(rs.getString(1)).equals(rs.getString(2))) {
+						MetaEntriesToUpdate.put(rs.getString(1), MetaEntriesToAdd.get(rs.getString(1)));
+					}
+					// Remove this entry from the set of entries to be added (as it already exits!)
+					MetaEntriesToAdd.remove(rs.getString(1));
+				} else {
+					// Entry is out-to-date
+					MetaEntriesToRemove.put(rs.getString(1), rs.getString(2));
+				}
+			}
+			rs.close();
+			stmt.close();
+		} catch (SQLException se) {
+			se.printStackTrace();
+			result = false;
+		}
+
+		return result;
+
+	} // ---------------------------------------------------------------------
+
+	/**
+	 * Check that the each multi-species analysis that uses a species tree has the species tree stored in the meta table.
+	 */
+	private boolean checkSpeciesTreesArePresent(DatabaseRegistryEntry dbre) {
+
+		boolean result = true;
+
+		// get version from meta table
+		Connection con = dbre.getConnection();
+
+		// get all the links between conservation scores and multiple genomic alignments
+		String sql = "SELECT method_link_species_set_id, IFNULL(meta_key, 'NULL'), IFNULL(meta_value, 'NULL'),"
+				+ " method_link_species_set.name, count(distinct genome_db_id)"
+				+ " FROM method_link_species_set"
+				+ " JOIN method_link USING (method_link_id)"
+				+ " LEFT JOIN meta ON (meta_key = CONCAT('tree_', method_link_species_set_id))"
+				+ " JOIN species_set USING (species_set_id)"
+				+ " WHERE (class LIKE 'GenomicAlignTree%' OR class LIKE '%multiple_alignment' OR class LIKE '%tree_node')"
+				+ " GROUP BY method_link_species_set_id";
+
+		try {
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				Integer methodLinkSpeciesSetIdInt = rs.getInt(1);
+				String metaKeyStr = rs.getString(2);
+				String treeStr = rs.getString(3);
+				String methodLinkSpeciesSetNameStr = rs.getString(4);
+				Integer numSpecies = rs.getInt(5);
+				if (metaKeyStr.equals("NULL")) {
+					ReportManager.problem(this, con, "MethodLinkSpeciesSet " + methodLinkSpeciesSetIdInt  +
+							" (" + methodLinkSpeciesSetNameStr  + ") does not have its tree in the meta table!");
+					result = false;
+				} else if (StringUtils.countMatches(treeStr, "(") != StringUtils.countMatches(treeStr, ")")) {
+					ReportManager.problem(this, con, "The tree for MethodLinkSpeciesSet " + methodLinkSpeciesSetIdInt  +
+							" (" + methodLinkSpeciesSetNameStr  + ") does not have the same number of opening and closing brackets!");
+					result = false;
+				} else if (StringUtils.countMatches(treeStr, ",") + 1 != numSpecies) {
+					ReportManager.problem(this, con, "The tree for MethodLinkSpeciesSet " + methodLinkSpeciesSetIdInt  +
+							" (" + methodLinkSpeciesSetNameStr  + ") does not have the right number of leaves!");
+					result = false;
+				} else {
+					MetaEntriesToAdd.put("tree_" + rs.getString(1), rs.getString(3));
+				}
+			}
+			rs.close();
+			stmt.close();
+		} catch (SQLException se) {
+			se.printStackTrace();
+			result = false;
+		}
+
+		// get all the values currently stored in the DB
+		sql = "SELECT meta_key, meta_value, count(*) FROM meta WHERE meta_key LIKE \"tree_%\" GROUP BY meta_key";
 
 		try {
 			Statement stmt = con.createStatement();
