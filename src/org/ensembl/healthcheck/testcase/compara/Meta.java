@@ -80,7 +80,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 		}
 
 		// These methods return false if there is any problem with the test
-// 		result &= checkMaxAlignmentLength(con);
+		result &= checkMaxAlignmentLength(con);
 
 		result &= checkSchemaVersionDBName(dbre);
 
