@@ -6,6 +6,7 @@
  */
 package org.ensembl.healthcheck.testcase.eg_core;
 
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.AbstractPerlModuleBasedTestCase;
 
 /**
@@ -16,6 +17,8 @@ public class ProteinTranslation extends AbstractPerlModuleBasedTestCase {
 
 	public ProteinTranslation() {
 		super();
+		
+		setTeamResponsible(Team.ENSEMBL_GENOMES);
 	}
 
 	/* (non-Javadoc)
