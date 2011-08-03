@@ -50,32 +50,43 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 		String[] tables = getTableNames(dbre.getConnection());
 		Species species = dbre.getSpecies();
 
-		// ----------------------------------------------------
-		// the following tables are allowed to be empty
-		String[] allowedEmpty = { "allele_group", "allele_group_allele", "httag", "variation_group", "variation_group_feature", "variation_group_variation", "individual_genotype_multiple_bp",
-				"variation_synonym", "structural_variation", "variation_set", "variation_set_variation", "variation_set_structure" };
-		tables = remove(tables, allowedEmpty);
+        String[] unusedTables           = { "allele_group", "allele_group_allele", "httag", "variation_group", "variation_group_variation", "variation_group_feature" };
+        String[] humanOnlyTables        = { "protein_function_predictions", "phenotype", "tagged_variation_feature" };
+        String[] svTables               = { "structural_variation", "structural_variation_feature" };
+		String[] sampleTables           = { "population_genotype", "population_structure", "sample_synonym" };
+        String[] setTables              = { "variation_set", "variation_set_structure", "variation_set_variation" };
+        String[] genotypeTables         = { "individual_genotype_multiple_bp", "compressed_genotype_single_bp" };
+        String[] coverageTables         = { "read_coverage" };
 
-		// only rat has entries in QTL tables
+        // first drop the unused tables
+
+        tables = remove(tables, unusedTables);
+
+        // then human specific ones unless we're running on human
+
+        if (species != Species.HOMO_SAPIENS) {
+            tables = remove(tables, humanOnlyTables);
+        }
+
+        // only these species have coverage data
+
 		if (species != Species.RATTUS_NORVEGICUS && species != Species.MUS_MUSCULUS && species != Species.PONGO_ABELII && species != Species.HOMO_SAPIENS) {
-			tables = remove(tables, "read_coverage");
+			tables = remove(tables, coverageTables);
 		}
-		if (species == Species.HOMO_SAPIENS) {
-			tables = remove(tables, "structural_variation");
-			tables = remove(tables, "variation_set");
-			tables = remove(tables, "variation_set_structure");
-			tables = remove(tables, "variation_set_variation");
-		}
-		if (species != Species.HOMO_SAPIENS) {
-			tables = remove(tables, "variation_annotation");
-			tables = remove(tables, "phenotype");
-			tables = remove(tables, "tagged_variation_feature");
-		}
-		if (species == Species.ANOPHELES_GAMBIAE || species == Species.ORNITHORHYNCHUS_ANATINUS || species == Species.PONGO_ABELII || species == Species.TETRAODON_NIGROVIRIDIS) {
-			String[] sampleTables = { "population_genotype", "population_structure", "sample_synonym" };
+
+        // only these species have structural variation data
+
+		if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.CANIS_FAMILIARIS && species != Species.SUS_SCROFA) {
+            tables = remove(tables, svTables);
+	    }
+        
+        // only these species do not have sample data
+	
+        if (species == Species.ANOPHELES_GAMBIAE || species == Species.ORNITHORHYNCHUS_ANATINUS || species == Species.PONGO_ABELII || species == Species.TETRAODON_NIGROVIRIDIS) {
 			tables = remove(tables, sampleTables);
 		}
-		return tables;
+		
+        return tables;
 	}
 
 	// ---------------------------------------------------------------------

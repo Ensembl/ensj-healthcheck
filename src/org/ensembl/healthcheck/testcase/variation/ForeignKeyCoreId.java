@@ -100,7 +100,7 @@ public class ForeignKeyCoreId extends MultiDatabaseTestCase {
 	
 				result &= checkForOrphansWithConstraint(con, dbrvar.getName() + ".read_coverage", "seq_region_id", dbrcore.getName() + ".seq_region", "seq_region_id", "seq_region_id IS NOT NULL");
 	
-				result &= checkForOrphansWithConstraint(con, dbrvar.getName() + ".structural_variation", "seq_region_id", dbrcore.getName() + ".seq_region", "seq_region_id", "seq_region_id IS NOT NULL");
+				result &= checkForOrphansWithConstraint(con, dbrvar.getName() + ".structural_variation_feature", "seq_region_id", dbrcore.getName() + ".seq_region", "seq_region_id", "seq_region_id IS NOT NULL");
 	
 				int rows = getRowCount(con, "SELECT COUNT(*) FROM " + dbrvar.getName() + ".seq_region srv ," + dbrcore.getName() + ".seq_region src," + dbrcore.getName()
 						+ ".coord_system cs WHERE cs.attrib = 'default_version' AND cs.coord_system_id = src.coord_system_id AND src.name=srv.name AND src.seq_region_id != srv.seq_region_id");

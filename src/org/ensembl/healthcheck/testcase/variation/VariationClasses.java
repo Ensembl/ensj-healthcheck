@@ -18,23 +18,24 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that the structural variations do not contain anomalities
+ * Sanity check variation classes
  */
-public class StructuralVariation extends SingleDatabaseTestCase {
+public class VariationClasses extends SingleDatabaseTestCase {
 
 	/**
-	 * Creates a new instance of StructuralVariation
+	 * Creates a new instance of VariationClasses
 	 */
-	public StructuralVariation() {
+	public VariationClasses() {
 
 		addToGroup("variation");
 		addToGroup("variation-release");
-		
-		setDescription("Checks that the structural variation tables make sense");
+
+		setDescription("Sanity check variation classes");
 		setTeamResponsible(Team.VARIATION);
 
 	}
@@ -42,7 +43,7 @@ public class StructuralVariation extends SingleDatabaseTestCase {
 	// ---------------------------------------------------------------------
 
 	/**
-	 * Check that the structural variation tables make sense.
+	 * Sanity check the variation classes.
 	 * 
 	 * @param dbre
 	 *          The database to check.
@@ -50,20 +51,42 @@ public class StructuralVariation extends SingleDatabaseTestCase {
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 
-		Connection con = dbre.getConnection();
 		boolean result = true;
-		
-		try {
-	
-			result &= checkCountIsZero(con, "structural_variation_feature", "(inner_start < seq_region_start OR outer_start > seq_region_start OR inner_end > seq_region_end OR outer_end < seq_region_end)");
 
-			// At the moment, this is ok since that means an insertion relative to the reference. In the future, we should probably represent these Ensembl-style (start = end+1)
-			// result &= checkCountIsZero(con, "structural_variation", "inner_start = inner_end");
-	
-		} catch (Exception e) {
-			ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
-			result = false;
+		Species species = dbre.getSpecies();
+
+		Connection con = dbre.getConnection();
+
+        // at the moment we only check human
+        
+        if (species == Species.HOMO_SAPIENS) {
+            
+            try {
+                
+                // and we only check that no HGMD mutation is ever classed as 'sequence_alteration'
+
+                String query =  "SELECT COUNT(*) "+
+                                "FROM variation v, source s, attrib a, attrib_type t "+
+                                "WHERE t.code = 'SO_term' "+
+                                "AND a.attrib_type_id = t.attrib_type_id "+
+                                "AND a.value = 'sequence_alteration' "+
+                                "AND a.attrib_id = v.class_attrib_id "+
+                                "AND s.name = 'HGMD-PUBLIC' "+
+                                "AND s.source_id = v.source_id ";
+
+			    result &= (getRowCount(con, query) == 0);
+
+		    } 
+            catch (Exception e) {
+			    ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
+		    	result = false;
+		    }
+        }
+
+		if (result) {
+			ReportManager.correct(this, con, "Variation classes look sane");
 		}
+
 		return result;
 
 	} // run
@@ -82,4 +105,4 @@ public class StructuralVariation extends SingleDatabaseTestCase {
 
 	}
 
-} // StructuralVariation
+} // VariationClasses
