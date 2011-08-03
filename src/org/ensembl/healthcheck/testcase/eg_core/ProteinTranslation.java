@@ -18,7 +18,7 @@ public class ProteinTranslation extends AbstractPerlModuleBasedTestCase {
 	public ProteinTranslation() {
 		super();
 		
-		setTeamResponsible(Team.ENSEMBL_GENOMES);
+		setTeamResponsible(Team.GENEBUILD);
 	}
 
 	/* (non-Javadoc)
