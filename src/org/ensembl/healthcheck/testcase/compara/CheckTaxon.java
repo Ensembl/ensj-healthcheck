@@ -139,7 +139,7 @@ public class CheckTaxon extends MultiDatabaseTestCase {
             String taxon_id = getRowColumnValue(speciesCon,
                 "SELECT meta_value FROM meta WHERE meta_key = \"species.taxonomy_id\"");
             
-            /* Check name */
+            /* Check name ++ compara scientific name := last two entries in the species classification in the core meta table */
             sql1 = "SELECT \"name\", name " +
                 " FROM ncbi_taxa_name WHERE name_class = \"scientific name\" AND taxon_id = " + taxon_id;
             sql2 = "SELECT \"name\", GROUP_CONCAT(meta_value ORDER BY meta_id DESC SEPARATOR \" \") " +
@@ -148,11 +148,25 @@ public class CheckTaxon extends MultiDatabaseTestCase {
                 " GROUP BY meta_key";
             result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
             
-            /* Check common_name */
+            /* Check common_name  */
             sql1 = "SELECT \"common_name\", name " +
                 " FROM ncbi_taxa_name WHERE name_class = \"genbank common name\" AND taxon_id = " + taxon_id;
             sql2 = "SELECT \"common_name\", meta_value FROM meta" +
                 " WHERE meta_key = \"species.common_name\" and meta_value != \"\"";
+            result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
+            
+            /* Check ensembl_common_name  */
+            sql1 = "SELECT \"ensembl_common_name\", name " +
+                " FROM ncbi_taxa_name WHERE name_class = \"ensembl common name\" AND taxon_id = " + taxon_id;
+            sql2 = "SELECT \"ensembl_common_name\", meta_value FROM meta" +
+                " WHERE meta_key = \"species.ensembl_common_name\" and meta_value != \"\"";
+            result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
+            
+            /* Check ensembl_alias_name  */
+            sql1 = "SELECT \"ensembl_alias_name\", name " +
+                " FROM ncbi_taxa_name WHERE name_class = \"ensembl alias name\" AND taxon_id = " + taxon_id;
+            sql2 = "SELECT \"ensembl_alias_name\", meta_value FROM meta" +
+                " WHERE meta_key = \"species.ensembl_alias_name\" and meta_value != \"\"";
             result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
             
             /* Check classification */
