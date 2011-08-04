@@ -168,26 +168,76 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 		return getInfoFromName(name, null, null);
 	}
 
-	public static DatabaseInfo getInfoFromDatabase(DatabaseServer server,
-			final String name) {
-		SqlTemplate template = new ConnectionBasedSqlTemplateImpl(
-				server.getDatabaseConnection(name));
+	/**
+	 * <p>
+	 * 	Returns information about a database. Queries the meta table to  
+	 * determine the type and schema version of the database. 
+	 * </p>
+	 * 
+	 * @param server
+	 * @param name
+	 * @return DatabaseInfo
+	 */
+	public static DatabaseInfo getInfoFromDatabase(
+			DatabaseServer server,
+			final String name
+	) {
+		SqlTemplate template = null;
+		
+		try {
+			template = new ConnectionBasedSqlTemplateImpl(
+				server.getDatabaseConnection(name)
+			);
+		} catch (NullPointerException e) {
+
+			// This exception can be thrown, if a database name has hashes in 
+			// it like this one:
+			//
+			// #mysql50#jhv_gadus_morhua_57_merged_projection_build.bak
+			// or
+			// #mysql50#jhv_gadus_morhua_57_ref_1.3_asm_buggy
+			//
+			// A database like this can exist on a MySql server, but 
+			// connecting to it will cause a NullPointerException to be 
+			// thrown.
+			//
+			logger.warning("Unable to connect to " + name + " on " + server);
+
+			// No info will be available for this database.
+			//
+			return null;
+		}
 		DatabaseInfo info = null;
-		if (template.queryForDefaultObjectList("show tables like 'meta'",
-				String.class).size() ==1 ) {
-			List<DatabaseInfo> dbInfos = template
-					.queryForList(
-							"select m1.meta_value, m2.meta_value from meta m1 join meta m2 where m1.meta_key='schema_type' and m2.meta_key='schema_version'",
-							new RowMapper<DatabaseInfo>() {
-								public DatabaseInfo mapRow(ResultSet resultSet,
-										int position) throws SQLException {
-									return new DatabaseInfo(name, null,
-											Species.UNKNOWN, DatabaseType
-													.resolveAlias(resultSet
-															.getString(1)),
-											resultSet.getString(2), null);
-								}
-							});
+		
+		boolean dbHasAMetaTable = template.queryForDefaultObjectList("show tables like 'meta'", String.class).size()==1; 
+		
+		if (dbHasAMetaTable) {
+			
+			List<DatabaseInfo> dbInfos
+				= template.queryForList(
+						
+					// Will return something like ("core", 63)
+					//
+					"select m1.meta_value, m2.meta_value from meta m1 join meta m2 where m1.meta_key='schema_type' and m2.meta_key='schema_version'",
+
+					new RowMapper<DatabaseInfo>() {
+						
+						public DatabaseInfo mapRow(ResultSet resultSet, int position) throws SQLException {
+							
+							String schemaType    = resultSet.getString(1); 
+							String schemaVersion = resultSet.getString(2);
+							
+							return new DatabaseInfo(
+								name, 
+								null, 
+								Species.UNKNOWN, 
+								DatabaseType.resolveAlias(schemaType),
+								schemaVersion, 
+								null
+							);
+						}
+					}
+			);
 			info = CollectionUtils.getFirstElement(dbInfos, info);
 		}
 		return info;
