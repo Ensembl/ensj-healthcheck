@@ -25,7 +25,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Base class to compare a certain set of things (e.g. biotypes, xrefs) from on database with the equivalent things in the previous
+ * Base class to compare a certain set of things (e.g. biotypes, xrefs) from one database with the equivalent things in the previous
  * database.
  * 
  * Extending classes should implement the description, threshold and getCounts() methods. See individual Javadocs for details.
