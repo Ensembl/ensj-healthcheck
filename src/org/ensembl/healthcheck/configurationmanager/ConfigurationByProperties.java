@@ -180,7 +180,11 @@ public class ConfigurationByProperties<T> extends
 		}
 
 		if (dataTypeExpected == configurationDataType.String) {
-			return configValue;
+			
+			// Return trimmed version of the String so trailing spaces will 
+			// not be returned as part of the value. 
+			//
+			return configValue.trim();
 		}
 		if (dataTypeExpected == configurationDataType.List_Of_Strings) {
 
@@ -188,7 +192,13 @@ public class ConfigurationByProperties<T> extends
 
 			for (String currentValue : configValue
 					.split(LIST_SEPARATOR_IN_PROPERTY_FILE)) {
-				returnValue.add(currentValue);
+				
+				// The trimmed values are returned. Actually the call to trim 
+				// does not have any effect here anymore, because the split 
+				// on LIST_SEPARATOR_IN_PROPERTY_FILE already gets rid of 
+				// whitespaces around the values.
+				//
+				returnValue.add(currentValue.trim());
 			}
 			return returnValue;
 		}
