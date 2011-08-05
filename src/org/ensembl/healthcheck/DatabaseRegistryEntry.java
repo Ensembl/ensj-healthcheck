@@ -29,6 +29,7 @@ import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.RowMapper;
 import org.ensembl.healthcheck.util.SqlTemplate;
 import org.ensembl.healthcheck.util.UtilUncheckedException;
+import org.ensembl.healthcheck.util.ConnectionBasedSqlTemplateImpl.SqlTemplateUncheckedException;
 
 /**
  * Container for information about a database that can be stored in a
@@ -206,39 +207,51 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 			// No info will be available for this database.
 			//
 			return null;
-		}
+		} 
+		
 		DatabaseInfo info = null;
 		
 		boolean dbHasAMetaTable = template.queryForDefaultObjectList("show tables like 'meta'", String.class).size()==1; 
 		
 		if (dbHasAMetaTable) {
 			
-			List<DatabaseInfo> dbInfos
-				= template.queryForList(
-						
-					// Will return something like ("core", 63)
-					//
-					"select m1.meta_value, m2.meta_value from meta m1 join meta m2 where m1.meta_key='schema_type' and m2.meta_key='schema_version'",
-
-					new RowMapper<DatabaseInfo>() {
-						
-						public DatabaseInfo mapRow(ResultSet resultSet, int position) throws SQLException {
+			try {			
+				List<DatabaseInfo> dbInfos
+					= template.queryForList(
 							
-							String schemaType    = resultSet.getString(1); 
-							String schemaVersion = resultSet.getString(2);
+						// Will return something like ("core", 63)
+						//
+						"select m1.meta_value, m2.meta_value from meta m1 join meta m2 where m1.meta_key='schema_type' and m2.meta_key='schema_version'",
+	
+						new RowMapper<DatabaseInfo>() {
 							
-							return new DatabaseInfo(
-								name, 
-								null, 
-								Species.UNKNOWN, 
-								DatabaseType.resolveAlias(schemaType),
-								schemaVersion, 
-								null
-							);
+							public DatabaseInfo mapRow(ResultSet resultSet, int position) throws SQLException {
+								
+								String schemaType    = resultSet.getString(1); 
+								String schemaVersion = resultSet.getString(2);
+								
+								return new DatabaseInfo(
+									name, 
+									null, 
+									Species.UNKNOWN, 
+									DatabaseType.resolveAlias(schemaType),
+									schemaVersion, 
+									null
+								);
+							}
 						}
-					}
-			);
-			info = CollectionUtils.getFirstElement(dbInfos, info);
+				);
+					
+				info = CollectionUtils.getFirstElement(dbInfos, info);
+
+			} catch(SqlTemplateUncheckedException e) {
+				
+				logger.warning("Can't determine database type and version from " + name + " on " + server);
+
+				// No info will be available for this database.
+				//
+				return null;
+			}
 		}
 		return info;
 	}
