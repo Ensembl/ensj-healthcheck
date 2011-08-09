@@ -37,7 +37,11 @@ public class ConfigurationDumper<T> extends ConfigurationProcessor<T> {
 					method.getName().substring(3)
 			) + " :   ");
 			try {
-				out.append(method.invoke(configurationObject, (Object[]) null).toString());
+				out.append(
+					  "\""
+					+ method.invoke(configurationObject, (Object[]) null).toString()
+					+ "\""
+				);
 			} catch (OptionNotPresentException e) {
 				// This should be thrown for every options that has not 
 				// been set,
