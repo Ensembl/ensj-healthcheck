@@ -1,6 +1,7 @@
 package org.ensembl.healthcheck;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.logging.Logger;
 
 import org.ensembl.healthcheck.util.DBUtils;
@@ -24,6 +25,16 @@ public class DatabaseServer {
 	String user;
 
 	String pass;
+	
+	protected boolean connectedSuccessfully;
+
+	public boolean isConnectedSuccessfully() {
+		return connectedSuccessfully;
+	}
+
+	public void setConnectedSuccessfully(boolean connectedSuccessfully) {
+		this.connectedSuccessfully = connectedSuccessfully;
+	}
 
 	Connection connection; // connection to this server, not a specific named database - use getDatabaseConnection for that
 
@@ -43,13 +54,28 @@ public class DatabaseServer {
 
 		this.databaseURL = buildDatabaseURL();
 
-		this.connection = DBUtils.openConnection(driver, databaseURL, user, pass);
+		try {
+		
+			this.connection = DBUtils.openConnection(driver, databaseURL, user, pass);
+			connectedSuccessfully = true;
+		
+		} catch (SQLException e) {
+			
+			logger.warning(
+				"Couldn't connect to database"
+				+ " " + host 
+				+ " " + port
+				+ " " + user
+			);
+			connectedSuccessfully = false;
+			
+		}
 
 	}
 
 	// -------------------------------------------------------------------------
 
-	public Connection getDatabaseConnection(String databaseName) {
+	public Connection getDatabaseConnection(String databaseName) throws SQLException {
 
 		return DBUtils.openConnection(driver, databaseURL + databaseName, user, pass);
 
@@ -57,7 +83,7 @@ public class DatabaseServer {
 
 	// -------------------------------------------------------------------------
 
-	public Connection getServerConnection() {
+	public Connection getServerConnection() throws SQLException {
 
 		return DBUtils.openConnection(driver, databaseURL, user, pass);
 
