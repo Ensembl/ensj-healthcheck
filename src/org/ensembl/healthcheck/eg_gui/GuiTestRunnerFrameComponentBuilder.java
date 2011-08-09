@@ -27,6 +27,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.GroupOfTests;
 import org.ensembl.healthcheck.TestInstantiator;
 import org.ensembl.healthcheck.configuration.ConfigureHost;
@@ -34,6 +35,7 @@ import org.ensembl.healthcheck.eg_gui.dragAndDrop.ListOfTestsToBeRunDropListener
 import org.ensembl.healthcheck.eg_gui.dragAndDrop.TestsTransferHandler;
 import org.ensembl.healthcheck.eg_gui.dragAndDrop.TreeOfTestGroupsGestureListener;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * 
@@ -75,11 +77,22 @@ public class GuiTestRunnerFrameComponentBuilder {
 		
 		for (ConfigureHost currentDbServer : dbDetails) {
 			
-			dbServerComboBoxDisplayName.add(
-				currentDbServer.getHost() 
-				+ " as "
-				+ currentDbServer.getUser()
-			);
+			if (currentDbServer.getHost().equals("127.0.0.1")) {
+
+				dbServerComboBoxDisplayName.add(
+						currentDbServer.getHost() + ":" + currentDbServer.getPort() 
+						+ " as "
+						+ currentDbServer.getUser()
+				);
+
+			} else {
+			
+				dbServerComboBoxDisplayName.add(
+					currentDbServer.getHost() 
+					+ " as "
+					+ currentDbServer.getUser()
+				);
+			}
 		}
 		
 		JComboBox dbServerSelector = new JComboBox(dbServerComboBoxDisplayName.toArray());
