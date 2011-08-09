@@ -13,6 +13,7 @@
 
 package org.ensembl.healthcheck.util;
 
+import java.net.ConnectException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.DatabaseMetaData;
@@ -110,8 +111,9 @@ public final class DBUtils {
 	 * @param password
 	 *          Password for user.
 	 * @return A connection to the database, or null.
+	 * @throws SQLException 
 	 */
-	public static Connection openConnection(String driverClassName, String databaseURL, String user, String password) {
+	public static Connection openConnection(String driverClassName, String databaseURL, String user, String password) throws SQLException {
 
 		return ConnectionPool.getConnection(driverClassName, databaseURL, user, password);
 
@@ -817,8 +819,14 @@ public final class DBUtils {
 
 			if (primaryHostConfigured) {
 
-				checkAndAddDatabaseServerConf(mainDatabaseServers, DBUtils.hostConfiguration.getHost(), DBUtils.hostConfiguration.getPort(), DBUtils.hostConfiguration.getUser(), DBUtils.hostConfiguration
-						.getPassword(), DBUtils.hostConfiguration.getDriver());
+				checkAndAddDatabaseServerConf(
+					mainDatabaseServers, 
+					DBUtils.hostConfiguration.getHost(), 
+					DBUtils.hostConfiguration.getPort(), 
+					DBUtils.hostConfiguration.getUser(), 
+					DBUtils.hostConfiguration.getPassword(), 
+					DBUtils.hostConfiguration.getDriver()
+				);
 			}
 		}
 		return mainDatabaseServers;
@@ -840,8 +848,14 @@ public final class DBUtils {
 	private static void checkAndAddDatabaseServer(List<DatabaseServer> servers, String hostProp, String portProp, String userProp, String passwordProp, String driverProp) {
 
 		if (System.getProperty(hostProp) != null && System.getProperty(portProp) != null && System.getProperty(userProp) != null) {
-			DatabaseServer server = new DatabaseServer(System.getProperty(hostProp), System.getProperty(portProp), System.getProperty(userProp), System.getProperty(passwordProp), System
-					.getProperty(driverProp));
+			
+			DatabaseServer server = new DatabaseServer(
+					System.getProperty(hostProp), 
+					System.getProperty(portProp), 
+					System.getProperty(userProp), 
+					System.getProperty(passwordProp), 
+					System.getProperty(driverProp)
+			);
 			servers.add(server);
 			logger.fine("Added server: " + server.toString());
 		}
@@ -932,8 +946,16 @@ public final class DBUtils {
 	private static void checkAndAddDatabaseServerConf(List<DatabaseServer> servers, String host, String port, String user, String password, String driver) {
 
 		DatabaseServer server = new DatabaseServer(host, port, user, password, driver);
-		servers.add(server);
-		logger.fine("Added server: " + server.toString());
+		
+		if (server.isConnectedSuccessfully()) {
+
+			servers.add(server);
+			logger.fine("Added server: " + server.toString());
+
+		} else {
+			
+			logger.fine("Couldn't connect to server: " + server.toString());
+		}
 	}
 
 	// -------------------------------------------------------------------------
