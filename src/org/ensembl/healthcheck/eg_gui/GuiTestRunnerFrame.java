@@ -269,81 +269,6 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		}
 	}
 	
-	/**
-	 * <p>
-	 * 	Creates a configuration object of type ConfigureHost from the File
-	 * passed as a parameter and returns it.
-	 * </p>
-	 * 
-	 * @param iniFile
-	 * @return
-	 */
-	public static ConfigureHost getHostConfiguration(File iniFile) {
-
-		List<File> propertyFileNames = new ArrayList<File>();
-		
-		propertyFileNames.add(iniFile);
-		
-		ConfigurationFactory<ConfigureHost> confFact = new ConfigurationFactory(
-			ConfigureHost.class, 
-			propertyFileNames
-		);		
-		ConfigureHost configuration = confFact.getConfiguration(ConfigurationType.Properties);
-
-		return configuration;
-	}
-
-	/**
-	 * <p>
-	 * 	Iterates over all files in the directories dirWithDbServerConfigs. 
-	 * Assumes they are inifiles with data to populate a ConfigureHost object.
-	 * Creates a ConfigureHost object for every inifile and returns a 
-	 * List<ConfigureHost>.
-	 * </p>
-	 * 
-	 * @param dirWithDbServerConfigs
-	 * @return
-	 * @throws IOException 
-	 */
-	protected static List<ConfigureHost> createDbDetailsConfigurations(String... dirsWithDbServerConfigs) {
-		
-		List<ConfigureHost> dbDetails = new ArrayList<ConfigureHost>();
-		
-		for (String dirWithDbServerConfigs : dirsWithDbServerConfigs) {
-		
-			File currentDir = new File(dirWithDbServerConfigs);
-			
-			if (currentDir.exists() && currentDir.canRead() && currentDir.isDirectory()) {
-
-				for (
-					File f : currentDir.listFiles(
-
-						// Only use ini files. 
-						//
-						new FilenameFilter() {
-							public boolean accept(File arg0, String arg1) {								
-								return arg1.endsWith(".ini");
-							}
-						}
-					)
-				) {
-					ConfigureHost configuration = getHostConfiguration(f);			
-					dbDetails.add(configuration);
-				}
-			} else {
-				logger.info("Skipping " + currentDir);
-			}
-		}
-		if (dbDetails.isEmpty()) {
-			
-			throw new RuntimeException(
-				"Found no ini files with database server details. Please add at least one into the directories "
-				+ Arrays.toString(dirsWithDbServerConfigs)
-			);
-		}
-		return dbDetails;
-	}
-	
 	public GuiTestRunnerFrame(
 		List<GroupOfTests> testGroupList,
 		TestInstantiatorDynamic testInstantiator
@@ -377,12 +302,19 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 
 		tabSetup = new JPanel();
 		
-		dbDetails = createDbDetailsConfigurations(dirsWithDbServerConfigs);
+		dbDetails = GuiTestRunnerFrameUtils.grepForAvailableServers(
+				GuiTestRunnerFrameUtils.createDbDetailsConfigurations(
+				dirsWithDbServerConfigs
+			)
+		);
 
 		dbServerSelector = GuiTestRunnerFrameComponentBuilder.createDbServerSelector(dbDetails);		
 		dbServerSelector.setActionCommand(Constants.DB_SERVER_CHANGED);
 		dbServerSelector.addActionListener(this);
 		
+		//logger.info("Connecting to " + dbDetails.get(0));
+		
+		DBUtils.initialise();
 		DBUtils.setHostConfiguration(dbDetails.get(0));
 
 		List<String> regexps = new ArrayList<String>();
@@ -403,6 +335,8 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		init();
 	}
 
+
+	
 	/**
 	 * <p>
 	 * Plugs the individual components of the GUI to the JFrame. This is where
