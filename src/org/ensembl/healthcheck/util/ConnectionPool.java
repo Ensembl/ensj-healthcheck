@@ -20,6 +20,7 @@ package org.ensembl.healthcheck.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -54,8 +55,10 @@ public final class ConnectionPool {
      *          The username to connect to the database with.
      * @param password
      *          The password for username.
+     * @throws ClassNotFoundException 
+     * @throws SQLException 
      */
-    public static Connection getConnection(String driverClassName, String databaseURL, String user, String password) {
+    public static Connection getConnection(String driverClassName, String databaseURL, String user, String password) throws SQLException {
 
         Connection con = null;
 
@@ -70,15 +73,17 @@ public final class ConnectionPool {
             try {
 
                 Class.forName(driverClassName);
-                con = DriverManager.getConnection(databaseURL, user, password);
-                pool.put(databaseURL, con);
-                logger.finest("Added connection to " + databaseURL + " to pool");
 
-            } catch (Exception e) {
+            } catch (ClassNotFoundException e) {
 
-                e.printStackTrace();
+                logger.severe("Can't load class " + driverClassName);
+                throw new RuntimeException(e);
 
             }
+           	con = DriverManager.getConnection(databaseURL, user, password);
+            pool.put(databaseURL, con);
+            logger.finest("Added connection to " + databaseURL + " to pool");
+
         }
 
         return con;
