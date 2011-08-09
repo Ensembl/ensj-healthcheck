@@ -721,8 +721,17 @@ public class ReportManager {
 		logger.info("Connecting to " + System.getProperty("output.databaseURL") + System.getProperty("output.database") + " as " + System.getProperty("output.user") + " password "
 				+ System.getProperty("output.password"));
 
-		outputDatabaseConnection = DBUtils.openConnection(System.getProperty("output.driver"), System.getProperty("output.databaseURL") + System.getProperty("output.database"),
-				System.getProperty("output.user"), System.getProperty("output.password"));
+		try {
+			outputDatabaseConnection = DBUtils.openConnection(
+				System.getProperty("output.driver"), 
+				System.getProperty("output.databaseURL") + 
+				System.getProperty("output.database"),
+				System.getProperty("output.user"), 
+				System.getProperty("output.password")
+			);
+		} catch(SQLException e) {			
+			throw new RuntimeException(e);			
+		}
 
 		usingDatabase = true;
 

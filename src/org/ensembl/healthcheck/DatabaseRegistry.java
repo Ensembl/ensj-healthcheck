@@ -17,6 +17,7 @@
  */
 package org.ensembl.healthcheck;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,6 +55,7 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 	 *          The regular expressions matching the databases to use. If null, match everything.
 	 * @param isSecondary
 	 *          If true, this is a secondary database registry.
+	 * @throws SQLException 
 	 */
 	public DatabaseRegistry(List<String> regexps, DatabaseType globalType, Species globalSpecies, boolean isSecondary) {
 
@@ -70,7 +72,15 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 
 			if (regexps == null || regexps.size() == 0) {
 
-				String[] names = DBUtils.listDatabases(server.getServerConnection(), null);
+				String[] names = null;
+				
+				try {
+					
+					names = DBUtils.listDatabases(server.getServerConnection(), null);
+					
+				} catch(SQLException e) {
+					logger.warning(e.getMessage());
+				}
 				addEntriesToRegistry(server, names, isSecondary);
 
 			} else {
@@ -79,7 +89,15 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 				while (it.hasNext()) {
 
 					String regexp = it.next();
-					String[] names = DBUtils.listDatabases(server.getServerConnection(), regexp);
+					String[] names = null;
+					
+					try {
+						
+						names = DBUtils.listDatabases(server.getServerConnection(), regexp);
+					
+					} catch(SQLException e) {
+						logger.warning(e.getMessage());
+					}
 
 					addEntriesToRegistry(server, names, isSecondary);
 
@@ -128,6 +146,10 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 
 	private void addEntriesToRegistry(DatabaseServer server, final String[] names, boolean isSecondary) {
 
+		if (names==null) {
+			return;
+		}
+		
 		for (String name : names) {
 
 			DatabaseRegistryEntry dbre = new DatabaseRegistryEntry(server, name, globalSpecies, globalType);

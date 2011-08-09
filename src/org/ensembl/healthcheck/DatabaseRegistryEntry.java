@@ -182,7 +182,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	public static DatabaseInfo getInfoFromDatabase(
 			DatabaseServer server,
 			final String name
-	) {
+	) throws SQLException {
 		SqlTemplate template = null;
 		
 		try {
@@ -355,7 +355,17 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 		DatabaseInfo info = getInfoFromName(name, species, type);
 		if (info.getType() == DatabaseType.UNKNOWN) {
 			// try and get the info from the database
-			DatabaseInfo dbInfo = getInfoFromDatabase(server, name);
+			
+			DatabaseInfo dbInfo = null;
+			
+			try {
+				
+				dbInfo = getInfoFromDatabase(server, name);
+				
+			} catch(SQLException e) {
+				
+				logger.warning(e.getMessage());
+			}
 			if (dbInfo != null) {
 				info = dbInfo;
 			}
@@ -488,12 +498,14 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 
 		if (connection == null) {
 
-			connection = server.getDatabaseConnection(getName());
-
+			try {
+				connection = server.getDatabaseConnection(getName());
+			} catch (SQLException e) {
+				
+				logger.warning(e.getMessage());
+			}
 		}
-
 		return connection;
-
 	}
 
 	/**
