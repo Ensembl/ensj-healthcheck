@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
@@ -26,7 +27,7 @@ public class TestCaseCellRenderer implements ListCellRenderer {
 		labelsForItems = new HashMap<TestClassListItem, JLabel>();
 	}
 	
-	public Component getListCellRendererComponent(
+	public JComponent getListCellRendererComponent(
 	        JList list,
 	        Object value,
 	        int index,
