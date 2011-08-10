@@ -36,7 +36,9 @@ public class GuiReporterTab extends JPanel implements Reporter {
 	
 	final protected Map<Class<? extends EnsTestCase>,List<ReportLine>> report;
 
-	final protected JList                       testList;
+	//final protected JList                       testList;
+	final protected TestClassList                       testList;
+	
 	final protected JScrollPane                 testListScrollPane;
 	final protected TestClassListModel          listModel;
 	final protected ReportPanel                 reportPanel;
@@ -59,7 +61,7 @@ public class GuiReporterTab extends JPanel implements Reporter {
 	public GuiReporterTab() {
 
 		report      = new HashMap<Class<? extends EnsTestCase>,List<ReportLine>>();
-		testList    = new JList();		
+		testList    = new TestClassList();		
 		listModel   = new TestClassListModel();
 		reportPanel = new ReportPanel();
 		
