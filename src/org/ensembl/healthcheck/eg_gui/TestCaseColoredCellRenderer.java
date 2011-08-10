@@ -2,11 +2,15 @@ package org.ensembl.healthcheck.eg_gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
 
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 
@@ -24,7 +28,7 @@ public class TestCaseColoredCellRenderer extends TestCaseCellRenderer {
 		colorForItems.put(item, success);
 	}
 	
-	public Component getListCellRendererComponent(
+	public JComponent getListCellRendererComponent(
 	        JList list,
 	        Object value,
 	        int index,
@@ -33,11 +37,12 @@ public class TestCaseColoredCellRenderer extends TestCaseCellRenderer {
 		
 		TestClassListItem entry = (TestClassListItem) value;
 		
-		Component label = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+		JComponent label = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 		
 		Boolean success = colorForItems.get(entry.getTestClass());
 		
-		//Color color = colorForItems.get(entry.getTestClass());
+		// What a test looks like when succeeded or failed, is configured here:
+		//
 		
 		if (success==null) {
 			label.setForeground(list.getForeground());
@@ -50,6 +55,18 @@ public class TestCaseColoredCellRenderer extends TestCaseCellRenderer {
 				label.setForeground(Color.WHITE);
 			}		
 		}
+		
+		// The look of a test when it is selected is set here:
+		//
+		
+		Font f = label.getFont();
+		
+		if (isSelected) {
+			label.setBorder(new BevelBorder(BevelBorder.LOWERED));
+		} else {
+			label.setBorder(new EmptyBorder(0, 0, 0, 0));
+		}
+		
 		return label;		
 	}
 
