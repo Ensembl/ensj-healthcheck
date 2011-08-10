@@ -163,9 +163,11 @@ public class GuiTestRunnerFrameComponentBuilder {
 				
 				if (curPath.getLastPathComponent() instanceof TestNode) {
 					return ((TestNode) curPath.getLastPathComponent()).getToolTipText();
-				} else {
-					return "No tooltip text";
 				}
+				if (curPath.getLastPathComponent() instanceof GroupNode) {
+					return ((GroupNode) curPath.getLastPathComponent()).getToolTipText();
+				}
+				return "No tooltip text";
 			}
 		};
 		
@@ -210,23 +212,7 @@ public class GuiTestRunnerFrameComponentBuilder {
     		final ActionListener al
     ) {
     	
-    	JList listOfTestsToBeRun = new JList(
-   	    	new TestClassListModel()
-   	    ) {
-    	      public String getToolTipText(MouseEvent e) {
-    	          int index = locationToIndex(e.getPoint());
-    	          if (-1 < index) {
-    	        	  
-    	        	  Class<? extends EnsTestCase> item = (Class<? extends EnsTestCase>) ((TestClassListItem) getModel().getElementAt(index)).getTestClass();
-    	        	  return item.getCanonicalName();
-
-    	          } else {
-
-    	        	  return null;
-
-    	          }
-    	        }
-    	      };
+    	JList listOfTestsToBeRun = new TestClassList();
     	
     	listOfTestsToBeRun.setToolTipText("");
     	    
