@@ -1,5 +1,6 @@
 package org.ensembl.healthcheck.eg_gui;
 
+import java.awt.Component;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureRecognizer;
 import java.awt.dnd.DragSource;
@@ -15,8 +16,10 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -50,7 +53,24 @@ import org.ensembl.healthcheck.util.DBUtils;
  */
 public class GuiTestRunnerFrameComponentBuilder {
 	
-	public static Border defaultEmptyBorder = BorderFactory.createEmptyBorder(6, 2, 6, 2);
+	//public static Border defaultEmptyBorder = BorderFactory.createEmptyBorder(6, 2, 6, 2);
+	public static Border defaultEmptyBorder = BorderFactory.createEmptyBorder(12, 4, 12, 4);
+	
+	public static Component createLeftJustifiedComponent(Component c) {
+		
+		Box box = Box.createHorizontalBox();
+		box.add(c);
+		box.add(Box.createHorizontalGlue());
+
+		return box;	
+	}
+	public static Component createLeftJustifiedText(String text) {
+		
+		JLabel t = new JLabel(text, JLabel.LEFT);
+		t.setAlignmentX(JLabel.LEFT_ALIGNMENT);
+
+		return createLeftJustifiedComponent(t);	
+	}
 	
 	public static JComboBox createDbServerSelector(List<ConfigureHost> dbDetails) {
 		
