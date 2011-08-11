@@ -184,8 +184,8 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 						"where ss.type='feature' and ss.data_set_id=" + dsetID);	
 			                                                                                                	
 				count = 0;
-				String[] metaFsetIDs  = ((String) fsInfo.get("feature_set_ids")).split(",");
-				String[] metaFtypeIDs = ((String) fsInfo.get("feature_type_ids")).split(",");
+				String[] metaFsetIDs  = ((String) fsInfo.get("feature_set_ids")).split(",\\s*");
+				String[] metaFtypeIDs = ((String) fsInfo.get("feature_type_ids")).split(",\\s*");
 				
 				//String[] ssFsetIDs    = (String[])((Array) rsDsetSupport.getArray("ss_feature_set_id")).getArray();
 				//String[] fsFsetIDs    = (String[])((Array) rsDsetSupport.getArray("fs_feature_set_id")).getArray();
