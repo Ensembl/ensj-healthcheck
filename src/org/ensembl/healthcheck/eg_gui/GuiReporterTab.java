@@ -61,6 +61,8 @@ public class GuiReporterTab extends JPanel implements Reporter {
 	
 	public GuiReporterTab() {
 
+		this.setBorder(GuiTestRunnerFrameComponentBuilder.defaultEmptyBorder);
+		
 		report      = new HashMap<Class<? extends EnsTestCase>,List<ReportLine>>();
 		testList    = new TestClassList(TestClassList.TestClassListToolTipType.CLASS);		
 		listModel   = new TestClassListModel();
@@ -208,26 +210,15 @@ class ReportPanel extends JPanel implements ActionListener {
 	final protected JPopupTextArea  message;
 	
 	final String copy_selected_text_action = "copy_selected_text_action";
-	
-	protected Component createLabel(String text) {
-		
-		Box bb = Box.createHorizontalBox();
-		
-		
-		JLabel t = new JLabel(text, JLabel.LEFT);
-		t.setAlignmentX(LEFT_ALIGNMENT);
 
-		bb.add(t);
-		bb.add(Box.createHorizontalGlue());
-
-		return bb;	
-	}
 	
 	protected Component createVerticalSpacing() {
 		return Box.createVerticalStrut(Constants.DEFAULT_VERTICAL_COMPONENT_SPACING);
 	}
 	
 	public ReportPanel() {
+		
+		this.setBorder(GuiTestRunnerFrameComponentBuilder.defaultEmptyBorder);
 		
 		Box singleLineInfo = Box.createVerticalBox();
 		
@@ -239,19 +230,21 @@ class ReportPanel extends JPanel implements ActionListener {
 		
 		description.setLineWrap(true);
 		
-		singleLineInfo.add(createLabel("Test class:"));
+		GuiTestRunnerFrameComponentBuilder g = null;
+		
+		singleLineInfo.add(g.createLeftJustifiedText("Test class:"));
 		singleLineInfo.add(testName);
 		singleLineInfo.add(createVerticalSpacing());
 		
-		singleLineInfo.add(createLabel("Description:"));
+		singleLineInfo.add(g.createLeftJustifiedText("Description:"));
 		singleLineInfo.add(description);
 		singleLineInfo.add(createVerticalSpacing());
 		
-		singleLineInfo.add(createLabel("Team responsible:"));
+		singleLineInfo.add(g.createLeftJustifiedText("Team responsible:"));
 		singleLineInfo.add(teamResponsible);
 		singleLineInfo.add(createVerticalSpacing());
 		
-		singleLineInfo.add(createLabel("Species name:"));
+		singleLineInfo.add(g.createLeftJustifiedText("Species name:"));
 		singleLineInfo.add(speciesName);
 		singleLineInfo.add(createVerticalSpacing());
 		
@@ -263,7 +256,7 @@ class ReportPanel extends JPanel implements ActionListener {
 		
 		message.setComponentPopupMenu(popup);
 		
-		singleLineInfo.add(createLabel("Output from test:"));
+		singleLineInfo.add(g.createLeftJustifiedText("Output from test:"));
 		
 		add(singleLineInfo,           BorderLayout.NORTH);
 		

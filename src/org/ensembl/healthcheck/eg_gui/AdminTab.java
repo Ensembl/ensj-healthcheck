@@ -11,7 +11,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -137,23 +136,24 @@ public class AdminTab extends JPanel {
 		
 		settingsForm.setBorder(
 			BorderFactory.createTitledBorder(
-				GuiTestRunnerFrameComponentBuilder.defaultEmptyBorder, 
+				GuiTestRunnerFrameComponentBuilder.defaultEmptyBorder,
 				"Settings"
 			)
 		);
-		settingsForm.add(new JLabel("PERL5LIB"));		
+		settingsForm.add(GuiTestRunnerFrameComponentBuilder.createLeftJustifiedText("PERL5LIB"));
+		
 		settingsForm.add(perl5libTextField);		
 		
 		perlBinary = new JTextField();
 		
 		perlBinary.setText(createPerlBinaryDefaultValue());
 		
-		settingsForm.add(new JLabel("Perl binary"));
+		settingsForm.add(GuiTestRunnerFrameComponentBuilder.createLeftJustifiedText("Perl binary"));
 		settingsForm.add(perlBinary);
 		
 		JButton fileChooserButton = new JButton("Choose perl interpreter..."); 
 		
-		settingsForm.add(fileChooserButton);
+		settingsForm.add(GuiTestRunnerFrameComponentBuilder.createLeftJustifiedComponent(fileChooserButton));
 
 		fileChooserButton.addActionListener(			
 			new ActionListener() {		
@@ -169,24 +169,22 @@ public class AdminTab extends JPanel {
 					}
 				}
 			}
-		) ;
-
+		);
 	
 		perlOptions = new JTextField();
 		
-		settingsForm.add(new JLabel("Perl options"));
+		settingsForm.add(GuiTestRunnerFrameComponentBuilder.createLeftJustifiedText("Perl options"));
 		settingsForm.add(perlOptions);
 		
 		settingsForm.add(Box.createVerticalStrut(Constants.DEFAULT_VERTICAL_COMPONENT_SPACING));
 		
-		settingsForm.add(checkoutPerlDependenciesButton);		
+		settingsForm.add(GuiTestRunnerFrameComponentBuilder.createLeftJustifiedComponent(checkoutPerlDependenciesButton));		
 		
 		Box form = Box.createVerticalBox();
 		
 		form.setAlignmentX(LEFT_ALIGNMENT);
 		
 		form.add(settingsForm);
-		//form.add(actionsForm);
 		
 		output = new JPopupTextArea();
 		
