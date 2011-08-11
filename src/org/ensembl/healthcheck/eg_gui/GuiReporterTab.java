@@ -2,6 +2,7 @@ package org.ensembl.healthcheck.eg_gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -21,6 +23,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.border.BevelBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -198,28 +201,59 @@ public class GuiReporterTab extends JPanel implements Reporter {
 
 class ReportPanel extends JPanel implements ActionListener {
 	
-	final protected JTextField level;
+	final protected JTextField testName;
+	final protected JPopupTextArea description;
 	final protected JTextField teamResponsible;
 	final protected JTextField speciesName;
 	final protected JPopupTextArea  message;
 	
 	final String copy_selected_text_action = "copy_selected_text_action";
 	
+	protected Component createLabel(String text) {
+		
+		Box bb = Box.createHorizontalBox();
+		
+		
+		JLabel t = new JLabel(text, JLabel.LEFT);
+		t.setAlignmentX(LEFT_ALIGNMENT);
+
+		bb.add(t);
+		bb.add(Box.createHorizontalGlue());
+
+		return bb;	
+	}
+	
+	protected Component createVerticalSpacing() {
+		return Box.createVerticalStrut(Constants.DEFAULT_VERTICAL_COMPONENT_SPACING);
+	}
+	
 	public ReportPanel() {
 		
 		Box singleLineInfo = Box.createVerticalBox();
 		
-		level           = new JPopupTextField("Level");
+		testName        = new JPopupTextField("Name");
+		description     = new JPopupTextArea(3, 0);
 		teamResponsible = new JPopupTextField("Team Responsible");
 		speciesName     = new JPopupTextField("Species Name");
 		message         = new JPopupTextArea ();
 		
-		singleLineInfo.add(level);
-		singleLineInfo.add(Box.createVerticalStrut(Constants.DEFAULT_VERTICAL_COMPONENT_SPACING));
+		description.setLineWrap(true);
+		
+		singleLineInfo.add(createLabel("Test class:"));
+		singleLineInfo.add(testName);
+		singleLineInfo.add(createVerticalSpacing());
+		
+		singleLineInfo.add(createLabel("Description:"));
+		singleLineInfo.add(description);
+		singleLineInfo.add(createVerticalSpacing());
+		
+		singleLineInfo.add(createLabel("Team responsible:"));
 		singleLineInfo.add(teamResponsible);
-		singleLineInfo.add(Box.createVerticalStrut(Constants.DEFAULT_VERTICAL_COMPONENT_SPACING));
+		singleLineInfo.add(createVerticalSpacing());
+		
+		singleLineInfo.add(createLabel("Species name:"));
 		singleLineInfo.add(speciesName);
-		singleLineInfo.add(Box.createVerticalStrut(Constants.DEFAULT_VERTICAL_COMPONENT_SPACING));
+		singleLineInfo.add(createVerticalSpacing());
 		
 		setLayout(new BorderLayout());
 		
@@ -229,7 +263,10 @@ class ReportPanel extends JPanel implements ActionListener {
 		
 		message.setComponentPopupMenu(popup);
 		
+		singleLineInfo.add(createLabel("Output from test:"));
+		
 		add(singleLineInfo,           BorderLayout.NORTH);
+		
 		add(new JScrollPane(message), BorderLayout.CENTER);
 	}
 	
@@ -242,7 +279,10 @@ class ReportPanel extends JPanel implements ActionListener {
 		
 			ReportLine firstReportLine = report.get(0);
 			
-			level.setText           ( firstReportLine.getLevelAsString()          );
+			testName.setText(firstReportLine.getTestCase().getName());
+			description.setText(firstReportLine.getTestCase().getDescription());
+			
+			//level.setText           ( firstReportLine.getLevelAsString()          );
 			speciesName.setText     ( firstReportLine.getSpeciesName()            );
 			
 			if (firstReportLine.getTeamResponsible()!=null) {			
