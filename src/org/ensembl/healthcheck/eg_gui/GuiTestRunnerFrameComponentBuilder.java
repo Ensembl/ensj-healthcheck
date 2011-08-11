@@ -212,7 +212,7 @@ public class GuiTestRunnerFrameComponentBuilder {
     		final ActionListener al
     ) {
     	
-    	JList listOfTestsToBeRun = new TestClassList();
+    	JList listOfTestsToBeRun = new TestClassList(TestClassList.TestClassListToolTipType.DESCRIPTION);
     	
     	listOfTestsToBeRun.setToolTipText("");
     	    

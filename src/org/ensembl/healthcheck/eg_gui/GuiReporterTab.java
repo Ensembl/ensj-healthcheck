@@ -62,7 +62,7 @@ public class GuiReporterTab extends JPanel implements Reporter {
 	public GuiReporterTab() {
 
 		report      = new HashMap<Class<? extends EnsTestCase>,List<ReportLine>>();
-		testList    = new TestClassList();		
+		testList    = new TestClassList(TestClassList.TestClassListToolTipType.CLASS);		
 		listModel   = new TestClassListModel();
 		reportPanel = new ReportPanel();
 		
