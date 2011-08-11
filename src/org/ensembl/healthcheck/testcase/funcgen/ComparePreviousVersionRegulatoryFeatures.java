@@ -55,9 +55,11 @@ public class ComparePreviousVersionRegulatoryFeatures extends ComparePreviousVer
 		
 		//Get ids for all DISPLAYABLE feature sets
 
-		String sql = "select fs.feature_set_id, fs.name, fs.type from feature_set fs, status s, status_name sn"+
+		//Expand this to all feature classes?
+
+		String sql = "select fs.name, fs.type from feature_set fs, status s, status_name sn"+
 		" where sn.name='DISPLAYABLE' and sn.status_name_id=s.status_name_id and s.table_name='feature_set' and "+
-		" s.table_id=fs.feature_set_id group by fs.feature_set_id";
+		" s.table_id=fs.feature_set_id and fs.type='regulatory' group by fs.feature_set_id";
 
 		try {
 
@@ -71,9 +73,9 @@ public class ComparePreviousVersionRegulatoryFeatures extends ComparePreviousVer
 				
 				//sql = "SELECT fs.name, COUNT(distinct f."+fIDs.getString(3)+"_feature_id) "+
 				sql = "SELECT fs.name, COUNT(*) "+
-				" FROM "+fIDs.getString(3)+"_feature f, feature_set fs " +
-				" WHERE f.feature_set_id=fs.feature_set_id and f.feature_set_id=" + fIDs.getString(1) +
-				" GROUP BY f.feature_set_id";
+				" FROM " + fIDs.getString(2) + "_feature f, feature_set fs " +
+				" WHERE f.feature_set_id=fs.feature_set_id and fs.name='" + fIDs.getString(1) +
+				"' GROUP BY f.feature_set_id";
 				
 				try {
 					//logger.finest("Counting " + entityDescription() + " for " + dbre.getName() + ':' + fIDs.getString(2));
