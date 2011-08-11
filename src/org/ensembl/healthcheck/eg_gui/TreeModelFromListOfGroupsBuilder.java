@@ -70,7 +70,7 @@ public class TreeModelFromListOfGroupsBuilder {
 	 */
 	public static MutableTreeNode GroupOfTestsToTreeModel(GroupOfTests g) {
 		
-		MutableTreeNode root = new DefaultMutableTreeNode(g.getName());
+		MutableTreeNode root = new GroupNode(g);
 		
 		// A group of tests to keep track of which tests are present in the 
 		// groups of which the current group comprises. Tests will not be
