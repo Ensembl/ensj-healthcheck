@@ -116,6 +116,25 @@ public class GOXrefs extends SingleDatabaseTestCase {
 
 			ReportManager.correct(this, con, "No blank or null linkage_types in ontology_xref");
 		}
+		
+		
+		//check that linkage_type values are one of the allowable values
+		String[] allowable_linkage_types = {"IC", "IBA", "IDA", "IEA","IEP", "IGI", "IMP", "IPI", "ISS", "NAS", "ND", "TAS", "NR", "RCA", "EXP", "ISO", "ISA", "ISM", "IGC"};
+		
+		String[] linkage_types = getColumnValues(
+				con,
+				"SELECT DISTINCT(linkage_type) FROM ontology_xref WHERE linkage_type != '' AND linkage_type NOT IN ('" + Utils.arrayToString(allowable_linkage_types, "','") + "')");
+		if (linkage_types.length > 0) {
+
+			ReportManager.problem(this, con, "Linkage type(s): " + Utils.arrayToString(linkage_types, ", ") + " incorrect. Allowable values are: "+ Utils.arrayToString(allowable_linkage_types, ", "));
+			result = false;
+
+		} else {
+
+			ReportManager.correct(this, con, "Linkage type values in ontology_xref are correct");
+
+		}		
+		
 
 		// check that *only* GO xrefs have linkage types assigned
 		String[] dbs = getColumnValues(
