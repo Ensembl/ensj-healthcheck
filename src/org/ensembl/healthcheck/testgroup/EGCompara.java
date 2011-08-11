@@ -22,8 +22,10 @@ import org.ensembl.healthcheck.testcase.eg_compara.EGForeignKeyMethodLinkSpecies
 public class EGCompara extends GroupOfTests {
 
 	public EGCompara() {
-		addTest(
-				
+		
+		setDescription("Group of tests for EnsemblGenomes compara databases.");
+		
+		addTest(				
 			EGCommon.class,
 			EGComparaGeneTree.class,
 			EGCheckSynteny.class,
@@ -35,8 +37,7 @@ public class EGCompara extends GroupOfTests {
 			ForeignKeyMethodLinkId.class,
 			ForeignKeyTaxonId.class,
 			EGCheckEmptyLocators.class,
-			EGCheckNoTreeStableIds.class,
-			
+			EGCheckNoTreeStableIds.class,			
 			MultipleGenomicAlignBlockIds.class
 		);
 	}

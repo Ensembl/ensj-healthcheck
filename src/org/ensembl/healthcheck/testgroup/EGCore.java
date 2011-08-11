@@ -12,6 +12,9 @@ import org.ensembl.healthcheck.GroupOfTests;
 public class EGCore extends GroupOfTests {
 
 	public EGCore() {
+		
+		setDescription("Supergroup of tests for core databases from Ensembl Genomes.");
+		
 		addTest(
 			EGCoreGeneModel.class,
 			EGCoreMeta.class,
@@ -20,5 +23,6 @@ public class EGCore extends GroupOfTests {
 			EGCommon.class,
 			EGCoreMulti.class
 		);
+		
 	}
 }
