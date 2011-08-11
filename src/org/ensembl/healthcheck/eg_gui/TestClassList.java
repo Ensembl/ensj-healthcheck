@@ -6,8 +6,40 @@ import javax.swing.JList;
 
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 
+/**
+ * 
+ * <p>
+ * 	A JList for lists of tests.
+ * </p>
+ * 
+ * @author mnuhn
+ *
+ */
 public class TestClassList extends JList {
 
+	/**
+	 * Determines which kind of tooltip help will be shown.
+	 */
+	protected TestClassListToolTipType testClassListToolTipType;
+	
+	public TestClassListToolTipType getTestClassListToolTipType() {
+		return testClassListToolTipType;
+	}
+
+	public void setTestClassListToolTipType(
+			TestClassListToolTipType testClassListToolTipType) {
+		this.testClassListToolTipType = testClassListToolTipType;
+	}
+
+	public static enum TestClassListToolTipType {
+		CLASS, DESCRIPTION
+	};
+	
+	public TestClassList(TestClassListToolTipType testClassListToolTipType) {
+		this();
+		setTestClassListToolTipType(testClassListToolTipType);
+	}
+	
 	public TestClassList() {
 		super(new TestClassListModel());
 	}
@@ -18,29 +50,35 @@ public class TestClassList extends JList {
 
         if (-1 < index) {
       	  
-      	  Class<? extends EnsTestCase> item = (Class<? extends EnsTestCase>) 
-      	  	(
-      	  		(TestClassListItem) getModel().getElementAt(index)
-      	  	).getTestClass();
+			Class<? extends EnsTestCase> item = (Class<? extends EnsTestCase>) 
+			(
+				(TestClassListItem) getModel().getElementAt(index)
+			).getTestClass();
+        	
+        	if (testClassListToolTipType==TestClassListToolTipType.DESCRIPTION) {
 
-			EnsTestCase etc = null;
-			String description = "Couldn't get a description for this test.";
-			  
-			try {
-				etc = item.newInstance();
-				description = etc.getDescription(); 
-			} catch (InstantiationException e1) {
-				e1.printStackTrace();
-			} catch (IllegalAccessException e1) {
-				e1.printStackTrace();
-			}
-      	  
-			return item.getCanonicalName() + ": " + description;
+        		String tooltiptext = "";
+					
+				EnsTestCase etc = null;
+				tooltiptext = "Couldn't get a description for this test.";
+				
+				try {
+					etc         = item.newInstance();
+					tooltiptext = etc.getDescription();
 
-        } else {
+				} catch (InstantiationException e1) {
+					e1.printStackTrace();
+				} catch (IllegalAccessException e1) {
+					e1.printStackTrace();
+				}
 
-      	  return null;
+				return tooltiptext;
+        	}
 
+        	if (testClassListToolTipType==TestClassListToolTipType.CLASS) {
+        		return item.getCanonicalName();
+        	}
         }
+        return "";
       }
 }
