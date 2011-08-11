@@ -21,7 +21,17 @@ import javax.swing.text.DefaultEditorKit;
  */
 class JPopupTextArea extends JTextArea {
 
+	protected void addPopupMenu() {
+		new CopyAndPastePopupBuilder().addPopupMenu(this);
+	}
+	
+	public JPopupTextArea(int rows, int columns) {
+    	super(rows, columns);
+    	addPopupMenu();
+    }
+
     public JPopupTextArea() {
-    	new CopyAndPastePopupBuilder().addPopupMenu(this);
+    	super();
+    	addPopupMenu();
     }
 }
