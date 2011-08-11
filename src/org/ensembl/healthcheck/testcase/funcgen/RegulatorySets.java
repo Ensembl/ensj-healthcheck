@@ -253,7 +253,7 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 				}
 				
 				//CHECK META KEY focus_feature_set_ids		
-				String[] metaFFsetIDs  = ((String) fsInfo.get("focus_feature_set_ids")).split(",");
+				String[] metaFFsetIDs  = ((String) fsInfo.get("focus_feature_set_ids")).split(",\\s*");
 				
 				
 				for(int i=0; i < metaFFsetIDs.length; i++){
