@@ -87,11 +87,11 @@ public class FuncgenStableID extends SingleDatabaseTestCase {
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 
-		boolean result = true;
+		//boolean result = true;
 
 		Connection con = dbre.getConnection();
 
-		result &= checkStableIDs(con, "regulatory_feature");
+		//result &= checkStableIDs(con, "regulatory_feature");
 
 
 		//No need for any of this prefix stuff as we only store ints
@@ -107,7 +107,12 @@ public class FuncgenStableID extends SingleDatabaseTestCase {
 
 		//result = checkStableIDTimestamps(con);
 		
-		return result;
+		//return result;
+
+
+		//Just merge this with checkStableIDs?
+
+		return checkStableIDs(con, "regulatory_feature");
 	}
 
 	/**
@@ -137,17 +142,22 @@ public class FuncgenStableID extends SingleDatabaseTestCase {
 
 		try {
 			Statement stmt = con.createStatement();
-			// System.out.println("Executing " + sql);
-			ResultSet fsetIdNames = stmt.executeQuery("SELECT fs.feature_set_id, fs.name from feature_set fs, status s, status_name sn where fs.type='regulatory' and fs.feature_set_id=s.table_id and s.table_name='feature_set' and s.status_name_id=sn.status_name_id and sn.name='DISPLAYABLE'");
+			String     sql = "SELECT fs.feature_set_id, fs.name from feature_set fs, status s, status_name sn " +
+				"where fs.type='regulatory' and fs.feature_set_id=s.table_id and s.table_name='feature_set' " + 
+				"and s.status_name_id=sn.status_name_id and sn.name='DISPLAYABLE'";
+			
+			//System.out.println("Executing " + sql);
+			ResultSet fsetIdNames = stmt.executeQuery(sql);
+
+		
 
 			
 			while (fsetIdNames != null && fsetIdNames.next()) {
-				
-				//
-				int nStableIDs = getRowCount(con, "SELECT count(stable_id) from regulatory_feature where " + 
-											 "stable_id is not NULL and feature_set_id=" + fsetIdNames.getString(1));
-				// ReportManager.info(this, con, "Num " + typeName + "s stable ids = " +
-				// nStableIDs);
+				sql = "SELECT count(stable_id) from regulatory_feature where " + 
+					"stable_id is not NULL and feature_set_id=" + fsetIdNames.getString(1);
+				System.out.println("Executing " + sql);
+				int nStableIDs = getRowCount(con, sql);
+			
 				
 				//We could really do with a HC to check we have RegFeats on all main Chrs
 
