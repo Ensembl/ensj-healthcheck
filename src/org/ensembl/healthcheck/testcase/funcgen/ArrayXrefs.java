@@ -195,8 +195,13 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 		
 			ResultSet rs = efgCon.createStatement().executeQuery("SELECT s.seq_region_id, s.name, s.core_seq_region_id FROM seq_region s, coord_system cs " +
 					"WHERE cs.coord_system_id=s.coord_system_id AND cs.name='chromosome' and cs.attrib='default_version' and " +
-							"cs.schema_build='" + schemaBuild + "' group by s.seq_region_id");
+							"cs.schema_build='" + schemaBuild + "' and s.name not like '%\\_%' group by s.seq_region_id");
 	
+
+
+			//added not like '\_' to try and avoid non_ref stuff
+			//maybe we just remove this limit of 75?
+
 
 			//Do we even need this core_seq_region_id translation?
 			//Just link via the sr.name!
