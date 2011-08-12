@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.generic.CoreForeignKeys;
+import org.ensembl.healthcheck.Team;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key relationships.
@@ -37,6 +38,8 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 		addToGroup("funcgen");
 		setDescription("Check for broken foreign-key relationships.");
 		setHintLongRunning(true);
+		setTeamResponsible(Team.FUNCGEN);
+		removeSecondTeamResponsible(); // Does not appear to be imported
 	}
 
 	/**
