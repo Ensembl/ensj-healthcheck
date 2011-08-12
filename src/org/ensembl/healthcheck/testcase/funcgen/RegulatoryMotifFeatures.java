@@ -69,27 +69,38 @@ public class RegulatoryMotifFeatures extends SingleDatabaseTestCase {
 		int fmaxLength = 2000;  // Should add this as attribute to FuncgenSingleDatabaseTestCase?
 
 		int regAMFs = getRowCount
-			( con, "SELECT COUNT(distinct amf.motif_feature_id) from regulatory_attribute ra JOIN " +
-			  "(associated_motif_feature amf JOIN annotated_feature af on af.annotated_feature_id=amf.annotated_feature_id " +
-			  "AND (af.seq_region_end - af.seq_region_start +1) <= " + fmaxLength + ") " + 
-			  "on amf.annotated_feature_id=ra.attribute_feature_id " + 
-			  "where ra.attribute_feature_table='annotated'"
-			 );
+			( con, "select count(distinct amf.motif_feature_id) from " + 
+			  "associated_motif_feature amf, annotated_feature af, regulatory_attribute ra " + 
+			  "where af.annotated_feature_id=amf.annotated_feature_id and " + 
+			  "ra.attribute_feature_id=af.annotated_feature_id and " + 
+			  "ra.attribute_feature_table='annotated' and " + 
+			  "(af.seq_region_end - af.seq_region_start +1) <= " + fmaxLength);
+
+
+		//Why don't we just do the one suggested useful query here
+		//Was running over night
 
 
 		
 		if(regMFs != regAMFs){
+
+			//Need to optimize this as it is running overnight
+			//This also isn't in the form of the correct insert
+
 			ReportManager.problem
 				( this,  con, "The number of motif features associated to regulatory features (" + regMFs +
-				  ") does not correspond to the number of motif features within its associated annotated features (" +regAMFs + ")\n" +
-				  "USEFUL SQL:\tSELECT distinct(amf.motif_feature_id) from regulatory_attribute ra " +
-				  "JOIN (associated_motif_feature amf JOIN annotated_feature af on af.annotated_feature_id=amf.annotated_feature_id " +
-				  "AND (af.seq_region_end - af.seq_region_start +1) <= " + fmaxLength +
-				  "LEFT JOIN regulatory_attribute ra1 on amf.motif_feature_id=ra1.attribute_feature_id AND attribute_feature_table='motif') " + 
-				  "ON amf.annotated_feature_id=ra.attribute_feature_id " +
-				  "where ra.attribute_feature_table='annotated' and ra1.attribute_feature_id is NULL"
-				  );	
-			//This SQL takes ~ 30-60 mins
+				  ") does not correspond to the number of motif features within its associated annotated features (" 
+				  + regAMFs + ") which are less than " + fmaxLength + " bp\n" +
+				  "USEFUL SQL:\nALTER table regulatory_attribute add index `attribute_id_type`(attribute_feature_table, attribute_feature_id);\n" +
+				  "insert ignore into regulatory_attribute select ra.regulatory_feature_id, amf.motif_feature_id, 'motif' from " + 
+				  "annotated_feature af, regulatory_attribute ra, associated_motif_feature amf left join " + 
+				  "regulatory_attribute ra1 on (amf.motif_feature_id=ra1.attribute_feature_id and ra1.attribute_feature_table='motif') " + 
+				  "where af.annotated_feature_id=amf.annotated_feature_id and ra.attribute_feature_id=af.annotated_feature_id and " + 
+				  "ra.attribute_feature_table='annotated' and (af.seq_region_end - af.seq_region_start +1) <= " + 
+				  fmaxLength + " and ra1.attribute_feature_id is NULL;\nALTER table regulatory_attribute drop index `attribute_id_type`;"
+				  );
+			//This now takes seconds with the new temporary index
+			
 			result = false;
 		}
 		
