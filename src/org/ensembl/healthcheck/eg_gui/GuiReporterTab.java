@@ -1,29 +1,24 @@
 package org.ensembl.healthcheck.eg_gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.Box;
-import javax.swing.DefaultListModel;
-import javax.swing.JLabel;
-import javax.swing.JList;
+
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.border.BevelBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -37,13 +32,13 @@ import org.ensembl.healthcheck.testcase.EnsTestCase;
 
 public class GuiReporterTab extends JPanel implements Reporter {
 	
-	final protected Map<Class<? extends EnsTestCase>,List<ReportLine>> report;
-
 	final protected TestClassList               testList;
 	final protected JScrollPane                 testListScrollPane;
 	final protected TestClassListModel          listModel;
 	final protected ReportPanel                 reportPanel;
 	final protected TestCaseColoredCellRenderer testCaseCellRenderer;
+	
+	final protected Map<Class<? extends EnsTestCase>,GuiReportPanelData> reportData;
 	
 	public void selectDefaultListItem() {
 		
@@ -63,7 +58,8 @@ public class GuiReporterTab extends JPanel implements Reporter {
 
 		this.setBorder(GuiTestRunnerFrameComponentBuilder.defaultEmptyBorder);
 		
-		report      = new HashMap<Class<? extends EnsTestCase>,List<ReportLine>>();
+		reportData  = new HashMap<Class<? extends EnsTestCase>,GuiReportPanelData>();
+		
 		testList    = new TestClassList(TestClassList.TestClassListToolTipType.CLASS);		
 		listModel   = new TestClassListModel();
 		reportPanel = new ReportPanel();
@@ -105,10 +101,10 @@ public class GuiReporterTab extends JPanel implements Reporter {
 					
 					if (!arg0.getValueIsAdjusting()) {
 						reportPanel.setData(
-							report.get(
-									( (TestClassListItem) listModel.getElementAt(testList.getSelectedIndex()) ).getTestClass()
-							)
-						);
+								reportData.get(
+										( (TestClassListItem) listModel.getElementAt(testList.getSelectedIndex()) ).getTestClass()
+								)
+							);
 					}
 				}
 			}
@@ -120,10 +116,9 @@ public class GuiReporterTab extends JPanel implements Reporter {
 		
 		final Class<? extends EnsTestCase> currentKey = reportLine.getTestCase().getClass();
 		
-		if (!report.containsKey(currentKey)) {
+		if (!reportData.containsKey(currentKey)) {
 			
-			report.put(currentKey, new ArrayList<ReportLine>());
-			
+			reportData.put(currentKey, new GuiReportPanelData(reportLine));
 			testCaseCellRenderer.setOutcome(currentKey, null);
 
 			// This method will be called from a different thread. Therefore
@@ -145,11 +140,10 @@ public class GuiReporterTab extends JPanel implements Reporter {
 						}
 					}
 				);
-		}
+		} else {
 		
-		// Save the new reportline in the report hashmap
-		//
-		report.get(currentKey).add(reportLine);
+			reportData.get(currentKey).addReportLine(reportLine);
+		}
 		
 		// If anything was reported as a problem, the outcome is false.
 		//
@@ -167,8 +161,8 @@ public class GuiReporterTab extends JPanel implements Reporter {
 						@Override public void run() {
 							
 							reportPanel.setData(
-	
-									report.get(
+									
+									reportData.get(
 											( (TestClassListItem) listModel.getElementAt(testList.getSelectedIndex()) ).getTestClass()
 									)
 								);
@@ -252,53 +246,24 @@ class ReportPanel extends JPanel implements ActionListener {
 		
 		final JPopupMenu popup = new JPopupMenu();		
 		
-		message.add(GuiTestRunnerFrameComponentBuilder.makeMenuItem("Copy selected text", this, copy_selected_text_action));
-		
+		message.add(GuiTestRunnerFrameComponentBuilder.makeMenuItem("Copy selected text", this, copy_selected_text_action));		
 		message.setComponentPopupMenu(popup);
 		
 		singleLineInfo.add(g.createLeftJustifiedText("Output from test:"));
 		
 		add(singleLineInfo,           BorderLayout.NORTH);
-		
 		add(new JScrollPane(message), BorderLayout.CENTER);
 	}
 	
-	public void setData(List<ReportLine> report) {
+	public void setData(GuiReportPanelData reportData) {
 		
-		// It is possible that there is no report for a test, when it has not
-		// created a message yet.
-		//
-		if (report.size()>0) {
-		
-			ReportLine firstReportLine = report.get(0);
-			
-			testName.setText(firstReportLine.getTestCase().getName());
-			description.setText(firstReportLine.getTestCase().getDescription());
-			
-			//level.setText           ( firstReportLine.getLevelAsString()          );
-			speciesName.setText     ( firstReportLine.getSpeciesName()            );
-			
-			if (firstReportLine.getTeamResponsible()!=null) {			
-				teamResponsible.setText ( firstReportLine.getTeamResponsible().name() );			
-			} else {			
-				teamResponsible.setText ( "No team set." );			
-			}
-			
-			StringBuffer messageText = new StringBuffer(); 
-			for (ReportLine currentReportLine : report) {
-			
-				messageText.append(currentReportLine.getMessage());
-				messageText.append("\n");
-			}
-			message.setText( messageText.toString()  );
-			
-		} else {
-			
-			message.setText( "Nothing has been reported yet."  );
-			
-		}
+		testName        .setText (reportData.getTestName());
+		description     .setText (reportData.getDescription());
+		speciesName     .setText (reportData.getSpeciesName());
+		teamResponsible .setText (reportData.getTeamResponsible());
+		message         .setText (reportData.getMessage());
 	}
-
+	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 
