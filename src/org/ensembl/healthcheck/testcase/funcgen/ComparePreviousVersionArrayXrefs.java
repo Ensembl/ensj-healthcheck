@@ -22,6 +22,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
 
+
 /**
  * Compare the xrefs in the current database with those from the equivalent
  * database on the secondary server.
@@ -47,7 +48,7 @@ public class ComparePreviousVersionArrayXrefs extends ComparePreviousVersionBase
 	//We could add a run wrapper here to compare DISPLAYABLE arrays first?
 
 
-	// ----------------------------------------------------------------------
+	// ---------[-------------------------------------------------------------
 
 	protected Map getCounts(DatabaseRegistryEntry dbre) {
 
@@ -77,6 +78,8 @@ public class ComparePreviousVersionArrayXrefs extends ComparePreviousVersionBase
 				//Set this to ProbeSet for affy, and Probe for all others
 				//Would be nice to have this in the DB, but rely on vendor for now
 				
+				//Should probably 
+
 				if (arrayIDs.getString(2).equals("AFFY")) { //ProbeSets
 					//
 					
@@ -96,6 +99,10 @@ public class ComparePreviousVersionArrayXrefs extends ComparePreviousVersionBase
 						" GROUP BY a.array_id";
 				}
 
+
+				//SELECT a.name AS array_name, COUNT(distinct ox.object_xref_id) AS count FROM external_db edb, xref x, object_xref ox, probe p, array_chip ac, array a WHERE edb.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id and ox.ensembl_id=p.probe_id and p.array_chip_id=ac.array_chip_id and ac.array_id=a.array_id and ox.ensembl_object_type='Probe' and edb.db_display_name='EnsemblTranscript' and a.array_id='' GROUP BY a.array_id
+
+
 				//Can rely on only having xrefs against one edb per array due to 
 				//mandatory rollback in probe2transcript
 
@@ -108,7 +115,8 @@ public class ComparePreviousVersionArrayXrefs extends ComparePreviousVersionBase
 				//Recreate getCountsBySQL
 			
 				try {
-					logger.finest("Counting " + entityDescription() + " for " + dbre.getName() + ':' + arrayIDs.getString(3));
+					logger.finest("Counting " + entityDescription() + " for " + dbre.getName() + ':' + arrayIDs.getString(3)
+								  + "\nUSING SQL:\n" + sql);
 					ResultSet xrefCounts = cntStmt.executeQuery(sql);
 								
 					while (xrefCounts != null && xrefCounts.next()) {
