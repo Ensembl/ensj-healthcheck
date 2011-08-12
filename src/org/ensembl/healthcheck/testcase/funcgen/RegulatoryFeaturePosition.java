@@ -31,8 +31,8 @@ public class RegulatoryFeaturePosition extends SingleDatabaseTestCase {
 
 		setDescription("Checks if all motifs from annotated features are associated to their respective regulatory features.");
 		setPriority(Priority.AMBER);
-		setEffect("Regulatory Features will seem to miss some motif features.");
-		setFix("Re-project motif features or fix manually.");
+		//	setEffect("Regulatory Features will seem to miss some motif features.");
+		//setFix("Re-project motif features or fix manually.");
 	}
 	
 	
@@ -79,11 +79,8 @@ public class RegulatoryFeaturePosition extends SingleDatabaseTestCase {
 		}		
 				
 
-		//Could do this on same server in one request
-		//USEFUL SQL would have to be on same server?
-		//Or can we build the SQL from the data we fetch?
-		//Need fix SQL here too, would have to account for bound and core regions
-		//Probably don't need to do this? Just fix in pipeline?
+	
+	
 
 		//Get existing distinct seq_region_id and their limits from the core DB
 		//This needs to be restricted to the schemaBuild otherwise we may be using the wrong seq_region
@@ -154,6 +151,7 @@ public class RegulatoryFeaturePosition extends SingleDatabaseTestCase {
 			
 				//Will executing the fix screw the API as the underlying feats have not been patched?
 				//Should we also test for start>end?
+				//Probably don't need to do this? Just fix in pipeline?
 
 				ReportManager.problem(this, efgCon, "SeqRegion " + srName + " has " + featCount + 
 									  " features exceeding seq_region bounds\nUSEFUL SQL:\n" + usefulSQL);
