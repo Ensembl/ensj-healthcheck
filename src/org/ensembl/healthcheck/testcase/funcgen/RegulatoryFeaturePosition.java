@@ -128,7 +128,7 @@ public class RegulatoryFeaturePosition extends SingleDatabaseTestCase {
 				"WHERE seq_region_id=" + funcgenRegionID + 
 				" AND  ((seq_region_start <= 0) OR (bound_seq_region_start <= 0) " +
 				"OR (bound_seq_region_end > " + srLength + ") OR (seq_region_end > " + srLength + "))";
-			//<= 0 should never happen as it is an insigned field!
+			//< 0 should never happen as it is an insigned field!
    
 			Integer featCount = getRowCount(efgCon, sql); 	
 			//This is already being 'caught' higher in the stack, but no exit
@@ -141,12 +141,20 @@ public class RegulatoryFeaturePosition extends SingleDatabaseTestCase {
 			}
 			
 			if(featCount > 0){
-				String usefulSQL = "UPDATE regulatory_feature set bound_seq_region_end=" + srLength +  
-					" WHERE seq_region_id=" + funcgenRegionID + 
-					" AND bound_seq_region_end > " + srLength + ";\n" +
-					"UPDATE regulatory_feature set seq_region_end=" + srLength +  
-					" WHERE seq_region_id=" + funcgenRegionID + 
-					" AND seq_region_end > " + srLength + ";\n";
+				//String updateSQL = "UPDATE regulatory_feature set bound_seq_region_end=" + srLength +  
+				//	" WHERE seq_region_id=" + funcgenRegionID + 
+				//	" AND bound_seq_region_end > " + srLength + ";\n" +
+				//	"UPDATE regulatory_feature set seq_region_end=" + srLength +  
+				//	" WHERE seq_region_id=" + funcgenRegionID + 
+				//	" AND seq_region_end > " + srLength + ";\n";
+
+
+				String deleteSQL = "\nDELETE ra, rf from regulatory_feature rf join regulatory_attribute ra using (regulatory_feature_id) WHERE seq_region_id=" + funcgenRegionID + 
+					" AND  ((seq_region_start <= 0) OR (bound_seq_region_start <= 0) " +
+					"OR (bound_seq_region_end > " + srLength + ") OR (seq_region_end > " + srLength + "))";
+
+					String usefulSQL = sql + deleteSQL;
+
 				//Omit start <0 for now as it should never happen
 			
 				//Will executing the fix screw the API as the underlying feats have not been patched?
