@@ -69,7 +69,7 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 
 		// --------------------------------
 		// A gene that has at least one transcript.biotype='protein_coding' should have gene.biotype='protein_coding'
-		String sql = "SELECT COUNT(*) FROM gene g WHERE g.gene_id IN (SELECT tr.gene_id FROM transcript tr WHERE tr.biotype='protein_coding') AND g.biotype!='protein_coding'";
+		String sql = "SELECT COUNT(*) FROM gene g WHERE g.gene_id IN (SELECT tr.gene_id FROM transcript tr WHERE tr.biotype='protein_coding') AND g.biotype NOT IN ('protein_coding', 'polymorphic_pseudogene')";
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sanger_vega ignore genes that do not have source havana or WU
 			sql += "AND g.biotype!='polymorphic' AND g.biotype!='polymorphic_pseudogene' and (g.source='havana' or g.source='WU')";
 		}
