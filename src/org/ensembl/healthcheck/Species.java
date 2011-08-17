@@ -46,6 +46,7 @@ public enum Species {
 	MICROCEBUS_MURINUS(30608, "micMur", "ENSMIC", "mouse_lemur,mouselemur,microcebus,microcebus_murinus"),
 	MONODELPHIS_DOMESTICA(13616, "BROADO", "ENSMOD", "opossum,monodelphis,mdomestica,mdomesticus,monodelphisdomestica,monodelphisdomesticus,monodelphis_domesticus,monodelphis_domestica"),
 	MUS_MUSCULUS(10090, "NCBIM", "ENSMUS", "mouse,mmusculus,musmusculus,mus_musculus"),
+    MUSTELA_PUTORIUS_FURO(9669, "MusPutFur1.0", "ENSMPU", "ferret,domestic ferret,Mustela_putorius_furo,Mustela putorius furo"),
 	MYOTIS_LUCIFUGUS(59463, "Myoluc", "ENSMLU", "microbat,little_brown_bat,mlucifugus,myotis,myotis_lucifugus"),
 	NOMASCUS_LEUCOGENYS(61853, "NLEU", "ENSNLE","gibbon,nleu,nomleu,nleugogenys,nomascus_leucogenys"),
 	OCHOTONA_PRINCEPS(9978, "PIKA", "ENSOPR", "pika,Americanpika,American_pika,oprinceps,ochotona,ochotona_princeps"),
