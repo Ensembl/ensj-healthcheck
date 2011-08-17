@@ -6,24 +6,18 @@
  */
 package org.ensembl.healthcheck.testcase;
 
-import java.io.IOException;
-import java.util.List;
-
-
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.util.ProcessExec;
-
-import java.sql.Connection;;
 
 /**
- * Base class for invoking a perl script to carry out the test and parse the
+ * <p>
+ * 	Base class for invoking a perl script to carry out the test and parse the
  * output.
+ * </p>
  * 
  * @author dstaines
  * 
  */
-public abstract class AbstractPerlBasedTestCase extends SingleDatabaseTestCase {
+public abstract class AbstractPerlBasedTestCase extends AbstractShellBasedTestCase {
 
 	public static final String PERLOPTS = "perlopts";
 	public static final String PERL     = "perl";
@@ -63,102 +57,33 @@ public abstract class AbstractPerlBasedTestCase extends SingleDatabaseTestCase {
 	 */
 	protected abstract String getPerlScript(DatabaseRegistryEntry dbre, int speciesId);
 
-	/**
-	 * Creates an Appendable object to which Stdout is delegated
-	 * 
-	 */
-	protected abstract Appendable createStdoutProcessor(EnsTestCase e, Connection c);
-
-	/**
-	 * Creates an Appendable object to which Stderr is delegated
-	 * 
-	 */
-	protected abstract Appendable createStderrProcessor(EnsTestCase e, Connection c);
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.ensembl.healthcheck.testcase.SingleDatabaseTestCase#run(org.ensembl
-	 * .healthcheck.DatabaseRegistryEntry)
-	 */
-	@Override
-	public boolean run(final DatabaseRegistryEntry dbre) {
+	protected String createCommandLine(
+			final DatabaseRegistryEntry dbre,
+			int speciesId
+	) {
+		String commandLine = getPerlScript(dbre, speciesId);
 		
-		boolean passes = true;
-		
-		List<Integer> dbre_speciesIds = dbre.getSpeciesIds();
-		
-		// Make sure species ids were configured. If not, the perl test will 
-		// not be run. The warning message may be overlooked by a user, 
-		// therefore the test is set to fail in order to get attention.
-		//
-		if (dbre_speciesIds.size() == 0) {
+		if (config!=null) {
 			
-			logger.warning(
-				"No species ids! Perhaps no databases were configured?"
-				+ " This test will not be run."
-			);
-			passes = false;
-		}
-		
-		for (int speciesId : dbre_speciesIds) {
-			
-			String commandLine = getPerlScript(dbre, speciesId);
-			
-			if (config!=null) {
+			if (!config.getPerlBinary().isEmpty()) {
 				
-				if (!config.getPerlBinary().isEmpty()) {
+				if (config.getPerlOptions().isEmpty()) {
 					
-					if (config.getPerlOptions().isEmpty()) {
-						
-						commandLine = config.getPerlBinary() + " " + commandLine;
-						
-					} else {
-						
-						commandLine = config.getPerlBinary() +  " " + config.getPerlOptions() + " " + commandLine;
-					}
+					commandLine = config.getPerlBinary() + " " + commandLine;
+					
+				} else {
+					
+					commandLine = config.getPerlBinary() +  " " + config.getPerlOptions() + " " + commandLine;
 				}
 			}
-			
-			final EnsTestCase currentTestCase = this;
-			
-			Appendable out = createStdoutProcessor(currentTestCase, dbre.getConnection());
-			Appendable err = createStderrProcessor(currentTestCase, dbre.getConnection());
-			
-			try {
-				
-				int exit;
-				
-				if (getPERL5LIB() == null) {
-					exit = ProcessExec.exec(commandLine, out, err);
-				} else {
-					exit = ProcessExec.exec(
-						commandLine, 
-						out, 
-						err, 
-						new String[] { 
-							"PERL5LIB=" + getPERL5LIB() 
-						}
-					);
-				}
-				
-				if (exit == 0) {
-					ReportManager.correct(this, dbre.getConnection(), "Script "
-							+ commandLine + " completed successfully");
-				} else {
-					ReportManager.problem(this, dbre.getConnection(), "Script "
-							+ commandLine + " did not complete successfully");
-					passes = false;
-				}
-			} catch (IOException e) {
-				ReportManager.problem(this, dbre.getConnection(),
-						"Could not execute " + commandLine + ": "
-								+ e.getMessage());
-				passes = false;
-			} 
 		}
-		return passes;
+		return commandLine;
+	}
+	
+	protected String[] environmentVarsToSet() {
+		return new String[] {
+				"PERL5LIB=" + getPERL5LIB()
+		};
 	}
 }
 

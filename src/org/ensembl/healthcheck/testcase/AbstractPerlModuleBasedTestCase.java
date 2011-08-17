@@ -6,11 +6,11 @@
  */
 package org.ensembl.healthcheck.testcase;
 
-import java.io.IOException;
-
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseServer;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.util.LogMapperPerl2Java;
+import org.ensembl.healthcheck.util.ActionAppendable;
 import org.ensembl.healthcheck.util.TemplateBuilder;
 
 import java.sql.Connection;
@@ -19,11 +19,7 @@ import java.util.Map;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
-import java.util.logging.Level;
 import java.util.logging.LogRecord;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author dstaines
@@ -32,14 +28,14 @@ import java.util.regex.Pattern;
 public abstract class AbstractPerlModuleBasedTestCase extends AbstractPerlBasedTestCase {
 
 	private static final String SCRIPT = "./perl/run_healthcheck.pl -host $host$ -port $port$ -user $user$ -pass $pass$ -dbname $dbname$ -species_id $species_id$ -module $module$";
-	private final LogMapper logMapper;
+	private final LogMapperPerl2Java logMapper;
 	private final Formatter perlLogMessagesFormatter;
 
 	protected Map<Handler, Formatter> savedFormatter = new HashMap<Handler, Formatter>();
 
 	public AbstractPerlModuleBasedTestCase() {
 		super();
-		logMapper = new LogMapper(logger);
+		logMapper = new LogMapperPerl2Java(logger);
 		perlLogMessagesFormatter = createPerlLogMessageFormatter();
 	}
 	
@@ -82,11 +78,11 @@ public abstract class AbstractPerlModuleBasedTestCase extends AbstractPerlBasedT
 		
 		return new Formatter() {
 			
-			@Override public String formatMessage(LogRecord logRecord) {				
+			@Override public String formatMessage(LogRecord logRecord) {
 				return logRecord.getMessage();
 			}
 			
-			@Override public String format(LogRecord logRecord) {				
+			@Override public String format(LogRecord logRecord) {
 				return formatMessage(logRecord) + "\n";
 			}			
 		};
@@ -148,32 +144,32 @@ public abstract class AbstractPerlModuleBasedTestCase extends AbstractPerlBasedT
 		logger.warning(message);
 	}
 	
-	/**
-	 * <p>
-	 * 	Only one processor for output from perl healthchecks. We don't care
-	 * whether something was printed to stdout or stderr. What is done with
-	 * it depends on the prefix set by the output methods in 
-	 * Bio::EnsEMBL::Healthcheck.
-	 * </p>
-	 * 
-	 */
-	protected Appendable createOutputProcessor(final EnsTestCase e, final Connection c) {
-		return 
-			new OutputProcessor() {
-				@Override public void process(String message) {
-					dispatchMessage(e, c, message.trim());
-				}
-				
-			};
-	}
-	
-	@Override protected Appendable createStdoutProcessor(final EnsTestCase e, final Connection c) {
-		return createOutputProcessor(e, c);
-	}
-
-	@Override protected Appendable createStderrProcessor(final EnsTestCase e, final Connection c) {
-		return createOutputProcessor(e, c);
-	}
+//	/**
+//	 * <p>
+//	 * 	Only one processor for output from perl healthchecks. We don't care
+//	 * whether something was printed to stdout or stderr. What is done with
+//	 * it depends on the prefix set by the output methods in 
+//	 * Bio::EnsEMBL::Healthcheck.
+//	 * </p>
+//	 * 
+//	 */
+//	protected Appendable createOutputProcessor(final EnsTestCase e, final Connection c) {
+//		return 
+//			new ActionAppendable() {
+//				@Override public void process(String message) {
+//					dispatchMessage(e, c, message.trim());
+//				}
+//				
+//			};
+//	}
+//	
+//	@Override protected Appendable createStdoutProcessor(final EnsTestCase e, final Connection c) {
+//		return createOutputProcessor(e, c);
+//	}
+//
+//	@Override protected Appendable createStderrProcessor(final EnsTestCase e, final Connection c) {
+//		return createOutputProcessor(e, c);
+//	}
 	
 	protected void setPerlFriendlyLogFormatters() {
 		
@@ -223,136 +219,4 @@ public abstract class AbstractPerlModuleBasedTestCase extends AbstractPerlBasedT
 	}
 }
 
-/**
- * <p>
- * 	A class that maps a log message coming from a perl module based 
- * healthcheck to the java logging system. It relies on the formatting of 
- * messages as set in _initialise_logger in Bio::EnsEMBL::Healthcheck  which 
- * all perl module based healthchecks should inherit from.
- * </p>
- * 
- * @author michael
- *
- */
-class LogMapper {
-	
-	/**
-	 * Pattern that will find the loglevel which will be output by the perl
-	 * logger.
-	 */
-	protected final Pattern logLevelFromMessage;
-	
-	/**
-	 * The logger the convenience method "log" will write to. 
-	 */
-	protected final Logger  logger;
-	
-	public LogMapper(Logger logger) {
-		
-		logLevelFromMessage = Pattern.compile("LOG: (\\w+) ");
-		this.logger = logger;
-	}
-	
-	/**
-	 * 
-	 * <p>
-	 * 	Forwards a log message from a perl based healthcheck to the java 
-	 * logger.
-	 * </p>
-	 * 
-	 */
-	public void log(String message) {
-		
-		logger.log(
-			mapPerlLogToJavaLogLevel(
-				parsePerlLogLevelFromMessage(
-					message
-				)
-			), 
-			message
-		);
-	}
-	
-	public String parsePerlLogLevelFromMessage(String message) {
-		
-		Matcher m = logLevelFromMessage.matcher(message);
-		
-		if (m.find()) {
-		
-			String logLevel = m.group(1);
-			return logLevel;
-		}
-		
-		throw new IllegalArgumentException("Can't find loglevel in " + message);
-	}
-	
-	/**
-	 * 
-	 * <p>
-	 * 	Maps the loglevel from perl given as a String and returns the loglevel
-	 * in Java that corresponds to that.
-	 * </p>
-	 * 
-	 */
-	public Level mapPerlLogToJavaLogLevel(String perlLogLevel) {
-		
-		if (
-			   perlLogLevel.equals("DEBUG")
-			|| perlLogLevel.equals("TRACE")
-		) { 
-			return Level.FINE; 
-		}
-		if (
-			   perlLogLevel.equals("INFO")
-			|| perlLogLevel.equals("WARN")
-		)  { 
-			return Level.INFO; 
-		}
-		if (
-			   perlLogLevel.equals("ERROR")
-			|| perlLogLevel.equals("FATAL")
-		)  { 
-			return Level.SEVERE; 
-		}
-			
-		throw new IllegalArgumentException("Unknown loglevel " + perlLogLevel);
-	}
-}
-
-/**
- * <p>
- * 	Class for capturing output from a subprocess and using this output elsewhere.
- * </p>
- * 
- * <p>
- * 	Data can be written to the objects by using the Appendable interface it 
- * implements. What is done with the data can be detemined by overwriting the
- * process method.
- * </p>
- *
- */
-abstract class OutputProcessor implements Appendable {
-	
-	abstract public void process(String s); 
-	
-	@Override
-	public Appendable append(final CharSequence csq) throws IOException {
-		
-		process(csq.toString());
-		return this;
-	}
-
-	@Override
-	public Appendable append(final char c) throws IOException {
-
-		process(Character.toString(c));
-		return this;
-	}
-
-	@Override
-	public Appendable append(CharSequence csq, int start, int end) throws IOException {
-		
-		throw new NoSuchMethodError("This method should not be needed at the moment.");
-	}	
-}
 
