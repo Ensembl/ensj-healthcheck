@@ -171,10 +171,33 @@ public class ProcessExec {
 		Process proc = rt.exec(
 				command, 
 				environment
+		);
+
+		return waitForProcess(out, err, discard, proc);
+	}
+	public static int exec(
+			String[] command, 
+			Appendable out, 
+			Appendable err,
+			boolean discard, 
+			String[] environment
+	) throws IOException {
+		
+		Runtime rt = Runtime.getRuntime();
+		
+		Process proc = rt.exec(
+				command, 
+				environment
 		);		
+//		Process proc = rt.exec(
+//				command, 
+//				environment
+//		);		
 		return waitForProcess(out, err, discard, proc);
 	}
 
+	
+	
      /**
 	 * Execute the command, capturing output/error into the supplied streams if
 	 * required
