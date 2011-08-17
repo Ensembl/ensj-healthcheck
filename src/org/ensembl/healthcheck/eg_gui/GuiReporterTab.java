@@ -252,6 +252,7 @@ class ReportPanel extends JPanel implements ActionListener {
 		message         = new JPopupTextArea ();
 		
 		description.setLineWrap(true);
+		description.setWrapStyleWord(true);
 		
 		GuiTestRunnerFrameComponentBuilder g = null;
 		
@@ -286,6 +287,8 @@ class ReportPanel extends JPanel implements ActionListener {
 		);
 		
 		message.setFont(newFont);
+		message.setLineWrap(true);
+		message.setWrapStyleWord(true);
 		
 		singleLineInfo.add(g.createLeftJustifiedText("Output from test:"));
 		
