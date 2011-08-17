@@ -37,7 +37,12 @@ class GuiReportPanelData {
 	}
 
 	public String getMessage() {
-		return message.toString();
+		
+		// I have no idea, why there are two carriage returns after a line in  
+		// the test report. It just makes no sense, they should not be there in
+		// the first place.
+		//
+		return message.toString().replaceAll("\n\n", "\n");
 	}
 
 	public void setMessage(StringBuffer message) {
@@ -51,23 +56,38 @@ class GuiReportPanelData {
 	
 	StringBuffer message;
 	
+	boolean messageEndsWithCR;
+	
 	public GuiReportPanelData(ReportLine reportLine) {
 		
 		testName    = reportLine.getTestCase().getName();
 		description = reportLine.getTestCase().getDescription();
 		speciesName = reportLine.getSpeciesName();
 		
-		if (reportLine.getTeamResponsible()!=null) {			
-			teamResponsible = reportLine.getTeamResponsible().name();			
-		} else {			
+		if (reportLine.getTeamResponsible()!=null) {
+			teamResponsible = reportLine.getTeamResponsible().name();
+		} else {
 			teamResponsible = "No team set.";
 		}
-		message = new StringBuffer(reportLine.getMessage());
+		messageEndsWithCR = false;
+		
+		message = new StringBuffer();
+		
+		addReportLine(reportLine);
 	}
 	
 	public final void addReportLine(ReportLine reportLine) {
 		
-		message.append("\n" + reportLine.getMessage());
+		String currentMessage = reportLine.getMessage();
+		
+		if (!messageEndsWithCR) {
+			message.append("\n");
+		}
+		
+		if (currentMessage.endsWith("\n")) {
+			messageEndsWithCR = true;
+		}
+		message.append(currentMessage);
 	}
 }
 
