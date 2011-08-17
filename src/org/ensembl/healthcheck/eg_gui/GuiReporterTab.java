@@ -2,11 +2,14 @@ package org.ensembl.healthcheck.eg_gui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,19 +41,28 @@ public class GuiReporterTab extends JPanel implements Reporter {
 	final protected ReportPanel                 reportPanel;
 	final protected TestCaseColoredCellRenderer testCaseCellRenderer;
 	
+	protected boolean userClickedOnList = false;
+	
 	final protected Map<Class<? extends EnsTestCase>,GuiReportPanelData> reportData;
 	
 	public void selectDefaultListItem() {
 		
-		if (testList.isSelectionEmpty()) {
+		if (!userClickedOnList) {
 			selectLastListItem();
 		}
 	}
 	
+	/**
+	 * Selects the last item in the list and scrolls to that position.
+	 */
 	public void selectLastListItem() {
 		
 		if (listModel.getSize()>0) {
-			testList.setSelectedIndex(listModel.getSize()-1);
+			
+			int indexOfLastComponentInList =listModel.getSize()-1; 
+			
+			testList.setSelectedIndex(indexOfLastComponentInList);
+			testList.ensureIndexIsVisible(indexOfLastComponentInList);
 		}
 	}
 	
@@ -69,6 +81,22 @@ public class GuiReporterTab extends JPanel implements Reporter {
 		testCaseCellRenderer = new TestCaseColoredCellRenderer();
 		
 		testList.setCellRenderer(testCaseCellRenderer);
+		
+		testList.addMouseListener(new MouseListener() {
+
+			// We want to know, when as soon as the user clicks somewhere on 
+			// the list so we can stop selecting the last item in the list.
+			//
+			@Override public void mouseClicked(MouseEvent arg0) {
+				userClickedOnList = true;
+			}
+
+			@Override public void mouseEntered (MouseEvent arg0) {}
+			@Override public void mouseExited  (MouseEvent arg0) {}
+			@Override public void mousePressed (MouseEvent arg0) {}
+			@Override public void mouseReleased(MouseEvent arg0) {}
+			
+		});
 		
 		// Setting the preferred size causes the scrollbars to not be adapted 
 		// to the list changing size when items are added later on, so 
@@ -101,10 +129,10 @@ public class GuiReporterTab extends JPanel implements Reporter {
 					
 					if (!arg0.getValueIsAdjusting()) {
 						reportPanel.setData(
-								reportData.get(
-										( (TestClassListItem) listModel.getElementAt(testList.getSelectedIndex()) ).getTestClass()
-								)
-							);
+							reportData.get(
+								( (TestClassListItem) listModel.getElementAt(testList.getSelectedIndex()) ).getTestClass()
+							)
+						);
 					}
 				}
 			}
@@ -134,7 +162,8 @@ public class GuiReporterTab extends JPanel implements Reporter {
 							// something so the user is not staring at an
 							// empty report.
 							//
-							if (testList.isSelectionEmpty()) {
+							//if (testList.isSelectionEmpty()) {
+							if (!userClickedOnList) {
 								selectDefaultListItem();
 							}
 						}
@@ -246,8 +275,17 @@ class ReportPanel extends JPanel implements ActionListener {
 		
 		final JPopupMenu popup = new JPopupMenu();		
 		
-		message.add(GuiTestRunnerFrameComponentBuilder.makeMenuItem("Copy selected text", this, copy_selected_text_action));		
+		message.add(GuiTestRunnerFrameComponentBuilder.makeMenuItem("Copy selected text", this, copy_selected_text_action));
 		message.setComponentPopupMenu(popup);
+		
+		Font currentFont = message.getFont();
+		Font newFont = new Font(
+			"Courier",
+			currentFont.getStyle(),
+			currentFont.getSize()
+		);
+		
+		message.setFont(newFont);
 		
 		singleLineInfo.add(g.createLeftJustifiedText("Output from test:"));
 		
