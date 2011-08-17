@@ -90,7 +90,8 @@ public abstract class AbstractShellBasedTestCase extends SingleDatabaseTestCase 
 			final DatabaseRegistryEntry dbre,
 			int speciesId
 	) {
-		return "echo No shell command has been specified.";
+		//return "echo No shell command has been specified.";
+		return null;
 	}
 	
 	/**
@@ -111,7 +112,7 @@ public abstract class AbstractShellBasedTestCase extends SingleDatabaseTestCase 
 			int speciesId
 	) {
 		
-		return new String[]{ createCommandLine(dbre, speciesId) };
+		return null;
 	}
 	
 	/**
@@ -148,29 +149,58 @@ public abstract class AbstractShellBasedTestCase extends SingleDatabaseTestCase 
 		
 		for (int speciesId : dbre_speciesIds) {
 			
-			String[] commandLineArray = createCommandLineArray(dbre, speciesId);
-			
 			final EnsTestCase currentTestCase = this;
 			
 			Appendable out = createStdoutProcessor(currentTestCase, dbre.getConnection());
 			Appendable err = createStderrProcessor(currentTestCase, dbre.getConnection());
 			
+			String lastCmdThatWasRun = "";
+			
 			try {
-
-				int exit = ProcessExec.exec(
-					commandLineArray, 
-					out, 
-					err, 
-					false, 
-					environmentVarsToSet()
-				);
+				
+				String[] commandLineArray = createCommandLineArray(dbre, speciesId);
+				
+				int exit;
+				
+				if (commandLineArray!=null) {
+				
+					exit = ProcessExec.exec(
+						commandLineArray, 
+						out, 
+						err, 
+						false, 
+						environmentVarsToSet()
+					);
+					
+					lastCmdThatWasRun = StringUtils.join(commandLineArray, " ");
+					
+				} else {
+					
+					String commandLine = createCommandLine(dbre, speciesId);
+					
+					if (commandLine!=null) {
+						
+						exit = ProcessExec.exec(
+								commandLine, 
+								out, 
+								err, 
+								environmentVarsToSet()
+						);
+						
+						lastCmdThatWasRun = commandLine;
+						
+					} else {
+						throw new RuntimeException("createCommandLine and createCommandLineArray both returned null values. At least one of them must be overridden to return information on which command has to be run.");
+					}
+					
+				}
 				
 				if (exit == 0) {
 					ReportManager.correct(
 							this, 
 							dbre.getConnection(), 
 							"Command \n"
-							+ StringUtils.join(commandLineArray, " ") 
+							+ lastCmdThatWasRun 
 							+ "\ncompleted successfully"
 					);
 				} else {
@@ -178,7 +208,7 @@ public abstract class AbstractShellBasedTestCase extends SingleDatabaseTestCase 
 							this, 
 							dbre.getConnection(), 
 							"Command \n"
-							+ StringUtils.join(commandLineArray, " ") 
+							+ lastCmdThatWasRun 
 							+ "\ndid not complete successfully"
 					);
 					passes = false;
@@ -188,7 +218,7 @@ public abstract class AbstractShellBasedTestCase extends SingleDatabaseTestCase 
 					this, 
 					dbre.getConnection(),
 					"Could not execute " 
-					+ StringUtils.join(commandLineArray, " ") 
+					+ lastCmdThatWasRun 
 					+ "\nGot the following error: "
 					+ e.getMessage()
 				);
