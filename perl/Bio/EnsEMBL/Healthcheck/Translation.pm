@@ -28,6 +28,42 @@ sub new {
 	return $self;
 }
 
+sub createGeneStableIdIterator {
+	
+	my $self = shift;
+	
+	my $sql =
+      'select stable_id from gene join gene_stable_id using(gene_id) where biotype="protein_coding"';
+
+	my $sth = $self->dba()->prepare($sql);
+	$sth->execute();
+
+	return sub {
+		
+		my $result = $sth->fetchrow_array();
+		
+		if ($result) {
+			return $result;
+		}
+		
+		$sth->finish();			
+		return 
+	}
+}
+
+sub fetchNumberOfGenes {
+	
+	my $self = shift;
+	
+	my $sql =
+      'select count(*) from gene join gene_stable_id using(gene_id) where biotype="protein_coding"';
+
+	my $sth = $self->dba()->prepare($sql);
+	$sth->execute();
+
+	return $sth->fetchrow_array();
+}
+
 =head2 run
 
 	Iterates over all protein coding genes, checks if there is a stop codon 
@@ -46,12 +82,15 @@ sub run {
 
 	$self->log()->debug("Getting all protein coding genes");
 	
-	my $genes = $self->dba()->get_GeneAdaptor()->fetch_all_by_biotype("protein_coding");
+	#$self->dba()->no_cache(1);
+
+	#my $genes = $self->dba()->get_GeneAdaptor()->fetch_all_by_biotype("protein_coding");
 	
 	my $problem_report_stop_codons_tabular_all;
 	my $table_header_report_stop_codons;
 	
-	my $num_of_genes = @{$genes};
+	#my $num_of_genes = @{$genes};
+	my $num_of_genes = $self->fetchNumberOfGenes();
 	my $genes_tested = 0;
 	my $num_genes_until_lifesign_printed = 50;
 	my $num_genes_until_printed_since_last_lifesign = 0;
@@ -61,18 +100,27 @@ sub run {
 	my $max_genes_to_test  = 100;
 	my $only_test_upto_max = 0; 
 	
-	for my $gene ( @{$genes} ) {
+	my $stable_id_iterator = $self->createGeneStableIdIterator;
+	my $gene_adaptor = $self->dba()->get_GeneAdaptor();
+	
+	while ( my $current_stable_id = $stable_id_iterator->() ) {
+		
+		my $gene = $gene_adaptor->fetch_by_stable_id($current_stable_id); 
 		
 		if ($only_test_upto_max && $genes_tested>$max_genes_to_test) {
 			return $passes;
 		}
 		
+		#$gene->adaptor()->db->no_cache(1);
+		#$gene->adaptor()->db()->get_TranscriptAdaptor()->db->no_cache(1);
+
 		for my $transcript ( @{ $gene->get_all_Transcripts() } ) {
+
 			my $seq = $transcript->translate();
 			if ($seq) {
 				
 				my $sequence = $seq->seq();
-				
+
 				if ($self->sequence_comprises_only_of_Xs($sequence)) {
 					
 					$self->problem( "Transcript for "
