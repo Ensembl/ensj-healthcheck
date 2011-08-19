@@ -6,6 +6,8 @@
  */
 package org.ensembl.healthcheck.testcase.eg_core;
 
+import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.AbstractRowCountTestCase;
 
 /**
@@ -18,7 +20,9 @@ public class GeneDescription extends AbstractRowCountTestCase {
 
 	public GeneDescription() {
 		super();
-		addToGroup(AbstractEgCoreTestCase.EG_GROUP);
+		this.addToGroup(AbstractEgCoreTestCase.EG_GROUP);
+		this.appliesToType(DatabaseType.CORE);
+		this.setTeamResponsible(Team.ENSEMBL_GENOMES);
 	}
 
 	private final static String QUERY = "select count(*) from gene where description is null and biotype not in ('pseudogene')";
