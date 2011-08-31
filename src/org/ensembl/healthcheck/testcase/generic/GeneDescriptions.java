@@ -79,7 +79,7 @@ public class GeneDescriptions extends SingleDatabaseTestCase {
 		int rows = getRowCount(con, "SELECT COUNT(*) FROM gene WHERE description like '%Uniprot%' COLLATE latin1_general_cs");
 
 		if (rows > 0) {
-			ReportManager.problem(this, con, rows + " descriptions have incorrect spelling/capitalisation of Uniprot attribution");
+			ReportManager.problem(this, con, rows + " descriptions have incorrect spelling/capitalisation of Uniprot attribution, should be \"UniProt\"");
 			result = false;
 		} else {
 			ReportManager.correct(this, con, "All Uniprot attributions correct.");
