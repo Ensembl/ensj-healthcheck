@@ -37,6 +37,8 @@ import org.ensembl.healthcheck.util.ConnectionBasedSqlTemplateImpl.SqlTemplateUn
  */
 public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> {
 
+	private static final String COLLECTION_CLAUSE = "_collection";
+
 	/**
 	 * Simple read-only bean to store pertinent information about a database.
 	 * Objects of this type are held by the {@link DatabaseRegistryEntry} and
@@ -293,6 +295,9 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 							genebuildVersion = m.group(4);
 						}
 					}
+				}
+				if(alias.endsWith(COLLECTION_CLAUSE)) {
+					alias = alias.replaceAll(COLLECTION_CLAUSE, StringUtils.EMPTY);
 				}
 				break;
 			}
