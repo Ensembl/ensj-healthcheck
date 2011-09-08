@@ -84,6 +84,12 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 	protected int windowHeight = Constants.INITIAL_APPLICATION_WINDOW_HEIGHT;
 	
 	/**
+	 * Name of the server that will be set as default, if there is a 
+	 * configuration for this.
+	 */
+	String defaultSecondaryServerName = "mysql.ebi.ac.uk";
+	
+	/**
 	 * Title of the Window
 	 * 
 	 */
@@ -157,6 +163,48 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		super.processWindowEvent(e);
 	}
 
+	/**
+	 * <p>
+	 * 	Sets the primary and secondary host details in DBUtils.
+	 * </p>
+	 * 
+	 * @param primaryHostDetails
+	 * @param secondaryHostDetails
+	 */
+	protected void setPrimaryAndSecondaryHost(
+			ConfigureHost primaryHostDetails,
+			ConfigureHost secondaryHostDetails
+		) {
+		
+		Properties secondaryHostProperties = new Properties();
+		
+		secondaryHostProperties.setProperty("secondary.host",     secondaryHostDetails.getHost());
+		secondaryHostProperties.setProperty("secondary.port",     secondaryHostDetails.getPort());
+		secondaryHostProperties.setProperty("secondary.user",     secondaryHostDetails.getUser());
+		secondaryHostProperties.setProperty("secondary.password", secondaryHostDetails.getPassword());
+		secondaryHostProperties.setProperty("secondary.driver",   secondaryHostDetails.getDriver());
+		
+		ConfigureHost secondaryHostConfiguration = 
+			(ConfigureHost) ConfigurationByProperties.newInstance(
+				ConfigureHost.class, 
+				secondaryHostProperties
+			);
+		
+		ConfigurationFactory<ConfigureHost> confFact =
+			new ConfigurationFactory<ConfigureHost>(
+				ConfigureHost.class,
+				primaryHostDetails,
+				secondaryHostConfiguration
+			);
+		
+		ConfigureHost combinedHostConfig = confFact.getConfiguration(ConfigurationType.Cascading);
+		
+		// And finally set the new configuration file in which the 
+		// secondary host has been configured.
+		//
+		DBUtils.setHostConfiguration(combinedHostConfig);
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 
@@ -247,48 +295,10 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 						tabAdmin.getPerlOptions()
 				);
 				
-				ConfigureHost secondaryHostDetails = dbDetails.get(secondaryDbServerSelector.getSelectedIndex());
-				
-				ConfigureHost dbuhc = DBUtils.getHostConfiguration();
-				
-				Properties secondaryHostProperties = new Properties();
-				
-				secondaryHostProperties.setProperty("secondary.host",     secondaryHostDetails.getHost());
-				secondaryHostProperties.setProperty("secondary.port",     secondaryHostDetails.getPort());
-				secondaryHostProperties.setProperty("secondary.user",     secondaryHostDetails.getUser());
-				secondaryHostProperties.setProperty("secondary.password", secondaryHostDetails.getPassword());
-				secondaryHostProperties.setProperty("secondary.driver",   secondaryHostDetails.getDriver());
-				
-				ConfigureHost secondaryHostConfiguration = 
-					(ConfigureHost) ConfigurationByProperties.newInstance(
-						ConfigureHost.class, 
-						secondaryHostProperties
-					);
-				
-				ConfigurationFactory<ConfigureHost> confFact =
-					new ConfigurationFactory<ConfigureHost>(
-						ConfigureHost.class,
-						dbuhc,
-						secondaryHostConfiguration
-					);
-				
-				ConfigureHost combinedHostConfig = confFact.getConfiguration(ConfigurationType.Cascading);
-				
-//				DatabaseRegistry secondaryDatabaseRegistry = new DatabaseRegistry(
-//					new DatabaseRegistryEntry[] {
-//						new DatabaseRegistryEntry(
-//							new DatabaseServer(
-//								secondaryHostDetails.getHost(),
-//								secondaryHostDetails.getPort(),
-//								secondaryHostDetails.getUser(),
-//								secondaryHostDetails.getPassword(),
-//								secondaryHostDetails.getDriver()
-//							), null, null, DatabaseType.UNKNOWN
-//						)
-//					}
-//				);
-				
-				DBUtils.setHostConfiguration(combinedHostConfig);
+				setPrimaryAndSecondaryHost(
+					dbDetails.get(dbServerSelector.getSelectedIndex()),
+					dbDetails.get(secondaryDbServerSelector.getSelectedIndex())
+				);
 				
 				if (cmd.equals(Constants.RUN_SELECTED_TESTS)) {
 					
@@ -365,10 +375,29 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		secondaryDbServerSelector.setActionCommand(Constants.SECONDARY_DB_SERVER_CHANGED);
 		secondaryDbServerSelector.addActionListener(this);
 		
-		//logger.info("Connecting to " + dbDetails.get(0));
+		//
+		// See, if defaultSecondaryServerName can be found in dbDetails. If so,
+		// select this as the default secondary server.
+		//
+		int numServers = dbDetails.size();		
+		int defaultSelectedServerIndex = 0;
+		
+		for (int index=0; index<numServers; index++) {
+		
+			String serverName = dbDetails.get(index).getHost();
+			if (serverName.contains(defaultSecondaryServerName)) {
+				defaultSelectedServerIndex = index;
+			}
+		}
+		
+		secondaryDbServerSelector.setSelectedIndex(defaultSelectedServerIndex);
 		
 		DBUtils.initialise();
-		DBUtils.setHostConfiguration(dbDetails.get(0));
+
+		setPrimaryAndSecondaryHost(
+				dbDetails.get(dbServerSelector.getSelectedIndex()),
+				dbDetails.get(secondaryDbServerSelector.getSelectedIndex())
+			);
 
 		List<String> regexps = new ArrayList<String>();
 		regexps.add(".*");
