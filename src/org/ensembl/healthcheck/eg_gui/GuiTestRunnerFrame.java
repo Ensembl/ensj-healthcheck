@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
@@ -43,9 +44,13 @@ import javax.swing.event.ChangeListener;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseServer;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.GroupOfTests;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.configuration.ConfigurationUserParameters;
 import org.ensembl.healthcheck.configuration.ConfigureHost;
+import org.ensembl.healthcheck.configurationmanager.ConfigurationByProperties;
 import org.ensembl.healthcheck.configurationmanager.ConfigurationFactory;
 import org.ensembl.healthcheck.configurationmanager.ConfigurationFactory.ConfigurationType;
 import org.ensembl.healthcheck.eg_gui.AdminTab;
@@ -105,6 +110,7 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 	protected final JButton      runSelectedTests;
 	protected final JTree        tree;
 	protected final JComboBox    dbServerSelector;
+	protected final JComboBox    secondaryDbServerSelector;
 	
 	protected final List<ConfigureHost> dbDetails;
 
@@ -241,6 +247,49 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 						tabAdmin.getPerlOptions()
 				);
 				
+				ConfigureHost secondaryHostDetails = dbDetails.get(secondaryDbServerSelector.getSelectedIndex());
+				
+				ConfigureHost dbuhc = DBUtils.getHostConfiguration();
+				
+				Properties secondaryHostProperties = new Properties();
+				
+				secondaryHostProperties.setProperty("secondary.host",     secondaryHostDetails.getHost());
+				secondaryHostProperties.setProperty("secondary.port",     secondaryHostDetails.getPort());
+				secondaryHostProperties.setProperty("secondary.user",     secondaryHostDetails.getUser());
+				secondaryHostProperties.setProperty("secondary.password", secondaryHostDetails.getPassword());
+				secondaryHostProperties.setProperty("secondary.driver",   secondaryHostDetails.getDriver());
+				
+				ConfigureHost secondaryHostConfiguration = 
+					(ConfigureHost) ConfigurationByProperties.newInstance(
+						ConfigureHost.class, 
+						secondaryHostProperties
+					);
+				
+				ConfigurationFactory<ConfigureHost> confFact =
+					new ConfigurationFactory<ConfigureHost>(
+						ConfigureHost.class,
+						dbuhc,
+						secondaryHostConfiguration
+					);
+				
+				ConfigureHost combinedHostConfig = confFact.getConfiguration(ConfigurationType.Cascading);
+				
+//				DatabaseRegistry secondaryDatabaseRegistry = new DatabaseRegistry(
+//					new DatabaseRegistryEntry[] {
+//						new DatabaseRegistryEntry(
+//							new DatabaseServer(
+//								secondaryHostDetails.getHost(),
+//								secondaryHostDetails.getPort(),
+//								secondaryHostDetails.getUser(),
+//								secondaryHostDetails.getPassword(),
+//								secondaryHostDetails.getDriver()
+//							), null, null, DatabaseType.UNKNOWN
+//						)
+//					}
+//				);
+				
+				DBUtils.setHostConfiguration(combinedHostConfig);
+				
 				if (cmd.equals(Constants.RUN_SELECTED_TESTS)) {
 					
 					currentGuiTestRunnerThread = GuiTestRunnerFrameActionPerformer.runSelectedTests(
@@ -308,9 +357,13 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 			)
 		);
 
-		dbServerSelector = GuiTestRunnerFrameComponentBuilder.createDbServerSelector(dbDetails);		
+		dbServerSelector = GuiTestRunnerFrameComponentBuilder.createDbServerSelector(dbDetails);
 		dbServerSelector.setActionCommand(Constants.DB_SERVER_CHANGED);
 		dbServerSelector.addActionListener(this);
+		
+		secondaryDbServerSelector = GuiTestRunnerFrameComponentBuilder.createDbServerSelector(dbDetails);
+		secondaryDbServerSelector.setActionCommand(Constants.SECONDARY_DB_SERVER_CHANGED);
+		secondaryDbServerSelector.addActionListener(this);
 		
 		//logger.info("Connecting to " + dbDetails.get(0));
 		
@@ -354,7 +407,8 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 			JTree tree, 
 			JList testsToBeRun,
 			JPanel buttonPanel, 
-			JComboBox dbServerSelector
+			JComboBox dbServerSelector,
+			JComboBox secondaryDbServerSelector
 	) {
 		
 		JScrollPane treePane  = new JScrollPane(tree); 
@@ -388,7 +442,12 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 				BorderLayout.CENTER
 		);
 
-		tabSetup.add(dbServerSelector, BorderLayout.NORTH);
+		Box hbox = Box.createHorizontalBox();
+		
+		hbox.add(dbServerSelector);
+		hbox.add(secondaryDbServerSelector);
+		
+		tabSetup.add(hbox, BorderLayout.NORTH);
 		
 		tabAdmin = new AdminTab();
 		
@@ -416,7 +475,13 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		//
 		Border defaultEmptyBorder = GuiTestRunnerFrameComponentBuilder.defaultEmptyBorder;
 		
-		dbServerSelector     .setBorder(BorderFactory.createTitledBorder(defaultEmptyBorder, "1. Select a database server:"));
+		Border noBorder = BorderFactory.createEmptyBorder(0, 0, 0, 0);
+		
+		hbox                 .setBorder(BorderFactory.createTitledBorder(defaultEmptyBorder, "1. Select database servers:"));
+		
+		dbServerSelector          .setBorder(BorderFactory.createTitledBorder(noBorder, "Primary (where your database is):"));
+		secondaryDbServerSelector .setBorder(BorderFactory.createTitledBorder(noBorder, "Secondary (Some tests require a secondary db server):"));
+		
 		databaseTabbedPane   .setBorder(BorderFactory.createTitledBorder(defaultEmptyBorder, "2. Select a database:"));
 		testSelectionWidgets .setBorder(BorderFactory.createTitledBorder(defaultEmptyBorder, "3. Select tests to be run:"));
 		treePane             .setBorder(BorderFactory.createTitledBorder("Drag tests to the panel on the right"));
@@ -456,7 +521,8 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 				tree, 
 				listOfTestsToBeRun,
 				buttonPanel,
-				dbServerSelector
+				dbServerSelector,
+				secondaryDbServerSelector
 		);
 
 		this.setPreferredSize(new Dimension(windowWidth, windowHeight));
