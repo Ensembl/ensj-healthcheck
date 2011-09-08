@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.util.ActionAppendable;
@@ -20,6 +19,35 @@ import org.ensembl.healthcheck.util.ProcessExec;
  *
  */
 public abstract class AbstractShellBasedTestCase extends SingleDatabaseTestCase {
+
+	/**
+	 * <p>
+	 * Specify here, if the test implementing this class uses speciesIds. If 
+	 * true, the method
+	 * </p>
+	 * 
+	 * createCommandLine(dbre, speciesId);
+	 * 
+	 * <p>
+	 * will be called for creating commands. If the test implementing this 
+	 * class doesn't use speciesId, set to false and
+	 * </p>
+	 * 
+	 * createCommandLine(dbre);
+	 * 
+	 * <p>
+	 * will be called to get the command for executing the shell based test.
+	 * </p>
+	 */
+	boolean isSpeciesIdAware = false;
+
+	public boolean isSpeciesIdAware() {
+		return isSpeciesIdAware;
+	}
+
+	public void setSpeciesIdAware(boolean iteratesOverSpeciesIds) {
+		this.isSpeciesIdAware = iteratesOverSpeciesIds;
+	}
 
 	/**
 	 * <p>
@@ -76,44 +104,25 @@ public abstract class AbstractShellBasedTestCase extends SingleDatabaseTestCase 
 	
 	/**
 	 * <p>
-	 * 	This should return the command line that starts your test. If you have 
-	 * spaces in a path or an argument that has spaces, but should not be split
-	 * into several arguments, don't use this method, but use 
-	 * createCommandLineArray instead.
+	 * 	Use this, if your test uses species ids.
 	 * </p>
 	 * 
 	 * @param dbre
 	 * @param speciesId
 	 * @return
 	 */
-	protected String createCommandLine(
-			final DatabaseRegistryEntry dbre,
-			int speciesId
-	) {
-		//return "echo No shell command has been specified.";
-		return null;
-	}
+	protected String createCommandLine(final DatabaseRegistryEntry dbre, int speciesId) { return null; }
 	
 	/**
 	 * <p>
-	 * 	Java has issues when there are spaces in a command line. It breaks the
-	 * command into the command and its arguments by splitting on spaces. This
-	 * can be very bad, if you have spaces in a path or arguments that are 
-	 * quoted. In this case, you have to create the array of commands and 
-	 * arguments yourself to prevent java from doing this.
+	 * 	Use this, if your test is independent of species ids.
 	 * </p>
 	 * 
 	 * @param dbre
 	 * @param speciesId
 	 * @return
 	 */
-	protected String[] createCommandLineArray(
-			final DatabaseRegistryEntry dbre,
-			int speciesId
-	) {
-		
-		return null;
-	}
+	protected String createCommandLine(final DatabaseRegistryEntry dbre) { return null; }
 	
 	/**
 	 * <p>
@@ -127,104 +136,118 @@ public abstract class AbstractShellBasedTestCase extends SingleDatabaseTestCase 
 		return new String[]{};
 	}
 
+	public boolean runShellTest(final DatabaseRegistryEntry dbre, int speciesId, boolean useSpeciesId) {
+		
+		boolean passes = true;
+		
+		final EnsTestCase currentTestCase = this;
+		
+		Appendable out = createStdoutProcessor(currentTestCase, dbre.getConnection());
+		Appendable err = createStderrProcessor(currentTestCase, dbre.getConnection());
+		
+		String lastCmdThatWasRun = "";
+		
+		try {
+			
+			String shellCmd;
+			
+			if (useSpeciesId) {
+				shellCmd = createCommandLine(dbre, speciesId);
+			} else {
+				shellCmd = createCommandLine(dbre);
+			}
+			
+			int exit = 1;
+			
+			if (shellCmd!=null) {
+				
+				//
+				// Running the command by creating an array avoids the 
+				// problem of java breaking the command down at spaces to
+				// divide it into command and arguments.
+				//
+				// The command is passed to the bash so things like pipes and
+				// backticks are interpreted. 
+				//
+				String[] cmdLineItems = new String[] {
+						"/bin/bash",
+						"-c",
+						shellCmd,
+				};
+				
+				exit = ProcessExec.exec(
+					cmdLineItems, 
+					out, 
+					err, 
+					false, 
+					environmentVarsToSet()
+				);
+				
+				lastCmdThatWasRun = shellCmd;
+				
+			}
+			
+			if (exit == 0) {
+				ReportManager.correct(
+						this, 
+						dbre.getConnection(), 
+						"Command \n"
+						+ lastCmdThatWasRun 
+						+ "\ncompleted successfully"
+				);
+			} else {
+				ReportManager.problem(
+						this, 
+						dbre.getConnection(), 
+						"Command \n"
+						+ lastCmdThatWasRun 
+						+ "\ndid not complete successfully"
+				);
+				passes = false;
+			}
+		} catch (IOException e) {
+			ReportManager.problem(
+				this, 
+				dbre.getConnection(),
+				"Could not execute " 
+				+ lastCmdThatWasRun 
+				+ "\nGot the following error: "
+				+ e.getMessage()
+			);
+			passes = false;
+		} 
+		return passes;
+	}
+	
 	@Override
 	public boolean run(final DatabaseRegistryEntry dbre) {
 		
 		boolean passes = true;
 		
-		List<Integer> dbre_speciesIds = dbre.getSpeciesIds();
-		
-		// Make sure species ids were configured. If not, the perl test will 
-		// not be run. The warning message may be overlooked by a user, 
-		// therefore the test is set to fail in order to get attention.
-		//
-		if (dbre_speciesIds.size() == 0) {
+		if (isSpeciesIdAware) {
 			
-			logger.warning(
-				"No species ids! Perhaps no databases were configured?"
-				+ " This test will not be run."
-			);
-			passes = false;
-		}
-		
-		for (int speciesId : dbre_speciesIds) {
+			List<Integer> dbre_speciesIds = dbre.getSpeciesIds();
 			
-			final EnsTestCase currentTestCase = this;
-			
-			Appendable out = createStdoutProcessor(currentTestCase, dbre.getConnection());
-			Appendable err = createStderrProcessor(currentTestCase, dbre.getConnection());
-			
-			String lastCmdThatWasRun = "";
-			
-			try {
+			// Make sure species ids were configured. If not, the perl test will 
+			// not be run. The warning message may be overlooked by a user, 
+			// therefore the test is set to fail in order to get attention.
+			//
+			if (dbre_speciesIds.size() == 0) {
 				
-				String[] commandLineArray = createCommandLineArray(dbre, speciesId);
-				
-				int exit;
-				
-				if (commandLineArray!=null) {
-				
-					exit = ProcessExec.exec(
-						commandLineArray, 
-						out, 
-						err, 
-						false, 
-						environmentVarsToSet()
-					);
-					
-					lastCmdThatWasRun = StringUtils.join(commandLineArray, " ");
-					
-				} else {
-					
-					String commandLine = createCommandLine(dbre, speciesId);
-					
-					if (commandLine!=null) {
-						
-						exit = ProcessExec.exec(
-								commandLine, 
-								out, 
-								err, 
-								environmentVarsToSet()
-						);
-						
-						lastCmdThatWasRun = commandLine;
-						
-					} else {
-						throw new RuntimeException("createCommandLine and createCommandLineArray both returned null values. At least one of them must be overridden to return information on which command has to be run.");
-					}
-					
-				}
-				
-				if (exit == 0) {
-					ReportManager.correct(
-							this, 
-							dbre.getConnection(), 
-							"Command \n"
-							+ lastCmdThatWasRun 
-							+ "\ncompleted successfully"
-					);
-				} else {
-					ReportManager.problem(
-							this, 
-							dbre.getConnection(), 
-							"Command \n"
-							+ lastCmdThatWasRun 
-							+ "\ndid not complete successfully"
-					);
-					passes = false;
-				}
-			} catch (IOException e) {
-				ReportManager.problem(
-					this, 
-					dbre.getConnection(),
-					"Could not execute " 
-					+ lastCmdThatWasRun 
-					+ "\nGot the following error: "
-					+ e.getMessage()
+				logger.warning(
+					"No species ids! Perhaps no databases were configured?"
+					+ " This test will not be run."
 				);
 				passes = false;
-			} 
+			}
+
+			for (int speciesId : dbre_speciesIds) {
+				runShellTest(dbre, speciesId, true);
+			}
+
+		} else {
+			runShellTest(dbre, 0, false);
 		}
 		return passes;
 	}
-}
+};
