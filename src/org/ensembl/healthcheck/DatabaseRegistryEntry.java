@@ -404,10 +404,39 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 
 	// -----------------------------------------------------------------
 
+
+	/* 
+	 * Compares two databases by comparing the names of the species. If they
+	 * are the same, then the schema version is used as a secondary sorting
+	 * criterion.
+	 * 
+	 * The schema version is converted to an integer so there is 
+	 * numerical sorting on the schema version. Otherwise 9 would come after
+	 * 10.
+	 * 
+	 * This is important, because the comparing is used in 
+	 * ComparePreviousVersionBase from which all the ComparePreviousVersion*
+	 * inherit.
+	 * 
+	 */
 	public int compareTo(DatabaseRegistryEntry dbre) {
 
-		return getName().compareTo(dbre.getName());
+		int speciesOrdering = getSpecies().compareTo(dbre.getSpecies());
+		
+		if (speciesOrdering!=0) {
+			return speciesOrdering;
+		}
+		
+		return 
+			new Integer(
+				getSchemaVersion()
+			).compareTo (
+				new Integer(
+					dbre.getSchemaVersion()
+				)
+			);
 
+//		return getName().compareTo(dbre.getName());
 	}
 
 	public String getSchemaVersion() {
