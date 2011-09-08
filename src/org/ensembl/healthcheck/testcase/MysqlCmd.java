@@ -36,21 +36,21 @@ public abstract class MysqlCmd extends AbstractShellBasedTestCase {
 	protected String mysqlCmd = "mysql";
 	
 	@Override
-	protected String[] createCommandLineArray(DatabaseRegistryEntry dbre, int speciesId) {
+	protected String createCommandLine(DatabaseRegistryEntry dbre) {
 		
-		String[] dbServerDetails = new String[] {
-			mysqlCmd,
-			"--host="     + dbre.getDatabaseServer().getHost().trim(),
-			"--port="     + dbre.getDatabaseServer().getPort().trim(),
-			"--user="     + dbre.getDatabaseServer().getUser().trim(),
-			"--password=" + dbre.getDatabaseServer().getPass().trim(),
-			dbre.getName(),
-			"-t",
-			"-e",
-			sql
-		};
+		String cmdLine = 
+			mysqlCmd
+			+ " --host="     + dbre.getDatabaseServer().getHost().trim()
+			+ " --port="     + dbre.getDatabaseServer().getPort().trim()
+			+ " --user="     + dbre.getDatabaseServer().getUser().trim()
+			+ " --password=" + dbre.getDatabaseServer().getPass().trim()
+			+ " " + dbre.getName()
+			+ " -t"
+			+ " -e"
+			+ " \"" + sql + "\""
+		;
 
-		return dbServerDetails;
+		return cmdLine;
 	}
 
 	public String getSql() {
