@@ -107,7 +107,6 @@ public abstract class AbstractPerlModuleBasedTestCase extends AbstractPerlBasedT
 			//Formatter savedFormatter = logger.getHandlers()[0].getFormatter();
 			
 			logger.fine(message);
-			//Logger.getLogger("ProgressLogger").info(message);
 			return;
 		}
 		
@@ -143,34 +142,7 @@ public abstract class AbstractPerlModuleBasedTestCase extends AbstractPerlBasedT
 		//
 		logger.warning(message);
 	}
-	
-//	/**
-//	 * <p>
-//	 * 	Only one processor for output from perl healthchecks. We don't care
-//	 * whether something was printed to stdout or stderr. What is done with
-//	 * it depends on the prefix set by the output methods in 
-//	 * Bio::EnsEMBL::Healthcheck.
-//	 * </p>
-//	 * 
-//	 */
-//	protected Appendable createOutputProcessor(final EnsTestCase e, final Connection c) {
-//		return 
-//			new ActionAppendable() {
-//				@Override public void process(String message) {
-//					dispatchMessage(e, c, message.trim());
-//				}
-//				
-//			};
-//	}
-//	
-//	@Override protected Appendable createStdoutProcessor(final EnsTestCase e, final Connection c) {
-//		return createOutputProcessor(e, c);
-//	}
-//
-//	@Override protected Appendable createStderrProcessor(final EnsTestCase e, final Connection c) {
-//		return createOutputProcessor(e, c);
-//	}
-	
+
 	protected void setPerlFriendlyLogFormatters() {
 		
 		Handler[] configuredHandler = logger.getHandlers(); 
