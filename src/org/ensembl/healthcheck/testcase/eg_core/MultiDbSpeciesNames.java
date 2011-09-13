@@ -57,8 +57,8 @@ public class MultiDbSpeciesNames extends MultiDatabaseTestCase {
 										this,
 										coreDb.getConnection(),
 										"The name "
-												+ metaKey
-												+ " has been found in the following core databases :"
+												+ name
+												+ " (meta key "+metaKey+") has been found in the following core databases :"
 												+ StringUtils.join(dbs, ", "));
 						result = false;
 					}
