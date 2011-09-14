@@ -34,6 +34,8 @@ public class EGFuncgen extends GroupOfTests {
 			ExternalDBDisplayName.class, 
 			EGArrayXrefs.class,
 			FuncgenForeignKeys.class, 
+			// Removed, because schema doesn't allow for nulls in version
+			// column
 			BlankCoordSystemVersions.class,
 			BlanksInsteadOfNulls.class, 
 			RegulatoryFeatureTypes.class,
