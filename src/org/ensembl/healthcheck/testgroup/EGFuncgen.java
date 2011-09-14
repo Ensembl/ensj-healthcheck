@@ -36,7 +36,7 @@ public class EGFuncgen extends GroupOfTests {
 			FuncgenForeignKeys.class, 
 			// Removed, because schema doesn't allow for nulls in version
 			// column
-			BlankCoordSystemVersions.class,
+			//BlankCoordSystemVersions.class,
 			BlanksInsteadOfNulls.class, 
 			RegulatoryFeatureTypes.class,
 			ComparePreviousVersionArrayXrefs.class,
