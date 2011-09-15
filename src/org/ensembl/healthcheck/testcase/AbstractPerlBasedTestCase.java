@@ -49,6 +49,11 @@ public abstract class AbstractPerlBasedTestCase extends
 	}
 
 	public AbstractPerlBasedTestCase() {
+		// set PERL5LIB by default
+		String perl5Lib = System.getenv().get("PERL5LIB");
+		if (!StringUtils.isEmpty(perl5Lib)) {
+			setPERL5LIB(perl5Lib);
+		}
 	}
 
 	/**
@@ -82,10 +87,6 @@ public abstract class AbstractPerlBasedTestCase extends
 	}
 
 	protected String[] environmentVarsToSet() {
-		if (StringUtils.isEmpty(getPERL5LIB())) {
-			return new String[] {};
-		} else {
-			return new String[] { "PERL5LIB=" + getPERL5LIB() };
-		}
+		return new String[] { "PERL5LIB=" + getPERL5LIB() };
 	}
 }
