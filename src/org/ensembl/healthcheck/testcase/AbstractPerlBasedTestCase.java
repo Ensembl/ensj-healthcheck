@@ -6,24 +6,26 @@
  */
 package org.ensembl.healthcheck.testcase;
 
+import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 
 /**
  * <p>
- * 	Base class for invoking a perl script to carry out the test and parse the
+ * Base class for invoking a perl script to carry out the test and parse the
  * output.
  * </p>
  * 
  * @author dstaines
  * 
  */
-public abstract class AbstractPerlBasedTestCase extends AbstractShellBasedTestCase {
+public abstract class AbstractPerlBasedTestCase extends
+		AbstractShellBasedTestCase {
 
 	public static final String PERLOPTS = "perlopts";
-	public static final String PERL     = "perl";
+	public static final String PERL = "perl";
 
 	protected String PERL5LIB = null;
-	
+
 	public String getPERL5LIB() {
 		return PERL5LIB;
 	}
@@ -35,11 +37,9 @@ public abstract class AbstractPerlBasedTestCase extends AbstractShellBasedTestCa
 	protected PerlScriptConfig config;
 
 	public PerlScriptConfig getConfig() {
-		if(config==null) {
-			config = new PerlScriptConfig(
-					System.getProperty(PERL), 
-					System.getProperty(PERLOPTS)
-			);
+		if (config == null) {
+			config = new PerlScriptConfig(System.getProperty(PERL),
+					System.getProperty(PERLOPTS));
 		}
 		return config;
 	}
@@ -48,42 +48,44 @@ public abstract class AbstractPerlBasedTestCase extends AbstractShellBasedTestCa
 		this.config = config;
 	}
 
-	public AbstractPerlBasedTestCase() {}
-	
+	public AbstractPerlBasedTestCase() {
+	}
+
 	/**
 	 * @return String perl script and relevant arguments to invoke with perl
 	 *         binary and options from
 	 *         {@link AbstractPerlBasedTestCase#getConfig()}
 	 */
-	protected abstract String getPerlScript(DatabaseRegistryEntry dbre, int speciesId);
+	protected abstract String getPerlScript(DatabaseRegistryEntry dbre,
+			int speciesId);
 
-	protected String createCommandLine(
-			final DatabaseRegistryEntry dbre,
-			int speciesId
-	) {
+	protected String createCommandLine(final DatabaseRegistryEntry dbre,
+			int speciesId) {
 		String commandLine = getPerlScript(dbre, speciesId);
-		
-		if (config!=null) {
-			
+
+		if (config != null) {
+
 			if (!config.getPerlBinary().isEmpty()) {
-				
+
 				if (config.getPerlOptions().isEmpty()) {
-					
+
 					commandLine = config.getPerlBinary() + " " + commandLine;
-					
+
 				} else {
-					
-					commandLine = config.getPerlBinary() +  " " + config.getPerlOptions() + " " + commandLine;
+
+					commandLine = config.getPerlBinary() + " "
+							+ config.getPerlOptions() + " " + commandLine;
 				}
 			}
 		}
 		return commandLine;
 	}
-	
+
 	protected String[] environmentVarsToSet() {
-		return new String[] {
-				"PERL5LIB=" + getPERL5LIB()
-		};
+		if (StringUtils.isEmpty(getPERL5LIB())) {
+			return new String[] {};
+		} else {
+			return new String[] { "PERL5LIB=" + getPERL5LIB() };
+		}
 	}
 }
-
