@@ -21,9 +21,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
@@ -241,6 +243,8 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 	private boolean checkAnalysisAndDensityTypes(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
+		
+		Set<Species> variationSpecies = getVariationSpecies();
 
 		Connection con = dbre.getConnection();
 		Species species = dbre.getSpecies();
@@ -265,12 +269,11 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 			} else if (rows.length == 0) {
 
 				// only warn about missing snpDensity for species that have SNPs
-				if (logicNames[i].equals("snpDensity")
-						&& (species != Species.ANOPHELES_GAMBIAE && species != Species.CANIS_FAMILIARIS && species != Species.DANIO_RERIO && species != Species.GALLUS_GALLUS && species != Species.HOMO_SAPIENS
-								&& species != Species.MUS_MUSCULUS && species != Species.RATTUS_NORVEGICUS)) {
-					continue;
+				if(logicName.equals("snpDensity") && ! variationSpecies.contains(species)) {
+				  continue;
 				}
-				if (dbre.getType() != DatabaseType.SANGER_VEGA || logicName.equalsIgnoreCase("knownGeneDensity")) {// for sanger_vega only
+				
+				if (dbre.getType() != DatabaseType.SANGER_VEGA || logicName.equals("knownGeneDensity")) {// for sanger_vega only
 																																																						// report analysis
 					ReportManager.problem(this, con, "RelCo: No entry in density_type for analysis " + logicName + " - run ensembl/misc-scripts/density_feature/* scripts");
 				}
@@ -283,6 +286,34 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 
 		return result;
 
+	}
+	
+	/**
+	 * Returns a hash set of all species which we currently know have variation
+	 * data.
+	 */
+	protected Set<Species> getVariationSpecies() {
+		return EnumSet.of(
+		    Species.ANOPHELES_GAMBIAE, //not an e! species anymore 
+		    Species.BOS_TAURUS,
+		    Species.CANIS_FAMILIARIS,
+		    Species.DANIO_RERIO,
+		    Species.DROSOPHILA_MELANOGASTER,
+		    Species.EQUUS_CABALLUS,
+		    Species.FELIS_CATUS,
+		    Species.GALLUS_GALLUS,
+		    Species.HOMO_SAPIENS,
+		    Species.MONODELPHIS_DOMESTICA,
+		    Species.MUS_MUSCULUS,
+		    Species.ORNITHORHYNCHUS_ANATINUS,
+		    Species.PAN_TROGLODYTES,
+		    Species.PONGO_ABELII, 
+		    Species.RATTUS_NORVEGICUS,
+		    Species.SACCHAROMYCES_CEREVISIAE,
+		    Species.SUS_SCROFA,
+		    Species.TAENIOPYGIA_GUTTATA,
+		    Species.TETRAODON_NIGROVIRIDIS
+		);
 	}
 
 	// ----------------------------------------------------------------------
