@@ -67,12 +67,12 @@ public abstract class AbstractPerlBasedTestCase extends
 	protected String createCommandLine(final DatabaseRegistryEntry dbre,
 			int speciesId) {
 		String commandLine = getPerlScript(dbre, speciesId);
+		
+		if (getConfig() != null) {
 
-		if (config != null) {
+			if (!StringUtils.isEmpty(getConfig().getPerlBinary())) {
 
-			if (!config.getPerlBinary().isEmpty()) {
-
-				if (config.getPerlOptions().isEmpty()) {
+				if (StringUtils.isEmpty(getConfig().getPerlOptions())) {
 
 					commandLine = config.getPerlBinary() + " " + commandLine;
 
