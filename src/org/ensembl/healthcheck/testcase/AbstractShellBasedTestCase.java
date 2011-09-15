@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.util.ActionAppendable;
@@ -159,7 +160,7 @@ public abstract class AbstractShellBasedTestCase extends SingleDatabaseTestCase 
 			
 			int exit = 1;
 			
-			if (shellCmd!=null) {
+			if (!StringUtils.isEmpty(shellCmd)) {
 				
 				//
 				// Running the command by creating an array avoids the 
@@ -185,6 +186,8 @@ public abstract class AbstractShellBasedTestCase extends SingleDatabaseTestCase 
 				
 				lastCmdThatWasRun = shellCmd;
 				
+			} else {
+				throw new RuntimeException("Shell based test "+this.getName()+" has not returned a valid command line");
 			}
 			
 			if (exit == 0) {
