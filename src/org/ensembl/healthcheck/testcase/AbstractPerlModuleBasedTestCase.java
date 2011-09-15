@@ -37,6 +37,7 @@ public abstract class AbstractPerlModuleBasedTestCase extends AbstractPerlBasedT
 		super();
 		logMapper = new LogMapperPerl2Java(logger);
 		perlLogMessagesFormatter = createPerlLogMessageFormatter();
+		setSpeciesIdAware(true);
 	}
 	
 	/**
