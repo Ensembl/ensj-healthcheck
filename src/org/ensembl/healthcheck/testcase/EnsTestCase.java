@@ -2017,6 +2017,30 @@ public abstract class EnsTestCase {
 
 	}
 
+	// ------------------------------------------------------------------------------------------
+	
+	public boolean checkDatabaseExistsByType(DatabaseRegistryEntry dbre, DatabaseType dbType) {
+		
+		List<String> regexps = new ArrayList<String>();
+		regexps.add(".*");
+
+		DatabaseRegistry allDBR = new DatabaseRegistry(regexps, null, null, false);
+
+		for (DatabaseRegistryEntry eachDBRE : allDBR.getAll(dbType)) {
+			if ( dbre.getSpecies().equals(Species.UNKNOWN) && dbre.getAlias().equals(eachDBRE.getAlias()) )  {
+				// EG where we don't know the species, use type and alias
+				// matching instead
+					return true;
+			}
+			else {
+				if (dbre.getSpecies().equals(eachDBRE.getSpecies())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	// ----------------------------------------------------------------------
 	/**
 	 * Get a list of the logic names and analysis IDs from the analysis table.
