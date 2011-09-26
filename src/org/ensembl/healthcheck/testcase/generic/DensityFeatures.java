@@ -58,7 +58,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 		addToGroup("post-compara-handover");
 		
 		setDescription("Check that all top-level seq regions have some SNP/gene/knownGene density features, and that the values agree between the density_feature and seq_region attrib tables.");
-		setFailureText("May report count mismatches on HAP/PAR regions.\nAlso, if a species has no SNP data, the 'No entry in density_type for analysis snpDensity' warning can be ignored.\n If the genome has been assembled using short-read sequences, some seq_regions might not have density_features");
+		setFailureText("If the genome has been assembled using short-read sequences, some seq_regions might not have density_features");
 
 		logicNameToAttribCode.put("snpDensity", "SNPCount");
 		logicNameToAttribCode.put("geneDensity", "GeneCount");
@@ -88,6 +88,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 	 * 
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
+		
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {
 			logicNameToAttribCode.put("PCodDensity", "knownGeneCount");
 			logicNameToAttribCode.remove("snpDensity");
@@ -97,12 +98,16 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 			boolean variationDatabaseExists = checkDatabaseExistsByType(dbre,DatabaseType.VARIATION);
 			if (!variationDatabaseExists) {
 				logicNameToAttribCode.remove("snpDensity");
+			} else  {
+				if (!logicNameToAttribCode.containsKey("snpDensity")) {
+					logicNameToAttribCode.put("snpDensity", "SNPCount");	
+				}
 			}
 		}
 
 		boolean result = true;
 
-		Connection con = dbre.getConnection();
+		Connection con = dbre.getConnection();		
 
 		result &= checkFeaturesAndCounts(con);
 
@@ -142,14 +147,15 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 			// features there are
 			Statement stmt = con.createStatement();
 
-			ResultSet rs = stmt.executeQuery("SELECT * FROM seq_region WHERE coord_system_id=" + topLevelCSID + " AND name NOT LIKE '%\\_%'");
+			ResultSet rs = stmt.executeQuery("SELECT s.seq_region_id, s.name, CASE WHEN ae.seq_region_id IS NULL THEN 0 ELSE 1 END as exception FROM seq_region s LEFT JOIN assembly_exception ae ON s.seq_region_id = ae.seq_region_id WHERE coord_system_id=" + topLevelCSID + " AND name NOT LIKE '%\\_%' AND (exc_type IN ('HAP', 'PAR') or exc_type IS NULL) GROUP BY s.seq_region_id, s.name, exception");
 
 			int numTopLevel = 0;
 
 			while (rs.next() && numTopLevel++ < MAX_TOP_LEVEL) {
 
-				long seqRegionID = rs.getLong("seq_region_id");
-				String seqRegionName = rs.getString("name");
+				long seqRegionID = rs.getLong("s.seq_region_id");
+				String seqRegionName = rs.getString("s.name");
+				boolean assemblyException = rs.getBoolean("exception");
 				logger.fine("Counting density features on seq_region " + seqRegionName);
 
 				sql = "SELECT COUNT(*) FROM density_feature WHERE seq_region_id=" + seqRegionID;
@@ -188,7 +194,8 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 
 						String sumDF = getRowColumnValue(con, sql);
 						// System.out.println(sql + " " + sumDF);
-						if (sumDF != null && sumDF.length() > 0) {
+						//don't check the sum for haplotypes or PAR regions
+						if (sumDF != null && sumDF.length() > 0 && !assemblyException) {
 
 							long sumFromDensityFeature = Long.parseLong(sumDF);
 
@@ -209,7 +216,6 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 								} else {
 
 									ReportManager.correct(this, con, "density_feature and seq_region_attrib values agree for " + logicName + " on seq region " + seqRegionName);
-
 								}
 
 							} // if sumSRA
