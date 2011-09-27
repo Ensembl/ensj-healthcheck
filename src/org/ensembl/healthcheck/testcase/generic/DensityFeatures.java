@@ -56,7 +56,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 
 		addToGroup("release");
 		addToGroup("post-compara-handover");
-		
+	
 		setDescription("Check that all top-level seq regions have some SNP/gene/knownGene density features, and that the values agree between the density_feature and seq_region attrib tables.");
 		setFailureText("If the genome has been assembled using short-read sequences, some seq_regions might not have density_features");
 
@@ -103,6 +103,13 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 					logicNameToAttribCode.put("snpDensity", "SNPCount");	
 				}
 			}
+			if (!logicNameToAttribCode.containsKey("geneDensity")) {
+				logicNameToAttribCode.put("geneDensity", "GeneCount");	
+			}
+			if (!logicNameToAttribCode.containsKey("knownGeneDensity")) {
+				logicNameToAttribCode.put("knownGeneDensity", "knownGeneCount");	
+			}
+			
 		}
 
 		boolean result = true;
@@ -282,7 +289,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 			if (rows.length >= 1) {
 
 				ReportManager.correct(this, con, "One density_type for analysis " + logicName);
-
+				
 			} else if (rows.length == 0) {
 
 				if (dbre.getType() != DatabaseType.SANGER_VEGA || logicName.equalsIgnoreCase("knownGeneDensity")) {// for sanger_vega only
