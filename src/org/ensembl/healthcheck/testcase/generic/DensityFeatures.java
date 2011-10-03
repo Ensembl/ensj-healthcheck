@@ -25,11 +25,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -47,12 +45,14 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 	private static final int MAX_TOP_LEVEL = 100;
 
 	// map between analysis.logic_name and seq_region attrib_type.code
-	private Map logicNameToAttribCode = new HashMap();
+	@SuppressWarnings("rawtypes")
+  private Map logicNameToAttribCode = new HashMap();
 
 	/**
 	 * Create a new DensityFeatures testcase.
 	 */
-	public DensityFeatures() {
+	@SuppressWarnings("unchecked")
+  public DensityFeatures() {
 
 		addToGroup("release");
 		addToGroup("post-compara-handover");
@@ -87,7 +87,8 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 	 * @return true if the test passed.
 	 * 
 	 */
-	public boolean run(DatabaseRegistryEntry dbre) {
+	@SuppressWarnings("unchecked")
+  public boolean run(DatabaseRegistryEntry dbre) {
 		
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {
 			logicNameToAttribCode.put("PCodDensity", "knownGeneCount");
@@ -132,7 +133,8 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 
 	// ----------------------------------------------------------------------
 
-	private boolean checkFeaturesAndCounts(Connection con) {
+	@SuppressWarnings("rawtypes")
+  private boolean checkFeaturesAndCounts(Connection con) {
 
 		boolean result = true;
 
@@ -261,7 +263,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 		boolean result = true;
 		
 		Connection con = dbre.getConnection();
-		Species species = dbre.getSpecies();
+//		Species species = dbre.getSpecies();
 		String[] logicNames;
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {
 			logicNames = new String[] { "PCodDensity" };
