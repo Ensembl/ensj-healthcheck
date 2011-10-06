@@ -98,7 +98,7 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 		
 		int missingIds = 0;
 		int accessionsChanged = 0;
-		int missingDisplayXrefs = 0;
+
 		HashMap < String, Integer > changeCounts = new HashMap < String, Integer >();
 		
 		try {
@@ -128,35 +128,44 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 					currentRS.close();
 					continue;
 				}
-				
+
 				String currentDbName = currentRS.getString(2);
 				String currentAccession = currentRS.getString(3);
 			
-				if ( currentDbName == null || currentAccession == null ) {
-					missingDisplayXrefs ++;
-					result = false;
-				} else {
+				if (previousDbName == null) {
+				    previousDbName = "null";
+				}
+				if (previousAccession == null) {
+				    previousAccession = "null";
+				}
+
+				if (currentDbName == null) {
+				    currentDbName = "null";
+				}
+				if (currentAccession == null) {
+				    currentAccession = "null";
+				}
+
 					
-					if (!currentAccession.equals(previousAccession) && currentDbName.equals(previousDbName) ) { 
-						//store counts of display xrefs where accession changed - same source
-						accessionsChanged ++;
-					}
-					if (!currentDbName.equals(previousDbName) ) {
-						//store counts of display xrefs where source changed
+				if (!currentAccession.equals(previousAccession) && currentDbName.equals(previousDbName) ) { 
+				    //store counts of display xrefs where accession changed - same source
+				    accessionsChanged ++;
+				}
+				if (!currentDbName.equals(previousDbName) ) {
+				    //store counts of display xrefs where source changed
 										
-						String dbNames =  previousDbName + " to " + currentDbName; 
+				    String dbNames =  previousDbName + " to " + currentDbName; 
 						
-						if (changeCounts.containsKey(dbNames) ) {
-							int changeCount = changeCounts.get(dbNames);
-							changeCount ++;
-							changeCounts.put(dbNames, changeCount);
+				    if (changeCounts.containsKey(dbNames) ) {
+					 int changeCount = changeCounts.get(dbNames);
+					 changeCount ++;
+					 changeCounts.put(dbNames, changeCount);
 													
-						} else {
-							changeCounts.put(dbNames,1); 
-						}
-					}
-				}			
-				
+				    } else {
+					 changeCounts.put(dbNames,1); 
+				    }
+				}
+
 				currentRS.close();
 
 			}
@@ -184,7 +193,7 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 				changedSource += changeCount;
 			}	
 			totalCount = changedSource + accessionsChanged;
-	   		percentageChange = totalCount/displayXrefCount * 100 ;			
+	   		percentageChange = totalCount/displayXrefPreviousCount * 100 ;			
 			if (percentageChange > 1) {
 				result = false;
 			}
@@ -199,21 +208,14 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 			if (missingIds > 0 ) {	
         		ReportManager.problem(this, currentCon, missingIds + "(" + percentage + "%) stable ids missing from the current database ");
         	}
-
-			percentage = missingDisplayXrefs/displayXrefPreviousCount * 100;
-			percentage = Float.valueOf(twoDForm.format(percentage));
-			
-           	if (missingDisplayXrefs > 0 ) {	
-        		ReportManager.problem(this, currentCon, missingDisplayXrefs + "(" + percentage + "%) null display xref ids in the gene table in the current database ");
-        	}	
            	
-			percentage = accessionsChanged/displayXrefCount * 100;
-			percentage = Float.valueOf(twoDForm.format(percentage));
+		percentage = accessionsChanged/displayXrefPreviousCount * 100;
+		percentage = Float.valueOf(twoDForm.format(percentage));
 			
            	if (accessionsChanged > 0 ) {	
         		ReportManager.problem(this, currentCon, accessionsChanged + "(" +percentage + "%) display xref primary accessions changed for the same source ");
         	}
-           	percentageChange = changedSource/displayXrefCount * 100 ;	
+           	percentageChange = changedSource/displayXrefPreviousCount * 100 ;	
            	percentageChange = Float.valueOf(twoDForm.format(percentageChange));
 		
     		ReportManager.problem(this, currentCon, percentageChange + "% of gene display xrefs changed source: (from [previous source] to [current source] )");
@@ -222,7 +224,7 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 			while(iter.hasNext()) {
 				String key = iter.next();
 				int changeCount = changeCounts.get(key);
-				percentage = changeCount/displayXrefCount * 100;
+				percentage = changeCount/displayXrefPreviousCount * 100;
 				percentage = Float.valueOf(twoDForm.format(percentage));
 				ReportManager.problem(this, currentCon, changeCount +"("+ percentage +"%) gene display xrefs changed source from " + key);
 			}
