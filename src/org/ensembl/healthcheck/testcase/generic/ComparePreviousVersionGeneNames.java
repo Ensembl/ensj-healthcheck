@@ -43,7 +43,7 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 	public ComparePreviousVersionGeneNames() {
 
 		addToGroup("release");
-		addToGroup("xrefs");
+		addToGroup("core_xrefs");
 		
 		setDescription("Compare gene names in the current database with those from the equivalent database on the secondary server.");
 		setTeamResponsible(Team.GENEBUILD);
