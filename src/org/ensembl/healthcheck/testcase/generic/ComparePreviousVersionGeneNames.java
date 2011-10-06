@@ -100,6 +100,8 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 		int accessionsChanged = 0;
 
 		HashMap < String, Integer > changeCounts = new HashMap < String, Integer >();
+
+		HashMap < String, String > exampleStableIds = new HashMap < String, String >();
 		
 		try {
 
@@ -160,9 +162,15 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 					 int changeCount = changeCounts.get(dbNames);
 					 changeCount ++;
 					 changeCounts.put(dbNames, changeCount);
+					 if (changeCount <= 3) {
+					     String exampleSt = exampleStableIds.get(dbNames);
+					     exampleSt += " " + stableId;
+					     exampleStableIds.put(dbNames, exampleSt);
+					 }
 													
 				    } else {
 					 changeCounts.put(dbNames,1); 
+					 exampleStableIds.put(dbNames, ", e.g. " + stableId);
 				    }
 				}
 
@@ -226,7 +234,7 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 				int changeCount = changeCounts.get(key);
 				percentage = changeCount/displayXrefPreviousCount * 100;
 				percentage = Float.valueOf(twoDForm.format(percentage));
-				ReportManager.problem(this, currentCon, changeCount +"("+ percentage +"%) gene display xrefs changed source from " + key);
+				ReportManager.problem(this, currentCon, changeCount +"("+ percentage +"%) gene display xrefs changed source from " + key + exampleStableIds.get(key) );
 			}
 	
 		}
