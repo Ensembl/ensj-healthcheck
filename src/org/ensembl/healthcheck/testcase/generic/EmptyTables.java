@@ -66,7 +66,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 		} else if (type == DatabaseType.CORE || type == DatabaseType.VEGA) {
 
 			// the following tables are allowed to be empty
-			String[] allowedEmpty = { "alt_allele", "assembly_exception", "dnac", "seq_region_mapping", "unconventional_transcript_association", "operon", "operon_stable_id", "operon_transcript", "operon_transcript_gene", "operon_transcript_stable_id" };
+			String[] allowedEmpty = { "alt_allele", "assembly_exception", "data_file", "dnac", "seq_region_mapping", "unconventional_transcript_association", "operon", "operon_transcript", "operon_transcript_gene" };
 			tables = remove(tables, allowedEmpty);
 
 			// ID mapping related tables are checked in a separate test case
@@ -78,7 +78,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 				String[] qtlTables = { "qtl", "qtl_feature", "qtl_synonym" };
 				tables = remove(tables, qtlTables);
 			}
-
+			
 			// map, marker etc
 			if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.RATTUS_NORVEGICUS && species != Species.DANIO_RERIO) {
 				String[] markerTables = { "map", "marker", "marker_map_location", "marker_synonym", "marker_feature" };
@@ -118,13 +118,17 @@ public class EmptyTables extends SingleDatabaseTestCase {
 
 			// ----------------------------------------------------
 
-		} else if (type == DatabaseType.OTHERFEATURES || type == DatabaseType.RNASEQ || type == DatabaseType.CDNA) {
+		} else if (type == DatabaseType.OTHERFEATURES || type == DatabaseType.CDNA) {
 
 			// Only a few tables need to be filled in EST
 			String[] est = { "analysis", "analysis_description", "assembly", "attrib_type", "coord_system", "dna_align_feature", "external_db", "meta_coord", "meta", "misc_set", "seq_region", "seq_region_attrib", "unmapped_reason" };
 			tables = est;
-		}
+			
+		} else if (type == DatabaseType.RNASEQ ) {
 
+			String[] est = { "analysis", "analysis_description", "assembly", "attrib_type", "coord_system", "data_file", "dna_align_feature", "external_db", "meta_coord", "meta", "misc_set", "seq_region", "seq_region_attrib", "unmapped_reason" };
+			tables = est;
+		}
 		// -----------------------------------------------------
 		// many tables are allowed to be empty in vega and sanger_vega databases
 		if (type == DatabaseType.VEGA) {
