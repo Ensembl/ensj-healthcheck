@@ -2245,6 +2245,31 @@ public abstract class EnsTestCase {
 		return t;
 
 	}
+	
+	
+	public long getChecksum(Connection con, String tableName) {
+
+		long checksumValue = 0;
+		
+		try {
+
+			Statement stmt = con.createStatement();
+	
+			String sqlQuery = "CHECKSUM TABLE " + tableName; 
+			
+			ResultSet rs = stmt.executeQuery(sqlQuery);
+			
+			if (rs != null && rs.first()) {
+				checksumValue = rs.getLong(2);
+			}	
+	
+			stmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return checksumValue;
+	}
 
 	// ----------------------------------------------------------------------
 
