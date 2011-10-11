@@ -92,7 +92,7 @@ public class ForeignKeyCoreId extends MultiDatabaseTestCase {
 	
 				ReportManager.info(this, con, "Using " + dbrcore.getName() + " as core database and " + dbrvar.getName() + " as variation database");
 	
-				result &= checkForOrphans(con, dbrvar.getName() + ".transcript_variation", "feature_stable_id", dbrcore.getName() + ".transcript_stable_id", "stable_id");
+				result &= checkForOrphans(con, dbrvar.getName() + ".transcript_variation", "feature_stable_id", dbrcore.getName() + ".transcript", "stable_id");
 	
 				result &= checkForOrphansWithConstraint(con, dbrvar.getName() + ".flanking_sequence", "seq_region_id", dbrcore.getName() + ".seq_region", "seq_region_id", "seq_region_id IS NOT NULL");
 	

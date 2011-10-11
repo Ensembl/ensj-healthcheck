@@ -71,7 +71,7 @@ public class ESTStableIDs extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM gene g LEFT JOIN gene_stable_id gs ON g.gene_id = gs.gene_id WHERE gs.gene_id IS NULL HAVING COUNT(g.gene_id) > 0");
+		int rows = getRowCount(con, "SELECT COUNT(*) FROM gene WHERE stable_id IS NULL");
 
 		if (rows > 0) {
 			ReportManager.problem(this, con, rows + " genes have no stable IDs");

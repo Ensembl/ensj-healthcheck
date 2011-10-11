@@ -31,7 +31,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Checks the *_stable_id tables to ensure they are populated, have no orphan references, and have valid versions. Also prints some
+ * Checks stable_id data to ensure they are populated, have no orphan references, and have valid versions. Also prints some
  * examples from the table for checking by eye.
  * 
  * <p>
@@ -55,7 +55,7 @@ public class StableID extends SingleDatabaseTestCase {
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		
-		setDescription("Checks *_stable_id tables are valid.");
+		setDescription("Checks stable_id data is valid.");
 		setPriority(Priority.RED);
 		setEffect("Compara will have invalid stable IDs.");
 		setFix("Re-run stable ID mapping or fix manually.");
@@ -121,25 +121,15 @@ public class StableID extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		String stableIDtable = typeName + "_stable_id";
-		int nStableIDs = countRowsInTable(con, stableIDtable);
-		// ReportManager.info(this, con, "Num " + typeName + "s stable ids = " +
-		// nStableIDs);
+		String stableIDtable = typeName;
+		int nullStableIDs = getRowCount(con, "SELECT COUNT(1) FROM " + stableIDtable + " WHERE stable_id IS NULL");
 
-		if (nStableIDs < 1) {
-			ReportManager.problem(this, con, stableIDtable + " table is empty.");
+		if (nullStableIDs > 0) {
+			ReportManager.problem(this, con, stableIDtable + " table has NULL stable_ids");
 			result = false;
 		}
 
-		// look for orphans between type and type_stable_id tables
-		int orphans = countOrphans(con, typeName, typeName + "_id", stableIDtable, typeName + "_id", false);
-		if (orphans > 0) {
-			ReportManager.problem(this, con, "Orphan references between " + typeName + " and " + typeName + "_stable_id tables.");
-			result = false;
-		}
-
-		// check for duplicate stable IDs (will be redundant when stable ID columns
-		// get a UNIQUE constraint)
+		// check for duplicate stable IDs 
 		// to find which records are duplicated use
 		// SELECT exon_id, stable_id, COUNT(*) FROM exon_stable_id GROUP BY
 		// stable_id HAVING COUNT(*) > 1;
@@ -163,7 +153,7 @@ public class StableID extends SingleDatabaseTestCase {
 			result = false;
 		}
 
-		// make sure stable ID versions in the typeName_stable_id table matches those in stable_id_event
+		// make sure stable ID versions in the typeName table matches those in stable_id_event
 		// for the latest mapping_session
 		String mappingSessionId = getRowColumnValue(con, "SELECT mapping_session_id FROM mapping_session " + "ORDER BY created DESC LIMIT 1");
 
@@ -205,7 +195,7 @@ public class StableID extends SingleDatabaseTestCase {
 		while (it.hasNext()) {
 
 			String type = (String) it.next();
-			String table = type + "_stable_id";
+			String table = type;
 
 			String prefix = Species.getStableIDPrefixForSpecies(dbre.getSpecies(), dbre.getType());
 			if (prefix == null || prefix == "") {
@@ -272,8 +262,8 @@ public class StableID extends SingleDatabaseTestCase {
 
 		String prefix = "";
 
-		// hope the first row of the _type_stable_id table is correct
-		String stableID = getRowColumnValue(con, "SELECT stable_id FROM " + type + "_stable_id LIMIT 1");
+		// hope the first row of the type table is correct
+		String stableID = getRowColumnValue(con, "SELECT stable_id FROM " + type + " LIMIT 1");
 
 		prefix = stableID.replaceAll("[0-9]", "");
 
@@ -298,7 +288,7 @@ public class StableID extends SingleDatabaseTestCase {
 
 		for (int i = 0; i < types.length; i++) {
 
-			String table = types[i] + "_stable_id";
+			String table = types[i];
 
 			String sql = "SELECT COUNT(*) FROM " + table + " WHERE created_date=0 OR modified_date=0";
 

@@ -72,7 +72,7 @@ public class HGNCNumeric extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		String allSQL = "SELECT COUNT(*) FROM external_db e, xref x, object_xref ox, gene_stable_id gsi WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id AND ox.ensembl_object_type='Gene' AND ox.ensembl_id=gsi.gene_id AND e.db_name LIKE 'HGNC%'";
+		String allSQL = "SELECT COUNT(*) FROM external_db e, xref x, object_xref ox, gene g WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id AND ox.ensembl_object_type='Gene' AND ox.ensembl_id=g.gene_id AND e.db_name LIKE 'HGNC%'";
 		String numericSQL = allSQL + " AND x.dbprimary_acc=x.display_label";
 
 		int rowsAll = getRowCount(con, allSQL);

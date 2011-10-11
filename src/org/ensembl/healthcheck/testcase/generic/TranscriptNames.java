@@ -89,7 +89,7 @@ public class TranscriptNames extends SingleDatabaseTestCase {
 		try {
 
 			PreparedStatement stmt = con
-					.prepareStatement("SELECT COUNT(*) FROM analysis a, transcript_stable_id tsi, transcript t, xref x WHERE a.analysis_id=t.analysis_id AND t.transcript_id=tsi.transcript_id AND t.display_xref_id=x.xref_id AND a.logic_name=? AND x.display_label NOT REGEXP ?");
+					.prepareStatement("SELECT COUNT(*) FROM analysis a, transcript t, xref x WHERE a.analysis_id=t.analysis_id AND t.display_xref_id=x.xref_id AND a.logic_name=? AND x.display_label NOT REGEXP ?");
 
 			for (String logicName : logicNameRegexp.keySet()) {
 

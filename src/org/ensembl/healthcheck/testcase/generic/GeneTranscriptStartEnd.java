@@ -76,7 +76,7 @@ public class GeneTranscriptStartEnd extends SingleDatabaseTestCase {
 		// as the gene's
 		// end
 		// the SQL below will return any where this is /not/ the case
-		String sql = "SELECT g.gene_id, gsi.stable_id, g.seq_region_start AS gene_start, g.seq_region_end AS gene_end, MIN(tr.seq_region_start) AS min_transcript_start, MAX(tr.seq_region_end) AS max_transcript_end FROM gene g, transcript tr, gene_stable_id gsi WHERE tr.gene_id=g.gene_id AND gsi.gene_id = g.gene_id GROUP BY tr.gene_id HAVING (gene_start <> min_transcript_start OR gene_end <> max_transcript_end)";
+		String sql = "SELECT g.gene_id, g.stable_id, g.seq_region_start AS gene_start, g.seq_region_end AS gene_end, MIN(tr.seq_region_start) AS min_transcript_start, MAX(tr.seq_region_end) AS max_transcript_end FROM gene g, transcript tr WHERE tr.gene_id=g.gene_id GROUP BY tr.gene_id HAVING (gene_start <> min_transcript_start OR gene_end <> max_transcript_end)";
 
 		Connection con = dbre.getConnection();
 

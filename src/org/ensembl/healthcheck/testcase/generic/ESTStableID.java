@@ -95,11 +95,11 @@ public class ESTStableID extends SingleDatabaseTestCase {
 
 			String regexp = "EST" + letter + "[0-9]+";
 
-			String sql = "SELECT COUNT(*) FROM " + table + "_stable_id si, " + table + " x, analysis a WHERE a.analysis_id=x.analysis_id AND x." + table + "_id=si." + table
-					+ "_id AND a.logic_name LIKE '%est%' AND si.stable_id NOT REGEXP '" + regexp + "'";
+			String sql = "SELECT COUNT(*) FROM " + table + " x, analysis a WHERE a.analysis_id=x.analysis_id "
+					+ "AND a.logic_name LIKE '%est%' AND x.stable_id NOT REGEXP '" + regexp + "'";
 			if (table.equals("translation")) {
 				// need extra join to transcript table
-				sql = "SELECT COUNT(*) FROM translation_stable_id si, translation x, transcript t, analysis a WHERE a.analysis_id=t.analysis_id AND x.translation_id=si.translation_id AND x.transcript_id=t.transcript_id AND a.logic_name LIKE '%est%' AND si.stable_id NOT REGEXP 'ESTP[0-9]+'";
+				sql = "SELECT COUNT(*) FROM translation x, transcript t, analysis a WHERE a.analysis_id=t.analysis_id AND x.transcript_id=t.transcript_id AND a.logic_name LIKE '%est%' AND x.stable_id NOT REGEXP 'ESTP[0-9]+'";
 			}
 
 			int rows = getRowCount(con, sql);
