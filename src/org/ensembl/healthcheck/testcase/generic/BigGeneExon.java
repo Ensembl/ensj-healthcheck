@@ -169,7 +169,7 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 			// can't do one single query as not all genes may have
 			// display_xrefs/descriptions
 			String length = getRowColumnValue(con, "SELECT (seq_region_end-seq_region_start+1) AS length FROM gene WHERE gene_id=" + id);
-			String stableID = getRowColumnValue(con, "SELECT stable_id FROM gene_stable_id WHERE gene_id=" + id);
+			String stableID = getRowColumnValue(con, "SELECT stable_id FROM gene WHERE gene_id=" + id);
 			String name = getRowColumnValue(con, "SELECT x.display_label FROM gene g, xref x WHERE x.xref_id=g.display_xref_id AND g.gene_id=" + id);
 			String description = getRowColumnValue(con, "SELECT description FROM gene WHERE gene_id=" + id);
 			String status = getRowColumnValue(con, "SELECT status FROM gene WHERE gene_id=" + id);

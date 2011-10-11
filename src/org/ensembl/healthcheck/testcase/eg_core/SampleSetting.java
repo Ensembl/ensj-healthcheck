@@ -24,9 +24,9 @@ import org.ensembl.healthcheck.util.ConnectionBasedSqlTemplateImpl.SqlTemplateUn
  */
 public class SampleSetting extends AbstractEgCoreTestCase {
 
-	private static final String GENE_ID = "SELECT gene_id FROM gene_stable_id WHERE stable_id=?";
+	private static final String GENE_ID = "SELECT gene_id FROM gene WHERE stable_id=?";
 
-	private static final String TRANSCRIPT_ID = "SELECT transcript_id FROM transcript_stable_id WHERE stable_id=?";
+	private static final String TRANSCRIPT_ID = "SELECT transcript_id FROM transcript WHERE stable_id=?";
 
 	private final static String META_QUERY = "select meta_key,meta_value from meta where species_id=? and meta_key like 'sample.%'";
 

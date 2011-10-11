@@ -285,8 +285,8 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 				else{
 
 					xrefQuery = "select t.seq_region_id, count(*) as count  from " + coreDBName + ".transcript t, " + 
-						coreDBName + ".transcript_stable_id ts," + " object_xref ox, xref x " +
-						"where t.transcript_id=ts.transcript_id and ts.stable_id=x.dbprimary_acc " +
+						" object_xref ox, xref x " +
+						"where t.stable_id=x.dbprimary_acc " +
 						"and ox.ensembl_object_type='" + xrefObj + "' and ox.xref_id=x.xref_id " + 
 						edbClause + " GROUP BY t.seq_region_id";
 

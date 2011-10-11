@@ -59,27 +59,6 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		// ----------------------------
-		// Check stable IDs all correspond to an existing object
-		String[] stableIDtypes = { "gene", "transcript", "translation", "exon" };
-		for (String stableIDType : stableIDtypes) {
-
-			// exception for gene-gene_stable_id relations in otherfeatures databases as some non-genes are stored in the gene table
-			if (dbre.getType() == DatabaseType.OTHERFEATURES) {
-
-				if (stableIDType.equals("gene")) {
-
-					result &= checkForOrphansWithConstraint(con, "gene", "gene_id", "gene_stable_id", "gene_id", "biotype NOT IN ('est','cdna')");
-
-				}
-
-			} else {
-
-				result &= checkStableIDKeys(con, stableIDType);
-
-			}
-		}
-
-		// ----------------------------
 
 		result &= checkForOrphans(con, "exon", "exon_id", "exon_transcript", "exon_id", false);
 
@@ -255,18 +234,6 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
 	}
 
-	// -------------------------------------------------------------------------
-	private boolean checkStableIDKeys(Connection con, String type) {
-
-		if (tableHasRows(con, type + "_stable_id")) {
-
-			return checkForOrphans(con, type, type + "_id", type + "_stable_id", type + "_id", false);
-
-		}
-
-		return true;
-
-	} // checkStableIDKeys
 
 	// -------------------------------------------------------------------------
 	public boolean checkKeysByEnsemblObjectType(Connection con, String baseTable, String type) {

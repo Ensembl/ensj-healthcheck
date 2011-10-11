@@ -18,10 +18,9 @@ import org.ensembl.healthcheck.ReportManager;
 public class StableId extends AbstractEgCoreTestCase {
 
 	private final static String QUERY = "select g.gene_id from gene g "
-			+ "left join gene_stable_id gs using (gene_id) "
 			+ "join seq_region sr using (seq_region_id) "
 			+ "join coord_system cs using (coord_system_id) "
-			+ "where gs.stable_id is null and cs.species_id=?";
+			+ "where g.stable_id is null and cs.species_id=?";
 
 	/*
 	 * (non-Javadoc)

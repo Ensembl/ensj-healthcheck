@@ -42,7 +42,7 @@ public class DescriptionNewlines extends SingleDatabaseTestCase {
 
 		setPriority(Priority.AMBER);
 		setEffect("Will cause problems for TSV file dumping and importing");
-		setFix("Remove newlines and tabs; useful SQL for identifying affected genes:\nSELECT g.gene_id, gsi.stable_id, g.description FROM gene g, gene_stable_id gsi WHERE g.gene_id=gsi.gene_id AND (LOCATE('\\n', g.description) > 0 or LOCATE('\\t', g.description) > 0);");
+		setFix("Remove newlines and tabs; useful SQL for identifying affected genes:\nSELECT gene_id, stable_id, description FROM gene WHERE (LOCATE('\\n', description) > 0 or LOCATE('\\t', description) > 0);");
 		setTeamResponsible(Team.CORE);
 
 	}
@@ -61,7 +61,7 @@ public class DescriptionNewlines extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM gene g, gene_stable_id gsi WHERE g.gene_id=gsi.gene_id AND (LOCATE('\n', g.description) > 0 OR LOCATE('\t', g.description) > 0)");
+		int rows = getRowCount(con, "SELECT COUNT(*) FROM gene WHERE (LOCATE('\n', description) > 0 OR LOCATE('\t', description) > 0)");
 
 		if (rows > 0) {
 

@@ -74,8 +74,8 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		String sql = "SELECT g.gene_id, g.seq_region_start AS start, g.seq_region_end AS end, g.seq_region_id AS chromosome_id, g.seq_region_strand AS strand, g.biotype, gsi.stable_id, g.analysis_id, g.display_xref_id, g.source, g.status, g.description, g.is_current, g.canonical_transcript_id, g.canonical_annotation "
-				+ "             FROM (gene g, gene_stable_id gsi) WHERE g.gene_id=gsi.gene_id ORDER BY chromosome_id, strand, start, end";
+		String sql = "SELECT g.gene_id, g.seq_region_start AS start, g.seq_region_end AS end, g.seq_region_id AS chromosome_id, g.seq_region_strand AS strand, g.biotype, g.analysis_id, g.display_xref_id, g.source, g.status, g.description, g.is_current, g.canonical_transcript_id, g.canonical_annotation "
+				+ "             FROM gene g ORDER BY chromosome_id, strand, start, end";
 
 		Connection con = dbre.getConnection();
 		try {
