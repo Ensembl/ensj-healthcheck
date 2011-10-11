@@ -14,13 +14,10 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.logging.Logger;
 
 import org.ensembl.healthcheck.AssemblyNameInfo;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
@@ -29,9 +26,8 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionAssembly;
 import org.ensembl.healthcheck.util.Utils;
-import org.ensembl.healthcheck.testcase.EnsTestCase;
+
 
 /**
  * Checks that meta_value contents in the meta table are OK. Only one meta table at a time is done here; checks for the consistency of the
@@ -78,7 +74,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 		if (!isSangerVega) {// do not check for sanger_vega
 			result &= checkOverlappingRegions(con);
 		}
-
+		
 		result &= checkSpeciesClassification(dbre);
 
 		result &= checkAssemblyMapping(con);
@@ -150,10 +146,10 @@ public class MetaValues extends SingleDatabaseTestCase {
 		// -------------------------------------------
 
 		result &= checkGenebuildMethod(dbre);
-
+		
 		// -------------------------------------------
 		
-		result &= checkAssemblyAccessionUpdate(dbre);
+		result &= checkAssemblyAccessionUpdate(dbre);		
 
 		return result;
 
@@ -722,9 +718,14 @@ public class MetaValues extends SingleDatabaseTestCase {
 		
 		Connection con = dbre.getConnection();
 		String currentAssemblyAccession = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.accession'");
+		String currentAssemblyName = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.name'");
 
 		if (currentAssemblyAccession.equals("")) {
 			ReportManager.problem(this, con, "No assembly.accession entry present in Meta table");
+			return false;
+		}
+		if (currentAssemblyName.equals("")) {
+			ReportManager.problem(this, con, "No assembly.name entry present in Meta table");
 			return false;
 		}
 		
@@ -740,21 +741,40 @@ public class MetaValues extends SingleDatabaseTestCase {
 
 		Connection conPrevious = sec.getConnection();
 		String previousAssemblyAccession = getRowColumnValue(conPrevious, "SELECT meta_value FROM meta WHERE meta_key='assembly.accession'");
+		String previousAssemblyName = getRowColumnValue(conPrevious, "SELECT meta_value FROM meta WHERE meta_key='assembly.name'");
 
-		
-		//if assembly.accession value hasn't changed, test if contents of the assembly table are the same as in previous release
-		if ( !previousAssemblyAccession.equals("") && previousAssemblyAccession.equals(currentAssemblyAccession) ) {
-			
-			ComparePreviousVersionAssembly testCase = new ComparePreviousVersionAssembly();
-			
-			result = testCase.run(dbre);
-			if (!result) {
-				ReportManager.problem(this, con, "assembly.accession value " + currentAssemblyAccession + " has not been updated while the assembly table has changed.");				
-			}
+		long currentAssemblyChecksum = getChecksum(con, "assembly");
+		long previousAssemblyChecksum = getChecksum(conPrevious, "assembly");
+				
+		boolean assemblyChanged;
+		if (currentAssemblyChecksum != previousAssemblyChecksum) {
+			assemblyChanged = true; 
+		} else {
+			assemblyChanged = false;
 		}
+		if (assemblyChanged && previousAssemblyAccession.equals(currentAssemblyAccession) ) {
+			result = false;
+			ReportManager.problem(this, con, "assembly.accession value " + currentAssemblyAccession + " has not been updated while the assembly table has changed.");				
+		}	
+		
+		if (assemblyChanged && previousAssemblyName.equals(currentAssemblyName) ) {
+			result = false;
+			ReportManager.problem(this, con, "assembly.name value " + currentAssemblyName + " has not been updated while the assembly table has changed.");							
+		}
+		
+		if (!assemblyChanged && !previousAssemblyAccession.equals(currentAssemblyAccession) ) {
+			result = false;
+			ReportManager.problem(this, con, "assembly.accession value " + currentAssemblyAccession + " has been updated while the assembly table hasn't changed.");				
+		}	
+	
+		if (!assemblyChanged && !previousAssemblyName.equals(currentAssemblyName) ) {
+			result = false;
+			ReportManager.problem(this, con, "assembly.name value " + currentAssemblyName + " has been updated while the assembly table hasn't changed.");							
+		}
+					
 
 		if (result) {
-			ReportManager.correct(this, con, "assembly.accession value " + currentAssemblyAccession + " has changed.");
+			ReportManager.correct(this, con, "assembly.accession and assembly.name values are correct");
 		}
 		
 		return result;
