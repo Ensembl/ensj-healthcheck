@@ -1,6 +1,9 @@
+#!/usr/bin/env perl
+
 # Propagate manual_ok_all_releases from one release to another
 
 use strict;
+use warnings;
 use DBI;
 use Getopt::Long;
 use IO::File;
@@ -167,7 +170,7 @@ sub create_db_name_cache {
   }
 
   # create mapping
-  my %old_to_new = {};
+  my %old_to_new = ();
   my $missing;
 
   foreach my $old_db (@old_dbs) {
@@ -286,7 +289,7 @@ sub propagate {
 
 	if ($type eq 'manual_ok_this_genebuild') {
 
-	  next if ($meta_cache->{$old_database} ne $meta_cache->{$new_database});
+	  next if (($meta_cache->{$old_database} || '') ne ($meta_cache->{$new_database} || ''));
 
 	}
 
