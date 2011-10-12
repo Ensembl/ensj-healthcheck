@@ -58,7 +58,7 @@ public enum Species {
 	OTOLEMUR_GARNETTII(30611, "OtoGar", "ENSOGA", "bushbaby,bush_baby,galago,small_eared_galago,ogarnettii,otolemur,otolemur_garnettii"),
 	PAN_TROGLODYTES(9598, "CHIMP", "ENSPTR", "chimp,chimpanzee,ptroglodytes,pantroglodytes,pan_troglodytes"),
 	PAPIO_HAMADRYAS(9557, "Pham", "ENSPHA", "baboon,Papio_hamadryas,papio_hamadryas,papio_hamadryas,sacred_baboon,western_baboon,red_baboon"),
-	PETROMYZON_MARINUS(7757, "petromyzon_marinus", "ENSPMA", "lamprey,sea_lamprey,pmarinus,petromyzon,petromyzon_marinus"),
+	PETROMYZON_MARINUS(7757, "Pmarinus", "ENSPMA", "lamprey,sea_lamprey,pmarinus,petromyzon,petromyzon_marinus"),
 	PONGO_ABELII(9601, "PPYG", "ENSPPY", "orangutan,orang-utan,pabellii,pongo_abelii"),
 	PROCAVIA_CAPENSIS(9813, "PROCAP", "ENSPCA", "cape_rock_hyrax,caperockhyrax,procaviacapensis,procavia_capensis"),
 	PTEROPUS_VAMPYRUS(132908, "PTEVAM", "ENSPVA", "large_flying_fox,largeflyingfox,pteropusvampyrus,pteropus_vampyrus"),
