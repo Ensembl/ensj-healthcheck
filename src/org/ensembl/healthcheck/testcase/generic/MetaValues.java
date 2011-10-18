@@ -14,6 +14,9 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -27,7 +30,7 @@ import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.Utils;
-
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Checks that meta_value contents in the meta table are OK. Only one meta table at a time is done here; checks for the consistency of the
@@ -717,8 +720,8 @@ public class MetaValues extends SingleDatabaseTestCase {
 		}
 		
 		Connection con = dbre.getConnection();
-		String currentAssemblyAccession = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.accession'");
-		String currentAssemblyName = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.name'");
+		String currentAssemblyAccession = DBUtils.getMetaValue(con, "assembly.accession");
+		String currentAssemblyName = DBUtils.getMetaValue(con, "assembly.name");
 
 		if (currentAssemblyAccession.equals("")) {
 			ReportManager.problem(this, con, "No assembly.accession entry present in Meta table");
@@ -739,45 +742,77 @@ public class MetaValues extends SingleDatabaseTestCase {
 		
 		logger.finest("Equivalent database on secondary server is " + sec.getName());		
 
-		Connection conPrevious = sec.getConnection();
-		String previousAssemblyAccession = getRowColumnValue(conPrevious, "SELECT meta_value FROM meta WHERE meta_key='assembly.accession'");
-		String previousAssemblyName = getRowColumnValue(conPrevious, "SELECT meta_value FROM meta WHERE meta_key='assembly.name'");
-
+		Connection previousCon = sec.getConnection();
+		String previousAssemblyAccession = DBUtils.getMetaValue(previousCon, "assembly.accession");
+		String previousAssemblyName = DBUtils.getMetaValue(previousCon, "assembly.name");
+		
 		long currentAssemblyChecksum = getChecksum(con, "assembly");
-		long previousAssemblyChecksum = getChecksum(conPrevious, "assembly");
+		long previousAssemblyChecksum = getChecksum(previousCon, "assembly");
 				
-		boolean assemblyChanged;
+		boolean assemblyChanged = false;
+		boolean assemblyTableChanged = false;
+		boolean assemblyExceptionTableChanged = false;
+		
 		if (currentAssemblyChecksum != previousAssemblyChecksum) {
-			assemblyChanged = true; 
+			assemblyTableChanged = true;
 		} else {
-			assemblyChanged = false;
-		}
-		if (assemblyChanged && previousAssemblyAccession.equals(currentAssemblyAccession) ) {
-			result = false;
-			ReportManager.problem(this, con, "assembly.accession value " + currentAssemblyAccession + " has not been updated while the assembly table has changed.");				
-		}	
-		
-		if (assemblyChanged && previousAssemblyName.equals(currentAssemblyName) ) {
-			result = false;
-			ReportManager.problem(this, con, "assembly.name value " + currentAssemblyName + " has not been updated while the assembly table has changed.");							
-		}
-		
-		if (!assemblyChanged && !previousAssemblyAccession.equals(currentAssemblyAccession) ) {
-			result = false;
-			ReportManager.problem(this, con, "assembly.accession value " + currentAssemblyAccession + " has been updated while the assembly table hasn't changed.");				
-		}	
-	
-		if (!assemblyChanged && !previousAssemblyName.equals(currentAssemblyName) ) {
-			result = false;
-			ReportManager.problem(this, con, "assembly.name value " + currentAssemblyName + " has been updated while the assembly table hasn't changed.");							
-		}
+			if (dbre.getSpecies() != Species.HOMO_SAPIENS) {
+						
+				// compare assembly_exception tables (patches only) from each database
+				try {
+
+					Statement previousStmt = previousCon.createStatement();
+					Statement currentStmt = con.createStatement();
+
+					String sql = "SELECT * FROM assembly_exception WHERE exc_type LIKE ('PATCH_%') ORDER BY assembly_exception_id";
+					ResultSet previousRS = previousStmt.executeQuery(sql);
+					ResultSet currentRS = currentStmt.executeQuery(sql);
+
+					boolean assExSame = DBUtils.compareResultSets(currentRS, previousRS, this, "", false, false, "assembly_exception", false);
+
+					currentRS.close();
+					previousRS.close();
+					currentStmt.close();
+					previousStmt.close();
 					
+					assemblyExceptionTableChanged = !assExSame;
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}			
+				
+			}
+		}
+	
+		assemblyChanged = assemblyTableChanged || assemblyExceptionTableChanged;
+
+		if (assemblyChanged == previousAssemblyAccession.equals(currentAssemblyAccession) && previousAssemblyName.equals(currentAssemblyName) ) {
+			result = false;
+			String errorMessage = "assembly.accession and assembly.name values need to be updated when "
+					+ "the assembly table changes or new patches are added to the assembly exception table\n"
+					+ "previous assembly.accession: " + previousAssemblyAccession + " assembly.name: " + previousAssemblyName 
+					+ " current assembly.accession: " + currentAssemblyAccession + " assembly.name: " + currentAssemblyName + "\n"
+					+ "assembly table changed:";
+			if (assemblyTableChanged) {
+				errorMessage += " yes;";
+			} else {
+				errorMessage += " no;";
+			}
+			errorMessage += " assembly exception patches changed:";
+			if (assemblyExceptionTableChanged) {
+				errorMessage += " yes";
+			} else {
+				errorMessage += " no";
+			}			
+			ReportManager.problem(this, con, errorMessage);		
+		}	
 
 		if (result) {
 			ReportManager.correct(this, con, "assembly.accession and assembly.name values are correct");
-		}
-		
+		}			
+								
 		return result;
 	}	
+			
 	
 } // MetaValues
