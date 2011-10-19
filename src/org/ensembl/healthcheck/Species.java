@@ -21,7 +21,7 @@ public enum Species {
 	CHOLOEPUS_HOFFMANNI(9358, "choHof", "ENSCHO", "Sloth,Two-toed_sloth,Hoffmans_two-fingered_sloth,choloepus_hoffmanni"),
 	CIONA_INTESTINALIS(7719, "JGI", "ENSCIN", "cionaintestinalis,ciona_int,ciona_intestinalis"),
 	CIONA_SAVIGNYI(51511, "CSAV", "ENSCSAV", "savignyi,cionasavignyi,csavignyi,ciona_savignyi"),
-        CRICETULUS_GRISEUS(10029, "CriGri", "ENSCGR", "hamster,chinese_hamster"),
+        CRICETULUS_GRISEUS(10029, "CriGri", "ENSCGR", "hamster,chinese_hamster,cgriseus,cricetulus_griseus"),
 	CULEX_PIPIENS(7175, "CpiJ", "CPIJ", "culex,culexpipiens,culex_pipiens"),
 	DANIO_RERIO(7955, "Zv", "ENSDAR", "zebrafish,danio,drerio,daniorerio,danio_rerio"),
 	DASYPUS_NOVEMCINCTUS(9361, "DasNov", "ENSDNO", "armadillo,daisy,dasypus,nine_banded_armadillo,nine-banded_armadillo,texas_armadillo,dasypus_novemcinctus"),
