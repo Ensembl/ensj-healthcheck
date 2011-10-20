@@ -14,24 +14,11 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.logging.Logger;
 
-import org.ensembl.healthcheck.AssemblyNameInfo;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionAssembly;
-import org.ensembl.healthcheck.util.Utils;
-import org.ensembl.healthcheck.testcase.EnsTestCase;
 
 /**
  * Checks that meta_value for key assembly.name is not longer than 16 characters - the current display width limit on the website.
