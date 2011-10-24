@@ -72,15 +72,15 @@ to delete the directory with the checkouts.
 
 		<mkdir dir="${perlDependencyCheckoutDir}"/>
 
-		<exec dir="." executable="wget" os="Linux">
+		<exec dir="." executable="wget" os="Linux,Mac OS X">
 		  <arg line="bioperl.org/DIST/old_releases/bioperl-1.2.3.tar.gz" />
 		</exec>
 
-		<exec dir="." executable="tar" os="Linux">
+		<exec dir="." executable="tar" os="Linux,Mac OS X">
 		  <arg line="--directory perlcode/ -xzvf bioperl-1.2.3.tar.gz" />
 		</exec>
 
-		<exec dir="." executable="mv" os="Linux">
+		<exec dir="." executable="mv" os="Linux,Mac OS X">
 		  <arg line="perlcode/bioperl-1.2.3/ perlcode/bioperl" />
 		</exec>
 
