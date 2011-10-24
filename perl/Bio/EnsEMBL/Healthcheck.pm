@@ -66,6 +66,10 @@ sub _initialise_logger {
 sub dba {
 	my $self = shift;
 	$self->{dba} = shift if @_;
+
+	confess("Type eror!")
+	  unless('Bio::EnsEMBL::DBSQL::DBAdaptor');
+
 	return $self->{dba};
 }
 
