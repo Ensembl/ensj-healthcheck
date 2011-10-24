@@ -68,11 +68,11 @@ public class SingleDBCollations extends SingleDatabaseTestCase {
 		try {
 
 			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery("SHOW TABLE STATUS");
+			ResultSet rs = stmt.executeQuery("SELECT TABLE_NAME, TABLE_COLLATION FROM information_schema.tables WHERE table_schema = DATABASE() and TABLE_COMMENT NOT LIKE '%VIEW%'");
 
 			while (rs.next()) {
-				String table = rs.getString("name");
-				String collation = rs.getString("collation");
+				String table = rs.getString("TABLE_NAME");
+				String collation = rs.getString("TABLE_COLLATION");
 				if (collation == null) {
 					ReportManager.problem(this, con, "Can't get collation for " + table);
 					result = false;
