@@ -214,7 +214,7 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 			}
 
 			if (countOrphansWithConstraint(con, analysisTab, "analysis_id", "analysis", "analysis_id", "analysis_id IS NOT NULL") > 0) {
-				ReportManager.problem(this, con, "FAILED object_xref -> analysis using FK analysis_id relationships");
+				ReportManager.problem(this, con, "FAILED " + analysisTab + " -> analysis using FK analysis_id relationships");
 				result = false;
 			}
 
