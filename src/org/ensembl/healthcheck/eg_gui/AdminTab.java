@@ -100,9 +100,12 @@ public class AdminTab extends JPanel {
 	protected String getperl5LibDefaultValue() {
 		
 		String defaultValue;
-		
+
+		// If the user set PERL5LIB, then prepend it to the libraries of the 
+		// healthchecks
+		//
 		if (System.getenv().containsKey("PERL5LIB")) {
-			defaultValue = System.getenv().get("PERL5LIB");
+			defaultValue = System.getenv().get("PERL5LIB") + ":" + perl5libDefaultValue;
 		} else {
 			defaultValue = perl5libDefaultValue;
 		}
