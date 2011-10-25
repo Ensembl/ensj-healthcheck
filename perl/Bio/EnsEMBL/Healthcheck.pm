@@ -113,6 +113,9 @@ sub progress {
 =cut
 sub problem {
 	my ($self,$msg) = @_;
+	
+	$msg =~ s/\n/\nPROBLEM:/g;
+	
 	print STDERR "PROBLEM:$msg\n";
 }
 
