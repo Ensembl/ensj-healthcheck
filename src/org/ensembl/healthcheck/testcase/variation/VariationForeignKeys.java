@@ -67,7 +67,7 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			result &= checkForOrphans(con, "allele", "variation_id", "variation", "variation_id", true);
 			result &= checkForOrphans(con, "allele_group", "sample_id", "sample", "sample_id", true);
 			result &= checkForOrphans(con, "allele_group_allele", "variation_id", "variation", "variation_id", true);
-			result &= checkForOrphans(con, "compressed_genotype_single_bp", "sample_id", "individual", "sample_id", true);
+			result &= checkForOrphans(con, "compressed_genotype_region", "sample_id", "individual", "sample_id", true);
 			result &= checkForOrphans(con, "failed_allele", "failed_description_id", "failed_description", "failed_description_id", true);
 			result &= checkForOrphans(con, "failed_variation", "failed_description_id", "failed_description", "failed_description_id", true);
 			result &= checkForOrphans(con, "flanking_sequence", "variation_id", "variation", "variation_id", true);
@@ -78,6 +78,7 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			result &= checkForOrphans(con, "population", "sample_id", "sample", "sample_id", true);
 			result &= checkForOrphans(con, "population_genotype", "sample_id", "sample", "sample_id", true);
 			result &= checkForOrphans(con, "population_genotype", "variation_id", "variation", "variation_id", true);
+			result &= checkForOrphans(con, "compressed_genotype_var", "variation_id", "variation", "variation_id", true);
 			result &= checkForOrphans(con, "read_coverage", "sample_id", "sample", "sample_id", true);
 			result &= checkForOrphans(con, "read_coverage", "seq_region_id", "seq_region", "seq_region_id", true);
 			result &= checkForOrphans(con, "sample_synonym", "sample_id", "sample", "sample_id", true);
@@ -101,8 +102,13 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			result &= checkForOrphans(con, "variation_set_variation", "variation_set_id", "variation_set", "variation_set_id", true);
 			result &= checkForOrphans(con, "variation_synonym", "source_id", "source", "source_id", true);
 			result &= checkForOrphans(con, "variation_synonym", "variation_id", "variation", "variation_id", true);
+			
+			// alleles and genotypes
+			result &= checkForOrphans(con, "allele", "allele_code_id", "allele_code", "allele_code_id", true);
+			result &= checkForOrphans(con, "population_genotype", "genotype_code_id", "genotype_code", "genotype_code_id", true);
+			result &= checkForOrphans(con, "genotype_code", "allele_code_id", "allele_code", "allele_code_id", true);
 
-			rows = countOrphansWithConstraint(con,"compressed_genotype_single_bp","seq_region_id","variation_feature","seq_region_id","seq_region_start = variation_feature.seq_region_start");
+			rows = countOrphansWithConstraint(con,"compressed_genotype_region","seq_region_id","variation_feature","seq_region_id","seq_region_start = variation_feature.seq_region_start");
 			if (rows > 0) {
 				ReportManager.problem(this, con, rows + "entries in Compressed genotype table without variation features");
 				result = false;

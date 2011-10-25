@@ -55,7 +55,7 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
         String[] svTables               = { "structural_variation", "structural_variation_feature" };
 		String[] sampleTables           = { "population_genotype", "population_structure", "sample_synonym" };
         String[] setTables              = { "variation_set", "variation_set_structure", "variation_set_variation" };
-        String[] genotypeTables         = { "individual_genotype_multiple_bp", "compressed_genotype_single_bp" };
+        String[] genotypeTables         = { "compressed_genotype_region", "compressed_genotype_var" };
         String[] coverageTables         = { "read_coverage" };
 
         // first drop the unused tables

@@ -55,6 +55,7 @@ public class CompareVariationSchema extends MultiDatabaseTestCase {
 
 		addToGroup("variation");
 		addToGroup("variation-release");
+		addToGroup("variation-test");
 		setDescription("Will check if database schema is correct");
 		setTeamResponsible(Team.VARIATION);
 		this.defineExceptions();
@@ -203,6 +204,8 @@ public class CompareVariationSchema extends MultiDatabaseTestCase {
 			} else if (masterSchema != null) {
 				// use the defined schema name as the master
 				// get connection to master schema
+				
+				logger.info("Will is trying to connect to " + masterSchema);
 				masterCon = getSchemaConnection(masterSchema);
 				logger.fine("Opened connection to master schema in " + DBUtils.getShortDatabaseName(masterCon));
 
@@ -235,7 +238,7 @@ public class CompareVariationSchema extends MultiDatabaseTestCase {
 							// if there is a problem in that species (eg rat), report error
 							ReportManager.problem(this, checkCon, "Table name discrepancy detected, skipping rest of checks");
 							result = false;
-							continue;
+							//continue;
 						}
 
 						Statement dbStmt = checkCon.createStatement();

@@ -52,7 +52,7 @@ public class Meta_coord extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-		String[] tables = { "variation_feature", "flanking_sequence", "compressed_genotype_single_bp", "transcript_variation", "read_coverage", "variation_group_feature", "structural_variation_feature" };
+		String[] tables = { "variation_feature", "flanking_sequence", "compressed_genotype_region", "transcript_variation", "read_coverage", "variation_group_feature", "structural_variation_feature" };
 		
 		try {
 			/*

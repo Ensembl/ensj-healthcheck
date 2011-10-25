@@ -48,10 +48,10 @@ public class ComparePreviousVersionGenotypes extends ComparePreviousVersionBase 
 			
 			// Count genotypes in population_genotype
 			counts.putAll(getCountsBySQL(dbre, "SELECT 'population_genotype', COUNT(*) FROM population_genotype"));
-			// Count genotypes in compressed_genotype_single_bp
-			counts.putAll(getCountsBySQL(dbre, "SELECT 'compressed_genotype_single_bp', COUNT(*) FROM compressed_genotype_single_bp"));
-			// Count genotypes in individual_genotype_multiple_bp
-			counts.putAll(getCountsBySQL(dbre, "SELECT 'individual_genotype_multiple_bp', COUNT(*) FROM individual_genotype_multiple_bp"));
+			// Count genotypes in compressed_genotype_region
+			counts.putAll(getCountsBySQL(dbre, "SELECT 'compressed_genotype_region', COUNT(*) FROM compressed_genotype_region"));
+			// Count genotypes in compressed_genotype_var
+			counts.putAll(getCountsBySQL(dbre, "SELECT 'compressed_genotype_var', COUNT(*) FROM compressed_genotype_var"));
 
 		} catch (Exception e) {
 			ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
