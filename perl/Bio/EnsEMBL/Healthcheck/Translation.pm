@@ -31,9 +31,12 @@ sub new {
 sub createGeneStableIdIterator {
 	
 	my $self = shift;
+
+	my $dba = $self->dba();
 	
 	my $sql =
-      'select stable_id from gene where biotype="protein_coding"';
+      'select stable_id from gene join seq_region using (seq_region_id) join coord_system using (coord_system_id) '
+      . 'where biotype="protein_coding" and species_id=' . $dba->species_id();
 
 	my $db_connection = $self->dba()->dbc();
 
@@ -49,7 +52,7 @@ sub createGeneStableIdIterator {
 			return $result;
 		}
 		
-		$sth->finish();			
+		$sth->finish();
 		return 
 	}
 }
@@ -57,9 +60,12 @@ sub createGeneStableIdIterator {
 sub fetchNumberOfGenes {
 	
 	my $self = shift;
-	
+
+	my $dba = $self->dba();
+
 	my $sql =
-      'select count(*) from gene where biotype="protein_coding"';
+      'select count(*) from gene join seq_region using (seq_region_id) join coord_system using (coord_system_id) '
+      . 'where biotype="protein_coding" and species_id=' . $dba->species_id();
 
 	my $sth = $self->dba()->dbc->prepare($sql);
 	$sth->execute();
