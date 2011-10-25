@@ -6,6 +6,10 @@
  */
 package org.ensembl.healthcheck.testcase;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 
@@ -87,6 +91,15 @@ public abstract class AbstractPerlBasedTestCase extends
 	}
 
 	protected String[] environmentVarsToSet() {
-		return new String[] { "PERL5LIB=" + getPERL5LIB() };
+		
+		List<String> inheritedEnvironment = new LinkedList<String>();
+		
+		inheritedEnvironment.addAll(Arrays.asList(super.environmentVarsToSet()));
+		inheritedEnvironment.add(
+			"PERL5LIB=" + getPERL5LIB()
+		);
+
+		return (String[]) inheritedEnvironment.toArray(new String[]{});
+		
 	}
 }
