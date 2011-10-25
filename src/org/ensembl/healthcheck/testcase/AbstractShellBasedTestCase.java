@@ -3,6 +3,7 @@ package org.ensembl.healthcheck.testcase;
 import java.io.IOException;
 import java.sql.Connection;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
@@ -134,7 +135,19 @@ public abstract class AbstractShellBasedTestCase extends SingleDatabaseTestCase 
 	 * @return
 	 */
 	protected String[] environmentVarsToSet() {
-		return new String[]{};
+		
+		Map<String,String> environmentVars = System.getenv();
+		
+		String[] environment = new String[environmentVars.keySet().size()];
+		
+		int currentIndex=0;
+		for (String currentKey : environmentVars.keySet()) {
+			
+			environment[currentIndex]=currentKey + "=" + environmentVars.get(currentKey);
+			currentIndex++;
+		}
+		
+		return environment;
 	}
 
 	public boolean runShellTest(final DatabaseRegistryEntry dbre, int speciesId, boolean useSpeciesId) {
@@ -157,7 +170,13 @@ public abstract class AbstractShellBasedTestCase extends SingleDatabaseTestCase 
 			} else {
 				shellCmd = createCommandLine(dbre);
 			}
-			
+
+			System.out.println(
+				"Running: "
+				+ shellCmd
+			);
+				
+
 			int exit = 1;
 			
 			if (!StringUtils.isEmpty(shellCmd)) {
