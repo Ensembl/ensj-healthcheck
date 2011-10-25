@@ -28,9 +28,9 @@ import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that all table collations in a particular database are latin1_swedish_ci.
+ * Check that all table collations in a particular database are of
+ * the same type of specified in @{link {@link #getTargetCollation()}.
  */
-
 public class SingleDBCollations extends SingleDatabaseTestCase {
 
 	private static String TARGET_COLLATION = "latin1_swedish_ci";
@@ -39,16 +39,28 @@ public class SingleDBCollations extends SingleDatabaseTestCase {
 	 * Create a new SingleDBCollations testcase.
 	 */
 	public SingleDBCollations() {
-
+		groupAdditions();
+		setResponsibilities();
+	}
+	
+	protected void groupAdditions() {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		addToGroup("compara-ancestral");
 		addToGroup("post-compara-handover");
-		
-		setDescription("Check that all table collations are latin1_swedish_ci");
+	}
+	
+	protected void setResponsibilities() {
+		setDescription("Check that all table collations are "+getTargetCollation());
 		setTeamResponsible(Team.RELEASE_COORDINATOR);
 		setSecondTeamResponsible(Team.CORE);
-
+	}
+	
+	/**
+	 * Returns the target collation of latin1_swedish_ci
+	 */
+	protected String getTargetCollation() {
+		return TARGET_COLLATION;
 	}
 
 	/**
@@ -62,6 +74,7 @@ public class SingleDBCollations extends SingleDatabaseTestCase {
 	public boolean run(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
+		String targetCollation = getTargetCollation();
 
 		Connection con = dbre.getConnection();
 
@@ -78,8 +91,8 @@ public class SingleDBCollations extends SingleDatabaseTestCase {
 					result = false;
 					continue;
 				}
-				if (!collation.equals(TARGET_COLLATION)) {
-					ReportManager.problem(this, con, table + " has a collation of '" + collation + "' which is not the same as the target " + TARGET_COLLATION);
+				if (!collation.equals(targetCollation)) {
+					ReportManager.problem(this, con, table + " has a collation of '" + collation + "' which is not the same as the target " + targetCollation);
 					result = false;
 				}
 			}
@@ -92,7 +105,7 @@ public class SingleDBCollations extends SingleDatabaseTestCase {
 		}
 
 		if (result) {
-			ReportManager.correct(this, con, "All tables have collation " + TARGET_COLLATION);
+			ReportManager.correct(this, con, "All tables have collation " + targetCollation);
 		}
 
 		return result;
