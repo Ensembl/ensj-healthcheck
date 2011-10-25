@@ -80,8 +80,15 @@ public class ProductionMeta extends SingleDatabaseTestCase {
 		List<String> dbMetaKeys = getColumnValuesList(con, "SELECT DISTINCT(meta_key) FROM meta");
 
 		// First check that keys present in database are all valid and current
-		List<String> productionMetaKeys = getColumnValuesList(productionCon, "SELECT name FROM meta_key WHERE is_current = 1 AND FIND_IN_SET('" + databaseType + "', db_type) > 0 AND (FIND_IN_SET('"
-				+ species + "', only_for_species) > 0 OR only_for_species IS NULL)");
+		List<String> productionMetaKeys =
+                  getColumnValuesList(productionCon,
+                    "SELECT mk.name " +
+                    "FROM meta_key mk LEFT JOIN (" +
+                    "meta_key_species JOIN " +
+                    "species s USING (species_id) ) USING (meta_key_id) " +
+                    "WHERE FIND_IN_SET('" + databaseType + "', mk.db_type) > 0 AND " +
+                    "(s.db_name = '" + species + "' OR s.db_name IS NULL) AND " +
+                    "mk.is_current = 1");
 
 		// remove the list of valid keys from the list of keys in the database, the remainder (if any) are invalid
 		Collection<String> dbOnly = CollectionUtils.subtract(dbMetaKeys, productionMetaKeys);
@@ -100,8 +107,16 @@ public class ProductionMeta extends SingleDatabaseTestCase {
 		// now check that all non-optional keys in production database appear here
 		dbMetaKeys = getColumnValuesList(con, "SELECT DISTINCT(meta_key) FROM meta");
 
-		productionMetaKeys = getColumnValuesList(productionCon, "SELECT name FROM meta_key WHERE is_current = 1 AND is_optional = 0 AND FIND_IN_SET('" + databaseType
-				+ "', db_type) > 0 AND (FIND_IN_SET('" + species + "', only_for_species) > 0 OR only_for_species IS NULL)");
+		productionMetaKeys =
+                  getColumnValuesList(productionCon,
+                    "SELECT mk.name " +
+                    "FROM meta_key mk LEFT JOIN (" +
+                    "meta_key_species JOIN " +
+                    "species s USING (species_id) ) USING (meta_key_id) " +
+                    "WHERE FIND_IN_SET('" + databaseType + "', mk.db_type) > 0 AND " +
+                    "(s.db_name = '" + species + "' OR s.db_name IS NULL) AND " +
+                    "mk.is_current = 1 AND " +
+                    "mk.is_optional = 0");
 
 		// remove the keys in the database from the non-optional list, any remaining in the non-optional list are missing from the
 		// database
