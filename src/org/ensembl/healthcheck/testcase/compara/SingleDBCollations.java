@@ -18,77 +18,24 @@
 
 package org.ensembl.healthcheck.testcase.compara;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * Check that all table collations in a particular database are latin1_swedish_ci.
+ * Check that all table collations in a particular database are as
+ * specified in {@link #getTargetCollation()}.
  */
 
-public class SingleDBCollations extends SingleDatabaseTestCase {
-
-    private static String TARGET_COLLATION = "latin1_swedish_ci";
-
-    /**
-     * Create a new SingleDBCollations testcase.
-     */
-    public SingleDBCollations() {
-
-        addToGroup("compara_genomic");
-        addToGroup("compara_homology");
-        setDescription("Check that all table collations are " + TARGET_COLLATION);
-        setTeamResponsible(Team.COMPARA);
-	
+public class SingleDBCollations extends org.ensembl.healthcheck.testcase.generic.SingleDBCollations {
+    
+    @Override
+    protected void groupAdditions() {
+    	addToGroup("compara_genomic");
+      addToGroup("compara_homology");
+    }
+    
+    @Override
+    protected void setResponsibilities() {
+    	setTeamResponsible(Team.COMPARA);
     }
 
-
-    /**
-     * Run the test.
-     * 
-     * @param dbre The database to use.
-     * @return true if the test pased.
-     *  
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
-
-	boolean result = true;
-
-	Connection con = dbre.getConnection();
-	    
-	 try {
-
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("SHOW TABLE STATUS");
-
-            while (rs.next()) {
-                String table = rs.getString("name");
-		String collation = rs.getString("collation");
-		if (!collation.equals(TARGET_COLLATION)) {
-		    ReportManager.problem(this, con, table + " has a collation of '" + collation + "' which is not the same as the target " + TARGET_COLLATION);
-		    result = false;
-		}
-            }
-
-            rs.close();
-            stmt.close();
-
-	 } catch (SQLException se) {
-	    se.printStackTrace();
-	 }
-	 
-	 if (result) {
-	     ReportManager.correct(this, con, "All tables have collation " + TARGET_COLLATION);
-	 }
-
-	 return result;
-
-    } // run
-    
 } // SingleDBCollations
