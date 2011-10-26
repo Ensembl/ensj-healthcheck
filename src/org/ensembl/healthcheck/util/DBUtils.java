@@ -13,10 +13,9 @@
 
 package org.ensembl.healthcheck.util;
 
-import java.net.ConnectException;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -696,7 +695,21 @@ public final class DBUtils {
 		return result;
 
 	}
-
+	
+	/**
+	 * Requests all known views in the current schema from the MySQL 
+	 * information schema
+	 * 
+	 * @param con The connection to use
+	 * @return All known views in the given schema
+	 */
+	public static List<String> getViews(Connection con) {
+		String sql = "SELECT TABLE_NAME from information_schema.TABLES where TABLE_SCHEMA =? AND TABLE_TYPE =?";
+		SqlTemplate t = new ConnectionBasedSqlTemplateImpl(con);
+		String database = t.queryForDefaultObject("SELECT DATABASE()", String.class);
+		return t.queryForDefaultObjectList(sql, String.class, database, "VIEW");
+	}
+	
 	// -------------------------------------------------------------------------
 	/**
 	 * Execute SQL and writes results to ReportManager.info().

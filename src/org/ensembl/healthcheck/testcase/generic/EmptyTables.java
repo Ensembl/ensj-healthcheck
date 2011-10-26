@@ -14,6 +14,10 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
@@ -21,6 +25,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.Utils;
 
 /**
@@ -63,12 +68,15 @@ public class EmptyTables extends SingleDatabaseTestCase {
 			String[] ancestral = { "meta", "coord_system", "dna", "seq_region", "assembly" };
 			tables = ancestral;
 
-		} else if (type == DatabaseType.CORE || type == DatabaseType.VEGA) {
-
+		} else if (type == DatabaseType.CORE || type == DatabaseType.VEGA) {			
+			//The following are views & therefore we do not care about if they are empty
+			String[] views = DBUtils.getViews(dbre.getConnection()).toArray(new String[]{});
+			tables = remove(tables, views);
+			
 			// the following tables are allowed to be empty
-			String[] allowedEmpty = { "alt_allele", "assembly_exception", "data_file", "dnac", "seq_region_mapping", "unconventional_transcript_association", "operon", "operon_transcript", "operon_transcript_gene", "operon_stable_id", "operon_transcript_stable_id" };
+			String[] allowedEmpty = { "alt_allele", "assembly_exception", "data_file", "dnac", "seq_region_mapping", "unconventional_transcript_association", "operon", "operon_transcript", "operon_transcript_gene" };
 			tables = remove(tables, allowedEmpty);
-
+			
 			// ID mapping related tables are checked in a separate test case
 			String[] idMapping = { "gene_archive", "peptide_archive", "mapping_session", "stable_id_event" };
 			tables = remove(tables, idMapping);
