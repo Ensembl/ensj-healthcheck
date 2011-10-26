@@ -5,6 +5,7 @@ import org.ensembl.healthcheck.testcase.eg_core.DisplayXrefId;
 import org.ensembl.healthcheck.testcase.eg_core.GeneDescriptionSource;
 import org.ensembl.healthcheck.testcase.eg_core.OntologyLevel;
 import org.ensembl.healthcheck.testcase.eg_core.SharedDisplayXref;
+import org.ensembl.healthcheck.testcase.eg_core.UniprotGeneNameObjectXref;
 import org.ensembl.healthcheck.testcase.generic.DescriptionNewlines;
 import org.ensembl.healthcheck.testcase.generic.DisplayLabels;
 import org.ensembl.healthcheck.testcase.generic.DisplayXref;
@@ -23,7 +24,8 @@ public class EGCoreAnnotationCritical extends GroupOfTests {
 			GeneDescriptionSource.class, 
 			SharedDisplayXref.class,
 			TranscriptsSameName.class, 
-			OntologyLevel.class
+			OntologyLevel.class,
+			UniprotGeneNameObjectXref.class
 		);
 	}
 }
