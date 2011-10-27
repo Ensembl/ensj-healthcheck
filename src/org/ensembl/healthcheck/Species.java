@@ -41,6 +41,7 @@ public enum Species {
 	GASTEROSTEUS_ACULEATUS(69293, "BROADS", "ENSGAC", "stickleback,gas_aculeatus,gasaculeatus,gasterosteusaculeatus,gasterosteus_aculeatus"),
 	GORILLA_GORILLA(9593, "gorGor", "ENSGGO", "gorilla,gorilla_gorilla,ggor"),
 	HOMO_SAPIENS(9606, "GRCh", "ENS", "human,hsapiens,homosapiens,homo_sapiens"),
+	LATIMERIA_CHALUMNAE(7897,"LatCha", "ENSLAC","coelacanth,latimeria_chalumnae,latimeria,l_chalumnae,Latimeria chalumnae"),
 	LOXODONTA_AFRICANA(9785, "LoxAfr", "ENSLAF", "elephant,nelly,loxodonta,african_elephant,african_savannah_elephant,african_bush_elephant,loxodonta_africana"),
 	MACACA_MULATTA(9544, "MM", "ENSMMU", "macacamulatta,rhesusmacaque,rhesus_macaque,macaque,macaca_mulatta"),
 	MACROPUS_EUGENII(9315, "Meug", "ENSMEU", "wallaby,tammar_wallaby,macropuseugenii,m_eugenii,tammarwallaby,Macropus eugenii,macropus_eugenii"),
