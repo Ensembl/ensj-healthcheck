@@ -51,8 +51,8 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 		Species species = dbre.getSpecies();
 
         String[] unusedTables           = { "allele_group", "allele_group_allele", "httag", "variation_group", "variation_group_variation", "variation_group_feature" };
-        String[] humanOnlyTables        = { "protein_function_predictions", "phenotype", "tagged_variation_feature" };
-        String[] svTables               = { "structural_variation", "structural_variation_feature" };
+        String[] humanOnlyTables        = { "protein_function_predictions", "phenotype", "tagged_variation_feature", "variation_annotation", "associate_study" };
+        String[] svTables               = { "study", "structural_variation", "structural_variation_feature", "structural_variation_association", "structural_variation_annotation", "variation_set_structural_variation" };
 		String[] sampleTables           = { "population_genotype", "population_structure", "sample_synonym" };
         String[] setTables              = { "variation_set", "variation_set_structure", "variation_set_variation" };
         String[] genotypeTables         = { "compressed_genotype_region", "compressed_genotype_var" };
