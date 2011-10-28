@@ -171,7 +171,7 @@ public abstract class AbstractShellBasedTestCase extends SingleDatabaseTestCase 
 				shellCmd = createCommandLine(dbre);
 			}
 
-			System.out.println(
+			logger.info(
 				"Running: "
 				+ shellCmd
 			);
@@ -264,11 +264,15 @@ public abstract class AbstractShellBasedTestCase extends SingleDatabaseTestCase 
 			}
 
 			for (int speciesId : dbre_speciesIds) {
-				runShellTest(dbre, speciesId, true);
+				
+				// Once a test has failed, should not do anymore tests on  
+				// other species ids.
+				//
+				passes = passes && runShellTest(dbre, speciesId, true);
 			}
 
 		} else {
-			runShellTest(dbre, 0, false);
+			passes = runShellTest(dbre, 0, false);
 		}
 		return passes;
 	}
