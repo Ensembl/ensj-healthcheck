@@ -83,10 +83,9 @@ class GuiReportPanelData {
 		if (!messageEndsWithCR) {
 			message.append("\n");
 		}
-		
-		if (currentMessage.endsWith("\n")) {
-			messageEndsWithCR = true;
-		}
+
+		messageEndsWithCR = currentMessage.endsWith("\n");
+
 		message.append(currentMessage);
 	}
 }
