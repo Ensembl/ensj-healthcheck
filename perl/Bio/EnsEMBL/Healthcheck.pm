@@ -114,7 +114,13 @@ sub progress {
 sub problem {
 	my ($self,$msg) = @_;
 	
-	$msg =~ s/\n/\nPROBLEM:/g;
+	if ($msg=~/\n/) {
+		my @single_line = split "\n", $msg;
+		
+		foreach my $current_single_line (@single_line) {
+			$self->problem($current_single_line);
+		}
+	}
 	
 	print STDERR "PROBLEM:$msg\n";
 }
