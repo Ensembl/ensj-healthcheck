@@ -643,7 +643,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 			}
 		}
 		if (count == Tables.length) {
-			ReportManager.info(this, con, "Toplevel flags correctly set");
+			ReportManager.correct(this, con, "Toplevel flags correctly set");
 			result = true;
 		}
 		return result;
