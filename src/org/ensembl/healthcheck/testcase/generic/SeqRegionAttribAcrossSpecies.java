@@ -38,7 +38,7 @@ public class SeqRegionAttribAcrossSpecies extends MultiDatabaseTestCase {
 		addToGroup("post-compara-handover");
 		
 		setDescription("Check that the seq_region_attrib table is the same across all generic DBs");
-		setTeamResponsible(Team.RELEASE_COORDINATOR);
+		setTeamResponsible(Team.GENEBUILD);
 
 	}
 
