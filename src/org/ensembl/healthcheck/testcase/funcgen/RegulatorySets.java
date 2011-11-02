@@ -96,7 +96,7 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 				
 				fsInfo.put("name", fsetName);						
 				String cellType = fsetName.replaceAll("RegulatoryFeatures:", "");	
-				fsInfo.put("cell_type", fsetName);	
+				fsInfo.put("cell_type", cellType);	
 				cellTypes[count] = cellType;
 			
 				// GET META_KEYS
