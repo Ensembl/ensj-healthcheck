@@ -52,7 +52,8 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 					while ((rsetRSetNames != null) && rsetRSetNames.next()) {
 						String rsetName  = rsetRSetNames.getString(1);
 						String rsetPath  = rsetRSetNames.getString(2);
-						File rsetFolder = new File(root_dir+rsetPath);
+						String rSetFinalPath = root_dir+rsetPath;
+						File rsetFolder = new File(rSetFinalPath);
 						if(rsetFolder.exists()){
 							String[] windows = {"30","65","130","260","450","648","950","1296"}; 
 							for(int i=0;i<windows.length;i++){
@@ -69,7 +70,7 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 								}
 							}							
 						} else {
-							ReportManager.problem(this, con, root_dir+rsetPath + " does not seem to be valid for set "+rsetName);
+							ReportManager.problem(this, con, rSetFinalPath + " does not seem to be valid for set "+rsetName);
 							result = false;
 						}
 					}
