@@ -3,6 +3,7 @@ package org.ensembl.healthcheck.testcase.eg_compara;
 import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.compara.CheckSynteny;
 
 /**
@@ -12,7 +13,14 @@ import org.ensembl.healthcheck.testcase.compara.CheckSynteny;
  * @author ayates
  */
 public class EGCheckSynteny extends CheckSynteny {
-
+	
+  public EGCheckSynteny() {
+  	removeFromAllGroups();
+    addToGroup("eg_compara");
+    setDescription("Check for missing syntenies in the compara database.");
+    setTeamResponsible(Team.ENSEMBL_GENOMES);
+  }
+	
 	public boolean run(DatabaseRegistryEntry dbre) {
 		Connection con = dbre.getConnection();
 		if (!tableHasRows(con, "synteny_region")) {
