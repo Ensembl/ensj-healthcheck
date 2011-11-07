@@ -17,6 +17,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +26,6 @@ import java.util.TreeSet;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.DatabaseServer;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
@@ -98,7 +98,7 @@ public class CompareFuncgenSchema extends MultiDatabaseTestCase {
 		DatabaseRegistryEntry[] databases = dbr.getAll();
 		
 
-		//Iterate through the DBs firs to check we are testing against the same schema type
+		//Iterate through the DBs first to check we are testing against the same schema type
 		DatabaseType dbType = null;
 
 		for (int i = 0; i < databases.length; i++) {
@@ -117,29 +117,30 @@ public class CompareFuncgenSchema extends MultiDatabaseTestCase {
 		}
 
 
-		if (dbType != null){
-			String masterSchemaVar = "master.schema";
-			String definitionFileVar = "schema.file";
-			
-			if (! dbType.isGeneric()) {
-				masterSchemaVar = "master." + dbType.toString() + "_schema";
-				definitionFileVar = dbType.toString() + "_schema.file";
-			}
-		
+		if (dbType != null) {
+			String definitionFileVar = "funcgen_schema.file";
 			definitionFile = System.getProperty(definitionFileVar);
+			
+			String masterSchemaVar = "master.funcgen_schema";			
 			masterSchema = System.getProperty(masterSchemaVar);
-		
+			
 			if (definitionFile == null) {
-				logger.info("CompareFuncgenSchema: No schema definition file found! Set " + definitionFileVar + " property in database.properties if you want to use a table.sql file or similar.");
-				
-				//masterSchema = System.getProperty("master.funcgen_schema");
-				
-				//System.out.println("masterSchemaVar is " + masterSchemaVar + " = " + masterSchema);
-				
+				logger.info("CompareFuncgenSchema: No schema definition file found! Set "+definitionFileVar+" property in database.properties if you want to use a table.sql file or similar.");
 				if (masterSchema != null) {
-				logger.info("Will use " + masterSchema + " as specified master schema for comparisons.");
+					// add the named master schema to the master registry so that it can be accessed
+					List<String> regexps = new ArrayList<String>();
+					regexps.add(masterSchema);
+					DatabaseRegistry masterDBR = new DatabaseRegistry(regexps, null, null, false);
+					DatabaseRegistryEntry masterDBRE = masterDBR.getByExactName(masterSchema);
+					if (masterDBRE == null) {
+						logger.warning("Couldn't find database matching " + masterSchema);
+					}
+					dbr.add(masterDBRE);
+
+					logger.info("Will use " + masterSchema + " as specified master schema for comparisons.");
+
 				} else {
-					logger.info("CompareFuncgenSchema: No master schema defined! Set " + masterSchemaVar + " property in database.properties if you want to use a master schema.");
+					logger.info("CompareFuncgenSchema: No master schema defined file found! Set "+masterSchemaVar+" property in database.properties if you want to use a master schema.");
 				}
 			} else {
 				logger.fine("Will use schema definition from " + definitionFile);
@@ -147,71 +148,26 @@ public class CompareFuncgenSchema extends MultiDatabaseTestCase {
 			
 			try {
 				
-				if (definitionFile != null) { // use a schema definition file to
-					// generate a temporary database
-					
+				if (definitionFile != null) { 
 					logger.info("About to import " + definitionFile);
-					//This will import on the host set in database.properties
 					masterCon = importSchema(definitionFile);
 					logger.info("Got connection to " + DBUtils.getShortDatabaseName(masterCon));
-
-				} else if (masterSchema != null) {
-					// use the defined schema name as the master
-					// get connection to master schema
-
-					// the problem here is that the -d option causes filtering of available DBs
-					// so this needs to use direct access rather than what is in registry
-					// not quite sure how this worked originally??
-					
-					// masterCon = getSchemaConnection(masterSchema);
-					// We should make this look at database.properties for the dbhost and 
-					// filter list from DBUtils.getMainDatabaseServers()
-					// See DatabaseRegistry for example loop
-					//Need to access DatabaseServer directly here to get connection
-
-					List<DatabaseServer> servers = DBUtils.getMainDatabaseServers();
-
-					//try/catch for each server
-					//doesn't matter which host we use for masterSchema
-					
-					for (DatabaseServer server : servers) {
-				
-						
-						//Do we even need to try this?
-						//The ConnectionPool is handling the exception quietly
-
-						if(masterCon == null){
-							masterCon = server.getDatabaseConnection(masterSchema);
-						}
-
-						/* try{
-							masterCon = dbr.getDatabaseServer().getDatabaseConnection(masterSchema);
-							// This ultimately calls ConnectionPool.getConnection
-							//which generates the connection using DriverManager.getConnection
-							} catch (Exception e) {
-							logger.warning(e.getMessage());
-							} */
-					}
-
-
-					if(masterCon == null){
-						logger.severe("Can't find master schema (" + masterSchema + ") to compare databases against");
-					}
-					else{
-						logger.fine("Opened connection to master schema in " + DBUtils.getShortDatabaseName(masterCon));
-					}
-					
-				} else {
-					// just use the first one to compare with all the others
+				} 
+				else if (masterSchema != null) {
+					masterCon = getSchemaConnection(masterSchema);
+					logger.fine("Opened connection to master schema in " + DBUtils.getShortDatabaseName(masterCon));
+				} 
+				else {
 					if (databases.length > 0) {
 						masterCon = databases[0].getConnection();
-						logger.info("Using " + DBUtils.getShortDatabaseName(masterCon) + " as 'master' for comparisions.");
-					} else {
+						logger.info("Using " + DBUtils.getShortDatabaseName(masterCon) + " as 'master' for comparisons.");
+					} 
+					else {
 						logger.warning("Can't find any databases to check against");
 					}
-					
 				}
-				
+
+				masterStmt = masterCon.createStatement();
 
 				if(masterCon != null){
 
