@@ -12,6 +12,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import junit.framework.Test;
 
 public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 
@@ -36,7 +41,20 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 		
 		try {
 			Statement stmt = con.createStatement();
+			
+			HashMap<String, String> rSetDBLinks = new HashMap<String, String>();
+			
+			ResultSet rsetRSetNames = stmt.executeQuery("SELECT rs.name, dbf.path from result_set rs, dbfile_registry dbf "+ 
+			"WHERE rs.result_set_id=dbf.table_id and dbf.table_name='result_set'");
+			while ((rsetRSetNames != null) && rsetRSetNames.next()) {
+				//Assumes both fields are non-null... which should be true according to efg schema
+				//Also assumes rset name is unique
+				rSetDBLinks.put(rsetRSetNames.getString(1), rsetRSetNames.getString(2));
+			}
 
+			//If there are no DBLinks then there is nothing to test
+			if(rSetDBLinks.isEmpty()) return true;
+			
 			//Get Base Folder
 			ResultSet rsetDBDataRoot = stmt.executeQuery("SELECT meta_value from meta where meta_key='dbfile.data_root'");
 			if((rsetDBDataRoot != null) && rsetDBDataRoot.next()){
@@ -45,13 +63,13 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 				File root_dir_f = new File(root_dir);
 				if(root_dir_f.exists()){
 					//This HC does not check whether resultsets exist for a given dataset. 
-					//It only checks file links	are correct.	
-					ResultSet rsetRSetNames = stmt.executeQuery("SELECT rs.name, dbf.path from result_set rs, dbfile_registry dbf "+ 
-					"WHERE rs.result_set_id=dbf.table_id and dbf.table_name='result_set'");
-
-					while ((rsetRSetNames != null) && rsetRSetNames.next()) {
-						String rsetName  = rsetRSetNames.getString(1);
-						String rsetPath  = rsetRSetNames.getString(2);
+					//It only checks if file links	are correct.	
+					HashMap<String, String> problemLinks = new HashMap<String, String>();
+					
+					Iterator<String> dbLinkIt = rSetDBLinks.keySet().iterator();
+					while(dbLinkIt.hasNext()){
+						String rsetName  = dbLinkIt.next();
+						String rsetPath  = rSetDBLinks.get(rsetName);
 						String rSetFinalPath = root_dir+rsetPath;
 						File rsetFolder = new File(rSetFinalPath);
 						if(rsetFolder.exists()){
@@ -61,19 +79,35 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 								File rsetWindowFile = new File(rsetWindowFileName);
 								if(rsetWindowFile.exists()){
 									if(rsetWindowFile.length()==0){
-										ReportManager.problem(this, con, rsetWindowFileName + " seems empty for set "+rsetName);
+										problemLinks.put(rsetName, rsetWindowFileName + " seems empty for set "+rsetName);
 										result = false;
 									}
 								} else {
-									ReportManager.problem(this, con, rsetWindowFileName + " does not seem to exist for set "+rsetName);
+									problemLinks.put(rsetName, rsetWindowFileName + " does not seem to exist for set "+rsetName);
 									result = false;
 								}
 							}							
 						} else {
-							ReportManager.problem(this, con, rSetFinalPath + " does not seem to be valid for set "+rsetName);
-							result = false;
+							problemLinks.put(rsetName, rSetFinalPath + " does not seem to be valid for set "+rsetName);
+							result=false;
 						}
 					}
+
+					int MAX_REPORT=5;
+					//Check amount of problems and just output a few if there are too many...
+					if(problemLinks.keySet().size()>MAX_REPORT){
+						ReportManager.problem(this, con, problemLinks.keySet().size()+" result sets do not seem to have valid dbFile links");
+						result = false;
+					}
+					
+					int number=0;
+					Iterator<String> problemIt = problemLinks.keySet().iterator();
+					while(problemIt.hasNext()){
+						ReportManager.problem(this, con, problemLinks.get(problemIt.next()));
+						if(number>MAX_REPORT) return false;
+					}
+					
+					
 				} else {
 					ReportManager.problem(this, con, root_dir + " defined in dbfile.data_root meta key for " +  
 							DBUtils.getShortDatabaseName(con) + " does not seem to be valid");
