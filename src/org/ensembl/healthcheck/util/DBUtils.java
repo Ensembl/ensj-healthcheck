@@ -704,10 +704,9 @@ public final class DBUtils {
 	 * @return All known views in the given schema
 	 */
 	public static List<String> getViews(Connection con) {
-		String sql = "SELECT TABLE_NAME from information_schema.TABLES where TABLE_SCHEMA =? AND TABLE_TYPE =?";
+		String sql = "SELECT TABLE_NAME from information_schema.TABLES where TABLE_SCHEMA = DATABASE() AND TABLE_TYPE =?";
 		SqlTemplate t = new ConnectionBasedSqlTemplateImpl(con);
-		String database = t.queryForDefaultObject("SELECT DATABASE()", String.class);
-		return t.queryForDefaultObjectList(sql, String.class, database, "VIEW");
+		return t.queryForDefaultObjectList(sql, String.class, "VIEW");
 	}
 	
 	// -------------------------------------------------------------------------
