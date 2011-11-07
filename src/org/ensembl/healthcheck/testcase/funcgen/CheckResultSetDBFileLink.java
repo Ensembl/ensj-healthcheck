@@ -105,6 +105,7 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 					while(problemIt.hasNext()){
 						ReportManager.problem(this, con, problemLinks.get(problemIt.next()));
 						if(number>MAX_REPORT) return false;
+						number++;
 					}
 					
 					
