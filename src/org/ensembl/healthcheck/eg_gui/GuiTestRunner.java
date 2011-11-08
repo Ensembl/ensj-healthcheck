@@ -170,6 +170,8 @@ public class GuiTestRunner {
                             
                             testProgressDialog.setNote(message);
                             
+                            testCase.types();
+                            
                             boolean passed = ((SingleDatabaseTestCase) testCase).run(currentDbre);
                             
                             // If a test has not reported anything to the 
@@ -205,6 +207,8 @@ public class GuiTestRunner {
                         String message = testCase.getShortTestName() + " ( " + dbr.getEntryCount() + " databases)";
                         
                         testProgressDialog.setNote(message);
+                        
+                        testCase.types();
                         
                         boolean passed = ((MultiDatabaseTestCase) testCase).run(dbr);
 

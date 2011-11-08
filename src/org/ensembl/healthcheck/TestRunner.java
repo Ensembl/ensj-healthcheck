@@ -109,6 +109,8 @@ public class TestRunner {
 						ReportManager.startTestCase(testCase, database);
 						logger.info("Running " + testCase.getName() + " [" + database.getName() + "]");
 
+						testCase.types();
+						
 						boolean result = testCase.run(database);
 
 						ReportManager.finishTestCase(testCase, result, database);
@@ -145,6 +147,7 @@ public class TestRunner {
 
 					logger.info("Starting test " + testCase.getName() + " ");
 
+					testCase.types();
 					boolean result = testCase.run(databaseRegistry);
 
 					ReportManager.finishTestCase(testCase, result, null);
