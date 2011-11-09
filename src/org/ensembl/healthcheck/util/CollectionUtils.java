@@ -3,6 +3,7 @@ package org.ensembl.healthcheck.util;
 import static java.util.Arrays.asList;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -107,7 +108,7 @@ public class CollectionUtils {
 	public static <T> Set<T> createHashSet(int initialCapacity) {
 		return new HashSet<T>(initialCapacity);
 	}
-
+	
 	/**
 	 * Returns a linked hash set typed to the generics specified in the method
 	 * call
@@ -122,6 +123,15 @@ public class CollectionUtils {
 	 */
 	public static <T> Set<T> createLinkedHashSet(int initialCapacity) {
 		return new LinkedHashSet<T>(initialCapacity);
+	}
+	
+	/**
+	 * Returns a linked hash set typed to the generics specified in the method
+	 * call with the given elements as the contents
+	 */
+	public static <T> Set<T> createLinkedHashSet(T... objects) {
+		List<T> l = Arrays.asList(objects);
+		return new LinkedHashSet<T>(l);
 	}
 
 	/**

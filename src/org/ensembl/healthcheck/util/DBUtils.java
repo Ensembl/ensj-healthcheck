@@ -494,7 +494,7 @@ public final class DBUtils {
 
 	} // printResultSet
 
-	// -------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	/**
 	 * Gets the database name, without the jdbc:// prefix.
 	 * 
@@ -516,6 +516,26 @@ public final class DBUtils {
 		return name;
 
 	} // getShortDatabaseName
+	
+	//-------------------------------------------------------------------------
+	/**
+	 * Scans through a result set's metadata in an attempt to find a column
+	 * 
+	 * @param rs The ResultSet to scan
+	 * @param column The column to find
+	 * @return Boolean indicating if there was a column with said name
+	 * @throws SQLException Thrown in the event of an error whilst processing
+	 */
+	public static boolean resultSetContainsColumn(ResultSet rs, String column) throws SQLException {
+		ResultSetMetaData meta = rs.getMetaData();
+		int total = meta.getColumnCount();
+		for (int i = 1; i <= total; i++) {
+			if(meta.getColumnName(i).equals(column)) {
+				return true;
+			}
+		}
+		return false;
+	} //resultSetContainsColumn
 
 	// -------------------------------------------------------------------------
 	/**
