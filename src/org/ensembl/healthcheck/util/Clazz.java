@@ -67,7 +67,8 @@ public class Clazz {
 	 * @param listOfClassNames
 	 * @return
 	 */
-	public static <T> List<Class<T>> classloadListOfClasses(List<String> listOfClassNames) {
+	@SuppressWarnings("unchecked")
+  public static <T> List<Class<T>> classloadListOfClasses(List<String> listOfClassNames) {
 
 		List<Class<T>> listOfClasses = new ArrayList<Class<T>>();		
 		
@@ -94,7 +95,8 @@ public class Clazz {
 	 * class in the list.
 	 * 
 	 */
-	public static <T> List<T> instantiateGenericListOfClasses(List<String> listOfClassNames) {
+	@SuppressWarnings("unchecked")
+  public static <T> List<T> instantiateGenericListOfClasses(List<String> listOfClassNames) {
 
 		List<T> listOfTestGroups = new ArrayList<T>(); 
 		
