@@ -6,10 +6,11 @@ import java.util.LinkedHashMap;
  * This is a very poor implementation of a LRU cache in Java since it relies
  * on using normal references and therefore will keep its data in memory
  * for as long as there is a hard reference to the instance. If you require
- * a LRU cache which is more memory sensitive i.e. when you are about to
- * run out of memory we can clear the cache.
+ * a LRU cache which is more memory sensitive (when you are about to
+ * run out of memory clear the cache) then please do not use this 
+ * implementation.
  * 
- * Do not use this with high cache retention values.
+ * <b>Do not use this with high cache retention values.</b>
  * 
  * @param <K> Key class
  * @param <V> Value class
