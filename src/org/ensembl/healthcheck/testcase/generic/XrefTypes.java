@@ -21,6 +21,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that all xrefs for a particular external_db map to one and only one ensembl object type.
@@ -67,27 +68,32 @@ public class XrefTypes extends SingleDatabaseTestCase {
 			ResultSet rs = stmt
 					.executeQuery("SELECT x.external_db_id, ox.ensembl_object_type, COUNT(*), e.db_name FROM xref x, object_xref ox, external_db e WHERE x.xref_id = ox.xref_id AND e.external_db_id = x.external_db_id GROUP BY x.external_db_id, ox.ensembl_object_type");
 
-			long previousID = -1;
-			String previousType = "";
-
-			while (rs != null && rs.next()) {
-
-				long externalDBID = rs.getLong(1);
-				String objectType = rs.getString(2);
-				// int count = rs.getInt(3);
-				String externalDBName = rs.getString(4);
-
-				if (externalDBID == previousID) {
-
-					ReportManager.problem(this, con, "External DB with ID " + externalDBID + " (" + externalDBName + ") is associated with " + objectType + " as well as " + previousType);
-					result = false;
-
-				}
-
-				previousType = objectType;
-				previousID = externalDBID;
-
-			} // while rs
+			try {
+				long previousID = -1;
+				String previousType = "";
+	
+				while (rs != null && rs.next()) {
+	
+					long externalDBID = rs.getLong(1);
+					String objectType = rs.getString(2);
+					// int count = rs.getInt(3);
+					String externalDBName = rs.getString(4);
+	
+					if (externalDBID == previousID) {
+	
+						ReportManager.problem(this, con, "External DB with ID " + externalDBID + " (" + externalDBName + ") is associated with " + objectType + " as well as " + previousType);
+						result = false;
+	
+					}
+	
+					previousType = objectType;
+					previousID = externalDBID;
+	
+				} // while rs
+			}
+			finally {
+				DBUtils.closeQuietly(rs);
+			}
 
 			stmt.close();
 
