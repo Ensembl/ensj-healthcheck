@@ -25,6 +25,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that the start and end of genes and transcripts make sense.
@@ -74,11 +75,13 @@ public class ExonTranscriptStartEnd extends SingleDatabaseTestCase {
 		String sql = " SELECT tr.transcript_id, e.exon_id, tr.seq_region_start AS transcript_start, tr.seq_region_end AS transcript_end, MIN(e.seq_region_start) as min_exon_start, MAX(e.seq_region_end) AS max_exon_end FROM exon e, transcript tr, exon_transcript et WHERE e.exon_id=et.exon_id AND et.transcript_id=tr.transcript_id GROUP BY et.transcript_id HAVING min_exon_start != transcript_start OR max_exon_end != transcript_end ";
 
 		Connection con = dbre.getConnection();
-
+		Statement stmt = null;
+		ResultSet rs = null;
+		
 		try {
 
-			Statement stmt = dbre.getConnection().createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
+			stmt = dbre.getConnection().createStatement();
+			rs = stmt.executeQuery(sql);
 
 			while (rs.next()) {
 				ReportManager.problem(this, con, "Min/max exon start/ends do not agree with transcript start/end in transcript " + rs.getLong(1));
@@ -90,6 +93,10 @@ public class ExonTranscriptStartEnd extends SingleDatabaseTestCase {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		finally {
+			DBUtils.closeQuietly(rs);
+			DBUtils.closeQuietly(stmt);
 		}
 
 		if (result) {

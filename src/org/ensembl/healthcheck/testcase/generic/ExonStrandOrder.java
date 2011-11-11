@@ -25,6 +25,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * An EnsEMBL Healthcheck test case which checks all exon of a gene are on the same strand and in the correct order in their
@@ -115,10 +116,12 @@ ORDER BY
 
  */
 		Connection con = dbre.getConnection();
+		Statement st = null;
+		ResultSet rs = null;
 		try {
-			Statement stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
-			stmt.setFetchSize(Integer.MIN_VALUE);
-			ResultSet rs = stmt.executeQuery(sql);
+			st = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
+			st.setFetchSize(Integer.MIN_VALUE);
+			rs = st.executeQuery(sql);
 
 			long lastTranscriptID = -1;
 			long lastExonStart = -1;
@@ -229,14 +232,16 @@ ORDER BY
 				}
 
 			} // while rs
-
-			rs.close();
-			stmt.close();
+			
 			if ((double) singleExonTranscripts / transcriptCount > 0.2) {
 				ReportManager.warning(this, con, "High single exon transcript count. (" + singleExonTranscripts + "/" + transcriptCount + ")");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		finally {
+			DBUtils.closeQuietly(rs);
+			DBUtils.closeQuietly(st);
 		}
 		ReportManager.correct(this, con, "Exon strand order seems OK");
 
