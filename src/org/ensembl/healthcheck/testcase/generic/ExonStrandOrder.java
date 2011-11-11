@@ -147,7 +147,7 @@ ORDER BY
 				String geneStableID = rs.getString(14);
 				String transcriptStableID = rs.getString(15);
 
-				if (geneStableID.equalsIgnoreCase("CG32491")) {
+				if ("CG32491".equalsIgnoreCase(geneStableID)) {
 					continue;
 				}
 
