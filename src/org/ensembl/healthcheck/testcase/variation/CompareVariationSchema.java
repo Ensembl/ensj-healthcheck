@@ -61,6 +61,15 @@ public class CompareVariationSchema extends AbstractCompareSchema {
 	}
 
 	/**
+	 * We want to continue check the schema even if we know we are missing
+	 * tables.
+	 */
+	@Override
+	protected boolean skipCheckingIfTablesAreUnequal() {
+	  return false;
+	}
+	
+	/**
 	 * All tests are applicable
 	 */
 	@Override

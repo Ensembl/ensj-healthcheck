@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -66,6 +67,8 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 	    MAX_CACHE_SIZE);
 	private Map<String, String> createTables = new PoorLruMap<String, String>(
 	    MAX_CACHE_SIZE);
+	private Map<String, Set<String>> tables = new PoorLruMap<String, Set<String>>(
+	    MAX_CACHE_SIZE);
 
 	public AbstractCompareSchema() {
 		addGroups();
@@ -83,11 +86,29 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 				"genebuilders are responsible for deleting these before the release.");
 	}
 
+	/**
+	 * Override to set the groups your test will apply to
+	 */
 	protected abstract void addGroups();
 
+	/**
+	 * Override to set the test's responsible teams
+	 */
 	protected abstract void addResponsible();
 
+	/**
+	 * Override to add the various types of tests you wish to apply. See 
+	 * {@link TestTypes} for more information
+	 */
 	protected abstract void addTestTypes();
+	
+	/**
+	 * Defaults to true which means we will stop checking schemas if the master
+	 * and target schemas do not contain the same tables
+	 */
+	protected boolean skipCheckingIfTablesAreUnequal() {
+		return true;
+	}
 
 	public abstract void types();
 
@@ -222,15 +243,21 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 							directionFlag = EnsTestCase.COMPARE_RIGHT;
 							ignoreBackupTables = true;
 						}
-
+						
+						// for sanger_vega, ignore backup tables. If not the same, this
+						// method will generate a report
 						if (!compareTableEquality(masterCon, dbre, ignoreBackupTables,
 						    directionFlag)) {
-							// for sanger_vega, ignore backup tables. If not the same, this
-							// method will generate a report
-							ReportManager.problem(this, checkCon,
-							    "Table name discrepancy detected, skipping rest of checks");
 							result = false;
-							continue;
+							
+							if(skipCheckingIfTablesAreUnequal()) {
+								ReportManager.problem(this, checkCon,
+								    "Table name discrepancy detected, skipping rest of checks");
+								continue;
+							}
+							else {
+								ReportManager.problem(this, checkCon, "Table name discrepancy detected but continuing with table checks");
+							}
 						}
 
 						for (String table : getTableNames(masterCon)) {
@@ -298,6 +325,13 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 	    String table) throws SQLException {
 		
 		Connection target = targetDbre.getConnection();
+		
+		// If either schema did not contain this table then just return early
+		// because we will have warned about it earlier on. This could only happen
+		// if the skipCheckingIfTablesAreUnequal() method was returning false
+		if( !getTables(master).contains(table) || !getTables(target).contains(table) ) {
+			return false;
+		}
 		
 		// - test show create table as it's the fastest ... apparently
 		if (getCreateTable(master, table).equals(getCreateTable(target, table))) {
@@ -592,6 +626,18 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 		}
 
 		return new LinkedHashSet<Index>(indexes.values());
+	}
+	
+	/**
+	 * Returns a locally cached Set of table names in the given schema
+	 */
+	protected Set<String> getTables(Connection conn) throws SQLException {
+		String url = conn.getMetaData().getURL();
+		if(! tables.containsKey(url)) {
+			String[] array = getTableNames(conn);
+			tables.put(url, new HashSet<String>(Arrays.asList(array)));
+		}
+		return tables.get(url);
 	}
 
 	/**
