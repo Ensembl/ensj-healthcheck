@@ -350,11 +350,13 @@ public class ConfigurableTestRunner extends TestRunner {
 		
 		boolean printFailureText = true;
 
+		log.info("Printing output by test");
 		printReportsByTest(outputLevel, printFailureText);
 
 		if (this.reporterType == ReporterType.DATABASE) {
-			
+			log.info("Finishing reporter session");
 			ReportManager.endDatabaseSession();
+			log.info("Finished reporter session");
 		}
 	}
 }
