@@ -151,10 +151,9 @@ public final class DBUtils {
 			stmt.close();
 
 		} catch (Exception e) {
-
-			e.printStackTrace();
-			System.exit(1);
-
+			String msg = "Could not list databases";
+			logger.severe(msg);
+			throw new RuntimeException(msg,e);
 		}
 
 		String[] ret = new String[dbNames.size()];
