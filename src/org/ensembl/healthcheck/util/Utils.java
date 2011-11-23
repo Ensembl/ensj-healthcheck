@@ -147,8 +147,9 @@ public final class Utils {
 		String[] requiredProps = { "port", "host", "user" };
 		for (int i = 0; i < requiredProps.length; i++) {
 			if (System.getProperty(requiredProps[i]) == null) {
-				System.err.println("WARNING: " + requiredProps[i] + " is not set in config file or on command line - cannot connect to database");
-				System.exit(1);
+				String msg = "WARNING: " + requiredProps[i] + " is not set in config file or on command line - cannot connect to database";
+				System.err.println(msg);
+				throw new RuntimeException(msg);
 			}
 		}
 	}
@@ -173,8 +174,8 @@ public final class Utils {
 
 		} catch (Exception e) {
 
-			e.printStackTrace();
-			System.exit(1);
+			String msg = "Could not read from file "+propertiesFileName;
+			throw new RuntimeException(msg);
 
 		}
 

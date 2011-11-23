@@ -1238,10 +1238,9 @@ public abstract class EnsTestCase {
 			con = DriverManager.getConnection(System.getProperty("databaseURL") + tempDBName, System.getProperty("user"), System.getProperty("password"));
 
 		} catch (Exception e) {
-
-			e.printStackTrace();
-			System.exit(1);
-
+			String msg = "Could not create database "+tempDBName;
+			logger.severe(msg);
+			throw new RuntimeException(msg,e);
 		}
 
 		// ----------------------------------------------------
@@ -1264,8 +1263,9 @@ public abstract class EnsTestCase {
 
 		} catch (Exception e) {
 
-			e.printStackTrace();
-			System.exit(1);
+			String msg = "Could not load schema for database "+tempDBName;
+			logger.severe(msg);
+			throw new RuntimeException(msg,e);
 
 		}
 
@@ -1294,8 +1294,9 @@ public abstract class EnsTestCase {
 
 		} catch (Exception e) {
 
-			e.printStackTrace();
-			System.exit(1);
+			String msg = "Could not drop database "+dbName;
+			logger.severe(msg);
+			throw new RuntimeException(msg,e);
 
 		}
 

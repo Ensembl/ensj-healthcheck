@@ -75,9 +75,9 @@ public class PartitionedTables extends SingleDatabaseTestCase {
 
 		} catch (Exception e) {
 
-			e.printStackTrace();
-			System.exit(1);
-
+			String msg = "Could not get partioned table status";
+			logger.severe(msg);
+			throw new RuntimeException(msg,e);
 		}
 
 		if (result == true) {
