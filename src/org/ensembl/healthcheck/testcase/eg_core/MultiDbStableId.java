@@ -27,7 +27,7 @@ public class MultiDbStableId extends MultiDatabaseTestCase {
 		setTeamResponsible(Team.ENSEMBL_GENOMES);
 	}
 
-	private final static String STABLE_ID = "select stable_id from %obj%";
+	private final static String STABLE_ID = "select o.stable_id from %obj% o";
 	private final static String[] OBJ_TYPES = { "gene", "transcript",
 			"translation", "exon" };
 
