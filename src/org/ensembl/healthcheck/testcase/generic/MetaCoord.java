@@ -85,7 +85,7 @@ public class MetaCoord extends SingleDatabaseTestCase {
 					sql = "SELECT DISTINCT(sr.coord_system_id) FROM seq_region sr, " + tableName + " f WHERE sr.seq_region_id = f.seq_region_id";
 				}
 
-				logger.finest("Getting feature coordinate systems for " + tableName);
+				logger.finest("Getting feature coordinate systems and max_length for " + tableName);
 				ResultSet rs = stmt.executeQuery(sql);
 
 				while (rs.next()) {
@@ -123,9 +123,21 @@ public class MetaCoord extends SingleDatabaseTestCase {
 
 					csList.add(coordSystemID);
 					coordSystems.put(tableName, csList);
+									
+					// check that the max_length value in meta_coord corresponds to max feature length in each table per coord_system 
+					String mc_max_length = getRowColumnValue(con, "SELECT max_length FROM meta_coord WHERE coord_system_id=" + coordSystemID + " AND table_name='" + tableName + "'");					
+					String f_max_length = getRowColumnValue(con, "SELECT MAX(f.seq_region_end - f.seq_region_start + 1) FROM " + tableName + " f JOIN seq_region s USING(seq_region_id) WHERE s.coord_system_id=" + coordSystemID);
+					
+					if (mc_max_length.equals(f_max_length)) {
+						ReportManager.correct(this, con, "max_length value correct for coordinate system with ID " + coordSystemID + " for table " + tableName + " in meta_coord");
+					} else {
+						ReportManager.problem(this, con, "max_length value " + mc_max_length + " incorrect for coordinate system with ID " + coordSystemID + " for table " + tableName + " in meta_coord; max_length should equal "+ f_max_length);
+						result = false;
+					}
+					
 
 				}
-
+				
 				rs.close();
 
 			}
