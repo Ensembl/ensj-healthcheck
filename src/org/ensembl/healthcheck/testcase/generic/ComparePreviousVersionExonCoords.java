@@ -167,7 +167,7 @@ public class ComparePreviousVersionExonCoords extends SingleDatabaseTestCase {
 
 		Map<String, String> hash = new HashMap<String, String>();
 
-		String sql = "SELECT CONCAT(tsi.stable_id, ':', e.seq_region_start, ':', e.seq_region_end) FROM transcript_stable_id tsi, transcript t, exon_transcript et, exon e WHERE tsi.transcript_id=t.transcript_id AND t.transcript_id=et.transcript_id AND et.exon_id=e.exon_id AND t.biotype='protein_coding'";
+		String sql = "SELECT CONCAT(t.stable_id, ':', e.seq_region_start, ':', e.seq_region_end) FROM transcript t, exon_transcript et, exon e WHERE t.transcript_id=et.transcript_id AND et.exon_id=e.exon_id AND t.biotype='protein_coding'";
 
 		try {
 
