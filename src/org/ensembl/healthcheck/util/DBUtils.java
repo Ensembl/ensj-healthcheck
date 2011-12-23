@@ -563,7 +563,7 @@ public final class DBUtils {
 	 * 
 	 * @param con
 	 *          The database connection to use.
-	 * @return An array of Strings representing the names of the tables, obtained from the SHOW TABLES command.
+	 * @return An array of Strings representing the names of the base tables.
 	 */
 	public static String[] getTableNames(Connection con) {
 
@@ -578,7 +578,7 @@ public final class DBUtils {
 		try {
 
 			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery("SHOW TABLES");
+			ResultSet rs = stmt.executeQuery("SELECT TABLE_NAME from information_schema.TABLES where TABLE_SCHEMA = DATABASE() AND TABLE_TYPE = 'BASE TABLE'");
 
 			while (rs.next()) {
 				result.add(rs.getString(1));
