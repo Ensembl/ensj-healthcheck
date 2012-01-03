@@ -19,7 +19,7 @@ public enum Species {
 	CANIS_FAMILIARIS(9615, "BROADD", "ENSCAF", "dog,doggy,cfamiliaris,canisfamiliaris,canis_familiaris"),
 	CAVIA_PORCELLUS(10141, "CAVPOR", "ENSCPO", "guineapig,guinea_pig,cporcellus,cavia_porcellus"),
 	CHOLOEPUS_HOFFMANNI(9358, "choHof", "ENSCHO", "Sloth,Two-toed_sloth,Hoffmans_two-fingered_sloth,choloepus_hoffmanni"),
-	CIONA_INTESTINALIS(7719, "JGI", "ENSCIN", "cionaintestinalis,ciona_int,ciona_intestinalis"),
+	CIONA_INTESTINALIS(7719, "KH", "ENSCIN", "cionaintestinalis,ciona_int,ciona_intestinalis"),
 	CIONA_SAVIGNYI(51511, "CSAV", "ENSCSAV", "savignyi,cionasavignyi,csavignyi,ciona_savignyi"),
         CRICETULUS_GRISEUS(10029, "CriGri", "ENSCGR", "hamster,chinese_hamster,cgriseus,cricetulus_griseus"),
 	CULEX_PIPIENS(7175, "CpiJ", "CPIJ", "culex,culexpipiens,culex_pipiens"),
