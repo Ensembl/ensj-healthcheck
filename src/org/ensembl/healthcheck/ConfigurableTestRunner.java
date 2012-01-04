@@ -1,11 +1,16 @@
 package org.ensembl.healthcheck;
 
 import java.io.File;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.ReporterFactory.ReporterType;
 import org.ensembl.healthcheck.TestRegistryFactory.TestRegistryType;
 import org.ensembl.healthcheck.configuration.ConfigurationUserParameters;
@@ -17,8 +22,10 @@ import org.ensembl.healthcheck.configurationmanager.ConfigurationDumper;
 import org.ensembl.healthcheck.configurationmanager.ConfigurationException;
 import org.ensembl.healthcheck.configurationmanager.ConfigurationFactory;
 import org.ensembl.healthcheck.configurationmanager.ConfigurationFactory.ConfigurationType;
+import org.ensembl.healthcheck.util.ConnectionBasedSqlTemplateImpl;
 import org.ensembl.healthcheck.util.CreateHealthCheckDB;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.SqlTemplate;
 
 /**
  * 
@@ -27,6 +34,20 @@ import org.ensembl.healthcheck.util.DBUtils;
  * 
  */
 public class ConfigurableTestRunner extends TestRunner {
+
+	/**
+	 * 
+	 */
+	private static final String GET_DIVISION_DBS = "select division_db.db_name from division_db " +
+			"join division using (division_id) where division_db.is_current=1 and (division.name=? or division.shortname=?)";
+
+	/**
+	 * 
+	 */
+	private static final String GET_DIVISION_SPECIES_DBS = "select " +
+			"concat(species.db_name,'_',db.db_type,'_',db.db_release,'_',db.db_assembly) from db " +
+			"join species using (species_id) join division_species using (species_id) " +
+			"join division using (division_id) where db.is_current=1 and species.is_current=1 and (division.name=? or division.shortname=?)";
 
 	static final Logger log = Logger.getLogger(ConfigurableTestRunner.class
 			.getCanonicalName());
@@ -296,13 +317,8 @@ public class ConfigurableTestRunner extends TestRunner {
 
 		List<DatabaseRegistryEntry> databasesToTestList = new ArrayList<DatabaseRegistryEntry>();
 
-		if (!configuration.isTestDatabases()) {
-			throw new ConfigurationException(
-					"Parameter output.databases has not been set!");
-		}
-
 		// Create a DatabaseRegistryEntry for every database the user specified
-		for (String databaseToTest : configuration.getTestDatabases()) {
+		for (String databaseToTest : getTestDatabases()) {
 
 			DatabaseRegistryEntry currentDatabaseToTest = new DatabaseRegistryEntry(
 					ds, databaseToTest, null, null);
@@ -374,4 +390,57 @@ public class ConfigurableTestRunner extends TestRunner {
 			log.info("Finished reporter session");
 		}
 	}
+
+	protected Collection<String> getTestDatabases() {
+		Collection<String> dbs = new HashSet<String>();
+		if (configuration.isTestDatabases() && configuration.getTestDatabases().size()>0) {
+			for(String db: configuration.getTestDatabases()) {
+				if(!StringUtils.isEmpty(db)) {
+					dbs.add(db);
+				}
+			}
+		}
+		if (configuration.isDivisions() && configuration.getDivisions().size()>0) {
+			if (!configuration.isProductionDatabase()
+					&& !configuration.isOutputHost()) {
+				throw new ConfigurationException(
+						"Parameters production.database and output.host etc. must be set to use test_divisions");
+			} else {
+				// don't want to have to do this, but need to query production
+				// separately
+				Connection conn = null;
+				SqlTemplate template = null;
+				try {
+					conn = DBUtils.openConnection(
+							configuration.getOutputDriver(),
+							configuration.getOutputHost(),
+							configuration.getOutputPort(),
+							configuration.getOutputUser(),
+							configuration.getOutputPassword(),
+							configuration.getProductionDatabase());
+					template = new ConnectionBasedSqlTemplateImpl(conn);
+					for (String division : configuration.getDivisions()) {
+						dbs.addAll(template.queryForDefaultObjectList(
+								GET_DIVISION_SPECIES_DBS, String.class,
+								division, division));
+						dbs.addAll(template.queryForDefaultObjectList(
+								GET_DIVISION_DBS, String.class, division,
+								division));
+					}
+				} catch (SQLException e) {
+					throw new RuntimeException(
+							"Could not open connection to production db "
+									+ configuration.getProductionDatabase(), e);
+				} finally {
+					DBUtils.closeQuietly(conn);
+				}
+			}
+		}
+		if(dbs.isEmpty()) {
+			throw new ConfigurationException(
+					"No test databases found - Parameters test_databases or test_division have not been set!");
+		}
+		return dbs;
+	}
+
 }

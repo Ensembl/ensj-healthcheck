@@ -97,6 +97,23 @@ public final class DBUtils {
 
 	}
 
+	/**
+	 * Helper to avoid having to keep constructing tedious URLs - mysql only
+	 * @param driverClassName
+	 * @param host
+	 * @param port
+	 * @param user
+	 * @param password
+	 * @param database
+	 * @return
+	 * @throws SQLException
+	 */
+	public static Connection openConnection(String driverClassName, String host, String port, String user, String password, String database) throws SQLException {
+		
+		return ConnectionPool.getConnection(driverClassName, "jdbc:mysql://"+host+":"+port+"/"+database, user, password);
+
+	}
+	
 	// -------------------------------------------------------------------------
 	/**
 	 * Open a connection to the database.
@@ -1093,6 +1110,16 @@ public final class DBUtils {
 		if (st != null) {
 			try {
 				st.close();
+			} catch (SQLException e) {
+				// ignore
+			}
+		}
+	}
+
+	public static void closeQuietly(Connection c) {
+		if (c != null) {
+			try {
+				c.close();
 			} catch (SQLException e) {
 				// ignore
 			}

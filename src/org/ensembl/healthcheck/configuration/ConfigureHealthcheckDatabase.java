@@ -90,4 +90,13 @@ public interface ConfigureHealthcheckDatabase {
 		)
 		String getOutputSchemafile();
 		boolean isOutputSchemafile();	
+		
+		@Option(
+			longName    = "production.database",
+			description = "The name of the Ensembl production database to use to retrieve division information. " +
+					"Assumed to be on the same server as the output databases."
+		)
+		String getProductionDatabase();
+		boolean isProductionDatabase();
+		
 }

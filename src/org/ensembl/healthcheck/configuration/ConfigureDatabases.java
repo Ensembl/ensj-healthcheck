@@ -27,4 +27,9 @@ public interface ConfigureDatabases {
 
 	boolean isTestDatabases();
 
+	@Option(shortName = "D", longName = "test_divisions", description = "Names of division to which databases to test should belong e.g. EPl or EnsemblPlants. " +
+			"This option requires the production database to be set up.")
+	List<String> getDivisions();
+	boolean isDivisions();
+	
 }
