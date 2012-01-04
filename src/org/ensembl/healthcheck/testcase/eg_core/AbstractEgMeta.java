@@ -32,7 +32,7 @@ public abstract class AbstractEgMeta extends AbstractEgCoreTestCase {
 
 	protected final static String SPECIES_ID_QUERY = "select distinct(species_id) from meta where species_id>0 order by species_id";
 
-	private final MapRowMapper<String, List<String>> mapper = new MapRowMapper<String, List<String>>() {
+	protected final MapRowMapper<String, List<String>> mapper = new MapRowMapper<String, List<String>>() {
 
 		public void existingObject(List<String> currentValue,
 				ResultSet resultSet, int position) throws SQLException {
@@ -61,7 +61,7 @@ public abstract class AbstractEgMeta extends AbstractEgCoreTestCase {
 
 	};
 
-	private final List<String> metaKeys;
+	protected final List<String> metaKeys;
 
 	public AbstractEgMeta(List<String> metaKeys) {
 		super();

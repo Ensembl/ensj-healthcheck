@@ -12,14 +12,14 @@ import org.ensembl.healthcheck.util.TestCaseUtils;
  * @author dstaines
  * 
  */
-public class SuggestedEgMeta extends AbstractEgMeta {
+public class RequiredEgMeta extends AbstractEgMeta {
 
 	/**
 	 * @param metaKeys
 	 */
-	public SuggestedEgMeta() {
+	public RequiredEgMeta() {
 		super(
-				TestCaseUtils.resourceToStringList("/org/ensembl/healthcheck/testcase/eg_core/meta_keys.txt"));
+				TestCaseUtils.resourceToStringList("/org/ensembl/healthcheck/testcase/eg_core/required_meta_keys.txt"));
 	}
 
 }

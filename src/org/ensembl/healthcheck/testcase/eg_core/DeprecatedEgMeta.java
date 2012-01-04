@@ -37,7 +37,7 @@ public class DeprecatedEgMeta extends AbstractEgMeta {
 				passes = false;
 				ReportManager.problem(this, dbre.getConnection(),
 						"Meta table for " + speciesId
-								+ " contains a value for " + e.getKey());
+								+ " contains a value for the deprecated key " + e.getKey());
 			}
 		}
 		return passes;

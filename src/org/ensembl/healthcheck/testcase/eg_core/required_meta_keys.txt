@@ -15,6 +15,8 @@ sample.transcript_text
 species.classification
 species.production_name
 species.scientific_name
+species.display_name
+species.url
 species.short_name
 species.taxonomy_id
 species.division
