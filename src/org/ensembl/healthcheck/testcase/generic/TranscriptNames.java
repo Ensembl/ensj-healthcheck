@@ -44,6 +44,7 @@ public class TranscriptNames extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
+		addToGroup("core_xrefs");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		
