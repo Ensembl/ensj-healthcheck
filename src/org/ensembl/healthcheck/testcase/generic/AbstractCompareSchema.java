@@ -650,12 +650,12 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 		private int columnSize;
 		private int decimalDigits;
 		private boolean nullable;
-		private String columnDef;
+		private String columnDefault;
 		private int charOctetLength;
 		private boolean autoIncrement;
 
 		public Column(String name, int dataType, int columnSize, int decimalDigits,
-		    boolean nullable, String columnDef, int charOctetLength,
+		    boolean nullable, String columnDefault, int charOctetLength,
 		    boolean autoIncrement) {
 			super();
 			this.name = name;
@@ -663,7 +663,7 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 			this.columnSize = columnSize;
 			this.decimalDigits = decimalDigits;
 			this.nullable = nullable;
-			this.columnDef = columnDef;
+			this.columnDefault = columnDefault;
 			this.charOctetLength = charOctetLength;
 			this.autoIncrement = autoIncrement;
 		}
@@ -679,7 +679,7 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 			result = prime * result + (autoIncrement ? 1231 : 1237);
 			result = prime * result + charOctetLength;
 			result = prime * result
-			    + ((columnDef == null) ? 0 : columnDef.hashCode());
+			    + ((columnDefault == null) ? 0 : columnDefault.hashCode());
 			result = prime * result + columnSize;
 			result = prime * result + dataType;
 			result = prime * result + decimalDigits;
@@ -701,11 +701,11 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 				return false;
 			if (charOctetLength != other.charOctetLength)
 				return false;
-			if (columnDef == null) {
-				if (other.columnDef != null)
+			if (columnDefault == null) {
+				if (other.columnDefault != null)
 					return false;
 			}
-			else if (!columnDef.equals(other.columnDef))
+			else if (!columnDefault.equals(other.columnDefault))
 				return false;
 			if (columnSize != other.columnSize)
 				return false;
