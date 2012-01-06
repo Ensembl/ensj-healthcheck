@@ -153,6 +153,10 @@ public class MetaValues extends SingleDatabaseTestCase {
 		// -------------------------------------------
 		
 		result &= checkAssemblyAccessionUpdate(dbre);		
+		
+		// -------------------------------------------
+		
+		result &= checkRepeatAnalysis(dbre);
 
 		return result;
 
@@ -814,5 +818,25 @@ public class MetaValues extends SingleDatabaseTestCase {
 		return result;
 	}	
 			
+	
+	// ---------------------------------------------------------------------
+	/**
+	 * Check that all meta_values with meta_key 'repeat.analysis' reference analysis.logic_name
+	 */
+	private boolean checkRepeatAnalysis(DatabaseRegistryEntry dbre) {
+
+		boolean result = true;
+
+		Connection con = dbre.getConnection();
+		String[] repeatAnalyses = getColumnValues(con, "SELECT meta_value FROM meta LEFT JOIN analysis ON meta_value = logic_name WHERE meta_key = 'repeat.analysis' AND analysis_id IS NULL");
+		if (repeatAnalyses.length > 0) {
+			ReportManager.problem(this, con, "The following values for meta_key repeat.analysis don't have a corresponding logic_name entry in the analysis table: " + Utils.arrayToString(repeatAnalyses,",") );
+		} else {
+			ReportManager.correct(this, con, "All values for meta_key repeat.analysis have a corresponding logic_name entry in the analysis table");
+		}
+
+		return result;
+
+	}
 	
 } // MetaValues
