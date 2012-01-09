@@ -210,16 +210,18 @@ sub find_match {
 # --------------------------------------------------------------------------------
 
 sub compare_dbs {
-
   my ($old, $new) = @_;
 
-  my @o = split(/_/, $old);
+  my $regex = qr/(
+    \A [a-z0-9]+ _ [a-z0-9]+  #binomial component 
+    (?: _ [a-z0-9]+)?         #trinomial component or group
+    _ [a-z]+                  #group
+    ) _ \d                    # _ release number of some description
+  /xms;
 
-  my @n = split(/_/, $new);
-
-  # if first 3 bits are the same, we have a match
-  return ($o[0] eq $n[0] && $o[1] eq $n[1] && $o[2] eq $n[2]);
-
+  my ($old_prefix) = $old =~ $regex;
+  my ($new_prefix) = $new =~ $regex;
+  return $old_prefix eq $new_prefix;
 }
 
 # --------------------------------------------------------------------------------
