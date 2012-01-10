@@ -1,5 +1,7 @@
 package org.ensembl.healthcheck.testcase.generic;
 
+import static org.ensembl.healthcheck.util.CollectionUtils.createArrayList;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -227,14 +229,16 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 				}
 			}
 
+			String masterShortName = DBUtils.getShortDatabaseName(masterCon);
 			for (DatabaseRegistryEntry dbre : databases) {
+				
 				DatabaseType type = dbre.getType();
 
 				if (appliesToType(type)) {
 					Connection checkCon = dbre.getConnection();
+					String checkShortName = DBUtils.getShortDatabaseName(checkCon);
 					if (checkCon != masterCon) {
-						logger.info("Comparing " + DBUtils.getShortDatabaseName(checkCon)
-						    + " with " + DBUtils.getShortDatabaseName(masterCon));
+						logger.info("Comparing " + checkShortName + " with " + masterShortName);
 						// check that both schemas have the same tables
 						somethingWasCompared = true;
 						int directionFlag = EnsTestCase.COMPARE_BOTH;
@@ -251,12 +255,24 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 							result = false;
 							
 							if(skipCheckingIfTablesAreUnequal()) {
-								ReportManager.problem(this, checkCon,
-								    "Table name discrepancy detected, skipping rest of checks");
+								String msg;
+								if(searchForTemporaryTables(checkCon)) {
+									msg = String.format(
+											"Table name discrepancy detected but temporary tables " +
+											"were found in the schema '%s'. Try running " +
+											"ensembl/misc-scripts/cleanup_tmp_tables.pl",
+											checkShortName
+									);
+								}
+								else {
+									msg = "Table name discrepancy detected, skipping rest of checks";
+								}
+								ReportManager.problem(this, checkCon, msg);
 								continue;
 							}
 							else {
-								ReportManager.problem(this, checkCon, "Table name discrepancy detected but continuing with table checks");
+								ReportManager.problem(this, checkCon, 
+										"Table name discrepancy detected but continuing with table checks");
 							}
 						}
 
@@ -638,6 +654,21 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 			tables.put(url, new HashSet<String>(Arrays.asList(array)));
 		}
 		return tables.get(url);
+	}
+	
+	private boolean searchForTemporaryTables(Connection conn) throws SQLException {
+		boolean temporaryTables = false;
+		Set<String> tables = getTables(conn);
+		List<String> searchValues = createArrayList("MTMP_", "tmp", "temp", "bak", "backup");
+		for(String table: tables) {
+			for(String search: searchValues) {
+				if(table.contains(search)) {
+					temporaryTables = true;
+					break;
+				}
+			}
+		}
+		return temporaryTables;
 	}
 
 	/**
