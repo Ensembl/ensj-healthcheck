@@ -44,6 +44,11 @@ public class CompareSchema extends AbstractCompareSchema {
 	protected void addResponsible() {
 		setTeamResponsible(RELEASE_COORDINATOR);
 	}
+	
+	@Override
+	protected boolean skipCheckingIfTablesAreUnequal() {
+	  return false;
+	}
 
 	@Override
 	protected void addTestTypes() {
