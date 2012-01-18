@@ -78,7 +78,7 @@ public class PredictedXrefs extends SingleDatabaseTestCase {
 
 			if (rows > 0) {
 
-				ReportManager.problem(this, con, rows + " " + externalDBName + " xrefs seem to be predictions (match " + pattern + ")\nUSEFUL SQL:select count(*),t.analysis_id from transcript t, object_xref ox, xref x, external_db e where t.transcript_id=ox.ensembl_id and ox.ensembl_object_type='Transcript' and ox.xref_id=x.xref_id and x.external_db_id=e.external_db_id and e.db_name in ('RefSeq_mRNA','RefSeq_ncRNA','RefSeq_protein') and x.display_label REGEXP 'X[M,R,P].+' group by t.analysis_id;");
+				ReportManager.problem(this, con, rows + " " + externalDBName + " xrefs seem to be predictions (match " + pattern + ")\nUSEFUL SQL:SELECT COUNT(*) FROM xref x, external_db e WHERE x.external_db_id=e.external_db_id AND e.db_name='RefSeq_peptide'  AND x.dbprimary_acc LIKE 'XP%';");
 				result = false;
 
 			} else {
