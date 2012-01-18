@@ -260,7 +260,7 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 									msg = String.format(
 											"Table name discrepancy detected but temporary tables " +
 											"were found in the schema '%s'. Try running " +
-											"ensembl/misc-scripts/cleanup_tmp_tables.pl",
+											"ensembl/misc-scripts/db/cleanup_tmp_tables.pl",
 											checkShortName
 									);
 								}
