@@ -1911,6 +1911,36 @@ public abstract class EnsTestCase {
 		return result;
 
 	} // checkNoNulls
+	
+	/**
+	 * Check a column for zero values. Problem or correct reports are generated via ReportManager.
+	 * 
+	 * @param con
+	 *          The database connection to use.
+	 * @param table
+	 *          The table name.
+	 * @param column
+	 *          The column to check.
+	 * @return True if no columns have zero values, false otherwise.
+	 */
+	public boolean checkNoZeroes(Connection con, String table, String column) {
+		
+		boolean result = true;
+		
+		int zeroes = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE" + column + "= 0");
+		
+		if (zeroes > 0) {
+			
+			ReportManager.problem(this, con, "Zeroes found in " + table + "." + column);
+			result = false;
+		} else {
+			ReportManager.correct(this, con, "No zeroes found in " + table + "." + column);
+		}
+		
+		return result;
+	}
+	
+	
 
 	// ----------------------------------------------------------------------
 	/**
