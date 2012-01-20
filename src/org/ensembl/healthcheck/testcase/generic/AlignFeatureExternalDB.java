@@ -79,6 +79,7 @@ public class AlignFeatureExternalDB extends SingleDatabaseTestCase {
 		for (int i = 0; i < tables.length; i++) {
 
 			result &= checkNoNulls(con, tables[i], "external_db_id");
+			result &= checkNoZeroes(con, tables[i], "external_db_id");
 
 		}
 
