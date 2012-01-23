@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 
@@ -189,14 +190,51 @@ public class ProcessExec {
 				command, 
 				environment
 		);		
-//		Process proc = rt.exec(
-//				command, 
-//				environment
-//		);		
+
 		return waitForProcess(out, err, discard, proc);
 	}
 
-	
+	public static int exec(
+			String[] command, 
+			Appendable out, 
+			Appendable err,
+			boolean discard, 
+			Map<String,String> environmentVars
+	) throws IOException {
+		
+
+		return exec(
+			command, 
+			out, 
+			err,
+			discard, 
+			environmentMapToString(environmentVars)
+		);
+	}
+
+	/**
+	 * 
+	 * <p>
+	 * 	Converts the map representing the environment to be set to the
+	 * array of "key=value" representation that the Runtime.exec method
+	 * wants.
+	 * </p>
+	 * 
+	 * @return
+	 */
+	protected static String[] environmentMapToString(Map<String,String> environmentVars) {
+		
+		String[] environment = new String[environmentVars.keySet().size()];
+		
+		int currentIndex=0;
+		for (String currentKey : environmentVars.keySet()) {
+			
+			environment[currentIndex]=currentKey + "=" + environmentVars.get(currentKey);
+			currentIndex++;
+		}
+		
+		return environment;
+	}	
 	
      /**
 	 * Execute the command, capturing output/error into the supplied streams if
