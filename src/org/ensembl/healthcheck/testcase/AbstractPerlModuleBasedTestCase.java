@@ -14,7 +14,9 @@ import org.ensembl.healthcheck.util.ActionAppendable;
 import org.ensembl.healthcheck.util.TemplateBuilder;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
@@ -27,11 +29,13 @@ import java.util.logging.LogRecord;
  */
 public abstract class AbstractPerlModuleBasedTestCase extends AbstractPerlBasedTestCase {
 
-	private static final String SCRIPT = "./perl/run_healthcheck.pl -host $host$ -port $port$ -user $user$ -pass $pass$ -dbname $dbname$ -species_id $species_id$ -module $module$";
+	//private static final String SCRIPT = "./perl/run_healthcheck.pl -host $host$ -port $port$ -user $user$ -pass $pass$ -dbname $dbname$ -species_id $species_id$ -module $module$";
+	private static final String SCRIPT = "./perl/run_healthcheck.pl -host $host$ -port $port$ -user $user$ -dbname $dbname$ -species_id $species_id$ -module $module$";
 	private final LogMapperPerl2Java logMapper;
 	private final Formatter perlLogMessagesFormatter;
 
 	protected Map<Handler, Formatter> savedFormatter = new HashMap<Handler, Formatter>();
+	protected String pass = "";
 
 	public AbstractPerlModuleBasedTestCase() {
 		super();
@@ -61,10 +65,20 @@ public abstract class AbstractPerlModuleBasedTestCase extends AbstractPerlBasedT
 		return TemplateBuilder.template(SCRIPT, "host", srv.getHost(),
 				"port", srv.getPort(),
 				"user", srv.getUser(),
-				"pass", srv.getPass(),
+//				"pass", srv.getPass(),
 				"dbname", dbre.getName(),
 				"module", getModule(),
 				"species_id", speciesId);
+	}
+	
+	protected Map<String,String> environmentVarsToSet() {
+		
+		Map<String,String> inheritedEnvironment = super.environmentVarsToSet();
+		
+		inheritedEnvironment.put("pass", this.pass);
+		
+		return inheritedEnvironment;
+		
 	}
 	
 	/**
@@ -183,6 +197,7 @@ public abstract class AbstractPerlModuleBasedTestCase extends AbstractPerlBasedT
 		boolean savedUseParentHandler = logger.getUseParentHandlers();
 		logger.setUseParentHandlers(false);
 
+		this.pass = dbre.getDatabaseServer().getPass();
 		boolean passes = super.run(dbre);
 		
 		removePerlFriendlyLogFormatters();
