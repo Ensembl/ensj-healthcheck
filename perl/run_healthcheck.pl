@@ -16,12 +16,16 @@ use Carp;
 
 my ( $host, $user, $pass, $port, $dbname, $species_id, $module );
 
+# Allow password to be passed by setting the environment variable 'pass'.
+#
+$pass = $ENV{'pass'};
+
 GetOptions(
-	"host=s",       \$host,   
+	"host=s",       \$host,
 	"user=s",       \$user,
-	"pass:s",       \$pass,   
+	"pass:s",       \$pass,
 	"port=i",       \$port,
-	"dbname=s",     \$dbname, 
+	"dbname=s",     \$dbname,
 	"species_id=s", \$species_id,
 	"module=s",     \$module
 );
@@ -35,6 +39,7 @@ if (   !defined $host
 		"Usage: $0 -host host -port port -user user [-pass password] -dbname db [-species_id species_id] -module module"
 	);
 }
+
 my %args = (
 	-HOST   => $host,
 	-USER   => $user,
