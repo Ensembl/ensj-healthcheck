@@ -17,17 +17,13 @@ public class ProteinTranslation extends AbstractPerlModuleBasedTestCase {
 
 	public ProteinTranslation() {
 		super();
-		
+		setSpeciesIdAware(true);
 		setTeamResponsible(Team.GENEBUILD);
 		setSpeciesIdAware(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.ensembl.healthcheck.testcase.AbstractPerlModuleBasedTestCase#getModule()
-	 */
 	@Override
 	protected String getModule() {
 		return "Bio::EnsEMBL::Healthcheck::Translation";
 	}
-
 }
