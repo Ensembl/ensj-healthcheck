@@ -2,6 +2,7 @@ package org.ensembl.healthcheck.testcase;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -128,26 +129,17 @@ public abstract class AbstractShellBasedTestCase extends SingleDatabaseTestCase 
 	
 	/**
 	 * <p>
-	 * 	Does not set any environment variable by default. If your test requires
+	 * 	Preservers the system environment by default. If your test requires
 	 * certain environment variables to be set, override this method.
 	 * </p>
 	 * 
 	 * @return
 	 */
-	protected String[] environmentVarsToSet() {
+	protected Map<String,String> environmentVarsToSet() {
 		
-		Map<String,String> environmentVars = System.getenv();
+		Map<String,String> environmentVars = new HashMap<String,String>(System.getenv());
 		
-		String[] environment = new String[environmentVars.keySet().size()];
-		
-		int currentIndex=0;
-		for (String currentKey : environmentVars.keySet()) {
-			
-			environment[currentIndex]=currentKey + "=" + environmentVars.get(currentKey);
-			currentIndex++;
-		}
-		
-		return environment;
+		return environmentVars;
 	}
 
 	public boolean runShellTest(final DatabaseRegistryEntry dbre, int speciesId, boolean useSpeciesId) {
