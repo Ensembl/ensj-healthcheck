@@ -121,7 +121,7 @@ public class XrefLevels extends MultiDatabaseTestCase {
 				stmt.close();
 								
 			}
-			masterPrep = tempDB.prepareStatement("SELECT * FROM " + masterTable + " GROUP BY source, object");
+			masterPrep = tempDB.prepareStatement("select source, object, species from "+ masterTable +" group by source, object, species order by source, object" );
 			// find problems - loop over results grouped by source and object
 			// find situations where the source is the same but the species and object
 			// are different
