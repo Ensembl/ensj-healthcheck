@@ -168,6 +168,8 @@ public class TestRunner {
 
 					numberOfTestsRun++;
 				} catch (Throwable e) {
+				  //TODO If we had a throwable then we should mark the test as failed 
+				  
 					// catch and log unexpected exceptions
 					logger.warning("Could not execute test "
 							+ testCase.getName() + ": " + e.getMessage());
@@ -199,6 +201,8 @@ public class TestRunner {
 				logger.info(testCase.getName() + " "
 						+ (result ? "PASSED" : "FAILED"));
 			} catch (Throwable e) {
+			  //TODO If we had a throwable then we should mark the test as failed
+			  
 				// catch and log unexpected exceptions
 				logger.warning("Could not execute test " + testCase.getName()
 						+ ": " + e.getMessage());
