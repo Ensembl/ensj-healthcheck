@@ -78,8 +78,8 @@ public class XrefLevels extends MultiDatabaseTestCase {
 		// Create an in-memory SQL database via h2 driver
 		
 		try {
-			Class.forName("org.h2.Driver");
-			Connection tempDB = DriverManager.getConnection("jdbc:h2:~healthcheck"); // no login credential.
+			Class.forName("org.h2.Driver");               //      memory:tablename
+			Connection tempDB = DriverManager.getConnection("jdbc:h2:mem:XrefLevels"); 
 			
 			createTempTable(tempDB);
 
@@ -182,7 +182,7 @@ public class XrefLevels extends MultiDatabaseTestCase {
 		try {
 			Statement stmt = conn.createStatement();
 			stmt.execute("CREATE TABLE healthcheck_xref (species VARCHAR(255), source VARCHAR(255), object VARCHAR(255))");
-			logger.fine("Created table healthcheck_xref in temporary DB");
+			logger.fine("Created table healthcheck_xref in temporary H2 DB");
 		} catch (SQLException se) {
 			se.printStackTrace();
 		}
