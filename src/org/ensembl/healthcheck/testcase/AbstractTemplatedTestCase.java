@@ -8,7 +8,6 @@ package org.ensembl.healthcheck.testcase;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.util.ConnectionBasedSqlTemplateImpl;
 import org.ensembl.healthcheck.util.SqlTemplate;
 
 /**
@@ -25,7 +24,7 @@ public abstract class AbstractTemplatedTestCase extends SingleDatabaseTestCase {
 	}
 
 	protected SqlTemplate getTemplate(DatabaseRegistryEntry dbre) {
-		return new ConnectionBasedSqlTemplateImpl(dbre.getConnection());
+	  return getSqlTemplate(dbre);
 	}
 
 	protected abstract boolean runTest(DatabaseRegistryEntry dbre);

@@ -36,8 +36,10 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.TestRunner;
+import org.ensembl.healthcheck.util.ConnectionBasedSqlTemplateImpl;
 import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.SQLParser;
+import org.ensembl.healthcheck.util.SqlTemplate;
 import org.ensembl.healthcheck.util.Utils;
 
 /**
@@ -254,17 +256,7 @@ public abstract class EnsTestCase {
 	 * @return The comma-separated list of group names.
 	 */
 	public String getCommaSeparatedGroups() {
-
-		StringBuffer gString = new StringBuffer();
-
-		Iterator<String> it = groups.iterator();
-		while (it.hasNext()) {
-			gString.append((String) it.next());
-			if (it.hasNext()) {
-				gString.append(",");
-			}
-		}
-		return gString.toString();
+	  return StringUtils.join(groups, ',');
 	}
 
 	// -------------------------------------------------------------------------
@@ -361,19 +353,35 @@ public abstract class EnsTestCase {
 	 *          The list of group names to check.
 	 * @return True if this test case is in any of the groups, false if it is in none.
 	 */
-	public boolean inGroups(List<String> checkGroups) {
+  public boolean inGroups(List<String> checkGroups) {
 
-		boolean result = false;
+    boolean result = false;
 
-		Iterator<String> it = checkGroups.iterator();
-		while (it.hasNext()) {
-			if (inGroup((String) it.next())) {
-				result = true;
-			}
-		}
-		return result;
+    Iterator<String> it = checkGroups.iterator();
+    while (it.hasNext()) {
+      if (inGroup((String) it.next())) {
+        result = true;
+      }
+    }
+    return result;
 
-	} // inGroups
+  } // inGroups
+	
+	/**
+	 * Produce an instance of {@link SqlTemplate} from a
+	 * {@link DatabaseRegistryEntry}.
+	 */
+	public SqlTemplate getSqlTemplate(DatabaseRegistryEntry dbre) {
+	  return new ConnectionBasedSqlTemplateImpl(dbre);
+	}
+
+	/**
+	 * Produce an instance of {@link SqlTemplate} from a
+	 * {@link Connection}.
+	 */
+	public SqlTemplate getSqlTemplate(Connection conn) {
+	  return new ConnectionBasedSqlTemplateImpl(conn);
+	}
 
 	// -------------------------------------------------------------------------
 	/**
@@ -885,45 +893,45 @@ public abstract class EnsTestCase {
 	 */
 	public boolean checkSameSQLResult(String sql, DatabaseRegistryEntry[] databases, boolean comparingSchema) {
 
-		ArrayList resultSetGroup = new ArrayList();
-		ArrayList statements = new ArrayList();
+	  List<ResultSet> resultSetGroup = new ArrayList<ResultSet>();
+	  List<Statement> statements = new ArrayList<Statement>();
 
-		for (int i = 0; i < databases.length; i++) {
+	  for (int i = 0; i < databases.length; i++) {
 
-			Connection con = databases[i].getConnection();
+	    Connection con = databases[i].getConnection();
 
-			try {
-				Statement stmt = con.createStatement();
-				// System.out.println(databases[i].getName() + " " + sql);
-				ResultSet rs = stmt.executeQuery(sql);
-				if (rs != null) {
-					resultSetGroup.add(rs);
-				}
-				logger.fine("Added ResultSet for " + DBUtils.getShortDatabaseName(con) + ": " + sql);
-				// DBUtils.printResultSet(rs, 100);
-				// note that the Statement can't be closed here as we use the
-				// ResultSet elsewhere
-				// so store a reference to it for closing later
-				statements.add(stmt);
-				// con.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+	    try {
+	      Statement stmt = con.createStatement();
+	      // System.out.println(databases[i].getName() + " " + sql);
+	      ResultSet rs = stmt.executeQuery(sql);
+	      if (rs != null) {
+	        resultSetGroup.add(rs);
+	      }
+	      logger.fine("Added ResultSet for " + DBUtils.getShortDatabaseName(con) + ": " + sql);
+	      // DBUtils.printResultSet(rs, 100);
+	      // note that the Statement can't be closed here as we use the
+	      // ResultSet elsewhere
+	      // so store a reference to it for closing later
+	      statements.add(stmt);
+	      // con.close();
+	    } catch (Exception e) {
+	      e.printStackTrace();
+	    }
+	  }
 
-		logger.finest("Number of ResultSets to compare: " + resultSetGroup.size());
-		boolean same = DBUtils.compareResultSetGroup(resultSetGroup, this, comparingSchema);
+	  logger.finest("Number of ResultSets to compare: " + resultSetGroup.size());
+	  boolean same = DBUtils.compareResultSetGroup(resultSetGroup, this, comparingSchema);
 
-		Iterator it = statements.iterator();
-		while (it.hasNext()) {
-			try {
-				((Statement) it.next()).close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+	  Iterator<Statement> it = statements.iterator();
+	  while (it.hasNext()) {
+	    try {
+	      ((Statement) it.next()).close();
+	    } catch (Exception e) {
+	      e.printStackTrace();
+	    }
+	  }
 
-		return same;
+	  return same;
 
 	} // checkSameSQLResult
 
@@ -1019,38 +1027,37 @@ public abstract class EnsTestCase {
 	 *          The column to examine.
 	 * @return An list of the row indices of any blank entries. Will be zero-length if there are none.
 	 */
-	public List checkBlankNonNull(Connection con, String table, String column) {
+  public List<String> checkBlankNonNull(Connection con, String table, String column) {
 
-		if (con == null) {
-			logger.severe("checkBlankNonNull (column): Database connection is null");
-			return null;
-		}
+    if (con == null) {
+      logger.severe("checkBlankNonNull (column): Database connection is null");
+      return null;
+    }
 
-		ArrayList blanks = new ArrayList();
+    List<String> blanks = new ArrayList<String>();
+    try {
+      String sql = "SELECT " + column + " FROM " + table;
+      Statement stmt = con.createStatement();
+      ResultSet rs = stmt.executeQuery(sql);
+      ResultSetMetaData rsmd = rs.getMetaData();
+      while (rs.next()) {
+        String columnValue = rs.getString(1);
+        // should it be non-null?
+        if (rsmd.isNullable(1) == ResultSetMetaData.columnNoNulls) {
+          if (columnValue == null || columnValue.equals("")) {
+            blanks.add(Integer.toString(rs.getRow()));
+          }
+        }
+      }
+      rs.close();
+      stmt.close();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
-		String sql = "SELECT " + column + " FROM " + table;
-		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
-			ResultSetMetaData rsmd = rs.getMetaData();
-			while (rs.next()) {
-				String columnValue = rs.getString(1);
-				// should it be non-null?
-				if (rsmd.isNullable(1) == ResultSetMetaData.columnNoNulls) {
-					if (columnValue == null || columnValue.equals("")) {
-						blanks.add("" + rs.getRow());
-					}
-				}
-			}
-			rs.close();
-			stmt.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+    return blanks;
 
-		return blanks;
-
-	} // checkBlankNonNull
+  } // checkBlankNonNull
 
 	// -------------------------------------------------------------------------
 	/**

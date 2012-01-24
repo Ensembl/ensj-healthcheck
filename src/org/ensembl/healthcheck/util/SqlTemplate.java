@@ -1,13 +1,15 @@
 package org.ensembl.healthcheck.util;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
 /**
  * An lightweight, generic analogue of Spring's JdbcTemplate code (docs are available from <a
  * href="http://www.springframework.org/docs/api/org/springframework/jdbc/core/JdbcTemplate.html">
- * Spring's Javadoc site</a>. 
+ * Spring's Javadoc site</a>.
  *
  * <p>
  * The object attempts to use as many new features from Java5. This means that
@@ -39,8 +41,7 @@ import java.util.Map;
  * lifecycle of the {@link #queryForMap(String, MapRowMapper, Object[])} method.
  *
  * <p>
- * This class should be used in conjunction with {@link DbUtils} and the default
- * implementation {@link ConnectionBasedSqlTemplateImpl}.
+ * The default implementation is {@link ConnectionBasedSqlTemplateImpl}.
  *
  * @author ayates
  * @author dstaines (adapted for pure JDBC use)
@@ -137,7 +138,7 @@ public interface SqlTemplate {
 	 * In the above example we have queried for a count which we know must exist
 	 * and will only return one value. We tell the method that we are going to
 	 * be querying for an Integer object and that this will be autoboxed to an
-	 * int. Since the method relies heavily on Generics this will deal with the
+	 * int. Since the method relies heavily on generics this will deal with the
 	 * problems of casting & conversion of result to specified data type.
 	 *
 	 * @throws SqlServiceUncheckedException
@@ -157,7 +158,7 @@ public interface SqlTemplate {
 	 * </code>
 	 *
 	 * In the above example we are querying for all dates from a specified
-	 * table. The list will never be null but maybe empty if no results were
+	 * table. The list will never be null but can be empty if no results were
 	 * found.
 	 */
 	<T> List<T> queryForDefaultObjectList(String sql, Class<T> expected,
@@ -181,7 +182,7 @@ public interface SqlTemplate {
 	 * <li>If it has not then call {@link RowMapper#mapRow(ResultSet, int)}</li>
 	 * <li>If it has then call
 	 * {@link MapRowMapper#existingObject(Object, ResultSet, int)} and pass
-	 * back the Object associcated with the key</li>
+	 * back the Object associated with the key</li>
 	 * </ol>
 	 * <li>Repeat until the result set is finished</li>
 	 * <li>Return the generated map</li>
@@ -208,5 +209,43 @@ public interface SqlTemplate {
 	 */
 	<K, T> Map<K, T> queryForMap(String sql, MapRowMapper<K, T> mapRowMapper,
 			Object... args);
+
+	/**
+   * A generic method used for opening {@link PreparedStatement} and
+   * {@link ResultSet} instances and closing them down. Useful for when
+   * you need to execute SQL but want finer control over how you
+   * will process the {@link ResultSet}. This is provided via the
+   * {@link ResultSetCallback} interface which defines the same generic
+   * type as this method defines.
+   *
+   * @param sql SQL statement to run
+   * @param callback Callback used to process the {@link ResultSet} generated
+   * from the SQL statement
+   * @param args The arguments to use
+   * @return Returns whatever the method is typed to
+   */
+  <T> T execute(String sql, ResultSetCallback<T> callback, Object... args);
+
+	/**
+   * Executes the given SQL statement. Useful for executing inlined DML or DDL
+   *
+   * <code>
+   * template.execute("create table tab(one varchar2(10))");
+   * template.execute("truncate table tab");
+   * </code>
+   *
+   * @param sql The SQL statement to execute
+   * @return The number of executed rows. Returns the number of rows returned
+   * for DML and 0 for statements with no effects e.g. DDL
+   */
+	int execute(String sql);
+
+	/**
+   * Callback used to process a {@link ResultSet} whilst maintaining the
+   * correct level of encapsulation for resource cleanup.
+   */
+  public static interface ResultSetCallback<T> {
+    T process(ResultSet rs) throws SQLException;
+  }
 
 }

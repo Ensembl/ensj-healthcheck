@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -18,18 +19,29 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
 
 /**
  * The default implementation of {@link SqlTemplate} which provides all the
  * basic functionality that should be expected from a class which implements
  * this class. A {@link Connection} is passed into the constructor that is used for all
- * queries. Note that this should not be closed independently.
+ * queries. Note that this should not be closed independently. You can
+ * initialise with a {@link DatabaseRegistryEntry}
  *
  * @author ayates
  * @author dstaines
  */
 public class ConnectionBasedSqlTemplateImpl implements SqlTemplate {
 
+  public static final int FIRST_COLUMN_INDEX = 1;
+  public static final int NO_ROW_LIMIT_CHECKS = -1;
+  
+  /**
+   * Internal runtime exception class used to capture any issues and
+   * throw up to higher levels of control. This allows for any
+   * operation run by the {@link ConnectionBasedSqlTemplateImpl} to
+   * fail fast.
+   */
 	public class SqlTemplateUncheckedException extends RuntimeException {
 
 		private static final long serialVersionUID = 1L;
@@ -51,7 +63,11 @@ public class ConnectionBasedSqlTemplateImpl implements SqlTemplate {
 		return uri;
 	}
 
-	public ConnectionBasedSqlTemplateImpl(Connection connection){
+	public ConnectionBasedSqlTemplateImpl(DatabaseRegistryEntry dbre) {
+    this(dbre.getConnection());
+  }
+
+	public ConnectionBasedSqlTemplateImpl(Connection connection) {
 		this.connection = connection;
 		try {
 			this.uri = connection.getMetaData().getURL();
@@ -63,8 +79,8 @@ public class ConnectionBasedSqlTemplateImpl implements SqlTemplate {
 	/**
 	 * {@inheritDoc}
 	 */
-	public <T> List<T> mapResultSetToList(ResultSet resultSet,
-			RowMapper<T> mapper, final int rowLimit, String sql, Object[] args)
+	public <T> List<T> mapResultSetToList(final ResultSet resultSet,
+	    final RowMapper<T> mapper, final int rowLimit, String sql, final Object[] args)
 			throws SqlTemplateUncheckedException {
 		List<T> output = new ArrayList<T>();
 		int position = 0;
@@ -118,33 +134,62 @@ public class ConnectionBasedSqlTemplateImpl implements SqlTemplate {
 	/**
 	 * {@inheritDoc}
 	 */
-	public <T> T queryForObject(String sql, RowMapper<T> mapper, Object... args)
+	public <T> T queryForObject(final String sql, final RowMapper<T> mapper, final Object... args)
 			throws SqlTemplateUncheckedException {
-		ResultSet resultSet = null;
-		try {
-			resultSet = executeSql(sql, args);
-			T output = mapResultSetToSingleObject(resultSet, mapper, sql, args);
-			return output;
-		} finally {
-			closeDbObject(resultSet);
-		}
+	  return execute(sql, new ResultSetCallback<T>() {
+	    @Override
+	    public T process(ResultSet rs) throws SQLException {
+	      return mapResultSetToSingleObject(rs, mapper, sql, args);
+	    }
+    }, args);
 	}
 
-	public ResultSet executeSql(String sql, Object[] args) {
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		try {
-			ps = connection.prepareStatement(sql);
-			bindParamsToPreparedStatement(ps, args);
-			rs = ps.executeQuery();
-		} catch (SQLException e) {
-			throw createUncheckedException(sql, args, e);
-		} finally {
-			//closeDbObject(ps);
-		}
-		return rs;
+	/**
+	 * {@inheritDoc}
+	 */
+	public int execute(String sql) {
+	  int updatedRows = -1;
+	  Statement st = null;
+	  try {
+	    st = connection.createStatement();
+	    updatedRows = st.executeUpdate(sql);
+	  }
+	  catch(SQLException e) {
+	    createUncheckedException(sql, new Object[]{}, e);
+	  }
+	  finally {
+	    closeDbObject(st);
+	  }
+	  return updatedRows;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public <T> T execute(String sql, ResultSetCallback<T> callback, Object... args) {
+	  T object;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    try {
+      ps = connection.prepareStatement(sql);
+      bindParamsToPreparedStatement(ps, args);
+      rs = ps.executeQuery();
+      object = callback.process(rs);
+    }
+    catch (SQLException e) {
+      throw createUncheckedException(sql, args, e);
+    }
+    finally {
+      closeDbObject(rs);
+      closeDbObject(ps);
+    }
+    return object;
+  }
+
+	/**
+	 * Use this to close down {@link ResultSet} objects with null safety
+   * checks
+	 */
 	protected void closeDbObject(ResultSet resultSet) {
 		try {
 			if (resultSet != null)
@@ -154,10 +199,14 @@ public class ConnectionBasedSqlTemplateImpl implements SqlTemplate {
 		}
 	}
 
-	protected void closeDbObject(PreparedStatement resultSet) {
+	/**
+	 * Use this to close down {@link Statement} objects with null safety
+	 * checks
+	 */
+	protected void closeDbObject(Statement st) {
 		try {
-			if (resultSet != null)
-				resultSet.close();
+			if (st != null)
+			  st.close();
 		} catch (SQLException e) {
 			// ignore closing exceptions here
 		}
@@ -166,17 +215,14 @@ public class ConnectionBasedSqlTemplateImpl implements SqlTemplate {
 	/**
 	 * {@inheritDoc}
 	 */
-	public <T> List<T> queryForList(String sql, RowMapper<T> mapper,
-			Object... args) throws SqlTemplateUncheckedException {
-		ResultSet resultSet = null;
-		try {
-			resultSet = executeSql(sql, args);
-			List<T> output = mapResultSetToList(resultSet, mapper, -1, sql,
-					args);
-			return output;
-		} finally {
-			closeDbObject(resultSet);
-		}
+	public <T> List<T> queryForList(final String sql, final RowMapper<T> mapper,
+			final Object... args) throws SqlTemplateUncheckedException {
+	  return execute(sql, new ResultSetCallback<List<T>>() {
+	    @Override
+	    public List<T> process(ResultSet rs) throws SQLException {
+	      return mapResultSetToList(rs, mapper, NO_ROW_LIMIT_CHECKS, sql, args);
+	    }
+	  }, args);
 	}
 
 	/**
@@ -185,7 +231,7 @@ public class ConnectionBasedSqlTemplateImpl implements SqlTemplate {
 	public <T> T queryForDefaultObject(String sql, Class<T> expected,
 			Object... args) throws SqlTemplateUncheckedException {
 		DefaultObjectRowMapper<T> mapper = new DefaultObjectRowMapper<T>(
-				expected, 1);
+				expected, FIRST_COLUMN_INDEX);
 		return queryForObject(sql, mapper, args);
 	}
 
@@ -195,43 +241,37 @@ public class ConnectionBasedSqlTemplateImpl implements SqlTemplate {
 	public <T> List<T> queryForDefaultObjectList(String sql, Class<T> expected,
 			Object... args) throws SqlTemplateUncheckedException {
 		DefaultObjectRowMapper<T> mapper = new DefaultObjectRowMapper<T>(
-				expected, 1);
+				expected, FIRST_COLUMN_INDEX);
 		return queryForList(sql, mapper, args);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public <K, T> Map<K, T> queryForMap(String sql,
-			MapRowMapper<K, T> mapRowMapper, Object... args)
+	public <K, T> Map<K, T> queryForMap(final String sql,
+			final MapRowMapper<K, T> mapRowMapper, final Object... args)
 			throws SqlTemplateUncheckedException {
 
-		Map<K, T> targetMap = mapRowMapper.getMap();
-
-		ResultSet resultSet = null;
-		try {
-			resultSet = executeSql(sql, args);
-			int position = -1;
-			while (resultSet.next()) {
-				position++;
-				K key = mapRowMapper.getKey(resultSet);
-				if (targetMap.containsKey(key)) {
-					T currentValue = targetMap.get(key);
-					mapRowMapper.existingObject(currentValue, resultSet,
-							position);
-				} else {
-					T newValue = mapRowMapper.mapRow(resultSet, position);
-					targetMap.put(key, newValue);
-				}
-			}
-		} catch (SQLException e) {
-			throw new SqlTemplateUncheckedException(
-					"Cannot map from result set into Map", e);
-		} finally {
-			closeDbObject(resultSet);
-		}
-
-		return targetMap;
+		return execute(sql, new ResultSetCallback<Map<K,T>>() {
+      @Override
+      public Map<K,T> process(ResultSet rs) throws SQLException {
+        Map<K, T> targetMap = mapRowMapper.getMap();
+        int position = -1;
+        while (rs.next()) {
+          position++;
+          K key = mapRowMapper.getKey(rs);
+          if (targetMap.containsKey(key)) {
+            T currentValue = targetMap.get(key);
+            mapRowMapper.existingObject(currentValue, rs,
+                position);
+          } else {
+            T newValue = mapRowMapper.mapRow(rs, position);
+            targetMap.put(key, newValue);
+          }
+        }
+        return targetMap;
+      }
+    }, args);
 	}
 
 	// ----- EXCEPTION HANDLING
@@ -248,28 +288,30 @@ public class ConnectionBasedSqlTemplateImpl implements SqlTemplate {
 		return new SqlTemplateUncheckedException(message, e);
 	}
 
-	private int twoDTraceLimit = 3;
+	// -------- COMMENTED OUT BECAUSE WE HAVE NO NEED FOR THIS YET
 
-	private String formatExceptionMessage(String exceptionMessage, String sql,
-			Object[][] params) {
-		List<Object> listArgs = new ArrayList<Object>();
-
-		int loop = (params.length > twoDTraceLimit) ? twoDTraceLimit
-				: params.length;
-
-		for (int i = 0; i < loop; i++) {
-			Object[] arg = params[i];
-			listArgs.add(Arrays.toString(arg));
-		}
-
-		if (params.length > twoDTraceLimit) {
-			listArgs.add("More params lines than can show (" + params.length
-					+ ") ...");
-		}
-
-		Object[] args = listArgs.toArray(new Object[0]);
-		return formatExceptionMessage(exceptionMessage, sql, args);
-	}
+//	private int twoDTraceLimit = 3;
+//
+//	private String formatExceptionMessage(String exceptionMessage, String sql,
+//			Object[][] params) {
+//		List<Object> listArgs = new ArrayList<Object>();
+//
+//		int loop = (params.length > twoDTraceLimit) ? twoDTraceLimit
+//				: params.length;
+//
+//		for (int i = 0; i < loop; i++) {
+//			Object[] arg = params[i];
+//			listArgs.add(Arrays.toString(arg));
+//		}
+//
+//		if (params.length > twoDTraceLimit) {
+//			listArgs.add("More params lines than can show (" + params.length
+//					+ ") ...");
+//		}
+//
+//		Object[] args = listArgs.toArray(new Object[0]);
+//		return formatExceptionMessage(exceptionMessage, sql, args);
+//	}
 
 	/**
 	 * Used to generate the exception messages used through this class
@@ -291,29 +333,30 @@ public class ConnectionBasedSqlTemplateImpl implements SqlTemplate {
 		if (arguments != null) {
 
 			for (Object arg : arguments) {
+			  i++;
 				if (arg == null) {
-					st.setNull(++i, Types.NULL);
+					st.setNull(i, Types.NULL);
 				} else if (arg instanceof String) {
-					st.setString(++i, (String) arg);
+					st.setString(i, (String) arg);
 				} else if (arg instanceof Integer) {
-					st.setInt(++i, (Integer) arg);
+					st.setInt(i, (Integer) arg);
 				} else if (arg instanceof Boolean) {
-					st.setBoolean(++i, (Boolean) arg);
+					st.setBoolean(i, (Boolean) arg);
 				} else if (arg instanceof Short) {
-					st.setShort(++i, (Short) arg);
+					st.setShort(i, (Short) arg);
 				} else if (arg instanceof Date) {
-					st.setTimestamp(++i, new java.sql.Timestamp(((Date) arg)
+					st.setTimestamp(i, new java.sql.Timestamp(((Date) arg)
 							.getTime()));
 				} else if (arg instanceof java.sql.Date) {
-					st.setDate(++i, new java.sql.Date(((Date) arg).getTime()));
+					st.setDate(i, new java.sql.Date(((Date) arg).getTime()));
 				} else if (arg instanceof Double) {
-					st.setDouble(++i, (Double) arg);
+					st.setDouble(i, (Double) arg);
 				} else if (arg instanceof Long) {
-					st.setLong(++i, (Long) arg);
+					st.setLong(i, (Long) arg);
 				} else if (arg instanceof BigDecimal) {
-					st.setObject(++i, arg);
+					st.setObject(i, arg);
 				} else if (arg instanceof BigInteger) {
-					st.setObject(++i, arg);
+					st.setObject(i, arg);
 				} else { // Object
 					try {
 						ByteArrayOutputStream bytesS = new ByteArrayOutputStream();
@@ -322,7 +365,7 @@ public class ConnectionBasedSqlTemplateImpl implements SqlTemplate {
 						out.close();
 						byte[] bytes = bytesS.toByteArray();
 						bytesS.close();
-						st.setBytes(++i, bytes);
+						st.setBytes(i, bytes);
 					} catch (IOException e) {
 						throw new SQLException("Could not serialize object "
 								+ arg + " for use in a PreparedStatement ");
@@ -331,5 +374,4 @@ public class ConnectionBasedSqlTemplateImpl implements SqlTemplate {
 			}
 		}
 	}
-
 }
