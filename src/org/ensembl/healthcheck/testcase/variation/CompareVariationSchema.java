@@ -88,6 +88,10 @@ public class CompareVariationSchema extends AbstractCompareSchema {
 		return "master.variation_schema";
 	}
 	
+	/**
+	 * These are tables which could be defined in the master schema
+	 * but can be missing from the target schema
+	 */
   protected Map<Species,Set<String>> notRequiredTables() {
   	if(nr == null) {
   		nr = new HashMap<Species, Set<String>>();
@@ -95,16 +99,20 @@ public class CompareVariationSchema extends AbstractCompareSchema {
 //  		nr.put(Species.UNKNOWN, 						createLinkedHashSet(""));
 			nr.put(Species.HOMO_SAPIENS, 		createLinkedHashSet("tmp_individual_genotype_single_bp"));
 			nr.put(Species.PAN_TROGLODYTES, createLinkedHashSet("tmp_individual_genotype_single_bp"));
-			nr.put(Species.HOMO_SAPIENS, 		createLinkedHashSet("tmp_individual_genotype_single_bp"));
-			nr.put(Species.HOMO_SAPIENS, 		createLinkedHashSet("tmp_individual_genotype_single_bp"));
   	}
 		return nr;
 	}
 	
+  /**
+   * Set of tables which MUST be in the target schema. One would assume that
+   * they could be missing from the master schema
+   */
 	protected Map<Species,Set<String>> requiredTables() {
 		if(r == null) {
 			r = new HashMap<Species, Set<String>>();
 			r.put(Species.UNKNOWN, 						createLinkedHashSet("subsnp_map"));
+			r.put(Species.UNKNOWN,            createLinkedHashSet("MTMP_allele"));
+			r.put(Species.UNKNOWN,            createLinkedHashSet("MTMP_population_genotype"));
 			r.put(Species.MUS_MUSCULUS, 			createLinkedHashSet("strain_gtype_poly"));
 			r.put(Species.RATTUS_NORVEGICUS,	createLinkedHashSet("strain_gtype_poly"));
 		}
@@ -121,7 +129,8 @@ public class CompareVariationSchema extends AbstractCompareSchema {
 	    DatabaseRegistryEntry targetDbre, String table) throws SQLException {
 		Species species = targetDbre.getSpecies();
 		Set<String> notRequired = getSets(notRequiredTables(), species);
-		if(notRequired.contains(table)) {
+		Set<String> required    = getSets(requiredTables(), species);
+		if(notRequired.contains(table) || required.contains(table)) {
 			return true;
 		}
 	  return super.compareTable(master, targetDbre, table);
