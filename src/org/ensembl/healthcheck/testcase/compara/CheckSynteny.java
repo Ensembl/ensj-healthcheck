@@ -130,6 +130,7 @@ public class CheckSynteny extends SingleDatabaseTestCase {
                         + " genomic_align ga1 LEFT JOIN genomic_align ga2 USING (genomic_align_block_id)"
                         + " LEFT JOIN dnafrag ON (ga2.dnafrag_id = dnafrag.dnafrag_id) WHERE"
                         + " ga1.dnafrag_id = " + these_dnafrag_ids[j]
+                        + " AND dnafrag.coord_system_name = 'chromosome'"
                         + " AND ga1.method_link_species_set_id = " + alignment_mlss_id[k]
                         + " AND ga1.dnafrag_id <> ga2.dnafrag_id GROUP BY ga2.dnafrag_id "
                         + " ORDER BY count(*) DESC LIMIT 1");
