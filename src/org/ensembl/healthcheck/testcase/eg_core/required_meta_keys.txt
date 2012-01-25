@@ -20,3 +20,4 @@ species.url
 species.short_name
 species.taxonomy_id
 species.division
+species.ensembl_alias_name

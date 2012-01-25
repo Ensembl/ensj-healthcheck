@@ -4,10 +4,12 @@ assembly.date
 assembly.default
 assembly.long_name
 assembly.mapping
+assembly.master_accession
 assembly.name
 assembly.overlapping_regions
 dna_align_featurebuild.level
 exonbuild.level
+genebuild.hash
 genebuild.id
 genebuild.initial_release_date
 genebuild.last_geneset_update
@@ -57,3 +59,5 @@ species.taxonomy_id
 species.url
 transcriptbuild.level
 xref.timestamp
+species.ensembl_alias_name
+species.ensembl_common_name
