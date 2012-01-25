@@ -1903,7 +1903,8 @@ public abstract class EnsTestCase {
 
 		boolean result = true;
 
-		int nulls = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE " + column + " IS NULL");
+		String sql = String.format("SELECT COUNT(*) FROM %s WHERE %s IS NULL", table, column);
+		int nulls = getRowCount(con, sql);
 
 		if (nulls > 0) {
 
@@ -1933,8 +1934,8 @@ public abstract class EnsTestCase {
 	public boolean checkNoZeroes(Connection con, String table, String column) {
 		
 		boolean result = true;
-		
-		int zeroes = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE" + column + "= 0");
+		String sql = String.format("SELECT COUNT(*) FROM %s WHERE %s = 0", table, column);
+		int zeroes = getRowCount(con, sql);
 		
 		if (zeroes > 0) {
 			
