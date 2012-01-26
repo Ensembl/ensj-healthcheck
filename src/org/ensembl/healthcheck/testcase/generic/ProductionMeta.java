@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
@@ -65,13 +64,13 @@ public class ProductionMeta extends SingleDatabaseTestCase {
 	 * @return true if the test passed.
 	 * 
 	 */
-	public boolean run(DatabaseRegistryEntry dbre) {
+  @SuppressWarnings("unchecked")
+  public boolean run(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-
-		Connection productionCon = getProductionDatabase().getConnection();
+		DatabaseRegistryEntry prodDbre = getProductionDatabase();
 
 		// we'll use a different query depending on the database type; also some keys are only for certain species
 		String databaseType = dbre.getType().getName(); // will be core, otherfeatures etc
@@ -81,7 +80,7 @@ public class ProductionMeta extends SingleDatabaseTestCase {
 
 		// First check that keys present in database are all valid and current
 		List<String> productionMetaKeys =
-                  getColumnValuesList(productionCon,
+                  getColumnValuesList(prodDbre.getConnection(),
                     "SELECT mk.name " +
                     "FROM meta_key mk LEFT JOIN (" +
                     "meta_key_species JOIN " +
@@ -91,11 +90,13 @@ public class ProductionMeta extends SingleDatabaseTestCase {
                     "mk.is_current = 1");
 
 		// remove the list of valid keys from the list of keys in the database, the remainder (if any) are invalid
-		Collection<String> dbOnly = CollectionUtils.subtract(dbMetaKeys, productionMetaKeys);
+		Collection<String> dbOnly = (Collection<String>)CollectionUtils.subtract(dbMetaKeys, productionMetaKeys);
 
 		if (!dbOnly.isEmpty()) {
-
-			ReportManager.problem(this, con, dbre.getName() + " contains the following meta keys which are missing from " + getProductionDatabase().getName() + ": " + StringUtils.join(dbOnly, ","));
+		  for(String key: dbOnly) {
+		    String msg = String.format("%s contains the following meta key which is missing from %s: %s", dbre.getName(), prodDbre.getName(), key);
+		    ReportManager.problem(this, con, msg);
+		  }
 			result = false;
 
 		} else {
@@ -108,7 +109,7 @@ public class ProductionMeta extends SingleDatabaseTestCase {
 		dbMetaKeys = getColumnValuesList(con, "SELECT DISTINCT(meta_key) FROM meta");
 
 		productionMetaKeys =
-                  getColumnValuesList(productionCon,
+                  getColumnValuesList(prodDbre.getConnection(),
                     "SELECT mk.name " +
                     "FROM meta_key mk LEFT JOIN (" +
                     "meta_key_species JOIN " +
@@ -120,11 +121,13 @@ public class ProductionMeta extends SingleDatabaseTestCase {
 
 		// remove the keys in the database from the non-optional list, any remaining in the non-optional list are missing from the
 		// database
-		Collection<String> productionOnly = CollectionUtils.subtract(productionMetaKeys, dbMetaKeys);
+		Collection<String> productionOnly = (Collection<String>)CollectionUtils.subtract(productionMetaKeys, dbMetaKeys);
 
 		if (!productionOnly.isEmpty()) {
-
-			ReportManager.problem(this, con, "Missing required meta keys: " + StringUtils.join(productionOnly, ","));
+		  for(String key: productionOnly) {
+        String msg = String.format("Missing required meta key: %s", key);
+        ReportManager.problem(this, con, msg);
+      }
 			result = false;
 
 		} else {
