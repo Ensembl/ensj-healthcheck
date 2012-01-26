@@ -76,8 +76,6 @@ public class GeneStatus extends SingleDatabaseTestCase {
 		result &= checkNull(dbre);
 
 		result &= checkDisplayXrefs(dbre);
-		
-		result &= checkKnownGeneLinkedKnownXref(dbre);
 
 		return result;
 
@@ -158,32 +156,6 @@ public class GeneStatus extends SingleDatabaseTestCase {
 		}
 
 		return result;
-	}
-	
-	/**
-	 * Make sure that if a gene is linked as being KNOWN it has at least
-	 * one Xref linked to it which is also known. Could indicate a bad
-	 * Xref run
-	 */
-	private boolean checkKnownGeneLinkedKnownXref(DatabaseRegistryEntry dbre) {
-	  boolean result = true;
-	  Connection con = dbre.getConnection();
-    SqlTemplate t = getSqlTemplate(con);
-    String inner = "select gene_id, count(*) as known_counter from gene g left join object_xref ox on (g.gene_id = ox.ensembl_id and ox.ensembl_object_type = ?) left join xref x using (xref_id) left join external_db ed on (x.external_db_id= ed.external_db_id and ed.status =?) where g.status =? group by g.stable_id";
-    Object[] params = new Object[]{ "Gene", "KNOWN", "KNOWN" };
-    String outer = String.format("select count(*) from (%s) a", inner);
-    int geneCount = t.queryForDefaultObject(outer, Integer.class, "Gene", "KNOWN", "KNOWN");
-    if(geneCount != 0) {
-      String paramsString = String.format("'%s', '%s', '%s'", params);
-      String msg = String.format("Found genes with a KNOWN status but no xrefs linked to them. Possible error.\nUSEFUL SQL: %s\nPARAMS: %s",inner, paramsString);
-      ReportManager.problem(this, con, msg); 
-      result = false;
-    }
-    else {
-      ReportManager.correct(this, con, "All KNOWN genes have atleast one KNOWN Xref linked");
-    }
-    
-	  return result;
 	}
 
 	private boolean checkNull(DatabaseRegistryEntry dbre) {
