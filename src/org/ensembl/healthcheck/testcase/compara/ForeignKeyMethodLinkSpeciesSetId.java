@@ -138,6 +138,7 @@ public class ForeignKeyMethodLinkSpeciesSetId extends SingleDatabaseTestCase {
             Pattern unaryPattern = Pattern.compile("^([A-Z].[a-z]{3}) ");
             Pattern binaryPattern = Pattern.compile("^([A-Z].[a-z]{3})-([A-Z].[a-z]{3})");
             Pattern multiPattern = Pattern.compile("([0-9]+)");
+            Pattern lastzpatchPattern = Pattern.compile("lastz-patch");
             /* Query returns the MLLS.name, the number of genomes and their name ("H.sap" format) */
             String sql = "SELECT method_link_species_set.name, count(*),"+
                 " GROUP_CONCAT( CONCAT( UPPER(substr(genome_db.name, 1, 1)), '.', SUBSTR(SUBSTRING_INDEX(genome_db.name, '_', -1),1,3) ) ), "+
@@ -158,6 +159,7 @@ public class ForeignKeyMethodLinkSpeciesSetId extends SingleDatabaseTestCase {
                   Matcher unaryMatcher = unaryPattern.matcher(name);
                   Matcher binaryMatcher = binaryPattern.matcher(name);
                   Matcher multiMatcher = multiPattern.matcher(name);
+                  Matcher lastzpatchMatcher = lastzpatchPattern.matcher(name);
                   if (unaryMatcher.find()) {
                     if (num != 1) {
                       ReportManager.problem(this, con, "FAILED species_set(" + ss_id + ") for \"" + name + "\"(" + mlss_id + ") links to " + num + " genomes instead of 1");
@@ -167,12 +169,15 @@ public class ForeignKeyMethodLinkSpeciesSetId extends SingleDatabaseTestCase {
                       ReportManager.problem(this, con, "FAILED species_set(" + ss_id + ") for \"" + name + "\"(" + mlss_id + ") links to " + genomes);
                     }
                   } else if (binaryMatcher.find()) {
-                    if (num != 2) {
+                    if (num != 2 && binaryMatcher.group(1) != binaryMatcher.group(2) && !lastzpatchMatcher.find()) {
                       ReportManager.problem(this, con, "FAILED species_set(" + ss_id + ") for \"" + name + "\"(" + mlss_id + ") links to " + num + " genomes instead of 2");
                       result = false;
                     }
                     if (!genomes.equals(binaryMatcher.group(1)+ "," + binaryMatcher.group(2)) && !genomes.equals(binaryMatcher.group(2) + "," + binaryMatcher.group(1))) {
-                      ReportManager.problem(this, con, "FAILED species_set(" + ss_id + ") for \"" + name + "\"(" + mlss_id + ") links to " + genomes);
+                            if (binaryMatcher.group(1).equals (binaryMatcher.group(2)) && genomes.equals(binaryMatcher.group(1))) {
+                            } else {
+                            ReportManager.problem(this, con, "Yes, we felt here... FAILED species_set(" + ss_id + ") for \"" + name + "\"(" + mlss_id + ") links to " + genomes + " instead of " + binaryMatcher.group(1) + "," + binaryMatcher.group(2));
+                            }
                     }
                   } else if (multiMatcher.find()) {
                     if (num != Integer.valueOf(multiMatcher.group()).intValue()) {
