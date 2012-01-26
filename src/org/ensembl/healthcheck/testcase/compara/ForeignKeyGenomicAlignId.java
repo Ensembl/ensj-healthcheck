@@ -57,11 +57,12 @@ public class ForeignKeyGenomicAlignId extends SingleDatabaseTestCase {
 
        Connection con = dbre.getConnection();
 
-        if (tableHasRows(con, "genomic_align_group") &&
-            tableHasRows(con, "genomic_align")) {
+//        if (tableHasRows(con, "genomic_align_group") &&
+//            tableHasRows(con, "genomic_align")) {
+       if (tableHasRows(con, "genomic_align")) {
 
             //            result &= checkForOrphans(con, "genomic_align", "genomic_align_id", "genomic_align_group", "genomic_align_id");
-            result &= checkForOrphans(con, "genomic_align_group", "genomic_align_id", "genomic_align", "genomic_align_id");
+            //            result &= checkForOrphans(con, "genomic_align_group", "genomic_align_id", "genomic_align", "genomic_align_id");
 
             // Check that all method_link_species_set_ids match the genomic_align_block table
             int mismatches = getRowCount(con, "SELECT COUNT(*) FROM genomic_align ga LEFT JOIN genomic_align_block gab" +
@@ -75,9 +76,9 @@ public class ForeignKeyGenomicAlignId extends SingleDatabaseTestCase {
                     " method_link_species_set_id according to genomic_align_block table");
             }
  
-        } else {
-            ReportManager.correct(this, con, "NO ENTRIES in genomic_align_group or in genomic_align tables, so nothing to test IGNORED");
-        }
+       } else {
+               ReportManager.correct(this, con, "NO ENTRIES in genomic_align table, so nothing to test IGNORED");
+       }
 
         return result;
 
