@@ -90,7 +90,7 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 
 			if (allSecondaryComparaDBs.length == 0) {
 				result = false;
-				ReportManager.problem(this, allPrimaryComparaDBs[i].getConnection(), "Cannot find the compara database in the secondary server");
+				ReportManager.problem(this, allPrimaryComparaDBs[i].getConnection(), "Cannot find the compara database in the secondary server. This check expects to find a previous version of the compara database for checking that all the *named* species_sets are still present in the current database.");
 				usage();
 			}
 			for (int j = 0; j < allSecondaryComparaDBs.length; j++) {
