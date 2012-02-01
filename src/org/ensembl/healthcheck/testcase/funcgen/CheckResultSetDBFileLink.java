@@ -124,10 +124,11 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 
 			
 			if(removeableRsets.size() > 0){
-				
-				ReportManager.info(this, con, "Found " + removeableRsets.size() + 
+				//Should this be info instead?
+				ReportManager.problem(this, con, "Found " + removeableRsets.size() + 
 						"'removeable' result_sets i.e. not DISPLAYABLE, not in build and has no dbfile_registry.path:\n\t" +
 						StringUtils.join(removeableRsets, "\n\t") + "\n");
+				result = false;
 				
 			}
 			
@@ -277,7 +278,7 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 							}
 													
 							if(! problemString.equals("")){
-								rsetProblems.add(rsetName + " problems:\n" + problemString);
+								rsetProblems.add(rsetName + " ResultSet has problems:\n" + problemString);
 							}
 						}
 
