@@ -107,29 +107,23 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 				if( (rsetPath != null) || 
 					(rsetStatus != null) ||
 					(regFset != null) ){
-								
+						
 					rSetDBLinks.put(rsetName, rsetPath);
 					rSetStates.put(rsetName, rsetStatus);
 					rSetRFSets.put(rsetName, regFset);
 				}
 				else{
 					removeableRsets.add(rsetName);	
-					//Could do with reporting this once by joining removeableRsets
-					//infoString += "\t"
-					//ReportManager.info(this, con, 
-					//		"Found 'removeable' result_set (i.e. not DISPLAYABLE, in build or has dbfile_registry):\t" + rsetName);	
 				}
-				
 			}
 
 			
 			if(removeableRsets.size() > 0){
 				//Should this be info instead?
 				ReportManager.problem(this, con, "Found " + removeableRsets.size() + 
-						"'removeable' result_sets i.e. not DISPLAYABLE, not in build and has no dbfile_registry.path:\n\t" +
+						" 'removeable' result_sets i.e. not DISPLAYABLE, not in build and has no dbfile_registry.path:\n\t" +
 						StringUtils.join(removeableRsets, "\n\t") + "\n");
 				result = false;
-				
 			}
 			
 			int numRsets = rSetDBLinks.size();
@@ -161,28 +155,15 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 
 							if(subdirRsetIDs.next()){
 								problemString += "\tCannot find unique result_set. Check manually or update HC\n";
-								
-								//ReportManager.problem(this, con, "Cannot find unique result_set for subdir:\t" + subDirs[i] +
-								//		".\nCheck manually or update HC");
-								//Could do with reporting this once
-								//result = false;
 							}
 							
 							//CATCH SUBDIRS WHICH FOR RESULT_SETS WITHOUT DBFILE_REGISTRY/DISPLAYABLE ENTRY OR IN BUILD
 							if(removeableRsets.contains(subDirs[i])){
-								//ReportManager.info(this, con, "Found result_feature subdir for 'removeable' result_set " +
-								//		"(i.e. not DISPLAYABLE, in build or has dbfile_registry):\t" + subDirs[i]);	
-								problemString += "\tAppears to be 'removeable' i.e. not DISPLAYABLE, not in build and has no dbfile_registry.path.\n";
-								//Could do with reporting this once by joining removeableRsets
+															problemString += "\tAppears to be 'removeable' i.e. not DISPLAYABLE, not in build and has no dbfile_registry.path.\n";
 							}
 						}
 						else{
-							//ReportManager.problem(this, con, "Cannot find result_set entry for:\t" +
-							//		root_dir + "/result_feature/"+ subDirs[i]);
 							problemString += "\tCannot find result_set.\n";
-							
-							//Could do with reporting this once by joining removeableRsets
-							//result = false;
 						}
 					
 						
@@ -245,9 +226,9 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 							//Report all these together for easier interpretation	
 							if( rsetPath.equals("NO DBFILE_REGISTRY PATH") ||
 								rsetStatus.equals("NOT DISPLAYABLE") ||
-								rsetPath.equals("NO DBFILE_RESIGTRY PATH") ){
+								regFset.equals("NOT IN BUILD") ){
 								
-								problemString += "\tPath:\t" + rsetPath + "\n\t" +
+								problemString += "\tdbfile_registry.path:\t" + rsetPath + "\n\t" +
 										"IS " + rsetStatus + "\n\t" + "Supports:\t" + regFset + "\n";
 							}
 					
