@@ -15,8 +15,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-
 import junit.framework.Test;
+import org.apache.commons.lang.StringUtils;
 
 public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 
@@ -27,12 +27,13 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 		setTeamResponsible(Team.FUNCGEN);
 
 		setDescription("Checks if the binary signal (col) files exist for relevant ResultSets\n" +
-				"Also checks dbfile_data_root subdirs to see if there are still DISPLAYABLE or if they support a regualtory build\n" +
-				"NOTE: RegulatorySets does something similar, but from the DataSet perspective\n " +
-				"\tHence, consider those HC results first, before fixing these!");
+				"Also checks dbfile_data_root subdirs to see if there are still DISPLAYABLE or if they support a regualtory build\n");
+		
 		
 		setPriority(Priority.AMBER);
-		setEffect("Signal tracks will not display in the browser.");
+		setEffect("Signal tracks will not display in the browser.\n" + 
+				"NOTE: RegulatorySets does something similar, but from the DataSet perspective\n " +
+				"\tHence, consider those HC results first, before fixing these!");
 		setFix("Re-create files or check file names manually.");		
 		
 	}
@@ -71,7 +72,7 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 	
 		try {
 			Statement stmt = con.createStatement();
-			
+			int MAX_REPORT=5; //Only out 5 problems by default
 			HashMap<String, String> rSetDBLinks = new HashMap<String, String>();
 			HashMap<String, String> rSetStates  = new HashMap<String, String>();
 			HashMap<String, String> rSetRFSets  = new HashMap<String, String>();
@@ -86,7 +87,8 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 		
 			ResultSet rsetInfo = stmt.executeQuery(rsetInfoSQL);
 			String rsetStatus, rsetPath, rsetName, regFset;
-		
+			String infoString = "";
+			
 			while ((rsetInfo != null) && rsetInfo.next()) {
 				rsetName   = rsetInfo.getString(1); 
 				rsetPath   = rsetInfo.getString(2);
@@ -111,55 +113,105 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 					rSetRFSets.put(rsetName, regFset);
 				}
 				else{
-					removeableRsets.add(rsetName);				
-					ReportManager.info(this, con, 
-							"Found 'removeable' result_set (i.e. not DISPLAYABLE, in build or has dbfile_registry):\t" + rsetName);	
+					removeableRsets.add(rsetName);	
+					//Could do with reporting this once by joining removeableRsets
+					//infoString += "\t"
+					//ReportManager.info(this, con, 
+					//		"Found 'removeable' result_set (i.e. not DISPLAYABLE, in build or has dbfile_registry):\t" + rsetName);	
 				}
 				
 			}
 
+			
+			if(removeableRsets.size() > 0){
+				
+				ReportManager.info(this, con, "Found " + removeableRsets.size() + 
+						"'removeable' result_sets i.e. not DISPLAYABLE, not in build and has no dbfile_registry.path:\n\t" +
+						StringUtils.join(removeableRsets, "\n\t") + "\n");
+				
+			}
+			
 			int numRsets = rSetDBLinks.size();
 			
 			//Get Base Folder
 			ResultSet rsetDBDataRoot = stmt.executeQuery("SELECT meta_value from meta where meta_key='dbfile.data_root'");
+			String problemString; 	//For easier interpretation/reporting, build 1 problem string per result_set/subDir, 
 			
 			if((rsetDBDataRoot != null) && rsetDBDataRoot.next()){
 				String root_dir  = rsetDBDataRoot.getString(1);
 						
 				//TEST EXISTING DIRECTORIES ARE RESULT SETS
 				File result_feature_dir_f = new File(root_dir + "/result_feature");
-				
+			
 				if(result_feature_dir_f.exists()){
-					
 					String[] subDirs = result_feature_dir_f.list();
 					String rsetSQL;
+					ArrayList subdirProblems = new ArrayList();
+					
 					
 					for(int i=0; i<subDirs.length; i++){
+						problemString = "";
 						rsetSQL = "SELECT result_set_id from result_set where name='" + subDirs[i] + "'";
 						ResultSet subdirRsetIDs = stmt.executeQuery(rsetSQL);
 						
 						if((rsetDBDataRoot != null) && subdirRsetIDs.next()){
 							String rsetID         = subdirRsetIDs.getString(1);
-							logger.fine("Found result_feature subdir:\t" + subDirs[i] + " with rset id\t" + rsetID);
+							//logger.fine("Found result_feature subdir:\t" + subDirs[i] + " with rset id\t" + rsetID);
 
 							if(subdirRsetIDs.next()){
-								ReportManager.problem(this, con, "Cannot find unique result_set for subdir:\t" + subDirs[i] +
-										".\nCheck manually or update HC");
-								result = false;
+								problemString += "\tCannot find unique result_set. Check manually or update HC\n";
+								
+								//ReportManager.problem(this, con, "Cannot find unique result_set for subdir:\t" + subDirs[i] +
+								//		".\nCheck manually or update HC");
+								//Could do with reporting this once
+								//result = false;
 							}
 							
 							//CATCH SUBDIRS WHICH FOR RESULT_SETS WITHOUT DBFILE_REGISTRY/DISPLAYABLE ENTRY OR IN BUILD
 							if(removeableRsets.contains(subDirs[i])){
-								ReportManager.info(this, con, "Found result_feature subdir for 'removeable' result_set " +
-										"(i.e. not DISPLAYABLE, in build or has dbfile_registry):\t" + subDirs[i]);	
+								//ReportManager.info(this, con, "Found result_feature subdir for 'removeable' result_set " +
+								//		"(i.e. not DISPLAYABLE, in build or has dbfile_registry):\t" + subDirs[i]);	
+								problemString += "\tAppears to be 'removeable' i.e. not DISPLAYABLE, not in build and has no dbfile_registry.path.\n";
+								//Could do with reporting this once by joining removeableRsets
 							}
 						}
 						else{
-							ReportManager.problem(this, con, "Cannot find result_set entry for:\t" +
-									root_dir + "/result_feature/"+ subDirs[i]);
-							result = false;
+							//ReportManager.problem(this, con, "Cannot find result_set entry for:\t" +
+							//		root_dir + "/result_feature/"+ subDirs[i]);
+							problemString += "\tCannot find result_set.\n";
+							
+							//Could do with reporting this once by joining removeableRsets
+							//result = false;
+						}
+					
+						
+						if(! problemString.equals("")){
+							subdirProblems.add(subDirs[i] + " result_feature subdir has problems:\n" + problemString);
 						}
 					}
+					
+					
+					int numProbs = subdirProblems.size();
+					
+					if(numProbs != 0){
+						ReportManager.problem(this, con, "Found " + numProbs + " result_feature subdirs with problems.");
+						result = false;
+											
+						for(int i=0; i<numProbs; i++){
+																
+							if(i >= MAX_REPORT){
+								//Both these seem to report even with when restricting to -output problem?
+								ReportManager.info(this, con, subdirProblems.get(i).toString());
+							}
+							else{
+								ReportManager.problem(this, con, subdirProblems.get(i).toString());
+							}	
+						}
+					}
+					else{
+						ReportManager.info(this, con, "Found 0 result_feature subdirs with problems.");					
+					}
+					
 				}
 				else{
 					ReportManager.problem(this, con, "Cannot test if result_set dirs are valid as parent directory does not exist:\t" + 
@@ -167,8 +219,7 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 					result = false;
 					//Don't return here as rsetPaths in DB may now be pointing to as different path
 				}
-					
-									
+								
 				if(numRsets == 0){
 					ReportManager.problem(this, con, "dbfile_root is defined in the meta table but found no result_sets can be found");
 					result = false;					//Could return here?
@@ -178,46 +229,32 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 					File root_dir_f = new File(root_dir);
 														
 					if(root_dir_f.exists()){
-						ArrayList problemLinks  = new ArrayList();
-						ArrayList problemStates = new ArrayList();
-						ArrayList problemRFsets = new ArrayList();
+						ArrayList rsetProblems = new ArrayList();
 						Iterator<String> dbLinkIt = rSetDBLinks.keySet().iterator();
 						Object tmpObject;
 						
 						while(dbLinkIt.hasNext()){
 							rsetName   = dbLinkIt.next().toString();
+							problemString = "";
 							//toString on null was failing silently here!
-							//rsetPath   = ( (tmpObject = rSetDBLinks.get(rsetName)) == null) ? null : tmpObject.toString();
-							//rsetStatus = ( (tmpObject = rSetStates.get(rsetName)) == null) ? null : tmpObject.toString();
-							//regFset    = ( (tmpObject = rSetRFSets.get(rsetName)) == null) ? null : tmpObject.toString();
-							//quicker but more verbose to integrate below
-							//usage of tmpObject assignment in test is a little obfuscated
-							
-							// CHECK DISPLAYABLE AND DBFILE_REGISTRY ENTRIES
-							if( (tmpObject = rSetDBLinks.get(rsetName)) == null ){
-								regFset = null;
-								problemRFsets.add("Found result_set which does not appear to " +
-										"support the RegulatoryBuild:\t" + rsetName);
-							}else{
-								regFset = tmpObject.toString();
-							}
-											
-							if( (tmpObject = rSetStates.get(rsetName)) == null ){
-								rsetStatus = null;
-							
-								problemStates.add(rsetName + " is not DISPLAYABLE");								
-							}else{
-								rsetStatus =tmpObject.toString();
+							rsetPath   = ( (tmpObject = rSetDBLinks.get(rsetName)) == null) ? "NO DBFILE_REGISTRY PATH" : tmpObject.toString();
+							rsetStatus = ( (tmpObject = rSetStates.get(rsetName)) == null) ? "NOT DISPLAYABLE" : tmpObject.toString();
+							regFset    = ( (tmpObject = rSetRFSets.get(rsetName)) == null) ? "NOT IN BUILD" : tmpObject.toString();
+													
+							//Report all these together for easier interpretation	
+							if( rsetPath.equals("NO DBFILE_REGISTRY PATH") ||
+								rsetStatus.equals("NOT DISPLAYABLE") ||
+								rsetPath.equals("NO DBFILE_RESIGTRY PATH") ){
+								
+								problemString += "\tPath:\t" + rsetPath + "\n\t" +
+										"IS " + rsetStatus + "\n\t" + "Supports:\t" + regFset + "\n";
 							}
 					
-							if( (tmpObject = rSetDBLinks.get(rsetName)) == null ){
-								rsetPath = null;
-								problemLinks.add("result_set " + rsetName + " does not have a dbfile_registry entry");
-							}
-							else{// NOW TEST COL FILES
-								String rSetFinalPath = root_dir + tmpObject.toString();
-								File rsetFolder = new File(rSetFinalPath);
 							
+							if(! rsetPath.equals("NO DBFILE_REGISTRY PATH")){// NOW TEST COL FILES
+								String rSetFinalPath = root_dir + rsetPath;
+								File rsetFolder = new File(rSetFinalPath);
+															
 								if(rsetFolder.exists()){
 									String[] windows = {"30","65","130","260","450","648","950","1296"}; 
 								
@@ -227,77 +264,43 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 									
 										if(rsetWindowFile.exists()){
 											if(rsetWindowFile.length() == 0){
-												problemLinks.add(rsetWindowFileName + " seems empty for set " + rsetName);
+												problemString += "\tEmpty file:\t" + rsetWindowFileName + "\n";
 											}
 										} else {
-											problemLinks.add(rsetWindowFileName + " does not seem to exist for set " + rsetName);
+											problemString += "\tFile does not exist:\t" + rsetWindowFileName + "\n";
 										}
 									}
 																
 								} else {
-									problemLinks.add(rSetFinalPath + " does not seem to be valid for set " + rsetName);
+									problemString += "\tdbfile_registry.path does not exist:\t" + rSetFinalPath + "\n";
 								}
+							}
+													
+							if(! problemString.equals("")){
+								rsetProblems.add(rsetName + " problems:\n" + problemString);
 							}
 						}
 
-						int MAX_REPORT=5; //Only out 5 problems by default
 						
-						//Handle all error types separately
-						int numProbs = problemLinks.size();
-															
+						int numProbs = rsetProblems.size();
+					
 						if(numProbs != 0){
-							ReportManager.problem(this, con, "Found " + numProbs + " result_set file/path omissions");
+							ReportManager.problem(this, con, "Found " + numProbs + " ResultSets with problems.\n");
 							result = false;
 												
 							for(int i=0; i<numProbs; i++){
 																	
 								if(i >= MAX_REPORT){
 									//Both these seem to report even with when restricting to -output problem?
-									ReportManager.info(this, con, problemLinks.get(i).toString());
-									//logger.info(problemLinks.get(problemIt.next()));
+									ReportManager.info(this, con, rsetProblems.get(i).toString());
 								}
 								else{
-									ReportManager.problem(this, con, problemLinks.get(i).toString());
+									ReportManager.problem(this, con, rsetProblems.get(i).toString());
 								}	
 							}
 						}
-						
-						numProbs = problemStates.size();
-						
-						if(numProbs != 0){
-							ReportManager.problem(this, con, numProbs + " result sets do not seem to be DISPLAYABLE");
-							result = false;
-						
-							for(int i=0; i<numProbs; i++){
-																		
-								if(i >= MAX_REPORT){
-									//Both these seem to report even with when restricting to -output problem?
-									ReportManager.info(this, con, problemStates.get(i).toString());
-									//logger.info(problemLinks.get(problemIt.next()));
-								}
-								else{
-									ReportManager.problem(this, con, problemStates.get(i).toString());
-								}	
-							}	
-						}
-						
-						numProbs = problemRFsets.size();
-						
-						if(numProbs != 0){
-							ReportManager.problem(this, con, numProbs + " result sets do not appear to support a regulatory build");
-							result = false;
-						
-							for(int i=0; i<numProbs; i++){
-																	
-								if(i >= MAX_REPORT){
-									//Both these seem to report even with when restricting to -output problem?
-									ReportManager.info(this, con, problemRFsets.get(i).toString());
-									//logger.info(problemLinks.get(problemIt.next()));
-								}
-								else{
-									ReportManager.problem(this, con, problemRFsets.get(i).toString());
-								}	
-							}	
+						else{
+							ReportManager.info(this, con, "Found 0 ResultSets with problems.");					
 						}
 					} 
 					else {
