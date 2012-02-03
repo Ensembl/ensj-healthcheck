@@ -25,6 +25,8 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.Utils;
+
 
 
 /**
@@ -62,11 +64,28 @@ public class AnalysisLogicName extends SingleDatabaseTestCase {
         public boolean run(DatabaseRegistryEntry dbre) {
 
                 boolean result = true;
-
                 Connection con = dbre.getConnection();
 
-                // check that db_version is not empty if not a raw compute
 
+                result &= checkdbVersion(con);
+                
+                result &= checkLowerCase(con);
+
+                return result;
+        }
+
+
+        // ---------------------------------------------------------------------
+
+
+       /**
+         * Check that db_version is not empty if not a raw compute
+         */
+
+
+        private boolean checkdbVersion(Connection con) {
+
+                boolean result = true;
                 int rows = getRowCount(con, "SELECT COUNT(*) FROM analysis where isnull(db_version) " );
                 if (rows > 0) {
                          result = false ;
@@ -74,8 +93,33 @@ public class AnalysisLogicName extends SingleDatabaseTestCase {
                 }
 
                 return result;
-
         }
+
+
+
+        // ---------------------------------------------------------------------
+
+
+
+       /**
+         * Check all logic names are lower case 
+         */
+
+        private boolean checkLowerCase(Connection con) {
+
+                boolean result = true;
+
+                String[] logicNames = getColumnValues(con, "SELECT logic_name FROM analysis where BINARY logic_name != lower(logic_name) ");
+                if (logicNames.length > 0) {
+                        ReportManager.problem(this, con, "The following logic_names are not lower case: " + Utils.arrayToString(logicNames,",") );
+                } else {
+                        ReportManager.correct(this, con, "All logic names are lower case");
+                }
+
+                return result;
+        }
+
+
 
 }
 
