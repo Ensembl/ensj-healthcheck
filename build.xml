@@ -62,6 +62,7 @@
 			failonerror = "true" 
 			maxmemory   = "1500m"
 		>
+			<jvmarg value="-Dmaster.schema=master_schema_66"/>
 			<arg line="-Djava.util.logging.config.file=config/logger/logging.properties" />
 			<classpath>
 				<fileset dir="lib">
