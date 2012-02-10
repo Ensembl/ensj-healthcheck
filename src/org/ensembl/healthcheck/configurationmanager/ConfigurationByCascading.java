@@ -116,8 +116,15 @@ public class ConfigurationByCascading<T> extends AbstractConfigurationBacking {
 			// Search in all configuration object in the order they were given
 			for (T configuration : configurationObjects) {
 				
-				Method methodInConfigObject = configuration.getClass().getMethod(methodName, parameterTypes);
-
+				// If the configuraion object queried is not of the correct
+				// type, then invoking getMethod on its class will cause
+				// an exception to be thrown. This will is caught below.
+				//
+				Method methodInConfigObject = configuration.getClass().getMethod(
+					methodName, 
+					parameterTypes
+				);
+				
 				try {
 					// Try to invoke the method the user wants on the current
 					// configuration object. If it fails, because the parameter
@@ -183,9 +190,14 @@ public class ConfigurationByCascading<T> extends AbstractConfigurationBacking {
 				}
 			}
 		}
-		// These two should never happen as well, so throw an error.
-		catch (SecurityException     e) { throw new RuntimeException(e); }
-		catch (NoSuchMethodException e) { throw new RuntimeException(e); }
+		catch (NoSuchMethodException e) {
+			//
+			// This can happen, if the configuration object does not 
+			// have the requested field.
+			//
+		}
+		// Should never happen, so throw an error.
+		catch (SecurityException     e) { throw new RuntimeException(e); }	
 
 		if (methodIsIsMethod) {
 			// If the method is an is ismethod, then we have searched through 
