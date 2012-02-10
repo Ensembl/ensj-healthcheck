@@ -391,6 +391,10 @@ public class ConfigurableTestRunner extends TestRunner {
 		}
 	}
 
+	public static String getDefaultPropertiesFile() {
+		return DEFAULT_PROPERTIES_FILE;
+	}
+
 	protected Collection<String> getTestDatabases() {
 		Collection<String> dbs = new HashSet<String>();
 		if (configuration.isTestDatabases() && configuration.getTestDatabases().size()>0) {
