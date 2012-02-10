@@ -42,12 +42,14 @@ import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.ensembl.healthcheck.ConfigurableTestRunner;
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseServer;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.GroupOfTests;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.SystemPropertySetter;
 import org.ensembl.healthcheck.configuration.ConfigurationUserParameters;
 import org.ensembl.healthcheck.configuration.ConfigureHost;
 import org.ensembl.healthcheck.configurationmanager.ConfigurationByProperties;
@@ -171,7 +173,7 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 	 * @param primaryHostDetails
 	 * @param secondaryHostDetails
 	 */
-	protected void setPrimaryAndSecondaryHost(
+	protected void setPrimaryAndSecondaryAndSystemPropertiesHost(
 			ConfigureHost primaryHostDetails,
 			ConfigureHost secondaryHostDetails
 		) {
@@ -190,19 +192,27 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 				secondaryHostProperties
 			);
 		
-		ConfigurationFactory<ConfigureHost> confFact =
-			new ConfigurationFactory<ConfigureHost>(
-				ConfigureHost.class,
+		List<File> propertyFileNames = new ArrayList<File>();
+		propertyFileNames.add(new File(ConfigurableTestRunner.getDefaultPropertiesFile()));
+		
+		ConfigurationFactory<ConfigurationUserParameters> confFact =
+			new ConfigurationFactory<ConfigurationUserParameters>(
+				ConfigurationUserParameters.class,
 				primaryHostDetails,
-				secondaryHostConfiguration
+				secondaryHostConfiguration,
+				propertyFileNames
 			);
 		
-		ConfigureHost combinedHostConfig = confFact.getConfiguration(ConfigurationType.Cascading);
+		ConfigurationUserParameters combinedHostConfig = confFact.getConfiguration(ConfigurationType.Cascading);
 		
 		// And finally set the new configuration file in which the 
 		// secondary host has been configured.
 		//
-		DBUtils.setHostConfiguration(combinedHostConfig);
+		DBUtils.setHostConfiguration((ConfigureHost) combinedHostConfig);
+		
+		SystemPropertySetter systemPropertySetter = new SystemPropertySetter(combinedHostConfig);
+		
+		systemPropertySetter.setPropertiesForHealthchecks();
 	}
 	
 	@Override
@@ -295,7 +305,7 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 						tabAdmin.getPerlOptions()
 				);
 				
-				setPrimaryAndSecondaryHost(
+				setPrimaryAndSecondaryAndSystemPropertiesHost(
 					dbDetails.get(dbServerSelector.getSelectedIndex()),
 					dbDetails.get(secondaryDbServerSelector.getSelectedIndex())
 				);
@@ -394,7 +404,7 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		
 		DBUtils.initialise();
 
-		setPrimaryAndSecondaryHost(
+		setPrimaryAndSecondaryAndSystemPropertiesHost(
 				dbDetails.get(dbServerSelector.getSelectedIndex()),
 				dbDetails.get(secondaryDbServerSelector.getSelectedIndex())
 			);
