@@ -82,6 +82,7 @@ public enum Species {
 	TURSIOPS_TRUNCATUS(9739, "TURTRU", "ENSTTR", "bottlenosed_dolphin,dolphin,tursiopstruncatus,tursiops_truncatus"),
 	VICUGNA_PACOS(30538, "VICPAC", "ENSVPA", "alpaca,vicugnapacos,vicugna_pacos"),
 	XENOPUS_TROPICALIS(8364, "JGI", "ENSXET", "pipid,pipidfrog,xenopus,xtropicalis,xenopustropicalis,xenopus_tropicalis"),
+	XIPHOPHORUS_MACULATUS(8083, "Xipmac", "ENSXMA", "xiphophorous_maculatus,platyfish,southern_platyfish"),
 	HEALTHCHECK(0, "", "", ""),
 	HELP(0, "", "", ""),
 	NCBI_TAXONOMY(0, "", "", ""),
