@@ -120,7 +120,7 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 	protected final JComboBox    dbServerSelector;
 	protected final JComboBox    secondaryDbServerSelector;
 	
-	protected final List<ConfigureHost> dbDetails;
+	protected List<ConfigureHost> dbDetails;
 
 	protected TestProgressDialog testProgressDialog;
 	
@@ -371,11 +371,19 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 
 		tabSetup = new JPanel();
 		
-		dbDetails = GuiTestRunnerFrameUtils.grepForAvailableServers(
-				GuiTestRunnerFrameUtils.createDbDetailsConfigurations(
+		dbDetails = GuiTestRunnerFrameUtils.createDbDetailsConfigurations(
 				dirsWithDbServerConfigs
-			)
 		);
+		
+		// Set to false, because checking availability costs too much startup
+		// time when there are many servers configured and opens too many 
+		// connections.
+		//
+		boolean checkAvailabilityOfServers = false;
+		
+		if (checkAvailabilityOfServers) {		
+			dbDetails = GuiTestRunnerFrameUtils.grepForAvailableServers(dbDetails);
+		}
 
 		dbServerSelector = GuiTestRunnerFrameComponentBuilder.createDbServerSelector(dbDetails);
 		dbServerSelector.setActionCommand(Constants.DB_SERVER_CHANGED);
