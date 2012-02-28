@@ -82,7 +82,17 @@ public class ForeignKeyMethodLinkSpeciesSetId extends SingleDatabaseTestCase {
                 ReportManager.problem(this, con, "USEFUL SQL: SELECT gdbs, count(*) num, GROUP_CONCAT(species_set_id) species_set_ids FROM ("+
                     "SELECT species_set_id, GROUP_CONCAT(genome_db_id) gdbs FROM species_set GROUP by species_set_id) t1 GROUP BY gdbs HAVING COUNT(*)>1");
                 result = false;
-            }
+	    }
+
+	    /* Check if have both BLASTZ_NET and LASTZ_NET entries for the same species set */
+	    int numOfBLASTZ_LASTZSpeciesSets = getRowCount(con,
+							   "SELECT species_set_id, count(*) FROM method_link_species_set JOIN method_link USING (method_link_id) WHERE TYPE in ('BLASTZ_NET', 'LASTZ_NET') GROUP BY species_set_id HAVING count(*) > 1");
+	    if (numOfBLASTZ_LASTZSpeciesSets > 0) {
+		ReportManager.problem(this, con, "FAILED method_link_species_set table contains " + numOfBLASTZ_LASTZSpeciesSets + " entries with a BLASTZ_NET and LASTZ_NET entry for the same species_set");
+		ReportManager.problem(this, con, "USEFUL SQL: SELECT species_set_id, count(*) FROM method_link_species_set JOIN method_link USING (method_link_id) WHERE TYPE in ('BLASTZ_NET', 'LASTZ_NET') GROUP BY species_set_id HAVING count(*) > 1");
+		result = false;
+	    }
+	    
 
             /* Check method_link_species_set <-> synteny_region */
             /* All method_link for syntenies must have an internal ID between 101 and 199 */
