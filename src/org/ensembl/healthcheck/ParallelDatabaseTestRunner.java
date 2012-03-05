@@ -146,8 +146,10 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 		}
 
 	}
-
-
+	
+	private static final String MEMORY_RUSAGE = "select[mem>2000] rusage[mem=2000]";
+	private static final String MEMORY_RESERVATION = "2000000";
+	
 	/**
 	 * <p>
 	 * Creates the bsub comand that sets the end_time columns in the database indicating when the session has ended. It will create
@@ -185,7 +187,7 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 
                 String jobName = String.format("hc_%s", session);
 
-		String[] finalJob = { "bsub", "-o", out, "-e", err, "-J", jobName, "-w", bsubConditionClause.toString(), runNodeDBTestRunnerScript, "-endDbSession", "-session", session };
+		String[] finalJob = { "bsub", "-R", MEMORY_RUSAGE, "-M", MEMORY_RESERVATION, "-o", out, "-e", err, "-J", jobName, "-w", bsubConditionClause.toString(), runNodeDBTestRunnerScript, "-endDbSession", "-session", session };
 
 		return finalJob;
 	}
@@ -209,7 +211,7 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 			String currentJobName = "Job_" + jobNumber;
 
 			// TODO EG: Need to push out LSF commands into separate file if we want to use them
-			String[] cmd = { "bsub", "-J", currentJobName, "-q", "long", "-R", "select[myens_staging1<=800]", "-R", "select[myens_staging2<=800]", "-R", "select[myens_livemirror<=300]", "-R",
+			String[] cmd = { "bsub", "-J", currentJobName, "-q", "long", "-R", MEMORY_RUSAGE, "-M", MEMORY_RESERVATION, "-R", "select[myens_staging1<=800]", "-R", "select[myens_staging2<=800]", "-R", "select[myens_livemirror<=300]", "-R",
 					"select[lustre && linux]", "-R", "order[ut:mem]", "-R", "rusage[myens_staging1=10:myens_staging1=10:myens_livemirror=50]", "-o", "healthcheck_%J.out", "-e", "healthcheck_%J.err",
 					runNodeDBTestRunnerScript, "-d", database, "-group", group, "-session", "" + sessionID };
 
