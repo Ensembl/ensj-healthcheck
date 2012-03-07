@@ -163,7 +163,7 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 		if (rows > 0) {
 
 			result = false;
-			ReportManager.problem(this, con, rows + " genes have canonical transripts with mismatched biotypes");
+			ReportManager.problem(this, con, rows + " genes have canonical transcripts with mismatched biotypes");
 
 		} else {
 
