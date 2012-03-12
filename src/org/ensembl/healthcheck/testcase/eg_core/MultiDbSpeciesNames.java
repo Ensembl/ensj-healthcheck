@@ -74,10 +74,13 @@ public class MultiDbSpeciesNames extends MultiDatabaseTestCase {
 												+ metaKey
 												+ ") has been found in the following core databases :"
 												+ StringUtils.join(dbs, ", "));
-						ReportManager.info(this,
-										coreDb.getConnection(), "SQL to fix: "+TemplateBuilder.template(FIX_SQL, NAME_HOLDER,name, KEY_HOLDER,metaKey));
-						ReportManager.info(this,
-								coreDb.getConnection(), "SQL to remove: "+TemplateBuilder.template(DELETE_SQL, NAME_HOLDER,name, KEY_HOLDER,metaKey));
+						if(metaKey.equals("species.alias")) {
+							ReportManager.info(this,
+									coreDb.getConnection(), "SQL to remove: "+TemplateBuilder.template(DELETE_SQL, NAME_HOLDER,name, KEY_HOLDER,metaKey));							
+						} else {
+							ReportManager.info(this,
+									coreDb.getConnection(), "SQL to fix: "+TemplateBuilder.template(FIX_SQL, NAME_HOLDER,name, KEY_HOLDER,metaKey));							
+						}
 						result = false;
 					}
 					dbs.add(coreDb.getName());
