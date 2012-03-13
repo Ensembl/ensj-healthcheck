@@ -72,7 +72,7 @@ public enum Species {
 	SAIMIRI_BOLIVIENSIS(39432, "SaiBol", "ENSSBO", "saimiri_boliviensis,sboliviensis,squirrel_monkey,bolivian_squirrel_monkey,squirrelmonkey"),
 	SARCOPHILUS_HARRISII(9305, "devil", "ENSSHA", "devil,Sarcophilus_harrisii,sarcophilus_harrisii,tasmanian_devil,taz"),
 	SOREX_ARANEUS(42254, "COMMON_SHREW", "ENSSAR", "shrew,common_shrew,commonShrew,european_shrew,saraneus,sorex,sorex_araneus"),
-	SPERMOPHILUS_TRIDECEMLINEATUS(43179, "SQUIRREL", "ENSSTO", "squirrel,stridecemlineatus,thirteen-lined_ground_squirrel,spermophilus_tridecemlineatus_arenicola,spermophilus_tridecemlineatus"),
+	SPERMOPHILUS_TRIDECEMLINEATUS(43179, "spetri2", "ENSSTO", "squirrel,stridecemlineatus,thirteen-lined_ground_squirrel,spermophilus_tridecemlineatus_arenicola,spermophilus_tridecemlineatus"),
 	SUS_SCROFA(9823, "Sscrofa", "ENSSSC", "pig,boar,wildboar,wild_boar,susscrofa,sus_scrofa"),
 	TAENIOPYGIA_GUTTATA(59729, "taeGut", "ENSTGU", "zebrafinch,zebra_finch,taeniopygia_guttata,taeniopygiaguttata,tguttata,poephila_guttata,taenopygia_guttata"),
 	TAKIFUGU_RUBRIPES(31033, "FUGU", "ENSTRU", "pufferfish,fugu,frubripes,fugurubripes,fugu_rubripes,takifugu,trubripes,takifugurubripes,takifugu_rubripes"),
