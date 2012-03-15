@@ -50,6 +50,7 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
         public void types() {
 
                 removeAppliesToType(DatabaseType.SANGER_VEGA);
+                removeAppliesToType(DatabaseType.VEGA);
 
         }
 
