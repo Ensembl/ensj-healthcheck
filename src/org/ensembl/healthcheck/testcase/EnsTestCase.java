@@ -13,6 +13,7 @@
 
 package org.ensembl.healthcheck.testcase;
 
+import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -135,7 +136,17 @@ public abstract class EnsTestCase {
 
 	private String[] funcgenTablesWithAnalysisID = { "probe_feature", "object_xref", "unmapped_object", "feature_set", "result_set" };
 
+	protected boolean setSystemProperties = true; 	
+	
 	// do we need to add analysis_description here?
+
+	public boolean isSetSystemProperties() {
+		return setSystemProperties;
+	}
+
+	public void setSetSystemProperties(boolean setSystemProperties) {
+		this.setSystemProperties = setSystemProperties;
+	}
 
 	/**
 	 * A DatabaseRegistryEntry pointing to the production database.
@@ -1196,6 +1207,13 @@ public abstract class EnsTestCase {
 
 	} // setFailureText
 
+	protected void setConfiguredProperties() {
+		// read properties file
+		String propsFile = System.getProperty("user.dir") + System.getProperty("file.separator") + TestRunner.getPropertiesFile();
+		Utils.readPropertiesFileIntoSystem(propsFile, false);
+		logger.fine("Read database properties from " + propsFile);
+	}
+	
 	// -------------------------------------------------------------------------
 	/**
 	 * Read a database schema from a file and create a temporary database from it.
@@ -1203,8 +1221,9 @@ public abstract class EnsTestCase {
 	 * @param fileName
 	 *          The name of the schema to read.
 	 * @return A connection to a database built from the schema.
+	 * @throws FileNotFoundException 
 	 */
-	public Connection importSchema(String fileName) {
+	public Connection importSchema(String fileName) throws FileNotFoundException {
 
 		Connection con = null;
 
@@ -1212,27 +1231,31 @@ public abstract class EnsTestCase {
 		// Parse the file first in case there are problems
 		SQLParser sqlParser = new SQLParser();
 
-		// try {
-		// List sqlCommands = sqlParser.parse(fileName);
-		// // sqlParser.printLines();
-		// } catch (FileNotFoundException fnfe) {
-		// fnfe.printStackTrace();
-		// }
+		//try {
+			List sqlCommands = sqlParser.parse(fileName);
+		// sqlParser.printLines();
+		//} catch (FileNotFoundException fnfe) {
+		//	fnfe.printStackTrace();
+		//}
 
 		// ----------------------------------------------------
 		// create the database
 
 		String tempDBName = DBUtils.generateTempDatabaseName();
 
-		// read properties file
-		String propsFile = System.getProperty("user.dir") + System.getProperty("file.separator") + "database.properties";
-		Utils.readPropertiesFileIntoSystem(propsFile, false);
-		logger.fine("Read database properties from " + propsFile);
+		if (setSystemProperties) {
+			setConfiguredProperties();
+		}
 
 		try {
 
 			Class.forName(System.getProperty("driver"));
-			Connection tmpCon = DriverManager.getConnection(System.getProperty("databaseURL"), System.getProperty("user"), System.getProperty("password"));
+			
+			String databaseURL = System.getProperty("databaseURL");
+			String user        = System.getProperty("user");
+			String password    = System.getProperty("password"); 
+			
+			Connection tmpCon = DriverManager.getConnection(databaseURL, user, password);
 
 			String sql = "CREATE DATABASE " + tempDBName;
 			logger.finest(sql);
@@ -1242,7 +1265,7 @@ public abstract class EnsTestCase {
 
 			// close the temporary connection and create a "real" one
 			tmpCon.close();
-			con = DriverManager.getConnection(System.getProperty("databaseURL") + tempDBName, System.getProperty("user"), System.getProperty("password"));
+			con = DriverManager.getConnection(databaseURL + tempDBName, user, password);
 
 		} catch (Exception e) {
 			String msg = "Could not create database "+tempDBName;
