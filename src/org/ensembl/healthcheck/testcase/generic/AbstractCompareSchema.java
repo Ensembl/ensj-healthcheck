@@ -22,6 +22,7 @@ import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.TestRunner;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.util.ConnectionBasedSqlTemplateImpl;
@@ -167,11 +168,15 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 
 		definitionFile = System.getProperty(definitionFileKey);
 		if (definitionFile == null) {
+			
 			logger
 			    .info(testName
 			        + ": No schema definition file found! Set "
 			        + definitionFileKey
-			        + " property in database.properties if you want to use a table.sql file or similar. This is not an error if you are using "
+			        + " property in "
+			        + TestRunner.getPropertiesFile() 
+			        + " if you want to use a table.sql file or similar. "
+			        + "This is not an error if you are using "
 			        + masterSchemaKey);
 
 			masterSchema = System.getProperty(masterSchemaKey);
