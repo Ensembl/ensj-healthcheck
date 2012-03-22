@@ -178,6 +178,22 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 			ConfigureHost secondaryHostDetails
 		) {
 		
+		ConfigurationUserParameters combinedHostConfig = createConfigurationObject(primaryHostDetails, secondaryHostDetails);
+		
+		// And finally set the new configuration file in which the 
+		// secondary host has been configured.
+		//
+		DBUtils.setHostConfiguration((ConfigureHost) combinedHostConfig);
+		
+		SystemPropertySetter systemPropertySetter = new SystemPropertySetter(combinedHostConfig);		
+		systemPropertySetter.setPropertiesForHealthchecks();
+	}
+	
+	protected ConfigurationUserParameters createConfigurationObject(
+			ConfigureHost primaryHostDetails,
+			ConfigureHost secondaryHostDetails
+		) {
+		
 		Properties secondaryHostProperties = new Properties();
 		
 		secondaryHostProperties.setProperty("secondary.host",     secondaryHostDetails.getHost());
@@ -194,25 +210,25 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		
 		List<File> propertyFileNames = new ArrayList<File>();
 		propertyFileNames.add(new File(ConfigurableTestRunner.getDefaultPropertiesFile()));
+
+		ConfigurationUserParameters ConfigurationByPropertyFiles =
+			new ConfigurationFactory<ConfigurationUserParameters>(
+				ConfigurationUserParameters.class,
+				propertyFileNames
+			).getConfiguration(ConfigurationType.Properties);
+
 		
 		ConfigurationFactory<ConfigurationUserParameters> confFact =
 			new ConfigurationFactory<ConfigurationUserParameters>(
 				ConfigurationUserParameters.class,
 				primaryHostDetails,
 				secondaryHostConfiguration,
-				propertyFileNames
+				ConfigurationByPropertyFiles
 			);
 		
 		ConfigurationUserParameters combinedHostConfig = confFact.getConfiguration(ConfigurationType.Cascading);
 		
-		// And finally set the new configuration file in which the 
-		// secondary host has been configured.
-		//
-		DBUtils.setHostConfiguration((ConfigureHost) combinedHostConfig);
-		
-		SystemPropertySetter systemPropertySetter = new SystemPropertySetter(combinedHostConfig);
-		
-		systemPropertySetter.setPropertiesForHealthchecks();
+		return combinedHostConfig;
 	}
 	
 	@Override
@@ -408,15 +424,15 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 			}
 		}
 		
-		secondaryDbServerSelector.setSelectedIndex(defaultSelectedServerIndex);
-		
-		DBUtils.initialise();
-
-		setPrimaryAndSecondaryAndSystemPropertiesHost(
-				dbDetails.get(dbServerSelector.getSelectedIndex()),
-				dbDetails.get(secondaryDbServerSelector.getSelectedIndex())
-			);
-
+		// databaseTabbedPane must be set up before running
+		//
+		// dbServerSelector.setSelectedIndex(defaultSelectedServerIndex);
+		//
+		// because the above statement will trigger an action that will
+		// reconfigure what is in the databaseTabbedPane. If databaseTabbedPane
+		// is null then, because it has not been initialised, it will result
+		// in a hard to find error.
+		//
 		List<String> regexps = new ArrayList<String>();
 		regexps.add(".*");
 
@@ -428,10 +444,18 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 
 		databaseTabbedPane = new DatabaseTabbedPane(databaseRegistry);
 		
-		this.setTitle(windowTitle);
+		dbServerSelector.setSelectedIndex(defaultSelectedServerIndex);
+		secondaryDbServerSelector.setSelectedIndex(defaultSelectedServerIndex);
 		
-		tab = new JTabbedPane();
+		DBUtils.initialise();
 
+		setPrimaryAndSecondaryAndSystemPropertiesHost(
+				dbDetails.get(dbServerSelector.getSelectedIndex()),
+				dbDetails.get(secondaryDbServerSelector.getSelectedIndex())
+			);
+		
+		this.setTitle(windowTitle);
+		tab = new JTabbedPane();
 		init();
 	}
 
