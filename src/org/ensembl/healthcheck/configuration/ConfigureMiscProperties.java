@@ -36,16 +36,32 @@ public interface ConfigureMiscProperties {
 	// Used in:
 	//
 	// org.ensembl.healthcheck.testcase.generic.CompareSchema
-	// org.ensembl.healthcheck.testcase.variation.CompareVariationSchema
-	// org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema
 	//
 	@Option(longName = "schema.file", description = "Parameter used only in "
 			+ "org.ensembl.healthcheck.testcase.generic.CompareSchema, "
-			+ "org.ensembl.healthcheck.testcase.variation.CompareVariationSchema "
-			+ "and org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema")
+	)
 	String getSchemaFile();
-
 	boolean isSchemaFile();
+
+	// Used in:
+	//
+	// org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema
+	//
+	@Option(longName = "funcgen_schema", description = "Parameter used only in "
+		+ "and org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema"
+	)
+	String getFuncgenSchemaFile();
+	boolean isFuncgenSchemaFile();
+
+	// Used in:
+	//
+	// org.ensembl.healthcheck.testcase.variation.CompareVariationSchema
+	//
+	@Option(longName = "variation_schema", description = "Parameter used only in "
+		+ "org.ensembl.healthcheck.testcase.variation.CompareVariationSchema "
+	)
+	String getVariationSchemaFile();
+	boolean isVariationSchemaFile();
 
 	// Used in:
 	//
