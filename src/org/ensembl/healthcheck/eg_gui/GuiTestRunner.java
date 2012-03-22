@@ -138,6 +138,13 @@ public class GuiTestRunner {
 					//
 					guiLogHandler.setEnsTestCase(testCase);
 					
+					// System properties are set by the GUI. This prevents
+					// EnsTestCase.importSchema from overwriting settings
+					// by the user with the defaults from the configuration
+					// file.
+					//
+					testCase.setSetSystemProperties(false);
+					
 					// Stack traces are written to stderr. They indicate a 
 					// serious error. They are rerouted to the ReportManager
 					// as problems and the test fails.
