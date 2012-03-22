@@ -1,6 +1,7 @@
 assembly.default
 assembly.mapping
 assembly.name
+assembly.accession
 genebuild.start_date
 genebuild.version
 genebuild.method
@@ -20,4 +21,3 @@ species.url
 species.short_name
 species.taxonomy_id
 species.division
-species.ensembl_alias_name
