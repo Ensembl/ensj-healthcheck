@@ -63,6 +63,10 @@ to delete the directory with the checkouts.
 			cvsRoot="${ensemblCvsRoot}" 
 			command="checkout -d ${perlDependencyCheckoutDir}/ensembl-variation ${ensemblRevisionOption} ensembl-variation"
 		/>
+		<cvs 
+			cvsRoot="${ensemblCvsRoot}" 
+			command="checkout -d ${perlDependencyCheckoutDir}/ensembl-functgenomics ${ensemblRevisionOption} ensembl-functgenomics"
+		/>
 	</target>
 
 	<!--
