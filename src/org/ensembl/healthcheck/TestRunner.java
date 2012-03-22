@@ -60,8 +60,8 @@ public class TestRunner {
 		return propertiesFile;
 	}
 
-	public void setPropertiesFile(String propertiesFile) {
-		this.propertiesFile = propertiesFile;
+	public static void setPropertiesFile(String propertiesFile) {
+		TestRunner.propertiesFile = propertiesFile;
 	}
 
 	/** Flag to determine whether repairs will be shown if appropriate */
