@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import javax.swing.JFrame;
 
 import org.ensembl.healthcheck.GroupOfTests;
+import org.ensembl.healthcheck.TestRunner;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.util.Clazz;
 import org.ensembl.healthcheck.util.ClassFileFilter;
@@ -87,6 +88,10 @@ public class GuiStarter {
 
 	public static void main(String argv[]) {
 		
+		// So when Utils.readPropertiesFileIntoSystem is called, it gets
+		// the right configuration file.
+		//
+		TestRunner.setPropertiesFile("database.defaults.properties");
 		GuiStarter t = new GuiStarter();
 		t.run();
 	}
