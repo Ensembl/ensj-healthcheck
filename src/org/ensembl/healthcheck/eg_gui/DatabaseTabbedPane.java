@@ -12,6 +12,7 @@ import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -104,7 +105,16 @@ public class DatabaseTabbedPane extends JTabbedPane {
     	
     	this.removeAll();
     	
-    	Map<DatabaseRegistryEntry, JRadioButton> checkBoxMap = createRadioButtonsForDb(databaseRegistry.getAll());
+    	DatabaseRegistryEntry[] allDbEntries = databaseRegistry.getAll();
+    	
+    	if (allDbEntries.length==0) {
+    		addTab(
+    			"Problem",
+    			new JLabel("No databases found! Possibly the server can't be reached.")
+    		);
+    	}
+    	
+    	Map<DatabaseRegistryEntry, JRadioButton> checkBoxMap = createRadioButtonsForDb(allDbEntries);
 
         DatabaseType[] types = databaseRegistry.getTypes();
         Arrays.sort(types, new DatabaseTypeGUIComparator());
