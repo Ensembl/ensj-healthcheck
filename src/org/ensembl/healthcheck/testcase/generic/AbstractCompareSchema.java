@@ -2,6 +2,7 @@ package org.ensembl.healthcheck.testcase.generic;
 
 import static org.ensembl.healthcheck.util.CollectionUtils.createArrayList;
 
+import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -214,7 +215,11 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 
 			if (definitionFile != null) {
 				logger.info("About to import " + definitionFile);
-				masterCon = importSchema(definitionFile);
+				try {
+					masterCon = importSchema(definitionFile);
+				} catch (FileNotFoundException e) {
+					return false;
+				}
 				logger.info("Got connection to "
 				    + DBUtils.getShortDatabaseName(masterCon));
 			}
