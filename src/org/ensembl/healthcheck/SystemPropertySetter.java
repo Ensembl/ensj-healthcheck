@@ -76,10 +76,24 @@ public class SystemPropertySetter {
 			// Used in:
 			//
 			// org.ensembl.healthcheck.testcase.generic.CompareSchema
-			// org.ensembl.healthcheck.testcase.variation.CompareVariationSchema
-			// org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema
 			//		
 			System.setProperty("schema.file",    configuration.getSchemaFile());
+		}
+		
+		if (configuration.isVariationSchemaFile()) {
+			// Used in:
+			//
+			// org.ensembl.healthcheck.testcase.variation.CompareVariationSchema
+			//		
+			System.setProperty("variation_schema.file",    configuration.getVariationSchemaFile());
+		}
+		
+		if (configuration.isFuncgenSchemaFile()) {
+			// Used in:
+			//
+			// org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema
+			//		
+			System.setProperty("funcgen_schema.file",    configuration.getFuncgenSchemaFile());
 		}
 		
 		if (configuration.isMasterSchema()) {
@@ -148,6 +162,22 @@ public class SystemPropertySetter {
 			// org.ensembl.healthcheck.testcase.EnsTestCase
 			//
 			System.setProperty("databaseURL",    configuration.getDatabaseURL());
+		} else {
+			// Used in:
+			//
+			// org.ensembl.healthcheck.testcase.EnsTestCase importSchema
+			//
+			// when running CompareSchema tests. I have absolutely no idea where
+			// the this is supposed to get set in the legacy code.
+			//
+			System.setProperty(
+				"databaseURL",    
+				"jdbc:mysql://"
+				+ configuration.getHost()
+				+ ":"
+				+ configuration.getPort()
+				+ "/"
+			);
 		}
 		
 		if (configuration.isUser()) {
@@ -165,7 +195,6 @@ public class SystemPropertySetter {
 			//
 			System.setProperty("password",    configuration.getPassword());
 		}
-		
 		if (configuration.isMasterFuncgenSchema()) {
 			// Used in:
 			//
