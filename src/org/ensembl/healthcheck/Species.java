@@ -55,7 +55,7 @@ public enum Species {
 	MYOTIS_LUCIFUGUS(59463, "Myoluc", "ENSMLU", "microbat,little_brown_bat,mlucifugus,myotis,myotis_lucifugus"),
 	NOMASCUS_LEUCOGENYS(61853, "NLEU", "ENSNLE","gibbon,nleu,nomleu,nleugogenys,nomascus_leucogenys"),
 	OCHOTONA_PRINCEPS(9978, "PIKA", "ENSOPR", "pika,Americanpika,American_pika,oprinceps,ochotona,ochotona_princeps"),
-	OREOCHROMIS_NILOTICUS(8128, "Orenil", "PREONI", "tilapia,Oreochromis niloticus,oreochromis niloticus,Oreochromis_niloticus,oreochromis_niloticus,Nile tilapia,nile tilapia,Nile_tilapia,nile_tilapia,O. niloticus"),
+	OREOCHROMIS_NILOTICUS(8128, "Orenil", "ENSONI", "tilapia,Oreochromis niloticus,oreochromis niloticus,Oreochromis_niloticus,oreochromis_niloticus,Nile tilapia,nile tilapia,Nile_tilapia,nile_tilapia,O. niloticus"),
 	ORNITHORHYNCHUS_ANATINUS(9258, "OANA", "ENSOAN", "platypus,oanatius,ornithorhynchus_anatinus"),
 	ORYCTOLAGUS_CUNICULUS(9986, "oryCun", "ENSOCU", "rabbit,oryctolagus,domestic_rabbit,bunny,japanese_white_rabbit,european_rabbit,oryctolagus_cuniculus"),
 	ORYZIAS_LATIPES(8090, "MEDAKA", "ENSORL", "medaka,oryzias,japanese_medaka,japanese_rice_fish,japanese_ricefish,japanese_killifish,oryzias_latipes"),
