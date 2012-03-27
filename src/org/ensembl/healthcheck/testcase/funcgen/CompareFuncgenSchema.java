@@ -15,10 +15,12 @@ package org.ensembl.healthcheck.testcase.funcgen;
 
 import java.util.EnumSet;
 import java.util.Set;
+import java.util.Arrays;
 
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.generic.AbstractCompareSchema;
+
 
 /**
  * Extension of the compare schema functionality customised to run only
@@ -43,11 +45,18 @@ public class CompareFuncgenSchema extends AbstractCompareSchema {
 		setTeamResponsible(Team.FUNCGEN);
 	}
 
-	@Override
+
+    @Override
 	protected void addTestTypes() {
-		Set<TestTypes> types = EnumSet.allOf(TestTypes.class);
-		getTestTypes().addAll(types);
-	}
+		Set<TestTypes> types = getTestTypes();
+		types.addAll(Arrays.asList(
+			TestTypes.IGNORE_AUTOINCREMENT_OPTION,
+			TestTypes.CHARSET,
+			TestTypes.ENGINE,
+			TestTypes.MAX_ROWS
+		));
+    }
+
 
 	@Override
 	protected String getDefinitionFileKey() {
