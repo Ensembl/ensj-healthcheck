@@ -126,7 +126,7 @@ public class MetaCoord extends SingleDatabaseTestCase {
 									
 					// check that the max_length value in meta_coord corresponds to max feature length in each table per coord_system 
 					String mc_max_length = getRowColumnValue(con, "SELECT max_length FROM meta_coord WHERE coord_system_id=" + coordSystemID + " AND table_name='" + tableName + "'");					
-					String f_max_length = getRowColumnValue(con, "SELECT MAX(f.seq_region_end - f.seq_region_start + 1) FROM " + tableName + " f JOIN seq_region s USING(seq_region_id) WHERE s.coord_system_id=" + coordSystemID);
+					String f_max_length = getRowColumnValue(con, "SELECT MAX(f.seq_region_end - f.seq_region_start + 1) FROM " + tableName + " f JOIN seq_region s USING(seq_region_id) WHERE seq_region_end>seq_region_start and s.coord_system_id=" + coordSystemID);
 					
 					if (mc_max_length.equals(f_max_length)) {
 						ReportManager.correct(this, con, "max_length value correct for coordinate system with ID " + coordSystemID + " for table " + tableName + " in meta_coord");
