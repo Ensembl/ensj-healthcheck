@@ -8,6 +8,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 public class RegulatoryMotifFeatures extends SingleDatabaseTestCase {
 
@@ -63,12 +64,12 @@ public class RegulatoryMotifFeatures extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 
-		int regMFs = getRowCount(con, "SELECT COUNT(distinct attribute_feature_id) from regulatory_attribute where attribute_feature_table='motif'");
+		int regMFs = DBUtils.getRowCount(con, "SELECT COUNT(distinct attribute_feature_id) from regulatory_attribute where attribute_feature_table='motif'");
 
 		//Nested join now accounts for focus_max_length
 		int fmaxLength = 2000;  // Should add this as attribute to FuncgenSingleDatabaseTestCase?
 
-		int regAMFs = getRowCount
+		int regAMFs = DBUtils.getRowCount
 			( con, "select count(distinct amf.motif_feature_id) from " + 
 			  "associated_motif_feature amf, annotated_feature af, regulatory_attribute ra " + 
 			  "where af.annotated_feature_id=amf.annotated_feature_id and " + 

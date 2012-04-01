@@ -122,7 +122,7 @@ public class StableID extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		String stableIDtable = typeName;
-		int nullStableIDs = getRowCount(con, "SELECT COUNT(1) FROM " + stableIDtable + " WHERE stable_id IS NULL");
+		int nullStableIDs = DBUtils.getRowCount(con, "SELECT COUNT(1) FROM " + stableIDtable + " WHERE stable_id IS NULL");
 
 		if (nullStableIDs > 0) {
 			ReportManager.problem(this, con, stableIDtable + " table has NULL stable_ids");
@@ -136,7 +136,7 @@ public class StableID extends SingleDatabaseTestCase {
 		// this will give the internal IDs for *one* of each of the duplicates
 		// if there are only a few then reassign the stable IDs of one of the
 		// duplicates
-		int duplicates = getRowCount(con, "SELECT COUNT(stable_id)-COUNT(DISTINCT stable_id) FROM " + stableIDtable);
+		int duplicates = DBUtils.getRowCount(con, "SELECT COUNT(stable_id)-COUNT(DISTINCT stable_id) FROM " + stableIDtable);
 		if (duplicates > 0) {
 			ReportManager.problem(this, con, stableIDtable + " has " + duplicates + " duplicate stable IDs (versions not checked)");
 			result = false;
@@ -145,7 +145,7 @@ public class StableID extends SingleDatabaseTestCase {
 		}
 
 		// check for invalid or missing stable ID versions
-		int nInvalidVersions = getRowCount(con, "SELECT COUNT(*) AS " + typeName + "_with_invalid_version" + " FROM " + stableIDtable + " WHERE version < 1 OR version IS NULL;");
+		int nInvalidVersions = DBUtils.getRowCount(con, "SELECT COUNT(*) AS " + typeName + "_with_invalid_version" + " FROM " + stableIDtable + " WHERE version < 1 OR version IS NULL;");
 
 		if (nInvalidVersions > 0) {
 			ReportManager.problem(this, con, "Invalid " + typeName + " versions in " + stableIDtable);
@@ -155,14 +155,14 @@ public class StableID extends SingleDatabaseTestCase {
 
 		// make sure stable ID versions in the typeName table matches those in stable_id_event
 		// for the latest mapping_session
-		String mappingSessionId = getRowColumnValue(con, "SELECT mapping_session_id FROM mapping_session " + "ORDER BY created DESC LIMIT 1");
+		String mappingSessionId = DBUtils.getRowColumnValue(con, "SELECT mapping_session_id FROM mapping_session " + "ORDER BY created DESC LIMIT 1");
 
 		if (mappingSessionId.equals("")) {
 			ReportManager.info(this, con, "No mapping_session found");
 			return result;
 		}
 
-		int nVersionMismatch = getRowCount(con, "SELECT COUNT(*) FROM stable_id_event sie, " + stableIDtable + " si WHERE sie.mapping_session_id = " + Integer.parseInt(mappingSessionId)
+		int nVersionMismatch = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM stable_id_event sie, " + stableIDtable + " si WHERE sie.mapping_session_id = " + Integer.parseInt(mappingSessionId)
 				+ " AND sie.new_stable_id = si.stable_id AND sie.new_version <> si.version");
 
 		if (nVersionMismatch > 0) {
@@ -206,7 +206,7 @@ public class StableID extends SingleDatabaseTestCase {
 					return true;
 				}
 				String prefixLetter = prefix + (String) tableToLetter.get(type);
-				int wrong = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE stable_id NOT LIKE '" + prefixLetter + "%' AND stable_id NOT LIKE 'LRG%'");
+				int wrong = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE stable_id NOT LIKE '" + prefixLetter + "%' AND stable_id NOT LIKE 'LRG%'");
 				if (wrong > 0) {
 					ReportManager.problem(this, con, wrong + " rows in " + table + " do not have the correct (" + prefixLetter + ") prefix");
 					result = false;
@@ -239,7 +239,7 @@ public class StableID extends SingleDatabaseTestCase {
 
 			String sql = "SELECT COUNT(*) FROM stable_id_event WHERE (old_stable_id LIKE '" + prefix + "%' OR new_stable_id LIKE '" + prefix + "%') AND type != '" + type + "'";
 
-			int rows = getRowCount(con, sql);
+			int rows = DBUtils.getRowCount(con, sql);
 
 			if (rows > 0) {
 
@@ -263,7 +263,7 @@ public class StableID extends SingleDatabaseTestCase {
 		String prefix = "";
 
 		// hope the first row of the type table is correct
-		String stableID = getRowColumnValue(con, "SELECT stable_id FROM " + type + " LIMIT 1");
+		String stableID = DBUtils.getRowColumnValue(con, "SELECT stable_id FROM " + type + " LIMIT 1");
 
 		prefix = stableID.replaceAll("[0-9]", "");
 
@@ -292,7 +292,7 @@ public class StableID extends SingleDatabaseTestCase {
 
 			String sql = "SELECT COUNT(*) FROM " + table + " WHERE created_date=0 OR modified_date=0";
 
-			int rows = getRowCount(con, sql);
+			int rows = DBUtils.getRowCount(con, sql);
 
 			if (rows > 0) {
 

@@ -23,6 +23,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check for any coord_system.versions that are blank ('') - they should be NULL for various other things to work.
@@ -62,7 +63,7 @@ public class BlankCoordSystemVersions extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM coord_system WHERE version = ''");
+		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM coord_system WHERE version = ''");
 
 		if (rows > 0) {
 

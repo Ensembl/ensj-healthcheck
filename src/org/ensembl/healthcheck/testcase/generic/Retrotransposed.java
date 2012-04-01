@@ -23,6 +23,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check for any retrotransposed transcripts that have translations (shouldn't be any).
@@ -57,7 +58,7 @@ public class Retrotransposed extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM transcript t, translation tln WHERE t.transcript_id=tln.transcript_id AND t.biotype = 'retrotransposed'");
+		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM transcript t, translation tln WHERE t.transcript_id=tln.transcript_id AND t.biotype = 'retrotransposed'");
 
 		if (rows > 0) {
 

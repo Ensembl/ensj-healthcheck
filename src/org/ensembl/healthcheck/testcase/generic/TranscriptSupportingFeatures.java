@@ -23,6 +23,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that transcripts which need supporting features have them.
@@ -115,7 +116,7 @@ public class TranscriptSupportingFeatures extends SingleDatabaseTestCase {
 						"SELECT COUNT(*),t.analysis_id FROM transcript t LEFT JOIN transcript_supporting_feature tsf ON t.transcript_id = tsf.transcript_id JOIN analysis a ON a.analysis_id=t.analysis_id WHERE a.analysis_id=t.analysis_id and tsf.transcript_id IS NULL AND a.logic_name NOT IN (%s) AND t.biotype NOT IN ('rRNA') group by t.analysis_id",
 						allowed);
 
-		int rows = getRowCount(con, sql);
+		int rows = DBUtils.getRowCount(con, sql);
 
 		if (rows > 0) {
 

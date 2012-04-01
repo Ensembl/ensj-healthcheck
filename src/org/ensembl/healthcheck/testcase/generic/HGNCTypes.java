@@ -23,9 +23,11 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Check that HGNC_curated_genes xrefs are on genes, _transcript are on transcript etc.
+ * Check that HGNC_curated_genes xrefs are on genes, _transcript are on
+ * transcript etc.
  */
 
 public class HGNCTypes extends SingleDatabaseTestCase {
@@ -39,7 +41,7 @@ public class HGNCTypes extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
-		
+
 		setDescription("Check that HGNC_curated_genes xrefs are on genes, _transcript are on transcript etc");
 		setTeamResponsible(Team.CORE);
 
@@ -62,7 +64,7 @@ public class HGNCTypes extends SingleDatabaseTestCase {
 	 * Run the test.
 	 * 
 	 * @param dbre
-	 *          The database to use.
+	 *            The database to use.
 	 * @return Result.
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
@@ -87,17 +89,25 @@ public class HGNCTypes extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM xref x, external_db e, object_xref ox WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id AND e.db_name='" + source
-				+ "' AND ox.ensembl_object_type='" + wrongObject + "'");
+		int rows = DBUtils
+				.getRowCount(
+						con,
+						"SELECT COUNT(*) FROM xref x, external_db e, object_xref ox WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id AND e.db_name='"
+								+ source
+								+ "' AND ox.ensembl_object_type='"
+								+ wrongObject + "'");
 
 		if (rows > 0) {
 
-			ReportManager.problem(this, con, rows + " " + source + " xrefs are assigned to " + wrongObject.toLowerCase() + "s");
+			ReportManager.problem(this, con, rows + " " + source
+					+ " xrefs are assigned to " + wrongObject.toLowerCase()
+					+ "s");
 			result = false;
 
 		} else {
 
-			ReportManager.correct(this, con, "All " + source + " xrefs assigned to correct object type");
+			ReportManager.correct(this, con, "All " + source
+					+ " xrefs assigned to correct object type");
 		}
 
 		return result;

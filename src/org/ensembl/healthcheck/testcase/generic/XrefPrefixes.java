@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that all xrefs of particular types have the correct prefix for dbprimary_acc and/or display_label.
@@ -65,7 +66,7 @@ public class XrefPrefixes extends SingleDatabaseTestCase {
 
 		// --------------------------------
 		// MGI - dbprimary_acc should have MGI: prefix
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM external_db e, xref x WHERE x.external_db_id=e.external_db_id AND e.db_name='MGI' AND x.dbprimary_acc NOT LIKE 'MGI:%'");
+		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM external_db e, xref x WHERE x.external_db_id=e.external_db_id AND e.db_name='MGI' AND x.dbprimary_acc NOT LIKE 'MGI:%'");
 
 		if (rows > 0) {
 			ReportManager.problem(this, con, rows + " MGI xrefs do not have MGI: prefixes in the dbprimary_acc column");
@@ -76,7 +77,7 @@ public class XrefPrefixes extends SingleDatabaseTestCase {
 
 		// --------------------------------
 		// GO - dbprimary_acc and display_label should have GO: prefix
-		rows = getRowCount(con,
+		rows = DBUtils.getRowCount(con,
 				"SELECT COUNT(*) FROM external_db e, xref x WHERE x.external_db_id=e.external_db_id AND e.db_name='GO' AND (x.dbprimary_acc NOT LIKE 'GO:%' OR x.display_label NOT LIKE 'GO:%')");
 
 		if (rows > 0) {
@@ -88,7 +89,7 @@ public class XrefPrefixes extends SingleDatabaseTestCase {
 
 		// --------------------------------
 		// ZFIN - dbprimary_acc should begin with ZDB
-		rows = getRowCount(con, "SELECT COUNT(*) FROM external_db e, xref x WHERE x.external_db_id=e.external_db_id AND e.db_name='ZFIN_ID' AND x.dbprimary_acc NOT LIKE 'ZDB%'");
+		rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM external_db e, xref x WHERE x.external_db_id=e.external_db_id AND e.db_name='ZFIN_ID' AND x.dbprimary_acc NOT LIKE 'ZDB%'");
 
 		if (rows > 0) {
 			ReportManager.problem(this, con, rows + " GO xrefs do not have GO: prefixes in the dbprimary_acc and/or display_label columns");

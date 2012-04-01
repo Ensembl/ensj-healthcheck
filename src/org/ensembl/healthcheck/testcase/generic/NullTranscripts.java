@@ -22,6 +22,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check for null transcripts.
@@ -57,7 +58,7 @@ public class NullTranscripts extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM transcript WHERE seq_region_id = 0");
+		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM transcript WHERE seq_region_id = 0");
 
 		if (rows > 0) {
 

@@ -82,7 +82,7 @@ public class BlankEnums extends SingleDatabaseTestCase {
 				String[] columnAndType = (String[]) it.next();
 				String column = columnAndType[0];
 
-				int rows = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE " + column + "=''");
+				int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE " + column + "=''");
 
 				if (rows > 0) {
 

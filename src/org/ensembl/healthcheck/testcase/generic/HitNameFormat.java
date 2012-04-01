@@ -23,6 +23,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check for hit_names that aren't formatted correctly.
@@ -37,7 +38,7 @@ public class HitNameFormat extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("post_genebuild");
 		addToGroup("post-compara-handover");
-		
+
 		setDescription("Check that there are no incorrectly formatted hit_names");
 		setPriority(Priority.AMBER);
 		setFix("Manually fix affected values.");
@@ -49,7 +50,7 @@ public class HitNameFormat extends SingleDatabaseTestCase {
 	 * Run the test.
 	 * 
 	 * @param dbre
-	 *          The database registry entry to be checked.
+	 *            The database registry entry to be checked.
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 
@@ -57,19 +58,41 @@ public class HitNameFormat extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		String[] tables = { "dna_align_feature", "protein_align_feature", "protein_feature" };
+		String[] tables = { "dna_align_feature", "protein_align_feature",
+				"protein_feature" };
 
 		for (String table : tables) {
 
-			int rows = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE hit_name LIKE '%|%'");
+			int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + table
+					+ " WHERE hit_name LIKE '%|%'");
 
 			if (rows > 0) {
-				ReportManager.problem(this, con, rows + " " + table + "s appear to have incorrectly formatted hit_names (containing a '|' symbol)");
-				ReportManager.problem(this, con, "USEFUL SQL: SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(hit_name,'|',-2),'|',1) FROM " + table + " WHERE hit_name LIKE 'gi%|%'");
-				ReportManager.problem(this, con, "UPDATE " + table + " SET hit_name = SUBSTRING_INDEX(SUBSTRING_INDEX(hit_name,'|',-2),'|',1) WHERE hit_name LIKE 'gi|%'");
+				ReportManager
+						.problem(
+								this,
+								con,
+								rows
+										+ " "
+										+ table
+										+ "s appear to have incorrectly formatted hit_names (containing a '|' symbol)");
+				ReportManager
+						.problem(
+								this,
+								con,
+								"USEFUL SQL: SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(hit_name,'|',-2),'|',1) FROM "
+										+ table
+										+ " WHERE hit_name LIKE 'gi%|%'");
+				ReportManager
+						.problem(
+								this,
+								con,
+								"UPDATE "
+										+ table
+										+ " SET hit_name = SUBSTRING_INDEX(SUBSTRING_INDEX(hit_name,'|',-2),'|',1) WHERE hit_name LIKE 'gi|%'");
 				result = false;
 			} else {
-				ReportManager.correct(this, con, "All " + table + "s have correctly formatted hit_names");
+				ReportManager.correct(this, con, "All " + table
+						+ "s have correctly formatted hit_names");
 			}
 
 		}

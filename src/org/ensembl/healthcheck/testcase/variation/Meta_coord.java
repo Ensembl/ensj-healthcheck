@@ -22,6 +22,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Checks the meta_coord table to make sure it is OK. Only one meta table at a time is done here; checks for the consistency of the
@@ -60,7 +61,7 @@ public class Meta_coord extends SingleDatabaseTestCase {
 			 * and variation_group_feature entries in the meta_coord, when data present in those tables
 			 */
 			for (int i = 0; i < tables.length; i++) {
-				int rows = getRowCount(con, "SELECT COUNT(*) FROM " + tables[i]); // count if table has data
+				int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + tables[i]); // count if table has data
 				if (rows > 0) {
 					// the meta_coord table should contain entry
 					result &= checkKeysPresent(con, tables[i]);
@@ -83,7 +84,7 @@ public class Meta_coord extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM meta_coord WHERE table_name='" + tableName + "'");
+		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM meta_coord WHERE table_name='" + tableName + "'");
 		if (rows == 0) {
 			result = false;
 			ReportManager.problem(this, con, "No entry in meta_coord table for " + tableName);

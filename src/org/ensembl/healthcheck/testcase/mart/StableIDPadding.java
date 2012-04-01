@@ -25,6 +25,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check the padding in the stable_id_1051 column in certain species.
@@ -70,7 +71,7 @@ public class StableIDPadding extends SingleDatabaseTestCase {
 
 			int paddingLength = tablePaddingLength.get(table);
 
-			int rows = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE LENGTH(" + column + ") != " + paddingLength);
+			int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE LENGTH(" + column + ") != " + paddingLength);
 
 			if (rows > 0) {
 

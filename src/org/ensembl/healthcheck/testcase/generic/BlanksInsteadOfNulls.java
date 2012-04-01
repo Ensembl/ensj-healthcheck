@@ -89,7 +89,7 @@ public class BlanksInsteadOfNulls extends SingleDatabaseTestCase {
 				if (columnDefault != null && !columnDefault.toLowerCase().equals("null")) {
 					continue;
 				}
-				int rows = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE " + column + "=''");
+				int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE " + column + "=''");
 
 				if (rows > 0) {
 

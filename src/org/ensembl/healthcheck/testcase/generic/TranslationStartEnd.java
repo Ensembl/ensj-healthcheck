@@ -23,6 +23,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that if the start and end of translation is on the same exon, that start < end. Also check that translation ends aren't
@@ -67,7 +68,7 @@ public class TranslationStartEnd extends SingleDatabaseTestCase {
 
 		// check start < end
 		Connection con = dbre.getConnection();
-		int rows = getRowCount(con, "SELECT COUNT(translation_id) FROM translation WHERE start_exon_id = end_exon_id AND seq_start > seq_end");
+		int rows = DBUtils.getRowCount(con, "SELECT COUNT(translation_id) FROM translation WHERE start_exon_id = end_exon_id AND seq_start > seq_end");
 		if (rows > 0) {
 			result = false;
 			ReportManager.problem(this, con, rows + " translations have start > end");
@@ -76,7 +77,7 @@ public class TranslationStartEnd extends SingleDatabaseTestCase {
 		}
 
 		// check no translations overrun their exons
-		rows = getRowCount(con, "SELECT COUNT(*) FROM translation t, exon e WHERE t.end_exon_id=e.exon_id AND e.seq_region_end-e.seq_region_start+1 < t.seq_end");
+		rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM translation t, exon e WHERE t.end_exon_id=e.exon_id AND e.seq_region_end-e.seq_region_start+1 < t.seq_end");
 		if (rows > 0) {
 			result = false;
 			ReportManager.problem(this, con, rows + " translations end beyond the end of their exons");

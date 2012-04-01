@@ -23,6 +23,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that the correct variation synonym dimension tables exist in the SNP mart.
@@ -67,7 +68,7 @@ public class VariationSynonymDimensionTables extends SingleDatabaseTestCase {
 
 			logger.finest(String.format("Getting list of variation synonyms used in %s (BioMart equivalent %s)", variationDB.getName(), speciesRoot));
 
-			String[] sourceNames = getColumnValues(variationDB.getConnection(), "SELECT DISTINCT(name) FROM source WHERE somatic = 0");
+			String[] sourceNames = DBUtils.getColumnValues(variationDB.getConnection(), "SELECT DISTINCT(name) FROM source WHERE somatic = 0");
 
 			// check that a BioMart table for each entry exists
 			for (String source : sourceNames) {
@@ -81,7 +82,7 @@ public class VariationSynonymDimensionTables extends SingleDatabaseTestCase {
 				// build table name and check it
 				String table = String.format("%s_snp__variation_synonym_%s__dm", speciesRoot, source);
 
-				if (!checkTableExists(martCon, table)) {
+				if (!DBUtils.checkTableExists(martCon, table)) {
 
 					ReportManager.problem(this, martCon, String.format("Variation named %s in species %s (%s) is missing", table, variationDB.getSpecies().toString(), speciesRoot));
 					result = false;

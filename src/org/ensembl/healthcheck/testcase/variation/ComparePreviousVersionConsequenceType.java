@@ -16,10 +16,12 @@ import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
+
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
+import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 
 /**
@@ -58,7 +60,7 @@ public class ComparePreviousVersionConsequenceType extends ComparePreviousVersio
 		query = "SELECT SET_ELEMENT, COUNT(*) FROM transcript_variation tv WHERE FIND_IN_SET(SET_ELEMENT,tv.consequence_types)";
 		sqlQueries.setProperty("countVariationsByConsequenceType", query);
 
-		return sqlQueries;
+		return sqlQueries; 
 	}
 
 	protected Map getCounts(DatabaseRegistryEntry dbre) {
@@ -71,7 +73,7 @@ public class ComparePreviousVersionConsequenceType extends ComparePreviousVersio
 			Properties sqlQueries = getSQLQueries();
 	
 			// First, get the structure of the consequence_types
-			String[] description = getRowValues(dbre.getConnection(), sqlQueries.getProperty("describeConsequenceTypes"));
+			String[] description = DBUtils.getRowValues(dbre.getConnection(), sqlQueries.getProperty("describeConsequenceTypes"));
 	
 			// The second column contains the type, strip out the individual, comma-separated set elements
 			String[] setElements = description[1].split(",");

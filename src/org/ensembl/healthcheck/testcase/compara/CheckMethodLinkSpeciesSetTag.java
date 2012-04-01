@@ -31,6 +31,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Repair;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**                                                                                                                                                                                 
  * An EnsEMBL Healthcheck test case for MethodLinkSpeciesSetTag entries
@@ -63,7 +64,7 @@ public class CheckMethodLinkSpeciesSetTag extends SingleDatabaseTestCase {
 
                 Connection con = dbre.getConnection();
 
-                if (!checkTableExists(con, "method_link_species_set_tag")) {
+                if (!DBUtils.checkTableExists(con, "method_link_species_set_tag")) {
                         result = false;
                         ReportManager.problem(this, con, "method_link_species_set_tag table not present");
                         return result;

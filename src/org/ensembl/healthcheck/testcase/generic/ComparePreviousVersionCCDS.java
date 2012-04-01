@@ -20,6 +20,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Compare the CCDS in the current database with those from the equivalent database on the secondary server.
@@ -71,13 +72,13 @@ public class ComparePreviousVersionCCDS extends ComparePreviousVersionBase {
 
 		// and total number of associations with genes, transcripts and translations
 		String sql = " FROM gene g, transcript tr, translation tl, object_xref ox, xref x, external_db e WHERE x.xref_id=ox.xref_id AND x.external_db_id=e.external_db_id AND e.db_name='CCDS' AND g.gene_id =tr.gene_id AND tl.translation_id=ox.ensembl_id AND ox.ensembl_object_type='Translation' and tl.transcript_id=tr.transcript_id";
-		int genes = getRowCount(con, "SELECT COUNT(DISTINCT(g.gene_id))" + sql);
+		int genes = DBUtils.getRowCount(con, "SELECT COUNT(DISTINCT(g.gene_id))" + sql);
 		counts.put("CCDS-gene associations", genes);
 
-		int transcripts = getRowCount(con, "SELECT COUNT(DISTINCT(tr.transcript_id))" + sql);
+		int transcripts = DBUtils.getRowCount(con, "SELECT COUNT(DISTINCT(tr.transcript_id))" + sql);
 		counts.put("CCDS-transcript associations", transcripts);
 
-		int translations = getRowCount(con, "SELECT COUNT(DISTINCT(tl.translation_id))" + sql);
+		int translations = DBUtils.getRowCount(con, "SELECT COUNT(DISTINCT(tl.translation_id))" + sql);
 		counts.put("CCDS-translation associations", translations);
 
 		return counts;

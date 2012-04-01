@@ -29,6 +29,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key
@@ -74,7 +75,7 @@ public class ForeignKeyMethodLinkSpeciesSetId extends SingleDatabaseTestCase {
                 "species_set_id not in (SELECT distinct species_set_id from species_set_tag)");
 
             /* Check uniqueness of species_set entries */
-            int numOfDuplicatedSpeciesSets = getRowCount(con,
+            int numOfDuplicatedSpeciesSets = DBUtils.getRowCount(con,
                 "SELECT gdbs, count(*) num, GROUP_CONCAT(species_set_id) species_set_ids FROM ("+
                 "SELECT species_set_id, GROUP_CONCAT(genome_db_id) gdbs FROM species_set GROUP by species_set_id) t1 GROUP BY gdbs HAVING COUNT(*)>1");
             if (numOfDuplicatedSpeciesSets > 0) {
@@ -85,7 +86,7 @@ public class ForeignKeyMethodLinkSpeciesSetId extends SingleDatabaseTestCase {
 	    }
 
 	    /* Check if have both BLASTZ_NET and LASTZ_NET entries for the same species set */
-	    int numOfBLASTZ_LASTZSpeciesSets = getRowCount(con,
+	    int numOfBLASTZ_LASTZSpeciesSets = DBUtils.getRowCount(con,
 							   "SELECT species_set_id, count(*) FROM method_link_species_set JOIN method_link USING (method_link_id) WHERE TYPE in ('BLASTZ_NET', 'LASTZ_NET') GROUP BY species_set_id HAVING count(*) > 1");
 	    if (numOfBLASTZ_LASTZSpeciesSets > 0) {
 		ReportManager.problem(this, con, "FAILED method_link_species_set table contains " + numOfBLASTZ_LASTZSpeciesSets + " entries with a BLASTZ_NET and LASTZ_NET entry for the same species_set");
@@ -130,21 +131,21 @@ public class ForeignKeyMethodLinkSpeciesSetId extends SingleDatabaseTestCase {
             result &= checkForOrphans(con, "gene_tree_root", "method_link_species_set_id", "method_link_species_set", "method_link_species_set_id");
 
             /* Check number of MLSS with no source */
-            int numOfUnsetSources = getRowCount(con, "SELECT count(*) FROM method_link_species_set WHERE source = 'NULL' OR source IS NULL");
+            int numOfUnsetSources = DBUtils.getRowCount(con, "SELECT count(*) FROM method_link_species_set WHERE source = 'NULL' OR source IS NULL");
             if (numOfUnsetSources > 0) {
                 ReportManager.problem(this, con, "FAILED method_link_species_set table contains " + numOfUnsetSources + " with no source");
                 result = false;
             }
 
             /* Check number of MLSS with no name */
-            int numOfUnsetNames = getRowCount(con, "SELECT count(*) FROM method_link_species_set WHERE name = 'NULL' OR name IS NULL");
+            int numOfUnsetNames = DBUtils.getRowCount(con, "SELECT count(*) FROM method_link_species_set WHERE name = 'NULL' OR name IS NULL");
             if (numOfUnsetNames > 0) {
                 ReportManager.problem(this, con, "FAILED method_link_species_set table contains " + numOfUnsetNames + " with no name");
                 result = false;
             }
 
             /* Check the genomes in the species_set linked to the MLSS table */
-            int numOfGenomesInTheDatabase = getRowCount(con, "SELECT count(*) FROM genome_db WHERE taxon_id > 0");
+            int numOfGenomesInTheDatabase = DBUtils.getRowCount(con, "SELECT count(*) FROM genome_db WHERE taxon_id > 0");
             Pattern unaryPattern = Pattern.compile("^([A-Z].[a-z]{3}) ");
             Pattern binaryPattern = Pattern.compile("^([A-Z].[a-z]{3})-([A-Z].[a-z]{3})");
             Pattern multiPattern = Pattern.compile("([0-9]+)");

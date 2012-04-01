@@ -23,6 +23,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that all the non-optional meta keys listed in the production database are present, and that all the meta keys are valid.
@@ -76,11 +77,11 @@ public class ProductionMeta extends SingleDatabaseTestCase {
 		String databaseType = dbre.getType().getName(); // will be core, otherfeatures etc
 		String species = dbre.getSpecies().toString(); // will be homo_sapiens etc
 
-		List<String> dbMetaKeys = getColumnValuesList(con, "SELECT DISTINCT(meta_key) FROM meta");
+		List<String> dbMetaKeys = DBUtils.getColumnValuesList(con, "SELECT DISTINCT(meta_key) FROM meta");
 
 		// First check that keys present in database are all valid and current
 		List<String> productionMetaKeys =
-                  getColumnValuesList(prodDbre.getConnection(),
+				DBUtils.getColumnValuesList(prodDbre.getConnection(),
                     "SELECT mk.name " +
                     "FROM meta_key mk LEFT JOIN (" +
                     "meta_key_species JOIN " +
@@ -106,10 +107,10 @@ public class ProductionMeta extends SingleDatabaseTestCase {
 		}
 
 		// now check that all non-optional keys in production database appear here
-		dbMetaKeys = getColumnValuesList(con, "SELECT DISTINCT(meta_key) FROM meta");
+		dbMetaKeys = DBUtils.getColumnValuesList(con, "SELECT DISTINCT(meta_key) FROM meta");
 
 		productionMetaKeys =
-                  getColumnValuesList(prodDbre.getConnection(),
+				DBUtils.getColumnValuesList(prodDbre.getConnection(),
                     "SELECT mk.name " +
                     "FROM meta_key mk LEFT JOIN (" +
                     "meta_key_species JOIN " +

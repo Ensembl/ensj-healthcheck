@@ -19,6 +19,13 @@
 /*
  * 
  * $Log$
+ * Revision 1.4  2011-04-19 10:09:52  gp1
+ * Significant change to handling of "Team Responsible" setting:
+ *
+ * Instead of a free-text String, the team responsible is now an Enum (org.ensembl.healthcheck.Team). Having a second team responsible is also supported (via setSecondTeamResponsible() etc).
+ *
+ * The setTeamResponsible() call has been added to many healthchecks that didn't have it before, although its use is not yet mandatory.
+ *
  * Revision 1.3  2010-09-09 09:52:46  gp1
  * Rationalise group names
  *
@@ -93,7 +100,7 @@ public class NoDuplicateRows extends SingleDatabaseTestCase {
 
 			logger.finest("Checking that " + table + " has all distinct rows");
 
-			int total = countRowsInTable(con, table);
+			int total = DBUtils.countRowsInTable(con, table);
 			int distinct = total; // i.e. not a problem in the total > distinct test below
 
 			if (total > 0) {
@@ -101,7 +108,7 @@ public class NoDuplicateRows extends SingleDatabaseTestCase {
 				String colTxt = StringUtils.join(DBUtils.getColumnsInTable(con, table), ',');
 				System.out.println(colTxt);
 				// query does group by all columns to simulate count distinct *
-				distinct = getRowCount(con, "SELECT COUNT(*) FROM " + table + " GROUP BY " + colTxt);
+				distinct = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + table + " GROUP BY " + colTxt);
 
 			}
 			if (total > distinct) {

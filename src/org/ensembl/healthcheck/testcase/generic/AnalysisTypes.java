@@ -31,6 +31,7 @@ import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that all chromosomes have at least some genes with certain analyses.
@@ -68,7 +69,7 @@ public class AnalysisTypes extends SingleDatabaseTestCase {
 
 	}
 
-	/**
+	/** 
 	 * Run the test.
 	 * 
 	 * @param dbr
@@ -92,11 +93,11 @@ public class AnalysisTypes extends SingleDatabaseTestCase {
 		String[] logicNames = { "ensembl", "havana", "ensembl_havana_gene" };
 
 		// get all chromosomes, ignore LRG and MT
-		String[] seqRegionNames = getColumnValues(con,
+		String[] seqRegionNames = DBUtils.getColumnValues(con,
 				"SELECT s.name FROM seq_region s, coord_system cs WHERE s.coord_system_id=cs.coord_system_id AND cs.name='chromosome' AND cs.version='GRCh37' AND s.name NOT LIKE 'LRG%' AND s.name != 'MT'");
 
 		// filter out patches
-		String[] patches = getColumnValues(con, "SELECT sr.name FROM seq_region sr, assembly_exception ae WHERE sr.seq_region_id=ae.seq_region_id AND ae.exc_type IN ('PATCH_NOVEL', 'PATCH_FIX')");
+		String[] patches = DBUtils.getColumnValues(con, "SELECT sr.name FROM seq_region sr, assembly_exception ae WHERE sr.seq_region_id=ae.seq_region_id AND ae.exc_type IN ('PATCH_NOVEL', 'PATCH_FIX')");
 
 		List<String> nonPatchSeqRegions = ListUtils.removeAll(Arrays.asList(seqRegionNames), Arrays.asList(patches));
 

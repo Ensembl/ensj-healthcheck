@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key relationships.
@@ -58,7 +59,7 @@ public class SpeciesNameConsistency extends SingleDatabaseTestCase {
         Connection con = dbre.getConnection();
 
         // check genome_db table has > 0 rows
-        if (countRowsInTable(con, "genome_db") == 0) {
+        if (DBUtils.countRowsInTable(con, "genome_db") == 0) {
             result = false;
             ReportManager.problem(this, con, "genome_db table is empty");
         } else {
@@ -66,7 +67,7 @@ public class SpeciesNameConsistency extends SingleDatabaseTestCase {
         }
 
         // check taxon table has > 0 rows
-        if (countRowsInTable(con, "ncbi_taxa_name") == 0) {
+        if (DBUtils.countRowsInTable(con, "ncbi_taxa_name") == 0) {
             result = false;
             ReportManager.problem(this, con, "ncbi_taxa_name table is empty");
         } else {
@@ -75,7 +76,7 @@ public class SpeciesNameConsistency extends SingleDatabaseTestCase {
 
         String sql = "select gdb.taxon_id from ncbi_taxa_name tx, genome_db gdb where tx.taxon_id=gdb.taxon_id and tx.name_class='scientific name' and gdb.name != replace(lower(tx.name),' ','_')";
 
-        String[] taxonIDs = getColumnValues(con, sql);
+        String[] taxonIDs = DBUtils.getColumnValues(con, sql);
 
         if (taxonIDs.length > 0) {
             result = false;

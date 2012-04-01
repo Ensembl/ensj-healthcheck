@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key
@@ -71,7 +72,7 @@ public class CheckHomology extends SingleDatabaseTestCase {
              " GROUP BY hm1.member_id, hm2.member_id HAVING COUNT(*) > 1";
         String sql_count = sql_main;
         String sql_summary = "SELECT descs, num, count(*) FROM (" + sql_main + ") tt1 GROUP BY descs, num";
-        int numRows = getRowCount(con, sql_count);
+        int numRows = DBUtils.getRowCount(con, sql_count);
         if (numRows > 0) {
             ReportManager.problem(this, con, "FAILED homology contains redundant entries");
             ReportManager.problem(this, con, "FAILURE DETAILS: There are " + numRows + " redundant homology relationships in the DB");

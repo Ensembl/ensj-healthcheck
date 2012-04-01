@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that the seq_region names are in the right format. Only checks human and mouse.
@@ -90,7 +91,7 @@ public class SeqRegionName extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		int rows = getRowCount(con, String.format(
+		int rows = DBUtils.getRowCount(con, String.format(
 				"SELECT COUNT(*) FROM seq_region sr, coord_system cs WHERE sr.coord_system_id=cs.coord_system_id AND cs.name='%s' AND sr.name NOT LIKE 'LRG%%' AND sr.name NOT REGEXP '%s' ", coordinateSystem,
 				regexp));
 

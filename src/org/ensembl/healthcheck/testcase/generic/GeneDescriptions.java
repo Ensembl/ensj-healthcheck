@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * 
@@ -40,7 +41,7 @@ public class GeneDescriptions extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
-		
+
 		setDescription("Check gene descriptions; correct capitalisation of UniprotKB/SwissProt");
 		setPriority(Priority.AMBER);
 		setEffect("Capitalisation of Uniprot will be wrong in gene descriptions.");
@@ -54,7 +55,7 @@ public class GeneDescriptions extends SingleDatabaseTestCase {
 	 * Run the test.
 	 * 
 	 * @param dbre
-	 *          The database to use.
+	 *            The database to use.
 	 * @return true if the test passed.
 	 * 
 	 */
@@ -76,13 +77,22 @@ public class GeneDescriptions extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM gene WHERE description like '%Uniprot%' COLLATE latin1_general_cs");
+		int rows = DBUtils
+				.getRowCount(
+						con,
+						"SELECT COUNT(*) FROM gene WHERE description like '%Uniprot%' COLLATE latin1_general_cs");
 
 		if (rows > 0) {
-			ReportManager.problem(this, con, rows + " descriptions have incorrect spelling/capitalisation of Uniprot attribution, should be \"UniProt\"");
+			ReportManager
+					.problem(
+							this,
+							con,
+							rows
+									+ " descriptions have incorrect spelling/capitalisation of Uniprot attribution, should be \"UniProt\"");
 			result = false;
 		} else {
-			ReportManager.correct(this, con, "All Uniprot attributions correct.");
+			ReportManager.correct(this, con,
+					"All Uniprot attributions correct.");
 		}
 
 		return result;

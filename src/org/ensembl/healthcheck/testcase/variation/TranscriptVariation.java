@@ -18,11 +18,11 @@ package org.ensembl.healthcheck.testcase.variation;
 
 import java.sql.Connection;
 
-import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
-//import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 // This HC seems a bit useless with Graham's new consequence pipeline. I'll disable it for now and we'll have to discuss what 
 // we want checked before enabling it again.
@@ -56,7 +56,7 @@ public class TranscriptVariation extends SingleDatabaseTestCase {
 	// check peptide_allele_string not filled with numbers
 
         Connection con = dbre.getConnection();
-        int rows = getRowCount(con, "SELECT COUNT(*) FROM transcript_variation WHERE pep_allele_string >1");
+        int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM transcript_variation WHERE pep_allele_string >1");
         if (rows >=1) {
             result = false;
             ReportManager.problem(this, con, rows + " with peptide_allele_string >1");
@@ -64,7 +64,7 @@ public class TranscriptVariation extends SingleDatabaseTestCase {
       //      ReportManager.info(this, con, "No transcript_variation have peptide_allele_string >1);
         }
 
-	int rows1 = getRowCount(con, "SELECT COUNT(*) FROM transcript_variation WHERE consequence_types=''");
+	int rows1 = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM transcript_variation WHERE consequence_types=''");
         if (rows1 >=1) {
             result = false;
             ReportManager.problem(this, con, rows1 + " with consequence_types a empty string");
@@ -72,7 +72,7 @@ public class TranscriptVariation extends SingleDatabaseTestCase {
       //      ReportManager.info(this, con, "No transcript_variation have consequence_type a empty string");
         }
         
-	int rows2 = getRowCount(con, "SELECT COUNT(*) FROM variation_feature vf WHERE NOT FIND_IN_SET('intergenic_variant',vf.consequence_type) AND NOT EXISTS (SELECT * FROM transcript_variation tv WHERE tv.variation_feature_id = vf.variation_feature_id)");
+	int rows2 = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM variation_feature vf WHERE NOT FIND_IN_SET('intergenic_variant',vf.consequence_type) AND NOT EXISTS (SELECT * FROM transcript_variation tv WHERE tv.variation_feature_id = vf.variation_feature_id)");
         if (rows2 >=1) {
 	    result = false;
 	    ReportManager.problem(this, con, rows2 + " with consequence_type != 'intergenic_variant' and there is no corresponding transcript exists in transcript_variation table");

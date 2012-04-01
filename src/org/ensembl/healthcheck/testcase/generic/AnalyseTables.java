@@ -64,12 +64,12 @@ public class AnalyseTables extends SingleDatabaseTestCase {
 
 			String table = tables[i];
 
-			int results = getRowCount(con, " SHOW INDEX FROM " + table + " WHERE CARDINALITY IS NULL");
+			int results = DBUtils.getRowCount(con, " SHOW INDEX FROM " + table + " WHERE CARDINALITY IS NULL");
 
 			if (results > 0) {
 
 				// Don't complain if the table is empty
-				if (countRowsInTable(con, table) > 0) {
+				if (DBUtils.countRowsInTable(con, table) > 0) {
 					ReportManager.problem(this, con, table + " needs to be analysed");
 					result = false;
 				}

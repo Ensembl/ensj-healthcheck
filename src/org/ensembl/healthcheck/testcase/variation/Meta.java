@@ -23,10 +23,12 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Checks the metadata table to make sure it is OK. Only one meta table at a time is done here; checks for the consistency of the
- * meta table across species are done in MetaCrossSpecies.
+ * Checks the metadata table to make sure it is OK. Only one meta table at a
+ * time is done here; checks for the consistency of the meta table across
+ * species are done in MetaCrossSpecies.
  */
 public class Meta extends SingleDatabaseTestCase {
 
@@ -46,7 +48,7 @@ public class Meta extends SingleDatabaseTestCase {
 	 * Check various aspects of the meta table.
 	 * 
 	 * @param dbre
-	 *          The database to check.
+	 *            The database to check.
 	 * @return True if the test passed.
 	 */
 	public boolean run(final DatabaseRegistryEntry dbre) {
@@ -57,19 +59,25 @@ public class Meta extends SingleDatabaseTestCase {
 
 		result &= checkSchemaVersionDBName(dbre);
 
-		// check the Meta table in Human: should contain the entry for the pairwise_ld
+		// check the Meta table in Human: should contain the entry for the
+		// pairwise_ld
 		if (dbre.getSpecies() == Species.HOMO_SAPIENS) {
 			// find out if there is an entry for the default LD Population
 			metaKey = "pairwise_ld.default_population";
 
 			result &= checkKeysPresent(con, metaKey);
 
-			result &= checkForOrphansWithConstraint(con, "meta", "meta_value", "sample", "sample_id", "meta_key = '" + metaKey + "'");
+			result &= checkForOrphansWithConstraint(con, "meta", "meta_value",
+					"sample", "sample_id", "meta_key = '" + metaKey + "'");
 
 		}
-		if (dbre.getSpecies() == Species.MUS_MUSCULUS || dbre.getSpecies() == Species.RATTUS_NORVEGICUS || dbre.getSpecies() == Species.HOMO_SAPIENS) {
-			// find out if the entries in the Meta point to the strain information
-			// String[] metaKeys = {"read_coverage.coverage_level","individual.default_strain","source.default_source"};
+		if (dbre.getSpecies() == Species.MUS_MUSCULUS
+				|| dbre.getSpecies() == Species.RATTUS_NORVEGICUS
+				|| dbre.getSpecies() == Species.HOMO_SAPIENS) {
+			// find out if the entries in the Meta point to the strain
+			// information
+			// String[] metaKeys =
+			// {"read_coverage.coverage_level","individual.default_strain","source.default_source"};
 			// String[] metaKeys =
 			// {"read_coverage.coverage_level","individual.default_strain","individual.display_strain","individual.reference_strain"};
 			String[] metaKeys = { "read_coverage.coverage_level" };
@@ -78,29 +86,41 @@ public class Meta extends SingleDatabaseTestCase {
 
 				result &= checkKeysPresent(con, metaKey);
 				if (metaKey == "read_coverage.coverage_level") {
-					result &= checkForOrphansWithConstraint(con, "meta", "meta_value", "read_coverage", "level", "meta_key = '" + metaKey + "'");
-				} else if ((metaKey == "individual.default_strain") || (metaKey == "individual.display_strain")) {
-					result &= checkForOrphansWithConstraint(con, "meta", "meta_value", "sample", "name COLLATE latin1_general_cs", "meta_key = '" + metaKey + "'");
+					result &= checkForOrphansWithConstraint(con, "meta",
+							"meta_value", "read_coverage", "level",
+							"meta_key = '" + metaKey + "'");
+				} else if ((metaKey == "individual.default_strain")
+						|| (metaKey == "individual.display_strain")) {
+					result &= checkForOrphansWithConstraint(con, "meta",
+							"meta_value", "sample",
+							"name COLLATE latin1_general_cs", "meta_key = '"
+									+ metaKey + "'");
 				} else if (metaKey == "individual.reference_strain") {
 					result &= checkKeysPresent(con, metaKey);
 
 				}
 				/*
 				 * else if (metaKey == "source.default_source"){ result &=
-				 * checkForOrphansWithConstraint(con,"meta","meta_value","source","name","meta_key = '" + metaKey + "'"); }
+				 * checkForOrphansWithConstraint
+				 * (con,"meta","meta_value","source","name","meta_key = '" +
+				 * metaKey + "'"); }
 				 */
 
 			}
 		}
 		if (dbre.getSpecies() == Species.CANIS_FAMILIARIS) {
-			// find out if the entries in the Meta point to the strain information
+			// find out if the entries in the Meta point to the strain
+			// information
 			String[] metaKeys = { "individual.default_strain" };
 			for (int i = 0; i < metaKeys.length; i++) {
 				metaKey = metaKeys[i];
 
 				result &= checkKeysPresent(con, metaKey);
 				if (metaKey == "individual.default_strain") {
-					result &= checkForOrphansWithConstraint(con, "meta", "meta_value", "sample", "name COLLATE latin1_general_cs", "meta_key = '" + metaKey + "'");
+					result &= checkForOrphansWithConstraint(con, "meta",
+							"meta_value", "sample",
+							"name COLLATE latin1_general_cs", "meta_key = '"
+									+ metaKey + "'");
 				}
 			}
 		}
@@ -110,25 +130,32 @@ public class Meta extends SingleDatabaseTestCase {
 		for (int i = 0; i < metaKeys.length; i++) {
 			if (!checkKeysPresent(con, metaKeys[i])) {
 				result = false;
-				ReportManager.problem(this, con, "Missing required meta_key '" + metaKeys[i] + "'");
+				ReportManager.problem(this, con, "Missing required meta_key '"
+						+ metaKeys[i] + "'");
 			}
 		}
 
 		// List the keys that affects the schema
 		metaKeys = new String[] { "schema_version", "schema_type", "patch" };
-		// Check that the species_id column is NULL for meta entries that concerns the schema
+		// Check that the species_id column is NULL for meta entries that
+		// concerns the schema
 		for (int i = 0; i < metaKeys.length; i++) {
-			String sql = "SELECT meta_id FROM meta WHERE meta_key = '" + metaKeys[i] + "' AND species_id IS NOT NULL";
-			String[] violations = getColumnValues(con, sql);
+			String sql = "SELECT meta_id FROM meta WHERE meta_key = '"
+					+ metaKeys[i] + "' AND species_id IS NOT NULL";
+			String[] violations = DBUtils.getColumnValues(con, sql);
 			for (int j = 0; j < violations.length; j++) {
 				result = false;
-				ReportManager.problem(this, con, "Meta entry for meta_key '" + metaKeys[i] + "' with meta_id = " + violations[j] + " has species_id not set to NULL");
+				ReportManager.problem(this, con, "Meta entry for meta_key '"
+						+ metaKeys[i] + "' with meta_id = " + violations[j]
+						+ " has species_id not set to NULL");
 			}
 		}
 
 		if (result) {
-			// if there were no problems, just inform for the interface to pick the HC
-			ReportManager.correct(this, con, "Meta test passed without any problem");
+			// if there were no problems, just inform for the interface to pick
+			// the HC
+			ReportManager.correct(this, con,
+					"Meta test passed without any problem");
 		}
 		return result;
 	} // run
@@ -139,10 +166,12 @@ public class Meta extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey + "'");
+		int rows = DBUtils.getRowCount(con,
+				"SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey + "'");
 		if (rows == 0) {
 			result = false;
-			ReportManager.problem(this, con, "No entry in meta table for " + metaKey);
+			ReportManager.problem(this, con, "No entry in meta table for "
+					+ metaKey);
 		} else {
 			ReportManager.correct(this, con, metaKey + " entry present");
 		}
@@ -152,7 +181,8 @@ public class Meta extends SingleDatabaseTestCase {
 
 	// ---------------------------------------------------------------------
 	/**
-	 * Check that the schema_version in the meta table is present and matches the database name.
+	 * Check that the schema_version in the meta table is present and matches
+	 * the database name.
 	 */
 	private boolean checkSchemaVersionDBName(DatabaseRegistryEntry dbre) {
 
@@ -166,31 +196,39 @@ public class Meta extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		if (dbNameVersion == null) {
-			ReportManager.warning(this, con, "Can't deduce schema version from database name.");
+			ReportManager.warning(this, con,
+					"Can't deduce schema version from database name.");
 			return false;
 		}
 
-		String schemaVersion = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='schema_version'");
+		String schemaVersion = DBUtils.getRowColumnValue(con,
+				"SELECT meta_value FROM meta WHERE meta_key='schema_version'");
 		logger.finest("schema_version from meta table: " + schemaVersion);
 
 		if (schemaVersion == null || schemaVersion.length() == 0) {
 
-			ReportManager.problem(this, con, "No schema_version entry in meta table");
+			ReportManager.problem(this, con,
+					"No schema_version entry in meta table");
 			return false;
 
 		} else if (!schemaVersion.matches("[0-9]+")) {
 
-			ReportManager.problem(this, con, "Meta schema_version " + schemaVersion + " is not numeric");
+			ReportManager.problem(this, con, "Meta schema_version "
+					+ schemaVersion + " is not numeric");
 			return false;
 
 		} else if (!dbNameVersion.equals(schemaVersion)) {
 
-			ReportManager.problem(this, con, "Meta schema_version " + schemaVersion + " does not match version inferred from database name (" + dbNameVersion + ")");
+			ReportManager.problem(this, con, "Meta schema_version "
+					+ schemaVersion
+					+ " does not match version inferred from database name ("
+					+ dbNameVersion + ")");
 			return false;
 
 		} else {
 
-			ReportManager.correct(this, con, "schema_version " + schemaVersion + " matches database name version " + dbNameVersion);
+			ReportManager.correct(this, con, "schema_version " + schemaVersion
+					+ " matches database name version " + dbNameVersion);
 
 		}
 		return result;

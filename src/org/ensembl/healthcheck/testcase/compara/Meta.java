@@ -31,6 +31,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Repair;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key relationships.
@@ -73,7 +74,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 
 		Connection con = dbre.getConnection();
 
-		if (!checkTableExists(con, "meta")) {
+		if (!DBUtils.checkTableExists(con, "meta")) {
 			result = false;
 			ReportManager.problem(this, con, "Meta table not present");
 			return result;

@@ -39,7 +39,7 @@ public class MultiDbSpeciesNames extends MultiDatabaseTestCase {
 			+ "where name.species_id=ass.species_id and ass.meta_key='assembly.name' "
 			+ "and name.meta_value='$" + NAME_HOLDER
 			+ "$' and name.meta_key='$" + KEY_HOLDER + "$'";
-	private final static String DELETE_SQL = "delete from meta name where name.meta_value='$"
+	private final static String DELETE_SQL = "delete name.* from meta name where name.meta_value='$"
 			+ NAME_HOLDER + "$' and name.meta_key='$" + KEY_HOLDER + "$'";
 
 	@Override
@@ -75,10 +75,10 @@ public class MultiDbSpeciesNames extends MultiDatabaseTestCase {
 												+ ") has been found in the following core databases :"
 												+ StringUtils.join(dbs, ", "));
 						if(metaKey.equals("species.alias")) {
-							ReportManager.info(this,
+							ReportManager.problem(this,
 									coreDb.getConnection(), "SQL to remove: "+TemplateBuilder.template(DELETE_SQL, NAME_HOLDER,name, KEY_HOLDER,metaKey));							
 						} else {
-							ReportManager.info(this,
+							ReportManager.problem(this,
 									coreDb.getConnection(), "SQL to fix: "+TemplateBuilder.template(FIX_SQL, NAME_HOLDER,name, KEY_HOLDER,metaKey));							
 						}
 						result = false;

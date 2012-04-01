@@ -23,6 +23,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that if the start and end of translation is on the same exon, that start < end. Also check that translation ends aren't
@@ -68,7 +69,7 @@ public class TranslationStartEndExon extends SingleDatabaseTestCase {
 		// check if the start_exon of a translation exists in the exon_table
 
 		Connection con = dbre.getConnection();
-		int rows = getRowCount(con, " SELECT COUNT(*) FROM translation tl  LEFT JOIN exon e ON e.exon_id=tl.start_exon_id WHERE e.exon_id IS NULL");
+		int rows = DBUtils.getRowCount(con, " SELECT COUNT(*) FROM translation tl  LEFT JOIN exon e ON e.exon_id=tl.start_exon_id WHERE e.exon_id IS NULL");
 		if (rows > 0) {
 			result = false;
 			ReportManager.problem(this, con, rows + " translations refer to an start_exon which doesn't exist ");
@@ -77,7 +78,7 @@ public class TranslationStartEndExon extends SingleDatabaseTestCase {
 		}
 
 		// check if the end_exon of a translation exists in the exon_table
-		rows = getRowCount(con, " SELECT COUNT(*) FROM translation tl  LEFT JOIN exon e ON e.exon_id=tl.end_exon_id WHERE e.exon_id IS NULL");
+		rows = DBUtils.getRowCount(con, " SELECT COUNT(*) FROM translation tl  LEFT JOIN exon e ON e.exon_id=tl.end_exon_id WHERE e.exon_id IS NULL");
 		if (rows > 0) {
 			result = false;
 			ReportManager.problem(this, con, rows + " translations refer to an end_exon which doesn't exist in the exon-table");

@@ -21,6 +21,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Sanity check variation classes
@@ -74,7 +75,7 @@ public class VariationClasses extends SingleDatabaseTestCase {
                                 "AND s.name = 'HGMD-PUBLIC' "+
                                 "AND s.source_id = v.source_id ";
 
-			    result &= (getRowCount(con, query) == 0);
+			    result &= (DBUtils.getRowCount(con, query) == 0);
 
 		    } 
             catch (Exception e) {

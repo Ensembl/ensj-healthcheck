@@ -20,6 +20,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that there are no translations for pseudogenes.
@@ -61,7 +62,7 @@ public class Pseudogene extends SingleDatabaseTestCase {
 			qry += " and gene.biotype!= 'polymorphic_pseudogene' and (gene.source='havana' or gene.source='WU')";
 		}
 
-		int rows = getRowCount(con, qry);
+		int rows = DBUtils.getRowCount(con, qry);
 		if (rows > 0) {
 			result = false;
 			ReportManager.problem(this, con, "Translation table contains " + rows + " rows for pseudogene types - should contain none");

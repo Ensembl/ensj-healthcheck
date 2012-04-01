@@ -29,6 +29,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 
 /**
@@ -110,7 +111,7 @@ public class CheckTopLevelDnaFrag extends MultiDatabaseTestCase {
           if (speciesDbr != null) {
               Connection speciesCon = speciesDbr[0].getConnection();
               int maxRows = 50000;
-              int rows = getRowCount(comparaCon, "SELECT COUNT(*) FROM" +
+              int rows = DBUtils.getRowCount(comparaCon, "SELECT COUNT(*) FROM" +
                   " dnafrag LEFT JOIN genome_db USING (genome_db_id)" +
                   " WHERE genome_db.name = \"" + species + "\" AND assembly_default = 1");
               if (rows > maxRows) {

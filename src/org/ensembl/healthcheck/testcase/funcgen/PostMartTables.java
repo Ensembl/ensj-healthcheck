@@ -22,6 +22,7 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that certain views/tables required for the Biomart build are not present.
@@ -55,7 +56,7 @@ public class PostMartTables extends SingleDatabaseTestCase {
 		
 		for (String table : getBiomartFuncgenTablesAndViews()) {
 			
-			if (checkTableExists(con, table)) {
+			if (DBUtils.checkTableExists(con, table)) {
 				
 				ReportManager.problem(this, con,  table + " exists but should have been removed after the Biomart build");
 				result = false;

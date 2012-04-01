@@ -31,6 +31,7 @@ import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Checks the *_stable_id tables to ensure they are populated, have no orphan
@@ -156,7 +157,7 @@ public class FuncgenStableID extends SingleDatabaseTestCase {
 				sql = "SELECT count(stable_id) from regulatory_feature where " + 
 					"stable_id is not NULL and feature_set_id=" + fsetIdNames.getString(1);
 				System.out.println("Executing " + sql);
-				int nStableIDs = getRowCount(con, sql);
+				int nStableIDs = DBUtils.getRowCount(con, sql);
 			
 				
 				//We could really do with a HC to check we have RegFeats on all main Chrs
@@ -168,7 +169,7 @@ public class FuncgenStableID extends SingleDatabaseTestCase {
 				}
 				else{
 				
-					nStableIDs = getRowCount(con, "SELECT count(stable_id) from regulatory_feature where stable_id " + 
+					nStableIDs = DBUtils.getRowCount(con, "SELECT count(stable_id) from regulatory_feature where stable_id " + 
 											 "is NULL and feature_set_id=" + fsetIdNames.getString(1));
 
 
@@ -186,7 +187,7 @@ public class FuncgenStableID extends SingleDatabaseTestCase {
 
 				//Test for duplicates within set
 				//Could remove this if there is a unique feature_set_id, stble_id key?
-				int duplicates = getRowCount(con, "SELECT COUNT(stable_id)-COUNT(DISTINCT stable_id) FROM " + 
+				int duplicates = DBUtils.getRowCount(con, "SELECT COUNT(stable_id)-COUNT(DISTINCT stable_id) FROM " + 
 											 stableIDtable + " WHERE feature_set_id=" + fsetIdNames.getString(1));
 				
 				if (duplicates > 0) {
@@ -201,7 +202,7 @@ public class FuncgenStableID extends SingleDatabaseTestCase {
 
 
 				// check for invalid or missing stable ID versions
-				//int nInvalidVersions = getRowCount(con, "SELECT COUNT(*) AS " + typeName + "_with_invalid_version" + " FROM " + stableIDtable
+				//int nInvalidVersions = DBUtils.getRowCount(con, "SELECT COUNT(*) AS " + typeName + "_with_invalid_version" + " FROM " + stableIDtable
 				//								   + " WHERE version < 1 OR version IS NULL;");
 				//
 				//if (nInvalidVersions > 0) {
@@ -212,7 +213,7 @@ public class FuncgenStableID extends SingleDatabaseTestCase {
 
 				// make sure stable ID versions in the typeName_stable_id table matches those in stable_id_event
 				// for the latest mapping_session
-                //String mappingSessionId = getRowColumnValue(con, "SELECT mapping_session_id FROM mapping_session " +
+                //String mappingSessionId = DBUtils.getRowColumnValue(con, "SELECT mapping_session_id FROM mapping_session " +
 				//"ORDER BY created DESC LIMIT 1");
 
                 //if (mappingSessionId.equals("")) {
@@ -220,7 +221,7 @@ public class FuncgenStableID extends SingleDatabaseTestCase {
                 //  return result;
                 //}
 		
-				//int nVersionMismatch = getRowCount(con, "SELECT COUNT(*) FROM stable_id_event sie, " + stableIDtable +
+				//int nVersionMismatch = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM stable_id_event sie, " + stableIDtable +
 				//								   " si WHERE sie.mapping_session_id = " + Integer.parseInt(mappingSessionId) +
 				//								   " AND sie.new_stable_id = si.stable_id AND sie.new_version <> si.version");
 				
@@ -273,7 +274,7 @@ public class FuncgenStableID extends SingleDatabaseTestCase {
 					return true;
 				}
 				String prefixLetter = prefix + (String) tableToLetter.get(type);
-				int wrong = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE stable_id NOT LIKE '" + prefixLetter + "%'");
+				int wrong = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE stable_id NOT LIKE '" + prefixLetter + "%'");
 				if (wrong > 0) {
 					ReportManager.problem(this, con, wrong + " rows in " + table + " do not have the correct (" + prefixLetter + ") prefix");
 					result = false;
@@ -308,7 +309,7 @@ public class FuncgenStableID extends SingleDatabaseTestCase {
 //			String sql = "SELECT COUNT(*) FROM stable_id_event WHERE (old_stable_id LIKE '" + prefix + "%' OR new_stable_id LIKE '"
 //					+ prefix + "%') AND type != '" + type + "'";
 //
-//			int rows = getRowCount(con, sql);
+//			int rows = DBUtils.getRowCount(con, sql);
 //
 //			if (rows > 0) {
 //
@@ -333,7 +334,7 @@ public class FuncgenStableID extends SingleDatabaseTestCase {
 //		String prefix = "";
 //
 //		// hope the first row of the _type_stable_id table is correct
-//		String stableID = getRowColumnValue(con, "SELECT stable_id FROM " + type + "_stable_id LIMIT 1");
+//		String stableID = DBUtils.getRowColumnValue(con, "SELECT stable_id FROM " + type + "_stable_id LIMIT 1");
 //
 //		prefix = stableID.replaceAll("[0-9]", "");
 //
@@ -361,7 +362,7 @@ public class FuncgenStableID extends SingleDatabaseTestCase {
 //
 //			String sql = "SELECT COUNT(*) FROM " + table + " WHERE created_date=0 OR modified_date=0";
 //
-//			int rows = getRowCount(con, sql);
+//			int rows = DBUtils.getRowCount(con, sql);
 //
 //			if (rows > 0) {
 //

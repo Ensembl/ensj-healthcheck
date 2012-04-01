@@ -23,6 +23,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check for duplicated rows in various *_attrib tables.
@@ -70,13 +71,13 @@ public class DuplicateAttributes extends SingleDatabaseTestCase {
 
 			logger.finest("Checking " + table);
 
-			int totalRows = getRowCount(con, "SELECT COUNT(*) FROM " + table);
+			int totalRows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + table);
 
 			if (totalRows == 0) { // avoid division by zero
 				continue;
 			}
 
-			int uniqueRows = getRowCount(con, "SELECT COUNT(DISTINCT " + column + ", attrib_type_id, value) FROM " + table);
+			int uniqueRows = DBUtils.getRowCount(con, "SELECT COUNT(DISTINCT " + column + ", attrib_type_id, value) FROM " + table);
 
 			int duplicates = totalRows - uniqueRows;
 

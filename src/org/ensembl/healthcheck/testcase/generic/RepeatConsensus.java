@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that there are certain types in repeat_types.
@@ -73,7 +74,7 @@ public class RepeatConsensus extends SingleDatabaseTestCase {
 		if (dbre.getType() != DatabaseType.SANGER_VEGA) {// for sanger_vega, simple is fine
 			query += " OR repeat_type ='Simple'";
 		}
-		int rows = getRowCount(con, query);
+		int rows = DBUtils.getRowCount(con, query);
 
 		if (rows > 0) {
 			String report = "repeat_consensus table has " + rows + " rows of repeat_type empty";

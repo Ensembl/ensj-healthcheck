@@ -22,10 +22,12 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Check for genes, transcripts and exons where the is_current column is anything other than 1. Any value other than 1 will cause
- * problems for Ensembl databases.
+ * Check for genes, transcripts and exons where the is_current column is
+ * anything other than 1. Any value other than 1 will cause problems for Ensembl
+ * databases.
  */
 public class IsCurrent extends SingleDatabaseTestCase {
 
@@ -38,7 +40,7 @@ public class IsCurrent extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
-		
+
 		setTeamResponsible(Team.CORE);
 		setTeamResponsible(Team.GENEBUILD);
 		setDescription("Check for genes, transcripts and exons where the is_current column is anything other than 1.");
@@ -49,7 +51,7 @@ public class IsCurrent extends SingleDatabaseTestCase {
 	 * Run the test.
 	 * 
 	 * @param dbre
-	 *          The database to use.
+	 *            The database to use.
 	 * @return true if the test passed.
 	 * 
 	 */
@@ -65,16 +67,25 @@ public class IsCurrent extends SingleDatabaseTestCase {
 
 			String table = types[i];
 
-			int rows = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE is_current IS NULL OR is_current != 1");
+			int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + table
+					+ " WHERE is_current IS NULL OR is_current != 1");
 
 			if (rows > 0) {
 
-				ReportManager.problem(this, con, rows + " " + table + "s have is_current set to null or some value other than 1");
+				ReportManager
+						.problem(
+								this,
+								con,
+								rows
+										+ " "
+										+ table
+										+ "s have is_current set to null or some value other than 1");
 				result = false;
 
 			} else {
 
-				ReportManager.correct(this, con, "All " + table + "s have is_current=1");
+				ReportManager.correct(this, con, "All " + table
+						+ "s have is_current=1");
 
 			}
 

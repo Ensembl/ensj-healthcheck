@@ -25,6 +25,7 @@ import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that certain regions have a specific gene count.
@@ -39,7 +40,7 @@ public class GeneCount extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
-		
+
 		setDescription("Check that certain regions have a specific gene count.");
 		setPriority(Priority.AMBER);
 		setEffect("Causes incorrect display of gene counts and confusing contigview displays.");
@@ -52,14 +53,16 @@ public class GeneCount extends SingleDatabaseTestCase {
 	 * Run the test.
 	 * 
 	 * @param dbr
-	 *          The database registry containing all the specified databases.
+	 *            The database registry containing all the specified databases.
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
 
-		// MT chromosome should have 13 protein coding genes, only applies to core database
-		if (dbre.getSpecies() == Species.HOMO_SAPIENS && dbre.getType() == DatabaseType.CORE) {
+		// MT chromosome should have 13 protein coding genes, only applies to
+		// core database
+		if (dbre.getSpecies() == Species.HOMO_SAPIENS
+				&& dbre.getType() == DatabaseType.CORE) {
 			result &= countMTGenes(dbre.getConnection());
 		}
 
@@ -73,18 +76,22 @@ public class GeneCount extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		int genes = getRowCount(
-				con,
-				"SELECT COUNT(*) FROM coord_system cs, seq_region sr, gene g WHERE cs.coord_system_id=sr.coord_system_id AND cs.name='chromosome' AND cs.version='GRCh37' AND sr.name='MT' and g.seq_region_id=sr.seq_region_id AND g.biotype='protein_coding'");
+		int genes = DBUtils
+				.getRowCount(
+						con,
+						"SELECT COUNT(*) FROM coord_system cs, seq_region sr, gene g WHERE cs.coord_system_id=sr.coord_system_id AND cs.name='chromosome' AND cs.version='GRCh37' AND sr.name='MT' and g.seq_region_id=sr.seq_region_id AND g.biotype='protein_coding'");
 
 		if (genes != 13) {
 
-			ReportManager.problem(this, con, "Human MT chromosome should have 13 protein coding genes, actually has " + genes);
+			ReportManager.problem(this, con,
+					"Human MT chromosome should have 13 protein coding genes, actually has "
+							+ genes);
 			result = false;
 
 		} else {
 
-			ReportManager.correct(this, con, "Human MT chromosome has 13 protein coding genes.");
+			ReportManager.correct(this, con,
+					"Human MT chromosome has 13 protein coding genes.");
 
 		}
 

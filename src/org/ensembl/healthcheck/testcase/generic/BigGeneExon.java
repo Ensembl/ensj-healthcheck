@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check for any genes/exons that are suspiciously large; > 2Mb for genes, > 0.5Mb for exons. Length assumed to be end-start+1, i.e.
@@ -86,7 +87,7 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sanger_vega ignore genes that do not have source havana or WU
 			sql += " and (source='havana' or source='WU')";
 		}
-		int rows = getRowCount(con, sql);
+		int rows = DBUtils.getRowCount(con, sql);
 		if (rows > 0) {
 
 			ReportManager.info(this, con, rows + " genes are longer than " + GENE_WARN + " bases but less than " + GENE_ERROR + " bases");
@@ -103,7 +104,7 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 			sql += " and (source='havana' or source='WU')";
 		}
 
-		String[] longIDs = getColumnValues(con, sql);
+		String[] longIDs = DBUtils.getColumnValues(con, sql);
 
 		if (longIDs.length > 0) {
 
@@ -124,7 +125,7 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 			sql += " and (source='havana' or source='WU')";
 		}
 
-		longIDs = getColumnValues(con, sql);
+		longIDs = DBUtils.getColumnValues(con, sql);
 
 		if (longIDs.length > 0) {
 
@@ -142,7 +143,7 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 		// exon - error
 		sql = "SELECT COUNT(*) FROM exon WHERE (seq_region_end-seq_region_start+1) >= " + EXON_ERROR;
 
-		rows = getRowCount(con, sql);
+		rows = DBUtils.getRowCount(con, sql);
 		if (rows > 0) {
 
 			ReportManager.problem(this, con, rows + " exons are longer than " + EXON_ERROR + " bases");
@@ -168,11 +169,11 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 
 			// can't do one single query as not all genes may have
 			// display_xrefs/descriptions
-			String length = getRowColumnValue(con, "SELECT (seq_region_end-seq_region_start+1) AS length FROM gene WHERE gene_id=" + id);
-			String stableID = getRowColumnValue(con, "SELECT stable_id FROM gene WHERE gene_id=" + id);
-			String name = getRowColumnValue(con, "SELECT x.display_label FROM gene g, xref x WHERE x.xref_id=g.display_xref_id AND g.gene_id=" + id);
-			String description = getRowColumnValue(con, "SELECT description FROM gene WHERE gene_id=" + id);
-			String status = getRowColumnValue(con, "SELECT status FROM gene WHERE gene_id=" + id);
+			String length = DBUtils.getRowColumnValue(con, "SELECT (seq_region_end-seq_region_start+1) AS length FROM gene WHERE gene_id=" + id);
+			String stableID = DBUtils.getRowColumnValue(con, "SELECT stable_id FROM gene WHERE gene_id=" + id);
+			String name = DBUtils.getRowColumnValue(con, "SELECT x.display_label FROM gene g, xref x WHERE x.xref_id=g.display_xref_id AND g.gene_id=" + id);
+			String description = DBUtils.getRowColumnValue(con, "SELECT description FROM gene WHERE gene_id=" + id);
+			String status = DBUtils.getRowColumnValue(con, "SELECT status FROM gene WHERE gene_id=" + id);
 
 			String str = "Gene " + stableID;
 			if (name != null && name.length() > 0) {

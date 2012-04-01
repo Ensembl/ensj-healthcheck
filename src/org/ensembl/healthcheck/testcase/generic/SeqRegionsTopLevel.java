@@ -19,6 +19,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that all seq_regions comprising genes are marked as toplevel in seq_region_attrib. Also checks that there is at least one
@@ -86,7 +87,7 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 	private int getAttribTypeID(Connection con) {
 
 		// check that all gene seq_regions have toplevel attributes
-		String val = getRowColumnValue(con, "SELECT attrib_type_id FROM attrib_type WHERE code=\'toplevel\'");
+		String val = DBUtils.getRowColumnValue(con, "SELECT attrib_type_id FROM attrib_type WHERE code=\'toplevel\'");
 		if (val == null || val.equals("")) {
 			ReportManager.problem(this, con, "Can't find a seq_region attrib_type with code 'toplevel', exiting");
 			return -1;
@@ -105,8 +106,8 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		int numTopLevelGenes = getRowCount(con, "SELECT COUNT(*) FROM seq_region_attrib sra, gene g WHERE sra.attrib_type_id = " + topLevelAttribTypeID + " AND sra.seq_region_id=g.seq_region_id");
-		int numGenes = getRowCount(con, "SELECT COUNT(*) FROM gene");
+		int numTopLevelGenes = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM seq_region_attrib sra, gene g WHERE sra.attrib_type_id = " + topLevelAttribTypeID + " AND sra.seq_region_id=g.seq_region_id");
+		int numGenes = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM gene");
 
 		int nonTopLevelGenes = numGenes - numTopLevelGenes;
 
@@ -131,7 +132,7 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		// check for at least one toplevel seq_region
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM seq_region_attrib WHERE attrib_type_id=" + topLevelAttribTypeID);
+		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM seq_region_attrib WHERE attrib_type_id=" + topLevelAttribTypeID);
 		if (rows == 0) {
 
 			ReportManager.problem(this, con, "No seq_regions are marked as toplevel. This may cause problems for Compara");
@@ -158,7 +159,7 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 		// check that there is one co-ordinate system with rank = 1
 		if (!dbre.isMultiSpecies()) {
 
-			int rows = getRowCount(con, "SELECT COUNT(*) FROM coord_system WHERE rank=1");
+			int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM coord_system WHERE rank=1");
 			if (rows == 0) {
 
 				ReportManager.problem(this, con, "No co-ordinate systems have rank = 1");
@@ -186,7 +187,7 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 	private boolean checkAssemblyTable(Connection con, int topLevelAttribTypeID) {
 		boolean result = true;
 
-		int rows = getRowCount(con, "SELECT count(*) FROM seq_region_attrib sra LEFT JOIN assembly a on sra.seq_region_id = a.asm_seq_region_id, seq_region s, coord_system c "
+		int rows = DBUtils.getRowCount(con, "SELECT count(*) FROM seq_region_attrib sra LEFT JOIN assembly a on sra.seq_region_id = a.asm_seq_region_id, seq_region s, coord_system c "
 				+ "where a.asm_seq_region_id is null and sra.attrib_type_id =" + topLevelAttribTypeID + " and c.coord_system_id = s.coord_system_id "
 				+ " and s.seq_region_id = sra.seq_region_id and c.attrib not like '%sequence_level%'");
 

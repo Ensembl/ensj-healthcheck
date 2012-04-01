@@ -23,6 +23,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that there is a table (e.g. hsapiens_gene_ensembl__eFG_PHALANX_OneArray__dm) corresponding to each species and microarray
@@ -66,13 +67,13 @@ public class MicroArrayDimensionTables extends SingleDatabaseTestCase {
 
 			logger.finest(String.format("Getting list of microarray names used in %s (BioMart equivalent %s)", funcgenDB.getName(), speciesRoot));
 
-			String[] tables = getColumnValues(funcgenDB.getConnection(), String.format(
+			String[] tables = DBUtils.getColumnValues(funcgenDB.getConnection(), String.format(
 					"SELECT DISTINCT(CONCAT('%s_gene_ensembl__eFG_',vendor,'_',REPLACE(name,'-','_'),'__dm')) FROM array WHERE format = 'EXPRESSION'", speciesRoot));
 
 			// check that a BioMart table for each entry exists
 			for (String table : tables) {
 
-				if (!checkTableExists(martCon, table)) {
+				if (!DBUtils.checkTableExists(martCon, table)) {
 
 					ReportManager.problem(this, martCon, String.format("Microarray table named %s in species %s (%s) is missing", table, funcgenDB.getSpecies().toString(), speciesRoot));
 					result = false;

@@ -19,6 +19,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Checks that meta_value for key assembly.name is not longer than 16 characters - the current display width limit on the website.
@@ -47,12 +48,12 @@ public class AssemblyNameLength extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='assembly.name'");
+		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='assembly.name'");
 		if (rows == 0) {
 			ReportManager.problem(this, con, "No entry in meta table for assembly.name");
 			return false;
 		} else {
-			int asemblyNameLength = Integer.valueOf(getRowColumnValue(con, "SELECT LENGTH(meta_value) FROM meta WHERE meta_key='assembly.name'")).intValue();
+			int asemblyNameLength = Integer.valueOf(DBUtils.getRowColumnValue(con, "SELECT LENGTH(meta_value) FROM meta WHERE meta_key='assembly.name'")).intValue();
 
 			if (asemblyNameLength > 16 ) {
 				ReportManager.problem(this, con, "assembly.name value in Meta table is longer than 16 characters");

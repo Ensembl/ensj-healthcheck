@@ -19,11 +19,14 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.SqlTemplate;
 
 /**
- * Check that the number of KNOWN & NOVEL genes is within 20% in the new and previous databases. Also check for unset statuses in
- * genes & transcripts. Also check that all KNOWN and KNOWN_BY_PROJECTION genes have display_srefs set
+ * Check that the number of KNOWN & NOVEL genes is within 20% in the new and
+ * previous databases. Also check for unset statuses in genes & transcripts.
+ * Also check that all KNOWN and KNOWN_BY_PROJECTION genes have display_srefs
+ * set
  */
 
 public class GeneStatus extends SingleDatabaseTestCase {
@@ -39,7 +42,7 @@ public class GeneStatus extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
-		
+
 		setDescription("Check that the number of KNOWN genes & transcripts is within 20% in the new and previous databases. Also check for unset status.");
 		setTeamResponsible(Team.CORE);
 		setSecondTeamResponsible(Team.GENEBUILD);
@@ -61,7 +64,7 @@ public class GeneStatus extends SingleDatabaseTestCase {
 	 * Run the test.
 	 * 
 	 * @param dbre
-	 *          The database to use.
+	 *            The database to use.
 	 * @return true if the test passed.
 	 * 
 	 */
@@ -69,7 +72,8 @@ public class GeneStatus extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		if (dbre.getType() != DatabaseType.OTHERFEATURES && dbre.getType() != DatabaseType.RNASEQ) {
+		if (dbre.getType() != DatabaseType.OTHERFEATURES
+				&& dbre.getType() != DatabaseType.RNASEQ) {
 			checkPrevious(dbre);
 		}
 
@@ -97,11 +101,13 @@ public class GeneStatus extends SingleDatabaseTestCase {
 		DatabaseRegistryEntry sec = getEquivalentFromSecondaryServer(dbre);
 
 		if (sec == null) {
-			logger.warning("Can't get equivalent database for " + dbre.getName());
+			logger.warning("Can't get equivalent database for "
+					+ dbre.getName());
 			return true;
 		}
 
-		logger.finest("Equivalent database on secondary server is " + sec.getName());
+		logger.finest("Equivalent database on secondary server is "
+				+ sec.getName());
 
 		String[] types = { "gene", "transcript" };
 
@@ -115,14 +121,16 @@ public class GeneStatus extends SingleDatabaseTestCase {
 
 				String status = stats[i];
 
-				String sql = "SELECT COUNT(*) FROM " + type + " WHERE status='" + status + "'";
-				int current = getRowCount(dbre.getConnection(), sql);
-				int previous = getRowCount(sec.getConnection(), sql);
+				String sql = "SELECT COUNT(*) FROM " + type + " WHERE status='"
+						+ status + "'";
+				int current = DBUtils.getRowCount(dbre.getConnection(), sql);
+				int previous = DBUtils.getRowCount(sec.getConnection(), sql);
 
 				// if there are no KNOWN genes at all, fail
 				if (status.equals("KNOWN") && current == 0) {
 
-					ReportManager.problem(this, con, "No " + type + "s have status " + status);
+					ReportManager.problem(this, con, "No " + type
+							+ "s have status " + status);
 					return false;
 
 				}
@@ -130,24 +138,41 @@ public class GeneStatus extends SingleDatabaseTestCase {
 				// otherwise check ratios
 				if (previous == 0) { // avoid division by zero
 
-					ReportManager.warning(this, con, "Previous count of " + status + " " + type + "s is 0, skipping");
+					ReportManager.warning(this, con, "Previous count of "
+							+ status + " " + type + "s is 0, skipping");
 					return false;
 
 				}
 
-				double difference = (double) (previous - current) / (double) previous;
+				double difference = (double) (previous - current)
+						/ (double) previous;
 
-				logger.finest(type + ": previous " + previous + " current " + current + " difference ratio " + difference);
+				logger.finest(type + ": previous " + previous + " current "
+						+ current + " difference ratio " + difference);
 
 				if (difference > THRESHOLD) {
 
-					ReportManager.problem(this, con, "Only " + current + " " + type + "s have " + status + " status in the current database, compared with " + previous + " in the previous database");
+					ReportManager.problem(this, con, "Only " + current + " "
+							+ type + "s have " + status
+							+ " status in the current database, compared with "
+							+ previous + " in the previous database");
 					result = false;
 
 				} else {
 
-					ReportManager.correct(this, con, "Current database has " + current + " " + type + "s of status " + status + " compared to " + previous
-							+ " in the previous database, which is within the allowed tollerance.");
+					ReportManager
+							.correct(
+									this,
+									con,
+									"Current database has "
+											+ current
+											+ " "
+											+ type
+											+ "s of status "
+											+ status
+											+ " compared to "
+											+ previous
+											+ " in the previous database, which is within the allowed tollerance.");
 
 				}
 
@@ -160,7 +185,7 @@ public class GeneStatus extends SingleDatabaseTestCase {
 
 	private boolean checkNull(DatabaseRegistryEntry dbre) {
 		boolean result = true;
-		for (String type: new String[]{ "gene", "transcript" }) {
+		for (String type : new String[] { "gene", "transcript" }) {
 			result &= checkNoNulls(dbre.getConnection(), type, "status");
 		}
 		return result;
@@ -169,20 +194,29 @@ public class GeneStatus extends SingleDatabaseTestCase {
 	private boolean checkDisplayXrefs(DatabaseRegistryEntry dbre) {
 		boolean result = true;
 		Connection con = dbre.getConnection();
-		SqlTemplate t = getSqlTemplate(con);
+		SqlTemplate t = DBUtils.getSqlTemplate(con);
 
-		for(String status: new String[]{"KNOWN", "KNOWN_BY_PROJECTION"}) {
-		  int rows  = t.queryForDefaultObject("SELECT COUNT(*) from gene where status=? AND display_xref_id IS NULL", Integer.class, status);
-		  if(rows > 0) {
-		    int total = t.queryForDefaultObject("SELECT COUNT(*) from gene where status=?", Integer.class, status);
-		    String useful = String.format("select count(*),logic_name from gene g, analysis a WHERE g.analysis_id=a.analysis_id and g.status= '%s' AND display_xref_id is NULL group by logic_name;", status);
-		    String msg = String.format("%d genes of status %s have NULL display_xrefs (out of a total of %d)\nUSEFUL SQL: %s ", rows, status, total, useful);
-		    ReportManager.problem(this, con, msg);
-		    result = false;
-		  }
-		  else {
-		    ReportManager.correct(this, con, String.format("No null display_xrefs of status %s", status));
-		  }
+		for (String status : new String[] { "KNOWN", "KNOWN_BY_PROJECTION" }) {
+			int rows = t
+					.queryForDefaultObject(
+							"SELECT COUNT(*) from gene where status=? AND display_xref_id IS NULL",
+							Integer.class, status);
+			if (rows > 0) {
+				int total = t.queryForDefaultObject(
+						"SELECT COUNT(*) from gene where status=?",
+						Integer.class, status);
+				String useful = String
+						.format("select count(*),logic_name from gene g, analysis a WHERE g.analysis_id=a.analysis_id and g.status= '%s' AND display_xref_id is NULL group by logic_name;",
+								status);
+				String msg = String
+						.format("%d genes of status %s have NULL display_xrefs (out of a total of %d)\nUSEFUL SQL: %s ",
+								rows, status, total, useful);
+				ReportManager.problem(this, con, msg);
+				result = false;
+			} else {
+				ReportManager.correct(this, con, String.format(
+						"No null display_xrefs of status %s", status));
+			}
 		}
 		return result;
 	}

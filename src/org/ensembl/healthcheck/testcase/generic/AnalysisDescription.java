@@ -19,6 +19,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that all of certain types of objects have analysis_descriptions. Also check that displayable field is set.
@@ -87,12 +88,12 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 				sql = "SELECT DISTINCT(g.analysis_id) FROM gene g, transcript t WHERE t.gene_id=g.gene_id";
 			}
 
-			String[] analyses = getColumnValues(con, sql);
+			String[] analyses = DBUtils.getColumnValues(con, sql);
 
 			// check each one has an analysis_description
 			for (String analysis : analyses) {
 
-				int count = getRowCount(con, String.format("SELECT COUNT(*) FROM analysis_description WHERE analysis_id=%s", analysis));
+				int count = DBUtils.getRowCount(con, String.format("SELECT COUNT(*) FROM analysis_description WHERE analysis_id=%s", analysis));
 
 				if (count == 0) {
 

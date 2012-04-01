@@ -6,6 +6,7 @@ import java.sql.Statement;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * @author mnuhn
@@ -37,7 +38,7 @@ public class SeqRegionLength extends AbstractEgCoreTestCase {
 
 		Connection con = dbre.getConnection();
 		
-		int numRows = getRowCount(con, sql_find_wrong_lengths);
+		int numRows = DBUtils.getRowCount(con, sql_find_wrong_lengths);
 		
 		boolean passed = numRows==0; 
 		

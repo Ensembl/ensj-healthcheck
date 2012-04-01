@@ -19,6 +19,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check for ARRAY() entries in external_synonym.
@@ -35,7 +36,7 @@ public class ExternalSynonymArray extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
-		
+
 		setDescription("Check for ARRAY() entries in external_synonym.");
 		setTeamResponsible(Team.RELEASE_COORDINATOR);
 		setSecondTeamResponsible(Team.GENEBUILD);
@@ -58,7 +59,7 @@ public class ExternalSynonymArray extends SingleDatabaseTestCase {
 	 * Run the test.
 	 * 
 	 * @param dbre
-	 *          The database to use.
+	 *            The database to use.
 	 * @return true if the test passed.
 	 * 
 	 */
@@ -68,11 +69,14 @@ public class ExternalSynonymArray extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM external_synonym WHERE synonym LIKE 'ARRAY(%)'");
+		int rows = DBUtils
+				.getRowCount(con,
+						"SELECT COUNT(*) FROM external_synonym WHERE synonym LIKE 'ARRAY(%)'");
 
 		if (rows > 0) {
 
-			ReportManager.problem(this, con, rows + " rows in external_synonym have ARRAY() names");
+			ReportManager.problem(this, con, rows
+					+ " rows in external_synonym have ARRAY() names");
 			result = false;
 
 		} else {

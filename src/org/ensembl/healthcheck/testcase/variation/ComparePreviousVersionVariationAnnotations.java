@@ -12,11 +12,12 @@
  */
 package org.ensembl.healthcheck.testcase.variation;
 
+import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
-import java.sql.Connection;
-import org.ensembl.healthcheck.ReportManager;
+
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
 

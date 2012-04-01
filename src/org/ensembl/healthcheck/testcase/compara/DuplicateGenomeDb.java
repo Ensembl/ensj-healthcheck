@@ -26,6 +26,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for entries in the GenomeDB table with the same name and assembly_default set to true for more than one.
@@ -70,7 +71,7 @@ public class DuplicateGenomeDb extends SingleDatabaseTestCase {
 	        + ") a JOIN genome_db g ON (g.name = a.name) ORDER BY NAME; ";
 
 
-        String[] genomeDbIds = getColumnValues(con, sql);
+        String[] genomeDbIds = DBUtils.getColumnValues(con, sql);
 
         if (genomeDbIds.length > 0) {
             result = false;

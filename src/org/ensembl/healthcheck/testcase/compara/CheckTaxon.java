@@ -29,6 +29,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 
 /**
@@ -118,7 +119,7 @@ public class CheckTaxon extends MultiDatabaseTestCase {
         
 	//Check that don't have duplicate entries in the ncbi_taxa_name table
 	String useful_sql = "SELECT taxon_id,name,name_class,count(*) FROM ncbi_taxa_name GROUP BY taxon_id,name,name_class HAVING count(*) > 1;";
-	String[] failures = getColumnValues(comparaCon, useful_sql);
+	String[] failures = DBUtils.getColumnValues(comparaCon, useful_sql);
 	if (failures.length > 0) {
 	    ReportManager.problem(this, comparaCon, "FAILED ncbi_taxa_name contains duplicate entries ");
 	    ReportManager.problem(this, comparaCon, "FAILURE DETAILS: There are " + failures.length + " ncbi_taxa_names with more than 1 entry");
@@ -136,7 +137,7 @@ public class CheckTaxon extends MultiDatabaseTestCase {
             Connection speciesCon = speciesDbr[0].getConnection();
             String sql1, sql2;
             /* Get taxon_id */
-            String taxon_id = getRowColumnValue(speciesCon,
+            String taxon_id = DBUtils.getRowColumnValue(speciesCon,
                 "SELECT meta_value FROM meta WHERE meta_key = \"species.taxonomy_id\"");
             
             /* Check name ++ compara scientific name := last two entries in the species classification in the core meta table */
@@ -180,7 +181,7 @@ public class CheckTaxon extends MultiDatabaseTestCase {
                in one single SQL. Therefore, we are getting the results recursivelly and
                then execute a dumb SQL query with result itself */
             String comparaClassification = "";
-            String values1[] = getRowValues(comparaCon,
+            String values1[] = DBUtils.getRowValues(comparaCon,
                 "SELECT rank, parent_id, genbank_hidden_flag FROM ncbi_taxa_node WHERE taxon_id = " + taxon_id);
             if (values1.length == 0) {
               /* if no rows are fetched, this taxon is missing from compara DB */
@@ -188,14 +189,14 @@ public class CheckTaxon extends MultiDatabaseTestCase {
             } else {
               String this_taxon_id = values1[1];
               while (!this_taxon_id.equals("0")) {
-                      values1 = getRowValues(comparaCon,
+                      values1 = DBUtils.getRowValues(comparaCon,
                                              "SELECT rank, parent_id, genbank_hidden_flag FROM ncbi_taxa_node WHERE taxon_id = " + this_taxon_id);
                       if ( // values1[2].equals("0") &&       // we used to filter out entries with genbank_hidden_flag, we don't anymore
                               !this_taxon_id.equals("33154") &&   // "Fungi/Metazoa" node (under various names) has to be excluded
                               !values1[1].equals("1") && !values1[1].equals("0") &&
                               !values1[0].equals("subgenus") && !values1[0].equals("subspecies")
                               ) {
-                              String taxonName = getRowColumnValue(comparaCon,
+                              String taxonName = DBUtils.getRowColumnValue(comparaCon,
                                                                    "SELECT name FROM ncbi_taxa_name " +
                                                                    "WHERE name_class = \"scientific name\" AND taxon_id = " + this_taxon_id);
                               
@@ -209,7 +210,7 @@ public class CheckTaxon extends MultiDatabaseTestCase {
               sql1 = "SELECT \"classification\", \"" + comparaClassification + "\"";
               /* It will be much better to run this using GROUP_CONCAT() but our MySQL server does not support it yet */
               sql2 = "SELECT \"classification\", \"";
-              String[] values2 = getColumnValues(speciesCon,
+              String[] values2 = DBUtils.getColumnValues(speciesCon,
                   "SELECT meta_value FROM meta WHERE meta_key = \"species.classification\"" +
                   " ORDER BY meta_id");
               /* Skip first value as it is part of the species name and not the lineage */

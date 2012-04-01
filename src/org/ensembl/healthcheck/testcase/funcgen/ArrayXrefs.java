@@ -51,7 +51,7 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 
 	public void types() {
 		removeAppliesToType(DatabaseType.CORE);
-		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.OTHERFEATURES); 
 		removeAppliesToType(DatabaseType.CDNA);
 		removeAppliesToType(DatabaseType.VEGA);
 	}
@@ -86,10 +86,10 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 		// Checks EPXRESSION and CGH arrays only
 		
 		
-//		Integer displayableArrays = getRowCount(efgCon, "SELECT COUNT(*) FROM array a, status s, status_name sn where sn.name='DISPLAYABLE' and " +
+//		Integer displayableArrays = DBUtils.getRowCount(efgCon, "SELECT COUNT(*) FROM array a, status s, status_name sn where sn.name='DISPLAYABLE' and " +
 //														"sn.status_name_id=s.status_name_id and s.table_name='array' and s.table_id=a.array_id");
 	
-		int expressionArrays = getRowCount(efgCon, "SELECT COUNT(*) FROM array a where (format='EXPRESSION' OR format='CGH')");
+		int expressionArrays = DBUtils.getRowCount(efgCon, "SELECT COUNT(*) FROM array a where (format='EXPRESSION' OR format='CGH')");
 		
 		if ( expressionArrays == 0) { //Assume we should always have EXPRESSION arrays
 			ReportManager.problem(this, efgCon, DBUtils.getShortDatabaseName(efgCon) + 
@@ -179,7 +179,7 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 			
 		//Die if we don't see the current schema build and is the only one that is_current
 		//Otherwise we cannot be sure that all seq_region records have been updated
-		String[] currentSchemaBuilds = getColumnValues(efgCon,  "SELECT schema_build FROM coord_system where name='chromosome' and is_current=1");
+		String[] currentSchemaBuilds = DBUtils.getColumnValues(efgCon,  "SELECT schema_build FROM coord_system where name='chromosome' and is_current=1");
 		
 		if ((currentSchemaBuilds.length != 1) ||
 			(! currentSchemaBuilds[0].equals(schemaBuild))){
@@ -233,7 +233,7 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 			//Not enirely true, there are plenty of data changes which can cause a version bump which don't affect array mapping
 			
 					
-			String[] exdbIDs = getColumnValues(efgCon, "select external_db_id from external_db where db_name='" + edbName 
+			String[] exdbIDs = DBUtils.getColumnValues(efgCon, "select external_db_id from external_db where db_name='" + edbName 
 											   + "' and db_release like '%\\_" + assemblyBuild[1] + "'");
 
 			//Catch absent edbs
@@ -268,8 +268,8 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 			
 		
 			
-			xrefObjects[0] = getRowCount(efgCon, "select count(*) from array where vendor='AFFY'");
-			xrefObjects[1] = getRowCount(efgCon, "select count(*) from array where vendor!='AFFY'");
+			xrefObjects[0] = DBUtils.getRowCount(efgCon, "select count(*) from array where vendor='AFFY'");
+			xrefObjects[1] = DBUtils.getRowCount(efgCon, "select count(*) from array where vendor!='AFFY'");
 				
 			
 			for (int i = 0; i <= 1; i++) {

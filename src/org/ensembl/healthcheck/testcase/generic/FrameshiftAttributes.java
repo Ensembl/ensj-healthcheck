@@ -26,6 +26,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that transcript frameshift attributes have been calculated.
@@ -42,7 +43,7 @@ public class FrameshiftAttributes extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
-		
+
 		setDescription("Check that transcript frameshift attributes have been calculated.");
 		setTeamResponsible(Team.RELEASE_COORDINATOR);
 	}
@@ -64,7 +65,7 @@ public class FrameshiftAttributes extends SingleDatabaseTestCase {
 	 * Run the test.
 	 * 
 	 * @param dbre
-	 *          The database to use.
+	 *            The database to use.
 	 * @return true if the test passed.
 	 * 
 	 */
@@ -74,16 +75,24 @@ public class FrameshiftAttributes extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM attrib_type at, transcript_attrib ta WHERE at.attrib_type_id=ta.attrib_type_id AND at.code='Frameshift'");
+		int rows = DBUtils
+				.getRowCount(
+						con,
+						"SELECT COUNT(*) FROM attrib_type at, transcript_attrib ta WHERE at.attrib_type_id=ta.attrib_type_id AND at.code='Frameshift'");
 
 		if (rows == 0) {
 
-			ReportManager.problem(this, con, "No transcript frameshift attributes found\n --> make sure you ran script ensembl/misc_scripts/frameshift_transcript_attribs.pl");
+			ReportManager
+					.problem(
+							this,
+							con,
+							"No transcript frameshift attributes found\n --> make sure you ran script ensembl/misc_scripts/frameshift_transcript_attribs.pl");
 			result = false;
 
 		} else {
 
-			ReportManager.correct(this, con, rows + " transcript frameshift attributes found");
+			ReportManager.correct(this, con, rows
+					+ " transcript frameshift attributes found");
 
 		}
 

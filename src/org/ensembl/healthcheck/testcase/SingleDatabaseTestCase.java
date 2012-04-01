@@ -19,6 +19,8 @@ package org.ensembl.healthcheck.testcase;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.util.DBUtils;
+
 import java.sql.Connection;
 
 /**
@@ -64,7 +66,7 @@ public abstract class SingleDatabaseTestCase extends EnsTestCase {
         }
 
         logger.fine(useful_sql);
-        count = getRowCount(con, useful_sql);
+        count = DBUtils.getRowCount(con, useful_sql);
 
         if (count == 0) {
             ReportManager.correct(this, con, "PASSED ");

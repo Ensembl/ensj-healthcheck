@@ -19,6 +19,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that some display_xrefs are set. Also check for numeric EntrezGenes being used as display xrefs.
@@ -74,9 +75,9 @@ public class DisplayXref extends SingleDatabaseTestCase {
 		String[] types = { "gene", "transcript" };
 		for (int i = 0; i < types.length; i++) {
 
-			int total = getRowCount(con, "SELECT COUNT(*) FROM " + types[i]);
+			int total = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + types[i]);
 
-			if (getRowCount(con, "SELECT COUNT(*) FROM " + types[i] + " WHERE display_xref_id IS NOT NULL AND display_xref_id > 0") == 0) {
+			if (DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + types[i] + " WHERE display_xref_id IS NOT NULL AND display_xref_id > 0") == 0) {
 
 				ReportManager.problem(this, con, "No " + types[i] + "s with valid display_xref_id");
 				result = false;
@@ -84,7 +85,7 @@ public class DisplayXref extends SingleDatabaseTestCase {
 			}
 
 			// no display_xref_id should be 0
-			int zeroDX = getRowCount(con, "SELECT COUNT(*) FROM " + types[i] + " WHERE display_xref_id = 0");
+			int zeroDX = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + types[i] + " WHERE display_xref_id = 0");
 			if (zeroDX > 0) {
 
 				ReportManager.problem(this, con, zeroDX + " " + types[i] + " display_xrefs are set to 0 - should be set to NULL");
@@ -96,7 +97,7 @@ public class DisplayXref extends SingleDatabaseTestCase {
 			// can't use countOrphans() here as we need to rule out cases where both
 			// are null
 
-			int orphans = getRowCount(con, "SELECT COUNT(*) FROM " + types[i] + " LEFT JOIN xref ON " + types[i] + ".display_xref_id=xref.xref_id WHERE " + types[i]
+			int orphans = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + types[i] + " LEFT JOIN xref ON " + types[i] + ".display_xref_id=xref.xref_id WHERE " + types[i]
 					+ ".display_xref_id IS NOT NULL AND xref.xref_id IS NULL");
 
 			if (orphans > 0) {
@@ -109,7 +110,7 @@ public class DisplayXref extends SingleDatabaseTestCase {
 		}
 
 		// check for numeric EntrezGenes being used as display_xrefs
-		int numeric = getRowCount(con,
+		int numeric = DBUtils.getRowCount(con,
 				"SELECT COUNT(*) FROM gene g, xref x, external_db e WHERE e.external_db_id=x.external_db_id AND g.display_xref_id=x.xref_id AND e.db_name='EntrezGene' AND x.display_label REGEXP '^[0-9]+$'");
 
 		if (numeric > 0) {

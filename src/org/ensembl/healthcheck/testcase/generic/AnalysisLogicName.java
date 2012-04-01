@@ -25,6 +25,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.Utils;
 
 
@@ -86,7 +87,7 @@ public class AnalysisLogicName extends SingleDatabaseTestCase {
         private boolean checkdbVersion(Connection con) {
 
                 boolean result = true;
-                int rows = getRowCount(con, "SELECT COUNT(*) FROM analysis where isnull(db_version) " );
+                int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM analysis where isnull(db_version) " );
                 if (rows > 0) {
                          result = false ;
                          ReportManager.problem(this, con,  rows + " Analyses are missing db_version");
@@ -109,7 +110,7 @@ public class AnalysisLogicName extends SingleDatabaseTestCase {
 
                 boolean result = true;
 
-                String[] logicNames = getColumnValues(con, "SELECT logic_name FROM analysis where BINARY logic_name != lower(logic_name) ");
+                String[] logicNames = DBUtils.getColumnValues(con, "SELECT logic_name FROM analysis where BINARY logic_name != lower(logic_name) ");
                 if (logicNames.length > 0) {
                         ReportManager.problem(this, con, "The following logic_names are not lower case: " + Utils.arrayToString(logicNames,",") );
                 } else {

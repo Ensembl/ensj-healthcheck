@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check for Uniprot xrefs that have "Unreviewed" as the primary DB accession.
@@ -65,7 +66,7 @@ public class UnreviewedXrefs extends SingleDatabaseTestCase {
 
 		// --------------------------------
 		// MGI - dbprimary_acc should have MGI: prefix
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM xref x, external_db e WHERE e.external_db_id=x.external_db_id AND e.db_name LIKE 'UniProt%' AND x.dbprimary_acc='Unreviewed';");
+		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM xref x, external_db e WHERE e.external_db_id=x.external_db_id AND e.db_name LIKE 'UniProt%' AND x.dbprimary_acc='Unreviewed';");
 
 		if (rows > 0) {
 			ReportManager.problem(this, con, rows + " UniProt xrefs have \'Unreviewed\' as the primary accession.");

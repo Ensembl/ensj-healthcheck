@@ -16,11 +16,6 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
@@ -28,13 +23,14 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.util.Utils;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Check that the meta table exists and has data and the entries correspond to the database name and a few other basic data errors. 
- * Other meta_value tests are done in the MetaValue test case. 
- * Only one meta table at a time is done here; checks for the consistency of the
- * meta table across species are done in MetaCrossSpecies.
+ * Check that the meta table exists and has data and the entries correspond to
+ * the database name and a few other basic data errors. Other meta_value tests
+ * are done in the MetaValue test case. Only one meta table at a time is done
+ * here; checks for the consistency of the meta table across species are done in
+ * MetaCrossSpecies.
  */
 public class Meta extends SingleDatabaseTestCase {
 	private boolean isSangerVega = false;
@@ -49,17 +45,18 @@ public class Meta extends SingleDatabaseTestCase {
 		addToGroup("compara-ancestral");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
-		
+
 		setTeamResponsible(Team.RELEASE_COORDINATOR);
 		setSecondTeamResponsible(Team.GENEBUILD);
 		setDescription("Check that the meta table exists and has data and the entries correspond to the database name");
 	}
 
 	/**
-	 * Check that the meta table exists and has data and the entries correspond to the database name.
+	 * Check that the meta table exists and has data and the entries correspond
+	 * to the database name.
 	 * 
 	 * @param dbre
-	 *          The database to check.
+	 *            The database to check.
 	 * @return True if the test passed.
 	 */
 	public boolean run(final DatabaseRegistryEntry dbre) {
@@ -77,7 +74,8 @@ public class Meta extends SingleDatabaseTestCase {
 		result &= checkSchemaVersionDBName(dbre);
 
 		if (species == Species.ANCESTRAL_SEQUENCES) {
-			// The rest of the tests are not relevant for the ancestral sequences DB
+			// The rest of the tests are not relevant for the ancestral
+			// sequences DB
 			return result;
 		}
 
@@ -94,7 +92,6 @@ public class Meta extends SingleDatabaseTestCase {
 
 		result &= checkArrays(dbre);
 
-		
 		return result;
 
 	} // run
@@ -105,7 +102,7 @@ public class Meta extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		if (!checkTableExists(con, "meta")) {
+		if (!DBUtils.checkTableExists(con, "meta")) {
 			result = false;
 			ReportManager.problem(this, con, "Meta table not present");
 		} else {
@@ -122,7 +119,7 @@ public class Meta extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		int rows = countRowsInTable(con, "meta");
+		int rows = DBUtils.countRowsInTable(con, "meta");
 		if (rows == 0) {
 			result = false;
 			ReportManager.problem(this, con, "meta table is empty");
@@ -141,26 +138,38 @@ public class Meta extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		// check that certain keys exist
-		String[] metaKeys = { "assembly.default", "species.classification", "species.ensembl_common_name", "species.taxonomy_id", "assembly.name", "assembly.date", "species.ensembl_alias_name",
-				"repeat.analysis", "marker.priority", "assembly.coverage_depth", "species.stable_id_prefix", "species.production_name", "species.scientific_name", "species.short_name" };
+		String[] metaKeys = { "assembly.default", "species.classification",
+				"species.ensembl_common_name", "species.taxonomy_id",
+				"assembly.name", "assembly.date", "species.ensembl_alias_name",
+				"repeat.analysis", "marker.priority",
+				"assembly.coverage_depth", "species.stable_id_prefix",
+				"species.production_name", "species.scientific_name",
+				"species.short_name" };
 		for (int i = 0; i < metaKeys.length; i++) {
 			String metaKey = metaKeys[i];
-			int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey + "'");
+			int rows = DBUtils.getRowCount(con,
+					"SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey
+							+ "'");
 			if (rows == 0) {
 				result = false;
-				ReportManager.problem(this, con, "No entry in meta table for " + metaKey);
+				ReportManager.problem(this, con, "No entry in meta table for "
+						+ metaKey);
 			}
 		}
 
 		// check that there are some species.alias entries
 		int MIN_ALIASES = 3;
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='species.alias'");
+		int rows = DBUtils.getRowCount(con,
+				"SELECT COUNT(*) FROM meta WHERE meta_key='species.alias'");
 		if (rows < MIN_ALIASES) {
 			result = false;
-			ReportManager.problem(this, con, "Only " + rows + " species.alias entries, should be at least " + MIN_ALIASES);
+			ReportManager.problem(this, con, "Only " + rows
+					+ " species.alias entries, should be at least "
+					+ MIN_ALIASES);
 		} else {
-			ReportManager.correct(this, con, rows + " species.alias entries present");
+			ReportManager.correct(this, con, rows
+					+ " species.alias entries present");
 		}
 
 		return result;
@@ -175,22 +184,26 @@ public class Meta extends SingleDatabaseTestCase {
 		String[] metaKeys = {};
 		for (int i = 0; i < metaKeys.length; i++) {
 			String metaKey = metaKeys[i];
-			int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey + "'");
+			int rows = DBUtils.getRowCount(con,
+					"SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey
+							+ "'");
 			if (rows > 0) {
 				result = false;
-				ReportManager.problem(this, con, rows + " meta entries for " + metaKey + " when there shouldn't be any");
+				ReportManager.problem(this, con, rows + " meta entries for "
+						+ metaKey + " when there shouldn't be any");
 			} else {
-				ReportManager.correct(this, con, "No entry in meta table for " + metaKey + " - this is correct");
+				ReportManager.correct(this, con, "No entry in meta table for "
+						+ metaKey + " - this is correct");
 			}
 		}
 
 		return result;
 	}
 
-
 	// ---------------------------------------------------------------------
 	/**
-	 * Check that the schema_version in the meta table is present and matches the database name.
+	 * Check that the schema_version in the meta table is present and matches
+	 * the database name.
 	 */
 	private boolean checkSchemaVersionDBName(DatabaseRegistryEntry dbre) {
 
@@ -203,31 +216,43 @@ public class Meta extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		if (dbNameVersion == null) {
-			ReportManager.warning(this, con, "Can't deduce schema version from database name.");
+			ReportManager.warning(this, con,
+					"Can't deduce schema version from database name.");
 			return false;
 		}
 
-		String schemaVersion = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='schema_version'");
+		String schemaVersion = DBUtils.getRowColumnValue(con,
+				"SELECT meta_value FROM meta WHERE meta_key='schema_version'");
 		logger.finest("schema_version from meta table: " + schemaVersion);
 
 		if (schemaVersion == null || schemaVersion.length() == 0) {
 
-			ReportManager.problem(this, con, "No schema_version entry in meta table");
+			ReportManager.problem(this, con,
+					"No schema_version entry in meta table");
 			return false;
 
 		} else if (!schemaVersion.matches("[0-9]+")) {
 
-			ReportManager.problem(this, con, "Meta schema_version " + schemaVersion + " is not numeric");
+			ReportManager.problem(this, con, "Meta schema_version "
+					+ schemaVersion + " is not numeric");
 			return false;
 
-		} else if (!dbNameVersion.equals(schemaVersion) && !isSangerVega) {// do not report for sanger_vega
+		} else if (!dbNameVersion.equals(schemaVersion) && !isSangerVega) {// do
+																			// not
+																			// report
+																			// for
+																			// sanger_vega
 
-			ReportManager.problem(this, con, "Meta schema_version " + schemaVersion + " does not match version inferred from database name (" + dbNameVersion + ")");
+			ReportManager.problem(this, con, "Meta schema_version "
+					+ schemaVersion
+					+ " does not match version inferred from database name ("
+					+ dbNameVersion + ")");
 			return false;
 
 		} else {
 
-			ReportManager.correct(this, con, "schema_version " + schemaVersion + " matches database name version " + dbNameVersion);
+			ReportManager.correct(this, con, "schema_version " + schemaVersion
+					+ " matches database name version " + dbNameVersion);
 
 		}
 		return result;
@@ -236,31 +261,41 @@ public class Meta extends SingleDatabaseTestCase {
 
 	// ---------------------------------------------------------------------
 	/**
-	 * Check that the assembly_version in the meta table is present and matches the database name.
+	 * Check that the assembly_version in the meta table is present and matches
+	 * the database name.
 	 */
-	private boolean checkAssemblyVersion(Connection con, String dbNameAssemblyVersion, String metaTableAssemblyVersion) {
+	private boolean checkAssemblyVersion(Connection con,
+			String dbNameAssemblyVersion, String metaTableAssemblyVersion) {
 
 		boolean result = true;
 
-		if (metaTableAssemblyVersion == null || metaTableAssemblyVersion.length() == 0) {
+		if (metaTableAssemblyVersion == null
+				|| metaTableAssemblyVersion.length() == 0) {
 
-			ReportManager.problem(this, con, "No assembly_version entry in meta table");
+			ReportManager.problem(this, con,
+					"No assembly_version entry in meta table");
 			return false;
 
 		} else if (!dbNameAssemblyVersion.equals(metaTableAssemblyVersion)) {
 
-			ReportManager.problem(this, con, "Meta assembly_version " + metaTableAssemblyVersion + " does not match version inferred from database name (" + dbNameAssemblyVersion + ")");
+			ReportManager.problem(this, con, "Meta assembly_version "
+					+ metaTableAssemblyVersion
+					+ " does not match version inferred from database name ("
+					+ dbNameAssemblyVersion + ")");
 			return false;
 
 		} else {
 
-			ReportManager.correct(this, con, "assembly_version " + metaTableAssemblyVersion + " matches database name version " + dbNameAssemblyVersion);
+			ReportManager
+					.correct(this, con, "assembly_version "
+							+ metaTableAssemblyVersion
+							+ " matches database name version "
+							+ dbNameAssemblyVersion);
 
 		}
 		return result;
 
 	}
-
 
 	// ---------------------------------------------------------------------
 	/**
@@ -276,11 +311,17 @@ public class Meta extends SingleDatabaseTestCase {
 
 			Statement stmt = con.createStatement();
 
-			ResultSet rs = stmt.executeQuery("SELECT meta_key, meta_value FROM meta GROUP BY meta_key, meta_value, species_id HAVING COUNT(*)>1");
+			ResultSet rs = stmt
+					.executeQuery("SELECT meta_key, meta_value FROM meta GROUP BY meta_key, meta_value, species_id HAVING COUNT(*)>1");
 
 			while (rs.next()) {
 
-				ReportManager.problem(this, con, "Key/value pair " + rs.getString(1) + "/" + rs.getString(2) + " appears more than once in the meta table");
+				ReportManager.problem(
+						this,
+						con,
+						"Key/value pair " + rs.getString(1) + "/"
+								+ rs.getString(2)
+								+ " appears more than once in the meta table");
 				result = false;
 
 			}
@@ -311,11 +352,14 @@ public class Meta extends SingleDatabaseTestCase {
 
 			Statement stmt = con.createStatement();
 
-			ResultSet rs = stmt.executeQuery("SELECT meta_key, meta_value FROM meta WHERE meta_value LIKE 'ARRAY(%'");
+			ResultSet rs = stmt
+					.executeQuery("SELECT meta_key, meta_value FROM meta WHERE meta_value LIKE 'ARRAY(%'");
 
 			while (rs.next()) {
 
-				ReportManager.problem(this, con, "Meta table entry for key " + rs.getString(1) + " has value " + rs.getString(2) + " which is probably incorrect");
+				ReportManager.problem(this, con, "Meta table entry for key "
+						+ rs.getString(1) + " has value " + rs.getString(2)
+						+ " which is probably incorrect");
 				result = false;
 
 			}
@@ -331,6 +375,5 @@ public class Meta extends SingleDatabaseTestCase {
 		return result;
 
 	}
-
 
 } // Meta

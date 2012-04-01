@@ -29,6 +29,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that EST genes/transcripts/translations have EST in the stable ID.
@@ -102,7 +103,7 @@ public class ESTStableID extends SingleDatabaseTestCase {
 				sql = "SELECT COUNT(*) FROM translation x, transcript t, analysis a WHERE a.analysis_id=t.analysis_id AND x.transcript_id=t.transcript_id AND a.logic_name LIKE '%est%' AND x.stable_id NOT REGEXP 'ESTP[0-9]+'";
 			}
 
-			int rows = getRowCount(con, sql);
+			int rows = DBUtils.getRowCount(con, sql);
 
 			if (rows > 0) {
 

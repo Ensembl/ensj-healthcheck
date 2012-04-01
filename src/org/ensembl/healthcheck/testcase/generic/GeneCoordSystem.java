@@ -25,6 +25,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that no genes are on a sequence_level coord system. Single-coord system species are ignored.
@@ -81,7 +82,7 @@ public class GeneCoordSystem extends SingleDatabaseTestCase {
 
 		// if flag set to toplevel, check all genes are in seq_region with attrib_type_id = toplevel
 		if (result) {
-			int rows = getRowCount(
+			int rows = DBUtils.getRowCount(
 					con,
 					"select count(*) from gene where gene_id not in (select g.gene_id from gene g, seq_region_attrib sra, attrib_type a where g.seq_region_id = sra.seq_region_id and sra.attrib_type_id = a.attrib_type_id and a.code = 'toplevel')");
 
@@ -105,7 +106,7 @@ public class GeneCoordSystem extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key = 'genebuild.level' and meta_value = 'toplevel'");
+		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key = 'genebuild.level' and meta_value = 'toplevel'");
 		if (rows >= 1) {
 			ReportManager.correct(this, con, " Toplevel flag set in genebuild.level in Meta table");
 			result = true;

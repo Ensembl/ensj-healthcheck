@@ -23,9 +23,12 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Check that there is a table (e.g. hsapiens_gene_ensembl__ox_UniprotSWISSPROT__dm ) corresponding to each species and xref type.
+ * Check that there is a table (e.g.
+ * hsapiens_gene_ensembl__ox_UniprotSWISSPROT__dm ) corresponding to each
+ * species and xref type.
  */
 
 public class XrefTables extends SingleDatabaseTestCase {
@@ -46,7 +49,7 @@ public class XrefTables extends SingleDatabaseTestCase {
 	 * Run the test.
 	 * 
 	 * @param dbre
-	 *          The database to use.
+	 *            The database to use.
 	 * @return true if the test passed.
 	 * 
 	 */
@@ -57,40 +60,68 @@ public class XrefTables extends SingleDatabaseTestCase {
 		Connection martCon = martDbre.getConnection();
 
 		// get the list of species, and find the xref types in each one
-		DatabaseRegistryEntry[] coreDBs = getDatabaseRegistryByPattern(".*_core_.*").getAll();
+		DatabaseRegistryEntry[] coreDBs = getDatabaseRegistryByPattern(
+				".*_core_.*").getAll();
 
 		for (DatabaseRegistryEntry coreDB : coreDBs) {
 
 			String speciesRoot = coreDB.getSpecies().getBioMartRoot();
 
-			logger.finest(String.format("Getting list of external DB names used in %s (BioMart equivalent %s)", coreDB.getName(), speciesRoot));
+			logger.finest(String
+					.format("Getting list of external DB names used in %s (BioMart equivalent %s)",
+							coreDB.getName(), speciesRoot));
 
-			String[] externalDBs = getColumnValues(coreDB.getConnection(),
-					"SELECT DISTINCT(e.db_name) FROM external_db e, xref x, object_xref ox WHERE e.external_db_id = x.external_db_id AND ox.xref_id = x.xref_id");
+			String[] externalDBs = DBUtils
+					.getColumnValues(
+							coreDB.getConnection(),
+							"SELECT DISTINCT(e.db_name) FROM external_db e, xref x, object_xref ox WHERE e.external_db_id = x.external_db_id AND ox.xref_id = x.xref_id");
 
 			// check that a BioMart table for each entry exists
 			for (String externalDB : externalDBs) {
 
-				externalDB = externalDB.replace("/", ""); // e.g. Uniprot/SWISSPROT
+				externalDB = externalDB.replace("/", ""); // e.g.
+															// Uniprot/SWISSPROT
 
-				String tableName = String.format("%s_gene_ensembl__ox_%s__dm", speciesRoot, externalDB);
+				String tableName = String.format("%s_gene_ensembl__ox_%s__dm",
+						speciesRoot, externalDB);
 
-				if (!checkTableExists(martCon, tableName)) {
+				if (!DBUtils.checkTableExists(martCon, tableName)) {
 
-					ReportManager.problem(this, martCon, String.format("Table named %s for xref type %s in species %s (%s) is missing", tableName, externalDB, coreDB.getSpecies().toString(), speciesRoot));
+					ReportManager
+							.problem(
+									this,
+									martCon,
+									String.format(
+											"Table named %s for xref type %s in species %s (%s) is missing",
+											tableName, externalDB, coreDB
+													.getSpecies().toString(),
+											speciesRoot));
 					result = false;
 
 				} else if (!tableHasRows(martCon, tableName)) {
 
-					ReportManager.problem(this, martCon, String.format("Table named %s for xref type %s in species %s (%s) exists but has zero rows", tableName, externalDB, coreDB.getSpecies().toString(),
-							speciesRoot));
+					ReportManager
+							.problem(
+									this,
+									martCon,
+									String.format(
+											"Table named %s for xref type %s in species %s (%s) exists but has zero rows",
+											tableName, externalDB, coreDB
+													.getSpecies().toString(),
+											speciesRoot));
 					result = false;
 
 				}
 
 			}
 
-			ReportManager.correct(this, martCon, String.format("All expected xref dimension tables from %s are present and populated", coreDB.getName()));
+			ReportManager
+					.correct(
+							this,
+							martCon,
+							String.format(
+									"All expected xref dimension tables from %s are present and populated",
+									coreDB.getName()));
 
 		}
 

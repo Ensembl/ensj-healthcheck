@@ -28,6 +28,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check for genes with more than one transcript where all the transcripts have the same display_xref_id.
@@ -70,9 +71,9 @@ public class TranscriptsSameName extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		// first get total number of genes that have more than one transcript
-		// note we have to force the use getRowCountFast here because of the nature
+		// note we have to force the use DBUtils.getRowCountFast here because of the nature
 		// of the query
-		int totalGenes = getRowCountFast(con, "SELECT COUNT(1) FROM (SELECT g.gene_id FROM gene g, transcript t WHERE t.gene_id=g.gene_id GROUP BY g.gene_id HAVING COUNT(*) > 1) AS c");
+		int totalGenes = DBUtils.getRowCountFast(con, "SELECT COUNT(1) FROM (SELECT g.gene_id FROM gene g, transcript t WHERE t.gene_id=g.gene_id GROUP BY g.gene_id HAVING COUNT(*) > 1) AS c");
 
 		try {
 

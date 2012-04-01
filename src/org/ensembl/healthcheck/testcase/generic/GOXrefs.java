@@ -19,10 +19,12 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.Utils;
 
 /**
- * Check that unrpoejcted GO xrefs exist, and that there are no blank or null linkage types.
+ * Check that unrpoejcted GO xrefs exist, and that there are no blank or null
+ * linkage types.
  */
 
 public class GOXrefs extends SingleDatabaseTestCase {
@@ -36,7 +38,7 @@ public class GOXrefs extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
-		
+
 		setDescription("Check that unrpoejcted GO xrefs exist, and that there are no blank or null linkage types.");
 		setTeamResponsible(Team.GENEBUILD);
 	}
@@ -58,7 +60,7 @@ public class GOXrefs extends SingleDatabaseTestCase {
 	 * Run the test.
 	 * 
 	 * @param dbre
-	 *          The database to use.
+	 *            The database to use.
 	 * @return true if the test passed.
 	 * 
 	 */
@@ -79,26 +81,37 @@ public class GOXrefs extends SingleDatabaseTestCase {
 			// check that they exist in the xref table
 			String sql = "SELECT COUNT(*) FROM external_db edb, xref x WHERE edb.db_name= 'go' AND edb.external_db_id = x.external_db_id AND (x.info_type IS NULL OR x.info_type != 'PROJECTION')";
 
-			int xref_rows = getRowCount(con, sql);
+			int xref_rows = DBUtils.getRowCount(con, sql);
 			if (xref_rows == 0) {
 
-				ReportManager.problem(this, con, "No unprojected GO xrefs found.");
+				ReportManager.problem(this, con,
+						"No unprojected GO xrefs found.");
 				result = false;
 
 			} else {
 
-				ReportManager.correct(this, con, "Found " + xref_rows + " unprojected GO xrefs");
+				ReportManager.correct(this, con, "Found " + xref_rows
+						+ " unprojected GO xrefs");
 
-				// if GO xrefs exist, check that the ontology_xref table is populated
-				int ontology_xref_rows = getRowCount(con, "SELECT COUNT(*) FROM ontology_xref");
+				// if GO xrefs exist, check that the ontology_xref table is
+				// populated
+				int ontology_xref_rows = DBUtils.getRowCount(con,
+						"SELECT COUNT(*) FROM ontology_xref");
 				if (ontology_xref_rows == 0) {
 
-					ReportManager.problem(this, con, "Found " + xref_rows + " GO xrefs in xref table but ontology_xref table is empty");
+					ReportManager
+							.problem(
+									this,
+									con,
+									"Found "
+											+ xref_rows
+											+ " GO xrefs in xref table but ontology_xref table is empty");
 					result = false;
 
 				} else {
 
-					ReportManager.correct(this, con, "ontology_xref table has " + ontology_xref_rows + " rows");
+					ReportManager.correct(this, con, "ontology_xref table has "
+							+ ontology_xref_rows + " rows");
 
 				}
 			}
@@ -106,48 +119,77 @@ public class GOXrefs extends SingleDatabaseTestCase {
 		}
 
 		// check for blank or null linkage_type
-		int blank = getRowCount(con, "SELECT COUNT(*) FROM ontology_xref WHERE linkage_type IS NULL OR linkage_type=''");
+		int blank = DBUtils
+				.getRowCount(
+						con,
+						"SELECT COUNT(*) FROM ontology_xref WHERE linkage_type IS NULL OR linkage_type=''");
 		if (blank > 0) {
 
-			ReportManager.problem(this, con, blank + " rows in ontology_xref have null or blank ('') linkage_type");
+			ReportManager
+					.problem(
+							this,
+							con,
+							blank
+									+ " rows in ontology_xref have null or blank ('') linkage_type");
 			result = false;
 
 		} else {
 
-			ReportManager.correct(this, con, "No blank or null linkage_types in ontology_xref");
+			ReportManager.correct(this, con,
+					"No blank or null linkage_types in ontology_xref");
 		}
-		
-		
-		//check that linkage_type values are one of the allowable values
-		String[] allowable_linkage_types = {"IC", "IBA", "IDA", "IEA","IEP", "IGI", "IMP", "IPI", "ISS", "NAS", "ND", "TAS", "NR", "RCA", "EXP", "ISO", "ISA", "ISM", "IGC"};
-		
-		String[] linkage_types = getColumnValues(
-				con,
-				"SELECT DISTINCT(linkage_type) FROM ontology_xref WHERE linkage_type != '' AND linkage_type NOT IN ('" + Utils.arrayToString(allowable_linkage_types, "','") + "')");
+
+		// check that linkage_type values are one of the allowable values
+		String[] allowable_linkage_types = { "IC", "IBA", "IDA", "IEA", "IEP",
+				"IGI", "IMP", "IPI", "ISS", "NAS", "ND", "TAS", "NR", "RCA",
+				"EXP", "ISO", "ISA", "ISM", "IGC" };
+
+		String[] linkage_types = DBUtils
+				.getColumnValues(
+						con,
+						"SELECT DISTINCT(linkage_type) FROM ontology_xref WHERE linkage_type != '' AND linkage_type NOT IN ('"
+								+ Utils.arrayToString(allowable_linkage_types,
+										"','") + "')");
 		if (linkage_types.length > 0) {
 
-			ReportManager.problem(this, con, "Linkage type(s): " + Utils.arrayToString(linkage_types, ", ") + " incorrect. Allowable values are: "+ Utils.arrayToString(allowable_linkage_types, ", "));
+			ReportManager
+					.problem(
+							this,
+							con,
+							"Linkage type(s): "
+									+ Utils.arrayToString(linkage_types, ", ")
+									+ " incorrect. Allowable values are: "
+									+ Utils.arrayToString(
+											allowable_linkage_types, ", "));
 			result = false;
 
 		} else {
 
-			ReportManager.correct(this, con, "Linkage type values in ontology_xref are correct");
+			ReportManager.correct(this, con,
+					"Linkage type values in ontology_xref are correct");
 
-		}		
-		
+		}
 
 		// check that *only* GO xrefs have linkage types assigned
-		String[] dbs = getColumnValues(
-				con,
-				"SELECT DISTINCT(e.db_name) FROM external_db e, xref x, object_xref ox, ontology_xref g WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id AND ox.object_xref_id=g.object_xref_id AND e.db_name != 'GO' ");
+		String[] dbs = DBUtils
+				.getColumnValues(
+						con,
+						"SELECT DISTINCT(e.db_name) FROM external_db e, xref x, object_xref ox, ontology_xref g WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id AND ox.object_xref_id=g.object_xref_id AND e.db_name != 'GO' ");
 		if (dbs.length > 0) {
 
-			ReportManager.problem(this, con, "Some " + Utils.arrayToString(dbs, ", ") + " xrefs have entries in linkage_type - should only be GO xrefs");
+			ReportManager
+					.problem(
+							this,
+							con,
+							"Some "
+									+ Utils.arrayToString(dbs, ", ")
+									+ " xrefs have entries in linkage_type - should only be GO xrefs");
 			result = false;
 
 		} else {
 
-			ReportManager.correct(this, con, "No non-GO xrefs have linkage types assigned");
+			ReportManager.correct(this, con,
+					"No non-GO xrefs have linkage types assigned");
 
 		}
 

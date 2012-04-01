@@ -32,6 +32,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that meta_coord table contains entries for all the coordinate systems that all the features are stored in.
@@ -94,7 +95,7 @@ public class MetaCoord extends SingleDatabaseTestCase {
 					logger.finest("Added feature coordinate system for " + tableName + ": " + coordSystemID);
 
 					// check that the meta_coord table has an entry corresponding to this
-					int mc = getRowCount(con, "SELECT COUNT(*) FROM meta_coord WHERE coord_system_id=" + coordSystemID + " AND table_name='" + tableName + "'");
+					int mc = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM meta_coord WHERE coord_system_id=" + coordSystemID + " AND table_name='" + tableName + "'");
 
 					if (mc == 0) {
 
@@ -125,8 +126,8 @@ public class MetaCoord extends SingleDatabaseTestCase {
 					coordSystems.put(tableName, csList);
 									
 					// check that the max_length value in meta_coord corresponds to max feature length in each table per coord_system 
-					String mc_max_length = getRowColumnValue(con, "SELECT max_length FROM meta_coord WHERE coord_system_id=" + coordSystemID + " AND table_name='" + tableName + "'");					
-					String f_max_length = getRowColumnValue(con, "SELECT MAX(f.seq_region_end - f.seq_region_start + 1) FROM " + tableName + " f JOIN seq_region s USING(seq_region_id) WHERE seq_region_end>seq_region_start and s.coord_system_id=" + coordSystemID);
+					String mc_max_length = DBUtils.getRowColumnValue(con, "SELECT max_length FROM meta_coord WHERE coord_system_id=" + coordSystemID + " AND table_name='" + tableName + "'");					
+					String f_max_length = DBUtils.getRowColumnValue(con, "SELECT MAX(f.seq_region_end - f.seq_region_start + 1) FROM " + tableName + " f JOIN seq_region s USING(seq_region_id) WHERE seq_region_end>seq_region_start and s.coord_system_id=" + coordSystemID);
 					
 					if (mc_max_length.equals(f_max_length)) {
 						ReportManager.correct(this, con, "max_length value correct for coordinate system with ID " + coordSystemID + " for table " + tableName + " in meta_coord");

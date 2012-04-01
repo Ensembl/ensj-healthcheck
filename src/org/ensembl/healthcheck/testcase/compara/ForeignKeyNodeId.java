@@ -23,6 +23,7 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.Team;
 
 /**
@@ -62,7 +63,7 @@ public class ForeignKeyNodeId extends SingleDatabaseTestCase {
 	   if (tableHasRows(con, "genomic_align")) {
 	       /* Can't use this because genomic_align.node_id can be NULL eg pairwise alignments */ 
 	       /* result &= checkForOrphans(con, "genomic_align", "node_id", "genomic_align_tree", "node_id"); */
-	       int num_orphans = getRowCount(con, "SELECT genomic_align.node_id FROM genomic_align LEFT JOIN genomic_align_tree ON genomic_align.node_id = genomic_align_tree.node_id WHERE genomic_align.node_id is not NULL AND genomic_align_tree.node_id iS NULL");
+	       int num_orphans = DBUtils.getRowCount(con, "SELECT genomic_align.node_id FROM genomic_align LEFT JOIN genomic_align_tree ON genomic_align.node_id = genomic_align_tree.node_id WHERE genomic_align.node_id is not NULL AND genomic_align_tree.node_id iS NULL");
 	       if (num_orphans > 0) {
 		   ReportManager.problem(this, con, num_orphans + " genomic_align entries are not linked to genomic_align_tree");
 		   ReportManager.problem(this, con, " USEFUL SQL: SELECT genomic_align.node_id FROM genomic_align LEFT JOIN genomic_align_tree ON genomic_align.node_id = genomic_align_tree.node_id WHERE genomic_align.node_id is not NULL AND genomic_align_tree.node_id iS NULL");
@@ -74,7 +75,7 @@ public class ForeignKeyNodeId extends SingleDatabaseTestCase {
 	   }
 	   
 	   // Check the left_node_id values are set (and assume right_node_ids have also been set)
-	   int left_node_ids = getRowCount(con, "SELECT COUNT(*) FROM genomic_align_tree WHERE left_node_id != 0");
+	   int left_node_ids = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM genomic_align_tree WHERE left_node_id != 0");
 	   if (left_node_ids == 0) {
 	       ReportManager.problem(this, con, "There are no left_node_ids set.");
 	   } else {
@@ -84,7 +85,7 @@ public class ForeignKeyNodeId extends SingleDatabaseTestCase {
 	   /* Looking at distance_to_parent > 1 is true for LOW_COVERAGE but not epo */
 	    //Check distance_to_parent > 1
 	   /*
-	   int dist_to_parent = getRowCount(con, "SELECT COUNT(*) FROM genomic_align_tree WHERE distance_to_parent > 1");
+	   int dist_to_parent = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM genomic_align_tree WHERE distance_to_parent > 1");
 	   if (dist_to_parent > 0) {
 	       ReportManager.problem(this, con, dist_to_parent + " entries in genomic_align_tree table have distance_to_parent values greater than 1");
 	       result = false;

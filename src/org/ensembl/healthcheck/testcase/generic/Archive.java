@@ -23,6 +23,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Checks that the archive tables are up to date.
@@ -93,7 +94,7 @@ public class Archive extends SingleDatabaseTestCase {
 		String sql = "SELECT CONCAT(old_stable_id, \".\", old_version) " + "FROM stable_id_event LEFT JOIN peptide_archive " + "                     ON old_stable_id=translation_stable_id " + "WHERE "
 				+ "     mapping_session_id >= " + minMappingSessionID + " " + "     AND old_stable_id like \"%P%\" " + "     AND new_stable_id is NULL " + "     AND translation_stable_id is NULL;";
 
-		String[] rows = getColumnValues(con, sql);
+		String[] rows = DBUtils.getColumnValues(con, sql);
 		if (rows.length > 0) {
 			ReportManager.problem(this, con, rows.length + " deleted translations missing from peptide_archive");
 			result = false;
@@ -110,7 +111,7 @@ public class Archive extends SingleDatabaseTestCase {
 				+ "     mapping_session_id >= " + minMappingSessionID + " " + "     AND old_stable_id like \"%P%\" " + "     AND new_stable_id=old_stable_id " + "     AND old_version!=new_version "
 				+ "     AND translation_stable_id is NULL;";
 
-		String[] rows = getColumnValues(con, sql);
+		String[] rows = DBUtils.getColumnValues(con, sql);
 		if (rows.length > 0) {
 			ReportManager.problem(this, con, rows.length + " updated translations missing from peptide_archive");
 			result = false;
@@ -125,7 +126,7 @@ public class Archive extends SingleDatabaseTestCase {
 
 		String sql = "SELECT CONCAT( pa.translation_stable_id, \".\", pa.translation_version) " + " FROM peptide_archive pa LEFT JOIN gene_archive ga "
 				+ " ON ga.translation_stable_id=pa.translation_stable_id " + " AND ga.translation_version=pa.translation_version " + " WHERE ga.translation_stable_id is NULL;";
-		String[] rows = getColumnValues(con, sql);
+		String[] rows = DBUtils.getColumnValues(con, sql);
 		if (rows.length > 0) {
 			ReportManager.problem(this, con, rows.length + " translations from peptide archive not in gene archive");
 			// for (int i = 0; i < rows.length && i < 10; i++) {
@@ -143,7 +144,7 @@ public class Archive extends SingleDatabaseTestCase {
 
 		String sql = "SELECT CONCAT(ts.stable_id , \".\",ts.version)" + " FROM translation_stable_id ts, peptide_archive pa " + " WHERE ts.stable_id=pa.translation_stable_id "
 				+ "       AND ts.version= pa.translation_version;";
-		String[] rows = getColumnValues(con, sql);
+		String[] rows = DBUtils.getColumnValues(con, sql);
 		if (rows.length > 0) {
 			ReportManager.problem(this, con, rows.length + " current translations in peptide archive");
 			result = false;
@@ -173,7 +174,7 @@ public class Archive extends SingleDatabaseTestCase {
 				+ "WHERE " + "     sie.mapping_session_id >= " + minMappingSessionID + " " + "     AND sie.mapping_session_id=ga.mapping_session_id " + "     AND old_stable_id like \"%" + filter + "%\" "
 				+ "     AND gene_stable_id is NULL " + "     AND new_stable_id=old_stable_id and old_version!=new_version;";
 
-		String[] rows = getColumnValues(con, sql);
+		String[] rows = DBUtils.getColumnValues(con, sql);
 		if (rows.length > 0) {
 			ReportManager.problem(this, con, rows.length + " deleted " + type + "s not in gene_archive ");
 			result = false;
@@ -204,7 +205,7 @@ public class Archive extends SingleDatabaseTestCase {
 		String sql = "SELECT CONCAT(old_stable_id, \".\", old_version) " + "FROM stable_id_event sie LEFT JOIN gene_archive ga " + "                     ON old_stable_id=" + type + "_stable_id "
 				+ "WHERE " + "   sie.mapping_session_id >= " + minMappingSessionID + " " + "   AND sie.mapping_session_id=ga.mapping_session_id " + "   AND old_stable_id like \"%" + filter + "%\""
 				+ "   AND new_stable_id is NULL " + "   AND " + type + "_stable_id is NULL;";
-		String[] rows = getColumnValues(con, sql);
+		String[] rows = DBUtils.getColumnValues(con, sql);
 		if (rows.length > 0) {
 			ReportManager.problem(this, con, rows.length + " deleted " + type + "s not in gene_archive ");
 			result = false;

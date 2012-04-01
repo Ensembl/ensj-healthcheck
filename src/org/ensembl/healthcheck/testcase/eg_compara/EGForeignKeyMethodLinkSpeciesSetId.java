@@ -15,6 +15,7 @@ import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase;
 import org.ensembl.healthcheck.util.AbstractStringMapRowMapper;
 import org.ensembl.healthcheck.util.CollectionUtils;
+import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.DefaultMapRowMapper;
 import org.ensembl.healthcheck.util.MapRowMapper;
 
@@ -46,7 +47,7 @@ public class EGForeignKeyMethodLinkSpeciesSetId extends
 	protected boolean assertNoEmptyNames(DatabaseRegistryEntry dbre) {
 		boolean result = true;
 		Connection con = dbre.getConnection();
-		int numOfUnsetNames = getRowCount(con, "SELECT count(*) FROM method_link_species_set WHERE name = 'NULL' OR name IS NULL");
+		int numOfUnsetNames = DBUtils.getRowCount(con, "SELECT count(*) FROM method_link_species_set WHERE name = 'NULL' OR name IS NULL");
     if (numOfUnsetNames > 0) {
       ReportManager.problem(this, con, "FAILED method_link_species_set table contains " + numOfUnsetNames + " with no name");
       result = false;
@@ -60,7 +61,7 @@ public class EGForeignKeyMethodLinkSpeciesSetId extends
 	protected boolean assertNoSource(DatabaseRegistryEntry dbre) {
 		boolean result = true;
 		Connection con = dbre.getConnection();
-		int numOfUnsetSources = getRowCount(con, "SELECT count(*) FROM method_link_species_set WHERE source = 'NULL' OR source IS NULL");
+		int numOfUnsetSources = DBUtils.getRowCount(con, "SELECT count(*) FROM method_link_species_set WHERE source = 'NULL' OR source IS NULL");
     if (numOfUnsetSources > 0) {
         ReportManager.problem(this, con, "FAILED method_link_species_set table contains " + numOfUnsetSources + " with no source");
         result = false;

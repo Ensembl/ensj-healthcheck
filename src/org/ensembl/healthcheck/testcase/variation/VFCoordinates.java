@@ -28,6 +28,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key relationships between core and variation database.
@@ -88,7 +89,7 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 
 			System.out.println("Using " + coreName + " as core database and " + variationName + " as variation database");
 
-			int mc = getRowCount(
+			int mc = DBUtils.getRowCount(
 					con,
 					"SELECT COUNT(*) FROM "
 							+ variationName
@@ -101,19 +102,19 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 				result = false;
 			}
 
-			mc = getRowCount(con, "SELECT COUNT(*) FROM " + coreName + ".seq_region s, " + variationName + ".variation_feature vf WHERE vf.seq_region_id = s.seq_region_id AND vf.seq_region_end > s.length");
+			mc = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + coreName + ".seq_region s, " + variationName + ".variation_feature vf WHERE vf.seq_region_id = s.seq_region_id AND vf.seq_region_end > s.length");
 			if (mc > 0) {
 				ReportManager.problem(this, con, "Variation Features outside range in " + variationName);
 				result = false;
 			}
-			mc = getRowCount(con, "SELECT COUNT(*) FROM " + variationName + ".variation_feature vf WHERE vf.seq_region_start = 1 AND vf.seq_region_end > 1");
+			mc = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + variationName + ".variation_feature vf WHERE vf.seq_region_start = 1 AND vf.seq_region_end > 1");
 			if (mc > 0) {
 				ReportManager.problem(this, con, "Variation Features with coordinates = 1 " + variationName);
 				result = false;
 			}
 			// Check that no VFs are on the negative strand, unless they have map_weight > 1 and/or are located on non-reference
 			// seq_regions or correspond to CNV probes
-			String vfId = getRowColumnValue(con, "SELECT vf.variation_feature_id FROM " + variationName
+			String vfId = DBUtils.getRowColumnValue(con, "SELECT vf.variation_feature_id FROM " + variationName
 					+ ".variation_feature vf WHERE vf.seq_region_strand = -1 AND vf.map_weight = 1 AND vf.allele_string NOT LIKE 'CNV_PROBE' AND NOT EXISTS (SELECT * FROM " + coreName
 					+ ".seq_region_attrib sra JOIN " + coreName + ".attrib_type at USING (attrib_type_id) WHERE sra.seq_region_id = vf.seq_region_id AND at.code = 'non_ref') LIMIT 1");
 			if (vfId.length() > 0) {
@@ -121,7 +122,7 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 				result = false;
 			}
 			// Check that no VFs are duplicated
-			mc = getRowCount(con, "SELECT COUNT(DISTINCT vf1.variation_id) FROM " + variationName + ".variation_feature vf1 JOIN " + variationName
+			mc = DBUtils.getRowCount(con, "SELECT COUNT(DISTINCT vf1.variation_id) FROM " + variationName + ".variation_feature vf1 JOIN " + variationName
 					+ ".variation_feature vf2 USING (variation_id,seq_region_id,seq_region_start,seq_region_end,seq_region_strand) WHERE vf1.variation_feature_id < vf2.variation_feature_id");
 			if (mc > 0) {
 				ReportManager.problem(this, con, "There are duplicated Variation Features for " + String.valueOf(mc) + " variations in " + variationName);

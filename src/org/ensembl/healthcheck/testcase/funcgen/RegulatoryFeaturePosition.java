@@ -12,6 +12,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 public class RegulatoryFeaturePosition extends SingleDatabaseTestCase {
 
@@ -91,7 +92,7 @@ public class RegulatoryFeaturePosition extends SingleDatabaseTestCase {
 		HashMap<String, String> coreSeqRegionIDName    = new HashMap<String, String>(); 
 		HashMap<String, String> nameFuncgenSeqRegionID = new HashMap<String, String>(); 
 		
-
+ 
 		try {
 			ResultSet rs = efgCon.createStatement().executeQuery(sql);
 
@@ -111,7 +112,7 @@ public class RegulatoryFeaturePosition extends SingleDatabaseTestCase {
 			
 		for (Iterator<String> iter = coreSeqRegionIDName.keySet().iterator(); iter.hasNext();) {
 			String coreSrID = (String) iter.next();
-			seqRegionLen.put(coreSrID, getRowColumnValue(coreCon, "select length from seq_region where seq_region_id=" + coreSrID) );
+			seqRegionLen.put(coreSrID, DBUtils.getRowColumnValue(coreCon, "select length from seq_region where seq_region_id=" + coreSrID) );
 		}
 		
 		//Now check, for each core seq region, if boundaries are passed
@@ -130,7 +131,7 @@ public class RegulatoryFeaturePosition extends SingleDatabaseTestCase {
 				"OR (bound_seq_region_end > " + srLength + ") OR (seq_region_end > " + srLength + "))";
 			//< 0 should never happen as it is an insigned field!
    
-			Integer featCount = getRowCount(efgCon, sql); 	
+			Integer featCount = DBUtils.getRowCount(efgCon, sql); 	
 			//This is already being 'caught' higher in the stack, but no exit
 			//but still shows as 'PASSED' as result is true by default!
 			//featCount is -1 not null if sql failed

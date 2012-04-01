@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that the all genes have stable IDs in EST databases.
@@ -71,7 +72,7 @@ public class ESTStableIDs extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM gene WHERE stable_id IS NULL");
+		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM gene WHERE stable_id IS NULL");
 
 		if (rows > 0) {
 			ReportManager.problem(this, con, rows + " genes have no stable IDs");

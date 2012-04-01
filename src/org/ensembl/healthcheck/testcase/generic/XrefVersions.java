@@ -23,6 +23,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check for blank or null versions in the xref table.
@@ -59,7 +60,7 @@ public class XrefVersions extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM xref WHERE version='' OR version IS NULL");
+		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM xref WHERE version='' OR version IS NULL");
 
 		if (rows > 0) {
 

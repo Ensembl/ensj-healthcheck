@@ -29,6 +29,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check for cases where components map to multiple parts of the assembly but the chained mapper is *not* specified for that pair of
@@ -66,7 +67,6 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-
 		// cache coord system name to ID
 		Map coordSystemNameAndVersionToID = new HashMap();
 
@@ -98,7 +98,7 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 		// chained mapper
 		String constraint = "";
 
-		String[] mappings = getColumnValues(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.mapping'  AND meta_value LIKE '%#%'");
+		String[] mappings = DBUtils.getColumnValues(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.mapping'  AND meta_value LIKE '%#%'");
 
 		Pattern assemblyMappingPattern = Pattern.compile("^([a-zA-Z0-9.]+):?([a-zA-Z0-9._]+)?[\\|#]([a-zA-Z0-9._]+):?([a-zA-Z0-9._]+)?([\\|#]([a-zA-Z0-9.]+):?([a-zA-Z0-9._]+)?)?$");
 

@@ -23,6 +23,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that there are no duplicates in the assembly table.
@@ -60,7 +61,7 @@ public class DuplicateAssembly extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		int rows = getRowCount(con, "SELECT *, COUNT(*) AS c FROM assembly GROUP BY asm_seq_region_id, cmp_seq_region_id, asm_start, asm_end, cmp_start, cmp_end, ori HAVING c > 1");
+		int rows = DBUtils.getRowCount(con, "SELECT *, COUNT(*) AS c FROM assembly GROUP BY asm_seq_region_id, cmp_seq_region_id, asm_start, asm_end, cmp_start, cmp_end, ori HAVING c > 1");
 
 		if (rows > 0) {
 

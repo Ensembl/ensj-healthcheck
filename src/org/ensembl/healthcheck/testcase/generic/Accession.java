@@ -28,6 +28,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check for presence and format of PFAM hits, and format of others. Also checks for protein features with no hit_id.
@@ -75,7 +76,7 @@ public class Accession extends SingleDatabaseTestCase {
 		// others - prints, prosite etc - may not have any hits
 		// only a problem for core databses
 		if (dbre.getType() == DatabaseType.CORE) {
-			int hits = getRowCount(con, "SELECT COUNT(*) FROM protein_feature pf, analysis a WHERE a.logic_name='pfam' AND a.analysis_id=pf.analysis_id");
+			int hits = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM protein_feature pf, analysis a WHERE a.logic_name='pfam' AND a.analysis_id=pf.analysis_id");
 			if (hits < 1) {
 				result = false;
 				ReportManager.problem(this, con, "No proteins with PFAM hits");
@@ -94,7 +95,7 @@ public class Accession extends SingleDatabaseTestCase {
 			logger.fine("Checking for logic name " + key + " with hits of format " + formats.get(key));
 
 			// check format of hits
-			int badFormat = getRowCount(con, "SELECT COUNT(*) FROM protein_feature pf, analysis a WHERE a.logic_name='" + key + "' AND a.analysis_id=pf.analysis_id AND pf.hit_name NOT LIKE '"
+			int badFormat = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM protein_feature pf, analysis a WHERE a.logic_name='" + key + "' AND a.analysis_id=pf.analysis_id AND pf.hit_name NOT LIKE '"
 					+ formats.get(key) + "'");
 			if (badFormat > 0) {
 				result = false;
@@ -106,7 +107,7 @@ public class Accession extends SingleDatabaseTestCase {
 		}
 
 		// check for protein features with no hit_id
-		int nullHitIDs = getRowCount(con, "SELECT COUNT(*) FROM protein_feature WHERE hit_name IS NULL OR hit_name=''");
+		int nullHitIDs = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM protein_feature WHERE hit_name IS NULL OR hit_name=''");
 		if (nullHitIDs > 0) {
 			result = false;
 			ReportManager.problem(this, con, nullHitIDs + " protein features have null or blank hit_names");

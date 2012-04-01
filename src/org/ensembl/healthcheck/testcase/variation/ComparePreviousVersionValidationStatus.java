@@ -12,13 +12,15 @@
  */
 package org.ensembl.healthcheck.testcase.variation;
 
+import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.sql.Connection;
+
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
-import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Compare the number of variations having each validation status between the current database and the database on the secondary
@@ -56,7 +58,7 @@ public class ComparePreviousVersionValidationStatus extends ComparePreviousVersi
 		sqlQueries.setProperty("countVariationsByValidationStatus", query);
 
 		return sqlQueries;
-	}
+	} 
 
 	protected Map getCounts(DatabaseRegistryEntry dbre) {
 
@@ -68,7 +70,7 @@ public class ComparePreviousVersionValidationStatus extends ComparePreviousVersi
 			Properties sqlQueries = getSQLQueries();
 	
 			// First, get the structure of the validation_status
-			String[] description = getRowValues(dbre.getConnection(), sqlQueries.getProperty("describeValidationStatus"));
+			String[] description = DBUtils.getRowValues(dbre.getConnection(), sqlQueries.getProperty("describeValidationStatus"));
 	
 			// The second column contains the type, strip out the individual, comma-separated set elements
 			String[] setElements = description[1].split(",");

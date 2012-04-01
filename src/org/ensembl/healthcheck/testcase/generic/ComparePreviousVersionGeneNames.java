@@ -29,6 +29,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.Species;
+import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.Utils;
 
 /**
@@ -84,8 +85,8 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 
 		// Get data from previous database, compare each one with equivalent on
 		// current
-		float displayXrefCount = new Integer(getRowCount(currentCon, "SELECT COUNT(1) FROM gene WHERE display_xref_id IS NOT NULL" ) );
-		float displayXrefPreviousCount = new Integer(getRowCount(previousCon, "SELECT COUNT(1) FROM gene WHERE display_xref_id IS NOT NULL" ) );
+		float displayXrefCount = new Integer(DBUtils.getRowCount(currentCon, "SELECT COUNT(1) FROM gene WHERE display_xref_id IS NOT NULL" ) );
+		float displayXrefPreviousCount = new Integer(DBUtils.getRowCount(previousCon, "SELECT COUNT(1) FROM gene WHERE display_xref_id IS NOT NULL" ) );
 		
 		if (displayXrefCount == 0 || displayXrefPreviousCount == 0 ) {
 			ReportManager.problem(this, currentCon, "display xref count is 0 in the current or previous database");

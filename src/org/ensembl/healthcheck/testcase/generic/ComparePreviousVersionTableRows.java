@@ -19,6 +19,7 @@ import java.util.Map;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.Team;
+import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.Utils;
 
 /**
@@ -64,10 +65,10 @@ public class ComparePreviousVersionTableRows extends ComparePreviousVersionBase 
 
 		for (int i = 0; i < tables.length; i++) {
 
-			rowCounts.put(tables[i], new Integer(getRowCount(con, "SELECT COUNT(*) FROM " + tables[i])));
+			rowCounts.put(tables[i], new Integer(DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + tables[i])));
 
 		}
-		rowCounts.put("external_synonym", new Integer(getRowCount(con, "SELECT COUNT(*) FROM external_synonym e, xref x WHERE e.xref_id = x.xref_id AND x.info_type <> 'PROJECTION'")));
+		rowCounts.put("external_synonym", new Integer(DBUtils.getRowCount(con, "SELECT COUNT(*) FROM external_synonym e, xref x WHERE e.xref_id = x.xref_id AND x.info_type <> 'PROJECTION'")));
 
 		return rowCounts;
 

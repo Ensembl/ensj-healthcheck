@@ -14,6 +14,7 @@ package org.ensembl.healthcheck.testcase.generic;
  */
 
 import java.sql.Connection;
+import org.ensembl.healthcheck.util.DBUtils;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
@@ -55,7 +56,7 @@ public class ExternalDBDisplayName extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM external_db WHERE db_display_name IS NULL OR db_display_name LIKE ' %'");
+		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM external_db WHERE db_display_name IS NULL OR db_display_name LIKE ' %'");
 
 		if (rows > 0) {
 

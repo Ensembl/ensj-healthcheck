@@ -20,6 +20,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that the variation_feature table do not contain anomalities
@@ -57,7 +58,7 @@ public class VariationFeature extends SingleDatabaseTestCase {
 	
 			// Look for duplicates
 			String stmt = "SELECT COUNT(DISTINCT vf1.variation_id) FROM variation_feature vf1 JOIN variation_feature vf2 ON (vf2.variation_id = vf1.variation_id AND vf2.variation_feature_id > vf1.variation_feature_id AND vf2.seq_region_id = vf1.seq_region_id AND vf2.seq_region_start = vf1.seq_region_start AND vf2.seq_region_end = vf1.seq_region_end AND vf2.seq_region_strand = vf1.seq_region_strand)";
-			int rows = getRowCount(con,stmt);
+			int rows = DBUtils.getRowCount(con,stmt);
 			if (rows > 0) {
 				result = false;
 				ReportManager.problem(this, con, String.valueOf(rows) + " rows are duplicated in variation_feature");

@@ -14,11 +14,12 @@ import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.util.SqlTemplate;
+import org.ensembl.healthcheck.util.SqlUncheckedException;
 import org.ensembl.healthcheck.util.TestCaseUtils;
-import org.ensembl.healthcheck.util.ConnectionBasedSqlTemplateImpl.SqlTemplateUncheckedException;
 
 /**
  * Check to see if sample IDs have been added
+ * 
  * @author dstaines
  * 
  */
@@ -78,7 +79,7 @@ public class SampleSetting extends AbstractEgCoreTestCase {
 												+ " not found for species "
 												+ speciesId);
 					}
-				} catch (SqlTemplateUncheckedException e) {
+				} catch (SqlUncheckedException e) {
 					passes = false;
 					ReportManager.problem(this, dbre.getConnection(),
 							"Sample gene with ID " + geneText
@@ -100,7 +101,7 @@ public class SampleSetting extends AbstractEgCoreTestCase {
 												+ " not found for species "
 												+ speciesId);
 					}
-				} catch (SqlTemplateUncheckedException e) {
+				} catch (SqlUncheckedException e) {
 					passes = false;
 					ReportManager.problem(this, dbre.getConnection(),
 							"Sample transcript with ID " + transcriptText
@@ -126,7 +127,7 @@ public class SampleSetting extends AbstractEgCoreTestCase {
 											+ " of length " + length
 											+ " for species " + speciesId);
 						}
-					} catch (SqlTemplateUncheckedException e) {
+					} catch (SqlUncheckedException e) {
 						passes = false;
 						ReportManager
 								.problem(this, dbre.getConnection(),

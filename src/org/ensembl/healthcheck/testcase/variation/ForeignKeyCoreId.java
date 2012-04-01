@@ -19,8 +19,8 @@
 package org.ensembl.healthcheck.testcase.variation;
 
 import java.sql.Connection;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
@@ -29,9 +29,11 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * An EnsEMBL Healthcheck test case that looks for broken foreign-key relationships between core and variation database.
+ * An EnsEMBL Healthcheck test case that looks for broken foreign-key
+ * relationships between core and variation database.
  */
 
 public class ForeignKeyCoreId extends MultiDatabaseTestCase {
@@ -53,72 +55,114 @@ public class ForeignKeyCoreId extends MultiDatabaseTestCase {
 	 * Run the test.
 	 * 
 	 * @param databases
-	 *          The databases to check, in order core->variation
-	 * @return true if same transcripts and seq_regions in core and variation are the same.
+	 *            The databases to check, in order core->variation
+	 * @return true if same transcripts and seq_regions in core and variation
+	 *         are the same.
 	 * 
 	 */
 	public boolean run(DatabaseRegistry dbr) {
 
 		boolean overallResult = true;
 
-		DatabaseRegistryEntry[] variationDBs = dbr.getAll(DatabaseType.VARIATION);
+		DatabaseRegistryEntry[] variationDBs = dbr
+				.getAll(DatabaseType.VARIATION);
 
-		// the database registry parameter dbr only contains the databases matching the regular expression passed on the command line
-		// so create a database registry containing all the core databases and find the one we want
+		// the database registry parameter dbr only contains the databases
+		// matching the regular expression passed on the command line
+		// so create a database registry containing all the core databases and
+		// find the one we want
 		List<String> coreRegexps = new ArrayList<String>();
 		coreRegexps.add(".*_core_.*");
 
-		DatabaseRegistry allDBR = new DatabaseRegistry(coreRegexps, null, null, false);
+		DatabaseRegistry allDBR = new DatabaseRegistry(coreRegexps, null, null,
+				false);
 
 		for (int i = 0; i < variationDBs.length; i++) {
 
 			boolean result = true;
 			DatabaseRegistryEntry dbrvar = variationDBs[i];
 			Connection con = dbrvar.getConnection();
-		
+
 			try {
-				
+
 				Species species = dbrvar.getSpecies();
-	
+
 				String variationName = dbrvar.getName();
 				String coreName = variationName.replaceAll("variation", "core");
-				
-				
+
 				DatabaseRegistryEntry dbrcore = allDBR.getByExactName(coreName);
 				if (dbrcore == null) {
-					logger.severe("Incorrect core database " + coreName + " for " + variationName);
-					throw new Exception("Incorrect core database " + coreName + " for " + variationName);
+					logger.severe("Incorrect core database " + coreName
+							+ " for " + variationName);
+					throw new Exception("Incorrect core database " + coreName
+							+ " for " + variationName);
 				}
-	
-				ReportManager.info(this, con, "Using " + dbrcore.getName() + " as core database and " + dbrvar.getName() + " as variation database");
-	
-				result &= checkForOrphans(con, dbrvar.getName() + ".transcript_variation", "feature_stable_id", dbrcore.getName() + ".transcript", "stable_id");
-	
-				result &= checkForOrphansWithConstraint(con, dbrvar.getName() + ".flanking_sequence", "seq_region_id", dbrcore.getName() + ".seq_region", "seq_region_id", "seq_region_id IS NOT NULL");
-	
-				result &= checkForOrphansWithConstraint(con, dbrvar.getName() + ".variation_feature", "seq_region_id", dbrcore.getName() + ".seq_region", "seq_region_id", "seq_region_id IS NOT NULL");
-	
-				result &= checkForOrphansWithConstraint(con, dbrvar.getName() + ".read_coverage", "seq_region_id", dbrcore.getName() + ".seq_region", "seq_region_id", "seq_region_id IS NOT NULL");
-	
-				result &= checkForOrphansWithConstraint(con, dbrvar.getName() + ".structural_variation_feature", "seq_region_id", dbrcore.getName() + ".seq_region", "seq_region_id", "seq_region_id IS NOT NULL");
-	
-				int rows = getRowCount(con, "SELECT COUNT(*) FROM " + dbrvar.getName() + ".seq_region srv ," + dbrcore.getName() + ".seq_region src," + dbrcore.getName()
-						+ ".coord_system cs WHERE cs.attrib = 'default_version' AND cs.coord_system_id = src.coord_system_id AND src.name=srv.name AND src.seq_region_id != srv.seq_region_id");
+
+				ReportManager.info(this, con, "Using " + dbrcore.getName()
+						+ " as core database and " + dbrvar.getName()
+						+ " as variation database");
+
+				result &= checkForOrphans(con, dbrvar.getName()
+						+ ".transcript_variation", "feature_stable_id",
+						dbrcore.getName() + ".transcript", "stable_id");
+
+				result &= checkForOrphansWithConstraint(con, dbrvar.getName()
+						+ ".flanking_sequence", "seq_region_id",
+						dbrcore.getName() + ".seq_region", "seq_region_id",
+						"seq_region_id IS NOT NULL");
+
+				result &= checkForOrphansWithConstraint(con, dbrvar.getName()
+						+ ".variation_feature", "seq_region_id",
+						dbrcore.getName() + ".seq_region", "seq_region_id",
+						"seq_region_id IS NOT NULL");
+
+				result &= checkForOrphansWithConstraint(con, dbrvar.getName()
+						+ ".read_coverage", "seq_region_id", dbrcore.getName()
+						+ ".seq_region", "seq_region_id",
+						"seq_region_id IS NOT NULL");
+
+				result &= checkForOrphansWithConstraint(con, dbrvar.getName()
+						+ ".structural_variation_feature", "seq_region_id",
+						dbrcore.getName() + ".seq_region", "seq_region_id",
+						"seq_region_id IS NOT NULL");
+
+				int rows = DBUtils
+						.getRowCount(
+								con,
+								"SELECT COUNT(*) FROM "
+										+ dbrvar.getName()
+										+ ".seq_region srv ,"
+										+ dbrcore.getName()
+										+ ".seq_region src,"
+										+ dbrcore.getName()
+										+ ".coord_system cs WHERE cs.attrib = 'default_version' AND cs.coord_system_id = src.coord_system_id AND src.name=srv.name AND src.seq_region_id != srv.seq_region_id");
 				if (rows > 0) {
-					ReportManager.problem(this, con, rows + " rows seq_region in core has same name, but different seq_region_id comparing with seq_region in variation database");
+					ReportManager
+							.problem(
+									this,
+									con,
+									rows
+											+ " rows seq_region in core has same name, but different seq_region_id comparing with seq_region in variation database");
 					result = false;
 				}
-	
+
 				if (result) {
-					// if there were no problems, just inform for the interface to pick the HC
-					ReportManager.correct(this, con, "ForeignKeyCoreId test passed without any problem");
+					// if there were no problems, just inform for the interface
+					// to pick the HC
+					ReportManager.correct(this, con,
+							"ForeignKeyCoreId test passed without any problem");
 				}
-				
+
 			} catch (Exception e) {
-				ReportManager.problem(this, con, "HealthCheck generated an exception: " + e.getMessage());
+				ReportManager
+						.problem(
+								this,
+								con,
+								"HealthCheck generated an exception: "
+										+ e.getMessage());
 				result = false;
 			}
-			
+
 			overallResult &= result;
 		}
 		return overallResult;

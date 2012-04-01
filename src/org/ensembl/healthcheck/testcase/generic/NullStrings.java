@@ -80,7 +80,7 @@ public class NullStrings extends SingleDatabaseTestCase {
 				String[] columnAndType = (String[]) it.next();
 				String column = columnAndType[0];
 
-				int rows = getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE " + column + "='NULL'");
+				int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE " + column + "='NULL'");
 
 				if (rows > 0) {
 

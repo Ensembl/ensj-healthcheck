@@ -35,6 +35,7 @@ import java.util.Map;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that meta_coord table contains entries for all the coordinate systems
@@ -71,7 +72,7 @@ public class MetaCoord extends SingleDatabaseTestCase {
 
 		// coordSystems is a hash of lists of coordinate systems that each feature
 		// table contains
-		Map coordSystems = new HashMap();
+		Map coordSystems = new HashMap(); 
 
 		try {
 
@@ -92,7 +93,7 @@ public class MetaCoord extends SingleDatabaseTestCase {
 					String coordSystemID = rs.getString(1);
 					logger.finest("Added feature coordinate system for " + tableName + ": " + coordSystemID);
 					// check that the meta_coord table has an entry corresponding to this
-					int mc = getRowCount(con, "SELECT COUNT(*) FROM meta_coord WHERE coord_system_id=" + coordSystemID + " AND table_name='"
+					int mc = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM meta_coord WHERE coord_system_id=" + coordSystemID + " AND table_name='"
 							+ tableName + "'");
 					if (mc == 0) {
 						ReportManager.problem(this, con, "No entry for coordinate system with ID " + coordSystemID + " for " + tableName

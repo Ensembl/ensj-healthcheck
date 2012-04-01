@@ -23,6 +23,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check for xrefs that have HTML markup in the display_label.
@@ -58,7 +59,7 @@ public class XrefHTML extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM xref WHERE display_label LIKE '%<%>%<%/>%'");
+		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM xref WHERE display_label LIKE '%<%>%<%/>%'");
 
 		if (rows > 0) {
 			ReportManager.problem(this, con, rows + " xrefs appear to have HTML markup (<...>) in the display_label");

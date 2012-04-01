@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that certain tables for protein features and object xrefs exist in the Vega Biomart.
@@ -71,7 +72,7 @@ public class VegaMartDimensionTables extends SingleDatabaseTestCase {
 			// Check protein feature analysis names
 			logger.finest(String.format("Getting list of protein feature analysis logic names used in %s (BioMart equivalent %s)", vegaDB.getName(), speciesRoot));
 
-			String[] logicNames = getColumnValues(vegaDB.getConnection(),
+			String[] logicNames = DBUtils.getColumnValues(vegaDB.getConnection(),
 					"SELECT DISTINCT(REPLACE(analysis.logic_name,'-','_')) FROM protein_feature LEFT JOIN analysis ON (protein_feature. analysis_id = analysis.analysis_id)");
 
 			// check that a BioMart table for each entry exists
@@ -79,7 +80,7 @@ public class VegaMartDimensionTables extends SingleDatabaseTestCase {
 
 				String tableName = String.format("%s_gene_vega__protein_feature_%s__dm", speciesRoot, logicName);
 
-				if (!checkTableExists(martCon, tableName)) {
+				if (!DBUtils.checkTableExists(martCon, tableName)) {
 
 					ReportManager.problem(this, martCon, String.format("protein_feature dimension table named %s in species %s (%s) is missing", tableName, vegaDB.getSpecies().toString(), speciesRoot));
 					result = false;
@@ -100,7 +101,7 @@ public class VegaMartDimensionTables extends SingleDatabaseTestCase {
 			// Check external_db names
 			logger.finest(String.format("Getting list of external_db names used in %s (BioMart equivalent %s)", vegaDB.getName(), speciesRoot));
 
-			String[] externalDBNames = getColumnValues(
+			String[] externalDBNames = DBUtils.getColumnValues(
 					vegaDB.getConnection(),
 					"SELECT DISTINCT(REPLACE(external_db.db_name,'/','')) FROM object_xref LEFT JOIN gene ON (gene.gene_id = object_xref.ensembl_id) LEFT JOIN xref ON (object_xref.xref_id = xref.xref_id) LEFT JOIN external_db ON (xref.external_db_id = external_db.external_db_id)");
 
@@ -109,7 +110,7 @@ public class VegaMartDimensionTables extends SingleDatabaseTestCase {
 
 				String tableName = String.format("%s_gene_vega__ox_%s__dm", speciesRoot, externalDBName);
 
-				if (!checkTableExists(martCon, tableName)) {
+				if (!DBUtils.checkTableExists(martCon, tableName)) {
 
 					ReportManager.problem(this, martCon, String.format("external_db dimension table named %s in species %s (%s) is missing", tableName, vegaDB.getSpecies().toString(), speciesRoot));
 					result = false;

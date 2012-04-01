@@ -79,7 +79,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 
 	}
 
-	/**
+	/**Integer.valueOf(
 	 * Run the test.
 	 * 
 	 * @param dbre
@@ -141,7 +141,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 		// get top level co-ordinate system ID
 		String sql = "SELECT coord_system_id FROM coord_system WHERE rank=1 LIMIT 1";
 
-		String s = getRowColumnValue(con, sql);
+		String s = DBUtils.getRowColumnValue(con, sql);
 
 		if (s.length() == 0) {
 			System.err.println("Error: can't get top-level co-ordinate system for " + DBUtils.getShortDatabaseName(con));
@@ -168,7 +168,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 				logger.fine("Counting density features on seq_region " + seqRegionName);
 
 				sql = "SELECT COUNT(*) FROM density_feature WHERE seq_region_id=" + seqRegionID;
-				int dfRows = getRowCount(con, sql);
+				int dfRows = DBUtils.getRowCount(con, sql);
 				if (dfRows == 0) {
 
 					ReportManager.problem(this, con, "Top-level seq region " + seqRegionName + " (ID " + seqRegionID + ") has no density features");
@@ -187,7 +187,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 					String attribCode = (String) logicNameToAttribCode.get(logicName);
 
 					// check if this species has appropriate density features
-					int analRows = getRowCount(con, "SELECT COUNT(*) FROM analysis WHERE logic_name='" + logicName + "'");
+					int analRows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM analysis WHERE logic_name='" + logicName + "'");
 					if (analRows == 0) {
 						logger.info(DBUtils.getShortDatabaseName(con) + " has no " + logicName + " analysis type, skipping checks for these features");
 					} else {
@@ -201,7 +201,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 						sql = "SELECT SUM(df.density_value) FROM density_type dt, density_feature df, analysis a WHERE dt.density_type_id=df.density_type_id AND dt.analysis_id=a.analysis_id AND a.logic_name='"
 								+ logicName + "' AND seq_region_id=" + seqRegionID;
 
-						String sumDF = getRowColumnValue(con, sql);
+						String sumDF = DBUtils.getRowColumnValue(con, sql);
 						// System.out.println(sql + " " + sumDF);
 						//don't check the sum for haplotypes or PAR regions
 						if (sumDF != null && sumDF.length() > 0 && !assemblyException) {
@@ -210,7 +210,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 
 							sql = "SELECT value FROM seq_region_attrib sra, attrib_type at WHERE sra.attrib_type_id=at.attrib_type_id AND at.code='" + attribCode + "' AND seq_region_id=" + seqRegionID;
 
-							String sumSRA = getRowColumnValue(con, sql);
+							String sumSRA = DBUtils.getRowColumnValue(con, sql);
 							// System.out.println(sql + " " + sumSRA);
 							if (sumSRA != null && sumSRA.length() > 0) {
 
@@ -257,7 +257,6 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 	/**
 	 * Check that each analysis_id is used at least one one density_type.
 	 */
-
 	private boolean checkAnalysisAndDensityTypes(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
@@ -287,7 +286,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 			String logicName = logicNames[i];
 			String sql = "SELECT dt.density_type_id FROM analysis a, density_type dt WHERE a.analysis_id=dt.analysis_id AND a.logic_name='" + logicName + "'";
 
-			String[] rows = getColumnValues(con, sql);
+			String[] rows = DBUtils.getColumnValues(con, sql);
 			if (rows.length >= 1) {
 
 				ReportManager.correct(this, con, "One density_type for analysis " + logicName);
@@ -319,7 +318,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 
 		String sql = "SELECT dt.density_type_id FROM density_type dt LEFT JOIN analysis a ON dt.analysis_id=a.analysis_id WHERE a.analysis_id IS NULL";
 
-		String[] rows = getColumnValues(con, sql);
+		String[] rows = DBUtils.getColumnValues(con, sql);
 		if (rows.length == 0) {
 
 			ReportManager.correct(this, con, "All density_types reference existing analysis_ids");
@@ -373,7 +372,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 		for (int i = 0; i < types.length; i++) {
 
 			logger.finest("Checking for duplicate " + types[i] + " seq_region attribs");
-			int rows = getRowCount(con, "SELECT COUNT(*) AS n FROM seq_region_attrib s, attrib_type a WHERE a.attrib_type_id=s.attrib_type_id and a.code ='" + types[i]
+			int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) AS n FROM seq_region_attrib s, attrib_type a WHERE a.attrib_type_id=s.attrib_type_id and a.code ='" + types[i]
 					+ "' GROUP BY s.seq_region_id, s.attrib_type_id, s.value HAVING n > 1;");
 
 			if (rows > 0) {

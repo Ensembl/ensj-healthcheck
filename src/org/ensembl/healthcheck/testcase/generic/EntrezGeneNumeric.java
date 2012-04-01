@@ -20,6 +20,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that no genes are named after numeric EntrezGene identifiers.
@@ -69,7 +70,7 @@ public class EntrezGeneNumeric extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		int rows = getRowCount(con,
+		int rows = DBUtils.getRowCount(con,
 				"SELECT COUNT(*) FROM gene g, external_db e, xref x WHERE g.display_xref_id=x.xref_id AND e.external_db_id=x.external_db_id AND e.db_name='EntrezGene' AND x.display_label REGEXP '^[0-9]+$'");
 
 		if (rows > 0) {

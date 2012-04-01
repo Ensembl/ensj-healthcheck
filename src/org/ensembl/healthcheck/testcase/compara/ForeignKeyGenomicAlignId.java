@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key
@@ -65,7 +66,7 @@ public class ForeignKeyGenomicAlignId extends SingleDatabaseTestCase {
             //            result &= checkForOrphans(con, "genomic_align_group", "genomic_align_id", "genomic_align", "genomic_align_id");
 
             // Check that all method_link_species_set_ids match the genomic_align_block table
-            int mismatches = getRowCount(con, "SELECT COUNT(*) FROM genomic_align ga LEFT JOIN genomic_align_block gab" +
+            int mismatches = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM genomic_align ga LEFT JOIN genomic_align_block gab" +
                 " USING (genomic_align_block_id) WHERE ga.method_link_species_set_id != gab.method_link_species_set_id");
             if (mismatches > 0) {
                 ReportManager.problem(this, con, mismatches + " entries in genomic_align table have a wrong" +

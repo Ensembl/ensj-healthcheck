@@ -27,6 +27,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that all species that should have projected xrefs do in fact have them.
@@ -84,7 +85,7 @@ public class ProjectedXrefs extends MultiDatabaseTestCase {
 
 				String species = projectedDisplayXrefSpecies[i].toString();
 
-				int rows = getRowCount(con, "SELECT COUNT(*) FROM gene g, xref x WHERE g.display_xref_id=x.xref_id AND x.info_type='PROJECTION'");
+				int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM gene g, xref x WHERE g.display_xref_id=x.xref_id AND x.info_type='PROJECTION'");
 
 				if (rows == 0) {
 
@@ -114,7 +115,7 @@ public class ProjectedXrefs extends MultiDatabaseTestCase {
 
 				String species = projectedGOTermSpecies[k].toString();
 
-				int rows = getRowCount(con, "SELECT COUNT(*) FROM xref x, external_db e WHERE e.external_db_id=x.external_db_id AND e.db_name='GO' AND x.info_type='PROJECTION'");
+				int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM xref x, external_db e WHERE e.external_db_id=x.external_db_id AND e.db_name='GO' AND x.info_type='PROJECTION'");
 
 				if (rows == 0) {
 

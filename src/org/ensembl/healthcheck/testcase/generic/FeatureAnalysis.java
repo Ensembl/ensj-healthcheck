@@ -30,16 +30,19 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Check that features exist for expected analysis types, and that all analysis types have features.
+ * Check that features exist for expected analysis types, and that all analysis
+ * types have features.
  */
 public class FeatureAnalysis extends SingleDatabaseTestCase {
 
 	// the following tables have an analysis_id column
 	String[] featureTables = getCoreTablesWithAnalysisID();
 
-	private String[] proteinFeatureAnalyses = { "prints", "pfscan", "signalp", "seg", "ncoils", "pfam", "tmhmm" };
+	private String[] proteinFeatureAnalyses = { "prints", "pfscan", "signalp",
+			"seg", "ncoils", "pfam", "tmhmm" };
 
 	/**
 	 * Creates a new instance of FeatureAnalysis
@@ -72,7 +75,7 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 	 * Run the test.
 	 * 
 	 * @param dbre
-	 *          The database to use.
+	 *            The database to use.
 	 * @return true if the test passed.
 	 * 
 	 */
@@ -86,7 +89,8 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 
 		// --------------------------------
 		// Check protein_feature
-		result &= checkFeatureAnalyses(dbre, "protein_feature", proteinFeatureAnalyses);
+		result &= checkFeatureAnalyses(dbre, "protein_feature",
+				proteinFeatureAnalyses);
 
 		// -------------------------------
 		// TODO - other feature tables
@@ -100,9 +104,11 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 	// ---------------------------------------------------------------------
 
 	/**
-	 * Check that all the analyses in the analysis table have some features associated.
+	 * Check that all the analyses in the analysis table have some features
+	 * associated.
 	 */
-	private boolean checkAnalysesHaveFeatures(DatabaseRegistryEntry dbre, String[] featureTables) {
+	private boolean checkAnalysesHaveFeatures(DatabaseRegistryEntry dbre,
+			String[] featureTables) {
 
 		boolean result = true;
 
@@ -119,30 +125,52 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 				String featureTable = featureTables[t];
 				logger.fine("Collecting analysis IDs from " + featureTable);
 				Statement stmt = con.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT DISTINCT(analysis_id), COUNT(*) AS count FROM " + featureTable + " GROUP BY analysis_id");
+				ResultSet rs = stmt
+						.executeQuery("SELECT DISTINCT(analysis_id), COUNT(*) AS count FROM "
+								+ featureTable + " GROUP BY analysis_id");
 				while (rs.next()) {
 					Integer analysisID = new Integer(rs.getInt("analysis_id"));
 					if (analysesFromFeatureTables.containsKey(analysisID)) {
 
-						// don't complain if gene and transcript table contain the same
+						// don't complain if gene and transcript table contain
+						// the same
 						// analysis-id
-						if (featureTable.equals("transcript") && analysesFromFeatureTables.get(analysisID).equals("gene")) {
+						if (featureTable.equals("transcript")
+								&& analysesFromFeatureTables.get(analysisID)
+										.equals("gene")) {
 							result = true;
 							// ditto for unmapped_object and object_xref
-						} else if (featureTable.equals("unmapped_object") && analysesFromFeatureTables.get(analysisID).equals("object_xref")) {
+						} else if (featureTable.equals("unmapped_object")
+								&& analysesFromFeatureTables.get(analysisID)
+										.equals("object_xref")) {
 							result = true;
 						} else {
-							ReportManager.problem(this, con, "Analysis with ID " + analysisID + " is used in " + featureTable + " as well as " + analysesFromFeatureTables.get(analysisID));
+							ReportManager.problem(
+									this,
+									con,
+									"Analysis with ID "
+											+ analysisID
+											+ " is used in "
+											+ featureTable
+											+ " as well as "
+											+ analysesFromFeatureTables
+													.get(analysisID));
 							result = false;
 						}
 					} else {
 						analysesFromFeatureTables.put(analysisID, featureTable);
 					}
 
-					// check that each analysis actually exists in the analysis table
-					if (!analysesFromAnalysisTable.containsKey("" + analysisID.intValue()) && !featureTable.equals("object_xref")) {
+					// check that each analysis actually exists in the analysis
+					// table
+					if (!analysesFromAnalysisTable.containsKey(""
+							+ analysisID.intValue())
+							&& !featureTable.equals("object_xref")) {
 						int count = rs.getInt("count");
-						ReportManager.problem(this, con, "Analysis ID " + analysisID.intValue() + " is used in " + count + " rows in " + featureTable + " but is not present in the analysis table.");
+						ReportManager.problem(this, con, "Analysis ID "
+								+ analysisID.intValue() + " is used in "
+								+ count + " rows in " + featureTable
+								+ " but is not present in the analysis table.");
 						result = false;
 					}
 
@@ -151,25 +179,41 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 				stmt.close();
 			}
 
-			// look at each analysis ID *from the analysis table* to see if it's used
+			// look at each analysis ID *from the analysis table* to see if it's
+			// used
 			// somewhere
-			// some analyses may be listed in the analysis table but actually used in
+			// some analyses may be listed in the analysis table but actually
+			// used in
 			// the otherfeatures database
 			// so go and get the lis of analyses from the feature tables in the
 			// otherfeatures database first
-			Map otherfeatureAnalyses = getAnalysesFromOtherDatabase(dbre, featureTables);
+			Map otherfeatureAnalyses = getAnalysesFromOtherDatabase(dbre,
+					featureTables);
 
 			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT analysis_id, logic_name FROM analysis");
+			ResultSet rs = stmt
+					.executeQuery("SELECT analysis_id, logic_name FROM analysis");
 			while (rs.next()) {
 				int analysisID = rs.getInt("analysis_id");
 				String logicName = rs.getString("logic_name");
 				Integer anal = new Integer(analysisID);
-				if (!analysesFromFeatureTables.containsKey(anal) && !otherfeatureAnalyses.containsKey(anal)) {
-					ReportManager.problem(this, con, "Analysis with ID " + analysisID + ", logic name " + logicName + " is not used in any feature table");
+				if (!analysesFromFeatureTables.containsKey(anal)
+						&& !otherfeatureAnalyses.containsKey(anal)) {
+					ReportManager.problem(this, con, "Analysis with ID "
+							+ analysisID + ", logic name " + logicName
+							+ " is not used in any feature table");
 					result = false;
 				} else {
-					ReportManager.correct(this, con, "Analysis with ID " + analysisID + ", logic name " + logicName + " is used in " + analysesFromFeatureTables.get(new Integer(analysisID)));
+					ReportManager.correct(
+							this,
+							con,
+							"Analysis with ID "
+									+ analysisID
+									+ ", logic name "
+									+ logicName
+									+ " is used in "
+									+ analysesFromFeatureTables
+											.get(new Integer(analysisID)));
 				}
 			}
 			rs.close();
@@ -185,7 +229,8 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 
 	// -----------------------------------------------------------------
 
-	private boolean checkFeatureAnalyses(DatabaseRegistryEntry dbre, String table, String[] analyses) {
+	private boolean checkFeatureAnalyses(DatabaseRegistryEntry dbre,
+			String table, String[] analyses) {
 
 		logger.fine("Checking analyses for " + table + " in " + dbre.getName());
 
@@ -193,14 +238,18 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 
 		for (int i = 0; i < analyses.length; i++) {
 
-			String sql = "SELECT COUNT(*) FROM " + table + ", analysis a WHERE LCASE(a.logic_name)='" + analyses[i] + "' AND a.analysis_id=" + table + ".analysis_id";
+			String sql = "SELECT COUNT(*) FROM " + table
+					+ ", analysis a WHERE LCASE(a.logic_name)='" + analyses[i]
+					+ "' AND a.analysis_id=" + table + ".analysis_id";
 			Connection con = dbre.getConnection();
-			int rows = getRowCount(con, sql);
+			int rows = DBUtils.getRowCount(con, sql);
 			if (rows == 0) {
-				ReportManager.problem(this, con, table + " has no features for analysis " + analyses[i]);
+				ReportManager.problem(this, con, table
+						+ " has no features for analysis " + analyses[i]);
 				result = false;
 			} else {
-				ReportManager.correct(this, con, table + " has features for analysis " + analyses[i]);
+				ReportManager.correct(this, con, table
+						+ " has features for analysis " + analyses[i]);
 			}
 		}
 
@@ -210,7 +259,8 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 
 	// -----------------------------------------------------------------
 
-	private Map getAnalysesFromOtherDatabase(DatabaseRegistryEntry dbre, String[] featureTables) {
+	private Map getAnalysesFromOtherDatabase(DatabaseRegistryEntry dbre,
+			String[] featureTables) {
 
 		Map analyses = new HashMap();
 
@@ -218,7 +268,8 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 		DatabaseRegistry dr = dbre.getDatabaseRegistry();
 		DatabaseRegistryEntry ofDBRE = dr.getByExactName(ofName);
 		if (ofDBRE == null) {
-			logger.info("Can't get otherfeatures database for " + dbre.getName());
+			logger.info("Can't get otherfeatures database for "
+					+ dbre.getName());
 			return analyses;
 		}
 
@@ -228,7 +279,9 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 			for (int t = 0; t < featureTables.length; t++) {
 				String featureTable = featureTables[t];
 				Statement stmt = con.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT DISTINCT(analysis_id) FROM " + featureTable);
+				ResultSet rs = stmt
+						.executeQuery("SELECT DISTINCT(analysis_id) FROM "
+								+ featureTable);
 				while (rs.next()) {
 					Integer analysisID = new Integer(rs.getInt("analysis_id"));
 					analyses.put(analysisID, featureTable);

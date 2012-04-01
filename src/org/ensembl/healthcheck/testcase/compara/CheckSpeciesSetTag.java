@@ -37,13 +37,15 @@ import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * An EnsEMBL Healthcheck test case that looks for broken foreign-key relationships.
+ * An EnsEMBL Healthcheck test case that looks for broken foreign-key
+ * relationships.
  */
 
 public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 
 	/**
-	 * Create an ForeignKeyMethodLinkSpeciesSetId that applies to a specific set of databases.
+	 * Create an ForeignKeyMethodLinkSpeciesSetId that applies to a specific set
+	 * of databases.
 	 */
 	public CheckSpeciesSetTag() {
 
@@ -57,7 +59,7 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 	 * Run the test.
 	 * 
 	 * @param dbre
-	 *          The database to use.
+	 *            The database to use.
 	 * @return true if the test passed.
 	 * 
 	 */
@@ -66,7 +68,8 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 		boolean result = true;
 
 		// Get compara DB connection
-		DatabaseRegistryEntry[] allPrimaryComparaDBs = DBUtils.getMainDatabaseRegistry().getAll(DatabaseType.COMPARA);
+		DatabaseRegistryEntry[] allPrimaryComparaDBs = DBUtils
+				.getMainDatabaseRegistry().getAll(DatabaseType.COMPARA);
 		if (allPrimaryComparaDBs.length == 0) {
 			result = false;
 			ReportManager.problem(this, "", "Cannot find compara database");
@@ -74,7 +77,8 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 			return false;
 		}
 
-		DatabaseRegistryEntry[] allSecondaryComparaDBs = DBUtils.getSecondaryDatabaseRegistry().getAll(DatabaseType.COMPARA);
+		DatabaseRegistryEntry[] allSecondaryComparaDBs = DBUtils
+				.getSecondaryDatabaseRegistry().getAll(DatabaseType.COMPARA);
 
 		Map speciesDbrs = getSpeciesDatabaseMap(dbr, true);
 
@@ -83,26 +87,34 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 			// ... check the entries with a taxon id
 			result &= checkSpeciesSetByTaxon(allPrimaryComparaDBs[i]);
 			// ... check the entry for low-coverage genomes
-			result &= checkLowCoverageSpecies(allPrimaryComparaDBs[i], speciesDbrs);
+			result &= checkLowCoverageSpecies(allPrimaryComparaDBs[i],
+					speciesDbrs);
 
 			// ... check that we have one name tag for every MSA
 			result &= checkNameTagForMultipleAlignments(allPrimaryComparaDBs[i]);
 
 			if (allSecondaryComparaDBs.length == 0) {
 				result = false;
-				ReportManager.problem(this, allPrimaryComparaDBs[i].getConnection(), "Cannot find the compara database in the secondary server. This check expects to find a previous version of the compara database for checking that all the *named* species_sets are still present in the current database.");
+				ReportManager
+						.problem(
+								this,
+								allPrimaryComparaDBs[i].getConnection(),
+								"Cannot find the compara database in the secondary server. This check expects to find a previous version of the compara database for checking that all the *named* species_sets are still present in the current database.");
 				usage();
 			}
 			for (int j = 0; j < allSecondaryComparaDBs.length; j++) {
 				// Check vs previous compara DB.
-				result &= checkSetOfSpeciesSets(allPrimaryComparaDBs[i], allSecondaryComparaDBs[j]);
+				result &= checkSetOfSpeciesSets(allPrimaryComparaDBs[i],
+						allSecondaryComparaDBs[j]);
 			}
 		}
 
 		return result;
 	}
 
-	public boolean checkSetOfSpeciesSets(DatabaseRegistryEntry primaryComparaDbre, DatabaseRegistryEntry secondaryComparaDbre) {
+	public boolean checkSetOfSpeciesSets(
+			DatabaseRegistryEntry primaryComparaDbre,
+			DatabaseRegistryEntry secondaryComparaDbre) {
 
 		boolean result = true;
 		Connection con1 = primaryComparaDbre.getConnection();
@@ -136,13 +148,26 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 		while (it.hasNext()) {
 			Object next = it.next();
 			Object primaryValue = primarySets.get(next);
-			Integer secondaryValue = new Integer(secondarySets.get(next).toString());
+			Integer secondaryValue = new Integer(secondarySets.get(next)
+					.toString());
 			if (primaryValue == null) {
-				ReportManager.problem(this, con1, "Species set \"" + next.toString() + "\" is missing (it appears " + secondaryValue + " time(s) in " + DBUtils.getShortDatabaseName(con2) + ")");
+				ReportManager.problem(
+						this,
+						con1,
+						"Species set \"" + next.toString()
+								+ "\" is missing (it appears " + secondaryValue
+								+ " time(s) in "
+								+ DBUtils.getShortDatabaseName(con2) + ")");
 				result = false;
 			} else if (new Integer(primaryValue.toString()) < secondaryValue) {
-				ReportManager.problem(this, con1,
-						"Species set \"" + next.toString() + "\" is present only " + primaryValue + " times instead of " + secondaryValue + " as in " + DBUtils.getShortDatabaseName(con2));
+				ReportManager.problem(
+						this,
+						con1,
+						"Species set \"" + next.toString()
+								+ "\" is present only " + primaryValue
+								+ " times instead of " + secondaryValue
+								+ " as in "
+								+ DBUtils.getShortDatabaseName(con2));
 				result = false;
 			}
 		}
@@ -150,7 +175,8 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 		return result;
 	}
 
-	public boolean checkLowCoverageSpecies(DatabaseRegistryEntry comparaDbre, Map speciesDbrs) {
+	public boolean checkLowCoverageSpecies(DatabaseRegistryEntry comparaDbre,
+			Map speciesDbrs) {
 
 		boolean result = true;
 		Connection con = comparaDbre.getConnection();
@@ -166,7 +192,8 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 			ResultSet rs = stmt.executeQuery(sql2);
 			while (rs.next()) {
 				comparaSpeciesStr.add(rs.getString(2));
-				comparaSpecies.add(Species.resolveAlias(rs.getString(2).toLowerCase().replace(' ', '_')));
+				comparaSpecies.add(Species.resolveAlias(rs.getString(2)
+						.toLowerCase().replace(' ', '_')));
 				comparaGenomeDBids.add(rs.getString(1));
 			}
 			rs.close();
@@ -175,24 +202,30 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 			e.printStackTrace();
 		}
 
-		// Find which of these species are low-coverage by looking into the meta table
-		// I don't know if this will work for multi-species DBs, but hopefully these don't have low-cov assemblies
+		// Find which of these species are low-coverage by looking into the meta
+		// table
+		// I don't know if this will work for multi-species DBs, but hopefully
+		// these don't have low-cov assemblies
 		boolean allSpeciesFound = true;
 		Vector lowCoverageSpecies = new Vector();
 		Vector lowCoverageGenomeDdIds = new Vector();
 		for (int i = 0; i < comparaSpecies.size(); i++) {
 			Species species = (Species) comparaSpecies.get(i);
-			DatabaseRegistryEntry[] speciesDbr = (DatabaseRegistryEntry[]) speciesDbrs.get(species);
+			DatabaseRegistryEntry[] speciesDbr = (DatabaseRegistryEntry[]) speciesDbrs
+					.get(species);
 			if (speciesDbr != null) {
 				Connection speciesCon = speciesDbr[0].getConnection();
-				String coverageDepth = getRowColumnValue(speciesCon, "SELECT meta_value FROM meta WHERE meta_key = \"assembly.coverage_depth\"");
+				String coverageDepth = DBUtils
+						.getRowColumnValue(speciesCon,
+								"SELECT meta_value FROM meta WHERE meta_key = \"assembly.coverage_depth\"");
 
 				if (coverageDepth.equals("low")) {
 					lowCoverageSpecies.add(species);
 					lowCoverageGenomeDdIds.add(comparaGenomeDBids.get(i));
 				}
 			} else {
-				ReportManager.problem(this, con, "No connection for " + comparaSpeciesStr.get(i).toString());
+				ReportManager.problem(this, con, "No connection for "
+						+ comparaSpeciesStr.get(i).toString());
 				allSpeciesFound = false;
 			}
 		}
@@ -203,31 +236,48 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 
 		// If there are low-coverage species, check the species_set_tag entry
 		if (lowCoverageSpecies.size() > 0) {
-			// Check that the low-coverage entry exists in the species_set_tag table
-			String speciesSetId1 = getRowColumnValue(con, "SELECT species_set_id FROM species_set_tag WHERE tag = 'name' AND value = 'low-coverage'");
+			// Check that the low-coverage entry exists in the species_set_tag
+			// table
+			String speciesSetId1 = DBUtils
+					.getRowColumnValue(
+							con,
+							"SELECT species_set_id FROM species_set_tag WHERE tag = 'name' AND value = 'low-coverage'");
 			if (speciesSetId1.equals("")) {
-				ReportManager.problem(this, con, "There is no species_set_tag entry for low-coverage genomes");
+				ReportManager
+						.problem(this, con,
+								"There is no species_set_tag entry for low-coverage genomes");
 				result = false;
 			}
 
 			// Check the species_set_id for the set of low-coverage assemblies
-			StringBuffer buf = new StringBuffer(lowCoverageGenomeDdIds.get(0).toString());
+			StringBuffer buf = new StringBuffer(lowCoverageGenomeDdIds.get(0)
+					.toString());
 			for (int i = 1; i < lowCoverageGenomeDdIds.size(); i++) {
 				buf.append(",");
 				buf.append(lowCoverageGenomeDdIds.get(i));
 			}
 			String sql = buf.toString();
 
-			String speciesSetId2 = getRowColumnValue(con, "SELECT species_set_id, GROUP_CONCAT(genome_db_id ORDER BY genome_db_id) gdbs" + " FROM species_set GROUP BY species_set_id HAVING gdbs = \"" + sql
-					+ "\"");
+			String speciesSetId2 = DBUtils
+					.getRowColumnValue(
+							con,
+							"SELECT species_set_id, GROUP_CONCAT(genome_db_id ORDER BY genome_db_id) gdbs"
+									+ " FROM species_set GROUP BY species_set_id HAVING gdbs = \""
+									+ sql + "\"");
 			if (speciesSetId2.equals("")) {
-				ReportManager.problem(this, con, "Wrong set of low-coverage (" + speciesSetId1 + ") genome_db_ids. It must be: " + sql);
+				ReportManager
+						.problem(this, con, "Wrong set of low-coverage ("
+								+ speciesSetId1
+								+ ") genome_db_ids. It must be: " + sql);
 				result = false;
 			}
 
 			// Check that both are the same
-			if (!speciesSetId1.equals("") && !speciesSetId2.equals("") && !speciesSetId1.equals(speciesSetId2)) {
-				ReportManager.problem(this, con, "The species_set_id for low-coverage should be " + speciesSetId2 + " and not " + speciesSetId1);
+			if (!speciesSetId1.equals("") && !speciesSetId2.equals("")
+					&& !speciesSetId1.equals(speciesSetId2)) {
+				ReportManager.problem(this, con,
+						"The species_set_id for low-coverage should be "
+								+ speciesSetId2 + " and not " + speciesSetId1);
 				result = false;
 			}
 		}
@@ -263,7 +313,8 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 				Statement stmt2 = con.createStatement();
 				ResultSet rs2 = stmt2.executeQuery(sql2);
 				while (rs2.next()) {
-					allSetsForMultipleAlignments.put(rs2.getInt(1), rs2.getString(2));
+					allSetsForMultipleAlignments.put(rs2.getInt(1),
+							rs2.getString(2));
 				}
 				rs2.close();
 				stmt2.close();
@@ -275,15 +326,22 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 			while (it.hasNext()) {
 				Object next = it.next();
 				Object setName = allSetsWithAName.get(next);
-				String multipleAlignmentName = allSetsForMultipleAlignments.get(next).toString();
+				String multipleAlignmentName = allSetsForMultipleAlignments
+						.get(next).toString();
 				if (setName == null) {
-					ReportManager.problem(this, con, "There is no name entry in species_set_tag for MSA \"" + multipleAlignmentName + "\".");
+					ReportManager.problem(this, con,
+							"There is no name entry in species_set_tag for MSA \""
+									+ multipleAlignmentName + "\".");
 					result = false;
 				}
 			}
 
 		} else {
-			ReportManager.problem(this, con, "species_set_tag table is empty. There will be no aliases for multiple alignments");
+			ReportManager
+					.problem(
+							this,
+							con,
+							"species_set_tag table is empty. There will be no aliases for multiple alignments");
 			result = false;
 		}
 
@@ -306,13 +364,21 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 				Statement stmt_tag = con.createStatement();
 				ResultSet rs_tag = stmt_tag.executeQuery(sql_tag);
 				while (rs_tag.next()) {
-					// Check that all the genome_db_ids for that taxon are included
+					// Check that all the genome_db_ids for that taxon are
+					// included
 					// 1. genome_db_ids from ncbi_taxa_node + genome_db tables
-					String sql_taxon = "SELECT GROUP_CONCAT(genome_db_id ORDER BY genome_db_id)" + " FROM ncbi_taxa_node nod1"
-							+ " LEFT JOIN ncbi_taxa_node nod2 ON (nod1.left_index < nod2.left_index and nod1.right_index > nod2.left_index)" + " LEFT JOIN genome_db ON (nod2.taxon_id = genome_db.taxon_id)"
-							+ " WHERE nod1.taxon_id = '" + rs_tag.getInt(2) + "'" + " AND genome_db_id IS NOT NULL AND genome_db.assembly_default = 1";
+					String sql_taxon = "SELECT GROUP_CONCAT(genome_db_id ORDER BY genome_db_id)"
+							+ " FROM ncbi_taxa_node nod1"
+							+ " LEFT JOIN ncbi_taxa_node nod2 ON (nod1.left_index < nod2.left_index and nod1.right_index > nod2.left_index)"
+							+ " LEFT JOIN genome_db ON (nod2.taxon_id = genome_db.taxon_id)"
+							+ " WHERE nod1.taxon_id = '"
+							+ rs_tag.getInt(2)
+							+ "'"
+							+ " AND genome_db_id IS NOT NULL AND genome_db.assembly_default = 1";
 					// 2. genome_db_ids from the species_set table
-					String sql_sset = "SELECT GROUP_CONCAT(genome_db_id ORDER BY genome_db_id)" + " FROM species_set WHERE species_set_id = " + rs_tag.getInt(1);
+					String sql_sset = "SELECT GROUP_CONCAT(genome_db_id ORDER BY genome_db_id)"
+							+ " FROM species_set WHERE species_set_id = "
+							+ rs_tag.getInt(1);
 					Statement stmt_taxon = con.createStatement();
 					ResultSet rs_taxon = stmt_taxon.executeQuery(sql_taxon);
 					Statement stmt_sset = con.createStatement();
@@ -321,7 +387,14 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 					// Check that 1 and 2 are the same
 					if (rs_taxon.next() && rs_sset.next()) {
 						if (!rs_taxon.getString(1).equals(rs_sset.getString(1))) {
-							ReportManager.problem(this, con, "Species set " + rs_tag.getInt(1) + " has not the right set of genome_db_ids: " + rs_taxon.getString(1));
+							ReportManager
+									.problem(
+											this,
+											con,
+											"Species set "
+													+ rs_tag.getInt(1)
+													+ " has not the right set of genome_db_ids: "
+													+ rs_taxon.getString(1));
 							result = false;
 						}
 					}
@@ -337,7 +410,11 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 				result = false;
 			}
 		} else {
-			ReportManager.problem(this, con, "species_set_tag table is empty. There will be no colouring in the gene tree view");
+			ReportManager
+					.problem(
+							this,
+							con,
+							"species_set_tag table is empty. There will be no colouring in the gene tree view");
 			result = false;
 		}
 
@@ -347,7 +424,12 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 
 	private void usage() {
 
-		ReportManager.problem(this, "USAGE", "run-healthcheck.sh -d ensembl_compara_.+ " + " -d2 .+_core_.+ -d2 .+_compara_.+ CheckSpeciesSetTag");
+		ReportManager
+				.problem(
+						this,
+						"USAGE",
+						"run-healthcheck.sh -d ensembl_compara_.+ "
+								+ " -d2 .+_core_.+ -d2 .+_compara_.+ CheckSpeciesSetTag");
 	}
 
 } // CheckSpeciesSetTag

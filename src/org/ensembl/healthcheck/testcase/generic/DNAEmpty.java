@@ -25,6 +25,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Healthcheck for the dna table. Should be empty in an est database
@@ -68,7 +69,7 @@ public class DNAEmpty extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM dna");
+		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM dna");
 		if (rows > 0) {
 			result = false;
 			ReportManager.problem(this, con, "dna table contains " + rows + " rows - it should be empty unless it's a core database ");

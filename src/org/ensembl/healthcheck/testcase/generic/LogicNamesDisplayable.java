@@ -31,6 +31,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.Utils;
 
 /**
@@ -150,7 +151,7 @@ public class LogicNamesDisplayable extends SingleDatabaseTestCase {
 			logger.finest("Analysing features in " + featureTableName);
 
 			// get analysis IDs
-			String[] analysisIDs = getColumnValues(con, "SELECT DISTINCT analysis_id FROM " + featureTableName);
+			String[] analysisIDs = DBUtils.getColumnValues(con, "SELECT DISTINCT analysis_id FROM " + featureTableName);
 
 			// check each analysis ID
 			for (int i = 0; i < analysisIDs.length; i++) {
@@ -242,13 +243,13 @@ public class LogicNamesDisplayable extends SingleDatabaseTestCase {
 
 		List result = new ArrayList(Arrays.asList(initialNames));
 
-		String[] featureTypes = getColumnValues(con, "SELECT DISTINCT(feature_type) FROM supporting_feature");
+		String[] featureTypes = DBUtils.getColumnValues(con, "SELECT DISTINCT(feature_type) FROM supporting_feature");
 
 		for (int i = 0; i < featureTypes.length; i++) {
 			String featureType = featureTypes[i];
 			String sql = "SELECT DISTINCT a.logic_name FROM supporting_feature sf, " + featureType + " f, analysis a " + "WHERE sf.feature_type='" + featureType + "' AND sf.feature_id=f." + featureType
 					+ "_id " + "AND f.analysis_id=a.analysis_id";
-			String[] logicNames = getColumnValues(con, sql);
+			String[] logicNames = DBUtils.getColumnValues(con, sql);
 			for (int j = 0; j < logicNames.length; j++) {
 				result.add(logicNames[j]);
 				logger.finest("Added logic name " + logicNames[j] + " from supporting features in " + featureType);
@@ -272,7 +273,7 @@ public class LogicNamesDisplayable extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		String[] blankDBLogicNames = getColumnValues(con, "SELECT logic_name FROM analysis WHERE db=''");
+		String[] blankDBLogicNames = DBUtils.getColumnValues(con, "SELECT logic_name FROM analysis WHERE db=''");
 		for (int j = 0; j < blankDBLogicNames.length; j++) {
 			ReportManager.problem(this, con, "Analysis with logic name '" + blankDBLogicNames[j] + "' has a blank db field - features of this type will have no label in ProtView");
 			result = false;

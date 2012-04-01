@@ -23,6 +23,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that the seq_region_strand is +1 or -1 for several tables.
@@ -64,7 +65,7 @@ public class Strand extends SingleDatabaseTestCase {
 			String table = tables[i];
 			String sql = "SELECT COUNT(*) FROM " + table + " WHERE seq_region_strand NOT IN (1,-1)";
 			Connection con = dbre.getConnection();
-			int rows = getRowCount(con, sql);
+			int rows = DBUtils.getRowCount(con, sql);
 			if (rows == 0) {
 				ReportManager.correct(this, con, "All seq_region_strand in " + table + " are 1 or -1");
 			} else if (rows > 0) {

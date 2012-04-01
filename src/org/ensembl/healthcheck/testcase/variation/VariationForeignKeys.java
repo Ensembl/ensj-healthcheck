@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key realtionships.
@@ -115,8 +116,8 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			}
 	
 			// Hmmm.. this is not really a foreign key check.. [pontus]
-			if (getRowCount(con, "SHOW TABLES like 'tmp_individual%'") > 0) {
-				rows = getRowCount(con, "SELECT COUNT(*) FROM tmp_individual_genotype_single_bp where length(allele_1) >1 or length(allele_2) > 1");
+			if (DBUtils.getRowCount(con, "SHOW TABLES like 'tmp_individual%'") > 0) {
+				rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM tmp_individual_genotype_single_bp where length(allele_1) >1 or length(allele_2) > 1");
 				if (rows > 0) {
 					ReportManager.problem(this, con, rows + "entries in The tmp_individual_genotype_single_bp table contains alleles with more than 1 bp");
 					result = false;
@@ -130,7 +131,7 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			 *  have a single mapping is very inconsistent and with poor resolution  
 			 * for this kind of test.. I'll comment out this test [Pontus]
 			 *
-			rows = getRowCount(
+			rows = DBUtils.getRowCount(
 					con,
 					"SELECT COUNT(*) " +
 					"FROM variation_feature vf, flanking_sequence f " +
@@ -147,7 +148,7 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			/*
 			 * Similar argument as above, I'll comment out [Pontus]
 			 *
-			rows = getRowCount(
+			rows = DBUtils.getRowCount(
 					con,
 					"SELECT COUNT(*) " +
 					"FROM variation_feature vf, " +

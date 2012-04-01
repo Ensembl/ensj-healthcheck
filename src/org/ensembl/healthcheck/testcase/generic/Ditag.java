@@ -109,14 +109,14 @@ public class Ditag extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		int rowCount1 = getRowCount(con, "SELECT * FROM ditag LIMIT 10");
+		int rowCount1 = DBUtils.getRowCount(con, "SELECT * FROM ditag LIMIT 10");
 
 		if (rowCount1 == 0) {
 			ReportManager.problem(this, con, "No ditags in databaset");
 			result = false;
 		}
 
-		int rowCount2 = getRowCount(con, "SELECT * FROM ditag_feature LIMIT 10");
+		int rowCount2 = DBUtils.getRowCount(con, "SELECT * FROM ditag_feature LIMIT 10");
 
 		if (rowCount2 == 0) {
 			ReportManager.problem(this, con, "No ditag features in databaset");
@@ -140,7 +140,7 @@ public class Ditag extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		int count = getRowCount(con, "SELECT COUNT(*) FROM ditag_feature df LEFT JOIN ditag d ON d.ditag_id=df.ditag_id WHERE d.ditag_id IS NULL");
+		int count = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM ditag_feature df LEFT JOIN ditag d ON d.ditag_id=df.ditag_id WHERE d.ditag_id IS NULL");
 
 		if (count > 0) {
 
@@ -175,7 +175,7 @@ public class Ditag extends SingleDatabaseTestCase {
 		// get top level co-ordinate system ID
 		String sql = "SELECT coord_system_id FROM coord_system WHERE rank=1 LIMIT 1";
 
-		String s = getRowColumnValue(con, sql);
+		String s = DBUtils.getRowColumnValue(con, sql);
 
 		if (s.length() == 0) {
 			System.err.println("Error: can't get top-level co-ordinate system for " + DBUtils.getShortDatabaseName(con));
@@ -203,7 +203,7 @@ public class Ditag extends SingleDatabaseTestCase {
 				// check ditag_features
 				logger.fine("Counting ditag_features on chromosome " + seqRegionName);
 				sql = "SELECT COUNT(*) FROM ditag_feature WHERE seq_region_id=" + seqRegionID;
-				int rows = getRowCount(con, sql);
+				int rows = DBUtils.getRowCount(con, sql);
 				if (rows == 0) {
 
 					ReportManager.problem(this, con, "Chromosome " + seqRegionName + " (seq_region_id " + seqRegionID + ") has no ditag_features");

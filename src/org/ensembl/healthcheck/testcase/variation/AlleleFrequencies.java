@@ -25,6 +25,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that allele frequencies add up to 1
@@ -72,7 +73,7 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 
 				// Get the maximum variation id
 				String sql = "SELECT MAX(s.variation_id) FROM " + tables[i] + " s";
-				sql = getRowColumnValue(con, sql);
+				sql = DBUtils.getRowColumnValue(con, sql);
 				if (sql.length() == 0) {
 					sql = "0";
 				}

@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that certain seq_regions that have known, protein_coding genes have the GeneNo_knwCod attribute associated with them.
@@ -79,7 +80,7 @@ public class SeqRegionAttribsPresent extends SingleDatabaseTestCase {
 		String sql = " FROM gene g WHERE g.biotype='protein_coding' AND g.status='KNOWN' AND g.seq_region_id NOT IN (SELECT DISTINCT(g.seq_region_id) FROM gene g LEFT JOIN seq_region_attrib sra ON g.seq_region_id=sra.seq_region_id WHERE g.biotype='protein_coding' AND g.status='KNOWN' AND sra.attrib_type_id=(select attrib_type_id from attrib_type where code = "
 				+ code + ") AND sra.seq_region_id IS NOT NULL)";
 
-		int count = getRowCount(con, "SELECT COUNT(DISTINCT(g.seq_region_id))" + sql);
+		int count = DBUtils.getRowCount(con, "SELECT COUNT(DISTINCT(g.seq_region_id))" + sql);
 
 		if (count > 0) {
 

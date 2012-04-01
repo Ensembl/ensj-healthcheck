@@ -28,6 +28,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check for identically-named seq_regions in different co-ordinate systems. Also check that identically-named seq_regions have the
@@ -109,7 +110,7 @@ public class SeqRegionCoordSystem extends SingleDatabaseTestCase {
 					String csI = (String) coordSystems.get(coordSystemIDs[i]);
 					String csJ = (String) coordSystems.get(coordSystemIDs[j]);
 
-					int same = getRowCount(con, "SELECT COUNT(*) FROM seq_region s1, seq_region s2 WHERE s1.coord_system_id=" + coordSystemIDs[i] + " AND s2.coord_system_id=" + coordSystemIDs[j]
+					int same = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM seq_region s1, seq_region s2 WHERE s1.coord_system_id=" + coordSystemIDs[i] + " AND s2.coord_system_id=" + coordSystemIDs[j]
 							+ " AND s1.name = s2.name");
 
 					if (same > 0) {
@@ -146,7 +147,7 @@ public class SeqRegionCoordSystem extends SingleDatabaseTestCase {
 			if (dbre.getType() == DatabaseType.SANGER_VEGA || dbre.getType() == DatabaseType.VEGA) {
 				query += " and c1.version=c2.version";
 			}
-			int rows = getRowCount(con, query);
+			int rows = DBUtils.getRowCount(con, query);
 			if (rows > 0) {
 
 				ReportManager.problem(this, con, rows + " seq_regions have the same name but different lengths for species " + speciesId);

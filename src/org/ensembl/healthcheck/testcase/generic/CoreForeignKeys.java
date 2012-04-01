@@ -20,6 +20,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key relationships.
@@ -252,7 +253,7 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		 * Is this not just checkForOrphansWithConstraint?
 		 * 
 		 * 
-		 * //int rows = getRowCount(con, "SELECT COUNT(*) FROM " + baseTable + " x LEFT JOIN " + table + " ON x." + column + "=" + table
+		 * //int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + baseTable + " x LEFT JOIN " + table + " ON x." + column + "=" + table
 		 * + "." + table + // "_id WHERE x.ensembl_object_type=\'" + type + "\' AND " + table + "." + table + "_id IS NULL");
 		 * 
 		 * 
@@ -278,7 +279,7 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		// check the canonical_transcript_id column contains right transcript_id
 		result &= checkForOrphans(con, "gene", "canonical_transcript_id", "transcript", "transcript_id", true);
 		// and finally check that all canonical_transcript_id belong to gene
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM gene g, transcript t where g.canonical_transcript_id=" + "t.transcript_id and g.gene_id <> t.gene_id");
+		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM gene g, transcript t where g.canonical_transcript_id=" + "t.transcript_id and g.gene_id <> t.gene_id");
 		if (rows > 0) {
 			// problem, the canonical transcript does not belong to the gene
 			String useful_sql = "SELECT g.gene_id,g.canonical_transcript_id FROM gene g, transcript t where g.canonical_transcript_id=" + "t.transcript_id and g.gene_id <> t.gene_id";
@@ -293,7 +294,7 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
 		// the foreign key has been checked before, but might not point to a marker_synonym
 		// of this markers=
-		int rows = getRowCount(con, "select count(*) from marker m where m.display_marker_synonym_id not in " + "(select ms.marker_synonym_id from marker_synonym ms where m.marker_id = ms.marker_id)");
+		int rows = DBUtils.getRowCount(con, "select count(*) from marker m where m.display_marker_synonym_id not in " + "(select ms.marker_synonym_id from marker_synonym ms where m.marker_id = ms.marker_id)");
 		if (rows > 0) {
 			// problem, there are markers that have display_marker_synonym_id that is not part of the
 			// synonyms for the marker

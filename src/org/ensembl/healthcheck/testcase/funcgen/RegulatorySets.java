@@ -17,6 +17,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 public class RegulatorySets extends SingleDatabaseTestCase {
 
@@ -74,7 +75,7 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 		String[] metaKeys  = {"feature_set_ids", "focus_feature_set_ids", "feature_type_ids"};	
 				
 		try {
-			int regSetCount = getRowCount(efgCon, "SELECT count(*) from feature_set where type='regulatory'");
+			int regSetCount = DBUtils.getRowCount(efgCon, "SELECT count(*) from feature_set where type='regulatory'");
 			String[] cellTypes = new String[regSetCount];
 			int count = 0;
 			

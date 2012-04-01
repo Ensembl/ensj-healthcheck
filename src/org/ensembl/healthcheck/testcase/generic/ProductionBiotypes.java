@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that the gene and transcript biotypes match the valid current ones in the production database.
@@ -78,9 +79,9 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
 
 		for (String table : tables) {
 
-			List<String> dbBiotypes = getColumnValuesList(con, "SELECT DISTINCT(biotype) FROM " + table);
+			List<String> dbBiotypes = DBUtils.getColumnValuesList(con, "SELECT DISTINCT(biotype) FROM " + table);
 
-			List<String> productionBiotypes = getColumnValuesList(productionCon, "SELECT name FROM biotype WHERE object_type='" + table + "' AND is_current = 1 AND FIND_IN_SET('" + databaseType
+			List<String> productionBiotypes = DBUtils.getColumnValuesList(productionCon, "SELECT name FROM biotype WHERE object_type='" + table + "' AND is_current = 1 AND FIND_IN_SET('" + databaseType
 					+ "', db_type) > 0");
 
 			// remove the list of valid biotypes from the list of biotypes in the database, the remainder (if any) are invalid

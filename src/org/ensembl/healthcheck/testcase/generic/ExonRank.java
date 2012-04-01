@@ -19,6 +19,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Look for entries in the exon_transcript table that are duplicates apart from the rank.
@@ -63,7 +64,7 @@ public class ExonRank extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM exon_transcript et1, exon_transcript et2 WHERE et1.exon_id=et2.exon_id AND et1.transcript_id=et2.transcript_id AND et1.rank != et2.rank");
+		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM exon_transcript et1, exon_transcript et2 WHERE et1.exon_id=et2.exon_id AND et1.transcript_id=et2.transcript_id AND et1.rank != et2.rank");
 
 		if (rows > 0) {
 

@@ -26,6 +26,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that the assembly table and seq_region table are consistent.
@@ -92,7 +93,7 @@ public class AssemblySeqregion extends SingleDatabaseTestCase {
 		// check various other things about the assembly table
 		// Check for mismatched lengths of assembled and component sides.
 		// ie where (asm_end - asm_start + 1) != (cmp_end - cmp_start + 1)
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM assembly WHERE (asm_end - asm_start + 1) != (cmp_end - cmp_start + 1)");
+		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM assembly WHERE (asm_end - asm_start + 1) != (cmp_end - cmp_start + 1)");
 		if (rows > 0) {
 			ReportManager.problem(this, con, rows + " rows in assembly table have mismatched lengths of assembled and component sides");
 		} else {
@@ -100,7 +101,7 @@ public class AssemblySeqregion extends SingleDatabaseTestCase {
 		}
 
 		// check for start/end < 1
-		rows = getRowCount(con, "SELECT COUNT(*) FROM assembly WHERE asm_start < 1 OR asm_end < 1 OR cmp_start < 1 OR cmp_end < 1");
+		rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM assembly WHERE asm_start < 1 OR asm_end < 1 OR cmp_start < 1 OR cmp_end < 1");
 		if (rows > 0) {
 			ReportManager.problem(this, con, rows + " rows in assembly table have start or end coords < 1");
 		} else {
@@ -108,7 +109,7 @@ public class AssemblySeqregion extends SingleDatabaseTestCase {
 		}
 
 		// check for end < start
-		rows = getRowCount(con, "SELECT COUNT(*) FROM assembly WHERE asm_end < asm_start OR cmp_end < cmp_start");
+		rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM assembly WHERE asm_end < asm_start OR cmp_end < cmp_start");
 		if (rows > 0) {
 			ReportManager.problem(this, con, rows + " rows in assembly table have start or end coords < 1");
 		} else {

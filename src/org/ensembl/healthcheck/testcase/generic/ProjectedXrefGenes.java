@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that only genes have projected xrefs.
@@ -60,7 +61,7 @@ public class ProjectedXrefGenes extends SingleDatabaseTestCase {
 
 		String sql = "SELECT COUNT(*) FROM external_db e, xref x, object_xref ox, transcript t WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id AND ox.ensembl_object_type='Transcript' AND ox.ensembl_id=t.transcript_id AND x.info_type='PROJECTION'";
 
-		int rows = getRowCount(con, sql);
+		int rows = DBUtils.getRowCount(con, sql);
 
 		if (rows > 0) {
 

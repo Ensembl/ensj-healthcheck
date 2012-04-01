@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.Utils;
 
 /**
@@ -69,7 +70,7 @@ public class SchemaType extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		// check that the key is present
-		String key = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='schema_type'");
+		String key = DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='schema_type'");
 		if (key == null || key.length() == 0) {
 			ReportManager.problem(this, con, "No entry in meta table for schema_type");
 			return false;

@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that all transcripts of genes of protein coding genes translate.
@@ -81,7 +82,7 @@ public class TranscriptsTranslate extends SingleDatabaseTestCase {
 			sql = "select count(*) from gene g where g.biotype='protein_coding' and g.gene_id NOT IN(select tr.gene_id  from transcript tr JOIN translation t ON t.transcript_id=tr.transcript_id) and (g.source='havana' or g.source='WU')";
 		}
 
-		int rows = getRowCount(con, sql);
+		int rows = DBUtils.getRowCount(con, sql);
 		if (rows != 0) {
 
 			ReportManager.problem(this, con, rows + " transcript(s) in protein_coding genes do not have translations.");

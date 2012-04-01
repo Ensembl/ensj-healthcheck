@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Healthcheck for the assembly_exception table.
@@ -59,14 +60,14 @@ public class AssemblyExceptions extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		// check that seq_region_end > seq_region_start
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM assembly_exception WHERE seq_region_start > seq_region_end");
+		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM assembly_exception WHERE seq_region_start > seq_region_end");
 		if (rows > 0) {
 			result = false;
 			ReportManager.problem(this, con, "assembly_exception has " + rows + " rows where seq_region_start > seq_region_end");
 		}
 
 		// check that exc_seq_region_start > exc_seq_region_end
-		rows = getRowCount(con, "SELECT COUNT(*) FROM assembly_exception WHERE exc_seq_region_start > exc_seq_region_end");
+		rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM assembly_exception WHERE exc_seq_region_start > exc_seq_region_end");
 		if (rows > 0) {
 			result = false;
 			ReportManager.problem(this, con, "assembly_exception has " + rows + " rows where exc_seq_region_start > exc_seq_region_end");
@@ -74,9 +75,9 @@ public class AssemblyExceptions extends SingleDatabaseTestCase {
 
 		// If the assembly_exception table contains an exception of type 'HAP' then
 		// there should be at least one seq_region_attrib row of type 'non-reference'
-		if (getRowCount(con, "SELECT COUNT(*) FROM assembly_exception WHERE exc_type='HAP'") > 0) {
+		if (DBUtils.getRowCount(con, "SELECT COUNT(*) FROM assembly_exception WHERE exc_type='HAP'") > 0) {
 
-			if (getRowCount(con, "SELECT COUNT(*) FROM seq_region_attrib sra, attrib_type at WHERE sra.attrib_type_id=at.attrib_type_id AND at.code='non_ref'") == 0) {
+			if (DBUtils.getRowCount(con, "SELECT COUNT(*) FROM seq_region_attrib sra, attrib_type at WHERE sra.attrib_type_id=at.attrib_type_id AND at.code='non_ref'") == 0) {
 				result = false;
 				ReportManager.problem(this, con, "assembly_exception contains at least one exception of type 'HAP' but there are no seq_region_attrib rows of type 'non-reference'");
 			}

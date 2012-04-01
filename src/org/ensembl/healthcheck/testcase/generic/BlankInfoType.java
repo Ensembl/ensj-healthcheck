@@ -23,6 +23,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check for any xref.info_type that are blank ('') - they should be NULL for various other things to work.
@@ -61,7 +62,7 @@ public class BlankInfoType extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM xref WHERE info_type = ''");
+		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM xref WHERE info_type = ''");
 
 		if (rows > 0) {
 

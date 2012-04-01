@@ -22,6 +22,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that not all xrefs have the same identifier. Also check that there are no blank/null display_labels.
@@ -119,7 +120,7 @@ public class XrefIdentifiers extends SingleDatabaseTestCase {
 
 		for (String column : columns) {
 
-			int rows = getRowCount(con, "SELECT COUNT(*) FROM xref WHERE " + column + "='' OR " + column + " IS NULL");
+			int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM xref WHERE " + column + "='' OR " + column + " IS NULL");
 
 			if (rows > 0) {
 

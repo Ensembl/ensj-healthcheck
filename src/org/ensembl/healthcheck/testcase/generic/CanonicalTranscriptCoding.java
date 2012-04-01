@@ -25,6 +25,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check if protein_coding genes have a canonical transcript that has a valid translation. See also canonical_transcript checks in
@@ -74,7 +75,7 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sanger_vega ignore genes that do not have source havana or WU
 			sql += "AND g.biotype!='polymorphic' AND g.biotype!='polymorphic_pseudogene' and (g.source='havana' or g.source='WU')";
 		}
-		int rows = getRowCount(con, sql);
+		int rows = DBUtils.getRowCount(con, sql);
 
 		if (rows > 0) {
 
@@ -97,7 +98,7 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {
 			sql += " and (g.source='havana' or g.source='WU')";
 		}
-		rows = getRowCount(con, sql);
+		rows = DBUtils.getRowCount(con, sql);
 		if (rows > 0) {
 
 			result = false;
@@ -114,7 +115,7 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sanger_vega ignore genes that do not have source havana or WU
 			sql += " and (g.source='havana' or g.source='WU')";
 		}
-		rows = getRowCount(con, sql);
+		rows = DBUtils.getRowCount(con, sql);
 
 		if (rows > 0) {
 
@@ -137,7 +138,7 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 		} else {
 			sql += ")";
 		}
-		rows = getRowCount(con, sql);
+		rows = DBUtils.getRowCount(con, sql);
 
 		if (rows > 0) {
 
@@ -159,7 +160,7 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 		} else {
 			sql += "))";
 		}
-		rows = getRowCount(con, sql);
+		rows = DBUtils.getRowCount(con, sql);
 
 		if (rows > 0) {
 
@@ -179,7 +180,7 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sanger_vega ignore genes that do not have source havana or WU
 			sql += " and (g.source='havana' or g.source='WU')";
 		}
-		rows = getRowCount(con, sql);
+		rows = DBUtils.getRowCount(con, sql);
 
 		if (rows > 0) {
 
@@ -199,7 +200,7 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sanger_vega ignore genes that do not have source havana or WU
 			sql += " and (g.source='havana' or g.source='WU')";
 		}
-		rows = getRowCount(con, sql);
+		rows = DBUtils.getRowCount(con, sql);
 
 		if (rows > 0) {
 
@@ -218,7 +219,7 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sanger_vega ignore genes that do not have source havana or WU
 			sql += " and (g.source='havana' or g.source='WU')";
 		}
-		rows = getRowCount(con, sql);
+		rows = DBUtils.getRowCount(con, sql);
 
 		if (rows > 0) {
 
@@ -232,9 +233,9 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 
 		// --------------------------------
 		// check that the number of canonical translations is correct
-		int numCanonical = getRowCount(con, "SELECT COUNT(*) FROM transcript t1, translation p, transcript t2 WHERE t1.canonical_translation_id = p.translation_id AND p.transcript_id = t2.transcript_id");
+		int numCanonical = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM transcript t1, translation p, transcript t2 WHERE t1.canonical_translation_id = p.translation_id AND p.transcript_id = t2.transcript_id");
 
-		int numTotal = getRowCount(con, "SELECT COUNT(*) FROM translation p, transcript t WHERE t.transcript_id = p.transcript_id");
+		int numTotal = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM translation p, transcript t WHERE t.transcript_id = p.transcript_id");
 
 		if (numCanonical != numTotal) {
 

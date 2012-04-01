@@ -23,10 +23,12 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Check that cigar lines in the identity_xref table are in the same format as they are in the alignment tables, i.e. start with a
- * number rather than a letter.
+ * Check that cigar lines in the identity_xref table are in the same format as
+ * they are in the alignment tables, i.e. start with a number rather than a
+ * letter.
  */
 
 public class IdentityXrefCigarLines extends SingleDatabaseTestCase {
@@ -40,7 +42,7 @@ public class IdentityXrefCigarLines extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
-		
+
 		setDescription("Check that cigar lines in the identity_xref table are in the same format, as they are in the alignment tables, i.e. start with a number rather than a letter");
 		setTeamResponsible(Team.CORE);
 		setSecondTeamResponsible(Team.GENEBUILD);
@@ -64,7 +66,7 @@ public class IdentityXrefCigarLines extends SingleDatabaseTestCase {
 	 * Test various things about ditag features.
 	 * 
 	 * @param dbre
-	 *          The database to use.
+	 *            The database to use.
 	 * @return Result.
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
@@ -73,16 +75,25 @@ public class IdentityXrefCigarLines extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM identity_xref WHERE cigar_line REGEXP '^[MDI]'");
+		int rows = DBUtils
+				.getRowCount(con,
+						"SELECT COUNT(*) FROM identity_xref WHERE cigar_line REGEXP '^[MDI]'");
 
 		if (rows > 0) {
 
-			ReportManager.problem(this, con, rows + " cigar lines in identity_xref appear to be in the wrong format (number first)");
+			ReportManager
+					.problem(
+							this,
+							con,
+							rows
+									+ " cigar lines in identity_xref appear to be in the wrong format (number first)");
 			result = false;
 
 		} else {
 
-			ReportManager.correct(this, con, "All cigar lines in identity_xref are in the correct format");
+			ReportManager
+					.correct(this, con,
+							"All cigar lines in identity_xref are in the correct format");
 		}
 
 		return result;

@@ -23,6 +23,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.Utils;
 
 /**
@@ -84,7 +85,7 @@ public class Biotypes extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM gene WHERE biotype='ensembl'");
+		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM gene WHERE biotype='ensembl'");
 
 		if (rows > 0) {
 
@@ -110,14 +111,14 @@ public class Biotypes extends SingleDatabaseTestCase {
 		// be a bit more informative than just counting rows
 
 		// get gene biotypes
-		String[] geneBiotypes = getColumnValues(con, "SELECT DISTINCT(biotype) FROM gene");
+		String[] geneBiotypes = DBUtils.getColumnValues(con, "SELECT DISTINCT(biotype) FROM gene");
 
 		// check transcript biotypes for each one
 		for (int i = 0; i < geneBiotypes.length; i++) {
 
 			String geneBiotype = geneBiotypes[i];
 
-			String[] mismatchedBiotypes = getColumnValues(con,
+			String[] mismatchedBiotypes = DBUtils.getColumnValues(con,
 					String.format("SELECT DISTINCT(t.biotype) FROM transcript t, gene g WHERE g.gene_id=t.gene_id AND g.biotype != t.biotype AND g.biotype='%s'", geneBiotype));
 
 			if (mismatchedBiotypes.length > 0) {
@@ -127,7 +128,7 @@ public class Biotypes extends SingleDatabaseTestCase {
 				// get count for each one
 				for (String transcriptBiotype : mismatchedBiotypes) {
 
-					int rows = getRowCount(con,
+					int rows = DBUtils.getRowCount(con,
 							String.format("SELECT COUNT(DISTINCT g.gene_id) FROM transcript t, gene g WHERE g.gene_id=t.gene_id AND g.biotype='%s' AND t.biotype='%s'", geneBiotype, transcriptBiotype));
 					ReportManager.problem(this, con, rows + " genes of biotype " + geneBiotype + " have transcripts with biotype " + transcriptBiotype);
 
@@ -166,7 +167,7 @@ public class Biotypes extends SingleDatabaseTestCase {
 		for (int i = 0; i < tables.length; i++) {
 
 			String table = tables[i];
-			String[] biotypes = getColumnValues(con, "SELECT DISTINCT(biotype) FROM " + table);
+			String[] biotypes = DBUtils.getColumnValues(con, "SELECT DISTINCT(biotype) FROM " + table);
 
 			for (int j = 0; j < biotypes.length; j++) {
 

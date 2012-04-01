@@ -159,7 +159,6 @@ public class MetaValues extends SingleDatabaseTestCase {
 		result &= checkRepeatAnalysis(dbre);
 
 		return result;
-
 	} // run
 
 	// ---------------------------------------------------------------------
@@ -174,12 +173,12 @@ public class MetaValues extends SingleDatabaseTestCase {
 		String[] metaKeys = { "assembly.overlapping_regions" };
 		for (int i = 0; i < metaKeys.length; i++) {
 			String metaKey = metaKeys[i];
-			int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey + "'");
+			int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey + "'");
 			if (rows == 0) {
 				result = false;
 				ReportManager.problem(this, con, "No entry in meta table for " + metaKey + ". It might need to run the misc-scripts/overlapping_regions.pl script");
 			} else {
-				String[] metaValue = getColumnValues(con, "SELECT meta_value FROM meta WHERE meta_key='" + metaKey + "'");
+				String[] metaValue = DBUtils.getColumnValues(con, "SELECT meta_value FROM meta WHERE meta_key='" + metaKey + "'");
 				if (metaValue[0].equals("1")) {
 					// there are overlapping regions !! API might behave oddly
 					ReportManager.problem(this, con, "There are overlapping regions in the database (e.g. two versions of the same chromosomes). The API"
@@ -210,7 +209,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 		}
 
 		// Check that species.classification matches database name
-		String[] metaTableSpeciesGenusArray = getColumnValues(con, "SELECT LCASE(meta_value) FROM meta WHERE meta_key='species.classification' ORDER BY meta_id LIMIT 2");
+		String[] metaTableSpeciesGenusArray = DBUtils.getColumnValues(con, "SELECT LCASE(meta_value) FROM meta WHERE meta_key='species.classification' ORDER BY meta_id LIMIT 2");
 		// if all is well, metaTableSpeciesGenusArray should contain the
 		// species and genus
 		// (in that order) from the meta table
@@ -258,9 +257,9 @@ public class MetaValues extends SingleDatabaseTestCase {
 		// can also have # instead of | as used in unfinished contigs etc
 
 		Pattern assemblyMappingPattern = Pattern.compile("^([a-zA-Z0-9.]+):?([a-zA-Z0-9._]+)?[\\|#]([a-zA-Z0-9._]+):?([a-zA-Z0-9._]+)?([\\|#]([a-zA-Z0-9.]+):?([a-zA-Z0-9._]+)?)?$");
-		String[] validCoordSystems = getColumnValues(con, "SELECT name FROM coord_system");
+		String[] validCoordSystems = DBUtils.getColumnValues(con, "SELECT name FROM coord_system");
 
-		String[] mappings = getColumnValues(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.mapping'");
+		String[] mappings = DBUtils.getColumnValues(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.mapping'");
 		for (int i = 0; i < mappings.length; i++) {
 			Matcher matcher = assemblyMappingPattern.matcher(mappings[i]);
 			if (!matcher.matches()) {
@@ -317,7 +316,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		List<String> coordSystemsAndVersions = getColumnValuesList(con, "SELECT CONCAT_WS(':',name,version) FROM coord_system");
+		List<String> coordSystemsAndVersions = DBUtils.getColumnValuesList(con, "SELECT CONCAT_WS(':',name,version) FROM coord_system");
 
 		result &= checkCoordSystemPairInList(con, cs1, assembly1, coordSystemsAndVersions);
 
@@ -393,7 +392,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 		// TODO - table name in report
 		boolean result = true;
 
-		String[] coordSystems = getColumnValues(con, "SELECT name FROM coord_system");
+		String[] coordSystems = DBUtils.getColumnValues(con, "SELECT name FROM coord_system");
 
 		for (int i = 0; i < coordSystems.length; i++) {
 
@@ -417,7 +416,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 		// The taxonomy ID-species mapping is held in the Species class.
 
 		Species species = dbre.getSpecies();
-		String dbTaxonID = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='species.taxonomy_id'");
+		String dbTaxonID = DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='species.taxonomy_id'");
 		logger.finest("Taxonomy ID from database: " + dbTaxonID);
 
 		if (dbTaxonID.equals(Species.getTaxonomyID(species))) {
@@ -448,7 +447,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 			String key = keys[i];
 			String regexp = regexps[i];
 
-			String value = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='" + key + "'");
+			String value = DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='" + key + "'");
 			if (value == null || value.length() == 0) {
 
 				ReportManager.problem(this, con, "No " + key + " entry in meta table");
@@ -468,9 +467,9 @@ public class MetaValues extends SingleDatabaseTestCase {
 		}
 
 		// some more checks for sanity of dates
-		int startDate = Integer.valueOf(getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.start_date'").replaceAll("[^0-9]", "")).intValue();
-		int initialReleaseDate = Integer.valueOf(getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.initial_release_date'").replaceAll("[^0-9]", "")).intValue();
-		int lastGenesetUpdate = Integer.valueOf(getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.last_geneset_update'").replaceAll("[^0-9]", "")).intValue();
+		int startDate = Integer.valueOf(DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.start_date'").replaceAll("[^0-9]", "")).intValue();
+		int initialReleaseDate = Integer.valueOf(DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.initial_release_date'").replaceAll("[^0-9]", "")).intValue();
+		int lastGenesetUpdate = Integer.valueOf(DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.last_geneset_update'").replaceAll("[^0-9]", "")).intValue();
 
 		// check for genebuild.start_date >= genebuild.initial_release_date (not allowed as we cannot release a gene set before
 		// downloaded the evidence)
@@ -496,7 +495,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 
 		Connection previousCon = previous.getConnection();
 
-		String previousLastGenesetUpdateString = getRowColumnValue(previousCon, "SELECT meta_value FROM meta WHERE meta_key='genebuild.last_geneset_update'").replaceAll("-", "");
+		String previousLastGenesetUpdateString = DBUtils.getRowColumnValue(previousCon, "SELECT meta_value FROM meta WHERE meta_key='genebuild.last_geneset_update'").replaceAll("-", "");
 
 		if (previousLastGenesetUpdateString == null || previousLastGenesetUpdateString.length() == 0) {
 
@@ -520,13 +519,13 @@ public class MetaValues extends SingleDatabaseTestCase {
 
 		if (lastGenesetUpdate <= previousLastGenesetUpdate) {
 
-			int currentGeneCount = getRowCount(con, "SELECT COUNT(*) FROM gene");
-			int currentTranscriptCount = getRowCount(con, "SELECT COUNT(*) FROM transcript");
-			int currentExonCount = getRowCount(con, "SELECT COUNT(*) FROM exon");
+			int currentGeneCount = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM gene");
+			int currentTranscriptCount = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM transcript");
+			int currentExonCount = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM exon");
 
-			int previousGeneCount = getRowCount(previousCon, "SELECT COUNT(*) FROM gene");
-			int previousTranscriptCount = getRowCount(previousCon, "SELECT COUNT(*) FROM transcript");
-			int previousExonCount = getRowCount(previousCon, "SELECT COUNT(*) FROM exon");
+			int previousGeneCount = DBUtils.getRowCount(previousCon, "SELECT COUNT(*) FROM gene");
+			int previousTranscriptCount = DBUtils.getRowCount(previousCon, "SELECT COUNT(*) FROM transcript");
+			int previousExonCount = DBUtils.getRowCount(previousCon, "SELECT COUNT(*) FROM exon");
 
 			if (currentGeneCount != previousGeneCount || currentTranscriptCount != previousTranscriptCount || currentExonCount != previousExonCount) {
 
@@ -581,7 +580,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 
 	private boolean checkGenebuildID(Connection con) {
 
-		String gbid = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.id'");
+		String gbid = DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.id'");
 		logger.finest("genebuild.id from database: " + gbid);
 
 		if (gbid == null || gbid.length() == 0) {
@@ -613,16 +612,16 @@ public class MetaValues extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 		String[] Tables = { "gene", "transcript", "exon", "repeat_feature", "dna_align_feature", "protein_align_feature", "simple_feature", "prediction_transcript", "prediction_exon" };
 
-		int exists = getRowCount(con, "SELECT COUNT(*) FROM meta where meta_key like '%build.level'");
+		int exists = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM meta where meta_key like '%build.level'");
 		if (exists == 0) {
 			ReportManager.problem(this, con, "GB: No %build.level entries in the meta table - run ensembl/misc-scripts/meta_levels.pl");
 		}
 		int count = 0;
 		for (int i = 0; i < Tables.length; i++) {
 			String Table = Tables[i];
-			int rows = getRowCount(con, "SELECT COUNT(*) FROM " + Table);
-			int key = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key = '" + Table + "build.level' ");
-			int toplevel = getRowCount(con, "SELECT COUNT(*) FROM " + Table
+			int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + Table);
+			int key = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key = '" + Table + "build.level' ");
+			int toplevel = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + Table
 					+ " t, seq_region_attrib sra, attrib_type at WHERE t.seq_region_id = sra.seq_region_id AND sra.attrib_type_id = at.attrib_type_id AND at.code = 'toplevel' ");
 			if (rows != 0) {
 				if (key == 0) {
@@ -664,7 +663,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		int rows = getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='species.classification' AND meta_value LIKE '% %'");
+		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='species.classification' AND meta_value LIKE '% %'");
 
 		if (rows > 0) {
 			ReportManager.problem(this, con, rows + " species.classification entries have values with spaces");
@@ -694,7 +693,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 		String[] allowedMethods = { "full_genebuild", "projection_build", "import", "mixed_strategy_build" };
 
 		Connection con = dbre.getConnection();
-		String method = getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.method'");
+		String method = DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.method'");
 
 		if (method.equals("")) {
 			ReportManager.problem(this, con, "No genebuild.method entry present in Meta table");
@@ -828,7 +827,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-		String[] repeatAnalyses = getColumnValues(con, "SELECT meta_value FROM meta LEFT JOIN analysis ON meta_value = logic_name WHERE meta_key = 'repeat.analysis' AND analysis_id IS NULL");
+		String[] repeatAnalyses = DBUtils.getColumnValues(con, "SELECT meta_value FROM meta LEFT JOIN analysis ON meta_value = logic_name WHERE meta_key = 'repeat.analysis' AND analysis_id IS NULL");
 		if (repeatAnalyses.length > 0) {
 			ReportManager.problem(this, con, "The following values for meta_key repeat.analysis don't have a corresponding logic_name entry in the analysis table: " + Utils.arrayToString(repeatAnalyses,",") );
 		} else {
