@@ -14,7 +14,7 @@ package org.ensembl.healthcheck;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;http://www.bbc.co.uk/news/uk-politics-17576745
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.logging.Logger;
