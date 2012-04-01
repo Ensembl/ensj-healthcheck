@@ -14,7 +14,7 @@ package org.ensembl.healthcheck;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.SQLException;http://www.bbc.co.uk/news/uk-politics-17576745
 import java.sql.Statement;
 import java.util.List;
 import java.util.logging.Logger;
@@ -28,8 +28,8 @@ import org.ensembl.healthcheck.util.ConnectionBasedSqlTemplateImpl;
 import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.RowMapper;
 import org.ensembl.healthcheck.util.SqlTemplate;
+import org.ensembl.healthcheck.util.SqlUncheckedException;
 import org.ensembl.healthcheck.util.UtilUncheckedException;
-import org.ensembl.healthcheck.util.ConnectionBasedSqlTemplateImpl.SqlTemplateUncheckedException;
 
 /**
  * Container for information about a database that can be stored in a
@@ -173,35 +173,32 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 
 	/**
 	 * <p>
-	 * 	Returns information about a database. Queries the meta table to  
-	 * determine the type and schema version of the database. 
+	 * Returns information about a database. Queries the meta table to determine
+	 * the type and schema version of the database.
 	 * </p>
 	 * 
 	 * @param server
 	 * @param name
 	 * @return DatabaseInfo
 	 */
-	public static DatabaseInfo getInfoFromDatabase(
-			DatabaseServer server,
-			final String name
-	) throws SQLException {
+	public static DatabaseInfo getInfoFromDatabase(DatabaseServer server,
+			final String name) throws SQLException {
 		SqlTemplate template = null;
-		
+
 		try {
 			template = new ConnectionBasedSqlTemplateImpl(
-				server.getDatabaseConnection(name)
-			);
+					server.getDatabaseConnection(name));
 		} catch (NullPointerException e) {
 
-			// This exception can be thrown, if a database name has hashes in 
+			// This exception can be thrown, if a database name has hashes in
 			// it like this one:
 			//
 			// #mysql50#jhv_gadus_morhua_57_merged_projection_build.bak
 			// or
 			// #mysql50#jhv_gadus_morhua_57_ref_1.3_asm_buggy
 			//
-			// A database like this can exist on a MySql server, but 
-			// connecting to it will cause a NullPointerException to be 
+			// A database like this can exist on a MySql server, but
+			// connecting to it will cause a NullPointerException to be
 			// thrown.
 			//
 			logger.warning("Unable to connect to " + name + " on " + server);
@@ -209,46 +206,50 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 			// No info will be available for this database.
 			//
 			return null;
-		} 
-		
+		}
+
 		DatabaseInfo info = null;
-		
-		boolean dbHasAMetaTable = template.queryForDefaultObjectList("show tables like 'meta'", String.class).size()==1; 
-		
+
+		boolean dbHasAMetaTable = template.queryForDefaultObjectList(
+				"show tables like 'meta'", String.class).size() == 1;
+
 		if (dbHasAMetaTable) {
-			
-			try {			
-				List<DatabaseInfo> dbInfos
-					= template.queryForList(
-							
+
+			try {
+				List<DatabaseInfo> dbInfos = template
+						.queryForList(
+
 						// Will return something like ("core", 63)
 						//
-						"select m1.meta_value, m2.meta_value from meta m1 join meta m2 where m1.meta_key='schema_type' and m2.meta_key='schema_version'",
-	
-						new RowMapper<DatabaseInfo>() {
-							
-							public DatabaseInfo mapRow(ResultSet resultSet, int position) throws SQLException {
-								
-								String schemaType    = resultSet.getString(1); 
-								String schemaVersion = resultSet.getString(2);
-								
-								return new DatabaseInfo(
-									name, 
-									null, 
-									Species.UNKNOWN, 
-									DatabaseType.resolveAlias(schemaType),
-									schemaVersion, 
-									null
-								);
-							}
-						}
-				);
-					
+								"select m1.meta_value, m2.meta_value from meta m1 join meta m2 where m1.meta_key='schema_type' and m2.meta_key='schema_version'",
+
+								new RowMapper<DatabaseInfo>() {
+
+									public DatabaseInfo mapRow(
+											ResultSet resultSet, int position)
+											throws SQLException {
+
+										String schemaType = resultSet
+												.getString(1);
+										String schemaVersion = resultSet
+												.getString(2);
+
+										return new DatabaseInfo(
+												name,
+												null,
+												Species.UNKNOWN,
+												DatabaseType
+														.resolveAlias(schemaType),
+												schemaVersion, null);
+									}
+								});
+
 				info = CollectionUtils.getFirstElement(dbInfos, info);
 
-			} catch(SqlTemplateUncheckedException e) {
-				
-				logger.warning("Can't determine database type and version from " + name + " on " + server);
+			} catch (SqlUncheckedException e) {
+
+				logger.warning("Can't determine database type and version from "
+						+ name + " on " + server+": "+e.getMessage());
 
 				// No info will be available for this database.
 				//
@@ -296,8 +297,9 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 						}
 					}
 				}
-				if(alias.endsWith(COLLECTION_CLAUSE)) {
-					alias = alias.replaceAll(COLLECTION_CLAUSE, StringUtils.EMPTY);
+				if (alias.endsWith(COLLECTION_CLAUSE)) {
+					alias = alias.replaceAll(COLLECTION_CLAUSE,
+							StringUtils.EMPTY);
 				}
 				break;
 			}
@@ -360,15 +362,15 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 		DatabaseInfo info = getInfoFromName(name, species, type);
 		if (info.getType() == DatabaseType.UNKNOWN) {
 			// try and get the info from the database
-			
+
 			DatabaseInfo dbInfo = null;
-			
+
 			try {
-				
+
 				dbInfo = getInfoFromDatabase(server, name);
-				
-			} catch(SQLException e) {
-				
+
+			} catch (SQLException e) {
+
 				logger.warning(e.getMessage());
 			}
 			if (dbInfo != null) {
@@ -404,39 +406,30 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 
 	// -----------------------------------------------------------------
 
-
-	/* 
-	 * Compares two databases by comparing the names of the species. If they
-	 * are the same, then the schema version is used as a secondary sorting
+	/*
+	 * Compares two databases by comparing the names of the species. If they are
+	 * the same, then the schema version is used as a secondary sorting
 	 * criterion.
 	 * 
-	 * The schema version is converted to an integer so there is 
-	 * numerical sorting on the schema version. Otherwise 9 would come after
-	 * 10.
+	 * The schema version is converted to an integer so there is numerical
+	 * sorting on the schema version. Otherwise 9 would come after 10.
 	 * 
-	 * This is important, because the comparing is used in 
+	 * This is important, because the comparing is used in
 	 * ComparePreviousVersionBase from which all the ComparePreviousVersion*
 	 * inherit.
-	 * 
 	 */
 	public int compareTo(DatabaseRegistryEntry dbre) {
 
 		int speciesOrdering = getSpecies().compareTo(dbre.getSpecies());
-		
-		if (speciesOrdering!=0) {
+
+		if (speciesOrdering != 0) {
 			return speciesOrdering;
 		}
-		
-		return 
-			new Integer(
-				getSchemaVersion()
-			).compareTo (
-				new Integer(
-					dbre.getSchemaVersion()
-				)
-			);
 
-//		return getName().compareTo(dbre.getName());
+		return new Integer(getSchemaVersion()).compareTo(new Integer(dbre
+				.getSchemaVersion()));
+
+		// return getName().compareTo(dbre.getName());
 	}
 
 	public String getSchemaVersion() {
@@ -535,7 +528,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 			try {
 				connection = server.getDatabaseConnection(getName());
 			} catch (SQLException e) {
-				
+
 				logger.warning(e.getMessage());
 			}
 		}
@@ -560,10 +553,10 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 		if (o == null) {
 			return false;
 		}
-		return (((DatabaseRegistryEntry)o).getName().equals(getName()));
+		return (((DatabaseRegistryEntry) o).getName().equals(getName()));
 
 	}
-	
+
 	public String getAlias() {
 		return info.getAlias();
 	}
