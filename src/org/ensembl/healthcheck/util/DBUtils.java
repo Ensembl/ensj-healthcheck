@@ -1415,7 +1415,9 @@ public final class DBUtils {
 	 */
 	public static String getRowColumnValue(Connection con, String sql) {
 
-		return getSqlTemplate(con).queryForDefaultObject(sql, String.class);
+		return CollectionUtils.getFirstElement(getSqlTemplate(con)
+				.queryForDefaultObjectList(sql, String.class),
+				StringUtils.EMPTY);
 
 	} // DBUtils.getRowColumnValue
 
