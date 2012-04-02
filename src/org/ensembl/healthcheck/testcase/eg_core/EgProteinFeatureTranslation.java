@@ -18,18 +18,14 @@ package org.ensembl.healthcheck.testcase.eg_core;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.testcase.Repair;
 import org.ensembl.healthcheck.util.CollectionUtils;
-import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * An EnsEMBL Healthcheck test case which checks that the protein_feature table
@@ -37,16 +33,11 @@ import org.ensembl.healthcheck.util.DBUtils;
  * support seq_edits
  */
 
-public class EgProteinFeatureTranslation extends AbstractEgCoreTestCase
-		implements Repair {
+public class EgProteinFeatureTranslation extends AbstractEgCoreTestCase {
 
-	// hash of lists of protein features to delete
-	// key - database name
-	private Map<String, List<Integer>> featuresToDelete = CollectionUtils.createHashMap();
-
-	private static int THRESHOLD = 1000; // don't report a problem if there
-
-	// are less results than this
+	private static int THRESHOLD = 5; // don't report a problem if there are
+										// less results than this
+	private static int DISPLAY_LIMIT = 20;
 
 	/**
 	 * Create an ProteinFeatureTranslationTestCase that applies to a specific
@@ -206,13 +197,12 @@ public class EgProteinFeatureTranslation extends AbstractEgCoreTestCase
 					java.sql.ResultSet.CONCUR_READ_ONLY);
 			stmt.setFetchSize(1000);
 
-			logger
-					.fine("Built translation length cache, about to look at protein features");
+			logger.fine("Built translation length cache, about to look at protein features");
 			// dumpTranslationLengths(con, translationLengths, 100);
 
 			// find protein features where seq_end is > than the length of the
 			// translation
-			List<Integer> thisDBFeatures = CollectionUtils.createArrayList();
+			List<String> thisDBFeatures = CollectionUtils.createArrayList();
 			rs = stmt
 					.executeQuery("SELECT pf.protein_feature_id, pf.translation_id, pf.seq_end, a.logic_name, pf.hit_name "
 							+ "FROM protein_feature pf join analysis a using (analysis_id)");
@@ -220,49 +210,52 @@ public class EgProteinFeatureTranslation extends AbstractEgCoreTestCase
 			while (rs.next()) {
 
 				Integer translationID = new Integer(rs.getInt("translation_id"));
-				Integer proteinFeatureID = new Integer(rs
-						.getInt("protein_feature_id"));
+				Integer proteinFeatureID = new Integer(
+						rs.getInt("protein_feature_id"));
 
 				if (translationLengths.get(translationID) != null) {
 					// some codons can only be 2 bp ?!?
 					int minTranslationLength = (((Integer) translationLengths
 							.get(translationID)).intValue() + 2) / 3;
-					// int minTranslationLength = ((Integer)
-					// translationLengths.get(translationID)).intValue();
 					int fl = rs.getInt("seq_end");
 					if (fl > minTranslationLength) {
 						result = false;
-						ReportManager
-								.problem(this, con, "Protein feature "
-										+ proteinFeatureID + "("
-										+ rs.getString(4) + "/"
-										+ rs.getString(5) + ") ends at " + fl
-										+ " which is beyond the "
-										+ minTranslationLength
-										+ " length of the translation "
-										+ translationID);
-						thisDBFeatures.add(proteinFeatureID);
-						// System.out.println("proteinFeatureID: " +
-						// proteinFeatureID);
+						String msg = "Protein feature " + proteinFeatureID
+								+ "(" + rs.getString(4) + "/" + rs.getString(5)
+								+ ") ends at " + fl + " which is beyond the "
+								+ minTranslationLength
+								+ " length of the translation " + translationID;
+						thisDBFeatures.add(msg);
 					}
-				} else {
-					ReportManager.problem(this, con, "Protein feature "
-							+ proteinFeatureID
-							+ " refers to non-existent translation "
-							+ translationID);
 				}
+
 			}
 
-			featuresToDelete.put(DBUtils.getShortDatabaseName(con),
-					thisDBFeatures);
 			if (thisDBFeatures.size() > THRESHOLD) {
-				ReportManager.problem(this, con, "protein_feature table has "
-						+ thisDBFeatures.size()
-						+ " features that are longer than the translation");
+				ReportManager
+						.problem(
+								this,
+								con,
+								"protein_feature table has "
+										+ thisDBFeatures.size()
+										+ " features that are longer than the translation");
+				int n = 0;
+				for (String msg : thisDBFeatures) {
+					if (n < DISPLAY_LIMIT) {
+						ReportManager.problem(this, con, msg);
+					} else if (n == DISPLAY_LIMIT
+							&& DISPLAY_LIMIT < thisDBFeatures.size()) {
+						ReportManager.problem(this, con, "... "
+								+ (thisDBFeatures.size() - DISPLAY_LIMIT)
+								+ " more problem translations remain");
+					}
+					n++;
+				}
 			} else if (thisDBFeatures.size() == 0) {
 				ReportManager
 						.correct(this, con,
 								"protein_feature_table has no features that are longer than the translation");
+				
 			} else {
 				ReportManager
 						.correct(
@@ -285,77 +278,4 @@ public class EgProteinFeatureTranslation extends AbstractEgCoreTestCase
 
 	}
 
-	// ------------------------------------------
-	// Implementation of Repair interface.
-
-	/**
-	 * Delete any protein features that run past the end of the translation.
-	 * <strong>CAUTION! </strong>Actually deletes the features from the
-	 * protein_feature table.
-	 * 
-	 * @param dbre
-	 *            The database to use.
-	 */
-	public void repair(DatabaseRegistryEntry dbre) {
-
-		Connection con = dbre.getConnection();
-		String sql = setupRepairSQL(con);
-		if (sql.length() == 0) {
-			System.out.println("No invalid protein features were found in "
-					+ DBUtils.getShortDatabaseName(con));
-		} else {
-			try {
-				Statement stmt = con.createStatement();
-				System.out.println(DBUtils.getShortDatabaseName(con));
-				System.out.println(sql);
-				// stmt.execute(sql);
-				stmt.close();
-			} catch (SQLException se) {
-				se.printStackTrace();
-			}
-		}
-
-	}
-
-	/**
-	 * Show which protein features would be deleted by the repair method.
-	 * 
-	 * @param dbre
-	 *            The database to use.
-	 */
-	public void show(DatabaseRegistryEntry dbre) {
-
-		System.out.println("Candidate for repair:");
-
-		Connection con = dbre.getConnection();
-		String sql = setupRepairSQL(con);
-		if (sql.length() == 0) {
-			System.out.println("No invalid protein features were found in "
-					+ DBUtils.getShortDatabaseName(con));
-		} else {
-			System.out.println(DBUtils.getShortDatabaseName(con) + ": " + sql);
-		}
-
-	}
-
-	/**
-	 * Set up the SQL to delete the offending protein features.
-	 * 
-	 * @param con
-	 *            The database connection to use.
-	 * @return The SQL to delete the incorrect protein features, or "" if there
-	 *         are no problems.
-	 */
-	private String setupRepairSQL(Connection con) {
-
-		List<Integer> thisDBFeatures = featuresToDelete.get(DBUtils
-				.getShortDatabaseName(con));
-
-		if (thisDBFeatures == null || thisDBFeatures.size() == 0) {
-			return "";
-		} else {
-			return "DELETE FROM protein_feature WHERE protein_feature_id IN ("
-					+ StringUtils.join(thisDBFeatures, ",") + ")";
-		}
-	}
 } // ProteinFeatureTranslationTestCase
