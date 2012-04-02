@@ -66,8 +66,6 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			 * result &= checkForOrphans(con, "allele", "sample_id", "sample", "sample_id",true);
 			 */
 			result &= checkForOrphans(con, "allele", "variation_id", "variation", "variation_id", true);
-			result &= checkForOrphans(con, "allele_group", "sample_id", "sample", "sample_id", true);
-			result &= checkForOrphans(con, "allele_group_allele", "variation_id", "variation", "variation_id", true);
 			result &= checkForOrphans(con, "compressed_genotype_region", "sample_id", "individual", "sample_id", true);
 			result &= checkForOrphans(con, "failed_allele", "failed_description_id", "failed_description", "failed_description_id", true);
 			result &= checkForOrphans(con, "failed_variation", "failed_description_id", "failed_description", "failed_description_id", true);
@@ -96,13 +94,14 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			result &= checkForOrphans(con, "variation_feature", "source_id", "source", "source_id", true);
 			result &= checkForOrphans(con, "variation_feature", "variation_id", "flanking_sequence", "variation_id", true);
 			result &= checkForOrphans(con, "variation_feature", "variation_id", "allele", "variation_id", true);
-			result &= checkForOrphans(con, "variation_group_variation", "variation_id", "variation", "variation_id", true);
 			result &= checkForOrphans(con, "variation_set_structure", "variation_set_sub", "variation_set", "variation_set_id", true);
 			result &= checkForOrphans(con, "variation_set_structure", "variation_set_super", "variation_set", "variation_set_id", true);
 			result &= checkForOrphans(con, "variation_set_variation", "variation_id", "variation", "variation_id", true);
 			result &= checkForOrphans(con, "variation_set_variation", "variation_set_id", "variation_set", "variation_set_id", true);
 			result &= checkForOrphans(con, "variation_synonym", "source_id", "source", "source_id", true);
 			result &= checkForOrphans(con, "variation_synonym", "variation_id", "variation", "variation_id", true);
+			result &= checkForOrphans(con, "structural_variation_feature", "structural_variation_id", "structural_variation", "structural_variation_id", true);
+			result &= checkForOrphans(con, "structural_variation_annotation", "structural_variation_id", "structural_variation", "structural_variation_id", true);
 			
 			// alleles and genotypes
 			result &= checkForOrphans(con, "allele", "allele_code_id", "allele_code", "allele_code_id", true);
