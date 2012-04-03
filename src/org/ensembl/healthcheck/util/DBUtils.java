@@ -1701,9 +1701,9 @@ public final class DBUtils {
 	 * @return
 	 */
 	public static long getChecksum(Connection con, String tableName) {
-
-		return getSqlTemplate(con).queryForDefaultObject(
-				"CHECKSUM TABLE " + tableName, Long.class);
+	  String sql = "CHECKSUM TABLE "+tableName;
+	  RowMapper<Long> mapper = new DefaultObjectRowMapper<Long>(Long.class, 2);
+		return getSqlTemplate(con).queryForObject(sql, mapper);
 	}
 
 	// -------------------------------------------------------------------------
