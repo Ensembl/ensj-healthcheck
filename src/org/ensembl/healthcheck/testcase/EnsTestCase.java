@@ -131,7 +131,7 @@ public abstract class EnsTestCase {
 			"dna_align_feature", "protein_align_feature", "repeat_feature",
 			"prediction_transcript", "simple_feature", "marker_feature",
 			"qtl_feature", "density_type", "object_xref", "transcript",
-			"unmapped_object", "ditag_feature" };
+			"unmapped_object", "ditag_feature", "data_file" };
 
 	/**
 	 * Names of tables in funcgen schema that count as "feature" tables. Used in
@@ -1803,11 +1803,11 @@ public abstract class EnsTestCase {
 	 *            The connection to use.
 	 * @return A map of analysis IDs (keys) and logic names (values).
 	 */
-	public Map<String, String> getLogicNamesFromAnalysisTable(Connection con) {
+	public Map<Integer, String> getLogicNamesFromAnalysisTable(Connection con) {
 
 		return DBUtils.getSqlTemplate(con).queryForMap(
 				"SELECT analysis_id, logic_name FROM analysis",
-				new MapRowMapper<String, String>() {
+				new MapRowMapper<Integer, String>() {
 
 					@Override
 					public String mapRow(ResultSet resultSet, int position)
@@ -1816,14 +1816,14 @@ public abstract class EnsTestCase {
 					}
 
 					@Override
-					public Map<String, String> getMap() {
+					public Map<Integer, String> getMap() {
 						return CollectionUtils.createHashMap();
 					}
 
 					@Override
-					public String getKey(ResultSet resultSet)
+					public Integer getKey(ResultSet resultSet)
 							throws SQLException {
-						return resultSet.getString("analysis_id");
+						return resultSet.getInt("analysis_id");
 					}
 
 					@Override
@@ -2022,20 +2022,14 @@ public abstract class EnsTestCase {
 	/**
 	 * Produce an instance of {@link SqlTemplate} from a
 	 * {@link DatabaseRegistryEntry}.
-	 * 
-	 * @deprecated use {@link DBUtils#getSqlTemplate(DatabaseRegistryEntry)}
 	 */
-	@Deprecated
 	public SqlTemplate getSqlTemplate(DatabaseRegistryEntry dbre) {
 		return DBUtils.getSqlTemplate(dbre);
 	}
 
 	/**
 	 * Produce an instance of {@link SqlTemplate} from a {@link Connection}.
-	 * 
-	 * @deprecated use {@link DBUtils#getSqlTemplate(Connection)}
 	 */
-	@Deprecated
 	public SqlTemplate getSqlTemplate(Connection conn) {
 		return DBUtils.getSqlTemplate(conn);
 	}
