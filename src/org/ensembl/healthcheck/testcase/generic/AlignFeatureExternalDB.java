@@ -52,12 +52,9 @@ public class AlignFeatureExternalDB extends SingleDatabaseTestCase {
 	 * This only applies to core and Vega databases.
 	 */
 	public void types() {
-
-		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		removeAppliesToType(DatabaseType.ESTGENE);
 		removeAppliesToType(DatabaseType.CDNA);
 		removeAppliesToType(DatabaseType.RNASEQ);
-
 	}
 
 	/**
