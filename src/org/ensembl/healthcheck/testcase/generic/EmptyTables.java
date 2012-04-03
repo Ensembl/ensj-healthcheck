@@ -74,7 +74,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 			tables = remove(tables, views);
 			
 			// the following tables are allowed to be empty
-			String[] allowedEmpty = { "alt_allele", "assembly_exception", "data_file", "dnac", "seq_region_mapping", "unconventional_transcript_association", "operon", "operon_transcript", "operon_transcript_gene" };
+			String[] allowedEmpty = { "alt_allele", "assembly_exception", "data_file", "dnac", "seq_region_mapping", "unconventional_transcript_association", "operon", "operon_transcript", "operon_transcript_gene", "intron_supporting_evidence" };
 			tables = remove(tables, allowedEmpty);
 			
 			// ID mapping related tables are checked in a separate test case
