@@ -117,7 +117,7 @@ public class GuiReporterTab extends JPanel implements Reporter {
 			new JSplitPane(
 				JSplitPane.HORIZONTAL_SPLIT, 
 				testListScrollPane, 
-				reportPanel
+				new JScrollPane(reportPanel)
 			), BorderLayout.CENTER
 		);
 		
