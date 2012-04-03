@@ -40,6 +40,7 @@ import org.ensembl.healthcheck.eg_gui.TabChangeListener;
 public class DatabaseTabbedPane extends JTabbedPane {
 
 	protected ActionListener radioActionListener;
+	protected DatabaseRegistry databaseRegistry;
 	
 	/**
 	 * 
@@ -103,7 +104,8 @@ public class DatabaseTabbedPane extends JTabbedPane {
      */
     public DatabaseTabbedPane(DatabaseRegistry databaseRegistry) {
 
-    	init(databaseRegistry);
+    	this.databaseRegistry = databaseRegistry;
+    	init();
     }
     
     public DatabaseTabbedPane(
@@ -114,9 +116,20 @@ public class DatabaseTabbedPane extends JTabbedPane {
     	this(databaseRegistry);
     	this.radioActionListener = radioActionListener;
     }
-    
-    
+
+    public void setMessage(String caption, String message) {
+
+    	this.removeAll();
+		addTab(caption, new JLabel(message));
+    }
+
+
     public void init(DatabaseRegistry databaseRegistry) {
+    	this.databaseRegistry = databaseRegistry;
+    	init();
+    }
+
+    public void init() {
     	
     	this.removeAll();
     	
