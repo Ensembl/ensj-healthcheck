@@ -13,13 +13,14 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
+import java.util.List;
 import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.SqlTemplate;
 
 /**
  * Check that all of certain types of objects have analysis_descriptions. Also check that displayable field is set.
@@ -70,9 +71,10 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
+		SqlTemplate t = getSqlTemplate(con);
 
 		// cache logic_names by analysis_id
-		Map<String, String> logicNamesByAnalID = getLogicNamesFromAnalysisTable(con);
+		Map<Integer, String> logicNamesByAnalID = getLogicNamesFromAnalysisTable(con);
 
 		String[] tableTypes = tableNames();
 
@@ -88,24 +90,18 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 				sql = "SELECT DISTINCT(g.analysis_id) FROM gene g, transcript t WHERE t.gene_id=g.gene_id";
 			}
 
-			String[] analyses = DBUtils.getColumnValues(con, sql);
+			List<Integer> analyses = t.queryForDefaultObjectList(sql, Integer.class);
 
 			// check each one has an analysis_description
-			for (String analysis : analyses) {
-
-				int count = DBUtils.getRowCount(con, String.format("SELECT COUNT(*) FROM analysis_description WHERE analysis_id=%s", analysis));
+			for (Integer analysisId : analyses) {
+			  int count = t.queryForDefaultObject("select count(*) from analysis_description where analysis_id =?", Integer.class, analysisId);
 
 				if (count == 0) {
-
-					ReportManager.problem(this, con, String.format("Analysis %s is used in %s but has no entry in analysis_description", logicNamesByAnalID.get(analysis), tableType));
+					ReportManager.problem(this, con, String.format("Analysis %s is used in %s but has no entry in analysis_description", logicNamesByAnalID.get(analysisId), tableType));
 					result = false;
-
 				} else {
-
-					ReportManager.correct(this, con, String.format("Analysis %s is used in %s and has an entry in analysis_description", logicNamesByAnalID.get(analysis), tableType));
-
+					ReportManager.correct(this, con, String.format("Analysis %s is used in %s and has an entry in analysis_description", logicNamesByAnalID.get(analysisId), tableType));
 				}
-
 			}
 		}
 
