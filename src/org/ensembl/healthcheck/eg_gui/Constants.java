@@ -40,4 +40,6 @@ public class Constants {
 	public static final Color COLOR_SUCCESS = new Color(0, 192, 0);
 	public static final Color COLOR_FAILURE = new Color(192, 0, 0);
 	
+	public static final String selectedDatabaseChanged = "selectedDatabaseChanged";
+	
 }
