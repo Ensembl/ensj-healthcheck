@@ -50,7 +50,7 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 		String[] tables = getTableNames(dbre.getConnection());
 		Species species = dbre.getSpecies();
 
-        String[] unusedTables           = { "allele_group", "allele_group_allele", "httag", "variation_group", "variation_group_variation", "variation_group_feature" };
+        String[] unusedTables           = { "coord_system" };
         String[] humanOnlyTables        = { "protein_function_predictions", "phenotype", "tagged_variation_feature", "variation_annotation", "associate_study" };
         String[] svTables               = { "study", "structural_variation", "structural_variation_feature", "structural_variation_association", "structural_variation_annotation", "variation_set_structural_variation" };
 		String[] sampleTables           = { "population_genotype", "population_structure", "sample_synonym" };
@@ -76,7 +76,7 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 
         // only these species have structural variation data
 
-		if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.CANIS_FAMILIARIS && species != Species.SUS_SCROFA) {
+		if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.CANIS_FAMILIARIS && species != Species.SUS_SCROFA && species != Species.MACACA_MULATTA) {
             tables = remove(tables, svTables);
 	    }
         
