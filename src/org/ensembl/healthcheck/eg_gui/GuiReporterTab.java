@@ -313,7 +313,6 @@ class ReportPanel extends JPanel implements ActionListener {
 		//
 		this.setMinimumSize(new Dimension(200,300));
 		
-		this.addComponentListener(this);
 		
 	}
 	
