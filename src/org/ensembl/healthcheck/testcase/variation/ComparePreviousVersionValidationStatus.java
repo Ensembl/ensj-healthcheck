@@ -86,6 +86,7 @@ public class ComparePreviousVersionValidationStatus extends ComparePreviousVersi
 			}
 		} catch (Exception e) {
 			ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
+			e.printStackTrace();
 		}
 		
 		return counts;
