@@ -48,27 +48,39 @@ public class GuiTestRunnerFrameActionPerformer {
 	 * @param dbDetails
 	 * 
 	 */
-	public static void setupDatabasePane(
-			DatabaseTabbedPane databaseTabbedPane,
+	public static Thread setupDatabasePane(
+			final DatabaseTabbedPane databaseTabbedPane,
 			ConfigureHost dbDetails
 	) {
 		DBUtils.initialise();
 		DBUtils.setHostConfiguration(dbDetails);
 		
-		List<String> regexps = new ArrayList<String>();
+		final List<String> regexps = new ArrayList<String>();
 		regexps.add(".*");
 
-		DatabaseRegistry databaseRegistry = new DatabaseRegistry(regexps, null,
-				null, false);
-		// Should throw an exception which can be caught and displayed 
-		// something in a dialog box.
-		//
-		//if (databaseRegistry.getEntryCount() == 0) {
-		//	logger.warning("Warning: no databases found!");
-		//}
-		
-		databaseTabbedPane.init(databaseRegistry);			
-		databaseTabbedPane.repaint();
+		Thread t = new Thread() {
+
+			public void run() {
+			
+				DatabaseRegistry databaseRegistry = new DatabaseRegistry(regexps, null,
+						null, false);
+				// Should throw an exception which can be caught and displayed 
+				// something in a dialog box.
+				//
+				//if (databaseRegistry.getEntryCount() == 0) {
+				//	logger.warning("Warning: no databases found!");
+				//}
+				
+				databaseTabbedPane.init(databaseRegistry);
+				databaseTabbedPane.repaint();
+			}
+		};
+		databaseTabbedPane.setMessage(
+			"Changing database server", 
+			"Connecting and loading database entries, please wait"
+		);
+		t.start();
+		return t;
 	}
 
 	/**
