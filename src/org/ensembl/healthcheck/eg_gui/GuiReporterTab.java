@@ -2,12 +2,16 @@ package org.ensembl.healthcheck.eg_gui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.HashMap;
@@ -117,7 +121,8 @@ public class GuiReporterTab extends JPanel implements Reporter {
 			new JSplitPane(
 				JSplitPane.HORIZONTAL_SPLIT, 
 				testListScrollPane, 
-				new JScrollPane(reportPanel)
+				//new JScrollPane(reportPanel)
+				reportPanel
 			), BorderLayout.CENTER
 		);
 		
@@ -224,7 +229,7 @@ public class GuiReporterTab extends JPanel implements Reporter {
 	}
 }
 
-class ReportPanel extends JPanel implements ActionListener {
+class ReportPanel extends JPanel implements ActionListener, ComponentListener {
 	
 	final protected JTextField testName;
 	final protected JPopupTextArea description;
@@ -294,6 +299,22 @@ class ReportPanel extends JPanel implements ActionListener {
 		
 		add(singleLineInfo,           BorderLayout.NORTH);
 		add(new JScrollPane(message), BorderLayout.CENTER);
+		
+		// This has to be set to something small otherwise we will get problems when
+		// wrapping this in a JSplitPane:
+		//
+		// http://docs.oracle.com/javase/6/docs/api/javax/swing/JSplitPane.html
+		//
+		// "When the user is resizing the Components the minimum size of the 
+		// Components is used to determine the maximum/minimum position the 
+		// Components can be set to. If the minimum size of the two 
+		// components is greater than the size of the split pane the divider 
+		// will not allow you to resize it."
+		//
+		this.setMinimumSize(new Dimension(200,300));
+		
+		this.addComponentListener(this);
+		
 	}
 	
 	public void setData(GuiReportPanelData reportData) {
