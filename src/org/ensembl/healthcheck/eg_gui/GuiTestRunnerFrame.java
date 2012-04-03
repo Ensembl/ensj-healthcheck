@@ -28,6 +28,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -37,6 +38,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
@@ -64,6 +66,7 @@ import org.ensembl.healthcheck.eg_gui.TestProgressDialog;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.testcase.PerlScriptConfig;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.eg_gui.CopyAndPastePopupBuilder;
 
 /**
  * <p>
@@ -112,6 +115,7 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 	};
 
 	protected DatabaseTabbedPane databaseTabbedPane;
+	protected JTextField         MysqlConnectionCmd;
 	protected final JList        listOfTestsToBeRun;
 	protected final JButton      rmSelectedTests;
 	protected final JButton      runAllTests;
@@ -230,12 +234,56 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		
 		return combinedHostConfig;
 	}
+
+	protected String createDbCmdLine() {
+		
+		ConfigureHost selectedDbServerConf = dbDetails.get(
+			dbServerSelector.getSelectedIndex()
+		);
+		
+		String passwordParam;
+		
+		if (selectedDbServerConf.getPassword().isEmpty()) {
+			passwordParam = "";
+		} else {
+			passwordParam = " --password=" + selectedDbServerConf.getPassword();
+		}
+		
+		return "mysql" 
+			+ " --host "     + selectedDbServerConf.getHost() 
+			+ " --port "     + selectedDbServerConf.getPort()
+			+ " --user "     + selectedDbServerConf.getUser()
+			+ passwordParam
+		;
+	}
+	
+	protected void updateDbCmdLine() {
+
+		if (MysqlConnectionCmd ==null) { return; }
+		MysqlConnectionCmd.setText(createDbCmdLine());
+		MysqlConnectionCmd.selectAll();
+	}
+	
+	protected void updateDbCmdLine(String dbName) {
+
+		if (MysqlConnectionCmd ==null) { return; }
+		String cmd = createDbCmdLine() + " " + dbName;
+		MysqlConnectionCmd.setText(cmd);
+		MysqlConnectionCmd.selectAll();
+	}
 	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-
+		
 		String cmd = arg0.getActionCommand();
 
+		if (cmd.equals(Constants.selectedDatabaseChanged)) {
+			
+			DatabaseRadioButton selectedDbRadioButton = (DatabaseRadioButton) arg0.getSource();			
+			String currentlySelectsDBName = selectedDbRadioButton.getText();
+			updateDbCmdLine(currentlySelectsDBName);
+		}
+		
 		// Not implemented yet
 		if (cmd.equals(Constants.Add_to_tests_to_be_run)) {
 			
@@ -251,6 +299,7 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 				databaseTabbedPane, 
 				dbDetails.get(dbServerSelector.getSelectedIndex())
 			);
+			updateDbCmdLine();
 		}
 		if (cmd.equals(Constants.RUN_ALL_TESTS) || cmd.equals(Constants.RUN_SELECTED_TESTS)) {
 
@@ -442,7 +491,9 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 			logger.warning("Warning: no databases found!");
 		}
 
-		databaseTabbedPane = new DatabaseTabbedPane(databaseRegistry);
+		databaseTabbedPane = new DatabaseTabbedPane(
+			databaseRegistry, this
+		);
 		
 		dbServerSelector.setSelectedIndex(defaultSelectedServerIndex);
 		secondaryDbServerSelector.setSelectedIndex(defaultSelectedServerIndex);
@@ -479,7 +530,8 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 			JList testsToBeRun,
 			JPanel buttonPanel, 
 			JComboBox dbServerSelector,
-			JComboBox secondaryDbServerSelector
+			JComboBox secondaryDbServerSelector,
+			JTextField MysqlConnectionCmd
 	) {
 		
 		JScrollPane treePane  = new JScrollPane(tree); 
@@ -503,6 +555,13 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		);
 		
 		tabSetup.setLayout(new BorderLayout());
+		
+		MysqlConnectionCmd.setBorder(
+			BorderFactory.createTitledBorder(
+				GuiTestRunnerFrameComponentBuilder.defaultEmptyBorder, "Use this command to connect to the selected database")
+		);
+		
+		tabSetup.add(MysqlConnectionCmd, BorderLayout.SOUTH);
 		
 		tabSetup.add(
 				new JSplitPane(
@@ -587,15 +646,21 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		buttonPanel.add(rmSelectedTests);
 		buttonPanel.add(runAllTests);
 
+		MysqlConnectionCmd = new JTextField(); 
+		new CopyAndPastePopupBuilder().addPopupMenu(MysqlConnectionCmd);
+		
 		addComponentsToLayout(
-				databaseTabbedPane, 
-				tree, 
-				listOfTestsToBeRun,
-				buttonPanel,
-				dbServerSelector,
-				secondaryDbServerSelector
+			databaseTabbedPane, 
+			tree, 
+			listOfTestsToBeRun,
+			buttonPanel,
+			dbServerSelector,
+			secondaryDbServerSelector,
+			MysqlConnectionCmd
 		);
 
+		updateDbCmdLine();
+		
 		this.setPreferredSize(new Dimension(windowWidth, windowHeight));
 		this.pack();
 
