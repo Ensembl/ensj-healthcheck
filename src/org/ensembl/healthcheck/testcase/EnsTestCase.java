@@ -2137,7 +2137,7 @@ public abstract class EnsTestCase {
 	} // getRowValues
 
 	@Deprecated
-	public List<String> getRowValuesList(Connection con, String sql) {
+	public List<String[]> getRowValuesList(Connection con, String sql) {
 		return DBUtils.getRowValuesList(con, sql);
 	}
 

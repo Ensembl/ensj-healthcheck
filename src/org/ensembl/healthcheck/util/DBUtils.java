@@ -1433,13 +1433,33 @@ public final class DBUtils {
 	 * @return The value(s) returned by the SQL in an array of Strings.
 	 */
 	public static String[] getRowValues(Connection con, String sql) {
-
-		return getColumnValuesList(con, sql).toArray(new String[] {});
-
+		List<String[]> v = getRowValuesList(con, sql);
+		if(v.isEmpty()) {
+		  throw new SqlUncheckedException("The query '"+sql+"' returned no rows. Cannot return anything");
+		}
+		return v.get(0);
 	} // getRowValues
 
-	public static List<String> getRowValuesList(Connection con, String sql) {
-		return getSqlTemplate(con).queryForDefaultObjectList(sql, String.class);
+	/**
+	 * Returns a List of String arrays for working with multiple values
+	 * 
+	 * @param con Connection to use
+	 * @param sql SQL to run; can return several values
+	 * @return Returns a list of values 
+	 */
+	public static List<String[]> getRowValuesList(Connection con, String sql) {
+	  return getSqlTemplate(con).queryForList(sql, new RowMapper<String[]>() {
+	    @Override
+	    public String[] mapRow(ResultSet resultSet, int position)
+	        throws SQLException {
+	      int length = resultSet.getMetaData().getColumnCount();
+	      String[] values = new String[length];
+	      for (int sqlIndex = 1, arrayIndex = 0; sqlIndex <= length; sqlIndex++, arrayIndex++) {
+	        values[arrayIndex] = resultSet.getString(sqlIndex);
+	      }
+	      return values;
+	    }
+	  });
 	}
 
 	// -------------------------------------------------------------------------
