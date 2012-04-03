@@ -7,6 +7,7 @@ use warnings;
 use DBI;
 use Getopt::Long;
 use IO::File;
+use Carp;
 use File::Basename;
 use Data::Dumper;
 
@@ -136,6 +137,12 @@ else {
 # cache genebuild.start_date entries for all databases
 my $meta_cache = create_meta_cache( $dbi1, $dbi2, $dbi_prev );
 
+# cache assembly.name for all DBs 
+my $assembly_cache = create_assembly_cache( $dbi1, $dbi2, $dbi_prev );
+
+#Meta cache for regulation
+my $regulatory_build_cache = create_regulation_cache($dbi1, $dbi2, $dbi_prev);
+
 # propagate! propagate!
 propagate( $dbi1, $dbi_prev, $old_release, $new_release, $session_id,
   $old_to_new_db_name, $meta_cache );
@@ -145,95 +152,50 @@ set_end_time( $dbi1, $session_id );
 # --------------------------------------------------------------------------------
 
 sub create_db_name_cache {
-
   my ( $healthcheck_dbi, $server_dbi, $old_release, $new_release, $new_dbname )
     = @_;
 
-  $new_dbname ||= undef;
-
-  my %cache;
-
   # get list of databases for old session
-  my @old_dbs;
-  my $sth = $healthcheck_dbi->prepare(
-    "SELECT distinct(database_name) from report WHERE database_name LIKE ?");
-
+  my $sql = "SELECT distinct(database_name) from report WHERE database_name LIKE ?";
+  my $hc_like;
   if ($new_dbname) {
-
     # only propagate for new_dbname
     $new_dbname =~ /([a-z]+_[a-z]+_[a-z]+)_\d+/;
-    $sth->execute("%$1_$old_release%");
-
+    $hc_like = "%$1_$old_release%";
   }
   else {
-
     # propagate for all databases in old_release
-    $sth->execute("%_${old_release}_%");
-
+    $hc_like = "%_${old_release}_%";
   }
-
-  foreach my $row ( @{ $sth->fetchall_arrayref() } ) {
-    push @old_dbs, $row->[0];
-  }
+  my @old_dbs = @{$healthcheck_dbi->selectcol_arrayref($sql, {}, $hc_like)};
 
   # get list of new databases
-  my @new_dbs;
-  $sth = $server_dbi->prepare("SHOW DATABASES LIKE ?");
-
-  if ($new_dbname) {
-
-    # get a single database
-    $sth->execute("%$new_dbname%");
-
-  }
-  else {
-
-    # get all databases in this new_release
-    $sth->execute("%_${new_release}_%")
-      ;    # note this will exclude master_schema_48 etc
-
-  }
-
-  foreach my $row ( @{ $sth->fetchall_arrayref() } ) {
-    push @new_dbs, $row->[0];
-  }
+  my $new_like = ($new_dbname) ? 
+    "%$new_dbname%" :     # get a single DB
+    "%_${new_release}_%"; # get all DBs; note this will exclude master_schema_48 etc
+  my @new_dbs = @{$server_dbi->selectcol_arrayref("SHOW DATABASES LIKE ?", {}, $new_like)};
 
   # create mapping
-  my %old_to_new = ();
-  my $missing;
-
+  my %cache;
   foreach my $old_db (@old_dbs) {
-
     my $new_db = find_match( $old_db, @new_dbs );
-
     if ($new_db) {
-
       print "$old_db -> $new_db\n" unless ($quiet);
       $cache{$old_db} = $new_db;
-
     }
-
   }
-
+  
   return \%cache;
-
 }
 
 # --------------------------------------------------------------------------------
 
 sub find_match {
-
-  my ( $old_db, @new_dbs ) = @_;
-
-  my $match;
-
+  my ($old_db, @new_dbs) = @_;
   foreach my $new_db (@new_dbs) {
-
-    $match = $new_db if ( compare_dbs( $old_db, $new_db ) );
-
+    return $new_db if compare_dbs($old_db, $new_db);
   }
-
-  return $match;
+  return;
 }
 
 # --------------------------------------------------------------------------------
@@ -322,27 +284,22 @@ sub propagate {
 
         # type eq manual_ok_this_assembly:
         # will only need to propagate if it is the same assembly
-
         if ( $type eq 'manual_ok_this_assembly' ) {
-
-          # compare the assembly component from the database name
-          my $is_new_assembly = new_assembly( $old_database, $new_database );
-
-          # if it is a new assembly, do not propagate this HC
-          next if $is_new_assembly;
+          next if new_assembly( $old_database, $new_database );
         }
 
         # type eq manual_ok_this_genebuild
         # will only need to propagate if it is the same genebuild
         # i.e. if genebuild.start_date values in meta table are the same
         # so skip propagation if they are not the same
-
         if ( $type eq 'manual_ok_this_genebuild' ) {
-
-          next
-            if ( ( $meta_cache->{$old_database} || '' ) ne
-            ( $meta_cache->{$new_database} || '' ) );
-
+          next if new_genebuild($old_database, $new_database);
+        }
+        
+        # type eq manual_ok_this_regulatory_build:
+        # will only need to propagate if it is the same regulatory build
+        if($type eq 'manual_ok_this_regulatory_build') {
+          next if new_regulatory_build($old_database, $new_database);
         }
 
         # create new report
@@ -364,7 +321,6 @@ sub propagate {
       }
 
       print "\t$old_database\t$count\n" if ( !$quiet && $count > 0 );
-
     }
 
     print "Propagated " . $counts{$type} . " $type reports\n" unless ($quiet);
@@ -376,18 +332,38 @@ sub propagate {
 # --------------------------------------------------------------------------------
 
 # this method will return true if it is a new species assembly, false otherwise
-# will check the number in the name. e.g. homo_sapiens_core_53_(36)o
+# checks the contents of meta
 
 sub new_assembly {
+  my ($old_dbname, $new_dbname) = @_;
+  my $old = $assembly_cache->{$old_dbname};
+  my $new = $assembly_cache->{$new_dbname};
+  return ("$old" eq "$new") ? 0 : 1; #force string comparison
+}
 
-  my $old_database = shift;
-  my $new_database = shift;
+# --------------------------------------------------------------------------------
 
-  my ($old_db_assembly) = $old_database =~ /_(\d+)[a-z]{0,1}$/;
-  my ($new_db_assembly) = $new_database =~ /_(\d+)[a-z]{0,1}$/;
+# Will check if this is a new genebuild
 
-  return ( $old_db_assembly != $new_db_assembly );
+sub new_genebuild {
+  my ($old_dbname, $new_dbname) = @_;
+  my $old = $meta_cache->{$old_dbname};
+  my $new = $meta_cache->{$new_dbname};
+  return ("$old" eq "$new") ? 0 : 1; #force string comparison
+}
 
+# --------------------------------------------------------------------------------
+
+# Will check if this is a new regulatory build. New means either DB's build
+# was null (as we can't check it) or the build values were not the same
+
+sub new_regulatory_build {
+  my ($old_dbname, $new_dbname) = @_;
+  my $old = $regulatory_build_cache->{$old_dbname};
+  my $new = $regulatory_build_cache->{$new_dbname};
+  return 1 if ! defined $old || ! defined $new; 
+  return 0 if $old eq $new;
+  return 1;
 }
 
 # --------------------------------------------------------------------------------
@@ -395,64 +371,69 @@ sub new_assembly {
 # method that will return the latest session_id in the database for the new_release
 
 sub get_latest_session_id {
-
-  my ( $dbi, $new_release ) = @_;
-
+  my ($dbi, $new_release) = @_;
   #get latest session_id for the new release
-  my $sth_session_id =
-    $dbi->prepare("SELECT max(session_id) FROM session WHERE db_release = ?");
-  $sth_session_id->execute($new_release);
-  my $latest_session_id = $sth_session_id->fetch();
-  if ( $latest_session_id->[0] ) {
-    return $latest_session_id->[0];
-  }
-  else {
-    return -1;
-  }
-
+  my $sql = 'SELECT max(session_id) FROM session WHERE db_release = ?';
+  my $res = $dbi->selectcol_arrayref($sql, {}, $new_release);
+  return $res->[0] if @{$res};
+  return -1;
 }
 
 # --------------------------------------------------------------------------------
-# Cache all the genebuild.start_date entries in all databases
+# Cache all the meta entries in all databases applicable
 # Note all databases = all on $dbi_prev, $dbi1, $dbi2, e.g. all on ens-livemirror, ens-staging1, ens-staging2
 
 sub create_meta_cache {
-
   my ( $dbi1, $dbi2, $dbi_prev ) = @_;
+  my $die_if_none = 1;
+  return build_meta_cache('core', 'genebuild.start_date', $die_if_none, $dbi1, $dbi2, $dbi_prev);
+}
 
-  print "Caching genebuild.start_date meta entries\n" unless ($quiet);
+# --------------------------------------------------------------------------------
+# Cache all the meta entries in all databases applicable
+# Note all databases = all on $dbi_prev, $dbi1, $dbi2, e.g. all on ens-livemirror, ens-staging1, ens-staging2
 
+sub create_assembly_cache {
+  my ( $dbi1, $dbi2, $dbi_prev ) = @_;
+  my $die_if_none = 1;
+  return build_meta_cache('core', 'assembly.name', $die_if_none, $dbi1, $dbi2, $dbi_prev);
+}
+
+# --------------------------------------------------------------------------------
+# Cache all the meta entries in all databases applicable
+# Note all databases = all on $dbi_prev, $dbi1, $dbi2, e.g. all on ens-livemirror, ens-staging1, ens-staging2
+
+sub create_regulation_cache {
+  my ( $dbi1, $dbi2, $dbi_prev ) = @_;
+  my $die_if_none = 0;
+  return build_meta_cache('core', 'regbuild.last_annotation_update', $die_if_none, $dbi1, $dbi2, $dbi_prev);
+}
+
+# --------------------------------------------------------------------------------
+# Cache all the meta entries in all databases applicable using the specified keys
+
+sub build_meta_cache {
+  my ($dbtype, $meta_key, $die_if_none, @dbhs) = @_;
+  print "Building cache '$meta_key' for '$dbtype'\n" unless $quiet;
   my %cache;
-
-  foreach my $dbi ( $dbi1, $dbi2, $dbi_prev ) {
-
-    my $list_sth = $dbi->prepare("SHOW DATABASES LIKE ?");
-
-# get all core databases on this server whose names are in the (could be optimised by just looking at the ones we need)
-    $list_sth->execute("%\\_core\\_%");
-
-    my $dbname;
-    $list_sth->bind_columns( \$dbname );
-
-    while ( $list_sth->fetch() ) {
-
-      my $meta_sth = $dbi->prepare(
-"SELECT meta_value FROM $dbname.meta WHERE meta_key='genebuild.start_date'"
-      );    # can't do this with a prepared statemen
-
-      $meta_sth->execute();
-
-      my $start_date = ( $meta_sth->fetchrow_array() )[0]
-        || die "Error getting genebuild.start_date from $dbname";
-
-      $cache{$dbname} = $start_date;
-
+  foreach my $dbh (@dbhs) {
+    my $like = "%\\_${dbtype}\\_%";
+    my $dbs = $dbh->selectcol_arrayref('SHOW DATABASES LIKE ?', {}, $like);
+    
+    printf("Scanning through %d potential databases\n", scalar(@{$dbs})) unless $quiet;
+    
+    foreach my $db (@{$dbs}) {
+      my $sql = sprintf('SELECT meta_value FROM %s.meta where meta_key =?', $dbname);
+      my @row = $dbh->selectrow_array($sql, {}, $meta_key);
+      my ($value) = @row;
+      if($die_if_none && ! $value) {
+        croak "Error getting $meta_key from $dbname. Program will abort";
+      }
+      $cache{$db} = $value if $value; 
     }
-
   }
-
+  print "Finished cache building '$meta_key' for '$dbtype'\n" unless $quiet;
   return \%cache;
-
 }
 
 # --------------------------------------------------------------------------------
