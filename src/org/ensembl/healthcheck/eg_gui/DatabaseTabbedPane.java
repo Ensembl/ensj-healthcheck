@@ -2,6 +2,7 @@ package org.ensembl.healthcheck.eg_gui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -38,6 +39,8 @@ import org.ensembl.healthcheck.eg_gui.TabChangeListener;
 
 public class DatabaseTabbedPane extends JTabbedPane {
 
+	protected ActionListener radioActionListener;
+	
 	/**
 	 * 
 	 * <p>
@@ -56,6 +59,8 @@ public class DatabaseTabbedPane extends JTabbedPane {
         for (DatabaseRegistryEntry currentEntry : allDbEntries) {
         	
         	DatabaseRadioButton dbcb = new DatabaseRadioButton(currentEntry, false);
+        	dbcb.addActionListener(radioActionListener);
+        	dbcb.setActionCommand(Constants.selectedDatabaseChanged);
             checkBoxMap.put(currentEntry, dbcb);
         }
         return checkBoxMap;
@@ -100,6 +105,16 @@ public class DatabaseTabbedPane extends JTabbedPane {
 
     	init(databaseRegistry);
     }
+    
+    public DatabaseTabbedPane(
+    	DatabaseRegistry databaseRegistry,
+    	ActionListener radioActionListener
+    	) {
+
+    	this(databaseRegistry);
+    	this.radioActionListener = radioActionListener;
+    }
+    
     
     public void init(DatabaseRegistry databaseRegistry) {
     	
