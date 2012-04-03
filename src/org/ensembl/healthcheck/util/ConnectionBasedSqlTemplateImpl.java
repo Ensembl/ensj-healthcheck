@@ -258,7 +258,7 @@ public class ConnectionBasedSqlTemplateImpl implements SqlTemplate {
 	private SqlUncheckedException createUncheckedException(String sql,
 			Object[] params, Throwable e) {
 		String message = formatExceptionMessage(
-				"Could not run statement because of SqlServiceException", sql,
+				"Could not run statement because of SqlServiceException: "+e.getMessage(), sql,
 				params);
 		return new SqlUncheckedException(message, e);
 	}
