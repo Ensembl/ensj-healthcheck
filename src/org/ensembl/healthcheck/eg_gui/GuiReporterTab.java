@@ -229,7 +229,7 @@ public class GuiReporterTab extends JPanel implements Reporter {
 	}
 }
 
-class ReportPanel extends JPanel implements ActionListener, ComponentListener {
+class ReportPanel extends JPanel implements ActionListener {
 	
 	final protected JTextField testName;
 	final protected JPopupTextArea description;
