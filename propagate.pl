@@ -12,36 +12,43 @@ use Data::Dumper;
 
 $Data::Dumper::Sortkeys = 1;
 
-my ($host1, $port1, $user1, $pass1, $host2, $port2, $user2, $pass2, $host_prev, $port_prev, $user_prev, $pass_prev, $dbname, $old_release, $new_release, $quiet, $new_dbname);
+my (
+  $host1,     $port1,     $user1,  $pass1,       $host2,
+  $port2,     $user2,     $pass2,  $host_prev,   $port_prev,
+  $user_prev, $pass_prev, $dbname, $old_release, $new_release,
+  $quiet,     $new_dbname
+);
 
-GetOptions('user1=s'           => \$user1,
-	   'pass1=s'           => \$pass1,
-	   'host1=s'           => \$host1,
-	   'port1=i'           => \$port1,
-	   'user2=s'           => \$user2,
-	   'pass2=s'           => \$pass2,
-	   'host2=s'           => \$host2,
-	   'port2=i'           => \$port2,
-	   'user_prev=s'       => \$user_prev,
-	   'pass_prev=s'       => \$pass_prev,
-	   'host_prev=s'       => \$host_prev,
-	   'port_prev=i'       => \$port_prev,
-	   'dbname=s'          => \$dbname,
-           'old_release=i'     => \$old_release,
-	   'new_release=i'     => \$new_release,
-	   'quiet'             => \$quiet,
-	   'new_dbname=s'      => \$new_dbname,
-	   'help'              => sub { usage(); exit(0); });
+GetOptions(
+  'user1=s'       => \$user1,
+  'pass1=s'       => \$pass1,
+  'host1=s'       => \$host1,
+  'port1=i'       => \$port1,
+  'user2=s'       => \$user2,
+  'pass2=s'       => \$pass2,
+  'host2=s'       => \$host2,
+  'port2=i'       => \$port2,
+  'user_prev=s'   => \$user_prev,
+  'pass_prev=s'   => \$pass_prev,
+  'host_prev=s'   => \$host_prev,
+  'port_prev=i'   => \$port_prev,
+  'dbname=s'      => \$dbname,
+  'old_release=i' => \$old_release,
+  'new_release=i' => \$new_release,
+  'quiet'         => \$quiet,
+  'new_dbname=s'  => \$new_dbname,
+  'help'          => sub { usage(); exit(0); }
+);
 
-$user1    = $user1 || "ensadmin";
-$pass1    = $pass1 || "ensembl";
-$host1    = $host1 || "ens-staging";
-$port1    = $port1 || "3306";
+$user1 = $user1 || "ensadmin";
+$pass1 = $pass1 || "ensembl";
+$host1 = $host1 || "ens-staging";
+$port1 = $port1 || "3306";
 
-$user2    = $user2 || "ensadmin";
-$pass2    = $pass2 || "ensembl";
-$host2    = $host2 || "ens-staging2";
-$port2    = $port2 || "3306";
+$user2 = $user2 || "ensadmin";
+$pass2 = $pass2 || "ensembl";
+$host2 = $host2 || "ens-staging2";
+$port2 = $port2 || "3306";
 
 $user_prev = $user_prev || "ensadmin";
 $pass_prev = $pass_prev || "ensembl";
@@ -49,80 +56,98 @@ $host_prev = $host_prev || "ens-livemirror";
 $port_prev = $port_prev || "3306";
 
 # Note healthchecks db ($dbname) is assumed to be on $host1
-$dbname  = $dbname || "healthchecks";
+$dbname = $dbname || "healthchecks";
 
-if (!($old_release && $new_release)) {
+if ( !( $old_release && $new_release ) ) {
   print "Must specify -old_release and -new_release\n";
   exit(1);
 }
 
 # connect to healthcheck database - note assumed to be on host1
-my $dbi1 = DBI->connect("DBI:mysql:host=$host1:port=$port1;database=$dbname", $user1, $pass1, {'RaiseError' => 1}) || die "Can't connect to healthcheck database\n";
+my $dbi1 = DBI->connect( "DBI:mysql:host=$host1:port=$port1;database=$dbname",
+  $user1, $pass1, { 'RaiseError' => 1 } )
+  || die "Can't connect to healthcheck database\n";
 
 # connect to second database server if it's defined
 my $dbi2 = undef;
 if ($host2) {
- $dbi2 =  DBI->connect("DBI:mysql:host=$host2:port=$port2;", $user2, $pass2, {'RaiseError' => 1}) || die "Can't connect to secondary database on $host2:port2\n";
+  $dbi2 = DBI->connect( "DBI:mysql:host=$host2:port=$port2;",
+    $user2, $pass2, { 'RaiseError' => 1 } )
+    || die "Can't connect to secondary database on $host2:port2\n";
 }
 
 # connect to server where previous release databases should be
-my $dbi_prev = DBI->connect("DBI:mysql:host=$host_prev:port=$port_prev", $user_prev, $pass_prev, {'RaiseError' => 1}) || die "Can't connect to previous release database server\n";
+my $dbi_prev = DBI->connect( "DBI:mysql:host=$host_prev:port=$port_prev",
+  $user_prev, $pass_prev, { 'RaiseError' => 1 } )
+  || die "Can't connect to previous release database server\n";
 
 # cache database name mappings
 my $old_to_new_db_name;
 my $session_id;
 
 # if we are propagating all the databases within the release, get all databases from staging
-if (!$new_dbname) {
+if ( !$new_dbname ) {
 
-  $old_to_new_db_name = create_db_name_cache($dbi1, $dbi1, $old_release, $new_release);
+  $old_to_new_db_name =
+    create_db_name_cache( $dbi1, $dbi1, $old_release, $new_release );
 
   # add second database server list if required
   if ($host2) {
 
-    my $second_server_dbs = create_db_name_cache($dbi1, $dbi2, $old_release, $new_release);
-    $old_to_new_db_name = { %$old_to_new_db_name, %$second_server_dbs }; # note use of {} since we're dealing with references
+    my $second_server_dbs =
+      create_db_name_cache( $dbi1, $dbi2, $old_release, $new_release );
+    $old_to_new_db_name = { %$old_to_new_db_name, %$second_server_dbs
+    };    # note use of {} since we're dealing with references
 
   }
 
   # create new session for new release
-  $session_id = create_session($dbi1, $old_release, $new_release);
+  $session_id = create_session( $dbi1, $old_release, $new_release );
 
-} else {
+}
+else {
 
   # we are propagating a single database
-  $old_to_new_db_name = create_db_name_cache($dbi1, $dbi1, $old_release, $new_release, $new_dbname);
+  $old_to_new_db_name =
+    create_db_name_cache( $dbi1, $dbi1, $old_release, $new_release,
+    $new_dbname );
 
   # add second database server list if required
   if ($host2) {
-    my $second_server_dbs = create_db_name_cache($dbi1, $dbi2, $old_release, $new_release, $new_dbname);
-    $old_to_new_db_name = { %$old_to_new_db_name, %$second_server_dbs }; # note use of {} since we're dealing with references
+    my $second_server_dbs =
+      create_db_name_cache( $dbi1, $dbi2, $old_release, $new_release,
+      $new_dbname );
+    $old_to_new_db_name = { %$old_to_new_db_name, %$second_server_dbs
+    };    # note use of {} since we're dealing with references
 
   }
 
   # we will use the latest session_id (if it has already been created)
-  $session_id = get_latest_session_id($dbi1, $new_release);
-  if ($session_id < 0) {
+  $session_id = get_latest_session_id( $dbi1, $new_release );
+  if ( $session_id < 0 ) {
+
     # the session_id is not correct, probably not run propagate before;
-    print STDERR "There is no session_id for release $new_release in the database\n. Have you propagated all the databases before?\n";
+    print STDERR
+"There is no session_id for release $new_release in the database\n. Have you propagated all the databases before?\n";
     exit(1);
   }
 }
 
 # cache genebuild.start_date entries for all databases
-my $meta_cache = create_meta_cache($dbi1, $dbi2, $dbi_prev);
-
+my $meta_cache = create_meta_cache( $dbi1, $dbi2, $dbi_prev );
 
 # propagate! propagate!
-propagate($dbi1, $dbi_prev, $old_release, $new_release, $session_id, $old_to_new_db_name, $meta_cache);
+propagate( $dbi1, $dbi_prev, $old_release, $new_release, $session_id,
+  $old_to_new_db_name, $meta_cache );
 
-set_end_time($dbi1, $session_id);
+set_end_time( $dbi1, $session_id );
 
 # --------------------------------------------------------------------------------
 
 sub create_db_name_cache {
 
-  my ($healthcheck_dbi, $server_dbi, $old_release, $new_release, $new_dbname) = @_;
+  my ( $healthcheck_dbi, $server_dbi, $old_release, $new_release, $new_dbname )
+    = @_;
 
   $new_dbname ||= undef;
 
@@ -130,7 +155,8 @@ sub create_db_name_cache {
 
   # get list of databases for old session
   my @old_dbs;
-  my $sth = $healthcheck_dbi->prepare("SELECT distinct(database_name) from report WHERE database_name LIKE ?");
+  my $sth = $healthcheck_dbi->prepare(
+    "SELECT distinct(database_name) from report WHERE database_name LIKE ?");
 
   if ($new_dbname) {
 
@@ -138,14 +164,15 @@ sub create_db_name_cache {
     $new_dbname =~ /([a-z]+_[a-z]+_[a-z]+)_\d+/;
     $sth->execute("%$1_$old_release%");
 
-  } else {
+  }
+  else {
 
     # propagate for all databases in old_release
     $sth->execute("%_${old_release}_%");
 
   }
 
-  foreach my $row (@{$sth->fetchall_arrayref()}) {
+  foreach my $row ( @{ $sth->fetchall_arrayref() } ) {
     push @old_dbs, $row->[0];
   }
 
@@ -158,14 +185,16 @@ sub create_db_name_cache {
     # get a single database
     $sth->execute("%$new_dbname%");
 
-  } else {
+  }
+  else {
 
     # get all databases in this new_release
-    $sth->execute("%_${new_release}_%"); # note this will exclude master_schema_48 etc
+    $sth->execute("%_${new_release}_%")
+      ;    # note this will exclude master_schema_48 etc
 
   }
 
-  foreach my $row (@{$sth->fetchall_arrayref()}) {
+  foreach my $row ( @{ $sth->fetchall_arrayref() } ) {
     push @new_dbs, $row->[0];
   }
 
@@ -175,7 +204,7 @@ sub create_db_name_cache {
 
   foreach my $old_db (@old_dbs) {
 
-    my $new_db = find_match($old_db, @new_dbs);
+    my $new_db = find_match( $old_db, @new_dbs );
 
     if ($new_db) {
 
@@ -194,13 +223,13 @@ sub create_db_name_cache {
 
 sub find_match {
 
-  my ($old_db, @new_dbs) = @_;
+  my ( $old_db, @new_dbs ) = @_;
 
   my $match;
 
   foreach my $new_db (@new_dbs) {
 
-    $match = $new_db if (compare_dbs($old_db, $new_db));
+    $match = $new_db if ( compare_dbs( $old_db, $new_db ) );
 
   }
 
@@ -210,7 +239,7 @@ sub find_match {
 # --------------------------------------------------------------------------------
 
 sub compare_dbs {
-  my ($old, $new) = @_;
+  my ( $old, $new ) = @_;
 
   my $regex = qr/(
     \A [a-z0-9]+ _ [a-z0-9]+  #binomial component 
@@ -228,10 +257,13 @@ sub compare_dbs {
 
 sub create_session {
 
-  my ($dbi, $old_release, $new_release) = @_;
+  my ( $dbi, $old_release, $new_release ) = @_;
 
-  my $sth = $dbi->prepare("INSERT INTO session (db_release,config,start_time) VALUES (?,?,NOW())");
-  $sth->execute($new_release, "Propagation of entries from release $old_release to release $new_release") || die "Error creating new session\n";
+  my $sth = $dbi->prepare(
+    "INSERT INTO session (db_release,config,start_time) VALUES (?,?,NOW())");
+  $sth->execute( $new_release,
+    "Propagation of entries from release $old_release to release $new_release" )
+    || die "Error creating new session\n";
 
   my $session_id = $sth->{'mysql_insertid'};
 
@@ -245,15 +277,24 @@ sub create_session {
 
 sub propagate {
 
-  my ($dbi, $dbi_prev, $old_release, $new_release, $propagation_session_id, $old_to_new_db_name, $meta_cache) = @_;
+  my ( $dbi, $dbi_prev, $old_release, $new_release, $propagation_session_id,
+    $old_to_new_db_name, $meta_cache )
+    = @_;
 
-  my @types = qw(manual_ok_all_releases manual_ok_this_assembly manual_ok_this_genebuild);
+  my @types =
+    qw(manual_ok_all_releases manual_ok_this_assembly manual_ok_this_genebuild);
 
-  my $select_sth = $dbi->prepare("SELECT r.first_session_id, r.species, r.database_type, r.timestamp, r.testcase, r.result, r.text, a.person, a.action,a.comment,a.created_at, a.modified_at, a.created_by, a.modified_by FROM report r, annotation a WHERE a.report_id=r.report_id AND r.database_name=? AND a.action=?");
+  my $select_sth = $dbi->prepare(
+"SELECT r.first_session_id, r.species, r.database_type, r.timestamp, r.testcase, r.result, r.text, a.person, a.action,a.comment,a.created_at, a.modified_at, a.created_by, a.modified_by FROM report r, annotation a WHERE a.report_id=r.report_id AND r.database_name=? AND a.action=?"
+  );
 
-  my $insert_report_sth = $dbi->prepare("INSERT INTO report (first_session_id, last_session_id, database_name, database_type, species, timestamp, testcase, result, text) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+  my $insert_report_sth = $dbi->prepare(
+"INSERT INTO report (first_session_id, last_session_id, database_name, database_type, species, timestamp, testcase, result, text) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+  );
 
-  my $insert_annotation_sth = $dbi->prepare("INSERT INTO annotation (report_id, person, action, comment, created_at, modified_at, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+  my $insert_annotation_sth = $dbi->prepare(
+"INSERT INTO annotation (report_id, person, action, comment, created_at, modified_at, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+  );
 
   my %counts;
 
@@ -263,55 +304,72 @@ sub propagate {
     $counts{$type} = 0;
 
     # find all manual_ok_all_releases etc for each old database
-    foreach my $old_database (keys %$old_to_new_db_name) {
+    foreach my $old_database ( keys %$old_to_new_db_name ) {
 
       my $new_database = $old_to_new_db_name->{$old_database};
 
       my $count = 0;
 
-      $select_sth->execute($old_database, $type);
-      foreach my $row (@{$select_sth->fetchall_arrayref()}) {
+      $select_sth->execute( $old_database, $type );
+      foreach my $row ( @{ $select_sth->fetchall_arrayref() } ) {
 
-	my ($first_session_id, $species, $database_type, $timestamp, $testcase, $result, $text, $person, $action,$comment,$created_at, $modified_at, $created_by, $modified_by) = @$row;
-	
-	# type eq manual_ok_this_assembly:
-	# will only need to propagate if it is the same assembly
+        my (
+          $first_session_id, $species, $database_type, $timestamp,
+          $testcase,         $result,  $text,          $person,
+          $action,           $comment, $created_at,    $modified_at,
+          $created_by,       $modified_by
+        ) = @$row;
 
-	if ($type eq 'manual_ok_this_assembly') {
-	  # compare the assembly component from the database name
-	  my $is_new_assembly = new_assembly($old_database, $new_database);
-	  # if it is a new assembly, do not propagate this HC
-	  next if $is_new_assembly;
-	}
+        # type eq manual_ok_this_assembly:
+        # will only need to propagate if it is the same assembly
 
-	# type eq manual_ok_this_genebuild
-	# will only need to propagate if it is the same genebuild
-	# i.e. if genebuild.start_date values in meta table are the same
-	# so skip propagation if they are not the same
+        if ( $type eq 'manual_ok_this_assembly' ) {
 
-	if ($type eq 'manual_ok_this_genebuild') {
+          # compare the assembly component from the database name
+          my $is_new_assembly = new_assembly( $old_database, $new_database );
 
-	  next if (($meta_cache->{$old_database} || '') ne ($meta_cache->{$new_database} || ''));
+          # if it is a new assembly, do not propagate this HC
+          next if $is_new_assembly;
+        }
 
-	}
+        # type eq manual_ok_this_genebuild
+        # will only need to propagate if it is the same genebuild
+        # i.e. if genebuild.start_date values in meta table are the same
+        # so skip propagation if they are not the same
 
-	# create new report
-	$insert_report_sth->execute($first_session_id, $propagation_session_id, $new_database, $database_type, $species, $timestamp, $testcase, $result, $text) || die "Error inserting report";
-	my $report_id = $insert_report_sth->{'mysql_insertid'};
-	# create new annotation
-	$insert_annotation_sth->execute($report_id, $person, $action, $comment, $created_at, $modified_at, $created_by, $modified_by) || die "Error inserting annotation";
-	$count++;
-	$counts{$type}++;
+        if ( $type eq 'manual_ok_this_genebuild' ) {
+
+          next
+            if ( ( $meta_cache->{$old_database} || '' ) ne
+            ( $meta_cache->{$new_database} || '' ) );
+
+        }
+
+        # create new report
+        $insert_report_sth->execute(
+          $first_session_id, $propagation_session_id, $new_database,
+          $database_type,    $species,                $timestamp,
+          $testcase,         $result,                 $text
+        ) || die "Error inserting report";
+        my $report_id = $insert_report_sth->{'mysql_insertid'};
+
+        # create new annotation
+        $insert_annotation_sth->execute(
+          $report_id,  $person,      $action,     $comment,
+          $created_at, $modified_at, $created_by, $modified_by
+        ) || die "Error inserting annotation";
+        $count++;
+        $counts{$type}++;
 
       }
 
-      print "\t$old_database\t$count\n" if (!$quiet && $count > 0);
+      print "\t$old_database\t$count\n" if ( !$quiet && $count > 0 );
 
     }
 
     print "Propagated " . $counts{$type} . " $type reports\n" unless ($quiet);
 
-  } # foreach type
+  }    # foreach type
 
 }
 
@@ -328,7 +386,7 @@ sub new_assembly {
   my ($old_db_assembly) = $old_database =~ /_(\d+)[a-z]{0,1}$/;
   my ($new_db_assembly) = $new_database =~ /_(\d+)[a-z]{0,1}$/;
 
-  return ($old_db_assembly != $new_db_assembly);
+  return ( $old_db_assembly != $new_db_assembly );
 
 }
 
@@ -338,14 +396,17 @@ sub new_assembly {
 
 sub get_latest_session_id {
 
-  my ($dbi,$new_release) = @_;
+  my ( $dbi, $new_release ) = @_;
+
   #get latest session_id for the new release
-  my $sth_session_id = $dbi->prepare("SELECT max(session_id) FROM session WHERE db_release = ?");
+  my $sth_session_id =
+    $dbi->prepare("SELECT max(session_id) FROM session WHERE db_release = ?");
   $sth_session_id->execute($new_release);
   my $latest_session_id = $sth_session_id->fetch();
-  if ($latest_session_id->[0]) {
+  if ( $latest_session_id->[0] ) {
     return $latest_session_id->[0];
-  } else {
+  }
+  else {
     return -1;
   }
 
@@ -357,29 +418,32 @@ sub get_latest_session_id {
 
 sub create_meta_cache {
 
-  my ($dbi1, $dbi2, $dbi_prev) = @_;
+  my ( $dbi1, $dbi2, $dbi_prev ) = @_;
 
   print "Caching genebuild.start_date meta entries\n" unless ($quiet);
 
   my %cache;
 
-  foreach my $dbi ($dbi1, $dbi2, $dbi_prev) {
+  foreach my $dbi ( $dbi1, $dbi2, $dbi_prev ) {
 
     my $list_sth = $dbi->prepare("SHOW DATABASES LIKE ?");
 
-    # get all core databases on this server whose names are in the (could be optimised by just looking at the ones we need)
+# get all core databases on this server whose names are in the (could be optimised by just looking at the ones we need)
     $list_sth->execute("%\\_core\\_%");
 
     my $dbname;
-    $list_sth->bind_columns(\$dbname);
+    $list_sth->bind_columns( \$dbname );
 
-    while ($list_sth->fetch()) {
+    while ( $list_sth->fetch() ) {
 
-      my $meta_sth = $dbi->prepare("SELECT meta_value FROM $dbname.meta WHERE meta_key='genebuild.start_date'"); # can't do this with a prepared statemen
+      my $meta_sth = $dbi->prepare(
+"SELECT meta_value FROM $dbname.meta WHERE meta_key='genebuild.start_date'"
+      );    # can't do this with a prepared statemen
 
       $meta_sth->execute();
 
-      my $start_date = ($meta_sth->fetchrow_array())[0] || die "Error getting genebuild.start_date from $dbname";
+      my $start_date = ( $meta_sth->fetchrow_array() )[0]
+        || die "Error getting genebuild.start_date from $dbname";
 
       $cache{$dbname} = $start_date;
 
@@ -395,9 +459,10 @@ sub create_meta_cache {
 
 sub set_end_time {
 
-  my ($dbi,$session_id) = @_;
+  my ( $dbi, $session_id ) = @_;
 
-  my $sth = $dbi->prepare("UPDATE session SET end_time=NOW() WHERE session_id=?");
+  my $sth =
+    $dbi->prepare("UPDATE session SET end_time=NOW() WHERE session_id=?");
   $sth->execute($session_id) || die "Error setting end time\n";
 
   print "Set end time for session\n" unless $quiet;
