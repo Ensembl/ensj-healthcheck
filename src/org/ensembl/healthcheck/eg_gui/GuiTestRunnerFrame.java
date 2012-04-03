@@ -279,7 +279,7 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 
 		if (cmd.equals(Constants.selectedDatabaseChanged)) {
 			
-			DatabaseRadioButton selectedDbRadioButton = (DatabaseRadioButton) arg0.getSource();			
+			DatabaseRadioButton selectedDbRadioButton = (DatabaseRadioButton) arg0.getSource();
 			String currentlySelectsDBName = selectedDbRadioButton.getText();
 			updateDbCmdLine(currentlySelectsDBName);
 		}
