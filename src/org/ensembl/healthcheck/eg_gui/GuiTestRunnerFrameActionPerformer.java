@@ -136,7 +136,7 @@ public class GuiTestRunnerFrameActionPerformer {
 			final GuiLogHandler guiLogHandler
 	) {
 		
-		ListModel lm = listOfTestsToBeRun.getModel();		
+		ListModel lm = listOfTestsToBeRun.getModel();
 		List<TestClassListItem> TestClassListItemList = new ArrayList<TestClassListItem>();
 		
 		for(int i=0; i<lm.getSize(); i++) {
