@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.SqlTemplate;
 
 /**
  * Check that the meta table exists and has data and the entries correspond to
@@ -134,42 +135,46 @@ public class Meta extends SingleDatabaseTestCase {
 	// ---------------------------------------------------------------------
 
 	private boolean checkKeysPresent(Connection con) {
-
 		boolean result = true;
 
 		// check that certain keys exist
-		String[] metaKeys = { "assembly.default", "species.classification",
-				"species.ensembl_common_name", "species.taxonomy_id",
-				"assembly.name", "assembly.date", "species.ensembl_alias_name",
-				"repeat.analysis", "marker.priority",
-				"assembly.coverage_depth", "species.stable_id_prefix",
-				"species.production_name", "species.scientific_name",
-				"species.short_name" };
-		for (int i = 0; i < metaKeys.length; i++) {
-			String metaKey = metaKeys[i];
-			int rows = DBUtils.getRowCount(con,
-					"SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey
-							+ "'");
+		String[] metaKeys = { 
+		  "assembly.default", 
+		  "assembly.name", 
+		  "assembly.date", 
+		  "assembly.coverage_depth",
+		    
+	    "species.classification",
+			"species.ensembl_common_name", 
+			"species.taxonomy_id",
+			"species.ensembl_alias_name",
+			"species.stable_id_prefix",
+			"species.production_name", 
+			"species.scientific_name",
+			"species.short_name",
+			
+			"repeat.analysis",
+			"marker.priority",
+		};
+		for (String metaKey: metaKeys) {
+		  int rows = metaKeyCount(con, metaKey);
 			if (rows == 0) {
 				result = false;
-				ReportManager.problem(this, con, "No entry in meta table for "
-						+ metaKey);
+				ReportManager.problem(this, con, "No entry in meta table for "+ metaKey);
 			}
 		}
 
 		// check that there are some species.alias entries
 		int MIN_ALIASES = 3;
 
-		int rows = DBUtils.getRowCount(con,
-				"SELECT COUNT(*) FROM meta WHERE meta_key='species.alias'");
+		int rows = metaKeyCount(con, "species.alias");
 		if (rows < MIN_ALIASES) {
 			result = false;
-			ReportManager.problem(this, con, "Only " + rows
-					+ " species.alias entries, should be at least "
-					+ MIN_ALIASES);
-		} else {
-			ReportManager.correct(this, con, rows
-					+ " species.alias entries present");
+			String msg = String.format("Only %d species.alias entries, should be at least %d", rows, MIN_ALIASES);
+			ReportManager.problem(this, con, msg);
+		}
+		else {
+			ReportManager.correct(this, con, rows+" species.alias entries present");
 		}
 
 		return result;
@@ -184,9 +189,7 @@ public class Meta extends SingleDatabaseTestCase {
 		String[] metaKeys = {};
 		for (int i = 0; i < metaKeys.length; i++) {
 			String metaKey = metaKeys[i];
-			int rows = DBUtils.getRowCount(con,
-					"SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey
-							+ "'");
+			int rows = metaKeyCount(con, metaKey);
 			if (rows > 0) {
 				result = false;
 				ReportManager.problem(this, con, rows + " meta entries for "
@@ -198,6 +201,13 @@ public class Meta extends SingleDatabaseTestCase {
 		}
 
 		return result;
+	}
+	  
+	//---------------------------------------------------------------------
+	private int metaKeyCount(Connection con, String metaKey) {
+	  String sql = "select count(*) from meta where meta_key =?";
+	  SqlTemplate t = getSqlTemplate(con);
+	  return t.queryForDefaultObject(sql, Integer.class, metaKey);
 	}
 
 	// ---------------------------------------------------------------------
@@ -253,44 +263,6 @@ public class Meta extends SingleDatabaseTestCase {
 
 			ReportManager.correct(this, con, "schema_version " + schemaVersion
 					+ " matches database name version " + dbNameVersion);
-
-		}
-		return result;
-
-	}
-
-	// ---------------------------------------------------------------------
-	/**
-	 * Check that the assembly_version in the meta table is present and matches
-	 * the database name.
-	 */
-	private boolean checkAssemblyVersion(Connection con,
-			String dbNameAssemblyVersion, String metaTableAssemblyVersion) {
-
-		boolean result = true;
-
-		if (metaTableAssemblyVersion == null
-				|| metaTableAssemblyVersion.length() == 0) {
-
-			ReportManager.problem(this, con,
-					"No assembly_version entry in meta table");
-			return false;
-
-		} else if (!dbNameAssemblyVersion.equals(metaTableAssemblyVersion)) {
-
-			ReportManager.problem(this, con, "Meta assembly_version "
-					+ metaTableAssemblyVersion
-					+ " does not match version inferred from database name ("
-					+ dbNameAssemblyVersion + ")");
-			return false;
-
-		} else {
-
-			ReportManager
-					.correct(this, con, "assembly_version "
-							+ metaTableAssemblyVersion
-							+ " matches database name version "
-							+ dbNameAssemblyVersion);
 
 		}
 		return result;
