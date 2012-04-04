@@ -12,8 +12,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.variation.VFCoordinates </li> 
  *   <li> org.ensembl.healthcheck.testcase.variation.Meta_coord </li> 
  *   <li> org.ensembl.healthcheck.testcase.variation.TranscriptVariation </li> 
- *   <li> org.ensembl.healthcheck.testcase.variation.EmptyVariationTables </li> 
- *   <li> org.ensembl.healthcheck.testcase.variation.VariationSynonym </li> 
+ *   <li> org.ensembl.healthcheck.testcase.variation.EmptyVariationTables </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.FlankingUpDownSeq </li> 
  *   <li> org.ensembl.healthcheck.testcase.variation.Meta </li> 
  *   <li> org.ensembl.healthcheck.testcase.variation.CompareVariationSchema </li> 
@@ -34,7 +33,6 @@ public class VariationRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.variation.Meta_coord.class,
 			org.ensembl.healthcheck.testcase.variation.TranscriptVariation.class,
 			org.ensembl.healthcheck.testcase.variation.EmptyVariationTables.class,
-			org.ensembl.healthcheck.testcase.variation.VariationSynonym.class,
 			org.ensembl.healthcheck.testcase.variation.FlankingUpDownSeq.class,
 			org.ensembl.healthcheck.testcase.variation.Meta.class,
 			org.ensembl.healthcheck.testcase.variation.CompareVariationSchema.class
