@@ -156,8 +156,7 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 
           // check that each analysis actually exists in the analysis
           // table
-          if (!analysesFromAnalysisTable
-              .containsKey("" + analysisID.intValue())
+          if (!analysesFromAnalysisTable.containsKey(analysisID)
               && !featureTable.equals("object_xref")) {
             int count = rs.getInt("count");
             ReportManager.problem(this, con,
