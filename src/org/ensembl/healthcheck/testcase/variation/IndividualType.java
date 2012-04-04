@@ -77,7 +77,8 @@ public class IndividualType extends SingleDatabaseTestCase {
 				|| dbre.getSpecies() == Species.RATTUS_NORVEGICUS
 				|| dbre.getSpecies() == Species.ANOPHELES_GAMBIAE
 				|| dbre.getSpecies() == Species.BOS_TAURUS
-				|| dbre.getSpecies() == Species.ORNITHORHYNCHUS_ANATINUS) {
+				|| dbre.getSpecies() == Species.ORNITHORHYNCHUS_ANATINUS
+				|| dbre.getSpecies() == Species.PONGO_ABELII) {
 			int mc = DBUtils
 					.getRowCount(con,
 							"SELECT COUNT(*) FROM individual WHERE individual_type_id <> 2");
@@ -93,8 +94,7 @@ public class IndividualType extends SingleDatabaseTestCase {
 		}
 		if (dbre.getSpecies() == Species.HOMO_SAPIENS
 				|| dbre.getSpecies() == Species.PAN_TROGLODYTES
-				|| dbre.getSpecies() == Species.TETRAODON_NIGROVIRIDIS
-				|| dbre.getSpecies() == Species.PONGO_ABELII) {
+				|| dbre.getSpecies() == Species.TETRAODON_NIGROVIRIDIS) {
 			int mc = DBUtils
 					.getRowCount(con,
 							"SELECT COUNT(*) FROM individual WHERE individual_type_id <> 3");
