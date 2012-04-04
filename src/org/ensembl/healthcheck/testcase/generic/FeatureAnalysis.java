@@ -31,6 +31,8 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.DefaultMapRowMapper;
+import org.ensembl.healthcheck.util.MapRowMapper;
 
 /**
  * Check that features exist for expected analysis types, and that all analysis
@@ -63,12 +65,8 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
    * This only applies to core and Vega databases.
    */
   public void types() {
-
-    removeAppliesToType(DatabaseType.OTHERFEATURES);
     removeAppliesToType(DatabaseType.VEGA);
     removeAppliesToType(DatabaseType.CDNA);
-    removeAppliesToType(DatabaseType.RNASEQ);
-
   }
 
   /**
@@ -124,51 +122,43 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
       for (String featureTable: featureTables) {
         logger.fine("Collecting analysis IDs from " + featureTable);
         String sql = String.format("SELECT DISTINCT(analysis_id), COUNT(*) AS count FROM %s GROUP BY analysis_id", featureTable);
-        Statement stmt = con.createStatement();
-        ResultSet rs = stmt.executeQuery(sql);
-        while (rs.next()) {
-          Integer analysisID = rs.getInt("analysis_id");
-          if (analysesFromFeatureTables.containsKey(analysisID)) {
-
-            // don't complain if gene and transcript table contain
-            // the same
-            // analysis-id
-            if (featureTable.equals("transcript")
-                && analysesFromFeatureTables.get(analysisID).equals("gene")) {
+        MapRowMapper<Integer, Integer> mapper = new DefaultMapRowMapper<Integer, Integer>(Integer.class, Integer.class);
+        Map<Integer, Integer> tableAnalysis = getSqlTemplate(dbre).queryForMap(sql, mapper);
+        
+        for(Map.Entry<Integer, Integer> entry: tableAnalysis.entrySet()) {
+          Integer id = entry.getKey();
+          Integer count = entry.getValue();
+          String priorTable = analysesFromFeatureTables.get(id);
+          
+          if(priorTable != null) {
+            //Gene & transcript are allowed to share analysis id
+            if("transcript".equals(featureTable) && "gene".equals(priorTable)) {
               result = true;
-              // ditto for unmapped_object and object_xref
             }
-            else if (featureTable.equals("unmapped_object")
-                && analysesFromFeatureTables.get(analysisID).equals(
-                    "object_xref")) {
+            //Unmapped object, object_xref & marker_feature are allowed to share
+            else if ("unmapped_object".equals(featureTable) && ("object_xref".equals(priorTable) || "marker_feature".equals(priorTable))) {
+              result = true;
+            }
+            //Operon & operon transcript are allowed to share
+            else if ("operon".equals(featureTable) && "operon_transcript".equals(priorTable)) {
               result = true;
             }
             else {
-              ReportManager.problem(this, con, "Analysis with ID " + analysisID
-                  + " is used in " + featureTable + " as well as "
-                  + analysesFromFeatureTables.get(analysisID));
-              result = false;
+              String msg = String.format("Analysis with ID %d is used in %s as well as %s", id, featureTable, priorTable);
+              ReportManager.problem(this, con, msg);
             }
           }
           else {
-            analysesFromFeatureTables.put(analysisID, featureTable);
+            analysesFromFeatureTables.put(id, featureTable);
           }
-
+          
           // check that each analysis actually exists in the analysis
           // table
-          if (!analysesFromAnalysisTable.containsKey(analysisID)
-              && !featureTable.equals("object_xref")) {
-            int count = rs.getInt("count");
-            ReportManager.problem(this, con,
-                "Analysis ID " + analysisID.intValue() + " is used in " + count
-                    + " rows in " + featureTable
-                    + " but is not present in the analysis table.");
-            result = false;
+          if(! analysesFromAnalysisTable.containsKey(id) && ! "object_xref".equals(featureTable)) {
+            String msg = String.format("Analysis ID %d is used in %d rows in %s but is not present in the analysis table", id, count, featureTable);
+            ReportManager.problem(this, con, msg);
           }
-
         }
-        rs.close();
-        stmt.close();
       }
 
       // look at each analysis ID *from the analysis table* to see if it's
@@ -188,9 +178,8 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
       while (rs.next()) {
         int analysisID = rs.getInt("analysis_id");
         String logicName = rs.getString("logic_name");
-        Integer anal = new Integer(analysisID);
-        if (!analysesFromFeatureTables.containsKey(anal)
-            && !otherfeatureAnalyses.containsKey(anal)) {
+        if (!analysesFromFeatureTables.containsKey(analysisID)
+            && !otherfeatureAnalyses.containsKey(analysisID)) {
           ReportManager.problem(this, con, "Analysis with ID " + analysisID
               + ", logic name " + logicName
               + " is not used in any feature table");
