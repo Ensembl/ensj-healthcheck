@@ -308,12 +308,27 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 			// run.
 			//
 			if (
+				(currentGuiTestRunnerThread != null) 
+				&& (currentGuiTestRunnerThread.isAlive())
+			) {
+				
+				JOptionPane.showMessageDialog(
+						this, 
+						"A session of healthchecks is currently running already. "
+						+ "Please wait for it to terminate before starting another.", 
+						"Error",
+						JOptionPane.ERROR_MESSAGE
+					);
+					return;
+			}
+			
+			if (
 				cmd.equals(Constants.RUN_SELECTED_TESTS) 
 				&& listOfTestsToBeRun.getSelectedValues().length==0
 			) {
 				JOptionPane.showMessageDialog(
 					this, 
-					"No tests selected!", 
+					"You have not selected any tests!", 
 					"Error",
 					JOptionPane.ERROR_MESSAGE
 				);
@@ -321,11 +336,11 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 			}
 			if (
 				cmd.equals(Constants.RUN_ALL_TESTS) 
-				&& listOfTestsToBeRun.getSelectedValues().length==0
+				&& listOfTestsToBeRun.getModel().getSize()==0
 			) {
 				JOptionPane.showMessageDialog(
 					this, 
-					"No tests! Please drag tests into the area.", 
+					"No tests! Please drag tests from the tree in the left into the area above.", 
 					"Error",
 					JOptionPane.ERROR_MESSAGE
 				);
@@ -403,8 +418,6 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 					dbDetails.get(dbServerSelector.getSelectedIndex()),
 					dbDetails.get(secondaryDbServerSelector.getSelectedIndex())
 				);
-				
-
 				
 				if (cmd.equals(Constants.RUN_SELECTED_TESTS)) {
 					
