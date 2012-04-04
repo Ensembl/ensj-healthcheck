@@ -303,6 +303,35 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		}
 		if (cmd.equals(Constants.RUN_ALL_TESTS) || cmd.equals(Constants.RUN_SELECTED_TESTS)) {
 
+			//
+			// Check, if basic conditions have been met so that tests can be 
+			// run.
+			//
+			if (
+				cmd.equals(Constants.RUN_SELECTED_TESTS) 
+				&& listOfTestsToBeRun.getSelectedValues().length==0
+			) {
+				JOptionPane.showMessageDialog(
+					this, 
+					"No tests selected!", 
+					"Error",
+					JOptionPane.ERROR_MESSAGE
+				);
+				return;
+			}
+			if (
+				cmd.equals(Constants.RUN_ALL_TESTS) 
+				&& listOfTestsToBeRun.getSelectedValues().length==0
+			) {
+				JOptionPane.showMessageDialog(
+					this, 
+					"No tests! Please drag tests into the area.", 
+					"Error",
+					JOptionPane.ERROR_MESSAGE
+				);
+				return;
+			}
+			
 			DatabaseRegistryEntry[] selectedDatabases 
 				= databaseTabbedPane.getSelectedDatabases();
 
@@ -375,6 +404,8 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 					dbDetails.get(secondaryDbServerSelector.getSelectedIndex())
 				);
 				
+
+				
 				if (cmd.equals(Constants.RUN_SELECTED_TESTS)) {
 					
 					currentGuiTestRunnerThread = GuiTestRunnerFrameActionPerformer.runSelectedTests(
@@ -388,7 +419,6 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 					);
 				}
 				if (cmd.equals(Constants.RUN_ALL_TESTS)) {
-					
 					currentGuiTestRunnerThread = GuiTestRunnerFrameActionPerformer.runAllTests(
 						listOfTestsToBeRun, 
 						selectedDatabases,
