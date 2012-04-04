@@ -33,11 +33,16 @@ public class TestProgressDialog extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 
-    	if (Runner != null) {		
-    		Runner.interrupt();
-       	}
+		if (arg0.getSource() == cancelButton) {
+		
+			if (Runner != null) {
+				Runner.interrupt();
+				cancelButton.setEnabled(false);
+				noteLabel.setText("Test is being cancelled.");
+			}
+		}
 	}
-    
+
     public Thread getRunner() {
 		return Runner;
 	}
