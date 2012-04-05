@@ -68,7 +68,11 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			result &= checkForOrphans(con, "allele", "variation_id", "variation", "variation_id", true);
 			result &= checkForOrphans(con, "compressed_genotype_region", "sample_id", "individual", "sample_id", true);
 			result &= checkForOrphans(con, "failed_allele", "failed_description_id", "failed_description", "failed_description_id", true);
+			result &= checkForOrphans(con, "failed_allele", "allele_id", "allele", "allele_id", true);
 			result &= checkForOrphans(con, "failed_variation", "failed_description_id", "failed_description", "failed_description_id", true);
+			result &= checkForOrphans(con, "failed_variation", "variation_id", "variation", "variation_id", true);
+			result &= checkForOrphans(con, "failed_structural_variation", "failed_description_id", "failed_description", "failed_description_id", true);
+			result &= checkForOrphans(con, "failed_structural_variation", "structural_variation_id", "structural_variation", "structural_variation_id", true);
 			result &= checkForOrphans(con, "flanking_sequence", "variation_id", "variation", "variation_id", true);
 			result &= checkForOrphans(con, "individual", "sample_id", "sample", "sample_id", true);
 			result &= checkForOrphans(con, "individual_genotype_multiple_bp", "sample_id", "individual_population", "individual_sample_id", true);
