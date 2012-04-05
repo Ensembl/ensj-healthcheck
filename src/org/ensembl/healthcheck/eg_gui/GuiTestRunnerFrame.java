@@ -114,7 +114,8 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		System.getProperty("user.home") + "/.ensj"
 	};
 
-	protected DatabaseTabbedPane databaseTabbedPane;
+	//protected DatabaseTabbedPane databaseTabbedPane;
+	protected DatabaseTabbedPaneWithSearchBox databaseTabbedPaneWithSearchBox;
 	protected JTextField         MysqlConnectionCmd;
 	protected final JList        listOfTestsToBeRun;
 	protected final JButton      rmSelectedTests;
@@ -296,7 +297,7 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		if (cmd.equals(Constants.DB_SERVER_CHANGED)) {
 
 			GuiTestRunnerFrameActionPerformer.setupDatabasePane(
-				databaseTabbedPane, 
+				databaseTabbedPaneWithSearchBox.getDtp(), 
 				dbDetails.get(dbServerSelector.getSelectedIndex())
 			);
 			updateDbCmdLine();
@@ -348,7 +349,7 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 			}
 			
 			DatabaseRegistryEntry[] selectedDatabases 
-				= databaseTabbedPane.getSelectedDatabases();
+				= databaseTabbedPaneWithSearchBox.getDtp().getSelectedDatabases();
 
 			if (selectedDatabases.length == 0) {
 				JOptionPane.showMessageDialog(
@@ -534,9 +535,10 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 			logger.warning("Warning: no databases found!");
 		}
 
-		databaseTabbedPane = new DatabaseTabbedPane(
+		DatabaseTabbedPane databaseTabbedPane = new DatabaseTabbedPane(
 			databaseRegistry, this
 		);
+		databaseTabbedPaneWithSearchBox = new DatabaseTabbedPaneWithSearchBox(databaseTabbedPane);
 		
 		dbServerSelector.setSelectedIndex(defaultSelectedServerIndex);
 		secondaryDbServerSelector.setSelectedIndex(defaultSelectedServerIndex);
@@ -568,7 +570,7 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 	 * 
 	 */
 	protected void addComponentsToLayout(
-			DatabaseTabbedPane databaseTabbedPane, 
+			DatabaseTabbedPaneWithSearchBox databaseTabbedPaneWithSearchBox, 
 			JTree tree, 
 			JList testsToBeRun,
 			JPanel buttonPanel, 
@@ -609,7 +611,7 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		tabSetup.add(
 				new JSplitPane(
 						JSplitPane.VERTICAL_SPLIT, 
-						databaseTabbedPane,
+						databaseTabbedPaneWithSearchBox,
 						testSelectionWidgets
 				),
 				BorderLayout.CENTER
@@ -655,7 +657,7 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		dbServerSelector          .setBorder(BorderFactory.createTitledBorder(noBorder, "Primary (where your database is):"));
 		secondaryDbServerSelector .setBorder(BorderFactory.createTitledBorder(noBorder, "Secondary (Some tests require a secondary db server):"));
 		
-		databaseTabbedPane   .setBorder(BorderFactory.createTitledBorder(defaultEmptyBorder, "2. Select a database:"));
+		databaseTabbedPaneWithSearchBox   .setBorder(BorderFactory.createTitledBorder(defaultEmptyBorder, "2. Select a database:"));
 		testSelectionWidgets .setBorder(BorderFactory.createTitledBorder(defaultEmptyBorder, "3. Select tests to be run:"));
 		treePane             .setBorder(BorderFactory.createTitledBorder("Drag tests to the panel on the right"));
 		testsPane            .setBorder(BorderFactory.createTitledBorder("Select tests and run from context menu"));
@@ -663,7 +665,7 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		// The default dimensions look appalling. This looks slightly less
 		// appalling.
 		//
-		databaseTabbedPane.setMinimumSize(new Dimension(0,       windowHeight/4));
+		databaseTabbedPaneWithSearchBox.setMinimumSize(new Dimension(0,       windowHeight/4));
 		testsPane         .setMinimumSize(new Dimension(0,       windowHeight/4));
 		treePane          .setMinimumSize(new Dimension(windowWidth/3, 0));
 	}
@@ -682,8 +684,6 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		//databaseTabbedPane.setPreferredSize(new Dimension(500, 200));
-
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridLayout(2, 1));
 		buttonPanel.add(rmSelectedTests);
@@ -693,7 +693,7 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		new CopyAndPastePopupBuilder().addPopupMenu(MysqlConnectionCmd);
 		
 		addComponentsToLayout(
-			databaseTabbedPane, 
+			databaseTabbedPaneWithSearchBox, 
 			tree, 
 			listOfTestsToBeRun,
 			buttonPanel,

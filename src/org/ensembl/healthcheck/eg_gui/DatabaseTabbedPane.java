@@ -53,9 +53,9 @@ public class DatabaseTabbedPane extends JTabbedPane {
 	 * @return Map<DatabaseRegistryEntry, JRadioButton>
 	 * 
 	 */
-	protected Map<DatabaseRegistryEntry, JRadioButton> createRadioButtonsForDb(DatabaseRegistryEntry[] allDbEntries) {
+	protected Map<DatabaseRegistryEntry, DatabaseRadioButton> createRadioButtonsForDb(DatabaseRegistryEntry[] allDbEntries) {
 		
-		Map<DatabaseRegistryEntry, JRadioButton> checkBoxMap = new HashMap<DatabaseRegistryEntry, JRadioButton>();
+		Map<DatabaseRegistryEntry, DatabaseRadioButton> checkBoxMap = new HashMap<DatabaseRegistryEntry, DatabaseRadioButton>();
         
         for (DatabaseRegistryEntry currentEntry : allDbEntries) {
         	
@@ -142,7 +142,7 @@ public class DatabaseTabbedPane extends JTabbedPane {
     		);
     	}
     	
-    	Map<DatabaseRegistryEntry, JRadioButton> checkBoxMap = createRadioButtonsForDb(allDbEntries);
+    	Map<DatabaseRegistryEntry, DatabaseRadioButton> checkBoxMap = createRadioButtonsForDb(allDbEntries);
 
         DatabaseType[] types = databaseRegistry.getTypes();
         Arrays.sort(types, new DatabaseTypeGUIComparator());
@@ -164,7 +164,7 @@ public class DatabaseTabbedPane extends JTabbedPane {
 
         	// Create Radiobuttons for them for the user to select.
         	//
-        	List<JRadioButton> checkBoxesTabForCurrentType = new ArrayList<JRadioButton>();
+        	List<DatabaseRadioButton> checkBoxesTabForCurrentType = new ArrayList<DatabaseRadioButton>();
         	
 	        for (DatabaseRegistryEntry currentEntry : dbsOnServerWithThisType) {
 	            checkBoxesTabForCurrentType.add(checkBoxMap.get(currentEntry));
@@ -176,6 +176,25 @@ public class DatabaseTabbedPane extends JTabbedPane {
             );
         }
         addChangeListener(new TabChangeListener());
+    }
+
+
+    public void applySearchtermFilter(List<String> SearchTerm) {
+    	
+    	int index = this.getSelectedIndex();
+
+    	// Returns a JLabel when the JTabbedPane is not fully initialised yet.
+    	//
+    	Object careful = this.getComponentAt(index);
+    	
+    	if (!(careful instanceof DatabaseListPanel)) {
+    		return;
+    	}
+    	
+    	DatabaseListPanel p = (DatabaseListPanel) careful;
+    	if (p!=null) {
+    		p.applySearchtermFilter(SearchTerm);
+    	}
     }
 
     // -------------------------------------------------------------------------
@@ -203,82 +222,97 @@ public class DatabaseTabbedPane extends JTabbedPane {
 } // DatabaseTabbedPane
 
 /**
- * A JCheckBox that stores a reference to a DatabaseRegistryEntry.
+ * <p>
+ * A JRadioButton with a reference to a DatabaseRegistryEntry.
+ * </p>
+ * 
  */
 
 class DatabaseRadioButton extends JRadioButton {
 
-    private DatabaseRegistryEntry database;
+	private DatabaseRegistryEntry database;
 
-    public DatabaseRadioButton(DatabaseRegistryEntry database, boolean selected) {
-        super(database.getName(), selected);
-        this.database = database;
-        //this.addChangeListener(l);
-        //setBackground(Color.WHITE);
-    }
+	public DatabaseRadioButton(DatabaseRegistryEntry database, boolean selected) {
+		super(database.getName(), selected);
+		this.database = database;
+	}
 
-    public DatabaseRegistryEntry getDatabase() {
-        return database;
-    }
+	public DatabaseRegistryEntry getDatabase() {
+		return database;
+	}
 
-    public void setDatabase(DatabaseRegistryEntry database) {
-        this.database = database;
-    }
+	public void setDatabase(DatabaseRegistryEntry database) {
+		this.database = database;
+	}
 }
 
 /**
- * A class that creates a panel (in a JScrollPane) containing a list of DatabseCheckBoxes, and
- * provides methods for accessing the selected ones.
+ * 
+ * <p>
+ * 	A class that creates a panel (in a JScrollPane) containing a list of 
+ * DatabaseRadioButton, and provides methods for accessing the selected ones.
+ * </p>
+ * 
  */
 
 class DatabaseListPanel extends JScrollPane {
 
-    private List<JRadioButton> dbSelectionRadioButtons;
-    
-    private final ButtonGroup buttonGroup;
+	private List<DatabaseRadioButton> dbSelectionRadioButtons;
+	private final ButtonGroup buttonGroup;
 
-    /**
-     * 
-     * <p>
-     * 	This constructor allows the user to set a ButtonGroup explicitly. That
-     * way the same ButtonGroup can be used
-     * </p>
-     * 
-     * @param dbSelectionRadioButtons
-     * @param buttonGroup
-     * 
-     */
-    public DatabaseListPanel(List<JRadioButton> dbSelectionRadioButtons, ButtonGroup buttonGroup) {
+	/**
+	 * 
+	 * <p>
+	 * 	This constructor allows the user to set a ButtonGroup explicitly. That
+	 * way the same ButtonGroup can be used
+	 * </p>
+	 * 
+	 * @param dbSelectionRadioButtons
+	 * @param buttonGroup
+	 * 
+	 */
+	public DatabaseListPanel(List<DatabaseRadioButton> dbSelectionRadioButtons, ButtonGroup buttonGroup) {
 
-        this.dbSelectionRadioButtons = dbSelectionRadioButtons;
-        this.buttonGroup             = buttonGroup;
+		this.dbSelectionRadioButtons = dbSelectionRadioButtons;
+		this.buttonGroup             = buttonGroup;
+	
+		Iterator<DatabaseRadioButton> it = dbSelectionRadioButtons.iterator();
+		
+		JPanel radioButtonPanel = new JPanel();
+		radioButtonPanel.setLayout(new BoxLayout(radioButtonPanel, BoxLayout.Y_AXIS));
+		
+		while (it.hasNext()) {
+		
+			DatabaseRadioButton currentDatabaseRadioButton = it.next();
+	
+			radioButtonPanel.add(currentDatabaseRadioButton);
+			buttonGroup     .add(currentDatabaseRadioButton);
+		}
+		setViewportView(radioButtonPanel);
+	}
+	
+	public void applySearchtermFilter(List<String> SearchTerm) {
+		
+		Iterator<DatabaseRadioButton> it = dbSelectionRadioButtons.iterator();
+		
+		while (it.hasNext()) {
+			
+			DatabaseRadioButton currentDatabaseRadioButton = it.next();
+			boolean allSearchTermsPresent = true;
+			
+			for (String currentSearchTerm : SearchTerm) {
+				
+				boolean searchTermNotFound = currentDatabaseRadioButton.getDatabase().getName().indexOf(currentSearchTerm)==-1;
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-
-        JPanel allDatabasesPanel = new JPanel();
-        allDatabasesPanel.setLayout(new BoxLayout(allDatabasesPanel, BoxLayout.Y_AXIS));
-
-        Iterator<JRadioButton> it = dbSelectionRadioButtons.iterator();
-        
-        while (it.hasNext()) {
-        
-        	JPanel radioButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-            
-            JRadioButton currentDatabaseRadioButton = it.next(); 
-            
-            radioButtonPanel.add(currentDatabaseRadioButton);
-            buttonGroup     .add(currentDatabaseRadioButton);
-            
-            allDatabasesPanel.add(radioButtonPanel);
-            
-        }
-        
-        final DatabaseListPanel localDBLP = this;
-        panel.add(allDatabasesPanel, BorderLayout.CENTER);
-        setViewportView(panel);
-    	
-    }
+				if (searchTermNotFound) {
+					allSearchTermsPresent = false;
+					break;
+				}
+			}
+			currentDatabaseRadioButton.setVisible(allSearchTermsPresent);
+		}
+	}
+	
     
     /**
      * <p>
@@ -288,7 +322,7 @@ class DatabaseListPanel extends JScrollPane {
      * @param dbSelectionRadioButtons
      * 
      */
-    public DatabaseListPanel(List<JRadioButton> dbSelectionRadioButtons) {
+    public DatabaseListPanel(List<DatabaseRadioButton> dbSelectionRadioButtons) {
 
     	this(dbSelectionRadioButtons, new ButtonGroup());
     }
