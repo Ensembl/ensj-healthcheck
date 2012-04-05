@@ -31,8 +31,8 @@ public class Constants {
 	
 	public static final String ALL_TESTS_GROUP_NAME = "All Tests";
 	
-	public static final int INITIAL_APPLICATION_WINDOW_WIDTH  = 1000;
-	public static final int INITIAL_APPLICATION_WINDOW_HEIGHT =  700;
+	public static final int INITIAL_APPLICATION_WINDOW_WIDTH  = 1200;
+	public static final int INITIAL_APPLICATION_WINDOW_HEIGHT =  800;
 	
 	public static final int DEFAULT_HORIZONTAL_COMPONENT_SPACING = 10;
 	public static final int DEFAULT_VERTICAL_COMPONENT_SPACING   = 10;
