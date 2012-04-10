@@ -87,8 +87,7 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 
     // --------------------------------
     // Check protein_feature
-    result &= checkFeatureAnalyses(dbre, "protein_feature",
-        proteinFeatureAnalyses);
+    result &= checkFeatureAnalyses(dbre, "protein_feature", proteinFeatureAnalyses);
 
     // -------------------------------
     // TODO - other feature tables
@@ -207,10 +206,14 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
 
   private boolean checkFeatureAnalyses(DatabaseRegistryEntry dbre,
       String table, String[] analyses) {
+    boolean result = true;
 
     logger.fine("Checking analyses for " + table + " in " + dbre.getName());
-
-    boolean result = true;
+    int tableCount = DBUtils.countRowsInTable(dbre.getConnection(), table);
+    if(tableCount == 0) {
+      logger.fine("Table "+table+" has no rows. Skipping");
+      return true;
+    }
 
     for (int i = 0; i < analyses.length; i++) {
 
