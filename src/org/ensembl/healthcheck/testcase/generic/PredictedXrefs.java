@@ -14,7 +14,7 @@ package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Map.Entry;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
@@ -59,21 +59,18 @@ public class PredictedXrefs extends SingleDatabaseTestCase {
 		// hash of external_db_name / xref accession regexps to look for.
 		// Note patterns are MySQL patterns, not regexps
 		// if any of these match it's an error
-		HashMap nameToAccessionPattern = new HashMap();
+		HashMap<String,String> nameToAccessionPattern = new HashMap<String,String>();
 		nameToAccessionPattern.put("RefSeq_mRNA", "XM%");
 		nameToAccessionPattern.put("RefSeq_ncRNA", "XR%");
 		nameToAccessionPattern.put("RefSeq_peptide", "XP%");
 
 		Connection con = dbre.getConnection();
 
-		Iterator it = nameToAccessionPattern.keySet().iterator();
-		while (it.hasNext()) {
+		for(Entry<String,String> entry: nameToAccessionPattern.entrySet()) {		  
+			String externalDBName = entry.getKey();
+			String pattern = entry.getValue();
 
-			String externalDBName = (String) it.next();
-			String pattern = (String) (nameToAccessionPattern
-					.get(externalDBName));
-
-			logger.info("Checking for " + externalDBName + " xrefs matching "
+			logger.fine("Checking for " + externalDBName + " xrefs matching "
 					+ pattern);
 
 			int rows = DBUtils

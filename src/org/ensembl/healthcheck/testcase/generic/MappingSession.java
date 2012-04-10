@@ -85,15 +85,15 @@ public class MappingSession extends SingleDatabaseTestCase {
 
 			Connection con = dbre.getConnection();
 
-			logger.info("Checking tables exist and are populated");
+			logger.fine("Checking tables exist and are populated");
 			result &= checkTablesExistAndPopulated(dbre);
-			logger.info("Checking DB name format in mapping_session");
+			logger.fine("Checking DB name format in mapping_session");
 			result &= checkDBNameFormat(con);
-			// logger.info("Checking mapping_session chaining");
+			// logger.fine("Checking mapping_session chaining");
 			// result &= checkMappingSessionChaining(con);
-			logger.info("Checking mapping_session old_release and new_release values");
+			logger.fine("Checking mapping_session old_release and new_release values");
 			result &= checkOldAndNewReleases(con);
-			logger.info("Checking for duplicates in stable_id_event");
+			logger.fine("Checking for duplicates in stable_id_event");
 			result &= checkStableIdEventDuplicates(con);
 		}
 
@@ -185,46 +185,12 @@ public class MappingSession extends SingleDatabaseTestCase {
 
 		} else {
 
-			logger.info(dbName
+			logger.fine(dbName
 					+ " seems to be a new genebuild, skipping table checks");
 
 		}
 
 		return result;
-	}
-
-	// -----------------------------------------------------------------
-	/**
-	 * Check that the old_db_name and new_db_name columns "chain" together.
-	 */
-	private boolean checkMappingSessionChaining(final Connection con) {
-
-		boolean result = true;
-
-		String[] oldNames = DBUtils
-				.getColumnValues(
-						con,
-						"SELECT old_db_name FROM mapping_session WHERE old_db_name <> 'ALL' ORDER BY created");
-		String[] newNames = DBUtils
-				.getColumnValues(
-						con,
-						"SELECT new_db_name FROM mapping_session WHERE new_db_name <> 'LATEST' ORDER BY created");
-
-		for (int i = 1; i < oldNames.length; i++) {
-			if (!(oldNames[i].equalsIgnoreCase(newNames[i - 1]))) {
-				ReportManager.problem(this, con, "Old/new names " + oldNames[i]
-						+ " " + newNames[i - 1] + " do not chain properly");
-				result = false;
-			}
-		}
-
-		if (result) {
-			ReportManager.correct(this, con,
-					"Old/new db name chaining in mapping_session seems OK");
-		}
-
-		return result;
-
 	}
 
 	// -----------------------------------------------------------------

@@ -144,7 +144,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 		String s = DBUtils.getRowColumnValue(con, sql);
 
 		if (s.length() == 0) {
-			System.err.println("Error: can't get top-level co-ordinate system for " + DBUtils.getShortDatabaseName(con));
+			logger.warning("Error: can't get top-level co-ordinate system for " + DBUtils.getShortDatabaseName(con));
 			return false;
 		}
 
@@ -189,7 +189,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 					// check if this species has appropriate density features
 					int analRows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM analysis WHERE logic_name='" + logicName + "'");
 					if (analRows == 0) {
-						logger.info(DBUtils.getShortDatabaseName(con) + " has no " + logicName + " analysis type, skipping checks for these features");
+						logger.fine(DBUtils.getShortDatabaseName(con) + " has no " + logicName + " analysis type, skipping checks for these features");
 					} else {
 
 						// check that the sum of the density_feature.density_value matches

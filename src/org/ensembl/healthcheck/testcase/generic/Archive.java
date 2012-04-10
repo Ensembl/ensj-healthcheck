@@ -72,83 +72,18 @@ public class Archive extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		logger.info("Checking deleted genes");
+		logger.fine("Checking deleted genes");
 		result &= checkDeletedInGeneArchive(con, "gene", "G", MIN_MAPPING_SESSION_ID);
-		logger.info("Checking deleted transcripts");
+		logger.fine("Checking deleted transcripts");
 		result &= checkDeletedInGeneArchive(con, "transcript", "T", MIN_MAPPING_SESSION_ID);
-		logger.info("Checking deleted translations");
+		logger.fine("Checking deleted translations");
 		result &= checkDeletedInGeneArchive(con, "translation", "P", MIN_MAPPING_SESSION_ID);
-		logger.info("Checking changed translations");
+		logger.fine("Checking changed translations");
 		result &= checkChangedInGeneArchive(con, "translation", "P", MIN_MAPPING_SESSION_ID);
-		logger.info("Checking changed transcript");
+		logger.fine("Checking changed transcript");
 		result &= checkChangedInGeneArchive(con, "transcript", "T", MIN_MAPPING_SESSION_ID);
-		logger.info("Checking changed genes");
+		logger.fine("Checking changed genes");
 		result &= checkChangedInGeneArchive(con, "gene", "G", MIN_MAPPING_SESSION_ID);
-
-		return result;
-	}
-
-	private boolean checkDeletedTranslationsInPeptideArchive(final Connection con, final long minMappingSessionID) {
-		boolean result = true;
-
-		String sql = "SELECT CONCAT(old_stable_id, \".\", old_version) " + "FROM stable_id_event LEFT JOIN peptide_archive " + "                     ON old_stable_id=translation_stable_id " + "WHERE "
-				+ "     mapping_session_id >= " + minMappingSessionID + " " + "     AND old_stable_id like \"%P%\" " + "     AND new_stable_id is NULL " + "     AND translation_stable_id is NULL;";
-
-		String[] rows = DBUtils.getColumnValues(con, sql);
-		if (rows.length > 0) {
-			ReportManager.problem(this, con, rows.length + " deleted translations missing from peptide_archive");
-			result = false;
-		}
-
-		return result;
-	}
-
-	private boolean checkChangedTranslationsInPeptideArchive(final Connection con, final long minMappingSessionID) {
-
-		boolean result = true;
-
-		String sql = "SELECT CONCAT(old_stable_id, \".\", old_version) " + "FROM stable_id_event LEFT JOIN peptide_archive " + "                     ON old_stable_id=translation_stable_id " + "WHERE "
-				+ "     mapping_session_id >= " + minMappingSessionID + " " + "     AND old_stable_id like \"%P%\" " + "     AND new_stable_id=old_stable_id " + "     AND old_version!=new_version "
-				+ "     AND translation_stable_id is NULL;";
-
-		String[] rows = DBUtils.getColumnValues(con, sql);
-		if (rows.length > 0) {
-			ReportManager.problem(this, con, rows.length + " updated translations missing from peptide_archive");
-			result = false;
-		}
-
-		return result;
-	}
-
-	private boolean checkTranslationsFromPeptideArchiveInGeneArchive(final Connection con) {
-
-		boolean result = true;
-
-		String sql = "SELECT CONCAT( pa.translation_stable_id, \".\", pa.translation_version) " + " FROM peptide_archive pa LEFT JOIN gene_archive ga "
-				+ " ON ga.translation_stable_id=pa.translation_stable_id " + " AND ga.translation_version=pa.translation_version " + " WHERE ga.translation_stable_id is NULL;";
-		String[] rows = DBUtils.getColumnValues(con, sql);
-		if (rows.length > 0) {
-			ReportManager.problem(this, con, rows.length + " translations from peptide archive not in gene archive");
-			// for (int i = 0; i < rows.length && i < 10; i++) {
-			// System.out.println(rows[i]);
-			// }
-			result = false;
-		}
-
-		return result;
-	}
-
-	private boolean checkNoCurrentTranslationsInPeptideArchive(final Connection con) {
-
-		boolean result = true;
-
-		String sql = "SELECT CONCAT(ts.stable_id , \".\",ts.version)" + " FROM translation_stable_id ts, peptide_archive pa " + " WHERE ts.stable_id=pa.translation_stable_id "
-				+ "       AND ts.version= pa.translation_version;";
-		String[] rows = DBUtils.getColumnValues(con, sql);
-		if (rows.length > 0) {
-			ReportManager.problem(this, con, rows.length + " current translations in peptide archive");
-			result = false;
-		}
 
 		return result;
 	}
