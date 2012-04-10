@@ -665,8 +665,8 @@ public class MetaValues extends SingleDatabaseTestCase {
 		String previousAssemblyAccession = DBUtils.getMetaValue(previousCon, "assembly.accession");
 		String previousAssemblyName = DBUtils.getMetaValue(previousCon, "assembly.name");
 		
-		long currentAssemblyChecksum = getChecksum(con, "assembly");
-		long previousAssemblyChecksum = getChecksum(previousCon, "assembly");
+		long currentAssemblyChecksum = DBUtils.getChecksum(con, "assembly");
+		long previousAssemblyChecksum = DBUtils.getChecksum(previousCon, "assembly");
 				
 		boolean assemblyChanged = false;
 		boolean assemblyTableChanged = false;
