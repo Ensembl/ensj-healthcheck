@@ -69,7 +69,7 @@ public class FeatureCoords extends SingleDatabaseTestCase {
 
 			// ------------------------
 
-			logger.info("Checking " + tableName + " for start < 1");
+			logger.fine("Checking " + tableName + " for start < 1");
 			String sql = "SELECT COUNT(*) FROM " + tableName
 					+ " WHERE seq_region_start < 1";
 			int rows = DBUtils.getRowCount(con, sql);
@@ -125,7 +125,7 @@ public class FeatureCoords extends SingleDatabaseTestCase {
 		int rows;
 		boolean result = true;
 		// ------------------------
-		logger.info("Checking " + tableName + " for start > end");
+		logger.fine("Checking " + tableName + " for start > end");
 		sql = "SELECT COUNT(*) FROM " + tableName
 				+ " WHERE seq_region_start > seq_region_end";
 		rows = DBUtils.getRowCount(con, sql);
