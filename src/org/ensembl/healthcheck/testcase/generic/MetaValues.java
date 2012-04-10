@@ -29,8 +29,8 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.util.Utils;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.Utils;
 
 /**
  * Checks that meta_value contents in the meta table are OK. Only one meta table at a time is done here; checks for the consistency of the
