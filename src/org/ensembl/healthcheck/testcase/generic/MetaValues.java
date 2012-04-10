@@ -77,8 +77,6 @@ public class MetaValues extends SingleDatabaseTestCase {
 		if (!isSangerVega) {// do not check for sanger_vega
 			result &= checkOverlappingRegions(con);
 		}
-		
-		result &= checkSpeciesClassification(dbre);
 
 		result &= checkAssemblyMapping(con);
 
@@ -144,10 +142,6 @@ public class MetaValues extends SingleDatabaseTestCase {
 
 		// -------------------------------------------
 
-		result &= checkSpacesInSpeciesClassification(dbre);
-
-		// -------------------------------------------
-
 		result &= checkGenebuildMethod(dbre);
 		
 		// -------------------------------------------
@@ -188,57 +182,6 @@ public class MetaValues extends SingleDatabaseTestCase {
 					ReportManager.correct(this, con, metaKey + " entry present");
 				}
 			}
-		}
-
-		return result;
-	}
-
-	// ---------------------------------------------------------------------
-
-	private boolean checkSpeciesClassification(DatabaseRegistryEntry dbre) {
-
-		boolean result = true;
-
-		String dbName = dbre.getName();
-		Connection con = dbre.getConnection();
-
-		// no point checking this for multi-species databases as they don't have the
-		// genus & species in the database name
-		if (dbre.isMultiSpecies()) {
-			return true;
-		}
-
-		// Check that species.classification matches database name
-		String[] metaTableSpeciesGenusArray = DBUtils.getColumnValues(con, "SELECT LCASE(meta_value) FROM meta WHERE meta_key='species.classification' ORDER BY meta_id LIMIT 2");
-		// if all is well, metaTableSpeciesGenusArray should contain the
-		// species and genus
-		// (in that order) from the meta table
-
-		if (metaTableSpeciesGenusArray != null && metaTableSpeciesGenusArray.length == 2 && metaTableSpeciesGenusArray[0] != null && metaTableSpeciesGenusArray[1] != null) {
-
-			String[] dbNameGenusSpeciesArray = dbName.split("_");
-			String dbNameGenusSpecies = dbNameGenusSpeciesArray[0] + "_" + dbNameGenusSpeciesArray[1];
-			;
-
-			String metaTableGenusSpecies = metaTableSpeciesGenusArray[1] + "_" + metaTableSpeciesGenusArray[0];
-			logger.finest("Classification from DB name:" + dbNameGenusSpecies + " Meta table: " + metaTableGenusSpecies);
-
-			if (!isSangerVega) {// do not check this for sanger_vega
-				if (!dbNameGenusSpecies.equalsIgnoreCase(metaTableGenusSpecies)) {
-					result = false;
-					// warn(con, "Database name does not correspond to
-					// species/genus data from meta
-					// table");
-					ReportManager.problem(this, con, "Database name does not correspond to species/genus data from meta table");
-				} else {
-					ReportManager.correct(this, con, "Database name corresponds to species/genus data from meta table");
-				}
-			}
-
-		} else {
-			// logger.warning("Cannot get species information from meta
-			// table");
-			ReportManager.problem(this, con, "Cannot get species information from meta table");
 		}
 
 		return result;
@@ -649,29 +592,6 @@ public class MetaValues extends SingleDatabaseTestCase {
 			ReportManager.correct(this, con, "Toplevel flags correctly set");
 			result = true;
 		}
-		return result;
-
-	}
-
-	// ---------------------------------------------------------------------
-	/**
-	 * Check for species.classification entries that contain spaces.
-	 */
-	private boolean checkSpacesInSpeciesClassification(DatabaseRegistryEntry dbre) {
-
-		boolean result = true;
-
-		Connection con = dbre.getConnection();
-
-		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='species.classification' AND meta_value LIKE '% %'");
-
-		if (rows > 0) {
-			ReportManager.problem(this, con, rows + " species.classification entries have values with spaces");
-			result = false;
-		} else {
-			ReportManager.correct(this, con, "No species.classification entries contain spaces");
-		}
-
 		return result;
 
 	}
