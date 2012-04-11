@@ -95,6 +95,7 @@ public class CheckMethodLinkSpeciesSetTag extends SingleDatabaseTestCase {
                 + " LEFT JOIN method_link_species_set_tag USING (method_link_species_set_id)"
                 + " JOIN species_set USING (species_set_id)"
                 + " WHERE (class LIKE 'GenomicAlignTree%' OR class LIKE '%multiple_alignment' OR class LIKE '%tree_node')"
+	        + " AND tag = 'species_tree'"
                 + " GROUP BY method_link_species_set_id";
 
         try {
