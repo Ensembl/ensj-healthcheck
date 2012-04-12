@@ -79,8 +79,6 @@ public class GeneStatus extends SingleDatabaseTestCase {
 
 		result &= checkNull(dbre);
 
-		result &= checkDisplayXrefs(dbre);
-
 		return result;
 
 	} // run
@@ -191,33 +189,4 @@ public class GeneStatus extends SingleDatabaseTestCase {
 		return result;
 	}
 
-	private boolean checkDisplayXrefs(DatabaseRegistryEntry dbre) {
-		boolean result = true;
-		Connection con = dbre.getConnection();
-		SqlTemplate t = DBUtils.getSqlTemplate(con);
-
-		for (String status : new String[] { "KNOWN", "KNOWN_BY_PROJECTION" }) {
-			int rows = t
-					.queryForDefaultObject(
-							"SELECT COUNT(*) from gene where status=? AND display_xref_id IS NULL",
-							Integer.class, status);
-			if (rows > 0) {
-				int total = t.queryForDefaultObject(
-						"SELECT COUNT(*) from gene where status=?",
-						Integer.class, status);
-				String useful = String
-						.format("select count(*),logic_name from gene g, analysis a WHERE g.analysis_id=a.analysis_id and g.status= '%s' AND display_xref_id is NULL group by logic_name;",
-								status);
-				String msg = String
-						.format("%d genes of status %s have NULL display_xrefs (out of a total of %d)\nUSEFUL SQL: %s ",
-								rows, status, total, useful);
-				ReportManager.problem(this, con, msg);
-				result = false;
-			} else {
-				ReportManager.correct(this, con, String.format(
-						"No null display_xrefs of status %s", status));
-			}
-		}
-		return result;
-	}
 }
