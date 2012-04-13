@@ -210,10 +210,12 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 		else {
 			logger.fine("Will use schema definition from " + definitionFile);
 		}
+		
+		boolean createTemporaryMasterDatabase = definitionFile != null;
 
 		try {
+			if (createTemporaryMasterDatabase) {
 
-			if (definitionFile != null) {
 				logger.info("About to import " + definitionFile);
 				try {
 					masterCon = importSchema(definitionFile);
@@ -297,20 +299,22 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 
 		}
 		catch (SQLException e) {
+			
 			logger.severe(e.getMessage());
 		}
 		finally {
+			
 			// avoid leaving temporary DBs lying around if something bad happens
-			if (definitionFile == null && masterCon != null) {
+			if (createTemporaryMasterDatabase && masterCon != null) {
 				// double-check to make sure the DB we're going to remove is a
 				// temp one
 				String dbName = DBUtils.getShortDatabaseName(masterCon);
+				
 				if (dbName.indexOf("_temp_") > -1) {
 					removeDatabase(masterCon);
 					logger.info("Removed " + DBUtils.getShortDatabaseName(masterCon));
 				}
 			}
-
 		}
 
 		if (!somethingWasCompared) {
