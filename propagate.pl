@@ -396,7 +396,7 @@ sub create_meta_cache {
 sub create_assembly_cache {
   my ( $dbi1, $dbi2, $dbi_prev ) = @_;
   my $die_if_none = 1;
-  return build_meta_cache('core', 'assembly.name', $die_if_none, $dbi1, $dbi2, $dbi_prev);
+  return build_meta_cache('core', 'assembly.default', $die_if_none, $dbi1, $dbi2, $dbi_prev);
 }
 
 # --------------------------------------------------------------------------------
