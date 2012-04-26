@@ -191,7 +191,7 @@ sub run {
 			  
 		);
 	}
-	$fh->close()
+	$fh->close();
 	return $passes;
 }
 
