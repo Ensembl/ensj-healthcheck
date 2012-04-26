@@ -7,6 +7,7 @@ assembly.mapping
 assembly.master_accession
 assembly.name
 assembly.overlapping_regions
+assembly.version
 dna_align_featurebuild.level
 exonbuild.level
 genebuild.hash
