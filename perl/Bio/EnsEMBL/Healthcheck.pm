@@ -63,6 +63,69 @@ sub _initialise_logger {
 	} );
 }
 
+=head2 get_healthcheck_name
+
+Gets the last part of the package name. This is the name under which the
+healthcheck will most commonly be known.
+
+Example: Bio::EnsEMBL::Healthcheck::Translation -> Translation
+
+=cut
+sub get_healthcheck_name {
+
+	my $self = shift;
+
+	my @package_parts = split '::', ref $self;
+	my $last_part = pop @package_parts;
+	return $last_part;
+}
+
+sub create_external_result_file_name {
+
+	my $self = shift;
+
+	use Date::Simple ('date', 'today');
+
+	my $date = Date::Simple->new(today());
+
+	my $year  = $date->year;
+	my $month = sprintf("%02d", $date->month);
+	my $day   = sprintf("%02d", $date->day);
+
+	my $dbname = $self->dba->dbc->dbname;
+
+	my $healthcheck_name = $self->get_healthcheck_name;
+
+	my $dir           = "external_reports/${year}_${month}_${day}/$dbname";
+	my $file_basename = "${healthcheck_name}.log";
+
+	use File::Spec;
+	use Cwd;
+
+	my $file = File::Spec->join(cwd(), $dir, $file_basename);
+
+	return ($file, $dir, $file_basename);
+}
+
+sub open_external_result_file {
+
+	my $self = shift;
+
+	(my $file, my $dir, my $file_basename)
+		= $self->create_external_result_file_name();
+
+	use File::Path qw( make_path );
+	make_path ($dir);
+
+	use IO::File;
+	my $fh = IO::File->new($file, 'w');
+
+	confess("Can't open file $file for writing!")
+		unless (defined $fh);
+
+	return ($fh, $file);
+}
+
 sub dba {
 	my $self = shift;
 	$self->{dba} = shift if @_;

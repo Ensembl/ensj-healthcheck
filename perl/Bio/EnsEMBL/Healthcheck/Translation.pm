@@ -84,16 +84,14 @@ sub fetchNumberOfGenes {
 =cut
 sub run {
 	my ($self) = @_;
-	
+
+	(my $fh, my $file) = $self->open_external_result_file();
+
 	# Indicates whether or not the test has passed.
 	#
 	my $passes = 1;
 
 	$self->log()->debug("Getting all protein coding genes");
-	
-	#$self->dba()->no_cache(1);
-
-	#my $genes = $self->dba()->get_GeneAdaptor()->fetch_all_by_biotype("protein_coding");
 	
 	my $problem_report_stop_codons_tabular_all;
 	my $table_header_report_stop_codons;
@@ -103,6 +101,8 @@ sub run {
 	my $genes_tested = 0;
 	my $num_genes_until_lifesign_printed = 50;
 	my $num_genes_until_printed_since_last_lifesign = 0;
+
+	my $user_notified_of_problems = 0;
 	
 	# Used for testing so a run of this testcase doesn't take forever.
 	#
@@ -120,9 +120,6 @@ sub run {
 			return $passes;
 		}
 		
-		#$gene->adaptor()->db->no_cache(1);
-		#$gene->adaptor()->db()->get_TranscriptAdaptor()->db->no_cache(1);
-
 		for my $transcript ( @{ $gene->get_all_Transcripts() } ) {
 
 			my $seq = $transcript->translate();
@@ -131,8 +128,10 @@ sub run {
 				my $sequence = $seq->seq();
 
 				if ($self->sequence_comprises_only_of_Xs($sequence)) {
+
+					$passes = 0;
 					
-					$self->problem( "Transcript for "
+					$fh->print( "Transcript for "
 						  . "\ndbID:"                   . $transcript->dbID
 						  . "\ndisplay_id:"             . $transcript->display_id
 						  . "\ntranscript stable_id: "  . $transcript->stable_id
@@ -151,7 +150,7 @@ sub run {
 
 					$problem_report_stop_codons_tabular_all .= $problem_report_tabular; 		
 
-					$self->problem( "Transcript for "
+					$fh->print( "Transcript for "
 						  . "\ndbID:"                   . $transcript->dbID
 						  . "\ndisplay_id:"             . $transcript->display_id
 						  . "\ntranscript stable_id: "  . $transcript->stable_id
@@ -164,7 +163,7 @@ sub run {
 										
 				}
 			} else {
-				$self->problem( "No translation found for transcript ID "
+				$fh->print( "No translation found for transcript ID "
 					  . $transcript->dbID );
 			}
 		}
@@ -176,18 +175,23 @@ sub run {
 			$self->progress("Tested $genes_tested out of $num_of_genes genes.");
 			$num_genes_until_printed_since_last_lifesign = 0;
 		}
+		if (!$passes && !$user_notified_of_problems) {
+			$self->problem("This database contains transcripts with incorrect translations. See $file for detailed error messages.");
+			$user_notified_of_problems = 1;
+		}
 	}
 	#
 	# If there were problems, report the details in tabluar format in the end.
 	#
 	if (!$passes) {
-		$self->problem(
+		$fh->print(
 			  "\n\n---------------- problems: -------------------\n\n"
 			  
 			. $table_header_report_stop_codons . "\n" . $problem_report_stop_codons_tabular_all				  
 			  
 		);
 	}
+	$fh->close()
 	return $passes;
 }
 
