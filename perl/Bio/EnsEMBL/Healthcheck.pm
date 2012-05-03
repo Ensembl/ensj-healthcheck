@@ -84,19 +84,11 @@ sub create_external_result_file_name {
 
 	my $self = shift;
 
-	use Date::Simple ('date', 'today');
-
-	my $date = Date::Simple->new(today());
-
-	my $year  = $date->year;
-	my $month = sprintf("%02d", $date->month);
-	my $day   = sprintf("%02d", $date->day);
-
 	my $dbname = $self->dba->dbc->dbname;
 
 	my $healthcheck_name = $self->get_healthcheck_name;
 
-	my $dir           = "external_reports/${year}_${month}_${day}/$dbname";
+	my $dir           = "external_reports/$dbname";
 	my $file_basename = "${healthcheck_name}.log";
 
 	use File::Spec;
