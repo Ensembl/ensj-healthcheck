@@ -54,6 +54,8 @@ import org.ensembl.healthcheck.util.RowMapper;
 public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 
 	private static final int MAX_CACHE_SIZE = 2;
+	
+	private boolean usingTemporaryDatabase;
 
 	/**
 	 * An enum to contain the types of tests we allow a compare schema to perform.
@@ -211,10 +213,10 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 			logger.fine("Will use schema definition from " + definitionFile);
 		}
 		
-		boolean createTemporaryMasterDatabase = definitionFile != null;
+		usingTemporaryDatabase = definitionFile != null;
 
 		try {
-			if (createTemporaryMasterDatabase) {
+			if (usingTemporaryDatabase) {
 
 				logger.info("About to import " + definitionFile);
 				try {
@@ -305,7 +307,7 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 		finally {
 			
 			// avoid leaving temporary DBs lying around if something bad happens
-			if (createTemporaryMasterDatabase && masterCon != null) {
+			if (usingTemporaryDatabase && masterCon != null) {
 				// double-check to make sure the DB we're going to remove is a
 				// temp one
 				String dbName = DBUtils.getShortDatabaseName(masterCon);
@@ -343,6 +345,49 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 	}
 
 	/**
+	 * A healthcheck has to report the same error message for the same 
+	 * problem. The error can't be manually overridden by annotating it 
+	 * as ok on the admin site.
+	 * 
+	 * When a temporary database is used, it gets a unique name every
+	 * time. This makes the same error produce slightly different error
+	 * messages every time. If the user annotates it as ok, it will appear
+	 * as a new error the next time, because the name of the temporary 
+	 * database has changed.
+	 * 
+	 * Therefore the messages the test produces are rid of the name of the
+	 * master database, if the master is a temporary database.
+	 */
+	String getMasterNameForMsg(Connection master) {
+		
+		String masterNameForMsg;
+		
+		if (usingTemporaryDatabase) {
+			masterNameForMsg = System.getProperty(getDefinitionFileKey());
+		} else {
+			masterNameForMsg = DBUtils.getShortDatabaseName(master);
+		}
+		return masterNameForMsg;
+	}
+
+	/**
+	 * 
+	 * See comment for {@link getMasterNameForMsg}
+	 * 
+	 */
+	Connection getMasterForReportManager(Connection master) {
+	
+		Connection masterForReportManager;
+		
+		if (usingTemporaryDatabase) {
+			masterForReportManager = null;
+		} else {
+			masterForReportManager = master;
+		}
+		return masterForReportManager;
+	}
+
+	/**
 	 * Performs tests on the equivalent sets of columns in the given table, the
 	 * indexes on the given table, the type of the table (view or not) as well as
 	 * other creation parameters e.g. <em>AVG_ROW_LENGTH</em>. Many of these are
@@ -369,8 +414,12 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 		}
 
 		boolean okay = true;
+		
 		String masterName = DBUtils.getShortDatabaseName(master);
 		String targetName = DBUtils.getShortDatabaseName(target);
+		
+		String masterNameForMsg           = getMasterNameForMsg(master);
+		Connection masterForReportManager = getMasterForReportManager(master);
 
 		// Compare table structure
 		Set<Column> masterMinusTargetColumns = getColumns(master, table);
@@ -382,7 +431,7 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 				String message = String
 				    .format(
 				        "`%s` `%s` does not have the same definition as `%s`. Column `%s` was different. Check table structures",
-				        targetName, table, masterName, col);
+				        targetName, table, masterNameForMsg, col);
 				ReportManager.problem(this, target, message);
 				columnIssuesCalled.add(col.getName());
 			}
@@ -402,8 +451,8 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 				String message = String
 				    .format(
 				        "`%s` `%s` does not have the same definition as `%s`. Column `%s` was different. Check table structures",
-				        masterName, table, targetName, col);
-				ReportManager.problem(this, master, message);
+				        masterNameForMsg, table, targetName, col);
+				ReportManager.problem(this, masterForReportManager, message);
 			}
 			okay = false;
 		}
@@ -414,7 +463,7 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 			String masterType = (masterView) ? "VIEW" : "TABLE";
 			String targetType = (targetView) ? "VIEW" : "TABLE";
 			String msg = String.format("`%s` is a %s in `%s` but a %s in `%s`",
-			    table, masterType, masterName, targetType, targetName);
+			    table, masterType, masterNameForMsg, targetType, targetName);
 			ReportManager.problem(this, target, msg);
 		}
 
@@ -431,7 +480,7 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 					String message = String
 					    .format(
 					        "`%s` `%s` does not have the index `%s` which is present in `%s`. Check table structures",
-					        targetName, table, index, masterName);
+					        targetName, table, index, masterNameForMsg);
 					ReportManager.problem(this, target, message);
 				}
 				okay = false;
@@ -445,8 +494,8 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 					String message = String
 					    .format(
 					        "`%s` `%s` does not have the index `%s` which is present in `%s`. Check table structures",
-					        masterName, table, index, targetName);
-					ReportManager.problem(this, master, message);
+					        masterNameForMsg, table, index, targetName);
+					ReportManager.problem(this, masterForReportManager, message);
 				}
 				okay = false;
 			}
@@ -504,7 +553,7 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 		String message = String
 		    .format(
 		        "%s in `%s` had different values. `%s` contained '%s'. `%s` contained '%s'",
-		        testing.toString(), table, DBUtils.getShortDatabaseName(master),
+		        testing.toString(), table, getMasterNameForMsg(master),
 		        masterValue, DBUtils.getShortDatabaseName(target), targetValue);
 
 		ReportManager.problem(this, target, message);
