@@ -32,6 +32,8 @@ import org.ensembl.healthcheck.util.DefaultObjectRowMapper;
 import org.ensembl.healthcheck.util.PoorLruMap;
 import org.ensembl.healthcheck.util.RowMapper;
 
+import java.io.File;
+
 /**
  * A re-implementation of the {@link CompareSchema} health-check code but the
  * intention is to allow for post modifications in the various extension classes
@@ -361,9 +363,11 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 	String getMasterNameForMsg(Connection master) {
 		
 		String masterNameForMsg;
-		
+
 		if (usingTemporaryDatabase) {
-			masterNameForMsg = System.getProperty(getDefinitionFileKey());
+			
+			File f = new File(System.getProperty(getDefinitionFileKey()));
+			masterNameForMsg = f.getAbsolutePath();
 		} else {
 			masterNameForMsg = DBUtils.getShortDatabaseName(master);
 		}
