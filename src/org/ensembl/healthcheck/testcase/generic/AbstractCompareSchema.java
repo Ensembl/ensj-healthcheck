@@ -58,6 +58,13 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 	private static final int MAX_CACHE_SIZE = 2;
 	
 	private boolean usingTemporaryDatabase;
+	
+	/* comparison flags */
+	private static final int COMPARE_LEFT  = 0;
+	private static final int COMPARE_RIGHT = 1;
+	private static final int COMPARE_BOTH  = 2;
+	
+	private String masterShortName;
 
 	/**
 	 * An enum to contain the types of tests we allow a compare schema to perform.
@@ -190,10 +197,10 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 				// accessed
 				List<String> regexps = new ArrayList<String>();
 				regexps.add(masterSchema);
-				DatabaseRegistry masterDBR = new DatabaseRegistry(regexps, null, null,
-				    false);
-				DatabaseRegistryEntry masterDBRE = masterDBR
-				    .getByExactName(masterSchema);
+				DatabaseRegistry masterDBR = new DatabaseRegistry(regexps, null, null, false);
+				
+				DatabaseRegistryEntry masterDBRE = masterDBR.getByExactName(masterSchema);
+				
 				if (masterDBRE == null) {
 					logger.warning("Couldn't find database matching " + masterSchema);
 				}
@@ -245,7 +252,7 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 				}
 			}
 
-			String masterShortName = DBUtils.getShortDatabaseName(masterCon);
+			masterShortName = DBUtils.getShortDatabaseName(masterCon);
 			for (DatabaseRegistryEntry dbre : databases) {
 				
 				DatabaseType type = dbre.getType();
@@ -257,17 +264,16 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 						logger.info("Comparing " + checkShortName + " with " + masterShortName);
 						// check that both schemas have the same tables
 						somethingWasCompared = true;
-						int directionFlag = EnsTestCase.COMPARE_BOTH;
+						int directionFlag = COMPARE_BOTH;
 						boolean ignoreBackupTables = false;
 						if (type == DatabaseType.SANGER_VEGA) {
-							directionFlag = EnsTestCase.COMPARE_RIGHT;
+							directionFlag = COMPARE_RIGHT;
 							ignoreBackupTables = true;
 						}
 						
 						// for sanger_vega, ignore backup tables. If not the same, this
 						// method will generate a report
-						if (!compareTableEquality(masterCon, dbre, ignoreBackupTables,
-						    directionFlag)) {
+						if (!compareTableEquality(masterCon, dbre, ignoreBackupTables, directionFlag)) {
 							result = false;
 							
 							if(skipCheckingIfTablesAreUnequal()) {
@@ -346,6 +352,78 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 		    directionFlag);
 	}
 
+	// -------------------------------------------------------------------------
+	/**
+	 * Compare two schemas to see if they have the same tables. The comparison
+	 * is done in both directions, so will return false if a table exists in
+	 * schema1 but not in schema2, <em>or</em> if a table exists in schema2 but
+	 * not in schema2.
+	 * 
+	 * @param schema1
+	 *            The first schema to compare.
+	 * @param schema2
+	 *            The second schema to compare.
+	 * @return true if all tables in schema1 exist in schema2, and vice-versa.
+	 */
+	public boolean compareTablesInSchema(Connection schema1, Connection schema2) {
+		return compareTablesInSchema(schema1, schema2, false, COMPARE_BOTH);
+	}
+
+	/**
+	 * Compare two schemas to see if they have the same tables. The comparison
+	 * can be done in in one direction or both directions.
+	 * 
+	 * @param schema1
+	 *            The first schema to compare.
+	 * @param schema2
+	 *            The second schema to compare.
+	 * @param ignoreBackupTables
+	 *            Should backup tables be excluded form this check?
+	 * @param directionFlag
+	 *            The direction to perform comparison in, either
+	 *            EnsTestCase.COMPARE_RIGHT, EnsTestCase.COMPARE_LEFT or
+	 *            EnsTestCase.COMPARE_BOTH
+	 * @return for left comparison: all tables in schema1 exist in schema2 for
+	 *         right comparison: all tables in schema1 exist in schema2 for
+	 *         both: if all tables in schema1 exist in schema2, and vice-versa
+	 */
+	public boolean compareTablesInSchema(Connection schema1,
+			Connection schema2, boolean ignoreBackupTables, int directionFlag) {
+
+		boolean result = true;
+		if (directionFlag == COMPARE_RIGHT || directionFlag == COMPARE_BOTH) {
+			
+			// perform right compare if required
+			//
+			result = compareTablesInSchema(schema2, schema1, ignoreBackupTables, COMPARE_LEFT);
+		}
+
+		if (directionFlag == COMPARE_LEFT || directionFlag == COMPARE_BOTH) {
+			
+			// perform left compare if required
+			//
+			String name1 = getDbNameForMsg(schema1);
+			String name2 = getDbNameForMsg(schema2);
+
+			// check each table in turn
+			String[] tables = getTableNames(schema1);
+			for (int i = 0; i < tables.length; i++) {
+				String table = tables[i];
+				if (!ignoreBackupTables || !table.contains(backupIdentifier)) {
+					if (!DBUtils.checkTableExists(schema2, table)) {
+						ReportManager.problem(
+								this, 
+								getConnectionForReportManager(schema1), 
+								"Table " + table + " exists in " + name1 + " but not in " + name2
+						);
+						result = false;
+					}
+				}
+			}
+		}
+		return result;
+	}
+	
 	/**
 	 * A healthcheck has to report the same error message for the same 
 	 * problem. The error can't be manually overridden by annotating it 
@@ -373,6 +451,16 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 		}
 		return masterNameForMsg;
 	}
+	
+	String getDbNameForMsg(Connection db) {
+		
+		String dbShortName = DBUtils.getShortDatabaseName(db);
+		
+		if (dbShortName.equals(masterShortName)) {
+			return getMasterNameForMsg(db);
+		}
+		return dbShortName;
+	}
 
 	/**
 	 * 
@@ -389,6 +477,18 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 			masterForReportManager = master;
 		}
 		return masterForReportManager;
+	}
+
+	Connection getConnectionForReportManager(Connection db) {
+		
+		Connection connectionForReportManager;
+		
+		String dbShortName = DBUtils.getShortDatabaseName(db);
+		
+		if (dbShortName.equals(masterShortName)) {
+			return getMasterForReportManager(db);
+		}
+		return db;
 	}
 
 	/**
