@@ -138,7 +138,7 @@ public class DatabaseTabbedPane extends JTabbedPane {
     	if (allDbEntries.length==0) {
     		addTab(
     			"Problem",
-    			new JLabel("No databases found! Possibly the server can't be reached.")
+    			new JLabel("No databases available.")
     		);
     	}
     	
