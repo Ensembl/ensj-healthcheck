@@ -129,7 +129,7 @@ public class DatabaseTabbedPane extends JTabbedPane {
     	init();
     }
 
-    public void init() {
+    public synchronized void init() {
     	
     	this.removeAll();
     	
@@ -176,6 +176,9 @@ public class DatabaseTabbedPane extends JTabbedPane {
             );
         }
         addChangeListener(new TabChangeListener());
+        if (getTabCount()>0) {
+        	setEnabledAt(0, true);
+        }
     }
 
 
