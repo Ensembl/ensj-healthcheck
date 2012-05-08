@@ -53,7 +53,6 @@ import org.ensembl.healthcheck.util.DBUtils;
  */
 public class GuiTestRunnerFrameComponentBuilder {
 	
-	//public static Border defaultEmptyBorder = BorderFactory.createEmptyBorder(6, 2, 6, 2);
 	public static Border defaultEmptyBorder = BorderFactory.createEmptyBorder(12, 4, 12, 4);
 	
 	public static Component createLeftJustifiedComponent(Component c) {
