@@ -190,7 +190,7 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		//
 		DBUtils.setHostConfiguration((ConfigureHost) combinedHostConfig);
 		
-		SystemPropertySetter systemPropertySetter = new SystemPropertySetter(combinedHostConfig);		
+		SystemPropertySetter systemPropertySetter = new SystemPropertySetter(combinedHostConfig);
 		systemPropertySetter.setPropertiesForHealthchecks();
 	}
 	
@@ -201,11 +201,13 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		
 		Properties secondaryHostProperties = new Properties();
 		
-		secondaryHostProperties.setProperty("secondary.host",     secondaryHostDetails.getHost());
-		secondaryHostProperties.setProperty("secondary.port",     secondaryHostDetails.getPort());
-		secondaryHostProperties.setProperty("secondary.user",     secondaryHostDetails.getUser());
-		secondaryHostProperties.setProperty("secondary.password", secondaryHostDetails.getPassword());
-		secondaryHostProperties.setProperty("secondary.driver",   secondaryHostDetails.getDriver());
+		if (secondaryHostDetails!=null) {
+			secondaryHostProperties.setProperty("secondary.host",     secondaryHostDetails.getHost());
+			secondaryHostProperties.setProperty("secondary.port",     secondaryHostDetails.getPort());
+			secondaryHostProperties.setProperty("secondary.user",     secondaryHostDetails.getUser());
+			secondaryHostProperties.setProperty("secondary.password", secondaryHostDetails.getPassword());
+			secondaryHostProperties.setProperty("secondary.driver",   secondaryHostDetails.getDriver());
+		}
 		
 		ConfigureHost secondaryHostConfiguration = 
 			(ConfigureHost) ConfigurationByProperties.newInstance(
@@ -238,9 +240,15 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 
 	protected String createDbCmdLine() {
 		
-		ConfigureHost selectedDbServerConf = dbDetails.get(
-			dbServerSelector.getSelectedIndex()
-		);
+		int selectedIndex = dbServerSelector.getSelectedIndex();
+		
+		// if nothing has been selected
+		//
+		if (selectedIndex==-1) {
+			return "No database has been selected.";
+		}
+		
+		ConfigureHost selectedDbServerConf = dbDetails.get(selectedIndex);
 		
 		String passwordParam;
 		
@@ -371,7 +379,7 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 				}
 				currentGuiReporter = new GuiReporterTab();
 				
-				guiLogHandler = new GuiLogHandler();				
+				guiLogHandler = new GuiLogHandler();
 				guiLogHandler.setReporter(currentGuiReporter);
 				
 				// Set the formatter for EnsTestcases to what the user 
@@ -501,6 +509,31 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		secondaryDbServerSelector = GuiTestRunnerFrameComponentBuilder.createDbServerSelector(dbDetails);
 		secondaryDbServerSelector.setActionCommand(Constants.SECONDARY_DB_SERVER_CHANGED);
 		secondaryDbServerSelector.addActionListener(this);
+
+		DBUtils.initialise(false);
+		
+		// databaseTabbedPane must be set up before running
+		//
+		// dbServerSelector.setSelectedIndex(defaultSelectedServerIndex);
+		//
+		// because the above statement will trigger an action that will
+		// reconfigure what is in the databaseTabbedPane. If databaseTabbedPane
+		// is null then, because it has not been initialised, it will result
+		// in an error which is hard to find.
+		//
+		List<String> regexps = new ArrayList<String>();
+		regexps.add(".*");
+
+		DatabaseRegistry databaseRegistry = new DatabaseRegistry(regexps, null,
+				null, false);
+		if (databaseRegistry.getEntryCount() == 0) {
+			logger.warning("Warning: no databases found!");
+		}
+
+		DatabaseTabbedPane databaseTabbedPane = new DatabaseTabbedPane(
+				databaseRegistry, this
+			);
+		databaseTabbedPaneWithSearchBox = new DatabaseTabbedPaneWithSearchBox(databaseTabbedPane);
 		
 		//
 		// See, if defaultSecondaryServerName can be found in dbDetails. If so,
@@ -517,39 +550,25 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 			}
 		}
 		
-		// databaseTabbedPane must be set up before running
-		//
-		// dbServerSelector.setSelectedIndex(defaultSelectedServerIndex);
-		//
-		// because the above statement will trigger an action that will
-		// reconfigure what is in the databaseTabbedPane. If databaseTabbedPane
-		// is null then, because it has not been initialised, it will result
-		// in a hard to find error.
-		//
-		List<String> regexps = new ArrayList<String>();
-		regexps.add(".*");
-
-		DatabaseRegistry databaseRegistry = new DatabaseRegistry(regexps, null,
-				null, false);
-		if (databaseRegistry.getEntryCount() == 0) {
-			logger.warning("Warning: no databases found!");
+		ConfigureHost primaryHostDetails   = null;
+		ConfigureHost secondaryHostDetails = null;
+		
+		if (dbServerSelector.getItemCount()>0) {
+			dbServerSelector.setSelectedIndex(defaultSelectedServerIndex);
+			primaryHostDetails = dbDetails.get(defaultSelectedServerIndex);
+			actionPerformed(new ActionEvent(this, 0, Constants.DB_SERVER_CHANGED));
 		}
 
-		DatabaseTabbedPane databaseTabbedPane = new DatabaseTabbedPane(
-			databaseRegistry, this
-		);
-		databaseTabbedPaneWithSearchBox = new DatabaseTabbedPaneWithSearchBox(databaseTabbedPane);
+		if (secondaryDbServerSelector.getItemCount()>0) {
+			secondaryDbServerSelector.setSelectedIndex(defaultSelectedServerIndex);
+			secondaryHostDetails = dbDetails.get(defaultSelectedServerIndex);
+			actionPerformed(new ActionEvent(this, 1, Constants.DB_SERVER_CHANGED));
+		}
 		
-		dbServerSelector.setSelectedIndex(defaultSelectedServerIndex);
-		secondaryDbServerSelector.setSelectedIndex(defaultSelectedServerIndex);
 		
-		DBUtils.initialise();
 
-		setPrimaryAndSecondaryAndSystemPropertiesHost(
-				dbDetails.get(dbServerSelector.getSelectedIndex()),
-				dbDetails.get(secondaryDbServerSelector.getSelectedIndex())
-			);
-		
+		setPrimaryAndSecondaryAndSystemPropertiesHost(primaryHostDetails, secondaryHostDetails);
+
 		this.setTitle(windowTitle);
 		tab = new JTabbedPane();
 		init();
