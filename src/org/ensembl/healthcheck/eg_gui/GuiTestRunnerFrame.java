@@ -562,7 +562,6 @@ public class GuiTestRunnerFrame extends JFrame implements ActionListener {
 		if (secondaryDbServerSelector.getItemCount()>0) {
 			secondaryDbServerSelector.setSelectedIndex(defaultSelectedServerIndex);
 			secondaryHostDetails = dbDetails.get(defaultSelectedServerIndex);
-			actionPerformed(new ActionEvent(this, 1, Constants.DB_SERVER_CHANGED));
 		}
 		
 		
