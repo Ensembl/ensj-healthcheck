@@ -27,7 +27,7 @@ public class SystemPropertySetter {
 		System.setProperty("output.password",    configuration.getOutputPassword());
 		System.setProperty("host",           configuration.getHost() );
 		System.setProperty("port",           configuration.getPort() );
-		System.setProperty("output.release", configuration.getOutputRelease() );			
+		System.setProperty("output.release", configuration.getOutputRelease() );
 
 	}
 
