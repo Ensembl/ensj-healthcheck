@@ -71,25 +71,18 @@ public class GuiTestRunnerFrameUtils {
 						// Only use ini files. 
 						//
 						new FilenameFilter() {
-							public boolean accept(File arg0, String arg1) {								
+							public boolean accept(File arg0, String arg1) {
 								return arg1.endsWith(".ini");
 							}
 						}
 					)
 				) {
-					ConfigureHost configuration = getHostConfiguration(f);			
+					ConfigureHost configuration = getHostConfiguration(f);
 					dbDetails.add(configuration);
 				}
 			} else {
 				logger.info("Skipping " + currentDir);
 			}
-		}
-		if (dbDetails.isEmpty()) {
-			
-			throw new RuntimeException(
-				"Found no ini files with database server details. Please add at least one into the directories "
-				+ Arrays.toString(dirsWithDbServerConfigs)
-			);
 		}
 		return dbDetails;
 	}
