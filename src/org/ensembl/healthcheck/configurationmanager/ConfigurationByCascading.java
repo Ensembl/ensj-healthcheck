@@ -116,6 +116,10 @@ public class ConfigurationByCascading<T> extends AbstractConfigurationBacking {
 			// Search in all configuration object in the order they were given
 			for (T configuration : configurationObjects) {
 				
+				if (configuration == null) {
+					throw new NullPointerException("One of the configuration objects was null!");
+				}
+				
 				// If the configuraion object queried is not of the correct
 				// type, then invoking getMethod on its class will cause
 				// an exception to be thrown. This will is caught below.
