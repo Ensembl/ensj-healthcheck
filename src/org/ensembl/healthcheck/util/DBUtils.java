@@ -49,6 +49,7 @@ public final class DBUtils {
 	private static DatabaseRegistry secondaryDatabaseRegistry;
 
 	private static ConfigureHost hostConfiguration;
+	private static boolean useDefaultsFromFile = true;
 
 	/**
 	 * <p>
@@ -85,6 +86,13 @@ public final class DBUtils {
 		mainDatabaseRegistry = null;
 		secondaryDatabaseRegistry = null;
 		hostConfiguration = null;
+		useDefaultsFromFile = true;
+	}
+
+	public static void initialise(boolean useDefaultsFromFile) {
+
+		initialise();
+		DBUtils.useDefaultsFromFile = useDefaultsFromFile;
 	}
 
 	public static ConfigureHost getHostConfiguration() {
@@ -920,11 +928,6 @@ public final class DBUtils {
 	// -------------------------------------------------------------------------
 	/**
 	 * <p>
-	 * Get main database server list - build if necessary. Assumes properties
-	 * file already read.
-	 * </p>
-	 * 
-	 * <p>
 	 * Depends on system properties being set by a call like
 	 * </p>
 	 * 
@@ -942,7 +945,16 @@ public final class DBUtils {
 	public static List<DatabaseServer> getMainDatabaseServers() {
 
 		if (DBUtils.hostConfiguration == null) {
-			return getMainDatabaseServersProperties();
+			
+			if (useDefaultsFromFile) {
+				return getMainDatabaseServersProperties();
+			} else {
+
+				// If nothing was preconfigured and defaults should not be
+				// used, return empty list.
+				//
+				return new ArrayList<DatabaseServer>();
+			}
 		} else {
 			return getMainDatabaseServersConf();
 		}
