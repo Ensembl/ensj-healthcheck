@@ -75,26 +75,29 @@ public class ConfigurationFactory <T> {
 		// Can be a configuration object or a String
 		for (Object arg : args) {
 			
-			if (arg instanceof String) {
-				// Every string in the constructor is a command line argument
-				commandLineArguments.add((String) arg);
-			} else {
-				if (arg instanceof String[]) {
-					//
-					// The constructor accepts arrays of Strings as well like
-					// the args[] that are passed to the main method. These
-					// are added to the list of command line arguments.
-					//
-					String[] argList = (String[]) arg;
-					
-					for (String a : argList) {
-						commandLineArguments.add(a);
-					}
+			if (arg != null) {
+			
+				if (arg instanceof String) {
+					// Every string in the constructor is a command line argument
+					commandLineArguments.add((String) arg);
 				} else {
-					if (arg instanceof List<?>) {
-						propertyFiles.addAll( (List<File>) arg );
+					if (arg instanceof String[]) {
+						//
+						// The constructor accepts arrays of Strings as well like
+						// the args[] that are passed to the main method. These
+						// are added to the list of command line arguments.
+						//
+						String[] argList = (String[]) arg;
+						
+						for (String a : argList) {
+							commandLineArguments.add(a);
+						}
 					} else {
-						configurationObjects.add((T) arg);
+						if (arg instanceof List<?>) {
+							propertyFiles.addAll( (List<File>) arg );
+						} else {
+							configurationObjects.add((T) arg);
+						}
 					}
 				}
 			}
@@ -166,7 +169,7 @@ public class ConfigurationFactory <T> {
 			);
 		}
 
-		@SuppressWarnings("unchecked")		
+		@SuppressWarnings("unchecked")
 		T configuration = (T)
 			java.lang.reflect.Proxy.newProxyInstance(
 				this.configurationInterface.getClassLoader(),
