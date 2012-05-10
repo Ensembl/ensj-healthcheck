@@ -74,6 +74,14 @@ public class SetupTab extends JPanel {
 		MysqlConnectionCmd.selectAll();
 	}
 
+	protected void updateDbCmdLine(String dbName) {
+
+		if (MysqlConnectionCmd ==null) { return; }
+		String cmd = createDbCmdLine() + " " + dbName;
+		MysqlConnectionCmd.setText(cmd);
+		MysqlConnectionCmd.selectAll();
+	}
+
 	protected String createDbCmdLine() {
 		
 		int selectedIndex = dbServerSelector.getSelectedIndex();
