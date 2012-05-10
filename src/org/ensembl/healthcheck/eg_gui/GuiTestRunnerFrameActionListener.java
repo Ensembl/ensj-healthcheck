@@ -133,7 +133,8 @@ public class GuiTestRunnerFrameActionListener implements ActionListener {
 			
 			DatabaseRadioButton selectedDbRadioButton = (DatabaseRadioButton) arg0.getSource();
 			String currentlySelectsDBName = selectedDbRadioButton.getText();
-			guiTestRunnerFrame.setupTab.updateDbCmdLine();
+			guiTestRunnerFrame.setupTab.updateDbCmdLine(currentlySelectsDBName);
+
 		}
 		
 		// Not implemented yet
