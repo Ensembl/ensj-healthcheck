@@ -98,6 +98,10 @@ public class GuiTestRunnerFrameComponentBuilder {
 			
 			if (currentDbServer.getHost().equals("127.0.0.1")) {
 
+				// If the connection is local, it is probably being port 
+				// forwarded. Add port number so the user knows which one
+				// it is.
+				//
 				dbServerComboBoxDisplayName.add(
 						currentDbServer.getHost() + ":" + currentDbServer.getPort() 
 						+ " as "
