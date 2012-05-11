@@ -83,12 +83,16 @@ public class GuiTestRunnerFrameBuilder {
 	protected void buildFinalise() {
 		
 		actionListener.setActive(true);
-		guiTestRunnerFrame.setupTab.actionListener.actionPerformed(
-			new ActionEvent(
-				guiTestRunnerFrame.setupTab.actionListener, 
-				0, 
-				Constants.DB_SERVER_CHANGED
-			)
-		);
+		
+		if (guiTestRunnerFrame.setupTab.dbServerSelector.getItemCount()>0) {
+
+			guiTestRunnerFrame.setupTab.actionListener.actionPerformed(
+				new ActionEvent(
+					guiTestRunnerFrame.setupTab.actionListener, 
+					0, 
+					Constants.DB_SERVER_CHANGED
+				)
+			);
+		}
 	}
 }
