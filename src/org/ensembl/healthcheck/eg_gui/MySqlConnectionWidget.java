@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -30,6 +31,71 @@ public class MySqlConnectionWidget extends JPanel implements ActionListener {
 	protected JComboBox dbServerSelector;
 	protected DatabaseTabbedPane databaseTabbedPane;
 	
+	protected String konsoleCmd = "konsole";
+	
+	protected boolean checkCanExecute(String programName) {
+		
+		String fullPath = findInSystemPath(programName);		
+		return new File(fullPath).canExecute();
+	}
+	
+	protected String findInSystemPath(String programName) {
+		
+		List<String> param = new LinkedList<String>(); 
+		
+		param.add("which");			
+		param.add(programName);		
+		
+		String[] cmdLineItems = param.toArray(new String[] { "" });
+		Map<String,String> environmentVars = new HashMap<String,String>(System.getenv());
+		
+		final StringBuffer locationOfProgram = new StringBuffer();
+		
+		try {
+			int exit = ProcessExec.exec(
+				cmdLineItems, 
+				new ActionAppendable() {
+					@Override public void process(String message) {
+						locationOfProgram.append(message);
+					}
+				}, 
+				new ActionAppendable() {
+					@Override public void process(String message) {
+						System.err.println(message);
+					}
+				}, 
+				false, 
+				environmentVars
+			);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		// Trim is important, because which returns a carriage return at the end.
+		return locationOfProgram.toString().trim();
+	}
+	
+	protected JButton createRunMysqlInConsoleButton() {
+		
+		JButton OpenInMySqlCli = new JButton("Open in MySql CLI");
+
+	    OpenInMySqlCli.setActionCommand(Constants.OPEN_MYSQL_CLI);
+	    OpenInMySqlCli.addActionListener(this);
+	    OpenInMySqlCli.setMnemonic(KeyEvent.VK_M);
+	    OpenInMySqlCli.setSize(
+	    		Constants.DEFAULT_BUTTON_WIDTH, 
+	    		Constants.DEFAULT_BUTTON_HEIGHT
+	    );
+		return OpenInMySqlCli;
+	}
+	
+	protected JTextField createMysqlCmdTextField() {
+		
+		JTextField MysqlCmdTextField = new JTextField(); 
+		new CopyAndPastePopupBuilder().addPopupMenu(MysqlCmdTextField);
+		return MysqlCmdTextField;
+	}
+	
 	public MySqlConnectionWidget(
 		List<ConfigureHost> dbDetails, 
 		JComboBox dbServerSelector, 
@@ -39,19 +105,8 @@ public class MySqlConnectionWidget extends JPanel implements ActionListener {
 		this.dbDetails = dbDetails;
 		this.dbServerSelector = dbServerSelector;
 		this.databaseTabbedPane = databaseTabbedPane;
-		
-	    OpenInMySqlCli = new JButton("Open in MySql CLI");
-
-	    OpenInMySqlCli.setActionCommand(Constants.OPEN_MYSQL_CLI);
-	    OpenInMySqlCli.addActionListener(this);
-	    OpenInMySqlCli.setMnemonic(KeyEvent.VK_M);
-	    OpenInMySqlCli.setSize(
-	    		Constants.DEFAULT_BUTTON_WIDTH, 
-	    		Constants.DEFAULT_BUTTON_HEIGHT
-	    );
-
-		MysqlConnectionCmd = new JTextField(); 
-		new CopyAndPastePopupBuilder().addPopupMenu(MysqlConnectionCmd);
+	    
+		MysqlConnectionCmd = createMysqlCmdTextField();
 		
 		setBorder(
 			BorderFactory.createTitledBorder(
@@ -59,16 +114,28 @@ public class MySqlConnectionWidget extends JPanel implements ActionListener {
 				"Connect to the selected database"
 			)
 		);
-
 		setLayout(new BorderLayout());
 	    
 		JLabel label = new JLabel("Or copy and paste this:"); 
-		
+
 		Box b = Box.createHorizontalBox();
-		b.add(label);
+
+		if (checkCanExecute(konsoleCmd)) {
+			
+			OpenInMySqlCli = createRunMysqlInConsoleButton();
+			add(OpenInMySqlCli, BorderLayout.WEST);
+			label = new JLabel("or copy and paste this:");
+			b.add(label);
+			
+		} else {
+
+			label = new JLabel("Copy and paste:");
+			b.add(label);
+			
+		}		
+
 		b.add(MysqlConnectionCmd);
 		
-		add(OpenInMySqlCli, BorderLayout.WEST);
 		add(b, BorderLayout.CENTER);
 		
 		updateDbCmdLine();
