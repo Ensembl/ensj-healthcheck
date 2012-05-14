@@ -340,7 +340,7 @@ public class GuiTestRunnerFrameComponentBuilder {
 	    );
 	    return button;
 	}
-    
+
     public static JButton createRunSelectedTestsButton(ActionListener buttonActionListener) {
 		
 	    JButton button = new JButton("Run selected tests");
