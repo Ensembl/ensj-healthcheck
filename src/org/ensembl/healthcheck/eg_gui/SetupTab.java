@@ -1,6 +1,7 @@
 package org.ensembl.healthcheck.eg_gui;
 
 import java.awt.event.ActionListener;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -64,49 +65,7 @@ public class SetupTab extends JPanel {
 	protected JButton rmSelectedTests;
 	protected JButton runAllTests;
 	protected JButton runSelectedTests;
+	
+	protected MySqlConnectionWidget mysqlWidget;
 
-	protected JTextField MysqlConnectionCmd;
-
-	protected void updateDbCmdLine() {
-
-		if (MysqlConnectionCmd ==null) { return; }
-		MysqlConnectionCmd.setText(createDbCmdLine());
-		MysqlConnectionCmd.selectAll();
-	}
-
-	protected void updateDbCmdLine(String dbName) {
-
-		if (MysqlConnectionCmd ==null) { return; }
-		String cmd = createDbCmdLine() + " " + dbName;
-		MysqlConnectionCmd.setText(cmd);
-		MysqlConnectionCmd.selectAll();
-	}
-
-	protected String createDbCmdLine() {
-		
-		int selectedIndex = dbServerSelector.getSelectedIndex();
-		
-		// if nothing has been selected
-		//
-		if (selectedIndex==-1) {
-			return "No database has been selected.";
-		}
-		
-		ConfigureHost selectedDbServerConf = dbDetails.get(selectedIndex);
-		
-		String passwordParam;
-		
-		if (selectedDbServerConf.getPassword().isEmpty()) {
-			passwordParam = "";
-		} else {
-			passwordParam = " --password=" + selectedDbServerConf.getPassword();
-		}
-		
-		return "mysql" 
-			+ " --host "     + selectedDbServerConf.getHost() 
-			+ " --port "     + selectedDbServerConf.getPort()
-			+ " --user "     + selectedDbServerConf.getUser()
-			+ passwordParam
-		;
-	}
 }
