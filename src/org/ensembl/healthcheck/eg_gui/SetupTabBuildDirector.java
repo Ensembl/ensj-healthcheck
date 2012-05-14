@@ -14,7 +14,7 @@ public class SetupTabBuildDirector {
 		builder.buildDbDetails();
 		builder.buildDbServerSelector();
 		builder.buildDatabaseTabbedPaneWithSearchBox();
-		builder.buildMysqlConnectionCmd();
+		builder.buildMysqlConnectionWidget();
 		builder.buildSecondaryDbServerSelector();
 		builder.buildComponentWiring();
 		
