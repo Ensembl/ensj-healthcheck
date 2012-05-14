@@ -15,12 +15,12 @@ import javax.swing.event.ChangeListener;
 
 public class DatabaseTabbedPaneWithSearchBox extends JPanel implements CaretListener, ChangeListener {
 
-	private DatabaseTabbedPane dtp;
+	private DatabaseTabbedPane databasePane;
 	private JTextField searchField;
 	
 	public DatabaseTabbedPaneWithSearchBox(DatabaseTabbedPane databaseTabbedPane) {
 
-		dtp         = databaseTabbedPane;
+		databasePane = databaseTabbedPane;
 		searchField = new JTextField();
 		
 		this.setLayout(new BorderLayout());
@@ -32,19 +32,19 @@ public class DatabaseTabbedPaneWithSearchBox extends JPanel implements CaretList
 		searchForm.add(searchField);
 		
 		this.add(searchForm, BorderLayout.NORTH);
-		this.add(dtp,        BorderLayout.CENTER);
+		this.add(databasePane,        BorderLayout.CENTER);
 		
 		new CopyAndPastePopupBuilder().addPopupMenu(searchField);
 		searchField.addCaretListener(this);
-		dtp.addChangeListener(this);
+		databasePane.addChangeListener(this);
 	}
 
-	public DatabaseTabbedPane getDtp() {
-		return dtp;
+	public DatabaseTabbedPane getDatabasePane() {
+		return databasePane;
 	}
 
 	public void setDtp(DatabaseTabbedPane dtp) {
-		this.dtp = dtp;
+		this.databasePane = dtp;
 	}
 
 	public JTextField getSearchField() {
@@ -61,7 +61,7 @@ public class DatabaseTabbedPaneWithSearchBox extends JPanel implements CaretList
 		String[] searchItems = searchText.split(" ");
 		List<String> SearchTerm = Arrays.asList(searchItems);
 		
-		dtp.applySearchtermFilter(SearchTerm);
+		databasePane.applySearchtermFilter(SearchTerm);
 	}
 	
 	@Override
