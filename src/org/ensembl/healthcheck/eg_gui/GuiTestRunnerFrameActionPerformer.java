@@ -73,6 +73,10 @@ public class GuiTestRunnerFrameActionPerformer {
 				
 				databaseTabbedPane.init(databaseRegistry);
 				databaseTabbedPane.repaint();
+				
+				//List<String> searchTerm = new ArrayList<String>();
+				//searchTerm.add("ara");
+				//databaseTabbedPane.applySearchtermFilter(searchTerm);
 			}
 		};
 		databaseTabbedPane.setMessage(
