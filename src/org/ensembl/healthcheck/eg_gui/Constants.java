@@ -15,6 +15,8 @@ public class Constants {
 	public static final String RUN_ALL_TESTS          = "RUN_ALL_TESTS";
 	public static final String RUN_SELECTED_TESTS     = "RUN_SELECTED_TESTS";
 	public static final String REMOVE_SELECTED_TESTS  = "REMOVE_SELECTED_TESTS";
+
+	public static final String OPEN_MYSQL_CLI  = "OPEN_MYSQL_CLI";
 	
 	public static final String DB_SERVER_CHANGED           = "DB_SERVER_CHANGED";
 	public static final String SECONDARY_DB_SERVER_CHANGED = "SECONDARY_DB_SERVER_CHANGED";
