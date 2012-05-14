@@ -4,8 +4,12 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
@@ -25,12 +29,15 @@ import org.ensembl.healthcheck.configurationmanager.ConfigurationFactory;
 import org.ensembl.healthcheck.configurationmanager.ConfigurationFactory.ConfigurationType;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.testcase.PerlScriptConfig;
+import org.ensembl.healthcheck.util.ActionAppendable;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.ProcessExec;
 
 public class GuiTestRunnerFrameActionListener implements ActionListener {
 	
 	protected final GuiTestRunnerFrame guiTestRunnerFrame;
 	protected boolean active;
+	
     // Holds a reference to the gui reporter. It is a component of the
     // JPanel tabResults.
     //
@@ -106,7 +113,6 @@ public class GuiTestRunnerFrameActionListener implements ActionListener {
 				propertyFileNames
 			).getConfiguration(ConfigurationType.Properties);
 
-		
 		ConfigurationFactory<ConfigurationUserParameters> confFact =
 			new ConfigurationFactory<ConfigurationUserParameters>(
 				ConfigurationUserParameters.class,
@@ -128,14 +134,6 @@ public class GuiTestRunnerFrameActionListener implements ActionListener {
 			return;
 		}
 		String cmd = arg0.getActionCommand();
-
-		if (cmd.equals(Constants.selectedDatabaseChanged)) {
-			
-			DatabaseRadioButton selectedDbRadioButton = (DatabaseRadioButton) arg0.getSource();
-			String currentlySelectsDBName = selectedDbRadioButton.getText();
-			guiTestRunnerFrame.setupTab.updateDbCmdLine(currentlySelectsDBName);
-
-		}
 		
 		// Not implemented yet
 		if (cmd.equals(Constants.Add_to_tests_to_be_run)) {
@@ -149,10 +147,9 @@ public class GuiTestRunnerFrameActionListener implements ActionListener {
 		if (cmd.equals(Constants.DB_SERVER_CHANGED)) {
 
 			GuiTestRunnerFrameActionPerformer.setupDatabasePane(
-				guiTestRunnerFrame.setupTab.databaseTabbedPaneWithSearchBox.getDtp(), 
+				guiTestRunnerFrame.setupTab.databaseTabbedPaneWithSearchBox.getDatabasePane(), 
 				guiTestRunnerFrame.setupTab.dbDetails.get(guiTestRunnerFrame.setupTab.dbServerSelector.getSelectedIndex())
 			);
-			guiTestRunnerFrame.setupTab.updateDbCmdLine();
 		}
 		if (cmd.equals(Constants.RUN_ALL_TESTS) || cmd.equals(Constants.RUN_SELECTED_TESTS)) {
 
@@ -201,7 +198,7 @@ public class GuiTestRunnerFrameActionListener implements ActionListener {
 			}
 			
 			DatabaseRegistryEntry[] selectedDatabases 
-				= guiTestRunnerFrame.setupTab.databaseTabbedPaneWithSearchBox.getDtp().getSelectedDatabases();
+				= guiTestRunnerFrame.setupTab.databaseTabbedPaneWithSearchBox.getDatabasePane().getSelectedDatabases();
 
 			if (selectedDatabases.length == 0) {
 				JOptionPane.showMessageDialog(

@@ -3,11 +3,14 @@ package org.ensembl.healthcheck.eg_gui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -17,6 +20,7 @@ import javax.swing.border.Border;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.GroupOfTests;
+import org.ensembl.healthcheck.configuration.ConfigureHost;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.util.ClassFileFilter;
 import org.ensembl.healthcheck.util.Clazz;
@@ -125,28 +129,19 @@ public class SetupTabBuilder {
 			.createListOfTestsToBeExecutedPopupMenu(setupTab.actionListener);
 	}
 
-	protected void buildMysqlConnectionCmd() {
+	protected void buildMysqlConnectionWidget() {
 		
-		setupTab.MysqlConnectionCmd = new JTextField(); 
-		new CopyAndPastePopupBuilder().addPopupMenu(setupTab.MysqlConnectionCmd);
-		
-		setupTab.MysqlConnectionCmd.setBorder(
-			BorderFactory.createTitledBorder(
-				GuiTestRunnerFrameComponentBuilder.defaultEmptyBorder, 
-				"Use this command to connect to the selected database"
-			)
+		setupTab.mysqlWidget = new MySqlConnectionWidget(
+				setupTab.dbDetails, 
+				setupTab.dbServerSelector, 
+				setupTab.databaseTabbedPaneWithSearchBox.getDatabasePane()
 		);
-
-		setupTab.updateDbCmdLine();
 	}
 	
 	protected void buildComponentWiring() {
 
 		if (setupTab==null) {
 			throw new NullPointerException("setupTab has not been built.");
-		}
-		if (setupTab.MysqlConnectionCmd==null) {
-			throw new NullPointerException("setupTab.MysqlConnectionCmd has not been built.");
 		}
 		if (setupTab.tree==null) {
 			throw new NullPointerException("setupTab.tree has not been built.");
@@ -158,6 +153,8 @@ public class SetupTabBuilder {
 			throw new NullPointerException("setupTab.secondaryDbServerSelector has not been built.");
 		}
 
+		setupTab.databaseTabbedPaneWithSearchBox.getDatabasePane().addActionListener(setupTab.mysqlWidget);
+		
 		JScrollPane treePane  = new JScrollPane(setupTab.tree);
 		
 		JSplitPane testSelectionWidgets = new JSplitPane(
@@ -167,7 +164,7 @@ public class SetupTabBuilder {
 		);
 
 		setupTab.setLayout(new BorderLayout());
-		setupTab.add(setupTab.MysqlConnectionCmd, BorderLayout.SOUTH);
+		setupTab.add(setupTab.mysqlWidget, BorderLayout.SOUTH);
 		setupTab.add(
 				new JSplitPane(
 						JSplitPane.VERTICAL_SPLIT, 
@@ -361,9 +358,9 @@ public class SetupTabBuilder {
 
 		DatabaseRegistry databaseRegistry = new DatabaseRegistry(regexps, null, null, false);
 
-		DatabaseTabbedPane databaseTabbedPane = new DatabaseTabbedPane(
-				databaseRegistry, setupTab.actionListener
-			);
+		DatabaseTabbedPane databaseTabbedPane = new DatabaseTabbedPane(databaseRegistry);
+		databaseTabbedPane.addActionListener(setupTab.actionListener);
+
 		setupTab.databaseTabbedPaneWithSearchBox = new DatabaseTabbedPaneWithSearchBox(databaseTabbedPane);
 	}
 	

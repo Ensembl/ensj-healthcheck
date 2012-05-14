@@ -2,12 +2,14 @@ package org.ensembl.healthcheck.eg_gui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -37,11 +39,47 @@ import org.ensembl.healthcheck.eg_gui.TabChangeListener;
  * 
  */
 
-public class DatabaseTabbedPane extends JTabbedPane {
+public class DatabaseTabbedPane extends JTabbedPane implements ActionListener {
 
-	protected ActionListener radioActionListener;
 	protected DatabaseRegistry databaseRegistry;
+	protected final List<ActionListener> actionListener;
+
+	/**
+	 * Updated automatically to always hold the currently selected DbButton.
+	 */
+	protected DatabaseRadioButton selectedDbButton;
+
+	public DatabaseRadioButton getSelectedDbButton() {
+		return selectedDbButton;
+	}
+
+	public void addActionListener(ActionListener l) {
+		actionListener.add(l);
+	}
+
+	protected void fireActionEvent(ActionEvent actionEvent) {
+		for(ActionListener currentActionListener : actionListener) {
+			currentActionListener.actionPerformed(actionEvent);
+		}
+	}
 	
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+
+		String cmd = arg0.getActionCommand();
+		
+		if (cmd.equals(Constants.selectedDatabaseChanged)) {			
+			selectedDbButton = (DatabaseRadioButton) arg0.getSource();
+			
+			ActionEvent actionEvent = new ActionEvent(
+				this, 
+				arg0.getID() +1, 
+				Constants.selectedDatabaseChanged
+			);
+			fireActionEvent(actionEvent);
+		}
+	}
+
 	/**
 	 * 
 	 * <p>
@@ -60,8 +98,9 @@ public class DatabaseTabbedPane extends JTabbedPane {
         for (DatabaseRegistryEntry currentEntry : allDbEntries) {
         	
         	DatabaseRadioButton dbcb = new DatabaseRadioButton(currentEntry, false);
-        	dbcb.addActionListener(radioActionListener);
+        	dbcb.addActionListener(this);
         	dbcb.setActionCommand(Constants.selectedDatabaseChanged);
+        	
             checkBoxMap.put(currentEntry, dbcb);
         }
         return checkBoxMap;
@@ -105,6 +144,7 @@ public class DatabaseTabbedPane extends JTabbedPane {
     public DatabaseTabbedPane(DatabaseRegistry databaseRegistry) {
 
     	this.databaseRegistry = databaseRegistry;
+    	actionListener = new LinkedList<ActionListener>();
     	init();
     }
     
@@ -114,7 +154,7 @@ public class DatabaseTabbedPane extends JTabbedPane {
     	) {
 
     	this(databaseRegistry);
-    	this.radioActionListener = radioActionListener;
+    	this.addActionListener(radioActionListener);
     }
 
     public void setMessage(String caption, String message) {
@@ -132,6 +172,8 @@ public class DatabaseTabbedPane extends JTabbedPane {
     public synchronized void init() {
     	
     	this.removeAll();
+    	
+    	selectedDbButton = null;
     	
     	DatabaseRegistryEntry[] allDbEntries = databaseRegistry.getAll();
     	
@@ -204,19 +246,21 @@ public class DatabaseTabbedPane extends JTabbedPane {
 
     public DatabaseRegistryEntry[] getSelectedDatabases() {
 
-        List result = new ArrayList();
-
-        // get all the selected databases for each tab in turn
-        for (int i = 0; i < getTabCount(); i++) {
-
-            DatabaseListPanel dblp = (DatabaseListPanel) getComponentAt(i);
-            DatabaseRegistryEntry[] panelSelected = dblp.getSelected();
-            for (int j = 0; j < panelSelected.length; j++) {
-                result.add(panelSelected[j]);
-            }
-        }
-
-        return (DatabaseRegistryEntry[]) result.toArray(new DatabaseRegistryEntry[result.size()]);
+    	return new DatabaseRegistryEntry[] { getSelectedDbButton().getDatabase() };
+    	
+//        List result = new ArrayList();
+//
+//        // get all the selected databases for each tab in turn
+//        for (int i = 0; i < getTabCount(); i++) {
+//
+//            DatabaseListPanel dblp = (DatabaseListPanel) getComponentAt(i);
+//            DatabaseRegistryEntry[] panelSelected = dblp.getSelected();
+//            for (int j = 0; j < panelSelected.length; j++) {
+//                result.add(panelSelected[j]);
+//            }
+//        }
+//
+//        return (DatabaseRegistryEntry[]) result.toArray(new DatabaseRegistryEntry[result.size()]);
 
     } // getSelectedDatabases
 
