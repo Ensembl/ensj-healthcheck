@@ -45,6 +45,7 @@ schema_type
 schema_version
 simple_featurebuild.level
 species.alias
+species.biomart_dataset
 species.classification
 species.common_name
 species.db_name
