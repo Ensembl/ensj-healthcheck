@@ -2,6 +2,7 @@ package org.ensembl.healthcheck.configurationmanager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -120,85 +121,99 @@ public class ConfigurationByCascading<T> extends AbstractConfigurationBacking {
 					throw new NullPointerException("One of the configuration objects was null!");
 				}
 				
-				// If the configuraion object queried is not of the correct
-				// type, then invoking getMethod on its class will cause
-				// an exception to be thrown. This will is caught below.
-				//
-				Method methodInConfigObject = configuration.getClass().getMethod(
-					methodName, 
-					parameterTypes
-				);
-				
 				try {
-					// Try to invoke the method the user wants on the current
-					// configuration object. If it fails, because the parameter
-					// was not present in this object, the configuration object
-					// will throw a OptionNotPresentException which is wrapped
-					// in an InvocationTargetException.
-					//
-					result = methodInConfigObject.invoke(configuration);
 					
-					if (methodIsGetMethod) {
-						// If we are here, all went well and we are returning
-						// the value of the parameter in the first 
-						// configuration object in which it was set.
+					// If the configuraion object queried is not of the correct
+					// type, then invoking getMethod on its class will cause
+					// an NoSuchMethodException to be thrown. This will is 
+					// caught below.
+					//
+					// This can happen, if the user is requesting information
+					// that this configuration object does not have. It is
+					// however possible that a different configuration object
+					// does have this method. Therefore it is correct that a
+					// particular configuration object throws the error, but
+					// this does not necessarily mean that calling the method 
+					// on the cascading configuration object was wrong so the
+					// for loop in which we are now must continue to iterate
+					// through all the other objects.
+					//
+					Method methodInConfigObject = configuration.getClass().getMethod(
+						methodName, 
+						parameterTypes
+					);
+				
+					try {
+						// Try to invoke the method the user wants on the current
+						// configuration object. If it fails, because the parameter
+						// was not present in this object, the configuration object
+						// will throw a OptionNotPresentException which is wrapped
+						// in an InvocationTargetException.
 						//
-						return result;
-					}
-					if (methodIsIsMethod) {
-						// If we are here, the method called is a method
-						// indicating if a specific parameter was set in the
-						// configuration. If the current configuration returns
-						// false, because it has not been set there, it might 
-						// still have been set in one of the other 
-						// configuration objects.
-						//
-						boolean boolResult = (Boolean) result;
+						result = methodInConfigObject.invoke(configuration);
 						
-						if ( boolResult ) {
-							// If found we know it is there
-							return true;
+						if (methodIsGetMethod) {
+							// If we are here, all went well and we are returning
+							// the value of the parameter in the first 
+							// configuration object in which it was set.
+							//
+							return result;
 						}
-						// Otherwise continue for loop with other configuration 
-						// objects
-					}
-				} 
-				// The next two exceptions should never occur.
-				catch (IllegalArgumentException  e) { throw new RuntimeException(e); } 
-				catch (IllegalAccessException    e) { throw new RuntimeException(e); }
-				catch (InvocationTargetException e) { 
-					if (e.getTargetException() instanceof OptionNotPresentException) {
-						// In this case the variable was not found in the 
-						// current configuration object, so proceed with next one.
-					} else {
-						if (e.getTargetException() instanceof UnsupportedOperationException) {
+						if (methodIsIsMethod) {
+							// If we are here, the method called is a method
+							// indicating if a specific parameter was set in the
+							// configuration. If the current configuration returns
+							// false, because it has not been set there, it might 
+							// still have been set in one of the other 
+							// configuration objects.
+							//
+							boolean boolResult = (Boolean) result;
 							
-							UnsupportedOperationException myE = (UnsupportedOperationException) e.getTargetException();
-							
-							String errMsg = myE.getMessage() + "\n"
-								+ "This error probably occurrs because the "
-								+ "program is trying to access a method that "
-								+ "you have not annotated with @Option in the "
-								+ "configuration interface.\n";
- 
-							
-							log.log(java.util.logging.Level.SEVERE, errMsg, e);
-							
-							throw new RuntimeException(errMsg, e);
-							
+							if ( boolResult ) {
+								// If found we know it is there
+								return true;
+							}
+							// Otherwise continue for loop with other configuration 
+							// objects
+						}
+					} 
+					// The next two exceptions should never occur.
+					catch (IllegalArgumentException  e) { throw new RuntimeException(e); } 
+					catch (IllegalAccessException    e) { throw new RuntimeException(e); }
+					catch (InvocationTargetException e) { 
+						if (e.getTargetException() instanceof OptionNotPresentException) {
+							// In this case the variable was not found in the 
+							// current configuration object, so proceed with next one.
 						} else {
-							// In any other case we have a problem.
-							throw new RuntimeException(e);
+							if (e.getTargetException() instanceof UnsupportedOperationException) {
+								
+								UnsupportedOperationException myE = (UnsupportedOperationException) e.getTargetException();
+								
+								String errMsg = myE.getMessage() + "\n"
+									+ "This error probably occurrs because the "
+									+ "program is trying to access a method that "
+									+ "you have not annotated with @Option in the "
+									+ "configuration interface.\n";
+	 
+								
+								log.log(java.util.logging.Level.SEVERE, errMsg, e);
+								
+								throw new RuntimeException(errMsg, e);
+								
+							} else {
+								// In any other case we have a problem.
+								throw new RuntimeException(e);
+							}
 						}
 					}
 				}
+				catch (NoSuchMethodException e) {
+					//
+					// This can happen, if the configuration object does not 
+					// have the requested field.
+					//
+				}
 			}
-		}
-		catch (NoSuchMethodException e) {
-			//
-			// This can happen, if the configuration object does not 
-			// have the requested field.
-			//
 		}
 		// Should never happen, so throw an error.
 		catch (SecurityException     e) { throw new RuntimeException(e); }	
