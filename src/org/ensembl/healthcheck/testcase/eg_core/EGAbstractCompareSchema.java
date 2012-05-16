@@ -14,6 +14,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.SystemCommand;
 import org.ensembl.healthcheck.TestRunner;
+import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.testcase.generic.AbstractCompareSchema;
 import org.ensembl.healthcheck.util.ActionAppendable;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -27,7 +28,7 @@ import org.ensembl.healthcheck.util.DBUtils;
  * another.
  * </p>
  */
-public abstract class EGAbstractCompareSchema extends AbstractCompareSchema {
+public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 
 	protected final String mysqldiffBin = "/usr/local/bin/mysqldiff";
 	
@@ -57,6 +58,16 @@ public abstract class EGAbstractCompareSchema extends AbstractCompareSchema {
 	}
 	
 	/**
+	 * Should return the property key used to locate a target schema file
+	 */
+	protected abstract String getDefinitionFileKey();
+
+	/**
+	 * Should return the property key used to locate a target master schema
+	 */
+	protected abstract String getMasterSchemaKey();
+	
+	/**
 	 * @param compareSchemaInstance
 	 * <p>
 	 * 	Returns a concrete CompareSchemaStrategy which will compare schemas.
@@ -65,7 +76,7 @@ public abstract class EGAbstractCompareSchema extends AbstractCompareSchema {
 	 * </p>
 	 */
 	protected CompareSchemaStrategy createCompareSchemaStrategy(
-			AbstractCompareSchema compareSchemaInstance
+			EGAbstractCompareSchema compareSchemaInstance
 	) {
 			String definitionFileKey = getDefinitionFileKey();
 			String masterSchemaKey   = getMasterSchemaKey();
@@ -161,7 +172,7 @@ public abstract class EGAbstractCompareSchema extends AbstractCompareSchema {
 		Connection masterCon = compareSchemaStrategy.buildMasterConnection();
 		String masterShortName = DBUtils.getShortDatabaseName(masterCon);
 
-		final AbstractCompareSchema compareSchemaTest = this;
+		final EGAbstractCompareSchema compareSchemaTest = this;
 		DatabaseRegistryEntry[] databases = dbr.getAll();
 		
 		for (final DatabaseRegistryEntry dbre : databases) {
@@ -259,11 +270,11 @@ public abstract class EGAbstractCompareSchema extends AbstractCompareSchema {
  */
 abstract class CompareSchemaStrategy {
 	
-	protected final AbstractCompareSchema compareSchemaInstance;
+	protected final EGAbstractCompareSchema compareSchemaInstance;
 	protected Connection masterCon;
 	protected Logger logger;
 	
-	public CompareSchemaStrategy(AbstractCompareSchema compareSchemaInstance) {
+	public CompareSchemaStrategy(EGAbstractCompareSchema compareSchemaInstance) {
 		this.compareSchemaInstance = compareSchemaInstance;
 		this.logger = compareSchemaInstance.getLogger();
 	}
@@ -283,7 +294,7 @@ class CompareToSchemaFile extends CompareSchemaStrategy {
 	
 	protected String definitionFile;
 	
-	public CompareToSchemaFile(AbstractCompareSchema compareSchemaInstance, String definitionFile) {
+	public CompareToSchemaFile(EGAbstractCompareSchema compareSchemaInstance, String definitionFile) {
 		super(compareSchemaInstance);
 		logger.fine("Will use schema definition from " + definitionFile);
 		this.definitionFile = definitionFile;
@@ -323,7 +334,7 @@ class CompareToMasterSchema extends CompareSchemaStrategy {
 
 	protected String masterSchema;
 	
-	public CompareToMasterSchema(AbstractCompareSchema compareSchemaInstance, String masterSchema) {
+	public CompareToMasterSchema(EGAbstractCompareSchema compareSchemaInstance, String masterSchema) {
 		super(compareSchemaInstance);
 		logger.fine("Will master schema: " + masterSchema);
 		this.masterSchema = masterSchema;
