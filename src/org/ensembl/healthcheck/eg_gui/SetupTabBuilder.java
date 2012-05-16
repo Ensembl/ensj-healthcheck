@@ -154,6 +154,7 @@ public class SetupTabBuilder {
 		}
 
 		setupTab.databaseTabbedPaneWithSearchBox.getDatabasePane().addActionListener(setupTab.mysqlWidget);
+		setupTab.dbServerSelector.addActionListener(setupTab.mysqlWidget);
 		
 		JScrollPane treePane  = new JScrollPane(setupTab.tree);
 		
@@ -188,7 +189,7 @@ public class SetupTabBuilder {
 		Border noBorder = BorderFactory.createEmptyBorder(0, 0, 0, 0);
 		
 		setupTab.dbServerSelector          .setBorder(BorderFactory.createTitledBorder(noBorder, "Primary (where your database is):"));
-		setupTab.secondaryDbServerSelector .setBorder(BorderFactory.createTitledBorder(noBorder, "Secondary (Some tests require a secondary db server):"));
+		setupTab.secondaryDbServerSelector .setBorder(BorderFactory.createTitledBorder(noBorder, "Secondary (used by the ComparePreviousVersion* healthchecks):"));
 		
 		setupTab.databaseTabbedPaneWithSearchBox   .setBorder(BorderFactory.createTitledBorder(defaultEmptyBorder, "2. Select a database:"));
 
