@@ -225,8 +225,14 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 				continue;
 			}
 			
-			String patchFileNameBase = "patch_schema_for_" + dbre.getName() + ".sql";			
-			File patchFile = new File(patchFileNameBase); 
+			String patchFileNameBase = "schema_patch_from_"+compareSchemaTest.getShortTestName()+".sql";
+			String patchFileDir      = "external_reports/" + dbre.getName();
+			
+			File patchFileDirF = new File(patchFileDir);
+			
+			patchFileDirF.mkdirs();
+			
+			File patchFile = new File(patchFileDir + File.separatorChar + patchFileNameBase); 
 			
 			ReportManager.problem(compareSchemaTest, checkCon, 
 					"\n"
