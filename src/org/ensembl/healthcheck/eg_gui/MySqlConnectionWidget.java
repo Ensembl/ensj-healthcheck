@@ -158,42 +158,62 @@ public class MySqlConnectionWidget extends JPanel implements ActionListener {
 			return "No database has been selected.";
 		}
 		
-		List<String> param = createMysqlExecParameters();
-		
-		StringBuffer dbCmdLine = new StringBuffer();
-		
-		for(String currentParam : param) {
-			dbCmdLine.append(currentParam);
-			dbCmdLine.append(" ");
-		}
-		return dbCmdLine.toString().trim();
+		List<String> cmdLineParameter = createMysqlExecParametersFromGuiWidgets();
+		return join(cmdLineParameter, " ");
 	}
 
-	protected List<String> createMysqlExecParameters() {
+	protected String join(List<String> stringList, String separator) {
+
+		StringBuffer dbCmdLine = new StringBuffer();
+		
+		for(String currentParam : stringList) {
+			dbCmdLine.append(currentParam);
+			dbCmdLine.append(separator);
+		}
+		return dbCmdLine.toString().trim();		
+	}
+	
+	protected List<String> createMysqlExecParametersFromGuiWidgets() {
 		
 		int selectedIndex = dbServerSelector.getSelectedIndex();
 		ConfigureHost selectedDbServerConf = dbDetails.get(selectedIndex);
+		String selectedDatabaseName = getSelectedDatabaseName(); 
 		
+		return createMysqlExecParameters(
+			selectedDbServerConf.getHost(),
+			selectedDbServerConf.getPort(),
+			selectedDbServerConf.getUser(),
+			selectedDbServerConf.getPassword(),
+			selectedDatabaseName
+		);
+	}
+	
+	protected List<String> createMysqlExecParameters(
+		String host,
+		String port,
+		String user,
+		String password,
+		String dbName
+	) {
 		List<String> param = new LinkedList<String>();
 		
 		param.add("mysql");
 		param.add("--host");
-		param.add(selectedDbServerConf.getHost() );
+		param.add(host);
 		param.add("--port");
-		param.add(selectedDbServerConf.getPort());
+		param.add(port);
 		param.add("--user");
-		param.add(selectedDbServerConf.getUser());
+		param.add(user);
 		
-		if (!selectedDbServerConf.getPassword().isEmpty()) {
-			param.add("--password=" + selectedDbServerConf.getPassword());
+		if (!password.isEmpty()) {
+			param.add("--password=" + password);
 		}
 		
 		String selectedDatabaseName = getSelectedDatabaseName(); 
 		
-		if (selectedDatabaseName!=null) {
+		if (dbName!=null) {
 			param.add(selectedDatabaseName);
 		}
-
 		return param;
 	}
 
@@ -218,7 +238,7 @@ public class MySqlConnectionWidget extends JPanel implements ActionListener {
 		param.add("konsole");		
 		param.add("-e");			
 		param.addAll(
-			createMysqlExecParameters()
+				createMysqlExecParametersFromGuiWidgets()
 		);
 		
 		String[] cmdLineItems = param.toArray(new String[] { "" });
