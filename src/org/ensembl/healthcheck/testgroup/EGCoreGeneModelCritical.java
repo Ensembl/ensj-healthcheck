@@ -3,6 +3,7 @@ package org.ensembl.healthcheck.testgroup;
 import org.ensembl.healthcheck.GroupOfTests;
 import org.ensembl.healthcheck.testcase.eg_core.CircularAwareFeatureCoords;
 import org.ensembl.healthcheck.testcase.eg_core.DuplicateTopLevel;
+import org.ensembl.healthcheck.testcase.eg_core.EGCompareCoreSchema;
 import org.ensembl.healthcheck.testcase.eg_core.EnaSeqRegionName;
 import org.ensembl.healthcheck.testcase.eg_core.PeptideTranslationAttribs;
 import org.ensembl.healthcheck.testcase.eg_core.ProteinCodingGene;
@@ -46,6 +47,7 @@ public class EGCoreGeneModelCritical extends GroupOfTests {
 			CanonicalTranscriptCoding.class,
 			CircularAwareFeatureCoords.class, 
 			CompareSchema.class, 
+			EGCompareCoreSchema.class,
 			CoreForeignKeys.class,
 			DuplicateAssembly.class, 
 			DuplicateTopLevel.class,
