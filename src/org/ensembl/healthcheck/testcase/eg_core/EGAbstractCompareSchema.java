@@ -109,41 +109,17 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 	 * @param checkCon
 	 * 
 	 * <p>
-	 * 	Checks, if the schema versions of the two databases are identical. If
-	 * not, it will report this as a problem to the ReportManager.
-	 * </p>
-	 * <p>
-	 * 	Returns true or false depending on whether or not the schema versions
-	 * were identical.
+	 * 	Checks, if the schemas that will be compared are compatible with one
+	 * another. In core databases the relevant information will be in the 
+	 * schema_type and schema_version entries of the meta table, in variation
+	 * and funcgen schemas there is only the schema_type.
 	 * </p>
 	 * 
 	 */
-	protected boolean checkSameSchemaVersion(
+	abstract protected boolean assertSchemaCompatibility(
 			Connection masterCon, 
 			Connection checkCon
-	) {
-		String sql = "SELECT meta_value FROM meta WHERE meta_key='schema_version'";
-		String schemaVersionCheck  = DBUtils.getRowColumnValue(checkCon, sql);
-		String schemaVersionMaster = DBUtils.getRowColumnValue(masterCon, sql);
-		
-		if (!schemaVersionCheck.equals(schemaVersionMaster)) {
-
-			String checkShortName = DBUtils.getShortDatabaseName(checkCon);
-			
-			ReportManager.problem(this, checkCon, 
-
-					  "Database version error: You are comparing " 
-					+ checkShortName + " which has a version " + schemaVersionCheck 
-					+ " schema with a version " + schemaVersionMaster + " schema.\n"
-					+ "Please ensure the version of the database you are "
-					+ "checking is the same as the version of the schema to "
-					+ "which you are comparing and rerun the test."
-
-			);
-			return false;
-		}
-		return true;
-	}
+	);
 	
 	public boolean run(DatabaseRegistry dbr) {
 		
@@ -188,7 +164,7 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 			
 			if (
 				doSchemaVersionCheck 
-				&& !checkSameSchemaVersion(masterCon, checkCon)
+				&& !assertSchemaCompatibility(masterCon, checkCon)
 			) {
 				result = false;
 				continue;
@@ -223,7 +199,11 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 			boolean schemasAreEqual = patch.toString().trim().equals("");
 			
 			if (schemasAreEqual) {
-				ReportManager.correct(compareSchemaTest, checkCon, "");
+				ReportManager.correct(
+					compareSchemaTest, 
+					checkCon, 
+					"The schema of " + dbre.getName() + " is correct."
+				);
 				continue;
 			}
 			
