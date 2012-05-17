@@ -442,7 +442,7 @@ public class ConfigurableTestRunner extends TestRunner {
 		}
 		if(dbs.isEmpty()) {
 			throw new ConfigurationException(
-					"No test databases found - Parameters test_databases or test_division have not been set!");
+					"No test databases found - Parameters test_databases or test_divisions have not been set!");
 		}
 		return dbs;
 	}
