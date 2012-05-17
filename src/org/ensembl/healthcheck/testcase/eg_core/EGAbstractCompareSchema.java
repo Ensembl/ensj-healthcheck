@@ -30,7 +30,7 @@ import org.ensembl.healthcheck.util.DBUtils;
  */
 public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 
-	protected final String mysqldiffBin = "/usr/local/bin/mysqldiff";
+	protected final String mysqldiffBin = "mysqldiff";
 	
 	public boolean isDoSchemaVersionCheck() {
 		return doSchemaVersionCheck;
