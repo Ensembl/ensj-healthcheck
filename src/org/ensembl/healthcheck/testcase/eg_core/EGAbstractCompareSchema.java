@@ -184,12 +184,14 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 			final Connection checkCon = dbre.getConnection();
 			if (checkCon == masterCon) { continue; }
 			
+			logger.info("Checking schema of " + dbre.getName());
+			
 			if (
 				doSchemaVersionCheck 
 				&& !checkSameSchemaVersion(masterCon, checkCon)
 			) {
 				result = false;
-				break;
+				continue;
 			}
 		
 			DatabaseServer srv = dbre.getDatabaseServer();
@@ -225,14 +227,25 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 				continue;
 			}
 			
+			logger.info("Found schema differences.");
+			
 			String patchFileNameBase = "schema_patch_from_"+compareSchemaTest.getShortTestName()+".sql";
 			String patchFileDir      = "external_reports/" + dbre.getName();
 			
-			File patchFileDirF = new File(patchFileDir);
-			
-			patchFileDirF.mkdirs();
+			new File(patchFileDir).mkdirs();
 			
 			File patchFile = new File(patchFileDir + File.separatorChar + patchFileNameBase); 
+			
+			// Mysqldiff will insert the name of the master database into the
+			// report. If a temporary database was used, the name will be 
+			// different during every run. This will cause problems in the
+			// web interface, which assumes that the exact same error is
+			// given for the same problem every time.
+			//
+			// There fore the name of the master database is replaced with the
+			// constant string "master_database" here.
+			//
+			String patchedPatch = patch.toString().replaceAll(masterShortName, "master_database");
 			
 			ReportManager.problem(compareSchemaTest, checkCon, 
 					"\n"
@@ -241,13 +254,15 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 					+ "database to match the one of the master database:\n"
 					+ "\n"
 					+ "\n-----------------------------------\n"
-					+ patch
+					+ patchedPatch
 					+ "\n-----------------------------------\n"
 			);
 			try {
 				
+				logger.info("Storing patch file in " + patchFile.getCanonicalPath());
+				
 				PrintWriter out = new PrintWriter(patchFile);
-				out.println(patch);
+				out.println(patchedPatch);
 				out.close();
 				
 				ReportManager.problem(compareSchemaTest, checkCon, 
