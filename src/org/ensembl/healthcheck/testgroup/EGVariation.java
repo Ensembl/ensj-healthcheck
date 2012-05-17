@@ -1,6 +1,7 @@
 package org.ensembl.healthcheck.testgroup;
 
 import org.ensembl.healthcheck.GroupOfTests;
+import org.ensembl.healthcheck.testcase.eg_core.EGCompareVariationSchema;
 import org.ensembl.healthcheck.testcase.variation.AlleleFrequencies;
 import org.ensembl.healthcheck.testcase.variation.CompareVariationSchema;
 import org.ensembl.healthcheck.testcase.variation.EmptyVariationTables;
@@ -29,6 +30,7 @@ public class EGVariation extends GroupOfTests {
 
 			AlleleFrequencies.class, 
 			CompareVariationSchema.class,
+			EGCompareVariationSchema.class,
 			EmptyVariationTables.class, 
 			FlankingUpDownSeq.class,
 			ForeignKeyCoreId.class, 
