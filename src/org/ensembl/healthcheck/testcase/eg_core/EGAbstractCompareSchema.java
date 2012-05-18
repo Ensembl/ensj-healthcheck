@@ -285,10 +285,22 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 	) {
 		
 		String sql = "SELECT meta_value FROM meta WHERE meta_key='schema_type'";
-		String schemaVersionCheck  = DBUtils.getRowColumnValue(checkCon, sql);
-		String schemaVersionMaster = DBUtils.getRowColumnValue(masterCon, sql);
-		
-		if (!schemaVersionCheck.equals(schemaVersionMaster)) {
+		String schemaTypeCheck  = DBUtils.getRowColumnValue(checkCon, sql);
+		String schemaTypeMaster = DBUtils.getRowColumnValue(masterCon, sql);
+
+		if (schemaTypeMaster.isEmpty()) {
+			logger.severe("Can't find schema_type in meta table of the master database!");
+			return false;
+		}
+		if (schemaTypeCheck.isEmpty()) {
+			
+			String checkShortName = DBUtils.getShortDatabaseName(checkCon);
+			
+			logger.severe("Can't find schema_type in meta table of " + checkShortName + "!");
+			return false;
+		}
+
+		if (!schemaTypeCheck.equals(schemaTypeMaster)) {
 			
 			ReportManager.problem(this, checkCon,
 				"Database schema type error: The schema type of your database "
@@ -321,10 +333,19 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 		String schemaVersionCheck  = DBUtils.getRowColumnValue(checkCon, sql);
 		String schemaVersionMaster = DBUtils.getRowColumnValue(masterCon, sql);
 		
+		String checkShortName = DBUtils.getShortDatabaseName(checkCon);
+		
+		if (schemaVersionMaster.isEmpty()) {
+			logger.severe("Can't find schema_version in meta table of the master database!");
+			return false;
+		}
+		if (schemaVersionCheck.isEmpty()) {
+			logger.severe("Can't find schema_version in meta table of the " + checkShortName + "!");
+			return false;
+		}
+		
 		if (!schemaVersionCheck.equals(schemaVersionMaster)) {
 
-			String checkShortName = DBUtils.getShortDatabaseName(checkCon);
-			
 			logger.severe(
 				"Schema versions in " + checkShortName + " and the master "
 				+ "database differ. The test will be aborted."
@@ -383,7 +404,11 @@ class CompareToSchemaFile extends CompareSchemaStrategy {
 	
 	public CompareToSchemaFile(EGAbstractCompareSchema compareSchemaInstance, String definitionFile) {
 		super(compareSchemaInstance);
-		logger.fine("Will use schema definition from " + definitionFile);
+		try {
+			logger.info("Will use schema definition from " + new File(definitionFile).getCanonicalPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		this.definitionFile = definitionFile;
 	}
 	
