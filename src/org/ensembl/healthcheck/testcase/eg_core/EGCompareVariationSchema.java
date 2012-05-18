@@ -37,8 +37,6 @@ public class EGCompareVariationSchema extends EGAbstractCompareSchema {
 			Connection checkCon
 	) {		
 		return 
-			assertSchemaTypesCompatible(masterCon, checkCon)
-			&& assertSchemaVersionCompatible(masterCon, checkCon)
-		;
+			assertSchemaTypesCompatible(masterCon, checkCon);
 	}
 }
