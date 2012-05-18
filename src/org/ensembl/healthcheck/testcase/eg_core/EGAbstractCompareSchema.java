@@ -33,11 +33,11 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 	protected final String mysqldiffBin = "mysqldiff";
 	
 	public boolean isDoSchemaVersionCheck() {
-		return doSchemaVersionCheck;
+		return doSchemaCompatibilityChecks;
 	}
 
 	public void setDoSchemaVersionCheck(boolean doSchemaVersionCheck) {
-		this.doSchemaVersionCheck = doSchemaVersionCheck;
+		this.doSchemaCompatibilityChecks = doSchemaVersionCheck;
 	}
 
 	public boolean isTolerant() {
@@ -48,13 +48,13 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 		this.tolerant = tolerant;
 	}
 
-	protected boolean doSchemaVersionCheck = true;
+	protected boolean doSchemaCompatibilityChecks = true;
 	protected boolean tolerant;
 	
 	public EGAbstractCompareSchema() {
 
 		tolerant = true;
-		doSchemaVersionCheck = true;
+		doSchemaCompatibilityChecks = true;
 	}
 	
 	/**
@@ -124,6 +124,7 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 	public boolean run(DatabaseRegistry dbr) {
 		
 		boolean result = true;
+		boolean somethingWasChecked = false;
 		
 		CompareSchemaStrategy compareSchemaStrategy = createCompareSchemaStrategy(this);
 
@@ -163,7 +164,7 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 			logger.info("Checking schema of " + dbre.getName());
 			
 			if (
-				doSchemaVersionCheck 
+				doSchemaCompatibilityChecks 
 				&& !assertSchemaCompatibility(masterCon, checkCon)
 			) {
 				result = false;
@@ -172,6 +173,8 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 		
 			DatabaseServer srv = dbre.getDatabaseServer();
 			final StringBuffer patch = new StringBuffer();
+			
+			logger.info("Running " + mysqldiffBin);
 			
 			systemCommand.runCmd(
 				new String[] {
@@ -196,7 +199,10 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 				}
 			);
 			
+			logger.info("Done running " + mysqldiffBin);
+			
 			boolean schemasAreEqual = patch.toString().trim().equals("");
+			somethingWasChecked = true;
 			
 			if (schemasAreEqual) {
 				ReportManager.correct(
@@ -256,6 +262,19 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 			}
 			
 		}
+
+		if (!somethingWasChecked) {
+			
+			// Depending on the users configuration this doesn't have to be an
+			// error, but most of the time it will be a misconfiguration.
+			//
+			ReportManager.correct(
+				compareSchemaTest, 
+				masterCon, 
+				"Warning: Nothing was compared."
+			);
+		}
+		
 		compareSchemaStrategy.cleanup();
 		return result;
 	}
