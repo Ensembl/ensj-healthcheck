@@ -47,7 +47,7 @@ public interface ConfigureMiscProperties {
 	//
 	// org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema
 	//
-	@Option(longName = "funcgen_schema", description = "Parameter used only in "
+	@Option(longName = "funcgen_schema.file", description = "Parameter used only in "
 		+ "and org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema"
 	)
 	String getFuncgenSchemaFile();
@@ -57,7 +57,7 @@ public interface ConfigureMiscProperties {
 	//
 	// org.ensembl.healthcheck.testcase.variation.CompareVariationSchema
 	//
-	@Option(longName = "variation_schema", description = "Parameter used only in "
+	@Option(longName = "variation_schema.file", description = "Parameter used only in "
 		+ "org.ensembl.healthcheck.testcase.variation.CompareVariationSchema "
 	)
 	String getVariationSchemaFile();
