@@ -259,6 +259,73 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 		compareSchemaStrategy.cleanup();
 		return result;
 	}
+	
+	protected boolean assertSchemaTypesCompatible(
+			Connection masterCon,
+			Connection checkCon
+	) {
+		
+		String sql = "SELECT meta_value FROM meta WHERE meta_key='schema_type'";
+		String schemaVersionCheck  = DBUtils.getRowColumnValue(checkCon, sql);
+		String schemaVersionMaster = DBUtils.getRowColumnValue(masterCon, sql);
+		
+		if (!schemaVersionCheck.equals(schemaVersionMaster)) {
+			
+			ReportManager.problem(this, checkCon,
+				"Database schema type error: The schema type of your database "
+				+ "is not that of the database checked." 
+			);
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * @param masterCon
+	 * @param checkCon
+	 * 
+	 * <p>
+	 * 	Checks, if the schema versions of the two databases are identical. If
+	 * not, it will report this as a problem to the ReportManager.
+	 * </p>
+	 * <p>
+	 * 	Returns true or false depending on whether or not the schema versions
+	 * were identical.
+	 * </p>
+	 * 
+	 */
+	protected boolean assertSchemaVersionCompatible(
+			Connection masterCon, 
+			Connection checkCon
+	) {
+		String sql = "SELECT meta_value FROM meta WHERE meta_key='schema_version'";
+		String schemaVersionCheck  = DBUtils.getRowColumnValue(checkCon, sql);
+		String schemaVersionMaster = DBUtils.getRowColumnValue(masterCon, sql);
+		
+		if (!schemaVersionCheck.equals(schemaVersionMaster)) {
+
+			String checkShortName = DBUtils.getShortDatabaseName(checkCon);
+			
+			logger.severe(
+				"Schema versions in " + checkShortName + " and the master "
+				+ "database differ. The test will be aborted."
+			);
+			
+			ReportManager.problem(this, checkCon, 
+
+					  "Database version error: You are comparing " 
+					+ checkShortName + " which has a version " + schemaVersionCheck 
+					+ " schema with a version " + schemaVersionMaster + " schema.\n"
+					+ "Please ensure the version of the database you are "
+					+ "checking is the same as the version of the schema to "
+					+ "which you are comparing and rerun the test."
+
+			);
+			return false;
+		}
+		logger.info("Good: Schema versions are the same.");
+		return true;
+	}
 }
 
 /**
