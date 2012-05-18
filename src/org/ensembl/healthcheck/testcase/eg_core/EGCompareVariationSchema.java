@@ -10,7 +10,7 @@ import org.ensembl.healthcheck.util.DBUtils;
 public class EGCompareVariationSchema extends EGAbstractCompareSchema {
 
 	public EGCompareVariationSchema() {
-		setTeamResponsible(Team.VARIATION);
+		setTeamResponsible(Team.ENSEMBL_GENOMES);
 		addAppliesToType(DatabaseType.VARIATION);
 	}
 
