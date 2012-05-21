@@ -85,7 +85,8 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
 					+ "', db_type) > 0");
 
 			// remove the list of valid biotypes from the list of biotypes in the database, the remainder (if any) are invalid
-			Collection<String> dbOnly = CollectionUtils.subtract(dbBiotypes, productionBiotypes);
+			@SuppressWarnings("unchecked")
+      Collection<String> dbOnly = CollectionUtils.subtract(dbBiotypes, productionBiotypes);
 
 			if (!dbOnly.isEmpty()) {
 
