@@ -2,6 +2,7 @@ package org.ensembl.healthcheck.testcase.generic;
 
 import static org.ensembl.healthcheck.util.CollectionUtils.createArrayList;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -24,15 +25,12 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.TestRunner;
-import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.util.ConnectionBasedSqlTemplateImpl;
 import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.DefaultObjectRowMapper;
 import org.ensembl.healthcheck.util.PoorLruMap;
 import org.ensembl.healthcheck.util.RowMapper;
-
-import java.io.File;
 
 /**
  * A re-implementation of the {@link CompareSchema} health-check code but the
@@ -58,13 +56,13 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 	private static final int MAX_CACHE_SIZE = 3;
 	
 	private boolean usingTemporaryDatabase;
+	private String masterShortName;
 	
 	/* comparison flags */
 	private static final int COMPARE_LEFT  = 0;
 	private static final int COMPARE_RIGHT = 1;
 	private static final int COMPARE_BOTH  = 2;
 	
-	private String masterShortName;
 
 	/**
 	 * An enum to contain the types of tests we allow a compare schema to perform.
@@ -150,6 +148,22 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 	public boolean applyTest(TestTypes type) {
 		return testTypes.contains(type);
 	}
+	
+	public boolean isUsingTemporaryDatabase() {
+    return usingTemporaryDatabase;
+  }
+	
+	public void setUsingTemporaryDatabase(boolean usingTemporaryDatabase) {
+    this.usingTemporaryDatabase = usingTemporaryDatabase;
+  }
+	
+	public String getMasterShortName() {
+    return masterShortName;
+  }
+	
+	public void setMasterShortName(String masterShortName) {
+    this.masterShortName = masterShortName;
+  }
 
 	/**
 	 * Compare each database with the master.
@@ -222,10 +236,10 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 			logger.fine("Will use schema definition from " + definitionFile);
 		}
 		
-		usingTemporaryDatabase = definitionFile != null;
+		setUsingTemporaryDatabase(definitionFile != null);
 
 		try {
-			if (usingTemporaryDatabase) {
+			if (isUsingTemporaryDatabase()) {
 
 				logger.info("About to import " + definitionFile);
 				try {
@@ -252,7 +266,7 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 				}
 			}
 
-			masterShortName = DBUtils.getShortDatabaseName(masterCon);
+			setMasterShortName(DBUtils.getShortDatabaseName(masterCon));
 			for (DatabaseRegistryEntry dbre : databases) {
 				
 				DatabaseType type = dbre.getType();
@@ -261,7 +275,7 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 					Connection checkCon = dbre.getConnection();
 					String checkShortName = DBUtils.getShortDatabaseName(checkCon);
 					if (checkCon != masterCon) {
-						logger.info("Comparing " + checkShortName + " with " + masterShortName);
+						logger.info("Comparing " + checkShortName + " with " + getMasterShortName());
 						// check that both schemas have the same tables
 						somethingWasCompared = true;
 						int directionFlag = COMPARE_BOTH;
@@ -315,7 +329,7 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 		finally {
 			
 			// avoid leaving temporary DBs lying around if something bad happens
-			if (usingTemporaryDatabase && masterCon != null) {
+			if (isUsingTemporaryDatabase() && masterCon != null) {
 				// double-check to make sure the DB we're going to remove is a
 				// temp one
 				String dbName = DBUtils.getShortDatabaseName(masterCon);
@@ -438,12 +452,9 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 	 * Therefore the messages the test produces are rid of the name of the
 	 * master database, if the master is a temporary database.
 	 */
-	String getMasterNameForMsg(Connection master) {
-		
+	protected String getMasterNameForMsg(Connection master) {
 		String masterNameForMsg;
-
-		if (usingTemporaryDatabase) {
-			
+		if (isUsingTemporaryDatabase()) {
 			File f = new File(System.getProperty(getDefinitionFileKey()));
 			masterNameForMsg = f.getAbsolutePath();
 		} else {
@@ -452,11 +463,11 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 		return masterNameForMsg;
 	}
 	
-	String getDbNameForMsg(Connection db) {
+	protected String getDbNameForMsg(Connection db) {
 		
 		String dbShortName = DBUtils.getShortDatabaseName(db);
 		
-		if (dbShortName.equals(masterShortName)) {
+		if (dbShortName.equals(getMasterShortName())) {
 			return getMasterNameForMsg(db);
 		}
 		return dbShortName;
@@ -467,25 +478,13 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 	 * See comment for {@link getMasterNameForMsg}
 	 * 
 	 */
-	Connection getMasterForReportManager(Connection master) {
-	
-		Connection masterForReportManager;
-		
-		if (usingTemporaryDatabase) {
-			masterForReportManager = null;
-		} else {
-			masterForReportManager = master;
-		}
-		return masterForReportManager;
+	protected Connection getMasterForReportManager(Connection master) {
+		return (isUsingTemporaryDatabase()) ? null : master;
 	}
 
-	Connection getConnectionForReportManager(Connection db) {
-		
-		Connection connectionForReportManager;
-		
+	protected Connection getConnectionForReportManager(Connection db) {
 		String dbShortName = DBUtils.getShortDatabaseName(db);
-		
-		if (dbShortName.equals(masterShortName)) {
+		if (dbShortName.equals(getMasterShortName())) {
 			return getMasterForReportManager(db);
 		}
 		return db;
@@ -519,7 +518,6 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 
 		boolean okay = true;
 		
-		String masterName = DBUtils.getShortDatabaseName(master);
 		String targetName = DBUtils.getShortDatabaseName(target);
 		
 		String masterNameForMsg           = getMasterNameForMsg(master);
