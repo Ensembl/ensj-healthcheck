@@ -16,7 +16,6 @@
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
@@ -28,100 +27,95 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.Utils;
 
-
-
 /**
- * An EnsEMBL Healthcheck test case that looks for correct analysis table structure
+ * An EnsEMBL Healthcheck test case that looks for correct analysis table
+ * structure
  */
 
 public class AnalysisLogicName extends SingleDatabaseTestCase {
 
-        /**
-         * Create the analysis table.
-         */
-        public AnalysisLogicName() {
+  /**
+   * Create the analysis table.
+   */
+  public AnalysisLogicName() {
 
-                addToGroup("post_genebuild");
-                addToGroup("release");
-                addToGroup("compara-ancestral");
-                addToGroup("id_mapping");
-                addToGroup("pre-compara-handover");
-                addToGroup("post-compara-handover");
+    addToGroup("post_genebuild");
+    addToGroup("release");
+    addToGroup("compara-ancestral");
+    addToGroup("id_mapping");
+    addToGroup("pre-compara-handover");
+    addToGroup("post-compara-handover");
 
-                setDescription("Check the analysis data is correct.");
-                setSecondTeamResponsible(Team.GENEBUILD);
+    setDescription("Check the analysis data is correct.");
+    setSecondTeamResponsible(Team.GENEBUILD);
 
-        }
+  }
 
-       /**
-         * Check the data in the analysis table.
-         * 
-         * @param dbre
-         *          The database to use.
-         * @return true if all data is there and in the correct format.
-         */
+  /**
+   * Check the data in the analysis table.
+   * 
+   * @param dbre
+   *          The database to use.
+   * @return true if all data is there and in the correct format.
+   */
 
+  public boolean run(DatabaseRegistryEntry dbre) {
 
-        public boolean run(DatabaseRegistryEntry dbre) {
+    boolean result = true;
+    Connection con = dbre.getConnection();
 
-                boolean result = true;
-                Connection con = dbre.getConnection();
+    result &= checkdbVersion(con);
 
+    result &= checkLowerCase(con);
 
-                result &= checkdbVersion(con);
-                
-                result &= checkLowerCase(con);
+    return result;
+  }
 
-                return result;
-        }
+  // ---------------------------------------------------------------------
 
+  /**
+   * Check that db_version is not empty if not a raw compute
+   */
 
-        // ---------------------------------------------------------------------
+  private boolean checkdbVersion(Connection con) {
 
+    boolean result = true;
+    int rows = DBUtils.getRowCount(con,
+        "SELECT COUNT(*) FROM analysis where isnull(db_version) ");
+    if (rows > 0) {
+      result = false;
+      ReportManager.problem(this, con, rows
+          + " Analyses are missing db_version");
+    }
 
-       /**
-         * Check that db_version is not empty if not a raw compute
-         */
+    return result;
+  }
 
+  // ---------------------------------------------------------------------
 
-        private boolean checkdbVersion(Connection con) {
+  /**
+   * Check all logic names are lower case
+   */
 
-                boolean result = true;
-                int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM analysis where isnull(db_version) " );
-                if (rows > 0) {
-                         result = false ;
-                         ReportManager.problem(this, con,  rows + " Analyses are missing db_version");
-                }
+  private boolean checkLowerCase(Connection con) {
 
-                return result;
-        }
+    boolean result = true;
 
+    String[] logicNames = DBUtils
+        .getColumnValues(con,
+            "SELECT logic_name FROM analysis where BINARY logic_name != lower(logic_name) ");
+    if (logicNames.length > 0) {
+      ReportManager.problem(
+          this,
+          con,
+          "The following logic_names are not lower case: "
+              + Utils.arrayToString(logicNames, ","));
+    }
+    else {
+      ReportManager.correct(this, con, "All logic names are lower case");
+    }
 
-
-        // ---------------------------------------------------------------------
-
-
-
-       /**
-         * Check all logic names are lower case 
-         */
-
-        private boolean checkLowerCase(Connection con) {
-
-                boolean result = true;
-
-                String[] logicNames = DBUtils.getColumnValues(con, "SELECT logic_name FROM analysis where BINARY logic_name != lower(logic_name) ");
-                if (logicNames.length > 0) {
-                        ReportManager.problem(this, con, "The following logic_names are not lower case: " + Utils.arrayToString(logicNames,",") );
-                } else {
-                        ReportManager.correct(this, con, "All logic names are lower case");
-                }
-
-                return result;
-        }
-
-
+    return result;
+  }
 
 }
-
-
