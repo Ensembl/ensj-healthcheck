@@ -55,7 +55,7 @@ import java.io.File;
  */
 public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 
-	private static final int MAX_CACHE_SIZE = 2;
+	private static final int MAX_CACHE_SIZE = 3;
 	
 	private boolean usingTemporaryDatabase;
 	
