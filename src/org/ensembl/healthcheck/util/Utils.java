@@ -35,8 +35,6 @@ import java.util.StringTokenizer;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
-import org.ensembl.healthcheck.ConfigurableTestRunner;
-
 /**
  * General utilities (not database-related). For database-related utilities, see
  * {@link DBUtils DBUtils}.
@@ -73,13 +71,9 @@ public final class Utils {
 		}
 
 		Properties dbProps = Utils.readSimplePropertiesFile(propsFile);
-		Enumeration e = dbProps.propertyNames();
-		String name, value;
 		log.fine("\n---------------------------------------------------\n");
-		while (e.hasMoreElements()) {
-			name = (String) e.nextElement();
-			value = dbProps.getProperty(name);
-			
+		for(String name: dbProps.stringPropertyNames()) {
+			String value = dbProps.getProperty(name);
 			log.fine("name = " + name + " value = " + value);
 			// add to System
 			System.setProperty(name, value);
@@ -138,21 +132,21 @@ public final class Utils {
 
 	}
 
-	/**
-	 * Check that certain properties are set.
-	 */
-	private static void checkProperties() {
-
-		// check that properties that need to be set are set
-		String[] requiredProps = { "port", "host", "user" };
-		for (int i = 0; i < requiredProps.length; i++) {
-			if (System.getProperty(requiredProps[i]) == null) {
-				String msg = "WARNING: " + requiredProps[i] + " is not set in config file or on command line - cannot connect to database";
-				System.err.println(msg);
-				throw new RuntimeException(msg);
-			}
-		}
-	}
+//	/**
+//	 * Check that certain properties are set.
+//	 */
+//	private static void checkProperties() {
+//
+//		// check that properties that need to be set are set
+//		String[] requiredProps = { "port", "host", "user" };
+//		for (int i = 0; i < requiredProps.length; i++) {
+//			if (System.getProperty(requiredProps[i]) == null) {
+//				String msg = "WARNING: " + requiredProps[i] + " is not set in config file or on command line - cannot connect to database";
+//				System.err.println(msg);
+//				throw new RuntimeException(msg);
+//			}
+//		}
+//	}
 
 	// -------------------------------------------------------------------------
 	/**
@@ -190,13 +184,10 @@ public final class Utils {
 	 * @param l
 	 *          The List to be printed.
 	 */
-	public static void printList(List l) {
-
-		Iterator it = l.iterator();
-		while (it.hasNext()) {
-			System.out.println((String) it.next());
-		}
-
+	public static void printList(List<? extends Object> l) {
+	  for(Object o: l) {
+	    System.out.println(String.valueOf(o));
+	  }
 	} // printList
 
 	// -------------------------------------------------------------------------
@@ -210,19 +201,16 @@ public final class Utils {
 	 * @return A String containing the elements of list separated by delim. No
 	 *         trailing delimiter.
 	 */
-	public static String listToString(List list, String delim) {
-
-		StringBuffer buf = new StringBuffer();
-		Iterator it = list.iterator();
+	public static String listToString(List<? extends Object> list, String delim) {
+	  StringBuilder buf = new StringBuilder();
+		Iterator<?> it = list.iterator();
 		while (it.hasNext()) {
-			buf.append((String) it.next());
+			buf.append(String.valueOf(it.next()));
 			if (it.hasNext()) {
 				buf.append(delim);
 			}
 		}
-
 		return buf.toString();
-
 	}
 
 	// -------------------------------------------------------------------------
@@ -257,14 +245,10 @@ public final class Utils {
 	 * @param m
 	 *          The map to use.
 	 */
-	public static void printKeys(Map<String, String> m) {
-
-		for (String s : m.keySet()) {
-			
+	public static void printKeys(Map<? extends Object, ? extends Object> m) {
+		for (Object s : m.keySet()) {
 			System.out.println(s);
-			
 		}
-
 	} // printKeys
 	
 //-------------------------------------------------------------------------
@@ -294,11 +278,9 @@ public final class Utils {
 	 *          The array to be printed.
 	 */
 	public static void printArray(String[] a) {
-
 		for (int i = 0; i < a.length; i++) {
 			System.out.println(a[i]);
 		}
-
 	} // printArray
 
 	// -------------------------------------------------------------------------
@@ -308,12 +290,10 @@ public final class Utils {
 	 * @param e
 	 *          The enumeration to be printed.
 	 */
-	public static void printEnumeration(Enumeration e) {
-
+	public static void printEnumeration(Enumeration<?> e) {
 		while (e.hasMoreElements()) {
 			System.out.println(e.nextElement());
 		}
-
 	} // printEnumeration
 
 	// -------------------------------------------------------------------------
@@ -457,7 +437,7 @@ public final class Utils {
 	 */
 	public static String[] readTextFile(String name) {
 
-		List lines = new ArrayList();
+		List<String> lines = new ArrayList<String>();
 
 		BufferedReader br = null;
 
@@ -568,7 +548,7 @@ public final class Utils {
 	 */
 	public static String[] getSubDirs(String parentDir) {
 
-		List dirs = new ArrayList();
+		List<String> dirs = new ArrayList<String>();
 
 		File parentDirFile = new File(parentDir);
 
@@ -603,7 +583,7 @@ public final class Utils {
 	 */
 	public static Object[] filterArray(Object[] source, Object[] remove) {
 
-		List result = new ArrayList();
+		List<Object> result = new ArrayList<Object>();
 
 		for (int i = 0; i < source.length; i++) {
 
@@ -705,18 +685,12 @@ public final class Utils {
 	/**
 	 * Convert a list of Longs to an array of longs.
 	 */
-	public static long[] listToArrayLong(List list) {
-
+	public static long[] listToArrayLong(List<? extends Number> list) {
 		long[] array = new long[list.size()];
-
-		Iterator it = list.iterator();
 		int i = 0;
-		while (it.hasNext()) {
-
-			array[i++] = ((Long) it.next()).longValue();
-
+		for(Number n: list) {
+		  array[i++] = n.longValue();
 		}
-
 		return array;
 
 	}
