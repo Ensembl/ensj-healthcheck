@@ -244,7 +244,7 @@ sub propagate {
     = @_;
 
   my @types =
-    qw(manual_ok_all_releases manual_ok_this_assembly manual_ok_this_genebuild);
+    qw(manual_ok_all_releases manual_ok_this_assembly manual_ok_this_genebuild manual_ok_this_regulatory_build);
 
   my $select_sth = $dbi->prepare(
 "SELECT r.first_session_id, r.species, r.database_type, r.timestamp, r.testcase, r.result, r.text, a.person, a.action,a.comment,a.created_at, a.modified_at, a.created_by, a.modified_by FROM report r, annotation a WHERE a.report_id=r.report_id AND r.database_name=? AND a.action=?"
