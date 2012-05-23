@@ -102,8 +102,8 @@ if ( !$new_dbname ) {
 
   }
 
-  # create new session for new release
-  $session_id = create_session( $dbi1, $old_release, $new_release );
+  # create a new session for new release or reuse an existing one
+  $session_id = session_id( $dbi1, $old_release, $new_release );
 
 }
 else {
@@ -144,10 +144,9 @@ my $assembly_cache = create_assembly_cache( $dbi1, $dbi2, $dbi_prev );
 my $regulatory_build_cache = create_regulation_cache($dbi1, $dbi2, $dbi_prev);
 
 # propagate! propagate!
-propagate( $dbi1, $dbi_prev, $old_release, $new_release, $session_id,
-  $old_to_new_db_name, $meta_cache );
+propagate( $dbi1, $dbi_prev, $old_release, $new_release);
 
-set_end_time( $dbi1, $session_id );
+set_end_time( $dbi1 );
 
 # --------------------------------------------------------------------------------
 
@@ -168,12 +167,7 @@ sub create_db_name_cache {
     $hc_like = "%_${old_release}_%";
   }
   my @old_dbs = @{$healthcheck_dbi->selectcol_arrayref($sql, {}, $hc_like)};
-
-  # get list of new databases
-  my $new_like = ($new_dbname) ? 
-    "%$new_dbname%" :     # get a single DB
-    "%_${new_release}_%"; # get all DBs; note this will exclude master_schema_48 etc
-  my @new_dbs = @{$server_dbi->selectcol_arrayref("SHOW DATABASES LIKE ?", {}, $new_like)};
+  my @new_dbs = @{get_new_databases($server_dbi, $new_release, $new_dbname)};
 
   # create mapping
   my %cache;
@@ -190,6 +184,29 @@ sub create_db_name_cache {
 
 # --------------------------------------------------------------------------------
 
+sub get_new_databases {
+  my ($server_dbi, $new_release, $new_dbname) = @_;
+  my $new_like = ($new_dbname) ? 
+    "%$new_dbname%" :     # get a single DB
+    "%_${new_release}_%"; # get all DBs; note this will exclude master_schema_48 etc
+  my $new_dbs = $server_dbi->selectcol_arrayref("SHOW DATABASES LIKE ?", {}, $new_like);
+  return $new_dbs;
+}
+
+# --------------------------------------------------------------------------------
+# Returns databases which could be parsed by the extract_prefix code
+#
+
+sub get_valid_databases {
+  my ($server_dbi, $release) = @_;
+  my @databases = grep {
+    (extract_prefix($_)) ? 1 : 0
+  } @{get_new_databases($server_dbi, $release)};
+  return \@databases;
+}
+
+# --------------------------------------------------------------------------------
+
 sub find_match {
   my ($old_db, @new_dbs) = @_;
   foreach my $new_db (@new_dbs) {
@@ -202,46 +219,29 @@ sub find_match {
 
 sub compare_dbs {
   my ( $old, $new ) = @_;
+  return extract_prefix($old) eq extract_prefix($new);
+}
 
+# --------------------------------------------------------------------------------
+
+sub extract_prefix {
+  my ($dbname) = @_;
   my $regex = qr/(
     \A [a-z0-9]+ _ [a-z0-9]+  #binomial component 
     (?: _ [a-z0-9]+)?         #trinomial component or group
     _ [a-z]+                  #group
     ) _ \d                    # _ release number of some description
   /xms;
-
-  my ($old_prefix) = $old =~ $regex;
-  my ($new_prefix) = $new =~ $regex;
-  return $old_prefix eq $new_prefix;
-}
-
-# --------------------------------------------------------------------------------
-
-sub create_session {
-
-  my ( $dbi, $old_release, $new_release ) = @_;
-
-  my $sth = $dbi->prepare(
-    "INSERT INTO session (db_release,config,start_time) VALUES (?,?,NOW())");
-  $sth->execute( $new_release,
-    "Propagation of entries from release $old_release to release $new_release" )
-    || die "Error creating new session\n";
-
-  my $session_id = $sth->{'mysql_insertid'};
-
-  print "Created session ID $session_id for propagation\n" unless $quiet;
-
-  return $session_id;
-
+  my ($prefix) = $dbname =~ $regex;
+  return $prefix;
 }
 
 # --------------------------------------------------------------------------------
 
 sub propagate {
+  my ($dbi, $dbi_prev, $old_release, $new_release) = @_;
 
-  my ( $dbi, $dbi_prev, $old_release, $new_release, $propagation_session_id,
-    $old_to_new_db_name, $meta_cache )
-    = @_;
+  my %propagated_new_databases;
 
   my @types =
     qw(manual_ok_all_releases manual_ok_this_assembly manual_ok_this_genebuild manual_ok_this_regulatory_build);
@@ -281,6 +281,12 @@ sub propagate {
           $action,           $comment, $created_at,    $modified_at,
           $created_by,       $modified_by
         ) = @$row;
+        
+        #If we have already processed this DB then we skip it
+        if(has_been_propagated($new_database, $type)) {
+          print "Skipping $new_database as it has already been propagated\n" if ! $quiet;
+          next;
+        }
 
         # type eq manual_ok_this_assembly:
         # will only need to propagate if it is the same assembly
@@ -304,9 +310,9 @@ sub propagate {
 
         # create new report
         $insert_report_sth->execute(
-          $first_session_id, $propagation_session_id, $new_database,
-          $database_type,    $species,                $timestamp,
-          $testcase,         $result,                 $text
+          $first_session_id, $session_id,   $new_database,
+          $database_type,    $species,      $timestamp,
+          $testcase,         $result,       $text
         ) || die "Error inserting report";
         my $report_id = $insert_report_sth->{'mysql_insertid'};
 
@@ -319,6 +325,8 @@ sub propagate {
         $counts{$type}++;
 
       }
+      $propagated_new_databases{$new_database} = 1;
+      record_propagation($new_database, $type);
 
       print "\t$old_database\t$count\n" if ( !$quiet && $count > 0 );
     }
@@ -327,6 +335,9 @@ sub propagate {
 
   }    # foreach type
 
+  flag_non_propagated_dbs(\%propagated_new_databases);
+  
+  return;
 }
 
 # --------------------------------------------------------------------------------
@@ -368,6 +379,32 @@ sub new_regulatory_build {
 
 # --------------------------------------------------------------------------------
 
+# Combines the other two session methods to add to an existing session
+# or create a new one if there is not one already available.
+
+sub session_id {
+  my ($dbi, $old_release, $new_release) = @_;
+  my $last_session_id = get_latest_session_id($dbi, $new_release);
+  return $last_session_id if $last_session_id >= 0;
+  return create_session($old_release, $new_release);
+} 
+
+# --------------------------------------------------------------------------------
+
+sub create_session {
+  my ( $dbi, $old_release, $new_release ) = @_;
+  my $sth = $dbi->prepare(
+    "INSERT INTO session (db_release,config,start_time) VALUES (?,?,NOW())");
+  $sth->execute( $new_release,
+    "Propagation of entries from release $old_release to release $new_release" )
+    || die "Error creating new session\n";
+  my $new_session_id = $sth->{'mysql_insertid'};
+  print "Created session ID $new_session_id for propagation\n" unless $quiet;
+  return $new_session_id;
+}
+
+# --------------------------------------------------------------------------------
+
 # method that will return the latest session_id in the database for the new_release
 
 sub get_latest_session_id {
@@ -377,6 +414,53 @@ sub get_latest_session_id {
   my $res = $dbi->selectcol_arrayref($sql, {}, $new_release);
   return $res->[0] if @{$res};
   return -1;
+}
+
+# --------------------------------------------------------------------------------
+# Works with the propagation table which records what species have been seen 
+# by this script meaning we can support multiple runs
+
+sub record_propagation {
+  my ($dbi, $dbname, $action) = @_;
+  my %allowed = map { $_ => 1 } ('manual_ok_all_releases','manual_ok_this_assembly','manual_ok_this_genebuild','manual_ok_this_regulatory_build','none');
+  die "Do not understand the action $action " unless $allowed{$action};
+  my $sth = $dbi->prepare('insert into propagation (database_name, action, session_id) values (?,?,?)');
+  $sth->execute($dbname, $session_id, $action); #session_id is a global
+  $sth->finish();
+  return;
+}
+
+# --------------------------------------------------------------------------------
+# Queries the propagation table for the given database name and returns the 
+# count of entries which map to this
+
+sub has_been_propagated {
+  my ($dbi, $dbname) = @_;
+  my $sth = $dbi->prepare('select count(*) from propagation where database_name =?');
+  $sth->execute($dbname);
+  my ($count) = $sth->fetchrow_array();
+  $sth->finish();
+  return $count;
+}
+
+# --------------------------------------------------------------------------------
+# Attempt to find all databases on the live release but did not have any data
+# propagated. We still want to flag that we saw it but did nothing with it. We
+# also need to check that we have not already propagated this data into the
+# schema
+sub flag_non_propagated_dbs {
+  my ($propagated_new_databases) = @_;
+  my %live_new_databases = map { $_ => 1 } @{get_new_databases($dbi1, $new_release)};
+  if($dbi2) {
+    %live_new_databases = map { $_ => 1 } @{get_new_databases($dbi2, $new_release)};
+  }
+  foreach my $new_database (keys %live_new_databases) {
+    if(!$propagated_new_databases->{$new_database} && ! has_been_propagated($dbi1, $new_database)) {
+      printf("Recording '%s' has been seen but we had no data to propagate\n", $new_database) if ! $quiet;
+      record_propagation($new_database, 'none');
+    }
+  }
+  return;
 }
 
 # --------------------------------------------------------------------------------
@@ -406,7 +490,7 @@ sub create_assembly_cache {
 sub create_regulation_cache {
   my ( $dbi1, $dbi2, $dbi_prev ) = @_;
   my $die_if_none = 0;
-  return build_meta_cache('core', 'regbuild.last_annotation_update', $die_if_none, $dbi1, $dbi2, $dbi_prev);
+  return build_meta_cache('funcgen', 'regbuild.last_annotation_update', $die_if_none, $dbi1, $dbi2, $dbi_prev);
 }
 
 # --------------------------------------------------------------------------------
@@ -439,8 +523,7 @@ sub build_meta_cache {
 # --------------------------------------------------------------------------------
 
 sub set_end_time {
-
-  my ( $dbi, $session_id ) = @_;
+  my ( $dbi ) = @_;
 
   my $sth =
     $dbi->prepare("UPDATE session SET end_time=NOW() WHERE session_id=?");
