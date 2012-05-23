@@ -18,18 +18,15 @@
 
 package org.ensembl.healthcheck;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 
-import org.ensembl.healthcheck.configuration.ConfigureHost;
-import org.ensembl.healthcheck.configurationmanager.ConfigurationByProperties;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.util.ConnectionPool;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -111,11 +108,11 @@ public class TextTestRunner extends TestRunner implements Reporter {
 		
 		parseCommandLine(args);
 
-		ConfigureHost conf;
 		String propertiesFile = getPropertiesFile();
 
 		Utils.readPropertiesFileIntoSystem(propertiesFile, true);
 		
+//		ConfigureHost conf;
 //		try {
 //			conf = (ConfigureHost) ConfigurationByProperties.newInstance(
 //					ConfigureHost.class, 
@@ -140,6 +137,8 @@ public class TextTestRunner extends TestRunner implements Reporter {
 		
 		secondaryDatabaseRegistry = new DatabaseRegistry(secondaryDatabaseRegexps, globalType, globalSpecies, true);
 		DBUtils.setSecondaryDatabaseRegistry(secondaryDatabaseRegistry);
+		
+		printMatchingDatabases();
 
 		if (mainDatabaseRegistry.getEntryCount() == 0) {
 			logger.warning("Warning: no database names matched any of the database regexps given");
@@ -200,17 +199,13 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
 		System.out.println("\nCurrently available tests:");
 
-		List tests = testRegistry.getAll();
-		Map groups = new HashMap();
+		List<EnsTestCase> tests = testRegistry.getAll();
+		Map<String,String> groups = new HashMap<String,String>();
 		Collections.sort(tests, new TestComparator());
-		Iterator it = tests.iterator();
-		while (it.hasNext()) {
-			EnsTestCase test = (EnsTestCase) it.next();
+		for (EnsTestCase test: tests) {
 			System.out.print(test.getShortTestName() + " ");
-			List testGroups = test.getGroups();
-			Iterator it2 = testGroups.iterator();
-			while (it2.hasNext()) {
-				String group = (String) it2.next();
+			List<String> testGroups = test.getGroups();
+			for(String group: testGroups) {
 				if (group.equals(group.toLowerCase())) {
 					groups.put(group, group);
 				}
@@ -218,7 +213,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 		}
 
 		System.out.println("\n\nCurrently available test groups (use show-groups.sh to show which tests are in which groups):");
-		System.out.println(Utils.listToString(new ArrayList(groups.keySet()), " "));
+		System.out.println(Utils.listToString(new ArrayList<String>(groups.keySet()), " "));
 
 	}
 
@@ -246,7 +241,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 		} else {
 
 			for (int i = 0; i < args.length; i++) {
-
+			  
 				if (args[i].equals("-h")) {
 
 					printUsage();
@@ -377,27 +372,36 @@ public class TextTestRunner extends TestRunner implements Reporter {
 				System.err.println("No testcase names or groups specified");
 			}
 
-			// print matching databases if no tests specified
-			if (groupsToRun.size() == 0 && databaseRegexps.size() > 0) {
-
-				Utils.readPropertiesFileIntoSystem(getPropertiesFile(), false);
-
-				for (Iterator<String> it = databaseRegexps.iterator(); it.hasNext();) {
-
-					String databaseRegexp = it.next();
-					System.out.println("Databases that match the regular expression " + databaseRegexp + ":");
-
-					for (DatabaseRegistryEntry entry : mainDatabaseRegistry.getAll()) {
-						System.out.println("  " + entry);
-					}
-				}
-			}
-
 		}
 
 	}
 
 	// parseCommandLine
+	
+	private void printMatchingDatabases() {
+	  if(mainDatabaseRegistry.isEmpty()) {
+	    logger.warning("Warning: no database names matched any of the database regexps given");
+	  }
+	  else {
+	    // print matching databases if no tests specified
+      if (groupsToRun.size() == 0 && databaseRegexps.size() > 0) {
+  
+        Utils.readPropertiesFileIntoSystem(getPropertiesFile(), false);
+  
+        for (Iterator<String> it = databaseRegexps.iterator(); it.hasNext();) {
+  
+          String databaseRegexp = it.next();
+          System.out.println("Databases that match the regular expression " + databaseRegexp + ":");
+  
+          for (DatabaseRegistryEntry entry : mainDatabaseRegistry.getAll()) {
+            System.out.println("  " + entry);
+          }
+        }
+      }
+	  }
+	}
+	
+	// printMatchingDatabases
 
 	// -------------------------------------------------------------------------
 
