@@ -139,7 +139,11 @@ public class NodeDatabaseTestRunner extends DatabaseTestRunner implements Report
 				endDbSession = true;
 				logger.finest("Will end session");
 				
-			}
+			} else if (args[i].equals("-config")) {
+			  i++;
+			  setPropertiesFile(args[i]);
+			  logger.finest("Will read properties from " + getPropertiesFile());
+      }
 			
 		}
 
@@ -156,8 +160,9 @@ public class NodeDatabaseTestRunner extends DatabaseTestRunner implements Report
 		System.out.println("  -session {id}   The session ID to use (required)");
 		System.out.println("  -h              This message.");
 		System.out.println("  -debug          Print debugging info");
+		System.out.println("  -config         Change the properties file used. Defaults to database.properties");
 		System.out.println();
-		System.out.println("All configuration information is read from the file database.properties. ");
+		System.out.println("All configuration information is read from the file database.properties (unless you use -config). ");
 		System.out.println("See the comments in that file for information on which options to set.");
 
 	}

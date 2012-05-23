@@ -17,13 +17,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.Level;
-import java.util.Properties;
 
 import org.ensembl.healthcheck.util.ConnectionPool;
 import org.ensembl.healthcheck.util.LogFormatter;
@@ -96,8 +93,10 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 				debug = true;
 				logger.finest("Running in debug mode");
 
-			}
-
+			} else if (arg.equals("-config")) {
+        setPropertiesFile(arg);
+        logger.finest("Will read properties from " + getPropertiesFile());
+      }
 		}
 
 	} // parseCommandLine
@@ -110,8 +109,9 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 		System.out.println("Options:");
 		System.out.println("  -h              This message.");
 		System.out.println("  -debug          Print debugging info");
+		System.out.println("  -config         Change the properties file used. Defaults to database.properties");
 		System.out.println();
-		System.out.println("All configuration information is read from the file database.properties. ");
+		System.out.println("All configuration information is read from the file database.properties (unless you use -config). ");
 		System.out.println("See the comments in that file for information on which options to set.");
 
 	}
@@ -213,7 +213,7 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 			// TODO EG: Need to push out LSF commands into separate file if we want to use them
 			String[] cmd = { "bsub", "-J", currentJobName, "-q", "long", "-R", MEMORY_RUSAGE, "-M", MEMORY_RESERVATION, "-R", "select[myens_staging1<=800]", "-R", "select[myens_staging2<=800]", "-R", "select[myens_livemirror<=300]", "-R",
 					"select[lustre && linux]", "-R", "order[ut:mem]", "-R", "rusage[myens_staging1=10:myens_staging1=10:myens_livemirror=50]", "-o", "healthcheck_%J.out", "-e", "healthcheck_%J.err",
-					runNodeDBTestRunnerScript, "-d", database, "-group", group, "-session", "" + sessionID };
+					runNodeDBTestRunnerScript, "-d", database, "-group", group, "-session", "" + sessionID, "-config", getPropertiesFile() };
 
 			jobNames.add(currentJobName);
 

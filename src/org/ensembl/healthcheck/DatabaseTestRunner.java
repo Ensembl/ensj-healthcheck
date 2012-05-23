@@ -137,9 +137,10 @@ public class DatabaseTestRunner extends TestRunner implements Reporter {
 		System.out.println("Options:");
 		System.out.println("  -delete         Delete all previous entries from output database");
 		System.out.println("  -h              This message.");
+		System.out.println("  -config         Change the properties file used. Defaults to database.properties");
 		System.out.println("  -debug          Print debugging info");
 		System.out.println();
-		System.out.println("All configuration information is read from the file database.properties. ");
+		System.out.println("All configuration information is read from the file database.properties (unless you use -config). ");
 		System.out.println("See the comments in that file for information on which options to set.");
 
 	}
@@ -240,7 +241,7 @@ public class DatabaseTestRunner extends TestRunner implements Reporter {
 	 * 
 	 * @return The list of database names or patterns.
 	 */
-	protected List getDatabasesFromProperties() {
+	protected List<String> getDatabasesFromProperties() {
 
 		String[] dbs_and_groups = System.getProperty("output.databases").split(",");
 		String[] dbs = new String[dbs_and_groups.length];

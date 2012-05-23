@@ -10,6 +10,6 @@ done
 
 cd $dir
 
-$JAVA_HOME/bin/java -server -classpath $cp -Xmx2048m org.ensembl.healthcheck.DatabaseTestRunner
+$JAVA_HOME/bin/java -server -classpath $cp -Xmx2048m org.ensembl.healthcheck.DatabaseTestRunner -config database.release.properties
 
 

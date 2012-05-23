@@ -12,5 +12,5 @@ done
 
 cd $dir
 
-$JAVA_HOME/bin/java -server -classpath $cp -Xmx1024m org.ensembl.healthcheck.ParallelDatabaseTestRunner
+$JAVA_HOME/bin/java -server -classpath $cp -Xmx1024m org.ensembl.healthcheck.ParallelDatabaseTestRunner -config database.release.properties
 
