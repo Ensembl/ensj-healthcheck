@@ -27,7 +27,9 @@ import org.ensembl.healthcheck.testcase.EnsTestCase;
  * Implementation of Comparator for comparing EnsTestCase objects.
  */
 
-public class TestComparator implements Comparator, Serializable {
+public class TestComparator implements Comparator<EnsTestCase>, Serializable {
+
+  private static final long serialVersionUID = 1L;
 
     /**
      * Implementation of Compare interface. Compares on test name.
@@ -38,13 +40,8 @@ public class TestComparator implements Comparator, Serializable {
      *          The first EnsTestCase (as an Object) to compare.
      * @return Result of natural comparison of test name strings.
      */
-    public int compare(Object o1, Object o2) {
-
-        String n1 = ((EnsTestCase) o1).getShortTestName();
-        String n2 = ((EnsTestCase) o2).getShortTestName();
-
-        return n1.compareTo(n2);
-
+    public int compare(EnsTestCase o1, EnsTestCase o2) {
+        return o1.getShortTestName().compareTo(o2.getShortTestName());
     }
 
 }
