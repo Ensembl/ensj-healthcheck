@@ -394,6 +394,7 @@ public abstract class EnsTestCase {
 		while (it.hasNext()) {
 			if (inGroup((String) it.next())) {
 				result = true;
+				break;
 			}
 		}
 		return result;
