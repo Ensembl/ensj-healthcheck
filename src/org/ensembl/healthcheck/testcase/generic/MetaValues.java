@@ -30,6 +30,7 @@ import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.SqlTemplate;
 import org.ensembl.healthcheck.util.Utils;
 
 /**
@@ -147,6 +148,10 @@ public class MetaValues extends SingleDatabaseTestCase {
 		// -------------------------------------------
 		
 		result &= checkRepeatAnalysis(dbre);
+		
+		// -------------------------------------------
+		
+		result &= checkForSchemaPatchLineBreaks(dbre);
 
 		return result;
 	} // run
@@ -752,6 +757,21 @@ public class MetaValues extends SingleDatabaseTestCase {
 
 		return result;
 
+	}
+	
+	private boolean checkForSchemaPatchLineBreaks(DatabaseRegistryEntry dbre) {
+	  SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+	  String metaKey = "patch"; 
+	  String sql = "select meta_id from meta where meta_key =? and species_id IS NULL and meta_value like ?";
+	  List<Integer> ids = t.queryForDefaultObjectList(sql, Integer.class, metaKey, "%\n%");
+    if(!ids.isEmpty()) {
+      String idsJoined = Utils.listToString(ids, ",");
+      String usefulSql = "select * from meta where meta_id IN ("+idsJoined+")";
+      String msg = String.format("The meta ids [%s] had values with linebreaks.\nUSEFUL SQL: %s", idsJoined, usefulSql);
+      ReportManager.problem(this, dbre.getConnection(), msg);
+      return false;
+    }
+    return true;
 	}
 	
 } // MetaValues
