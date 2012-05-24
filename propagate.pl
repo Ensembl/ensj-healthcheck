@@ -13,6 +13,8 @@ use Data::Dumper;
 
 $Data::Dumper::Sortkeys = 1;
 
+my $core_like_dbs = [qw/core cdna otherfeatures vega rnaseq vega_update/];
+
 my (
   $host1,     $port1,     $user1,  $pass1,       $host2,
   $port2,     $user2,     $pass2,  $host_prev,   $port_prev,
@@ -320,7 +322,7 @@ sub propagate {
           $report_id,  $person,      $action,     $comment,
           $created_at, $modified_at, $created_by, $modified_by
         ) || die "Error inserting annotation";
-        
+  
         $count++;
         $counts{$type}++;
 
@@ -482,8 +484,8 @@ sub flag_non_propagated_dbs {
 
 sub create_meta_cache {
   my ( $dbi1, $dbi2, $dbi_prev ) = @_;
-  my $die_if_none = 1;
-  return build_meta_cache('core', 'genebuild.start_date', $die_if_none, $dbi1, $dbi2, $dbi_prev);
+  my $die_if_none = 0;
+  return build_meta_cache($core_like_dbs, 'genebuild.start_date', $die_if_none, $dbi1, $dbi2, $dbi_prev);
 }
 
 # --------------------------------------------------------------------------------
@@ -492,8 +494,8 @@ sub create_meta_cache {
 
 sub create_assembly_cache {
   my ( $dbi1, $dbi2, $dbi_prev ) = @_;
-  my $die_if_none = 1;
-  return build_meta_cache('core', 'assembly.default', $die_if_none, $dbi1, $dbi2, $dbi_prev);
+  my $die_if_none = 0;
+  return build_meta_cache($core_like_dbs, 'assembly.default', $die_if_none, $dbi1, $dbi2, $dbi_prev);
 }
 
 # --------------------------------------------------------------------------------
@@ -503,33 +505,37 @@ sub create_assembly_cache {
 sub create_regulation_cache {
   my ( $dbi1, $dbi2, $dbi_prev ) = @_;
   my $die_if_none = 0;
-  return build_meta_cache('funcgen', 'regbuild.last_annotation_update', $die_if_none, $dbi1, $dbi2, $dbi_prev);
+  return build_meta_cache(['funcgen'], 'regbuild.last_annotation_update', $die_if_none, $dbi1, $dbi2, $dbi_prev);
 }
 
 # --------------------------------------------------------------------------------
 # Cache all the meta entries in all databases applicable using the specified keys
 
 sub build_meta_cache {
-  my ($dbtype, $meta_key, $die_if_none, @dbhs) = @_;
-  print "Building cache '$meta_key' for '$dbtype'\n" unless $quiet;
+  my ($dbtypes, $meta_key, $die_if_none, @dbhs) = @_;
+  use Carp; confess 'barp' unless defined $dbtypes;
+  my $types_str = join(q{,}, @{$dbtypes});
+  print "Building cache '$meta_key' for '$types_str'\n" unless $quiet;
   my %cache;
-  foreach my $dbh (@dbhs) {
-    my $like = "%\\_${dbtype}\\_%";
-    my $dbs = $dbh->selectcol_arrayref('SHOW DATABASES LIKE ?', {}, $like);
+  foreach my $dbtype (@{$dbtypes}) {
+    foreach my $dbh (@dbhs) {
+      my $like = "%\\_${dbtype}\\_%";
+      my $dbs = $dbh->selectcol_arrayref('SHOW DATABASES LIKE ?', {}, $like);
     
-    printf("Scanning through %d potential databases\n", scalar(@{$dbs})) unless $quiet;
+      printf("Scanning through %d potential databases\n", scalar(@{$dbs})) unless $quiet;
     
-    foreach my $db (@{$dbs}) {
-      my $sql = sprintf('SELECT meta_value FROM %s.meta where meta_key =?', $db);
-      my @row = $dbh->selectrow_array($sql, {}, $meta_key);
-      my ($value) = @row;
-      if($die_if_none && ! $value) {
-        croak "Error getting $meta_key from $dbname. Program will abort";
+      foreach my $db (@{$dbs}) {
+        my $sql = sprintf('SELECT meta_value FROM %s.meta where meta_key =?', $db);
+        my @row = $dbh->selectrow_array($sql, {}, $meta_key);
+        my ($value) = @row;
+        if($die_if_none && ! $value) {
+          croak "Error getting $meta_key from $db. Program will abort";
+        }
+        $cache{$db} = $value if $value; 
       }
-      $cache{$db} = $value if $value; 
     }
   }
-  print "Finished cache building '$meta_key' for '$dbtype'\n" unless $quiet;
+  print "Finished cache building '$meta_key' for '$types_str'\n" unless $quiet;
   return \%cache;
 }
 
