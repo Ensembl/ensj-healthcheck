@@ -267,10 +267,15 @@ sub propagate {
 
     # find all manual_ok_all_releases etc for each old database
     foreach my $old_database ( keys %$old_to_new_db_name ) {
-
+      
       my $new_database = $old_to_new_db_name->{$old_database};
-
       my $count = 0;
+      
+      #If we have already processed this DB then we skip it
+      if(has_been_propagated($new_database, $type)) {
+        print "Skipping $new_database as it has already been propagated\n" if ! $quiet;
+        next;
+      }
 
       $select_sth->execute( $old_database, $type );
       foreach my $row ( @{ $select_sth->fetchall_arrayref() } ) {
@@ -281,12 +286,6 @@ sub propagate {
           $action,           $comment, $created_at,    $modified_at,
           $created_by,       $modified_by
         ) = @$row;
-        
-        #If we have already processed this DB then we skip it
-        if(has_been_propagated($new_database, $type)) {
-          print "Skipping $new_database as it has already been propagated\n" if ! $quiet;
-          next;
-        }
 
         # type eq manual_ok_this_assembly:
         # will only need to propagate if it is the same assembly
@@ -315,18 +314,21 @@ sub propagate {
           $testcase,         $result,       $text
         ) || die "Error inserting report";
         my $report_id = $insert_report_sth->{'mysql_insertid'};
-
+        
         # create new annotation
         $insert_annotation_sth->execute(
           $report_id,  $person,      $action,     $comment,
           $created_at, $modified_at, $created_by, $modified_by
         ) || die "Error inserting annotation";
+        
         $count++;
         $counts{$type}++;
 
       }
-      $propagated_new_databases{$new_database} = 1;
-      record_propagation($new_database, $type);
+      if($count) {
+        $propagated_new_databases{$new_database} = 1;
+        record_propagation($new_database, $type, $count);
+      }
 
       print "\t$old_database\t$count\n" if ( !$quiet && $count > 0 );
     }
@@ -347,9 +349,7 @@ sub propagate {
 
 sub new_assembly {
   my ($old_dbname, $new_dbname) = @_;
-  my $old = $assembly_cache->{$old_dbname};
-  my $new = $assembly_cache->{$new_dbname};
-  return ("$old" eq "$new") ? 0 : 1; #force string comparison
+  return _compare_caches($old_dbname, $new_dbname, $assembly_cache);
 }
 
 # --------------------------------------------------------------------------------
@@ -358,9 +358,7 @@ sub new_assembly {
 
 sub new_genebuild {
   my ($old_dbname, $new_dbname) = @_;
-  my $old = $meta_cache->{$old_dbname};
-  my $new = $meta_cache->{$new_dbname};
-  return ("$old" eq "$new") ? 0 : 1; #force string comparison
+  return _compare_caches($old_dbname, $new_dbname, $meta_cache);
 }
 
 # --------------------------------------------------------------------------------
@@ -370,11 +368,17 @@ sub new_genebuild {
 
 sub new_regulatory_build {
   my ($old_dbname, $new_dbname) = @_;
-  my $old = $regulatory_build_cache->{$old_dbname};
-  my $new = $regulatory_build_cache->{$new_dbname};
-  return 1 if ! defined $old || ! defined $new; 
-  return 0 if $old eq $new;
-  return 1;
+  return _compare_caches($old_dbname, $new_dbname, $regulatory_build_cache);
+}
+
+# --------------------------------------------------------------------------------
+
+sub _compare_caches {
+  my ($old_dbname, $new_dbname, $cache) = @_;
+  #logic copied from old script. Get value or default to nothing
+  my $old = $cache->{$old_dbname} || q{};
+  my $new = $cache->{$new_dbname} || q{};
+  return ("$old" eq "$new") ? 0 : 1; #force string comparison
 }
 
 # --------------------------------------------------------------------------------
@@ -386,7 +390,7 @@ sub session_id {
   my ($dbi, $old_release, $new_release) = @_;
   my $last_session_id = get_latest_session_id($dbi, $new_release);
   return $last_session_id if $last_session_id >= 0;
-  return create_session($old_release, $new_release);
+  return create_session($dbi, $old_release, $new_release);
 } 
 
 # --------------------------------------------------------------------------------
@@ -412,8 +416,10 @@ sub get_latest_session_id {
   #get latest session_id for the new release
   my $sql = 'SELECT max(session_id) FROM session WHERE db_release = ?';
   my $res = $dbi->selectcol_arrayref($sql, {}, $new_release);
-  return $res->[0] if @{$res};
-  return -1;
+  my ($session) = @{$res};
+  $session ||= -1;
+  printf("Found session %d in the DB\n", $session);
+  return $session;
 }
 
 # --------------------------------------------------------------------------------
@@ -421,11 +427,12 @@ sub get_latest_session_id {
 # by this script meaning we can support multiple runs
 
 sub record_propagation {
-  my ($dbi, $dbname, $action) = @_;
+  my ($dbname, $action, $amount) = @_;
   my %allowed = map { $_ => 1 } ('manual_ok_all_releases','manual_ok_this_assembly','manual_ok_this_genebuild','manual_ok_this_regulatory_build','none');
   die "Do not understand the action $action " unless $allowed{$action};
-  my $sth = $dbi->prepare('insert into propagation (database_name, action, session_id) values (?,?,?)');
-  $sth->execute($dbname, $session_id, $action); #session_id is a global
+  $amount ||= 0;
+  my $sth = $dbi1->prepare('insert into propagated (database_name, action, session_id, amount) values (?,?,?,?)');
+  $sth->execute($dbname, $action, $session_id, $amount); #session_id is a global
   $sth->finish();
   return;
 }
@@ -435,9 +442,15 @@ sub record_propagation {
 # count of entries which map to this
 
 sub has_been_propagated {
-  my ($dbi, $dbname) = @_;
-  my $sth = $dbi->prepare('select count(*) from propagation where database_name =?');
-  $sth->execute($dbname);
+  my ($dbname, $action) = @_;
+  my $sql = 'select count(*) from propagated where database_name =?';
+  my @params = ($dbname);
+  if($action) {
+    $sql .= ' and action =?';
+    push(@params, $action);
+  }
+  my $sth = $dbi1->prepare($sql);
+  $sth->execute(@params);
   my ($count) = $sth->fetchrow_array();
   $sth->finish();
   return $count;
@@ -455,9 +468,9 @@ sub flag_non_propagated_dbs {
     %live_new_databases = map { $_ => 1 } @{get_new_databases($dbi2, $new_release)};
   }
   foreach my $new_database (keys %live_new_databases) {
-    if(!$propagated_new_databases->{$new_database} && ! has_been_propagated($dbi1, $new_database)) {
+    if(!$propagated_new_databases->{$new_database} && ! has_been_propagated($new_database)) {
       printf("Recording '%s' has been seen but we had no data to propagate\n", $new_database) if ! $quiet;
-      record_propagation($new_database, 'none');
+      record_propagation($new_database, 'none', 0);
     }
   }
   return;
@@ -507,7 +520,7 @@ sub build_meta_cache {
     printf("Scanning through %d potential databases\n", scalar(@{$dbs})) unless $quiet;
     
     foreach my $db (@{$dbs}) {
-      my $sql = sprintf('SELECT meta_value FROM %s.meta where meta_key =?', $dbname);
+      my $sql = sprintf('SELECT meta_value FROM %s.meta where meta_key =?', $db);
       my @row = $dbh->selectrow_array($sql, {}, $meta_key);
       my ($value) = @row;
       if($die_if_none && ! $value) {
