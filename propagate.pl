@@ -277,6 +277,26 @@ sub propagate {
         next;
       }
 
+      # type eq manual_ok_this_assembly:
+      # will only need to propagate if it is the same assembly
+      if ( $type eq 'manual_ok_this_assembly' ) {
+        next if new_assembly( $old_database, $new_database );
+      }
+
+      # type eq manual_ok_this_genebuild
+      # will only need to propagate if it is the same genebuild
+      # i.e. if genebuild.start_date values in meta table are the same
+      # so skip propagation if they are not the same
+      if ( $type eq 'manual_ok_this_genebuild' ) {
+        next if new_genebuild($old_database, $new_database);
+      }
+      
+      # type eq manual_ok_this_regulatory_build:
+      # will only need to propagate if it is the same regulatory build
+      if($type eq 'manual_ok_this_regulatory_build') {
+        next if new_regulatory_build($old_database, $new_database);
+      }
+
       $select_sth->execute( $old_database, $type );
       foreach my $row ( @{ $select_sth->fetchall_arrayref() } ) {
 
@@ -286,26 +306,6 @@ sub propagate {
           $action,           $comment, $created_at,    $modified_at,
           $created_by,       $modified_by
         ) = @$row;
-
-        # type eq manual_ok_this_assembly:
-        # will only need to propagate if it is the same assembly
-        if ( $type eq 'manual_ok_this_assembly' ) {
-          next if new_assembly( $old_database, $new_database );
-        }
-
-        # type eq manual_ok_this_genebuild
-        # will only need to propagate if it is the same genebuild
-        # i.e. if genebuild.start_date values in meta table are the same
-        # so skip propagation if they are not the same
-        if ( $type eq 'manual_ok_this_genebuild' ) {
-          next if new_genebuild($old_database, $new_database);
-        }
-        
-        # type eq manual_ok_this_regulatory_build:
-        # will only need to propagate if it is the same regulatory build
-        if($type eq 'manual_ok_this_regulatory_build') {
-          next if new_regulatory_build($old_database, $new_database);
-        }
 
         # create new report
         $insert_report_sth->execute(
@@ -330,7 +330,7 @@ sub propagate {
         record_propagation($new_database, $type, $count);
       }
 
-      print "\t$old_database\t$count\n" if ( !$quiet && $count > 0 );
+      print "\t$old_database\t$new_database\t$count\n" if ( !$quiet && $count > 0 );
     }
 
     print "Propagated " . $counts{$type} . " $type reports\n" unless ($quiet);
