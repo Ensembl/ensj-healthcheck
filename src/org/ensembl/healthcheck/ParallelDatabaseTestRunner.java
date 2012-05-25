@@ -81,6 +81,8 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 
 	private void parseCommandLine(String[] args) {
 
+		Boolean getPathToConfig = false;
+		
 		for (String arg : args) {
 
 			if (arg.equals("-h")) {
@@ -94,9 +96,12 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 				logger.finest("Running in debug mode");
 
 			} else if (arg.equals("-config")) {
-        setPropertiesFile(arg);
-        logger.finest("Will read properties from " + getPropertiesFile());
-      }
+				getPathToConfig = true;
+			} else if (getPathToConfig.equals(true)) {
+				setPropertiesFile(arg);
+				logger.finest("Will read properties from " + getPropertiesFile());
+				getPathToConfig = false;
+			}
 		}
 
 	} // parseCommandLine
