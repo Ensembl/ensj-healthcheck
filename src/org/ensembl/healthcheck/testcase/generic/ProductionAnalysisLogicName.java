@@ -53,7 +53,7 @@ public class ProductionAnalysisLogicName extends AbstractTemplatedTestCase {
   private Set<String> getLogicNamesDb(DatabaseRegistryEntry dbre) {
     SqlTemplate t = DBUtils.getSqlTemplate(dbre);
     String sql = "select logic_name from analysis";
-    List<String> results = t.queryForDefaultObjectList(sql, String.class, dbre.getName());
+    List<String> results = t.queryForDefaultObjectList(sql, String.class);
     return new HashSet<String>(results);
   }
   
