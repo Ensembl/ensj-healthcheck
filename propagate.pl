@@ -278,6 +278,11 @@ sub propagate {
         print "Skipping $new_database as it has already been propagated\n" if ! $quiet;
         next;
       }
+      
+      if(has_been_propagated($new_database, 'none')) {
+        print "Skipping $new_database as it we have already marked it as propagated for no transfers\n" if ! $quiet;
+        next;
+      }
 
       # type eq manual_ok_this_assembly:
       # will only need to propagate if it is the same assembly
