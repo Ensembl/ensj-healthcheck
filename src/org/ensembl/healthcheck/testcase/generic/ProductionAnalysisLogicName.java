@@ -27,6 +27,7 @@ public class ProductionAnalysisLogicName extends AbstractTemplatedTestCase {
     setPriority(Priority.AMBER);
     setEffect("Discrepancies between tables can cause problems");
     setFix("Resync tables");
+    setTeamResponsible(Team.GENEBUILD);
     setTeamResponsible(Team.RELEASE_COORDINATOR);
   }
 
