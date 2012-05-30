@@ -1,5 +1,6 @@
 package org.ensembl.healthcheck.testcase.generic;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,8 +16,6 @@ import org.ensembl.healthcheck.util.SqlTemplate;
 
 public class ProductionAnalysisLogicName extends AbstractTemplatedTestCase {
   
-  private Set<String> productionLogicNames = null;
-
   public ProductionAnalysisLogicName() {
     addToGroup("production");
     addToGroup("release");
@@ -37,18 +36,29 @@ public class ProductionAnalysisLogicName extends AbstractTemplatedTestCase {
   
   @Override
   protected boolean runTest(DatabaseRegistryEntry dbre) {
+    boolean result = true;
     Set<String> coreLogicNames = getLogicNamesDb(dbre);
-    Set<String> productionLogicNames = getLogicNamesFromProduction();
-    Set<String> missingNames = new HashSet<String>(coreLogicNames);
-    missingNames.removeAll(productionLogicNames);
-    if(!missingNames.isEmpty()) {
-      for(String name: missingNames) {
-        String msg = String.format("The logic_name '%s' is missing from production. Add and resync", name);
-        ReportManager.problem(this, dbre.getConnection(), msg);
-      }
-      return false;
+    Set<String> productionLogicNames = getLogicNamesFromProduction(dbre);
+    result &= testForIdentity(dbre, coreLogicNames, productionLogicNames, "production");
+    result &= testForIdentity(dbre, productionLogicNames, coreLogicNames, "core");
+    return result;
+  }
+  
+  /**
+   * Minuses the elements in the second collection from the first. Anything
+   * remaining in the first collection cannot exist in the second set 
+   */
+  private <T extends CharSequence> boolean testForIdentity(DatabaseRegistryEntry dbre, Collection<T> core, Collection<T> toRemove, String type) {
+    Set<T> missing = new HashSet<T>(core);
+    missing.removeAll(toRemove);
+    if(missing.isEmpty()) {
+      return true;
     }
-    return true;
+    for(CharSequence name: missing) {
+      String msg = String.format("The logic name '%s' is missing from %s", name, type);
+      ReportManager.problem(this, dbre.getConnection(), msg);
+    }
+    return false;
   }
   
   private Set<String> getLogicNamesDb(DatabaseRegistryEntry dbre) {
@@ -58,13 +68,11 @@ public class ProductionAnalysisLogicName extends AbstractTemplatedTestCase {
     return new HashSet<String>(results);
   }
   
-  private Set<String> getLogicNamesFromProduction() {
-    if(productionLogicNames == null) {
-      SqlTemplate t = DBUtils.getSqlTemplate(getProductionDatabase());
-      String sql = "select logic_name from analysis_description";
-      List<String> results = t.queryForDefaultObjectList(sql, String.class);
-      productionLogicNames = new HashSet<String>(results);
-    }
-    return productionLogicNames;
+  private Set<String> getLogicNamesFromProduction(DatabaseRegistryEntry dbre) {
+    SqlTemplate t = DBUtils.getSqlTemplate(getProductionDatabase());
+    String sql = "select logic_name from full_analysis_description where full_db_name =?";
+    String name = DBUtils.getShortDatabaseName(dbre.getConnection());
+    List<String> results = t.queryForDefaultObjectList(sql, String.class, name);
+    return new HashSet<String>(results);
   }
 }
