@@ -95,7 +95,7 @@ public class ProductionMeta extends SingleDatabaseTestCase {
 
 		if (!dbOnly.isEmpty()) {
 		  for(String key: dbOnly) {
-		    String msg = String.format("%s contains the following meta key which is missing from %s: %s", dbre.getName(), prodDbre.getName(), key);
+		    String msg = String.format("Meta key '%s' is not in the allowed meta key list from production", key);
 		    ReportManager.problem(this, con, msg);
 		  }
 			result = false;
