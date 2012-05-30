@@ -42,7 +42,7 @@ public class BlankInfoType extends SingleDatabaseTestCase {
 		addToGroup("funcgen");
 		addToGroup("post-compara-handover");
 		
-		setDescription("Check for any xref.info_type that are blank ('') - they should be NULL for various other things to work.");
+		setDescription("Check for any xref.info_type that are blank ('') or NULL - they should be NONE for various other things to work.");
 		setTeamResponsible(Team.CORE);
 		setSecondTeamResponsible(Team.GENEBUILD);
 
@@ -63,10 +63,11 @@ public class BlankInfoType extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM xref WHERE info_type = ''");
+		rows += DBUtils.getRowCount(con, "SELECT COUNT(*) FROM xref WHERE info_type is NULL");
 
 		if (rows > 0) {
 
-			ReportManager.problem(this, con, rows + " rows in xref have a blank info_type - should be set to null");
+			ReportManager.problem(this, con, rows + " rows in xref have a blank info_type or null entry - should be set to NONE. See patch 67_68_b");
 			result = false;
 
 		} else {
