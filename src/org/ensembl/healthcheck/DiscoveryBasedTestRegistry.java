@@ -291,7 +291,7 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 			
 			try {
 				Class<?> newClass = Class.forName(packageName + "." + baseClassName);
-				boolean isEnsTestCase = newClass.isAssignableFrom(EnsTestCase.class);
+				boolean isEnsTestCase = EnsTestCase.class.isAssignableFrom(newClass);
 				boolean isAbstract = Modifier.isAbstract(newClass.getModifiers());
 				if (! isAbstract) {
           if(isEnsTestCase) {
@@ -376,7 +376,7 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 					  
 			      try {
 			        Class<?> newClass = Class.forName(packageName + "." + dirName + "." + className);
-			        boolean isEnsTestCase = newClass.isAssignableFrom(EnsTestCase.class);
+			        boolean isEnsTestCase = EnsTestCase.class.isAssignableFrom(newClass);
 			        boolean isAbstract = Modifier.isAbstract(newClass.getModifiers());
 			        if (! isAbstract) {
 			          if(isEnsTestCase) {
