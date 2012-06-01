@@ -140,7 +140,7 @@ public class CompareVariationSchema extends AbstractCompareSchema {
 	 * specific logic which means that schemas can differ but this is still
 	 * valid.
 	 * 
-	 * The logic is the same as variation's original verison
+	 * The logic is the same as variation's original version
 	 * 
 	 * @param target The master connection
 	 * @param master The registry entry for the given target schema
@@ -154,8 +154,8 @@ public class CompareVariationSchema extends AbstractCompareSchema {
 		boolean result = true;
 		
 		Connection target = targetDbre.getConnection();
-		String targetName = getShortDatabaseName(target);
-		String masterName = getShortDatabaseName(master);
+		String targetName = getDbNameForMsg(target);
+		String masterName = getDbNameForMsg(master);
 		
 		Set<String> targetTables = createLinkedHashSet(getTableNames(target));
 		Set<String> masterTables = createLinkedHashSet(getTableNames(master));
