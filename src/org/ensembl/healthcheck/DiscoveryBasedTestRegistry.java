@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.ensembl.healthcheck.testcase.EnsTestCase;
@@ -277,7 +278,7 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 			logger.finer("Examining " + classFiles.length + " class file" + (classFiles.length > 1 ? "s" : "") + " in " + dir);
 		}
 
-		Object obj = new Object();
+		Object obj = null;
 
 		for (File classFile : classFiles) {
 
@@ -289,21 +290,27 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 			}
 			
 			try {
-
-				Class newClass = Class.forName(packageName + "." + baseClassName);
-				if (!Modifier.isAbstract(newClass.getModifiers())) {
-					obj = newClass.newInstance();
-				}
+				Class<?> newClass = Class.forName(packageName + "." + baseClassName);
+				boolean isEnsTestCase = newClass.isAssignableFrom(EnsTestCase.class);
+				boolean isAbstract = Modifier.isAbstract(newClass.getModifiers());
+				if (! isAbstract) {
+          if(isEnsTestCase) {
+            obj = newClass.newInstance();
+          }
+          else {
+            logger.fine("The class "+baseClassName+" is in the test package but appears not to implement "+EnsTestCase.class);
+          }
+        }
 			} catch (IllegalAccessException ie) {
 				// EG: Catch and log reflection warnings
-				logger.warning(baseClassName + " does not seem to be a test case class");
+				logger.log(Level.WARNING, baseClassName + " has an issue when trying to create an instance", ie);
 			} catch (InstantiationException ie) {
-				logger.warning(baseClassName + " does not seem to be a test case class");
+			  logger.log(Level.WARNING, baseClassName + " has an issue when trying to create an instance", ie);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			
-			if (obj instanceof EnsTestCase && !tests.contains(obj)) {
+			if (obj != null && !tests.contains(obj)) {
 
 				// set the test's type based upon the directory, if required
 				EnsTestCase testCase = (EnsTestCase) obj;
@@ -350,7 +357,7 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 				JarEntry entry = (JarEntry) en.nextElement();
 				String entryName = entry.getName().replace(File.separatorChar, '.');
 
-				Object obj = new Object();
+				Object obj = null;
 
 				// if entryName matches base package name, extract test name and subdir
 				if (!entry.isDirectory() && entryName.indexOf(packageName) > -1) {
@@ -366,20 +373,29 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 					}
 					
 					if (extension.equalsIgnoreCase("class") && !dirName.equals("testcase")) {
-						try {
+					  
+			      try {
+			        Class<?> newClass = Class.forName(packageName + "." + dirName + "." + className);
+			        boolean isEnsTestCase = newClass.isAssignableFrom(EnsTestCase.class);
+			        boolean isAbstract = Modifier.isAbstract(newClass.getModifiers());
+			        if (! isAbstract) {
+			          if(isEnsTestCase) {
+			            obj = newClass.newInstance();
+			          }
+			          else {
+			            logger.fine("The class "+className+" is in the test package but appears not to implement "+EnsTestCase.class);
+			          }
+			        }
+			      } catch (IllegalAccessException ie) {
+			        // EG: Catch and log reflection warnings
+			        logger.log(Level.WARNING, className + " had an issue whilst trying to create an instance", ie);
+			      } catch (InstantiationException ie) {
+			        logger.log(Level.WARNING, className + " has an issue whilst trying to create an instance", ie);
+			      } catch (Exception e) {
+			        e.printStackTrace();
+			      }
 
-							Class newClass = Class.forName(packageName + "." + dirName + "." + className);
-							if (!Modifier.isAbstract(newClass.getModifiers())) {
-								obj = newClass.newInstance();
-							}
-
-						} catch (InstantiationException ie) {
-							logger.warning(className + " does not seem to be a test case class");
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-
-						if (obj instanceof org.ensembl.healthcheck.testcase.EnsTestCase && !tests.contains(obj)) {
+						if (obj != null && !tests.contains(obj)) {
 
 							// set the test's type based upon the directory, if required
 							EnsTestCase testCase = (EnsTestCase) obj;
