@@ -207,14 +207,18 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		// Check tables which reference the analysis table
 		String[] analysisTabs = getCoreTablesWithAnalysisID();
 
-		for (int i = 0; i < analysisTabs.length; i++) {
-			String analysisTab = analysisTabs[i];
+		for(String analysisTab: analysisTabs) {
 			// skip large tables as this test takes an inordinately long time
 			if (analysisTab.equals("protein_align_feature") || analysisTab.equals("dna_align_feature") || analysisTab.equals("repeat_feature")) {
 				continue;
 			}
+			
+			String constraint = "analysis_id IS NOT NULL";
+			if("object_xref".equals(analysisTab)) {
+			  constraint += " and "+analysisTab+".analysis_id <> 0";
+			}
 
-			if (countOrphansWithConstraint(con, analysisTab, "analysis_id", "analysis", "analysis_id", "analysis_id IS NOT NULL") > 0) {
+			if (countOrphansWithConstraint(con, analysisTab, "analysis_id", "analysis", "analysis_id", constraint) > 0) {
 				ReportManager.problem(this, con, "FAILED " + analysisTab + " -> analysis using FK analysis_id relationships");
 				result = false;
 			}
