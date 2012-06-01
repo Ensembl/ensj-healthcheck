@@ -71,12 +71,7 @@ public final class ConnectionPool {
 
         } else {
 
-        	try {
-        		con = getConnectionByClassloader(driverClassName, databaseURL, user, password);
-        		
-        	} catch(AbstractMethodError e) {
-        		logger.finest("Got connection to " + databaseURL + " from pool");
-        	}
+        	con = getConnectionByClassloader(driverClassName, databaseURL, user, password);
         }
         
         return con;
@@ -92,7 +87,7 @@ public final class ConnectionPool {
 		} catch (Exception e) {
 			
 			// Trying to catch java.io.EOFException here, but java doesn't
-			// allow this. The compile claims this exception never gets thrown
+			// allow this. The compiler claims this exception never gets thrown
 			// from the statements in the try block, but stack traces indicate
 			// otherwise.
 			//
