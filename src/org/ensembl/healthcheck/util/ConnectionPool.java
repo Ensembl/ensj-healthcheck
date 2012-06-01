@@ -18,9 +18,11 @@
 
 package org.ensembl.healthcheck.util;
 
+import java.io.EOFException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -65,30 +67,88 @@ public final class ConnectionPool {
         if (pool.containsKey(databaseURL)) {
 
             logger.finest("Got connection to " + databaseURL + " from pool");
-            con = (Connection) pool.get(databaseURL);
+            con = getConnectionFromPool(driverClassName, databaseURL, user, password);
 
         } else {
 
-            // create a connection and add it to the pool
-            try {
+        	try {
+        		con = getConnectionByClassloader(driverClassName, databaseURL, user, password);
+        		
+        	} catch(AbstractMethodError e) {
+        		logger.finest("Got connection to " + databaseURL + " from pool");
+        	}
+        }
+        
+        return con;
+    }
+    
+    protected static boolean isValidConnection(Connection con) {
+    	
+		try {
+			
+			Statement stmt = con.createStatement();
+			stmt.executeQuery("select NOW();");
+			
+		} catch (Exception e) {
+			
+			// Trying to catch java.io.EOFException here, but java doesn't
+			// allow this. The compile claims this exception never gets thrown
+			// from the statements in the try block, but stack traces indicate
+			// otherwise.
+			//
+			return false;
+		}
+		
+    	return true;
+    }
+    
+    public static Connection getConnectionFromPool(String driverClassName, String databaseURL, String user, String password) throws SQLException {
+    	
+        Connection con = (Connection) pool.get(databaseURL);
+        
+        boolean connectionIsValid;
+        
+        try {
+        	
+        	// Currently throws a java.lang.AbstractMethodError, but maybe
+        	// someday this will work.
+        	//
+        	connectionIsValid = con.isValid(5000);
+        	
+        } catch(java.lang.AbstractMethodError e) {
+        	
+        	logger.info("Connection object doesn't implement \"isValid call, using manual implementation.\"");
+        	connectionIsValid = isValidConnection(con);
+        }
+        
+        if (connectionIsValid) {
+        	
+        	con = getConnectionByClassloader(driverClassName, databaseURL, user, password); 
+        }
+        return con;
+    }
+    
+    public static Connection getConnectionByClassloader(String driverClassName, String databaseURL, String user, String password) throws SQLException {
 
-                Class.forName(driverClassName);
+    	Connection con = null;
+    	
+        // create a connection and add it to the pool
+        try {
 
-            } catch (ClassNotFoundException e) {
+            Class.forName(driverClassName);
 
-                logger.severe("Can't load class " + driverClassName);
-                throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
 
-            }
-           	con = DriverManager.getConnection(databaseURL, user, password);
-            pool.put(databaseURL, con);
-            logger.finest("Added connection to " + databaseURL + " to pool");
+            logger.severe("Can't load class " + driverClassName);
+            throw new RuntimeException(e);
 
         }
-
-        return con;
-
-    } // getConnection
+       	con = DriverManager.getConnection(databaseURL, user, password);
+        pool.put(databaseURL, con);
+        logger.finest("Added connection to " + databaseURL + " to pool");
+    	
+    	return con;
+    }
 
     // -------------------------------------------------------------------------
     /**
