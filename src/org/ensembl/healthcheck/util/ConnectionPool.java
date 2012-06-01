@@ -121,8 +121,9 @@ public final class ConnectionPool {
         	connectionIsValid = isValidConnection(con);
         }
         
-        if (connectionIsValid) {
+        if (!connectionIsValid) {
         	
+        	logger.warning("Connection in pool was invalid. Creating again from scratch.");
         	con = getConnectionByClassloader(driverClassName, databaseURL, user, password); 
         }
         return con;
