@@ -1,12 +1,14 @@
 package org.ensembl.healthcheck;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.logging.Logger;
 import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
 
 public enum Species {
-	// defined new Species and properties: taxonomy_id, assemblyprefix, stableIDprefix, alias - ADD THE SPECIES NAME TO THE ALIAS LIST
+	// defined new Species and properties: taxonomy_id, assemblyprefix, stableIDprefix, alias
 	AEDES_AEGYPTI(7159, "", "IGNORE", "aedes,aedesaegypti,aedes_aegypti"),
 	AILUROPODA_MELANOLEUCA(9646, "ailMel", "ENSAME", "panda,giant panda,ailuropoda melanoleuca,ailuropoda_melanoleuca"),
 	ANOLIS_CAROLINENSIS(28377, "AnoCar", "ENSACA", "lizard,anole,anolis_lizard,anolis,anolis_carolinensis"),
@@ -63,7 +65,7 @@ public enum Species {
 	OTOLEMUR_GARNETTII(30611, "OtoGar", "ENSOGA", "bushbaby,bush_baby,galago,small_eared_galago,ogarnettii,otolemur,otolemur_garnettii"),
 	PAN_TROGLODYTES(9598, "CHIMP", "ENSPTR", "chimp,chimpanzee,ptroglodytes,pantroglodytes,pan_troglodytes"),
 	PAPIO_HAMADRYAS(9557, "Pham", "ENSPHA", "baboon,Papio_hamadryas,papio_hamadryas,papio_hamadryas,sacred_baboon,western_baboon,red_baboon"),
-	PELODISCUS_SINENSIS(13735, "PelSin", "ENSPSI", "Chinese_softshell_turtle,turtle,softshell_turtle,Trionyx_sinensis,pelodiscus_sinensis"),
+	PELODISCUS_SINENSIS(13735, "PelSin", "ENSPSI", "Chinese_softshell_turtle,turtle,softshell_turtle,Trionyx_sinensis"),
 	PETROMYZON_MARINUS(7757, "Pmarinus", "ENSPMA", "lamprey,sea_lamprey,pmarinus,petromyzon,petromyzon_marinus"),
 	PONGO_ABELII(9601, "PPYG", "ENSPPY", "orangutan,orang-utan,pabellii,pongo_abelii"),
 	PROCAVIA_CAPENSIS(9813, "PROCAP", "ENSPCA", "cape_rock_hyrax,caperockhyrax,procaviacapensis,procavia_capensis"),
@@ -130,12 +132,22 @@ public enum Species {
 	private final String stableIDPrefix;
 
 	private final String alias;
+	
+	private final Set<String> aliasSet;
 
 	private Species(int tax_id, String assembly, String stableID, String alias) {
 		this.taxonID = tax_id;
 		this.assemblyPrefix = assembly;
 		this.stableIDPrefix = stableID;
 		this.alias = alias;
+		
+		//Build a hash set of lowercased aliases rather than using splits of aliases everytime
+		Set<String> aliasSet = new HashSet<String>();
+		for(String a: alias.split(",")) {
+		  aliasSet.add(a.toLowerCase().trim());
+		}
+		aliasSet.add(this.name().toLowerCase());
+		this.aliasSet = aliasSet;
 	}
 
 	// getters for the properties
@@ -171,9 +183,9 @@ public enum Species {
 
 		// --------------------------------------
 		for (Species s : values()) {
-			if (in(alias, s.getAlias())) {
-				return s;
-			}
+		  if(s.aliasSet.contains(alias)) {
+		    return s;
+		  }
 		}
 		return Species.UNKNOWN;
 	}
@@ -210,23 +222,6 @@ public enum Species {
 		}
 
 		return result;
-	}
-
-	// -----------------------------------------------------------------
-	/**
-	 * Return true if alias appears somewhere in a string.
-	 */
-	private static boolean in(String alias, String list) {
-
-		String[] aliases = list.split(",");
-		for (int i = 0; i < aliases.length; i++) {
-			if (alias.equalsIgnoreCase(aliases[i].trim())) {
-				return true;
-			}
-		}
-
-		return false;
-
 	}
 
 	// -------------------------------------------------------------------------
