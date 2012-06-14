@@ -5,6 +5,8 @@ import org.ensembl.healthcheck.testcase.eg_core.DbDisplayNameUniProt;
 import org.ensembl.healthcheck.testcase.eg_core.DisplayXrefId;
 import org.ensembl.healthcheck.testcase.eg_core.GeneDescriptionSource;
 import org.ensembl.healthcheck.testcase.eg_core.GeneDescriptionUniProtSource;
+import org.ensembl.healthcheck.testcase.eg_core.GoTermCount;
+import org.ensembl.healthcheck.testcase.eg_core.InterproHitCount;
 import org.ensembl.healthcheck.testcase.eg_core.OntologyLevel;
 import org.ensembl.healthcheck.testcase.eg_core.PositiveCoordinates;
 import org.ensembl.healthcheck.testcase.eg_core.SharedDisplayXref;
@@ -32,7 +34,9 @@ public class EGCoreAnnotationCritical extends GroupOfTests {
 			PositiveCoordinates.class,
 			UniprotGeneNameObjectXref.class,
 			GeneDescriptionUniProtSource.class, 
-			DbDisplayNameUniProt.class
+			DbDisplayNameUniProt.class,
+			InterproHitCount.class,
+			GoTermCount.class
 		);
 	}
 }
