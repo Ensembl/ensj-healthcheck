@@ -48,6 +48,7 @@ public class ProteinTranslation extends AbstractPerlModuleBasedTestCase {
 				db.setRead();
 			}
 		} else {
+			// Checksums are only updated, if the test has passed
 			ReportManager.correct(this, dbre.getConnection(), "Database has not changed since last check so assuming OK");
 		}
 		return passed;
