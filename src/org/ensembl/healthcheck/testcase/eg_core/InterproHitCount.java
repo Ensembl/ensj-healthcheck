@@ -57,7 +57,7 @@ public class InterproHitCount extends AbstractEgCoreTestCase {
 						+ " protein_coding genes of a total of " + geneN
 						+ " for species " + speciesId
 						+ " have at least one interpro domain -"
-						+ " this is less than the permitted threshold of "
+						+ " this is less than the suggested threshold of "
 						+ THRESHOLD * 100 + "%");
 				result = false;
 			} else {

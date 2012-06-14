@@ -96,7 +96,7 @@ public class GoTermCount extends AbstractEgCoreTestCase {
 						+ " protein_coding genes of a total of " + geneN
 						+ " for species " + speciesId
 						+ " have at least one GO term -"
-						+ " this is less than the permitted threshold of "
+						+ " this is less than the suggested threshold of "
 						+ THRESHOLD * 100 + "%");
 				result = false;
 			} else {
