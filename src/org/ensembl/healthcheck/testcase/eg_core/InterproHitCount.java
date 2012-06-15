@@ -1,5 +1,5 @@
 /**
- * EnaProvider
+ * InterproHitCount
  * 
  * @author dstaines
  * @author $Author$
@@ -12,8 +12,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.util.SqlTemplate;
 
 /**
- * Test to make sure we're not using ENA as the provider where we could be using
- * something better and more accurate
+ * Test to check that at least a minimal threshold of protein coding genes have at least 1 interpro hit
  * 
  * @author dstaines
  * 
