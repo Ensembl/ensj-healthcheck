@@ -190,7 +190,7 @@ sub get_new_databases {
   my ($server_dbi, $new_release, $new_dbname) = @_;
   my $new_like = ($new_dbname) ? 
     "%$new_dbname%" :     # get a single DB
-    "%_${new_release}_%"; # get all DBs; note this will exclude master_schema_48 etc
+    "%\_${new_release}\_%"; # get all DBs; note this will exclude master_schema_48 etc
   my $new_dbs = $server_dbi->selectcol_arrayref("SHOW DATABASES LIKE ?", {}, $new_like);
   return $new_dbs;
 }
@@ -268,7 +268,7 @@ sub propagate {
     $counts{$type} = 0;
 
     # find all manual_ok_all_releases etc for each old database
-    foreach my $old_database ( keys %$old_to_new_db_name ) {
+    foreach my $old_database ( sort keys %$old_to_new_db_name ) {
       
       my $new_database = $old_to_new_db_name->{$old_database};
       my $count = 0;
@@ -287,7 +287,10 @@ sub propagate {
       # type eq manual_ok_this_assembly:
       # will only need to propagate if it is the same assembly
       if ( $type eq 'manual_ok_this_assembly' ) {
-        next if new_assembly( $old_database, $new_database );
+        if(new_assembly($old_database, $new_database)) {
+          print "Skipping $new_database as it is a new assembly so we ignore '$type'\n" if ! $quiet;
+          next;
+        }
       }
 
       # type eq manual_ok_this_genebuild
@@ -295,13 +298,19 @@ sub propagate {
       # i.e. if genebuild.start_date values in meta table are the same
       # so skip propagation if they are not the same
       if ( $type eq 'manual_ok_this_genebuild' ) {
-        next if new_genebuild($old_database, $new_database);
+        if(new_genebuild($old_database, $new_database)) {
+          print "Skipping $new_database as it is a new genebuild so we ignore '$type'\n" if ! $quiet;
+          next;
+        }
       }
       
       # type eq manual_ok_this_regulatory_build:
       # will only need to propagate if it is the same regulatory build
       if($type eq 'manual_ok_this_regulatory_build') {
-        next if new_regulatory_build($old_database, $new_database);
+        if(new_regulatory_build($old_database, $new_database)) {
+          print "Skipping $new_database as it is a new regulatory build so we ignore '$type'\n" if ! $quiet;
+          next;
+        }
       }
 
       $select_sth->execute( $old_database, $type );
@@ -356,6 +365,12 @@ sub propagate {
 
 sub new_assembly {
   my ($old_dbname, $new_dbname) = @_;
+  #Fall back to old method for non-core DBs. We will use the production DB
+  if(index($old_dbname, 'variation') > -1 || index($old_dbname, 'funcgen') > -1) {
+    my ($old_db_assembly) = $old_dbname =~ /_(\d+)$/;
+    my ($new_db_assembly) = $new_dbname =~ /_(\d+)$/;
+    return ($old_db_assembly ne $new_db_assembly) ? 1 : 0;
+  }
   return _compare_caches($old_dbname, $new_dbname, $assembly_cache);
 }
 
@@ -472,7 +487,7 @@ sub flag_non_propagated_dbs {
   my ($propagated_new_databases) = @_;
   my %live_new_databases = map { $_ => 1 } @{get_new_databases($dbi1, $new_release)};
   if($dbi2) {
-    %live_new_databases = map { $_ => 1 } @{get_new_databases($dbi2, $new_release)};
+    %live_new_databases = (%live_new_databases, map { $_ => 1 } @{get_new_databases($dbi2, $new_release)});
   }
   foreach my $new_database (keys %live_new_databases) {
     if(!$propagated_new_databases->{$new_database} && ! has_been_propagated($new_database)) {
