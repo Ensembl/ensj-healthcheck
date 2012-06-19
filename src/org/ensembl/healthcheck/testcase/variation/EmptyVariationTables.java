@@ -76,7 +76,7 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 
         // only these species have structural variation data
 
-		if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.CANIS_FAMILIARIS && species != Species.SUS_SCROFA && species != Species.MACACA_MULATTA) {
+		if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.BOS_TAURUS && species != Species.EQUUS_CABALLUS && species != Species.MACACA_MULATTA && species != Species.DANIO_RERIO) {
             tables = remove(tables, svTables);
 	    }
         
