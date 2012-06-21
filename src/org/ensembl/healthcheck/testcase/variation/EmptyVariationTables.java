@@ -27,152 +27,159 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  */
 public class EmptyVariationTables extends SingleDatabaseTestCase {
 
-	/**
-	 * Creates a new instance of EmptyVariationTablesTestCase
-	 */
-	public EmptyVariationTables() {
+  /**
+   * Creates a new instance of EmptyVariationTablesTestCase
+   */
+  public EmptyVariationTables() {
 
-		addToGroup("variation");
-		addToGroup("variation-release");
+    addToGroup("variation");
+    addToGroup("variation-release");
 
-		setDescription("Checks that all tables have data");
-		setTeamResponsible(Team.VARIATION);
+    setDescription("Checks that all tables have data");
+    setTeamResponsible(Team.VARIATION);
 
-	}
+  }
 
-	// ---------------------------------------------------------------------
+  // ---------------------------------------------------------------------
 
-	/**
-	 * Define what tables are to be checked.
-	 */
-	private String[] getTablesToCheck(final DatabaseRegistryEntry dbre) {
+  /**
+   * Define what tables are to be checked.
+   */
+  private String[] getTablesToCheck(final DatabaseRegistryEntry dbre) {
 
-		String[] tables = getTableNames(dbre.getConnection());
-		Species species = dbre.getSpecies();
+    String[] tables = getTableNames(dbre.getConnection());
+    Species species = dbre.getSpecies();
 
-        String[] unusedTables           = { "coord_system" };
-        String[] humanOnlyTables        = { "protein_function_predictions", "phenotype", "tagged_variation_feature", "variation_annotation", "associate_study", "translation_md5" };
-        String[] svTables               = { "study", "structural_variation", "structural_variation_feature", "structural_variation_association", "structural_variation_annotation", "variation_set_structural_variation", "failed_structural_variation" };
-		String[] sampleTables           = { "population_genotype", "population_structure", "sample_synonym" };
-        String[] setTables              = { "variation_set_structure" };
-        String[] genotypeTables         = { "compressed_genotype_region", "compressed_genotype_var" };
-        String[] coverageTables         = { "read_coverage" };
+    String[] unusedTables           = { "coord_system" };
+    String[] humanOnlyTables        = { "protein_function_predictions", "phenotype", "tagged_variation_feature", "variation_annotation", "associate_study", "translation_md5" };
+    String[] svTables               = { "study", "structural_variation", "structural_variation_feature", "structural_variation_association", "structural_variation_annotation", "variation_set_structural_variation", "failed_structural_variation" };
+    String[] sampleTables           = { "population_genotype", "population_structure", "sample_synonym" };
+    String[] setTables              = { "variation_set_structure" };
+    String[] genotypeTables         = { "compressed_genotype_region", "compressed_genotype_var" };
+    String[] coverageTables         = { "read_coverage" };
+    String[] strainTables          = { "strain_gtype_poly" };
 
-        // first drop the unused tables
+    // first drop the unused tables
 
-        tables = remove(tables, unusedTables);
+    tables = remove(tables, unusedTables);
 
-        // then human specific ones unless we're running on human
+    // then human specific ones unless we're running on human
 
-        if (species != Species.HOMO_SAPIENS) {
-            tables = remove(tables, humanOnlyTables);
-            tables = remove(tables, setTables);
-        }
+    if (species != Species.HOMO_SAPIENS) {
+      tables = remove(tables, humanOnlyTables);
+      tables = remove(tables, setTables);
+    }
 
-        // only these species have coverage data
+    // only these species have coverage data
 
-		if (species != Species.RATTUS_NORVEGICUS && species != Species.MUS_MUSCULUS && species != Species.PONGO_ABELII && species != Species.HOMO_SAPIENS) {
-			tables = remove(tables, coverageTables);
-		}
+    if (species != Species.RATTUS_NORVEGICUS && species != Species.MUS_MUSCULUS && species != Species.PONGO_ABELII && species != Species.HOMO_SAPIENS) {
+      tables = remove(tables, coverageTables);
+    }
 
-        // only these species have structural variation data
+    // only these species have structural variation data
 
-		if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.BOS_TAURUS && species != Species.EQUUS_CABALLUS && species != Species.MACACA_MULATTA && species != Species.DANIO_RERIO) {
-            tables = remove(tables, svTables);
-	    }
+    if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.BOS_TAURUS && species != Species.EQUUS_CABALLUS && species != Species.MACACA_MULATTA && species != Species.DANIO_RERIO) {
+      tables = remove(tables, svTables);
+    }
         
-        // only these species do not have sample data
-	
-        if (species == Species.ANOPHELES_GAMBIAE || species == Species.ORNITHORHYNCHUS_ANATINUS || species == Species.PONGO_ABELII || species == Species.TETRAODON_NIGROVIRIDIS) {
-			tables = remove(tables, sampleTables);
-		}
-		
-        return tables;
-	}
+    // only these species do not have sample data
+  
+    if (species == Species.ANOPHELES_GAMBIAE || species == Species.ORNITHORHYNCHUS_ANATINUS || species == Species.PONGO_ABELII || species == Species.TETRAODON_NIGROVIRIDIS) {
+      tables = remove(tables, sampleTables);
+    }
 
-	// ---------------------------------------------------------------------
+    // only these species have strain genotype data
 
-	/**
-	 * Check that every table has more than 0 rows.
-	 * 
-	 * @param dbre
-	 *          The database to check.
-	 * @return true if the test passed.
-	 */
-	public boolean run(DatabaseRegistryEntry dbre) {
+    if (species != Species.HOMO_SAPIENS && species != Species.RATTUS_NORVEGICUS && species != Species.MUS_MUSCULUS && species) {
+      tables = remove(tables, strainTables);
+    }
+    
+    return tables;
+  }
 
-		boolean result = true;
+  // ---------------------------------------------------------------------
 
-		String[] tables = getTablesToCheck(dbre);
-		Connection con = dbre.getConnection();
+  /**
+   * Check that every table has more than 0 rows.
+   * 
+   * @param dbre
+   *          The database to check.
+   * @return true if the test passed.
+   */
+  public boolean run(DatabaseRegistryEntry dbre) {
 
-		for (int i = 0; i < tables.length; i++) {
+    boolean result = true;
 
-			String table = tables[i];
-			// logger.finest("Checking that " + table + " has rows");
+    String[] tables = getTablesToCheck(dbre);
+    Connection con = dbre.getConnection();
 
-			if (!tableHasRows(con, table)) {
+    for (int i = 0; i < tables.length; i++) {
 
-				ReportManager.problem(this, con, table + " has zero rows");
-				result = false;
+      String table = tables[i];
+      // logger.finest("Checking that " + table + " has rows");
 
-			}
-		}
+      if (!tableHasRows(con, table)) {
 
-		if (result) {
-			ReportManager.correct(this, con, "All required tables have data");
-		}
+        ReportManager.problem(this, con, table + " has zero rows");
+        result = false;
 
-		return result;
+      }
+    }
 
-	} // run
+    if (result) {
+      ReportManager.correct(this, con, "All required tables have data");
+    }
 
-	// -----------------------------------------------------------------
+    return result;
 
-	private String[] remove(final String[] tables, final String table) {
+  } // run
 
-		String[] result = new String[tables.length - 1];
-		int j = 0;
-		for (int i = 0; i < tables.length; i++) {
-			if (!tables[i].equalsIgnoreCase(table)) {
-				if (j < result.length) {
-					result[j++] = tables[i];
-				} else {
-					logger.severe("Cannot remove " + table + " since it's not in the list!");
-				}
-			}
-		}
+  // -----------------------------------------------------------------
 
-		return result;
+  private String[] remove(final String[] tables, final String table) {
 
-	}
+    String[] result = new String[tables.length - 1];
+    int j = 0;
+    for (int i = 0; i < tables.length; i++) {
+      if (!tables[i].equalsIgnoreCase(table)) {
+        if (j < result.length) {
+          result[j++] = tables[i];
+        } else {
+          logger.severe("Cannot remove " + table + " since it's not in the list!");
+        }
+      }
+    }
 
-	// -----------------------------------------------------------------
+    return result;
 
-	private String[] remove(final String[] src, final String[] tablesToRemove) {
+  }
 
-		String[] result = src;
+  // -----------------------------------------------------------------
 
-		for (int i = 0; i < tablesToRemove.length; i++) {
-			result = remove(result, tablesToRemove[i]);
-		}
+  private String[] remove(final String[] src, final String[] tablesToRemove) {
 
-		return result;
+    String[] result = src;
 
-	}
+    for (int i = 0; i < tablesToRemove.length; i++) {
+      result = remove(result, tablesToRemove[i]);
+    }
 
-	// -----------------------------------------------------------------
+    return result;
 
-	/**
-	 * This only applies to variation databases.
-	 */
-	public void types() {
+  }
 
-		removeAppliesToType(DatabaseType.OTHERFEATURES);
-		removeAppliesToType(DatabaseType.CDNA);
-		removeAppliesToType(DatabaseType.CORE);
-		removeAppliesToType(DatabaseType.VEGA);
+  // -----------------------------------------------------------------
 
-	}
+  /**
+   * This only applies to variation databases.
+   */
+  public void types() {
+
+    removeAppliesToType(DatabaseType.OTHERFEATURES);
+    removeAppliesToType(DatabaseType.CDNA);
+    removeAppliesToType(DatabaseType.CORE);
+    removeAppliesToType(DatabaseType.VEGA);
+
+  }
 
 } // EmptyVariationTablesTestCase
