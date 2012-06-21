@@ -64,32 +64,11 @@ public class AnalysisLogicName extends SingleDatabaseTestCase {
     boolean result = true;
     Connection con = dbre.getConnection();
 
-    result &= checkdbVersion(con);
-
     result &= checkLowerCase(con);
 
     return result;
   }
 
-  // ---------------------------------------------------------------------
-
-  /**
-   * Check that db_version is not empty if not a raw compute
-   */
-
-  private boolean checkdbVersion(Connection con) {
-
-    boolean result = true;
-    int rows = DBUtils.getRowCount(con,
-        "SELECT COUNT(*) FROM analysis where isnull(db_version) ");
-    if (rows > 0) {
-      result = false;
-      ReportManager.problem(this, con, rows
-          + " Analyses are missing db_version");
-    }
-
-    return result;
-  }
 
   // ---------------------------------------------------------------------
 
