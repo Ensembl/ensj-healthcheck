@@ -39,6 +39,10 @@ public class ProductionAnalysisLogicName extends AbstractTemplatedTestCase {
     boolean result = true;
     Set<String> coreLogicNames = getLogicNamesDb(dbre);
     Set<String> productionLogicNames = getLogicNamesFromProduction(dbre);
+    Set<String> coreDbVersion = getDbVersionCore(dbre);
+    Set<String> productionDbVersion = getDbVersionProduction(dbre, coreLogicNames);
+    result &= checkHasDbVersion(dbre, productionDbVersion, coreDbVersion, "core");
+    result &= checkHasDbVersion(dbre, coreDbVersion, productionDbVersion, "production");
     result &= testForIdentity(dbre, coreLogicNames, productionLogicNames, "production");
     result &= testForIdentity(dbre, productionLogicNames, coreLogicNames, "core");
     return result;
@@ -60,6 +64,19 @@ public class ProductionAnalysisLogicName extends AbstractTemplatedTestCase {
     }
     return false;
   }
+
+  private <T extends CharSequence> boolean checkHasDbVersion(DatabaseRegistryEntry dbre, Collection<T> core, Collection<T> production, String type) {
+    Set<T> missing = new HashSet<T>(core);
+    missing.removeAll(production);
+    if(missing.isEmpty()) {
+      return true;
+    }
+    for(CharSequence name: missing) {
+      String msg = String.format("Analysis '%s' in %s db should have a dbversion", name, type);
+      ReportManager.problem(this, dbre.getConnection(), msg);
+    }
+    return false;
+  }
   
   private Set<String> getLogicNamesDb(DatabaseRegistryEntry dbre) {
     SqlTemplate t = DBUtils.getSqlTemplate(dbre);
@@ -75,4 +92,22 @@ public class ProductionAnalysisLogicName extends AbstractTemplatedTestCase {
     List<String> results = t.queryForDefaultObjectList(sql, String.class, name);
     return new HashSet<String>(results);
   }
+
+  private Set<String> getDbVersionCore(DatabaseRegistryEntry dbre) {
+    SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+    String sql = "SELECT logic_name FROM analysis where !isnull(db_version)";
+    List<String> results = t.queryForDefaultObjectList(sql, String.class);
+    return new HashSet<String>(results);
+  }
+
+  private Set<String> getDbVersionProduction(DatabaseRegistryEntry dbre, Set<String> analysisList) {
+    SqlTemplate t = DBUtils.getSqlTemplate(getProductionDatabase());
+    Set<String> results = new HashSet<String>();
+    for (String analysis : analysisList) {
+      String sql = "SELECT logic_name FROM analysis_description where logic_name = '" + analysis + "' and db_version = 1";
+      results.addAll(t.queryForDefaultObjectList(sql, String.class));
+    }
+    return results;
+  }
+
 }
