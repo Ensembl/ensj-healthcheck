@@ -52,7 +52,7 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 
         String[] unusedTables           = { "coord_system" };
         String[] humanOnlyTables        = { "protein_function_predictions", "phenotype", "tagged_variation_feature", "variation_annotation", "associate_study", "translation_md5" };
-        String[] svTables               = { "study", "structural_variation", "structural_variation_feature", "structural_variation_association", "structural_variation_annotation", "variation_set_structural_variation" };
+        String[] svTables               = { "study", "structural_variation", "structural_variation_feature", "structural_variation_association", "structural_variation_annotation", "variation_set_structural_variation", "failed_structural_variation" };
 		String[] sampleTables           = { "population_genotype", "population_structure", "sample_synonym" };
         String[] setTables              = { "variation_set", "variation_set_structure", "variation_set_variation" };
         String[] genotypeTables         = { "compressed_genotype_region", "compressed_genotype_var" };
