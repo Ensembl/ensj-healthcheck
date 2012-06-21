@@ -6,7 +6,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  * These are the tests that register themselves as post_genebuild. The tests are:
  * 
  * <ul>
- *   <li> org.ensembl.healthcheck.testcase.generic.Biotypes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.CoreForeignKeys </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.Accession </li> 
@@ -93,7 +92,6 @@ public class PostGenebuild extends GroupOfTests {
 	public PostGenebuild() {
 
 		addTest(
-			org.ensembl.healthcheck.testcase.generic.Biotypes.class,
 			org.ensembl.healthcheck.testcase.generic.CoreForeignKeys.class,
 			org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate.class,
 			org.ensembl.healthcheck.testcase.generic.Accession.class,

@@ -6,7 +6,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  * These are the tests that register themselves as release. The tests are:
  * 
  * <ul>
- *   <li> org.ensembl.healthcheck.testcase.generic.Biotypes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.Accession </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.XrefTypes </li> 
@@ -129,7 +128,6 @@ public class Release extends GroupOfTests {
 	public Release() {
 
 		addTest(
-			org.ensembl.healthcheck.testcase.generic.Biotypes.class,
 			org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate.class,
 			org.ensembl.healthcheck.testcase.generic.Accession.class,
 			org.ensembl.healthcheck.testcase.generic.XrefTypes.class,
