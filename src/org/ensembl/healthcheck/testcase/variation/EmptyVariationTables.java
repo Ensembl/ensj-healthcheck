@@ -90,7 +90,7 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 
     // only these species have strain genotype data
 
-    if (species != Species.HOMO_SAPIENS && species != Species.RATTUS_NORVEGICUS && species != Species.MUS_MUSCULUS && species) {
+    if (species != Species.HOMO_SAPIENS && species != Species.RATTUS_NORVEGICUS && species != Species.MUS_MUSCULUS) {
       tables = remove(tables, strainTables);
     }
     
