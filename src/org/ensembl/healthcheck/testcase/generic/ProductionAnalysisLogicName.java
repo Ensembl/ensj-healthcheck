@@ -9,6 +9,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
+import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -37,8 +38,11 @@ public class ProductionAnalysisLogicName extends AbstractTemplatedTestCase {
   @Override
   protected boolean runTest(DatabaseRegistryEntry dbre) {
     boolean result = true;
+    Species dbSpecies = dbre.getSpecies();
+    String species = dbSpecies.toString();
+    String databaseType = dbre.getType().getName();
     Set<String> coreLogicNames = getLogicNamesDb(dbre);
-    Set<String> productionLogicNames = getLogicNamesFromProduction(dbre);
+    Set<String> productionLogicNames = getLogicNamesFromProduction(dbre, species, databaseType);
     Set<String> coreDbVersion = getDbVersionCore(dbre);
     Set<String> productionDbVersion = getDbVersionProduction(dbre, coreLogicNames);
     result &= checkHasDbVersion(dbre, productionDbVersion, coreDbVersion, "core");
@@ -85,11 +89,10 @@ public class ProductionAnalysisLogicName extends AbstractTemplatedTestCase {
     return new HashSet<String>(results);
   }
   
-  private Set<String> getLogicNamesFromProduction(DatabaseRegistryEntry dbre) {
+  private Set<String> getLogicNamesFromProduction(DatabaseRegistryEntry dbre, String species, String databaseType) {
     SqlTemplate t = DBUtils.getSqlTemplate(getProductionDatabase());
-    String sql = "select logic_name from full_analysis_description where full_db_name =?";
-    String name = DBUtils.getShortDatabaseName(dbre.getConnection());
-    List<String> results = t.queryForDefaultObjectList(sql, String.class, name);
+    String sql = "select logic_name from analysis_description ad, species s, analysis_web_data aw where ad.analysis_description_id = aw.analysis_description_id and aw.species_id = s.species_id and s.db_name = '" + species + "' and aw.db_type = '" + databaseType + "' and s.is_current = 1 and ad.is_current = 1";
+    List<String> results = t.queryForDefaultObjectList(sql, String.class);
     return new HashSet<String>(results);
   }
 
