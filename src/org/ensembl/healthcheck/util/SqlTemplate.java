@@ -3,8 +3,10 @@ package org.ensembl.healthcheck.util;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * An lightweight, generic analogue of Spring's JdbcTemplate code (docs are available from <a
@@ -78,6 +80,37 @@ public interface SqlTemplate {
 	 */
 	<T> List<T> mapResultSetToList(ResultSet resultSet, RowMapper<T> mapper,
 			final int rowLimit, String sql, Object[] args);
+	
+  /**
+   * The core method which takes the output of a ResultSet and will output a
+   * Set of objects. This method provides a very useful manner to parse the
+   * outputs of result sets however it is recommended that you use a more
+   * custom method for the procedure.
+   *
+   * @param <T>
+   *            The required output type
+   * @param resultSet
+   *            The input result set
+   * @param mapper
+   *            The mapper object to use to map from result set to object
+   * @param rowLimit
+   *            Indicates that there is an expected row limit that when
+   *            exceeded we want a runtime exception raised. If set to -1 or 0
+   *            this is ignored. If set then exceeding the row limit or a
+   *            return count of 0 will cause an exception to be raised
+   * @param sql
+   *            The SQL used to execute this statement. Used for error
+   *            reporting
+   * @param args
+   *            The args used to execute this statement. Used for error
+   *            reporting
+   * @return A {@link LinkedHashSet} of objects which were created by the mapper
+   * @throws SqlServiceUncheckedException
+   *             Thrown if SQLExceptions were raised during the mapping
+   *             process or row limit was exceeded
+   */
+  <T> Set<T> mapResultSetToSet(ResultSet resultSet, RowMapper<T> mapper,
+      final int rowLimit, String sql, Object[] args);
 
 	/**
 	 * Wrapper version for
@@ -122,6 +155,23 @@ public interface SqlTemplate {
 	 * @return The list of specified objects
 	 */
 	<T> List<T> queryForList(String sql, RowMapper<T> mapper, Object... args);
+	
+  /**
+   * Runs {@link #executeSql(String, Object[])} and then call out to
+   * {@link #mapResultSetToSet(ResultSet, RowMapper, int, String, Object[])}
+   * for processing into a Set.
+   *
+   * @param <T>
+   *            The expected return type
+   * @param sql
+   *            The SQL to execute
+   * @param mapper
+   *            The mapper to use
+   * @param args
+   *            Arguments to use in the SQL
+   * @return The set of specified objects
+   */
+	<T> Set<T> queryForSet(String sql, RowMapper<T> mapper, Object... args);
 
 	/**
 	 * See {@link DefaultObjectRowMapper} for more information about supported
@@ -164,6 +214,23 @@ public interface SqlTemplate {
 	<T> List<T> queryForDefaultObjectList(String sql, Class<T> expected,
 			Object... args);
 
+  /**
+   * See {@link DefaultObjectRowMapper} for more information about supported
+   * mappings. Will map column 1 from a result set into a given object.
+   * Example usage:
+   *
+   * <code>
+   * SqlServiceTemplate template = getTemplate(); //Resolved from somewhere
+   * Set&lt;Date&gt; = template.queryForDefaultObjectSet("select dates from date_table", Date.class);
+   * </code>
+   *
+   * In the above example we are querying for all dates from a specified
+   * table. The setwill never be null but can be empty if no results were
+   * found.
+   */
+  <T> Set<T> queryForDefaultObjectSet(String sql, Class<T> expected,
+      Object... args);
+	
 	/**
 	 * Provides very similar functionality to
 	 * {@link #queryForList(String, uk.ac.ebi.proteome.util.sql.RowMapper, Object[])}
@@ -239,6 +306,15 @@ public interface SqlTemplate {
    * for DML and 0 for statements with no effects e.g. DDL
    */
 	int execute(String sql);
+	
+	/**
+	 * Executes the given SQL statement as an update with the given parameters
+	 * 
+	 * @param sql SQL to execute
+	 * @param args Params to bind
+	 * @return Returns the number of rows afffected
+	 */
+	int update(String sql, Object... args);
 
 	/**
    * Callback used to process a {@link ResultSet} whilst maintaining the

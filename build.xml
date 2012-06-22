@@ -7,7 +7,7 @@
 -->
 
 <project name="healthchecks" default="jar" basedir=".">
-
+	
 	<property file = "buildfiles/build.configurable_testrunner.properties" />
 	<import   file = "buildfiles/build.configurable_testrunner.xml"       />
 
@@ -18,6 +18,14 @@
 	<property name="scp-executable" value="c:\cygwin\bin\scp.exe" />
 	<property name="scp-port" value="2222" />
 	<property name="scp-target" value="gp1@localhost:~/work/ensj-healthcheck/lib" />
+	
+	<taskdef name="testng" classname="org.testng.TestNGAntTask">
+		<classpath>
+		  <fileset dir="lib">
+		    <include name="**/testng*.jar"/>
+		  </fileset>
+		</classpath>
+	</taskdef>
 
 	<!-- ################################################################################## -->
 	<!-- Targets -->
@@ -28,6 +36,7 @@
 		<!-- Create the directory structure -->
 		<mkdir dir="${build}" />
 		<mkdir dir="${dist}" />
+		<mkdir dir="${test.class.dir}"/>
 	</target>
 
 	<!-- ################################################################################## -->
@@ -41,7 +50,7 @@
 	<!-- ################################################################################## -->
 
 	<target name="compile" depends="init" description="Compile the source ">
-		<javac srcdir="${src}" destdir="${build}" excludes="**/*Test.*" debug="true" debugLevel="lines,vars,source">
+		<javac srcdir="${src}" destdir="${build}" excludes="**/*Test.*" debug="true" debugLevel="lines,vars,source" includeantruntime="false">
 			<classpath>
 				<fileset dir="lib">
 					<include name="**/*.jar" />
@@ -50,6 +59,41 @@
 		</javac>
 		<echo>Run &quot;ant jar&quot; so the compiled classes are used by the command line scripts.</echo>
 	</target>
+	
+	<target name="compile-tests" depends="compile" description="Compile the test cases ">
+    <javac srcdir="${test.java.dir}" destdir="${test.class.dir}" debug="true" debugLevel="lines,vars,source" includeantruntime="false">
+      <classpath>
+      	<dirset dir="${build}"/>
+        <fileset dir="lib">
+          <include name="**/*.jar" />
+        	<exclude name="**/ensj*.jar"/>
+        	<exclude name="**/junit.jar"/>
+        </fileset>
+      </classpath>
+    </javac>
+  </target>
+	
+	<target name="test" depends="compile-tests" description="Run testng unit tests">
+		<path id="test-cp">
+			<pathelement location="${build}"/>
+			<pathelement location="${test.class.dir}"/>
+			<fileset dir="${lib}">
+				<include name="**/*.jar"/>
+				<exclude name="**/ensj*.jar"/>
+				<exclude name="**/junit.jar"/>
+			</fileset>
+		</path>
+		<echo level="info" message="See '${test.report.dir}/index.html' for test report information"/>
+		<echo level="info" message="If tests are not working try increasing verbosity of testng"/>
+		<testng classpathref="test-cp" outputdir="${test.report.dir}" verbose="1">
+			<classfileset dir="${test.class.dir}" includes="**/*Test.class"/>
+		</testng>
+	</target>
+	
+	<target name="tests">
+		<antcall target="test"/>
+	</target>
+	
 
 	<target 
 		name        = "eg_gui" 
@@ -155,6 +199,8 @@
 		<delete dir="${doc}/javadoc" />
 		<delete dir="${dist}" />
 		<delete dir="${build}" />
+		<delete dir="${test.class.dir}"/>
+		<delete dir="${test.report.dir}"/>
 		<delete file="${lib}/${name}.jar" />
 		<delete>
 			<fileset dir=".">

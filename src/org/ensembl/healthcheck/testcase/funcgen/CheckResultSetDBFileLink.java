@@ -1,13 +1,6 @@
 package org.ensembl.healthcheck.testcase.funcgen;
 
-import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.Priority;
-import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.util.DBUtils;
-
-import java.io.*;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,8 +8,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import junit.framework.Test;
+
 import org.apache.commons.lang.StringUtils;
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
+import org.ensembl.healthcheck.testcase.Priority;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 

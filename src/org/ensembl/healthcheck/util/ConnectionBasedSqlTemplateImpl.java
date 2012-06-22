@@ -14,9 +14,12 @@ import java.sql.Types;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
@@ -55,14 +58,32 @@ public class ConnectionBasedSqlTemplateImpl implements SqlTemplate {
 			throw new SqlUncheckedException("Could not get URL for connection");
 		}
 	}
-
+	
 	/**
-	 * {@inheritDoc}
-	 */
+   * {@inheritDoc}
+   */
 	public <T> List<T> mapResultSetToList(final ResultSet resultSet,
+      final RowMapper<T> mapper, final int rowLimit, String sql,
+      final Object[] args) throws SqlUncheckedException {
+	  List<T> output = new ArrayList<T>();
+	  mapResultSetToCollection(resultSet, mapper, rowLimit, sql, args, output);
+	  return output;
+	}
+	
+  /**
+   * {@inheritDoc}
+   */
+  public <T> Set<T> mapResultSetToSet(final ResultSet resultSet,
+      final RowMapper<T> mapper, final int rowLimit, String sql,
+      final Object[] args) throws SqlUncheckedException {
+    Set<T> output = new LinkedHashSet<T>();
+    mapResultSetToCollection(resultSet, mapper, rowLimit, sql, args, output);
+    return output;
+  }
+
+	public <T> void mapResultSetToCollection(final ResultSet resultSet,
 			final RowMapper<T> mapper, final int rowLimit, String sql,
-			final Object[] args) throws SqlUncheckedException {
-		List<T> output = new ArrayList<T>();
+			final Object[] args, final Collection<T> output) throws SqlUncheckedException {
 		int position = 0;
 		boolean inspectRowCount = (rowLimit > 0);
 
@@ -96,8 +117,6 @@ public class ConnectionBasedSqlTemplateImpl implements SqlTemplate {
 					sql, args);
 			throw new SqlUncheckedException(message, e);
 		}
-
-		return output;
 	}
 
 	/**
@@ -200,12 +219,26 @@ public class ConnectionBasedSqlTemplateImpl implements SqlTemplate {
 			}
 		}, args);
 	}
+	
+  /**
+   * {@inheritDoc}
+   */
+	public <T> Set<T> queryForSet(final String sql, final RowMapper<T> mapper, 
+	    final Object... args) {
+	  return execute(sql, new ResultSetCallback<Set<T>>() {
+      @Override
+      public Set<T> process(ResultSet rs) throws SQLException {
+        return mapResultSetToSet(rs, mapper, NO_ROW_LIMIT_CHECKS, sql,
+            args);
+      }
+    }, args);
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public <T> T queryForDefaultObject(String sql, Class<T> expected,
-			Object... args) throws SqlUncheckedException {
+	public <T> T queryForDefaultObject(final String sql, final Class<T> expected,
+	    final Object... args) throws SqlUncheckedException {
 		DefaultObjectRowMapper<T> mapper = new DefaultObjectRowMapper<T>(
 				expected, FIRST_COLUMN_INDEX);
 		return queryForObject(sql, mapper, args);
@@ -214,12 +247,22 @@ public class ConnectionBasedSqlTemplateImpl implements SqlTemplate {
 	/**
 	 * {@inheritDoc}
 	 */
-	public <T> List<T> queryForDefaultObjectList(String sql, Class<T> expected,
-			Object... args) throws SqlUncheckedException {
+	public <T> List<T> queryForDefaultObjectList(final String sql, final Class<T> expected,
+	    final Object... args) throws SqlUncheckedException {
 		DefaultObjectRowMapper<T> mapper = new DefaultObjectRowMapper<T>(
 				expected, FIRST_COLUMN_INDEX);
 		return queryForList(sql, mapper, args);
 	}
+	
+  /**
+   * {@inheritDoc}
+   */
+  public <T> Set<T> queryForDefaultObjectSet(final String sql, final Class<T> expected,
+      final Object... args) throws SqlUncheckedException {
+    DefaultObjectRowMapper<T> mapper = new DefaultObjectRowMapper<T>(
+        expected, FIRST_COLUMN_INDEX);
+    return queryForSet(sql, mapper, args);
+  }
 
 	/**
 	 * {@inheritDoc}
@@ -247,6 +290,22 @@ public class ConnectionBasedSqlTemplateImpl implements SqlTemplate {
 				return targetMap;
 			}
 		}, args);
+	}
+	
+  /**
+   * {@inheritDoc}
+   */
+	public int update(final String sql, final Object... args) {
+	  PreparedStatement ps = null;
+	  try {
+      ps = connection.prepareStatement(sql);
+      bindParamsToPreparedStatement(ps, args);
+      return ps.executeUpdate();
+    } catch (SQLException e) {
+      throw createUncheckedException(sql, args, e);
+    } finally {
+      closeDbObject(ps);
+    }
 	}
 
 	// ----- EXCEPTION HANDLING
