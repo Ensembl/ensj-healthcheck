@@ -18,7 +18,7 @@ public enum Species {
 	CAENORHABDITIS_BRIGGSAE(6238, "CBR", "", "briggsae,cbriggsae,caenorhabditisbriggsae,caenorhabditis_briggsae"),
 	CAENORHABDITIS_ELEGANS(6239, "WBcel", "IGNORE", "elegans,celegans,caenorhabditiselegans,caenorhabditis_elegans"),
 	CALLITHRIX_JACCHUS(9483, "C_jacchus", "ENSCJA", "marmoset,white-tufted-ear marmoset,callithrix_jacchus,callithrix jacchus,Callithrix_jacchus,Callithrix jacchus,callithrix"),
-	CANIS_FAMILIARIS(9615, "BROADD", "ENSCAF", "dog,doggy,cfamiliaris,canisfamiliaris,canis_familiaris"),
+	CANIS_FAMILIARIS(9615, "CanFam", "ENSCAF", "dog,doggy,cfamiliaris,canisfamiliaris,canis_familiaris"),
 	CAVIA_PORCELLUS(10141, "CAVPOR", "ENSCPO", "guineapig,guinea_pig,cporcellus,cavia_porcellus"),
 	CHOLOEPUS_HOFFMANNI(9358, "choHof", "ENSCHO", "Sloth,Two-toed_sloth,Hoffmans_two-fingered_sloth,choloepus_hoffmanni"),
 	CIONA_INTESTINALIS(7719, "KH", "ENSCIN", "cionaintestinalis,ciona_int,ciona_intestinalis"),
