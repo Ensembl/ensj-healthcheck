@@ -45,10 +45,10 @@ public class ProductionAnalysisLogicName extends AbstractTemplatedTestCase {
     Set<String> productionLogicNames = getLogicNamesFromProduction(dbre, species, databaseType);
     Set<String> coreDbVersion = getDbVersionCore(dbre);
     Set<String> productionDbVersion = getDbVersionProduction(dbre, coreLogicNames);
-    result &= checkHasDbVersion(dbre, productionDbVersion, coreDbVersion, "core");
+    result &= checkHasDbVersion(dbre, productionDbVersion, coreDbVersion, databaseType);
     result &= checkHasDbVersion(dbre, coreDbVersion, productionDbVersion, "production");
     result &= testForIdentity(dbre, coreLogicNames, productionLogicNames, "production");
-    result &= testForIdentity(dbre, productionLogicNames, coreLogicNames, "core");
+    result &= testForIdentity(dbre, productionLogicNames, coreLogicNames, databaseType);
     return result;
   }
   
