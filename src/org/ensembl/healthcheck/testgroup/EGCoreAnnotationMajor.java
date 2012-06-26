@@ -4,6 +4,7 @@ import org.ensembl.healthcheck.GroupOfTests;
 import org.ensembl.healthcheck.testcase.eg_core.DuplicateXref;
 import org.ensembl.healthcheck.testcase.eg_core.IgiXref;
 import org.ensembl.healthcheck.testcase.eg_core.ProteinFeatureAnalysisDb;
+import org.ensembl.healthcheck.testcase.eg_core.SimpleFeatureAnalysisTypes;
 import org.ensembl.healthcheck.testcase.eg_core.UniProtKB_DisplayXrefIds;
 import org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions;
 import org.ensembl.healthcheck.testcase.generic.BlankEnums;
