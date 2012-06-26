@@ -83,7 +83,7 @@ public class CheckFlatProteinTrees extends AbstractTemplatedTestCase {
 				flatMembersWithInternalStructure.add(nodeId);
 			}
 			else if (entry.getValue() > getMaxAllowedFlatMembers()
-					&& entry.getValue() == memberCounts.get(nodeId)) {
+					&& entry.getValue().equals(memberCounts.get(nodeId))) {
 				flatTreesStructure.add(nodeId);
 			}
 		}
