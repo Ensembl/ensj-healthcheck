@@ -18,7 +18,7 @@ import java.util.Set;
  * A set of useful methods you might want to use when creating collections and
  * working with Collections. The first set of methods allow you to escape from
  * generics hell i.e.
- *
+ * 
  * <code>
  * <pre>
  * Map&lt;String,List&lt;Map&lt;String,String&gt;&gt;&gt; myMap =
@@ -27,15 +27,52 @@ import java.util.Set;
  * Map&lt;String,List&lt;Map&lt;String,String&gt;&gt;&gt; myMap = CollectionUtils.createHashMap();
  * </pre>
  * </code>
- *
+ * 
  * Decide for yourself if this is easier or not (and remember that in Java5 you
  * can do static imports so this truncates down to a call to the createHashMap
  * method).
- *
+ * 
  * @author ayates
  */
 public class CollectionUtils {
 
+	/**
+	 * Create a new {@link Pair} of two supplied objects
+	 * 
+	 * @param a
+	 * @param b
+	 * @return new pair
+	 */
+	public static <A, B> Pair<A, B> pair(A a, B b) {
+		return new Pair<A, B>(a, b);
+	}
+
+
+	/**
+	 * Create a new {@link Triple} of three supplied objects
+	 * 
+	 * @param a
+	 * @param b
+	 * @param c
+	 * @return new triple
+	 */
+	public static <A, B, C> Triple<A, B, C> triple(A a, B b, C c) {
+		return new Triple<A, B, C>(a, b, c);
+	}
+	
+	/**
+	 * Create a new {@link Quadruple} of four supplied objects
+	 * 
+	 * @param a
+	 * @param b
+	 * @param c
+	 * @param d
+	 * @return new quadruple
+	 */
+	public static <A, B, C, D> Quadruple<A, B, C, D> triple(A a, B b, C c, D d) {
+		return new Quadruple<A, B, C, D>(a, b, c, d);
+	}
+	
 	/**
 	 * Returns a hash map typed to the generics specified in the method call
 	 */
@@ -67,9 +104,11 @@ public class CollectionUtils {
 
 	/**
 	 * Creates a list and populates it with the contents of args
-	 *
-	 * @param <T> Generic type of list
-	 * @param args Elements to go into the list
+	 * 
+	 * @param <T>
+	 *            Generic type of list
+	 * @param args
+	 *            Elements to go into the list
 	 * @return List of args typed accordingly
 	 */
 	public static <T> List<T> createArrayList(T... args) {
@@ -108,7 +147,7 @@ public class CollectionUtils {
 	public static <T> Set<T> createHashSet(int initialCapacity) {
 		return new HashSet<T>(initialCapacity);
 	}
-	
+
 	/**
 	 * Returns a linked hash set typed to the generics specified in the method
 	 * call
@@ -124,7 +163,7 @@ public class CollectionUtils {
 	public static <T> Set<T> createLinkedHashSet(int initialCapacity) {
 		return new LinkedHashSet<T>(initialCapacity);
 	}
-	
+
 	/**
 	 * Returns a linked hash set typed to the generics specified in the method
 	 * call with the given elements as the contents
@@ -137,7 +176,7 @@ public class CollectionUtils {
 	/**
 	 * Method which will return the "last" element in the given collection or a
 	 * null value if not found.
-	 *
+	 * 
 	 * @param <T>
 	 *            generic collection type
 	 * @param collection
@@ -159,7 +198,7 @@ public class CollectionUtils {
 		}
 		return elem;
 	}
-	
+
 	public static <T> T getFirstElement(Collection<T> collection, T defaultValue) {
 		T elem = defaultValue;
 		if (collection != null && !collection.isEmpty()) {
@@ -174,7 +213,5 @@ public class CollectionUtils {
 		}
 		return elem;
 	}
-	
-
 
 }
