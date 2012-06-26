@@ -18,43 +18,36 @@
 
 package org.ensembl.healthcheck.test;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import org.ensembl.healthcheck.Species;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
-import junit.framework.TestCase;
-
-/**
- * Junit test case for Species
- */
-public class SpeciesTest extends TestCase {
-
-    public SpeciesTest(String arg) {
-
-        super(arg);
-
-    }
+public class SpeciesTest {
 
     // -----------------------------------------------------------------
 
+    @Test
     public void testToString() {
-
-        Species s = Species.HOMO_SAPIENS;
-        assertEquals("toString method not returning expected result", s.toString(), "homo_sapiens");
+        assertEquals("homo_sapiens", Species.HOMO_SAPIENS.toString(), "toString method not returning expected result");
 
     }
 
     // -----------------------------------------------------------------
 
+    @Test
     public void testEquals() {
 
-        assertEquals("equals method not working", Species.HOMO_SAPIENS, Species.HOMO_SAPIENS);
-        assertTrue("compare with == not working", Species.DANIO_RERIO == Species.DANIO_RERIO);
-        assertTrue("species that are the not the same are coming out equal",
-                Species.TAKIFUGU_RUBRIPES != Species.CAENORHABDITIS_BRIGGSAE);
+      Assert.assertEquals(Species.HOMO_SAPIENS, Species.HOMO_SAPIENS, "equals method not working");
+      Assert.assertTrue(Species.TAKIFUGU_RUBRIPES != Species.CAENORHABDITIS_BRIGGSAE, "species that are the not the same are coming out equal");
 
     }
 
     // -----------------------------------------------------------------
 
+    @Test
     public void testAlias() {
 
         // not an exhaustive list ...
@@ -71,6 +64,7 @@ public class SpeciesTest extends TestCase {
 
     // -----------------------------------------------------------------
 
+    @Test
     public void testTaxonomyIDs() {
 
         assertEquals(Species.getTaxonomyID(Species.HOMO_SAPIENS), "9606");
@@ -82,13 +76,14 @@ public class SpeciesTest extends TestCase {
         assertEquals(Species.getSpeciesFromTaxonomyID(10090), Species.MUS_MUSCULUS);
         assertEquals(Species.getSpeciesFromTaxonomyID(10116), Species.RATTUS_NORVEGICUS);
 
-        assertEquals(Species.getTaxonomyID(Species.UNKNOWN), "");
+        assertEquals("0", Species.getTaxonomyID(Species.UNKNOWN), "Checking unknown returns a taxon of 0");
         assertEquals(Species.getSpeciesFromTaxonomyID(-1), Species.UNKNOWN);
 
     }
 
     // -----------------------------------------------------------------
     
+    @Test
     public void testSimilarNames() {
         
         assertTrue(!(Species.resolveAlias("hedgehog").equals(Species.ECHINOPS_TELFAIRI)));
@@ -98,9 +93,10 @@ public class SpeciesTest extends TestCase {
     
  // -----------------------------------------------------------------
     
+    @Test
     public void testAssemblyPrefixes() {
         
-        assertEquals(Species.getSpeciesForAssemblyPrefix("NCBI"), Species.HOMO_SAPIENS);
+        assertEquals(Species.getSpeciesForAssemblyPrefix("GRCh"), Species.HOMO_SAPIENS);
         
     }
     
