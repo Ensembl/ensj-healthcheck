@@ -47,7 +47,8 @@ public class Triple<A,B,C> extends Pair<A,B> {
 	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	@Override
+	@SuppressWarnings("unchecked")
+  @Override
 	public boolean equals(Object obj) {
 		if (obj == null || !this.getClass().equals(obj.getClass())) {
 			return false;
@@ -69,7 +70,7 @@ public class Triple<A,B,C> extends Pair<A,B> {
 	 */
 	@Override
 	public String toString() {
-		return super.toString()+",c=[" + c.toString() + "]";
+		return super.toString()+",c=[" + String.valueOf(c) + "]";
 	}
 	
 }

@@ -2,6 +2,10 @@ package org.ensembl.healthcheck.util;
 
 import static org.ensembl.healthcheck.util.CollectionUtils.createArrayList;
 import static org.ensembl.healthcheck.util.CollectionUtils.createLinkedHashSet;
+import static org.ensembl.healthcheck.util.CollectionUtils.pair;
+import static org.ensembl.healthcheck.util.CollectionUtils.quadruple;
+import static org.ensembl.healthcheck.util.CollectionUtils.triple;
+import static org.ensembl.healthcheck.util.CollectionUtils.unit;
 import static org.testng.Assert.assertEquals;
 
 import java.sql.Connection;
@@ -30,10 +34,13 @@ public class SqlTemplateTest {
     t = new ConnectionBasedSqlTemplateImpl(conn);
     
     t.execute("create table numbers(a int)");
-    String update = "insert into numbers values(?)";
     for(Integer i: new Integer[]{1,1,2,3,4,5,6,7,8,8}) {
+      String update = "insert into numbers values(?)";
       t.update(update, i);
     }
+    
+    t.execute("create table tupletastic(a int, b varchar, c float, d boolean)");
+    t.update("insert into tupletastic values(?,?,?,?)", 1, "hello", 4.0D, true);
   }
 
   @Test
@@ -65,4 +72,16 @@ public class SqlTemplateTest {
     assertEquals(ints, expected, "Making sure we retain order");
   }
   
+  @Test
+  public void tupleMethods() {
+    String sql = "select a,b,c,d from tupletastic";
+    Class<Integer> a = Integer.class;
+    Class<String> b = String.class;
+    Class<Double> c = Double.class;
+    Class<Boolean> d = Boolean.class;
+    assertEquals(unit(1), t.queryForObject(sql, TupleRowMappers.unit(a)), "Checking unit ok");
+    assertEquals(pair(1, "hello"), t.queryForObject(sql, TupleRowMappers.pair(a,b)), "Checking pair ok");
+    assertEquals(triple(1, "hello", 4.0D), t.queryForObject(sql, TupleRowMappers.triple(a,b,c)), "Checking triple ok");
+    assertEquals(quadruple(1, "hello", 4.0D, true), t.queryForObject(sql, TupleRowMappers.quadruple(a, b, c, d)), "Checking quadruple ok");
+  }
 }

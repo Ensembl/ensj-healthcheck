@@ -45,7 +45,8 @@ public class Pair<A, B> extends Unit<A> {
 	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	@Override
+	@SuppressWarnings("unchecked")
+  @Override
 	public boolean equals(Object obj) {
 		if (obj == null || !this.getClass().equals(obj.getClass())) {
 			return false;
@@ -67,7 +68,7 @@ public class Pair<A, B> extends Unit<A> {
 	 */
 	@Override
 	public String toString() {
-		return super.toString()+",b=[" + b.toString() + "]";
+		return super.toString()+",b=[" + String.valueOf(b) + "]";
 	}
 
 }

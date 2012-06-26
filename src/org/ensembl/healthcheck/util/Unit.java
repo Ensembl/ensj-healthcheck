@@ -37,7 +37,8 @@ public class Unit<A> {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	@Override
+	@SuppressWarnings("unchecked")
+  @Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -59,7 +60,7 @@ public class Unit<A> {
 	 */
 	@Override
 	public String toString() {
-		return "a=[" + a + "]";
+		return "a=[" + String.valueOf(a) + "]";
 	}
 
 }

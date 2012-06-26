@@ -35,6 +35,10 @@ import java.util.Set;
  * @author ayates
  */
 public class CollectionUtils {
+  
+  public static <A> Unit<A> unit(A a) {
+    return new Unit<A>(a);
+  }
 
 	/**
 	 * Create a new {@link Pair} of two supplied objects
@@ -69,7 +73,7 @@ public class CollectionUtils {
 	 * @param d
 	 * @return new quadruple
 	 */
-	public static <A, B, C, D> Quadruple<A, B, C, D> triple(A a, B b, C c, D d) {
+	public static <A, B, C, D> Quadruple<A, B, C, D> quadruple(A a, B b, C c, D d) {
 		return new Quadruple<A, B, C, D>(a, b, c, d);
 	}
 	

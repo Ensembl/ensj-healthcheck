@@ -47,7 +47,8 @@ public class Quadruple<A,B,C,D> extends Triple<A,B,C> {
 	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	@Override
+	@SuppressWarnings("unchecked")
+  @Override
 	public boolean equals(Object obj) {
 		if (obj == null || !this.getClass().equals(obj.getClass())) {
 			return false;
@@ -69,7 +70,7 @@ public class Quadruple<A,B,C,D> extends Triple<A,B,C> {
 	 */
 	@Override
 	public String toString() {
-		return super.toString()+",d=[" + d.toString() + "]";
+		return super.toString()+",d=[" + String.valueOf(d) + "]";
 	}
 	
 }
