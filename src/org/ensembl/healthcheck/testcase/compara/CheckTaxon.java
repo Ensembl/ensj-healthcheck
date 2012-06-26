@@ -143,10 +143,8 @@ public class CheckTaxon extends MultiDatabaseTestCase {
             /* Check name ++ compara scientific name := last two entries in the species classification in the core meta table */
             sql1 = "SELECT \"name\", name " +
                 " FROM ncbi_taxa_name WHERE name_class = \"scientific name\" AND taxon_id = " + taxon_id;
-            sql2 = "SELECT \"name\", GROUP_CONCAT(meta_value ORDER BY meta_id DESC SEPARATOR \" \") " +
-                " FROM (SELECT meta_id, meta_key, meta_value FROM meta " +
-                " WHERE meta_key = \"species.classification\" ORDER BY meta_id LIMIT 2) AS name " +
-                " GROUP BY meta_key";
+            sql2 = "SELECT \"name\", meta_value " +
+                " FROM meta WHERE meta_key = \"species.classification\" ORDER BY meta_id LIMIT 1";
             result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
             
             /* Check classification */
@@ -171,18 +169,14 @@ public class CheckTaxon extends MultiDatabaseTestCase {
                       values1 = DBUtils.getRowValues(comparaCon,
                                              "SELECT rank, parent_id, genbank_hidden_flag FROM ncbi_taxa_node WHERE taxon_id = " + this_taxon_id);
                       if ( // values1[2].equals("0") &&       // we used to filter out entries with genbank_hidden_flag, we don't anymore
-                              !this_taxon_id.equals("33154") &&   // "Fungi/Metazoa" node (under various names) has to be excluded
                               !values1[1].equals("1") && !values1[1].equals("0") &&
-                              !values1[0].equals("subgenus") && !values1[0].equals("subspecies")
+                              !values1[0].equals("subgenus") && !values1[0].equals("genus") && !values1[0].equals("species subgroup") && !values1[0].equals("species group")
                               ) {
                               String taxonName = DBUtils.getRowColumnValue(comparaCon,
                                                                    "SELECT name FROM ncbi_taxa_name " +
                                                                    "WHERE name_class = \"scientific name\" AND taxon_id = " + this_taxon_id);
                               
-                              // spaces within taxa are not allowed by the script that loads taxonomy into core:
-                              if (taxonName.indexOf(' ')==-1) {
-                                      comparaClassification += " " + taxonName;
-                              }
+                              comparaClassification += " " + taxonName;
                       }
                       this_taxon_id = values1[1];
               }
