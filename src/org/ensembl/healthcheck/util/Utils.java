@@ -14,6 +14,7 @@
 package org.ensembl.healthcheck.util;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,6 +34,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -436,43 +438,41 @@ public final class Utils {
 	 * @return An array of Strings representing the lines of the file.
 	 */
 	public static String[] readTextFile(String name) {
-
 		List<String> lines = new ArrayList<String>();
-
+		String line = null;
 		BufferedReader br = null;
-
 		try {
-
-			br = new BufferedReader(new FileReader(name));
-
-		} catch (FileNotFoundException fe) {
-
-			System.err.println("Cannot find " + name);
-			fe.printStackTrace();
-
-		}
-
-		String line;
-
-		try {
-
+		  br = new BufferedReader(new FileReader(name));
 			while ((line = br.readLine()) != null) {
-
 				lines.add(line);
-
 			}
-
-			br.close();
-
-		} catch (Exception e) {
-
-			e.printStackTrace();
-
+		}
+		catch (FileNotFoundException e) {
+      log.log(Level.WARNING, "Cannot find "+name, e);
+    }
+		catch (IOException e) {
+		  log.log(Level.WARNING, "Error whilst reading "+name, e);
+		}
+		finally {
+	    closeClosable(br);
 		}
 
 		return (String[]) lines.toArray(new String[lines.size()]);
 
 	} // readTextFile
+	
+	/**
+	 * Null safe way of closing down a Closable object 
+	 */
+	public static void closeClosable(Closeable closable) {
+	  try {
+	    if(closable != null)
+	      closable.close();
+	  }
+	  catch(IOException e) {
+	    log.log(Level.WARNING, "Found exception whilst closing handle", e);
+	  }
+	}
 
 	// -------------------------------------------------------------------------
 	/**
