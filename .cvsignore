@@ -3,3 +3,4 @@
 .project
 .classpath
 *.patch
+test-output
