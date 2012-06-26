@@ -526,7 +526,7 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 		// Compare table structure
 		Set<Column> masterMinusTargetColumns = getColumns(master, table);
 		masterMinusTargetColumns.removeAll(getColumns(target, table));
-		Set<String> columnIssuesCalled = new HashSet<String>();
+		Set<Column> columnIssuesCalled = new HashSet<Column>();
 		// report that the target is missing columns defined in the master
 		if (!masterMinusTargetColumns.isEmpty()) {
 			for (Column col : masterMinusTargetColumns) {
@@ -535,7 +535,7 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 				        "`%s` `%s` does not have the same definition as `%s`. Column `%s` was different. Check table structures",
 				        targetName, table, masterNameForMsg, col);
 				ReportManager.problem(this, target, message);
-				columnIssuesCalled.add(col.getName());
+				columnIssuesCalled.add(col);
 			}
 			okay = false;
 		}
@@ -547,7 +547,7 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 		// report that a target table columns which the master lacks
 		if (!targetMinusMasterColumns.isEmpty()) {
 			for (Column col : targetMinusMasterColumns) {
-				if (columnIssuesCalled.contains(col.getName())) {
+				if (columnIssuesCalled.contains(col)) {
 					continue;
 				}
 				String message = String
