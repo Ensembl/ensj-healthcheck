@@ -10,6 +10,7 @@ import org.ensembl.healthcheck.testcase.eg_core.ProteinCodingGene;
 import org.ensembl.healthcheck.testcase.eg_core.ProteinTranslation;
 import org.ensembl.healthcheck.testcase.eg_core.SimpleFeatureAnalysisTypes;
 import org.ensembl.healthcheck.testcase.generic.AssemblyExceptions;
+import org.ensembl.healthcheck.testcase.generic.AssemblyMapping;
 import org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap;
 import org.ensembl.healthcheck.testcase.generic.AssemblySeqregion;
 import org.ensembl.healthcheck.testcase.generic.CanonicalTranscriptCoding;
@@ -70,7 +71,8 @@ public class EGCoreGeneModelCritical extends GroupOfTests {
 			TranslationStartEndExon.class, 
 			ProteinTranslation.class,
 			EnaSeqRegionName.class,
-			SimpleFeatureAnalysisTypes.class
+			SimpleFeatureAnalysisTypes.class,
+			AssemblyMapping.class
 		);
 	}
 }

@@ -12,13 +12,8 @@ import org.ensembl.healthcheck.testcase.generic.MetaCoord;
 public class EGCoreMetaCritical extends GroupOfTests {
 
 	public EGCoreMetaCritical() {
-		addTest(
-				RequiredEgMeta.class, 
-				DeprecatedEgMeta.class,
-				GeneBuildStartDate.class,
-				DuplicateMetaKeys.class, 
-				GeneGC.class, 
-				MetaCoord.class,
-				SampleSetting.class);
+		addTest(RequiredEgMeta.class, DeprecatedEgMeta.class,
+				GeneBuildStartDate.class, DuplicateMetaKeys.class,
+				GeneGC.class, MetaCoord.class, SampleSetting.class);
 	}
 }
