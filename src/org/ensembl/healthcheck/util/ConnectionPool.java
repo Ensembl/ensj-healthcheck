@@ -18,15 +18,16 @@
 
 package org.ensembl.healthcheck.util;
 
-import java.io.EOFException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -66,8 +67,11 @@ public final class ConnectionPool {
 
         if (pool.containsKey(databaseURL)) {
 
-            logger.finest("Got connection to " + databaseURL + " from pool");
-            con = getConnectionFromPool(driverClassName, databaseURL, user, password);
+		logger.finest("Got connection to " + databaseURL + " from pool");
+		con = getConnectionFromPool(driverClassName, databaseURL, user, password);
+		// mnuhn: Turn off connection pooling, see if this fixes the problems we are having.
+		//
+		//con = getConnectionByClassloader(driverClassName, databaseURL, user, password);
 
         } else {
 
@@ -76,27 +80,63 @@ public final class ConnectionPool {
         
         return con;
     }
-    
-    protected static boolean isValidConnection(Connection con) {
-    	
-		try {
-			
-			Statement stmt = con.createStatement();
-			stmt.executeQuery("select NOW();");
-			
-		} catch (Exception e) {
-			
-			// Trying to catch java.io.EOFException here, but java doesn't
-			// allow this. The compiler claims this exception never gets thrown
-			// from the statements in the try block, but stack traces indicate
-			// otherwise.
-			//
-			return false;
-		}
-		
-    	return true;
+
+  public static boolean isValidConnection(Connection con) {
+
+    String url;
+    boolean valid = true;
+
+    try {
+      url = con.getMetaData().getURL();
     }
-    
+    catch (SQLException e1) {
+      url = "(Could not get url of connection)";
+    }
+
+    Statement stmt = null;
+    ResultSet rs = null;
+    try {
+      stmt = con.createStatement();
+      rs = stmt.executeQuery("select 5;");
+      rs.next();
+      int i = rs.getInt(1);
+      if (i != 5) {
+        throw new RuntimeException("Got unexpected value (" + i + ") when "
+            + "testing connection to " + url + ". Expected value was 5");
+      }
+    }
+    catch (Exception e) {
+      String message;
+      if (e instanceof java.net.SocketException) {
+        message = "Connection threw a SocketException, so the "
+            + "connection probably timed out";
+      }
+      else {
+        if (e instanceof java.sql.SQLException) {
+          // The original exception thrown is an EOFException. It is
+          // wrapped by a SQLException, so that is what we get here.
+          message = "Connection threw a SQLException";
+        }
+        else {
+          message = "Exception thrown was not a SocketException and not a SQLException!"
+                  + "something else is going wrong";
+        }
+      }
+      logger.fine("Connection is not valid");
+      logger.log(Level.FINE, message, e);
+      valid = false;
+    }
+    finally {
+      DBUtils.closeQuietly(rs);
+      DBUtils.closeQuietly(stmt);
+    }
+		
+	  if(valid) 
+	    logger.fine("Connection is valid");
+		  
+  	return valid;
+  }
+ 
     public static Connection getConnectionFromPool(String driverClassName, String databaseURL, String user, String password) throws SQLException {
     	
         Connection con = (Connection) pool.get(databaseURL);

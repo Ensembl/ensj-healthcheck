@@ -25,6 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.ensembl.healthcheck.util.CollectionUtils;
 import org.ensembl.healthcheck.util.ConnectionBasedSqlTemplateImpl;
+import org.ensembl.healthcheck.util.ConnectionPool;
 import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.RowMapper;
 import org.ensembl.healthcheck.util.SqlTemplate;
@@ -523,7 +524,10 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 
 	public Connection getConnection() {
 
-		if (connection == null) {
+		if (
+			(connection == null) 
+			|| !(ConnectionPool.isValidConnection(connection))
+		) {
 
 			try {
 				connection = server.getDatabaseConnection(getName());
