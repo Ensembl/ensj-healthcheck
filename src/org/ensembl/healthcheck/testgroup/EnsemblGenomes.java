@@ -69,7 +69,7 @@ public class EnsemblGenomes extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.eg_core.InterproFeature.class,
 			org.ensembl.healthcheck.testcase.eg_core.PeptideTranslationAttribs.class,
 			org.ensembl.healthcheck.testcase.eg_core.DuplicateMetaKeys.class,
-			org.ensembl.healthcheck.testcase.eg_core.SpeciesSqlName.class,
+			org.ensembl.healthcheck.testcase.eg_core.SpeciesProductionName.class,
 			org.ensembl.healthcheck.testcase.eg_core.DuplicateTopLevel.class,
 			org.ensembl.healthcheck.testcase.eg_core.SharedDisplayXref.class
 		);
