@@ -270,7 +270,6 @@ public class ConfigurationProcessor<T> {
 	 */
 	public List<Method> getGetMethods(Class<T> configurationClass) {
 
-		StringBuffer out = new StringBuffer();
 		Method[] methods = configurationClass.getMethods();
 
 		// These get methods are not about configuration parameters.
