@@ -40,4 +40,12 @@ public class StableId extends AbstractEgCoreTestCase {
 		}
 		return passes;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.eg_core.AbstractEgCoreTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Check to see if stable_ids have been set for each species in turn";
+	}
 }

@@ -56,4 +56,13 @@ public class PeptideTranslationAttribs extends AbstractEgCoreTestCase {
 		}
 		return passes;
 	}
+
+
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.eg_core.AbstractEgCoreTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Check that translation_attribs are valid";
+	}
 }

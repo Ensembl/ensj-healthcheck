@@ -71,4 +71,13 @@ public class SharedDisplayXref extends AbstractEgCoreTestCase {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.eg_core.AbstractEgCoreTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Test to find if gene display xrefs are shared between species. " +
+				"If this happens, it can lead to species-specific synonyms being applied to the wrong species.";
+	}
+
 }

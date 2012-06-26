@@ -27,4 +27,12 @@ public class ZombieSpecies extends AbstractEgCoreTestCase {
 		return passes;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.eg_core.AbstractEgCoreTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Test to find where species have been marked for death by metakey but still survive";
+	}
+
 }

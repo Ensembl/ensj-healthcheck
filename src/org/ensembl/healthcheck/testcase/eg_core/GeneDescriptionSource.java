@@ -49,4 +49,12 @@ public class GeneDescriptionSource extends AbstractEgCoreTestCase {
 		return passes;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.eg_core.AbstractEgCoreTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Test to see if [Source:] tag is set in the description";
+	}
+
 }

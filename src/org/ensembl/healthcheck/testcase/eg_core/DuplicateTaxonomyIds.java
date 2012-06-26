@@ -67,4 +67,12 @@ public class DuplicateTaxonomyIds extends AbstractEgCoreTestCase {
 		return passes;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Test to find duplicate taxids entries";
+	}
+
 }

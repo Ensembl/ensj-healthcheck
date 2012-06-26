@@ -7,6 +7,8 @@
  */
 package org.ensembl.healthcheck.testcase.eg_core;
 
+import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.AbstractIntegerTestCase;
 
 /**
@@ -17,6 +19,10 @@ public class EnaSeqRegionName extends AbstractIntegerTestCase {
 
 	public EnaSeqRegionName() {
 		super();
+		this.addToGroup(AbstractEgCoreTestCase.EG_GROUP);
+		this.appliesToType(DatabaseType.CORE);
+		this.setTeamResponsible(Team.ENSEMBL_GENOMES);
+		this.setDescription("Checks to see is seq_regions are annotated as ENA entries");
 	}
 
 	/*
@@ -53,5 +59,6 @@ public class EnaSeqRegionName extends AbstractIntegerTestCase {
 		return "No seq_regions annotated as ENA found "
 				+ "- must have a name of the form %.% and a seq_region_attrib of type 'external_db' and value 'ENA'";
 	}
+
 
 }

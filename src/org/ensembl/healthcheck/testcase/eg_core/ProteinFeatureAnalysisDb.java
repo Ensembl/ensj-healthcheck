@@ -33,4 +33,13 @@ public class ProteinFeatureAnalysisDb extends AbstractEgCoreTestCase {
 		return passed;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.eg_core.AbstractEgCoreTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Test to make sure that db column is populated for analysis types attached to"
+		 +" protein features. If this is missing the domain column will not be populated.";
+	}
+
 }

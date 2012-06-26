@@ -28,4 +28,12 @@ public class ExternalDbSeqRegion extends AbstractEgCoreTestCase {
 				}
 		}
 
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.eg_core.AbstractEgCoreTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Test for external-db attributes on seq_level regions";
+	}
+
 }

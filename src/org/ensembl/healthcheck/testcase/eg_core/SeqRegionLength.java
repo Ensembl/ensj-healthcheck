@@ -72,4 +72,12 @@ public class SeqRegionLength extends AbstractEgCoreTestCase {
 		}
 		return passed;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.eg_core.AbstractEgCoreTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Checks that the length given in seq_region is the length of the sequence in the dna table.";
+	}
 }

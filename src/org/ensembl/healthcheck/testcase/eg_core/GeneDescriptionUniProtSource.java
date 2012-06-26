@@ -44,4 +44,12 @@ public class GeneDescriptionUniProtSource extends AbstractEgCoreTestCase {
 		}
 		return passes;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.eg_core.AbstractEgCoreTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Test to see if Uniprot misspelling is present in descriptions";
+	}
 }

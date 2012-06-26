@@ -23,6 +23,7 @@ public class DuplicateTopLevel extends AbstractRowCountTestCase {
 		this.addToGroup(AbstractEgCoreTestCase.EG_GROUP);
 		this.appliesToType(DatabaseType.CORE);
 		this.setTeamResponsible(Team.ENSEMBL_GENOMES);
+		this.setDescription("Test to see if we have more than one seq_region_attrib");
 	}
 
 	private final static String QUERY = "select count(*) from (select count(*) as c "
@@ -55,5 +56,6 @@ public class DuplicateTopLevel extends AbstractRowCountTestCase {
 	protected String getErrorMessage() {
 		return "$actual$ seq regions found with duplicate top level attribs";
 	}
+
 
 }

@@ -23,7 +23,6 @@ public class EnaProvider extends AbstractEgCoreTestCase {
 	private final static String[] VALS = {"European Nucleotide Archive","http://www.ebi.ac.uk/ena/"};
 	public EnaProvider() {
 		super();
-		setDescription("Test to make sure the default GenomeLoader providers are not used as there are likely to be better providers to use");
 	}
 
 	/* (non-Javadoc)
@@ -44,6 +43,14 @@ public class EnaProvider extends AbstractEgCoreTestCase {
 			}
 		}
 		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Test to make sure the default GenomeLoader providers are not used as there are likely to be better providers to use";
 	}
 
 }

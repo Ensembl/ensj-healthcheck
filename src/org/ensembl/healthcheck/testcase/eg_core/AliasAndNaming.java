@@ -121,4 +121,12 @@ public class AliasAndNaming extends AbstractEgCoreTestCase {
 		return passes;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Tests whether species are correctly named for Ensembl Genomes";
+	}
+
 }

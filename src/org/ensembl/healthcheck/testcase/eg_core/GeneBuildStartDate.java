@@ -63,4 +63,12 @@ public class GeneBuildStartDate extends AbstractEgCoreTestCase {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.eg_core.AbstractEgCoreTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Standalone test for checking genebuild.start_date meta key is of the form 2011-07-Ensembl";
+	}
+
 }

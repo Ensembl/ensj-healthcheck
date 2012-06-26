@@ -79,4 +79,12 @@ public class OntologyLevel extends AbstractEgCoreTestCase {
 		return passes;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.eg_core.AbstractEgCoreTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Test to find ontology dbs attached to Gene but not Transcript/Translation";
+	}
+
 }

@@ -60,4 +60,12 @@ public class InappropriateTranslation extends AbstractEgCoreTestCase {
 		return success;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.eg_core.AbstractEgCoreTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Test to find translations on genes with biotypes for which they are inappropriate";
+	}
+
 }

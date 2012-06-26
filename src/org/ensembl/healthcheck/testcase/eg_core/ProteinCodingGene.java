@@ -43,4 +43,12 @@ public class ProteinCodingGene extends AbstractEgCoreTestCase {
 		return found;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.eg_core.AbstractEgCoreTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Test to check if we have at least 1 protein coding gene per species";
+	}
+
 }

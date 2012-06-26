@@ -99,4 +99,13 @@ public class InterproFeature extends AbstractEgCoreTestCase {
 		return passes;
 	}
 
+
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.eg_core.AbstractEgCoreTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Test to see if interpro xrefs and features agree";
+	}
+
 }

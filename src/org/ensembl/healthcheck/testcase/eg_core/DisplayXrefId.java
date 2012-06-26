@@ -23,6 +23,7 @@ public class DisplayXrefId extends AbstractRowCountTestCase {
 		this.addToGroup(AbstractEgCoreTestCase.EG_GROUP);
 		this.appliesToType(DatabaseType.CORE);
 		this.setTeamResponsible(Team.ENSEMBL_GENOMES);
+		this.setDescription("Test to find genes where display_xref_id is not set");
 	}
 
 	private final static String QUERY = "select count(*) from gene where status<>'NOVEL' and display_xref_id is null";

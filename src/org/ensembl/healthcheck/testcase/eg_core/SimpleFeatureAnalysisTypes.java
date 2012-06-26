@@ -64,4 +64,12 @@ public class SimpleFeatureAnalysisTypes extends AbstractEgCoreTestCase {
 		}
 		return result;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.eg_core.AbstractEgCoreTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Test to check simple features for permitted types";
+	}
 }

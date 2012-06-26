@@ -29,8 +29,7 @@ public class InterproHitCount extends AbstractEgCoreTestCase {
 	private final static double THRESHOLD = 0.5;
 	public InterproHitCount() {
 		super();
-		setDescription("Test to check that at least " + THRESHOLD * 100
-				+ "% of protein coding genes have at least one interpro hit");
+
 	}
 	/*
 	 * (non-Javadoc)
@@ -67,5 +66,13 @@ public class InterproHitCount extends AbstractEgCoreTestCase {
 			}
 		}
 		return result;
+	}
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.eg_core.AbstractEgCoreTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Test to check that at least " + THRESHOLD * 100
+				+ "% of protein coding genes have at least one interpro hit";
 	}
 }

@@ -34,4 +34,12 @@ public class DuplicateXref extends AbstractEgCoreTestCase {
 		return passes;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Test for where xrefs have been added twice";
+	}
+
 }

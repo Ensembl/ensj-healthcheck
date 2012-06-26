@@ -36,4 +36,12 @@ public class DbDisplayNameUniProt extends AbstractEgCoreTestCase {
 		}
 		return passes;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Test to see if Uniprot (case!) misspelling is present in descriptions";
+	}
 }

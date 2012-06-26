@@ -43,4 +43,12 @@ public class SeqRegionName extends AbstractEgCoreTestCase {
 		}
 		return passes;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.eg_core.AbstractEgCoreTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Checks that seq_region names contain only the permitted characters";
+	}
 }

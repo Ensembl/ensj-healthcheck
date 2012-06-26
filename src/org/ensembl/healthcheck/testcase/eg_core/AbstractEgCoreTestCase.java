@@ -25,5 +25,13 @@ public abstract class AbstractEgCoreTestCase extends AbstractTemplatedTestCase {
 		this.addToGroup(EG_GROUP);
 		this.appliesToType(DatabaseType.CORE);
 		this.setTeamResponsible(Team.ENSEMBL_GENOMES);
+		setDescription(getEgDescription());
 	}
+	
+	
+	/**
+	 * @return String describing this test case
+	 */
+	protected abstract String getEgDescription();
+	
 }

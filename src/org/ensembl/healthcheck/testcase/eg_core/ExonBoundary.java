@@ -40,4 +40,12 @@ public class ExonBoundary extends AbstractEgCoreTestCase {
 		return success;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Test to detect if exon boundaries are at the expected locations";
+	}
+
 }

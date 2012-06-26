@@ -43,5 +43,13 @@ public class DeprecatedEgMeta extends AbstractEgMeta {
 		return passes;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Checks for deprecated meta keys";
+	}
+
 }
 

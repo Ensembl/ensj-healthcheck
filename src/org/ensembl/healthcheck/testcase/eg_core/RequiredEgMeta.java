@@ -22,4 +22,12 @@ public class RequiredEgMeta extends AbstractEgMeta {
 				TestCaseUtils.resourceToStringList("/org/ensembl/healthcheck/testcase/eg_core/required_meta_keys.txt"));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.eg_core.AbstractEgCoreTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Checks that we have the minimal set of metakeys";
+	}
+
 }

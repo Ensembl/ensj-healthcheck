@@ -13,15 +13,15 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.util.SqlTemplate;
 
 /**
- * Check to see if sql_names are valid
+ * Check to see if species.production_name entries are valid
  * @author dstaines
  * 
  */
-public class SpeciesSqlName extends AbstractEgCoreTestCase {
+public class SpeciesProductionName extends AbstractEgCoreTestCase {
 
 	private final static String META_QUERY = "select meta_value from meta where meta_key=?";
 
-	private final static String[] META_KEYS = { "species.sql_name" };
+	private final static String[] META_KEYS = { "species.production_name" };
 
 	private static final Pattern VALID_SQL_NAME = Pattern
 			.compile("^[A-z0-9_]+$");
@@ -49,6 +49,14 @@ public class SpeciesSqlName extends AbstractEgCoreTestCase {
 			}
 		}
 		return passes;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ensembl.healthcheck.testcase.eg_core.AbstractEgCoreTestCase#getEgDescription()
+	 */
+	@Override
+	protected String getEgDescription() {
+		return "Check to see if species.production_name entries are valid";
 	}
 
 }
