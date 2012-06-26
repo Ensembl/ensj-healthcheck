@@ -62,12 +62,14 @@ public abstract class AbstractEgMeta extends AbstractEgCoreTestCase {
 	};
 
 	protected final List<String> metaKeys;
+	
+	public AbstractEgMeta() {
+	  this(TestCaseUtils.resourceToStringList("/org/ensembl/healthcheck/testcase/eg_core/meta_keys.txt"));
+	}
 
 	public AbstractEgMeta(List<String> metaKeys) {
 		super();
 		this.metaKeys = metaKeys;
-		metaKeys = TestCaseUtils
-				.resourceToStringList("/org/ensembl/healthcheck/testcase/eg_core/meta_keys.txt");
 	}
 
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
