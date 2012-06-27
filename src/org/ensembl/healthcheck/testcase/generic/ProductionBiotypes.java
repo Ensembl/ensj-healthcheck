@@ -230,9 +230,11 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
 
   private List<String> getGeneWithTranscript(DatabaseRegistryEntry dbre, Set<String> biotypeGroup, String databaseType) {
     SqlTemplate t = DBUtils.getSqlTemplate(dbre);
-    Set<String> biotypes = getBiotypeFromGrouping(dbre, biotypeGroup, "transcript", databaseType);
-    String list = getListBiotypes(biotypes);
-    String sql = "SELECT g.stable_id from gene g, transcript t where g.gene_id = t.gene_id and g.biotype in (" + list + ") and t.biotype in (" + list + ") group by g.stable_id";
+    Set<String> biotypesT = getBiotypeFromGrouping(dbre, biotypeGroup, "transcript", databaseType);
+    Set<String> biotypesG = getBiotypeFromGrouping(dbre, biotypeGroup, "gene", databaseType);
+    String listT = getListBiotypes(biotypesT);
+    String listG = getListBiotypes(biotypesG);
+    String sql = "SELECT g.stable_id from gene g, transcript t where g.gene_id = t.gene_id and g.biotype in (" + listG + ") and t.biotype in (" + listT + ") group by g.stable_id";
     return t.queryForDefaultObjectList(sql, String.class);
   }
 
