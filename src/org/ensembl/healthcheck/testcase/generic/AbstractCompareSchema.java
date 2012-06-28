@@ -194,18 +194,8 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 
 		definitionFile = System.getProperty(definitionFileKey);
 		if (definitionFile == null) {
-			
-			logger
-			    .info(testName
-			        + ": No schema definition file found! Set "
-			        + definitionFileKey
-			        + " property in "
-			        + TestRunner.getPropertiesFile() 
-			        + " if you want to use a table.sql file or similar. "
-			        + "This is not an error if you are using "
-			        + masterSchemaKey);
 
-			masterSchema = System.getProperty(masterSchemaKey);
+		  masterSchema = System.getProperty(masterSchemaKey);
 			if (masterSchema != null) {
 				// add the named master schema to the master registry so that it can be
 				// accessed
@@ -225,6 +215,16 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 
 			}
 			else {
+		     logger
+         .info(testName
+             + ": No schema definition file found! Set "
+             + definitionFileKey
+             + " property in "
+             + TestRunner.getPropertiesFile() 
+             + " if you want to use a table.sql file or similar. "
+             + "This is not an error if you are using "
+             + masterSchemaKey);
+			  
 				logger
 				    .info(testName
 				        + ": No master schema defined file found! Set "
@@ -922,7 +922,7 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 
 		@Override
 		public String toString() {
-			return name;
+			return getName();
 		}
 	}
 
