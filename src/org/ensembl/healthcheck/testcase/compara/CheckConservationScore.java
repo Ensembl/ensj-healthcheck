@@ -91,13 +91,9 @@ public class CheckConservationScore extends SingleDatabaseTestCase {
 			for (int i = 0; i < method_link_species_set_ids.length; i++) {
 
 				// Get the mlss_id for the associated multiple alignment
-				String multi_align_mlss_id = DBUtils.getRowColumnValue(con,
-						"SELECT meta_value FROM meta WHERE meta_key=\"gerp_"
-								+ method_link_species_set_ids[i] + "\"");
+				String multi_align_mlss_id = DBUtils.getRowColumnValue(con, "SELECT value FROM method_link_species_set_tag WHERE tag=\"msa_mlss_id\"");
 				if (multi_align_mlss_id == "") {
-					ReportManager.problem(this, con, "There is no gerp_"
-							+ method_link_species_set_ids[i]
-							+ " entry in the meta table\n");
+					ReportManager.problem(this, con, "There is no msa_mlss_id tag for the GERP mlss" + method_link_species_set_ids[i] + "\n");
 				} else {
 					/**
 					 * Find the multiple alignments gabs which have more than 3

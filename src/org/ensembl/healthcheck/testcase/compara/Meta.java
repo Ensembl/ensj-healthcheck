@@ -54,8 +54,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 
 		addToGroup("compara_genomic");
 		addToGroup("compara_homology");
-		setDescription("Tests that proper max_alignment_length have been defined.");
-		setDescription("Check meta table for the right schema version and max alignment lengths");
+		setDescription("Check meta table for the right schema version and species_id");
 		setTeamResponsible(Team.COMPARA);
 
 	}
@@ -81,13 +80,7 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 		}
 
 		// These methods return false if there is any problem with the test
-		result &= checkMaxAlignmentLength(con);
-
 		result &= checkSchemaVersionDBName(dbre);
-
-		result &= checkConservationScoreLink(dbre);
-
-//		result &= checkSpeciesTreesArePresent(dbre);
 
 		result &= checkSpeciesId(dbre);
 
@@ -120,162 +113,6 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 
 		return result;
 	}
-
-	/**
-	 * Check that the each conservation score MethodLinkSpeciesSet obejct has a link to a multiple alignment MethodLinkSpeciesSet in
-	 * the meta table.
-	 */
-	private boolean checkConservationScoreLink(DatabaseRegistryEntry dbre) {
-
-		boolean result = true;
-
-		// get version from meta table
-		Connection con = dbre.getConnection();
-
-		// get all the links between conservation scores and multiple genomic alignments
-		String sql = "SELECT mlss1.method_link_species_set_id," + " mlss2.method_link_species_set_id, ml1.type, ml2.type, count(*)"
-				+ " FROM method_link ml1, method_link_species_set mlss1, method_link ml2," + " method_link_species_set mlss2 WHERE mlss1.method_link_id = ml1.method_link_id "
-				+ " AND ml1.class = \"ConservationScore.conservation_score\" " + " AND mlss1.species_set_id = mlss2.species_set_id AND mlss2.method_link_id = ml2.method_link_id"
-				+ " AND (ml2.class = \"GenomicAlignBlock.multiple_alignment\" OR ml2.class LIKE \"GenomicAlignTree.%\") GROUP BY mlss1.method_link_species_set_id";
-
-		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
-			while (rs.next()) {
-				if (rs.getInt(5) > 1) {
-					ReportManager.problem(this, con, "MethodLinkSpeciesSet " + rs.getString(1) + " links to several multiple alignments!");
-					result = false;
-				} else if (rs.getString(3).equals("GERP_CONSERVATION_SCORE")) {
-					MetaEntriesToAdd.put("gerp_" + rs.getString(1), new Integer(rs.getInt(2)).toString());
-				} else {
-					ReportManager.problem(this, con, "Using " + rs.getString(3) + " method_link_type is not supported by this healthcheck");
-					result = false;
-				}
-			}
-			rs.close();
-			stmt.close();
-		} catch (SQLException se) {
-			se.printStackTrace();
-			result = false;
-		}
-
-		// get all the values currently stored in the DB
-		sql = "SELECT meta_key, meta_value, count(*) FROM meta WHERE meta_key LIKE \"gerp_%\" GROUP BY meta_key";
-
-		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
-			while (rs.next()) {
-				if (rs.getInt(3) != 1) {
-					// Delete all current entries. The right entry will be added
-					MetaEntriesToRemove.put(rs.getString(1), rs.getString(2));
-				} else if (MetaEntriesToAdd.containsKey(rs.getString(1))) {
-					// Entry matches one of the required entries. Update if needed.
-					if (!MetaEntriesToAdd.get(rs.getString(1)).equals(rs.getString(2))) {
-						MetaEntriesToUpdate.put(rs.getString(1), MetaEntriesToAdd.get(rs.getString(1)));
-					}
-					// Remove this entry from the set of entries to be added (as it already exits!)
-					MetaEntriesToAdd.remove(rs.getString(1));
-				} else {
-					// Entry is out-to-date
-					MetaEntriesToRemove.put(rs.getString(1), rs.getString(2));
-				}
-			}
-			rs.close();
-			stmt.close();
-		} catch (SQLException se) {
-			se.printStackTrace();
-			result = false;
-		}
-
-		return result;
-
-	} // ---------------------------------------------------------------------
-
-// 	/**
-// 	 * Check that the each multi-species analysis that uses a species tree has the species tree stored in the meta table.
-// 	 */
-// 	private boolean checkSpeciesTreesArePresent(DatabaseRegistryEntry dbre) {
-
-// 		boolean result = true;
-
-// 		// get version from meta table
-// 		Connection con = dbre.getConnection();
-
-// 		// get all the links between conservation scores and multiple genomic alignments
-// 		String sql = "SELECT method_link_species_set_id, IFNULL(meta_key, 'NULL'), IFNULL(meta_value, 'NULL'),"
-// 				+ " method_link_species_set.name, count(distinct genome_db_id)"
-// 				+ " FROM method_link_species_set"
-// 				+ " JOIN method_link USING (method_link_id)"
-// 				+ " LEFT JOIN meta ON (meta_key = CONCAT('tree_', method_link_species_set_id))"
-// 				+ " JOIN species_set USING (species_set_id)"
-// 				+ " WHERE (class LIKE 'GenomicAlignTree%' OR class LIKE '%multiple_alignment' OR class LIKE '%tree_node')"
-// 				+ " GROUP BY method_link_species_set_id";
-
-// 		try {
-// 			Statement stmt = con.createStatement();
-// 			ResultSet rs = stmt.executeQuery(sql);
-// 			while (rs.next()) {
-// 				Integer methodLinkSpeciesSetIdInt = rs.getInt(1);
-// 				String metaKeyStr = rs.getString(2);
-// 				String treeStr = rs.getString(3);
-// 				String methodLinkSpeciesSetNameStr = rs.getString(4);
-// 				Integer numSpecies = rs.getInt(5);
-// 				if (metaKeyStr.equals("NULL")) {
-// 					ReportManager.problem(this, con, "MethodLinkSpeciesSet " + methodLinkSpeciesSetIdInt  +
-// 							" (" + methodLinkSpeciesSetNameStr  + ") does not have its tree in the meta table!");
-// 					result = false;
-// 				} else if (StringUtils.countMatches(treeStr, "(") != StringUtils.countMatches(treeStr, ")")) {
-// 					ReportManager.problem(this, con, "The tree for MethodLinkSpeciesSet " + methodLinkSpeciesSetIdInt  +
-// 							" (" + methodLinkSpeciesSetNameStr  + ") does not have the same number of opening and closing brackets!");
-// 					result = false;
-// 				} else if (StringUtils.countMatches(treeStr, ",") + 1 != numSpecies) {
-// 					ReportManager.problem(this, con, "The tree for MethodLinkSpeciesSet " + methodLinkSpeciesSetIdInt  +
-// 							" (" + methodLinkSpeciesSetNameStr  + ") does not have the right number of leaves!");
-// 					result = false;
-// 				} else {
-// 					MetaEntriesToAdd.put("tree_" + rs.getString(1), rs.getString(3));
-// 				}
-// 			}
-// 			rs.close();
-// 			stmt.close();
-// 		} catch (SQLException se) {
-// 			se.printStackTrace();
-// 			result = false;
-// 		}
-
-// 		// get all the values currently stored in the DB
-// 		sql = "SELECT meta_key, meta_value, count(*) FROM meta WHERE meta_key LIKE \"tree_%\" GROUP BY meta_key";
-
-// 		try {
-// 			Statement stmt = con.createStatement();
-// 			ResultSet rs = stmt.executeQuery(sql);
-// 			while (rs.next()) {
-// 				if (rs.getInt(3) != 1) {
-// 					// Delete all current entries. The right entry will be added
-// 					MetaEntriesToRemove.put(rs.getString(1), rs.getString(2));
-// 				} else if (MetaEntriesToAdd.containsKey(rs.getString(1))) {
-// 					// Entry matches one of the required entries. Update if needed.
-// 					if (!MetaEntriesToAdd.get(rs.getString(1)).equals(rs.getString(2))) {
-// 						MetaEntriesToUpdate.put(rs.getString(1), MetaEntriesToAdd.get(rs.getString(1)));
-// 					}
-// 					// Remove this entry from the set of entries to be added (as it already exits!)
-// 					MetaEntriesToAdd.remove(rs.getString(1));
-// 				} else {
-// 					// Entry is out-to-date
-// 					MetaEntriesToRemove.put(rs.getString(1), rs.getString(2));
-// 				}
-// 			}
-// 			rs.close();
-// 			stmt.close();
-// 		} catch (SQLException se) {
-// 			se.printStackTrace();
-// 			result = false;
-// 		}
-
-// 		return result;
-
-// 	} // ---------------------------------------------------------------------
 
 	/**
 	 * Check that the species_id is 1 for everything except schema_version which should be NULL
@@ -352,109 +189,6 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 
 	} // ---------------------------------------------------------------------
 
-	/**
-	 * Check the max_align_* and max_alignment_length in the meta table
-	 */
-	private boolean checkMaxAlignmentLength(Connection con) {
-
-		boolean result = true;
-
-		int globalMaxAlignmentLength = 0;
-
-		// Check whether tables are empty or not
-		if (!tableHasRows(con, "genomic_align")) {
-			ReportManager.correct(this, con, "NO ENTRIES in genomic_align table");
-			return true;
-		}
-
-		// Calculate current max_alignment_length by method_link_species_set
-		String sql = "SELECT CONCAT('max_align_', method_link_species_set_id)," + " MAX(dnafrag_end - dnafrag_start) FROM genomic_align" + " GROUP BY method_link_species_set_id";
-		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
-			// Add 2 to the dnafrag_end - dnafrag_start in order to get length + 1.
-			// Adding this at this point is probably faster than asking MySQL to add 2
-			// to every single row...
-			while (rs.next()) {
-				MetaEntriesToAdd.put(rs.getString(1), new Integer(rs.getInt(2) + 2).toString());
-				if (rs.getInt(2) > globalMaxAlignmentLength) {
-					globalMaxAlignmentLength = rs.getInt(2) + 2;
-				}
-			}
-			rs.close();
-			stmt.close();
-		} catch (SQLException se) {
-			se.printStackTrace();
-			result = false;
-		}
-
-		// Calculate current max_align_ by method_link_species_set for constrained elements
-		String sql_ce = "SELECT CONCAT('max_align_', method_link_species_set_id)," + " MAX(dnafrag_end - dnafrag_start) FROM constrained_element" + " GROUP BY method_link_species_set_id";
-		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(sql_ce);
-			// Add 2 to the dnafrag_end - dnafrag_start in order to get length + 1.
-			// Adding this at this point is probably faster than asking MySQL to add 2
-			// to every single row...
-			while (rs.next()) {
-				MetaEntriesToAdd.put(rs.getString(1), new Integer(rs.getInt(2) + 2).toString());
-				if (rs.getInt(2) > globalMaxAlignmentLength) {
-					globalMaxAlignmentLength = rs.getInt(2) + 2;
-				}
-			}
-			rs.close();
-			stmt.close();
-		} catch (SQLException se) {
-			se.printStackTrace();
-			result = false;
-		}
-
-		// Get values currently stored in the meta table
-		sql = "SELECT meta_key, meta_value, count(*)" + " FROM meta WHERE meta_key LIKE \"max\\_align\\_%\" GROUP BY meta_key";
-		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
-			while (rs.next()) {
-				if (rs.getInt(3) != 1) {
-					MetaEntriesToRemove.put(rs.getString(1), rs.getString(2));
-				} else if (MetaEntriesToAdd.containsKey(rs.getString(1))) {
-					if (!MetaEntriesToAdd.get(rs.getString(1)).equals(rs.getString(2))) {
-						MetaEntriesToUpdate.put(rs.getString(1), MetaEntriesToAdd.get(rs.getString(1)));
-					}
-					MetaEntriesToAdd.remove(rs.getString(1));
-				} else {
-					MetaEntriesToRemove.put(rs.getString(1), rs.getString(2));
-				}
-			}
-			rs.close();
-			stmt.close();
-		} catch (SQLException se) {
-			se.printStackTrace();
-			result = false;
-		}
-
-		// Get current global value from the meta table (used for backwards compatibility)
-		sql = "SELECT meta_key, meta_value" + " FROM meta WHERE meta_key = \"max_alignment_length\"";
-		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
-			if (rs.first()) {
-				if (rs.getInt(2) != globalMaxAlignmentLength) {
-					MetaEntriesToUpdate.put("max_alignment_length", new Integer(globalMaxAlignmentLength).toString());
-				}
-			} else {
-				MetaEntriesToAdd.put("max_alignment_length", new Integer(globalMaxAlignmentLength).toString());
-			}
-			rs.close();
-			stmt.close();
-		} catch (SQLException se) {
-			se.printStackTrace();
-			result = false;
-		}
-
-		return result;
-
-	}
 
 	// ------------------------------------------
 	// Implementation of Repair interface.
