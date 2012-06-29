@@ -125,6 +125,7 @@ public abstract class EnsTestCase {
 			"dna_align_feature", "protein_align_feature", "repeat_feature",
 			"prediction_transcript", "simple_feature", "marker_feature",
 			"qtl_feature", "density_type", "object_xref", "transcript",
+                        "intron_supporting_evidence", "operon",  "operon_transcript", 
 			"unmapped_object", "ditag_feature", "data_file" };
 
 	/**
@@ -986,7 +987,7 @@ public abstract class EnsTestCase {
 	/**
 	 * Set the database type(s) that this test applies to based upon the
 	 * directory name. For directories called "generic", the type is set to
-	 * core, otherfeatures, cdna, rnaseq, vega and sanger_vega. For all other
+	 * core, otherfeatures, cdna, rnaseq, pre, vega and sanger_vega. For all other
 	 * directories the type is set based upon the directory name.
 	 * 
 	 * @param dirName
@@ -1004,6 +1005,7 @@ public abstract class EnsTestCase {
 			types.add(DatabaseType.OTHERFEATURES);
 			types.add(DatabaseType.SANGER_VEGA);
 			types.add(DatabaseType.RNASEQ);
+                        types.add(DatabaseType.PRE_SITE);
 
 			logger.finest("Set generic types for " + getName());
 

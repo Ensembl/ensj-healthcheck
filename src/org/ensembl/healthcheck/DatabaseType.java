@@ -94,6 +94,9 @@ public final class DatabaseType {
 	/** An rnaseq database */
 	public static final DatabaseType RNASEQ = new DatabaseType("rnaseq");
 
+        /** A pre database */
+        public static final DatabaseType PRE_SITE = new DatabaseType("pre_site");
+
 	/** A database whose type has not been determined */
 	public static final DatabaseType UNKNOWN = new DatabaseType("unknown");
 
@@ -317,6 +320,14 @@ public final class DatabaseType {
 
 		}
 
+                // --------------------------------------
+
+                if (in(lcAlias, "pre_site")) {
+
+                        return PRE_SITE;
+
+                }
+
 		// --------------------------------------
 		// treat ensembl genomes collection databases as core
 
@@ -361,7 +372,7 @@ public final class DatabaseType {
 	 */
 	public boolean isGeneric() {
 
-		String[] genericTypes = {"core", "est", "estgene", "vega", "cdna", "otherfeatures", "sanger_vega", "rnaseq"};
+		String[] genericTypes = {"core", "est", "estgene", "vega", "cdna", "otherfeatures", "sanger_vega", "rnaseq", "pre_site"};
 
 		return Utils.stringInArray(name, genericTypes, false);
 
