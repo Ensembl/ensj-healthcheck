@@ -33,29 +33,21 @@ import org.ensembl.healthcheck.testcase.Repair;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
-/**
- * An EnsEMBL Healthcheck test case that looks for broken foreign-key relationships.
- */
 
-public class MethodLinkSpeciesSetTag extends SingleDatabaseTestCase implements Repair {
+/*
+Abstract class that provides a "Repair" interface to the method_link_species_set_tag table.
+Subclasses must fill the "tagToCheck" attribute and imnplement the "doCheck" method.
+*/
+public abstract class MethodLinkSpeciesSetTag extends SingleDatabaseTestCase implements Repair {
 
-	private HashMap MetaEntriesToAdd = new HashMap();
+	protected HashMap MetaEntriesToAdd = new HashMap();
 
-	private HashMap MetaEntriesToRemove = new HashMap();
+	protected HashMap MetaEntriesToRemove = new HashMap();
 
-	private HashMap MetaEntriesToUpdate = new HashMap();
+	protected HashMap MetaEntriesToUpdate = new HashMap();
 
-	/**
-	 * Create an ForeignKeyMethodLinkId that applies to a specific set of databases.
-	 */
-	public MethodLinkSpeciesSetTag() {
+	protected String tagToCheck;
 
-		addToGroup("compara_genomic");
-		setDescription("Tests that proper max_alignment_length have been defined.");
-		setDescription("Check method_link_species_set_tag table for the right GERP <-> MSA links and max alignment lengths");
-		setTeamResponsible(Team.COMPARA);
-
-	}
 
 	/**
 	 * Run the test.
@@ -78,9 +70,7 @@ public class MethodLinkSpeciesSetTag extends SingleDatabaseTestCase implements R
 		}
 
 		// These methods return false if there is any problem with the test
-		result &= checkMaxAlignmentLength(con);
-
-		result &= checkConservationScoreLink(dbre);
+		result &= doCheck(con);
 
 		// I still have to check if some entries have to be removed/inserted/updated
 		Iterator it = MetaEntriesToRemove.keySet().iterator();
@@ -109,157 +99,7 @@ public class MethodLinkSpeciesSetTag extends SingleDatabaseTestCase implements R
 	 * Check that the each conservation score MethodLinkSpeciesSet obejct has a link to a multiple alignment MethodLinkSpeciesSet in
 	 * the method_link_species_set_tag table.
 	 */
-	private boolean checkConservationScoreLink(DatabaseRegistryEntry dbre) {
-
-		boolean result = true;
-
-		// get version from method_link_species_set_tag table
-		Connection con = dbre.getConnection();
-
-		// get all the links between conservation scores and multiple genomic alignments
-		String sql = "SELECT mlss1.method_link_species_set_id," + " mlss2.method_link_species_set_id, ml1.type, ml2.type, count(*)"
-				+ " FROM method_link ml1, method_link_species_set mlss1, method_link ml2," + " method_link_species_set mlss2 WHERE mlss1.method_link_id = ml1.method_link_id "
-				+ " AND ml1.class = \"ConservationScore.conservation_score\" " + " AND mlss1.species_set_id = mlss2.species_set_id AND mlss2.method_link_id = ml2.method_link_id"
-				+ " AND (ml2.class = \"GenomicAlignBlock.multiple_alignment\" OR ml2.class LIKE \"GenomicAlignTree.%\") GROUP BY mlss1.method_link_species_set_id";
-
-		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
-			while (rs.next()) {
-				if (rs.getInt(5) > 1) {
-					ReportManager.problem(this, con, "MethodLinkSpeciesSet " + rs.getString(1) + " links to several multiple alignments!");
-					result = false;
-				} else if (rs.getString(3).equals("GERP_CONSERVATION_SCORE")) {
-					MetaEntriesToAdd.put(new Integer(rs.getInt(1)).toString(), new Integer(rs.getInt(2)).toString());
-				} else {
-					ReportManager.problem(this, con, "Using " + rs.getString(3) + " method_link_type is not supported by this healthcheck");
-					result = false;
-				}
-			}
-			rs.close();
-			stmt.close();
-		} catch (SQLException se) {
-			se.printStackTrace();
-			result = false;
-		}
-
-		// get all the values currently stored in the DB
-		sql = "SELECT method_link_species_set_id, value, COUNT(*) FROM method_link_species_set_tag WHERE tag = \"msa_mlss_id\" GROUP BY method_link_species_set_id";
-
-		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
-			while (rs.next()) {
-				if (rs.getInt(3) != 1) {
-					// Delete all current entries. The right entry will be added
-					MetaEntriesToRemove.put(rs.getString(1), rs.getString(2));
-				} else if (MetaEntriesToAdd.containsKey(rs.getString(1))) {
-					// Entry matches one of the required entries. Update if needed.
-					if (!MetaEntriesToAdd.get(rs.getString(1)).equals(rs.getString(2))) {
-						MetaEntriesToUpdate.put(rs.getString(1), MetaEntriesToAdd.get(rs.getString(1)));
-					}
-					// Remove this entry from the set of entries to be added (as it already exits!)
-					MetaEntriesToAdd.remove(rs.getString(1));
-				} else {
-					// Entry is out-to-date
-					MetaEntriesToRemove.put(rs.getString(1), rs.getString(2));
-				}
-			}
-			rs.close();
-			stmt.close();
-		} catch (SQLException se) {
-			se.printStackTrace();
-			result = false;
-		}
-
-		return result;
-
-	} // ---------------------------------------------------------------------
-
-	/**
-	 * Check the max_align in the method_link_species_set_tag table
-	 */
-	private boolean checkMaxAlignmentLength(Connection con) {
-
-		boolean result = true;
-
-		int globalMaxAlignmentLength = 0;
-
-		// Check whether tables are empty or not
-		if (!tableHasRows(con, "genomic_align")) {
-			ReportManager.correct(this, con, "NO ENTRIES in genomic_align table");
-			return true;
-		}
-
-		// Calculate current max_alignment_length by method_link_species_set
-		String sql = "SELECT method_link_species_set_id, MAX(dnafrag_end - dnafrag_start) FROM genomic_align GROUP BY method_link_species_set_id";
-		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
-			// Add 2 to the dnafrag_end - dnafrag_start in order to get length + 1.
-			// Adding this at this point is probably faster than asking MySQL to add 2
-			// to every single row...
-			while (rs.next()) {
-				MetaEntriesToAdd.put(rs.getString(1), new Integer(rs.getInt(2) + 2).toString());
-				if (rs.getInt(2) > globalMaxAlignmentLength) {
-					globalMaxAlignmentLength = rs.getInt(2) + 2;
-				}
-			}
-			rs.close();
-			stmt.close();
-		} catch (SQLException se) {
-			se.printStackTrace();
-			result = false;
-		}
-
-		// Calculate current max_align by method_link_species_set for constrained elements
-		String sql_ce = "SELECT method_link_species_set_id, MAX(dnafrag_end - dnafrag_start) FROM constrained_element GROUP BY method_link_species_set_id";
-		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(sql_ce);
-			// Add 2 to the dnafrag_end - dnafrag_start in order to get length + 1.
-			// Adding this at this point is probably faster than asking MySQL to add 2
-			// to every single row...
-			while (rs.next()) {
-				MetaEntriesToAdd.put(rs.getString(1), new Integer(rs.getInt(2) + 2).toString());
-				if (rs.getInt(2) > globalMaxAlignmentLength) {
-					globalMaxAlignmentLength = rs.getInt(2) + 2;
-				}
-			}
-			rs.close();
-			stmt.close();
-		} catch (SQLException se) {
-			se.printStackTrace();
-			result = false;
-		}
-
-		// Get values currently stored in the method_link_species_set_tag table
-		sql = "SELECT method_link_species_set_id, value, COUNT(*) FROM method_link_species_set_tag WHERE tag = \"max_align\" GROUP BY method_link_species_set_id";
-		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
-			while (rs.next()) {
-				if (rs.getInt(3) != 1) {
-					MetaEntriesToRemove.put(rs.getString(1), rs.getString(2));
-				} else if (MetaEntriesToAdd.containsKey(rs.getString(1))) {
-					if (!MetaEntriesToAdd.get(rs.getString(1)).equals(rs.getString(2))) {
-						MetaEntriesToUpdate.put(rs.getString(1), MetaEntriesToAdd.get(rs.getString(1)));
-					}
-					MetaEntriesToAdd.remove(rs.getString(1));
-				} else {
-					MetaEntriesToRemove.put(rs.getString(1), rs.getString(2));
-				}
-			}
-			rs.close();
-			stmt.close();
-		} catch (SQLException se) {
-			se.printStackTrace();
-			result = false;
-		}
-
-		return result;
-
-	}
+	abstract boolean doCheck(Connection con);
 
 	// ------------------------------------------
 	// Implementation of Repair interface.
@@ -286,31 +126,28 @@ public class MethodLinkSpeciesSetTag extends SingleDatabaseTestCase implements R
 			Iterator it = MetaEntriesToRemove.keySet().iterator();
 			while (it.hasNext()) {
 				Object next = it.next();
-				String sql = "DELETE FROM meta WHERE meta_key = \"" + next + "\";";
+				String sql = "DELETE FROM method_link_species_set_tag WHERE method_link_species_set_id = \"" + next + "\" AND tag = \"" + tagToCheck + "\";";
 				int numRows = stmt.executeUpdate(sql);
 				if (numRows != 1) {
-					ReportManager.problem(this, con, "WARNING: " + numRows + " rows DELETED for meta_key \"" + next + "\" while repairing meta");
+					ReportManager.problem(this, con, "WARNING: " + numRows + " rows DELETED for mlss_id \"" + next + "\" while repairing mlss_tag");
 				}
 			}
 			it = MetaEntriesToAdd.keySet().iterator();
 			while (it.hasNext()) {
 				Object next = it.next();
-				// String sql = "INSERT INTO meta VALUES (NULL, \"" + next + "\", "
-				// + MetaEntriesToAdd.get(next) + ", 1);");
-				String sql = "INSERT INTO meta VALUES (NULL, 1, \"" + next + "\", " + MetaEntriesToAdd.get(next) + ");";
-
+				String sql = "INSERT INTO method_link_species_set_tag VALUES (\"" + next + "\", \"" + tagToCheck + "\", " + MetaEntriesToAdd.get(next) + ");";
 				int numRows = stmt.executeUpdate(sql);
 				if (numRows != 1) {
-					ReportManager.problem(this, con, "WARNING: " + numRows + " rows INSERTED for meta_key \"" + next + "\" while repairing meta");
+					ReportManager.problem(this, con, "WARNING: " + numRows + " rows INSERTED for mlss_id \"" + next + "\" while repairing mlss_tag");
 				}
 			}
 			it = MetaEntriesToUpdate.keySet().iterator();
 			while (it.hasNext()) {
 				Object next = it.next();
-				String sql = "UPDATE meta SET meta_value = " + MetaEntriesToUpdate.get(next) + " WHERE meta_key = \"" + next + "\";";
+				String sql = "UPDATE method_link_species_set_tag SET value = " + MetaEntriesToUpdate.get(next) + " WHERE tag = \"" + tagToCheck + "\" AND method_link_species_set_id = \"" + next + "\";";
 				int numRows = stmt.executeUpdate(sql);
 				if (numRows != 1) {
-					ReportManager.problem(this, con, "WARNING: " + numRows + " rows UPDATED for meta_key \"" + next + "\" while repairing meta");
+					ReportManager.problem(this, con, "WARNING: " + numRows + " rows UPDATED for mlss_id \"" + next + "\" while repairing mlss_tag");
 				}
 			}
 			stmt.close();
@@ -340,21 +177,21 @@ public class MethodLinkSpeciesSetTag extends SingleDatabaseTestCase implements R
 		Iterator it = MetaEntriesToRemove.keySet().iterator();
 		while (it.hasNext()) {
 			Object next = it.next();
-			System.out.println("  DELETE FROM meta WHERE meta_key = \"" + next + "\";");
+			System.out.println("  DELETE FROM method_link_species_set_tag WHERE method_link_species_set_id = \"" + next + "\" AND tag = \"" + tagToCheck + "\";");
 		}
 		it = MetaEntriesToAdd.keySet().iterator();
 		while (it.hasNext()) {
 			Object next = it.next();
-			System.out.println("  INSERT INTO meta VALUES (NULL, 1, \"" + next + "\", " + MetaEntriesToAdd.get(next) + ");");
+			System.out.println("  INSERT INTO method_link_species_set_tag VALUES (\"" + next + "\", \"" + tagToCheck + "\", " + MetaEntriesToAdd.get(next) + ");");
 		}
 		it = MetaEntriesToUpdate.keySet().iterator();
 		while (it.hasNext()) {
 			Object next = it.next();
-			System.out.println("  UPDATE meta SET meta_value = " + MetaEntriesToUpdate.get(next) + " WHERE meta_key = \"" + next + "\";");
+			System.out.println("  UPDATE method_link_species_set_tag SET value = " + MetaEntriesToUpdate.get(next) + " WHERE tag = \"" + tagToCheck + "\" AND method_link_species_set_id = \"" + next + "\";");
 		}
 
 	}
 
 	// -------------------------------------------------------------------------
 
-} // ForeignKeyMethodLinkId
+}
