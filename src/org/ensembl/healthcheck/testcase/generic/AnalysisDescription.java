@@ -86,9 +86,6 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 			// special case for transcripts - need to link to gene table and get analysis from there
 			String sql = String.format("SELECT DISTINCT(analysis_id) FROM %s", tableType);
 
-			if (tableType.equals("transcript")) {
-				sql = "SELECT DISTINCT(g.analysis_id) FROM gene g, transcript t WHERE t.gene_id=g.gene_id";
-			}
 
 			List<Integer> analyses = t.queryForDefaultObjectList(sql, Integer.class);
 
