@@ -69,13 +69,27 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
+
+                // --------------------------------
+                // Check all canonical transcripts in a gene correspond to a transcript and all canonical_transcript_ids correspond to a gene
+
+                result &= checkForOrphans(con, "gene", "canonical_transcript_id", "transcript", "transcript_id", true);
+                int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM gene g, transcript t where g.canonical_transcript_id=" + "t.transcript_id and g.gene_id <> t.gene_id");
+                if (rows > 0) {
+                        // problem, the canonical transcript does not belong to the gene
+                        String useful_sql = "SELECT g.gene_id,g.canonical_transcript_id FROM gene g, transcript t where g.canonical_transcript_id=" + "t.transcript_id and g.gene_id <> t.gene_id";
+                        ReportManager.problem(this, con, rows + " rows in gene have a canonical transcript it doesn't belong to the gene" + " Try '" + useful_sql + "' to find out the offending genes");
+                        result = false;
+                }
+
+
 		// --------------------------------
 		// A gene that has at least one transcript.biotype='protein_coding' should have gene.biotype='protein_coding'
 		String sql = "SELECT COUNT(*) FROM gene g WHERE g.gene_id IN (SELECT tr.gene_id FROM transcript tr WHERE tr.biotype='protein_coding') AND g.biotype NOT IN ('protein_coding', 'polymorphic_pseudogene')";
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sanger_vega ignore genes that do not have source havana or WU
 			sql += "AND g.biotype!='polymorphic' AND g.biotype!='polymorphic_pseudogene' and (g.source='havana' or g.source='WU')";
 		}
-		int rows = DBUtils.getRowCount(con, sql);
+		rows = DBUtils.getRowCount(con, sql);
 
 		if (rows > 0) {
 
