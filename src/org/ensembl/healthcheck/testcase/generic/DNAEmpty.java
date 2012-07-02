@@ -52,6 +52,7 @@ public class DNAEmpty extends SingleDatabaseTestCase {
 	public void types() {
 
 		removeAppliesToType(DatabaseType.CORE);
+                removeAppliesToType(DatabaseType.PRE_SITE);
 		removeAppliesToType(DatabaseType.SANGER_VEGA);
 
 	}
