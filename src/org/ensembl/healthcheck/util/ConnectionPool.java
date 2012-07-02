@@ -152,7 +152,7 @@ public final class ConnectionPool {
         	
         } catch(java.lang.AbstractMethodError e) {
         	
-        	logger.info("Connection object doesn't implement \"isValid call, using manual implementation.\"");
+        	logger.finest("Connection object does not implement \"isValid()\" call. Using manual implementation");
         	connectionIsValid = isValidConnection(con);
         }
         
