@@ -82,7 +82,6 @@ public class Meta extends SingleDatabaseTestCase {
 
 		if (dbre.getType() == DatabaseType.CORE) {
 			result &= checkKeysPresent(con);
-			result &= checkKeysNotPresent(con);
 		}
 
 		// -------------------------------------------
@@ -180,29 +179,6 @@ public class Meta extends SingleDatabaseTestCase {
 		return result;
 	}
 
-	// ---------------------------------------------------------------------
-
-	private boolean checkKeysNotPresent(Connection con) {
-
-		boolean result = true;
-
-		String[] metaKeys = {};
-		for (int i = 0; i < metaKeys.length; i++) {
-			String metaKey = metaKeys[i];
-			int rows = metaKeyCount(con, metaKey);
-			if (rows > 0) {
-				result = false;
-				ReportManager.problem(this, con, rows + " meta entries for "
-						+ metaKey + " when there shouldn't be any");
-			} else {
-				ReportManager.correct(this, con, "No entry in meta table for "
-						+ metaKey + " - this is correct");
-			}
-		}
-
-		return result;
-	}
-	  
 	//---------------------------------------------------------------------
 	private int metaKeyCount(Connection con, String metaKey) {
 	  String sql = "select count(*) from meta where meta_key =?";
