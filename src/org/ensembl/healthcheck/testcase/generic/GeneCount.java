@@ -61,8 +61,7 @@ public class GeneCount extends SingleDatabaseTestCase {
 
 		// MT chromosome should have 13 protein coding genes, only applies to
 		// core database
-		if (dbre.getSpecies() == Species.HOMO_SAPIENS
-				&& dbre.getType() == DatabaseType.CORE) {
+		if ( dbre.getType() == DatabaseType.CORE) {
 			result &= countMTGenes(dbre.getConnection());
 		}
 
@@ -75,23 +74,30 @@ public class GeneCount extends SingleDatabaseTestCase {
 	private boolean countMTGenes(Connection con) {
 
 		boolean result = true;
+                
+                int MT = DBUtils.getRowCount( con, "SELECT COUNT(*) FROM seq_region WHERE name='MT'");   
+
+                if (MT == 0) {
+                        return result;
+                }
+
 
 		int genes = DBUtils
 				.getRowCount(
 						con,
-						"SELECT COUNT(*) FROM coord_system cs, seq_region sr, gene g WHERE cs.coord_system_id=sr.coord_system_id AND cs.name='chromosome' AND cs.version='GRCh37' AND sr.name='MT' and g.seq_region_id=sr.seq_region_id AND g.biotype='protein_coding'");
+						"SELECT COUNT(*) FROM coord_system cs, seq_region sr, seq_region_attrib sa, gene g WHERE cs.coord_system_id=sr.coord_system_id AND cs.attrib like 'default_version%' AND sr.name='MT' AND sr.seq_region_id=sa.seq_region_id AND sa.attrib_type_id=6 AND g.seq_region_id=sr.seq_region_id AND g.biotype='protein_coding'");
 
 		if (genes != 13) {
 
 			ReportManager.problem(this, con,
-					"Human MT chromosome should have 13 protein coding genes, actually has "
+					"MT chromosome should have 13 protein coding genes, actually has "
 							+ genes);
 			result = false;
 
 		} else {
 
 			ReportManager.correct(this, con,
-					"Human MT chromosome has 13 protein coding genes.");
+					"MT chromosome has 13 protein coding genes.");
 
 		}
 
