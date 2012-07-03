@@ -57,7 +57,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.ProductionMasterTables </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.Archive </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ProjectedXrefs </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.ESTStableIDs </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.XrefVersions </li> 
  *   <li> org.ensembl.healthcheck.testcase.funcgen.ArrayXrefs </li> 
  *   <li> org.ensembl.healthcheck.testcase.funcgen.FuncgenForeignKeys </li> 
@@ -179,7 +178,6 @@ public class Release extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.ProductionMasterTables.class,
 			org.ensembl.healthcheck.testcase.generic.Archive.class,
 			org.ensembl.healthcheck.testcase.generic.ProjectedXrefs.class,
-			org.ensembl.healthcheck.testcase.generic.ESTStableIDs.class,
 			org.ensembl.healthcheck.testcase.generic.XrefVersions.class,
 			org.ensembl.healthcheck.testcase.funcgen.ArrayXrefs.class,
 			org.ensembl.healthcheck.testcase.funcgen.FuncgenForeignKeys.class,

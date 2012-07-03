@@ -46,7 +46,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.IdentityXrefCigarLines </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblySeqregion </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.ESTStableIDs </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.XrefVersions </li> 
  *   <li> org.ensembl.healthcheck.testcase.funcgen.ArrayXrefs </li> 
  *   <li> org.ensembl.healthcheck.testcase.funcgen.FuncgenForeignKeys </li> 
@@ -136,7 +135,6 @@ public class PostGenebuild extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.IdentityXrefCigarLines.class,
 			org.ensembl.healthcheck.testcase.generic.AssemblySeqregion.class,
 			org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd.class,
-			org.ensembl.healthcheck.testcase.generic.ESTStableIDs.class,
 			org.ensembl.healthcheck.testcase.generic.XrefVersions.class,
 			org.ensembl.healthcheck.testcase.funcgen.ArrayXrefs.class,
 			org.ensembl.healthcheck.testcase.funcgen.FuncgenForeignKeys.class,
