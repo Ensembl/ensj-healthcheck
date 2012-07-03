@@ -72,10 +72,10 @@ public class PreSite extends GroupOfTests {
 	public PreSite() {
 
 		addTest(
-//                        org.ensembl.healthcheck.testcase.generic.ProductionAnalysisLogicName.class,
-//                       org.ensembl.healthcheck.testcase.generic.ProductionBiotypes.class,
-//                        org.ensembl.healthcheck.testcase.generic.ProductionMasterTables.class,
-//                        org.ensembl.healthcheck.testcase.generic.ProductionMeta.class,
+                        org.ensembl.healthcheck.testcase.generic.ProductionAnalysisLogicName.class,
+                       org.ensembl.healthcheck.testcase.generic.ProductionBiotypes.class,
+                        org.ensembl.healthcheck.testcase.generic.ProductionMasterTables.class,
+                        org.ensembl.healthcheck.testcase.generic.ProductionMeta.class,
 			org.ensembl.healthcheck.testcase.generic.CoreForeignKeys.class,
                         org.ensembl.healthcheck.testcase.generic.AnalysisDescription.class,
                         org.ensembl.healthcheck.testcase.generic.AnalysisLogicName.class,
