@@ -26,7 +26,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.HitNameFormat </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.Retrotransposed </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.Pseudogene </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.DescriptionNewlines </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyException </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblySeqregion </li> 
@@ -93,7 +92,6 @@ public class PreSite extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.HitNameFormat.class,
 			org.ensembl.healthcheck.testcase.generic.Retrotransposed.class,
 			org.ensembl.healthcheck.testcase.generic.Pseudogene.class,
-			org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable.class,
 			org.ensembl.healthcheck.testcase.generic.DescriptionNewlines.class,
 			org.ensembl.healthcheck.testcase.generic.AssemblyExceptions.class,
 			org.ensembl.healthcheck.testcase.generic.AssemblySeqregion.class,
