@@ -105,13 +105,6 @@ public class SystemPropertySetter {
 			System.setProperty("master.schema",    configuration.getMasterSchema());
 		}
 		
-		if (configuration.isLogicnamesFile()) {
-			// Used in:
-			//
-			// org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable
-			//		
-			System.setProperty("logicnames.file",    configuration.getLogicnamesFile());
-		}
 		
 		if (configuration.isPerl()) {
 			// Used in:
