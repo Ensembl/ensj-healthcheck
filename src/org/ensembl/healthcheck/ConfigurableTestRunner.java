@@ -315,8 +315,15 @@ public class ConfigurableTestRunner extends TestRunner {
 		// Notice the elegant downcast happening here
 		DatabaseServer ds = connectToDatabase(configuration);
 
-		List<DatabaseRegistryEntry> databasesToTestList = new ArrayList<DatabaseRegistryEntry>();
+//		List<DatabaseRegistryEntry> databasesToTestList = new ArrayList<DatabaseRegistryEntry>();
 
+                List<String> testDatabases = new ArrayList<String>(getTestDatabases());
+
+                DatabaseRegistry databasesToTestRegistry = new DatabaseRegistry(
+                                testDatabases, null, null, false
+                );
+
+                /*
 		// Create a DatabaseRegistryEntry for every database the user specified
 		for (String databaseToTest : getTestDatabases()) {
 
@@ -327,6 +334,8 @@ public class ConfigurableTestRunner extends TestRunner {
 
 		DatabaseRegistry databasesToTestRegistry = new DatabaseRegistry(
 				databasesToTestList);
+
+                */
 
 		if (databasesToTestRegistry.getAll().length == 0) {
 			logger.warning("Warning: no databases configured!");

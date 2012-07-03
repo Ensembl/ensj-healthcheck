@@ -995,22 +995,80 @@ public final class DBUtils {
 
 			mainDatabaseServers = new ArrayList<DatabaseServer>();
 
-			boolean primaryHostConfigured = DBUtils.hostConfiguration.isHost()
-					&& DBUtils.hostConfiguration.isPort()
-					&& DBUtils.hostConfiguration.isUser()
-					&& DBUtils.hostConfiguration.isPassword()
-					&& DBUtils.hostConfiguration.isDriver();
+                        ConfigureHost hostConfiguration = DBUtils.hostConfiguration;
 
-			if (primaryHostConfigured) {
+                        if (
+                                        hostConfiguration.isHost()
+                                        && hostConfiguration.isPort()
+                                        && hostConfiguration.isUser()
+                                ) {
 
-				checkAndAddDatabaseServerConf(mainDatabaseServers,
-						DBUtils.hostConfiguration.getHost(),
-						DBUtils.hostConfiguration.getPort(),
-						DBUtils.hostConfiguration.getUser(),
-						DBUtils.hostConfiguration.getPassword(),
-						DBUtils.hostConfiguration.getDriver());
-			}
-		}
+                                        // Passwords handled this way, because it might have not
+                                        // been set, if no password is required. In that case,
+                                        // calling hostConfiguration.getPassword() without checking
+                                        // if it iset will make this throw an 
+                                        // OptionNotPresentException.
+                                        //
+                                        String password = null;
+
+                                        if (hostConfiguration.isPassword()) {
+                                                password = hostConfiguration.getPassword();
+                                        }
+
+                                        checkAndAddDatabaseServerConf(
+                                                mainDatabaseServers,
+                                                hostConfiguration.getHost(),
+                                                hostConfiguration.getPort(),
+                                                hostConfiguration.getUser(),
+                                                password,
+                                                hostConfiguration.getDriver()
+                                        );
+                                }
+
+                        if (
+                                        hostConfiguration.isHost1()
+                                        && hostConfiguration.isPort1()
+                                        && hostConfiguration.isUser1()
+                                ) {
+
+                                        String password = null;
+
+                                        if (hostConfiguration.isPassword1()) {
+                                                password = hostConfiguration.getPassword1();
+                                        }
+
+                                        checkAndAddDatabaseServerConf(
+                                                mainDatabaseServers,
+                                                hostConfiguration.getHost1(),
+                                                hostConfiguration.getPort1(),
+                                                hostConfiguration.getUser1(),
+                                                password,
+                                                hostConfiguration.getDriver1()
+                                        );
+                                }
+
+                        if (
+                                        hostConfiguration.isHost2()
+                                        && hostConfiguration.isPort2()
+                                        && hostConfiguration.isUser2()
+                                ) {
+
+                                        String password = null;
+
+                                        if (hostConfiguration.isPassword2()) {
+                                                password = hostConfiguration.getPassword2();
+                                        }
+
+                                        checkAndAddDatabaseServerConf(
+                                                mainDatabaseServers,
+                                                hostConfiguration.getHost2(),
+                                                hostConfiguration.getPort2(),
+                                                hostConfiguration.getUser2(),
+                                                password,
+                                                hostConfiguration.getDriver2()
+                                        );
+                                }
+                }
 		return mainDatabaseServers;
 	}
 
