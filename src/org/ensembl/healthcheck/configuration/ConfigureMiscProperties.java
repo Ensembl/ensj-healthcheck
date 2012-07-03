@@ -65,16 +65,6 @@ public interface ConfigureMiscProperties {
 
 	// Used in:
 	//
-	// org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable
-	//
-	@Option(longName = "logicnames.file", description = "Parameter used only in "
-			+ "org.ensembl.healthcheck.testcase.generic.LogicNamesDisplayable")
-	String getLogicnamesFile();
-
-	boolean isLogicnamesFile();
-
-	// Used in:
-	//
 	// org.ensembl.healthcheck.testcase.AbstractPerlBasedTestCase
 	//
 	@Option(longName = "perl", description = "Parameter used only in "
