@@ -104,6 +104,9 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 
 	}
 
+        // e.g. username_species_type
+        protected final static Pattern GB_DB = Pattern
+                        .compile("^[a-z0-9_]+_([a-z]+)_([a-z]+)");
 	// e.g. neurospora_crassa_core_4_56_1a
 	protected final static Pattern EG_DB = Pattern
 			.compile("^([a-z0-9_]+)_([a-z]+)_[0-9]+_([0-9]+)_([0-9A-Za-z]+)");
@@ -158,7 +161,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	protected final static Pattern MYSQL_DB = Pattern
 			.compile("^(mysql|information_schema)");
 
-	protected final static Pattern[] patterns = { EC_DB, UA_DB, UC_DB, UCM_DB,
+	protected final static Pattern[] patterns = { GB_DB, EC_DB, UA_DB, UC_DB, UCM_DB,
 			EA_DB, EGC_DB, EG_DB, E_DB, PE_DB, EM_DB, EE_DB, EEL_DB, U_DB,
 			V_DB, MYSQL_DB, BLAST_DB, UD_DB, TAX_DB, EW_DB, HELP_DB };
 
