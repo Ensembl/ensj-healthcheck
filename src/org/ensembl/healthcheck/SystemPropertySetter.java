@@ -54,13 +54,6 @@ public class SystemPropertySetter {
 	 */
 	public void setPropertiesForHealthchecks() {
 		
-		if (configuration.isBiotypesFile()) {
-			// Used in:
-			//
-			// org.ensembl.healthcheck.testcase.generic.Biotypes
-			//
-			System.setProperty("biotypes.file",    configuration.getBiotypesFile());
-		}
 
 		if (configuration.isIgnorePreviousChecks()) {
 			// Used in:
