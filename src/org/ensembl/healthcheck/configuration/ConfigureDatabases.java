@@ -31,5 +31,14 @@ public interface ConfigureDatabases {
 			"This option requires the production database to be set up.")
 	List<String> getDivisions();
 	boolean isDivisions();
+
+        @Option(longName = "species", description = "If set, this will be used as the species for all databases, overriding anything the" +
+                        "name or meta table of the database may indicate.")
+        String getSpecies();
+        boolean isSpecies();
+
+        @Option(shortName = "t", longName = "dbtype", description = "If set, this will be used as the type for all databases.")
+        String getDbType();
+        boolean isDbType();
 	
 }

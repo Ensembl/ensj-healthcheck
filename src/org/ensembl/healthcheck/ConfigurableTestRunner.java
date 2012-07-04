@@ -315,27 +315,33 @@ public class ConfigurableTestRunner extends TestRunner {
 		// Notice the elegant downcast happening here
 		DatabaseServer ds = connectToDatabase(configuration);
 
-//		List<DatabaseRegistryEntry> databasesToTestList = new ArrayList<DatabaseRegistryEntry>();
-
                 List<String> testDatabases = new ArrayList<String>(getTestDatabases());
 
+                Species globalSpecies = null;
+
+                if (configuration.isSpecies()) {
+                        globalSpecies = Species.resolveAlias(configuration.getSpecies());
+                        if (globalSpecies != Species.UNKNOWN) {
+                                logger.info("Will override guessed species with " + globalSpecies + " for all databases");
+                        } else {
+                                logger.severe("Argument " + configuration.getSpecies() + " to -species not recognised");
+                        }
+                }
+
+                DatabaseType globalDatabaseType = null;
+
+                if (configuration.isDbType()) {
+                        globalDatabaseType = DatabaseType.resolveAlias(configuration.getDbType());
+                        if (globalDatabaseType != DatabaseType.UNKNOWN) { 
+                                logger.info("Will override guessed database types with " + globalDatabaseType + " for all databases");
+                        } else {
+                                logger.severe("Argument " + configuration.getDbType() + " to -type not recognised");
+                        }
+                }
+
                 DatabaseRegistry databasesToTestRegistry = new DatabaseRegistry(
-                                testDatabases, null, null, false
+                                testDatabases, globalDatabaseType, globalSpecies, false
                 );
-
-                /*
-		// Create a DatabaseRegistryEntry for every database the user specified
-		for (String databaseToTest : getTestDatabases()) {
-
-			DatabaseRegistryEntry currentDatabaseToTest = new DatabaseRegistryEntry(
-					ds, databaseToTest, null, null);
-			databasesToTestList.add(currentDatabaseToTest);
-		}
-
-		DatabaseRegistry databasesToTestRegistry = new DatabaseRegistry(
-				databasesToTestList);
-
-                */
 
 		if (databasesToTestRegistry.getAll().length == 0) {
 			logger.warning("Warning: no databases configured!");
