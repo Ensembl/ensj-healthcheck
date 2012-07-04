@@ -54,33 +54,34 @@ public class AssemblyMapping extends AbstractTemplatedTestCase {
 			Map<String, List<String>> cs = templ.queryForMap(CS_SQL,
 					new StringListMapRowMapper(), speciesId);
 			// 2. get assembly mapping
-			String assMap = templ.queryForDefaultObject(ASS_MAP_SQL,
+			List<String> assMap = templ.queryForDefaultObjectList(ASS_MAP_SQL,
 					String.class, speciesId);
-			for (String mapElem : assMap.split("[#|]")) {
-				Matcher m = ASS_MAP.matcher(mapElem);
-				if (m.matches()) {
-					if (m.groupCount() == 3) {
-						String name = m.group(1);
-						String version = m.group(3);
-						List<String> versions = cs.get(name);
-						if (versions == null) {
-							ReportManager.problem(this, dbre.getConnection(),
+                        for (String map : assMap) {
+        			for (String mapElem : map.split("[#|]")) {
+	        			Matcher m = ASS_MAP.matcher(mapElem);
+		        		if (m.matches()) {
+			        		if (m.groupCount() == 3) {
+				        		String name = m.group(1);
+					        	String version = m.group(3);
+						        List<String> versions = cs.get(name);
+        						if (versions == null) {
+	        						ReportManager.problem(this, dbre.getConnection(),
 									"No coordinate system named '" + name
 											+ "' found for mapping " + assMap);
-							result = false;
-						} else {
-							if (!versions.contains(version)) {
-								ReportManager.problem(this,
+		        					result = false;
+			        			} else {
+				        			if (!versions.contains(version)) {
+					        			ReportManager.problem(this,
 										dbre.getConnection(),
 										"No coordinate system named '" + name
 												+ "' with version " + version
 												+ " found for mapping "
 												+ assMap);
-								result = false;
-							}
-						}
-					} else {
-						ReportManager
+						        		result = false;
+        							}
+	        					}
+        					} else {
+	        					ReportManager
 								.problem(
 										this,
 										dbre.getConnection(),
@@ -90,17 +91,18 @@ public class AssemblyMapping extends AbstractTemplatedTestCase {
 												+ assMap
 												+ " does not match the expected pattern "
 												+ ASS_MAP.pattern());
-						result = false;
-					}
-				} else {
-					ReportManager.problem(this, dbre.getConnection(),
+		        				result = false;
+        					}
+	        			} else {
+		        			ReportManager.problem(this, dbre.getConnection(),
 							"Assembly mapping element " + mapElem + " from "
 									+ assMap
 									+ " does not match the expected pattern "
 									+ ASS_MAP.pattern());
-					result = false;
-				}
-			}
+			        		result = false;
+				        }
+        			}
+                        }
 		}
 		return result;
 	}
