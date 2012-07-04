@@ -12,15 +12,6 @@ public interface ConfigureMiscProperties {
 
 	// Used in:
 	//
-	// org.ensembl.healthcheck.testcase.generic.Biotypes
-	//
-	@Option(longName = "biotypes.file", description = "Parameter used only in the test org.ensembl.healthcheck.testcase.generic.Biotypes")
-	String getBiotypesFile();
-
-	boolean isBiotypesFile();
-
-	// Used in:
-	//
 	// org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionExonCoords
 	// org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase
 	// org.ensembl.healthcheck.testcase.generic.GeneStatus
