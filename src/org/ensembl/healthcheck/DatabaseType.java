@@ -32,7 +32,7 @@ public final class DatabaseType {
 	public static final DatabaseType VEGA = new DatabaseType("vega");
 
 	/** A Sanger Vega database - note this is different from the Ensembl Vega database */
-	public static final DatabaseType SANGER_VEGA = new DatabaseType("sanger_vega");
+	public static final DatabaseType SANGER_VEGA = new DatabaseType("sangervega");
 
 	/** A Compara database */
 	public static final DatabaseType COMPARA = new DatabaseType("compara");
@@ -95,7 +95,7 @@ public final class DatabaseType {
 	public static final DatabaseType RNASEQ = new DatabaseType("rnaseq");
 
         /** A pre database */
-        public static final DatabaseType PRE_SITE = new DatabaseType("pre_site");
+        public static final DatabaseType PRE_SITE = new DatabaseType("presite");
 
 	/** A database whose type has not been determined */
 	public static final DatabaseType UNKNOWN = new DatabaseType("unknown");
@@ -322,7 +322,7 @@ public final class DatabaseType {
 
                 // --------------------------------------
 
-                if (in(lcAlias, "pre_site")) {
+                if (in(lcAlias, "presite")) {
 
                         return PRE_SITE;
 
@@ -338,9 +338,9 @@ public final class DatabaseType {
 		}
 
 		// --------------------------------------
-		// and sanger_vega (generally specified via -type)
+		// and sangervega (generally specified via -type)
 
-		if (in(lcAlias, "sanger_vega")) {
+		if (in(lcAlias, "sangervega")) {
 
 			return SANGER_VEGA;
 
@@ -372,7 +372,7 @@ public final class DatabaseType {
 	 */
 	public boolean isGeneric() {
 
-		String[] genericTypes = {"core", "est", "estgene", "vega", "cdna", "otherfeatures", "sanger_vega", "rnaseq", "pre_site"};
+		String[] genericTypes = {"core", "est", "estgene", "vega", "cdna", "otherfeatures", "sangervega", "rnaseq", "presite"};
 
 		return Utils.stringInArray(name, genericTypes, false);
 
