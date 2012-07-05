@@ -293,7 +293,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 				
 			} else if (rows.length == 0) {
 
-				if (dbre.getType() != DatabaseType.SANGER_VEGA || logicName.equalsIgnoreCase("knownGeneDensity")) {// for sanger_vega only
+				if (dbre.getType() != DatabaseType.SANGER_VEGA || logicName.equalsIgnoreCase("knownGeneDensity")) {// for sangervega only
 																																																						// report analysis
 					ReportManager.problem(this, con, "RelCo: No entry in density_type for analysis " + logicName + " - run ensembl/misc-scripts/density_feature/* scripts");
 				}

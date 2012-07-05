@@ -134,7 +134,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 			tables = est;
 		}
 		// -----------------------------------------------------
-		// many tables are allowed to be empty in vega and sanger_vega databases
+		// many tables are allowed to be empty in vega and sangervega databases
 		if (type == DatabaseType.VEGA) {
 
 			String[] allowedEmpty = { "affy_array", "affy_feature", "affy_probe", "ditag", "ditag_feature", "dna", "external_synonym", "identity_xref", "map", "mapping_session", "marker", "marker_feature",

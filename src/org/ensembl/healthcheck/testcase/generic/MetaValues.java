@@ -75,13 +75,15 @@ public class MetaValues extends SingleDatabaseTestCase {
 			
 		}
 
-		if (!isSangerVega) {// do not check for sanger_vega
+		if (!isSangerVega) {// do not check for sangervega
 			result &= checkOverlappingRegions(con);
 		}
 
 		result &= checkAssemblyMapping(con);
 
 		result &= checkTaxonomyID(dbre);
+
+                result &= checkAssemblyWeb(dbre);
 
 		if (dbre.getType() == DatabaseType.CORE) {
 			result &= checkDates(dbre);
@@ -123,7 +125,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 			Species dbSpecies = dbre.getSpecies();
 			String correctPrefix = Species.getAssemblyPrefixForSpecies(dbSpecies);
 
-			if (!isSangerVega) {// do not check this for sanger_vega
+			if (!isSangerVega) {// do not check this for sangervega
 				if (correctPrefix == null) {
 					logger.info("Can't get correct assembly prefix for " + dbSpecies.toString());
 				} else {
@@ -372,6 +374,44 @@ public class MetaValues extends SingleDatabaseTestCase {
 		return result;
 
 	}
+
+        // ---------------------------------------------------------------------
+
+        private boolean checkAssemblyWeb(DatabaseRegistryEntry dbre) {
+
+                boolean result = true;
+
+                Connection con = dbre.getConnection();
+
+                // Check that the taxonomy ID matches a known one.
+                // The taxonomy ID-species mapping is held in the Species class.
+
+                String[] allowedTypes   = {"GenBank Assembly ID", "EMBL-Bank WGS Master"};
+                String[] allowedSources = {"NCBI", "ENA", "DDBJ"};
+                String WebType   = DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.web_accession_type'");
+                String WebSource = DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.web_accession_source'");
+
+                if (WebType != null) {
+                        if (!Utils.stringInArray(WebType, allowedTypes, true)) {
+                                result = false;
+                                ReportManager.problem(this, con, "Web accession type " + WebType + " is not allowed");
+                        } else {
+                                ReportManager.correct(this, con, "Web accession type " + WebType + " correctly set");
+                        }
+                }
+
+                if (WebSource != null) {
+                        if (!Utils.stringInArray(WebSource, allowedSources, true)) {
+                                result = false;
+                                ReportManager.problem(this, con, "Web accession source " + WebSource + " is not allowed");
+                        } else {
+                                ReportManager.correct(this, con, "Web accession source " + WebSource + " correctly set");
+                        }
+                }
+                return result;
+
+        }
+
 
 	// ---------------------------------------------------------------------
 

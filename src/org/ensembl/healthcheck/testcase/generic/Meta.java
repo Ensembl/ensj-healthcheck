@@ -227,7 +227,7 @@ public class Meta extends SingleDatabaseTestCase {
 																			// not
 																			// report
 																			// for
-																			// sanger_vega
+																			// sangervega
 
 			ReportManager.problem(this, con, "Meta schema_version "
 					+ schemaVersion

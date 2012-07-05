@@ -285,7 +285,7 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 							ignoreBackupTables = true;
 						}
 						
-						// for sanger_vega, ignore backup tables. If not the same, this
+						// for sangervega, ignore backup tables. If not the same, this
 						// method will generate a report
 						if (!compareTableEquality(masterCon, dbre, ignoreBackupTables, directionFlag)) {
 							result = false;

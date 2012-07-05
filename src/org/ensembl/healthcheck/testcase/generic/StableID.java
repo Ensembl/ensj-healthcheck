@@ -96,7 +96,7 @@ public class StableID extends SingleDatabaseTestCase {
 		// there are several species where ID mapping is not done
 		Species s = dbre.getSpecies();
 		if (s != null && s != Species.CAENORHABDITIS_ELEGANS && s != Species.DROSOPHILA_MELANOGASTER && s != Species.SACCHAROMYCES_CEREVISIAE && s != Species.ANOPHELES_GAMBIAE && s != Species.UNKNOWN) {
-			if (dbre.getType() != DatabaseType.SANGER_VEGA) {// for sanger_vega, do not check the prefixes
+			if (dbre.getType() != DatabaseType.SANGER_VEGA) {// for sangervega, do not check the prefixes
 				result &= checkPrefixes(dbre);
 			}
 			result &= checkStableIDEventTypes(con);

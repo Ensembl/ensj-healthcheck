@@ -84,7 +84,7 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 
 		// gene - warning
 		String sql = "SELECT COUNT(*) FROM gene WHERE (seq_region_end-seq_region_start+1) >= " + GENE_WARN + " AND (seq_region_end-seq_region_start+1) < " + GENE_ERROR;
-		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sanger_vega ignore genes that do not have source havana or WU
+		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sangervega ignore genes that do not have source havana or WU
 			sql += " and (source='havana' or source='WU')";
 		}
 		int rows = DBUtils.getRowCount(con, sql);
@@ -100,7 +100,7 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 
 		// gene - error
 		sql = "SELECT gene_id FROM gene WHERE (seq_region_end-seq_region_start+1) >= " + GENE_ERROR;
-		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sanger_vega ignore genes that do not have source havana or WU
+		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sangervega ignore genes that do not have source havana or WU
 			sql += " and (source='havana' or source='WU')";
 		}
 
@@ -121,7 +121,7 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 
 		// gene - really long
 		sql = "SELECT gene_id FROM gene WHERE (seq_region_end-seq_region_start+1) >= " + GENE_ENORMOUS;
-		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sanger_vega ignore genes that do not have source havana or WU
+		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sangervega ignore genes that do not have source havana or WU
 			sql += " and (source='havana' or source='WU')";
 		}
 

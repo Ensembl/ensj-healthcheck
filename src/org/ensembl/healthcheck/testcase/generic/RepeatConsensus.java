@@ -71,14 +71,14 @@ public class RepeatConsensus extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 		String query = "SELECT COUNT(*) FROM repeat_consensus WHERE repeat_type = ''";
-		if (dbre.getType() != DatabaseType.SANGER_VEGA) {// for sanger_vega, simple is fine
+		if (dbre.getType() != DatabaseType.SANGER_VEGA) {// for sangervega, simple is fine
 			query += " OR repeat_type ='Simple'";
 		}
 		int rows = DBUtils.getRowCount(con, query);
 
 		if (rows > 0) {
 			String report = "repeat_consensus table has " + rows + " rows of repeat_type empty";
-			if (dbre.getType() != DatabaseType.SANGER_VEGA) {// for sanger_vega, simple is fine
+			if (dbre.getType() != DatabaseType.SANGER_VEGA) {// for sangervega, simple is fine
 				report += " OR 'Simple'";
 			}
 			ReportManager.problem(this, con, report);

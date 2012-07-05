@@ -41,7 +41,7 @@ public class ComparePreviousVersionXrefs extends ComparePreviousVersionBase {
 	}
 
 	/**
-	 * This test Does not apply to sanger_vega dbs
+	 * This test Does not apply to sangervega dbs
 	 */
 	public void types() {
 		removeAppliesToType(DatabaseType.SANGER_VEGA);

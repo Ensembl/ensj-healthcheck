@@ -136,7 +136,7 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 				geneCanonicalTranscript = rs.getInt(14);
 				geneCanonicalAnnotation = rs.getString(15);
 
-				if (!first) { // for sanger_vega, we only want to report true duplicates (i.e. genes that have all fields identical)
+				if (!first) { // for sangervega, we only want to report true duplicates (i.e. genes that have all fields identical)
 					if (lastGeneChromosome == geneChromosome
 							&& lastGeneStart == geneStart
 							&& lastGeneEnd == geneEnd

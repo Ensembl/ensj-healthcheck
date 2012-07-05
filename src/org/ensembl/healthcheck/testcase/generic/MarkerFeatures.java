@@ -91,7 +91,7 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 				.equals(Species.HOMO_SAPIENS) || s.equals(Species.MUS_MUSCULUS) || s
 					.equals(Species.RATTUS_NORVEGICUS)))
 				|| s.equals(Species.DANIO_RERIO)) { // for
-													// sanger_vega
+													// sangervega
 													// only
 													// run
 													// the
