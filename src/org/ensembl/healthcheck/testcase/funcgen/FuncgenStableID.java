@@ -156,10 +156,11 @@ public class FuncgenStableID extends SingleDatabaseTestCase {
 			while (fsetIdNames != null && fsetIdNames.next()) {
 				sql = "SELECT count(stable_id) from regulatory_feature where " + 
 					"stable_id is not NULL and feature_set_id=" + fsetIdNames.getString(1);
-				System.out.println("Executing " + sql);
+
+				//System.out.println("Executing " + sql);
 				int nStableIDs = DBUtils.getRowCount(con, sql);
-			
-				
+
+						
 				//We could really do with a HC to check we have RegFeats on all main Chrs
 
 				if (nStableIDs < 1) {
