@@ -18,6 +18,14 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
@@ -25,6 +33,10 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.Utils;
+import org.ensembl.healthcheck.util.SqlTemplate;
+import org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase;
+
 
 /**
  * Check that certain seq_regions that have known, protein_coding genes have the GeneNo_knwCod attribute associated with them.
@@ -77,24 +89,26 @@ public class SeqRegionAttribsPresent extends SingleDatabaseTestCase {
 		} else {
 			code = "'GeneNo_knwCod'";
 		}
-		String sql = " FROM gene g WHERE g.biotype='protein_coding' AND g.status='KNOWN' AND g.seq_region_id NOT IN (SELECT DISTINCT(g.seq_region_id) FROM gene g LEFT JOIN seq_region_attrib sra ON g.seq_region_id=sra.seq_region_id WHERE g.biotype='protein_coding' AND g.status='KNOWN' AND sra.attrib_type_id=(select attrib_type_id from attrib_type where code = "
-				+ code + ") AND sra.seq_region_id IS NOT NULL)";
 
-		int count = DBUtils.getRowCount(con, "SELECT COUNT(DISTINCT(g.seq_region_id))" + sql);
+                SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+                String sql = "select distinct g.seq_region_id from gene g where g.biotype = 'protein_coding' and g.status = 'KNOWN' and g.seq_region_id not in (select distinct g.seq_region_id from gene g, seq_region_attrib sa, attrib_type at where g.seq_region_id = sa.seq_region_id and sa.attrib_type_id = at.attrib_type_id and at.code in ('LRG', 'non_ref'))" ;
+                List<String> toplevel = t.queryForDefaultObjectList(sql, String.class);
 
-		if (count > 0) {
+                sql = "select distinct g.seq_region_id from gene g, seq_region_attrib sa, attrib_type at where g.seq_region_id = sa.seq_region_id and sa.attrib_type_id = at.attrib_type_id and code = " + code ;
+                List<String> known = t.queryForDefaultObjectList(sql, String.class);
 
-			String str = count + " seq_regions with known, protein_coding genes do not have the GeneNo_knwCod attribute associated";
-			// str += "USEFUL SQL: SELECT DISTINCT(g.seq_region_id)" + sql;
-			ReportManager.problem(this, con, str);
-			result = false;
+                Set<String> missing = new HashSet<String>(toplevel);
+                missing.removeAll(known);
 
-		} else {
-
-			ReportManager.correct(this, con, "All seq_regions with known, protein_coding genes have a GeneNo_knwCod attribute associated with them");
-
-		}
-
+		if (missing.isEmpty()) {
+                        ReportManager.correct(this, con, "All seq_regions with known, protein_coding genes have a GeneNo_knwCod attribute associated with them");
+                } else {
+                        for(CharSequence name: missing) {
+                                String msg = String.format("Seq_region '%s' with known, protein_coding genes does not have the GeneNo_knwCod attribute associated", name);
+                        	ReportManager.problem(this, con, msg);
+        			result = false;
+	        	}
+                }
 		return result;
 
 	} // run
