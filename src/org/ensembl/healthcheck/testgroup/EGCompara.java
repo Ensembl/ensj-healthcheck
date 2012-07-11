@@ -37,7 +37,10 @@ public class EGCompara extends GroupOfTests {
 			ForeignKeyMethodLinkId.class,
 			ForeignKeyTaxonId.class,
 			EGCheckEmptyLocators.class,
-			EGCheckNoTreeStableIds.class,			
+                        //This test is broken
+			//EGCheckNoTreeStableIds.class,
+                        //Here is my replacement
+                        StableIDNotNull.class,
 			MultipleGenomicAlignBlockIds.class
 		);
 	}
