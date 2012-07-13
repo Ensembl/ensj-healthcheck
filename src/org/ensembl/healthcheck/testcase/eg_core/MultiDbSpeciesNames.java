@@ -30,15 +30,29 @@ public class MultiDbSpeciesNames extends MultiDatabaseTestCase {
 
 	private final static String STABLE_ID = "select meta_value from meta where meta_key=?";
 	private final static String[] META_KEYS = { "species.production_name",
-			"species.alias", "species.db_name" };
+			"species.db_name", "species.display_name", "species.alias" };
 
 	private final static String NAME_HOLDER = "name";
 	private final static String KEY_HOLDER = "metaKey";
-	private final static String FIX_SQL = "update meta name, meta ass set "
+	private final static String DB_HOLDER = "dbName";
+	private final static String FIX_PROD_SQL = "update $"
+			+ DB_HOLDER
+			+ "$.meta name, $"
+			+ DB_HOLDER
+			+ "$.meta ass set "
 			+ "name.meta_value=concat(name.meta_value,'_',ass.meta_value) "
 			+ "where name.species_id=ass.species_id and ass.meta_key='assembly.name' "
-			+ "and name.meta_value='$" + NAME_HOLDER
-			+ "$' and name.meta_key='$" + KEY_HOLDER + "$'";
+			+ "and name.meta_value='$" + NAME_HOLDER + "$'";
+
+	private final static String FIX_DISPLAY_SQL = "update $"
+			+ DB_HOLDER
+			+ "$.meta name, $"
+			+ DB_HOLDER
+			+ "$.meta ass set "
+			+ "name.meta_value=concat(name.meta_value,' (',ass.meta_value,')') "
+			+ "where name.species_id=ass.species_id and ass.meta_key='assembly.name' "
+			+ "and name.meta_value='$" + NAME_HOLDER + "$'";
+
 	private final static String DELETE_SQL = "delete name.* from meta name where name.meta_value='$"
 			+ NAME_HOLDER + "$' and name.meta_key='$" + KEY_HOLDER + "$'";
 
@@ -74,12 +88,38 @@ public class MultiDbSpeciesNames extends MultiDatabaseTestCase {
 												+ metaKey
 												+ ") has been found in the following core databases :"
 												+ StringUtils.join(dbs, ", "));
-						if(metaKey.equals("species.alias")) {
-							ReportManager.problem(this,
-									coreDb.getConnection(), "SQL to remove: "+TemplateBuilder.template(DELETE_SQL, NAME_HOLDER,name, KEY_HOLDER,metaKey));							
+						if (metaKey.equals("species.alias")) {
+							ReportManager
+									.problem(
+											this,
+											coreDb.getConnection(),
+											"SQL to remove: "
+													+ TemplateBuilder.template(
+															DELETE_SQL,
+															NAME_HOLDER, name,
+															KEY_HOLDER,
+															metaKey, DB_HOLDER,
+															coreDb.getName()));
+						} else if (metaKey.equals("species.display_name")) {
+							ReportManager
+									.problem(
+											this,
+											coreDb.getConnection(),
+											"SQL to fix: "
+													+ TemplateBuilder.template(
+															FIX_DISPLAY_SQL,
+															NAME_HOLDER, name,
+															DB_HOLDER,
+															coreDb.getName()));
 						} else {
-							ReportManager.problem(this,
-									coreDb.getConnection(), "SQL to fix: "+TemplateBuilder.template(FIX_SQL, NAME_HOLDER,name, KEY_HOLDER,metaKey));							
+							ReportManager.problem(
+									this,
+									coreDb.getConnection(),
+									"SQL to fix: "
+											+ TemplateBuilder.template(
+													FIX_PROD_SQL, NAME_HOLDER,
+													name, DB_HOLDER,
+													coreDb.getName()));
 						}
 						result = false;
 					}
