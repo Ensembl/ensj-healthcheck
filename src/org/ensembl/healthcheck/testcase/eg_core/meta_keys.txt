@@ -8,6 +8,8 @@ assembly.master_accession
 assembly.name
 assembly.overlapping_regions
 assembly.version
+assembly.num_toplevel_seqs
+annotation.sourceURL
 dna_align_featurebuild.level
 exonbuild.level
 genebuild.hash
@@ -59,6 +61,7 @@ species.stable_id_prefix
 species.strain
 species.taxonomy_id
 species.url
+species.three_letter_code
 transcriptbuild.level
 xref.timestamp
 species.ensembl_alias_name
