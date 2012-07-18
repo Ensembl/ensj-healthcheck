@@ -10,6 +10,7 @@ assembly.overlapping_regions
 assembly.version
 assembly.num_toplevel_seqs
 annotation.sourceURL
+annotation.source
 dna_align_featurebuild.level
 exonbuild.level
 genebuild.hash
