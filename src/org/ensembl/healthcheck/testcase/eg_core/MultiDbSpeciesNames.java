@@ -63,72 +63,77 @@ public class MultiDbSpeciesNames extends MultiDatabaseTestCase {
 			Map<String, Collection<String>> names = CollectionUtils
 					.createHashMap();
 			for (DatabaseRegistryEntry coreDb : dbr.getAll(DatabaseType.CORE)) {
-				ReportManager.info(this, coreDb.getConnection(), "Checking "
-						+ metaKey + " stable ID for " + coreDb.getName());
-				ConnectionBasedSqlTemplateImpl template = new ConnectionBasedSqlTemplateImpl(
-						coreDb.getConnection());
-				int checked = 0;
-				int dups = 0;
-				for (String name : template.queryForDefaultObjectList(
-						STABLE_ID, String.class, metaKey)) {
-					checked++;
-					Collection<String> dbs = names.get(name);
-					if (dbs == null) {
-						dbs = CollectionUtils.createArrayList(1);
-						names.put(name, dbs);
-					} else {
-						dups++;
-						ReportManager
-								.problem(
+				if (coreDb.getName().contains("_core_")) {
+					ReportManager.info(
+							this,
+							coreDb.getConnection(),
+							"Checking " + metaKey + " stable ID for "
+									+ coreDb.getName());
+					ConnectionBasedSqlTemplateImpl template = new ConnectionBasedSqlTemplateImpl(
+							coreDb.getConnection());
+					int checked = 0;
+					int dups = 0;
+					for (String name : template.queryForDefaultObjectList(
+							STABLE_ID, String.class, metaKey)) {
+						checked++;
+						Collection<String> dbs = names.get(name);
+						if (dbs == null) {
+							dbs = CollectionUtils.createArrayList(1);
+							names.put(name, dbs);
+						} else {
+							dups++;
+							ReportManager
+									.problem(
+											this,
+											coreDb.getConnection(),
+											"The name "
+													+ name
+													+ " (meta key "
+													+ metaKey
+													+ ") has been found in the following core databases :"
+													+ StringUtils.join(dbs,
+															", "));
+							if (metaKey.equals("species.alias")) {
+								ReportManager.problem(
 										this,
 										coreDb.getConnection(),
-										"The name "
-												+ name
-												+ " (meta key "
-												+ metaKey
-												+ ") has been found in the following core databases :"
-												+ StringUtils.join(dbs, ", "));
-						if (metaKey.equals("species.alias")) {
-							ReportManager
-									.problem(
-											this,
-											coreDb.getConnection(),
-											"SQL to remove: "
-													+ TemplateBuilder.template(
-															DELETE_SQL,
-															NAME_HOLDER, name,
-															KEY_HOLDER,
-															metaKey, DB_HOLDER,
-															coreDb.getName()));
-						} else if (metaKey.equals("species.display_name")) {
-							ReportManager
-									.problem(
-											this,
-											coreDb.getConnection(),
-											"SQL to fix: "
-													+ TemplateBuilder.template(
-															FIX_DISPLAY_SQL,
-															NAME_HOLDER, name,
-															DB_HOLDER,
-															coreDb.getName()));
-						} else {
-							ReportManager.problem(
-									this,
-									coreDb.getConnection(),
-									"SQL to fix: "
-											+ TemplateBuilder.template(
-													FIX_PROD_SQL, NAME_HOLDER,
-													name, DB_HOLDER,
-													coreDb.getName()));
+										"SQL to remove: "
+												+ TemplateBuilder.template(
+														DELETE_SQL,
+														NAME_HOLDER, name,
+														KEY_HOLDER, metaKey,
+														DB_HOLDER,
+														coreDb.getName()));
+							} else if (metaKey.equals("species.display_name")) {
+								ReportManager.problem(
+										this,
+										coreDb.getConnection(),
+										"SQL to fix: "
+												+ TemplateBuilder.template(
+														FIX_DISPLAY_SQL,
+														NAME_HOLDER, name,
+														DB_HOLDER,
+														coreDb.getName()));
+							} else {
+								ReportManager.problem(
+										this,
+										coreDb.getConnection(),
+										"SQL to fix: "
+												+ TemplateBuilder.template(
+														FIX_PROD_SQL,
+														NAME_HOLDER, name,
+														DB_HOLDER,
+														coreDb.getName()));
+							}
+							result = false;
 						}
-						result = false;
+						dbs.add(coreDb.getName());
 					}
-					dbs.add(coreDb.getName());
+					ReportManager.info(this, coreDb.getConnection(),
+							"Checked " + checked + " " + metaKey
+									+ " names for " + coreDb.getName()
+									+ ": found " + dups + " duplicates");
 				}
-				ReportManager.info(this, coreDb.getConnection(),
-						"Checked " + checked + " " + metaKey + " names for "
-								+ coreDb.getName() + ": found " + dups
-								+ " duplicates");
 			}
 		}
 		return result;
