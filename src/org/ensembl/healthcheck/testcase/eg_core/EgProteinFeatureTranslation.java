@@ -37,7 +37,7 @@ public class EgProteinFeatureTranslation extends AbstractEgCoreTestCase {
 
 	private static int THRESHOLD = 5; // don't report a problem if there are
 										// less results than this
-	private static int DISPLAY_LIMIT = 200;
+	private static int DISPLAY_LIMIT = 20;
 
 	/**
 	 * Create an ProteinFeatureTranslationTestCase that applies to a specific
