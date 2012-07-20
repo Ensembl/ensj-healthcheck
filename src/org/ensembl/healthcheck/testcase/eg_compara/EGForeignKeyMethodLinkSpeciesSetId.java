@@ -40,33 +40,43 @@ public class EGForeignKeyMethodLinkSpeciesSetId extends
 		result &= assertMethodLinkSpeciesSetCounts(dbre);
 		return result;
 	}
-	
+
 	/**
 	 * Check for MLSS which lack a name
 	 */
 	protected boolean assertNoEmptyNames(DatabaseRegistryEntry dbre) {
 		boolean result = true;
 		Connection con = dbre.getConnection();
-		int numOfUnsetNames = DBUtils.getRowCount(con, "SELECT count(*) FROM method_link_species_set WHERE name = 'NULL' OR name IS NULL");
-    if (numOfUnsetNames > 0) {
-      ReportManager.problem(this, con, "FAILED method_link_species_set table contains " + numOfUnsetNames + " with no name");
-      result = false;
-    }
-    return result;
+		int numOfUnsetNames = DBUtils
+				.getRowCount(
+						con,
+						"SELECT count(*) FROM method_link_species_set WHERE name = 'NULL' OR name IS NULL");
+		if (numOfUnsetNames > 0) {
+			ReportManager.problem(this, con,
+					"FAILED method_link_species_set table contains "
+							+ numOfUnsetNames + " with no name");
+			result = false;
+		}
+		return result;
 	}
-	
+
 	/**
 	 * Check for MLSS which lack a source
 	 */
 	protected boolean assertNoSource(DatabaseRegistryEntry dbre) {
 		boolean result = true;
 		Connection con = dbre.getConnection();
-		int numOfUnsetSources = DBUtils.getRowCount(con, "SELECT count(*) FROM method_link_species_set WHERE source = 'NULL' OR source IS NULL");
-    if (numOfUnsetSources > 0) {
-        ReportManager.problem(this, con, "FAILED method_link_species_set table contains " + numOfUnsetSources + " with no source");
-        result = false;
-    }
-    return result;
+		int numOfUnsetSources = DBUtils
+				.getRowCount(
+						con,
+						"SELECT count(*) FROM method_link_species_set WHERE source = 'NULL' OR source IS NULL");
+		if (numOfUnsetSources > 0) {
+			ReportManager.problem(this, con,
+					"FAILED method_link_species_set table contains "
+							+ numOfUnsetSources + " with no source");
+			result = false;
+		}
+		return result;
 	}
 
 	/**
@@ -75,7 +85,8 @@ public class EGForeignKeyMethodLinkSpeciesSetId extends
 	 * {@link #getMethodLinkTypeRange()} to assert that all link method link
 	 * species set identifiers have the correct method_link_id range
 	 */
-	protected boolean assertMlssIdForeignKeysAndRanges(DatabaseRegistryEntry dbre) {
+	protected boolean assertMlssIdForeignKeysAndRanges(
+			DatabaseRegistryEntry dbre) {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
@@ -89,9 +100,10 @@ public class EGForeignKeyMethodLinkSpeciesSetId extends
 			Integer lower = ranges.get(0);
 			Integer upper = ranges.get(1);
 
-			result &= checkForOrphansWithConstraint(con, "method_link_species_set",
-					"method_link_species_set_id", table, "method_link_species_set_id",
-					"method_link_id >= " + lower + " and method_link_id < " + upper);
+			result &= checkForOrphansWithConstraint(con,
+					"method_link_species_set", "method_link_species_set_id",
+					table, "method_link_species_set_id", "method_link_id >= "
+							+ lower + " and method_link_id < " + upper);
 			result &= checkForOrphans(con, table, "method_link_species_set_id",
 					"method_link_species_set", "method_link_species_set_id");
 		}
@@ -100,8 +112,8 @@ public class EGForeignKeyMethodLinkSpeciesSetId extends
 	}
 
 	/**
-	 * Check for the number of MLSS unlinked to a protein tree and those
-	 * protein tree members unlinked to a MLSS
+	 * Check for the number of MLSS unlinked to a protein tree and those protein
+	 * tree members unlinked to a MLSS
 	 */
 	protected boolean assertMethodLinkSpeciesSetOrphans(
 			DatabaseRegistryEntry dbre) {
@@ -113,33 +125,33 @@ public class EGForeignKeyMethodLinkSpeciesSetId extends
 				"method_link_species_set_id",
 				"method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'ProteinTree.%')");
 	}
-	
+
 	protected boolean assertGeneTreeRootOrphans(DatabaseRegistryEntry dbre) {
-		return checkForOrphans(dbre.getConnection(), 
-				"gene_tree_root",
+		return checkForOrphans(dbre.getConnection(), "gene_tree_root",
 				"method_link_species_set_id", "method_link_species_set",
 				"method_link_species_set_id");
 	}
-	
-//	Hashed out because we do not do this kind of analysis yet
-//	protected boolean assertNCTreeMethodLinkSpeciesSet(
-//			DatabaseRegistryEntry dbre) {
-//		return checkForOrphansWithConstraint(
-//				dbre.getConnection(),
-//				"method_link_species_set",
-//				"method_link_species_set_id",
-//				"nc_tree_member",
-//				"method_link_species_set_id",
-//				"method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'NCTree.%')");
-//	}
+
+	// Hashed out because we do not do this kind of analysis yet
+	// protected boolean assertNCTreeMethodLinkSpeciesSet(
+	// DatabaseRegistryEntry dbre) {
+	// return checkForOrphansWithConstraint(
+	// dbre.getConnection(),
+	// "method_link_species_set",
+	// "method_link_species_set_id",
+	// "nc_tree_member",
+	// "method_link_species_set_id",
+	// "method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'NCTree.%')");
+	// }
 
 	/**
-	 * loops through all method link species sets where an expected count is known
-	 * from {@link #getMethodLinkTypeToExpectedCounts()} and asserts that the
-	 * number of species in the method link species set is equal to one of those
-	 * values
+	 * loops through all method link species sets where an expected count is
+	 * known from {@link #getMethodLinkTypeToExpectedCounts()} and asserts that
+	 * the number of species in the method link species set is equal to one of
+	 * those values
 	 */
-	protected boolean assertMethodLinkSpeciesSetCounts(DatabaseRegistryEntry dbre) {
+	protected boolean assertMethodLinkSpeciesSetCounts(
+			DatabaseRegistryEntry dbre) {
 		boolean result = true;
 
 		Map<String, List<Long>> methodLinkToMlssId = getMethodLinkTypeToMlssId(dbre);
@@ -154,22 +166,32 @@ public class EGForeignKeyMethodLinkSpeciesSetId extends
 
 			for (Long methodLinkSpeciesSetId : methodLink.getValue()) {
 				Integer count = mlssIdToCount.get(methodLinkSpeciesSetId);
-				boolean countOkay = false;
-				List<Integer> expectedCounts = methodLinkTypeExpectedCounts
-						.get(methodLinkType);
-				for (Integer expected : expectedCounts) {
-					if (count.equals(expected)) {
-						countOkay = true;
-						break;
+				if (count != null) {
+					boolean countOkay = false;
+					List<Integer> expectedCounts = methodLinkTypeExpectedCounts
+							.get(methodLinkType);
+					for (int expected : expectedCounts) {
+						if (count == expected) {
+							countOkay = true;
+							break;
+						}
 					}
-				}
 
-				if (!countOkay) {
-					result = false;
-					String expecteds = StringUtils.join(expectedCounts, ',');
-					ReportManager.problem(this, dbre.getConnection(), "MLSS ID "
-							+ methodLinkSpeciesSetId + " of type " + methodLinkType
-							+ " count was " + count + ". We expected [" + expecteds + "]");
+					if (!countOkay) {
+						result = false;
+						String expecteds = StringUtils
+								.join(expectedCounts, ',');
+						ReportManager.problem(this, dbre.getConnection(),
+								"MLSS ID " + methodLinkSpeciesSetId
+										+ " of type " + methodLinkType
+										+ " count was " + count
+										+ ". We expected [" + expecteds + "]");
+					}
+				} else {
+					ReportManager.problem(this, dbre.getConnection(),
+							"No count found for MLSS ID "
+									+ methodLinkSpeciesSetId + " of type "
+									+ methodLinkType);
 				}
 			}
 		}
@@ -178,9 +200,11 @@ public class EGForeignKeyMethodLinkSpeciesSetId extends
 	}
 
 	protected Map<Long, Integer> getMlssIdCount(DatabaseRegistryEntry dbre) {
-		return getTemplate(dbre).queryForMap(
-				"select mlss.method_link_species_set_id, count(*) from method_link_species_set mlss join species_set ss using (species_set_id) group by mlss.method_link_species_set_id",
-				new DefaultMapRowMapper<Long, Integer>(Long.class, Integer.class));
+		return getTemplate(dbre)
+				.queryForMap(
+						"select mlss.method_link_species_set_id, count(*) from method_link_species_set mlss join species_set ss using (species_set_id) group by mlss.method_link_species_set_id",
+						new DefaultMapRowMapper<Long, Integer>(Long.class,
+								Integer.class));
 	}
 
 	protected Map<String, List<Long>> getMethodLinkTypeToMlssId(
@@ -195,14 +219,15 @@ public class EGForeignKeyMethodLinkSpeciesSetId extends
 			}
 
 			@Override
-			public void existingObject(List<Long> currentValue, ResultSet resultSet,
-					int position) throws SQLException {
+			public void existingObject(List<Long> currentValue,
+					ResultSet resultSet, int position) throws SQLException {
 				currentValue.add(resultSet.getLong(2));
 			}
 		};
-		return getTemplate(dbre).queryForMap(
-				"select ml.type, mlss.method_link_species_set_id from method_link ml join method_link_species_set mlss using (method_link_id)",
-				mapper);
+		return getTemplate(dbre)
+				.queryForMap(
+						"select ml.type, mlss.method_link_species_set_id from method_link ml join method_link_species_set mlss using (method_link_id)",
+						mapper);
 	}
 
 	protected Map<String, List<Integer>> getMethodLinkTypeToExpectedCounts() {
