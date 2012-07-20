@@ -11,20 +11,23 @@ public class EGCheckNoTreeStableIds extends AbstractTemplatedTestCase {
 	public EGCheckNoTreeStableIds() {
 		setTeamResponsible(Team.ENSEMBL_GENOMES);
 		appliesToType(DatabaseType.COMPARA);
-		setDescription("Checks that all trees have a stable id");
+		setDescription("Checks that all protein gene trees have a stable id");
 		addToGroup("ensembl_genomes_compara");
 	}
+	private final static String COUNT_NULLS = "SELECT COUNT(*) " +
+			"FROM gene_tree_root " +
+        "WHERE member_type = 'protein' " +
+        "AND tree_type = 'tree' " +
+        "AND cluster_set_id='default' " +
+        "AND stable_id IS NULL";
 	
 	@Override
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
 		boolean pass = true;
-		String sql = "select count(*) " +
-				"from protein_tree_node ptn " +
-				"left join protein_tree_stable_id ptsi using (node_id) " +
-				"where ptn.node_id = ptn.root_id and ptsi.node_id is null";
-		Integer count = getTemplate(dbre).queryForDefaultObject(sql, Integer.class);
+		
+		Integer count = getTemplate(dbre).queryForDefaultObject(COUNT_NULLS, Integer.class);
 		if(count > 0) {
-			String message = String.format("%d ProteinTree(s) lacked a stable ID. Sql to check is '%s'", count, sql);
+			String message = String.format("%d protein gene tree(s) lacked a stable ID. Sql to check is '%s'", count, COUNT_NULLS);
 			ReportManager.problem(this, dbre.getConnection(), message);
 			pass = false;
 		}

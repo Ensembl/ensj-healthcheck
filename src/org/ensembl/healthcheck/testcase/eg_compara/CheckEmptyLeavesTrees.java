@@ -24,7 +24,7 @@ public class CheckEmptyLeavesTrees extends AbstractTemplatedTestCase {
 
 	@Override
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
-		String sql = "select distinct ptn.root_id from protein_tree_node ptn left join protein_tree_node ptn2 on (ptn.node_id = ptn2.parent_id) where ptn2.node_id is null and (ptn.right_index -  ptn.left_index) > 1";
+		String sql = "select distinct ptn.root_id from gene_tree_node ptn left join gene_tree_node ptn2 on (ptn.node_id = ptn2.parent_id) where ptn2.node_id is null and (ptn.right_index -  ptn.left_index) > 1";
 		List<Long> rootIds = getTemplate(dbre).queryForDefaultObjectList(
 				sql, Long.class);
 		boolean ok = rootIds.isEmpty();
