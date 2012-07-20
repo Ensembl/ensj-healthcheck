@@ -18,7 +18,7 @@ public class EGCheckNoTreeStableIds extends AbstractTemplatedTestCase {
 			"FROM gene_tree_root " +
         "WHERE member_type = 'protein' " +
         "AND tree_type = 'tree' " +
-        "AND cluster_set_id='default' " +
+        "AND clusterset_id='default' " +
         "AND stable_id IS NULL";
 	
 	@Override

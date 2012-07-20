@@ -36,7 +36,7 @@ public class EGForeignKeyMethodLinkSpeciesSetId extends
 		result &= assertNoSource(dbre);
 		result &= assertMlssIdForeignKeysAndRanges(dbre);
 		result &= assertMethodLinkSpeciesSetOrphans(dbre);
-		result &= assertProteinTreeMemberOrphans(dbre);
+		result &= assertGeneTreeRootOrphans(dbre);
 		result &= assertMethodLinkSpeciesSetCounts(dbre);
 		return result;
 	}
@@ -109,14 +109,14 @@ public class EGForeignKeyMethodLinkSpeciesSetId extends
 				dbre.getConnection(),
 				"method_link_species_set",
 				"method_link_species_set_id",
-				"protein_tree_member",
+				"gene_tree_root",
 				"method_link_species_set_id",
 				"method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'ProteinTree.%')");
 	}
 	
-	protected boolean assertProteinTreeMemberOrphans(DatabaseRegistryEntry dbre) {
+	protected boolean assertGeneTreeRootOrphans(DatabaseRegistryEntry dbre) {
 		return checkForOrphans(dbre.getConnection(), 
-				"protein_tree_member",
+				"gene_tree_root",
 				"method_link_species_set_id", "method_link_species_set",
 				"method_link_species_set_id");
 	}

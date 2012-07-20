@@ -8,14 +8,13 @@ import org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignId;
 import org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkId;
 import org.ensembl.healthcheck.testcase.compara.ForeignKeyTaxonId;
 import org.ensembl.healthcheck.testcase.compara.MultipleGenomicAlignBlockIds;
-import org.ensembl.healthcheck.testcase.compara.StableIDNotNull;
 import org.ensembl.healthcheck.testcase.eg_compara.EGCheckEmptyLocators;
 import org.ensembl.healthcheck.testcase.eg_compara.EGCheckNoTreeStableIds;
 import org.ensembl.healthcheck.testcase.eg_compara.EGCheckSynteny;
 import org.ensembl.healthcheck.testcase.eg_compara.EGForeignKeyMethodLinkSpeciesSetId;
 
 /**
- * Group of tests for EnsemblGenomes compara databases 
+ * Group of tests for EnsemblGenomes compara databases
  * 
  * @author dstaines
  * 
@@ -23,26 +22,22 @@ import org.ensembl.healthcheck.testcase.eg_compara.EGForeignKeyMethodLinkSpecies
 public class EGCompara extends GroupOfTests {
 
 	public EGCompara() {
-		
+
 		setDescription("Group of tests for EnsemblGenomes compara databases.");
-		
-		addTest(				
-			EGCommon.class,
-			EGComparaGeneTree.class,
-			EGCheckSynteny.class,
-			EGForeignKeyMethodLinkSpeciesSetId.class,
-			ForeignKeyDnafragId.class,
-			ForeignKeyGenomeDbId.class,
-			ForeignKeyGenomicAlignBlockId.class,
-			ForeignKeyGenomicAlignId.class,
-			ForeignKeyMethodLinkId.class,
-			ForeignKeyTaxonId.class,
-			EGCheckEmptyLocators.class,
-                        //This test is broken
-			//EGCheckNoTreeStableIds.class,
-                        //Here is my replacement
-                        StableIDNotNull.class,
-			MultipleGenomicAlignBlockIds.class
-		);
+
+		addTest(
+				EGCommon.class, 
+				EGComparaGeneTree.class, 
+				EGCheckSynteny.class,
+				EGForeignKeyMethodLinkSpeciesSetId.class,
+				EGCheckNoTreeStableIds.class,
+				ForeignKeyDnafragId.class, 
+				ForeignKeyGenomeDbId.class,
+				ForeignKeyGenomicAlignBlockId.class,
+				ForeignKeyGenomicAlignId.class, 
+				ForeignKeyMethodLinkId.class,
+				ForeignKeyTaxonId.class, 
+				EGCheckEmptyLocators.class,
+				MultipleGenomicAlignBlockIds.class);
 	}
 }
