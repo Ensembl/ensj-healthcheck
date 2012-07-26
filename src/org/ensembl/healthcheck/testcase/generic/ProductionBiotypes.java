@@ -135,10 +135,11 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
         List<String> allGenes = getGene(dbre, geneGrouping, databaseType);
         List<String> goodGenes = getGeneWithTranscript(dbre, geneGrouping, databaseType);
         result = checkMissing(dbre, allGenes, goodGenes, geneBiotype);
-      } else if (geneGrouping.contains("polymorphic_pseudogene")) {
-        List<String> allGenes = getGene(dbre, geneGrouping, databaseType);
-        List<String> goodGenes = getGeneWithTranscript(dbre, geneGrouping, databaseType);
-        result = checkMissing(dbre, allGenes, goodGenes, geneBiotype);
+        if (geneBiotype.contains("polymorphic_pseudogene")) {
+          allGenes = getGeneP(dbre, "polymorphic_pseudogene", databaseType);
+          goodGenes = getGeneWithTranscriptP(dbre, "polymorphic_pseudogene", databaseType);
+          result = checkMissing(dbre, allGenes, goodGenes, geneBiotype);
+        }
       }
     }
     return result;
@@ -146,7 +147,6 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
 
 
   private boolean checkMissing(DatabaseRegistryEntry dbre, List<String> allGenes, List<String> goodGenes, String biotype) {
-    SqlTemplate t = DBUtils.getSqlTemplate(dbre);
     Set<String> missing = new HashSet<String>(allGenes);
     missing.removeAll(goodGenes);
     if(missing.isEmpty()) {
@@ -225,6 +225,18 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
     Set<String> biotypes = getBiotypeFromGrouping(dbre, biotypeGroup, "gene", databaseType);
     String list = getListBiotypes(biotypes);
     String sql = "SELECT stable_id FROM gene where biotype in (" + list + ")";
+    return t.queryForDefaultObjectList(sql, String.class);
+  }
+
+  private List<String> getGeneP(DatabaseRegistryEntry dbre, String biotype, String databaseType) {
+    SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+    String sql = "SELECT stable_id FROM gene where biotype = '" + biotype + "'";
+    return t.queryForDefaultObjectList(sql, String.class);
+  }
+
+  private List<String> getGeneWithTranscriptP(DatabaseRegistryEntry dbre, String biotype, String databaseType) {
+    SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+    String sql = "SELECT g.stable_id from gene g, transcript t where g.gene_id = t.gene_id and t.biotype = '" + biotype + "' group by g.stable_id";
     return t.queryForDefaultObjectList(sql, String.class);
   }
 
