@@ -87,15 +87,14 @@ public class MetaValues extends SingleDatabaseTestCase {
 
 		if (dbre.getType() == DatabaseType.CORE) {
 			result &= checkDates(dbre);
+                        result &= checkGenebuildID(con);
 		}
 
 		result &= checkCoordSystemTableCases(con);
 
-		if (dbre.getType() == DatabaseType.CORE) {
-			result &= checkGenebuildID(con);
-		}
-
 		result &= checkBuildLevel(dbre);
+
+                result &= checkSample(dbre);
 
 		// ----------------------------------------
 		//Use an AssemblyNameInfo object to get the assembly information
@@ -813,5 +812,23 @@ public class MetaValues extends SingleDatabaseTestCase {
     }
     return true;
 	}
+
+  private boolean checkSample(DatabaseRegistryEntry dbre) {
+    SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+    String metaKey = "sample.location_text";
+    String sql = "select meta_value from meta where meta_key = ?"; 
+    List<String> value = t.queryForDefaultObjectList(sql, String.class, metaKey);
+    if (!value.isEmpty()) {
+      String linkedKey = "sample.location_param";
+      String linkedSql = "select meta_value from meta where meta_key = ?";
+      List<String> linkedValue = t.queryForDefaultObjectList(linkedSql, String.class, linkedKey);
+      if(!linkedValue.equals(value)) {
+        ReportManager.problem(this, dbre.getConnection(), "Keys " + metaKey + " and " + linkedKey + " do not have same value");
+        return false;
+      }
+    }
+    return true;
+  }
+
 	
 } // MetaValues
