@@ -274,7 +274,7 @@ System.out.println("is sum sra null?");
 
 				if (dbre.getType() != DatabaseType.SANGER_VEGA || logicName.equalsIgnoreCase("knownGeneDensity")) {// for sangervega only
 																																																						// report analysis
-					ReportManager.problem(this, con, "RelCo: No entry in density_type for analysis " + logicName + " - run ensembl/misc-scripts/density_feature/* scripts");
+					ReportManager.problem(this, con, "RelCo: No entry in density_type for analysis " + logicName + " - run density pipeline");
 				}
 				result = false;
 
