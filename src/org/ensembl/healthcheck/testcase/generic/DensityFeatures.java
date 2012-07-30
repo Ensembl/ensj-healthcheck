@@ -33,16 +33,13 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Check that all top-level seq regions have some SNP/gene/knownGene density features, and that the values agree between the
+ * Check that all top-level seq regions have some SNP/gene density features, and that the values agree between the
  * density_feature and seq_region attrib tables. Only checks top-level seq regions that do NOT have an _ in their names. Also checks
  * that there are some density features for each analysis/density type. Also checks that there are no duplicates in the
  * seq_region_attrib table.
  */
 
 public class DensityFeatures extends SingleDatabaseTestCase {
-
-	// max number of top-level seq regions to check
-	private static final int MAX_TOP_LEVEL = 100;
 
 	// map between analysis.logic_name and seq_region attrib_type.code
 	@SuppressWarnings("rawtypes")
@@ -57,12 +54,13 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("post-compara-handover");
 	
-		setDescription("Check that all top-level seq regions have some SNP/gene/knownGene density features, and that the values agree between the density_feature and seq_region attrib tables.");
+		setDescription("Check that all top-level seq regions have some SNP/gene density features, and that the values agree between the density_feature and seq_region attrib tables.");
 		setFailureText("If the genome has been assembled using short-read sequences, some seq_regions might not have density_features");
 
-		logicNameToAttribCode.put("snpDensity", "SNPCount");
-		logicNameToAttribCode.put("geneDensity", "GeneCount");
-		logicNameToAttribCode.put("knownGeneDensity", "knownGeneCount");
+		logicNameToAttribCode.put("SnpDensity", "SnpCount");
+		logicNameToAttribCode.put("CodingDensity", "coding_cnt");
+                logicNameToAttribCode.put("PseudogeneDensity", "pseudogene_cnt");
+                logicNameToAttribCode.put("NonCodingDensity", "noncoding_cnt");
 		setTeamResponsible(Team.RELEASE_COORDINATOR);
 	}
 
@@ -93,24 +91,12 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {
 			logicNameToAttribCode.put("PCodDensity", "knownGeneCount");
 			logicNameToAttribCode.remove("snpDensity");
-			logicNameToAttribCode.remove("geneDensity");
-			logicNameToAttribCode.remove("knownGeneDensity");
+                        logicNameToAttribCode.remove("CodingDensity");
 		} else {
 			boolean variationDatabaseExists = checkDatabaseExistsByType(dbre,DatabaseType.VARIATION);
 			if (!variationDatabaseExists) {
 				logicNameToAttribCode.remove("snpDensity");
-			} else  {
-				if (!logicNameToAttribCode.containsKey("snpDensity")) {
-					logicNameToAttribCode.put("snpDensity", "SNPCount");	
-				}
 			}
-			if (!logicNameToAttribCode.containsKey("geneDensity")) {
-				logicNameToAttribCode.put("geneDensity", "GeneCount");	
-			}
-			if (!logicNameToAttribCode.containsKey("knownGeneDensity")) {
-				logicNameToAttribCode.put("knownGeneDensity", "knownGeneCount");	
-			}
-			
 		}
 
 		boolean result = true;
@@ -160,7 +146,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 
 			int numTopLevel = 0;
 
-			while (rs.next() && numTopLevel++ < MAX_TOP_LEVEL) {
+			while (rs.next()) {
 
 				long seqRegionID = rs.getLong("s.seq_region_id");
 				String seqRegionName = rs.getString("s.name");
@@ -173,10 +159,6 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 
 					ReportManager.problem(this, con, "Top-level seq region " + seqRegionName + " (ID " + seqRegionID + ") has no density features");
 					result = false;
-
-				} else {
-
-					ReportManager.correct(this, con, seqRegionName + " has " + dfRows + " density features");
 				}
 
 				// check each analysis type
@@ -224,10 +206,14 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 
 								} else {
 
-									ReportManager.correct(this, con, "density_feature and seq_region_attrib values agree for " + logicName + " on seq region " + seqRegionName);
 								}
 
 							} // if sumSRA
+                                                        if (sumSRA.length() == 0) {
+System.out.println("is sum sra null?");
+                                                                ReportManager.problem(this, con, seqRegionName + " has no seq_region_attrib for " + attribCode);
+                                                                result = false;
+                                                        }
 
 						} // if sumDF
 
@@ -240,9 +226,6 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 			rs.close();
 			stmt.close();
 
-			if (numTopLevel == MAX_TOP_LEVEL) {
-				logger.warning("Only checked first " + numTopLevel + " seq_regions");
-			}
 
 		} catch (SQLException se) {
 			se.printStackTrace();
@@ -271,10 +254,10 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 			boolean variationDatabaseExists = checkDatabaseExistsByType(dbre,DatabaseType.VARIATION);
 			// only warn about missing snpDensity for species that have SNPs
 			if (variationDatabaseExists) {
-				logicNames = new String[] { "PercentGC", "PercentageRepeat", "knownGeneDensity", "geneDensity", "snpDensity" };
+				logicNames = new String[] { "PercentGC", "PercentageRepeat", "CodingDensity", "PseudogeneDensity", "NonCodingDensity", "snpDensity" };
 				
 			} else {
-				logicNames = new String[] { "PercentGC", "PercentageRepeat", "knownGeneDensity", "geneDensity" };
+				logicNames = new String[] { "PercentGC", "PercentageRepeat", "CodingDensity", "PseudogeneDensity", "NonCodingDensity" };
 				//logger.warning("Variation database for "  + dbre.getSpecies() + " not found");
 			}
 
@@ -287,11 +270,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 			String sql = "SELECT dt.density_type_id FROM analysis a, density_type dt WHERE a.analysis_id=dt.analysis_id AND a.logic_name='" + logicName + "'";
 
 			String[] rows = DBUtils.getColumnValues(con, sql);
-			if (rows.length >= 1) {
-
-				ReportManager.correct(this, con, "One density_type for analysis " + logicName);
-				
-			} else if (rows.length == 0) {
+			if (rows.length == 0) {
 
 				if (dbre.getType() != DatabaseType.SANGER_VEGA || logicName.equalsIgnoreCase("knownGeneDensity")) {// for sangervega only
 																																																						// report analysis
@@ -350,8 +329,6 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 		if (orphans > 0) {
 			ReportManager.problem(this, con, orphans + " density_features reference non-existent seq_regions");
 			result = false;
-		} else {
-			ReportManager.correct(this, con, "All density_type->seq_region relationships are OK");
 		}
 		return result;
 
@@ -365,7 +342,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		String[] types = { "GeneNo_knwCod", "GeneNo_novCod", "GeneNo_rRNA", "GeneNo_pseudo", "GeneNo_snRNA", "GeneNo_snoRNA", "GeneNo_miRNA", "GeneNo_mscRNA", "GeneNo_scRNA", "SNPCount", "codon_table",
+		String[] types = { "coding_cnt", "pseudogene_cnt", "noncoding_cnt", "SNPCount", "codon_table",
 				"KnownPCCount", "NovelPCCount", "NovelPTCount", "PutPTCount", "PredPCCount", "IgSegCount", "IgPsSegCount", "TotPsCount", "ProcPsCount", "UnprocPsCount", "KnwnPCProgCount", "NovPCProgCount",
 				"AnnotSeqLength", "TotCloneNum", "NumAnnotClone", "KnownPTCount" };
 
@@ -378,8 +355,6 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 			if (rows > 0) {
 				ReportManager.problem(this, con, rows + " duplicates attributes of type " + types[i] + " in seq_region_attrib");
 				result = false;
-			} else {
-				ReportManager.correct(this, con, "No duplicates of type " + types[i] + " in seq_region_attrib");
 			}
 
 		}
