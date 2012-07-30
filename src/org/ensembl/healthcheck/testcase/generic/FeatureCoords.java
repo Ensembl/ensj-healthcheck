@@ -103,7 +103,7 @@ public class FeatureCoords extends SingleDatabaseTestCase {
                         String name = t.queryForDefaultObject(nameSQL, String.class, region);
 
                         if (max > length) {
-                                ReportManager.problem(this, dbre.getConnection(), "Table " + tableName + " has features which are longer than " + name);
+                                ReportManager.problem(this, dbre.getConnection(), "Some features in " + tableName + " start on position " + max + " when region " + name + " is only " + length + " long");
                                 result = false;
                         }
                 }
