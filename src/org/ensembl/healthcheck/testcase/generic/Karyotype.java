@@ -16,6 +16,8 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
+
 
 /**
  * Check if any chromosomes that have different lengths in karyotype & seq_region tables.
@@ -63,6 +65,8 @@ public class Karyotype extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
+                result &= karyotypeExists(dbre);
+
 		// don't check for empty karyotype table - this is done in EmptyTables
 		// meta_coord check also done in MetaCoord
 
@@ -105,5 +109,22 @@ public class Karyotype extends SingleDatabaseTestCase {
 		return result;
 
 	} // run
+
+
+        protected boolean karyotypeExists(DatabaseRegistryEntry dbre) {
+                Connection con = dbre.getConnection();
+                boolean result = true;
+                String sqlCS = "SELECT count(*) FROM coord_system WHERE name = 'chromosome'";
+                int karyotype = DBUtils.getRowCount(con, sqlCS);
+                if (karyotype > 0) {
+                        String sqlAttrib = "SELECT count(*) FROM seq_region_attrib sa, attrib_type at WHERE at.attrib_type_id = sa.attrib_type_id AND code = 'karyotype_rank'";
+                        int attrib = DBUtils.getRowCount(con, sqlAttrib);
+                        if (attrib == 0) {
+                                result = false;
+                                ReportManager.problem(this, con, "Chromosome entry exists but no karyotype attrib is present");
+                        }
+                } 
+        return result;
+        }
 
 } // Karyotype
