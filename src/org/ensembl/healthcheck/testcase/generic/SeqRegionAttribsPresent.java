@@ -51,9 +51,9 @@ public class SeqRegionAttribsPresent extends SingleDatabaseTestCase {
 		addToGroup("release");
 		addToGroup("post-compara-handover");
 		
-		setDescription("Check that certain seq_regions that have known, protein_coding genes have the GeneNo_knwCod attribute associated with them.");
+		setDescription("Check that certain seq_regions that have protein_coding genes have the GeneNo_knwCod attribute associated with them.");
 		setEffect("Website gene counts will be wrong");
-		setFix("Re-run ensembl/misc-scripts/density_feature/seq_region_stats.pl script");
+		setFix("Re-run density generation pipeline");
 		setTeamResponsible(Team.RELEASE_COORDINATOR);
 	}
 
@@ -87,11 +87,11 @@ public class SeqRegionAttribsPresent extends SingleDatabaseTestCase {
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {
 			code = "'KnwnPCCount'";
 		} else {
-			code = "'GeneNo_knwCod'";
+			code = "'coding_cnt'";
 		}
 
                 SqlTemplate t = DBUtils.getSqlTemplate(dbre);
-                String sql = "select distinct g.seq_region_id from gene g where g.biotype = 'protein_coding' and g.status = 'KNOWN' and g.seq_region_id not in (select distinct g.seq_region_id from gene g, seq_region_attrib sa, attrib_type at where g.seq_region_id = sa.seq_region_id and sa.attrib_type_id = at.attrib_type_id and at.code in ('LRG', 'non_ref'))" ;
+                String sql = "select distinct g.seq_region_id from gene g where g.biotype = 'protein_coding' and g.seq_region_id not in (select distinct g.seq_region_id from gene g, seq_region_attrib sa, attrib_type at where g.seq_region_id = sa.seq_region_id and sa.attrib_type_id = at.attrib_type_id and at.code in ('LRG', 'non_ref'))" ;
                 List<String> toplevel = t.queryForDefaultObjectList(sql, String.class);
 
                 sql = "select distinct g.seq_region_id from gene g, seq_region_attrib sa, attrib_type at where g.seq_region_id = sa.seq_region_id and sa.attrib_type_id = at.attrib_type_id and code = " + code ;
@@ -101,10 +101,10 @@ public class SeqRegionAttribsPresent extends SingleDatabaseTestCase {
                 missing.removeAll(known);
 
 		if (missing.isEmpty()) {
-                        ReportManager.correct(this, con, "All seq_regions with known, protein_coding genes have a GeneNo_knwCod attribute associated with them");
+                        ReportManager.correct(this, con, "All seq_regions with protein_coding genes have a coding_cnt attribute associated with them");
                 } else {
                         for(CharSequence name: missing) {
-                                String msg = String.format("Seq_region '%s' with known, protein_coding genes does not have the GeneNo_knwCod attribute associated", name);
+                                String msg = String.format("Seq_region '%s' with protein_coding genes does not have the coding_cnt attribute associated", name);
                         	ReportManager.problem(this, con, msg);
         			result = false;
 	        	}
