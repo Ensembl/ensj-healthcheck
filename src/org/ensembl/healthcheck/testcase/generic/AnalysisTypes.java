@@ -79,8 +79,9 @@ public class AnalysisTypes extends SingleDatabaseTestCase {
 
 		// only applies to human, mouse and zebrafish at the moment
 		Species species = dbre.getSpecies();
+                boolean is_merged = testMerged(species);
 
-		if (!species.equals(Species.HOMO_SAPIENS) && !species.equals(Species.MUS_MUSCULUS) && !species.equals(Species.DANIO_RERIO)) {
+		if (!is_merged) {
 
 			return true;
 
@@ -124,9 +125,6 @@ public class AnalysisTypes extends SingleDatabaseTestCase {
 						result = false;
 						ReportManager.problem(this, con, String.format("Chromosome %s has no genes with logic name %s", seqRegion, logicName));
 
-					} else {
-
-						ReportManager.correct(this, con, String.format("Chromosome %s has some genes with logic name %s", seqRegion, logicName));
 					}
 
 					rs.close();
@@ -147,6 +145,18 @@ public class AnalysisTypes extends SingleDatabaseTestCase {
 		return result;
 
 	} // run
+
+
+  private boolean testMerged(Species s) {
+    boolean result = false;
+    int taxon = s.getTaxonID();
+    int rows = DBUtils.getRowCount(getProductionDatabase().getConnection(), "SELECT count(*) FROM species s, attrib_type at WHERE at.attrib_type_id = s.attrib_type_id AND code = 'merged' AND taxon = " + taxon);
+    if (rows > 0) {
+      result = true;
+    }
+    return result;
+  }
+
 
 	// --------------------------------------------------------------------------
 
