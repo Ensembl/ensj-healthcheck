@@ -30,6 +30,8 @@ import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
+
 
 /**
  * Check for certain combinations of logic name and transcript name.
@@ -68,7 +70,8 @@ public class TranscriptNames extends SingleDatabaseTestCase {
 
 		// only valid in human, mouse and zebrafish
 		Species s = dbre.getSpecies();
-		if (!(s.equals(Species.HOMO_SAPIENS) || s.equals(Species.MUS_MUSCULUS) || s.equals(Species.DANIO_RERIO))) {
+                boolean is_merged = testMerged(s);
+		if (!is_merged) {
 			return true;
 		}
 
@@ -125,5 +128,16 @@ public class TranscriptNames extends SingleDatabaseTestCase {
 		return result;
 
 	}
+
+
+  private boolean testMerged(Species s) {
+    boolean result = false;
+    int taxon = s.getTaxonID();
+    int rows = DBUtils.getRowCount(getProductionDatabase().getConnection(), "SELECT count(*) FROM species s, attrib_type at WHERE at.attrib_type_id = s.attrib_type_id AND code = 'merged' AND taxon = " + taxon);
+    if (rows > 0) {
+      result = true;
+    }
+    return result;
+  }
 
 } // TranscriptNames
