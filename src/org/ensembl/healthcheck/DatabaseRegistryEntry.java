@@ -112,7 +112,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 			.compile("^([a-z0-9_]+)_([a-z]+)_[0-9]+_([0-9]+)_([0-9A-Za-z]+)");
 	// e.g. homo_sapiens_core_56_37a
 	protected final static Pattern E_DB = Pattern
-			.compile("^([^_]+_[^_]+)_([a-z]+)_([0-9]+)_([0-9A-Za-z]+)");
+			.compile("^([a-z_]+)_([a-z]+)_([0-9]+)_([0-9A-Za-z]+)");
 	// e.g. prefix_homo_sapiens_funcgen_60_37e
 	protected final static Pattern PE_DB = Pattern
 			.compile("^[^_]+_([^_]+_[^_]+)_([a-z]+)_([0-9]+)_([0-9A-Za-z]+)");
