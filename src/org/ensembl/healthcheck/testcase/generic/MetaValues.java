@@ -390,21 +390,17 @@ public class MetaValues extends SingleDatabaseTestCase {
                 String WebType   = DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.web_accession_type'");
                 String WebSource = DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.web_accession_source'");
 
-                if (WebType != null) {
+                if (WebType.length() > 0) {
                         if (!Utils.stringInArray(WebType, allowedTypes, true)) {
                                 result = false;
                                 ReportManager.problem(this, con, "Web accession type " + WebType + " is not allowed");
-                        } else {
-                                ReportManager.correct(this, con, "Web accession type " + WebType + " correctly set");
                         }
                 }
 
-                if (WebSource != null) {
+                if (WebSource.length() > 0) {
                         if (!Utils.stringInArray(WebSource, allowedSources, true)) {
                                 result = false;
                                 ReportManager.problem(this, con, "Web accession source " + WebSource + " is not allowed");
-                        } else {
-                                ReportManager.correct(this, con, "Web accession source " + WebSource + " correctly set");
                         }
                 }
                 return result;
