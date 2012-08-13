@@ -64,16 +64,6 @@ public class StableID extends SingleDatabaseTestCase {
 	}
 
 	/**
-	 * This only applies to core and Vega databases.
-	 */
-	public void types() {
-
-		removeAppliesToType(DatabaseType.OTHERFEATURES);
-		removeAppliesToType(DatabaseType.CDNA);
-
-	}
-
-	/**
 	 * Run the test.
 	 * 
 	 * @param dbre
@@ -95,11 +85,11 @@ public class StableID extends SingleDatabaseTestCase {
 		// there are several species where ID mapping is not done
 		Species s = dbre.getSpecies();
 		if (s != null && s != Species.CAENORHABDITIS_ELEGANS && s != Species.DROSOPHILA_MELANOGASTER && s != Species.SACCHAROMYCES_CEREVISIAE && s != Species.ANOPHELES_GAMBIAE && s != Species.UNKNOWN) {
-			if (dbre.getType() != DatabaseType.SANGER_VEGA) {// for sangervega, do not check the prefixes
+			if (dbre.getType() == DatabaseType.CORE) {// for sangervega, do not check the prefixes
 				result &= checkPrefixes(dbre);
-			}
-			result &= checkStableIDEventTypes(con);
-			result = checkStableIDTimestamps(con);
+        			result &= checkStableIDEventTypes(con);
+                        }
+                        result = checkStableIDTimestamps(con);
 		}
 
 		return result;
@@ -283,7 +273,7 @@ public class StableID extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		String[] types = { "gene", "transcript", "translation" };
+		String[] types = { "gene", "transcript", "translation", "exon" };
 
 		for (int i = 0; i < types.length; i++) {
 
