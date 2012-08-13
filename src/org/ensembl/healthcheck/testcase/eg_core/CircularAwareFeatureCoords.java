@@ -2,6 +2,7 @@ package org.ensembl.healthcheck.testcase.eg_core;
 
 import java.sql.Connection;
 
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.generic.FeatureCoords;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -20,7 +21,8 @@ public class CircularAwareFeatureCoords extends FeatureCoords {
 	}
 	
 	@Override
-	protected boolean checkStartEnd(String tableName, Connection con) {
+	protected boolean checkStartEnd(DatabaseRegistryEntry dbre, String tableName) {
+		Connection con=dbre.getConnection(); 
 		String sql = TemplateBuilder.template(START_END_SQL, "tableName", tableName);
 		boolean result = true;
 		// ------------------------
