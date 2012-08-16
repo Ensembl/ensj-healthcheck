@@ -103,6 +103,14 @@ public class TestRunner {
 		// run the appropriate tests on each of them
 		for (DatabaseRegistryEntry database : databaseRegistry.getAll()) {
 
+// If a healthcheck database is being used and nothing has been propagated for the database being tested, skip
+                        if (ReportManager.usingDatabase()) {
+                                boolean propagated = ReportManager.hasPropagated(database);
+                                if (!propagated) {
+                                        continue;
+                                }
+                        }
+
 			for (SingleDatabaseTestCase testCase : testRegistry.getAllSingle(
 					groupsToRun, database.getType())) {
 
