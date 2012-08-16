@@ -702,6 +702,30 @@ public class ReportManager {
 
 	} // getReports
 
+
+        // -------------------------------------------------------------------------
+        /**
+         * Check if reports for a given database have been propagated for the release
+         * 
+         * @return boolean true if propagation has been run, false else
+         * 
+         * @param database
+         *          The database.
+         */
+        public static boolean hasPropagated(DatabaseRegistryEntry database) {
+
+                boolean result = true;
+                String sql = "SELECT count(*) FROM propagated WHERE database_name = '" + database.getName() + "'";
+                int rows = DBUtils.getRowCount(outputDatabaseConnection, sql);
+                if (rows == 0) {
+                        result = false;
+                }
+
+                return result;
+
+        } // getReports
+
+
 	// -------------------------------------------------------------------------
 	/**
 	 * Flag to state whether a database is being used as the output destination.
