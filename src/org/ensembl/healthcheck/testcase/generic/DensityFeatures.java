@@ -41,6 +41,9 @@ import org.ensembl.healthcheck.util.DBUtils;
 
 public class DensityFeatures extends SingleDatabaseTestCase {
 
+        // max number of top-level seq regions to check
+        private static final int MAX_TOP_LEVEL = 100;
+
 	// map between analysis.logic_name and seq_region attrib_type.code
 	@SuppressWarnings("rawtypes")
   private Map logicNameToAttribCode = new HashMap();
@@ -92,6 +95,8 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 			logicNameToAttribCode.put("PCodDensity", "knownGeneCount");
 			logicNameToAttribCode.remove("snpDensity");
                         logicNameToAttribCode.remove("CodingDensity");
+                        logicNameToAttribCode.remove("PseudogeneDensity");
+                        logicNameToAttribCode.remove("NonCodingDensity");
 		} else {
 			boolean variationDatabaseExists = checkDatabaseExistsByType(dbre,DatabaseType.VARIATION);
 			if (!variationDatabaseExists) {
@@ -146,7 +151,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 
 			int numTopLevel = 0;
 
-			while (rs.next()) {
+			while (rs.next() && numTopLevel++ < MAX_TOP_LEVEL) {
 
 				long seqRegionID = rs.getLong("s.seq_region_id");
 				String seqRegionName = rs.getString("s.name");
@@ -204,8 +209,6 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 											+ valueFromSeqRegionAttrib + ") for " + seqRegionName);
 									result = false;
 
-								} else {
-
 								}
 
 							} // if sumSRA
@@ -226,6 +229,9 @@ System.out.println("is sum sra null?");
 			rs.close();
 			stmt.close();
 
+                        if (numTopLevel == MAX_TOP_LEVEL) {
+                                logger.warning("Only checked first " + numTopLevel + " seq_regions");
+                        }
 
 		} catch (SQLException se) {
 			se.printStackTrace();
