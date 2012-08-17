@@ -148,7 +148,7 @@ my $regulatory_build_cache = create_regulation_cache($dbi1, $dbi2, $dbi_prev);
 # propagate! propagate!
 propagate( $dbi1, $dbi_prev, $old_release, $new_release);
 
-set_end_time( $dbi1 );
+#set_end_time( $dbi1 );
 
 # --------------------------------------------------------------------------------
 
