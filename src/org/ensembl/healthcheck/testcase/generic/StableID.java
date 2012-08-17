@@ -133,34 +133,6 @@ public class StableID extends SingleDatabaseTestCase {
 			ReportManager.correct(this, con, "No duplicate stable IDs in " + stableIDtable);
 		}
 
-		// check for invalid or missing stable ID versions
-		int nInvalidVersions = DBUtils.getRowCount(con, "SELECT COUNT(*) AS " + typeName + "_with_invalid_version" + " FROM " + stableIDtable + " WHERE version < 1 OR version IS NULL;");
-
-		if (nInvalidVersions > 0) {
-			ReportManager.problem(this, con, "Invalid " + typeName + " versions in " + stableIDtable);
-			DBUtils.printRows(this, con, "SELECT DISTINCT(version) FROM " + stableIDtable);
-			result = false;
-		}
-
-		// make sure stable ID versions in the typeName table matches those in stable_id_event
-		// for the latest mapping_session
-		String mappingSessionId = DBUtils.getRowColumnValue(con, "SELECT mapping_session_id FROM mapping_session " + "ORDER BY created DESC LIMIT 1");
-
-		if (mappingSessionId.equals("")) {
-			ReportManager.info(this, con, "No mapping_session found");
-			return result;
-		}
-
-		int nVersionMismatch = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM stable_id_event sie, " + stableIDtable + " si WHERE sie.mapping_session_id = " + Integer.parseInt(mappingSessionId)
-				+ " AND sie.new_stable_id = si.stable_id AND sie.new_version <> si.version");
-
-		if (nVersionMismatch > 0) {
-			ReportManager.problem(this, con, "Version mismatch between " + nVersionMismatch + " " + typeName + " versions in " + stableIDtable + " and stable_id_event");
-			DBUtils.printRows(this, con, "SELECT si.stable_id FROM stable_id_event sie, " + stableIDtable + " si WHERE sie.mapping_session_id = " + Integer.parseInt(mappingSessionId)
-					+ " AND sie.new_stable_id = si.stable_id AND sie.new_version <> si.version");
-			result = false;
-		}
-
 		return result;
 	}
 
@@ -218,7 +190,8 @@ public class StableID extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		String[] types = { "gene", "transcript", "translation" };
+		String[] types = { "gene", "transcript", "translation", "exon" };
+
 
 		for (int i = 0; i < types.length; i++) {
 
@@ -238,8 +211,36 @@ public class StableID extends SingleDatabaseTestCase {
 			} else {
 
 				ReportManager.correct(this, con, "All types in stable_id_event correspond to identifiers");
-
 			}
+
+                        // check for invalid or missing stable ID versions
+                        int nInvalidVersions = DBUtils.getRowCount(con, "SELECT COUNT(*) AS " + type + "_with_invalid_version" + " FROM " + type + " WHERE version < 1 OR version IS NULL;");
+
+                        if (nInvalidVersions > 0) {
+                                ReportManager.problem(this, con, "Invalid versions in " + type);
+                                DBUtils.printRows(this, con, "SELECT DISTINCT(version) FROM " + type);
+                                result = false;
+                        }
+
+                        // make sure stable ID versions in the typeName table matches those in stable_id_event
+                        // for the latest mapping_session
+                        String mappingSessionId = DBUtils.getRowColumnValue(con, "SELECT mapping_session_id FROM mapping_session " + "ORDER BY created DESC LIMIT 1");
+
+                        if (mappingSessionId.equals("")) {
+                                ReportManager.info(this, con, "No mapping_session found");
+                                return result;
+                        }
+
+                        int nVersionMismatch = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM stable_id_event sie, " + type + " si WHERE sie.mapping_session_id = " + Integer.parseInt(mappingSessionId)
+                                        + " AND sie.new_stable_id = si.stable_id AND sie.new_version <> si.version");
+
+                        if (nVersionMismatch > 0) {
+                                ReportManager.problem(this, con, "Version mismatch between " + nVersionMismatch + " " + type + " versions in and stable_id_event");
+                                DBUtils.printRows(this, con, "SELECT si.stable_id FROM stable_id_event sie, " + type + " si WHERE sie.mapping_session_id = " + Integer.parseInt(mappingSessionId)
+                                                + " AND sie.new_stable_id = si.stable_id AND sie.new_version <> si.version");
+                                result = false;
+                        }
+
 		}
 		return result;
 
