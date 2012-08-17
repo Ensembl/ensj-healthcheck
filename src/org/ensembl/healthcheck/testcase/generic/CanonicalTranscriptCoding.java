@@ -82,6 +82,19 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
                         result = false;
                 }
 
+                if (dbre.getType() == DatabaseType.SANGER_VEGA || dbre.getType() == DatabaseType.CORE) {
+                        result &= checkBiotypes(dbre);
+                }
+
+                return result;
+
+        }
+
+        private boolean checkBiotypes(DatabaseRegistryEntry dbre) {
+
+                boolean result = true;
+
+                Connection con = dbre.getConnection();
 
 		// --------------------------------
 		// A gene that has at least one transcript.biotype='protein_coding' should have gene.biotype='protein_coding'
@@ -89,7 +102,7 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sangervega ignore genes that do not have source havana or WU
 			sql += "AND g.biotype!='polymorphic' AND g.biotype!='polymorphic_pseudogene' and (g.source='havana' or g.source='WU')";
 		}
-		rows = DBUtils.getRowCount(con, sql);
+		int rows = DBUtils.getRowCount(con, sql);
 
 		if (rows > 0) {
 
@@ -263,6 +276,6 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 
 		return result;
 
-	} // run
+	}
 
 } // CanonicalTranscriptCoding
