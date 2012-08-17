@@ -26,6 +26,9 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.SqlTemplate;
+import org.ensembl.healthcheck.util.DBUtils;
+
 
 /**
  * Check for DNA that is not stored on the sequence-level coordinate system.
@@ -58,6 +61,8 @@ public class SequenceLevel extends SingleDatabaseTestCase {
 	public boolean run(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
+
+                result &= checkVersion(dbre);
 
 		Connection con = dbre.getConnection();
 		String sql = "SELECT cs.name, COUNT(1) FROM coord_system cs, seq_region s, dna d WHERE d.seq_region_id = s.seq_region_id AND cs.coord_system_id =s.coord_system_id AND attrib NOT LIKE '%sequence_level%' GROUP BY cs.coord_system_id";
@@ -94,5 +99,18 @@ public class SequenceLevel extends SingleDatabaseTestCase {
 		return result;
 
 	} // run
+
+  private boolean checkVersion(DatabaseRegistryEntry dbre) {
+
+    SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+    boolean result = true;
+    String sql = "SELECT count(*) FROM coord_system WHERE name = 'contig' AND version is not NULL";
+    int rows = t.queryForDefaultObject(sql, Integer.class);
+    if (rows > 0) {
+      result = false;
+      ReportManager.problem(this, dbre.getConnection(), "Contig version is not null"); 
+    }
+    return result;
+  }
 
 } // SequenceLevel
