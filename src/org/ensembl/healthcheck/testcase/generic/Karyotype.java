@@ -17,6 +17,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.SqlTemplate;
 
 
 /**
@@ -110,15 +111,22 @@ public class Karyotype extends SingleDatabaseTestCase {
 
         protected boolean karyotypeExists(DatabaseRegistryEntry dbre) {
                 Connection con = dbre.getConnection();
+                SqlTemplate t = DBUtils.getSqlTemplate(dbre);
                 boolean result = true;
                 String sqlCS = "SELECT count(*) FROM coord_system WHERE name = 'chromosome'";
-                int karyotype = DBUtils.getRowCount(con, sqlCS);
+                String sqlAttrib = "SELECT count(*) FROM seq_region_attrib sa, attrib_type at WHERE at.attrib_type_id = sa.attrib_type_id AND code = 'karyotype_rank'";
+                String sqlMT = "SELECT count(*) FROM seq_region_attrib sa, attrib_type at, seq_region s WHERE at.attrib_type_id = sa.attrib_type_id AND code = 'karyotype_rank' AND s.name = 'MT'";
+                int karyotype = t.queryForDefaultObject(sqlCS, Integer.class);
                 if (karyotype > 0) {
-                        String sqlAttrib = "SELECT count(*) FROM seq_region_attrib sa, attrib_type at WHERE at.attrib_type_id = sa.attrib_type_id AND code = 'karyotype_rank'";
-                        int attrib = DBUtils.getRowCount(con, sqlAttrib);
+                        int attrib = t.queryForDefaultObject(sqlAttrib, Integer.class);
                         if (attrib == 0) {
                                 result = false;
                                 ReportManager.problem(this, con, "Chromosome entry exists but no karyotype attrib is present");
+                        }
+                        int mt = t.queryForDefaultObject(sqlMT, Integer.class);
+                        if (attrib == 0) {
+                                result = false;
+                                ReportManager.problem(this, con, "Species has a karyotype but MT is not part of it");
                         }
                 } 
         return result;
