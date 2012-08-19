@@ -232,7 +232,7 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 		if (rows > 0) {
 
 			result = false;
-			ReportManager.problem(this, con, rows + " protein_coding genes may potentialy be missing translations.");
+			ReportManager.problem(this, con, rows + " protein_coding gene(s) may potentially be missing translations.");
 
 		} else {
 
