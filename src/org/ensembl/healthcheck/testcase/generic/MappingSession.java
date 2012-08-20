@@ -160,34 +160,25 @@ public class MappingSession extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-		String dbName = DBUtils.getShortDatabaseName(con);
-		if (!dbName.matches(".*_1[a-zA-Z]?$")) {
 
-			for (int i = 0; i < tables.length; i++) {
-				String table = tables[i];
-				boolean exists = DBUtils.checkTableExists(con, table);
-				if (exists) {
-					// gene_archive and peptide_archive can be empty
-					if (table.equals("gene_archive")
-							|| table.equals("peptide_archive")) {
-						continue;
-					}
-					if (DBUtils.countRowsInTable(con, table) == 0) {
-						ReportManager
-								.problem(this, con, "Empty table:" + table);
-						result = false;
-					}
-				} else {
-					ReportManager.problem(this, con, "Missing table:" + table);
+		for (int i = 0; i < tables.length; i++) {
+			String table = tables[i];
+			boolean exists = DBUtils.checkTableExists(con, table);
+			if (exists) {
+				// gene_archive and peptide_archive can be empty
+				if (table.equals("gene_archive")
+						|| table.equals("peptide_archive")) {
+					continue;
+				}
+				if (DBUtils.countRowsInTable(con, table) == 0) {
+					ReportManager
+							.problem(this, con, "Empty table:" + table);
 					result = false;
 				}
+			} else {
+				ReportManager.problem(this, con, "Missing table:" + table);
+				result = false;
 			}
-
-		} else {
-
-			logger.fine(dbName
-					+ " seems to be a new genebuild, skipping table checks");
-
 		}
 
 		return result;
