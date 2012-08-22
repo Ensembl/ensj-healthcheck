@@ -1680,9 +1680,6 @@ public abstract class EnsTestCase {
 		// current one, if available
 		DatabaseRegistryEntry result = null;
 
-		matchingDBs.remove(dbre); // remove the current database from the list
-		// to avoid comparisons with itself
-
 		if (matchingDBs.size() > 0) {
 
 			result = (DatabaseRegistryEntry) matchingDBs.last();
