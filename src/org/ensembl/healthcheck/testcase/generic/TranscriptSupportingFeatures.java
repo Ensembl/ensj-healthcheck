@@ -113,7 +113,7 @@ public class TranscriptSupportingFeatures extends SingleDatabaseTestCase {
 
 		String sql = String
 				.format(
-						"SELECT COUNT(*),t.analysis_id FROM transcript t LEFT JOIN transcript_supporting_feature tsf ON t.transcript_id = tsf.transcript_id JOIN analysis a ON a.analysis_id=t.analysis_id WHERE a.analysis_id=t.analysis_id and tsf.transcript_id IS NULL AND a.logic_name NOT IN (%s) AND t.biotype NOT IN ('rRNA') group by t.analysis_id",
+						"SELECT COUNT(*),t.analysis_id FROM transcript t LEFT JOIN transcript_supporting_feature tsf ON t.transcript_id = tsf.transcript_id JOIN analysis a ON a.analysis_id=t.analysis_id WHERE a.analysis_id=t.analysis_id and tsf.transcript_id IS NULL AND a.logic_name NOT IN (%s) group by t.analysis_id",
 						allowed);
 
 		int rows = DBUtils.getRowCount(con, sql);
