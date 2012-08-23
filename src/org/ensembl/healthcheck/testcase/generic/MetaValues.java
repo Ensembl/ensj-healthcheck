@@ -131,8 +131,6 @@ public class MetaValues extends SingleDatabaseTestCase {
 					if (!metaTableAssemblyPrefix.toUpperCase().startsWith(correctPrefix.toUpperCase())) {
 						ReportManager.problem(this, con, "Database species is " + dbSpecies + " but assembly prefix " + metaTableAssemblyPrefix + " should have prefix beginning with " + correctPrefix);
 						result = false;
-					} else {
-						ReportManager.correct(this, con, "Meta table assembly prefix (" + metaTableAssemblyPrefix + ") is correct for " + dbSpecies);
 					}
 				}
 			}
@@ -180,8 +178,6 @@ public class MetaValues extends SingleDatabaseTestCase {
 					ReportManager.problem(this, con, "There are overlapping regions in the database (e.g. two versions of the same chromosomes). The API"
 							+ " might have unexpected results when trying to map features to that coordinate system.");
 					result = false;
-				} else {
-					ReportManager.correct(this, con, metaKey + " entry present");
 				}
 			}
 		}
