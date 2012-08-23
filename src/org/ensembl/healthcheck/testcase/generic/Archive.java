@@ -31,8 +31,6 @@ import org.ensembl.healthcheck.util.DBUtils;
 
 public class Archive extends SingleDatabaseTestCase {
 
-	private static final int MIN_MAPPING_SESSION_ID = 355;
-
 	/**
 	 * Create a new Archive test case.
 	 */
@@ -73,17 +71,17 @@ public class Archive extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		logger.fine("Checking deleted genes");
-		result &= checkDeletedInGeneArchive(con, "gene", "G", MIN_MAPPING_SESSION_ID);
+		result &= checkDeletedInGeneArchive(con, "gene", "G");
 		logger.fine("Checking deleted transcripts");
-		result &= checkDeletedInGeneArchive(con, "transcript", "T", MIN_MAPPING_SESSION_ID);
+		result &= checkDeletedInGeneArchive(con, "transcript", "T");
 		logger.fine("Checking deleted translations");
-		result &= checkDeletedInGeneArchive(con, "translation", "P", MIN_MAPPING_SESSION_ID);
+		result &= checkDeletedInGeneArchive(con, "translation", "P");
 		logger.fine("Checking changed translations");
-		result &= checkChangedInGeneArchive(con, "translation", "P", MIN_MAPPING_SESSION_ID);
+		result &= checkChangedInGeneArchive(con, "translation", "P");
 		logger.fine("Checking changed transcript");
-		result &= checkChangedInGeneArchive(con, "transcript", "T", MIN_MAPPING_SESSION_ID);
+		result &= checkChangedInGeneArchive(con, "transcript", "T");
 		logger.fine("Checking changed genes");
-		result &= checkChangedInGeneArchive(con, "gene", "G", MIN_MAPPING_SESSION_ID);
+		result &= checkChangedInGeneArchive(con, "gene", "G");
 
 		return result;
 	}
@@ -97,16 +95,13 @@ public class Archive extends SingleDatabaseTestCase {
 	 *          type of item deleted
 	 * @param filter
 	 *          substring to use use to filter relevant stableIDs, will be used in SQL as "%FILTER%".
-	 * @param minMappingSessionID
-	 *          mapping_session_id for first mapping session which contains arechive data. This is needed because no archive data
-	 *          exists for previous release.
 	 * @return whether the test succeeded.
 	 */
-	private boolean checkChangedInGeneArchive(final Connection con, final String type, final String filter, final long minMappingSessionID) {
+	private boolean checkChangedInGeneArchive(final Connection con, final String type, final String filter) {
 		boolean result = true;
 
 		String sql = "SELECT CONCAT(old_stable_id, \".\", old_version) " + "FROM stable_id_event sie LEFT JOIN gene_archive ga " + "                     ON old_stable_id=" + type + "_stable_id "
-				+ "WHERE " + "     sie.mapping_session_id >= " + minMappingSessionID + " " + "     AND sie.mapping_session_id=ga.mapping_session_id " + "     AND old_stable_id like \"%" + filter + "%\" "
+				+ "WHERE sie.mapping_session_id=ga.mapping_session_id " + "     AND old_stable_id like \"%" + filter + "%\" "
 				+ "     AND gene_stable_id is NULL " + "     AND new_stable_id=old_stable_id and old_version!=new_version;";
 
 		String[] rows = DBUtils.getColumnValues(con, sql);
@@ -128,17 +123,14 @@ public class Archive extends SingleDatabaseTestCase {
 	 *          type of item deleted
 	 * @param filter
 	 *          substring to use use to filter relevant stableIDs, will be used in SQL as "%FILTER%".
-	 * @param minMappingSessionID
-	 *          mapping_session_id for first mapping session which contains arechive data. This is needed because no archive data
-	 *          exists for previous release.
 	 * @return whether the test succeeded.
 	 */
-	private boolean checkDeletedInGeneArchive(final Connection con, final String type, final String filter, final long minMappingSessionID) {
+	private boolean checkDeletedInGeneArchive(final Connection con, final String type, final String filter) {
 
 		boolean result = true;
 
 		String sql = "SELECT CONCAT(old_stable_id, \".\", old_version) " + "FROM stable_id_event sie LEFT JOIN gene_archive ga " + "                     ON old_stable_id=" + type + "_stable_id "
-				+ "WHERE " + "   sie.mapping_session_id >= " + minMappingSessionID + " " + "   AND sie.mapping_session_id=ga.mapping_session_id " + "   AND old_stable_id like \"%" + filter + "%\""
+				+ "WHERE sie.mapping_session_id=ga.mapping_session_id " + "   AND old_stable_id like \"%" + filter + "%\""
 				+ "   AND new_stable_id is NULL " + "   AND " + type + "_stable_id is NULL;";
 		String[] rows = DBUtils.getColumnValues(con, sql);
 		if (rows.length > 0) {
