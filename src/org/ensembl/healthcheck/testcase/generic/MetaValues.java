@@ -129,7 +129,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 					logger.info("Can't get correct assembly prefix for " + dbSpecies.toString());
 				} else {
 					if (!metaTableAssemblyPrefix.toUpperCase().startsWith(correctPrefix.toUpperCase())) {
-						ReportManager.problem(this, con, "Database species is " + dbSpecies + " but assembly prefix " + metaTableAssemblyPrefix + " should have prefix beginning with " + correctPrefix);
+						ReportManager.problem(this, con, "Database species is " + dbSpecies + " but assembly prefix " + metaTableAssemblyPrefix + " should have prefix beginning with " + correctPrefix + " There should not be any version number, check Species.java is using the right value");
 						result = false;
 					}
 				}
