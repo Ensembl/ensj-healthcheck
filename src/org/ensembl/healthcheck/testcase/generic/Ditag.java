@@ -82,7 +82,7 @@ public class Ditag extends SingleDatabaseTestCase {
 
 		// only check for human, mouse
 		Species s = dbre.getSpecies();
-		if (s.equals(Species.HOMO_SAPIENS) || s.equals(Species.MUS_MUSCULUS)) {
+		if (s.equals(Species.HOMO_SAPIENS) || s.equals(Species.MUS_MUSCULUS) || s.equals(Species.ORYZIAS_LATIPES)) {
 
 			result &= checkExistance(con);
 
