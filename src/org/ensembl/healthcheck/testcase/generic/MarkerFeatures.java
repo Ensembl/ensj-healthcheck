@@ -53,6 +53,7 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		addToGroup("post-compara-handover");
+                addToGroup("pre-compara-handover");
 
 		setDescription("Checks that marker_features exist and that they have non-zero map_weights, that marker priorities are sensible and that all chromosomes have some marker features and marker_map_locations");
 		setTeamResponsible(Team.GENEBUILD);

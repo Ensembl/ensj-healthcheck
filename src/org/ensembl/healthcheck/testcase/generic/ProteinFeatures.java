@@ -40,7 +40,6 @@ public class ProteinFeatures extends SingleDatabaseTestCase {
 		setDescription("Check that protein annotation feature coords make sense and that all translations exist in the database");
 		addToGroup("post_genebuild");
 		addToGroup("release");
-		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		
 		setTeamResponsible(Team.GENEBUILD);
@@ -53,6 +52,7 @@ public class ProteinFeatures extends SingleDatabaseTestCase {
 
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		removeAppliesToType(DatabaseType.RNASEQ);
+                removeAppliesToType(DatabaseType.CDNA);
 
 	}
 
@@ -74,24 +74,20 @@ public class ProteinFeatures extends SingleDatabaseTestCase {
 		if (rows > THRESHOLD) {
 			result = false;
 			ReportManager.problem(this, con, rows + " protein features have seq_start > seq_end");
-		} else {
-			ReportManager.correct(this, con, "No protein features where seq_start > seq_end");
 		}
 
 		logger.fine("Checking protein features for " + DBUtils.getShortDatabaseName(con) + " ...");
 		rows = DBUtils.getRowCount(con, "SELECT COUNT(*) from protein_feature WHERE seq_start < 0");
 		if (rows > THRESHOLD) {
+                        result = false;
 			ReportManager.problem(this, con, rows + " protein features have seq_start < 0");
-		} else {
-			ReportManager.correct(this, con, "No protein features where seq_start < 0");
 		}
 
 		logger.fine("Checking protein features for " + DBUtils.getShortDatabaseName(con) + " ...");
 		rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM protein_feature WHERE hit_start < 0");
 		if (rows > THRESHOLD) {
+                        result = false;
 			ReportManager.problem(this, con, rows + " protein features have hit_start < 0");
-		} else {
-			ReportManager.correct(this, con, "No protein features where hit_start < 0");
 		}
 
 		logger.fine("Checking protein features for " + DBUtils.getShortDatabaseName(con) + " ...");
@@ -99,8 +95,6 @@ public class ProteinFeatures extends SingleDatabaseTestCase {
 		if (rows > THRESHOLD) {
 			result = false;
 			ReportManager.problem(this, con, rows + " protein features have hit_start > hit_end");
-		} else {
-			ReportManager.correct(this, con, "No protein features where hit_start > hit_end");
 		}
 
 		return result;
