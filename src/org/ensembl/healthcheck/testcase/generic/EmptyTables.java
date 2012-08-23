@@ -84,7 +84,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 			}
 			
 			// map, marker etc
-			if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.RATTUS_NORVEGICUS && species != Species.DANIO_RERIO) {
+			if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.RATTUS_NORVEGICUS && species != Species.DANIO_RERIO && species != Species.BOS_TAURUS && species != Species.CANIS_FAMILIARIS && species != Species.GALLUS_GALLUS && species != Species.MACACA_MULATTA && species != Species.SUS_SCROFA) {
 				String[] markerTables = { "map", "marker", "marker_map_location", "marker_synonym", "marker_feature" };
 				tables = remove(tables, markerTables);
 			}
@@ -107,14 +107,8 @@ public class EmptyTables extends SingleDatabaseTestCase {
 				tables = Utils.removeStringFromArray(tables, "ditag_feature");
 			}
 
-			// don't check for unconventional transcript associations in species other
-			// than human
-			if (species != Species.HOMO_SAPIENS) {
-				tables = Utils.removeStringFromArray(tables, "unconventional_transcript_association");
-			}
-
 			// only have splicing events in human, mouse, danio, rat and drosophila
-			if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.DANIO_RERIO && species != Species.RATTUS_NORVEGICUS && species != Species.DROSOPHILA_MELANOGASTER) {
+			if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.DANIO_RERIO && species != Species.RATTUS_NORVEGICUS && species != Species.DROSOPHILA_MELANOGASTER && species != Species.CAENORHABDITIS_ELEGANS) {
 				tables = Utils.removeStringFromArray(tables, "splicing_event");
 				tables = Utils.removeStringFromArray(tables, "splicing_event_feature");
 				tables = Utils.removeStringFromArray(tables, "splicing_transcript_pair");
