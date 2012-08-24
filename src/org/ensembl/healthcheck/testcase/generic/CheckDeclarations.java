@@ -55,6 +55,17 @@ public class CheckDeclarations extends SingleDatabaseTestCase {
                 setDescription("Check that all changes have been correctly declared");
         }
 
+        /**
+         * This test applies only to core dbs
+         */
+        public void types() {
+                removeAppliesToType(DatabaseType.SANGER_VEGA);
+                removeAppliesToType(DatabaseType.VEGA);
+                removeAppliesToType(DatabaseType.CDNA);
+                removeAppliesToType(DatabaseType.OTHERFEATURES);
+                removeAppliesToType(DatabaseType.RNASEQ);
+        }
+
 
         /**
          * Checks that changes in database have been declared.
