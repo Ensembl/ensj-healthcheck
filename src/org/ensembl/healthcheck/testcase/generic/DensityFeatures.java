@@ -150,6 +150,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 			ResultSet rs = stmt.executeQuery("SELECT s.seq_region_id, s.name, CASE WHEN ae.seq_region_id IS NULL THEN 0 ELSE 1 END as exception FROM seq_region s LEFT JOIN assembly_exception ae ON s.seq_region_id = ae.seq_region_id WHERE coord_system_id=" + topLevelCSID + " AND name NOT LIKE '%\\_%' AND (exc_type IN ('HAP', 'PAR') or exc_type IS NULL) GROUP BY s.seq_region_id, s.name, exception");
 
 			int numTopLevel = 0;
+                        int noDensity = 0;
 
 			while (rs.next() && numTopLevel++ < MAX_TOP_LEVEL) {
 
@@ -162,8 +163,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 				int dfRows = DBUtils.getRowCount(con, sql);
 				if (dfRows == 0) {
 
-					ReportManager.problem(this, con, "Top-level seq region " + seqRegionName + " (ID " + seqRegionID + ") has no density features");
-					result = false;
+                                        noDensity++;
 				}
 
 				// check each analysis type
@@ -225,6 +225,11 @@ System.out.println("is sum sra null?");
 				} // while it
 
 			} // while rs.next
+
+                        if (noDensity > 0) {
+                                ReportManager.problem(this, con, noDensity + " of the " + MAX_TOP_LEVEL + " first toplevel regions have no density features");
+                                result = false;
+                        }
 
 			rs.close();
 			stmt.close();
