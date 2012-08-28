@@ -82,7 +82,6 @@ public class SeqRegionAttribsPresent extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-
 		String code;
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {
 			code = "'KnwnPCCount'";
@@ -103,11 +102,9 @@ public class SeqRegionAttribsPresent extends SingleDatabaseTestCase {
 		if (missing.isEmpty()) {
                         ReportManager.correct(this, con, "All seq_regions with protein_coding genes have a coding_cnt attribute associated with them");
                 } else {
-                        for(CharSequence name: missing) {
-                                String msg = String.format("Seq_region '%s' with protein_coding genes does not have the coding_cnt attribute associated", name);
-                        	ReportManager.problem(this, con, msg);
-        			result = false;
-	        	}
+                        String msg = String.format("%s regions with protein_coding genes do not have the coding_cnt attribute associated", missing.size());
+                       	ReportManager.problem(this, con, msg);
+        		result = false;
                 }
 		return result;
 
