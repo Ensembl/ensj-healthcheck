@@ -163,13 +163,6 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
       // look at each analysis ID *from the analysis table* to see if it's
       // used
       // somewhere
-      // some analyses may be listed in the analysis table but actually
-      // used in
-      // the otherfeatures database
-      // so go and get the lis of analyses from the feature tables in the
-      // otherfeatures database first
-      Map<Integer,String> otherfeatureAnalyses = getAnalysesFromOtherDatabase(dbre,
-          featureTables);
 
       Statement stmt = con.createStatement();
       ResultSet rs = stmt
@@ -177,8 +170,7 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
       while (rs.next()) {
         int analysisID = rs.getInt("analysis_id");
         String logicName = rs.getString("logic_name");
-        if (!analysesFromFeatureTables.containsKey(analysisID)
-            && !otherfeatureAnalyses.containsKey(analysisID)) {
+        if (!analysesFromFeatureTables.containsKey(analysisID)) {
           ReportManager.problem(this, con, "Analysis with ID " + analysisID
               + ", logic name " + logicName
               + " is not used in any feature table");
@@ -234,45 +226,6 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
     }
 
     return result;
-
-  }
-
-  // -----------------------------------------------------------------
-
-  private Map<Integer, String> getAnalysesFromOtherDatabase(DatabaseRegistryEntry dbre,
-      String[] featureTables) {
-
-    Map<Integer, String> analyses = new HashMap<Integer, String>();
-
-    String ofName = dbre.getName().replaceAll("core", "otherfeatures");
-    DatabaseRegistry dr = dbre.getDatabaseRegistry();
-    DatabaseRegistryEntry ofDBRE = dr.getByExactName(ofName);
-    if (ofDBRE == null) {
-      logger.info("Can't get otherfeatures database for " + dbre.getName());
-      return analyses;
-    }
-
-    try {
-      Connection con = ofDBRE.getConnection();
-      // build cumulative list of analyses from feature tables
-      for (int t = 0; t < featureTables.length; t++) {
-        String featureTable = featureTables[t];
-        Statement stmt = con.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT DISTINCT(analysis_id) FROM "
-            + featureTable);
-        while (rs.next()) {
-          Integer analysisID = rs.getInt("analysis_id");
-          analyses.put(analysisID, featureTable);
-        }
-        rs.close();
-        stmt.close();
-      }
-    }
-    catch (SQLException se) {
-      se.printStackTrace();
-    }
-
-    return analyses;
 
   }
 
