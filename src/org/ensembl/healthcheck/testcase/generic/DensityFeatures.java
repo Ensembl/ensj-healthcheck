@@ -31,6 +31,8 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.SqlTemplate;
+
 
 /**
  * Check that all top-level seq regions have some SNP/gene density features, and that the values agree between the
@@ -107,6 +109,15 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();		
+                SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+
+// Density features needed only for species with a karyotype
+                String sqlKaryotype = "SELECT count(*) FROM seq_region_attrib sa, attrib_type at WHERE at.attrib_type_id = sa.attrib_type_id AND code = 'karyotype_rank'";
+                int karyotype = t.queryForDefaultObject(sqlKaryotype, Integer.class);
+
+                if (karyotype == 0) {
+                        return result;
+                }
 
 		result &= checkFeaturesAndCounts(con);
 
