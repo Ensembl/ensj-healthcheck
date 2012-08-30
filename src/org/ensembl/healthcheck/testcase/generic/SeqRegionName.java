@@ -25,6 +25,8 @@ import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.Utils;
+
 
 /**
  * Check that the seq_region names are in the right format. Only checks human and mouse.
@@ -59,18 +61,19 @@ public class SeqRegionName extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		// only do this for human and mouse
 		Species s = dbre.getSpecies();
-		if (s.equals(Species.HOMO_SAPIENS) || s.equals(Species.MUS_MUSCULUS)) {
+                Connection con = dbre.getConnection();
+                String AssemblyAccession = DBUtils.getMetaValue(con, "assembly.accession");
 
-			Connection con = dbre.getConnection();
+                if (AssemblyAccession.contains("GCA")) {
 
 			result &= seqRegionNameCheck(con, "clone", "^[a-zA-Z]+[0-9]+\\.[0-9]+$");
-			result &= seqRegionNameCheck(con, "contig", "^[a-zA-Z]+[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+$");
+			result &= seqRegionNameCheck(con, "contig", "^[a-zA-Z]*[0-9]*(\\\\.[0-9]+)+(\\.[0-9+])*$");
+                        result &= seqRegionNameCheck(con, "scaffold", "^[a-zA-Z]*[0-9]*(\\.[0-9]+)+(\\.[0-9]+)*$");
 
-		} else if (s.equals(Species.ANCESTRAL_SEQUENCES)) {
+                }
 
-			Connection con = dbre.getConnection();
+		if (s.equals(Species.ANCESTRAL_SEQUENCES)) {
 
 			result &= seqRegionNameCheck(con, "ancestralsegment", "Ancestor_[0-9]+_[0-9]+$");
 
@@ -92,7 +95,7 @@ public class SeqRegionName extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		int rows = DBUtils.getRowCount(con, String.format(
-				"SELECT COUNT(*) FROM seq_region sr, coord_system cs WHERE sr.coord_system_id=cs.coord_system_id AND cs.name='%s' AND sr.name NOT LIKE 'LRG%%' AND sr.name NOT REGEXP '%s' ", coordinateSystem,
+				"SELECT COUNT(*) FROM seq_region sr, coord_system cs WHERE sr.coord_system_id=cs.coord_system_id AND cs.name='%s' AND sr.name NOT LIKE 'LRG%%' AND sr.name NOT LIKE 'MT' AND sr.name NOT REGEXP '%s' ", coordinateSystem,
 				regexp));
 
 		if (rows > 0) {
