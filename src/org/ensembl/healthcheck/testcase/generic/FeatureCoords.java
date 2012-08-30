@@ -90,6 +90,9 @@ public class FeatureCoords extends SingleDatabaseTestCase {
         protected boolean checkLength(DatabaseRegistryEntry dbre, String tableName) {
                 SqlTemplate t = DBUtils.getSqlTemplate(dbre);
                 boolean result = true;
+                if (tableName.equals("repeat_feature")) {
+                        return true;
+                }
                 DefaultMapRowMapper<Integer, Integer> mapper = new DefaultMapRowMapper<Integer, Integer>(Integer.class, Integer.class);
                 String featureSQL = "SELECT seq_region_id, max(seq_region_start) from " + tableName + " group by seq_region_id ";
                 String lengthSQL = "SELECT length from seq_region where seq_region_id = ?";
