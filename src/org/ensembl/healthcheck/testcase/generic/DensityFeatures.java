@@ -224,7 +224,6 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 
 							} // if sumSRA
                                                         if (sumSRA.length() == 0) {
-System.out.println("is sum sra null?");
                                                                 ReportManager.problem(this, con, seqRegionName + " has no seq_region_attrib for " + attribCode);
                                                                 result = false;
                                                         }
