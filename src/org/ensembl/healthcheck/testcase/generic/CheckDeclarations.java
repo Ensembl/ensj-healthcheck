@@ -79,30 +79,44 @@ public class CheckDeclarations extends SingleDatabaseTestCase {
 
                 boolean result = true;
 
-                result &= checkAssembly(dbre);
+                Connection con = dbre.getConnection();
+                DatabaseRegistryEntry sec = getEquivalentFromSecondaryServer(dbre);
 
-                result &= checkRepeats(dbre);
+                if (sec == null) {
+                        boolean newSpecies = checkDeclaration(dbre, "assembly");
+                        if (!newSpecies) {
+                                ReportManager.problem(this, con, "New database " + dbre.getName() + " has not been declared");
+                                return false;
+                        } else {
+                                return true;
+                        }
+                }
 
-                result &= checkGenes(dbre);
+                Connection previousCon = sec.getConnection();
+
+                result &= checkAssembly(dbre, sec);
+
+                result &= checkRepeats(dbre, sec);
+
+                result &= checkGenes(dbre, sec);
 
                 return result;
         }
 
-  private boolean checkAssembly(DatabaseRegistryEntry dbre) {
+  private boolean checkAssembly(DatabaseRegistryEntry dbre, DatabaseRegistryEntry sec) {
 
     boolean result = true;
 
     Connection con = dbre.getConnection();
-    String currentAssembly = DBUtils.getMetaValue(con, "assembly.name");
-
-    DatabaseRegistryEntry sec = getEquivalentFromSecondaryServer(dbre);
     Connection previousCon = sec.getConnection();
+
+    String currentAssembly = DBUtils.getMetaValue(con, "assembly.name");
     String previousAssembly = DBUtils.getMetaValue(previousCon, "assembly.name");
 
     if (!previousAssembly.equals(currentAssembly)) {
       boolean declared = checkDeclaration(dbre, "assembly");
       if (!declared) {
-        ReportManager.problem(this, con, "Assembly has changed for " + dbre.getName() + " but has not been declared");
+        ReportManager.problem(this, con, "Assembly has changed but has not been declared");
         result = false;
       }
     }
@@ -110,22 +124,21 @@ public class CheckDeclarations extends SingleDatabaseTestCase {
     return result;
   }
 
-  private boolean checkRepeats(DatabaseRegistryEntry dbre) {
+  private boolean checkRepeats(DatabaseRegistryEntry dbre, DatabaseRegistryEntry sec) {
 
     boolean result = true;
 
     Connection con = dbre.getConnection();
+    Connection previousCon = sec.getConnection();
+
     String sql = "SELECT count(*) FROM repeat_feature";
     int currentRepeats = DBUtils.getRowCount(con, sql);
-
-    DatabaseRegistryEntry sec = getEquivalentFromSecondaryServer(dbre);
-    Connection previousCon = sec.getConnection();
     int previousRepeats = DBUtils.getRowCount(previousCon, sql);
 
     if (currentRepeats != previousRepeats) {
       boolean declared = checkDeclaration(dbre, "repeat_masking");
       if (!declared) {
-        ReportManager.problem(this, con, "Repeats have changed for " + dbre.getName() + " but have not been declared");
+        ReportManager.problem(this, con, "Repeats have changed but have not been declared");
         result = false;
       }
     }
@@ -133,22 +146,21 @@ public class CheckDeclarations extends SingleDatabaseTestCase {
     return result;
   }
 
-  private boolean checkGenes(DatabaseRegistryEntry dbre) {
+  private boolean checkGenes(DatabaseRegistryEntry dbre, DatabaseRegistryEntry sec) {
 
     boolean result = true;
 
     Connection con = dbre.getConnection();
+    Connection previousCon = sec.getConnection();
+
     String sql = "SELECT count(*) FROM gene";
     int currentGenes = DBUtils.getRowCount(con, sql);
-
-    DatabaseRegistryEntry sec = getEquivalentFromSecondaryServer(dbre);
-    Connection previousCon = sec.getConnection();
     int previousGenes = DBUtils.getRowCount(previousCon, sql);
 
     if (currentGenes != previousGenes) {
       boolean declared = checkDeclaration(dbre, "gene_set");
       if (!declared) {
-        ReportManager.problem(this, con, "Repeats have changed for " + dbre.getName() + " but have not been declared");
+        ReportManager.problem(this, con, "Genes have changed but have not been declared");
         result = false;
       }
     }
@@ -161,6 +173,7 @@ public class CheckDeclarations extends SingleDatabaseTestCase {
     boolean result = true;
 
     Connection con = dbre.getConnection();
+
     String release = DBUtils.getMetaValue(con, "schema_version");
     DatabaseRegistryEntry prod = getProductionDatabase();
     String sql = "SELECT count(*) FROM db_list dl, db d WHERE dl.db_id = d.db_id and db_type = 'core' and is_current = 1 AND full_db_name = '" + dbre.getName() + "' AND species_id IN (SELECT species_id FROM changelog c, changelog_species cs WHERE c.changelog_id = cs.changelog_id AND release_id = " + release + " AND status not in ('cancelled', 'postponed') AND " + change + " = 'Y')";
