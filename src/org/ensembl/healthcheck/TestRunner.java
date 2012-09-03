@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.ensembl.healthcheck.testcase.EnsTestCase;
@@ -136,9 +137,10 @@ public class TestRunner {
 						numberOfTestsRun++;
 
 					} catch (Throwable e) {
-						logger.warning("Could not execute test "
-								+ testCase.getName() + " on "
-								+ database.getName() + ": " + e.getMessage());
+					  String msg = "Could not execute test "
+                + testCase.getName() + " on "
+                + database.getName() + ": " + e.getMessage();
+					  logger.log(Level.WARNING, msg, e);
 					}
 
 				} else {
@@ -177,10 +179,9 @@ public class TestRunner {
 					numberOfTestsRun++;
 				} catch (Throwable e) {
 				  //TODO If we had a throwable then we should mark the test as failed 
-				  
-					// catch and log unexpected exceptions
-					logger.warning("Could not execute test "
-							+ testCase.getName() + ": " + e.getMessage());
+          String msg = "Could not execute test "
+              + testCase.getName() + ": " + e.getMessage();
+          logger.log(Level.WARNING, msg, e);
 				}
 			} else {
 
@@ -210,10 +211,9 @@ public class TestRunner {
 						+ (result ? "PASSED" : "FAILED"));
 			} catch (Throwable e) {
 			  //TODO If we had a throwable then we should mark the test as failed
-			  
-				// catch and log unexpected exceptions
-				logger.warning("Could not execute test " + testCase.getName()
-						+ ": " + e.getMessage());
+        String msg = "Could not execute test "
+            + testCase.getName() + ": " + e.getMessage();
+        logger.log(Level.WARNING, msg, e);
 			}
 
 			numberOfTestsRun++;
