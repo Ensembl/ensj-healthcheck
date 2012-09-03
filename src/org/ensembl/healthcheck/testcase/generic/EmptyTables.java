@@ -23,6 +23,8 @@ import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.Utils;
+import org.ensembl.healthcheck.util.SqlTemplate;
+
 
 /**
  * Check that all tables have data.
@@ -56,6 +58,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 		String[] tables = getTableNames(dbre.getConnection());
 		Species species = dbre.getSpecies();
 		DatabaseType type = dbre.getType();
+                boolean karyotype = karyotypeExists(dbre);
 
 		// ----------------------------------------------------
 		if (species == Species.ANCESTRAL_SEQUENCES) {
@@ -77,7 +80,13 @@ public class EmptyTables extends SingleDatabaseTestCase {
 			String[] idMapping = { "gene_archive", "peptide_archive", "mapping_session", "stable_id_event" };
 			tables = remove(tables, idMapping);
 
-			// only rat has entries in QTL tables
+                        // density_feature only populated for species with a karyotype
+                        if (!karyotype) {
+                                String [] density = {"density_feature", "density_type"};
+                                tables = remove(tables, density);
+                        }		
+
+                	// only rat has entries in QTL tables
 			if (species != Species.RATTUS_NORVEGICUS) {
 				String[] qtlTables = { "qtl", "qtl_feature", "qtl_synonym" };
 				tables = remove(tables, qtlTables);
@@ -210,5 +219,20 @@ public class EmptyTables extends SingleDatabaseTestCase {
 	}
 
 	// -----------------------------------------------------------------
+
+        protected boolean karyotypeExists(DatabaseRegistryEntry dbre) {
+                Connection con = dbre.getConnection();
+                SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+                boolean result = true;
+                String sqlKaryotype = "SELECT count(*) FROM seq_region_attrib sa, attrib_type at WHERE at.attrib_type_id = sa.attrib_type_id AND code = 'karyotype_rank'";
+                int karyotype = t.queryForDefaultObject(sqlKaryotype, Integer.class);
+                if (karyotype == 0) {
+                        result = false;
+                }
+                return result;
+        }
+
+        // -----------------------------------------------------------------
+
 
 } // EmptyTablesTestCase
