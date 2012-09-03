@@ -1672,7 +1672,7 @@ public abstract class EnsTestCase {
 		}
 
 		if (matchingDBs.size() == 0) {
-			logger.severe("Could not find equivalent database to "
+			logger.finest("Could not find equivalent database to "
 					+ dbre.getName() + " on secondary server");
 		}
 
