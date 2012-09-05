@@ -107,11 +107,6 @@ public class ForeignKeyCoreId extends MultiDatabaseTestCase {
 						dbrcore.getName() + ".transcript", "stable_id");
 
 				result &= checkForOrphansWithConstraint(con, dbrvar.getName()
-						+ ".flanking_sequence", "seq_region_id",
-						dbrcore.getName() + ".seq_region", "seq_region_id",
-						"seq_region_id IS NOT NULL");
-
-				result &= checkForOrphansWithConstraint(con, dbrvar.getName()
 						+ ".variation_feature", "seq_region_id",
 						dbrcore.getName() + ".seq_region", "seq_region_id",
 						"seq_region_id IS NOT NULL");
