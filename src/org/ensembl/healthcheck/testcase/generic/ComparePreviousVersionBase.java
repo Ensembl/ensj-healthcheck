@@ -100,10 +100,6 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 						(((double) currentCount / (double) secondaryCount)) > (1 / threshold())) {
 					ReportManager.problem(this, dbre.getConnection(), sec.getName() + " only has " + secondaryCount + " " + entityDescription() + " " + key + " but " + dbre.getName() + " has " + currentCount);
 					result = false;
-				} else {
-					ReportManager.correct(this, dbre.getConnection(), sec.getName() + " has " + secondaryCount + " " + entityDescription() + " " + key + " and " + dbre.getName() + " has " + currentCount
-							+ successText);
-
 				}
 
 			} else {
