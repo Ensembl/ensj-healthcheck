@@ -158,7 +158,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 			// features there are
 			Statement stmt = con.createStatement();
 
-			ResultSet rs = stmt.executeQuery("SELECT s.seq_region_id, s.name, CASE WHEN ae.seq_region_id IS NULL THEN 0 ELSE 1 END as exception FROM seq_region s LEFT JOIN assembly_exception ae ON s.seq_region_id = ae.seq_region_id WHERE coord_system_id=" + topLevelCSID + " AND name NOT LIKE '%\\_%' AND (exc_type IN ('HAP', 'PAR') or exc_type IS NULL) GROUP BY s.seq_region_id, s.name, exception");
+			ResultSet rs = stmt.executeQuery("SELECT s.seq_region_id, s.name, CASE WHEN ae.seq_region_id IS NULL THEN 0 ELSE 1 END as exception FROM seq_region_attrib sa, attrib_type at, seq_region s LEFT JOIN assembly_exception ae ON s.seq_region_id = ae.seq_region_id WHERE s.seq_region_id = sa.seq_region_id AND sa.attrib_type_id = at.attrib_type_id AND at.code = 'karyotype_rank' AND coord_system_id=" + topLevelCSID + " AND (exc_type IN ('HAP', 'PAR') or exc_type IS NULL) GROUP BY s.seq_region_id, s.name, exception");
 
 			int numTopLevel = 0;
                         int noDensity = 0;
