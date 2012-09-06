@@ -73,7 +73,6 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			result &= checkForOrphans(con, "failed_variation", "variation_id", "variation", "variation_id", true);
 			result &= checkForOrphans(con, "failed_structural_variation", "failed_description_id", "failed_description", "failed_description_id", true);
 			result &= checkForOrphans(con, "failed_structural_variation", "structural_variation_id", "structural_variation", "structural_variation_id", true);
-			result &= checkForOrphans(con, "flanking_sequence", "variation_id", "variation", "variation_id", true);
 			result &= checkForOrphans(con, "individual", "sample_id", "sample", "sample_id", true);
 			result &= checkForOrphans(con, "individual_genotype_multiple_bp", "sample_id", "individual_population", "individual_sample_id", true);
 			result &= checkForOrphans(con, "individual_genotype_multiple_bp", "sample_id", "sample", "sample_id", true);
@@ -97,7 +96,6 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			result &= checkForOrphans(con, "variation_annotation", "variation_id", "variation", "variation_id", true);
 			result &= checkForOrphans(con, "variation_annotation", "study_id", "study", "study_id", true);
 			result &= checkForOrphans(con, "variation_feature", "source_id", "source", "source_id", true);
-			result &= checkForOrphans(con, "variation_feature", "variation_id", "flanking_sequence", "variation_id", true);
 			result &= checkForOrphans(con, "variation_feature", "variation_id", "allele", "variation_id", true);
 			result &= checkForOrphans(con, "variation_set_structure", "variation_set_sub", "variation_set", "variation_set_id", true);
 			result &= checkForOrphans(con, "variation_set_structure", "variation_set_super", "variation_set", "variation_set_id", true);
@@ -128,47 +126,6 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 					result = false;
 				}
 			}
-			
-			/* haplotype seq_region_id in chimp 506737 and in human 27795,27796,27797,27798,27799,27800,27801,27802,27803 hard coded here */
-			/*
-			 * This situation must be allowed though.. basically, this is just a compression of the flanking sequence and any sequence
-			 * possible to compress against should be ok. In any case, just checking the seq_region_id and cases where we only
-			 *  have a single mapping is very inconsistent and with poor resolution  
-			 * for this kind of test.. I'll comment out this test [Pontus]
-			 *
-			rows = DBUtils.getRowCount(
-					con,
-					"SELECT COUNT(*) " +
-					"FROM variation_feature vf, flanking_sequence f " +
-					"where vf.variation_id=f.variation_id and " +
-					"vf.seq_region_id != f.seq_region_id and " +
-					"vf.map_weight=1 and " +
-					"vf.seq_region_id not in (506737,27795,27796,27797,27798,27799,27800,27801,27802,27803) and " +
-					"f.seq_region_id not in (506737,27795,27796,27797,27798,27799,27800,27801,27802,27803)");
-			if (rows > 0) {
-				ReportManager.problem(this, con, rows + "entries in flanking_sequence have same variation_id, but different seq_region_id compare with table variation features");
-				result = false;
-			}
-			 */
-			/*
-			 * Similar argument as above, I'll comment out [Pontus]
-			 *
-			rows = DBUtils.getRowCount(
-					con,
-					"SELECT COUNT(*) " +
-					"FROM variation_feature vf, " +
-					"flanking_sequence f " +
-					"where " +
-					"vf.variation_id=f.variation_id and " +
-					"vf.seq_region_strand != f.seq_region_strand and " +
-					"vf.map_weight=1 and " +
-					"vf.seq_region_id not in (506737,27795,27796,27797,27798,27799,27800,27801,27802,27803) and " +
-					"f.seq_region_id not in (506737,27795,27796,27797,27798,27799,27800,27801,27802,27803)");
-			if (rows > 0) {
-				ReportManager.problem(this, con, rows + "entries in flanking_sequence have same variation_id, but different seq_region_strand compare with table variation features");
-				result = false;
-			}
-			*/
 			
 		} catch (Exception e) {
 			ReportManager.problem(this, con, "HealthCheck generated an exception: " + e.getMessage());
