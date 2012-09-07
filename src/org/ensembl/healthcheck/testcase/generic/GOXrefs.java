@@ -142,7 +142,7 @@ public class GOXrefs extends SingleDatabaseTestCase {
 		// check that linkage_type values are one of the allowable values
 		String[] allowable_linkage_types = { "IC", "IBA", "IDA", "IEA", "IEP",
 				"IGI", "IMP", "IPI", "ISS", "NAS", "ND", "TAS", "NR", "RCA",
-				"EXP", "ISO", "ISA", "ISM", "IGC", "FB" };
+				"EXP", "ISO", "ISA", "ISM", "IGC" };
 
 		String[] linkage_types = DBUtils
 				.getColumnValues(
