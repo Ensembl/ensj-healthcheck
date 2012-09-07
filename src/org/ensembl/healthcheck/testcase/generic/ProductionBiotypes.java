@@ -54,7 +54,7 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
 		setDescription("Check that the gene and transcript biotypes match the valid current ones in the production database.");
 		setPriority(Priority.AMBER);
 		setEffect("Unknown/incorrect biotypes.");
-		setTeamResponsible(Team.RELEASE_COORDINATOR);
+		setTeamResponsible(Team.GENEBUILD);
 
 	}
 
