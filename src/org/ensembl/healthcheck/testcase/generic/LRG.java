@@ -58,7 +58,7 @@ public class LRG extends AbstractTemplatedTestCase {
 		addToGroup("post-compara-handover");
 		
 		setDescription("Healthcheck for LRGs");
-		setTeamResponsible(Team.VARIATION);
+		setTeamResponsible(Team.CORE);
 
 	}
 
@@ -71,6 +71,7 @@ public class LRG extends AbstractTemplatedTestCase {
 		removeAppliesToType(DatabaseType.VEGA);
 		removeAppliesToType(DatabaseType.SANGER_VEGA);
 		removeAppliesToType(DatabaseType.RNASEQ);
+                removeAppliesToType(DatabaseType.CDNA);
 
 	}
 	
