@@ -63,6 +63,14 @@ public class StableID extends SingleDatabaseTestCase {
 		setSecondTeamResponsible(Team.GENEBUILD);
 	}
 
+
+        public void types() {
+
+                removeAppliesToType(DatabaseType.CDNA);
+
+        }
+
+
 	/**
 	 * Run the test.
 	 * 
