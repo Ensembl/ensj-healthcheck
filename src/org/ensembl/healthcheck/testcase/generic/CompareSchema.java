@@ -20,7 +20,7 @@ import static org.ensembl.healthcheck.DatabaseType.ESTGENE;
 import static org.ensembl.healthcheck.DatabaseType.OTHERFEATURES;
 import static org.ensembl.healthcheck.DatabaseType.RNASEQ;
 import static org.ensembl.healthcheck.DatabaseType.SANGER_VEGA;
-import static org.ensembl.healthcheck.Team.RELEASE_COORDINATOR;
+import org.ensembl.healthcheck.Team;
 import static org.ensembl.healthcheck.testcase.generic.AbstractCompareSchema.TestTypes.CHARSET;
 import static org.ensembl.healthcheck.testcase.generic.AbstractCompareSchema.TestTypes.ENGINE;
 import static org.ensembl.healthcheck.testcase.generic.AbstractCompareSchema.TestTypes.IGNORE_AUTOINCREMENT_OPTION;
@@ -42,8 +42,8 @@ public class CompareSchema extends AbstractCompareSchema {
 
 	@Override
 	protected void addResponsible() {
-		setTeamResponsible(RELEASE_COORDINATOR);
-                setSecondTeamResponsible(GENEBUILD);
+		setTeamResponsible(Team.RELEASE_COORDINATOR);
+                setSecondTeamResponsible(Team.GENEBUILD);
 	}
 	
 	@Override
