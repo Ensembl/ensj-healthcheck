@@ -43,6 +43,7 @@ public class CompareSchema extends AbstractCompareSchema {
 	@Override
 	protected void addResponsible() {
 		setTeamResponsible(RELEASE_COORDINATOR);
+                setSecondTeamResponsible(GENEBUILD);
 	}
 	
 	@Override
