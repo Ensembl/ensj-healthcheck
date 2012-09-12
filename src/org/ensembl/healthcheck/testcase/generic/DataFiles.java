@@ -44,7 +44,7 @@ public class DataFiles extends AbstractTemplatedTestCase {
     String sql = "select name from data_file where name LIKE ?";
     List<String> names = getSqlTemplate(dbre).queryForDefaultObjectList(sql, String.class, "%.%");
     boolean ok = true;
-    Pattern p = Pattern.compile("\\.(\\w+)$");
+    Pattern p = Pattern.compile("\\.([A-Za-z]+)$");
     for(String n: names) {
       Matcher m = p.matcher(n);
       if(m.find()) {
