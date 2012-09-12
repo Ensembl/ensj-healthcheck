@@ -52,7 +52,8 @@ public class MetaCoord extends SingleDatabaseTestCase {
 		addToGroup("post-compara-handover");
 		
 		setDescription("Check that meta_coord table contains entries for all the coordinate systems that all the features are stored in");
-		setTeamResponsible(Team.RELEASE_COORDINATOR);
+		setTeamResponsible(Team.GENEBUILD);
+    setSecondTeamResponsible(Team.RELEASE_COORDINATOR);
 	}
 
 	/**
