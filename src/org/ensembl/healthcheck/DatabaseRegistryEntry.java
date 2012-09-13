@@ -158,12 +158,14 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 			.compile("^([a-z_]+)_(userdata)");
 	protected final static Pattern BLAST_DB = Pattern
 			.compile("^([a-z_]+)_(blast)");
+        protected final static Pattern MASTER_DB = Pattern
+                        .compile("^(master_schema)_([a-z]+)?_([0-9]+)");
 	protected final static Pattern MYSQL_DB = Pattern
 			.compile("^(mysql|information_schema)");
 
 	protected final static Pattern[] patterns = { EC_DB, UA_DB, UC_DB, UCM_DB,
 			EA_DB, EGC_DB, EG_DB, E_DB, PE_DB, EM_DB, EE_DB, EEL_DB, U_DB,
-			V_DB, MYSQL_DB, BLAST_DB, UD_DB, TAX_DB, EW_DB, HELP_DB, GB_DB };
+			V_DB, MYSQL_DB, BLAST_DB, UD_DB, TAX_DB, EW_DB, HELP_DB, GB_DB, MASTER_DB };
 
 	/**
 	 * Utility for building a {@link DatabaseInfo} object given a name
