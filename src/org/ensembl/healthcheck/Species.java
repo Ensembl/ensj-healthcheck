@@ -86,6 +86,7 @@ public enum Species {
 	VICUGNA_PACOS(30538, "VICPAC", "ENSVPA", "alpaca,vicugnapacos,vicugna_pacos"),
 	XENOPUS_TROPICALIS(8364, "JGI", "ENSXET", "pipid,pipidfrog,xenopus,xtropicalis,xenopustropicalis,xenopus_tropicalis"),
 	XIPHOPHORUS_MACULATUS(8083, "Xipmac", "ENSXMA", "xiphophorous_maculatus,platyfish,southern_platyfish"),
+        MASTER_SCHEMA(0, "", "", "master_schema,masterschema,schema"),
 	HEALTHCHECK(0, "", "", ""),
 	HELP(0, "", "", ""),
 	NCBI_TAXONOMY(0, "", "", ""),
