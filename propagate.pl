@@ -136,12 +136,6 @@ else {
   }
 }
 
-# cache genebuild.start_date entries for all databases
-my $meta_cache = create_meta_cache( $dbi1, $dbi2, $dbi_prev );
-
-# cache assembly.name for all DBs 
-my $assembly_cache = create_assembly_cache( $dbi1, $dbi2, $dbi_prev );
-
 #Meta cache for regulation
 my $regulatory_build_cache = create_regulation_cache($dbi1, $dbi2, $dbi_prev);
 
@@ -287,7 +281,7 @@ sub propagate {
       # type eq manual_ok_this_assembly:
       # will only need to propagate if it is the same assembly
       if ( $type eq 'manual_ok_this_assembly' ) {
-        if(new_assembly($old_database, $new_database)) {
+        if(new_assembly($old_database, $new_database, $new_release, $dbi1, $dbi2, $dbi_prev)) {
           print "Skipping $new_database as it is a new assembly so we ignore '$type'\n" if ! $quiet;
           next;
         }
@@ -298,7 +292,7 @@ sub propagate {
       # i.e. if genebuild.start_date values in meta table are the same
       # so skip propagation if they are not the same
       if ( $type eq 'manual_ok_this_genebuild' ) {
-        if(new_genebuild($old_database, $new_database)) {
+        if(new_genebuild($old_database, $new_database, $new_release, $dbi1, $dbi2, $dbi_prev)) {
           print "Skipping $new_database as it is a new genebuild so we ignore '$type'\n" if ! $quiet;
           next;
         }
@@ -364,14 +358,11 @@ sub propagate {
 # checks the contents of meta
 
 sub new_assembly {
-  my ($old_dbname, $new_dbname) = @_;
-  #Fall back to old method for non-core DBs. We will use the production DB
-  if(index($old_dbname, 'variation') > -1 || index($old_dbname, 'funcgen') > -1) {
-    my ($old_db_assembly) = $old_dbname =~ /_(\d+)$/;
-    my ($new_db_assembly) = $new_dbname =~ /_(\d+)$/;
-    return ($old_db_assembly ne $new_db_assembly) ? 1 : 0;
-  }
-  return _compare_caches($old_dbname, $new_dbname, $assembly_cache);
+  my ($old_dbname, $new_dbname, $new_release, $dbi1, $dbi2, $dbi_prev) = @_;
+  my $changed = 0;
+  $changed += _check_declaration($new_dbname, $new_release, 'assembly');
+  $changed += _check_changes($old_dbname, $new_dbname, 'assembly', $dbi1, $dbi2, $dbi_prev);
+  return $changed;
 }
 
 # --------------------------------------------------------------------------------
@@ -379,8 +370,11 @@ sub new_assembly {
 # Will check if this is a new genebuild
 
 sub new_genebuild {
-  my ($old_dbname, $new_dbname) = @_;
-  return _compare_caches($old_dbname, $new_dbname, $meta_cache);
+  my ($old_dbname, $new_dbname, $new_release, $dbi1, $dbi2, $dbi_prev) = @_;
+  my $changed = 0;
+  $changed += _check_declaration($new_dbname, $new_release, 'gene_set');
+  $changed += _check_changes($old_dbname, $new_dbname, 'gene', $dbi1, $dbi2, $dbi_prev);
+  return $changed;
 }
 
 # --------------------------------------------------------------------------------
@@ -401,6 +395,59 @@ sub _compare_caches {
   my $old = $cache->{$old_dbname} || q{};
   my $new = $cache->{$new_dbname} || q{};
   return ("$old" eq "$new") ? 0 : 1; #force string comparison
+}
+
+sub _check_changes {
+  my ($old_dbname, $new_dbname, $table, $dbi1, $dbi2, $dbi_prev) = @_;
+  my $result = 0;
+  my $old_check = get_checksum($old_dbname, $table, $dbi_prev);
+  my $new_check = get_checksum($new_dbname, $table, $dbi1, $dbi2);
+  if (!$old_check) {
+    return 1;
+  }
+  if ($old_check != $new_check) {
+    $result = 1;
+  }
+  return $result;
+}
+
+sub get_checksum {
+  my ($dbname, $table, @dbhs) = @_;
+  my $result = 0;
+  foreach my $dbh (@dbhs) {
+    my $sth_status = $dbh->prepare("CHECKSUM table $dbname.$table");
+    $sth_status->execute();
+    my $sth_res = $sth_status->fetchrow_array();
+    if ($sth_res) {
+      $result = $sth_res;
+    }
+  }
+  return $result;
+}
+
+sub _check_declaration {
+  my ($new_dbname, $new_release, $declaration) = @_;
+  my $prod_dbi = get_production_DBAdaptor();
+  my $sth = $prod_dbi->prepare("SELECT count(*)
+     FROM   db_list dl, db d
+     WHERE  dl.db_id = d.db_id and db_type = 'core' and is_current = 1 
+     AND full_db_name = ?
+     AND    species_id IN (
+     SELECT species_id 
+     FROM   changelog c, changelog_species cs 
+     WHERE  c.changelog_id = cs.changelog_id 
+     AND    release_id = ?
+     AND    status not in ('cancelled', 'postponed') 
+     AND    ? = 'Y')");
+
+  $sth->execute($new_dbname, $new_release, $declaration);
+  my $result = $sth->fetchrow_array();
+  return $result;
+}
+
+sub get_production_DBAdaptor {
+  my $prod_dbi = DBI->connect( "DBI:mysql:host=$host1:port=$port1;database=ensembl_production", $user1, $pass1, { 'RaiseError' => 1 } );
+  return $prod_dbi;
 }
 
 # --------------------------------------------------------------------------------
@@ -496,26 +543,6 @@ sub flag_non_propagated_dbs {
     }
   }
   return;
-}
-
-# --------------------------------------------------------------------------------
-# Cache all the meta entries in all databases applicable
-# Note all databases = all on $dbi_prev, $dbi1, $dbi2, e.g. all on ens-livemirror, ens-staging1, ens-staging2
-
-sub create_meta_cache {
-  my ( $dbi1, $dbi2, $dbi_prev ) = @_;
-  my $die_if_none = 0;
-  return build_meta_cache($core_like_dbs, 'genebuild.start_date', $die_if_none, $dbi1, $dbi2, $dbi_prev);
-}
-
-# --------------------------------------------------------------------------------
-# Cache all the meta entries in all databases applicable
-# Note all databases = all on $dbi_prev, $dbi1, $dbi2, e.g. all on ens-livemirror, ens-staging1, ens-staging2
-
-sub create_assembly_cache {
-  my ( $dbi1, $dbi2, $dbi_prev ) = @_;
-  my $die_if_none = 0;
-  return build_meta_cache($core_like_dbs, 'assembly.default', $die_if_none, $dbi1, $dbi2, $dbi_prev);
 }
 
 # --------------------------------------------------------------------------------
