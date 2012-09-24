@@ -438,9 +438,9 @@ sub _check_declaration {
      WHERE  c.changelog_id = cs.changelog_id 
      AND    release_id = ?
      AND    status not in ('cancelled', 'postponed') 
-     AND    ? = 'Y')");
+     AND    $declaration = 'Y')");
 
-  $sth->execute($new_dbname, $new_release, $declaration);
+  $sth->execute($new_dbname, $new_release);
   my $result = $sth->fetchrow_array();
   return $result;
 }
@@ -569,8 +569,6 @@ sub build_meta_cache {
       my $like = "%\\_${dbtype}\\_%";
       my $dbs = $dbh->selectcol_arrayref('SHOW DATABASES LIKE ?', {}, $like);
     
-      printf("Scanning through %d potential databases\n", scalar(@{$dbs})) unless $quiet;
-    
       foreach my $db (@{$dbs}) {
         my $sql = sprintf('SELECT meta_value FROM %s.meta where meta_key =?', $db);
         my @row = $dbh->selectrow_array($sql, {}, $meta_key);
@@ -582,7 +580,6 @@ sub build_meta_cache {
       }
     }
   }
-  print "Finished cache building '$meta_key' for '$types_str'\n" unless $quiet;
   return \%cache;
 }
 
