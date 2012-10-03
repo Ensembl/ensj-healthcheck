@@ -18,9 +18,13 @@ public class EGCompareVariationSchema extends EGAbstractCompareSchema {
 
 	public EGCompareVariationSchema() {
 		setTeamResponsible(Team.ENSEMBL_GENOMES);
-		addAppliesToType(DatabaseType.VARIATION);
 	}
 
+	@Override
+	public void types() {
+		addAppliesToType(DatabaseType.VARIATION);
+	}
+	
 	@Override
 	protected String getDefinitionFileKey() {
 		return "variation_schema.file";
