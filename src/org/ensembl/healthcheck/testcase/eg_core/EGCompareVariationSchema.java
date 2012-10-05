@@ -22,7 +22,7 @@ public class EGCompareVariationSchema extends EGAbstractCompareSchema {
 
 	@Override
 	public void types() {
-		addAppliesToType(DatabaseType.VARIATION);
+		setAppliesToType(DatabaseType.VARIATION);
 	}
 	
 	@Override
