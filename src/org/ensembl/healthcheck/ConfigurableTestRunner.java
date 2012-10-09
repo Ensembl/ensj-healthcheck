@@ -38,16 +38,16 @@ public class ConfigurableTestRunner extends TestRunner {
 	/**
 	 * 
 	 */
-	private static final String GET_DIVISION_DBS = "select division_db.db_name from division_db " +
-			"join division using (division_id) where division_db.is_current=1 and (division.name=? or division.shortname=?)";
+	private static final String GET_DIVISION_DBS = "select division_db.db_name from division_db "
+			+ "join division using (division_id) where division_db.is_current=1 and (division.name=? or division.shortname=?)";
 
 	/**
 	 * 
 	 */
-	private static final String GET_DIVISION_SPECIES_DBS = "select " +
-			"concat(species.db_name,'_',db.db_type,'_',db.db_release,'_',db.db_assembly) from db " +
-			"join species using (species_id) join division_species using (species_id) " +
-			"join division using (division_id) where db.is_current=1 and species.is_current=1 and (division.name=? or division.shortname=?)";
+	private static final String GET_DIVISION_SPECIES_DBS = "select "
+			+ "concat(species.db_name,'_',db.db_type,'_',db.db_release,'_',db.db_assembly) from db "
+			+ "join species using (species_id) join division_species using (species_id) "
+			+ "join division using (division_id) where db.is_current=1 and species.is_current=1 and (division.name=? or division.shortname=?)";
 
 	static final Logger log = Logger.getLogger(ConfigurableTestRunner.class
 			.getCanonicalName());
@@ -315,33 +315,41 @@ public class ConfigurableTestRunner extends TestRunner {
 		// Notice the elegant downcast happening here
 		DatabaseServer ds = connectToDatabase(configuration);
 
-                List<String> testDatabases = new ArrayList<String>(getTestDatabases());
+		List<String> testDatabases = new ArrayList<String>(getTestDatabases());
 
-                Species globalSpecies = null;
+		Species globalSpecies = null;
 
-                if (configuration.isSpecies()) {
-                        globalSpecies = Species.resolveAlias(configuration.getSpecies());
-                        if (globalSpecies != Species.UNKNOWN) {
-                                logger.info("Will override guessed species with " + globalSpecies + " for all databases");
-                        } else {
-                                logger.severe("Argument " + configuration.getSpecies() + " to -species not recognised");
-                        }
-                }
+		if (configuration.isSpecies()) {
+			globalSpecies = Species.resolveAlias(configuration.getSpecies());
+			if (globalSpecies != Species.UNKNOWN) {
+				logger.info("Will override guessed species with "
+						+ globalSpecies + " for all databases");
+			} else {
+				String msg = "Argument " + configuration.getSpecies()
+						+ " to -species not recognised";
+				logger.severe(msg);
+				throw new ConfigurationException(msg);
+			}
+		}
 
-                DatabaseType globalDatabaseType = null;
+		DatabaseType globalDatabaseType = null;
 
-                if (configuration.isDbType()) {
-                        globalDatabaseType = DatabaseType.resolveAlias(configuration.getDbType());
-                        if (globalDatabaseType != DatabaseType.UNKNOWN) { 
-                                logger.info("Will override guessed database types with " + globalDatabaseType + " for all databases");
-                        } else {
-                                logger.severe("Argument " + configuration.getDbType() + " to -type not recognised");
-                        }
-                }
+		if (configuration.isDbType()) {
+			globalDatabaseType = DatabaseType.resolveAlias(configuration
+					.getDbType());
+			if (globalDatabaseType != DatabaseType.UNKNOWN) {
+				logger.info("Will override guessed database types with "
+						+ globalDatabaseType + " for all databases");
+			} else {
+				String msg = "Argument " + configuration.getDbType()
+						+ " to -type not recognised";
+				logger.severe(msg);
+				throw new ConfigurationException(msg);
+			}
+		}
 
-                DatabaseRegistry databasesToTestRegistry = new DatabaseRegistry(
-                                testDatabases, globalDatabaseType, globalSpecies, false
-                );
+		DatabaseRegistry databasesToTestRegistry = new DatabaseRegistry(
+				testDatabases, globalDatabaseType, globalSpecies, false);
 
 		if (databasesToTestRegistry.getAll().length == 0) {
 			logger.warning("Warning: no databases configured!");
@@ -412,14 +420,16 @@ public class ConfigurableTestRunner extends TestRunner {
 
 	protected Collection<String> getTestDatabases() {
 		Collection<String> dbs = new HashSet<String>();
-		if (configuration.isTestDatabases() && configuration.getTestDatabases().size()>0) {
-			for(String db: configuration.getTestDatabases()) {
-				if(!StringUtils.isEmpty(db)) {
+		if (configuration.isTestDatabases()
+				&& configuration.getTestDatabases().size() > 0) {
+			for (String db : configuration.getTestDatabases()) {
+				if (!StringUtils.isEmpty(db)) {
 					dbs.add(db);
 				}
 			}
 		}
-		if (configuration.isDivisions() && configuration.getDivisions().size()>0) {
+		if (configuration.isDivisions()
+				&& configuration.getDivisions().size() > 0) {
 			if (!configuration.isProductionDatabase()
 					&& !configuration.isOutputHost()) {
 				throw new ConfigurationException(
@@ -455,7 +465,7 @@ public class ConfigurableTestRunner extends TestRunner {
 				}
 			}
 		}
-		if(dbs.isEmpty()) {
+		if (dbs.isEmpty()) {
 			throw new ConfigurationException(
 					"No test databases found - Parameters test_databases or test_divisions have not been set!");
 		}
