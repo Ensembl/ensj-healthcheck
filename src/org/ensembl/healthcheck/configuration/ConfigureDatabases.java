@@ -37,7 +37,7 @@ public interface ConfigureDatabases {
         String getSpecies();
         boolean isSpecies();
 
-        @Option(shortName = "t", longName = "dbtype", description = "If set, this will be used as the type for all databases.")
+        @Option(longName = "dbtype", description = "If set, this will be used as the type for all databases.")
         String getDbType();
         boolean isDbType();
 	
