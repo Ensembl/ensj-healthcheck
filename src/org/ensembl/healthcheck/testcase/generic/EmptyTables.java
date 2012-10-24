@@ -177,12 +177,6 @@ public class EmptyTables extends SingleDatabaseTestCase {
 		String[] tables = getTablesToCheck(dbre);
 		Connection con = dbre.getConnection();
 
-		// if there is only one coordinate system then there's no assembly
-		if (DBUtils.getRowCount(con, "SELECT COUNT(*) FROM coord_system") == 1) {
-			tables = Utils.removeStringFromArray(tables, "assembly");
-			logger.finest(dbre.getName() + " has only one coord_system, assembly table can be empty");
-		}
-
 		for (int i = 0; i < tables.length; i++) {
 
 			String table = tables[i];
