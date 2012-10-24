@@ -50,8 +50,8 @@ public class GeneDescription extends AbstractRowCountTestCase {
 	}
 	
 	@Override
-	protected String getErrorMessage() {
-		return "$actual$ genes found with null descriptions";
+	protected String getErrorMessage(int count) {
+		return count+" genes found with null descriptions";
 	}
 
 }

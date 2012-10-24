@@ -47,7 +47,7 @@ public class GeneDescriptionNewline extends AbstractRowCountTestCase {
 		return "select count(*) from gene where description like '%\\n%'";
 	}
 	@Override
-	protected String getErrorMessage() {
-		return "$actual$ genes found with newlines in descriptions";
+	protected String getErrorMessage(int count) {
+		return count + " genes found with newlines in descriptions";
 	}
 }

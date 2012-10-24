@@ -51,8 +51,8 @@ public class DisplayXrefId extends AbstractRowCountTestCase {
 	}
 
 	@Override
-	protected String getErrorMessage() {
-		return "$actual$ genes with non-novel status found with null display_xref_id";
+	protected String getErrorMessage(int count) {
+		return count+" genes with non-novel status found with null display_xref_id";
 	}
 	
 

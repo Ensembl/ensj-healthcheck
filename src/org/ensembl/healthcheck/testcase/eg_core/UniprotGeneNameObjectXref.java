@@ -56,9 +56,8 @@ public class UniprotGeneNameObjectXref extends AbstractRowCountTestCase {
 	 * ()
 	 */
 	@Override
-	protected String getErrorMessage() {
-		return "Found more than "
-				+ getExpectedCount()
+	protected String getErrorMessage(int count) {
+		return "Found " + count
 				+ " Uniprot_genename entries in object_xref - these should be removed from object_xref";
 	}
 

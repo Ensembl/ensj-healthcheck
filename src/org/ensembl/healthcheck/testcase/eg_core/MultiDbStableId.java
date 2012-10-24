@@ -40,6 +40,7 @@ public class MultiDbStableId extends MultiDatabaseTestCase {
 			Map<String, Collection<String>> stableIds = CollectionUtils
 					.createHashMap();
 			for (DatabaseRegistryEntry coreDb : dbr.getAll(DatabaseType.CORE)) {
+				System.out.println("TYPE:"+coreDb.getType()+" from "+coreDb.getName());
 				if (!coreDb.getName().contains(
 						DatabaseType.OTHERFEATURES.getName())) {
 					ReportManager.info(this, coreDb.getConnection(),

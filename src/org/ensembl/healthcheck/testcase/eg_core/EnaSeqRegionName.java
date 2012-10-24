@@ -55,7 +55,7 @@ public class EnaSeqRegionName extends AbstractIntegerTestCase {
 	 * ()
 	 */
 	@Override
-	protected String getErrorMessage() {
+	protected String getErrorMessage(int count) {
 		return "No seq_regions annotated as ENA found "
 				+ "- must have a name of the form %.% and a seq_region_attrib of type 'external_db' and value 'ENA'";
 	}

@@ -59,8 +59,8 @@ public class PepstatsTranslationAttribs extends AbstractIntegerTestCase {
 	 * ()
 	 */
 	@Override
-	protected String getErrorMessage() {
-		return "Translations without pepstats attribs found";
+	protected String getErrorMessage(int count) {
+		return count + " translations without pepstats attribs found";
 	}
 
 }

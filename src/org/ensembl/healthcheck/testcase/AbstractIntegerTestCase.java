@@ -37,7 +37,7 @@ public abstract class AbstractIntegerTestCase extends AbstractTemplatedTestCase 
 		if(testValue(count)) {
 			return true;
 		} else {
-			ReportManager.problem(this, dbre.getConnection(), TemplateBuilder.template(getErrorMessage(), "actual", count));
+			ReportManager.problem(this, dbre.getConnection(), getErrorMessage(count));
 			return false;
 		}
 	}
@@ -56,6 +56,6 @@ public abstract class AbstractIntegerTestCase extends AbstractTemplatedTestCase 
 	 */
 	protected abstract boolean testValue(int value);
 	
-	protected abstract String getErrorMessage();
+	protected abstract String getErrorMessage(int value);
 
 }
