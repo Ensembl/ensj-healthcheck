@@ -43,7 +43,7 @@ public class AssemblySeqregion extends SingleDatabaseTestCase {
 		addToGroup("compara-ancestral");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
-		
+
 		setDescription("Check that the chromosome lengths from the seq_region table agree with both the assembly table and the karyotype table.");
 		setTeamResponsible(Team.CORE);
 		setSecondTeamResponsible(Team.GENEBUILD);
@@ -52,7 +52,7 @@ public class AssemblySeqregion extends SingleDatabaseTestCase {
 
 	/**
 	 * @param dbre
-	 *          The database to use.
+	 *            The database to use.
 	 * @return The test case result.
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
@@ -62,13 +62,19 @@ public class AssemblySeqregion extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		// ---------------------------------------------------
-		// Find any seq_regions that have different lengths in seq_region & assembly
-		// NB seq_region length should always be equal to (or possibly greater than) the maximum
+		// Find any seq_regions that have different lengths in seq_region &
+		// assembly
+		// NB seq_region length should always be equal to (or possibly greater
+		// than) the maximum
 		// assembly length
 		// The SQL returns failures
 		// ----------------------------------------------------
-		String sql = "SELECT sr.name AS name, sr.length, cs.name AS coord_system " + "FROM seq_region sr, assembly ass, coord_system cs " + "WHERE sr.coord_system_id=cs.coord_system_id "
-				+ "AND ass.asm_seq_region_id = sr.seq_region_id " + "GROUP BY ass.asm_seq_region_id " + "HAVING sr.length < MAX(ass.asm_end)";
+		String sql = "SELECT sr.name AS name, sr.length, cs.name AS coord_system "
+				+ "FROM seq_region sr, assembly ass, coord_system cs "
+				+ "WHERE sr.coord_system_id=cs.coord_system_id "
+				+ "AND ass.asm_seq_region_id = sr.seq_region_id "
+				+ "GROUP BY ass.asm_seq_region_id "
+				+ "HAVING sr.length < MAX(ass.asm_end)";
 
 		try {
 
@@ -79,41 +85,86 @@ public class AssemblySeqregion extends SingleDatabaseTestCase {
 				result = false;
 				String cs = rs.getString("coord_system");
 				String sr = rs.getString("name");
-				ReportManager.problem(this, con, cs + " " + sr + " is shorter in seq_region than in assembly");
+				ReportManager.problem(this, con, cs + " " + sr
+						+ " is shorter in seq_region than in assembly");
 			}
 			if (i == 0) {
-				ReportManager.correct(this, con, "Sequence region lengths are equal or greater in the seq_region table compared to the assembly table");
+				ReportManager
+						.correct(
+								this,
+								con,
+								"Sequence region lengths are equal or greater in the seq_region table compared to the assembly table");
 			}
 		} catch (SQLException e) {
 			System.err.println("Error executing " + sql + ":");
 			e.printStackTrace();
 		}
 
-		// -------------------------------------------------------
-		// check various other things about the assembly table
-		// Check for mismatched lengths of assembled and component sides.
-		// ie where (asm_end - asm_start + 1) != (cmp_end - cmp_start + 1)
-		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM assembly WHERE (asm_end - asm_start + 1) != (cmp_end - cmp_start + 1)");
-		if (rows > 0) {
-			ReportManager.problem(this, con, rows + " rows in assembly table have mismatched lengths of assembled and component sides");
+		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM assembly");
+		if (rows == 0) {
+			ReportManager.problem(this, con, rows
+					+ " rows found in assembly table");
 		} else {
-			ReportManager.correct(this, con, "All rows in assembly table have matching lengths of assembled and component sides");
-		}
+			ReportManager.correct(this, con, "Assembly table is populated");
 
-		// check for start/end < 1
-		rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM assembly WHERE asm_start < 1 OR asm_end < 1 OR cmp_start < 1 OR cmp_end < 1");
-		if (rows > 0) {
-			ReportManager.problem(this, con, rows + " rows in assembly table have start or end coords < 1");
-		} else {
-			ReportManager.correct(this, con, "All rows in assembly table have start and end coords > 0");
-		}
+			// -------------------------------------------------------
+			// check various other things about the assembly table
+			// Check for mismatched lengths of assembled and component sides.
+			// ie where (asm_end - asm_start + 1) != (cmp_end - cmp_start + 1)
+			rows = DBUtils
+					.getRowCount(
+							con,
+							"SELECT COUNT(*) FROM assembly WHERE (asm_end - asm_start + 1) != (cmp_end - cmp_start + 1)");
+			if (rows > 0) {
+				ReportManager
+						.problem(
+								this,
+								con,
+								rows
+										+ " rows in assembly table have mismatched lengths of assembled and component sides");
+			} else {
+				ReportManager
+						.correct(
+								this,
+								con,
+								"All rows in assembly table have matching lengths of assembled and component sides");
+			}
 
-		// check for end < start
-		rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM assembly WHERE asm_end < asm_start OR cmp_end < cmp_start");
-		if (rows > 0) {
-			ReportManager.problem(this, con, rows + " rows in assembly table have start or end coords < 1");
-		} else {
-			ReportManager.correct(this, con, "All rows in assembly table have end coords > start coords");
+			// check for start/end < 1
+			rows = DBUtils
+					.getRowCount(
+							con,
+							"SELECT COUNT(*) FROM assembly WHERE asm_start < 1 OR asm_end < 1 OR cmp_start < 1 OR cmp_end < 1");
+			if (rows > 0) {
+				ReportManager
+						.problem(
+								this,
+								con,
+								rows
+										+ " rows in assembly table have start or end coords < 1");
+			} else {
+				ReportManager
+						.correct(this, con,
+								"All rows in assembly table have start and end coords > 0");
+			}
+
+			// check for end < start
+			rows = DBUtils
+					.getRowCount(
+							con,
+							"SELECT COUNT(*) FROM assembly WHERE asm_end < asm_start OR cmp_end < cmp_start");
+			if (rows > 0) {
+				ReportManager
+						.problem(
+								this,
+								con,
+								rows
+										+ " rows in assembly table have start or end coords < 1");
+			} else {
+				ReportManager
+						.correct(this, con,
+								"All rows in assembly table have end coords > start coords");
+			}
 		}
 
 		return result;
