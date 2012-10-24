@@ -131,7 +131,7 @@ public class CheckDeclarations extends SingleDatabaseTestCase {
     Connection con = dbre.getConnection();
     Connection previousCon = sec.getConnection();
 
-    String sql = "SELECT count(*) FROM repeat_feature";
+    String sql = "CHECKSUM table repeat_feature";
     int currentRepeats = DBUtils.getRowCount(con, sql);
     int previousRepeats = DBUtils.getRowCount(previousCon, sql);
 
@@ -153,7 +153,7 @@ public class CheckDeclarations extends SingleDatabaseTestCase {
     Connection con = dbre.getConnection();
     Connection previousCon = sec.getConnection();
 
-    String sql = "SELECT count(*) FROM gene";
+    String sql = "CHECKSUM table gene";
     int currentGenes = DBUtils.getRowCount(con, sql);
     int previousGenes = DBUtils.getRowCount(previousCon, sql);
 
