@@ -179,7 +179,19 @@ public class GuiTestRunner {
                             
                             testCase.types();
                             
-                            boolean passed = ((SingleDatabaseTestCase) testCase).run(currentDbre);
+                            boolean passed = false;
+                            try {
+                            	passed = ((SingleDatabaseTestCase) testCase).run(currentDbre);
+                            }
+                            catch (Exception e) {
+                            	
+                            	ReportManager.report(
+                            			testCase, 
+                            			currentDbre.getConnection(), 
+                            			ReportLine.PROBLEM,
+                            			testCase.getShortTestName() + " threw an exception: " + e.getMessage()
+                            	);
+                            }
                             
                             // If a test has not reported anything to the 
                             // report manager, there will not be any report. 
