@@ -140,7 +140,7 @@ public class Karyotype extends SingleDatabaseTestCase {
                                 ReportManager.problem(this, con, "Chromosome entry exists but no karyotype attrib is present");
                         }
                         int mt = t.queryForDefaultObject(sqlMT, Integer.class);
-                        if (mt == 0) {
+                        if (mt == 0 && dbre.getType() != DatabaseType.SANGER_VEGA) {
                                 result = false;
                                 ReportManager.problem(this, con, "Species has chromosomes but no MT");
                         }
