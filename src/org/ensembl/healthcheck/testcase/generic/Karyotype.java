@@ -140,9 +140,9 @@ public class Karyotype extends SingleDatabaseTestCase {
                                 ReportManager.problem(this, con, "Chromosome entry exists but no karyotype attrib is present");
                         }
                         int mt = t.queryForDefaultObject(sqlMT, Integer.class);
-                        if (attrib == 0) {
+                        if (mt == 0) {
                                 result = false;
-                                ReportManager.problem(this, con, "Species has a karyotype but MT is not part of it");
+                                ReportManager.problem(this, con, "Species has chromosomes but no MT");
                         }
                 } 
         return result;
