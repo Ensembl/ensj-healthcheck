@@ -48,7 +48,6 @@ public class EGCoreGeneModelCritical extends GroupOfTests {
 			AssemblySeqregion.class, 
 			CanonicalTranscriptCoding.class,
 			CircularAwareFeatureCoords.class, 
-			CompareSchema.class, 
 			EGCompareCoreSchema.class,
 			CoreForeignKeys.class,
 			DuplicateAssembly.class, 
