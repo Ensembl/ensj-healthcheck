@@ -14,7 +14,6 @@ import org.ensembl.healthcheck.testcase.generic.AssemblyMapping;
 import org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap;
 import org.ensembl.healthcheck.testcase.generic.AssemblySeqregion;
 import org.ensembl.healthcheck.testcase.generic.CanonicalTranscriptCoding;
-import org.ensembl.healthcheck.testcase.generic.CompareSchema;
 import org.ensembl.healthcheck.testcase.generic.CoreForeignKeys;
 import org.ensembl.healthcheck.testcase.generic.DuplicateAssembly;
 import org.ensembl.healthcheck.testcase.generic.ExonRank;
