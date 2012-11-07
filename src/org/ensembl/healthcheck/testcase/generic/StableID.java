@@ -96,8 +96,8 @@ public class StableID extends SingleDatabaseTestCase {
 			if (dbre.getType() == DatabaseType.CORE) {// for sangervega, do not check the prefixes
 				result &= checkPrefixes(dbre);
         			result &= checkStableIDEventTypes(con);
+                                result = checkStableIDTimestamps(con);
                         }
-                        result = checkStableIDTimestamps(con);
 		}
 
 		return result;
