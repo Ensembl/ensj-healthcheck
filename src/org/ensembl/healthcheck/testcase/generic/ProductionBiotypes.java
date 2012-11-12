@@ -12,26 +12,18 @@
  */
 package org.ensembl.healthcheck.testcase.generic;
 
-import java.sql.Connection;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-
-
+import java.util.Set;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
-import org.ensembl.healthcheck.util.Utils;
 import org.ensembl.healthcheck.util.SqlTemplate;
 
 
@@ -207,18 +199,18 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
     return new HashSet<String>(results);
   }
 
-  private boolean checkHasTranscriptBiotype(DatabaseRegistryEntry dbre, Set<String> biotypeGroup, String gene) {
-    SqlTemplate t = DBUtils.getSqlTemplate(dbre);
-    String databaseType = dbre.getType().getName();
-    boolean result = false;
-    Set<String> biotypes = getBiotypeFromGrouping(dbre, biotypeGroup, "transcript", databaseType);
-    String list = getListBiotypes(biotypes);
-    int rows = DBUtils.getRowCount(dbre.getConnection(), "SELECT COUNT(*) FROM transcript t, gene g where g.gene_id = t.gene_id and g.stable_id = '" + gene + "' and t.biotype in (" + list + ")");
-    if (rows > 0){
-      result = true;
-    }
-    return result;
-  }
+//  private boolean checkHasTranscriptBiotype(DatabaseRegistryEntry dbre, Set<String> biotypeGroup, String gene) {
+//    SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+//    String databaseType = dbre.getType().getName();
+//    boolean result = false;
+//    Set<String> biotypes = getBiotypeFromGrouping(dbre, biotypeGroup, "transcript", databaseType);
+//    String list = getListBiotypes(biotypes);
+//    int rows = DBUtils.getRowCount(dbre.getConnection(), "SELECT COUNT(*) FROM transcript t, gene g where g.gene_id = t.gene_id and g.stable_id = '" + gene + "' and t.biotype in (" + list + ")");
+//    if (rows > 0){
+//      result = true;
+//    }
+//    return result;
+//  }
 
   private List<String> getGene(DatabaseRegistryEntry dbre, Set<String> biotypeGroup, String databaseType) {
     SqlTemplate t = DBUtils.getSqlTemplate(dbre);
