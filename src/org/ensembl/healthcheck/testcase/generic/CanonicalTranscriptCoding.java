@@ -181,7 +181,7 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 		// --------------------------------
 		// None of the transcripts that have a translation and have a biotype different to
 		// ('protein_coding','IG_C_gene','IG_D_gene','IG_J_gene','IG_V_gene')) should be canonical transcripts to any gene.
-		sql = "SELECT COUNT(*) FROM gene g WHERE g.canonical_transcript_id IN (select tr.transcript_id FROM transcript tr, translation tl WHERE tr.transcript_id=tl.transcript_id AND tr.biotype NOT IN ('protein_coding','IG_C_gene','IG_D_gene','IG_J_gene','IG_V_gene', 'IG_LV_gene', 'TR_C_gene','TR_J_gene','TR_V_gene', 'TR_D_gene','LRG_gene', 'nonsense_mediated_decay','polymorphic_pseudogene'";
+		sql = "SELECT COUNT(distinct g.gene_id) FROM gene g WHERE g.canonical_transcript_id IN (select tr.transcript_id FROM transcript tr, translation tl WHERE tr.transcript_id=tl.transcript_id AND tr.biotype NOT IN ('protein_coding','IG_C_gene','IG_D_gene','IG_J_gene','IG_V_gene', 'IG_LV_gene', 'TR_C_gene','TR_J_gene','TR_V_gene', 'TR_D_gene','LRG_gene', 'nonsense_mediated_decay','polymorphic_pseudogene'";
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sangervega ignore genes that do not have source havana or WU
 			sql += ", 'polymorphic','IG_gene','TR_gene')) and (g.source='havana' or g.source='WU')";
 		} else {
@@ -203,7 +203,7 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 		// --------------------------------
 		// A gene that has gene.biotype='protein_coding' and has at least one transcript.biotype='protein_coding' should have a
 		// canonical transcript.biotype='protein_coding'.
-		sql = "SELECT count(*) FROM gene g JOIN transcript t USING (gene_id) WHERE g.gene_id IN (SELECT g.gene_id FROM gene g JOIN transcript t ON (g.canonical_transcript_id = t.transcript_id) WHERE g.biotype = 'protein_coding' AND t.biotype != 'protein_coding') AND t.biotype = 'protein_coding'";
+		sql = "SELECT count(distinct g.gene_id) FROM gene g JOIN transcript t USING (gene_id) WHERE g.gene_id IN (SELECT g.gene_id FROM gene g JOIN transcript t ON (g.canonical_transcript_id = t.transcript_id) WHERE g.biotype = 'protein_coding' AND t.biotype != 'protein_coding') AND t.biotype = 'protein_coding'";
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sangervega ignore genes that do not have source havana or WU
 			sql += " and (g.source='havana' or g.source='WU')";
 		}
