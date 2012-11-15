@@ -75,7 +75,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 			
 		}
 
-		if (!isSangerVega) {// do not check for sangervega
+		if (!isSangerVega && dbre.getType() != DatabaseType.VEGA) {// do not check for sangervega
 			result &= checkOverlappingRegions(con);
 		}
 
@@ -682,6 +682,10 @@ public class MetaValues extends SingleDatabaseTestCase {
 			ReportManager.problem(this, con, "No assembly.accession entry present in Meta table");
 			return false;
 		}
+                if (!currentAssemblyAccession.matches("^GC.*")){
+                        ReportManager.problem(this, con, "Meta key assembly.accession does not start with GC");
+                        return false;
+                }
 		if (currentAssemblyName.equals("")) {
 			ReportManager.problem(this, con, "No assembly.name entry present in Meta table");
 			return false;
