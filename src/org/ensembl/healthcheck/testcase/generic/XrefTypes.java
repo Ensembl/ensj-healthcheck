@@ -66,7 +66,7 @@ public class XrefTypes extends SingleDatabaseTestCase {
 			// execute it and loop over each row checking for > 1 consecutive row with same ID
 
 			ResultSet rs = stmt
-					.executeQuery("SELECT x.external_db_id, ox.ensembl_object_type, COUNT(*), e.db_name FROM xref x, object_xref ox, external_db e WHERE x.xref_id = ox.xref_id AND e.external_db_id = x.external_db_id GROUP BY x.external_db_id, ox.ensembl_object_type");
+					.executeQuery("SELECT  x.external_db_id, ox.ensembl_object_type, COUNT(*), e.db_name FROM object_xref ox, external_db e, xref x LEFT JOIN transcript t ON t.display_xref_id = x.xref_id WHERE x.xref_id = ox.xref_id AND e.external_db_id = x.external_db_id AND isnull(transcript_id) GROUP BY x.external_db_id, ox.ensembl_object_type");
 
 			try {
 				long previousID = -1;
