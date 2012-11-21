@@ -58,6 +58,7 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
     String[] genotypeTables         = { "compressed_genotype_region", "compressed_genotype_var" };
     String[] coverageTables         = { "read_coverage" };
     String[] strainTables           = { "strain_gtype_poly" };
+    String[] regulatoryTables       = { "motif_feature_variation", "regulatory_feature_variation" };
 
     // first drop the unused tables
 
@@ -70,6 +71,8 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
       tables = remove(tables, setTables);
     }
 
+    
+    
     // only these species have coverage data
 
     if (species != Species.RATTUS_NORVEGICUS && species != Species.MUS_MUSCULUS && species != Species.PONGO_ABELII && species != Species.HOMO_SAPIENS) {
@@ -92,6 +95,12 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 
     if (species != Species.HOMO_SAPIENS && species != Species.RATTUS_NORVEGICUS && species != Species.MUS_MUSCULUS) {
       tables = remove(tables, strainTables);
+    }
+    
+    // only these species have regulatory data
+
+    if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS) {
+      tables = remove(tables, regulatoryTables);
     }
     
     return tables;
