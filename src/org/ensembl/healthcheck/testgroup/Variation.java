@@ -15,7 +15,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.variation.VariationForeignKeys </li> 
  *   <li> org.ensembl.healthcheck.testcase.variation.TranscriptVariation </li> 
  *   <li> org.ensembl.healthcheck.testcase.variation.EmptyVariationTables </li>
- *   <li> org.ensembl.healthcheck.testcase.variation.FlankingUpDownSeq </li> 
  *   <li> org.ensembl.healthcheck.testcase.variation.Meta </li> 
  *   <li> org.ensembl.healthcheck.testcase.variation.CompressedGenotypeRegion </li> 
  *   <li> org.ensembl.healthcheck.testcase.variation.CompareVariationSchema </li> 
@@ -38,7 +37,6 @@ public class Variation extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.variation.VariationForeignKeys.class,
 			org.ensembl.healthcheck.testcase.variation.TranscriptVariation.class,
 			org.ensembl.healthcheck.testcase.variation.EmptyVariationTables.class,
-			org.ensembl.healthcheck.testcase.variation.FlankingUpDownSeq.class,
 			org.ensembl.healthcheck.testcase.variation.Meta.class,
 			org.ensembl.healthcheck.testcase.variation.CompressedGenotypeRegion.class,
 			org.ensembl.healthcheck.testcase.variation.CompareVariationSchema.class
