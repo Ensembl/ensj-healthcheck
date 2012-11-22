@@ -185,8 +185,9 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 						"where ss.type='feature' and ss.data_set_id=" + dsetID);	
 			                                                                                                	
 				count = 0;
-				String[] metaFsetIDs  = ((String) fsInfo.get("feature_set_ids")).split(",\\s*");
-				String[] metaFtypeIDs = ((String) fsInfo.get("feature_type_ids")).split(",\\s*");
+				String[] metaFsetIDs       = ((String) fsInfo.get("feature_set_ids")).split(",\\s*");
+        String   metaFtypeIDString = (String) fsInfo.get("feature_type_ids");
+				String[] metaFtypeIDs      = metaFtypeIDString.split(",\\s*");
 				
 				//String[] ssFsetIDs    = (String[])((Array) rsDsetSupport.getArray("ss_feature_set_id")).getArray();
 				//String[] fsFsetIDs    = (String[])((Array) rsDsetSupport.getArray("fs_feature_set_id")).getArray();
@@ -260,29 +261,46 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 				for(int i=0; i < metaFFsetIDs.length; i++){
 				
 					if(metaFFsetIDs[i].equals("")){
-						//List of single empty value indicates empty meta_value i.e. projection build
-						ReportManager.problem(this, efgCon, "Found empty regbuild." + fsInfo.get("cell_type") 
-											  + ".focus_feature_set_ids regbuild_string. Is this really a projection build?");
-						result = false;
-						continue;
-					}
+              //Now test whether any of the feature_type_ids are of core class
+              //ResultSet.getFetchSize() does not work for MySQL :/ Just returns 0
+              //If fetching ftype name would have to process the whole ResultSet before we can get thr true size
+              //Not that useful to list them, so just print some useful SQL and count instead
 
-					
-					if(! Arrays.asList(metaFsetIDs).contains(metaFFsetIDs[i])){
-						ReportManager.problem
-							(
-							 this, efgCon, "Found feature_set_id(" + metaFFsetIDs[i] + 
-							 ") in regbuild_string:\t" + "regbuild." + fsInfo.get("cell_type") +
-							 ".focus_feature_set_ids which is not present in regbuild." 
-							 + fsInfo.get("cell_type") + ".feature_set_ids");
-						result = false;	
-						//sqlSafe = false;// Is it just the focus key that is wrong?
-						//Will have already set this otherwise
-						continue;
+              ResultSet ftypesRset = stmt.executeQuery("SELECT count(feature_type_id) as num_ftypes from feature_type where feature_type_id in("
+                                                            + metaFtypeIDString + 
+                                                            ") and class in ('Open Chromatin', 'Transcription Factor' ,'Transcription Factor Complex')");
+
+              ftypesRset.next();
+              int numCoreFsets = ftypesRset.getInt("num_ftypes");//This just returns 0 anyway!!
+
+              if(numCoreFsets != 0){
+                  //Useful SQL here?
+                  //To list the offending feature sets or
+                  //just to correct the regbuild strings?
+                  //these should have been corrected by update_DB_for_release?
+
+                  ReportManager.problem(this, efgCon, "Found empty regbuild." + fsInfo.get("cell_type") 
+                                        + ".focus_feature_set_ids regbuild_string. Is this really a projection build?");
+                  result = false;
+                  continue;
+              }
 					}
+          else{
 					
-					//Could check feature_type is_focus here too?					
-				}
+              if(! Arrays.asList(metaFsetIDs).contains(metaFFsetIDs[i])){
+                  ReportManager.problem
+                      (
+                       this, efgCon, "Found feature_set_id(" + metaFFsetIDs[i] + 
+                       ") in regbuild_string:\t" + "regbuild." + fsInfo.get("cell_type") +
+                       ".focus_feature_set_ids which is not present in regbuild." 
+                       + fsInfo.get("cell_type") + ".feature_set_ids");
+                  result = false;	
+                  //sqlSafe = false;// Is it just the focus key that is wrong?
+                  //Will have already set this otherwise
+                  continue;
+              }
+          }
+        }
 				
 				//Could check length matches for MultiCell set?
 				//Could actually remove this meta_key for MultiCell as it should be the same feature_set_ids?
