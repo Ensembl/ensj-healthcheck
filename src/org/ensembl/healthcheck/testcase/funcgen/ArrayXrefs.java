@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Arrays;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
@@ -79,8 +80,8 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 		 *  Change xref counting to include all db versions, warn if more than one and fail if some are missing
 		 *  Write perl script to log counts?
 		 */
-
-
+    
+    
 	
 		// Check if there are any DISPLAYABLE Arrays - if so there should be  Xrefs
 		// Checks EPXRESSION and CGH arrays only
@@ -230,45 +231,57 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 
 			//We really need to match the genebuild between the edb and the schema_build
 			//otherwise we have out of date data?
-			//Not enirely true, there are plenty of data changes which can cause a version bump which don't affect array mapping
-			
-					
-			String[] exdbIDs = DBUtils.getColumnValues(efgCon, "select external_db_id from external_db where db_name='" + edbName 
-											   + "' and db_release like '%\\_" + assemblyBuild[1] + "'");
-
-			//Catch absent edbs
+			//Not enirely true, there are plenty of data changes which can cause a version bump which don't affect array mapping				
+      
+      //Let's just get all of them first, and warn if there are any which don't match the assemblyBuild
+      String [] exdbIDs = DBUtils.getColumnValues
+          (
+           efgCon, "select distinct edb.external_db_id from external_db edb " + 
+           " join xref x on edb.external_db_id=x.external_db_id join object_xref ox on x.xref_id=ox.xref_id " + 
+           " and ox.ensembl_object_type in ('Probe', 'ProbeFeature', 'ProbeSet')"
+           );
+ 
+      //Catch absent edbs
 
 			if(exdbIDs.length == 0){
-				ReportManager.problem(this, efgCon, "Could not identify external_db " + edbName + " with db_release like " + assemblyBuild[1] +
-									  "\nXrefs on older db_versions will still be reported as failed if absent");
-				
-				//Do we really want to return here, as this maybe valid and we want to run the rest of the tests.
-				//Will will still catch no xrefs later
-				//as we don't restrict to a particular edb db_version
-				//we should really catch db versions which don't match the assembly
-
-				result = false;
+          ReportManager.problem(this, efgCon, "Could not identify external_db " + edbName + " with associated Probe, ProbeFeature or ProbeSet object_xrefs");
+          result = false;      
 			}
-			else{
-
+			else{ //Handle mutliple edbs
+          
+          
 				for (int i = 0; i < exdbIDs.length; i++) {
-					if (i > 0)
-						inList.append(",");
-					inList.append(exdbIDs[i]);
-				}
+            inList.append(exdbIDs[i]);
+
+            if(i != (exdbIDs.length -1)){
+                inList.append(",");
+            }
+        }
 
 				edbClause = "and x.external_db_id in ("	+ inList + ")";
-			}
+
+        String dbReleases [] = DBUtils.getColumnValues
+            (efgCon, "select db_release from external_db where external_db_id in(" + inList + ")");
+        
+        if(exdbIDs.length == 1){ // Test it matches the assembly/build
+              
+            if(! dbReleases[0].matches(".*" + assemblyBuild[1]) ){
+                ReportManager.warning(this, efgCon, 
+                                      "Xrefs are associated with an external_db which does not match the current assembly/build:\t" +
+                                      Arrays.toString(dbReleases));
+            }
+        }
+        else{ // >1 simply list all the db_releases
+            ReportManager.warning(this, efgCon, 
+                                  "Found multiple external_db db_release versions with xrefs:\n\t" + 
+                                  Arrays.toString(dbReleases));
+        }
+      }
 		
 
-			//Set which objects we are looking for
-			//i.e. Probe or ProbeSets
-
+			//Set which objects we are looking for i.e. Probe or ProbeSets
 			int[] xrefObjects = new int[2];
-			
-		
-			
-			xrefObjects[0] = DBUtils.getRowCount(efgCon, "select count(*) from array where vendor='AFFY'");
+      xrefObjects[0] = DBUtils.getRowCount(efgCon, "select count(*) from array where vendor='AFFY'");
 			xrefObjects[1] = DBUtils.getRowCount(efgCon, "select count(*) from array where vendor!='AFFY'");
 				
 			
@@ -280,7 +293,7 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 					
 					ReportManager.problem(this, efgCon, "Has no " + arrayVendor + " arrays. " +
 										  " " + xrefObj + " xref counts will be skipped");
-					//result = false;
+					//result = false; This should be a wrning rathe than a problem as we are not returning false?
 				}
 				else{
 
