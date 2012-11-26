@@ -32,7 +32,6 @@ public class EGVariation extends GroupOfTests {
 			CompareVariationSchema.class,
 			EGCompareVariationSchema.class,
 			EmptyVariationTables.class, 
-			FlankingUpDownSeq.class,
 			ForeignKeyCoreId.class, 
 			IndividualType.class, 
 			Meta_coord.class,
