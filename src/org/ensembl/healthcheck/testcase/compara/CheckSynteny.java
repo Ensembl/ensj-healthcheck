@@ -114,6 +114,15 @@ public class CheckSynteny extends SingleDatabaseTestCase {
 						"SELECT genome_db_id FROM method_link_species_set LEFT JOIN species_set"
 								+ " USING (species_set_id) WHERE method_link_species_set_id = "
 								+ method_link_species_set_id);
+
+		/**
+		 * Looks for method_link_species_sets of GenomicAlignBlocks using the
+		 * same species set.
+		 * 
+		 * If no synteny regions can be found for the method_link_species_set, 
+		 * then the genomic align blocks will be checked.
+		 * 
+		 */
 		String[] alignment_mlss_id = DBUtils
 				.getColumnValues(
 						con,
@@ -122,10 +131,21 @@ public class CheckSynteny extends SingleDatabaseTestCase {
 								+ method_link_species_set_id
 								+ " AND mlss1.species_set_id = mlss2.species_set_id"
 								+ " AND mlss2.method_link_id = ml.method_link_id AND ml.class like 'GenomicAlignBlock%'");
+		
 		for (int i = 0; i < genome_db_ids.length; i++) {
 			String genome_db_name = DBUtils.getRowColumnValue(con,
 					"SELECT name FROM genome_db " + " WHERE genome_db_id = "
 							+ genome_db_ids[i]);
+			
+			/**
+			 * Get ids of dna_frags that are longer that 1Mb. The 'NOT LIKE'
+			 * bits exclude coord systems like
+			 * 
+			 *   - unknown_singleton
+			 *   - unknown_group and
+			 *   - chromosome_group.
+			 * 
+			 */			
 			String[] these_dnafrag_ids = DBUtils.getColumnValues(con,
 					"SELECT dnafrag_id FROM dnafrag WHERE genome_db_id = "
 							+ genome_db_ids[i]
@@ -133,7 +153,16 @@ public class CheckSynteny extends SingleDatabaseTestCase {
 							+ " AND name NOT LIKE '%\\_%'"
 							+ " AND name NOT LIKE '%Un%'"
 							+ " AND name NOT IN ('MT') AND length > 1000000");
+			
 			for (int j = 0; j < these_dnafrag_ids.length; j++) {
+				
+				/**
+				 * count is the number of synteny regions that are on the 
+				 * dnafrag tested in this iteration of the loop that belong
+				 * to the method_link_species_set being tested in this call
+				 * of the method.
+				 * 
+				 */
 				int count = DBUtils
 						.getRowCountFast(
 								con,
@@ -143,11 +172,23 @@ public class CheckSynteny extends SingleDatabaseTestCase {
 										+ method_link_species_set_id
 										+ " AND dnafrag_id = "
 										+ these_dnafrag_ids[j]);
+				/*
+				 * If synteny regions were found, this is ok, otherwise check 
+				 * alignments from genomic align blocks.
+				 * 
+				 */
 				if (count == 0) {
 					int aln_count = 0;
 					String aln_name = "";
 					String aln_mlss_id = "";
 					for (int k = 0; k < alignment_mlss_id.length; k++) {
+						
+						/**
+						 *  Name of the dna frag with the greatest amount of
+						 *  genomic alignment blocks that make hits on other
+						 *  dna frags (foreign alignments) and how many such 
+						 *  genomic alignment blocks exist on this dna frag. 
+						 */
 						String[] aln_result = DBUtils
 								.getRowValues(
 										con,
@@ -170,6 +211,11 @@ public class CheckSynteny extends SingleDatabaseTestCase {
 							aln_mlss_id = alignment_mlss_id[k];
 						}
 					}
+					
+					/*
+					 * If a dna_frag has more than 1000 foreign alignments,
+					 * this is reported as an error. 
+					 */
 					if (aln_count > 1000) {
 						String dnafrag_name = DBUtils.getRowColumnValue(con,
 								"SELECT name FROM dnafrag "
