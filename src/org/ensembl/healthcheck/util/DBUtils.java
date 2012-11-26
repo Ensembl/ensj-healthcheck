@@ -1504,9 +1504,11 @@ public final class DBUtils {
 	 */
 	public static String[] getRowValues(Connection con, String sql) {
 		List<String[]> v = getRowValuesList(con, sql);
-		if(v.isEmpty()) {
-		  throw new SqlUncheckedException("The query '"+sql+"' returned no rows. Cannot return anything");
+
+		if (v.isEmpty()) {			
+			return new String[] {};			
 		}
+
 		return v.get(0);
 	} // getRowValues
 
