@@ -16,21 +16,19 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Iterator;
 import java.text.DecimalFormat;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.logging.Logger;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.util.DBUtils;
-import org.ensembl.healthcheck.util.Utils;
 
 /**
  * Compare the gene names in the current database with those from the equivalent database on the secondary server.
@@ -72,7 +70,11 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		//this test only applies to the human db
-		if ( !dbre.getSpecies().equals(Species.HOMO_SAPIENS) ) {
+		EnumSet<Species> speciesSet = EnumSet.of(
+		    Species.HOMO_SAPIENS, Species.MUS_MUSCULUS, Species.DANIO_RERIO, Species.SUS_SCROFA);
+		Species species = dbre.getSpecies();
+		if (! speciesSet.contains(species)) {
+		  Logger.getLogger(getClass().getName()).fine("Skipping species "+species.name()+". If this is wrong edit this testcase");
 			return result;
 		}
 		
