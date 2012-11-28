@@ -106,8 +106,7 @@ public class RegulatoryFeaturePosition extends SingleDatabaseTestCase {
 			return false;
 		}
 		
-			
-		Connection coreCon = coreDbre.getConnection();
+					Connection coreCon = coreDbre.getConnection();
 		HashMap<String, String> seqRegionLen      = new HashMap<String, String>(); 
 			
 		for (Iterator<String> iter = coreSeqRegionIDName.keySet().iterator(); iter.hasNext();) {
@@ -115,7 +114,7 @@ public class RegulatoryFeaturePosition extends SingleDatabaseTestCase {
 			seqRegionLen.put(coreSrID, DBUtils.getRowColumnValue(coreCon, "select length from seq_region where seq_region_id=" + coreSrID) );
 		}
 		
-		//Now check, for each core seq region, if boundaries are passed
+		// Check if reg feat start/ends are beyond seq_region start/ends
 		Iterator<String> it = seqRegionLen.keySet().iterator();
 	
 		while(it.hasNext()){
@@ -127,8 +126,8 @@ public class RegulatoryFeaturePosition extends SingleDatabaseTestCase {
 
 			sql = "select count(regulatory_feature_id) from regulatory_feature " + 
 				"WHERE seq_region_id=" + funcgenRegionID + 
-				" AND  ((seq_region_start <= 0) OR (bound_seq_region_start <= 0) " +
-				"OR (bound_seq_region_end > " + srLength + ") OR (seq_region_end > " + srLength + "))";
+				" AND  ((seq_region_start <= 0) OR ( (seq_region_start - bound_start_length) <= 0) " +
+				"OR ( (seq_region_end + bound_end_length) > " + srLength + ") OR (seq_region_end > " + srLength + "))";
 			//< 0 should never happen as it is an insigned field!
    
 			Integer featCount = DBUtils.getRowCount(efgCon, sql); 	
@@ -151,8 +150,8 @@ public class RegulatoryFeaturePosition extends SingleDatabaseTestCase {
 
 
 				String deleteSQL = "\nDELETE ra, rf from regulatory_feature rf join regulatory_attribute ra using (regulatory_feature_id) WHERE seq_region_id=" + funcgenRegionID + 
-					" AND  ((seq_region_start <= 0) OR (bound_seq_region_start <= 0) " +
-					"OR (bound_seq_region_end > " + srLength + ") OR (seq_region_end > " + srLength + "))";
+					" AND  ((seq_region_start <= 0) OR ( (seq_region_start - bound_start_length)  <= 0) " +
+					"OR ( (seq_region_end + bound_end_length)  > " + srLength + ") OR (seq_region_end > " + srLength + "))";
 
 					String usefulSQL = sql + deleteSQL;
 
