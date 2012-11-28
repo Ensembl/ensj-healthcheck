@@ -232,7 +232,7 @@ public class TestRunner {
 	/**
 	 * Check if the given testcase can repair errors on the given database.
 	 */
-	private void checkRepair(EnsTestCase testCase,
+	protected void checkRepair(EnsTestCase testCase,
 			DatabaseRegistryEntry database) {
 
 		// check for show/do repair
