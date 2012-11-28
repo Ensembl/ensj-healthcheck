@@ -23,6 +23,9 @@ import org.ensembl.healthcheck.configurationmanager.ConfigurationException;
 import org.ensembl.healthcheck.configurationmanager.ConfigurationFactory;
 import org.ensembl.healthcheck.configurationmanager.ConfigurationFactory.ConfigurationType;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
+import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
+import org.ensembl.healthcheck.testcase.OrderedDatabaseTestCase;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.ConnectionBasedSqlTemplateImpl;
 import org.ensembl.healthcheck.util.CreateHealthCheckDB;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -313,7 +316,6 @@ public class ConfigurableTestRunner extends TestRunner {
 
 		ReportManager.setReporter(reporter);
 
-		// Notice the elegant downcast happening here
 		DatabaseServer ds = connectToDatabase(configuration);
 
 		List<String> testDatabases = new ArrayList<String>(getTestDatabases());
@@ -396,15 +398,41 @@ public class ConfigurableTestRunner extends TestRunner {
 		systemPropertySetter.setPropertiesForHealthchecks();
 
 		log.info("Running tests\n\n");
+		List<EnsTestCase> missingTest = new ArrayList<EnsTestCase>();
 		try {
-			runAllTests(databasesToTestRegistry, testRegistry, false);
+			//runAllTests(databasesToTestRegistry, testRegistry, false);
+			HashSet testsRun = runAllTestsWithAccounting(databasesToTestRegistry, testRegistry, false);
+
+			for (EnsTestCase currentTestCase : testRegistry.getAll()) {
+				
+				if (!testsRun.contains(currentTestCase)) {					
+					missingTest.add(currentTestCase);					
+				}
+			}
+
 		} catch (Throwable e) {
 			log.severe("Execution of tests failed: " + e.getMessage());
 			log.log(Level.FINE, "Execution of tests failed: " + e.getMessage(),
 					e);
 		}
+		
+		if (!missingTest.isEmpty()) {
+			
+			StringBuffer missingTestToString = new StringBuffer();
+			
+			for (EnsTestCase currentMissingTest : missingTest) {
+				missingTestToString.append("  - " + currentMissingTest.getName() + "\n");
+			}
+			
+			ReportManager.problem(
+				createFakeTestToMakeReports(), 
+				"Skipped tests", 
+				"The following tests were not run:\n" + missingTestToString
+			);
+		}
+		
 		log.info("Done running tests\n\n");
-
+		
 		boolean printFailureText = true;
 
 		log.info("Printing output by test");
@@ -421,6 +449,24 @@ public class ConfigurableTestRunner extends TestRunner {
 		return DEFAULT_PROPERTIES_FILE;
 	}
 
+	/**
+	 * <p>
+	 * Generates a Collection<String> of the databases to be tested.
+	 * </p>
+	 * 
+	 * <p>
+	 * The databases to be tested are the ones specified explicitly via the
+	 * testDatabases parameter and the ones specified by the division 
+	 * parameter.
+	 * </p> 
+	 * 
+	 * <p>
+	 * If a division parameter has been set, this method will try to query the 
+	 * production database. If a production database has not been configured,
+	 * a ConfigurationException is thrown.
+	 * </p>
+	 * 
+	 */
 	protected Collection<String> getTestDatabases() {
 		Collection<String> dbs = new HashSet<String>();
 		if (configuration.isTestDatabases()
@@ -474,6 +520,152 @@ public class ConfigurableTestRunner extends TestRunner {
 		}
 		return dbs;
 	}
+
+	/**
+	 * Run appropriate tests against databases. Also run show/repair methods if
+	 * the test implements the Repair interface and the appropriate flags are
+	 * set.
+	 * 
+	 * @param databaseRegistry
+	 *            The DatabaseRegistry to use.
+	 * @param testRegistry
+	 *            The TestRegistry to use.
+	 * @param skipSlow
+	 *            If true, skip long-running tests.
+	 */
+	protected HashSet runAllTestsWithAccounting(DatabaseRegistry databaseRegistry,
+			TestRegistry testRegistry, boolean skipSlow) {
+
+		int numberOfTestsRun = 0;
+		
+		HashSet testsRun = new HashSet();
+
+		// --------------------------------
+		// Single-database tests
+
+		// run the appropriate tests on each of them
+		for (DatabaseRegistryEntry database : databaseRegistry.getAll()) {
+
+			for (SingleDatabaseTestCase testCase : testRegistry.getAllSingle(
+					groupsToRun, database.getType())) {
+
+				if (!testCase.isLongRunning()
+						|| (testCase.isLongRunning() && !skipSlow)) {
+
+					try {
+						ReportManager.startTestCase(testCase, database);
+						logger.info("Running " + testCase.getName() + " ["
+								+ database.getName() + "]");
+
+						testCase.types();
+						
+						boolean result = testCase.run(database);
+
+						testsRun.add(testCase);
+						
+						ReportManager
+								.finishTestCase(testCase, result, database);
+						logger.info(testCase.getName() + " ["
+								+ database.getName() + "]"
+								+ (result ? "PASSED" : "FAILED"));
+
+						checkRepair(testCase, database);
+						numberOfTestsRun++;
+
+					} catch (Throwable e) {
+					  String msg = "Could not execute test "
+                + testCase.getName() + " on "
+                + database.getName() + ": " + e.getMessage();
+					  logger.log(Level.WARNING, msg, e);
+					}
+
+				} else {
+					logger.info("Skipping long-running test "
+							+ testCase.getName());
+
+				}
+
+			} // foreach test
+
+		} // foreach DB
+
+		// --------------------------------
+		// Multi-database tests
+
+		// here we just pass the whole DatabaseRegistry to each test
+		// and let the test decide what to do
+
+		for (MultiDatabaseTestCase testCase : testRegistry
+				.getAllMulti(groupsToRun)) {
+
+			if (!testCase.isLongRunning()
+					|| (testCase.isLongRunning() && !skipSlow)) {
+				try {
+					ReportManager.startTestCase(testCase, null);
+
+					logger.info("Starting test " + testCase.getName() + " ");
+
+					testCase.types();
+					boolean result = testCase.run(databaseRegistry);
+					testsRun.add(testCase);
+
+					ReportManager.finishTestCase(testCase, result, null);
+					logger.info(testCase.getName() + " "
+							+ (result ? "PASSED" : "FAILED"));
+
+					numberOfTestsRun++;
+				} catch (Throwable e) {
+				  //TODO If we had a throwable then we should mark the test as failed 
+          String msg = "Could not execute test "
+              + testCase.getName() + ": " + e.getMessage();
+          logger.log(Level.WARNING, msg, e);
+				}
+			} else {
+
+				logger.info("Skipping long-running test " + testCase.getName());
+
+			}
+
+		} // foreach test
+
+		// --------------------------------
+		// Ordered database tests
+
+		// getAll() should give back databases in the order they were specified
+		// on the command line
+		DatabaseRegistryEntry[] orderedDatabases = databaseRegistry.getAll();
+
+		for (OrderedDatabaseTestCase testCase : testRegistry
+				.getAllOrdered(groupsToRun)) {
+
+			ReportManager.startTestCase(testCase, null);
+
+			try {
+				boolean result = testCase.run(orderedDatabases);
+				testsRun.add(testCase);
+
+				ReportManager.finishTestCase(testCase, result, null);
+				logger.info(testCase.getName() + " "
+						+ (result ? "PASSED" : "FAILED"));
+			} catch (Throwable e) {
+			  //TODO If we had a throwable then we should mark the test as failed
+        String msg = "Could not execute test "
+            + testCase.getName() + ": " + e.getMessage();
+        logger.log(Level.WARNING, msg, e);
+			}
+
+			numberOfTestsRun++;
+
+		} // foreach test
+
+		// --------------------------------
+
+		if (numberOfTestsRun == 0) {
+			logger.warning("Warning: no tests were run.");
+		}
+
+		return testsRun;
+	} // runAllTests
 	
 	/**
 	 * <p>
@@ -501,18 +693,22 @@ public class ConfigurableTestRunner extends TestRunner {
 		for (DatabaseRegistryEntry currentDRE: databasesToTestRegistry.getAll()) {			
 			namesOfDbsFound.add(currentDRE.getName());			
 		}
-		FakeTestToMakeReports fakeTestToMakeReports = new FakeTestToMakeReports();
-		fakeTestToMakeReports.setTeamResponsible(Team.RELEASE_COORDINATOR);
-		
 		for (String dbName : testDatabases) {
 			if (!namesOfDbsFound.contains(dbName)) {
 				ReportManager.problem(
-					fakeTestToMakeReports, 
+					createFakeTestToMakeReports(), 
 					"Configuration problem", 
 					"Database " + dbName + " has been specified for testing, but it doesn't exist on the server!"
 				);
 			}
 		}
+	}
+	
+	protected FakeTestToMakeReports createFakeTestToMakeReports() {
+		
+		FakeTestToMakeReports fakeTestToMakeReports = new FakeTestToMakeReports();
+		fakeTestToMakeReports.setTeamResponsible(Team.RELEASE_COORDINATOR);
+		return fakeTestToMakeReports;
 	}
 
 }
