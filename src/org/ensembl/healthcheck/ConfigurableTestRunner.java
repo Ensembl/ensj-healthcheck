@@ -22,6 +22,7 @@ import org.ensembl.healthcheck.configurationmanager.ConfigurationDumper;
 import org.ensembl.healthcheck.configurationmanager.ConfigurationException;
 import org.ensembl.healthcheck.configurationmanager.ConfigurationFactory;
 import org.ensembl.healthcheck.configurationmanager.ConfigurationFactory.ConfigurationType;
+import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.util.ConnectionBasedSqlTemplateImpl;
 import org.ensembl.healthcheck.util.CreateHealthCheckDB;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -316,7 +317,7 @@ public class ConfigurableTestRunner extends TestRunner {
 		DatabaseServer ds = connectToDatabase(configuration);
 
 		List<String> testDatabases = new ArrayList<String>(getTestDatabases());
-
+		
 		Species globalSpecies = null;
 
 		if (configuration.isSpecies()) {
@@ -354,7 +355,9 @@ public class ConfigurableTestRunner extends TestRunner {
 		if (databasesToTestRegistry.getAll().length == 0) {
 			logger.warning("Warning: no databases configured!");
 		}
-
+		
+		complainAboutDatabasesNotFound(databasesToTestRegistry, testDatabases);
+		
 		if (this.reporterType == ReporterType.DATABASE) {
 
 			// Create the database to which tests will be written
@@ -471,5 +474,50 @@ public class ConfigurableTestRunner extends TestRunner {
 		}
 		return dbs;
 	}
+	
+	/**
+	 * <p>
+	 * Users specify the exact names of databases and these are used to 
+	 * initialise the DatabaseRegistry object.
+	 * </p>
+	 * 
+	 * <p>
+	 * The DatabaseRegistry however uses them as regular expressions to which
+	 * databases may match or not. If no matching database was found, it does
+	 * not complain about it. The database will appear as if it has passed.
+	 * </p>
+	 * 
+	 * <p>
+	 * This is not the desired behaviour in the configurable testrunner. If 
+	 * users misspell a database name, this should flag as an error.
+	 * </p>
+	 * 
+	 * @param databasesToTestRegistry
+	 * @param testDatabases
+	 */
+	void complainAboutDatabasesNotFound(DatabaseRegistry databasesToTestRegistry, List<String> testDatabases) {
+		
+		HashSet<String> namesOfDbsFound = new HashSet<String>();
+		for (DatabaseRegistryEntry currentDRE: databasesToTestRegistry.getAll()) {			
+			namesOfDbsFound.add(currentDRE.getName());			
+		}
+		FakeTestToMakeReports fakeTestToMakeReports = new FakeTestToMakeReports();
+		fakeTestToMakeReports.setTeamResponsible(Team.RELEASE_COORDINATOR);
+		
+		for (String dbName : testDatabases) {
+			if (!namesOfDbsFound.contains(dbName)) {
+				ReportManager.problem(
+					fakeTestToMakeReports, 
+					"Configuration problem", 
+					"Database " + dbName + " has been specified for testing, but it doesn't exist on the server!"
+				);
+			}
+		}
+	}
 
 }
+
+
+class FakeTestToMakeReports extends EnsTestCase {};
+
+
