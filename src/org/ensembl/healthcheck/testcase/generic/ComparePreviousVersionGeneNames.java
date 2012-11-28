@@ -69,15 +69,6 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		//this test only applies to the human db
-		EnumSet<Species> speciesSet = EnumSet.of(
-		    Species.HOMO_SAPIENS, Species.MUS_MUSCULUS, Species.DANIO_RERIO, Species.SUS_SCROFA);
-		Species species = dbre.getSpecies();
-		if (! speciesSet.contains(species)) {
-		  Logger.getLogger(getClass().getName()).fine("Skipping species "+species.name()+". If this is wrong edit this testcase");
-			return result;
-		}
-		
 		Connection currentCon = dbre.getConnection();
 
 		DatabaseRegistryEntry previous = getEquivalentFromSecondaryServer(dbre);
