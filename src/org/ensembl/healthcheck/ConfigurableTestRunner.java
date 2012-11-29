@@ -737,7 +737,7 @@ public class ConfigurableTestRunner extends TestRunner {
 		for (String dbName : testDatabases) {
 			if (!namesOfDbsFound.contains(dbName)) {
 				ReportManager.problem(
-					createFakeTestToMakeReports(), 
+					new TestRunnerSelfCheck(), 
 					"Configuration problem", 
 					"Database " + dbName + " has been specified for testing, but it doesn't exist on the server!"
 				);
