@@ -431,9 +431,30 @@ public class ConfigurableTestRunner extends TestRunner {
 			);
 		}
 		
+		Map<Class<? extends EnsTestCase>, List<DatabaseRegistryEntry>> exceptionToDb;
+		
 		try {
 			TestRunStats accounting = runAllTestsWithAccounting(databasesToTestRegistry, testRegistry, false);
 
+			exceptionToDb = accounting.getExceptionToDb();
+			
+			if (!exceptionToDb.isEmpty()) {
+				
+				for (Class<? extends EnsTestCase> currentTestClass : exceptionToDb.keySet()) {
+					
+					ReportManager.problem(
+							new TestRunnerSelfCheck(), 
+							"Skipped tests", 
+							"The following test died with an exception: " + currentTestClass.getName() + "\n"
+							+ "on the following databases: \n"
+							+ dbreListToBulletPoints(
+									exceptionToDb.get(currentTestClass)
+							)
+					);					
+				}
+				
+			}
+			
 			for (Class<? extends EnsTestCase> currentTestCase : accounting.getTrackCompletionStatus().keySet()) {
 				
 				if (!accounting.getTrackCompletionStatus().get(currentTestCase).equals(TestRunStats.CompletionStatus.DIED_WITH_EXCEPTION)) {					
@@ -465,6 +486,8 @@ public class ConfigurableTestRunner extends TestRunner {
 			);
 		}		
 		
+		/* Doing this differently now above.
+		 * 
 		if (!testsThrowingAnException.isEmpty()) {
 			
 			ReportManager.problem(
@@ -472,7 +495,8 @@ public class ConfigurableTestRunner extends TestRunner {
 				"Skipped tests", 
 				"The following tests were not run, because they threw an exception:\n" + testListToBulletPoints(testsThrowingAnException)
 			);
-		}		
+		}
+		*/		
 		
 		if (!testsSkippedLongRunning.isEmpty()) {
 			
@@ -593,6 +617,13 @@ public class ConfigurableTestRunner extends TestRunner {
 		
 		HashSet<Class<? extends EnsTestCase>> testsRun = new HashSet<Class<? extends EnsTestCase>>();
 		Map<Class<? extends EnsTestCase>,TestRunStats.CompletionStatus> trackCompletionStatus = new HashMap<Class<? extends EnsTestCase>,TestRunStats.CompletionStatus>();
+		Map<
+			Class<? extends EnsTestCase>,
+			List<DatabaseRegistryEntry>
+		> exceptionToDb = new HashMap<
+			Class<? extends EnsTestCase>,
+			List<DatabaseRegistryEntry>
+		>();
 
 		// --------------------------------
 		// Single-database tests
@@ -630,6 +661,12 @@ public class ConfigurableTestRunner extends TestRunner {
 					} catch (Throwable e) {
 						
 						trackCompletionStatus.put(testCase.getClass(), TestRunStats.CompletionStatus.DIED_WITH_EXCEPTION);
+						
+						if (!exceptionToDb.containsKey(testCase.getClass())) {
+							exceptionToDb.put(testCase.getClass(), new ArrayList<DatabaseRegistryEntry>());
+						}
+						
+						exceptionToDb.get(testCase.getClass()).add(database);							
 						
 					  String msg = "Could not execute test "
                 + testCase.getName() + " on "
@@ -726,7 +763,7 @@ public class ConfigurableTestRunner extends TestRunner {
 			logger.warning("Warning: no tests were run.");
 		}
 
-		return new TestRunStats(testsRun, trackCompletionStatus);
+		return new TestRunStats(testsRun, trackCompletionStatus, exceptionToDb);
 	} // runAllTests
 	
 	/**
@@ -774,6 +811,16 @@ public class ConfigurableTestRunner extends TestRunner {
 			missingTestToString.append("  - " + currentMissingTest.getName() + "\n");
 		}
 		return missingTestToString.toString();
+	}
+	
+	protected String dbreListToBulletPoints(List<DatabaseRegistryEntry> listOfDbres) {
+		
+		StringBuffer listOfDbresToString = new StringBuffer();
+		
+		for (DatabaseRegistryEntry currentDbre : listOfDbres) {
+			listOfDbresToString.append("  - " + currentDbre.getName() + "\n");
+		}
+		return listOfDbresToString.toString();
 	}
 	
 	List<Class<? extends EnsTestCase>> findTestsApplyingToNoDb(TestRegistry testRegistry, DatabaseRegistry databasesToTestRegistry) {
@@ -839,15 +886,28 @@ class TestRunStats {
 		return trackCompletionStatus;
 	}
 
-	final HashSet<Class<? extends EnsTestCase>> testsRun;
-	final Map<Class<? extends EnsTestCase>, CompletionStatus> trackCompletionStatus;
+	protected final HashSet<Class<? extends EnsTestCase>> testsRun;
+	protected final Map<Class<? extends EnsTestCase>, CompletionStatus> trackCompletionStatus;
+	protected final Map<
+		Class<? extends EnsTestCase>,
+		List<DatabaseRegistryEntry>
+	> exceptionToDb;
+
+	public Map<Class<? extends EnsTestCase>, List<DatabaseRegistryEntry>> getExceptionToDb() {
+		return exceptionToDb;
+	}
 
 	public TestRunStats(
 			HashSet<Class<? extends EnsTestCase>> testsRun, 
-			Map<Class<? extends EnsTestCase>, CompletionStatus> trackCompletionStatus
+			Map<Class<? extends EnsTestCase>, CompletionStatus> trackCompletionStatus,
+			Map<
+				Class<? extends EnsTestCase>,
+				List<DatabaseRegistryEntry>
+			> exceptionToDb
 	) {
 		this.testsRun = testsRun;
 		this.trackCompletionStatus = trackCompletionStatus;
+		this.exceptionToDb = exceptionToDb;
 	}
 }
 
