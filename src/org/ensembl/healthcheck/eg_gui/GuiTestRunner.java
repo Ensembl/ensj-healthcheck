@@ -2,6 +2,7 @@ package org.ensembl.healthcheck.eg_gui;
 
 import java.awt.BorderLayout;
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -189,7 +190,10 @@ public class GuiTestRunner {
                             			testCase, 
                             			currentDbre.getConnection(), 
                             			ReportLine.PROBLEM,
-                            			testCase.getShortTestName() + " threw an exception: " + e.getMessage()
+                            			testCase.getShortTestName() + " threw an exception:"
+                            			+ e.getClass().getCanonicalName() + "\n\n"
+                            			+ stackTraceToString(e.getStackTrace()) + "\n\n" 
+                            			+ e.getMessage()
                             	);
                             }
                             
@@ -229,7 +233,23 @@ public class GuiTestRunner {
                         
                         testCase.types();
                         
-                        boolean passed = ((MultiDatabaseTestCase) testCase).run(dbr);
+                        boolean passed = false;
+                        
+                        try {
+                        	passed = ((MultiDatabaseTestCase) testCase).run(dbr);
+	                    }
+	                    catch (Exception e) {
+	                    	
+	                    	ReportManager.report(
+	                    			testCase, 
+	                    			(Connection) null, 
+	                    			ReportLine.PROBLEM,
+	                    			testCase.getShortTestName() + " threw an exception:"
+	                    			+ e.getClass().getCanonicalName() + "\n\n"
+	                    			+ stackTraceToString(e.getStackTrace()) + "\n\n" 
+	                    			+ e.getMessage()
+	                    	);
+	                    }
 
                         ReportManager.finishTestCase(testCase, passed, null);
                         
@@ -309,6 +329,19 @@ public class GuiTestRunner {
         t.start();
         return t;
     }
+
+	protected static String stackTraceToString(StackTraceElement[] stackTraceElement) {
+		
+		StringBuffer stacktrace = new StringBuffer();
+		
+		for (StackTraceElement ste : stackTraceElement) {
+			
+			stacktrace.append(ste.toString());
+			stacktrace.append("\n");
+			
+		}
+		return stacktrace.toString();
+	}
 }
 
 /**
