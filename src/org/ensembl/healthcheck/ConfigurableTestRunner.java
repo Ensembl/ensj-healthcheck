@@ -408,6 +408,7 @@ public class ConfigurableTestRunner extends TestRunner {
 		log.info("Running tests\n\n");
 		List<EnsTestCase> testsThrowingAnException = new ArrayList<EnsTestCase>();
 		List<EnsTestCase> testsSkippedLongRunning  = new ArrayList<EnsTestCase>();
+		List<EnsTestCase> testsSkippedForUnknownReason = new ArrayList<EnsTestCase>();
 		
 		try {
 			//HashSet<EnsTestCase> testsRun = runAllTestsWithAccounting(databasesToTestRegistry, testRegistry, false);
@@ -423,24 +424,31 @@ public class ConfigurableTestRunner extends TestRunner {
 				}
 			}
 
-			List<EnsTestCase> testsNotRun = testRegistry.getAll();
-			testsNotRun.removeAll(accounting.getTestsRun());
-			log.severe("Not run: " + testListToBulletPoints(testsNotRun));			
-				
+			testsSkippedForUnknownReason = testRegistry.getAll();
+			testsSkippedForUnknownReason.removeAll(accounting.getTestsRun());
+			testsSkippedForUnknownReason.removeAll(testsThrowingAnException);
+			testsSkippedForUnknownReason.removeAll(testsSkippedLongRunning);
 
 		} catch (Throwable e) {
 			log.severe("Execution of tests failed: " + e.getMessage());
 			log.log(Level.FINE, "Execution of tests failed: " + e.getMessage(),
 					e);
 		}
-		
-		
+
+		if (!testsSkippedForUnknownReason.isEmpty()) {
+			
+			ReportManager.problem(
+				new TestRunnerSelfCheck(), 
+				"Skipped tests", 
+				"The following tests were skipped for no known reason:\n" + testListToBulletPoints(testsSkippedForUnknownReason)
+			);
+		}		
 		
 		if (!testsThrowingAnException.isEmpty()) {
 			
 			ReportManager.problem(
-				createFakeTestToMakeReports(), 
-				"Failed tests", 
+				new TestRunnerSelfCheck(), 
+				"Skipped tests", 
 				"The following tests were not run, because they threw an exception:\n" + testListToBulletPoints(testsThrowingAnException)
 			);
 		}		
@@ -448,9 +456,9 @@ public class ConfigurableTestRunner extends TestRunner {
 		if (!testsSkippedLongRunning.isEmpty()) {
 			
 			ReportManager.correct(
-				createFakeTestToMakeReports(), 
+				new TestRunnerSelfCheck(), 
 				"Skipped tests", 
-				"The following tests were not run, because they are long running:\n" + testListToBulletPoints(testsSkippedLongRunning)
+				"The following tests were not run, because they are long running and the run was configured to skip these:\n" + testListToBulletPoints(testsSkippedLongRunning)
 			);
 		}
 
@@ -746,18 +754,14 @@ public class ConfigurableTestRunner extends TestRunner {
 		}
 		return missingTestToString.toString();
 	}
-	
-	protected FakeTestToMakeReports createFakeTestToMakeReports() {
-		
-		FakeTestToMakeReports fakeTestToMakeReports = new FakeTestToMakeReports();
-		fakeTestToMakeReports.setTeamResponsible(Team.RELEASE_COORDINATOR);
-		return fakeTestToMakeReports;
-	}
-
 }
 
 
-class FakeTestToMakeReports extends EnsTestCase {};
+class TestRunnerSelfCheck extends EnsTestCase {
+	public TestRunnerSelfCheck() {
+		setTeamResponsible(Team.RELEASE_COORDINATOR);
+	}
+};
 
 class TestRunStats {
 
