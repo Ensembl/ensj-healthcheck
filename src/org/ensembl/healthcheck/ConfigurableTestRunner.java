@@ -311,6 +311,16 @@ public class ConfigurableTestRunner extends TestRunner {
 		return ds;
 	}
 
+	List<Class<? extends EnsTestCase>> getAllRegisteredTestClasses(TestRegistry testRegistry) {
+	
+		List<Class<? extends EnsTestCase>> registeredClasses = new ArrayList<Class<? extends EnsTestCase>>();
+		
+		for (EnsTestCase currentTestCase : testRegistry.getAll()) {
+			registeredClasses.add(currentTestCase.getClass());
+		}
+		return registeredClasses;
+	}
+	
 	protected void run() {
 
 		TestRegistry testRegistry = this.testRegistry;
@@ -406,15 +416,25 @@ public class ConfigurableTestRunner extends TestRunner {
 		systemPropertySetter.setPropertiesForHealthchecks();
 
 		log.info("Running tests\n\n");
-		List<EnsTestCase> testsThrowingAnException = new ArrayList<EnsTestCase>();
-		List<EnsTestCase> testsSkippedLongRunning  = new ArrayList<EnsTestCase>();
-		List<EnsTestCase> testsSkippedForUnknownReason = new ArrayList<EnsTestCase>();
+		List<Class<? extends EnsTestCase>> testsThrowingAnException     = new ArrayList<Class<? extends EnsTestCase>>();
+		List<Class<? extends EnsTestCase>> testsSkippedLongRunning      = new ArrayList<Class<? extends EnsTestCase>>();
+		List<Class<? extends EnsTestCase>> testsSkippedForUnknownReason = new ArrayList<Class<? extends EnsTestCase>>();
+		
+		List<Class<? extends EnsTestCase>> testsApplyingToNoDb = findTestsApplyingToNoDb(testRegistry, databasesToTestRegistry);
+		
+		if (!testsApplyingToNoDb.isEmpty()) {
+			
+			ReportManager.problem(
+					new TestRunnerSelfCheck(), 
+					"Skipped tests", 
+					"These tests apply to none of the databases that will be tested:\n" + testListToBulletPoints(testsApplyingToNoDb)
+			);
+		}
 		
 		try {
-			//HashSet<EnsTestCase> testsRun = runAllTestsWithAccounting(databasesToTestRegistry, testRegistry, false);
 			TestRunStats accounting = runAllTestsWithAccounting(databasesToTestRegistry, testRegistry, false);
 
-			for (EnsTestCase currentTestCase : accounting.getTrackCompletionStatus().keySet()) {
+			for (Class<? extends EnsTestCase> currentTestCase : accounting.getTrackCompletionStatus().keySet()) {
 				
 				if (!accounting.getTrackCompletionStatus().get(currentTestCase).equals(TestRunStats.CompletionStatus.DIED_WITH_EXCEPTION)) {					
 					testsThrowingAnException.add(currentTestCase);					
@@ -424,10 +444,11 @@ public class ConfigurableTestRunner extends TestRunner {
 				}
 			}
 
-			testsSkippedForUnknownReason = testRegistry.getAll();
+			testsSkippedForUnknownReason = getAllRegisteredTestClasses(testRegistry);
 			testsSkippedForUnknownReason.removeAll(accounting.getTestsRun());
 			testsSkippedForUnknownReason.removeAll(testsThrowingAnException);
 			testsSkippedForUnknownReason.removeAll(testsSkippedLongRunning);
+			testsSkippedForUnknownReason.removeAll(testsApplyingToNoDb);			
 
 		} catch (Throwable e) {
 			log.severe("Execution of tests failed: " + e.getMessage());
@@ -570,8 +591,8 @@ public class ConfigurableTestRunner extends TestRunner {
 
 		int numberOfTestsRun = 0;
 		
-		HashSet<EnsTestCase> testsRun = new HashSet<EnsTestCase>();
-		Map<EnsTestCase,TestRunStats.CompletionStatus> trackCompletionStatus = new HashMap<EnsTestCase,TestRunStats.CompletionStatus>();
+		HashSet<Class<? extends EnsTestCase>> testsRun = new HashSet<Class<? extends EnsTestCase>>();
+		Map<Class<? extends EnsTestCase>,TestRunStats.CompletionStatus> trackCompletionStatus = new HashMap<Class<? extends EnsTestCase>,TestRunStats.CompletionStatus>();
 
 		// --------------------------------
 		// Single-database tests
@@ -594,8 +615,8 @@ public class ConfigurableTestRunner extends TestRunner {
 						
 						boolean result = testCase.run(database);
 
-						testsRun.add(testCase);
-						trackCompletionStatus.put(testCase, TestRunStats.CompletionStatus.COMPLETED);
+						testsRun.add(testCase.getClass());
+						trackCompletionStatus.put(testCase.getClass(), TestRunStats.CompletionStatus.COMPLETED);
 						
 						ReportManager
 								.finishTestCase(testCase, result, database);
@@ -608,7 +629,7 @@ public class ConfigurableTestRunner extends TestRunner {
 
 					} catch (Throwable e) {
 						
-						trackCompletionStatus.put(testCase, TestRunStats.CompletionStatus.DIED_WITH_EXCEPTION);
+						trackCompletionStatus.put(testCase.getClass(), TestRunStats.CompletionStatus.DIED_WITH_EXCEPTION);
 						
 					  String msg = "Could not execute test "
                 + testCase.getName() + " on "
@@ -619,7 +640,7 @@ public class ConfigurableTestRunner extends TestRunner {
 				} else {
 					logger.info("Skipping long-running test "
 							+ testCase.getName());
-					trackCompletionStatus.put(testCase, TestRunStats.CompletionStatus.SKIPPED_LONG_RUNNING);
+					trackCompletionStatus.put(testCase.getClass(), TestRunStats.CompletionStatus.SKIPPED_LONG_RUNNING);
 
 				}
 
@@ -645,8 +666,8 @@ public class ConfigurableTestRunner extends TestRunner {
 
 					testCase.types();
 					boolean result = testCase.run(databaseRegistry);
-					testsRun.add(testCase);
-					trackCompletionStatus.put(testCase, TestRunStats.CompletionStatus.COMPLETED);
+					testsRun.add(testCase.getClass());
+					trackCompletionStatus.put(testCase.getClass(), TestRunStats.CompletionStatus.COMPLETED);
 
 					ReportManager.finishTestCase(testCase, result, null);
 					logger.info(testCase.getName() + " "
@@ -658,12 +679,12 @@ public class ConfigurableTestRunner extends TestRunner {
           String msg = "Could not execute test "
               + testCase.getName() + ": " + e.getMessage();
           logger.log(Level.WARNING, msg, e);
-          			trackCompletionStatus.put(testCase, TestRunStats.CompletionStatus.DIED_WITH_EXCEPTION);
+          			trackCompletionStatus.put(testCase.getClass(), TestRunStats.CompletionStatus.DIED_WITH_EXCEPTION);
 				}
 			} else {
 
 				logger.info("Skipping long-running test " + testCase.getName());
-				trackCompletionStatus.put(testCase, TestRunStats.CompletionStatus.SKIPPED_LONG_RUNNING);
+				trackCompletionStatus.put(testCase.getClass(), TestRunStats.CompletionStatus.SKIPPED_LONG_RUNNING);
 
 			}
 
@@ -683,7 +704,7 @@ public class ConfigurableTestRunner extends TestRunner {
 
 			try {
 				boolean result = testCase.run(orderedDatabases);
-				testsRun.add(testCase);
+				testsRun.add(testCase.getClass());
 
 				ReportManager.finishTestCase(testCase, result, null);
 				logger.info(testCase.getName() + " "
@@ -745,14 +766,53 @@ public class ConfigurableTestRunner extends TestRunner {
 		}
 	}
 
-	protected String testListToBulletPoints(List<EnsTestCase> listOfTests) {
+	protected String testListToBulletPoints(List<Class<? extends EnsTestCase>> listOfTests) {
 		
 		StringBuffer missingTestToString = new StringBuffer();
 		
-		for (EnsTestCase currentMissingTest : listOfTests) {
+		for (Class<? extends EnsTestCase> currentMissingTest : listOfTests) {
 			missingTestToString.append("  - " + currentMissingTest.getName() + "\n");
 		}
 		return missingTestToString.toString();
+	}
+	
+	List<Class<? extends EnsTestCase>> findTestsApplyingToNoDb(TestRegistry testRegistry, DatabaseRegistry databasesToTestRegistry) {
+		
+		HashSet<DatabaseType> databaseTypesRegistered = new HashSet<DatabaseType>(); 
+		
+		for (DatabaseRegistryEntry dbre : databasesToTestRegistry.getAll()) {
+			databaseTypesRegistered.add(dbre.getType());
+		}
+		
+		List<Class<? extends EnsTestCase>> testsApplyingToNoDb = new ArrayList<Class<? extends EnsTestCase>>(); 
+		
+		for (Class<? extends EnsTestCase> currentTest : getAllRegisteredTestClasses(testRegistry)) {
+			
+			DatabaseType[] dbT;
+			try {
+				dbT = currentTest.newInstance().getAppliesToTypes();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+				break;
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+				break;
+			}
+			boolean currentTestAppliesToADb = false;
+			
+			for (DatabaseType currentDbt : dbT) {
+				if (databaseTypesRegistered.contains(currentDbt)) {
+					currentTestAppliesToADb = true;
+					if (currentTestAppliesToADb) {
+						break;
+					}
+				}
+			}
+			if (!currentTestAppliesToADb) {
+				testsApplyingToNoDb.add(currentTest);
+			}
+		}
+		return testsApplyingToNoDb;
 	}
 }
 
@@ -771,19 +831,21 @@ class TestRunStats {
 		DIED_WITH_EXCEPTION		
 	}
 
-	public HashSet getTestsRun() {
+	public HashSet<Class<? extends EnsTestCase>> getTestsRun() {
 		return testsRun;
 	}
 
-	public Map<EnsTestCase, CompletionStatus> getTrackCompletionStatus() {
+	public Map<Class<? extends EnsTestCase>, CompletionStatus> getTrackCompletionStatus() {
 		return trackCompletionStatus;
 	}
 
-	final HashSet testsRun;
-	final Map<EnsTestCase,CompletionStatus> trackCompletionStatus;
+	final HashSet<Class<? extends EnsTestCase>> testsRun;
+	final Map<Class<? extends EnsTestCase>, CompletionStatus> trackCompletionStatus;
 
-	public TestRunStats(HashSet testsRun, Map<EnsTestCase,CompletionStatus> trackCompletionStatus) {
-
+	public TestRunStats(
+			HashSet<Class<? extends EnsTestCase>> testsRun, 
+			Map<Class<? extends EnsTestCase>, CompletionStatus> trackCompletionStatus
+	) {
 		this.testsRun = testsRun;
 		this.trackCompletionStatus = trackCompletionStatus;
 	}
