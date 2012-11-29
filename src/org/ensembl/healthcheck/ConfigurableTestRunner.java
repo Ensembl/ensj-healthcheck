@@ -5,8 +5,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -358,8 +360,6 @@ public class ConfigurableTestRunner extends TestRunner {
 			logger.warning("Warning: no databases configured!");
 		}
 		
-		complainAboutDatabasesNotFound(databasesToTestRegistry, testDatabases);
-		
 		if (this.reporterType == ReporterType.DATABASE) {
 
 			// Create the database to which tests will be written
@@ -395,20 +395,38 @@ public class ConfigurableTestRunner extends TestRunner {
 			ReportManager.createDatabaseSession();
 		}
 
+		// When writing to a database, this must only be run after calling
+		//
+		// ReportManager.connectToOutputDatabase()
+		//
+		// Otherwise reporting problems won't work.
+		//
+		complainAboutDatabasesNotFound(databasesToTestRegistry, testDatabases);
+		
 		systemPropertySetter.setPropertiesForHealthchecks();
 
 		log.info("Running tests\n\n");
-		List<EnsTestCase> missingTest = new ArrayList<EnsTestCase>();
+		List<EnsTestCase> testsThrowingAnException = new ArrayList<EnsTestCase>();
+		List<EnsTestCase> testsSkippedLongRunning  = new ArrayList<EnsTestCase>();
+		
 		try {
-			//runAllTests(databasesToTestRegistry, testRegistry, false);
-			HashSet testsRun = runAllTestsWithAccounting(databasesToTestRegistry, testRegistry, false);
+			//HashSet<EnsTestCase> testsRun = runAllTestsWithAccounting(databasesToTestRegistry, testRegistry, false);
+			TestRunStats accounting = runAllTestsWithAccounting(databasesToTestRegistry, testRegistry, false);
 
-			for (EnsTestCase currentTestCase : testRegistry.getAll()) {
+			for (EnsTestCase currentTestCase : accounting.getTrackCompletionStatus().keySet()) {
 				
-				if (!testsRun.contains(currentTestCase)) {					
-					missingTest.add(currentTestCase);					
+				if (!accounting.getTrackCompletionStatus().get(currentTestCase).equals(TestRunStats.CompletionStatus.DIED_WITH_EXCEPTION)) {					
+					testsThrowingAnException.add(currentTestCase);					
+				}
+				if (!accounting.getTrackCompletionStatus().get(currentTestCase).equals(TestRunStats.CompletionStatus.SKIPPED_LONG_RUNNING)) {					
+					testsSkippedLongRunning.add(currentTestCase);					
 				}
 			}
+
+			List<EnsTestCase> testsNotRun = testRegistry.getAll();
+			testsNotRun.removeAll(accounting.getTestsRun());
+			log.severe("Not run: " + testListToBulletPoints(testsNotRun));			
+				
 
 		} catch (Throwable e) {
 			log.severe("Execution of tests failed: " + e.getMessage());
@@ -416,20 +434,26 @@ public class ConfigurableTestRunner extends TestRunner {
 					e);
 		}
 		
-		if (!missingTest.isEmpty()) {
-			
-			StringBuffer missingTestToString = new StringBuffer();
-			
-			for (EnsTestCase currentMissingTest : missingTest) {
-				missingTestToString.append("  - " + currentMissingTest.getName() + "\n");
-			}
+		
+		
+		if (!testsThrowingAnException.isEmpty()) {
 			
 			ReportManager.problem(
 				createFakeTestToMakeReports(), 
+				"Failed tests", 
+				"The following tests were not run, because they threw an exception:\n" + testListToBulletPoints(testsThrowingAnException)
+			);
+		}		
+		
+		if (!testsSkippedLongRunning.isEmpty()) {
+			
+			ReportManager.correct(
+				createFakeTestToMakeReports(), 
 				"Skipped tests", 
-				"The following tests were not run:\n" + missingTestToString
+				"The following tests were not run, because they are long running:\n" + testListToBulletPoints(testsSkippedLongRunning)
 			);
 		}
+
 		
 		log.info("Done running tests\n\n");
 		
@@ -533,12 +557,13 @@ public class ConfigurableTestRunner extends TestRunner {
 	 * @param skipSlow
 	 *            If true, skip long-running tests.
 	 */
-	protected HashSet runAllTestsWithAccounting(DatabaseRegistry databaseRegistry,
+	protected TestRunStats runAllTestsWithAccounting(DatabaseRegistry databaseRegistry,
 			TestRegistry testRegistry, boolean skipSlow) {
 
 		int numberOfTestsRun = 0;
 		
-		HashSet testsRun = new HashSet();
+		HashSet<EnsTestCase> testsRun = new HashSet<EnsTestCase>();
+		Map<EnsTestCase,TestRunStats.CompletionStatus> trackCompletionStatus = new HashMap<EnsTestCase,TestRunStats.CompletionStatus>();
 
 		// --------------------------------
 		// Single-database tests
@@ -562,6 +587,7 @@ public class ConfigurableTestRunner extends TestRunner {
 						boolean result = testCase.run(database);
 
 						testsRun.add(testCase);
+						trackCompletionStatus.put(testCase, TestRunStats.CompletionStatus.COMPLETED);
 						
 						ReportManager
 								.finishTestCase(testCase, result, database);
@@ -573,6 +599,9 @@ public class ConfigurableTestRunner extends TestRunner {
 						numberOfTestsRun++;
 
 					} catch (Throwable e) {
+						
+						trackCompletionStatus.put(testCase, TestRunStats.CompletionStatus.DIED_WITH_EXCEPTION);
+						
 					  String msg = "Could not execute test "
                 + testCase.getName() + " on "
                 + database.getName() + ": " + e.getMessage();
@@ -582,6 +611,7 @@ public class ConfigurableTestRunner extends TestRunner {
 				} else {
 					logger.info("Skipping long-running test "
 							+ testCase.getName());
+					trackCompletionStatus.put(testCase, TestRunStats.CompletionStatus.SKIPPED_LONG_RUNNING);
 
 				}
 
@@ -608,6 +638,7 @@ public class ConfigurableTestRunner extends TestRunner {
 					testCase.types();
 					boolean result = testCase.run(databaseRegistry);
 					testsRun.add(testCase);
+					trackCompletionStatus.put(testCase, TestRunStats.CompletionStatus.COMPLETED);
 
 					ReportManager.finishTestCase(testCase, result, null);
 					logger.info(testCase.getName() + " "
@@ -619,10 +650,12 @@ public class ConfigurableTestRunner extends TestRunner {
           String msg = "Could not execute test "
               + testCase.getName() + ": " + e.getMessage();
           logger.log(Level.WARNING, msg, e);
+          			trackCompletionStatus.put(testCase, TestRunStats.CompletionStatus.DIED_WITH_EXCEPTION);
 				}
 			} else {
 
 				logger.info("Skipping long-running test " + testCase.getName());
+				trackCompletionStatus.put(testCase, TestRunStats.CompletionStatus.SKIPPED_LONG_RUNNING);
 
 			}
 
@@ -664,7 +697,7 @@ public class ConfigurableTestRunner extends TestRunner {
 			logger.warning("Warning: no tests were run.");
 		}
 
-		return testsRun;
+		return new TestRunStats(testsRun, trackCompletionStatus);
 	} // runAllTests
 	
 	/**
@@ -703,6 +736,16 @@ public class ConfigurableTestRunner extends TestRunner {
 			}
 		}
 	}
+
+	protected String testListToBulletPoints(List<EnsTestCase> listOfTests) {
+		
+		StringBuffer missingTestToString = new StringBuffer();
+		
+		for (EnsTestCase currentMissingTest : listOfTests) {
+			missingTestToString.append("  - " + currentMissingTest.getName() + "\n");
+		}
+		return missingTestToString.toString();
+	}
 	
 	protected FakeTestToMakeReports createFakeTestToMakeReports() {
 		
@@ -715,5 +758,32 @@ public class ConfigurableTestRunner extends TestRunner {
 
 
 class FakeTestToMakeReports extends EnsTestCase {};
+
+class TestRunStats {
+
+	protected enum CompletionStatus {
+		COMPLETED,
+		SKIPPED_LONG_RUNNING,
+		DIED_WITH_EXCEPTION		
+	}
+
+	public HashSet getTestsRun() {
+		return testsRun;
+	}
+
+	public Map<EnsTestCase, CompletionStatus> getTrackCompletionStatus() {
+		return trackCompletionStatus;
+	}
+
+	final HashSet testsRun;
+	final Map<EnsTestCase,CompletionStatus> trackCompletionStatus;
+
+	public TestRunStats(HashSet testsRun, Map<EnsTestCase,CompletionStatus> trackCompletionStatus) {
+
+		this.testsRun = testsRun;
+		this.trackCompletionStatus = trackCompletionStatus;
+	}
+}
+
 
 
