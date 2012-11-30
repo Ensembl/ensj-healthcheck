@@ -116,59 +116,79 @@ public class RegulatoryFeaturePosition extends SingleDatabaseTestCase {
 		
 		// Check if reg feat start/ends are beyond seq_region start/ends
 		Iterator<String> it = seqRegionLen.keySet().iterator();
-	
-		while(it.hasNext()){
-			String coreRegionId    = it.next();
-			String srName          = coreSeqRegionIDName.get(coreRegionId);
-			String funcgenRegionID = nameFuncgenSeqRegionID.get(srName);
-			String srLength        = seqRegionLen.get(coreRegionId);
-			//Using efg sr_id removes need for use of schema_build and sr join
+  
+    //Shouldn't these be defined somewhere more generic?
+    String [] featureTables = {"annotated_feature", "regulatory_feature", 
+                               "external_feature",  "segmentation_feature"};
+    
+    for(String fTable : featureTables){
+        String problemString = "";
+        String usefulSQL     = "";
+        String deleteSQL     = "";
+        int    totalFeatures = 0;
+        it.beforeFirst();
 
-			sql = "select count(regulatory_feature_id) from regulatory_feature " + 
-				"WHERE seq_region_id=" + funcgenRegionID + 
-				" AND  ((seq_region_start <= 0) OR ( (seq_region_start - bound_start_length) <= 0) " +
-				"OR ( (seq_region_end + bound_end_length) > " + srLength + ") OR (seq_region_end > " + srLength + "))";
-			//< 0 should never happen as it is an insigned field!
+        while(it.hasNext()){
+            String coreRegionId    = it.next();
+            String srName          = coreSeqRegionIDName.get(coreRegionId);
+            String funcgenRegionID = nameFuncgenSeqRegionID.get(srName);
+            String srLength        = seqRegionLen.get(coreRegionId);
+            //Using efg sr_id removes need for use of schema_build and sr join
+     
+            //start = 0 as is unsigned
+            //only need the bound calc here, as it will be more extreme or equal to seq_region loci
+
+            sql = "select count(" + fTable + "_id) from " + fTable + "WHERE seq_region_id=" + 
+                funcgenRegionID + " AND  ((seq_region_start - bound_start_length) = 0 " +
+                "OR (seq_region_end + bound_end_length) > " + srLength + ")";
+            //<= 0 should never happen as it is an insigned field!
    
-			Integer featCount = DBUtils.getRowCount(efgCon, sql); 	
-			//This is already being 'caught' higher in the stack, but no exit
-			//but still shows as 'PASSED' as result is true by default!
-			//featCount is -1 not null if sql failed
+            //start = 0 as is unsigned
 
-			if(featCount == -1){
-				ReportManager.problem(this, efgCon, "SQL Failed:\t" + sql);
-				return false;
-			}
+            Integer featCount = DBUtils.getRowCount(efgCon, sql); 	
+            totalFeatures    += featCount;
+
+            //This is already being 'caught' higher in the stack, but no exit
+            //but still shows as 'PASSED' as result is true by default!
+            //featCount is -1 not null if sql failed
+
+            if(featCount == -1){
+                ReportManager.problem(this, efgCon, "SQL Failed:\t" + sql);
+                return false;
+            }
 			
-			if(featCount > 0){
-				//String updateSQL = "UPDATE regulatory_feature set bound_seq_region_end=" + srLength +  
-				//	" WHERE seq_region_id=" + funcgenRegionID + 
-				//	" AND bound_seq_region_end > " + srLength + ";\n" +
-				//	"UPDATE regulatory_feature set seq_region_end=" + srLength +  
-				//	" WHERE seq_region_id=" + funcgenRegionID + 
-				//	" AND seq_region_end > " + srLength + ";\n";
+            if(featCount > 0){
+                //Delete as we never trust peaks over ends of sequencable regions, as they are likely
+                //the start of long ranging repeats where alignments stack up erroneously
+          
+                deleteSQL += "DELETE ra, rf from regulatory_feature rf join regulatory_attribute ra using (regulatory_feature_id) WHERE seq_region_id=" + funcgenRegionID + 
+                    " AND  ((seq_region_start - bound_start_length)  = 0 " +
+                    "OR  (seq_region_end + bound_end_length)  > " + srLength + ");\n" +
+                    "DELETE af from annotated_feature af WHERE seq_region_id=" + funcgenRegionID + 
+                    " AND  (seq_region_start = 0 OR seq_region_end  > " + srLength + ");\n";
+            
+                usefulSQL += sql + ";\n";
 
 
-				String deleteSQL = "\nDELETE ra, rf from regulatory_feature rf join regulatory_attribute ra using (regulatory_feature_id) WHERE seq_region_id=" + funcgenRegionID + 
-					" AND  ((seq_region_start <= 0) OR ( (seq_region_start - bound_start_length)  <= 0) " +
-					"OR ( (seq_region_end + bound_end_length)  > " + srLength + ") OR (seq_region_end > " + srLength + "))";
-
-					String usefulSQL = sql + deleteSQL;
-
-				//Omit start <0 for now as it should never happen
+                // start <=0 should never happen as it is unsigned
 			
-				//Will executing the fix screw the API as the underlying feats have not been patched?
-				//Should we also test for start>end?
-				//Probably don't need to do this? Just fix in pipeline?
+                problemString = problemString + " " + srName + "(" + featCount + ")";
 
-				ReportManager.problem(this, efgCon, "SeqRegion " + srName + " has " + featCount + 
-									  " features exceeding seq_region bounds\nUSEFUL SQL:\n" + usefulSQL);
-				result =  false;
-			}
-		}
-		
+                result =  false;
+            }
+        }
+
+        if(! problemString.isEmpty() ){
+        
+            ReportManager.problem
+                (
+                 this, efgCon, 
+                 "Found " + totalFeatures + " " + fTable + "s exceeding seq_region bounds:\t" + problemString +
+                 "\nUSEFUL SQL:\n" + usefulSQL + "\nDELETE SQL:\n" + deleteSQL
+                 );  
+        }
+    }
 		return result;
 	}
-	
 
 }
