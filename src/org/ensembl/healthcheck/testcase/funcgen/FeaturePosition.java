@@ -14,26 +14,22 @@ import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
-public class RegulatoryFeaturePosition extends SingleDatabaseTestCase {
+public class FeaturePosition extends SingleDatabaseTestCase {
 
 	
 	/**
 	 * Create a new instance
 	 */
-	public RegulatoryFeaturePosition() {
-		addToGroup("post_regulatorybuild");
+	public FeaturePosition() {
+		addToGroup("pre_regulatorybuild");
 		addToGroup("funcgen");//do we need this group and the funcgen-release group?
 		addToGroup("funcgen-release");
 		
-		//setHintLongRunning(true); // should be relatively fast
-		
 		setTeamResponsible(Team.FUNCGEN);
-
-
-		setDescription("Checks if all motifs from annotated features are associated to their respective regulatory features.");
+		setDescription("Checks if features lie within bounds of seq_region i.e. start !=0 and end <= seq_region length.");
 		setPriority(Priority.AMBER);
-		//	setEffect("Regulatory Features will seem to miss some motif features.");
-		//setFix("Re-project motif features or fix manually.");
+		setEffect("Low quality features will be included which maybe the result of reads mapping to repeat regions at end of seq_regions.");
+		setFix("Fix:  See DELETE SQL. These should have been filtered within the pipeline!");
 	}
 	
 	
@@ -64,14 +60,10 @@ public class RegulatoryFeaturePosition extends SingleDatabaseTestCase {
 	 * 
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
-
-		boolean result = true;
-
-
-		Connection efgCon = dbre.getConnection();
-
+		boolean     result = true;
+		Connection  efgCon = dbre.getConnection();
 		String schemaBuild = dbre.getSchemaVersion() + "_" + dbre.getGeneBuildVersion();
-		String coreDBName = dbre.getSpecies() + "_core_" + schemaBuild;
+		String  coreDBName = dbre.getSpecies() + "_core_" + schemaBuild;
 		DatabaseRegistryEntry coreDbre = getDatabaseRegistryEntryByPattern(coreDBName);
 		
 		if (coreDbre == null){
@@ -79,10 +71,6 @@ public class RegulatoryFeaturePosition extends SingleDatabaseTestCase {
 			return false;	
 		}		
 				
-
-	
-	
-
 		//Get existing distinct seq_region_id and their limits from the core DB
 		//This needs to be restricted to the schemaBuild otherwise we may be using the wrong seq_region
 		//No need for schemaBuild restriction here due to reg_feat join
@@ -113,10 +101,7 @@ public class RegulatoryFeaturePosition extends SingleDatabaseTestCase {
 			String coreSrID = (String) iter.next();
 			seqRegionLen.put(coreSrID, DBUtils.getRowColumnValue(coreCon, "select length from seq_region where seq_region_id=" + coreSrID) );
 		}
-		
-		// Check if reg feat start/ends are beyond seq_region start/ends
-		Iterator<String> it = seqRegionLen.keySet().iterator();
-  
+		  
     //Shouldn't these be defined somewhere more generic?
     String [] featureTables = {"annotated_feature", "regulatory_feature", 
                                "external_feature",  "segmentation_feature"};
@@ -126,7 +111,7 @@ public class RegulatoryFeaturePosition extends SingleDatabaseTestCase {
         String usefulSQL     = "";
         String deleteSQL     = "";
         int    totalFeatures = 0;
-        it.beforeFirst();
+        Iterator<String> it = seqRegionLen.keySet().iterator();
 
         while(it.hasNext()){
             String coreRegionId    = it.next();
@@ -135,15 +120,20 @@ public class RegulatoryFeaturePosition extends SingleDatabaseTestCase {
             String srLength        = seqRegionLen.get(coreRegionId);
             //Using efg sr_id removes need for use of schema_build and sr join
      
-            //start = 0 as is unsigned
+            //start = 0 as is unsigned i.e. never <0
             //only need the bound calc here, as it will be more extreme or equal to seq_region loci
 
-            sql = "select count(" + fTable + "_id) from " + fTable + "WHERE seq_region_id=" + 
-                funcgenRegionID + " AND  ((seq_region_start - bound_start_length) = 0 " +
-                "OR (seq_region_end + bound_end_length) > " + srLength + ")";
-            //<= 0 should never happen as it is an insigned field!
-   
-            //start = 0 as is unsigned
+            if(fTable.equals("regulatory_feature")){
+                sql = "select count(" + fTable + "_id) from " + fTable + " WHERE seq_region_id=" + 
+                    funcgenRegionID + " AND  ((seq_region_start - bound_start_length) = 0 " +
+                    "OR (seq_region_end + bound_end_length) > " + srLength + ")";
+            }
+            else{
+                sql = "select count(" + fTable + "_id) from " + fTable + " WHERE seq_region_id=" + 
+                    funcgenRegionID + " AND  (seq_region_start = 0 OR seq_region_end > " + srLength + ")";  
+            }
+
+
 
             Integer featCount = DBUtils.getRowCount(efgCon, sql); 	
             totalFeatures    += featCount;
@@ -161,19 +151,19 @@ public class RegulatoryFeaturePosition extends SingleDatabaseTestCase {
                 //Delete as we never trust peaks over ends of sequencable regions, as they are likely
                 //the start of long ranging repeats where alignments stack up erroneously
           
-                deleteSQL += "DELETE ra, rf from regulatory_feature rf join regulatory_attribute ra using (regulatory_feature_id) WHERE seq_region_id=" + funcgenRegionID + 
-                    " AND  ((seq_region_start - bound_start_length)  = 0 " +
-                    "OR  (seq_region_end + bound_end_length)  > " + srLength + ");\n" +
-                    "DELETE af from annotated_feature af WHERE seq_region_id=" + funcgenRegionID + 
-                    " AND  (seq_region_start = 0 OR seq_region_end  > " + srLength + ");\n";
+                if(fTable.equals("regulatory_feature")){
+                    deleteSQL += "DELETE ra, rf from regulatory_feature rf join " + 
+                        "regulatory_attribute ra using (regulatory_feature_id) WHERE seq_region_id=" + 
+                        funcgenRegionID + " AND  ((seq_region_start - bound_start_length)  = 0 " +
+                        "OR  (seq_region_end + bound_end_length)  > " + srLength + ");\n" ;
+                }
+                else{
+                    deleteSQL += "DELETE from " + fTable + " WHERE seq_region_id=" + funcgenRegionID + 
+                        " AND  (seq_region_start = 0 OR seq_region_end  > " + srLength + ");\n";
+                }
             
-                usefulSQL += sql + ";\n";
-
-
-                // start <=0 should never happen as it is unsigned
-			
+                usefulSQL += sql + ";\n";			
                 problemString = problemString + " " + srName + "(" + featCount + ")";
-
                 result =  false;
             }
         }
