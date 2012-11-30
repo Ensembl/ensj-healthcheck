@@ -836,15 +836,22 @@ public class ConfigurableTestRunner extends TestRunner {
 		for (Class<? extends EnsTestCase> currentTest : getAllRegisteredTestClasses(testRegistry)) {
 			
 			DatabaseType[] dbT;
-			try {
-				dbT = currentTest.newInstance().getAppliesToTypes();
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-				break;
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-				break;
-			}
+
+			/*
+			 * Instead of instantiating a test directly, a group of this one 
+			 * test is created and then retrieved from it.
+			 * 
+			 * The reason is that "getTests" has method calls to set the types
+			 * of databases to which this test can be applied.
+			 * 
+			 * By instantiating the test this way, the tescase is initialised
+			 * the same way as it will be when it is run by the testrunner.
+			 * 
+			 */
+			GroupOfTests g = new GroupOfTests();
+			g.addTest(currentTest);
+			dbT = g.getTests().iterator().next().getAppliesToTypes();
+
 			boolean currentTestAppliesToADb = false;
 			
 			for (DatabaseType currentDbt : dbT) {
