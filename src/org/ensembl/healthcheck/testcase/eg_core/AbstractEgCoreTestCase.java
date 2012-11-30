@@ -23,7 +23,7 @@ public abstract class AbstractEgCoreTestCase extends AbstractTemplatedTestCase {
 	public AbstractEgCoreTestCase() {
 		super();
 		this.addToGroup(EG_GROUP);
-		this.appliesToType(DatabaseType.CORE);
+		addAppliesToType(DatabaseType.CORE);
 		this.setTeamResponsible(Team.ENSEMBL_GENOMES);
 		setDescription(getEgDescription());
 	}
