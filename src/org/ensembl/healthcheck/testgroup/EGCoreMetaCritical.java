@@ -1,6 +1,7 @@
 package org.ensembl.healthcheck.testgroup;
 
 import org.ensembl.healthcheck.GroupOfTests;
+import org.ensembl.healthcheck.testcase.eg_core.AssemblyAccession;
 import org.ensembl.healthcheck.testcase.eg_core.DeprecatedEgMeta;
 import org.ensembl.healthcheck.testcase.eg_core.DuplicateMetaKeys;
 import org.ensembl.healthcheck.testcase.eg_core.GeneBuildStartDate;
@@ -14,6 +15,7 @@ public class EGCoreMetaCritical extends GroupOfTests {
 	public EGCoreMetaCritical() {
 		addTest(RequiredEgMeta.class, DeprecatedEgMeta.class,
 				GeneBuildStartDate.class, DuplicateMetaKeys.class,
-				GeneGC.class, MetaCoord.class, SampleSetting.class);
+				GeneGC.class, MetaCoord.class, SampleSetting.class,
+				AssemblyAccession.class);
 	}
 }
