@@ -504,7 +504,7 @@ public class RegulatorySets extends SingleDatabaseTestCase {
                 }
                 
 
-                
+                //These are empty strings not nullsif not present
                 String sqlQuery      = "select meta_value from meta where meta_key='regbuild.version'"; 
                 String oldRelVersion = DBUtils.getRowColumnValue(secCon, sqlQuery); 
                 String newRelVersion = DBUtils.getRowColumnValue(efgCon, sqlQuery);
@@ -516,38 +516,38 @@ public class RegulatorySets extends SingleDatabaseTestCase {
                     "'regbuild.last_annotation_update'"; 
                 String oldAnnoDate   = DBUtils.getRowColumnValue(secCon, sqlQuery); 
                 String newAnnoDate   = DBUtils.getRowColumnValue(efgCon, sqlQuery);
-                
 
-
-                //Deal with incomplete old data first
-
-
-                if(! ((newRelVersion != null) &&
-                      (newRelDate != null) &&
-                      (newAnnoDate != null) )){
+                   
+                //Deal with incomplete data first
+                if( newRelVersion.isEmpty() &&
+                    newRelDate.isEmpty()    &&
+                    newAnnoDate.isEmpty()   ){
                     ReportManager.warning
                         (this, efgCon, 
-                         "Found no release version and/or dates, unable to complete test"); 
+                         "Found no current release version and/or dates, unable to complete test"); 
                     result = false;
                 }
                 else{
 
-                    if((oldRelVersion == null) &&
-                       (oldRelDate == null) &&
-                       (oldAnnoDate == null) ){
+                    if( oldRelVersion.isEmpty() &&
+                        oldRelDate.isEmpty()    &&
+                        oldAnnoDate.isEmpty()   ){
                         ReportManager.warning
                             (this, efgCon, 
                              "Found no previous release version or dates, assuming this is a virgin build"); 
+
+                        //We have already done a test for all new values
+                        //assume if there are defined then they are valid as we have nothing to compare them to.
                     }
                     else{
                     
-                        if( (oldRelVersion != null) ||
-                            (oldRelDate != null) ||
-                            (oldAnnoDate != null) ){
+                        if( oldRelVersion.isEmpty() ||
+                            oldRelDate.isEmpty()    ||
+                            oldAnnoDate.isEmpty()   ){
                             ReportManager.problem
                                 (this, efgCon, 
-                                 "Previous release version and/or dates are incomplete, " + 
-                                 "cannot complete regbuild met dates test");
+                                 "Previous release version and/or dates meta entries are incomplete, " + 
+                                 "cannot complete regbuild dates test");
                             result = false;	
                         }
                         else{ //WE have complete set of old an new values
@@ -592,8 +592,9 @@ public class RegulatorySets extends SingleDatabaseTestCase {
                         }
                     }
                 }
-            }
-        }catch (SQLException se) {
+            }//end of regbuild version data test
+        }
+        catch (SQLException se) {
             //Does this exit and return false?
             se.printStackTrace();
             //This currently still returns PASSED and does print the 'problem'!
