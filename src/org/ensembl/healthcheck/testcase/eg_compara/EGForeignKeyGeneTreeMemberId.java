@@ -10,6 +10,6 @@ public class EGForeignKeyGeneTreeMemberId extends AbstractEGForeignKeyMemberId {
 	
 	@Override
 	protected String getTargetTable() {
-		return "gene_tree_member";
+		return "gene_tree_node";
 	}
 }
