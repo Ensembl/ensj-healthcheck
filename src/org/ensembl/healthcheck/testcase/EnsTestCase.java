@@ -87,6 +87,8 @@ public abstract class EnsTestCase {
 	protected static Logger logger = Logger.getLogger(EnsTestCase.class
 			.getCanonicalName());
 
+	protected String comparaMasterDbName = "ensembl_compara_master";
+	
 	public static Logger getLogger() {
 		return logger;
 	}
@@ -789,6 +791,12 @@ public abstract class EnsTestCase {
 		// to find it
 		return productionDBRE != null ? productionDBRE
 				: getDatabaseRegistryEntryByPattern("ensembl_production");
+
+	}
+
+	public DatabaseRegistryEntry getComparaMasterDatabase() {
+
+		return getDatabaseRegistryEntryByPattern(comparaMasterDbName);
 
 	}
 
