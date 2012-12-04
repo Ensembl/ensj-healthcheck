@@ -821,14 +821,14 @@ public final class DBUtils {
 	 *            The name of the table to list.
 	 * @param con
 	 *            The connection to use.
-	 * @param typeFilter
+	 * @param typeFilters
 	 *            If not null, only return columns whose types start with this
-	 *            string (case insensitive).
+	 *            string (case insensitive). Vargs so specify as many as you need
 	 * @return A List of 6-element String[] arrays representing: 0: Column name
 	 *         1: Type 2: Null? 3: Key 4: Default 5: Extra
 	 */
 	public static List<String[]> getTableInfo(Connection con, String table,
-			String typeFilter) {
+			String... typeFilters) {
 
 		List<String[]> results = getSqlTemplate(con).queryForList(
 				"DESCRIBE " + table, new RowMapper<String[]>() {
@@ -844,14 +844,21 @@ public final class DBUtils {
 					}
 				});
 
-		if (typeFilter != null) {
-			typeFilter = typeFilter.toLowerCase();
-			for (Iterator<String[]> i = results.iterator(); i.hasNext();) {
-				String[] info = i.next();
-				if (!info[1].toLowerCase().startsWith(typeFilter)) {
-					i.remove();
-				}
-			}
+		if (typeFilters != null) {
+		  for (Iterator<String[]> i = results.iterator(); i.hasNext();) {
+		    String[] info = i.next();
+		    boolean passed = false;
+		    for(String typeFilter: typeFilters) {
+		      typeFilter = typeFilter.toLowerCase();
+  				if (info[1].toLowerCase().startsWith(typeFilter)) {
+  					passed = true;
+  					break;
+  				}
+  			}
+		    if(!passed) {
+		      i.remove();
+		    }
+		  }
 		}
 		return results;
 
