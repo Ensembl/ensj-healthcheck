@@ -57,9 +57,11 @@ public class CheckFlatProteinTrees extends AbstractTemplatedTestCase {
         String internalNodeCountSql = "SELECT gtn.root_id, count(*) AS internal_nodes FROM gene_tree_node gtn WHERE gtn.member_id IS NULL AND gtn.node_id <> gtn.root_id AND gtn.root_id <> 0 GROUP BY gtn.root_id";
 		// Counts all members per tree where root id is not 0, whose parent id is
 		// the same as the root id but have more than one of these per tree
-        String flatMemberCountSql = "SELECT gtn.root_id, count(*) AS root_members FROM gene_tree_node gtn WHERE gtn.member_id IS NOT NULL AND gtn.parent_id = gtn.root_id AND gtn.root_id <> 0 GROUP BY gtn.root_id having root_members > 1";
+        String flatMemberCountSql = "SELECT gtn.root_id, count(*) AS root_members FROM gene_tree_node gtn WHERE gtn.member_id IS NOT NULL AND gtn.parent_id = gtn.root_id AND gtn.root_id <> 2 GROUP BY gtn.root_id having root_members > 1";
 		// Count all members where root is not 0
 		String memberCountSql = "SELECT root_id, count(distinct root_id) from gene_tree_node where root_id <> 0 group by root_id";
+		// Selects all the non-rooted trees
+		String nonrootedTreesSql = "SELECT root_id, 1 FROM gene_tree_root WHERE tree_type = 'tree' AND clusterset_id LIKE '%\\_it\\_%' AND clusterset_id NOT LIKE 'pg\\_it\\_%' ";
 
 		Long totalTreesCount = template.queryForDefaultObject(
 				"select count(*) from gene_tree_root", Long.class);
@@ -71,6 +73,8 @@ public class CheckFlatProteinTrees extends AbstractTemplatedTestCase {
 				mapRowMapper);
 		Map<Long, Long> memberCounts = template.queryForMap(memberCountSql,
 				mapRowMapper);
+		Map<Long, Long> nonrootedTrees = template.queryForMap(nonrootedTreesSql,
+				mapRowMapper);
 
 		List<Long> flatMembersWithInternalStructure = createArrayList();
 		List<Long> flatTreesStructure = createArrayList();
@@ -80,7 +84,10 @@ public class CheckFlatProteinTrees extends AbstractTemplatedTestCase {
 			Long nodeId = entry.getKey();
 			Long internalNodeCount = internalNodeCounts.get(nodeId);
 			if (internalNodeCount != null) {
-				flatMembersWithInternalStructure.add(nodeId);
+				if (! nonrootedTrees.containsKey(nodeId)) {
+					problem(this, dbre.getConnection(), format("%d has a problem: %d", nodeId, nonrootedTrees.get(nodeId)));
+					flatMembersWithInternalStructure.add(nodeId);
+				}
 			}
 			else if (entry.getValue() > getMaxAllowedFlatMembers()
 					&& entry.getValue().equals(memberCounts.get(nodeId))) {
