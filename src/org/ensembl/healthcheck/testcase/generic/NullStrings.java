@@ -17,9 +17,13 @@
  */
 package org.ensembl.healthcheck.testcase.generic;
 
+import static org.ensembl.healthcheck.util.CollectionUtils.createHashMap;
+import static org.ensembl.healthcheck.util.CollectionUtils.createLinkedHashSet;
+
 import java.sql.Connection;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
@@ -52,55 +56,53 @@ public class NullStrings extends SingleDatabaseTestCase {
 
 	}
 
-	/**
-	 * Run the test.
-	 * 
-	 * @param dbre
-	 *          The database to use.
-	 * @return true if the test passed.
-	 * 
-	 */
+	public Map<String,Set<String>> getExclusions() {
+    Map<String,Set<String>> map = createHashMap();
+    map.put("dnac", createLinkedHashSet("n_line"));
+    return map;
+  }
+	
 	public boolean run(DatabaseRegistryEntry dbre) {
+    boolean ok = true;
+    Connection con = dbre.getConnection();
 
-		boolean result = true;
-
-		Connection con = dbre.getConnection();
-
-		String[] tables = DBUtils.getTableNames(con);
-
-		for (int i = 0; i < tables.length; i++) {
-
-			String table = tables[i];
-			boolean thisTableProblem = false;
-
-			List columnsAndTypes = DBUtils.getTableInfo(con, table, "varchar");
-			Iterator it = columnsAndTypes.iterator();
-			while (it.hasNext()) {
-
-				String[] columnAndType = (String[]) it.next();
-				String column = columnAndType[0];
-
-				int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE " + column + "='NULL'");
-
-				if (rows > 0) {
-
-					ReportManager.problem(this, con, rows + " rows in " + table + "." + column + " have the string value NULL, not a proper NULL value");
-					result = false;
-					thisTableProblem = true;
-
-				}
-
-			}
-
-			// only store one correct report per table to avoid swamping output
-			if (!thisTableProblem) {
-				ReportManager.correct(this, con, "No columns with NULL strings in " + table);
-			}
-
-		}
-
-		return result;
-
-	} // run
+    Map<String,Set<String>> globalExclusions = getExclusions();
+    String[] tables = DBUtils.getTableNames(con);
+    
+    for (String table: tables) {
+      Set<String> exclusions = globalExclusions.get(table.toLowerCase());
+      List<String[]> columnsAndTypes = DBUtils.getTableInfo(con, table, "varchar", "text");
+      for(String[] columnInfo: columnsAndTypes) {
+        String column = columnInfo[0];
+        String allowedNull = columnInfo[2];
+        
+        //If we were told to skip this column then do so
+        if(exclusions != null && exclusions.contains(column.toLowerCase())) {
+          continue;
+        }
+        
+        //If we didn't allow for NULLs then skip
+        if(allowedNull.toUpperCase().equals("NO")) {
+          continue;
+        }
+        
+        System.out.println(table+" : "+column);
+        
+        String sql = String.format("SELECT COUNT(*) FROM %1$s WHERE %2$s = 'NULL'", table, column);
+        int rows = DBUtils.getRowCount(con, sql);
+        if (rows > 0) {
+          String str = rows + " rows in " + table + "." + column + " have their value set to the String 'NULL'";
+          String usefulSql = String.format("UPDATE %1$s SET %2$s = NULL WHERE %2$s = '' OR %2$s = 'NULL';", table, column);
+          str += ", should probably be NULL";
+          str += "\n   Useful SQL: ";
+          str += usefulSql;
+          ReportManager.problem(this, con, str);
+          ok = false;
+        }
+      }
+    }
+    
+    return ok;
+  }
 
 } // NullStrings
