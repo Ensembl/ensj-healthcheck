@@ -17,6 +17,7 @@
  */
 package org.ensembl.healthcheck.testcase.generic;
 
+import static java.lang.String.format;
 import static org.ensembl.healthcheck.util.CollectionUtils.createHashMap;
 import static org.ensembl.healthcheck.util.CollectionUtils.createLinkedHashSet;
 
@@ -86,16 +87,17 @@ public class NullStrings extends SingleDatabaseTestCase {
           continue;
         }
         
-        System.out.println(table+" : "+column);
+        Object[] sqlArgs = new Object[]{table, column};
         
-        String sql = String.format("SELECT COUNT(*) FROM %1$s WHERE %2$s = 'NULL'", table, column);
+        String sql = String.format("SELECT COUNT(*) FROM %1$s WHERE %2$s = 'NULL'", sqlArgs);
         int rows = DBUtils.getRowCount(con, sql);
         if (rows > 0) {
-          String str = rows + " rows in " + table + "." + column + " have their value set to the String 'NULL'";
-          String usefulSql = String.format("UPDATE %1$s SET %2$s = NULL WHERE %2$s = '' OR %2$s = 'NULL';", table, column);
-          str += ", should probably be NULL";
-          str += "\n   Useful SQL: ";
-          str += usefulSql;
+          String lb = System.getProperty("line.separator");
+          String usefulSql = format("UPDATE %1$s SET %2$s = NULL WHERE %2$s = '' OR %2$s = 'NULL';", sqlArgs);
+          Object[] args = new Object[]{rows, table, column, lb, usefulSql};
+          String str = format("%d rows in %s.%s have their value set to " +
+          		"the String 'NULL', should be the database primative NULL%s" +
+          		"   Useful SQL: %s", args);
           ReportManager.problem(this, con, str);
           ok = false;
         }
