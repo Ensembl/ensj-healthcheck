@@ -141,6 +141,8 @@ public class TestRunner {
                 + testCase.getName() + " on "
                 + database.getName() + ": " + e.getMessage();
 					  logger.log(Level.WARNING, msg, e);
+					  //TODO Get the logger to do this
+					  e.printStackTrace();
 					}
 
 				} else {
@@ -182,6 +184,8 @@ public class TestRunner {
           String msg = "Could not execute test "
               + testCase.getName() + ": " + e.getMessage();
           logger.log(Level.WARNING, msg, e);
+        //TODO Get the logger to do this
+          e.printStackTrace();
 				}
 			} else {
 
@@ -214,6 +218,8 @@ public class TestRunner {
         String msg = "Could not execute test "
             + testCase.getName() + ": " + e.getMessage();
         logger.log(Level.WARNING, msg, e);
+      //TODO Get the logger to do this
+        e.printStackTrace();
 			}
 
 			numberOfTestsRun++;
