@@ -15,8 +15,8 @@ import org.ensembl.healthcheck.testcase.Priority;
 
 /**
  * Tries to avoid users specifying data files like 
- * "human_frontal_lobe_rnaseq.bam". The data files API automatically deals
- * with file extensions
+ * "human_frontal_lobe_rnaseq.bam", rhe data files API automatically deals
+ * with file extensions, or " human_frontal_lobe_rnaseq" (extrenous spaces)
  * 
  * @author ayates
  */
@@ -26,7 +26,7 @@ public class DataFiles extends AbstractTemplatedTestCase {
     addToGroup("release");
     addToGroup("pre-compara-handover");
     addToGroup("post-compara-handover");
-    setDescription("Check that the data_file tables are correctly formatted. Includes searching for bad file extensions in names");
+    setDescription("Check that the data_file tables are correctly formatted. Includes searching for bad file extensions and spaces in names");
     setPriority(Priority.AMBER);
     setTeamResponsible(Team.GENEBUILD);
   }
@@ -37,21 +37,52 @@ public class DataFiles extends AbstractTemplatedTestCase {
   
   @Override
   protected boolean runTest(DatabaseRegistryEntry dbre) {
-    return runExtensionTest(dbre);
+    boolean ok = runExtensionTest(dbre);
+    ok &= runSpaceTest(dbre);
+    return ok;
   }
-
-  protected boolean runExtensionTest(DatabaseRegistryEntry dbre) {
-    String sql = "select name from data_file where name LIKE ?";
-    List<String> names = getSqlTemplate(dbre).queryForDefaultObjectList(sql, String.class, "%.%");
+  
+  protected boolean testByPattern(DatabaseRegistryEntry dbre, Pattern p, StringCallback callback) {
     boolean ok = true;
-    Pattern p = Pattern.compile("\\.([A-Za-z]+)$");
-    for(String n: names) {
-      Matcher m = p.matcher(n);
+    String sql = "select name from data_file";
+    List<String> names = getSqlTemplate(dbre).queryForDefaultObjectList(sql, String.class);
+    for(String name: names) {
+      Matcher m = p.matcher(name);
       if(m.find()) {
-        String msg = format("The data_file %s has a possible extension '%s'. Do not specify extensions in name; The DataFiles API will add this for you", n, m.group(1));
+        ok = false;
+        String msg = callback.report(dbre, name, m);
         ReportManager.problem(this, dbre.getConnection(), msg);
       }
     }
     return ok;
+  }
+
+  protected boolean runExtensionTest(DatabaseRegistryEntry dbre) {
+    Pattern p = Pattern.compile("\\.([A-Za-z]+)$");
+    StringCallback callback = new StringCallback(){
+      @Override
+      public String report(DatabaseRegistryEntry dbre, String name, Matcher m) {
+        return format("The data_file '%s' has a possible extension '%s'. " +
+        		"Do not specify extensions in name; The DataFiles API will add " +
+        		"this for you", name, m.group(1));
+      }
+    };
+    return testByPattern(dbre, p, callback);
+  }
+  
+  protected boolean runSpaceTest(DatabaseRegistryEntry dbre) {
+    Pattern p = Pattern.compile("\\s");
+    StringCallback callback = new StringCallback(){
+      @Override
+      public String report(DatabaseRegistryEntry dbre, String name, Matcher m) {
+        return format("The data_file '%s' has a space in the name '%s'. " +
+        		"Do not use spaces", name);
+      }
+    };
+    return testByPattern(dbre, p, callback);
+  }
+  
+  private interface StringCallback {
+    String report(DatabaseRegistryEntry dbre, String name, Matcher m);
   }
 }
