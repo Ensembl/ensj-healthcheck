@@ -37,7 +37,7 @@ import org.ensembl.healthcheck.util.ClassFileFilenameFilter;
 import org.ensembl.healthcheck.util.Utils;
 
 /**
- * Hold information about tests. Can aldo find tests in a particular location.
+ * Hold information about tests. Can also find tests in a particular location.
  */
 public class DiscoveryBasedTestRegistry implements TestRegistry {
 
