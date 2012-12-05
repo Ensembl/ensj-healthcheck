@@ -37,7 +37,6 @@ compara_genomic:
 	ForeignKeyTaxonId
 	Meta
 	SingleDBCollations
-	SpeciesNameConsistency
 
 compara_homology:
 	CheckHomology
@@ -54,7 +53,6 @@ compara_homology:
 	ForeignKeyTaxonId
 	Meta
 	SingleDBCollations
-	SpeciesNameConsistency
 
 core_xrefs:
 	AnalysisXrefs

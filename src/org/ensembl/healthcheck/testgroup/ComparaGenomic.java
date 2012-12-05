@@ -16,7 +16,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignId </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeySyntenyRegionId </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckSynteny </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.SpeciesNameConsistency </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyDnafragId </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkSpeciesSetId </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomeDbId </li> 
@@ -40,7 +39,6 @@ public class ComparaGenomic extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignId.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeySyntenyRegionId.class,
 			org.ensembl.healthcheck.testcase.compara.CheckSynteny.class,
-			org.ensembl.healthcheck.testcase.compara.SpeciesNameConsistency.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyDnafragId.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkSpeciesSetId.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomeDbId.class

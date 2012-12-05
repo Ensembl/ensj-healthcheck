@@ -17,7 +17,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckFlatProteinTrees </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckSequenceTable </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyFamilyId </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.SpeciesNameConsistency </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkSpeciesSetId </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetTag </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomeDbId </li> 
@@ -42,7 +41,6 @@ public class ComparaHomology extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.CheckFlatProteinTrees.class,
 			org.ensembl.healthcheck.testcase.compara.CheckSequenceTable.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyFamilyId.class,
-			org.ensembl.healthcheck.testcase.compara.SpeciesNameConsistency.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkSpeciesSetId.class,
 			org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetTag.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomeDbId.class
