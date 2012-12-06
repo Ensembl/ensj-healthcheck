@@ -162,6 +162,9 @@ public abstract class EnsTestCase {
 	 * A DatabaseRegistryEntry pointing to the production database.
 	 */
 	DatabaseRegistryEntry productionDBRE = null;
+	
+	DatabaseRegistryEntry comparaMasterDbre = null;
+	
 
 	// -------------------------------------------------------------------------
 	/**
@@ -796,7 +799,8 @@ public abstract class EnsTestCase {
 
 	public DatabaseRegistryEntry getComparaMasterDatabase() {
 
-		return getDatabaseRegistryEntryByPattern(comparaMasterDbName);
+		return comparaMasterDbre != null ? comparaMasterDbre
+				: getDatabaseRegistryEntryByPattern(comparaMasterDbName);
 
 	}
 
