@@ -69,10 +69,17 @@ public class GuiTestRunnerFrameActionListener implements ActionListener {
 	 */
 	protected void setPrimaryAndSecondaryAndSystemPropertiesHost(
 			ConfigureHost primaryHostDetails,
+			ConfigureHost secondPrimaryHostDetails,
 			ConfigureHost secondaryHostDetails
 		) {
 		
-		ConfigurationUserParameters combinedHostConfig = createConfigurationObject(primaryHostDetails, secondaryHostDetails);
+		ConfigurationUserParameters combinedHostConfig = createConfigurationObject(
+			primaryHostDetails, 
+			secondPrimaryHostDetails, 
+			secondaryHostDetails
+		);
+		
+		System.out.println("Configuration is: " + combinedHostConfig);
 		
 		// And finally set the new configuration file in which the 
 		// secondary host has been configured.
@@ -83,25 +90,76 @@ public class GuiTestRunnerFrameActionListener implements ActionListener {
 		systemPropertySetter.setPropertiesForHealthchecks();
 	}
 	
+	protected Properties writeToPrimaryServer(
+		Properties properties,
+		ConfigureHost hostDetails
+	) {		
+		if (properties!=null) {
+			properties.setProperty("host",     hostDetails.getHost());
+			properties.setProperty("port",     hostDetails.getPort());
+			properties.setProperty("user",     hostDetails.getUser());
+			properties.setProperty("password", hostDetails.getPassword());
+			properties.setProperty("driver",   hostDetails.getDriver());
+		}
+		
+		return properties;
+	}
+
+	protected Properties writeToSecondPrimaryServer(
+			Properties properties,
+			ConfigureHost hostDetails
+		) {		
+			if (properties!=null) {
+				properties.setProperty("host1",     hostDetails.getHost());
+				properties.setProperty("port1",     hostDetails.getPort());
+				properties.setProperty("user1",     hostDetails.getUser());
+				properties.setProperty("password1", hostDetails.getPassword());
+				properties.setProperty("driver1",   hostDetails.getDriver());
+			}
+			
+			return properties;
+		}
+
+	protected Properties writeToSecondaryServer(
+			Properties properties,
+			ConfigureHost hostDetails
+		) {			
+			if (properties!=null) {
+				properties.setProperty("secondary.host",     hostDetails.getHost());
+				properties.setProperty("secondary.port",     hostDetails.getPort());
+				properties.setProperty("secondary.user",     hostDetails.getUser());
+				properties.setProperty("secondary.password", hostDetails.getPassword());
+				properties.setProperty("secondary.driver",   hostDetails.getDriver());
+			}
+			
+			return properties;
+		}
+
 	protected ConfigurationUserParameters createConfigurationObject(
 			ConfigureHost primaryHostDetails,
+			ConfigureHost secondPrimaryHostDetails,
 			ConfigureHost secondaryHostDetails
 		) {
 		
-		Properties secondaryHostProperties = new Properties();
+		Properties hostProperties = new Properties();
 		
-		if (secondaryHostDetails!=null) {
-			secondaryHostProperties.setProperty("secondary.host",     secondaryHostDetails.getHost());
-			secondaryHostProperties.setProperty("secondary.port",     secondaryHostDetails.getPort());
-			secondaryHostProperties.setProperty("secondary.user",     secondaryHostDetails.getUser());
-			secondaryHostProperties.setProperty("secondary.password", secondaryHostDetails.getPassword());
-			secondaryHostProperties.setProperty("secondary.driver",   secondaryHostDetails.getDriver());
-		}
+		hostProperties = writeToPrimaryServer       (hostProperties, primaryHostDetails);
+		hostProperties = writeToSecondaryServer     (hostProperties, secondaryHostDetails);
+		hostProperties = writeToSecondPrimaryServer (hostProperties, secondPrimaryHostDetails);		
 		
-		ConfigureHost secondaryHostConfiguration = 
+		return createConfiguration(hostProperties);
+	}
+
+	/**
+	 * @param hostProperties
+	 * @return
+	 */
+	protected ConfigurationUserParameters createConfiguration(
+			Properties hostProperties) {
+		ConfigureHost hostConfiguration = 
 			(ConfigureHost) ConfigurationByProperties.newInstance(
 				ConfigureHost.class, 
-				secondaryHostProperties
+				hostProperties
 			);
 		
 		List<File> propertyFileNames = new ArrayList<File>();
@@ -116,8 +174,7 @@ public class GuiTestRunnerFrameActionListener implements ActionListener {
 		ConfigurationFactory<ConfigurationUserParameters> confFact =
 			new ConfigurationFactory<ConfigurationUserParameters>(
 				ConfigurationUserParameters.class,
-				primaryHostDetails,
-				secondaryHostConfiguration,
+				hostConfiguration,
 				ConfigurationByPropertyFiles
 			);
 		
@@ -144,11 +201,21 @@ public class GuiTestRunnerFrameActionListener implements ActionListener {
 
 			GuiTestRunnerFrameActionPerformer.removeSelectedTests(guiTestRunnerFrame.setupTab.listOfTestsToBeRun);
 		}
-		if (cmd.equals(Constants.DB_SERVER_CHANGED)) {
-
+		if (cmd.equals(Constants.DB_SERVER_CHANGED) || cmd.equals(Constants.PAN_DB_SERVER_CHANGED)) {
+			
+			ConfigureHost host           = guiTestRunnerFrame.setupTab.dbDetails.get(guiTestRunnerFrame.setupTab.dbPrimaryServerSelector.getSelectedIndex());
+			ConfigureHost secondary_host = guiTestRunnerFrame.setupTab.dbDetails.get(guiTestRunnerFrame.setupTab.dbSecondaryServerSelector.getSelectedIndex());
+			ConfigureHost host1          = guiTestRunnerFrame.setupTab.dbDetails.get(guiTestRunnerFrame.setupTab.dbSecondPrimaryServerSelector.getSelectedIndex());
+			
+			ConfigureHost combinedHostConfig = createConfigurationObject(
+					host, 
+					host1, 
+					secondary_host
+				);
+			
 			GuiTestRunnerFrameActionPerformer.setupDatabasePane(
 				guiTestRunnerFrame.setupTab.databaseTabbedPaneWithSearchBox.getDatabasePane(), 
-				guiTestRunnerFrame.setupTab.dbDetails.get(guiTestRunnerFrame.setupTab.dbServerSelector.getSelectedIndex())
+				combinedHostConfig
 			);
 		}
 		if (cmd.equals(Constants.RUN_ALL_TESTS) || cmd.equals(Constants.RUN_SELECTED_TESTS)) {
@@ -265,14 +332,15 @@ public class GuiTestRunnerFrameActionListener implements ActionListener {
 				);
 				
 				setPrimaryAndSecondaryAndSystemPropertiesHost(
-					guiTestRunnerFrame.setupTab.dbDetails.get(guiTestRunnerFrame.setupTab.dbServerSelector.getSelectedIndex()),
-					guiTestRunnerFrame.setupTab.dbDetails.get(guiTestRunnerFrame.setupTab.secondaryDbServerSelector.getSelectedIndex())
+					guiTestRunnerFrame.setupTab.dbDetails.get(guiTestRunnerFrame.setupTab.dbPrimaryServerSelector.getSelectedIndex()),
+					guiTestRunnerFrame.setupTab.dbDetails.get(guiTestRunnerFrame.setupTab.dbSecondPrimaryServerSelector.getSelectedIndex()),
+					guiTestRunnerFrame.setupTab.dbDetails.get(guiTestRunnerFrame.setupTab.dbSecondaryServerSelector.getSelectedIndex())
 				);
 				
 				if (cmd.equals(Constants.RUN_SELECTED_TESTS)) {
 					
 					guiTestRunnerFrame.currentGuiTestRunnerThread = GuiTestRunnerFrameActionPerformer.runSelectedTests(
-							guiTestRunnerFrame.setupTab.listOfTestsToBeRun, 
+						guiTestRunnerFrame.setupTab.listOfTestsToBeRun, 
 						selectedDatabases,
 						guiTestRunnerFrame.testProgressDialog,
 						guiTestRunnerFrame.legacyResultTab,
@@ -283,7 +351,7 @@ public class GuiTestRunnerFrameActionListener implements ActionListener {
 				}
 				if (cmd.equals(Constants.RUN_ALL_TESTS)) {
 					guiTestRunnerFrame.currentGuiTestRunnerThread = GuiTestRunnerFrameActionPerformer.runAllTests(
-							guiTestRunnerFrame.setupTab.listOfTestsToBeRun, 
+						guiTestRunnerFrame.setupTab.listOfTestsToBeRun, 
 						selectedDatabases,
 						guiTestRunnerFrame.testProgressDialog,
 						guiTestRunnerFrame.legacyResultTab,

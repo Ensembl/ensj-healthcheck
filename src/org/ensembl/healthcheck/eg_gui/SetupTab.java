@@ -27,6 +27,7 @@ public class SetupTab extends JPanel {
 	protected GroupOfTests allGroups;
 	protected String jarFile;
 	protected ConfigureHost primaryHostDetails;
+	protected ConfigureHost secondPrimaryHostDetails;
 	protected ConfigureHost secondaryHostDetails;
 	
 	protected List<ConfigureHost> dbDetails;
@@ -35,8 +36,9 @@ public class SetupTab extends JPanel {
 	 * Name of the server that will be set as default, if there is a 
 	 * configuration for this.
 	 */
-	String defaultSecondaryServerName = "mysql.ebi.ac.uk";
 	String defaultPrimaryServerName   = "staging-1";
+	String defaultSecondaryServerName = "mysql.ebi.ac.uk";
+	String defaultPanServerName       = "pan-1";
 
 	/**
 	 * Directories in which configuration files for database servers will be 
@@ -54,8 +56,9 @@ public class SetupTab extends JPanel {
 
 	// The gui widgets of this tab
 	//
-	protected JComboBox dbServerSelector;
-	protected JComboBox secondaryDbServerSelector;
+	protected JComboBox dbPrimaryServerSelector;
+	protected JComboBox dbSecondPrimaryServerSelector;
+	protected JComboBox dbSecondaryServerSelector;
 	
 	protected DatabaseTabbedPaneWithSearchBox databaseTabbedPaneWithSearchBox;
 

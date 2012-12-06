@@ -133,7 +133,7 @@ public class SetupTabBuilder {
 		
 		setupTab.mysqlWidget = new MySqlConnectionWidget(
 				setupTab.dbDetails, 
-				setupTab.dbServerSelector, 
+				setupTab.dbPrimaryServerSelector, 
 				setupTab.databaseTabbedPaneWithSearchBox.getDatabasePane()
 		);
 	}
@@ -146,15 +146,15 @@ public class SetupTabBuilder {
 		if (setupTab.tree==null) {
 			throw new NullPointerException("setupTab.tree has not been built.");
 		}
-		if (setupTab.dbServerSelector==null) {
+		if (setupTab.dbPrimaryServerSelector==null) {
 			throw new NullPointerException("setupTab.dbServerSelector has not been built.");
 		}
-		if (setupTab.secondaryDbServerSelector==null) {
+		if (setupTab.dbSecondaryServerSelector==null) {
 			throw new NullPointerException("setupTab.secondaryDbServerSelector has not been built.");
 		}
 
 		setupTab.databaseTabbedPaneWithSearchBox.getDatabasePane().addActionListener(setupTab.mysqlWidget);
-		setupTab.dbServerSelector.addActionListener(setupTab.mysqlWidget);
+		setupTab.dbPrimaryServerSelector.addActionListener(setupTab.mysqlWidget);
 		
 		JScrollPane treePane  = new JScrollPane(setupTab.tree);
 		
@@ -177,8 +177,9 @@ public class SetupTabBuilder {
 
 		Box hbox = Box.createHorizontalBox();
 		
-		hbox.add(setupTab.dbServerSelector);
-		hbox.add(setupTab.secondaryDbServerSelector);
+		hbox.add(setupTab.dbPrimaryServerSelector);
+		hbox.add(setupTab.dbSecondPrimaryServerSelector);		
+		hbox.add(setupTab.dbSecondaryServerSelector);
 		
 		setupTab.add(hbox, BorderLayout.NORTH);
 		
@@ -188,8 +189,9 @@ public class SetupTabBuilder {
 
 		Border noBorder = BorderFactory.createEmptyBorder(0, 0, 0, 0);
 		
-		setupTab.dbServerSelector          .setBorder(BorderFactory.createTitledBorder(noBorder, "Primary (where your database is):"));
-		setupTab.secondaryDbServerSelector .setBorder(BorderFactory.createTitledBorder(noBorder, "Secondary (used by the ComparePreviousVersion* healthchecks):"));
+		setupTab.dbPrimaryServerSelector      .setBorder(BorderFactory.createTitledBorder(noBorder, "Primary (where your database is):"));
+		setupTab.dbSecondPrimaryServerSelector.setBorder(BorderFactory.createTitledBorder(noBorder, "Pan db server (for ensembl_compara_master)"));
+		setupTab.dbSecondaryServerSelector    .setBorder(BorderFactory.createTitledBorder(noBorder, "Secondary (for ComparePreviousVersion* tests):"));
 		
 		setupTab.databaseTabbedPaneWithSearchBox   .setBorder(BorderFactory.createTitledBorder(defaultEmptyBorder, "2. Select a database:"));
 
@@ -269,8 +271,13 @@ public class SetupTabBuilder {
 		);
 	}
 	
-	protected void buildDbServerSelector() {
-
+	protected void buildDbServerSelector(
+		CallByReferenceWorkaround callByReferenceWorkaround,
+		String actionCommandChanged,
+		ActionListener actionListener,
+		String defaultServerName
+	) {
+		
 		if (setupTab==null) {
 			throw new NullPointerException("setupTab has not been built.");
 		}
@@ -279,15 +286,15 @@ public class SetupTabBuilder {
 		}
 		if (setupTab.actionListener==null) {
 			throw new NullPointerException("setupTab.actionListener has not been built.");
-		}
-		
-		setupTab.dbServerSelector = GuiTestRunnerFrameComponentBuilder.createDbServerSelector(setupTab.dbDetails);
-		setupTab.dbServerSelector.setActionCommand(Constants.DB_SERVER_CHANGED);
-		setupTab.dbServerSelector.addActionListener(setupTab.actionListener);
+		}		
+				
+		JComboBox dbServerSelector = GuiTestRunnerFrameComponentBuilder.createDbServerSelector(setupTab.dbDetails);
+		dbServerSelector.setActionCommand(actionCommandChanged);
+		dbServerSelector.addActionListener(actionListener);		
 		
 		//
-		// See, if defaultSecondaryServerName can be found in dbDetails. If so,
-		// select this as the default secondary server.
+		// See, if the default server name can be found in dbDetails. If so,
+		// select this as the default server for this database selector.
 		//
 		int numServers = setupTab.dbDetails.size();
 		int defaultSelectedServerIndex = 0;
@@ -295,52 +302,75 @@ public class SetupTabBuilder {
 		for (int index=0; index<numServers; index++) {
 		
 			String serverName = setupTab.dbDetails.get(index).getHost();
-			if (serverName.contains(setupTab.defaultPrimaryServerName)) {
+			if (serverName.contains(defaultServerName)) {
 				defaultSelectedServerIndex = index;
 			}
 		}
 		
-		if (setupTab.dbServerSelector.getItemCount()>0) {
-			setupTab.dbServerSelector.setSelectedIndex(defaultSelectedServerIndex);
-			setupTab.primaryHostDetails = setupTab.dbDetails.get(defaultSelectedServerIndex);
+		if (dbServerSelector.getItemCount()>0) {
+			dbServerSelector.setSelectedIndex(defaultSelectedServerIndex);
+			callByReferenceWorkaround.setConfigureHostAttribute(setupTab.dbDetails.get(defaultSelectedServerIndex));
 		}
+		callByReferenceWorkaround.setDbServerSelectorAttribute(dbServerSelector);
+	}
+	
+	protected interface CallByReferenceWorkaround {
+		public abstract void setDbServerSelectorAttribute(JComboBox jcb);
+		public abstract void setConfigureHostAttribute(ConfigureHost ch);
+	}
+	
+	protected void buildPrimaryDbServerSelector() {
+
+		buildDbServerSelector(
+			new CallByReferenceWorkaround() {
+				@Override public void setDbServerSelectorAttribute(JComboBox jcb) {
+					setupTab.dbPrimaryServerSelector = jcb;					
+				}
+				@Override
+				public void setConfigureHostAttribute(ConfigureHost ch) {
+					setupTab.primaryHostDetails = ch;					
+				}				
+			},
+			Constants.DB_SERVER_CHANGED,
+			setupTab.actionListener,
+			setupTab.defaultPrimaryServerName
+		);
 	}
 	
 	protected void buildSecondaryDbServerSelector() {
 
-		if (setupTab==null) {
-			throw new NullPointerException("setupTab has not been built.");
-		}
-		if (setupTab.dbDetails==null) {
-			throw new NullPointerException("setupTab.dbDetails has not been built.");
-		}
-		if (setupTab.actionListener==null) {
-			throw new NullPointerException("setupTab.actionListener has not been built.");
-		}
+		buildDbServerSelector(
+			new CallByReferenceWorkaround() {
+				@Override public void setDbServerSelectorAttribute(JComboBox jcb) {
+					setupTab.dbSecondaryServerSelector = jcb;					
+				}
+				@Override
+				public void setConfigureHostAttribute(ConfigureHost ch) {
+					setupTab.secondaryHostDetails = ch;					
+				}				
+			},
+			Constants.SECONDARY_DB_SERVER_CHANGED,
+			setupTab.actionListener,
+			setupTab.defaultSecondaryServerName
+		);
+	}
+	
+	protected void buildSecondDbServerSelector() {
 
-		setupTab.secondaryDbServerSelector = GuiTestRunnerFrameComponentBuilder.createDbServerSelector(setupTab.dbDetails);
-		setupTab.secondaryDbServerSelector.setActionCommand(Constants.SECONDARY_DB_SERVER_CHANGED);
-		setupTab.secondaryDbServerSelector.addActionListener(setupTab.actionListener);
-		
-		//
-		// See, if defaultSecondaryServerName can be found in dbDetails. If so,
-		// select this as the default secondary server.
-		//
-		int numServers = setupTab.dbDetails.size();
-		int defaultSelectedServerIndex = 0;
-		
-		for (int index=0; index<numServers; index++) {
-		
-			String serverName = setupTab.dbDetails.get(index).getHost();
-			if (serverName.contains(setupTab.defaultSecondaryServerName)) {
-				defaultSelectedServerIndex = index;
-			}
-		}
-		
-		if (setupTab.secondaryDbServerSelector.getItemCount()>0) {
-			setupTab.secondaryDbServerSelector.setSelectedIndex(defaultSelectedServerIndex);
-			setupTab.secondaryHostDetails = setupTab.dbDetails.get(defaultSelectedServerIndex);
-		}
+		buildDbServerSelector(
+			new CallByReferenceWorkaround() {
+				@Override public void setDbServerSelectorAttribute(JComboBox jcb) {
+					setupTab.dbSecondPrimaryServerSelector = jcb;					
+				}
+				@Override
+				public void setConfigureHostAttribute(ConfigureHost ch) {
+					setupTab.secondPrimaryHostDetails = ch;					
+				}				
+			},
+			Constants.PAN_DB_SERVER_CHANGED,
+			setupTab.actionListener,
+			setupTab.defaultPanServerName
+		);
 	}
 	
 	protected void buildDatabaseTabbedPaneWithSearchBox() {

@@ -12,10 +12,11 @@ public class SetupTabBuildDirector {
 		builder.buildListOfTestsToBeRunArea();
 		builder.buildTreeOfTestGroups();
 		builder.buildDbDetails();
-		builder.buildDbServerSelector();
+		builder.buildPrimaryDbServerSelector();
+		builder.buildSecondDbServerSelector();		
+		builder.buildSecondaryDbServerSelector();
 		builder.buildDatabaseTabbedPaneWithSearchBox();
 		builder.buildMysqlConnectionWidget();
-		builder.buildSecondaryDbServerSelector();
 		builder.buildComponentWiring();
 		
 		return builder.getResult();
