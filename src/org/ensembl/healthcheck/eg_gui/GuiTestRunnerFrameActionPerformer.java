@@ -1,14 +1,10 @@
 package org.ensembl.healthcheck.eg_gui;
 
-import java.awt.BorderLayout;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.ListModel;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
