@@ -72,7 +72,7 @@ public class NullStrings extends SingleDatabaseTestCase {
     
     for (String table: tables) {
       Set<String> exclusions = globalExclusions.get(table.toLowerCase());
-      List<String[]> columnsAndTypes = DBUtils.getTableInfo(con, table, "varchar", "text");
+      List<String[]> columnsAndTypes = DBUtils.getTableInfo(con, table, new String[]{"varchar", "text"});
       for(String[] columnInfo: columnsAndTypes) {
         String column = columnInfo[0];
         String allowedNull = columnInfo[2];

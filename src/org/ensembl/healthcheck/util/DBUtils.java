@@ -814,8 +814,59 @@ public final class DBUtils {
 	}
 
 	// -------------------------------------------------------------------------
+	
 	/**
-	 * List the column information in a table - names, types, defaults etc.
+   * List the column information in a table - names, types, defaults etc.
+   * 
+   * @param table
+   *            The name of the table to list.
+   * @param con
+   *            The connection to use.
+   * @param typeFilters
+   *            If not empty, only return columns whose types start with this
+   *            string (case insensitive).
+   * @return A List of 6-element String[] arrays representing: 0: Column name
+   *         1: Type 2: Null? 3: Key 4: Default 5: Extra
+   */
+	public static List<String[]> getTableInfo(Connection con, String table,
+      String[] typeFilters) {
+	  List<String[]> results = getSqlTemplate(con).queryForList(
+        "DESCRIBE " + table, new RowMapper<String[]>() {
+
+          @Override
+          public String[] mapRow(ResultSet rs, int position)
+              throws SQLException {
+            String[] info = new String[6];
+            for (int i = 0; i < 6; i++) {
+              info[i] = rs.getString(i + 1);
+            }
+            return info;
+          }
+        });
+
+    if (typeFilters != null && typeFilters.length > 0) {
+      for (Iterator<String[]> i = results.iterator(); i.hasNext();) {
+        String[] info = i.next();
+        boolean passed = false;
+        for(String typeFilter: typeFilters) {
+          typeFilter = typeFilter.toLowerCase();
+          if (info[1].toLowerCase().startsWith(typeFilter)) {
+            passed = true;
+            break;
+          }
+        }
+        if(!passed) {
+          i.remove();
+        }
+      }
+    }
+    return results;
+	}
+	
+	
+	/**
+	 * List the column information in a table - names, types, defaults etc. 
+	 * Delegates to the array based version of this code
 	 * 
 	 * @param table
 	 *            The name of the table to list.
@@ -824,44 +875,14 @@ public final class DBUtils {
 	 * @param typeFilters
 	 *            If not null, only return columns whose types start with this
 	 *            string (case insensitive). Vargs so specify as many as you need
+	 *            
+	 * @see {@link #getTableInfo(Connection, String, String[])}
 	 * @return A List of 6-element String[] arrays representing: 0: Column name
 	 *         1: Type 2: Null? 3: Key 4: Default 5: Extra
 	 */
 	public static List<String[]> getTableInfo(Connection con, String table,
-			String... typeFilters) {
-
-		List<String[]> results = getSqlTemplate(con).queryForList(
-				"DESCRIBE " + table, new RowMapper<String[]>() {
-
-					@Override
-					public String[] mapRow(ResultSet rs, int position)
-							throws SQLException {
-						String[] info = new String[6];
-						for (int i = 0; i < 6; i++) {
-							info[i] = rs.getString(i + 1);
-						}
-						return info;
-					}
-				});
-
-		if (typeFilters != null) {
-		  for (Iterator<String[]> i = results.iterator(); i.hasNext();) {
-		    String[] info = i.next();
-		    boolean passed = false;
-		    for(String typeFilter: typeFilters) {
-		      typeFilter = typeFilter.toLowerCase();
-  				if (info[1].toLowerCase().startsWith(typeFilter)) {
-  					passed = true;
-  					break;
-  				}
-  			}
-		    if(!passed) {
-		      i.remove();
-		    }
-		  }
-		}
-		return results;
-
+			String typeFilter) {
+	  return getTableInfo(con, table, new String[]{typeFilter});
 	}
 
 	/**
