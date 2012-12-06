@@ -1013,7 +1013,7 @@ public final class DBUtils {
                                         // Passwords handled this way, because it might have not
                                         // been set, if no password is required. In that case,
                                         // calling hostConfiguration.getPassword() without checking
-                                        // if it iset will make this throw an 
+                                        // if it is set, will make this throw an 
                                         // OptionNotPresentException.
                                         //
                                         String password = null;
