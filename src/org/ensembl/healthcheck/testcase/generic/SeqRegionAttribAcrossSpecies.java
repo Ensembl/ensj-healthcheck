@@ -26,7 +26,7 @@ import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
  */
 public class SeqRegionAttribAcrossSpecies extends MultiDatabaseTestCase {
 
-	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.OTHERFEATURES };
+	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.OTHERFEATURES, DatabaseType.RNASEQ, DatabaseType.CDNA };
 
 	/**
 	 * Creates a new instance of SeqRegionAttribAcrossSpecies
@@ -52,7 +52,7 @@ public class SeqRegionAttribAcrossSpecies extends MultiDatabaseTestCase {
 	public boolean run(DatabaseRegistry dbr) {
 
 		return checkSQLAcrossSpecies(
-				"SELECT COUNT(*) FROM seq_region_attrib sa, attrib_type at WHERE at.attrib_type_id=sa.attrib_type_id AND at.code NOT LIKE 'GeneNo%' AND at.code != 'SNPCount' AND at.code NOT LIKE '%LRG%' AND at.code NOT LIKE 'noncoding_%' AND at.code NOT LIKE 'pseudogene_%' AND at.code NOT LIKE 'coding_%'",
+				"SELECT COUNT(*) FROM seq_region_attrib sa, attrib_type at WHERE at.attrib_type_id=sa.attrib_type_id AND at.code != 'SNPCount' AND at.code NOT LIKE '%_cnt' AND at.code NOT LIKE '%_acnt'",
 				dbr, types, false);
 
 	} // run
