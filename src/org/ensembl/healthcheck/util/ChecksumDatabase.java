@@ -41,13 +41,23 @@ public class ChecksumDatabase {
 		this(dbre.getName(), DBUtils.getSqlTemplate(dbre), directory, tables);
 	}
 
+	public ChecksumDatabase(DatabaseRegistryEntry dbre, 
+			Collection<String> tables) {
+		this(dbre.getName(), DBUtils.getSqlTemplate(dbre), null, tables);
+	}
+
 	public ChecksumDatabase(String databaseName, SqlTemplate templ,
 			File directory, Collection<String> tables) {
 		this.databaseName = databaseName;
 		this.templ = templ;
 		this.tables = tables;
-		directory.mkdirs();
-		checksumFile = new File(directory, databaseName + ".chk");
+		
+		if (directory==null) {
+			checksumFile = null;
+		} else {
+			directory.mkdirs();
+			checksumFile = new File(directory, databaseName + ".chk");
+		}
 	}
 
 	protected Properties getChecksumFromFile() {
@@ -63,7 +73,7 @@ public class ChecksumDatabase {
 		return fileSum;
 	}
 
-	protected Properties getChecksumFromDatabase() {
+	public Properties getChecksumFromDatabase() {
 		Properties dbSum = new Properties();
 		for (final String table : tables) {
 			dbSum.putAll(templ.queryForMap(
