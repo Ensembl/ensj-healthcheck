@@ -84,7 +84,9 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 			fetchAllRowsFromTableSql,
 			new ResultSetCallback<Boolean>() {
 
-				@Override public Boolean process(ResultSet rs) throws SQLException {					
+				@Override public Boolean process(ResultSet rs) throws SQLException {
+					
+					rs.setFetchSize(1);
 					
 					boolean allRowsPresentInMasterDb = true;
 					
@@ -131,6 +133,12 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 	}
 	
 	/**
+	 * 
+	 * Will check, if the current for of the ResultSet is present in the master database.
+	 * 
+	 * The columns are passed in each time so this doesn't have to be generated for each
+	 * call.
+	 * 
 	 * @param controlledTableToTest
 	 * @param sqlTemplateComparaMaster
 	 * @param columns
@@ -183,7 +191,7 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 						return false;
 					}
 					
-					ReportManager.problem(thisTest, getComparaMasterDatabase().getConnection(), 
+					ReportManager.problem(thisTest, rsFromMaster.getStatement().getConnection(), 
 						"Found " + numberOfMatchingRowsInMaster + " "
 						+ "matching rows in the master database!\n"
 						+ "The row searched for was:\n"
@@ -203,6 +211,10 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 	}
 	
 	/**
+	 * 
+	 * For the given ResultSet object this will return a stringified version 
+	 * of the current row. Useful to print in error or debug messages.
+	 * 
 	 * @param rs
 	 * @return
 	 * @throws SQLException
@@ -225,6 +237,16 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 		return asCommaSeparatedString(columnValuesStringy);
 	}
 
+	/**
+	 * 
+	 * Generates a sql statement that will fetch the given columns of all rows
+	 * of the table.
+	 * 
+	 * @param conn
+	 * @param tableName
+	 * @param columns
+	 * @return
+	 */
 	protected String fetchAllRowsFromTableSql(
 			Connection conn, 
 			String tableName, 
@@ -233,6 +255,15 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 		return "select " + asCommaSeparatedString(columns) + " from " + tableName;			
 	}
 	
+	/**
+	 * 
+	 * Generates a sql statement that will fetch all columns of all rows from
+	 * the given table.
+	 * 
+	 * @param conn
+	 * @param tableName
+	 * @return
+	 */
 	protected String generateFetchAllRowsFromTableSql(Connection conn, String tableName) {
 
 		List<String> columns = getColumnsOfTable(conn, tableName);			
@@ -241,6 +272,18 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 		return sql;
 	}
 	
+	/**
+	 * 
+	 * Creates a where clause for a sql statement of the form column_1=? and 
+	 * column_2=? ... column_n=?. The listOfValues parameter is used to 
+	 * determine whether a value will be compared with "=" or with "is". By
+	 * default "=" is used, but "is" will be used for null values like 
+	 * "... and column_i is null".  
+	 * 
+	 * @param listOfColumns
+	 * @param listOfValues
+	 * @return
+	 */
 	protected String asParameterisedWhereClause(List<String> listOfColumns, List<Object> listOfValues) {
 		
 		int numColumns = listOfColumns.size();
@@ -278,10 +321,24 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 		return whereClause.toString();
 	}
 	
+	/**
+	 * Joins the list of strings into one comma (and space) separated string.
+	 * 
+	 * @param listOfStrings
+	 * @return
+	 */
 	protected String asCommaSeparatedString(List<String> listOfStrings) {		
 		return joinListOfStrings(listOfStrings, ", ");
 	}
 	
+	/**
+	 * 
+	 * Joins a list of strings with a separator.
+	 * 
+	 * @param listOfStrings
+	 * @param separator
+	 * @return
+	 */
 	protected String joinListOfStrings(List<String> listOfStrings, String separator) {
 		
 		int numStrings = listOfStrings.size();
@@ -296,6 +353,14 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 
 	}
 	
+	/**
+	 * 
+	 * Returns the names of all tables in the database.
+	 * 
+	 * @param conn
+	 * @return
+	 * @throws SQLException
+	 */
 	protected List<String> getTablesOfDb(Connection conn) throws SQLException {
 		
 		DatabaseMetaData md = conn.getMetaData();
@@ -310,6 +375,14 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 		return tablesOfDb;
 	}
 	
+	/**
+	 * 
+	 * Returns the names of all columns for a given table.
+	 * 
+	 * @param conn
+	 * @param table
+	 * @return
+	 */
 	protected List<String> getColumnsOfTable(Connection conn, String table) {
 		
 		List<String> columnsOfTable;
