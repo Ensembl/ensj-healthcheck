@@ -20,6 +20,7 @@ public class Constants {
 	
 	public static final String DB_SERVER_CHANGED           = "DB_SERVER_CHANGED";
 	public static final String SECONDARY_DB_SERVER_CHANGED = "SECONDARY_DB_SERVER_CHANGED";
+	public static final String PAN_DB_SERVER_CHANGED       = "PAN_DB_SERVER_CHANGED";
 	
 	public static final String Add_to_tests_to_be_run = "Add to tests to be run";
 	public static final String Execute                = "Execute";
