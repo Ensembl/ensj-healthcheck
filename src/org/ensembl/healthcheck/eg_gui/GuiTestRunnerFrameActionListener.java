@@ -79,8 +79,6 @@ public class GuiTestRunnerFrameActionListener implements ActionListener {
 			secondaryHostDetails
 		);
 		
-		System.out.println("Configuration is: " + combinedHostConfig);
-		
 		// And finally set the new configuration file in which the 
 		// secondary host has been configured.
 		//
