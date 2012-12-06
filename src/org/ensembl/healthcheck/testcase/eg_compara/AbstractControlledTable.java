@@ -1,6 +1,10 @@
 package org.ensembl.healthcheck.testcase.eg_compara;
 
+import java.io.File;
 import java.sql.Connection;
+
+import org.ensembl.healthcheck.util.ChecksumDatabase;
+import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.SqlTemplate;
 import org.ensembl.healthcheck.util.SqlTemplate.ResultSetCallback;
 
@@ -8,7 +12,10 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
@@ -41,33 +48,103 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 			);
 			return false;
 		}
-
-		Connection comparaMasterconn = masterDbRe.getConnection();
 		
-		boolean result = checkAllRowsInTable(
-				controlledTableToTest, 
-				testDbConn,
-				comparaMasterconn
-		);		
-		return result;
+		boolean passed;
+		
+		if (getComparisonStrategy() == ComparisonStrategy.RowByRow) {
+			
+			passed = checkAllRowsInTable(
+					controlledTableToTest, 
+					dbre,
+					masterDbRe				
+			);
+			
+		} else {
+			
+			passed = checkByChecksum(
+					controlledTableToTest,
+					dbre,
+					masterDbRe				
+			);
+			
+			if (!passed) {
+				ReportManager.problem(
+					this, 
+					dbre.getConnection(), 
+					"The table " + controlledTableToTest + " differs from the one in the master database. This was established by using checksums."
+				);
+			}			
+		}
+		
+		return passed;
 	}
 	
 	protected int getMaxReportedMismatches() {
 		return 50;
 	}
+	
+	protected enum ComparisonStrategy { RowByRow, Checksum };
+	
+	protected ComparisonStrategy getComparisonStrategy() {
+		return ComparisonStrategy.RowByRow;
+	}
+	
+	protected boolean checkByChecksum(
+			final String controlledTableToTest,
+			DatabaseRegistryEntry testDbRe,
+			DatabaseRegistryEntry masterDbRe
+		) {
+		
+		List<String> tablesToChecksum = new ArrayList<String>();
+		tablesToChecksum.add(controlledTableToTest);
+		
+		String checksumValueMaster = calculateChecksumForTable(
+				masterDbRe, tablesToChecksum);
+		
+		String checksumValueTest = calculateChecksumForTable(
+				testDbRe, tablesToChecksum);
+		
+		return checksumValueMaster.equals(checksumValueTest);
+	}
 
 	/**
-	 * @param controlledTableToTest
-	 * @param testDbConn
-	 * @param sqlTemplateTestDb
-	 * @param sqlTemplateComparaMaster
+	 * @param testDbRe
+	 * @param masterDbRe
+	 * @param tablesToChecksum
 	 * @return
 	 */
-	protected boolean checkAllRowsInTable(
-			final String controlledTableToTest,
-			final Connection testDbConn,
-			final Connection comparaMasterconn
+	protected String calculateChecksumForTable(
+			DatabaseRegistryEntry masterDbRe, 
+			List<String> tablesToChecksum
 		) {
+		ChecksumDatabase cd = new ChecksumDatabase(masterDbRe, tablesToChecksum);
+		
+		// Should be something like this:
+		// {ensembl_compara_master.dnafrag=635082403}
+		//
+		Properties checksumMaster = cd.getChecksumFromDatabase();
+		
+		Set<String> entrySet = checksumMaster.stringPropertyNames();
+		if (entrySet.size()!=1) {
+			throw new RuntimeException("Unexpected result from checksumming (expected only one element): ");
+		}
+		// Will be prefixed with the database name like: 
+		// "ensembl_compara_master.dnafrag"
+		//
+		String tableName = entrySet.iterator().next();
+		
+		String checksumValueMaster = (String) checksumMaster.get(tableName);
+		return checksumValueMaster;
+	}
+
+		protected boolean checkAllRowsInTable(
+			final String controlledTableToTest,
+			DatabaseRegistryEntry testDbre,
+			DatabaseRegistryEntry masterDbRe
+		) {
+		
+		final Connection testDbConn        = testDbre.getConnection();
+		final Connection comparaMasterconn = masterDbRe.getConnection();
 		
 		final SqlTemplate sqlTemplateTestDb        = getSqlTemplate(testDbConn);  
 		final SqlTemplate sqlTemplateComparaMaster = getSqlTemplate(comparaMasterconn);
