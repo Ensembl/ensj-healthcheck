@@ -168,6 +168,8 @@ public class GuiTestRunner {
                     	}
                     }
 
+                    boolean passed = false;
+                    
                     if (testCase instanceof SingleDatabaseTestCase) {
 
                         for (DatabaseRegistryEntry currentDbre : databases) {
@@ -178,9 +180,8 @@ public class GuiTestRunner {
                             
                             testProgressDialog.setNote(message);
                             
-                            testCase.types();
+                            testCase.types();                            
                             
-                            boolean passed = false;
                             try {
                             	passed = ((SingleDatabaseTestCase) testCase).run(currentDbre);
                             }
@@ -204,13 +205,22 @@ public class GuiTestRunner {
                             //
                             boolean testHasReportedSomething = ReportManager.getAllReportsByTestCase().containsKey(testCase.getTestName()); 
                             
-                            if (passed && !testHasReportedSomething) {
-                            	ReportManager.report(
-                            			testCase, 
-                            			currentDbre.getConnection(), 
-                            			ReportLine.INFO,
-                            			testCase.getShortTestName() + " did not produce any output, but reported that the database has passed."
-                            	);
+                            if (!testHasReportedSomething) { 
+	                            if (passed) {
+	                            	ReportManager.report(
+	                            			testCase, 
+	                            			currentDbre.getConnection(), 
+	                            			ReportLine.INFO,
+	                            			testCase.getShortTestName() + " did not produce any output, but reported that the database has passed."
+	                            	);
+	                            } else {
+	                            	ReportManager.report(
+	                            			testCase, 
+	                            			currentDbre.getConnection(), 
+	                            			ReportLine.PROBLEM,
+	                            			testCase.getShortTestName() + " did not produce any output, but reported that the database has failed."
+	                            	);
+	                            }
                             }
                             
                             ReportManager.finishTestCase(testCase, passed, currentDbre);
@@ -232,9 +242,7 @@ public class GuiTestRunner {
                         testProgressDialog.setNote(message);
                         
                         testCase.types();
-                        
-                        boolean passed = false;
-                        
+                                              
                         try {
                         	passed = ((MultiDatabaseTestCase) testCase).run(dbr);
 	                    }
@@ -292,19 +300,13 @@ public class GuiTestRunner {
                     // Restore stderr
                     //
                     System.setErr(stderrSaved);
-                    
-                    boolean currentTestReportedNoProblems 
-                    	= ReportManager.getReportsByTestCase(
-                    		testCase.getTestName(), 
-                    		ReportLine.PROBLEM
-                    	).size()==0; 
-                    
+                        
                     ReportManager.finishTestCase(
-                    	testCase, 
-                    	currentTestReportedNoProblems, 
-                    	null
-                    );
-                    
+                        	testCase, 
+                        	passed, 
+                        	null
+                        );
+                        
                 }
                 testProgressDialog.setVisible(false);
                 
