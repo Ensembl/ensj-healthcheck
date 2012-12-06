@@ -87,7 +87,7 @@ public class GuiTestRunnerFrameBuilder {
 		
 		actionListener.setActive(true);
 		
-		if (guiTestRunnerFrame.setupTab.dbServerSelector.getItemCount()>0) {
+		if (guiTestRunnerFrame.setupTab.dbPrimaryServerSelector.getItemCount()>0) {
 
 			guiTestRunnerFrame.setupTab.actionListener.actionPerformed(
 				new ActionEvent(
