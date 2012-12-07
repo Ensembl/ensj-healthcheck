@@ -20,9 +20,10 @@ public class MySQLStorageEngine extends AbstractTemplatedTestCase {
 
 	public MySQLStorageEngine() {
 
+                addToGroup("release");
+                addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
-		setTeamResponsible(Team.PRODUCTION);
-
+                setTeamResponsible(Team.RELEASE_COORDINATOR);
 	}
 
 	public void types() {
@@ -30,6 +31,10 @@ public class MySQLStorageEngine extends AbstractTemplatedTestCase {
 		this.addAppliesToType(DatabaseType.VARIATION);
 		this.addAppliesToType(DatabaseType.FUNCGEN);
 		this.addAppliesToType(DatabaseType.COMPARA);
+                this.addAppliesToType(DatabaseType.CDNA);
+                this.addAppliesToType(DatabaseType.OTHERFEATURES);
+                this.addAppliesToType(DatabaseType.RNASEQ);
+                this.addAppliesToType(DatabaseType.VEGA);
 	}
 
 	@Override
