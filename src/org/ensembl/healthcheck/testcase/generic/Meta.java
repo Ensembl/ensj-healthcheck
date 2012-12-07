@@ -47,8 +47,7 @@ public class Meta extends SingleDatabaseTestCase {
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 
-		setTeamResponsible(Team.RELEASE_COORDINATOR);
-		setSecondTeamResponsible(Team.GENEBUILD);
+		setTeamResponsible(Team.GENEBUILD);
 		setDescription("Check that the meta table exists and has data and the entries correspond to the database name");
 	}
 

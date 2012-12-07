@@ -53,7 +53,7 @@ public class MetaCoord extends SingleDatabaseTestCase {
 		
 		setDescription("Check that meta_coord table contains entries for all the coordinate systems that all the features are stored in");
 		setTeamResponsible(Team.GENEBUILD);
-    setSecondTeamResponsible(Team.RELEASE_COORDINATOR);
+                setSecondTeamResponsible(Team.RELEASE_COORDINATOR);
 	}
 
 	/**

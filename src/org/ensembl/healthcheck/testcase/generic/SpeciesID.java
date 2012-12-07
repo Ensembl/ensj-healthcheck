@@ -47,7 +47,7 @@ public class SpeciesID extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Could cause problems in multi-species databases");
 		setFix("Manually fix affected keys, e.g. UPDATE TABLE meta SET species_id = NULL WHERE meta_key IN ( 'patch', 'schema_version' );");
-		setTeamResponsible(Team.CORE); // No longer valid for funcgen
+		setTeamResponsible(Team.GENEBUILD); // No longer valid for funcgen
 
 	}
 

@@ -54,6 +54,7 @@ public class TranscriptNames extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Transcript names do not match the logic names.");
 		setTeamResponsible(Team.CORE);
+                setSecondTeamResponsible(Team.GENEBUILD);
 	}
 
 	/**

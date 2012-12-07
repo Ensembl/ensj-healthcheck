@@ -43,7 +43,6 @@ public class Archive extends SingleDatabaseTestCase {
 		setDescription("Checks the archive tables are up to date.");
 		setHintLongRunning(true);
 		setTeamResponsible(Team.CORE);
-
 	}
 
 	/**

@@ -41,7 +41,7 @@ public class XrefTypes extends SingleDatabaseTestCase {
 		
 		setDescription("Check that all xrefs only map to one ensembl object type.");
 		setTeamResponsible(Team.CORE);
-		setTeamResponsible(Team.GENEBUILD);
+                setSecondTeamResponsible(Team.GENEBUILD);
 	}
 
 	/**

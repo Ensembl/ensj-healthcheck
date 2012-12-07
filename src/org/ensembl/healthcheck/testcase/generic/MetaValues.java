@@ -49,8 +49,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		
-		setTeamResponsible(Team.RELEASE_COORDINATOR);
-		setSecondTeamResponsible(Team.GENEBUILD);
+		setTeamResponsible(Team.GENEBUILD);
 		setDescription("Check that meta_value contents in the meta table are OK");
 	}
 

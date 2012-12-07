@@ -50,8 +50,11 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Will cause problems with sequence retrieval for the affected region, and possibly website crashes.");
 		setFix("Specify the chained mapper (#) in the assembly.mapping entry for these two coordinate systems.");
-		setTeamResponsible(Team.CORE);
-		setSecondTeamResponsible(Team.GENEBUILD);
+                addToGroup("production");
+                addToGroup("release");
+                addToGroup("pre-compara-handover");
+                addToGroup("post-compara-handover");
+		setTeamResponsible(Team.GENEBUILD);
 	}
 
 	/**

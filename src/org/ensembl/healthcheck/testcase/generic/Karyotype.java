@@ -42,7 +42,7 @@ public class Karyotype extends SingleDatabaseTestCase {
                 addToGroup("pre-compara-handover");
 		
 		setDescription("Check that karyotype and seq_region tables agree");
-		setTeamResponsible(Team.CORE);
+		setTeamResponsible(Team.GENEBUILD);
 
 	}
 

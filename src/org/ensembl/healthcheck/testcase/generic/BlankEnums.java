@@ -51,8 +51,7 @@ public class BlankEnums extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Will have blank values where NULL or one of the enum values is expected.");
 		setFix("Re-import after identifying source of problem - possibly the word NULL in import files instead of \\N");
-		setTeamResponsible(Team.RELEASE_COORDINATOR);
-		setSecondTeamResponsible(Team.GENEBUILD);
+		setTeamResponsible(Team.GENEBUILD);
 	}
 
 	/**

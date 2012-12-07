@@ -39,7 +39,7 @@ public class ExternalDBDisplayName extends SingleDatabaseTestCase {
 		addToGroup("post-compara-handover");
 		
 		setDescription("Check that there are no blank db_display_name fields in external_db");
-		setTeamResponsible(Team.RELEASE_COORDINATOR);
+		setTeamResponsible(Team.GENEBUILD);
 	}
 
 	/**

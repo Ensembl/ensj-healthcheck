@@ -40,8 +40,7 @@ public class MetaCrossSpecies extends MultiDatabaseTestCase {
 		addToGroup("post-compara-handover");
 		
 		setDescription("Check meta table species, classification and taxonomy_id is the same in all DBs for each species");
-		setTeamResponsible(Team.RELEASE_COORDINATOR);
-		setSecondTeamResponsible(Team.GENEBUILD);
+		setTeamResponsible(Team.Team.GENEBUILD);
 	}
 
 	/**
