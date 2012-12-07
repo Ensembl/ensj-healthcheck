@@ -10,6 +10,13 @@ import org.ensembl.healthcheck.testcase.generic.StableIdDuplicates;
 import org.ensembl.healthcheck.testcase.generic.StableIdNullValues;
 import org.ensembl.healthcheck.testcase.generic.TranscriptNames;
 
+import org.ensembl.healthcheck.testcase.generic.AnalysisTypes;
+import org.ensembl.healthcheck.testcase.generic.CheckDeclarations;
+import org.ensembl.healthcheck.testcase.generic.ProductionAnalysisLogicName;
+import org.ensembl.healthcheck.testcase.generic.ProductionBiotypes;
+import org.ensembl.healthcheck.testcase.generic.ProductionMeta;
+import org.ensembl.healthcheck.testcase.generic.TranscriptNames;
+
 /**
  * Supergroup of tests for Ensembl Genomes (incorporates {@link EGCoreGeneModel}
  * , {@link EGCoreMeta}, {@link EGCoreAnnotation} and {@link EGCoreCompare})
@@ -35,8 +42,8 @@ public class EGCore extends GroupOfTests {
 			ProductionAnalysisLogicName.class,
 			ProductionBiotypes.class,
 			ProductionMeta.class,
-			TranscriptNames.class
-		);
-		
+			TranscriptNames.class,
+			ControlledCoreTables.class
+		);		
 	}
 }
