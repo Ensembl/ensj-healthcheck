@@ -38,6 +38,7 @@ public class ComparePreviousVersionValidationStatus extends ComparePreviousVersi
 		addToGroup("variation-release");
 		addToGroup("variation-post-import");
 		setDescription("Compare the number of variations having each validation status in the current database with those from the equivalent database on the secondary server");
+                setTeamResponsible(Team.VARIATION);
 	}
 
 	/**
