@@ -20,6 +20,7 @@ import java.util.Set;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 
@@ -27,6 +28,7 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 	
 	public AbstractControlledTable() {
 		appliesToType(DatabaseType.COMPARA);
+		this.setTeamResponsible(Team.ENSEMBL_GENOMES);
 	}
 
 	protected abstract String getControlledTableName();
