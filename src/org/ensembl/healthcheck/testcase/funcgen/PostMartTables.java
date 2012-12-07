@@ -21,6 +21,7 @@ import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
@@ -37,7 +38,7 @@ public class PostMartTables extends SingleDatabaseTestCase {
 
 		// TODO - group specifically for this?
 		setDescription("Check that certain views/tables required for the Biomart build are not present.");
-
+                setTeamResponsible(Team.FUNCGEN);
 	}
 
 	/**
