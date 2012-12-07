@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
@@ -185,7 +186,7 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 						"--user", srv.getUser(),
 						"--password", srv.getPass(),
 						"db:" + dbre.getName(),
-						"db:" + masterShortName
+						"db:" + masterShortName,
 				}, 
 				new ActionAppendable() {
 					@Override public void process(String message) {
@@ -228,10 +229,15 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 			// web interface, which assumes that the exact same error is
 			// given for the same problem every time.
 			//
-			// There fore the name of the master database is replaced with the
+			// Therefore the name of the master database is replaced with the
 			// constant string "master_database" here.
 			//
-			String patchedPatch = patch.toString().replaceAll(masterShortName, "master_database");
+			// The second call to replaceAll removes the date that is inserted
+			// by mysqldiff.
+			//
+			String patchedPatch = patch.toString()
+					.replaceAll(masterShortName, "master_database")
+					.replaceAll("## Run on .*?\n", "");
 			
 			ReportManager.problem(compareSchemaTest, checkCon, 
 					"\n"
