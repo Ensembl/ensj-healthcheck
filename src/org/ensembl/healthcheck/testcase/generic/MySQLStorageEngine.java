@@ -3,6 +3,7 @@ package org.ensembl.healthcheck.testcase.generic;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase;
 
 /**
@@ -20,6 +21,7 @@ public class MySQLStorageEngine extends AbstractTemplatedTestCase {
 	public MySQLStorageEngine() {
 
 		addToGroup("post-compara-handover");
+		setTeamResponsible(Team.PRODUCTION);
 
 	}
 
