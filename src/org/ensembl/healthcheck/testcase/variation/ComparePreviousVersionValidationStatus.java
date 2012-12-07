@@ -21,6 +21,8 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.Team;
+
 
 /**
  * Compare the number of variations having each validation status between the current database and the database on the secondary
