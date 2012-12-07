@@ -81,6 +81,7 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 		// current
 		float displayXrefCount = new Integer(DBUtils.getRowCount(currentCon, "SELECT COUNT(1) FROM gene WHERE display_xref_id IS NOT NULL" ) );
 		float displayXrefPreviousCount = new Integer(DBUtils.getRowCount(previousCon, "SELECT COUNT(1) FROM gene WHERE display_xref_id IS NOT NULL" ) );
+                float PreviousCount = new Integer(DBUtils.getRowCount(previousCon, "SELECT COUNT(1) FROM gene" ) );
 		
 		if (displayXrefCount == 0 || displayXrefPreviousCount == 0 ) {
 			ReportManager.problem(this, currentCon, "display xref count is 0 in the current or previous database");
@@ -196,8 +197,9 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 				changedSource += changeCount;
 			}	
 			totalCount = changedSource + accessionsChanged;
-	   		percentageChange = totalCount/displayXrefPreviousCount * 100 ;			
-			if (percentageChange > 1) {
+	   		percentageChange = totalCount/PreviousCount * 100 ;			
+			if (percentageChange > 5) {
+                                ReportManager.problem(this, currentCon, "Overall gene display xrefs have changed by " +percentageChange);
 				result = false;
 			}
 		}
@@ -208,28 +210,29 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 			float percentage = missingIds/displayXrefPreviousCount * 100;
 			percentage = Float.valueOf(twoDForm.format(percentage));
 			
-			if (missingIds > 0 ) {	
-        		ReportManager.problem(this, currentCon, missingIds + "(" + percentage + "%) stable ids missing from the current database ");
-        	}
+			if (missingIds > 0 && percentage > 5) {	
+                		ReportManager.problem(this, currentCon, missingIds + "(" + percentage + "%) stable ids missing from the current database ");
+         	        }
            	
-		percentage = accessionsChanged/displayXrefPreviousCount * 100;
-		percentage = Float.valueOf(twoDForm.format(percentage));
+		        percentage = accessionsChanged/displayXrefPreviousCount * 100;
+		        percentage = Float.valueOf(twoDForm.format(percentage));
 			
-           	if (accessionsChanged > 0 ) {	
-        		ReportManager.problem(this, currentCon, accessionsChanged + "(" +percentage + "%) display xref primary accessions changed for the same source ");
-        	}
-           	percentageChange = changedSource/displayXrefPreviousCount * 100 ;	
-           	percentageChange = Float.valueOf(twoDForm.format(percentageChange));
+           	        if (accessionsChanged > 50 && percentage > 5) {	
+        		        ReportManager.problem(this, currentCon, accessionsChanged + "(" +percentage + "%) display xref primary accessions changed for the same source ");
+        	        }
+           	        percentageChange = changedSource/displayXrefPreviousCount * 100 ;	
+           	        percentageChange = Float.valueOf(twoDForm.format(percentageChange));
 		
-    		ReportManager.problem(this, currentCon, percentageChange + "% of gene display xrefs changed source: (from [previous source] to [current source] )");
-			//print out counts and percentages of changes
-			Iterator<String> iter = changeCounts.keySet().iterator();
-			while(iter.hasNext()) {
-				String key = iter.next();
-				int changeCount = changeCounts.get(key);
-				percentage = changeCount/displayXrefPreviousCount * 100;
-				percentage = Float.valueOf(twoDForm.format(percentage));
-				ReportManager.problem(this, currentCon, changeCount +"("+ percentage +"%) gene display xrefs changed source from " + key + exampleStableIds.get(key) );
+		        //print out counts and percentages of changes
+		        Iterator<String> iter = changeCounts.keySet().iterator();
+		        while(iter.hasNext()) {
+			        String key = iter.next();
+			        int changeCount = changeCounts.get(key);
+        			percentage = changeCount/displayXrefPreviousCount * 100;
+	        		percentage = Float.valueOf(twoDForm.format(percentage));
+                                if (percentage > 5 && changeCount > 50) {
+                                        ReportManager.problem(this, currentCon, changeCount +"("+ percentage +"%) gene display xrefs changed source from " + key + exampleStableIds.get(key) );
+                                }
 			}
 	
 		}
