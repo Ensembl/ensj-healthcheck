@@ -1,10 +1,8 @@
 package org.ensembl.healthcheck.testcase.eg_compara;
 
-import java.io.File;
 import java.sql.Connection;
 
 import org.ensembl.healthcheck.util.ChecksumDatabase;
-import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.SqlTemplate;
 import org.ensembl.healthcheck.util.SqlTemplate.ResultSetCallback;
 
@@ -12,7 +10,6 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -26,12 +23,31 @@ import org.ensembl.healthcheck.testcase.EnsTestCase;
 
 public abstract class AbstractControlledTable extends AbstractTemplatedTestCase {
 	
-	public AbstractControlledTable() {
-		appliesToType(DatabaseType.COMPARA);
-		this.setTeamResponsible(Team.ENSEMBL_GENOMES);
+	/**
+	 * The name of the table that will be compared to the master. 
+	 */
+	protected abstract String getControlledTableName();
+
+	/**
+	 * The maximum amount of mismatches that this test is allowed to report.
+	 */
+	protected int getMaxReportedMismatches() {
+		return 50;
+	}
+	
+	/**
+	 * How the tables should be compared.
+	 */
+	protected ComparisonStrategy getComparisonStrategy() {
+		return ComparisonStrategy.RowByRow;
 	}
 
-	protected abstract String getControlledTableName();
+	protected enum ComparisonStrategy { RowByRow, Checksum };
+	
+	public AbstractControlledTable() {
+		appliesToType(DatabaseType.COMPARA);
+		setTeamResponsible(Team.ENSEMBL_GENOMES);
+	}
 	
 	@Override
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
@@ -73,24 +89,23 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 				ReportManager.problem(
 					this, 
 					dbre.getConnection(), 
-					"The table " + controlledTableToTest + " differs from the one in the master database. This was established by using checksums."
+					"The table " + controlledTableToTest + " differs from the one in the master database. This was established by using checksums so the rows in question are not shown."
 				);
 			}			
-		}
-		
+		}		
 		return passed;
 	}
 	
-	protected int getMaxReportedMismatches() {
-		return 50;
-	}
-	
-	protected enum ComparisonStrategy { RowByRow, Checksum };
-	
-	protected ComparisonStrategy getComparisonStrategy() {
-		return ComparisonStrategy.RowByRow;
-	}
-	
+	/**
+	 * 
+	 * Checks whether a table that exists in two databases has the same 
+	 * content. This is done using checksums. 
+	 * 
+	 * @param controlledTableToTest
+	 * @param testDbRe
+	 * @param masterDbRe
+	 * @return
+	 */
 	protected boolean checkByChecksum(
 			final String controlledTableToTest,
 			DatabaseRegistryEntry testDbRe,
@@ -110,16 +125,18 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 	}
 
 	/**
-	 * @param testDbRe
-	 * @param masterDbRe
+	 * 
+	 * Calculates the checksum of a list of tables in a given database.
+	 * 
+	 * @param dbre
 	 * @param tablesToChecksum
 	 * @return
 	 */
 	protected String calculateChecksumForTable(
-			DatabaseRegistryEntry masterDbRe, 
+			DatabaseRegistryEntry dbre, 
 			List<String> tablesToChecksum
 		) {
-		ChecksumDatabase cd = new ChecksumDatabase(masterDbRe, tablesToChecksum);
+		ChecksumDatabase cd = new ChecksumDatabase(dbre, tablesToChecksum);
 		
 		// Should be something like this:
 		// {ensembl_compara_master.dnafrag=635082403}
@@ -139,7 +156,17 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 		return checksumValueMaster;
 	}
 
-		protected boolean checkAllRowsInTable(
+	/**
+	 * For every row of the table controlledTableToTest in the database 
+	 * testDbre this checks, if this row also exists in the table 
+	 * controlledTableToTest of masterDbRe.
+	 * 
+	 * @param controlledTableToTest
+	 * @param testDbre
+	 * @param masterDbRe
+	 * @return
+	 */
+	protected boolean checkAllRowsInTable(
 			final String controlledTableToTest,
 			DatabaseRegistryEntry testDbre,
 			DatabaseRegistryEntry masterDbRe
@@ -206,6 +233,8 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 					return allRowsPresentInMasterDb;
 				}
 			},
+			// No bound parameters
+			//
 			new Object[0]
 		);
 		return result;
@@ -482,6 +511,4 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 		}
 		return columnsOfTable;
 	}
-
-
 }
