@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase;
 import org.ensembl.healthcheck.util.SqlTemplate;
 import org.ensembl.healthcheck.util.StringListMapRowMapper;
@@ -36,6 +37,11 @@ public class AssemblyMapping extends AbstractTemplatedTestCase {
 		super();
 		this.appliesToType(DatabaseType.CORE);
 		this.setDescription("Test to make sure that the coord_systems and versions referred to in assembly.mapping exist");
+                addToGroup("production");
+                addToGroup("release");
+                addToGroup("pre-compara-handover");
+                addToGroup("post-compara-handover");
+                setTeamResponsible(Team.GENEBUILD);
 	}
 
 	/*

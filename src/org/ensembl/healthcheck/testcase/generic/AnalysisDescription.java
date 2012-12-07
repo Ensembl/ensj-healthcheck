@@ -42,7 +42,7 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 		
 		setDescription("Check that all of certain types of objects have analysis_descriptions; also check that displayable field is set.");
 		setTeamResponsible(Team.GENEBUILD);
-		setSecondTeamResponsible(Team.Team.RELEASE_COORDINATOR);
+		setSecondTeamResponsible(Team.RELEASE_COORDINATOR);
 
 	}
 
