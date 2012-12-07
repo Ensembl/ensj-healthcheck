@@ -277,14 +277,19 @@ public class ReportLine {
 	
 	public String getPrintableTeamResponsibleString() {
 	
-		String team = getTeamResponsible().toString();
+		Team team = getTeamResponsible();
+		String teamName;
 		
-		if (getSecondTeamResponsible() != null) {
-			team += " and " + getSecondTeamResponsible();
-		}
-		
-		return team;
-		
+		if (team==null) {
+			teamName = "No team specified.";
+		} else {		
+			teamName = getTeamResponsible().toString();
+			
+			if (getSecondTeamResponsible() != null) {
+				teamName += " and " + getSecondTeamResponsible();
+			}
+		}		
+		return teamName;	
 	}
 	
 	public String getSpeciesName() {
