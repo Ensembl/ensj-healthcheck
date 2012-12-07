@@ -39,7 +39,7 @@ public class EGCompara extends GroupOfTests {
 				ForeignKeyTaxonId.class, 
 				EGCheckEmptyLocators.class,
 				MultipleGenomicAlignBlockIds.class,
-				ControlledTables.class
+				ControlledComparaTables.class
 		);
 	}
 }
