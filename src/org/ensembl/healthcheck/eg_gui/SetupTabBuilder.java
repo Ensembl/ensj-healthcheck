@@ -190,7 +190,7 @@ public class SetupTabBuilder {
 		Border noBorder = BorderFactory.createEmptyBorder(0, 0, 0, 0);
 		
 		setupTab.dbPrimaryServerSelector      .setBorder(BorderFactory.createTitledBorder(noBorder, "Primary (where your database is):"));
-		setupTab.dbSecondPrimaryServerSelector.setBorder(BorderFactory.createTitledBorder(noBorder, "Pan db server (for ensembl_compara_master)"));
+		setupTab.dbSecondPrimaryServerSelector.setBorder(BorderFactory.createTitledBorder(noBorder, "Pan db server (for master databases)"));
 		setupTab.dbSecondaryServerSelector    .setBorder(BorderFactory.createTitledBorder(noBorder, "Secondary (for ComparePreviousVersion* tests):"));
 		
 		setupTab.databaseTabbedPaneWithSearchBox   .setBorder(BorderFactory.createTitledBorder(defaultEmptyBorder, "2. Select a database:"));
