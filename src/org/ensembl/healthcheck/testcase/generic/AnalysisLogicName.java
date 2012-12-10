@@ -89,6 +89,7 @@ public class AnalysisLogicName extends SingleDatabaseTestCase {
           con,
           "The following logic_names are not lower case: "
               + Utils.arrayToString(logicNames, ","));
+        result = false;
     }
     else {
       ReportManager.correct(this, con, "All logic names are lower case");
