@@ -1,12 +1,7 @@
 package org.ensembl.healthcheck.testgroup;
 
 import org.ensembl.healthcheck.GroupOfTests;
-import org.ensembl.healthcheck.testcase.generic.AnalysisTypes;
-import org.ensembl.healthcheck.testcase.generic.CheckDeclarations;
-import org.ensembl.healthcheck.testcase.generic.ProductionAnalysisLogicName;
-import org.ensembl.healthcheck.testcase.generic.ProductionBiotypes;
-import org.ensembl.healthcheck.testcase.generic.ProductionMeta;
-import org.ensembl.healthcheck.testcase.generic.TranscriptNames;
+import org.ensembl.healthcheck.testcase.generic.*;
 
 import org.ensembl.healthcheck.testcase.generic.AnalysisTypes;
 import org.ensembl.healthcheck.testcase.generic.CheckDeclarations;
@@ -41,7 +36,8 @@ public class EGCore extends GroupOfTests {
 			ProductionBiotypes.class,
 			ProductionMeta.class,
 			TranscriptNames.class,
-			ControlledCoreTables.class
+			ControlledCoreTables.class,
+            AnalysisLogicName.class
 		);		
 	}
 }
