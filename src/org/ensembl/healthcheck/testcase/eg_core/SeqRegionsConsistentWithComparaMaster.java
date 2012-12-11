@@ -112,7 +112,7 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractTemplatedTest
 		
 		boolean allToplevelSeqRegionInDnaFragTable = assertToplevelSeqRegionInDnaFragTable(genomeDbId);
 		
-		return allToplevelSeqRegionInDnaFragTable;
+		return sequenceCountsOk && allToplevelSeqRegionInDnaFragTable;
 	}
 	
 	protected int fetchToplevelSeqRegionCount() {
