@@ -8,16 +8,18 @@ import java.util.List;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.util.SqlTemplate;
 import org.ensembl.healthcheck.util.SqlUncheckedException;
 import org.ensembl.healthcheck.util.SqlTemplate.ResultSetCallback;
 
-
 /**
  * 
- * Todo: Make it able to deal with multi species databases.
+ * Checks whether all toplevel sequences in a core database are present as 
+ * dnafrag regions in the compara master database, if the genome is in 
+ * the compara master database.
  * 
  * @author mnuhn
  *
@@ -37,16 +39,40 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractTemplatedTest
 		DatabaseRegistryEntry masterDbRe = getComparaMasterDatabase();
 		masterDbConn = masterDbRe.getConnection();
 		masterSqlTemplate = getSqlTemplate(masterDbConn);
+		
+		setTeamResponsible(Team.ENSEMBL_GENOMES);
 	}
 
 	@Override
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
-		
+
 		init(dbre);
 		
-		String productionName     = fetchSingleMetaValueFor(sqlTemplateTestDb, "species.production_name");
-		String assemblyDefault    = fetchSingleMetaValueFor(sqlTemplateTestDb, "assembly.default");
-		String genebuildStartDate = fetchSingleMetaValueFor(sqlTemplateTestDb, "genebuild.start_date");
+		List<Integer> allSpeciesIds = sqlTemplateTestDb.queryForDefaultObjectList(
+			"select distinct species_id from meta where species_id is not null", 
+			Integer.class
+		);
+
+		if (allSpeciesIds.size() == 0) {
+			ReportManager.problem(this, testDbConn, "No species configured!");
+		}
+		
+		boolean allSpeciesPassed = true;
+		
+		for(int speciesId : allSpeciesIds) {
+			allSpeciesPassed &= runTestForSpecies(dbre, speciesId);
+		}
+		
+		return allSpeciesPassed;
+	}
+	
+	protected boolean runTestForSpecies(DatabaseRegistryEntry dbre, int speciesId) {
+		
+		String productionName     = fetchSingleMetaValueFor(sqlTemplateTestDb, speciesId, "species.production_name");
+		String assemblyDefault    = fetchSingleMetaValueFor(sqlTemplateTestDb, speciesId, "assembly.default");
+		String genebuildStartDate = fetchSingleMetaValueFor(sqlTemplateTestDb, speciesId, "genebuild.start_date");
+		
+		getLogger().info("Testing species" + productionName);
 		
 		boolean hasEntryInMasterDb = fetchHasGenomeDbId(
 				productionName, 
@@ -79,7 +105,7 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractTemplatedTest
 					+ "species are " + toplevelSeqRegionCount + " toplevel "
 					+ "sequence regions in the core database and " 
 					+ dnaFragRowCountFor + " dna frags in the compara "
-					+ "master database.");
+					+ "master database. The counts should be equal.");
 		}
 		
 		boolean allToplevelSeqRegionInDnaFragTable = assertToplevelSeqRegionInDnaFragTable(genomeDbId);
@@ -138,6 +164,9 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractTemplatedTest
 					
 					SeqRegionData seqRegionData = new SeqRegionData();
 					
+					int reportMaxMissingRows = 50;
+					int missingRows = 0;					
+					
 					boolean allRowsExistInDnaFragTable = true;
 					
 					while (rs.next()) {					
@@ -158,7 +187,12 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractTemplatedTest
 						}
 						if (numCorrespondingRowsInDnaFragTable == 0) {
 							
-							ReportManager.problem(thisTest, testDbConn, "The following seq region is not in the dnafrag table in the master database:\n" + seqRegionData);							
+							ReportManager.problem(thisTest, testDbConn, "The following seq region is not in the dnafrag table in the master database:\n" + seqRegionData);
+							missingRows++;
+							if (missingRows>=reportMaxMissingRows) {
+								ReportManager.problem(thisTest, testDbConn, "No more rows will be reported, because the maximum of " + reportMaxMissingRows + " has been reached.");
+								return false;
+							}
 							currentRowExistsInDnaFragTable = false;
 						}
 						if (numCorrespondingRowsInDnaFragTable > 1) {
@@ -203,7 +237,6 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractTemplatedTest
 		
 		return numSeqRegionsInDnaFragTableList.get(0);		
 	}
-
 
 	protected void assertLengthIsOne(List<?> list) {
 
@@ -311,22 +344,27 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractTemplatedTest
 	 * @param metaKey
 	 * @return
 	 */
-	protected String fetchSingleMetaValueFor(final SqlTemplate sqlTemplateTestDb,
-			String metaKey) {
+	protected String fetchSingleMetaValueFor(
+			final SqlTemplate sqlTemplateTestDb,
+			int speciesId,
+			String metaKey
+		) {
+		
+		String sql = "select meta_value from meta where meta.meta_key = '"+metaKey+"' and species_id="+speciesId;
 		
 		List<String> metaValueList = sqlTemplateTestDb.queryForDefaultObjectList(
-				"select meta_value from meta where meta.meta_key = '"+metaKey+"';", String.class);
+				sql, String.class
+		);
 		
 		if (metaValueList.size()>1) {
-			throw new RuntimeException("Got more than one meta_value for metaKey "+metaKey+". Expected only one!");
+			throw new RuntimeException("Got more than one meta_value for metaKey "+metaKey+". Expected only one!\n"+sql);
 		}
 		if (metaValueList.size()==0) {
-			throw new RuntimeException("Metakey "+metaKey+" is missing in the meta table!");
+			throw new RuntimeException("Metakey "+metaKey+" is missing in the meta table!\n"+sql);
 		}
 		
 		String metaValue = metaValueList.get(0);
 		
 		return metaValue;
 	}
-
 }
