@@ -74,7 +74,7 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractTemplatedTest
 		String assemblyDefault    = fetchSingleMetaValueFor(sqlTemplateTestDb, speciesId, "assembly.default");
 		String genebuildStartDate = fetchSingleMetaValueFor(sqlTemplateTestDb, speciesId, "genebuild.start_date");
 		
-		getLogger().info("Testing species" + productionName);
+		getLogger().info("Testing species " + productionName);
 		
 		boolean hasEntryInMasterDb = fetchHasGenomeDbId(
 				productionName, 
@@ -188,9 +188,13 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractTemplatedTest
 						}
 						if (numCorrespondingRowsInDnaFragTable == 0) {
 							
-							ReportManager.problem(thisTest, testDbConn, "The following seq region is not in the dnafrag table in the master database:\n" + seqRegionData);						
-							ReportManager.problem(thisTest, testDbConn, "Useful sql for compara master:\n" + createUsefulSqlMaster(seqRegionData, genomeDbId));
+							ReportManager.problem(thisTest, testDbConn, "The following seq region is not in the dnafrag table in the master database:\n" + seqRegionData);
 							
+							ReportManager.problem(thisTest, testDbConn, "The seq region that comes up with this sql in the core database:\n\n"
+									+ createUsefulSqlCore(seqRegionData) + "\n\n"
+									+ "should come up with this sql:\n\n"
+									+ createUsefulSqlMaster(seqRegionData, genomeDbId)
+							);
 							
 							missingRows++;
 							if (missingRows>=reportMaxMissingRows) {
@@ -223,6 +227,22 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractTemplatedTest
 			+ "and name = '" + seqRegionData.seq_region_name + "' "
 			+ "and length = " + seqRegionData.seq_region_length + " "
 			+ "and coord_system_name='" + seqRegionData.coord_system_name + "'";
+	}
+
+	protected String createUsefulSqlCore(final SeqRegionData seqRegionData) {
+		return "select \n"
+		+  "	seq_region.seq_region_id, \n"
+		+  "	seq_region.name, \n"
+		+  "	seq_region.length, \n"
+		+  "	coord_system.name \n"
+		+  "from  \n"
+		+  "	seq_region join seq_region_attrib using (seq_region_id) \n" 
+		+  "	join attrib_type using (attrib_type_id)  \n"
+		+  "	join coord_system using (coord_system_id)  \n"
+		+  "where  \n"
+		+  "	code='toplevel' \n"
+		+  "	and seq_region_id="+seqRegionData.seq_region_id+"; \n"
+		;
 	}
 
 	protected int fetchNumCorrespondingRowsInDnaFragTable(
