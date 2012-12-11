@@ -25,6 +25,8 @@ import org.ensembl.healthcheck.util.SqlTemplate.ResultSetCallback;
  *
  */
 public class SeqRegionsConsistentWithComparaMaster extends AbstractTemplatedTestCase {
+
+	final int reportMaxMissingRows = 20;
 	
 	protected Connection testDbConn;
 	protected SqlTemplate sqlTemplateTestDb;
@@ -164,7 +166,6 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractTemplatedTest
 					
 					SeqRegionData seqRegionData = new SeqRegionData();
 					
-					int reportMaxMissingRows = 50;
 					int missingRows = 0;					
 					
 					boolean allRowsExistInDnaFragTable = true;
@@ -187,7 +188,10 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractTemplatedTest
 						}
 						if (numCorrespondingRowsInDnaFragTable == 0) {
 							
-							ReportManager.problem(thisTest, testDbConn, "The following seq region is not in the dnafrag table in the master database:\n" + seqRegionData);
+							ReportManager.problem(thisTest, testDbConn, "The following seq region is not in the dnafrag table in the master database:\n" + seqRegionData);						
+							ReportManager.problem(thisTest, testDbConn, "Useful sql for compara master:\n" + createUsefulSqlMaster(seqRegionData, genomeDbId));
+							
+							
 							missingRows++;
 							if (missingRows>=reportMaxMissingRows) {
 								ReportManager.problem(thisTest, testDbConn, "No more rows will be reported, because the maximum of " + reportMaxMissingRows + " has been reached.");
@@ -210,6 +214,15 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractTemplatedTest
 			new Object[0]
 		);		
 		return allRowsExistInDnaFragTable;
+	}
+	
+	protected String createUsefulSqlMaster(final SeqRegionData seqRegionData, final int genomeDbId) {
+		return "select * "
+			+ "from dnafrag "
+			+ "where genome_db_id = "+genomeDbId+" "
+			+ "and name = '" + seqRegionData.seq_region_name + "' "
+			+ "and length = " + seqRegionData.seq_region_length + " "
+			+ "and coord_system_name='" + seqRegionData.coord_system_name + "'";
 	}
 
 	protected int fetchNumCorrespondingRowsInDnaFragTable(
