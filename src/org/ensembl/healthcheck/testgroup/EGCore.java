@@ -1,6 +1,7 @@
 package org.ensembl.healthcheck.testgroup;
 
 import org.ensembl.healthcheck.GroupOfTests;
+import org.ensembl.healthcheck.testcase.eg_core.SeqRegionsConsistentWithComparaMaster;
 import org.ensembl.healthcheck.testcase.generic.*;
 
 import org.ensembl.healthcheck.testcase.generic.AnalysisTypes;
@@ -37,7 +38,8 @@ public class EGCore extends GroupOfTests {
 			ProductionMeta.class,
 			TranscriptNames.class,
 			ControlledCoreTables.class,
-            AnalysisLogicName.class
+            AnalysisLogicName.class,
+            SeqRegionsConsistentWithComparaMaster.class
 		);		
 	}
 }
