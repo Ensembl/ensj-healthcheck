@@ -68,6 +68,7 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 	public boolean run(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
+                boolean nochange = true;
 
 		Connection currentCon = dbre.getConnection();
 
@@ -198,13 +199,13 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 			}	
 			totalCount = changedSource + accessionsChanged;
 	   		percentageChange = totalCount/PreviousCount * 100 ;			
-			if (percentageChange > 5) {
-                                ReportManager.problem(this, currentCon, "Overall gene display xrefs have changed by " +percentageChange);
-				result = false;
+			if (percentageChange > 2) {
+                                ReportManager.info(this, currentCon, "Overall gene display xrefs have changed by " +percentageChange);
+				nochange = false;
 			}
 		}
 		
-		if (!result) {
+		if (!nochange) {
            	DecimalFormat twoDForm = new DecimalFormat("#.##");
            	
 			float percentage = missingIds/displayXrefPreviousCount * 100;
@@ -212,6 +213,7 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 			
 			if (missingIds > 0 && percentage > 5) {	
                 		ReportManager.problem(this, currentCon, missingIds + "(" + percentage + "%) stable ids missing from the current database ");
+                                result = false;
          	        }
            	
 		        percentage = accessionsChanged/displayXrefPreviousCount * 100;
@@ -219,6 +221,7 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 			
            	        if (accessionsChanged > 50 && percentage > 5) {	
         		        ReportManager.problem(this, currentCon, accessionsChanged + "(" +percentage + "%) display xref primary accessions changed for the same source ");
+                                result = false;
         	        }
            	        percentageChange = changedSource/displayXrefPreviousCount * 100 ;	
            	        percentageChange = Float.valueOf(twoDForm.format(percentageChange));
@@ -232,6 +235,7 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 	        		percentage = Float.valueOf(twoDForm.format(percentage));
                                 if (percentage > 5 && changeCount > 50) {
                                         ReportManager.problem(this, currentCon, changeCount +"("+ percentage +"%) gene display xrefs changed source from " + key + exampleStableIds.get(key) );
+                                        result = false;
                                 }
 			}
 	
