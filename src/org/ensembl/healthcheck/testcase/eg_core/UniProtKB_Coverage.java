@@ -28,42 +28,53 @@ public class UniProtKB_Coverage extends AbstractTemplatedTestCase {
 	private final static String QUERY_UNIPROT = "SELECT count(distinct(g.gene_id)) "
 			+ "FROM gene g join transcript t using (gene_id) "
 			+ "join translation tl using (transcript_id) "
-			+ "join object_xref ox on (tl.transcript_id=ox.ensembl_id and ox.ensembl_object_type='Translation') "
+			+ "join object_xref ox on (tl.translation_id=ox.ensembl_id and ox.ensembl_object_type='Translation') "
 			+ "join xref x using (xref_id) join external_db d using (external_db_id) "
+			+ "join seq_region s on (s.seq_region_id=g.seq_region_id) "
+			+ "join coord_system using (coord_system_id) "
 			+ "WHERE g.biotype='protein_coding' "
-			+ "AND d.db_name IN ('Uniprot/SPTREMBL','Uniprot/SPTREMBL_predicted','Uniprot/SWISSPROT','Uniprot/SWISSPROT_predicted')";
+			+ "AND d.db_name IN "
+			+ "('Uniprot/SPTREMBL','Uniprot/SPTREMBL_predicted','Uniprot/SWISSPROT','Uniprot/SWISSPROT_predicted') "
+			+ "and species_id=?";
 
-	private final static String QUERY_GENES = "select count(*) from gene where biotype='protein_coding'";
+	private final static String QUERY_GENES = "select count(*) from gene "
+			+ "join seq_region using (seq_region_id) "
+			+ "join coord_system using (coord_system_id) where biotype='protein_coding' and species_id=?";
 
 	@Override
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
+		boolean result = true;
 		SqlTemplate template = getSqlTemplate(dbre);
-		int nProteinCoding = template.queryForDefaultObject(QUERY_GENES,
-				Integer.class);
-		if (nProteinCoding == 0) {
-			ReportManager.problem(this, dbre.getConnection(),
-					"No protein coding genes found!");
-			return false;
+		for (int speciesId : dbre.getSpeciesIds()) {
+			int nProteinCoding = template.queryForDefaultObject(QUERY_GENES,
+					Integer.class, speciesId);
+			if (nProteinCoding == 0) {
+				ReportManager.problem(this, dbre.getConnection(),
+						"No protein coding genes found!");
+				result = false;
+				continue;
+			}
+			int nUniProt = template.queryForDefaultObject(QUERY_UNIPROT,
+					Integer.class, speciesId);
+			double ratio = (100.0 * nUniProt) / nProteinCoding;
+			if (ratio < THRESHOLD) {
+				ReportManager
+						.problem(
+								this,
+								dbre.getConnection(),
+								"Less than "
+										+ THRESHOLD
+										+ "% of protein_coding genes for species "
+										+ speciesId
+										+ " have a UniProtKB xref ("
+										+ nUniProt
+										+ "/"
+										+ nProteinCoding
+										+ "): this may be correct for some genomes so please check and annotate accordingly");
+				result = false;
+			}
 		}
-		int nUniProt = template.queryForDefaultObject(QUERY_UNIPROT,
-				Integer.class);
-		double ratio = (100.0 * nUniProt) / nProteinCoding;
-		if (ratio < THRESHOLD) {
-			ReportManager
-					.problem(
-							this,
-							dbre.getConnection(),
-							"Less than "
-									+ THRESHOLD
-									+ "% of protein_coding genes have a UniProtKB xref ("
-									+ nUniProt
-									+ "/"
-									+ nProteinCoding
-									+ "): this may be correct for some genomes so please check and annotate accordingly");
-			return false;
-		} else {
-			return true;
-		}
+		return result;
 	}
 
 }
