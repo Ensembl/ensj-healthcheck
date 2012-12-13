@@ -47,7 +47,8 @@ public class AnalysisLogicName extends SingleDatabaseTestCase {
     addToGroup("post-compara-handover");
 
     setDescription("Check the analysis data is correct.");
-    setSecondTeamResponsible(Team.GENEBUILD);
+    setTeamResponsible(Team.GENEBUILD);
+    setSecondTeamResponsible(Team.RELEASE_COORDINATOR);
 
   }
 
