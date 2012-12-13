@@ -50,8 +50,8 @@ public class TestCaseInfo {
       info.put("shortTestName", t.getShortTestName());
       info.put("description", t.getDescription());
       info.put("priority", t.getPriority());
-      info.put("responible", (t.getTeamResponsible().name() != null ? t.getTeamResponsible().name() : null));
-      info.put("secondResponsible", (t.getSecondTeamResponsible().name() != null ? t.getSecondTeamResponsible().name() : null));
+      info.put("responible", (t.getTeamResponsible() != null ? t.getTeamResponsible().name() : null));
+      info.put("secondResponsible", (t.getSecondTeamResponsible() != null ? t.getSecondTeamResponsible().name() : null));
       info.put("groups", t.getGroups());
       list.add(info);
     }
