@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * An lightweight, generic analogue of Spring's JdbcTemplate code (docs are available from <a
+ * A lightweight, generic analogue of Spring's JdbcTemplate code (docs are available from <a
  * href="http://www.springframework.org/docs/api/org/springframework/jdbc/core/JdbcTemplate.html">
  * Spring's Javadoc site</a>.
  *
