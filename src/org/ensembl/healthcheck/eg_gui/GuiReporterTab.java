@@ -239,6 +239,7 @@ class ReportPanel extends JPanel implements ActionListener {
 	
 	final String copy_selected_text_action = "copy_selected_text_action";
 
+	protected boolean updateInProgress;
 	
 	protected Component createVerticalSpacing() {
 		return Box.createVerticalStrut(Constants.DEFAULT_VERTICAL_COMPONENT_SPACING);
@@ -292,8 +293,8 @@ class ReportPanel extends JPanel implements ActionListener {
 		);
 		
 		message.setFont(newFont);
-		message.setLineWrap(true);
-		message.setWrapStyleWord(true);
+		//message.setLineWrap(true);
+		//message.setWrapStyleWord(true);
 		
 		singleLineInfo.add(g.createLeftJustifiedText("Output from test:"));
 		
@@ -313,16 +314,49 @@ class ReportPanel extends JPanel implements ActionListener {
 		//
 		this.setMinimumSize(new Dimension(200,300));
 		
+		updateInProgress = false;
 		
 	}
 	
-	public void setData(GuiReportPanelData reportData) {
+	public void setData(final GuiReportPanelData reportData) {
 		
-		testName        .setText (reportData.getTestName());
-		description     .setText (reportData.getDescription());
-		speciesName     .setText (reportData.getSpeciesName());
-		teamResponsible .setText (reportData.getTeamResponsible());
-		message         .setText (reportData.getMessage());
+		/*
+		 * Updating the reporter tab may be slow especially when setting the
+		 * message to a long string.
+		 * 
+		 * Therefore the update is put into a new Thread to keep the gui 
+		 * responsive.
+		 * 
+		 * Additional updates are prevented in the meantime. In the worst case
+		 * this could lead to an StackOverflorError, if the method gets 
+		 * repeatedly called before it can complete.
+		 * 
+		 */
+		if (updateInProgress) {
+			return;
+		}
+		
+		Thread t = new Thread() {
+			
+			public void run() {
+				
+				testName        .setText (reportData.getTestName());
+				description     .setText (reportData.getDescription());
+				speciesName     .setText (reportData.getSpeciesName());
+				teamResponsible .setText (reportData.getTeamResponsible());
+				
+				String msg = reportData.getMessage();
+				
+				message.setText (msg);				
+				message.setCaretPosition(msg.length());
+				
+				updateInProgress = false;				
+			}
+		};
+		t.setName("Updating data in reporter tab.");
+		updateInProgress = true;
+		t.start();
+		
 	}
 	
 	@Override
