@@ -37,12 +37,7 @@ class GuiReportPanelData {
 	}
 
 	public String getMessage() {
-		
-		// I have no idea, why there are two carriage returns after a line in  
-		// the test report. It just makes no sense, they should not be there in
-		// the first place.
-		//
-		return message.toString().replaceAll("\n\n", "\n");
+		return message.toString();
 	}
 
 	public void setMessage(StringBuffer message) {
