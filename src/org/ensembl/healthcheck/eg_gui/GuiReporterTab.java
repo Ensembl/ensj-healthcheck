@@ -318,7 +318,7 @@ class ReportPanel extends JPanel implements ActionListener {
 		
 	}
 	
-	public void setData(final GuiReportPanelData reportData) {
+	public synchronized void setData(final GuiReportPanelData reportData) {
 		
 		/*
 		 * Updating the reporter tab may be slow especially when setting the
