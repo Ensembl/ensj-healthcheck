@@ -2,6 +2,7 @@ package org.ensembl.healthcheck.eg_gui;
 
 import java.awt.BorderLayout;
 import java.io.PrintStream;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Arrays;
 import java.util.List;
 
@@ -197,7 +198,25 @@ public class GuiTestRunner {
                             			+ e.getMessage()
                             	);
                             }
-                            
+                            catch (java.lang.Error e) {
+                            	
+                            	String errorMsg = testCase.getShortTestName() + " threw a java error:"
+                            			+ e.getClass().getCanonicalName() + "\n\n"
+                            			+ stackTraceToString(e.getStackTrace()) + "\n\n" 
+                            			+ e.getMessage();
+                            	
+                            	System.err.println(errorMsg);
+                            	System.out.println(errorMsg);
+                            	stderrSaved.println(errorMsg);
+                            	
+                            	ReportManager.report(
+                            			testCase, 
+                            			currentDbre.getConnection(), 
+                            			ReportLine.PROBLEM,
+                            			errorMsg
+                            	);
+                            	
+                            }
                             // If a test has not reported anything to the 
                             // report manager, there will not be any report. 
                             // The user may think that the test was not run.
@@ -328,7 +347,28 @@ public class GuiTestRunner {
             }
         };
         testProgressDialog.setRunner(t);
+        
+        t.setName("GuiTestRunner");
+        
+        UncaughtExceptionHandler eh = 
+	        new UncaughtExceptionHandler() {
+				@Override
+				public void uncaughtException(Thread t, Throwable e) {
+	            	String errorMsg = t.getName() + " threw a java error:"
+	            			+ e.getClass().getCanonicalName() + "\n\n"
+	            			+ stackTraceToString(e.getStackTrace()) + "\n\n" 
+	            			+ e.getMessage();
+	            	
+	            	System.err.println(errorMsg);
+	            	System.out.println(errorMsg);				
+				}
+	        };
+        
+        t.setUncaughtExceptionHandler(eh);
+        Thread.setDefaultUncaughtExceptionHandler(eh);
+        
         t.start();
+        
         return t;
     }
 
