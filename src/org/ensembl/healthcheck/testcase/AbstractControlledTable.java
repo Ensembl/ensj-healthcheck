@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
@@ -30,7 +32,7 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 	 * The maximum amount of mismatches that this test is allowed to report.
 	 */
 	protected int getMaxReportedMismatches() {
-		return 50;
+		return 500000;
 	}
 	
 	/**
@@ -76,6 +78,15 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 		
 		if (getComparisonStrategy() == ComparisonStrategy.RowByRow) {
 			
+			getLogger().log(Level.INFO, "Checking row by row");
+			
+			try {
+				dbre.getConnection().setAutoCommit(false);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			passed = checkAllRowsInTable(
 					controlledTableToTest, 
 					dbre,
@@ -83,6 +94,8 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 			);
 			
 		} else {
+			
+			getLogger().log(Level.INFO, "Checking by using checksums");
 			
 			passed = checkByChecksum(
 					controlledTableToTest,
@@ -197,18 +210,30 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 			DatabaseRegistryEntry masterDbRe
 		) {
 		
+		final Logger logger = getLogger();
+		
 		final Connection testDbConn = testDbre.getConnection();
 		final Connection masterconn = masterDbRe.getConnection();
-		
-		final SqlTemplate sqlTemplateTestDb        = getSqlTemplate(testDbConn);  
-		final SqlTemplate sqlTemplateComparaMaster = getSqlTemplate(masterconn);
-		
-		String fetchAllRowsFromTableSql = generateFetchAllRowsFromTableSql(testDbConn, controlledTableToTest);
 
-		final List<String> testTableColumns = getColumnsOfTable(testDbConn, controlledTableToTest);		
-		final List<String> masterColumns    = getColumnsOfTable(masterconn, controlledTableToTest);
+		final SqlTemplate sqlTemplateTestDb        = getSqlTemplate(testDbConn);  
 		
-		boolean masterHasAllNecessaryColumns = masterColumns.containsAll(testTableColumns);
+		int rowCount = sqlTemplateTestDb.queryForDefaultObject(
+			"select count(*) from dnafrag",
+			Integer.class
+		);
+		
+		logger.info("Number of rows in table: " + rowCount);
+		
+		final List<String> testTableColumns = getColumnsOfTable(testDbConn, controlledTableToTest);		
+		final List<String> masterColumns    = getColumnsOfTable(masterconn, controlledTableToTest);		
+		
+		boolean masterHasAllNecessaryColumns = columnsAreSubset(
+				testDbConn,
+				masterconn,
+				controlledTableToTest
+		);		
+		
+		logger.log(Level.INFO, "Checking if columns are compatible");
 		
 		if (!masterHasAllNecessaryColumns) {
 			
@@ -221,8 +246,68 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 				+ "The schemas are not compatible.\n"
 			);
 			return false;
+		} else {
+			logger.log(Level.INFO, "Columns are ok.");
 		}
 		
+		int limit = 1000;
+		boolean allRowsInMaster = true;
+
+		for(int currentOffset = 0; currentOffset<rowCount; currentOffset+=limit) {
+			
+			logger.info("Checking rows " + currentOffset + " out of " + rowCount);
+			
+			allRowsInMaster &= checkRangeOfRowsInTable(
+				controlledTableToTest,
+				masterTable,
+				testDbre,
+				masterDbRe,
+				limit,
+				currentOffset
+			);			
+		}
+		return allRowsInMaster;
+	}
+	
+	protected boolean columnsAreSubset(
+			final Connection testDbConn,
+			final Connection masterconn,
+			final String controlledTableToTest
+		) {
+		
+		final List<String> testTableColumns = getColumnsOfTable(testDbConn, controlledTableToTest);		
+		final List<String> masterColumns    = getColumnsOfTable(masterconn, controlledTableToTest);
+		
+		boolean masterHasAllNecessaryColumns = masterColumns.containsAll(testTableColumns);
+
+		return masterHasAllNecessaryColumns;
+	}
+	
+	/**
+	 * For every row of the table controlledTableToTest in the database 
+	 * testDbre this checks, if this row also exists in the table 
+	 * masterTable of masterDbRe.
+	 * 
+	 */
+	protected boolean checkRangeOfRowsInTable(
+			final String controlledTableToTest,
+			final String masterTable,
+			DatabaseRegistryEntry testDbre,
+			DatabaseRegistryEntry masterDbRe,
+			int limit,
+			int offset
+		) {
+
+		final Connection testDbConn = testDbre.getConnection();
+		final Connection masterconn = masterDbRe.getConnection();
+		
+		final SqlTemplate sqlTemplateTestDb        = getSqlTemplate(testDbConn);  
+		final SqlTemplate sqlTemplateComparaMaster = getSqlTemplate(masterconn);
+		
+		String fetchAllRowsFromTableSql = generateFetchAllRowsFromTableSql(testDbConn, controlledTableToTest, limit, offset);
+
+		final List<String> testTableColumns = getColumnsOfTable(testDbConn, controlledTableToTest);		
+
 		final EnsTestCase thisTest = this;
 		
 		final int maxReportedMismatches = getMaxReportedMismatches();		
@@ -233,15 +318,15 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 
 				@Override public Boolean process(ResultSet rs) throws SQLException {
 					
-					rs.setFetchSize(1);
-					
+					rs.setFetchSize(1000);					
+							
 					boolean allRowsPresentInMasterDb = true;
 					
 					int numReportedRows = 0;
 					boolean numReportedRowsExceedsMaximum = false;
 					
 					while (rs.next() && !numReportedRowsExceedsMaximum) {
-
+						
 						boolean currentRowPresentInMasterDb = isCurrentRowInMaster(
 							rs,
 							sqlTemplateComparaMaster, 
@@ -399,9 +484,12 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 	protected String fetchAllRowsFromTableSql(
 			Connection conn, 
 			String tableName, 
-			List<String> columns
-		) {
-		return "select " + asCommaSeparatedString(columns) + " from " + tableName;			
+			List<String> columns,
+			int limit,
+			int offset
+
+		) {		
+		return "select " + asCommaSeparatedString(columns) + " from " + tableName + " limit " + limit + " offset " + offset;			
 	}
 	
 	/**
@@ -413,10 +501,15 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 	 * @param tableName
 	 * @return
 	 */
-	protected String generateFetchAllRowsFromTableSql(Connection conn, String tableName) {
-
+	protected String generateFetchAllRowsFromTableSql(
+			Connection conn, 
+			String tableName,
+			int limit,
+			int offset
+		) {
+		
 		List<String> columns = getColumnsOfTable(conn, tableName);			
-		String sql = fetchAllRowsFromTableSql(conn, tableName, columns);
+		String sql = fetchAllRowsFromTableSql(conn, tableName, columns, limit, offset);
 			
 		return sql;
 	}
