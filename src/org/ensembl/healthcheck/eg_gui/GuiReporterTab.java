@@ -47,13 +47,31 @@ public class GuiReporterTab extends JPanel implements Reporter {
 	final protected ReportPanel                 reportPanel;
 	final protected TestCaseColoredCellRenderer testCaseCellRenderer;
 	
-	protected boolean userClickedOnList = false;
+	protected boolean userClickedOnTestList = false;
 	
 	final protected Map<Class<? extends EnsTestCase>,GuiReportPanelData> reportData;
 	
+	/**
+	 * <p>
+	 * 	While the testrunner is running, the test selected will be 
+	 * automatically updated to be the last one in the list. That way
+	 * the user can monitor what is going on while the tests are running.
+	 * </p>
+	 * 
+	 * <p>
+	 * 	This behaviour is deactivated, if the user has selected a test from
+	 * the list or when he has given the message field focus.
+	 * </p>
+	 * 
+	 * @return whether or not it is ok to scroll to the last test of the list automatically.
+	 */
+	protected boolean autoScrollTestListOk() {
+		return !userClickedOnTestList && !reportPanel.messageFieldHasFocus();
+	}
+	
 	public void selectDefaultListItem() {
 		
-		if (!userClickedOnList) {
+		if (autoScrollTestListOk()) {
 			selectLastListItem();
 		}
 	}
@@ -94,7 +112,7 @@ public class GuiReporterTab extends JPanel implements Reporter {
 			// the list so we can stop selecting the last item in the list.
 			//
 			@Override public void mouseClicked(MouseEvent arg0) {
-				userClickedOnList = true;
+				userClickedOnTestList = true;
 			}
 
 			@Override public void mouseEntered (MouseEvent arg0) {}
@@ -170,7 +188,7 @@ public class GuiReporterTab extends JPanel implements Reporter {
 							// empty report.
 							//
 							//if (testList.isSelectionEmpty()) {
-							if (!userClickedOnList) {
+							if (!userClickedOnTestList) {
 								selectDefaultListItem();
 							}
 						}
@@ -249,6 +267,10 @@ class ReportPanel extends JPanel implements ActionListener {
 	
 	private boolean messageFieldHasFocus = false;
 	
+	public boolean messageFieldHasFocus() {
+		return messageFieldHasFocus;
+	}
+
 	public ReportPanel() {
 		
 		this.setBorder(GuiTestRunnerFrameComponentBuilder.defaultEmptyBorder);
