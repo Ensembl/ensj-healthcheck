@@ -17,10 +17,34 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 
+/**
+ * <p>
+ * 	Base class for comparing a table of a database to a reference table in a 
+ * production database.
+ * </p>
+ * 
+ * <p>
+ * 	Use this by subclassing and overriding the following methods: 		
+ * </p>
+ * 
+ * <ul>
+ * 	<li>
+ * 		{@link AbstractControlledTable#getControlledTableName}
+ * 	</li>
+ * 	<li>
+ * 		{@link AbstractControlledTable#getComparisonStrategy} (optional)
+ * 	</li>
+ * 	<li>
+ * 		{@link AbstractControlledTable#getMaxReportedMismatches} (optional)
+ * 	</li>
+ * </ul>
+ * 
+ * @author mnuhn
+ *
+ */
 public abstract class AbstractControlledTable extends AbstractTemplatedTestCase {
 	
 	/**
@@ -29,20 +53,55 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 	protected abstract String getControlledTableName();
 
 	/**
-	 * The maximum amount of mismatches that this test is allowed to report.
-	 */
-	protected int getMaxReportedMismatches() {
-		return 500000;
-	}
-	
-	/**
 	 * How the tables should be compared.
+	 * 
+	 * @return {@link ComparisonStrategy}
 	 */
 	protected ComparisonStrategy getComparisonStrategy() {
 		return ComparisonStrategy.RowByRow;
 	}
+	
+	/**
+	 * Enum of strategy names of how to compare two tables.
+	 */
+	protected enum ComparisonStrategy { 
+		/**
+		 * Compares two tables row by row. Rows are fetched iteratively in 
+		 * batches of size {@link AbstractControlledTable#batchSize}
+		 */
+		RowByRow, 
 
-	protected enum ComparisonStrategy { RowByRow, Checksum };
+		/**
+		 * Compares two tables using checksums.
+		 */
+		Checksum 
+	};
+
+	/**
+	 * If the {@link ComparisonStrategy} {@link ComparisonStrategy#RowByRow} 
+	 * is used, we want to make sure not to report excessive an amount of 
+	 * errors.
+	 * 
+	 * The maximum amount of mismatches that this test is allowed to report
+	 * when using ComparisonStrategy.RowByRow.
+	 * 
+	 */
+	protected int getMaxReportedMismatches() {
+		return 50;
+	}
+	
+	/**
+	 * Number of rows that have been reported by this test, if 
+	 * {@link ComparisonStrategy#RowByRow} is being used. If numReportedRows 
+	 * exceeds getMaxReportedMismatches(), the test will terminate.
+	 * 
+	 */
+	private int numReportedRows;
+
+	/**
+	 * Maximum number of rows to be fetched in one iteration;
+	 */
+	protected final int batchSize = 1000;
 	
 	/**
 	 * DatabaseRegistryEntry of the master database.
@@ -80,12 +139,7 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 			
 			getLogger().log(Level.INFO, "Checking row by row");
 			
-			try {
-				dbre.getConnection().setAutoCommit(false);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			numReportedRows = 0;
 			
 			passed = checkAllRowsInTable(
 					controlledTableToTest, 
@@ -114,15 +168,9 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 		return passed;
 	}
 	
-	/**
-	 * 
+	/** 
 	 * Checks whether a table that exists in two databases has the same 
 	 * content. This is done using checksums. 
-	 * 
-	 * @param controlledTableToTest
-	 * @param testDbRe
-	 * @param masterDbRe
-	 * @return
 	 */
 	protected boolean checkByChecksum(
 			final String controlledTableToTest,
@@ -146,9 +194,6 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 	 * 
 	 * Calculates the checksum of a list of tables in a given database.
 	 * 
-	 * @param dbre
-	 * @param tablesToChecksum
-	 * @return
 	 */
 	protected String calculateChecksumForTable(
 			DatabaseRegistryEntry dbre, 
@@ -250,10 +295,10 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 			logger.log(Level.INFO, "Columns are ok.");
 		}
 		
-		int limit = 1000;
+		int limit = batchSize;
 		boolean allRowsInMaster = true;
-
-		for(int currentOffset = 0; currentOffset<rowCount; currentOffset+=limit) {
+		
+		for(int currentOffset = 0; currentOffset<rowCount && !numReportedRowsExceedsMaximum(); currentOffset+=limit) {
 			
 			logger.info("Checking rows " + currentOffset + " out of " + rowCount);
 			
@@ -283,6 +328,10 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 		return masterHasAllNecessaryColumns;
 	}
 	
+	private boolean numReportedRowsExceedsMaximum() {
+		return numReportedRows>getMaxReportedMismatches();
+	}
+	
 	/**
 	 * For every row of the table controlledTableToTest in the database 
 	 * testDbre this checks, if this row also exists in the table 
@@ -310,22 +359,17 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 
 		final EnsTestCase thisTest = this;
 		
-		final int maxReportedMismatches = getMaxReportedMismatches();		
-		
 		boolean result = sqlTemplateTestDb.execute(
 			fetchAllRowsFromTableSql,
 			new ResultSetCallback<Boolean>() {
 
 				@Override public Boolean process(ResultSet rs) throws SQLException {
 					
-					rs.setFetchSize(1000);					
+					rs.setFetchSize(batchSize);					
 							
-					boolean allRowsPresentInMasterDb = true;
+					boolean allRowsPresentInMasterDb = true;				
 					
-					int numReportedRows = 0;
-					boolean numReportedRowsExceedsMaximum = false;
-					
-					while (rs.next() && !numReportedRowsExceedsMaximum) {
+					while (rs.next() && !numReportedRowsExceedsMaximum()) {
 						
 						boolean currentRowPresentInMasterDb = isCurrentRowInMaster(
 							rs,
@@ -339,13 +383,12 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 						if (!currentRowPresentInMasterDb) {
 							
 							numReportedRows++;
-							numReportedRowsExceedsMaximum = numReportedRows>maxReportedMismatches;
 							
-							if (numReportedRowsExceedsMaximum) {
+							if (numReportedRowsExceedsMaximum()) {
 								ReportManager.problem(
 										thisTest, 
 										testDbConn, 
-										"The maximum of " + maxReportedMismatches + " reported rows has been reached, no further rows will be tested."
+										"The maximum of " + getMaxReportedMismatches() + " reported rows has been reached, no further rows will be tested."
 								);
 							} else {							
 								ReportManager.problem(
@@ -616,7 +659,7 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 		
 		return tablesOfDb;
 	}
-	
+
 	/**
 	 * 
 	 * Returns the names of all columns for a given table.
