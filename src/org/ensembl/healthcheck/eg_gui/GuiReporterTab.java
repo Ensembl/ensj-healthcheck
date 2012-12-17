@@ -12,6 +12,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.HashMap;
@@ -245,6 +247,8 @@ class ReportPanel extends JPanel implements ActionListener {
 		return Box.createVerticalStrut(Constants.DEFAULT_VERTICAL_COMPONENT_SPACING);
 	}
 	
+	private boolean messageFieldHasFocus = false;
+	
 	public ReportPanel() {
 		
 		this.setBorder(GuiTestRunnerFrameComponentBuilder.defaultEmptyBorder);
@@ -256,6 +260,18 @@ class ReportPanel extends JPanel implements ActionListener {
 		teamResponsible = new JPopupTextField("Team Responsible");
 		speciesName     = new JPopupTextField("Species Name");
 		message         = new JPopupTextArea ();
+		
+		message.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				messageFieldHasFocus = true;				
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				messageFieldHasFocus = false;				
+			}			
+		});
 		
 		description.setLineWrap(true);
 		description.setWrapStyleWord(true);
@@ -347,8 +363,11 @@ class ReportPanel extends JPanel implements ActionListener {
 				
 				String msg = reportData.getMessage();
 				
-				message.setText (msg);				
-				message.setCaretPosition(msg.length());
+				message.setText (msg);
+				
+				if (!messageFieldHasFocus) {
+					message.setCaretPosition(msg.length());
+				}
 				
 				updateInProgress = false;				
 			}
