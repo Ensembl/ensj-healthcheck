@@ -25,6 +25,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import com.mysql.jdbc.Connection;
 
 import java.util.logging.Handler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class GuiTestRunner {
@@ -73,7 +74,7 @@ public class GuiTestRunner {
     		final List<Class<? extends EnsTestCase>> tests,
     		final DatabaseRegistryEntry[] databases,
     		final TestProgressDialog testProgressDialog,
-    		final JComponent resultDisplayComponent,
+    		//final JComponent resultDisplayComponent,
     		final String PERL5LIB,
     		final PerlScriptConfig psc,
     		final GuiLogHandler guiLogHandler
@@ -147,11 +148,10 @@ public class GuiTestRunner {
 					//
 					testCase.setSetSystemProperties(false);
 					
-					// Stack traces are written to stderr. They indicate a 
-					// serious error. They are rerouted to the ReportManager
-					// as problems and the test fails.
+					// Stack traces are written to stderr by tests. Stderr is 
+					// redirected to the logger.
 					//
-					System.setErr(new ReporterPrintStream(testCase));
+					System.setErr(new ReporterPrintStream(guiLogger, Level.SEVERE, testCase));
 					
 					// If PERL5LIB parameter has been set and this is a perl 
 					// based test case, then set the PERL5LIB attribute.
@@ -332,18 +332,18 @@ public class GuiTestRunner {
                 // Open in the legacy result window, because it is really 
                 // nice.
                 //
-                resultDisplayComponent.removeAll();
-                resultDisplayComponent.add(
-                	new GuiTestResultWindowTab("All", ReportLine.ALL), 
-                	BorderLayout.CENTER
-                );
+                //resultDisplayComponent.removeAll();
+                //resultDisplayComponent.add(
+                //new GuiTestResultWindowTab("All", ReportLine.ALL), 
+                //BorderLayout.CENTER
+                //);
                 
                 // The above will have no visible effect. In order for this 
                 // to work, revalidate must be called.
                 //
                 // See: http://www.iam.ubc.ca/guides/javatut99/uiswing/overview/threads.html
                 //
-                resultDisplayComponent.revalidate();
+                //resultDisplayComponent.revalidate();
             }
         };
         testProgressDialog.setRunner(t);
@@ -404,19 +404,35 @@ public class GuiTestRunner {
 class ReporterPrintStream extends PrintStream {
 
 	protected EnsTestCase e;
+	protected Logger logger;
+	protected Level logLevel;
 	
-	public ReporterPrintStream(EnsTestCase e) {
+	public ReporterPrintStream(Logger logger, Level logLevel, EnsTestCase e) {
 		super(System.out);
 		this.e = e;
+		this.logger = logger;
+		this.logLevel = logLevel;
 	}
 	
-	public void print(String s) {		
-		ReportManager.problem(e, (Connection) null, s);
+	public void print(String s) {
+		
+		// The ReportManager can't be used like this here:
+		//
+		// ReportManager.problem(e, (Connection) null, s);
+		//
+		// because in the event that more than ReportManager.MAX_BUFFER_SIZE
+		// lines are reported, the ReportManager will write to System.err
+		// which will make these two methods call each other recursively and
+		// lead to a java.lang.StackOverflowError.
+		//
+		// Instead, error messages are forwarded to the logger.
+		
+		logger.log(logLevel, s);
 	}
 
 	public void println(String s) {		
 
-		// No newline added, messages to the ReportManager don't need
+		// No newline added, the logger adds a newline already.
 		// a newline.
 		//
 		this.print(s);
