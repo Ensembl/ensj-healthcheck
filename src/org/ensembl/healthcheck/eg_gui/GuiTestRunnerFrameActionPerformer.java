@@ -97,7 +97,7 @@ public class GuiTestRunnerFrameActionPerformer {
 			final JList listOfTestsToBeRun,
 			final DatabaseRegistryEntry[] databases,
 			final TestProgressDialog testProgressDialog,
-			final JComponent resultDisplayComponent,
+			//final JComponent resultDisplayComponent,
 			final String PERL5LIB,
 			final PerlScriptConfig psc,
 			final GuiLogHandler guiLogHandler
@@ -119,7 +119,7 @@ public class GuiTestRunnerFrameActionPerformer {
 			TestClassListItemList,
 			databases,
 			testProgressDialog,
-			resultDisplayComponent,
+			//resultDisplayComponent,
 			PERL5LIB,
 			psc,
 			guiLogHandler
@@ -130,7 +130,7 @@ public class GuiTestRunnerFrameActionPerformer {
 			final JList listOfTestsToBeRun,
 			final DatabaseRegistryEntry[] databases,
 			final TestProgressDialog testProgressDialog,
-			final JComponent resultDisplayComponent,
+			//final JComponent resultDisplayComponent,
 			final String PERL5LIB,
 			final PerlScriptConfig psc,
 			final GuiLogHandler guiLogHandler
@@ -148,7 +148,7 @@ public class GuiTestRunnerFrameActionPerformer {
 			TestClassListItemList,
 			databases,
 			testProgressDialog,
-			resultDisplayComponent,
+			//resultDisplayComponent,
 			PERL5LIB,
 			psc,
 			guiLogHandler
@@ -159,7 +159,7 @@ public class GuiTestRunnerFrameActionPerformer {
 			final List<TestClassListItem> TestClassListItemList,
 			final DatabaseRegistryEntry[] databases,
 			final TestProgressDialog testProgressDialog,
-			final JComponent resultDisplayComponent,
+			//final JComponent resultDisplayComponent,
 			final String PERL5LIB,
 			final PerlScriptConfig psc,
 			final GuiLogHandler guiLogHandler
@@ -178,7 +178,7 @@ public class GuiTestRunnerFrameActionPerformer {
 			selectedTests, 
 			databases, 
 			testProgressDialog, 
-			resultDisplayComponent, 
+			//resultDisplayComponent, 
 			PERL5LIB,
 			psc,
 			guiLogHandler

@@ -317,10 +317,10 @@ public class GuiTestRunnerFrameActionListener implements ActionListener {
 				guiTestRunnerFrame.resultTab.add(currentGuiReporter, BorderLayout.CENTER);
 				
 				guiTestRunnerFrame.tabbedPane.setEnabledAt(guiTestRunnerFrame.resultTabIndex,       true);
-				guiTestRunnerFrame.tabbedPane.setEnabledAt(guiTestRunnerFrame.legacyResultTabIndex, true);
+				//guiTestRunnerFrame.tabbedPane.setEnabledAt(guiTestRunnerFrame.legacyResultTabIndex, true);
 				guiTestRunnerFrame.tabbedPane.setSelectedIndex(guiTestRunnerFrame.resultTabIndex);
 				
-				guiTestRunnerFrame.legacyResultTab.setLayout(new BorderLayout());
+				//guiTestRunnerFrame.legacyResultTab.setLayout(new BorderLayout());
 				
 				ReportManager.setReporter(currentGuiReporter);
 				
@@ -341,7 +341,7 @@ public class GuiTestRunnerFrameActionListener implements ActionListener {
 						guiTestRunnerFrame.setupTab.listOfTestsToBeRun, 
 						selectedDatabases,
 						guiTestRunnerFrame.testProgressDialog,
-						guiTestRunnerFrame.legacyResultTab,
+						//guiTestRunnerFrame.legacyResultTab,
 						guiTestRunnerFrame.adminTab.getPerl5Lib(),
 						psc,
 						guiLogHandler
@@ -352,7 +352,7 @@ public class GuiTestRunnerFrameActionListener implements ActionListener {
 						guiTestRunnerFrame.setupTab.listOfTestsToBeRun, 
 						selectedDatabases,
 						guiTestRunnerFrame.testProgressDialog,
-						guiTestRunnerFrame.legacyResultTab,
+						//guiTestRunnerFrame.legacyResultTab,
 						guiTestRunnerFrame.adminTab.getPerl5Lib(),
 						psc,
 						guiLogHandler

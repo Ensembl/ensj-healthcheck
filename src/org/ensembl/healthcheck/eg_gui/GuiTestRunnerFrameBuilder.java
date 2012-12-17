@@ -61,7 +61,7 @@ public class GuiTestRunnerFrameBuilder {
 		guiTestRunnerFrame.adminTab = new AdminTab();
 		
 		guiTestRunnerFrame.resultTab       = new JPanel();
-		guiTestRunnerFrame.legacyResultTab = new JPanel();
+		//guiTestRunnerFrame.legacyResultTab = new JPanel();
 		
 		guiTestRunnerFrame.tabbedPane = new JTabbedPane();
 		
@@ -71,14 +71,14 @@ public class GuiTestRunnerFrameBuilder {
 		guiTestRunnerFrame.tabbedPane.add(guiTestRunnerFrame.resultTabName, guiTestRunnerFrame.resultTab);
 		guiTestRunnerFrame.resultTabIndex = 1;
 		
-		guiTestRunnerFrame.tabbedPane.add("Legacy", guiTestRunnerFrame.legacyResultTab);
-		guiTestRunnerFrame.legacyResultTabIndex = 2;
+		//guiTestRunnerFrame.tabbedPane.add("Legacy", guiTestRunnerFrame.legacyResultTab);
+		//guiTestRunnerFrame.legacyResultTabIndex = 2;
 		
 		guiTestRunnerFrame.tabbedPane.add("Admin", guiTestRunnerFrame.adminTab);
 		guiTestRunnerFrame.adminTabIndex = 3;
 		
 		guiTestRunnerFrame.tabbedPane.setEnabledAt(guiTestRunnerFrame.resultTabIndex,       false);
-		guiTestRunnerFrame.tabbedPane.setEnabledAt(guiTestRunnerFrame.legacyResultTabIndex, false);
+		//guiTestRunnerFrame.tabbedPane.setEnabledAt(guiTestRunnerFrame.legacyResultTabIndex, false);
 		
 		guiTestRunnerFrame.getContentPane().add(guiTestRunnerFrame.tabbedPane);
 	}
