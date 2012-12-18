@@ -412,7 +412,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 
 	// -----------------------------------------------------------------
 
-	/*
+	/**
 	 * Compares two databases by comparing the names of the species. If they are
 	 * the same, then the schema version is used as a secondary sorting
 	 * criterion.
