@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -803,9 +805,35 @@ public class ConfigurableTestRunner extends TestRunner {
 		}
 	}
 
+	/**
+	 * <p>
+	 * 	Convert a list of tests into a string in which the names are listed
+	 * in bullet points. The list is sorted by class names.
+	 * </p>
+	 * 
+	 * <p>
+	 * Useful for printing.
+	 * </p>
+	 * 
+	 * @param listOfTests
+	 * @return Stringified version of the list as bullet points
+	 */
 	protected String testListToBulletPoints(List<Class<? extends EnsTestCase>> listOfTests) {
 		
 		StringBuffer missingTestToString = new StringBuffer();
+
+		// Sort list before printing. Otherwise they will appear in an
+		// arbitrary order and appear as new every day on the admin site.
+		//
+		Collections.sort(listOfTests, new Comparator<Class<? extends EnsTestCase>>() {
+			@Override
+			public int compare(
+					Class<? extends EnsTestCase> o1,
+					Class<? extends EnsTestCase> o2) {
+
+				return o1.getName().compareTo(o2.getName());
+			}			
+		});
 		
 		for (Class<? extends EnsTestCase> currentMissingTest : listOfTests) {
 			missingTestToString.append("  - " + currentMissingTest.getName() + "\n");
@@ -813,7 +841,33 @@ public class ConfigurableTestRunner extends TestRunner {
 		return missingTestToString.toString();
 	}
 	
+	/**
+	 * <p>
+	 * 	Convert a list of DatabaseRegistryEntry into a string in which the 
+	 * names are listed in bullet points. The list is sorted using the 
+	 * {@link DatabaseRegistryEntry#compareTo(DatabaseRegistryEntry)} method.
+	 * </p>
+	 * 
+	 * <p>
+	 * Useful for printing.
+	 * </p>
+	 * 
+	 * @return Stringified version of the list as bullet points
+	 */
 	protected String dbreListToBulletPoints(List<DatabaseRegistryEntry> listOfDbres) {
+
+		// Sort list before printing. Otherwise they will appear in an
+		// arbitrary order and appear as new every day on the admin site.
+		//
+		Collections.sort(listOfDbres, new Comparator<DatabaseRegistryEntry>() {
+			@Override
+			public int compare(
+					DatabaseRegistryEntry o1,
+					DatabaseRegistryEntry o2) {
+
+				return o1.compareTo(o2);
+			}			
+		});
 		
 		StringBuffer listOfDbresToString = new StringBuffer();
 		
