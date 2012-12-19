@@ -263,14 +263,14 @@ public abstract class AbstractControlledTable extends AbstractTemplatedTestCase 
 		final SqlTemplate sqlTemplateTestDb        = getSqlTemplate(testDbConn);  
 		
 		int rowCount = sqlTemplateTestDb.queryForDefaultObject(
-			"select count(*) from dnafrag",
+			"select count(*) from " + controlledTableToTest,
 			Integer.class
 		);
 		
 		logger.info("Number of rows in table: " + rowCount);
 		
 		final List<String> testTableColumns = getColumnsOfTable(testDbConn, controlledTableToTest);		
-		final List<String> masterColumns    = getColumnsOfTable(masterconn, controlledTableToTest);		
+		final List<String> masterColumns    = getColumnsOfTable(masterconn, masterTable);		
 		
 		boolean masterHasAllNecessaryColumns = columnsAreSubset(
 				testDbConn,
