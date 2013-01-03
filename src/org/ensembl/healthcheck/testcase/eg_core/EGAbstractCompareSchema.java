@@ -235,9 +235,14 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 			// The second call to replaceAll removes the date that is inserted
 			// by mysqldiff.
 			//
+			// The third removes the password from the report.
+			//
 			String patchedPatch = patch.toString()
 					.replaceAll(masterShortName, "master_database")
-					.replaceAll("## Run on .*?\n", "");
+					.replaceAll("## Run on .*?\n", "")
+					.replaceAll("password=.*?,", "password=*,")
+					;
+
 			
 			ReportManager.problem(compareSchemaTest, checkCon, 
 					"\n"
