@@ -212,6 +212,8 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 					"The schema of " + dbre.getName() + " is correct."
 				);
 				continue;
+			} else {
+				result = false;
 			}
 			
 			logger.info("Found schema differences.");
