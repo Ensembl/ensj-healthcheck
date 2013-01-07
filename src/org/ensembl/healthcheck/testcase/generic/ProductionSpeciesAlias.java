@@ -66,6 +66,7 @@ public class ProductionSpeciesAlias extends SingleDatabaseTestCase {
     result &= checkHasAlias(dbre, productionAliases, dbAliases, "species");
 
     result &= checkUrl(dbre, prodDbre, species);
+    result &= checkName(dbre, prodDbre, species);
 
     return result;
 
@@ -84,7 +85,7 @@ public class ProductionSpeciesAlias extends SingleDatabaseTestCase {
       }
     }
 
-// Looking for species URL name
+// Checking species URL name
 // Should be both in the production and the core databases
 // Should start with a capital letter and have underscores between the names
     private <T extends CharSequence> boolean checkUrl(DatabaseRegistryEntry dbre, DatabaseRegistryEntry prodDbre, String species) {
@@ -95,15 +96,39 @@ public class ProductionSpeciesAlias extends SingleDatabaseTestCase {
       String url = t.queryForDefaultObject(sql, String.class);
       String prodUrl = prodt.queryForDefaultObject(prodSql, String.class, species);
       if (url.equals(prodUrl)) {
-        if (url.matches("^[A-Z]{1}[a-z]*(_[a-z]*){1,2}")) {
-          ReportManager.correct(this, dbre.getConnection(), "species.url " + url + " is the same in both databases and is in the correct format");
+        if (url.matches("^[A-Z]{1}[a-z0-9]*(_[a-z0-9]*){1,2}")) {
+          ReportManager.correct(this, dbre.getConnection(), "species.url '" + url + "' is the same in both databases and is in the correct format");
           return true;
         } else {
-          ReportManager.problem(this, dbre.getConnection(), "species.url " + url + " is not in the correct format. Should start with a capital letter and have underscores to separate names");
+          ReportManager.problem(this, dbre.getConnection(), "species.url '" + url + "' is not in the correct format. Should start with a capital letter and have underscores to separate names");
           return false;
         }
       } else {
-        ReportManager.problem(this, dbre.getConnection(), "species.url " + url + " in database does not match " + prodUrl + " in the production database");
+        ReportManager.problem(this, dbre.getConnection(), "species.url '" + url + "' in database does not match '" + prodUrl + "' in the production database");
+        return false;
+      }
+    }
+
+// Checking species production name
+// Should be both in the production and the core databases
+// Should contain only lower case caracters and underscores
+    private <T extends CharSequence> boolean checkName(DatabaseRegistryEntry dbre, DatabaseRegistryEntry prodDbre, String species) {
+      SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+      SqlTemplate prodt = DBUtils.getSqlTemplate(prodDbre);
+      String sql = "SELECT meta_value FROM meta WHERE meta_key = 'species.production_name'";
+      String prodSql = "SELECT production_name FROM species WHERE db_name = ?";
+      String name = t.queryForDefaultObject(sql, String.class);
+      String prodName = prodt.queryForDefaultObject(prodSql, String.class, species);
+      if (name.equals(prodName)) {
+        if (name.matches("^[a-z0-9_]*$")) {
+          ReportManager.correct(this, dbre.getConnection(), "species.production_name '" + name + "' is the same in both databases and is in the correct format");
+          return true;
+        } else {
+          ReportManager.problem(this, dbre.getConnection(), "species.production_name '" + name + "' is not in the correct format. It should only contain lower case caracters and underscores");
+          return false;
+        }
+      } else {
+        ReportManager.problem(this, dbre.getConnection(), "species.production_name '" + name + "' in database does not match '" + prodName + "' in the production database");
         return false;
       }
     }
