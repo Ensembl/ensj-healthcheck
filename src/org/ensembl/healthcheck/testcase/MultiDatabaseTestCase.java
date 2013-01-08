@@ -84,11 +84,16 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
 		for (int i = 0; i < allDBs.length; i++) {
 
 			Species s = allDBs[i].getSpecies();
+                        boolean propagated = true;
+                        if (ReportManager.usingDatabase()) {
+                                propagated = ReportManager.hasPropagated(allDBs[i]);
+                        }
+
 
 			speciesDBs = fromSecondary ? DBUtils.getSecondaryDatabaseRegistry().getAll(s) : DBUtils.getMainDatabaseRegistry().getAll(s);
 
 			logger.finest("Got " + speciesDBs.length + " databases for " + s.toString());
-			if (!speciesMap.containsKey(s)) {
+			if (!speciesMap.containsKey(s) && propagated) {
 				speciesMap.put(s, speciesDBs);
 			}
 		}
