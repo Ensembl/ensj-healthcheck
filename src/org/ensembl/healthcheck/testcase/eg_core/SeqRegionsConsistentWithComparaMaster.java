@@ -107,7 +107,13 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractTemplatedTest
 					+ "species are " + toplevelSeqRegionCount + " toplevel "
 					+ "sequence regions in the core database and " 
 					+ dnaFragRowCountFor + " dna frags in the compara "
-					+ "master database. The counts should be equal.");
+					+ "master database. The counts should be equal.\n"
+					+ "This can happen, if the assembly has been changed, "
+					+ "but the assembly.default entry in the meta table has "
+					+ "not been changed. In that case the dna_frag table in "
+					+ "the compara master database is not updated "
+					+ "by the populate_mdb.pl script."
+			);
 		}
 		
 		boolean allToplevelSeqRegionInDnaFragTable = assertToplevelSeqRegionInDnaFragTable(genomeDbId);
