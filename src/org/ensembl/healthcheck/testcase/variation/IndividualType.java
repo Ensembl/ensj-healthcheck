@@ -75,7 +75,6 @@ public class IndividualType extends SingleDatabaseTestCase {
 				|| dbre.getSpecies() == Species.DANIO_RERIO
 				|| dbre.getSpecies() == Species.GALLUS_GALLUS
 				|| dbre.getSpecies() == Species.RATTUS_NORVEGICUS
-				|| dbre.getSpecies() == Species.ANOPHELES_GAMBIAE
 				|| dbre.getSpecies() == Species.BOS_TAURUS
 				|| dbre.getSpecies() == Species.ORNITHORHYNCHUS_ANATINUS
 				|| dbre.getSpecies() == Species.PONGO_ABELII) {
@@ -92,6 +91,23 @@ public class IndividualType extends SingleDatabaseTestCase {
 								+ dbre.getSpecies());
 			}
 		}
+		
+		if (dbre.getSpecies() == Species.ANOPHELES_GAMBIAE) {
+			int mc = DBUtils
+					.getRowCount(con,
+							"SELECT COUNT(*) FROM individual WHERE individual_type_id <> 2 and individual_type_id <> 3");
+			if (mc > 0) {
+				ReportManager.problem(this, con,
+						"Individual type incorrect in Individual table");
+				result = false;
+			} else {
+				ReportManager
+						.correct(this, con, "Individual type table correct in "
+								+ dbre.getSpecies());
+			}
+			
+		}
+		
 		if (dbre.getSpecies() == Species.HOMO_SAPIENS
 				|| dbre.getSpecies() == Species.PAN_TROGLODYTES
 				|| dbre.getSpecies() == Species.TETRAODON_NIGROVIRIDIS) {
