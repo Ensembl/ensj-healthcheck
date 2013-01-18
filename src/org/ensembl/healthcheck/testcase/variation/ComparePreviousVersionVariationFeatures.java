@@ -17,6 +17,7 @@ import java.util.Map;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
+import org.ensembl.healthcheck.Species;
 
 /**
  * Compare the number of variation features between the current database and the database on the secondary server.
@@ -36,8 +37,23 @@ public class ComparePreviousVersionVariationFeatures extends ComparePreviousVers
 
 	}
 
-	protected Map getCounts(DatabaseRegistryEntry dbre) {
+	// ------------------------------------------------------------------------
+	
+	public boolean run(DatabaseRegistryEntry dbre) {
 
+		// Additional check to avoid having thousands of HC "Problem" when comparing 2 differents assemblies (with different contigs/scaffolds).
+		if (sameAssemblyNumber(dbre)) {
+			return super.run(dbre);
+		} else {
+			return true;
+		}
+
+	} // run
+		
+	// ------------------------------------------------------------------------
+	
+	protected Map getCounts(DatabaseRegistryEntry dbre) {
+		
 		return getCountsBySQL(dbre, "SELECT sr.name, COUNT(*) FROM seq_region sr JOIN variation_feature vf ON (sr.seq_region_id = vf.seq_region_id) GROUP BY sr.name");
 
 	}
@@ -58,6 +74,36 @@ public class ComparePreviousVersionVariationFeatures extends ComparePreviousVers
 
 	}
 
+	// ------------------------------------------------------------------------
+	
+	protected boolean sameAssemblyNumber(DatabaseRegistryEntry dbre) {
+		
+		// Primary database
+		String variationName = dbre.getName();
+		String[] parts = variationName.split("_");
+		String assembly_prim = parts[4];
+		
+		// Secondary database
+		DatabaseRegistryEntry sec = getEquivalentFromSecondaryServer(dbre);
+		if (sec == null) {
+			logger.warning("Can't get equivalent database for " + dbre.getName());
+			return true;
+		}
+		
+		String variationName2 = sec.getName();
+		String[] parts2 = variationName2.split("_");
+		String assembly_sec = parts2[4];
+		
+		
+		// Compare the last number in the database names (e.g. homo_sapiens_variation_70_37 => "37" & homo_sapiens_variation_69_37 => "37")
+		// Corresponds to the assembly number
+		if (assembly_sec.equals(assembly_prim)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	// ------------------------------------------------------------------------
 
 } // ComparePreviousVersionVariationFeatures
