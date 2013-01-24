@@ -30,7 +30,7 @@ public interface MapRowMapper<K, T> extends RowMapper<T> {
 
 	/**
 	 * Delegates responsibility for the creation of the map to be the
-	 * responsiblity of the mapper since the mapper is the capture of the
+	 * responsibility of the mapper since the mapper is the capture of the
 	 * client's requirements. This method should return an instance of a Map
 	 * implementing class. The calling mapper will not make any attempt to clear
 	 * this Object before usage.
@@ -51,7 +51,7 @@ public interface MapRowMapper<K, T> extends RowMapper<T> {
 	 * @param resultSet
 	 *            The result set iterated onto the current row
 	 * @param position
-	 *            The current position in this iterater
+	 *            The current position in this iterator
 	 */
 	void existingObject(T currentValue, ResultSet resultSet, int position)
 			throws SQLException;
