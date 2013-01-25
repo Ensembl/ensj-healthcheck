@@ -22,7 +22,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
@@ -30,6 +35,10 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.testcase.Priority;
+import org.ensembl.healthcheck.util.ConnectionBasedSqlTemplateImpl;
+import org.ensembl.healthcheck.util.MapRowMapper;
+import org.ensembl.healthcheck.util.SqlTemplate;
+import org.ensembl.healthcheck.util.StringListMapRowMapper;
 
 /**
  * Check that all xrefs from a certain source (e.g. HGNC, EntrezGene) are consistently assigned to the same Ensembl object type.
@@ -121,42 +130,43 @@ public class XrefLevels extends MultiDatabaseTestCase {
 				stmt.close();
 								
 			}
-			masterPrep = tempDB.prepareStatement("select source, object, species from "+ masterTable +" group by source, object, species order by source, object" );
-			// find problems - loop over results grouped by source and object
-			// find situations where the source is the same but the species and object
-			// are different
 			
-			ResultSet rs = masterPrep.executeQuery();
+			PreparedStatement sourcePrep = tempDB.prepareStatement("select distinct source from "+masterTable);
+			ResultSet sources = sourcePrep.executeQuery();
 			
-			String source = "";
-			String object = "";
-			String species = "";
-			
-			String lastSource = "";
-			String lastObject = "";
-			String lastSpecies = "";
-			
-			while (rs.next()) {
+			while (sources.next()) {
+				String source = sources.getString("source");
+				String query = "select object,species from "+ masterTable +" where source = ?";
 				
-				source = rs.getString("source");
-				object = rs.getString("object");
-				species = rs.getString("species");
+				MapRowMapper<String,List<String>> mapper = new StringListMapRowMapper();
+				SqlTemplate template = new ConnectionBasedSqlTemplateImpl(tempDB);
+				Map<String,List<String>> map = template.queryForMap(query, mapper, source);
 				
-				if (!source.equals("")) { // first time around is a special case
-					
-					if (source.equals(lastSource) && !species.equals(lastSpecies) && !object.equals(lastObject)) {
-						result = false;
-						ReportManager.problem(this, "", source + " is on " + object + " in some species (e.g. " + species + ") and " + lastObject + " in others (e.g." + lastSpecies + ")");
-					} else {
-						ReportManager.correct(this, "", source + " only on " + object + " in all species.");
+				if (map.size() != 1) {
+					// more than one list in the map implies there are at least two object types referenced
+					// figure out which species are different
+					String message = "Source:"+source+", types differ between species. ";
+										
+					int smallest = 1000;
+					String smallestType = "";
+					for (Map.Entry<String, List<String>> entry: map.entrySet()) {
+						List<String> species = entry.getValue();
+						if (species.size() < smallest) {
+							smallest = species.size();
+							smallestType = entry.getKey();
+						}
+						message = message.concat(entry.getKey() + " has " + species.size() + " species. ");
 					}
+					
+					List<String> minoritySpecies = map.get(smallestType);
+					
+					message = message.concat("Problem species are:"+ StringUtils.join(minoritySpecies,","));
+					
+					ReportManager.problem(this, "", message);
+					
 				}
-				lastSource = source;
-				lastObject = object;
-				lastSpecies = species;
 				
 			}
-			
 			
 			dropTempTable(tempDB);
 			
