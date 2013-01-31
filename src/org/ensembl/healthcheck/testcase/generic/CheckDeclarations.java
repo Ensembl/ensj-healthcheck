@@ -110,10 +110,11 @@ public class CheckDeclarations extends SingleDatabaseTestCase {
     Connection con = dbre.getConnection();
     Connection previousCon = sec.getConnection();
 
-    String currentAssembly = DBUtils.getMetaValue(con, "assembly.name");
-    String previousAssembly = DBUtils.getMetaValue(previousCon, "assembly.name");
+    String sql = "CHECKSUM table assembly";
+    int currentAssembly = DBUtils.getRowCount(con, sql);
+    int previousAssembly = DBUtils.getRowCount(previousCon, sql);
 
-    if (!previousAssembly.equals(currentAssembly)) {
+    if (previousAssembly != currentAssembly) {
       boolean declared = checkDeclaration(dbre, "assembly");
       if (!declared) {
         ReportManager.problem(this, con, "Assembly has changed but has not been declared");
