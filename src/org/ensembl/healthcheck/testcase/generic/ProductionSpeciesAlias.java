@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
+import java.util.regex.Matcher;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
@@ -15,7 +17,7 @@ import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.SqlTemplate;
-import java.util.regex.Matcher;
+import org.ensembl.healthcheck.util.StringListMapRowMapper;
 
 
 public class ProductionSpeciesAlias extends SingleDatabaseTestCase {
@@ -67,6 +69,8 @@ public class ProductionSpeciesAlias extends SingleDatabaseTestCase {
 
     result &= checkUrl(dbre, prodDbre, species);
     result &= checkName(dbre, prodDbre, species);
+    result &= checkScientific(dbre, prodDbre, species);
+    result &= checkConsistent(dbre, species);
 
     return result;
 
@@ -133,5 +137,56 @@ public class ProductionSpeciesAlias extends SingleDatabaseTestCase {
       }
     }
 
+
+// Checking species scientific name
+// Should be both in the production and the core databases
+// Should start with a capital letter and have spaces between the names
+    private <T extends CharSequence> boolean checkScientific(DatabaseRegistryEntry dbre, DatabaseRegistryEntry prodDbre, String species) {
+      SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+      SqlTemplate prodt = DBUtils.getSqlTemplate(prodDbre);
+      String sql = "SELECT meta_value FROM meta WHERE meta_key = 'species.scientific_name'";
+      String prodSql = "SELECT scientific_name FROM species WHERE db_name = ?";
+      String url = t.queryForDefaultObject(sql, String.class);
+      String prodUrl = prodt.queryForDefaultObject(prodSql, String.class, species);
+      if (url.equals(prodUrl)) {
+        if (url.matches("^[A-Z]{1}[a-z0-9]*( [a-z0-9]*){1,2}")) {
+          ReportManager.correct(this, dbre.getConnection(), "species.scientific_name '" + url + "' is the same in both databases and is in the correct format");
+          return true;
+        } else {
+          ReportManager.problem(this, dbre.getConnection(), "species.scientific_name '" + url + "' is not in the correct format. Should start with a capital letter and have underscores to separate names");
+          return false;
+        }
+      } else {
+        ReportManager.problem(this, dbre.getConnection(), "species.scientific '" + url + "' in database does not match '" + prodUrl + "' in the production database");
+        return false;
+      }
+    }
+
+
+// Checking all species meta keys are consistent
+// Once removed all the capitalisation and separators, should all be the same
+    private <T extends CharSequence> boolean checkConsistent(DatabaseRegistryEntry dbre, String species) {
+      boolean result = true;
+      SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+      StringBuilder shortName = new StringBuilder();
+      for (String speciesChunk : species.split("_")) {
+        shortName.append(speciesChunk);
+      }
+      String all_sql = "SELECT meta_value, meta_key FROM meta WHERE meta_key in ('species.scientific_name', 'species.production_name', 'species.url')";
+      Map<String, List<String>> keys = t.queryForMap(all_sql, new StringListMapRowMapper());
+      String sql = "SELECT meta_value FROM meta WHERE meta_key in ('species.scientific_name', 'species.production_name', 'species.url')";
+      List<String> names = t.queryForDefaultObjectList(sql, String.class);
+      for (String name : names) {
+        StringBuilder fullName = new StringBuilder();
+        for (String nameChunk : name.split("_| ")) {
+          fullName.append(nameChunk.toLowerCase());
+        }
+        if (fullName.equals(shortName)) {
+          ReportManager.problem(this, dbre.getConnection(), keys.get(name) + " has a meta value which does not match the correct species name " + species);
+          result = false;
+        }
+      } 
+      return result;
+    }
 
 }
