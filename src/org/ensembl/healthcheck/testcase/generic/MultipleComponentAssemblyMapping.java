@@ -25,6 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
@@ -56,6 +57,20 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
                 addToGroup("post-compara-handover");
 		setTeamResponsible(Team.GENEBUILD);
 	}
+
+        /**
+         * This only applies to core databases.
+         */
+        public void types() {
+
+                removeAppliesToType(DatabaseType.ESTGENE);
+                removeAppliesToType(DatabaseType.CDNA);
+                removeAppliesToType(DatabaseType.VEGA);
+                removeAppliesToType(DatabaseType.SANGER_VEGA);
+                removeAppliesToType(DatabaseType.OTHERFEATURES);
+                removeAppliesToType(DatabaseType.RNASEQ);
+
+        }
 
 	/**
 	 * Run the test.
