@@ -116,7 +116,7 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 		// chained mapper
 		String constraint = "";
 
-		String[] mappings = DBUtils.getColumnValues(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.mapping'  AND meta_value LIKE '%#%'");
+		String[] mappings = DBUtils.getColumnValues(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.mapping'");
 
 		Pattern assemblyMappingPattern = Pattern.compile("^([a-zA-Z0-9.]+):?([a-zA-Z0-9._]+)?[\\|#]([a-zA-Z0-9._]+):?([a-zA-Z0-9._]+)?([\\|#]([a-zA-Z0-9.]+):?([a-zA-Z0-9._]+)?)?$");
 
@@ -146,7 +146,7 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 		// now find components that map to multiple assemblies but whose coordinate
 		// systems are not using a chained mapper
 		String sql = "SELECT a.cmp_seq_region_id, a.asm_seq_region_id, s1.coord_system_id " + "FROM assembly a, seq_region s1, seq_region s2 "
-				+ "WHERE a.asm_seq_region_id=s1.seq_region_id AND a.cmp_seq_region_id = s2.seq_region_id " + constraint + "ORDER BY s1.coord_system_id, a.cmp_seq_region_id";
+				+ "WHERE a.asm_seq_region_id=s1.seq_region_id AND a.cmp_seq_region_id = s2.seq_region_id AND s1.coord_system_id != s2.coord_system_id " + constraint + "ORDER BY s1.coord_system_id, a.cmp_seq_region_id";
 
 		try {
 
