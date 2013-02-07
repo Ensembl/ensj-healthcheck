@@ -163,7 +163,7 @@ public class XrefLevels extends MultiDatabaseTestCase {
 					message = message.concat("Problem species are:"+ StringUtils.join(minoritySpecies,","));
 					
 					ReportManager.problem(this, "", message);
-					
+					result = false;
 				}
 				
 			}
