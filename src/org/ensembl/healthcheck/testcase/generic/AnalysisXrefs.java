@@ -73,7 +73,12 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
 		// --------------------------------
 		// havana/OTTT
 
-		result &= checkAnalysisAndSource(dbre, "Transcript", "havana", "ensembl_havana_transcript", "havana_ig_gene", "ensembl_havana_lincrna", "proj_havana", "proj_ensembl_havana_transcript", "proj_ensembl_havana_lincrna", "OTTT");
+    result &= checkAnalysisAndSource( dbre, "Transcript",
+                         "havana",         "ensembl_havana_transcript",
+                         "havana_ig_gene", "ensembl_havana_lincrna",
+                         "proj_havana",    "proj_ensembl_havana_transcript",
+                         "proj_ensembl_havana_lincrna", "proj_havana_ig_gene",
+                         "proj_ensembl_havana_lincrna", "OTTT" );
 
 		// --------------------------------
 		// other pairs here
@@ -86,7 +91,7 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
 
 	// --------------------------------------------------------------------------
 
-	private boolean checkAnalysisAndSource(DatabaseRegistryEntry dbre, String objectType, String analysis1, String analysis2, String analysis3, String analysis4, String analysis5, String analysis6, String analysis7, String source) {
+	private boolean checkAnalysisAndSource(DatabaseRegistryEntry dbre, String objectType, String analysis1, String analysis2, String analysis3, String analysis4, String analysis5, String analysis6, String analysis7, String analysis8, String analysis9, String source) {
 
 		boolean result = true;
 
@@ -141,7 +146,7 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
 
 		sql = "SELECT COUNT(DISTINCT(t." + table + "_id)) FROM xref x, object_xref ox, external_db e, " + table
 				+ " t, analysis a WHERE x.xref_id=ox.xref_id AND x.external_db_id=e.external_db_id AND ox.ensembl_id=t." + table
-				+ "_id AND a.logic_name not in (?, ?, ?, ?, ?, ?, ?) AND e.db_name=? AND t.analysis_id=a.analysis_id  AND ox.ensembl_object_type=?";
+				+ "_id AND a.logic_name not in (?, ?, ?, ?, ?, ?, ?, ?, ?) AND e.db_name=? AND t.analysis_id=a.analysis_id  AND ox.ensembl_object_type=?";
 
 		try {
 
