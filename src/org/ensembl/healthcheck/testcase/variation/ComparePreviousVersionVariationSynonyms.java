@@ -74,6 +74,14 @@ public class ComparePreviousVersionVariationSynonyms extends ComparePreviousVers
 
 	}
 
+        // ------------------------------------------------------------------------
+
+        protected double minimum() {
+
+                return 0;
+
+        }
+
 	// ------------------------------------------------------------------------
 
 } // ComparePreviousVersionVariationSynonyms

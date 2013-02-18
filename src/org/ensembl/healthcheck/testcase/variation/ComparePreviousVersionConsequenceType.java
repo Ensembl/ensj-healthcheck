@@ -110,6 +110,14 @@ public class ComparePreviousVersionConsequenceType extends ComparePreviousVersio
 
 	}
 
+        // ------------------------------------------------------------------------
+
+        protected double minimum() {
+
+                return 0;
+
+        }
+
 	// ------------------------------------------------------------------------
 
 } // ComparePreviousVersionConsequenceType

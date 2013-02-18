@@ -112,6 +112,15 @@ public class ComparePreviousVersionRegulatoryFeatures extends ComparePreviousVer
 		return 0.95;
 
 	}
+
+        protected double minimum() {
+
+                return 0;
+
+        }
+
+        // ------------------------------------------------------------------------
+
 	
 	protected boolean testUpperThreshold(){
 		return true;

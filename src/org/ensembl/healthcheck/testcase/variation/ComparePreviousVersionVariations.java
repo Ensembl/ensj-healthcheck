@@ -74,6 +74,14 @@ public class ComparePreviousVersionVariations extends ComparePreviousVersionBase
 
 	}
 
+        // ------------------------------------------------------------------------
+
+        protected double minimum() {
+
+                return 0;
+
+        }
+
 	// ------------------------------------------------------------------------
 
 } // ComparePreviousVersionVariations

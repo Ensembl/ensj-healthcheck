@@ -150,6 +150,14 @@ public class ComparePreviousVersionArrayXrefs extends ComparePreviousVersionBase
 
 	}
 
+        // ------------------------------------------------------------------------
+
+        protected double minimum() {
+
+                return 0;
+
+        }
+
 	// ----------------------------------------------------------------------
 
 	protected boolean testUpperThreshold(){

@@ -74,6 +74,14 @@ public class ComparePreviousVersionVariationFeatures extends ComparePreviousVers
 
 	}
 
+        // ------------------------------------------------------------------------
+
+        protected double minimum() {
+
+                return 0;
+
+        }
+
 	// ------------------------------------------------------------------------
 	
 	protected boolean sameAssemblyNumber(DatabaseRegistryEntry dbre) {

@@ -111,6 +111,14 @@ public class ComparePreviousVersionValidationStatus extends ComparePreviousVersi
 
 	}
 
+        // ------------------------------------------------------------------------
+
+        protected double minimum() {
+
+                return 0;
+
+        }
+
 	// ------------------------------------------------------------------------
 
 } // ComparePreviousVersionValidationStatus

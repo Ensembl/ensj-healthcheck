@@ -59,6 +59,14 @@ public class ComparePreviousVersionVariationSets extends ComparePreviousVersionB
 
 	}
 
+        // ------------------------------------------------------------------------
+
+        protected double minimum() {
+
+                return 0;
+
+        }
+
 	// ------------------------------------------------------------------------
 
 } // ComparePreviousVersionVariationSets
