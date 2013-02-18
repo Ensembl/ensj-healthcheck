@@ -71,6 +71,14 @@ public class ComparePreviousVersionXrefs extends ComparePreviousVersionBase {
 
 	}
 
+        // ------------------------------------------------------------------------
+
+        protected double minimum() {
+
+                return 100;
+
+        }
+
 	// ----------------------------------------------------------------------
 
 	private String getExcludeProjectedSQL(DatabaseRegistryEntry dbre) {

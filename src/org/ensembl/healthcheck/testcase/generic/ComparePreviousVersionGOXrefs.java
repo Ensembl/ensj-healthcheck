@@ -73,6 +73,14 @@ public class ComparePreviousVersionGOXrefs extends ComparePreviousVersionBase {
 
 	}
 
+        // ------------------------------------------------------------------------
+
+        protected double minimum() {
+
+                return 0;
+
+        }
+
 	// ----------------------------------------------------------------------
 
 } // ComparePreviousVersionGOXrefs

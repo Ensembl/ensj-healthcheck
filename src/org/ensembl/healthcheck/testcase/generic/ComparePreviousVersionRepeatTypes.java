@@ -70,6 +70,14 @@ public class ComparePreviousVersionRepeatTypes extends ComparePreviousVersionBas
 
 	}
 
+        // ------------------------------------------------------------------------
+
+        protected double minimum() {
+
+                return 0;
+
+        }
+
 	// ------------------------------------------------------------------------
 
 } // ComparePreviousVersionRepeatTypes

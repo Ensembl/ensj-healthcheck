@@ -70,6 +70,14 @@ public class ComparePreviousVersionSynonyms extends ComparePreviousVersionBase {
 
 	}
 
+        // ------------------------------------------------------------------------
+
+        protected double minimum() {
+
+                return 0;
+
+        }
+
 	// ----------------------------------------------------------------------
 
 } // ComparePreviousVersionSynonyms

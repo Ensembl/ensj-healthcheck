@@ -69,6 +69,16 @@ public class ComparePreviousVersionBiotypes extends ComparePreviousVersionBase {
 
 	}
 
+        // ------------------------------------------------------------------------
+
+        protected double minimum() {
+
+                return 0;
+
+        }
+
+
+
 	// ------------------------------------------------------------------------
 
 } // ComparePreviousVersionBiotypes

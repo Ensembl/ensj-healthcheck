@@ -101,6 +101,14 @@ public class ComparePreviousVersionCCDS extends ComparePreviousVersionBase {
 
 	}
 
+        // ------------------------------------------------------------------------
+
+        protected double minimum() {
+
+                return 0;
+
+        }
+
 	// ------------------------------------------------------------------------
 
 } // ComparePreviousVersionCCDS

@@ -71,6 +71,14 @@ public class ComparePreviousVersionDensityFeatures extends ComparePreviousVersio
 
 	}
 
+        // ------------------------------------------------------------------------
+
+        protected double minimum() {
+
+                return 0;
+
+        }
+
 	// ----------------------------------------------------------------------
 
 } // ComparePreviousVersionDensityFeatures

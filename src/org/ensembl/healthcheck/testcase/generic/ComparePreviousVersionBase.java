@@ -92,12 +92,12 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 
 				int currentCount = ((Integer) (currentCounts.get(key))).intValue();
 
-				if (((double) currentCount / (double) secondaryCount) < threshold()) {
+				if (((double) currentCount / (double) secondaryCount) < threshold() && secondaryCount > minimum()) {
 					ReportManager.problem(this, dbre.getConnection(), sec.getName() + " has " + secondaryCount + " " + entityDescription() + " " + key + " but " + dbre.getName() + " only has " + currentCount);
 					result = false;
 				} else if (testUpperThreshold() &&
 				// ((1 -(double) secondaryCount / (double) currentCount)) > threshold()) {
-						(((double) currentCount / (double) secondaryCount)) > (1 / threshold())) {
+						(((double) currentCount / (double) secondaryCount)) > (1 / threshold()) && secondaryCount > minimum()) {
 					ReportManager.problem(this, dbre.getConnection(), sec.getName() + " only has " + secondaryCount + " " + entityDescription() + " " + key + " but " + dbre.getName() + " has " + currentCount);
 					result = false;
 				}
@@ -160,6 +160,10 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 	protected abstract double threshold();
 
 	// ------------------------------------------------------------------------
+
+        protected abstract double minimum();
+
+        // ------------------------------------------------------------------------
 
 	protected boolean testUpperThreshold() {
 		return false;

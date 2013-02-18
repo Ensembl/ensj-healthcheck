@@ -236,6 +236,9 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
                                 if (percentage > 5 && changeCount > 50) {
                                         ReportManager.problem(this, currentCon, changeCount +"("+ percentage +"%) gene display xrefs changed source from " + key + exampleStableIds.get(key) );
                                         result = false;
+                                } else if (changeCount == 0) {
+                                        ReportManager.problem(this, currentCon, "Source " + key + " does not appear in the new database any more");
+                                        result = false;
                                 }
 			}
 	
