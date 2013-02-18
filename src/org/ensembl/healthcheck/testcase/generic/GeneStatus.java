@@ -148,7 +148,7 @@ public class GeneStatus extends SingleDatabaseTestCase {
 				logger.finest(type + ": previous " + previous + " current "
 						+ current + " difference ratio " + difference);
 
-				if (difference > THRESHOLD) {
+				if (difference > THRESHOLD && previous > 100) {
 
 					ReportManager.problem(this, con, "Only " + current + " "
 							+ type + "s have " + status
