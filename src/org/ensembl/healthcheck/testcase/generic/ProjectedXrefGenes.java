@@ -37,10 +37,6 @@ public class ProjectedXrefGenes extends SingleDatabaseTestCase {
 	 */
 	public ProjectedXrefGenes() {
 
-		addToGroup("post_genebuild");
-		addToGroup("release");
-		addToGroup("post-compara-handover");
-		
 		setDescription("Check that only genes have projected xrefs");
 		setTeamResponsible(Team.CORE);
 
