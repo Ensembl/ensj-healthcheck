@@ -159,8 +159,10 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
                         stmt.setString(5, analysis5);
                         stmt.setString(6, analysis6);
                         stmt.setString(7, analysis7);
-			stmt.setString(8, source);
-			stmt.setString(9, objectType);
+                        stmt.setString(8, analysis8);
+                        stmt.setString(9, analysis9);
+			stmt.setString(10, source);
+			stmt.setString(11, objectType);
 
 			ResultSet rs = stmt.executeQuery();
 
