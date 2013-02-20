@@ -22,10 +22,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistry;
@@ -121,7 +119,12 @@ public class XrefLevels extends MultiDatabaseTestCase {
 						.executeQuery("SELECT e.db_name, ox.ensembl_object_type FROM external_db e, xref x, object_xref ox WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id GROUP BY e.db_name, ox.ensembl_object_type");
 				
 				while (rs.next()) {
-					masterPrep.setString(1, dbre.getSpecies().toString());
+                    String species = dbre.getSpecies().toString();
+                    if (species == null || species.equalsIgnoreCase("unknown")) {
+                        species = dbre.getAlias();
+                    }
+
+					masterPrep.setString(1, species);
 					masterPrep.setString(2, rs.getString("db_name"));
 					masterPrep.setString(3, rs.getString("ensembl_object_type"));
 					masterPrep.execute();
