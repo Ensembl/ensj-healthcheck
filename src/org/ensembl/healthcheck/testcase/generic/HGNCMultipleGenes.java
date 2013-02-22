@@ -74,6 +74,7 @@ public class HGNCMultipleGenes extends SingleDatabaseTestCase {
 		// this has to be done the slow way, don't think there's a way to do
 		// this all at once
 		String sql = "SELECT DISTINCT(x.display_label), COUNT(*) AS count FROM gene g, xref x, external_db e WHERE e.external_db_id=x.external_db_id AND e.db_name LIKE 'HGNC%' AND x.xref_id=g.display_xref_id ";
+                sql += "and g.seq_region_id NOT in (select seq_region_id FROM seq_region_attrib sa, attrib_type at WHERE at.attrib_type_id = sa.attrib_type_id AND code = 'non_ref') ";
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sangervega do
 															// not consider
 															// duplicates for
