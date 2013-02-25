@@ -81,7 +81,7 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			result &= checkForOrphans(con, "phenotype_feature", "source_id", "source", "source_id", true);
 			result &= checkForOrphans(con, "phenotype_feature", "study_id", "study", "study_id", true);
 			result &= checkForOrphans(con, "phenotype_feature_attrib", "phenotype_feature_id", "phenotype_feature", "phenotype_feature_id", true);
-			result &= checkForOrphans(con, "phenotype_feature_attrib", "attrib_type_id", "attrib", "attrib_type_id", true);
+			result &= checkForOrphans(con, "phenotype_feature_attrib", "attrib_type_id", "attrib_type", "attrib_type_id", true);
 			result &= checkForOrphans(con, "population", "sample_id", "sample", "sample_id", true);
 			result &= checkForOrphans(con, "population_genotype", "sample_id", "sample", "sample_id", true);
 			result &= checkForOrphans(con, "population_genotype", "variation_id", "variation", "variation_id", true);
@@ -115,13 +115,13 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			result &= checkForOrphans(con, "genotype_code", "allele_code_id", "allele_code", "allele_code_id", true);
             
             // check phenotype_feature (special case since it can contain links to multiple tables)
-            rows = countOrphansWithConstraint(con,"phenotype_feature","object_id","variation","name","phenotype_feature.type = 'Variation'");
+            rows = countOrphansWithConstraint(con,"phenotype_feature","object_id","variation","name","type = 'Variation'");
 			if (rows > 0) {
 				ReportManager.problem(this, con, rows + "entries in phenotype_feature table without entries in variation");
 				result = false;
 			}
             
-            rows = countOrphansWithConstraint(con,"phenotype_feature","object_id","structural_variation","name","phenotype_feature.type IN ('StructuralVariation','SupportingStructuralVariation')");
+            rows = countOrphansWithConstraint(con,"phenotype_feature","object_id","structural_variation","name","type IN ('StructuralVariation','SupportingStructuralVariation')");
 			if (rows > 0) {
 				ReportManager.problem(this, con, rows + "entries in phenotype_feature table without entries in structural_variation");
 				result = false;
