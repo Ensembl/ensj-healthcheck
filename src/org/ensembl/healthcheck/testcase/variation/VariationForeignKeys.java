@@ -121,7 +121,7 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 				result = false;
 			}
             
-            rows = countOrphansWithConstraint(con,"phenotype_feature","object_id","structural_variation","name","type IN ('StructuralVariation','SupportingStructuralVariation')");
+            rows = countOrphansWithConstraint(con,"phenotype_feature","object_id","structural_variation","variation_name","type IN ('StructuralVariation','SupportingStructuralVariation')");
 			if (rows > 0) {
 				ReportManager.problem(this, con, rows + "entries in phenotype_feature table without entries in structural_variation");
 				result = false;
