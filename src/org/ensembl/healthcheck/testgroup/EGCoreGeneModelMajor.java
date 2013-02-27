@@ -4,6 +4,7 @@ import org.ensembl.healthcheck.GroupOfTests;
 import org.ensembl.healthcheck.testcase.eg_core.ExonBoundary;
 import org.ensembl.healthcheck.testcase.eg_core.EgProteinFeatureTranslation;
 import org.ensembl.healthcheck.testcase.eg_core.InappropriateTranslation;
+import org.ensembl.healthcheck.testcase.eg_core.SeqRegionNaming;
 import org.ensembl.healthcheck.testcase.generic.DuplicateExons;
 import org.ensembl.healthcheck.testcase.generic.DuplicateGenes;
 import org.ensembl.healthcheck.testcase.generic.GeneCoordSystem;
@@ -28,6 +29,7 @@ public class EGCoreGeneModelMajor extends GroupOfTests {
 				Pseudogene.class, 
 				SpeciesID.class,
 				EgProteinFeatureTranslation.class,
-				InappropriateTranslation.class);
+				InappropriateTranslation.class,
+				SeqRegionNaming.class);
 	}
 }
