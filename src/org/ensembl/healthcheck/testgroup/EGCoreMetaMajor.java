@@ -5,6 +5,7 @@ import org.ensembl.healthcheck.testcase.eg_core.DuplicateTaxonomyIds;
 import org.ensembl.healthcheck.testcase.eg_core.EnaProvider;
 import org.ensembl.healthcheck.testcase.eg_core.MetaForCompara;
 import org.ensembl.healthcheck.testcase.eg_core.PermittedEgMeta;
+import org.ensembl.healthcheck.testcase.eg_core.RepeatAnalysesInMeta;
 import org.ensembl.healthcheck.testcase.eg_core.TranslationAttribType;
 import org.ensembl.healthcheck.testcase.generic.AnalysisDescription;
 
@@ -16,6 +17,9 @@ public class EGCoreMetaMajor extends GroupOfTests {
 			MetaForCompara.class,
 			TranslationAttribType.class,
 			DuplicateTaxonomyIds.class,
-			PermittedEgMeta.class, EnaProvider.class);
+			PermittedEgMeta.class, 
+			EnaProvider.class,
+			RepeatAnalysesInMeta.class
+		);
 	}
 }
