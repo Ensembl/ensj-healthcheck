@@ -83,11 +83,13 @@ public class ForeignKeyCoreId extends MultiDatabaseTestCase {
 			DatabaseRegistryEntry dbrvar = variationDBs[i];
 			Connection con = dbrvar.getConnection();
 
+			String variationName = dbrvar.getName();
+			if(! variationName.matches("master.*")){
+
 			try {
 
 				Species species = dbrvar.getSpecies();
-
-				String variationName = dbrvar.getName();
+			       
 				String coreName = variationName.replaceAll("variation", "core");
 
 				DatabaseRegistryEntry dbrcore = allDBR.getByExactName(coreName);
@@ -157,8 +159,9 @@ public class ForeignKeyCoreId extends MultiDatabaseTestCase {
 										+ e.getMessage());
 				result = false;
 			}
-
+			
 			overallResult &= result;
+			}
 		}
 		return overallResult;
 
