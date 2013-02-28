@@ -175,7 +175,7 @@ public class RepeatAnalysesInMeta extends AbstractEgCoreTestCase {
 					ReportManager.problem(
 						this, 
 						dbre.getConnection(), 
-						"not ok: " + repeatLogicName + " is a logic name for repeats, but has not been declared in meta for species " + speciesId
+						repeatLogicName + " is a logic name for repeats, but has not been declared in meta for species " + speciesId
 						+ "\n\nFix this by running\n\n"
 						+ "insert into meta (species_id, meta_key, meta_value) values ("+speciesId+", \"repeat.analysis\", \""+repeatLogicName+"\");"
 						+ "\n\non your database."
