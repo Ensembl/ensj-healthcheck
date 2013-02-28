@@ -19,7 +19,7 @@ import org.ensembl.healthcheck.util.SqlTemplate;
  * </p>
  * <ul>
  *     <li>
- *         Any of the analyses in getRepeatAnalysesThatShouldBeInMetaIfRun 
+ *         Any of the analyses in {@link #getRepeatAnalysesThatShouldBeInMetaIfRun} 
  *         has been run, but not been declared in meta for all the species in
  *         the database or
  *     </li>
@@ -52,8 +52,7 @@ public class RepeatAnalysesInMeta extends AbstractEgCoreTestCase {
 		repeatAnalysesThatShouldBeInMetaIfRun.add("trf");	
 		
 		return repeatAnalysesThatShouldBeInMetaIfRun;
-	}
-	
+	}	
 	
 	protected DatabaseRegistryEntry dbre;
 	protected SqlTemplate           sqlTemplate;
