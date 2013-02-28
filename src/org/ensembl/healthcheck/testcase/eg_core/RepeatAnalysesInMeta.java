@@ -109,7 +109,8 @@ public class RepeatAnalysesInMeta extends AbstractEgCoreTestCase {
 			return passes;
 		}
 		
-		logger.info("The following repeat logic names are in the analysis table: " + repeatLogicNames.toString());
+		logger.info("Analysis ids in the repeat_feature table: " + repeatAnalysisIds.toString());
+		logger.info("So there are repeat features for the following repeat logic names: " + repeatLogicNames.toString());
 		
 		for (int speciesId : speciesIds) {			
 			passes = checkMetaEntriesForSpecies(speciesId);
@@ -166,6 +167,9 @@ public class RepeatAnalysesInMeta extends AbstractEgCoreTestCase {
 				boolean missingAnalysisIsAProblem = repeatAnalysesThatShouldBeInMetaIfRun.contains(repeatLogicName);					
 				boolean foundNoEntryForCurrentSpecies = meta_id.size() == 0;
 				
+				if (foundNoEntryForCurrentSpecies && !missingAnalysisIsAProblem) {
+					logger.info("No meta entry for " + repeatLogicName + " found, but this isn't a problem, because this repeat analysis does not have to be declared, even if it has been run.");
+				}
 				if (foundNoEntryForCurrentSpecies && missingAnalysisIsAProblem) {						
 					currentSpeciesPasses = false;						
 					ReportManager.problem(
