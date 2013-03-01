@@ -188,7 +188,7 @@ public class RepeatAnalysesInMeta extends AbstractEgCoreTestCase {
 					ReportManager.problem(
 						this, 
 						dbre.getConnection(), 
-						"not ok: " + repeatLogicName + " is present multiple times in meta. Meta ids: " + StringUtils.join(meta_id, ',')
+						repeatLogicName + " is present multiple times in meta. Meta ids: " + StringUtils.join(meta_id, ',')
 					);						
 				}
 			}
@@ -200,7 +200,7 @@ public class RepeatAnalysesInMeta extends AbstractEgCoreTestCase {
 			ReportManager.problem(
 					this, 
 					dbre.getConnection(), 
-					"not ok: No valid 'repeat.analysis' key found in meta!"
+					"No valid 'repeat.analysis' key found in meta!"
 			);
 		}
 		return currentSpeciesPasses;
