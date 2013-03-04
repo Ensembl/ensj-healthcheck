@@ -495,24 +495,13 @@ public final class DBUtils {
 			while (rs1.next()) {
 
 				if (rs2.next()) {
+                                        String str = name1 + " and " + name2 + text + " " + singleTableName + " with columns ";
 					for (int j = 0; j < columns.length; j++) {
 						int i = columns[j];
+                                                str += rsmd1.getColumnName(i) + " " + Utils.truncate(rs1.getString(i), 250, true) + ", ";
 						// note columns indexed from 1
 						if (!compareColumns(rs1, rs2, i, warnNull)) {
-							String str = name1
-									+ " and "
-									+ name2
-									+ text
-									+ " "
-									+ singleTableName
-									+ " differ at row "
-									+ row
-									+ " column "
-									+ i
-									+ " ("
-									+ rsmd1.getColumnName(i)
-									+ ")"
-									+ " Values: "
+							str +=  " differ for values "
 									+ Utils.truncate(rs1.getString(i), 250,
 											true)
 									+ ", "
