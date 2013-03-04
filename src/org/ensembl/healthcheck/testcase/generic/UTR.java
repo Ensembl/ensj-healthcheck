@@ -104,7 +104,7 @@ public class UTR extends SingleDatabaseTestCase {
 
     if (comp < 50) {
       result = false;
-      ReportManager.info(this, con, "Only " + comp + " % coding transcripts have UTRs");
+      ReportManager.problem(this, con, "Only " + comp + " % coding transcripts have UTRs");
     }
 
     return result;
