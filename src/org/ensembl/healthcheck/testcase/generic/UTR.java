@@ -103,8 +103,7 @@ public class UTR extends SingleDatabaseTestCase {
     float comp = Float.valueOf(twoDForm.format(percentage));
 
     if (comp < 50) {
-      result = false;
-      ReportManager.problem(this, con, "Only " + comp + " % coding transcripts have UTRs");
+      ReportManager.info(this, con, "Only " + comp + " % coding transcripts have UTRs");
     }
 
     return result;
