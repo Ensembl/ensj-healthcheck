@@ -895,7 +895,7 @@ public class ReportManager {
 	 */
 	public static long reportExistsInDatabase(ReportLine report) {
 
-		String sql = "SELECT report_id FROM report WHERE database_name=? AND testcase=? AND result=? AND text=?";
+		String sql = "SELECT report_id FROM report WHERE database_name=? AND testcase=? AND result=? AND BINARY(text)=BINARY(?)";
 
 		long reportID = -1;
 
