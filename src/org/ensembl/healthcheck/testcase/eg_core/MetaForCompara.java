@@ -12,14 +12,15 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.util.SqlTemplate;
 
 /**
- * Pre-flight test for compara
- * @author dstaines
+ * Checks that the genebuild start date meta key is set, and checks
+ * that it matches the version of the lowest ranking coordinate system
+ * @author dstaines, dbolser
  * 
  */
 public class MetaForCompara extends AbstractEgCoreTestCase {
 
 	private final static String META_QUERY = "select meta_value from meta where meta_key=? and species_id=?";
-	private final static String COORD_VERSION_QUERY = "select version from coord_system where rank=1 and species_id=?";
+	private final static String COORD_VERSION_QUERY = "select version from coord_system where rank=(SELECT MIN(rank) FROM coord_system) and species_id=?";
 	private static final String GB_START = "genebuild.start_date";
 	private static final String ASS_DEF = "assembly.default";
 
@@ -96,7 +97,7 @@ public class MetaForCompara extends AbstractEgCoreTestCase {
 	 */
 	@Override
 	protected String getEgDescription() {
-		return "Pre-flight test for compara";
+		return " Checks that the genebuild start date meta key is set, and checks that it matches the version of the lowest ranking coordinate system";
 	}
 
 }
