@@ -72,7 +72,7 @@ public class TranscriptVariation extends SingleDatabaseTestCase {
       //      ReportManager.info(this, con, "No transcript_variation have consequence_type a empty string");
         }
         
-	int rows2 = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM variation_feature vf WHERE NOT FIND_IN_SET('intergenic_variant',vf.consequence_type) AND NOT EXISTS (SELECT * FROM transcript_variation tv WHERE tv.variation_feature_id = vf.variation_feature_id)");
+	int rows2 = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM variation_feature vf WHERE NOT FIND_IN_SET('intergenic_variant',vf.consequence_types) AND NOT EXISTS (SELECT * FROM transcript_variation tv WHERE tv.variation_feature_id = vf.variation_feature_id)");
         if (rows2 >=1) {
 	    result = false;
 	    ReportManager.problem(this, con, rows2 + " with consequence_type != 'intergenic_variant' and there is no corresponding transcript exists in transcript_variation table");
