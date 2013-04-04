@@ -32,8 +32,8 @@ public class ComparePreviousVersionVariationAnnotations extends ComparePreviousV
 	 */
 	public ComparePreviousVersionVariationAnnotations() {
 
-		addToGroup("variation");
-		addToGroup("variation-release");
+	    //addToGroup("variation");
+	    //addToGroup("variation-release");
 
 		setDescription("Compare the number of variation annotations in the current database with those from the equivalent database on the secondary server");
 		setTeamResponsible(Team.VARIATION);
