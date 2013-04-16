@@ -147,6 +147,13 @@ public class CheckTaxon extends MultiDatabaseTestCase {
                 " FROM meta WHERE meta_key = \"species.classification\" ORDER BY meta_id LIMIT 1";
             result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
             
+            /* Check scientific name in compara and core meta */
+            sql1 = "SELECT \"scientific name\", name " +
+                " FROM ncbi_taxa_name WHERE name_class = \"scientific name\" AND taxon_id = " + taxon_id;
+            sql2 = "SELECT \"scientific name\", meta_value " +
+                " FROM meta WHERE meta_key = \"species.scientific_name\"";
+            result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
+            
             /* Check classification */
             /* This check is quite complex as the axonomy is stored in very different ways in compara
                and core DBs. In compara, the tree structure is stored in the ncbi_taxa_node table
