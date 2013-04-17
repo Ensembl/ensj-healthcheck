@@ -72,6 +72,7 @@ public class ProductionMasterTables extends SingleDatabaseTestCase {
 		exceptions.add("created_at");
 		exceptions.add("modified_by");
 		exceptions.add("modified_at");
+                exceptions.add("db_release");
 
 		for (String table : tables) {
 			String key = table + "_id";
