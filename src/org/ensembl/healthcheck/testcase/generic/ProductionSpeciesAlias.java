@@ -32,8 +32,8 @@ public class ProductionSpeciesAlias extends SingleDatabaseTestCase {
     setPriority(Priority.AMBER);
     setEffect("Missing aliases can not be searched for");
     setFix("Re-run populate_species_meta.pl script");
-    setTeamResponsible(Team.RELEASE_COORDINATOR);
-    setSecondTeamResponsible(Team.GENEBUILD);
+    setTeamResponsible(Team.GENEBUILD);
+    setSecondTeamResponsible(Team.RELEASE_COORDINATOR);
   }
 
   public void types() {
