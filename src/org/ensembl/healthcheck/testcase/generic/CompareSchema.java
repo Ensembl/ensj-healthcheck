@@ -42,8 +42,8 @@ public class CompareSchema extends AbstractCompareSchema {
 
 	@Override
 	protected void addResponsible() {
-		setTeamResponsible(Team.RELEASE_COORDINATOR);
-                setSecondTeamResponsible(Team.GENEBUILD);
+		setTeamResponsible(Team.GENEBUILD);
+                setSecondTeamResponsible(Team.RELEASE_COORDINATOR);
 	}
 	
 	@Override
