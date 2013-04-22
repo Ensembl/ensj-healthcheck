@@ -223,7 +223,7 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 		// --------------------------------
 		// If a gene is gene.biotype='protein_coding' but has no transcripts that are transcript.biotype='protein_coding', at least one
 		// of the transcripts has to have a translation.
-		sql = "SELECT count(distinct g.gene_id) FROM gene g JOIN transcript t USING (gene_id) JOIN translation p ON (t.canonical_translation_id = p.translation_id) WHERE g.biotype = 'protein_coding' AND g.gene_id NOT IN (SELECT gene_id FROM transcript WHERE biotype in ('protein_coding', 'nonsense_mediated_decay'))";
+		sql = "SELECT count(distinct g.gene_id) FROM gene g JOIN transcript t USING (gene_id) JOIN translation p ON (t.canonical_translation_id = p.translation_id) WHERE g.biotype = 'protein_coding' AND g.gene_id NOT IN (SELECT gene_id FROM transcript WHERE biotype in ('protein_coding', 'nonsense_mediated_decay', 'non_stop_decay'))";
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sangervega ignore genes that do not have source havana or WU
 			sql += " and (g.source='havana' or g.source='WU')";
 		}
