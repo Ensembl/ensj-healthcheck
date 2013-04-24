@@ -73,7 +73,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 			tables = remove(tables, views);
 			
 			// the following tables are allowed to be empty
-			String[] allowedEmpty = { "alt_allele", "assembly_exception", "data_file", "dnac", "seq_region_mapping", "unconventional_transcript_association", "operon", "operon_transcript", "operon_transcript_gene", "intron_supporting_evidence", "transcript_intron_supporting_evidence", "associated_xref", "associated_group" };
+			String[] allowedEmpty = { "alt_allele", "assembly_exception", "data_file", "dnac", "seq_region_mapping", "unconventional_transcript_association", "operon", "operon_transcript", "operon_transcript_gene", "intron_supporting_evidence", "transcript_intron_supporting_evidence", "associated_xref", "associated_group", "qtl", "qtl_feature", "qtl_synonym" };
 			tables = remove(tables, allowedEmpty);
 			
 			// ID mapping related tables are checked in a separate test case
@@ -86,12 +86,6 @@ public class EmptyTables extends SingleDatabaseTestCase {
                                 tables = remove(tables, density);
                         }		
 
-                	// only rat has entries in QTL tables
-			if (species != Species.RATTUS_NORVEGICUS) {
-				String[] qtlTables = { "qtl", "qtl_feature", "qtl_synonym" };
-				tables = remove(tables, qtlTables);
-			}
-			
 			// map, marker etc
 			if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS && species != Species.RATTUS_NORVEGICUS && species != Species.DANIO_RERIO && species != Species.BOS_TAURUS && species != Species.CANIS_FAMILIARIS && species != Species.GALLUS_GALLUS && species != Species.MACACA_MULATTA && species != Species.SUS_SCROFA) {
 				String[] markerTables = { "map", "marker", "marker_map_location", "marker_synonym", "marker_feature" };
