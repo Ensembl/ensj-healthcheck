@@ -40,6 +40,9 @@ public class ProductionAnalysisLogicName extends AbstractTemplatedTestCase {
     boolean result = true;
     Species dbSpecies = dbre.getSpecies();
     String species = dbSpecies.toString();
+    if (species == null || species.equalsIgnoreCase("unknown")) {
+      species = dbre.getAlias();
+    }    
     String databaseType = dbre.getType().getName();
     Set<String> coreLogicNames = getLogicNamesDb(dbre);
     Set<String> productionLogicNames = getLogicNamesFromProduction(dbre, species, databaseType);
