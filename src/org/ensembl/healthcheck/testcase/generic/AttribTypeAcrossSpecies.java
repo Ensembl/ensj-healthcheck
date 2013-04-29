@@ -43,11 +43,11 @@ public class AttribTypeAcrossSpecies extends MultiDatabaseTestCase {
 	}
 
 	/**
-	 * Make sure that the assembly tables are all the same.
+	 * Make sure that the attrib_type tables are all the same.
 	 * 
 	 * @param dbr
 	 *          The database registry containing all the specified databases.
-	 * @return True if the assembly table is the same across all the species in the registry.
+	 * @return True if the attrib_type table is the same across all the species in the registry.
 	 */
 	public boolean run(DatabaseRegistry dbr) {
 
