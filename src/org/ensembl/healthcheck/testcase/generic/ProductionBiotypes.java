@@ -120,11 +120,11 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
           result = false;
           ReportManager.problem(this, dbre.getConnection(), "Some genes of biotype '" + geneBiotype + "' have transcripts in '" + transcriptBiotypes + "'");
         }
-        List<String> allGenes = getGene(dbre, geneGrouping, databaseType);
+        List<String> allGenes = getGene(dbre, geneBiotype, databaseType);
         List<String> goodGenes = getGeneWithTranscript(dbre, geneGrouping, databaseType);
         result = checkMissing(dbre, allGenes, goodGenes, geneBiotype);
       } else if (geneGrouping.contains("coding")) {
-        List<String> allGenes = getGene(dbre, geneGrouping, databaseType);
+        List<String> allGenes = getGene(dbre, geneBiotype, databaseType);
         List<String> goodGenes = getGeneWithTranscript(dbre, geneGrouping, databaseType);
         result = checkMissing(dbre, allGenes, goodGenes, geneBiotype);
         if (geneBiotype.contains("polymorphic_pseudogene")) {
@@ -212,11 +212,9 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
 //    return result;
 //  }
 
-  private List<String> getGene(DatabaseRegistryEntry dbre, Set<String> biotypeGroup, String databaseType) {
+  private List<String> getGene(DatabaseRegistryEntry dbre, String biotype, String databaseType) {
     SqlTemplate t = DBUtils.getSqlTemplate(dbre);
-    Set<String> biotypes = getBiotypeFromGrouping(dbre, biotypeGroup, "gene", databaseType);
-    String list = getListBiotypes(biotypes);
-    String sql = "SELECT stable_id FROM gene where biotype in (" + list + ")";
+    String sql = "SELECT stable_id FROM gene where biotype = '" + biotype + "'";
     return t.queryForDefaultObjectList(sql, String.class);
   }
 
