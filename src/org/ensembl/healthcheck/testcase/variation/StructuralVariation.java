@@ -55,6 +55,14 @@ public class StructuralVariation extends SingleDatabaseTestCase {
 		
 		try {
 	
+	    // Look for duplicates
+			String stmt = "SELECT COUNT(DISTINCT svf1.structural_variation_id) FROM structural_variation_feature svf1 JOIN structural_variation_feature svf2 ON (svf2.structural_variation_id = svf1.structural_variation_id AND svf2.structural_variation_feature_id > svf1.structural_variation_feature_id AND svf2.seq_region_id = svf1.seq_region_id AND svf2.seq_region_start = svf1.seq_region_start AND svf2.seq_region_end = svf1.seq_region_end AND svf2.seq_region_strand = svf1.seq_region_strand)";
+			int rows = DBUtils.getRowCount(con,stmt);
+			if (rows > 0) {
+				result = false;
+				ReportManager.problem(this, con, String.valueOf(rows) + " rows are duplicated in structural_variation_feature");
+			}
+	
 			result &= checkCountIsZero(con, "structural_variation_feature", "(inner_start < seq_region_start OR outer_start > seq_region_start OR inner_end > seq_region_end OR outer_end < seq_region_end)");
 
 			// At the moment, this is ok since that means an insertion relative to the reference. In the future, we should probably represent these Ensembl-style (start = end+1)
