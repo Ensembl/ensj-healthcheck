@@ -25,7 +25,7 @@ import org.ensembl.healthcheck.Team;
 
 
 /**
- * Compare the number of variations having each validation status between the current database and the database on the secondary
+ * Compare the number of variations having each evidence between the current database and the database on the secondary
  * server.
  */
 
@@ -39,7 +39,7 @@ public class ComparePreviousVersionValidationStatus extends ComparePreviousVersi
 		addToGroup("variation");
 		addToGroup("variation-release");
 		addToGroup("variation-post-import");
-		setDescription("Compare the number of variations having each validation status in the current database with those from the equivalent database on the secondary server");
+		setDescription("Compare the number of variations having each an evidence annotation in the current database with those from the equivalent database on the secondary server");
                 setTeamResponsible(Team.VARIATION);
 	}
 
@@ -52,13 +52,13 @@ public class ComparePreviousVersionValidationStatus extends ComparePreviousVersi
 		Properties sqlQueries = new Properties();
 		String query;
 
-		// Query getting the structure of the validation_status column
-		query = "DESCRIBE variation validation_status";
-		sqlQueries.setProperty("describeValidationStatus", query);
+		// Query getting the structure of the evidence column
+		query = "DESCRIBE variation evidence";
+		sqlQueries.setProperty("describeEvidence", query);
 
-		// Query counting the number of variations with a particular validation_status
-		query = "SELECT SET_ELEMENT, COUNT(*) FROM variation v WHERE FIND_IN_SET(SET_ELEMENT,validation_status)";
-		sqlQueries.setProperty("countVariationsByValidationStatus", query);
+		// Query counting the number of variations with a particular evidence
+		query = "SELECT SET_ELEMENT, COUNT(*) FROM variation v WHERE FIND_IN_SET(SET_ELEMENT,evidence)";
+		sqlQueries.setProperty("countVariationsByEvidence", query);
 
 		return sqlQueries;
 	} 
@@ -72,8 +72,8 @@ public class ComparePreviousVersionValidationStatus extends ComparePreviousVersi
 			// Get all the needed SQL statements in a Properties object
 			Properties sqlQueries = getSQLQueries();
 	
-			// First, get the structure of the validation_status
-			String[] description = DBUtils.getRowValues(dbre.getConnection(), sqlQueries.getProperty("describeValidationStatus"));
+			// First, get the structure of the evidence
+			String[] description = DBUtils.getRowValues(dbre.getConnection(), sqlQueries.getProperty("describeEvidence"));
 	
 			// The second column contains the type, strip out the individual, comma-separated set elements
 			String[] setElements = description[1].split(",");
@@ -84,8 +84,8 @@ public class ComparePreviousVersionValidationStatus extends ComparePreviousVersi
 				// We need to strip away any 'set(' or ')' strings from the set element
 				setElements[i] = setElements[i].replaceAll("set\\(|\\)", "");
 	
-				// Replace the 'SET_ELEMENT' placeholder with the current validation_status and do the query
-				counts.putAll(getCountsBySQL(dbre, sqlQueries.getProperty("countVariationsByValidationStatus").replaceAll("SET_ELEMENT", setElements[i])));
+				// Replace the 'SET_ELEMENT' placeholder with the current evidence and do the query
+				counts.putAll(getCountsBySQL(dbre, sqlQueries.getProperty("countVariationsByEvidence").replaceAll("SET_ELEMENT", setElements[i])));
 			}
 		} catch (Exception e) {
 			ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
@@ -99,7 +99,7 @@ public class ComparePreviousVersionValidationStatus extends ComparePreviousVersi
 
 	protected String entityDescription() {
 
-		return "number of variations having validation status";
+		return "number of variations having at least one evidence annotation";
 
 	}
 
