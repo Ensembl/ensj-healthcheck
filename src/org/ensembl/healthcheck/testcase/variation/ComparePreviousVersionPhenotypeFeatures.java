@@ -72,6 +72,14 @@ public class ComparePreviousVersionPhenotypeFeatures extends ComparePreviousVers
 		return 1;
 
 	}
+	
+	// ------------------------------------------------------------------------
+
+	protected double minimum() {
+
+		return 0;
+
+	}
 
 	// ------------------------------------------------------------------------
 
