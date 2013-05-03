@@ -776,6 +776,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 	// ---------------------------------------------------------------------
 	/**
 	 * Check that all meta_values with meta_key 'repeat.analysis' reference analysis.logic_name
+         * Also check that repeatmask is one of them
 	 */
 	private boolean checkRepeatAnalysis(DatabaseRegistryEntry dbre) {
 
@@ -784,11 +785,20 @@ public class MetaValues extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 		String[] repeatAnalyses = DBUtils.getColumnValues(con, "SELECT meta_value FROM meta LEFT JOIN analysis ON meta_value = logic_name WHERE meta_key = 'repeat.analysis' AND analysis_id IS NULL");
 		if (repeatAnalyses.length > 0) {
+                        result = false;
 			ReportManager.problem(this, con, "The following values for meta_key repeat.analysis don't have a corresponding logic_name entry in the analysis table: " + Utils.arrayToString(repeatAnalyses,",") );
 		} else {
 			ReportManager.correct(this, con, "All values for meta_key repeat.analysis have a corresponding logic_name entry in the analysis table");
 		}
 
+                int repeatMask = DBUtils.getRowCount(con, "SELECT count(*) FROM meta WHERE meta_key = 'repeat.analysis' AND meta_value = 'repeatmask'");
+                if (repeatMask == 0) {
+                        result = false;
+                        ReportManager.problem(this, con, "There is no entry in meta for repeatmask repeat.analysis");
+                } else {
+                        ReportManager.correct(this, con, "Repeatmask is present in meta table for repeat.analysis");
+                }
+                
 		return result;
 
 	}
