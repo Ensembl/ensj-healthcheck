@@ -87,6 +87,8 @@ public class MetaValues extends SingleDatabaseTestCase {
 		if (dbre.getType() == DatabaseType.CORE) {
 			result &= checkDates(dbre);
                         result &= checkGenebuildID(con);
+                        result &= checkGenebuildMethod(dbre);
+                        result &= checkAssemblyAccessionUpdate(dbre);
 		}
 
 		result &= checkCoordSystemTableCases(con);
@@ -135,14 +137,6 @@ public class MetaValues extends SingleDatabaseTestCase {
 			}
 		}
 
-		// -------------------------------------------
-
-		result &= checkGenebuildMethod(dbre);
-		
-		// -------------------------------------------
-		
-		result &= checkAssemblyAccessionUpdate(dbre);		
-		
 		// -------------------------------------------
 		
 		result &= checkRepeatAnalysis(dbre);
@@ -636,11 +630,6 @@ public class MetaValues extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		// only valid for core databases
-		if (dbre.getType() != DatabaseType.CORE) {
-			return true;
-		}
-
 		String[] allowedMethods = { "full_genebuild", "projection_build", "import", "mixed_strategy_build" };
 
 		Connection con = dbre.getConnection();
@@ -667,11 +656,6 @@ public class MetaValues extends SingleDatabaseTestCase {
 	private boolean checkAssemblyAccessionUpdate(DatabaseRegistryEntry dbre) {
 		
 		boolean result = true;
-		
-		// only valid for core databases
-		if (dbre.getType() != DatabaseType.CORE) {
-			return true;
-		}
 		
 		Connection con = dbre.getConnection();
 		String currentAssemblyAccession = DBUtils.getMetaValue(con, "assembly.accession");
@@ -791,12 +775,15 @@ public class MetaValues extends SingleDatabaseTestCase {
 			ReportManager.correct(this, con, "All values for meta_key repeat.analysis have a corresponding logic_name entry in the analysis table");
 		}
 
-                int repeatMask = DBUtils.getRowCount(con, "SELECT count(*) FROM meta WHERE meta_key = 'repeat.analysis' AND meta_value = 'repeatmask'");
-                if (repeatMask == 0) {
-                        result = false;
-                        ReportManager.problem(this, con, "There is no entry in meta for repeatmask repeat.analysis");
-                } else {
-                        ReportManager.correct(this, con, "Repeatmask is present in meta table for repeat.analysis");
+                if (dbre.getType() == DatabaseType.CORE) {
+
+                        int repeatMask = DBUtils.getRowCount(con, "SELECT count(*) FROM meta WHERE meta_key = 'repeat.analysis' AND meta_value = 'repeatmask'");
+                        if (repeatMask == 0) {
+                                result = false;
+                                ReportManager.problem(this, con, "There is no entry in meta for repeatmask repeat.analysis");
+                        } else {
+                                ReportManager.correct(this, con, "Repeatmask is present in meta table for repeat.analysis");
+                        }
                 }
                 
 		return result;
