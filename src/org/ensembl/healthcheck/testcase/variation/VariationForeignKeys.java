@@ -62,34 +62,34 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 		try {
 			
 			/*
-			 * This is allowed allele can have null sample_id 
-			 * result &= checkForOrphans(con, "allele", "sample_id", "sample", "sample_id",true);
+			 * This is allowed allele can have null population_id 
+			 * result &= checkForOrphans(con, "allele", "population_id", "population", "population_id",true);
 			 */
 			result &= checkForOrphans(con, "allele", "variation_id", "variation", "variation_id", true);
-			result &= checkForOrphans(con, "compressed_genotype_region", "sample_id", "individual", "sample_id", true);
+			result &= checkForOrphans(con, "compressed_genotype_region", "individual_id", "individual", "individual_id", true);
 			result &= checkForOrphans(con, "failed_allele", "failed_description_id", "failed_description", "failed_description_id", true);
 			result &= checkForOrphans(con, "failed_allele", "allele_id", "allele", "allele_id", true);
 			result &= checkForOrphans(con, "failed_variation", "failed_description_id", "failed_description", "failed_description_id", true);
 			result &= checkForOrphans(con, "failed_variation", "variation_id", "variation", "variation_id", true);
 			result &= checkForOrphans(con, "failed_structural_variation", "failed_description_id", "failed_description", "failed_description_id", true);
 			result &= checkForOrphans(con, "failed_structural_variation", "structural_variation_id", "structural_variation", "structural_variation_id", true);
-			result &= checkForOrphans(con, "individual", "sample_id", "sample", "sample_id", true);
-			result &= checkForOrphans(con, "individual_genotype_multiple_bp", "sample_id", "individual_population", "individual_sample_id", true);
-			result &= checkForOrphans(con, "individual_genotype_multiple_bp", "sample_id", "sample", "sample_id", true);
-			result &= checkForOrphans(con, "individual_population", "individual_sample_id", "sample", "sample_id", true);
+			result &= checkForOrphans(con, "individual_genotype_multiple_bp", "individual_id", "individual_population", "individual_id", true);
+			result &= checkForOrphans(con, "individual_genotype_multiple_bp", "individual_id", "individual", "individual_id", true);
+			result &= checkForOrphans(con, "individual_population", "individual_id", "individual", "individual_id", true);
+			result &= checkForOrphans(con, "individual_population", "population_id", "population", "population_id", true);
 			result &= checkForOrphans(con, "phenotype_feature", "phenotype_id", "phenotype", "phenotype_id", true);
 			result &= checkForOrphans(con, "phenotype_feature", "source_id", "source", "source_id", true);
 			result &= checkForOrphans(con, "phenotype_feature", "study_id", "study", "study_id", true);
 			result &= checkForOrphans(con, "phenotype_feature_attrib", "phenotype_feature_id", "phenotype_feature", "phenotype_feature_id", true);
 			result &= checkForOrphans(con, "phenotype_feature_attrib", "attrib_type_id", "attrib_type", "attrib_type_id", true);
-			result &= checkForOrphans(con, "population", "sample_id", "sample", "sample_id", true);
-			result &= checkForOrphans(con, "population_genotype", "sample_id", "sample", "sample_id", true);
+			result &= checkForOrphans(con, "population_genotype", "poulation_id", "poulation", "poulation_id", true);
 			result &= checkForOrphans(con, "population_genotype", "variation_id", "variation", "variation_id", true);
 			result &= checkForOrphans(con, "compressed_genotype_var", "variation_id", "variation", "variation_id", true);
-			result &= checkForOrphans(con, "read_coverage", "sample_id", "sample", "sample_id", true);
+			result &= checkForOrphans(con, "read_coverage", "individual_id", "individual", "individual_id", true);
 			result &= checkForOrphans(con, "read_coverage", "seq_region_id", "seq_region", "seq_region_id", true);
-			result &= checkForOrphans(con, "sample_synonym", "sample_id", "sample", "sample_id", true);
-			result &= checkForOrphans(con, "tagged_variation_feature", "sample_id", "sample", "sample_id", true);
+			result &= checkForOrphans(con, "individual_synonym", "individual_id", "individual", "individual_id", true);
+			result &= checkForOrphans(con, "population_synonym", "population_id", "population", "population_id", true);
+			result &= checkForOrphans(con, "tagged_variation_feature", "population_id", "population", "population_id", true);
 			/*
 			 * instead check compressed_genotype_single_bp with individual table
 			 * result &= checkForOrphans(con, "tmp_individual_genotype_single_bp", "variation_id", "variation", "variation_id", true);
@@ -108,6 +108,11 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			result &= checkForOrphans(con, "variation_synonym", "variation_id", "variation", "variation_id", true);
 			result &= checkForOrphans(con, "structural_variation_feature", "structural_variation_id", "structural_variation", "structural_variation_id", true);
 			result &= checkForOrphans(con, "structural_variation", "study_id", "study", "study_id", true);
+			result &= checkForOrphans(con, "structural_variation_sample", "structural_variation_id", "structural_variation", "structural_variation_id", true);
+			result &= checkForOrphans(con, "study_variation", "study_id", "study", "study_id", true);
+			result &= checkForOrphans(con, "study_variation", "variation_id", "variation", "variation_id", true);
+			result &= checkForOrphans(con, "variation_citation", "variation_id", "variation", "variation_id", true);			
+			result &= checkForOrphans(con, "variation_citation", "publication_id", "publication", "publication_id", true);
 			
 			// alleles and genotypes
 			result &= checkForOrphans(con, "allele", "allele_code_id", "allele_code", "allele_code_id", true);
