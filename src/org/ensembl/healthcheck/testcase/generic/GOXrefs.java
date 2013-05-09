@@ -79,7 +79,7 @@ public class GOXrefs extends SingleDatabaseTestCase {
 		if (true) {
 
 			// check that they exist in the xref table
-			String sql = "SELECT COUNT(*) FROM external_db edb, xref x WHERE edb.db_name= 'go' AND edb.external_db_id = x.external_db_id AND (x.info_type IS NULL OR x.info_type != 'PROJECTION')";
+			String sql = "SELECT COUNT(*) FROM external_db edb, xref x WHERE edb.db_name like 'go%' AND edb.external_db_id = x.external_db_id AND (x.info_type IS NULL OR x.info_type != 'PROJECTION')";
 
 			int xref_rows = DBUtils.getRowCount(con, sql);
 			if (xref_rows == 0) {
@@ -174,7 +174,7 @@ public class GOXrefs extends SingleDatabaseTestCase {
 		String[] dbs = DBUtils
 				.getColumnValues(
 						con,
-						"SELECT DISTINCT(e.db_name) FROM external_db e, xref x, object_xref ox, ontology_xref g WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id AND ox.object_xref_id=g.object_xref_id AND e.db_name != 'GO' ");
+						"SELECT DISTINCT(e.db_name) FROM external_db e, xref x, object_xref ox, ontology_xref g WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id AND ox.object_xref_id=g.object_xref_id AND e.db_name not like 'GO%' ");
 		if (dbs.length > 0) {
 
 			ReportManager
