@@ -20,17 +20,22 @@ public class EGCore extends GroupOfTests {
 
 		setDescription("Supergroup of tests for core databases from Ensembl Genomes.");
 
-		addTest(EGCoreGeneModel.class, EGCoreMeta.class,
-				EGCoreAnnotation.class, EGCoreCompare.class, EGCommon.class,
-				EGCoreMulti.class,
-				AnalysisTypes.class,
-				// CheckDeclarations.class,
-				// ProductionAnalysisLogicName.class,
-				ProductionBiotypes.class,
-				// ProductionMeta.class,
-				TranscriptNames.class, ControlledCoreTables.class,
-				AnalysisLogicName.class
-		// SeqRegionsConsistentWithComparaMaster.class
+		addTest(
+			EGCoreGeneModel.class, 
+			EGCoreMeta.class,
+			EGCoreAnnotation.class, 
+			EGCoreCompare.class, 
+			EGCommon.class,
+			EGCoreMulti.class,
+			AnalysisTypes.class,
+			// CheckDeclarations.class,
+			ProductionAnalysisLogicName.class,
+			ProductionBiotypes.class,
+			// ProductionMeta.class,
+			TranscriptNames.class, 
+			ControlledCoreTables.class,
+			AnalysisLogicName.class
+			// SeqRegionsConsistentWithComparaMaster.class
 		);
 	}
 }
