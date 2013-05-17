@@ -743,18 +743,28 @@ public final class Utils {
 	// ---------------------------------------------------------------------
 
 	public static String[] removeStringFromArray(String[] tables, String table) {
-
-		String[] result = new String[tables.length - 1];
-		int j = 0;
-		for (int i = 0; i < tables.length; i++) {
-			if (!tables[i].equalsIgnoreCase(table)) {
-				if (j < result.length) {
-					result[j++] = tables[i];
-				}
-			}
+	    // test whether the item is in the array
+	    boolean found = false;
+	    for (int i = 0; i < tables.length; i++) {
+		if(tables[i].equalsIgnoreCase(table)) {
+		    found = true;
+		    break;
 		}
+	    }
 
-		return result;
+	    if(!found) { return tables; }
+
+	    String[] result = new String[tables.length - 1];
+	    int j = 0;
+	    for (int i = 0; i < tables.length; i++) {
+		if (!tables[i].equalsIgnoreCase(table)) {
+		    if (j < result.length) {
+			result[j++] = tables[i];
+		    }
+		} // else { System.out.println("Removing table " + table); }
+	    }
+
+	    return result;
 
 	}
 
