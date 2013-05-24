@@ -2,6 +2,7 @@ assembly.accession
 assembly.coverage_depth
 assembly.date
 assembly.default
+assembly.description
 assembly.long_name
 assembly.mapping
 assembly.master_accession
@@ -9,6 +10,8 @@ assembly.name
 assembly.overlapping_regions
 assembly.version
 assembly.num_toplevel_seqs
+assembly.web_accession_source
+assembly.web_accession_type
 annotation.sourceURL
 annotation.source
 dna_align_featurebuild.level
