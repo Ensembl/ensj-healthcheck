@@ -85,6 +85,24 @@ public class TranslationStartEnd extends SingleDatabaseTestCase {
 			ReportManager.correct(this, con, "No translations overrun exons");
 		}
 
+                // check the start and end exon have a correct phase
+                rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM translation t, exon e WHERE t.start_exon_id=e.exon_id AND start_exon_id <> end_exon_id and end_phase = -1");
+                if (rows > 0) {
+                        result = false;
+                        ReportManager.problem(this, con, rows + " translations have start exon with a -1 end phase");
+                } else {
+                        ReportManager.correct(this, con, "Start exons for translations have correct end phase");
+                }
+
+                rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM translation t, exon e WHERE t.end_exon_id=e.exon_id AND start_exon_id <> end_exon_id and phase = -1");
+                if (rows > 0) {
+                        result = false;
+                        ReportManager.problem(this, con, rows + " translations have end exon with -1 phase");
+                } else {
+                        ReportManager.correct(this, con, "End exons for translations have correct phase");
+                }
+
+
 		return result;
 
 	} // run
