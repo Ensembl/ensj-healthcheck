@@ -21,6 +21,7 @@ import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.testcase.OrderedDatabaseTestCase;
 import org.ensembl.healthcheck.testcase.PerlScriptConfig;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.ConnectionPool;
 
 import com.mysql.jdbc.Connection;
 
@@ -328,6 +329,7 @@ public class GuiTestRunner {
                         
                 }
                 testProgressDialog.setVisible(false);
+                ConnectionPool.closeAll();
                 
                 // Open in the legacy result window, because it is really 
                 // nice.
