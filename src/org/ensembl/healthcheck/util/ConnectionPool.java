@@ -142,7 +142,12 @@ public final class ConnectionPool {
         Connection con = (Connection) pool.get(databaseURL);
         
         boolean connectionIsValid;
-        
+
+        if (con.isClosed()) {
+        	con = getConnectionByClassloader(driverClassName, databaseURL, user, password);
+        	return con;
+        }
+
         try {
         	
         	// Currently throws a java.lang.AbstractMethodError, but maybe
@@ -155,7 +160,6 @@ public final class ConnectionPool {
         	logger.finest("Connection object does not implement \"isValid()\" call. Using manual implementation");
         	connectionIsValid = isValidConnection(con);
         }
-        
         if (!connectionIsValid) {
         	
         	logger.warning("Connection in pool was invalid. Creating again from scratch.");
