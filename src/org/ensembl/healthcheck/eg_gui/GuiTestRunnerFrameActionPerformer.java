@@ -13,6 +13,7 @@ import org.ensembl.healthcheck.configuration.ConfigureHost;
 import org.ensembl.healthcheck.eg_gui.TestProgressDialog;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.testcase.PerlScriptConfig;
+import org.ensembl.healthcheck.util.ConnectionPool;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
@@ -60,6 +61,11 @@ public class GuiTestRunnerFrameActionPerformer {
 			
 				DatabaseRegistry databaseRegistry = new DatabaseRegistry(regexps, null,
 						null, false);
+				
+				// Prevent holding lots of extra connections that might never be used.
+				//
+				ConnectionPool.closeAll();
+				
 				// Should throw an exception which can be caught and displayed 
 				// something in a dialog box.
 				//
