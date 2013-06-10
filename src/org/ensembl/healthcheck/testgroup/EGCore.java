@@ -7,6 +7,9 @@ import org.ensembl.healthcheck.testcase.generic.AnalysisTypes;
 import org.ensembl.healthcheck.testcase.generic.ProductionBiotypes;
 import org.ensembl.healthcheck.testcase.generic.TranscriptNames;
 
+import org.ensembl.healthcheck.testcase.eg_core.NoRepeatFeatures;
+import org.ensembl.healthcheck.testcase.eg_core.SeqRegionLength;
+
 /**
  * Supergroup of tests for Ensembl Genomes (incorporates {@link EGCoreGeneModel}
  * , {@link EGCoreMeta}, {@link EGCoreAnnotation} and {@link EGCoreCompare})
@@ -34,8 +37,10 @@ public class EGCore extends GroupOfTests {
 			// ProductionMeta.class,
 			TranscriptNames.class, 
 			ControlledCoreTables.class,
-			AnalysisLogicName.class
-			// SeqRegionsConsistentWithComparaMaster.class
+			AnalysisLogicName.class,
+			// SeqRegionsConsistentWithComparaMaster.class,
+			SeqRegionLength.class,
+			NoRepeatFeatures.class
 		);
 	}
 }
