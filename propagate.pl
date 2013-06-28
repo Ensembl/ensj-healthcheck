@@ -402,6 +402,9 @@ sub _check_changes {
   my $result = 0;
   my $old_check = get_checksum($old_dbname, $table, $dbi_prev);
   my $new_check = get_checksum($new_dbname, $table, $dbi1, $dbi2);
+  if (!$new_check) {
+    return 0;
+  }
   if (!$old_check) {
     return 1;
   }
@@ -427,16 +430,19 @@ sub get_checksum {
 
 sub _check_declaration {
   my ($new_dbname, $new_release, $declaration) = @_;
+  $new_dbname =~ /[a-z]+_[a-z]+_([a-z]+)_\d+/;
+  my $db_type = $1;
   my $prod_dbi = get_production_DBAdaptor();
   my $sth = $prod_dbi->prepare("SELECT count(*)
      FROM   db_list dl, db d
-     WHERE  dl.db_id = d.db_id and db_type = 'core' and is_current = 1 
+     WHERE  dl.db_id = d.db_id and is_current = 1 
      AND full_db_name = ?
      AND    species_id IN (
      SELECT species_id 
      FROM   changelog c, changelog_species cs 
      WHERE  c.changelog_id = cs.changelog_id 
      AND    release_id = ?
+     AND    db_type_affected like '%$db_type%'
      AND    status not in ('cancelled', 'postponed') 
      AND    $declaration = 'Y')");
 
