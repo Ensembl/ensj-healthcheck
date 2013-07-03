@@ -68,7 +68,7 @@ public class Meta extends SingleDatabaseTestCase {
 			result &= checkKeysPresent(con, metaKey);
 
 			result &= checkForOrphansWithConstraint(con, "meta", "meta_value",
-					"sample", "sample_id", "meta_key = '" + metaKey + "'");
+					"population", "population_id", "meta_key = '" + metaKey + "'");
 
 		}
 		if (dbre.getSpecies() == Species.MUS_MUSCULUS
@@ -92,7 +92,7 @@ public class Meta extends SingleDatabaseTestCase {
 				} else if ((metaKey == "individual.default_strain")
 						|| (metaKey == "individual.display_strain")) {
 					result &= checkForOrphansWithConstraint(con, "meta",
-							"meta_value", "sample",
+							"meta_value", "individual",
 							"name COLLATE latin1_general_cs", "meta_key = '"
 									+ metaKey + "'");
 				} else if (metaKey == "individual.reference_strain") {
@@ -118,7 +118,7 @@ public class Meta extends SingleDatabaseTestCase {
 				result &= checkKeysPresent(con, metaKey);
 				if (metaKey == "individual.default_strain") {
 					result &= checkForOrphansWithConstraint(con, "meta",
-							"meta_value", "sample",
+							"meta_value", "individual",
 							"name COLLATE latin1_general_cs", "meta_key = '"
 									+ metaKey + "'");
 				}
@@ -126,7 +126,7 @@ public class Meta extends SingleDatabaseTestCase {
 		}
 
 		// Check that the required meta keys exist
-		String[] metaKeys = new String[] { "schema_version", "schema_type" };
+		String[] metaKeys = new String[] { "schema_version", "schema_type", "species.production_name" };
 		for (int i = 0; i < metaKeys.length; i++) {
 			if (!checkKeysPresent(con, metaKeys[i])) {
 				result = false;
