@@ -35,7 +35,6 @@ public class ComparePreviousVersionArrayXrefs extends ComparePreviousVersionBase
 	 */
 
 	public ComparePreviousVersionArrayXrefs() {
-		addToGroup("post_genebuild");
 		addToGroup("release");
 		addToGroup("funcgen");
 		addToGroup("funcgen-release");

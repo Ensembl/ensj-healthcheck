@@ -35,7 +35,6 @@ public class ComparePreviousVersionRegulatoryFeatures extends ComparePreviousVer
 	 */
 
 	public ComparePreviousVersionRegulatoryFeatures() {
-		addToGroup("post_genebuild");
 		addToGroup("release");
 		addToGroup("funcgen");
 		addToGroup("funcgen-release");
