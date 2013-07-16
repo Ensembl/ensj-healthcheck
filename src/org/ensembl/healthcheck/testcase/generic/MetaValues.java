@@ -777,7 +777,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 
                 if (dbre.getType() == DatabaseType.CORE) {
 
-                        int repeatMask = DBUtils.getRowCount(con, "SELECT count(*) FROM meta WHERE meta_key = 'repeat.analysis' AND meta_value = 'repeatmask'");
+                        int repeatMask = DBUtils.getRowCount(con, "SELECT count(*) FROM meta WHERE meta_key = 'repeat.analysis' AND (meta_value like 'repeatmask_repbase%' or meta_value = 'repeatmask')");
                         if (repeatMask == 0) {
                                 result = false;
                                 ReportManager.problem(this, con, "There is no entry in meta for repeatmask repeat.analysis");
