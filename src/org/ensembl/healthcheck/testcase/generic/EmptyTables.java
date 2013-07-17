@@ -64,6 +64,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 	setDescription("Checks that all tables have data");
 
 	setTeamResponsible(Team.GENEBUILD);
+        setSecondTeamResponsible(Team.RELEASE_COORDINATOR);
 
 	// initialize lists of tables grouped by category 
 	// and the corresponding species
