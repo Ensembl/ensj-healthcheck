@@ -65,7 +65,8 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 		logicNameToAttribCode.put("SnpDensity", "SnpCount");
 		logicNameToAttribCode.put("CodingDensity", "coding_cnt");
                 logicNameToAttribCode.put("PseudogeneDensity", "pseudogene_cnt");
-                logicNameToAttribCode.put("NonCodingDensity", "noncoding_cnt");
+                logicNameToAttribCode.put("ShortNonCodingDensity", "snoncoding_cnt");
+                logicNameToAttribCode.put("LongNonCodingDensity", "lnoncoding_cnt");
 		setTeamResponsible(Team.RELEASE_COORDINATOR);
 	}
 
