@@ -6,4 +6,4 @@ for jar in $home/lib/*.jar; do
     cp=$jar:$cp
 done
 
-$JAVA_HOME/bin/java -classpath $cp org.ensembl.healthcheck.ListAllTests -groups
+$JAVA_HOME/bin/java -Xmx1500m -classpath $cp org.ensembl.healthcheck.ListAllTests -groups
