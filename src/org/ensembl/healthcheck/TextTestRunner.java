@@ -84,6 +84,8 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
 	private String customPass = null;
 
+	private String customDriver = null;
+
 	private static final String CORE_DB_REGEXP = "[a-z]+_[a-z]+_(core|otherfeatures|cdna|vega|otherfeatures|sangervega|rnaseq|presite)";
 
 	// -------------------------------------------------------------------------
@@ -191,6 +193,7 @@ public class TextTestRunner extends TestRunner implements Reporter {
 		System.out.println("  -user           Note that, since the password is optional, if it is set in the properties file but not on");
 		System.out.println("  -pass           the command line, the one in the properties file will be used anyway, possibly leading to odd results.");
 		System.out.println("                  Note that -password can also be used here.");
+		System.out.println("  -driver         Database driver to use. This must be specified if you are not using the default properties file");
 		System.out.println("  group1          Names of groups of test cases to run.");
 		System.out.println("                  Note each test case is in a group of its own with the name of the test case.");
 		System.out.println("                  This allows individual tests to be run if required.");
@@ -351,6 +354,11 @@ public class TextTestRunner extends TestRunner implements Reporter {
 				} else if (args[i].equals("-pass") || args[i].equals("-password")) {
 
 					customPass = args[++i];
+
+				} 
+				else if (args[i].equals("-driver")) {
+
+					customDriver = args[++i];
 
 				} else {
 
@@ -566,6 +574,13 @@ public class TextTestRunner extends TestRunner implements Reporter {
 
 			System.setProperty("password", customPass);
 			logger.finest("Set database password to " + customPass);
+
+		}
+
+		if(customDriver != null) {
+
+			System.setProperty("driver", customDriver);
+			logger.finest("Set database driver to "+customDriver);
 
 		}
 
