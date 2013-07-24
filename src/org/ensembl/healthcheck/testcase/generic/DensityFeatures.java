@@ -99,7 +99,8 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 			logicNameToAttribCode.remove("snpDensity");
                         logicNameToAttribCode.remove("CodingDensity");
                         logicNameToAttribCode.remove("PseudogeneDensity");
-                        logicNameToAttribCode.remove("NonCodingDensity");
+                        logicNameToAttribCode.put("ShortNonCodingDensity", "snoncoding_cnt");
+                        logicNameToAttribCode.put("LongNonCodingDensity", "lnoncoding_cnt");
 		} else {
 			boolean variationDatabaseExists = checkDatabaseExistsByType(dbre,DatabaseType.VARIATION);
 			if (!variationDatabaseExists) {
@@ -276,10 +277,10 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 			boolean variationDatabaseExists = checkDatabaseExistsByType(dbre,DatabaseType.VARIATION);
 			// only warn about missing snpDensity for species that have SNPs
 			if (variationDatabaseExists) {
-				logicNames = new String[] { "PercentGC", "PercentageRepeat", "CodingDensity", "PseudogeneDensity", "NonCodingDensity", "snpDensity" };
+				logicNames = new String[] { "PercentGC", "PercentageRepeat", "CodingDensity", "PseudogeneDensity", "ShortNonCodingDensity", "LongNonCodingDensity", "snpDensity" };
 				
 			} else {
-				logicNames = new String[] { "PercentGC", "PercentageRepeat", "CodingDensity", "PseudogeneDensity", "NonCodingDensity" };
+				logicNames = new String[] { "PercentGC", "PercentageRepeat", "CodingDensity", "PseudogeneDensity", "ShortNonCodingDensity", "LongNonCodingDensity" };
 				//logger.warning("Variation database for "  + dbre.getSpecies() + " not found");
 			}
 
