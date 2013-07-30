@@ -310,13 +310,13 @@ public class EmptyTables extends SingleDatabaseTestCase {
 	// allowed to be empty for that particular db type
 	allowedEmptyTablesMap = new HashMap<DatabaseType, Set<String> >();
 	allowedEmptyTablesMap.put(DatabaseType.CORE, 
-				  CollectionUtils.createLinkedHashSet("alt_allele", "assembly_exception", "data_file", 
+				  CollectionUtils.createLinkedHashSet("alt_allele", "alt_allele_attrib", "alt_allele_group", "assembly_exception", "data_file", 
 								      "dnac", "seq_region_mapping", "unconventional_transcript_association", 
 								      "operon", "operon_transcript", "operon_transcript_gene", 
 								      "intron_supporting_evidence", "transcript_intron_supporting_evidence", "associated_xref", 
 								      "associated_group", "qtl", "qtl_feature", "qtl_synonym"));
 	allowedEmptyTablesMap.put(DatabaseType.VEGA, 
-				  CollectionUtils.createLinkedHashSet("alt_allele", "assembly_exception", "data_file", 
+				  CollectionUtils.createLinkedHashSet("alt_allele", "alt_allele_attrib", "alt_allele_group", "assembly_exception", "data_file", 
 								      "dnac", "seq_region_mapping", "unconventional_transcript_association", 
 								      "operon", "operon_transcript", "operon_transcript_gene", 
 								      "intron_supporting_evidence", "transcript_intron_supporting_evidence", "associated_xref", 
