@@ -54,7 +54,12 @@ public class ComparePreviousVersionVariationFeatures extends ComparePreviousVers
 	
 	protected Map getCounts(DatabaseRegistryEntry dbre) {
 		
-		return getCountsBySQL(dbre, "SELECT sr.name, COUNT(*) FROM seq_region sr JOIN variation_feature vf ON (sr.seq_region_id = vf.seq_region_id) GROUP BY sr.name");
+	    //	return getCountsBySQL(dbre, "SELECT sr.name, COUNT(*) FROM seq_region sr JOIN variation_feature vf ON (sr.seq_region_id = vf.seq_region_id) GROUP BY sr.name");
+
+		String vardbname  = dbre.getName();
+		String coredbname = vardbname.replace("variation", "core");
+
+           return getCountsBySQL(dbre, "SELECT src.name, COUNT(*) FROM " + coredbname + ".seq_region src, " + coredbname + ".coord_system cs, variation_feature vf where cs.rank = 1 and cs.coord_system_id = src.coord_system_id and src.seq_region_id = vf.seq_region_id GROUP BY src.name");
 
 	}
 
