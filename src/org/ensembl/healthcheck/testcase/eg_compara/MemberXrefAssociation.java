@@ -13,7 +13,6 @@ public class MemberXrefAssociation extends AbstractTemplatedTestCase {
 		setTeamResponsible(Team.ENSEMBL_GENOMES);
 		appliesToType(DatabaseType.COMPARA);
 		setDescription("Checks whether member_xref is populated");
-		addToGroup("ensembl_genomes_compara");
 	}
 
 	@Override

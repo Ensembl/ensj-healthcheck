@@ -12,7 +12,6 @@ public class EGCheckNoTreeStableIds extends AbstractTemplatedTestCase {
 		setTeamResponsible(Team.ENSEMBL_GENOMES);
 		appliesToType(DatabaseType.COMPARA);
 		setDescription("Checks that all protein gene trees have a stable id");
-		addToGroup("ensembl_genomes_compara");
 	}
 	private final static String COUNT_NULLS = "SELECT COUNT(*) " +
 			"FROM gene_tree_root " +

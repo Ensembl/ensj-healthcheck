@@ -20,7 +20,6 @@ public abstract class AbstractEGForeignKeyMemberId extends AbstractTemplatedTest
 		setTeamResponsible(Team.ENSEMBL_GENOMES);
 		appliesToType(DatabaseType.COMPARA);
 		setDescription("Check for broken foreign-key member relationships in ensembl_compara databases.");
-		addToGroup("ensembl_genomes_compara");
 	}
 	
 	@Override

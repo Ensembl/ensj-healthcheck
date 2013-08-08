@@ -18,7 +18,6 @@ public class CheckEmptyLeavesTrees extends AbstractTemplatedTestCase {
 	public CheckEmptyLeavesTrees() {
 		setTeamResponsible(Team.ENSEMBL_GENOMES);
 		setDescription("Checks that all nodes where left/right index is greater than 1 have children");
-		addToGroup("ensembl_genomes_compara");
 		appliesToType(DatabaseType.COMPARA);
 	}
 

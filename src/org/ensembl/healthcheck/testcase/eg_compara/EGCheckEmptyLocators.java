@@ -15,7 +15,6 @@ public class EGCheckEmptyLocators extends AbstractTemplatedTestCase {
 		setTeamResponsible(Team.ENSEMBL_GENOMES);
 		appliesToType(DatabaseType.COMPARA);
 		setDescription("Checks the consistency of GenomeDB locators");
-		addToGroup("ensembl_genomes_compara");
 	}
 	
 	@Override

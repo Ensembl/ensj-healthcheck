@@ -26,7 +26,6 @@ public class EGForeignKeyMethodLinkSpeciesSetId extends
 		setTeamResponsible(Team.ENSEMBL_GENOMES);
 		appliesToType(DatabaseType.COMPARA);
 		setDescription("Checks the consistency of MLSS foreign keys");
-		addToGroup("ensembl_genomes_compara");
 	}
 
 	@Override
