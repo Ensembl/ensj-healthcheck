@@ -16,7 +16,6 @@ public class EGCheckSynteny extends CheckSynteny {
 	
   public EGCheckSynteny() {
   	removeFromAllGroups();
-    addToGroup("eg_compara");
     setDescription("Check for missing syntenies in the compara database.");
     setTeamResponsible(Team.ENSEMBL_GENOMES);
   }
