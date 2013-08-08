@@ -192,7 +192,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 	
 	if (species == Species.ANCESTRAL_SEQUENCES) {
 	    // Only a few tables need to be filled in ancestral databases
-	    return CollectionUtils.createLinkedHashSet("meta", "coord_system", "dna", "seq_region", "assembly");
+	    return CollectionUtils.createLinkedHashSet("meta", "coord_system", "dna", "seq_region");
 	}
 
 	if (type == DatabaseType.OTHERFEATURES || type == DatabaseType.CDNA) {
