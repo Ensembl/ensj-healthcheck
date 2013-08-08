@@ -42,7 +42,6 @@ public class AnalysisLogicName extends SingleDatabaseTestCase {
     addToGroup("post_genebuild");
     addToGroup("release");
     addToGroup("compara-ancestral");
-    addToGroup("id_mapping");
     addToGroup("pre-compara-handover");
     addToGroup("post-compara-handover");
 

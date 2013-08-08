@@ -49,7 +49,6 @@ public class StableID extends SingleDatabaseTestCase {
 	 */
 	public StableID() {
 		
-		addToGroup("id_mapping");
 		addToGroup("post_genebuild");
 		addToGroup("release");
 		addToGroup("pre-compara-handover");

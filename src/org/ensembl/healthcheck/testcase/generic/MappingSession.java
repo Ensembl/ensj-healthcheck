@@ -43,7 +43,6 @@ public class MappingSession extends SingleDatabaseTestCase {
 	 */
 	public MappingSession() {
 
-		addToGroup("id_mapping");
 		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");

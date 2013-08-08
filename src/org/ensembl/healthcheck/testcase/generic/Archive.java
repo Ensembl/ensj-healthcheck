@@ -36,7 +36,6 @@ public class Archive extends SingleDatabaseTestCase {
 	 */
 	public Archive() {
 
-		addToGroup("id_mapping");
 		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");

@@ -52,7 +52,6 @@ public class FuncgenStableID extends SingleDatabaseTestCase {
 	 * Create a new instance of StableID.
 	 */
 	public FuncgenStableID() {
-		addToGroup("id_mapping");
 		addToGroup("post_regulatorybuild");
 		addToGroup("release");
 		addToGroup("funcgen");//do we need this group and the funcgen-release group?

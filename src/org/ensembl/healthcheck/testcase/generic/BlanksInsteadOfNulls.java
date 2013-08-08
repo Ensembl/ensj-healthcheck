@@ -39,7 +39,6 @@ public class BlanksInsteadOfNulls extends SingleDatabaseTestCase {
 	public BlanksInsteadOfNulls() {
 
 		addToGroup("post_genebuild");
-		addToGroup("id_mapping");
 		addToGroup("release");
 		addToGroup("funcgen-release");
 		addToGroup("funcgen");
