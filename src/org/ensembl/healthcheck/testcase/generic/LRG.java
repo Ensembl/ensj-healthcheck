@@ -54,7 +54,6 @@ public class LRG extends AbstractTemplatedTestCase {
 	public LRG() {
 
 		addToGroup("release");
-		addToGroup("lrg");
 		addToGroup("post-compara-handover");
 		
 		setDescription("Healthcheck for LRGs");
