@@ -35,7 +35,6 @@ public class ComparePreviousVersionRegulatoryFeatures extends ComparePreviousVer
 	 */
 
 	public ComparePreviousVersionRegulatoryFeatures() {
-		addToGroup("release");
 		addToGroup("funcgen");
 		addToGroup("funcgen-release");
 		//setHintLongRunning(true);// ?Only take about 10 mins for mouse

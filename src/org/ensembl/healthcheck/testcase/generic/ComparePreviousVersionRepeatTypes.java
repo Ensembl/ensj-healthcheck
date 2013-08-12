@@ -30,7 +30,6 @@ public class ComparePreviousVersionRepeatTypes extends ComparePreviousVersionBas
 	public ComparePreviousVersionRepeatTypes() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		

@@ -41,7 +41,6 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 	 */
 	public ComparePreviousVersionGeneNames() {
 
-		addToGroup("release");
 		addToGroup("core_xrefs");
                 addToGroup("post-compara-handover");
 		

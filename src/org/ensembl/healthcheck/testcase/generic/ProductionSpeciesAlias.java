@@ -24,7 +24,6 @@ public class ProductionSpeciesAlias extends SingleDatabaseTestCase {
   
   public ProductionSpeciesAlias() {
     addToGroup("production");
-    addToGroup("release");
     addToGroup("pre-compara-handover");
     addToGroup("post-compara-handover");
     

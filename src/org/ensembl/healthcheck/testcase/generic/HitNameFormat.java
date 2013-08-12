@@ -35,7 +35,6 @@ public class HitNameFormat extends SingleDatabaseTestCase {
 	 */
 	public HitNameFormat() {
 
-		addToGroup("release");
 		addToGroup("post_genebuild");
 		addToGroup("post-compara-handover");
                 addToGroup("pre-compara-handover");

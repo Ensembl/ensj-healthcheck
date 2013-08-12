@@ -38,7 +38,6 @@ public class GeneDescriptions extends SingleDatabaseTestCase {
 	public GeneDescriptions() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
 

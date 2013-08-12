@@ -50,7 +50,6 @@ public class FeatureCoords extends SingleDatabaseTestCase {
 	public FeatureCoords() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 

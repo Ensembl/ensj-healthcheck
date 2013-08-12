@@ -43,7 +43,6 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 	public DuplicateGenes() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		

@@ -37,7 +37,6 @@ public class HGNCMultipleGenes extends SingleDatabaseTestCase {
 	public HGNCMultipleGenes() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
 

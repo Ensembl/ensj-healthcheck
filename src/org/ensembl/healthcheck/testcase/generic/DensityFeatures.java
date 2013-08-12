@@ -56,7 +56,6 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 	@SuppressWarnings("unchecked")
   public DensityFeatures() {
 
-		addToGroup("release");
 		addToGroup("post-compara-handover");
 	
 		setDescription("Check that all top-level seq regions have some SNP/gene density features, and that the values agree between the density_feature and seq_region attrib tables.");

@@ -37,7 +37,6 @@ public class IsCurrent extends SingleDatabaseTestCase {
 	public IsCurrent() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 

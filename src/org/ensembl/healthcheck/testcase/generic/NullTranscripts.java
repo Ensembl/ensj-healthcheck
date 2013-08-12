@@ -35,7 +35,6 @@ public class NullTranscripts extends SingleDatabaseTestCase {
 	public NullTranscripts() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		

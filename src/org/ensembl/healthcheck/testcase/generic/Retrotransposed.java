@@ -37,7 +37,6 @@ public class Retrotransposed extends SingleDatabaseTestCase {
 	public Retrotransposed() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		

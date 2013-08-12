@@ -37,7 +37,6 @@ public class HGNCNumeric extends SingleDatabaseTestCase {
 	 */
 	public HGNCNumeric() {
 
-		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
 

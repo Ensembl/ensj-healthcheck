@@ -41,7 +41,6 @@ public class ExternalDBDescribe extends MultiDatabaseTestCase {
 	 */
 	public ExternalDBDescribe() {
 
-		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
 		

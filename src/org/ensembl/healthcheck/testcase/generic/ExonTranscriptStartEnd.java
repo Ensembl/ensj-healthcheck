@@ -38,7 +38,6 @@ public class ExonTranscriptStartEnd extends SingleDatabaseTestCase {
 	public ExonTranscriptStartEnd() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		

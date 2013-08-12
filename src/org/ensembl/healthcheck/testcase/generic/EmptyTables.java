@@ -56,7 +56,6 @@ public class EmptyTables extends SingleDatabaseTestCase {
     public EmptyTables() {
 
 	addToGroup("post_genebuild");
-	addToGroup("release");
 	addToGroup("compara-ancestral");
 	addToGroup("pre-compara-handover");
 	addToGroup("post-compara-handover");

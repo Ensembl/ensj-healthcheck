@@ -38,7 +38,6 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
 	 */
 	public AnalysisXrefs() {
 
-		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");

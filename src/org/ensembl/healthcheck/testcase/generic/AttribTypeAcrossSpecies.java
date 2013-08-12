@@ -33,7 +33,6 @@ public class AttribTypeAcrossSpecies extends MultiDatabaseTestCase {
 	 */
 	public AttribTypeAcrossSpecies() {
 
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		

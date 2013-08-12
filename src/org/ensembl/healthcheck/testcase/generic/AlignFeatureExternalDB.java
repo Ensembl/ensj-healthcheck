@@ -37,7 +37,6 @@ public class AlignFeatureExternalDB extends SingleDatabaseTestCase {
 	public AlignFeatureExternalDB() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("post-compara-handover");
                 addToGroup("pre-compara-handover");
 		

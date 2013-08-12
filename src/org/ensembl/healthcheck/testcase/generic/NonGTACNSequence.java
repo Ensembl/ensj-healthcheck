@@ -40,7 +40,6 @@ public class NonGTACNSequence extends SingleDatabaseTestCase {
 	 */
 	public NonGTACNSequence() {
 
-		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
                 addToGroup("pre-compara-handover");

@@ -47,7 +47,6 @@ public class SeqRegionAttribsPresent extends SingleDatabaseTestCase {
 	 */
 	public SeqRegionAttribsPresent() {
 
-		addToGroup("release");
 		addToGroup("post-compara-handover");
 		
 		setDescription("Check that certain seq_regions that have protein_coding genes have the coding_cnt attribute associated with them. Also ensure that _rna_edit attributes represent substitutions");

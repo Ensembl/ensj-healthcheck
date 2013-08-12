@@ -40,7 +40,6 @@ public class BlankEnums extends SingleDatabaseTestCase {
 	public BlankEnums() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("funcgen-release");
 		addToGroup("funcgen");
 		addToGroup("compara-ancestral");

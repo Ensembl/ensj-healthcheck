@@ -40,7 +40,6 @@ public class FrameshiftAttributes extends SingleDatabaseTestCase {
 	public FrameshiftAttributes() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 

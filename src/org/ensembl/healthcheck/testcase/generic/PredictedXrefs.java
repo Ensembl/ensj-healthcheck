@@ -35,7 +35,6 @@ public class PredictedXrefs extends SingleDatabaseTestCase {
 	public PredictedXrefs() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
 

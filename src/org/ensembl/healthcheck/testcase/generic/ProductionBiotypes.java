@@ -39,7 +39,6 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
 	public ProductionBiotypes() {
 
 		addToGroup("production");
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		

@@ -29,7 +29,6 @@ public class ComparePreviousVersionXrefs extends ComparePreviousVersionBase {
 	 */
 	public ComparePreviousVersionXrefs() {
 
-		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
 		

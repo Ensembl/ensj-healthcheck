@@ -37,7 +37,6 @@ public class ProductionMeta extends SingleDatabaseTestCase {
 	public ProductionMeta() {
 
 		addToGroup("production");
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		

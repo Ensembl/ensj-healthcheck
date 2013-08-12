@@ -38,7 +38,6 @@ public class DNAEmpty extends SingleDatabaseTestCase {
 	 */
 	public DNAEmpty() {
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		

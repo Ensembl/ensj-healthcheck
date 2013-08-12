@@ -52,7 +52,6 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
   public FeatureAnalysis() {
 
     addToGroup("post_genebuild");
-    addToGroup("release");
     addToGroup("pre-compara-handover");
     addToGroup("post-compara-handover");
 

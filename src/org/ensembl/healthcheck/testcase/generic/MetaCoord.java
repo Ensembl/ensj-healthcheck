@@ -46,7 +46,6 @@ public class MetaCoord extends SingleDatabaseTestCase {
 	 */
 	public MetaCoord() {
 
-		addToGroup("release");
 		addToGroup("post_genebuild");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");

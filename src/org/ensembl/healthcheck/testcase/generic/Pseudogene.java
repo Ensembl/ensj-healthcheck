@@ -34,7 +34,6 @@ public class Pseudogene extends SingleDatabaseTestCase {
 	public Pseudogene() {
 		
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		

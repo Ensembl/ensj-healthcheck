@@ -51,7 +51,6 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 	public MarkerFeatures() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("post-compara-handover");
                 addToGroup("pre-compara-handover");
 

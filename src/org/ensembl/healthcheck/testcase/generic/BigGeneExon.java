@@ -47,7 +47,6 @@ public class BigGeneExon extends SingleDatabaseTestCase {
 	public BigGeneExon() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		

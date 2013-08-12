@@ -33,7 +33,6 @@ public class SeqRegionAcrossSpecies extends MultiDatabaseTestCase {
 	 */
 	public SeqRegionAcrossSpecies() {
 
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		

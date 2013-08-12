@@ -44,7 +44,6 @@ public class NullStrings extends SingleDatabaseTestCase {
 	public NullStrings() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("funcgen-release");
 		addToGroup("funcgen");
 		addToGroup("compara-ancestral");

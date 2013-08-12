@@ -37,7 +37,6 @@ public class BlankCoordSystemVersions extends SingleDatabaseTestCase {
 	public BlankCoordSystemVersions() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("funcgen");
 		addToGroup("funcgen-release");
 		addToGroup("compara-ancestral");

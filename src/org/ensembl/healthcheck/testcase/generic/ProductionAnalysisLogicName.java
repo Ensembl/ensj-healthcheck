@@ -19,7 +19,6 @@ public class ProductionAnalysisLogicName extends AbstractTemplatedTestCase {
   
   public ProductionAnalysisLogicName() {
     addToGroup("production");
-    addToGroup("release");
     addToGroup("pre-compara-handover");
     addToGroup("post-compara-handover");
     

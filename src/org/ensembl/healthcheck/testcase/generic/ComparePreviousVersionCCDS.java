@@ -34,7 +34,6 @@ public class ComparePreviousVersionCCDS extends ComparePreviousVersionBase {
 	public ComparePreviousVersionCCDS() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");

@@ -33,7 +33,6 @@ public class AssemblyTablesAcrossSpecies extends MultiDatabaseTestCase {
 	 */
 	public AssemblyTablesAcrossSpecies() {
 
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		

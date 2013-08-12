@@ -53,7 +53,6 @@ public class FuncgenStableID extends SingleDatabaseTestCase {
 	 */
 	public FuncgenStableID() {
 		addToGroup("post_regulatorybuild");
-		addToGroup("release");
 		addToGroup("funcgen");//do we need this group and the funcgen-release group?
 		addToGroup("funcgen-release");
 		//setHintLongRunning(true);// ?Only take about 10 mins for mouse

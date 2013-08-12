@@ -37,7 +37,6 @@ public class GeneCount extends SingleDatabaseTestCase {
 	 */
 	public GeneCount() {
 
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 

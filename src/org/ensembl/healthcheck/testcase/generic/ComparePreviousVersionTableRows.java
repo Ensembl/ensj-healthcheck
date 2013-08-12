@@ -34,7 +34,6 @@ public class ComparePreviousVersionTableRows extends ComparePreviousVersionBase 
 	public ComparePreviousVersionTableRows() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		

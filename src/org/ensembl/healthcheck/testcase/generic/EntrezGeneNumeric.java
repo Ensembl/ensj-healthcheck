@@ -33,7 +33,6 @@ public class EntrezGeneNumeric extends SingleDatabaseTestCase {
 	 */
 	public EntrezGeneNumeric() {
 
-		addToGroup("release");
 		addToGroup("post-compara-handover");
 		
 		setDescription("Check that no genes are named after numeric EntrezGene identifiers.");

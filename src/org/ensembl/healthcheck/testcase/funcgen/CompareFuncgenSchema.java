@@ -32,7 +32,6 @@ public class CompareFuncgenSchema extends AbstractCompareSchema {
 	protected void addGroups() {
 		addToGroup("funcgen");
 		addToGroup("funcgen-release");
-		addToGroup("release");
 	}
 	
 	@Override

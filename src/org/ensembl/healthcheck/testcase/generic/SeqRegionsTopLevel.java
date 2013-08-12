@@ -35,7 +35,6 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 	public SeqRegionsTopLevel() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		

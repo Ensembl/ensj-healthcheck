@@ -37,7 +37,6 @@ public class BlankInfoType extends SingleDatabaseTestCase {
 	public BlankInfoType() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("funcgen-release");
 		addToGroup("funcgen");
 		addToGroup("post-compara-handover");

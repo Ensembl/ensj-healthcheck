@@ -28,7 +28,6 @@ public class AssemblyNameLength extends SingleDatabaseTestCase {
 	
 	public AssemblyNameLength() {
 
-		addToGroup("release");
 		addToGroup("pre-compara-handover");	
                 addToGroup("post-compara-handover");
 		setTeamResponsible(Team.GENEBUILD);

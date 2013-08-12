@@ -36,7 +36,6 @@ public class Archive extends SingleDatabaseTestCase {
 	 */
 	public Archive() {
 
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		setDescription("Checks the archive tables are up to date.");

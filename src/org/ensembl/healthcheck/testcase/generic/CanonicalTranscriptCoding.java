@@ -38,7 +38,6 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 	 */
 	public CanonicalTranscriptCoding() {
 
-		addToGroup("release");
 		addToGroup("post_genebuild");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");

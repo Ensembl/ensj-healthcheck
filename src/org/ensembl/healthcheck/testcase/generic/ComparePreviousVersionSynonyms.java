@@ -29,7 +29,6 @@ public class ComparePreviousVersionSynonyms extends ComparePreviousVersionBase {
 	 */
 	public ComparePreviousVersionSynonyms() {
 
-		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
 		

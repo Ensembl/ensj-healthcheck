@@ -41,7 +41,6 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 	public ArrayXrefs() {
 
 		//addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("funcgen");
 		addToGroup("funcgen-release");
 		setTeamResponsible(Team.FUNCGEN);

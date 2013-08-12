@@ -35,7 +35,6 @@ public class CompareSchema extends AbstractCompareSchema {
 	
 	@Override
 	protected void addGroups() {
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");		
 	}

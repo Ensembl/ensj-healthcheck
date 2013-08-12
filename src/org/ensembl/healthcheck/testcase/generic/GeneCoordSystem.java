@@ -37,7 +37,6 @@ public class GeneCoordSystem extends SingleDatabaseTestCase {
 	 */
 	public GeneCoordSystem() {
 
-		addToGroup("release");
 		addToGroup("post_genebuild");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");

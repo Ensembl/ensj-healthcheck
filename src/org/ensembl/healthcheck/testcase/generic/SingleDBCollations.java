@@ -45,7 +45,6 @@ public class SingleDBCollations extends SingleDatabaseTestCase {
 	
 	protected void groupAdditions() {
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("compara-ancestral");
 		addToGroup("post-compara-handover");
 	}

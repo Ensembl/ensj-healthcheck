@@ -29,7 +29,6 @@ public class ComparePreviousVersionDensityFeatures extends ComparePreviousVersio
 	 */
 	public ComparePreviousVersionDensityFeatures() {
 
-		addToGroup("release");
 		addToGroup("post-compara-handover");
 
 		setDescription("Compare the density features in the current database with those from the equivalent database on the secondary server");

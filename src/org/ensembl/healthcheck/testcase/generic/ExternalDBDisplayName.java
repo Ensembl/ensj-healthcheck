@@ -32,7 +32,6 @@ public class ExternalDBDisplayName extends SingleDatabaseTestCase {
 	 */
 	public ExternalDBDisplayName() {
 
-		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("funcgen");
 		addToGroup("funcgen-release");

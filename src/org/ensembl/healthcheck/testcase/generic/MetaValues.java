@@ -44,7 +44,6 @@ public class MetaValues extends SingleDatabaseTestCase {
 	public MetaValues() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("compara-ancestral");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");

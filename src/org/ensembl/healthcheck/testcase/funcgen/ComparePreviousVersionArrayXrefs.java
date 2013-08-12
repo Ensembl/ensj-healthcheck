@@ -35,7 +35,6 @@ public class ComparePreviousVersionArrayXrefs extends ComparePreviousVersionBase
 	 */
 
 	public ComparePreviousVersionArrayXrefs() {
-		addToGroup("release");
 		addToGroup("funcgen");
 		addToGroup("funcgen-release");
 		//setHintLongRunning(true);// ?Only take about 10 mins for mouse

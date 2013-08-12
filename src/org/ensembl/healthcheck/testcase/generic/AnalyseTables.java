@@ -35,7 +35,6 @@ public class AnalyseTables extends SingleDatabaseTestCase {
 	 */
 	public AnalyseTables() {
 
-		addToGroup("release");
 		addToGroup("funcgen-release");
 		addToGroup("compara-ancestral");
 		addToGroup("pre-compara-handover");

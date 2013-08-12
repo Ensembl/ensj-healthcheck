@@ -35,7 +35,6 @@ public class MetaCrossSpecies extends MultiDatabaseTestCase {
 	 */
 	public MetaCrossSpecies() {
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		

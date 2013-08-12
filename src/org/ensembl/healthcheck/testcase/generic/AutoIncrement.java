@@ -49,7 +49,6 @@ public class AutoIncrement extends SingleDatabaseTestCase {
 
 		setTeamResponsible(Team.CORE);
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		

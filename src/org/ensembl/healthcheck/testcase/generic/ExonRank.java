@@ -32,7 +32,6 @@ public class ExonRank extends SingleDatabaseTestCase {
 	 */
 	public ExonRank() {
 
-		addToGroup("release");
 		addToGroup("post_genebuild");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");

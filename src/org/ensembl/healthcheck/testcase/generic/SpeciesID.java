@@ -37,7 +37,6 @@ public class SpeciesID extends SingleDatabaseTestCase {
 	 */
 	public SpeciesID() {
 
-		addToGroup("release");
 		addToGroup("funcgen-release");
 		addToGroup("compara-ancestral");
 		addToGroup("pre-compara-handover");

@@ -39,7 +39,6 @@ public class GeneStatus extends SingleDatabaseTestCase {
 	 */
 	public GeneStatus() {
 
-		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
 

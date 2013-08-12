@@ -23,7 +23,6 @@ import org.ensembl.healthcheck.testcase.Priority;
 public class DataFiles extends AbstractTemplatedTestCase {
 
   public DataFiles() {
-    addToGroup("release");
     addToGroup("pre-compara-handover");
     addToGroup("post-compara-handover");
     setDescription("Check that the data_file tables are correctly formatted. Includes searching for bad file extensions and spaces in names");

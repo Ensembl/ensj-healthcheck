@@ -44,7 +44,6 @@ public class ProjectedXrefs extends MultiDatabaseTestCase {
 	 */
 	public ProjectedXrefs() {
 
-		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
 		

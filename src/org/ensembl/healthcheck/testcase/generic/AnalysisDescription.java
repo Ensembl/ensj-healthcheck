@@ -36,7 +36,6 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 	public AnalysisDescription() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("post-compara-handover");
                 addToGroup("pre-compara-handover");
 		

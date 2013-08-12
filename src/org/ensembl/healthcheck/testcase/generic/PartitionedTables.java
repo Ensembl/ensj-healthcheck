@@ -36,7 +36,6 @@ public class PartitionedTables extends SingleDatabaseTestCase {
 	 */
 	public PartitionedTables() {
 
-		addToGroup("release");
 		setDescription("Check whether tables have been partitioned.");
 		addToGroup("post-compara-handover");
 		

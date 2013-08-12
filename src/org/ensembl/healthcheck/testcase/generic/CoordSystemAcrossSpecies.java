@@ -33,7 +33,6 @@ public class CoordSystemAcrossSpecies extends MultiDatabaseTestCase {
 	 */
 	public CoordSystemAcrossSpecies() {
 
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		

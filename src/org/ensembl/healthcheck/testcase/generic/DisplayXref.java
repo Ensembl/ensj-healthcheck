@@ -33,7 +33,6 @@ public class DisplayXref extends SingleDatabaseTestCase {
 	public DisplayXref() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
 		

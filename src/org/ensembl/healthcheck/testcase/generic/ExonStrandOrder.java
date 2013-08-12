@@ -42,7 +42,6 @@ public class ExonStrandOrder extends SingleDatabaseTestCase {
 	public ExonStrandOrder() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		
 		setHintLongRunning(true);
 		setTeamResponsible(Team.GENEBUILD);

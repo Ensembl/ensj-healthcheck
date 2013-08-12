@@ -38,7 +38,6 @@ public class RepeatConsensus extends SingleDatabaseTestCase {
 	public RepeatConsensus() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		

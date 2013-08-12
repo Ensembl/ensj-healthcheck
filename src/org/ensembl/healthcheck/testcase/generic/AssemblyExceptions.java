@@ -37,7 +37,6 @@ public class AssemblyExceptions extends SingleDatabaseTestCase {
 	 */
 	public AssemblyExceptions() {
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		setDescription("Check assembly_exception table");

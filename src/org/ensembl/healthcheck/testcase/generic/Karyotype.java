@@ -37,7 +37,6 @@ public class Karyotype extends SingleDatabaseTestCase {
 	public Karyotype() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("post-compara-handover");
                 addToGroup("pre-compara-handover");
 		

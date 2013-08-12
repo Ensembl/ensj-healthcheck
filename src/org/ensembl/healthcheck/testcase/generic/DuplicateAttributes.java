@@ -39,7 +39,6 @@ public class DuplicateAttributes extends SingleDatabaseTestCase {
 	 */
 	public DuplicateAttributes() {
 
-		addToGroup("release");
 		addToGroup("post_genebuild");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");

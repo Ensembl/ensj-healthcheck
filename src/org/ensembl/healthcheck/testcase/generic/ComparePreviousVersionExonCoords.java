@@ -41,7 +41,6 @@ public class ComparePreviousVersionExonCoords extends SingleDatabaseTestCase {
 	 */
 	public ComparePreviousVersionExonCoords() {
 
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		

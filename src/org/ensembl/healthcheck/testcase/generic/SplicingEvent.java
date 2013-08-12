@@ -30,7 +30,6 @@ public class SplicingEvent extends SingleDatabaseTestCase {
 	 */
 	public SplicingEvent() {
 
-		addToGroup("release");
 
 		setDescription("Checks that splicing_event table has been updated.");
 
