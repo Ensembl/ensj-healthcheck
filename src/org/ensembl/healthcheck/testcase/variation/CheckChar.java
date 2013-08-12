@@ -97,7 +97,7 @@ public class CheckChar extends SingleDatabaseTestCase {
 		    int ascii_val = (int) test_value;	   
 		    
 		    // check code in supported range
-		    if(ascii_val < 32 || ascii_val  > 126){
+		    if(ascii_val < 32 || ascii_val  > 126 || ascii_val == 60 || ascii_val == 62 ){
 			is_ok = false;
 		    }
 		}
