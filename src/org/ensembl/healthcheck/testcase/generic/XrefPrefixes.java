@@ -38,7 +38,6 @@ public class XrefPrefixes extends SingleDatabaseTestCase {
 	public XrefPrefixes() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
 		

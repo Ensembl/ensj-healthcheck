@@ -39,7 +39,6 @@ public class Strand extends SingleDatabaseTestCase {
 	public Strand() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		

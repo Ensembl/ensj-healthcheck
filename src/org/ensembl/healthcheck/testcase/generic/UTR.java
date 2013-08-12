@@ -47,7 +47,6 @@ public class UTR extends SingleDatabaseTestCase {
         public UTR() {
 
                 addToGroup("post_genebuild");
-                addToGroup("release");
                 addToGroup("pre-compara-handover");
                 addToGroup("post-compara-handover");
 

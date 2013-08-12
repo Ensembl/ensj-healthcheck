@@ -37,7 +37,6 @@ public class UnreviewedXrefs extends SingleDatabaseTestCase {
 	 */
 	public UnreviewedXrefs() {
 
-		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
 		

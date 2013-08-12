@@ -35,7 +35,6 @@ public class XrefHTML extends SingleDatabaseTestCase {
 	 */
 	public XrefHTML() {
 
-		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
 		

@@ -37,7 +37,6 @@ public class TranslationStartEnd extends SingleDatabaseTestCase {
 	public TranslationStartEnd() {
 		
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		

@@ -39,7 +39,6 @@ public class TranscriptSupportingFeatures extends SingleDatabaseTestCase {
 	public TranscriptSupportingFeatures() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		

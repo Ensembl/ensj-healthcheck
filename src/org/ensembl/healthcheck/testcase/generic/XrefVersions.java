@@ -37,7 +37,6 @@ public class XrefVersions extends SingleDatabaseTestCase {
 	public XrefVersions() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
 		

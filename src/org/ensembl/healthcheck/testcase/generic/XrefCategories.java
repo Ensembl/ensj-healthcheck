@@ -34,7 +34,6 @@ public class XrefCategories extends SingleDatabaseTestCase {
 	public XrefCategories() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
 		

@@ -46,7 +46,6 @@ public class TranscriptsSameName extends SingleDatabaseTestCase {
 	public TranscriptsSameName() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("post-compara-handover");
 		
 		setDescription(" Check for genes with more than one transcript where all the transcripts have the same display_xref_id.");

@@ -48,7 +48,6 @@ public class XrefLevels extends MultiDatabaseTestCase {
 	 */
 	public XrefLevels() {
 
-		addToGroup("release");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
 		

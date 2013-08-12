@@ -38,7 +38,6 @@ public class TranscriptsTranslate extends SingleDatabaseTestCase {
 	public TranscriptsTranslate() {
 
 		addToGroup("post_genebuild");
-		addToGroup("release");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
 		
