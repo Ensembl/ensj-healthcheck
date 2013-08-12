@@ -39,7 +39,6 @@ public class ForeignKeys extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("release");
-		addToGroup("xrefs");
 		setDescription("Check foreign key constraints in xref databases.");
 		setTeamResponsible(Team.CORE);
 
