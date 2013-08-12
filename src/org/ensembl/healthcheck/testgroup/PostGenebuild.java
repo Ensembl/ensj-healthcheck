@@ -153,7 +153,6 @@ public class PostGenebuild extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.Karyotype.class,
 			org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem.class,
 			org.ensembl.healthcheck.testcase.generic.RepeatFeature.class,
-			org.ensembl.healthcheck.testcase.xref.ForeignKeys.class,
 			org.ensembl.healthcheck.testcase.generic.FeatureAnalysis.class,
 			org.ensembl.healthcheck.testcase.generic.Ditag.class,
 			org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionArrayXrefs.class,
