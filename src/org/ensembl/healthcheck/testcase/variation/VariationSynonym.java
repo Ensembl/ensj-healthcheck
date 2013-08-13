@@ -26,7 +26,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Check that if the peptide_allele_string of transcript_variation is not >1. It should out >1, unless it filled with numbers
+ * Check for duplicate synonym names which may have different import sources despite having the same original source
  */
 public class VariationSynonym extends SingleDatabaseTestCase {
 
@@ -35,7 +35,7 @@ public class VariationSynonym extends SingleDatabaseTestCase {
 	 */
 	public VariationSynonym() {
 		addToGroup("variation-release");
-		setDescription("Check that Venter and Watson should have 3 million variations");
+		setDescription("Check for duplicate variation synonyms");
 		setTeamResponsible(Team.VARIATION);
 
 	}
@@ -56,37 +56,26 @@ public class VariationSynonym extends SingleDatabaseTestCase {
 			return true;
 		}
 		
-		boolean overallResult = true;
+		boolean result = true;
 		
 		try {
-		
-			String[] individualNames = { "Venter", "Watson" };
-			String individualName;
 			
-			// Check that Venter and Watson should have 3 million variations
-	
-			for (int i = 0; i < individualNames.length; i++) {
-				
-				boolean result = true; 
-				individualName = individualNames[i];
-				int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM variation v, source s WHERE v.source_id=s.source_id and s.name like '%" + individualName + "'");
-				int rows1 = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM variation_synonym vs, source s WHERE vs.source_id=s.source_id and s.name like '%" + individualName + "'");
-				int tot_rows = rows + rows1;
-				if (tot_rows < 3000000) {
-					result = false;
-					ReportManager.problem(this, con, tot_rows + " with variations for " + individualName);
-				} else {
-					ReportManager.correct(this, con, "Venter/Watson has more then 3 million variations");
-				}
-				overallResult &= result;
-			}
+		    int rows = DBUtils.getRowCount(con, "select vs1.variation_synonym_id, vs1.variation_id, vs1.name from variation_synonym vs1, variation_synonym vs2 where  vs2.variation_id =  vs1.variation_id and vs2.name  = vs1.name and vs2.variation_synonym_id > vs1.variation_synonym_id");
+
+		    if (rows > 0) {
+			result = false;
+			ReportManager.problem(this, con, rows + " duplicate variation_synonyms detected");
+		    } else {
+			ReportManager.correct(this, con, "No duplicate variation_synonyms detected");
+		    }
+		
 			
 		} catch (Exception e) {
 			ReportManager.problem(this, con, "HealthCheck generated an error: " + e.getMessage());
-			overallResult = false;
+			result = false;
 		}
 				
-		return overallResult;
+		return result;
 
 	} // run
 
