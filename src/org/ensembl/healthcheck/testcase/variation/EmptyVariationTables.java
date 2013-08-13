@@ -32,7 +32,6 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
    */
   public EmptyVariationTables() {
 
-    addToGroup("variation");
     addToGroup("variation-release");
 
     setDescription("Checks that all tables have data");

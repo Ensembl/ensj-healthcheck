@@ -29,7 +29,6 @@ public class ComparePreviousVersionAlleles extends ComparePreviousVersionBase {
 	 */
 	public ComparePreviousVersionAlleles() {
 
-		addToGroup("variation");
 		addToGroup("variation-release");
 		setDescription("Compare the number of alleles in the current database with those from the equivalent database on the secondary server");
 		setTeamResponsible(Team.VARIATION);

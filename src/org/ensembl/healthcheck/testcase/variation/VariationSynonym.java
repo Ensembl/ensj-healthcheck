@@ -34,7 +34,6 @@ public class VariationSynonym extends SingleDatabaseTestCase {
 	 * Creates a new instance of Check Variation Synonym
 	 */
 	public VariationSynonym() {
-		addToGroup("variation");
 		addToGroup("variation-release");
 		setDescription("Check that Venter and Watson should have 3 million variations");
 		setTeamResponsible(Team.VARIATION);

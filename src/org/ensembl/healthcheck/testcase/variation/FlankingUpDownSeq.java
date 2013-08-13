@@ -33,7 +33,6 @@ public class FlankingUpDownSeq extends SingleDatabaseTestCase {
 	 * Creates a new instance of CheckFlankingUpDownSeq
 	 */
 	public FlankingUpDownSeq() {
-		//addToGroup("variation");
 		//addToGroup("variation-release");
 		setDescription("Check that if the up_seq or down_seq of flanking_sequence is null, that up_seq_region_start or down_seq_region_start should not be null.");
 		setTeamResponsible(Team.VARIATION);

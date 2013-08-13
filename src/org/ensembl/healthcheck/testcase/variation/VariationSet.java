@@ -41,7 +41,6 @@ public class VariationSet extends SingleDatabaseTestCase {
 	 */
 	public VariationSet() {
 
-		addToGroup("variation");
 		addToGroup("variation-release");
 
 		setDescription("Checks that the variation_set tables are valid");

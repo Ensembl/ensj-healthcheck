@@ -32,7 +32,6 @@ public class VariationFeature extends SingleDatabaseTestCase {
 	 */
 	public VariationFeature() {
 
-		addToGroup("variation");
 		addToGroup("variation-release");
 		
 		setDescription("Checks that the variation_feature table makes sense");

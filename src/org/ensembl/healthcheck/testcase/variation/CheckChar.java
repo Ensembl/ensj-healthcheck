@@ -36,7 +36,6 @@ public class CheckChar extends SingleDatabaseTestCase {
 	 */
 	public CheckChar() {
 
-		addToGroup("variation");
 		addToGroup("variation-release");
 		setDescription("Check that imported names/descriptions contains only supported characters");
 		setTeamResponsible(Team.VARIATION);

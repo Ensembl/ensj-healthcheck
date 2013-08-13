@@ -33,7 +33,6 @@ public class VariationClasses extends SingleDatabaseTestCase {
 	 */
 	public VariationClasses() {
 
-		addToGroup("variation");
 		addToGroup("variation-release");
 
 		setDescription("Sanity check variation classes");

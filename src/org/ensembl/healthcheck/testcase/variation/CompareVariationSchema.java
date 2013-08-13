@@ -44,7 +44,6 @@ public class CompareVariationSchema extends AbstractCompareSchema {
 	
 	@Override
 	protected void addGroups() {
-		addToGroup("variation");
 		addToGroup("variation-release");
 		addToGroup("variation-test");
 	}

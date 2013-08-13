@@ -32,7 +32,6 @@ public class ComparePreviousVersionVariationSynonyms extends ComparePreviousVers
 	 */
 	public ComparePreviousVersionVariationSynonyms() {
 
-		addToGroup("variation");
 		addToGroup("variation-release");
 		setDescription("Compare the number of variation synonyms in the current database with those from the equivalent database on the secondary server");
 		setTeamResponsible(Team.VARIATION);

@@ -36,7 +36,6 @@ public class ComparePreviousVersionValidationStatus extends ComparePreviousVersi
 	 */
 	public ComparePreviousVersionValidationStatus() {
 
-		addToGroup("variation");
 		addToGroup("variation-release");
 		addToGroup("variation-post-import");
 		setDescription("Compare the number of variations having each an evidence annotation in the current database with those from the equivalent database on the secondary server");
