@@ -56,20 +56,37 @@ public class CheckChar extends SingleDatabaseTestCase {
 
 		try {
 			/*
-			 * Will extract a list of phenotype.descriptions and check for unsupported char
+			 * Will extract a list of phenotype.descriptions and check for unsupported char & short names
 			 */
-		    boolean is_ok = true;
+		    boolean char_ok   = true;
+
 
 		    List<String> data = getSqlTemplate(con).queryForDefaultObjectList(
 			"select description from phenotype", String.class);
 		    for (int i = 0; i < data.size(); i++) {
 
 			    String input = data.get(i);
-			    is_ok = checkUnsuportedChar(input);
-			    if(is_ok == false){
+
+                            // check for unusually short descriptions
+			    if(input.length() < 4){
+				result = false;
+				ReportManager.problem(this, con, "phenotype: " + input + " is suspiciously short");
+			    }
+ 
+                            // check for None as a phenotype
+                            String avoid = "None";
+			    if( input.equalsIgnoreCase( avoid ) ){
+				result = false;
+				ReportManager.problem(this, con, "phenotype: " + input + " is not useful");
+			    }
+
+                            // check for unsupported individual character
+			    char_ok = checkUnsupportedChar(input);
+			    if(char_ok == false){
 				result = false;
 				ReportManager.problem(this, con, "phenotype: " + input + " has suspect characters");
 			    }
+
 			}		
 		} catch (Exception e) {
 			ReportManager.problem(this, con, "HealthCheck generated an exception: " + e.getMessage());
@@ -84,7 +101,7 @@ public class CheckChar extends SingleDatabaseTestCase {
 
 	// --------------------------------------------------------------
 
-	private boolean checkUnsuportedChar( String input) {
+	private boolean checkUnsupportedChar( String input) {
 
 		boolean is_ok = true;
 		int len = input.length();
