@@ -38,7 +38,7 @@ public class EGCore extends GroupOfTests {
 			TranscriptNames.class, 
 			ControlledCoreTables.class,
 			AnalysisLogicName.class,
-			// SeqRegionsConsistentWithComparaMaster.class,
+			SeqRegionsConsistentWithComparaMaster.class,
 			SeqRegionLength.class,
 			NoRepeatFeatures.class
 		);
