@@ -73,9 +73,9 @@ public class CheckChar extends SingleDatabaseTestCase {
 				ReportManager.problem(this, con, "phenotype: " + input + " is suspiciously short");
 			    }
  
-                            // check for None as a phenotype
-                            String avoid = "None";
-			    if( input.equalsIgnoreCase( avoid ) ){
+                            // check for phenotype descriptions suggesting no phenotype
+                            boolean name_ok = checkNonPhenotypes(input);
+			    if(name_ok == false){
 				result = false;
 				ReportManager.problem(this, con, "phenotype: " + input + " is not useful");
 			    }
@@ -117,6 +117,24 @@ public class CheckChar extends SingleDatabaseTestCase {
 			is_ok = false;
 		    }
 		}
+		return is_ok;
+	}
+
+
+	private boolean checkNonPhenotypes( String input) {
+
+		boolean is_ok = true;
+		String[] junk = {"None", "Not provided", "not specified", "Not in OMIM", "Variant of unknown significance" };
+
+		int len = junk.length;
+			    
+		for (int i =0; i< len; i++){
+
+		    if( input.equalsIgnoreCase( junk[i] ) ){
+			is_ok  = false;
+		    }
+		}
+		
 		return is_ok;
 	}
 
