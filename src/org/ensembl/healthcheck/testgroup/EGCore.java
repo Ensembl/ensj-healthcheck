@@ -9,6 +9,7 @@ import org.ensembl.healthcheck.testcase.generic.TranscriptNames;
 
 import org.ensembl.healthcheck.testcase.eg_core.NoRepeatFeatures;
 import org.ensembl.healthcheck.testcase.eg_core.SeqRegionLength;
+import org.ensembl.healthcheck.testcase.eg_core.SeqRegionsConsistentWithComparaMaster;
 
 /**
  * Supergroup of tests for Ensembl Genomes (incorporates {@link EGCoreGeneModel}
