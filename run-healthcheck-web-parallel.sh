@@ -2,15 +2,13 @@
 
 . /software/lsf/conf/profile.lsf
 
-#JAVA_HOME=/usr/opt/java
+#cd into the dir but this file is already there. Use standard import pattern
 dir=$HOME/ensj-healthcheck
-
-cp=$dir
-for jar in $dir/lib/*.jar; do
-    cp=$jar:$cp
-done
-
 cd $dir
 
-$JAVA_HOME/bin/java -server -classpath $cp -Xmx1024m org.ensembl.healthcheck.ParallelDatabaseTestRunner -config database.release.properties
+home=`dirname $0`
+. $home/setup.sh
+classpath
+
+$JAVA_HOME/bin/java -server -Xmx1024m org.ensembl.healthcheck.ParallelDatabaseTestRunner -config database.release.properties
 

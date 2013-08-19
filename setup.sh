@@ -1,3 +1,14 @@
+#### To Import
+# home=`dirname $0`
+# . $home/setup.sh
+#
+# To use:
+#
+# jar
+# classpath
+# echoerr "I am a warning to STDERR\n"
+####
+
 echoerr() { printf "$@" 1>&2; }
 
 jar() {
@@ -19,7 +30,7 @@ classpath() {
 	for jar in $home/lib/*.jar; do
     cp=$jar:$cp
 	done
-	cp=$home/dist/ensj-healthcheck.jar:$cp
+	cp=$home/target/dist/ensj-healthcheck.jar:$cp
 	cp=$cp:src/:$home/resources/runtime
 	export CLASSPATH=$cp
 }
