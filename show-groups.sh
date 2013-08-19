@@ -1,9 +1,8 @@
 #!/bin/sh
 
 home=`dirname $0`
-cp=$home:$home/build/
-for jar in $home/lib/*.jar; do
-    cp=$jar:$cp
-done
+. $home/setup.sh
+jar
+classpath
 
-$JAVA_HOME/bin/java -Xmx1500m -classpath $cp org.ensembl.healthcheck.ListAllTests -groups
+$JAVA_HOME/bin/java -Xmx1500m org.ensembl.healthcheck.ListAllTests -groups

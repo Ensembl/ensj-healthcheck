@@ -14,10 +14,6 @@
 	<property name="web.dir" location="${user.home}/public_html" />
 	<property name="web.javadoc.dir" location="${web.dir}/javadoc" />
 	<property name="web.mirror.dir" location="${doc}/external_web_pages" />
-
-	<property name="scp-executable" value="c:\cygwin\bin\scp.exe" />
-	<property name="scp-port" value="2222" />
-	<property name="scp-target" value="gp1@localhost:~/work/ensj-healthcheck/lib" />
 	
 	<taskdef name="testng" classname="org.testng.TestNGAntTask">
 		<classpath>
@@ -41,14 +37,6 @@
 
 	<!-- ################################################################################## -->
 
-	<target name="java-version" description="Print which version of Java is being used; hopefully will help to spot path problems">
-		<exec executable="java">
-			<arg value="-version" />
-		</exec>
-	</target>
-
-	<!-- ################################################################################## -->
-
 	<target name="compile" depends="init" description="Compile the source ">
 		<javac srcdir="${src}" destdir="${build}" excludes="**/*Test.*" debug="true" debugLevel="lines,vars,source" includeantruntime="false">
 			<classpath>
@@ -66,8 +54,6 @@
       	<dirset dir="${build}"/>
         <fileset dir="lib">
           <include name="**/*.jar" />
-        	<exclude name="**/ensj*.jar"/>
-        	<exclude name="**/junit.jar"/>
         </fileset>
       </classpath>
     </javac>
@@ -79,8 +65,6 @@
 			<pathelement location="${test.class.dir}"/>
 			<fileset dir="${lib}">
 				<include name="**/*.jar"/>
-				<exclude name="**/ensj*.jar"/>
-				<exclude name="**/junit.jar"/>
 			</fileset>
 		</path>
 		<echo level="info" message="See '${test.report.dir}/index.html' for test report information"/>
@@ -148,7 +132,7 @@
 	<!-- ################################################################################## -->
 
 	<target name="jar" depends="compile, copy-resources" description="generate ensj-healthcheck.jar">
-		<jar jarfile="${lib}/${name}.jar">
+		<jar jarfile="${dist}/${name}.jar">
 			<fileset dir="${build}/" />
 			<fileset dir="${src}">
 				<include name="**/*.txt" />
@@ -157,41 +141,6 @@
 	</target>
 
 	<!-- ################################################################################## -->
-	<!-- Transfer lib/ensj-healthcheck.jar to Sanger using scp over SSH tunnel
-       Assumes local port 2222 is forwarded to port 22 on a Sanger machine                -->
-
-	<target name="scp-lib" depends="jar" description="scp jar file via SSH tunnel to Sanger">
-		<exec executable="${scp-executable}" dir="${lib}">
-			<arg value="-oPort=${scp-port}" />
-			<arg value="${name}.jar" />
-			<arg value="${scp-target}" />
-		</exec>
-	</target>
-
-	<!-- ################################################################################## -->
-
-	<target name="dist" depends="compile" description="generate the distribution">
-		<!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
-		<jar jarfile="${dist}/${build.name}-${DSTAMP}.jar" basedir="${build}" />
-		<!-- Current version -->
-		<copy file="${dist}/${build.name}-${DSTAMP}.jar" tofile="${dist}/${name}.jar" />
-		<!-- And the source -->
-		<jar jarfile="${dist}/${build.name}-src.jar" basedir="${src}" />
-		<!-- Tar file containing everything -->
-		<tar tarfile="${dist}/${name}.tar.gz" basedir="../" includes="${name}/**" excludes="**/*~, **/*.class, **/.nbattrs, **/.xvpics/*, **/dist/**" compression="gzip" />
-	</target>
-
-	<target name="dist-web" depends="javadoc-web, javadoc-tar, dist" description="Copy distribution files to a web dir">
-		<copy todir="${web.dir}">
-			<fileset dir="${dist}">
-				<include name="**/*.jar" />
-				<include name="**/*.tar.gz" />
-			</fileset>
-			<fileset dir="${web.mirror.dir}">
-				<include name="**/*.html" />
-			</fileset>
-		</copy>
-	</target>
 
 	<!-- ################################################################################## -->
 
@@ -201,7 +150,6 @@
 		<delete dir="${build}" />
 		<delete dir="${test.class.dir}"/>
 		<delete dir="${test.report.dir}"/>
-		<delete file="${lib}/${name}.jar" />
 		<delete>
 			<fileset dir=".">
 				<include name="**/*.class" />
@@ -242,12 +190,6 @@
 		</copy>
 
 	</target>
-
-	<!-- Commit jar file to CVS -->
-	<target name="commit" description="Commits the jar file to CVS." depends="jar">
-		<cvs command="commit -m '' lib/ensj-healthcheck.jar" />
-	</target>
-
 
 	<!-- ################################################################################## -->
 	<!-- Execution targets to replace old run-*.sh -->

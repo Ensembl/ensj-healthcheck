@@ -241,7 +241,7 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 		// This is done second as if there is a class file for this test case in the build dir
 		// then that should be used instead of the one in the jar file.
 		// (addUniqueTests doesn't add a test if it's already in the list)
-		String jarFileName = System.getProperty("user.dir") + File.separator + "lib" + File.separator + "ensj-healthcheck.jar";
+		String jarFileName = System.getProperty("user.dir") + File.separator + "dist" + File.separator + "ensj-healthcheck.jar";
 		if ((new File(jarFileName)).exists()) {
 			addUniqueTests(allTests, findTestsInJar(jarFileName, BASE_TESTCASE_PACKAGE));
 		}
