@@ -5,6 +5,7 @@ import org.ensembl.healthcheck.testcase.eg_core.DuplicateXref;
 import org.ensembl.healthcheck.testcase.eg_core.IgiXref;
 import org.ensembl.healthcheck.testcase.eg_core.ProteinFeatureAnalysisDb;
 import org.ensembl.healthcheck.testcase.eg_core.UniProtKB_Coverage;
+import org.ensembl.healthcheck.testcase.eg_core.UniParc_Coverage;
 import org.ensembl.healthcheck.testcase.eg_core.UniProtKB_DisplayXrefIds;
 import org.ensembl.healthcheck.testcase.generic.AnalysisTypes;
 import org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions;
@@ -31,7 +32,7 @@ public class EGCoreAnnotationMajor extends GroupOfTests {
 				IsCurrent.class, NullStrings.class, XrefCategories.class,
 				XrefHTML.class, XrefIdentifiers.class, XrefLevels.class,
 				XrefTypes.class, XrefVersions.class,
-				UniProtKB_DisplayXrefIds.class, UniProtKB_Coverage.class);
+				UniProtKB_DisplayXrefIds.class, UniProtKB_Coverage.class, UniParc_Coverage.class);
 	}
 
 }
