@@ -2,6 +2,7 @@ package org.ensembl.healthcheck.testgroup;
 
 import org.ensembl.healthcheck.GroupOfTests;
 import org.ensembl.healthcheck.testcase.eg_core.EGCompareVariationSchema;
+import org.ensembl.healthcheck.testcase.eg_variation.EGVariationFeature;
 import org.ensembl.healthcheck.testcase.variation.AlleleFrequencies;
 import org.ensembl.healthcheck.testcase.variation.CompareVariationSchema;
 import org.ensembl.healthcheck.testcase.variation.EmptyVariationTables;
@@ -12,9 +13,9 @@ import org.ensembl.healthcheck.testcase.variation.Meta;
 import org.ensembl.healthcheck.testcase.variation.Meta_coord;
 import org.ensembl.healthcheck.testcase.variation.StructuralVariation;
 import org.ensembl.healthcheck.testcase.variation.TranscriptVariation;
-import org.ensembl.healthcheck.testcase.variation.VFCoordinates;
 import org.ensembl.healthcheck.testcase.variation.VariationForeignKeys;
 import org.ensembl.healthcheck.testcase.variation.VariationSet;
+import org.ensembl.healthcheck.testcase.variation.VFCoordinates;
 
 /**
  * Group of tests for variation databases
@@ -31,6 +32,7 @@ public class EGVariation extends GroupOfTests {
 			AlleleFrequencies.class, 
 			CompareVariationSchema.class,
 			EGCompareVariationSchema.class,
+			EGVariationFeature.class,
 			EmptyVariationTables.class, 
 			ForeignKeyCoreId.class, 
 			IndividualType.class, 
