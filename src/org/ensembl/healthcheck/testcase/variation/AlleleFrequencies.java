@@ -67,7 +67,7 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 
 			Statement stmt = con.createStatement();
 
-			// Get variations with allele/genotype frequencies that don't add up to 1 for the same variation_id, subsnp_id and sample_id
+			// Get variations with allele/genotype frequencies that don't add up to 1 for the same variation_id, subsnp_id and population_id
 			for (int i = 0; i < tables.length; i++) {
 				// long subStart = System.currentTimeMillis();
 
@@ -80,8 +80,8 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 				int maxId = Integer.parseInt(sql);
 
 				// The query to get the data
-				sql = "SELECT s.variation_id, s.subsnp_id, s.sample_id, s.frequency FROM " + tables[i]
-						+ " s USE INDEX (variation_idx,subsnp_idx) WHERE s.variation_id BETWEEN VIDLOWER AND VIDUPPER ORDER BY s.variation_id, s.subsnp_id, s.sample_id";
+				sql = "SELECT s.variation_id, s.subsnp_id, s.population_id, s.frequency FROM " + tables[i]
+						+ " s USE INDEX (variation_idx,subsnp_idx) WHERE s.variation_id BETWEEN VIDLOWER AND VIDUPPER ORDER BY s.variation_id, s.subsnp_id, s.population_id";
 				int offset = 1;
 
 				// Count the number of failed
@@ -116,7 +116,7 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 
 					while (rs.next()) {
 
-						// Get the variation_id, subsnp_id, sample_id and frequency. If any of these are NULL, they will be returned as 0
+						// Get the variation_id, subsnp_id, population_id and frequency. If any of these are NULL, they will be returned as 0
 						curVid = rs.getInt(1);
 						curSSid = rs.getInt(2);
 						curSid = rs.getInt(3);
@@ -163,13 +163,13 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 				} else {
 					// Get an example and print it
 					int[] entry = (int[]) failedEntries.get(0);
-					String example = "variation_id = " + String.valueOf(entry[0]) + ", subsnp_id = " + String.valueOf(entry[1]) + ", sample_id = " + String.valueOf(entry[2]) + ", sum is "
+					String example = "variation_id = " + String.valueOf(entry[0]) + ", subsnp_id = " + String.valueOf(entry[1]) + ", population_id = " + String.valueOf(entry[2]) + ", sum is "
 							+ String.valueOf((0.001f * entry[3]));
 					ReportManager.problem(this, con, "There are " + String.valueOf(failed) + " variations in " + tables[i] + " where the frequencies don't add up to 1 +/- " + String.valueOf(tol) + " (e.g. "
 							+ example + ")");
 					result = false;
 
-					// Loop over the failed entries and print a list of variation_id, subsnp_id, sample_id and summed frequency to stdout
+					// Loop over the failed entries and print a list of variation_id, subsnp_id, population_id and summed frequency to stdout
 					/*
 					for (int j = 0; j < failedEntries.size(); j++) {
 						entry = (int[]) failedEntries.get(j);
@@ -198,3 +198,4 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 	} // run
 
 } // AlleleFrequencies
+
