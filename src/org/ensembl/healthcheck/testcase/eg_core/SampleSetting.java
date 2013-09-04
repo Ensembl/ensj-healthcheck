@@ -31,7 +31,7 @@ public class SampleSetting extends AbstractEgCoreTestCase {
 
 	private final static String META_QUERY = "select meta_key,meta_value from meta where species_id=? and meta_key like 'sample.%'";
 
-	private static final String LOC_LEN = "select length from seq_region sr join coord_system cs using (coord_system_id) where cs.species_id=? and sr.name=?";
+	private static final String LOC_LEN = "select length from seq_region sr join coord_system cs using (coord_system_id) where cs.attrib like '%default_version%' and cs.species_id=? and sr.name=?";
 
 	private static Pattern locationPattern = Pattern
 			.compile("([^:]+):(\\d+)-(\\d+)");
