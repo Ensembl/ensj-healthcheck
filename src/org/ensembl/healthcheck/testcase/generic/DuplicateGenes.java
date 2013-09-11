@@ -186,7 +186,7 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 		}
 		// EG return correct report line if all is OK
 		if (result)
-			ReportManager.correct(this, con, "No duplicate exons found");
+			ReportManager.correct(this, con, "No duplicate genes found");
 		return result;
 
 	}
