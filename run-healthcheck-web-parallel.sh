@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. /software/lsf/conf/profile.lsf
+. /software/lsf-farm3/conf/profile.lsf
 
 #JAVA_HOME=/usr/opt/java
 dir=$HOME/ensj-healthcheck
@@ -12,5 +12,5 @@ done
 
 cd $dir
 
-$JAVA_HOME/bin/java -server -classpath $cp -Xmx1024m org.ensembl.healthcheck.ParallelDatabaseTestRunner -config database.release.properties
+$JAVA_HOME/bin/java -server -classpath $cp -Xmx256m org.ensembl.healthcheck.ParallelDatabaseTestRunner -config database.release.properties
 
