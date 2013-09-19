@@ -51,7 +51,7 @@ public enum Species {
 	HOMO_SAPIENS(9606, "GRCh", "ENS", "human,hsapiens,homosapiens,homo_sapiens"),
 	ICTIDOMYS_TRIDECEMLINEATUS(43179, "spetri", "ENSSTO", "squirrel,stridecemlineatus,thirteen-lined_ground_squirrel,ictidomys_tridecemlineatus_arenicola,ictidomys_tridecemlineatus"),
   LATIMERIA_CHALUMNAE(7897,"LatCha", "ENSLAC","coelacanth,latimeria_chalumnae,latimeria,l_chalumnae,Latimeria chalumnae"),
-  LEPISOSTEUS_OCULATUS(7918, "LepOcu","ENSLOC","spotted_gar");
+  LEPISOSTEUS_OCULATUS(7918, "LepOcu","ENSLOC","spotted_gar"),
   LOXODONTA_AFRICANA(9785, "LoxAfr", "ENSLAF", "elephant,nelly,loxodonta,african_elephant,african_savannah_elephant,african_bush_elephant,loxodonta_africana"),
 	MACACA_MULATTA(9544, "MM", "ENSMMU", "macacamulatta,rhesusmacaque,rhesus_macaque,macaque,macaca_mulatta"),
 	MACROPUS_EUGENII(9315, "Meug", "ENSMEU", "wallaby,tammar_wallaby,macropuseugenii,m_eugenii,tammarwallaby,Macropus eugenii,macropus_eugenii"),
