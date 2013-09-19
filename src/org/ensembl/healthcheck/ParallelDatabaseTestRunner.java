@@ -153,7 +153,7 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 	}
 	
 	private static final String MEMORY_RUSAGE = "select[mem>2000] rusage[mem=2000]";
-	private static final String MEMORY_RESERVATION = "2000000";
+	private static final String MEMORY_RESERVATION = "2000";
 	
 	/**
 	 * <p>
