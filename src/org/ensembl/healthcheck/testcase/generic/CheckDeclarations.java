@@ -18,6 +18,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -31,6 +33,7 @@ import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.RowMapper;
 import org.ensembl.healthcheck.util.SqlTemplate;
 import org.ensembl.healthcheck.util.Utils;
 
@@ -152,12 +155,22 @@ public class CheckDeclarations extends SingleDatabaseTestCase {
 
     Connection con = dbre.getConnection();
     Connection previousCon = sec.getConnection();
+    SqlTemplate t = getSqlTemplate(dbre);
+    RowMapper<Set<Object>> rowMapper = new RowMapper<Set<Object>>(){
+      public Set<Object> mapRow(ResultSet rs, int position) throws SQLException {
+        Set<Object> set = new HashSet<Object>();
+        for (int i=1; i <= 11; i++) {
+          set.add(rs.getObject(i));
+        }
+        return set;
+      }
+    };
 
-    String sql = "CHECKSUM table gene";
-    int currentGenes = DBUtils.getRowCount(con, sql);
-    int previousGenes = DBUtils.getRowCount(previousCon, sql);
+    String sql = "SELECT (biotype, analysis_id, seq_region_id, seq_region_start, seq_region_end, seq_region_end, seq_region_strand, stable_id, is_current, version) FROM gene" ;
+    Set<Set<Object>> currentGenes = t.queryForSet(sql, rowMapper);
+    Set<Set<Object>> previousGenes = getSqlTemplate(sec).queryForSet(sql, rowMapper);
 
-    if (currentGenes != previousGenes) {
+    if (! currentGenes.equals(previousGenes)) {
       boolean declared = checkDeclaration(dbre, "gene_set");
       if (!declared) {
         ReportManager.problem(this, con, "Genes have changed but have not been declared");
