@@ -1,4 +1,4 @@
-JAVA_HOME=/software/jdk1.6.0_01
+JAVA_HOME=/software/jdk1.6.0_14
 LSB_DEFAULTPROJECT=ensembl-core
 LSB_DEFAULTGROUP=ensembl-core
 
