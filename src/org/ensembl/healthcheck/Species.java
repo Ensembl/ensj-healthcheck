@@ -70,6 +70,7 @@ public enum Species {
 	ORYCTOLAGUS_CUNICULUS(9986, "OryCun", "ENSOCU", "rabbit,oryctolagus,domestic_rabbit,bunny,japanese_white_rabbit,european_rabbit,oryctolagus_cuniculus"),
 	ORYZIAS_LATIPES(8090, "MEDAKA", "ENSORL", "medaka,oryzias,japanese_medaka,japanese_rice_fish,japanese_ricefish,japanese_killifish,oryzias_latipes"),
 	OTOLEMUR_GARNETTII(30611, "OtoGar", "ENSOGA", "bushbaby,bush_baby,galago,small_eared_galago,ogarnettii,otolemur,otolemur_garnettii"),
+	OVIS_ARIES(9940, "Oar", "ENSOAR", "ovis_aries,oaries,oviari,sheep"),
 	PAN_TROGLODYTES(9598, "CHIMP", "ENSPTR", "chimp,chimpanzee,ptroglodytes,pantroglodytes,pan_troglodytes"),
         PAPIO_ANUBIS(9555,"PapAnu", "ENSPAN", "papio_anubis"),
 	PAPIO_HAMADRYAS(9557, "Pham", "ENSPHA", "baboon,Papio_hamadryas,papio_hamadryas,papio_hamadryas,sacred_baboon,western_baboon,red_baboon"),
