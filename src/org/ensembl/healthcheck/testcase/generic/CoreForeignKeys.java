@@ -163,8 +163,9 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		result &= checkForOrphans(con, "marker_map_location", "marker_id", "marker", "marker_id", true);
 		result &= checkForOrphans(con, "marker_map_location", "marker_synonym_id", "marker_synonym", "marker_synonym_id", true);
 
-		result &= checkForOrphans(con, "qtl_feature", "qtl_id", "qtl", "qtl_id", true);
-		result &= checkForOrphans(con, "qtl_synonym", "qtl_id", "qtl", "qtl_id", true);
+		// 73 -> 74 core schema patch: qtl* removed
+		// result &= checkForOrphans(con, "qtl_feature", "qtl_id", "qtl", "qtl_id", true);
+		// result &= checkForOrphans(con, "qtl_synonym", "qtl_id", "qtl", "qtl_id", true);
 
 		result &= checkForOrphans(con, "assembly", "asm_seq_region_id", "seq_region", "seq_region_id", true);
 
@@ -188,9 +189,10 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		result &= checkForOrphans(con, "marker", "display_marker_synonym_id", "marker_synonym", "marker_synonym_id");
 
 		// optional relations
-		result &= checkOptionalRelation(con, "qtl", "flank_marker_id_1", "marker", "marker_id");
-		result &= checkOptionalRelation(con, "qtl", "flank_marker_id_2", "marker", "marker_id");
-		result &= checkOptionalRelation(con, "qtl", "peak_marker_id", "marker", "marker_id");
+		// 73 -> 74 core schema patch: qtl* removed
+		// result &= checkOptionalRelation(con, "qtl", "flank_marker_id_1", "marker", "marker_id");
+		// result &= checkOptionalRelation(con, "qtl", "flank_marker_id_2", "marker", "marker_id");
+		// result &= checkOptionalRelation(con, "qtl", "peak_marker_id", "marker", "marker_id");
 		result &= checkOptionalRelation(con, "unmapped_object", "external_db_id", "external_db", "external_db_id");
 
 		/*
