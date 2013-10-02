@@ -159,7 +159,7 @@ public class CheckDeclarations extends SingleDatabaseTestCase {
     RowMapper<Set<Object>> rowMapper = new RowMapper<Set<Object>>(){
       public Set<Object> mapRow(ResultSet rs, int position) throws SQLException {
         Set<Object> set = new HashSet<Object>();
-        for (int i=1; i <= 11; i++) {
+        for (int i=1; i <= 10; i++) {
           set.add(rs.getObject(i));
         }
         return set;
