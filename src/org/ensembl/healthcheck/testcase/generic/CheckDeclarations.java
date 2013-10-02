@@ -166,7 +166,7 @@ public class CheckDeclarations extends SingleDatabaseTestCase {
       }
     };
 
-    String sql = "SELECT (biotype, analysis_id, seq_region_id, seq_region_start, seq_region_end, seq_region_end, seq_region_strand, stable_id, is_current, version) FROM gene" ;
+    String sql = "SELECT biotype, analysis_id, seq_region_id, seq_region_start, seq_region_end, seq_region_end, seq_region_strand, stable_id, is_current, version FROM gene" ;
     Set<Set<Object>> currentGenes = t.queryForSet(sql, rowMapper);
     Set<Set<Object>> previousGenes = getSqlTemplate(sec).queryForSet(sql, rowMapper);
 
