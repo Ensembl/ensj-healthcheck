@@ -20,19 +20,28 @@ import org.ensembl.healthcheck.testcase.generic.AbstractCompareSchema;
 import org.ensembl.healthcheck.util.ActionAppendable;
 import org.ensembl.healthcheck.util.DBUtils;
 
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.util.*;
+
+
+import java.sql.DriverManager;
+import java.sql.Statement;
+
+
 /**
  * @author mnuhn
- * 
+ *
  * <p>
- * 	Abstract class from which EGCompareSchema tests can inherit. Uses 
- * mysqldiff, which will suggest a patch file, if the schemas differ from one 
+ * 	Abstract class from which EGCompareSchema tests can inherit. Uses
+ * mysqldiff, which will suggest a patch file, if the schemas differ from one
  * another.
  * </p>
  */
 public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 
 	protected final String mysqldiffBin = "mysqldiff";
-	
+
 	public boolean isDoSchemaVersionCheck() {
 		return doSchemaCompatibilityChecks;
 	}
@@ -51,13 +60,13 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 
 	protected boolean doSchemaCompatibilityChecks = true;
 	protected boolean tolerant;
-	
+
 	public EGAbstractCompareSchema() {
 
 		tolerant = true;
 		doSchemaCompatibilityChecks = true;
 	}
-	
+
 	/**
 	 * Should return the property key used to locate a target schema file
 	 */
@@ -67,7 +76,7 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 	 * Should return the property key used to locate a target master schema
 	 */
 	protected abstract String getMasterSchemaKey();
-	
+
 	/**
 	 * @param compareSchemaInstance
 	 * <p>
@@ -81,52 +90,52 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 	) {
 			String definitionFileKey = getDefinitionFileKey();
 			String masterSchemaKey   = getMasterSchemaKey();
-			
-			String definitionFile = System.getProperty(definitionFileKey);			
+
+			String definitionFile = System.getProperty(definitionFileKey);
 			definitionFile = System.getProperty(definitionFileKey);
-			
+
 			if (definitionFile == null) {
-				
+
 				logger.info(
 			        "No schema definition file found! Set "
 			        + definitionFileKey
 			        + " property in "
-			        + TestRunner.getPropertiesFile() 
+			        + TestRunner.getPropertiesFile()
 			        + " if you want to use a table.sql file or similar. "
 			        + "This is not an error if you are using "
 			        + masterSchemaKey);
-				
+
 				String masterSchema = System.getProperty(masterSchemaKey);
-				
+
 				return new CompareToMasterSchema(compareSchemaInstance, masterSchema);
-				
+
 			} else {
 				return new CompareToSchemaFile(compareSchemaInstance, definitionFile);
 			}
 	}
-	
+
 	/**
 	 * @param masterCon
 	 * @param checkCon
-	 * 
+	 *
 	 * <p>
 	 * 	Checks, if the schemas that will be compared are compatible with one
-	 * another. In core databases the relevant information will be in the 
+	 * another. In core databases the relevant information will be in the
 	 * schema_type and schema_version entries of the meta table, in variation
 	 * and funcgen schemas there is only the schema_type.
 	 * </p>
-	 * 
+	 *
 	 */
 	abstract protected boolean assertSchemaCompatibility(
-			Connection masterCon, 
+			Connection masterCon,
 			Connection checkCon
 	);
-	
+
 	public boolean run(DatabaseRegistry dbr) {
-		
+
 		boolean result = true;
 		boolean somethingWasChecked = false;
-		
+
 		CompareSchemaStrategy compareSchemaStrategy = createCompareSchemaStrategy(this);
 
 		SystemCommand systemCommand = new SystemCommand();
@@ -135,7 +144,7 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 		//
 		if (!systemCommand.checkCanExecute(mysqldiffBin)) {
 
-			ReportManager.problem(this, (Connection) null, 
+			ReportManager.problem(this, (Connection) null,
 					"Can't find mysqldiff! "
 					+ this.getShortTestName() + " relies on this program to "
 					+ "compare database schemas.\n"
@@ -148,38 +157,58 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 		}
 
 		Connection masterCon = compareSchemaStrategy.buildMasterConnection();
-		String masterShortName = DBUtils.getShortDatabaseName(masterCon);
+
+		DatabaseRegistryEntry[] databases = dbr.getAll();
+		List<DatabaseRegistryEntry> databasesToRunOn = new LinkedList<DatabaseRegistryEntry>();
+		for (final DatabaseRegistryEntry dbre : databasesToRunOn) {
+		    DatabaseType type = dbre.getType();
+		    if (!appliesToType(type)) { continue; }
+		    databasesToRunOn.add(dbre);
+		}
 
 		final EGAbstractCompareSchema compareSchemaTest = this;
-		DatabaseRegistryEntry[] databases = dbr.getAll();
-		
-		for (final DatabaseRegistryEntry dbre : databases) {
-			
+		if (masterCon == null) {
+
+		    for (final DatabaseRegistryEntry dbre : dbr.getAll()) {
+
+			DatabaseType type = dbre.getType();
+			if (!appliesToType(type)) { continue; }
+
+			ReportManager.problem(compareSchemaTest, dbre.getConnection(), "Couldn't create or connect to master database!");
+		    }
+		    return false;
+		} else {
+		    logger.info("masterCon is not null.");
+		}
+		String masterShortName = DBUtils.getShortDatabaseName(masterCon);
+
+		for (final DatabaseRegistryEntry dbre : databasesToRunOn) {
+
 			DatabaseType type = dbre.getType();
 
 			if (!appliesToType(type)) { continue; }
 
 			final Connection checkCon = dbre.getConnection();
 			if (checkCon == masterCon) { continue; }
-			
+
 			logger.info("Checking schema of " + dbre.getName());
-			
+
 			if (
-				doSchemaCompatibilityChecks 
+				doSchemaCompatibilityChecks
 				&& !assertSchemaCompatibility(masterCon, checkCon)
 			) {
 				result = false;
 				continue;
 			}
-		
+
 			DatabaseServer srv = dbre.getDatabaseServer();
 			final StringBuffer patch = new StringBuffer();
-			
+
 			logger.info("Running " + mysqldiffBin);
-			
+
 			systemCommand.runCmd(
 				new String[] {
-						mysqldiffBin, 
+						mysqldiffBin,
 						"--tolerant",
 						"--host", srv.getHost(),
 						"--port", srv.getPort(),
@@ -187,46 +216,46 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 						"--password", srv.getPass(),
 						"db:" + dbre.getName(),
 						"db:" + masterShortName,
-				}, 
+				},
 				new ActionAppendable() {
 					@Override public void process(String message) {
 						patch.append(message);
 					}
-				}, 
+				},
 				new ActionAppendable() {
 					@Override public void process(String message) {
 						ReportManager.problem(compareSchemaTest, checkCon, message);
 					}
 				}
 			);
-			
+
 			logger.info("Done running " + mysqldiffBin);
-			
+
 			boolean schemasAreEqual = patch.toString().trim().equals("");
 			somethingWasChecked = true;
-			
+
 			if (schemasAreEqual) {
 				ReportManager.correct(
-					compareSchemaTest, 
-					checkCon, 
+					compareSchemaTest,
+					checkCon,
 					"The schema of " + dbre.getName() + " is correct."
 				);
 				continue;
 			} else {
 				result = false;
 			}
-			
+
 			logger.info("Found schema differences.");
-			
+
 			String patchFileNameBase = "schema_patch_from_"+compareSchemaTest.getShortTestName()+".sql";
 			String patchFileDir      = "external_reports/" + dbre.getName();
-			
+
 			new File(patchFileDir).mkdirs();
-			
-			File patchFile = new File(patchFileDir + File.separatorChar + patchFileNameBase); 
-			
+
+			File patchFile = new File(patchFileDir + File.separatorChar + patchFileNameBase);
+
 			// Mysqldiff will insert the name of the master database into the
-			// report. If a temporary database was used, the name will be 
+			// report. If a temporary database was used, the name will be
 			// different during every run. This will cause problems in the
 			// web interface, which assumes that the exact same error is
 			// given for the same problem every time.
@@ -245,8 +274,8 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 					.replaceAll("password=.*?,", "password=*,")
 					;
 
-			
-			ReportManager.problem(compareSchemaTest, checkCon, 
+
+			ReportManager.problem(compareSchemaTest, checkCon,
 					"\n"
 					+ "\nDifferences between the two schemas were found. The "
 					+ "following sql commands would patch the schema of your "
@@ -257,14 +286,14 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 					+ "\n-----------------------------------\n"
 			);
 			try {
-				
+
 				logger.info("Storing patch file in " + patchFile.getCanonicalPath());
-				
+
 				PrintWriter out = new PrintWriter(patchFile);
 				out.println(patchedPatch);
 				out.close();
-				
-				ReportManager.problem(compareSchemaTest, checkCon, 
+
+				ReportManager.problem(compareSchemaTest, checkCon,
 						  "\nA patch file with the commands shown above has been written to:\n"
 						+ patchFile.getCanonicalPath()
 						+ "\n\n"
@@ -273,30 +302,30 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+
 		}
 
 		if (!somethingWasChecked) {
-			
+
 			// Depending on the users configuration this doesn't have to be an
 			// error, but most of the time it will be a misconfiguration.
 			//
 			ReportManager.correct(
-				compareSchemaTest, 
-				masterCon, 
+				compareSchemaTest,
+				masterCon,
 				"Warning: Nothing was compared."
 			);
 		}
-		
+
 		compareSchemaStrategy.cleanup();
 		return result;
 	}
-	
+
 	protected boolean assertSchemaTypesCompatible(
 			Connection masterCon,
 			Connection checkCon
 	) {
-		
+
 		String sql = "SELECT meta_value FROM meta WHERE meta_key='schema_type'";
 		String schemaTypeCheck  = DBUtils.getRowColumnValue(checkCon, sql);
 		String schemaTypeMaster = DBUtils.getRowColumnValue(masterCon, sql);
@@ -306,28 +335,28 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 			return false;
 		}
 		if (schemaTypeCheck.isEmpty()) {
-			
+
 			String checkShortName = DBUtils.getShortDatabaseName(checkCon);
-			
+
 			logger.severe("Can't find schema_type in meta table of " + checkShortName + "!");
 			return false;
 		}
 
 		if (!schemaTypeCheck.equals(schemaTypeMaster)) {
-			
+
 			ReportManager.problem(this, checkCon,
 				"Database schema type error: The schema type of your database "
-				+ "is not that of the database checked." 
+				+ "is not that of the database checked."
 			);
 			return false;
 		}
 		return true;
 	}
-	
+
 	/**
 	 * @param masterCon
 	 * @param checkCon
-	 * 
+	 *
 	 * <p>
 	 * 	Checks, if the schema versions of the two databases are identical. If
 	 * not, it will report this as a problem to the ReportManager.
@@ -336,18 +365,18 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 	 * 	Returns true or false depending on whether or not the schema versions
 	 * were identical.
 	 * </p>
-	 * 
+	 *
 	 */
 	protected boolean assertSchemaVersionCompatible(
-			Connection masterCon, 
+			Connection masterCon,
 			Connection checkCon
 	) {
 		String sql = "SELECT meta_value FROM meta WHERE meta_key='schema_version'";
 		String schemaVersionCheck  = DBUtils.getRowColumnValue(checkCon, sql);
 		String schemaVersionMaster = DBUtils.getRowColumnValue(masterCon, sql);
-		
+
 		String checkShortName = DBUtils.getShortDatabaseName(checkCon);
-		
+
 		if (schemaVersionMaster.isEmpty()) {
 			logger.severe("Can't find schema_version in meta table of the master database!");
 			return false;
@@ -356,18 +385,18 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 			logger.severe("Can't find schema_version in meta table of the " + checkShortName + "!");
 			return false;
 		}
-		
+
 		if (!schemaVersionCheck.equals(schemaVersionMaster)) {
 
 			logger.severe(
 				"Schema versions in " + checkShortName + " and the master "
 				+ "database differ. The test will be aborted."
 			);
-			
-			ReportManager.problem(this, checkCon, 
 
-					  "Database version error: You are comparing " 
-					+ checkShortName + " which has a version " + schemaVersionCheck 
+			ReportManager.problem(this, checkCon,
+
+					  "Database version error: You are comparing "
+					+ checkShortName + " which has a version " + schemaVersionCheck
 					+ " schema with a version " + schemaVersionMaster + " schema.\n"
 					+ "Please ensure the version of the database you are "
 					+ "checking is the same as the version of the schema to "
@@ -383,18 +412,18 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 
 /**
  * @author mnuhn
- * 
+ *
  * <p>
  * 	Concrete implementations of this implement specific ways on comparing
  * schemas depending on which way the user has chosen.
  * </p>
  */
 abstract class CompareSchemaStrategy {
-	
+
 	protected final EGAbstractCompareSchema compareSchemaInstance;
 	protected Connection masterCon;
 	protected Logger logger;
-	
+
 	public CompareSchemaStrategy(EGAbstractCompareSchema compareSchemaInstance) {
 		this.compareSchemaInstance = compareSchemaInstance;
 		this.logger = compareSchemaInstance.getLogger();
@@ -405,16 +434,16 @@ abstract class CompareSchemaStrategy {
 
 /**
  * @author mnuhn
- * 
+ *
  * <p>
  * 	Methods for comparing to a schema file.
  * </p>
  */
 
 class CompareToSchemaFile extends CompareSchemaStrategy {
-	
+
 	protected String definitionFile;
-	
+
 	public CompareToSchemaFile(EGAbstractCompareSchema compareSchemaInstance, String definitionFile) {
 		super(compareSchemaInstance);
 		try {
@@ -424,56 +453,112 @@ class CompareToSchemaFile extends CompareSchemaStrategy {
 		}
 		this.definitionFile = definitionFile;
 	}
-	
+
 	protected Connection buildMasterConnection() {
-		
+
 		logger.info("About to import " + definitionFile);
 		try {
 			masterCon = compareSchemaInstance.importSchema(definitionFile);
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException(e);
 		}
+		catch (RuntimeException e) {
+
+		    String msg = e.getMessage();
+
+		    // This error message is generated, in importSchema when
+		    // the schema couldn't be loaded. In that case the databases
+		    // has been created, but is not complete.
+		    //
+		    // Deleting is not straightforward, because the name is
+		    // generated in the method and is unknown outside of it.
+		    // masterCon is not set to anything. The only way to get at
+		    // the name of the database is via the error message.
+		    //
+		    // The database is deleted here via a drop. We return null
+		    // to indicate failure. In the future maybe this could be
+		    // changed into an exception being thrown.
+		    //
+		    // In order to make sure that only temporary databases can
+		    // be deleted, we make the string "_temp_" part of the
+		    // pattern for the database name.
+		    //
+		    Pattern p = Pattern.compile("^Could not load schema for database (_temp_.+)$");
+		    Matcher m = p.matcher(msg);
+		    if (m.find()) {
+
+			String dbName = m.group(1);
+			logger.info("Schema loading problem on " + dbName);
+			masterCon = null;
+
+			try {
+			    Class.forName(System.getProperty("driver"));
+
+			    String databaseURL = System.getProperty("databaseURL");
+			    String user = System.getProperty("user");
+			    String password = System.getProperty("password");
+
+			    Connection tmpCon = DriverManager.getConnection(databaseURL, user,
+					    password);
+
+			    String sql = "drop database " + dbName;
+			    logger.info("Dropping temporary database " + dbName);
+			    Statement stmt = tmpCon.createStatement();
+			    stmt.execute(sql);
+			}
+			catch (Exception e2) {
+			    throw new RuntimeException(e2);
+			}
+		    } else {
+			logger.info("Unknown problem");
+		    }
+		    return masterCon;
+		}
 		logger.info("Got connection to "
 		    + DBUtils.getShortDatabaseName(masterCon));
 		return masterCon;
 	}
-	
-	protected void cleanup() {
-		String dbName = DBUtils.getShortDatabaseName(masterCon);
-		
+
+	protected void cleanup(String dbName) {
+
 		if (dbName.indexOf("_temp_") > -1) {
 			compareSchemaInstance.removeDatabase(masterCon);
 			logger.info("Removed " + DBUtils.getShortDatabaseName(masterCon));
 		}
 	}
+
+	protected void cleanup() {
+		String dbName = DBUtils.getShortDatabaseName(masterCon);
+		cleanup(dbName);
+	}
 }
 
 /**
  * @author mnuhn
- * 
+ *
  * <p>
  * 	Methods for comparing to a master schema.
  * </p>
  */
-class CompareToMasterSchema extends CompareSchemaStrategy {	
+class CompareToMasterSchema extends CompareSchemaStrategy {
 
 	protected String masterSchema;
-	
+
 	public CompareToMasterSchema(EGAbstractCompareSchema compareSchemaInstance, String masterSchema) {
 		super(compareSchemaInstance);
 		logger.fine("Will master schema: " + masterSchema);
 		this.masterSchema = masterSchema;
 	}
-	
+
 	protected Connection buildMasterConnection() {
-		
+
 		masterCon = compareSchemaInstance.getSchemaConnection(masterSchema);
-		
+
 		logger.fine("Opened connection to master schema in "
 			    + DBUtils.getShortDatabaseName(masterCon));
-		
+
 		return masterCon;
 	}
-	protected void cleanup() {}		
-	
+	protected void cleanup() {}
+
 }
