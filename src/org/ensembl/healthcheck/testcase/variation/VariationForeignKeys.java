@@ -75,6 +75,7 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			result &= checkForOrphans(con, "individual_genotype_multiple_bp", "individual_id", "individual", "individual_id", true);
 			result &= checkForOrphans(con, "individual_population", "individual_id", "individual", "individual_id", true);
 			result &= checkForOrphans(con, "individual_population", "population_id", "population", "population_id", true);
+			result &= checkForOrphans(con, "phenotype", "phenotype_id", "phenotype_feature", "phenotype_id", true);
 			result &= checkForOrphans(con, "phenotype_feature", "phenotype_id", "phenotype", "phenotype_id", true);
 			result &= checkForOrphans(con, "phenotype_feature", "source_id", "source", "source_id", true);
 			result &= checkForOrphans(con, "phenotype_feature", "study_id", "study", "study_id", true);
