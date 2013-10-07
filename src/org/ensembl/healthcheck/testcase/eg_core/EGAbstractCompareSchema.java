@@ -16,11 +16,9 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.SystemCommand;
 import org.ensembl.healthcheck.TestRunner;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
-import org.ensembl.healthcheck.testcase.generic.AbstractCompareSchema;
 import org.ensembl.healthcheck.util.ActionAppendable;
 import org.ensembl.healthcheck.util.DBUtils;
 
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.*;
 
@@ -158,7 +156,8 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 
 		Connection masterCon = compareSchemaStrategy.buildMasterConnection();
 
-		DatabaseRegistryEntry[] databases = dbr.getAll();
+		// Get all databases on which this test shall be run.
+		//
 		List<DatabaseRegistryEntry> databasesToRunOn = new LinkedList<DatabaseRegistryEntry>();
 		for (final DatabaseRegistryEntry dbre : databasesToRunOn) {
 		    DatabaseType type = dbre.getType();
@@ -168,25 +167,24 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 
 		final EGAbstractCompareSchema compareSchemaTest = this;
 		if (masterCon == null) {
-
+			// This means we weren't able to get a connection to a master 
+			// database.
 		    for (final DatabaseRegistryEntry dbre : dbr.getAll()) {
 
-			DatabaseType type = dbre.getType();
-			if (!appliesToType(type)) { continue; }
-
-			ReportManager.problem(compareSchemaTest, dbre.getConnection(), "Couldn't create or connect to master database!");
+				DatabaseType type = dbre.getType();
+				if (!appliesToType(type)) { continue; }
+				
+				// Fail all databases to which this test would have applied.
+				ReportManager.problem(compareSchemaTest, dbre.getConnection(), "Couldn't create or connect to master database!");
 		    }
 		    return false;
 		} else {
-		    logger.info("masterCon is not null.");
+		    logger.fine("Got connection to a master database.");
 		}
+		
 		String masterShortName = DBUtils.getShortDatabaseName(masterCon);
 
 		for (final DatabaseRegistryEntry dbre : databasesToRunOn) {
-
-			DatabaseType type = dbre.getType();
-
-			if (!appliesToType(type)) { continue; }
 
 			final Connection checkCon = dbre.getConnection();
 			if (checkCon == masterCon) { continue; }
