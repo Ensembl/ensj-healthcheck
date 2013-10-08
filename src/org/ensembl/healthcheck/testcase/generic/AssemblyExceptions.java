@@ -19,12 +19,17 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.SqlTemplate;
 
 /**
  * Healthcheck for the assembly_exception table.
@@ -56,7 +61,44 @@ public class AssemblyExceptions extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		Connection con = dbre.getConnection();
+                result &= checkStartEnd(dbre);
+                result &= seqMapping(dbre);
+                return result;
+        }
+
+        private boolean seqMapping(DatabaseRegistryEntry dbre) {
+
+                boolean result = false;
+
+                SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+                Connection con = dbre.getConnection();
+                String all_sql = "SELECT distinct sr.name FROM seq_region sr, assembly_exception ax where ax.seq_region_id = sr.seq_region_id and exc_type not in ('PAR')";
+                List<String> all_exc = t.queryForDefaultObjectList(all_sql, String.class);
+
+                String daf_sql = "SELECT distinct sr.name FROM seq_region sr, assembly_exception ax, dna_align_feature daf, analysis a "
+                       + " WHERE sr.seq_region_id = ax.seq_region_id AND exc_type not in ('HAP') AND sr.seq_region_id = daf.seq_region_id "
+                       + " AND daf.analysis_id = a.analysis_id AND a.logic_name = 'alt_seq_mapping'";
+                List<String> daf_exc = t.queryForDefaultObjectList(daf_sql, String.class);
+
+                Set<String> missing = new HashSet<String>(all_exc);
+                missing.removeAll(daf_exc);
+
+                if(missing.isEmpty()) {
+                     result = true;
+                }
+                for(String name: missing) {
+                     String msg = String.format("Assembly exception '%s' does not have a sequence mapping", name);
+                     ReportManager.problem(this, dbre.getConnection(), msg);
+                }
+
+                return result;
+        }
+
+
+        private boolean checkStartEnd(DatabaseRegistryEntry dbre) {
+
+                Connection con = dbre.getConnection();
+                boolean result = true;
 
 		// check that seq_region_end > seq_region_start
 		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM assembly_exception WHERE seq_region_start > seq_region_end");
