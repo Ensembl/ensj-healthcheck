@@ -64,6 +64,32 @@ public class AssemblyExceptions extends SingleDatabaseTestCase {
                 result &= checkStartEnd(dbre);
                 result &= seqMapping(dbre);
                 result &= uniqueRegion(dbre);
+                result &= checkExternalDB(dbre);
+
+                return result;
+        }
+
+        private boolean checkExternalDB(DatabaseRegistryEntry dbre) {
+
+                boolean result = false;
+
+                SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+                Connection con = dbre.getConnection();
+                String unique_sql = "SELECT distinct sr.name FROM seq_region sr, assembly_exception ax, external_db e, "
+                       + " dna_align_feature daf, analysis a WHERE a.analysis_id = daf.analysis_id AND "
+                       + " daf.seq_region_id = sr.seq_region_id AND ax.seq_region_id = sr.seq_region_id AND "
+                       + " e.external_db_id = daf.external_db_id AND logic_name = 'alt_seq_mapping' AND "
+                       + " exc_type not in ('PAR') AND e.db_name != 'GRC_primary_assembly'" ;
+                List<String> unique_regions = t.queryForDefaultObjectList(unique_sql, String.class);
+
+                if (unique_regions.isEmpty()) {
+                     result = true;
+                }
+
+                for (String region: unique_regions) {
+                     String msg = String.format("Assembly exception %s has a mapping which is not from 'GRC_primary_assembly'", region);
+                     ReportManager.problem(this, dbre.getConnection(), msg);
+                }
 
                 return result;
         }
