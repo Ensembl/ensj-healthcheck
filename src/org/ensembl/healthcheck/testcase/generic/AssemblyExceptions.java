@@ -63,6 +63,33 @@ public class AssemblyExceptions extends SingleDatabaseTestCase {
 
                 result &= checkStartEnd(dbre);
                 result &= seqMapping(dbre);
+                result &= uniqueRegion(dbre);
+
+                return result;
+        }
+
+        private boolean uniqueRegion(DatabaseRegistryEntry dbre) {
+
+                boolean result = false;
+
+                SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+                Connection con = dbre.getConnection();
+                String unique_sql = "SELECT distinct sr.name FROM seq_region sr, assembly_exception ax, seq_region sr2, " 
+                       + " dna_align_feature daf, analysis a WHERE a.analysis_id = daf.analysis_id AND "
+                       + " daf.seq_region_id = sr.seq_region_id AND ax.seq_region_id = sr.seq_region_id AND "
+                       + " ax.exc_seq_region_id = sr2.seq_region_id AND logic_name = 'alt_seq_mapping' AND "
+                       + " exc_type not in ('PAR') AND sr2.name != hit_name" ;
+                List<String> unique_regions = t.queryForDefaultObjectList(unique_sql, String.class);
+
+                if (unique_regions.isEmpty()) {
+                     result = true;
+                }
+
+                for (String region: unique_regions) {
+                     String msg = String.format("Assembly exception %s maps more than one reference region", region);
+                     ReportManager.problem(this, dbre.getConnection(), msg);
+                }
+
                 return result;
         }
 
