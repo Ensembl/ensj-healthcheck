@@ -16,18 +16,15 @@ public interface ConfigureTestRunner {
 			+ "The allowed options are \"Discoverybased\" and "
 			+ "\"ConfigurationBased\"")
 	String getTestRegistryType();
-
 	boolean isTestRegistryType();
 
 	@Option(shortName = "R", description = "Specify the reporter type that will be used. "
 			+ "The allowed options are \"Database\" and \"Text\".")
 	String getReporterType();
-
 	boolean isReporterType();
 
         @Option(shortName = "o", longName = "output", description = "Specify the level of output that will be used. "
-                        + "The allowed options are \"All\", \"None\", \"Problem\", \"Corrent\", \"Warning\" and \"Info\", .")
-        String getLevel();
-
+                        + "The allowed options are \"All\", \"None\", \"Problem\", \"Current\", \"Warning\" and \"Info\", .")
+        String getOutputLevel();
         boolean isOutputLevel();
 }
