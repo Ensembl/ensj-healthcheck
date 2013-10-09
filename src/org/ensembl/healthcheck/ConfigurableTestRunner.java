@@ -490,18 +490,6 @@ public class ConfigurableTestRunner extends TestRunner {
 			);
 		}		
 		
-		/* Doing this differently now above.
-		 * 
-		if (!testsThrowingAnException.isEmpty()) {
-			
-			ReportManager.problem(
-				new TestRunnerSelfCheck(), 
-				"Skipped tests", 
-				"The following tests were not run, because they threw an exception:\n" + testListToBulletPoints(testsThrowingAnException)
-			);
-		}
-		*/		
-		
 		if (!testsSkippedLongRunning.isEmpty()) {
 			
 			ReportManager.correct(
@@ -643,8 +631,6 @@ public class ConfigurableTestRunner extends TestRunner {
 
 					try {
 						ReportManager.startTestCase(testCase, database);
-						logger.info("Running " + testCase.getName() + " ["
-								+ database.getName() + "]");
 
 						testCase.types();
 						
@@ -655,9 +641,6 @@ public class ConfigurableTestRunner extends TestRunner {
 						
 						ReportManager
 								.finishTestCase(testCase, result, database);
-						logger.info(testCase.getName() + " ["
-								+ database.getName() + "]"
-								+ (result ? "PASSED" : "FAILED"));
 
 						checkRepair(testCase, database);
 						numberOfTestsRun++;
