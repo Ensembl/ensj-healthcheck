@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
@@ -40,6 +41,9 @@ public class AssemblyExceptions extends SingleDatabaseTestCase {
 	/**
 	 * Check the assembly_exception table.
 	 */
+
+
+
 	public AssemblyExceptions() {
 		addToGroup("post_genebuild");
 		addToGroup("pre-compara-handover");
@@ -49,6 +53,17 @@ public class AssemblyExceptions extends SingleDatabaseTestCase {
 		addToGroup("compara-ancestral");
 
 	}
+
+        public void types() {
+
+                removeAppliesToType(DatabaseType.ESTGENE);
+                removeAppliesToType(DatabaseType.CDNA);
+                removeAppliesToType(DatabaseType.VEGA);
+                removeAppliesToType(DatabaseType.SANGER_VEGA);
+                removeAppliesToType(DatabaseType.OTHERFEATURES);
+                removeAppliesToType(DatabaseType.RNASEQ);
+
+        }
 
 	/**
 	 * Check the data in the assembly_exception table. Note referential integrity checks are done in CoreForeignKeys.
