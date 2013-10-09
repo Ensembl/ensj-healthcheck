@@ -24,4 +24,10 @@ public interface ConfigureTestRunner {
 	String getReporterType();
 
 	boolean isReporterType();
+
+        @Option(shortName = "o", longName = "output", description = "Specify the level of output that will be used. "
+                        + "The allowed options are \"All\", \"None\", \"Problem\", \"Corrent\", \"Warning\" and \"Info\", .")
+        String getLevel();
+
+        boolean isOutputLevel();
 }
