@@ -144,7 +144,7 @@ public class AssemblyExceptions extends SingleDatabaseTestCase {
                 List<String> all_exc = t.queryForDefaultObjectList(all_sql, String.class);
 
                 String daf_sql = "SELECT distinct sr.name FROM seq_region sr, assembly_exception ax, dna_align_feature daf, analysis a "
-                       + " WHERE sr.seq_region_id = ax.seq_region_id AND exc_type not in ('HAP') AND sr.seq_region_id = daf.seq_region_id "
+                       + " WHERE sr.seq_region_id = ax.seq_region_id AND exc_type not in ('PAR') AND sr.seq_region_id = daf.seq_region_id "
                        + " AND daf.analysis_id = a.analysis_id AND a.logic_name = 'alt_seq_mapping'";
                 List<String> daf_exc = t.queryForDefaultObjectList(daf_sql, String.class);
 
