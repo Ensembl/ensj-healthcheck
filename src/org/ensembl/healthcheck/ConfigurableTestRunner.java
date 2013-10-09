@@ -327,6 +327,8 @@ public class ConfigurableTestRunner extends TestRunner {
 
 		TestRegistry testRegistry = this.testRegistry;
 		Reporter reporter = this.reporter;
+                String outputLevelString = configuration.getLevel();
+                setOutputLevel(outputLevelString);
 
 		ReportManager.setReporter(reporter);
 
