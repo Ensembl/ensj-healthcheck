@@ -206,9 +206,9 @@ public class TestInstantiator {
 			theClassInstance = s.newInstance();
 
 		} catch (InstantiationException e) {
-			log.warning("Could not instantiate " + s + ", got an InstantiationException!");
+			log.config("Could not instantiate " + s + ", got an InstantiationException!");
 		} catch (IllegalAccessException e) {
-			log.warning("Could not instantiate " + s + ", got an IllegalAccessException!");
+			log.config("Could not instantiate " + s + ", got an IllegalAccessException!");
 		}
 		
 		if (theClassInstance == null) {
@@ -321,7 +321,7 @@ public class TestInstantiator {
 		// If so, we have an ambiguous short name
 		//
 		if (aliasAlreadyMappedToOtherClass) {
-			log.warning(
+			log.config(
 			      currentKeyValuePair.key   + " is an ambiguous alias!\n"
 				+ currentKeyValuePair.value + "\n"
 				+ simpleNameToClass.get(currentKeyValuePair.key) + "\n"
