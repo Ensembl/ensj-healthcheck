@@ -74,8 +74,8 @@ public class SQLParser {
 
 				line = line.trim();
 
-				// skip comments and blank lines
-				if (line.startsWith("#") || line.length() == 0) {
+				// skip comments, blank lines and example sql command lines
+				if (line.startsWith("#") || line.length() == 0 || line.startsWith("@")) {
 					continue;
 				}
 
