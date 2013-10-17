@@ -13,16 +13,19 @@ import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.SqlTemplate;
 import org.apache.commons.collections.ListUtils;
+import org.ensembl.healthcheck.util.CollectionUtils;
 
 
 
@@ -68,6 +71,12 @@ public class Karyotype extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
+                Species species = dbre.getSpecies();
+                Set<Species> karyotypeSpecies =
+                      CollectionUtils.createLinkedHashSet(Species.DROSOPHILA_MELANOGASTER,
+                                                Species.HOMO_SAPIENS,
+                                                Species.MUS_MUSCULUS,
+                                                Species.RATTUS_NORVEGICUS);
 
                 result &= karyotypeExists(dbre);
 
@@ -78,39 +87,50 @@ public class Karyotype extends SingleDatabaseTestCase {
 		// same.
 		// The SQL returns failures
 
-               String[] seqRegionNames = DBUtils.getColumnValues(con,
+                 if(karyotypeSpecies.contains(species) == false) {
+                         return true;
+                 }
+
+                 String[] seqRegionNames = DBUtils.getColumnValues(con,
                                 "SELECT s.name FROM seq_region s, coord_system cs WHERE s.coord_system_id=cs.coord_system_id AND cs.name='chromosome' AND cs.attrib='default_version' AND s.name NOT LIKE 'LRG%' AND s.name != 'MT'");
 
-                String[] patches = DBUtils.getColumnValues(con, "SELECT sr.name FROM seq_region sr, assembly_exception ae WHERE sr.seq_region_id=ae.seq_region_id AND ae.exc_type IN ('PATCH_NOVEL', 'PATCH_FIX')");
-
-                List<String> nonPatchSeqRegions = ListUtils.removeAll(Arrays.asList(seqRegionNames), Arrays.asList(patches));
+                 String[] patches = DBUtils.getColumnValues(con, "SELECT sr.name FROM seq_region sr, assembly_exception ae WHERE sr.seq_region_id=ae.seq_region_id AND ae.exc_type IN ('PATCH_NOVEL', 'PATCH_FIX', 'HAP')");
+                 List<String> patchList = Arrays.asList(patches);
+                 List<String> nonPatchSeqRegions = ListUtils.removeAll(Arrays.asList(seqRegionNames), patchList);
 
 		int count = 0;
 		try {
-			PreparedStatement stmt = con.prepareStatement("SELECT sr.name, MAX(kar.seq_region_end), sr.length FROM seq_region sr, karyotype kar WHERE sr.seq_region_id=kar.seq_region_id AND sr.seq_region_id=? GROUP BY kar.seq_region_id HAVING sr.length <> MAX(kar.seq_region_end)");
+			PreparedStatement stmt = con.prepareStatement("SELECT sr.name, MAX(kar.seq_region_end), sr.length FROM seq_region sr, karyotype kar WHERE sr.seq_region_id=kar.seq_region_id AND sr.name = ? GROUP BY kar.seq_region_id");
 
-                        for (String seqRegion : nonPatchSeqRegions) {
+                        for (String seqRegion : seqRegionNames) {
                                 stmt.setString(1, seqRegion);
         			ResultSet rs = stmt.executeQuery();
-        			if (rs != null) {
-	        			while (rs.next() && count < 50) {
-		        			count++;
-			        		String chrName = rs.getString(1);
-				        	int karLen = rs.getInt(2);
-					        int chrLen = rs.getInt(3);
-        					String prob = "";
-	        				int bp = 0;
-		        			if (karLen > chrLen) {
-			        			bp = karLen - chrLen;
-				        		prob = "longer";
-					        } else {
-        						bp = chrLen - karLen;
-	        					prob = "shorter";
-		        			}
-			        		result = false;
+                                boolean hasKaryotype = false;
+                                while (rs.next() && count < 50) {
+                                        hasKaryotype = true;
+                                        if (patchList.contains(seqRegion)) { continue; }
+	        			count++;
+		        		String chrName = rs.getString(1);
+			        	int karLen = rs.getInt(2);
+				        int chrLen = rs.getInt(3);
+       					String prob = "";
+        				int bp = 0;
+	        			if (karLen > chrLen) {
+		        			bp = karLen - chrLen;
+			        		prob = "longer";
+				        } else {
+       						bp = chrLen - karLen;
+        					prob = "shorter";
+	        			}
+                                        if (bp > 0) {
+        		        		result = false;
         					ReportManager.problem(this, con, "Chromosome " + chrName + " is " + bp + "bp " + prob + " in the karyotype table than " + "in the seq_region table");
                                         }
-				}
+                                }
+                                if (!hasKaryotype) {
+                                        result = false;
+                                        ReportManager.problem(this, con, "Chromosome " + seqRegion + " has no karyotype data");
+                                }
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
