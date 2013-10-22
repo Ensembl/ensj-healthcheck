@@ -179,7 +179,7 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 			
 		//Die if we don't see the current schema build and is the only one that is_current
 		//Otherwise we cannot be sure that all seq_region records have been updated
-		String[] currentSchemaBuilds = DBUtils.getColumnValues(efgCon,  "SELECT schema_build FROM coord_system where name='chromosome' and is_current=1");
+		String[] currentSchemaBuilds = DBUtils.getColumnValues(efgCon,  "SELECT schema_build FROM coord_system where is_current=1 and schema_build is not null");
 		
 		if ((currentSchemaBuilds.length != 1) ||
 			(! currentSchemaBuilds[0].equals(schemaBuild))){
