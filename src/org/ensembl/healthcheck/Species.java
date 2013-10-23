@@ -15,7 +15,7 @@ public enum Species {
 	ANOLIS_CAROLINENSIS(28377, "AnoCar", "ENSACA", "lizard,anole,anolis_lizard,anolis,anolis_carolinensis"),
 	ANOPHELES_GAMBIAE(7165, "AgamP", "IGNORE", "mosquito,anopheles,agambiae,anophelesgambiae,anopheles_gambiae"),
 	APIS_MELLIFERA(7460, "AMEL", "", "honeybee,honey_bee,apis,amellifera,apismellifera,apis_mellifera"),
-  ASTYANAX_MEXICANUS(7994, "AstMex", "ENSAME", "amex,amexicanus,astmex,astyanax mexicanus,astyanax_mexicanus,cave fish"),
+  ASTYANAX_MEXICANUS(7994, "AstMex", "ENSAMX", "amex,amexicanus,astmex,astyanax mexicanus,astyanax_mexicanus,cave fish"),
 	BOS_TAURUS(9913, "UMD", "ENSBTA", "cow,btaurus,bostaurus,bos_taurus"),
 	CAENORHABDITIS_BRIGGSAE(6238, "CBR", "", "briggsae,cbriggsae,caenorhabditisbriggsae,caenorhabditis_briggsae"),
 	CAENORHABDITIS_ELEGANS(6239, "WBcel", "IGNORE", "elegans,celegans,caenorhabditiselegans,caenorhabditis_elegans"),
