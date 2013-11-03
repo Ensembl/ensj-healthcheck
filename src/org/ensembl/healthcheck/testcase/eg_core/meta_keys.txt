@@ -1,6 +1,7 @@
 assembly.accession
 assembly.coverage_depth
 assembly.date
+assembly.description
 assembly.default
 assembly.description
 assembly.long_name
@@ -49,6 +50,9 @@ sample.variation_param
 sample.variation_text
 schema_type
 schema_version
+schema.load_started
+schema.load_complete
+schema.copy_src
 simple_featurebuild.level
 species.alias
 species.biomart_dataset
