@@ -179,13 +179,15 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 			
 		//Die if we don't see the current schema build and is the only one that is_current
 		//Otherwise we cannot be sure that all seq_region records have been updated
-		String[] currentSchemaBuilds = DBUtils.getColumnValues(efgCon,  "SELECT schema_build FROM coord_system where is_current=1 and schema_build is not null");
+		String csName = DBUtils.getRowColumnValue(coreDbre.getConnection(),  "SELECT name FROM coord_system order by rank desc limit 1");
+		String[] currentSchemaBuilds = DBUtils.getColumnValues(efgCon,  "SELECT schema_build FROM coord_system where is_current=1 and schema_build is not null" +
+		    " AND name='" + csName + "'");
 		
 		if ((currentSchemaBuilds.length != 1) ||
 			(! currentSchemaBuilds[0].equals(schemaBuild))){
 			
 			
-			ReportManager.problem(this, efgCon, "Could not identify a unique current chromosome coord_system.schema_build to match " + schemaBuild);
+			ReportManager.problem(this, efgCon, "Could not identify a unique current coord_system.schema_build to match " + schemaBuild);
 			return false;	
 		}
 		
@@ -233,6 +235,8 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 			//Not enirely true, there are plenty of data changes which can cause a version bump which don't affect array mapping				
       
       //Let's just get all of them first, and warn if there are any which don't match the assemblyBuild
+
+      //Update to count and list counts for each obj type, db_release and analysis_id?
       String [] exdbIDs = DBUtils.getColumnValues
           (
            efgCon, "select distinct edb.external_db_id from external_db edb " + 
@@ -240,6 +244,11 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
            " and ox.ensembl_object_type in ('Probe', 'ProbeFeature', 'ProbeSet')"
            );
  
+      //need edb ids here as edbClause is used elsewhere
+      //Update to count and list counts for each obj type, db_release and analysis_id?
+      //select edb.db_release, ox.ensembl_object_type, count(*), edb.external_db_id, a.logic_name from external_db edb  join xref x on edb.external_db_id=x.external_db_id join object_xref ox on x.xref_id=ox.xref_id and ox.ensembl_object_type in ('Probe', 'ProbeFeature', 'ProbeSet') join analysis a on ox.analysis_id=a.analysis_id group by edb.db_release, ox.ensembl_object_type, a.logic_name;
+      
+
       //Catch absent edbs
 
 			if(exdbIDs.length == 0){
@@ -268,12 +277,18 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
                 ReportManager.warning(this, efgCon, 
                                       "Xrefs are associated with an external_db which does not match the current assembly/build:\t" +
                                       Arrays.toString(dbReleases));
+
+                //This is actually unsafe now. As we can't identify whether a transcript set has been updated
+                //simply using the schema_build. Will have to use meta keys
+
             }
         }
         else{ // >1 simply list all the db_releases
+            //This maybe valid if we have ProbeFeature genomic and transcript xrefs on different releases
             ReportManager.warning(this, efgCon, 
                                   "Found multiple external_db db_release versions with xrefs:\n\t" + 
                                   Arrays.toString(dbReleases));
+            //These may not also match the current build, but not test here
         }
       }
 		
