@@ -20,7 +20,7 @@ import org.ensembl.healthcheck.util.SqlTemplate;
 public class MetaForCompara extends AbstractEgCoreTestCase {
 
 	private final static String META_QUERY = "select meta_value from meta where meta_key=? and species_id=?";
-	private final static String COORD_VERSION_QUERY = "select version from coord_system where rank=(SELECT MIN(rank) FROM coord_system) and species_id=?";
+	private final static String COORD_VERSION_QUERY = "select version from coord_system where rank=(SELECT MIN(rank) FROM coord_system where species_id=?) and species_id=?";
 	private static final String GB_START = "genebuild.start_date";
 	private static final String ASS_DEF = "assembly.default";
 
@@ -56,7 +56,7 @@ public class MetaForCompara extends AbstractEgCoreTestCase {
 		if (passes) {
 			// 2. check to see if it matches the default coord_system version
 			String version = template.queryForDefaultObject(
-					COORD_VERSION_QUERY, String.class, speciesId);
+					COORD_VERSION_QUERY, String.class, speciesId, speciesId);
 			if (!assDef.equals(version)) {
 				passes = false;
 				ReportManager
@@ -67,7 +67,7 @@ public class MetaForCompara extends AbstractEgCoreTestCase {
 										+ ASS_DEF
 										+ " ("
 										+ assDef
-										+ ") does not match rank 1 coord_system version "
+										+ ") does not match min rank coord_system version "
 										+ version + " for species " + speciesId);
 			}
 		}
