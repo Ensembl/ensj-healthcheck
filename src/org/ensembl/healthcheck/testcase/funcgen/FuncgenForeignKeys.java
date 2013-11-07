@@ -57,6 +57,9 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 		String[] featTabs = getFuncgenFeatureTables();
 		//We need to write a new method here to handle denormalised link tables
 		
+		
+		try{
+		
 		result &= checkForOrphans(con, "annotated_feature", "feature_set_id", "feature_set", "feature_set_id", true);
 		
 		result &= checkForOrphans(con, "array", "array_id", "array_chip", "array_id", false);
@@ -103,19 +106,18 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 		result &= checkForOrphansWithConstraint(con, "data_set", "feature_set_id", "feature_set", "feature_set_id", "feature_set_id != 0");
 		
 		
-		//design_type?
+
 		
-		result &= checkForOrphans(con, "input_set", "experiment_id", "experiment", "experiment_id", true);
+		result &= checkForOrphans(con, "input_subset", "experiment_id", "experiment", "experiment_id", true); 
 		
 		result &= checkForOrphans(con, "experimental_chip", "experiment_id", "experiment", "experiment_id", true);
 		
 		result &= checkForOrphans(con, "experimental_chip", "feature_type_id", "feature_type", "feature_type_id", true);
 		
-		//experimental design?
 		
 		result &= checkForOrphans(con, "experiment", "experimental_group_id", "experimental_group", "experimental_group_id", true);
 		result &= checkForOrphansWithConstraint(con, "experiment", "mage_xml_id", "mage_xml", "mage_xml_id", "mage_xml_id is NOT NULL");
-		//experimental variable?
+
 		
 		result &= checkForOrphans(con, "external_feature", "feature_set_id", "feature_set", "feature_set_id", true);
 		
@@ -128,8 +130,15 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 		result &= checkForOrphans(con, "result_set", "feature_type_id", "feature_type", "feature_type_id", true);
 		
 		result &= checkForOrphans(con, "input_set", "feature_type_id", "feature_type", "feature_type_id", true);
+	
+	  result &= checkForOrphans(con, "input_set", "analysis_id", "analysis", "analysis_id", true);
 		
-		result &= checkForOrphans(con, "input_set", "input_set_id", "input_subset", "input_set_id", false);
+		result &= checkForOrphans(con, "input_set", "input_set_id", "input_set_input_subset", "input_set_id", false);
+		
+		result &= checkForOrphans(con, "input_set_input_subset", "input_subset_id", "input_subset", "input_subset_id", true);
+    
+    result &= checkForOrphans(con, "input_subset", "feature_type_id", "feature_type", "feature_type_id", true);
+    result &= checkForOrphans(con, "input_subset", "cell_type_id", "cell_type", "cell_type_id", true);
 
 		//Need to check for input_sets which are nor present in supporting_set and result_set_input
 		//reverse is already done, but we need this logical && test
@@ -286,6 +295,16 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 				result = false;
 			}
 
+		}
+		}
+		catch(Exception e){ //Catch all possible exceptions
+		  ReportManager   
+      .problem(
+                      this,
+                      con,
+                      "HealthCheck generated an exception:\n\t"
+                                      + e.getMessage());
+		  result = false;
 		}
 
 	
