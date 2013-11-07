@@ -15,8 +15,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.util.SqlTemplate;
 
 /**
- * Test to make sure we're not using ENA as the provider where we could be using
- * something better and more accurate
+ * Test to make sure assembly.accession is set and available
  * 
  * @author dstaines
  * 
@@ -24,7 +23,7 @@ import org.ensembl.healthcheck.util.SqlTemplate;
 public class AssemblyAccession extends AbstractEgCoreTestCase {
 
 	private final static String META_VAL = "select meta_value from meta where meta_key=? and species_id=?";
-	private final static Pattern ASS_PAT = Pattern.compile("GC[AF]_[0-9]+\\.?[0-9]*");
+	private final static Pattern ASS_PAT = Pattern.compile("GCA_[0-9]+\\.[0-9]+");
 
 	public AssemblyAccession() {
 		super();
