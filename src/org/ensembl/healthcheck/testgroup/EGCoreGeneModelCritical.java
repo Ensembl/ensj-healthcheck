@@ -6,6 +6,7 @@ import org.ensembl.healthcheck.testcase.eg_core.DuplicateTopLevel;
 import org.ensembl.healthcheck.testcase.eg_core.EGCompareCoreSchema;
 import org.ensembl.healthcheck.testcase.eg_core.ENASeqRegionSynonyms;
 import org.ensembl.healthcheck.testcase.eg_core.EnaSeqRegionName;
+import org.ensembl.healthcheck.testcase.eg_core.MultipleENASeqRegionSynonyms;
 import org.ensembl.healthcheck.testcase.eg_core.PeptideTranslationAttribs;
 import org.ensembl.healthcheck.testcase.eg_core.ProteinCodingGene;
 import org.ensembl.healthcheck.testcase.eg_core.ProteinTranslation;
@@ -62,7 +63,7 @@ public class EGCoreGeneModelCritical extends GroupOfTests {
 			ProteinCodingGene.class,
 			SeqRegionAttribsPresent.class, 
 			SeqRegionCoordSystem.class,
-			SeqRegionsTopLevel.class, 
+			SeqRegionsTopLevel.class,
 			StableID.class, 
 			Strand.class,
 			TranscriptsTranslate.class, 
@@ -72,7 +73,8 @@ public class EGCoreGeneModelCritical extends GroupOfTests {
 			EnaSeqRegionName.class,
 			SimpleFeatureAnalysisTypes.class,
 			AssemblyMapping.class,
-			ENASeqRegionSynonyms.class
+			ENASeqRegionSynonyms.class,
+			MultipleENASeqRegionSynonyms.class
 		);
 	}
 }
