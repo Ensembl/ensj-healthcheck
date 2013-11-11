@@ -50,7 +50,7 @@ public class ComparePreviousVersionGOXrefs extends ComparePreviousVersionBase {
 
 	protected Map getCounts(DatabaseRegistryEntry dbre) {
 
-		String sql = "SELECT substring_index(substring_index(info_text,' ',2),' ',-1) AS species, count(*) FROM xref x WHERE dbprimary_acc like 'GO%' and info_type not in ('UNMAPPED', 'DEPENDENT') GROUP BY species";
+		String sql = "SELECT substring_index(substring_index(info_text,' ',2),' ',-1) AS species, count(*) FROM xref x WHERE dbprimary_acc like 'GO:%' and info_type not in ('UNMAPPED', 'DEPENDENT') GROUP BY species";
 
 		return getCountsBySQL(dbre, sql);
 
