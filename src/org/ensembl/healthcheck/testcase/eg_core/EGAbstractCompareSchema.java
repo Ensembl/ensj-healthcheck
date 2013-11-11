@@ -159,7 +159,7 @@ public abstract class EGAbstractCompareSchema extends MultiDatabaseTestCase {
 		// Get all databases on which this test shall be run.
 		//
 		List<DatabaseRegistryEntry> databasesToRunOn = new LinkedList<DatabaseRegistryEntry>();
-		for (final DatabaseRegistryEntry dbre : databasesToRunOn) {
+		for (final DatabaseRegistryEntry dbre : dbr.getAll()) {
 		    DatabaseType type = dbre.getType();
 		    if (!appliesToType(type)) { continue; }
 		    databasesToRunOn.add(dbre);
