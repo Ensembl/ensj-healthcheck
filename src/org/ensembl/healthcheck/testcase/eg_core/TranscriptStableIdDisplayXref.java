@@ -24,8 +24,8 @@ public class TranscriptStableIdDisplayXref extends AbstractIntegerTestCase {
 		this.appliesToType(DatabaseType.CORE);
 		this.setTeamResponsible(Team.ENSEMBL_GENOMES);
 		this.setFix("update transcript t, xref x set t.display_xref_id=NULL "
-				+ "where t.display_xref_id=x.xref_id and x.display_label=t.stable_id "
-				+ "or x.dbprimary_acc=t.stable_id");
+				+ "where t.display_xref_id=x.xref_id and (x.display_label=t.stable_id "
+				+ "or x.dbprimary_acc=t.stable_id)");
 	}
 
 	/*
