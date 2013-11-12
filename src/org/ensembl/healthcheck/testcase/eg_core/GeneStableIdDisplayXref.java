@@ -23,7 +23,9 @@ public class GeneStableIdDisplayXref extends AbstractIntegerTestCase {
 		this.addToGroup(AbstractEgCoreTestCase.EG_GROUP);
 		this.appliesToType(DatabaseType.CORE);
 		this.setTeamResponsible(Team.ENSEMBL_GENOMES);
-		this.setFix("update gene g, xref x set g.display_xref_id=NULL where x.display_label=g.stable_id or x.dbprimary_acc=g.stable_id");
+		this.setFix("update gene g, xref x set g.display_xref_id=NULL "
+				+ "where g.display_xref_id=x.xref_id and x.display_label=g.stable_id "
+				+ "or x.dbprimary_acc=g.stable_id");
 	}
 
 	/*
