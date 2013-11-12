@@ -30,7 +30,7 @@ public class EGVariation extends GroupOfTests {
 			EGCommon.class,
 
 			AlleleFrequencies.class, 
-			CompareVariationSchema.class,
+			//CompareVariationSchema.class,
 			EGCompareVariationSchema.class,
 			EGVariationFeature.class,
 			EmptyVariationTables.class, 
