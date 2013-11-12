@@ -124,7 +124,7 @@ public class CheckChar extends SingleDatabaseTestCase {
 	private boolean checkNonPhenotypes( String input) {
 
 		boolean is_ok = true;
-		String[] junk = {"None", "Not provided", "not specified", "Not in OMIM", "Variant of unknown significance" };
+		String[] junk = {"None", "Not provided", "not specified", "Not in OMIM", "Variant of unknown significance", "not_provided" };
 
 		int len = junk.length;
 			    
