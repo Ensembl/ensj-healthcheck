@@ -22,11 +22,7 @@ public class EGComparaGeneTree extends GroupOfTests {
 				CheckSequenceTable.class,
 
 				EGForeignKeyHomologyMemberId.class,
-				// Commented out until
-				// http://www.ebi.ac.uk/panda/jira/browse/EG-1242
-				// is resolved.
-				//
-				//EGForeignKeyGeneTreeMemberId.class,
+				EGForeignKeyGeneTreeMemberId.class,
 				EGGeneTreeForeignKeyMethodLinkSpeciesSetId.class,
 
 				ForeignKeyHomologyId.class, 
