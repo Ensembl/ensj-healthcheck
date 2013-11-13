@@ -4,8 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
+import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
@@ -44,6 +46,55 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractTemplatedTest
 		
 		setTeamResponsible(Team.ENSEMBL_GENOMES);
 	}
+	
+	/**
+	 * <p>
+	 * 	List of method names in the compara master that mean DNA compara is
+	 * run.
+	 * </p>
+	 * <p>
+	 * 	If you modify this list, please make sure that all method names are 
+	 * quoted.
+	 * </p> 
+	 */
+	protected final List<String> dnaComparaMethods = 
+		Arrays.asList(
+			new String[] { 
+				"'GenomicAlignBlock.pairwise_alignment'",
+			    "'GenomicAlignBlock.multiple_alignment'",
+			    "'GenomicAlignTree.tree_alignment'",
+			    "'GenomicAlignBlock.constrained_element'"
+			}
+		);
+	
+	protected boolean speciesConfiguredForDnaCompara(String speciesName) {
+		
+		String dnaComparaMethodsCommaSep = StringUtils.join(dnaComparaMethods, ", ");
+		
+		List<Integer> dnaMethodsConfigured = masterSqlTemplate.queryForDefaultObjectList(
+				"select distinct genome_db.genome_db_id, genome_db.name, method_link.class "
+				+ "from "
+				+ "	genome_db " 
+				+ "	join species_set using (genome_db_id) " 
+				+ "	join method_link_species_set using (species_set_id) " 
+				+ "	join method_link using (method_link_id) "
+				+ "where "
+				+ "	genome_db.assembly_default=true " 
+				+ "	and genome_db.name='" + speciesName + "' " 
+				+ "	and method_link.class in ( "
+				+ dnaComparaMethodsCommaSep
+				+ " ) ", 
+				Integer.class
+				);
+
+		if (dnaMethodsConfigured.size()==1) {
+			return true; 
+		}
+		if (dnaMethodsConfigured.size()==0) {
+			return false;
+		}
+		throw new RuntimeException("Unexpected number of rows returned!");		
+	}
 
 	@Override
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
@@ -54,6 +105,7 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractTemplatedTest
 			"select distinct species_id from meta where species_id is not null", 
 			Integer.class
 		);
+	
 
 		if (allSpeciesIds.size() == 0) {
 			ReportManager.problem(this, testDbConn, "No species configured!");
@@ -73,6 +125,11 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractTemplatedTest
 		String productionName     = fetchSingleMetaValueFor(sqlTemplateTestDb, speciesId, "species.production_name");
 		String assemblyDefault    = fetchSingleMetaValueFor(sqlTemplateTestDb, speciesId, "assembly.default");
 		String genebuildStartDate = fetchSingleMetaValueFor(sqlTemplateTestDb, speciesId, "genebuild.start_date");
+		
+		if (!speciesConfiguredForDnaCompara(productionName)) {
+			getLogger().info("Skipping species " + productionName + ", because it is not linked to any method involving DNA comparisons in the compara master.");
+			return true;
+		}
 		
 		getLogger().info("Testing species " + productionName);
 		
@@ -323,6 +380,10 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractTemplatedTest
 		return genomeDbId;			
 	}
 
+	/**
+	 * Check in master database, if there is a genome_db entry for this 
+	 * species.
+	 */
 	protected boolean fetchHasGenomeDbId(
 			String productionName, String assemblyDefault,
 			String genebuildStartDate) {
