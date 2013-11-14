@@ -26,7 +26,7 @@ public class DisplayXrefId extends AbstractRowCountTestCase {
 		this.setDescription("Test to find genes where display_xref_id is not set");
 	}
 
-	private final static String QUERY = "select count(*) from gene where status<>'NOVEL' and display_xref_id is null";
+	private final static String QUERY = "select count(*) from gene where status not in ('NOVEL','ANNOTATED') and display_xref_id is null";
 
 	/*
 	 * (non-Javadoc)
