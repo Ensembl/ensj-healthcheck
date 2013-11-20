@@ -30,9 +30,6 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractControlledRow
 	protected Connection testDbConn;
 	protected SqlTemplate sqlTemplateTestDb;
 	
-	protected Connection masterDbConn;
-	protected SqlTemplate masterSqlTemplate;
-	
 	protected void init(DatabaseRegistryEntry dbre) {
 		
 		super.init();
