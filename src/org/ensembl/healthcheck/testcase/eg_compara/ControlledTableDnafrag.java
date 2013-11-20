@@ -25,6 +25,8 @@ public class ControlledTableDnafrag extends AbstractControlledRows {
 	@Override
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
 
+		init();
+		
 		String controlledTableToTest = getControlledTableName();
 		
 		DatabaseRegistryEntry masterDbRe = getMasterDatabase();

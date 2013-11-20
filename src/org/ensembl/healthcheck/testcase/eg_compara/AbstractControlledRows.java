@@ -21,6 +21,12 @@ abstract public class AbstractControlledRows extends AbstractTemplatedTestCase {
 	protected Connection masterDbConn;
 	protected SqlTemplate masterSqlTemplate;
 
+	protected void init() {
+		DatabaseRegistryEntry masterDbRe = getComparaMasterDatabase();
+		masterDbConn = masterDbRe.getConnection();
+		masterSqlTemplate = getSqlTemplate(masterDbConn);		
+	}
+
 	protected boolean checkRangeOfRowsInTable(
 			final String controlledTableToTest,
 			final String masterTable,
@@ -441,15 +447,6 @@ abstract public class AbstractControlledRows extends AbstractTemplatedTestCase {
 			throw new RuntimeException("Got no columns for table " + table);
 		}
 		return columnsOfTable;
-	}
-
-	public AbstractControlledRows() {
-		
-		super();
-
-		DatabaseRegistryEntry masterDbRe = getComparaMasterDatabase();
-		masterDbConn = masterDbRe.getConnection();
-		masterSqlTemplate = getSqlTemplate(masterDbConn);
 	}
 
 	/**

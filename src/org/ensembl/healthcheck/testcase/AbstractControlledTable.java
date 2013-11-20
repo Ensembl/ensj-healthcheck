@@ -92,6 +92,8 @@ public abstract class AbstractControlledTable extends AbstractControlledRows {
 	
 	@Override
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
+		
+		init();
 
 		String controlledTableToTest = getControlledTableName();
 		
