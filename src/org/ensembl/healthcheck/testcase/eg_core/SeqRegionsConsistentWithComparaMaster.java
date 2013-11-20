@@ -35,11 +35,10 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractControlledRow
 	
 	protected void init(DatabaseRegistryEntry dbre) {
 		
+		super.init();
+		
 		testDbConn   = dbre.getConnection();
 		sqlTemplateTestDb = getSqlTemplate(testDbConn);
-		DatabaseRegistryEntry masterDbRe = getComparaMasterDatabase();
-		masterDbConn = masterDbRe.getConnection();
-		masterSqlTemplate = getSqlTemplate(masterDbConn);
 		
 		setTeamResponsible(Team.ENSEMBL_GENOMES);
 	}
