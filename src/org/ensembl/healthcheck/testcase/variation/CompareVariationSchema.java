@@ -104,16 +104,16 @@ public class CompareVariationSchema extends AbstractCompareSchema {
    * Set of tables which MUST be in the target schema. One would assume that
    * they could be missing from the master schema
    */
-	protected Map<Species,Set<String>> requiredTables() {
-		if(r == null) {
-			r = new HashMap<Species, Set<String>>();
-			r.put(Species.UNKNOWN, 			createLinkedHashSet("subsnp_map", "MTMP_population_genotype"));
-			r.put(Species.MUS_MUSCULUS, 			createLinkedHashSet("strain_gtype_poly"));
-			r.put(Species.RATTUS_NORVEGICUS,	createLinkedHashSet("strain_gtype_poly"));
-		}
-		return r;
-	}
-	
+        protected Map<Species,Set<String>> requiredTables() {
+                if(r == null) {
+                        r = new HashMap<Species, Set<String>>();
+                        r.put(Species.UNKNOWN,            createLinkedHashSet("subsnp_map", "MTMP_population_genotype", "variation_hgvs", "variation_genename"));
+                        r.put(Species.MUS_MUSCULUS,       createLinkedHashSet("strain_gtype_poly"));
+                        r.put(Species.RATTUS_NORVEGICUS,  createLinkedHashSet("strain_gtype_poly"));
+                }
+                return r;
+        }
+        
 	/**
 	 * Override of the test method which makes sure we only test those tables
 	 * which are required by the schema. If a table appears in the list 
