@@ -67,6 +67,8 @@ species.scientific_name
 species.short_name
 species.stable_id_prefix
 species.strain
+species.serotype
+species.substrain
 species.taxonomy_id
 species.url
 species.three_letter_code
