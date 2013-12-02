@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.testcase.generic.ProductionBiotypes;
 import org.ensembl.healthcheck.testcase.generic.TranscriptNames;
 
 import org.ensembl.healthcheck.testcase.eg_core.NoRepeatFeatures;
+import org.ensembl.healthcheck.testcase.eg_core.SchemaPatchesApplied;
 import org.ensembl.healthcheck.testcase.eg_core.SeqRegionLength;
 import org.ensembl.healthcheck.testcase.eg_core.SeqRegionsConsistentWithComparaMaster;
 
@@ -57,7 +58,8 @@ public class EGCore extends GroupOfTests {
 			AnalysisLogicName.class,
 			SeqRegionsConsistentWithComparaMaster.class,
 			SeqRegionLength.class,
-			NoRepeatFeatures.class
+			NoRepeatFeatures.class,
+			SchemaPatchesApplied.class
 		);
 	}
 }
