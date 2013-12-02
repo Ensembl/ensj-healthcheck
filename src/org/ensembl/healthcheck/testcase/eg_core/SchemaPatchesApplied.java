@@ -127,7 +127,7 @@ public class SchemaPatchesApplied extends SingleDatabaseTestCase {
 			},
 			new ActionAppendable() {
 				@Override public void process(String message) {
-					ReportManager.problem(thisTestRef, conn, message);
+					logger.warning(message);
 				}
 			}
 		);
