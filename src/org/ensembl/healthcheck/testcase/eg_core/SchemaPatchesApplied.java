@@ -31,20 +31,19 @@ public class SchemaPatchesApplied extends SingleDatabaseTestCase {
 		
 		SystemCommand systemCommand = new SystemCommand();
 	
-		// If mysqldiff can't be found, the test can terminate right away.
+		// If the script can't be found, the test can terminate right away.
 		//
 		if (!systemCommand.checkCanExecute(schemaPatchScript)) {
 	
 			ReportManager.problem(this, (Connection) null,
 					"Can't find "+ schemaPatchScript +"! "
 					+ this.getShortTestName() + " relies on this program to "
-					+ "find missing patches.\n"
+					+ "find missing patches."
 			);
 			passes = false;
 			return passes;
 		}
-	
-	
+		
 		String database = dbr.getName();
 		String type     = dbr.getType().getName();
 		String release  = dbr.getSchemaVersion();
@@ -112,7 +111,7 @@ public class SchemaPatchesApplied extends SingleDatabaseTestCase {
 						if (matcher.matches()) {
 							String patchName = matcher.group(1);
 							String type      = matcher.group(2);
-							ReportManager.problem(thisTestRef, conn, "Patch file has not been applied: " + patchName);
+							ReportManager.problem(thisTestRef, conn, "The patch file "+patchName+" has not been applied.");
 							thisTestRef.setPasses(false);
 							
 						} else {
@@ -130,10 +129,7 @@ public class SchemaPatchesApplied extends SingleDatabaseTestCase {
 					logger.warning(message);
 				}
 			}
-		);
-	
-		logger.info("Done running " + schemaPatchScript);
-	
+		);	
 		return isPasses();
 	}
 }
