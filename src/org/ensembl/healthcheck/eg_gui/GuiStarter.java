@@ -32,7 +32,7 @@ public class GuiStarter {
 
 		// The jar file in which tests and testgroups will be searched.
 		//
-		String jarFile = "lib/ensj-healthcheck.jar";
+		String jarFile = "dist/ensj-healthcheck.jar";
 		
 		GuiTestRunnerFrameBuilder builder = new GuiTestRunnerFrameBuilder(jarFile);
 		

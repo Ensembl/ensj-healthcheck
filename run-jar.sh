@@ -14,5 +14,6 @@
 # limitations under the License.
 
 
-ANT_OPTS=-Xmx500M ant clean jar
-
+home=`dirname $0`
+. $home/setup.sh
+jar

@@ -212,7 +212,7 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 		// Look for class files located in the appropriate package in the build/ directory.
 
 		// find all subdirectories
-		String startDir = System.getProperty("user.dir") + File.separator + "build" + File.separator + BASE_TESTCASE_PACKAGE.replace('.', File.separatorChar);
+		String startDir = System.getProperty("user.dir") + File.separator + "target" + File.separator + "build" + File.separator + BASE_TESTCASE_PACKAGE.replace('.', File.separatorChar);
 		String[] subdirs = Utils.getSubDirs(startDir);
 
 		// look for tests in each
@@ -240,7 +240,7 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 		// This is done second as if there is a class file for this test case in the build dir
 		// then that should be used instead of the one in the jar file.
 		// (addUniqueTests doesn't add a test if it's already in the list)
-		String jarFileName = System.getProperty("user.dir") + File.separator + "lib" + File.separator + "ensj-healthcheck.jar";
+		String jarFileName = System.getProperty("user.dir") + File.separator + "target" + File.separator + "dist" + File.separator + "ensj-healthcheck.jar";
 		if ((new File(jarFileName)).exists()) {
 			addUniqueTests(allTests, findTestsInJar(jarFileName, BASE_TESTCASE_PACKAGE));
 		}
