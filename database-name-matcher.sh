@@ -1,9 +1,8 @@
 #!/bin/sh
 
 home=`dirname $0`
-cp=$home:$home/build/classes
-for jar in $home/lib/*.jar; do
-    cp=$jar:$cp
-done
+. $home/setup.sh
+jar
+classpath
 
-$JAVA_HOME/bin/java -classpath $cp org.ensembl.healthcheck.DatabaseNameMatcher "$*"
+$JAVA_HOME/bin/java org.ensembl.healthcheck.DatabaseNameMatcher "$*"

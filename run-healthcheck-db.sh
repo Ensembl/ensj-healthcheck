@@ -5,6 +5,7 @@
 
 home=`dirname $0`
 . $home/setup.sh
+jar
 classpath
 
 $JAVA_HOME/bin/java -Duser.dir=$home -Xmx1500m org.ensembl.healthcheck.DatabaseTestRunner $*
