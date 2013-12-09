@@ -90,14 +90,20 @@
 			failonerror = "true" 
 			maxmemory   = "1500m"
 		>
-			<jvmarg value="-Dmaster.schema=master_schema_66"/>
-			<arg line="-Djava.util.logging.config.file=config/logger/logging.properties" />
+			<arg line="
+				-Djava.util.logging.config.file=config/logger/logging.properties 
+				-Dcom.sun.management.jmxremote
+				-Dcom.sun.management.jmxremote.port=9010
+				-Dcom.sun.management.jmxremote.local.only=false
+				-Dcom.sun.management.jmxremote.authenticate=false
+				-Dcom.sun.management.jmxremote.ssl=false
+			" />
 			<classpath>
 				<fileset dir="lib">
 					<include name="**/*.jar" />
 				</fileset>
 				<pathelement path="build/"/>
-
+				<pathelement path="./target/dist/ensj-healthcheck.jar"/>
 			</classpath>
 		</java>
 	</target>
