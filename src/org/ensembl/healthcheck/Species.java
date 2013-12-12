@@ -96,7 +96,7 @@ public enum Species {
 	PROCAVIA_CAPENSIS(9813, "PROCAP", "ENSPCA", "cape_rock_hyrax,caperockhyrax,procaviacapensis,procavia_capensis"),
 	PTEROPUS_VAMPYRUS(132908, "PTEVAM", "ENSPVA", "large_flying_fox,largeflyingfox,pteropusvampyrus,pteropus_vampyrus"),
 	RATTUS_NORVEGICUS(10116, "Rnor", "ENSRNO", "rat,rnovegicus,rattusnorvegicus,rattus_norvegicus"),
-	SACCHAROMYCES_CEREVISIAE(4932, "EF", "IGNORE", "yeast,saccharomyces,scerevisiae,saccharomycescerevisiae,saccharomyces_cerevisiae"),
+	SACCHAROMYCES_CEREVISIAE(4932, "R", "IGNORE", "yeast,saccharomyces,scerevisiae,saccharomycescerevisiae,saccharomyces_cerevisiae"),
 	SAIMIRI_BOLIVIENSIS(39432, "SaiBol", "ENSSBO", "saimiri_boliviensis,sboliviensis,squirrel_monkey,bolivian_squirrel_monkey,squirrelmonkey"),
 	SARCOPHILUS_HARRISII(9305, "devil", "ENSSHA", "devil,Sarcophilus_harrisii,sarcophilus_harrisii,tasmanian_devil,taz"),
 	SOREX_ARANEUS(42254, "COMMON_SHREW", "ENSSAR", "shrew,common_shrew,commonShrew,european_shrew,saraneus,sorex,sorex_araneus"),
