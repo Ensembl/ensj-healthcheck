@@ -50,19 +50,18 @@ import org.ensembl.healthcheck.util.DBUtils;
  * Compare the gene names in the current database with those from the equivalent database on the secondary server.
  */
 
-public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
+public class ComparePreviousVersionProjectedGeneNames extends SingleDatabaseTestCase {
 
 	/**
 	 * Create a new testcase.
 	 */
-	public ComparePreviousVersionGeneNames() {
+	public ComparePreviousVersionProjectedGeneNames() {
 
-		addToGroup("core_xrefs");
-                addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		setDescription("Compare gene names in the current database with those from the equivalent database on the secondary server.");
-		setTeamResponsible(Team.GENEBUILD);
-		setSecondTeamResponsible(Team.CORE);
+		setTeamResponsible(Team.CORE);
+		setSecondTeamResponsible(Team.RELEASE_COORDINATOR);
 
 	}
 
@@ -105,8 +104,8 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 			return result;
 		}
 		
-		String previousSQL = "SELECT stable_id, db_name, dbprimary_acc FROM gene LEFT JOIN xref ON display_xref_id = xref_id LEFT JOIN external_db USING(external_db_id)";
-		String currentSQL = "SELECT stable_id, db_name, dbprimary_acc FROM gene LEFT JOIN xref ON display_xref_id = xref_id LEFT JOIN external_db USING(external_db_id) WHERE xref.info_type <> 'PROJECTION' AND stable_id = ?";
+		String previousSQL = "SELECT stable_id, db_name, dbprimary_acc FROM gene LEFT JOIN xref ON display_xref_id = xref_id LEFT JOIN external_db USING(external_db_id) WHERE xref.info_type = 'PROJECTION'";
+		String currentSQL = "SELECT stable_id, db_name, dbprimary_acc FROM gene LEFT JOIN xref ON display_xref_id = xref_id LEFT JOIN external_db USING(external_db_id) WHERE xref.info_type = 'PROJECTION' AND stable_id = ?";
 		
 		int missingIds = 0;
 		int accessionsChanged = 0;
@@ -265,5 +264,5 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 
 	// ----------------------------------------------------------------------
 
-} // ComparePreviousVersionGeneNames
+} // ComparePreviousVersionProjectedGeneNames
 

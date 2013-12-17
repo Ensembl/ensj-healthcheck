@@ -77,6 +77,9 @@ public class ComparePreviousVersionTableRows extends ComparePreviousVersionBase 
 		tables = Utils.removeStringFromArray(tables, "meta");
 		// we need a different query for xref, and only compare those that are not projected
 		tables = Utils.removeStringFromArray(tables, "external_synonym");
+                tables = Utils.removeStringFromArray(tables, "ontology_xref");
+                tables = Utils.removeStringFromArray(tables, "object_xref");
+                tables = Utils.removeStringFromArray(tables, "xref");
 
 		for (int i = 0; i < tables.length; i++) {
 
@@ -84,6 +87,9 @@ public class ComparePreviousVersionTableRows extends ComparePreviousVersionBase 
 
 		}
 		rowCounts.put("external_synonym", new Integer(DBUtils.getRowCount(con, "SELECT COUNT(*) FROM external_synonym e, xref x WHERE e.xref_id = x.xref_id AND x.info_type <> 'PROJECTION'")));
+                rowCounts.put("ontology_xref", new Integer(DBUtils.getRowCount(con, "SELECT COUNT(*) FROM ontology_xref go, object_xref ox, xref x WHERE go.object_xref_id = ox.object_xref_id AND ox.xref_id = x.xref_id AND x.info_type <> 'PROJECTION'")));
+                rowCounts.put("object_xref", new Integer(DBUtils.getRowCount(con, "SELECT COUNT(*) FROM object_xref ox, xref x WHERE ox.xref_id = x.xref_id AND x.info_type <> 'PROJECTION'")));
+                rowCounts.put("xref", new Integer(DBUtils.getRowCount(con, "SELECT COUNT(*) FROM xref x WHERE x.info_type <> 'PROJECTION'")));
 
 		return rowCounts;
 

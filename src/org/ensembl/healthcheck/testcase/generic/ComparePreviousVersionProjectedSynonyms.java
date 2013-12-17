@@ -38,19 +38,18 @@ import org.ensembl.healthcheck.Team;
  * Compare the xref synonyms in the current database with those from the equivalent database on the secondary server.
  */
 
-public class ComparePreviousVersionSynonyms extends ComparePreviousVersionBase {
+public class ComparePreviousVersionProjectedSynonyms extends ComparePreviousVersionBase {
 
 	/**
 	 * Constructor.
 	 */
-	public ComparePreviousVersionSynonyms() {
+	public ComparePreviousVersionProjectedSynonyms() {
 
-		addToGroup("core_xrefs");
-		addToGroup("post-compara-handover");
+		addToGroup("post-projection");
 		
 		setDescription("Compare the xref synonyms in the current database with those from the equivalent database on the secondary server");
 		setTeamResponsible(Team.CORE);
-		setSecondTeamResponsible(Team.GENEBUILD);
+		setSecondTeamResponsible(Team.RELEASE_COORDINATOR);
 
 	}
 
@@ -65,7 +64,7 @@ public class ComparePreviousVersionSynonyms extends ComparePreviousVersionBase {
 
 	protected Map<String, Integer> getCounts(DatabaseRegistryEntry dbre) {
 
-		String sql = "SELECT e.db_name, count(*) FROM external_db e, external_synonym es, xref x, object_xref ox WHERE x.xref_id=ox.xref_id AND e.external_db_id=x.external_db_id AND x.xref_id=es.xref_id AND x.info_type <> 'PROJECTION' GROUP BY e.db_name";
+		String sql = "SELECT e.db_name, count(*) FROM external_db e, external_synonym es, xref x, object_xref ox WHERE x.xref_id=ox.xref_id AND e.external_db_id=x.external_db_id AND x.xref_id=es.xref_id AND x.info_type = 'PROJECTION' GROUP BY e.db_name";
 
 		return getCountsBySQL(dbre, sql);
 
@@ -95,5 +94,5 @@ public class ComparePreviousVersionSynonyms extends ComparePreviousVersionBase {
 
 	// ----------------------------------------------------------------------
 
-} // ComparePreviousVersionSynonyms
+} // ComparePreviousVersionProjectedSynonyms
 
