@@ -155,12 +155,6 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
 		String sql = "SELECT COUNT(*) FROM " + table + " " + extraSQL;
 		boolean result = checkSQLAcrossSpecies(sql, dbr, types, false);
 
-		if (!result) {
-			ReportManager.problem(this, "", problem);
-		} else {
-			ReportManager.correct(this, "", correct);
-		}
-
 		return result;
 
 	}
