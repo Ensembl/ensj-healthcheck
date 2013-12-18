@@ -71,6 +71,10 @@ public class ProjectedXrefs extends SingleDatabaseTestCase {
 	        Connection con = dbre.getConnection();
                 Species species = dbre.getSpecies();
 
+                if (species.equals(Species.HOMO_SAPIENS)) {
+                        return result;
+                }
+
                 // check display xrefs
 
 	        int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM gene g, xref x WHERE g.display_xref_id=x.xref_id AND x.info_type='PROJECTION'");
