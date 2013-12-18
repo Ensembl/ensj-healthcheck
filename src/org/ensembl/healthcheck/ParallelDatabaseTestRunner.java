@@ -208,7 +208,7 @@ public class ParallelDatabaseTestRunner extends TestRunner {
 
                 String jobName = String.format("hc_%s", session);
 
-		String[] finalJob = { "bsub", "-R", MEMORY_RUSAGE, "-M", MEMORY_RESERVATION, "-o", out, "-e", err, "-J", jobName, "-w", bsubConditionClause.toString(), runNodeDBTestRunnerScript, "-endDbSession", "-session", session };
+		String[] finalJob = { "bsub", "-R", MEMORY_RUSAGE, "-M", MEMORY_RESERVATION, "-o", out, "-e", err, "-J", jobName, "-w", bsubConditionClause.toString(), runNodeDBTestRunnerScript, "-endDbSession", "-session", session , "-config", getPropertiesFile() };
 
 		return finalJob;
 	}
