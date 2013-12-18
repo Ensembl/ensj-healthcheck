@@ -105,7 +105,7 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 			return result;
 		}
 		
-		String previousSQL = "SELECT stable_id, db_name, dbprimary_acc FROM gene LEFT JOIN xref ON display_xref_id = xref_id LEFT JOIN external_db USING(external_db_id)";
+		String previousSQL = "SELECT stable_id, db_name, dbprimary_acc FROM gene LEFT JOIN xref ON display_xref_id = xref_id LEFT JOIN external_db USING(external_db_id) WHERE xref.info_type <> 'PROJECTION'";
 		String currentSQL = "SELECT stable_id, db_name, dbprimary_acc FROM gene LEFT JOIN xref ON display_xref_id = xref_id LEFT JOIN external_db USING(external_db_id) WHERE xref.info_type <> 'PROJECTION' AND stable_id = ?";
 		
 		int missingIds = 0;
