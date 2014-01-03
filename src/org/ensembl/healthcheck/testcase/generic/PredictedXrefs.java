@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
@@ -58,6 +59,19 @@ public class PredictedXrefs extends SingleDatabaseTestCase {
 		setTeamResponsible(Team.CORE);
 		setSecondTeamResponsible(Team.GENEBUILD);
 	}
+
+        /**
+         * This only applies to core databases.
+         */
+        public void types() {
+
+                removeAppliesToType(DatabaseType.OTHERFEATURES);
+                removeAppliesToType(DatabaseType.VEGA);
+                removeAppliesToType(DatabaseType.SANGER_VEGA);
+                removeAppliesToType(DatabaseType.RNASEQ);
+                removeAppliesToType(DatabaseType.CDNA);
+
+        }
 
 	/**
 	 * Run the test.
@@ -85,30 +99,20 @@ public class PredictedXrefs extends SingleDatabaseTestCase {
 			String externalDBName = entry.getKey();
 			String pattern = entry.getValue();
 
-			logger.fine("Checking for " + externalDBName + " xrefs matching "
-					+ pattern);
+                        String sql = "SELECT COUNT(*) FROM xref x, external_db e " +
+                                     "WHERE x.external_db_id = e.external_db_id " +
+                                     "AND e.db_name = '" + externalDBName + "' " +
+                                     "AND x.dbprimary_acc LIKE '" + pattern + "'";
 
-			int rows = DBUtils
-					.getRowCount(
-							con,
-							"SELECT COUNT(*) FROM xref x, external_db e WHERE x.external_db_id=e.external_db_id AND e.db_name='"
-									+ externalDBName
-									+ "' AND x.dbprimary_acc LIKE '"
-									+ pattern
-									+ "'");
+			logger.fine("Checking for " + externalDBName + " xrefs matching " + pattern);
+
+			int rows = DBUtils.getRowCount(con, sql);
 
 			if (rows > 0) {
 
-				ReportManager
-						.problem(
-								this,
-								con,
-								rows
-										+ " "
-										+ externalDBName
-										+ " xrefs seem to be predictions (match "
-										+ pattern
-										+ ")\nUSEFUL SQL:SELECT COUNT(*) FROM xref x, external_db e WHERE x.external_db_id=e.external_db_id AND e.db_name='RefSeq_peptide'  AND x.dbprimary_acc LIKE 'XP%';");
+				ReportManager.problem(this, con, rows +
+						      " " + externalDBName + " xrefs seem to be predictions (match " + pattern + ")\n" +
+                                                      "USEFUL SQL:" + sql);
 				result = false;
 
 			} else {
