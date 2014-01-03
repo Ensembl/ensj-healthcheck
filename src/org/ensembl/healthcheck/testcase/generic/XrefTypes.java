@@ -34,6 +34,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
@@ -58,6 +59,19 @@ public class XrefTypes extends SingleDatabaseTestCase {
 		setTeamResponsible(Team.CORE);
                 setSecondTeamResponsible(Team.GENEBUILD);
 	}
+
+        /**
+         * This only applies to core databases.
+         */
+        public void types() {
+
+                removeAppliesToType(DatabaseType.OTHERFEATURES);
+                removeAppliesToType(DatabaseType.VEGA);
+                removeAppliesToType(DatabaseType.SANGER_VEGA);
+                removeAppliesToType(DatabaseType.RNASEQ);
+                removeAppliesToType(DatabaseType.CDNA);
+
+        }
 
 	/**
 	 * Run the test.
