@@ -346,8 +346,8 @@ public class EmptyTables extends SingleDatabaseTestCase {
 								      "repeat_consensus", "repeat_feature", "simple_feature", 
 								      "supporting_feature", "transcript_attrib", "unconventional_transcript_association", 
 								      "splicing_transcript_pair", "splicing_event_feature", "splicing_event", 
-								      "dependent_xref", "seq_region_synonym", "density_feature", 
-								      "mapping_set", "density_type"));
+								      "dependent_xref", "seq_region_synonym", "density_feature", "unmapped_object",
+								      "mapping_set", "density_type", "genome_statistics"));
 
     }
 
