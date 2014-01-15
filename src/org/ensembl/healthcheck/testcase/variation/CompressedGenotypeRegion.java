@@ -175,8 +175,9 @@ public class CompressedGenotypeRegion extends SingleDatabaseTestCase {
     while (rs.next()) {
       region_name = rs.getString(1);
       count_genotype = rs.getInt(2);
-			
-      if (count_genotype < MIN_GENOTYPE && !region_name.equals("MT")) {  
+
+      // exclude short sequences from this check
+      if (count_genotype < MIN_GENOTYPE && !region_name.equals("MT") && !region_name.matches(".*PATCH")  && !region_name.matches("HSCHR.*")) {  
 				count++;
         if (msg.equals("none")) {
           msg=region_name;
