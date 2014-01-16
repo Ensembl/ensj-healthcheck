@@ -71,43 +71,6 @@ public class Meta extends SingleDatabaseTestCase {
 					"population", "population_id", "meta_key = '" + metaKey + "'");
 
 		}
-		if (dbre.getSpecies() == Species.MUS_MUSCULUS
-				|| dbre.getSpecies() == Species.RATTUS_NORVEGICUS
-				|| dbre.getSpecies() == Species.HOMO_SAPIENS) {
-			// find out if the entries in the Meta point to the strain
-			// information
-			// String[] metaKeys =
-			// {"read_coverage.coverage_level","individual.default_strain","source.default_source"};
-			// String[] metaKeys =
-			// {"read_coverage.coverage_level","individual.default_strain","individual.display_strain","individual.reference_strain"};
-			String[] metaKeys = { "read_coverage.coverage_level" };
-			for (int i = 0; i < metaKeys.length; i++) {
-				metaKey = metaKeys[i];
-
-				result &= checkKeysPresent(con, metaKey);
-				if (metaKey == "read_coverage.coverage_level") {
-					result &= checkForOrphansWithConstraint(con, "meta",
-							"meta_value", "read_coverage", "level",
-							"meta_key = '" + metaKey + "'");
-				} else if ((metaKey == "individual.default_strain")
-						|| (metaKey == "individual.display_strain")) {
-					result &= checkForOrphansWithConstraint(con, "meta",
-							"meta_value", "individual",
-							"name COLLATE latin1_general_cs", "meta_key = '"
-									+ metaKey + "'");
-				} else if (metaKey == "individual.reference_strain") {
-					result &= checkKeysPresent(con, metaKey);
-
-				}
-				/*
-				 * else if (metaKey == "source.default_source"){ result &=
-				 * checkForOrphansWithConstraint
-				 * (con,"meta","meta_value","source","name","meta_key = '" +
-				 * metaKey + "'"); }
-				 */
-
-			}
-		}
 		if (dbre.getSpecies() == Species.CANIS_FAMILIARIS) {
 			// find out if the entries in the Meta point to the strain
 			// information
