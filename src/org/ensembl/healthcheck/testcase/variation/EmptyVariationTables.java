@@ -71,7 +71,6 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
     String[] sampleTables           = { "population_genotype", "population_structure", "population_synonym", "individual_synonym",  };
     String[] setTables              = { "variation_set_structure" };
     String[] genotypeTables         = { "compressed_genotype_region", "compressed_genotype_var" };
-    String[] coverageTables         = { "read_coverage" };
     String[] strainTables           = { "strain_gtype_poly" };
     String[] regulatoryTables       = { "motif_feature_variation", "regulatory_feature_variation" };
     String[] citationTables         = { "publication", "variation_citation" };
@@ -85,14 +84,6 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
     if (species != Species.HOMO_SAPIENS) {
       tables = remove(tables, humanOnlyTables);
       tables = remove(tables, setTables);
-    }
-
-    
-    
-    // only these species have coverage data
-
-    if (species != Species.RATTUS_NORVEGICUS && species != Species.MUS_MUSCULUS && species != Species.PONGO_ABELII && species != Species.HOMO_SAPIENS) {
-      tables = remove(tables, coverageTables);
     }
 
     // only these species have structural variation data
