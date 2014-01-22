@@ -31,12 +31,15 @@ import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Repair;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.Utils; // needed for stringInArray
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key relationships.
  */
 
 public class Meta extends SingleDatabaseTestCase implements Repair {
+
+    String[] speciesless_meta_keys = { "schema_version", "schema_type", "patch" };
 
 	private HashMap MetaEntriesToAdd = new HashMap();
 
@@ -129,12 +132,12 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
-				if (rs.getString(2).equals("schema_version")) {
+                if (Utils.stringInArray(rs.getString(2), speciesless_meta_keys, true)) { // Is it one of meta_keys that expect species_id=NULL ?
 					if (rs.getInt(1) != 0) {
 						// set species_id of schema_version to NULL
 						SpeciesIdToUpdate.put(rs.getString(2), "NULL");
 					}
-				} else {
+				} else {    // the rest of meta_keys expect species_id=1 in Compara schema
 					if (rs.getInt(1) != 1) {
 						// set species_id of everything else to 1
 						SpeciesIdToUpdate.put(rs.getString(2), new Integer(1));
