@@ -79,6 +79,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.GeneTranscriptStartEnd </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.XrefPrefixes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AnalysisTypes </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.SourceTypes </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.Karyotype </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.RepeatFeature </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.EmptyTables </li> 
@@ -170,6 +171,7 @@ public class PostGenebuild extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.GeneTranscriptStartEnd.class,
 			org.ensembl.healthcheck.testcase.generic.XrefPrefixes.class,
 			org.ensembl.healthcheck.testcase.generic.AnalysisTypes.class,
+                        org.ensembl.healthcheck.testcase.generic.SourceTypes.class,
 			org.ensembl.healthcheck.testcase.generic.Karyotype.class,
 			org.ensembl.healthcheck.testcase.generic.RepeatFeature.class,
 			org.ensembl.healthcheck.testcase.generic.EmptyTables.class,
