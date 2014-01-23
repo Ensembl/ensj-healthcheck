@@ -104,6 +104,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.HGNCNumeric </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.XrefPrefixes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AnalysisTypes </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.SourceTypes </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.Karyotype </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.RepeatFeature </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.EmptyTables </li> 
@@ -239,6 +240,7 @@ public class PostComparaHandover extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.HGNCNumeric.class,
 			org.ensembl.healthcheck.testcase.generic.XrefPrefixes.class,
 			org.ensembl.healthcheck.testcase.generic.AnalysisTypes.class,
+                        org.ensembl.healthcheck.testcase.generic.SourceTypes.class,
 			org.ensembl.healthcheck.testcase.generic.Karyotype.class,
 			org.ensembl.healthcheck.testcase.generic.RepeatFeature.class,
 			org.ensembl.healthcheck.testcase.generic.EmptyTables.class,
