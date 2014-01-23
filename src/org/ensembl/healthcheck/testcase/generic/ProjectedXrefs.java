@@ -71,7 +71,7 @@ public class ProjectedXrefs extends SingleDatabaseTestCase {
 	        Connection con = dbre.getConnection();
                 Species species = dbre.getSpecies();
 
-                if (species.equals(Species.HOMO_SAPIENS)) {
+                if (species.equals(Species.HOMO_SAPIENS) || species.equals(Species.CAENORHABDITIS_ELEGANS) || species.equals(Species.DROSOPHILA_MELANOGASTER) || species.equals(Species.SACCHAROMYCES_CEREVISIAE) || species.equals(Species.CIONA_INTESTINALIS) || species.equals(Species.CIONA_SAVIGNYI)) {
                         return result;
                 }
 
