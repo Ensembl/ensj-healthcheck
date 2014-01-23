@@ -42,6 +42,7 @@ public class AnalysisLogicName extends SingleDatabaseTestCase {
     addToGroup("compara-ancestral");
     addToGroup("pre-compara-handover");
     addToGroup("post-compara-handover");
+    addToGroup("post-projection");
 
     setDescription("Check the analysis data is correct.");
     setTeamResponsible(Team.GENEBUILD);

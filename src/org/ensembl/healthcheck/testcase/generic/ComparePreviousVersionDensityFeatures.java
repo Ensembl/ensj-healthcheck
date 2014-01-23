@@ -46,6 +46,7 @@ public class ComparePreviousVersionDensityFeatures extends ComparePreviousVersio
 	public ComparePreviousVersionDensityFeatures() {
 
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 
 		setDescription("Compare the density features in the current database with those from the equivalent database on the secondary server");
 		setTeamResponsible(Team.RELEASE_COORDINATOR);

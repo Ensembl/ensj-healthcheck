@@ -40,6 +40,7 @@ public class TranslationStartEndExon extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		setDescription("Check if the start- and end-exon mentioned in the translation-table exist in the database, too. ");
 		setTeamResponsible(Team.GENEBUILD);

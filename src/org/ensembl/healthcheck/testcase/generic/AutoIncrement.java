@@ -50,6 +50,7 @@ public class AutoIncrement extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		setDescription("Check that the AUTO_INCREMENT flag is set for certain columns.");
 

@@ -55,6 +55,7 @@ public class HGNCNumeric extends SingleDatabaseTestCase {
 
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 
 		setDescription("Check that no HGNC xrefs have dbprimary_acc=display_label");
 		setPriority(Priority.AMBER);

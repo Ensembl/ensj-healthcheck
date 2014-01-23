@@ -53,6 +53,7 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		addToGroup("compara-ancestral");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		setDescription("Check for broken foreign-key relationships.");
 		setTeamResponsible(Team.CORE);

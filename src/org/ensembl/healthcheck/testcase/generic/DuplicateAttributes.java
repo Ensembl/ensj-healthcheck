@@ -43,6 +43,7 @@ public class DuplicateAttributes extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		setDescription("Check for duplicated rows in various *_attrib tables.");
 		setPriority(Priority.AMBER);

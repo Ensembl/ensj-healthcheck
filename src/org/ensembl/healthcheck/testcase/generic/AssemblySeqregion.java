@@ -40,6 +40,7 @@ public class AssemblySeqregion extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 
 		setDescription("Check that the chromosome lengths from the seq_region table agree with both the assembly table and the karyotype table.");
 		setTeamResponsible(Team.GENEBUILD);

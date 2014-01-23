@@ -41,6 +41,7 @@ public class NonGTACNSequence extends SingleDatabaseTestCase {
 
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
                 addToGroup("pre-compara-handover");
 
 		setDescription("Check for sequence that does not match GTACN.");

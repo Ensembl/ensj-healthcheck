@@ -35,6 +35,7 @@ public class XrefCategories extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		setDescription("Check that all external_db entries have a type assigned.");
 		setPriority(Priority.AMBER);

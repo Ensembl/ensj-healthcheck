@@ -40,6 +40,7 @@ public class GeneCount extends SingleDatabaseTestCase {
 
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 
 		setDescription("Check that certain regions have a specific gene count.");
 		setPriority(Priority.AMBER);

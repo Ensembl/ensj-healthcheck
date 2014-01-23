@@ -39,6 +39,7 @@ public class RepeatFeature extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		setDescription("Check that repeat_start and repeat_end in repeat_feature make sense.");
 		setTeamResponsible(Team.GENEBUILD);

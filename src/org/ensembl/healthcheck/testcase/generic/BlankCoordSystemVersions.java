@@ -41,6 +41,7 @@ public class BlankCoordSystemVersions extends SingleDatabaseTestCase {
 		addToGroup("compara-ancestral");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		setDescription("Check for any coord_system.version that are blank ('') - they should be NULL.");
 		setTeamResponsible(Team.GENEBUILD);// this is now inaccurate for funcgen usecase

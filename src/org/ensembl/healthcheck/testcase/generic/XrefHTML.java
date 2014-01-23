@@ -38,6 +38,7 @@ public class XrefHTML extends SingleDatabaseTestCase {
 
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		setDescription("Check that there are no xrefs with HTML markup");
 		setPriority(Priority.AMBER);

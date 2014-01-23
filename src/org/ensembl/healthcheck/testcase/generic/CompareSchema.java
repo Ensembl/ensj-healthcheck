@@ -53,6 +53,7 @@ public class CompareSchema extends AbstractCompareSchema {
 	protected void addGroups() {
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");		
+                addToGroup("post-projection");
 	}
 
 	@Override

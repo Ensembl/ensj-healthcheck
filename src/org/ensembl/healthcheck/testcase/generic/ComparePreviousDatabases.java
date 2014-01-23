@@ -41,6 +41,7 @@ public class ComparePreviousDatabases extends MultiDatabaseTestCase {
 
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 
 		setDescription("Check that all species and database types in the previous release are represented in the current release.");
 		setTeamResponsible(Team.RELEASE_COORDINATOR);

@@ -47,6 +47,7 @@ public class ComparePreviousVersionSynonyms extends ComparePreviousVersionBase {
 
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		setDescription("Compare the xref synonyms in the current database with those from the equivalent database on the secondary server");
 		setTeamResponsible(Team.CORE);

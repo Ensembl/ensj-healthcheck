@@ -41,6 +41,7 @@ public class ProteinFeatures extends SingleDatabaseTestCase {
 		setDescription("Check that protein annotation feature coords make sense and that all translations exist in the database");
 		addToGroup("post_genebuild");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		setTeamResponsible(Team.GENEBUILD);
 	}

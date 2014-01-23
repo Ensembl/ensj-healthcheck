@@ -57,6 +57,7 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
 		addToGroup("production");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		setDescription("Check that the gene and transcript biotypes match the valid current ones in the production database.");
 		setPriority(Priority.AMBER);

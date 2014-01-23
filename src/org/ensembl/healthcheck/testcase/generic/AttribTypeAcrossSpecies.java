@@ -36,6 +36,7 @@ public class AttribTypeAcrossSpecies extends MultiDatabaseTestCase {
 
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		setDescription("Check that the attrib_type table contains the same information for all databases with the same species.");
 		setTeamResponsible(Team.RELEASE_COORDINATOR);

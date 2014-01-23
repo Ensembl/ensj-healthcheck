@@ -40,6 +40,7 @@ public class AnalyseTables extends SingleDatabaseTestCase {
 		addToGroup("compara-ancestral");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		setDescription("Check whether tables need to be analysed.");
 		setPriority(Priority.AMBER);
 		setEffect("Causes indices not to be used, making queries slow or unresponsive.");

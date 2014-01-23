@@ -54,6 +54,7 @@ public class PredictedXrefs extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 
 		setDescription("Check for predicted xrefs erroneously classed as KNOWN.");
 		setTeamResponsible(Team.CORE);

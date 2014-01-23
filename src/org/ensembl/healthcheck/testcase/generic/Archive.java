@@ -39,6 +39,7 @@ public class Archive extends SingleDatabaseTestCase {
 
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		setDescription("Checks the archive tables are up to date.");
 		setHintLongRunning(true);
 		setTeamResponsible(Team.CORE);

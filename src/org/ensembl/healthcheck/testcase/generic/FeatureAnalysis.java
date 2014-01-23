@@ -53,6 +53,7 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
     addToGroup("post_genebuild");
     addToGroup("pre-compara-handover");
     addToGroup("post-compara-handover");
+    addToGroup("post-projection");
 
     setHintLongRunning(true);
     setDescription("Check that features exist for the expected analyses.");

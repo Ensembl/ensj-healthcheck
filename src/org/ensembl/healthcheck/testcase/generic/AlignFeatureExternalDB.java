@@ -38,6 +38,7 @@ public class AlignFeatureExternalDB extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("post-compara-handover");
                 addToGroup("pre-compara-handover");
+                addToGroup("post-projection");
 		
 		setDescription("Check that all DNA and protein align features have an external_db_id set.");
 		setPriority(Priority.AMBER);

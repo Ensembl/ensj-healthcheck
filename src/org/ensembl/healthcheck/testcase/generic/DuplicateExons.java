@@ -44,6 +44,7 @@ public class DuplicateExons extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		setTeamResponsible(Team.GENEBUILD);
 
