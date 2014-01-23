@@ -38,6 +38,7 @@ public class UnreviewedXrefs extends SingleDatabaseTestCase {
 
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		setDescription("Check for Uniprot xrefs that have 'Unreviewed' as the primary DB accession.");
 		setPriority(Priority.AMBER);

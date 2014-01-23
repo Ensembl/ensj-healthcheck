@@ -56,6 +56,7 @@ public class AssemblyMapping extends AbstractTemplatedTestCase {
                 addToGroup("production");
                 addToGroup("pre-compara-handover");
                 addToGroup("post-compara-handover");
+                addToGroup("post-projection");
                 setTeamResponsible(Team.GENEBUILD);
 	}
 

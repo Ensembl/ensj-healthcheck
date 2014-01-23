@@ -41,6 +41,7 @@ public class ExonTranscriptStartEnd extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		setDescription("Checks that exon and transcript start/end agree");
 		setTeamResponsible(Team.GENEBUILD);

@@ -36,6 +36,7 @@ public class DisplayLabels extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		setDescription("Check that certain tables have display_labels set");
 		setTeamResponsible(Team.CORE);

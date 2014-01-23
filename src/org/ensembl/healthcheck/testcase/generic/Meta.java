@@ -61,6 +61,7 @@ public class Meta extends SingleDatabaseTestCase {
 		addToGroup("compara-ancestral");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 
 		setTeamResponsible(Team.GENEBUILD);
 		setDescription("Check that the meta table exists and has data and the entries correspond to the database name");

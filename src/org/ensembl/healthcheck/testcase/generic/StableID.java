@@ -53,6 +53,7 @@ public class StableID extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		setDescription("Checks stable_id data is valid.");
 		setPriority(Priority.RED);

@@ -41,6 +41,7 @@ public class FrameshiftAttributes extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 
 		setDescription("Check that transcript frameshift attributes have been calculated.");
 		setTeamResponsible(Team.GENEBUILD);

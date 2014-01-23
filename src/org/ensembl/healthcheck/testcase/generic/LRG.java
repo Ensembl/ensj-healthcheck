@@ -55,6 +55,7 @@ public class LRG extends AbstractTemplatedTestCase {
 	public LRG() {
 
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		setDescription("Healthcheck for LRGs");
 		setTeamResponsible(Team.CORE);

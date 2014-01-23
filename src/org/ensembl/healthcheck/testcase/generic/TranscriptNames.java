@@ -47,6 +47,7 @@ public class TranscriptNames extends SingleDatabaseTestCase {
 		addToGroup("core_xrefs");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		setDescription("Check for certain combinations of logic name and transcript name.");
 		setPriority(Priority.AMBER);

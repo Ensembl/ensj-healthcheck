@@ -67,6 +67,7 @@ public class CheckDeclarations extends SingleDatabaseTestCase {
                 addToGroup("compara-ancestral");
                 addToGroup("pre-compara-handover");
                 addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 
                 setTeamResponsible(Team.GENEBUILD);
                 setSecondTeamResponsible(Team.RELEASE_COORDINATOR);

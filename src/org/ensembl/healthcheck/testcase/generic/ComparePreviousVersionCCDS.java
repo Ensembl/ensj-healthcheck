@@ -53,6 +53,7 @@ public class ComparePreviousVersionCCDS extends ComparePreviousVersionBase {
 		addToGroup("core_xrefs");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 
 		setDescription("Compare the CCDS in the current database with those from the equivalent database on the secondary server");
 		setPriority(Priority.AMBER);

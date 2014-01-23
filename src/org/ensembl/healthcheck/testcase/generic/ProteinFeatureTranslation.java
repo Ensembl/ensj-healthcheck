@@ -57,6 +57,7 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
 		addToGroup("post_genebuild");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		featuresToDelete = new HashMap();
 		setFailureText("Large numbers of features longer than the translation indicate something is wrong. A few is probably OK");

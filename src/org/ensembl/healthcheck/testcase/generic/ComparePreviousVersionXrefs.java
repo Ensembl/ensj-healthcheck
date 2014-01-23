@@ -47,6 +47,7 @@ public class ComparePreviousVersionXrefs extends ComparePreviousVersionBase {
 
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		setDescription("Compare the xrefs in the current database with those from the equivalent database on the secondary server");
 		setTeamResponsible(Team.CORE);

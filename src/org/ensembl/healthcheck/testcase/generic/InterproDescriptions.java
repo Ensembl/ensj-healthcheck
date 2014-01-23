@@ -40,6 +40,7 @@ public class InterproDescriptions extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 
 		setDescription("Check that there are Interpro descriptions, that each one has an xref, and that the xref has a description.");
 		setTeamResponsible(Team.GENEBUILD);

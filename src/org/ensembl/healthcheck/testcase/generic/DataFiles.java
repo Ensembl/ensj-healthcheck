@@ -41,6 +41,7 @@ public class DataFiles extends AbstractTemplatedTestCase {
   public DataFiles() {
     addToGroup("pre-compara-handover");
     addToGroup("post-compara-handover");
+    addToGroup("post-projection");
     setDescription("Check that the data_file tables are correctly formatted. Includes searching for bad file extensions and spaces in names");
     setPriority(Priority.AMBER);
     setTeamResponsible(Team.GENEBUILD);

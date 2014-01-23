@@ -40,6 +40,7 @@ public class HGNCMultipleGenes extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("core_xrefs");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 
 		setDescription("Check for HGNCs that have been assigned as display labels more than one gene.");
 		setTeamResponsible(Team.CORE);

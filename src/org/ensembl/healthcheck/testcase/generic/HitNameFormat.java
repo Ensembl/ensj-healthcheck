@@ -38,6 +38,7 @@ public class HitNameFormat extends SingleDatabaseTestCase {
 
 		addToGroup("post_genebuild");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
                 addToGroup("pre-compara-handover");
 
 		setDescription("Check that there are no incorrectly formatted hit_names");

@@ -42,6 +42,7 @@ public class SchemaType extends SingleDatabaseTestCase {
 
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		setDescription("Check that the schema_type meta key is present and correct.");
 		setPriority(Priority.AMBER);

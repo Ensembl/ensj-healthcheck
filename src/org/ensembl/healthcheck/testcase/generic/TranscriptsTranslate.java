@@ -39,6 +39,7 @@ public class TranscriptsTranslate extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		setDescription("Check that all transcripts of protein_coding genes translate");
 		setTeamResponsible(Team.GENEBUILD);

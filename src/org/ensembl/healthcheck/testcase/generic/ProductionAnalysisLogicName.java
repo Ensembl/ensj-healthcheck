@@ -37,6 +37,7 @@ public class ProductionAnalysisLogicName extends AbstractTemplatedTestCase {
     addToGroup("production");
     addToGroup("pre-compara-handover");
     addToGroup("post-compara-handover");
+    addToGroup("post-projection");
     
     setDescription("Check that the content of the analysis logic names in the core databases are subsets of production");
     setPriority(Priority.AMBER);

@@ -39,6 +39,7 @@ public class GeneCoordSystem extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		
 		setDescription("Check that no genes are on a sequence_level coord system.");
 		setPriority(Priority.AMBER);

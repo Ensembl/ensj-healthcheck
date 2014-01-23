@@ -54,6 +54,7 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
                 addToGroup("production");
                 addToGroup("pre-compara-handover");
                 addToGroup("post-compara-handover");
+                addToGroup("post-projection");
 		setTeamResponsible(Team.GENEBUILD);
 	}
 
