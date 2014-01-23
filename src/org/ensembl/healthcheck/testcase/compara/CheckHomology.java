@@ -58,8 +58,7 @@ public class CheckHomology extends SingleDatabaseTestCase {
         Connection con = dbre.getConnection();
 
         if (tableHasRows(con, "homology") && tableHasRows(con, "homology")) {
-            result &= checkCountIsZero(con,"homology","threshold_on_ds=0.0");
-            result &= checkCountIsZero(con,"homology","threshold_on_ds>2.0");
+            result &= checkCountIsZero(con,"method_link_species_set_tag","tag='threshold_on_ds' AND value NOT IN (1,2)");
         } else {
             ReportManager.problem(this, con, "NO ENTRIES in homology or homology_member tables");
         }
