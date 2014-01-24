@@ -33,6 +33,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -46,6 +48,7 @@ import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.RowMapper;
 import org.ensembl.healthcheck.util.SqlTemplate;
 import org.ensembl.healthcheck.util.Utils;
 
@@ -83,6 +86,8 @@ public class MetaValues extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
+                DatabaseRegistryEntry sec = getEquivalentFromSecondaryServer(dbre);
+
 		Species species = dbre.getSpecies();
 
 		if (species == Species.ANCESTRAL_SEQUENCES) {
@@ -106,6 +111,7 @@ public class MetaValues extends SingleDatabaseTestCase {
                         result &= checkGenebuildID(con);
                         result &= checkGenebuildMethod(dbre);
                         result &= checkAssemblyAccessionUpdate(dbre);
+                        result &= checkGenes(dbre, sec);
 		}
 
 		result &= checkCoordSystemTableCases(con);
@@ -470,56 +476,6 @@ public class MetaValues extends SingleDatabaseTestCase {
 			ReportManager.problem(this, con, "genebuild.initial_release_date is greater than or equal to genebuild.last_geneset_update");
 		}
 
-		// check for current genebuild.last_geneset_update <= previous release genebuild.last_geneset_update
-		// AND the number of genes or transcripts or exons between the two releases has changed
-		// If the gene set has changed in any way since the previous release then the date should have been updated.
-		DatabaseRegistryEntry previous = getEquivalentFromSecondaryServer(dbre);
-		if (previous == null) {
-			return result;
-		}
-
-		Connection previousCon = previous.getConnection();
-
-		String previousLastGenesetUpdateString = DBUtils.getRowColumnValue(previousCon, "SELECT meta_value FROM meta WHERE meta_key='genebuild.last_geneset_update'").replaceAll("-", "");
-
-		if (previousLastGenesetUpdateString == null || previousLastGenesetUpdateString.length() == 0) {
-
-			ReportManager.problem(this, con, "Problem parsing last geneset update entry from previous database.");
-			return false;
-
-		}
-
-		int previousLastGenesetUpdate;
-
-		try {
-
-			previousLastGenesetUpdate = Integer.valueOf(previousLastGenesetUpdateString).intValue();
-
-		} catch (NumberFormatException e) {
-
-			ReportManager.problem(this, con, "Problem parsing last geneset update entry from previous database: " + Arrays.toString(e.getStackTrace()));
-			return false;
-
-		}
-
-		if (lastGenesetUpdate <= previousLastGenesetUpdate) {
-
-			int currentGeneCount = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM gene");
-			int currentTranscriptCount = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM transcript");
-			int currentExonCount = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM exon");
-
-			int previousGeneCount = DBUtils.getRowCount(previousCon, "SELECT COUNT(*) FROM gene");
-			int previousTranscriptCount = DBUtils.getRowCount(previousCon, "SELECT COUNT(*) FROM transcript");
-			int previousExonCount = DBUtils.getRowCount(previousCon, "SELECT COUNT(*) FROM exon");
-
-			if (currentGeneCount != previousGeneCount || currentTranscriptCount != previousTranscriptCount || currentExonCount != previousExonCount) {
-
-				ReportManager.problem(this, con, "Last geneset update entry is the same or older than the equivalent entry in the previous release and the number of genes, transcripts or exons has changed.");
-				result = false;
-
-			}
-		}
-
 		return result;
 
 	}
@@ -806,6 +762,50 @@ public class MetaValues extends SingleDatabaseTestCase {
 		return result;
 
 	}
+
+        private boolean checkGenes(DatabaseRegistryEntry dbre, DatabaseRegistryEntry sec) {
+
+          boolean result = true;
+
+          Connection con = dbre.getConnection();
+          Connection previousCon = sec.getConnection();
+
+          SqlTemplate t = getSqlTemplate(dbre);
+
+          RowMapper<Set<Object>> rowMapper = new RowMapper<Set<Object>>(){
+            public Set<Object> mapRow(ResultSet rs, int position) throws SQLException {
+              Set<Object> set = new HashSet<Object>();
+              for (int i=1; i <= 10; i++) {
+                set.add(rs.getObject(i));
+              }
+              return set;
+            }
+          };
+
+          String sql = "SELECT biotype, analysis_id, seq_region_id, seq_region_start, seq_region_end, seq_region_end, seq_region_strand, stable_id, is_current, version FROM gene" ;
+          Set<Set<Object>> currentGenes = t.queryForSet(sql, rowMapper);
+          Set<Set<Object>> previousGenes = getSqlTemplate(sec).queryForSet(sql, rowMapper);
+
+          String genesetUpdate = DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key = 'genebuild.last_geneset_update'");
+          String previousGenesetUpdate = DBUtils.getRowColumnValue(previousCon, "SELECT meta_value FROM meta WHERE meta_key = 'genebuild.last_geneset_update'");
+
+          String gencode = DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key = 'gencode.version'");
+          String previousGencode = DBUtils.getRowColumnValue(previousCon, "SELECT meta_value FROM meta WHERE meta_key = 'gencode.version'");
+
+          if (! currentGenes.equals(previousGenes)) {
+            if (genesetUpdate.equals(previousGenesetUpdate)) {
+              ReportManager.problem(this, con, "Gene set has changed but last_geneset_update has not been updated");
+              result = false;
+            }
+            if (gencode.equals(previousGencode)) {
+              ReportManager.problem(this, con, "Gene set has changed but genecode.version has not been updated");
+              result = false;
+            }
+          }
+
+          return result;
+
+        }
 	
 	private boolean checkForSchemaPatchLineBreaks(DatabaseRegistryEntry dbre) {
 	  SqlTemplate t = DBUtils.getSqlTemplate(dbre);
