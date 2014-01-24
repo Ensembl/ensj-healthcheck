@@ -34,6 +34,7 @@ import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
+
 /**
  * Check that all chromosomes have at least some genes with certain analyses.
  */
@@ -90,7 +91,19 @@ public class SourceTypes extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		Connection con = dbre.getConnection();
+                Connection con = dbre.getConnection();
+
+                result &= geneSources(con);
+                result &= transcriptSources(con);
+                result &= geneTranscriptSources(con);
+
+                return result;
+
+        } // run
+
+        public boolean geneSources(Connection con) {
+
+                boolean result = true;
 
 		String[] sources = { "ensembl", "havana", "ensembl_havana" };
 
@@ -145,7 +158,102 @@ public class SourceTypes extends SingleDatabaseTestCase {
 
 		return result;
 
-	} // run
+	} // geneSources 
+
+
+        public boolean transcriptSources(Connection con) {
+        
+               boolean result = true;
+
+               String sql = "SELECT COUNT(*) FROM transcript WHERE isnull(source)";
+
+               int rows = DBUtils.getRowCount(con, sql);
+
+               if (rows > 0) {
+
+                       result = false;
+                       ReportManager.problem(this, con, "Some transcripts have no source");
+
+               }
+
+               sql = "SELECT COUNT(*) FROM transcript t, analysis a WHERE t.analysis_id = a.analysis_id AND source not in ('ensembl') AND logic_name = 'ensembl'";
+
+               rows = DBUtils.getRowCount(con, sql);
+
+               if (rows > 0) {
+
+                       result = false;
+                       ReportManager.problem(this, con, "Some transcripts of source ensembl do not have ensembl analysis");
+
+               }
+
+               sql = "SELECT COUNT(*) FROM transcript t, analysis a WHERE t.analysis_id = a.analysis_id AND source not in ('havana') AND logic_name = 'havana'";
+
+               rows = DBUtils.getRowCount(con, sql);
+
+
+               if (rows > 0) {
+
+                       result = false;
+                       ReportManager.problem(this, con, "Some transcripts of source havana do not have havana analysis");
+
+               }
+
+               sql = "SELECT COUNT(*) FROM transcript t, analysis a WHERE t.analysis_id = a.analysis_id AND source not in ('ensembl_havana_transcript') AND logic_name = 'ensembl_havana'";
+
+               rows = DBUtils.getRowCount(con, sql);
+
+               if (rows > 0) {
+
+                       result = false;
+                       ReportManager.problem(this, con, "Some transcripts of source ensembl_havana_transcript do not have ensembl_havana analysis");
+
+               }
+
+               return result;
+
+        }
+
+        public boolean geneTranscriptSources(Connection con) {
+
+               boolean result = true;
+
+               String sql = "SELECT COUNT(*) FROM gene g, transcript t where g.gene_id = t.gene_id and g.source = 'ensembl' and t.source not in ('ensembl')";
+
+               int rows = DBUtils.getRowCount(con, sql);
+
+               if (rows > 0) {
+
+                       result = false;
+                       ReportManager.problem(this, con, "Some ensembl genes have transcripts which are not ensembl");
+
+               }
+
+               sql = "SELECT COUNT(*) FROM gene g, transcript t where g.gene_id = t.gene_id and g.source = 'havana' and t.source not in ('havana')";
+
+               rows = DBUtils.getRowCount(con, sql);
+
+               if (rows > 0) {
+
+                       result = false;
+                       ReportManager.problem(this, con, "Some havana genes have transcripts which are not havana");
+
+               }
+
+               sql = "SELECT COUNT(*) FROM gene g, transcript t where g.gene_id = t.gene_id and g.source not in ('ensembl_havana') and t.source = 'ensembl_havana'";
+
+               rows = DBUtils.getRowCount(con, sql);
+
+               if (rows > 0) {
+
+                       result = false;
+                       ReportManager.problem(this, con, "Some ensembl_havana transcripts belong to genes which are ensembl_havana");
+
+               }
+
+               return result;
+
+        }
 
 
   private boolean testMerged(Species s) {
