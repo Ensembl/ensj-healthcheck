@@ -199,7 +199,7 @@ public class SourceTypes extends SingleDatabaseTestCase {
 
                }
 
-               sql = "SELECT COUNT(*) FROM transcript t, analysis a WHERE t.analysis_id = a.analysis_id AND source not in ('ensembl_havana_transcript') AND logic_name = 'ensembl_havana'";
+               sql = "SELECT COUNT(*) FROM transcript t, analysis a WHERE t.analysis_id = a.analysis_id AND source not in ('ensembl_havana') AND logic_name = 'ensembl_havana_transcript'";
 
                rows = DBUtils.getRowCount(con, sql);
 
