@@ -797,9 +797,11 @@ public class MetaValues extends SingleDatabaseTestCase {
               ReportManager.problem(this, con, "Gene set has changed but last_geneset_update has not been updated");
               result = false;
             }
-            if (gencode.equals(previousGencode)) {
-              ReportManager.problem(this, con, "Gene set has changed but genecode.version has not been updated");
-              result = false;
+            if (dbre.getSpecies() == Species.HOMO_SAPIENS || dbre.getSpecies() == Species.MUS_MUSCULUS) {
+              if (gencode.equals(previousGencode)) {
+                ReportManager.problem(this, con, "Gene set has changed but gencode.version has not been updated");
+                result = false;
+              }
             }
           }
 
