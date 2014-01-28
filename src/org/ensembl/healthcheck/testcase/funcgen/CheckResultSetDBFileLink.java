@@ -24,6 +24,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.io.IOException;
 
 import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
@@ -33,7 +34,11 @@ import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
-
+	
+	String[] windows = {"30","65","130","260","450","648","950","1296"}; 
+	
+	protected String[] windowSizes() {	return windows; }
+	
     public CheckResultSetDBFileLink() {
         addToGroup("post_regulatorybuild");
         addToGroup("funcgen");//do we need this group and the funcgen-release group?
@@ -86,14 +91,13 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 	
         try {
             Statement stmt = con.createStatement();
-            int MAX_REPORT=5; //Only out 5 problems by default
+            int MAX_REPORT=50; //Only out 50 problems by default
             HashMap<String, String> rSetDBLinks  = new HashMap<String, String>();
             HashMap<String, String> rSetFClasses = new HashMap<String, String>();
             HashMap<String, String> rSetStates   = new HashMap<String, String>();
             HashMap<String, String> rSetRFSets   = new HashMap<String, String>();
-            ArrayList removeableRsets            = new ArrayList();
+            ArrayList<String> removeableRsets    = new ArrayList<String>();
 
-			
             String rsetInfoSQL = "SELECT rs.name, dbf.path, s1.name, rs.feature_class from result_set rs left join dbfile_registry dbf "+ 
                 "ON rs.result_set_id=dbf.table_id and dbf.table_name='result_set' left join " + 
                 "(select s.table_id, sn.name from status s, status_name sn where " + 
@@ -102,7 +106,7 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 		
             ResultSet rsetInfo = stmt.executeQuery(rsetInfoSQL);
             String rsetStatus, rsetPath, rsetName, regFset, rsetFClass;
-            String infoString = "";
+           //String infoString = "";
 			
             while ((rsetInfo != null) && rsetInfo.next()) {
                 rsetName   = rsetInfo.getString(1); 
@@ -134,9 +138,6 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
                 }
             }
 
-            
-
-			
             if(removeableRsets.size() > 0){
                 //Should this be info instead?
                 ReportManager.problem(this, con, "Found " + removeableRsets.size() + 
@@ -155,17 +156,11 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
                 String root_dir  = rsetDBDataRoot.getString(1);
                 //rsetDBDataRoot.close(); // don't need this anymore as reusing stmt will close this
 
-                //Check is defined
-                
-
-
-
                 ReportManager.problem(this, con, "Found dbfile.data_root meta key. Need to remove this once all the other failures have been resolved");
                 result = false;
                 //This can be removed once we resolve the dbfile.data_root issue. /nfs/ensnfs-dev/staging/nNeed adding to config
                 //and add species and assembly
 
-                
                 //Get distinct result_set feature_class values
                 String    fclassSQL    = "SELECT distinct(feature_class) from result_set";  
                 ResultSet rsetFclasses = stmt.executeQuery(fclassSQL);
@@ -183,31 +178,36 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
                     String resultSetPath  = root_dir + "/" +  featureClass + "_feature";
                     File   resultSetPathF = new File(resultSetPath);
 			
-
-                    //Need to test is directory here
-
                     if(resultSetPathF.exists() &&
-                       resultSetPathF.isDirectory() ){
+                       resultSetPathF.isDirectory()){
                         String[] subDirs = resultSetPathF.list();
                         String rsetSQL;
-                        ArrayList subdirProblems = new ArrayList();
+                        ArrayList<String> subdirProblems = new ArrayList<String>();
                         Statement stmt1          = con.createStatement();
                         boolean seenREADME = false;
 
-                        for(int i=0; i< subDirs.length; i++){
-                            problemString = "";
+                        for(String subDir : subDirs){
+                        	problemString = "";
 
-                            if(subDirs[i].equals("README") ){
+                            //Check is not a soft link
+                        	//as these are to support archives, and really need testing in another HC
+                            boolean isLink = true;
+                            String fullPath = resultSetPath + "/" + subDir;
+                            try { isLink = isSymLink(fullPath); } catch(IOException i){ i.printStackTrace(); }
+                      
+                            if(subDir.equals("README") ){
                                 seenREADME = true;
                                 continue;
                             }
+                            else if(isLink){
+                            	continue;                            	
+                            }
 
-
-                            rsetSQL = "SELECT result_set_id from result_set where name='" + subDirs[i] + "'";
+                            rsetSQL = "SELECT result_set_id from result_set where name='" + subDir + "'";
                             ResultSet subdirRsetIDs = stmt1.executeQuery(rsetSQL);
 						
                             if((root_dir != null) && subdirRsetIDs.next()){
-                                String rsetID         = subdirRsetIDs.getString(1);
+                                //String rsetID         = subdirRsetIDs.getString(1);
                                 //logger.fine("Found result_feature subdir:\t" + subDirs[i] + " with rset id\t" + rsetID);
 
                                 if(subdirRsetIDs.next()){
@@ -215,17 +215,16 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
                                 }
 							
                                 //CATCH SUBDIRS WHICH FOR RESULT_SETS WITHOUT DBFILE_REGISTRY/DISPLAYABLE ENTRY OR IN BUILD
-                                if(removeableRsets.contains(subDirs[i])){
+                                if(removeableRsets.contains(subDir)){
                                     problemString += "\tAppears to be 'removeable' i.e. not DISPLAYABLE, not in build and has no dbfile_registry.path.\n";
                                 }
                             }
                             else{
                                 problemString += "\tCannot find result_set.\n";
                             }
-					
 						
                             if(! problemString.equals("")){
-                                subdirProblems.add(subDirs[i] + " " + featureClass + "_feature subdir has problems:\n" + problemString);
+                                subdirProblems.add(subDir + " " + featureClass + "_feature subdir has problems:\n" + problemString);
                             }
                         }
 					
@@ -264,10 +263,7 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
                         result = false;
                         //Don't return here as rsetPaths in DB may now be pointing to as different path
                     }
-								}
-
-
-             
+				}
 
                 if(numRsets == 0){
                     ReportManager.problem(this, con, "dbfile_root is defined in the meta table but found no result_sets can be found");
@@ -275,17 +271,14 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
                     
                 }
                 else{ // NOW CHECK EXISTING RESULT SETS
-                    File root_dir_f = new File(root_dir);
+                File root_dir_f = new File(root_dir);
 										
                     if(root_dir_f.exists()){
-                        ArrayList rsetProblems = new ArrayList();
+                        ArrayList<String> rsetProblems = new ArrayList<String>();
                         Iterator<String> dbLinkIt = rSetDBLinks.keySet().iterator();
-                        
-
                         //Here we are iterating over all the rSetDBLinks twice
                         //once for each FeatureClass
                         //but we get the rsetFClass below
-
                         Object tmpObject;
 						
                         while(dbLinkIt.hasNext()){
@@ -316,8 +309,6 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
                                     "IS " + rsetStatus + "\n";
                             }
 
-					
-							
                             if(! rsetPath.equals("NO DBFILE_REGISTRY PATH")){// NOW TEST COL FILES
                                 String rSetFinalPath = root_dir + rsetPath;
                                 File rsetFileFolder = new File(rSetFinalPath);
@@ -326,10 +317,13 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 
                                     if(rsetFClass.equals("result") ){
                                             
-                                        String[] windows = {"30","65","130","260","450","648","950","1296"}; 
-                                            
-                                        for(int i=0;i<windows.length;i++){
-                                            String rsetWindowFileName = rSetFinalPath + "/result_features." + rsetName + "." + windows[i] + ".col";
+                                        //String[] windows = {"30","65","130","260","450","648","950","1296"}; 
+                                    	//for(int i=0;i<windows.length;i++){
+                                        
+                                    	String[] windowSizes= windowSizes();
+                                    	
+                                    	for (String wSize : windowSizes) {
+                                            String rsetWindowFileName = rSetFinalPath + "/result_features." + rsetName + "." + wSize + ".col";
                                             File rsetWindowFile = new File(rsetWindowFileName);
                                                 
                                             if(rsetWindowFile.exists()){
@@ -400,4 +394,29 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
         
         return result;
     }
+    
+    
+    // Need to push these to some core File utils class
+    
+    public static boolean isSymLink(File file) throws IOException {
+    	
+    	if (file == null) throw new NullPointerException("File argument cannot be null");
+    	
+    	File cfile;
+    	  	
+	  	if (file.getParent() == null) {
+	  		cfile = file;
+	  	} else {
+	  		File canonDir = file.getParentFile().getCanonicalFile();
+	  		cfile = new File(canonDir, file.getName());
+	  	}
+
+	  	return ! cfile.getCanonicalFile().equals( cfile.getAbsoluteFile() );
+  	}
+    
+    public static boolean isSymLink(String path) throws IOException {
+    	if (path == null) throw new NullPointerException("Path argument cannot be null");
+    	File pathFile = new File(path);
+    	return isSymLink(pathFile);
+  	}
 }
