@@ -36,7 +36,6 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 	
 	String[] windows = {"30","65","130","260","450","648","950","1296"}; 
-
 	
 	protected String[] windowSizes() {	return windows; }
 	
@@ -92,19 +91,13 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
 	
         try {
             Statement stmt = con.createStatement();
-            
-            //We need to ignore link in here
-            //as these generally support archive DBs
-            //So we also need a HC to test the exists paths in the ensnfs-prd area are also available in ensnfs-dev/staging
-            
-            int MAX_REPORT=50; //Only out 5 problems by default
+            int MAX_REPORT=50; //Only out 50 problems by default
             HashMap<String, String> rSetDBLinks  = new HashMap<String, String>();
             HashMap<String, String> rSetFClasses = new HashMap<String, String>();
             HashMap<String, String> rSetStates   = new HashMap<String, String>();
             HashMap<String, String> rSetRFSets   = new HashMap<String, String>();
             ArrayList<String> removeableRsets    = new ArrayList<String>();
 
-			
             String rsetInfoSQL = "SELECT rs.name, dbf.path, s1.name, rs.feature_class from result_set rs left join dbfile_registry dbf "+ 
                 "ON rs.result_set_id=dbf.table_id and dbf.table_name='result_set' left join " + 
                 "(select s.table_id, sn.name from status s, status_name sn where " + 
@@ -145,9 +138,6 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
                 }
             }
 
-            
-
-			
             if(removeableRsets.size() > 0){
                 //Should this be info instead?
                 ReportManager.problem(this, con, "Found " + removeableRsets.size() + 
@@ -171,7 +161,6 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
                 //This can be removed once we resolve the dbfile.data_root issue. /nfs/ensnfs-dev/staging/nNeed adding to config
                 //and add species and assembly
 
-                
                 //Get distinct result_set feature_class values
                 String    fclassSQL    = "SELECT distinct(feature_class) from result_set";  
                 ResultSet rsetFclasses = stmt.executeQuery(fclassSQL);
@@ -189,10 +178,6 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
                     String resultSetPath  = root_dir + "/" +  featureClass + "_feature";
                     File   resultSetPathF = new File(resultSetPath);
 			
-
-                
-                    
-                    
                     if(resultSetPathF.exists() &&
                        resultSetPathF.isDirectory()){
                         String[] subDirs = resultSetPathF.list();
@@ -201,7 +186,6 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
                         Statement stmt1          = con.createStatement();
                         boolean seenREADME = false;
 
-                        
                         for(String subDir : subDirs){
                         	problemString = "";
 
@@ -218,7 +202,6 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
                             else if(isLink){
                             	continue;                            	
                             }
-
 
                             rsetSQL = "SELECT result_set_id from result_set where name='" + subDir + "'";
                             ResultSet subdirRsetIDs = stmt1.executeQuery(rsetSQL);
@@ -239,7 +222,6 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
                             else{
                                 problemString += "\tCannot find result_set.\n";
                             }
-					
 						
                             if(! problemString.equals("")){
                                 subdirProblems.add(subDir + " " + featureClass + "_feature subdir has problems:\n" + problemString);
@@ -283,9 +265,6 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
                     }
 				}
 
-
-             
-
                 if(numRsets == 0){
                     ReportManager.problem(this, con, "dbfile_root is defined in the meta table but found no result_sets can be found");
                     result = false;					//Could return here?
@@ -297,12 +276,9 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
                     if(root_dir_f.exists()){
                         ArrayList<String> rsetProblems = new ArrayList<String>();
                         Iterator<String> dbLinkIt = rSetDBLinks.keySet().iterator();
-                        
-
                         //Here we are iterating over all the rSetDBLinks twice
                         //once for each FeatureClass
                         //but we get the rsetFClass below
-
                         Object tmpObject;
 						
                         while(dbLinkIt.hasNext()){
@@ -333,8 +309,6 @@ public class CheckResultSetDBFileLink extends SingleDatabaseTestCase {
                                     "IS " + rsetStatus + "\n";
                             }
 
-					
-							
                             if(! rsetPath.equals("NO DBFILE_REGISTRY PATH")){// NOW TEST COL FILES
                                 String rSetFinalPath = root_dir + rsetPath;
                                 File rsetFileFolder = new File(rSetFinalPath);
