@@ -42,7 +42,7 @@ jar() {
 classpath() {
 
   if [ -n "$JAVA_HOME" ]; then
-    if [ ! -f "$JAVA_HOME/bin/java"]; then
+    if [ ! -f "$JAVA_HOME/bin/java" ]; then
       echoerr "FAILED. Cannot find a Java binary at $JAVA_HOME/bin/java\n"
       exit 2
     fi
