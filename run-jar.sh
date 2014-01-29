@@ -16,4 +16,5 @@
 
 home=`dirname $0`
 . $home/setup.sh
-jar
+PRINT_ANT=1 clean
+PRINT_ANT=1 jar
