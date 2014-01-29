@@ -33,7 +33,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.BlanksInsteadOfNulls </li> 
  *   <li> org.ensembl.healthcheck.testcase.funcgen.RegulatoryFeatureTypes </li> 
  *   <li> org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionArrayXrefs </li> 
- *   <li> org.ensembl.healthcheck.testcase.funcgen.AnalysisDescription </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.SpeciesID </li> 
  *   <li> org.ensembl.healthcheck.testcase.funcgen.FuncgenStableID </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AnalyseTables </li> 
@@ -60,7 +59,6 @@ public class FuncgenRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.BlanksInsteadOfNulls.class,
 			org.ensembl.healthcheck.testcase.funcgen.RegulatoryFeatureTypes.class,
 			org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionArrayXrefs.class,
-			org.ensembl.healthcheck.testcase.funcgen.AnalysisDescription.class,
 			org.ensembl.healthcheck.testcase.generic.SpeciesID.class,
 			org.ensembl.healthcheck.testcase.funcgen.FuncgenStableID.class,
 			org.ensembl.healthcheck.testcase.generic.AnalyseTables.class,
