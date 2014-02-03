@@ -119,6 +119,10 @@ public final class DBUtils {
 		DBUtils.hostConfiguration = hostConfiguration;
 	}
 
+        public static String getSecondaryDatabase() {
+                return hostConfiguration.getSecondaryDb();
+        }
+
 	// hide constructor to stop instantiation
 	private DBUtils() {
 

@@ -1675,10 +1675,15 @@ public abstract class EnsTestCase {
 		// free
 
 		for (DatabaseRegistryEntry secDBRE : secondaryDatabaseRegistry.getAll()) {
+                        if (DBUtils.getSecondaryDatabase() != null) {
+                                if (secDBRE.getName().equals(DBUtils.getSecondaryDatabase())) {
+                                        return secDBRE;
+                                }
+                        }
 			if (dbre.getSpecies() == Species.UNKNOWN) {
 				// EG where we don't know the species, use type and alias
 				// matching instead
-				if (dbre.getType() == secDBRE.getType()
+				if (dbre.getType().equals(secDBRE.getType())
 						&& dbre.getAlias().equals(secDBRE.getAlias())) {
 					matchingDBs.add(secDBRE);
 					logger.finest("added "
@@ -1688,8 +1693,8 @@ public abstract class EnsTestCase {
 				}
 			} else {
 				// nulls will set type automatically
-				if (dbre.getType() == secDBRE.getType()
-						&& dbre.getSpecies() == secDBRE.getSpecies()) {
+				if (dbre.getType().equals(secDBRE.getType())
+						&& dbre.getSpecies().equals(secDBRE.getSpecies())) {
 					matchingDBs.add(secDBRE);
 					logger.finest("added "
 							+ secDBRE.getName()
@@ -1706,7 +1711,7 @@ public abstract class EnsTestCase {
 
 		// take the highest one that doesn't have the same version number as our
 		// current one, if available
-		DatabaseRegistryEntry result = null;
+                DatabaseRegistryEntry result = null;
 
 		if (matchingDBs.size() > 0) {
 

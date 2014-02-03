@@ -83,6 +83,12 @@ public interface ConfigureHost {
 
 	boolean isSecondaryDriver();
 
+        @Option(longName = "secondary.database", description = "Some tests require a second database containing the previous release. This "
+                        + "configures the database name for the second database server.")
+        String getSecondaryDb();
+
+        boolean isSecondaryDb();
+
 	/* Additional methods for handling multiple database servers */
 
 	@Option(description = "Host for server 1 (support for multiple staging servers in Ensembl)")
