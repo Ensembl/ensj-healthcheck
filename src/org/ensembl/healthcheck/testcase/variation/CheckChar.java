@@ -74,6 +74,13 @@ public class CheckChar extends SingleDatabaseTestCase {
 				ReportManager.problem(this, con, "phenotype: " + input + " is suspiciously short");
 			    }
  
+			    // check for strings starting with space
+                            boolean bad_start = input.startsWith(" ");
+                            if( bad_start == true){
+                                result = false;
+                                ReportManager.problem(this, con, "phenotype: " + input + " starts with a space");
+                            }
+
                             // check for phenotype descriptions suggesting no phenotype
                             boolean name_ok = checkNonPhenotypes(input);
 			    if(name_ok == false){
