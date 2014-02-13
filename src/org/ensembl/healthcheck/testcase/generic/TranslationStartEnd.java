@@ -78,7 +78,7 @@ public class TranslationStartEnd extends SingleDatabaseTestCase {
 		}
 
 		// check no translations overrun their exons
-		rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM translation t, exon e WHERE t.end_exon_id=e.exon_id AND e.seq_region_end-e.seq_region_start+1 < t.seq_end");
+		rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM translation t, exon e WHERE t.end_exon_id=e.exon_id AND cast(e.seq_region_end as signed int)-cast(e.seq_region_start as signed int)+1 < t.seq_end");
 		if (rows > 0) {
 			result = false;
 			ReportManager.problem(this, con, rows + " translations end beyond the end of their exons");
