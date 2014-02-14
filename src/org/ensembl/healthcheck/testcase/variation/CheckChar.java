@@ -73,13 +73,7 @@ public class CheckChar extends SingleDatabaseTestCase {
 				result = false;
 				ReportManager.problem(this, con, "phenotype: " + input + " is suspiciously short");
 			    }
- 
-			    // check for strings starting with space
-                            boolean bad_start = input.startsWith(" ");
-                            if( bad_start == true){
-                                result = false;
-                                ReportManager.problem(this, con, "phenotype: " + input + " starts with a space");
-                            }
+ 			   
 
                             // check for phenotype descriptions suggesting no phenotype
                             boolean name_ok = checkNonPhenotypes(input);
@@ -92,7 +86,7 @@ public class CheckChar extends SingleDatabaseTestCase {
 			    char_ok = checkUnsupportedChar(input);
 			    if(char_ok == false){
 				result = false;
-				ReportManager.problem(this, con, "phenotype: " + input + " has suspect characters");
+				ReportManager.problem(this, con, "phenotype: \""+ input +"\" has suspect start or unsupported characters");
 			    }
 
 			}		
@@ -124,9 +118,19 @@ public class CheckChar extends SingleDatabaseTestCase {
 		    if(ascii_val < 32 || ascii_val  > 126 || ascii_val == 60 || ascii_val == 62 ){
 			is_ok = false;
 		    }
+
+		    // also check first character makes sense
+		    if(i == 0 && ( ascii_val < 48 || 
+				   (ascii_val  > 57 && ascii_val < 65) ||
+				   (ascii_val  > 90 && ascii_val < 97) ||
+				   ascii_val  > 122)){
+			is_ok = false;
+		    }
 		}
 		return is_ok;
 	}
+
+
 
 
 	private boolean checkNonPhenotypes( String input) {
@@ -145,6 +149,9 @@ public class CheckChar extends SingleDatabaseTestCase {
 		
 		return is_ok;
 	}
+
+
+   
 
 	// --------------------------------------
 }
