@@ -40,7 +40,7 @@ public class GeneStableIdDisplayXref extends AbstractIntegerTestCase {
 		this.appliesToType(DatabaseType.CORE);
 		this.setTeamResponsible(Team.ENSEMBL_GENOMES);
 		this.setFix("update gene g, xref x set g.display_xref_id=NULL "
-				+ "where g.display_xref_id=x.xref_id and x.display_label=g.stable_id");
+				+ "where g.display_xref_id=x.xref_id and x.display_label=g.stable_id and biotype='protein_coding'");
 	}
 
 	/*
