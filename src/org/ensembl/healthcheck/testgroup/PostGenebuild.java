@@ -60,6 +60,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblySeqregion </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.TranscriptSupportingFeatures </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.ExonSupportingFeatures.java </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.AnalysisLogicName </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.XrefVersions </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AutoIncrement </li> 
@@ -152,6 +153,7 @@ public class PostGenebuild extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.AssemblySeqregion.class,
 			org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd.class,
 			org.ensembl.healthcheck.testcase.generic.TranscriptSupportingFeatures.class,
+                        org.ensembl.healthcheck.testcase.generic.ExonSupportingFeatures.class,
 			org.ensembl.healthcheck.testcase.generic.AnalysisLogicName.class,
 			org.ensembl.healthcheck.testcase.generic.XrefVersions.class,
 			org.ensembl.healthcheck.testcase.generic.AutoIncrement.class,

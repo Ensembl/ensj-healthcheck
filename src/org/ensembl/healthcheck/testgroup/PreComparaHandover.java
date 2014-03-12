@@ -58,6 +58,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.ProductionMasterTables </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.Archive </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.TranscriptSupportingFeatures </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.ExonSupportingFeatures </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.AncestralSequencesExtraChecks </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AnalysisLogicName </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AutoIncrement </li> 
@@ -154,6 +155,7 @@ public class PreComparaHandover extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.ProductionMasterTables.class,
 			org.ensembl.healthcheck.testcase.generic.Archive.class,
 			org.ensembl.healthcheck.testcase.generic.TranscriptSupportingFeatures.class,
+                        org.ensembl.healthcheck.testcase.generic.ExonSupportingFeatures.class,
 			org.ensembl.healthcheck.testcase.generic.AncestralSequencesExtraChecks.class,
 			org.ensembl.healthcheck.testcase.generic.AnalysisLogicName.class,
 			org.ensembl.healthcheck.testcase.generic.AutoIncrement.class,

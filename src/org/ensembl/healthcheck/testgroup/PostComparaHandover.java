@@ -78,6 +78,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.Archive </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ProjectedXrefs </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.TranscriptSupportingFeatures </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.ExonSupportingFeatures </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.AncestralSequencesExtraChecks </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AnalysisLogicName </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.XrefVersions </li> 
@@ -214,6 +215,7 @@ public class PostComparaHandover extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.Archive.class,
 			org.ensembl.healthcheck.testcase.generic.ProjectedXrefs.class,
 			org.ensembl.healthcheck.testcase.generic.TranscriptSupportingFeatures.class,
+                        org.ensembl.healthcheck.testcase.generic.ExonSupportingFeatures.class,
 			org.ensembl.healthcheck.testcase.generic.AncestralSequencesExtraChecks.class,
 			org.ensembl.healthcheck.testcase.generic.AnalysisLogicName.class,
 			org.ensembl.healthcheck.testcase.generic.XrefVersions.class,
