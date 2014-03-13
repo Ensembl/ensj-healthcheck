@@ -50,8 +50,10 @@ public class EGForeignKeyMethodLinkSpeciesSetId extends
 		result &= assertNoEmptyNames(dbre);
 		result &= assertNoSource(dbre);
 		result &= assertMlssIdForeignKeysAndRanges(dbre);
-		result &= assertMethodLinkSpeciesSetOrphans(dbre);
+		result &= assertMlssGeneTreeRootOrphans(dbre);
 		result &= assertGeneTreeRootOrphans(dbre);
+		result &= assertMlssGenomicAlignOrphans(dbre);
+		result &= assertGenomicAlignOrphans(dbre);
 		result &= assertMethodLinkSpeciesSetCounts(dbre);
 		return result;
 	}
@@ -130,7 +132,7 @@ public class EGForeignKeyMethodLinkSpeciesSetId extends
 	 * Check for the number of MLSS unlinked to a protein tree and those protein
 	 * tree members unlinked to a MLSS
 	 */
-	protected boolean assertMethodLinkSpeciesSetOrphans(
+	protected boolean assertMlssGeneTreeRootOrphans(
 			DatabaseRegistryEntry dbre) {
 		return checkForOrphansWithConstraint(
 				dbre.getConnection(),
@@ -143,6 +145,23 @@ public class EGForeignKeyMethodLinkSpeciesSetId extends
 
 	protected boolean assertGeneTreeRootOrphans(DatabaseRegistryEntry dbre) {
 		return checkForOrphans(dbre.getConnection(), "gene_tree_root",
+				"method_link_species_set_id", "method_link_species_set",
+				"method_link_species_set_id");
+	}
+
+	protected boolean assertMlssGenomicAlignOrphans(
+			DatabaseRegistryEntry dbre) {
+		return checkForOrphansWithConstraint(
+				dbre.getConnection(),
+				"method_link_species_set",
+				"method_link_species_set_id",
+				"genomic_align_block",
+				"method_link_species_set_id",
+				"method_link_id BETWEEN 1 AND 99");
+	}
+
+	protected boolean assertGenomicAlignOrphans(DatabaseRegistryEntry dbre) {
+		return checkForOrphans(dbre.getConnection(), "genomic_align_block",
 				"method_link_species_set_id", "method_link_species_set",
 				"method_link_species_set_id");
 	}
