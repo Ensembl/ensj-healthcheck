@@ -70,6 +70,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.NullTranscripts </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.FrameshiftAttributes </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.GencodeAttributes </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.DuplicateGenes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ExonRank </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ExonStrandOrder </li> 
@@ -164,6 +165,7 @@ public class PostGenebuild extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.NullTranscripts.class,
 			org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions.class,
 			org.ensembl.healthcheck.testcase.generic.FrameshiftAttributes.class,
+                        org.ensembl.healthcheck.testcase.generic.GencodeAttributes.class,
 			org.ensembl.healthcheck.testcase.generic.DuplicateGenes.class,
 			org.ensembl.healthcheck.testcase.generic.ExonRank.class,
 			org.ensembl.healthcheck.testcase.generic.ExonStrandOrder.class,

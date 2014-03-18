@@ -71,6 +71,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ProductionAnalysisLogicName </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.FrameshiftAttributes </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.GencodeAttributes </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.DuplicateGenes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ExonRank </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.BlanksInsteadOfNulls </li> 
@@ -169,6 +170,7 @@ public class PreComparaHandover extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies.class,
 			org.ensembl.healthcheck.testcase.generic.ProductionAnalysisLogicName.class,
 			org.ensembl.healthcheck.testcase.generic.FrameshiftAttributes.class,
+                        org.ensembl.healthcheck.testcase.generic.GencodeAttributes.class,
 			org.ensembl.healthcheck.testcase.generic.DuplicateGenes.class,
 			org.ensembl.healthcheck.testcase.generic.ExonRank.class,
 			org.ensembl.healthcheck.testcase.generic.BlanksInsteadOfNulls.class,
