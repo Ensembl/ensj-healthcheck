@@ -40,6 +40,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.DuplicateExons </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ProductionBiotypes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionCCDS </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionRegionSynonyms </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionRepeatTypes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.CheckDeclarations </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap </li> 
@@ -137,6 +138,7 @@ public class PreComparaHandover extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.DuplicateExons.class,
 			org.ensembl.healthcheck.testcase.generic.ProductionBiotypes.class,
 			org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionCCDS.class,
+                        org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionRegionSynonyms.class,
 			org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionRepeatTypes.class,
 			org.ensembl.healthcheck.testcase.generic.CheckDeclarations.class,
 			org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap.class,

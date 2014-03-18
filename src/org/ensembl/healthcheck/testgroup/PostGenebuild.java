@@ -42,6 +42,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.BlankInfoType </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ProteinFeatures </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionCCDS </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionRegionSynonyms </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionRepeatTypes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.CheckDeclarations </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.GeneDescriptions </li> 
@@ -135,6 +136,7 @@ public class PostGenebuild extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.BlankInfoType.class,
 			org.ensembl.healthcheck.testcase.generic.ProteinFeatures.class,
 			org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionCCDS.class,
+                        org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionRegionSynonyms.class,
 			org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionRepeatTypes.class,
 			org.ensembl.healthcheck.testcase.generic.CheckDeclarations.class,
 			org.ensembl.healthcheck.testcase.generic.GeneDescriptions.class,
