@@ -92,7 +92,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.FeatureCoords </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyExceptions </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.UTR </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.HGNCTypes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.TranslationStartEnd </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.RepeatConsensus </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.TranscriptNames </li> 
@@ -187,7 +186,6 @@ public class PostGenebuild extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.FeatureCoords.class,
 			org.ensembl.healthcheck.testcase.generic.AssemblyExceptions.class,
 			org.ensembl.healthcheck.testcase.generic.UTR.class,
-			org.ensembl.healthcheck.testcase.generic.HGNCTypes.class,
 			org.ensembl.healthcheck.testcase.generic.TranslationStartEnd.class,
 			org.ensembl.healthcheck.testcase.generic.RepeatConsensus.class,
 			org.ensembl.healthcheck.testcase.generic.TranscriptNames.class,

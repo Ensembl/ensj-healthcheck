@@ -40,10 +40,6 @@ public class ExternalDBDescribe extends MultiDatabaseTestCase {
 	 */
 	public ExternalDBDescribe() {
 
-		addToGroup("core_xrefs");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check that the external_db table is the same in all databases.");
 		setTeamResponsible(Team.RELEASE_COORDINATOR);
 
