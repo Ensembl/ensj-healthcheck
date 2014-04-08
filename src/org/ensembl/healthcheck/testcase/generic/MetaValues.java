@@ -789,6 +789,9 @@ public class MetaValues extends SingleDatabaseTestCase {
           String genesetUpdate = DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key = 'genebuild.last_geneset_update'");
           String previousGenesetUpdate = DBUtils.getRowColumnValue(previousCon, "SELECT meta_value FROM meta WHERE meta_key = 'genebuild.last_geneset_update'");
 
+          String[] gencodeWebdata = DBUtils.getColumnValues(con, "SELECT web_data FROM analysis_description ad, analysis a WHERE a.analysis_id = ad.analysis_id AND logic_name in ('ensembl_havana_gene', 'ensembl_havana_ig_gene', 'ensembl_lincrna')");
+          String[] previousGencodeWebdata = DBUtils.getColumnValues(con, "SELECT web_data FROM analysis_description ad, analysis a WHERE a.analysis_id = ad.analysis_id AND logic_name in ('ensembl_havana_gene', 'ensembl_havana_ig_gene', 'ensembl_lincrna')");
+
           String gencode = DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key = 'gencode.version'");
           String previousGencode = DBUtils.getRowColumnValue(previousCon, "SELECT meta_value FROM meta WHERE meta_key = 'gencode.version'");
 
@@ -801,6 +804,12 @@ public class MetaValues extends SingleDatabaseTestCase {
               if (gencode.equals(previousGencode)) {
                 ReportManager.problem(this, con, "Gene set has changed but gencode.version has not been updated");
                 result = false;
+              }
+              for (int i = 0; i < gencodeWebdata.length; i++) {
+                if (gencodeWebdata[i].equals(previousGencodeWebdata[i])) {
+                  ReportManager.problem(this, con, "Gene set has changed but gencode version in web_data has not been updated");
+                  result = false;
+                }
               }
             }
           }
