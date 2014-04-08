@@ -34,77 +34,65 @@ import org.ensembl.healthcheck.util.DBUtils;
 
 public class GencodeAttributes extends SingleDatabaseTestCase {
 
-	/**
-	 * Create a new  testcase.
-	 */
-	public GencodeAttributes() {
+  /**
+   * Create a new  testcase.
+   */
+  public GencodeAttributes() {
 
-		addToGroup("post_genebuild");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
+    addToGroup("post_genebuild");
+    addToGroup("pre-compara-handover");
+    addToGroup("post-compara-handover");
                 addToGroup("post-projection");
 
-		setDescription("Check that Gencode basic geneset attributes have been added");
-		setTeamResponsible(Team.GENEBUILD);
-	}
+    setDescription("Check that Gencode basic geneset attributes have been added");
+    setTeamResponsible(Team.GENEBUILD);
+  }
 
-	/**
-	 * Only applies to core dbs.
-	 */
-	public void types() {
+  /**
+   * Only applies to core dbs.
+   */
+  public void types() {
 
-		List types = new ArrayList();
+    List types = new ArrayList();
 
-		types.add(DatabaseType.CORE);
+    types.add(DatabaseType.CORE);
                 types.add(DatabaseType.PRE_SITE);
 
-		setAppliesToTypes(types);
+    setAppliesToTypes(types);
 
-	}
+  }
 
-	/**
-	 * Run the test.
-	 * 
-	 * @param dbre
-	 *            The database to use.
-	 * @return true if the test passed.
-	 * 
-	 */
-	public boolean run(DatabaseRegistryEntry dbre) {
+  /**
+   * Run the test.
+   * 
+   * @param dbre
+   *            The database to use.
+   * @return true if the test passed.
+   * 
+   */
+  public boolean run(DatabaseRegistryEntry dbre) {
 
-		boolean result = true;
+    boolean result = true;
 
-		Connection con = dbre.getConnection();
+    Connection con = dbre.getConnection();
 
-                if (dbre.getSpecies() != Species.HOMO_SAPIENS && dbre.getSpecies() != Species.MUS_MUSCULUS) {
-                         return result;
-                }
+    if (dbre.getSpecies() != Species.HOMO_SAPIENS && dbre.getSpecies() != Species.MUS_MUSCULUS) {
+      return result;
+    }
 
-		int rows = DBUtils
-				.getRowCount(
-						con,
-						"SELECT COUNT(*) FROM attrib_type at, transcript_attrib ta WHERE at.attrib_type_id=ta.attrib_type_id AND at.code='gencode_basic'");
+    int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM attrib_type at, transcript_attrib ta WHERE at.attrib_type_id=ta.attrib_type_id AND at.code='gencode_basic'");
 
-		if (rows == 0) {
+    if (rows == 0) {
+      ReportManager.problem(this, con, "No gencode basic transcript attributes found\n");
+      result = false;
+    } else {
+      ReportManager.correct(this, con, rows + " gencode basic transcript attributes found");
+    }
 
-			ReportManager
-					.problem(
-							this,
-							con,
-							"No gencode basic transcript attributes found\n");
-			result = false;
+    return result;
 
-		} else {
+  } // run
 
-			ReportManager.correct(this, con, rows
-					+ " gencode basic transcript attributes found");
+  // ----------------------------------------------------------------------
 
-		}
-
-		return result;
-
-	} // run
-
-	// ----------------------------------------------------------------------
-
-} // ESTStableID
+} // GencodeAttributes
