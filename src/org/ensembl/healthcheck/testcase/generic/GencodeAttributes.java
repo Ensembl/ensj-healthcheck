@@ -89,6 +89,22 @@ public class GencodeAttributes extends SingleDatabaseTestCase {
       ReportManager.correct(this, con, rows + " gencode basic transcript attributes found");
     }
 
+    int genes = DBUtils.getRowCount(con, "SELECT COUNT(distinct g.gene_id) FROM gene g, seq_region s, coord_system cs WHERE g.seq_region_id = s.seq_region_id AND " +
+                                            "s.coord_system_id = cs.coord_system_id AND cs.name = 'chromosome' AND cs.attrib = 'default_version' AND s.name NOT LIKE 'LRG%' " +
+                                            "AND s.name != 'MT' AND s.seq_region_id NOT IN (SELECT seq_region_id FROM assembly_exception WHERE exc_type in ('PATCH_NOVEL', 'PATCH_FIX', 'HAP'))");
+
+    int refseqGenes = DBUtils.getRowCount(con, "SELECT COUNT(distinct g.gene_id) FROM gene g, seq_region s, coord_system cs, gene_attrib ga, attrib_type at WHERE g.seq_region_id = s.seq_region_id AND " +
+                                            "s.coord_system_id = cs.coord_system_id AND cs.name = 'chromosome' AND cs.attrib = 'default_version' AND s.name NOT LIKE 'LRG%' " +
+                                            "AND s.name != 'MT' AND s.seq_region_id NOT IN (SELECT seq_region_id FROM assembly_exception WHERE exc_type in ('PATCH_NOVEL', 'PATCH_FIX', 'HAP')) " +
+                                            "AND g.seq_region_id = s.seq_region_id AND ga.gene_id = g.gene_id AND ga.attrib_type_id = at.attrib_type_id AND code = 'refseq_compare'");
+
+    if (genes > refseqGenes) {
+      ReportManager.problem(this, con, "Some genes do not have the refseq_compare attribute");
+      result = false;
+    } else {
+      ReportManager.correct(this, con, refseqGenes + " genes found with refseq_compare attribute");
+    }
+
     return result;
 
   } // run
