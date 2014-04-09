@@ -137,10 +137,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 		// don't check ditag data tables
 		tables.removeAll(ditagDataTables);
 	    }
-	    if(splicingEventsSpecies.contains(species) == false) {
-		// don't check splicing event tables
-		tables.removeAll(splicingEventsTables);
-	    }
+	    
 	}
  
 	// ad-hoc adjustment for zebrafish in VEGA
