@@ -58,10 +58,10 @@ public class EmptyTables extends SingleDatabaseTestCase {
 
     // list of tables grouped by category 
     private Set<String> idMappingTables, densityTables, markerTables,
-	miscTables, karyotypeTables, ditagDataTables, splicingEventsTables;
+	miscTables, karyotypeTables, ditagDataTables;
     // list of species which contain data for the above tables
     private Set<Species> idMappingSpecies, densitySpecies, markerSpecies,
-	miscSpecies, karyotypeSpecies, ditagDataSpecies, splicingEventsSpecies;
+	miscSpecies, karyotypeSpecies, ditagDataSpecies;
     // a map of database types to a list of tables which are
     // allowed to be empty for that particular db type
     Map<DatabaseType, Set<String> > allowedEmptyTablesMap;
@@ -306,18 +306,6 @@ public class EmptyTables extends SingleDatabaseTestCase {
 						Species.MUS_MUSCULUS,
 						Species.ORYZIAS_LATIPES);
 
-	// splicing event tables and species
-	splicingEventsTables =
-	    CollectionUtils.createLinkedHashSet("splicing_event", "splicing_event_feature", 
-						"splicing_transcript_pair");
-	splicingEventsSpecies = 
-	    CollectionUtils.createLinkedHashSet(Species.HOMO_SAPIENS,
-						Species.MUS_MUSCULUS,
-						Species.DANIO_RERIO,
-						Species.RATTUS_NORVEGICUS,
-						Species.DROSOPHILA_MELANOGASTER,
-						Species.CAENORHABDITIS_ELEGANS);
-
 
 	// init map of database types to a list of tables which are 
 	// allowed to be empty for that particular db type
@@ -343,7 +331,6 @@ public class EmptyTables extends SingleDatabaseTestCase {
 								      "misc_set", "prediction_exon", "prediction_transcript", 
 								      "repeat_consensus", "repeat_feature", "simple_feature", 
 								      "supporting_feature", "transcript_attrib", "unconventional_transcript_association", 
-								      "splicing_transcript_pair", "splicing_event_feature", "splicing_event", 
 								      "dependent_xref", "seq_region_synonym", "density_feature", "unmapped_object",
 								      "mapping_set", "density_type", "genome_statistics"));
 
