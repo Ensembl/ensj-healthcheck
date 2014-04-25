@@ -98,9 +98,19 @@ public class SeqRegionName extends SingleDatabaseTestCase {
 				regexp));
 
 		if (rows > 0) {
+                        if (rows == 1 && coordinateSystem.equals("contig")) {
+                              int MT = DBUtils.getRowCount(con, String.format(
+                                 "SELECT COUNT(*) FROM seq_region s1, coord_system cs, seq_region s2, assembly asm WHERE s1.coord_system_id = cs.coord_system_id AND cs.name ='%s' AND s1.seq_region_id = cmp_seq_region_id AND s2.seq_region_id = asm_seq_region_id AND s2.name = 'MT' AND s1.name NOT REGEXP '%s' ", coordinateSystem, regexp));
+                              if (MT == 1) {
+                                     ReportManager.correct(this, con, String.format("1 MT contig region found with special format"));
+                              } else {
+                                     ReportManager.problem(this, con, String.format("%d seq_regions in coordinate system %s have names that are not of the correct format", rows, coordinateSystem));
+                              }
+                        } else {
 
-			ReportManager.problem(this, con, String.format("%d seq_regions in coordinate system %s have names that are not of the correct format", rows, coordinateSystem));
-			result = false;
+                              ReportManager.problem(this, con, String.format("%d seq_regions in coordinate system %s have names that are not of the correct format", rows, coordinateSystem));
+                              result = false;
+                        }
 
 		} else {
 
