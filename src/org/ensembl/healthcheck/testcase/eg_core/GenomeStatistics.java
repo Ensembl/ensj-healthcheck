@@ -38,7 +38,7 @@ public class GenomeStatistics extends AbstractEgCoreTestCase {
   // modules that generate the stats, so there's not really another option.
   List<String> statistics = Arrays.asList(new String[] {
     "coding_cnt", "pseudogene_cnt", "snoncoding_cnt", "lnoncoding_cnt",
-    "transcript_cnt", "ref_length", "total_length" });
+    "transcript", "ref_length", "total_length" });
   
   // Should return 1 for each statistic
   private final static String STATISTIC_EXISTS =
@@ -49,13 +49,13 @@ public class GenomeStatistics extends AbstractEgCoreTestCase {
     "SELECT COUNT(*) FROM "
       + "genome_statistics LEFT OUTER JOIN "
       + "attrib_type USING (attrib_type_id) "
-      + "WHERE statistic <> code;";
+      + "WHERE statistic <> code AND statistic NOT IN ('transcript', 'alt_transcript');";
 
   private final static String STATISTICS_CONSISTENT_2 =
     "SELECT attrib_type_id, statistic, code FROM "
       + "genome_statistics LEFT OUTER JOIN "
       + "attrib_type USING (attrib_type_id) "
-      + "WHERE statistic <> code;";
+      + "WHERE statistic <> code AND statistic NOT IN ('transcript', 'alt_transcript');";
   
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
 		boolean passes = true;
