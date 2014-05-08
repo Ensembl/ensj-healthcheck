@@ -50,14 +50,14 @@ public class GenomeStatistics extends AbstractEgCoreTestCase {
       + "genome_statistics LEFT OUTER JOIN "
       + "attrib_type USING (attrib_type_id) "
       + "WHERE statistic <> code AND statistic NOT IN "
-      + "('transcript', 'alt_transcript', 'PredictionTranscript', 'StructuralVariationFeature');";
+      + "('transcript', 'alt_transcript', 'PredictionTranscript', 'StructuralVariation');";
 
   private final static String STATISTICS_CONSISTENT_2 =
     "SELECT attrib_type_id, statistic, code FROM "
       + "genome_statistics LEFT OUTER JOIN "
       + "attrib_type USING (attrib_type_id) "
       + "WHERE statistic <> code AND statistic NOT IN "
-      + "('transcript', 'alt_transcript', 'PredictionTranscript', 'StructuralVariationFeature');";
+      + "('transcript', 'alt_transcript', 'PredictionTranscript', 'StructuralVariation');";
   
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
 		boolean passes = true;
