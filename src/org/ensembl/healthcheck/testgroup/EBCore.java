@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.testcase.eg_core.InterproHitCount;
 import org.ensembl.healthcheck.testcase.eg_core.NoRepeatFeatures;
 import org.ensembl.healthcheck.testcase.eg_core.RepeatAnalysesInMeta;
 import org.ensembl.healthcheck.testcase.eg_core.SeqRegionsConsistentWithComparaMaster;
+import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionExonCoords;
 import org.ensembl.healthcheck.testcase.generic.Karyotype;
 import org.ensembl.healthcheck.testcase.generic.ProductionAnalysisLogicName;
 import org.ensembl.healthcheck.testcase.generic.StableID;
@@ -47,6 +48,6 @@ public class EBCore extends GroupOfTests {
 				Karyotype.class, GoTermCount.class, InterproHitCount.class,
 				NoRepeatFeatures.class, ProductionAnalysisLogicName.class,
 				RepeatAnalysesInMeta.class, StableID.class, XrefVersions.class,
-				SeqRegionsConsistentWithComparaMaster.class);
+				SeqRegionsConsistentWithComparaMaster.class, ComparePreviousVersionExonCoords.class);
 	}
 }
