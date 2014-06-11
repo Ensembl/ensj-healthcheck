@@ -120,7 +120,8 @@ public final class DBUtils {
 	}
 
         public static String getSecondaryDatabase() {
-                return hostConfiguration.getSecondaryDb();
+                if (hostConfiguration != null) { return hostConfiguration.getSecondaryDb(); }
+                else { return "secondary.database";  }
         }
 
 	// hide constructor to stop instantiation

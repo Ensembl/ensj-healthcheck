@@ -133,7 +133,7 @@ public abstract class EnsTestCase {
 			"dna_align_feature", "protein_align_feature", "repeat_feature",
 			"simple_feature", "marker_feature", "misc_feature",
 			"karyotype", "transcript", "density_feature", "prediction_exon",
-			"prediction_transcript", "ditag_feature", "splicing_event" };
+			"prediction_transcript", "ditag_feature" };
 
 	/**
 	 * Tables that have an analysis ID.

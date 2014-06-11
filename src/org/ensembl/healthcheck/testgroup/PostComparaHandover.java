@@ -48,9 +48,9 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.BlankInfoType </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ProteinFeatures </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionCCDS </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionRegionSynonyms </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionRepeatTypes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.CheckDeclarations </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.ExternalDBDescribe </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.GeneDescriptions </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AnalysisXrefs </li> 
@@ -73,11 +73,11 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblySeqregion </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.MultipleComponentAssemblyMapping </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ProductionMasterTables </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.Archive </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ProjectedXrefs </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.TranscriptSupportingFeatures </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.ExonSupportingFeatures </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.AncestralSequencesExtraChecks </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AnalysisLogicName </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.XrefVersions </li> 
@@ -91,6 +91,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ProductionAnalysisLogicName </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.FrameshiftAttributes </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.GencodeAttributes </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.DuplicateGenes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ExonRank </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.XrefHTML </li> 
@@ -120,7 +121,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyExceptions </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.UTR </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.SeqRegionAcrossSpecies </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.HGNCTypes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.SpeciesID </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.TranslationStartEnd </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.RepeatConsensus </li> 
@@ -184,9 +184,9 @@ public class PostComparaHandover extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.BlankInfoType.class,
 			org.ensembl.healthcheck.testcase.generic.ProteinFeatures.class,
 			org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionCCDS.class,
+                        org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionRegionSynonyms.class,
 			org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionRepeatTypes.class,
 			org.ensembl.healthcheck.testcase.generic.CheckDeclarations.class,
-			org.ensembl.healthcheck.testcase.generic.ExternalDBDescribe.class,
 			org.ensembl.healthcheck.testcase.generic.GeneDescriptions.class,
 			org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap.class,
 			org.ensembl.healthcheck.testcase.generic.AnalysisXrefs.class,
@@ -209,11 +209,11 @@ public class PostComparaHandover extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.AssemblySeqregion.class,
 			org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd.class,
 			org.ensembl.healthcheck.testcase.generic.MultipleComponentAssemblyMapping.class,
-			org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName.class,
 			org.ensembl.healthcheck.testcase.generic.ProductionMasterTables.class,
 			org.ensembl.healthcheck.testcase.generic.Archive.class,
 			org.ensembl.healthcheck.testcase.generic.ProjectedXrefs.class,
 			org.ensembl.healthcheck.testcase.generic.TranscriptSupportingFeatures.class,
+                        org.ensembl.healthcheck.testcase.generic.ExonSupportingFeatures.class,
 			org.ensembl.healthcheck.testcase.generic.AncestralSequencesExtraChecks.class,
 			org.ensembl.healthcheck.testcase.generic.AnalysisLogicName.class,
 			org.ensembl.healthcheck.testcase.generic.XrefVersions.class,
@@ -227,6 +227,7 @@ public class PostComparaHandover extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies.class,
 			org.ensembl.healthcheck.testcase.generic.ProductionAnalysisLogicName.class,
 			org.ensembl.healthcheck.testcase.generic.FrameshiftAttributes.class,
+                        org.ensembl.healthcheck.testcase.generic.GencodeAttributes.class,
 			org.ensembl.healthcheck.testcase.generic.DuplicateGenes.class,
 			org.ensembl.healthcheck.testcase.generic.ExonRank.class,
 			org.ensembl.healthcheck.testcase.generic.XrefHTML.class,
@@ -256,7 +257,6 @@ public class PostComparaHandover extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.AssemblyExceptions.class,
 			org.ensembl.healthcheck.testcase.generic.UTR.class,
 			org.ensembl.healthcheck.testcase.generic.SeqRegionAcrossSpecies.class,
-			org.ensembl.healthcheck.testcase.generic.HGNCTypes.class,
 			org.ensembl.healthcheck.testcase.generic.SpeciesID.class,
 			org.ensembl.healthcheck.testcase.generic.TranslationStartEnd.class,
 			org.ensembl.healthcheck.testcase.generic.RepeatConsensus.class,

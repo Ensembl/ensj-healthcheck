@@ -42,6 +42,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.BlankInfoType </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ProteinFeatures </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionCCDS </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionRegionSynonyms </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionRepeatTypes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.CheckDeclarations </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.GeneDescriptions </li> 
@@ -60,6 +61,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblySeqregion </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.TranscriptSupportingFeatures </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.ExonSupportingFeatures.java </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.AnalysisLogicName </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.XrefVersions </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AutoIncrement </li> 
@@ -68,6 +70,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.NullTranscripts </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.FrameshiftAttributes </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.GencodeAttributes </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.DuplicateGenes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ExonRank </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ExonStrandOrder </li> 
@@ -89,7 +92,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.FeatureCoords </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyExceptions </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.UTR </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.HGNCTypes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.TranslationStartEnd </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.RepeatConsensus </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.TranscriptNames </li> 
@@ -134,6 +136,7 @@ public class PostGenebuild extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.BlankInfoType.class,
 			org.ensembl.healthcheck.testcase.generic.ProteinFeatures.class,
 			org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionCCDS.class,
+                        org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionRegionSynonyms.class,
 			org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionRepeatTypes.class,
 			org.ensembl.healthcheck.testcase.generic.CheckDeclarations.class,
 			org.ensembl.healthcheck.testcase.generic.GeneDescriptions.class,
@@ -152,6 +155,7 @@ public class PostGenebuild extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.AssemblySeqregion.class,
 			org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd.class,
 			org.ensembl.healthcheck.testcase.generic.TranscriptSupportingFeatures.class,
+                        org.ensembl.healthcheck.testcase.generic.ExonSupportingFeatures.class,
 			org.ensembl.healthcheck.testcase.generic.AnalysisLogicName.class,
 			org.ensembl.healthcheck.testcase.generic.XrefVersions.class,
 			org.ensembl.healthcheck.testcase.generic.AutoIncrement.class,
@@ -160,6 +164,7 @@ public class PostGenebuild extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.NullTranscripts.class,
 			org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions.class,
 			org.ensembl.healthcheck.testcase.generic.FrameshiftAttributes.class,
+                        org.ensembl.healthcheck.testcase.generic.GencodeAttributes.class,
 			org.ensembl.healthcheck.testcase.generic.DuplicateGenes.class,
 			org.ensembl.healthcheck.testcase.generic.ExonRank.class,
 			org.ensembl.healthcheck.testcase.generic.ExonStrandOrder.class,
@@ -181,7 +186,6 @@ public class PostGenebuild extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.FeatureCoords.class,
 			org.ensembl.healthcheck.testcase.generic.AssemblyExceptions.class,
 			org.ensembl.healthcheck.testcase.generic.UTR.class,
-			org.ensembl.healthcheck.testcase.generic.HGNCTypes.class,
 			org.ensembl.healthcheck.testcase.generic.TranslationStartEnd.class,
 			org.ensembl.healthcheck.testcase.generic.RepeatConsensus.class,
 			org.ensembl.healthcheck.testcase.generic.TranscriptNames.class,

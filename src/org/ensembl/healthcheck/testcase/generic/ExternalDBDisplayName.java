@@ -48,11 +48,8 @@ public class ExternalDBDisplayName extends SingleDatabaseTestCase {
 	 */
 	public ExternalDBDisplayName() {
 
-		addToGroup("core_xrefs");
 		addToGroup("funcgen");
 		addToGroup("funcgen-release");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
 		
 		setDescription("Check that there are no blank db_display_name fields in external_db");
 		setTeamResponsible(Team.GENEBUILD);
