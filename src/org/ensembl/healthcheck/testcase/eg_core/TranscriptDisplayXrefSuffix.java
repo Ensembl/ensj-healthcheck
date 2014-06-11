@@ -51,8 +51,8 @@ public class TranscriptDisplayXrefSuffix extends AbstractIntegerTestCase {
 	@Override
 	protected String getSql() {
 		return
-      "select count(*) from transcript t inner join xref x on t.display_xref_id = x.xref_id " +
-      "where x.dbprimary_acc regexp '-2[[:digit:]]{2}$' and x.dbprimary_acc = x.display_label";
+      "select count(distinct t.stable_id) from transcript t inner join xref x on t.display_xref_id = x.xref_id " +
+      "where x.dbprimary_acc regexp '-20[[:digit:]]$' and x.dbprimary_acc = x.display_label";
 	}
 
 	@Override
