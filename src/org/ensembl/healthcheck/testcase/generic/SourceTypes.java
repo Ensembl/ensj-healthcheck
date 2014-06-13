@@ -247,7 +247,7 @@ public class SourceTypes extends SingleDatabaseTestCase {
                if (rows > 0) {
 
                        result = false;
-                       ReportManager.problem(this, con, "Some ensembl_havana transcripts belong to genes which are ensembl_havana");
+                       ReportManager.problem(this, con, "Some transcripts with ensembl_havana source belong to genes whose source is not ensembl_havana");
 
                }
 
