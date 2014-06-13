@@ -85,7 +85,7 @@ public class TranscriptNames extends SingleDatabaseTestCase {
 		logicNameRegexp.put("havana_ig_gene", "-0[0-9][0-9]$");
 		logicNameRegexp.put("ncrna_pseudogene", "-2[0-9][0-9]$");
 		logicNameRegexp.put("mt_genbank_import", "-2[0-9][0-9]$");
-		logicNameRegexp.put("lrg_import", "-2[0-9][0-9]$");
+		logicNameRegexp.put("lrg_import", "LRG_[0-9]+t[0-9]+$");
 		logicNameRegexp.put("ensembl_lincrna", "-2[0-9][0-9]$");
 
 		Connection con = dbre.getConnection();
