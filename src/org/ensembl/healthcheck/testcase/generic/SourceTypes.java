@@ -176,18 +176,18 @@ public class SourceTypes extends SingleDatabaseTestCase {
 
                }
 
-               sql = "SELECT COUNT(*) FROM transcript t, analysis a WHERE t.analysis_id = a.analysis_id AND source not in ('ensembl') AND logic_name = 'ensembl'";
+               sql = "SELECT COUNT(*) FROM transcript t, analysis a WHERE t.analysis_id = a.analysis_id AND source not in ('ensembl') AND (logic_name LIKE '%ensembl%' OR logic_name LIKE '%nrcna%') AND logic_name NOT LIKE '%havana%'";
 
                rows = DBUtils.getRowCount(con, sql);
 
                if (rows > 0) {
 
                        result = false;
-                       ReportManager.problem(this, con, "Some transcripts of source ensembl do not have ensembl analysis");
+                       ReportManager.problem(this, con, "Some transcripts of %ensembl% and/or %ncrna% analyses do not have ensembl source");
 
                }
 
-               sql = "SELECT COUNT(*) FROM transcript t, analysis a WHERE t.analysis_id = a.analysis_id AND source not in ('havana') AND logic_name = 'havana'";
+               sql = "SELECT COUNT(*) FROM transcript t, analysis a WHERE t.analysis_id = a.analysis_id AND source not in ('havana') AND logic_name LIKE '%havana%' AND logic_name NOT LIKE '%ensembl_havana%'";
 
                rows = DBUtils.getRowCount(con, sql);
 
@@ -195,18 +195,18 @@ public class SourceTypes extends SingleDatabaseTestCase {
                if (rows > 0) {
 
                        result = false;
-                       ReportManager.problem(this, con, "Some transcripts of source havana do not have havana analysis");
+                       ReportManager.problem(this, con, "Some transcripts of %havana% analysis do not have havana source");
 
                }
 
-               sql = "SELECT COUNT(*) FROM transcript t, analysis a WHERE t.analysis_id = a.analysis_id AND source not in ('ensembl_havana') AND logic_name = 'ensembl_havana_transcript'";
+               sql = "SELECT COUNT(*) FROM transcript t, analysis a WHERE t.analysis_id = a.analysis_id AND source not in ('ensembl_havana') AND logic_name LIKE '%ensembl_havana%'";
 
                rows = DBUtils.getRowCount(con, sql);
 
                if (rows > 0) {
 
                        result = false;
-                       ReportManager.problem(this, con, "Some transcripts of source ensembl_havana_transcript do not have ensembl_havana analysis");
+                       ReportManager.problem(this, con, "Some transcripts of analysis %ensembl_havana% do not have ensembl_havana source");
 
                }
 
