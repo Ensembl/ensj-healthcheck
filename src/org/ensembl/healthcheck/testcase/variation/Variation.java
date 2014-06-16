@@ -50,7 +50,7 @@ public class Variation extends SingleDatabaseTestCase {
 
 		addToGroup("variation-release");
 		
-		setDescription("Checks that the variation table does not have blank evidence statuses");
+		setDescription("Checks that the variation table does not have blank evidence attribs");
 		setTeamResponsible(Team.VARIATION);
 
 	}
@@ -58,7 +58,7 @@ public class Variation extends SingleDatabaseTestCase {
 	// ---------------------------------------------------------------------
 
 	/**
-	 * Check that the variation table does not have blank evidence statuses
+	 * Check that the variation table does not have blank evidence attribs
 	 * 
 	 * @param dbre
 	 *          The database to check.
@@ -71,8 +71,8 @@ public class Variation extends SingleDatabaseTestCase {
 		
 		try {				
 			// Check for empty but non-null evidence statuses 
-			if (!checkCountIsZero(con,"variation","evidence = '' ")) {
-				ReportManager.problem(this, con, "Variations with blank evidence statuses");
+			if (!checkCountIsZero(con,"variation","evidence_attribs = '' ")) {
+				ReportManager.problem(this, con, "Variations with blank evidence_attribs statuses");
 				result = false;
 			}
 			
