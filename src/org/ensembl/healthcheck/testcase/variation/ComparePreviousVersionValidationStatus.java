@@ -71,7 +71,7 @@ public class ComparePreviousVersionValidationStatus extends ComparePreviousVersi
 		sqlQueries.setProperty("describeEvidence", query);
 
 		// Query counting the number of variations with a particular evidence
-		query = "SELECT SET_ELEMENT, COUNT(*) FROM variation v WHERE FIND_IN_SET(SET_ELEMENT,evidence)";
+		query = "SELECT SET_ELEMENT, COUNT(*) FROM variation v WHERE FIND_IN_SET(SET_ELEMENT,evidence_attribs)";
 		sqlQueries.setProperty("countVariationsByEvidence", query);
 
 		return sqlQueries;
