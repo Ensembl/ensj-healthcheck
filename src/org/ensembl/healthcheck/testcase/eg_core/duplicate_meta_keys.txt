@@ -1,10 +1,4 @@
 species.common_name
 species.db_name
-species.ensembl_alias_name
-species.ensembl_common_name
-species.file_name
 species.alias
 species.proteome_id
-species.sql_name
-species.compara_name
-
