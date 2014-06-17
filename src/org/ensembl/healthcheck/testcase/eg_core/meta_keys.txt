@@ -9,7 +9,6 @@ assembly.long_name
 assembly.mapping
 assembly.master_accession
 assembly.name
-assembly.num_toplevel_seqs
 assembly.overlapping_regions
 assembly.version
 assembly.web_accession_source
@@ -64,7 +63,6 @@ species.db_name
 species.display_name
 species.division
 species.production_name
-species.proteome_id
 species.scientific_name
 species.serotype
 species.stable_id_prefix
