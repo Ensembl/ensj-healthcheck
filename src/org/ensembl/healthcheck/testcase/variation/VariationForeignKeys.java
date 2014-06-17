@@ -77,7 +77,7 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			result &= checkForOrphans(con, "phenotype", "phenotype_id", "phenotype_feature", "phenotype_id", true);
 			result &= checkForOrphans(con, "phenotype_feature", "phenotype_id", "phenotype", "phenotype_id", true);
 			result &= checkForOrphans(con, "phenotype_feature", "source_id", "source", "source_id", true);
-			result &= checkForOrphans(con, "phenotype_feature", "study_id", "study", "study_id", true);
+			//result &= checkForOrphans(con, "phenotype_feature", "study_id", "study", "study_id", true);
 			result &= checkForOrphans(con, "phenotype_feature_attrib", "phenotype_feature_id", "phenotype_feature", "phenotype_feature_id", true);
 			result &= checkForOrphans(con, "phenotype_feature_attrib", "attrib_type_id", "attrib_type", "attrib_type_id", true);
 			result &= checkForOrphans(con, "population_genotype", "population_id", "population", "population_id", true);
@@ -94,8 +94,10 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			 */
 			result &= checkForOrphans(con, "transcript_variation", "variation_feature_id", "variation_feature", "variation_feature_id", true);
 			result &= checkForOrphans(con, "variation", "source_id", "source", "source_id", true);
+			result &= checkForOrphans(con, "variation", "class_attrib_id", "attrib", "attrib_id", true);
 			result &= checkForOrphans(con, "variation_feature", "source_id", "source", "source_id", true);
 			result &= checkForOrphans(con, "variation_feature", "variation_id", "allele", "variation_id", true);
+			result &= checkForOrphans(con, "variation_feature", "class_attrib_id", "attrib", "attrib_id", true);
 			result &= checkForOrphans(con, "variation_set_structure", "variation_set_sub", "variation_set", "variation_set_id", true);
 			result &= checkForOrphans(con, "variation_set_structure", "variation_set_super", "variation_set", "variation_set_id", true);
 			result &= checkForOrphans(con, "variation_set_variation", "variation_id", "variation", "variation_id", true);
@@ -103,8 +105,14 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			result &= checkForOrphans(con, "variation_synonym", "source_id", "source", "source_id", true);
 			result &= checkForOrphans(con, "variation_synonym", "variation_id", "variation", "variation_id", true);
 			result &= checkForOrphans(con, "structural_variation_feature", "structural_variation_id", "structural_variation", "structural_variation_id", true);
+			result &= checkForOrphans(con, "structural_variation_feature", "source_id", "source", "source_id", true);
+			result &= checkForOrphans(con, "structural_variation_feature", "study_id", "study", "study_id", true);
+			result &= checkForOrphans(con, "structural_variation_feature", "class_attrib_id", "attrib", "attrib_id", true);
+			result &= checkForOrphans(con, "structural_variation", "source_id", "source", "source_id", true);
 			result &= checkForOrphans(con, "structural_variation", "study_id", "study", "study_id", true);
+			result &= checkForOrphans(con, "structural_variation", "class_attrib_id", "attrib", "attrib_id", true);
 			result &= checkForOrphans(con, "structural_variation_sample", "structural_variation_id", "structural_variation", "structural_variation_id", true);
+			result &= checkForOrphans(con, "structural_variation_association", "structural_variation_id", "structural_variation", "structural_variation_id", true);
 			result &= checkForOrphans(con, "study_variation", "study_id", "study", "study_id", true);
 			result &= checkForOrphans(con, "study_variation", "variation_id", "variation", "variation_id", true);
 			result &= checkForOrphans(con, "variation_citation", "variation_id", "variation", "variation_id", true);			
