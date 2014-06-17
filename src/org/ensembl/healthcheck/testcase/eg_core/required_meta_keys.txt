@@ -18,6 +18,5 @@ species.display_name
 species.division
 species.production_name
 species.scientific_name
-species.short_name
 species.taxonomy_id
 species.url
