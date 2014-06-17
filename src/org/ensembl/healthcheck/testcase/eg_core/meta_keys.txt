@@ -29,6 +29,7 @@ liftover.mapping
 lrg
 marker.priority
 patch
+ploidy
 prediction_exonbuild.level
 prediction_transcriptbuild.level
 protein_align_featurebuild.level
