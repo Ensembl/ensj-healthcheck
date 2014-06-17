@@ -62,13 +62,10 @@ species.common_name
 species.db_name
 species.display_name
 species.division
-species.ensembl_alias_name
-species.ensembl_common_name
 species.production_name
 species.proteome_id
 species.scientific_name
 species.serotype
-species.short_name
 species.stable_id_prefix
 species.strain
 species.substrain
