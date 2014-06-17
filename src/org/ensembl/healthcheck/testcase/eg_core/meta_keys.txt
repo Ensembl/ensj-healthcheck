@@ -5,7 +5,6 @@ assembly.coverage_depth
 assembly.date
 assembly.default
 assembly.description
-assembly.description
 assembly.long_name
 assembly.mapping
 assembly.master_accession
