@@ -1,3 +1,8 @@
+assembly.num_toplevel_seqs
+provider.logo
 species.compara_name
+species.ensembl_alias_name
+species.ensembl_common_name
 species.file_name
+species.short_name
 species.sql_name
