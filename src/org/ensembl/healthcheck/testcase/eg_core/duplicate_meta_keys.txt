@@ -1,4 +1,4 @@
+species.alias
 species.common_name
 species.db_name
-species.alias
 species.proteome_id
