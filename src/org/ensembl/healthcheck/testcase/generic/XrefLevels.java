@@ -97,7 +97,7 @@ public class XrefLevels extends MultiDatabaseTestCase {
 			
 			String masterTable = "healthcheck_xref";
 			
-			DatabaseRegistryEntry[] dbres = dbr.getAll();
+			DatabaseRegistryEntry[] dbres = dbr.getAll(DatabaseType.CORE);
 			
 			if (dbres.length == 0) {
 				return true;
@@ -107,7 +107,7 @@ public class XrefLevels extends MultiDatabaseTestCase {
 				
 				if (masterDBRE == null) {
 					masterDBRE = dbre;
-					masterPrep = tempDB.prepareStatement("INSERT INTO " + masterTable + " (species, source, object) VALUES (?,?,?)");
+					masterPrep = tempDB.prepareStatement("INSERT INTO " + masterTable + " (species, source, object, database) VALUES (?,?,?,?)");
 				}
 				
 				// fill with the list of sources and object types from each species
@@ -120,14 +120,15 @@ public class XrefLevels extends MultiDatabaseTestCase {
 						.executeQuery("SELECT e.db_name, ox.ensembl_object_type FROM external_db e, xref x, object_xref ox WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id GROUP BY e.db_name, ox.ensembl_object_type");
 				
 				while (rs.next()) {
-                    String species = dbre.getSpecies().toString();
-                    if (species == null || species.equalsIgnoreCase("unknown")) {
-                        species = dbre.getAlias();
-                    }
+                                        String species = dbre.getSpecies().toString();
+                                        if (species == null || species.equalsIgnoreCase("unknown")) {
+                                                species = dbre.getAlias();
+                                        }
 
 					masterPrep.setString(1, species);
 					masterPrep.setString(2, rs.getString("db_name"));
 					masterPrep.setString(3, rs.getString("ensembl_object_type"));
+                                        masterPrep.setString(4, dbre.getName());
 					masterPrep.execute();
 				}
 				
@@ -141,10 +142,12 @@ public class XrefLevels extends MultiDatabaseTestCase {
 			while (sources.next()) {
 				String source = sources.getString("source");
 				String query = "select object,species from "+ masterTable +" where source = ?";
+                                String queryDb = "select species,database from "+ masterTable +" where source = ?";
 				
 				MapRowMapper<String,List<String>> mapper = new StringListMapRowMapper();
 				SqlTemplate template = new ConnectionBasedSqlTemplateImpl(tempDB);
 				Map<String,List<String>> map = template.queryForMap(query, mapper, source);
+                                Map<String,List<String>> mapDb = template.queryForMap(queryDb, mapper, source);
 				
 				if (map.size() != 1) {
 					// more than one list in the map implies there are at least two object types referenced
@@ -165,6 +168,11 @@ public class XrefLevels extends MultiDatabaseTestCase {
 					List<String> minoritySpecies = map.get(smallestType);
 					
 					message = message.concat("Problem species are:"+ StringUtils.join(minoritySpecies,","));
+
+                                        for (String species: minoritySpecies) {
+                                                List<String> minorityDatabases = mapDb.get(species);
+                                                message = message.concat(". In problem databases:"+ StringUtils.join(minorityDatabases,","));
+                                        }
 					
 					ReportManager.problem(this, "", message);
 					result = false;
@@ -195,7 +203,7 @@ public class XrefLevels extends MultiDatabaseTestCase {
 		// making a temporary table in memory rather than affecting production DB
 		try {
 			Statement stmt = conn.createStatement();
-			stmt.execute("CREATE TABLE healthcheck_xref (species VARCHAR(255), source VARCHAR(255), object VARCHAR(255))");
+			stmt.execute("CREATE TABLE healthcheck_xref (species VARCHAR(255), source VARCHAR(255), object VARCHAR(255), database VARCHAR(255))");
 			logger.fine("Created table healthcheck_xref in temporary H2 DB");
 		} catch (SQLException se) {
 			se.printStackTrace();
