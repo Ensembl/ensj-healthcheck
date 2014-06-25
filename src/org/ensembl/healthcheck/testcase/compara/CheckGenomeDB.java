@@ -192,8 +192,8 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
             /* Check assembly */
             sql1 = "SELECT \"" + species + "\", \"assembly\", assembly FROM genome_db" +
                 " WHERE genome_db.name = \"" + species + "\" AND  assembly_default = 1";
-            sql2 = "SELECT \"" + species + "\", \"assembly\", meta_value FROM meta" +
-                " WHERE meta_key = \"assembly.default\"";
+            sql2 = "SELECT \"" + species + "\", \"assembly\", version FROM coord_system" +
+                " WHERE rank=1";
             result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
             /* Check genebuild */
             sql1 = "SELECT \"" + species + "\", \"genebuild\", genebuild FROM genome_db" +
