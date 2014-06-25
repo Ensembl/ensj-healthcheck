@@ -38,7 +38,7 @@ public class TranscriptVariation extends SingleDatabaseTestCase {
      * Creates a new instance of Check Transcript Variation
      */
     public TranscriptVariation() {
-    	//addToGroup("variation-release");
+    	addToGroup("variation-release");
         setDescription("Check that if the peptide_allele_string of transcript_variation is not >1. It should out >1, unless it filled with numbers");
 		setTeamResponsible(Team.VARIATION);
     }
