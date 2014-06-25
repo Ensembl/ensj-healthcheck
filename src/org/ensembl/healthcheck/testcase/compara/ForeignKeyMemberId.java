@@ -56,20 +56,24 @@ public class ForeignKeyMemberId extends SingleDatabaseTestCase {
 
         Connection con = dbre.getConnection();
 
-        if (tableHasRows(con, "member")) {
+        if (tableHasRows(con, "seq_member")) {
 
                 // Had to invent this tricky workaround because "gene members" and "non-gene members" are held in the same table:
-            result &= checkForOrphansWithConstraint(con, "member", "member_id", "family_member", "member_id", "source_name in ('Uniprot/SWISSPROT', 'Uniprot/SPTREMBL', 'ENSEMBLPEP') AND member.member_id < 300000000");
-            result &= checkForOrphansWithConstraint(con, "member", "member_id", "family_member", "member_id", "source_name='ENSEMBLGENE' AND member.member_id in (SELECT gene_member_id FROM member m2 WHERE m2.source_name='ENSEMBLPEP' AND m2.member_id < 300000000)");
+            result &= checkForOrphansWithConstraint(con, "seq_member", "seq_member_id", "family_member", "seq_member_id", "source_name in ('Uniprot/SWISSPROT', 'Uniprot/SPTREMBL', 'ENSEMBLPEP') AND seq_member.seq_member_id < 300000000");
 
-            result &= checkForOrphans(con, "family_member", "member_id", "member", "member_id");
-            result &= checkForOrphans(con, "homology_member", "member_id", "member", "member_id");
-            result &= checkForOrphans(con, "homology_member", "peptide_member_id", "member", "member_id");
-            result &= checkForOrphans(con, "domain_member", "member_id", "member", "member_id");
+            result &= checkForOrphans(con, "family_member", "seq_member_id", "seq_member", "seq_member_id");
+            result &= checkForOrphans(con, "homology_member", "seq_member_id", "seq_member", "seq_member_id");
 
         } else {
-            ReportManager.correct(this, con, "NO ENTRIES in member table, so nothing to test IGNORED");
+            ReportManager.correct(this, con, "NO ENTRIES in seq_member table, so nothing to test IGNORED");
         }
+
+        if (tableHasRows(con, "gene_member")) {
+            result &= checkForOrphans(con, "homology_member", "gene_member_id", "gene_member", "gene_member_id");
+        } else {
+            ReportManager.correct(this, con, "NO ENTRIES in gene_member table, so nothing to test IGNORED");
+        }
+
 
         return result;
 

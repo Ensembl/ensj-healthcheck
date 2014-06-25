@@ -58,7 +58,7 @@ public class ForeignKeySequenceId extends SingleDatabaseTestCase {
 
         if (tableHasRows(con, "sequence")) {
 
-            result &= checkForOrphansWithConstraint(con, "member", "sequence_id", "sequence", "sequence_id", "sequence_id != 0");
+            result &= checkForOrphansWithConstraint(con, "seq_member", "sequence_id", "sequence", "sequence_id", "sequence_id != 0");
 
 
         } else {

@@ -67,13 +67,13 @@ public class CheckFlatProteinTrees extends AbstractTemplatedTestCase {
 		MapRowMapper<Long, Long> mapRowMapper = new DefaultMapRowMapper<Long, Long>(
 				Long.class, Long.class);
 
-		// Counts all nodes which do not represent a member, do not share the same
+		// Counts all nodes which do not represent a seq_member, do not share the same
 		// id
 		// as their root and whose root id is not 0. Groups this by the root_id
-        String internalNodeCountSql = "SELECT gtn.root_id, count(*) AS internal_nodes FROM gene_tree_node gtn WHERE gtn.member_id IS NULL AND gtn.node_id <> gtn.root_id AND gtn.root_id <> 0 GROUP BY gtn.root_id";
+        String internalNodeCountSql = "SELECT gtn.root_id, count(*) AS internal_nodes FROM gene_tree_node gtn WHERE gtn.seq_member_id IS NULL AND gtn.node_id <> gtn.root_id AND gtn.root_id <> 0 GROUP BY gtn.root_id";
 		// Counts all members per tree where root id is not 0, whose parent id is
 		// the same as the root id but have more than one of these per tree
-        String flatMemberCountSql = "SELECT gtn.root_id, count(*) AS root_members FROM gene_tree_node gtn WHERE gtn.member_id IS NOT NULL AND gtn.parent_id = gtn.root_id AND gtn.root_id <> 2 GROUP BY gtn.root_id having root_members > 1";
+        String flatMemberCountSql = "SELECT gtn.root_id, count(*) AS root_members FROM gene_tree_node gtn WHERE gtn.seq_member_id IS NOT NULL AND gtn.parent_id = gtn.root_id AND gtn.root_id <> 2 GROUP BY gtn.root_id having root_members > 1";
 		// Count all members where root is not 0
 		String memberCountSql = "SELECT root_id, count(distinct root_id) from gene_tree_node where root_id <> 0 group by root_id";
 		// Selects all the non-rooted trees
@@ -113,7 +113,7 @@ public class CheckFlatProteinTrees extends AbstractTemplatedTestCase {
 
 		if (!flatMembersWithInternalStructure.isEmpty()) {
 			reportProblem(dbre, flatMembersWithInternalStructure, totalTreesCount,
-					"have more than one member joined to the root and a well formed internal tree structure");
+					"have more than one seq_member joined to the root and a well formed internal tree structure");
 			passed = false;
 		}
 		if (!flatTreesStructure.isEmpty()) {

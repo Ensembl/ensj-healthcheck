@@ -59,7 +59,8 @@ public class ForeignKeyTaxonId extends SingleDatabaseTestCase {
 
         if (tableHasRows(con, "ncbi_taxa_node")) {
 
-            result &= checkForOrphans(con, "member", "taxon_id", "ncbi_taxa_node", "taxon_id");
+            result &= checkForOrphans(con, "gene_member", "taxon_id", "ncbi_taxa_node", "taxon_id");
+            result &= checkForOrphans(con, "seq_member", "taxon_id", "ncbi_taxa_node", "taxon_id");
             result &= checkForOrphansWithConstraint(con, "genome_db", "taxon_id", "ncbi_taxa_node", "taxon_id", "taxon_id != 0");
 
         } else {
@@ -67,7 +68,8 @@ public class ForeignKeyTaxonId extends SingleDatabaseTestCase {
         }
         if (tableHasRows(con, "ncbi_taxa_name")) {
 
-            result &= checkForOrphans(con, "member", "taxon_id", "ncbi_taxa_name", "taxon_id");
+            result &= checkForOrphans(con, "gene_member", "taxon_id", "ncbi_taxa_name", "taxon_id");
+            result &= checkForOrphans(con, "seq_member", "taxon_id", "ncbi_taxa_name", "taxon_id");
             result &= checkForOrphansWithConstraint(con, "genome_db", "taxon_id", "ncbi_taxa_name", "taxon_id", "taxon_id != 0");
 
         } else {
