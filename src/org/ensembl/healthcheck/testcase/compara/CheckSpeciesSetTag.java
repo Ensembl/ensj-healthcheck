@@ -83,8 +83,6 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 
 		// For each compara connection...
 		for (int i = 0; i < allPrimaryComparaDBs.length; i++) {
-			// ... check the entries with a taxon id
-			result &= checkSpeciesSetByTaxon(allPrimaryComparaDBs[i]);
 			// ... check the entry for low-coverage genomes
 			result &= checkLowCoverageSpecies(allPrimaryComparaDBs[i],
 					speciesDbrs);
@@ -414,78 +412,6 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 
 	}
 
-	public boolean checkSpeciesSetByTaxon(DatabaseRegistryEntry dbre) {
-
-		boolean result = true;
-
-		Connection con = dbre.getConnection();
-
-		if (tableHasRows(con, "species_set_tag")) {
-
-			// Find all the entries with a taxon_id tag
-			String sql_tag = "SELECT species_set_id, value FROM species_set_tag WHERE tag = 'taxon_id'";
-
-			try {
-				Statement stmt_tag = con.createStatement();
-				ResultSet rs_tag = stmt_tag.executeQuery(sql_tag);
-				while (rs_tag.next()) {
-					// Check that all the genome_db_ids for that taxon are
-					// included
-					// 1. genome_db_ids from ncbi_taxa_node + genome_db tables
-					String sql_taxon = "SELECT GROUP_CONCAT(genome_db_id ORDER BY genome_db_id)"
-							+ " FROM ncbi_taxa_node nod1"
-							+ " LEFT JOIN ncbi_taxa_node nod2 ON (nod1.left_index < nod2.left_index and nod1.right_index > nod2.left_index)"
-							+ " LEFT JOIN genome_db ON (nod2.taxon_id = genome_db.taxon_id)"
-							+ " WHERE nod1.taxon_id = '"
-							+ rs_tag.getInt(2)
-							+ "'"
-							+ " AND genome_db_id IS NOT NULL AND genome_db.assembly_default = 1";
-					// 2. genome_db_ids from the species_set table
-					String sql_sset = "SELECT GROUP_CONCAT(genome_db_id ORDER BY genome_db_id)"
-							+ " FROM species_set WHERE species_set_id = "
-							+ rs_tag.getInt(1);
-					Statement stmt_taxon = con.createStatement();
-					ResultSet rs_taxon = stmt_taxon.executeQuery(sql_taxon);
-					Statement stmt_sset = con.createStatement();
-					ResultSet rs_sset = stmt_sset.executeQuery(sql_sset);
-
-					// Check that 1 and 2 are the same
-					if (rs_taxon.next() && rs_sset.next()) {
-						if (!rs_taxon.getString(1).equals(rs_sset.getString(1))) {
-							ReportManager
-									.problem(
-											this,
-											con,
-											"Species set "
-													+ rs_tag.getInt(1)
-													+ " has not the right set of genome_db_ids: "
-													+ rs_taxon.getString(1));
-							result = false;
-						}
-					}
-					rs_taxon.close();
-					stmt_taxon.close();
-					rs_sset.close();
-					stmt_sset.close();
-				}
-				rs_tag.close();
-				stmt_tag.close();
-			} catch (SQLException se) {
-				se.printStackTrace();
-				result = false;
-			}
-		} else {
-			ReportManager
-					.problem(
-							this,
-							con,
-							"species_set_tag table is empty. There will be no colouring in the gene tree view");
-			result = false;
-		}
-
-		return result;
-
-	}
 
 	private void usage() {
 
