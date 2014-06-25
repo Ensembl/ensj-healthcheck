@@ -83,9 +83,6 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 
 		// For each compara connection...
 		for (int i = 0; i < allPrimaryComparaDBs.length; i++) {
-			// ... check the entry for low-coverage genomes
-			result &= checkLowCoverageSpecies(allPrimaryComparaDBs[i],
-					speciesDbrs);
 			// ... check that the genome_db names are correct
 			result &= checkProductionNames(allPrimaryComparaDBs[i], speciesDbrs);
 			// ... check that we have one name tag for every MSA
@@ -173,114 +170,6 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 		return result;
 	}
 
-	public boolean checkLowCoverageSpecies(DatabaseRegistryEntry comparaDbre,
-			Map speciesDbrs) {
-
-		boolean result = true;
-		Connection con = comparaDbre.getConnection();
-
-		// Get list of species (assembly_default) in compara
-		Vector comparaSpeciesStr = new Vector();
-		Vector comparaSpecies = new Vector();
-		Vector comparaGenomeDBids = new Vector();
-		String sql2 = "SELECT DISTINCT genome_db.genome_db_id, genome_db.name FROM genome_db WHERE assembly_default = 1"
-				+ " AND name <> 'Ancestral sequences' AND name <> 'ancestral_sequences' ORDER BY genome_db.genome_db_id";
-		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(sql2);
-			while (rs.next()) {
-				comparaSpeciesStr.add(rs.getString(2));
-				comparaSpecies.add(Species.resolveAlias(rs.getString(2)
-						.toLowerCase().replace(' ', '_')));
-				comparaGenomeDBids.add(rs.getString(1));
-			}
-			rs.close();
-			stmt.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		// Find which of these species are low-coverage by looking into the meta
-		// table
-		// I don't know if this will work for multi-species DBs, but hopefully
-		// these don't have low-cov assemblies
-		boolean allSpeciesFound = true;
-		Vector lowCoverageSpecies = new Vector();
-		Vector lowCoverageGenomeDdIds = new Vector();
-		for (int i = 0; i < comparaSpecies.size(); i++) {
-			Species species = (Species) comparaSpecies.get(i);
-			DatabaseRegistryEntry[] speciesDbr = (DatabaseRegistryEntry[]) speciesDbrs
-					.get(species);
-			if (speciesDbr != null) {
-				Connection speciesCon = speciesDbr[0].getConnection();
-				String coverageDepth = DBUtils
-						.getRowColumnValue(speciesCon,
-								"SELECT meta_value FROM meta WHERE meta_key = \"assembly.coverage_depth\"");
-
-				if (coverageDepth.equals("low")) {
-					lowCoverageSpecies.add(species);
-					lowCoverageGenomeDdIds.add(comparaGenomeDBids.get(i));
-				}
-			} else {
-				ReportManager.problem(this, con, "No connection for "
-						+ comparaSpeciesStr.get(i).toString());
-				allSpeciesFound = false;
-			}
-		}
-		if (!allSpeciesFound) {
-			ReportManager.problem(this, con, "Cannot find all the species");
-			usage();
-		}
-
-		// If there are low-coverage species, check the species_set_tag entry
-		if (lowCoverageSpecies.size() > 0) {
-			// Check that the low-coverage entry exists in the species_set_tag
-			// table
-			String speciesSetId1 = DBUtils
-					.getRowColumnValue(
-							con,
-							"SELECT species_set_id FROM species_set_tag WHERE tag = 'name' AND value = 'low-coverage'");
-			if (speciesSetId1.equals("")) {
-				ReportManager
-						.problem(this, con,
-								"There is no species_set_tag entry for low-coverage genomes");
-				result = false;
-			}
-
-			// Check the species_set_id for the set of low-coverage assemblies
-			StringBuffer buf = new StringBuffer(lowCoverageGenomeDdIds.get(0)
-					.toString());
-			for (int i = 1; i < lowCoverageGenomeDdIds.size(); i++) {
-				buf.append(",");
-				buf.append(lowCoverageGenomeDdIds.get(i));
-			}
-			String sql = buf.toString();
-
-			String speciesSetId2 = DBUtils
-					.getRowColumnValue(
-							con,
-							"SELECT species_set_id, GROUP_CONCAT(genome_db_id ORDER BY genome_db_id) gdbs"
-									+ " FROM species_set GROUP BY species_set_id HAVING gdbs = \""
-									+ sql + "\"");
-			if (speciesSetId2.equals("")) {
-				ReportManager
-						.problem(this, con, "Wrong set of low-coverage ("
-								+ speciesSetId1
-								+ ") genome_db_ids. It must be: " + sql);
-				result = false;
-			}
-
-			// Check that both are the same
-			if (!speciesSetId1.equals("") && !speciesSetId2.equals("")
-					&& !speciesSetId1.equals(speciesSetId2)) {
-				ReportManager.problem(this, con,
-						"The species_set_id for low-coverage should be "
-								+ speciesSetId2 + " and not " + speciesSetId1);
-				result = false;
-			}
-		}
-		return result;
-	}
 
 	public boolean checkProductionNames(DatabaseRegistryEntry comparaDbre,
 			Map speciesDbrs) {
