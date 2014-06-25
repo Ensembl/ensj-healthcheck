@@ -77,7 +77,7 @@ public class TranscriptsTranslate extends SingleDatabaseTestCase {
 		// for sangervega ignore genes that do not have source havana or WU
 		if (dbre.getType() == DatabaseType.SANGER_VEGA || dbre.getType() == DatabaseType.VEGA) {
 			// sql +=" and (g.source='havana' or g.source='WU')";
-			sql = "select count(*) from gene g where g.biotype='protein_coding' and g.gene_id NOT IN(select tr.gene_id  from transcript tr JOIN translation t ON t.transcript_id=tr.transcript_id) and (g.source='havana' or g.source='WU')  and g.gene_id NOT IN (select gene_id from gene_attrib join attrib_type using (attrib_type_id) where code = 'NoTransRefError')";
+			sql = "select count(*) from gene g left join ( transcript t join translation p using (transcript_id) ) using (gene_id) where t.transcript_id is null and g.biotype = 'protein_coding' and g.gene_id not in (select gene_id from gene_attrib join attrib_type using (attrib_type_id) where code = 'NoTransRefError') and (g.source='havana' or g.source='WU')";
 		}
 
 		int rows = DBUtils.getRowCount(con, sql);
