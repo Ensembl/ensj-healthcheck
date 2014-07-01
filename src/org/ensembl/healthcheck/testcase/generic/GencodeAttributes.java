@@ -80,10 +80,12 @@ public class GencodeAttributes extends SingleDatabaseTestCase {
       return result;
     }
 
-    int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM attrib_type at, transcript_attrib ta WHERE at.attrib_type_id=ta.attrib_type_id AND at.code='gencode_basic'");
+    int gencodeGenes = DBUtils.getRowCount(con, "SELECT COUNT(distinct gene_id) FROM transcript t, attrib_type at, transcript_attrib ta WHERE t.transcript_id = ta.transcript_id AND at.attrib_type_id=ta.attrib_type_id AND at.code='gencode_basic'");
 
-    if (rows == 0) {
-      ReportManager.problem(this, con, "No gencode basic transcript attributes found\n");
+    int rows = DBUtils.getRowCount(con, "SELECT COUNT(distinct gene_id) FROM transcript WHERE biotype NOT IN ('LRG_gene')");
+
+    if (rows > gencodeGenes) {
+      ReportManager.problem(this, con, (rows - gencodeGenes) + " genes do not have any transcripts with the gencode_basic attribute\n");
       result = false;
     } else {
       ReportManager.correct(this, con, rows + " gencode basic transcript attributes found");
@@ -99,7 +101,7 @@ public class GencodeAttributes extends SingleDatabaseTestCase {
                                             "AND g.seq_region_id = s.seq_region_id AND ga.gene_id = g.gene_id AND ga.attrib_type_id = at.attrib_type_id AND code = 'refseq_compare'");
 
     if (genes > refseqGenes) {
-      ReportManager.problem(this, con, "Some genes do not have the refseq_compare attribute");
+      ReportManager.problem(this, con, (genes - refseqGenes) + " genes do not have the refseq_compare attribute");
       result = false;
     } else {
       ReportManager.correct(this, con, refseqGenes + " genes found with refseq_compare attribute");
