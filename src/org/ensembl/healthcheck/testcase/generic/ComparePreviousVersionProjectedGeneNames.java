@@ -226,7 +226,7 @@ public class ComparePreviousVersionProjectedGeneNames extends SingleDatabaseTest
 			percentage = Float.valueOf(twoDForm.format(percentage));
 			
 			if (missingIds > 0 && percentage > 5) {	
-                		ReportManager.problem(this, currentCon, missingIds + "(" + percentage + "%) gene stable ids missing from the current database ");
+                		ReportManager.problem(this, currentCon, missingIds + "(" + percentage + "%) genes lack projected names in the current database ");
                                 result = false;
          	        }
            	
