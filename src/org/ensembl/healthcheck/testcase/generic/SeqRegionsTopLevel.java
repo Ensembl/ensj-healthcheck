@@ -36,6 +36,8 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.SqlTemplate;
+import java.util.List;
 
 /**
  * Check that all seq_regions comprising genes are marked as toplevel in seq_region_attrib. Also checks that there is at least one
@@ -79,6 +81,8 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
+                String AssemblyAccession = DBUtils.getMetaValue(con, "assembly.accession");
+
 		int topLevelAttribTypeID = getAttribTypeID(con);
 		if (topLevelAttribTypeID == -1) {
 			return false;
@@ -91,6 +95,10 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 		result &= checkRankOne(dbre);
 
 		result &= checkAssemblyTable(con, topLevelAttribTypeID);
+
+                if (AssemblyAccession.contains("GCA")) {
+                        result &= checkSynonyms(dbre, topLevelAttribTypeID);
+                }
 
 		return result;
 
@@ -198,6 +206,8 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 
 	}
 
+        // --------------------------------------------------------------------------
+
 	private boolean checkAssemblyTable(Connection con, int topLevelAttribTypeID) {
 		boolean result = true;
 
@@ -221,5 +231,51 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 	}
 
 	// --------------------------------------------------------------------------
+
+
+        private boolean checkSynonyms(DatabaseRegistryEntry dbre, int topLevelAttribTypeID) {
+
+                boolean result = true;
+                SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+                Connection con = dbre.getConnection();
+
+                int numMissingRefseq = 0;
+                int numMissingINSDC = 0;
+                String topSql = "SELECT DISTINCT s.name FROM seq_region s, seq_region_attrib sa WHERE s.seq_region_id = sa.seq_region_id AND s.name NOT LIKE 'LRG%' AND s.name NOT LIKE 'MT' AND attrib_type_id = " + topLevelAttribTypeID;
+                String synsSql = "SELECT COUNT(*) FROM seq_region s, seq_region_synonym ss, external_db e WHERE s.seq_region_id = ss.seq_region_id AND ss.external_db_id = e.external_db_id AND s.name = ? AND e.db_name = ?";
+                List<String> regions = t.queryForDefaultObjectList(topSql, String.class);
+
+                for (String region : regions) {
+                        int refseq = t.queryForDefaultObject(synsSql, Integer.class, region, "RefSeq_genomic");
+                        if (refseq == 0) { 
+                               // ReportManager.problem(this, con, region + " does not have a RefSeq_genomic synonym");
+                               numMissingRefseq++;
+                        }
+                        int insdc = t.queryForDefaultObject(synsSql, Integer.class, region, "INSDC");
+                        if (insdc == 0) {
+                               // ReportManager.problem(this, con, region + " does not have an INSDC synonym");
+                               numMissingINSDC++;
+                        }
+                }
+
+                if (numMissingRefseq > 0) {
+
+                        ReportManager.problem(this, con, numMissingRefseq + " regions do not have a RefSeq_genomic synonym");
+                        result = false;
+
+                } else if (numMissingINSDC > 0) {
+
+                        ReportManager.problem(this, con, numMissingINSDC + " regions do not have an INSDC synonym");
+                        result = false;
+
+                } else {
+
+                        ReportManager.correct(this, con, "All toplevel regions have the required synonyms");
+
+                }
+
+                return result;
+        }
+
 
 } // SeqRegionsTopLevel
