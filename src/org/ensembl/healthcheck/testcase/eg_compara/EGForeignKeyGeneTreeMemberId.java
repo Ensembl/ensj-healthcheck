@@ -151,4 +151,13 @@ public class EGForeignKeyGeneTreeMemberId extends AbstractEGForeignKeyMemberId {
 	protected String getTargetTable() {
 		return "gene_tree_node";
 	}
+  
+	protected String getSourceTable() {
+		return "seq_member";
+	}
+	
+	protected String getSourceField() {
+		return "seq_member_id";
+	}
+	
 }

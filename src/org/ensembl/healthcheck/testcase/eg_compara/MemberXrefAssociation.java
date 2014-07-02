@@ -35,13 +35,13 @@ public class MemberXrefAssociation extends AbstractTemplatedTestCase {
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
 		SqlTemplate srv = getSqlTemplate(dbre);
 		boolean result = true;
-		if(srv.queryForDefaultObject("select count(*) from member_xref join member using (member_id)", Integer.class)==0) {
-			ReportManager.problem(this, dbre.getConnection(), "No entries found in member_xref linked to member");
+		if(srv.queryForDefaultObject("select count(*) from member_xref join gene_member using (gene_member_id)", Integer.class)==0) {
+			ReportManager.problem(this, dbre.getConnection(), "No entries found in member_xref linked to gene_member");
 			result = false;
 		}
-		Integer cnt = srv.queryForDefaultObject("select count(*) from member_xref x left join member m using (member_id) where m.member_id is null", Integer.class);
+		Integer cnt = srv.queryForDefaultObject("select count(*) from member_xref x left join gene_member m using (gene_member_id) where m.gene_member_id is null", Integer.class);
 		if(cnt>0) {
-			ReportManager.problem(this, dbre.getConnection(), cnt+" entries found in member_xref that are not linked to member");
+			ReportManager.problem(this, dbre.getConnection(), cnt+" entries found in member_xref that are not linked to gene_member");
 			result = false;
 		}
 		return result;

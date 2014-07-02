@@ -58,11 +58,11 @@ public abstract class AbstractEGForeignKeyMemberId extends AbstractTemplatedTest
 	protected abstract String getTargetTable();
 	
 	protected String getSourceTable() {
-		return "member";
+		return "gene_member";
 	}
 	
 	protected String getSourceField() {
-		return "member_id";
+		return "gene_member_id";
 	}
 	
 	protected boolean executeMoreChecks(DatabaseRegistryEntry dbre) {
