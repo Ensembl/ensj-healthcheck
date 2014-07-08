@@ -31,6 +31,8 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.ListIterator;
 import java.util.Set;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
@@ -107,10 +109,16 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
   }
 
   private <T extends CharSequence> boolean checkGrouping(DatabaseRegistryEntry dbre) {
-    boolean result = true;
     String databaseType = dbre.getType().getName();
     String[] table = {"gene"};
-    Set<String> geneBiotypes = getBiotypesDb(dbre, table); 
+    Set<String> geneBiotypes = getBiotypesDb(dbre, table);
+
+    ArrayList<String> transcriptErrors = new ArrayList<String>();
+    ArrayList<String> biotypeGroupErrors = new ArrayList<String>();
+    ArrayList<String> noGroupErrors = new ArrayList<String>();
+    ArrayList<String> nonCodingErrors = new ArrayList<String>();
+    ArrayList<String> pseudogeneErrors = new ArrayList<String>();
+
     for (String geneBiotype : geneBiotypes) {
       Set<String> transcriptBiotypes = getBiotypesTranscript(dbre, geneBiotype);
       String[] transcripts = transcriptBiotypes.toArray(new String[0]);
@@ -118,53 +126,64 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
       Set<String> geneGrouping = getGrouping(dbre, genes, "gene", databaseType);
       Set<String> transcriptGrouping = getGrouping(dbre, transcripts, "transcript", databaseType);
 
-      if (transcriptBiotypes.size() == 1) {
-        if (!transcriptBiotypes.contains(geneBiotype)) {
-          result = false;
-          ReportManager.problem(this, dbre.getConnection(), "Transcript biotype '" + transcriptBiotypes + "' does not match gene biotype '" + geneBiotype + "'");
-        }
-      } else if (transcriptGrouping.size() == 1) {
-        if (!geneGrouping.equals(transcriptGrouping)) {
-          result = false;
-          ReportManager.problem(this, dbre.getConnection(), "Genes of biotype '" + geneBiotype + "' should not have transcripts of mismatched group '" + transcriptGrouping + "'");
-        }
+      if (transcriptBiotypes.size() == 1 && !transcriptBiotypes.contains(geneBiotype) ) {
+          transcriptErrors.add("Transcript biotype '" + transcriptBiotypes + "' does not match gene biotype '" + geneBiotype + "'");
+      } else if (transcriptGrouping.size() == 1 && !geneGrouping.equals(transcriptGrouping)) {
+          biotypeGroupErrors.add("Genes of biotype '" + geneBiotype + "' should not have transcripts of mismatched group '" + transcriptGrouping + "'");
       } else if (geneGrouping.contains("undefined") || geneGrouping.contains("non-coding")) {
-        result = false;
-        ReportManager.problem(this, dbre.getConnection(), "Genes of biotype '" + geneBiotype + "' should not have transcripts with biotypes in '" + transcriptBiotypes + "'");
+          noGroupErrors.add("Genes of biotype '" + geneBiotype + "' should not have transcripts with biotypes in '" + transcriptBiotypes + "'");
       } else if (geneGrouping.contains("pseudogene")) {
         if (transcriptGrouping.contains("coding") || transcriptGrouping.contains("undefined")) {
-          result = false;
-          ReportManager.problem(this, dbre.getConnection(), "Some genes of biotype '" + geneBiotype + "' have transcripts in '" + transcriptBiotypes + "'");
+          nonCodingErrors.add("Some genes of biotype '" + geneBiotype + "' have transcripts in '" + transcriptBiotypes + "'");
         }
         List<String> allGenes = getGene(dbre, geneBiotype, databaseType);
         List<String> goodGenes = getGeneWithTranscript(dbre, geneGrouping, databaseType);
-        result = checkMissing(dbre, allGenes, goodGenes, geneBiotype);
+        pseudogeneErrors.addAll( checkMissing(dbre, allGenes, goodGenes, geneBiotype) );
       } else if (geneGrouping.contains("coding")) {
         List<String> allGenes = getGene(dbre, geneBiotype, databaseType);
         List<String> goodGenes = getGeneWithTranscript(dbre, geneGrouping, databaseType);
-        result = checkMissing(dbre, allGenes, goodGenes, geneBiotype);
+        pseudogeneErrors.addAll( checkMissing(dbre, allGenes, goodGenes, geneBiotype) );
         if (geneBiotype.contains("polymorphic_pseudogene")) {
           allGenes = getGeneP(dbre, "polymorphic_pseudogene", databaseType);
           goodGenes = getGeneWithTranscriptP(dbre, "polymorphic_pseudogene", databaseType);
-          result = checkMissing(dbre, allGenes, goodGenes, geneBiotype);
+          pseudogeneErrors.addAll( checkMissing(dbre, allGenes, goodGenes, geneBiotype) );
         }
+      }
+ 
+    }
+
+    if ( processErrors(dbre, transcriptErrors) && processErrors(dbre,biotypeGroupErrors) 
+      && processErrors(dbre, noGroupErrors) && processErrors(dbre,nonCodingErrors) && processErrors(dbre,pseudogeneErrors)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private boolean processErrors(DatabaseRegistryEntry dbre, List<String> errorList) {
+    ListIterator<String> errorIt = errorList.listIterator();
+    int i = 0;
+    Boolean result = true;
+    while (errorIt.hasNext()) {
+      result = false;
+      ReportManager.problem(this,dbre.getConnection(),errorIt.next());
+      i++;
+      if (i == 10) {
+        ReportManager.problem(this,dbre.getConnection(), errorList.size() + " similar errors found in total.");
+        break;
       }
     }
     return result;
   }
 
-
-  private boolean checkMissing(DatabaseRegistryEntry dbre, List<String> allGenes, List<String> goodGenes, String biotype) {
+  private ArrayList<String> checkMissing(DatabaseRegistryEntry dbre, List<String> allGenes, List<String> goodGenes, String biotype) {
     Set<String> missing = new HashSet<String>(allGenes);
+    ArrayList<String> unhappyGenes = new ArrayList<String>();
     missing.removeAll(goodGenes);
-    if(missing.isEmpty()) {
-      return true;
-    }
     for(CharSequence name: missing) {
-      String msg = String.format("Gene '%s' of biotype '%s' has no transcript of same biotype group", name, biotype);
-      ReportManager.problem(this, dbre.getConnection(), msg);
+      unhappyGenes.add(String.format("Gene '%s' of biotype '%s' has no transcript of same biotype group", name, biotype));
     }
-    return false;
+    return unhappyGenes;
   }
 
   private Set<String> getBiotypesDb(DatabaseRegistryEntry dbre, String[] tables) {

@@ -13,8 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 home=`dirname $0`
+
+: ${JAVA_HOME:?"JAVA_HOME must be set"}
+
+
 . $home/setup.sh
 jar
 classpath
