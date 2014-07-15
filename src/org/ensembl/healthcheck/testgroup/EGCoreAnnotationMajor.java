@@ -26,6 +26,7 @@ import org.ensembl.healthcheck.testcase.eg_core.ProteinFeatureAnalysisDb;
 import org.ensembl.healthcheck.testcase.eg_core.TranscriptDisplayXrefSuffix;
 import org.ensembl.healthcheck.testcase.eg_core.TranscriptStableIdDisplayXref;
 import org.ensembl.healthcheck.testcase.eg_core.UniParc_Coverage;
+import org.ensembl.healthcheck.testcase.eg_core.UniProtExternalDbTypes;
 import org.ensembl.healthcheck.testcase.eg_core.UniProtKB_Coverage;
 import org.ensembl.healthcheck.testcase.eg_core.UniProtKB_DisplayXrefIds;
 import org.ensembl.healthcheck.testcase.generic.AnalysisTypes;
@@ -57,8 +58,8 @@ public class EGCoreAnnotationMajor extends GroupOfTests {
 				UniParc_Coverage.class, GeneStableIdDisplayXref.class,
 				TranscriptDisplayXrefSuffix.class,
 				TranscriptStableIdDisplayXref.class,
-        DuplicateRepeatFeature.class,
-        EponineFeatures.class);
+				DuplicateRepeatFeature.class, EponineFeatures.class,
+				UniProtExternalDbTypes.class);
 	}
 
 }
