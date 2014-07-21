@@ -84,6 +84,14 @@ public class VariationFeature extends SingleDatabaseTestCase {
 				ReportManager.problem(this, con, "Variation Features with coordinates = 1");
 				result = false;
 			}
+
+            // Check map weight and warn if map weight exceeds 25
+            stmt = "SELECT COUNT(DISTINCT variation_id) FROM variation_feature where map_weight > 25";
+            rows = DBUtils.getRowCount(con, stmt);
+            if (rows > 0) {
+                result = false;
+                ReportManager.problem(this, con, String.valueOf(rows) + " variants have a map_weight greater than 25");
+            }
 			
 		} catch (Exception e) {
 			ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
