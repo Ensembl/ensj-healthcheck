@@ -61,7 +61,7 @@ public class UniprotGeneNameObjectXref extends AbstractRowCountTestCase {
 	 */
 	@Override
 	protected String getSql() {
-            return "select count(*) from object_xref o,  xref x, external_db e where o.xref_id=x.xref_id and x.external_db_id=e.external_db_id and e.db_name='Uniprot_gn'";
+            return "select count(*) from object_xref o,  xref x, external_db e where o.xref_id=x.xref_id and x.external_db_id=e.external_db_id and e.db_name IN ('Uniprot_gn', 'Uniprot_gn_gene_name', 'Uniprot_gn_trans_name')";
 	}
 
 	/*
@@ -74,7 +74,7 @@ public class UniprotGeneNameObjectXref extends AbstractRowCountTestCase {
 	@Override
 	protected String getErrorMessage(int count) {
 		return "Found " + count
-				+ " Uniprot_gn entries in object_xref - these should be removed from object_xref";
+				+ " Uniprot_gn* entries in object_xref - these should be removed from object_xref";
 	}
 
 }
