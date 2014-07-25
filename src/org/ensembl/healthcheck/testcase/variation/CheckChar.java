@@ -63,10 +63,11 @@ public class CheckChar extends SingleDatabaseTestCase {
 
 
 		    List<String> data = getSqlTemplate(con).queryForDefaultObjectList(
-			"select description from phenotype", String.class);
+			"select description from phenotype where description is not null", String.class);
 		    for (int i = 0; i < data.size(); i++) {
 
 			    String input = data.get(i);
+			    
 
                             // check for unusually short descriptions
 			    if(input.length() < 4){
@@ -89,7 +90,8 @@ public class CheckChar extends SingleDatabaseTestCase {
 				ReportManager.problem(this, con, "phenotype: \""+ input +"\" has suspect start or unsupported characters");
 			    }
 
-			}		
+		    }					    
+	
 		} catch (Exception e) {
 			ReportManager.problem(this, con, "HealthCheck generated an exception: " + e.getMessage());
 			result = false;
