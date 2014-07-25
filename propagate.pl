@@ -165,16 +165,16 @@ sub create_db_name_cache {
     = @_;
 
   # get list of databases for old session
-  my $sql = "SELECT distinct(database_name) from report WHERE database_name LIKE ?";
+  my $sql = "SELECT distinct(database_name) from report WHERE database_name REGEXP ?";
   my $hc_like;
   if ($new_dbname) {
     # only propagate for new_dbname
-    $new_dbname =~ /([a-z]+_[a-z]+_[a-z]+)_\d+/;
-    $hc_like = "%$1_$old_release%";
+    $new_dbname =~ /([a-z]+_[a-z]+_[a-z]+)_\d+_\d+/;
+    $hc_like = "$1_$old_release";
   }
   else {
     # propagate for all databases in old_release
-    $hc_like = "%_${old_release}_%";
+    $hc_like = "_${old_release}_[0-9]+";
   }
   my @old_dbs = @{$healthcheck_dbi->selectcol_arrayref($sql, {}, $hc_like)};
   my @new_dbs = @{get_new_databases($server_dbi, $new_release, $new_dbname)};
@@ -197,9 +197,9 @@ sub create_db_name_cache {
 sub get_new_databases {
   my ($server_dbi, $new_release, $new_dbname) = @_;
   my $new_like = ($new_dbname) ? 
-    "%$new_dbname%" :     # get a single DB
-    "%\_${new_release}\_%"; # get all DBs; note this will exclude master_schema_48 etc
-  my $new_dbs = $server_dbi->selectcol_arrayref("SHOW DATABASES LIKE ?", {}, $new_like);
+    "$new_dbname" :     # get a single DB
+    "\_${new_release}\_[0-9]+"; # get all DBs; note this will exclude master_schema_48 etc
+  my $new_dbs = $server_dbi->selectcol_arrayref("SHOW DATABASES WHERE `database` REGEXP ?", {}, $new_like);
   return $new_dbs;
 }
 
@@ -288,7 +288,7 @@ sub propagate {
       }
       
       if(has_been_propagated($new_database, 'none')) {
-        print "Skipping $new_database as it we have already marked it as propagated for no transfers\n" if ! $quiet;
+        print "Skipping $new_database as we have already marked it as propagated for no transfers\n" if ! $quiet;
         next;
       }
 
