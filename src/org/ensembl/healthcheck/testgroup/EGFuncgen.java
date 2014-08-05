@@ -18,7 +18,7 @@ package org.ensembl.healthcheck.testgroup;
 
 import org.ensembl.healthcheck.GroupOfTests;
 import org.ensembl.healthcheck.testcase.eg_funcgen.EGArrayXrefs;
-import org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema;
+import org.ensembl.healthcheck.testcase.eg_funcgen.EGCompareFuncgenSchema;
 import org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionArrayXrefs;
 import org.ensembl.healthcheck.testcase.funcgen.FuncgenForeignKeys;
 import org.ensembl.healthcheck.testcase.funcgen.FuncgenStableID;
@@ -57,7 +57,7 @@ public class EGFuncgen extends GroupOfTests {
 			ComparePreviousVersionArrayXrefs.class,
 			FuncgenStableID.class,
 			NullStrings.class, 
-			CompareFuncgenSchema.class
+			EGCompareFuncgenSchema.class
 		);
 	}
 }
