@@ -458,6 +458,7 @@ sub _check_declaration {
      AND    release_id = ?
      AND    db_type_affected like '%$db_type%'
      AND    status not in ('cancelled', 'postponed') 
+     AND    is_current = 1
      AND    $declaration = 'Y')");
 
   $sth->execute($new_dbname, $new_release);
