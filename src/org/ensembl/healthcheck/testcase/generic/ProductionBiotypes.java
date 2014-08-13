@@ -90,7 +90,9 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
     Set<String> coreBiotypes = getBiotypesDb(dbre, tables);
     Set<String> productionBiotypes = getBiotypesProduction(dbre, databaseType);
     result &= checkBiotypeExists(dbre, coreBiotypes, productionBiotypes, "production");
-    result &= checkGrouping(dbre);
+    if (dbre.getType() == DatabaseType.CORE) {
+      result &= checkGrouping(dbre);
+    }
     return result;
   }
 
