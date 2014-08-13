@@ -23,7 +23,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  * 
  * <ul>
  *   <li> org.ensembl.healthcheck.testcase.generic.CoreForeignKeys </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousDatabases </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.GeneCoordSystem </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.MappingSession </li> 
@@ -122,7 +121,6 @@ public class PreComparaHandover extends GroupOfTests {
 
 		addTest(
 			org.ensembl.healthcheck.testcase.generic.CoreForeignKeys.class,
-			org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate.class,
 			org.ensembl.healthcheck.testcase.generic.ComparePreviousDatabases.class,
 			org.ensembl.healthcheck.testcase.generic.GeneCoordSystem.class,
 			org.ensembl.healthcheck.testcase.generic.MappingSession.class,

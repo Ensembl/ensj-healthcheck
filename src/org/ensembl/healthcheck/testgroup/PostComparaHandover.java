@@ -23,7 +23,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  * 
  * <ul>
  *   <li> org.ensembl.healthcheck.testcase.generic.CoreForeignKeys </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousDatabases </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.Accession </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.XrefTypes </li> 
@@ -159,7 +158,6 @@ public class PostComparaHandover extends GroupOfTests {
 
 		addTest(
 			org.ensembl.healthcheck.testcase.generic.CoreForeignKeys.class,
-			org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate.class,
 			org.ensembl.healthcheck.testcase.generic.ComparePreviousDatabases.class,
 			org.ensembl.healthcheck.testcase.generic.Accession.class,
 			org.ensembl.healthcheck.testcase.generic.XrefTypes.class,

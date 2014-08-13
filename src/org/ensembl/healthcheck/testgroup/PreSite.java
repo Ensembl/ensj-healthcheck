@@ -32,7 +32,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.AnalysisLogicName </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AnalysisTypes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.SourceTypes </li>
- *   <li> org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AlignFeatureExternalDB </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.BlankEnums </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.TranslationStartEndExon </li> 
@@ -105,7 +104,6 @@ public class PreSite extends GroupOfTests {
                         org.ensembl.healthcheck.testcase.generic.AnalysisLogicName.class,
                         org.ensembl.healthcheck.testcase.generic.AnalysisTypes.class,
                         org.ensembl.healthcheck.testcase.generic.SourceTypes.class,
-			org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate.class,
 			org.ensembl.healthcheck.testcase.generic.AlignFeatureExternalDB.class,
 			org.ensembl.healthcheck.testcase.generic.BlankEnums.class,
 			org.ensembl.healthcheck.testcase.generic.TranslationStartEndExon.class,

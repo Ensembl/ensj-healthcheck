@@ -28,7 +28,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionProjectedGeneNames </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.VariationDensity</li>
  *   <li> org.ensembl.healthcheck.testcase.generic.CoreForeignKeys </li>
- *   <li> org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousDatabases </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.Accession </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.XrefTypes </li>
@@ -164,7 +163,6 @@ public class PostProjection extends GroupOfTests {
 
 		addTest(
                         org.ensembl.healthcheck.testcase.generic.CoreForeignKeys.class,
-                        org.ensembl.healthcheck.testcase.generic.TranscriptsTranslate.class,
                         org.ensembl.healthcheck.testcase.generic.ComparePreviousDatabases.class,
                         org.ensembl.healthcheck.testcase.generic.Accession.class,
                         org.ensembl.healthcheck.testcase.generic.XrefTypes.class,
