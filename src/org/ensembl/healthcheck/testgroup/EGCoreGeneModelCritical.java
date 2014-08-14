@@ -28,6 +28,7 @@ import org.ensembl.healthcheck.testcase.eg_core.ProteinCodingGene;
 import org.ensembl.healthcheck.testcase.eg_core.ProteinTranslation;
 import org.ensembl.healthcheck.testcase.eg_core.SeqRegionCoordSystem;
 import org.ensembl.healthcheck.testcase.eg_core.SimpleFeatureAnalysisTypes;
+import org.ensembl.healthcheck.testcase.eg_core.ValidSeqEnd;
 import org.ensembl.healthcheck.testcase.generic.AssemblyExceptions;
 import org.ensembl.healthcheck.testcase.generic.AssemblyMapping;
 import org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap;
@@ -90,7 +91,8 @@ public class EGCoreGeneModelCritical extends GroupOfTests {
 			SimpleFeatureAnalysisTypes.class,
 			AssemblyMapping.class,
 			ENASeqRegionSynonyms.class,
-			MultipleENASeqRegionSynonyms.class
+			MultipleENASeqRegionSynonyms.class,
+		    ValidSeqEnd.class
 		);
 	}
 }
