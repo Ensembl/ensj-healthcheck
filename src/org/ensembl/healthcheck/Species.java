@@ -40,7 +40,7 @@ public enum Species {
   CAVIA_PORCELLUS(10141, "CAVPOR", "ENSCPO", "guineapig,guinea_pig,cporcellus,cavia_porcellus"),
   CERATOTHERIUM_SIMUM_SIMUM(73337,"CerSimSim","ENSCSI","ceratotherium simum simum,ceratotherium_simum_simum,cersim,csim,csimum_simum,rhinoceros"),
 	CHOLOEPUS_HOFFMANNI(9358, "choHof", "ENSCHO", "Sloth,Two-toed_sloth,Hoffmans_two-fingered_sloth,choloepus_hoffmanni"),
-  CHLOROCEBUS_SABAEUS(60711,"ChlSab","ENSCHS","chlorocebus_sabaeus,chlorocebus_aethiops_sabaeus,vervet monkey,african green monkey,green monkey"), 
+  CHLOROCEBUS_SABAEUS(60711,"ChlSab","ENSCSA","chlorocebus_sabaeus,chlorocebus_aethiops_sabaeus,vervet monkey,african green monkey,green monkey"), 
 	CIONA_INTESTINALIS(7719, "KH", "ENSCIN", "cionaintestinalis,ciona_int,ciona_intestinalis"),
 	CIONA_SAVIGNYI(51511, "CSAV", "ENSCSAV", "savignyi,cionasavignyi,csavignyi,ciona_savignyi"),
   CRICETULUS_GRISEUS(10029, "CriGri", "ENSCGR", "hamster,chinese_hamster,cgriseus,cricetulus_griseus"),
