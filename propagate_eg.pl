@@ -116,6 +116,8 @@ sub create_meta_cache {
 
 	while ( $list_sth->fetch() ) {
 
+	  if($dbname =~ m/^[a-z0-9_]+_core_[0-9]+_[0-9]+$/) {
+
 	  my $meta_sth = $dbi->prepare(
 "SELECT meta_value FROM $dbname.meta WHERE meta_key='genebuild.version' and species_id=1"
 	  );    # can't do this with a prepared statemen
@@ -138,7 +140,7 @@ sub create_meta_cache {
 	  if ( defined $start_date ) {
 		$cache{$dbname} = $start_date;
 	  }
-
+	  }
 	} ## end while ( $list_sth->fetch(...))
 
   } ## end foreach my $dbi (@_)
@@ -341,7 +343,7 @@ values (?,?,?,?,?,?,?,?)/;
 	  # look for matches
 	  my $count = 0;
 
-	  $ann_sth->execute( $type, $new_database );
+	  $ann_sth->execute( $type, $old_database );
 	  foreach my $row ( @{ $ann_sth->fetchall_arrayref() } ) {
 		my $report_id = $problems->{ $row->[0] . $row->[1] };
 		if ( defined $report_id ) {
@@ -363,152 +365,6 @@ values (?,?,?,?,?,?,?,?)/;
 
   return;
 } ## end sub propagate
-
-sub propagate_old {
-  my ( $dbi, $dbi_prev, $old_release, $new_release ) = @_;
-
-  my %propagated_new_databases;
-
-  my @types =
-	qw(manual_ok_all_releases manual_ok_this_assembly manual_ok_this_genebuild manual_ok_this_regulatory_build);
-
-  my $select_sth = $dbi->prepare(
-"SELECT r.first_session_id, r.species, r.database_type, r.timestamp, r.testcase, r.result, r.text, a.person, a.action,a.comment,a.created_at, a.modified_at, a.created_by, a.modified_by FROM report r, annotation a WHERE a.report_id=r.report_id AND r.database_name=? AND a.action=?"
-  );
-
-  my $insert_report_sth = $dbi->prepare(
-"INSERT INTO report (first_session_id, last_session_id, database_name, database_type, species, timestamp, testcase, result, text) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
-  );
-
-  my $insert_annotation_sth = $dbi->prepare(
-"INSERT INTO annotation (report_id, person, action, comment, created_at, modified_at, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-  );
-  print Dumper($meta_cache);
-  my %counts;
-
-  #
-
-  foreach my $type (@types) {
-
-	print "Propagating $type\n" unless ($quiet);
-	$counts{$type} = 0;
-
-	# find all manual_ok_all_releases etc for each old database
-	foreach my $old_database ( sort keys %$old_to_new_db_name ) {
-
-	  my $new_database = $old_to_new_db_name->{$old_database};
-	  my $count        = 0;
-
-	  my $propagated_problem_count =
-		get_propagated_problem_count($dbname);
-	  my $current_problem_count = get_current_problem_count($dbname);
-
-	  if ( $current_problem_count != $propagated_problem_count ) {
-		reset_propagation($dbname);
-	  }
-
-	  #If we have already processed this DB then we skip it
-	  if ( has_been_propagated( $new_database, $type ) ) {
-		print
-		  "Skipping $new_database as it has already been propagated\n"
-		  if !$quiet;
-		next;
-	  }
-
-	  if ( has_been_propagated( $new_database, 'none' ) ) {
-		print
-"Skipping $new_database as it we have already marked it as propagated for no transfers\n"
-		  if !$quiet;
-		next;
-	  }
-
-	  # type eq manual_ok_this_assembly:
-	  # will only need to propagate if it is the same assembly
-	  if ( $type eq 'manual_ok_this_assembly' ) {
-		if ( new_assembly( $old_database, $new_database, $new_release,
-						   $dbi1,         $dbi_prev ) )
-		{
-		  print
-"Skipping $new_database as it is a new assembly so we ignore '$type'\n"
-			if !$quiet;
-		  next;
-		}
-	  }
-
-	  # type eq manual_ok_this_genebuild
-	  # will only need to propagate if it is the same genebuild
-	  # i.e. if genebuild.start_date values in meta table are the same
-	  # so skip propagation if they are not the same
-	  if ( $type eq 'manual_ok_this_genebuild' ) {
-		if ( new_genebuild( $old_database, $new_database, $new_release,
-							$dbi1,         $dbi_prev ) )
-		{
-		  print
-"Skipping $new_database as it is a new genebuild so we ignore '$type'\n"
-			if !$quiet;
-		  next;
-		}
-	  }
-
-	  # type eq manual_ok_this_regulatory_build:
-	  # will only need to propagate if it is the same regulatory build
-	  if ( $type eq 'manual_ok_this_regulatory_build' ) {
-		if ( new_regulatory_build( $old_database, $new_database ) ) {
-		  print
-"Skipping $new_database as it is a new regulatory build so we ignore '$type'\n"
-			if !$quiet;
-		  next;
-		}
-	  }
-
-	  $select_sth->execute( $old_database, $type );
-	  foreach my $row ( @{ $select_sth->fetchall_arrayref() } ) {
-
-		my ( $first_session_id, $species,    $database_type,
-			 $timestamp,        $testcase,   $result,
-			 $text,             $person,     $action,
-			 $comment,          $created_at, $modified_at,
-			 $created_by,       $modified_by ) = @$row;
-
-	 # create new report - appears to be reinserting the original - why?
-		$insert_report_sth->execute(
-						  $first_session_id, $session_id, $new_database,
-						  $database_type,    $species,    $timestamp,
-						  $testcase,         $result,     $text ) ||
-		  die "Error inserting report";
-		my $report_id = $insert_report_sth->{'mysql_insertid'};
-
-		## TODO does the annotation exist already?
-
-		# create new annotation
-		$insert_annotation_sth->execute(
-					$report_id,  $person,      $action,     $comment,
-					$created_at, $modified_at, $created_by, $modified_by
-		  ) ||
-		  die "Error inserting annotation";
-
-		$count++;
-		$counts{$type}++;
-
-	  } ## end foreach my $row ( @{ $select_sth...})
-	  if ($count) {
-		$propagated_new_databases{$new_database} = 1;
-		record_propagation( $new_database, $type, $count );
-	  }
-
-	  print "\t$old_database\t$new_database\t$count\n"
-		if ( !$quiet && $count > 0 );
-	} ## end foreach my $old_database ( ...)
-
-	print "Propagated " . $counts{$type} . " $type reports\n"
-	  unless ($quiet);
-
-  }    # foreach type
-
-  flag_non_propagated_dbs( \%propagated_new_databases );
-
-  return;
-} ## end sub propagate_old
 
 # --------------------------------------------------------------------------------
 
