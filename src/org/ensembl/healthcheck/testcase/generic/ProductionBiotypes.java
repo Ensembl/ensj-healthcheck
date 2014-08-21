@@ -115,6 +115,10 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
     String[] table = {"gene"};
     Set<String> geneBiotypes = getBiotypesDb(dbre, table);
 
+    List<String> annotatorGenes = new ArrayList<String>();
+    if("vega".equals(databaseType) || "sangervega".equals(databaseType)) {
+      annotatorGenes = getGenesWithAnnotatorBiotype(dbre);
+    }
     ArrayList<String> transcriptErrors = new ArrayList<String>();
     ArrayList<String> biotypeGroupErrors = new ArrayList<String>();
     ArrayList<String> noGroupErrors = new ArrayList<String>();
@@ -140,14 +144,17 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
         }
         List<String> allGenes = getGene(dbre, geneBiotype, databaseType);
         List<String> goodGenes = getGeneWithTranscript(dbre, geneGrouping, databaseType);
+        goodGenes.addAll(annotatorGenes);
         pseudogeneErrors.addAll( checkMissing(dbre, allGenes, goodGenes, geneBiotype) );
       } else if (geneGrouping.contains("coding")) {
         List<String> allGenes = getGene(dbre, geneBiotype, databaseType);
         List<String> goodGenes = getGeneWithTranscript(dbre, geneGrouping, databaseType);
+        goodGenes.addAll(annotatorGenes);
         pseudogeneErrors.addAll( checkMissing(dbre, allGenes, goodGenes, geneBiotype) );
         if (geneBiotype.contains("polymorphic_pseudogene")) {
           allGenes = getGeneP(dbre, "polymorphic_pseudogene", databaseType);
           goodGenes = getGeneWithTranscriptP(dbre, "polymorphic_pseudogene", databaseType);
+          goodGenes.addAll(annotatorGenes);
           pseudogeneErrors.addAll( checkMissing(dbre, allGenes, goodGenes, geneBiotype) );
         }
       }
@@ -265,6 +272,12 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
     SqlTemplate t = DBUtils.getSqlTemplate(dbre);
     String sql = "SELECT g.stable_id from gene g, transcript t where g.gene_id = t.gene_id and t.biotype = '" + biotype + "' group by g.stable_id";
     return t.queryForDefaultObjectList(sql, String.class);
+  }
+
+  private List<String> getGenesWithAnnotatorBiotype(DatabaseRegistryEntry dbre) {
+    SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+    String sql = "select g.stable_id from gene g join gene_attrib using (gene_id) join attrib_type at using (attrib_type_id) where at.code = 'hidden_remark' and value like 'ASB_%' and CONCAT('ASB_',g.biotype) = value";
+    return t.queryForDefaultObjectList(sql,String.class);
   }
 
   private List<String> getGeneWithTranscript(DatabaseRegistryEntry dbre, Set<String> biotypeGroup, String databaseType) {
