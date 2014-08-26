@@ -62,22 +62,23 @@ public class CheckChar extends SingleDatabaseTestCase {
 		    boolean char_ok   = true;
 
 
-		    List<String> data = getSqlTemplate(con).queryForDefaultObjectList(
-			"select description from phenotype where description is not null", String.class);
+		    
+                   List<String> data = getSqlTemplate(con).queryForDefaultObjectList( 
+		       "select description from phenotype where description is not null", String.class);
+
 		    for (int i = 0; i < data.size(); i++) {
 
 			    String input = data.get(i);
 			    
-
-                            // check for unusually short descriptions
+			     // check for unusually short descriptions
 			    if(input.length() < 4){
 				result = false;
 				ReportManager.problem(this, con, "phenotype: " + input + " is suspiciously short");
-			    }
+			     }
  			   
 
                             // check for phenotype descriptions suggesting no phenotype
-                            boolean name_ok = checkNonPhenotypes(input);
+                            boolean name_ok = checkNonTerms(input);
 			    if(name_ok == false){
 				result = false;
 				ReportManager.problem(this, con, "phenotype: " + input + " is not useful");
@@ -105,7 +106,7 @@ public class CheckChar extends SingleDatabaseTestCase {
 
 	// --------------------------------------------------------------
 
-	private boolean checkUnsupportedChar( String input) {
+	public boolean checkUnsupportedChar( String input) {
 
 		boolean is_ok = true;
 		int len = input.length();
@@ -135,10 +136,10 @@ public class CheckChar extends SingleDatabaseTestCase {
 
 
 
-	private boolean checkNonPhenotypes( String input) {
+	public boolean checkNonTerms( String input) {
 
 		boolean is_ok = true;
-		String[] junk = {"None", "Not provided", "not specified", "Not in OMIM", "Variant of unknown significance", "not_provided" };
+		String[] junk = {"None", "Not provided", "not specified", "Not in OMIM", "Variant of unknown significance", "not_provided", "?","." };
 
 		int len = junk.length;
 			    
