@@ -67,7 +67,7 @@ public class ComparePreviousVersionValidationStatus extends ComparePreviousVersi
 		String query;
 
 		// Query getting the structure of the evidence column
-		query = "DESCRIBE variation evidence";
+		query = "DESCRIBE variation evidence_attribs";
 		sqlQueries.setProperty("describeEvidence", query);
 
 		// Query counting the number of variations with a particular evidence
