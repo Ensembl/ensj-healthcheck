@@ -77,6 +77,11 @@ public class Pseudogene extends SingleDatabaseTestCase {
 																											// polymorphic_pseudogene to have translations
 			qry += " and (gene.source='havana' or gene.source='WU')";
 		}
+    if (dbre.getType() == DatabaseType.SANGER_VEGA ||
+        dbre.getType() == DatabaseType.VEGA) {
+      // Vega allows translations on translated_processed_pseudogene-s
+      qry += " and gene.biotype != 'translated_processed_pseudogene'";
+    }
 
 		int rows = DBUtils.getRowCount(con, qry);
 		if (rows > 0) {
