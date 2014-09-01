@@ -123,7 +123,7 @@ public class CompareVariationSchema extends AbstractCompareSchema {
         protected Map<Species,Set<String>> requiredTables() {
                 if(r == null) {
                         r = new HashMap<Species, Set<String>>();
-                        r.put(Species.UNKNOWN,            createLinkedHashSet("subsnp_map", "MTMP_population_genotype", "variation_hgvs", "variation_genename"));
+                        r.put(Species.UNKNOWN,            createLinkedHashSet("subsnp_map", "MTMP_population_genotype", "MTMP_evidence"));
                         r.put(Species.MUS_MUSCULUS,       createLinkedHashSet("strain_gtype_poly"));
                         r.put(Species.RATTUS_NORVEGICUS,  createLinkedHashSet("strain_gtype_poly"));
                 }
