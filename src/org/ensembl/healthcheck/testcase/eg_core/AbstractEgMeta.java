@@ -53,11 +53,9 @@ public abstract class AbstractEgMeta extends AbstractEgCoreTestCase {
 		public void existingObject(List<String> currentValue,
 				ResultSet resultSet, int position) throws SQLException {
 			String string = resultSet.getString(2);
-			if (StringUtils.isEmpty(string)) {
-				throw new RuntimeException("Meta key " + resultSet.getString(1)
-						+ " has empty value");
+			if(!StringUtils.isEmpty(string)) {
+				currentValue.add(string);
 			}
-			currentValue.add(string);
 		}
 
 		public String getKey(ResultSet resultSet) throws SQLException {
@@ -101,12 +99,9 @@ public abstract class AbstractEgMeta extends AbstractEgCoreTestCase {
 
 	protected Map<String, Boolean> getKeys(SqlTemplate template, int speciesId) {
 		Map<String, Boolean> metaKeyOut = CollectionUtils.createHashMap();
-		for (String key : metaKeys) {
-			metaKeyOut.put(key, false);
-		}
 		for (Entry<String, List<String>> meta : template.queryForMap(
 				META_QUERY, mapper, speciesId).entrySet()) {
-			if (metaKeyOut.containsKey(meta.getKey())) {
+			if (!meta.getValue().isEmpty() && metaKeyOut.containsKey(meta.getKey())) {
 				metaKeyOut.put(meta.getKey(), true);
 			}
 		}
