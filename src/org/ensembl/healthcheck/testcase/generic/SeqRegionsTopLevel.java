@@ -37,7 +37,11 @@ import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.SqlTemplate;
+
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Check that all seq_regions comprising genes are marked as toplevel in seq_region_attrib. Also checks that there is at least one
@@ -83,10 +87,15 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 
                 String AssemblyAccession = DBUtils.getMetaValue(con, "assembly.accession");
 
-		int topLevelAttribTypeID = getAttribTypeID(con);
+		int topLevelAttribTypeID = getAttribTypeID(con, "toplevel");
 		if (topLevelAttribTypeID == -1) {
 			return false;
 		}
+
+                int karyotypeAttribTypeID = getAttribTypeID(con, "karyotype_rank");
+                if (karyotypeAttribTypeID == -1) {
+                        return false;
+                }
 
 		result &= check_genes(con, topLevelAttribTypeID);
 
@@ -96,8 +105,16 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 
 		result &= checkAssemblyTable(con, topLevelAttribTypeID);
 
+
                 if (AssemblyAccession.contains("GCA")) {
-                        result &= checkSynonyms(dbre, topLevelAttribTypeID);
+                        Set<String> synsRefSeqGenomic = getSyns(dbre, "RefSeq_genomic");
+                        Set<String> topLevelRegions = getRegions(dbre, topLevelAttribTypeID);
+                        result &= checkSynonyms(dbre, synsRefSeqGenomic, topLevelRegions, "RefSeq_genomic", "toplevel");
+                        Set<String> synsINSDC = getSyns(dbre, "INSDC");
+                        Set<String> karyotypeRegions = getRegions(dbre, karyotypeAttribTypeID);
+                        result &= checkSynonyms(dbre, synsINSDC, karyotypeRegions, "INSDC", "chromosome");
+                        Set<String> patchRegions = getPatches(dbre);
+                        result &= checkSynonyms(dbre, synsRefSeqGenomic, patchRegions, "RefSeq_genomic", "patch");
                 }
 
 		return result;
@@ -106,19 +123,19 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 
 	// --------------------------------------------------------------------------
 
-	private int getAttribTypeID(Connection con) {
+	private int getAttribTypeID(Connection con, String attrib) {
 
 		// check that all gene seq_regions have toplevel attributes
-		String val = DBUtils.getRowColumnValue(con, "SELECT attrib_type_id FROM attrib_type WHERE code=\'toplevel\'");
+		String val = DBUtils.getRowColumnValue(con, "SELECT attrib_type_id FROM attrib_type WHERE code='" + attrib + "'");
 		if (val == null || val.equals("")) {
 			ReportManager.problem(this, con, "Can't find a seq_region attrib_type with code 'toplevel', exiting");
 			return -1;
 		}
-		int topLevelAttribTypeID = Integer.parseInt(val);
+		int attribTypeID = Integer.parseInt(val);
 
-		logger.info("attrib_type_id for toplevel: " + topLevelAttribTypeID);
+		logger.info("attrib_type_id for toplevel: " + attribTypeID);
 
-		return topLevelAttribTypeID;
+		return attribTypeID;
 
 	}
 
@@ -233,48 +250,44 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 	// --------------------------------------------------------------------------
 
 
-        private boolean checkSynonyms(DatabaseRegistryEntry dbre, int topLevelAttribTypeID) {
+        private <T extends CharSequence> boolean checkSynonyms(DatabaseRegistryEntry dbre, Collection<T> syns, Collection<T> regions, String dbName, String type) {
 
                 boolean result = true;
                 SqlTemplate t = DBUtils.getSqlTemplate(dbre);
                 Connection con = dbre.getConnection();
 
-                int numMissingRefseq = 0;
-                int numMissingINSDC = 0;
-                String topSql = "SELECT DISTINCT s.name FROM seq_region s, seq_region_attrib sa WHERE s.seq_region_id = sa.seq_region_id AND s.name NOT LIKE 'LRG%' AND s.name NOT LIKE 'MT' AND attrib_type_id = " + topLevelAttribTypeID;
-                String synsSql = "SELECT COUNT(*) FROM seq_region s, seq_region_synonym ss, external_db e WHERE s.seq_region_id = ss.seq_region_id AND ss.external_db_id = e.external_db_id AND s.name = ? AND e.db_name = ?";
-                List<String> regions = t.queryForDefaultObjectList(topSql, String.class);
+                Set<T> missing = new HashSet<T>(regions);
+                missing.removeAll(syns);
 
-                for (String region : regions) {
-                        int refseq = t.queryForDefaultObject(synsSql, Integer.class, region, "RefSeq_genomic");
-                        if (refseq == 0) { 
-                               // ReportManager.problem(this, con, region + " does not have a RefSeq_genomic synonym");
-                               numMissingRefseq++;
-                        }
-                        int insdc = t.queryForDefaultObject(synsSql, Integer.class, region, "INSDC");
-                        if (insdc == 0) {
-                               // ReportManager.problem(this, con, region + " does not have an INSDC synonym");
-                               numMissingINSDC++;
-                        }
-                }
-
-                if (numMissingRefseq > 0) {
-
-                        ReportManager.problem(this, con, numMissingRefseq + " regions do not have a RefSeq_genomic synonym");
-                        result = false;
-
-                } else if (numMissingINSDC > 0) {
-
-                        ReportManager.problem(this, con, numMissingINSDC + " regions do not have an INSDC synonym");
-                        result = false;
-
+                if (!missing.isEmpty()) {
+                  ReportManager.problem(this, con, missing.size() + " " + type + " region(s) do not have a " + dbName + " synonym");
+                  result = false;
                 } else {
-
-                        ReportManager.correct(this, con, "All toplevel regions have the required synonyms");
-
+                  ReportManager.correct(this, con, "All " + type + " regions have a synonym for " + dbName);
                 }
 
                 return result;
+        }
+
+        private Set<String> getSyns(DatabaseRegistryEntry dbre, String dbName) {
+                SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+                String sql = "SELECT DISTINCT s.name FROM seq_region s, seq_region_synonym ss, external_db e WHERE s.seq_region_id = ss.seq_region_id AND ss.external_db_id = e.external_db_id AND e.db_name = ?";
+                List<String> results = t.queryForDefaultObjectList(sql, String.class, dbName);
+                return new HashSet<String>(results);
+        }
+
+        private Set<String> getRegions(DatabaseRegistryEntry dbre, int attribTypeID) {
+                SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+                String sql = "SELECT DISTINCT s.name FROM seq_region s, seq_region_attrib sa WHERE s.seq_region_id = sa.seq_region_id AND s.name NOT LIKE 'CHR_%' AND s.name NOT LIKE 'LRG%' AND s.name NOT LIKE 'MT' AND attrib_type_id = ? AND s.seq_region_id NOT IN (SELECT s.seq_region_id FROM seq_region s, attrib_type at, seq_region_attrib sa WHERE s.seq_region_id = sa.seq_region_id AND sa.attrib_type_id = at.attrib_type_id AND code = 'codon_table') ";
+                List<String> results = t.queryForDefaultObjectList(sql, String.class, attribTypeID);
+                return new HashSet<String>(results);
+        }
+
+        private Set<String> getPatches(DatabaseRegistryEntry dbre) {
+                SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+                String sql = "SELECT DISTINCT s1.name FROM seq_region s1, seq_region s2, coord_system cs1, coord_system cs2 WHERE s2.name = concat('CHR_', s1.name) AND s1.coord_system_id = cs1.coord_system_id AND cs1.name = 'scaffold' AND s2.coord_system_id = cs2.coord_system_id AND cs2.name = 'chromosome'";
+                List<String> results = t.queryForDefaultObjectList(sql, String.class);
+                return new HashSet<String>(results);
         }
 
 
