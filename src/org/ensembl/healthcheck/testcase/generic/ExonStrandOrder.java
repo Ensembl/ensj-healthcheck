@@ -222,11 +222,6 @@ ORDER BY
 					lastExonID = -1;
 					lastExonRank = 0;
 
-					// check for overlong transcripts
-					if (transcriptEnd - transcriptStart > TRANSCRIPT_WARN_LENGTH) {
-						ReportManager.warning(this, con, "Long transcript " + transcriptStableID + " length " + (transcriptEnd - transcriptStart));
-					}
-
 					transcriptCount++;
 
 				}
