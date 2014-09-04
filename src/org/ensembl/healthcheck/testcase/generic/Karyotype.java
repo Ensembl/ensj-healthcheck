@@ -107,9 +107,17 @@ public class Karyotype extends SingleDatabaseTestCase {
 		// same.
 		// The SQL returns failures
 
-                 if(karyotypeSpecies.contains(species) == false) {
-                         return true;
+                 if(karyotypeSpecies.contains(species) == true) {
+                         result &= checkKaryotype(dbre);
                  }
+
+                 return result;
+        }
+
+        protected boolean checkKaryotype(DatabaseRegistryEntry dbre) {
+
+                Connection con = dbre.getConnection();
+                boolean result = true;
 
                  String[] seqRegionNames = DBUtils.getColumnValues(con,
                                 "SELECT s.name FROM seq_region s, coord_system cs WHERE s.coord_system_id=cs.coord_system_id AND cs.name='chromosome' AND cs.attrib='default_version' AND s.name NOT LIKE 'LRG%' AND s.name != 'MT'");
@@ -129,7 +137,6 @@ public class Karyotype extends SingleDatabaseTestCase {
                                 while (rs.next() && count < 50) {
                                         hasKaryotype = true;
                                         if (patchList.contains(seqRegion)) { continue; }
-	        			count++;
 		        		String chrName = rs.getString(1);
 			        	int karLen = rs.getInt(2);
 				        int chrLen = rs.getInt(3);
@@ -144,6 +151,7 @@ public class Karyotype extends SingleDatabaseTestCase {
 	        			}
                                         if (bp > 0) {
         		        		result = false;
+                                                count++;
         					ReportManager.problem(this, con, "Chromosome " + chrName + " is " + bp + "bp " + prob + " in the karyotype table than " + "in the seq_region table");
                                         }
                                 }
