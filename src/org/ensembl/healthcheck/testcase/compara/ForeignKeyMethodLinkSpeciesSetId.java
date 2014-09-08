@@ -129,6 +129,11 @@ public class ForeignKeyMethodLinkSpeciesSetId extends SingleDatabaseTestCase {
             result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "gene_tree_root", "method_link_species_set_id", "method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'NCTree.%')");
             result &= checkForOrphans(con, "gene_tree_root", "method_link_species_set_id", "method_link_species_set", "method_link_species_set_id");
 
+            /* Check method_link_species_set <-> species_tree_root */
+            result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "species_tree_root", "method_link_species_set_id", "method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'ProteinTree.%')");
+            result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "species_tree_root", "method_link_species_set_id", "method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'NCTree.%')");
+            result &= checkForOrphans(con, "species_tree_root", "method_link_species_set_id", "method_link_species_set", "method_link_species_set_id");
+
             /* Check number of MLSS with no source */
             int numOfUnsetSources = DBUtils.getRowCount(con, "SELECT count(*) FROM method_link_species_set WHERE source = 'NULL' OR source IS NULL");
             if (numOfUnsetSources > 0) {

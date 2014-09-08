@@ -30,12 +30,12 @@ import org.ensembl.healthcheck.Team;
  * relationships.
  */
 
-public class ForeignKeyNodeId extends SingleDatabaseTestCase {
+public class ForeignKeyGenomicAlignNodeId extends SingleDatabaseTestCase {
 
     /**
      * Create an ForeignKeyGenomicAlignBlockId that applies to a specific set of databases.
      */
-    public ForeignKeyNodeId() {
+    public ForeignKeyGenomicAlignNodeId() {
 
         addToGroup("compara_genomic");
         setDescription("Check for broken foreign-key relationships in ensembl_compara databases.");
