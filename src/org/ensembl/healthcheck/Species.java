@@ -92,7 +92,7 @@ public enum Species {
 	PAPIO_HAMADRYAS(9557, "Pham", "ENSPHA", "baboon,Papio_hamadryas,papio_hamadryas,papio_hamadryas,sacred_baboon,western_baboon,red_baboon"),
 	PELODISCUS_SINENSIS(13735, "PelSin", "ENSPSI", "Chinese_softshell_turtle,turtle,softshell_turtle,Trionyx_sinensis"),
 	PETROMYZON_MARINUS(7757, "Pmarinus", "ENSPMA", "lamprey,sea_lamprey,pmarinus,petromyzon,petromyzon_marinus"),
-	POECILIA_FORMOSA(48698, "Poecilia_formosa", "ENSPFO", "amazon molly,poecilia_formosa,pformosa,poefor,pfor"),
+	POECILIA_FORMOSA(48698, "PoeFor", "ENSPFO", "amazon molly,poecilia_formosa,pformosa,poefor,pfor"),
 	PONGO_ABELII(9601, "PPYG", "ENSPPY", "orangutan,orang-utan,pabellii,pongo_abelii"),
 	PROCAVIA_CAPENSIS(9813, "PROCAP", "ENSPCA", "cape_rock_hyrax,caperockhyrax,procaviacapensis,procavia_capensis"),
 	PTEROPUS_VAMPYRUS(132908, "PTEVAM", "ENSPVA", "large_flying_fox,largeflyingfox,pteropusvampyrus,pteropus_vampyrus"),
