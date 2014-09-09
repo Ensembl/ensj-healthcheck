@@ -60,8 +60,8 @@ public class ForeignKeyDnafragId extends SingleDatabaseTestCase {
             result &= checkForOrphans(con, "dnafrag_region", "dnafrag_id", "dnafrag", "dnafrag_id");
             result &= checkForOrphans(con, "genomic_align", "dnafrag_id", "dnafrag", "dnafrag_id");
             result &= checkForOrphans(con, "constrained_element", "dnafrag_id", "dnafrag", "dnafrag_id");
-            result &= checkForOrphans(con, "gene_member", "dnafrag_id", "dnafrag", "dnafrag_id");
-            result &= checkForOrphans(con, "seq_member", "dnafrag_id", "dnafrag", "dnafrag_id");
+            result &= checkForOrphansWithConstraint(con, "gene_member", "dnafrag_id", "dnafrag", "dnafrag_id", "source_name = 'ENSEMBLGENE'");
+            result &= checkForOrphansWithConstraint(con, "seq_member", "dnafrag_id", "dnafrag", "dnafrag_id", "source_name = 'ENSEMBLPEP'");
 
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in dnafrag table, so nothing to test IGNORED");
