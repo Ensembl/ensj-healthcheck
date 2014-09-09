@@ -55,7 +55,7 @@ public class CheckFlatProteinTrees extends AbstractTemplatedTestCase {
 	 * considering it to be <em>dodgy</em>
 	 */
 	protected int getMaxAllowedFlatMembers() {
-		return 3;
+		return 2;
 	}
 
 	@Override
