@@ -66,12 +66,8 @@ public class ForeignKeyMethodLinkSpeciesSetId extends SingleDatabaseTestCase {
         if (tableHasRows(con, "method_link_species_set")) {
 
             /* Check method_link_species_set <-> species_set */
-            result &= checkForOrphans(con,
-                "method_link_species_set", "species_set_id",
-                "species_set", "species_set_id");
-            result &= checkForOrphansWithConstraint(con, "species_set", "species_set_id",
-                "method_link_species_set", "species_set_id",
-                "species_set_id not in (SELECT distinct species_set_id from species_set_tag)");
+            result &= checkForOrphans(con, "method_link_species_set", "species_set_id", "species_set", "species_set_id");
+            result &= checkForOrphansWithConstraint(con, "species_set", "species_set_id", "method_link_species_set", "species_set_id", "species_set_id not in (SELECT distinct species_set_id from species_set_tag)");
 
             /* Check uniqueness of species_set entries */
             int numOfDuplicatedSpeciesSets = DBUtils.getRowCount(con,
@@ -84,54 +80,7 @@ public class ForeignKeyMethodLinkSpeciesSetId extends SingleDatabaseTestCase {
                 result = false;
 	    }
 
-	    /* Check if have both BLASTZ_NET and LASTZ_NET entries for the same species set */
-	    int numOfBLASTZ_LASTZSpeciesSets = DBUtils.getRowCount(con,
-							   "SELECT species_set_id, count(*) FROM method_link_species_set JOIN method_link USING (method_link_id) WHERE TYPE in ('BLASTZ_NET', 'LASTZ_NET') GROUP BY species_set_id HAVING count(*) > 1");
-	    if (numOfBLASTZ_LASTZSpeciesSets > 0) {
-		ReportManager.problem(this, con, "FAILED method_link_species_set table contains " + numOfBLASTZ_LASTZSpeciesSets + " entries with a BLASTZ_NET and LASTZ_NET entry for the same species_set");
-		ReportManager.problem(this, con, "USEFUL SQL: SELECT species_set_id, count(*) FROM method_link_species_set JOIN method_link USING (method_link_id) WHERE TYPE in ('BLASTZ_NET', 'LASTZ_NET') GROUP BY species_set_id HAVING count(*) > 1");
-		result = false;
-	    }
-	    
-
-            /* Check method_link_species_set <-> synteny_region */
-            /* All method_link for syntenies must have an internal ID between 101 and 199 */
-            result &= checkForOrphansWithConstraint(con,
-                "method_link_species_set", "method_link_species_set_id",
-                "synteny_region", "method_link_species_set_id",
-                "method_link_id >= 101 and method_link_id < 200");
-            result &= checkForOrphans(con,
-                "synteny_region", "method_link_species_set_id",
-                "method_link_species_set", "method_link_species_set_id");
-
-            /* Check method_link_species_set <-> homology */
-            /* All method_link for homologies must have an internal ID between 201 and 299 */
-            result &= checkForOrphansWithConstraint(con,
-                "method_link_species_set", "method_link_species_set_id",
-                "homology", "method_link_species_set_id",
-                "method_link_id >= 201 and method_link_id < 300");
-            result &= checkForOrphans(con,
-                "homology", "method_link_species_set_id",
-                "method_link_species_set", "method_link_species_set_id");
-
-            /* Check method_link_species_set <-> family */
-            /* All method_link for families must have an internal ID between 301 and 399 */
-            result &= checkForOrphansWithConstraint(con,
-                "method_link_species_set", "method_link_species_set_id",
-                "family", "method_link_species_set_id",
-                "method_link_id >= 301 and method_link_id < 400");
-            result &= checkForOrphans(con,
-                "family", "method_link_species_set_id",
-                "method_link_species_set", "method_link_species_set_id");
-
-            /* Check method_link_species_set <-> gene_tree_root */
-            result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "gene_tree_root", "method_link_species_set_id", "method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'ProteinTree.%')");
-            result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "gene_tree_root", "method_link_species_set_id", "method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'NCTree.%')");
-            result &= checkForOrphans(con, "gene_tree_root", "method_link_species_set_id", "method_link_species_set", "method_link_species_set_id");
-
             /* Check method_link_species_set <-> species_tree_root */
-            result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "species_tree_root", "method_link_species_set_id", "method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'ProteinTree.%')");
-            result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "species_tree_root", "method_link_species_set_id", "method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'NCTree.%')");
             result &= checkForOrphans(con, "species_tree_root", "method_link_species_set_id", "method_link_species_set", "method_link_species_set_id");
 
             /* Check number of MLSS with no source */
