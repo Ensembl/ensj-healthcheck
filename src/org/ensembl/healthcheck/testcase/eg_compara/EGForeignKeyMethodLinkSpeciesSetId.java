@@ -157,7 +157,7 @@ public class EGForeignKeyMethodLinkSpeciesSetId extends
 				"method_link_species_set_id",
 				"genomic_align_block",
 				"method_link_species_set_id",
-				"method_link_id BETWEEN 1 AND 99");
+				"method_link_id BETWEEN 1 AND 99 AND method_link_id != 11");
 	}
 
 	protected boolean assertGenomicAlignOrphans(DatabaseRegistryEntry dbre) {
