@@ -28,7 +28,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.CollectionUtils;
 
@@ -37,7 +37,7 @@ import org.ensembl.healthcheck.util.CollectionUtils;
  * Compara tables are similar to the previous release
  */
 
-public class CheckTableSizes extends MultiDatabaseTestCase {
+public class CheckTableSizes extends SingleDatabaseTestCase {
 
 	public CheckTableSizes() {
 
@@ -71,36 +71,22 @@ public class CheckTableSizes extends MultiDatabaseTestCase {
 	 * Kick-off a comparison between the current database and all the
 	 * previous ones
 	 */
-	public boolean run(final DatabaseRegistry dbr) {
-
-		boolean result = true;
-
+	public boolean run(final DatabaseRegistryEntry dbre) {
 
 		// Get compara DB connection
-		DatabaseRegistryEntry[] allPrimaryComparaDBs = DBUtils.getMainDatabaseRegistry().getAll(DatabaseType.COMPARA);
-		if (allPrimaryComparaDBs.length == 0) {
-			result = false;
-			ReportManager.problem(this, "", "Cannot find compara database");
-			usage();
+		DatabaseRegistryEntry[] allSecondaryComparaDBs = DBUtils.getSecondaryDatabaseRegistry().getAll(DatabaseType.COMPARA);
+		if (allSecondaryComparaDBs.length == 0) {
+			ReportManager.problem( this, dbre.getConnection(),
+					"Cannot find the compara database in the secondary server. This check expects to find a previous version of the compara database for checking that all the *named* species_sets are still present in the current database.");
 			return false;
 		}
 
-		DatabaseRegistryEntry[] allSecondaryComparaDBs = DBUtils.getSecondaryDatabaseRegistry().getAll(DatabaseType.COMPARA);
-
 		// For each compara connection...
-		for (int i = 0; i < allPrimaryComparaDBs.length; i++) {
-			if (allSecondaryComparaDBs.length == 0) {
-				result = false;
-				ReportManager.problem( this, allPrimaryComparaDBs[i].getConnection(),
-						"Cannot find the compara database in the secondary server. This check expects to find a previous version of the compara database for checking that all the *named* species_sets are still present in the current database.");
-				usage();
-			}
-			for (int j = 0; j < allSecondaryComparaDBs.length; j++) {
-				// Check vs previous compara DB.
-				result &= compareTableSizes(allPrimaryComparaDBs[i], allSecondaryComparaDBs[j]);
-			}
+		boolean result = true;
+		for (DatabaseRegistryEntry this_other_Compara_dbre : allSecondaryComparaDBs) {
+			// Check vs previous compara DB.
+			result &= compareTableSizes(dbre, this_other_Compara_dbre);
 		}
-
 		return result;
 
 	} // run
@@ -154,12 +140,5 @@ public class CheckTableSizes extends MultiDatabaseTestCase {
 
 		return result;
 	}
-
-	// -----------------------------------------------------------------
-
-	private void usage() {
-		ReportManager.problem(this, "USAGE", "run-healthcheck.sh -d ensembl_compara_.+  -d2 .+_core_.+ -d2 .+_compara_.+ CheckEmptyTables");
-	}
-
 
 } // CheckEmptyTables
