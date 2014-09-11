@@ -65,7 +65,8 @@ public class ComparaGenomic extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.Meta.class,
 			org.ensembl.healthcheck.testcase.compara.MLSSTagGERPMSA.class,
 			org.ensembl.healthcheck.testcase.compara.MLSSTagMaxAlign.class,
-			org.ensembl.healthcheck.testcase.compara.SingleDBCollations.class
+			org.ensembl.healthcheck.testcase.compara.SingleDBCollations.class,
+			org.ensembl.healthcheck.testcase.eg_compara.EGForeignKeyMethodLinkSpeciesSetId.class
 		);
 	}
 }

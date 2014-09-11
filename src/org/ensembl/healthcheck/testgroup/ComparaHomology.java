@@ -68,7 +68,11 @@ public class ComparaHomology extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeNodeId.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyTaxonId.class,
 			org.ensembl.healthcheck.testcase.compara.Meta.class,
-			org.ensembl.healthcheck.testcase.compara.SingleDBCollations.class
+			org.ensembl.healthcheck.testcase.compara.SingleDBCollations.class,
+			org.ensembl.healthcheck.testcase.eg_compara.CheckEmptyLeavesTrees.class,
+			org.ensembl.healthcheck.testcase.eg_compara.MemberProductionCounts.class,
+			org.ensembl.healthcheck.testcase.eg_compara.EGCheckNoTreeStableIds.class,
+			org.ensembl.healthcheck.testcase.eg_compara.EGForeignKeyMethodLinkSpeciesSetId.class
 		);
 	}
 }
