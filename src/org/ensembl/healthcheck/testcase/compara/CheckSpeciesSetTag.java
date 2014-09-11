@@ -48,7 +48,7 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 	 */
 	public CheckSpeciesSetTag() {
 
-		addToGroup("compara_homology");
+		addToGroup("compara_genomic");
 		setDescription("Check the content of the species_set_tag table");
 		setTeamResponsible(Team.COMPARA);
 
