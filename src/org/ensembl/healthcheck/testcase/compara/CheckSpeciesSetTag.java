@@ -67,8 +67,7 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 		boolean result = true;
 
 		// Get compara DB connection
-		DatabaseRegistryEntry[] allPrimaryComparaDBs = DBUtils
-				.getMainDatabaseRegistry().getAll(DatabaseType.COMPARA);
+		DatabaseRegistryEntry[] allPrimaryComparaDBs = dbr.getAll(DatabaseType.COMPARA);
 		if (allPrimaryComparaDBs.length == 0) {
 			result = false;
 			ReportManager.problem(this, "", "Cannot find compara database");
