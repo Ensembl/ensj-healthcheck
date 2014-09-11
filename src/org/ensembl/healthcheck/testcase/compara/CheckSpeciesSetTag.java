@@ -90,11 +90,9 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 
 			if (allSecondaryComparaDBs.length == 0) {
 				result = false;
-				ReportManager
-						.problem(
-								this,
-								allPrimaryComparaDBs[i].getConnection(),
-								"Cannot find the compara database in the secondary server. This check expects to find a previous version of the compara database for checking that all the *named* species_sets are still present in the current database.");
+				ReportManager.problem(this,
+						allPrimaryComparaDBs[i].getConnection(),
+						"Cannot find the compara database in the secondary server. This check expects to find a previous version of the compara database for checking that all the *named* species_sets are still present in the current database.");
 				usage();
 			}
 			for (int j = 0; j < allSecondaryComparaDBs.length; j++) {
@@ -289,11 +287,7 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 			}
 
 		} else {
-			ReportManager
-					.problem(
-							this,
-							con,
-							"species_set_tag table is empty. There will be no aliases for multiple alignments");
+			ReportManager.problem(this, con, "species_set_tag table is empty. There will be no aliases for multiple alignments");
 			result = false;
 		}
 
@@ -303,13 +297,7 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 
 
 	private void usage() {
-
-		ReportManager
-				.problem(
-						this,
-						"USAGE",
-						"run-healthcheck.sh -d ensembl_compara_.+ "
-								+ " -d2 .+_core_.+ -d2 .+_compara_.+ CheckSpeciesSetTag");
+		ReportManager.problem(this, "USAGE", "run-healthcheck.sh -d ensembl_compara_.+ -d2 .+_core_.+ -d2 .+_compara_.+ CheckSpeciesSetTag");
 	}
 
 } // CheckSpeciesSetTag
