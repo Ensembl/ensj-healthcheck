@@ -46,20 +46,29 @@ public class ComparaHomology extends GroupOfTests {
 	public ComparaHomology() {
 
 		addTest(
+			org.ensembl.healthcheck.testcase.compara.CheckFlatProteinTrees.class,
+			org.ensembl.healthcheck.testcase.compara.CheckGeneGainLossData.class,
+			org.ensembl.healthcheck.testcase.compara.CheckHomology.class,
+			org.ensembl.healthcheck.testcase.compara.CheckMethodLinkSpeciesSetTag.class,
+			org.ensembl.healthcheck.testcase.compara.CheckSequenceTable.class,
+			org.ensembl.healthcheck.testcase.compara.CheckSpeciesTreeNodeTag.class,
+			org.ensembl.healthcheck.testcase.compara.CheckTableSizes.class,
+			org.ensembl.healthcheck.testcase.compara.DuplicateGenomeDb.class,
+			org.ensembl.healthcheck.testcase.compara.ForeignKeyCAFEGeneFamily.class,
+			org.ensembl.healthcheck.testcase.compara.ForeignKeyDnafragId.class,
+			org.ensembl.healthcheck.testcase.compara.ForeignKeyFamilyId.class,
+			org.ensembl.healthcheck.testcase.compara.ForeignKeyGeneTrees.class,
+			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomeDbId.class,
+			org.ensembl.healthcheck.testcase.compara.ForeignKeyHomologyId.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyMemberId.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkId.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyHomologyId.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeySequenceId.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyTaxonId.class,
-			org.ensembl.healthcheck.testcase.compara.SingleDBCollations.class,
-			org.ensembl.healthcheck.testcase.compara.CheckHomology.class,
-			org.ensembl.healthcheck.testcase.compara.DuplicateGenomeDb.class,
-			org.ensembl.healthcheck.testcase.compara.CheckFlatProteinTrees.class,
-			org.ensembl.healthcheck.testcase.compara.CheckSequenceTable.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyFamilyId.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkSpeciesSetId.class,
-			org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetTag.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomeDbId.class
+			org.ensembl.healthcheck.testcase.compara.ForeignKeyMLSSIdHomology.class,
+			org.ensembl.healthcheck.testcase.compara.ForeignKeySequenceId.class,
+			org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeNodeId.class,
+			org.ensembl.healthcheck.testcase.compara.ForeignKeyTaxonId.class,
+			org.ensembl.healthcheck.testcase.compara.Meta.class,
+			org.ensembl.healthcheck.testcase.compara.SingleDBCollations.class
 		);
 	}
 }

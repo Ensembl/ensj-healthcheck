@@ -45,19 +45,27 @@ public class ComparaGenomic extends GroupOfTests {
 	public ComparaGenomic() {
 
 		addTest(
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkId.class,
 			org.ensembl.healthcheck.testcase.compara.CheckConservationScore.class,
 			org.ensembl.healthcheck.testcase.compara.CheckGenomicAlignGenomeDBs.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyTaxonId.class,
-			org.ensembl.healthcheck.testcase.compara.SingleDBCollations.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkSpeciesSetIdGenomicAlignBlock.class,
+			org.ensembl.healthcheck.testcase.compara.CheckMethodLinkSpeciesSetTag.class,
+			org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetTag.class,
+			org.ensembl.healthcheck.testcase.compara.CheckSynteny.class,
+			org.ensembl.healthcheck.testcase.compara.CheckTableSizes.class,
+			org.ensembl.healthcheck.testcase.compara.ForeignKeyDnafragId.class,
+			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomeDbId.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignBlockId.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignId.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeySyntenyRegionId.class,
-			org.ensembl.healthcheck.testcase.compara.CheckSynteny.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyDnafragId.class,
+			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignNodeId.class,
+			org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkId.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkSpeciesSetId.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomeDbId.class
+			org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkSpeciesSetIdGenomicAlignBlock.class,
+			org.ensembl.healthcheck.testcase.compara.ForeignKeyMLSSIdGenomic.class,
+			org.ensembl.healthcheck.testcase.compara.ForeignKeySyntenyRegionId.class,
+			org.ensembl.healthcheck.testcase.compara.ForeignKeyTaxonId.class,
+			org.ensembl.healthcheck.testcase.compara.Meta.class,
+			org.ensembl.healthcheck.testcase.compara.MLSSTagGERPMSA.class,
+			org.ensembl.healthcheck.testcase.compara.MLSSTagMaxAlign.class,
+			org.ensembl.healthcheck.testcase.compara.SingleDBCollations.class
 		);
 	}
 }
