@@ -119,17 +119,14 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
 
 		boolean result = true;
 
-		Map speciesMap = getSpeciesDatabaseMap(dbr);
+		// Why not using the dbr given as argument ? I don't know, but
+		// maybe we should ?
+		DatabaseRegistry mainDbr = DBUtils.getMainDatabaseRegistry();
 
-		// check that the table has the same number of rows across the species
-		Iterator it = speciesMap.keySet().iterator();
-		while (it.hasNext()) {
+		for (Species species : mainDbr.getUniqueSpecies()) {
 
-			Species species = (Species) it.next();
-
-			DatabaseRegistryEntry[] dbsForSpecies = (DatabaseRegistryEntry[]) speciesMap.get(species);
 			// filter by database type
-			DatabaseRegistryEntry[] filteredDBs = filterByType(dbsForSpecies, types);
+			DatabaseRegistryEntry[] filteredDBs = filterByType(mainDbr.getAll(species), types);
 			result &= checkSameSQLResult(sql, filteredDBs, comparingSchema);
 
 		} // foreach species
