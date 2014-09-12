@@ -51,60 +51,6 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
 
 	// ---------------------------------------------------------------------
 	/**
-	 * Build a hash of arrays of DatabaseRegistryEntries, one key for each species.
-	 * 
-	 * @param dbr
-	 *          The DatabaseRegistry to use.
-	 * @return HashMap of DatabaseRegistryEntry[], one key/value pair for each Species.
-	 */
-	public Map getSpeciesDatabaseMap(DatabaseRegistry dbr) {
-
-		return getSpeciesDatabaseMap(dbr, false);
-
-	} // getSpeciesDatabaseMap
-
-	// ---------------------------------------------------------------------
-	/**
-	 * Build a hash of arrays of DatabaseRegistryEntries, one key for each species.
-	 * 
-	 * @param dbr
-	 *          The DatabaseRegistry to use.
-	 * @param fromSecondary
-	 *          boolean value for getting species map from secondary server instead
-	 * 
-	 * @return HashMap of DatabaseRegistryEntry[], one key/value pair for each Species.
-	 */
-	public Map<Species, DatabaseRegistryEntry[]> getSpeciesDatabaseMap(DatabaseRegistry dbr, boolean fromSecondary) {
-
-		Map<Species, DatabaseRegistryEntry[]> speciesMap = new HashMap<Species, DatabaseRegistryEntry[]>();
-
-		DatabaseRegistryEntry[] allDBs, speciesDBs;
-
-		allDBs = fromSecondary ? DBUtils.getSecondaryDatabaseRegistry().getAll() : DBUtils.getMainDatabaseRegistry().getAll();
-
-		for (int i = 0; i < allDBs.length; i++) {
-
-			Species s = allDBs[i].getSpecies();
-                        boolean propagated = true;
-                        if (ReportManager.usingDatabase()) {
-                                propagated = ReportManager.hasPropagated(allDBs[i]);
-                        }
-
-
-			speciesDBs = fromSecondary ? DBUtils.getSecondaryDatabaseRegistry().getAll(s) : DBUtils.getMainDatabaseRegistry().getAll(s);
-
-			logger.finest("Got " + speciesDBs.length + " databases for " + s.toString());
-			if (!speciesMap.containsKey(s) && propagated) {
-				speciesMap.put(s, speciesDBs);
-			}
-		}
-
-		return speciesMap;
-
-	} // getSpeciesDatabaseMap
-
-	// ---------------------------------------------------------------------
-	/**
 	 * Check that the same piece of SQL gives the same result across several species.
 	 * 
 	 * @param sql
