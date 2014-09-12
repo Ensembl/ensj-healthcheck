@@ -20,6 +20,7 @@ package org.ensembl.healthcheck.testcase.compara;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Vector;
 
@@ -29,7 +30,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
+import org.ensembl.healthcheck.testcase.compara.AbstractSingleDBTestCaseWithCoreDBs;
 import org.ensembl.healthcheck.util.DBUtils;
 
 
@@ -37,7 +38,7 @@ import org.ensembl.healthcheck.util.DBUtils;
  * Check compara taxon table against core meta ones.
  */
 
-public class CheckTaxon extends MultiDatabaseTestCase {
+public class CheckTaxon extends AbstractSingleDBTestCaseWithCoreDBs{
 
     /**
      * Create a new instance of MetaCrossSpecies
@@ -62,24 +63,11 @@ public class CheckTaxon extends MultiDatabaseTestCase {
      * @return true if the all the taxa in compara.taxon table which have a counterpart in
      *    the compara.genome_db table match the corresponding core databases.
      */
-    public boolean run(DatabaseRegistry dbr) {
+    public boolean run(DatabaseRegistryEntry comparaDbre) {
 
         boolean result = true;
-
-        // Get compara DB connection
-        DatabaseRegistryEntry[] allComparaDBs = dbr.getAll(DatabaseType.COMPARA);
-        if (allComparaDBs.length == 0) {
-          result = false;
-          ReportManager.problem(this, "", "Cannot find compara database");
-          return false;
-        }
-
-        Map speciesDbrs = getSpeciesDatabaseMap(dbr, true);
-
-        for (int i = 0; i < allComparaDBs.length; i++) {
-            result &= checkTaxon(allComparaDBs[i], speciesDbrs);
-        }
-        return result;
+		result &= checkTaxon(comparaDbre);
+		return result;
     }
 
 
@@ -96,7 +84,7 @@ public class CheckTaxon extends MultiDatabaseTestCase {
      * @return true if the all the taxa in compara.taxon table which have a counterpart in
      *    the compara.genome_db table match the corresponding core databases.
      */
-    public boolean checkTaxon(DatabaseRegistryEntry comparaDbre, Map speciesDbrs) {
+    public boolean checkTaxon(DatabaseRegistryEntry comparaDbre) {
 
         boolean result = true;
         Connection comparaCon = comparaDbre.getConnection();
@@ -129,12 +117,13 @@ public class CheckTaxon extends MultiDatabaseTestCase {
 	    result = true;
 	}
 
+		Map<Species, DatabaseRegistryEntry> speciesMap = getSpeciesCoreDbMap(DBUtils.getMainDatabaseRegistry());
+
         boolean allSpeciesFound = true;
         for (int i = 0; i < comparaSpecies.size(); i++) {
           Species species = (Species) comparaSpecies.get(i);
-          DatabaseRegistryEntry[] speciesDbr = (DatabaseRegistryEntry[]) speciesDbrs.get(species);
-          if (speciesDbr != null) {
-            Connection speciesCon = speciesDbr[0].getConnection();
+		  if (speciesMap.containsKey(species)) {
+            Connection speciesCon = speciesMap.get(species).getConnection();
             String sql1, sql2;
             /* Get taxon_id */
             String taxon_id = DBUtils.getRowColumnValue(speciesCon,
