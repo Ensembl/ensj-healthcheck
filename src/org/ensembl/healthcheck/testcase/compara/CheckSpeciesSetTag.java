@@ -71,7 +71,6 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 		if (allPrimaryComparaDBs.length == 0) {
 			result = false;
 			ReportManager.problem(this, "", "Cannot find compara database");
-			usage();
 			return false;
 		}
 
@@ -92,7 +91,6 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 				ReportManager.problem(this,
 						allPrimaryComparaDBs[i].getConnection(),
 						"Cannot find the compara database in the secondary server. This check expects to find a previous version of the compara database for checking that all the *named* species_sets are still present in the current database.");
-				usage();
 			}
 			for (int j = 0; j < allSecondaryComparaDBs.length; j++) {
 				// Check vs previous compara DB.
@@ -292,11 +290,6 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 
 		return result;
 
-	}
-
-
-	private void usage() {
-		ReportManager.problem(this, "USAGE", "run-healthcheck.sh -d ensembl_compara_.+ -d2 .+_core_.+ -d2 .+_compara_.+ CheckSpeciesSetTag");
 	}
 
 } // CheckSpeciesSetTag

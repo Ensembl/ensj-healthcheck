@@ -73,7 +73,6 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
         if (allComparaDBs.length == 0) {
           result = false;
           ReportManager.problem(this, "", "Cannot find compara database");
-          usage();
           return false;
         }
 
@@ -175,25 +174,8 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
             allSpeciesFound = false;
           }
         }
-        if (!allSpeciesFound) {
-          usage();
-        }
 
         return result;
-    }
-    
-    /**
-     * Prints the usage through the ReportManager
-     * 
-     * @param
-     *          The database registry containing all the specified databases.
-     * @return true if the all the dnafrags are top_level seq_regions in their corresponding
-     *    core database.
-     */
-    private void usage() {
-
-      ReportManager.problem(this, "USAGE", "run-healthcheck.sh -d ensembl_compara_.+ " + 
-          " -d2 .+_core_.+ CheckGenomeDB");
     }
     
 } // CheckTopLevelDnaFrag
