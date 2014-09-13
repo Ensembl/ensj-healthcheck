@@ -81,6 +81,14 @@ public class SystemPropertySetter {
 			System.setProperty("ignore.previous.checks",    configuration.getIgnorePreviousChecks());
 		}
 
+		if (configuration.isRepair()) {
+			// Used in:
+			//
+			// org.ensembl.healthcheck.testcase.EnsTestCase
+			//
+			System.setProperty("repair",    configuration.getRepair());
+		}
+
 		if (configuration.isSchemaFile()) {
 			// Used in:
 			//
