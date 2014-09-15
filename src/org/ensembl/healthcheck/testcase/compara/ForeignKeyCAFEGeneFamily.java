@@ -29,14 +29,13 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  * relationships.
  */
 
-public class ForeignKeyGenomeDbId extends SingleDatabaseTestCase {
+public class ForeignKeyCAFEGeneFamily extends SingleDatabaseTestCase {
 
     /**
-     * Create an ForeignKeyGenomeDbId that applies to a specific set of databases.
+     * Create an ForeignKeyMemberId that applies to a specific set of databases.
      */
-    public ForeignKeyGenomeDbId() {
+    public ForeignKeyCAFEGeneFamily() {
 
-        addToGroup("compara_genomic");
         addToGroup("compara_homology");
         setDescription("Check for broken foreign-key relationships in ensembl_compara databases.");
         setTeamResponsible(Team.COMPARA);
@@ -48,7 +47,7 @@ public class ForeignKeyGenomeDbId extends SingleDatabaseTestCase {
      * 
      * @param dbre
      *          The database to use.
-     * @return true if the test pased.
+     * @return true if the test passed.
      *  
      */
     public boolean run(DatabaseRegistryEntry dbre) {
@@ -57,21 +56,21 @@ public class ForeignKeyGenomeDbId extends SingleDatabaseTestCase {
 
         Connection con = dbre.getConnection();
 
-        if (tableHasRows(con, "genome_db")) {
+        if (tableHasRows(con, "CAFE_gene_family")) {
 
-            result &= checkForOrphans(con, "dnafrag", "genome_db_id", "genome_db", "genome_db_id");
-            result &= checkOptionalRelation(con, "gene_member", "genome_db_id", "genome_db", "genome_db_id");
-            result &= checkOptionalRelation(con, "seq_member", "genome_db_id", "genome_db", "genome_db_id");
-            result &= checkForOrphans(con, "species_set", "genome_db_id", "genome_db", "genome_db_id");
-            result &= checkForOrphansWithConstraint(con, "genome_db", "genome_db_id", "species_set", "genome_db_id", "taxon_id != 0");
-            result &= checkOptionalRelation(con, "species_tree_node", "genome_db_id", "genome_db", "genome_db_id");
+	    result &= checkForOrphans(con, "CAFE_species_gene", "cafe_gene_family_id", "CAFE_gene_family", "cafe_gene_family_id");
+
+            result &= checkForOrphans(con, "CAFE_gene_family", "gene_tree_root_id", "gene_tree_root", "root_id");
+
+	    result &= checkForOrphans(con, "CAFE_gene_family", "lca_id", "species_tree_node", "node_id");
+	    result &= checkForOrphans(con, "CAFE_gene_family", "root_id", "species_tree_root", "root_id");
 
         } else {
-            ReportManager.correct(this, con, "NO ENTRIES in genome_db table, so nothing to test IGNORED");
+            ReportManager.correct(this, con, "NO ENTRIES in CAFE_gene_family table, so nothing to test IGNORED");
         }
 
         return result;
 
     }
 
-} // ForeignKeyGenomeDbId
+} // ForeignKeyCAFEGeneFamily

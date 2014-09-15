@@ -20,6 +20,7 @@ package org.ensembl.healthcheck.testcase.compara;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.regex.Pattern;
@@ -63,7 +64,7 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
      * @return true if the all the dnafrags are top_level seq_regions in their corresponding
      *    core database.
      */
-    public boolean run(DatabaseRegistry dbr) {
+    public boolean run(final DatabaseRegistry dbr) {
 
         boolean result = true;
 
@@ -78,9 +79,9 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
 
         Map speciesDbrs = getSpeciesDatabaseMap(dbr, true);
 
-        for (int i = 0; i < allComparaDBs.length; i++) {
-            result &= checkAssemblies(allComparaDBs[i]);
-            result &= checkGenomeDB(allComparaDBs[i], speciesDbrs);
+	for (DatabaseRegistryEntry comparaDbre : allComparaDBs) {
+            result &= checkAssemblies(comparaDbre);
+            result &= checkGenomeDB(comparaDbre, speciesDbrs);
         }
         return result;
     }
@@ -95,54 +96,30 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
         // Get list of species with more than 1 default assembly
         String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE assembly_default = 1"
             + " GROUP BY name HAVING count(*) <> 1";
-        try {
-          Statement stmt = comparaCon.createStatement();
-          ResultSet rs = stmt.executeQuery(sql);
-          while (rs.next()) {
-            ReportManager.problem(this, comparaCon, "There are more than 1 default assembly for "
-              + rs.getString(1));
-            result = false;
-          }
-          rs.close();
-          stmt.close();
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
+	List<String[]> data = DBUtils.getRowValuesList(comparaCon, sql);
+	for (String[] line : data) {
+		ReportManager.problem(this, comparaCon, "There are more than 1 default assembly for " + line[0]);
+		result = false;
+	}
 
         // Get list of species with a non-default assembly
-        sql = "SELECT DISTINCT name FROM genome_db WHERE assembly_default = 0";
         if (!Pattern.matches(".*master.*", comparaDbName)) {
-            try {
-              Statement stmt = comparaCon.createStatement();
-              ResultSet rs = stmt.executeQuery(sql);
-              while (rs.next()) {
-                ReportManager.problem(this, comparaCon, comparaDbName + " There is at least one non-default assembly for "
-                  + rs.getString(1) + " (this should not happen in the release DB)");
-              }
-              rs.close();
-              stmt.close();
-            } catch (Exception e) {
-              e.printStackTrace();
-            }
+		sql = "SELECT DISTINCT name FROM genome_db WHERE assembly_default = 0";
+		data = DBUtils.getRowValuesList(comparaCon, sql);
+		for (String[] line : data) {
+			ReportManager.problem(this, comparaCon, comparaDbName + " There is at least one non-default assembly for " + line[0] + " (this should not happen in the release DB)");
+		}
         }
 
         // Get list of species with no default assembly
         sql = "SELECT DISTINCT gdb1.name FROM genome_db gdb1 LEFT JOIN genome_db gdb2"
             + " ON (gdb1.name = gdb2.name and gdb1.assembly_default = 1 - gdb2.assembly_default)"
             + " WHERE gdb1.assembly_default = 0 AND gdb2.name is null";
-        try {
-          Statement stmt = comparaCon.createStatement();
-          ResultSet rs = stmt.executeQuery(sql);
-          while (rs.next()) {
-            ReportManager.problem(this, comparaCon, "There is no default assembly for "
-              + rs.getString(1));
-            result = false;
-          }
-          rs.close();
-          stmt.close();
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
+	data = DBUtils.getRowValuesList(comparaCon, sql);
+	for (String[] line : data) {
+		ReportManager.problem(this, comparaCon, "There is no default assembly for " + line[0]);
+		result = false;
+	}
 
         return result;
     }
@@ -157,23 +134,15 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
         Vector comparaSpecies = new Vector();
         String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE assembly_default = 1"
             + " AND name <> 'ancestral_sequences'";
-        try {
-          Statement stmt = comparaCon.createStatement();
-          ResultSet rs = stmt.executeQuery(sql);
-          while (rs.next()) {
-            Species species = Species.resolveAlias(rs.getString(1).toLowerCase().replace(' ', '_'));
-	     if (species.toString().equals("unknown")) {
-              ReportManager.problem(this, comparaCon, "No species defined for " + rs.getString(1) +
-                  " in org.ensembl.healthcheck.Species");
-            } else {
-              comparaSpecies.add(species);
-            }
-          }
-          rs.close();
-          stmt.close();
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
+	List<String[]> data = DBUtils.getRowValuesList(comparaCon, sql);
+	for (String[] line : data) {
+		Species species = Species.resolveAlias(line[0].toLowerCase().replace(' ', '_'));
+		if (species.toString().equals("unknown")) {
+			ReportManager.problem(this, comparaCon, "No species defined for " + line[0] + " in org.ensembl.healthcheck.Species");
+		} else {
+			comparaSpecies.add(species);
+		}
+	}
         
         boolean allSpeciesFound = true;
         for (int i = 0; i < comparaSpecies.size(); i++) {

@@ -62,6 +62,7 @@ public class ForeignKeyTaxonId extends SingleDatabaseTestCase {
             result &= checkForOrphans(con, "gene_member", "taxon_id", "ncbi_taxa_node", "taxon_id");
             result &= checkForOrphans(con, "seq_member", "taxon_id", "ncbi_taxa_node", "taxon_id");
             result &= checkForOrphansWithConstraint(con, "genome_db", "taxon_id", "ncbi_taxa_node", "taxon_id", "taxon_id != 0");
+            result &= checkOptionalRelation(con, "species_tree_node", "taxon_id", "ncbi_taxa_node", "taxon_id");
 
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in ncbi_taxa_node table, so nothing to test IGNORED");
@@ -71,6 +72,7 @@ public class ForeignKeyTaxonId extends SingleDatabaseTestCase {
             result &= checkForOrphans(con, "gene_member", "taxon_id", "ncbi_taxa_name", "taxon_id");
             result &= checkForOrphans(con, "seq_member", "taxon_id", "ncbi_taxa_name", "taxon_id");
             result &= checkForOrphansWithConstraint(con, "genome_db", "taxon_id", "ncbi_taxa_name", "taxon_id", "taxon_id != 0");
+            result &= checkOptionalRelation(con, "species_tree_node", "taxon_id", "ncbi_taxa_name", "taxon_id");
 
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in ncbi_taxa_name table, so nothing to test IGNORED");

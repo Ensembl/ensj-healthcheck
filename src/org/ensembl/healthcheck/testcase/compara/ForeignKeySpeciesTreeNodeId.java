@@ -22,21 +22,20 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.testcase.compara.AbstractInternalForeignKey;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key
  * relationships.
  */
 
-public class ForeignKeyGenomeDbId extends SingleDatabaseTestCase {
+public class ForeignKeySpeciesTreeNodeId extends AbstractInternalForeignKey {
 
     /**
-     * Create an ForeignKeyGenomeDbId that applies to a specific set of databases.
+     * Create an ForeignKeyMemberId that applies to a specific set of databases.
      */
-    public ForeignKeyGenomeDbId() {
+    public ForeignKeySpeciesTreeNodeId() {
 
-        addToGroup("compara_genomic");
         addToGroup("compara_homology");
         setDescription("Check for broken foreign-key relationships in ensembl_compara databases.");
         setTeamResponsible(Team.COMPARA);
@@ -48,7 +47,7 @@ public class ForeignKeyGenomeDbId extends SingleDatabaseTestCase {
      * 
      * @param dbre
      *          The database to use.
-     * @return true if the test pased.
+     * @return true if the test passed.
      *  
      */
     public boolean run(DatabaseRegistryEntry dbre) {
@@ -57,21 +56,19 @@ public class ForeignKeyGenomeDbId extends SingleDatabaseTestCase {
 
         Connection con = dbre.getConnection();
 
-        if (tableHasRows(con, "genome_db")) {
+        if (tableHasRows(con, "species_tree_node")) {
 
-            result &= checkForOrphans(con, "dnafrag", "genome_db_id", "genome_db", "genome_db_id");
-            result &= checkOptionalRelation(con, "gene_member", "genome_db_id", "genome_db", "genome_db_id");
-            result &= checkOptionalRelation(con, "seq_member", "genome_db_id", "genome_db", "genome_db_id");
-            result &= checkForOrphans(con, "species_set", "genome_db_id", "genome_db", "genome_db_id");
-            result &= checkForOrphansWithConstraint(con, "genome_db", "genome_db_id", "species_set", "genome_db_id", "taxon_id != 0");
-            result &= checkOptionalRelation(con, "species_tree_node", "genome_db_id", "genome_db", "genome_db_id");
+            result &= checkForOrphansSameTable(con, "species_tree_node", "root_id", "node_id", false);
+            result &= checkForOrphansSameTable(con, "species_tree_node", "parent_id", "node_id", true);
+            result &= checkForOrphans(con, "species_tree_node_tag", "node_id", "species_tree_node", "node_id");
+            result &= checkForOrphans(con, "species_tree_root", "root_id", "species_tree_node", "node_id");
 
         } else {
-            ReportManager.correct(this, con, "NO ENTRIES in genome_db table, so nothing to test IGNORED");
+            ReportManager.correct(this, con, "NO ENTRIES in seq_member table, so nothing to test IGNORED");
         }
 
         return result;
 
     }
 
-} // ForeignKeyGenomeDbId
+} // ForeignKeySpeciesTreeNodeId

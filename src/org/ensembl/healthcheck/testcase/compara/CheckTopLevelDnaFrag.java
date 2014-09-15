@@ -130,8 +130,7 @@ public class CheckTopLevelDnaFrag extends MultiDatabaseTestCase {
                           " JOIN seq_region_attrib USING (seq_region_id)" +
                           " JOIN attrib_type USING (attrib_type_id)" +
                           " LEFT JOIN (SELECT seq_region_id FROM seq_region_attrib JOIN attrib_type USING (attrib_type_id) WHERE attrib_type.code = 'non_ref') non_ref_seq_region USING (seq_region_id)" +
-                          " WHERE coord_system.name <> 'lrg' " +
-                          " AND attrib_type.code = 'toplevel'" +
+                          " WHERE attrib_type.code = 'toplevel'" +
                           " ORDER BY (seq_region.name)" +
                           " LIMIT " + rowCount + ", " + maxRows;
                       result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
@@ -147,8 +146,7 @@ public class CheckTopLevelDnaFrag extends MultiDatabaseTestCase {
                       " JOIN seq_region_attrib USING (seq_region_id)" +
                       " JOIN attrib_type USING (attrib_type_id)" +
                       " LEFT JOIN (SELECT seq_region_id FROM seq_region_attrib JOIN attrib_type USING (attrib_type_id) WHERE attrib_type.code = 'non_ref') non_ref_seq_region USING (seq_region_id)" +
-                      " WHERE coord_system.name <> 'lrg' " +
-                      " AND attrib_type.code = 'toplevel'";
+                      " WHERE attrib_type.code = 'toplevel'";
                   result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
               }
           } else {

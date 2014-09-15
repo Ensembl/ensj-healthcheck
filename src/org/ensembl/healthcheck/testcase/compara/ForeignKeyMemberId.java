@@ -58,11 +58,11 @@ public class ForeignKeyMemberId extends SingleDatabaseTestCase {
 
         if (tableHasRows(con, "seq_member")) {
 
-                // Had to invent this tricky workaround because "gene members" and "non-gene members" are held in the same table:
-            result &= checkForOrphansWithConstraint(con, "seq_member", "seq_member_id", "family_member", "seq_member_id", "source_name in ('Uniprot/SWISSPROT', 'Uniprot/SPTREMBL', 'ENSEMBLPEP') AND seq_member.seq_member_id < 300000000");
-
             result &= checkForOrphans(con, "family_member", "seq_member_id", "seq_member", "seq_member_id");
             result &= checkForOrphans(con, "homology_member", "seq_member_id", "seq_member", "seq_member_id");
+            result &= checkForOrphans(con, "gene_align_member", "seq_member_id", "seq_member", "seq_member_id");
+            result &= checkOptionalRelation(con, "gene_tree_node", "seq_member_id", "seq_member", "seq_member_id");
+            result &= checkForOrphans(con, "other_member_sequence", "seq_member_id", "seq_member", "seq_member_id");
 
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in seq_member table, so nothing to test IGNORED");
@@ -70,6 +70,8 @@ public class ForeignKeyMemberId extends SingleDatabaseTestCase {
 
         if (tableHasRows(con, "gene_member")) {
             result &= checkForOrphans(con, "homology_member", "gene_member_id", "gene_member", "gene_member_id");
+            result &= checkForOrphans(con, "member_xref", "gene_member_id", "gene_member", "gene_member_id");
+            result &= checkOptionalRelation(con, "seq_member", "gene_member_id", "gene_member", "gene_member_id");
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in gene_member table, so nothing to test IGNORED");
         }

@@ -61,17 +61,12 @@ public class CheckConservationScore extends SingleDatabaseTestCase {
 		 * Get all method_link_species_set_ids for method_link type of
 		 * GERP_CONSERVATION_SCORE
 		 */
-		String[] method_link_species_set_ids = DBUtils
-				.getColumnValues(
-						con,
-						"SELECT method_link_species_set_id FROM method_link_species_set LEFT JOIN method_link USING (method_link_id) WHERE type=\"GERP_CONSERVATION_SCORE\" OR class LIKE \"ConservationScore%\"");
+		String[] method_link_species_set_ids = DBUtils.getColumnValues(con, "SELECT method_link_species_set_id FROM method_link_species_set LEFT JOIN method_link USING (method_link_id) WHERE type=\"GERP_CONSERVATION_SCORE\" OR class LIKE \"ConservationScore%\"");
 
 		/**
 		 * Get Ancestral sequences genome_db_id
 		 */
-		String ancestral_seq_id = DBUtils
-				.getRowColumnValue(con,
-						"SELECT genome_db_id FROM genome_db WHERE name = \"ancestral_sequences\"");
+		String ancestral_seq_id = DBUtils.getRowColumnValue(con, "SELECT genome_db_id FROM genome_db WHERE name = \"ancestral_sequences\"");
 
 		if (method_link_species_set_ids.length > 0) {
 
@@ -79,20 +74,16 @@ public class CheckConservationScore extends SingleDatabaseTestCase {
 			 * Check have entries in conservation_score table
 			 */
 			if (!tableHasRows(con, "conservation_score")) {
-				ReportManager
-						.problem(
-								this,
-								con,
-								"FAILED: Database contains entry in the method_link_species_set table but the conservation_score table is empty");
+				ReportManager.problem(this, con, "FAILED: Database contains entry in the method_link_species_set table but the conservation_score table is empty");
 				return result;
 			}
 
-			for (int i = 0; i < method_link_species_set_ids.length; i++) {
+			for(String mlss_id : method_link_species_set_ids) {
 
 				// Get the mlss_id for the associated multiple alignment
-				String multi_align_mlss_id = DBUtils.getRowColumnValue(con, "SELECT value FROM method_link_species_set_tag WHERE tag=\"msa_mlss_id\"");
+				String multi_align_mlss_id = DBUtils.getRowColumnValue(con, "SELECT value FROM method_link_species_set_tag WHERE tag=\"msa_mlss_id\" AND method_link_species_set_id=" + mlss_id);
 				if (multi_align_mlss_id == "") {
-					ReportManager.problem(this, con, "There is no msa_mlss_id tag for the GERP mlss" + method_link_species_set_ids[i] + "\n");
+					ReportManager.problem(this, con, "There is no msa_mlss_id tag for the GERP mlss" + mlss_id + "\n");
 				} else {
 					/**
 					 * Find the multiple alignments gabs which have more than 3
@@ -127,41 +118,16 @@ public class CheckConservationScore extends SingleDatabaseTestCase {
 						String[] failures4 = DBUtils.getColumnValues(con,
 								useful_sql4);
 						if (failures.length == failures4.length) {
-							ReportManager
-									.problem(
-											this,
-											con,
-											"WARNING conservation_score -> multiple alignments which have more than 3 species but don't have any conservation scores");
-							ReportManager
-									.problem(
-											this,
-											con,
-											"WARNING DETAILS: There are "
-													+ failures.length
-													+ " blocks (mlss= "
-													+ multi_align_mlss_id
+							ReportManager.problem(this, con, "WARNING conservation_score -> multiple alignments which have more than 3 species but don't have any conservation scores");
+							ReportManager.problem(this, con, "WARNING DETAILS: There are " + failures.length + " blocks (mlss= " + multi_align_mlss_id
 													+ ") with 4 seqs and no conservation score! Must check that the sum of the branch lengths of these 4 species is less than 0.5 (min_neu_evol). If it is greater than 0.5, there is a problem that needs fixing!");
-							ReportManager.problem(this, con, "USEFUL SQL: "
-									+ useful_sql4);
+							ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql4);
 							result = true;
 
 						} else {
-							ReportManager
-									.problem(
-											this,
-											con,
-											"FAILED conservation_score -> multiple alignments which have more than 3 species but don't have any conservation scores");
-							ReportManager
-									.problem(
-											this,
-											con,
-											"FAILURE DETAILS: There are "
-													+ failures.length
-													+ " blocks (mlss= "
-													+ multi_align_mlss_id
-													+ ") with more than 4 seqs and no conservation score!");
-							ReportManager.problem(this, con, "USEFUL SQL: "
-									+ useful_sql);
+							ReportManager.problem(this, con, "FAILED conservation_score -> multiple alignments which have more than 3 species but don't have any conservation scores");
+							ReportManager.problem(this, con, "FAILURE DETAILS: There are " + failures.length + " blocks (mlss= " + multi_align_mlss_id + ") with more than 4 seqs and no conservation score!");
+							ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
 							result = false;
 						}
 					}
@@ -169,14 +135,9 @@ public class CheckConservationScore extends SingleDatabaseTestCase {
 			}
 
 		} else if (tableHasRows(con, "conservation_score")) {
-			ReportManager
-					.problem(
-							this,
-							con,
-							"FAILED: Database contains data in the conservation_score table but no corresponding entry in the method_link_species_set table.");
+			ReportManager.problem(this, con, "FAILED: Database contains data in the conservation_score table but no corresponding entry in the method_link_species_set table.");
 		} else {
-			ReportManager.correct(this, con,
-					"NO conservation scores in this database");
+			ReportManager.correct(this, con, "NO conservation scores in this database");
 		}
 
 		return result;
