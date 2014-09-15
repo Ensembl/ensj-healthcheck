@@ -49,12 +49,15 @@ public class EGForeignKeyMethodLinkSpeciesSetId extends
 		boolean result = true;
 		result &= assertNoEmptyNames(dbre);
 		result &= assertNoSource(dbre);
+		result &= assertMethodLinkSpeciesSetCounts(dbre);
+		if (DBUtils.getShortDatabaseName(dbre.getConnection()).contains(comparaMasterDbName)) {
+			return result;
+		}
 		result &= assertMlssIdForeignKeysAndRanges(dbre);
 		result &= assertMlssGeneTreeRootOrphans(dbre);
 		result &= assertGeneTreeRootOrphans(dbre);
 		result &= assertMlssGenomicAlignOrphans(dbre);
 		result &= assertGenomicAlignOrphans(dbre);
-		result &= assertMethodLinkSpeciesSetCounts(dbre);
 		return result;
 	}
 

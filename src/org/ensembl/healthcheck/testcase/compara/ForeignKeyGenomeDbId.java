@@ -22,14 +22,14 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.testcase.compara.AbstractComparaTestCase;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key
  * relationships.
  */
 
-public class ForeignKeyGenomeDbId extends SingleDatabaseTestCase {
+public class ForeignKeyGenomeDbId extends AbstractComparaTestCase {
 
     /**
      * Create an ForeignKeyGenomeDbId that applies to a specific set of databases.
@@ -56,6 +56,13 @@ public class ForeignKeyGenomeDbId extends SingleDatabaseTestCase {
         boolean result = true;
 
         Connection con = dbre.getConnection();
+
+		if (isMasterDB(con)) {
+            result &= checkForOrphans(con, "dnafrag", "genome_db_id", "genome_db", "genome_db_id");
+            result &= checkForOrphans(con, "species_set", "genome_db_id", "genome_db", "genome_db_id");
+            result &= checkForOrphansWithConstraint(con, "genome_db", "genome_db_id", "species_set", "genome_db_id", "taxon_id != 0");
+			return result;
+		}
 
         if (tableHasRows(con, "genome_db")) {
 

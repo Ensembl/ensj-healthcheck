@@ -114,4 +114,14 @@ public abstract class AbstractComparaTestCase extends SingleDatabaseTestCase {
 
 	} // getSpeciesCoreDbMap
 
+
+	/**
+	 * Tells whether the current database being tested is a Master database
+	 *
+	 * @return a boolean
+	 */
+	public boolean isMasterDB(Connection con) {
+		return DBUtils.getShortDatabaseName(con).contains(comparaMasterDbName);
+	}
+
 } // AbstractComparaTestCase

@@ -27,7 +27,7 @@ import java.util.regex.Matcher;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.testcase.compara.AbstractComparaTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
@@ -35,7 +35,7 @@ import org.ensembl.healthcheck.util.DBUtils;
  * relationships.
  */
 
-public class ForeignKeyMLSSIdGenomic extends SingleDatabaseTestCase {
+public class ForeignKeyMLSSIdGenomic extends AbstractComparaTestCase {
 
     /**
      * Create an ForeignKeyMLSSIdGenomic that applies to a specific set of databases.
@@ -74,6 +74,10 @@ public class ForeignKeyMLSSIdGenomic extends SingleDatabaseTestCase {
 	    }
 	    
 
+			// Everything below will be ignored on the master database
+			if (isMasterDB(dbre.getConnection())) {
+				return result;
+			}
             /* Check method_link_species_set <-> synteny_region */
             /* All method_link for syntenies must have an internal ID between 101 and 199 */
             result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "synteny_region", "method_link_species_set_id", "method_link_id >= 101 and method_link_id < 200");

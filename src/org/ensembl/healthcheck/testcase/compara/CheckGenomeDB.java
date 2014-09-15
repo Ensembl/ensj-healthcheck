@@ -21,6 +21,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -41,6 +43,8 @@ import org.ensembl.healthcheck.util.DBUtils;
  */
 
 public class CheckGenomeDB extends AbstractComparaTestCase {
+
+	private String[] orphanedSpeciesInMasterDB = {"anopheles_gambiae", "aedes_aegypti", "spermophilus_tridecemlineatus"};
 
     /**
      * Create a new instance of MetaCrossSpecies
@@ -90,14 +94,19 @@ public class CheckGenomeDB extends AbstractComparaTestCase {
 		result = false;
 	}
 
+		boolean is_master_db = isMasterDB(comparaCon);
+		HashSet<String> allowedOrphanedSpecies = new HashSet();
+
         // Get list of species with a non-default assembly
-        if (!Pattern.matches(".*master.*", comparaDbName)) {
+        if (!isMasterDB(comparaCon)) {
 		sql = "SELECT DISTINCT name FROM genome_db WHERE assembly_default = 0";
 		data = DBUtils.getRowValuesList(comparaCon, sql);
 		for (String[] line : data) {
 			ReportManager.problem(this, comparaCon, comparaDbName + " There is at least one non-default assembly for " + line[0] + " (this should not happen in the release DB)");
 		}
-        }
+        } else {
+			allowedOrphanedSpecies.addAll(Arrays.asList(orphanedSpeciesInMasterDB));
+		}
 
         // Get list of species with no default assembly
         sql = "SELECT DISTINCT gdb1.name FROM genome_db gdb1 LEFT JOIN genome_db gdb2"
@@ -105,8 +114,10 @@ public class CheckGenomeDB extends AbstractComparaTestCase {
             + " WHERE gdb1.assembly_default = 0 AND gdb2.name is null";
 	data = DBUtils.getRowValuesList(comparaCon, sql);
 	for (String[] line : data) {
+	  if (! allowedOrphanedSpecies.contains(line[0]) ) {
 		ReportManager.problem(this, comparaCon, "There is no default assembly for " + line[0]);
 		result = false;
+	  }
 	}
 
         return result;

@@ -65,6 +65,7 @@ public class MLSSTagGERPMSA extends MethodLinkSpeciesSetTag {
 		String sql = "SELECT mlss1.method_link_species_set_id," + " mlss2.method_link_species_set_id, ml1.type, ml2.type, count(*)"
 				+ " FROM method_link ml1, method_link_species_set mlss1, method_link ml2," + " method_link_species_set mlss2 WHERE mlss1.method_link_id = ml1.method_link_id "
 				+ " AND (ml1.class = \"ConservationScore.conservation_score\" OR ml1.class = \"ConstrainedElement.constrained_element\" )"
+				+ " AND ml1.type NOT LIKE \"pGERP%\" AND ml2.type NOT LIKE \"pEPO%\" "
 				+ " AND mlss1.species_set_id = mlss2.species_set_id AND mlss2.method_link_id = ml2.method_link_id"
 				+ " AND (ml2.class = \"GenomicAlignBlock.multiple_alignment\" OR ml2.class LIKE \"GenomicAlignTree.%\") GROUP BY mlss1.method_link_species_set_id";
 

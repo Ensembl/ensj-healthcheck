@@ -27,7 +27,7 @@ import java.util.regex.Matcher;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.testcase.compara.AbstractComparaTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
@@ -35,7 +35,7 @@ import org.ensembl.healthcheck.util.DBUtils;
  * relationships.
  */
 
-public class ForeignKeyMethodLinkSpeciesSetId extends SingleDatabaseTestCase {
+public class ForeignKeyMethodLinkSpeciesSetId extends AbstractComparaTestCase {
 
     /**
      * Create an ForeignKeyMethodLinkSpeciesSetId that applies to a specific set of databases.
@@ -69,6 +69,9 @@ public class ForeignKeyMethodLinkSpeciesSetId extends SingleDatabaseTestCase {
             result &= checkForOrphans(con, "method_link_species_set", "species_set_id", "species_set", "species_set_id");
             result &= checkForOrphansWithConstraint(con, "species_set", "species_set_id", "method_link_species_set", "species_set_id", "species_set_id not in (SELECT distinct species_set_id from species_set_tag)");
 
+			/* Check that species_set_tag refers to existing species sets */
+            result &= checkForOrphans(con, "species_set_tag", "species_set_id", "species_set", "species_set_id");
+
             /* Check uniqueness of species_set entries */
             int numOfDuplicatedSpeciesSets = DBUtils.getRowCount(con,
                 "SELECT gdbs, count(*) num, GROUP_CONCAT(species_set_id) species_set_ids FROM ("+
@@ -80,8 +83,10 @@ public class ForeignKeyMethodLinkSpeciesSetId extends SingleDatabaseTestCase {
                 result = false;
 	    }
 
-            /* Check method_link_species_set <-> species_tree_root */
-            result &= checkForOrphans(con, "species_tree_root", "method_link_species_set_id", "method_link_species_set", "method_link_species_set_id");
+			if (!isMasterDB(dbre.getConnection())) {
+				/* Check method_link_species_set <-> species_tree_root */
+				result &= checkForOrphans(con, "species_tree_root", "method_link_species_set_id", "method_link_species_set", "method_link_species_set_id");
+			}
 
             /* Check number of MLSS with no source */
             int numOfUnsetSources = DBUtils.getRowCount(con, "SELECT count(*) FROM method_link_species_set WHERE source = 'NULL' OR source IS NULL");
@@ -148,7 +153,7 @@ public class ForeignKeyMethodLinkSpeciesSetId extends SingleDatabaseTestCase {
                       ReportManager.problem(this, con, "FAILED species_set(" + ss_id + ") for \"" + name + "\"(" + mlss_id + ") links to " + num + " genomes instead of " + multiMatcher.group());
                       result = false;
                     }
-                  } else if (num != numOfGenomesInTheDatabase) {
+                  } else if (num != numOfGenomesInTheDatabase && !isMasterDB(dbre.getConnection())) {
                       ReportManager.problem(this, con, "FAILED species_set(" + ss_id + ") for \"" + name + "\"(" + mlss_id + ") links to " + num + " genomes instead of " + numOfGenomesInTheDatabase);
                   }
                 }

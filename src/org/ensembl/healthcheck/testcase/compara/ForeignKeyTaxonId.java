@@ -22,14 +22,14 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.testcase.compara.AbstractComparaTestCase;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key
  * relationships.
  */
 
-public class ForeignKeyTaxonId extends SingleDatabaseTestCase {
+public class ForeignKeyTaxonId extends AbstractComparaTestCase {
 
     /**
      * Create an ForeignKeyTaxonId that applies to a specific set of databases.
@@ -56,6 +56,13 @@ public class ForeignKeyTaxonId extends SingleDatabaseTestCase {
         boolean result = true;
 
         Connection con = dbre.getConnection();
+
+		if (isMasterDB(con)) {
+			// We only check genome_db in this case
+			result &= checkForOrphansWithConstraint(con, "genome_db", "taxon_id", "ncbi_taxa_node", "taxon_id", "taxon_id != 0");
+			result &= checkForOrphansWithConstraint(con, "genome_db", "taxon_id", "ncbi_taxa_name", "taxon_id", "taxon_id != 0");
+			return result;
+		}
 
         if (tableHasRows(con, "ncbi_taxa_node")) {
 

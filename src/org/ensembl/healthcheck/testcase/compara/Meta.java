@@ -29,7 +29,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Repair;
-import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.testcase.compara.AbstractComparaTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.Utils; // needed for stringInArray
 
@@ -37,7 +37,7 @@ import org.ensembl.healthcheck.util.Utils; // needed for stringInArray
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key relationships.
  */
 
-public class Meta extends SingleDatabaseTestCase implements Repair {
+public class Meta extends AbstractComparaTestCase implements Repair {
 
     String[] speciesless_meta_keys = { "schema_version", "schema_type", "patch" };
 
@@ -82,7 +82,9 @@ public class Meta extends SingleDatabaseTestCase implements Repair {
 		}
 
 		// These methods return false if there is any problem with the test
-		result &= checkSchemaVersionDBName(dbre);
+		if (!isMasterDB(con)) {
+			result &= checkSchemaVersionDBName(dbre);
+		}
 
 		result &= checkSpeciesId(dbre);
 
