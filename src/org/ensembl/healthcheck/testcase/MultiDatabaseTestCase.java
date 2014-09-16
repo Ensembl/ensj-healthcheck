@@ -51,60 +51,6 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
 
 	// ---------------------------------------------------------------------
 	/**
-	 * Build a hash of arrays of DatabaseRegistryEntries, one key for each species.
-	 * 
-	 * @param dbr
-	 *          The DatabaseRegistry to use.
-	 * @return HashMap of DatabaseRegistryEntry[], one key/value pair for each Species.
-	 */
-	public Map getSpeciesDatabaseMap(DatabaseRegistry dbr) {
-
-		return getSpeciesDatabaseMap(dbr, false);
-
-	} // getSpeciesDatabaseMap
-
-	// ---------------------------------------------------------------------
-	/**
-	 * Build a hash of arrays of DatabaseRegistryEntries, one key for each species.
-	 * 
-	 * @param dbr
-	 *          The DatabaseRegistry to use.
-	 * @param fromSecondary
-	 *          boolean value for getting species map from secondary server instead
-	 * 
-	 * @return HashMap of DatabaseRegistryEntry[], one key/value pair for each Species.
-	 */
-	public Map<Species, DatabaseRegistryEntry[]> getSpeciesDatabaseMap(DatabaseRegistry dbr, boolean fromSecondary) {
-
-		Map<Species, DatabaseRegistryEntry[]> speciesMap = new HashMap<Species, DatabaseRegistryEntry[]>();
-
-		DatabaseRegistryEntry[] allDBs, speciesDBs;
-
-		allDBs = fromSecondary ? DBUtils.getSecondaryDatabaseRegistry().getAll() : DBUtils.getMainDatabaseRegistry().getAll();
-
-		for (int i = 0; i < allDBs.length; i++) {
-
-			Species s = allDBs[i].getSpecies();
-                        boolean propagated = true;
-                        if (ReportManager.usingDatabase()) {
-                                propagated = ReportManager.hasPropagated(allDBs[i]);
-                        }
-
-
-			speciesDBs = fromSecondary ? DBUtils.getSecondaryDatabaseRegistry().getAll(s) : DBUtils.getMainDatabaseRegistry().getAll(s);
-
-			logger.finest("Got " + speciesDBs.length + " databases for " + s.toString());
-			if (!speciesMap.containsKey(s) && propagated) {
-				speciesMap.put(s, speciesDBs);
-			}
-		}
-
-		return speciesMap;
-
-	} // getSpeciesDatabaseMap
-
-	// ---------------------------------------------------------------------
-	/**
 	 * Check that the same piece of SQL gives the same result across several species.
 	 * 
 	 * @param sql
@@ -119,17 +65,14 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
 
 		boolean result = true;
 
-		Map speciesMap = getSpeciesDatabaseMap(dbr);
+		// Why not using the dbr given as argument ? I don't know, but
+		// maybe we should ?
+		DatabaseRegistry mainDbr = DBUtils.getMainDatabaseRegistry();
 
-		// check that the table has the same number of rows across the species
-		Iterator it = speciesMap.keySet().iterator();
-		while (it.hasNext()) {
+		for (Species species : mainDbr.getUniqueSpecies()) {
 
-			Species species = (Species) it.next();
-
-			DatabaseRegistryEntry[] dbsForSpecies = (DatabaseRegistryEntry[]) speciesMap.get(species);
 			// filter by database type
-			DatabaseRegistryEntry[] filteredDBs = filterByType(dbsForSpecies, types);
+			DatabaseRegistryEntry[] filteredDBs = filterByType(mainDbr.getAll(species), types);
 			result &= checkSameSQLResult(sql, filteredDBs, comparingSchema);
 
 		} // foreach species
@@ -182,84 +125,6 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
 
 		return (DatabaseRegistryEntry[]) filtered.toArray(new DatabaseRegistryEntry[filtered.size()]);
 
-	}
-
-	// ---------------------------------------------------------------------
-
-	/**
-	 * Run different queries in two databases and compare the results
-	 * 
-	 * @param con1
-	 *          Connection to database1
-	 * @param sql1
-	 *          SQL query to run in database1
-	 * @param con2
-	 *          Connection to database2
-	 * @param sql2
-	 *          SQL query to run in database2
-	 * @return true if both queries return the same rows.
-	 */
-	public boolean compareQueries(Connection con1, String sql1, Connection con2, String sql2) {
-		boolean result = true;
-		String dbName1 = (con1 == null) ? "no_database" : DBUtils.getShortDatabaseName(con1);
-		String dbName2 = (con2 == null) ? "no_database" : DBUtils.getShortDatabaseName(con2);
-		Map values1 = runQuery(con1, sql1);
-		Map values2 = runQuery(con2, sql2);
-		Iterator it1 = values1.keySet().iterator();
-		while (it1.hasNext()) {
-			String thisValue = (String) it1.next();
-			if (values2.get(thisValue) == null) {
-				result = false;
-				ReportManager.problem(this, dbName1, thisValue + " is not in " + dbName2);
-			}
-		} // foreach it1
-
-		Iterator it2 = values2.keySet().iterator();
-		while (it2.hasNext()) {
-			String thisValue = (String) it2.next();
-			if (values1.get(thisValue) == null) {
-				result = false;
-				ReportManager.problem(this, dbName2, thisValue + " is not in " + dbName1);
-			}
-		} // foreach it1
-
-		return result;
-	}
-
-	/**
-	 * Run a query in a database and return the results as a HashMap where the keys are the rows (cols are concatenated with "::").
-	 * 
-	 * @param con
-	 *          Connection to database
-	 * @param sql
-	 *          SQL query to run in database
-	 * @return Map where the keys are the rows (cols are concatenated with "::").
-	 */
-	private Map<String,String> runQuery(Connection con, String sql) {
-		
-		Map<String,String> values = new HashMap<String,String>();
-		
-		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
-
-			while (rs.next()) {
-				StringBuffer buf = new StringBuffer(rs.getString(1));
-				for (int a = 2; a <= rs.getMetaData().getColumnCount(); a++) {
-					buf.append("::");
-					buf.append(rs.getString(a));
-				}
-				values.put(buf.toString(), "1");
-			}
-			rs.close();
-			stmt.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		return values;
-		
 	}
 
 }

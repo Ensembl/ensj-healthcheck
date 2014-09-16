@@ -20,6 +20,7 @@ package org.ensembl.healthcheck.testcase.compara;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Vector;
 
@@ -29,7 +30,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
+import org.ensembl.healthcheck.testcase.compara.AbstractSingleDBTestCaseWithCoreDBs;
 import org.ensembl.healthcheck.util.DBUtils;
 
 
@@ -37,7 +38,7 @@ import org.ensembl.healthcheck.util.DBUtils;
  * Check dnafrag table against core databases.
  */
 
-public class CheckTopLevelDnaFrag extends MultiDatabaseTestCase {
+public class CheckTopLevelDnaFrag extends AbstractSingleDBTestCaseWithCoreDBs {
 
     /**
      * Create a new instance of MetaCrossSpecies
@@ -60,29 +61,15 @@ public class CheckTopLevelDnaFrag extends MultiDatabaseTestCase {
      * @return true if the all the dnafrags are top_level seq_regions in their corresponding
      *    core database.
      */
-    public boolean run(DatabaseRegistry dbr) {
+    public boolean run(DatabaseRegistryEntry comparaDbre) {
 
         boolean result = true;
-        
-        // Get compara DB connection
-        DatabaseRegistryEntry[] allComparaDBs = dbr.getAll(DatabaseType.COMPARA);
-        if (allComparaDBs.length == 0) {
-          result = false;
-          ReportManager.problem(this, "", "Cannot find compara database");
-          usage();
-          return false;
-        }
-
-        Map speciesDbrs = getSpeciesDatabaseMap(dbr, true);
-
-        for (int i = 0; i < allComparaDBs.length; i++) {
-            result &= checkTopLevelDnaFrag(allComparaDBs[i], speciesDbrs);
-        }
+		result &= checkTopLevelDnaFrag(comparaDbre);
         return result;
     }
 
 
-    public boolean checkTopLevelDnaFrag(DatabaseRegistryEntry comparaDbre, Map speciesDbrs) {
+    public boolean checkTopLevelDnaFrag(DatabaseRegistryEntry comparaDbre) {
 
         boolean result = true;
         Connection comparaCon = comparaDbre.getConnection();
@@ -103,14 +90,14 @@ public class CheckTopLevelDnaFrag extends MultiDatabaseTestCase {
           e.printStackTrace();
         }
         
+		Map<Species, DatabaseRegistryEntry> speciesMap = getSpeciesCoreDbMap(DBUtils.getMainDatabaseRegistry());
+
         String speciesNotFound = "";
         for (int i = 0; i < comparaSpecies.size(); i++) {
           Species species = (Species) comparaSpecies.get(i);
 	  
-          DatabaseRegistryEntry[] speciesDbr = (DatabaseRegistryEntry[]) speciesDbrs.get(species);
-
-          if (speciesDbr != null) {
-              Connection speciesCon = speciesDbr[0].getConnection();
+		  if (speciesMap.containsKey(species)) {
+              Connection speciesCon = speciesMap.get(species).getConnection();
               int maxRows = 50000;
               int rows = DBUtils.getRowCount(comparaCon, "SELECT COUNT(*) FROM" +
                   " dnafrag LEFT JOIN genome_db USING (genome_db_id)" +
@@ -162,24 +149,9 @@ public class CheckTopLevelDnaFrag extends MultiDatabaseTestCase {
         // Warning about missing species
         if (speciesNotFound != "") {
             ReportManager.problem(this, comparaCon, "No connection for " + speciesNotFound);
-            usage();
         }
 
         return result;
-    }
-    
-    /**
-     * Prints the usage through the ReportManager
-     * 
-     * @param
-     *          The database registry containing all the specified databases.
-     * @return true if the all the dnafrags are top_level seq_regions in their corresponding
-     *    core database.
-     */
-    private void usage() {
-
-      ReportManager.problem(this, "USAGE", "run-healthcheck.sh -d ensembl_compara_.+ " + 
-          " -d2 .+_core_.+ CheckTopLevelDnaFrag");
     }
     
 } // CheckTopLevelDnaFrag

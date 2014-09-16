@@ -21,6 +21,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -32,7 +33,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
+import org.ensembl.healthcheck.testcase.compara.AbstractSingleDBTestCaseWithCoreDBs;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
@@ -40,7 +41,7 @@ import org.ensembl.healthcheck.util.DBUtils;
  * relationships.
  */
 
-public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
+public class CheckSpeciesSetTag extends AbstractSingleDBTestCaseWithCoreDBs {
 
 	/**
 	 * Create an ForeignKeyMethodLinkSpeciesSetId that applies to a specific set
@@ -62,44 +63,29 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 	 * @return true if the test passed.
 	 * 
 	 */
-	public boolean run(DatabaseRegistry dbr) {
+	public boolean run(DatabaseRegistryEntry comparaDbre) {
 
 		boolean result = true;
-
-		// Get compara DB connection
-		DatabaseRegistryEntry[] allPrimaryComparaDBs = dbr.getAll(DatabaseType.COMPARA);
-		if (allPrimaryComparaDBs.length == 0) {
-			result = false;
-			ReportManager.problem(this, "", "Cannot find compara database");
-			usage();
-			return false;
-		}
 
 		DatabaseRegistryEntry[] allSecondaryComparaDBs = DBUtils
 				.getSecondaryDatabaseRegistry().getAll(DatabaseType.COMPARA);
 
-		Map speciesDbrs = getSpeciesDatabaseMap(dbr, true);
-
-		// For each compara connection...
-		for (int i = 0; i < allPrimaryComparaDBs.length; i++) {
 			// ... check that the genome_db names are correct
-			result &= checkProductionNames(allPrimaryComparaDBs[i], speciesDbrs);
+			result &= checkProductionNames(comparaDbre, DBUtils.getMainDatabaseRegistry());
 			// ... check that we have one name tag for every MSA
-			result &= checkNameTagForMultipleAlignments(allPrimaryComparaDBs[i]);
+			result &= checkNameTagForMultipleAlignments(comparaDbre);
 
 			if (allSecondaryComparaDBs.length == 0) {
 				result = false;
 				ReportManager.problem(this,
-						allPrimaryComparaDBs[i].getConnection(),
+						comparaDbre.getConnection(),
 						"Cannot find the compara database in the secondary server. This check expects to find a previous version of the compara database for checking that all the *named* species_sets are still present in the current database.");
-				usage();
 			}
 			for (int j = 0; j < allSecondaryComparaDBs.length; j++) {
 				// Check vs previous compara DB.
-				result &= checkSetOfSpeciesSets(allPrimaryComparaDBs[i],
+				result &= checkSetOfSpeciesSets(comparaDbre,
 						allSecondaryComparaDBs[j]);
 			}
-		}
 
 		return result;
 	}
@@ -169,7 +155,7 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 
 
 	public boolean checkProductionNames(DatabaseRegistryEntry comparaDbre,
-			Map speciesDbrs) {
+			DatabaseRegistry dbr) {
 
 		boolean result = true;
 
@@ -195,16 +181,15 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 		}
 
 
+		Map<Species, DatabaseRegistryEntry> speciesMap = getSpeciesCoreDbMap(DBUtils.getMainDatabaseRegistry());
 
 		// get all the production names
 		boolean allSpeciesFound = true;
 
 		for (int i = 0; i < comparaSpecies.size(); i++) {
 			Species species = (Species) comparaSpecies.get(i);
-			DatabaseRegistryEntry[] speciesDbr = (DatabaseRegistryEntry[]) speciesDbrs
-					.get(species);
-			if (speciesDbr != null) {
-				Connection speciesCon = speciesDbr[0].getConnection();
+		    if (speciesMap.containsKey(species)) {
+                Connection speciesCon = speciesMap.get(species).getConnection();
 				String productionName = DBUtils
 						.getRowColumnValue(speciesCon,
 								"SELECT meta_value FROM meta WHERE meta_key = \"species.production_name\"");
@@ -292,11 +277,6 @@ public class CheckSpeciesSetTag extends MultiDatabaseTestCase {
 
 		return result;
 
-	}
-
-
-	private void usage() {
-		ReportManager.problem(this, "USAGE", "run-healthcheck.sh -d ensembl_compara_.+ -d2 .+_core_.+ -d2 .+_compara_.+ CheckSpeciesSetTag");
 	}
 
 } // CheckSpeciesSetTag

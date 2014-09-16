@@ -20,6 +20,7 @@ package org.ensembl.healthcheck.testcase.compara;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -31,7 +32,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
+import org.ensembl.healthcheck.testcase.compara.AbstractSingleDBTestCaseWithCoreDBs;
 import org.ensembl.healthcheck.util.DBUtils;
 
 
@@ -39,7 +40,7 @@ import org.ensembl.healthcheck.util.DBUtils;
  * Check compara genome_db table against core meta one.
  */
 
-public class CheckGenomeDB extends MultiDatabaseTestCase {
+public class CheckGenomeDB extends AbstractSingleDBTestCaseWithCoreDBs {
 
     /**
      * Create a new instance of MetaCrossSpecies
@@ -64,25 +65,12 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
      * @return true if the all the dnafrags are top_level seq_regions in their corresponding
      *    core database.
      */
-    public boolean run(final DatabaseRegistry dbr) {
+    public boolean run(final DatabaseRegistryEntry comparaDbre) {
 
         boolean result = true;
 
-        // Get compara DB connection
-        DatabaseRegistryEntry[] allComparaDBs = dbr.getAll(DatabaseType.COMPARA);
-        if (allComparaDBs.length == 0) {
-          result = false;
-          ReportManager.problem(this, "", "Cannot find compara database");
-          usage();
-          return false;
-        }
-
-        Map speciesDbrs = getSpeciesDatabaseMap(dbr, true);
-
-	for (DatabaseRegistryEntry comparaDbre : allComparaDBs) {
             result &= checkAssemblies(comparaDbre);
-            result &= checkGenomeDB(comparaDbre, speciesDbrs);
-        }
+            result &= checkGenomeDB(comparaDbre);
         return result;
     }
 
@@ -125,7 +113,7 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
     }
 
 
-    public boolean checkGenomeDB(DatabaseRegistryEntry comparaDbre, Map speciesDbrs) {
+    public boolean checkGenomeDB(DatabaseRegistryEntry comparaDbre) {
 
         boolean result = true;
         Connection comparaCon = comparaDbre.getConnection();
@@ -144,12 +132,13 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
 		}
 	}
         
+		Map<Species, DatabaseRegistryEntry> speciesMap = getSpeciesCoreDbMap(DBUtils.getMainDatabaseRegistry());
+
         boolean allSpeciesFound = true;
         for (int i = 0; i < comparaSpecies.size(); i++) {
           Species species = (Species) comparaSpecies.get(i);
-          DatabaseRegistryEntry[] speciesDbr = (DatabaseRegistryEntry[]) speciesDbrs.get(species);
-          if (speciesDbr != null) {
-            Connection speciesCon = speciesDbr[0].getConnection();
+		  if (speciesMap.containsKey(species)) {
+            Connection speciesCon = speciesMap.get(species).getConnection();
             /* Check taxon_id */
             String sql1, sql2;
 
@@ -175,25 +164,8 @@ public class CheckGenomeDB extends MultiDatabaseTestCase {
             allSpeciesFound = false;
           }
         }
-        if (!allSpeciesFound) {
-          usage();
-        }
 
         return result;
-    }
-    
-    /**
-     * Prints the usage through the ReportManager
-     * 
-     * @param
-     *          The database registry containing all the specified databases.
-     * @return true if the all the dnafrags are top_level seq_regions in their corresponding
-     *    core database.
-     */
-    private void usage() {
-
-      ReportManager.problem(this, "USAGE", "run-healthcheck.sh -d ensembl_compara_.+ " + 
-          " -d2 .+_core_.+ CheckGenomeDB");
     }
     
 } // CheckTopLevelDnaFrag
