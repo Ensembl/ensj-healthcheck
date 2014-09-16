@@ -124,6 +124,10 @@ public class ConfigurableTestRunner extends TestRunner {
 				configuration);
 		this.reporter = getReporter(this.reporterType);
 
+		String repair = configuration.getRepair().toLowerCase();
+		this.doRepair = (repair.equals("do") || repair.equals("1") || repair.equals("yes"));
+		this.showRepair = (repair.equals("show"));
+
 		DBUtils.setHostConfiguration((ConfigureHost) configuration);
 	}
 

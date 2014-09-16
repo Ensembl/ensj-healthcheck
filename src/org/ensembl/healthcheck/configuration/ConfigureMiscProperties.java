@@ -140,4 +140,13 @@ public interface ConfigureMiscProperties {
 
 	boolean isPassword();
 
+	// Used in:
+	//
+	// org.ensembl.healthcheck.testcase.EnsTestCase
+	//
+	@Option(longName = "repair", description = "Allow the tests to try to repair the database (if they can)")
+	String getRepair();
+
+	boolean isRepair();
+
 }
