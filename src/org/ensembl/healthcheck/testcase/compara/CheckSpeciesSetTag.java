@@ -33,7 +33,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.compara.AbstractSingleDBTestCaseWithCoreDBs;
+import org.ensembl.healthcheck.testcase.compara.AbstractComparaTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
@@ -41,7 +41,7 @@ import org.ensembl.healthcheck.util.DBUtils;
  * relationships.
  */
 
-public class CheckSpeciesSetTag extends AbstractSingleDBTestCaseWithCoreDBs {
+public class CheckSpeciesSetTag extends AbstractComparaTestCase {
 
 	/**
 	 * Create an ForeignKeyMethodLinkSpeciesSetId that applies to a specific set

@@ -22,14 +22,14 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.compara.AbstractInternalForeignKey;
+import org.ensembl.healthcheck.testcase.compara.AbstractComparaTestCase;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key
  * relationships.
  */
 
-public class ForeignKeySpeciesTreeNodeId extends AbstractInternalForeignKey {
+public class ForeignKeySpeciesTreeNodeId extends AbstractComparaTestCase {
 
     /**
      * Create an ForeignKeyMemberId that applies to a specific set of databases.

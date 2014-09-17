@@ -32,7 +32,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.compara.AbstractSingleDBTestCaseWithCoreDBs;
+import org.ensembl.healthcheck.testcase.compara.AbstractComparaTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 
@@ -40,7 +40,7 @@ import org.ensembl.healthcheck.util.DBUtils;
  * Check compara genome_db table against core meta one.
  */
 
-public class CheckGenomeDB extends AbstractSingleDBTestCaseWithCoreDBs {
+public class CheckGenomeDB extends AbstractComparaTestCase {
 
     /**
      * Create a new instance of MetaCrossSpecies

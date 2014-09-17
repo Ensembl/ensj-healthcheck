@@ -18,20 +18,25 @@
 package org.ensembl.healthcheck.testcase.compara;
 
 import java.sql.Connection;
+import java.util.HashMap;
 
+import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 
 /**
- * An extension of the SingleDatabaseTestCase to test for foreign-key
- * consistency within the same table
+ * An extension of the SingleDatabaseTestCase that adds some Compara requirements
+ *  - Some foreign keys actually link a table to itself
+ *  - We need an easy way of getting the core database of each species
  */
 
-public abstract class AbstractInternalForeignKey extends SingleDatabaseTestCase {
+public abstract class AbstractComparaTestCase extends SingleDatabaseTestCase {
 
 
 	/**
@@ -88,4 +93,25 @@ public abstract class AbstractInternalForeignKey extends SingleDatabaseTestCase 
 	} // checkForOrphansSameTable
 
 
-} // AbstractInternalForeignKey
+	/**
+	 * Get a Map associating each species with its core database
+	 *
+	 * @return A map (key:Species, value:DatabaseRegistryEntry).
+	 */
+	public final HashMap<Species, DatabaseRegistryEntry> getSpeciesCoreDbMap(final DatabaseRegistry dbr) {
+
+		HashMap<Species, DatabaseRegistryEntry> speciesCoreMap = new HashMap();
+
+		for (DatabaseRegistryEntry entry : dbr.getAllEntries()) {
+			// We need to check the database name because some _cdna_
+			// databases have the DatabaseType.CORE type
+			if (entry.getType().equals(DatabaseType.CORE) && entry.getName().contains("_core_")) {
+				speciesCoreMap.put(entry.getSpecies(), entry);
+			}
+		}
+
+		return speciesCoreMap;
+
+	} // getSpeciesCoreDbMap
+
+} // AbstractComparaTestCase

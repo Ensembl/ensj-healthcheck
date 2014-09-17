@@ -30,7 +30,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.compara.AbstractSingleDBTestCaseWithCoreDBs;
+import org.ensembl.healthcheck.testcase.compara.AbstractComparaTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 
@@ -38,7 +38,7 @@ import org.ensembl.healthcheck.util.DBUtils;
  * Check compara taxon table against core meta ones.
  */
 
-public class CheckTaxon extends AbstractSingleDBTestCaseWithCoreDBs{
+public class CheckTaxon extends AbstractComparaTestCase{
 
     /**
      * Create a new instance of MetaCrossSpecies
