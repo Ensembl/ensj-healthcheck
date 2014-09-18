@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.testcase.eg_core.GeneStableIdDisplayXref;
 import org.ensembl.healthcheck.testcase.eg_core.GOslimXrefs;
 import org.ensembl.healthcheck.testcase.eg_core.IgiXref;
 import org.ensembl.healthcheck.testcase.eg_core.ProteinFeatureAnalysisDb;
+import org.ensembl.healthcheck.testcase.eg_core.SeqRegionDna;
 import org.ensembl.healthcheck.testcase.eg_core.TranscriptDisplayXrefSuffix;
 import org.ensembl.healthcheck.testcase.eg_core.TranscriptStableIdDisplayXref;
 import org.ensembl.healthcheck.testcase.eg_core.UniParc_Coverage;
@@ -60,7 +61,8 @@ public class EGCoreAnnotationMajor extends GroupOfTests {
 				TranscriptDisplayXrefSuffix.class,
 				TranscriptStableIdDisplayXref.class,
 				DuplicateRepeatFeature.class, EponineFeatures.class,
-				UniProtExternalDbTypes.class, GOslimXrefs.class);
+				UniProtExternalDbTypes.class, GOslimXrefs.class,
+				SeqRegionDna.class);
 	}
 
 }
