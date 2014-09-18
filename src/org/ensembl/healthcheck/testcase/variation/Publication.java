@@ -80,6 +80,23 @@ public class Publication extends SingleDatabaseTestCase {
 		    ReportManager.problem(this, con, "HealthCheck generated an exception: " + e.getMessage());
 		    result = false;
 		}
+
+
+
+	        // Look for variations or variation_features with display = 0
+                boolean variation_ok = checkNonDisplay("variation", con);
+	        if(variation_ok == false){
+		 	result = false;
+	       		ReportManager.problem(this, con, "cited variants have variation.display =0");
+	       	    }
+
+                boolean varfeat_ok = checkNonDisplay("variation_feature", con);
+  	        if(varfeat_ok == false){
+        	 	result = false;
+	       		ReportManager.problem(this, con, "cited variants have variation_feature.display =0");
+	       	    }
+
+			
 		
 		if (result) {
 		    // if there were no problems, just inform for the interface to pick the HC
@@ -88,4 +105,17 @@ public class Publication extends SingleDatabaseTestCase {
 		return result;
 	 } 
     
+
+
+    private boolean checkNonDisplay( String input, Connection con ) {
+
+             String stmt = "select count(*) from " + input + " ,variation_citation where " + input + ".variation_id = variation_citation.variation_id and " + input + ".display = 0";
+
+             boolean result = true;
+	     int rows = DBUtils.getRowCount(con,stmt);
+	     if (rows > 0) {
+	       	result = false;		
+	    	}
+	     return result;
+	}
 }
