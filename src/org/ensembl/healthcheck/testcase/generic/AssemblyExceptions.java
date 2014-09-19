@@ -155,7 +155,7 @@ public class AssemblyExceptions extends SingleDatabaseTestCase {
                      result = true;
                 }
                 for(String name: missing) {
-                     String msg = String.format("Assembly exception '%s' does not have a sequence mapping", name);
+                     String msg = String.format("Assembly exception '%s' does not have results in dna_align_feature table for analysis alt_seq_mapping", name);
                      ReportManager.problem(this, dbre.getConnection(), msg);
                 }
 
