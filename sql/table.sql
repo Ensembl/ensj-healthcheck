@@ -57,6 +57,17 @@ CREATE TABLE report (
 
 );
 
+-- Map reports to individual sessions
+
+CREATE TABLE report_session (
+
+  session_id                      INT(10) UNSIGNED NOT NULL,
+  report_id                       INT(10) UNSIGNED NOT NULL,
+
+  KEY session_idx(session_id)
+
+);
+
 
 -- Store annotations about healthcheck results
 
@@ -65,7 +76,7 @@ CREATE TABLE annotation (
   annotation_id               INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   report_id					INT(10) UNSIGNED NOT NULL,
   person 					VARCHAR(255),
-  action						ENUM("manual_ok", "under_review", "note", "healthcheck_bug", "manual_ok_all_releases", "manual_ok_this_assembly", "manual_ok_this_genebuild"),
+  action						ENUM('manual_ok','under_review','fixed','note','healthcheck_bug','manual_ok_this_assembly','manual_ok_this_genebuild','manual_ok_this_regulatory_build'),
   comment					TEXT,
   created_at                 	TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
   modified_at      			TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
