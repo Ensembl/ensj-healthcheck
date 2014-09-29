@@ -72,6 +72,7 @@ public class CheckMethodLinkSpeciesSetTag extends SingleDatabaseTestCase {
                 // These methods return false if there is any problem with the test
                 result &= checkSpeciesTreesArePresent(dbre);
 		result &= checkThresholdOnDsArePresent(dbre);
+				result &= checkSpeciesAreSpelledCorrectly(dbre);
 
                 return result;
         }
@@ -144,4 +145,10 @@ public class CheckMethodLinkSpeciesSetTag extends SingleDatabaseTestCase {
 		}
 		return true;
 	}
+
+	public boolean checkSpeciesAreSpelledCorrectly(final DatabaseRegistryEntry dbre) {
+		Connection con = dbre.getConnection();
+		return checkForOrphansWithConstraint(con, "method_link_species_set_tag", "value", "genome_db", "name", "tag LIKE '%reference_species'");
+	}
+
 }
