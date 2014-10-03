@@ -48,9 +48,8 @@ public class FuncgenAnalysisDescription extends AnalysisDescription {
    * Create a new FuncgenAnalysisDescription testcase.
    */
 	public FuncgenAnalysisDescription() {
-		//Apparently these have already been added...where?
-		//addToGroup("funcgen");
-		//addToGroup("funcgen-release");
+		addToGroup("funcgen");
+		addToGroup("funcgen-release");
 		setDescription("Check that all of certain types of objects have analysis_descriptions; also check that displayable field is set.");
 		setTeamResponsible(Team.FUNCGEN);
 		
