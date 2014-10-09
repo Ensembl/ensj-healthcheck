@@ -168,7 +168,8 @@ public class ParallelConfigurableTestRunner extends TestRunner {
                         String currentJobName = "Job_" + jobNumber;
 
                         String[] cmd = {"bsub", "-q", "long", "-J", currentJobName, "-R", MEMORY_RUSAGE, "-M", MEMORY_RESERVATION, "-R", "select[myens_staging1<=800]", "-R", "select[myens_staging2<=800]", "-R", "select[myens_livemirror<=400]",
-                        "-R", "rusage[myens_staging1=10:myens_staging1=10:myens_livemirror=50]", "-o", "healthcheck_%J.out", "-e", "healthcheck_%J.err", runConfigurable, "-d", database, "--sessionID", "" + sessionID };
+                        "-R", "rusage[myens_staging1=10:myens_staging1=10:myens_livemirror=50]", "-o", "healthcheck_%J.out", "-e", "healthcheck_%J.err", runConfigurable, "-d", database, "--sessionID", "" + sessionID, "-c", DEFAULT_PROPERTIES_FILE };
+System.out.println("Submitting new job for " + database + " with session " + sessionID);
 
                         jobNames.add(currentJobName);
 
