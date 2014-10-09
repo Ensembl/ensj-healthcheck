@@ -40,6 +40,14 @@ public interface ConfigureHealthcheckDatabase {
 		String getOutputDatabase();
 		boolean isOutputDatabase();
 
+                @Option(
+                        longName    = "sessionID",
+                        description = "The session to add these results for"
+                                + "Reuse same session in parallel run"
+                )
+                String getSessionID();
+                boolean isSessionID();
+
 		@Option(
 			longName    = "output.host",
 			description = "The name of the database where the results of the "

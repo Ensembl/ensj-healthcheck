@@ -426,7 +426,11 @@ public class ConfigurableTestRunner extends TestRunner {
 
 			systemPropertySetter
 					.setPropertiesForReportManager_createDatabaseSession();
-			ReportManager.createDatabaseSession();
+                        if (configuration.isSessionID()) {
+                                ReportManager.reuseDatabaseSession(Long.valueOf(configuration.getSessionID()));
+                        } else {
+			        ReportManager.createDatabaseSession();
+                        }
 		}
 
 		// When writing to a database, this must only be run after calling

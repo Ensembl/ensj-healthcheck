@@ -813,6 +813,70 @@ public class ReportManager {
 
 	}
 
+        // -------------------------------------------------------------------------
+        /**
+         * Reuse an existing entry in the session table.
+         */
+        public static void reuseDatabaseSession(long sessionID) {
+
+                // build comma-separated list of hosts
+                StringBuffer buf = new StringBuffer();
+                Iterator<DatabaseServer> it = DBUtils.getMainDatabaseServers().iterator();
+
+                while (it.hasNext()) {
+
+                        DatabaseServer server = (DatabaseServer) it.next();
+                        buf.append(String.format("%s:%s", server.getHost(), server.getPort()));
+                        if (it.hasNext()) {
+                                buf.append(",");
+                        }
+
+                }
+
+                String hosts = buf.toString();
+
+                String outputDatabases = Utils.listToString(Utils.getDatabasesAndGroups(), ",");
+
+                String outputRelease = System.getProperty("output.release");
+
+                String sql = "SELECT session_id FROM session WHERE host=? AND config=? AND db_release=? AND session_id=?";
+
+                long newSessionID = -1;
+
+                try {
+
+                        PreparedStatement stmt = outputDatabaseConnection.prepareStatement(sql);
+                        stmt.setString(1, hosts.toString());
+                        stmt.setString(2, outputDatabases);
+                        stmt.setString(3, outputRelease);
+                        stmt.setLong(4, sessionID);
+                        ResultSet rs = stmt.executeQuery();
+                        if (rs != null) {
+                                if (rs.first()) {
+                                        newSessionID = rs.getLong(1);
+                                } else {
+                                        newSessionID = -1; // probably signifies an empty ResultSet
+                                }
+                        }
+                        rs.close();
+                        stmt.close();
+
+                } catch (SQLException e) {
+
+                        System.err.println("Error executing:\n" + sql);
+                        e.printStackTrace();
+
+                }
+
+                if (newSessionID == -1) {
+                        logger.severe("Could not reuse " + newSessionID);
+                        logger.severe(sql);
+                }
+
+                setSessionID(sessionID);
+        }
+
+
 	// -------------------------------------------------------------------------
 	/**
 	 * End a database session. Write the end time into the database.
