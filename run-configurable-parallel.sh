@@ -17,7 +17,7 @@
 . /software/lsf-farm3/conf/profile.lsf
 
 #cd into the dir but this file is already there. Use standard import pattern
-dir=$HOME/src/ensj-healthcheck
+dir=$HOME/ensj-healthcheck
 cd $dir
 
 home=`dirname $0`
