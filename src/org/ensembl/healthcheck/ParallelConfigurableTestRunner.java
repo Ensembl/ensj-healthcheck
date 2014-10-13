@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.List;
+import java.util.Iterator;
 import java.util.ArrayList;
 
 import org.ensembl.healthcheck.configuration.ConfigureHealthcheckDatabase;
@@ -169,7 +170,6 @@ public class ParallelConfigurableTestRunner extends TestRunner {
 
                         String[] cmd = {"bsub", "-q", "long", "-J", currentJobName, "-R", MEMORY_RUSAGE, "-M", MEMORY_RESERVATION, "-R", "select[myens_staging1<=800]", "-R", "select[myens_staging2<=800]", "-R", "select[myens_livemirror<=400]",
                         "-R", "rusage[myens_staging1=10:myens_staging1=10:myens_livemirror=50]", "-o", "healthcheck_%J.out", "-e", "healthcheck_%J.err", runConfigurable, "-d", database, "--sessionID", "" + sessionID, "-c", DEFAULT_PROPERTIES_FILE };
-System.out.println("Submitting new job for " + database + " with session " + sessionID);
 
                         jobNames.add(currentJobName);
 
@@ -178,7 +178,31 @@ System.out.println("Submitting new job for " + database + " with session " + ses
                         jobNumber++;
 
                  }
-                 System.out.println("Submitted session dependency job");
+ 
+                 Iterator<String> jobNameIterator = jobNames.iterator();
+                 StringBuffer bsubConditionClause = new StringBuffer();
+                 while (jobNameIterator.hasNext()) {
+
+                        String currentJobName = jobNameIterator.next();
+                        bsubConditionClause.append("ended(\"" + currentJobName + "\")");
+
+                        if (jobNameIterator.hasNext()) {
+                                bsubConditionClause.append(" && ");
+                        }
+                }
+
+                String session = "" + sessionID;
+
+                String out = String.format("healthcheck_session_%s.out", session);
+                String err = String.format("healthcheck_session_%s.err", session);
+
+                String jobName = String.format("hc_%s", session);
+
+                String[] sessionEndTimeCmd = { "bsub", "-R", MEMORY_RUSAGE, "-M", MEMORY_RESERVATION, "-o", out, "-e", err, "-J", jobName, "-w", bsubConditionClause.toString(), runConfigurable, "--endSession", "" + sessionID, "-c", DEFAULT_PROPERTIES_FILE };
+
+                execCmd(sessionEndTimeCmd);
+
+                System.out.println("Submitted session dependency job");
 
         } // submitJobs
 

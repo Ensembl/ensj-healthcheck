@@ -354,6 +354,16 @@ public class ConfigurableTestRunner extends TestRunner {
 
 		DatabaseServer ds = connectToDatabase(configuration);
 
+                if (this.reporterType == ReporterType.DATABASE && configuration.isEndSession()) {
+                        log.info("Finishing reporter session");
+                        systemPropertySetter.setPropertiesForReportManager_connectToOutputDatabase();
+                        ReportManager.connectToOutputDatabase();
+                        ReportManager.setSessionID(Long.valueOf(configuration.getEndSession()));
+                        ReportManager.endDatabaseSession();
+                        log.info("Finished reporter session");
+                        return;
+                }
+
 		List<String> testDatabases = new ArrayList<String>(getTestDatabases());
 		
 		Species globalSpecies = null;
@@ -531,7 +541,7 @@ public class ConfigurableTestRunner extends TestRunner {
 		log.info("Printing output by test");
 		printReportsByTest(outputLevel, printFailureText);
 
-		if (this.reporterType == ReporterType.DATABASE) {
+		if (this.reporterType == ReporterType.DATABASE && !configuration.isSessionID()) {
 			log.info("Finishing reporter session");
 			ReportManager.endDatabaseSession();
 			log.info("Finished reporter session");

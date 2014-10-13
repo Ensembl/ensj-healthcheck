@@ -48,6 +48,14 @@ public interface ConfigureHealthcheckDatabase {
                 String getSessionID();
                 boolean isSessionID();
 
+                @Option(
+                        longName    = "endSession",
+                        description = "Flag to run an empty testrunner"
+                                + "Used to mark the end of a parallel run"
+                )
+                String getEndSession();
+                boolean isEndSession();
+
 		@Option(
 			longName    = "output.host",
 			description = "The name of the database where the results of the "
