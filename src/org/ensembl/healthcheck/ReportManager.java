@@ -741,8 +741,7 @@ public class ReportManager {
 	 */
 	public static void connectToOutputDatabase() {
 
-		logger.info("Connecting to " + System.getProperty("output.databaseURL") + System.getProperty("output.database") + " as " + System.getProperty("output.user") + " password "
-				+ System.getProperty("output.password"));
+		logger.info("Connecting to " + System.getProperty("output.databaseURL") + System.getProperty("output.database") + " as " + System.getProperty("output.user"));
 
 		try {
 			outputDatabaseConnection = DBUtils.openConnection(
