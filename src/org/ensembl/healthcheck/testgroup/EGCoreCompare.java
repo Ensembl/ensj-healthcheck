@@ -18,6 +18,8 @@ package org.ensembl.healthcheck.testgroup;
 
 import org.ensembl.healthcheck.GroupOfTests;
 import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionAnalysisDescriptions;
+import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionAssociatedXrefGroups;
+import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionAssociatedXrefs;
 import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
 import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBiotypes;
 import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionExonCoords;
@@ -37,6 +39,8 @@ public class EGCoreCompare extends GroupOfTests {
 
 	public EGCoreCompare() {
 		addTest(ComparePreviousVersionAnalysisDescriptions.class,
+				ComparePreviousVersionAssociatedXrefs.class,
+				ComparePreviousVersionAssociatedXrefGroups.class,
 				ComparePreviousVersionBase.class,
 				ComparePreviousVersionBiotypes.class,
 				ComparePreviousVersionExonCoords.class,
