@@ -45,6 +45,21 @@ public class SystemPropertySetter {
 		System.setProperty("port",           configuration.getPort() );
 		System.setProperty("output.release", configuration.getOutputRelease() );
 
+                if (configuration.isTestDatabases()) {
+                     String test_databases = "";
+                     for (String database : configuration.getTestDatabases()) {
+                         test_databases += database + ";";
+                     }
+                     System.setProperty("test_databases", test_databases);
+                }
+                if (configuration.isGroups()) {
+                     String test_groups = "";
+                     for (String group : configuration.getGroups()) {
+                         test_groups += group + ";";
+                     }
+                     System.setProperty("test_groups", test_groups);
+                }
+
 	}
 
 	public void setPropertiesForReportManager_connectToOutputDatabase() {
