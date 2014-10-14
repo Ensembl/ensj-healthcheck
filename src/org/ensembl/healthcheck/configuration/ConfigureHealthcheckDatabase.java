@@ -43,7 +43,7 @@ public interface ConfigureHealthcheckDatabase {
                 @Option(
                         longName    = "sessionID",
                         description = "The session to add these results for"
-                                + "Reuse same session in parallel run"
+                                + "Used in parallel run"
                 )
                 String getSessionID();
                 boolean isSessionID();
