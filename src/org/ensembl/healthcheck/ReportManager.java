@@ -838,17 +838,16 @@ public class ReportManager {
 
                 String outputRelease = System.getProperty("output.release");
 
-                String sql = "SELECT session_id FROM session WHERE host=? AND config=? AND db_release=? AND session_id=?";
+                String sql = "SELECT session_id FROM session WHERE config=? AND db_release=? AND session_id=?";
 
                 long newSessionID = -1;
 
                 try {
 
                         PreparedStatement stmt = outputDatabaseConnection.prepareStatement(sql);
-                        stmt.setString(1, hosts.toString());
-                        stmt.setString(2, outputDatabases);
-                        stmt.setString(3, outputRelease);
-                        stmt.setLong(4, sessionID);
+                        stmt.setString(1, outputDatabases);
+                        stmt.setString(2, outputRelease);
+                        stmt.setLong(3, sessionID);
                         ResultSet rs = stmt.executeQuery();
                         if (rs != null) {
                                 if (rs.first()) {
