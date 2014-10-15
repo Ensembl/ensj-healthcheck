@@ -366,6 +366,10 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 			return false;
 		}
 
+                if (result) {
+                        ReportManager.correct(this, masterCon, "CompareSchema was run, no issues found");
+                }
+
 		return result;
 	}
 
