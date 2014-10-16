@@ -59,7 +59,8 @@ public class EGCompara extends GroupOfTests {
         MemberXrefAssociation.class,
         MemberProductionCounts.class,
 				MultipleGenomicAlignBlockIds.class,
-				ControlledComparaTables.class
+				ControlledComparaTables.class,
+				CheckPairAlignerStats class
 		);
 	}
 }
