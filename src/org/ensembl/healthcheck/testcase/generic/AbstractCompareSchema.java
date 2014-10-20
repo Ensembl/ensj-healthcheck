@@ -209,7 +209,7 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 		DatabaseRegistryEntry[] databases = dbr.getAll();
 
 		definitionFile = System.getProperty(definitionFileKey);
-		if (definitionFile == null) {
+		if (definitionFile == null || definitionFile.isEmpty()) {
 
 		  masterSchema = System.getProperty(masterSchemaKey);
 			if (masterSchema != null) {
@@ -252,7 +252,7 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 			logger.fine("Will use schema definition from " + definitionFile);
 		}
 		
-		setUsingTemporaryDatabase(definitionFile != null);
+		setUsingTemporaryDatabase(definitionFile != null && !definitionFile.isEmpty());
 
 		try {
 			if (isUsingTemporaryDatabase()) {
