@@ -35,7 +35,6 @@ public class PhenotypeFeatureAttrib extends CheckChar  {
 	
 	public PhenotypeFeatureAttrib() {
 
-		addToGroup("variation-release");
 		setDescription("Check that imported phenotype_feature_attrib values are reasonable");
 		setTeamResponsible(Team.VARIATION);
 
