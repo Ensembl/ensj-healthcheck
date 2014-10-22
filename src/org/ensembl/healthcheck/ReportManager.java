@@ -781,7 +781,7 @@ public class ReportManager {
 
 		String hosts = buf.toString();
 
-                String outputDatabases = System.getProperty("test_groups") + " " + System.getProperty("test_databases");
+                String outputDatabases = System.getProperty("test_databases");
 
 		String outputRelease = System.getProperty("output.release");
 
@@ -834,7 +834,7 @@ public class ReportManager {
 
                 String hosts = buf.toString();
 
-                String outputDatabases = System.getProperty("test_groups") + " " + System.getProperty("test_databases");
+                String outputDatabases = System.getProperty("test_databases");
 
                 String outputRelease = System.getProperty("output.release");
 
