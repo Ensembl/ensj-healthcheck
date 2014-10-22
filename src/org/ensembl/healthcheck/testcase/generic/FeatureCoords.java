@@ -58,6 +58,8 @@ public class FeatureCoords extends SingleDatabaseTestCase {
 		setTeamResponsible(Team.GENEBUILD);
 	}
 
+	public Map<String,Integer> seq_regions;
+	
 	/**
 	 * Iterate over each affected database and perform various checks.
 	 * 
@@ -70,8 +72,13 @@ public class FeatureCoords extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		String[] featureTables = getCoreFeatureTables();
-                Connection con = dbre.getConnection();
-
+        Connection con = dbre.getConnection();
+        SqlTemplate t = DBUtils.getSqlTemplate(con);
+        String sql = "SELECT s.name,s.length FROM seq_region s, seq_region_attrib a WHERE s.seq_region_id = a.seq_region_id AND a.attrib_type_id = 6";
+        DefaultMapRowMapper<String, Integer> mapper = new DefaultMapRowMapper<String, Integer>(String.class, Integer.class);
+                             
+        seq_regions = t.queryForMap(sql,mapper);
+        
 		for (int tableIndex = 0; tableIndex < featureTables.length; tableIndex++) {
 
 			String tableName = featureTables[tableIndex];
@@ -86,45 +93,46 @@ public class FeatureCoords extends SingleDatabaseTestCase {
 	} // run
 
 
-        protected boolean checkLength(DatabaseRegistryEntry dbre, String tableName) {
-                SqlTemplate t = DBUtils.getSqlTemplate(dbre);
-                boolean result = true;
-                if (tableName.equals("repeat_feature")) {
-                        return true;
-                }
-                DefaultMapRowMapper<Integer, Integer> mapper = new DefaultMapRowMapper<Integer, Integer>(Integer.class, Integer.class);
-                String featureSQL = "SELECT seq_region_id, max(seq_region_start) from " + tableName + " group by seq_region_id ";
-                String lengthSQL = "SELECT length from seq_region where seq_region_id = ?";
-                String nameSQL = "SELECT name from seq_region where seq_region_id = ?";
-                Map<Integer, Integer> featureResults = t.queryForMap(featureSQL, mapper);
+      protected boolean checkLength(DatabaseRegistryEntry dbre, String tableName) {
+        SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+        boolean result = true;
+        if (tableName.equals("repeat_feature")) {
+                return true;
+        }
+        String featureSQL = "SELECT seq_region_id, max(seq_region_start) from " + tableName + " group by seq_region_id ";
+        DefaultMapRowMapper<Integer, Integer> feature_mapper = new DefaultMapRowMapper<Integer, Integer>(Integer.class, Integer.class);
+        Map<Integer, Integer> featureResults = t.queryForMap(featureSQL, feature_mapper);
 
-                for (Map.Entry<Integer, Integer> entry : featureResults.entrySet()) {
-                        Integer max = entry.getValue();
-                        Integer region = entry.getKey();
-                        Integer length = t.queryForDefaultObject(lengthSQL, Integer.class, region);
-                        String name = t.queryForDefaultObject(nameSQL, String.class, region);
-
-                        if (max > length) {
-                                ReportManager.problem(this, dbre.getConnection(), "Some features in " + tableName + " start on position " + max + " when region " + name + " is only " + length + " long");
-                                result = false;
-                        }
-                }
-                return result;
+        
+        for (Map.Entry<Integer, Integer> entry : featureResults.entrySet()) {
+          Integer max = entry.getValue();
+          Integer region = entry.getKey();
+          if (seq_regions.containsKey(region) ) {
+            Integer length = seq_regions.get(region);
+            if (max > length) {
+              ReportManager.problem(this, dbre.getConnection(), "Some features in " + tableName + " start on position " + max + " when region " + region + " is only " + length + " long");
+              result = false;
+            }
+            
+          }
 
         }
+        return result;
+
+      }
 
 
-        protected boolean checkStart(DatabaseRegistryEntry dbre, String tableName) {
-                String sql = "SELECT COUNT(*) FROM " + tableName + " WHERE seq_region_start < 1";
-                int rows = DBUtils.getRowCount(dbre.getConnection(), sql);
-                if (rows > 0) {
-                        ReportManager.problem(this, dbre.getConnection(), rows + " rows in " + tableName + " have seq_region_start < 1");
-                        return false;
-                 } else {
-                        return true;
-                 }
+      protected boolean checkStart(DatabaseRegistryEntry dbre, String tableName) {
+        String sql = "SELECT COUNT(*) FROM " + tableName + " WHERE seq_region_start < 1";
+        int rows = DBUtils.getRowCount(dbre.getConnection(), sql);
+        if (rows > 0) {
+                ReportManager.problem(this, dbre.getConnection(), rows + " rows in " + tableName + " have seq_region_start < 1");
+                return false;
+         } else {
+                return true;
+         }
 
-        }
+      }
 	/**
 	 * Subroutine to carry out a check on whether the start is after the end.
 	 * This is to allow EG to skip this check for circular molecules
