@@ -18,18 +18,12 @@ package org.ensembl.healthcheck.testgroup;
 
 import org.ensembl.healthcheck.GroupOfTests;
 import org.ensembl.healthcheck.testcase.eg_funcgen.EGArrayXrefs;
-import org.ensembl.healthcheck.testcase.eg_funcgen.EGCompareFuncgenSchema;
+import org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema;
 import org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionArrayXrefs;
 import org.ensembl.healthcheck.testcase.funcgen.FuncgenForeignKeys;
 import org.ensembl.healthcheck.testcase.funcgen.FuncgenStableID;
 import org.ensembl.healthcheck.testcase.funcgen.MetaCoord;
 import org.ensembl.healthcheck.testcase.funcgen.RegulatoryFeatureTypes;
-import org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions;
-import org.ensembl.healthcheck.testcase.generic.BlankEnums;
-import org.ensembl.healthcheck.testcase.generic.BlankInfoType;
-import org.ensembl.healthcheck.testcase.generic.BlanksInsteadOfNulls;
-import org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName;
-import org.ensembl.healthcheck.testcase.generic.NullStrings;
 
 /**
  * Tests to run on an Ensembl Genomes funcgen database
@@ -38,26 +32,10 @@ import org.ensembl.healthcheck.testcase.generic.NullStrings;
 public class EGFuncgen extends GroupOfTests {
 
 	public EGFuncgen() {
-
-		addTest(
-
-			EGCommon.class,
-			
-			BlankEnums.class, 
-			BlankInfoType.class, 
-			MetaCoord.class,
-			ExternalDBDisplayName.class, 
-			EGArrayXrefs.class,
-			FuncgenForeignKeys.class, 
-			// Removed, because schema doesn't allow for nulls in version
-			// column
-			//BlankCoordSystemVersions.class,
-			BlanksInsteadOfNulls.class, 
-			RegulatoryFeatureTypes.class,
-			ComparePreviousVersionArrayXrefs.class,
-			FuncgenStableID.class,
-			NullStrings.class, 
-			EGCompareFuncgenSchema.class
-		);
+		addTest(EGCommon.class, MetaCoord.class,
+				EGArrayXrefs.class, FuncgenForeignKeys.class,
+				RegulatoryFeatureTypes.class,
+				ComparePreviousVersionArrayXrefs.class, FuncgenStableID.class,
+				CompareFuncgenSchema.class);
 	}
 }
