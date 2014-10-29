@@ -28,8 +28,9 @@ import org.ensembl.healthcheck.testcase.eg_compara.EGCheckEmptyLocators;
 import org.ensembl.healthcheck.testcase.eg_compara.EGCheckNoTreeStableIds;
 import org.ensembl.healthcheck.testcase.eg_compara.EGCheckSynteny;
 import org.ensembl.healthcheck.testcase.eg_compara.EGForeignKeyMethodLinkSpeciesSetId;
-import org.ensembl.healthcheck.testcase.eg_compara.MemberXrefAssociation;
+import org.ensembl.healthcheck.testcase.eg_compara.EGMethodLinkSpeciesSetIdStats;
 import org.ensembl.healthcheck.testcase.eg_compara.MemberProductionCounts;
+import org.ensembl.healthcheck.testcase.eg_compara.MemberXrefAssociation;
 
 /**
  * Group of tests for EnsemblGenomes compara databases
@@ -48,6 +49,7 @@ public class EGCompara extends GroupOfTests {
 				EGComparaGeneTree.class, 
 				EGCheckSynteny.class,
 				EGForeignKeyMethodLinkSpeciesSetId.class,
+				EGMethodLinkSpeciesSetIdStats.class,
 				EGCheckNoTreeStableIds.class,
 				ForeignKeyDnafragId.class, 
 				ForeignKeyGenomeDbId.class,
@@ -56,8 +58,7 @@ public class EGCompara extends GroupOfTests {
 				ForeignKeyMethodLinkId.class,
 				ForeignKeyTaxonId.class, 
 				EGCheckEmptyLocators.class,
-        MemberXrefAssociation.class,
-        MemberProductionCounts.class,
+				MemberXrefAssociation.class, MemberProductionCounts.class,
 				MultipleGenomicAlignBlockIds.class,
 				ControlledComparaTables.class
 		);
