@@ -22,6 +22,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  * These are the tests that register themselves as compara_genomic. The tests are:
  * 
  * <ul>
+ *   <li> org.ensembl.healthcheck.testcase.eg_compara.EGMethodLinkSpeciesSetIdStats </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckConservationScore </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckGenomicAlignGenomeDBs </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckMethodLinkSpeciesSetTag </li> 
@@ -54,6 +55,7 @@ public class ComparaGenomic extends GroupOfTests {
 	public ComparaGenomic() {
 
 		addTest(
+			org.ensembl.healthcheck.testcase.eg_compara.EGMethodLinkSpeciesSetIdStats.class,
 			org.ensembl.healthcheck.testcase.compara.CheckConservationScore.class,
 			org.ensembl.healthcheck.testcase.compara.CheckGenomicAlignGenomeDBs.class,
 			org.ensembl.healthcheck.testcase.compara.CheckMethodLinkSpeciesSetTag.class,
