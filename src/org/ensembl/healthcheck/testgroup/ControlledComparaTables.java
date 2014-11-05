@@ -22,7 +22,6 @@ import org.ensembl.healthcheck.testcase.eg_compara.ControlledTableGenomeDb;
 import org.ensembl.healthcheck.testcase.eg_compara.ControlledTableMappingSession;
 import org.ensembl.healthcheck.testcase.eg_compara.ControlledTableMethodLink;
 import org.ensembl.healthcheck.testcase.eg_compara.ControlledTableMethodLinkSpeciesSet;
-import org.ensembl.healthcheck.testcase.eg_compara.ControlledTableMethodLinkSpeciesSetTag;
 import org.ensembl.healthcheck.testcase.eg_compara.ControlledTableNcbiTaxaName;
 import org.ensembl.healthcheck.testcase.eg_compara.ControlledTableNcbiTaxaNode;
 import org.ensembl.healthcheck.testcase.eg_compara.ControlledTableSpeciesSet;
@@ -37,8 +36,7 @@ public class ControlledComparaTables extends GroupOfTests {
 				ControlledTableGenomeDb.class,
 				ControlledTableMappingSession.class,
 				ControlledTableMethodLink.class,
-				ControlledTableMethodLinkSpeciesSet.class,				
-				ControlledTableMethodLinkSpeciesSetTag.class,
+				ControlledTableMethodLinkSpeciesSet.class,
 				ControlledTableNcbiTaxaName.class,
 				ControlledTableNcbiTaxaNode.class,
 				ControlledTableSpeciesSet.class,
