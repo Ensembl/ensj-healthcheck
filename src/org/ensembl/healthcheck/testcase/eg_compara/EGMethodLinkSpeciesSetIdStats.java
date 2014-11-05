@@ -40,7 +40,7 @@ public class EGMethodLinkSpeciesSetIdStats extends
 			+ "'ref_matches', 'ref_mis_matches', 'ref_uncovered') "
 			+ "GROUP BY method_link_species_set_id) as tc "
 			+ "ON mlss.method_link_species_set_id = tc.method_link_species_set_id "
-			+ "WHERE ml.type IN ('BLASTZ_NET', 'LASTZ_NET') "
+			+ "WHERE ml.type IN ('BLASTZ_NET', 'LASTZ_NET', 'TRANSLATED_BLAT_NET') "
 			+ "HAVING (stats_related_tags != 14) OR (stats_related_tags IS NULL)) as find_missing_stats";
 
 	public EGMethodLinkSpeciesSetIdStats() {
