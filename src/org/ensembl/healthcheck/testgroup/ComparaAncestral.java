@@ -67,6 +67,7 @@ public class ComparaAncestral extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.EmptyTables.class,
 			org.ensembl.healthcheck.testcase.generic.Meta.class,
 			org.ensembl.healthcheck.testcase.generic.MetaValues.class,
+			org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class,
 			org.ensembl.healthcheck.testcase.generic.NullStrings.class,
 			org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem.class,
 			org.ensembl.healthcheck.testcase.generic.SeqRegionName.class,

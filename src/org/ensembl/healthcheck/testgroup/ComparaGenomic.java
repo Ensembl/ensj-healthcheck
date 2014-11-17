@@ -75,6 +75,7 @@ public class ComparaGenomic extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.ForeignKeySyntenyRegionId.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyTaxonId.class,
 			org.ensembl.healthcheck.testcase.compara.Meta.class,
+			org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class,
 			org.ensembl.healthcheck.testcase.compara.MLSSTagGERPMSA.class,
 			org.ensembl.healthcheck.testcase.compara.MLSSTagMaxAlign.class,
 			org.ensembl.healthcheck.testcase.compara.SingleDBCollations.class
