@@ -78,7 +78,9 @@ public class GencodeAttributes extends SingleDatabaseTestCase {
 
     Connection con = dbre.getConnection();
 
-    if (dbre.getSpecies() != Species.HOMO_SAPIENS && dbre.getSpecies() != Species.MUS_MUSCULUS) {
+    if (dbre.getSpecies() != Species.HOMO_SAPIENS && dbre.getSpecies() != Species.MUS_MUSCULUS &&
+        dbre.getSpecies() != Species.RATTUS_NORVEGICUS && dbre.getSpecies() != Species.SUS_SCROFA &&
+        dbre.getSpecies() != Species.DANIO_RERIO) {
       return result;
     }
 
