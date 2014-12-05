@@ -168,7 +168,6 @@ public class Meta extends SingleDatabaseTestCase {
 		  "species.url",		  
 			
 			"repeat.analysis",
-			"marker.priority",
 		};
 		for (String metaKey: metaKeys) {
 		  int rows = metaKeyCount(con, metaKey);
