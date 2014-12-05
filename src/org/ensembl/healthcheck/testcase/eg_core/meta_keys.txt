@@ -9,7 +9,6 @@ assembly.long_name
 assembly.mapping
 assembly.master_accession
 assembly.name
-assembly.overlapping_regions
 assembly.version
 assembly.web_accession_source
 assembly.web_accession_type
@@ -28,8 +27,6 @@ interproscan.date
 interproscan.version
 interpro.version
 liftover.mapping
-lrg
-marker.priority
 patch
 ploidy
 prediction_exonbuild.level
