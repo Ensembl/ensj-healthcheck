@@ -96,10 +96,6 @@ public class MetaValues extends SingleDatabaseTestCase {
 			
 		}
 
-		if (!isSangerVega && dbre.getType() != DatabaseType.VEGA) {// do not check for sangervega
-			result &= checkOverlappingRegions(con);
-		}
-
 		result &= checkAssemblyMapping(con);
 
 		result &= checkTaxonomyID(dbre);
@@ -170,36 +166,6 @@ public class MetaValues extends SingleDatabaseTestCase {
 
 		return result;
 	} // run
-
-	// ---------------------------------------------------------------------
-
-	// this HC will check the Meta table contains the assembly.overlapping_regions and
-	// that it is set to false (so no overlapping regions in the genome)
-	private boolean checkOverlappingRegions(Connection con) {
-
-		boolean result = true;
-
-		// check that certain keys exist
-		String[] metaKeys = { "assembly.overlapping_regions" };
-		for (int i = 0; i < metaKeys.length; i++) {
-			String metaKey = metaKeys[i];
-			int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='" + metaKey + "'");
-			if (rows == 0) {
-				result = false;
-				ReportManager.problem(this, con, "No entry in meta table for " + metaKey + ". It might need to run the misc-scripts/overlapping_regions.pl script");
-			} else {
-				String[] metaValue = DBUtils.getColumnValues(con, "SELECT meta_value FROM meta WHERE meta_key='" + metaKey + "'");
-				if (metaValue[0].equals("1")) {
-					// there are overlapping regions !! API might behave oddly
-					ReportManager.problem(this, con, "There are overlapping regions in the database (e.g. two versions of the same chromosomes). The API"
-							+ " might have unexpected results when trying to map features to that coordinate system.");
-					result = false;
-				}
-			}
-		}
-
-		return result;
-	}
 
 	// ---------------------------------------------------------------------
 
