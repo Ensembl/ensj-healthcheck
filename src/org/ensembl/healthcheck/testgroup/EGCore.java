@@ -27,6 +27,8 @@ import org.ensembl.healthcheck.testcase.eg_core.NoRepeatFeatures;
 import org.ensembl.healthcheck.testcase.eg_core.SchemaPatchesApplied;
 import org.ensembl.healthcheck.testcase.eg_core.SeqRegionLength;
 import org.ensembl.healthcheck.testcase.eg_core.SeqRegionsConsistentWithComparaMaster;
+import org.ensembl.healthcheck.testcase.eg_core.SeqRegionAttribForPolyploidGenome;
+import org.ensembl.healthcheck.testcase.eg_core.SeqRegionAttribForPolyploidGenomeToplevelOnly;
 
 /**
  * Supergroup of tests for Ensembl Genomes (incorporates {@link EGCoreGeneModel}
@@ -57,6 +59,8 @@ public class EGCore extends GroupOfTests {
 			ControlledCoreTables.class,
 			AnalysisLogicName.class,
 			SeqRegionsConsistentWithComparaMaster.class,
+			SeqRegionAttribForPolyploidGenome.class,
+			SeqRegionAttribForPolyploidGenomeToplevelOnly.class,
 			SeqRegionLength.class,
 			NoRepeatFeatures.class,
 			SchemaPatchesApplied.class
