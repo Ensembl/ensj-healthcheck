@@ -1554,6 +1554,39 @@ public abstract class EnsTestCase {
 
 		return result;
 	}
+	
+	/**
+	 * Check a column for odd characters. Problem or correct reports are generated
+	 * via ReportManager. Applicable to display names, and other presentation strings
+	 * 
+	 * @param con
+	 *            The database connection to use.
+	 * @param table
+	 *            The table name.
+	 * @param column
+	 *            The column to check.
+	 * @return True if column is devoid of bad characters, false otherwise.
+	 */
+	public boolean checkNoBadCharacters(Connection con, String table, String column) {
+
+		boolean result = true;
+		String sql = String.format("SELECT COUNT(*) FROM %s WHERE %s REGEXP '%s'",
+				table, column, "^\\[\\:\\;\\n\\r\\t\\~\\]|\\[\\:\\;\\n\\r\\t\\~\\]$");
+		// MOAR slashes
+		int badrows = DBUtils.getRowCount(con, sql);
+
+		if (badrows > 0) {
+
+			ReportManager.problem(this, con, "Forbidden characters found in "+badrows+" rows of " + table + "."
+					+ column);
+			result = false;
+		} else {
+			ReportManager.correct(this, con, "Column is clean of weird characters in " + table
+					+ "." + column);
+		}
+
+		return result;
+	}
 
 	// -------------------------------------------------------------------------
 	/**
