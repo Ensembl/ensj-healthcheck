@@ -42,7 +42,7 @@ public class AssemblySeqregion extends SingleDatabaseTestCase {
 		addToGroup("post-compara-handover");
                 addToGroup("post-projection");
 
-		setDescription("Check that the chromosome lengths from the seq_region table agree with both the assembly table and the karyotype table.");
+		setDescription("Check that the chromosome lengths from the seq_region table agree with both the assembly table.");
 		setTeamResponsible(Team.GENEBUILD);
 	}
 
@@ -58,11 +58,11 @@ public class AssemblySeqregion extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		// ---------------------------------------------------
-		// Find any seq_regions that have different lengths in seq_region &
-		// assembly
-		// NB seq_region length should always be equal to (or possibly greater
-		// than) the maximum
-		// assembly length
+		// Find any seq_regions that have different lengths in
+		// seq_region and assembly tables. The seq_region
+		// length should always be equal to the maximum
+		// assembly length. Having shorter or longer values of
+                // seq_region.length doesn't make sense.
 		// The SQL returns failures
 		// ----------------------------------------------------
 		String sql = "SELECT sr.name AS name, sr.length, cs.name AS coord_system "
@@ -70,7 +70,7 @@ public class AssemblySeqregion extends SingleDatabaseTestCase {
 				+ "WHERE sr.coord_system_id=cs.coord_system_id "
 				+ "AND ass.asm_seq_region_id = sr.seq_region_id "
 				+ "GROUP BY ass.asm_seq_region_id "
-				+ "HAVING sr.length < MAX(ass.asm_end)";
+				+ "HAVING sr.length != MAX(ass.asm_end)";
 
 		try {
 
@@ -82,14 +82,14 @@ public class AssemblySeqregion extends SingleDatabaseTestCase {
 				String cs = rs.getString("coord_system");
 				String sr = rs.getString("name");
 				ReportManager.problem(this, con, cs + " " + sr
-						+ " is shorter in seq_region than in assembly");
+						+ " is not equal in seq_region and in assembly");
 			}
 			if (i == 0) {
 				ReportManager
 						.correct(
 								this,
 								con,
-								"Sequence region lengths are equal or greater in the seq_region table compared to the assembly table");
+								"Sequence region lengths are equal in the seq_region table compared to the assembly table");
 			}
 		} catch (SQLException e) {
 			System.err.println("Error executing " + sql + ":");
