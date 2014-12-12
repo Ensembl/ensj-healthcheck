@@ -3,3 +3,9 @@ jdk:
   - oraclejdk7
   - openjdk7
   - openjdk6
+
+notifications:
+  email:
+  recipients:
+      - ensembl-production-git@ebi.ac.uk
+    on_failure: always
