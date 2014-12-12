@@ -8,4 +8,4 @@ notifications:
   email:
   recipients:
       - ensembl-production-git@ebi.ac.uk
-    on_failure: always
+  on_failure: always
