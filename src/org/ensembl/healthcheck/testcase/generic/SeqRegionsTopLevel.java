@@ -125,15 +125,14 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 
 	private int getAttribTypeID(Connection con, String attrib) {
 
-		// check that all gene seq_regions have toplevel attributes
 		String val = DBUtils.getRowColumnValue(con, "SELECT attrib_type_id FROM attrib_type WHERE code='" + attrib + "'");
 		if (val == null || val.equals("")) {
-			ReportManager.problem(this, con, "Can't find a seq_region attrib_type with code 'toplevel', exiting");
+			ReportManager.problem(this, con, "Can't find a seq_region attrib_type with code '" + attrib + "', exiting");
 			return -1;
 		}
 		int attribTypeID = Integer.parseInt(val);
 
-		logger.info("attrib_type_id for toplevel: " + attribTypeID);
+		logger.info("attrib_type_id for '" + attrib + "': " + attribTypeID);
 
 		return attribTypeID;
 

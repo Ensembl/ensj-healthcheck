@@ -61,6 +61,7 @@ public class DisplayLabels extends SingleDatabaseTestCase {
 		result &= checkNoNulls(con, "simple_feature", "display_label");
 		result &= checkNoNulls(con, "xref", "display_label");
 
+		result &= checkNoBadCharacters(con, "xref", "display_label");
 		return result;
 
 	} // run
