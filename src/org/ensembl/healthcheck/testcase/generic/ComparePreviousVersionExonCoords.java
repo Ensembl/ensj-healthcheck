@@ -45,9 +45,11 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Compare the transcript stable IDs and exon coordinates between 2 releases. Note this is not comparing counts so doesn't extend
- * ComparePreviousVersionBase. Note this reads 2 complete exon sets into memory and so needs quite a bit of memory allocated.
- * Suggest -Xmx1700m
+ * Compare the transcript stable IDs and exon coordinates between 2
+ * releases. Note this is not comparing counts so doesn't extend
+ * ComparePreviousVersionBase. Note this reads 2 complete exon sets
+ * into memory and so needs quite a bit of memory allocated.  Suggest
+ * -Xmx1700m
  */
 
 public class ComparePreviousVersionExonCoords extends SingleDatabaseTestCase {
@@ -148,7 +150,7 @@ public class ComparePreviousVersionExonCoords extends SingleDatabaseTestCase {
     if (inNewNotOld.size() > 0 && inOldNotNew.size() == 0 ) {
 
             ReportManager
-                             .problem(this, currentCon, inNewNotOld.size() + " exons in " + current.getName() + " are not in " + previous.getName());
+                             .problem(this, currentCon, inNewNotOld.size() + " protein coding exons in " + current.getName() + " are not in " + previous.getName());
             result = false;
 
     }
@@ -156,7 +158,7 @@ public class ComparePreviousVersionExonCoords extends SingleDatabaseTestCase {
     if (inNewNotOld.size() == 0 && inOldNotNew.size() > 0 ) {
 
             ReportManager
-                             .problem(this, currentCon, inOldNotNew.size() + " exons in " + previous.getName() + " are not in " + current.getName());
+                             .problem(this, currentCon, inOldNotNew.size() + " protein coding exons in " + previous.getName() + " are not in " + current.getName());
             result = false;
 
     }
@@ -164,7 +166,7 @@ public class ComparePreviousVersionExonCoords extends SingleDatabaseTestCase {
     if (inNewNotOld.size() > 0 && inOldNotNew.size() > 0 ) {
 
              ReportManager
-                             .problem(this, currentCon, inOldNotNew.size() + " exons in " + previous.getName() + " have coordinates that are different from those in the same transcript in " + current.getName());
+                             .problem(this, currentCon, inOldNotNew.size() + " protein coding exons in " + previous.getName() + " have coordinates that are different from those in the same transcript in " + current.getName());
              result = false;
 
     }
@@ -172,7 +174,7 @@ public class ComparePreviousVersionExonCoords extends SingleDatabaseTestCase {
 
 		if (inOldNotNew.size() == 0 && inNewNotOld.size() == 0) {
 
-			ReportManager.correct(this, currentCon, "All exons identical between databases");
+			ReportManager.correct(this, currentCon, "All protein coding exons identical between databases");
 
 		}
 
