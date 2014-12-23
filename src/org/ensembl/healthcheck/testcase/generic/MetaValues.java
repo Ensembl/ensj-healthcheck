@@ -412,7 +412,9 @@ public class MetaValues extends SingleDatabaseTestCase {
 
 			}
 
-			result &= checkMetaKey(con, key, value, regexp);
+                        if (result) {
+			        result &= checkMetaKey(con, key, value, regexp);
+                        }
 
 			if (result) {
 				result &= checkDateFormat(con, key, value);
@@ -422,6 +424,10 @@ public class MetaValues extends SingleDatabaseTestCase {
 				ReportManager.correct(this, con, key + " is present & in a valid format");
 			}
 		}
+
+                if (!result) {
+                        return result;
+                }
 
 		// some more checks for sanity of dates
 		int startDate = Integer.valueOf(DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.start_date'").replaceAll("[^0-9]", "")).intValue();
