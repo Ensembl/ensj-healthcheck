@@ -20,6 +20,7 @@ package org.ensembl.healthcheck.testcase.generic;
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.Team;
+import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 /**
@@ -27,7 +28,7 @@ import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
  */
 public class CoordSystemAcrossSpecies extends MultiDatabaseTestCase {
 
-	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.CDNA, DatabaseType.OTHERFEATURES };
+	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.CDNA, DatabaseType.OTHERFEATURES, DatabaseType.RNASEQ };
 
 	/**
 	 * Creates a new instance of CoordSystemAcrossSpecies
@@ -52,7 +53,14 @@ public class CoordSystemAcrossSpecies extends MultiDatabaseTestCase {
 	 */
 	public boolean run(DatabaseRegistry dbr) {
 
-		return checkTableAcrossSpecies("coord_system", dbr, types, "All coord_system tables are the same", "coord_system tables are different", " WHERE name !='lrg'");
+		boolean result = checkSQLAcrossSpecies("SELECT * FROM coord_system WHERE name !='lrg' ", dbr, types, false);
+
+                if (!result) {
+                        ReportManager.problem(this, "", "coord_system information not the same for some databases");
+                } else {
+                        ReportManager.correct(this, "", "coord_system information is the same for all databases for all species");
+                }
+                return result;
 
 	} // run
 
