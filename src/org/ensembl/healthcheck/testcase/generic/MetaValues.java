@@ -740,6 +740,10 @@ public class MetaValues extends SingleDatabaseTestCase {
           boolean result = true;
 
           Connection con = dbre.getConnection();
+          if (sec == null) {
+            logger.warning("Can't get equivalent database for " + dbre.getName());
+            return true;
+          }
           Connection previousCon = sec.getConnection();
 
           SqlTemplate t = getSqlTemplate(dbre);
