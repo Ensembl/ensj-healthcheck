@@ -52,7 +52,7 @@ public class AttribTypeAcrossSpecies extends MultiDatabaseTestCase {
 	 */
 	public boolean run(DatabaseRegistry dbr) {
 
-		return checkTableAcrossSpecies("attrib_type", dbr, types, "attrib_type tables all the same", "attrib_type tables are different", "WHERE code NOT LIKE 'GeneNo%' AND code NOT LIKE '%LRG%'");
+		return checkTableAcrossSpecies("attrib_type", dbr, types, "attrib_type tables all the same", "attrib_type tables are different", "");
 
 	} // run
 
