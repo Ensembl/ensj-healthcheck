@@ -63,8 +63,8 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 
 		logicNameToAttribCode.put("CodingDensity", "coding_cnt");
                 logicNameToAttribCode.put("PseudogeneDensity", "pseudogene_cnt");
-                logicNameToAttribCode.put("ShortNonCodingDensity", "snoncoding_cnt");
-                logicNameToAttribCode.put("LongNonCodingDensity", "lnoncoding_cnt");
+                logicNameToAttribCode.put("ShortNonCodingDensity", "noncoding_cnt_s");
+                logicNameToAttribCode.put("LongNonCodingDensity", "noncoding_cnt_l");
 		setTeamResponsible(Team.RELEASE_COORDINATOR);
 	}
 
@@ -96,8 +96,8 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 			logicNameToAttribCode.put("PCodDensity", "knownGeneCount");
                         logicNameToAttribCode.remove("CodingDensity");
                         logicNameToAttribCode.remove("PseudogeneDensity");
-                        logicNameToAttribCode.put("ShortNonCodingDensity", "snoncoding_cnt");
-                        logicNameToAttribCode.put("LongNonCodingDensity", "lnoncoding_cnt");
+                        logicNameToAttribCode.put("ShortNonCodingDensity", "noncoding_cnt_s");
+                        logicNameToAttribCode.put("LongNonCodingDensity", "noncoding_cnt_l");
 		}
 
 		boolean result = true;
