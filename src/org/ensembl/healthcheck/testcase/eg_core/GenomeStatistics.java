@@ -37,7 +37,8 @@ public class GenomeStatistics extends AbstractEgCoreTestCase {
   // It's not great to hard-code these, but they're hard-coded in the
   // modules that generate the stats, so there's not really another option.
   List<String> statistics = Arrays.asList(new String[] {
-    "coding_cnt", "pseudogene_cnt", "snoncoding_cnt", "lnoncoding_cnt",
+    "coding_cnt", "pseudogene_cnt", "noncoding_cnt",
+    "noncoding_cnt_s", "noncoding_cnt_l", "noncoding_cnt_m",
     "transcript", "ref_length", "total_length" });
   
   // Should return 1 for each statistic
