@@ -71,6 +71,7 @@ species.substrain
 species.taxonomy_id
 species.three_letter_code
 species.url
+species.wikipedia_name
 species.wikipedia_url
 transcriptbuild.level
 xref.timestamp
