@@ -66,8 +66,12 @@ public class ProductionAnalysisLogicName extends AbstractTemplatedTestCase {
     Set<String> productionDbVersion = getDbVersionProduction(dbre, coreLogicNames);
     result &= checkHasDbVersion(dbre, productionDbVersion, coreDbVersion, databaseType);
     result &= checkHasDbVersion(dbre, coreDbVersion, productionDbVersion, "production");
-    result &= testForIdentity(dbre, coreLogicNames, productionLogicNames, "production");
-    result &= testForIdentity(dbre, productionLogicNames, coreLogicNames, databaseType);
+    if(!dbre.isMultiSpecies()) {
+    	// checks are inappropriate for a multispecies database where individual mappings
+    	// are not stored in the production database
+    	result &= testForIdentity(dbre, coreLogicNames, productionLogicNames, "production");
+    	result &= testForIdentity(dbre, productionLogicNames, coreLogicNames, databaseType);
+    }
     return result;
   }
   
