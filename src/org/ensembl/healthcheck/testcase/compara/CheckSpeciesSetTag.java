@@ -97,8 +97,8 @@ public class CheckSpeciesSetTag extends AbstractComparaTestCase {
 		boolean result = true;
 		Connection con1 = primaryComparaDbre.getConnection();
 		Connection con2 = secondaryComparaDbre.getConnection();
-		HashMap primarySets = new HashMap();
-		HashMap secondarySets = new HashMap();
+		HashMap<String,Integer> primarySets = new HashMap<String,Integer>();
+		HashMap<String,Integer> secondarySets = new HashMap<String,Integer>();
 
 		// Get list of species_set sets in the secondary server
 		String sql = "SELECT value, count(*) FROM species_set_tag WHERE tag = 'name' GROUP BY value";
@@ -122,26 +122,25 @@ public class CheckSpeciesSetTag extends AbstractComparaTestCase {
 			e.printStackTrace();
 		}
 
-		Iterator it = secondarySets.keySet().iterator();
+		Iterator<String> it = secondarySets.keySet().iterator();
 		while (it.hasNext()) {
-			Object next = it.next();
-			Object primaryValue = primarySets.get(next);
-			Integer secondaryValue = new Integer(secondarySets.get(next)
-					.toString());
+			String next = it.next();
+			Integer primaryValue = primarySets.get(next);
+			Integer secondaryValue = secondarySets.get(next);
 			if (primaryValue == null) {
 				ReportManager.problem(
 						this,
 						con1,
-						"Species set \"" + next.toString()
+						"Species set \"" + next
 								+ "\" is missing (it appears " + secondaryValue
 								+ " time(s) in "
 								+ DBUtils.getShortDatabaseName(con2) + ")");
 				result = false;
-			} else if (new Integer(primaryValue.toString()) < secondaryValue) {
+			} else if (primaryValue < secondaryValue) {
 				ReportManager.problem(
 						this,
 						con1,
-						"Species set \"" + next.toString()
+						"Species set \"" + next
 								+ "\" is present only " + primaryValue
 								+ " times instead of " + secondaryValue
 								+ " as in "
@@ -162,8 +161,8 @@ public class CheckSpeciesSetTag extends AbstractComparaTestCase {
 		Connection con = comparaDbre.getConnection();
 
 		// Get list of species (assembly_default) in compara
-		Vector comparaSpeciesStr = new Vector();
-		Vector comparaSpecies = new Vector();
+		Vector<String> comparaSpeciesStr = new Vector<String>();
+		Vector<Species> comparaSpecies = new Vector<Species>();
 		String sql2 = "SELECT genome_db.name FROM genome_db WHERE assembly_default = 1"
 				+ " AND name <> 'Ancestral sequences' AND name <> 'ancestral_sequences' ORDER BY genome_db.genome_db_id";
 		try {
@@ -187,7 +186,7 @@ public class CheckSpeciesSetTag extends AbstractComparaTestCase {
 		boolean allSpeciesFound = true;
 
 		for (int i = 0; i < comparaSpecies.size(); i++) {
-			Species species = (Species) comparaSpecies.get(i);
+			Species species = comparaSpecies.get(i);
 		    if (speciesMap.containsKey(species)) {
                 Connection speciesCon = speciesMap.get(species).getConnection();
 				String productionName = DBUtils
@@ -196,13 +195,13 @@ public class CheckSpeciesSetTag extends AbstractComparaTestCase {
 
 				if (!productionName.equals(comparaSpeciesStr.get(i))) {
 					ReportManager.problem(this, con,
-						"The genome_db '" + comparaSpeciesStr.get(i).toString() + "' as a different 'species.production_name' key: '" + productionName + "'"
+						"The genome_db '" + comparaSpeciesStr.get(i) + "' as a different 'species.production_name' key: '" + productionName + "'"
 						);
 					result = false;
 				}
 			} else {
 				ReportManager.problem(this, con, "No connection for "
-						+ comparaSpeciesStr.get(i).toString());
+						+ comparaSpeciesStr.get(i));
 				allSpeciesFound = false;
 			}
 		}
@@ -223,8 +222,8 @@ public class CheckSpeciesSetTag extends AbstractComparaTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-		HashMap allSetsWithAName = new HashMap();
-		HashMap allSetsForMultipleAlignments = new HashMap();
+		HashMap<Integer,String> allSetsWithAName = new HashMap<Integer,String>();
+		HashMap<Integer,String> allSetsForMultipleAlignments = new HashMap<Integer,String>();
 
 		if (tableHasRows(con, "species_set_tag")) {
 
@@ -256,12 +255,11 @@ public class CheckSpeciesSetTag extends AbstractComparaTestCase {
 				e.printStackTrace();
 			}
 
-			Iterator it = allSetsForMultipleAlignments.keySet().iterator();
+			Iterator<Integer> it = allSetsForMultipleAlignments.keySet().iterator();
 			while (it.hasNext()) {
-				Object next = it.next();
-				Object setName = allSetsWithAName.get(next);
-				String multipleAlignmentName = allSetsForMultipleAlignments
-						.get(next).toString();
+				Integer next = it.next();
+				String setName = allSetsWithAName.get(next);
+				String multipleAlignmentName = allSetsForMultipleAlignments.get(next);
 				if (setName == null) {
 					ReportManager.problem(this, con,
 							"There is no name entry in species_set_tag for MSA \""
