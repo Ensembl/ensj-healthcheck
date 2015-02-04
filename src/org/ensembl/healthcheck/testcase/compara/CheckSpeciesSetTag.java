@@ -128,23 +128,10 @@ public class CheckSpeciesSetTag extends AbstractComparaTestCase {
 			Integer primaryValue = primarySets.get(next);
 			Integer secondaryValue = secondarySets.get(next);
 			if (primaryValue == null) {
-				ReportManager.problem(
-						this,
-						con1,
-						"Species set \"" + next
-								+ "\" is missing (it appears " + secondaryValue
-								+ " time(s) in "
-								+ DBUtils.getShortDatabaseName(con2) + ")");
+				ReportManager.problem(this, con1, String.format("Species set '%s' is missing (it appears %d time(s) in %s", next, secondaryValue, DBUtils.getShortDatabaseName(con2)));
 				result = false;
 			} else if (primaryValue < secondaryValue) {
-				ReportManager.problem(
-						this,
-						con1,
-						"Species set \"" + next
-								+ "\" is present only " + primaryValue
-								+ " times instead of " + secondaryValue
-								+ " as in "
-								+ DBUtils.getShortDatabaseName(con2));
+				ReportManager.problem(this, con1, String.format("Species set '%s' is present only %d times instead of %d as in %s", next, primaryValue, secondaryValue, DBUtils.getShortDatabaseName(con2)));
 				result = false;
 			}
 		}
