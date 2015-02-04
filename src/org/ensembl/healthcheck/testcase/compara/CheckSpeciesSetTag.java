@@ -148,6 +148,14 @@ public class CheckSpeciesSetTag extends AbstractComparaTestCase {
 				result = false;
 			}
 		}
+		it = primarySets.keySet().iterator();
+		while (it.hasNext()) {
+			String next = it.next();
+			if (!secondarySets.containsKey(next)) {
+				ReportManager.problem(this, con1, String.format("Species set '%s' is new (compared to %s)", next, DBUtils.getShortDatabaseName(con2)));
+				result = false;
+			}
+		}
 
 		return result;
 	}
