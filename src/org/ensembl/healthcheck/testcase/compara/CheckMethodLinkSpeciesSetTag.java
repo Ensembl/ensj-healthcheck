@@ -38,10 +38,6 @@ import org.ensembl.healthcheck.util.DBUtils;
 
 public class CheckMethodLinkSpeciesSetTag extends SingleDatabaseTestCase {
 
-        private HashMap MLSSTagEntriesToAdd = new HashMap();
-
-        private HashMap MLSSTagEntriesToRemove = new HashMap();
-
         public CheckMethodLinkSpeciesSetTag() {
                 addToGroup("compara_genomic");
                 addToGroup("compara_homology");

@@ -82,7 +82,7 @@ public class CheckSynteny extends SingleDatabaseTestCase {
 	}
 
 	private String[] get_all_method_link_species_set_ids(Connection con) {
-		ArrayList method_link_species_set_ids = new ArrayList();
+		ArrayList<String> method_link_species_set_ids = new ArrayList<String>();
 
 		String[] method_link_ids = DBUtils
 				.getColumnValues(
@@ -99,8 +99,7 @@ public class CheckSynteny extends SingleDatabaseTestCase {
 			}
 		}
 
-		return (String[]) method_link_species_set_ids
-				.toArray(new String[method_link_species_set_ids.size()]);
+		return method_link_species_set_ids.toArray(new String[method_link_species_set_ids.size()]);
 	}
 
 	private boolean check_this_synteny(Connection con,

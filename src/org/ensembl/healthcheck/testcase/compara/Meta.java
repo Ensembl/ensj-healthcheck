@@ -41,13 +41,13 @@ public class Meta extends AbstractComparaTestCase implements Repair {
 
     String[] speciesless_meta_keys = { "schema_version", "schema_type", "patch" };
 
-	private HashMap MetaEntriesToAdd = new HashMap();
+	private HashMap<String,String> MetaEntriesToAdd = new HashMap<String,String>();
 
-	private HashMap MetaEntriesToRemove = new HashMap();
+	private HashMap<String,String> MetaEntriesToRemove = new HashMap<String,String>();
 
-	private HashMap MetaEntriesToUpdate = new HashMap();
+	private HashMap<String,String> MetaEntriesToUpdate = new HashMap<String,String>();
 
-	private HashMap SpeciesIdToUpdate = new HashMap();
+	private HashMap<String,String> SpeciesIdToUpdate = new HashMap<String,String>();
 
 	/**
 	 * Create an ForeignKeyMethodLinkId that applies to a specific set of databases.
@@ -89,7 +89,7 @@ public class Meta extends AbstractComparaTestCase implements Repair {
 		result &= checkSpeciesId(dbre);
 
 		// I still have to check if some entries have to be removed/inserted/updated
-		Iterator it = MetaEntriesToRemove.keySet().iterator();
+		Iterator<String> it = MetaEntriesToRemove.keySet().iterator();
 		while (it.hasNext()) {
 			Object next = it.next();
 			ReportManager.problem(this, con, "Remove from meta: " + next + " -- " + MetaEntriesToRemove.get(next));
@@ -142,7 +142,7 @@ public class Meta extends AbstractComparaTestCase implements Repair {
 				} else {    // the rest of meta_keys expect species_id=1 in Compara schema
 					if (rs.getInt(1) != 1) {
 						// set species_id of everything else to 1
-						SpeciesIdToUpdate.put(rs.getString(2), new Integer(1));
+						SpeciesIdToUpdate.put(rs.getString(2), "1");
 					}
 				}
 			}
@@ -177,10 +177,10 @@ public class Meta extends AbstractComparaTestCase implements Repair {
 			ResultSet rs = stmt.executeQuery(sql);
 			if (rs.first()) {
 				if (rs.getInt(2) != new Integer(dbNameVersion).intValue()) {
-					MetaEntriesToUpdate.put("schema_version", new Integer(dbNameVersion));
+					MetaEntriesToUpdate.put("schema_version", dbNameVersion);
 				}
 			} else {
-				MetaEntriesToAdd.put("schema_version", new Integer(dbNameVersion));
+				MetaEntriesToAdd.put("schema_version", dbNameVersion);
 			}
 			rs.close();
 			stmt.close();
@@ -216,7 +216,7 @@ public class Meta extends AbstractComparaTestCase implements Repair {
 			Statement stmt = con.createStatement();
 
 			// Start by removing entries as a duplicated entry will be both deleted and then inserted
-			Iterator it = MetaEntriesToRemove.keySet().iterator();
+			Iterator<String> it = MetaEntriesToRemove.keySet().iterator();
 			while (it.hasNext()) {
 				Object next = it.next();
 				String sql = "DELETE FROM meta WHERE meta_key = \"" + next + "\";";
@@ -280,7 +280,7 @@ public class Meta extends AbstractComparaTestCase implements Repair {
 
 		System.out.println("MySQL statements needed to repair meta table:");
 
-		Iterator it = MetaEntriesToRemove.keySet().iterator();
+		Iterator<String> it = MetaEntriesToRemove.keySet().iterator();
 		while (it.hasNext()) {
 			Object next = it.next();
 			System.out.println("  DELETE FROM meta WHERE meta_key = \"" + next + "\";");

@@ -75,7 +75,7 @@ public class CheckTopLevelDnaFrag extends AbstractComparaTestCase {
         Connection comparaCon = comparaDbre.getConnection();
 
         // Get list of species in compara
-        Vector comparaSpecies = new Vector();
+        Vector<Species> comparaSpecies = new Vector<Species>();
         String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE assembly_default = 1"
             + " AND name <> 'ancestral_sequences'";
         try {
@@ -94,7 +94,7 @@ public class CheckTopLevelDnaFrag extends AbstractComparaTestCase {
 
         String speciesNotFound = "";
         for (int i = 0; i < comparaSpecies.size(); i++) {
-          Species species = (Species) comparaSpecies.get(i);
+          Species species = comparaSpecies.get(i);
 	  
 		  if (speciesMap.containsKey(species)) {
               Connection speciesCon = speciesMap.get(species).getConnection();

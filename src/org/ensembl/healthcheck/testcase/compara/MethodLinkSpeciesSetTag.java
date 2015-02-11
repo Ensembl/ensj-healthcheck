@@ -39,11 +39,11 @@ Subclasses must fill the "tagToCheck" attribute and imnplement the "doCheck" met
 */
 public abstract class MethodLinkSpeciesSetTag extends SingleDatabaseTestCase implements Repair {
 
-	protected HashMap MetaEntriesToAdd = new HashMap();
+	protected HashMap<String,String> MetaEntriesToAdd = new HashMap<String,String>();
 
-	protected HashMap MetaEntriesToRemove = new HashMap();
+	protected HashMap<String,String> MetaEntriesToRemove = new HashMap<String,String>();
 
-	protected HashMap MetaEntriesToUpdate = new HashMap();
+	protected HashMap<String,String> MetaEntriesToUpdate = new HashMap<String,String>();
 
 	protected String tagToCheck;
 
@@ -72,7 +72,7 @@ public abstract class MethodLinkSpeciesSetTag extends SingleDatabaseTestCase imp
 		result &= doCheck(con);
 
 		// I still have to check if some entries have to be removed/inserted/updated
-		Iterator it = MetaEntriesToRemove.keySet().iterator();
+		Iterator<String> it = MetaEntriesToRemove.keySet().iterator();
 		while (it.hasNext()) {
 			Object next = it.next();
 			ReportManager.problem(this, con, "Remove from method_link_species_set_tag: " + next + " -- " + MetaEntriesToRemove.get(next));
@@ -122,7 +122,7 @@ public abstract class MethodLinkSpeciesSetTag extends SingleDatabaseTestCase imp
 			Statement stmt = con.createStatement();
 
 			// Start by removing entries as a duplicated entry will be both deleted and then inserted
-			Iterator it = MetaEntriesToRemove.keySet().iterator();
+			Iterator<String> it = MetaEntriesToRemove.keySet().iterator();
 			while (it.hasNext()) {
 				Object next = it.next();
 				String sql = "DELETE FROM method_link_species_set_tag WHERE method_link_species_set_id = \"" + next + "\" AND tag = \"" + tagToCheck + "\";";
@@ -173,7 +173,7 @@ public abstract class MethodLinkSpeciesSetTag extends SingleDatabaseTestCase imp
 
 		System.out.println("MySQL statements needed to repair method_link_species_set_tag table:");
 
-		Iterator it = MetaEntriesToRemove.keySet().iterator();
+		Iterator<String> it = MetaEntriesToRemove.keySet().iterator();
 		while (it.hasNext()) {
 			Object next = it.next();
 			System.out.println("  DELETE FROM method_link_species_set_tag WHERE method_link_species_set_id = \"" + next + "\" AND tag = \"" + tagToCheck + "\";");
