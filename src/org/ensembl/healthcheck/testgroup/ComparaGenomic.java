@@ -56,6 +56,7 @@ public class ComparaGenomic extends GroupOfTests {
 
 		addTest(
 			org.ensembl.healthcheck.testcase.eg_compara.EGMethodLinkSpeciesSetIdStats.class,
+			org.ensembl.healthcheck.testcase.eg_compara.EGMethodLinkSpeciesSetIdSyntenyStats.class,
 			org.ensembl.healthcheck.testcase.compara.CheckConservationScore.class,
 			org.ensembl.healthcheck.testcase.compara.CheckGenomicAlignGenomeDBs.class,
 			org.ensembl.healthcheck.testcase.compara.CheckMethodLinkSpeciesSetTag.class,
