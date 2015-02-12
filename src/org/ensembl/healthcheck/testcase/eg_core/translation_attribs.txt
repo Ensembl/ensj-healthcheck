@@ -1,5 +1,6 @@
 amino_acid_sub
 starts_met
+has_start_codon
 has_stop_codon
 AvgResWeight
 NumResidues

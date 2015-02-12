@@ -48,6 +48,8 @@ public class EBCore extends GroupOfTests {
 				Karyotype.class, GoTermCount.class, InterproHitCount.class,
 				NoRepeatFeatures.class, ProductionAnalysisLogicName.class,
 				RepeatAnalysesInMeta.class, StableID.class, XrefVersions.class,
-				SeqRegionsConsistentWithComparaMaster.class, ComparePreviousVersionExonCoords.class);
+				SeqRegionsConsistentWithComparaMaster.class,
+				ComparePreviousVersionExonCoords.class, Karyotype.class,
+				EnaProvider.class);
 	}
 }

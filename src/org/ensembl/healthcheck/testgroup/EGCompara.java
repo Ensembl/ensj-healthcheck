@@ -29,6 +29,7 @@ import org.ensembl.healthcheck.testcase.eg_compara.EGCheckNoTreeStableIds;
 import org.ensembl.healthcheck.testcase.eg_compara.EGCheckSynteny;
 import org.ensembl.healthcheck.testcase.eg_compara.EGForeignKeyMethodLinkSpeciesSetId;
 import org.ensembl.healthcheck.testcase.eg_compara.EGMethodLinkSpeciesSetIdStats;
+import org.ensembl.healthcheck.testcase.eg_compara.EGMethodLinkSpeciesSetIdSyntenyStats;
 import org.ensembl.healthcheck.testcase.eg_compara.MemberProductionCounts;
 import org.ensembl.healthcheck.testcase.eg_compara.MemberXrefAssociation;
 
@@ -50,6 +51,7 @@ public class EGCompara extends GroupOfTests {
 				EGCheckSynteny.class,
 				EGForeignKeyMethodLinkSpeciesSetId.class,
 				EGMethodLinkSpeciesSetIdStats.class,
+				EGMethodLinkSpeciesSetIdSyntenyStats.class,
 				EGCheckNoTreeStableIds.class,
 				ForeignKeyDnafragId.class, 
 				ForeignKeyGenomeDbId.class,

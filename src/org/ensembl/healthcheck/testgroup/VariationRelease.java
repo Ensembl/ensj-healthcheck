@@ -37,6 +37,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionVariations </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.CompareVariationSchema </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.CompressedGenotypeRegion </li>
+ *   <li> org.ensembl.healthcheck.testcase.variation.Denormalized </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.EmptyVariationTables </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.ForeignKeyCoreId </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.IndividualType </li>
@@ -79,6 +80,7 @@ public class VariationRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionVariations.class,
 			org.ensembl.healthcheck.testcase.variation.CompareVariationSchema.class,
 			org.ensembl.healthcheck.testcase.variation.CompressedGenotypeRegion.class,
+			org.ensembl.healthcheck.testcase.variation.Denormalized.class,
 			org.ensembl.healthcheck.testcase.variation.EmptyVariationTables.class,
 			org.ensembl.healthcheck.testcase.variation.ForeignKeyCoreId.class,
 			org.ensembl.healthcheck.testcase.variation.IndividualType.class,

@@ -37,7 +37,8 @@ public class GenomeStatistics extends AbstractEgCoreTestCase {
   // It's not great to hard-code these, but they're hard-coded in the
   // modules that generate the stats, so there's not really another option.
   List<String> statistics = Arrays.asList(new String[] {
-    "coding_cnt", "pseudogene_cnt", "snoncoding_cnt", "lnoncoding_cnt",
+    "coding_cnt", "pseudogene_cnt", "noncoding_cnt",
+    "noncoding_cnt_s", "noncoding_cnt_l", "noncoding_cnt_m",
     "transcript", "ref_length", "total_length" });
   
   // Should return 1 for each statistic
@@ -59,19 +60,22 @@ public class GenomeStatistics extends AbstractEgCoreTestCase {
       + "WHERE statistic <> code AND statistic NOT IN "
       + "('transcript', 'alt_transcript', 'PredictionTranscript', 'StructuralVariation');";
   
+	@Override
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
 		boolean passes = true;
     
-    for (String statistic : statistics) {
-      int statCount = getTemplate(dbre).queryForDefaultObject(STATISTIC_EXISTS, Integer.class, statistic);
+		final int speciesCnt = dbre.getSpeciesIds().size();
+
+    for (final String statistic : statistics) {
+      final int statCount = getTemplate(dbre).queryForDefaultObject(STATISTIC_EXISTS, Integer.class, statistic);
       
-      if (statCount != 1) {
+			if (statCount != speciesCnt) {
         passes = false;
-        ReportManager.problem(this, dbre.getConnection(), statCount+" '"+statistic+"' entries found in genome_statistics table.");
+        ReportManager.problem(this, dbre.getConnection(), statCount+" '"+statistic+"' entries found in genome_statistics table - expected "+speciesCnt);
       }
     }
     
-    int statsConsistent = getTemplate(dbre).queryForDefaultObject(STATISTICS_CONSISTENT, Integer.class);
+    final int statsConsistent = getTemplate(dbre).queryForDefaultObject(STATISTICS_CONSISTENT, Integer.class);
     if (statsConsistent > 0) {
       passes = false;
       ReportManager.problem(this, dbre.getConnection(), "Inconsistent statistic names: "+STATISTICS_CONSISTENT);

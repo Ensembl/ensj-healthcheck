@@ -52,25 +52,28 @@ public class Denormalized extends SingleDatabaseTestCase {
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 
-    Species species = dbre.getSpecies();
 		boolean result = true;
-		int rows = 0;
 
 		Connection con = dbre.getConnection();
-
 		try {
-		  if (species == Species.HOMO_SAPIENS) {
+		  // somatic
+		  if (dbre.getSpecies() == Species.HOMO_SAPIENS) {
         result &= checkForBadDenormalization(con, "variation", "variation_id", "somatic", "variation_feature", "variation_id", "somatic");
         result &= checkForBadDenormalization(con, "structural_variation", "structural_variation_id", "somatic", "structural_variation_feature", "structural_variation_id", "somatic");
+        result &= checkForBadDenormalization(con, "variation_feature", "variation_feature_id", "somatic", "transcript_variation", "variation_feature_id", "somatic");
       }
+      // display
+      result &= checkForBadDenormalization(con, "variation", "variation_id", "display", "variation_feature", "variation_id", "display");
+      result &= checkForBadDenormalization(con, "variation_feature", "variation_feature_id", "display", "transcript_variation", "variation_feature_id", "display");
     } catch (Exception e) {
 			ReportManager.problem(this, con, "HealthCheck generated an exception: " + e.getMessage());
 			result = false;
 		}
 		if (result) {
 			// if there were no problems, just inform for the interface to pick the HC
-			ReportManager.correct(this, con, "VariationForeignKeys test passed without any problem");
+			ReportManager.correct(this, con, "Denormalized columns test passed without any problem");
 		}
+
 		return result;
   }
   
@@ -104,11 +107,11 @@ public class Denormalized extends SingleDatabaseTestCase {
 		     table1 + "." + col1d + " != " + table2 + "." + col2d;
 	
 	  String useful_sql = "SELECT " + table1 + "." + col1 + ", " + table1 + "." + col1d + ", " +
-	                                  table2 + "." + col2 + ", " + table2 + "." + col2d + " " + sql;
+	                                  table2 + "." + col2 + ", " + table2 + "." + col2d + " FROM " + sql;
 	
 	  int count = DBUtils.getRowCount(con, "SELECT count(*) FROM " + sql);
 	  
-	  if (count > 0) {
+	  if (count != 0) {
 			ReportManager.problem(this, con, "FAILED " + table1 + " -> "
 					+ table2 + " on the denormalization of " + col1d + " using the FK " + col1);
 			ReportManager.problem(this, con, "FAILURE DETAILS: " + count

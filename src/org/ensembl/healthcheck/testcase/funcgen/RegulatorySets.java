@@ -334,9 +334,10 @@ public class RegulatorySets extends SingleDatabaseTestCase {
                 //as separate Strings
                 //String[] rsetStates = {Arrays.asList(dsetStates).,  };
                 //Need to get current CS name here for IMPORTED_'CS_NAME' status
-                //my @fset_states = (@rset_states, 'MART_DISPLAYABLE');
-                String[] rsetStates  = {"DISPLAYABLE", "DAS_DISPLAYABLE"}; //Conditional test for RESULT_FEATURE_SET is below
-                String[] fsetStates  = {"DISPLAYABLE", "DAS_DISPLAYABLE", "MART_DISPLAYABLE"};
+
+			  
+                String[] rsetStates  = {"DISPLAYABLE"}; //Conditional test for RESULT_FEATURE_SET is below
+                String[] fsetStates  = {"DISPLAYABLE", "MART_DISPLAYABLE"};
                 String rsetStatesString = Arrays.toString(rsetStates).replaceAll("[\\[\\]]", "'");
                 String fsetStatesString = Arrays.toString(fsetStates).replaceAll("[\\[\\]]", "'");
                 String dsetStatesString = Arrays.toString(dsetStates).replaceAll("[\\[\\]]", "'");
@@ -429,8 +430,15 @@ public class RegulatorySets extends SingleDatabaseTestCase {
                                                                   "not a RESULT_FEATURE_SET:\t" + ssRsetIDs.get(i));
                                             result = false;
                                         }
+<<<<<<< HEAD
                                         else if(! dbfPath.matches(".*" + Pattern.quote(rs.getString("rs_name")) + "/*")){//rset_name matches path?
                                             ReportManager.problem(this, efgCon,
+=======
+                                        else if(! dbfPath.matches(".*" + rs.getString("rs_name") + "/*")){//rset_name matches path?
+                                            //This is currently not handling meta characters in the rs_name
+                                            //specifically  Monocytes-CD14+
+                                            ReportManager.problem(this, efgCon, 
+>>>>>>> Removes DAS_DISPLAYABLE status from RegulatorySets HC
                                                                   "Found mismatch between ResultSet name and dbfile_registry.path:\t" +
                                                                   rs.getString("rs_name") + " vs " + dbfPath);
                                             result = false;
@@ -512,8 +520,17 @@ public class RegulatorySets extends SingleDatabaseTestCase {
                 //Unless it is a patch version
                 //e.g. remove just a few problem features
                 //dates remain same but version goes from 12 to 12.1?
+<<<<<<< HEAD
 
                 Connection secCon = getEquivalentFromSecondaryServer(dbre).getConnection();
+=======
+                
+                //This is not caught! And results will be returned from test DB?
+
+                Connection secCon = getEquivalentFromSecondaryServer(dbre).getConnection();
+                
+
+>>>>>>> Removes DAS_DISPLAYABLE status from RegulatorySets HC
 
                 if (secCon == null) {
                     logger.warning("Can't get equivalent database for " + dbre.getName());
