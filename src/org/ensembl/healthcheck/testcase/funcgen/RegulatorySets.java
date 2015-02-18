@@ -430,7 +430,8 @@ public class RegulatorySets extends SingleDatabaseTestCase {
                                                                   "not a RESULT_FEATURE_SET:\t" + ssRsetIDs.get(i));
                                             result = false;
                                         }
-                                        else if(! dbfPath.matches(".*" + Pattern.quote(rs.getString("rs_name")) + "/*")){//rset_name matches path?
+                                        else if(! dbfPath.matches(".*" + Pattern.quote(rs.getString("rs_name")) + ".*")){//rset_name matches path?
+                                            // This now allows fuzzy matching on path to allow for 'versioned' data.
                                             ReportManager.problem(this, efgCon,
                                                                   "Found mismatch between ResultSet name and dbfile_registry.path:\t" +
                                                                   rs.getString("rs_name") + " vs " + dbfPath);
