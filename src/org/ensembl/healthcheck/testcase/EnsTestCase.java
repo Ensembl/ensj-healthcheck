@@ -154,14 +154,14 @@ public abstract class EnsTestCase {
 
 	private String[] funcgenFeatureTables = { "probe_feature",
 			"annotated_feature", "regulatory_feature", "external_feature",
-			"motif_feature" };
+			"motif_feature", "mirna_target_feature", "segmentation_feature" };
 
 	/**
 	 * Funcgen tables that have an analysis ID.
 	 */
 
 	private String[] funcgenTablesWithAnalysisID = { "probe_feature",
-			"object_xref", "unmapped_object", "feature_set", "result_set" };
+			"object_xref", "unmapped_object", "feature_set", "result_set" }; // also feature_type, but this is marked for removal.
 
 	protected boolean setSystemProperties = true;
 

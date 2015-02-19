@@ -125,7 +125,7 @@ public class FeaturePosition extends SingleDatabaseTestCase {
     for(String fTable : featureTables){
         String problemString = "";
         String usefulSQL     = "";
-        String deleteSQL     = "";
+        String updateSQL     = "";
         int    totalFeatures = 0;
         Iterator<String> it = seqRegionLen.keySet().iterator();
 
@@ -167,16 +167,24 @@ public class FeaturePosition extends SingleDatabaseTestCase {
                 //Delete as we never trust peaks over ends of sequencable regions, as they are likely
                 //the start of long ranging repeats where alignments stack up erroneously
           
-                if(fTable.equals("regulatory_feature")){
+                /** if(fTable.equals("regulatory_feature")){
                     deleteSQL += "DELETE ra, rf from regulatory_feature rf join " + 
                         "regulatory_attribute ra using (regulatory_feature_id) WHERE seq_region_id=" + 
                         funcgenRegionID + " AND  ((seq_region_start - bound_start_length)  = 0 " +
-                        "OR  (seq_region_end + bound_end_length)  > " + srLength + ");\n" ;
+                        "OR  (seq_region_end + bound_end_length)  > " + srLength + ");\n" ; 
+               
+
                 }
                 else{
-                    deleteSQL += "DELETE from " + fTable + " WHERE seq_region_id=" + funcgenRegionID + 
-                        " AND  (seq_region_start = 0 OR seq_region_end  > " + srLength + ");\n";
-                }
+                     deleteSQL += "DELETE from " + fTable + " WHERE seq_region_id=" + funcgenRegionID + 
+                        " AND  (seq_region_start = 0 OR seq_region_end  > " + srLength + ");\n"; **/
+                updateSQL += "UPDATE " + fTable + " set seq_region_end =" + srLength +  "WHERE seq_region_id=" + 
+                  funcgenRegionID + " AND seq_region_end  > " + srLength + ";\n";
+
+                updateSQL += "UPDATE " + fTable + " set seq_region_start=1 WHERE seq_region_id=" + 
+                  funcgenRegionID + " AND seq_region_start = 0;\n";
+
+                //}
             
                 usefulSQL += sql + ";\n";			
                 problemString = problemString + " " + srName + "(" + featCount + ")";
@@ -184,14 +192,11 @@ public class FeaturePosition extends SingleDatabaseTestCase {
             }
         }
 
-        if(! problemString.isEmpty() ){
-        
+        if(! problemString.isEmpty() ){     
             ReportManager.problem
-                (
-                 this, efgCon, 
+                (this, efgCon, 
                  "Found " + totalFeatures + " " + fTable + "s exceeding seq_region bounds:\t" + problemString +
-                 "\nUSEFUL SQL:\n" + usefulSQL + "\nDELETE SQL:\n" + deleteSQL
-                 );  
+                 "\nUSEFUL SQL:\n" + usefulSQL + "\nUPDATE SQL:\n" + updateSQL);  
         }
     }
 		return result;
