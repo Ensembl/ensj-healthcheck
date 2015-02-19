@@ -193,34 +193,48 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 		Map<String, String> srID2name    = new HashMap<String, String>();
 		Map<String, String> coreSrID2efg = new HashMap<String, String>();
 
-		//Die if we don't see the current schema build and is the only one that is_current
-		//Otherwise we cannot be sure that all seq_region records have been updated
-		String csName = DBUtils.getRowColumnValue(coreDbre.getConnection(),  "SELECT name FROM coord_system order by rank desc limit 1");
-		String[] currentSchemaBuilds = DBUtils.getColumnValues(efgCon,  "SELECT schema_build FROM coord_system where is_current=1 and schema_build is not null" +
-		    " AND name='" + csName + "'");
-
-		if ((currentSchemaBuilds.length != 1) ||
-			(! currentSchemaBuilds[0].equals(schemaBuild))){
-
-
-			ReportManager.problem(this, efgCon, "Could not identify a unique current coord_system.schema_build to match " + schemaBuild);
-			return false;
+		// Die if we don't see the current schema build and is the only one that is_current
+		// Otherwise we cannot be sure that all seq_region records have been updated
+		String csName = DBUtils.getRowColumnValue(coreDbre.getConnection(),  
+      "SELECT name FROM coord_system order by rank desc limit 1");
+		
+		if(csName == null){
+			ReportManager.problem(this, efgCon, "Could not identify coord_system entries for schema_build:\t" + schemaBuild);
+			return false;	
 		}
-
 
 
 		try {
 
-			ResultSet rs = efgCon.createStatement().executeQuery("SELECT s.seq_region_id, s.name, s.core_seq_region_id FROM seq_region s, coord_system cs " +
-					"WHERE cs.coord_system_id=s.coord_system_id AND cs.name='chromosome' and cs.attrib='default_version' and " +
-							"cs.schema_build='" + schemaBuild + "' and s.name not like '%\\_%' group by s.seq_region_id");
+      ResultSet rs = efgCon.createStatement().executeQuery("SELECT coord_system_id, rank, schema_build " + 
+        "FROM coord_system WHERE is_current=1 and schema_build is not null AND name='" + csName + "'");
+      // Should never have null schema_build entries
 
+      int csRank = 999999999;
+      String csID = ""; // Can't just declare here and init in the while as this causes a compilation error
 
+      while(rs.next()){
 
-			//added not like '\_' to try and avoid non_ref stuff
-			//maybe we just remove this limit of 75?
+        if (! rs.getString(3).equals(schemaBuild)){
+          ReportManager.problem(this, efgCon, 
+            "Found an 'is_current' " + csName + "coord_system with unexpected schema_build:\t" + rs.getString(3));
+          return false;
+        }
 
+        // Do we need a attrib 'default' check here too?
 
+        // Get highest ranking csID
+        if (rs.getInt(2) < csRank){
+          csRank = rs.getInt(2);
+          csID   = rs.getString(1);
+        }
+      }
+      rs.close();
+
+      rs = efgCon.createStatement().executeQuery("SELECT s.seq_region_id, s.name, s.core_seq_region_id " + 
+        "FROM seq_region s WHERE s.coord_system_id=" + csID + 
+        " and s.name not like '%\\_%' group by s.seq_region_id");
+		
 			//Do we even need this core_seq_region_id translation?
 			//Just link via the sr.name!
 
@@ -228,7 +242,6 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 				srID2name.put(rs.getString(1), rs.getString(2));
 				coreSrID2efg.put(rs.getString(3), rs.getString(1));
 			}
-
 			rs.close();
 
 			if (srID2name.size() > MAX_CHROMOSOMES) {
