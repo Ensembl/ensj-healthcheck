@@ -83,6 +83,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.NullStrings </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.NullTranscripts </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.PredictedXrefs </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.PredictionTranscriptHasExons </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.ProteinFeatures </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.Pseudogene </li> 
@@ -178,6 +179,7 @@ public class PostGenebuild extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.NullStrings.class,
 			org.ensembl.healthcheck.testcase.generic.NullTranscripts.class,
 			org.ensembl.healthcheck.testcase.generic.PredictedXrefs.class,
+			org.ensembl.healthcheck.testcase.generic.PredictionTranscriptHasExons.class,
 			org.ensembl.healthcheck.testcase.generic.ProteinFeatures.class,
 			org.ensembl.healthcheck.testcase.generic.ProteinFeatureTranslation.class,
 			org.ensembl.healthcheck.testcase.generic.Pseudogene.class,
