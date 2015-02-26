@@ -110,7 +110,7 @@ public class InterproDescriptions extends SingleDatabaseTestCase {
 		}
 
 		// check that the description field is populated for all of them
-		sql = "SELECT COUNT(*) FROM interpro i, xref x WHERE i.interpro_ac=x.dbprimary_acc AND x.description IS NULL";
+		sql = "SELECT COUNT(*) FROM interpro i, xref x WHERE i.interpro_ac=x.dbprimary_acc AND (x.description IS NULL OR x.description = '')";
 
 		rows = DBUtils.getRowCount(con, sql);
 		if (rows > 0) {
