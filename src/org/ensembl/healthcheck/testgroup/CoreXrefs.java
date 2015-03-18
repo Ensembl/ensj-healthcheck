@@ -29,8 +29,10 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionGeneNames </li>  
  *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionSynonyms </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionXrefs </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.DescriptionXrefs </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.DisplayLabels </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.DisplayXref </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.DisplayXref </li>
+ *   <li> org.ensembl.healthcheck.testcase.generic.DisplayLabelsMIM </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.EntrezGeneNumeric </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ExternalDBDescribe </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName </li> 
@@ -73,8 +75,10 @@ public class CoreXrefs extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionGeneNames.class,
 			org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionSynonyms.class,
 			org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionXrefs.class,
+			org.ensembl.healthcheck.testcase.generic.DescriptionXrefs.class,
 			org.ensembl.healthcheck.testcase.generic.DisplayLabels.class,
 			org.ensembl.healthcheck.testcase.generic.DisplayXref.class,
+			org.ensembl.healthcheck.testcase.generic.DisplayLabelsMIM.class,
 			org.ensembl.healthcheck.testcase.generic.EntrezGeneNumeric.class,
 			org.ensembl.healthcheck.testcase.generic.ExternalDBDescribe.class,
 			org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName.class,
