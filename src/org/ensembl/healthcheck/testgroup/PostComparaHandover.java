@@ -63,7 +63,9 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.DataFiles </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.DensityFeatures </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.DescriptionNewlines </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.DescriptionXrefs </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.DisplayLabels </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.DisplayLabelsMIM </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.DisplayXref </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.Ditag </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.DNAEmpty </li> 
@@ -197,7 +199,9 @@ public class PostComparaHandover extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.DataFiles.class,
 			org.ensembl.healthcheck.testcase.generic.DensityFeatures.class,
 			org.ensembl.healthcheck.testcase.generic.DescriptionNewlines.class,
+			org.ensembl.healthcheck.testcase.generic.DescriptionXrefs.class,
 			org.ensembl.healthcheck.testcase.generic.DisplayLabels.class,
+			org.ensembl.healthcheck.testcase.generic.DisplayLabelsMIM.class,
 			org.ensembl.healthcheck.testcase.generic.DisplayXref.class,
 			org.ensembl.healthcheck.testcase.generic.Ditag.class,
 			org.ensembl.healthcheck.testcase.generic.DNAEmpty.class,
