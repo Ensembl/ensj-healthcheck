@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
@@ -69,6 +70,7 @@ public class CheckMethodLinkSpeciesSetTag extends SingleDatabaseTestCase {
                 result &= checkSpeciesTreesArePresent(dbre);
 		result &= checkThresholdOnDsArePresent(dbre);
 				result &= checkSpeciesAreSpelledCorrectly(dbre);
+				result &= checkLowCoverageMLSSAreLinkedToHighCoverageMLSS(dbre);
 
                 return result;
         }
@@ -147,4 +149,30 @@ public class CheckMethodLinkSpeciesSetTag extends SingleDatabaseTestCase {
 		return checkForOrphansWithConstraint(con, "method_link_species_set_tag", "value", "genome_db", "name", "tag LIKE '%reference_species'");
 	}
 
+
+	public boolean checkLowCoverageMLSSAreLinkedToHighCoverageMLSS(final DatabaseRegistryEntry dbre) {
+		Connection con = dbre.getConnection();
+		String sql = "SELECT mlss1.method_link_species_set_id, tag, value, mlss2.method_link_species_set_id, ml2.type"
+			+ " FROM method_link_species_set mlss1 JOIN method_link ml1 USING (method_link_id)"
+			+ " LEFT JOIN method_link_species_set_tag mlsst ON mlsst.method_link_species_set_id = mlss1.method_link_species_set_id AND tag = 'high_coverage_mlss_id'"
+			+ " LEFT JOIN (method_link_species_set mlss2 JOIN method_link ml2 USING (method_link_id)) ON value = mlss2.method_link_species_set_id"
+			+ " WHERE ml1.type = 'EPO_LOW_COVERAGE'";
+
+		List<String[]> bad_rows = DBUtils.getRowValuesList(con, sql);
+		boolean result = true;
+		for (String[] row : bad_rows) {
+			// Check all the potential errors
+			if (row[1] == null) {
+				ReportManager.problem(this, con, String.format("The MLSS ID %s is missing its 'high_coverage_mlss_id' tag", row[0]));
+			} else if (row[2] == null) {
+				ReportManager.problem(this, con, String.format("The 'high_coverage_mlss_id' tag for MLSS ID %s has a NULL value", row[0]));
+			} else if (row[3] == null) {
+				ReportManager.problem(this, con, String.format("The value of the 'high_coverage_mlss_id' tag for MLSS ID %s does not link to a valid MLSS ID: '%s'", row[0], row[2]));
+			} else if (!row[4].equals("EPO")) {
+				ReportManager.problem(this, con, String.format("The value of the 'high_coverage_mlss_id' tag for MLSS ID %s does not link to a 'EPO' MLSS but '%s' (ID %s)", row[0], row[4], row[3]));
+			}
+			result = false;
+		}
+		return result;
+	}
 }
