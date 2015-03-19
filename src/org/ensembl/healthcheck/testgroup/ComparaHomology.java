@@ -81,6 +81,7 @@ public class ComparaHomology extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeNodeId.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyTaxonId.class,
 			org.ensembl.healthcheck.testcase.compara.Meta.class,
+			org.ensembl.healthcheck.testcase.compara.MethodLinkSpeciesSetIdStatsHomology.class,
 			org.ensembl.healthcheck.testcase.compara.SingleDBCollations.class,
 			org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class,
 			org.ensembl.healthcheck.testcase.eg_compara.CheckEmptyLeavesTrees.class,
