@@ -49,6 +49,7 @@ public class ProductionAnalysisLogicName extends AbstractTemplatedTestCase {
 
   public void types() {
     removeAppliesToType(DatabaseType.SANGER_VEGA);
+    removeAppliesToType(DatabaseType.VEGA);
   }
   
   @Override
