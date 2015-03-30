@@ -72,7 +72,7 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
     String[] setTables              = { "variation_set_structure" };
     String[] genotypeTables         = { "compressed_genotype_region", "compressed_genotype_var" };
     String[] strainTables           = { "strain_gtype_poly" };
-    String[] regulatoryTables       = { "motif_feature_variation", "regulatory_feature_variation", "MTMP_regulatory_feature_variation", "MTMP_motif_feature_variation", "display_group" };
+    String[] regulatoryTables       = { "motif_feature_variation", "regulatory_feature_variation", "display_group" };
     String[] citationTables         = { "publication", "variation_citation" };
 
     // first drop the unused tables
@@ -112,7 +112,7 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
     
     // only these species have citation data
 
-    if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS  && species != Species.BOS_TAURUS && species != Species.RATTUS_NORVEGICUS && species != Species.CANIS_FAMILIARIS && species != Species.GALLUS_GALLUS ) {
+    if (species != Species.HOMO_SAPIENS && species != Species.MUS_MUSCULUS  && species != Species.BOS_TAURUS && species != Species.RATTUS_NORVEGICUS && species != Species.CANIS_FAMILIARIS && species != Species.GALLUS_GALLUS && species != Species.SUS_SCROFA && species != Species.OVIS_ARIES ) {
       tables = remove(tables, citationTables);
     }
     return tables;
