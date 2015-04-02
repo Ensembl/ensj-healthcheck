@@ -93,6 +93,7 @@ public enum Species {
 	PELODISCUS_SINENSIS(13735, "PelSin", "ENSPSI", "Chinese_softshell_turtle,turtle,softshell_turtle,Trionyx_sinensis"),
 	PETROMYZON_MARINUS(7757, "Pmarinus", "ENSPMA", "lamprey,sea_lamprey,pmarinus,petromyzon,petromyzon_marinus"),
 	POECILIA_FORMOSA(48698, "PoeFor", "ENSPFO", "amazon molly,poecilia_formosa,pformosa,poefor,pfor"),
+        PHYSETER_MACROCEPHALUS(9755,"PhyMac", "ENSPMC", "physeter_macrocephalus, sperm whale, pmac, pmacrocephalus, physeter macrocephalus, phymac"),
 	PONGO_ABELII(9601, "PPYG", "ENSPPY", "orangutan,orang-utan,pabellii,pongo_abelii"),
 	PROCAVIA_CAPENSIS(9813, "PROCAP", "ENSPCA", "cape_rock_hyrax,caperockhyrax,procaviacapensis,procavia_capensis"),
 	PTEROPUS_VAMPYRUS(132908, "PTEVAM", "ENSPVA", "large_flying_fox,largeflyingfox,pteropusvampyrus,pteropus_vampyrus"),
