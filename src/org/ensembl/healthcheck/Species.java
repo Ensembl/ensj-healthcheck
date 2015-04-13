@@ -45,7 +45,7 @@ public enum Species {
 	CIONA_SAVIGNYI(51511, "CSAV", "ENSCSAV", "savignyi,cionasavignyi,csavignyi,ciona_savignyi"),
   CRICETULUS_GRISEUS(10029, "CriGri", "ENSCGR", "hamster,chinese_hamster,cgriseus,cricetulus_griseus"),
 	CULEX_PIPIENS(7175, "CpiJ", "CPIJ", "culex,culexpipiens,culex_pipiens"),
-	DANIO_RERIO(7955, "Zv", "ENSDAR", "zebrafish,danio,drerio,daniorerio,danio_rerio"),
+	DANIO_RERIO(7955, "GRCz", "Zv", "ENSDAR", "zebrafish,danio,drerio,daniorerio,danio_rerio"),
 	DASYPUS_NOVEMCINCTUS(9361, "DasNov", "ENSDNO", "armadillo,daisy,dasypus,nine_banded_armadillo,nine-banded_armadillo,texas_armadillo,dasypus_novemcinctus"),
 	DIPODOMYS_ORDII(10020, "DIPORD", "ENSDOR", "ords_kangaroo_rat,ordskangaroorat,kangaroo_rat, kangaroorat , dipodomys_ordii"),
 	DROSOPHILA_ANANASSAE(7217, "dana", "IGNORE", "drosophila,ananassae,drosophilaananassae,drosophila_ananassae,dana"),
