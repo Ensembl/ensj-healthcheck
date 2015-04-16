@@ -64,7 +64,10 @@ public class Denormalized extends SingleDatabaseTestCase {
         result &= checkForBadDenormalization(con, "variation_feature", "variation_feature_id", "somatic", "transcript_variation", "variation_feature_id", "somatic");
       }
       // display
-      result &= checkForBadDenormalization(con, "variation", "variation_id", "display", "variation_feature", "variation_id", "display");
+      // Query switched off for human because it was taking too long to run.
+      if (dbre.getSpecies() != Species.HOMO_SAPIENS) {
+        result &= checkForBadDenormalization(con, "variation", "variation_id", "display", "variation_feature", "variation_id", "display");
+      }
       result &= checkForBadDenormalization(con, "variation_feature", "variation_feature_id", "display", "transcript_variation", "variation_feature_id", "display");
     } catch (Exception e) {
       ReportManager.problem(this, con, "HealthCheck generated an exception: " + e.getMessage());
