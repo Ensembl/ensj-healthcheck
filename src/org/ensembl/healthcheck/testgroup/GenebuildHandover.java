@@ -19,17 +19,16 @@ package org.ensembl.healthcheck.testgroup;
 import org.ensembl.healthcheck.GroupOfTests;
 
 /**
- * These are the tests to run once all analyses have been completed.
+ * These are the tests to run once the geneset is complete.
  *
  * @author Thomas Maurel
  *
  */
-public class PostComparaHandover extends GroupOfTests {
+public class GenebuildHandover extends GroupOfTests {
 	
-	public PostComparaHandover() {
+	public GenebuildHandover() {
 
 		addTest(
-                        AdditionalAnnotation.class,
                         Assembly.class,
                         CoreCompare.class,
                         CoreXrefs.class,
