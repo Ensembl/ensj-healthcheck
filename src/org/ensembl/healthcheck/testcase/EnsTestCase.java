@@ -810,7 +810,7 @@ public abstract class EnsTestCase {
 		// return existing one if we already have it, otherwise use method above
 		// to find it
 		return productionDBRE != null ? productionDBRE
-				: getDatabaseRegistryEntryByPattern("ensembl_production");
+				: getDatabaseRegistryEntryByPattern(System.getProperty("production.database"));
 
 	}
 
