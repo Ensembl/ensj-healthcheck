@@ -177,17 +177,19 @@ public class SourceTypes extends SingleDatabaseTestCase {
                }
 
                sql = "SELECT COUNT(*) FROM transcript t, analysis a WHERE t.analysis_id = a.analysis_id AND source not in ('ensembl') AND (logic_name LIKE '%ensembl%' OR logic_name LIKE '%nrcna%') AND logic_name NOT LIKE '%havana%'";
+               String useful_sql = "SELECT t.stable_id, t.source, a.logic_name FROM transcript t, analysis a WHERE t.analysis_id = a.analysis_id AND source not in ('ensembl') AND (logic_name LIKE '%ensembl%' OR logic_name LIKE '%nrcna%') AND logic_name NOT LIKE '%havana%'";
 
                rows = DBUtils.getRowCount(con, sql);
 
                if (rows > 0) {
 
                        result = false;
-                       ReportManager.problem(this, con, "Some transcripts of %ensembl% and/or %ncrna% analyses do not have ensembl source");
+                       ReportManager.problem(this, con, "Some transcripts of %ensembl% and/or %ncrna% analyses do not have ensembl source. Try " + useful_sql + " to find those transcripts");
 
                }
 
                sql = "SELECT COUNT(*) FROM transcript t, analysis a WHERE t.analysis_id = a.analysis_id AND source not in ('havana') AND logic_name LIKE '%havana%' AND logic_name NOT LIKE '%ensembl_havana%'";
+               useful_sql = "SELECT t.stable_id, t.source, a.logic_name FROM transcript t, analysis a WHERE t.analysis_id = a.analysis_id AND source not in ('havana') AND logic_name LIKE '%havana%' AND logic_name NOT LIKE '%ensembl_havana%'";
 
                rows = DBUtils.getRowCount(con, sql);
 
@@ -195,18 +197,19 @@ public class SourceTypes extends SingleDatabaseTestCase {
                if (rows > 0) {
 
                        result = false;
-                       ReportManager.problem(this, con, "Some transcripts of %havana% analysis do not have havana source");
+                       ReportManager.problem(this, con, "Some transcripts of %havana% analysis do not have havana source. Try " + useful_sql + " to find those transcripts");
 
                }
 
                sql = "SELECT COUNT(*) FROM transcript t, analysis a WHERE t.analysis_id = a.analysis_id AND source not in ('ensembl_havana') AND logic_name LIKE '%ensembl_havana%'";
+               useful_sql = "SELECT t.stable_id, t.source, a.logic_name FROM transcript t, analysis a WHERE t.analysis_id = a.analysis_id AND source not in ('ensembl_havana') AND logic_name LIKE '%ensembl_havana%'";
 
                rows = DBUtils.getRowCount(con, sql);
 
                if (rows > 0) {
 
                        result = false;
-                       ReportManager.problem(this, con, "Some transcripts of analysis %ensembl_havana% do not have ensembl_havana source");
+                       ReportManager.problem(this, con, "Some transcripts of analysis %ensembl_havana% do not have ensembl_havana source. Try " + useful_sql + " to find those transcripts");
 
                }
 
@@ -219,52 +222,57 @@ public class SourceTypes extends SingleDatabaseTestCase {
                boolean result = true;
 
                String sql = "SELECT COUNT(*) FROM gene g, transcript t where g.gene_id = t.gene_id and g.source = 'ensembl' and t.source not in ('ensembl')";
+               String useful_sql = "SELECT g.stable_id, g.source, t.stable_id, t.source FROM gene g, transcript t where g.gene_id = t.gene_id and g.source = 'ensembl' and t.source not in ('ensembl')";
 
                int rows = DBUtils.getRowCount(con, sql);
 
                if (rows > 0) {
 
                        result = false;
-                       ReportManager.problem(this, con, "Some ensembl genes have transcripts which are not ensembl");
+                       ReportManager.problem(this, con, "Some ensembl genes have transcripts which are not ensembl. Try " + useful_sql + " to find those genes");
 
                }
 
                sql = "SELECT COUNT(*) FROM gene g, transcript t where g.gene_id = t.gene_id and g.source = 'havana' and t.source not in ('havana')";
+               useful_sql = "SELECT g.stable_id, g.source, t.stable_id, t.source FROM gene g, transcript t where g.gene_id = t.gene_id and g.source = 'havana' and t.source not in ('havana')";
 
                rows = DBUtils.getRowCount(con, sql);
 
                if (rows > 0) {
 
                        result = false;
-                       ReportManager.problem(this, con, "Some havana genes have transcripts which are not havana");
+                       ReportManager.problem(this, con, "Some havana genes have transcripts which are not havana. Try " + useful_sql + " to find those genes");
 
                }
 
                sql = "SELECT COUNT(*) FROM gene g, transcript t where g.gene_id = t.gene_id and g.source not in ('ensembl_havana') and t.source = 'ensembl_havana'";
+               useful_sql = "SELECT g.stable_id, g.source, t.stable_id, t.source FROM gene g, transcript t where g.gene_id = t.gene_id and g.source not in ('ensembl_havana') and t.source = 'ensembl_havana'";
 
                rows = DBUtils.getRowCount(con, sql);
 
                if (rows > 0) {
 
                        result = false;
-                       ReportManager.problem(this, con, "Some transcripts with ensembl_havana source belong to genes whose source is not ensembl_havana");
+                       ReportManager.problem(this, con, "Some transcripts with ensembl_havana source belong to genes whose source is not ensembl_havana. Try " + useful_sql + " to find those transcripts");
 
                }
 
 // Check source and analysis are consistent in the gene table
 
                sql = "SELECT COUNT(*) FROM gene g, analysis a where g.analysis_id = a.analysis_id and source not in ('ensembl') AND (logic_name LIKE '%ensembl%' OR logic_name LIKE '%nrcna%') AND logic_name NOT LIKE '%havana%'";
+               useful_sql = "SELECT g.stable_id, g.source, a.logic_name FROM gene g, analysis a where g.analysis_id = a.analysis_id and source not in ('ensembl') AND (logic_name LIKE '%ensembl%' OR logic_name LIKE '%nrcna%') AND logic_name NOT LIKE '%havana%'";
 
                rows = DBUtils.getRowCount(con, sql);
 
                if (rows > 0) {
 
                        result = false;
-                       ReportManager.problem(this, con, "Some genes of %ensembl% and/or %ncrna% analyses do not have ensembl source");
+                       ReportManager.problem(this, con, "Some genes of %ensembl% and/or %ncrna% analyses do not have ensembl source. Try " + useful_sql + " to find those genes");
 
                }
 
                sql = "SELECT COUNT(*) FROM gene g, analysis a WHERE g.analysis_id = a.analysis_id AND source not in ('havana') AND logic_name LIKE '%havana%' AND logic_name NOT LIKE '%ensembl_havana%'";
+               useful_sql = "SELECT g.stable_id, g.source, a.logic_name FROM gene g, analysis a WHERE g.analysis_id = a.analysis_id AND source not in ('havana') AND logic_name LIKE '%havana%' AND logic_name NOT LIKE '%ensembl_havana%'";
 
                rows = DBUtils.getRowCount(con, sql);
 
@@ -272,18 +280,19 @@ public class SourceTypes extends SingleDatabaseTestCase {
                if (rows > 0) {
 
                        result = false;
-                       ReportManager.problem(this, con, "Some genes of %havana% analysis do not have havana source");
+                       ReportManager.problem(this, con, "Some genes of %havana% analysis do not have havana source. Try " + useful_sql + " to find those genes");
 
                }
 
                sql = "SELECT COUNT(*) FROM gene g, analysis a WHERE g.analysis_id = a.analysis_id AND source not in ('ensembl_havana') AND logic_name LIKE '%ensembl_havana%'";
+               useful_sql = "SELECT g.stable_id, g.source, a.logic_name FROM gene g, analysis a WHERE g.analysis_id = a.analysis_id AND source not in ('ensembl_havana') AND logic_name LIKE '%ensembl_havana%'";
 
                rows = DBUtils.getRowCount(con, sql);
 
                if (rows > 0) {
 
                        result = false;
-                       ReportManager.problem(this, con, "Some genes of analysis %ensembl_havana% do not have ensembl_havana source");
+                       ReportManager.problem(this, con, "Some genes of analysis %ensembl_havana% do not have ensembl_havana source. Try " + useful_sql + " to find those genes");
 
                }
 
