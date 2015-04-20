@@ -251,6 +251,43 @@ public class SourceTypes extends SingleDatabaseTestCase {
 
                }
 
+// Check source and analysis are consistent in the gene table
+
+               sql = "SELECT COUNT(*) FROM gene g, analysis a where g.analysis_id = a.analysis_id and source not in ('ensembl') AND (logic_name LIKE '%ensembl%' OR logic_name LIKE '%nrcna%') AND logic_name NOT LIKE '%havana%'";
+
+               rows = DBUtils.getRowCount(con, sql);
+
+               if (rows > 0) {
+
+                       result = false;
+                       ReportManager.problem(this, con, "Some genes of %ensembl% and/or %ncrna% analyses do not have ensembl source");
+
+               }
+
+               sql = "SELECT COUNT(*) FROM gene g, analysis a WHERE g.analysis_id = a.analysis_id AND source not in ('havana') AND logic_name LIKE '%havana%' AND logic_name NOT LIKE '%ensembl_havana%'";
+
+               rows = DBUtils.getRowCount(con, sql);
+
+
+               if (rows > 0) {
+
+                       result = false;
+                       ReportManager.problem(this, con, "Some genes of %havana% analysis do not have havana source");
+
+               }
+
+               sql = "SELECT COUNT(*) FROM gene g, analysis a WHERE g.analysis_id = a.analysis_id AND source not in ('ensembl_havana') AND logic_name LIKE '%ensembl_havana%'";
+
+               rows = DBUtils.getRowCount(con, sql);
+
+               if (rows > 0) {
+
+                       result = false;
+                       ReportManager.problem(this, con, "Some genes of analysis %ensembl_havana% do not have ensembl_havana source");
+
+               }
+
+
                return result;
 
         }
