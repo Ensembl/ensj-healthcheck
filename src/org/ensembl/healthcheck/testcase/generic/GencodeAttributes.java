@@ -145,8 +145,16 @@ public class GencodeAttributes extends SingleDatabaseTestCase {
     String chromosomeSql = "SELECT DISTINCT s.name FROM seq_region s, seq_region_attrib sa, attrib_type at WHERE s.seq_region_id = sa.seq_region_id AND sa.attrib_type_id = at.attrib_type_id AND code = 'karyotype_rank'";
     String codingSql = "SELECT count(distinct g.stable_id) FROM gene g, seq_region s WHERE g.seq_region_id = s.seq_region_id AND s.name = ? AND biotype = 'protein_coding'";
     String apprisSql = "SELECT count(distinct g.stable_id) FROM gene g, seq_region s, transcript t, transcript_attrib ta, attrib_type a WHERE g.seq_region_id = s.seq_region_id AND s.name = ? AND g.biotype = 'protein_coding' AND g.gene_id=t.gene_id AND t.transcript_id=ta.transcript_id AND ta.attrib_type_id=a.attrib_type_id AND a.code like 'appris%'"; 
-    List<String> chromosomes = t.queryForDefaultObjectList(chromosomeSql, String.class);
 
+// If no data available at all, exit early
+    String hasApprisSql = "SELECT count(*) FROM transcript t, transcript_attrib ta, attrib_type a WHERE t.transcript_id = ta.transcript_id AND ta.attrib_type_id = a.attrib_type_id AND code like 'appris%'";
+    int hasAppris = DBUtils.getRowCount(con, hasApprisSql);
+    if (hasAppris == 0) {
+      ReportManager.problem(this, con, "No appris attributes found, have you imported the new data?");
+      return false;
+    }
+
+    List<String> chromosomes = t.queryForDefaultObjectList(chromosomeSql, String.class);
     for (String chromosome: chromosomes) {
       int codingCount = t.queryForDefaultObject(codingSql, Integer.class, chromosome);
       int apprisCount = t.queryForDefaultObject(apprisSql, Integer.class, chromosome);
@@ -154,6 +162,10 @@ public class GencodeAttributes extends SingleDatabaseTestCase {
         ReportManager.problem(this, con, chromosome + " has " + codingCount + " protein coding genes but only " + apprisCount + " have a transcript-attrib like ‘appris%’");
         result = false;
       }
+    }
+
+    if (result) {
+      ReportManager.correct(this, con, "Found correct number of Appris attributes on all chromosomes");
     }
 
     return result;
@@ -167,11 +179,24 @@ public class GencodeAttributes extends SingleDatabaseTestCase {
     Connection con = dbre.getConnection();
     SqlTemplate t = DBUtils.getSqlTemplate(dbre);
 
-    String chromosomeSql = "SELECT DISTINCT s.name FROM seq_region s, seq_region_attrib sa, attrib_type at WHERE s.seq_region_id = sa.seq_region_id AND sa.attrib_type_id = at.attrib_type_id AND s.name NOT LIKE 'LRG%' AND code = 'toplevel'";
+    String chromosomeSql = "SELECT DISTINCT s.name FROM seq_region s, seq_region_attrib sa, attrib_type at WHERE s.seq_region_id = sa.seq_region_id AND sa.attrib_type_id = at.attrib_type_id AND code = 'karyotype_rank'";
     String transcriptSql = "SELECT count(distinct t.stable_id) from seq_region s, transcript t WHERE t.seq_region_id = s.seq_region_id and s.name = ?";
     String tslSql = "SELECT count(distinct t.stable_id) from seq_region s, transcript t, transcript_attrib ta, attrib_type a WHERE t.seq_region_id = s.seq_region_id AND t.transcript_id = ta.transcript_id AND ta.attrib_type_id = a.attrib_type_id AND a.code like 'tsl%' AND s.name = ?";
-    List<String> chromosomes = t.queryForDefaultObjectList(chromosomeSql, String.class);
 
+// If no data available, exit early
+    String hasTslSql = "SELECT count(*) FROM transcript t, transcript_attrib ta, attrib_type a WHERE t.transcript_id = ta.transcript_id AND ta.attrib_type_id = a.attrib_type_id AND code like 'tsl%'";
+    int hasTsl = DBUtils.getRowCount(con, hasTslSql);
+    if (hasTsl == 0) {
+      ReportManager.problem(this, con, "No tsl attributes found, have you imported the new data?");
+      return false;
+    }
+
+    String patchSql = "SELECT count(*) FROM transcript t, assembly_exception ax, transcript_attrib ta, attrib_type a " + 
+                      "WHERE t.seq_region_id = ax.seq_region_id AND t.transcript_id = ta.transcript_id AND ta.attrib_type_id = a.attrib_type_id AND code like 'tsl%'";
+    int patchCount = DBUtils.getRowCount(con, patchSql);
+    ReportManager.info(this, con, "There are " + patchCount + " transcripts with TSL attributes on patches");
+
+    List<String> chromosomes = t.queryForDefaultObjectList(chromosomeSql, String.class);
     for (String chromosome: chromosomes) {
       int transcriptCount = t.queryForDefaultObject(transcriptSql, Integer.class, chromosome);
       int tslCount = t.queryForDefaultObject(tslSql, Integer.class, chromosome);
@@ -179,6 +204,10 @@ public class GencodeAttributes extends SingleDatabaseTestCase {
         ReportManager.problem(this, con, chromosome + " has " + transcriptCount + " transcripts but only " + tslCount + " have a transcript-attrib like ‘tsl%’");
         result = false;
       }
+    }
+
+    if (result) {
+      ReportManager.correct(this, con, "Found correct number of TSL attributes on all chromosomes");
     }
 
     return result;
