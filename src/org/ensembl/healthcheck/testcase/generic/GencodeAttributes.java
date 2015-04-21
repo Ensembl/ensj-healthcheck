@@ -84,10 +84,13 @@ public class GencodeAttributes extends SingleDatabaseTestCase {
       return result;
     }
 
-    result &= gencodeAttrib(con);
+// Gencode and TSL attributes are only for human and mouse
+    if (dbre.getSpecies() == Species.HOMO_SAPIENS || dbre.getSpecies() == Species.MUS_MUSCULUS) {
+      result &= gencodeAttrib(con);
+      result &= tslAttrib(dbre);
+    }
     result &= refseqAttrib(con);
     result &= apprisAttrib(dbre);
-    result &= tslAttrib(dbre);
 
     return result;
 
