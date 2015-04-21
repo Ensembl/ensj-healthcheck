@@ -495,10 +495,10 @@ public class ConfigurableTestRunner extends TestRunner {
 			
 			for (Class<? extends EnsTestCase> currentTestCase : accounting.getTrackCompletionStatus().keySet()) {
 				
-				if (!accounting.getTrackCompletionStatus().get(currentTestCase).equals(TestRunStats.CompletionStatus.DIED_WITH_EXCEPTION)) {					
+				if (accounting.getTrackCompletionStatus().get(currentTestCase).equals(TestRunStats.CompletionStatus.DIED_WITH_EXCEPTION)) {					
 					testsThrowingAnException.add(currentTestCase);					
 				}
-				if (!accounting.getTrackCompletionStatus().get(currentTestCase).equals(TestRunStats.CompletionStatus.SKIPPED_LONG_RUNNING)) {					
+				if (accounting.getTrackCompletionStatus().get(currentTestCase).equals(TestRunStats.CompletionStatus.SKIPPED_LONG_RUNNING)) {					
 					testsSkippedLongRunning.add(currentTestCase);					
 				}
 			}
