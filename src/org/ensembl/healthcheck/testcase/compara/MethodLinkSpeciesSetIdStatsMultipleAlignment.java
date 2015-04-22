@@ -29,11 +29,8 @@ public class MethodLinkSpeciesSetIdStatsMultipleAlignment extends MethodLinkSpec
 		};
 		mandatoryTags.put("EPO", tags_multiple_alignments);
 		mandatoryTags.put("PECAN", tags_multiple_alignments);
+		mandatoryTags.put("EPO_LOW_COVERAGE", tags_multiple_alignments);	// We don't include "high_coverage_mlss_id" because it is checked by another HC
 
-		String[] tags_epo2x_alignments = {
-			"ensembl_release", "num_blocks", "max_align", "high_coverage_mlss_id"
-		};
-		mandatoryTags.put("EPO_LOW_COVERAGE", tags_epo2x_alignments);
 		return mandatoryTags;
 	}
 
