@@ -99,8 +99,6 @@ public class Accession extends SingleDatabaseTestCase {
 			if (badFormat > 0) {
 				result = false;
 				ReportManager.problem(this, con, badFormat + " " + key + " hit IDs are not in the correct format");
-			} else {
-				ReportManager.correct(this, con, "All " + key + " hits are in the correct format");
 			}
 
 		}

@@ -137,8 +137,6 @@ public class StableID extends SingleDatabaseTestCase {
 		if (duplicates > 0) {
 			ReportManager.problem(this, con, stableIDtable + " has " + duplicates + " duplicate stable IDs (versions not checked)");
 			result = false;
-		} else {
-			ReportManager.correct(this, con, "No duplicate stable IDs in " + stableIDtable);
 		}
 
 		return result;
@@ -179,8 +177,6 @@ public class StableID extends SingleDatabaseTestCase {
 				if (wrong > 0) {
 					ReportManager.problem(this, con, wrong + " rows in " + table + " do not have the correct (" + prefixLetter + ") prefix");
 					result = false;
-				} else {
-					ReportManager.correct(this, con, "All rows in " + table + " have the correct prefix (" + prefixLetter + ")");
 				}
 			}
 		}
@@ -216,9 +212,6 @@ public class StableID extends SingleDatabaseTestCase {
 				ReportManager.problem(this, con, rows + " rows of type " + type + " (prefix " + prefix + ") in stable_id_event have identifiers that do not correspond to " + type + "s");
 				result = false;
 
-			} else {
-
-				ReportManager.correct(this, con, "All types in stable_id_event correspond to identifiers");
 			}
 
                         // check for invalid or missing stable ID versions
@@ -296,10 +289,6 @@ public class StableID extends SingleDatabaseTestCase {
 
 				ReportManager.problem(this, con, rows + " rows in " + table + " have created or modified dates of 0000-00-00 00:00:00");
 				result = false;
-
-			} else {
-
-				ReportManager.correct(this, con, "All entries in " + table + " have valid created/modified timestamps");
 
 			}
 		}
