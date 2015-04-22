@@ -123,15 +123,11 @@ public class ComparePreviousVersionAnalysisDescriptions extends SingleDatabaseTe
 				if (!currentDisplayLabel.equals(previousDisplayLabel)) {
 					ReportManager.problem(this, currentCon, "Display label for logic name " + logicName + " differs; \ncurrent: '" + currentDisplayLabel + "' \nprevious: '" + previousDisplayLabel + "'");
 					result = false;
-				} else {
-					ReportManager.correct(this, currentCon, "Display labels identical between releases for " + logicName);
 				}
 
 				if (currentDisplayable != previousDisplayable) {
 					ReportManager.problem(this, currentCon, "Displayable flag for logic name " + logicName + " differs; \ncurrent: '" + currentDisplayable + "' \nprevious: '" + previousDisplayable + "'");
 					result = false;
-				} else {
-					ReportManager.correct(this, currentCon, "Displayable flags identical between releases for " + logicName);
 				}
 
 				if (currentWebData != null && !currentWebData.equals("") && previousWebData != null && !previousWebData.equals("")) {
@@ -171,9 +167,7 @@ public class ComparePreviousVersionAnalysisDescriptions extends SingleDatabaseTe
 					}
 
 					// and finally compare them
-					if (currentWebHashValueString.equals(previousWebHashValueString) && currentWebHashValueHash.equals(previousWebHashValueHash)) {
-						ReportManager.correct(this, currentCon, "Web data identical between releases for " + logicName);
-					} else {
+					if (!currentWebHashValueString.equals(previousWebHashValueString) || !currentWebHashValueHash.equals(previousWebHashValueHash)) {
 						ReportManager.problem(this, currentCon, "Web data for logic name " + logicName + " differs; \ncurrent: '" + currentWebData + "' \nprevious: '" + previousWebData + "'");
 						result = false;
 					}
