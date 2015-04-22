@@ -280,8 +280,8 @@ public class EGForeignKeyMethodLinkSpeciesSetId extends
 
 	protected Map<String, List<Integer>> getMethodLinkTypeRange() {
 		Map<String, List<Integer>> output = CollectionUtils.createHashMap();
-		output.put("ENSEMBL_ORTHOLOGUES", Arrays.asList(201, 300));
-		output.put("ENSEMBL_PARALOGUES", Arrays.asList(201, 300));
+		output.put("ENSEMBL_ORTHOLOGUES", Arrays.asList(201, 202));
+		output.put("ENSEMBL_PARALOGUES", Arrays.asList(202, 300));
 		output.put("SYNTENY", Arrays.asList(101, 200));
 		output.put("FAMILY", Arrays.asList(301, 400));
 		return output;
