@@ -67,68 +67,11 @@ public class CheckMethodLinkSpeciesSetTag extends SingleDatabaseTestCase {
                 }
 
                 // These methods return false if there is any problem with the test
-                result &= checkSpeciesTreesArePresent(dbre);
-		result &= checkThresholdOnDsArePresent(dbre);
+				result &= checkThresholdOnDsArePresent(dbre);
 				result &= checkSpeciesAreSpelledCorrectly(dbre);
 				result &= checkLowCoverageMLSSAreLinkedToHighCoverageMLSS(dbre);
 
                 return result;
-        }
-
-/**                                                                                                                                                                             
-* Check that the each multi-species analysis that uses a species tree has the species tree stored in the method_link_species_set_tag table.
-*/
-
-        private boolean checkSpeciesTreesArePresent(DatabaseRegistryEntry dbre) {
-
-                boolean result = true;
-
-                // get version from mlsstag table 
-                Connection con = dbre.getConnection();
-
-                // get all the links between conservation scores and multiple genomic alignments
-        String sql = "SELECT method_link_species_set_id, IFNULL(tag, 'NULL'), IFNULL(value, 'NULL'),"
-                + " method_link_species_set.name, count(distinct genome_db_id)"
-                + " FROM method_link_species_set"
-                + " JOIN method_link USING (method_link_id)"
-                + " LEFT JOIN method_link_species_set_tag USING (method_link_species_set_id)"
-                + " JOIN species_set USING (species_set_id)"
-                + " WHERE (class LIKE 'GenomicAlignTree%' OR class LIKE '%multiple_alignment' OR class LIKE '%tree_node')"
-	        + " AND tag = 'species_tree'"
-                + " GROUP BY method_link_species_set_id";
-
-        try {
-                Statement stmt = con.createStatement();
-                ResultSet rs = stmt.executeQuery(sql);
-                while (rs.next()) {
-                        Integer methodLinkSpeciesSetIdInt = rs.getInt(1);
-                        String metaKeyStr = rs.getString(2);
-                        String treeStr = rs.getString(3);
-                        String methodLinkSpeciesSetNameStr = rs.getString(4);
-                        Integer numSpecies = rs.getInt(5);
-                        if (metaKeyStr.equals("NULL")) {
-                                ReportManager.problem(this, con, "MethodLinkSpeciesSet " + methodLinkSpeciesSetIdInt  +
-                                                      " (" + methodLinkSpeciesSetNameStr  + ") does not have its tree in the method_link_species_set_tag table!");
-                                result = false;
-                        } else if (StringUtils.countMatches(treeStr, "(") != StringUtils.countMatches(treeStr, ")")) {
-                                ReportManager.problem(this, con, "The tree for MethodLinkSpeciesSet " + methodLinkSpeciesSetIdInt  +
-                                                      " (" + methodLinkSpeciesSetNameStr  + ") does not have the same number of opening and closing brackets!");
-                                result = false;
-                        } else if (StringUtils.countMatches(treeStr, ",") + 1 != numSpecies) {
-                                ReportManager.problem(this, con, "The tree for MethodLinkSpeciesSet " + methodLinkSpeciesSetIdInt  +
-                                                      " (" + methodLinkSpeciesSetNameStr  + ") does not have the right number of leaves!");
-                                result = false;
-                        }
-                }
-                rs.close();
-                stmt.close();
-        } catch (SQLException se) {
-                se.printStackTrace();
-                result = false;
-        }
-
-        return result;
-
         }
 
 	public boolean checkThresholdOnDsArePresent(final DatabaseRegistryEntry dbre) {
