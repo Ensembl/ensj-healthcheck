@@ -1452,10 +1452,6 @@ public abstract class EnsTestCase {
 					+ " -> " + table2 + " using FK " + col1
 					+ ", look at the StackTrace if any");
 			result = false;
-		} else {
-			ReportManager.correct(this, con, "SUCCESS: All rows in " + table1
-					+ " (constraint is: " + constraint1 + ") refer to valid "
-					+ table2 + "s");
 		}
 
 		return result;
@@ -1512,11 +1508,6 @@ public abstract class EnsTestCase {
 			ReportManager.problem(this, con, nulls + " NULL values in " + table
 					+ "." + column);
 			result = false;
-
-		} else {
-
-			ReportManager.correct(this, con, "No NULL values in " + table + "."
-					+ column);
 		}
 
 		return result;
@@ -1547,9 +1538,6 @@ public abstract class EnsTestCase {
 			ReportManager.problem(this, con, "Zeroes found in " + table + "."
 					+ column);
 			result = false;
-		} else {
-			ReportManager.correct(this, con, "No zeroes found in " + table
-					+ "." + column);
 		}
 
 		return result;
@@ -1580,9 +1568,6 @@ public abstract class EnsTestCase {
 			ReportManager.problem(this, con, "Forbidden characters found in "+badrows+" rows of " + table + "."
 					+ column);
 			result = false;
-		} else {
-			ReportManager.correct(this, con, "Column is clean of weird characters in " + table
-					+ "." + column);
 		}
 
 		return result;
