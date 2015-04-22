@@ -349,6 +349,7 @@ public class ConfigurableTestRunner extends TestRunner {
 		Reporter reporter = this.reporter;
                 String outputLevelString = configuration.getOutputLevel();
                 setOutputLevel(outputLevelString);
+                ReportManager.setOutputLevel(outputLevel);
 
 		ReportManager.setReporter(reporter);
 
@@ -538,14 +539,16 @@ public class ConfigurableTestRunner extends TestRunner {
 		
 		boolean printFailureText = true;
 
-		log.info("Printing output by test");
-		printReportsByTest(outputLevel, printFailureText);
-
-		if (this.reporterType == ReporterType.DATABASE && !configuration.isSessionID()) {
-			log.info("Finishing reporter session");
-			ReportManager.endDatabaseSession();
-			log.info("Finished reporter session");
-		}
+		if (this.reporterType == ReporterType.DATABASE) {
+                        if (!configuration.isSessionID()) {
+			        log.info("Finishing reporter session");
+			        ReportManager.endDatabaseSession();
+			        log.info("Finished reporter session");
+                        }
+		} else {
+                        log.info("Printing output by test");
+                        printReportsByTest(outputLevel, printFailureText);
+                }
 	}
 
 	public static String getDefaultPropertiesFile() {

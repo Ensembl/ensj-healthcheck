@@ -78,6 +78,8 @@ public class ReportManager {
 
 	private static boolean usingDatabase = false;
 
+        private static int outputLevel = 0;
+
 	private static Connection outputDatabaseConnection;
 
 	private static long sessionID = -1;
@@ -97,6 +99,10 @@ public class ReportManager {
 
 		reporter = rep;
 	}
+
+        public static void setOutputLevel(int level) {
+                outputLevel = level;
+        }
 
 	/**
 	 * Should be called before a test case is run.
@@ -936,13 +942,16 @@ public class ReportManager {
 
 		long reportID = reportExistsInDatabase(report);
 
-		if (reportID > -1) {
+                if (report.getLevel() >= outputLevel) {
 
-			updateReportInDatabase(report, reportID);
+		        if (reportID > -1) {
 
-		} else {
+			          updateReportInDatabase(report, reportID);
 
-			addReportToDatabase(report);
+		        } else {
+
+			          addReportToDatabase(report);
+                        }
 
 		}
 
