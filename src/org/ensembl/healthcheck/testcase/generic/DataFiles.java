@@ -47,8 +47,16 @@ public class DataFiles extends AbstractTemplatedTestCase {
     setTeamResponsible(Team.GENEBUILD);
   }
 
+  /**
+  * This test only applies to rnaseq databases
+  */
+
   public void types() {
     removeAppliesToType(DatabaseType.SANGER_VEGA);
+    removeAppliesToType(DatabaseType.OTHERFEATURES);
+    removeAppliesToType(DatabaseType.ESTGENE);
+    removeAppliesToType(DatabaseType.CORE);
+    removeAppliesToType(DatabaseType.CDNA);
   }
   
   @Override

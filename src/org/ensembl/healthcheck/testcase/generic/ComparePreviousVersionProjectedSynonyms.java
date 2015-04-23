@@ -54,10 +54,14 @@ public class ComparePreviousVersionProjectedSynonyms extends ComparePreviousVers
 	}
 
 	/**
-	 * This test Does not apply to sangervega dbs
+         * This only applies to core databases.
 	 */
 	public void types() {
 		removeAppliesToType(DatabaseType.SANGER_VEGA);
+                removeAppliesToType(DatabaseType.OTHERFEATURES);
+                removeAppliesToType(DatabaseType.ESTGENE);
+                removeAppliesToType(DatabaseType.RNASEQ);
+                removeAppliesToType(DatabaseType.CDNA);
 	}
 
 	// ----------------------------------------------------------------------

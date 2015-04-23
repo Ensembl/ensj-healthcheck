@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
@@ -52,6 +53,18 @@ public class AssemblyMultipleOverlap extends SingleDatabaseTestCase {
 		setDescription("Check for multiple components which overlap and are assembled to the same thing.");
 		setTeamResponsible(Team.GENEBUILD);
 	}
+
+        /**
+         * Data is only tested in core database, as the tables are in sync
+         */
+        public void types() {
+
+                removeAppliesToType(DatabaseType.OTHERFEATURES);
+                removeAppliesToType(DatabaseType.ESTGENE);
+                removeAppliesToType(DatabaseType.RNASEQ);
+                removeAppliesToType(DatabaseType.CDNA);
+
+        }
 
 	/**
 	 * Run the test.

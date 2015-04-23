@@ -60,6 +60,18 @@ public class AssemblyMapping extends AbstractTemplatedTestCase {
                 setTeamResponsible(Team.GENEBUILD);
 	}
 
+        /**
+         * Data is only tested in core database, as the tables are in sync
+         */
+        public void types() {
+
+                removeAppliesToType(DatabaseType.OTHERFEATURES);
+                removeAppliesToType(DatabaseType.ESTGENE);
+                removeAppliesToType(DatabaseType.RNASEQ);
+                removeAppliesToType(DatabaseType.CDNA);
+
+        }
+
 	/*
 	 * (non-Javadoc)
 	 * 
