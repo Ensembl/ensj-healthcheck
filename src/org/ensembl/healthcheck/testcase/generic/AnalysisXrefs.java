@@ -58,6 +58,8 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
 
 		removeAppliesToType(DatabaseType.ESTGENE);
 		removeAppliesToType(DatabaseType.CDNA);
+                removeAppliesToType(DatabaseType.OTHERFEATURES);
+                removeAppliesToType(DatabaseType.RNASEQ);
 
 	}
 
