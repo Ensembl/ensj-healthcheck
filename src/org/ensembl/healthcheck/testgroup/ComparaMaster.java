@@ -28,7 +28,7 @@ public class ComparaMaster extends GroupOfTests {
 		addTest(
 			org.ensembl.healthcheck.testcase.compara.CheckGenomeDB.class,
 			org.ensembl.healthcheck.testcase.compara.CheckTaxon.class,
-			//org.ensembl.healthcheck.testcase.compara.CheckTopLevelDnaFrag.class,
+			org.ensembl.healthcheck.testcase.compara.CheckTopLevelDnaFrag.class,
 			org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetTag.class,
 
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomeDbId.class,
