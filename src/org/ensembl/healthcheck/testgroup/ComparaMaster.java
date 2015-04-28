@@ -42,7 +42,7 @@ public class ComparaMaster extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.Meta.class,
 			org.ensembl.healthcheck.testcase.compara.SingleDBCollations.class,
 
-			org.ensembl.healthcheck.testcase.eg_compara.EGForeignKeyMethodLinkSpeciesSetId.class
+			org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetCountsByMethod.class
 
 		);
 	}
