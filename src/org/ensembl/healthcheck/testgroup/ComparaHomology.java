@@ -32,7 +32,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckTableSizes </li>  
  *   <li> org.ensembl.healthcheck.testcase.compara.DuplicateGenomeDb </li>
  *   <li> org.ensembl.healthcheck.testcase.eg_compara.EGCheckNoTreeStableIds </li>
- *   <li> org.ensembl.healthcheck.testcase.eg_compara.EGForeignKeyMethodLinkSpeciesSetId </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyCAFEGeneFamily </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyDnafragId </li>  
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyFamilyId </li> 
@@ -86,7 +85,7 @@ public class ComparaHomology extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class,
 			org.ensembl.healthcheck.testcase.eg_compara.CheckEmptyLeavesTrees.class,
 			org.ensembl.healthcheck.testcase.eg_compara.EGCheckNoTreeStableIds.class,
-			org.ensembl.healthcheck.testcase.eg_compara.EGForeignKeyMethodLinkSpeciesSetId.class,
+			org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetCountsByMethod.class,
 			org.ensembl.healthcheck.testcase.eg_compara.MemberProductionCounts.class
 		);
 	}
