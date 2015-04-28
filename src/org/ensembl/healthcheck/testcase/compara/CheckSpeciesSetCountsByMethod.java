@@ -33,8 +33,7 @@ public class CheckSpeciesSetCountsByMethod extends SingleDatabaseTestCase {
 		setDescription("Checks that the species-sets have the expected number of genomes");
 	}
 
-	@Override
-	protected boolean runTest(DatabaseRegistryEntry dbre) {
+	public boolean run(DatabaseRegistryEntry dbre) {
 		boolean result = true;
 		result &= assertSpeciesSetCountForMLSS(dbre, "ENSEMBL_ORTHOLOGUES", 2);
 		result &= assertSpeciesSetCountForMLSS(dbre, "ENSEMBL_PARALOGUES", 1);
