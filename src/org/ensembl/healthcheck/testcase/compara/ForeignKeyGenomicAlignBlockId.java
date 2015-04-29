@@ -63,13 +63,6 @@ public class ForeignKeyGenomicAlignBlockId extends SingleDatabaseTestCase {
             result &= checkForOrphans(con, "genomic_align", "genomic_align_block_id",
                 "genomic_align_block", "genomic_align_block_id");
 
-            if (tableHasRows(con, "conservation_score")) {
-
-                result &= checkForOrphans(con, "conservation_score", "genomic_align_block_id",
-                    "genomic_align_block", "genomic_align_block_id");
-
-            }
-
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in genomic_align_block table, so nothing to test IGNORED");
         }
