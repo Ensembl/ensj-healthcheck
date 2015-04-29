@@ -59,8 +59,6 @@ public class ForeignKeyGenomeDbId extends AbstractComparaTestCase {
 
         if (tableHasRows(con, "genome_db")) {
 
-            result &= checkOptionalRelation(con, "gene_member", "genome_db_id", "genome_db", "genome_db_id");
-            result &= checkOptionalRelation(con, "seq_member", "genome_db_id", "genome_db", "genome_db_id");
             result &= checkOptionalRelation(con, "species_tree_node", "genome_db_id", "genome_db", "genome_db_id");
 
         } else {

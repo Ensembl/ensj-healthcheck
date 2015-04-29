@@ -62,7 +62,6 @@ public class ForeignKeyMemberId extends SingleDatabaseTestCase {
             result &= checkForOrphans(con, "homology_member", "seq_member_id", "seq_member", "seq_member_id");
             result &= checkForOrphans(con, "gene_align_member", "seq_member_id", "seq_member", "seq_member_id");
             result &= checkOptionalRelation(con, "gene_tree_node", "seq_member_id", "seq_member", "seq_member_id");
-            result &= checkForOrphans(con, "other_member_sequence", "seq_member_id", "seq_member", "seq_member_id");
 
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in seq_member table, so nothing to test IGNORED");
@@ -71,7 +70,6 @@ public class ForeignKeyMemberId extends SingleDatabaseTestCase {
         if (tableHasRows(con, "gene_member")) {
             result &= checkForOrphans(con, "homology_member", "gene_member_id", "gene_member", "gene_member_id");
             result &= checkForOrphans(con, "member_xref", "gene_member_id", "gene_member", "gene_member_id");
-            result &= checkOptionalRelation(con, "seq_member", "gene_member_id", "gene_member", "gene_member_id");
         } else {
             ReportManager.correct(this, con, "NO ENTRIES in gene_member table, so nothing to test IGNORED");
         }
