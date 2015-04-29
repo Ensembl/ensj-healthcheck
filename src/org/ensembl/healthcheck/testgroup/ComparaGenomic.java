@@ -30,7 +30,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckSynteny </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckTableSizes </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyDnafragId </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomeDbId </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignBlockId </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignId </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMLSSIdGenomic </li>
@@ -38,8 +37,8 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMasterTables </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkSpeciesSetId </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkSpeciesSetIdGenomicAlignBlock </li> 
+ *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeTables </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeySyntenyRegionId </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyTaxonId </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.Meta </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.MLSSTagGERPMSA </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.MLSSTagMaxAlign </li> 
@@ -66,7 +65,6 @@ public class ComparaGenomic extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.CheckWGASpeciesTree.class,
 			org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetCountsByMethod.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyDnafragId.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomeDbId.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignBlockId.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignId.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignNodeId.class,
@@ -74,8 +72,8 @@ public class ComparaGenomic extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkSpeciesSetId.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkSpeciesSetIdGenomicAlignBlock.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyMLSSIdGenomic.class,
+			org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeTables.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeySyntenyRegionId.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyTaxonId.class,
 			org.ensembl.healthcheck.testcase.compara.Meta.class,
 			org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class,
 			org.ensembl.healthcheck.testcase.compara.MLSSTagGERPMSA.class,
