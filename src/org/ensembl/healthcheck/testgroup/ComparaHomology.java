@@ -34,10 +34,10 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.eg_compara.EGCheckNoTreeStableIds </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyCAFETables </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyFamilyTables </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyGeneTrees </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyHomologyId </li>
+ *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyGeneAlignTables </li>
+ *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyGeneTreeTables </li>
+ *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyHomologyTables </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMLSSIdHomology </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMemberId </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMasterTables </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkSpeciesSetId </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeTables </li>
@@ -64,9 +64,9 @@ public class ComparaHomology extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.DuplicateGenomeDb.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyCAFETables.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyFamilyTables.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyGeneTrees.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyHomologyId.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyMemberId.class,
+			org.ensembl.healthcheck.testcase.compara.ForeignKeyGeneAlignTables.class,
+			org.ensembl.healthcheck.testcase.compara.ForeignKeyGeneTreeTables.class,
+			org.ensembl.healthcheck.testcase.compara.ForeignKeyHomologyTables.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyMasterTables.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyMemberTables.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkSpeciesSetId.class,
