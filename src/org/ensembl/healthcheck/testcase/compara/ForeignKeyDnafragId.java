@@ -58,7 +58,6 @@ public class ForeignKeyDnafragId extends SingleDatabaseTestCase {
 
         if (tableHasRows(con, "dnafrag")) {
 
-            result &= checkForOrphans(con, "dnafrag_region", "dnafrag_id", "dnafrag", "dnafrag_id");
             result &= checkForOrphans(con, "genomic_align", "dnafrag_id", "dnafrag", "dnafrag_id");
             result &= checkForOrphans(con, "constrained_element", "dnafrag_id", "dnafrag", "dnafrag_id");
 

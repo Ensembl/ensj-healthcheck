@@ -22,6 +22,7 @@ import org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignBlockId;
 import org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignId;
 import org.ensembl.healthcheck.testcase.compara.ForeignKeyMemberTables;
 import org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeTables;
+import org.ensembl.healthcheck.testcase.compara.ForeignKeySyntenyTables;
 import org.ensembl.healthcheck.testcase.compara.MultipleGenomicAlignBlockIds;
 import org.ensembl.healthcheck.testcase.eg_compara.EGCheckEmptyLocators;
 import org.ensembl.healthcheck.testcase.eg_compara.EGCheckNoTreeStableIds;
@@ -57,6 +58,7 @@ public class EGCompara extends GroupOfTests {
 				ForeignKeyGenomicAlignId.class, 
 				ForeignKeyMemberTables.class,
 				ForeignKeySpeciesTreeTables.class,
+				ForeignKeySyntenyTables.class,
 				EGCheckEmptyLocators.class,
 				MemberXrefAssociation.class, MemberProductionCounts.class,
 				MultipleGenomicAlignBlockIds.class,
