@@ -33,7 +33,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.compara.DuplicateGenomeDb </li>
  *   <li> org.ensembl.healthcheck.testcase.eg_compara.EGCheckNoTreeStableIds </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyCAFETables </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyFamilyId </li> 
+ *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyFamilyTables </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyGeneTrees </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyHomologyId </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMLSSIdHomology </li> 
@@ -63,7 +63,7 @@ public class ComparaHomology extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.CheckTableSizes.class,
 			org.ensembl.healthcheck.testcase.compara.DuplicateGenomeDb.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyCAFETables.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyFamilyId.class,
+			org.ensembl.healthcheck.testcase.compara.ForeignKeyFamilyTables.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyGeneTrees.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyHomologyId.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyMemberId.class,

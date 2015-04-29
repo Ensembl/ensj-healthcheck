@@ -58,7 +58,6 @@ public class ForeignKeyMemberId extends SingleDatabaseTestCase {
 
         if (tableHasRows(con, "seq_member")) {
 
-            result &= checkForOrphans(con, "family_member", "seq_member_id", "seq_member", "seq_member_id");
             result &= checkForOrphans(con, "homology_member", "seq_member_id", "seq_member", "seq_member_id");
             result &= checkForOrphans(con, "gene_align_member", "seq_member_id", "seq_member", "seq_member_id");
             result &= checkOptionalRelation(con, "gene_tree_node", "seq_member_id", "seq_member", "seq_member_id");
