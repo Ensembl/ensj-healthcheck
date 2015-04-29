@@ -69,16 +69,7 @@ public class ForeignKeyGenomicAlignNodeId extends SingleDatabaseTestCase {
 	   }
 
 	   /* Looking at distance_to_parent > 1 is true for LOW_COVERAGE but not epo */
-	    //Check distance_to_parent > 1
-	   /*
-	   int dist_to_parent = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM genomic_align_tree WHERE distance_to_parent > 1");
-	   if (dist_to_parent > 0) {
-	       ReportManager.problem(this, con, dist_to_parent + " entries in genomic_align_tree table have distance_to_parent values greater than 1");
-	       result = false;
-	   } else {
-	       ReportManager.correct(this, con, "All entries in genomic_align_tree table have distance_to_parent values of less than 1");
-	   }
-	   */
+	   //result &= checkCountIsZero(con, "genomic_align_tree", "distance_to_parent > 1");
        } else {
 	   ReportManager.correct(this, con, "NO ENTRIES in genomic_align_tree tables, so nothing to test IGNORED");
         }
