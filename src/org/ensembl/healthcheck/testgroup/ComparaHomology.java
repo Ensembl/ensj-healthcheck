@@ -40,7 +40,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyHomologyId </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMLSSIdHomology </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMemberId </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkId </li> 
+ *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMasterTables </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkSpeciesSetId </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeySequenceId </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeNodeId </li>  
@@ -73,7 +73,7 @@ public class ComparaHomology extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomeDbId.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyHomologyId.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyMemberId.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkId.class,
+			org.ensembl.healthcheck.testcase.compara.ForeignKeyMasterTables.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkSpeciesSetId.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyMLSSIdHomology.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeySequenceId.class,

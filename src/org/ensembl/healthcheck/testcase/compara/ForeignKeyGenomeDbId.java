@@ -57,20 +57,10 @@ public class ForeignKeyGenomeDbId extends AbstractComparaTestCase {
 
         Connection con = dbre.getConnection();
 
-		if (isMasterDB(con)) {
-            result &= checkForOrphans(con, "dnafrag", "genome_db_id", "genome_db", "genome_db_id");
-            result &= checkForOrphans(con, "species_set", "genome_db_id", "genome_db", "genome_db_id");
-            result &= checkForOrphansWithConstraint(con, "genome_db", "genome_db_id", "species_set", "genome_db_id", "taxon_id != 0");
-			return result;
-		}
-
         if (tableHasRows(con, "genome_db")) {
 
-            result &= checkForOrphans(con, "dnafrag", "genome_db_id", "genome_db", "genome_db_id");
             result &= checkOptionalRelation(con, "gene_member", "genome_db_id", "genome_db", "genome_db_id");
             result &= checkOptionalRelation(con, "seq_member", "genome_db_id", "genome_db", "genome_db_id");
-            result &= checkForOrphans(con, "species_set", "genome_db_id", "genome_db", "genome_db_id");
-            result &= checkForOrphansWithConstraint(con, "genome_db", "genome_db_id", "species_set", "genome_db_id", "taxon_id != 0");
             result &= checkOptionalRelation(con, "species_tree_node", "genome_db_id", "genome_db", "genome_db_id");
 
         } else {

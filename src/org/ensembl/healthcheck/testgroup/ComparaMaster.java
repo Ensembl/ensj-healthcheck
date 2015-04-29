@@ -32,7 +32,7 @@ public class ComparaMaster extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetTag.class,
 
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomeDbId.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkId.class,
+			org.ensembl.healthcheck.testcase.compara.ForeignKeyMasterTables.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkSpeciesSetId.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyMLSSIdGenomic.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyTaxonId.class,

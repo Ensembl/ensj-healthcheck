@@ -57,18 +57,10 @@ public class ForeignKeyTaxonId extends AbstractComparaTestCase {
 
         Connection con = dbre.getConnection();
 
-		if (isMasterDB(con)) {
-			// We only check genome_db in this case
-			result &= checkForOrphansWithConstraint(con, "genome_db", "taxon_id", "ncbi_taxa_node", "taxon_id", "taxon_id != 0");
-			result &= checkForOrphansWithConstraint(con, "genome_db", "taxon_id", "ncbi_taxa_name", "taxon_id", "taxon_id != 0");
-			return result;
-		}
-
         if (tableHasRows(con, "ncbi_taxa_node")) {
 
             result &= checkForOrphans(con, "gene_member", "taxon_id", "ncbi_taxa_node", "taxon_id");
             result &= checkForOrphans(con, "seq_member", "taxon_id", "ncbi_taxa_node", "taxon_id");
-            result &= checkForOrphansWithConstraint(con, "genome_db", "taxon_id", "ncbi_taxa_node", "taxon_id", "taxon_id != 0");
             result &= checkOptionalRelation(con, "species_tree_node", "taxon_id", "ncbi_taxa_node", "taxon_id");
 
         } else {
@@ -78,7 +70,6 @@ public class ForeignKeyTaxonId extends AbstractComparaTestCase {
 
             result &= checkForOrphans(con, "gene_member", "taxon_id", "ncbi_taxa_name", "taxon_id");
             result &= checkForOrphans(con, "seq_member", "taxon_id", "ncbi_taxa_name", "taxon_id");
-            result &= checkForOrphansWithConstraint(con, "genome_db", "taxon_id", "ncbi_taxa_name", "taxon_id", "taxon_id != 0");
             result &= checkOptionalRelation(con, "species_tree_node", "taxon_id", "ncbi_taxa_name", "taxon_id");
 
         } else {
