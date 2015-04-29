@@ -70,8 +70,6 @@ public class CheckSpeciesSetTag extends AbstractComparaTestCase {
 		DatabaseRegistryEntry[] allSecondaryComparaDBs = DBUtils
 				.getSecondaryDatabaseRegistry().getAll(DatabaseType.COMPARA);
 
-			// ... check that the genome_db names are correct
-			result &= checkProductionNames(comparaDbre, DBUtils.getMainDatabaseRegistry());
 			// ... check that we have one name tag for every MSA
 			result &= checkNameTagForMultipleAlignments(comparaDbre);
 
@@ -145,71 +143,6 @@ public class CheckSpeciesSetTag extends AbstractComparaTestCase {
 		}
 
 		return result;
-	}
-
-
-	public boolean checkProductionNames(DatabaseRegistryEntry comparaDbre,
-			DatabaseRegistry dbr) {
-
-		boolean result = true;
-
-		Connection con = comparaDbre.getConnection();
-
-		// Get list of species (assembly_default) in compara
-		Vector<String> comparaSpeciesStr = new Vector<String>();
-		Vector<Species> comparaSpecies = new Vector<Species>();
-		String sql2 = "SELECT genome_db.name FROM genome_db WHERE assembly_default = 1"
-				+ " AND name <> 'Ancestral sequences' AND name <> 'ancestral_sequences' ORDER BY genome_db.genome_db_id";
-		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(sql2);
-			while (rs.next()) {
-				comparaSpeciesStr.add(rs.getString(1));
-				comparaSpecies.add(Species.resolveAlias(rs.getString(1)
-						.toLowerCase().replace(' ', '_')));
-			}
-			rs.close();
-			stmt.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-
-		Map<Species, DatabaseRegistryEntry> speciesMap = getSpeciesCoreDbMap(DBUtils.getMainDatabaseRegistry());
-
-		// get all the production names
-		boolean allSpeciesFound = true;
-
-		for (int i = 0; i < comparaSpecies.size(); i++) {
-			Species species = comparaSpecies.get(i);
-		    if (speciesMap.containsKey(species)) {
-                Connection speciesCon = speciesMap.get(species).getConnection();
-				String productionName = DBUtils
-						.getRowColumnValue(speciesCon,
-								"SELECT meta_value FROM meta WHERE meta_key = \"species.production_name\"");
-
-				if (!productionName.equals(comparaSpeciesStr.get(i))) {
-					ReportManager.problem(this, con,
-						"The genome_db '" + comparaSpeciesStr.get(i) + "' as a different 'species.production_name' key: '" + productionName + "'"
-						);
-					result = false;
-				}
-			} else {
-				ReportManager.problem(this, con, "No connection for "
-						+ comparaSpeciesStr.get(i));
-				allSpeciesFound = false;
-			}
-		}
-		if (!allSpeciesFound) {
-			ReportManager.problem(this, con, "Cannot find all the species");
-		}
-
-        if (result) {
-            ReportManager.correct(this, con, "PASSED genome_db and ncbi_taxa_name table share the same species names");
-        }
-
-        return result;
-
 	}
 
 	public boolean checkNameTagForMultipleAlignments(DatabaseRegistryEntry dbre) {

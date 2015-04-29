@@ -146,30 +146,39 @@ public class CheckGenomeDB extends AbstractComparaTestCase {
 		Map<Species, DatabaseRegistryEntry> speciesMap = getSpeciesCoreDbMap(DBUtils.getMainDatabaseRegistry());
 
         boolean allSpeciesFound = true;
-        for (int i = 0; i < comparaSpecies.size(); i++) {
-          Species species = comparaSpecies.get(i);
+		for (Species species: comparaSpecies) {
 		  if (speciesMap.containsKey(species)) {
             Connection speciesCon = speciesMap.get(species).getConnection();
-            /* Check taxon_id */
-            String sql1, sql2;
 
+            /* Check production name */
+            String sql1, sql2;
+            sql1 = "SELECT \"" + species + "\", \"name\", name FROM genome_db" +
+                " WHERE genome_db.name = \"" + species + "\" AND  assembly_default = 1";
+            sql2 = "SELECT \"" + species + "\", \"name\", meta_value FROM meta" +
+                " WHERE meta_key = \"species.production_name\"";
+            result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
+
+            /* Check taxon_id */
             sql1 = "SELECT \"" + species + "\", \"taxon_id\", taxon_id FROM genome_db" +
                 " WHERE genome_db.name = \"" + species + "\" AND  assembly_default = 1";
             sql2 = "SELECT \"" + species + "\", \"taxon_id\", meta_value FROM meta" +
                 " WHERE meta_key = \"species.taxonomy_id\"";
             result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
+
             /* Check assembly */
             sql1 = "SELECT \"" + species + "\", \"assembly\", assembly FROM genome_db" +
                 " WHERE genome_db.name = \"" + species + "\" AND  assembly_default = 1";
             sql2 = "SELECT \"" + species + "\", \"assembly\", version FROM coord_system" +
                 " WHERE rank=1";
             result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
+
             /* Check genebuild */
             sql1 = "SELECT \"" + species + "\", \"genebuild\", genebuild FROM genome_db" +
                 " WHERE genome_db.name = \"" + species + "\" AND  assembly_default = 1";
             sql2 = "SELECT \"" + species + "\", \"genebuild\", meta_value FROM meta" +
                 " WHERE meta_key = \"genebuild.start_date\"";
             result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
+
           } else {
             ReportManager.problem(this, comparaCon, "No connection for " + species);
             allSpeciesFound = false;
@@ -178,5 +187,5 @@ public class CheckGenomeDB extends AbstractComparaTestCase {
 
         return result;
     }
-    
-} // CheckTopLevelDnaFrag
+
+} // CheckGenomeDB
