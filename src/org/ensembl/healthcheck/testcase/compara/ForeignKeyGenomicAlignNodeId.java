@@ -59,19 +59,6 @@ public class ForeignKeyGenomicAlignNodeId extends SingleDatabaseTestCase {
 
        if (tableHasRows(con, "genomic_align_tree")) {
 	   
-	   if (tableHasRows(con, "genomic_align")) {
-	       /* Can't use this because genomic_align.node_id can be NULL eg pairwise alignments */ 
-	       /* result &= checkForOrphans(con, "genomic_align", "node_id", "genomic_align_tree", "node_id"); */
-	       int num_orphans = DBUtils.getRowCount(con, "SELECT genomic_align.node_id FROM genomic_align LEFT JOIN genomic_align_tree ON genomic_align.node_id = genomic_align_tree.node_id WHERE genomic_align.node_id is not NULL AND genomic_align_tree.node_id iS NULL");
-	       if (num_orphans > 0) {
-		   ReportManager.problem(this, con, num_orphans + " genomic_align entries are not linked to genomic_align_tree");
-		   ReportManager.problem(this, con, " USEFUL SQL: SELECT genomic_align.node_id FROM genomic_align LEFT JOIN genomic_align_tree ON genomic_align.node_id = genomic_align_tree.node_id WHERE genomic_align.node_id is not NULL AND genomic_align_tree.node_id iS NULL");
-		   result = false;
-	       }
-
-	   } else {
-	       ReportManager.correct(this, con, "NO ENTRIES in genomic_align table, so nothing to test IGNORED");
-	   }
 	   
 	   // Check the left_node_id values are set (and assume right_node_ids have also been set)
 	   int left_node_ids = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM genomic_align_tree WHERE left_node_id != 0");

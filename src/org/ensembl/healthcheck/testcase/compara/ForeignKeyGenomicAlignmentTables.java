@@ -44,6 +44,7 @@ public class ForeignKeyGenomicAlignmentTables extends AbstractComparaTestCase {
 		result &= checkForOrphans(con, "genomic_align", "dnafrag_id", "dnafrag", "dnafrag_id");
 		result &= checkForOrphans(con, "genomic_align_block", "genomic_align_block_id", "genomic_align", "genomic_align_block_id");
 		result &= checkForOrphans(con, "genomic_align", "genomic_align_block_id", "genomic_align_block", "genomic_align_block_id");
+		result &= checkOptionalRelation(con, "genomic_align", "node_id", "genomic_align_tree", "node_id");
 		return result;
 	}
 
