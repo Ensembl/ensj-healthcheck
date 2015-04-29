@@ -22,10 +22,10 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.testcase.compara.AbstractComparaTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
-public class CheckSpeciesSetCountsByMethod extends SingleDatabaseTestCase {
+public class CheckSpeciesSetCountsByMethod extends AbstractComparaTestCase {
 
 	public CheckSpeciesSetCountsByMethod() {
 		setTeamResponsible(Team.COMPARA);
@@ -36,7 +36,9 @@ public class CheckSpeciesSetCountsByMethod extends SingleDatabaseTestCase {
 	public boolean run(DatabaseRegistryEntry dbre) {
 		boolean result = true;
 		result &= assertSpeciesSetCountForMLSS(dbre, "ENSEMBL_ORTHOLOGUES", 2);
-		result &= assertSpeciesSetCountForMLSS(dbre, "ENSEMBL_PARALOGUES", 1);
+		if (! isMasterDB(dbre.getConnection())) {
+			result &= assertSpeciesSetCountForMLSS(dbre, "ENSEMBL_PARALOGUES", 1);
+		}
 		result &= assertSpeciesSetCountForMLSS(dbre, "ENSEMBL_HOMOEOLOGUES", 2);
 		result &= assertSpeciesSetCountForMLSS(dbre, "BLASTZ_NET", 2);
 		result &= assertSpeciesSetCountForMLSS(dbre, "LASTZ_NET", 2);
