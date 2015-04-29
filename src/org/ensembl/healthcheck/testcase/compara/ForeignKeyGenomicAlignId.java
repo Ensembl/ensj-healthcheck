@@ -57,12 +57,7 @@ public class ForeignKeyGenomicAlignId extends SingleDatabaseTestCase {
 
        Connection con = dbre.getConnection();
 
-//        if (tableHasRows(con, "genomic_align_group") &&
-//            tableHasRows(con, "genomic_align")) {
        if (tableHasRows(con, "genomic_align")) {
-
-            //            result &= checkForOrphans(con, "genomic_align", "genomic_align_id", "genomic_align_group", "genomic_align_id");
-            //            result &= checkForOrphans(con, "genomic_align_group", "genomic_align_id", "genomic_align", "genomic_align_id");
 
             // Check that all method_link_species_set_ids match the genomic_align_block table
             int mismatches = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM genomic_align ga LEFT JOIN genomic_align_block gab" +

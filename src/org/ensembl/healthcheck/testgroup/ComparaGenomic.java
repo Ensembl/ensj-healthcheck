@@ -29,8 +29,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetTag </li>  
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckSynteny </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckTableSizes </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyDnafragId </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignBlockId </li> 
+ *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignmentTables </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignId </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMLSSIdGenomic </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignNodeId </li>  
@@ -65,8 +64,7 @@ public class ComparaGenomic extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.CheckWGASpeciesTree.class,
 			org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetCountsByMethod.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyConservationTables.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyDnafragId.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignBlockId.class,
+			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignmentTables.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignId.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignNodeId.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyMasterTables.class,
