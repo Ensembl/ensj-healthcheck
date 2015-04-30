@@ -87,15 +87,13 @@ public class CheckGenomicAlignGenomeDBs extends SingleDatabaseTestCase {
 
 		if (method_link_species_set_ids.length > 0) {
 
-			for (int i = 0; i < method_link_species_set_ids.length; i++) {
+			for (String mlss_id : method_link_species_set_ids) {
 				/**
 				 * Expected number of genome_db_ids
 				 */
 
-				String gdb_sql = "SELECT COUNT(*) FROM species_set LEFT JOIN method_link_species_set USING (species_set_id) WHERE method_link_species_set_id = "
-						+ method_link_species_set_ids[i];
-				String[] num_genome_db_ids = DBUtils.getColumnValues(con,
-						gdb_sql);
+				String gdb_sql = "SELECT COUNT(*) FROM species_set LEFT JOIN method_link_species_set USING (species_set_id) WHERE method_link_species_set_id = " + mlss_id;
+				String[] num_genome_db_ids = DBUtils.getColumnValues(con, gdb_sql);
 
 				/**
 				 * Find genome_db_ids in genomic_aligns. For speed, only look at
@@ -110,32 +108,25 @@ public class CheckGenomicAlignGenomeDBs extends SingleDatabaseTestCase {
 				 */
 				String useful_sql;
 				useful_sql = "SELECT COUNT(DISTINCT genome_db_id) FROM (SELECT * FROM genomic_align_block WHERE method_link_species_set_id = "
-						+ method_link_species_set_ids[i]
+						+ mlss_id
 						+ " limit 100) t1 LEFT JOIN genomic_align USING (genomic_align_block_id) LEFT JOIN dnafrag USING (dnafrag_id) HAVING COUNT(DISTINCT genome_db_id) >= (SELECT COUNT(*) FROM species_set LEFT JOIN method_link_species_set USING (species_set_id) WHERE method_link_species_set_id = "
-						+ method_link_species_set_ids[i] + " )";
+						+ mlss_id + " )";
 				String[] success = DBUtils.getColumnValues(con, useful_sql);
 
 				if (success.length > 0) {
 					/**
 					 * System.out.println("MLSS " +
-					 * method_link_species_set_ids[i] + " real " + success[0] +
+					 * mlss_id + " real " + success[0] +
 					 * " expected " + num_genome_db_ids[0]);
 					 */
-					ReportManager
-							.correct(
-									this,
-									con,
-									"All genome_dbs are present in the genomic_aligns for method_link_species_set_id "
-											+ method_link_species_set_ids[i]);
+					ReportManager.correct(this, con, "All genome_dbs are present in the genomic_aligns for method_link_species_set_id " + mlss_id);
 				} else {
-					ReportManager
-							.problem(
+					ReportManager.problem(
 									this,
 									con,
 									"WARNING not all the genome_dbs are present in the first 100 genomic_align_block_ids. Could indicate a problem with alignment with method_link_species_set_id "
-											+ method_link_species_set_ids[i]);
-					ReportManager.problem(this, con, "USEFUL SQL: "
-							+ useful_sql);
+											+ mlss_id);
+					ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
 					result = false;
 				}
 			}

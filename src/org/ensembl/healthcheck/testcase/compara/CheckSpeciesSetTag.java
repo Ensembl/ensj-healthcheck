@@ -80,9 +80,9 @@ public class CheckSpeciesSetTag extends AbstractComparaTestCase {
 					"Cannot find the compara database in the secondary server. This check expects to find a previous version of the compara database for checking that all the *named* species_sets are still present in the current database.");
 		}
 
-		for (int j = 0; j < allSecondaryComparaDBs.length; j++) {
+		for (DatabaseRegistryEntry secondaryComparaDbre: allSecondaryComparaDBs) {
 			// Check vs previous compara DB.
-			result &= checkSetOfSpeciesSets(comparaDbre, allSecondaryComparaDBs[j]);
+			result &= checkSetOfSpeciesSets(comparaDbre, secondaryComparaDbre);
 		}
 
 		return result;

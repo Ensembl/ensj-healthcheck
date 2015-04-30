@@ -120,8 +120,7 @@ public class CheckTaxon extends AbstractComparaTestCase{
 		Map<Species, DatabaseRegistryEntry> speciesMap = getSpeciesCoreDbMap(DBUtils.getMainDatabaseRegistry());
 
         boolean allSpeciesFound = true;
-        for (int i = 0; i < comparaSpecies.size(); i++) {
-          Species species = comparaSpecies.get(i);
+		for (Species species: comparaSpecies) {
 		  if (speciesMap.containsKey(species)) {
             Connection speciesCon = speciesMap.get(species).getConnection();
             String sql1, sql2;
