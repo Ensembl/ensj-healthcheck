@@ -62,6 +62,8 @@ public abstract class MethodLinkSpeciesSetIdStats extends AbstractTemplatedTestC
 			if (mlsss.size() > 0) {
 				ReportManager.problem( this, dbre.getConnection(), "MLSSs for " + method_tags.getKey() + " found with no statistics: " + StringUtils.join(mlsss, ","));
 				result = false;
+			} else {
+				ReportManager.correct(this, dbre.getConnection(), "PASSED ");
 			}
 		}
 		return result;
