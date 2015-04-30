@@ -43,6 +43,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeTables </li>
  *   <li> org.ensembl.healthcheck.testcase.eg_compara.MemberProductionCounts </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.Meta </li> 
+ *   <li> org.ensembl.healthcheck.testcase.compara.MetaSpeciesID </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.SingleDBCollations </li> 
  * </ul>
  *
@@ -73,6 +74,7 @@ public class ComparaHomology extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyMLSSIdHomology.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeTables.class,
 			org.ensembl.healthcheck.testcase.compara.Meta.class,
+			org.ensembl.healthcheck.testcase.compara.MetaSpeciesID.class,
 			org.ensembl.healthcheck.testcase.compara.MethodLinkSpeciesSetIdStatsHomology.class,
 			org.ensembl.healthcheck.testcase.compara.SingleDBCollations.class,
 			org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class,

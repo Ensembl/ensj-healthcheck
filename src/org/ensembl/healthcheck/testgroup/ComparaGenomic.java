@@ -39,6 +39,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeTables </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeySyntenyTables </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.Meta </li> 
+ *   <li> org.ensembl.healthcheck.testcase.compara.MetaSpeciesID </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.MLSSTagGERPMSA </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.MLSSTagMaxAlign </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.SingleDBCollations </li> 
@@ -74,6 +75,7 @@ public class ComparaGenomic extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeTables.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeySyntenyTables.class,
 			org.ensembl.healthcheck.testcase.compara.Meta.class,
+			org.ensembl.healthcheck.testcase.compara.MetaSpeciesID.class,
 			org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class,
 			org.ensembl.healthcheck.testcase.compara.MLSSTagGERPMSA.class,
 			org.ensembl.healthcheck.testcase.compara.MLSSTagMaxAlign.class,

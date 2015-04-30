@@ -37,26 +37,27 @@ import org.ensembl.healthcheck.util.Utils; // needed for stringInArray
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key relationships.
  */
 
-public class Meta extends AbstractRepairableComparaTestCase {
+public class MetaSpeciesID extends AbstractRepairableComparaTestCase {
 
+	String[] speciesless_meta_keys = { "schema_version", "schema_type", "patch" };
 
 	protected String getTableName() {
 		return "meta";
 	}
 	protected String getAddQuery(String key, String value) {
-		return "INSERT INTO meta VALUES (NULL, 1, \"" + key + "\", " + value + ");";
+		return ""; // Cannot happend
 	}
 	protected String getUpdateQuery(String key, String value) {
-		return "UPDATE meta SET meta_value = " + value + " WHERE meta_key = \"" + key + "\";";
+		return "UPDATE meta SET species_id = " + value + " WHERE meta_key = \"" + key + "\";";
 	}
 	protected String getRemoveQuery(String key) {
-		return "DELETE FROM meta WHERE meta_key = \"" + key + "\";";
+		return ""; // Cannot happend
 	}
 
 	/**
 	 * Create an ForeignKeyMethodLinkId that applies to a specific set of databases.
 	 */
-	public Meta() {
+	public MetaSpeciesID() {
 
 		addToGroup("compara_genomic");
 		addToGroup("compara_homology");
@@ -74,52 +75,38 @@ public class Meta extends AbstractRepairableComparaTestCase {
 	 * 
 	 */
 	public boolean runTest(DatabaseRegistryEntry dbre) {
-
 		boolean result = true;
-
-		Connection con = dbre.getConnection();
-
-		if (!DBUtils.checkTableExists(con, "meta")) {
-			result = false;
-			ReportManager.problem(this, con, "Meta table not present");
-			return result;
-		}
-
-		// These methods return false if there is any problem with the test
-		if (!isMasterDB(con)) {
-			result &= checkSchemaVersionDBName(dbre);
-		}
-
+		result &= checkSpeciesId(dbre);
 		return result;
 	}
 
-
 	/**
-	 * Check that the schema_version in the meta table is present and matches the database name.
+	 * Check that the species_id is 1 for everything except schema_version which should be NULL
 	 */
-	private boolean checkSchemaVersionDBName(DatabaseRegistryEntry dbre) {
+	private boolean checkSpeciesId(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
-
-		// get version from database name
-		String dbNameVersion = dbre.getSchemaVersion();
-
-		logger.finest("Schema version from database name: " + dbNameVersion);
 
 		// get version from meta table
 		Connection con = dbre.getConnection();
 
-		// Get current global value from the meta table (used for backwards compatibility)
-		String sql = "SELECT meta_key, meta_value" + " FROM meta WHERE meta_key = \"schema_version\"";
+		String sql = "SELECT species_id, meta_key FROM meta";
+
 		try {
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
-			if (rs.first()) {
-				if (rs.getInt(2) != new Integer(dbNameVersion).intValue()) {
-					EntriesToUpdate.put("schema_version", dbNameVersion);
+			while (rs.next()) {
+				if (Utils.stringInArray(rs.getString(2), speciesless_meta_keys, true)) { // Is it one of meta_keys that expect species_id=NULL ?
+					if (rs.getInt(1) != 0) {
+						// set species_id of schema_version to NULL
+						EntriesToUpdate.put(rs.getString(2), "NULL");
+					}
+				} else {    // the rest of meta_keys expect species_id=1 in Compara schema
+					if (rs.getInt(1) != 1) {
+						// set species_id of everything else to 1
+						EntriesToUpdate.put(rs.getString(2), "1");
+					}
 				}
-			} else {
-				EntriesToAdd.put("schema_version", dbNameVersion);
 			}
 			rs.close();
 			stmt.close();
@@ -127,9 +114,7 @@ public class Meta extends AbstractRepairableComparaTestCase {
 			se.printStackTrace();
 			result = false;
 		}
-
 		return result;
+	}
 
-	} // ---------------------------------------------------------------------
-
-} // Meta
+} // MetaSpeciesID

@@ -37,6 +37,7 @@ public class ComparaMaster extends GroupOfTests {
 
 			org.ensembl.healthcheck.testcase.compara.DuplicateGenomeDb.class,
 			org.ensembl.healthcheck.testcase.compara.Meta.class,
+			org.ensembl.healthcheck.testcase.compara.MetaSpeciesID.class,
 			org.ensembl.healthcheck.testcase.compara.SingleDBCollations.class,
 
 			org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetCountsByMethod.class

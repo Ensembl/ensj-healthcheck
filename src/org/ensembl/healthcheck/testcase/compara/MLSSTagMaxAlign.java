@@ -28,6 +28,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.testcase.Repair;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.testcase.compara.MethodLinkSpeciesSetTag;
@@ -39,22 +40,28 @@ import org.ensembl.healthcheck.util.DBUtils;
 
 public class MLSSTagMaxAlign extends MethodLinkSpeciesSetTag {
 
+	public String getTagToCheck() {
+		return "max_align";
+	}
+
+
 	/**
 	 * Create an ForeignKeyMethodLinkId that applies to a specific set of databases.
 	 */
 	public MLSSTagMaxAlign() {
 
 		addToGroup("compara_genomic");
+		appliesToType(DatabaseType.COMPARA);
 		setDescription("Tests that proper max_alignment_length have been defined in the method_link_species_set_tag table.");
 		setTeamResponsible(Team.COMPARA);
-		tagToCheck = "max_align";
 	}
 
 	/**
 	 * Check the max_align in the method_link_species_set_tag table
 	 */
-	boolean doCheck(Connection con) {
+	protected boolean runTest(DatabaseRegistryEntry dbre) {
 
+		Connection con = dbre.getConnection();
 		boolean result = true;
 
 		int globalMaxAlignmentLength = 0;
@@ -74,7 +81,7 @@ public class MLSSTagMaxAlign extends MethodLinkSpeciesSetTag {
 			// Adding this at this point is probably faster than asking MySQL to add 2
 			// to every single row...
 			while (rs.next()) {
-				MetaEntriesToAdd.put(rs.getString(1), new Integer(rs.getInt(2) + 2).toString());
+				EntriesToAdd.put(rs.getString(1), new Integer(rs.getInt(2) + 2).toString());
 				if (rs.getInt(2) > globalMaxAlignmentLength) {
 					globalMaxAlignmentLength = rs.getInt(2) + 2;
 				}
@@ -95,7 +102,7 @@ public class MLSSTagMaxAlign extends MethodLinkSpeciesSetTag {
 			// Adding this at this point is probably faster than asking MySQL to add 2
 			// to every single row...
 			while (rs.next()) {
-				MetaEntriesToAdd.put(rs.getString(1), new Integer(rs.getInt(2) + 2).toString());
+				EntriesToAdd.put(rs.getString(1), new Integer(rs.getInt(2) + 2).toString());
 				if (rs.getInt(2) > globalMaxAlignmentLength) {
 					globalMaxAlignmentLength = rs.getInt(2) + 2;
 				}
@@ -114,14 +121,14 @@ public class MLSSTagMaxAlign extends MethodLinkSpeciesSetTag {
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
 				if (rs.getInt(3) != 1) {
-					MetaEntriesToRemove.put(rs.getString(1), rs.getString(2));
-				} else if (MetaEntriesToAdd.containsKey(rs.getString(1))) {
-					if (!MetaEntriesToAdd.get(rs.getString(1)).equals(rs.getString(2))) {
-						MetaEntriesToUpdate.put(rs.getString(1), MetaEntriesToAdd.get(rs.getString(1)));
+					EntriesToRemove.put(rs.getString(1), rs.getString(2));
+				} else if (EntriesToAdd.containsKey(rs.getString(1))) {
+					if (!EntriesToAdd.get(rs.getString(1)).equals(rs.getString(2))) {
+						EntriesToUpdate.put(rs.getString(1), EntriesToAdd.get(rs.getString(1)));
 					}
-					MetaEntriesToAdd.remove(rs.getString(1));
+					EntriesToAdd.remove(rs.getString(1));
 				} else {
-					MetaEntriesToRemove.put(rs.getString(1), rs.getString(2));
+					EntriesToRemove.put(rs.getString(1), rs.getString(2));
 				}
 			}
 			rs.close();
