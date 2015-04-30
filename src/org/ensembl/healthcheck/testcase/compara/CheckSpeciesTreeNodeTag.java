@@ -65,17 +65,9 @@ public class CheckSpeciesTreeNodeTag extends SingleDatabaseTestCase {
 			return true;
 		}
 
-		int n_tags_root = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM species_tree_node_tag WHERE tag LIKE 'root\\_%'");
-		int n_tags_genes = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM species_tree_node_tag WHERE tag LIKE 'nb%\\_genes%'");
-
 		boolean result = true;
-		if (n_tags_root == 0) {
-			ReportManager.problem(this, con, "There are no species_tree_node_tags to describe properties of the root nodes");
-			result = false;
-		} else if (n_tags_genes == 0) {
-			ReportManager.problem(this, con, "There are no species_tree_node_tags to summarize the gene counts");
-			result = false;
-		}
+		result &= checkCountIsNonZero(con, "species_tree_node_tag", "tag LIKE 'root\\_%'");
+		result &= checkCountIsNonZero(con, "species_tree_node_tag", "tag LIKE 'nb%\\_genes%'");
 		return result;
 	}
 }

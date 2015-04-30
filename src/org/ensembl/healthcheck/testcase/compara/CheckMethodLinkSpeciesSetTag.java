@@ -77,11 +77,7 @@ public class CheckMethodLinkSpeciesSetTag extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		if (tableHasRows(con, "homology")) {
-			int n_tags = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM method_link_species_set_tag WHERE tag = 'threshold_on_ds'");
-			if (n_tags == 0) {
-				ReportManager.problem(this, con, "There are homologies, but no 'threshold_on_ds' tags.");
-				return false;
-			}
+			return checkCountIsNonZero(con, "method_link_species_set_tag", "tag = 'threshold_on_ds'");
 		}
 		return true;
 	}

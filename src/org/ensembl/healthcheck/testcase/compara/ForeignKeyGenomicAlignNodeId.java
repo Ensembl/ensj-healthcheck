@@ -61,12 +61,7 @@ public class ForeignKeyGenomicAlignNodeId extends SingleDatabaseTestCase {
 	   
 	   
 	   // Check the left_node_id values are set (and assume right_node_ids have also been set)
-	   int left_node_ids = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM genomic_align_tree WHERE left_node_id != 0");
-	   if (left_node_ids == 0) {
-	       ReportManager.problem(this, con, "There are no left_node_ids set.");
-	   } else {
-	       ReportManager.correct(this, con, "left_node_ids have been set");
-	   }
+		result &= checkCountIsNonZero(con, "genomic_align_tree", "left_node_id != 0");
 
 	   /* Looking at distance_to_parent > 1 is true for LOW_COVERAGE but not epo */
 	   //result &= checkCountIsZero(con, "genomic_align_tree", "distance_to_parent > 1");
