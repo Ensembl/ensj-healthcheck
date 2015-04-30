@@ -116,6 +116,9 @@ public class CheckTableSizes extends SingleDatabaseTestCase {
 				} else if (count1 > 0 && count2 == 0) {
 					result = false;
 					ReportManager.problem( this, con1, String.format("Table %s has %,d rows but was empty in %s.", table, count1, DBUtils.getShortDatabaseName(con2)));
+				} else if (count1 == count2 && count1 > 0) {
+					result = false;
+					ReportManager.problem( this, con1, String.format("Table %s has exactly the same number of rows (%,d) as in %s. Is it expected ?", table, count2, DBUtils.getShortDatabaseName(con2)));
 				} else if (count1 < (int) (.95 * count2) || count2 > (int) (1.10 * count2)) {
 					result = false;
 					ReportManager.problem( this, con1, String.format("Table %s had %,d rows in %s, but now has %,d rows (%+,d = %+.2f %%)", table, count2, DBUtils.getShortDatabaseName(con2), count1, count1-count2, (100.*(count1-count2))/count2));
