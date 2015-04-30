@@ -73,6 +73,8 @@ public class CheckSynteny extends SingleDatabaseTestCase {
 			}
 		}
 
+		result &= checkForSingles(con, "dnafrag_region", "synteny_region_id");
+
 		return result;
 
 	}

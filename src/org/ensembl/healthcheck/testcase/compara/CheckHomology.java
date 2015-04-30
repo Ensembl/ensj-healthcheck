@@ -57,11 +57,13 @@ public class CheckHomology extends SingleDatabaseTestCase {
 
         Connection con = dbre.getConnection();
 
-        if (tableHasRows(con, "homology") && tableHasRows(con, "homology")) {
+        if (tableHasRows(con, "homology")) {
             result &= checkCountIsZero(con,"method_link_species_set_tag","tag='threshold_on_ds' AND value NOT IN (1,2)");
         } else {
             ReportManager.problem(this, con, "NO ENTRIES in homology or homology_member tables");
         }
+
+		result &= checkForSingles(con, "homology_member", "homology_id");
         
         String sql_main = "SELECT hm1.gene_member_id gene_member_id1, hm2.gene_member_id gene_member_id2, COUNT(*) num, GROUP_CONCAT(h1.description order by h1.description) descs" +
              " FROM homology h1 CROSS JOIN homology_member hm1 USING (homology_id)" +
