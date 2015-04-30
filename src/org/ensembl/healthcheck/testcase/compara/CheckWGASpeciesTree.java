@@ -32,31 +32,20 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 public class CheckWGASpeciesTree extends SingleDatabaseTestCase {
 
-    /**
-     * Create an ForeignKeyMLSSIdHomology that applies to a specific set of databases.
-     */
     public CheckWGASpeciesTree() {
-        addToGroup("compara_homology");
         setDescription("Check for WGAs missing a species tree.");
         setTeamResponsible(Team.COMPARA);
     }
 
-    /**
-     * Run the test.
-     * 
-     * @param dbre
-     *          The database to use.
-     * @return true if the test passed.
-     *  
-     */
     public boolean run(DatabaseRegistryEntry dbre) {
-        boolean result = true;
         Connection con = dbre.getConnection();
-        if (tableHasRows(con, "method_link_species_set")) {
-            result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "species_tree_root", "method_link_species_set_id", "method_link_id IN (SELECT method_link_id FROM method_link WHERE (class LIKE 'GenomicAlignTree%' OR class LIKE '%multiple_alignment' OR class LIKE '%tree_node'))");
-        } else {
+
+        if (!tableHasRows(con, "method_link_species_set")) {
             ReportManager.correct(this, con, "NO ENTRIES in method_link_species_set table, so nothing to test IGNORED");
-        }
+		}
+
+        boolean result = true;
+		result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "species_tree_root", "method_link_species_set_id", "method_link_id IN (SELECT method_link_id FROM method_link WHERE (class LIKE 'GenomicAlignTree%' OR class LIKE '%multiple_alignment' OR class LIKE '%tree_node'))");
         return result;
     }
 

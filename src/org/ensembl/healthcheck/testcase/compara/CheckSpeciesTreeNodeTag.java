@@ -38,13 +38,11 @@ import org.ensembl.healthcheck.util.DBUtils;
 public class CheckSpeciesTreeNodeTag extends SingleDatabaseTestCase {
 
 	public CheckSpeciesTreeNodeTag() {
-		addToGroup("compara_homology");
-		setDescription("Tests that proper entries are in method_link_species_set_tag.");
+		setDescription("Tests that entries are present in species_tree_node_tag");
 		setTeamResponsible(Team.COMPARA);
 	}
 
 	public boolean run(DatabaseRegistryEntry dbre) {
-
 		Connection con = dbre.getConnection();
 
 		if (!DBUtils.checkTableExists(con, "species_tree_node_tag")) {
@@ -52,16 +50,8 @@ public class CheckSpeciesTreeNodeTag extends SingleDatabaseTestCase {
 			return false;
 		}
 
-		// These methods return false if there is any problem with the test
-		boolean result = true;
-		result &= checkTreeStatsArePresent(dbre);
-		return result;
-	}
-
-	public boolean checkTreeStatsArePresent(final DatabaseRegistryEntry dbre) {
-		Connection con = dbre.getConnection();
-
 		if (!tableHasRows(con, "species_tree_root")) {
+			ReportManager.info(this, con, "species_tree_root table is empty");
 			return true;
 		}
 
