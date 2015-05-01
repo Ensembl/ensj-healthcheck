@@ -18,7 +18,7 @@ package org.ensembl.healthcheck.testcase.compara;
 
 import org.ensembl.healthcheck.testcase.compara.AbstractRepairableComparaTestCase;
 
-public abstract class MethodLinkSpeciesSetTag extends AbstractRepairableComparaTestCase {
+public abstract class AbstractRepairableMLSSTag extends AbstractRepairableComparaTestCase {
 
 	protected abstract String getTagToCheck();
 

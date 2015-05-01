@@ -31,14 +31,14 @@ import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.testcase.Repair;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.testcase.compara.MethodLinkSpeciesSetTag;
+import org.ensembl.healthcheck.testcase.compara.AbstractRepairableMLSSTag;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key relationships.
  */
 
-public class MLSSTagMaxAlign extends MethodLinkSpeciesSetTag {
+public class MLSSTagMaxAlign extends AbstractRepairableMLSSTag {
 
 	public String getTagToCheck() {
 		return "max_align";
