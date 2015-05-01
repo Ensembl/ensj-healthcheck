@@ -143,7 +143,7 @@ public class CheckSynteny extends SingleDatabaseTestCase {
 			String[] these_dnafrag_ids = DBUtils.getColumnValues(con,
 					"SELECT dnafrag_id FROM dnafrag WHERE genome_db_id = "
 							+ genome_db_id
-							+ " AND coord_system_name = 'chromosome'"
+							+ " AND coord_system_name IN ('chromosome', 'group')"
 							+ " AND name NOT LIKE '%\\_%'"
 							+ " AND name NOT LIKE '%Un%'"
 							+ " AND name NOT IN ('MT') AND length > 1000000");
@@ -191,7 +191,7 @@ public class CheckSynteny extends SingleDatabaseTestCase {
 												+ " LEFT JOIN dnafrag ON (ga2.dnafrag_id = dnafrag.dnafrag_id) WHERE"
 												+ " ga1.dnafrag_id = "
 												+ dnafrag_id
-												+ " AND dnafrag.coord_system_name = 'chromosome'"
+												+ " AND dnafrag.coord_system_name IN ('chromosome', 'group')"
 												+ " AND ga1.method_link_species_set_id = "
 												+ alignment_mlss_id
 												+ " AND ga1.dnafrag_id <> ga2.dnafrag_id GROUP BY ga2.dnafrag_id "
