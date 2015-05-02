@@ -28,7 +28,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase;
 
-public abstract class MethodLinkSpeciesSetIdStats extends AbstractTemplatedTestCase {
+public abstract class AbstractMLSSTagStats extends AbstractTemplatedTestCase {
 
 	private final static String QUERY = "SELECT method_link_species_set_id FROM "
 			+ "(SELECT mlss.method_link_species_set_id, tc.stats_related_tags "
@@ -44,7 +44,7 @@ public abstract class MethodLinkSpeciesSetIdStats extends AbstractTemplatedTestC
 
 	abstract protected HashMap<String,String[]> getMandatoryTags();
 
-	public MethodLinkSpeciesSetIdStats() {
+	public AbstractMLSSTagStats() {
 		setTeamResponsible(Team.COMPARA);
 		appliesToType(DatabaseType.COMPARA);
 		setDescription("Checks whether stats have been generated for all MLSSs");

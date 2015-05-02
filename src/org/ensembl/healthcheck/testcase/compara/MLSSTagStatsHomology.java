@@ -18,18 +18,26 @@ package org.ensembl.healthcheck.testcase.compara;
 
 import java.util.HashMap;
 
-import org.ensembl.healthcheck.testcase.compara.MethodLinkSpeciesSetIdStats;
+import org.ensembl.healthcheck.testcase.compara.AbstractMLSSTagStats;
 
-public class MethodLinkSpeciesSetIdStatsSynteny extends MethodLinkSpeciesSetIdStats {
+public class MLSSTagStatsHomology extends AbstractMLSSTagStats {
 
 	protected HashMap<String,String[]> getMandatoryTags() {
 		HashMap<String,String[]> mandatoryTags = new HashMap<String,String[]>();
-		String[] tags_synteny = {
-			"ensembl_release", "num_blocks",
-			"non_reference_species", "non_ref_coding_exon_length", "non_ref_covered", "non_ref_genome_coverage", "non_ref_genome_length", "non_ref_uncovered",
-			"reference_species", "ref_coding_exon_length", "ref_covered", "ref_genome_coverage", "ref_genome_length", "ref_uncovered"
+		String[] tags_orthologies = {
+			"n_many-to-many_groups", "n_many-to-many_pairs",
+			"n_many-to-one_groups", "n_many-to-one_pairs",
+			"n_one-to-many_groups", "n_one-to-many_pairs",
+			"n_one-to-one_groups", "n_one-to-one_pairs"
 		};
-		mandatoryTags.put("SYNTENY", tags_synteny);
+		mandatoryTags.put("ENSEMBL_ORTHOLOGUES", tags_orthologies);
+
+		String[] tags_paralogies = {
+			"n_gene_split_genes", "n_gene_split_groups", "n_gene_split_pairs", "avg_gene_split_perc_id",
+			"n_within_species_paralog_genes", "n_within_species_paralog_groups", "n_within_species_paralog_pairs", "avg_within_species_paralog_perc_id"
+		};
+		mandatoryTags.put("ENSEMBL_PARALOGUES", tags_paralogies);
+
 		return mandatoryTags;
 	}
 

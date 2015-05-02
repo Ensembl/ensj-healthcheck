@@ -18,21 +18,19 @@ package org.ensembl.healthcheck.testcase.compara;
 
 import java.util.HashMap;
 
-import org.ensembl.healthcheck.testcase.compara.MethodLinkSpeciesSetIdStats;
+import org.ensembl.healthcheck.testcase.compara.AbstractMLSSTagStats;
 
-public class MethodLinkSpeciesSetIdStatsPairwiseAlignment extends MethodLinkSpeciesSetIdStats {
+public class MLSSTagStatsMultipleAlignment extends AbstractMLSSTagStats {
 
 	protected HashMap<String,String[]> getMandatoryTags() {
 		HashMap<String,String[]> mandatoryTags = new HashMap<String,String[]>();
-		String[] tags_pairwise = {
-			"non_ref_coding_exon_length", "non_ref_genome_coverage","non_ref_genome_length",
-			"non_ref_insertions", "non_ref_matches", "non_ref_mis_matches", "non_ref_uncovered",
-			"ref_coding_exon_length", "ref_genome_coverage", "ref_genome_length", "ref_insertions",
-			"ref_matches", "ref_mis_matches", "ref_uncovered"
+		String[] tags_multiple_alignments = {
+			"ensembl_release", "num_blocks", "max_align"
 		};
-		mandatoryTags.put("BLASTZ_NET", tags_pairwise);
-		mandatoryTags.put("LASTZ_NET", tags_pairwise);
-		mandatoryTags.put("TRANSLATED_BLAT_NET", tags_pairwise);
+		mandatoryTags.put("EPO", tags_multiple_alignments);
+		mandatoryTags.put("PECAN", tags_multiple_alignments);
+		mandatoryTags.put("EPO_LOW_COVERAGE", tags_multiple_alignments);	// We don't include "high_coverage_mlss_id" because it is checked by another HC
+
 		return mandatoryTags;
 	}
 
