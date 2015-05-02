@@ -66,21 +66,12 @@ public class CheckMethodLinkSpeciesSetTag extends SingleDatabaseTestCase {
                 }
 
                 // These methods return false if there is any problem with the test
-				result &= checkThresholdOnDsArePresent(dbre);
 				result &= checkSpeciesAreSpelledCorrectly(dbre);
 				result &= checkLowCoverageMLSSAreLinkedToHighCoverageMLSS(dbre);
 
                 return result;
         }
 
-	public boolean checkThresholdOnDsArePresent(final DatabaseRegistryEntry dbre) {
-		Connection con = dbre.getConnection();
-
-		if (tableHasRows(con, "homology")) {
-			return checkCountIsNonZero(con, "method_link_species_set_tag", "tag = 'threshold_on_ds'");
-		}
-		return true;
-	}
 
 	public boolean checkSpeciesAreSpelledCorrectly(final DatabaseRegistryEntry dbre) {
 		Connection con = dbre.getConnection();
