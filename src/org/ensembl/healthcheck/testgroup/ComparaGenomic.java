@@ -25,7 +25,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.eg_compara.EGMethodLinkSpeciesSetIdStats </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckConservationScore </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckGenomicAlignGenomeDBs </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.CheckMethodLinkSpeciesSetTag </li> 
+ *   <li> org.ensembl.healthcheck.testcase.compara.MLSSTagSpeciesNames </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetTag </li>  
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckSynteny </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckTableSizes </li> 
@@ -58,7 +58,7 @@ public class ComparaGenomic extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.MLSSTagStatsSynteny.class,
 			org.ensembl.healthcheck.testcase.compara.CheckConservationScore.class,
 			org.ensembl.healthcheck.testcase.compara.CheckGenomicAlignGenomeDBs.class,
-			org.ensembl.healthcheck.testcase.compara.CheckMethodLinkSpeciesSetTag.class,
+			org.ensembl.healthcheck.testcase.compara.MLSSTagSpeciesNames.class,
 			org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetTag.class,
 			org.ensembl.healthcheck.testcase.compara.CheckSynteny.class,
 			org.ensembl.healthcheck.testcase.compara.CheckTableSizes.class,
@@ -79,6 +79,7 @@ public class ComparaGenomic extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class,
 			org.ensembl.healthcheck.testcase.compara.MLSSTagGERPMSA.class,
 			org.ensembl.healthcheck.testcase.compara.MLSSTagMaxAlign.class,
+			org.ensembl.healthcheck.testcase.compara.MLSSTagHighCoverageMSA.class,
 			org.ensembl.healthcheck.testcase.compara.SingleDBCollations.class
 		);
 	}

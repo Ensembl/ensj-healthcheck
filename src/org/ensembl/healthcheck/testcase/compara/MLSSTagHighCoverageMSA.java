@@ -32,27 +32,17 @@ import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
-/**                                                                                                                                                                                 
- * An EnsEMBL Healthcheck test case for MethodLinkSpeciesSetTag entries
+/**
+ * An EnsEMBL Healthcheck test case for the "high_coverage_mlss_id" MethodLinkSpeciesSetTag entries
  */
 
-public class CheckMethodLinkSpeciesSetTag extends SingleDatabaseTestCase {
+public class MLSSTagHighCoverageMSA extends SingleDatabaseTestCase {
 
-        public CheckMethodLinkSpeciesSetTag() {
-                addToGroup("compara_genomic");
-                addToGroup("compara_homology");
+        public MLSSTagHighCoverageMSA() {
                 setDescription("Tests that proper entries are in method_link_species_set_tag.");
                 setTeamResponsible(Team.COMPARA);
         }
 
-    /**                                               
-     * Run the test.                                                            
- *                                                                                                                                                                              
- * @param dbre                                                                                                                                                                  
- *          The database to use.                                                                                                                                                
- * @return true if the test passed.                                                                                                                                             
- *                                                                                                                                                                              
- */
         public boolean run(DatabaseRegistryEntry dbre) {
 
                 boolean result = true;
@@ -65,19 +55,10 @@ public class CheckMethodLinkSpeciesSetTag extends SingleDatabaseTestCase {
                         return result;
                 }
 
-                // These methods return false if there is any problem with the test
-				result &= checkSpeciesAreSpelledCorrectly(dbre);
-				result &= checkLowCoverageMLSSAreLinkedToHighCoverageMLSS(dbre);
+                result &= checkLowCoverageMLSSAreLinkedToHighCoverageMLSS(dbre);
 
                 return result;
         }
-
-
-	public boolean checkSpeciesAreSpelledCorrectly(final DatabaseRegistryEntry dbre) {
-		Connection con = dbre.getConnection();
-		return checkForOrphansWithConstraint(con, "method_link_species_set_tag", "value", "genome_db", "name", "tag LIKE '%reference_species'");
-	}
-
 
 	public boolean checkLowCoverageMLSSAreLinkedToHighCoverageMLSS(final DatabaseRegistryEntry dbre) {
 		Connection con = dbre.getConnection();

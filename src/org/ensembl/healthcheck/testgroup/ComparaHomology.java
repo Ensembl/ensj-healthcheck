@@ -26,7 +26,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckFlatProteinTrees </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckGeneGainLossData </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckHomology </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.CheckMethodLinkSpeciesSetTag </li> 
+ *   <li> org.ensembl.healthcheck.testcase.compara.MLSSTagSpeciesNames </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckSequenceTable </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckSpeciesTreeNodeTag </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckTableSizes </li>  
@@ -58,7 +58,7 @@ public class ComparaHomology extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.CheckFlatProteinTrees.class,
 			org.ensembl.healthcheck.testcase.compara.CheckGeneGainLossData.class,
 			org.ensembl.healthcheck.testcase.compara.CheckHomology.class,
-			org.ensembl.healthcheck.testcase.compara.CheckMethodLinkSpeciesSetTag.class,
+			org.ensembl.healthcheck.testcase.compara.MLSSTagSpeciesNames.class,
 			org.ensembl.healthcheck.testcase.compara.CheckSequenceTable.class,
 			org.ensembl.healthcheck.testcase.compara.CheckSpeciesTreeNodeTag.class,
 			org.ensembl.healthcheck.testcase.compara.CheckTableSizes.class,
