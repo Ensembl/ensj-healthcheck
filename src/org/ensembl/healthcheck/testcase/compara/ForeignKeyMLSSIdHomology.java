@@ -55,8 +55,8 @@ public class ForeignKeyMLSSIdHomology extends AbstractMLSSIdToData {
 		result &= checkMLSSIdLink(con, "gene_tree_root", "method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'NCTree.%')", false);
 
 		/* Check method_link_species_set <-> species_tree_root */
-		result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "species_tree_root", "method_link_species_set_id", "method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'ProteinTree.%')");
-		result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "species_tree_root", "method_link_species_set_id", "method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'NCTree.%')");
+		result &= checkMLSSIdLink(con, "species_tree_root", "method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'ProteinTree.%')");
+		result &= checkMLSSIdLink(con, "species_tree_root", "method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'NCTree.%')", false);
 
 		return result;
 	}

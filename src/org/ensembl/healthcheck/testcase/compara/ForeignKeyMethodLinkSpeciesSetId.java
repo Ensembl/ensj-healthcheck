@@ -83,11 +83,6 @@ public class ForeignKeyMethodLinkSpeciesSetId extends AbstractComparaTestCase {
                 result = false;
 	    }
 
-			if (!isMasterDB(dbre.getConnection())) {
-				/* Check method_link_species_set <-> species_tree_root */
-				result &= checkForOrphans(con, "species_tree_root", "method_link_species_set_id", "method_link_species_set", "method_link_species_set_id");
-			}
-
             /* Check number of MLSS with no source */
             int numOfUnsetSources = DBUtils.getRowCount(con, "SELECT count(*) FROM method_link_species_set WHERE source = 'NULL' OR source IS NULL");
             if (numOfUnsetSources > 0) {
