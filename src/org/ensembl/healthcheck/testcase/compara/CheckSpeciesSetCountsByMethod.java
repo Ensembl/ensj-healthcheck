@@ -37,6 +37,7 @@ public class CheckSpeciesSetCountsByMethod extends AbstractComparaTestCase {
 		boolean result = true;
 		result &= assertSpeciesSetCountForMLSS(dbre, "ENSEMBL_ORTHOLOGUES", 2);
 		if (! isMasterDB(dbre.getConnection())) {
+			// In the master db, we still have between-species paralogues
 			result &= assertSpeciesSetCountForMLSS(dbre, "ENSEMBL_PARALOGUES", 1);
 		}
 		result &= assertSpeciesSetCountForMLSS(dbre, "ENSEMBL_HOMOEOLOGUES", 2);

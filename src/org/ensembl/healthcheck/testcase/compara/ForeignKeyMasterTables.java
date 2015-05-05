@@ -52,9 +52,8 @@ public class ForeignKeyMasterTables extends AbstractComparaTestCase {
 		// genome_db
 		result &= checkForOrphansWithConstraint(con, "genome_db", "taxon_id", "ncbi_taxa_node", "taxon_id", "taxon_id != 0");
 		result &= checkForOrphansWithConstraint(con, "genome_db", "taxon_id", "ncbi_taxa_name", "taxon_id", "taxon_id != 0");
-		// The following ones only / do not apply to the master database
-		if (isMasterDB(con)) {
-		} else {
+
+		if (!isMasterDB(con)) {
 			// The master database has the history of all method_links.
 			// Some of them are not used any more, but they must stay
 			// there. The following check would not apply in that case
