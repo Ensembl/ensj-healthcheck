@@ -61,7 +61,7 @@ public class ComparaGenomic extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetTag.class,
 			org.ensembl.healthcheck.testcase.compara.CheckSynteny.class,
 			org.ensembl.healthcheck.testcase.compara.CheckTableSizes.class,
-			org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetCountsByMethod.class,
+			org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetSizeByMethod.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyConservationTables.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignmentTables.class,
 			org.ensembl.healthcheck.testcase.compara.CheckMLSSIDConsistencyInGenomicAlign.class,

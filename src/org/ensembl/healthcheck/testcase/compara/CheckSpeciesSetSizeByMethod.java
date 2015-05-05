@@ -25,9 +25,9 @@ import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.compara.AbstractComparaTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
-public class CheckSpeciesSetCountsByMethod extends AbstractComparaTestCase {
+public class CheckSpeciesSetSizeByMethod extends AbstractComparaTestCase {
 
-	public CheckSpeciesSetCountsByMethod() {
+	public CheckSpeciesSetSizeByMethod() {
 		setTeamResponsible(Team.COMPARA);
 		appliesToType(DatabaseType.COMPARA);
 		setDescription("Checks that the species-sets have the expected number of genomes");

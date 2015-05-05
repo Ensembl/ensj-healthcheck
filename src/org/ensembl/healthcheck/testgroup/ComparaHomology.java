@@ -78,7 +78,7 @@ public class ComparaHomology extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class,
 			org.ensembl.healthcheck.testcase.eg_compara.CheckEmptyLeavesTrees.class,
 			org.ensembl.healthcheck.testcase.eg_compara.EGCheckNoTreeStableIds.class,
-			org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetCountsByMethod.class,
+			org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetSizeByMethod.class,
 			org.ensembl.healthcheck.testcase.eg_compara.MemberProductionCounts.class
 		);
 	}
