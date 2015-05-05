@@ -17,70 +17,44 @@
 
 package org.ensembl.healthcheck.testcase.compara;
 
-import java.lang.Integer;
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.compara.AbstractComparaTestCase;
-import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * An EnsEMBL Healthcheck test case that looks for broken foreign-key
- * relationships.
+ * An EnsEMBL Healthcheck test case that looks for genomic mlss_ids that
+ * are not linked to any data.
  */
 
-public class ForeignKeyMLSSIdGenomic extends AbstractComparaTestCase {
+public class ForeignKeyMLSSIdGenomic extends AbstractMLSSIdToData {
 
-    /**
-     * Create an ForeignKeyMLSSIdGenomic that applies to a specific set of databases.
-     */
-    public ForeignKeyMLSSIdGenomic() {
+	public ForeignKeyMLSSIdGenomic() {
+		setDescription("Check for missing links between method_link_species_set and the genomic tables.");
+		setTeamResponsible(Team.COMPARA);
+	}
 
-        addToGroup("compara_genomic");
-        setDescription("Check for broken foreign-key relationships in ensembl_compara databases.");
-        setTeamResponsible(Team.COMPARA);
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-    }
+		Connection con = dbre.getConnection();
 
-    /**
-     * Run the test.
-     * 
-     * @param dbre
-     *          The database to use.
-     * @return true if the test passed.
-     *  
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+		boolean result = true;
 
-        boolean result = true;
+		/* Check method_link_species_set <-> genomic_align(_block) */
+		/* All method_link for genomic-alignments must have an internal ID lower than 99 */
+		result &= checkMLSSIdLink(con, "genomic_align", "method_link_id IN (SELECT method_link_id FROM method_link WHERE method_link_id < 100 AND class NOT LIKE 'ConstrainedElement.%')");
+		result &= checkMLSSIdLink(con, "genomic_align_block", "method_link_id IN (SELECT method_link_id FROM method_link WHERE method_link_id < 100 AND class NOT LIKE 'ConstrainedElement.%')");
 
-        Connection con = dbre.getConnection();
+		/* Check method_link_species_set <-> constrained_element */
+		/* All method_link for contrained elements must have an internal ID lower than 99 */
+		result &= checkMLSSIdLink(con, "constrained_element", "method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'ConstrainedElement.%')");
 
-        if (tableHasRows(con, "method_link_species_set")) {
+		/* Check method_link_species_set <-> synteny_region */
+		/* All method_link for syntenies must have an internal ID between 101 and 199 */
+		result &= checkMLSSIdLink(con, "synteny_region", "method_link_id >= 101 and method_link_id < 200");
 
-
-			// Everything below will be ignored on the master database
-			if (isMasterDB(dbre.getConnection())) {
-				return result;
-			}
-            /* Check method_link_species_set <-> synteny_region */
-            /* All method_link for syntenies must have an internal ID between 101 and 199 */
-            result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "synteny_region", "method_link_species_set_id", "method_link_id >= 101 and method_link_id < 200");
-            result &= checkForOrphans(con, "synteny_region", "method_link_species_set_id", "method_link_species_set", "method_link_species_set_id");
-
-        } else {
-
-            ReportManager.correct(this, con, "NO ENTRIES in method_link_species_set table, so nothing to test IGNORED");
-        }
-
-        return result;
-
-    }
+		return result;
+	}
 
 } // ForeignKeyMLSSIdGenomic
