@@ -25,7 +25,6 @@ import org.ensembl.healthcheck.testcase.compara.ForeignKeyMasterTables;
 import org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeTables;
 import org.ensembl.healthcheck.testcase.eg_compara.CheckEmptyLeavesTrees;
 import org.ensembl.healthcheck.testcase.eg_compara.EGForeignKeyGeneTreeMemberId;
-import org.ensembl.healthcheck.testcase.eg_compara.EGGeneTreeForeignKeyMethodLinkSpeciesSetId;
 
 public class EGComparaGeneTree extends GroupOfTests {
 
@@ -36,7 +35,6 @@ public class EGComparaGeneTree extends GroupOfTests {
 				CheckSequenceTable.class,
 
 				EGForeignKeyGeneTreeMemberId.class,
-				EGGeneTreeForeignKeyMethodLinkSpeciesSetId.class,
 
 				ForeignKeyHomologyTables.class,
 				ForeignKeyMasterTables.class,

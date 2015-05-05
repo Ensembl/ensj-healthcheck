@@ -40,10 +40,16 @@ public class ForeignKeyMasterTables extends AbstractComparaTestCase {
 		Connection con = dbre.getConnection();
 
 		boolean result = true;
+		// dnafrag
 		result &= checkForOrphans(con, "dnafrag", "genome_db_id", "genome_db", "genome_db_id");
+		// species set
 		result &= checkForOrphans(con, "species_set", "genome_db_id", "genome_db", "genome_db_id");
 		result &= checkForOrphansWithConstraint(con, "genome_db", "genome_db_id", "species_set", "genome_db_id", "taxon_id != 0");
+		// method_link_species_set
 		result &= checkForOrphans(con, "method_link_species_set", "method_link_id", "method_link", "method_link_id");
+		result &= checkForOrphans(con, "method_link_species_set", "species_set_id", "species_set", "species_set_id");
+		result &= checkForOrphansWithConstraint(con, "species_set", "species_set_id", "method_link_species_set", "species_set_id", "species_set_id not in (SELECT distinct species_set_id from species_set_tag)");
+		// genome_db
 		result &= checkForOrphansWithConstraint(con, "genome_db", "taxon_id", "ncbi_taxa_node", "taxon_id", "taxon_id != 0");
 		result &= checkForOrphansWithConstraint(con, "genome_db", "taxon_id", "ncbi_taxa_name", "taxon_id", "taxon_id != 0");
 		// The following ones only / do not apply to the master database

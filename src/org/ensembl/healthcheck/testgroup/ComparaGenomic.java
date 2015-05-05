@@ -34,7 +34,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMLSSIdGenomic </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.CheckGenomicAlignTreeTable </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMasterTables </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkSpeciesSetId </li> 
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeTables </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeySyntenyTables </li>
  *   <li> org.ensembl.healthcheck.testcase.compara.Meta </li> 
@@ -68,7 +67,6 @@ public class ComparaGenomic extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.CheckMLSSIDConsistencyInGenomicAlign.class,
 			org.ensembl.healthcheck.testcase.compara.CheckGenomicAlignTreeTable.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyMasterTables.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkSpeciesSetId.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyMLSSIdGenomic.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeTables.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeySyntenyTables.class,
