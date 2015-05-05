@@ -41,10 +41,18 @@ public class ForeignKeyGenomicAlignmentTables extends AbstractComparaTestCase {
 		Connection con = dbre.getConnection();
 
 		boolean result = true;
+		// genomic_align -> dnafrag
 		result &= checkForOrphans(con, "genomic_align", "dnafrag_id", "dnafrag", "dnafrag_id");
+		// genomic_align <-> genomic_align_block
 		result &= checkForOrphans(con, "genomic_align_block", "genomic_align_block_id", "genomic_align", "genomic_align_block_id");
 		result &= checkForOrphans(con, "genomic_align", "genomic_align_block_id", "genomic_align_block", "genomic_align_block_id");
+		// genomic_align -> genomic_align_tree
 		result &= checkOptionalRelation(con, "genomic_align", "node_id", "genomic_align_tree", "node_id");
+		// genomic_align_tree internal relationships
+		//result &= checkForOrphansSameTable(con, "genomic_align_tree", "parent_id", "node_id", false);
+		//result &= checkForOrphansSameTable(con, "genomic_align_tree", "root_id", "node_id", false);
+		//result &= checkForOrphansSameTable(con, "genomic_align_tree", "left_node_id", "node_id", false);
+		//result &= checkForOrphansSameTable(con, "genomic_align_tree", "right_node_id", "node_id", false);
 		return result;
 	}
 

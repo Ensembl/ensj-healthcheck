@@ -42,6 +42,7 @@ public class CheckGenomicAlignTreeTable extends AbstractComparaTestCase {
 		boolean result = true;
 
 		// Check the left_node_id values are set (and assume right_node_ids have also been set)
+		// FIXME: this will have to be updated when left_node_id becomes NULLable
 		result &= checkCountIsNonZero(con, "genomic_align_tree", "left_node_id != 0");
 
 		/* Looking at distance_to_parent > 1 is true for LOW_COVERAGE but not epo */
