@@ -44,14 +44,14 @@ public class ForeignKeyMemberTables extends AbstractComparaTestCase {
 		result &= checkForOrphans(con, "gene_member", "genome_db_id", "genome_db", "genome_db_id");
 		result &= checkForOrphans(con, "gene_member", "taxon_id", "ncbi_taxa_node", "taxon_id");
 		result &= checkForOrphans(con, "gene_member", "taxon_id", "ncbi_taxa_name", "taxon_id");
-		result &= checkForOrphansWithConstraint(con, "gene_member", "dnafrag_id", "dnafrag", "dnafrag_id", "source_name LIKE 'ENSEMBL%'");
+		result &= checkOptionalRelation(con, "gene_member", "dnafrag_id", "dnafrag", "dnafrag_id");
 		// seq_member table
 		result &= checkOptionalRelation(con, "seq_member", "gene_member_id", "gene_member", "gene_member_id");
 		result &= checkOptionalRelation(con, "seq_member", "genome_db_id", "genome_db", "genome_db_id");
 		result &= checkForOrphans(con, "seq_member", "taxon_id", "ncbi_taxa_node", "taxon_id");
 		result &= checkForOrphans(con, "seq_member", "taxon_id", "ncbi_taxa_name", "taxon_id");
-		result &= checkForOrphansWithConstraint(con, "seq_member", "dnafrag_id", "dnafrag", "dnafrag_id", "source_name LIKE 'ENSEMBL%'");
-		result &= checkForOrphansWithConstraint(con, "seq_member", "sequence_id", "sequence", "sequence_id", "sequence_id != 0");
+		result &= checkOptionalRelation(con, "seq_member", "dnafrag_id", "dnafrag", "dnafrag_id");
+		result &= checkOptionalRelation(con, "seq_member", "sequence_id", "sequence", "sequence_id");
 		result &= checkForOrphans(con, "other_member_sequence", "seq_member_id", "seq_member", "seq_member_id");
 		return result;
 	}
