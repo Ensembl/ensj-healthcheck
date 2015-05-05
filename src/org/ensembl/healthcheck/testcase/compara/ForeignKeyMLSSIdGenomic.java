@@ -65,15 +65,6 @@ public class ForeignKeyMLSSIdGenomic extends AbstractComparaTestCase {
         if (tableHasRows(con, "method_link_species_set")) {
 
 
-	    /* Check if have both BLASTZ_NET and LASTZ_NET entries for the same species set */
-	    int numOfBLASTZ_LASTZSpeciesSets = DBUtils.getRowCount(con, "SELECT species_set_id, count(*) FROM method_link_species_set JOIN method_link USING (method_link_id) WHERE TYPE in ('BLASTZ_NET', 'LASTZ_NET') GROUP BY species_set_id HAVING count(*) > 1");
-	    if (numOfBLASTZ_LASTZSpeciesSets > 0) {
-		ReportManager.problem(this, con, "FAILED method_link_species_set table contains " + numOfBLASTZ_LASTZSpeciesSets + " entries with a BLASTZ_NET and LASTZ_NET entry for the same species_set");
-		ReportManager.problem(this, con, "USEFUL SQL: SELECT species_set_id, count(*) FROM method_link_species_set JOIN method_link USING (method_link_id) WHERE TYPE in ('BLASTZ_NET', 'LASTZ_NET') GROUP BY species_set_id HAVING count(*) > 1");
-		result = false;
-	    }
-	    
-
 			// Everything below will be ignored on the master database
 			if (isMasterDB(dbre.getConnection())) {
 				return result;
