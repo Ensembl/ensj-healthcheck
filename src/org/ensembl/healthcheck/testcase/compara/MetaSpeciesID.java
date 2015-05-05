@@ -45,13 +45,13 @@ public class MetaSpeciesID extends AbstractRepairableComparaTestCase {
 		return "meta";
 	}
 	protected String getAddQuery(String key, String value) {
-		return ""; // Cannot happend
+		return ""; // Cannot happen
 	}
 	protected String getUpdateQuery(String key, String value) {
 		return "UPDATE meta SET species_id = " + value + " WHERE meta_key = \"" + key + "\";";
 	}
 	protected String getRemoveQuery(String key) {
-		return ""; // Cannot happend
+		return ""; // Cannot happen
 	}
 
 	/**
