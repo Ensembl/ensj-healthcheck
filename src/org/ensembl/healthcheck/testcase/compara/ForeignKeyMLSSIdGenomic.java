@@ -54,6 +54,9 @@ public class ForeignKeyMLSSIdGenomic extends AbstractMLSSIdToData {
 		/* All method_link for syntenies must have an internal ID between 101 and 199 */
 		result &= checkMLSSIdLink(con, "synteny_region", "method_link_id >= 101 and method_link_id < 200");
 
+		/* Check method_link_species_set <-> species_tree_root */
+		result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "species_tree_root", "method_link_species_set_id", "method_link_id IN (SELECT method_link_id FROM method_link WHERE (class LIKE 'GenomicAlignTree%' OR class LIKE '%multiple_alignment'))");
+
 		return result;
 	}
 
