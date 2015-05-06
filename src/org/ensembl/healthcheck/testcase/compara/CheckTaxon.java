@@ -38,7 +38,7 @@ import org.ensembl.healthcheck.util.DBUtils;
  * Check compara taxon table against core meta ones.
  */
 
-public class CheckTaxon extends AbstractComparaTestCase{
+public class CheckTaxon extends AbstractComparaTestCase {
 
     /**
      * Create a new instance of MetaCrossSpecies
