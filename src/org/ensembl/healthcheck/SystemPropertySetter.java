@@ -227,5 +227,14 @@ public class SystemPropertySetter {
 			//
 			System.setProperty("master.funcgen_schema",    configuration.getMasterFuncgenSchema());
 		}
+		if (configuration.isProductionDatabase()) {
+			// Used in:
+			//
+			// org.ensembl.healthcheck.testcase.EnsTestCase
+			//
+			System.setProperty("production.database", configuration.getProductionDatabase());
+		} else {
+			System.setProperty("production.database", "ensembl_production");
+		}
 	}
 }
