@@ -19,15 +19,14 @@ package org.ensembl.healthcheck.testgroup;
 import org.ensembl.healthcheck.GroupOfTests;
 
 /**
- * Healthchecks for the Compara master database
+ * Healthchecks for the Compara master database only
  */
-public class ComparaMaster extends GroupOfTests {
+public class ComparaMasterOnly extends GroupOfTests {
 
-	public ComparaMaster() {
+	public ComparaMasterOnly() {
 
 		addTest(
-			ComparaMasterOnly.class,
-			ComparaShared.class
+			// Nothing at the moment
 		);
 	}
 }
