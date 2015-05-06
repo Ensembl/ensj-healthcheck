@@ -19,67 +19,18 @@ package org.ensembl.healthcheck.testgroup;
 import org.ensembl.healthcheck.GroupOfTests;
 
 /**
- * These are the tests that register themselves as compara_homology. The tests are:
- * 
- * <ul>
- *   <li> org.ensembl.healthcheck.testcase.eg_compara.CheckEmptyLeavesTrees </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.CheckFlatProteinTrees </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.CheckGeneGainLossData </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.CheckHomology </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.MLSSTagSpeciesNames </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.CheckSequenceTable </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.CheckSpeciesTreeNodeTag </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.CheckTableSizes </li>  
- *   <li> org.ensembl.healthcheck.testcase.compara.DuplicateGenomeDb </li>
- *   <li> org.ensembl.healthcheck.testcase.eg_compara.EGCheckNoTreeStableIds </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyCAFETables </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyFamilyTables </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyGeneAlignTables </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyGeneTreeTables </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyHomologyTables </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMLSSIdHomology </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMasterTables </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeTables </li>
- *   <li> org.ensembl.healthcheck.testcase.eg_compara.MemberProductionCounts </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.Meta </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.MetaSpeciesID </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.SingleDBCollations </li> 
- * </ul>
- *
- * @author Thomas Maurel
- *
+ * Healthchecks for the homology Compara databases
+ * NB: This group is made of 3 other groups. Edit
+ * them and not this one.
  */
 public class ComparaHomology extends GroupOfTests {
 	
 	public ComparaHomology() {
 
 		addTest(
-			org.ensembl.healthcheck.testcase.compara.CheckFlatProteinTrees.class,
-			org.ensembl.healthcheck.testcase.compara.CheckGeneGainLossData.class,
-			org.ensembl.healthcheck.testcase.compara.CheckHomology.class,
-			org.ensembl.healthcheck.testcase.compara.MLSSTagSpeciesNames.class,
-			org.ensembl.healthcheck.testcase.compara.CheckSequenceTable.class,
-			org.ensembl.healthcheck.testcase.compara.CheckSpeciesTreeNodeTag.class,
-			org.ensembl.healthcheck.testcase.compara.CheckTableSizes.class,
-			org.ensembl.healthcheck.testcase.compara.DuplicateGenomeDb.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyCAFETables.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyFamilyTables.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyGeneAlignTables.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyGeneTreeTables.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyHomologyTables.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyMasterTables.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyMemberTables.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyMLSSIdHomology.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeTables.class,
-			org.ensembl.healthcheck.testcase.compara.Meta.class,
-			org.ensembl.healthcheck.testcase.compara.MetaSpeciesID.class,
-			org.ensembl.healthcheck.testcase.compara.MLSSTagStatsHomology.class,
-			org.ensembl.healthcheck.testcase.compara.SingleDBCollations.class,
-			org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class,
-			org.ensembl.healthcheck.testcase.eg_compara.CheckEmptyLeavesTrees.class,
-			org.ensembl.healthcheck.testcase.eg_compara.EGCheckNoTreeStableIds.class,
-			org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetSizeByMethod.class,
-			org.ensembl.healthcheck.testcase.eg_compara.MemberProductionCounts.class
+			org.ensembl.healthcheck.testgroup.ComparaHomologyOnly.class,
+			org.ensembl.healthcheck.testgroup.ComparaReleaseOnly.class,
+			org.ensembl.healthcheck.testgroup.ComparaShared.class
 		);
 	}
 }

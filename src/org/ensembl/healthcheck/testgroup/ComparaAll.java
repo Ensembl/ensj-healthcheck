@@ -19,16 +19,19 @@ package org.ensembl.healthcheck.testgroup;
 import org.ensembl.healthcheck.GroupOfTests;
 
 /**
- * Healthchecks for the Compara master database
+ * Healthchecks for the final Compara databases
+ * NB: This group is made of 4 other groups. Edit
+ * them and not this one.
  */
-public class ComparaMaster extends GroupOfTests {
-
-	public ComparaMaster() {
+public class ComparaAll extends GroupOfTests {
+	
+	public ComparaAll() {
 
 		addTest(
-			ComparaShared.class
-			// Here we could add tests that *only* apply to the master
-			// database
+			org.ensembl.healthcheck.testgroup.ComparaGenomicOnly.class,
+			org.ensembl.healthcheck.testgroup.ComparaHomologyOnly.class,
+			org.ensembl.healthcheck.testgroup.ComparaReleaseOnly.class,
+			org.ensembl.healthcheck.testgroup.ComparaShared.class
 		);
 	}
 }
