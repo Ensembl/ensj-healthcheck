@@ -34,73 +34,73 @@ import org.ensembl.healthcheck.util.DBUtils;
 
 public class DuplicateGenomeDb extends SingleDatabaseTestCase {
 
-    public DuplicateGenomeDb() {
+	public DuplicateGenomeDb() {
 
-        addToGroup("compara_homology"); 
-        setDescription("Searches for species where assembly_default has been set to true more than once for the same name. This seems to happen when the contents of the GenomeDB table is copied from the master to the pan compara database. ");
-        setTeamResponsible(Team.ENSEMBL_GENOMES);
+		addToGroup("compara_homology"); 
+		setDescription("Searches for species where assembly_default has been set to true more than once for the same name. This seems to happen when the contents of the GenomeDB table is copied from the master to the pan compara database. ");
+		setTeamResponsible(Team.ENSEMBL_GENOMES);
 
-    }
+	}
 
-    /**
-     * Run the test.
-     * 
-     * @param dbre
-     *          The database to use.
-     * @return true if the test pased.
-     *  
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+	/**
+	 * Run the test.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return true if the test pased.
+	 *  
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-        boolean result = true;
+		boolean result = true;
 
-        Connection con = dbre.getConnection();
+		Connection con = dbre.getConnection();
 
-        String sql = "SELECT "
-	        + "	genome_db_id, "
-	        + "	a.name, "
-	        + "	assembly, "
-	        + "	assembly_default "
-	        + "FROM ( "
-	        + "	SELECT NAME, count(*) AS cnt "
-	        + "	FROM genome_db "
-	        + "	WHERE assembly_default = 1 "
-	        + "	GROUP BY NAME "
-	        + "	HAVING cnt > 1 "
-	        + ") a JOIN genome_db g ON (g.name = a.name) ORDER BY NAME; ";
+		String sql = "SELECT "
+			+ "	genome_db_id, "
+			+ "	a.name, "
+			+ "	assembly, "
+			+ "	assembly_default "
+			+ "FROM ( "
+			+ "	SELECT NAME, count(*) AS cnt "
+			+ "	FROM genome_db "
+			+ "	WHERE assembly_default = 1 "
+			+ "	GROUP BY NAME "
+			+ "	HAVING cnt > 1 "
+			+ ") a JOIN genome_db g ON (g.name = a.name) ORDER BY NAME; ";
 
 
-        String[] genomeDbIds = DBUtils.getColumnValues(con, sql);
+		String[] genomeDbIds = DBUtils.getColumnValues(con, sql);
 
-        if (genomeDbIds.length > 0) {
-            result = false;
-            ReportManager.problem(this, con,
-                    "Genome dbs were found with the same name with assembly_default set to true:");
+		if (genomeDbIds.length > 0) {
+			result = false;
+			ReportManager.problem(this, con,
+					"Genome dbs were found with the same name with assembly_default set to true:");
 
-    		try {
-    			Statement stmt = con.createStatement();
-    			ResultSet rs = stmt.executeQuery(sql);
+			try {
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(sql);
 
-    				while (rs.next()) {
-    					ReportManager.problem(this, con, 
-    					"  genome_db_id: "      + rs.getString("genome_db_id")
-    					+ " a.name: "           + rs.getString("a.name")
-    					+ " assembly: "         + rs.getString("assembly")
-    					+ " assembly_default: " + rs.getString("assembly_default")
-                        );
-    				}
+				while (rs.next()) {
+					ReportManager.problem(this, con, 
+							"  genome_db_id: "      + rs.getString("genome_db_id")
+							+ " a.name: "           + rs.getString("a.name")
+							+ " assembly: "         + rs.getString("assembly")
+							+ " assembly_default: " + rs.getString("assembly_default")
+							);
+				}
 
-    			rs.close();
-    			stmt.close();
-    		} catch (Exception e) {
-    			e.printStackTrace();
-    		}
-            
-        } else {
-            ReportManager.correct(this, con, "PASSED test! :-D");
-        }
+				rs.close();
+				stmt.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
-        return result;
-    }
+		} else {
+			ReportManager.correct(this, con, "PASSED test! :-D");
+		}
+
+		return result;
+	}
 
 } // DuplicateGenomeDb

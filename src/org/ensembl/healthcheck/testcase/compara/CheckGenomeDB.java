@@ -46,146 +46,146 @@ public class CheckGenomeDB extends AbstractComparaTestCase {
 
 	private String[] orphanedSpeciesInMasterDB = {"anopheles_gambiae", "aedes_aegypti", "spermophilus_tridecemlineatus"};
 
-    /**
-     * Create a new instance of MetaCrossSpecies
-     */
-    public CheckGenomeDB() {
+	/**
+	 * Create a new instance of MetaCrossSpecies
+	 */
+	public CheckGenomeDB() {
 
-        addToGroup("compara_external_foreign_keys");
-        setDescription("Check that the properties of the genome_db table (taxon_id, assembly" +
-            " and genebuild) correspond to the meta data in the core DB and vice versa.");
-        setTeamResponsible(Team.COMPARA);
+		addToGroup("compara_external_foreign_keys");
+		setDescription("Check that the properties of the genome_db table (taxon_id, assembly" +
+				" and genebuild) correspond to the meta data in the core DB and vice versa.");
+		setTeamResponsible(Team.COMPARA);
 
-    }
- 
-    /**
-     * Check that the properties of the genome_db table (taxon_id, assembly and genebuild)
-     * correspond to the meta data in the core DB and vice versa.
-     * NB: A warning message is displayed if some dnafrags cannot be checked because
-     * there is not any connection to the corresponding core database.
-     * 
-     * @param dbr
-     *          The database registry containing all the specified databases.
-     * @return true if the all the dnafrags are top_level seq_regions in their corresponding
-     *    core database.
-     */
-    public boolean run(final DatabaseRegistryEntry comparaDbre) {
-
-        boolean result = true;
-
-            result &= checkAssemblies(comparaDbre);
-            result &= checkGenomeDB(comparaDbre);
-        return result;
-    }
-
-
-    public boolean checkAssemblies(DatabaseRegistryEntry comparaDbre) {
-
-        boolean result = true;
-        Connection comparaCon = comparaDbre.getConnection();
-        String comparaDbName = (comparaCon == null) ? "no_database" : DBUtils.getShortDatabaseName(comparaCon);
-
-        // Get list of species with more than 1 default assembly
-        String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE assembly_default = 1"
-            + " GROUP BY name HAVING count(*) <> 1";
-	List<String[]> data = DBUtils.getRowValuesList(comparaCon, sql);
-	for (String[] line : data) {
-		ReportManager.problem(this, comparaCon, "There are more than 1 default assembly for " + line[0]);
-		result = false;
 	}
+
+	/**
+	 * Check that the properties of the genome_db table (taxon_id, assembly and genebuild)
+	 * correspond to the meta data in the core DB and vice versa.
+	 * NB: A warning message is displayed if some dnafrags cannot be checked because
+	 * there is not any connection to the corresponding core database.
+	 * 
+	 * @param dbr
+	 *          The database registry containing all the specified databases.
+	 * @return true if the all the dnafrags are top_level seq_regions in their corresponding
+	 *    core database.
+	 */
+	public boolean run(final DatabaseRegistryEntry comparaDbre) {
+
+		boolean result = true;
+
+		result &= checkAssemblies(comparaDbre);
+		result &= checkGenomeDB(comparaDbre);
+		return result;
+	}
+
+
+	public boolean checkAssemblies(DatabaseRegistryEntry comparaDbre) {
+
+		boolean result = true;
+		Connection comparaCon = comparaDbre.getConnection();
+		String comparaDbName = (comparaCon == null) ? "no_database" : DBUtils.getShortDatabaseName(comparaCon);
+
+		// Get list of species with more than 1 default assembly
+		String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE assembly_default = 1"
+			+ " GROUP BY name HAVING count(*) <> 1";
+		List<String[]> data = DBUtils.getRowValuesList(comparaCon, sql);
+		for (String[] line : data) {
+			ReportManager.problem(this, comparaCon, "There are more than 1 default assembly for " + line[0]);
+			result = false;
+		}
 
 		boolean is_master_db = isMasterDB(comparaCon);
 		HashSet<String> allowedOrphanedSpecies = new HashSet<String>();
 
-        // Get list of species with a non-default assembly
-        if (!isMasterDB(comparaCon)) {
-		sql = "SELECT DISTINCT name FROM genome_db WHERE assembly_default = 0";
-		data = DBUtils.getRowValuesList(comparaCon, sql);
-		for (String[] line : data) {
-			ReportManager.problem(this, comparaCon, comparaDbName + " There is at least one non-default assembly for " + line[0] + " (this should not happen in the release DB)");
-		}
-        } else {
+		// Get list of species with a non-default assembly
+		if (!isMasterDB(comparaCon)) {
+			sql = "SELECT DISTINCT name FROM genome_db WHERE assembly_default = 0";
+			data = DBUtils.getRowValuesList(comparaCon, sql);
+			for (String[] line : data) {
+				ReportManager.problem(this, comparaCon, comparaDbName + " There is at least one non-default assembly for " + line[0] + " (this should not happen in the release DB)");
+			}
+		} else {
 			allowedOrphanedSpecies.addAll(Arrays.asList(orphanedSpeciesInMasterDB));
 		}
 
-        // Get list of species with no default assembly
-        sql = "SELECT DISTINCT gdb1.name FROM genome_db gdb1 LEFT JOIN genome_db gdb2"
-            + " ON (gdb1.name = gdb2.name and gdb1.assembly_default = 1 - gdb2.assembly_default)"
-            + " WHERE gdb1.assembly_default = 0 AND gdb2.name is null";
-	data = DBUtils.getRowValuesList(comparaCon, sql);
-	for (String[] line : data) {
-	  if (! allowedOrphanedSpecies.contains(line[0]) ) {
-		ReportManager.problem(this, comparaCon, "There is no default assembly for " + line[0]);
-		result = false;
-	  }
-	}
-
-        return result;
-    }
-
-
-    public boolean checkGenomeDB(DatabaseRegistryEntry comparaDbre) {
-
-        boolean result = true;
-        Connection comparaCon = comparaDbre.getConnection();
-
-        // Get list of species in compara
-        Vector<Species> comparaSpecies = new Vector<Species>();
-        String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE assembly_default = 1"
-            + " AND name <> 'ancestral_sequences'";
-	List<String[]> data = DBUtils.getRowValuesList(comparaCon, sql);
-	for (String[] line : data) {
-		Species species = Species.resolveAlias(line[0].toLowerCase().replace(' ', '_'));
-		if (species.toString().equals("unknown")) {
-			ReportManager.problem(this, comparaCon, "No species defined for " + line[0] + " in org.ensembl.healthcheck.Species");
-		} else {
-			comparaSpecies.add(species);
+		// Get list of species with no default assembly
+		sql = "SELECT DISTINCT gdb1.name FROM genome_db gdb1 LEFT JOIN genome_db gdb2"
+			+ " ON (gdb1.name = gdb2.name and gdb1.assembly_default = 1 - gdb2.assembly_default)"
+			+ " WHERE gdb1.assembly_default = 0 AND gdb2.name is null";
+		data = DBUtils.getRowValuesList(comparaCon, sql);
+		for (String[] line : data) {
+			if (! allowedOrphanedSpecies.contains(line[0]) ) {
+				ReportManager.problem(this, comparaCon, "There is no default assembly for " + line[0]);
+				result = false;
+			}
 		}
+
+		return result;
 	}
-        
+
+
+	public boolean checkGenomeDB(DatabaseRegistryEntry comparaDbre) {
+
+		boolean result = true;
+		Connection comparaCon = comparaDbre.getConnection();
+
+		// Get list of species in compara
+		Vector<Species> comparaSpecies = new Vector<Species>();
+		String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE assembly_default = 1"
+			+ " AND name <> 'ancestral_sequences'";
+		List<String[]> data = DBUtils.getRowValuesList(comparaCon, sql);
+		for (String[] line : data) {
+			Species species = Species.resolveAlias(line[0].toLowerCase().replace(' ', '_'));
+			if (species.toString().equals("unknown")) {
+				ReportManager.problem(this, comparaCon, "No species defined for " + line[0] + " in org.ensembl.healthcheck.Species");
+			} else {
+				comparaSpecies.add(species);
+			}
+		}
+
 		Map<Species, DatabaseRegistryEntry> speciesMap = getSpeciesCoreDbMap(DBUtils.getMainDatabaseRegistry());
 
-        boolean allSpeciesFound = true;
+		boolean allSpeciesFound = true;
 		for (Species species: comparaSpecies) {
-		  if (speciesMap.containsKey(species)) {
-            Connection speciesCon = speciesMap.get(species).getConnection();
+			if (speciesMap.containsKey(species)) {
+				Connection speciesCon = speciesMap.get(species).getConnection();
 
-            /* Check production name */
-            String sql1, sql2;
-            sql1 = "SELECT \"" + species + "\", \"name\", name FROM genome_db" +
-                " WHERE genome_db.name = \"" + species + "\" AND  assembly_default = 1";
-            sql2 = "SELECT \"" + species + "\", \"name\", meta_value FROM meta" +
-                " WHERE meta_key = \"species.production_name\"";
-            result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
+				/* Check production name */
+				String sql1, sql2;
+				sql1 = "SELECT \"" + species + "\", \"name\", name FROM genome_db" +
+					" WHERE genome_db.name = \"" + species + "\" AND  assembly_default = 1";
+				sql2 = "SELECT \"" + species + "\", \"name\", meta_value FROM meta" +
+					" WHERE meta_key = \"species.production_name\"";
+				result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
 
-            /* Check taxon_id */
-            sql1 = "SELECT \"" + species + "\", \"taxon_id\", taxon_id FROM genome_db" +
-                " WHERE genome_db.name = \"" + species + "\" AND  assembly_default = 1";
-            sql2 = "SELECT \"" + species + "\", \"taxon_id\", meta_value FROM meta" +
-                " WHERE meta_key = \"species.taxonomy_id\"";
-            result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
+				/* Check taxon_id */
+				sql1 = "SELECT \"" + species + "\", \"taxon_id\", taxon_id FROM genome_db" +
+					" WHERE genome_db.name = \"" + species + "\" AND  assembly_default = 1";
+				sql2 = "SELECT \"" + species + "\", \"taxon_id\", meta_value FROM meta" +
+					" WHERE meta_key = \"species.taxonomy_id\"";
+				result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
 
-            /* Check assembly */
-            sql1 = "SELECT \"" + species + "\", \"assembly\", assembly FROM genome_db" +
-                " WHERE genome_db.name = \"" + species + "\" AND  assembly_default = 1";
-            sql2 = "SELECT \"" + species + "\", \"assembly\", version FROM coord_system" +
-                " WHERE rank=1";
-            result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
+				/* Check assembly */
+				sql1 = "SELECT \"" + species + "\", \"assembly\", assembly FROM genome_db" +
+					" WHERE genome_db.name = \"" + species + "\" AND  assembly_default = 1";
+				sql2 = "SELECT \"" + species + "\", \"assembly\", version FROM coord_system" +
+					" WHERE rank=1";
+				result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
 
-            /* Check genebuild */
-            sql1 = "SELECT \"" + species + "\", \"genebuild\", genebuild FROM genome_db" +
-                " WHERE genome_db.name = \"" + species + "\" AND  assembly_default = 1";
-            sql2 = "SELECT \"" + species + "\", \"genebuild\", meta_value FROM meta" +
-                " WHERE meta_key = \"genebuild.start_date\"";
-            result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
+				/* Check genebuild */
+				sql1 = "SELECT \"" + species + "\", \"genebuild\", genebuild FROM genome_db" +
+					" WHERE genome_db.name = \"" + species + "\" AND  assembly_default = 1";
+				sql2 = "SELECT \"" + species + "\", \"genebuild\", meta_value FROM meta" +
+					" WHERE meta_key = \"genebuild.start_date\"";
+				result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
 
-          } else {
-            ReportManager.problem(this, comparaCon, "No connection for " + species);
-            allSpeciesFound = false;
-          }
-        }
+			} else {
+				ReportManager.problem(this, comparaCon, "No connection for " + species);
+				allSpeciesFound = false;
+			}
+		}
 
-        return result;
-    }
+		return result;
+	}
 
 } // CheckGenomeDB

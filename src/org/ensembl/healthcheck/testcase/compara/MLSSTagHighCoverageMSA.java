@@ -38,27 +38,27 @@ import org.ensembl.healthcheck.util.DBUtils;
 
 public class MLSSTagHighCoverageMSA extends SingleDatabaseTestCase {
 
-        public MLSSTagHighCoverageMSA() {
-                setDescription("Tests that proper entries are in method_link_species_set_tag.");
-                setTeamResponsible(Team.COMPARA);
-        }
+	public MLSSTagHighCoverageMSA() {
+		setDescription("Tests that proper entries are in method_link_species_set_tag.");
+		setTeamResponsible(Team.COMPARA);
+	}
 
-        public boolean run(DatabaseRegistryEntry dbre) {
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-                boolean result = true;
+		boolean result = true;
 
-                Connection con = dbre.getConnection();
+		Connection con = dbre.getConnection();
 
-                if (!DBUtils.checkTableExists(con, "method_link_species_set_tag")) {
-                        result = false;
-                        ReportManager.problem(this, con, "method_link_species_set_tag table not present");
-                        return result;
-                }
+		if (!DBUtils.checkTableExists(con, "method_link_species_set_tag")) {
+			result = false;
+			ReportManager.problem(this, con, "method_link_species_set_tag table not present");
+			return result;
+		}
 
-                result &= checkLowCoverageMLSSAreLinkedToHighCoverageMLSS(dbre);
+		result &= checkLowCoverageMLSSAreLinkedToHighCoverageMLSS(dbre);
 
-                return result;
-        }
+		return result;
+	}
 
 	public boolean checkLowCoverageMLSSAreLinkedToHighCoverageMLSS(final DatabaseRegistryEntry dbre) {
 		Connection con = dbre.getConnection();

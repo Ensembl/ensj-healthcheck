@@ -31,7 +31,7 @@ import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
-/**                                                                                                                                                                                 
+/**
  * An EnsEMBL Healthcheck test case for SpeciesTreeNodeTag entries
  */
 

@@ -32,50 +32,50 @@ import org.ensembl.healthcheck.util.DBUtils;
 
 public class CheckHomology extends SingleDatabaseTestCase {
 
-    /**
-     * Create an CheckHomology that applies to a specific set of databases.
-     */
-    public CheckHomology() {
+	/**
+	 * Create an CheckHomology that applies to a specific set of databases.
+	 */
+	public CheckHomology() {
 
-        addToGroup("compara_homology");
-        setDescription("Check for broken foreign-key relationships in ensembl_compara databases.");
-        setTeamResponsible(Team.COMPARA);
+		addToGroup("compara_homology");
+		setDescription("Check for broken foreign-key relationships in ensembl_compara databases.");
+		setTeamResponsible(Team.COMPARA);
 
-    }
+	}
 
-    /**
-     * Run the test.
-     * 
-     * @param dbre
-     *          The database to use.
-     * @return true if the test passed.
-     *  
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+	/**
+	 * Run the test.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return true if the test passed.
+	 *  
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-        boolean result = true;
+		boolean result = true;
 
-        Connection con = dbre.getConnection();
+		Connection con = dbre.getConnection();
 
 		result &= checkForSingles(con, "homology_member", "homology_id");
-        
-        String sql_main = "SELECT hm1.gene_member_id gene_member_id1, hm2.gene_member_id gene_member_id2, COUNT(*) num, GROUP_CONCAT(h1.description order by h1.description) descs" +
-             " FROM homology h1 CROSS JOIN homology_member hm1 USING (homology_id)" +
-             " CROSS JOIN homology_member hm2 USING (homology_id)" +
-             " WHERE hm1.gene_member_id < hm2.gene_member_id" +
-             " GROUP BY hm1.gene_member_id, hm2.gene_member_id HAVING COUNT(*) > 1";
-        String sql_count = sql_main;
-        String sql_summary = "SELECT descs, num, count(*) FROM (" + sql_main + ") tt1 GROUP BY descs, num";
-        int numRows = DBUtils.getRowCount(con, sql_count);
-        if (numRows > 0) {
-            ReportManager.problem(this, con, "FAILED homology contains redundant entries");
-            ReportManager.problem(this, con, "FAILURE DETAILS: There are " + numRows + " redundant homology relationships in the DB");
-            ReportManager.problem(this, con, "USEFUL SQL: " + sql_summary);
-            result = false;
-        }
 
-        return result;
+		String sql_main = "SELECT hm1.gene_member_id gene_member_id1, hm2.gene_member_id gene_member_id2, COUNT(*) num, GROUP_CONCAT(h1.description order by h1.description) descs" +
+			" FROM homology h1 CROSS JOIN homology_member hm1 USING (homology_id)" +
+			" CROSS JOIN homology_member hm2 USING (homology_id)" +
+			" WHERE hm1.gene_member_id < hm2.gene_member_id" +
+			" GROUP BY hm1.gene_member_id, hm2.gene_member_id HAVING COUNT(*) > 1";
+		String sql_count = sql_main;
+		String sql_summary = "SELECT descs, num, count(*) FROM (" + sql_main + ") tt1 GROUP BY descs, num";
+		int numRows = DBUtils.getRowCount(con, sql_count);
+		if (numRows > 0) {
+			ReportManager.problem(this, con, "FAILED homology contains redundant entries");
+			ReportManager.problem(this, con, "FAILURE DETAILS: There are " + numRows + " redundant homology relationships in the DB");
+			ReportManager.problem(this, con, "USEFUL SQL: " + sql_summary);
+			result = false;
+		}
 
-    }
+		return result;
+
+	}
 
 } // CheckHomology

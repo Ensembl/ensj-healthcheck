@@ -40,10 +40,10 @@ public class MLSSTagThresholdDs extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-        if (!tableHasRows(con, "homology")) {
-            ReportManager.problem(this, con, "NO ENTRIES in homology or homology_member tables");
+		if (!tableHasRows(con, "homology")) {
+			ReportManager.problem(this, con, "NO ENTRIES in homology or homology_member tables");
 			return false;
-        }
+		}
 
 		boolean result = true;
 		result &= checkCountIsNonZero(con, "method_link_species_set_tag", "tag = 'threshold_on_ds'");
