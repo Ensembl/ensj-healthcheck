@@ -49,8 +49,6 @@ public class MLSSTagMaxAlign extends AbstractRepairableMLSSTag {
 	 * Create an ForeignKeyMethodLinkId that applies to a specific set of databases.
 	 */
 	public MLSSTagMaxAlign() {
-
-		addToGroup("compara_genomic");
 		appliesToType(DatabaseType.COMPARA);
 		setDescription("Tests that proper max_alignment_length have been defined in the method_link_species_set_tag table.");
 		setTeamResponsible(Team.COMPARA);

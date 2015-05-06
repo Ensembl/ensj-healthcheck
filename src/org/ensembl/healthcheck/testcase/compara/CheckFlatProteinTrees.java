@@ -45,7 +45,6 @@ import org.ensembl.healthcheck.util.SqlTemplate;
 public class CheckFlatProteinTrees extends AbstractTemplatedTestCase {
 
 	public CheckFlatProteinTrees() {
-		addToGroup("compara_homology");
 		setDescription("Look for trees which have internal nodes but all members' parent is the root");
 		setTeamResponsible(Team.COMPARA);
 	}

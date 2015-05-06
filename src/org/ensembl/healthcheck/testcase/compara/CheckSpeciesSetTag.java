@@ -49,11 +49,8 @@ public class CheckSpeciesSetTag extends AbstractComparaTestCase {
 	 * of databases.
 	 */
 	public CheckSpeciesSetTag() {
-
-		addToGroup("compara_genomic");
 		setDescription("Check the content of the species_set_tag table");
 		setTeamResponsible(Team.COMPARA);
-
 	}
 
 	/**

@@ -40,9 +40,6 @@ import org.ensembl.healthcheck.util.CollectionUtils;
 public class CheckTableSizes extends SingleDatabaseTestCase {
 
 	public CheckTableSizes() {
-
-		addToGroup("compara_homology");
-		addToGroup("compara_genomic");
 		setDescription("Checks the size of the Compara tables");
 		setTeamResponsible(Team.COMPARA);
 	}

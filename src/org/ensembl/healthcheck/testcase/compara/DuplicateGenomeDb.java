@@ -35,11 +35,8 @@ import org.ensembl.healthcheck.util.DBUtils;
 public class DuplicateGenomeDb extends SingleDatabaseTestCase {
 
 	public DuplicateGenomeDb() {
-
-		addToGroup("compara_homology"); 
 		setDescription("Searches for species where assembly_default has been set to true more than once for the same name. This seems to happen when the contents of the GenomeDB table is copied from the master to the pan compara database. ");
 		setTeamResponsible(Team.ENSEMBL_GENOMES);
-
 	}
 
 	/**

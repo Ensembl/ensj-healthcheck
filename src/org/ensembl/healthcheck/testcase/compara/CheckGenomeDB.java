@@ -50,12 +50,9 @@ public class CheckGenomeDB extends AbstractComparaTestCase {
 	 * Create a new instance of MetaCrossSpecies
 	 */
 	public CheckGenomeDB() {
-
-		addToGroup("compara_external_foreign_keys");
 		setDescription("Check that the properties of the genome_db table (taxon_id, assembly" +
 				" and genebuild) correspond to the meta data in the core DB and vice versa.");
 		setTeamResponsible(Team.COMPARA);
-
 	}
 
 	/**

@@ -34,7 +34,6 @@ import org.ensembl.healthcheck.util.DBUtils;
 public class CheckGeneGainLossData extends SingleDatabaseTestCase {
 
 	public CheckGeneGainLossData() {
-		addToGroup("compara_homology");
 		setDescription("Check that we have data coming from ncRNA and protein gain/loss trees");
 		setTeamResponsible(Team.COMPARA);
 	}

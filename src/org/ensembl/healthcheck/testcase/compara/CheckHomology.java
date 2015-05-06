@@ -36,11 +36,8 @@ public class CheckHomology extends SingleDatabaseTestCase {
 	 * Create an CheckHomology that applies to a specific set of databases.
 	 */
 	public CheckHomology() {
-
-		addToGroup("compara_homology");
 		setDescription("Check for broken foreign-key relationships in ensembl_compara databases.");
 		setTeamResponsible(Team.COMPARA);
-
 	}
 
 	/**

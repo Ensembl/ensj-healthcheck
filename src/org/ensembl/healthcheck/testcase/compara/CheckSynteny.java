@@ -38,11 +38,8 @@ public class CheckSynteny extends SingleDatabaseTestCase {
 	 * Create an CheckSynteny that applies to a specific set of databases.
 	 */
 	public CheckSynteny() {
-
-		addToGroup("compara_genomic");
 		setDescription("Check for missing syntenies in the compara database.");
 		setTeamResponsible(Team.COMPARA);
-
 	}
 
 	/**

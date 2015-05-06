@@ -27,12 +27,6 @@ import org.ensembl.healthcheck.Team;
 public class SingleDBCollations extends org.ensembl.healthcheck.testcase.generic.SingleDBCollations {
 
 	@Override
-	protected void groupAdditions() {
-		addToGroup("compara_genomic");
-		addToGroup("compara_homology");
-	}
-
-	@Override
 	protected void setResponsibilities() {
 		setTeamResponsible(Team.COMPARA);
 	}

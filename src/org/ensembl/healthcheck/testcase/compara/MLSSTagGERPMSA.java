@@ -49,8 +49,6 @@ public class MLSSTagGERPMSA extends AbstractRepairableMLSSTag {
 	 * Create an ForeignKeyMethodLinkId that applies to a specific set of databases.
 	 */
 	public MLSSTagGERPMSA() {
-
-		addToGroup("compara_genomic");
 		appliesToType(DatabaseType.COMPARA);
 		setDescription("Tests that proper max_alignment_length have been defined.");
 		setDescription("Check method_link_species_set_tag table for the right GERP <-> MSA links and max alignment lengths");

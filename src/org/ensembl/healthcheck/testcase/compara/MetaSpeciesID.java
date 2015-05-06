@@ -58,12 +58,8 @@ public class MetaSpeciesID extends AbstractRepairableComparaTestCase {
 	 * Create an ForeignKeyMethodLinkId that applies to a specific set of databases.
 	 */
 	public MetaSpeciesID() {
-
-		addToGroup("compara_genomic");
-		addToGroup("compara_homology");
 		setDescription("Check meta table for the right schema version and species_id");
 		setTeamResponsible(Team.COMPARA);
-
 	}
 
 	/**

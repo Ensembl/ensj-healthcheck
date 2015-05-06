@@ -36,11 +36,8 @@ public class CheckConservationScore extends SingleDatabaseTestCase {
 	 * databases.
 	 */
 	public CheckConservationScore() {
-
-		addToGroup("compara_genomic");
 		setDescription("Check the conservation_score table in ensembl_compara databases.");
 		setTeamResponsible(Team.COMPARA);
-
 	}
 
 	/**

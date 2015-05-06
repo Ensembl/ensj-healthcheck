@@ -44,8 +44,6 @@ public class CheckTopLevelDnaFrag extends AbstractComparaTestCase {
 	 * Create a new instance of MetaCrossSpecies
 	 */
 	public CheckTopLevelDnaFrag() {
-
-		addToGroup("compara_external_foreign_keys");
 		setDescription("Check that every dnafrag corresponds to a top_level seq_region in the core DB and vice versa.");
 		setTeamResponsible(Team.COMPARA);
 	}
