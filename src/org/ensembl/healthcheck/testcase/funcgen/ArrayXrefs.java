@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
@@ -86,6 +87,11 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 	 *
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
+
+		if (Pattern.matches("master_schema_funcgen_\\d+", dbre.getName())) {
+			logger.fine("Skipping " + dbre.getName());
+			return true;
+		}
 
 		boolean result = true;
 		Connection efgCon = dbre.getConnection();

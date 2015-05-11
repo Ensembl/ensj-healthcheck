@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.regex.Pattern;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
@@ -76,6 +77,12 @@ public class FeaturePosition extends SingleDatabaseTestCase {
 	 * 
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
+
+        if (Pattern.matches("master_schema_funcgen_\\d+", dbre.getName())) {
+            logger.fine("Skipping " + dbre.getName());
+            return true;
+        }
+
 		boolean     result = true;
 		Connection  efgCon = dbre.getConnection();
 		String schemaBuild = dbre.getSchemaVersion() + "_" + dbre.getGeneBuildVersion();
