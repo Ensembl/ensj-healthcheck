@@ -78,12 +78,6 @@ public class VariationFeature extends SingleDatabaseTestCase {
 				result = false;
 				ReportManager.problem(this, con, String.valueOf(rows) + " rows are duplicated in variation_feature");
 			}
-			
-			// Check that seq_region_start is not 1 (why not..?)
-			if (!checkCountIsZero(con,"variation_feature","seq_region_start = 1 AND seq_region_end > 1")) {
-				ReportManager.problem(this, con, "Variation Features with coordinates = 1");
-				result = false;
-			}
 
             // Check map weight and warn if map weight exceeds 25
             stmt = "SELECT COUNT(DISTINCT variation_id) FROM variation_feature where map_weight > 25";
