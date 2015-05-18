@@ -19,10 +19,7 @@ package org.ensembl.healthcheck.testcase.funcgen;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Arrays;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
@@ -95,6 +92,30 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 
 		boolean result = true;
 		Connection efgCon = dbre.getConnection();
+
+        // check that all arrays (except Illumina Infinium) have
+        // MART_DISPLAYABLE status
+        try {
+            ResultSet rs = efgCon.createStatement().executeQuery("select a" +
+                    ".array_id, a.name, a.class, s.status_name_id from array " +
+                    "a left join status s on a.array_id=s.table_id and s" +
+                    ".table_name='array' and s.status_name_id=(select " +
+                    "status_name_id from status_name where " +
+                    "name='MART_DISPLAYABLE') where status_name_id is NULL " +
+                    "and a.class!='ILLUMINA_INFINIUM'");
+            while (rs.next()) {
+                int arrayID = rs.getInt(1);
+                String arrayName = rs.getString(2);
+                ReportManager.problem(this, efgCon, "Array " + arrayID + " " 
+                        + arrayName + " has no MART_DISPLAYABLE status");
+                result = false;
+            }
+            rs.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            result = false;
+        }
 
 
 		/** To do
@@ -201,18 +222,18 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 
 		// Die if we don't see the current schema build and is the only one that is_current
 		// Otherwise we cannot be sure that all seq_region records have been updated
-		String csName = DBUtils.getRowColumnValue(coreDbre.getConnection(),  
+		String csName = DBUtils.getRowColumnValue(coreDbre.getConnection(),
       "SELECT name FROM coord_system order by rank desc limit 1");
-		
+
 		if(csName == null){
 			ReportManager.problem(this, efgCon, "Could not identify coord_system entries for schema_build:\t" + schemaBuild);
-			return false;	
+			return false;
 		}
 
 
 		try {
 
-      ResultSet rs = efgCon.createStatement().executeQuery("SELECT coord_system_id, rank, schema_build " + 
+      ResultSet rs = efgCon.createStatement().executeQuery("SELECT coord_system_id, rank, schema_build " +
         "FROM coord_system WHERE is_current=1 and schema_build is not null AND name='" + csName + "'");
       // Should never have null schema_build entries
 
@@ -222,7 +243,7 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
       while(rs.next()){
 
         if (! rs.getString(3).equals(schemaBuild)){
-          ReportManager.problem(this, efgCon, 
+          ReportManager.problem(this, efgCon,
             "Found an 'is_current' " + csName + "coord_system with unexpected schema_build:\t" + rs.getString(3));
           return false;
         }
@@ -237,10 +258,10 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
       }
       rs.close();
 
-      rs = efgCon.createStatement().executeQuery("SELECT s.seq_region_id, s.name, s.core_seq_region_id " + 
-        "FROM seq_region s WHERE s.coord_system_id=" + csID + 
+      rs = efgCon.createStatement().executeQuery("SELECT s.seq_region_id, s.name, s.core_seq_region_id " +
+        "FROM seq_region s WHERE s.coord_system_id=" + csID +
         " and s.name not like '%\\_%' group by s.seq_region_id");
-		
+
 			//Do we even need this core_seq_region_id translation?
 			//Just link via the sr.name!
 
