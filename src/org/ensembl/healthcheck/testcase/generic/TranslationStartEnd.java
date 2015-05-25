@@ -72,7 +72,7 @@ public class TranslationStartEnd extends SingleDatabaseTestCase {
 		int rows = DBUtils.getRowCount(con, "SELECT COUNT(translation_id) FROM translation WHERE start_exon_id = end_exon_id AND seq_start > seq_end");
 		if (rows > 0) {
 			result = false;
-			ReportManager.problem(this, con, rows + " translations have start > end");
+			ReportManager.problem(this, con, rows + " translations have start > end\nUseful SQL: SELECT COUNT(translation_id) FROM translation WHERE start_exon_id = end_exon_id AND seq_start > seq_end");
 		} else {
 			ReportManager.correct(this, con, "No translations have start > end");
 		}
@@ -81,7 +81,7 @@ public class TranslationStartEnd extends SingleDatabaseTestCase {
 		rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM translation t, exon e WHERE t.end_exon_id=e.exon_id AND cast(e.seq_region_end as signed int)-cast(e.seq_region_start as signed int)+1 < t.seq_end");
 		if (rows > 0) {
 			result = false;
-			ReportManager.problem(this, con, rows + " translations end beyond the end of their exons");
+			ReportManager.problem(this, con, rows + " translations end beyond the end of their exons\nUseful SQL: SELECT translation_id, transcript_id, translation.stable_id, seq_end, seq_region_id, seq_region_start, seq_region_end, seq_region_strand, phase FROM translation INNER JOIN exon ON exon_id = end_exon_id WHERE seq_region_start+seq_end-1 > seq_region_end");
 		} else {
 			ReportManager.correct(this, con, "No translations overrun exons");
 		}
