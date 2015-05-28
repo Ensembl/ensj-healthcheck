@@ -37,11 +37,9 @@ public class Population extends SingleDatabaseTestCase {
 	 * Creates a new instance of Population
 	 */
 	public Population() {
-
 		addToGroup("variation-release");
 		setDescription("Check the Populations are entered as expected");
 		setTeamResponsible(Team.VARIATION);
-
 	}
 
 	/**
@@ -50,42 +48,34 @@ public class Population extends SingleDatabaseTestCase {
 	 *          The database to check.
 	 * @return True if the test passed
 	 */
-         public boolean run(final DatabaseRegistryEntry dbre) {
-	     boolean result = true;
+  public boolean run(final DatabaseRegistryEntry dbre) {
+    boolean result = true;
+    Connection con = dbre.getConnection();
 
-		Connection con = dbre.getConnection();
+    try {				
+      // Check for populations without sizes
+      String size_stmt = "select count(*) from population pop, sample_population sp where pop.population_id = sp.population_id and pop.size is null;";
 
-	
-		try {				
-			// Check for populations without sizes
-			String size_stmt = "select count(*) from population pop, sample_population sp where pop.population_id = sp.population_id and pop.size is null;";
-			
-                        int size_rows = DBUtils.getRowCount(con,size_stmt);
-                        if (size_rows > 0) {
-			    result = false;
-			    ReportManager.problem(this, con, String.valueOf(size_rows) + " populations have no stored size");
-                        }
+      int size_rows = DBUtils.getRowCount(con,size_stmt);
+      if (size_rows > 0) {
+        result = false;
+        ReportManager.problem(this, con, String.valueOf(size_rows) + " populations have no stored size");
+      }
 
-			// Check for populations with freqs_from_gts set for mouse and human
-			 if (dbre.getSpecies() == Species.MUS_MUSCULUS || dbre.getSpecies() == Species.HOMO_SAPIENS) {
-
-			     // Check for populations without sizes
-			     String freq_stmt = "select count(*) from population pop where pop.freqs_from_gts = 1;";
-			
-			     int freq_rows = DBUtils.getRowCount(con,freq_stmt);
-			     if (freq_rows == 0) {
-				 result = false;
-				 ReportManager.problem(this, con, "No populations have freqs_from_gts set ");
-			     }
-			 }
-			 
-		} catch (Exception e) {
-			ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
-			result = false;
-		}
-		
-
-		return result;
-	 } 
-    
+      // Check for populations with freqs_from_gts set for mouse and human
+      if (dbre.getSpecies() == Species.MUS_MUSCULUS || dbre.getSpecies() == Species.HOMO_SAPIENS) {
+        // Check for populations without sizes
+        String freq_stmt = "select count(*) from population pop where pop.freqs_from_gts = 1;";
+        int freq_rows = DBUtils.getRowCount(con,freq_stmt);
+        if (freq_rows == 0) {
+          result = false;
+          ReportManager.problem(this, con, "No populations have freqs_from_gts set ");
+        }
+      }
+    } catch (Exception e) {
+      ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
+      result = false;
+    }
+    return result;
+  } 
 }
