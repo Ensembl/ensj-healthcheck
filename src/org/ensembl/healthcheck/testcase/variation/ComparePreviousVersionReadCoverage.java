@@ -46,13 +46,13 @@ public class ComparePreviousVersionReadCoverage extends ComparePreviousVersionBa
 	public ComparePreviousVersionReadCoverage() {
 
 		addToGroup("variation-release");
-		setDescription("Compare the number of reads for each individual with read coverage in the current database with those from the equivalent database on the secondary server");
+		setDescription("Compare the number of reads for each sample with read coverage in the current database with those from the equivalent database on the secondary server");
 		setTeamResponsible(Team.VARIATION);
 
 	}
 
 	protected Map getCounts(DatabaseRegistryEntry dbre) {
-		return getCountsBySQL(dbre, "SELECT i.name, COUNT(*) FROM read_coverage rc JOIN individual i ON (i.individual_id = rc.individual_id) GROUP BY i.name");
+		return getCountsBySQL(dbre, "SELECT s.name, COUNT(*) FROM read_coverage rc JOIN sample s ON (s.sample_id = rc.sample_id) GROUP BY s.name");
 
 	}
 
@@ -60,7 +60,7 @@ public class ComparePreviousVersionReadCoverage extends ComparePreviousVersionBa
 
 	protected String entityDescription() {
 
-		return "number of reads for individual";
+		return "number of reads for sample";
 
 	}
 
