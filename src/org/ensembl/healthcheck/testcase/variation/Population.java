@@ -58,7 +58,7 @@ public class Population extends SingleDatabaseTestCase {
 	
 		try {				
 			// Check for populations without sizes
-			String size_stmt = "select count(*) from population pop, individual_population ip where pop.population_id = ip.population_id and pop.size is null;";
+			String size_stmt = "select count(*) from population pop, sample_population sp where pop.population_id = sp.population_id and pop.size is null;";
 			
                         int size_rows = DBUtils.getRowCount(con,size_stmt);
                         if (size_rows > 0) {
