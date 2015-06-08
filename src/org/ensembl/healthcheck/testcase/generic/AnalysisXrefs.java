@@ -81,7 +81,7 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
                          "havana_ig_gene", "ensembl_havana_lincrna",
                          "proj_havana",    "proj_ensembl_havana_transcript",
                          "proj_ensembl_havana_lincrna", "proj_havana_ig_gene",
-                         "ensembl_havana_ig_gene",
+                         "ensembl_havana_ig_gene", "proj_ensembl_havana_ig_gene",
                          "OTTT" );
 
 		// --------------------------------
