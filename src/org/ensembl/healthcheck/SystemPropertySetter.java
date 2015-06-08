@@ -43,7 +43,11 @@ public class SystemPropertySetter {
 		System.setProperty("output.password",    configuration.getOutputPassword());
 		System.setProperty("host",           configuration.getHost() );
 		System.setProperty("port",           configuration.getPort() );
+                System.setProperty("host1",           configuration.getHost1() );
+                System.setProperty("port1",           configuration.getPort1() );
 		System.setProperty("output.release", configuration.getOutputRelease() );
+                System.setProperty("secondary.host",           configuration.getSecondaryHost() );
+                System.setProperty("secondary.port",           configuration.getSecondaryPort() );
 
                 if (configuration.isTestDatabases()) {
                      String test_databases = "";
