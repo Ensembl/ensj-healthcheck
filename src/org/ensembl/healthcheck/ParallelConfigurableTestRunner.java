@@ -173,14 +173,12 @@ public class ParallelConfigurableTestRunner extends TestRunner {
                                  "select[my" + configuration.getHost1().replace("-", "_") + "<=800]", "-R",  "select[my" + configuration.getSecondaryHost().replace("-", "_") + "<=400]", "-R",
                                  "rusage[my" + configuration.getHost().replace("-", "_") + "=10:my" + configuration.getHost1().replace("-", "_") + "=10:my" + configuration.getSecondaryHost().replace("-", "_") + "=50]", "-o", "healthcheck_%J.out", "-e", 
                                  "healthcheck_%J.err", runConfigurable, "-d", database, "--sessionID", "" + sessionID, "-c", DEFAULT_PROPERTIES_FILE };
-                                 System.out.println("cmd:" + cmd);
                         }
                         else {
                                  cmd = new String[] {"bsub", "-q", "long", "-J", currentJobName, "-R", MEMORY_RUSAGE, "-M", MEMORY_RESERVATION, "-R", "select[my" + configuration.getHost().replace("-", "_") + "<=800]", "-R", 
                                  "select[my" + configuration.getSecondaryHost().replace("-", "_") + "<=400]", "-R", "rusage[my" + configuration.getHost().replace("-", "_") + "=10:my" + configuration.getSecondaryHost().replace("-", "_") + "=50]",
                                  "-o", "healthcheck_%J.out", "-e", "healthcheck_%J.err", runConfigurable, "-d", database, "--sessionID", "" + sessionID, "-c", 
                                  DEFAULT_PROPERTIES_FILE };
-                                 System.out.println("cmd:" + cmd);
                         }
 
                         jobNames.add(currentJobName);
