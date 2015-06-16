@@ -74,14 +74,14 @@ public class Meta extends SingleDatabaseTestCase {
 		if (dbre.getSpecies() == Species.CANIS_FAMILIARIS) {
 			// find out if the entries in the Meta point to the strain
 			// information
-			String[] metaKeys = { "individual.default_strain" };
+			String[] metaKeys = { "sample.default_strain" };
 			for (int i = 0; i < metaKeys.length; i++) {
 				metaKey = metaKeys[i];
 
 				result &= checkKeysPresent(con, metaKey);
-				if (metaKey == "individual.default_strain") {
+				if (metaKey == "sample.default_strain") {
 					result &= checkForOrphansWithConstraint(con, "meta",
-							"meta_value", "individual",
+							"meta_value", "sample",
 							"name COLLATE latin1_general_cs", "meta_key = '"
 									+ metaKey + "'");
 				}
