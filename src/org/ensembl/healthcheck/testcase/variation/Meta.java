@@ -18,14 +18,13 @@
 package org.ensembl.healthcheck.testcase.variation;
 
 import java.sql.Connection;
-
+import java.util.List;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
-
 /**
  * Checks the metadata table to make sure it is OK. Only one meta table at a
  * time is done here; checks for the consistency of the meta table across
@@ -80,10 +79,8 @@ public class Meta extends SingleDatabaseTestCase {
 
 				result &= checkKeysPresent(con, metaKey);
 				if (metaKey == "sample.default_strain") {
-					result &= checkForOrphansWithConstraint(con, "meta",
-							"meta_value", "sample",
-							"name COLLATE latin1_general_cs", "meta_key = '"
-									+ metaKey + "'");
+					result &= checkForOrphansWithConstraint(con, "meta", "meta_value", "sample",
+							"name COLLATE latin1_general_cs", "meta_key = '" + metaKey + "'");
 				}
 			}
 		}
@@ -103,8 +100,7 @@ public class Meta extends SingleDatabaseTestCase {
 		// Check that the species_id column is NULL for meta entries that
 		// concerns the schema
 		for (int i = 0; i < metaKeys.length; i++) {
-			String sql = "SELECT meta_id FROM meta WHERE meta_key = '"
-					+ metaKeys[i] + "' AND species_id IS NOT NULL";
+			String sql = "SELECT meta_id FROM meta WHERE meta_key = '" + metaKeys[i] + "' AND species_id IS NOT NULL";
 			String[] violations = DBUtils.getColumnValues(con, sql);
 			for (int j = 0; j < violations.length; j++) {
 				result = false;
@@ -114,11 +110,18 @@ public class Meta extends SingleDatabaseTestCase {
 			}
 		}
 
+    // Check that species specific meta keys (e.g. sift_version, sift_protein_db_version, HGVS_version) are set to 1
+    String sql = "SELECT meta_id, meta_key FROM meta WHERE meta_key NOT IN ('schema_version', 'schema_type', 'patch') AND (species_id != 1 OR species_id IS NULL)";
+    List<String[]> data = DBUtils.getRowValuesList(con, sql);
+    for (String[] line : data) {
+      result = false;
+      ReportManager.problem(this, con, "Meta entry for species specific meta_key " + line[1] + " (meta_id=" + line[0] + ") is not set to 1");
+    }
+
 		if (result) {
 			// if there were no problems, just inform for the interface to pick
 			// the HC
-			ReportManager.correct(this, con,
-					"Meta test passed without any problem");
+			ReportManager.correct(this, con, "Meta test passed without any problem");
 		}
 		return result;
 	} // run
