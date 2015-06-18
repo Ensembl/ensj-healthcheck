@@ -25,28 +25,24 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase;
 
-public class EGMethodLinkSpeciesSetIdStats extends
+public class EGMissingPairwiseAlignments extends
 		AbstractTemplatedTestCase {
 
 	private final static String QUERY = "SELECT method_link_species_set_id FROM "
-			+ "(SELECT mlss.method_link_species_set_id, tc.stats_related_tags "
-			+ "FROM method_link_species_set mlss "
-			+ "INNER JOIN method_link ml ON mlss.method_link_id = ml.method_link_id "
-			+ "LEFT JOIN (SELECT count(*) stats_related_tags, method_link_species_set_id "
-			+ "FROM method_link_species_set_tag WHERE tag IN "
-			+ "('non_ref_coding_exon_length', 'non_ref_genome_coverage','non_ref_genome_length', "
-			+ "'non_ref_insertions', 'non_ref_matches', 'non_ref_mis_matches', 'non_ref_uncovered', "
-			+ "'ref_coding_exon_length', 'ref_genome_coverage', 'ref_genome_length', 'ref_insertions', "
-			+ "'ref_matches', 'ref_mis_matches', 'ref_uncovered') "
-			+ "GROUP BY method_link_species_set_id) as tc "
-			+ "ON mlss.method_link_species_set_id = tc.method_link_species_set_id "
-			+ "WHERE ml.type IN ('BLASTZ_NET', 'LASTZ_NET', 'TRANSLATED_BLAT_NET', 'ATAC') "
-			+ "HAVING (stats_related_tags != 14) OR (stats_related_tags IS NULL)) as find_missing_stats";
+	    + "(SELECT mlss.method_link_species_set_id, distinct_mlss_ga.method_link_species_set_id ga_mlss "
+	    + "FROM method_link_species_set mlss "
+	    + "LEFT JOIN (SELECT DISTINCT method_link_species_set_id FROM genomic_align) as distinct_mlss_ga "
+	    + "ON mlss.method_link_species_set_id = distinct_mlss_ga.method_link_species_set_id "
+	    + "INNER JOIN method_link ml "
+	    + "ON mlss.method_link_id = ml.method_link_id "
+	    + "WHERE ml.type IN ('BLASTZ_NET', 'LASTZ_NET', 'TRANSLATED_BLAT_NET', 'ATAC') "
+	    + "HAVING distinct_mlss_ga.method_link_species_set_id IS NULL) AS find_missing_ga";
 
-	public EGMethodLinkSpeciesSetIdStats() {
+
+	public EGMissingPairwiseAlignments() {
 		setTeamResponsible(Team.ENSEMBL_GENOMES);
 		appliesToType(DatabaseType.COMPARA);
-		setDescription("Checks whether stats have been generated for all MLSSs");
+		setDescription("Checks for method_link_species_sets with a pairwise method_link for which there are no genomic_aligns");
 	}
 
 	@Override
@@ -58,7 +54,7 @@ public class EGMethodLinkSpeciesSetIdStats extends
 			ReportManager.problem(
 					this,
 					dbre.getConnection(),
-					"MLSSs found with no statistics: "
+					"No genomic_aligns for pairwise MLSSs: "
 							+ StringUtils.join(mlsss, ","));
 			result = false;
 		}
