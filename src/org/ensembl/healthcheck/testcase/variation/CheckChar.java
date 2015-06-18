@@ -75,6 +75,13 @@ public class CheckChar extends SingleDatabaseTestCase {
 				result = false;
 				ReportManager.problem(this, con, "phenotype: " + input + " is suspiciously short");
 			     }
+
+                            // check for characters which will be interpreted a new lines
+                            if( input.contains("\n") ){
+                                result = false;
+                                ReportManager.problem(this, con, "phenotype: " + input + " contains a newline ");
+                             }
+
  			   
 
                             // check for phenotype descriptions suggesting no phenotype
