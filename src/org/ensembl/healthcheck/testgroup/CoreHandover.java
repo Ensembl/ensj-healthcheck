@@ -19,14 +19,14 @@ package org.ensembl.healthcheck.testgroup;
 import org.ensembl.healthcheck.GroupOfTests;
 
 /**
- * These are the tests to run once xref projections have finished.
+ * These are the tests to run once all analyses have been completed.
  *
  * @author Thomas Maurel
  *
  */
-public class PostProjection extends GroupOfTests {
+public class CoreHandover extends GroupOfTests {
 	
-	public PostProjection() {
+	public CoreHandover() {
 
 		addTest(
                         AdditionalAnnotation.class,
@@ -35,7 +35,6 @@ public class PostProjection extends GroupOfTests {
                         CoreXrefs.class,
                         Geneset.class,
                         Production.class,
-                        Projection.class,
                         Schema.class
 		);
 	}

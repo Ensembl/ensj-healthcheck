@@ -19,23 +19,21 @@ package org.ensembl.healthcheck.testgroup;
 import org.ensembl.healthcheck.GroupOfTests;
 
 /**
- * These are the tests to run once xref projections have finished.
+ * These are the tests to run once the geneset is complete.
  *
  * @author Thomas Maurel
  *
  */
-public class PostProjection extends GroupOfTests {
+public class GenebuildHandover extends GroupOfTests {
 	
-	public PostProjection() {
+	public GenebuildHandover() {
 
 		addTest(
-                        AdditionalAnnotation.class,
                         Assembly.class,
                         CoreCompare.class,
                         CoreXrefs.class,
                         Geneset.class,
                         Production.class,
-                        Projection.class,
                         Schema.class
 		);
 	}

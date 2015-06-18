@@ -52,7 +52,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.NullTranscripts </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.FrameshiftAttributes </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.GencodeAttributes </li>
+ *   <li> org.ensembl.healthcheck.testcase.generic.AttribValues </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.ExonRank </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ExonStrandOrder </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.BlanksInsteadOfNulls </li> 
@@ -124,7 +124,7 @@ public class PreSite extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.NullTranscripts.class,
 			org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions.class,
 			org.ensembl.healthcheck.testcase.generic.FrameshiftAttributes.class,
-                        org.ensembl.healthcheck.testcase.generic.GencodeAttributes.class,
+                        org.ensembl.healthcheck.testcase.generic.AttribValues.class,
 			org.ensembl.healthcheck.testcase.generic.ExonRank.class,
 			org.ensembl.healthcheck.testcase.generic.ExonStrandOrder.class,
 			org.ensembl.healthcheck.testcase.generic.BlanksInsteadOfNulls.class,

@@ -63,7 +63,7 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			 * result &= checkForOrphans(con, "allele", "population_id", "population", "population_id",true);
 			 */
 			result &= checkForOrphans(con, "allele", "variation_id", "variation", "variation_id", true);
-			result &= checkForOrphans(con, "compressed_genotype_region", "individual_id", "individual", "individual_id", true);
+			result &= checkForOrphans(con, "compressed_genotype_region", "sample_id", "sample", "sample_id", true);
 			result &= checkForOrphans(con, "compressed_genotype_region", "seq_region_id", "seq_region", "seq_region_id", true);
 			result &= checkForOrphans(con, "compressed_genotype_var", "variation_id", "variation", "variation_id", true);
 			result &= checkForOrphans(con, "failed_allele", "failed_description_id", "failed_description", "failed_description_id", true);
@@ -72,10 +72,10 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			result &= checkForOrphans(con, "failed_variation", "variation_id", "variation", "variation_id", true);
 			result &= checkForOrphans(con, "failed_structural_variation", "failed_description_id", "failed_description", "failed_description_id", true);
 			result &= checkForOrphans(con, "failed_structural_variation", "structural_variation_id", "structural_variation", "structural_variation_id", true);
-			result &= checkForOrphans(con, "individual_genotype_multiple_bp", "individual_id", "individual_population", "individual_id", true);
-			result &= checkForOrphans(con, "individual_genotype_multiple_bp", "individual_id", "individual", "individual_id", true);
-			result &= checkForOrphans(con, "individual_population", "individual_id", "individual", "individual_id", true);
-			result &= checkForOrphans(con, "individual_population", "population_id", "population", "population_id", true);
+			result &= checkForOrphans(con, "sample_genotype_multiple_bp", "sample_id", "sample_population", "sample_id", true);
+			result &= checkForOrphans(con, "sample_genotype_multiple_bp", "sample_id", "sample", "sample_id", true);
+			result &= checkForOrphans(con, "sample_population", "sample_id", "sample", "sample_id", true);
+			result &= checkForOrphans(con, "sample_population", "population_id", "population", "population_id", true);
 			result &= checkForOrphans(con, "individual_synonym", "individual_id", "individual", "individual_id", true);
 			result &= checkForOrphans(con, "phenotype", "phenotype_id", "phenotype_feature", "phenotype_id", true);
 			result &= checkForOrphans(con, "phenotype_feature", "phenotype_id", "phenotype", "phenotype_id", true);
@@ -88,12 +88,12 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			result &= checkForOrphans(con, "population_genotype", "variation_id", "variation", "variation_id", true);
 			result &= checkForOrphans(con, "population_synonym", "population_id", "population", "population_id", true);
 			result &= checkForOrphans(con, "read_coverage", "seq_region_id", "seq_region", "seq_region_id", true);
-			result &= checkForOrphans(con, "read_coverage", "individual_id", "individual", "individual_id", true);
+			result &= checkForOrphans(con, "read_coverage", "sample_id", "sample", "sample_id", true);
 			result &= checkForOrphans(con, "tagged_variation_feature", "population_id", "population", "population_id", true);
 
-			//  result &= checkForOrphans(con, "tmp_individual_genotype_single_bp", "variation_id", "variation", "variation_id", true);
+			//  result &= checkForOrphans(con, "tmp_sample_genotype_single_bp", "variation_id", "variation", "variation_id", true);
 
-			result &= checkForOrphans(con, "tmp_individual_genotype_single_bp", "individual_id", "individual", "individual_id",true);
+			result &= checkForOrphans(con, "tmp_sample_genotype_single_bp", "sample_id", "sample", "sample_id",true);
 			result &= checkForOrphans(con, "transcript_variation", "variation_feature_id", "variation_feature", "variation_feature_id", true);
 			result &= checkForOrphans(con, "variation", "source_id", "source", "source_id", true);
 			result &= checkForOrphans(con, "variation", "class_attrib_id", "attrib", "attrib_id", true);
@@ -146,10 +146,10 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			}
 	
 			// Hmmm.. this is not really a foreign key check.. [pontus]
-			if (DBUtils.getRowCount(con, "SHOW TABLES like 'tmp_individual%'") > 0) {
-				rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM tmp_individual_genotype_single_bp where length(allele_1) >1 or length(allele_2) > 1");
+			if (DBUtils.getRowCount(con, "SHOW TABLES like 'tmp_sample%'") > 0) {
+				rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM tmp_sample_genotype_single_bp where length(allele_1) >1 or length(allele_2) > 1");
 				if (rows > 0) {
-					ReportManager.problem(this, con, rows + "entries in The tmp_individual_genotype_single_bp table contains alleles with more than 1 bp");
+					ReportManager.problem(this, con, rows + "entries in The tmp_sample_genotype_single_bp table contains alleles with more than 1 bp");
 					result = false;
 				}
 			}
