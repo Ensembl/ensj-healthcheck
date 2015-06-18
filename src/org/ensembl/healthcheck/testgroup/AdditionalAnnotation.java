@@ -37,7 +37,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.EmptyTables </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ESTStableID </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.FrameshiftAttributes </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.GencodeAttributes </li>
+ *   <li> org.ensembl.healthcheck.testcase.generic.AttribValues </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.MappingSession </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.MarkerFeatures </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ProteinFeatures </li> 
@@ -68,7 +68,7 @@ public class AdditionalAnnotation extends GroupOfTests {
                         org.ensembl.healthcheck.testcase.generic.EmptyTables.class,
                         org.ensembl.healthcheck.testcase.generic.ESTStableID.class,
                         org.ensembl.healthcheck.testcase.generic.FrameshiftAttributes.class,
-                        org.ensembl.healthcheck.testcase.generic.GencodeAttributes.class,
+                        org.ensembl.healthcheck.testcase.generic.AttribValues.class,
                         org.ensembl.healthcheck.testcase.generic.MappingSession.class,
                         org.ensembl.healthcheck.testcase.generic.MarkerFeatures.class,
                         org.ensembl.healthcheck.testcase.generic.ProteinFeatures.class,
