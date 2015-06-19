@@ -52,7 +52,7 @@ public class CompareFuncgenSchema extends AbstractCompareSchema {
 	
 	@Override
 	public void types() {
-		addAppliesToType(DatabaseType.FUNCGEN);
+
 	}
 
 	@Override
