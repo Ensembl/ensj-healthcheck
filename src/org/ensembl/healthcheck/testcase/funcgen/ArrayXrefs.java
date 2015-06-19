@@ -272,8 +272,8 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 			rs.close();
 
 			if (srID2name.size() > MAX_CHROMOSOMES) {
-				ReportManager.problem(this, efgCon, "Database has more than " + MAX_CHROMOSOMES + " seq_regions in 'chromosome' coordinate system (actually " + srID2name.size() + ") - test skipped");
-				return false;
+				ReportManager.problem(this, efgCon, "Database has more than " + MAX_CHROMOSOMES + " seq_regions in 'chromosome' coordinate system (actually " + srID2name.size() + ") - test skipped suspended");
+				// return false;
 			}
 
 			// Count the number of xrefs for each chr
