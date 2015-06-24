@@ -39,6 +39,11 @@ public class CheckGenomicAlignTreeTable extends AbstractComparaTestCase {
 	public boolean run(DatabaseRegistryEntry dbre) {
 		Connection con = dbre.getConnection();
 
+		if (!tableHasRows(con, "genomic_align_tree")) {
+			ReportManager.correct(this, con, "NO ENTRIES in genomic_align_tree table, so nothing to test IGNORED");
+			return true;
+		}
+
 		boolean result = true;
 
 		// Check the left_node_id values are set (and assume right_node_ids have also been set)
