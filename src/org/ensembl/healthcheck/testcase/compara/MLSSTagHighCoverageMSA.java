@@ -68,9 +68,9 @@ public class MLSSTagHighCoverageMSA extends SingleDatabaseTestCase {
 			+ " LEFT JOIN (method_link_species_set mlss2 JOIN method_link ml2 USING (method_link_id)) ON value = mlss2.method_link_species_set_id"
 			+ " WHERE ml1.type = 'EPO_LOW_COVERAGE'";
 
-		List<String[]> bad_rows = DBUtils.getRowValuesList(con, sql);
+		List<String[]> all_rows = DBUtils.getRowValuesList(con, sql);
 		boolean result = true;
-		for (String[] row : bad_rows) {
+		for (String[] row : all_rows) {
 			// Check all the potential errors
 			if (row[1] == null) {
 				ReportManager.problem(this, con, String.format("The MLSS ID %s is missing its 'high_coverage_mlss_id' tag", row[0]));
@@ -80,6 +80,9 @@ public class MLSSTagHighCoverageMSA extends SingleDatabaseTestCase {
 				ReportManager.problem(this, con, String.format("The value of the 'high_coverage_mlss_id' tag for MLSS ID %s does not link to a valid MLSS ID: '%s'", row[0], row[2]));
 			} else if (!row[4].equals("EPO")) {
 				ReportManager.problem(this, con, String.format("The value of the 'high_coverage_mlss_id' tag for MLSS ID %s does not link to a 'EPO' MLSS but '%s' (ID %s)", row[0], row[4], row[3]));
+			} else {
+				// This row is correct: everything is non-NULL, and the EPO_LOW_COVERAGE mlss is linked to a EPO
+				continue;
 			}
 			result = false;
 		}
