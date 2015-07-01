@@ -60,15 +60,12 @@ public class RegulatorySets extends SingleDatabaseTestCase {
 	 * This only applies to funcgen databases.
 	 */
 	public void types() {
-		addAppliesToType(DatabaseType.FUNCGEN);
-
 		//Do we really need these removes?
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		removeAppliesToType(DatabaseType.CDNA);
 		removeAppliesToType(DatabaseType.CORE);
 		removeAppliesToType(DatabaseType.VARIATION);
 		removeAppliesToType(DatabaseType.COMPARA);
-
 	}
 
 

@@ -34,19 +34,19 @@ import org.ensembl.healthcheck.util.SqlTemplate;
  * Check that gencode basic attributes are present
  */
 
-public class GencodeAttributes extends SingleDatabaseTestCase {
+public class AttribValues extends SingleDatabaseTestCase {
 
   /**
    * Create a new  testcase.
    */
-  public GencodeAttributes() {
+  public AttribValues() {
 
     addToGroup("post_genebuild");
     addToGroup("pre-compara-handover");
     addToGroup("post-compara-handover");
                 addToGroup("post-projection");
 
-    setDescription("Check that Gencode basic geneset attributes have been added");
+    setDescription("Check that some attributes have been added (currently, tsl, appris, gencode and refseq attributes)");
     setTeamResponsible(Team.GENEBUILD);
   }
 
@@ -215,4 +215,4 @@ public class GencodeAttributes extends SingleDatabaseTestCase {
 
   // ----------------------------------------------------------------------
 
-} // GencodeAttributes
+} // AttribValues
