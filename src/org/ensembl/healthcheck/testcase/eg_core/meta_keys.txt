@@ -76,4 +76,5 @@ species.url
 species.wikipedia_name
 species.wikipedia_url
 transcriptbuild.level
+vb.release_status
 xref.timestamp
