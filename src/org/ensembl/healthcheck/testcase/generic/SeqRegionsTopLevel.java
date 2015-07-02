@@ -36,17 +36,13 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
-import org.ensembl.healthcheck.util.SqlTemplate;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
- * Check that all seq_regions comprising genes are marked as toplevel in seq_region_attrib. Also checks that there is at least one
- * seq_region marked as toplevel (needed by compara). Also check that all toplevel seq regions are marked as such, and no seq
- * regions that are marked as toplevel are not toplevel.
+ * Check that all seq_regions comprising genes are marked as toplevel in
+ * seq_region_attrib. Also checks that there is at least one seq_region marked
+ * as toplevel (needed by compara). Also check that all toplevel seq regions are
+ * marked as such, and no seq regions that are marked as toplevel are not
+ * toplevel.
  */
 
 public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
@@ -59,29 +55,29 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
+		addToGroup("post-projection");
+
 		setDescription("Check that all seq_regions comprising genes are marked as toplevel in seq_region_attrib, and that there is at least one toplevel seq_region. Also check that all toplevel seq regions are marked as such, and no seq regions that are marked as toplevel are not toplevel. Will check as well if the toplevel seqregions have information in the assembly table");
 		setTeamResponsible(Team.GENEBUILD);
 	}
 
-        /**
-         * Data is only tested in core database, as the tables are in sync
-         */
-        public void types() {
+	/**
+	 * Data is only tested in core database, as the tables are in sync
+	 */
+	public void types() {
 
-                removeAppliesToType(DatabaseType.OTHERFEATURES);
-                removeAppliesToType(DatabaseType.ESTGENE);
-                removeAppliesToType(DatabaseType.RNASEQ);
-                removeAppliesToType(DatabaseType.CDNA);
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.ESTGENE);
+		removeAppliesToType(DatabaseType.RNASEQ);
+		removeAppliesToType(DatabaseType.CDNA);
 
-        }
+	}
 
 	/**
 	 * Run the test.
 	 * 
 	 * @param dbre
-	 *          The database to use.
+	 *            The database to use.
 	 * @return true if the test passed.
 	 * 
 	 */
@@ -91,17 +87,10 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-                String AssemblyAccession = DBUtils.getMetaValue(con, "assembly.accession");
-
 		int topLevelAttribTypeID = getAttribTypeID(con, "toplevel");
 		if (topLevelAttribTypeID == -1) {
 			return false;
 		}
-
-                int karyotypeAttribTypeID = getAttribTypeID(con, "karyotype_rank");
-                if (karyotypeAttribTypeID == -1) {
-                        return false;
-                }
 
 		result &= check_genes(con, topLevelAttribTypeID);
 
@@ -111,18 +100,6 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 
 		result &= checkAssemblyTable(con, topLevelAttribTypeID);
 
-
-                if (AssemblyAccession.contains("GCA")) {
-                        Set<String> synsRefSeqGenomic = getSyns(dbre, "RefSeq_genomic");
-                        Set<String> topLevelRegions = getRegions(dbre, topLevelAttribTypeID);
-                        result &= checkSynonyms(dbre, synsRefSeqGenomic, topLevelRegions, "RefSeq_genomic", "toplevel");
-                        Set<String> synsINSDC = getSyns(dbre, "INSDC");
-                        Set<String> karyotypeRegions = getRegions(dbre, karyotypeAttribTypeID);
-                        result &= checkSynonyms(dbre, synsINSDC, karyotypeRegions, "INSDC", "chromosome");
-                        Set<String> patchRegions = getPatches(dbre);
-                        result &= checkSynonyms(dbre, synsRefSeqGenomic, patchRegions, "RefSeq_genomic", "patch");
-                }
-
 		return result;
 
 	} // run
@@ -131,9 +108,13 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 
 	private int getAttribTypeID(Connection con, String attrib) {
 
-		String val = DBUtils.getRowColumnValue(con, "SELECT attrib_type_id FROM attrib_type WHERE code='" + attrib + "'");
+		String val = DBUtils.getRowColumnValue(con,
+				"SELECT attrib_type_id FROM attrib_type WHERE code='" + attrib
+						+ "'");
 		if (val == null || val.equals("")) {
-			ReportManager.problem(this, con, "Can't find a seq_region attrib_type with code '" + attrib + "', exiting");
+			ReportManager.problem(this, con,
+					"Can't find a seq_region attrib_type with code '" + attrib
+							+ "', exiting");
 			return -1;
 		}
 		int attribTypeID = Integer.parseInt(val);
@@ -150,19 +131,30 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		int numTopLevelGenes = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM seq_region_attrib sra, gene g WHERE sra.attrib_type_id = " + topLevelAttribTypeID + " AND sra.seq_region_id=g.seq_region_id");
+		int numTopLevelGenes = DBUtils
+				.getRowCount(
+						con,
+						"SELECT COUNT(*) FROM seq_region_attrib sra, gene g WHERE sra.attrib_type_id = "
+								+ topLevelAttribTypeID
+								+ " AND sra.seq_region_id=g.seq_region_id");
 		int numGenes = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM gene");
 
 		int nonTopLevelGenes = numGenes - numTopLevelGenes;
 
 		if (nonTopLevelGenes > 0) {
 
-			ReportManager.problem(this, con, nonTopLevelGenes + " genes are on seq_regions which are not toplevel; this may cause problems for Compara and slow down the mapper.");
+			ReportManager
+					.problem(
+							this,
+							con,
+							nonTopLevelGenes
+									+ " genes are on seq_regions which are not toplevel; this may cause problems for Compara and slow down the mapper.");
 			result = false;
 
 		} else {
 
-			ReportManager.correct(this, con, "All genes are on toplevel seq regions");
+			ReportManager.correct(this, con,
+					"All genes are on toplevel seq regions");
 
 		}
 
@@ -171,20 +163,26 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 
 	// --------------------------------------------------------------------------
 
-	private boolean check_one_seq_region(Connection con, int topLevelAttribTypeID) {
+	private boolean check_one_seq_region(Connection con,
+			int topLevelAttribTypeID) {
 
 		boolean result = true;
 
 		// check for at least one toplevel seq_region
-		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM seq_region_attrib WHERE attrib_type_id=" + topLevelAttribTypeID);
+		int rows = DBUtils.getRowCount(con,
+				"SELECT COUNT(*) FROM seq_region_attrib WHERE attrib_type_id="
+						+ topLevelAttribTypeID);
 		if (rows == 0) {
 
-			ReportManager.problem(this, con, "No seq_regions are marked as toplevel. This may cause problems for Compara");
+			ReportManager
+					.problem(this, con,
+							"No seq_regions are marked as toplevel. This may cause problems for Compara");
 			result = false;
 
 		} else {
 
-			ReportManager.correct(this, con, rows + " seq_regions are marked as toplevel");
+			ReportManager.correct(this, con, rows
+					+ " seq_regions are marked as toplevel");
 
 		}
 
@@ -203,24 +201,34 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 		// check that there is one co-ordinate system with rank = 1
 		if (!dbre.isMultiSpecies()) {
 
-			int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM coord_system WHERE rank=1");
+			int rows = DBUtils.getRowCount(con,
+					"SELECT COUNT(*) FROM coord_system WHERE rank=1");
 			if (rows == 0) {
 
-				ReportManager.problem(this, con, "No co-ordinate systems have rank = 1");
+				ReportManager.problem(this, con,
+						"No co-ordinate systems have rank = 1");
 				result = false;
 
 			} else if (rows > 1) {
 
 				if (rows != dbre.getSpeciesIds().size()) {
-					ReportManager.problem(this, con, rows + " rows in coord_system have a rank of 1. There should be " + dbre.getSpeciesIds().size());
+					ReportManager
+							.problem(
+									this,
+									con,
+									rows
+											+ " rows in coord_system have a rank of 1. There should be "
+											+ dbre.getSpeciesIds().size());
 					result = false;
 				} else {
-					ReportManager.correct(this, con, dbre.getSpeciesIds().size() + " co-ordinate systems with rank = 1");
+					ReportManager.correct(this, con, dbre.getSpeciesIds()
+							.size() + " co-ordinate systems with rank = 1");
 				}
 
 			} else {
 
-				ReportManager.correct(this, con, "One co-ordinate system has rank = 1");
+				ReportManager.correct(this, con,
+						"One co-ordinate system has rank = 1");
 
 			}
 		}
@@ -228,72 +236,41 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 
 	}
 
-        // --------------------------------------------------------------------------
+	// --------------------------------------------------------------------------
 
 	private boolean checkAssemblyTable(Connection con, int topLevelAttribTypeID) {
 		boolean result = true;
 
-		int rows = DBUtils.getRowCount(con, "SELECT count(*) FROM seq_region_attrib sra LEFT JOIN assembly a on sra.seq_region_id = a.asm_seq_region_id, seq_region s, coord_system c "
-				+ "where a.asm_seq_region_id is null and sra.attrib_type_id =" + topLevelAttribTypeID + " and c.coord_system_id = s.coord_system_id "
-				+ " and s.seq_region_id = sra.seq_region_id and c.attrib not like '%sequence_level%'");
+		int rows = DBUtils
+				.getRowCount(
+						con,
+						"SELECT count(*) FROM seq_region_attrib sra LEFT JOIN assembly a on sra.seq_region_id = a.asm_seq_region_id, seq_region s, coord_system c "
+								+ "where a.asm_seq_region_id is null and sra.attrib_type_id ="
+								+ topLevelAttribTypeID
+								+ " and c.coord_system_id = s.coord_system_id "
+								+ " and s.seq_region_id = sra.seq_region_id and c.attrib not like '%sequence_level%'");
 
 		if (rows > 0) {
 
-			ReportManager.problem(this, con, "There are toplevel regions in the database with no assembly information.Try the query to get the regions: "
-					+ "SELECT s.name FROM seq_region_attrib sra LEFT JOIN assembly a ON sra.seq_region_id = a.asm_seq_region_id, seq_region s, " + "coord_system c where sra.attrib_type_id = "
-					+ topLevelAttribTypeID + " AND sra.seq_region_id = s.seq_region_id and a.asm_seq_region_id is null " + "and c.coord_system_id = s.coord_system_id and c.attrib not like '%sequence_level%'");
+			ReportManager
+					.problem(
+							this,
+							con,
+							"There are toplevel regions in the database with no assembly information.Try the query to get the regions: "
+									+ "SELECT s.name FROM seq_region_attrib sra LEFT JOIN assembly a ON sra.seq_region_id = a.asm_seq_region_id, seq_region s, "
+									+ "coord_system c where sra.attrib_type_id = "
+									+ topLevelAttribTypeID
+									+ " AND sra.seq_region_id = s.seq_region_id and a.asm_seq_region_id is null "
+									+ "and c.coord_system_id = s.coord_system_id and c.attrib not like '%sequence_level%'");
 
 			result = false;
 		} else {
-			ReportManager.correct(this, con, "All toplevel regions have assembly information");
+			ReportManager.correct(this, con,
+					"All toplevel regions have assembly information");
 		}
 
 		return result;
 
 	}
-
-	// --------------------------------------------------------------------------
-
-
-        private <T extends CharSequence> boolean checkSynonyms(DatabaseRegistryEntry dbre, Collection<T> syns, Collection<T> regions, String dbName, String type) {
-
-                boolean result = true;
-                SqlTemplate t = DBUtils.getSqlTemplate(dbre);
-                Connection con = dbre.getConnection();
-
-                Set<T> missing = new HashSet<T>(regions);
-                missing.removeAll(syns);
-
-                if (!missing.isEmpty()) {
-                  ReportManager.problem(this, con, missing.size() + " " + type + " region(s) do not have a " + dbName + " synonym");
-                  result = false;
-                } else {
-                  ReportManager.correct(this, con, "All " + type + " regions have a synonym for " + dbName);
-                }
-
-                return result;
-        }
-
-        private Set<String> getSyns(DatabaseRegistryEntry dbre, String dbName) {
-                SqlTemplate t = DBUtils.getSqlTemplate(dbre);
-                String sql = "SELECT DISTINCT s.name FROM seq_region s, seq_region_synonym ss, external_db e WHERE s.seq_region_id = ss.seq_region_id AND ss.external_db_id = e.external_db_id AND e.db_name = ?";
-                List<String> results = t.queryForDefaultObjectList(sql, String.class, dbName);
-                return new HashSet<String>(results);
-        }
-
-        private Set<String> getRegions(DatabaseRegistryEntry dbre, int attribTypeID) {
-                SqlTemplate t = DBUtils.getSqlTemplate(dbre);
-                String sql = "SELECT DISTINCT s.name FROM seq_region s, seq_region_attrib sa WHERE s.seq_region_id = sa.seq_region_id AND s.name NOT LIKE 'CHR_%' AND s.name NOT LIKE 'LRG%' AND s.name NOT LIKE 'MT' AND attrib_type_id = ? AND s.seq_region_id NOT IN (SELECT s.seq_region_id FROM seq_region s, attrib_type at, seq_region_attrib sa WHERE s.seq_region_id = sa.seq_region_id AND sa.attrib_type_id = at.attrib_type_id AND code = 'codon_table') ";
-                List<String> results = t.queryForDefaultObjectList(sql, String.class, attribTypeID);
-                return new HashSet<String>(results);
-        }
-
-        private Set<String> getPatches(DatabaseRegistryEntry dbre) {
-                SqlTemplate t = DBUtils.getSqlTemplate(dbre);
-                String sql = "SELECT DISTINCT s1.name FROM seq_region s1, seq_region s2, coord_system cs1, coord_system cs2 WHERE s2.name = concat('CHR_', s1.name) AND s1.coord_system_id = cs1.coord_system_id AND cs1.name = 'scaffold' AND s2.coord_system_id = cs2.coord_system_id AND cs2.name = 'chromosome'";
-                List<String> results = t.queryForDefaultObjectList(sql, String.class);
-                return new HashSet<String>(results);
-        }
-
 
 } // SeqRegionsTopLevel
