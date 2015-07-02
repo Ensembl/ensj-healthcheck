@@ -154,7 +154,7 @@ public class AttribValues extends SingleDatabaseTestCase {
       int codingCount = t.queryForDefaultObject(codingSql, Integer.class, chromosome);
       int apprisCount = t.queryForDefaultObject(apprisSql, Integer.class, chromosome);
       if (apprisCount < codingCount * 0.95) { 
-        ReportManager.problem(this, con, chromosome + " has " + codingCount + " protein coding genes but only " + apprisCount + " have a transcript-attrib like ‘appris%’");
+        ReportManager.problem(this, con, chromosome + " has " + codingCount + " protein coding genes but only " + apprisCount + " have a transcript-attrib like 'appris%'");
         result = false;
       }
     }
@@ -196,7 +196,7 @@ public class AttribValues extends SingleDatabaseTestCase {
       int transcriptCount = t.queryForDefaultObject(transcriptSql, Integer.class, chromosome);
       int tslCount = t.queryForDefaultObject(tslSql, Integer.class, chromosome);
       if (tslCount < transcriptCount * 0.95) {
-        ReportManager.problem(this, con, chromosome + " has " + transcriptCount + " transcripts but only " + tslCount + " have a transcript-attrib like ‘tsl%’");
+        ReportManager.problem(this, con, chromosome + " has " + transcriptCount + " transcripts but only " + tslCount + " have a transcript-attrib like 'tsl%'");
         result = false;
       }
     }
