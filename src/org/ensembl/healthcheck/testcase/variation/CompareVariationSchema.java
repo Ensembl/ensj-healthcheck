@@ -110,8 +110,8 @@ public class CompareVariationSchema extends AbstractCompareSchema {
   		nr = new HashMap<Species, Set<String>>();
   		//Uncomment to bring in a table which applies to all species
 //  		nr.put(Species.UNKNOWN, 						createLinkedHashSet(""));
-			nr.put(Species.HOMO_SAPIENS, 		createLinkedHashSet("tmp_individual_genotype_single_bp"));
-			nr.put(Species.PAN_TROGLODYTES, createLinkedHashSet("tmp_individual_genotype_single_bp"));
+			nr.put(Species.HOMO_SAPIENS, 		createLinkedHashSet("tmp_sample_genotype_single_bp"));
+			nr.put(Species.PAN_TROGLODYTES, createLinkedHashSet("tmp_sample_genotype_single_bp"));
   	}
 		return nr;
 	}

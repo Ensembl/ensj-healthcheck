@@ -20,13 +20,11 @@ import org.ensembl.healthcheck.GroupOfTests;
 import org.ensembl.healthcheck.testcase.compara.CheckFlatProteinTrees;
 import org.ensembl.healthcheck.testcase.compara.CheckHomology;
 import org.ensembl.healthcheck.testcase.compara.CheckSequenceTable;
-import org.ensembl.healthcheck.testcase.compara.ForeignKeyHomologyId;
-import org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkId;
-import org.ensembl.healthcheck.testcase.compara.ForeignKeySequenceId;
-import org.ensembl.healthcheck.testcase.compara.ForeignKeyTaxonId;
+import org.ensembl.healthcheck.testcase.compara.ForeignKeyHomologyTables;
+import org.ensembl.healthcheck.testcase.compara.ForeignKeyMasterTables;
+import org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeTables;
 import org.ensembl.healthcheck.testcase.eg_compara.CheckEmptyLeavesTrees;
 import org.ensembl.healthcheck.testcase.eg_compara.EGForeignKeyGeneTreeMemberId;
-import org.ensembl.healthcheck.testcase.eg_compara.EGGeneTreeForeignKeyMethodLinkSpeciesSetId;
 
 public class EGComparaGeneTree extends GroupOfTests {
 
@@ -37,11 +35,9 @@ public class EGComparaGeneTree extends GroupOfTests {
 				CheckSequenceTable.class,
 
 				EGForeignKeyGeneTreeMemberId.class,
-				EGGeneTreeForeignKeyMethodLinkSpeciesSetId.class,
 
-				ForeignKeyHomologyId.class, 
-				ForeignKeyMethodLinkId.class,
-				ForeignKeySequenceId.class, 
-				ForeignKeyTaxonId.class);
+				ForeignKeyHomologyTables.class,
+				ForeignKeyMasterTables.class,
+				ForeignKeySpeciesTreeTables.class);
 	}
 }

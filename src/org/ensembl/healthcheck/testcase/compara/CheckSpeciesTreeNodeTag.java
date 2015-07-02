@@ -28,24 +28,21 @@ import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.Repair;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
-/**                                                                                                                                                                                 
+/**
  * An EnsEMBL Healthcheck test case for SpeciesTreeNodeTag entries
  */
 
 public class CheckSpeciesTreeNodeTag extends SingleDatabaseTestCase {
 
 	public CheckSpeciesTreeNodeTag() {
-		addToGroup("compara_homology");
-		setDescription("Tests that proper entries are in method_link_species_set_tag.");
+		setDescription("Tests that entries are present in species_tree_node_tag");
 		setTeamResponsible(Team.COMPARA);
 	}
 
 	public boolean run(DatabaseRegistryEntry dbre) {
-
 		Connection con = dbre.getConnection();
 
 		if (!DBUtils.checkTableExists(con, "species_tree_node_tag")) {
@@ -53,30 +50,14 @@ public class CheckSpeciesTreeNodeTag extends SingleDatabaseTestCase {
 			return false;
 		}
 
-		// These methods return false if there is any problem with the test
-		boolean result = true;
-		result &= checkTreeStatsArePresent(dbre);
-		return result;
-	}
-
-	public boolean checkTreeStatsArePresent(final DatabaseRegistryEntry dbre) {
-		Connection con = dbre.getConnection();
-
 		if (!tableHasRows(con, "species_tree_root")) {
+			ReportManager.info(this, con, "species_tree_root table is empty");
 			return true;
 		}
 
-		int n_tags_root = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM species_tree_node_tag WHERE tag LIKE 'root\\_%'");
-		int n_tags_genes = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM species_tree_node_tag WHERE tag LIKE 'nb%\\_genes%'");
-
 		boolean result = true;
-		if (n_tags_root == 0) {
-			ReportManager.problem(this, con, "There are no species_tree_node_tags to describe properties of the root nodes");
-			result = false;
-		} else if (n_tags_genes == 0) {
-			ReportManager.problem(this, con, "There are no species_tree_node_tags to summarize the gene counts");
-			result = false;
-		}
+		result &= checkCountIsNonZero(con, "species_tree_node_tag", "tag LIKE 'root\\_%'");
+		result &= checkCountIsNonZero(con, "species_tree_node_tag", "tag LIKE 'nb%\\_genes%'");
 		return result;
 	}
 }

@@ -19,74 +19,18 @@ package org.ensembl.healthcheck.testgroup;
 import org.ensembl.healthcheck.GroupOfTests;
 
 /**
- * These are the tests that register themselves as compara_homology. The tests are:
- * 
- * <ul>
- *   <li> org.ensembl.healthcheck.testcase.eg_compara.CheckEmptyLeavesTrees </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.CheckFlatProteinTrees </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.CheckGeneGainLossData </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.CheckHomology </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.CheckMethodLinkSpeciesSetTag </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.CheckSequenceTable </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.CheckSpeciesTreeNodeTag </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.CheckTableSizes </li>  
- *   <li> org.ensembl.healthcheck.testcase.compara.DuplicateGenomeDb </li>
- *   <li> org.ensembl.healthcheck.testcase.eg_compara.EGCheckNoTreeStableIds </li>
- *   <li> org.ensembl.healthcheck.testcase.eg_compara.EGForeignKeyMethodLinkSpeciesSetId </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyCAFEGeneFamily </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyDnafragId </li>  
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyFamilyId </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyGeneTrees </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomeDbId </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyHomologyId </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMLSSIdHomology </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMemberId </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkId </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkSpeciesSetId </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeySequenceId </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeNodeId </li>  
- *   <li> org.ensembl.healthcheck.testcase.compara.ForeignKeyTaxonId </li> 
- *   <li> org.ensembl.healthcheck.testcase.eg_compara.MemberProductionCounts </li>
- *   <li> org.ensembl.healthcheck.testcase.compara.Meta </li> 
- *   <li> org.ensembl.healthcheck.testcase.compara.SingleDBCollations </li> 
- * </ul>
- *
- * @author Thomas Maurel
- *
+ * Healthchecks for the homology Compara databases
+ * NB: This group is made of 3 other groups. Edit
+ * them and not this one.
  */
 public class ComparaHomology extends GroupOfTests {
 	
 	public ComparaHomology() {
 
 		addTest(
-			org.ensembl.healthcheck.testcase.compara.CheckFlatProteinTrees.class,
-			org.ensembl.healthcheck.testcase.compara.CheckGeneGainLossData.class,
-			org.ensembl.healthcheck.testcase.compara.CheckHomology.class,
-			org.ensembl.healthcheck.testcase.compara.CheckMethodLinkSpeciesSetTag.class,
-			org.ensembl.healthcheck.testcase.compara.CheckSequenceTable.class,
-			org.ensembl.healthcheck.testcase.compara.CheckSpeciesTreeNodeTag.class,
-			org.ensembl.healthcheck.testcase.compara.CheckTableSizes.class,
-			org.ensembl.healthcheck.testcase.compara.DuplicateGenomeDb.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyCAFEGeneFamily.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyDnafragId.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyFamilyId.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyGeneTrees.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomeDbId.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyHomologyId.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyMemberId.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkId.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkSpeciesSetId.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyMLSSIdHomology.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeySequenceId.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeNodeId.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyTaxonId.class,
-			org.ensembl.healthcheck.testcase.compara.Meta.class,
-			org.ensembl.healthcheck.testcase.compara.SingleDBCollations.class,
-			org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class,
-			org.ensembl.healthcheck.testcase.eg_compara.CheckEmptyLeavesTrees.class,
-			org.ensembl.healthcheck.testcase.eg_compara.EGCheckNoTreeStableIds.class,
-			org.ensembl.healthcheck.testcase.eg_compara.EGForeignKeyMethodLinkSpeciesSetId.class,
-			org.ensembl.healthcheck.testcase.eg_compara.MemberProductionCounts.class
+			org.ensembl.healthcheck.testgroup.ComparaHomologyOnly.class,
+			org.ensembl.healthcheck.testgroup.ComparaReleaseOnly.class,
+			org.ensembl.healthcheck.testgroup.ComparaShared.class
 		);
 	}
 }

@@ -100,7 +100,7 @@ public abstract class AbstractComparaTestCase extends SingleDatabaseTestCase {
 	 */
 	public final HashMap<Species, DatabaseRegistryEntry> getSpeciesCoreDbMap(final DatabaseRegistry dbr) {
 
-		HashMap<Species, DatabaseRegistryEntry> speciesCoreMap = new HashMap();
+		HashMap<Species, DatabaseRegistryEntry> speciesCoreMap = new HashMap<Species, DatabaseRegistryEntry>();
 
 		for (DatabaseRegistryEntry entry : dbr.getAllEntries()) {
 			// We need to check the database name because some _cdna_

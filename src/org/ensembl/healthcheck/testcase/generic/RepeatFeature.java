@@ -19,6 +19,7 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
@@ -45,6 +46,18 @@ public class RepeatFeature extends SingleDatabaseTestCase {
 		setTeamResponsible(Team.GENEBUILD);
 
 	}
+
+        /**
+         * This test only applies to core databases.
+         */
+        public void types() {
+
+                removeAppliesToType(DatabaseType.OTHERFEATURES);
+                removeAppliesToType(DatabaseType.ESTGENE);
+                removeAppliesToType(DatabaseType.RNASEQ);
+                removeAppliesToType(DatabaseType.CDNA);
+
+        }
 
 	/**
 	 * Run the test.

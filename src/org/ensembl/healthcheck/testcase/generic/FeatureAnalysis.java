@@ -175,11 +175,6 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
               + " is not used in any feature table");
           result = false;
         }
-        else {
-          ReportManager.correct(this, con, "Analysis with ID " + analysisID
-              + ", logic name " + logicName + " is used in "
-              + analysesFromFeatureTables.get(new Integer(analysisID)));
-        }
       }
       rs.close();
       stmt.close();

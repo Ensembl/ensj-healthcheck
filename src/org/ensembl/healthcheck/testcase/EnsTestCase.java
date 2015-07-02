@@ -154,14 +154,14 @@ public abstract class EnsTestCase {
 
 	private String[] funcgenFeatureTables = { "probe_feature",
 			"annotated_feature", "regulatory_feature", "external_feature",
-			"motif_feature" };
+			"motif_feature", "mirna_target_feature", "segmentation_feature" };
 
 	/**
 	 * Funcgen tables that have an analysis ID.
 	 */
 
 	private String[] funcgenTablesWithAnalysisID = { "probe_feature",
-			"object_xref", "unmapped_object", "feature_set", "result_set" };
+			"object_xref", "unmapped_object", "feature_set", "result_set" }; // also feature_type, but this is marked for removal.
 
 	protected boolean setSystemProperties = true;
 
@@ -810,7 +810,7 @@ public abstract class EnsTestCase {
 		// return existing one if we already have it, otherwise use method above
 		// to find it
 		return productionDBRE != null ? productionDBRE
-				: getDatabaseRegistryEntryByPattern("ensembl_production");
+				: getDatabaseRegistryEntryByPattern(System.getProperty("production.database"));
 
 	}
 
@@ -1452,10 +1452,6 @@ public abstract class EnsTestCase {
 					+ " -> " + table2 + " using FK " + col1
 					+ ", look at the StackTrace if any");
 			result = false;
-		} else {
-			ReportManager.correct(this, con, "SUCCESS: All rows in " + table1
-					+ " (constraint is: " + constraint1 + ") refer to valid "
-					+ table2 + "s");
 		}
 
 		return result;
@@ -1512,11 +1508,6 @@ public abstract class EnsTestCase {
 			ReportManager.problem(this, con, nulls + " NULL values in " + table
 					+ "." + column);
 			result = false;
-
-		} else {
-
-			ReportManager.correct(this, con, "No NULL values in " + table + "."
-					+ column);
 		}
 
 		return result;
@@ -1547,9 +1538,6 @@ public abstract class EnsTestCase {
 			ReportManager.problem(this, con, "Zeroes found in " + table + "."
 					+ column);
 			result = false;
-		} else {
-			ReportManager.correct(this, con, "No zeroes found in " + table
-					+ "." + column);
 		}
 
 		return result;
@@ -1580,9 +1568,6 @@ public abstract class EnsTestCase {
 			ReportManager.problem(this, con, "Forbidden characters found in "+badrows+" rows of " + table + "."
 					+ column);
 			result = false;
-		} else {
-			ReportManager.correct(this, con, "Column is clean of weird characters in " + table
-					+ "." + column);
 		}
 
 		return result;

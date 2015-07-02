@@ -19,10 +19,8 @@ package org.ensembl.healthcheck.testcase.funcgen;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Arrays;
+import java.util.*;
+import java.util.regex.Pattern;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
@@ -87,8 +85,37 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 
+		if (Pattern.matches("master_schema_funcgen_\\d+", dbre.getName())) {
+			logger.fine("Skipping " + dbre.getName());
+			return true;
+		}
+
 		boolean result = true;
 		Connection efgCon = dbre.getConnection();
+
+        // check that all arrays (except Illumina Infinium) have
+        // MART_DISPLAYABLE status
+        try {
+            ResultSet rs = efgCon.createStatement().executeQuery("select a" +
+                    ".array_id, a.name, a.class, s.status_name_id from array " +
+                    "a left join status s on a.array_id=s.table_id and s" +
+                    ".table_name='array' and s.status_name_id=(select " +
+                    "status_name_id from status_name where " +
+                    "name='MART_DISPLAYABLE') where status_name_id is NULL " +
+                    "and a.class!='ILLUMINA_INFINIUM'");
+            while (rs.next()) {
+                int arrayID = rs.getInt(1);
+                String arrayName = rs.getString(2);
+                ReportManager.problem(this, efgCon, "Array " + arrayID + " " 
+                        + arrayName + " has no MART_DISPLAYABLE status");
+                result = false;
+            }
+            rs.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            result = false;
+        }
 
 
 		/** To do
@@ -193,33 +220,47 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 		Map<String, String> srID2name    = new HashMap<String, String>();
 		Map<String, String> coreSrID2efg = new HashMap<String, String>();
 
-		//Die if we don't see the current schema build and is the only one that is_current
-		//Otherwise we cannot be sure that all seq_region records have been updated
-		String csName = DBUtils.getRowColumnValue(coreDbre.getConnection(),  "SELECT name FROM coord_system order by rank desc limit 1");
-		String[] currentSchemaBuilds = DBUtils.getColumnValues(efgCon,  "SELECT schema_build FROM coord_system where is_current=1 and schema_build is not null" +
-		    " AND name='" + csName + "'");
+		// Die if we don't see the current schema build and is the only one that is_current
+		// Otherwise we cannot be sure that all seq_region records have been updated
+		String csName = DBUtils.getRowColumnValue(coreDbre.getConnection(),
+      "SELECT name FROM coord_system order by rank desc limit 1");
 
-		if ((currentSchemaBuilds.length != 1) ||
-			(! currentSchemaBuilds[0].equals(schemaBuild))){
-
-
-			ReportManager.problem(this, efgCon, "Could not identify a unique current coord_system.schema_build to match " + schemaBuild);
+		if(csName == null){
+			ReportManager.problem(this, efgCon, "Could not identify coord_system entries for schema_build:\t" + schemaBuild);
 			return false;
 		}
 
 
-
 		try {
 
-			ResultSet rs = efgCon.createStatement().executeQuery("SELECT s.seq_region_id, s.name, s.core_seq_region_id FROM seq_region s, coord_system cs " +
-					"WHERE cs.coord_system_id=s.coord_system_id AND cs.name='chromosome' and cs.attrib='default_version' and " +
-							"cs.schema_build='" + schemaBuild + "' and s.name not like '%\\_%' group by s.seq_region_id");
+      ResultSet rs = efgCon.createStatement().executeQuery("SELECT coord_system_id, rank, schema_build " +
+        "FROM coord_system WHERE is_current=1 and schema_build is not null AND name='" + csName + "'");
+      // Should never have null schema_build entries
 
+      int csRank = 999999999;
+      String csID = ""; // Can't just declare here and init in the while as this causes a compilation error
 
+      while(rs.next()){
 
-			//added not like '\_' to try and avoid non_ref stuff
-			//maybe we just remove this limit of 75?
+        if (! rs.getString(3).equals(schemaBuild)){
+          ReportManager.problem(this, efgCon,
+            "Found an 'is_current' " + csName + "coord_system with unexpected schema_build:\t" + rs.getString(3));
+          return false;
+        }
 
+        // Do we need a attrib 'default' check here too?
+
+        // Get highest ranking csID
+        if (rs.getInt(2) < csRank){
+          csRank = rs.getInt(2);
+          csID   = rs.getString(1);
+        }
+      }
+      rs.close();
+
+      rs = efgCon.createStatement().executeQuery("SELECT s.seq_region_id, s.name, s.core_seq_region_id " +
+        "FROM seq_region s WHERE s.coord_system_id=" + csID +
+        " and s.name not like '%\\_%' group by s.seq_region_id");
 
 			//Do we even need this core_seq_region_id translation?
 			//Just link via the sr.name!
@@ -228,12 +269,11 @@ public class ArrayXrefs extends SingleDatabaseTestCase {
 				srID2name.put(rs.getString(1), rs.getString(2));
 				coreSrID2efg.put(rs.getString(3), rs.getString(1));
 			}
-
 			rs.close();
 
-			if (srID2name.size() > MAX_CHROMOSOMES) {
-				ReportManager.problem(this, efgCon, "Database has more than " + MAX_CHROMOSOMES + " seq_regions in 'chromosome' coordinate system (actually " + srID2name.size() + ") - test skipped");
-				return false;
+			if (srID2name.size() > MAX_CHROMOSOMES) { 
+        ReportManager.info(this, efgCon, "Database has " + srID2name.size() + " seq_regions in 'chromosome' coordinate system");
+				// return false; // No longer skip here
 			}
 
 			// Count the number of xrefs for each chr

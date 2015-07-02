@@ -17,17 +17,15 @@
 package org.ensembl.healthcheck.testgroup;
 
 import org.ensembl.healthcheck.GroupOfTests;
-import org.ensembl.healthcheck.testcase.compara.ForeignKeyDnafragId;
-import org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomeDbId;
-import org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignBlockId;
-import org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignId;
-import org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkId;
-import org.ensembl.healthcheck.testcase.compara.ForeignKeyTaxonId;
+import org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignmentTables;
+import org.ensembl.healthcheck.testcase.compara.CheckMLSSIDConsistencyInGenomicAlign;
+import org.ensembl.healthcheck.testcase.compara.ForeignKeyMemberTables;
+import org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeTables;
+import org.ensembl.healthcheck.testcase.compara.ForeignKeySyntenyTables;
 import org.ensembl.healthcheck.testcase.compara.MultipleGenomicAlignBlockIds;
 import org.ensembl.healthcheck.testcase.eg_compara.EGCheckEmptyLocators;
 import org.ensembl.healthcheck.testcase.eg_compara.EGCheckNoTreeStableIds;
 import org.ensembl.healthcheck.testcase.eg_compara.EGCheckSynteny;
-import org.ensembl.healthcheck.testcase.eg_compara.EGForeignKeyMethodLinkSpeciesSetId;
 import org.ensembl.healthcheck.testcase.eg_compara.EGMethodLinkSpeciesSetIdStats;
 import org.ensembl.healthcheck.testcase.eg_compara.EGMethodLinkSpeciesSetIdSyntenyStats;
 import org.ensembl.healthcheck.testcase.eg_compara.MemberProductionCounts;
@@ -49,16 +47,14 @@ public class EGCompara extends GroupOfTests {
 				EGCommon.class, 
 				EGComparaGeneTree.class, 
 				EGCheckSynteny.class,
-				EGForeignKeyMethodLinkSpeciesSetId.class,
 				EGMethodLinkSpeciesSetIdStats.class,
 				EGMethodLinkSpeciesSetIdSyntenyStats.class,
 				EGCheckNoTreeStableIds.class,
-				ForeignKeyDnafragId.class, 
-				ForeignKeyGenomeDbId.class,
-				ForeignKeyGenomicAlignBlockId.class,
-				ForeignKeyGenomicAlignId.class, 
-				ForeignKeyMethodLinkId.class,
-				ForeignKeyTaxonId.class, 
+				ForeignKeyGenomicAlignmentTables.class, 
+				CheckMLSSIDConsistencyInGenomicAlign.class,
+				ForeignKeyMemberTables.class,
+				ForeignKeySpeciesTreeTables.class,
+				ForeignKeySyntenyTables.class,
 				EGCheckEmptyLocators.class,
 				MemberXrefAssociation.class, MemberProductionCounts.class,
 				MultipleGenomicAlignBlockIds.class,

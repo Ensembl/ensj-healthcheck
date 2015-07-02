@@ -87,6 +87,7 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 		// cache coord system name to ID
 		Map coordSystemNameAndVersionToID = new HashMap();
+                HashMap<Long, String> coordSystemIDToNameAndVersion = new HashMap();
 
 		Statement stmt = null;
 
@@ -103,6 +104,7 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 				}
 
 				coordSystemNameAndVersionToID.put(rs.getString("name") + rs.getString("version"), new Long(rs.getLong("coord_system_id")));
+                                coordSystemIDToNameAndVersion.put(new Long(rs.getLong("coord_system_id")), rs.getString("name") + ":" + rs.getString("version"));
 				logger.fine(rs.getString("name") + rs.getString("version") + " -> " + rs.getLong("coord_system_id"));
 
 			}
@@ -145,8 +147,8 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 
 		// now find components that map to multiple assemblies but whose coordinate
 		// systems are not using a chained mapper
-		String sql = "SELECT a.cmp_seq_region_id, a.asm_seq_region_id, s1.coord_system_id " + "FROM assembly a, seq_region s1, seq_region s2 "
-				+ "WHERE a.asm_seq_region_id=s1.seq_region_id AND a.cmp_seq_region_id = s2.seq_region_id AND s1.coord_system_id != s2.coord_system_id " + constraint + "ORDER BY s1.coord_system_id, a.cmp_seq_region_id";
+		String sql = "SELECT count(*), s1.coord_system_id, s2.coord_system_id " + "FROM assembly a, seq_region s1, seq_region s2 "
+				+ "WHERE a.asm_seq_region_id=s1.seq_region_id AND a.cmp_seq_region_id = s2.seq_region_id AND s1.coord_system_id != s2.coord_system_id " + constraint + " group by s1.coord_system_id, s2.coord_system_id ";
 
 		try {
 
@@ -157,33 +159,14 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 
 			while (rs.next()) {
 
-				long cmpID = rs.getLong("cmp_seq_region_id");
-				long asmID = rs.getLong("asm_seq_region_id");
-				long coordSystemID = rs.getLong("coord_system_id");
+                                long count = rs.getLong(1);
+				long asmCoordSystemID = rs.getLong(2);
+                                long cmpCoordSystemID = rs.getLong(3);
 
-				// allow mapping to different coordinate systems
-				if (coordSystemID != oldCoordSystemID) {
-					list.clear();
-					oldCoordSystemID = coordSystemID;
-				}
+                                String asmCs = coordSystemIDToNameAndVersion.get(asmCoordSystemID);
+                                String cmpCs = coordSystemIDToNameAndVersion.get(cmpCoordSystemID);
+                                ReportManager.problem(this, con, count + " components for " + cmpCs + " are mapped to " + asmCs + " but this is not in the list of expected mappings. Did you forget to add a meta_key for " + asmCs + "#" + cmpCs + "?");
 
-				Long LcmpID = new Long(cmpID);
-				String value = (String) list.get(LcmpID);
-
-				if (value != null) {
-
-					String newValue = value + "," + asmID;
-
-					list.put(new Long(cmpID), newValue);
-					ReportManager.problem(this, con, "Component with ID " + cmpID + " is linked to more than one assembly mapping for coord_system with ID " + coordSystemID + " (" + newValue + ")");
-
-					result = false;
-
-				} else {
-
-					list.put(LcmpID, "" + asmID);
-
-				}
 
 			} // while rs
 

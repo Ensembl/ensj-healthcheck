@@ -113,8 +113,6 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 				if (count == 0) {
 					ReportManager.problem(this, con, String.format("Analysis %s is used in %s but has no entry in analysis_description", logicNamesByAnalID.get(analysisId), tableType));
 					result = false;
-				} else {
-					ReportManager.correct(this, con, String.format("Analysis %s is used in %s and has an entry in analysis_description", logicNamesByAnalID.get(analysisId), tableType));
 				}
 			}
 		}

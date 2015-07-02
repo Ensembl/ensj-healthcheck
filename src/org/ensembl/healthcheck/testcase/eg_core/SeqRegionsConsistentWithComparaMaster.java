@@ -369,7 +369,7 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractControlledRow
 		if (genomeDbId==0) {
 			return false;
 		}		
-		throw new RuntimeException("Unexpected number of matching rows for " + productionName + "in master database!");			
+		throw new RuntimeException("Unexpected number of matching rows for " + productionName + " in master database!");			
 	}
 	
 	protected ResultSet fetchFromGenomeDbId(
@@ -378,7 +378,7 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractControlledRow
 			String genebuildStartDate, 
 			String column
 	) {
-		String sql = "select "+column+" from genome_db where name=? and assembly=? and genebuild=?";
+		String sql = "select "+column+" from genome_db where name=? and assembly=? and genebuild=? and genome_component IS NULL";
 		
 		ResultSet rs = null;
 		

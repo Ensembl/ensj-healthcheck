@@ -103,8 +103,6 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 
 			result &= checkFeaturesAndMapWeights(con);
 
-			result &= checkMarkerPriorities(con);
-
 			result &= checkAllChromosomesHaveMarkers(con);
 
 		}
@@ -155,36 +153,6 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 		return result;
 
 	} // checkFeaturesAndMapWeights
-
-	// ----------------------------------------------------------------------
-	/**
-	 * Check that all priorities are greater than a certain threshold.
-	 */
-	private boolean checkMarkerPriorities(Connection con) {
-
-		boolean result = true;
-
-		int count = DBUtils.getRowCount(con,
-				"SELECT COUNT(*) FROM marker WHERE priority > "
-						+ MARKER_PRIORITY_THRESHOLD);
-
-		if (count == 0) {
-
-			ReportManager.problem(this, con,
-					" No marker features have priorities greater than the threshold ("
-							+ MARKER_PRIORITY_THRESHOLD + ")");
-			result = false;
-
-		} else {
-
-			ReportManager.correct(this, con,
-					"Some marker features have priorities greater than "
-							+ MARKER_PRIORITY_THRESHOLD);
-
-		}
-
-		return result;
-	}
 
 	// ----------------------------------------------------------------------
 	/**

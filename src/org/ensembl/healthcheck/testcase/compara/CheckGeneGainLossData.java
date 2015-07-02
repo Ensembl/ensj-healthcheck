@@ -33,41 +33,30 @@ import org.ensembl.healthcheck.util.DBUtils;
 
 public class CheckGeneGainLossData extends SingleDatabaseTestCase {
 
-        public CheckGeneGainLossData() {
+	public CheckGeneGainLossData() {
+		setDescription("Check that we have data coming from ncRNA and protein gain/loss trees");
+		setTeamResponsible(Team.COMPARA);
+	}
 
-                addToGroup("compara_homology");
-                setDescription("Check that we have data coming from ncRNA and protein gain/loss trees");
-                setTeamResponsible(Team.COMPARA);
-        }
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-       /**                                                                                                                                                                                   
-         * Run the test.
-         *
-         * @param dbre
-         *          The database to use.
-         * @return true if the test passed.
-         *
-         **/
+		boolean result = true;
 
-        public boolean run(DatabaseRegistryEntry dbre) {
- 
-                boolean result = true;
+		Connection con = dbre.getConnection();
 
-                Connection con = dbre.getConnection();
+		String sql_main = "SELECT member_type, count(*)" + 
+			" FROM gene_tree_root gtr JOIN CAFE_gene_family cgf ON(gtr.root_id=cgf.gene_tree_root_id)" +
+			" WHERE gtr.tree_type = 'tree' GROUP BY gtr.member_type";
 
-                String sql_main = "SELECT member_type, count(*)" + 
-                        " FROM gene_tree_root gtr JOIN CAFE_gene_family cgf ON(gtr.root_id=cgf.gene_tree_root_id)" +
-                        " WHERE gtr.tree_type = 'tree' GROUP BY gtr.member_type";
+		int numRows = DBUtils.getRowCount(con, sql_main);
+		if (numRows > 2) {
+			ReportManager.problem(this, con, "FAILED Gene Gain/Loss Data test. Either ncRNA or protein trees don't have gene Gain/Loss trees.");
+			ReportManager.problem(this, con, "FAILURE DETAILS: There are less than 2 member_types [protein/ncRNA] having gene Gain/Loss trees.");
+			ReportManager.problem(this, con, "USEFUL SQL: " + sql_main);
+			return false;
 
-                int numRows = DBUtils.getRowCount(con, sql_main);
-                if (numRows > 2)  {
-                        ReportManager.problem(this, con, "FAILED Gene Gain/Loss Data test. Either ncRNA or protein trees don't have gene Gain/Loss trees.");
-                        ReportManager.problem(this, con, "FAILURE DETAILS: There are less than 2 member_types [protein/ncRNA] having gene Gain/Loss trees.");
-                        ReportManager.problem(this, con, "USEFUL SQL: " + sql_main);
-                        return false;
-                                              
-                }
-                return true;
-        }
+		}
+		return true;
+	}
 
 }

@@ -65,11 +65,17 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 		setTeamResponsible(Team.GENEBUILD);
 	}
 
-	public void types() {
+        /**
+         * Data is only tested in core database, as the tables are in sync
+         */
+        public void types() {
 
-		removeAppliesToType(DatabaseType.RNASEQ);
+                removeAppliesToType(DatabaseType.OTHERFEATURES);
+                removeAppliesToType(DatabaseType.ESTGENE);
+                removeAppliesToType(DatabaseType.RNASEQ);
+                removeAppliesToType(DatabaseType.CDNA);
 
-	}
+        }
 
 	/**
 	 * Run the test.

@@ -35,6 +35,7 @@ import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.compara.AbstractComparaTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.DefaultMapRowMapper;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key
@@ -48,11 +49,8 @@ public class CheckSpeciesSetTag extends AbstractComparaTestCase {
 	 * of databases.
 	 */
 	public CheckSpeciesSetTag() {
-
-		addToGroup("compara_genomic");
 		setDescription("Check the content of the species_set_tag table");
 		setTeamResponsible(Team.COMPARA);
-
 	}
 
 	/**
@@ -67,155 +65,58 @@ public class CheckSpeciesSetTag extends AbstractComparaTestCase {
 
 		boolean result = true;
 
-		DatabaseRegistryEntry[] allSecondaryComparaDBs = DBUtils
-				.getSecondaryDatabaseRegistry().getAll(DatabaseType.COMPARA);
+		DatabaseRegistryEntry[] allSecondaryComparaDBs = DBUtils.getSecondaryDatabaseRegistry().getAll(DatabaseType.COMPARA);
 
-			// ... check that the genome_db names are correct
-			result &= checkProductionNames(comparaDbre, DBUtils.getMainDatabaseRegistry());
-			// ... check that we have one name tag for every MSA
-			result &= checkNameTagForMultipleAlignments(comparaDbre);
+		// ... check that we have one name tag for every MSA
+		result &= checkNameTagForMultipleAlignments(comparaDbre);
 
-			if (allSecondaryComparaDBs.length == 0) {
-				result = false;
-				ReportManager.problem(this,
-						comparaDbre.getConnection(),
-						"Cannot find the compara database in the secondary server. This check expects to find a previous version of the compara database for checking that all the *named* species_sets are still present in the current database.");
-			}
-			for (int j = 0; j < allSecondaryComparaDBs.length; j++) {
-				// Check vs previous compara DB.
-				result &= checkSetOfSpeciesSets(comparaDbre,
-						allSecondaryComparaDBs[j]);
-			}
+		if (allSecondaryComparaDBs.length == 0) {
+			result = false;
+			ReportManager.problem(this,
+					comparaDbre.getConnection(),
+					"Cannot find the compara database in the secondary server. This check expects to find a previous version of the compara database for checking that all the *named* species_sets are still present in the current database.");
+		}
+
+		for (DatabaseRegistryEntry secondaryComparaDbre: allSecondaryComparaDBs) {
+			// Check vs previous compara DB.
+			result &= checkSetOfSpeciesSets(comparaDbre, secondaryComparaDbre);
+		}
 
 		return result;
 	}
 
-	public boolean checkSetOfSpeciesSets(
-			DatabaseRegistryEntry primaryComparaDbre,
-			DatabaseRegistryEntry secondaryComparaDbre) {
+	public boolean checkSetOfSpeciesSets(DatabaseRegistryEntry primaryComparaDbre, DatabaseRegistryEntry secondaryComparaDbre) {
 
 		boolean result = true;
 		Connection con1 = primaryComparaDbre.getConnection();
 		Connection con2 = secondaryComparaDbre.getConnection();
-		HashMap primarySets = new HashMap();
-		HashMap secondarySets = new HashMap();
 
 		// Get list of species_set sets in the secondary server
 		String sql = "SELECT value, count(*) FROM species_set_tag WHERE tag = 'name' GROUP BY value";
-		try {
-			Statement stmt1 = con1.createStatement();
-			ResultSet rs1 = stmt1.executeQuery(sql);
-			while (rs1.next()) {
-				primarySets.put(rs1.getString(1), rs1.getInt(2));
-			}
-			rs1.close();
-			stmt1.close();
+		Map<String,Integer> primarySets   = DBUtils.getSqlTemplate(con1).queryForMap(sql, new DefaultMapRowMapper<String, Integer>(String.class, Integer.class));
+		Map<String,Integer> secondarySets = DBUtils.getSqlTemplate(con2).queryForMap(sql, new DefaultMapRowMapper<String, Integer>(String.class, Integer.class));
 
-			Statement stmt2 = con2.createStatement();
-			ResultSet rs2 = stmt2.executeQuery(sql);
-			while (rs2.next()) {
-				secondarySets.put(rs2.getString(1), rs2.getInt(2));
-			}
-			rs2.close();
-			stmt2.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		Iterator it = secondarySets.keySet().iterator();
-		while (it.hasNext()) {
-			Object next = it.next();
-			Object primaryValue = primarySets.get(next);
-			Integer secondaryValue = new Integer(secondarySets.get(next)
-					.toString());
-			if (primaryValue == null) {
-				ReportManager.problem(
-						this,
-						con1,
-						"Species set \"" + next.toString()
-								+ "\" is missing (it appears " + secondaryValue
-								+ " time(s) in "
-								+ DBUtils.getShortDatabaseName(con2) + ")");
+		for (Map.Entry<String, Integer> key_value : secondarySets.entrySet()) {
+			String key = key_value.getKey();
+			Integer primaryValue = primarySets.get(key);
+			Integer secondaryValue = key_value.getValue();
+			if (!primarySets.containsKey(key)) {
+				ReportManager.problem(this, con1, String.format("Species set '%s' is missing (it appears %d time(s) in %s", key, secondaryValue, DBUtils.getShortDatabaseName(con2)));
 				result = false;
-			} else if (new Integer(primaryValue.toString()) < secondaryValue) {
-				ReportManager.problem(
-						this,
-						con1,
-						"Species set \"" + next.toString()
-								+ "\" is present only " + primaryValue
-								+ " times instead of " + secondaryValue
-								+ " as in "
-								+ DBUtils.getShortDatabaseName(con2));
+			} else if (primaryValue < secondaryValue) {
+				ReportManager.problem(this, con1, String.format("Species set '%s' is present only %d times instead of %d as in %s", key, primaryValue, secondaryValue, DBUtils.getShortDatabaseName(con2)));
+				result = false;
+			}
+		}
+		for (Map.Entry<String, Integer> key_value : primarySets.entrySet()) {
+			String next = key_value.getKey();
+			if (!secondarySets.containsKey(next)) {
+				ReportManager.problem(this, con1, String.format("Species set '%s' is new (compared to %s)", next, DBUtils.getShortDatabaseName(con2)));
 				result = false;
 			}
 		}
 
 		return result;
-	}
-
-
-	public boolean checkProductionNames(DatabaseRegistryEntry comparaDbre,
-			DatabaseRegistry dbr) {
-
-		boolean result = true;
-
-		Connection con = comparaDbre.getConnection();
-
-		// Get list of species (assembly_default) in compara
-		Vector comparaSpeciesStr = new Vector();
-		Vector comparaSpecies = new Vector();
-		String sql2 = "SELECT genome_db.name FROM genome_db WHERE assembly_default = 1"
-				+ " AND name <> 'Ancestral sequences' AND name <> 'ancestral_sequences' ORDER BY genome_db.genome_db_id";
-		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(sql2);
-			while (rs.next()) {
-				comparaSpeciesStr.add(rs.getString(1));
-				comparaSpecies.add(Species.resolveAlias(rs.getString(1)
-						.toLowerCase().replace(' ', '_')));
-			}
-			rs.close();
-			stmt.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-
-		Map<Species, DatabaseRegistryEntry> speciesMap = getSpeciesCoreDbMap(DBUtils.getMainDatabaseRegistry());
-
-		// get all the production names
-		boolean allSpeciesFound = true;
-
-		for (int i = 0; i < comparaSpecies.size(); i++) {
-			Species species = (Species) comparaSpecies.get(i);
-		    if (speciesMap.containsKey(species)) {
-                Connection speciesCon = speciesMap.get(species).getConnection();
-				String productionName = DBUtils
-						.getRowColumnValue(speciesCon,
-								"SELECT meta_value FROM meta WHERE meta_key = \"species.production_name\"");
-
-				if (!productionName.equals(comparaSpeciesStr.get(i))) {
-					ReportManager.problem(this, con,
-						"The genome_db '" + comparaSpeciesStr.get(i).toString() + "' as a different 'species.production_name' key: '" + productionName + "'"
-						);
-					result = false;
-				}
-			} else {
-				ReportManager.problem(this, con, "No connection for "
-						+ comparaSpeciesStr.get(i).toString());
-				allSpeciesFound = false;
-			}
-		}
-		if (!allSpeciesFound) {
-			ReportManager.problem(this, con, "Cannot find all the species");
-		}
-
-        if (result) {
-            ReportManager.correct(this, con, "PASSED genome_db and ncbi_taxa_name table share the same species names");
-        }
-
-        return result;
-
 	}
 
 	public boolean checkNameTagForMultipleAlignments(DatabaseRegistryEntry dbre) {
@@ -223,8 +124,6 @@ public class CheckSpeciesSetTag extends AbstractComparaTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-		HashMap allSetsWithAName = new HashMap();
-		HashMap allSetsForMultipleAlignments = new HashMap();
 
 		if (tableHasRows(con, "species_set_tag")) {
 
@@ -233,39 +132,14 @@ public class CheckSpeciesSetTag extends AbstractComparaTestCase {
 
 			// Find all the species_set_ids for multiple alignments
 			String sql2 = "SELECT species_set_id, name FROM method_link_species_set JOIN method_link USING (method_link_id) WHERE"
-					+ " class LIKE '%multiple_alignment%' OR class LIKE '%tree_alignment%' OR class LIKE '%ancestral_alignment%'";
+				+ " class LIKE '%multiple_alignment%' OR class LIKE '%tree_alignment%' OR class LIKE '%ancestral_alignment%'";
 
-			try {
-				Statement stmt1 = con.createStatement();
-				ResultSet rs1 = stmt1.executeQuery(sql1);
-				while (rs1.next()) {
-					allSetsWithAName.put(rs1.getInt(1), rs1.getString(2));
-				}
-				rs1.close();
-				stmt1.close();
+			Map<Integer, String> allSetsWithAName = DBUtils.getSqlTemplate(con).queryForMap(sql1, new DefaultMapRowMapper<Integer, String>(Integer.class, String.class));
+			Map<Integer, String> allSetsForMultipleAlignments = DBUtils.getSqlTemplate(con).queryForMap(sql2, new DefaultMapRowMapper<Integer, String>(Integer.class, String.class));
 
-				Statement stmt2 = con.createStatement();
-				ResultSet rs2 = stmt2.executeQuery(sql2);
-				while (rs2.next()) {
-					allSetsForMultipleAlignments.put(rs2.getInt(1),
-							rs2.getString(2));
-				}
-				rs2.close();
-				stmt2.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			Iterator it = allSetsForMultipleAlignments.keySet().iterator();
-			while (it.hasNext()) {
-				Object next = it.next();
-				Object setName = allSetsWithAName.get(next);
-				String multipleAlignmentName = allSetsForMultipleAlignments
-						.get(next).toString();
-				if (setName == null) {
-					ReportManager.problem(this, con,
-							"There is no name entry in species_set_tag for MSA \""
-									+ multipleAlignmentName + "\".");
+			for (Map.Entry<Integer, String> key_value : allSetsForMultipleAlignments.entrySet()) {
+				if (!allSetsWithAName.containsKey(key_value.getKey())) {
+					ReportManager.problem(this, con, "There is no name entry in species_set_tag for MSA \"" + key_value.getValue()+ "\".");
 					result = false;
 				}
 			}
@@ -276,7 +150,6 @@ public class CheckSpeciesSetTag extends AbstractComparaTestCase {
 		}
 
 		return result;
-
 	}
 
 } // CheckSpeciesSetTag

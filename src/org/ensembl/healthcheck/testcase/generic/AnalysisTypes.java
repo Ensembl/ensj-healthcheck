@@ -96,12 +96,8 @@ public class AnalysisTypes extends SingleDatabaseTestCase {
 
 		// get all chromosomes, ignore LRG and MT
 		String[] seqRegionNames = DBUtils.getColumnValues(con,
-				"SELECT s.name FROM seq_region s, coord_system cs WHERE s.coord_system_id=cs.coord_system_id AND cs.name='chromosome' AND cs.attrib='default_version' AND s.name NOT LIKE 'LRG%' AND s.name != 'MT'");
+				"SELECT s.name FROM seq_region s, seq_region_attrib sa, attrib_type at WHERE s.seq_region_id = sa.seq_region_id AND sa.attrib_type_id = at.attrib_type_id AND code = 'karyotype_rank' AND s.name NOT LIKE 'MT'");
 
-		// filter out patches
-		String[] patches = DBUtils.getColumnValues(con, "SELECT sr.name FROM seq_region sr, assembly_exception ae WHERE sr.seq_region_id=ae.seq_region_id AND ae.exc_type IN ('PATCH_NOVEL', 'PATCH_FIX')");
-
-		List<String> nonPatchSeqRegions = ListUtils.removeAll(Arrays.asList(seqRegionNames), Arrays.asList(patches));
 
 		// loop over each seq region, check that each logic name is represented
 		try {
@@ -109,7 +105,7 @@ public class AnalysisTypes extends SingleDatabaseTestCase {
 			PreparedStatement stmt = con
 					.prepareStatement("SELECT COUNT(*) FROM gene g, seq_region sr, analysis a WHERE a.analysis_id=g.analysis_id AND g.seq_region_id=sr.seq_region_id AND sr.name=? AND a.logic_name=?");
 
-			for (String seqRegion : nonPatchSeqRegions) {
+			for (String seqRegion : seqRegionNames) {
 
 				for (String logicName : logicNames) {
 

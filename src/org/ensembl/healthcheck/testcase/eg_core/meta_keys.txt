@@ -65,6 +65,8 @@ species.division
 species.production_name
 species.scientific_name
 species.serotype
+species.species_name
+species.species_taxonomy_id
 species.stable_id_prefix
 species.strain
 species.substrain
@@ -74,4 +76,5 @@ species.url
 species.wikipedia_name
 species.wikipedia_url
 transcriptbuild.level
+vb.release_status
 xref.timestamp

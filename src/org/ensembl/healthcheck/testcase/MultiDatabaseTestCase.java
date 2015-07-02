@@ -65,11 +65,11 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
 
 		boolean result = true;
 
-		// Why not using the dbr given as argument ? I don't know, but
-		// maybe we should ?
+
+                // Use whole registry to access all databases, but restrict to species of interest
 		DatabaseRegistry mainDbr = DBUtils.getMainDatabaseRegistry();
 
-		for (Species species : mainDbr.getUniqueSpecies()) {
+		for (Species species : dbr.getUniqueSpecies()) {
 
 			// filter by database type
 			DatabaseRegistryEntry[] filteredDBs = filterByType(mainDbr.getAll(species), types);

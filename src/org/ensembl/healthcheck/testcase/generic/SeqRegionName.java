@@ -19,6 +19,7 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
@@ -47,6 +48,18 @@ public class SeqRegionName extends SingleDatabaseTestCase {
 		setDescription("Check that seq_region names for human and mouse are in the right format.");
 		setTeamResponsible(Team.GENEBUILD);
 	}
+
+        /**
+         * Data is only tested in core database, as the tables are in sync
+         */
+        public void types() {
+
+                removeAppliesToType(DatabaseType.OTHERFEATURES);
+                removeAppliesToType(DatabaseType.ESTGENE);
+                removeAppliesToType(DatabaseType.RNASEQ);
+                removeAppliesToType(DatabaseType.CDNA);
+
+        }
 
 	/**
 	 * Run the test.

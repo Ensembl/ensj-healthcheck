@@ -58,6 +58,17 @@ public class Accession extends SingleDatabaseTestCase {
 
 	}
 
+        /**
+         * This test applies only to core dbs
+         */
+        public void types() {
+                removeAppliesToType(DatabaseType.SANGER_VEGA);
+                removeAppliesToType(DatabaseType.VEGA);
+                removeAppliesToType(DatabaseType.CDNA);
+                removeAppliesToType(DatabaseType.OTHERFEATURES);
+                removeAppliesToType(DatabaseType.RNASEQ);
+        }
+
 	/**
 	 * Check each type of hit.
 	 * 
@@ -99,8 +110,6 @@ public class Accession extends SingleDatabaseTestCase {
 			if (badFormat > 0) {
 				result = false;
 				ReportManager.problem(this, con, badFormat + " " + key + " hit IDs are not in the correct format");
-			} else {
-				ReportManager.correct(this, con, "All " + key + " hits are in the correct format");
 			}
 
 		}

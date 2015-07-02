@@ -66,6 +66,13 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 			return true;
 		}
 
+                boolean skipCondition = skipCondition(dbre);
+
+                if (skipCondition) {
+                         logger.finest("Skipping test as data is not yet available");
+                         return true;
+                }
+
 		DatabaseRegistryEntry sec = getEquivalentFromSecondaryServer(dbre);
 
 		if (sec == null) {
@@ -184,5 +191,11 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 	protected boolean testUpperThreshold() {
 		return false;
 	}
+
+        // ------------------------------------------------------------------------
+
+        protected boolean skipCondition(DatabaseRegistryEntry dbre) {
+                return false;
+        }
 
 } // ComparePreviousVersionBase
