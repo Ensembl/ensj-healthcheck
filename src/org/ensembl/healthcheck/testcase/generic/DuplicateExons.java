@@ -112,7 +112,7 @@ public class DuplicateExons extends SingleDatabaseTestCase {
 
 				if (!first) {
 					if (lastExonChromosome == exonChromosome && lastExonStart == exonStart && lastExonEnd == exonEnd && lastExonPhase == exonPhase && lastExonStrand == exonStrand
-							&& lastExonEndPhase == exonEndPhase && lastExonGeneId != exonGeneId) {
+							&& lastExonEndPhase == exonEndPhase && lastExonGeneId != exonGeneId && lastExonID != exonID) {
 						duplicateExon++;
 						if (duplicateExon <= MAX_WARNINGS) {
 							ReportManager.warning(this, con, "Exon " + exonID + " in gene " + exonGeneId + " is a duplicate of exon " + lastExonID);
