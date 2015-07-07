@@ -63,6 +63,8 @@ public class Assembly extends GroupOfTests {
                         org.ensembl.healthcheck.testcase.generic.NonGTACNSequence.class,
                         org.ensembl.healthcheck.testcase.generic.SeqRegionName.class,
                         org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel.class,
+                        org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevelRefSeq.class,
+                        org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevelRank.class,
                         org.ensembl.healthcheck.testcase.generic.SequenceLevel.class
                 );
         }

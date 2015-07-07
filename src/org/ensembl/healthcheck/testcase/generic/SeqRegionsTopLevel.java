@@ -95,9 +95,7 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 		result &= check_genes(con, topLevelAttribTypeID);
 
 		result &= check_one_seq_region(con, topLevelAttribTypeID);
-
-		result &= checkRankOne(dbre);
-
+		
 		result &= checkAssemblyTable(con, topLevelAttribTypeID);
 
 		return result;
@@ -189,54 +187,6 @@ public class SeqRegionsTopLevel extends SingleDatabaseTestCase {
 		return result;
 
 	}
-
-	// --------------------------------------------------------------------------
-
-	private boolean checkRankOne(DatabaseRegistryEntry dbre) {
-
-		boolean result = true;
-
-		Connection con = dbre.getConnection();
-
-		// check that there is one co-ordinate system with rank = 1
-		if (!dbre.isMultiSpecies()) {
-
-			int rows = DBUtils.getRowCount(con,
-					"SELECT COUNT(*) FROM coord_system WHERE rank=1");
-			if (rows == 0) {
-
-				ReportManager.problem(this, con,
-						"No co-ordinate systems have rank = 1");
-				result = false;
-
-			} else if (rows > 1) {
-
-				if (rows != dbre.getSpeciesIds().size()) {
-					ReportManager
-							.problem(
-									this,
-									con,
-									rows
-											+ " rows in coord_system have a rank of 1. There should be "
-											+ dbre.getSpeciesIds().size());
-					result = false;
-				} else {
-					ReportManager.correct(this, con, dbre.getSpeciesIds()
-							.size() + " co-ordinate systems with rank = 1");
-				}
-
-			} else {
-
-				ReportManager.correct(this, con,
-						"One co-ordinate system has rank = 1");
-
-			}
-		}
-		return result;
-
-	}
-
-	// --------------------------------------------------------------------------
 
 	private boolean checkAssemblyTable(Connection con, int topLevelAttribTypeID) {
 		boolean result = true;
