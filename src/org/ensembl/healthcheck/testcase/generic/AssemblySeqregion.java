@@ -41,23 +41,23 @@ public class AssemblySeqregion extends SingleDatabaseTestCase {
 		addToGroup("post_genebuild");
 		addToGroup("pre-compara-handover");
 		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
+		addToGroup("post-projection");
 
 		setDescription("Check that the chromosome lengths from the seq_region table agree with both the assembly table and the karyotype table.");
 		setTeamResponsible(Team.GENEBUILD);
 	}
 
-        /**
-         * Data is only tested in core database, as the tables are in sync
-         */
-        public void types() {
+	/**
+	 * Data is only tested in core database, as the tables are in sync
+	 */
+	public void types() {
 
-                removeAppliesToType(DatabaseType.OTHERFEATURES);
-                removeAppliesToType(DatabaseType.ESTGENE);
-                removeAppliesToType(DatabaseType.RNASEQ);
-                removeAppliesToType(DatabaseType.CDNA);
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.ESTGENE);
+		removeAppliesToType(DatabaseType.RNASEQ);
+		removeAppliesToType(DatabaseType.CDNA);
 
-        }
+	}
 
 	/**
 	 * @param dbre
@@ -109,70 +109,76 @@ public class AssemblySeqregion extends SingleDatabaseTestCase {
 			e.printStackTrace();
 		}
 
-		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM assembly");
-		if (rows == 0) {
-			ReportManager.problem(this, con, rows
-					+ " rows found in assembly table");
-		} else {
-			ReportManager.correct(this, con, "Assembly table is populated");
-
-			// -------------------------------------------------------
-			// check various other things about the assembly table
-			// Check for mismatched lengths of assembled and component sides.
-			// ie where (asm_end - asm_start + 1) != (cmp_end - cmp_start + 1)
-			rows = DBUtils
-					.getRowCount(
-							con,
-							"SELECT COUNT(*) FROM assembly WHERE (asm_end - asm_start + 1) != (cmp_end - cmp_start + 1)");
-			if (rows > 0) {
-				ReportManager
-						.problem(
-								this,
-								con,
-								rows
-										+ " rows in assembly table have mismatched lengths of assembled and component sides");
+		int cs = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM coord_system");
+		if (cs > 1) {
+			int rows = DBUtils
+					.getRowCount(con, "SELECT COUNT(*) FROM assembly");
+			if (rows == 0) {
+				ReportManager.problem(this, con, rows
+						+ " rows found in assembly table");
 			} else {
-				ReportManager
-						.correct(
-								this,
-								con,
-								"All rows in assembly table have matching lengths of assembled and component sides");
-			}
+				ReportManager.correct(this, con, "Assembly table is populated");
 
-			// check for start/end < 1
-			rows = DBUtils
-					.getRowCount(
-							con,
-							"SELECT COUNT(*) FROM assembly WHERE asm_start < 1 OR asm_end < 1 OR cmp_start < 1 OR cmp_end < 1");
-			if (rows > 0) {
-				ReportManager
-						.problem(
-								this,
+				// -------------------------------------------------------
+				// check various other things about the assembly table
+				// Check for mismatched lengths of assembled and component
+				// sides.
+				// ie where (asm_end - asm_start + 1) != (cmp_end - cmp_start +
+				// 1)
+				rows = DBUtils
+						.getRowCount(
 								con,
-								rows
-										+ " rows in assembly table have start or end coords < 1");
-			} else {
-				ReportManager
-						.correct(this, con,
-								"All rows in assembly table have start and end coords > 0");
-			}
+								"SELECT COUNT(*) FROM assembly WHERE (asm_end - asm_start + 1) != (cmp_end - cmp_start + 1)");
+				if (rows > 0) {
+					ReportManager
+							.problem(
+									this,
+									con,
+									rows
+											+ " rows in assembly table have mismatched lengths of assembled and component sides");
+				} else {
+					ReportManager
+							.correct(
+									this,
+									con,
+									"All rows in assembly table have matching lengths of assembled and component sides");
+				}
 
-			// check for end < start
-			rows = DBUtils
-					.getRowCount(
-							con,
-							"SELECT COUNT(*) FROM assembly WHERE asm_end < asm_start OR cmp_end < cmp_start");
-			if (rows > 0) {
-				ReportManager
-						.problem(
-								this,
+				// check for start/end < 1
+				rows = DBUtils
+						.getRowCount(
 								con,
-								rows
-										+ " rows in assembly table have start or end coords < 1");
-			} else {
-				ReportManager
-						.correct(this, con,
-								"All rows in assembly table have end coords > start coords");
+								"SELECT COUNT(*) FROM assembly WHERE asm_start < 1 OR asm_end < 1 OR cmp_start < 1 OR cmp_end < 1");
+				if (rows > 0) {
+					ReportManager
+							.problem(
+									this,
+									con,
+									rows
+											+ " rows in assembly table have start or end coords < 1");
+				} else {
+					ReportManager
+							.correct(this, con,
+									"All rows in assembly table have start and end coords > 0");
+				}
+
+				// check for end < start
+				rows = DBUtils
+						.getRowCount(
+								con,
+								"SELECT COUNT(*) FROM assembly WHERE asm_end < asm_start OR cmp_end < cmp_start");
+				if (rows > 0) {
+					ReportManager
+							.problem(
+									this,
+									con,
+									rows
+											+ " rows in assembly table have start or end coords < 1");
+				} else {
+					ReportManager
+							.correct(this, con,
+									"All rows in assembly table have end coords > start coords");
+				}
 			}
 		}
 
