@@ -14,7 +14,6 @@ import org.ensembl.healthcheck.testcase.eg_core.ExonBoundary;
 import org.ensembl.healthcheck.testcase.eg_core.GeneBuildStartDate;
 import org.ensembl.healthcheck.testcase.eg_core.GeneDescriptionUniProtSource;
 import org.ensembl.healthcheck.testcase.eg_core.GeneGC;
-import org.ensembl.healthcheck.testcase.eg_core.GeneStableIdDisplayXref;
 import org.ensembl.healthcheck.testcase.eg_core.IgiXref;
 import org.ensembl.healthcheck.testcase.eg_core.InappropriateTranslation;
 import org.ensembl.healthcheck.testcase.eg_core.MetaForCompara;
@@ -35,7 +34,6 @@ import org.ensembl.healthcheck.testcase.eg_core.SeqRegionAttribForPolyploidGenom
 import org.ensembl.healthcheck.testcase.eg_core.SeqRegionDna;
 import org.ensembl.healthcheck.testcase.eg_core.SeqRegionLength;
 import org.ensembl.healthcheck.testcase.eg_core.SeqRegionsConsistentWithComparaMaster;
-import org.ensembl.healthcheck.testcase.eg_core.TranscriptStableIdDisplayXref;
 import org.ensembl.healthcheck.testcase.eg_core.TranslationAttribType;
 import org.ensembl.healthcheck.testcase.eg_core.UniProtExternalDbTypes;
 import org.ensembl.healthcheck.testcase.eg_core.ValidSeqEnd;
@@ -54,7 +52,6 @@ import org.ensembl.healthcheck.testcase.generic.CoreForeignKeys;
 import org.ensembl.healthcheck.testcase.generic.DescriptionNewlines;
 import org.ensembl.healthcheck.testcase.generic.DisplayLabels;
 import org.ensembl.healthcheck.testcase.generic.DuplicateAssembly;
-import org.ensembl.healthcheck.testcase.generic.DuplicateExons;
 import org.ensembl.healthcheck.testcase.generic.ExonRank;
 import org.ensembl.healthcheck.testcase.generic.ExonStrandOrder;
 import org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd;
@@ -78,8 +75,9 @@ import org.ensembl.healthcheck.testcase.generic.XrefHTML;
 import org.ensembl.healthcheck.testcase.generic.XrefIdentifiers;
 import org.ensembl.healthcheck.testcase.generic.XrefTypes;
 
-/** 
- * Group containing tests that should never fail for Ensembl Genomes core databases
+/**
+ * Group containing tests that should never fail for Ensembl Genomes core
+ * databases
  * 
  * @author dstaines
  *
@@ -98,7 +96,7 @@ public class EGCoreIntegrity extends GroupOfTests {
 				SeqRegionsTopLevel.class, StableID.class, Strand.class,
 				TranscriptsTranslate.class, TranslationStartEnd.class,
 				TranslationStartEndExon.class, ProteinTranslation.class,
-				AssemblyMapping.class, ValidSeqEnd.class, DuplicateExons.class,
+				AssemblyMapping.class, ValidSeqEnd.class,
 				ExonBoundary.class, InappropriateTranslation.class,
 				DescriptionNewlines.class, DisplayLabels.class,
 				GeneDescriptions.class, PositiveCoordinates.class,
@@ -108,16 +106,15 @@ public class EGCoreIntegrity extends GroupOfTests {
 				BlankInfoType.class, DuplicateXref.class, IgiXref.class,
 				InterproDescriptions.class, IsCurrent.class,
 				XrefCategories.class, XrefHTML.class, XrefIdentifiers.class,
-				XrefTypes.class, GeneStableIdDisplayXref.class,
-				TranscriptStableIdDisplayXref.class,
-				UniProtExternalDbTypes.class, SeqRegionDna.class,
-				RequiredEgMeta.class, DeprecatedEgMeta.class,
-				GeneBuildStartDate.class, DuplicateMetaKeys.class,
-				GeneGC.class, MetaCoord.class, SampleSetting.class,
-				AnalysisDescription.class, MetaForCompara.class,
-				TranslationAttribType.class, PermittedEgMeta.class,
-				RepeatAnalysesInMeta.class, ProductionAnalysisLogicName.class,
-				ProductionBiotypes.class, ControlledTableExternalDb.class,
+				XrefTypes.class, UniProtExternalDbTypes.class,
+				SeqRegionDna.class, RequiredEgMeta.class,
+				DeprecatedEgMeta.class, GeneBuildStartDate.class,
+				DuplicateMetaKeys.class, GeneGC.class, MetaCoord.class,
+				SampleSetting.class, AnalysisDescription.class,
+				MetaForCompara.class, TranslationAttribType.class,
+				PermittedEgMeta.class, RepeatAnalysesInMeta.class,
+				ProductionAnalysisLogicName.class, ProductionBiotypes.class,
+				ControlledTableExternalDb.class,
 				ControlledTableAttribType.class, AnalysisLogicName.class,
 				SeqRegionsConsistentWithComparaMaster.class,
 				SeqRegionAttribForPolyploidGenome.class,
