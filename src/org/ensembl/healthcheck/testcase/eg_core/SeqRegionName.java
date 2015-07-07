@@ -31,7 +31,7 @@ import org.ensembl.healthcheck.ReportManager;
  */
 public class SeqRegionName extends AbstractEgCoreTestCase {
 
-	private static final String VALID_NAME = "^[A-z0-9:.-]+$";
+	private static final String VALID_NAME = "^[A-z0-9.-]+$";
 
 	public SeqRegionName() {
 		super();
