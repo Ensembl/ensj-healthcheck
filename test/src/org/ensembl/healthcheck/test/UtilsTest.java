@@ -37,7 +37,7 @@ public class UtilsTest {
     @Test
     public void testReadPropertiesFile() {
 
-        Assert.assertNotNull(Utils.readSimplePropertiesFile("database.properties"));
+        Assert.assertNotNull(Utils.readSimplePropertiesFile("database.defaults.properties"));
 
     }
 
