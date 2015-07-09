@@ -1,3 +1,5 @@
+annotation.date
+annotation.release
 annotation.source
 annotation.sourceURL
 assembly.accession
