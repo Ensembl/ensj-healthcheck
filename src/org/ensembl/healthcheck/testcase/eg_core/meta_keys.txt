@@ -25,9 +25,9 @@ genebuild.method
 genebuild.projection_source_db
 genebuild.start_date
 genebuild.version
+interpro.version
 interproscan.date
 interproscan.version
-interpro.version
 liftover.mapping
 patch
 ploidy
