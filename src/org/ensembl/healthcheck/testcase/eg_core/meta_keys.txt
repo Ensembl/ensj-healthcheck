@@ -44,6 +44,7 @@ sample.gene_param
 sample.gene_text
 sample.location_param
 sample.location_text
+sample.polyploid_region
 sample.search_text
 sample.structural_param
 sample.structural_text
