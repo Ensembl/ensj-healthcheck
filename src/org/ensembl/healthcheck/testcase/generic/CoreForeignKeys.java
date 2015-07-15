@@ -144,6 +144,12 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
 		result &= checkForOrphans(con, "associated_xref", "source_xref_id", "xref", "xref_id", true);
 
+		result &= checkForOrphans(con, "dependent_xref", "object_xref_id", "object_xref", "object_xref_id", true);
+
+		result &= checkForOrphans(con, "dependent_xref", "master_xref_id", "xref", "xref_id", true);
+
+		result &= checkForOrphans(con, "dependent_xref", "dependent_xref_id", "xref", "xref_id", true);
+
 		// stable ID archive
 		result &= checkForOrphansWithConstraint(con, "gene_archive", "peptide_archive_id", "peptide_archive", "peptide_archive_id", "peptide_archive_id != 0");
 		result &= checkForOrphans(con, "peptide_archive", "peptide_archive_id", "gene_archive", "peptide_archive_id", true);
