@@ -37,6 +37,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.Species;
 
 /**
  * Check that the variation_feature table do not contain anomalities
@@ -86,6 +87,17 @@ public class VariationFeature extends SingleDatabaseTestCase {
                 result = false;
                 ReportManager.problem(this, con, String.valueOf(rows) + " variants have a map_weight greater than 25");
             }
+
+            // Check for variants mapping to human Y PAR - should be deleted as handled by API
+            Species species = dbre.getSpecies();
+            if (species == Species.HOMO_SAPIENS){
+              String par_stmt =  "SELECT COUNT(variation_feature_id) FROM variation_feature vf, seq_region sr where vf.seq_region_start between 10001 and 2600000 and vf.seq_region_id = sr.seq_region_id and sr.name ='MT'";
+              rows = DBUtils.getRowCount(con, par_stmt);
+              if (rows > 0) {
+                 result = false;
+                 ReportManager.problem(this, con, String.valueOf(rows) + " variants are mapped to the Y PAR");
+               }   
+             }
 			
 		} catch (Exception e) {
 			ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
