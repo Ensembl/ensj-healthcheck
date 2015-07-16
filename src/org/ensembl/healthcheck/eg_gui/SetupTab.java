@@ -54,7 +54,7 @@ public class SetupTab extends JPanel {
 	 */
 	String defaultPrimaryServerName   = "staging-1";
 	String defaultSecondaryServerName = "mysql.ebi.ac.uk";
-	String defaultPanServerName       = "pan-1";
+	String defaultPanServerName       = "pan-prod";
 
 	/**
 	 * Directories in which configuration files for database servers will be 
