@@ -744,7 +744,7 @@ public class MetaValues extends SingleDatabaseTestCase {
             }
           };
 
-          String sql = "SELECT biotype, analysis_id, seq_region_id, seq_region_start, seq_region_end, seq_region_end, seq_region_strand, stable_id, is_current, version FROM gene" ;
+          String sql = "SELECT biotype, analysis_id, seq_region_id, seq_region_start, seq_region_end, seq_region_end, seq_region_strand, stable_id, is_current, version FROM gene WHERE biotype NOT IN ('LRG_gene')" ;
           Set<Set<Object>> currentGenes = t.queryForSet(sql, rowMapper);
           Set<Set<Object>> previousGenes = getSqlTemplate(sec).queryForSet(sql, rowMapper);
 
