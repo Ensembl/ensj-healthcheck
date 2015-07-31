@@ -61,6 +61,7 @@ public class StableID extends SingleDatabaseTestCase {
 	public void types() {
 
 		removeAppliesToType(DatabaseType.CDNA);
+    removeAppliesToType(DatabaseType.OTHERFEATURES);
 
 	}
 
