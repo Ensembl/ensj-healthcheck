@@ -88,7 +88,7 @@ public class CheckTaxon extends AbstractComparaTestCase {
 
 		// Get list of species in compara
 		Vector<Species> comparaSpecies = new Vector<Species>();
-		String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE assembly_default = 1"
+		String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE first_release IS NOT NULL AND last_release IS NULL"
 			+ " AND name <> 'ancestral_sequences'";
 		try {
 			Statement stmt = comparaCon.createStatement();

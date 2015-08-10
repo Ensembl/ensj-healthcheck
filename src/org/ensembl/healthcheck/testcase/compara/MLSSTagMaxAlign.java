@@ -62,8 +62,6 @@ public class MLSSTagMaxAlign extends AbstractRepairableMLSSTag {
 		Connection con = dbre.getConnection();
 		boolean result = true;
 
-		int globalMaxAlignmentLength = 0;
-
 		// Check whether tables are empty or not
 		if (!tableHasRows(con, "genomic_align")) {
 			ReportManager.correct(this, con, "NO ENTRIES in genomic_align table");
@@ -80,9 +78,6 @@ public class MLSSTagMaxAlign extends AbstractRepairableMLSSTag {
 			// to every single row...
 			while (rs.next()) {
 				EntriesToAdd.put(rs.getString(1), new Integer(rs.getInt(2) + 2).toString());
-				if (rs.getInt(2) > globalMaxAlignmentLength) {
-					globalMaxAlignmentLength = rs.getInt(2) + 2;
-				}
 			}
 			rs.close();
 			stmt.close();
@@ -101,9 +96,6 @@ public class MLSSTagMaxAlign extends AbstractRepairableMLSSTag {
 			// to every single row...
 			while (rs.next()) {
 				EntriesToAdd.put(rs.getString(1), new Integer(rs.getInt(2) + 2).toString());
-				if (rs.getInt(2) > globalMaxAlignmentLength) {
-					globalMaxAlignmentLength = rs.getInt(2) + 2;
-				}
 			}
 			rs.close();
 			stmt.close();
