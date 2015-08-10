@@ -43,12 +43,11 @@ public class ForeignKeyMasterTables extends AbstractComparaTestCase {
 		// dnafrag
 		result &= checkForOrphans(con, "dnafrag", "genome_db_id", "genome_db", "genome_db_id");
 		// species set
+		result &= checkForOrphans(con, "species_set", "species_set_id", "species_set_header", "species_set_id");
 		result &= checkForOrphans(con, "species_set", "genome_db_id", "genome_db", "genome_db_id");
-		result &= checkForOrphansWithConstraint(con, "genome_db", "genome_db_id", "species_set", "genome_db_id", "taxon_id != 0");
 		// method_link_species_set
 		result &= checkForOrphans(con, "method_link_species_set", "method_link_id", "method_link", "method_link_id");
-		result &= checkForOrphans(con, "method_link_species_set", "species_set_id", "species_set", "species_set_id");
-		result &= checkForOrphansWithConstraint(con, "species_set", "species_set_id", "method_link_species_set", "species_set_id", "species_set_id not in (SELECT distinct species_set_id from species_set_tag)");
+		result &= checkForOrphans(con, "method_link_species_set", "species_set_id", "species_set_header", "species_set_id");
 		// genome_db
 		result &= checkForOrphansWithConstraint(con, "genome_db", "taxon_id", "ncbi_taxa_node", "taxon_id", "taxon_id != 0");
 		result &= checkForOrphansWithConstraint(con, "genome_db", "taxon_id", "ncbi_taxa_name", "taxon_id", "taxon_id != 0");
@@ -58,6 +57,11 @@ public class ForeignKeyMasterTables extends AbstractComparaTestCase {
 			// Some of them are not used any more, but they must stay
 			// there. The following check would not apply in that case
 			result &= checkForOrphans(con, "method_link", "method_link_id", "method_link_species_set", "method_link_id");
+			// Again, because the master database has the almost-complete
+			// of Compara, some GenomeDBs are not in any species-sets
+			result &= checkForOrphansWithConstraint(con, "genome_db", "genome_db_id", "species_set", "genome_db_id", "taxon_id != 0");
+			// Finally, all the species-sets must be used by a MLSS
+			result &= checkForOrphans(con, "species_set", "species_set_id", "method_link_species_set", "species_set_id");
 		}
 		return result;
 	}
