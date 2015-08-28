@@ -91,7 +91,7 @@ public class VariationFeature extends SingleDatabaseTestCase {
             // Check for variants mapping to human Y PAR - should be deleted as handled by API
             Species species = dbre.getSpecies();
             if (species == Species.HOMO_SAPIENS){
-              String par_stmt =  "SELECT COUNT(variation_feature_id) FROM variation_feature vf, seq_region sr where vf.seq_region_start between 10001 and 2600000 and vf.seq_region_id = sr.seq_region_id and sr.name ='MT'";
+              String par_stmt =  "SELECT COUNT(variation_feature_id) FROM variation_feature vf, seq_region sr where vf.seq_region_start between 10001 and 2600000 and vf.seq_region_id = sr.seq_region_id and sr.name ='Y'";
               rows = DBUtils.getRowCount(con, par_stmt);
               if (rows > 0) {
                  result = false;
