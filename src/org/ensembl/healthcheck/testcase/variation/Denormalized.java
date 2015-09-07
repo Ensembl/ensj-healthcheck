@@ -58,15 +58,15 @@ public class Denormalized extends SingleDatabaseTestCase {
     try {
       // somatic
       if (dbre.getSpecies() == Species.HOMO_SAPIENS) {
-        // Query switched off because it was taking too long to run.
+        // Queries switched off because it was taking too long to run. Need to be run manually.
         //result &= checkForBadDenormalization(con, "variation", "variation_id", "somatic", "variation_feature", "variation_id", "somatic");
+        //result &= checkForBadDenormalization(con, "variation_feature", "variation_feature_id", "somatic", "transcript_variation", "variation_feature_id", "somatic");
         result &= checkForBadDenormalization(con, "structural_variation", "structural_variation_id", "somatic", "structural_variation_feature", "structural_variation_id", "somatic");
-        result &= checkForBadDenormalization(con, "variation_feature", "variation_feature_id", "somatic", "transcript_variation", "variation_feature_id", "somatic");
       }
       // display
-      // Query switched off because it was taking too long to run.
+      // Queries switched off because it was taking too long to run. Need to be run manually.
       //result &= checkForBadDenormalization(con, "variation", "variation_id", "display", "variation_feature", "variation_id", "display");
-      result &= checkForBadDenormalization(con, "variation_feature", "variation_feature_id", "display", "transcript_variation", "variation_feature_id", "display");
+      //result &= checkForBadDenormalization(con, "variation_feature", "variation_feature_id", "display", "transcript_variation", "variation_feature_id", "display");
     } catch (Exception e) {
       ReportManager.problem(this, con, "HealthCheck generated an exception: " + e.getMessage());
       result = false;
