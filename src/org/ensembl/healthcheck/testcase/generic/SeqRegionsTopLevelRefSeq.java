@@ -72,6 +72,8 @@ public class SeqRegionsTopLevelRefSeq extends SingleDatabaseTestCase {
 		removeAppliesToType(DatabaseType.ESTGENE);
 		removeAppliesToType(DatabaseType.RNASEQ);
 		removeAppliesToType(DatabaseType.CDNA);
+                removeAppliesToType(DatabaseType.VEGA);
+                removeAppliesToType(DatabaseType.SANGER_VEGA);
 
 	}
 
