@@ -98,7 +98,14 @@ public class VariationFeature extends SingleDatabaseTestCase {
                  ReportManager.problem(this, con, String.valueOf(rows) + " variants are mapped to the Y PAR");
                }   
              }
-			
+		
+            // Check for MAF > 0.5 
+            if (!checkCountIsZero(con,"variation_feature","minor_allele_freq >0.5 ")) {
+                ReportManager.problem(this, con, "VariationFeatures with minor alleles > 0.5");
+                result = false;
+            }
+
+	
 		} catch (Exception e) {
 			ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
 			result = false;
