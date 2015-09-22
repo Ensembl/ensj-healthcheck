@@ -28,6 +28,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionGenotypes </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionPhenotypeFeatures </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionReadCoverage </li>
+ *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionSampleDisplay </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionSources </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionStructuralVariations </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionValidationStatus </li>
@@ -71,6 +72,7 @@ public class VariationRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionGenotypes.class,
 			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionPhenotypeFeatures.class,
 			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionReadCoverage.class,
+			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionSampleDisplay.class,
 			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionSources.class,
 			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionStructuralVariations.class,
 			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionValidationStatus.class,
