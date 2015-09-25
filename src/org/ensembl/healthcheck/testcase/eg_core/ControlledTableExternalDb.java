@@ -19,6 +19,7 @@ package org.ensembl.healthcheck.testcase.eg_core;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.testcase.AbstractControlledTable;
 
+@Deprecated
 public class ControlledTableExternalDb extends AbstractControlledTable {
 
 	@Override protected String getControlledTableName() {
