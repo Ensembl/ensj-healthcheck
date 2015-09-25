@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.util.CollectionUtils;
 import org.ensembl.healthcheck.util.SqlTemplate;
@@ -39,6 +40,10 @@ import org.ensembl.healthcheck.util.TestCaseUtils;
  * 
  */
 public class GeneGC extends AbstractEgCoreTestCase {
+
+	public GeneGC() {
+		super();
+	}
 
 	private static final String ATTRIB_TYPE_QUERY = "SELECT attrib_type_id FROM attrib_type WHERE code='GeneGC'";
 	private final static String GC_QUERY = "select attrib_type_id,count(*) from gene "
@@ -67,7 +72,7 @@ public class GeneGC extends AbstractEgCoreTestCase {
 									+ ATTR_ID);
 					passes = false;
 				}
-			} else {
+			} else if(dbre.getType()==DatabaseType.OTHERFEATURES) {
 				ReportManager.problem(this, dbre.getConnection(),
 						"No GeneGC attrib_type found");
 				passes = false;
