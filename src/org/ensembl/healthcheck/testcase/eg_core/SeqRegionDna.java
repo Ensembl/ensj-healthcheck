@@ -43,6 +43,7 @@ public class SeqRegionDna extends AbstractRowCountTestCase {
 		this.appliesToType(DatabaseType.CORE);
 		this.setTeamResponsible(Team.ENSEMBL_GENOMES);
 		this.setDescription("TODO");
+		this.removeAppliesToType(DatabaseType.OTHERFEATURES);
 	}
 
 	@Override
