@@ -69,7 +69,8 @@ public class FuncgenRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.funcgen.DuplicateProbeFeatures.class,
 			org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName.class,
 			org.ensembl.healthcheck.testcase.funcgen.FeaturePosition.class,
-			org.ensembl.healthcheck.testcase.funcgen.FeaturesMappedToCurrentSeqRegion.class,
+			// Deactivated until we delete the non current seq regions.
+			//org.ensembl.healthcheck.testcase.funcgen.FeaturesMappedToCurrentSeqRegion.class,
 			org.ensembl.healthcheck.testcase.funcgen.FuncgenAnalysisDescription.class,
 			org.ensembl.healthcheck.testcase.funcgen.FuncgenForeignKeys.class,
 			org.ensembl.healthcheck.testcase.funcgen.FuncgenStableID.class,
