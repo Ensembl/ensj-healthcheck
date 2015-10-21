@@ -228,7 +228,7 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 			percentage = Float.valueOf(twoDForm.format(percentage));
 			
 			if (missingIds > 0 && percentage > 5) {	
-                		ReportManager.problem(this, currentCon, missingIds + "(" + percentage + "%) gene stable ids missing from the current database ");
+                		ReportManager.problem(this, currentCon, missingIds + "(" + percentage + "%) gene stable ids are missing a display xref in the current database ");
                                 result = false;
          	        }
            	
