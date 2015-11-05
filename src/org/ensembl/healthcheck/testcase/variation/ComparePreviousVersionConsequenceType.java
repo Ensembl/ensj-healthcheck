@@ -58,25 +58,6 @@ public class ComparePreviousVersionConsequenceType extends ComparePreviousVersio
 		setTeamResponsible(Team.VARIATION);
 	}
 
-	/**
-	 * Store the SQL queries in a Properties object.
-	 */
-	private Properties getSQLQueries() {
-
-		// Store all the needed SQL statements in a Properties object
-		Properties sqlQueries = new Properties();
-		String query;
-
-		// Query getting the structure of the consequence_types column
-		query = "DESCRIBE transcript_variation consequence_types";
-		sqlQueries.setProperty("describeConsequenceTypes", query);
-
-		// Query counting the number of transcript variations with a particular consequence type
-		query = "SELECT SET_ELEMENT, COUNT(*) FROM transcript_variation tv WHERE FIND_IN_SET(SET_ELEMENT,tv.consequence_types)";
-		sqlQueries.setProperty("countVariationsByConsequenceType", query);
-
-		return sqlQueries; 
-	}
 
 	protected Map getCounts(DatabaseRegistryEntry dbre) {
 
@@ -84,24 +65,9 @@ public class ComparePreviousVersionConsequenceType extends ComparePreviousVersio
 		Connection con = dbre.getConnection();
 
 		try {
-			// Get all the needed SQL statements in a Properties object
-			Properties sqlQueries = getSQLQueries();
-	
-			// First, get the structure of the consequence_types
-			String[] description = DBUtils.getRowValues(dbre.getConnection(), sqlQueries.getProperty("describeConsequenceTypes"));
-	
-			// The second column contains the type, strip out the individual, comma-separated set elements
-			String[] setElements = description[1].split(",");
-	
-			// Loop over the set elements and count the number for each
-			for (int i = 0; i < setElements.length; i++) {
-	
-				// We need to strip away any 'set(' or ')' strings from the set element
-				setElements[i] = setElements[i].replaceAll("set\\(|\\)", "");
-	
-				// Replace the 'SET_ELEMENT' placeholder with the current consequence_type and do the query
-				counts.putAll(getCountsBySQL(dbre, sqlQueries.getProperty("countVariationsByConsequenceType").replaceAll("SET_ELEMENT", setElements[i])));
-			}
+			// 
+			counts.putAll(getCountsBySQL(dbre, "SELECT consequence_types, COUNT(*) FROM transcript_variation group by consequence_types")); 
+			
 		} catch (Exception e) {
 			ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
 		}
