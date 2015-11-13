@@ -216,15 +216,15 @@ public class EgProteinFeatureTranslation extends AbstractEgCoreTestCase {
 
 				if (translationLengths.get(translationID) != null) {
 					// some codons can only be 2 bp ?!?
-					int minTranslationLength = (((Integer) translationLengths
-							.get(translationID)).intValue() + 2) / 3;
+					int maxTranslationLength = (((Integer) translationLengths
+							.get(translationID)).intValue() + 3) / 3;
 					int fl = rs.getInt("seq_end");
-					if (fl > minTranslationLength) {
+					if (fl > maxTranslationLength) {
 						result = false;
 						String msg = "Protein feature " + proteinFeatureID
 								+ "(" + rs.getString(4) + "/" + rs.getString(5)
 								+ ") ends at " + fl + " which is beyond the "
-								+ minTranslationLength
+								+ maxTranslationLength
 								+ " length of the translation " + translationID;
 						thisDBFeatures.add(msg);
 					}
