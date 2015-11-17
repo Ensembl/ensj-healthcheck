@@ -87,6 +87,12 @@ public class Ditag extends SingleDatabaseTestCase {
 
 			result &= checkExistance(con);
 
+			// If there are no ditag records, don't make a lot of noise
+			// saying they're missing for each chromosome
+			if(!result) {
+			    return false;
+			}
+
 			result &= checkDitagRelation(con);
 
 			result &= checkAllChromosomesHaveDitagFeatures(con);
@@ -114,7 +120,9 @@ public class Ditag extends SingleDatabaseTestCase {
 
 		if (rowCount1 == 0) {
 			ReportManager.problem(this, con, "No ditags in databaset");
-			result = false;
+			// If there are no ditags in the dataset, we don't care if
+			// there are features, that's irrelevant, skip
+			return false;
 		}
 
 		int rowCount2 = DBUtils.getRowCount(con, "SELECT * FROM ditag_feature LIMIT 10");
