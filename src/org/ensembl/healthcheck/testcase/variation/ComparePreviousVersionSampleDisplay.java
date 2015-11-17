@@ -35,29 +35,47 @@ import java.util.Properties;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.Team;
 
 
 /**
- * Compare the number of transcript_variation alleles having each consequence type between the current database and the database on
- * the secondary server.
+ * Compare the number of variations having each evidence between the current database and the database on the secondary
+ * server.
  */
 
-public class ComparePreviousVersionConsequenceType extends ComparePreviousVersionBase {
+public class ComparePreviousVersionSampleDisplay extends ComparePreviousVersionBase {
 
 	/**
 	 * Create a new testcase.
 	 */
-	public ComparePreviousVersionConsequenceType() {
+	public ComparePreviousVersionSampleDisplay() {
 
 		addToGroup("variation-release");
-		
-		setDescription("Compare the number of transcript_variations having each consequence type status in the current database with those from the equivalent database on the secondary server");
-		setTeamResponsible(Team.VARIATION);
+		setDescription("Compare the number of samples having each display value in the current database with those from the equivalent database on the secondary server");
+    setTeamResponsible(Team.VARIATION);
 	}
 
+	/**
+	 * Store the SQL queries in a Properties object.
+	 */
+	private Properties getSQLQueries() {
+
+		// Store all the needed SQL statements in a Properties object
+		Properties sqlQueries = new Properties();
+		String query;
+
+		// Query getting the structure of the evidence column
+		query = "DESCRIBE sample display";
+		sqlQueries.setProperty("describeDisplay", query);
+
+		// Query counting the number of variations with a particular display value
+		query = "SELECT SET_ELEMENT, COUNT(*) FROM sample s WHERE FIND_IN_SET(SET_ELEMENT,display)";
+		sqlQueries.setProperty("countSamplesByDisplayValue", query);
+
+		return sqlQueries;
+	} 
 
 	protected Map getCounts(DatabaseRegistryEntry dbre) {
 
@@ -65,11 +83,27 @@ public class ComparePreviousVersionConsequenceType extends ComparePreviousVersio
 		Connection con = dbre.getConnection();
 
 		try {
-			// 
-			counts.putAll(getCountsBySQL(dbre, "SELECT consequence_types, COUNT(*) FROM transcript_variation group by consequence_types")); 
-			
+			// Get all the needed SQL statements in a Properties object
+			Properties sqlQueries = getSQLQueries();
+	
+			// First, get the structure of the display value
+			String[] description = DBUtils.getRowValues(dbre.getConnection(), sqlQueries.getProperty("describeDisplay"));
+	
+			// The second column contains the type, strip out the individual, comma-separated set elements
+			String[] setElements = description[1].split(",");
+	
+			// Loop over the set elements and count the number for each
+			for (int i = 0; i < setElements.length; i++) {
+	
+				// We need to strip away any 'enum(' or ')' strings from the enum element
+				setElements[i] = setElements[i].replaceAll("enum\\(|\\)", "");
+	
+				// Replace the 'SET_ELEMENT' placeholder with the current display value and do the query
+				counts.putAll(getCountsBySQL(dbre, sqlQueries.getProperty("countSamplesByDisplayValue").replaceAll("SET_ELEMENT", setElements[i])));
+			}
 		} catch (Exception e) {
 			ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
+			e.printStackTrace();
 		}
 		
 		return counts;
@@ -79,7 +113,7 @@ public class ComparePreviousVersionConsequenceType extends ComparePreviousVersio
 
 	protected String entityDescription() {
 
-		return "consequence type";
+		return "samples having the display value";
 
 	}
 
@@ -101,4 +135,4 @@ public class ComparePreviousVersionConsequenceType extends ComparePreviousVersio
 
 	// ------------------------------------------------------------------------
 
-} // ComparePreviousVersionConsequenceType
+} // ComparePreviousVersionValidationStatus

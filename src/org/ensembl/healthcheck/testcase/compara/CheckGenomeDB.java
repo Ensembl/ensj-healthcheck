@@ -46,7 +46,7 @@ public class CheckGenomeDB extends AbstractComparaTestCase {
 
 	// FIXME: I'm not sure EG would like to know about this list. Should we
 	// tag them in the meta table ?
-	private String[] orphanedSpeciesInMasterDB = {"anopheles_gambiae", "aedes_aegypti", "apis_mellifera", "caenorhabditis_briggsae"};
+    private String[] orphanedSpeciesInMasterDB = {"spermophilus_tridecemlineatus", "anopheles_gambiae", "aedes_aegypti", "apis_mellifera", "caenorhabditis_briggsae"};
 
 	/**
 	 * Create a new instance of MetaCrossSpecies

@@ -73,7 +73,7 @@ public class VariationFeature extends SingleDatabaseTestCase {
 		try {
 	
 			// Look for duplicates
-			String stmt = "SELECT COUNT(DISTINCT vf1.variation_id) FROM variation_feature vf1 JOIN variation_feature vf2 ON (vf2.variation_id = vf1.variation_id AND vf2.variation_feature_id > vf1.variation_feature_id AND vf2.seq_region_id = vf1.seq_region_id AND vf2.seq_region_start = vf1.seq_region_start AND vf2.seq_region_end = vf1.seq_region_end AND vf2.seq_region_strand = vf1.seq_region_strand)";
+			String stmt = "SELECT COUNT(DISTINCT vf1.variation_id) FROM variation_feature vf1 JOIN variation_feature vf2 ON (vf2.variation_id = vf1.variation_id AND vf2.variation_feature_id > vf1.variation_feature_id AND vf2.seq_region_id = vf1.seq_region_id AND vf2.seq_region_start = vf1.seq_region_start AND vf2.seq_region_end = vf1.seq_region_end)";
 			int rows = DBUtils.getRowCount(con,stmt);
 			if (rows > 0) {
 				result = false;
@@ -98,7 +98,14 @@ public class VariationFeature extends SingleDatabaseTestCase {
                  ReportManager.problem(this, con, String.valueOf(rows) + " variants are mapped to the Y PAR");
                }   
              }
-			
+		
+            // Check for MAF > 0.5 
+            if (!checkCountIsZero(con,"variation_feature","minor_allele_freq >0.5 ")) {
+                ReportManager.problem(this, con, "VariationFeatures with minor alleles > 0.5");
+                result = false;
+            }
+
+	
 		} catch (Exception e) {
 			ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
 			result = false;

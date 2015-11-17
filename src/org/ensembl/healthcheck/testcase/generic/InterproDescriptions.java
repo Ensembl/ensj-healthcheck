@@ -31,6 +31,7 @@ import org.ensembl.healthcheck.util.DBUtils;
  */
 
 public class InterproDescriptions extends SingleDatabaseTestCase {
+	
 
 	/**
 	 * Create a new InterproDescriptions testcase.
@@ -44,6 +45,7 @@ public class InterproDescriptions extends SingleDatabaseTestCase {
 
 		setDescription("Check that there are Interpro descriptions, that each one has an xref, and that the xref has a description.");
 		setTeamResponsible(Team.GENEBUILD);
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
 
 	}
 

@@ -56,7 +56,7 @@ public class EGCore extends GroupOfTests {
 			ProductionBiotypes.class,
 			// ProductionMeta.class,
 			TranscriptNames.class, 
-			ControlledCoreTables.class,
+			ProductionMasterTables.class,
 			AnalysisLogicName.class,
 			SeqRegionsConsistentWithComparaMaster.class,
 			SeqRegionAttribForPolyploidGenome.class,

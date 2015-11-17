@@ -63,6 +63,7 @@ import org.ensembl.healthcheck.testcase.generic.MetaCoord;
 import org.ensembl.healthcheck.testcase.generic.NullTranscripts;
 import org.ensembl.healthcheck.testcase.generic.ProductionAnalysisLogicName;
 import org.ensembl.healthcheck.testcase.generic.ProductionBiotypes;
+import org.ensembl.healthcheck.testcase.generic.ProductionMasterTables;
 import org.ensembl.healthcheck.testcase.generic.SeqRegionAttribsPresent;
 import org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel;
 import org.ensembl.healthcheck.testcase.generic.StableID;
@@ -114,8 +115,7 @@ public class EGCoreIntegrity extends GroupOfTests {
 				MetaForCompara.class, TranslationAttribType.class,
 				PermittedEgMeta.class, RepeatAnalysesInMeta.class,
 				ProductionAnalysisLogicName.class, ProductionBiotypes.class,
-				ControlledTableExternalDb.class,
-				ControlledTableAttribType.class, AnalysisLogicName.class,
+				ProductionMasterTables.class, AnalysisLogicName.class,
 				SeqRegionsConsistentWithComparaMaster.class,
 				SeqRegionAttribForPolyploidGenome.class,
 				SeqRegionAttribForPolyploidGenomeToplevelOnly.class,

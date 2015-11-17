@@ -508,9 +508,8 @@ abstract public class AbstractControlledRows extends AbstractTemplatedTestCase {
 				+ "	join method_link_species_set using (species_set_id) " 
 				+ "	join method_link using (method_link_id) "
 				+ "where "
-				+ "	genome_db.assembly_default=true " 
-				+ "	and genome_db.name='" + speciesName + "' " 
-				+ "	and method_link.class in ( "
+				+ " genome_db.name='" + speciesName + "' " 
+				+ " and method_link.class in ( "
 				+ dnaComparaMethodsCommaSep
 				+ " ) "; 
 		
