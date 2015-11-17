@@ -27,8 +27,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import static java.lang.System.*;
-
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
