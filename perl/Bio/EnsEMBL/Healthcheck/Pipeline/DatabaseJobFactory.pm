@@ -21,7 +21,6 @@ sub run {
         });
     $self->warning("Started new session $session_id");   
     my $output_ids = [];
-    my $n = 0;
     for my $sql (
         q/select concat(species.db_name,"_",db.db_type,"_",db.db_release,"_",db.db_assembly) 
 from ensembl_production.division join ensembl_production.division_species using (division_id) 
@@ -32,7 +31,6 @@ where division.shortname=? and db.is_current=1/,
         ) {
         for my $db (grep {$_ !~ m/_mart_/} @{$hc_dbc->sql_helper()->execute_simple(-SQL=>$sql,-PARAMS=>[$self->param('division')])}) {
             push @$output_ids,{dbname=>$db,session_id=>$session_id};
-            last if $n++>5;
         }        
     }    
     $self->warning("Processing ".scalar(@$output_ids)." databases");
