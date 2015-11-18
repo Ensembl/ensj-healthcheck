@@ -18,8 +18,6 @@
  * AltAllele
  * 
  * @author lairdm
- * @author $Author$
- * @version $Revision$
  */
 package org.ensembl.healthcheck.testcase.generic;
 
