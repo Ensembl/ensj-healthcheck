@@ -16,6 +16,7 @@
 
 package org.ensembl.healthcheck.testcase.eg_core;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Map;
 
@@ -49,7 +50,7 @@ public class MultiDbStableId extends MultiDatabaseTestCase {
 	private final int MAX_REPORTS = 10;
 
 	@Override
-	public boolean run(DatabaseRegistry dbr) {
+	public boolean run(DatabaseRegistry dbr) throws SQLException {
 		boolean result = true;
 		for (String objectType : OBJ_TYPES) {
 			String query = STABLE_ID.replaceAll("%obj%", objectType);
@@ -106,6 +107,7 @@ public class MultiDbStableId extends MultiDatabaseTestCase {
 							+ checked + " " + objectType + " stable IDs for "
 							+ coreDb.getName() + ": found " + dups
 							+ " duplicates");
+                                        coreDb.getConnection().close();
 				}
 			}
 		}
