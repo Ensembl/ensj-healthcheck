@@ -22,6 +22,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  * These are the tests that are required to guarantee integrity of the geneset. The tests are:
  * 
  * <ul>
+ *   <li> org.ensembl.healthcheck.testcase.generic.AltAllele </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.AnalysisTypes </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.AnalysisXrefs </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.BigGeneExon </li>
@@ -68,6 +69,7 @@ public class Geneset extends GroupOfTests {
         public Geneset() {
 
                 addTest(
+                        org.ensembl.healthcheck.testcase.generic.AltAllele.class,
                         org.ensembl.healthcheck.testcase.generic.AnalysisTypes.class,
                         org.ensembl.healthcheck.testcase.generic.AnalysisXrefs.class,
                         org.ensembl.healthcheck.testcase.generic.BigGeneExon.class,
