@@ -787,7 +787,7 @@ public class ReportManager {
 
 		String hosts = buf.toString();
 
-    String outputDatabases = System.getProperty("test_groups") + " " + System.getProperty("test_databases");
+                String outputDatabases = System.getProperty("test_groups") + " " + System.getProperty("test_databases");
 
 		String outputRelease = System.getProperty("output.release");
 
@@ -840,20 +840,14 @@ public class ReportManager {
 
                 String hosts = buf.toString();
 
-                String outputDatabases = System.getProperty("test_groups") + " " + System.getProperty("test_databases");
-
-                String outputRelease = System.getProperty("output.release");
-
-                String sql = "SELECT session_id FROM session WHERE config=? AND db_release=? AND session_id=?";
+                String sql = "SELECT session_id FROM session WHERE session_id=?";
 
                 long newSessionID = -1;
 
                 try {
 
                         PreparedStatement stmt = outputDatabaseConnection.prepareStatement(sql);
-                        stmt.setString(1, outputDatabases);
-                        stmt.setString(2, outputRelease);
-                        stmt.setLong(3, sessionID);
+                        stmt.setLong(1, sessionID);
                         ResultSet rs = stmt.executeQuery();
                         if (rs != null) {
                                 if (rs.first()) {
@@ -876,7 +870,7 @@ public class ReportManager {
                         logger.severe("Could not reuse " + newSessionID);
                         logger.severe(sql);
                 }
-
+                logger.info("Reusing session ID "+sessionID);
                 setSessionID(sessionID);
         }
 
