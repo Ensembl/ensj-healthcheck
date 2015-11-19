@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
@@ -47,7 +48,7 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
 	 *          The database registry containing all the matched databases.
 	 * @return true if the test passed.
 	 */
-	public abstract boolean run(DatabaseRegistry dbr);
+	public abstract boolean run(DatabaseRegistry dbr) throws SQLException;
 
 	// ---------------------------------------------------------------------
 	/**
