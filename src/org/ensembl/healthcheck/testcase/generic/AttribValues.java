@@ -41,11 +41,6 @@ public class AttribValues extends SingleDatabaseTestCase {
    */
   public AttribValues() {
 
-    addToGroup("post_genebuild");
-    addToGroup("pre-compara-handover");
-    addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-
     setDescription("Check that some attributes have been added (currently, tsl, appris, gencode and refseq attributes)");
     setTeamResponsible(Team.GENEBUILD);
   }

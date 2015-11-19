@@ -55,11 +55,6 @@ public class Karyotype extends SingleDatabaseTestCase {
 	 */
 	public Karyotype() {
 
-		addToGroup("post_genebuild");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-                addToGroup("pre-compara-handover");
-		
 		setDescription("Check that karyotype and seq_region tables agree");
 		setTeamResponsible(Team.GENEBUILD);
 

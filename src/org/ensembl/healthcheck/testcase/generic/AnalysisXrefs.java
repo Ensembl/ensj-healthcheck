@@ -39,10 +39,6 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
 	 */
 	public AnalysisXrefs() {
 
-		addToGroup("core_xrefs");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
 		setDescription("Check that analyses (e.g. havana) and their associated xref types (e.g. OTTT) exist, and vice versa");
 		setPriority(Priority.AMBER);
 		setEffect("Will cause problems/miscoloring on web display.");

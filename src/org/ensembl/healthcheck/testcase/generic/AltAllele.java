@@ -50,7 +50,6 @@ public class AltAllele extends SingleDatabaseTestCase {
 	appliesToType(DatabaseType.CORE);
 	setDescription("Test to ensure AltAllele group members all map back to the same chromosome");
 
-	addToGroup("post_genebuild");
 	setTeamResponsible(Team.GENEBUILD);
 	
     }

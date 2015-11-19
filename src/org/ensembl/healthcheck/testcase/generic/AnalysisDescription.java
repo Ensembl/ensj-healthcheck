@@ -51,11 +51,6 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 	 */
 	public AnalysisDescription() {
 
-		addToGroup("post_genebuild");
-		addToGroup("post-compara-handover");
-                addToGroup("pre-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check that all of certain types of objects have analysis_descriptions; also check that displayable field is set.");
 		setTeamResponsible(Team.GENEBUILD);
 		setSecondTeamResponsible(Team.RELEASE_COORDINATOR);

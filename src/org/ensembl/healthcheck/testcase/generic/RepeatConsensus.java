@@ -36,11 +36,6 @@ public class RepeatConsensus extends SingleDatabaseTestCase {
 	 */
 	public RepeatConsensus() {
 
-		addToGroup("post_genebuild");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check there certain types in repeat_consensus.repeat_type.");
 		setTeamResponsible(Team.GENEBUILD);
 	}

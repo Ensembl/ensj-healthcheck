@@ -48,11 +48,6 @@ public class DisplayXref extends SingleDatabaseTestCase {
 	 */
 	public DisplayXref() {
 
-		addToGroup("post_genebuild");
-		addToGroup("core_xrefs");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check that display_xrefs are set OK");
 		setTeamResponsible(Team.CORE);
 		setSecondTeamResponsible(Team.GENEBUILD);

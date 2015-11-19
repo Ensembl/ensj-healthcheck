@@ -44,17 +44,11 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 	 */
 	public MultipleComponentAssemblyMapping() {
 
-		// addToGroup("post_genebuild");
-
 		setDescription("Check for cases where components map to multiple parts of the assembly but the chained mapper is *not* specified for that pair of coordinate systems in the meta table.");
 
 		setPriority(Priority.AMBER);
 		setEffect("Will cause problems with sequence retrieval for the affected region, and possibly website crashes.");
 		setFix("Specify the chained mapper (#) in the assembly.mapping entry for these two coordinate systems.");
-                addToGroup("production");
-                addToGroup("pre-compara-handover");
-                addToGroup("post-compara-handover");
-                addToGroup("post-projection");
 		setTeamResponsible(Team.GENEBUILD);
 	}
 

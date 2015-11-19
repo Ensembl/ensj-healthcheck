@@ -52,11 +52,6 @@ public class ProductionMeta extends SingleDatabaseTestCase {
 	 */
 	public ProductionMeta() {
 
-		addToGroup("production");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check that all the non-optional meta keys listed in the production database are present, and that all the meta keys are valid.");
 		setPriority(Priority.AMBER);
 		setEffect("Unknown/incorrect meta keys.");

@@ -39,11 +39,6 @@ import org.ensembl.healthcheck.util.StringListMapRowMapper;
 public class ProductionSpeciesAlias extends SingleDatabaseTestCase {
   
   public ProductionSpeciesAlias() {
-    addToGroup("production");
-    addToGroup("pre-compara-handover");
-    addToGroup("post-compara-handover");
-    addToGroup("post-projection");
-    
     setDescription("Check that all the species aliases in production are also in the core databases");
     setPriority(Priority.AMBER);
     setEffect("Missing aliases can not be searched for");

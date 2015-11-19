@@ -44,10 +44,6 @@ public class TranscriptsSameName extends SingleDatabaseTestCase {
 	 */
 	public TranscriptsSameName() {
 
-		addToGroup("post_genebuild");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription(" Check for genes with more than one transcript where all the transcripts have the same display_xref_id.");
 		setPriority(Priority.AMBER);
 		setEffect("Web display and all other uses of xrefs are broken");

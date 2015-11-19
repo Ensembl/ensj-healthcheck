@@ -42,10 +42,6 @@ public class MappingSession extends SingleDatabaseTestCase {
 	 */
 	public MappingSession() {
 
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-
 		setDescription("Checks the mapping session and stable ID tables.");
 		setTeamResponsible(Team.CORE);
 		setSecondTeamResponsible(Team.GENEBUILD);

@@ -40,8 +40,6 @@ public class ProjectedXrefs extends SingleDatabaseTestCase {
 	 */
 	public ProjectedXrefs() {
 
-		addToGroup("post-projection");
-		
 		setDescription("Check that all species that should have projected xrefs do in fact have them.");
 		setTeamResponsible(Team.CORE);
 

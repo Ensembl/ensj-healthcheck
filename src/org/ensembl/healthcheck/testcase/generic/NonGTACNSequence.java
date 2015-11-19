@@ -39,11 +39,6 @@ public class NonGTACNSequence extends SingleDatabaseTestCase {
 	 */
 	public NonGTACNSequence() {
 
-		addToGroup("core_xrefs");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-                addToGroup("pre-compara-handover");
-
 		setDescription("Check for sequence that does not match GTACN.");
 		setPriority(Priority.AMBER);
 		setEffect("May indicate the presence of ambiguity codes.");

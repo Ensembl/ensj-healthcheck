@@ -37,14 +37,6 @@ public class BlanksInsteadOfNulls extends SingleDatabaseTestCase {
 	 */
 	public BlanksInsteadOfNulls() {
 
-		addToGroup("post_genebuild");
-		addToGroup("funcgen-release");
-		addToGroup("funcgen");
-		addToGroup("compara-ancestral");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check for text columns that have the default NULL but which actually contain blanks ('') which is probably wrong");
 		setTeamResponsible(Team.GENEBUILD);
 

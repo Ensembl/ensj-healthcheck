@@ -49,12 +49,6 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 	 */
 	public CoreForeignKeys() {
 
-		addToGroup("post_genebuild");
-		addToGroup("compara-ancestral");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check for broken foreign-key relationships.");
 		setTeamResponsible(Team.CORE);
                 setSecondTeamResponsible(Team.GENEBUILD);

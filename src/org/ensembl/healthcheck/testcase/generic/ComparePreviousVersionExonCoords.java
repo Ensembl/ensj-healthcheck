@@ -59,10 +59,6 @@ public class ComparePreviousVersionExonCoords extends SingleDatabaseTestCase {
 	 */
 	public ComparePreviousVersionExonCoords() {
 
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Compare the transcript stable IDs and exon coordinates for each exon across releases to ensure that protein sequences are the same.");
 		setEffect("Causes problems for Compara if proteins are not identical");
 		setTeamResponsible(Team.CORE);

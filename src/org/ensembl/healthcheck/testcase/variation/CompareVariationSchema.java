@@ -59,11 +59,6 @@ public class CompareVariationSchema extends AbstractCompareSchema {
 	private Map<Species,Set<String>> r;
 	
 	@Override
-	protected void addGroups() {
-		addToGroup("variation-release");
-	}
-	
-	@Override
 	public void types() {
 		addAppliesToType(DatabaseType.VARIATION);
 	}

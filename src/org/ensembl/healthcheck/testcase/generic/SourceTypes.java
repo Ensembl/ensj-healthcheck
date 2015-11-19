@@ -45,10 +45,6 @@ public class SourceTypes extends SingleDatabaseTestCase {
 	 */
 	public SourceTypes() {
 
-		addToGroup("post_genebuild");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
 		setDescription("Check that all chromsosomes have at least some genes with certain sources.");
 		setPriority(Priority.AMBER);
 		setEffect("Some genes may have only Ensembl or Havana annotation.");

@@ -57,8 +57,6 @@ public class ComparePreviousVersionProjectedGeneNames extends SingleDatabaseTest
 	 */
 	public ComparePreviousVersionProjectedGeneNames() {
 
-                addToGroup("post-projection");
-		
 		setDescription("Compare gene names in the current database with those from the equivalent database on the secondary server.");
 		setTeamResponsible(Team.CORE);
 		setSecondTeamResponsible(Team.RELEASE_COORDINATOR);

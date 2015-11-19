@@ -44,11 +44,6 @@ public class Ditag extends SingleDatabaseTestCase {
 	 */
 	public Ditag() {
 
-		addToGroup("post_genebuild");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Checks that ditag_features exist, that they all have a ditag entry and that all chromosomes have some ditag_features");
 		setTeamResponsible(Team.GENEBUILD);
 

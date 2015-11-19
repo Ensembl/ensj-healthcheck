@@ -36,11 +36,6 @@ public class GeneDescriptions extends SingleDatabaseTestCase {
 	 */
 	public GeneDescriptions() {
 
-		addToGroup("post_genebuild");
-		addToGroup("core_xrefs");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-
 		setDescription("Check gene descriptions; correct capitalisation of UniprotKB/SwissProt");
 		setPriority(Priority.AMBER);
 		setEffect("Capitalisation of Uniprot will be wrong in gene descriptions.");

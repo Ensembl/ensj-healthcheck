@@ -49,10 +49,6 @@ public class XrefLevels extends MultiDatabaseTestCase {
 	 */
 	public XrefLevels() {
 
-		addToGroup("core_xrefs");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check that all xrefs from a certain source (e.g. HGNC, EntrezGene) are consistently assigned to the same Ensembl object type across all species");
 		setPriority(Priority.AMBER);
 		setEffect("Causes BioMart to require specific workarounds for each case.");

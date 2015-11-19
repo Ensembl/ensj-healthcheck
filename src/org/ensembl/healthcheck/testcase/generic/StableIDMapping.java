@@ -49,11 +49,6 @@ public class StableIDMapping extends SingleDatabaseTestCase {
 	 */
 	public StableIDMapping() {
 
-		addToGroup("post_genebuild");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-		addToGroup("post-projection");
-
 		setDescription("Checks stable_id mapping data is valid.");
 		setPriority(Priority.RED);
 		setEffect("Compara will have invalid stable IDs.");
