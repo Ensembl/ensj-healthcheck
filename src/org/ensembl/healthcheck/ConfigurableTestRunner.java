@@ -73,8 +73,8 @@ public class ConfigurableTestRunner extends TestRunner {
 			+ "join species using (species_id) join division_species using (species_id) "
 			+ "join division using (division_id) where db.is_current=1 and species.is_current=1 and (division.name=? or division.shortname=?)";
 
-	static final Logger log = Logger.getLogger(ConfigurableTestRunner.class
-			.getCanonicalName());
+    //	static final Logger log = Logger.getLogger(ConfigurableTestRunner.class
+    //			.getCanonicalName());
 
 	/**
 	 * Name of a properties file from which parameters can be taken, if they
@@ -113,7 +113,7 @@ public class ConfigurableTestRunner extends TestRunner {
 	 */
 	public ConfigurableTestRunner(ConfigurationUserParameters configuration) {
 
-		log.config("Using classpath: \n\n" + Debug.classpathToString());
+		logger.config("Using classpath: \n\n" + Debug.classpathToString());
 
 		this.configuration = configuration;
 		this.systemPropertySetter = new SystemPropertySetter(configuration);
@@ -202,7 +202,7 @@ public class ConfigurableTestRunner extends TestRunner {
 		//
 				(ConfigureTestGroups) configuration);
 
-		log.config("Using test registry of type: " + testRegistryType);
+		logger.config("Using test registry of type: " + testRegistryType);
 
 		TestRegistry testRegistry = null;
 
@@ -213,7 +213,7 @@ public class ConfigurableTestRunner extends TestRunner {
 			throw new ConfigurationException(e);
 		}
 
-		log.config("Using testregistry with this configuration:\n"
+		logger.config("Using testregistry with this configuration:\n"
 				+ testRegistry.toString());
 
 		return testRegistry;
@@ -230,7 +230,7 @@ public class ConfigurableTestRunner extends TestRunner {
 
 		Reporter reporter = new ReporterFactory().getTestReporter(reporterType);
 
-		log.config("Using reporter of type: " + reporterType);
+		logger.config("Using reporter of type: " + reporterType);
 
 		return reporter;
 	}
@@ -298,14 +298,14 @@ public class ConfigurableTestRunner extends TestRunner {
 			msg.append("  - " + propertyFileName.getName() + "\n");
 		}
 
-		log.config(msg.toString());
+		logger.config(msg.toString());
 
 		// Finally create the configuration object.
 		ConfigurationUserParameters configuration = confFact
 				.getConfiguration(ConfigurationType.Cascading);
 
 		// Show user the final configuration settings that will be used.
-		log.config("The following settings will be used:\n\n"
+		logger.config("The following settings will be used:\n\n"
 				+ new ConfigurationDumper<ConfigurationUserParameters>()
 						.dump(configuration));
 
@@ -356,17 +356,17 @@ public class ConfigurableTestRunner extends TestRunner {
 		DatabaseServer ds = connectToDatabase(configuration);
 
                 if (this.reporterType == ReporterType.DATABASE && configuration.isEndSession()) {
-                        log.info("Finishing reporter session");
+                        logger.info("Finishing reporter session");
                         systemPropertySetter.setPropertiesForReportManager_connectToOutputDatabase();
                         ReportManager.connectToOutputDatabase();
                         ReportManager.setSessionID(Long.valueOf(configuration.getEndSession()));
                         ReportManager.endDatabaseSession();
-                        log.info("Finished reporter session");
+                        logger.info("Finished reporter session");
                         return;
                 }
 
 		List<String> testDatabases = new ArrayList<String>(getTestDatabases());
-		
+		System.out.println("Test databases "+testDatabases);
 		Species globalSpecies = null;
 
 		if (configuration.isSpecies()) {
@@ -403,6 +403,7 @@ public class ConfigurableTestRunner extends TestRunner {
 
 		if (databasesToTestRegistry.getAll().length == 0) {
 			logger.warning("Warning: no databases configured!");
+                        throw new RuntimeException("No databases configured");
 		}
 		
 		if (this.reporterType == ReporterType.DATABASE) {
@@ -454,7 +455,7 @@ public class ConfigurableTestRunner extends TestRunner {
 		
 		systemPropertySetter.setPropertiesForHealthchecks();
 
-		log.info("Running tests\n\n");
+		logger.info("Running tests\n\n");
 		List<Class<? extends EnsTestCase>> testsThrowingAnException     = new ArrayList<Class<? extends EnsTestCase>>();
 		List<Class<? extends EnsTestCase>> testsSkippedLongRunning      = new ArrayList<Class<? extends EnsTestCase>>();
 		List<Class<? extends EnsTestCase>> testsSkippedForUnknownReason = new ArrayList<Class<? extends EnsTestCase>>();
@@ -511,8 +512,8 @@ public class ConfigurableTestRunner extends TestRunner {
 			testsSkippedForUnknownReason.removeAll(testsApplyingToNoDb);			
 
 		} catch (Throwable e) {
-			log.severe("Execution of tests failed: " + e.getMessage());
-			log.log(Level.FINE, "Execution of tests failed: " + e.getMessage(),
+			logger.severe("Execution of tests failed: " + e.getMessage());
+			logger.log(Level.FINE, "Execution of tests failed: " + e.getMessage(),
 					e);
 		}
 
@@ -535,18 +536,18 @@ public class ConfigurableTestRunner extends TestRunner {
 		}
 
 		
-		log.info("Done running tests\n\n");
+		logger.info("Done running tests\n\n");
 		
 		boolean printFailureText = true;
 
 		if (this.reporterType == ReporterType.DATABASE) {
                         if (!configuration.isSessionID()) {
-			        log.info("Finishing reporter session");
+			        logger.info("Finishing reporter session");
 			        ReportManager.endDatabaseSession();
-			        log.info("Finished reporter session");
+			        logger.info("Finished reporter session");
                         }
 		} else {
-                        log.info("Printing output by test");
+                        logger.info("Printing output by test");
                         printReportsByTest(outputLevel, printFailureText);
                 }
 	}
@@ -642,6 +643,8 @@ public class ConfigurableTestRunner extends TestRunner {
 	protected TestRunStats runAllTestsWithAccounting(DatabaseRegistry databaseRegistry,
 			TestRegistry testRegistry, boolean skipSlow) {
 
+                    logger.info("Running all tests with accounting");
+
 		int numberOfTestsRun = 0;
 		
 		HashSet<Class<? extends EnsTestCase>> testsRun = new HashSet<Class<? extends EnsTestCase>>();
@@ -659,7 +662,7 @@ public class ConfigurableTestRunner extends TestRunner {
 
 		// run the appropriate tests on each of them
 		for (DatabaseRegistryEntry database : databaseRegistry.getAll()) {
-
+                    logger.info("Processing database "+database.getName());
 			for (SingleDatabaseTestCase testCase : testRegistry.getAllSingle(
 					groupsToRun, database.getType())) {
 
@@ -667,6 +670,7 @@ public class ConfigurableTestRunner extends TestRunner {
 						|| (testCase.isLongRunning() && !skipSlow)) {
 
 					try {
+                                            logger.info("Executing "+testCase.getTestName()+" on "+database.getName());
 						ReportManager.startTestCase(testCase, database);
 
 						testCase.types();
@@ -681,6 +685,7 @@ public class ConfigurableTestRunner extends TestRunner {
 
 						checkRepair(testCase, database);
 						numberOfTestsRun++;
+                                            logger.info("Completed executing "+testCase.getTestName()+" on "+database.getName());
 
 					} catch (Throwable e) {
 						
