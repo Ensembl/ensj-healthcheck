@@ -1,4 +1,4 @@
-#!/bin/bash -xl
+#!/bin/bash -l
 # Script for healthcheck execution with locking
 
 function msg {
@@ -30,7 +30,7 @@ msg "Running hived checks for $div as process $$ on $(hostname)"
 export PERL5LIB=./perl:$PERL5LIB
 cd $(dirname $0)
 if [ -z "$JAVA_OPTS" ]; then
-    JAVA_OPTS=-Xmx16g
+    JAVA_OPTS=-Xmx15g
 fi
 export JAVA_OPTS
 
@@ -84,7 +84,8 @@ failN=$($hive --column-names=false ${USER}_${pipeline_db} -e "select count(*) fr
 
 if [ "$failN" != "0" ]; then
     echo "$failN failures found for $url" 1>&2 
-    die
+    echo "$failN failed hive jobs found when running healthchecks for division $div - please check the hive $url for details" | mail -s Failure dstaines@ebi.ac.uk
+    exit 2
 fi
 
 # Populate log table and remove lock.
