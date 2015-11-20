@@ -29,7 +29,7 @@ sub resource_classes {
     my ($self) = @_;
     return { 'default' => { 'LSF' => '-q production-rh6' },
               'himem' =>
-              { 'LSF' => '-q production-rh6 -M  16000 -R "rusage[mem=16000]"' }
+              { 'LSF' => '-q production-rh6 -M 16384 -R "rusage[mem=16384]"' }
     };
 }
 
@@ -87,7 +87,7 @@ sub pipeline_analyses {
                 'division'    => $self->o('division')                        
             },
             -analysis_capacity => 10,
-                    resource_name => 'default'
+                    rc_name => 'himem'
         },
         {
             -logic_name => 'finish_session',
