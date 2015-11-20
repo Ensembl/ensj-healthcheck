@@ -1,8 +1,13 @@
-#!/bin/sh --
+#!/bin/sh -x
 
 div=$1
 db=$2
 sid=$3
+
+if [ -z "$JAVA_OPTS" ]; then
+    JAVA_OPTS=-Xmx15g
+fi
+export JAVA_OPTS
 
 report_dir=$(dirname $0)/hc_reports/$div/$sid
 mkdir -p $report_dir
