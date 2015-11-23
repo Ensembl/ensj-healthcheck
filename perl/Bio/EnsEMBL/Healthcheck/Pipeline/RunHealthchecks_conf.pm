@@ -87,7 +87,7 @@ sub pipeline_analyses {
                 'division'    => $self->o('division')                        
             },
             -analysis_capacity => 10,
-                    rc_name => 'himem'
+                    -rc_name => 'himem'
         },
         {
             -logic_name => 'finish_session',
