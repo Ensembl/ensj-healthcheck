@@ -39,12 +39,6 @@ public class SeqRegionName extends SingleDatabaseTestCase {
 	 */
 	public SeqRegionName() {
 
-		addToGroup("post_genebuild");
-		addToGroup("compara-ancestral");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check that seq_region names for human and mouse are in the right format.");
 		setTeamResponsible(Team.GENEBUILD);
 	}

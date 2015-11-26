@@ -47,10 +47,6 @@ public class AncestralSequencesExtraChecks extends SingleDatabaseTestCase {
 	 */
 	public AncestralSequencesExtraChecks() {
 
-		addToGroup("compara-ancestral");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
 		setTeamResponsible(Team.COMPARA);
 		setDescription("Additional checks for the ancestral sequences database (from compara).");
 

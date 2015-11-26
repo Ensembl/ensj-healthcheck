@@ -38,15 +38,7 @@ public class SingleDBCollations extends SingleDatabaseTestCase {
 	 * Create a new SingleDBCollations testcase.
 	 */
 	public SingleDBCollations() {
-		groupAdditions();
 		setResponsibilities();
-	}
-	
-	protected void groupAdditions() {
-		addToGroup("post_genebuild");
-		addToGroup("compara-ancestral");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
 	}
 	
 	protected void setResponsibilities() {

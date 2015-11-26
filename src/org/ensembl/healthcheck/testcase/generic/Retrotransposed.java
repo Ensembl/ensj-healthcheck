@@ -35,11 +35,6 @@ public class Retrotransposed extends SingleDatabaseTestCase {
 	 */
 	public Retrotransposed() {
 
-		addToGroup("post_genebuild");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check for any retrotransposed transcripts that have translations (shouldn't be any).");
 		setTeamResponsible(Team.GENEBUILD);
 	}

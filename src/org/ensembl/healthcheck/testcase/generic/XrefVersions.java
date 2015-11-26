@@ -35,11 +35,6 @@ public class XrefVersions extends SingleDatabaseTestCase {
 	 */
 	public XrefVersions() {
 
-		addToGroup("post_genebuild");
-		addToGroup("core_xrefs");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check for blank or null versions in the xref table.");
 		setTeamResponsible(Team.CORE);
 		setSecondTeamResponsible(Team.GENEBUILD);

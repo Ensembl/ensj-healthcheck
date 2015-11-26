@@ -49,11 +49,6 @@ public class Pseudogene extends SingleDatabaseTestCase {
 	 */
 	public Pseudogene() {
 		
-		addToGroup("post_genebuild");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check that there are no translations for pseudogenes");
 		setTeamResponsible(Team.GENEBUILD);
 	}

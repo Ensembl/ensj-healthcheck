@@ -36,11 +36,6 @@ public class XrefPrefixes extends SingleDatabaseTestCase {
 	 */
 	public XrefPrefixes() {
 
-		addToGroup("post_genebuild");
-		addToGroup("core_xrefs");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check that all xrefs of particular types have the correct prefix for dbprimary_acc and/or display_label.");
 		setPriority(Priority.AMBER);
 		setEffect("Web display of xrefs will be broken");

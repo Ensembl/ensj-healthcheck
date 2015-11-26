@@ -52,9 +52,6 @@ public class ExonSupportingFeatures extends SingleDatabaseTestCase {
          */
         public ExonSupportingFeatures() {
 
-                addToGroup("post_genebuild");
-                addToGroup("pre-compara-handover");
-                
                 setDescription("Check that exons overlap with their protein supporting features.");
                 setPriority(Priority.AMBER);
                 setTeamResponsible(Team.GENEBUILD);

@@ -45,12 +45,6 @@ import org.ensembl.healthcheck.testcase.generic.AbstractCompareSchema;
 public class CompareFuncgenSchema extends AbstractCompareSchema {
 
 	@Override
-	protected void addGroups() {
-		addToGroup("funcgen");
-		addToGroup("funcgen-release");
-	}
-	
-	@Override
 	public void types() {
 
 	}

@@ -35,10 +35,6 @@ public class CoordSystemAcrossSpecies extends MultiDatabaseTestCase {
 	 */
 	public CoordSystemAcrossSpecies() {
 
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check that the coord_system table is the same across all generic DBs; if not it will cause problems on the website.");
 		setTeamResponsible(Team.GENEBUILD);
 

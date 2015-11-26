@@ -100,7 +100,6 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 	    MAX_CACHE_SIZE);
 
 	public AbstractCompareSchema() {
-		addGroups();
 		addDescription();
 		addResponsible();
 		addTestTypes();
@@ -114,11 +113,6 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 				"genebuild handover because pipelines are still running. The " +
 				"genebuilders are responsible for deleting these before the release.");
 	}
-
-	/**
-	 * Override to set the groups your test will apply to
-	 */
-	protected abstract void addGroups();
 
 	/**
 	 * Override to set the test's responsible teams

@@ -50,13 +50,6 @@ import java.util.Set;
 public class CompareSchema extends AbstractCompareSchema {
 	
 	@Override
-	protected void addGroups() {
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");		
-                addToGroup("post-projection");
-	}
-
-	@Override
 	protected void addResponsible() {
 		setTeamResponsible(Team.GENEBUILD);
                 setSecondTeamResponsible(Team.RELEASE_COORDINATOR);

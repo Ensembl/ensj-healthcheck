@@ -62,12 +62,6 @@ public class MetaValues extends SingleDatabaseTestCase {
 	
 	public MetaValues() {
 
-		addToGroup("post_genebuild");
-		addToGroup("compara-ancestral");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setTeamResponsible(Team.GENEBUILD);
                 setSecondTeamResponsible(Team.RELEASE_COORDINATOR);
 		setDescription("Check that meta_value contents in the meta table are OK");

@@ -37,11 +37,6 @@ public class TranslationStartEnd extends SingleDatabaseTestCase {
 	 */
 	public TranslationStartEnd() {
 		
-		addToGroup("post_genebuild");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check that if the start and end of translation is on the same exon, that start < end. Also check that translation ends aren't beyond exon ends.");
 		setTeamResponsible(Team.GENEBUILD);
 	}
