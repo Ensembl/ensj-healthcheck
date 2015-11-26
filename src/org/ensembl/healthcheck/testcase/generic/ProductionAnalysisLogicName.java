@@ -34,6 +34,10 @@ import org.ensembl.healthcheck.util.SqlTemplate;
 public class ProductionAnalysisLogicName extends AbstractTemplatedTestCase {
   
   public ProductionAnalysisLogicName() {
+    addToGroup("production");
+    addToGroup("pre-compara-handover");
+    addToGroup("post-compara-handover");
+    addToGroup("post-projection");
     
     setDescription("Check that the content of the analysis logic names in the core databases are subsets of production");
     setPriority(Priority.AMBER);
@@ -104,7 +108,7 @@ public class ProductionAnalysisLogicName extends AbstractTemplatedTestCase {
   
   private Set<String> getLogicNamesDb(DatabaseRegistryEntry dbre) {
     SqlTemplate t = DBUtils.getSqlTemplate(dbre);
-    String sql = "select logic_name from analysis";
+    String sql = "select logic_name from analysis join analysis_description using (analysis_id)";
     List<String> results = t.queryForDefaultObjectList(sql, String.class);
     return new HashSet<String>(results);
   }
