@@ -44,11 +44,6 @@ public class Ditag extends SingleDatabaseTestCase {
 	 */
 	public Ditag() {
 
-		addToGroup("post_genebuild");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Checks that ditag_features exist, that they all have a ditag entry and that all chromosomes have some ditag_features");
 		setTeamResponsible(Team.GENEBUILD);
 
@@ -87,6 +82,12 @@ public class Ditag extends SingleDatabaseTestCase {
 
 			result &= checkExistance(con);
 
+			// If there are no ditag records, don't make a lot of noise
+			// saying they're missing for each chromosome
+			if(!result) {
+			    return false;
+			}
+
 			result &= checkDitagRelation(con);
 
 			result &= checkAllChromosomesHaveDitagFeatures(con);
@@ -114,7 +115,9 @@ public class Ditag extends SingleDatabaseTestCase {
 
 		if (rowCount1 == 0) {
 			ReportManager.problem(this, con, "No ditags in databaset");
-			result = false;
+			// If there are no ditags in the dataset, we don't care if
+			// there are features, that's irrelevant, skip
+			return false;
 		}
 
 		int rowCount2 = DBUtils.getRowCount(con, "SELECT * FROM ditag_feature LIMIT 10");

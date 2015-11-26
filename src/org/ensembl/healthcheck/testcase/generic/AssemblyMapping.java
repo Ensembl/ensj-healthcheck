@@ -53,10 +53,6 @@ public class AssemblyMapping extends AbstractTemplatedTestCase {
 		super();
 		this.appliesToType(DatabaseType.CORE);
 		this.setDescription("Test to make sure that the coord_systems and versions referred to in assembly.mapping exist");
-                addToGroup("production");
-                addToGroup("pre-compara-handover");
-                addToGroup("post-compara-handover");
-                addToGroup("post-projection");
                 setTeamResponsible(Team.GENEBUILD);
 	}
 

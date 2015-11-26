@@ -46,8 +46,6 @@ public class ComparePreviousVersionGOXrefs extends ComparePreviousVersionBase {
 	 */
 	public ComparePreviousVersionGOXrefs() {
 
-		addToGroup("post-projection");
-		
 		setDescription("Compare the GO xrefs in the current database with those from the equivalent database on the secondary server");
 		setTeamResponsible(Team.CORE);
 		setSecondTeamResponsible(Team.GENEBUILD);

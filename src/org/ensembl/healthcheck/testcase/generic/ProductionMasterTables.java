@@ -48,11 +48,6 @@ public class ProductionMasterTables extends SingleDatabaseTestCase {
 	 */
 	public ProductionMasterTables() {
 
-		addToGroup("production");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check that the content of the master_* tables in the production databases matches the equivalent table in this database");
 		setPriority(Priority.AMBER);
 		setEffect("Discrepancies between tables can cause problems.");

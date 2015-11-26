@@ -45,8 +45,6 @@ public class ComparePreviousVersionProjectedSynonyms extends ComparePreviousVers
 	 */
 	public ComparePreviousVersionProjectedSynonyms() {
 
-		addToGroup("post-projection");
-		
 		setDescription("Compare the xref synonyms in the current database with those from the equivalent database on the secondary server");
 		setTeamResponsible(Team.CORE);
 		setSecondTeamResponsible(Team.RELEASE_COORDINATOR);

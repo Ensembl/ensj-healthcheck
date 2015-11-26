@@ -36,11 +36,6 @@ public class HitNameFormat extends SingleDatabaseTestCase {
 	 */
 	public HitNameFormat() {
 
-		addToGroup("post_genebuild");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-                addToGroup("pre-compara-handover");
-
 		setDescription("Check that there are no incorrectly formatted hit_names");
 		setPriority(Priority.AMBER);
 		setFix("Manually fix affected values.");

@@ -45,9 +45,6 @@ public class AssemblyNameLength extends SingleDatabaseTestCase {
 	
 	public AssemblyNameLength() {
 
-		addToGroup("pre-compara-handover");	
-                addToGroup("post-compara-handover");
-                addToGroup("post-projection");
 		setTeamResponsible(Team.GENEBUILD);
 		setDescription("Check that meta_value for key assembly.name is not longer than 16 characters");
 	}

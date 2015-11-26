@@ -53,10 +53,6 @@ public class HGNCNumeric extends SingleDatabaseTestCase {
 	 */
 	public HGNCNumeric() {
 
-		addToGroup("core_xrefs");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-
 		setDescription("Check that no HGNC xrefs have dbprimary_acc=display_label");
 		setPriority(Priority.AMBER);
 		setFix("Remove HGNC xrefs and object_xrefs where dbprimary_acc=display_label. Set display_xref_ids of genes that were pointing to these to null.");

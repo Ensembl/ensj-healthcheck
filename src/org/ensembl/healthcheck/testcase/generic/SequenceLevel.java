@@ -41,11 +41,6 @@ public class SequenceLevel extends SingleDatabaseTestCase {
 	 */
 	public SequenceLevel() {
 
-		addToGroup("post_genebuild");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check for DNA that is not stored on the sequence-level coordinate system.");
 		setTeamResponsible(Team.GENEBUILD);
 	}

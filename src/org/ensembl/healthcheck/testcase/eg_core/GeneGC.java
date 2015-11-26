@@ -43,6 +43,7 @@ public class GeneGC extends AbstractEgCoreTestCase {
 
 	public GeneGC() {
 		super();
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
 	}
 
 	private static final String ATTRIB_TYPE_QUERY = "SELECT attrib_type_id FROM attrib_type WHERE code='GeneGC'";

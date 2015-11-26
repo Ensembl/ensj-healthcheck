@@ -49,11 +49,6 @@ public class ComparePreviousVersionRegionSynonyms extends ComparePreviousVersion
 	 */
 	public ComparePreviousVersionRegionSynonyms() {
 
-		addToGroup("post_genebuild");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-
 		setDescription("Compare the seq_region synonyms in the current database with those from the equivalent database on the secondary server");
 		setPriority(Priority.AMBER);
 		setEffect("Indicates that the synonyms have changed; should not happen unless the assembly has changed");

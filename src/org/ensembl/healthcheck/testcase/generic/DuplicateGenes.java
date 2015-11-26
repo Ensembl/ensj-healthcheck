@@ -41,11 +41,6 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 	 */
 	public DuplicateGenes() {
 
-		addToGroup("post_genebuild");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setTeamResponsible(Team.GENEBUILD);
 
 	}

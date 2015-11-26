@@ -57,12 +57,6 @@ public class Meta extends SingleDatabaseTestCase {
 	 */
 	public Meta() {
 
-		addToGroup("post_genebuild");
-		addToGroup("compara-ancestral");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-
 		setTeamResponsible(Team.GENEBUILD);
 		setDescription("Check that the meta table exists and has data and the entries correspond to the database name");
 	}

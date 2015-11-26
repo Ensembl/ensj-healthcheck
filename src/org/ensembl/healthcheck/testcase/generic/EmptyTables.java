@@ -71,12 +71,6 @@ public class EmptyTables extends SingleDatabaseTestCase {
      */
     public EmptyTables() {
 
-	addToGroup("post_genebuild");
-	addToGroup("compara-ancestral");
-	addToGroup("pre-compara-handover");
-	addToGroup("post-compara-handover");
-        addToGroup("post-projection");
-
 	setDescription("Checks that all tables have data");
 
 	setTeamResponsible(Team.GENEBUILD);

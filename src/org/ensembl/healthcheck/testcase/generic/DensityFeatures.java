@@ -55,9 +55,6 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 	@SuppressWarnings("unchecked")
   public DensityFeatures() {
 
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-	
 		setDescription("Check that all top-level seq regions have some gene density features, and that the values agree between the density_feature and seq_region attrib tables.");
 		setFailureText("If the genome has been assembled using short-read sequences, some seq_regions might not have density_features");
 

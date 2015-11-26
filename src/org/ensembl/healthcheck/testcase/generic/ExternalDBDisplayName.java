@@ -48,9 +48,6 @@ public class ExternalDBDisplayName extends SingleDatabaseTestCase {
 	 */
 	public ExternalDBDisplayName() {
 
-		addToGroup("funcgen");
-		addToGroup("funcgen-release");
-		
 		setDescription("Check that there are no blank db_display_name fields in external_db");
 		setTeamResponsible(Team.GENEBUILD);
 	}

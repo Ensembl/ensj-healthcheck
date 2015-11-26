@@ -36,10 +36,6 @@ public class DescriptionNewlines extends SingleDatabaseTestCase {
 	 */
 	public DescriptionNewlines() {
 
-		addToGroup("post_genebuild");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check for newlines and tabs in gene descriptions.");
 
 		setPriority(Priority.AMBER);

@@ -49,12 +49,6 @@ public class ComparePreviousVersionCCDS extends ComparePreviousVersionBase {
 	 */
 	public ComparePreviousVersionCCDS() {
 
-		addToGroup("post_genebuild");
-		addToGroup("core_xrefs");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-
 		setDescription("Compare the CCDS in the current database with those from the equivalent database on the secondary server");
 		setPriority(Priority.AMBER);
 		setEffect("Indicates that the CCDS object xrefs have changed between releases; may be due to a problem, or be expected, in which case the result should be annotated appropritately");

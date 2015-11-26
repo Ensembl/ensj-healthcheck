@@ -62,11 +62,6 @@ public class UTR extends SingleDatabaseTestCase {
 
         public UTR() {
 
-                addToGroup("post_genebuild");
-                addToGroup("pre-compara-handover");
-                addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-
                 setTeamResponsible(Team.GENEBUILD);
                 setDescription("Check that coding transcripts have UTR attached");
         }

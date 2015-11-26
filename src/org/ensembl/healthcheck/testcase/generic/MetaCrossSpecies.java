@@ -35,11 +35,6 @@ public class MetaCrossSpecies extends MultiDatabaseTestCase {
 	 * Create a new instance of MetaCrossSpecies
 	 */
 	public MetaCrossSpecies() {
-		addToGroup("post_genebuild");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check meta table species, classification and taxonomy_id is the same in all DBs for each species");
 		setTeamResponsible(Team.GENEBUILD);
 	}

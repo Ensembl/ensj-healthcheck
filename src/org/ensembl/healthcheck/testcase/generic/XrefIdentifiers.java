@@ -51,11 +51,6 @@ public class XrefIdentifiers extends SingleDatabaseTestCase {
 	 */
 	public XrefIdentifiers() {
 
-		addToGroup("post_genebuild");
-		addToGroup("core_xrefs");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check that not all xrefs have the same identifier.");
 		setPriority(Priority.AMBER);
 		setEffect("Web display and all other uses of xrefs are broken");

@@ -38,12 +38,6 @@ public class SpeciesID extends SingleDatabaseTestCase {
 	 */
 	public SpeciesID() {
 
-		addToGroup("funcgen-release");
-		addToGroup("compara-ancestral");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check that the species_id column in the meta table is set consistently.");
 		setPriority(Priority.AMBER);
 		setEffect("Could cause problems in multi-species databases");

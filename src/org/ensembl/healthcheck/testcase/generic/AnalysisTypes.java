@@ -44,10 +44,6 @@ public class AnalysisTypes extends SingleDatabaseTestCase {
 	 */
 	public AnalysisTypes() {
 
-		addToGroup("post_genebuild");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
 		setDescription("Check that all chromsosomes have at least some genes with certain analyses.");
 		setPriority(Priority.AMBER);
 		setEffect("Some genes may have only Ensembl or Havana annotation.");

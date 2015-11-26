@@ -36,9 +36,6 @@ public class MySQLStorageEngine extends AbstractTemplatedTestCase {
 
 	public MySQLStorageEngine() {
 
-                addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
                 setTeamResponsible(Team.RELEASE_COORDINATOR);
 	}
 

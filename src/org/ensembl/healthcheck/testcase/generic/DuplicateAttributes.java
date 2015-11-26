@@ -40,11 +40,6 @@ public class DuplicateAttributes extends SingleDatabaseTestCase {
 	 */
 	public DuplicateAttributes() {
 
-		addToGroup("post_genebuild");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check for duplicated rows in various *_attrib tables.");
 		setPriority(Priority.AMBER);
 		setEffect("Many duplicates can cause serious performance problems.");

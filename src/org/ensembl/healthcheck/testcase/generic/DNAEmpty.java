@@ -36,11 +36,6 @@ public class DNAEmpty extends SingleDatabaseTestCase {
 	 * Check the assembly_exception table.
 	 */
 	public DNAEmpty() {
-		addToGroup("post_genebuild");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check that dna table is empty");
 		setTeamResponsible(Team.GENEBUILD);
 	}

@@ -36,10 +36,6 @@ public class UnreviewedXrefs extends SingleDatabaseTestCase {
 	 */
 	public UnreviewedXrefs() {
 
-		addToGroup("core_xrefs");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check for Uniprot xrefs that have 'Unreviewed' as the primary DB accession.");
 		setPriority(Priority.AMBER);
 		setEffect("Affected xrefs will have broken hyperlinks, also problems for downstream pipelines.");

@@ -63,12 +63,6 @@ public class CheckDeclarations extends SingleDatabaseTestCase {
 
         public CheckDeclarations() {
 
-                addToGroup("post_genebuild");
-                addToGroup("compara-ancestral");
-                addToGroup("pre-compara-handover");
-                addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-
                 setTeamResponsible(Team.GENEBUILD);
                 setSecondTeamResponsible(Team.RELEASE_COORDINATOR);
                 setDescription("Check that all changes have been correctly declared");
