@@ -42,6 +42,8 @@ public class ExonStrandOrder extends SingleDatabaseTestCase {
 	 */
 	public ExonStrandOrder() {
 
+		addToGroup("post_genebuild");
+		
 		setHintLongRunning(true);
 		setTeamResponsible(Team.GENEBUILD);
 
@@ -79,7 +81,7 @@ public class ExonStrandOrder extends SingleDatabaseTestCase {
         + "AND    tr.transcript_id NOT IN "
         + "  (SELECT transcript_id FROM transcript_attrib INNER JOIN attrib_type USING (attrib_type_id) WHERE code='trans_spliced')"
         + "ORDER BY et.transcript_id, et.rank";
-
+System.out.println(sql);
 		Connection con = dbre.getConnection();
 		Statement st = null;
 		ResultSet rs = null;
@@ -142,12 +144,12 @@ public class ExonStrandOrder extends SingleDatabaseTestCase {
 						// check that exon start/ends make sense
 						if (exonStrand == 1) {
 							if (lastExonEnd > exonStart) {
-								ReportManager.problem(this, con, "Exons " + lastExonID + " and " + exonID + " in transcript " + transcriptID + " appear to overlap (positive strand)");
+								ReportManager.problem(this, con, "Exons " + lastExonID + " (end "+lastExonEnd+") and " + exonID + " (start "+exonStart+") in transcript " + transcriptID + " appear to overlap (positive strand)");
 								result = false;
 							}
 						} else if (exonStrand == -1) {
 							if (lastExonStart < exonEnd) {
-								ReportManager.problem(this, con, "Exons " + lastExonID + " and " + exonID + " in transcript " + transcriptID + " appear to overlap (negative strand)");
+								ReportManager.problem(this, con, "Exons " + lastExonID + " (start "+lastExonStart+") and " + exonID + " (end "+exonEnd+") in transcript " + transcriptID + " appear to overlap (negative strand)");
 								result = false;
 							}
 						}
