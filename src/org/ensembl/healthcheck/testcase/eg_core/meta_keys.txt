@@ -52,6 +52,11 @@ sample.transcript_param
 sample.transcript_text
 sample.variation_param
 sample.variation_text
+sample.vep_ensembl
+sample.vep_hgvs
+sample.vep_id
+sample.vep_pileup
+sample.vep_vcf
 schema.copy_src
 schema.load_complete
 schema.load_started
