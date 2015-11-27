@@ -26,11 +26,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.util.CollectionUtils;
 import org.ensembl.healthcheck.util.MapRowMapper;
 import org.ensembl.healthcheck.util.SqlTemplate;
@@ -44,7 +42,7 @@ import org.ensembl.healthcheck.util.TestCaseUtils;
  */
 public abstract class AbstractEgMeta extends AbstractEgCoreTestCase {
 
-	protected final static String META_QUERY = "select meta_key,meta_value from meta where species_id=?";
+	protected final static String META_QUERY = "select distinct meta_key from meta where species_id=?";
 
 	protected final static String SPECIES_ID_QUERY = "select distinct(species_id) from meta where species_id>0 order by species_id";
 
@@ -75,7 +73,7 @@ public abstract class AbstractEgMeta extends AbstractEgCoreTestCase {
 
 	};
 
-	protected final List<String> metaKeys;
+	private final List<String> metaKeys;
 	
 	public AbstractEgMeta() {
 	  this(TestCaseUtils.resourceToStringList("/org/ensembl/healthcheck/testcase/eg_core/meta_keys.txt"));
@@ -91,36 +89,17 @@ public abstract class AbstractEgMeta extends AbstractEgCoreTestCase {
 		SqlTemplate template = getTemplate(dbre);
 		for (int speciesId : template.queryForDefaultObjectList(
 				SPECIES_ID_QUERY, Integer.class)) {
-			Map<String, Boolean> metaKeyOut = getKeys(template, speciesId);
-			passes &= testKeys(dbre, speciesId, metaKeyOut);
+			passes &= testKeys(dbre, speciesId, getKeys(template, speciesId), metaKeys);
 		}
 		return passes;
 	}
 
-	protected Map<String, Boolean> getKeys(SqlTemplate template, int speciesId) {
-		Map<String, Boolean> metaKeyOut = CollectionUtils.createHashMap();
-		for (Entry<String, List<String>> meta : template.queryForMap(
-				META_QUERY, mapper, speciesId).entrySet()) {
-			if (!meta.getValue().isEmpty() && metaKeyOut.containsKey(meta.getKey())) {
-				metaKeyOut.put(meta.getKey(), true);
-			}
-		}
-		return metaKeyOut;
+	protected List<String> getKeys(SqlTemplate template, int speciesId) {
+		return template.queryForDefaultObjectList(META_QUERY, String.class, speciesId);
 	}
 
-	protected boolean testKeys(DatabaseRegistryEntry dbre, int speciesId,
-			Map<String, Boolean> metaKeyOut) {
-		boolean passes = true;
-		for (Entry<String, Boolean> e : metaKeyOut.entrySet()) {
-			if (!e.getValue()) {
-				passes = false;
-				ReportManager
-						.problem(this, dbre.getConnection(), "Meta table for "
-								+ speciesId + " does not contain a value for "
-								+ e.getKey());
-			}
-		}
-		return passes;
-	}
+	protected abstract boolean testKeys(DatabaseRegistryEntry dbre, int speciesId,
+			List<String> speciesKeys, List<String> testKeys);
+	
 
 }

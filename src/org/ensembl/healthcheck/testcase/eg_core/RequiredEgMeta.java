@@ -22,6 +22,12 @@
  */
 package org.ensembl.healthcheck.testcase.eg_core;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.util.TestCaseUtils;
 
 /**
@@ -44,6 +50,23 @@ public class RequiredEgMeta extends AbstractEgMeta {
 	@Override
 	protected String getEgDescription() {
 		return "Checks that we have the minimal set of metakeys";
+	}
+	
+	@Override
+	protected boolean testKeys(DatabaseRegistryEntry dbre, int speciesId,
+			List<String> speciesKeys, List<String> testKeys) {
+		boolean passes = true;
+		for(String meta: testKeys) {
+			System.out.println("Checking meta "+meta);
+			if(!speciesKeys.contains(meta)) {
+				passes = false;
+				ReportManager
+						.problem(this, dbre.getConnection(), "Meta table for "
+								+ speciesId + " does not contain a value for "
+								+ meta);
+			}
+		}
+		return passes;
 	}
 
 }
