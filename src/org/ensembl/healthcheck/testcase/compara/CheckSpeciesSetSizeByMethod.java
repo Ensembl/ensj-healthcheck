@@ -17,6 +17,7 @@
 package org.ensembl.healthcheck.testcase.compara;
 
 import java.util.List;
+import java.util.HashMap;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
@@ -27,6 +28,9 @@ import org.ensembl.healthcheck.util.DBUtils;
 
 public class CheckSpeciesSetSizeByMethod extends AbstractComparaTestCase {
 
+	// Maps method_link_species_set_id to size
+	protected HashMap<String,String> sizeExceptions = new HashMap<String,String>();
+
 	public CheckSpeciesSetSizeByMethod() {
 		setTeamResponsible(Team.COMPARA);
 		appliesToType(DatabaseType.COMPARA);
@@ -34,6 +38,7 @@ public class CheckSpeciesSetSizeByMethod extends AbstractComparaTestCase {
 	}
 
 	public boolean run(DatabaseRegistryEntry dbre) {
+		populateExceptions(dbre);
 		boolean result = true;
 		result &= assertSpeciesSetCountForMLSS(dbre, "ENSEMBL_ORTHOLOGUES", 2);
 		if (! isMasterDB(dbre.getConnection())) {
@@ -47,6 +52,13 @@ public class CheckSpeciesSetSizeByMethod extends AbstractComparaTestCase {
 		return result;
 	}
 
+	protected void populateExceptions(DatabaseRegistryEntry dbre) {
+		String sql = "SELECT method_link_species_set_id, value FROM method_link_species_set_tag WHERE tag = 'species_set_size'";
+		for(String[] a : DBUtils.getRowValuesList(dbre.getConnection(), sql)) {
+			sizeExceptions.put(a[0], a[1]);
+		}
+	}
+
 	protected boolean assertSpeciesSetCountForMLSS(DatabaseRegistryEntry dbre, String methodLinkType, int expectedCount) {
 		String sql = String.format(
 			"SELECT method_link_species_set_id, name, COUNT(*) AS cnt" +
@@ -57,15 +69,21 @@ public class CheckSpeciesSetSizeByMethod extends AbstractComparaTestCase {
 			methodLinkType,
 			expectedCount);
 		List <String[]> badMLSSs = DBUtils.getRowValuesList(dbre.getConnection(), sql);
-		if (badMLSSs.size() > 0) {
-			for (String [] thisBadMLSS : badMLSSs) {
-				ReportManager.problem(this, dbre.getConnection(), 
-						String.format("The MLSS '%s' (ID %s) has %s GenomeDBs in its species-set instead of %d",
-							thisBadMLSS[1], thisBadMLSS[0], thisBadMLSS[2], expectedCount));
+		boolean result = true;
+		for (String [] thisBadMLSS : badMLSSs) {
+			String expected = Integer.toString(expectedCount);
+			if (sizeExceptions.containsKey(thisBadMLSS[0])) {
+				expected = sizeExceptions.get(thisBadMLSS[0]);
+				if (thisBadMLSS[2].equals(expected)) {
+					continue;
+				}
 			}
-			return false;
-		} else {
-			return true;
+
+			result = false;
+			ReportManager.problem(this, dbre.getConnection(),
+					String.format("The MLSS '%s' (ID %s) has %s GenomeDBs in its species-set instead of %s",
+						thisBadMLSS[1], thisBadMLSS[0], thisBadMLSS[2], expected));
 		}
+		return result;
 	}
 }
