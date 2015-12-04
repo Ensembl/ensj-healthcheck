@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.List;
 import java.util.Vector;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
@@ -42,13 +43,13 @@ import org.ensembl.healthcheck.util.DefaultMapRowMapper;
  * relationships.
  */
 
-public class CheckSpeciesSetTag extends AbstractComparaTestCase {
+public class CheckMSANames extends AbstractComparaTestCase {
 
 	/**
 	 * Create an ForeignKeyMethodLinkSpeciesSetId that applies to a specific set
 	 * of databases.
 	 */
-	public CheckSpeciesSetTag() {
+	public CheckMSANames() {
 		setDescription("Check the content of the species_set_tag table");
 		setTeamResponsible(Team.COMPARA);
 	}
@@ -92,7 +93,10 @@ public class CheckSpeciesSetTag extends AbstractComparaTestCase {
 		Connection con2 = secondaryComparaDbre.getConnection();
 
 		// Get list of species_set sets in the secondary server
-		String sql = "SELECT value, count(*) FROM species_set_tag WHERE tag = 'name' GROUP BY value";
+		String sql = "SELECT species_set_header.name, COUNT(*) "
+			+ " FROM method_link_species_set JOIN method_link USING (method_link_id) JOIN species_set_header USING (species_set_id) "
+			+ " WHERE (class LIKE '%multiple_alignment%' OR class LIKE '%tree_alignment%' OR class LIKE '%ancestral_alignment%') AND species_set_header.name != ''"
+			+ " GROUP BY species_set_header.name";
 		Map<String,Integer> primarySets   = DBUtils.getSqlTemplate(con1).queryForMap(sql, new DefaultMapRowMapper<String, Integer>(String.class, Integer.class));
 		Map<String,Integer> secondarySets = DBUtils.getSqlTemplate(con2).queryForMap(sql, new DefaultMapRowMapper<String, Integer>(String.class, Integer.class));
 
@@ -125,32 +129,17 @@ public class CheckSpeciesSetTag extends AbstractComparaTestCase {
 
 		Connection con = dbre.getConnection();
 
-		if (tableHasRows(con, "species_set_tag")) {
+		String sql = "SELECT method_link_species_set_id, species_set_id, method_link_species_set.name "
+			+ " FROM method_link_species_set JOIN method_link USING (method_link_id) JOIN species_set_header USING (species_set_id) "
+			+ " WHERE (class LIKE '%multiple_alignment%' OR class LIKE '%tree_alignment%' OR class LIKE '%ancestral_alignment%') AND species_set_header.name = ''";
 
-			// Get list of species_set sets in the secondary server
-			String sql1 = "SELECT species_set_id, value FROM species_set_tag WHERE tag = 'name'";
-
-			// Find all the species_set_ids for multiple alignments
-			String sql2 = "SELECT species_set_id, name FROM method_link_species_set JOIN method_link USING (method_link_id) WHERE"
-				+ " class LIKE '%multiple_alignment%' OR class LIKE '%tree_alignment%' OR class LIKE '%ancestral_alignment%'";
-
-			Map<Integer, String> allSetsWithAName = DBUtils.getSqlTemplate(con).queryForMap(sql1, new DefaultMapRowMapper<Integer, String>(Integer.class, String.class));
-			Map<Integer, String> allSetsForMultipleAlignments = DBUtils.getSqlTemplate(con).queryForMap(sql2, new DefaultMapRowMapper<Integer, String>(Integer.class, String.class));
-
-			for (Map.Entry<Integer, String> key_value : allSetsForMultipleAlignments.entrySet()) {
-				if (!allSetsWithAName.containsKey(key_value.getKey())) {
-					ReportManager.problem(this, con, "There is no name entry in species_set_tag for MSA \"" + key_value.getValue()+ "\".");
-					result = false;
-				}
-			}
-
-		} else {
-			ReportManager.problem(this, con, "species_set_tag table is empty. There will be no aliases for multiple alignments");
+		List<String[]> data = DBUtils.getRowValuesList(con, sql);
+		for (String[] line : data) {
+			ReportManager.problem(this, con, "MLSS " + line[0] + " -- '" + line[2] + "' (species_set_id " + line[1] + ") has no name");
 			result = false;
 		}
-
 		return result;
 	}
 
-} // CheckSpeciesSetTag
+} // CheckMSANames
 

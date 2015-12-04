@@ -33,7 +33,7 @@ public class ComparaGenomicOnly extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.CheckGenomicAlignTreeTable.class,
 			org.ensembl.healthcheck.testcase.compara.CheckMLSSIDConsistencyInGenomicAlign.class,
 			org.ensembl.healthcheck.testcase.compara.CheckPairAlignerUniqueMethod.class,
-			org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetTag.class,
+			org.ensembl.healthcheck.testcase.compara.CheckMSANames.class,
 			org.ensembl.healthcheck.testcase.compara.CheckSynteny.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyConservationTables.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomicAlignmentTables.class,
