@@ -33,6 +33,7 @@ public class ComparaHomologyOnly extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.CheckHomology.class,
 			org.ensembl.healthcheck.testcase.compara.CheckSequenceTable.class,
 			org.ensembl.healthcheck.testcase.compara.CheckSpeciesTreeNodeTag.class,
+			org.ensembl.healthcheck.testcase.compara.CheckComparaStableIDs.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyCAFETables.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyFamilyTables.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyGeneAlignTables.class,
@@ -43,7 +44,6 @@ public class ComparaHomologyOnly extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.MLSSTagStatsHomology.class,
 			org.ensembl.healthcheck.testcase.compara.MLSSTagThresholdDs.class,
 			org.ensembl.healthcheck.testcase.eg_compara.CheckEmptyLeavesTrees.class,
-			org.ensembl.healthcheck.testcase.eg_compara.EGCheckNoTreeStableIds.class,
 			org.ensembl.healthcheck.testcase.eg_compara.MemberProductionCounts.class
 		);
 	}
