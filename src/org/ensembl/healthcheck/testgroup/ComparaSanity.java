@@ -19,16 +19,15 @@ package org.ensembl.healthcheck.testgroup;
 import org.ensembl.healthcheck.GroupOfTests;
 
 /**
- * Healthchecks for the Compara release database (i.e.
- * not the master database)
+ * Sanity healthchecks for all Compara databases
  */
-public class ComparaReleaseOnly extends GroupOfTests {
-	
-	public ComparaReleaseOnly() {
+public class ComparaSanity extends GroupOfTests {
+
+	public ComparaSanity() {
 
 		addTest(
-			org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeTables.class,
-			org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class
+			org.ensembl.healthcheck.testcase.compara.CheckTableSizes.class,
+			org.ensembl.healthcheck.testcase.compara.CheckSyntenySanity.class
 		);
 	}
 }
