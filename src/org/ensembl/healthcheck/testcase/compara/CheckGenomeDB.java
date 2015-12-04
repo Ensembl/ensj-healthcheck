@@ -74,6 +74,7 @@ public class CheckGenomeDB extends AbstractComparaTestCase {
 
 		result &= checkAssemblies(comparaDbre);
 		result &= checkGenomeDB(comparaDbre);
+		result &= checkCountIsZero(comparaDbre.getConnection(), "genome_db", "locator IS NOT NULL");
 		return result;
 	}
 
