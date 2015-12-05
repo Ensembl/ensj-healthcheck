@@ -131,4 +131,13 @@ public interface ConfigureHealthcheckDatabase {
 		String getProductionDatabase();
 		boolean isProductionDatabase();
 		
+		@Option(
+			longName    = "compara_master.database",
+			description = "The name of the Ensembl Compara master database to use " +
+					"to control the content of the tested Compara database. " +
+					"Assumed to be on one of the configured servers."
+		)
+		String getComparaMasterDatabase();
+		boolean isComparaMasterDatabase();
+
 }

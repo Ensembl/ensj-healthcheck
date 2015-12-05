@@ -121,7 +121,7 @@ public abstract class AbstractComparaTestCase extends SingleDatabaseTestCase {
 	 * @return a boolean
 	 */
 	public boolean isMasterDB(Connection con) {
-		return DBUtils.getShortDatabaseName(con).contains(comparaMasterDbName);
+		return DBUtils.getShortDatabaseName(con).contains(System.getProperty("compara_master.database"));
 	}
 
 } // AbstractComparaTestCase

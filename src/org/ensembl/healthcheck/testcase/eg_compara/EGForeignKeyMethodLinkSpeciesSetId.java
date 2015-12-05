@@ -50,7 +50,7 @@ public class EGForeignKeyMethodLinkSpeciesSetId extends
 		result &= assertNoEmptyNames(dbre);
 		result &= assertNoSource(dbre);
 		result &= assertMethodLinkSpeciesSetCounts(dbre);
-		if (DBUtils.getShortDatabaseName(dbre.getConnection()).contains(comparaMasterDbName)) {
+		if (DBUtils.getShortDatabaseName(dbre.getConnection()).contains(System.getProperty("compara_master.database"))) {
 			return result;
 		}
 		result &= assertMlssIdForeignKeysAndRanges(dbre);

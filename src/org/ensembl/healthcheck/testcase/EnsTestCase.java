@@ -104,8 +104,6 @@ public abstract class EnsTestCase {
 	protected static Logger logger = Logger.getLogger(EnsTestCase.class
 			.getCanonicalName());
 
-	protected String comparaMasterDbName = "ensembl_compara_master";
-	
 	public static Logger getLogger() {
 		return logger;
 	}
@@ -180,6 +178,9 @@ public abstract class EnsTestCase {
 	 */
 	DatabaseRegistryEntry productionDBRE = null;
 	
+	/**
+	 * A DatabaseRegistryEntry pointing to the Compara Master database.
+	 */
 	DatabaseRegistryEntry comparaMasterDbre = null;
 	
 
@@ -801,9 +802,7 @@ public abstract class EnsTestCase {
 	/**
 	 * Get a connection to the production database.
 	 * 
-	 * @param table
-	 *            The name of the schema to connect to.
-	 * @return A ResultSet containing the contents of the table.
+	 * @return A DatabaseRegistryEntry representing the database
 	 */
 	public DatabaseRegistryEntry getProductionDatabase() {
 
@@ -814,10 +813,17 @@ public abstract class EnsTestCase {
 
 	}
 
+	/**
+	 * Get a connection to the Compara master database.
+	 * 
+	 * @return A DatabaseRegistryEntry representing the database
+	 */
 	public DatabaseRegistryEntry getComparaMasterDatabase() {
 
+		// return existing one if we already have it, otherwise use method above
+		// to find it
 		return comparaMasterDbre != null ? comparaMasterDbre
-				: getDatabaseRegistryEntryByPattern(comparaMasterDbName);
+				: getDatabaseRegistryEntryByPattern(System.getProperty("compara_master.database"));
 
 	}
 

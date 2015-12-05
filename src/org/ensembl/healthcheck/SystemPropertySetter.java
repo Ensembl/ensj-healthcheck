@@ -240,5 +240,14 @@ public class SystemPropertySetter {
 		} else {
 			System.setProperty("production.database", "ensembl_production");
 		}
+		if (configuration.isComparaMasterDatabase()) {
+			// Used in:
+			//
+			// org.ensembl.healthcheck.testcase.EnsTestCase
+			//
+			System.setProperty("compara_master.database", configuration.getComparaMasterDatabase());
+		} else {
+			System.setProperty("compara_master.database", "ensembl_compara_master");
+		}
 	}
 }
