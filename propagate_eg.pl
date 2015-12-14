@@ -225,8 +225,12 @@ sub get_valid_databases {
 
 sub find_match {
   my ( $old_db, @new_dbs ) = @_;
-  foreach my $new_db (@new_dbs) {
-	return $new_db if compare_dbs( $old_db, $new_db );
+  if(defined $old_db) {
+      foreach my $new_db (@new_dbs) {
+          if(defined $new_db) {
+              return $new_db if compare_dbs( $old_db, $new_db );
+          }
+      }
   }
   return;
 }
@@ -250,7 +254,7 @@ sub extract_prefix {
   /xms;
   my ($prefix) = $dbname =~ $regex;
   #  print $dbname."->".$prefix."\n";
-  return $prefix;
+  return ($prefix||'');
 }
 
 # --------------------------------------------------------------------------------

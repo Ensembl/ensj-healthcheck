@@ -26,7 +26,7 @@ import org.ensembl.healthcheck.util.Utils;
 public class DatabaseReporter implements Reporter {
 
 	private long testStartTime;
-	private static String TIMINGS_FILE = "timings.txt";
+	private static String TIMINGS_FILE = "/tmp/timings.txt";
 
 	/**
 	 * Should be called just after a test case has been run.

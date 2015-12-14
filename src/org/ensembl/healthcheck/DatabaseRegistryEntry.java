@@ -492,7 +492,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	 * @return true if the database contains more than one species
 	 */
 	public boolean isMultiSpecies() {
-		return getSpeciesIds().size() > 1;
+            return this.getName().matches(".*_collection_.*");
 	}
 
 	/**
