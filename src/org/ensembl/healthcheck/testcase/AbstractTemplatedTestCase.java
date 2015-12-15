@@ -47,22 +47,7 @@ public abstract class AbstractTemplatedTestCase extends SingleDatabaseTestCase {
 	protected abstract boolean runTest(DatabaseRegistryEntry dbre);
 
 	public boolean run(DatabaseRegistryEntry dbre) {
-
-		boolean passes = false;
-		try {
-			passes = runTest(dbre);
-			if (passes) {
-				ReportManager
-						.correct(this, dbre.getConnection(), "Test passed");
-			}
-		} catch (Throwable e) {
-			e.printStackTrace();
-			ReportManager
-					.problem(this, dbre.getConnection(),
-							"Test failed due to unexpected exception "
-									+ e.getMessage());
-		}
-		return passes;
+		return runTest(dbre);
 	}
 
 }
