@@ -5,10 +5,8 @@ jdk:
 
 notifications:
   email:
-  recipients:
-      - ensembl-production-git@ebi.ac.uk
-  on_failure: always
-  
+    on_success: always
+    on_failure: always
   
 before_install:
   - cat /etc/hosts # optionally check the content *before*
