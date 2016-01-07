@@ -17,9 +17,6 @@ import org.ensembl.healthcheck.testcase.eg_core.GeneGC;
 import org.ensembl.healthcheck.testcase.eg_core.IgiXref;
 import org.ensembl.healthcheck.testcase.eg_core.InappropriateTranslation;
 import org.ensembl.healthcheck.testcase.eg_core.MetaForCompara;
-import org.ensembl.healthcheck.testcase.eg_core.MultiDbCompareNames;
-import org.ensembl.healthcheck.testcase.eg_core.MultiDbSpeciesNames;
-import org.ensembl.healthcheck.testcase.eg_core.MultiDbStableId;
 import org.ensembl.healthcheck.testcase.eg_core.PeptideTranslationAttribs;
 import org.ensembl.healthcheck.testcase.eg_core.PermittedEgMeta;
 import org.ensembl.healthcheck.testcase.eg_core.PositiveCoordinates;
@@ -119,9 +116,7 @@ public class EGCoreIntegrity extends GroupOfTests {
 				SeqRegionsConsistentWithComparaMaster.class,
 				SeqRegionAttribForPolyploidGenome.class,
 				SeqRegionAttribForPolyploidGenomeToplevelOnly.class,
-				SeqRegionLength.class, SchemaPatchesApplied.class,
-				MultiDbSpeciesNames.class, MultiDbStableId.class,
-				MultiDbCompareNames.class);
+				SeqRegionLength.class, SchemaPatchesApplied.class);
 	}
 
 }
