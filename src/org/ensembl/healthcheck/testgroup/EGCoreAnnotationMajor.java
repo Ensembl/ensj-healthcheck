@@ -17,11 +17,12 @@
 package org.ensembl.healthcheck.testgroup;
 
 import org.ensembl.healthcheck.GroupOfTests;
+import org.ensembl.healthcheck.testcase.eg_core.DuplicateObjectXref;
 import org.ensembl.healthcheck.testcase.eg_core.DuplicateRepeatFeature;
 import org.ensembl.healthcheck.testcase.eg_core.DuplicateXref;
 import org.ensembl.healthcheck.testcase.eg_core.EponineFeatures;
-import org.ensembl.healthcheck.testcase.eg_core.GeneStableIdDisplayXref;
 import org.ensembl.healthcheck.testcase.eg_core.GOslimXrefs;
+import org.ensembl.healthcheck.testcase.eg_core.GeneStableIdDisplayXref;
 import org.ensembl.healthcheck.testcase.eg_core.IgiXref;
 import org.ensembl.healthcheck.testcase.eg_core.ProteinFeatureAnalysisDb;
 import org.ensembl.healthcheck.testcase.eg_core.SeqRegionDna;
@@ -59,9 +60,10 @@ public class EGCoreAnnotationMajor extends GroupOfTests {
 				UniProtKB_DisplayXrefIds.class, UniProtKB_Coverage.class,
 				UniParc_Coverage.class, GeneStableIdDisplayXref.class,
 				TranscriptDisplayXrefSuffix.class,
-				TranscriptStableIdDisplayXref.class,
+				TranscriptStableIdDisplayXref.class, 
 				DuplicateRepeatFeature.class, EponineFeatures.class,
 				UniProtExternalDbTypes.class, GOslimXrefs.class,
+				DuplicateObjectXref.class,
 				SeqRegionDna.class);
 	}
 

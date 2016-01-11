@@ -26,20 +26,21 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 
 /**
- * Test for where xrefs have been added twice
+ * Test for where xrefs have been added twice to the same Ensembl object.
+ * This is acceptable where analysis_id is different e.g. GO terms from 2 pipelines
  * @author dstaines
  *
  */
-public class DuplicateXref extends AbstractEgCoreTestCase {
+public class DuplicateObjectXref extends AbstractEgCoreTestCase {
 
-	private final static String DUPLICATE_XREF = "select count(*) from (select count(*) from xref x group by x.dbprimary_acc,x.external_db_id,x.info_type,x.info_text having count(*)>1) cc";
+	private final static String DUPLICATE_OBJ_XREF = "select count(*) from (select count(*) from xref x join object_xref ox using (xref_id) group by ox.ensembl_id, ox.ensembl_object_type,x.dbprimary_acc,x.external_db_id,x.info_type,x.info_text having count(*)>1) cc";
 
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
 		boolean passes = true;
-		int nDupX =  getTemplate(dbre).queryForDefaultObject(DUPLICATE_XREF, Integer.class);
-		if(nDupX>0) {
+		int nDupOX =  getTemplate(dbre).queryForDefaultObject(DUPLICATE_OBJ_XREF, Integer.class);
+		if(nDupOX>0) {
 			passes = false;
-			ReportManager.problem(this, dbre.getConnection(), nDupX+" duplicates found in xref: "+DUPLICATE_XREF);
+			ReportManager.problem(this, dbre.getConnection(), nDupOX+" duplicates found in object_xref: "+DUPLICATE_OBJ_XREF);
 		}
 		return passes;
 	}
@@ -49,7 +50,7 @@ public class DuplicateXref extends AbstractEgCoreTestCase {
 	 */
 	@Override
 	protected String getEgDescription() {
-		return "Test for where xrefs have been added twice with different descriptions or versions etc.";
+		return "Test for where object_xrefs have been added twice";
 	}
 
 }
