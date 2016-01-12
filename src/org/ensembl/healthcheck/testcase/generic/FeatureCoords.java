@@ -69,7 +69,7 @@ public class FeatureCoords extends SingleDatabaseTestCase {
 		String[] featureTables = getCoreFeatureTables();
         Connection con = dbre.getConnection();
         SqlTemplate t = DBUtils.getSqlTemplate(con);
-        String sql = "SELECT s.name,s.length FROM seq_region s, seq_region_attrib a WHERE s.seq_region_id = a.seq_region_id AND a.attrib_type_id = 6";
+        String sql = "SELECT s.seq_region_id,s.length FROM seq_region s join seq_region_attrib a USING (seq_region_id) WHERE a.attrib_type_id = 6";
         DefaultMapRowMapper<String, Integer> mapper = new DefaultMapRowMapper<String, Integer>(String.class, Integer.class);
                              
         seq_regions = t.queryForMap(sql,mapper);
