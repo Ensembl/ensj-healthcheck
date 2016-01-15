@@ -39,7 +39,7 @@ import org.ensembl.healthcheck.testcase.PerlScriptConfig;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.ConnectionPool;
 
-import com.mysql.jdbc.Connection;
+import java.sql.Connection;
 
 import java.util.logging.Handler;
 import java.util.logging.Level;

@@ -24,8 +24,6 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Reporter;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 
-import com.mysql.jdbc.Connection;
-
 /**
  * <p>
  * 	A handler for the logging system. If added to a logger, it can forward
