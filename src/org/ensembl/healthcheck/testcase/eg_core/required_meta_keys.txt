@@ -1,6 +1,5 @@
 assembly.accession
 assembly.default
-assembly.mapping
 assembly.name
 genebuild.method
 genebuild.start_date
