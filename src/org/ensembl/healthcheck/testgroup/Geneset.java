@@ -26,6 +26,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.AnalysisTypes </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.AnalysisXrefs </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.BigGeneExon </li>
+ *   <li> org.ensembl.healthcheck.testcase.generic.BiotypeGroups </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.CanonicalTranscriptCoding </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.CoreForeignKeys </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.DuplicateAttributes </li>
@@ -73,6 +74,7 @@ public class Geneset extends GroupOfTests {
                         org.ensembl.healthcheck.testcase.generic.AnalysisTypes.class,
                         org.ensembl.healthcheck.testcase.generic.AnalysisXrefs.class,
                         org.ensembl.healthcheck.testcase.generic.BigGeneExon.class,
+                        org.ensembl.healthcheck.testcase.generic.BiotypeGroups.class,
                         org.ensembl.healthcheck.testcase.generic.CanonicalTranscriptCoding.class,
                         org.ensembl.healthcheck.testcase.generic.CoreForeignKeys.class,
                         org.ensembl.healthcheck.testcase.generic.DuplicateAttributes.class,
