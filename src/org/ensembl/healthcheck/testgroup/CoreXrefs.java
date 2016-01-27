@@ -84,6 +84,7 @@ public class CoreXrefs extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.HGNCTypes.class,
 			org.ensembl.healthcheck.testcase.generic.IdentityXrefCigarLines.class,
 			org.ensembl.healthcheck.testcase.generic.InterproDescriptions.class,
+			org.ensembl.healthcheck.testcase.generic.InterproFeatures.class,
                         org.ensembl.healthcheck.testcase.generic.LRG.class,
 			org.ensembl.healthcheck.testcase.generic.PredictedXrefs.class,
                         org.ensembl.healthcheck.testcase.generic.TranscriptNames.class,

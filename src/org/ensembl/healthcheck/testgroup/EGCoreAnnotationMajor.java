@@ -38,6 +38,7 @@ import org.ensembl.healthcheck.testcase.generic.BlankEnums;
 import org.ensembl.healthcheck.testcase.generic.BlankInfoType;
 import org.ensembl.healthcheck.testcase.generic.BlanksInsteadOfNulls;
 import org.ensembl.healthcheck.testcase.generic.InterproDescriptions;
+import org.ensembl.healthcheck.testcase.generic.InterproFeatures;
 import org.ensembl.healthcheck.testcase.generic.IsCurrent;
 import org.ensembl.healthcheck.testcase.generic.NullStrings;
 import org.ensembl.healthcheck.testcase.generic.XrefCategories;
@@ -53,7 +54,7 @@ public class EGCoreAnnotationMajor extends GroupOfTests {
 		addTest(AnalysisTypes.class, BlankCoordSystemVersions.class,
 				BlankEnums.class, BlankInfoType.class,
 				BlanksInsteadOfNulls.class, DuplicateXref.class, IgiXref.class,
-				InterproDescriptions.class, ProteinFeatureAnalysisDb.class,
+				InterproDescriptions.class, InterproFeatures.class, ProteinFeatureAnalysisDb.class,
 				IsCurrent.class, NullStrings.class, XrefCategories.class,
 				XrefHTML.class, XrefIdentifiers.class, XrefLevels.class,
 				XrefTypes.class, XrefVersions.class,

@@ -26,19 +26,18 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Check that there are Interpro descriptions, that each one has an xref, and
- * that the xref has a description.
+ * Check that there the interpro table is populated and there are interpro protein features
  */
 
-public class InterproDescriptions extends SingleDatabaseTestCase {
+public class InterproFeatures extends SingleDatabaseTestCase {
 	
 
 	/**
-	 * Create a new InterproDescriptions testcase.
+	 * Create a new InterproFeatures testcase.
 	 */
-	public InterproDescriptions() {
+	public InterproFeatures() {
 
-		setDescription("Check that there are Interpro descriptions, that each one has an xref, and that the xref has a description.");
+		setDescription("Check that there the interpro table is populated and there are interpro protein features");
 		setTeamResponsible(Team.GENEBUILD);
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
 
@@ -67,48 +66,28 @@ public class InterproDescriptions extends SingleDatabaseTestCase {
 	public boolean run(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
-
+		
 		Connection con = dbre.getConnection();
 
-		// check that there are no Interpro accessions without xrefs
-		String sql = "SELECT count(*) FROM interpro i LEFT JOIN xref x ON i.interpro_ac=x.dbprimary_acc WHERE x.dbprimary_acc IS NULL";
+		if (DBUtils.getRowCount(con, "SELECT COUNT(*) FROM interpro") == 0) {
 
-		int rows = DBUtils.getRowCount(con, sql);
-		if (rows > 0) {
+			ReportManager.problem(this, con,
+					"InterPro table is empty");
+			result &= false;
 
-			ReportManager
-					.problem(
-							this,
-							con,
-							"There are "
-									+ rows
-									+ " rows in the interpro table that have no associated xref");
-			result = false;
-
-		} else {
-
-			ReportManager.correct(this, con,
-					"All Interpro accessions have xrefs");
 		}
+		
+		if(DBUtils.getRowCount(con, "SELECT COUNT(*) FROM protein_feature JOIN interpro ON (id=hit_name)") == 0) {
 
-		// check that the description field is populated for all of them
-		sql = "SELECT COUNT(*) FROM interpro i, xref x WHERE i.interpro_ac=x.dbprimary_acc AND (x.description IS NULL OR x.description = '')";
-
-		rows = DBUtils.getRowCount(con, sql);
-		if (rows > 0) {
-
-			ReportManager.problem(this, con, "There are " + rows
-					+ " Interpro xrefs with missing descriptions");
-			result = false;
-
-		} else {
-
-			ReportManager.correct(this, con,
-					"All Interpro accessions have xref descriptions");
+			ReportManager.problem(this, con,
+					"No InterPro protein features found");
+			result &= false;
+			
 		}
-
+		
 		return result;
+
 
 	} // run
 
-} // InterproDescriptions
+}
