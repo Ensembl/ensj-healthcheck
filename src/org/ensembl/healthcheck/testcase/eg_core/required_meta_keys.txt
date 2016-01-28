@@ -8,7 +8,6 @@ sample.gene_param
 sample.gene_text
 sample.location_param
 sample.location_text
-sample.search_text
 sample.transcript_param
 sample.transcript_text
 species.classification

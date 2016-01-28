@@ -55,7 +55,7 @@ public class SampleSetting extends AbstractEgCoreTestCase {
 	private final String[] expectedKeys = { "sample.gene_text",
 			"sample.gene_param", "sample.transcript_text",
 			"sample.transcript_param", "sample.location_text",
-			"sample.location_param", "sample.search_text" };
+			"sample.location_param"};
 
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
 		boolean passes = true;
