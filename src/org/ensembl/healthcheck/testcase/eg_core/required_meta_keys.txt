@@ -1,4 +1,3 @@
-assembly.accession
 assembly.default
 assembly.name
 genebuild.method
