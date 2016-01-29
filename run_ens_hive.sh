@@ -14,12 +14,11 @@ hive_port=$(sed -n 's/.*hive.port *= *\([^ ]*.*\)/\1/p' < $properties)
 hive_user=$(sed -n 's/.*hive.user *= *\([^ ]*.*\)/\1/p' < $properties)
 hive_pass=$(sed -n 's/.*hive.password *= *\([^ ]*.*\)/\1/p' < $properties)
 
-hive="mysql -h $hive_host -P $hive_port -u $hive_user -p $hive_pass"
+hive="mysql -h $hive_host -P $hive_port -u $hive_user -p$hive_pass"
 
 
 LOG_FILE=${div}.log
 msg "Running hived checks for Ensembl as process $$ on $(hostname)"
-export PERL5LIB=./perl:$PERL5LIB
 cd $(dirname $0)
 if [ -z "$JAVA_OPTS" ]; then
     JAVA_OPTS=-Xmx15g
@@ -32,7 +31,7 @@ HCDB_HOST=$(sed -n 's/.*output.host *= *\([^ ]*.*\)/\1/p' < $properties)
 HCDB_PORT=$(sed -n 's/.*output.port *= *\([^ ]*.*\)/\1/p' < $properties)
 HCDB_USER=$(sed -n 's/.*output.user *= *\([^ ]*.*\)/\1/p' < $properties)
 HCDB_PASS=$(sed -n 's/.*output.password *= *\([^ ]*.*\)/\1/p' < $properties)
-group=$(sed -n 's/.*groups*= *\([^ ]*.*\)/\1/p' < $properties)
+group=$(sed -n 's/^groups *= *\([^ ]*.*\)/\1/p' < $properties)
 TIMINGS_FILE=/tmp/timings.txt
 touch $LOG_FILE
 touch $TIMINGS_FILE
