@@ -47,7 +47,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.variation.Phenotype </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.PhenotypeFeatureAttrib </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.Population </li>
- *   <li> org.ensembl.healthcheck.testcase.variation.PopulationGenotype </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.Publication </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.StructuralVariation </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.TranscriptVariation </li>
@@ -92,7 +91,6 @@ public class VariationRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.variation.Phenotype.class,
 			org.ensembl.healthcheck.testcase.variation.PhenotypeFeatureAttrib.class,
 			org.ensembl.healthcheck.testcase.variation.Population.class,
-                        org.ensembl.healthcheck.testcase.variation.PopulationGenotype.class,
 			org.ensembl.healthcheck.testcase.variation.Publication.class,
 			org.ensembl.healthcheck.testcase.variation.StructuralVariation.class,
 			org.ensembl.healthcheck.testcase.variation.TranscriptVariation.class,
