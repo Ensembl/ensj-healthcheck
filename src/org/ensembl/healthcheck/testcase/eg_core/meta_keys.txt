@@ -72,6 +72,7 @@ species.db_name
 species.display_name
 species.division
 species.nematode_name
+species.nematode_clade
 species.production_name
 species.scientific_name
 species.serotype
