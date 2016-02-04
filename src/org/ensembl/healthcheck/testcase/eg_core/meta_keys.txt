@@ -88,5 +88,7 @@ species.wikipedia_name
 species.wikipedia_url
 species.wormbase_name
 transcriptbuild.level
+uniprot_proteome.id
+uniprot_proteome.status
 vb.release_status
 xref.timestamp
