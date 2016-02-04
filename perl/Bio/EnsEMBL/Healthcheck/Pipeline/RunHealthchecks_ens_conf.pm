@@ -39,6 +39,7 @@ sub default_options {
         %{$self->SUPER::default_options},
         'hc_conn'    => undef,
         'hc_cmd'     => undef,
+        'exclude_dbs' => undef,
         'properties' => undef,
         'group'      => undef,
         'division'   => undef
@@ -68,6 +69,7 @@ sub pipeline_analyses {
             -input_ids => [
                  {
                      'hc_conn'     => $self->o('hc_conn'),                        
+                     'exclude_dbs' => $self->o('exclude_dbs'),
                      'properties'  => $self->o('properties'),
                      'group'       => $self->o('group'),
                      'division'    => $self->o('division')                        
@@ -92,7 +94,7 @@ sub pipeline_analyses {
                 'group'       => $self->o('group'),
                 'division'    => $self->o('division')                        
             },
-            -analysis_capacity => 20,
+            -analysis_capacity => 1,
                     -rc_name => 'himem'
         },
         {
