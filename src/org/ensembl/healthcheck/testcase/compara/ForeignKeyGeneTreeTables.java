@@ -49,6 +49,7 @@ public class ForeignKeyGeneTreeTables extends AbstractComparaTestCase {
 		result &= checkForOrphans(con, "gene_tree_root", "root_id", "gene_tree_node", "node_id");
 
 		result &= checkForOrphansSameTable(con, "gene_tree_root", "ref_root_id", "root_id", true);
+		result &= checkForOrphans(con, "gene_tree_root_attr", "root_id", "gene_tree_root", "root_id");
 		result &= checkForOrphans(con, "gene_tree_root_tag", "root_id", "gene_tree_root", "root_id");
 
 		return result;
