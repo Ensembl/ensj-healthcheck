@@ -48,7 +48,7 @@ public class BuildTestLibrary extends TestRunner {
 
         BuildTestLibrary btl = new BuildTestLibrary();
 
-        logger.setLevel(Level.OFF);
+        btl.logger.setLevel(Level.OFF);
 
         btl.parseCommandLine(args);
 

@@ -102,16 +102,16 @@ public class ParallelConfigurableTestRunner extends TestRunner {
 
 
         public static void main(String[] args) {
-
+        	ParallelConfigurableTestRunner parallelConfigurableTestRunner = new ParallelConfigurableTestRunner(
+                    args);
                 try {
 
-                        ParallelConfigurableTestRunner parallelConfigurableTestRunner = new ParallelConfigurableTestRunner(
-                                        args);
+                        
                         parallelConfigurableTestRunner.run();
 
                 } catch (ConfigurationException e) {
 
-                        ParallelConfigurableTestRunner.logger.log(Level.INFO, e.getMessage());
+                	parallelConfigurableTestRunner.logger.log(Level.INFO, e.getMessage());
                 }
         }
 
