@@ -75,7 +75,9 @@ public class FuncgenRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.funcgen.RegulatoryFeatureTypes.class,
 			org.ensembl.healthcheck.testcase.funcgen.RegulatoryMotifFeatures.class,
 			org.ensembl.healthcheck.testcase.funcgen.RegulatorySets.class,
-			org.ensembl.healthcheck.testcase.generic.SpeciesID.class
+			org.ensembl.healthcheck.testcase.generic.SpeciesID.class,
+			org.ensembl.healthcheck.testcase.generic.SchemaType.class,
+			org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class
 		);
 	}
 }
