@@ -7,7 +7,11 @@ function msg {
     echo $(date +"%Y-%m-%d %H:%M:%S") $1
 }
 
-properties=${div,,}-database.properties
+properties=$1
+
+if [ -z "$properties" ]; then
+  properties=${div,,}-database.properties
+fi
 
 hive_host=$(sed -n 's/.*hive.host *= *\([^ ]*.*\)/\1/p' < $properties)
 hive_port=$(sed -n 's/.*hive.port *= *\([^ ]*.*\)/\1/p' < $properties)
