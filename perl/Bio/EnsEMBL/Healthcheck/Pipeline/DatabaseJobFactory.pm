@@ -13,11 +13,11 @@ sub run {
     my @exclude_dbs = split(" ", $self->param('exclude_dbs'));
     my $host = $self->param('host');
     my $group = $self->param('group');
-    $group =~ s/\n/,/;
+    $group =~ s/ /,/;
     $host =~ s/\n/,/;
     if (scalar(@exclude_dbs)) {
-      $group .= '; exclude_dbs=';
-      $group .= join(',', @exclude_dbs);
+      $group .= '; ';
+      $group .= join(';', @exclude_dbs);
     }
     
     my $session_id;
