@@ -13,8 +13,8 @@ sub run {
     my @exclude_dbs = split(" ", $self->param('exclude_dbs'));
     my $host = $self->param('host');
     my $group = $self->param('group');
-    $group =~ s/ /,/;
-    $host =~ s/\n/,/;
+    $group =~ s/ /,/g;
+    $host =~ s/\n/,/g;
     if (scalar(@exclude_dbs)) {
       $group .= '; ';
       $group .= join(';', @exclude_dbs);
