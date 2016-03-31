@@ -98,7 +98,7 @@ sub pipeline_analyses {
                 'hcdb'        => $self->o('hcdb'),
                 'division'    => $self->o('division')                        
             },
-            -analysis_capacity => 1,
+            -analysis_capacity => 30,
                     -rc_name => 'himem'
         },
         {
