@@ -54,48 +54,48 @@ public class StandaloneTestRunner {
 	 */
 	public interface StandaloneTestOptions extends ConfigureTestGroups {
 
-		@Option(shortName = "d")
-		String getDbname();
-
 		@Option(helpRequest = true, description = "display help")
 		boolean getHelp();
+		
+		@Option(shortName = "v", description="Show detailed debugging output")
+		boolean isVerbose();
 
-		@Option(shortName = "h")
+		@Option(shortName = "d", description="Database to test")
+		String getDbname();
+
+		@Option(shortName = "u", description="Username for test database")
+		String getUser();
+
+
+		@Option(shortName = "h", description="Host for test database")
 		String getHost();
 
-		@Option(shortName = "p")
+		@Option(shortName = "p", description="Password for test database")
 		String getPassword();
-
 		boolean isPassword();
 
-		@Option(shortName = "P")
+		@Option(shortName = "P", description="Port for test database")
 		int getPort();
 
-		@Option(longName = "compara_dbname", defaultValue = "ensembl_compara_master")
+		@Option(longName = "compara_dbname", defaultValue = "ensembl_compara_master", description="Name of compara master database")
 		String getComparaMasterDbname();
 
-		@Option(longName = "prod_dbname", defaultValue = "ensembl_production")
+		@Option(longName = "prod_dbname", defaultValue = "ensembl_production", description="Name of production database")
 		String getProductionDbname();
 
-		@Option(longName = "prod_host")
+		@Option(longName = "prod_host", description="Production/compara master database host")
 		String getProductionHost();
 
-		@Option(longName = "prod_port")
+		@Option(longName = "prod_port", description="Production/compara master database port")
 		int getProductionPort();
 
-		@Option(longName = "prod_user")
+		@Option(longName = "prod_user", description="Production/compara master database user")
 		String getProductionUser();
 
-		@Option(longName = "prod_password")
+		@Option(longName = "prod_password", description="Production/compara master database password")
 		String getProductionPassword();
 
 		boolean isProductionPassword();
-
-		@Option(shortName = "u")
-		String getUser();
-
-		@Option(shortName = "v")
-		boolean isVerbose();
 
 	}
 
