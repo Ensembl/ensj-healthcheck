@@ -19,12 +19,15 @@ package org.ensembl.healthcheck;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.configuration.ConfigureTestGroups;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
@@ -108,10 +111,22 @@ public class StandaloneTestRunner {
 			System.err.println(e.getMessage());
 			System.exit(1);
 		}
-
+		
 		StandaloneTestRunner runner = new StandaloneTestRunner(options);
-		boolean result = runner.runAll();
+		
+		StandaloneReporter reporter = new StandaloneReporter(runner.getLogger());
+		ReportManager.setReporter(reporter);
 
+		boolean result = runner.runAll();
+		if (!result) {
+			for (Entry<String, List<String>> e : reporter.getFailures().entrySet()) {
+				runner.getLogger().severe("Failures detected for "+e.getKey()+":");
+				for(String testCase: e.getValue()) {
+					runner.getLogger().severe(testCase+" failures:");
+					StringUtils.join(reporter.getOutput().get(e.getKey()).get(testCase), "\n");
+				}
+			}
+		}
 		System.exit(result ? 0 : 1);
 
 	}
@@ -126,7 +141,7 @@ public class StandaloneTestRunner {
 		this.options = options;
 	}
 
-	private Logger getLogger() {
+	public Logger getLogger() {
 		if (logger == null) {
 			logger = Logger.getLogger(StandaloneTestRunner.class.getCanonicalName());
 			ConsoleHandler localConsoleHandler = new ConsoleHandler();
@@ -141,8 +156,10 @@ public class StandaloneTestRunner {
 			});
 			if (options.isVerbose()) {
 				localConsoleHandler.setLevel(Level.ALL);
+				logger.setLevel(Level.ALL);
 			} else {
 				localConsoleHandler.setLevel(Level.INFO);
+				logger.setLevel(Level.INFO);
 			}
 			logger.setUseParentHandlers(false);
 			logger.addHandler(localConsoleHandler);
@@ -211,8 +228,11 @@ public class StandaloneTestRunner {
 			getLogger().info("Executing testcase " + test.getName());
 			test.setProductionDatabase(getProductionDb());
 			test.setComparaMasterDatabase(getComparaMasterDb());
+			ReportManager.startTestCase(test, getTestDb());
 			boolean result = ((SingleDatabaseTestCase) test).run(getTestDb());
+			ReportManager.finishTestCase(test, result, getTestDb());
 			getLogger().info(test.getName() + " " + (result ? "succeeded" : "failed"));
+			success &= result;
 		} else {
 			getLogger().fine("Skipping non-single testcase " + test.getName());
 		}
