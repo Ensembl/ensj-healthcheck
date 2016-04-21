@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.ensembl.healthcheck.testcase.EnsTestCase;
+import org.ensembl.healthcheck.util.CollectionUtils;
 
 /**
  * Reporter that captures messages in a hash
@@ -42,9 +43,9 @@ public class StandaloneReporter implements Reporter {
 		this.logger = logger;
 	}
 
-	private final Map<String, List<String>> failures = new HashMap<>();
-	private final Map<String, Map<String, List<String>>> output = new HashMap<>();
-	private final Map<String, List<String>> successes = new HashMap<>();
+	private final Map<String, List<String>> failures = CollectionUtils.createHashMap();
+	private final Map<String, Map<String, List<String>>> output = CollectionUtils.createHashMap();
+	private final Map<String, List<String>> successes = CollectionUtils.createHashMap();
 
 	/*
 	 * (non-Javadoc)
@@ -59,14 +60,14 @@ public class StandaloneReporter implements Reporter {
 		if (result) {
 			List<String> dbSuccess = successes.get(dbre.getName());
 			if (dbSuccess == null) {
-				dbSuccess = new ArrayList<>();
+				dbSuccess = CollectionUtils.createArrayList();
 				successes.put(dbre.getName(), dbSuccess);
 			}
 			dbSuccess.add(testCase.getTestName());
 		} else {
 			List<String> dbFailure = failures.get(dbre.getName());
 			if (dbFailure == null) {
-				dbFailure = new ArrayList<>();
+				dbFailure = CollectionUtils.createArrayList();
 				failures.put(dbre.getName(), dbFailure);
 			}
 			dbFailure.add(testCase.getTestName());
@@ -96,12 +97,12 @@ public class StandaloneReporter implements Reporter {
 		logger.fine(reportLine.toString());
 		Map<String, List<String>> dbOutput = output.get(reportLine.getDatabaseName());
 		if (dbOutput == null) {
-			dbOutput = new HashMap<>();
+			dbOutput = CollectionUtils.createHashMap();
 			output.put(reportLine.getDatabaseName(), dbOutput);
 		}
 		List<String> testList = dbOutput.get(reportLine.getTestCase().getTestName());
 		if (testList == null) {
-			testList = new ArrayList<>();
+			testList = CollectionUtils.createArrayList();
 			dbOutput.put(reportLine.getTestCase().getTestName(), testList);
 		}
 		testList.add(reportLine.getLevelAsString() + ": " + reportLine.getMessage());
@@ -118,10 +119,10 @@ public class StandaloneReporter implements Reporter {
 	public void startTestCase(EnsTestCase testCase, DatabaseRegistryEntry dbre) {
 		Map<String, List<String>> dbOutput = output.get(dbre.getName());
 		if (dbOutput == null) {
-			dbOutput = new HashMap<>();
+			dbOutput = CollectionUtils.createHashMap();
 			output.put(dbre.getName(), dbOutput);
 		}
-		dbOutput.put(testCase.getTestName(), new ArrayList<>());
+		dbOutput.put(testCase.getTestName(),  new ArrayList<String>());
 	}
 
 }

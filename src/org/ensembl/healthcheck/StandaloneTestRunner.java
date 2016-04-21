@@ -122,7 +122,7 @@ public class StandaloneTestRunner {
 			for (Entry<String, List<String>> e : reporter.getFailures().entrySet()) {
 				runner.getLogger().severe("Failures detected for "+e.getKey()+":");
 				for(String testCase: e.getValue()) {
-					runner.getLogger().severe(testCase+" failures:");
+					runner.getLogger().severe(testCase);
 					StringUtils.join(reporter.getOutput().get(e.getKey()).get(testCase), "\n");
 				}
 			}
@@ -204,12 +204,17 @@ public class StandaloneTestRunner {
 
 	private TestRegistry getTestRegistry() {
 		if (testRegistry == null) {
-			try {
-				this.testRegistry = new ConfigurationBasedTestRegistry(options);
-			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException
-					| UnknownTestTypeException e) {
-				throw new RuntimeException(e.getMessage(), e);
-			}
+				try {
+					this.testRegistry = new ConfigurationBasedTestRegistry(options);
+				} catch (InstantiationException e) {
+					throw new RuntimeException(e);
+				} catch (IllegalAccessException e) {
+					throw new RuntimeException(e);
+				} catch (ClassNotFoundException e) {
+					throw new RuntimeException(e);
+				} catch (UnknownTestTypeException e) {
+					throw new RuntimeException(e);
+				}
 		}
 		return testRegistry;
 	}
