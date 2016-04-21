@@ -1,0 +1,222 @@
+/*
+ * Copyright [1999-2016] EMBL-European Bioinformatics Institute
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.ensembl.healthcheck;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Formatter;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
+
+import org.ensembl.healthcheck.configuration.ConfigureTestGroups;
+import org.ensembl.healthcheck.testcase.EnsTestCase;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+
+import com.mysql.jdbc.Driver;
+
+import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
+import uk.co.flamingpenguin.jewel.cli.CliFactory;
+import uk.co.flamingpenguin.jewel.cli.Option;
+
+/**
+ * Simple class to run one or more tests or groups on a single database
+ * 
+ * @author dstaines
+ *
+ */
+public class StandaloneTestRunner {
+
+	/**
+	 * Options that specify how the tests run
+	 * 
+	 * @author dstaines
+	 *
+	 */
+	public interface StandaloneTestOptions extends ConfigureTestGroups {
+
+		@Option(shortName = "d")
+		String getDbname();
+
+		@Option(helpRequest = true, description = "display help")
+		boolean getHelp();
+
+		@Option(shortName = "h")
+		String getHost();
+
+		@Option(shortName = "p")
+		String getPassword();
+
+		boolean isPassword();
+
+		@Option(shortName = "P")
+		int getPort();
+
+		@Option(longName = "compara_dbname", defaultValue = "ensembl_compara_master")
+		String getComparaMasterDbname();
+
+		@Option(longName = "prod_dbname", defaultValue = "ensembl_production")
+		String getProductionDbname();
+
+		@Option(longName = "prod_host")
+		String getProductionHost();
+
+		@Option(longName = "prod_port")
+		int getProductionPort();
+
+		@Option(longName = "prod_user")
+		String getProductionUser();
+
+		@Option(longName = "prod_password")
+		String getProductionPassword();
+
+		boolean isProductionPassword();
+
+		@Option(shortName = "u")
+		String getUser();
+
+		@Option(shortName = "v")
+		boolean isVerbose();
+
+	}
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+
+		StandaloneTestOptions options = null;
+		try {
+			options = CliFactory.parseArguments(StandaloneTestOptions.class, args);
+		} catch (ArgumentValidationException e) {
+			System.err.println(e.getMessage());
+			System.exit(1);
+		}
+
+		StandaloneTestRunner runner = new StandaloneTestRunner(options);
+		boolean result = runner.runAll();
+
+		System.exit(result ? 0 : 1);
+
+	}
+
+	private Logger logger;
+	private final StandaloneTestOptions options;
+	private DatabaseRegistryEntry productionDb;
+	private DatabaseRegistryEntry comparaMasterDb;
+	private DatabaseRegistryEntry testDb;
+
+	public StandaloneTestRunner(StandaloneTestOptions options) {
+		this.options = options;
+	}
+
+	private Logger getLogger() {
+		if (logger == null) {
+			logger = Logger.getLogger(StandaloneTestRunner.class.getCanonicalName());
+			ConsoleHandler localConsoleHandler = new ConsoleHandler();
+			localConsoleHandler.setFormatter(new Formatter() {
+				DateFormat format = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+
+				@Override
+				public String format(LogRecord record) {
+					return String.format("%s %s %s : %s%n", format.format(new Date(record.getMillis())),
+							record.getSourceClassName(), record.getLevel().toString(), record.getMessage());
+				}
+			});
+			if (options.isVerbose()) {
+				localConsoleHandler.setLevel(Level.ALL);
+			} else {
+				localConsoleHandler.setLevel(Level.INFO);
+			}
+			logger.setUseParentHandlers(false);
+			logger.addHandler(localConsoleHandler);
+		}
+		return logger;
+	}
+
+	public DatabaseRegistryEntry getProductionDb() {
+		if (productionDb == null) {
+			getLogger().info("Connecting to production database " + options.getProductionDbname());
+			productionDb = new DatabaseRegistryEntry(new DatabaseServer(options.getProductionHost(),
+					String.valueOf(options.getProductionPort()), options.getProductionUser(),
+					options.isProductionPassword() ? options.getProductionPassword() : null, Driver.class.getName()),
+					options.getProductionDbname(), null, null);
+		}
+		return productionDb;
+	}
+
+	public DatabaseRegistryEntry getComparaMasterDb() {
+		if (comparaMasterDb == null) {
+			getLogger().info("Connecting to compara master database " + options.getComparaMasterDbname());
+			comparaMasterDb = new DatabaseRegistryEntry(new DatabaseServer(options.getProductionHost(),
+					String.valueOf(options.getProductionPort()), options.getProductionUser(),
+					options.isProductionPassword() ? options.getProductionPassword() : null, Driver.class.getName()),
+					options.getComparaMasterDbname(), null, null);
+		}
+		return comparaMasterDb;
+	}
+
+	public DatabaseRegistryEntry getTestDb() {
+		if (testDb == null) {
+			getLogger().info("Connecting to test database " + options.getDbname());
+			testDb = new DatabaseRegistryEntry(
+					new DatabaseServer(options.getHost(), String.valueOf(options.getPort()), options.getUser(),
+							options.isPassword() ? options.getPassword() : null, Driver.class.getName()),
+					options.getDbname(), null, null);
+		}
+		return testDb;
+	}
+
+	private TestRegistry testRegistry;
+
+	private TestRegistry getTestRegistry() {
+		if (testRegistry == null) {
+			try {
+				this.testRegistry = new ConfigurationBasedTestRegistry(options);
+			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException
+					| UnknownTestTypeException e) {
+				throw new RuntimeException(e.getMessage(), e);
+			}
+		}
+		return testRegistry;
+	}
+
+	public boolean runAll() {
+		boolean success = true;
+		for (EnsTestCase testCase : getTestRegistry().getAll()) {
+			success &= runTestCase(testCase);
+		}
+		return success;
+	}
+
+	public boolean runTestCase(EnsTestCase test) {
+		boolean success = true;
+		if (SingleDatabaseTestCase.class.isAssignableFrom(test.getClass())) {
+			getLogger().info("Executing testcase " + test.getName());
+			test.setProductionDatabase(getProductionDb());
+			test.setComparaMasterDatabase(getComparaMasterDb());
+			boolean result = ((SingleDatabaseTestCase) test).run(getTestDb());
+			getLogger().info(test.getName() + " " + (result ? "succeeded" : "failed"));
+		} else {
+			getLogger().fine("Skipping non-single testcase " + test.getName());
+		}
+		return success;
+	}
+
+}
