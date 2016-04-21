@@ -16,6 +16,10 @@
 
 package org.ensembl.healthcheck;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -56,6 +60,9 @@ public class StandaloneTestRunner {
 
 		@Option(helpRequest = true, description = "display help")
 		boolean getHelp();
+		
+		@Option(shortName="o", longName="output_file", defaultValue="failures.txt", description="File to write any failures to")
+		String getOutputFile();
 		
 		@Option(shortName = "v", description="Show detailed debugging output")
 		boolean isVerbose();
@@ -119,13 +126,8 @@ public class StandaloneTestRunner {
 
 		boolean result = runner.runAll();
 		if (!result) {
-			for (Entry<String, List<String>> e : reporter.getFailures().entrySet()) {
-				runner.getLogger().severe("Failures detected for "+e.getKey()+":");
-				for(String testCase: e.getValue()) {
-					runner.getLogger().severe(testCase);
-					StringUtils.join(reporter.getOutput().get(e.getKey()).get(testCase), "\n");
-				}
-			}
+			runner.getLogger().severe("Failures detected - writing details to "+options.getOutputFile());
+			reporter.writeFailureFile(options.getOutputFile());
 		}
 		System.exit(result ? 0 : 1);
 

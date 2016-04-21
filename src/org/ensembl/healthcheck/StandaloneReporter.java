@@ -16,11 +16,18 @@
 
 package org.ensembl.healthcheck;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.util.CollectionUtils;
 
@@ -122,6 +129,28 @@ public class StandaloneReporter implements Reporter {
 			output.put(dbre.getName(), dbOutput);
 		}
 		dbOutput.put(testCase.getTestName(), new ArrayList<String>());
+	}
+
+	/**
+	 * @param outputFile
+	 */
+	public void writeFailureFile(String outputFile) {
+		Writer writer = null;
+		try {
+			writer = new BufferedWriter(new FileWriter(outputFile));
+			for (Entry<String, List<String>> e : this.getFailures().entrySet()) {
+				writer.write("Failures detected for " + e.getKey() + ":\n");
+				for (String testCase : e.getValue()) {
+					writer.write(testCase);
+					writer.write(StringUtils.join(this.getOutput().get(e.getKey()).get(testCase), "\n"));
+					writer.write("\n");
+				}
+			}
+		} catch (IOException e1) {
+			throw new RuntimeException(e1);
+		} finally {
+			IOUtils.closeQuietly(writer);
+		}
 	}
 
 }
