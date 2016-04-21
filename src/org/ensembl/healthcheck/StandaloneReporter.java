@@ -17,7 +17,6 @@
 package org.ensembl.healthcheck;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -122,7 +121,7 @@ public class StandaloneReporter implements Reporter {
 			dbOutput = CollectionUtils.createHashMap();
 			output.put(dbre.getName(), dbOutput);
 		}
-		dbOutput.put(testCase.getTestName(),  new ArrayList<String>());
+		dbOutput.put(testCase.getTestName(), new ArrayList<String>());
 	}
 
 }
