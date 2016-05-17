@@ -19,6 +19,8 @@ package org.ensembl.healthcheck;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -116,7 +118,7 @@ public class StandaloneTestRunner {
 			options = CliFactory.parseArguments(StandaloneTestOptions.class, args);
 		} catch (ArgumentValidationException e) {
 			System.err.println(e.getMessage());
-			System.exit(1);
+			System.exit(255);
 		}
 		
 		StandaloneTestRunner runner = new StandaloneTestRunner(options);
@@ -126,8 +128,20 @@ public class StandaloneTestRunner {
 
 		boolean result = runner.runAll();
 		if (!result) {
-			runner.getLogger().severe("Failures detected - writing details to "+options.getOutputFile());
-			reporter.writeFailureFile(options.getOutputFile());
+			if(options.getOutputFile().equals("-")) {
+				runner.getLogger().severe("Failures detected - writing details to screen");
+				try {
+					PrintWriter writer = new PrintWriter(System.out);
+					reporter.writeFailures(writer);
+					writer.close();
+				} catch (IOException e) {
+					System.err.println(e.getMessage());
+					System.exit(255);
+				}
+			} else {
+				runner.getLogger().severe("Failures detected - writing details to "+options.getOutputFile());
+				reporter.writeFailureFile(options.getOutputFile());
+			}
 		}
 		System.exit(result ? 0 : 1);
 

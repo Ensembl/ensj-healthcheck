@@ -138,18 +138,22 @@ public class StandaloneReporter implements Reporter {
 		Writer writer = null;
 		try {
 			writer = new BufferedWriter(new FileWriter(outputFile));
-			for (Entry<String, List<String>> e : this.getFailures().entrySet()) {
-				writer.write("Failures detected for " + e.getKey() + ":\n");
-				for (String testCase : e.getValue()) {
-					writer.write(testCase);
-					writer.write(StringUtils.join(this.getOutput().get(e.getKey()).get(testCase), "\n"));
-					writer.write("\n");
-				}
-			}
+			writeFailures(writer);
 		} catch (IOException e1) {
 			throw new RuntimeException(e1);
 		} finally {
 			IOUtils.closeQuietly(writer);
+		}
+	}
+
+	public void writeFailures(Writer writer) throws IOException {
+		for (Entry<String, List<String>> e : this.getFailures().entrySet()) {
+			writer.write("Failures detected for " + e.getKey() + ":\n");
+			for (String testCase : e.getValue()) {
+				writer.write(testCase);
+				writer.write(StringUtils.join(this.getOutput().get(e.getKey()).get(testCase), "\n"));
+				writer.write("\n");
+			}
 		}
 	}
 
