@@ -33,6 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.configuration.ConfigureTestGroups;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
@@ -53,6 +54,11 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 public class StandaloneTestRunner {
 
 	/**
+	 * 
+	 */
+	private static final String WRITE_STDOUT = "-";
+
+	/**
 	 * Options that specify how the tests run
 	 * 
 	 * @author dstaines
@@ -63,7 +69,7 @@ public class StandaloneTestRunner {
 		@Option(helpRequest = true, description = "display help")
 		boolean getHelp();
 		
-		@Option(shortName="o", longName="output_file", defaultValue="failures.txt", description="File to write any failures to")
+		@Option(shortName="o", longName="output_file", defaultValue="failures.txt", description="File to write any failures to (use '-' for standard out)")
 		String getOutputFile();
 		
 		@Option(shortName = "v", description="Show detailed debugging output")
@@ -118,17 +124,29 @@ public class StandaloneTestRunner {
 			options = CliFactory.parseArguments(StandaloneTestOptions.class, args);
 		} catch (ArgumentValidationException e) {
 			System.err.println(e.getMessage());
-			System.exit(255);
+			System.exit(2);
 		}
 		
 		StandaloneTestRunner runner = new StandaloneTestRunner(options);
+		
+		if(!StringUtils.isEmpty(options.getOutputFile()) && !options.getOutputFile().equals(WRITE_STDOUT)) {
+			File outfile = new File(options.getOutputFile());
+			if(outfile.exists()) {
+				runner.getLogger().fine("Deleting existing output file "+options.getOutputFile());
+				if(!outfile.delete()) {
+					runner.getLogger().fine("Could not delete existing output file "+options.getOutputFile());
+					System.exit(3);
+				}
+			}
+		}
+		
 		
 		StandaloneReporter reporter = new StandaloneReporter(runner.getLogger());
 		ReportManager.setReporter(reporter);
 
 		boolean result = runner.runAll();
 		if (!result) {
-			if(options.getOutputFile().equals("-")) {
+			if(options.getOutputFile().equals(WRITE_STDOUT)) {
 				runner.getLogger().severe("Failures detected - writing details to screen");
 				try {
 					PrintWriter writer = new PrintWriter(System.out);
@@ -136,7 +154,7 @@ public class StandaloneTestRunner {
 					writer.close();
 				} catch (IOException e) {
 					System.err.println(e.getMessage());
-					System.exit(255);
+					System.exit(4);
 				}
 			} else {
 				runner.getLogger().severe("Failures detected - writing details to "+options.getOutputFile());
