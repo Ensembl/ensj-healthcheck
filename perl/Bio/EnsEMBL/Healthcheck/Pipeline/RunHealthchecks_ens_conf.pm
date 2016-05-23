@@ -41,6 +41,8 @@ sub default_options {
         'hc_cmd'     => undef,
         'exclude_dbs' => undef,
         'properties' => undef,
+        'hcdb'       => undef,
+        'host'       => undef,
         'group'      => undef,
         'division'   => undef
     }
@@ -72,6 +74,7 @@ sub pipeline_analyses {
                      'exclude_dbs' => $self->o('exclude_dbs'),
                      'properties'  => $self->o('properties'),
                      'group'       => $self->o('group'),
+                     'host'        => $self->o('host'),
                      'division'    => $self->o('division')                        
                  }
                 ],
@@ -92,9 +95,10 @@ sub pipeline_analyses {
                 'cmd'         => $self->o('hc_cmd'),
                 'properties'  => $self->o('properties'),
                 'group'       => $self->o('group'),
+                'hcdb'        => $self->o('hcdb'),
                 'division'    => $self->o('division')                        
             },
-            -analysis_capacity => 1,
+            -analysis_capacity => 30,
                     -rc_name => 'himem'
         },
         {
