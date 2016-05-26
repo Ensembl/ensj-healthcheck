@@ -1,6 +1,7 @@
 package org.ensembl.healthcheck.testgroup;
 
 import org.ensembl.healthcheck.GroupOfTests;
+import org.ensembl.healthcheck.testcase.eg_core.AssemblyDefault;
 import org.ensembl.healthcheck.testcase.eg_core.CircularAwareFeatureCoords;
 import org.ensembl.healthcheck.testcase.eg_core.DbDisplayNameUniProt;
 import org.ensembl.healthcheck.testcase.eg_core.DeprecatedEgMeta;
@@ -82,6 +83,7 @@ public class EGCoreIntegrity extends GroupOfTests {
 	public EGCoreIntegrity() {
 		addTest(AssemblyExceptions.class, AssemblyMultipleOverlap.class,
 				AssemblySeqregion.class, CanonicalTranscriptCoding.class,
+				AssemblyDefault.class,
 				CircularAwareFeatureCoords.class,
 				CoreForeignKeys.class, DuplicateAssembly.class,
 				DuplicateTopLevel.class, ExonRank.class, ExonStrandOrder.class,

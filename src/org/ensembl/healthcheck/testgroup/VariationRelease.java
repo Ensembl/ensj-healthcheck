@@ -56,6 +56,8 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.variation.VariationForeignKeys </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.VariationSet </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.VariationSynonym </li>
+ *   <li> org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine </li>
+ *   <li> org.ensembl.healthcheck.testcase.generic.SchemaType </li>
  * </ul>
  *
  * @author Thomas Maurel
@@ -99,7 +101,9 @@ public class VariationRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.variation.VariationFeature.class,
 			org.ensembl.healthcheck.testcase.variation.VariationForeignKeys.class,
 			org.ensembl.healthcheck.testcase.variation.VariationSet.class,
-			org.ensembl.healthcheck.testcase.variation.VariationSynonym.class
+			org.ensembl.healthcheck.testcase.variation.VariationSynonym.class,
+                        org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class,
+                        org.ensembl.healthcheck.testcase.generic.SchemaType.class
 		);
 	}
 }

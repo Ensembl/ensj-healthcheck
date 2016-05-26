@@ -11,10 +11,19 @@ sub run {
     # start a new session
     my $hc_dbc = go_figure_dbc($self->param('hc_conn'));
     my @exclude_dbs = split(" ", $self->param('exclude_dbs'));
+    my $host = $self->param('host');
+    my $group = $self->param('group');
+    $group =~ s/ /,/g;
+    $host =~ s/\n/,/g;
+    if (scalar(@exclude_dbs)) {
+      $group .= '; ';
+      $group .= join(';', @exclude_dbs);
+    }
+    
     my $session_id;
     $hc_dbc->sql_helper->execute_update(
-        -SQL=>"insert into session(start_time,db_release) values(NOW(),?)", 
-        -PARAMS=>[software_version()],
+        -SQL=>"insert into session(start_time,db_release,host,config) values(NOW(),?,?,?)", 
+        -PARAMS=>[software_version(), $host, $group],
         -CALLBACK => sub {
             my ( $sth, $dbh, $rv ) = @_;
             $session_id = $dbh->{mysql_insertid};

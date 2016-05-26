@@ -7,7 +7,11 @@ function msg {
     echo $(date +"%Y-%m-%d %H:%M:%S") $1
 }
 
-properties=${div,,}-database.properties
+properties=$1
+
+if [ -z "$properties" ]; then
+  properties=${div,,}-database.properties
+fi
 
 hive_host=$(sed -n 's/.*hive.host *= *\([^ ]*.*\)/\1/p' < $properties)
 hive_port=$(sed -n 's/.*hive.port *= *\([^ ]*.*\)/\1/p' < $properties)
@@ -36,6 +40,7 @@ HCDB_USER=$(sed -n 's/.*output.user *= *\([^ ]*.*\)/\1/p' < $properties)
 HCDB_PASS=$(sed -n 's/.*output.password *= *\([^ ]*.*\)/\1/p' < $properties)
 group=$(sed -n 's/^groups *= *\([^ ]*.*\)/\1/p' < $properties)
 exclude_dbs=$(sed -n 's/^exclude_dbs *= *\([^ ]*.*\)/\1/p' < $properties)
+hosts=$(sed -n 's/^host[0-9]* *= *\([^ ]*.*\)/\1/p' < $properties)
 TIMINGS_FILE=/tmp/timings.txt
 touch $LOG_FILE
 touch $TIMINGS_FILE
@@ -69,7 +74,7 @@ msg "Starting healthcheck run for ${div}"
 pipeline_db="run_${HCDB}"
 hc_url=mysql://$HCDB_USER:$HCDB_PASS@$HCDB_HOST:$HCDB_PORT/$HCDB
 msg "Creating hive ${USER}_$pipeline_db"
-init_pipeline.pl Bio::EnsEMBL::Healthcheck::Pipeline::RunHealthchecks_ens_conf -hc_conn $hc_url -pipeline_db -user=$hive_user -pipeline_db -pass=$hive_pass -pipeline_db -host=$hive_host -pipeline_db -port=$hive_port -hive_force_init 1 -division $div -hc_cmd "./run_ens_hc_hive.sh #division# #dbname# #session_id# #properties# #group#" -pipeline_name $pipeline_db -properties $properties -group "$group" -exclude_dbs "$exclude_dbs"
+init_pipeline.pl Bio::EnsEMBL::Healthcheck::Pipeline::RunHealthchecks_ens_conf -hc_conn $hc_url -pipeline_db -user=$hive_user -pipeline_db -pass=$hive_pass -pipeline_db -host=$hive_host -pipeline_db -port=$hive_port -hive_force_init 1 -division $div -hc_cmd "./run_ens_hc_hive.sh #division# #dbname# #session_id# #properties# #group# #hcdb#" -pipeline_name $pipeline_db -properties $properties -group "$group" -exclude_dbs "$exclude_dbs" -host "$hosts" -hcdb "$HCDB"
 msg "Running beekeeper"
 hive_url=mysql://$hive_user:$hive_pass@$hive_host:$hive_port/${USER}_${pipeline_db}
 beekeeper.pl -url $hive_url -loop >& $LOG_FILE.hive

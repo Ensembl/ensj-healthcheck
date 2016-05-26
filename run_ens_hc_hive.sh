@@ -5,6 +5,7 @@ db=$2
 sid=$3
 properties=$4
 group=$5
+hcdb=$6
 
 if [ -z "$JAVA_OPTS" ]; then
     JAVA_OPTS=-Xmx15g
@@ -21,7 +22,7 @@ if [[ $db =~ core ]] || [[ $db =~ otherfeatures ]] || [[ $db =~ rnaseq ]] || [[ 
 ./run-configurable-testrunner.sh \
   -g $group\
   -c $properties \
-  -R Database --output.database healthchecks_ens \
+  -R Database --output.database $hcdb \
   -d $db \
   --sessionID $sid >& $report_dir/$db.out
 elif [[ $db =~ compara ]]; then
@@ -29,7 +30,7 @@ elif [[ $db =~ compara ]]; then
 ./run-configurable-testrunner.sh \
   -g EGCompara \
   -c $properties \
-  -R Database --output.database healthchecks_ens \
+  -R Database --output.database $hcdb \
   -d $db \
   --sessionID $sid >& $report_dir/$db.out
 
@@ -38,7 +39,7 @@ elif [[ $db =~ variation ]]; then
 ./run-configurable-testrunner.sh \
   -g VariationRelease \
   -c $properties \
-  -R Database --output.database healthchecks_ens \
+  -R Database --output.database $hcdb \
   -d $db \
   --sessionID $sid >& $report_dir/$db.out
 
@@ -47,7 +48,7 @@ elif [[ $db =~ funcgen ]]; then
 ./run-configurable-testrunner.sh \
   -g FuncgenRelease \
   -c $properties \
-  -R Database --output.database healthchecks_ens \
+  -R Database --output.database $hcdb \
   -d $db \
   --sessionID $sid >& $report_dir/$db.out
 
