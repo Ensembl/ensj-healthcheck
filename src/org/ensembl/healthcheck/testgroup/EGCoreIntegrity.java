@@ -86,7 +86,7 @@ public class EGCoreIntegrity extends GroupOfTests {
 				AssemblyDefault.class,
 				CircularAwareFeatureCoords.class,
 				CoreForeignKeys.class, DuplicateAssembly.class,
-				DuplicateTopLevel.class, ExonRank.class, ExonStrandOrder.class,
+				DuplicateTopLevel.class, ExonRank.class,
 				ExonTranscriptStartEnd.class, GeneCoordSystem.class,
 				NullTranscripts.class, PeptideTranslationAttribs.class,
 				ProteinCodingGene.class, SeqRegionAttribsPresent.class,
