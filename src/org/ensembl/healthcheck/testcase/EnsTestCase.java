@@ -812,6 +812,10 @@ public abstract class EnsTestCase {
 				: getDatabaseRegistryEntryByPattern(System.getProperty("production.database"));
 
 	}
+	
+	public void setProductionDatabase(DatabaseRegistryEntry productionDBRE ) {
+		this.productionDBRE = productionDBRE;
+	}
 
 	/**
 	 * Get a connection to the Compara master database.
@@ -825,6 +829,12 @@ public abstract class EnsTestCase {
 		return comparaMasterDbre != null ? comparaMasterDbre
 				: getDatabaseRegistryEntryByPattern(System.getProperty("compara_master.database"));
 
+	}
+	
+	public void setComparaMasterDatabase(DatabaseRegistryEntry comparaMasterDbre) {
+
+		this.comparaMasterDbre = comparaMasterDbre;
+		
 	}
 
 	// -------------------------------------------------------------------------
