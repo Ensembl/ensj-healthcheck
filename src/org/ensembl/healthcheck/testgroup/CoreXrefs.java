@@ -1,5 +1,5 @@
 /*
- * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [1999-2016] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,6 +84,7 @@ public class CoreXrefs extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.HGNCTypes.class,
 			org.ensembl.healthcheck.testcase.generic.IdentityXrefCigarLines.class,
 			org.ensembl.healthcheck.testcase.generic.InterproDescriptions.class,
+			org.ensembl.healthcheck.testcase.generic.InterproFeatures.class,
                         org.ensembl.healthcheck.testcase.generic.LRG.class,
 			org.ensembl.healthcheck.testcase.generic.PredictedXrefs.class,
                         org.ensembl.healthcheck.testcase.generic.TranscriptNames.class,

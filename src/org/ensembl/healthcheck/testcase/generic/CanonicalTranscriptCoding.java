@@ -1,5 +1,5 @@
 /*
- * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [1999-2016] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -154,7 +154,7 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 		// All canonical transcripts with a translation should belong to a gene with a biotype of 'protein_coding',
 		// 'IG_C_gene','IG_D_gene','IG_J_gene', 'IG_V_gene' or 'RNA-Seq_gene'
 
-		sql = "SELECT COUNT(*) FROM gene g WHERE g.canonical_transcript_id IN (SELECT tr.transcript_id FROM transcript tr, translation tl WHERE tr.transcript_id=tl.transcript_id) AND g.biotype NOT IN ('protein_coding','IG_C_gene','IG_D_gene','IG_J_gene','IG_V_gene','IG_LV_gene','RNA-Seq_gene','polymorphic_pseudogene','TR_C_gene','TR_J_gene','TR_V_gene','TR_D_gene','LRG_gene'";
+		sql = "SELECT COUNT(*) FROM gene g WHERE g.canonical_transcript_id IN (SELECT tr.transcript_id FROM transcript tr, translation tl WHERE tr.transcript_id=tl.transcript_id) AND g.biotype NOT IN ('protein_coding','IG_C_gene','IG_D_gene','IG_J_gene','IG_V_gene','IG_LV_gene','RNA-Seq_gene','polymorphic_pseudogene','TR_C_gene','TR_J_gene','TR_V_gene','TR_D_gene','LRG_gene','nontranslating_cds'";
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sangervega ignore genes that do not have source havana or WU
 			sql += ", 'polymorphic','IG_gene','TR_gene') and (g.source='havana' or g.source='WU')";
 		} else {
@@ -176,7 +176,7 @@ public class CanonicalTranscriptCoding extends SingleDatabaseTestCase {
 		// --------------------------------
 		// None of the transcripts that have a translation and have a biotype different to
 		// ('protein_coding','IG_C_gene','IG_D_gene','IG_J_gene','IG_V_gene')) should be canonical transcripts to any gene.
-		sql = "SELECT COUNT(distinct g.gene_id) FROM gene g WHERE g.canonical_transcript_id IN (select tr.transcript_id FROM transcript tr, translation tl WHERE tr.transcript_id=tl.transcript_id AND tr.biotype NOT IN ('protein_coding','IG_C_gene','IG_D_gene','IG_J_gene','IG_V_gene', 'IG_LV_gene', 'TR_C_gene','TR_J_gene','TR_V_gene', 'TR_D_gene','LRG_gene', 'nonsense_mediated_decay','polymorphic_pseudogene','non_stop_decay'";
+		sql = "SELECT COUNT(distinct g.gene_id) FROM gene g WHERE g.canonical_transcript_id IN (select tr.transcript_id FROM transcript tr, translation tl WHERE tr.transcript_id=tl.transcript_id AND tr.biotype NOT IN ('protein_coding','IG_C_gene','IG_D_gene','IG_J_gene','IG_V_gene', 'IG_LV_gene', 'TR_C_gene','TR_J_gene','TR_V_gene', 'TR_D_gene','LRG_gene', 'nonsense_mediated_decay','polymorphic_pseudogene','non_stop_decay','nontranslating_cds'";
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sangervega ignore genes that do not have source havana or WU
 			sql += ", 'polymorphic','IG_gene','TR_gene')) and (g.source='havana' or g.source='WU')";
 		} else {

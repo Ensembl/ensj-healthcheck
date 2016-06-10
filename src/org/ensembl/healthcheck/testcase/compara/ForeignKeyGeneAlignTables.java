@@ -1,5 +1,5 @@
 /*
- * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [1999-2016] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ public class ForeignKeyGeneAlignTables extends AbstractComparaTestCase {
 		result &= checkForOrphans(con, "gene_align_member", "gene_align_id", "gene_align", "gene_align_id");
 		result &= checkForOrphans(con, "gene_align_member", "seq_member_id", "seq_member", "seq_member_id");
 		result &= checkOptionalRelation(con, "gene_tree_root", "gene_align_id", "gene_align", "gene_align_id");
-		result &= checkForOrphansWithConstraint(con, "gene_tree_root_tag", "value", "gene_align", "gene_align_id", "tag = 'mcoffee_scores'");
+		result &= checkForOrphansWithConstraint(con, "gene_tree_root_attr", "mcoffee_scores_gene_align_id", "gene_align", "gene_align_id", "mcoffee_scores_gene_align_id IS NOT NULL");
 
 		return result;
 	}

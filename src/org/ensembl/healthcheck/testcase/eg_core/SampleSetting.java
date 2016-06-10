@@ -1,5 +1,5 @@
 /*
- * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [1999-2016] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ public class SampleSetting extends AbstractEgCoreTestCase {
 	private final String[] expectedKeys = { "sample.gene_text",
 			"sample.gene_param", "sample.transcript_text",
 			"sample.transcript_param", "sample.location_text",
-			"sample.location_param", "sample.search_text" };
+			"sample.location_param"};
 
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
 		boolean passes = true;

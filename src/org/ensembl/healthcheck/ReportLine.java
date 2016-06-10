@@ -1,5 +1,5 @@
 /*
- * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [1999-2016] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 
 package org.ensembl.healthcheck;
 
@@ -34,7 +33,7 @@ public class ReportLine {
 
 	/** The test case that this report refers to */
 	protected String testCaseName;
-	
+
 	public EnsTestCase getTestCase() {
 		return testCase;
 	}
@@ -56,7 +55,7 @@ public class ReportLine {
 	/** The team responsible for this report */
 	protected Team teamResponsible;
 	protected Team secondTeamResponsible;
-	
+
 	/** Output level that is higher than all the others */
 	public static final int NONE = 2000;
 
@@ -77,7 +76,7 @@ public class ReportLine {
 
 	/** Output level that is lower than all others */
 	public static final int ALL = 0;
-	
+
 	/** For log messages. */
 	public static final int LOG_MESSAGE = -10;
 
@@ -93,10 +92,10 @@ public class ReportLine {
 	 * @param message
 	 *            The message to report.
 	 */
-	public ReportLine(EnsTestCase testCase, String name, int level,
-			String message, Team teamResponsible, Team secondTeamResponsible) {
+	public ReportLine(EnsTestCase testCase, String name, int level, String message, Team teamResponsible,
+			Team secondTeamResponsible) {
 
-		this.testCase     = testCase;
+		this.testCase = testCase;
 		this.testCaseName = testCase.getTestName();
 		DatabaseInfo info = DatabaseRegistryEntry.getInfoFromName(name);
 		this.databaseName = info.getName();
@@ -249,8 +248,7 @@ public class ReportLine {
 			result = "LOG_MESSAGE";
 			break;
 		default:
-			System.err.println("Can't get text equivalent for report level "
-					+ level);
+			System.err.println("Can't get text equivalent for report level " + level);
 			break;
 		}
 
@@ -273,24 +271,24 @@ public class ReportLine {
 	public void setSecondTeamResponsible(Team teamResponsible) {
 		this.secondTeamResponsible = teamResponsible;
 	}
-	
+
 	public String getPrintableTeamResponsibleString() {
-	
+
 		Team team = getTeamResponsible();
 		String teamName;
-		
-		if (team==null) {
+
+		if (team == null) {
 			teamName = "No team specified.";
-		} else {		
+		} else {
 			teamName = getTeamResponsible().toString();
-			
+
 			if (getSecondTeamResponsible() != null) {
 				teamName += " and " + getSecondTeamResponsible();
 			}
-		}		
-		return teamName;	
+		}
+		return teamName;
 	}
-	
+
 	public String getSpeciesName() {
 		return speciesName;
 	}
@@ -305,6 +303,12 @@ public class ReportLine {
 
 	public void setType(DatabaseType type) {
 		this.type = type;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s %s %s : %s", this.getDatabaseName(), this.getTestCaseName(), this.getLevelAsString(),
+				this.getMessage());
 	}
 
 	// -------------------------------------------------------------------------

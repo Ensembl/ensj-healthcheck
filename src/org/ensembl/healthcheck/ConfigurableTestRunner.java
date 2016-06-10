@@ -1,5 +1,5 @@
 /*
- * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [1999-2016] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -191,7 +191,7 @@ public class ConfigurableTestRunner extends TestRunner {
 	 *         the configuration object.
 	 * 
 	 */
-	protected static TestRegistry getTestRegistry(
+	protected TestRegistry getTestRegistry(
 			TestRegistryType testRegistryType, ConfigureTestGroups configuration) {
 
 		TestRegistryFactory testRegistryFactory = new TestRegistryFactory(
@@ -226,7 +226,7 @@ public class ConfigurableTestRunner extends TestRunner {
 	 *         configuration object.
 	 * 
 	 */
-	protected static Reporter getReporter(ReporterType reporterType) {
+	protected Reporter getReporter(ReporterType reporterType) {
 
 		Reporter reporter = new ReporterFactory().getTestReporter(reporterType);
 
@@ -241,6 +241,7 @@ public class ConfigurableTestRunner extends TestRunner {
 	protected static ConfigurationUserParameters createConfigurationObj(
 			String[] args) {
 
+		Logger logger = Logger.getLogger("ConfigurationUserParameters");
 		// A temporary configuration object for accessing the command line
 		// parameters in which the user configures where the configuration
 		// files are located. Since only this information is of interest at
@@ -314,15 +315,16 @@ public class ConfigurableTestRunner extends TestRunner {
 
 	public static void main(String[] args) {
 
+		ConfigurableTestRunner configurableTestRunner = new ConfigurableTestRunner(
+				args);
 		try {
 
-			ConfigurableTestRunner configurableTestRunner = new ConfigurableTestRunner(
-					args);
+			
 			configurableTestRunner.run();
 
 		} catch (ConfigurationException e) {
 
-			ConfigurableTestRunner.logger.log(Level.INFO, e.getMessage());
+			configurableTestRunner.logger.log(Level.SEVERE, e.getMessage());
 		}
 	}
 
@@ -366,7 +368,6 @@ public class ConfigurableTestRunner extends TestRunner {
                 }
 
 		List<String> testDatabases = new ArrayList<String>(getTestDatabases());
-		System.out.println("Test databases "+testDatabases);
 		Species globalSpecies = null;
 
 		if (configuration.isSpecies()) {
@@ -419,14 +420,8 @@ public class ConfigurableTestRunner extends TestRunner {
 				logger.info("Reporting database "
 						+ configuration.getOutputDatabase()
 						+ " already exists, will reuse.");
-				System.out.println("Reporting database "
-						+ configuration.getOutputDatabase()
-						+ " already exists, will reuse.");
 			} else {
 				logger.info("Reporting database "
-						+ configuration.getOutputDatabase()
-						+ " does not exist, will create.");
-				System.out.println("Reporting database "
 						+ configuration.getOutputDatabase()
 						+ " does not exist, will create.");
 				c.run();
@@ -455,7 +450,7 @@ public class ConfigurableTestRunner extends TestRunner {
 		
 		systemPropertySetter.setPropertiesForHealthchecks();
 
-		logger.info("Running tests\n\n");
+		logger.info("Running tests");
 		List<Class<? extends EnsTestCase>> testsThrowingAnException     = new ArrayList<Class<? extends EnsTestCase>>();
 		List<Class<? extends EnsTestCase>> testsSkippedLongRunning      = new ArrayList<Class<? extends EnsTestCase>>();
 		List<Class<? extends EnsTestCase>> testsSkippedForUnknownReason = new ArrayList<Class<? extends EnsTestCase>>();

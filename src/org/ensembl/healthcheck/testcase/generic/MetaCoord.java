@@ -1,5 +1,5 @@
 /*
- * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [1999-2016] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -118,7 +118,7 @@ public class MetaCoord extends SingleDatabaseTestCase {
 									
 					// check that the max_length value in meta_coord corresponds to max feature length in each table per coord_system 
 					String mc_max_length = DBUtils.getRowColumnValue(con, "SELECT max_length FROM meta_coord WHERE coord_system_id=" + coordSystemID + " AND table_name='" + tableName + "'");					
-					String f_max_length = DBUtils.getRowColumnValue(con, "SELECT ABS(MAX(f.seq_region_end - f.seq_region_start) + 1) FROM " + tableName + " f JOIN seq_region s USING(seq_region_id) WHERE s.coord_system_id=" + coordSystemID);
+					String f_max_length = DBUtils.getRowColumnValue(con, "SELECT ABS(MAX((cast(f.seq_region_end as signed) - cast(f.seq_region_start as signed)) + 1)) FROM " + tableName + " f JOIN seq_region s USING(seq_region_id) WHERE s.coord_system_id=" + coordSystemID);
 					
 					if (!mc_max_length.equals(f_max_length)) {
 						ReportManager.problem(this, con, "max_length value " + mc_max_length + " incorrect for coordinate system with ID " + coordSystemID + " for table " + tableName + " in meta_coord; max_length should equal "+ f_max_length);

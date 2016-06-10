@@ -1,5 +1,5 @@
 /*
- * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [1999-2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,23 @@
  * limitations under the License.
  */
 
-package org.ensembl.healthcheck.testcase.eg_core;
+package org.ensembl.healthcheck.testgroup;
 
-import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.testcase.AbstractControlledTable;
+import org.ensembl.healthcheck.testcase.generic.InterproDescriptions;
+import org.ensembl.healthcheck.testcase.generic.ProductionAnalysisLogicName;
 
-@Deprecated
-public class ControlledTableExternalDb extends AbstractControlledTable {
+/**
+ * @author dstaines
+ *
+ */
+public class EGCoreHandover extends EGCoreIntegrity {
 
-	@Override protected String getControlledTableName() {
-		return "external_db";
+	/**
+	 * 
+	 */
+	public EGCoreHandover() {
+		super();
+		this.removeTest(InterproDescriptions.class, ProductionAnalysisLogicName.class);
 	}
 
-	protected DatabaseRegistryEntry getMasterDatabase() {
-		return getProductionDatabase();
-	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [1999-2016] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.variation.Phenotype </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.PhenotypeFeatureAttrib </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.Population </li>
- *   <li> org.ensembl.healthcheck.testcase.variation.PopulationGenotype </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.Publication </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.StructuralVariation </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.TranscriptVariation </li>
@@ -57,6 +56,8 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.variation.VariationForeignKeys </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.VariationSet </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.VariationSynonym </li>
+ *   <li> org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine </li>
+ *   <li> org.ensembl.healthcheck.testcase.generic.SchemaType </li>
  * </ul>
  *
  * @author Thomas Maurel
@@ -92,7 +93,6 @@ public class VariationRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.variation.Phenotype.class,
 			org.ensembl.healthcheck.testcase.variation.PhenotypeFeatureAttrib.class,
 			org.ensembl.healthcheck.testcase.variation.Population.class,
-                        org.ensembl.healthcheck.testcase.variation.PopulationGenotype.class,
 			org.ensembl.healthcheck.testcase.variation.Publication.class,
 			org.ensembl.healthcheck.testcase.variation.StructuralVariation.class,
 			org.ensembl.healthcheck.testcase.variation.TranscriptVariation.class,
@@ -101,7 +101,9 @@ public class VariationRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.variation.VariationFeature.class,
 			org.ensembl.healthcheck.testcase.variation.VariationForeignKeys.class,
 			org.ensembl.healthcheck.testcase.variation.VariationSet.class,
-			org.ensembl.healthcheck.testcase.variation.VariationSynonym.class
+			org.ensembl.healthcheck.testcase.variation.VariationSynonym.class,
+                        org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class,
+                        org.ensembl.healthcheck.testcase.generic.SchemaType.class
 		);
 	}
 }

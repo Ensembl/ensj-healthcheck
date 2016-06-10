@@ -1,5 +1,5 @@
 /*
- * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [1999-2016] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -118,9 +118,9 @@ public class CompareVariationSchema extends AbstractCompareSchema {
         protected Map<Species,Set<String>> requiredTables() {
                 if(r == null) {
                         r = new HashMap<Species, Set<String>>();
-                        r.put(Species.UNKNOWN,            createLinkedHashSet("subsnp_map", "MTMP_population_genotype", "MTMP_evidence"));
-                        r.put(Species.MUS_MUSCULUS,       createLinkedHashSet("strain_gtype_poly"));
-                        r.put(Species.RATTUS_NORVEGICUS,  createLinkedHashSet("strain_gtype_poly"));
+                        r.put(Species.UNKNOWN,            createLinkedHashSet("subsnp_map"));
+                        //r.put(Species.MUS_MUSCULUS,       createLinkedHashSet("strain_gtype_poly"));
+                        //r.put(Species.RATTUS_NORVEGICUS,  createLinkedHashSet("strain_gtype_poly"));
                 }
                 return r;
         }

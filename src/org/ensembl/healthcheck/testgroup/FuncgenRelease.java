@@ -1,5 +1,5 @@
 /*
- * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [1999-2016] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,7 +79,9 @@ public class FuncgenRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.funcgen.RegulatoryFeatureTypes.class,
 			org.ensembl.healthcheck.testcase.funcgen.RegulatoryMotifFeatures.class,
 			org.ensembl.healthcheck.testcase.funcgen.RegulatorySets.class,
-			org.ensembl.healthcheck.testcase.generic.SpeciesID.class
+			org.ensembl.healthcheck.testcase.generic.SpeciesID.class,
+			org.ensembl.healthcheck.testcase.generic.SchemaType.class,
+			org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class
 		);
 	}
 }

@@ -65,11 +65,14 @@ schema_version
 simple_featurebuild.level
 species.alias
 species.biomart_dataset
+species.bioproject_id
 species.classification
 species.common_name
 species.db_name
 species.display_name
 species.division
+species.nematode_name
+species.nematode_clade
 species.production_name
 species.scientific_name
 species.serotype
@@ -83,6 +86,9 @@ species.three_letter_code
 species.url
 species.wikipedia_name
 species.wikipedia_url
+species.wormbase_name
 transcriptbuild.level
+uniprot_proteome.id
+uniprot_proteome.status
 vb.release_status
 xref.timestamp

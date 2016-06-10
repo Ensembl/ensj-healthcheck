@@ -1,5 +1,5 @@
 /*
- * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [1999-2016] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -812,6 +812,10 @@ public abstract class EnsTestCase {
 				: getDatabaseRegistryEntryByPattern(System.getProperty("production.database"));
 
 	}
+	
+	public void setProductionDatabase(DatabaseRegistryEntry productionDBRE ) {
+		this.productionDBRE = productionDBRE;
+	}
 
 	/**
 	 * Get a connection to the Compara master database.
@@ -825,6 +829,12 @@ public abstract class EnsTestCase {
 		return comparaMasterDbre != null ? comparaMasterDbre
 				: getDatabaseRegistryEntryByPattern(System.getProperty("compara_master.database"));
 
+	}
+	
+	public void setComparaMasterDatabase(DatabaseRegistryEntry comparaMasterDbre) {
+
+		this.comparaMasterDbre = comparaMasterDbre;
+		
 	}
 
 	// -------------------------------------------------------------------------

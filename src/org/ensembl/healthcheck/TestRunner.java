@@ -1,5 +1,5 @@
 /*
- * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [1999-2016] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,13 +41,13 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 public class TestRunner {
 
 	/** List that holds an instance of each test. */
-	protected List allTests;
+	protected List<EnsTestCase> allTests;
 
 	/** The List of group names (as Strings) that will be run. */
 	protected List<String> groupsToRun;
 
 	/** The logger to use for this class */
-	protected static Logger logger = Logger.getLogger("HealthCheckLogger");
+	protected Logger logger = Logger.getLogger(this.getClass().getSimpleName());
 
 	/** Output level used by ReportManager */
 	protected int outputLevel = ReportLine.PROBLEM;

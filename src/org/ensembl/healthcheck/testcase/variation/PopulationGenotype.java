@@ -1,5 +1,5 @@
 /*
- * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [1999-2016] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ public class PopulationGenotype extends SingleDatabaseTestCase {
 	 * Creates a new instance of PopulationGenotype
 	 */
 	public PopulationGenotype() {
-		addToGroup("variation-release");
+	//	addToGroup("variation-release");
 		setDescription("Check the two PopulationGenotype tables have the same populations");
 		setTeamResponsible(Team.VARIATION);
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [1999-2016] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -148,7 +148,13 @@ public enum Species {
 			case DANIO_RERIO:
 				vegaStableIDPrefix.put(Species.DANIO_RERIO, "OTTDAR");
 				break;
-			}
+                        case RATTUS_NORVEGICUS:
+                                vegaStableIDPrefix.put(Species.RATTUS_NORVEGICUS, "OTTRNO");
+                                break;
+                        case SUS_SCROFA:
+                                vegaStableIDPrefix.put(Species.SUS_SCROFA, "OTTSUS");
+                                break;
+                        }
 
 		}
 	}

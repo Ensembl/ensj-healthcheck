@@ -1,5 +1,5 @@
 /*
- * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [1999-2016] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,10 +86,10 @@ public class XrefPrefixes extends SingleDatabaseTestCase {
 		rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM external_db e, xref x WHERE x.external_db_id=e.external_db_id AND e.db_name='ZFIN_ID' AND x.dbprimary_acc NOT LIKE 'ZDB%'");
 
 		if (rows > 0) {
-			ReportManager.problem(this, con, rows + " GO xrefs do not have GO: prefixes in the dbprimary_acc and/or display_label columns");
+			ReportManager.problem(this, con, rows + " ZFIN xrefs do not have ZDB: prefixes in the dbprimary_acc and/or display_label columns");
 			result = false;
 		} else {
-			ReportManager.correct(this, con, "All GO xrefs have the correct prefix");
+			ReportManager.correct(this, con, "All ZFIN xrefs have the correct prefix");
 		}
 
 		return result;

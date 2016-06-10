@@ -1,5 +1,5 @@
 /*
- * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [1999-2016] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 
 package org.ensembl.healthcheck.testcase.generic;
 
@@ -29,8 +28,8 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * An EnsEMBL Healthcheck test case which checks all exon of a gene are on the same strand and in the correct order in their
- * transcript.
+ * An EnsEMBL Healthcheck test case which checks all exon of a gene are on the
+ * same strand and in the correct order in their transcript.
  */
 
 public class ExonStrandOrder extends SingleDatabaseTestCase {
@@ -43,7 +42,7 @@ public class ExonStrandOrder extends SingleDatabaseTestCase {
 	public ExonStrandOrder() {
 
 		addToGroup("post_genebuild");
-		
+
 		setHintLongRunning(true);
 		setTeamResponsible(Team.GENEBUILD);
 
@@ -63,7 +62,7 @@ public class ExonStrandOrder extends SingleDatabaseTestCase {
 	 * Check strand order of exons.
 	 * 
 	 * @param dbre
-	 *          The database to use.
+	 *            The database to use.
 	 * @return Result.
 	 */
 
@@ -74,14 +73,12 @@ public class ExonStrandOrder extends SingleDatabaseTestCase {
 		int singleExonTranscripts = 0, transcriptCount = 0;
 
 		String sql = "SELECT g.gene_id, g.seq_region_start, g.seq_region_end, g.seq_region_strand, tr.transcript_id, tr.seq_region_start, tr.seq_region_end, tr.seq_region_strand,e.exon_id, e.seq_region_start, e.seq_region_end, e.seq_region_strand, et.rank,  g.stable_id, tr.stable_id "
-				+ "FROM   gene g, transcript tr, exon_transcript et, exon e "
-				+ "WHERE  e.exon_id = et.exon_id "
-				+ "AND    et.transcript_id = tr.transcript_id "
-				+ "AND    tr.gene_id = g.gene_id "
-        + "AND    tr.transcript_id NOT IN "
-        + "  (SELECT transcript_id FROM transcript_attrib INNER JOIN attrib_type USING (attrib_type_id) WHERE code='trans_spliced')"
-        + "ORDER BY et.transcript_id, et.rank";
-System.out.println(sql);
+				+ "FROM   gene g, transcript tr, exon_transcript et, exon e " + "WHERE  e.exon_id = et.exon_id "
+				+ "AND    et.transcript_id = tr.transcript_id " + "AND    tr.gene_id = g.gene_id "
+				+ "AND    tr.transcript_id NOT IN "
+				+ "  (SELECT transcript_id FROM transcript_attrib INNER JOIN attrib_type USING (attrib_type_id) WHERE code='trans_spliced')"
+				+ "ORDER BY et.transcript_id, et.rank";
+		System.out.println(sql);
 		Connection con = dbre.getConnection();
 		Statement st = null;
 		ResultSet rs = null;
@@ -97,7 +94,8 @@ System.out.println(sql);
 			long lastExonID = -1;
 			int lastExonRank = 0;
 
-			// ResultSet is ordered by transcript ID and rank, so we can loop through
+			// ResultSet is ordered by transcript ID and rank, so we can loop
+			// through
 			// and look at the grouped exons for each transcript
 			while (rs.next()) {
 
@@ -131,32 +129,42 @@ System.out.println(sql);
 
 						// check all exons in a transcript have the same strand
 						if (exonStrand != lastExonStrand) {
-							ReportManager.problem(this, con, "Exons in transcript " + transcriptID + " have different strands");
+							ReportManager.problem(this, con,
+									"Exons in transcript " + transcriptID + " have different strands");
 							result = false;
 						}
 
-						// check all exons have the same strand as their transcript
+						// check all exons have the same strand as their
+						// transcript
 						if (exonStrand != transcriptStrand) {
-							ReportManager.problem(this, con, "Exon " + exonID + " in transcript " + transcriptID + " has strand " + exonStrand + " but transcript's strand is " + transcriptStrand);
+							ReportManager.problem(this, con, "Exon " + exonID + " in transcript " + transcriptID
+									+ " has strand " + exonStrand + " but transcript's strand is " + transcriptStrand);
 							result = false;
 						}
 
 						// check that exon start/ends make sense
 						if (exonStrand == 1) {
 							if (lastExonEnd > exonStart) {
-								ReportManager.problem(this, con, "Exons " + lastExonID + " (end "+lastExonEnd+") and " + exonID + " (start "+exonStart+") in transcript " + transcriptID + " appear to overlap (positive strand)");
+								ReportManager.problem(this, con,
+										"Exons " + lastExonID + " (end " + lastExonEnd + ") and " + exonID + " (start "
+												+ exonStart + ") in transcript " + transcriptID
+												+ " appear to overlap (positive strand)");
 								result = false;
 							}
 						} else if (exonStrand == -1) {
 							if (lastExonStart < exonEnd) {
-								ReportManager.problem(this, con, "Exons " + lastExonID + " (start "+lastExonStart+") and " + exonID + " (end "+exonEnd+") in transcript " + transcriptID + " appear to overlap (negative strand)");
+								ReportManager.problem(this, con,
+										"Exons " + lastExonID + " (start " + lastExonStart + ") and " + exonID
+												+ " (end " + exonEnd + ") in transcript " + transcriptID
+												+ " appear to overlap (negative strand)");
 								result = false;
 							}
 						}
 
 						// check for rank jumping
 						if (exonRank - lastExonRank > 1) {
-							ReportManager.problem(this, con, "Exon rank jump in exon " + exonID + " transcript: " + transcriptID + " gene: " + geneID);
+							ReportManager.problem(this, con, "Exon rank jump in exon " + exonID + " transcript: "
+									+ transcriptID + " gene: " + geneID);
 							result = false;
 						}
 
@@ -190,14 +198,14 @@ System.out.println(sql);
 				}
 
 			} // while rs
-			
+
 			if ((double) singleExonTranscripts / transcriptCount > 0.2) {
-				ReportManager.warning(this, con, "High single exon transcript count. (" + singleExonTranscripts + "/" + transcriptCount + ")");
+				ReportManager.warning(this, con,
+						"High single exon transcript count. (" + singleExonTranscripts + "/" + transcriptCount + ")");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		finally {
+		} finally {
 			DBUtils.closeQuietly(rs);
 			DBUtils.closeQuietly(st);
 		}

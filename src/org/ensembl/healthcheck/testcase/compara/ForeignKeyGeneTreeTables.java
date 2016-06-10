@@ -1,5 +1,5 @@
 /*
- * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [1999-2016] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,7 @@ public class ForeignKeyGeneTreeTables extends AbstractComparaTestCase {
 		result &= checkForOrphans(con, "gene_tree_root", "root_id", "gene_tree_node", "node_id");
 
 		result &= checkForOrphansSameTable(con, "gene_tree_root", "ref_root_id", "root_id", true);
+		result &= checkForOrphans(con, "gene_tree_root_attr", "root_id", "gene_tree_root", "root_id");
 		result &= checkForOrphans(con, "gene_tree_root_tag", "root_id", "gene_tree_root", "root_id");
 
 		return result;

@@ -1,15 +1,13 @@
 package org.ensembl.healthcheck.testgroup;
 
 import org.ensembl.healthcheck.GroupOfTests;
+import org.ensembl.healthcheck.testcase.eg_core.AssemblyDefault;
 import org.ensembl.healthcheck.testcase.eg_core.CircularAwareFeatureCoords;
-import org.ensembl.healthcheck.testcase.eg_core.ControlledTableAttribType;
-import org.ensembl.healthcheck.testcase.eg_core.ControlledTableExternalDb;
 import org.ensembl.healthcheck.testcase.eg_core.DbDisplayNameUniProt;
 import org.ensembl.healthcheck.testcase.eg_core.DeprecatedEgMeta;
 import org.ensembl.healthcheck.testcase.eg_core.DuplicateMetaKeys;
 import org.ensembl.healthcheck.testcase.eg_core.DuplicateTopLevel;
 import org.ensembl.healthcheck.testcase.eg_core.DuplicateXref;
-import org.ensembl.healthcheck.testcase.eg_core.EGCompareCoreSchema;
 import org.ensembl.healthcheck.testcase.eg_core.ExonBoundary;
 import org.ensembl.healthcheck.testcase.eg_core.GeneBuildStartDate;
 import org.ensembl.healthcheck.testcase.eg_core.GeneDescriptionUniProtSource;
@@ -85,9 +83,10 @@ public class EGCoreIntegrity extends GroupOfTests {
 	public EGCoreIntegrity() {
 		addTest(AssemblyExceptions.class, AssemblyMultipleOverlap.class,
 				AssemblySeqregion.class, CanonicalTranscriptCoding.class,
-				CircularAwareFeatureCoords.class, EGCompareCoreSchema.class,
+				AssemblyDefault.class,
+				CircularAwareFeatureCoords.class,
 				CoreForeignKeys.class, DuplicateAssembly.class,
-				DuplicateTopLevel.class, ExonRank.class, ExonStrandOrder.class,
+				DuplicateTopLevel.class, ExonRank.class,
 				ExonTranscriptStartEnd.class, GeneCoordSystem.class,
 				NullTranscripts.class, PeptideTranslationAttribs.class,
 				ProteinCodingGene.class, SeqRegionAttribsPresent.class,

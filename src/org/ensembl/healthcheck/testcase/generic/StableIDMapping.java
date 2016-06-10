@@ -1,5 +1,5 @@
 /*
- * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [1999-2016] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,10 @@ public class StableIDMapping extends SingleDatabaseTestCase {
 
 	public void types() {
 
-		removeAppliesToType(DatabaseType.CDNA);
+                removeAppliesToType(DatabaseType.ESTGENE);
+                removeAppliesToType(DatabaseType.CDNA);
+                removeAppliesToType(DatabaseType.OTHERFEATURES);
+                removeAppliesToType(DatabaseType.RNASEQ);
 
 	}
 
@@ -79,13 +82,13 @@ public class StableIDMapping extends SingleDatabaseTestCase {
 
 		// there are several species where ID mapping is not done
 		Species s = dbre.getSpecies();
+                result &= checkPrefixes(dbre);
 		if (s != null && s != Species.CAENORHABDITIS_ELEGANS
 				&& s != Species.DROSOPHILA_MELANOGASTER
 				&& s != Species.SACCHAROMYCES_CEREVISIAE
 				&& s != Species.ANOPHELES_GAMBIAE && s != Species.UNKNOWN) {
 			if (dbre.getType() == DatabaseType.CORE) {// for sangervega, do not
 														// check the prefixes
-				result &= checkPrefixes(dbre);
 				result &= checkStableIDEventTypes(con);
 				result = checkStableIDTimestamps(con);
 			}
