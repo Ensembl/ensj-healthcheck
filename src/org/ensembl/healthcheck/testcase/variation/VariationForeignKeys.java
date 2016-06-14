@@ -76,6 +76,8 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			result &= checkForOrphans(con, "sample_genotype_multiple_bp", "sample_id", "sample", "sample_id", true);
 			result &= checkForOrphans(con, "sample_population", "sample_id", "sample", "sample_id", true);
 			result &= checkForOrphans(con, "sample_population", "population_id", "population", "population_id", true);
+			result &= checkForOrphans(con, "sample_synonym", "sample_id", "sample", "sample_id", true);
+			result &= checkForOrphans(con, "sample_synonym", "source_id", "source", "source_id", true);
 			result &= checkForOrphans(con, "individual_synonym", "individual_id", "individual", "individual_id", true);
 			result &= checkForOrphans(con, "phenotype", "phenotype_id", "phenotype_feature", "phenotype_id", true);
 			result &= checkForOrphans(con, "phenotype_feature", "phenotype_id", "phenotype", "phenotype_id", true);
@@ -84,12 +86,12 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			//result &= checkForOrphans(con, "phenotype_feature", "study_id", "study", "study_id", true);
 			result &= checkForOrphans(con, "phenotype_feature_attrib", "phenotype_feature_id", "phenotype_feature", "phenotype_feature_id", true);
 			result &= checkForOrphans(con, "phenotype_feature_attrib", "attrib_type_id", "attrib_type", "attrib_type_id", true);
+			result &= checkForOrphans(con, "phenotype_ontology_accession", "phenotype_id", "phenotype", "phenotype_id", true);
 			result &= checkForOrphans(con, "population_genotype", "population_id", "population", "population_id", true);
 			result &= checkForOrphans(con, "population_genotype", "variation_id", "variation", "variation_id", true);
 			result &= checkForOrphans(con, "population_synonym", "population_id", "population", "population_id", true);
 			result &= checkForOrphans(con, "read_coverage", "seq_region_id", "seq_region", "seq_region_id", true);
 			result &= checkForOrphans(con, "read_coverage", "sample_id", "sample", "sample_id", true);
-			result &= checkForOrphans(con, "tagged_variation_feature", "population_id", "population", "population_id", true);
 
 			//  result &= checkForOrphans(con, "tmp_sample_genotype_single_bp", "variation_id", "variation", "variation_id", true);
 
