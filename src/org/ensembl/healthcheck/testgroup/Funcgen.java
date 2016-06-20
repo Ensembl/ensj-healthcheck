@@ -55,19 +55,19 @@ public class Funcgen extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.BlankEnums.class,
 			org.ensembl.healthcheck.testcase.generic.BlankInfoType.class,
 			org.ensembl.healthcheck.testcase.generic.BlanksInsteadOfNulls.class,
-			org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema.class,
-			org.ensembl.healthcheck.testcase.funcgen.CheckResultSetDBFileLink.class,
+			// org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema.class,
+			// org.ensembl.healthcheck.testcase.funcgen.CheckResultSetDBFileLink.class,
 			org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionArrayXrefs.class,
-			org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionRegulatoryFeatures.class,
+			// org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionRegulatoryFeatures.class,
 			org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName.class,
 			org.ensembl.healthcheck.testcase.funcgen.FeaturePosition.class,
 			org.ensembl.healthcheck.testcase.funcgen.FuncgenForeignKeys.class,
 			org.ensembl.healthcheck.testcase.funcgen.FuncgenStableID.class,
 			org.ensembl.healthcheck.testcase.funcgen.MetaCoord.class,
 			org.ensembl.healthcheck.testcase.generic.NullStrings.class,
-			org.ensembl.healthcheck.testcase.funcgen.RegulatoryFeatureTypes.class,
-			org.ensembl.healthcheck.testcase.funcgen.RegulatoryMotifFeatures.class,
-			org.ensembl.healthcheck.testcase.funcgen.RegulatorySets.class
+			// org.ensembl.healthcheck.testcase.funcgen.RegulatoryFeatureTypes.class,
+			// org.ensembl.healthcheck.testcase.funcgen.RegulatoryMotifFeatures.class,
+			// org.ensembl.healthcheck.testcase.funcgen.RegulatorySets.class
 		);
 	}
 }
