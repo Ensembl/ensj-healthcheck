@@ -64,7 +64,7 @@ public class Funcgen extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.funcgen.FuncgenForeignKeys.class,
 			org.ensembl.healthcheck.testcase.funcgen.FuncgenStableID.class,
 			org.ensembl.healthcheck.testcase.funcgen.MetaCoord.class,
-			org.ensembl.healthcheck.testcase.generic.NullStrings.class,
+			org.ensembl.healthcheck.testcase.generic.NullStrings.class
 			// org.ensembl.healthcheck.testcase.funcgen.RegulatoryFeatureTypes.class,
 			// org.ensembl.healthcheck.testcase.funcgen.RegulatoryMotifFeatures.class,
 			// org.ensembl.healthcheck.testcase.funcgen.RegulatorySets.class
