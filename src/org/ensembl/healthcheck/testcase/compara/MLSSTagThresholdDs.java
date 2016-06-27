@@ -27,13 +27,13 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
  * An EnsEMBL Healthcheck test case to check for "threshold_on_ds" in the
- * method_link_species_set_tag table
+ * method_link_species_set_attr table
  */
 
 public class MLSSTagThresholdDs extends SingleDatabaseTestCase {
 
 	public MLSSTagThresholdDs() {
-		setDescription("Tests that proper 'threshold_on_ds' entries are in method_link_species_set_tag.");
+		setDescription("Tests that proper 'threshold_on_ds' entries are in method_link_species_set_attr.");
 		setTeamResponsible(Team.COMPARA);
 	}
 
@@ -47,8 +47,8 @@ public class MLSSTagThresholdDs extends SingleDatabaseTestCase {
 		}
 
 		boolean result = true;
-		result &= checkCountIsNonZero(con, "method_link_species_set_tag", "tag = 'threshold_on_ds'");
-		result &= checkCountIsZero(con, "method_link_species_set_tag", "tag='threshold_on_ds' AND value NOT IN (1,2)");
+		result &= checkCountIsNonZero(con, "method_link_species_set_attr", "threshold_on_ds IS NOT NULL");
+		result &= checkCountIsZero(con, "method_link_species_set_attr", "(threshold_on_ds IS NOT NULL) AND (threshold_on_ds NOT IN (1,2))");
 		return result;
 	}
 
