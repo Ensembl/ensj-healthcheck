@@ -33,21 +33,21 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * An EnsEMBL Healthcheck test case for SpeciesTreeNodeTag entries
+ * An EnsEMBL Healthcheck test case for SpeciesTreeNodeAttr entries
  */
 
-public class CheckSpeciesTreeNodeTag extends SingleDatabaseTestCase {
+public class CheckSpeciesTreeNodeAttr extends SingleDatabaseTestCase {
 
-	public CheckSpeciesTreeNodeTag() {
-		setDescription("Tests that entries are present in species_tree_node_tag");
+	public CheckSpeciesTreeNodeAttr() {
+		setDescription("Tests that entries are present in species_tree_node_attr");
 		setTeamResponsible(Team.COMPARA);
 	}
 
 	public boolean run(DatabaseRegistryEntry dbre) {
 		Connection con = dbre.getConnection();
 
-		if (!DBUtils.checkTableExists(con, "species_tree_node_tag")) {
-			ReportManager.problem(this, con, "species_tree_node_tag table not present");
+		if (!DBUtils.checkTableExists(con, "species_tree_node_attr")) {
+			ReportManager.problem(this, con, "species_tree_node_attr table not present");
 			return false;
 		}
 
@@ -57,8 +57,8 @@ public class CheckSpeciesTreeNodeTag extends SingleDatabaseTestCase {
 		}
 
 		boolean result = true;
-		result &= checkCountIsNonZero(con, "species_tree_node_tag", "tag LIKE 'root\\_%'");
-		result &= checkCountIsNonZero(con, "species_tree_node_tag", "tag LIKE 'nb%\\_genes%'");
+		result &= checkCountIsNonZero(con, "species_tree_node_attr", "root_nb_trees > 0");
+		result &= checkCountIsNonZero(con, "species_tree_node_attr", "nb_genes > 0");
 		return result;
 	}
 }
