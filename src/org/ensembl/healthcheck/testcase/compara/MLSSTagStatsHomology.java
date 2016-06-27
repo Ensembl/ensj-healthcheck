@@ -26,16 +26,17 @@ public class MLSSTagStatsHomology extends AbstractMLSSTagStats {
 	protected HashMap<String,String[]> getMandatoryTags() {
 		HashMap<String,String[]> mandatoryTags = new HashMap<String,String[]>();
 		String[] tags_orthologies = {
-			"n_many-to-many_groups", "n_many-to-many_pairs",
-			"n_many-to-one_groups", "n_many-to-one_pairs",
-			"n_one-to-many_groups", "n_one-to-many_pairs",
-			"n_one-to-one_groups", "n_one-to-one_pairs"
+			"n_protein_many-to-many_groups", "n_protein_many-to-many_pairs",
+			"n_protein_many-to-one_groups", "n_protein_many-to-one_pairs",
+			"n_protein_one-to-many_groups", "n_protein_one-to-many_pairs",
+			"n_protein_one-to-one_groups", "n_protein_one-to-one_pairs"
 		};
 		mandatoryTags.put("ENSEMBL_ORTHOLOGUES", tags_orthologies);
 
 		String[] tags_paralogies = {
-			"n_gene_split_genes", "n_gene_split_groups", "n_gene_split_pairs", "avg_gene_split_perc_id",
-			"n_within_species_paralog_genes", "n_within_species_paralog_groups", "n_within_species_paralog_pairs", "avg_within_species_paralog_perc_id"
+			"n_protein_within_species_paralog_genes", "n_protein_within_species_paralog_groups", "n_protein_within_species_paralog_pairs", "avg_protein_within_species_paralog_perc_id",
+			// Some species are excluded from the ncRNA-tree pipeline, so there are no paralogues for them
+			//"n_ncrna_within_species_paralog_genes", "n_ncrna_within_species_paralog_groups", "n_ncrna_within_species_paralog_pairs", "avg_ncrna_within_species_paralog_perc_id"
 		};
 		mandatoryTags.put("ENSEMBL_PARALOGUES", tags_paralogies);
 
