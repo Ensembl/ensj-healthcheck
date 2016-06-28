@@ -18,6 +18,7 @@ package org.ensembl.healthcheck.testgroup;
 
 import org.ensembl.healthcheck.testcase.eg_core.GeneGC;
 import org.ensembl.healthcheck.testcase.eg_core.ProteinCodingGene;
+import org.ensembl.healthcheck.testcase.eg_core.ProteinTranslation;
 import org.ensembl.healthcheck.testcase.eg_core.SeqRegionDna;
 import org.ensembl.healthcheck.testcase.generic.CanonicalTranscriptCoding;
 import org.ensembl.healthcheck.testcase.generic.DNAEmpty;
@@ -36,7 +37,7 @@ public class EGOtherFeaturesHandover extends EGCoreHandover {
 	public EGOtherFeaturesHandover() {
 		super();
 		this.removeTest(GeneGC.class, ProteinCodingGene.class, SeqRegionDna.class, CanonicalTranscriptCoding.class,
-				InterproDescriptions.class, SeqRegionAttribsPresent.class, StableID.class);
+				InterproDescriptions.class, SeqRegionAttribsPresent.class, StableID.class, ProteinTranslation.class);
 		this.addTest(DNAEmpty.class);
 	}
 
