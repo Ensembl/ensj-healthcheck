@@ -8,6 +8,7 @@ import org.ensembl.healthcheck.testcase.eg_core.DeprecatedEgMeta;
 import org.ensembl.healthcheck.testcase.eg_core.DuplicateMetaKeys;
 import org.ensembl.healthcheck.testcase.eg_core.DuplicateTopLevel;
 import org.ensembl.healthcheck.testcase.eg_core.DuplicateXref;
+import org.ensembl.healthcheck.testcase.eg_core.EvidenceFreeGO;
 import org.ensembl.healthcheck.testcase.eg_core.ExonBoundary;
 import org.ensembl.healthcheck.testcase.eg_core.GeneBuildStartDate;
 import org.ensembl.healthcheck.testcase.eg_core.GeneDescriptionUniProtSource;
@@ -115,7 +116,8 @@ public class EGCoreIntegrity extends GroupOfTests {
 				SeqRegionsConsistentWithComparaMaster.class,
 				SeqRegionAttribForPolyploidGenome.class,
 				SeqRegionAttribForPolyploidGenomeToplevelOnly.class,
-				SeqRegionLength.class, SchemaPatchesApplied.class);
+				SeqRegionLength.class, SchemaPatchesApplied.class, 
+				EvidenceFreeGO.class);
 	}
 
 }
