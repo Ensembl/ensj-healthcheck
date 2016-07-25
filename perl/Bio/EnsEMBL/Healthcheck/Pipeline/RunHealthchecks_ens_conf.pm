@@ -30,7 +30,7 @@ sub resource_classes {
     my ($self) = @_;
     return { 'default' => { 'LSF' => '-q normal' },
               'himem' =>
-              { 'LSF' => '-q normal -M 1500 -R"select[mem>1500] rusage[mem=1500]"' }
+              { 'LSF' => '-q long -M 1500 -R"select[mem>1500] rusage[mem=1500]"' }
     };
 }
 
