@@ -60,12 +60,12 @@ GetOptions(
 
 $user1 = $user1 || "ensadmin";
 $pass1 = $pass1 || "ensembl";
-$host1 = $host1 || "ens-staging";
+$host1 = $host1 || "ens-staging3";
 $port1 = $port1 || "3306";
 
 $user2 = $user2 || "ensadmin";
 $pass2 = $pass2 || "ensembl";
-$host2 = $host2 || "ens-staging2";
+$host2 = $host2 || "ens-staging3";
 $port2 = $port2 || "3306";
 
 $user_prev = $user_prev || "ensadmin";
