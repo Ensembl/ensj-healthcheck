@@ -49,13 +49,13 @@ public interface ConfigureDatabases {
 	List<String> getDivisions();
 	boolean isDivisions();
 
-        @Option(longName = "species", description = "If set, this will be used as the species for all databases, overriding anything the" +
-                        "name or meta table of the database may indicate.")
-        String getSpecies();
-        boolean isSpecies();
+	@Option(longName = "species", description = "If set, this will be used as the species for all databases, overriding anything the" +
+					"name or meta table of the database may indicate.")
+	String getSpecies();
+	boolean isSpecies();
 
-        @Option(longName = "dbtype", description = "If set, this will be used as the type for all databases.")
-        String getDbType();
-        boolean isDbType();
+	@Option(longName = "dbtype", description = "If set, this will be used as the type for all databases.")
+	String getDbType();
+	boolean isDbType();
 	
 }

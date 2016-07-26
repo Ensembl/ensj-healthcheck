@@ -129,6 +129,9 @@ public class ConfigurableTestRunner extends TestRunner {
 		this.doRepair = (repair.equals("do") || repair.equals("1") || repair.equals("yes"));
 		this.showRepair = (repair.equals("show"));
 
+		/* configuration is cast to a lesser interface to compartmentalise options for
+		* different packages.
+		* */
 		DBUtils.setHostConfiguration((ConfigureHost) configuration);
 	}
 
@@ -159,7 +162,7 @@ public class ConfigurableTestRunner extends TestRunner {
 			r = ReporterType.valueOf(reporterType.toUpperCase());
 		} catch (IllegalArgumentException e) {
 			throw new ConfigurationException(
-					"Parameter reportertype has been set to an illegal value: "
+					"Parameter reporterType has been set to an illegal value: "
 							+ reporterType);
 		}
 

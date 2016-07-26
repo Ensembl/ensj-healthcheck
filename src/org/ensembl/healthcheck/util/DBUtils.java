@@ -139,7 +139,7 @@ public final class DBUtils {
 	 * @param user
 	 * @param password
 	 * @param database
-	 * @return
+	 * @return Connection
 	 * @throws SQLException
 	 */
 	public static Connection openConnection(String driverClassName,
@@ -185,9 +185,10 @@ public final class DBUtils {
 	 */
 
 	public static String[] listDatabases(Connection con) {
-
-		List<String> dbs = getSqlTemplate(con).queryForDefaultObjectList(
-				"SHOW DATABASES", String.class);
+		Integer release = hostConfiguration.getRelease();
+		Integer lastRelease = release - 1;
+		String query = String.format("SHOW DATABASES WHERE `Database` LIKE %s OR `Database` LIKE %s", release.toString(), lastRelease.toString());
+		List<String> dbs = getSqlTemplate(con).queryForDefaultObjectList(query, String.class);
 		return dbs.toArray(new String[] {});
 
 	} // listDatabases
