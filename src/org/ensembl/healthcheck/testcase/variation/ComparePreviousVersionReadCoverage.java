@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,41 +45,32 @@ public class ComparePreviousVersionReadCoverage extends ComparePreviousVersionBa
 	 * Create a new testcase.
 	 */
 	public ComparePreviousVersionReadCoverage() {
-
 		addToGroup("variation-release");
-		setDescription("Compare the number of reads for each individual with read coverage in the current database with those from the equivalent database on the secondary server");
+		setDescription("Compare the number of reads for each sample with read coverage in the current database with those from the equivalent database on the secondary server");
 		setTeamResponsible(Team.VARIATION);
-
 	}
 
 	protected Map getCounts(DatabaseRegistryEntry dbre) {
-		return getCountsBySQL(dbre, "SELECT i.name, COUNT(*) FROM read_coverage rc JOIN individual i ON (i.individual_id = rc.individual_id) GROUP BY i.name");
-
+		return getCountsBySQL(dbre, "SELECT s.name, COUNT(*) FROM read_coverage rc JOIN sample s ON (s.sample_id = rc.sample_id) GROUP BY s.name");
 	}
 
 	// ------------------------------------------------------------------------
 
 	protected String entityDescription() {
-
-		return "number of reads for individual";
-
+		return "number of reads for sample";
 	}
 
 	// ------------------------------------------------------------------------
 
 	protected double threshold() {
-
 		return 1;
-
 	}
 
-        // ------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
 
-        protected double minimum() {
-
-                return 0;
-
-        }
+  protected double minimum() {
+    return 0;
+  }
 
 	// ------------------------------------------------------------------------
 

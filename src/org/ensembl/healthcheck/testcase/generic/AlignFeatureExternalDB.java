@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,11 +36,6 @@ public class AlignFeatureExternalDB extends SingleDatabaseTestCase {
 	 */
 	public AlignFeatureExternalDB() {
 
-		addToGroup("post_genebuild");
-		addToGroup("post-compara-handover");
-                addToGroup("pre-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check that all DNA and protein align features have an external_db_id set.");
 		setPriority(Priority.AMBER);
 		setEffect("Needed for web display.");

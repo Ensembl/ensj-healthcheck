@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,12 +63,6 @@ public class MetaValues extends SingleDatabaseTestCase {
 	
 	public MetaValues() {
 
-		addToGroup("post_genebuild");
-		addToGroup("compara-ancestral");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setTeamResponsible(Team.GENEBUILD);
                 setSecondTeamResponsible(Team.RELEASE_COORDINATOR);
 		setDescription("Check that meta_value contents in the meta table are OK");
@@ -211,9 +206,6 @@ public class MetaValues extends SingleDatabaseTestCase {
 					valid = false;
 					ReportManager.problem(this, con, "Third co-ordinate system in mapping (" + cs3 + ") is not in the coord_system table");
 				}
-				if (valid) {
-					ReportManager.correct(this, con, "Coordinate system mapping " + mappings[i] + " is OK");
-				}
 
 				result &= valid;
 
@@ -290,13 +282,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		if (cs.equals(cs.toLowerCase())) {
-
-			ReportManager.correct(this, con, "Co-ordinate system name " + cs + " all lower case in " + desc);
-			result = true;
-
-		} else {
-
+		if (!cs.equals(cs.toLowerCase())) {
 			ReportManager.problem(this, con, "Co-ordinate system name " + cs + " is not all lower case in " + desc);
 			result = false;
 
@@ -420,9 +406,6 @@ public class MetaValues extends SingleDatabaseTestCase {
 				result &= checkDateFormat(con, key, value);
 			}
 
-			if (result) {
-				ReportManager.correct(this, con, key + " is present & in a valid format");
-			}
 		}
 
                 if (!result) {
@@ -588,8 +571,6 @@ public class MetaValues extends SingleDatabaseTestCase {
 		if (!Utils.stringInArray(method, allowedMethods, true)) {
 			ReportManager.problem(this, con, "genebuild.method value " + method + " is not in list of allowed methods");
 			result = false;
-		} else {
-			ReportManager.correct(this, con, "genebuild.method " + method + " is valid");
 		}
 
 		return result;
@@ -758,7 +739,7 @@ public class MetaValues extends SingleDatabaseTestCase {
             }
           };
 
-          String sql = "SELECT biotype, analysis_id, seq_region_id, seq_region_start, seq_region_end, seq_region_end, seq_region_strand, stable_id, is_current, version FROM gene" ;
+          String sql = "SELECT biotype, analysis_id, seq_region_id, seq_region_start, seq_region_end, seq_region_end, seq_region_strand, stable_id, is_current, version FROM gene WHERE biotype NOT IN ('LRG_gene')" ;
           Set<Set<Object>> currentGenes = t.queryForSet(sql, rowMapper);
           Set<Set<Object>> previousGenes = getSqlTemplate(sec).queryForSet(sql, rowMapper);
 

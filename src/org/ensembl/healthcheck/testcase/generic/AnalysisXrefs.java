@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,10 +40,6 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
 	 */
 	public AnalysisXrefs() {
 
-		addToGroup("core_xrefs");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
 		setDescription("Check that analyses (e.g. havana) and their associated xref types (e.g. OTTT) exist, and vice versa");
 		setPriority(Priority.AMBER);
 		setEffect("Will cause problems/miscoloring on web display.");
@@ -58,6 +55,8 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
 
 		removeAppliesToType(DatabaseType.ESTGENE);
 		removeAppliesToType(DatabaseType.CDNA);
+                removeAppliesToType(DatabaseType.OTHERFEATURES);
+                removeAppliesToType(DatabaseType.RNASEQ);
 
 	}
 
@@ -79,7 +78,7 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
                          "havana_ig_gene", "ensembl_havana_lincrna",
                          "proj_havana",    "proj_ensembl_havana_transcript",
                          "proj_ensembl_havana_lincrna", "proj_havana_ig_gene",
-                         "ensembl_havana_ig_gene",
+                         "ensembl_havana_ig_gene", "proj_ensembl_havana_ig_gene",
                          "OTTT" );
 
 		// --------------------------------
@@ -93,7 +92,7 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
 
 	// --------------------------------------------------------------------------
 
-	private boolean checkAnalysisAndSource(DatabaseRegistryEntry dbre, String objectType, String analysis1, String analysis2, String analysis3, String analysis4, String analysis5, String analysis6, String analysis7, String analysis8, String analysis9, String source) {
+	private boolean checkAnalysisAndSource(DatabaseRegistryEntry dbre, String objectType, String analysis1, String analysis2, String analysis3, String analysis4, String analysis5, String analysis6, String analysis7, String analysis8, String analysis9, String analysis10, String source) {
 
 		boolean result = true;
 
@@ -146,7 +145,7 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
 
 		sql = "SELECT COUNT(DISTINCT(t." + table + "_id)) FROM xref x, object_xref ox, external_db e, " + table
 				+ " t, analysis a WHERE x.xref_id=ox.xref_id AND x.external_db_id=e.external_db_id AND ox.ensembl_id=t." + table
-				+ "_id AND a.logic_name not in (?, ?, ?, ?, ?, ?, ?, ?, ?) AND e.db_name=? AND t.analysis_id=a.analysis_id  AND ox.ensembl_object_type=?";
+				+ "_id AND a.logic_name not in (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) AND e.db_name=? AND t.analysis_id=a.analysis_id  AND ox.ensembl_object_type=?";
 
 		try {
 
@@ -161,8 +160,9 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
                         stmt.setString(7, analysis7);
                         stmt.setString(8, analysis8);
                         stmt.setString(9, analysis9);
-			stmt.setString(10, source);
-			stmt.setString(11, objectType);
+                        stmt.setString(10, analysis10);
+			stmt.setString(11, source);
+			stmt.setString(12, objectType);
 
 			ResultSet rs = stmt.executeQuery();
 
@@ -171,9 +171,9 @@ public class AnalysisXrefs extends SingleDatabaseTestCase {
 
 			if (rows > 0) {
 				result = false;
-				ReportManager.problem(this, con, rows + " " + table + "s with " + source + " xrefs do not have an analysis named " + analysis1 + ", " + analysis2 + ", " + analysis3 + ", " + analysis4 + ", " + analysis5 + ", " + analysis6 + ", " + analysis7 + ", " + analysis8 + " or " + analysis9);
+				ReportManager.problem(this, con, rows + " " + table + "s with " + source + " xrefs do not have an analysis named " + analysis1 + ", " + analysis2 + ", " + analysis3 + ", " + analysis4 + ", " + analysis5 + ", " + analysis6 + ", " + analysis7 + ", " + analysis8 + ", " + analysis9 + " or " + analysis10);
 			} else {
-				ReportManager.correct(this, con, "All " + table + "s with " + source + " xrefs have analyses of type " + analysis1 + ", " + analysis2 + ", " + analysis3 + ", " + analysis4 + ", " + analysis5 + ", " + analysis6 + ", " + analysis7 + ", " + analysis8 + " or " + analysis9);
+				ReportManager.correct(this, con, "All " + table + "s with " + source + " xrefs have analyses of type " + analysis1 + ", " + analysis2 + ", " + analysis3 + ", " + analysis4 + ", " + analysis5 + ", " + analysis6 + ", " + analysis7 + ", " + analysis8 + ", " + analysis9 + " or " + analysis10);
 			}
 
 			rs.close();

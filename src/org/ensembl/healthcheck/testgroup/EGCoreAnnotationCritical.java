@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +22,13 @@ import org.ensembl.healthcheck.testcase.eg_core.DbDisplayNameUniProt;
 import org.ensembl.healthcheck.testcase.eg_core.DisplayXrefId;
 import org.ensembl.healthcheck.testcase.eg_core.GeneDescriptionSource;
 import org.ensembl.healthcheck.testcase.eg_core.GeneDescriptionUniProtSource;
+import org.ensembl.healthcheck.testcase.eg_core.GeneSource;
 import org.ensembl.healthcheck.testcase.eg_core.GoTermCount;
 import org.ensembl.healthcheck.testcase.eg_core.InterproHitCount;
 import org.ensembl.healthcheck.testcase.eg_core.OntologyLevel;
 import org.ensembl.healthcheck.testcase.eg_core.PositiveCoordinates;
 import org.ensembl.healthcheck.testcase.eg_core.SharedDisplayXref;
+import org.ensembl.healthcheck.testcase.eg_core.TranscriptSource;
 import org.ensembl.healthcheck.testcase.eg_core.UniprotGeneNameObjectXref;
 import org.ensembl.healthcheck.testcase.eg_core.XrefDescriptionSpecialChars;
 import org.ensembl.healthcheck.testcase.generic.DescriptionNewlines;
@@ -54,7 +57,9 @@ public class EGCoreAnnotationCritical extends GroupOfTests {
 			DbDisplayNameUniProt.class,
 			InterproHitCount.class,
 			GoTermCount.class,
-			XrefDescriptionSpecialChars.class
+			XrefDescriptionSpecialChars.class,
+			GeneSource.class,
+			TranscriptSource.class
 		);
 	}
 }

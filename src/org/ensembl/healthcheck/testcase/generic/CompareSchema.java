@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,13 +50,6 @@ import java.util.Set;
  */
 public class CompareSchema extends AbstractCompareSchema {
 	
-	@Override
-	protected void addGroups() {
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");		
-                addToGroup("post-projection");
-	}
-
 	@Override
 	protected void addResponsible() {
 		setTeamResponsible(Team.GENEBUILD);

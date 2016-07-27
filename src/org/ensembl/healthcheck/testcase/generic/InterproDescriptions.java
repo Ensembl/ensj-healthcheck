@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,19 +32,16 @@ import org.ensembl.healthcheck.util.DBUtils;
  */
 
 public class InterproDescriptions extends SingleDatabaseTestCase {
+	
 
 	/**
 	 * Create a new InterproDescriptions testcase.
 	 */
 	public InterproDescriptions() {
 
-		addToGroup("post_genebuild");
-		addToGroup("core_xrefs");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-
 		setDescription("Check that there are Interpro descriptions, that each one has an xref, and that the xref has a description.");
 		setTeamResponsible(Team.GENEBUILD);
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
 
 	}
 
@@ -73,25 +71,10 @@ public class InterproDescriptions extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		// check that the interpro table has some rows
-		String sql = "SELECT COUNT(*) FROM interpro";
+		// check that there are no Interpro accessions without xrefs
+		String sql = "SELECT count(*) FROM interpro i LEFT JOIN xref x ON i.interpro_ac=x.dbprimary_acc WHERE x.dbprimary_acc IS NULL";
 
 		int rows = DBUtils.getRowCount(con, sql);
-		if (rows == 0) {
-
-			ReportManager.problem(this, con,
-					"Interpro table is empty (no xref checks done).");
-			return false;
-
-		} else {
-
-			ReportManager.correct(this, con, "Interpro table not empty");
-		}
-
-		// check that there are no Interpro accessions without xrefs
-		sql = "SELECT count(*) FROM interpro i LEFT JOIN xref x ON i.interpro_ac=x.dbprimary_acc WHERE x.dbprimary_acc IS NULL";
-
-		rows = DBUtils.getRowCount(con, sql);
 		if (rows > 0) {
 
 			ReportManager

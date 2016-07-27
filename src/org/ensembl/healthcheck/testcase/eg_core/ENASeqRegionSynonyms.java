@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +27,7 @@ public class ENASeqRegionSynonyms extends AbstractRowCountTestCase {
 		this.addToGroup(AbstractEgCoreTestCase.EG_GROUP);
 		this.appliesToType(DatabaseType.CORE);
 		this.setTeamResponsible(Team.ENSEMBL_GENOMES);
-		setDescription("Test to find toplevel seq_regions which do not have EMBL synonyms");
+		setDescription("Test to find toplevel seq_regions which do not have INSDC synonyms");
 	}
 
 	@Override
@@ -47,7 +48,7 @@ public class ENASeqRegionSynonyms extends AbstractRowCountTestCase {
 				"join attrib_type a using (attrib_type_id) " +
 				"where a.code='toplevel' and s.seq_region_id not in " +
 				"(select seq_region_id from seq_region_synonym srs " +
-				"join external_db e using (external_db_id) where e.db_name='EMBL')";
+				"join external_db e using (external_db_id) where e.db_name='INSDC')";
 	}
 	
 	
@@ -62,7 +63,7 @@ public class ENASeqRegionSynonyms extends AbstractRowCountTestCase {
 	@Override
 	protected String getErrorMessage(int count) {
 		return count
-				+ " top_level seq_regions found without EMBL seq_region_synonym entries";
+				+ " top_level seq_regions found without INSDC seq_region_synonym entries";
 	}
 	
 	

@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,10 +39,6 @@ public class GeneCount extends SingleDatabaseTestCase {
 	 */
 	public GeneCount() {
 
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-
 		setDescription("Check that certain regions have a specific gene count.");
 		setPriority(Priority.AMBER);
 		setEffect("Causes incorrect display of gene counts and confusing contigview displays.");
@@ -49,6 +46,18 @@ public class GeneCount extends SingleDatabaseTestCase {
 		setTeamResponsible(Team.GENEBUILD);
 
 	}
+
+        /**
+         * Data is only tested in core database, as the tables are in sync
+         */
+        public void types() {
+
+                removeAppliesToType(DatabaseType.OTHERFEATURES);
+                removeAppliesToType(DatabaseType.ESTGENE);
+                removeAppliesToType(DatabaseType.RNASEQ);
+                removeAppliesToType(DatabaseType.CDNA);
+
+        }
 
 	/**
 	 * Run the test.

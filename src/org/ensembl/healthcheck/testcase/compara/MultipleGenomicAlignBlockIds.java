@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +20,13 @@ package org.ensembl.healthcheck.testcase.compara;
 
 import java.sql.Connection;
 
+import org.apache.commons.lang.StringUtils;
+
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key
@@ -31,40 +35,31 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 public class MultipleGenomicAlignBlockIds extends SingleDatabaseTestCase {
 
-    /**
-     * Create an ForeignKeyGenomicAlignBlockId that applies to a specific set of databases.
-     */
-    public MultipleGenomicAlignBlockIds() {
+	public MultipleGenomicAlignBlockIds() {
+		setDescription("Check that every genomic_align_block_id is linked to more than one single genomic_align_id.");
+		setTeamResponsible(Team.COMPARA);
+	}
 
-        setDescription("Check that every genomic_align_block_id is linked to more than one single genomic_align_id.");
-        setTeamResponsible(Team.COMPARA);
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-    }
+		boolean result = true;
 
-    /**
-     * Run the test.
-     * 
-     * @param dbre
-     *          The database to use.
-     * @return true if the test passed.
-     *  
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+		Connection con = dbre.getConnection();
 
-        boolean result = true;
+		if (tableHasRows(con, "genomic_align")) {
 
-        Connection con = dbre.getConnection();
+			// The test does not apply to EPO alignments because they store
+			// ancestral sequences in a different genomic_align_block_id
+			String sqlNonEPOmlss_ids = "SELECT method_link_species_set_id FROM method_link_species_set JOIN method_link USING (method_link_id) WHERE class != 'GenomicAlignTree.ancestral_alignment'";
+			String[] nonEPOmlss_ids = DBUtils.getColumnValues(con, sqlNonEPOmlss_ids);
+			result &= checkForSingles(con, "genomic_align WHERE method_link_species_set_id IN (" + StringUtils.join(nonEPOmlss_ids, ",")+ ")", "genomic_align_block_id");
 
-        if (tableHasRows(con, "genomic_align")) {
+		} else {
+			ReportManager.correct(this, con, "NO ENTRIES in genomic_align table, so nothing to test IGNORED");
+		}
 
-            result &= checkForSingles(con, "genomic_align", "genomic_align_block_id");
- 
-        } else {
-            ReportManager.correct(this, con, "NO ENTRIES in genomic_align table, so nothing to test IGNORED");
-        }
+		return result;
 
-        return result;
+	}
 
-    }
-
-} // ForeignKeyGenomicAlignBlockId
+} // MultipleGenomicAlignBlockIds

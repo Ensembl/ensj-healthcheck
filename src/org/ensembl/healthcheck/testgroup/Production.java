@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +23,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  * These are the tests that register themselves as production. The tests are:
  * 
  * <ul>
- *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyMapping </li>
- *   <li> org.ensembl.healthcheck.testcase.generic.MultipleComponentAssemblyMapping </li>
+ *   <li> org.ensembl.healthcheck.testcase.generic.CheckDeclarations </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.ProductionAnalysisLogicName </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ProductionBiotypes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ProductionMasterTables </li> 
@@ -39,8 +39,7 @@ public class Production extends GroupOfTests {
 	public Production() {
 
 		addTest(
-			org.ensembl.healthcheck.testcase.generic.AssemblyMapping.class,
-			org.ensembl.healthcheck.testcase.generic.MultipleComponentAssemblyMapping.class,
+			org.ensembl.healthcheck.testcase.generic.CheckDeclarations.class,
 			org.ensembl.healthcheck.testcase.generic.ProductionAnalysisLogicName.class,
 			org.ensembl.healthcheck.testcase.generic.ProductionBiotypes.class,
 			org.ensembl.healthcheck.testcase.generic.ProductionMasterTables.class,

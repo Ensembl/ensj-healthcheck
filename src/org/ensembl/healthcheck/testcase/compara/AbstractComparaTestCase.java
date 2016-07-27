@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -121,7 +122,7 @@ public abstract class AbstractComparaTestCase extends SingleDatabaseTestCase {
 	 * @return a boolean
 	 */
 	public boolean isMasterDB(Connection con) {
-		return DBUtils.getShortDatabaseName(con).contains(comparaMasterDbName);
+		return DBUtils.getShortDatabaseName(con).contains(System.getProperty("compara_master.database"));
 	}
 
 } // AbstractComparaTestCase

@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,6 +76,13 @@ public class CheckChar extends SingleDatabaseTestCase {
 				result = false;
 				ReportManager.problem(this, con, "phenotype: " + input + " is suspiciously short");
 			     }
+
+                            // check for characters which will be interpreted a new lines
+                            if( input.contains("\n") ){
+                                result = false;
+                                ReportManager.problem(this, con, "phenotype: " + input + " contains a newline ");
+                             }
+
  			   
 
                             // check for phenotype descriptions suggesting no phenotype

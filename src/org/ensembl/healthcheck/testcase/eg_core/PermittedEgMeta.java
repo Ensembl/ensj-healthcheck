@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,26 +46,18 @@ public class PermittedEgMeta extends AbstractEgMeta {
 		super(
 				TestCaseUtils.resourceToStringList("/org/ensembl/healthcheck/testcase/eg_core/meta_keys.txt"));
 	}
-	protected Map<String, Boolean> getKeys(SqlTemplate template, int speciesId) {
-		Map<String, Boolean> metaKeyOut = CollectionUtils.createHashMap();
-		for (Entry<String, List<String>> meta : template.queryForMap(
-				META_QUERY, mapper, speciesId).entrySet()) {
-			if (!metaKeys.contains(meta.getKey())) {
-				metaKeyOut.put(meta.getKey(), true);
-			}
-		}
-		return metaKeyOut;
-	}
 
 	protected boolean testKeys(DatabaseRegistryEntry dbre, int speciesId,
-			Map<String, Boolean> metaKeyOut) {
+			List<String> speciesKeys, List<String> testKeys) {
 		boolean passes = true;
-		for (Entry<String, Boolean> e : metaKeyOut.entrySet()) {
+		for(String meta: speciesKeys) {
+			if(!testKeys.contains(meta)) {
 				passes = false;
 				ReportManager
 						.problem(this, dbre.getConnection(), "Meta table for "
 								+ speciesId + " contains the unrecognised key "
-								+ e.getKey());
+								+ meta);
+			}
 		}
 		return passes;
 	}

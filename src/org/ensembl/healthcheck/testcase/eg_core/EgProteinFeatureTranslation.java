@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -216,15 +217,15 @@ public class EgProteinFeatureTranslation extends AbstractEgCoreTestCase {
 
 				if (translationLengths.get(translationID) != null) {
 					// some codons can only be 2 bp ?!?
-					int minTranslationLength = (((Integer) translationLengths
-							.get(translationID)).intValue() + 2) / 3;
+					int maxTranslationLength = (((Integer) translationLengths
+							.get(translationID)).intValue() + 3) / 3;
 					int fl = rs.getInt("seq_end");
-					if (fl > minTranslationLength) {
+					if (fl > maxTranslationLength) {
 						result = false;
 						String msg = "Protein feature " + proteinFeatureID
 								+ "(" + rs.getString(4) + "/" + rs.getString(5)
 								+ ") ends at " + fl + " which is beyond the "
-								+ minTranslationLength
+								+ maxTranslationLength
 								+ " length of the translation " + translationID;
 						thisDBFeatures.add(msg);
 					}

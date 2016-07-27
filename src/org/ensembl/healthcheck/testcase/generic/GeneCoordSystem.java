@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,11 +37,6 @@ public class GeneCoordSystem extends SingleDatabaseTestCase {
 	 */
 	public GeneCoordSystem() {
 
-		addToGroup("post_genebuild");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check that no genes are on a sequence_level coord system.");
 		setPriority(Priority.AMBER);
 		setEffect("Having genes on a sequence_level co-ordinate system will slow down the mapper and affect website speed and dumping speed.");

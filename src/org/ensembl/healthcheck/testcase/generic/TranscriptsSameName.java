@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,10 +45,6 @@ public class TranscriptsSameName extends SingleDatabaseTestCase {
 	 */
 	public TranscriptsSameName() {
 
-		addToGroup("post_genebuild");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription(" Check for genes with more than one transcript where all the transcripts have the same display_xref_id.");
 		setPriority(Priority.AMBER);
 		setEffect("Web display and all other uses of xrefs are broken");

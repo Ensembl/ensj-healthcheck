@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +21,11 @@ import org.ensembl.healthcheck.GroupOfTests;
 import org.ensembl.healthcheck.testcase.compara.CheckFlatProteinTrees;
 import org.ensembl.healthcheck.testcase.compara.CheckHomology;
 import org.ensembl.healthcheck.testcase.compara.CheckSequenceTable;
-import org.ensembl.healthcheck.testcase.compara.ForeignKeyHomologyId;
-import org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkId;
-import org.ensembl.healthcheck.testcase.compara.ForeignKeySequenceId;
-import org.ensembl.healthcheck.testcase.compara.ForeignKeyTaxonId;
+import org.ensembl.healthcheck.testcase.compara.ForeignKeyHomologyTables;
+import org.ensembl.healthcheck.testcase.compara.ForeignKeyMasterTables;
+import org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeTables;
 import org.ensembl.healthcheck.testcase.eg_compara.CheckEmptyLeavesTrees;
 import org.ensembl.healthcheck.testcase.eg_compara.EGForeignKeyGeneTreeMemberId;
-import org.ensembl.healthcheck.testcase.eg_compara.EGGeneTreeForeignKeyMethodLinkSpeciesSetId;
 
 public class EGComparaGeneTree extends GroupOfTests {
 
@@ -37,11 +36,9 @@ public class EGComparaGeneTree extends GroupOfTests {
 				CheckSequenceTable.class,
 
 				EGForeignKeyGeneTreeMemberId.class,
-				EGGeneTreeForeignKeyMethodLinkSpeciesSetId.class,
 
-				ForeignKeyHomologyId.class, 
-				ForeignKeyMethodLinkId.class,
-				ForeignKeySequenceId.class, 
-				ForeignKeyTaxonId.class);
+				ForeignKeyHomologyTables.class,
+				ForeignKeyMasterTables.class,
+				ForeignKeySpeciesTreeTables.class);
 	}
 }

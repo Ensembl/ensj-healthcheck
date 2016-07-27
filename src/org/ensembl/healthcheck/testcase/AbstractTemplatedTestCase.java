@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,22 +48,7 @@ public abstract class AbstractTemplatedTestCase extends SingleDatabaseTestCase {
 	protected abstract boolean runTest(DatabaseRegistryEntry dbre);
 
 	public boolean run(DatabaseRegistryEntry dbre) {
-
-		boolean passes = false;
-		try {
-			passes = runTest(dbre);
-			if (passes) {
-				ReportManager
-						.correct(this, dbre.getConnection(), "Test passed");
-			}
-		} catch (Throwable e) {
-			e.printStackTrace();
-			ReportManager
-					.problem(this, dbre.getConnection(),
-							"Test failed due to unexpected exception "
-									+ e.getMessage());
-		}
-		return passes;
+		return runTest(dbre);
 	}
 
 }

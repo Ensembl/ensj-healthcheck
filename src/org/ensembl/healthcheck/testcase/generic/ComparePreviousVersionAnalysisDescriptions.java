@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,8 +58,6 @@ public class ComparePreviousVersionAnalysisDescriptions extends SingleDatabaseTe
 	 */
 	public ComparePreviousVersionAnalysisDescriptions() {
 
-		addToGroup("funcgen-release");
-		
 		setDescription("Compare the analysis_descriptions in the current database with those from the equivalent database on the secondary server. Note only certain columns are checked.");
 		setTeamResponsible(Team.GENEBUILD);
 		setSecondTeamResponsible(Team.FUNCGEN);
@@ -123,15 +122,11 @@ public class ComparePreviousVersionAnalysisDescriptions extends SingleDatabaseTe
 				if (!currentDisplayLabel.equals(previousDisplayLabel)) {
 					ReportManager.problem(this, currentCon, "Display label for logic name " + logicName + " differs; \ncurrent: '" + currentDisplayLabel + "' \nprevious: '" + previousDisplayLabel + "'");
 					result = false;
-				} else {
-					ReportManager.correct(this, currentCon, "Display labels identical between releases for " + logicName);
 				}
 
 				if (currentDisplayable != previousDisplayable) {
 					ReportManager.problem(this, currentCon, "Displayable flag for logic name " + logicName + " differs; \ncurrent: '" + currentDisplayable + "' \nprevious: '" + previousDisplayable + "'");
 					result = false;
-				} else {
-					ReportManager.correct(this, currentCon, "Displayable flags identical between releases for " + logicName);
 				}
 
 				if (currentWebData != null && !currentWebData.equals("") && previousWebData != null && !previousWebData.equals("")) {
@@ -171,9 +166,7 @@ public class ComparePreviousVersionAnalysisDescriptions extends SingleDatabaseTe
 					}
 
 					// and finally compare them
-					if (currentWebHashValueString.equals(previousWebHashValueString) && currentWebHashValueHash.equals(previousWebHashValueHash)) {
-						ReportManager.correct(this, currentCon, "Web data identical between releases for " + logicName);
-					} else {
+					if (!currentWebHashValueString.equals(previousWebHashValueString) || !currentWebHashValueHash.equals(previousWebHashValueHash)) {
 						ReportManager.problem(this, currentCon, "Web data for logic name " + logicName + " differs; \ncurrent: '" + currentWebData + "' \nprevious: '" + previousWebData + "'");
 						result = false;
 					}

@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +41,7 @@ public class EGMethodLinkSpeciesSetIdStats extends
 			+ "'ref_matches', 'ref_mis_matches', 'ref_uncovered') "
 			+ "GROUP BY method_link_species_set_id) as tc "
 			+ "ON mlss.method_link_species_set_id = tc.method_link_species_set_id "
-			+ "WHERE ml.type IN ('BLASTZ_NET', 'LASTZ_NET', 'TRANSLATED_BLAT_NET') "
+			+ "WHERE ml.type IN ('BLASTZ_NET', 'LASTZ_NET', 'TRANSLATED_BLAT_NET', 'ATAC') "
 			+ "HAVING (stats_related_tags != 14) OR (stats_related_tags IS NULL)) as find_missing_stats";
 
 	public EGMethodLinkSpeciesSetIdStats() {

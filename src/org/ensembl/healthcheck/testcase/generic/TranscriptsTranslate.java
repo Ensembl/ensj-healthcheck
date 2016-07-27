@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +37,7 @@ public class TranscriptsTranslate extends SingleDatabaseTestCase {
 	 */
 	public TranscriptsTranslate() {
 
-		setDescription("Check that all transcripts of protein_coding genes translate");
+		setDescription("Check that all protein_coding transcripts translate");
 		setTeamResponsible(Team.GENEBUILD);
 
 	}
@@ -66,7 +67,7 @@ public class TranscriptsTranslate extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		String sql = "SELECT COUNT(*) FROM gene g, transcript tr LEFT JOIN translation t ON t.transcript_id=tr.transcript_id WHERE t.translation_id IS NULL AND g.gene_id=tr.gene_id and g.biotype=\'protein_coding\'";
+		String sql = "SELECT COUNT(*) FROM transcript tr LEFT JOIN translation t ON t.transcript_id=tr.transcript_id WHERE t.translation_id IS NULL AND tr.biotype=\'protein_coding\'";
 		// protein_coding genes for sangervega only need at least 1 transcript with a translation, they can have transcripts without
 		// translations in addition to that
 		// for sangervega ignore genes that do not have source havana or WU
@@ -78,12 +79,12 @@ public class TranscriptsTranslate extends SingleDatabaseTestCase {
 		int rows = DBUtils.getRowCount(con, sql);
 		if (rows != 0) {
 
-			ReportManager.problem(this, con, rows + " transcript(s) in protein_coding genes do not have translations.");
+			ReportManager.problem(this, con, rows + " protein_coding transcript(s) do not have translations.");
 			result = false;
 
 		} else {
 
-			ReportManager.correct(this, con, "All transcripts of protein_coding genes have translations");
+			ReportManager.correct(this, con, "All protein_coding transcripts have translations");
 
 		}
 

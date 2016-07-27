@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +44,11 @@ public class SystemPropertySetter {
 		System.setProperty("output.password",    configuration.getOutputPassword());
 		System.setProperty("host",           configuration.getHost() );
 		System.setProperty("port",           configuration.getPort() );
+                System.setProperty("host1",           configuration.getHost1() );
+                System.setProperty("port1",           configuration.getPort1() );
 		System.setProperty("output.release", configuration.getOutputRelease() );
+                System.setProperty("secondary.host",           configuration.getSecondaryHost() );
+                System.setProperty("secondary.port",           configuration.getSecondaryPort() );
 
                 if (configuration.isTestDatabases()) {
                      String test_databases = "";
@@ -226,6 +231,24 @@ public class SystemPropertySetter {
 			// org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema
 			//
 			System.setProperty("master.funcgen_schema",    configuration.getMasterFuncgenSchema());
+		}
+		if (configuration.isProductionDatabase()) {
+			// Used in:
+			//
+			// org.ensembl.healthcheck.testcase.EnsTestCase
+			//
+			System.setProperty("production.database", configuration.getProductionDatabase());
+		} else {
+			System.setProperty("production.database", "ensembl_production");
+		}
+		if (configuration.isComparaMasterDatabase()) {
+			// Used in:
+			//
+			// org.ensembl.healthcheck.testcase.EnsTestCase
+			//
+			System.setProperty("compara_master.database", configuration.getComparaMasterDatabase());
+		} else {
+			System.setProperty("compara_master.database", "ensembl_compara_master");
 		}
 	}
 }

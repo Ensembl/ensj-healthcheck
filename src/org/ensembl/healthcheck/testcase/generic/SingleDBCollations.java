@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,15 +39,7 @@ public class SingleDBCollations extends SingleDatabaseTestCase {
 	 * Create a new SingleDBCollations testcase.
 	 */
 	public SingleDBCollations() {
-		groupAdditions();
 		setResponsibilities();
-	}
-	
-	protected void groupAdditions() {
-		addToGroup("post_genebuild");
-		addToGroup("compara-ancestral");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
 	}
 	
 	protected void setResponsibilities() {

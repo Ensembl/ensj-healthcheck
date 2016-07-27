@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,10 +43,6 @@ public class Accession extends SingleDatabaseTestCase {
 	 */
 	public Accession() {
 
-		addToGroup("post_genebuild");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check for presence and format of PFAM etc hits");
 		setTeamResponsible(Team.GENEBUILD);
 
@@ -57,6 +54,17 @@ public class Accession extends SingleDatabaseTestCase {
 		formats.put("scanprosite", "PS_____");
 
 	}
+
+        /**
+         * This test applies only to core dbs
+         */
+        public void types() {
+                removeAppliesToType(DatabaseType.SANGER_VEGA);
+                removeAppliesToType(DatabaseType.VEGA);
+                removeAppliesToType(DatabaseType.CDNA);
+                removeAppliesToType(DatabaseType.OTHERFEATURES);
+                removeAppliesToType(DatabaseType.RNASEQ);
+        }
 
 	/**
 	 * Check each type of hit.
@@ -99,8 +107,6 @@ public class Accession extends SingleDatabaseTestCase {
 			if (badFormat > 0) {
 				result = false;
 				ReportManager.problem(this, con, badFormat + " " + key + " hit IDs are not in the correct format");
-			} else {
-				ReportManager.correct(this, con, "All " + key + " hits are in the correct format");
 			}
 
 		}

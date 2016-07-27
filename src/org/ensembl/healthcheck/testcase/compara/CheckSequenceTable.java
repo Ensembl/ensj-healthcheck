@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,47 +26,30 @@ import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
- * An EnsEMBL Healthcheck test case that looks for broken foreign-key
- * relationships.
+ * An EnsEMBL Healthcheck test case that checks the "sequence" table
  */
 
 public class CheckSequenceTable extends SingleDatabaseTestCase {
 
-    /**
-     * Create an CheckSequenceTable that applies to a specific set of databases.
-     */
-    public CheckSequenceTable() {
+	public CheckSequenceTable() {
+		setDescription("Check for the sequence table of an ensembl_compara database.");
+		setTeamResponsible(Team.COMPARA);
+	}
 
-        addToGroup("compara_homology");
-        setDescription("Check for broken foreign-key relationships in ensembl_compara databases.");
-        setTeamResponsible(Team.COMPARA);
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-    }
+		Connection con = dbre.getConnection();
 
-    /**
-     * Run the test.
-     * 
-     * @param dbre
-     *          The database to use.
-     * @return true if the test passed.
-     *  
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+		if (tableHasRows(con, "sequence")) {
+			ReportManager.correct(this, con, "NO ENTRIES in sequence table, so nothing to test IGNORED");
+			return true;
+		}
 
-        boolean result = true;
-
-        Connection con = dbre.getConnection();
-
-        if (tableHasRows(con, "sequence")) {
-            result &= checkCountIsZero(con,"sequence","sequence='' or sequence is NULL");
-            result &= checkCountIsZero(con,"sequence","length='' or length=0 or length is NULL");
-            result &= checkCountIsZero(con,"sequence","length!=length(sequence)");
-        } else {
-            ReportManager.correct(this, con, "NO ENTRIES in sequence table, so nothing to test IGNORED");
-        }
-
-        return result;
-
-    }
+		boolean result = true;
+		result &= checkCountIsZero(con, "sequence", "sequence='' or sequence is NULL");
+		result &= checkCountIsZero(con, "sequence", "length='' or length=0 or length is NULL");
+		result &= checkCountIsZero(con, "sequence", "length!=length(sequence)");
+		return result;
+	}
 
 } // CheckSequenceTable

@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -131,4 +132,13 @@ public interface ConfigureHealthcheckDatabase {
 		String getProductionDatabase();
 		boolean isProductionDatabase();
 		
+		@Option(
+			longName    = "compara_master.database",
+			description = "The name of the Ensembl Compara master database to use " +
+					"to control the content of the tested Compara database. " +
+					"Assumed to be on one of the configured servers."
+		)
+		String getComparaMasterDatabase();
+		boolean isComparaMasterDatabase();
+
 }

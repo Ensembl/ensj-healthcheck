@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +38,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.Species;
 
 /**
  * Check that the variation_feature table do not contain anomalities
@@ -72,17 +74,11 @@ public class VariationFeature extends SingleDatabaseTestCase {
 		try {
 	
 			// Look for duplicates
-			String stmt = "SELECT COUNT(DISTINCT vf1.variation_id) FROM variation_feature vf1 JOIN variation_feature vf2 ON (vf2.variation_id = vf1.variation_id AND vf2.variation_feature_id > vf1.variation_feature_id AND vf2.seq_region_id = vf1.seq_region_id AND vf2.seq_region_start = vf1.seq_region_start AND vf2.seq_region_end = vf1.seq_region_end AND vf2.seq_region_strand = vf1.seq_region_strand)";
+			String stmt = "SELECT COUNT(DISTINCT vf1.variation_id) FROM variation_feature vf1 JOIN variation_feature vf2 ON (vf2.variation_id = vf1.variation_id AND vf2.variation_feature_id > vf1.variation_feature_id AND vf2.seq_region_id = vf1.seq_region_id AND vf2.seq_region_start = vf1.seq_region_start AND vf2.seq_region_end = vf1.seq_region_end)";
 			int rows = DBUtils.getRowCount(con,stmt);
 			if (rows > 0) {
 				result = false;
 				ReportManager.problem(this, con, String.valueOf(rows) + " rows are duplicated in variation_feature");
-			}
-			
-			// Check that seq_region_start is not 1 (why not..?)
-			if (!checkCountIsZero(con,"variation_feature","seq_region_start = 1 AND seq_region_end > 1")) {
-				ReportManager.problem(this, con, "Variation Features with coordinates = 1");
-				result = false;
 			}
 
             // Check map weight and warn if map weight exceeds 25
@@ -92,7 +88,25 @@ public class VariationFeature extends SingleDatabaseTestCase {
                 result = false;
                 ReportManager.problem(this, con, String.valueOf(rows) + " variants have a map_weight greater than 25");
             }
-			
+
+            // Check for variants mapping to human Y PAR - should be deleted as handled by API
+            Species species = dbre.getSpecies();
+            if (species == Species.HOMO_SAPIENS){
+              String par_stmt =  "SELECT COUNT(variation_feature_id) FROM variation_feature vf, seq_region sr where vf.seq_region_start between 10001 and 2600000 and vf.seq_region_id = sr.seq_region_id and sr.name ='Y'";
+              rows = DBUtils.getRowCount(con, par_stmt);
+              if (rows > 0) {
+                 result = false;
+                 ReportManager.problem(this, con, String.valueOf(rows) + " variants are mapped to the Y PAR");
+               }   
+             }
+		
+            // Check for MAF > 0.5 
+            if (!checkCountIsZero(con,"variation_feature","minor_allele_freq >0.5 ")) {
+                ReportManager.problem(this, con, "VariationFeatures with minor alleles > 0.5");
+                result = false;
+            }
+
+	
 		} catch (Exception e) {
 			ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
 			result = false;

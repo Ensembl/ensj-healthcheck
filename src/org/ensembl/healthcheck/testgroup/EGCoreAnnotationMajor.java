@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +18,12 @@
 package org.ensembl.healthcheck.testgroup;
 
 import org.ensembl.healthcheck.GroupOfTests;
+import org.ensembl.healthcheck.testcase.eg_core.DuplicateObjectXref;
 import org.ensembl.healthcheck.testcase.eg_core.DuplicateRepeatFeature;
 import org.ensembl.healthcheck.testcase.eg_core.DuplicateXref;
 import org.ensembl.healthcheck.testcase.eg_core.EponineFeatures;
-import org.ensembl.healthcheck.testcase.eg_core.GeneStableIdDisplayXref;
 import org.ensembl.healthcheck.testcase.eg_core.GOslimXrefs;
+import org.ensembl.healthcheck.testcase.eg_core.GeneStableIdDisplayXref;
 import org.ensembl.healthcheck.testcase.eg_core.IgiXref;
 import org.ensembl.healthcheck.testcase.eg_core.ProteinFeatureAnalysisDb;
 import org.ensembl.healthcheck.testcase.eg_core.SeqRegionDna;
@@ -37,6 +39,7 @@ import org.ensembl.healthcheck.testcase.generic.BlankEnums;
 import org.ensembl.healthcheck.testcase.generic.BlankInfoType;
 import org.ensembl.healthcheck.testcase.generic.BlanksInsteadOfNulls;
 import org.ensembl.healthcheck.testcase.generic.InterproDescriptions;
+import org.ensembl.healthcheck.testcase.generic.InterproFeatures;
 import org.ensembl.healthcheck.testcase.generic.IsCurrent;
 import org.ensembl.healthcheck.testcase.generic.NullStrings;
 import org.ensembl.healthcheck.testcase.generic.XrefCategories;
@@ -52,16 +55,17 @@ public class EGCoreAnnotationMajor extends GroupOfTests {
 		addTest(AnalysisTypes.class, BlankCoordSystemVersions.class,
 				BlankEnums.class, BlankInfoType.class,
 				BlanksInsteadOfNulls.class, DuplicateXref.class, IgiXref.class,
-				InterproDescriptions.class, ProteinFeatureAnalysisDb.class,
+				InterproDescriptions.class, InterproFeatures.class, ProteinFeatureAnalysisDb.class,
 				IsCurrent.class, NullStrings.class, XrefCategories.class,
 				XrefHTML.class, XrefIdentifiers.class, XrefLevels.class,
 				XrefTypes.class, XrefVersions.class,
 				UniProtKB_DisplayXrefIds.class, UniProtKB_Coverage.class,
 				UniParc_Coverage.class, GeneStableIdDisplayXref.class,
 				TranscriptDisplayXrefSuffix.class,
-				TranscriptStableIdDisplayXref.class,
+				TranscriptStableIdDisplayXref.class, 
 				DuplicateRepeatFeature.class, EponineFeatures.class,
 				UniProtExternalDbTypes.class, GOslimXrefs.class,
+				DuplicateObjectXref.class,
 				SeqRegionDna.class);
 	}
 

@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,9 +49,6 @@ public class ExternalDBDisplayName extends SingleDatabaseTestCase {
 	 */
 	public ExternalDBDisplayName() {
 
-		addToGroup("funcgen");
-		addToGroup("funcgen-release");
-		
 		setDescription("Check that there are no blank db_display_name fields in external_db");
 		setTeamResponsible(Team.GENEBUILD);
 	}

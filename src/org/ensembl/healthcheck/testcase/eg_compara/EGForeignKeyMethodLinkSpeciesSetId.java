@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +51,7 @@ public class EGForeignKeyMethodLinkSpeciesSetId extends
 		result &= assertNoEmptyNames(dbre);
 		result &= assertNoSource(dbre);
 		result &= assertMethodLinkSpeciesSetCounts(dbre);
-		if (DBUtils.getShortDatabaseName(dbre.getConnection()).contains(comparaMasterDbName)) {
+		if (DBUtils.getShortDatabaseName(dbre.getConnection()).contains(System.getProperty("compara_master.database"))) {
 			return result;
 		}
 		result &= assertMlssIdForeignKeysAndRanges(dbre);
@@ -280,8 +281,8 @@ public class EGForeignKeyMethodLinkSpeciesSetId extends
 
 	protected Map<String, List<Integer>> getMethodLinkTypeRange() {
 		Map<String, List<Integer>> output = CollectionUtils.createHashMap();
-		output.put("ENSEMBL_ORTHOLOGUES", Arrays.asList(201, 300));
-		output.put("ENSEMBL_PARALOGUES", Arrays.asList(201, 300));
+		output.put("ENSEMBL_ORTHOLOGUES", Arrays.asList(201, 202));
+		output.put("ENSEMBL_PARALOGUES", Arrays.asList(202, 300));
 		output.put("SYNTENY", Arrays.asList(101, 200));
 		output.put("FAMILY", Arrays.asList(301, 400));
 		return output;

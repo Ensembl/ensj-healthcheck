@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,7 +90,7 @@ public class CompressedGenotypeRegion extends SingleDatabaseTestCase {
     sqlQueries.setProperty("popId", query);    
     
     // Query counting the number of genotypes of a population, by chromosome
-    query = "SELECT s.name, COUNT(*) FROM compressed_genotype_region c, seq_region s WHERE s.seq_region_id=c.seq_region_id AND c.individual_id IN (SELECT individual_id FROM individual_population WHERE population_id=?) GROUP BY s.seq_region_id";  
+    query = "SELECT s.name, COUNT(*) FROM compressed_genotype_region c, seq_region s WHERE s.seq_region_id=c.seq_region_id AND c.sample_id IN (SELECT sample_id FROM sample_population WHERE population_id=?) GROUP BY s.seq_region_id";  
     sqlQueries.setProperty("genotype_region", query);  
     
     return sqlQueries;

@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,11 +37,6 @@ public class TranslationStartEnd extends SingleDatabaseTestCase {
 	 * Creates a new instance of CheckTranslationStartEnd
 	 */
 	public TranslationStartEnd() {
-		
-		addToGroup("post_genebuild");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
 		
 		setDescription("Check that if the start and end of translation is on the same exon, that start < end. Also check that translation ends aren't beyond exon ends.");
 		setTeamResponsible(Team.GENEBUILD);

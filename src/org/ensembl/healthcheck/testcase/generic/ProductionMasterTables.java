@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,11 +49,6 @@ public class ProductionMasterTables extends SingleDatabaseTestCase {
 	 */
 	public ProductionMasterTables() {
 
-		addToGroup("production");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check that the content of the master_* tables in the production databases matches the equivalent table in this database");
 		setPriority(Priority.AMBER);
 		setEffect("Discrepancies between tables can cause problems.");

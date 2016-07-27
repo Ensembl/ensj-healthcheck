@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +24,7 @@
 package org.ensembl.healthcheck.testcase.eg_core;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 
 /**
@@ -32,6 +34,11 @@ import org.ensembl.healthcheck.ReportManager;
  * 
  */
 public class ProteinCodingGene extends AbstractEgCoreTestCase {
+
+	public ProteinCodingGene() {
+		super();
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+	}
 
 	private final static String QUERY = "select count(*) from gene "
 			+ "join seq_region sr using (seq_region_id) "
@@ -59,8 +66,11 @@ public class ProteinCodingGene extends AbstractEgCoreTestCase {
 		return found;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.ensembl.healthcheck.testcase.eg_core.AbstractEgCoreTestCase#getEgDescription()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.ensembl.healthcheck.testcase.eg_core.AbstractEgCoreTestCase#
+	 * getEgDescription()
 	 */
 	@Override
 	protected String getEgDescription() {

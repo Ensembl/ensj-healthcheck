@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,11 +36,6 @@ public class MetaCrossSpecies extends MultiDatabaseTestCase {
 	 * Create a new instance of MetaCrossSpecies
 	 */
 	public MetaCrossSpecies() {
-		addToGroup("post_genebuild");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check meta table species, classification and taxonomy_id is the same in all DBs for each species");
 		setTeamResponsible(Team.GENEBUILD);
 	}

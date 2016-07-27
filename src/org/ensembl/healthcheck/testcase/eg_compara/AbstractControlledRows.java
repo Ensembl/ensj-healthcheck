@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -508,9 +509,8 @@ abstract public class AbstractControlledRows extends AbstractTemplatedTestCase {
 				+ "	join method_link_species_set using (species_set_id) " 
 				+ "	join method_link using (method_link_id) "
 				+ "where "
-				+ "	genome_db.assembly_default=true " 
-				+ "	and genome_db.name='" + speciesName + "' " 
-				+ "	and method_link.class in ( "
+				+ " genome_db.name='" + speciesName + "' " 
+				+ " and method_link.class in ( "
 				+ dnaComparaMethodsCommaSep
 				+ " ) "; 
 		

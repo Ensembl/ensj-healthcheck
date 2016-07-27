@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,11 +52,6 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 	 */
 	public AnalysisDescription() {
 
-		addToGroup("post_genebuild");
-		addToGroup("post-compara-handover");
-                addToGroup("pre-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check that all of certain types of objects have analysis_descriptions; also check that displayable field is set.");
 		setTeamResponsible(Team.GENEBUILD);
 		setSecondTeamResponsible(Team.RELEASE_COORDINATOR);
@@ -113,8 +109,6 @@ public class AnalysisDescription extends SingleDatabaseTestCase {
 				if (count == 0) {
 					ReportManager.problem(this, con, String.format("Analysis %s is used in %s but has no entry in analysis_description", logicNamesByAnalID.get(analysisId), tableType));
 					result = false;
-				} else {
-					ReportManager.correct(this, con, String.format("Analysis %s is used in %s and has an entry in analysis_description", logicNamesByAnalID.get(analysisId), tableType));
 				}
 			}
 		}

@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,10 +60,6 @@ public class ComparePreviousVersionExonCoords extends SingleDatabaseTestCase {
 	 */
 	public ComparePreviousVersionExonCoords() {
 
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Compare the transcript stable IDs and exon coordinates for each exon across releases to ensure that protein sequences are the same.");
 		setEffect("Causes problems for Compara if proteins are not identical");
 		setTeamResponsible(Team.CORE);

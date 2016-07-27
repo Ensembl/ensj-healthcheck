@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,9 +38,6 @@ public class Archive extends SingleDatabaseTestCase {
 	 */
 	public Archive() {
 
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
 		setDescription("Checks the archive tables are up to date.");
 		setHintLongRunning(true);
 		setTeamResponsible(Team.CORE);
@@ -53,6 +51,7 @@ public class Archive extends SingleDatabaseTestCase {
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		removeAppliesToType(DatabaseType.ESTGENE);
 		removeAppliesToType(DatabaseType.RNASEQ);
+                removeAppliesToType(DatabaseType.CDNA);
 
 	}
 

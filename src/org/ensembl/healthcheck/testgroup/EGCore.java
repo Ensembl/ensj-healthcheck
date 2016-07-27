@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,12 +52,10 @@ public class EGCore extends GroupOfTests {
 			EGCommon.class,
 			EGCoreMulti.class,
 			AnalysisTypes.class,
-			// CheckDeclarations.class,
 			ProductionAnalysisLogicName.class,
 			ProductionBiotypes.class,
-			// ProductionMeta.class,
 			TranscriptNames.class, 
-			ControlledCoreTables.class,
+			ProductionMasterTables.class,
 			AnalysisLogicName.class,
 			SeqRegionsConsistentWithComparaMaster.class,
 			SeqRegionAttribForPolyploidGenome.class,

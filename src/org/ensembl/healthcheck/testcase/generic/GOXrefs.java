@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,11 +50,6 @@ public class GOXrefs extends SingleDatabaseTestCase {
 	 * Create a new GOXrefs testcase.
 	 */
 	public GOXrefs() {
-
-		addToGroup("post_genebuild");
-		addToGroup("core_xrefs");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
 
 		setDescription("Check that unrpoejcted GO xrefs exist, and that there are no blank or null linkage types.");
 		setTeamResponsible(Team.GENEBUILD);

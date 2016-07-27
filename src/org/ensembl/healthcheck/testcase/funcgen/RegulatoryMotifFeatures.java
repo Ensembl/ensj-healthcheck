@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,15 +52,12 @@ public class RegulatoryMotifFeatures extends SingleDatabaseTestCase {
 	 * This only applies to funcgen databases.
 	 */
 	public void types() {
-		addAppliesToType(DatabaseType.FUNCGEN);
-
 		//Do we really need these removes?
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		removeAppliesToType(DatabaseType.CDNA);
 		removeAppliesToType(DatabaseType.CORE);
 		removeAppliesToType(DatabaseType.VARIATION);
 		removeAppliesToType(DatabaseType.COMPARA);
-
 	}
 
 

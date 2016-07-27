@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,12 +54,20 @@ public class AssemblyMapping extends AbstractTemplatedTestCase {
 		super();
 		this.appliesToType(DatabaseType.CORE);
 		this.setDescription("Test to make sure that the coord_systems and versions referred to in assembly.mapping exist");
-                addToGroup("production");
-                addToGroup("pre-compara-handover");
-                addToGroup("post-compara-handover");
-                addToGroup("post-projection");
                 setTeamResponsible(Team.GENEBUILD);
 	}
+
+        /**
+         * Data is only tested in core database, as the tables are in sync
+         */
+        public void types() {
+
+                removeAppliesToType(DatabaseType.OTHERFEATURES);
+                removeAppliesToType(DatabaseType.ESTGENE);
+                removeAppliesToType(DatabaseType.RNASEQ);
+                removeAppliesToType(DatabaseType.CDNA);
+
+        }
 
 	/*
 	 * (non-Javadoc)

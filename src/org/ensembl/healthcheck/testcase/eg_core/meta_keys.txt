@@ -1,3 +1,5 @@
+annotation.date
+annotation.release
 annotation.source
 annotation.sourceURL
 assembly.accession
@@ -23,9 +25,9 @@ genebuild.method
 genebuild.projection_source_db
 genebuild.start_date
 genebuild.version
+interpro.version
 interproscan.date
 interproscan.version
-interpro.version
 liftover.mapping
 patch
 ploidy
@@ -42,6 +44,7 @@ sample.gene_param
 sample.gene_text
 sample.location_param
 sample.location_text
+sample.polyploid_region
 sample.search_text
 sample.structural_param
 sample.structural_text
@@ -49,6 +52,11 @@ sample.transcript_param
 sample.transcript_text
 sample.variation_param
 sample.variation_text
+sample.vep_ensembl
+sample.vep_hgvs
+sample.vep_id
+sample.vep_pileup
+sample.vep_vcf
 schema.copy_src
 schema.load_complete
 schema.load_started
@@ -57,14 +65,19 @@ schema_version
 simple_featurebuild.level
 species.alias
 species.biomart_dataset
+species.bioproject_id
 species.classification
 species.common_name
 species.db_name
 species.display_name
 species.division
+species.nematode_name
+species.nematode_clade
 species.production_name
 species.scientific_name
 species.serotype
+species.species_name
+species.species_taxonomy_id
 species.stable_id_prefix
 species.strain
 species.substrain
@@ -73,5 +86,9 @@ species.three_letter_code
 species.url
 species.wikipedia_name
 species.wikipedia_url
+species.wormbase_name
 transcriptbuild.level
+uniprot_proteome.id
+uniprot_proteome.status
+vb.release_status
 xref.timestamp

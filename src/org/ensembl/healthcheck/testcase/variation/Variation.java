@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,6 +81,21 @@ public class Variation extends SingleDatabaseTestCase {
 			ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
 			result = false;
 		}
+
+
+
+               try {
+                        // Check for MAF > 0.5 
+                        if (!checkCountIsZero(con,"variation","minor_allele_freq >0.5 ")) {
+                                ReportManager.problem(this, con, "Variations with minor alleles > 0.5");
+                                result = false;
+                        }
+
+                } catch (Exception e) {
+                        ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
+                        result = false;
+                }
+ 
 		
 		return result;
 

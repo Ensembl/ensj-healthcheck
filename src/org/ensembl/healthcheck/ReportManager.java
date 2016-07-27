@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,6 +79,8 @@ public class ReportManager {
 
 	private static boolean usingDatabase = false;
 
+        private static int outputLevel = 0;
+
 	private static Connection outputDatabaseConnection;
 
 	private static long sessionID = -1;
@@ -97,6 +100,10 @@ public class ReportManager {
 
 		reporter = rep;
 	}
+
+        public static void setOutputLevel(int level) {
+                outputLevel = level;
+        }
 
 	/**
 	 * Should be called before a test case is run.
@@ -781,7 +788,7 @@ public class ReportManager {
 
 		String hosts = buf.toString();
 
-    String outputDatabases = System.getProperty("test_groups") + " " + System.getProperty("test_databases");
+                String outputDatabases = System.getProperty("test_groups") + " " + System.getProperty("test_databases");
 
 		String outputRelease = System.getProperty("output.release");
 
@@ -834,20 +841,14 @@ public class ReportManager {
 
                 String hosts = buf.toString();
 
-                String outputDatabases = System.getProperty("test_groups") + " " + System.getProperty("test_databases");
-
-                String outputRelease = System.getProperty("output.release");
-
-                String sql = "SELECT session_id FROM session WHERE config=? AND db_release=? AND session_id=?";
+                String sql = "SELECT session_id FROM session WHERE session_id=?";
 
                 long newSessionID = -1;
 
                 try {
 
                         PreparedStatement stmt = outputDatabaseConnection.prepareStatement(sql);
-                        stmt.setString(1, outputDatabases);
-                        stmt.setString(2, outputRelease);
-                        stmt.setLong(3, sessionID);
+                        stmt.setLong(1, sessionID);
                         ResultSet rs = stmt.executeQuery();
                         if (rs != null) {
                                 if (rs.first()) {
@@ -870,7 +871,7 @@ public class ReportManager {
                         logger.severe("Could not reuse " + newSessionID);
                         logger.severe(sql);
                 }
-
+                logger.info("Reusing session ID "+sessionID);
                 setSessionID(sessionID);
         }
 
@@ -936,13 +937,16 @@ public class ReportManager {
 
 		long reportID = reportExistsInDatabase(report);
 
-		if (reportID > -1) {
+                if (report.getLevel() >= outputLevel) {
 
-			updateReportInDatabase(report, reportID);
+		        if (reportID > -1) {
 
-		} else {
+			          updateReportInDatabase(report, reportID);
 
-			addReportToDatabase(report);
+		        } else {
+
+			          addReportToDatabase(report);
+                        }
 
 		}
 

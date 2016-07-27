@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +29,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionGenotypes </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionPhenotypeFeatures </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionReadCoverage </li>
+ *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionSampleDisplay </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionSources </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionStructuralVariations </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionValidationStatus </li>
@@ -55,6 +57,8 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.variation.VariationForeignKeys </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.VariationSet </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.VariationSynonym </li>
+ *   <li> org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine </li>
+ *   <li> org.ensembl.healthcheck.testcase.generic.SchemaType </li>
  * </ul>
  *
  * @author Thomas Maurel
@@ -71,6 +75,7 @@ public class VariationRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionGenotypes.class,
 			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionPhenotypeFeatures.class,
 			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionReadCoverage.class,
+			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionSampleDisplay.class,
 			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionSources.class,
 			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionStructuralVariations.class,
 			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionValidationStatus.class,
@@ -97,7 +102,9 @@ public class VariationRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.variation.VariationFeature.class,
 			org.ensembl.healthcheck.testcase.variation.VariationForeignKeys.class,
 			org.ensembl.healthcheck.testcase.variation.VariationSet.class,
-			org.ensembl.healthcheck.testcase.variation.VariationSynonym.class
+			org.ensembl.healthcheck.testcase.variation.VariationSynonym.class,
+                        org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class,
+                        org.ensembl.healthcheck.testcase.generic.SchemaType.class
 		);
 	}
 }

@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,7 +109,7 @@ public class ProductionAnalysisLogicName extends AbstractTemplatedTestCase {
   
   private Set<String> getLogicNamesDb(DatabaseRegistryEntry dbre) {
     SqlTemplate t = DBUtils.getSqlTemplate(dbre);
-    String sql = "select logic_name from analysis";
+    String sql = "select logic_name from analysis join analysis_description using (analysis_id)";
     List<String> results = t.queryForDefaultObjectList(sql, String.class);
     return new HashSet<String>(results);
   }

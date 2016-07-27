@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +40,7 @@ import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Compare the CCDS in the current database with those from the equivalent database on the secondary server.
+ * Compare the seq_region synonyms in the current database with those from the equivalent database on the secondary server.
  */
 
 public class ComparePreviousVersionRegionSynonyms extends ComparePreviousVersionBase {
@@ -48,11 +49,6 @@ public class ComparePreviousVersionRegionSynonyms extends ComparePreviousVersion
 	 * Create a new testcase.
 	 */
 	public ComparePreviousVersionRegionSynonyms() {
-
-		addToGroup("post_genebuild");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
 
 		setDescription("Compare the seq_region synonyms in the current database with those from the equivalent database on the secondary server");
 		setPriority(Priority.AMBER);
@@ -71,6 +67,10 @@ public class ComparePreviousVersionRegionSynonyms extends ComparePreviousVersion
 
 		removeAppliesToType(DatabaseType.VEGA);
 		removeAppliesToType(DatabaseType.SANGER_VEGA);
+                removeAppliesToType(DatabaseType.OTHERFEATURES);
+                removeAppliesToType(DatabaseType.ESTGENE);
+                removeAppliesToType(DatabaseType.RNASEQ);
+                removeAppliesToType(DatabaseType.CDNA);
 
 	}
 

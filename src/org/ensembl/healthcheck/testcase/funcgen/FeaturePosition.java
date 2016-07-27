@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.regex.Pattern;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
@@ -53,15 +55,12 @@ public class FeaturePosition extends SingleDatabaseTestCase {
 	 * This only applies to funcgen databases.
 	 */
 	public void types() {
-		addAppliesToType(DatabaseType.FUNCGEN);
-		
 		//Do we really need these removes?
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		removeAppliesToType(DatabaseType.CDNA);
 		removeAppliesToType(DatabaseType.CORE);
 		removeAppliesToType(DatabaseType.VARIATION);
 		removeAppliesToType(DatabaseType.COMPARA);
-
 	}
 	
 	
@@ -76,6 +75,12 @@ public class FeaturePosition extends SingleDatabaseTestCase {
 	 * 
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
+
+        if (Pattern.matches("master_schema_funcgen_\\d+", dbre.getName())) {
+            logger.fine("Skipping " + dbre.getName());
+            return true;
+        }
+
 		boolean     result = true;
 		Connection  efgCon = dbre.getConnection();
 		String schemaBuild = dbre.getSchemaVersion() + "_" + dbre.getGeneBuildVersion();
@@ -87,15 +92,12 @@ public class FeaturePosition extends SingleDatabaseTestCase {
 			return false;	
 		}		
 				
-		//Get existing distinct seq_region_id and their limits from the core DB
-		//This needs to be restricted to the schemaBuild otherwise we may be using the wrong seq_region
-		//No need for schemaBuild restriction here due to reg_feat join
-		//Could still have problems if we have archived sets on older assembly. Unlikely to happen
-		//Need to get name here so we can safely do sr join in feature count
-		String sql = "select sr.core_seq_region_id, sr.name, sr.seq_region_id from seq_region sr, regulatory_feature rf where rf.seq_region_id=sr.seq_region_id group by sr.name";
+    /* String sql = "SELECT schema_build from coord_system order by schema_build desc limit 1";
+    String schemaBuild = DBUtils.getRowColumnValue(efgCon, sql); */
+
+		String sql = "select sr.core_seq_region_id, sr.name, sr.seq_region_id from seq_region sr where schema_build='" + schemaBuild + "'";
 		HashMap<String, String> coreSeqRegionIDName    = new HashMap<String, String>(); 
-		HashMap<String, String> nameFuncgenSeqRegionID = new HashMap<String, String>(); 
-		
+		HashMap<String, String> nameFuncgenSeqRegionID = new HashMap<String, String>(); 	
  
 		try {
 			ResultSet rs = efgCon.createStatement().executeQuery(sql);
@@ -110,7 +112,7 @@ public class FeaturePosition extends SingleDatabaseTestCase {
 			return false;
 		}
 		
-					Connection coreCon = coreDbre.getConnection();
+		Connection coreCon = coreDbre.getConnection();
 		HashMap<String, String> seqRegionLen      = new HashMap<String, String>(); 
 			
 		for (Iterator<String> iter = coreSeqRegionIDName.keySet().iterator(); iter.hasNext();) {
@@ -119,8 +121,8 @@ public class FeaturePosition extends SingleDatabaseTestCase {
 		}
 		  
     //Shouldn't these be defined somewhere more generic?
-    String [] featureTables = {"annotated_feature", "regulatory_feature", 
-                               "external_feature",  "segmentation_feature"};
+    String [] featureTables = {"annotated_feature", "regulatory_feature", "motif_feature",
+                               "external_feature",  "segmentation_feature", "mirna_target_feature"};
     
     for(String fTable : featureTables){
         String problemString = "";
@@ -178,7 +180,7 @@ public class FeaturePosition extends SingleDatabaseTestCase {
                 else{
                      deleteSQL += "DELETE from " + fTable + " WHERE seq_region_id=" + funcgenRegionID + 
                         " AND  (seq_region_start = 0 OR seq_region_end  > " + srLength + ");\n"; **/
-                updateSQL += "UPDATE " + fTable + " set seq_region_end =" + srLength +  "WHERE seq_region_id=" + 
+                updateSQL += "UPDATE " + fTable + " set seq_region_end =" + srLength +  " WHERE seq_region_id=" + 
                   funcgenRegionID + " AND seq_region_end  > " + srLength + ";\n";
 
                 updateSQL += "UPDATE " + fTable + " set seq_region_start=1 WHERE seq_region_id=" + 

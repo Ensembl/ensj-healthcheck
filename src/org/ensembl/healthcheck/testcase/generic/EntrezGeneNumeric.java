@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,9 +50,6 @@ public class EntrezGeneNumeric extends SingleDatabaseTestCase {
 	 */
 	public EntrezGeneNumeric() {
 
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check that no genes are named after numeric EntrezGene identifiers.");
 		setPriority(Priority.AMBER);
 		setEffect("Causes genes to be displayed with numeric EntrezGene 'names', which is potentially confusing.");

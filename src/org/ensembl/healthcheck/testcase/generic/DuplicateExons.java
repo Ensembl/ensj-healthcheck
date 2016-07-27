@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,11 +42,6 @@ public class DuplicateExons extends SingleDatabaseTestCase {
 	 */
 	public DuplicateExons() {
 
-		addToGroup("post_genebuild");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setTeamResponsible(Team.GENEBUILD);
 
 	}
@@ -112,7 +108,7 @@ public class DuplicateExons extends SingleDatabaseTestCase {
 
 				if (!first) {
 					if (lastExonChromosome == exonChromosome && lastExonStart == exonStart && lastExonEnd == exonEnd && lastExonPhase == exonPhase && lastExonStrand == exonStrand
-							&& lastExonEndPhase == exonEndPhase && lastExonGeneId != exonGeneId) {
+							&& lastExonEndPhase == exonEndPhase && lastExonGeneId != exonGeneId && lastExonID != exonID) {
 						duplicateExon++;
 						if (duplicateExon <= MAX_WARNINGS) {
 							ReportManager.warning(this, con, "Exon " + exonID + " in gene " + exonGeneId + " is a duplicate of exon " + lastExonID);

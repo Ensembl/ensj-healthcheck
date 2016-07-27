@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +23,7 @@
  */
 package org.ensembl.healthcheck.testcase.eg_core;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -46,14 +48,14 @@ public class DeprecatedEgMeta extends AbstractEgMeta {
 
 	@Override
 	protected boolean testKeys(DatabaseRegistryEntry dbre, int speciesId,
-			Map<String, Boolean> metaKeyOut) {
+			List<String> speciesKeys, List<String> testKeys) {
 		boolean passes = true;
-		for (Entry<String, Boolean> e : metaKeyOut.entrySet()) {
-			if (e.getValue()) {
+		for(String key: speciesKeys) {
+			if(testKeys.contains(key)) {
 				passes = false;
 				ReportManager.problem(this, dbre.getConnection(),
 						"Meta table for " + speciesId
-								+ " contains a value for the deprecated key " + e.getKey());
+								+ " contains a value for the deprecated key " + key);
 			}
 		}
 		return passes;

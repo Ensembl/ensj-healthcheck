@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,12 +36,6 @@ public class BlankInfoType extends SingleDatabaseTestCase {
 	 */
 	public BlankInfoType() {
 
-		addToGroup("post_genebuild");
-		addToGroup("funcgen-release");
-		addToGroup("funcgen");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check for any xref.info_type that are blank ('') or NULL - they should be NONE for various other things to work.");
 		setTeamResponsible(Team.CORE);
 		setSecondTeamResponsible(Team.GENEBUILD);

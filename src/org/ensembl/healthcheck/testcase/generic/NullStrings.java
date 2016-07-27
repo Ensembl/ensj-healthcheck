@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,14 +43,6 @@ public class NullStrings extends SingleDatabaseTestCase {
 	 */
 	public NullStrings() {
 
-		addToGroup("post_genebuild");
-		addToGroup("funcgen-release");
-		addToGroup("funcgen");
-		addToGroup("compara-ancestral");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setTeamResponsible(Team.GENEBUILD);
 		setDescription("Check for rows that contain the *string* NULL - should probably be the database primitive NULL.");
 

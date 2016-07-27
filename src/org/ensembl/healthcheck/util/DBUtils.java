@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -196,7 +197,7 @@ public final class DBUtils {
 	 * Get a list of the database names that match a certain pattern for a
 	 * particular connection.
 	 * 
-	 * @param conn
+	 * @param con
 	 *            The connection to query.
 	 * @param regex
 	 *            A regular expression to match. If null, match all.
@@ -882,7 +883,7 @@ public final class DBUtils {
 	 *            The name of the table to list.
 	 * @param con
 	 *            The connection to use.
-	 * @param typeFilters
+	 * @param typeFilter
 	 *            If not null, only return columns whose types start with this
 	 *            string (case insensitive). Vargs so specify as many as you need
 	 *            
@@ -1001,8 +1002,7 @@ public final class DBUtils {
 	public static List<DatabaseServer> getMainDatabaseServersProperties() {
 
 		// EG replace literal reference to file with variable
-		Utils.readPropertiesFileIntoSystem(TestRunner.getPropertiesFile(),
-				false);
+		Utils.readPropertiesFileIntoSystem(TestRunner.getPropertiesFile(),false);
 
 		if (mainDatabaseServers == null) {
 
@@ -1493,14 +1493,13 @@ public final class DBUtils {
 		// if the query starts with SELECT COUNT and does not include a GROUP
 		// BY clause
 		// we can execute it and just take the first result, which is the count
-		if (sql.toLowerCase().indexOf("select count") >= 0
-				&& sql.toLowerCase().indexOf("group by") < 0) {
+		if (sql.toLowerCase().contains("select count")
+				&& !sql.toLowerCase().contains("group by")) {
 
 			result = getRowCountFast(con, sql);
 
-		} else if (sql.toLowerCase().indexOf("select count") < 0) {
+		} else if (!sql.toLowerCase().contains("select count")) {
 			// otherwise, do it row-by-row
-
 			logger.fine("getRowCount() executing SQL which does not appear to begin with SELECT COUNT - performing row-by-row count, which may take a long time if the table is large.");
 			result = getRowCountSlow(con, sql);
 

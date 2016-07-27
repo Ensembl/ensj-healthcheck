@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,12 +50,6 @@ public class ComparePreviousVersionCCDS extends ComparePreviousVersionBase {
 	 */
 	public ComparePreviousVersionCCDS() {
 
-		addToGroup("post_genebuild");
-		addToGroup("core_xrefs");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-
 		setDescription("Compare the CCDS in the current database with those from the equivalent database on the secondary server");
 		setPriority(Priority.AMBER);
 		setEffect("Indicates that the CCDS object xrefs have changed between releases; may be due to a problem, or be expected, in which case the result should be annotated appropritately");
@@ -86,16 +81,21 @@ public class ComparePreviousVersionCCDS extends ComparePreviousVersionBase {
 
 		Map<String, Integer> counts = new HashMap<String, Integer>();
 
-		// and total number of associations with genes, transcripts and translations
-		String sql = " FROM gene g, transcript tr, translation tl, object_xref ox, xref x, external_db e WHERE x.xref_id=ox.xref_id AND x.external_db_id=e.external_db_id AND e.db_name='CCDS' AND g.gene_id =tr.gene_id AND tl.translation_id=ox.ensembl_id AND ox.ensembl_object_type='Translation' and tl.transcript_id=tr.transcript_id";
-		int genes = DBUtils.getRowCount(con, "SELECT COUNT(DISTINCT(g.gene_id))" + sql);
-		counts.put("CCDS-gene associations", genes);
+                String hasCcdsSql = "SELECT count(*) FROM xref x, external_db e WHERE x.external_db_id = e.external_db_id AND e.db_name = 'CCDS'";
+                int hasCCDS = DBUtils.getRowCount(con, hasCcdsSql);
 
-		int transcripts = DBUtils.getRowCount(con, "SELECT COUNT(DISTINCT(tr.transcript_id))" + sql);
-		counts.put("CCDS-transcript associations", transcripts);
-
-		int translations = DBUtils.getRowCount(con, "SELECT COUNT(DISTINCT(tl.translation_id))" + sql);
-		counts.put("CCDS-translation associations", translations);
+                if (hasCCDS > 0) {
+			// and total number of associations with genes, transcripts and translations
+			String sql = " FROM gene g, transcript tr, translation tl, object_xref ox, xref x, external_db e WHERE x.xref_id=ox.xref_id AND x.external_db_id=e.external_db_id AND e.db_name='CCDS' AND g.gene_id =tr.gene_id AND tl.translation_id=ox.ensembl_id AND ox.ensembl_object_type='Translation' and tl.transcript_id=tr.transcript_id";
+			int genes = DBUtils.getRowCount(con, "SELECT COUNT(DISTINCT(g.gene_id))" + sql);
+			counts.put("CCDS-gene associations", genes);
+	
+			int transcripts = DBUtils.getRowCount(con, "SELECT COUNT(DISTINCT(tr.transcript_id))" + sql);
+			counts.put("CCDS-transcript associations", transcripts);
+	
+			int translations = DBUtils.getRowCount(con, "SELECT COUNT(DISTINCT(tl.translation_id))" + sql);
+			counts.put("CCDS-translation associations", translations);
+                }
 
 		return counts;
 

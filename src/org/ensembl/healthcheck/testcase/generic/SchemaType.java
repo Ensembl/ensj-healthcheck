@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,10 +41,6 @@ public class SchemaType extends SingleDatabaseTestCase {
 	 */
 	public SchemaType() {
 
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check that the schema_type meta key is present and correct.");
 		setPriority(Priority.AMBER);
 		setFix("Set schema_type meta key.");

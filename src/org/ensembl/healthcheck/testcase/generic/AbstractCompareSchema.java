@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,7 +101,6 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 	    MAX_CACHE_SIZE);
 
 	public AbstractCompareSchema() {
-		addGroups();
 		addDescription();
 		addResponsible();
 		addTestTypes();
@@ -114,11 +114,6 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 				"genebuild handover because pipelines are still running. The " +
 				"genebuilders are responsible for deleting these before the release.");
 	}
-
-	/**
-	 * Override to set the groups your test will apply to
-	 */
-	protected abstract void addGroups();
 
 	/**
 	 * Override to set the test's responsible teams

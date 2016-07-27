@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,11 +37,6 @@ public class AnalyseTables extends SingleDatabaseTestCase {
 	 */
 	public AnalyseTables() {
 
-		addToGroup("funcgen-release");
-		addToGroup("compara-ancestral");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
 		setDescription("Check whether tables need to be analysed.");
 		setPriority(Priority.AMBER);
 		setEffect("Causes indices not to be used, making queries slow or unresponsive.");

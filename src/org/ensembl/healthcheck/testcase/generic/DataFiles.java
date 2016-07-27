@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,16 +40,21 @@ import org.ensembl.healthcheck.testcase.Priority;
 public class DataFiles extends AbstractTemplatedTestCase {
 
   public DataFiles() {
-    addToGroup("pre-compara-handover");
-    addToGroup("post-compara-handover");
-    addToGroup("post-projection");
     setDescription("Check that the data_file tables are correctly formatted. Includes searching for bad file extensions and spaces in names");
     setPriority(Priority.AMBER);
     setTeamResponsible(Team.GENEBUILD);
   }
 
+  /**
+  * This test only applies to rnaseq databases
+  */
+
   public void types() {
     removeAppliesToType(DatabaseType.SANGER_VEGA);
+    removeAppliesToType(DatabaseType.OTHERFEATURES);
+    removeAppliesToType(DatabaseType.ESTGENE);
+    removeAppliesToType(DatabaseType.CORE);
+    removeAppliesToType(DatabaseType.CDNA);
   }
   
   @Override

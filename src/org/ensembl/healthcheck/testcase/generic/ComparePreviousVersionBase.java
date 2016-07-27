@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,6 +66,13 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 			logger.finest("ignore.previous.checks is set in database.properties, skipping this test");
 			return true;
 		}
+
+                boolean skipCondition = skipCondition(dbre);
+
+                if (skipCondition) {
+                         logger.finest("Skipping test as data is not yet available");
+                         return true;
+                }
 
 		DatabaseRegistryEntry sec = getEquivalentFromSecondaryServer(dbre);
 
@@ -184,5 +192,11 @@ public abstract class ComparePreviousVersionBase extends SingleDatabaseTestCase 
 	protected boolean testUpperThreshold() {
 		return false;
 	}
+
+        // ------------------------------------------------------------------------
+
+        protected boolean skipCondition(DatabaseRegistryEntry dbre) {
+                return false;
+        }
 
 } // ComparePreviousVersionBase

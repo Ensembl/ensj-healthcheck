@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -104,8 +105,6 @@ public abstract class EnsTestCase {
 	protected static Logger logger = Logger.getLogger(EnsTestCase.class
 			.getCanonicalName());
 
-	protected String comparaMasterDbName = "ensembl_compara_master";
-	
 	public static Logger getLogger() {
 		return logger;
 	}
@@ -180,6 +179,9 @@ public abstract class EnsTestCase {
 	 */
 	DatabaseRegistryEntry productionDBRE = null;
 	
+	/**
+	 * A DatabaseRegistryEntry pointing to the Compara Master database.
+	 */
 	DatabaseRegistryEntry comparaMasterDbre = null;
 	
 
@@ -801,24 +803,39 @@ public abstract class EnsTestCase {
 	/**
 	 * Get a connection to the production database.
 	 * 
-	 * @param table
-	 *            The name of the schema to connect to.
-	 * @return A ResultSet containing the contents of the table.
+	 * @return A DatabaseRegistryEntry representing the database
 	 */
 	public DatabaseRegistryEntry getProductionDatabase() {
 
 		// return existing one if we already have it, otherwise use method above
 		// to find it
 		return productionDBRE != null ? productionDBRE
-				: getDatabaseRegistryEntryByPattern("ensembl_production");
+				: getDatabaseRegistryEntryByPattern(System.getProperty("production.database"));
 
 	}
+	
+	public void setProductionDatabase(DatabaseRegistryEntry productionDBRE ) {
+		this.productionDBRE = productionDBRE;
+	}
 
+	/**
+	 * Get a connection to the Compara master database.
+	 * 
+	 * @return A DatabaseRegistryEntry representing the database
+	 */
 	public DatabaseRegistryEntry getComparaMasterDatabase() {
 
+		// return existing one if we already have it, otherwise use method above
+		// to find it
 		return comparaMasterDbre != null ? comparaMasterDbre
-				: getDatabaseRegistryEntryByPattern(comparaMasterDbName);
+				: getDatabaseRegistryEntryByPattern(System.getProperty("compara_master.database"));
 
+	}
+	
+	public void setComparaMasterDatabase(DatabaseRegistryEntry comparaMasterDbre) {
+
+		this.comparaMasterDbre = comparaMasterDbre;
+		
 	}
 
 	// -------------------------------------------------------------------------
@@ -1452,10 +1469,6 @@ public abstract class EnsTestCase {
 					+ " -> " + table2 + " using FK " + col1
 					+ ", look at the StackTrace if any");
 			result = false;
-		} else {
-			ReportManager.correct(this, con, "SUCCESS: All rows in " + table1
-					+ " (constraint is: " + constraint1 + ") refer to valid "
-					+ table2 + "s");
 		}
 
 		return result;
@@ -1512,11 +1525,6 @@ public abstract class EnsTestCase {
 			ReportManager.problem(this, con, nulls + " NULL values in " + table
 					+ "." + column);
 			result = false;
-
-		} else {
-
-			ReportManager.correct(this, con, "No NULL values in " + table + "."
-					+ column);
 		}
 
 		return result;
@@ -1547,9 +1555,6 @@ public abstract class EnsTestCase {
 			ReportManager.problem(this, con, "Zeroes found in " + table + "."
 					+ column);
 			result = false;
-		} else {
-			ReportManager.correct(this, con, "No zeroes found in " + table
-					+ "." + column);
 		}
 
 		return result;
@@ -1580,9 +1585,6 @@ public abstract class EnsTestCase {
 			ReportManager.problem(this, con, "Forbidden characters found in "+badrows+" rows of " + table + "."
 					+ column);
 			result = false;
-		} else {
-			ReportManager.correct(this, con, "Column is clean of weird characters in " + table
-					+ "." + column);
 		}
 
 		return result;

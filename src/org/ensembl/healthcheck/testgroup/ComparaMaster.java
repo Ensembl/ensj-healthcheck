@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,24 +27,8 @@ public class ComparaMaster extends GroupOfTests {
 	public ComparaMaster() {
 
 		addTest(
-			org.ensembl.healthcheck.testcase.compara.CheckGenomeDB.class,
-			org.ensembl.healthcheck.testcase.compara.CheckTaxon.class,
-			//org.ensembl.healthcheck.testcase.compara.CheckTopLevelDnaFrag.class,
-			org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetTag.class,
-
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyGenomeDbId.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkId.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyMethodLinkSpeciesSetId.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyMLSSIdGenomic.class,
-			org.ensembl.healthcheck.testcase.compara.ForeignKeyTaxonId.class,
-
-			org.ensembl.healthcheck.testcase.compara.DuplicateGenomeDb.class,
-			org.ensembl.healthcheck.testcase.compara.SingleDBCollations.class,
-			org.ensembl.healthcheck.testcase.compara.Meta.class,
-			org.ensembl.healthcheck.testcase.compara.SingleDBCollations.class,
-
-			org.ensembl.healthcheck.testcase.eg_compara.EGForeignKeyMethodLinkSpeciesSetId.class
-
+			ComparaMasterOnly.class,
+			ComparaShared.class
 		);
 	}
 }

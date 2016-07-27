@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,11 +39,6 @@ public class IdentityXrefCigarLines extends SingleDatabaseTestCase {
 	 * Creates a new instance of Ditag.
 	 */
 	public IdentityXrefCigarLines() {
-
-		addToGroup("post_genebuild");
-		addToGroup("core_xrefs");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
 
 		setDescription("Check that cigar lines in the identity_xref table are in the same format, as they are in the alignment tables, i.e. start with a number rather than a letter");
 		setTeamResponsible(Team.CORE);

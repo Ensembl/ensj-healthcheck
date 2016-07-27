@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,9 +47,6 @@ public class SeqRegionAttribsPresent extends SingleDatabaseTestCase {
 	 */
 	public SeqRegionAttribsPresent() {
 
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check that certain seq_regions that have protein_coding genes have the coding_cnt attribute associated with them. Also ensure that _rna_edit attributes represent substitutions");
 		setEffect("Website gene counts will be wrong and API will fail to load");
 		setFix("Re-run density generation pipeline or edit the database to remove the offending attribute");

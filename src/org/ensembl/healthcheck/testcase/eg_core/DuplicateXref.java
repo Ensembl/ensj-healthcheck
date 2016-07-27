@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +34,6 @@ import org.ensembl.healthcheck.ReportManager;
 public class DuplicateXref extends AbstractEgCoreTestCase {
 
 	private final static String DUPLICATE_XREF = "select count(*) from (select count(*) from xref x group by x.dbprimary_acc,x.external_db_id,x.info_type,x.info_text having count(*)>1) cc";
-	private final static String DUPLICATE_OBJ_XREF = "select count(*) from (select count(*) from xref x join object_xref ox using (xref_id) group by ox.ensembl_id, ox.ensembl_object_type,x.dbprimary_acc,x.external_db_id,x.info_type,x.info_text having count(*)>1) cc";
 
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
 		boolean passes = true;
@@ -41,11 +41,6 @@ public class DuplicateXref extends AbstractEgCoreTestCase {
 		if(nDupX>0) {
 			passes = false;
 			ReportManager.problem(this, dbre.getConnection(), nDupX+" duplicates found in xref: "+DUPLICATE_XREF);
-		}
-		int nDupOX =  getTemplate(dbre).queryForDefaultObject(DUPLICATE_OBJ_XREF, Integer.class);
-		if(nDupOX>0) {
-			passes = false;
-			ReportManager.problem(this, dbre.getConnection(), nDupOX+" duplicates found in object_xref: "+DUPLICATE_OBJ_XREF);
 		}
 		return passes;
 	}
@@ -55,7 +50,7 @@ public class DuplicateXref extends AbstractEgCoreTestCase {
 	 */
 	@Override
 	protected String getEgDescription() {
-		return "Test for where xrefs have been added twice";
+		return "Test for where xrefs have been added twice with different descriptions or versions etc.";
 	}
 
 }

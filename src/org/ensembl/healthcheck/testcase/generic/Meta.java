@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,12 +57,6 @@ public class Meta extends SingleDatabaseTestCase {
 	 * Creates a new instance of CheckMetaDataTableTestCase
 	 */
 	public Meta() {
-
-		addToGroup("post_genebuild");
-		addToGroup("compara-ancestral");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
 
 		setTeamResponsible(Team.GENEBUILD);
 		setDescription("Check that the meta table exists and has data and the entries correspond to the database name");

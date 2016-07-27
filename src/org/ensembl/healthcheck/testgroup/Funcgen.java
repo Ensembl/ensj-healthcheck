@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,19 +56,19 @@ public class Funcgen extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.BlankEnums.class,
 			org.ensembl.healthcheck.testcase.generic.BlankInfoType.class,
 			org.ensembl.healthcheck.testcase.generic.BlanksInsteadOfNulls.class,
-			org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema.class,
-			org.ensembl.healthcheck.testcase.funcgen.CheckResultSetDBFileLink.class,
+			// org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema.class,
+			// org.ensembl.healthcheck.testcase.funcgen.CheckResultSetDBFileLink.class,
 			org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionArrayXrefs.class,
-			org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionRegulatoryFeatures.class,
+			// org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionRegulatoryFeatures.class,
 			org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName.class,
 			org.ensembl.healthcheck.testcase.funcgen.FeaturePosition.class,
 			org.ensembl.healthcheck.testcase.funcgen.FuncgenForeignKeys.class,
 			org.ensembl.healthcheck.testcase.funcgen.FuncgenStableID.class,
 			org.ensembl.healthcheck.testcase.funcgen.MetaCoord.class,
-			org.ensembl.healthcheck.testcase.generic.NullStrings.class,
-			org.ensembl.healthcheck.testcase.funcgen.RegulatoryFeatureTypes.class,
-			org.ensembl.healthcheck.testcase.funcgen.RegulatoryMotifFeatures.class,
-			org.ensembl.healthcheck.testcase.funcgen.RegulatorySets.class
+			org.ensembl.healthcheck.testcase.generic.NullStrings.class
+			// org.ensembl.healthcheck.testcase.funcgen.RegulatoryFeatureTypes.class,
+			// org.ensembl.healthcheck.testcase.funcgen.RegulatoryMotifFeatures.class,
+			// org.ensembl.healthcheck.testcase.funcgen.RegulatorySets.class
 		);
 	}
 }

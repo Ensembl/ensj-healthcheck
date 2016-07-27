@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,10 +55,6 @@ public class GeneStatus extends SingleDatabaseTestCase {
 	 * Create a new GeneStatus testcase.
 	 */
 	public GeneStatus() {
-
-		addToGroup("core_xrefs");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
 
 		setDescription("Check that the number of KNOWN genes & transcripts is within 20% in the new and previous databases. Also check for unset status.");
 		setTeamResponsible(Team.CORE);

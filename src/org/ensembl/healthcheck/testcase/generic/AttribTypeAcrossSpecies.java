@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,10 +35,6 @@ public class AttribTypeAcrossSpecies extends MultiDatabaseTestCase {
 	 */
 	public AttribTypeAcrossSpecies() {
 
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check that the attrib_type table contains the same information for all databases with the same species.");
 		setTeamResponsible(Team.RELEASE_COORDINATOR);
 

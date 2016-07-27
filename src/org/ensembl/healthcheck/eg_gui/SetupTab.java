@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +55,7 @@ public class SetupTab extends JPanel {
 	 */
 	String defaultPrimaryServerName   = "staging-1";
 	String defaultSecondaryServerName = "mysql.ebi.ac.uk";
-	String defaultPanServerName       = "pan-1";
+	String defaultPanServerName       = "pan-prod";
 
 	/**
 	 * Directories in which configuration files for database servers will be 

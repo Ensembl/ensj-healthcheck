@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,11 +52,6 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 	 */
 	public MarkerFeatures() {
 
-		addToGroup("post_genebuild");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-                addToGroup("pre-compara-handover");
-
 		setDescription("Checks that marker_features exist and that they have non-zero map_weights, that marker priorities are sensible and that all chromosomes have some marker features and marker_map_locations");
 		setTeamResponsible(Team.GENEBUILD);
 
@@ -102,8 +98,6 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 													// zebrafish
 
 			result &= checkFeaturesAndMapWeights(con);
-
-			result &= checkMarkerPriorities(con);
 
 			result &= checkAllChromosomesHaveMarkers(con);
 
@@ -155,36 +149,6 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 		return result;
 
 	} // checkFeaturesAndMapWeights
-
-	// ----------------------------------------------------------------------
-	/**
-	 * Check that all priorities are greater than a certain threshold.
-	 */
-	private boolean checkMarkerPriorities(Connection con) {
-
-		boolean result = true;
-
-		int count = DBUtils.getRowCount(con,
-				"SELECT COUNT(*) FROM marker WHERE priority > "
-						+ MARKER_PRIORITY_THRESHOLD);
-
-		if (count == 0) {
-
-			ReportManager.problem(this, con,
-					" No marker features have priorities greater than the threshold ("
-							+ MARKER_PRIORITY_THRESHOLD + ")");
-			result = false;
-
-		} else {
-
-			ReportManager.correct(this, con,
-					"Some marker features have priorities greater than "
-							+ MARKER_PRIORITY_THRESHOLD);
-
-		}
-
-		return result;
-	}
 
 	// ----------------------------------------------------------------------
 	/**

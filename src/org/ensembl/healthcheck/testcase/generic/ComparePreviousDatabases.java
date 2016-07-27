@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,10 +39,6 @@ public class ComparePreviousDatabases extends MultiDatabaseTestCase {
 	 * Create a new instance of ComparePreviousDatabases
 	 */
 	public ComparePreviousDatabases() {
-
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
 
 		setDescription("Check that all species and database types in the previous release are represented in the current release.");
 		setTeamResponsible(Team.RELEASE_COORDINATOR);

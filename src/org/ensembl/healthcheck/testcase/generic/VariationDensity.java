@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,8 +56,6 @@ public class VariationDensity extends SingleDatabaseTestCase {
 	@SuppressWarnings("unchecked")
   public VariationDensity() {
 
-		addToGroup("post-projection");
-	
 		setDescription("Check that all top-level seq regions have some variation density features, and that the values agree between the density_feature and seq_region attrib tables.");
 		setFailureText("If the genome has been assembled using short-read sequences, some seq_regions might not have density_features");
 

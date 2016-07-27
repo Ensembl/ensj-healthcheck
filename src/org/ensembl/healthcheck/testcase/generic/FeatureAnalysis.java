@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,11 +50,6 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
    * Creates a new instance of FeatureAnalysis
    */
   public FeatureAnalysis() {
-
-    addToGroup("post_genebuild");
-    addToGroup("pre-compara-handover");
-    addToGroup("post-compara-handover");
-    addToGroup("post-projection");
 
     setHintLongRunning(true);
     setDescription("Check that features exist for the expected analyses.");
@@ -174,11 +170,6 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
               + ", logic name " + logicName
               + " is not used in any feature table");
           result = false;
-        }
-        else {
-          ReportManager.correct(this, con, "Analysis with ID " + analysisID
-              + ", logic name " + logicName + " is used in "
-              + analysesFromFeatureTables.get(new Integer(analysisID)));
         }
       }
       rs.close();

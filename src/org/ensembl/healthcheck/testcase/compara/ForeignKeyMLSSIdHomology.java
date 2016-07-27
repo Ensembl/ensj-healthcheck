@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,81 +18,48 @@
 
 package org.ensembl.healthcheck.testcase.compara;
 
-import java.lang.Integer;
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * An EnsEMBL Healthcheck test case that looks for broken foreign-key
- * relationships.
+ * An EnsEMBL Healthcheck test case that looks for homology mlss_ids that
+ * are not linked to any data.
  */
 
-public class ForeignKeyMLSSIdHomology extends SingleDatabaseTestCase {
+public class ForeignKeyMLSSIdHomology extends AbstractMLSSIdToData {
 
-    /**
-     * Create an ForeignKeyMLSSIdHomology that applies to a specific set of databases.
-     */
-    public ForeignKeyMLSSIdHomology() {
+	public ForeignKeyMLSSIdHomology() {
+		setDescription("Check for missing links between method_link_species_set and the homology tables.");
+		setTeamResponsible(Team.COMPARA);
+	}
 
-        addToGroup("compara_homology");
-        setDescription("Check for broken foreign-key relationships in ensembl_compara databases.");
-        setTeamResponsible(Team.COMPARA);
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-    }
+		Connection con = dbre.getConnection();
 
-    /**
-     * Run the test.
-     * 
-     * @param dbre
-     *          The database to use.
-     * @return true if the test passed.
-     *  
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+		boolean result = true;
 
-        boolean result = true;
+		/* Check method_link_species_set <-> homology */
+		/* All method_link for homologies must have an internal ID between 201 and 299 */
+		result &= checkMLSSIdLink(con, "homology", "method_link_id >= 201 and method_link_id < 300");
 
-        Connection con = dbre.getConnection();
+		/* Check method_link_species_set <-> family */
+		/* All method_link for families must have an internal ID between 301 and 399 */
+		result &= checkMLSSIdLink(con, "family", "method_link_id >= 301 and method_link_id < 400");
 
-        if (tableHasRows(con, "method_link_species_set")) {
+		/* Check method_link_species_set <-> gene_tree_root */
+		result &= checkMLSSIdLink(con, "gene_tree_root", "method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'ProteinTree.%')");
+		// Here, we add "false" because gene_tree_root->method_link_species_set links have already been checked previously
+		result &= checkMLSSIdLink(con, "gene_tree_root", "method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'NCTree.%')", false);
 
+		/* Check method_link_species_set <-> species_tree_root */
+		result &= checkMLSSIdLink(con, "species_tree_root", "method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'ProteinTree.%')");
+		result &= checkMLSSIdLink(con, "species_tree_root", "method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'NCTree.%')", false);
 
-            /* Check method_link_species_set <-> homology */
-            /* All method_link for homologies must have an internal ID between 201 and 299 */
-            result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "homology", "method_link_species_set_id", "method_link_id >= 201 and method_link_id < 300");
-            result &= checkForOrphans(con, "homology", "method_link_species_set_id", "method_link_species_set", "method_link_species_set_id");
-
-            /* Check method_link_species_set <-> family */
-            /* All method_link for families must have an internal ID between 301 and 399 */
-            result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "family", "method_link_species_set_id", "method_link_id >= 301 and method_link_id < 400");
-            result &= checkForOrphans(con, "family", "method_link_species_set_id", "method_link_species_set", "method_link_species_set_id");
-
-            /* Check method_link_species_set <-> gene_tree_root */
-            result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "gene_tree_root", "method_link_species_set_id", "method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'ProteinTree.%')");
-            result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "gene_tree_root", "method_link_species_set_id", "method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'NCTree.%')");
-            result &= checkForOrphans(con, "gene_tree_root", "method_link_species_set_id", "method_link_species_set", "method_link_species_set_id");
-
-            /* Check method_link_species_set <-> species_tree_root */
-            result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "species_tree_root", "method_link_species_set_id", "method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'ProteinTree.%')");
-            result &= checkForOrphansWithConstraint(con, "method_link_species_set", "method_link_species_set_id", "species_tree_root", "method_link_species_set_id", "method_link_id IN (SELECT method_link_id FROM method_link WHERE class LIKE 'NCTree.%')");
-
-
-        } else {
-
-            ReportManager.correct(this, con, "NO ENTRIES in method_link_species_set table, so nothing to test IGNORED");
-        }
-
-        return result;
-
-    }
+		return result;
+	}
 
 } // ForeignKeyMLSSIdHomology

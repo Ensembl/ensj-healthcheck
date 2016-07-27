@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +40,7 @@ import org.ensembl.healthcheck.testcase.PerlScriptConfig;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.ConnectionPool;
 
-import com.mysql.jdbc.Connection;
+import java.sql.Connection;
 
 import java.util.logging.Handler;
 import java.util.logging.Level;

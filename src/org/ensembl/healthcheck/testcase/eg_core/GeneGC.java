@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.util.CollectionUtils;
 import org.ensembl.healthcheck.util.SqlTemplate;
@@ -39,6 +41,11 @@ import org.ensembl.healthcheck.util.TestCaseUtils;
  * 
  */
 public class GeneGC extends AbstractEgCoreTestCase {
+
+	public GeneGC() {
+		super();
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+	}
 
 	private static final String ATTRIB_TYPE_QUERY = "SELECT attrib_type_id FROM attrib_type WHERE code='GeneGC'";
 	private final static String GC_QUERY = "select attrib_type_id,count(*) from gene "
@@ -67,7 +74,7 @@ public class GeneGC extends AbstractEgCoreTestCase {
 									+ ATTR_ID);
 					passes = false;
 				}
-			} else {
+			} else if(dbre.getType()==DatabaseType.OTHERFEATURES) {
 				ReportManager.problem(this, dbre.getConnection(),
 						"No GeneGC attrib_type found");
 				passes = false;

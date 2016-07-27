@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,11 +38,6 @@ public class HGNCMultipleGenes extends SingleDatabaseTestCase {
 	 */
 	public HGNCMultipleGenes() {
 
-		addToGroup("post_genebuild");
-		addToGroup("core_xrefs");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-
 		setDescription("Check for HGNCs that have been assigned as display labels more than one gene.");
 		setTeamResponsible(Team.CORE);
 	}
@@ -74,7 +70,7 @@ public class HGNCMultipleGenes extends SingleDatabaseTestCase {
 
 		// this has to be done the slow way, don't think there's a way to do
 		// this all at once
-		String sql = "SELECT DISTINCT(x.display_label), COUNT(*) AS count FROM gene g, xref x, external_db e WHERE e.external_db_id=x.external_db_id AND e.db_name LIKE 'HGNC%' AND x.xref_id=g.display_xref_id ";
+		String sql = "SELECT DISTINCT(x.display_label), COUNT(*) AS count FROM gene g, xref x, external_db e WHERE e.external_db_id=x.external_db_id AND e.db_name LIKE 'HGNC%' AND x.xref_id=g.display_xref_id and x.display_label not like '%1 to many)' ";
                 sql += "and g.seq_region_id NOT in (select seq_region_id FROM seq_region_attrib sa, attrib_type at WHERE at.attrib_type_id = sa.attrib_type_id AND code = 'non_ref') ";
 		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sangervega do
 															// not consider

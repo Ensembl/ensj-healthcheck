@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,16 +103,16 @@ public class ParallelConfigurableTestRunner extends TestRunner {
 
 
         public static void main(String[] args) {
-
+        	ParallelConfigurableTestRunner parallelConfigurableTestRunner = new ParallelConfigurableTestRunner(
+                    args);
                 try {
 
-                        ParallelConfigurableTestRunner parallelConfigurableTestRunner = new ParallelConfigurableTestRunner(
-                                        args);
+                        
                         parallelConfigurableTestRunner.run();
 
                 } catch (ConfigurationException e) {
 
-                        ParallelConfigurableTestRunner.logger.log(Level.INFO, e.getMessage());
+                	parallelConfigurableTestRunner.logger.log(Level.INFO, e.getMessage());
                 }
         }
 
@@ -157,8 +158,8 @@ public class ParallelConfigurableTestRunner extends TestRunner {
         protected void submitJobs() {
 
                 int numberOfTestsRun = 0;
-
                 int jobNumber = 0;
+                String[] cmd;
                 List<String> jobNames = new ArrayList<String>();
                 String dir = System.getProperty("user.dir");
                 String runConfigurable = dir + File.separator + "run-configurable-testrunner.sh";
@@ -168,8 +169,18 @@ public class ParallelConfigurableTestRunner extends TestRunner {
 
                         String currentJobName = "Job_" + jobNumber;
 
-                        String[] cmd = {"bsub", "-q", "long", "-J", currentJobName, "-R", MEMORY_RUSAGE, "-M", MEMORY_RESERVATION, "-R", "select[myens_staging1<=800]", "-R", "select[myens_staging2<=800]", "-R", "select[myens_livemirror<=400]",
-                        "-R", "rusage[myens_staging1=10:myens_staging1=10:myens_livemirror=50]", "-o", "healthcheck_%J.out", "-e", "healthcheck_%J.err", runConfigurable, "-d", database, "--sessionID", "" + sessionID, "-c", DEFAULT_PROPERTIES_FILE };
+                        if ( configuration.getHost1() != null ) {  
+                                 cmd = new String[] {"bsub", "-q", "long", "-J", currentJobName, "-R", MEMORY_RUSAGE, "-M", MEMORY_RESERVATION, "-R", "select[my" + configuration.getHost().replace("-", "_") + "<=800]", "-R",
+                                 "select[my" + configuration.getHost1().replace("-", "_") + "<=800]", "-R",  "select[my" + configuration.getSecondaryHost().replace("-", "_") + "<=400]", "-R",
+                                 "rusage[my" + configuration.getHost().replace("-", "_") + "=10:my" + configuration.getHost1().replace("-", "_") + "=10:my" + configuration.getSecondaryHost().replace("-", "_") + "=50]", "-o", "healthcheck_%J.out", "-e", 
+                                 "healthcheck_%J.err", runConfigurable, "-d", database, "--sessionID", "" + sessionID, "-c", DEFAULT_PROPERTIES_FILE };
+                        }
+                        else {
+                                 cmd = new String[] {"bsub", "-q", "long", "-J", currentJobName, "-R", MEMORY_RUSAGE, "-M", MEMORY_RESERVATION, "-R", "select[my" + configuration.getHost().replace("-", "_") + "<=800]", "-R", 
+                                 "select[my" + configuration.getSecondaryHost().replace("-", "_") + "<=400]", "-R", "rusage[my" + configuration.getHost().replace("-", "_") + "=10:my" + configuration.getSecondaryHost().replace("-", "_") + "=50]",
+                                 "-o", "healthcheck_%J.out", "-e", "healthcheck_%J.err", runConfigurable, "-d", database, "--sessionID", "" + sessionID, "-c", 
+                                 DEFAULT_PROPERTIES_FILE };
+                        }
 
                         jobNames.add(currentJobName);
 

@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,12 +50,6 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 	 */
 	public CoreForeignKeys() {
 
-		addToGroup("post_genebuild");
-		addToGroup("compara-ancestral");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check for broken foreign-key relationships.");
 		setTeamResponsible(Team.CORE);
                 setSecondTeamResponsible(Team.GENEBUILD);
@@ -137,6 +132,18 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 		result &= checkForOrphans(con, "translation", "transcript_id", "transcript", "transcript_id", true);
 
 		result &= checkForOrphans(con, "ontology_xref", "object_xref_id", "object_xref", "object_xref_id", true);
+		
+		result &= checkForOrphans(con, "associated_xref", "object_xref_id", "object_xref", "object_xref_id", true);
+
+		result &= checkForOrphans(con, "associated_xref", "xref_id", "xref", "xref_id", true);
+
+		result &= checkForOrphans(con, "associated_xref", "source_xref_id", "xref", "xref_id", true);
+
+		result &= checkForOrphans(con, "dependent_xref", "object_xref_id", "object_xref", "object_xref_id", true);
+
+		result &= checkForOrphans(con, "dependent_xref", "master_xref_id", "xref", "xref_id", true);
+
+		result &= checkForOrphans(con, "dependent_xref", "dependent_xref_id", "xref", "xref_id", true);
 
 		// stable ID archive
 		result &= checkForOrphansWithConstraint(con, "gene_archive", "peptide_archive_id", "peptide_archive", "peptide_archive_id", "peptide_archive_id != 0");

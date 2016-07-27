@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,54 +33,47 @@ import org.ensembl.healthcheck.util.DBUtils;
 
 public class CheckHomology extends SingleDatabaseTestCase {
 
-    /**
-     * Create an CheckHomology that applies to a specific set of databases.
-     */
-    public CheckHomology() {
+	/**
+	 * Create an CheckHomology that applies to a specific set of databases.
+	 */
+	public CheckHomology() {
+		setDescription("Check for broken foreign-key relationships in ensembl_compara databases.");
+		setTeamResponsible(Team.COMPARA);
+	}
 
-        addToGroup("compara_homology");
-        setDescription("Check for broken foreign-key relationships in ensembl_compara databases.");
-        setTeamResponsible(Team.COMPARA);
+	/**
+	 * Run the test.
+	 * 
+	 * @param dbre
+	 *          The database to use.
+	 * @return true if the test passed.
+	 *  
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-    }
+		boolean result = true;
 
-    /**
-     * Run the test.
-     * 
-     * @param dbre
-     *          The database to use.
-     * @return true if the test passed.
-     *  
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+		Connection con = dbre.getConnection();
 
-        boolean result = true;
+		result &= checkForSingles(con, "homology_member", "homology_id");
 
-        Connection con = dbre.getConnection();
+		String sql_main = "SELECT hm1.gene_member_id gene_member_id1, hm2.gene_member_id gene_member_id2, COUNT(*) num, GROUP_CONCAT(h1.description order by h1.description) descs" +
+			" FROM homology h1 CROSS JOIN homology_member hm1 USING (homology_id)" +
+			" CROSS JOIN homology_member hm2 USING (homology_id)" +
+			" WHERE hm1.gene_member_id < hm2.gene_member_id" +
+			" GROUP BY hm1.gene_member_id, hm2.gene_member_id HAVING COUNT(*) > 1";
+		String sql_count = sql_main;
+		String sql_summary = "SELECT descs, num, count(*) FROM (" + sql_main + ") tt1 GROUP BY descs, num";
+		int numRows = DBUtils.getRowCount(con, sql_count);
+		if (numRows > 0) {
+			ReportManager.problem(this, con, "FAILED homology contains redundant entries");
+			ReportManager.problem(this, con, "FAILURE DETAILS: There are " + numRows + " redundant homology relationships in the DB");
+			ReportManager.problem(this, con, "USEFUL SQL: " + sql_summary);
+			result = false;
+		}
 
-        if (tableHasRows(con, "homology") && tableHasRows(con, "homology")) {
-            result &= checkCountIsZero(con,"method_link_species_set_tag","tag='threshold_on_ds' AND value NOT IN (1,2)");
-        } else {
-            ReportManager.problem(this, con, "NO ENTRIES in homology or homology_member tables");
-        }
-        
-        String sql_main = "SELECT hm1.gene_member_id gene_member_id1, hm2.gene_member_id gene_member_id2, COUNT(*) num, GROUP_CONCAT(h1.description order by h1.description) descs" +
-             " FROM homology h1 CROSS JOIN homology_member hm1 USING (homology_id)" +
-             " CROSS JOIN homology_member hm2 USING (homology_id)" +
-             " WHERE hm1.gene_member_id < hm2.gene_member_id" +
-             " GROUP BY hm1.gene_member_id, hm2.gene_member_id HAVING COUNT(*) > 1";
-        String sql_count = sql_main;
-        String sql_summary = "SELECT descs, num, count(*) FROM (" + sql_main + ") tt1 GROUP BY descs, num";
-        int numRows = DBUtils.getRowCount(con, sql_count);
-        if (numRows > 0) {
-            ReportManager.problem(this, con, "FAILED homology contains redundant entries");
-            ReportManager.problem(this, con, "FAILURE DETAILS: There are " + numRows + " redundant homology relationships in the DB");
-            ReportManager.problem(this, con, "USEFUL SQL: " + sql_summary);
-            result = false;
-        }
+		return result;
 
-        return result;
-
-    }
+	}
 
 } // CheckHomology

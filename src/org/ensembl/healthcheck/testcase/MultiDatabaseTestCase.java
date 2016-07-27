@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
@@ -47,7 +49,7 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
 	 *          The database registry containing all the matched databases.
 	 * @return true if the test passed.
 	 */
-	public abstract boolean run(DatabaseRegistry dbr);
+	public abstract boolean run(DatabaseRegistry dbr) throws SQLException;
 
 	// ---------------------------------------------------------------------
 	/**
@@ -65,11 +67,11 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
 
 		boolean result = true;
 
-		// Why not using the dbr given as argument ? I don't know, but
-		// maybe we should ?
+
+                // Use whole registry to access all databases, but restrict to species of interest
 		DatabaseRegistry mainDbr = DBUtils.getMainDatabaseRegistry();
 
-		for (Species species : mainDbr.getUniqueSpecies()) {
+		for (Species species : dbr.getUniqueSpecies()) {
 
 			// filter by database type
 			DatabaseRegistryEntry[] filteredDBs = filterByType(mainDbr.getAll(species), types);

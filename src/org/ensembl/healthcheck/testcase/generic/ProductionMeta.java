@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,11 +53,6 @@ public class ProductionMeta extends SingleDatabaseTestCase {
 	 */
 	public ProductionMeta() {
 
-		addToGroup("production");
-		addToGroup("pre-compara-handover");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check that all the non-optional meta keys listed in the production database are present, and that all the meta keys are valid.");
 		setPriority(Priority.AMBER);
 		setEffect("Unknown/incorrect meta keys.");

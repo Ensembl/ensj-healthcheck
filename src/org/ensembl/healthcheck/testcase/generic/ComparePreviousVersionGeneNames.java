@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,10 +58,6 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 	 */
 	public ComparePreviousVersionGeneNames() {
 
-		addToGroup("core_xrefs");
-                addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Compare gene names in the current database with those from the equivalent database on the secondary server.");
 		setTeamResponsible(Team.GENEBUILD);
 		setSecondTeamResponsible(Team.CORE);
@@ -228,7 +225,7 @@ public class ComparePreviousVersionGeneNames extends SingleDatabaseTestCase {
 			percentage = Float.valueOf(twoDForm.format(percentage));
 			
 			if (missingIds > 0 && percentage > 5) {	
-                		ReportManager.problem(this, currentCon, missingIds + "(" + percentage + "%) gene stable ids missing from the current database ");
+                		ReportManager.problem(this, currentCon, missingIds + "(" + percentage + "%) gene stable ids are missing a display xref in the current database ");
                                 result = false;
          	        }
            	

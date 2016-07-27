@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,11 +56,6 @@ public class Karyotype extends SingleDatabaseTestCase {
 	 */
 	public Karyotype() {
 
-		addToGroup("post_genebuild");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-                addToGroup("pre-compara-handover");
-		
 		setDescription("Check that karyotype and seq_region tables agree");
 		setTeamResponsible(Team.GENEBUILD);
 
@@ -182,7 +178,7 @@ public class Karyotype extends SingleDatabaseTestCase {
                 int karyotype = t.queryForDefaultObject(sqlCS, Integer.class);
                 if (karyotype > 0) {
                         int attrib = t.queryForDefaultObject(sqlAttrib, Integer.class);
-                        if (attrib == 0) {
+                        if (attrib < 2) {
                                 result = false;
                                 ReportManager.problem(this, con, "Chromosome entry exists but no karyotype attrib is present");
                         }

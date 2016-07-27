@@ -1,5 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,11 +52,6 @@ public class XrefTypes extends SingleDatabaseTestCase {
 	 */
 	public XrefTypes() {
 
-		addToGroup("post_genebuild");
-		addToGroup("core_xrefs");
-		addToGroup("post-compara-handover");
-                addToGroup("post-projection");
-		
 		setDescription("Check that all xrefs only map to one ensembl object type.");
 		setTeamResponsible(Team.CORE);
                 setSecondTeamResponsible(Team.GENEBUILD);
