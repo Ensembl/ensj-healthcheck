@@ -189,7 +189,24 @@ public final class DBUtils {
 		Integer lastRelease = Integer.parseInt(release) - 1;
 		String query = "SHOW DATABASES WHERE `Database` LIKE '%" + release + "%' OR `Database` LIKE '%" + lastRelease.toString() + "%'";
 		List<String> dbs = getSqlTemplate(con).queryForDefaultObjectList(query, String.class);
-		return dbs.toArray(new String[] {});
+
+                // Additional clean up for databases which are not needed
+                List<String> good_dbs = new ArrayList<String>();
+                for (String db : dbs) {
+                  if (db.matches("(.*)ccds(.*)")) {
+                  // Skip ccds databases
+                  // System.out.println("Found " + db);
+                  } else if (db.matches("ensembl_(.*)")) {
+                  // Skip multi databases
+                  // System.out.println("Found " + db);
+                  } else {
+                    good_dbs.add(db);
+                  }
+                }
+                if (good_dbs.size() == 0) {
+                  logger.warning("No databases selected using release " + release + ", please check your setting");
+                }
+		return good_dbs.toArray(new String[] {});
 
 	} // listDatabases
 
