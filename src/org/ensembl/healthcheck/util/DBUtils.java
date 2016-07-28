@@ -185,9 +185,9 @@ public final class DBUtils {
 	 */
 
 	public static String[] listDatabases(Connection con) {
-		Integer release = hostConfiguration.getRelease();
-		Integer lastRelease = release - 1;
-		String query = String.format("SHOW DATABASES WHERE `Database` LIKE %s OR `Database` LIKE %s", release.toString(), lastRelease.toString());
+		String release = hostConfiguration.getRelease();
+		Integer lastRelease = Integer.parseInt(release) - 1;
+		String query = "SHOW DATABASES WHERE `Database` LIKE '%" + release + "%' OR `Database` LIKE '%" + lastRelease.toString() + "%'";
 		List<String> dbs = getSqlTemplate(con).queryForDefaultObjectList(query, String.class);
 		return dbs.toArray(new String[] {});
 
