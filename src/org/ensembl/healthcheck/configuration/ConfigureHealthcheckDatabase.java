@@ -103,14 +103,6 @@ public interface ConfigureHealthcheckDatabase {
 		boolean isOutputDriver();
 		
 		@Option(
-			longName    = "output.release",
-			description = "Gets written into the session table for describing"
-				+ " the test session, if the database reporter is used."
-		)
-		String getOutputRelease();
-		boolean isOutputRelease();	
-
-		@Option(
 			longName    = "output.schemafile",
 			description = "If output.database does not exist, it will be "
 				+ "created automatically. This file should have the SQL "

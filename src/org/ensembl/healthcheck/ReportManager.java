@@ -790,9 +790,9 @@ public class ReportManager {
 
                 String outputDatabases = System.getProperty("test_groups") + " " + System.getProperty("test_databases");
 
-		String outputRelease = System.getProperty("output.release");
+		String release = System.getProperty("release");
 
-		String sql = String.format("INSERT INTO session (host, config, db_release, start_time) VALUES (" + "\"" + hosts.toString() + "\", " + "\"" + outputDatabases + "\", " + "\"" + outputRelease
+		String sql = String.format("INSERT INTO session (host, config, db_release, start_time) VALUES (" + "\"" + hosts.toString() + "\", " + "\"" + outputDatabases + "\", " + "\"" + release
 				+ "\", " + "NOW())");
 
 		try {
