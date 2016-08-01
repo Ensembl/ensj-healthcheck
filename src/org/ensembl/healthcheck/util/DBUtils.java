@@ -225,25 +225,15 @@ public final class DBUtils {
 
 		ArrayList<String> dbMatches = new ArrayList<String>();
 
-		String[] allDBNames = listDatabases(con);
-
-		for (String name : allDBNames) {
-
-			if (regex == null) {
-
-				dbMatches.add(name);
-
-			} else if (name.matches(regex)) {
-
-				dbMatches.add(name);
-
-			}
-
-		}
-
-		String[] ret = new String[dbMatches.size()];
-
-		return (String[]) dbMatches.toArray(ret);
+                // If no regex, query all databases
+                if (regex == null) {
+                  return listDatabases(con);
+                // Otherwise, just query for that one regex
+                } else {
+                  String query = String.format("SHOW DATABASES LIKE '%s'", regex);
+                  List<String> dbs = getSqlTemplate(con).queryForDefaultObjectList(query, String.class);
+                  return dbs.toArray(new String[] {});
+                }
 
 	} // listDatabases
 
