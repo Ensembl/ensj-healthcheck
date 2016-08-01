@@ -187,7 +187,7 @@ public final class DBUtils {
 	public static String[] listDatabases(Connection con) {
 		String release = hostConfiguration.getRelease();
 		Integer lastRelease = Integer.parseInt(release) - 1;
-		String query = "SHOW DATABASES WHERE `Database` LIKE '%" + release + "%' OR `Database` LIKE '%" + lastRelease.toString() + "%'";
+		String query = "SHOW DATABASES WHERE `Database` LIKE '%" + release + "%' OR `Database` LIKE '%" + lastRelease.toString() + "%' OR `Database` LIKE 'ensembl_production'";
 		List<String> dbs = getSqlTemplate(con).queryForDefaultObjectList(query, String.class);
 
                 // Additional clean up for databases which are not needed
@@ -196,8 +196,8 @@ public final class DBUtils {
                   if (db.matches("(.*)ccds(.*)")) {
                   // Skip ccds databases
                   // System.out.println("Found " + db);
-                  } else if (db.matches("ensembl_(.*)")) {
-                  // Skip multi databases
+                  } else if (db.matches("ensembl_(.*)_(.*)")) {
+                  // Skip release multi databases
                   // System.out.println("Found " + db);
                   } else {
                     good_dbs.add(db);
