@@ -248,7 +248,7 @@ public class SystemPropertySetter {
 			//
 			System.setProperty("compara_master.database", configuration.getComparaMasterDatabase());
 		} else {
-			System.setProperty("compara_master.database", "ensembl_compara_master");
+			System.setProperty("compara_master.database", "plants_compara_master");
 		}
 	}
 }
