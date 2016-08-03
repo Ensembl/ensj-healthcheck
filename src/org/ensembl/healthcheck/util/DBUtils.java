@@ -139,7 +139,7 @@ public final class DBUtils {
 	 * @param user
 	 * @param password
 	 * @param database
-	 * @return
+	 * @return Connection
 	 * @throws SQLException
 	 */
 	public static Connection openConnection(String driverClassName,
@@ -185,10 +185,28 @@ public final class DBUtils {
 	 */
 
 	public static String[] listDatabases(Connection con) {
+		String release = hostConfiguration.getRelease();
+		Integer lastRelease = Integer.parseInt(release) - 1;
+		String query = "SHOW DATABASES WHERE `Database` LIKE '%" + release + "%' OR `Database` LIKE '%" + lastRelease.toString() + "%' OR `Database` LIKE 'ensembl_production'";
+		List<String> dbs = getSqlTemplate(con).queryForDefaultObjectList(query, String.class);
 
-		List<String> dbs = getSqlTemplate(con).queryForDefaultObjectList(
-				"SHOW DATABASES", String.class);
-		return dbs.toArray(new String[] {});
+                // Additional clean up for databases which are not needed
+                List<String> good_dbs = new ArrayList<String>();
+                for (String db : dbs) {
+                  if (db.matches("(.*)ccds(.*)")) {
+                  // Skip ccds databases
+                  // System.out.println("Found " + db);
+                  } else if (db.matches("ensembl_(.*)_(.*)")) {
+                  // Skip release multi databases
+                  // System.out.println("Found " + db);
+                  } else {
+                    good_dbs.add(db);
+                  }
+                }
+                if (good_dbs.size() == 0) {
+                  logger.warning("No databases selected using release " + release + ", please check your setting");
+                }
+		return good_dbs.toArray(new String[] {});
 
 	} // listDatabases
 
@@ -207,25 +225,15 @@ public final class DBUtils {
 
 		ArrayList<String> dbMatches = new ArrayList<String>();
 
-		String[] allDBNames = listDatabases(con);
-
-		for (String name : allDBNames) {
-
-			if (regex == null) {
-
-				dbMatches.add(name);
-
-			} else if (name.matches(regex)) {
-
-				dbMatches.add(name);
-
-			}
-
-		}
-
-		String[] ret = new String[dbMatches.size()];
-
-		return (String[]) dbMatches.toArray(ret);
+                // If no regex, query all databases
+                if (regex == null) {
+                  return listDatabases(con);
+                // Otherwise, just query for that one regex
+                } else {
+                  String query = String.format("SHOW DATABASES LIKE '%s'", regex);
+                  List<String> dbs = getSqlTemplate(con).queryForDefaultObjectList(query, String.class);
+                  return dbs.toArray(new String[] {});
+                }
 
 	} // listDatabases
 

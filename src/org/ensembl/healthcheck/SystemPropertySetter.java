@@ -46,7 +46,7 @@ public class SystemPropertySetter {
 		System.setProperty("port",           configuration.getPort() );
                 System.setProperty("host1",           configuration.getHost1() );
                 System.setProperty("port1",           configuration.getPort1() );
-		System.setProperty("output.release", configuration.getOutputRelease() );
+		System.setProperty("release", configuration.getRelease() );
                 System.setProperty("secondary.host",           configuration.getSecondaryHost() );
                 System.setProperty("secondary.port",           configuration.getSecondaryPort() );
 

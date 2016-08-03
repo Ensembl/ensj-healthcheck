@@ -142,4 +142,7 @@ public interface ConfigureHost {
 
 	boolean isDriver2();
 
+	@Option(longName = "release", description = "Release number which will apply once the data you're testing is released")
+	String getRelease();
+	boolean isRelease();
 }

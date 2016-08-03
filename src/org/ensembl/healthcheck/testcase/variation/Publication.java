@@ -83,6 +83,20 @@ public class Publication extends SingleDatabaseTestCase {
 		}
 
 
+                try {
+                    // Look for publications without titles
+                    String stmt = "select count(*) from publication where title is null";
+                        int rows = DBUtils.getRowCount(con,stmt);
+                        if (rows > 0) {
+                            result = false;
+                            ReportManager.problem(this, con, String.valueOf(rows) + " publications have no title ");
+                        }
+                } catch (Exception e) {
+                    ReportManager.problem(this, con, "HealthCheck generated an exception: " + e.getMessage());
+                    result = false;
+                }
+
+
 
 	        // Look for variations or variation_features with display = 0
                 boolean variation_ok = checkNonDisplay("variation", con);

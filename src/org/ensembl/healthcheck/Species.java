@@ -106,7 +106,7 @@ public enum Species {
 	SUS_SCROFA(9823, "Sscrofa", "ENSSSC", "pig,boar,wildboar,wild_boar,susscrofa,sus_scrofa"),
 	TAENIOPYGIA_GUTTATA(59729, "taeGut", "ENSTGU", "zebrafinch,zebra_finch,taeniopygia_guttata,taeniopygiaguttata,tguttata,poephila_guttata,taenopygia_guttata"),
 	TAKIFUGU_RUBRIPES(31033, "FUGU", "ENSTRU", "pufferfish,fugu,frubripes,fugurubripes,fugu_rubripes,takifugu,trubripes,takifugurubripes,takifugu_rubripes"),
-	TARSIUS_SYRICHTA(9478, "TARSYR", "ENSTSY", "philippine_tarsier,philippinetarsier,tarsiussyrichta,tarsius_syrichta"),
+	TARSIUS_SYRICHTA(1868482, "TARSYR", "ENSTSY", "philippine_tarsier,philippinetarsier,tarsiussyrichta,tarsius_syrichta"),
 	TETRAODON_NIGROVIRIDIS(99883, "TETRAODON", "IGNORE", "tetraodon,tnigroviridis,tetraodonnigroviridis,tetraodon_nigroviridis"),
 	TUPAIA_BELANGERI(37347, "TREESHREW", "ENSTBE", "treeshrew,tbelangeri,northern_tree_shrew,common_tree_shrew,tupaia_belangeri"),
 	TURSIOPS_TRUNCATUS(9739, "TURTRU", "ENSTTR", "bottlenosed_dolphin,dolphin,tursiopstruncatus,tursiops_truncatus"),
