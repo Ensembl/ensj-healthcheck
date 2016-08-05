@@ -64,8 +64,8 @@ public class TranscriptNames extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		// only valid in human, mouse and zebrafish
-		Species s = dbre.getSpecies();
-                boolean is_merged = testMerged(s);
+                Species species = dbre.getSpecies();
+                boolean is_merged = isMerged(species);
 		if (!is_merged) {
 			return true;
 		}
@@ -123,16 +123,5 @@ public class TranscriptNames extends SingleDatabaseTestCase {
 		return result;
 
 	}
-
-
-  private boolean testMerged(Species s) {
-    boolean result = false;
-    int taxon = s.getTaxonID();
-    int rows = DBUtils.getRowCount(getProductionDatabase().getConnection(), "SELECT count(*) FROM species s, attrib_type at WHERE at.attrib_type_id = s.attrib_type_id AND code = 'merged' AND taxon = " + taxon);
-    if (rows > 0) {
-      result = true;
-    }
-    return result;
-  }
 
 } // TranscriptNames

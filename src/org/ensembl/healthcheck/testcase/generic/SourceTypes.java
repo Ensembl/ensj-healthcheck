@@ -77,8 +77,8 @@ public class SourceTypes extends SingleDatabaseTestCase {
 	public boolean run(DatabaseRegistryEntry dbre) {
 
 		// only applies to human, mouse and zebrafish at the moment
-		Species species = dbre.getSpecies();
-                boolean is_merged = testMerged(species);
+                Species species = dbre.getSpecies();
+                boolean is_merged = isMerged(species);
 
 		if (!is_merged) {
 
@@ -292,18 +292,6 @@ public class SourceTypes extends SingleDatabaseTestCase {
                return result;
 
         }
-
-
-  private boolean testMerged(Species s) {
-    boolean result = false;
-    int taxon = s.getTaxonID();
-    int rows = DBUtils.getRowCount(getProductionDatabase().getConnection(), "SELECT count(*) FROM species s, attrib_type at WHERE at.attrib_type_id = s.attrib_type_id AND code = 'merged' AND taxon = " + taxon);
-    if (rows > 0) {
-      result = true;
-    }
-    return result;
-  }
-
 
 	// --------------------------------------------------------------------------
 
