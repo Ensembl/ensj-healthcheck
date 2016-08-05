@@ -72,12 +72,8 @@ public class SpeciesTest {
         assertEquals(Species.getTaxonomyID(Species.TETRAODON_NIGROVIRIDIS), "99883");
         assertEquals(Species.getTaxonomyID(Species.CIONA_INTESTINALIS), "7719");
         assertEquals(Species.getTaxonomyID(Species.APIS_MELLIFERA), "7460");
-        
-        assertEquals(Species.getSpeciesFromTaxonomyID(10090), Species.MUS_MUSCULUS);
-        assertEquals(Species.getSpeciesFromTaxonomyID(10116), Species.RATTUS_NORVEGICUS);
 
         assertEquals("0", Species.getTaxonomyID(Species.UNKNOWN), "Checking unknown returns a taxon of 0");
-        assertEquals(Species.getSpeciesFromTaxonomyID(-1), Species.UNKNOWN);
 
     }
 
