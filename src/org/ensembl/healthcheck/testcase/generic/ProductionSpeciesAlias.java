@@ -112,7 +112,7 @@ public class ProductionSpeciesAlias extends SingleDatabaseTestCase {
       String url = t.queryForDefaultObject(sql, String.class);
       String prodUrl = prodt.queryForDefaultObject(prodSql, String.class, species);
       if (url.equals(prodUrl)) {
-        if (url.matches("^[A-Z]{1}[a-z0-9]*(_[a-z0-9]*){1,2}")) {
+        if (url.matches("^[A-Z]{1}[a-z0-9]*(_[a-zA-Z0-9]*)+")) {
           ReportManager.correct(this, dbre.getConnection(), "species.url '" + url + "' is the same in both databases and is in the correct format");
           return true;
         } else {
