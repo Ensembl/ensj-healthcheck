@@ -115,7 +115,7 @@ public class MultipleComponentAssemblyMapping extends SingleDatabaseTestCase {
 
 		String[] mappings = DBUtils.getColumnValues(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.mapping'");
 
-		Pattern assemblyMappingPattern = Pattern.compile("^([a-zA-Z0-9.]+):?([a-zA-Z0-9._-]+)?[\\|#]([a-zA-Z0-9._-]+):?([a-zA-Z0-9._]+)?([\\|#]([a-zA-Z0-9.]+):?([a-zA-Z0-9._]+)?)?$");
+		Pattern assemblyMappingPattern = Pattern.compile("^([a-zA-Z0-9.]+):?([a-zA-Z0-9._-]+)?[\\|#]([a-zA-Z0-9._-]+):?([a-zA-Z0-9._-]+)?([\\|#]([a-zA-Z0-9.]+):?([a-zA-Z0-9._-]+)?)?$");
 
 		for (int i = 0; i < mappings.length; i++) {
 
