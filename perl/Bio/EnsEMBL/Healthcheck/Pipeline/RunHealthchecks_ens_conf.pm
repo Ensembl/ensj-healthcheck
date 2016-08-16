@@ -43,6 +43,7 @@ sub default_options {
         'exclude_dbs' => undef,
         'properties' => undef,
         'hcdb'       => undef,
+        'release'    => undef,
         'host'       => undef,
         'group'      => undef,
         'division'   => undef
@@ -75,6 +76,7 @@ sub pipeline_analyses {
                      'exclude_dbs' => $self->o('exclude_dbs'),
                      'properties'  => $self->o('properties'),
                      'group'       => $self->o('group'),
+                     'release'     => $self->o('release'),
                      'host'        => $self->o('host'),
                      'division'    => $self->o('division')                        
                  }

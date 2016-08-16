@@ -13,6 +13,7 @@ sub run {
     my @exclude_dbs = split(" ", $self->param('exclude_dbs'));
     my $host = $self->param('host');
     my $group = $self->param('group');
+    my $release = $self->param('release') || software_version();
     $group =~ s/ /,/g;
     $host =~ s/\n/,/g;
     if (scalar(@exclude_dbs)) {
@@ -23,7 +24,7 @@ sub run {
     my $session_id;
     $hc_dbc->sql_helper->execute_update(
         -SQL=>"insert into session(start_time,db_release,host,config) values(NOW(),?,?,?)", 
-        -PARAMS=>[software_version(), $host, $group],
+        -PARAMS=>[$release, $host, $group],
         -CALLBACK => sub {
             my ( $sth, $dbh, $rv ) = @_;
             $session_id = $dbh->{mysql_insertid};
