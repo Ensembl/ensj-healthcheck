@@ -61,7 +61,7 @@ public enum Species {
 	FICEDULA_ALBICOLLIS(59894, "FicAlb", "ENSFAL", "flycatcher,falbicollis,collared_flycatcher,f_albicollis,ficalb"),
 	FELIS_CATUS(9685, "Felis_catus", "ENSFCA", "cat,fcatus,felis,domestic_cat,felis_catus"),
         GADUS_MORHUA(8049, "gadMor", "ENSGMO", "cod,gadus_morhua,gmorhua,atlantic_cod"),
-	GALLUS_GALLUS(9031, "Galgal", "ENSGAL", "chicken,chick,ggallus,gallusgallus,gallus_gallus"),
+	GALLUS_GALLUS(9031, "Gallus_gallus-", "ENSGAL", "chicken,chick,ggallus,gallusgallus,gallus_gallus"),
 	GASTEROSTEUS_ACULEATUS(69293, "BROADS", "ENSGAC", "stickleback,gas_aculeatus,gasaculeatus,gasterosteusaculeatus,gasterosteus_aculeatus"),
 	GORILLA_GORILLA(9595, "gorGor", "ENSGGO", "gorilla,gorilla_gorilla,ggor"),
 	HETEROCEPHALUS_GLABER(10181, "HetGla", "ENSHGL", "naked_mole_rat,heterocephalus_glaber,hglaber"),
