@@ -224,13 +224,13 @@ public final class DBUtils {
 	public static String[] listDatabases(Connection con, String regex) {
 
 		ArrayList<String> dbMatches = new ArrayList<String>();
-                String newRegex = regex.replace(".*", "%");
 
                 // If no regex, query all databases
                 if (regex == null) {
                   return listDatabases(con);
                 // Otherwise, just query for that one regex
                 } else {
+                  String newRegex = regex.replace(".*", "%");
                   String query = String.format("SHOW DATABASES LIKE '%s'", newRegex);
                   List<String> dbs = getSqlTemplate(con).queryForDefaultObjectList(query, String.class);
                   return dbs.toArray(new String[] {});
