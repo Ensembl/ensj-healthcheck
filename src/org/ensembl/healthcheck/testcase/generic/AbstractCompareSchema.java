@@ -203,8 +203,23 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 
     DatabaseRegistryEntry[] databases = dbr.getAll();
 
+    // Check for definition file
+    // Ensure it also points to an existing file
     definitionFile = System.getProperty(definitionFileKey);
-    if (definitionFile == null || definitionFile.isEmpty()) {
+    if (definitionFile != null && !definitionFile.isEmpty()) {
+      logger.info("About to import " + definitionFile);
+      try {
+        masterCon = importSchema(definitionFile);
+        logger.info("Got connection to " + DBUtils.getShortDatabaseName(masterCon));
+        setUsingTemporaryDatabase(definitionFile != null && !definitionFile.isEmpty());
+      } catch (FileNotFoundException e) {
+        logger.warning(testName + ": Could not import schema file " + definitionFile + ". Check your settings in " + TestRunner.getPropertiesFile());
+      }
+    }
+
+    // Check master schema from configuration
+    // Skip if temporary database already created
+    if (masterSchemaKey != null && !masterSchemaKey.isEmpty() && !isUsingTemporaryDatabase()) {
 
       masterSchema = System.getProperty(masterSchemaKey);
       if (masterSchema != null) {
@@ -213,78 +228,45 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
         List<String> regexps = new ArrayList<String>();
         regexps.add(masterSchema);
         DatabaseRegistry masterDBR = new DatabaseRegistry(regexps, null, null, false);
-        
         DatabaseRegistryEntry masterDBRE = masterDBR.getByExactName(masterSchema);
-        
         if (masterDBRE == null) {
-          logger.warning("Couldn't find database matching " + masterSchema);
-        }
-        dbr.add(masterDBRE);
-
-        logger.info("Will use " + masterSchema
-            + " as specified master schema for comparisons.");
-
-      }
-      else {
-        logger.info(testName + ": No schema definition file found! Set " + definitionFileKey + " property in " + TestRunner.getPropertiesFile() 
-                + " if you want to use a table.sql file or similar. " + "This is not an error if you are using " + masterSchemaKey);
-        
-        logger.info(testName + ": No master schema deinfod file found! Set " + masterSchemaKey
-                + " property in database.properties if you want to use a master schema.");
-      }
-    }
-    else {
-      logger.info("Will use schema definition from " + definitionFile);
-    }
-    
-    setUsingTemporaryDatabase(definitionFile != null && !definitionFile.isEmpty());
-
-    try {
-      if (isUsingTemporaryDatabase()) {
-
-        logger.info("About to import " + definitionFile);
-        try {
-          masterCon = importSchema(definitionFile);
-        } catch (FileNotFoundException e) {
+          ReportManager.problem(this, (Connection) null, "Could no connect to database " + masterSchema + ". Check your settings in " + TestRunner.getPropertiesFile());
           return false;
         }
-        logger.info("Got connection to " + DBUtils.getShortDatabaseName(masterCon));
-      }
-      else if (masterSchema != null) {
-        masterCon = getSchemaConnection(masterSchema);
-        logger.info("Opened connection to master schema in " + DBUtils.getShortDatabaseName(masterCon));
-      }
-      else {
-        if (databases.length > 0) {
-          masterCon = databases[0].getConnection();
-          logger.info("Using " + DBUtils.getShortDatabaseName(masterCon) + " as 'master' for comparisons.");
-        }
-        else {
-          logger.warning("Can't find any databases to check against");
-        }
-      }
-
-      setMasterShortName(DBUtils.getShortDatabaseName(masterCon));
-      for (DatabaseRegistryEntry dbre : databases) {
         
-        DatabaseType type = dbre.getType();
+        dbr.add(masterDBRE);
 
-        if (appliesToType(type)) {
-          Connection checkCon = dbre.getConnection();
-          String checkShortName = DBUtils.getShortDatabaseName(checkCon);
-          if (checkCon != masterCon) {
-            logger.info("Comparing " + checkShortName + " with " + getMasterShortName());
-            // check that both schemas have the same tables
-            somethingWasCompared = true;
-            int directionFlag = COMPARE_BOTH;
-            boolean ignoreBackupTables = false;
-            if (type == DatabaseType.SANGER_VEGA) {
-              directionFlag = COMPARE_RIGHT;
-              ignoreBackupTables = true;
-            }
-            
-            // for sangervega, ignore backup tables. If not the same, this
-            // method will generate a report
+        masterCon = getSchemaConnection(masterSchema);
+        logger.info("Opened connection to master schema in " + DBUtils.getShortDatabaseName(masterCon) + " using " + masterSchema);
+
+      } else {
+        ReportManager.problem(this, (Connection) null, "Could no connect to database " + masterSchema + ". Check your settings in " + TestRunner.getPropertiesFile());
+        return false;
+      }
+    }
+
+    setMasterShortName(DBUtils.getShortDatabaseName(masterCon));
+    for (DatabaseRegistryEntry dbre : databases) {
+      
+      DatabaseType type = dbre.getType();
+
+      if (appliesToType(type)) {
+        Connection checkCon = dbre.getConnection();
+        String checkShortName = DBUtils.getShortDatabaseName(checkCon);
+        if (checkCon != masterCon) {
+          logger.info("Comparing " + checkShortName + " with " + getMasterShortName());
+          // check that both schemas have the same tables
+          somethingWasCompared = true;
+          int directionFlag = COMPARE_BOTH;
+          boolean ignoreBackupTables = false;
+          if (type == DatabaseType.SANGER_VEGA) {
+            directionFlag = COMPARE_RIGHT;
+            ignoreBackupTables = true;
+          }
+          
+          // for sangervega, ignore backup tables. If not the same, this
+          // method will generate a report
+          try {
             if (!compareTableEquality(masterCon, dbre, ignoreBackupTables, directionFlag)) {
               result = false;
               
@@ -313,29 +295,25 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
             for (String table : getTableNames(masterCon)) {
               result &= compareTable(masterCon, dbre, table);
             }
-          } // if checkCon != masterCon
+          }
+          catch (SQLException e) {
+            logger.severe(e.getMessage());
+          }
 
-        } // if appliesToType
+        } // if checkCon != masterCon
 
-      } // for database
+      } // if appliesToType
 
-    }
-    catch (SQLException e) {
-      
-      logger.severe(e.getMessage());
-    }
-    finally {
-      
+    } // for database
+
       // avoid leaving temporary DBs lying around if something bad happens
-      if (isUsingTemporaryDatabase() && masterCon != null) {
-        // double-check to make sure the DB we're going to remove is a
-        // temp one
-        String dbName = DBUtils.getShortDatabaseName(masterCon);
-        
-        if (dbName.indexOf("_temp_") > -1) {
-          removeDatabase(masterCon);
-          logger.info("Removed " + DBUtils.getShortDatabaseName(masterCon));
-        }
+    if (isUsingTemporaryDatabase() && masterCon != null) {
+      // double-check to make sure the DB we're going to remove is a temp one
+      String dbName = DBUtils.getShortDatabaseName(masterCon);
+      
+      if (dbName.indexOf("_temp_") > -1) {
+        removeDatabase(masterCon);
+        logger.info("Removed " + DBUtils.getShortDatabaseName(masterCon));
       }
     }
 
