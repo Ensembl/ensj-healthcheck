@@ -13,12 +13,13 @@ if [ -z "$properties" ]; then
   properties=${div,,}-database.properties
 fi
 
-hive_host=$(sed -n 's/.*hive.host *= *\([^ ]*.*\)/\1/p' < $properties)
-hive_port=$(sed -n 's/.*hive.port *= *\([^ ]*.*\)/\1/p' < $properties)
-hive_user=$(sed -n 's/.*hive.user *= *\([^ ]*.*\)/\1/p' < $properties)
-hive_pass=$(sed -n 's/.*hive.password *= *\([^ ]*.*\)/\1/p' < $properties)
+hive_host=$(sed -n 's/^ *hive.host *= *\([^ ]*.*\)/\1/p' < $properties)
+hive_port=$(sed -n 's/^ *hive.port *= *\([^ ]*.*\)/\1/p' < $properties)
+hive_user=$(sed -n 's/^ *hive.user *= *\([^ ]*.*\)/\1/p' < $properties)
+hive_pass=$(sed -n 's/^ *hive.password *= *\([^ ]*.*\)/\1/p' < $properties)
 
 hive="mysql -h $hive_host -P $hive_port -u $hive_user -p$hive_pass"
+msg "Will use hive $hive"
 
 
 LOG_FILE=${div}.log
@@ -33,15 +34,22 @@ export PATH=$HOME/src/ensembl/ensembl-hive/scripts:$HOME/ensj-healthcheck:$PATH
 export PERL5LIB=$cwd/perl:$HOME/src/ensembl/ensembl/modules:$HOME/src/ensembl/ensembl-hive/modules:$PERL5LIB
 
 # Get parameters for HC database.
-HCDB=$(sed -n 's/.*output.database *= *\([^ ]*.*\)/\1/p' < $properties)
-HCDB_HOST=$(sed -n 's/.*output.host *= *\([^ ]*.*\)/\1/p' < $properties)
-HCDB_PORT=$(sed -n 's/.*output.port *= *\([^ ]*.*\)/\1/p' < $properties)
-HCDB_USER=$(sed -n 's/.*output.user *= *\([^ ]*.*\)/\1/p' < $properties)
-HCDB_PASS=$(sed -n 's/.*output.password *= *\([^ ]*.*\)/\1/p' < $properties)
-group=$(sed -n 's/^groups *= *\([^ ]*.*\)/\1/p' < $properties)
-exclude_dbs=$(sed -n 's/^exclude_dbs *= *\([^ ]*.*\)/\1/p' < $properties)
-hosts=$(sed -n 's/^host[0-9]* *= *\([^ ]*.*\)/\1/p' < $properties)
-release=$(sed -n 's/release *= *\([0-9]*\)/\1/p' < $properties)
+HCDB=$(sed -n 's/^ *output.database *= *\([^ ]*.*\)/\1/p' < $properties)
+HCDB_HOST=$(sed -n 's/^ *output.host *= *\([^ ]*.*\)/\1/p' < $properties)
+HCDB_PORT=$(sed -n 's/^ *output.port *= *\([^ ]*.*\)/\1/p' < $properties)
+HCDB_USER=$(sed -n 's/^ *output.user *= *\([^ ]*.*\)/\1/p' < $properties)
+HCDB_PASS=$(sed -n 's/^ *output.password *= *\([^ ]*.*\)/\1/p' < $properties)
+hc_url=mysql://$HCDB_USER:$HCDB_PASS@$HCDB_HOST:$HCDB_PORT/$HCDB
+msg "Will use HC db $hc_url"
+
+# Get options for HC run
+group=$(sed -n 's/^ *groups *= *\([^ ]*.*\)/\1/p' < $properties)
+exclude_dbs=$(sed -n 's/^ *exclude_dbs *= *\([^ ]*.*\)/\1/p' < $properties)
+hosts=$(sed -n 's/^ *host[0-9]* *= *\([^ ]*.*\)/\1/p' < $properties)
+release=$(sed -n 's/^ *release *= *\([0-9]*\)/\1/p' < $properties)
+msg "Will run $group HCs on hosts $hosts, ignoring $exclude_dbs, for release $release"
+
+# Create output files
 TIMINGS_FILE=/tmp/timings.txt
 touch $LOG_FILE
 touch $TIMINGS_FILE
@@ -73,7 +81,6 @@ fi
 msg "Starting healthcheck run for ${div}"
 # do hive stuff
 pipeline_db="run_${HCDB}"
-hc_url=mysql://$HCDB_USER:$HCDB_PASS@$HCDB_HOST:$HCDB_PORT/$HCDB
 msg "Creating hive ${USER}_$pipeline_db"
 init_pipeline.pl Bio::EnsEMBL::Healthcheck::Pipeline::RunHealthchecks_ens_conf -hc_conn $hc_url -pipeline_db -user=$hive_user -pipeline_db -pass=$hive_pass -pipeline_db -host=$hive_host -pipeline_db -port=$hive_port -hive_force_init 1 -division $div -hc_cmd "./run_ens_hc_hive.sh #division# #dbname# #session_id# #properties# #group# #hcdb#" -pipeline_name $pipeline_db -properties $properties -group "$group" -exclude_dbs "$exclude_dbs" -host "$hosts" -hcdb "$HCDB" -release "$release"
 msg "Running beekeeper"
