@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  * 
  * <ul>
  *   <li> org.ensembl.healthcheck.testcase.generic.AltAllele </li>
+ *   <li> org.ensembl.healthcheck.testcase.generic.AltAlleleGroup </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.AnalysisTypes </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.AnalysisXrefs </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.BigGeneExon </li>
@@ -72,6 +73,7 @@ public class Geneset extends GroupOfTests {
 
                 addTest(
                         org.ensembl.healthcheck.testcase.generic.AltAllele.class,
+                        org.ensembl.healthcheck.testcase.generic.AltAlleleGroup.class,
                         org.ensembl.healthcheck.testcase.generic.AnalysisTypes.class,
                         org.ensembl.healthcheck.testcase.generic.AnalysisXrefs.class,
                         org.ensembl.healthcheck.testcase.generic.BigGeneExon.class,
