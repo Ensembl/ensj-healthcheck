@@ -1512,6 +1512,12 @@ public final class DBUtils {
 			logger.fine("getRowCount() executing SQL which does not appear to begin with SELECT COUNT - performing row-by-row count, which may take a long time if the table is large.");
 			result = getRowCountSlow(con, sql);
 
+		}  else if (sql.toLowerCase().contains("select count")
+				&& sql.toLowerCase().contains("group by")){
+			// query has both SELECT COUNT and GROUP BY clause
+			logger.fine("getRowCount() executing SQL which appears to begin with SELECT COUNT and contains GROUP BY clause - performing row-by-row count, which may take a long time if the table is large.");
+			result = getRowCountSlow(con, sql);
+			
 		}
 
 		return result;
