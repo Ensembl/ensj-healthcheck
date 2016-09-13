@@ -56,8 +56,8 @@ public class CheckMethodLinkSpeciesSetTable extends AbstractComparaTestCase {
 
 		/* Check the genomes in the species_set linked to the MLSS table */
 		int numOfGenomesInTheDatabase = DBUtils.getRowCount(con, "SELECT count(*) FROM genome_db WHERE taxon_id > 0");
-		Pattern unaryPattern = Pattern.compile("^([A-Z].[a-z]{3}) ");
-		Pattern binaryPattern = Pattern.compile("^([A-Z].[a-z]{3})-([A-Z].[a-z]{3})");
+		Pattern unaryPattern = Pattern.compile("^([A-Z].[a-z0-9]{2,3}) ");
+		Pattern binaryPattern = Pattern.compile("^([A-Z].[a-z0-9]{2,3})-([A-Z].[a-z0-9]{2,3})");
 		Pattern multiPattern = Pattern.compile("([0-9]+)");
 		Pattern lastzpatchPattern = Pattern.compile("lastz-patch");
 		/* Query returns the MLLS.name, the number of genomes and their name ("H.sap" format) */
