@@ -69,7 +69,7 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		String sql = "SELECT g.gene_id, g.seq_region_start AS start, g.seq_region_end AS end, g.seq_region_id AS chromosome_id, g.seq_region_strand AS strand, g.biotype, g.stable_id, g.analysis_id, g.display_xref_id, g.source, g.status, g.description, g.is_current, g.canonical_transcript_id "
+		String sql = "SELECT g.gene_id, g.seq_region_start AS start, g.seq_region_end AS end, g.seq_region_id AS chromosome_id, g.seq_region_strand AS strand, g.biotype, g.stable_id, g.analysis_id, g.display_xref_id, g.source, g.description, g.is_current, g.canonical_transcript_id "
 				+ "             FROM gene g ORDER BY chromosome_id, strand, start, end";
 
 		Connection con = dbre.getConnection();
@@ -90,7 +90,6 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 			int geneAnalysis = -1;
 			int geneDisplayXref = -1;
 			String geneSource = "";
-			String geneStatus = "";
 			String geneDescription = "";
 			int geneIsCurrent = -1;
 			int geneCanonicalTranscript = -1;
@@ -103,7 +102,6 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 			int lastGeneAnalysis = -1;
 			int lastGeneDisplayXref = -1;
 			String lastGeneSource = "";
-			String lastGeneStatus = "";
 			String lastGeneDescription = "";
 			int lastGeneIsCurrent = -1;
 			int lastGeneCanonicalTranscript = -1;
@@ -125,10 +123,9 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 				geneAnalysis = rs.getInt(8);
 				geneDisplayXref = rs.getInt(9);
 				geneSource = rs.getString(10);
-				geneStatus = rs.getString(11);
-				geneDescription = rs.getString(12);
-				geneIsCurrent = rs.getInt(13);
-				geneCanonicalTranscript = rs.getInt(14);
+				geneDescription = rs.getString(11);
+				geneIsCurrent = rs.getInt(12);
+				geneCanonicalTranscript = rs.getInt(13);
 				// canonical_annotation removed in 74
 				// geneCanonicalAnnotation = rs.getString(15);
 
@@ -139,7 +136,7 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 							&& lastGeneStrand == geneStrand
 							&& geneBioType.equals(lastGeneBioType)
 							&& (dbre.getType() != DatabaseType.SANGER_VEGA || (lastGeneAnalysis == geneAnalysis && lastGeneDisplayXref == geneDisplayXref && lastGeneSource == geneSource
-									&& lastGeneStatus == geneStatus && lastGeneDescription == geneDescription && lastGeneIsCurrent == geneIsCurrent && lastGeneCanonicalTranscript == geneCanonicalTranscript && lastGeneCanonicalAnnotation == geneCanonicalAnnotation))) {
+									&& lastGeneDescription == geneDescription && lastGeneIsCurrent == geneIsCurrent && lastGeneCanonicalTranscript == geneCanonicalTranscript && lastGeneCanonicalAnnotation == geneCanonicalAnnotation))) {
 
 						duplicateGene++;
 						if (duplicateGene < MAX_WARNINGS) {
@@ -162,7 +159,6 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 				lastGeneAnalysis = geneAnalysis;
 				lastGeneDisplayXref = geneDisplayXref;
 				lastGeneSource = geneSource;
-				lastGeneStatus = geneStatus;
 				lastGeneDescription = geneDescription;
 				lastGeneIsCurrent = geneIsCurrent;
 				lastGeneCanonicalTranscript = geneCanonicalTranscript;
