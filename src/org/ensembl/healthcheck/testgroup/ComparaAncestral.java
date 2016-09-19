@@ -32,7 +32,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.BlankEnums </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.BlanksInsteadOfNulls </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.CheckDeclarations </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.CoreForeignKeys </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.DuplicateAssembly </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.EmptyTables </li>
@@ -62,7 +61,6 @@ public class ComparaAncestral extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions.class,
 			org.ensembl.healthcheck.testcase.generic.BlankEnums.class,
 			org.ensembl.healthcheck.testcase.generic.BlanksInsteadOfNulls.class,
-			org.ensembl.healthcheck.testcase.generic.CheckDeclarations.class,
 			org.ensembl.healthcheck.testcase.generic.CoreForeignKeys.class,
 			org.ensembl.healthcheck.testcase.generic.DuplicateAssembly.class,
 			org.ensembl.healthcheck.testcase.generic.EmptyTables.class,
