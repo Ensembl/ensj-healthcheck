@@ -72,7 +72,7 @@ public class CheckTableSizes extends SingleDatabaseTestCase {
 	public boolean run(final DatabaseRegistryEntry dbre) {
 
 		// Get compara DB connection
-		DatabaseRegistryEntry[] allSecondaryComparaDBs = DBUtils.getSecondaryDatabaseRegistry().getAll(DatabaseType.COMPARA);
+		DatabaseRegistryEntry[] allSecondaryComparaDBs = DBUtils.getSecondaryDatabaseRegistry("compara").getAll(DatabaseType.COMPARA);
 		if (allSecondaryComparaDBs.length == 0) {
 			ReportManager.problem( this, dbre.getConnection(),
 					"Cannot find the compara database in the secondary server. This check expects to find a previous version of the compara database for checking that all the *named* species_sets are still present in the current database.");
