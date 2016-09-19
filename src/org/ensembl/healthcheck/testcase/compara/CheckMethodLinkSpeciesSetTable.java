@@ -59,7 +59,6 @@ public class CheckMethodLinkSpeciesSetTable extends AbstractComparaTestCase {
 		Pattern unaryPattern = Pattern.compile("^([A-Z]\\.[a-z0-9]{2,3}) ");
 		Pattern binaryPattern = Pattern.compile("^([A-Z]\\.[a-z0-9]{2,3})-([A-Z]\\.[a-z0-9]{2,3})");
 		Pattern multiPattern = Pattern.compile("([0-9]+)");
-		Pattern lastzpatchPattern = Pattern.compile("lastz-patch");
 		/* Query returns the MLLS.name, the number of genomes and their name ("H.sap" format) */
 		String sql = "SELECT method_link_species_set.name, count(*),"+
 			" GROUP_CONCAT( CONCAT( UPPER(substr(genome_db.name, 1, 1)), '.', SUBSTR(SUBSTRING_INDEX(genome_db.name, '_', -1),1,3) ) ), "+
@@ -80,7 +79,6 @@ public class CheckMethodLinkSpeciesSetTable extends AbstractComparaTestCase {
 					Matcher unaryMatcher = unaryPattern.matcher(name);
 					Matcher binaryMatcher = binaryPattern.matcher(name);
 					Matcher multiMatcher = multiPattern.matcher(name);
-					Matcher lastzpatchMatcher = lastzpatchPattern.matcher(name);
 					if (unaryMatcher.find()) {
 						if (num != 1) {
 							ReportManager.problem(this, con, "FAILED species_set(" + ss_id + ") for \"" + name + "\"(" + mlss_id + ") links to " + num + " genomes instead of 1");
@@ -90,7 +88,7 @@ public class CheckMethodLinkSpeciesSetTable extends AbstractComparaTestCase {
 							ReportManager.problem(this, con, "FAILED species_set(" + ss_id + ") for \"" + name + "\"(" + mlss_id + ") links to " + genomes);
 						}
 					} else if (binaryMatcher.find()) {
-						if (num != 2 && binaryMatcher.group(1) != binaryMatcher.group(2) && !lastzpatchMatcher.find()) {
+						if (num != 2 && binaryMatcher.group(1) != binaryMatcher.group(2)) {
 							ReportManager.problem(this, con, "FAILED species_set(" + ss_id + ") for \"" + name + "\"(" + mlss_id + ") links to " + num + " genomes instead of 2");
 							result = false;
 						}
