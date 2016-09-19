@@ -1286,6 +1286,25 @@ public final class DBUtils {
 
 	}
 
+        // -------------------------------------------------------------------------
+
+        public static DatabaseRegistry getSecondaryDatabaseRegistry(String regexp) {
+
+                List<String> regexps = new ArrayList<String>();
+                regexp = "%" + regexp + "%";
+                regexps.add(regexp);
+
+                if (secondaryDatabaseRegistry == null) {
+
+                        secondaryDatabaseRegistry = new DatabaseRegistry(regexps, null, null,
+                                        true);
+
+                }
+
+                return secondaryDatabaseRegistry;
+
+        }
+
 	// -------------------------------------------------------------------------
 
 	public static void setMainDatabaseRegistry(DatabaseRegistry dbr) {

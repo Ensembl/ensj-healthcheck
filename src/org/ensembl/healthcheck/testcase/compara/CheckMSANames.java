@@ -67,7 +67,7 @@ public class CheckMSANames extends AbstractComparaTestCase {
 
 		boolean result = true;
 
-		DatabaseRegistryEntry[] allSecondaryComparaDBs = DBUtils.getSecondaryDatabaseRegistry().getAll(DatabaseType.COMPARA);
+		DatabaseRegistryEntry[] allSecondaryComparaDBs = DBUtils.getSecondaryDatabaseRegistry("compara").getAll(DatabaseType.COMPARA);
 
 		// ... check that we have one name tag for every MSA
 		result &= checkNameTagForMultipleAlignments(comparaDbre);
