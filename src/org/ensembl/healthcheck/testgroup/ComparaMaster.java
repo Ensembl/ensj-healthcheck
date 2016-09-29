@@ -27,8 +27,8 @@ public class ComparaMaster extends GroupOfTests {
 	public ComparaMaster() {
 
 		addTest(
-			ComparaMasterOnly.class,
-			ComparaShared.class
+			org.ensembl.healthcheck.testgroup.ComparaMasterOnly.class,
+			org.ensembl.healthcheck.testgroup.ComparaShared.class
 		);
 	}
 }
