@@ -30,7 +30,7 @@ import org.ensembl.healthcheck.testcase.eg_compara.EGCheckNoTreeStableIds;
 import org.ensembl.healthcheck.testcase.eg_compara.EGCheckSynteny;
 import org.ensembl.healthcheck.testcase.eg_compara.EGMethodLinkSpeciesSetIdStats;
 import org.ensembl.healthcheck.testcase.eg_compara.EGMethodLinkSpeciesSetIdSyntenyStats;
-import org.ensembl.healthcheck.testcase.eg_compara.MemberProductionCounts;
+import org.ensembl.healthcheck.testcase.compara.MemberProductionCounts;
 import org.ensembl.healthcheck.testcase.eg_compara.MemberXrefAssociation;
 
 /**
