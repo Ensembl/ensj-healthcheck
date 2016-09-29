@@ -52,7 +52,9 @@ public class MultipleGenomicAlignBlockIds extends SingleDatabaseTestCase {
 			// ancestral sequences in a different genomic_align_block_id
 			String sqlNonEPOmlss_ids = "SELECT method_link_species_set_id FROM method_link_species_set JOIN method_link USING (method_link_id) WHERE class != 'GenomicAlignTree.ancestral_alignment'";
 			String[] nonEPOmlss_ids = DBUtils.getColumnValues(con, sqlNonEPOmlss_ids);
-			result &= checkForSingles(con, "genomic_align WHERE method_link_species_set_id IN (" + StringUtils.join(nonEPOmlss_ids, ",")+ ")", "genomic_align_block_id");
+			for (String mlss_id : nonEPOmlss_ids) {
+				result &= checkForSingles(con, "genomic_align WHERE method_link_species_set_id = " + mlss_id, "genomic_align_block_id");
+			}
 
 		} else {
 			ReportManager.correct(this, con, "NO ENTRIES in genomic_align table, so nothing to test IGNORED");
