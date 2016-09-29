@@ -44,8 +44,8 @@ public class ForeignKeyMLSSIdGenomic extends AbstractMLSSIdToData {
 
 		/* Check method_link_species_set <-> genomic_align(_block) */
 		/* All method_link for genomic-alignments must have an internal ID lower than 99 */
-		result &= checkMLSSIdLink(con, "genomic_align", "method_link_id IN (SELECT method_link_id FROM method_link WHERE method_link_id < 100 AND class NOT LIKE 'ConstrainedElement.%')");
-		result &= checkMLSSIdLink(con, "genomic_align_block", "method_link_id IN (SELECT method_link_id FROM method_link WHERE method_link_id < 100 AND class NOT LIKE 'ConstrainedElement.%')");
+		result &= checkMLSSIdLink(con, "genomic_align", "method_link_id IN (SELECT method_link_id FROM method_link WHERE method_link_id < 100 AND class NOT LIKE 'ConstrainedElement.%' AND type NOT LIKE 'CACTUS_HAL%')");
+		result &= checkMLSSIdLink(con, "genomic_align_block", "method_link_id IN (SELECT method_link_id FROM method_link WHERE method_link_id < 100 AND class NOT LIKE 'ConstrainedElement.%' AND type NOT LIKE 'CACTUS_HAL%')");
 
 		/* Check method_link_species_set <-> constrained_element */
 		/* All method_link for contrained elements must have an internal ID lower than 99 */
