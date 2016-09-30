@@ -1,0 +1,92 @@
+/*
+ * Copyright [1999-2015] Wellcome Trust Sanger Institute and the
+ * EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.ensembl.healthcheck.testcase.funcgen;
+
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+/**
+ * Check that every distinct experiment - epigenome - feature_type
+ * combination is linked to a feature_set.
+ *
+ * @author ilavidas
+ */
+
+
+public class ExperimentHasFeatureSet extends SingleDatabaseTestCase {
+
+    public ExperimentHasFeatureSet() {
+        setTeamResponsible(Team.FUNCGEN);
+        setDescription("Check that every distinct experiment - epigenome - "
+                + "feature_type combination is linked to a feature_set.");
+    }
+
+    @Override
+    public boolean run(DatabaseRegistryEntry dbre) {
+
+        boolean result = true;
+        Connection con = dbre.getConnection();
+
+        try {
+            //fetch all distinct experiment - epigenome - feature_type
+            // combinations from experiment table
+            Statement stmt = con.createStatement();
+            ResultSet combos = stmt.executeQuery("SELECT DISTINCT " +
+                    "experiment_id, epigenome_id, feature_type_id FROM " +
+                    "experiment");
+
+            while (combos != null && combos.next()) {
+                int experimentID = combos.getInt(1);
+                int epigenomeID = combos.getInt(2);
+                int featureTypeID = combos.getInt(3);
+
+                //fetch feature_sets for every combination
+                Statement newStmt = con.createStatement();
+                ResultSet featureSets = newStmt.executeQuery("SELECT " +
+                        "feature_set_id FROM feature_set WHERE " +
+                        "experiment_id=" +experimentID +" AND epigenome_id="
+                        + epigenomeID + " AND feature_type_id=" +featureTypeID);
+
+
+                if (!featureSets.next()) {
+                    ReportManager.problem(this, con, "There is no feature_set" +
+                            " for this combination: experiment_id = " +
+                            experimentID + ", epigenome_id = " + epigenomeID
+                            + ", feature_type_id = " + featureTypeID);
+
+                    result = false;
+                }
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+}
+
