@@ -45,7 +45,7 @@ public class ComparaHomologyOnly extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.MLSSTagStatsHomology.class,
 			org.ensembl.healthcheck.testcase.compara.MLSSTagThresholdDs.class,
 			org.ensembl.healthcheck.testcase.eg_compara.CheckEmptyLeavesTrees.class,
-			org.ensembl.healthcheck.testcase.eg_compara.MemberProductionCounts.class
+			org.ensembl.healthcheck.testcase.compara.MemberProductionCounts.class
 		);
 	}
 }

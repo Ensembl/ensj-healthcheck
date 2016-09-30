@@ -1,0 +1,121 @@
+/*
+ * Copyright [1999-2015] Wellcome Trust Sanger Institute and the
+ * EMBL-European Bioinformatics Institute
+ * Copyright [2016] EMBL-European Bioinformatics Institute
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.ensembl.healthcheck.testcase.funcgen;
+
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.ReportManager;
+import org.ensembl.healthcheck.Team;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+
+import java.io.File;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Given a list of ids (result_set_id, segmentation_file_id), check that
+ * every id has an associated file entry stored in dbfile_registry table.
+ * Check that the file actually exists on the disk.
+ *
+ * @author ilavidas
+ */
+
+abstract class DBFileRegistryHasFile extends SingleDatabaseTestCase {
+
+    DBFileRegistryHasFile() {
+        setTeamResponsible(Team.FUNCGEN);
+        setDescription("Given a list of ids (result_set_id, " +
+                "segmentation_file_id), check that every id has an associated" +
+                " file entry stored in dbfile_registry table. Check that the " +
+                "file actually exists on the disk.");
+    }
+
+    protected abstract FileType getFileType();
+
+    protected abstract TableName getTableName();
+
+    abstract HashMap<Integer, String> getTableIDs(DatabaseRegistryEntry dbre);
+
+    @Override
+    public boolean run(DatabaseRegistryEntry dbre) {
+        boolean result = true;
+        Connection con = dbre.getConnection();
+
+        FileType fileType = getFileType();
+        TableName tableName = getTableName();
+        HashMap<Integer, String> tableIDs = getTableIDs(dbre);
+
+        try {
+            for (Object o : tableIDs.entrySet()) {
+                Map.Entry<Integer, String> pair = (Map.Entry<Integer,
+                        String>) o;
+                int tableID = pair.getKey();
+                String name = pair.getValue();
+
+                //fetch file path for every table_id
+                Statement stmt = con.createStatement();
+                ResultSet filePath = stmt.executeQuery("SELECT path FROM " +
+                        "dbfile_registry WHERE table_name='" + tableName
+                        .toString() + "' AND file_type='" + fileType.toString
+                        () + "' AND table_id=" + tableID);
+
+                if (!filePath.next()) {
+                    ReportManager.problem(this, con, "No " + fileType
+                            .toString() + " file entry found in " +
+                            "dbfile_registry table for " + tableName.toString
+                            () + " " + name + " with id " + tableID);
+                    result = false;
+
+                } else {
+                    //check that the file actually exists on the disk
+                    //TODO add species agnostic parent directory
+                    String parentFuncgenDir =
+                            "/nfs/ensnfs-webdev/staging/homo_sapiens/GRCh38/";
+                    File alignmentFile = new File(parentFuncgenDir + filePath
+                            .getString(1));
+
+                    if (!alignmentFile.exists()) {
+                        ReportManager.problem(this, con, " File " +
+                                alignmentFile.getPath() + " does not exist on" +
+                                " the disk.");
+                        result = false;
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    enum FileType {
+        BAM, BIGWIG, BIGBED
+
+    }
+
+    enum TableName {
+        result_set, segmentation_file, external_feature_file
+
+    }
+}

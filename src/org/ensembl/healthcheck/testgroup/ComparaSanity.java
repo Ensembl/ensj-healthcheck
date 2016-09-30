@@ -29,6 +29,7 @@ public class ComparaSanity extends GroupOfTests {
 		addTest(
 			org.ensembl.healthcheck.testcase.compara.CheckTableSizes.class,
 			org.ensembl.healthcheck.testcase.compara.CheckConservationScoreSanity.class,
+			org.ensembl.healthcheck.testcase.compara.CompareMSANames.class,
 			org.ensembl.healthcheck.testcase.compara.CheckSyntenySanity.class
 		);
 	}

@@ -40,8 +40,7 @@ import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.DefaultMapRowMapper;
 
 /**
- * An EnsEMBL Healthcheck test case that looks for broken foreign-key
- * relationships.
+ * Check that all the species-sets are named
  */
 
 public class CheckMSANames extends AbstractComparaTestCase {
@@ -67,59 +66,8 @@ public class CheckMSANames extends AbstractComparaTestCase {
 
 		boolean result = true;
 
-		DatabaseRegistryEntry[] allSecondaryComparaDBs = DBUtils.getSecondaryDatabaseRegistry("compara").getAll(DatabaseType.COMPARA);
-
 		// ... check that we have one name tag for every MSA
 		result &= checkNameTagForMultipleAlignments(comparaDbre);
-
-		if (allSecondaryComparaDBs.length == 0) {
-			result = false;
-			ReportManager.problem(this,
-					comparaDbre.getConnection(),
-					"Cannot find the compara database in the secondary server. This check expects to find a previous version of the compara database for checking that all the *named* species_sets are still present in the current database.");
-		}
-
-		for (DatabaseRegistryEntry secondaryComparaDbre: allSecondaryComparaDBs) {
-			// Check vs previous compara DB.
-			result &= checkSetOfSpeciesSets(comparaDbre, secondaryComparaDbre);
-		}
-
-		return result;
-	}
-
-	public boolean checkSetOfSpeciesSets(DatabaseRegistryEntry primaryComparaDbre, DatabaseRegistryEntry secondaryComparaDbre) {
-
-		boolean result = true;
-		Connection con1 = primaryComparaDbre.getConnection();
-		Connection con2 = secondaryComparaDbre.getConnection();
-
-		// Get list of species_set sets in the secondary server
-		String sql = "SELECT species_set_header.name, COUNT(*) "
-			+ " FROM method_link_species_set JOIN method_link USING (method_link_id) JOIN species_set_header USING (species_set_id) "
-			+ " WHERE (class LIKE '%multiple_alignment%' OR class LIKE '%tree_alignment%' OR class LIKE '%ancestral_alignment%') AND species_set_header.name != ''"
-			+ " GROUP BY species_set_header.name";
-		Map<String,Integer> primarySets   = DBUtils.getSqlTemplate(con1).queryForMap(sql, new DefaultMapRowMapper<String, Integer>(String.class, Integer.class));
-		Map<String,Integer> secondarySets = DBUtils.getSqlTemplate(con2).queryForMap(sql, new DefaultMapRowMapper<String, Integer>(String.class, Integer.class));
-
-		for (Map.Entry<String, Integer> key_value : secondarySets.entrySet()) {
-			String key = key_value.getKey();
-			Integer primaryValue = primarySets.get(key);
-			Integer secondaryValue = key_value.getValue();
-			if (!primarySets.containsKey(key)) {
-				ReportManager.problem(this, con1, String.format("Species set '%s' is missing (it appears %d time(s) in %s", key, secondaryValue, DBUtils.getShortDatabaseName(con2)));
-				result = false;
-			} else if (primaryValue < secondaryValue) {
-				ReportManager.problem(this, con1, String.format("Species set '%s' is present only %d times instead of %d as in %s", key, primaryValue, secondaryValue, DBUtils.getShortDatabaseName(con2)));
-				result = false;
-			}
-		}
-		for (Map.Entry<String, Integer> key_value : primarySets.entrySet()) {
-			String next = key_value.getKey();
-			if (!secondarySets.containsKey(next)) {
-				ReportManager.problem(this, con1, String.format("Species set '%s' is new (compared to %s)", next, DBUtils.getShortDatabaseName(con2)));
-				result = false;
-			}
-		}
 
 		return result;
 	}

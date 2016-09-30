@@ -18,30 +18,21 @@
 package org.ensembl.healthcheck.testgroup;
 
 import org.ensembl.healthcheck.GroupOfTests;
-import org.ensembl.healthcheck.testcase.eg_compara.ControlledTableDnafrag;
-import org.ensembl.healthcheck.testcase.eg_compara.ControlledTableGenomeDb;
-import org.ensembl.healthcheck.testcase.eg_compara.ControlledTableMappingSession;
-import org.ensembl.healthcheck.testcase.eg_compara.ControlledTableMethodLink;
-import org.ensembl.healthcheck.testcase.eg_compara.ControlledTableMethodLinkSpeciesSet;
-import org.ensembl.healthcheck.testcase.eg_compara.ControlledTableNcbiTaxaName;
-import org.ensembl.healthcheck.testcase.eg_compara.ControlledTableNcbiTaxaNode;
-import org.ensembl.healthcheck.testcase.eg_compara.ControlledTableSpeciesSet;
-import org.ensembl.healthcheck.testcase.eg_compara.ControlledTableSpeciesSetTag;
 
 public class ControlledComparaTables extends GroupOfTests {
 	
 	public ControlledComparaTables() {
 		
 		addTest(
-				ControlledTableDnafrag.class,
-				ControlledTableGenomeDb.class,
-				ControlledTableMappingSession.class,
-				ControlledTableMethodLink.class,
-				ControlledTableMethodLinkSpeciesSet.class,
-				ControlledTableNcbiTaxaName.class,
-				ControlledTableNcbiTaxaNode.class,
-				ControlledTableSpeciesSet.class,
-				ControlledTableSpeciesSetTag.class				
+				org.ensembl.healthcheck.testcase.eg_compara.ControlledTableDnafrag.class,
+				org.ensembl.healthcheck.testcase.eg_compara.ControlledTableGenomeDb.class,
+				org.ensembl.healthcheck.testcase.eg_compara.ControlledTableMappingSession.class,
+				org.ensembl.healthcheck.testcase.eg_compara.ControlledTableMethodLink.class,
+				org.ensembl.healthcheck.testcase.eg_compara.ControlledTableMethodLinkSpeciesSet.class,
+				org.ensembl.healthcheck.testcase.eg_compara.ControlledTableNcbiTaxaName.class,
+				org.ensembl.healthcheck.testcase.eg_compara.ControlledTableNcbiTaxaNode.class,
+				org.ensembl.healthcheck.testcase.eg_compara.ControlledTableSpeciesSet.class,
+				org.ensembl.healthcheck.testcase.eg_compara.ControlledTableSpeciesSetTag.class
 		);		
 	}
 }
