@@ -31,17 +31,18 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.Team;
 
 /**
- * Compare the number of regulatory features in the current Regulatory Build
- * to the one in the previous release
+ * Compare the number of regulatory features per type (promoter, enhancer etc.)
+ * in the current Regulatory Build to the one in the previous release
  */
 
-public class ComparePreviousVersionRegulatoryFeatures extends
+public class ComparePreviousVersionRegulatoryFeaturesPerType extends
         ComparePreviousVersionBase {
 
-    public ComparePreviousVersionRegulatoryFeatures() {
+    public ComparePreviousVersionRegulatoryFeaturesPerType() {
         setTeamResponsible(Team.FUNCGEN);
-        setDescription("Compare the number of regulatory features in the " +
-                "current Regulatory Build to the one in the previous release");
+        setDescription("Compare the number of regulatory features per type " +
+                "(promoter, enhancer etc.) in the current Regulatory Build to" +
+                " the one in the previous release");
     }
 
 
@@ -53,14 +54,17 @@ public class ComparePreviousVersionRegulatoryFeatures extends
         Connection con = dbre.getConnection();
         try {
             Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT count(*) FROM " +
-                    "regulatory_feature JOIN regulatory_build USING" +
-                    "(regulatory_build_id) WHERE regulatory_build" +
-                    ".is_current=1");
+            ResultSet rs = stmt.executeQuery("SELECT feature_type.name,count" +
+                    "(*) FROM regulatory_feature JOIN " +
+                    "feature_type USING(feature_type_id) JOIN " +
+                    "regulatory_build USING(regulatory_build_id) WHERE " +
+                    "regulatory_build.is_current=1 GROUP BY feature_type" +
+                    ".feature_type_id");
 
-            while(rs != null && rs.next()){
-                int numberOfRegulatoryFeatures = rs.getInt(1);
-                counts.put("",numberOfRegulatoryFeatures);
+            while (rs != null && rs.next()) {
+                String featureTypeName = rs.getString(1);
+                int numberOfRegulatoryFeatures = rs.getInt(2);
+                counts.put(featureTypeName, numberOfRegulatoryFeatures);
             }
 
         } catch (SQLException e) {
@@ -72,12 +76,12 @@ public class ComparePreviousVersionRegulatoryFeatures extends
 
     @Override
     protected String entityDescription() {
-        return "Regulatory Features";
+        return "Regulatory Features of type";
     }
 
     @Override
     protected double threshold() {
-        return 0.90;
+        return 0.95;
     }
 
     @Override
