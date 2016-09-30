@@ -36,7 +36,7 @@ import java.util.HashMap;
 
 public class ResultSetHasBamFile extends DBFileRegistryHasFile {
 
-    ResultSetHasBamFile() {
+    public ResultSetHasBamFile() {
         setTeamResponsible(Team.FUNCGEN);
         setDescription("Check that every result_set has an associated BAM " +
                 "file entry stored in dbfile_registry table. Check that the " +
