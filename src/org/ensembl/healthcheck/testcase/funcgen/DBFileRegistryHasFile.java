@@ -21,7 +21,6 @@ package org.ensembl.healthcheck.testcase.funcgen;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 import java.io.File;
 import java.sql.Connection;
@@ -39,7 +38,7 @@ import java.util.Map;
  * @author ilavidas
  */
 
-abstract class DBFileRegistryHasFile extends SingleDatabaseTestCase {
+abstract class DBFileRegistryHasFile extends AbstractExternalFileUsingTestcase {
 
     DBFileRegistryHasFile() {
         setTeamResponsible(Team.FUNCGEN);
@@ -87,16 +86,14 @@ abstract class DBFileRegistryHasFile extends SingleDatabaseTestCase {
 
                 } else {
                     //check that the file actually exists on the disk
-                    //TODO add species agnostic parent directory
                     String parentFuncgenDir =
-                            "/nfs/ensnfs-webdev/staging/homo_sapiens/GRCh38/";
-                    File alignmentFile = new File(parentFuncgenDir + filePath
+                            getSpeciesAssemblyDataFileBasePath(dbre);
+                    File file = new File(parentFuncgenDir + filePath
                             .getString(1));
 
-                    if (!alignmentFile.exists()) {
-                        ReportManager.problem(this, con, " File " +
-                                alignmentFile.getPath() + " does not exist on" +
-                                " the disk.");
+                    if (!file.exists()) {
+                        ReportManager.problem(this, con, " File " + file
+                                .getPath() + " does not exist on the disk.");
                         result = false;
                     }
                 }
@@ -111,11 +108,9 @@ abstract class DBFileRegistryHasFile extends SingleDatabaseTestCase {
 
     enum FileType {
         BAM, BIGWIG, BIGBED
-
     }
 
     enum TableName {
         result_set, segmentation_file, external_feature_file
-
     }
 }
