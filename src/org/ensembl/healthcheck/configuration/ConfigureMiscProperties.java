@@ -43,6 +43,16 @@ public interface ConfigureMiscProperties {
 
 	// Used in:
 	//
+	// org.ensembl.healthcheck.testcase. todo
+	//
+	@Option(longName = "datafile_base_path", description = "Location of the "
+			+ "external files from the current release"
+	)
+	String getDataFileBasePath();
+	boolean isDataFileBasePath();
+
+	// Used in:
+	//
 	// org.ensembl.healthcheck.testcase.generic.CompareSchema
 	//
 	@Option(longName = "schema.file", description = "Parameter used only in "

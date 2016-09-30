@@ -16,7 +16,7 @@ import org.ensembl.healthcheck.ReportManager;
  * database is the default version in the corresponding core database.
  *
  */
-public class CoordSystemUpToDate extends AbstractCoreControlled {
+public class CoordSystemUpToDate extends AbstractCoreDatabaseUsingTestCase {
 	
 	protected List<CoordSystemEntry> fetchCurrentCoreCoordSystem(DatabaseRegistryEntry dbre) throws SQLException {
 		Statement stmt = dbre.getConnection().createStatement();

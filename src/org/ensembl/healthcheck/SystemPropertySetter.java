@@ -100,7 +100,12 @@ public class SystemPropertySetter {
 			//
 			System.setProperty("ignore.previous.checks",    configuration.getIgnorePreviousChecks());
 		}
-
+		if (configuration.isDataFileBasePath()) {
+			System.setProperty("dataFileBasePath", configuration.getDataFileBasePath());
+		} else {
+			System.setProperty("dataFileBasePath", "");
+		}
+		
 		if (configuration.isRepair()) {
 			// Used in:
 			//

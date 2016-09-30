@@ -814,6 +814,10 @@ public abstract class EnsTestCase {
 
 	}
 	
+	protected String getDataFileBasePath() {
+		return System.getProperty("dataFileBasePath");
+	}
+	
 	public void setProductionDatabase(DatabaseRegistryEntry productionDBRE ) {
 		this.productionDBRE = productionDBRE;
 	}

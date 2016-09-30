@@ -1,5 +1,6 @@
 package org.ensembl.healthcheck.testcase.funcgen;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -17,19 +18,11 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  * the core database.
  *
  */
-public abstract class AbstractCoreControlled extends SingleDatabaseTestCase {
+public abstract class AbstractCoreDatabaseUsingTestCase extends SingleDatabaseTestCase {
 	
-	public AbstractCoreControlled() {
+	public AbstractCoreDatabaseUsingTestCase() {
 		setTeamResponsible(Team.FUNCGEN);
 		setDescription("");
-	}
-	
-	protected String fetchSpeciesNameFromDb(DatabaseRegistryEntry dbre) throws SQLException {
-		Statement stmt = dbre.getConnection().createStatement();
-		ResultSet rs = stmt.executeQuery("select meta_value from meta where meta_key = \"species.production_name\"");
-		rs.next();
-		String speciesName = rs.getString("meta_value");
-		return speciesName;
 	}
 	
 	protected String fetchSchemaBuild(DatabaseRegistryEntry dbre)  throws SQLException {
@@ -40,13 +33,36 @@ public abstract class AbstractCoreControlled extends SingleDatabaseTestCase {
 		return speciesName;
 	}
 	
+	protected String getMetaValue(Connection coreConnection, String metaKey) {
+		
+		String sql = "select meta_value from meta where meta_key = \"" + metaKey + "\"";
+		String metaValue = "";
+		try {
+			Statement stmt = coreConnection.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			rs.next();
+			metaValue = rs.getString("meta_value");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return metaValue;
+	}
+
+	protected String getProductionName(Connection coreConnection) {
+		return getMetaValue(coreConnection, "species.production_name");
+	}
+
+	protected String getAssembly(Connection coreConnection) {
+		return getMetaValue(coreConnection, "assembly.default");
+	}
+
 	/**
 	 * Takes a DatabaseRegistryEntry of a funcgen database and returns the 
 	 * name of the core database it belongs to. 
 	 */
 	protected String getCoreDbName(DatabaseRegistryEntry dbre) throws SQLException {
 		
-		String speciesProductionName = fetchSpeciesNameFromDb(dbre);
+		String speciesProductionName = getProductionName(dbre.getConnection());
 		String schemaBuild = fetchSchemaBuild(dbre);
 		
 		String dbreSchemaBuild = dbre.getSchemaVersion() + "_" + dbre.getGeneBuildVersion();
