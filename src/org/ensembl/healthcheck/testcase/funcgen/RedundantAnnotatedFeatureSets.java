@@ -10,10 +10,10 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
-public class DuplicateAnnotatedFeatureSets extends SingleDatabaseTestCase {
+public class RedundantAnnotatedFeatureSets extends SingleDatabaseTestCase {
   
   protected final int max_errors_reported = 10;
-  public DuplicateAnnotatedFeatureSets() {
+  public RedundantAnnotatedFeatureSets() {
       setTeamResponsible(Team.FUNCGEN);
   }
   @Override

@@ -34,7 +34,7 @@ public class FuncgenPostERSA extends GroupOfTests {
           org.ensembl.healthcheck.testcase.funcgen.ResultSetHasBamFile.class,
           org.ensembl.healthcheck.testcase.funcgen.ResultSetHasBigWigFile.class,
           org.ensembl.healthcheck.testcase.funcgen.ExperimentHasFeatureSet.class,
-          org.ensembl.healthcheck.testcase.funcgen.DuplicateAnnotatedFeatureSets.class
+          org.ensembl.healthcheck.testcase.funcgen.RedundantAnnotatedFeatureSets.class
         );
     }
 }
