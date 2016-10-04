@@ -10,6 +10,13 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
+/**
+ * @author mnuhn
+ * 
+ * Checks that there is not more than one feature set with the same epigenome,
+ * feature type and analysis..
+ *
+ */
 public class RedundantAnnotatedFeatureSets extends SingleDatabaseTestCase {
   
   protected final int max_errors_reported = 10;
@@ -20,23 +27,24 @@ public class RedundantAnnotatedFeatureSets extends SingleDatabaseTestCase {
   public boolean run(DatabaseRegistryEntry dbre) {
 
     String sql = 
-        "select "
-            + "  epigenome.display_label, "
-            + "    feature_type.name, "
-            + "    analysis.logic_name, "
-            + "    count(feature_set_id) c "
-            + "  from  "
-            + "    feature_set "
-            + "    join epigenome using (epigenome_id) "
-            + "    join feature_type using (feature_type_id) "
-            + "    join analysis on (analysis.analysis_id=feature_set.analysis_id) "
-            + "  where "
-            + "   feature_set.type='annotated' "
-            + "  group by "
-            + "    feature_type_id, "
-            + "    epigenome_id "
-            + "  having "
-            + "    c > 1 ";
+      "select "
+      + "  epigenome.display_label, "
+      + "    feature_type.name, "
+      + "    analysis.logic_name, "
+      + "    count(feature_set_id) c "
+      + "  from  "
+      + "    feature_set "
+      + "    join epigenome using (epigenome_id) "
+      + "    join feature_type using (feature_type_id) "
+      + "    join analysis on (analysis.analysis_id=feature_set.analysis_id) "
+      + "  where "
+      + "   feature_set.type='annotated' "
+      + "  group by "
+      + "    feature_type_id, "
+      + "    epigenome_id, "
+      + "    analysis.logic_name "
+      + "  having "
+      + "    c > 1 ";
 
     Connection con = dbre.getConnection();
     int number_of_errors_reported = 0;
@@ -73,7 +81,7 @@ public class RedundantAnnotatedFeatureSets extends SingleDatabaseTestCase {
     boolean passes = number_of_errors_reported == 0;
     return passes;
   }
-  
+
   protected String generateUsefulSql(String epigenomeDisplayLabel, String featureTypeName, String analysisLogicName) {
     return
           " select"
@@ -89,5 +97,4 @@ public class RedundantAnnotatedFeatureSets extends SingleDatabaseTestCase {
         + "  and feature_type.name='"       + featureTypeName       + "'"
         + "  and logic_name='"              + analysisLogicName     + "'";
   }
-  
 }
