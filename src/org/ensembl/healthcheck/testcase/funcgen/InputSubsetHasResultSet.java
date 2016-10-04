@@ -29,7 +29,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * Check that every input_subset is linked to a result_set
+ * Check that every input_subset is linked to a result_set. Check that the
+ * result_set exists.
  *
  * @author ilavidas
  */
@@ -41,7 +42,7 @@ public class InputSubsetHasResultSet extends SingleDatabaseTestCase {
     public InputSubsetHasResultSet() {
         setTeamResponsible(Team.FUNCGEN);
         setDescription("Check that every input_subset is linked to a " +
-                "result_set");
+                "result_set. Check that the result_set exists.");
     }
 
     @Override
@@ -49,7 +50,8 @@ public class InputSubsetHasResultSet extends SingleDatabaseTestCase {
 
         boolean result = true;
         Connection con = dbre.getConnection();
-        int errorCount = 0;
+//        int noLinkErrorCount = 0;
+//        int noResultSetErrorCount = 0;
 
         try {
             //fetch all input_subsets
@@ -61,40 +63,61 @@ public class InputSubsetHasResultSet extends SingleDatabaseTestCase {
                 int issID = inputSubsets.getInt(1);
                 String issName = inputSubsets.getString(2);
 
-                //fetch result_sets for every input_subset
+                //fetch result_set links for every input_subset
                 Statement newStmt = con.createStatement();
-                ResultSet resultSets = newStmt.executeQuery("SELECT " +
+                ResultSet resultSetLinks = newStmt.executeQuery("SELECT " +
                         "result_set_id FROM result_set_input WHERE " +
                         "table_id=" + issID);
 
-                if (!resultSets.next()) {
-                    ReportManager.problem(this, con, "No result_set found for" +
-                            " " +
-                            "input_subset " + issName + " with " +
-                            "input_subset_id " + issID);
-                    errorCount++;
+                // Check that the input_subset has link(s) to result_set
+                if (!resultSetLinks.next()) {
+                    ReportManager.problem(this, con, "Input_subset " +
+                            issName + " with input_subset_id " + issID + " is" +
+                            " not linked to any result_set");
+//                    noLinkErrorCount++;
                     result = false;
+                } else {
+                    resultSetLinks.first();
+                    while(resultSetLinks.next()){
+                        int resultSetID = resultSetLinks.getInt(1);
+                        Statement statement = con.createStatement();
+                        ResultSet resultSets = statement.executeQuery("SELECT * " +
+                                "FROM result_set WHERE result_set_id=" +
+                                resultSetID);
+
+                        if(!resultSets.next()){
+                            ReportManager.problem(this,con,"Input_subset " +
+                                    issName + " with input_subset_id " + issID +
+                                    " appears to be linked to result_set_id " +
+                                    resultSetID + " but such id does NOT exist in" +
+                                    " the result_set table.");
+                            result=false;
+                        }
+                    }
                 }
 
-                //if the number of errors is too high do not report all of
+                // If the number of errors is too high do not report all of
                 // them, as this is usually slow. Print a helpful sql query
                 // instead for manual inspection by the user
-                if (errorCount > MAX_ERRORS_REPORTED) {
+//                if (noLinkErrorCount > MAX_ERRORS_REPORTED) {
+//
+//                    String helpfulQuery = "SELECT input_subset" + "" +
+//                            ".input_subset_id, input_subset.name FROM " +
+//                            "input_subset LEFT JOIN result_set_input ON " +
+//                            "(input_subset_id=table_id AND " +
+//                            "table_name='input_subset') WHERE result_set_id " +
+//                            "IS NULL";
+//
+//                    ReportManager.info(this, con, "Too many errors found. The" +
+//                            " above list is NOT exhaustive! Execute this " +
+//                            "query to retrieve all input_subsets that are not" +
+//                            " linked to a result_set:\n" + helpfulQuery);
+//
+//                    break;
+//                }
 
-                    String helpfulQuery = "SELECT input_subset" + "" +
-                            ".input_subset_id, input_subset.name FROM " +
-                            "input_subset LEFT JOIN result_set_input ON " +
-                            "(input_subset_id=table_id AND " +
-                            "table_name='input_subset') WHERE result_set_id " +
-                            "IS NULL";
-
-                    ReportManager.info(this, con, "Too many errors found. The" +
-                            " above list is NOT exhaustive! Execute this " +
-                            "query to retrieve all input_subsets that are not" +
-                            " linked to a result_set:\n" + helpfulQuery);
-
-                    break;
-                }
+                // Check that the result_set links found in the
+                // result_set_input table exist in the result_set table
             }
         } catch (SQLException e) {
             e.printStackTrace();

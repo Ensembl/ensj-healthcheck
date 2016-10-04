@@ -52,16 +52,20 @@ public class ExperimentHasFeatureSet extends SingleDatabaseTestCase {
 
         try {
             //fetch all distinct experiment - epigenome - feature_type
-            // combinations from experiment table
+            // combinations from experiment table. Ignore control files
             Statement stmt = con.createStatement();
-            ResultSet combos = stmt.executeQuery("SELECT DISTINCT " +
-                    "experiment_id, epigenome_id, feature_type_id FROM " +
-                    "experiment");
+            ResultSet combos = stmt.executeQuery("SELECT DISTINCT ex" +
+                    ".experiment_id, ex.epigenome_id, ex.feature_type_id, ep" +
+                    ".display_label, ft.name FROM experiment ex JOIN " +
+                    "feature_type ft USING(feature_type_id) JOIN epigenome ep" +
+                    " USING(epigenome_id) WHERE ft.name!='WCE'");
 
             while (combos != null && combos.next()) {
                 int experimentID = combos.getInt(1);
                 int epigenomeID = combos.getInt(2);
                 int featureTypeID = combos.getInt(3);
+                String epigenomeName = combos.getString(4);
+                String featureTypeName = combos.getString(5);
 
                 //fetch feature_sets for every combination
                 Statement newStmt = con.createStatement();
@@ -75,7 +79,8 @@ public class ExperimentHasFeatureSet extends SingleDatabaseTestCase {
                     ReportManager.problem(this, con, "There is no feature_set" +
                             " for this combination: experiment_id = " +
                             experimentID + ", epigenome_id = " + epigenomeID
-                            + ", feature_type_id = " + featureTypeID);
+                            + " (" + epigenomeName + "), feature_type_id = "
+                            + featureTypeID + " (" + featureTypeName + ")");
 
                     result = false;
                 }
