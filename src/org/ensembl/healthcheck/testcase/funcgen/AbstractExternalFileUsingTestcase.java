@@ -5,6 +5,13 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 
+/**
+ * @author mnuhn
+ * 
+ * Abstract class providing method "getSpeciesAssemblyDataFileBasePath". This 
+ * can be used to write checks for external files.
+ *
+ */
 public abstract class AbstractExternalFileUsingTestcase extends AbstractCoreDatabaseUsingTestCase {
 	
 	protected String getSpeciesAssemblyDataFileBasePath(DatabaseRegistryEntry dbre) {
