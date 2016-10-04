@@ -30,11 +30,11 @@ public class FuncgenPostERSA extends GroupOfTests {
     public FuncgenPostERSA() {
 
         addTest(
+          FuncgenIntegrity.class,
           org.ensembl.healthcheck.testcase.funcgen.InputSubsetHasResultSet.class,
           org.ensembl.healthcheck.testcase.funcgen.ResultSetHasBamFile.class,
           org.ensembl.healthcheck.testcase.funcgen.ResultSetHasBigWigFile.class,
-          org.ensembl.healthcheck.testcase.funcgen.ExperimentHasFeatureSet.class,
-          org.ensembl.healthcheck.testcase.funcgen.RedundantAnnotatedFeatureSets.class
+          org.ensembl.healthcheck.testcase.funcgen.ExperimentHasFeatureSet.class
         );
     }
 }
