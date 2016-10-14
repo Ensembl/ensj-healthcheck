@@ -39,7 +39,6 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
 
-
 /**
  * Compare the xrefs in the current database with those from the equivalent
  * database on the secondary server.
@@ -47,139 +46,74 @@ import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
 
 public class ComparePreviousVersionArrayXrefs extends ComparePreviousVersionBase {
 
-	/**
-	 * Create a new  testcase.
-	 */
+  /**
+  * Create a new  testcase.
+  */
+  public ComparePreviousVersionArrayXrefs() {
+    setTeamResponsible(Team.FUNCGEN);
+    setDescription("Compare the Arrays xrefs in the current database with those from the equivalent database on the secondary server");
+  }
+  protected Map getCounts(DatabaseRegistryEntry dbre) {
 
-	public ComparePreviousVersionArrayXrefs() {
-		addToGroup("funcgen");
-		addToGroup("funcgen-release");
-		//setHintLongRunning(true);// ?Only take about 10 mins for mouse
-		setTeamResponsible(Team.FUNCGEN);
-		setDescription("Compare the Arrays xrefs in the current database with those from the equivalent database on the secondary server");
-	}
+    //Doing this in one query will most likely run the instance out of resources
+    //Need to return an array of queries which can be performed bitwise
+    Map arrayXrefCounts = new HashMap();
+    String sql = "select array_id, vendor, name from array group by array_id";
 
+    try {
+      Statement idStmt     = dbre.getConnection().createStatement();
+      Statement cntStmt    = dbre.getConnection().createStatement();
+      ResultSet arrayIDs = idStmt.executeQuery(sql);
 
-	//We could add a run wrapper here to compare DISPLAYABLE arrays first?
+      while (arrayIDs != null && arrayIDs.next()) {
 
-
-	// ---------[-------------------------------------------------------------
-
-	protected Map getCounts(DatabaseRegistryEntry dbre) {
-
-		//Doing this in one query will most likely run the instance out of resources
-		//Need to return an array of queries which can be performed bitwise
-
-		Map arrayXrefCounts = new HashMap();
-		//Get array_ids for all DISPLAYABLE
-		//Also need to compare DISPLAYABLE arrays HC?
-
-		String sql = "select array_id, vendor, name from array group by array_id";
-
-		
-		//Count object_xref records for each array
-
-		try {
-			Statement idStmt     = dbre.getConnection().createStatement();
-			//Create separate Statment so we don't close the arrayIDs ResultSet
-			Statement cntStmt    = dbre.getConnection().createStatement();
-			ResultSet arrayIDs = idStmt.executeQuery(sql);
-			//System.out.println(sql);
-
-			while (arrayIDs != null && arrayIDs.next()) {
-				//ResultSets are 'never null', so why test for this?
-				
-				//Set this to ProbeSet for affy, and Probe for all others
-				//Would be nice to have this in the DB, but rely on vendor for now
-				
-				//Should probably 
-
-				if (arrayIDs.getString(2).equals("AFFY")) { //ProbeSets
-					//
-					
-					sql = "SELECT a.name AS array_name, COUNT(distinct ox.object_xref_id) AS count FROM external_db edb, xref x, " +
-					 	"object_xref ox, probe p, array_chip ac, array a " +
-						"WHERE edb.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id and ox.ensembl_id=p.probe_set_id and " +
-						"p.array_chip_id=ac.array_chip_id and ac.array_id=a.array_id and ox.ensembl_object_type='ProbeSet' and " +
-						"edb.db_display_name='EnsemblTranscript' and a.array_id=" + arrayIDs.getString(1) +
-						" GROUP BY a.array_id";
-				} 
-				else { //Probes
-					sql = "SELECT a.name AS array_name, COUNT(distinct ox.object_xref_id) AS count FROM external_db edb, xref x, " + 
-						"object_xref ox, probe p, array_chip ac, array a " +
-						"WHERE edb.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id and ox.ensembl_id=p.probe_id and " +
-						"p.array_chip_id=ac.array_chip_id and ac.array_id=a.array_id and ox.ensembl_object_type='Probe' and " +
-					 	"edb.db_display_name='EnsemblTranscript' and a.array_id=" + arrayIDs.getString(1) +
-						" GROUP BY a.array_id";
-				}
-
-
-				//SELECT a.name AS array_name, COUNT(distinct ox.object_xref_id) AS count FROM external_db edb, xref x, object_xref ox, probe p, array_chip ac, array a WHERE edb.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id and ox.ensembl_id=p.probe_id and p.array_chip_id=ac.array_chip_id and ac.array_id=a.array_id and ox.ensembl_object_type='Probe' and edb.db_display_name='EnsemblTranscript' and a.array_id='' GROUP BY a.array_id
-
-
-				//Can rely on only having xrefs against one edb per array due to 
-				//mandatory rollback in probe2transcript
-
-				//Could do with warning if edb does not match schema build if new and old schema_build do not match.
-				//i.e. we have a new assembly or gene build update
-
-
-				//System.out.println(sql);
-			
-				//Recreate getCountsBySQL
-			
-				try {
-					logger.finest("Counting " + entityDescription() + " for " + dbre.getName() + ':' + arrayIDs.getString(3)
-								  + "\nUSING SQL:\n" + sql);
-					ResultSet xrefCounts = cntStmt.executeQuery(sql);
-								
-					while (xrefCounts != null && xrefCounts.next()) {
-						//recast count which mysql returns as string as Integer?
-						arrayXrefCounts.put(xrefCounts.getString(1), new Integer(xrefCounts.getInt(2)));
-					}
-				} catch (SQLException e){
-					e.printStackTrace();
-				}
-			}
-		}catch (SQLException e){
-			e.printStackTrace();
-		}
-
-		return arrayXrefCounts;
-
-	} // ------------------------------------------------------------------------
-
-	protected String entityDescription() {
-
-		return "Array Xrefs";
-
-	}
-
-	// ------------------------------------------------------------------------
-
-	protected double threshold() {
-
-		//only allow 10% change before fail?
-		return 0.95;
-
-	}
-
-        // ------------------------------------------------------------------------
-
-        protected double minimum() {
-
-                return 0;
-
+        if (arrayIDs.getString(2).equals("AFFY")) { 
+          // ProbeSets
+          //
+          sql = "SELECT a.name AS array_name, COUNT(distinct ox.object_xref_id) AS count FROM external_db edb, xref x, " +
+          "object_xref ox, probe p, array_chip ac, array a " +
+          "WHERE edb.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id and ox.ensembl_id=p.probe_set_id and " +
+          "p.array_chip_id=ac.array_chip_id and ac.array_id=a.array_id and ox.ensembl_object_type='ProbeSet' and " +
+          "edb.db_display_name='EnsemblTranscript' and a.array_id=" + arrayIDs.getString(1) +
+          " GROUP BY a.array_id";
+        } else { 
+          // Probes
+          sql = "SELECT a.name AS array_name, COUNT(distinct ox.object_xref_id) AS count FROM external_db edb, xref x, " + 
+          "object_xref ox, probe p, array_chip ac, array a " +
+          "WHERE edb.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id and ox.ensembl_id=p.probe_id and " +
+          "p.array_chip_id=ac.array_chip_id and ac.array_id=a.array_id and ox.ensembl_object_type='Probe' and " +
+          "edb.db_display_name='EnsemblTranscript' and a.array_id=" + arrayIDs.getString(1) +
+          " GROUP BY a.array_id";
         }
+        try {
+          logger.finest("Counting " + entityDescription() + " for " + dbre.getName() + ':' + arrayIDs.getString(3)
+            + "\nUSING SQL:\n" + sql);
+          ResultSet xrefCounts = cntStmt.executeQuery(sql);
 
-	// ----------------------------------------------------------------------
-
-	protected boolean testUpperThreshold(){
-		return true;
-	}
-
-
-	// ----------------------------------------------------------------------
-
-} // ComparePreviousVersionArrayXrefs
+          while (xrefCounts != null && xrefCounts.next()) {
+            //recast count which mysql returns as string as Integer?
+            arrayXrefCounts.put(xrefCounts.getString(1), new Integer(xrefCounts.getInt(2)));
+          }
+        } catch (SQLException e){
+        e.printStackTrace();
+        }
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return arrayXrefCounts;
+  }
+  protected String entityDescription() {
+    return "Array Xrefs";
+  }
+  protected double threshold() {
+    return 0.95;
+  }
+  protected double minimum() {
+    return 0;
+  }
+  protected boolean testUpperThreshold(){
+    return true;
+  }
+}
 
