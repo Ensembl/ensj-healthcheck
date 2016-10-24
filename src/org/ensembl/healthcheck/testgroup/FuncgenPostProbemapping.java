@@ -7,8 +7,10 @@ public class FuncgenPostProbemapping extends GroupOfTests {
   public FuncgenPostProbemapping() {
 
       addTest(
+        org.ensembl.healthcheck.testcase.funcgen.ArraysHaveProbes.class,
         org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionProbes.class,
-        org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionArrayXrefs.class,
+        // Whoa, this is slow
+//        org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionArrayXrefs.class,
         org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionProbeFeatures.class,
         org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionProbeFeaturesByArray.class
       );
