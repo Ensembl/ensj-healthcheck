@@ -33,6 +33,9 @@ import org.ensembl.healthcheck.testcase.eg_core.SeqRegionsConsistentWithComparaM
 import org.ensembl.healthcheck.testcase.eg_core.TranslationAttribType;
 import org.ensembl.healthcheck.testcase.eg_core.UniProtExternalDbTypes;
 import org.ensembl.healthcheck.testcase.eg_core.ValidSeqEnd;
+import org.ensembl.healthcheck.testcase.eg_core.VersionedGenes;
+import org.ensembl.healthcheck.testcase.eg_core.VersionedTranscripts;
+import org.ensembl.healthcheck.testcase.eg_core.VersionedTranslations;
 import org.ensembl.healthcheck.testcase.eg_core.XrefDescriptionSpecialChars;
 import org.ensembl.healthcheck.testcase.generic.AnalysisDescription;
 import org.ensembl.healthcheck.testcase.generic.AnalysisLogicName;
@@ -117,7 +120,8 @@ public class EGCoreIntegrity extends GroupOfTests {
 				SeqRegionAttribForPolyploidGenome.class,
 				SeqRegionAttribForPolyploidGenomeToplevelOnly.class,
 				SeqRegionLength.class, SchemaPatchesApplied.class, 
-				EvidenceFreeGO.class);
+				EvidenceFreeGO.class, VersionedGenes.class,
+				VersionedTranscripts.class, VersionedTranslations.class);
 	}
 
 }
