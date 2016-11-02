@@ -30,6 +30,7 @@ import org.ensembl.healthcheck.testcase.eg_core.ProteinTranslation;
 import org.ensembl.healthcheck.testcase.eg_core.SeqRegionCoordSystem;
 import org.ensembl.healthcheck.testcase.eg_core.SimpleFeatureAnalysisTypes;
 import org.ensembl.healthcheck.testcase.eg_core.ValidSeqEnd;
+import org.ensembl.healthcheck.testcase.eg_core.VersionedExons;
 import org.ensembl.healthcheck.testcase.eg_core.VersionedGenes;
 import org.ensembl.healthcheck.testcase.eg_core.VersionedTranscripts;
 import org.ensembl.healthcheck.testcase.eg_core.VersionedTranslations;
@@ -97,6 +98,7 @@ public class EGCoreGeneModelCritical extends GroupOfTests {
 			ENASeqRegionSynonyms.class,
 			MultipleENASeqRegionSynonyms.class,
 		    ValidSeqEnd.class,
+		    VersionedExons.class,
 		    VersionedGenes.class,
 			VersionedTranscripts.class, 
 			VersionedTranslations.class
