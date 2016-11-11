@@ -19,11 +19,11 @@ public class CurrentRegulatoryBuildHasEpigenomes extends AbstractTemplatedTestCa
     
     SqlTemplate s = getTemplate(dbre);
     
-    List<String> arraysWithoutProbes = s.queryForDefaultObjectList(
-        "select * from regulatory_build join regulatory_build_epigenome using (regulatory_build_id) join epigenome using (epigenome_id) where is_current=true;", 
+    List<String> epigenomeInRegulatoryBuild = s.queryForDefaultObjectList(
+        "select epigenome.name from regulatory_build join regulatory_build_epigenome using (regulatory_build_id) join epigenome using (epigenome_id) where is_current=true;", 
         String.class
      );
-    if (arraysWithoutProbes.size()==0) {
+    if (epigenomeInRegulatoryBuild.size()==0) {
       ReportManager.problem(this, dbre.getConnection(), 
           "The current regulatory build has no epigenomes according to the regulatory_build_epigenome table."
       );
