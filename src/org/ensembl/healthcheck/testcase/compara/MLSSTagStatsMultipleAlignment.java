@@ -26,7 +26,7 @@ public class MLSSTagStatsMultipleAlignment extends AbstractMLSSTagStats {
 	protected HashMap<String,String[]> getMandatoryTags() {
 		HashMap<String,String[]> mandatoryTags = new HashMap<String,String[]>();
 		String[] tags_multiple_alignments = {
-			"ensembl_release", "num_blocks", "max_align"
+			"num_blocks", "max_align"
 		};
 		mandatoryTags.put("EPO", tags_multiple_alignments);
 		mandatoryTags.put("PECAN", tags_multiple_alignments);

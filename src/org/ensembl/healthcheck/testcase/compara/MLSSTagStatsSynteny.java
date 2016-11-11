@@ -26,7 +26,7 @@ public class MLSSTagStatsSynteny extends AbstractMLSSTagStats {
 	protected HashMap<String,String[]> getMandatoryTags() {
 		HashMap<String,String[]> mandatoryTags = new HashMap<String,String[]>();
 		String[] tags_synteny = {
-			"ensembl_release", "num_blocks",
+			"num_blocks",
 			"non_reference_species", "non_ref_coding_exon_length", "non_ref_covered", "non_ref_genome_coverage", "non_ref_genome_length", "non_ref_uncovered",
 			"reference_species", "ref_coding_exon_length", "ref_covered", "ref_genome_coverage", "ref_genome_length", "ref_uncovered"
 		};
