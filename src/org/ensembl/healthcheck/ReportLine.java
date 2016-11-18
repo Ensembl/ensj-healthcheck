@@ -84,9 +84,9 @@ public class ReportLine {
 	/**
 	 * Creates a new instance of ReportLine
 	 * 
-	 * @param testCaseName
+	 * @param testCase
 	 *            The test case to refer to.
-	 * @param databaseName
+	 * @param name
 	 *            The database name involved.
 	 * @param level
 	 *            The level of this report.

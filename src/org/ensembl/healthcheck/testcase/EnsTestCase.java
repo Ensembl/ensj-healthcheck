@@ -2228,7 +2228,7 @@ public abstract class EnsTestCase {
 	 *            The string to look for (not a pattern).
 	 * @return The number of columns that <em>DO NOT</em> match value.
 	 * @deprecated use
-	 *             {@link DBUtils#checkColumnValue(Connection, String, String, String)
+	 *             {@link DBUtils#checkColumnValue(Connection, String, String, String)}
 
 	 */
 	@Deprecated

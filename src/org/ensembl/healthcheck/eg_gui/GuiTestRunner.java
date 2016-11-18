@@ -54,7 +54,7 @@ public class GuiTestRunner {
 	 * Manager.
 	 * </p>
 	 * 
-	 * @param e
+	 * @param h
 	 * @return Logger
 	 * 
 	 */
@@ -84,9 +84,13 @@ public class GuiTestRunner {
      * 	Run all the tests in a list.
      * </p>
      * 
-     * @param ltests The tests to run.
-     * @param ldatabases The databases to run the tests on.
-     * @param lgtrf The test runner frame in which to display the results.
+     * @param tests
+     * @param databases
+     * @param testProgressDialog
+     * @param PERL5LIB
+     * @param psc
+     * @param guiLogHandler
+     * @return Thread running the tests
      */
     public static Thread runAllTests(
     		final List<Class<? extends EnsTestCase>> tests,

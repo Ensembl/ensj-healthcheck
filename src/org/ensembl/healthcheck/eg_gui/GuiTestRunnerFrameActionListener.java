@@ -167,7 +167,7 @@ public class GuiTestRunnerFrameActionListener implements ActionListener {
 
 	/**
 	 * @param hostProperties
-	 * @return
+	 * @return parameters
 	 */
 	protected ConfigurationUserParameters createConfiguration(
 			Properties hostProperties) {

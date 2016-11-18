@@ -38,7 +38,7 @@ import org.ensembl.healthcheck.util.TestCaseUtils;
 public class DeprecatedEgMeta extends AbstractEgMeta {
 
 	/**
-	 * @param metaKeys
+	 * Default constructor
 	 */
 	public DeprecatedEgMeta() {
 		super(

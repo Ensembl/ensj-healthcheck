@@ -69,10 +69,9 @@ public class GuiTestResultWindowTab extends JPanel {
 
     /**
      * Create a new GuiTestResultWindow.
-     * 
-     * @param gtrf The frame that opened this window.
+     * @param outputLevelAsString
+     * @param outputLevel
      */
-    //public GuiTestResultWindow(GuiTestRunnerFrame gtrf) {
     public GuiTestResultWindowTab(String outputLevelAsString, int outputLevel) {
 
         //super("Healthcheck Results");

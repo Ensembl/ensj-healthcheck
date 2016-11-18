@@ -104,7 +104,7 @@ public class DatabaseTabbedPane extends JTabbedPane implements ActionListener {
 	 * that will represent for selection in the gui.
 	 * </p>
 	 * 
-	 * @param databaseRegistry
+	 * @param allDbEntries
 	 * @return Map<DatabaseRegistryEntry, JRadioButton>
 	 * 
 	 */

@@ -64,7 +64,7 @@ public class CheckGenomeDB extends AbstractComparaTestCase {
 	 * NB: A warning message is displayed if some dnafrags cannot be checked because
 	 * there is not any connection to the corresponding core database.
 	 * 
-	 * @param dbr
+	 * @param comparaDbre
 	 *          The database registry containing all the specified databases.
 	 * @return true if the all the dnafrags are top_level seq_regions in their corresponding
 	 *    core database.

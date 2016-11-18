@@ -58,7 +58,7 @@ import org.ensembl.healthcheck.util.RowMapper;
  * compare all the others against:
  * <p>
  * <ol>
- * <li>If the property {@link #getDefinitionFileKey()} in database.properties
+ * <li>If the property getDefinitionFileKey() in database.properties
  * exists, the table.sql file it points to</li>
  * <li>If this is not present, the schema named by the property
  * {@link #getMasterSchemaKey()} is used</li>
@@ -444,7 +444,7 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
 
   /**
    * 
-   * See comment for {@link getMasterNameForMsg}
+   * See comment for {@link #getMasterNameForMsg(Connection)}
    * 
    */
   protected Connection getMasterForReportManager(Connection master) {

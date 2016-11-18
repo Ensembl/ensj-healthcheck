@@ -123,34 +123,27 @@ public abstract class AbstractShellBasedTestCase extends SingleDatabaseTestCase 
 	}
 	
 	/**
-	 * <p>
 	 * 	Use this, if your test uses species ids.
-	 * </p>
 	 * 
 	 * @param dbre
 	 * @param speciesId
-	 * @return
+	 * @return command line
 	 */
 	protected String createCommandLine(final DatabaseRegistryEntry dbre, int speciesId) { return null; }
 	
 	/**
-	 * <p>
 	 * 	Use this, if your test is independent of species ids.
-	 * </p>
 	 * 
 	 * @param dbre
-	 * @param speciesId
-	 * @return
+	 * @return command line
 	 */
 	protected String createCommandLine(final DatabaseRegistryEntry dbre) { return null; }
 	
 	/**
-	 * <p>
 	 * 	Preservers the system environment by default. If your test requires
 	 * certain environment variables to be set, override this method.
-	 * </p>
 	 * 
-	 * @return
+	 * @return hash of environment variables
 	 */
 	protected Map<String,String> environmentVarsToSet() {
 		

@@ -62,7 +62,7 @@ public class TestsInGroups {
 	protected final Map<String,List<String>> testcasegroupToTheirTestcasemembers;
 
 	/**
-	 * Creates a {@see java.util.Collection} of Testcases that were found in
+	 * Creates a {@link Collection} of Testcases that were found in
 	 * the specified package
 	 * 
 	 */
@@ -89,7 +89,7 @@ public class TestsInGroups {
 	 * Creates a map from a name of a testcase group to a list of names of 
 	 * its testcase members. 
 	 * 
-	 * @param classNames: An array of class names.
+	 * @param classNames An array of class names.
 	 * 
 	 * @return A Map<String,List<String>> as described above.
 	 * 
@@ -142,7 +142,7 @@ public class TestsInGroups {
 	}
 	
 	/**
-	 * @param packageWithHealthchecks: Name of packages the will be searched 
+	 * @param packageWithHealthchecks Name of packages the will be searched 
 	 * for testcases.
 	 * 
 	 */

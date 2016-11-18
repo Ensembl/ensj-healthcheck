@@ -76,10 +76,10 @@ public class ConfigurationFactory <T> {
 	protected final String[] commandLineArguments;
 	
 	/**
-	 * @param configurationInterface: The class object of the interface that 
+	 * @param configurationInterface The class object of the interface that 
 	 *     should be mocked by the produced configuration objects
 	 *     
-	 * @param args: The command line parameters that were given. These will
+	 * @param args The command line parameters that were given. These will
 	 *     be used to initialise the created objects and to find properties
 	 *     files that the user specified.
 	 */
@@ -125,7 +125,7 @@ public class ConfigurationFactory <T> {
 	}
 	
 	/**
-	 * @param An element of the enum ConfigurationTypes specifying what 
+	 * @param configurationType element of the enum ConfigurationTypes specifying what 
 	 *     configuration object you want.
 	 * @return ConfigurationUserParameters
 	 * 

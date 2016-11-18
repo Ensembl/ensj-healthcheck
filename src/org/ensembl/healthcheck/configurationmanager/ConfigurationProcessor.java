@@ -42,7 +42,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 public class ConfigurationProcessor<T> {
 
 	/**
-	 * @param A
+	 * @param m
 	 *            method of type java.lang.reflect.Method
 	 * @return true, if the method expects a java.util.List of Strings, false
 	 *         otherwise.

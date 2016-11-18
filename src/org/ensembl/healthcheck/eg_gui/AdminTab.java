@@ -55,7 +55,7 @@ public class AdminTab extends JPanel {
 	 * on the path. Calls "which perl" on the shell to do this.
 	 * </p>
 	 * 
-	 * @return
+	 * @return perl executable path
 	 */
 	protected String createPerlBinaryDefaultValue() {
 		
@@ -112,7 +112,7 @@ public class AdminTab extends JPanel {
 	 * perl5libDefaultValue is used.
 	 * </p>
 	 * 
-	 * @return
+	 * @return default value
 	 */
 	protected String getperl5LibDefaultValue() {
 		

@@ -58,7 +58,7 @@ public class CompareMSANames extends AbstractComparaTestCase {
 	/**
 	 * Run the test.
 	 * 
-	 * @param dbre
+	 * @param comparaDbre
 	 *            The database to use.
 	 * @return true if the test passed.
 	 * 

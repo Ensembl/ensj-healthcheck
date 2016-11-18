@@ -51,10 +51,10 @@ public class Generator {
 	}
 
 	/**
-	 * @param templateGroup: The group as in StringTemplate, not used as far
+	 * @param templateGroup The group as in StringTemplate, not used as far
 	 *     as I know. 
-	 * @param templateDir:   The directory in which the templates are.
-	 * @param templateName:  The name of the template used for creating the
+	 * @param templateDir   The directory in which the templates are.
+	 * @param templateName The name of the template used for creating the
 	 *     classes.
 	 */
 	public Generator(
@@ -72,7 +72,7 @@ public class Generator {
 	 * Static helper method to help users of the generate method in this class
 	 * to create a valid class name.
 	 * 
-	 * @param originalName: The original name that this class would have been 
+	 * @param originalName The original name that this class would have been 
 	 *     given, but may contain illegal characters.
 	 *      
 	 * @return: A String that looks like originalName, but can be used as a
@@ -104,7 +104,7 @@ public class Generator {
 	 * @param packageName
 	 * @param groupName
 	 * @param enstestcaseNames
-	 * @return
+	 * @return string for parameters
 	 */
 	public String generate(
 		String className,

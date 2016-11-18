@@ -141,7 +141,7 @@ public class TestInstantiator {
 	 * 
 	 * @param <T>
 	 * @param loadedClass
-	 * @return
+	 * @return new instance
 	 * 
 	 */
 	protected <T> T newInstance(Class<T> loadedClass) {
@@ -174,7 +174,7 @@ public class TestInstantiator {
 	 * 
 	 * @param <T>
 	 * @param testName
-	 * @return
+	 * @return instance of test
 	 */
 	public <T> T instanceByName(String testName) {
 		
@@ -191,7 +191,7 @@ public class TestInstantiator {
 	 * @param <T>
 	 * @param testName
 	 * @param expectedType
-	 * @return
+	 * @return instance of test
 	 */
 	public <T> T instanceByName(String testName, Class<T> expectedType) {
 		

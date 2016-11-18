@@ -69,8 +69,6 @@ public abstract class AbstractAliasAwareConfigurationBacking<T> extends Abstract
 	 * it is supposed to be in. Supported data types are the elements of the
 	 * enum configurationDataType:
 	 * 
-	 * @see AbstractAliasAwareConfigurationBacking#configurationDataType
-	 * 
 	 */
 	protected final Map<String,configurationDataType> canonicalVarName2DataType;
 	
@@ -103,7 +101,7 @@ public abstract class AbstractAliasAwareConfigurationBacking<T> extends Abstract
 	 * aliases for the variable.
 	 * 
 	 * @param varRequested
-	 * @return
+	 * @return variable for name
 	 * 
 	 */
 	abstract protected Object mockDirectGetMethod(String varRequested);
@@ -116,7 +114,7 @@ public abstract class AbstractAliasAwareConfigurationBacking<T> extends Abstract
 	 * possible aliases.
 	 * 
 	 * @param varRequested
-	 * @return
+	 * @return true if variable declared
 	 */
 	abstract protected boolean mockDirectIsMethod(String varRequested);
 	
@@ -142,7 +140,7 @@ public abstract class AbstractAliasAwareConfigurationBacking<T> extends Abstract
 	 * </p>
 	 * 
 	 * @param varRequested
-	 * @return
+	 * @return mock method
 	 */
 	protected Object mockGetMethod(String varRequested) {
 		
@@ -163,7 +161,7 @@ public abstract class AbstractAliasAwareConfigurationBacking<T> extends Abstract
 	 * </p>
 	 * 
 	 * @param varRequested
-	 * @return
+	 * @return whether method has been mocked
 	 * 
 	 */
 	protected boolean mockIsMethod(String varRequested) {

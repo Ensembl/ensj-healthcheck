@@ -228,7 +228,7 @@ abstract public class AbstractControlledRows extends AbstractTemplatedTestCase {
 	 * 
 	 * @param listOfColumns
 	 * @param listOfValues
-	 * @return
+	 * @return where clause
 	 */
 	protected String asParameterisedWhereClause(List<String> listOfColumns, List<Object> listOfValues) {
 		
@@ -273,7 +273,7 @@ abstract public class AbstractControlledRows extends AbstractTemplatedTestCase {
 	 * of the current row. Useful to print in error or debug messages.
 	 * 
 	 * @param rs
-	 * @return
+	 * @return row as string
 	 * @throws SQLException
 	 */
 	protected String resultSetRowAsString(ResultSet rs)
@@ -300,7 +300,7 @@ abstract public class AbstractControlledRows extends AbstractTemplatedTestCase {
 	 * Joins the list of strings into one comma (and space) separated string.
 	 * 
 	 * @param listOfStrings
-	 * @return
+	 * @return list as string
 	 */
 	protected String asCommaSeparatedString(List<String> listOfStrings) {		
 		return joinListOfStrings(listOfStrings, ", ");
@@ -312,7 +312,7 @@ abstract public class AbstractControlledRows extends AbstractTemplatedTestCase {
 	 * 
 	 * @param listOfStrings
 	 * @param separator
-	 * @return
+	 * @return list as string
 	 */
 	protected String joinListOfStrings(List<String> listOfStrings, String separator) {
 		
@@ -335,7 +335,7 @@ abstract public class AbstractControlledRows extends AbstractTemplatedTestCase {
 	 * 
 	 * @param conn
 	 * @param tableName
-	 * @return
+	 * @return SQL statement
 	 */
 	protected String generateFetchAllRowsFromTableSql(
 			Connection conn, 
@@ -368,7 +368,7 @@ abstract public class AbstractControlledRows extends AbstractTemplatedTestCase {
 	 * @param conn
 	 * @param tableName
 	 * @param columns
-	 * @return
+	 * @return SQL statement
 	 */
 	protected String fetchAllRowsFromTableSql(
 			Connection conn, 
@@ -403,7 +403,7 @@ abstract public class AbstractControlledRows extends AbstractTemplatedTestCase {
 	}
 
 	/**
-	 * If the {@link ComparisonStrategy} {@link ComparisonStrategy#RowByRow} 
+	 * If the ComparisonStrategy RowByRow
 	 * is used, we want to make sure not to report excessive an amount of 
 	 * errors.
 	 * 
@@ -417,7 +417,7 @@ abstract public class AbstractControlledRows extends AbstractTemplatedTestCase {
 	
 	/**
 	 * Number of rows that have been reported by this test, if 
-	 * {@link ComparisonStrategy#RowByRow} is being used. If numReportedRows 
+	 * ComparisonStrategy RowByRow is being used. If numReportedRows 
 	 * exceeds getMaxReportedMismatches(), the test will terminate.
 	 * 
 	 */
@@ -443,7 +443,7 @@ abstract public class AbstractControlledRows extends AbstractTemplatedTestCase {
 	 * 
 	 * @param conn
 	 * @param table
-	 * @return
+	 * @return names of columns
 	 */
 	protected List<String> getColumnsOfTable(Connection conn, String table) {
 		
@@ -493,7 +493,7 @@ abstract public class AbstractControlledRows extends AbstractTemplatedTestCase {
 	 * </p>
 	 *  
 	 * @param speciesName
-	 * @return
+	 * @return true if linked to DNA compara
 	 */
 	protected boolean speciesConfiguredForDnaCompara(String speciesName) {
 		

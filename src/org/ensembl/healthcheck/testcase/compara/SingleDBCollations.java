@@ -22,7 +22,7 @@ import org.ensembl.healthcheck.Team;
 
 /**
  * Check that all table collations in a particular database are as
- * specified in {@link #getTargetCollation()}.
+ * specified in getTargetCollation().
  */
 
 public class SingleDBCollations extends org.ensembl.healthcheck.testcase.generic.SingleDBCollations {

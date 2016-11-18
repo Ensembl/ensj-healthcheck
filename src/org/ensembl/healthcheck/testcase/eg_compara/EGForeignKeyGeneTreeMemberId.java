@@ -75,7 +75,7 @@ public class EGForeignKeyGeneTreeMemberId extends AbstractEGForeignKeyMemberId {
 	/**
 	 * An implementation similar to
 	 * 
-	 * @see checkForOrphans
+	 * @see #checkForOrphans(Connection, String, String, String, String)
 	 * 
 	 * but this one only searches for orphans in which the key column of the 
 	 * target table is not null.

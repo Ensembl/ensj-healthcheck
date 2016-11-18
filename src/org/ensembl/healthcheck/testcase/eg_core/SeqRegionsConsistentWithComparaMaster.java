@@ -317,7 +317,6 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractControlledRow
 	 * @param productionName
 	 * @param assemblyDefault
 	 * @param genebuildStartDate
-	 * @param masterDbRe
 	 */
 	protected int fetchGenomeDbId(
 			String productionName, String assemblyDefault,
@@ -403,7 +402,7 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractControlledRow
 	/**
 	 * @param sqlTemplateTestDb
 	 * @param metaKey
-	 * @return
+	 * @return metaValue
 	 */
 	protected String fetchSingleMetaValueFor(
 			final SqlTemplate sqlTemplateTestDb,
