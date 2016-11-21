@@ -53,7 +53,7 @@ public class ForeignKeyCoreId extends MultiDatabaseTestCase {
 	/**
 	 * Run the test.
 	 * 
-	 * @param databases
+	 * @param dbr
 	 *            The databases to check, in order core->variation
 	 * @return true if same transcripts and seq_regions in core and variation
 	 *         are the same.
@@ -116,17 +116,21 @@ public class ForeignKeyCoreId extends MultiDatabaseTestCase {
 						+ ".structural_variation_feature", "seq_region_id",
 						dbrcore.getName() + ".seq_region", "seq_region_id",
 						"seq_region_id IS NOT NULL");
-
+				
 				int rows = DBUtils
 						.getRowCount(
 								con,
 								"SELECT COUNT(*) FROM "
 										+ dbrvar.getName()
-										+ ".seq_region srv ,"
+										+ ".seq_region srv join "
+										+ dbrvar.getName()
+										+ ".coord_system csv on (srv.coord_system_id=csv.coord_system_id) join "
 										+ dbrcore.getName()
-										+ ".seq_region src,"
+										+ ".seq_region src on (src.name=srv.name) join "
 										+ dbrcore.getName()
-										+ ".coord_system cs WHERE cs.attrib = 'default_version' AND cs.coord_system_id = src.coord_system_id AND src.name=srv.name AND src.seq_region_id != srv.seq_region_id");
+										+ ".coord_system cs on (cs.coord_system_id=src.coord_system_id) "+
+										"WHERE csv.attrib = 'default_version' AND cs.attrib='default_version' AND src.seq_region_id != srv.seq_region_id");
+
 				if (rows > 0) {
 					ReportManager
 							.problem(

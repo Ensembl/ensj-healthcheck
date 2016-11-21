@@ -896,7 +896,7 @@ public final class DBUtils {
 	 *            If not null, only return columns whose types start with this
 	 *            string (case insensitive). Vargs so specify as many as you need
 	 *            
-	 * @see {@link #getTableInfo(Connection, String, String[])}
+	 * @see #getTableInfo(Connection, String, String[])
 	 * @return A List of 6-element String[] arrays representing: 0: Column name
 	 *         1: Type 2: Null? 3: Key 4: Default 5: Extra
 	 */
@@ -1861,7 +1861,7 @@ public final class DBUtils {
 	/**
 	 * @param con
 	 * @param tableName
-	 * @return
+	 * @return checksum for table
 	 */
 	public static long getChecksum(Connection con, String tableName) {
 	  String sql = "CHECKSUM TABLE "+tableName;

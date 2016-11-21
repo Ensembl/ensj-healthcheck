@@ -151,8 +151,8 @@ public class CompareVariationSchema extends AbstractCompareSchema {
 	 * 
 	 * The logic is the same as variation's original version
 	 * 
-	 * @param target The master connection
-	 * @param master The registry entry for the given target schema
+	 * @param master The master connection
+	 * @param targetDbre The registry entry for the given target schema
 	 * @param ignoreBackupTables Ignored option
 	 * @param directionFlag Ignored option
 	 */

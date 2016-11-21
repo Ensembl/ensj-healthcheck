@@ -77,7 +77,7 @@ public class ListOfTestsToBeRunDropListener implements DropTargetListener {
      * RuntimeException is thrown.
      * </p>
      * 
-     * @param itemToAdd
+     * @param itemsToAdd
      * 
      */
     protected void addTestToList(Object... itemsToAdd) {

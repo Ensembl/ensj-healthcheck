@@ -40,7 +40,7 @@ import org.ensembl.healthcheck.util.TestCaseUtils;
 public class PermittedEgMeta extends AbstractEgMeta {
 
 	/**
-	 * @param metaKeys
+	 * Default constructure
 	 */
 	public PermittedEgMeta() {
 		super(

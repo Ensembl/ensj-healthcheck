@@ -56,7 +56,7 @@ public class CheckTaxon extends AbstractComparaTestCase {
 	 * NB: A warning message is displayed if some dnafrags cannot be checked because
 	 * there is not any connection to the corresponding core database.
 	 * 
-	 * @param dbr
+	 * @param comparaDbre
 	 *          The database registry containing all the specified databases.
 	 * @return true if the all the taxa in compara.taxon table which have a counterpart in
 	 *    the compara.genome_db table match the corresponding core databases.
@@ -77,8 +77,6 @@ public class CheckTaxon extends AbstractComparaTestCase {
 	 * 
 	 * @param comparaDbre
 	 *          The database registry entry for Compara DB
-	 * @param Map
-	 *          HashMap of DatabaseRegistryEntry[], one key/value pair for each Species.
 	 * @return true if the all the taxa in compara.taxon table which have a counterpart in
 	 *    the compara.genome_db table match the corresponding core databases.
 	 */

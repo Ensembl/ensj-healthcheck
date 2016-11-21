@@ -62,8 +62,9 @@ public class GeneCount extends SingleDatabaseTestCase {
 	/**
 	 * Run the test.
 	 * 
-	 * @param dbr
+	 * @param dbre
 	 *            The database registry containing all the specified databases.
+	 * @return true if test succeeds
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 

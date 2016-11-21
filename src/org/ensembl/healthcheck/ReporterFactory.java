@@ -33,7 +33,7 @@ public class ReporterFactory {
 
 	/**
 	 * 
-	 * @param reporterType: One of "Text",  "Database"
+	 * @param reporterType One of "Text",  "Database"
 	 * @return An implementation of a Reporter
 	 * 
 	 */

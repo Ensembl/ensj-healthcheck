@@ -66,7 +66,7 @@ public class ConfigurationByProperties<T> extends
 	 * 
 	 * @param configurationInterfaceToProxy
 	 * @param properties
-	 * @return
+	 * @return {@link ConfigurationByProperties}
 	 */
 	public static Object newInstance(Class configurationInterfaceToProxy,
 			Properties properties) {
@@ -84,7 +84,7 @@ public class ConfigurationByProperties<T> extends
 	 * 
 	 * @param configurationInterfaceToProxy
 	 * @param propertyFile
-	 * @return
+	 * @return {@link ConfigurationByProperties}
 	 * @throws IOException
 	 */
 	public static Object newInstance(Class configurationInterfaceToProxy,
@@ -102,7 +102,7 @@ public class ConfigurationByProperties<T> extends
 	 * 
 	 * @param configurationInterfaceToProxy
 	 * @param handler
-	 * @return
+	 * @return proxy
 	 */
 	private static Object createProxyUsingConfigurationObject(
 			Class configurationInterfaceToProxy, InvocationHandler handler) {

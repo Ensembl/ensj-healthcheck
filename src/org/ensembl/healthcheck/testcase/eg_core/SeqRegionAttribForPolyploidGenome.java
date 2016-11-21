@@ -136,7 +136,7 @@ public class SeqRegionAttribForPolyploidGenome extends AbstractControlledRows {
 	/**
 	 * @param sqlTemplateTestDb
 	 * @param metaKey
-	 * @return
+	 * @return meta value
 	 */
 	protected String fetchSingleMetaValueFor(
 			final SqlTemplate sqlTemplateTestDb,

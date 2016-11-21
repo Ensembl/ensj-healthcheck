@@ -170,7 +170,7 @@ sub create_db_name_cache {
   my $hc_like;
   if ($new_dbname) {
     # only propagate for new_dbname
-    $new_dbname =~ /([a-z]+_[a-z]+_[a-z]+)_\d+_\d+/;
+    $new_dbname =~ /([a-z0-9]+_[a-z0-9]+(?:_[a-z0-9]+)?_[a-z]+)_\d+_\d+/;
     $hc_like = "$1_$old_release";
   }
   else {
@@ -376,7 +376,6 @@ sub new_assembly {
   my ($old_dbname, $new_dbname, $new_release, $dbi1, $dbi2, $dbi_prev) = @_;
   my $changed = 0;
   $changed += _check_declaration($new_dbname, $new_release, 'assembly');
-  $changed += _check_changes($old_dbname, $new_dbname, 'assembly', $dbi1, $dbi2, $dbi_prev);
   return $changed;
 }
 
@@ -388,7 +387,6 @@ sub new_genebuild {
   my ($old_dbname, $new_dbname, $new_release, $dbi1, $dbi2, $dbi_prev) = @_;
   my $changed = 0;
   $changed += _check_declaration($new_dbname, $new_release, 'gene_set');
-  $changed += _check_changes($old_dbname, $new_dbname, 'gene', $dbi1, $dbi2, $dbi_prev);
   return $changed;
 }
 
@@ -412,40 +410,9 @@ sub _compare_caches {
   return ("$old" eq "$new") ? 0 : 1; #force string comparison
 }
 
-sub _check_changes {
-  my ($old_dbname, $new_dbname, $table, $dbi1, $dbi2, $dbi_prev) = @_;
-  my $result = 0;
-  my $old_check = get_checksum($old_dbname, $table, $dbi_prev);
-  my $new_check = get_checksum($new_dbname, $table, $dbi1, $dbi2);
-  if (!$new_check) {
-    return 0;
-  }
-  if (!$old_check) {
-    return 1;
-  }
-  if ($old_check != $new_check) {
-    $result = 1;
-  }
-  return $result;
-}
-
-sub get_checksum {
-  my ($dbname, $table, @dbhs) = @_;
-  my $result = 0;
-  foreach my $dbh (@dbhs) {
-    my $sth_status = $dbh->prepare("CHECKSUM table $dbname.$table");
-    $sth_status->execute();
-    my $sth_res = $sth_status->fetchrow_array();
-    if ($sth_res) {
-      $result = $sth_res;
-    }
-  }
-  return $result;
-}
-
 sub _check_declaration {
   my ($new_dbname, $new_release, $declaration) = @_;
-  $new_dbname =~ /[a-z]+_[a-z]+_([a-z]+)_\d+/;
+  $new_dbname =~ /[a-z0-9]+_[a-z0-9]+(?:_[a-z0-9]+)?_([a-z]+)_\d+/;
   my $db_type = $1;
   my $prod_dbi = get_production_DBAdaptor();
   my $sth = $prod_dbi->prepare("SELECT count(*)

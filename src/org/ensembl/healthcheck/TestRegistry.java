@@ -31,7 +31,7 @@ public interface TestRegistry {
 	/**
 	 * @param groupsToRun
 	 * @param type
-	 * @return
+	 * @return list of tests
 	 */
 	public List<SingleDatabaseTestCase> getAllSingle(List<String> groupsToRun,
 			DatabaseType type);

@@ -45,9 +45,7 @@ public class EGVariation extends GroupOfTests {
 	public EGVariation() {
 		addTest(
 			EGCommon.class,
-
-			AlleleFrequencies.class, 
-			//CompareVariationSchema.class,
+			AlleleFrequencies.class,
 			EGCompareVariationSchema.class,
 			EGVariationFeature.class,
 			EmptyVariationTables.class, 

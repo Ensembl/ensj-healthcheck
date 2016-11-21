@@ -133,9 +133,9 @@ public class FeatureCoords extends SingleDatabaseTestCase {
 	 * Subroutine to carry out a check on whether the start is after the end.
 	 * This is to allow EG to skip this check for circular molecules
 	 * 
+	 * @param dbre
 	 * @param tableName
-	 * @param con
-	 * @return
+	 * @return true if start is after end
 	 */
 	protected boolean checkStartEnd(DatabaseRegistryEntry dbre, String tableName) {
 		String sql = "SELECT COUNT(*) FROM " + tableName + " WHERE seq_region_start > seq_region_end";

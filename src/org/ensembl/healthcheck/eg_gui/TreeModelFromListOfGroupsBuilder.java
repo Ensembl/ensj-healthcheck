@@ -58,7 +58,7 @@ public class TreeModelFromListOfGroupsBuilder {
 	 * </code>
 	 * 
 	 * @param testGroupList
-	 * @return
+	 * @return instance of node
 	 */
 	public static MutableTreeNode GroupOfTestsToTreeModel(List<GroupOfTests> testGroupList) {
 
@@ -82,7 +82,7 @@ public class TreeModelFromListOfGroupsBuilder {
 	 * </p>
 	 * 
 	 * @param g
-	 * @return
+	 * @return instance of node
 	 * 
 	 */
 	public static MutableTreeNode GroupOfTestsToTreeModel(GroupOfTests g) {

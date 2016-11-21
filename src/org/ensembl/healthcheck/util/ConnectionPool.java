@@ -58,7 +58,6 @@ public final class ConnectionPool {
      *          The username to connect to the database with.
      * @param password
      *          The password for username.
-     * @throws ClassNotFoundException 
      * @throws SQLException 
      */
     public static Connection getConnection(String driverClassName, String databaseURL, String user, String password) throws SQLException {

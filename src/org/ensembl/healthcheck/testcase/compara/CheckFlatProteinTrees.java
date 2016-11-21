@@ -37,7 +37,7 @@ import org.ensembl.healthcheck.util.SqlTemplate;
  * node is the root, we have more than 1 and there is an internal tree structure
  * therefore this looks to be a very suspect tree. We also try to look for flat
  * trees where all members have the root as their parent and have more than
- * {@link #getMaxAllowedFlatMembers()} in this count.
+ * getMaxAllowedFlatMembers() in this count.
  * 
  * @author ayates
  * @author $Author$

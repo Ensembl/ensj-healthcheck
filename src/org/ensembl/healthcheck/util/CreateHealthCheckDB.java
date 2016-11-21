@@ -113,7 +113,7 @@ public class CreateHealthCheckDB {
 	 * Checks, if a database exists with the name passed as an argument.
 	 * 
 	 * @param nameOfDatabase
-	 * @return
+	 * @return true if exists
 	 * 
 	 */
 	public boolean databaseExists(String nameOfDatabase) {

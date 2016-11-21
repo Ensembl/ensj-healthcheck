@@ -221,7 +221,7 @@ public abstract class AbstractControlledTable extends AbstractControlledRows {
 	 * @param controlledTableToTest
 	 * @param testDbre
 	 * @param masterDbRe
-	 * @return
+	 * @return true if rows exist
 	 */
 	protected boolean checkAllRowsInTable(
 			final String controlledTableToTest,
@@ -240,7 +240,7 @@ public abstract class AbstractControlledTable extends AbstractControlledRows {
 	 * @param masterTable
 	 * @param testDbre
 	 * @param masterDbRe
-	 * @return
+	 * @return true if rows exist
 	 */
 	protected boolean checkAllRowsInTable(
 			final String controlledTableToTest,
@@ -313,7 +313,7 @@ public abstract class AbstractControlledTable extends AbstractControlledRows {
 	 * Returns the names of all tables in the database.
 	 * 
 	 * @param conn
-	 * @return
+	 * @return names of tables
 	 * @throws SQLException
 	 */
 	protected List<String> getTablesOfDb(Connection conn) throws SQLException {

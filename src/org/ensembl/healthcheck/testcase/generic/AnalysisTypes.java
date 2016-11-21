@@ -70,7 +70,7 @@ public class AnalysisTypes extends SingleDatabaseTestCase {
 	/** 
 	 * Run the test.
 	 * 
-	 * @param dbr
+	 * @param dbre
 	 *          The database registry containing all the specified databases.
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {

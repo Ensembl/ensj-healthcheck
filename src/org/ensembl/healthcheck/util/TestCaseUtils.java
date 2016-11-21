@@ -79,7 +79,7 @@ public class TestCaseUtils {
 	/**
 	 * @param template
 	 * @param speciesId
-	 * @return
+	 * @return name
 	 */
 	public static String getBinomialName(SqlTemplate template, int speciesId) {
 		List<String> bin = template.queryForDefaultObjectList(

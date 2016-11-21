@@ -277,6 +277,8 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 				// No info will be available for this database.
 				//
 				return null;
+			} finally {
+				
 			}
 		}
 		return info;

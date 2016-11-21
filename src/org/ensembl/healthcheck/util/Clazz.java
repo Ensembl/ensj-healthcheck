@@ -82,7 +82,7 @@ public class Clazz {
 	 * 
 	 * @param <T>
 	 * @param listOfClassNames
-	 * @return
+	 * @return list of classes
 	 */
 	@SuppressWarnings("unchecked")
   public static <T> List<Class<T>> classloadListOfClasses(List<String> listOfClassNames) {

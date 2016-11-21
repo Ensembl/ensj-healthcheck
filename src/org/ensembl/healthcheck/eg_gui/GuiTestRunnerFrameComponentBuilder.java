@@ -148,7 +148,7 @@ public class GuiTestRunnerFrameComponentBuilder {
 	 * </p>
 	 * 
 	 * @param label
-	 * @return
+	 * @return menu item for label/action
 	 * 
 	 */
 	public static JMenuItem makeMenuItem(String label, ActionListener a, String actionCommand) {
@@ -243,7 +243,7 @@ public class GuiTestRunnerFrameComponentBuilder {
      * </p>
      * 
      * @param testInstantiator
-     * @return
+     * @return area for list
      * 
      */
     public static JList createListOfTestsToBeRunArea(
@@ -315,8 +315,8 @@ public class GuiTestRunnerFrameComponentBuilder {
 	 * run.
 	 * </p>
 	 * 
-	 * @param listOfTestsToBeRun
-	 * @return
+	 * @param buttonActionListener
+	 * @return button
 	 * 
 	 */
     public static JButton createRemoveSelectedTestsButton(ActionListener buttonActionListener) {
@@ -340,8 +340,8 @@ public class GuiTestRunnerFrameComponentBuilder {
 	 * run.
 	 * </p>
 	 * 
-	 * @param listOfTestsToBeRun
-	 * @return
+	 * @param buttonActionListener
+	 * @return button
 	 * 
 	 */
     public static JButton createRunAllTestsButton(ActionListener buttonActionListener) {
@@ -378,7 +378,7 @@ public class GuiTestRunnerFrameComponentBuilder {
      * Dummy ActionListener that only prints command names to STDOUT.
      * </p>
      * 
-     * @return
+     * @return listener instance
      * 
      */
     public static ActionListener createDummyActionListener() {

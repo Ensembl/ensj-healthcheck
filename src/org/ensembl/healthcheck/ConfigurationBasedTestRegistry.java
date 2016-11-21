@@ -98,7 +98,7 @@ public class ConfigurationBasedTestRegistry implements TestRegistry {
 	private List<OrderedDatabaseTestCase> orderedDatabaseTestCaseList;
 
 	/**
-	 * @param A ConfigurationUserParameters object
+	 * @param params ConfigurationUserParameters object
 	 *  
 	 */
 	public ConfigurationBasedTestRegistry(ConfigureTestGroups params) 

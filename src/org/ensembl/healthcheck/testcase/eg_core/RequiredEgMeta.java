@@ -38,7 +38,7 @@ import org.ensembl.healthcheck.util.TestCaseUtils;
 public class RequiredEgMeta extends AbstractEgMeta {
 
 	/**
-	 * @param metaKeys
+	 * Default constructor
 	 */
 	public RequiredEgMeta() {
 		super(

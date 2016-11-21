@@ -61,7 +61,7 @@ public interface MapRowMapper<K, T> extends RowMapper<T> {
 	K getKey(ResultSet resultSet) throws SQLException;
 
 	/**
-	 * Called when {@link #getKey(ROResultSet)} returns a hit
+	 * Called when {@link #getKey(ResultSet)} returns a hit
 	 *
 	 * @param currentValue
 	 *            The current value as extracted from the backing map

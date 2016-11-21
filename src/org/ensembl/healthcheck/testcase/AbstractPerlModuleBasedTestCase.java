@@ -62,11 +62,7 @@ public abstract class AbstractPerlModuleBasedTestCase extends AbstractPerlBasedT
 	}
 	
 	/**
-	 * 
-	 * Returns the name of the perl module with the healthcheck test.
-	 * 
-	 * @return
-	 * 
+	 * @return name of perl module used in this test
 	 */
 	protected abstract String getModule();
 
@@ -98,13 +94,8 @@ public abstract class AbstractPerlModuleBasedTestCase extends AbstractPerlBasedT
 		
 	}
 	
-	/**
-	 * <p>
-	 * 	Creates a formatter for log messages originating in a perl based 
-	 * healthcheck.
-	 * </p>
-	 * 
-	 * @return
+	/** 
+	 * @return formatter for log messages originating in a perl based healthcheck.
 	 */
 	protected Formatter createPerlLogMessageFormatter() {
 		

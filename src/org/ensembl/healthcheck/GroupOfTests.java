@@ -212,7 +212,6 @@ public class GroupOfTests {
 	 * </p>
 	 * 
 	 * @param testCasesOrGroupsOfTests
-	 * @throws ClassNotFoundException
 	 * 
 	 */
 	public void addTest(Class... testCasesOrGroupsOfTests) {
@@ -278,8 +277,7 @@ public class GroupOfTests {
 	 * 	Returns instance of all the tests in this group. Tests are instantiated
 	 * on the fly.
 	 * </p> 
-	 * 
-	 * @return
+	 * @return set of tests in group
 	 */
 	public Set<EnsTestCase> getTests() {
 		Set<EnsTestCase> tests = new HashSet<EnsTestCase>();

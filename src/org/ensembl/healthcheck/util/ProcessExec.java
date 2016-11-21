@@ -107,8 +107,8 @@ public class ProcessExec {
 	 * @param command
 	 * @param out
 	 * @param err
-	 * @return
-	 * @throws Exception
+	 * @return exit code
+	 * @throws IOException
 	 */
 	public static int exec(String command, Appendable out, Appendable err)
 			throws IOException {
@@ -127,8 +127,8 @@ public class ProcessExec {
 	 * @param commandarray
 	 * @param out
 	 * @param err
-	 * @return
-	 * @throws Exception
+	 * @return exit code
+	 * @throws IOException
 	 */
 	public static int exec(String[] commandarray, Appendable out, Appendable err)
 			throws IOException {
@@ -139,8 +139,8 @@ public class ProcessExec {
 	 * Execute the command, discarding output and error
 	 *
 	 * @param command
-	 * @return
-	 * @throws Exception
+	 * @return exit code
+	 * @throws IOException
 	 */
 	public static int exec(String command) throws IOException {
 		return exec(command, null, null, true);
@@ -150,8 +150,8 @@ public class ProcessExec {
 	 * Execute the command, discarding output and error
 	 *
 	 * @param commandarray
-	 * @return
-	 * @throws Exception
+	 * @return exit code
+	 * @throws IOException
 	 */
 	public static int exec(String[] commandarray) throws IOException {
 		return exec(commandarray, null, null, true);
@@ -237,7 +237,7 @@ public class ProcessExec {
 	 * wants.
 	 * </p>
 	 * 
-	 * @return
+	 * @return k-v array
 	 */
 	protected static String[] environmentMapToString(Map<String,String> environmentVars) {
 		
@@ -274,8 +274,8 @@ public class ProcessExec {
 	 * Execute the specified shell command, capturing output and error
 	 *
 	 * @param command
-	 * @return
-	 * @throws Exception
+	 * @return exit code
+	 * @throws IOException
 	 */
 	public static int execShell(
 			String command, 
@@ -290,8 +290,8 @@ public class ProcessExec {
 	 * Execute the specified shell command, discarding output and error
 	 *
 	 * @param command
-	 * @return
-	 * @throws Exception
+	 * @return exit code
+	 * @throws IOException
 	 */
 	public static int execShell(String command) throws IOException {
 		return execShell(command, (Appendable) null, (Appendable) null, true);
@@ -414,7 +414,7 @@ public class ProcessExec {
 	 * {@link #exec(String, Appendable, Appendable)} to avoid hangups
 	 *
 	 * @param command
-	 * @return
+	 * @return exit code
 	 * @throws IOException
 	 */
 	public static int execDirect(String command) throws IOException {
@@ -429,7 +429,7 @@ public class ProcessExec {
 	 * @param command
 	 * @param out
 	 * @param err
-	 * @return
+	 * @return exit code
 	 * @throws IOException
 	 */
 	public static int execDirect(String command, Appendable out,

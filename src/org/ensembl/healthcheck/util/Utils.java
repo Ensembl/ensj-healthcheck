@@ -109,9 +109,6 @@ public final class Utils {
 
 	/**
 	 * Build database URLs from system properties.
-	 * 
-	 * @param propertiesFileName
-	 *          The properties file to read.
 	 */
 	public static void buildDatabaseURLs() {
 

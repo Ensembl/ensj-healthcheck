@@ -1,6 +1,5 @@
 /*
- * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016] EMBL-European Bioinformatics Institute
+ * Copyright [1999-2016] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,21 +14,23 @@
  * limitations under the License.
  */
 
+package org.ensembl.healthcheck.testgroup;
 
-package org.ensembl.healthcheck.testcase.compara;
-
-import org.ensembl.healthcheck.Team;
+import org.ensembl.healthcheck.testcase.variation.EmptyVariationTables;
+import org.ensembl.healthcheck.testcase.variation.VFCoordinates;
 
 /**
- * Check that all table collations in a particular database are as
- * specified in getTargetCollation().
+ * @author dstaines
+ *
  */
+public class EGVariationHandover extends EGVariation {
 
-public class SingleDBCollations extends org.ensembl.healthcheck.testcase.generic.SingleDBCollations {
-
-	@Override
-	protected void setResponsibilities() {
-		setTeamResponsible(Team.COMPARA);
+	/**
+	 * 
+	 */
+	public EGVariationHandover() {
+		super();
+		this.removeTest(EmptyVariationTables.class, VFCoordinates.class);
 	}
 
-} // SingleDBCollations
+}

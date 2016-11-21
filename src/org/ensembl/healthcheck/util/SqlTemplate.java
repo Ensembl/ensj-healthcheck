@@ -91,9 +91,6 @@ public interface SqlTemplate {
 	 *            The args used to execute this statement. Used for error
 	 *            reporting
 	 * @return A list of objects which were created by the mapper
-	 * @throws SqlServiceUncheckedException
-	 *             Thrown if SQLExceptions were raised during the mapping
-	 *             process or row limit was exceeded
 	 */
 	<T> List<T> mapResultSetToList(ResultSet resultSet, RowMapper<T> mapper,
 			final int rowLimit, String sql, Object[] args);
@@ -122,8 +119,6 @@ public interface SqlTemplate {
    *            The args used to execute this statement. Used for error
    *            reporting
    * @return A {@link LinkedHashSet} of objects which were created by the mapper
-   * @throws SqlServiceUncheckedException
-   *             Thrown if SQLExceptions were raised during the mapping
    *             process or row limit was exceeded
    */
   <T> Set<T> mapResultSetToSet(ResultSet resultSet, RowMapper<T> mapper,
@@ -138,7 +133,7 @@ public interface SqlTemplate {
 			RowMapper<T> mapper, String sql, Object[] args);
 
 	/**
-	 * Used to call both the {@link #executeSql(String, Object[])} and then call
+	 * Used to call both the {@link #execute(String)} and then call
 	 * out to
 	 * {@link #mapResultSetToSingleObject(ResultSet, RowMapper, String, Object[])}.
 	 * This also means that this method will deal with resource handling
@@ -157,9 +152,7 @@ public interface SqlTemplate {
 	<T> T queryForObject(String sql, RowMapper<T> mapper, Object... args);
 
 	/**
-	 * Runs {@link #executeSql(String, Object[])} and then call out to
-	 * {@link #mapResultSetToList(ResultSet, RowMapper, int, String, Object[])}
-	 * for processing into a list.
+	 * Executes SQL and processes into a List
 	 *
 	 * @param <T>
 	 *            The expected return type
@@ -174,9 +167,7 @@ public interface SqlTemplate {
 	<T> List<T> queryForList(String sql, RowMapper<T> mapper, Object... args);
 	
   /**
-   * Runs {@link #executeSql(String, Object[])} and then call out to
-   * {@link #mapResultSetToSet(ResultSet, RowMapper, int, String, Object[])}
-   * for processing into a Set.
+   * Executes SQL and processes into a Set.
    *
    * @param <T>
    *            The expected return type
@@ -207,10 +198,6 @@ public interface SqlTemplate {
 	 * be querying for an Integer object and that this will be autoboxed to an
 	 * int. Since the method relies heavily on generics this will deal with the
 	 * problems of casting & conversion of result to specified data type.
-	 *
-	 * @throws SqlServiceUncheckedException
-	 *             Thrown if the given query brings back less than or more than
-	 *             1 result.
 	 */
 	<T> T queryForDefaultObject(String sql, Class<T> expected, Object... args);
 
@@ -250,7 +237,7 @@ public interface SqlTemplate {
 	
 	/**
 	 * Provides very similar functionality to
-	 * {@link #queryForList(String, uk.ac.ebi.proteome.util.sql.RowMapper, Object[])}
+	 * {@link #queryForList(String, RowMapper, Object...)}
 	 * however this assumes that there is a difference in the expected mapping
 	 * from results to domain object. You use {@link MapRowMapper} objects to
 	 * help this method to decode from the ResultSet into a Map. The procedure
@@ -288,8 +275,6 @@ public interface SqlTemplate {
 	 * @param args
 	 *            Arguments to send to the target server
 	 * @return A map which should be of the given above type
-	 * @throws SqlServiceUncheckedException
-	 *             Thrown in the event of problems with the mappings
 	 */
 	<K, T> Map<K, T> queryForMap(String sql, MapRowMapper<K, T> mapRowMapper,
 			Object... args);

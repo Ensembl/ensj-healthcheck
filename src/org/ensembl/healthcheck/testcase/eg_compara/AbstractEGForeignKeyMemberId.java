@@ -26,7 +26,7 @@ import org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase;
 
 /**
  * Base class used for the member relationships code. This default version
- * checks the {@link #getTargetTable()} table that all of its members have an
+ * checks the {@link AbstractEGForeignKeyMemberId#getTargetTable()} table that all of its members have an
  * entry in the member table.
  * 
  * @author ayates

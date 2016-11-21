@@ -43,7 +43,7 @@ public class GuiTestRunnerFrameUtils {
 	 * </p>
 	 * 
 	 * @param iniFile
-	 * @return
+	 * @return config object
 	 */
 	protected static ConfigureHost getHostConfiguration(File iniFile) {
 
@@ -68,9 +68,8 @@ public class GuiTestRunnerFrameUtils {
 	 * List<ConfigureHost>.
 	 * </p>
 	 * 
-	 * @param dirWithDbServerConfigs
-	 * @return
-	 * @throws IOException 
+	 * @param dirsWithDbServerConfigs
+	 * @return list of configuration objects
 	 */
 	public static List<ConfigureHost> createDbDetailsConfigurations(String... dirsWithDbServerConfigs) {
 		
@@ -113,7 +112,7 @@ public class GuiTestRunnerFrameUtils {
 	 * </p>
 	 * 
 	 * @param dbDetails
-	 * @return
+	 * @return true if connection succeeds
 	 */
 	protected static boolean canConnectToDbServer(ConfigureHost dbDetails) {
 		
@@ -141,7 +140,7 @@ public class GuiTestRunnerFrameUtils {
 	 * </p>
 	 * 
 	 * @param dbDetails
-	 * @return
+	 * @return configuration objects
 	 */
 	public static List<ConfigureHost> grepForAvailableServers(List<ConfigureHost> dbDetails) {
 		

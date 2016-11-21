@@ -1784,25 +1784,12 @@ public abstract class EnsTestCase {
 	public boolean checkDatabaseExistsByType(DatabaseRegistryEntry dbre,
 			DatabaseType dbType) {
 
-		List<String> regexps = new ArrayList<String>();
-		regexps.add(".*");
-
-		DatabaseRegistry allDBR = new DatabaseRegistry(regexps, null, null,
-				false);
-
-		for (DatabaseRegistryEntry eachDBRE : allDBR.getAll(dbType)) {
-			if (dbre.getSpecies().equals(Species.UNKNOWN)
-					&& dbre.getAlias().equals(eachDBRE.getAlias())) {
-				// EG where we don't know the species, use type and alias
-				// matching instead
-				return true;
-			} else {
-				if (dbre.getSpecies().equals(eachDBRE.getSpecies())) {
-					return true;
-				}
-			}
-		}
-		return false;
+		// figure out the corresponding database
+		String targetName = dbre.getName().replace(dbre.getType().getName(), dbType.getName());
+		
+		// work out if we have one
+		return DBUtils.getSqlTemplate(dbre).queryForDefaultObject("select count(*) from information_schema.tables where table_schema=?", Integer.class, targetName) > 0;
+	
 	}
 
 	// ----------------------------------------------------------------------
@@ -2241,7 +2228,7 @@ public abstract class EnsTestCase {
 	 *            The string to look for (not a pattern).
 	 * @return The number of columns that <em>DO NOT</em> match value.
 	 * @deprecated use
-	 *             {@link DBUtils#checkColumnValue(Connection, String, String, String)
+	 *             {@link DBUtils#checkColumnValue(Connection, String, String, String)}
 
 	 */
 	@Deprecated

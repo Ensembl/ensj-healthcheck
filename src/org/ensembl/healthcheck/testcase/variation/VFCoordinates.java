@@ -53,8 +53,8 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 	/**
 	 * Run the test.
 	 * 
-	 * @param databases
-	 *          The databases to check, in order core->variation
+	 * @param dbr
+	 *          Registry containing the databases to check, in order core->variation
 	 * @return true if same transcripts and seq_regions in core and variation are the same.
 	 * 
 	 */

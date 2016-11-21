@@ -55,7 +55,6 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 	 *          The regular expressions matching the databases to use. If null, match everything.
 	 * @param isSecondary
 	 *          If true, this is a secondary database registry.
-	 * @throws SQLException 
 	 */
 	public DatabaseRegistry(List<String> regexps, DatabaseType globalType, Species globalSpecies, boolean isSecondary) {
 

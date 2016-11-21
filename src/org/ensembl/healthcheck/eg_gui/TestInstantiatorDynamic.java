@@ -64,7 +64,7 @@ public class TestInstantiatorDynamic extends TestInstantiator {
 	 * </p>
 	 * 
 	 * @param name
-	 * @return
+	 * @return true if group is dynamic
 	 */
 	public boolean isDynamic(String name) {
 		
