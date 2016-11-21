@@ -74,8 +74,8 @@ public class ComparePreviousVersionArrayXrefs extends ComparePreviousVersionBase
 		//Get array_ids for all DISPLAYABLE
 		//Also need to compare DISPLAYABLE arrays HC?
 
-		String sql = "select a.array_id, a.vendor, a.name from array a, status s, status_name sn where sn.name='DISPLAYABLE'" +
-			" and sn.status_name_id=s.status_name_id and s.table_name='array' and s.table_id=a.array_id group by a.array_id";
+		String sql = "select a.array_id, a.vendor, a.name from array a " +
+			" group by a.array_id";
 
 		
 		//Count object_xref records for each array
