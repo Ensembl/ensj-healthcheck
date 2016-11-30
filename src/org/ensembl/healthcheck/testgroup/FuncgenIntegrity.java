@@ -8,7 +8,8 @@ public class FuncgenIntegrity extends GroupOfTests {
 
       addTest(
         org.ensembl.healthcheck.testcase.funcgen.InconsistentExperimentIds.class,
-        org.ensembl.healthcheck.testcase.funcgen.RedundantAnnotatedFeatureSets.class
+        org.ensembl.healthcheck.testcase.funcgen.RedundantAnnotatedFeatureSets.class,
+        org.ensembl.healthcheck.testcase.funcgen.BrokenFeatureSetToFeatureTypeLinks.class
       );
   }
 }
