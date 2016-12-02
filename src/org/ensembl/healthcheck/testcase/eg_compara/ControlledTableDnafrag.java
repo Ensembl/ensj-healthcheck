@@ -93,7 +93,7 @@ public class ControlledTableDnafrag extends AbstractControlledRows {
 		final SqlTemplate sqlTemplateTestDb        = getSqlTemplate(testDbConn);  
 
 		int genomeDbId = sqlTemplateTestDb.queryForDefaultObject(
-				"select genome_db_id from genome_db where name='" + speciesName + "'",
+				"select genome_db_id from genome_db where name='" + speciesName + "' AND genome_component IS NULL",
 				Integer.class
 			);
 		
