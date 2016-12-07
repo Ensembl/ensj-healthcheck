@@ -14,7 +14,11 @@ public class FuncgenPostProbemapping extends GroupOfTests {
         org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionProbeFeatures.class,
 //        org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionProbeFeaturesByArray.class,
         org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionTranscriptProbeFeaturesByArray.class,
-        org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionGenomicProbeFeaturesByArray.class
+        org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionGenomicProbeFeaturesByArray.class,
+        org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionGenomicProbeFeaturesByArray.class,
+        org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionGenomicProbeFeaturesByArrayWithProbeSets.class,
+        org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionTranscriptProbeFeaturesByArray.class,
+        org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionTranscriptProbeFeaturesByArrayWithProbeSets.class
       );
   }
 }

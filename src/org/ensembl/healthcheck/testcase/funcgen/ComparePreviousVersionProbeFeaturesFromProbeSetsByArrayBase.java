@@ -8,9 +8,9 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
 
-abstract public class ComparePreviousVersionProbeFeaturesByArrayBase extends ComparePreviousVersionBase{
+abstract public class ComparePreviousVersionProbeFeaturesFromProbeSetsByArrayBase extends ComparePreviousVersionBase{
   
-    public ComparePreviousVersionProbeFeaturesByArrayBase() {
+    public ComparePreviousVersionProbeFeaturesFromProbeSetsByArrayBase() {
         setTeamResponsible(Team.FUNCGEN);
     }
 
@@ -20,6 +20,7 @@ abstract public class ComparePreviousVersionProbeFeaturesByArrayBase extends Com
       Map<String, Integer> rawProbeFeaturePerArrayCounts  = getRawProbeFeaturePerArrayCounts(dbre);
       
       // Normalise the counts for arrays with probe sets
+      // Arrays that don't have probe sets will be skipped.
       Map<String, Integer> normalisedResult = new HashMap<String, Integer>();
       Iterator<String> iterator = rawProbeFeaturePerArrayCounts.keySet().iterator();
       
@@ -29,10 +30,9 @@ abstract public class ComparePreviousVersionProbeFeaturesByArrayBase extends Com
         
         if (arrayNameToAverageProbeSetSize.containsKey(currentArray)) {
           normalisedProbeFeatureCount = rawProbeFeaturePerArrayCounts.get(currentArray) / arrayNameToAverageProbeSetSize.get(currentArray);
-        } else {
-          normalisedProbeFeatureCount = rawProbeFeaturePerArrayCounts.get(currentArray);
+          normalisedResult.put(currentArray, normalisedProbeFeatureCount);
         }
-        normalisedResult.put(currentArray, normalisedProbeFeatureCount);
+        
       }
       return normalisedResult;
     }
