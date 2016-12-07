@@ -12,7 +12,9 @@ public class FuncgenPostProbemapping extends GroupOfTests {
         // Whoa, this is slow
 //        org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionArrayXrefs.class,
         org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionProbeFeatures.class,
-        org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionProbeFeaturesByArray.class
+//        org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionProbeFeaturesByArray.class,
+        org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionTranscriptProbeFeaturesByArray.class,
+        org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionGenomicProbeFeaturesByArray.class
       );
   }
 }
