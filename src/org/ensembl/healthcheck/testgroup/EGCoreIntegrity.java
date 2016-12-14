@@ -15,6 +15,7 @@ import org.ensembl.healthcheck.testcase.eg_core.GeneDescriptionUniProtSource;
 import org.ensembl.healthcheck.testcase.eg_core.GeneGC;
 import org.ensembl.healthcheck.testcase.eg_core.IgiXref;
 import org.ensembl.healthcheck.testcase.eg_core.InappropriateTranslation;
+import org.ensembl.healthcheck.testcase.eg_core.IncorrectExonRank;
 import org.ensembl.healthcheck.testcase.eg_core.MetaForCompara;
 import org.ensembl.healthcheck.testcase.eg_core.PeptideTranslationAttribs;
 import org.ensembl.healthcheck.testcase.eg_core.PermittedEgMeta;
@@ -121,7 +122,8 @@ public class EGCoreIntegrity extends GroupOfTests {
 				SeqRegionAttribForPolyploidGenomeToplevelOnly.class,
 				SeqRegionLength.class, SchemaPatchesApplied.class, 
 				EvidenceFreeGO.class, VersionedGenes.class,
-				VersionedTranscripts.class, VersionedTranslations.class);
+				VersionedTranscripts.class, VersionedTranslations.class,
+				IncorrectExonRank.class);
 	}
 
 }
