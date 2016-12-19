@@ -20,7 +20,9 @@ home=`dirname $0`
 
 
 . $home/setup.sh
-jar
+if [ -z "$NO_JAR" ]; then
+    jar
+fi
 classpath
 
 if [ -z "$JAVA_OPTS" ]; then

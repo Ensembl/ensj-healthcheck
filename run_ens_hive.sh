@@ -33,6 +33,11 @@ cwd=$(pwd)
 export PATH=$HOME/src/ensembl/ensembl-hive/scripts:$HOME/ensj-healthcheck:$PATH
 export PERL5LIB=$cwd/perl:$HOME/src/ensembl/ensembl/modules:$HOME/src/ensembl/ensembl-hive/modules:$PERL5LIB
 
+#Regenerating the hc jar
+. $HOME/work/ensj-healthcheck/setup.sh
+jar
+export NO_JAR=1
+
 # Get parameters for HC database.
 HCDB=$(sed -n 's/^ *output.database *= *\([^ ]*.*\)/\1/p' < $properties)
 HCDB_HOST=$(sed -n 's/^ *output.host *= *\([^ ]*.*\)/\1/p' < $properties)
