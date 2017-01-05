@@ -34,6 +34,7 @@ my (
   $host1,     $port1,     $user1,  $pass1,       $host2,
   $port2,     $user2,     $pass2,  $host_prev,   $port_prev,
   $user_prev, $pass_prev, $dbname, $old_release, $new_release,
+  $user_hc, $pass_hc, $host_hc, $port_hc,
   $quiet,     $new_dbname
 );
 
@@ -50,6 +51,10 @@ GetOptions(
   'pass_prev=s'   => \$pass_prev,
   'host_prev=s'   => \$host_prev,
   'port_prev=i'   => \$port_prev,
+  'user_hc=s'   => \$user_hc,
+  'pass_hc=s'   => \$pass_hc,
+  'host_hc=s'   => \$host_hc,
+  'port_hc=i'   => \$port_hc,
   'dbname=s'      => \$dbname,
   'old_release=i' => \$old_release,
   'new_release=i' => \$new_release,
@@ -58,22 +63,12 @@ GetOptions(
   'help'          => sub { usage(); exit(0); }
 );
 
-$user1 = $user1 || "ensadmin";
-$pass1 = $pass1 || "ensembl";
-$host1 = $host1 || "ens-staging1";
-$port1 = $port1 || "3306";
+# If healthchecks database server information not provided assume it's on host1
+$user_hc = $user_hc || $user1;
+$pass_hc = $pass_hc || $pass1;
+$host_hc = $host_hc || $host1;
+$port_hc = $port_hc || $port1;
 
-$user2 = $user2 || "ensadmin";
-$pass2 = $pass2 || "ensembl";
-$host2 = $host2 || "ens-staging2";
-$port2 = $port2 || "3306";
-
-$user_prev = $user_prev || "ensadmin";
-$pass_prev = $pass_prev || "ensembl";
-$host_prev = $host_prev || "ens-livemirror";
-$port_prev = $port_prev || "3306";
-
-# Note healthchecks db ($dbname) is assumed to be on $host1
 $dbname = $dbname || "healthchecks";
 
 if ( !( $old_release && $new_release ) ) {
@@ -81,8 +76,8 @@ if ( !( $old_release && $new_release ) ) {
   exit(1);
 }
 
-# connect to healthcheck database - note assumed to be on host1
-my $dbi1 = DBI->connect( "DBI:mysql:host=$host1:port=$port1;database=$dbname",
+# connect to first database server
+my $dbi1 = DBI->connect( "DBI:mysql:host=$host1:port=$port1",
   $user1, $pass1, { 'RaiseError' => 1 } )
   || die "Can't connect to healthcheck database\n";
 
@@ -99,6 +94,11 @@ my $dbi_prev = DBI->connect( "DBI:mysql:host=$host_prev:port=$port_prev",
   $user_prev, $pass_prev, { 'RaiseError' => 1 } )
   || die "Can't connect to previous release database server\n";
 
+# connect to the server where the hc database is located
+my $dbi_hc = DBI->connect( "DBI:mysql:host=$host_hc:port=$port_hc;database=$dbname",
+  $user_hc, $pass_hc, { 'RaiseError' => 1 } )
+  || die "Can't connect to healthcheck database\n";
+
 # cache database name mappings
 my $old_to_new_db_name;
 my $session_id;
@@ -107,33 +107,33 @@ my $session_id;
 if ( !$new_dbname ) {
 
   $old_to_new_db_name =
-    create_db_name_cache( $dbi1, $dbi1, $old_release, $new_release );
+    create_db_name_cache( $dbi_hc, $dbi1, $old_release, $new_release );
 
   # add second database server list if required
   if ($host2) {
 
     my $second_server_dbs =
-      create_db_name_cache( $dbi1, $dbi2, $old_release, $new_release );
+      create_db_name_cache( $dbi_hc, $dbi2, $old_release, $new_release );
     $old_to_new_db_name = { %$old_to_new_db_name, %$second_server_dbs
     };    # note use of {} since we're dealing with references
 
   }
 
   # create a new session for new release or reuse an existing one
-  $session_id = session_id( $dbi1, $old_release, $new_release );
+  $session_id = session_id( $dbi_hc, $old_release, $new_release );
 
 }
 else {
 
   # we are propagating a single database
   $old_to_new_db_name =
-    create_db_name_cache( $dbi1, $dbi1, $old_release, $new_release,
+    create_db_name_cache( $dbi_hc, $dbi1, $old_release, $new_release,
     $new_dbname );
 
   # add second database server list if required
   if ($host2) {
     my $second_server_dbs =
-      create_db_name_cache( $dbi1, $dbi2, $old_release, $new_release,
+      create_db_name_cache( $dbi_hc, $dbi2, $old_release, $new_release,
       $new_dbname );
     $old_to_new_db_name = { %$old_to_new_db_name, %$second_server_dbs
     };    # note use of {} since we're dealing with references
@@ -141,7 +141,7 @@ else {
   }
 
   # we will use the latest session_id (if it has already been created)
-  $session_id = get_latest_session_id( $dbi1, $new_release );
+  $session_id = get_latest_session_id( $dbi_hc, $new_release );
   if ( $session_id < 0 ) {
 
     # the session_id is not correct, probably not run propagate before;
@@ -155,9 +155,9 @@ else {
 my $regulatory_build_cache = create_regulation_cache($dbi1, $dbi2, $dbi_prev);
 
 # propagate! propagate!
-propagate( $dbi1, $dbi_prev, $old_release, $new_release);
+propagate( $dbi_hc, $dbi_prev, $old_release, $new_release);
 
-#set_end_time( $dbi1 );
+#set_end_time( $dbi_hc );
 
 # --------------------------------------------------------------------------------
 
@@ -489,7 +489,7 @@ sub record_propagation {
   my %allowed = map { $_ => 1 } ('manual_ok_all_releases','manual_ok_this_assembly','manual_ok_this_genebuild','manual_ok_this_regulatory_build','none');
   die "Do not understand the action $action " unless $allowed{$action};
   $amount ||= 0;
-  my $sth = $dbi1->prepare('insert into propagated (database_name, action, session_id, amount) values (?,?,?,?)');
+  my $sth = $dbi_hc->prepare('insert into propagated (database_name, action, session_id, amount) values (?,?,?,?)');
   $sth->execute($dbname, $action, $session_id, $amount); #session_id is a global
   $sth->finish();
   return;
@@ -507,7 +507,7 @@ sub has_been_propagated {
     $sql .= ' and action =?';
     push(@params, $action);
   }
-  my $sth = $dbi1->prepare($sql);
+  my $sth = $dbi_hc->prepare($sql);
   $sth->execute(@params);
   my ($count) = $sth->fetchrow_array();
   $sth->finish();
