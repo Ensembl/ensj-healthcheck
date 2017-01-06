@@ -39,6 +39,7 @@ sub default_options {
     return {
         %{$self->SUPER::default_options},
         'hc_conn'=>undef,
+        'prod_conn'=> undef,
         'hc_cmd'=>undef,
         'division'=>undef
     }
@@ -66,7 +67,8 @@ sub pipeline_analyses {
             -module     => 'Bio::EnsEMBL::Healthcheck::Pipeline::DatabaseJobFactory',
             -input_ids => [
                  {
-                     'hc_conn'    => $self->o('hc_conn'),                        
+                     'hc_conn'    => $self->o('hc_conn'),
+                     'prod_conn'   => $self->o('prod_conn'),
                      'division'    => $self->o('division')                        
                  }
                 ],

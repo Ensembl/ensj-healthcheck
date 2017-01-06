@@ -10,6 +10,7 @@ sub run {
     my $self = shift @_;
     # start a new session
     my $hc_dbc = go_figure_dbc($self->param('hc_conn'));
+    my $prod_dbc = go_figure_dbc($self->param('prod_conn'));
     my @exclude_dbs = split(" ", $self->param('exclude_dbs'));
     my $host = $self->param('host');
     my $group = $self->param('group');
@@ -40,7 +41,7 @@ join ensembl_production.db using (species_id)
 where division.shortname=? and db.is_current=1/,
         q/select db_name from ensembl_production.division join ensembl_production.division_db using (division_id) where shortname=? and is_current=1/
         ) {
-        for my $db (grep {$_ !~ m/_mart_/} @{$hc_dbc->sql_helper()->execute_simple(-SQL=>$sql,-PARAMS=>[$self->param('division')])}) {
+        for my $db (grep {$_ !~ m/_mart_/} @{$prod_dbc->sql_helper()->execute_simple(-SQL=>$sql,-PARAMS=>[$self->param('division')])}) {
             my $skip = 0;
             foreach my $exclude_db (@exclude_dbs) {
               if ($db =~ /$exclude_db/) {

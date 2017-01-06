@@ -47,6 +47,15 @@ HCDB_PASS=$(sed -n 's/^ *output.password *= *\([^ ]*.*\)/\1/p' < $properties)
 hc_url=mysql://$HCDB_USER:$HCDB_PASS@$HCDB_HOST:$HCDB_PORT/$HCDB
 msg "Will use HC db $hc_url"
 
+# Get parameters for the production database.
+PRODDB=$(sed -n 's/^ *production.database *= *\([^ ]*.*\)/\1/p' < $properties)
+PRODDB_HOST=$(sed -n 's/^ *production.host *= *\([^ ]*.*\)/\1/p' < $properties)
+PRODDB_PORT=$(sed -n 's/^ *production.port *= *\([^ ]*.*\)/\1/p' < $properties)
+PRODDB_USER=$(sed -n 's/^ *production.user *= *\([^ ]*.*\)/\1/p' < $properties)
+PRODDB_PASS=$(sed -n 's/^ *production.password *= *\([^ ]*.*\)/\1/p' < $properties)
+production_url=mysql://$PRODDB_USER:$PRODDB_PASS@$PRODDB_HOST:$PRODDB_PORT/$PRODDB
+msg "Will use Production db $production_url"
+
 # Get options for HC run
 group=$(sed -n 's/^ *groups *= *\([^ ]*.*\)/\1/p' < $properties)
 exclude_dbs=$(sed -n 's/^ *exclude_dbs *= *\([^ ]*.*\)/\1/p' < $properties)
@@ -87,7 +96,7 @@ msg "Starting healthcheck run for ${div}"
 # do hive stuff
 pipeline_db="run_${HCDB}"
 msg "Creating hive ${USER}_$pipeline_db"
-init_pipeline.pl Bio::EnsEMBL::Healthcheck::Pipeline::RunHealthchecks_ens_conf -hc_conn $hc_url -pipeline_db -user=$hive_user -pipeline_db -pass=$hive_pass -pipeline_db -host=$hive_host -pipeline_db -port=$hive_port -hive_force_init 1 -division $div -hc_cmd "./run_ens_hc_hive.sh #division# #dbname# #session_id# #properties# #group# #hcdb#" -pipeline_name $pipeline_db -properties $properties -group "$group" -exclude_dbs "$exclude_dbs" -host "$hosts" -hcdb "$HCDB" -release "$release"
+init_pipeline.pl Bio::EnsEMBL::Healthcheck::Pipeline::RunHealthchecks_ens_conf -hc_conn -prod_conn $production_url $hc_url -pipeline_db -user=$hive_user -pipeline_db -pass=$hive_pass -pipeline_db -host=$hive_host -pipeline_db -port=$hive_port -hive_force_init 1 -division $div -hc_cmd "./run_ens_hc_hive.sh #division# #dbname# #session_id# #properties# #group# #hcdb#" -pipeline_name $pipeline_db -properties $properties -group "$group" -exclude_dbs "$exclude_dbs" -host "$hosts" -hcdb "$HCDB" -release "$release"
 msg "Running beekeeper"
 hive_url=mysql://$hive_user:$hive_pass@$hive_host:$hive_port/${USER}_${pipeline_db}
 beekeeper.pl -url $hive_url -loop >& $LOG_FILE.hive
