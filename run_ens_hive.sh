@@ -96,7 +96,7 @@ msg "Starting healthcheck run for ${div}"
 # do hive stuff
 pipeline_db="run_${HCDB}"
 msg "Creating hive ${USER}_$pipeline_db"
-init_pipeline.pl Bio::EnsEMBL::Healthcheck::Pipeline::RunHealthchecks_ens_conf -hc_conn -prod_conn $production_url $hc_url -pipeline_db -user=$hive_user -pipeline_db -pass=$hive_pass -pipeline_db -host=$hive_host -pipeline_db -port=$hive_port -hive_force_init 1 -division $div -hc_cmd "./run_ens_hc_hive.sh #division# #dbname# #session_id# #properties# #group# #hcdb#" -pipeline_name $pipeline_db -properties $properties -group "$group" -exclude_dbs "$exclude_dbs" -host "$hosts" -hcdb "$HCDB" -release "$release"
+init_pipeline.pl Bio::EnsEMBL::Healthcheck::Pipeline::RunHealthchecks_ens_conf -hc_conn $hc_url -prod_conn $production_url -pipeline_db -user=$hive_user -pipeline_db -pass=$hive_pass -pipeline_db -host=$hive_host -pipeline_db -port=$hive_port -hive_force_init 1 -division $div -hc_cmd "./run_ens_hc_hive.sh #division# #dbname# #session_id# #properties# #group# #hcdb#" -pipeline_name $pipeline_db -properties $properties -group "$group" -exclude_dbs "$exclude_dbs" -host "$hosts" -hcdb "$HCDB" -release "$release"
 msg "Running beekeeper"
 hive_url=mysql://$hive_user:$hive_pass@$hive_host:$hive_port/${USER}_${pipeline_db}
 beekeeper.pl -url $hive_url -loop >& $LOG_FILE.hive
