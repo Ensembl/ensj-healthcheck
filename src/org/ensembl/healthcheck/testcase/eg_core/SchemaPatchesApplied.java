@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseServer;
 import org.ensembl.healthcheck.ReportManager;
@@ -57,7 +58,7 @@ public class SchemaPatchesApplied extends SingleDatabaseTestCase {
 	
 		String passwordOption = "";
 		
-		if (!srv.getPass().isEmpty()) {
+		if (StringUtils.isEmpty(srv.getPass())) {
 			passwordOption = "--pass=" + srv.getPass();
 		}
 		
