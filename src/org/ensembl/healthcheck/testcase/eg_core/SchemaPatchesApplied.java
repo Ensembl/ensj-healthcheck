@@ -58,7 +58,7 @@ public class SchemaPatchesApplied extends SingleDatabaseTestCase {
 	
 		String passwordOption = "";
 		
-		if (StringUtils.isEmpty(srv.getPass())) {
+		if (!StringUtils.isEmpty(srv.getPass())) {
 			passwordOption = "--pass=" + srv.getPass();
 		}
 		
