@@ -55,7 +55,7 @@ LOCK_EXISTS=$($MYSQL_CMD --column-names=false -e "select count(*) from informati
 if [ "$LOCK_EXISTS" == "1" ]; then
   LOCK_DETAILS=$($MYSQL_CMD --skip-column-names -e 'SELECT user, hostname from hc_lock;')
   echo "Execution of healthchecks failed - database locked by " $LOCK_DETAILS 1>&2;
-  exit
+  exit 1
 else
     msg "No lock found"    
   # Generate lock table.
