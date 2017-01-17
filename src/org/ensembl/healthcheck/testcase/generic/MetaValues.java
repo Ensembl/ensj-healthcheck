@@ -558,7 +558,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		String[] allowedMethods = { "full_genebuild", "projection_build", "import", "mixed_strategy_build" };
+		String[] allowedMethods = { "full_genebuild", "projection_build", "import", "mixed_strategy_build", "external_annotation_import" };
 
 		Connection con = dbre.getConnection();
 		String method = DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.method'");
