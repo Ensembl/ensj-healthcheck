@@ -104,7 +104,8 @@ sub pipeline_analyses {
                 'division'    => $self->o('division')                        
             },
             -analysis_capacity => 30,
-                    -rc_name => 'himem'
+            -rc_name => 'himem',
+            -max_retry_count => 10
         },
         {
             -logic_name => 'finish_session',
