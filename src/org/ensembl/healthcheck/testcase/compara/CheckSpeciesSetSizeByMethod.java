@@ -46,7 +46,7 @@ public class CheckSpeciesSetSizeByMethod extends AbstractComparaTestCase {
 			// In the master db, we still have between-species paralogues
 			result &= assertSpeciesSetCountForMLSS(dbre, "ENSEMBL_PARALOGUES", 1);
 		}
-		result &= assertSpeciesSetCountForMLSS(dbre, "ENSEMBL_HOMOEOLOGUES", 2);
+		result &= assertSpeciesSetCountForMLSS(dbre, "ENSEMBL_HOMOEOLOGUES", 1);
 		result &= assertSpeciesSetCountForMLSS(dbre, "BLASTZ_NET", 2);
 		result &= assertSpeciesSetCountForMLSS(dbre, "LASTZ_NET", 2);
 		result &= assertSpeciesSetCountForMLSS(dbre, "TRANSLATED_BLAT_NET", 2);
