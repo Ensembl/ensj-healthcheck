@@ -96,7 +96,7 @@ public enum Species {
         MUSTELA_PUTORIUS_FURO(9669, "MusPutFur", "ENSMPU", "ferret,domestic ferret,Mustela_putorius_furo,Mustela putorius furo"),
 	MYOTIS_LUCIFUGUS(59463, "Myoluc", "ENSMLU", "microbat,little_brown_bat,mlucifugus,myotis,myotis_lucifugus"),
 	NOMASCUS_LEUCOGENYS(61853, "NLEU", "ENSNLE","gibbon,nleu,nomleu,nleugogenys,nomascus_leucogenys"),
-	OCHOTONA_PRINCEPS(9978, "PIKA", "ENSOPR", "pika,Americanpika,American_pika,oprinceps,ochotona,ochotona_princeps"),
+	OCHOTONA_PRINCEPS(9978, "OchPri", "ENSOPR", "pika,Americanpika,American_pika,oprinceps,ochotona,ochotona_princeps"),
 	OREOCHROMIS_NILOTICUS(8128, "Orenil", "ENSONI", "tilapia,Oreochromis niloticus,oreochromis niloticus,Oreochromis_niloticus,oreochromis_niloticus,Nile tilapia,nile tilapia,Nile_tilapia,nile_tilapia,O. niloticus"),
 	ORNITHORHYNCHUS_ANATINUS(9258, "OANA", "ENSOAN", "platypus,oanatius,ornithorhynchus_anatinus"),
         ORYCTEROPUS_AFER_AFER(1230840,"OryAfe","ENSOAF","aardvark,oafe,oafer_after,oryafe,orycteropus afer afer,orycteropus_afer_afer"), 
