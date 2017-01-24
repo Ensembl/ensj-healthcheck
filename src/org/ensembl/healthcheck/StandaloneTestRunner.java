@@ -16,24 +16,18 @@
 
 package org.ensembl.healthcheck;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-import java.util.Map.Entry;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.configuration.ConfigureTestGroups;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
@@ -53,229 +47,228 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  */
 public class StandaloneTestRunner {
 
-	/**
-	 * 
-	 */
-	private static final String WRITE_STDOUT = "-";
+    /**
+     * 
+     */
+    private static final String WRITE_STDOUT = "-";
 
-	/**
-	 * Options that specify how the tests run
-	 * 
-	 * @author dstaines
-	 *
-	 */
-	public interface StandaloneTestOptions extends ConfigureTestGroups {
+    /**
+     * Options that specify how the tests run
+     * 
+     * @author dstaines
+     *
+     */
+    public interface StandaloneTestOptions extends ConfigureTestGroups {
 
-		@Option(helpRequest = true, description = "display help")
-		boolean getHelp();
-		
-		@Option(shortName="o", longName="output_file", defaultValue="failures.txt", description="File to write any failures to (use '-' for standard out)")
-		String getOutputFile();
-		
-		@Option(shortName = "v", description="Show detailed debugging output")
-		boolean isVerbose();
+        @Option(helpRequest = true, description = "display help")
+        boolean getHelp();
 
-		@Option(shortName = "d", description="Database to test")
-		String getDbname();
+        @Option(shortName = "o", longName = "output_file", defaultValue = "failures.txt", description = "File to write any failures to (use '-' for standard out)")
+        String getOutputFile();
 
-		@Option(shortName = "u", description="Username for test database")
-		String getUser();
+        @Option(shortName = "v", description = "Show detailed debugging output")
+        boolean isVerbose();
 
+        @Option(shortName = "d", description = "Database to test")
+        String getDbname();
 
-		@Option(shortName = "h", description="Host for test database")
-		String getHost();
+        @Option(shortName = "u", description = "Username for test database")
+        String getUser();
 
-		@Option(shortName = "p", description="Password for test database")
-		String getPassword();
-		boolean isPassword();
+        @Option(shortName = "h", description = "Host for test database")
+        String getHost();
 
-		@Option(shortName = "P", description="Port for test database")
-		int getPort();
+        @Option(shortName = "p", description = "Password for test database")
+        String getPassword();
 
-		@Option(longName = "compara_dbname", defaultValue = "ensembl_compara_master", description="Name of compara master database")
-		String getComparaMasterDbname();
+        boolean isPassword();
 
-		@Option(longName = "prod_dbname", defaultValue = "ensembl_production", description="Name of production database")
-		String getProductionDbname();
+        @Option(shortName = "P", description = "Port for test database")
+        int getPort();
 
-		@Option(longName = "prod_host", description="Production/compara master database host")
-		String getProductionHost();
+        @Option(longName = "compara_dbname", defaultValue = "ensembl_compara_master", description = "Name of compara master database")
+        String getComparaMasterDbname();
 
-		@Option(longName = "prod_port", description="Production/compara master database port")
-		int getProductionPort();
+        @Option(longName = "prod_dbname", defaultValue = "ensembl_production", description = "Name of production database")
+        String getProductionDbname();
 
-		@Option(longName = "prod_user", description="Production/compara master database user")
-		String getProductionUser();
+        @Option(longName = "prod_host", description = "Production/compara master database host")
+        String getProductionHost();
 
-		@Option(longName = "prod_password", description="Production/compara master database password")
-		String getProductionPassword();
+        @Option(longName = "prod_port", description = "Production/compara master database port")
+        int getProductionPort();
 
-		boolean isProductionPassword();
+        @Option(longName = "prod_user", description = "Production/compara master database user")
+        String getProductionUser();
 
-	}
+        @Option(longName = "prod_password", description = "Production/compara master database password")
+        String getProductionPassword();
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
+        boolean isProductionPassword();
 
-		StandaloneTestOptions options = null;
-		try {
-			options = CliFactory.parseArguments(StandaloneTestOptions.class, args);
-		} catch (ArgumentValidationException e) {
-			System.err.println(e.getMessage());
-			System.exit(2);
-		}
-		
-		StandaloneTestRunner runner = new StandaloneTestRunner(options);
-		
-		if(!StringUtils.isEmpty(options.getOutputFile()) && !options.getOutputFile().equals(WRITE_STDOUT)) {
-			File outfile = new File(options.getOutputFile());
-			if(outfile.exists()) {
-				runner.getLogger().fine("Deleting existing output file "+options.getOutputFile());
-				if(!outfile.delete()) {
-					runner.getLogger().fine("Could not delete existing output file "+options.getOutputFile());
-					System.exit(3);
-				}
-			}
-		}
-		
-		
-		StandaloneReporter reporter = new StandaloneReporter(runner.getLogger());
-		ReportManager.setReporter(reporter);
+    }
 
-		boolean result = runner.runAll();
-		if (!result) {
-			if(options.getOutputFile().equals(WRITE_STDOUT)) {
-				runner.getLogger().severe("Failures detected - writing details to screen");
-				try {
-					PrintWriter writer = new PrintWriter(System.out);
-					reporter.writeFailures(writer);
-					writer.close();
-				} catch (IOException e) {
-					System.err.println(e.getMessage());
-					System.exit(4);
-				}
-			} else {
-				runner.getLogger().severe("Failures detected - writing details to "+options.getOutputFile());
-				reporter.writeFailureFile(options.getOutputFile());
-			}
-		}
-		System.exit(result ? 0 : 1);
+    /**
+     * @param args
+     */
+    public static void main(String[] args) {
 
-	}
+        StandaloneTestOptions options = null;
+        try {
+            options = CliFactory.parseArguments(StandaloneTestOptions.class, args);
+        } catch (ArgumentValidationException e) {
+            System.err.println(e.getMessage());
+            System.exit(2);
+        }
 
-	private Logger logger;
-	private final StandaloneTestOptions options;
-	private DatabaseRegistryEntry productionDb;
-	private DatabaseRegistryEntry comparaMasterDb;
-	private DatabaseRegistryEntry testDb;
+        StandaloneTestRunner runner = new StandaloneTestRunner(options);
 
-	public StandaloneTestRunner(StandaloneTestOptions options) {
-		this.options = options;
-	}
+        if (!StringUtils.isEmpty(options.getOutputFile()) && !options.getOutputFile().equals(WRITE_STDOUT)) {
+            File outfile = new File(options.getOutputFile());
+            if (outfile.exists()) {
+                runner.getLogger().fine("Deleting existing output file " + options.getOutputFile());
+                if (!outfile.delete()) {
+                    runner.getLogger().fine("Could not delete existing output file " + options.getOutputFile());
+                    System.exit(3);
+                }
+            }
+        }
 
-	public Logger getLogger() {
-		if (logger == null) {
-			logger = Logger.getLogger(StandaloneTestRunner.class.getCanonicalName());
-			ConsoleHandler localConsoleHandler = new ConsoleHandler();
-			localConsoleHandler.setFormatter(new Formatter() {
-				DateFormat format = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+        StandaloneReporter reporter = new StandaloneReporter(runner.getLogger());
+        ReportManager.setReporter(reporter);
 
-				@Override
-				public String format(LogRecord record) {
-					return String.format("%s %s %s : %s%n", format.format(new Date(record.getMillis())),
-							record.getSourceClassName(), record.getLevel().toString(), record.getMessage());
-				}
-			});
-			if (options.isVerbose()) {
-				localConsoleHandler.setLevel(Level.ALL);
-				logger.setLevel(Level.ALL);
-			} else {
-				localConsoleHandler.setLevel(Level.INFO);
-				logger.setLevel(Level.INFO);
-			}
-			logger.setUseParentHandlers(false);
-			logger.addHandler(localConsoleHandler);
-		}
-		return logger;
-	}
+        boolean result = runner.runAll();
+        if (!result) {
+            if (options.getOutputFile().equals(WRITE_STDOUT)) {
+                runner.getLogger().severe("Failures detected - writing details to screen");
+                try {
+                    PrintWriter writer = new PrintWriter(System.out);
+                    reporter.writeFailures(writer);
+                    writer.close();
+                } catch (IOException e) {
+                    System.err.println(e.getMessage());
+                    System.exit(4);
+                }
+            } else {
+                runner.getLogger().severe("Failures detected - writing details to " + options.getOutputFile());
+                reporter.writeFailureFile(options.getOutputFile());
+            }
+        }
+        System.exit(result ? 0 : 1);
 
-	public DatabaseRegistryEntry getProductionDb() {
-		if (productionDb == null) {
-			getLogger().info("Connecting to production database " + options.getProductionDbname());
-			productionDb = new DatabaseRegistryEntry(new DatabaseServer(options.getProductionHost(),
-					String.valueOf(options.getProductionPort()), options.getProductionUser(),
-					options.isProductionPassword() ? options.getProductionPassword() : null, Driver.class.getName()),
-					options.getProductionDbname(), null, null);
-		}
-		return productionDb;
-	}
+    }
 
-	public DatabaseRegistryEntry getComparaMasterDb() {
-		if (comparaMasterDb == null) {
-			getLogger().info("Connecting to compara master database " + options.getComparaMasterDbname());
-			comparaMasterDb = new DatabaseRegistryEntry(new DatabaseServer(options.getProductionHost(),
-					String.valueOf(options.getProductionPort()), options.getProductionUser(),
-					options.isProductionPassword() ? options.getProductionPassword() : null, Driver.class.getName()),
-					options.getComparaMasterDbname(), null, null);
-		}
-		return comparaMasterDb;
-	}
+    private Logger logger;
+    private final StandaloneTestOptions options;
+    private DatabaseRegistryEntry productionDb;
+    private DatabaseRegistryEntry comparaMasterDb;
+    private DatabaseRegistryEntry testDb;
 
-	public DatabaseRegistryEntry getTestDb() {
-		if (testDb == null) {
-			getLogger().info("Connecting to test database " + options.getDbname());
-			testDb = new DatabaseRegistryEntry(
-					new DatabaseServer(options.getHost(), String.valueOf(options.getPort()), options.getUser(),
-							options.isPassword() ? options.getPassword() : null, Driver.class.getName()),
-					options.getDbname(), null, null);
-		}
-		return testDb;
-	}
+    public StandaloneTestRunner(StandaloneTestOptions options) {
+        this.options = options;
+    }
 
-	private TestRegistry testRegistry;
+    public Logger getLogger() {
+        if (logger == null) {
+            logger = Logger.getLogger(StandaloneTestRunner.class.getCanonicalName());
+            ConsoleHandler localConsoleHandler = new ConsoleHandler();
+            localConsoleHandler.setFormatter(new Formatter() {
+                DateFormat format = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
 
-	private TestRegistry getTestRegistry() {
-		if (testRegistry == null) {
-				try {
-					this.testRegistry = new ConfigurationBasedTestRegistry(options);
-				} catch (InstantiationException e) {
-					throw new RuntimeException(e);
-				} catch (IllegalAccessException e) {
-					throw new RuntimeException(e);
-				} catch (ClassNotFoundException e) {
-					throw new RuntimeException(e);
-				} catch (UnknownTestTypeException e) {
-					throw new RuntimeException(e);
-				}
-		}
-		return testRegistry;
-	}
+                @Override
+                public String format(LogRecord record) {
+                    return String.format("%s %s %s : %s%n", format.format(new Date(record.getMillis())),
+                            record.getSourceClassName(), record.getLevel().toString(), record.getMessage());
+                }
+            });
+            if (options.isVerbose()) {
+                localConsoleHandler.setLevel(Level.ALL);
+                logger.setLevel(Level.ALL);
+            } else {
+                localConsoleHandler.setLevel(Level.INFO);
+                logger.setLevel(Level.INFO);
+            }
+            logger.setUseParentHandlers(false);
+            logger.addHandler(localConsoleHandler);
+        }
+        return logger;
+    }
 
-	public boolean runAll() {
-		boolean success = true;
-		for (EnsTestCase testCase : getTestRegistry().getAll()) {
-			success &= runTestCase(testCase);
-		}
-		return success;
-	}
+    public DatabaseRegistryEntry getProductionDb() {
+        if (productionDb == null) {
+            getLogger().info("Connecting to production database " + options.getProductionDbname());
+            productionDb = new DatabaseRegistryEntry(new DatabaseServer(options.getProductionHost(),
+                    String.valueOf(options.getProductionPort()), options.getProductionUser(),
+                    options.isProductionPassword() ? options.getProductionPassword() : null, Driver.class.getName()),
+                    options.getProductionDbname(), null, null);
+        }
+        return productionDb;
+    }
 
-	public boolean runTestCase(EnsTestCase test) {
-		boolean success = true;
-		if (SingleDatabaseTestCase.class.isAssignableFrom(test.getClass())) {
-			getLogger().info("Executing testcase " + test.getName());
-			test.setProductionDatabase(getProductionDb());
-			test.setComparaMasterDatabase(getComparaMasterDb());
-			ReportManager.startTestCase(test, getTestDb());
-			boolean result = ((SingleDatabaseTestCase) test).run(getTestDb());
-			ReportManager.finishTestCase(test, result, getTestDb());
-			getLogger().info(test.getName() + " " + (result ? "succeeded" : "failed"));
-			success &= result;
-		} else {
-			getLogger().fine("Skipping non-single testcase " + test.getName());
-		}
-		return success;
-	}
+    public DatabaseRegistryEntry getComparaMasterDb() {
+        if (comparaMasterDb == null) {
+            getLogger().info("Connecting to compara master database " + options.getComparaMasterDbname());
+            comparaMasterDb = new DatabaseRegistryEntry(new DatabaseServer(options.getProductionHost(),
+                    String.valueOf(options.getProductionPort()), options.getProductionUser(),
+                    options.isProductionPassword() ? options.getProductionPassword() : null, Driver.class.getName()),
+                    options.getComparaMasterDbname(), null, null);
+        }
+        return comparaMasterDb;
+    }
+
+    public DatabaseRegistryEntry getTestDb() {
+        if (testDb == null) {
+            getLogger().info("Connecting to test database " + options.getDbname());
+            testDb = new DatabaseRegistryEntry(
+                    new DatabaseServer(options.getHost(), String.valueOf(options.getPort()), options.getUser(),
+                            options.isPassword() ? options.getPassword() : null, Driver.class.getName()),
+                    options.getDbname(), null, null);
+        }
+        return testDb;
+    }
+
+    private TestRegistry testRegistry;
+
+    private TestRegistry getTestRegistry() {
+        if (testRegistry == null) {
+            try {
+                this.testRegistry = new ConfigurationBasedTestRegistry(options);
+            } catch (InstantiationException e) {
+                throw new RuntimeException(e);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            } catch (UnknownTestTypeException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return testRegistry;
+    }
+
+    public boolean runAll() {
+        boolean success = true;
+        for (EnsTestCase testCase : getTestRegistry().getAll()) {
+            success &= runTestCase(testCase);
+        }
+        return success;
+    }
+
+    public boolean runTestCase(EnsTestCase test) {
+        boolean success = true;
+        if (SingleDatabaseTestCase.class.isAssignableFrom(test.getClass())) {
+            getLogger().info("Executing testcase " + test.getName());
+            test.setProductionDatabase(getProductionDb());
+            test.setComparaMasterDatabase(getComparaMasterDb());
+            ReportManager.startTestCase(test, getTestDb());
+            boolean result = ((SingleDatabaseTestCase) test).run(getTestDb());
+            ReportManager.finishTestCase(test, result, getTestDb());
+            getLogger().info(test.getName() + " " + (result ? "succeeded" : "failed"));
+            success &= result;
+        } else {
+            getLogger().fine("Skipping non-single testcase " + test.getName());
+        }
+        return success;
+    }
 
 }
