@@ -940,20 +940,24 @@ public final class DBUtils {
      */
     public static List<DatabaseServer> getMainDatabaseServers() {
 
-        if (DBUtils.hostConfiguration == null) {
+        if (mainDatabaseServers == null) {
 
-            if (useDefaultsFromFile) {
-                return getMainDatabaseServersProperties();
+            if (DBUtils.hostConfiguration == null) {
+
+                if (useDefaultsFromFile) {
+                    return getMainDatabaseServersProperties();
+                } else {
+
+                    // If nothing was preconfigured and defaults should not be
+                    // used, return empty list.
+                    //
+                    mainDatabaseServers = new ArrayList<DatabaseServer>();
+                }
             } else {
-
-                // If nothing was preconfigured and defaults should not be
-                // used, return empty list.
-                //
-                return new ArrayList<DatabaseServer>();
+                return getMainDatabaseServersConf();
             }
-        } else {
-            return getMainDatabaseServersConf();
         }
+        return mainDatabaseServers;
     }
 
     public static List<DatabaseServer> getMainDatabaseServersProperties() {
@@ -1077,9 +1081,9 @@ public final class DBUtils {
      */
     public static List<DatabaseServer> getSecondaryDatabaseServersProperties() {
 
-        Utils.readPropertiesFileIntoSystem(TestRunner.getPropertiesFile(), false);
-
         if (secondaryDatabaseServers == null) {
+
+            Utils.readPropertiesFileIntoSystem(TestRunner.getPropertiesFile(), false);
 
             secondaryDatabaseServers = new ArrayList<DatabaseServer>();
 
@@ -1092,12 +1096,22 @@ public final class DBUtils {
             checkAndAddDatabaseServer(secondaryDatabaseServers, "secondary.host2", "secondary.port2", "secondary.user2",
                     "secondary.password2", "secondary.driver2");
 
-        }
+            logger.fine("Number of secondary database servers found: " + secondaryDatabaseServers.size());
 
-        logger.fine("Number of secondary database servers found: " + secondaryDatabaseServers.size());
+        }
 
         return secondaryDatabaseServers;
 
+    }
+
+    public static void overrideSecondaryDatabaseServer(DatabaseServer srv) {
+        secondaryDatabaseServers = new ArrayList<DatabaseServer>();
+        secondaryDatabaseServers.add(srv);
+    }
+
+    public static void overrideMainDatabaseServer(DatabaseServer srv) {
+        mainDatabaseServers = new ArrayList<DatabaseServer>();
+        mainDatabaseServers.add(srv);
     }
 
     // -------------------------------------------------------------------------

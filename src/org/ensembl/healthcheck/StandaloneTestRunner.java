@@ -32,6 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.configuration.ConfigureTestGroups;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 import com.mysql.jdbc.Driver;
 
@@ -106,6 +107,26 @@ public class StandaloneTestRunner {
 
         boolean isProductionPassword();
 
+        @Option(longName = "secondary_host", description = "Secondary database host")
+        String getSecondaryHost();
+
+        boolean isSecondaryHost();
+
+        @Option(longName = "secondary_port", description = "Secondary database port")
+        int getSecondaryPort();
+
+        boolean isSecondaryPort();
+
+        @Option(longName = "secondary_user", description = "Secondary database user")
+        String getSecondaryUser();
+
+        boolean isSecondaryUser();
+
+        @Option(longName = "secondary_password", description = "Secondary database password")
+        String getSecondaryPassword();
+
+        boolean isSecondaryPassword();
+
     }
 
     /**
@@ -163,9 +184,14 @@ public class StandaloneTestRunner {
     private DatabaseRegistryEntry productionDb;
     private DatabaseRegistryEntry comparaMasterDb;
     private DatabaseRegistryEntry testDb;
+    private DatabaseServer primaryServer;
+    private DatabaseServer secondaryServer;
 
     public StandaloneTestRunner(StandaloneTestOptions options) {
         this.options = options;
+        DBUtils.overrideMainDatabaseServer(getPrimaryServer());
+        if (options.isSecondaryHost())
+            DBUtils.overrideMainDatabaseServer(getSecondaryServer());
     }
 
     public Logger getLogger() {
@@ -219,12 +245,25 @@ public class StandaloneTestRunner {
     public DatabaseRegistryEntry getTestDb() {
         if (testDb == null) {
             getLogger().info("Connecting to test database " + options.getDbname());
-            testDb = new DatabaseRegistryEntry(
-                    new DatabaseServer(options.getHost(), String.valueOf(options.getPort()), options.getUser(),
-                            options.isPassword() ? options.getPassword() : null, Driver.class.getName()),
-                    options.getDbname(), null, null);
+            testDb = new DatabaseRegistryEntry(getPrimaryServer(), options.getDbname(), null, null);
         }
         return testDb;
+    }
+
+    public DatabaseServer getPrimaryServer() {
+        if (primaryServer == null)
+            primaryServer = new DatabaseServer(options.getHost(), String.valueOf(options.getPort()), options.getUser(),
+                    options.isPassword() ? options.getPassword() : null, Driver.class.getName());
+        return primaryServer;
+    }
+
+    public DatabaseServer getSecondaryServer() {
+        if (secondaryServer == null) {
+            secondaryServer = new DatabaseServer(options.getSecondaryHost(), String.valueOf(options.getSecondaryPort()),
+                    options.getSecondaryUser(), options.isSecondaryPassword() ? options.getSecondaryPassword() : null,
+                    Driver.class.getName());
+        }
+        return secondaryServer;
     }
 
     private TestRegistry testRegistry;
