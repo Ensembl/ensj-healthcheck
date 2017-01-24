@@ -189,9 +189,12 @@ public class StandaloneTestRunner {
 
     public StandaloneTestRunner(StandaloneTestOptions options) {
         this.options = options;
+        getLogger().fine("Connecting to primary server "+options.getHost());
         DBUtils.overrideMainDatabaseServer(getPrimaryServer());
-        if (options.isSecondaryHost())
+        if (options.isSecondaryHost()) {
+            getLogger().fine("Connecting to secondary server "+options.getSecondaryHost());
             DBUtils.overrideMainDatabaseServer(getSecondaryServer());
+        }
     }
 
     public Logger getLogger() {
