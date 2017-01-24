@@ -126,6 +126,11 @@ public class StandaloneTestRunner {
         String getSecondaryPassword();
 
         boolean isSecondaryPassword();
+        
+        @Option(longName = "release", description="Current release")
+        String getRelease();
+        
+        boolean isRelease();
 
     }
 
@@ -194,6 +199,9 @@ public class StandaloneTestRunner {
         if (options.isSecondaryHost()) {
             getLogger().fine("Connecting to secondary server "+options.getSecondaryHost());
             DBUtils.overrideMainDatabaseServer(getSecondaryServer());
+        }
+        if(options.isRelease()) {
+            DBUtils.setRelease(options.getRelease());
         }
     }
 

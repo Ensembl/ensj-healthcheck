@@ -184,7 +184,7 @@ public final class DBUtils {
      */
 
     public static String[] listDatabases(Connection con) {
-        String release = hostConfiguration.getRelease();
+        String release = getRelease();
         Integer lastRelease = Integer.parseInt(release) - 1;
         String query = "SHOW DATABASES WHERE `Database` LIKE '%" + release + "%' OR `Database` LIKE '%"
                 + lastRelease.toString() + "%' OR `Database` LIKE 'ensembl_production'";
@@ -209,6 +209,18 @@ public final class DBUtils {
         return good_dbs.toArray(new String[] {});
 
     } // listDatabases
+
+    
+    private static String release;
+    public static String getRelease() {
+        if(release == null && hostConfiguration!=null) {
+            release = hostConfiguration.getRelease();
+        }
+        return release;
+    }
+    public static void setRelease(String r) {
+        release = r;
+    }
 
     // -------------------------------------------------------------------------
     /**
