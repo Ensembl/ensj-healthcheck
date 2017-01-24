@@ -185,6 +185,9 @@ public final class DBUtils {
 
     public static String[] listDatabases(Connection con) {
         String release = getRelease();
+        if(StringUtils.isEmpty(release)) {
+            throw new IllegalArgumentException("Current release not specified");
+        }
         Integer lastRelease = Integer.parseInt(release) - 1;
         String query = "SHOW DATABASES WHERE `Database` LIKE '%" + release + "%' OR `Database` LIKE '%"
                 + lastRelease.toString() + "%' OR `Database` LIKE 'ensembl_production'";
