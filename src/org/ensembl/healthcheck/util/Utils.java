@@ -90,20 +90,24 @@ public final class Utils {
             propsFile = propertiesFileName;
         }
 
-        Properties dbProps = Utils.readSimplePropertiesFile(propsFile);
-        log.fine("\n---------------------------------------------------\n");
-        for (String name : dbProps.stringPropertyNames()) {
-            String value = dbProps.getProperty(name);
-            log.fine("name = " + name + " value = " + value);
-            // add to System
-            System.setProperty(name, value);
-        }
-        log.fine("\n---------------------------------------------------\n");
+        if (new File(propsFile).exists()) {
+            Properties dbProps = Utils.readSimplePropertiesFile(propsFile);
+            log.fine("\n---------------------------------------------------\n");
+            for (String name : dbProps.stringPropertyNames()) {
+                String value = dbProps.getProperty(name);
+                log.fine("name = " + name + " value = " + value);
+                // add to System
+                System.setProperty(name, value);
+            }
+            log.fine("\n---------------------------------------------------\n");
 
-        if (!skipBuildDatabaseURLs) {
+            if (!skipBuildDatabaseURLs) {
 
-            buildDatabaseURLs();
+                buildDatabaseURLs();
 
+            }
+        } else {
+            log.warning("Properties file " + propsFile + " not found - skipping");
         }
 
     } // readPropertiesFile
