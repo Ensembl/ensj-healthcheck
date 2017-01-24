@@ -65,24 +65,28 @@ public class ProductionSpeciesAlias extends SingleDatabaseTestCase {
                 "SELECT sa.alias FROM species_alias sa, species s " + "WHERE s.species_id = sa.species_id "
                         + "AND s.db_name = '" + species + "' AND " + "s.is_current = 1 AND sa.is_current = 1");
 
-        // Looking for aliases which have been added directly into the species
-        // database
-        // These should always be added to the production database, then synced
-        // across using the populate_species_meta script
-        result &= checkHasAlias(dbre, dbAliases, productionAliases, "production");
-
-        // Looking for aliases which are missing from the species database
-        // This means the populate_species_meta script has not been run since
-        // the entry was added to the production database
-        // The populate_species_meta script is located in
-        // ensembl/misc-scripts/production_database/scripts
-        result &= checkHasAlias(dbre, productionAliases, dbAliases, "species");
-
-        result &= checkUrl(dbre, prodDbre, species);
         result &= checkName(dbre, prodDbre, species);
-        result &= checkScientific(dbre, prodDbre, species);
-        result &= checkConsistent(dbre, species);
 
+        if (result) {
+            // Looking for aliases which have been added directly into the
+            // species
+            // database
+            // These should always be added to the production database, then
+            // synced
+            // across using the populate_species_meta script
+            result &= checkHasAlias(dbre, dbAliases, productionAliases, "production");
+
+            // Looking for aliases which are missing from the species database
+            // This means the populate_species_meta script has not been run
+            // since
+            // the entry was added to the production database
+            // The populate_species_meta script is located in
+            // ensembl/misc-scripts/production_database/scripts
+            result &= checkHasAlias(dbre, productionAliases, dbAliases, "species");
+            result &= checkUrl(dbre, prodDbre, species);
+            result &= checkScientific(dbre, prodDbre, species);
+            result &= checkConsistent(dbre, species);
+        }
         return result;
 
     }
@@ -111,21 +115,29 @@ public class ProductionSpeciesAlias extends SingleDatabaseTestCase {
         String sql = "SELECT meta_value FROM meta WHERE meta_key = 'species.url'";
         String prodSql = "SELECT url_name FROM species WHERE db_name = ?";
         String url = t.queryForDefaultObject(sql, String.class);
-        String prodUrl = prodt.queryForDefaultObject(prodSql, String.class, species);
-        if (url.equals(prodUrl)) {
-            if (url.matches("^[A-Z]{1}[a-z0-9]*(_[a-zA-Z0-9]*)+")) {
-                ReportManager.correct(this, dbre.getConnection(),
-                        "species.url '" + url + "' is the same in both databases and is in the correct format");
-                return true;
+
+        List<String> prodUrlL = prodt.queryForDefaultObjectList(prodSql, String.class, species);
+        if (prodUrlL.isEmpty()) {
+            ReportManager.problem(this, dbre.getConnection(),
+                    "Species " + species + " not found in the production database");
+            return false;
+        } else {
+            String prodUrl = prodUrlL.get(0);
+            if (url.equals(prodUrl)) {
+                if (url.matches("^[A-Z]{1}[a-z0-9]*(_[a-zA-Z0-9]*)+")) {
+                    ReportManager.correct(this, dbre.getConnection(),
+                            "species.url '" + url + "' is the same in both databases and is in the correct format");
+                    return true;
+                } else {
+                    ReportManager.problem(this, dbre.getConnection(), "species.url '" + url
+                            + "' is not in the correct format. Should start with a capital letter and have underscores to separate names");
+                    return false;
+                }
             } else {
                 ReportManager.problem(this, dbre.getConnection(), "species.url '" + url
-                        + "' is not in the correct format. Should start with a capital letter and have underscores to separate names");
+                        + "' in database does not match '" + prodUrl + "' in the production database");
                 return false;
             }
-        } else {
-            ReportManager.problem(this, dbre.getConnection(), "species.url '" + url + "' in database does not match '"
-                    + prodUrl + "' in the production database");
-            return false;
         }
     }
 
@@ -139,21 +151,32 @@ public class ProductionSpeciesAlias extends SingleDatabaseTestCase {
         String sql = "SELECT meta_value FROM meta WHERE meta_key = 'species.production_name'";
         String prodSql = "SELECT production_name FROM species WHERE db_name = ?";
         String name = t.queryForDefaultObject(sql, String.class);
-        String prodName = prodt.queryForDefaultObject(prodSql, String.class, species);
-        if (name.equals(prodName)) {
-            if (name.matches("^[a-z0-9_]*$")) {
-                ReportManager.correct(this, dbre.getConnection(), "species.production_name '" + name
-                        + "' is the same in both databases and is in the correct format");
-                return true;
+        List<String> prodNameL = prodt.queryForDefaultObjectList(prodSql, String.class, species);
+        if (prodNameL.isEmpty()) {
+            ReportManager.problem(this, dbre.getConnection(),
+                    "species " + species + " not found in production database");
+            return false;
+        } else if (prodNameL.size() > 1) {
+            ReportManager.problem(this, dbre.getConnection(),
+                    "Multiple entries for species " + species + " found in production database");
+            return false;
+        } else {
+            String prodName = prodNameL.get(0);
+            if (name.equals(prodName)) {
+                if (name.matches("^[a-z0-9_]*$")) {
+                    ReportManager.correct(this, dbre.getConnection(), "species.production_name '" + name
+                            + "' is the same in both databases and is in the correct format");
+                    return true;
+                } else {
+                    ReportManager.problem(this, dbre.getConnection(), "species.production_name '" + name
+                            + "' is not in the correct format. It should only contain lower case caracters and underscores");
+                    return false;
+                }
             } else {
                 ReportManager.problem(this, dbre.getConnection(), "species.production_name '" + name
-                        + "' is not in the correct format. It should only contain lower case caracters and underscores");
+                        + "' in database does not match '" + prodName + "' in the production database");
                 return false;
             }
-        } else {
-            ReportManager.problem(this, dbre.getConnection(), "species.production_name '" + name
-                    + "' in database does not match '" + prodName + "' in the production database");
-            return false;
         }
     }
 
