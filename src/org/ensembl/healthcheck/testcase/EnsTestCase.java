@@ -52,6 +52,7 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.TestRunner;
+import org.ensembl.healthcheck.configurationmanager.ConfigurationException;
 import org.ensembl.healthcheck.util.CollectionUtils;
 import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.MapRowMapper;
@@ -892,6 +893,10 @@ public abstract class EnsTestCase {
 		Connection con = dbre.getConnection();
 
 		DatabaseRegistryEntry productionDBRE = getProductionDatabase();
+		
+		if(productionDBRE==null || productionDBRE.getConnection()==null) {
+		    throw new ConfigurationException("Production database not found");
+		}
 
 		return DBUtils.compareResultSets(
 				getWholeTableExceptSomeColumns(con, tableName, tableKey,

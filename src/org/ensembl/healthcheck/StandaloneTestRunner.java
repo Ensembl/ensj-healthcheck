@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.configuration.ConfigureTestGroups;
+import org.ensembl.healthcheck.configurationmanager.ConfigurationException;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -90,17 +91,27 @@ public class StandaloneTestRunner {
         @Option(longName = "compara_dbname", defaultValue = "ensembl_compara_master", description = "Name of compara master database")
         String getComparaMasterDbname();
 
+        boolean isComparaMasterDbname();
+
         @Option(longName = "prod_dbname", defaultValue = "ensembl_production", description = "Name of production database")
         String getProductionDbname();
+
+        boolean isProductionDbname();
 
         @Option(longName = "prod_host", description = "Production/compara master database host")
         String getProductionHost();
 
+        boolean isProductionHost();
+
         @Option(longName = "prod_port", description = "Production/compara master database port")
         int getProductionPort();
 
+        boolean isProductionPort();
+
         @Option(longName = "prod_user", description = "Production/compara master database user")
         String getProductionUser();
+
+        boolean isProductionUser();
 
         @Option(longName = "prod_password", description = "Production/compara master database password")
         String getProductionPassword();
@@ -126,10 +137,10 @@ public class StandaloneTestRunner {
         String getSecondaryPassword();
 
         boolean isSecondaryPassword();
-        
-        @Option(longName = "release", description="Current release")
+
+        @Option(longName = "release", shortName = "r", description = "Current release")
         String getRelease();
-        
+
         boolean isRelease();
 
     }
@@ -194,13 +205,13 @@ public class StandaloneTestRunner {
 
     public StandaloneTestRunner(StandaloneTestOptions options) {
         this.options = options;
-        getLogger().fine("Connecting to primary server "+options.getHost());
+        getLogger().fine("Connecting to primary server " + options.getHost());
         DBUtils.overrideMainDatabaseServer(getPrimaryServer());
         if (options.isSecondaryHost()) {
-            getLogger().fine("Connecting to secondary server "+options.getSecondaryHost());
-            DBUtils.overrideMainDatabaseServer(getSecondaryServer());
+            getLogger().fine("Connecting to secondary server " + options.getSecondaryHost());
+            DBUtils.overrideSecondaryDatabaseServer(getSecondaryServer());
         }
-        if(options.isRelease()) {
+        if (options.isRelease()) {
             DBUtils.setRelease(options.getRelease());
         }
     }
@@ -232,7 +243,7 @@ public class StandaloneTestRunner {
     }
 
     public DatabaseRegistryEntry getProductionDb() {
-        if (productionDb == null) {
+        if (productionDb == null && options.isProductionHost()) {
             getLogger().info("Connecting to production database " + options.getProductionDbname());
             productionDb = new DatabaseRegistryEntry(new DatabaseServer(options.getProductionHost(),
                     String.valueOf(options.getProductionPort()), options.getProductionUser(),
@@ -243,7 +254,7 @@ public class StandaloneTestRunner {
     }
 
     public DatabaseRegistryEntry getComparaMasterDb() {
-        if (comparaMasterDb == null) {
+        if (comparaMasterDb == null && options.isProductionHost()) {
             getLogger().info("Connecting to compara master database " + options.getComparaMasterDbname());
             comparaMasterDb = new DatabaseRegistryEntry(new DatabaseServer(options.getProductionHost(),
                     String.valueOf(options.getProductionPort()), options.getProductionUser(),
@@ -257,6 +268,9 @@ public class StandaloneTestRunner {
         if (testDb == null) {
             getLogger().info("Connecting to test database " + options.getDbname());
             testDb = new DatabaseRegistryEntry(getPrimaryServer(), options.getDbname(), null, null);
+            if(testDb.getConnection()==null) {
+                throw new ConfigurationException("Test database "+options.getDbname()+" not found");
+            }
         }
         return testDb;
     }
