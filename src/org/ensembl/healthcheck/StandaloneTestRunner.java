@@ -214,6 +214,7 @@ public class StandaloneTestRunner {
         if (options.isRelease()) {
             DBUtils.setRelease(options.getRelease());
         }
+        System.setProperty("compara_master.database", options.getComparaMasterDbname());
     }
 
     public Logger getLogger() {
