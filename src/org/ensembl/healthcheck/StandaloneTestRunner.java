@@ -68,52 +68,73 @@ public class StandaloneTestRunner {
         @Option(shortName = "o", longName = "output_file", defaultValue = "failures.txt", description = "File to write any failures to (use '-' for standard out)")
         String getOutputFile();
 
-        @Option(shortName = "v", description = "Show detailed debugging output")
+        @Option(shortName = "v", longName="verbose", description = "Show detailed debugging output")
         boolean isVerbose();
 
-        @Option(shortName = "d", description = "Database to test")
+        @Option(shortName = "d", longName="dbname", description = "Database to test")
         String getDbname();
 
-        @Option(shortName = "u", description = "Username for test database")
+        @Option(shortName = "u", longName="user", description = "Username for test database")
         String getUser();
 
-        @Option(shortName = "h", description = "Host for test database")
+        @Option(shortName = "h", longName="host", description = "Host for test database")
         String getHost();
 
-        @Option(shortName = "p", description = "Password for test database")
+        @Option(shortName = "p", longName="pass", description = "Password for test database")
         String getPassword();
 
         boolean isPassword();
 
-        @Option(shortName = "P", description = "Port for test database")
+        @Option(shortName = "P", longName="port", description = "Port for test database")
         int getPort();
 
         @Option(longName = "compara_dbname", defaultValue = "ensembl_compara_master", description = "Name of compara master database")
         String getComparaMasterDbname();
 
         boolean isComparaMasterDbname();
+        
+        @Option(longName = "compara_host", description = "Compara master database host")
+        String getComparaHost();
+
+        boolean isComparaHost();
+
+        @Option(longName = "compara_port", description = "Compara master database port")
+        int getComparaPort();
+
+        boolean isComparaPort();
+
+        @Option(longName = "compara_user", description = "Compara master database user")
+        String getComparaUser();
+
+        boolean isComparaUser();
+
+        @Option(longName = "compara_pass", description = "Compara master database password")
+        String getComparaPassword();
+
+        boolean isComparaPassword();
+
 
         @Option(longName = "prod_dbname", defaultValue = "ensembl_production", description = "Name of production database")
         String getProductionDbname();
 
         boolean isProductionDbname();
 
-        @Option(longName = "prod_host", description = "Production/compara master database host")
+        @Option(longName = "prod_host", description = "Production database host")
         String getProductionHost();
 
         boolean isProductionHost();
 
-        @Option(longName = "prod_port", description = "Production/compara master database port")
+        @Option(longName = "prod_port", description = "Production database port")
         int getProductionPort();
 
         boolean isProductionPort();
 
-        @Option(longName = "prod_user", description = "Production/compara master database user")
+        @Option(longName = "prod_user", description = "Production database user")
         String getProductionUser();
 
         boolean isProductionUser();
 
-        @Option(longName = "prod_password", description = "Production/compara master database password")
+        @Option(longName = "prod_pass", description = "Production database password")
         String getProductionPassword();
 
         boolean isProductionPassword();
@@ -133,7 +154,7 @@ public class StandaloneTestRunner {
 
         boolean isSecondaryUser();
 
-        @Option(longName = "secondary_password", description = "Secondary database password")
+        @Option(longName = "secondary_pass", description = "Secondary database password")
         String getSecondaryPassword();
 
         boolean isSecondaryPassword();
