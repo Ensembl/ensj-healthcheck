@@ -66,8 +66,15 @@ if [ ! -e "./perlcode" ]; then
     die "./perlcode directory not found" 4
 fi
 
+# add the perl directory to your library
+export PERL5LIB=./perl:$PERL5LIB
+
 RELEASE=$(perl -MBio::EnsEMBL::ApiVersion -e "print software_version()")
-msg "Running tests on Ensembl $RELEASE"
+if [ -z "$RELEASE" ]; then
+    die "Could not determine current Ensembl release"
+fi
+
+msg "Running tests for Ensembl $RELEASE"
 
 command="java -jar ./target/healthchecks-jar-with-dependencies.jar --dbname $DBNAME $($SRC details script) $($LIVE details script_secondary_) $($COMPARA details script_compara_) $($PROD details script_prod_) -g $GROUP $VERBOSE --release $RELEASE"
 msg "Building healthcheck jar"
