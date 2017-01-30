@@ -1,8 +1,12 @@
 #!/bin/bash --
 
+function die {
+    echo $1 1>&2
+    exit $2
+}
+
 function usage {
-    echo "Usage: $0 -s|--src src_srv -d|--dbname test_db [-l|--live live_srv] [-p|--production production_db_srv] [-c|--compara compara_master_srv] [-g|--group hc_group] [-v|--verbose]" 1>&2
-    exit 1
+    die "Usage: $0 -s|--src src_srv -d|--dbname test_db [-l|--live live_srv] [-p|--production production_db_srv] [-c|--compara compara_master_srv] [-g|--group hc_group] [-v|--verbose]" 1
 }
 
 function msg {
@@ -11,7 +15,9 @@ function msg {
 
 TEMP=`getopt -o d:s:l:p:c:g:o:v --long dbname:,src:,live:,production:,compara:,group:,outfile:,verbose -n 'run_hc_handover.sh' -- "$@"`
 
-if [ $? != 0 ] ; then usage; fi
+if [ $? != 0 ] ; then 
+    usage; 
+fi
 
 # Note the quotes around `$TEMP': they are essential!
 eval set -- "$TEMP"
@@ -53,15 +59,25 @@ if [ -z "$GROUP" ]; then
     elif [[ $DBNAME =~ .*_funcgen_.* ]]; then
         GROUP="FuncgenRelease"
     else
-        echo "Type for database $DBNAME not recognised" 2>&1
-        exit 2
+        die "Type for database $DBNAME not recognised" 2
     fi
 fi
-command="java -jar ./target/healthchecks-jar-with-dependencies.jar --dbname $DBNAME $($SRC details script) $($LIVE details script_secondary_) $($COMPARA details script_compara_) $($PROD details script_prod_) -g $GROUP $VERBOSE"
+if [ ! -e "./perlcode" ]; then
+    die "./perlcode directory not found" 4
+fi
+
+RELEASE=$(perl -MBio::EnsEMBL::ApiVersion -e "print software_version()")
+msg "Running tests on Ensembl $RELEASE"
+
+command="java -jar ./target/healthchecks-jar-with-dependencies.jar --dbname $DBNAME $($SRC details script) $($LIVE details script_secondary_) $($COMPARA details script_compara_) $($PROD details script_prod_) -g $GROUP $VERBOSE --release $RELEASE"
 msg "Building healthcheck jar"
 mvn package >& mvn.out || {
-    echo "could not build jar"
-    exit 1;
+    die "Could not build jar" 8
 }
+if [ ! -e "$JAR" ]; then
+    die "$JAR not found " 16
+fi
+
+
 msg "Running healthchecks"
 $command
