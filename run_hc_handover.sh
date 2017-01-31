@@ -69,7 +69,8 @@ fi
 RELEASE=$(perl -MBio::EnsEMBL::ApiVersion -e "print software_version()")
 msg "Running tests on Ensembl $RELEASE"
 
-command="java -jar ./target/healthchecks-jar-with-dependencies.jar --dbname $DBNAME $($SRC details script) $($LIVE details script_secondary_) $($COMPARA details script_compara_) $($PROD details script_prod_) -g $GROUP $VERBOSE --release $RELEASE"
+JAR=./target/healthchecks-jar-with-dependencies.jar
+command="java -jar $JAR --dbname $DBNAME $($SRC details script) $($LIVE details script_secondary_) $($COMPARA details script_compara_) $($PROD details script_prod_) -g $GROUP $VERBOSE --release $RELEASE"
 msg "Building healthcheck jar"
 mvn package >& mvn.out || {
     die "Could not build jar" 8
