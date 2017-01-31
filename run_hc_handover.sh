@@ -6,14 +6,14 @@ function die {
 }
 
 function usage {
-    die "Usage: $0 -s|--src src_srv -d|--dbname test_db [-l|--live live_srv] [-p|--production production_db_srv] [-c|--compara compara_master_srv] [-g|--group hc_group] [-v|--verbose]" 1
+    die "Usage: $0 -s|--src src_srv -d|--dbname test_db [-l|--live live_srv] [-p|--production production_db_srv] [-c|--compara compara_master_srv] [-g|--group hc_group] [-v|--verbose] [--help]" 1
 }
 
 function msg {
     echo $(date +"%Y/%m/%d %H:%M:%S") $1
 }
 
-TEMP=`getopt -o d:s:l:p:c:g:o:v --long dbname:,src:,live:,production:,compara:,group:,outfile:,verbose -n 'run_hc_handover.sh' -- "$@"`
+TEMP=`getopt -o d:s:l:p:c:g:o:vh --long dbname:,src:,live:,production:,compara:,group:,outfile:,verbose,help -n 'run_hc_handover.sh' -- "$@"`
 
 if [ $? != 0 ] ; then 
     usage; 
@@ -39,6 +39,7 @@ while true; do
         -p | --production ) PROD="$2"; shift 2;;
         -c | --compara ) COMPARA="$2"; shift 2;;
         -g | --group ) GROUP="$2"; shift 2;;
+        -h | --help ) usage ;;
         -- ) shift; break ;;
         * ) usage ;;
     esac
