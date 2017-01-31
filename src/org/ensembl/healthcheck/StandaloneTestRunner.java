@@ -211,6 +211,8 @@ public class StandaloneTestRunner {
                 runner.getLogger().severe("Failures detected - writing details to " + options.getOutputFile());
                 reporter.writeFailureFile(options.getOutputFile());
             }
+        } else {
+            runner.getLogger().info("Completed healthchecks with no failures");
         }
         System.exit(result ? 0 : 1);
 
