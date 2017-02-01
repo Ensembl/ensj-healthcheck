@@ -69,7 +69,12 @@ public class ExonTranscriptStartEnd extends SingleDatabaseTestCase {
 		// and that the maximum exon seq_region_start in a transcript it the same as the
 		// transcript's end
 		// The SQL below will return cases where this is not true
-		String sql = " SELECT tr.transcript_id, e.exon_id, tr.seq_region_start AS transcript_start, tr.seq_region_end AS transcript_end, MIN(e.seq_region_start) as min_exon_start, MAX(e.seq_region_end) AS max_exon_end FROM exon e, transcript tr, exon_transcript et WHERE e.exon_id=et.exon_id AND et.transcript_id=tr.transcript_id GROUP BY et.transcript_id HAVING min_exon_start != transcript_start OR max_exon_end != transcript_end ";
+		String sql = " SELECT tr.transcript_id, e.exon_id, tr.seq_region_start AS transcript_start, tr.seq_region_end AS transcript_end, "
+		        + "MIN(e.seq_region_start) as min_exon_start, MAX(e.seq_region_end) AS max_exon_end "
+		        + "FROM exon e, transcript tr, exon_transcript et "
+		        + "WHERE e.exon_id=et.exon_id AND et.transcript_id=tr.transcript_id "
+		        + "AND tr.transcript_id not in (select transcript_id from transcript_attrib inner join attrib_type using (attrib_type_id) where code='trans_spliced')"
+		        + "GROUP BY et.transcript_id HAVING min_exon_start != transcript_start OR max_exon_end != transcript_end ";
 
 		Connection con = dbre.getConnection();
 		Statement stmt = null;
