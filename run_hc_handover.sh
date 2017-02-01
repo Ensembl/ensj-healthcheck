@@ -78,7 +78,8 @@ fi
 msg "Running tests for Ensembl $RELEASE"
 
 JAR=./target/healthchecks-jar-with-dependencies.jar
-command="java -jar $JAR --dbname $DBNAME $($SRC details script) $($LIVE details script_secondary_) $($COMPARA details script_compara_) $($PROD details script_prod_) -g $GROUP $VERBOSE --release $RELEASE"
+FILE="${DBNAME}_failures.txt"
+command="java -jar $JAR --dbname $DBNAME $($SRC details script) $($LIVE details script_secondary_) $($COMPARA details script_compara_) $($PROD details script_prod_) -g $GROUP $VERBOSE --release $RELEASE -o $FILE"
 msg "Building healthcheck jar"
 mvn package >& mvn.out || {
     die "Could not build jar" 8
@@ -88,5 +89,5 @@ if [ ! -e "$JAR" ]; then
 fi
 
 
-msg "Running healthchecks"
+msg "Running healthchecks on $DBNAME (writing failures to $FILE)"
 $command
