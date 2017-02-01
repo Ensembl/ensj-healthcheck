@@ -70,8 +70,6 @@ public class TranslationStartEnd extends SingleDatabaseTestCase {
         if (rows > 0) {
             result = false;
             ReportManager.problem(this, con, rows + " translations have start > end");
-        } else {
-            ReportManager.correct(this, con, "No translations have start > end");
         }
 
         // check no translations overrun their exons
@@ -80,8 +78,6 @@ public class TranslationStartEnd extends SingleDatabaseTestCase {
         if (rows > 0) {
             result = false;
             ReportManager.problem(this, con, rows + " translations end beyond the end of their exons");
-        } else {
-            ReportManager.correct(this, con, "No translations overrun exons");
         }
 
         // check the start and end exon have a correct phase
@@ -90,8 +86,6 @@ public class TranslationStartEnd extends SingleDatabaseTestCase {
         if (rows > 0) {
             result = false;
             ReportManager.problem(this, con, rows + " translations have start exon with a -1 end phase");
-        } else {
-            ReportManager.correct(this, con, "Start exons for translations have correct end phase");
         }
 
         rows = DBUtils.getRowCount(con,
@@ -99,8 +93,6 @@ public class TranslationStartEnd extends SingleDatabaseTestCase {
         if (rows > 0) {
             result = false;
             ReportManager.problem(this, con, rows + " translations have end exon with -1 phase");
-        } else {
-            ReportManager.correct(this, con, "End exons for translations have correct phase");
         }
 
         return result;
