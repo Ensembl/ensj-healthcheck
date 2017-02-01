@@ -101,6 +101,7 @@ public class VariationRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.variation.VariationClasses.class,
 			org.ensembl.healthcheck.testcase.variation.VariationFeature.class,
 			org.ensembl.healthcheck.testcase.variation.VariationForeignKeys.class,
+            org.ensembl.healthcheck.testcase.variation.VariationFeatureAlleles.class,
 			org.ensembl.healthcheck.testcase.variation.VariationSet.class,
 			org.ensembl.healthcheck.testcase.variation.VariationSynonym.class,
                         org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class,
