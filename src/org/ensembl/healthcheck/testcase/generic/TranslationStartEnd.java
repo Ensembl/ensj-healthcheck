@@ -19,6 +19,7 @@ package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
 
+import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
@@ -31,6 +32,10 @@ import org.ensembl.healthcheck.util.DBUtils;
  * start < end. Also check that translation ends aren't beyond exon ends.
  */
 public class TranslationStartEnd extends SingleDatabaseTestCase {
+
+    private static final String SEQ_REGION_SQL = "select distinct seq_region_id from seq_region_attrib "
+            + "join attrib_type using (attrib_type_id) " + "where code='toplevel' and seq_region_id not in "
+            + "(select seq_region_id from seq_region_attrib join attrib_type using (attrib_type_id) where code='circular_seq')";
 
     /**
      * Creates a new instance of CheckTranslationStartEnd
@@ -63,10 +68,15 @@ public class TranslationStartEnd extends SingleDatabaseTestCase {
 
         boolean result = true;
 
-        // check start < end
         Connection con = dbre.getConnection();
+
+        String clause = " and seq_region_id in ("
+                + StringUtils.join(DBUtils.getColumnValuesList(con, SEQ_REGION_SQL), ',') + ")";
+
+        // check start < end
         int rows = DBUtils.getRowCount(con,
-                "SELECT COUNT(translation_id) FROM translation WHERE start_exon_id = end_exon_id AND seq_start > seq_end");
+                "SELECT COUNT(translation_id) FROM translation JOIN transcript USING (transcript_id) WHERE start_exon_id = end_exon_id AND seq_start > seq_end"
+                        + clause);
         if (rows > 0) {
             result = false;
             ReportManager.problem(this, con, rows + " translations have start > end");
@@ -74,7 +84,8 @@ public class TranslationStartEnd extends SingleDatabaseTestCase {
 
         // check no translations overrun their exons
         rows = DBUtils.getRowCount(con,
-                "SELECT COUNT(*) FROM translation t, exon e WHERE t.end_exon_id=e.exon_id AND cast(e.seq_region_end as signed int)-cast(e.seq_region_start as signed int)+1 < t.seq_end");
+                "SELECT COUNT(*) FROM translation t, exon e WHERE t.end_exon_id=e.exon_id AND cast(e.seq_region_end as signed int)-cast(e.seq_region_start as signed int)+1 < t.seq_end"
+                        + clause);
         if (rows > 0) {
             result = false;
             ReportManager.problem(this, con, rows + " translations end beyond the end of their exons");
@@ -82,14 +93,16 @@ public class TranslationStartEnd extends SingleDatabaseTestCase {
 
         // check the start and end exon have a correct phase
         rows = DBUtils.getRowCount(con,
-                "SELECT COUNT(*) FROM translation t, exon e WHERE t.start_exon_id=e.exon_id AND start_exon_id <> end_exon_id and end_phase = -1");
+                "SELECT COUNT(*) FROM translation t, exon e WHERE t.start_exon_id=e.exon_id AND start_exon_id <> end_exon_id and end_phase = -1"
+                        + clause);
         if (rows > 0) {
             result = false;
             ReportManager.problem(this, con, rows + " translations have start exon with a -1 end phase");
         }
 
         rows = DBUtils.getRowCount(con,
-                "SELECT COUNT(*) FROM translation t, exon e WHERE t.end_exon_id=e.exon_id AND start_exon_id <> end_exon_id and phase = -1");
+                "SELECT COUNT(*) FROM translation t, exon e WHERE t.end_exon_id=e.exon_id AND start_exon_id <> end_exon_id and phase = -1"
+                        + clause);
         if (rows > 0) {
             result = false;
             ReportManager.problem(this, con, rows + " translations have end exon with -1 phase");
