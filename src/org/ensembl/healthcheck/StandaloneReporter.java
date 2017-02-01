@@ -39,122 +39,124 @@ import org.ensembl.healthcheck.util.CollectionUtils;
  */
 public class StandaloneReporter implements Reporter {
 
-	private final Logger logger;
+    private final Logger logger;
 
-	public StandaloneReporter() {
-		this.logger = Logger.getLogger(StandaloneReporter.class.getSimpleName());
-	}
+    public StandaloneReporter() {
+        this.logger = Logger.getLogger(StandaloneReporter.class.getSimpleName());
+    }
 
-	public StandaloneReporter(Logger logger) {
-		this.logger = logger;
-	}
+    public StandaloneReporter(Logger logger) {
+        this.logger = logger;
+    }
 
-	private final Map<String, List<String>> failures = CollectionUtils.createHashMap();
-	private final Map<String, Map<String, List<String>>> output = CollectionUtils.createHashMap();
-	private final Map<String, List<String>> successes = CollectionUtils.createHashMap();
+    private final Map<String, List<String>> failures = CollectionUtils.createHashMap();
+    private final Map<String, Map<String, List<String>>> output = CollectionUtils.createHashMap();
+    private final Map<String, List<String>> successes = CollectionUtils.createHashMap();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.ensembl.healthcheck.Reporter#finishTestCase(org.ensembl.healthcheck.
-	 * testcase.EnsTestCase, boolean,
-	 * org.ensembl.healthcheck.DatabaseRegistryEntry)
-	 */
-	@Override
-	public void finishTestCase(EnsTestCase testCase, boolean result, DatabaseRegistryEntry dbre) {
-		if (result) {
-			List<String> dbSuccess = successes.get(dbre.getName());
-			if (dbSuccess == null) {
-				dbSuccess = CollectionUtils.createArrayList();
-				successes.put(dbre.getName(), dbSuccess);
-			}
-			dbSuccess.add(testCase.getTestName());
-		} else {
-			List<String> dbFailure = failures.get(dbre.getName());
-			if (dbFailure == null) {
-				dbFailure = CollectionUtils.createArrayList();
-				failures.put(dbre.getName(), dbFailure);
-			}
-			dbFailure.add(testCase.getTestName());
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.ensembl.healthcheck.Reporter#finishTestCase(org.ensembl.healthcheck.
+     * testcase.EnsTestCase, boolean,
+     * org.ensembl.healthcheck.DatabaseRegistryEntry)
+     */
+    @Override
+    public void finishTestCase(EnsTestCase testCase, boolean result, DatabaseRegistryEntry dbre) {
+        if (result) {
+            List<String> dbSuccess = successes.get(dbre.getName());
+            if (dbSuccess == null) {
+                dbSuccess = CollectionUtils.createArrayList();
+                successes.put(dbre.getName(), dbSuccess);
+            }
+            dbSuccess.add(testCase.getTestName());
+        } else {
+            List<String> dbFailure = failures.get(dbre.getName());
+            if (dbFailure == null) {
+                dbFailure = CollectionUtils.createArrayList();
+                failures.put(dbre.getName(), dbFailure);
+            }
+            dbFailure.add(testCase.getTestName());
+        }
+    }
 
-	public Map<String, List<String>> getFailures() {
-		return failures;
-	}
+    public Map<String, List<String>> getFailures() {
+        return failures;
+    }
 
-	public Map<String, Map<String, List<String>>> getOutput() {
-		return output;
-	}
+    public Map<String, Map<String, List<String>>> getOutput() {
+        return output;
+    }
 
-	public Map<String, List<String>> getSuccesses() {
-		return successes;
-	}
+    public Map<String, List<String>> getSuccesses() {
+        return successes;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.ensembl.healthcheck.Reporter#message(org.ensembl.healthcheck.
-	 * ReportLine)
-	 */
-	@Override
-	public void message(ReportLine reportLine) {
-		logger.fine(reportLine.toString());
-		Map<String, List<String>> dbOutput = output.get(reportLine.getDatabaseName());
-		if (dbOutput == null) {
-			dbOutput = CollectionUtils.createHashMap();
-			output.put(reportLine.getDatabaseName(), dbOutput);
-		}
-		List<String> testList = dbOutput.get(reportLine.getTestCase().getTestName());
-		if (testList == null) {
-			testList = CollectionUtils.createArrayList();
-			dbOutput.put(reportLine.getTestCase().getTestName(), testList);
-		}
-		testList.add(reportLine.getLevelAsString() + ": " + reportLine.getMessage());
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.ensembl.healthcheck.Reporter#message(org.ensembl.healthcheck.
+     * ReportLine)
+     */
+    @Override
+    public void message(ReportLine reportLine) {
+        logger.fine(reportLine.toString());
+        if (reportLine.getLevel() != ReportLine.CORRECT) {
+            Map<String, List<String>> dbOutput = output.get(reportLine.getDatabaseName());
+            if (dbOutput == null) {
+                dbOutput = CollectionUtils.createHashMap();
+                output.put(reportLine.getDatabaseName(), dbOutput);
+            }
+            List<String> testList = dbOutput.get(reportLine.getTestCase().getTestName());
+            if (testList == null) {
+                testList = CollectionUtils.createArrayList();
+                dbOutput.put(reportLine.getTestCase().getTestName(), testList);
+            }
+            testList.add(reportLine.getLevelAsString() + ": " + reportLine.getMessage());
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.ensembl.healthcheck.Reporter#startTestCase(org.ensembl.healthcheck.
-	 * testcase.EnsTestCase, org.ensembl.healthcheck.DatabaseRegistryEntry)
-	 */
-	@Override
-	public void startTestCase(EnsTestCase testCase, DatabaseRegistryEntry dbre) {
-		Map<String, List<String>> dbOutput = output.get(dbre.getName());
-		if (dbOutput == null) {
-			dbOutput = CollectionUtils.createHashMap();
-			output.put(dbre.getName(), dbOutput);
-		}
-		dbOutput.put(testCase.getTestName(), new ArrayList<String>());
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.ensembl.healthcheck.Reporter#startTestCase(org.ensembl.healthcheck.
+     * testcase.EnsTestCase, org.ensembl.healthcheck.DatabaseRegistryEntry)
+     */
+    @Override
+    public void startTestCase(EnsTestCase testCase, DatabaseRegistryEntry dbre) {
+        Map<String, List<String>> dbOutput = output.get(dbre.getName());
+        if (dbOutput == null) {
+            dbOutput = CollectionUtils.createHashMap();
+            output.put(dbre.getName(), dbOutput);
+        }
+        dbOutput.put(testCase.getTestName(), new ArrayList<String>());
+    }
 
-	/**
-	 * @param outputFile
-	 */
-	public void writeFailureFile(String outputFile) {
-		Writer writer = null;
-		try {
-			writer = new BufferedWriter(new FileWriter(outputFile));
-			writeFailures(writer);
-		} catch (IOException e1) {
-			throw new RuntimeException(e1);
-		} finally {
-			IOUtils.closeQuietly(writer);
-		}
-	}
+    /**
+     * @param outputFile
+     */
+    public void writeFailureFile(String outputFile) {
+        Writer writer = null;
+        try {
+            writer = new BufferedWriter(new FileWriter(outputFile));
+            writeFailures(writer);
+        } catch (IOException e1) {
+            throw new RuntimeException(e1);
+        } finally {
+            IOUtils.closeQuietly(writer);
+        }
+    }
 
-	public void writeFailures(Writer writer) throws IOException {
-		for (Entry<String, List<String>> e : this.getFailures().entrySet()) {
-			writer.write("Failures detected for " + e.getKey() + ":\n");
-			for (String testCase : e.getValue()) {
-				writer.write(testCase);
-				writer.write(StringUtils.join(this.getOutput().get(e.getKey()).get(testCase), "\n"));
-				writer.write("\n");
-			}
-		}
-	}
+    public void writeFailures(Writer writer) throws IOException {
+        for (Entry<String, List<String>> e : this.getFailures().entrySet()) {
+            writer.write("Failures detected for " + e.getKey() + ":\n");
+            for (String testCase : e.getValue()) {
+                writer.write(testCase);
+                writer.write(StringUtils.join(this.getOutput().get(e.getKey()).get(testCase), "\n"));
+                writer.write("\n");
+            }
+        }
+    }
 
 }
