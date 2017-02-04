@@ -34,7 +34,7 @@ import org.ensembl.healthcheck.ReportManager;
  */
 public class DuplicateObjectXref extends AbstractEgCoreTestCase {
 
-	private final static String DUPLICATE_OBJ_XREF = "select count(*) from (select count(*) from xref x join object_xref ox using (xref_id) left outer join ontology_xref ontx using (object_xref_id) group by ox.ensembl_id, ox.ensembl_object_type,x.dbprimary_acc,x.external_db_id,x.info_type,x.info_text,ontx.source_xref_id having count(*)>1) cc";
+	private final static String DUPLICATE_OBJ_XREF = "select count(*) from (select count(*) from xref x join object_xref ox using (xref_id) group by ox.ensembl_id, ox.ensembl_object_type,x.dbprimary_acc,x.external_db_id,x.info_type,x.info_text having count(*)>1) cc";
 
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
 		boolean passes = true;
