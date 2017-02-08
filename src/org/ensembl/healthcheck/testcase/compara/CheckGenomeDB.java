@@ -99,6 +99,7 @@ public class CheckGenomeDB extends AbstractComparaTestCase {
 			data = DBUtils.getRowValuesList(comparaCon, sql);
 			for (String[] line : data) {
 				ReportManager.problem(this, comparaCon, comparaDbName + " There is at least one non-current assembly for " + line[0] + " (this should not happen in the release DB)");
+				result = false;
 			}
 		} else {
 			// Get list of species with no default assembly
