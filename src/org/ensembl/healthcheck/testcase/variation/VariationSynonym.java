@@ -62,7 +62,7 @@ public class VariationSynonym extends SingleDatabaseTestCase {
 		
 		try {
 			
-		    int rows = DBUtils.getRowCount(con, "select vs1.variation_synonym_id, vs1.variation_id, vs1.name from variation_synonym vs1, variation_synonym vs2 where  vs2.variation_id =  vs1.variation_id and vs2.name  = vs1.name and vs2.variation_synonym_id > vs1.variation_synonym_id");
+		    int rows = DBUtils.getRowCount(con, "select vs1.variation_synonym_id, vs1.variation_id, vs1.name from variation_synonym vs1, variation_synonym vs2 where  vs2.variation_id =  vs1.variation_id and vs2.name  = vs1.name and vs2.variation_synonym_id > vs1.variation_synonym_id and vs1.source_id = vs2.source_id");
 
 		    if (rows > 0) {
 			result = false;
