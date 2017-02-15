@@ -82,12 +82,12 @@ public class VariationFeature extends SingleDatabaseTestCase {
 			}
 
             // Check map weight and warn if map weight exceeds 25
-            stmt = "SELECT COUNT(DISTINCT variation_id) FROM variation_feature where map_weight > 25";
-            rows = DBUtils.getRowCount(con, stmt);
-            if (rows > 0) {
-                result = false;
-                ReportManager.problem(this, con, String.valueOf(rows) + " variants have a map_weight greater than 25");
-            }
+            //stmt = "SELECT COUNT(DISTINCT variation_id) FROM variation_feature where map_weight > 25";
+            //rows = DBUtils.getRowCount(con, stmt);
+            //if (rows > 0) {
+            //    result = false;
+            //    ReportManager.problem(this, con, String.valueOf(rows) + " variants have a map_weight greater than 25");
+            //}
 
             // Check for variants mapping to human Y PAR - should be deleted as handled by API
             Species species = dbre.getSpecies();
