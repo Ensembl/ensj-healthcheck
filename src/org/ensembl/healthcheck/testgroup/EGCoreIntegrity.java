@@ -115,7 +115,7 @@ public class EGCoreIntegrity extends GroupOfTests {
 				SampleSetting.class, AnalysisDescription.class,
 				MetaForCompara.class, TranslationAttribType.class,
 				PermittedEgMeta.class, RepeatAnalysesInMeta.class,
-				ProductionAnalysisLogicName.class, ProductionBiotypes.class,
+				ProductionBiotypes.class,
 				ProductionMasterTables.class, AnalysisLogicName.class,
 				SeqRegionsConsistentWithComparaMaster.class,
 				SeqRegionAttribForPolyploidGenome.class,
