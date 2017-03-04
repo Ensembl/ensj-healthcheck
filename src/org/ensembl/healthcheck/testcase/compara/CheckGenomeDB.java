@@ -45,10 +45,6 @@ import org.ensembl.healthcheck.util.DBUtils;
 
 public class CheckGenomeDB extends AbstractComparaTestCase {
 
-	// FIXME: I'm not sure EG would like to know about this list. Should we
-	// tag them in the meta table ?
-    private String[] orphanedSpeciesInMasterDB = {"spermophilus_tridecemlineatus", "anopheles_gambiae", "aedes_aegypti", "apis_mellifera", "caenorhabditis_briggsae"};
-
 	/**
 	 * Create a new instance of MetaCrossSpecies
 	 */
@@ -96,7 +92,6 @@ public class CheckGenomeDB extends AbstractComparaTestCase {
 		}
 
 		boolean is_master_db = isMasterDB(comparaCon);
-		HashSet<String> allowedOrphanedSpecies = new HashSet<String>();
 
 		// Get list of species with a non-default assembly
 		if (!isMasterDB(comparaCon)) {
@@ -104,18 +99,14 @@ public class CheckGenomeDB extends AbstractComparaTestCase {
 			data = DBUtils.getRowValuesList(comparaCon, sql);
 			for (String[] line : data) {
 				ReportManager.problem(this, comparaCon, comparaDbName + " There is at least one non-current assembly for " + line[0] + " (this should not happen in the release DB)");
+				result = false;
 			}
 		} else {
-			allowedOrphanedSpecies.addAll(Arrays.asList(orphanedSpeciesInMasterDB));
-		}
-
-		// Get list of species with no default assembly
-		sql = "SELECT DISTINCT name FROM genome_db GROUP BY name HAVING SUM(first_release IS NOT NULL AND last_release IS NULL) = 0";
-		data = DBUtils.getRowValuesList(comparaCon, sql);
-		for (String[] line : data) {
-			if (! allowedOrphanedSpecies.contains(line[0]) ) {
-				ReportManager.problem(this, comparaCon, "There is no default assembly for " + line[0]);
-				result = false;
+			// Get list of species with no default assembly
+			sql = "SELECT DISTINCT name FROM genome_db GROUP BY name HAVING SUM(first_release IS NOT NULL AND last_release IS NULL) = 0";
+			data = DBUtils.getRowValuesList(comparaCon, sql);
+			for (String[] line : data) {
+				ReportManager.info(this, comparaCon, "There is no default assembly for " + line[0]);
 			}
 		}
 

@@ -53,7 +53,7 @@ public class MultipleGenomicAlignBlockIds extends SingleDatabaseTestCase {
 			String sqlNonEPOmlss_ids = "SELECT method_link_species_set_id FROM method_link_species_set JOIN method_link USING (method_link_id) WHERE class LIKE 'GenomicAlign%' AND class != 'GenomicAlignTree.ancestral_alignment'";
 			String[] nonEPOmlss_ids = DBUtils.getColumnValues(con, sqlNonEPOmlss_ids);
 			for (String mlss_id : nonEPOmlss_ids) {
-				result &= checkForSingles(con, "genomic_align WHERE method_link_species_set_id = " + mlss_id, "genomic_align_block_id");
+				result &= checkForSinglesWithConstraint(con, "genomic_align", "genomic_align_block_id", "WHERE method_link_species_set_id = " + mlss_id);
 			}
 
 		} else {

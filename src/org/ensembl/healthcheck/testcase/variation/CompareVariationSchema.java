@@ -125,6 +125,19 @@ public class CompareVariationSchema extends AbstractCompareSchema {
                 }
                 return r;
         }
+
+  /**
+   * Set of tables which may be in the target schema to aid Mart build.
+   * They will be missing from the master schema.
+   */
+        protected Map<Species,Set<String>> martTables() {
+                if(r == null) {
+                        r = new HashMap<Species, Set<String>>();
+                        r.put(Species.UNKNOWN, createLinkedHashSet("MTMP_transcript_variation"));
+                }
+                return r;
+        }
+
         
 	/**
 	 * Override of the test method which makes sure we only test those tables
@@ -137,7 +150,8 @@ public class CompareVariationSchema extends AbstractCompareSchema {
 		Species species = targetDbre.getSpecies();
 		Set<String> notRequired = getSets(notRequiredTables(), species);
 		Set<String> required    = getSets(requiredTables(), species);
-		if(notRequired.contains(table) || required.contains(table)) {
+                Set<String> martTables = getSets(martTables(), species);
+		if(notRequired.contains(table) || required.contains(table) || martTables.contains(table)) {
 			return true;
 		}
 	  return super.compareTable(master, targetDbre, table);

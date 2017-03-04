@@ -1363,9 +1363,12 @@ public abstract class EnsTestCase {
 	 *            With col, specifies the foreign key to check.
 	 * @param col
 	 *            Column in table to check.
+	 * @param constraint
+	 *            Subset of the rows to be tested. This SQL constraint must
+	 *            include the WHERE keyword. Leave empty for no filtering
 	 * @return The number of "singles"
 	 */
-	public int countSingles(Connection con, String table, String col) {
+	public int countSingles(Connection con, String table, String col, String constraint) {
 
 		if (con == null) {
 			logger.severe("countSingles: Database connection is null");
@@ -1373,7 +1376,7 @@ public abstract class EnsTestCase {
 
 		int result = 0;
 
-		String sql = " FROM " + table + " GROUP BY (" + col
+		String sql = " FROM " + table + " " + constraint + " GROUP BY (" + col
 				+ ") HAVING COUNT(*) = 1";
 
 		result = DBUtils.getRowCount(con, "SELECT *" + sql);
@@ -1407,13 +1410,32 @@ public abstract class EnsTestCase {
 	 * @return boolean true if everything is fine false otherwise
 	 */
 	public boolean checkForSingles(Connection con, String table, String col) {
+		return checkForSinglesWithConstraint(con, table, col, "");
+	}
+
+	/**
+	 * Verify multiple appearance of a given foreign key
+	 *
+	 * @param con
+	 *            A connection to the database to be tested. Should already be
+	 *            open.
+	 * @param table
+	 *            With col, specifies the foreign key to check.
+	 * @param col
+	 *            Column in table1 to check.
+	 * @param constraint
+	 *            Subset of the rows to be tested. This SQL constraint must
+	 *            include the WHERE keyword. Leave empty for no filtering
+	 * @return boolean true if everything is fine false otherwise
+	 */
+	public boolean checkForSinglesWithConstraint(Connection con, String table, String col, String constraint) {
 
 		int singles = 0;
 		boolean result = true;
 
-		singles = countSingles(con, table, col);
+		singles = countSingles(con, table, col, constraint);
 
-		String useful_sql = "SELECT " + table + "." + col + " FROM " + table
+		String useful_sql = "SELECT " + table + "." + col + " FROM " + table + " " + constraint
 				+ " GROUP BY (" + col + ") HAVING COUNT(*) = 1";
 
 		if (singles > 0) {

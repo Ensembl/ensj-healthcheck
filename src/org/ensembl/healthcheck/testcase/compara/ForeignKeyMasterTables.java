@@ -50,8 +50,9 @@ public class ForeignKeyMasterTables extends AbstractComparaTestCase {
 		result &= checkForOrphans(con, "method_link_species_set", "method_link_id", "method_link", "method_link_id");
 		result &= checkForOrphans(con, "method_link_species_set", "species_set_id", "species_set_header", "species_set_id");
 		// genome_db
-		result &= checkForOrphansWithConstraint(con, "genome_db", "taxon_id", "ncbi_taxa_node", "taxon_id", "taxon_id != 0");
-		result &= checkForOrphansWithConstraint(con, "genome_db", "taxon_id", "ncbi_taxa_name", "taxon_id", "taxon_id != 0");
+		// NOTE: "taxon_id != 0" is not needed by Ensembl. Maybe by EG ?
+		result &= checkForOrphansWithConstraint(con, "genome_db", "taxon_id", "ncbi_taxa_node", "taxon_id", "taxon_id != 0 AND (last_release IS NULL)");
+		result &= checkForOrphansWithConstraint(con, "genome_db", "taxon_id", "ncbi_taxa_name", "taxon_id", "taxon_id != 0 AND (last_release IS NULL)");
 
 		if (!isMasterDB(con)) {
 			// The master database has the history of all method_links.
