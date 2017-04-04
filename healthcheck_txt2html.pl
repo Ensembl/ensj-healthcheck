@@ -49,6 +49,8 @@ usage("A release version must be specified, using the option '-v'") unless ($ver
 
 my %test_case_groups;
 my %test_cases;
+my %status_by_db;
+my %sp_alias;
 my $results_by_test_case = 0;
 my $current_test_case;
 my $current_db_name;
@@ -56,9 +58,11 @@ my $current_db_name;
 
 my $bt_id_suffix  = 'button';
 my $div_id_suffix = 'content';
-my %status_colour = ( 'PASSED'  => 'label-success',
-                      'FAILED'  => 'label-danger',
-                      'default' => 'label-info'
+my $hc_success = 'PASSED';
+my $hc_failed  = 'FAILED';
+my %status_colour = ( $hc_success => 'label-success',
+                      $hc_failed  => 'label-danger',
+                      'default'   => 'label-info'
                     );
 
 my $pre_colour = 'pre_colour';
@@ -94,7 +98,10 @@ while (<HC>) {
       my $db_name = $tc_result[0];
          $db_name =~ s/ //g;
       my $tc_res;
-      if ($db_name =~ /^\w+_\w+_variation_$version\_/) {
+      if ($db_name =~ /^(\w+)_(\w+)_variation_$version\_/) {
+        my $sp_alias_1 = substr($1,0,1);
+        my $sp_alias_2 = $2;
+        $sp_alias{$db_name} = lc($sp_alias_1.$sp_alias_2);
         $current_db_name = $db_name;
         $tc_res = $tc_result[1];
       }
@@ -162,7 +169,7 @@ while (<HC>) {
       
       # Generate row reports
       if ($short_report) {
-        my $div_id = lc($current_test_case)."_".$row_id;
+        my $div_id = $sp_alias{$db_name}."_".lc($current_test_case)."_".$row_id;
         $row_id ++;
            
         $tc_res = qq{
@@ -191,15 +198,18 @@ while (<HC>) {
       $results_by_test_case = 1;
       next;
     }
+    my ($test_case,$db_name,$status);
     if ($_ =~ /\[/) {
-      my ($test_case,$db_name,$status) = $_ =~ /^(\w+)\s\[(.+)\]\s+\.*\s?(\w+)$/;
+      ($test_case,$db_name,$status) = $_ =~ /^(\w+)\s\[(.+)\]\s+\.*\s?(\w+)$/;
       $test_case_groups{$db_name}{$test_case} = $status;
       $current_db_name = $db_name;
     }
     else {
-      my ($test_case,$status) = $_ =~ /^(\w+)\s\.*\s?(\w+)$/;
+      ($test_case,$status) = $_ =~ /^(\w+)\s\.*\s?(\w+)$/;
       $test_case_groups{$current_db_name}{$test_case} = $status;
     }
+    
+    $status_by_db{$current_db_name}{$status} ++;
   }
 }
 close(HC);
@@ -216,67 +226,68 @@ open RESULTS, "> $output_file" or die $!;
 print RESULTS qq{
 <html>$head_html
   <body style="padding: 5px 8px">
-    <a id="top"></a>
 };
+
+my $several_dbs = (scalar(keys(%test_case_groups)) > 1) ? 1 : 0;
+my $hc_header_icon = ($several_dbs) ? 'glyphicon-menu-right' : 'glyphicon-menu-down';
+my $hc_content_display = ($several_dbs) ? ' style="display:none"' : '';
+
 
 foreach my $db_name (sort(keys(%test_case_groups))) {
   # Species header
-  print RESULTS qq{
-    <div class="db_header">$db_name</div>
-    <div>\n};
-  
-  # HealtChecks list
-  print RESULTS qq{
-      <div style="float:left">
-        <table class="table table-hover table_hc_list">
-          <thead>
-            <tr>
-              <th>HealthCheck</th>
-              <th>Status</th>
-              <th>Count</th>
-            </tr>
-          </thead>
-          <tbody>
-  };
-  foreach my $tc (sort(keys(%{$test_case_groups{$db_name}}))) {
-    my $status = $test_case_groups{$db_name}{$tc};
+  my $status_html = '';
+  # List of status with their counts
+  foreach my $status (sort{ ($a ne $hc_success) cmp ($b ne $hc_success) || $a cmp $b } keys(%{$status_by_db{$db_name}})) {
     my $status_c = $status_colour{$status} ? $status_colour{$status} : $status_colour{'default'};
-    my $tc_label = $tc;
-       $tc_label =~ s/([A-Z])/ $1/g;
-       $tc_label =~ s/My S Q L/MySQL/;
-    
-    my $hc_errors_count = ($test_cases{$db_name}{$tc} && scalar(@{$test_cases{$db_name}{$tc}})) ? scalar(@{$test_cases{$db_name}{$tc}}) : '-';
-    print RESULTS sprintf(
-    qq{            <tr>
-              <td><a href="#%s">%s</a></td>
-              <td style="vertical-align:middle"><span class="label %s" style="">%s</td>
-              <td title="Number of errors reported">%s</td>
-            </tr>\n},
-      lc($tc), $tc_label, $status_c, $status, $hc_errors_count
-    );
+    $status_html .= sprintf( qq{<span class="label %s hc_status hc_font_1"><span class="black">%i</span> %s</span>},
+                             $status_c, $status_by_db{$db_name}{$status}, $status
+                           );
   }
-  print RESULTS qq{          </tbody>
-        </table>
+  my $db_top_anchor = $sp_alias{$db_name}."_top";
+  print RESULTS qq{
+    <a id="$db_top_anchor"></a>
+    <div class="db_header clearfix">
+      <div class="left db_header_left">
+        <button id="$db_name\_button" class="glyphicon $hc_header_icon showhide_hc" onclick="showhide('$db_name', 1)"></button>
+        <span>$db_name</span>
       </div>
-      <div class="legend_box">
-        <div class="bold_font">Colour legend</div>
-        <div><span class="$pre_colour">123456</span><span>: number of entries in the previous release</span></div>
-        <div><span class="$new_colour">123456</span><span>: number of entries in the new release</span></div>
-        <div><span class="$err_colour">123456</span><span>: number of entries in the error report</span></div>
-      </div>
-      <div style="clear:both"></div>
+      <div class="left db_header_right">$status_html</div>
     </div>
+    <div id="$db_name\_content" class="db_content"$hc_content_display>
+      <div class="clearfix">\n};
+  
+  # Passed successfully healtChecks list
+  if ($status_by_db{$db_name}{$hc_success}) {
+    print RESULTS get_hc_list($db_name, $hc_success);
+  }
+  
+  # Other healtChecks list
+  if ($status_by_db{$db_name}{$hc_failed}) {
+    print RESULTS get_hc_list($db_name, $hc_failed);
+  }
+  
+  # Colour legend
+  print RESULTS qq{
+        <div class="legend_box">
+          <div class="bold_font">Colour legend</div>
+          <div><span class="$pre_colour">123456</span><span>: number of entries in the previous release</span></div>
+          <div><span class="$new_colour">123456</span><span>: number of entries in the new release</span></div>
+          <div><span class="$err_colour">123456</span><span>: number of entries in the error report</span></div>
+        </div>
+      </div>
   };
   
   # HealtChecks results
   foreach my $tc (sort(keys(%{$test_case_groups{$db_name}}))) {
     my $status = $test_case_groups{$db_name}{$tc};
+    next if ($status eq $hc_success);
     my $status_c = $status_colour{$status} ? $status_colour{$status} : $status_colour{'default'};
     my $tc_label = $tc;
        $tc_label =~ s/([A-Z])/ $1/g;
        $tc_label =~ s/My S Q L/MySQL/;
-    my $tc_id = lc($tc);
-    my $button_id = "$tc_id\_$bt_id_suffix";
+       $tc_label =~ s/Previous Version/Previous Version \-/i;
+    my $tc_id = $sp_alias{$db_name}."_".lc($tc);
+    my $button_id = $tc_id."_".$bt_id_suffix;
 
     if ($test_cases{$db_name}{$tc} && scalar(@{$test_cases{$db_name}{$tc}})) {
       print RESULTS sprintf(
@@ -284,9 +295,9 @@ foreach my $db_name (sort(keys(%test_case_groups))) {
     <div id="%s" class="hc_header">
       <button id="%s" class="glyphicon glyphicon-menu-down showhide_hc" onclick="showhide('%s')"></button>
      %s<span class="label %s hc_status hc_font_1">%s</span>
-      <div class="hc_top_link hc_font_1"><a href="#top"><span class="glyphicon glyphicon-circle-arrow-up"></span> top</a></div>
+      <div class="hc_top_link hc_font_1"><a href="#%s"><span class="glyphicon glyphicon-circle-arrow-up"></span> top</a></div>
     </div>\n},
-        $tc_id, $button_id, $tc_id, $tc_label, $status_c, $status
+        $tc_id, $button_id, $tc_id, $tc_label, $status_c, $status, $sp_alias{$db_name}."_top"
       );
     
       my $content_id = "$tc_id\_$div_id_suffix";
@@ -297,21 +308,80 @@ foreach my $db_name (sort(keys(%test_case_groups))) {
       }
       print RESULTS qq{      </tbody></table>\n    </div>\n};
     }
-    else {
-      print RESULTS sprintf(
-        qq{
-    <div id="%s" class="hc_header">
-      <span class="glyphicon glyphicon-minus hc_header_icon"></span>
-     %s<span class="label %s hc_status hc_font_1">%s</span>
-      <div class="hc_top_link hc_font_1"><a href="#top"><span class="glyphicon glyphicon-circle-arrow-up"></span> top</a></div>
-    </div>\n},
-        $tc_id, $tc_label, $status_c, $status
-      );
-    }
   }
+  print RESULTS qq{</div>};
 }
 print RESULTS qq{</body></html>};
 
+
+sub get_hc_list {
+  my $db_name = shift;
+  my $type    = shift;
+
+  my $html = '';
+
+  my $count_col_header = '';
+  my $margin_left      = '';
+  if ($type ne $hc_success) {
+    $count_col_header = qq{\n                <th>Count</th>};
+    $margin_left = ' style="margin-left:30px"' if ($status_by_db{$db_name}{$hc_success});
+  }
+  $html .=  qq{
+        <div class="left"$margin_left">
+          <table class="table table-hover table_hc_list">
+            <thead>
+              <tr>
+                <th>HealthCheck $type</th>
+                <th>Status</th>$count_col_header
+              </tr>
+            </thead>
+            <tbody>\n};
+            
+  foreach my $tc (sort(keys(%{$test_case_groups{$db_name}}))) {
+    my $status = $test_case_groups{$db_name}{$tc};
+    
+    next if ($status ne $hc_success && $type eq $hc_success); # HC success table
+    next if ($status eq $hc_success && $type ne $hc_success); # HC failed table
+      
+    my $tc_title = '';
+      
+    my $status_c = $status_colour{$status} ? $status_colour{$status} : $status_colour{'default'};
+    my $tc_label = $tc;
+       $tc_label =~ s/([A-Z])/ $1/g;
+       $tc_label =~ s/^\s+//;
+       $tc_label =~ s/My S Q L/MySQL/;
+       if ($tc_label =~ /Previous Version/i) {
+         $tc_title = qq{ class="hc_help" data-toggle="tooltip" data-placement="right" title="$tc_label"};
+         $tc_label =~ s/Previous Version/\.\.\./i;
+       }
+
+    my $hc_errors_count = '';
+    if ($type ne $hc_success) {
+      $hc_errors_count = ($test_cases{$db_name}{$tc} && scalar(@{$test_cases{$db_name}{$tc}})) ? scalar(@{$test_cases{$db_name}{$tc}}) : '-';
+      $hc_errors_count = qq{
+                  <td class="row_count" title="Number of errors reported">$hc_errors_count</td>};
+      $html .= sprintf( qq{              <tr>
+                  <td><a href="#%s"$tc_title>%s</a></td>
+                  <td style="vertical-align:middle"><span class="label %s">%s</td>%s
+                </tr>\n},
+                $sp_alias{$db_name}."_".lc($tc), $tc_label, $status_c, $status, $hc_errors_count
+               );
+    }
+    else {
+      $html .= sprintf( qq{              <tr>
+                  <td><span$tc_title>%s</span></td>
+                  <td style="vertical-align:middle"><span class="label %s">%s</td>
+                </tr>\n},
+                $tc_label, $status_c, $status
+               );
+    }
+  }
+  $html .=  qq{          </tbody>
+          </table>
+        </div>};
+
+  return $html;
+}
 
 sub thousandify {
   my $number = shift;
@@ -329,41 +399,60 @@ sub get_html_head {
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
     <style type="text/css">
-      .db_header { background-color:#EEE; padding:5px 6px; margin:5px 0px 10px; font-size:24px; }
-      .table_hc_list { font-size:12px; margin-bottom:15px; max-width:360px; }
+      .db_header { background-color:#555; color: #FFF; padding:5px 6px; margin:5px 0px 10px; font-size:22px; }
+      .db_header_left  { width:500px; }
+      .db_header_right>span { line-height:32px; }
+      .left { float:left; }
+      .clearfix:after { clear:both; }
+      .db_content { padding: 0px 15px; }
+      .table_hc_list { font-size:12px; margin-bottom:15px; max-width:375px; }
       .table_hc_list>thead>tr { background-color:#EEE; }
       .table_hc_list>thead>tr>th { padding:4px 5px; border-top:1px solid #DDD; }
       .table_hc_list>tbody>tr>td { padding:2px; }
+      .hc_help { cursor:pointer; }
       .legend_box { float:right; padding:5px; border:1px solid #CCC; }
       .bold_font { font-weight:bold; }
       .hc_header { padding:4px 6px; font-size:20px; margin:30px 0px 5px; background-color:#EEE; }
-      .showhide_hc { border:none; background-color:transparent; }
+      .showhide_hc { border:none; background-color:transparent; vertical-align:text-bottom; }
       .showhide_hc:hover { color: #00F; }
-      .hc_header_icon { padding:3px 6px; border:none; background-color:transparent; }
+      .hc_header_icon { padding:3px 6px; border:none; background-color:transparent; vertical-align:text-bottom; }
       .hc_status { margin-left:25px; vertical-align:middle; }
       .hc_top_link { float:right; }
       .hc_top_link a { text-decoration:none; padding:4px; }
       .hc_extra_row_div { padding:4px 0px; margin-left:30px; }
-      .hc_font_1 { font-size:14px; }
+      .hc_font_1 { font-size:12px; }
       .pre_colour { color:#00D; }
       .new_colour { color:#ff8000; }
       .err_colour { color:#D00; }
+      .black { color:#000; }
+      .row_count { text-align:right; }
     </style>
     
     <!-- Javascript -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script type="text/javascript">
-      function showhide(id) {
+      \$(document).ready(function(){
+        // Popups
+        \$('[data-toggle="tooltip"]').tooltip();
+      });
+      
+      function showhide(id, long) {
         var div_id = "#"+id+"_$div_id_suffix";
         var button_id = "#"+id+"_$bt_id_suffix";
         
+        var duration = 150;
+        if (long) {
+          duration = 300;
+        }
+        
         if(\$(button_id).hasClass("glyphicon-menu-right")) {
           \$(button_id).removeClass("glyphicon-menu-right").addClass("glyphicon-menu-down");
-          \$(div_id).show(150);
+          \$(div_id).show(duration);
         }
         else {
           \$(button_id).removeClass("glyphicon-menu-down").addClass("glyphicon-menu-right");
-          \$(div_id).hide(150);
+          \$(div_id).hide(duration);
         }
       }
       

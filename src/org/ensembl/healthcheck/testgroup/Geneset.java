@@ -41,6 +41,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.FeatureAnalysis </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.FeatureCoords </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.GeneCoordSystem </li>
+ *   <li> org.ensembl.healthcheck.testcase.generic.GeneTranscriptBiotypeMismatch </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.GeneTranscriptStartEnd </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.HitNameFormat </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.IsCurrent </li>
@@ -59,6 +60,8 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.StableID </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.Strand </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.TranscriptSupportingFeatures </li>
+ *   <li> org.ensembl.healthcheck.testcase.generic.TranslationCheckSeqStart </li>
+ *   <li> org.ensembl.healthcheck.testcase.generic.TranslationCheckZeroLength </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.TranslationStartEnd </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.TranslationStartEndExon </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.UTR </li>
