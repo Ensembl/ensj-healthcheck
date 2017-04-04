@@ -145,9 +145,9 @@ public class DuplicateProbeFeatures extends SingleDatabaseTestCase  implements R
 	}
 	
 	protected String getDuplicateSql() {
-		return "SELECT count(probe_feature_id) num_occurrences, group_concat(cast(probe_feature_id as char)) ids, seq_region_id, seq_region_start, seq_region_end, probe_id, analysis_id "
+		return "SELECT count(probe_feature_id) num_occurrences, group_concat(cast(probe_feature_id as char)) ids, seq_region_id, seq_region_start, seq_region_end, probe_id, analysis_id, cigar_line "
 				+ "FROM probe_feature "
-				+ "group by seq_region_id, seq_region_start, seq_region_end, probe_id, analysis_id "
+				+ "group by seq_region_id, seq_region_start, seq_region_end, probe_id, analysis_id, cigar_line "
 				+ "having num_occurrences > 1 order by num_occurrences desc";
 	}
 	
