@@ -44,7 +44,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.InterproDescriptions </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.LRG </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.PredictedXrefs </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.TranscriptNames </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.TranscriptsSameName </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.UnreviewedXrefs </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.XrefCategories </li> 
@@ -86,7 +85,6 @@ public class CoreXrefs extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.InterproFeatures.class,
                         org.ensembl.healthcheck.testcase.generic.LRG.class,
 			org.ensembl.healthcheck.testcase.generic.PredictedXrefs.class,
-                        org.ensembl.healthcheck.testcase.generic.TranscriptNames.class,
 			org.ensembl.healthcheck.testcase.generic.TranscriptsSameName.class,
 			org.ensembl.healthcheck.testcase.generic.UnreviewedXrefs.class,
 			org.ensembl.healthcheck.testcase.generic.XrefCategories.class,
