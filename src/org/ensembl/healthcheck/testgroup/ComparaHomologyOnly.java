@@ -35,6 +35,7 @@ public class ComparaHomologyOnly extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.CheckSequenceTable.class,
 			org.ensembl.healthcheck.testcase.compara.CheckSpeciesTreeNodeAttr.class,
 			org.ensembl.healthcheck.testcase.compara.CheckComparaStableIDs.class,
+			org.ensembl.healthcheck.testcase.compara.CheckOrthologQCThresholds.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyCAFETables.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyFamilyTables.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyGeneAlignTables.class,
