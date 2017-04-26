@@ -56,7 +56,6 @@ public class FuncgenRelease extends GroupOfTests {
 
 		addTest(
 			org.ensembl.healthcheck.testcase.generic.AnalyseTables.class,
-			org.ensembl.healthcheck.testcase.funcgen.ArrayXrefs.class,
 			org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions.class,
 			org.ensembl.healthcheck.testcase.generic.BlankEnums.class,
 			org.ensembl.healthcheck.testcase.generic.BlankInfoType.class,
@@ -67,7 +66,6 @@ public class FuncgenRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionAnalysisDescriptions.class,
 			org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionArrayXrefs.class,
 			// org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionRegulatoryFeatures.class,
-			org.ensembl.healthcheck.testcase.funcgen.DuplicateProbeFeatures.class,
 			org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName.class,
 			org.ensembl.healthcheck.testcase.funcgen.FeaturePosition.class,
 			// Deactivated until we delete the non current seq regions.
@@ -76,14 +74,18 @@ public class FuncgenRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.funcgen.FuncgenForeignKeys.class,
 			org.ensembl.healthcheck.testcase.funcgen.FuncgenStableID.class,
 			org.ensembl.healthcheck.testcase.funcgen.MetaCoord.class,
+			org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class,
 			org.ensembl.healthcheck.testcase.generic.NullStrings.class,
 			// org.ensembl.healthcheck.testcase.funcgen.RegulatoryFeatureTypes.class,
 			// org.ensembl.healthcheck.testcase.funcgen.RegulatoryMotifFeatures.class,
 			// org.ensembl.healthcheck.testcase.funcgen.RegulatorySets.class,
-			org.ensembl.healthcheck.testcase.generic.SpeciesID.class,
 			org.ensembl.healthcheck.testcase.generic.SchemaType.class,
-			org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class,
-			FuncgenIntegrity.class
+			org.ensembl.healthcheck.testcase.generic.SpeciesID.class,
+			org.ensembl.healthcheck.testgroup.FuncgenIntegrity.class,
+			org.ensembl.healthcheck.testgroup.FuncgenPostERSA.class,
+			org.ensembl.healthcheck.testgroup.FuncgenPostProbemapping.class,
+			org.ensembl.healthcheck.testgroup.FuncgenPostRegulatoryBuild.class
+
 		);
 	}
 }
