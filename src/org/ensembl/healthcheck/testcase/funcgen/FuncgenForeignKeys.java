@@ -105,16 +105,16 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 		}
 
 
-		//Need a constraint here where fs.cell_type_id is NOT NULL
-		//result &= checkForOrphans(con, "feature_set", "cell_type_id", "cell_type", "cell_type_id", true);
-		result &= checkForOrphansWithConstraint(con, "feature_set", "cell_type_id", "cell_type", "cell_type_id", "cell_type_id IS NOT NULL");
+		//Need a constraint here where fs.epigenome_id is NOT NULL
+		//result &= checkForOrphans(con, "feature_set", "epigenome_id", "epigenome", "epigenome_id", true);
+		result &= checkForOrphansWithConstraint(con, "feature_set", "epigenome_id", "epigenome", "epigenome_id", "epigenome_id IS NOT NULL");
 		
-		result &= checkForOrphans(con, "experimental_chip", "cell_type_id", "cell_type", "cell_type_id", true);
+		result &= checkForOrphans(con, "experimental_chip", "epigenome_id", "epigenome", "epigenome_id", true);
 		
-		result &= checkForOrphans(con, "input_set", "cell_type_id", "cell_type", "cell_type_id", true);
+		result &= checkForOrphans(con, "input_set", "epigenome_id", "epigenome", "epigenome_id", true);
 		
-		result &= checkForOrphans(con, "result_set", "cell_type_id", "cell_type", "cell_type_id", true);
-		//This may fail as it's not necessary to have a cell_type_id in a result_set???
+		result &= checkForOrphans(con, "result_set", "epigenome_id", "epigenome", "epigenome_id", true);
+		//This may fail as it's not necessary to have a epigenome_id in a result_set???
 		
 		result &= checkForOrphans(con, "channel", "experimental_chip_id", "experimental_chip", "experimental_chip_id", false);
 						
@@ -155,7 +155,7 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 		result &= checkForOrphans(con, "input_set_input_subset", "input_subset_id", "input_subset", "input_subset_id", true);
     
     result &= checkForOrphans(con, "input_subset", "feature_type_id", "feature_type", "feature_type_id", true);
-    result &= checkForOrphans(con, "input_subset", "cell_type_id", "cell_type", "cell_type_id", true);
+    result &= checkForOrphans(con, "input_subset", "epigenome_id", "epigenome", "epigenome_id", true);
 
 		//Need to check for input_sets which are nor present in supporting_set and result_set_input
 		//reverse is already done, but we need this logical && test
