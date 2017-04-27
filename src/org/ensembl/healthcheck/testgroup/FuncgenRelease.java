@@ -64,7 +64,6 @@ public class FuncgenRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.funcgen.CoordSystemUpToDate.class,
 			org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema.class,
 			org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionAnalysisDescriptions.class,
-			org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionArrayXrefs.class,
 			// org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionRegulatoryFeatures.class,
 			org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName.class,
 			org.ensembl.healthcheck.testcase.funcgen.FeaturePosition.class,
@@ -87,5 +86,12 @@ public class FuncgenRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testgroup.FuncgenPostRegulatoryBuild.class
 
 		);
+
+		removeTest(
+			// this test belongs to FuncgenPostERSA testgroup and is useful after
+			// the ERSA run but since we do not hand over bam files 
+			// it should not be part of the FuncgenRelease testgroup
+			org.ensembl.healthcheck.testcase.funcgen.ResultSetHasBamFile.class
+			);
 	}
 }
