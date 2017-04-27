@@ -67,7 +67,7 @@ public class RegulatoryFeatureIsActive extends SingleDatabaseTestCase {
                 //fetch activity for every regulatory_feature
                 Statement newStmt = con.createStatement();
                 ResultSet activity = newStmt.executeQuery("SELECT * FROM " +
-                        "regulatory_activity WHERE activity='ACTIVE' AND " +
+                        "regulatory_activity WHERE activity!='NA' AND " +
                         "regulatory_feature_id=" + regulatoryFeatureID);
 
                 if (!activity.next()) {
@@ -89,7 +89,7 @@ public class RegulatoryFeatureIsActive extends SingleDatabaseTestCase {
                             "(regulatory_build_id) LEFT JOIN " +
                             "regulatory_activity ON (regulatory_feature" +
                             ".regulatory_feature_id=regulatory_activity" +
-                            ".regulatory_feature_id AND activity='ACTIVE') " +
+                            ".regulatory_feature_id AND activity!='NA') " +
                             "WHERE regulatory_activity.regulatory_activity_id" +
                             " IS NULL AND regulatory_build.is_current=1";
 
