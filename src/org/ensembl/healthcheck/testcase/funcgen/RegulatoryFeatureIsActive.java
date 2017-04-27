@@ -29,8 +29,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * Check that every regulatory_feature of the current Regulatory Build is
- * active in at least one epigenome.
+ * Check that every regulatory_feature of the current Regulatory Build has
+ * a valid activity value in at least one epigenome.
+ * Valid activity: 'INACTIVE', 'REPRESSED', 'POISED', 'ACTIVE'
+ * Invalid activity: 'NA'
  *
  * @author ilavidas
  */
@@ -43,7 +45,8 @@ public class RegulatoryFeatureIsActive extends SingleDatabaseTestCase {
     public RegulatoryFeatureIsActive() {
         setTeamResponsible(Team.FUNCGEN);
         setDescription("Check that every regulatory_feature of the current "
-                + "Regulatory Build is active in at least one epigenome.");
+                + "Regulatory Build has a valid activity value in at least "
+                + "one epigenome.");
     }
 
     @Override
