@@ -50,6 +50,7 @@ elif [[ $db =~ funcgen ]]; then
   -c $properties \
   -R Database --output.database $hcdb \
   -d $db \
+  --datafile_base_path /nfs/production/panda/ensembl/production/ensemblftp/data_files/ \
   --sessionID $sid >& $report_dir/$db.out
 
 else
