@@ -65,7 +65,7 @@ abstract public class ComparePreviousVersionProbeFeaturesFromProbeSetsByArrayBas
           + "    array.name, "
           + "    count(distinct probe_id)/count(distinct probe_set_id) "
           + "from "
-          + "    probe_set join probe using (probe_set_id) join array_chip using (array_chip_id) join array using (array_id) "
+          + "    probe_set join probe using (probe_set_id) join array_chip on (array_chip.array_chip_id = probe.array_chip_id) join array using (array_id) "
           + "group by "
           + "    array.name, array.vendor";
       Map<String, Integer> arrayNameToAverageProbeSetSize = getCountsBySQL(dbre, sql);
