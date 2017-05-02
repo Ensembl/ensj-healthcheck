@@ -109,33 +109,17 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 		//result &= checkForOrphans(con, "feature_set", "epigenome_id", "epigenome", "epigenome_id", true);
 		result &= checkForOrphansWithConstraint(con, "feature_set", "epigenome_id", "epigenome", "epigenome_id", "epigenome_id IS NOT NULL");
 		
-		result &= checkForOrphans(con, "experimental_chip", "epigenome_id", "epigenome", "epigenome_id", true);
-		
-		result &= checkForOrphans(con, "input_set", "epigenome_id", "epigenome", "epigenome_id", true);
-		
 		result &= checkForOrphans(con, "result_set", "epigenome_id", "epigenome", "epigenome_id", true);
 		//This may fail as it's not necessary to have a epigenome_id in a result_set???
 		
-		result &= checkForOrphans(con, "channel", "experimental_chip_id", "experimental_chip", "experimental_chip_id", false);
-						
 		result &= checkForOrphans(con, "data_set", "data_set_id", "supporting_set", "data_set_id", false);
 		
 		result &= checkForOrphansWithConstraint(con, "data_set", "feature_set_id", "feature_set", "feature_set_id", "feature_set_id != 0");
 		
-		
+		result &= checkForOrphans(con, "input_subset", "experiment_id", "experiment", "experiment_id", true);
 
-		
-		result &= checkForOrphans(con, "input_subset", "experiment_id", "experiment", "experiment_id", true); 
-		
-		result &= checkForOrphans(con, "experimental_chip", "experiment_id", "experiment", "experiment_id", true);
-		
-		result &= checkForOrphans(con, "experimental_chip", "feature_type_id", "feature_type", "feature_type_id", true);
-		
-		
 		result &= checkForOrphans(con, "experiment", "experimental_group_id", "experimental_group", "experimental_group_id", true);
-		result &= checkForOrphansWithConstraint(con, "experiment", "mage_xml_id", "mage_xml", "mage_xml_id", "mage_xml_id is NOT NULL");
 
-		
 		result &= checkForOrphans(con, "external_feature", "feature_set_id", "feature_set", "feature_set_id", true);
 		
 		result &= checkForOrphans(con, "feature_set", "analysis_id", "analysis", "analysis_id", true);
@@ -145,23 +129,11 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 		result &= checkForOrphans(con, "regulatory_feature", "feature_type_id", "feature_type", "feature_type_id", true);
 		
 		result &= checkForOrphans(con, "result_set", "feature_type_id", "feature_type", "feature_type_id", true);
-		
-		result &= checkForOrphans(con, "input_set", "feature_type_id", "feature_type", "feature_type_id", true);
-	
-	  result &= checkForOrphans(con, "input_set", "analysis_id", "analysis", "analysis_id", true);
-		
-		result &= checkForOrphans(con, "input_set", "input_set_id", "input_set_input_subset", "input_set_id", false);
-		
-		result &= checkForOrphans(con, "input_set_input_subset", "input_subset_id", "input_subset", "input_subset_id", true);
-    
-    result &= checkForOrphans(con, "input_subset", "feature_type_id", "feature_type", "feature_type_id", true);
-    result &= checkForOrphans(con, "input_subset", "epigenome_id", "epigenome", "epigenome_id", true);
 
-		//Need to check for input_sets which are nor present in supporting_set and result_set_input
-		//reverse is already done, but we need this logical && test
-		
-		result &= checkForOrphans(con, "mage_xml", "mage_xml_id", "experiment", "mage_xml_id", true);
-				
+    	result &= checkForOrphans(con, "input_subset", "feature_type_id", "feature_type", "feature_type_id", true);
+
+    	result &= checkForOrphans(con, "input_subset", "epigenome_id", "epigenome", "epigenome_id", true);
+
 		result &= checkForOrphans(con, "probe", "array_chip_id", "array_chip", "array_chip_id", false);
 		
 		//result &= checkForOrphans(con, "probe", "probe_set_id", "probe_set", "probe_set_id", false);
@@ -177,7 +149,6 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 		result &= checkForOrphans(con, "probe_feature", "analysis_id", "analysis", "analysis_id", true);
 		
 		result &= checkForOrphans(con, "regulatory_attribute", "regulatory_feature_id", "regulatory_feature", "regulatory_feature_id", true);
-		
 
 		
 
@@ -198,32 +169,7 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 		
 		result &= checkForOrphans(con, "result_set", "analysis_id", "analysis", "analysis_id", true);
 
-		String[] rsetInputTables = {"experimental_chip", "channel", "input_set"};
-		
-		//This only checks for table_ids which have been orphaned by the input table
-		for (int i = 0; i < rsetInputTables.length; i++) {
-			result &= checkForOrphansWithConstraint(con, "result_set_input", "table_id", rsetInputTables[i], rsetInputTables[i] + "_id", "table_name='" + rsetInputTables[i] + "'");
-		}
-		
-		//Don't check for result_set_id in supporting set as this is nor mandatory
-		
-		//No valid enum'd table list for status, so just test what we have currently 
-		try {
-			ResultSet rs = con.createStatement().executeQuery("SELECT distinct(table_name) from status");
-			
-			while (rs.next()){
-				String tableName   = rs.getString(1); 
-				result &= checkForOrphansWithConstraint(con, "status", "table_id", tableName, tableName + "_id", "table_name='" + tableName + "'");
-			}
-			
-			rs.close();
-		}
-		catch (SQLException se) {	
-			se.printStackTrace();
-			return false;
-		}
-		
-		
+
 		result &= checkForOrphans(con, "status", "status_name_id", "status_name", "status_name_id", true);
 		
 			
