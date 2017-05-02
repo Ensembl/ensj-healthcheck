@@ -30,7 +30,7 @@ sub resource_classes {
     my ($self) = @_;
     return { 'default' => { 'LSF' => '-q production-rh7' },
               'himem' =>
-              { 'LSF' => '-q production-rh7 -M 4000 -R "rusage[mem=4000]"' }
+              { 'LSF' => '-q production-rh7 -M 5000 -R "rusage[mem=5000]"' }
     };
 }
 
