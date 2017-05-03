@@ -148,25 +148,6 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 		
 		result &= checkForOrphans(con, "probe_feature", "analysis_id", "analysis", "analysis_id", true);
 		
-		result &= checkForOrphans(con, "regulatory_attribute", "regulatory_feature_id", "regulatory_feature", "regulatory_feature_id", true);
-
-		
-
-		for (int i = 0; i < featTabs.length; i++) {
-			
-			if(! featTabs[i].equals("regulatory_feature")){
-			
-				String type = featTabs[i].replaceAll("_feature", "");
-				result &= checkForOrphansWithConstraint(con, "regulatory_attribute", "attribute_feature_id", featTabs[i], featTabs[i] + "_id","attribute_feature_table='" + type + "'");
-			}		
-		}
-		
-		result &= checkForOrphans(con, "regulatory_feature", "feature_set_id", "feature_set", "feature_set_id", true);
-		
-		result &= checkForOrphans(con, "result", "result_set_input_id", "result_set_input", "result_set_input_id", true);
-		
-		result &= checkForOrphans(con, "result", "probe_id", "probe", "probe_id", true);
-		
 		result &= checkForOrphans(con, "result_set", "analysis_id", "analysis", "analysis_id", true);
 
 
