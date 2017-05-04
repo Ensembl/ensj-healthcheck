@@ -2,11 +2,13 @@ package org.ensembl.healthcheck.testcase.funcgen;
 
 import java.util.Map;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
 
 public class ComparePreviousVersionGenomicProbeFeaturesByArray extends ComparePreviousVersionBase {
 
     public ComparePreviousVersionGenomicProbeFeaturesByArray() {
+        setTeamResponsible(Team.FUNCGEN);
         setDescription("Checks for loss of probes features from genomic mappings for each array that is not organised into probe sets.");
     }
 
