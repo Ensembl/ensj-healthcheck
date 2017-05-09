@@ -200,9 +200,31 @@ while (<HC>) {
     }
     my ($test_case,$db_name,$status);
     if ($_ =~ /\[/) {
-      ($test_case,$db_name,$status) = $_ =~ /^(\w+)\s\[(.+)\]\s+\.*\s?(\w+)$/;
-      $test_case_groups{$db_name}{$test_case} = $status;
-      $current_db_name = $db_name;
+      # Several reports on the same line
+      if ($_ =~ /\]\s\w+/) {
+        my @entries = split(/\]\s+/, $_);
+        if ($entries[$#entries] =~ /\s*\./) {
+          my $last_status = pop @entries;
+          $entries[$#entries] .= $last_status;
+        }
+        foreach my $entry (@entries) {
+          if ($entry =~ /\]\s+\./) {
+            ($test_case,$db_name,$status) = $entry =~ /^(\w+)\s\[(.+)\]\s+\.*\s?(\w+)$/;
+          }
+          else {
+            ($test_case,$db_name) = $entry =~ /^(\w+)\s\[(.+)\]/;
+            $status = 'FAILED';
+          }
+          $test_case_groups{$db_name}{$test_case} = $status;
+          $current_db_name = $db_name;
+        }
+      }
+      # Just one report per line
+      else {
+        ($test_case,$db_name,$status) = $_ =~ /^(\w+)\s\[(.+)\]\s+\.*\s?(\w+)$/;
+        $test_case_groups{$db_name}{$test_case} = $status;
+        $current_db_name = $db_name;
+      }
     }
     else {
       ($test_case,$status) = $_ =~ /^(\w+)\s\.*\s?(\w+)$/;
