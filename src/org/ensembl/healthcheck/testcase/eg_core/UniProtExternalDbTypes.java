@@ -47,7 +47,7 @@ public class UniProtExternalDbTypes extends AbstractRowCountTestCase {
        private final static String QUERY = "select count(*) from xref "
                      + "join external_db using (external_db_id) "
                              + "where db_name like 'Uniprot%' and "
-                                      + "db_name not in ('Uniprot/SPTREMBL','Uniprot/SWISSPROT','Uniprot_gn','Uniprot_gn_gene_name','Uniprot_gn_trans_name','UniProtKB-KW')";
+                                      + "db_name not in ('Uniprot/SPTREMBL','Uniprot/SWISSPROT','Uniprot/Varsplic','Uniprot_gn','Uniprot_gn_gene_name','Uniprot_gn_trans_name','UniProtKB-KW')";
 
        /*
         * (non-Javadoc)
