@@ -51,98 +51,123 @@ public class CheckChar extends SingleDatabaseTestCase {
 	 *          The database to check.
 	 * @return True if the test passed
 	 */
-         public boolean run(final DatabaseRegistryEntry dbre) {
-	     boolean result = true;
+  public boolean run(final DatabaseRegistryEntry dbre) {
+    boolean result = true;
 
-		Connection con = dbre.getConnection();
+    Connection con = dbre.getConnection();
 
-		try {
-			/*
-			 * Will extract a list of phenotype.descriptions and check for unsupported char & short names
-			 */
-		    boolean char_ok   = true;
+    try {
+      /*
+      * Will extract a list of phenotype.descriptions and check for unsupported char & short names
+      */
+      boolean char_ok   = true;
 
 
-		    
-                   List<String> data = getSqlTemplate(con).queryForDefaultObjectList( 
-		       "select description from phenotype where description is not null", String.class);
 
-		    for (int i = 0; i < data.size(); i++) {
+      List<String> data = getSqlTemplate(con).queryForDefaultObjectList("select description from phenotype where description is not null", String.class);
 
-			    String input = data.get(i);
-			    
-			     // check for unusually short descriptions
-			    if(input.length() < 4){
-				result = false;
-				ReportManager.problem(this, con, "phenotype: " + input + " is suspiciously short");
-			     }
+      for (int i = 0; i < data.size(); i++) {
 
-                            // check for characters which will be interpreted a new lines
-                            if( input.contains("\n") ){
-                                result = false;
-                                ReportManager.problem(this, con, "phenotype: " + input + " contains a newline ");
-                             }
+        String input = data.get(i);
 
- 			   
+        // check for unusually short descriptions
+        if(input.length() < 4){
+          result = false;
+          ReportManager.problem(this, con, "phenotype: " + input + " is suspiciously short");
+        }
 
-                            // check for phenotype descriptions suggesting no phenotype
-                            boolean name_ok = checkNonTerms(input);
-			    if(name_ok == false){
-				result = false;
-				ReportManager.problem(this, con, "phenotype: " + input + " is not useful");
-			    }
+        // check for characters which will be interpreted a new lines
+        if( input.contains("\n") ){
+          result = false;
+          ReportManager.problem(this, con, "phenotype: " + input + " contains a newline ");
+        }
 
-                            // check for unsupported individual character
-			    char_ok = checkUnsupportedChar(input);
-			    if(char_ok == false){
-				result = false;
-				ReportManager.problem(this, con, "phenotype: \""+ input +"\" has suspect start or unsupported characters");
-			    }
+        // check for phenotype descriptions suggesting no phenotype
+        boolean name_ok = checkNonTerms(input);
+        if(name_ok == false){
+          result = false;
+          ReportManager.problem(this, con, "phenotype: " + input + " is not useful");
+        }
 
-		    }					    
-	
-		} catch (Exception e) {
-			ReportManager.problem(this, con, "HealthCheck generated an exception: " + e.getMessage());
-			result = false;
-		}
-		if (result) {
-			// if there were no problems, just inform for the interface to pick the HC
-			ReportManager.correct(this, con, "CheckChar healthcheck passed without any problem");
-		}
-		return result;
-	} 
+        // check for unsupported individual character
+        char_ok = checkUnsupportedChar(input);
+        if(char_ok == false){
+          result = false;
+          String unsupportedChar = getUnsupportedChar(input);
+          ReportManager.problem(this, con, "phenotype: \""+ input +"\" has suspect start or unsupported characters: \"" + unsupportedChar  + "\"");
+        }
+
+      }					    
+
+    } catch (Exception e) {
+      ReportManager.problem(this, con, "HealthCheck generated an exception: " + e.getMessage());
+      result = false;
+    }
+    if (result) {
+      // if there were no problems, just inform for the interface to pick the HC
+      ReportManager.correct(this, con, "CheckChar healthcheck passed without any problem");
+    }
+    return result;
+  } 
 
 	// --------------------------------------------------------------
 
-	public boolean checkUnsupportedChar( String input) {
+  public boolean checkUnsupportedChar( String input) {
 
-		boolean is_ok = true;
-		int len = input.length();
-			    
-		for (int i =0; i< len; i++){
-		    char test_value= input.charAt(i);
-				
-		    //get ascii code				
-		    int ascii_val = (int) test_value;	   
-		    
-		    // check code in supported range
-		    if(ascii_val < 32 || ascii_val  > 126 || ascii_val == 60 || ascii_val == 62 ){
-			is_ok = false;
-		    }
+    boolean is_ok = true;
+    int len = input.length();
+    
+    for (int i =0; i< len; i++){
+      char test_value= input.charAt(i);
 
-		    // also check first character makes sense
-		    if(i == 0 && ( ascii_val < 48 || 
-				   (ascii_val  > 57 && ascii_val < 65) ||
-				   (ascii_val  > 90 && ascii_val < 97) ||
-				   ascii_val  > 122)){
-			is_ok = false;
-		    }
-		}
-		return is_ok;
-	}
+      //get ascii code				
+      int ascii_val = (int) test_value;	   
 
+      // check code in supported range
+      if(ascii_val < 32 || ascii_val  > 126 || ascii_val == 60 || ascii_val == 62 ){
+        is_ok = false;
+      }
 
+      // also check first character makes sense
+      if(i == 0 && ( ascii_val < 48 || 
+        (ascii_val  > 57 && ascii_val < 65) ||
+        (ascii_val  > 90 && ascii_val < 97) ||
+        ascii_val  > 122)){
+        is_ok = false;
+      }
+    }
+    return is_ok;
+  }
 
+  public String getUnsupportedChar( String input) {
+
+    boolean is_ok = true;
+    int len = input.length();
+    String unsupportedChar = "";
+    for (int i =0; i< len; i++){
+      char test_value= input.charAt(i);
+
+      //get ascii code				
+      int ascii_val = (int) test_value;	   
+
+      // check code in supported range
+      if(ascii_val < 32 || ascii_val  > 126 || ascii_val == 60 || ascii_val == 62 ){
+        is_ok = false;
+      }
+
+      // also check first character makes sense
+      if(i == 0 && ( ascii_val < 48 || 
+        (ascii_val  > 57 && ascii_val < 65) ||
+        (ascii_val  > 90 && ascii_val < 97) ||
+        ascii_val  > 122)){
+        is_ok = false;
+      }
+      if (!is_ok) {
+        unsupportedChar = "" + input.charAt(i);
+      }
+    }
+    return unsupportedChar;
+  }
 
 	public boolean checkNonTerms( String input) {
 
