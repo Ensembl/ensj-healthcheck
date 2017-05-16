@@ -79,6 +79,7 @@ public class VariationRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionSources.class,
 			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionStructuralVariations.class,
 			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionValidationStatus.class,
+			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionVariationClasses.class,
 			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionVariationFeatures.class,
 			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionVariationSets.class,
 			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionVariationSynonyms.class,
@@ -101,11 +102,11 @@ public class VariationRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.variation.VariationClasses.class,
 			org.ensembl.healthcheck.testcase.variation.VariationFeature.class,
 			org.ensembl.healthcheck.testcase.variation.VariationForeignKeys.class,
-            org.ensembl.healthcheck.testcase.variation.VariationFeatureAlleles.class,
+      org.ensembl.healthcheck.testcase.variation.VariationFeatureAlleles.class,
 			org.ensembl.healthcheck.testcase.variation.VariationSet.class,
 			org.ensembl.healthcheck.testcase.variation.VariationSynonym.class,
-                        org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class,
-                        org.ensembl.healthcheck.testcase.generic.SchemaType.class
+      org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class,
+      org.ensembl.healthcheck.testcase.generic.SchemaType.class
 		);
 	}
 }
