@@ -68,31 +68,31 @@ public class StandaloneTestRunner {
         @Option(shortName = "o", longName = "output_file", defaultValue = "failures.txt", description = "File to write any failures to (use '-' for standard out)")
         String getOutputFile();
 
-        @Option(shortName = "v", longName="verbose", description = "Show detailed debugging output")
+        @Option(shortName = "v", longName = "verbose", description = "Show detailed debugging output")
         boolean isVerbose();
 
-        @Option(shortName = "d", longName="dbname", description = "Database to test")
+        @Option(shortName = "d", longName = "dbname", description = "Database to test")
         String getDbname();
 
-        @Option(shortName = "u", longName="user", description = "Username for test database")
+        @Option(shortName = "u", longName = "user", description = "Username for test database")
         String getUser();
 
-        @Option(shortName = "h", longName="host", description = "Host for test database")
+        @Option(shortName = "h", longName = "host", description = "Host for test database")
         String getHost();
 
-        @Option(shortName = "p", longName="pass", description = "Password for test database")
+        @Option(shortName = "p", longName = "pass", description = "Password for test database")
         String getPassword();
 
         boolean isPassword();
 
-        @Option(shortName = "P", longName="port", description = "Port for test database")
+        @Option(shortName = "P", longName = "port", description = "Port for test database")
         int getPort();
 
         @Option(longName = "compara_dbname", defaultValue = "ensembl_compara_master", description = "Name of compara master database")
         String getComparaMasterDbname();
 
         boolean isComparaMasterDbname();
-        
+
         @Option(longName = "compara_host", description = "Compara master database host")
         String getComparaHost();
 
@@ -112,7 +112,6 @@ public class StandaloneTestRunner {
         String getComparaPassword();
 
         boolean isComparaPassword();
-
 
         @Option(longName = "prod_dbname", defaultValue = "ensembl_production", description = "Name of production database")
         String getProductionDbname();
@@ -292,8 +291,8 @@ public class StandaloneTestRunner {
         if (testDb == null) {
             getLogger().info("Connecting to test database " + options.getDbname());
             testDb = new DatabaseRegistryEntry(getPrimaryServer(), options.getDbname(), null, null);
-            if(testDb.getConnection()==null) {
-                throw new ConfigurationException("Test database "+options.getDbname()+" not found");
+            if (testDb.getConnection() == null) {
+                throw new ConfigurationException("Test database " + options.getDbname() + " not found");
             }
         }
         return testDb;
@@ -349,10 +348,15 @@ public class StandaloneTestRunner {
             test.setProductionDatabase(getProductionDb());
             test.setComparaMasterDatabase(getComparaMasterDb());
             ReportManager.startTestCase(test, getTestDb());
-            boolean result = ((SingleDatabaseTestCase) test).run(getTestDb());
-            ReportManager.finishTestCase(test, result, getTestDb());
-            getLogger().info(test.getName() + " " + (result ? "succeeded" : "failed"));
-            success &= result;
+            if (test.appliesToType(getTestDb().getType())) {
+                boolean result = ((SingleDatabaseTestCase) test).run(getTestDb());
+                ReportManager.finishTestCase(test, result, getTestDb());
+                getLogger().info(test.getName() + " " + (result ? "succeeded" : "failed"));
+                success &= result;
+            } else {
+                getLogger().info("Skipping testcase " + test.getName() + " for database " + getTestDb().getName()
+                        + " of type " + getTestDb().getType().getName());
+            }
         } else {
             getLogger().fine("Skipping non-single testcase " + test.getName());
         }
