@@ -47,7 +47,11 @@ sub default_options {
         'release'    => undef,
         'host'       => undef,
         'group'      => undef,
-        'division'   => undef
+        'division'   => undef,
+         priority => {
+      species => [qw/homo_sapiens mus_musculus danio_rerio rattus_norvegicus/],
+      group => [qw/core variation funcgen/],
+    },
     }
 }
 
@@ -87,12 +91,75 @@ sub pipeline_analyses {
             },
             -flow_into => {
                 1 => 'finish_session' ,
-                2 => 'run_healthcheck'
+                2 => 'prioritise'
             },
                     -meadow_type => 'LOCAL'
         },
+        {
+            -meadow_type=> 'LOCAL',
+            -logic_name => 'prioritise',
+            -module => 'Bio::EnsEMBL::Healthcheck::Pipeline::Prioritise',
+            -parameters => { priority => $self->o('priority') },
+            -flow_into => {
+                2 => ['run_healthcheck'],
+                3 => ['high_priority_run_healthcheck'],
+                4 => ['super_priority_run_healthcheck'],
+                5 => ['human_variation_run_healthcheck']
+            }
+        },
+
+       {    -logic_name => 'human_variation_run_healthcheck',
+            -module => 'Bio::EnsEMBL::Hive::RunnableDB::SystemCmd',
+            -meadow_type => 'LSF',
+            -parameters    => {
+                'cmd'         => $self->o('hc_cmd'),
+                'properties'  => $self->o('properties'),
+                'group'       => $self->o('group'),
+                'hcdb'        => $self->o('hcdb'),
+                'division'    => $self->o('division')
+            },
+            -can_be_empty => 1,
+            -hive_capacity => 30,
+            -priority => 30,
+            -rc_name => 'himem'
+        },
+
+        {
+            -logic_name => 'super_priority_run_healthcheck',
+            -module => 'Bio::EnsEMBL::Hive::RunnableDB::SystemCmd',
+            -meadow_type => 'LSF',
+            -parameters    => {
+                'cmd'         => $self->o('hc_cmd'),
+                'properties'  => $self->o('properties'),
+                'group'       => $self->o('group'),
+                'hcdb'        => $self->o('hcdb'),
+                'division'    => $self->o('division')
+            },
+            -hive_capacity => 30,
+            -priority => 20,
+            -can_be_empty => 1,
+            -rc_name => 'himem'
+        },
+
+        {
+            -logic_name => 'high_priority_run_healthcheck',
+            -module => 'Bio::EnsEMBL::Hive::RunnableDB::SystemCmd',
+            -meadow_type => 'LSF',
+            -parameters    => {
+                'cmd'         => $self->o('hc_cmd'),
+                'properties'  => $self->o('properties'),
+                'group'       => $self->o('group'),
+                'hcdb'        => $self->o('hcdb'),
+                'division'    => $self->o('division')
+            },
+            -hive_capacity => 30,
+            -priority => 10,
+            -can_be_empty => 1,
+            -wait_for => [qw/prioritise/],
+            -rc_name => 'himem'
+        },
         
-        {   
+        {
             -logic_name    => 'run_healthcheck',
             -module        => 'Bio::EnsEMBL::Hive::RunnableDB::SystemCmd',
             -meadow_type => 'LSF',
@@ -101,10 +168,11 @@ sub pipeline_analyses {
                 'properties'  => $self->o('properties'),
                 'group'       => $self->o('group'),
                 'hcdb'        => $self->o('hcdb'),
-                'division'    => $self->o('division')                        
+                'division'    => $self->o('division')
             },
-            -analysis_capacity => 30,
-            -rc_name => 'himem',
+            -hive_capacity => 30,
+            -rc_name => 'default',
+            -wait_for => [qw/prioritise/],
             -max_retry_count => 10
         },
         {
@@ -114,7 +182,7 @@ sub pipeline_analyses {
                 db_conn => $self->o('hc_conn'),
                 sql => 'update session set end_time=NOW() where session_id="#session_id#"'
             },
-                    -wait_for => ['run_healthcheck'],
+                    -wait_for => [qw/human_variation_run_healthcheck super_priority_run_healthcheck high_priority_run_healthcheck run_healthcheck/],
                     -meadow_type => 'LOCAL'
         }
         ];
