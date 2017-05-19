@@ -23,9 +23,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+import org.ensembl.healthcheck.DatabaseType;
 
 public enum Species {
 	// defined new Species and properties: taxonomy_id, assemblyprefix, stableIDprefix, alias
+	OCTODON_DEGUS(10160, "OctDeg", "ENSODE", "degu,brush_tailed_rat,10160"),
+	CHINCHILLA_LANIGERA(34839, "ChiLan", "ENSCLA", "long_tailed_chinchilla,Chinchilla_lanigera,chinchilla,chinchilla_lanigera"),
 	AEDES_AEGYPTI(7159, "", "IGNORE", "aedes,aedesaegypti,aedes_aegypti"),
 	AILUROPODA_MELANOLEUCA(9646, "ailMel", "ENSAME", "panda,giant panda,ailuropoda melanoleuca,ailuropoda_melanoleuca"),
 	ANAS_PLATYRHYNCHOS(8839, "BGI_duck", "ENSAPL","anapla,apla,mallard,anas_platyrhynchos,aplatyrhynchos,duck,anas platyrhynchos"),
