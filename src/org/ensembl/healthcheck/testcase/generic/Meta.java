@@ -172,19 +172,6 @@ public class Meta extends SingleDatabaseTestCase {
 			}
 		}
 
-		// check that there are some species.alias entries
-		int MIN_ALIASES = 3;
-
-		int rows = metaKeyCount(con, "species.alias");
-		if (rows < MIN_ALIASES) {
-			result = false;
-			String msg = String.format("Only %d species.alias entries, should be at least %d", rows, MIN_ALIASES);
-			ReportManager.problem(this, con, msg);
-		}
-		else {
-			ReportManager.correct(this, con, rows+" species.alias entries present");
-		}
-
 		return result;
 	}
 
