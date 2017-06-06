@@ -26,7 +26,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Check for blank or null versions in the xref table.
+ * Check for blank versions in the xref table.
  */
 
 public class XrefVersions extends SingleDatabaseTestCase {
@@ -36,7 +36,7 @@ public class XrefVersions extends SingleDatabaseTestCase {
 	 */
 	public XrefVersions() {
 
-		setDescription("Check for blank or null versions in the xref table.");
+		setDescription("Check for blank versions in the xref table.");
 		setTeamResponsible(Team.CORE);
 		setSecondTeamResponsible(Team.GENEBUILD);
 
@@ -55,16 +55,16 @@ public class XrefVersions extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM xref WHERE version='' OR version IS NULL");
+		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM xref WHERE version=''");
 
 		if (rows > 0) {
 
-			ReportManager.problem(this, con, rows + " rows in xref have blank or null versions.");
+			ReportManager.problem(this, con, rows + " rows in xref have blank versions.");
 			result = false;
 
 		} else {
 
-			ReportManager.correct(this, con, "No blank/null versions in xref");
+			ReportManager.correct(this, con, "No blank versions in xref");
 
 		}
 
