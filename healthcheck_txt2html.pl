@@ -261,8 +261,8 @@ foreach my $db_name (sort(keys(%test_case_groups))) {
   # List of status with their counts
   foreach my $status (sort{ ($a ne $hc_success) cmp ($b ne $hc_success) || $a cmp $b } keys(%{$status_by_db{$db_name}})) {
     my $status_c = $status_colour{$status} ? $status_colour{$status} : $status_colour{'default'};
-    $status_html .= sprintf( qq{<span class="label %s hc_status hc_font_1"><span class="black">%i</span> %s</span>},
-                             $status_c, $status_by_db{$db_name}{$status}, $status
+    $status_html .= sprintf( qq{<span class="label hc_status_left hc_font_1">%i</span><span class="label %s hc_status_right hc_font_1">%s</span>},
+                             $status_by_db{$db_name}{$status}, $status_c, $status
                            );
   }
   my $db_top_anchor = $sp_alias{$db_name}."_top";
@@ -438,7 +438,8 @@ sub get_html_head {
       .showhide_hc { border:none; background-color:transparent; vertical-align:text-bottom; }
       .showhide_hc:hover { color: #00F; }
       .hc_header_icon { padding:3px 6px; border:none; background-color:transparent; vertical-align:text-bottom; }
-      .hc_status { margin-left:25px; vertical-align:middle; }
+      .hc_status_left  { margin-left:25px; color:#000; background-color:#FFF; vertical-align:middle; border-radius: 0.25em 0 0 0.25em; }
+      .hc_status_right { vertical-align:middle; border-radius: 0 0.25em 0.25em 0; }
       .hc_top_link { float:right; }
       .hc_top_link a { text-decoration:none; padding:4px; }
       .hc_extra_row_div { padding:4px 0px; margin-left:30px; }
