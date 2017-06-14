@@ -36,7 +36,7 @@ public enum Species {
 	MUS_CAROLI(10089,"CAROLI_EIJ_","MGP_CAROLIEiJ_",""),
 	MUS_PAHARI(10093,"PAHARI_EIJ_","MGP_PahariEiJ_",""),
 	NANNOSPALAX_GALILI(1026970,"S.galili_","ENSNGA",""),
-	PEROMYSCUS_MANICULATUS_BAIRDII(230844,"Pman_","ENSPEM",""),
+	PEROMYSCUS_MANICULATUS_BAIRDII(230844,"Pman","ENSPEM",""),
 		
 	AEDES_AEGYPTI(7159, "", "IGNORE", "aedes,aedesaegypti,aedes_aegypti"),
 	AILUROPODA_MELANOLEUCA(9646, "ailMel", "ENSAME", "panda,giant panda,ailuropoda melanoleuca,ailuropoda_melanoleuca"),
@@ -60,7 +60,7 @@ public enum Species {
 	CULEX_PIPIENS(7175, "CpiJ", "CPIJ", "culex,culexpipiens,culex_pipiens"),
 	DANIO_RERIO(7955, "GRCz", "ENSDAR", "zebrafish,danio,drerio,daniorerio,danio_rerio"),
 	DASYPUS_NOVEMCINCTUS(9361, "DasNov", "ENSDNO", "armadillo,daisy,dasypus,nine_banded_armadillo,nine-banded_armadillo,texas_armadillo,dasypus_novemcinctus"),
-	DIPODOMYS_ORDII(10020, "DIPORD", "ENSDOR", "ords_kangaroo_rat,ordskangaroorat,kangaroo_rat, kangaroorat , dipodomys_ordii"),
+	DIPODOMYS_ORDII(10020, "Dord", "ENSDOR", "ords_kangaroo_rat,ordskangaroorat,kangaroo_rat, kangaroorat , dipodomys_ordii"),
 	DROSOPHILA_ANANASSAE(7217, "dana", "IGNORE", "drosophila,ananassae,drosophilaananassae,drosophila_ananassae,dana"),
 	DROSOPHILA_GRIMSHAWI(7222, "dgri", "IGNORE", "drosophila,grimshawi,drosophilagrimshawi,drosophila_grimshawi,dgri"),
 	DROSOPHILA_MELANOGASTER(7227, "BDGP", "IGNORE", "drosophila,dmelongaster,drosophilamelanogaster,drosophila_melanogaster"),
