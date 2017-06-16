@@ -39,7 +39,9 @@ public enum Species {
 	PEROMYSCUS_MANICULATUS_BAIRDII(230844,"Pman","ENSPEM",""),
 	MICROTUS_OCHROGASTER(79684,"MicOch","ENSMOC",""), 
 	HETEROCEPHALUS_GLABER_FEMALE(10181,"HetGla_female_","ENSHGL",""),	
-	HETEROCEPHALUS_GLABER_MALE(10181,"HetGla_","ENSHGL",""),		
+	HETEROCEPHALUS_GLABER_MALE(10181,"HetGla_","ENSHGL",""),
+	CRICETULUS_GRISEUS_CHOK1GSHD(10029,"CHOK1GS_HD","ENSCGR",""),
+	
 		
 	AEDES_AEGYPTI(7159, "", "IGNORE", "aedes,aedesaegypti,aedes_aegypti"),
 	AILUROPODA_MELANOLEUCA(9646, "ailMel", "ENSAME", "panda,giant panda,ailuropoda melanoleuca,ailuropoda_melanoleuca"),
