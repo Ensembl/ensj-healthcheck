@@ -202,6 +202,7 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
 				} else {
 					if (problems++ < OUTPUT_LIMIT) {
 						ReportManager.problem(this, con, "Protein feature " + proteinFeatureID + " refers to non-existent translation " + translationID);
+						result = false;
 					}
 				}
 			}
@@ -221,6 +222,7 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
 
 			if (problems >= OUTPUT_LIMIT) {
 				ReportManager.problem(this, con, "Note that only " + OUTPUT_LIMIT + " missing translation IDs were notified, there may be more");
+				result = false;
 			}
 
 		} catch (Exception e) {

@@ -31,6 +31,7 @@ public class CurrentSchemaBuildUnique extends SingleDatabaseTestCase {
 				
 				ReportManager.problem(this, con, "There is more than one schema_build flagged as current.");
 				ReportManager.problem(this, con, "The following schema builds are marked as current: " + current_schema_build);
+				return false;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

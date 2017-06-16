@@ -198,7 +198,8 @@ public class FeaturePosition extends SingleDatabaseTestCase {
             ReportManager.problem
                 (this, efgCon, 
                  "Found " + totalFeatures + " " + fTable + "s exceeding seq_region bounds:\t" + problemString +
-                 "\nUSEFUL SQL:\n" + usefulSQL + "\nUPDATE SQL:\n" + updateSQL);  
+                 "\nUSEFUL SQL:\n" + usefulSQL + "\nUPDATE SQL:\n" + updateSQL);
+            result = false;  
         }
     }
 		return result;
