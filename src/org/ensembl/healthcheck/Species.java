@@ -37,6 +37,9 @@ public enum Species {
 	MUS_PAHARI(10093,"PAHARI_EIJ_","MGP_PahariEiJ_",""),
 	NANNOSPALAX_GALILI(1026970,"S.galili_","ENSNGA",""),
 	PEROMYSCUS_MANICULATUS_BAIRDII(230844,"Pman","ENSPEM",""),
+	MICROTUS_OCHROGASTER(79684,"MicOch","ENSMOC",""), 
+	HETEROCEPHALUS_GLABER_FEMALE(10181,"HetGla_female_","ENSHGL",""),	
+	HETEROCEPHALUS_GLABER_MALE(10181,"HetGla_","ENSHGL",""),		
 		
 	AEDES_AEGYPTI(7159, "", "IGNORE", "aedes,aedesaegypti,aedes_aegypti"),
 	AILUROPODA_MELANOLEUCA(9646, "ailMel", "ENSAME", "panda,giant panda,ailuropoda melanoleuca,ailuropoda_melanoleuca"),
