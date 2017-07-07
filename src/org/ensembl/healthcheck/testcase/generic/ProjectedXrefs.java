@@ -85,16 +85,6 @@ public class ProjectedXrefs extends SingleDatabaseTestCase {
 			ReportManager.correct(this, con, rows + " genes in " + species + " have projected display_xrefs");
 		}
 
-		// check GO terms
-
-		rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM xref x, external_db e WHERE e.external_db_id=x.external_db_id AND e.db_name='GO' AND x.info_type='PROJECTION'");
-
-		if (rows == 0) {
-			ReportManager.problem(this, con, "No projected GO terms in " + species);
-			result = false;
-		} else {
-			ReportManager.correct(this, con, rows + " projected GO terms in " + species);
-		}
 		return result;
 
 	} // run
