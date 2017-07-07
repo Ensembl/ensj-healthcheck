@@ -90,16 +90,16 @@ public class HGNCMultipleGenes extends SingleDatabaseTestCase {
 
 		int rows = DBUtils.getRowCount(con, sql);
 
-		if (rows > 0) {
+		if (rows > 500) {
 
-			ReportManager.problem(this, con, rows
-					+ " HGNC symbols have been assigned to more than one gene");
+			ReportManager.problem(this, con,
+					"More than " + rows + " HGNC symbols have been assigned to more than one gene");
 			result = false;
 
 		} else {
 
 			ReportManager.correct(this, con,
-					"All HGNC symbols only assigned to one gene");
+					"Most HGNC symbols only assigned to one gene, " + rows + " have been assigned to more than one gene");
 		}
 
 		return result;
