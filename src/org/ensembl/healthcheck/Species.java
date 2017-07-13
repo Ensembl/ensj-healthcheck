@@ -41,7 +41,7 @@ public enum Species {
 	HETEROCEPHALUS_GLABER_FEMALE(10181,"HetGla_female","ENSHGL",""),
 	HETEROCEPHALUS_GLABER_MALE(10181,"HetGla","ENSHGL",""),
 	CRICETULUS_GRISEUS_CHOK1GSHD(10029,"CHOK1GS_HD","ENSCGR",""),
-	CRICETULUS_GRISEUS_CRIGRIBGI(10029,"CriGri","ENSCGR",""),
+	CRICETULUS_GRISEUS_CRIGRI(10029,"CriGri","ENSCGR",""),
 		
 	AEDES_AEGYPTI(7159, "", "IGNORE", "aedes,aedesaegypti,aedes_aegypti"),
 	AILUROPODA_MELANOLEUCA(9646, "ailMel", "ENSAME", "panda,giant panda,ailuropoda melanoleuca,ailuropoda_melanoleuca"),
