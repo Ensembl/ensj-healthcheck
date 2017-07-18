@@ -29,6 +29,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
+import org.ensembl.healthcheck.StandaloneReporter.OutputFormat;
 import org.ensembl.healthcheck.configuration.ConfigureTestGroups;
 import org.ensembl.healthcheck.configurationmanager.ConfigurationException;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
@@ -67,7 +68,10 @@ public class StandaloneTestRunner {
 
         @Option(shortName = "o", longName = "output_file", defaultValue = "failures.txt", description = "File to write any failures to (use '-' for standard out)")
         String getOutputFile();
-
+        
+        @Option(shortName = "f", longName = "output_format", defaultValue = "json", description = "Format for writing failures")
+        String getOutputFormat();
+        
         @Option(shortName = "v", longName = "verbose", description = "Show detailed debugging output")
         boolean isVerbose();
 
@@ -196,11 +200,12 @@ public class StandaloneTestRunner {
 
         boolean result = runner.runAll();
         if (!result) {
+            OutputFormat format = OutputFormat.valueOf(options.getOutputFormat().toUpperCase());
             if (options.getOutputFile().equals(WRITE_STDOUT)) {
                 runner.getLogger().severe("Failures detected - writing details to screen");
                 try {
                     PrintWriter writer = new PrintWriter(System.out);
-                    reporter.writeFailures(writer);
+                    reporter.writeFailures(writer, format);
                     writer.close();
                 } catch (IOException e) {
                     System.err.println(e.getMessage());
@@ -208,7 +213,7 @@ public class StandaloneTestRunner {
                 }
             } else {
                 runner.getLogger().severe("Failures detected - writing details to " + options.getOutputFile());
-                reporter.writeFailureFile(options.getOutputFile());
+                reporter.writeFailureFile(options.getOutputFile(), format);
             }
         } else {
             runner.getLogger().info("Completed healthchecks with no failures");
