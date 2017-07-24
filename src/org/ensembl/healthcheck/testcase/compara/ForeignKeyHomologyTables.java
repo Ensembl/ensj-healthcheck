@@ -48,6 +48,7 @@ public class ForeignKeyHomologyTables extends AbstractComparaTestCase {
 		result &= checkForOrphans(con, "homology_member", "gene_member_id", "gene_member", "gene_member_id");
 		result &= checkOptionalRelation(con, "homology", "gene_tree_node_id", "gene_tree_node", "node_id");
 		result &= checkOptionalRelation(con, "homology", "gene_tree_root_id", "gene_tree_root", "root_id");
+		result &= checkOptionalRelation(con, "homology", "species_tree_node_id", "species_tree_node", "node_id");
 
 		return result;
 	}
