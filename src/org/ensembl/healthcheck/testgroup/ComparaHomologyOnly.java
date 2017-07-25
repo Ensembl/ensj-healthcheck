@@ -32,6 +32,7 @@ public class ComparaHomologyOnly extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.CheckFlatProteinTrees.class,
 			org.ensembl.healthcheck.testcase.compara.CheckGeneGainLossData.class,
 			org.ensembl.healthcheck.testcase.compara.CheckHomology.class,
+			org.ensembl.healthcheck.testcase.compara.CheckJSONObjects.class,
 			org.ensembl.healthcheck.testcase.compara.CheckSequenceTable.class,
 			org.ensembl.healthcheck.testcase.compara.CheckSpeciesTreeNodeAttr.class,
 			org.ensembl.healthcheck.testcase.compara.CheckComparaStableIDs.class,
