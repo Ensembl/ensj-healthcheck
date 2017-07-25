@@ -1,7 +1,7 @@
 package org.ensembl.healthcheck.testgroup;
 
 import org.ensembl.healthcheck.GroupOfTests;
-import org.ensembl.healthcheck.testcase.NoopSuccessTestCase;
+import org.ensembl.healthcheck.testcase.generic.NoopSuccessTestCase;
 
 
 /**

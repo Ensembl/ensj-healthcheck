@@ -1,7 +1,7 @@
 package org.ensembl.healthcheck.testgroup;
 
 import org.ensembl.healthcheck.GroupOfTests;
-import org.ensembl.healthcheck.testcase.NoopFailTestCase;
+import org.ensembl.healthcheck.testcase.generic.NoopFailTestCase;
 
 /**
  * Group of tests that always fail. Use for testing.
