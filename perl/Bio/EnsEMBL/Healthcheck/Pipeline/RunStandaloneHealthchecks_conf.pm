@@ -69,7 +69,7 @@ sub pipeline_analyses {
 	    -flow_into     => {
 			       2 => [ '?table_name=result']      
 			      },
-	 -meadow_type => 'himem'
+	 -meadow_type => 'LOCAL'
         }
         ];
 }

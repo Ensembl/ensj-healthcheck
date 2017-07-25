@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-package Bio::EnsEMBL::Healthcheck::Pipeline::RunStandaloneHealthcheck;
+package Bio::EnsEMBL::Healthcheck::Pipeline::RunStandaloneHealthcheckParallel;
 use base ('Bio::EnsEMBL::Hive::Process');
 
 use Bio::EnsEMBL::Hive::Utils::URL;
@@ -29,6 +29,7 @@ sub run {
     my $db_uri = $self->param_required('db_uri');
     my $db = Bio::EnsEMBL::Hive::Utils::URL::parse($db_uri)->{dbname};
     my $hc_name = $self->param('hc_name');
+    croak "Full HC name must be specified e.g. org.ensembl.healthcheck.testcase.WhatEvs rather than WhatEvs" unless $hc_name =~ m/org.ensembl/;
 
     my $fail_file = sprintf("./%s_%s.json", $db, $hc_name);
 
@@ -46,15 +47,26 @@ sub run {
     my $exit = system($command);
     $exit >>= 8;
     $logger->info("Exited with status $exit");
-    if($exit != 0) {
+    my $output = {
+			       db_uri=>$db_uri,
+			       hc_name=>$hc_name
+			      };
+    if($exit == 0) {
+      $output->{status} = 'success';
+    } elsif($exit == 1) {
+      $output->{status} = 'failure';
+      my $msg = decode_json(read_file($fail_file));
+      print Dumper($msg);
+      unlink $fail_file;
+      $output->{messages} = $msg->{$db}->{$hc_name};
+    } else {
       my $log = read_file($log_file);
       croak "Could not execute $command: $log";
     }
     unlink $log_file;    
+    $logger->debug(Dumper($output));
     $self->dataflow_output_id({
-			       db_uri=>$db_uri,
-			       hc_name=>$hc_name,
-			       output_file=>$output_file
+			       hc_output=>$output
 			      }, 2);
     return;
 
