@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,11 +49,12 @@ public class ListHealthchecks {
         Class<?> targetClass = getClass(opts.getClassType());
 
         try {
-            List<Class<?>> classesForPackage = PackageScan.getClassesForPackage(opts.getPackage(), true);
-            List<String> noms = classesForPackage.stream()
-                    .filter(c -> !Modifier.isAbstract(c.getModifiers()) && targetClass.isAssignableFrom(c))
-                    .map(Class::getCanonicalName)
-                    .collect(Collectors.toList());
+            List<String> noms = new ArrayList<String>();
+            for(Class<?> c: PackageScan.getClassesForPackage(opts.getPackage(), true)) {
+                if(!Modifier.isAbstract(c.getModifiers()) && targetClass.isAssignableFrom(c)) {
+                    noms.add(c.getCanonicalName());
+                }
+            }
             FileUtils.writeStringToFile(new File(opts.getOutputFile()), new Gson().toJson(noms), Charset.defaultCharset().toString());
         } catch (ClassNotFoundException e) {
             System.err.println(e.getMessage());
