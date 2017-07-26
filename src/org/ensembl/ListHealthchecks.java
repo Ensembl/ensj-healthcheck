@@ -6,7 +6,6 @@ import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.ensembl.healthcheck.GroupOfTests;
@@ -25,7 +24,7 @@ public class ListHealthchecks {
         @Option(helpRequest = true, description = "display help")
         boolean getHelp();
 
-        @Option(shortName = "o", longName = "output_file", defaultValue="hc_list.json", description = "File to write HCs to")
+        @Option(shortName = "o", longName = "output_file", defaultValue = "hc_list.json", description = "File to write HCs to")
         String getOutputFile();
 
         @Option(shortName = "c", longName = "class_type", defaultValue = "test", description = "File to write HCs to")
@@ -50,12 +49,13 @@ public class ListHealthchecks {
 
         try {
             List<String> noms = new ArrayList<String>();
-            for(Class<?> c: PackageScan.getClassesForPackage(opts.getPackage(), true)) {
-                if(!Modifier.isAbstract(c.getModifiers()) && targetClass.isAssignableFrom(c)) {
+            for (Class<?> c : PackageScan.getClassesForPackage(opts.getPackage(), true)) {
+                if (!Modifier.isAbstract(c.getModifiers()) && targetClass.isAssignableFrom(c)) {
                     noms.add(c.getCanonicalName());
                 }
             }
-            FileUtils.writeStringToFile(new File(opts.getOutputFile()), new Gson().toJson(noms), Charset.defaultCharset().toString());
+            FileUtils.writeStringToFile(new File(opts.getOutputFile()), new Gson().toJson(noms),
+                    Charset.defaultCharset().toString());
         } catch (ClassNotFoundException e) {
             System.err.println(e.getMessage());
             System.exit(2);
