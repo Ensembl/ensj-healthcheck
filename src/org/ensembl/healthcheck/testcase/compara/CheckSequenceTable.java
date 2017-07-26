@@ -40,7 +40,7 @@ public class CheckSequenceTable extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		if (tableHasRows(con, "sequence")) {
+		if (!tableHasRows(con, "sequence")) {
 			ReportManager.correct(this, con, "NO ENTRIES in sequence table, so nothing to test IGNORED");
 			return true;
 		}
