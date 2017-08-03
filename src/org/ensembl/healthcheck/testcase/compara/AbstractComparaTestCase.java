@@ -125,4 +125,25 @@ public abstract class AbstractComparaTestCase extends SingleDatabaseTestCase {
 		return DBUtils.getShortDatabaseName(con).contains(System.getProperty("compara_master.database"));
 	}
 
+
+	/**
+	 * Return the DatabaseRegistryEntry of the Compara database
+	 * corresponding to the previous release (n-1)
+	 */
+	public DatabaseRegistryEntry getLastComparaReleaseDbre(DatabaseRegistryEntry currentReleaseDbre) {
+
+		// Get compara DB connection
+		DatabaseRegistryEntry[] allSecondaryComparaDBs = DBUtils.getSecondaryDatabaseRegistry("compara").getAll(DatabaseType.COMPARA);
+
+		int previous_version_number = Integer.parseInt(currentReleaseDbre.getSchemaVersion())-1;
+
+		for (DatabaseRegistryEntry this_other_Compara_dbre : allSecondaryComparaDBs) {
+			if (Integer.parseInt(this_other_Compara_dbre.getSchemaVersion()) == previous_version_number) {
+				return this_other_Compara_dbre;
+			}
+		}
+		return null;
+	}
+
+
 } // AbstractComparaTestCase
