@@ -20,6 +20,8 @@ package org.ensembl.healthcheck.testcase.compara;
 
 import java.sql.Connection;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
@@ -135,15 +137,41 @@ public abstract class AbstractComparaTestCase extends SingleDatabaseTestCase {
 		// Get compara DB connection
 		DatabaseRegistryEntry[] allSecondaryComparaDBs = DBUtils.getSecondaryDatabaseRegistry("compara").getAll(DatabaseType.COMPARA);
 
+		String division_name = getComparaDivisionName(currentReleaseDbre);
 		int previous_version_number = Integer.parseInt(currentReleaseDbre.getSchemaVersion())-1;
 
 		for (DatabaseRegistryEntry this_other_Compara_dbre : allSecondaryComparaDBs) {
-			if (Integer.parseInt(this_other_Compara_dbre.getSchemaVersion()) == previous_version_number) {
+			if (Integer.parseInt(this_other_Compara_dbre.getSchemaVersion()) == previous_version_number
+					&& division_name.equals(getComparaDivisionName(this_other_Compara_dbre))) {
 				return this_other_Compara_dbre;
 			}
 		}
 		return null;
 	}
 
+
+	// ensembl_compara_bacteria_3_56
+	protected final static Pattern EGC_DB = Pattern.compile("^([^_]+_)?ensembl_compara_([a-z_]+)_[0-9]+_[0-9]+");
+	// ensembl_compara_56
+	protected final static Pattern EC_DB = Pattern.compile("^([^_]+_)?ensembl_compara_[0-9]+");
+
+	String getComparaDivisionName(DatabaseRegistryEntry compara_dbre) {
+		Matcher m = EGC_DB.matcher(compara_dbre.getName());
+		if (m.matches()) {
+			if (m.groupCount() > 1) {
+				return m.group(2);
+			} else {
+				return m.group(1);
+			}
+		} else {
+			m = EC_DB.matcher(compara_dbre.getName());
+			if (m.matches()) {
+				return "ensembl";
+			} else {
+				ReportManager.problem(this, compara_dbre.getConnection(), "Cannot find the division name of this database: '" + compara_dbre.getName() + "'");
+				return null;
+			}
+		}
+	}
 
 } // AbstractComparaTestCase
