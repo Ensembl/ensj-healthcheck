@@ -29,7 +29,6 @@ import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.compara.AbstractComparaTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -85,22 +84,6 @@ public class CheckTaxon extends AbstractComparaTestCase {
 		boolean result = true;
 		Connection comparaCon = comparaDbre.getConnection();
 
-		// Get list of species in compara
-		Vector<Species> comparaSpecies = new Vector<Species>();
-		String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE first_release IS NOT NULL AND last_release IS NULL"
-			+ " AND name <> 'ancestral_sequences'";
-		try {
-			Statement stmt = comparaCon.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
-			while (rs.next()) {
-				comparaSpecies.add(Species.resolveAlias(rs.getString(1).toLowerCase().replace(' ', '_')));
-			}
-			rs.close();
-			stmt.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
 		//Check that don't have duplicate entries in the ncbi_taxa_name table
 		String useful_sql = "SELECT taxon_id,name,name_class,count(*) FROM ncbi_taxa_name GROUP BY taxon_id,name,name_class HAVING count(*) > 1;";
 		String[] failures = DBUtils.getColumnValues(comparaCon, useful_sql);
@@ -113,29 +96,27 @@ public class CheckTaxon extends AbstractComparaTestCase {
 			result = true;
 		}
 
-		Map<Species, DatabaseRegistryEntry> speciesMap = getSpeciesCoreDbMap(DBUtils.getMainDatabaseRegistry());
-
-		boolean allSpeciesFound = true;
-		for (Species species: comparaSpecies) {
-			if (speciesMap.containsKey(species)) {
-				Connection speciesCon = speciesMap.get(species).getConnection();
+		for (GenomeEntry genomeEntry : getAllGenomes(comparaDbre, DBUtils.getMainDatabaseRegistry())) {
+			if (genomeEntry.getCoreDbre() != null) {
+				Integer species_id = genomeEntry.getSpeciesID();
+				Connection speciesCon = genomeEntry.getCoreDbre().getConnection();
 				String sql1, sql2;
 				/* Get taxon_id */
 				String taxon_id = DBUtils.getRowColumnValue(speciesCon,
-						"SELECT meta_value FROM meta WHERE meta_key = \"species.taxonomy_id\"");
+						"SELECT meta_value FROM meta WHERE meta_key = \"species.taxonomy_id\" AND species_id = " + species_id);
 
 				/* Check name ++ compara scientific name := last two entries in the species classification in the core meta table */
 				sql1 = "SELECT \"name\", name " +
 					" FROM ncbi_taxa_name WHERE name_class = \"scientific name\" AND taxon_id = " + taxon_id;
 				sql2 = "SELECT \"name\", meta_value " +
-					" FROM meta WHERE meta_key = \"species.classification\" ORDER BY meta_id LIMIT 1";
+					" FROM meta WHERE meta_key = \"species.classification\" AND species_id = " + species_id + " ORDER BY meta_id LIMIT 1";
 				result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
 
 				/* Check scientific name in compara and core meta */
 				sql1 = "SELECT \"scientific name\", name " +
 					" FROM ncbi_taxa_name WHERE name_class = \"scientific name\" AND taxon_id = " + taxon_id;
 				sql2 = "SELECT \"scientific name\", meta_value " +
-					" FROM meta WHERE meta_key = \"species.scientific_name\"";
+					" FROM meta WHERE meta_key = \"species.scientific_name\" AND species_id = " + species_id;
 				result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
 
 				/* Check classification */
@@ -153,7 +134,7 @@ public class CheckTaxon extends AbstractComparaTestCase {
 						"SELECT rank, parent_id, genbank_hidden_flag FROM ncbi_taxa_node WHERE taxon_id = " + taxon_id);
 				if (values1.length == 0) {
 					/* if no rows are fetched, this taxon is missing from compara DB */
-					ReportManager.problem(this, comparaCon, "No taxon for " + species.toString());
+					ReportManager.problem(this, comparaCon, "No taxon for " + genomeEntry.getName());
 				} else {
 					String this_taxon_id = values1[1];
 					while (!this_taxon_id.equals("0")) {
@@ -175,7 +156,7 @@ public class CheckTaxon extends AbstractComparaTestCase {
 					/* It will be much better to run this using GROUP_CONCAT() but our MySQL server does not support it yet */
 					sql2 = "SELECT \"classification\", \"";
 					String[] values2 = DBUtils.getColumnValues(speciesCon,
-							"SELECT meta_value FROM meta WHERE meta_key = \"species.classification\"" +
+							"SELECT meta_value FROM meta WHERE meta_key = \"species.classification\" AND species_id = " + species_id +
 							" ORDER BY meta_id");
 					/* Skip first value as it is part of the species name and not the lineage */
 					for (int a = 1; a < values2.length; a++) {
@@ -185,8 +166,8 @@ public class CheckTaxon extends AbstractComparaTestCase {
 					result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
 				}
 			} else {
-				ReportManager.problem(this, comparaCon, "No connection for " + species.toString());
-				allSpeciesFound = false;
+				ReportManager.problem(this, comparaCon, "No connection for " + genomeEntry.getName());
+				result = false;
 			}
 		}
 

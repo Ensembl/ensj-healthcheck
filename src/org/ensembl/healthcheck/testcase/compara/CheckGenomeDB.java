@@ -119,63 +119,43 @@ public class CheckGenomeDB extends AbstractComparaTestCase {
 		boolean result = true;
 		Connection comparaCon = comparaDbre.getConnection();
 
-		// Get list of species in compara
-		Vector<Species> comparaSpecies = new Vector<Species>();
-		String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE first_release IS NOT NULL AND last_release IS NULL"
-			+ " AND name <> 'ancestral_sequences'";
-		List<String[]> data = DBUtils.getRowValuesList(comparaCon, sql);
-		for (String[] line : data) {
-			Species species = Species.resolveAlias(line[0].toLowerCase().replace(' ', '_'));
-			if (species.toString().equals("unknown")) {
-				ReportManager.problem(this, comparaCon, "No species defined for " + line[0] + " in org.ensembl.healthcheck.Species");
-			} else {
-				comparaSpecies.add(species);
-			}
-		}
+		for (GenomeEntry genomeEntry : getAllGenomes(comparaDbre, DBUtils.getMainDatabaseRegistry())) {
+			String species = genomeEntry.getName();
+			if (genomeEntry.getCoreDbre() != null) {
 
-		Map<Species, DatabaseRegistryEntry> speciesMap = getSpeciesCoreDbMap(DBUtils.getMainDatabaseRegistry());
+				Integer genome_db_id = genomeEntry.getGenomeDBID();
 
-		boolean allSpeciesFound = true;
-		for (Species species: comparaSpecies) {
-			if (speciesMap.containsKey(species)) {
-				Connection speciesCon = speciesMap.get(species).getConnection();
+				Connection speciesCon = genomeEntry.getCoreDbre().getConnection();
+				Integer species_id = genomeEntry.getSpeciesID();
 
 				/* Check production name */
-				String sql1, sql2;
-				sql1 = "SELECT \"" + species + "\", \"name\", name FROM genome_db" +
-					" WHERE genome_db.name = \"" + species + "\" AND  first_release IS NOT NULL AND last_release IS NULL";
-				sql2 = "SELECT \"" + species + "\", \"name\", meta_value FROM meta" +
-					" WHERE meta_key = \"species.production_name\"";
-				result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
+				result &= checkGenomeDBField(comparaCon, speciesCon, species_id, species, genome_db_id, "name", "species.production_name");
 
 				/* Check taxon_id */
-				sql1 = "SELECT \"" + species + "\", \"taxon_id\", taxon_id FROM genome_db" +
-					" WHERE genome_db.name = \"" + species + "\" AND  first_release IS NOT NULL AND last_release IS NULL";
-				sql2 = "SELECT \"" + species + "\", \"taxon_id\", meta_value FROM meta" +
-					" WHERE meta_key = \"species.taxonomy_id\"";
-				result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
+				result &= checkGenomeDBField(comparaCon, speciesCon, species_id, species, genome_db_id, "taxon_id", "species.taxonomy_id");
 
 				/* Check assembly */
-				sql1 = "SELECT \"" + species + "\", \"assembly\", assembly FROM genome_db" +
-					" WHERE genome_db.name = \"" + species + "\" AND  first_release IS NOT NULL AND last_release IS NULL";
-				sql2 = "SELECT \"" + species + "\", \"assembly\", version FROM coord_system" +
-					" WHERE rank=1";
+				String sql1 = "SELECT \"" + species + "\", \"assembly\", CONCAT(assembly,\"\") FROM genome_db WHERE genome_db_id = " + genome_db_id;
+				String sql2 = "SELECT \"" + species + "\", \"assembly\", version FROM coord_system WHERE rank = 1 AND species_id = " + species_id;
 				result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
 
 				/* Check genebuild */
-				sql1 = "SELECT \"" + species + "\", \"genebuild\", genebuild FROM genome_db" +
-					" WHERE genome_db.name = \"" + species + "\" AND  first_release IS NOT NULL AND last_release IS NULL";
-				sql2 = "SELECT \"" + species + "\", \"genebuild\", meta_value FROM meta" +
-					" WHERE meta_key = \"genebuild.start_date\"";
-				result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
+				result &= checkGenomeDBField(comparaCon, speciesCon, species_id, species, genome_db_id, "genebuild", "genebuild.start_date");
 
 			} else {
 				ReportManager.problem(this, comparaCon, "No connection for " + species);
-				allSpeciesFound = false;
+				result = false;
 			}
 		}
 
 		return result;
+	}
+
+	private boolean checkGenomeDBField(Connection comparaCon, Connection speciesCon, Integer species_id, String species, Integer genome_db_id, String fieldName, String metaKey) {
+		String sql0 = "SELECT \"" + species + "\", \"" + fieldName + "\", ";
+		String sql1 = sql0 + fieldName + " FROM genome_db WHERE genome_db_id = " + genome_db_id;
+		String sql2 = sql0 + "CONCAT(meta_value,\"\") FROM meta WHERE meta_key = \"" + metaKey + "\" AND species_id = " + species_id;
+		return compareQueries(comparaCon, sql1, speciesCon, sql2);
 	}
 
 } // CheckGenomeDB

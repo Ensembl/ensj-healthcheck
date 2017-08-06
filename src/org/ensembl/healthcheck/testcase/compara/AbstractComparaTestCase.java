@@ -18,8 +18,13 @@
 
 package org.ensembl.healthcheck.testcase.compara;
 
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,6 +36,8 @@ import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.Pair;
+import org.ensembl.healthcheck.util.SqlUncheckedException;
 
 
 /**
@@ -95,25 +102,96 @@ public abstract class AbstractComparaTestCase extends SingleDatabaseTestCase {
 
 	} // checkForOrphansSameTable
 
+	public static class GenomeEntry {
+
+		private final String name;
+		private final Integer genome_db_id;
+		private final DatabaseRegistryEntry coreDbre;
+		private final Integer species_id;
+
+		/**
+		 * Constructor to set up properties of {@link GenomeEntry}
+		 *
+		 * @param name
+		 * @param genome_db_id
+		 * @param coreDbre
+		 * @param species_id
+		 */
+		public GenomeEntry(String name, Integer genome_db_id, DatabaseRegistryEntry coreDbre, Integer species_id) {
+			this.name = name;
+			this.genome_db_id = genome_db_id;
+			this.coreDbre = coreDbre;
+			this.species_id = species_id;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public Integer getGenomeDBID() {
+			return genome_db_id;
+		}
+
+		public DatabaseRegistryEntry getCoreDbre() {
+			return coreDbre;
+		}
+
+		public Integer getSpeciesID() {
+			return species_id;
+		}
+
+		public String toString() {
+			return ReflectionToStringBuilder.toString(this);
+		}
+
+	}
+
 
 	/**
-	 * Get a Map associating each species with its core database
+	 * Get the list of all the genomes found in the Compara database and
+	 * their core database info
 	 *
-	 * @return A map (key:Species, value:DatabaseRegistryEntry).
+	 * @return A list of @link GenomeEntry
 	 */
-	public final HashMap<Species, DatabaseRegistryEntry> getSpeciesCoreDbMap(final DatabaseRegistry dbr) {
+	public final List<GenomeEntry> getAllGenomes(final DatabaseRegistryEntry comparaDbre, final DatabaseRegistry dbr) {
 
-		HashMap<Species, DatabaseRegistryEntry> speciesCoreMap = new HashMap<Species, DatabaseRegistryEntry>();
+		HashMap<String, Pair<DatabaseRegistryEntry,Integer>> speciesCoreMap = new HashMap(); //<String, DatabaseRegistryEntry>();
 
 		for (DatabaseRegistryEntry entry : dbr.getAllEntries()) {
 			// We need to check the database name because some _cdna_
 			// databases have the DatabaseType.CORE type
 			if (entry.getType().equals(DatabaseType.CORE) && entry.getName().contains("_core_")) {
-				speciesCoreMap.put(entry.getSpecies(), entry);
+				// There can be multiple species in the same core database
+				for (Integer species_id : entry.getSpeciesIds()) {
+					String sql = "SELECT meta_value FROM meta WHERE meta_key = \"species.production_name\" AND species_id = " + species_id;
+					String production_name = getRowColumnValue(entry.getConnection(), sql);
+					speciesCoreMap.put(production_name, new Pair<DatabaseRegistryEntry,Integer>(entry,species_id));
+				}
+				try {
+					entry.getConnection().close();
+				} catch (SQLException se) {
+					throw new SqlUncheckedException("Could not compare two result sets", se);
+				}
 			}
 		}
 
-		return speciesCoreMap;
+		String sql = "SELECT name, genome_db_id FROM genome_db WHERE first_release IS NOT NULL AND last_release IS NULL"
+			+ " AND name <> 'ancestral_sequences'";
+		List<String[]> data = DBUtils.getRowValuesList(comparaDbre.getConnection(), sql);
+
+		Vector<GenomeEntry> genomeEntries = new Vector<GenomeEntry>();
+
+		for (String[] row: data) {
+			String species = row[0];
+			Integer gdb_id = Integer.valueOf(row[1]);
+			if (speciesCoreMap.containsKey(species)) {
+				genomeEntries.add(new GenomeEntry(species, gdb_id, speciesCoreMap.get(species).a, speciesCoreMap.get(species).b));
+			} else {
+				genomeEntries.add(new GenomeEntry(species, gdb_id, null, null));
+			}
+		}
+
+		return genomeEntries;
 
 	} // getSpeciesCoreDbMap
 

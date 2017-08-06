@@ -29,7 +29,6 @@ import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.compara.AbstractComparaTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -73,39 +72,16 @@ public class CheckTopLevelDnaFrag extends AbstractComparaTestCase {
 		boolean result = true;
 		Connection comparaCon = comparaDbre.getConnection();
 
-		// Get list of species in compara
-		Vector<Species> comparaSpecies = new Vector<Species>();
-		String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE first_release IS NOT NULL AND last_release IS NULL"
-			+ " AND name <> 'ancestral_sequences'";
-		try {
-			Statement stmt = comparaCon.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
-			while (rs.next()) {
-				comparaSpecies.add(Species.resolveAlias(rs.getString(1).toLowerCase().replace(' ', '_')));
-			}
-			rs.close();
-			stmt.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		Map<Species, DatabaseRegistryEntry> speciesMap = getSpeciesCoreDbMap(DBUtils.getMainDatabaseRegistry());
-
-		String speciesNotFound = "";
-		for (Species species : comparaSpecies) {
-
-			if (speciesMap.containsKey(species)) {
-				Connection speciesCon = speciesMap.get(species).getConnection();
+		for (GenomeEntry genomeEntry : getAllGenomes(comparaDbre, DBUtils.getMainDatabaseRegistry())) {
+			if (genomeEntry.getCoreDbre() != null) {
+				Connection speciesCon = genomeEntry.getCoreDbre().getConnection();
 				int maxRows = 50000;
-				int rows = DBUtils.getRowCount(comparaCon, "SELECT COUNT(*) FROM" +
-						" dnafrag LEFT JOIN genome_db USING (genome_db_id)" +
-						" WHERE genome_db.name = \"" + species + "\" AND first_release IS NOT NULL AND last_release IS NULL");
+				int rows = DBUtils.getRowCount(comparaCon, "SELECT COUNT(*) FROM dnafrag WHERE genome_db_id = " + genomeEntry.getGenomeDBID());
 				if (rows > maxRows) {
 					// Divide and conquer approach for large sets
 					for (int rowCount=0; rowCount<rows; rowCount+=maxRows) {
 						String sql1 = "SELECT dnafrag.coord_system_name, dnafrag.name, CONCAT('length=', dnafrag.length), CONCAT('is_ref=', dnafrag.is_reference)" +
-							" FROM dnafrag LEFT JOIN genome_db USING (genome_db_id)" +
-							" WHERE genome_db.name = \"" + species + "\" AND first_release IS NOT NULL AND last_release IS NULL" +
+							" FROM dnafrag WHERE genome_db_id = " + genomeEntry.getGenomeDBID() +
 							" ORDER BY (dnafrag.name)" +
 							" LIMIT " + rowCount + ", " + maxRows;
 						String sql2 = "SELECT coord_system.name, seq_region.name, CONCAT('length=', seq_region.length),"+
@@ -116,14 +92,14 @@ public class CheckTopLevelDnaFrag extends AbstractComparaTestCase {
 							" JOIN attrib_type USING (attrib_type_id)" +
 							" LEFT JOIN (SELECT seq_region_id FROM seq_region_attrib JOIN attrib_type USING (attrib_type_id) WHERE attrib_type.code = 'non_ref') non_ref_seq_region USING (seq_region_id)" +
 							" WHERE attrib_type.code = 'toplevel'" +
+							" AND species_id = " + genomeEntry.getSpeciesID() +
 							" ORDER BY (seq_region.name)" +
 							" LIMIT " + rowCount + ", " + maxRows;
 						result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
 					}
 				} else {
 					String sql1 = "SELECT dnafrag.coord_system_name, dnafrag.name, CONCAT('length=', dnafrag.length), CONCAT('is_ref=', dnafrag.is_reference)" +
-						" FROM dnafrag LEFT JOIN genome_db USING (genome_db_id)" +
-						" WHERE genome_db.name = \"" + species + "\" AND first_release IS NOT NULL AND last_release IS NULL";
+						" FROM dnafrag WHERE genome_db_id = " + genomeEntry.getGenomeDBID();
 					String sql2 = "SELECT coord_system.name, seq_region.name, CONCAT('length=', seq_region.length),"+
 						" CONCAT('is_ref=', IF(non_ref_seq_region.seq_region_id is not null, 0, 1))" +
 						" FROM seq_region" +
@@ -131,22 +107,14 @@ public class CheckTopLevelDnaFrag extends AbstractComparaTestCase {
 						" JOIN seq_region_attrib USING (seq_region_id)" +
 						" JOIN attrib_type USING (attrib_type_id)" +
 						" LEFT JOIN (SELECT seq_region_id FROM seq_region_attrib JOIN attrib_type USING (attrib_type_id) WHERE attrib_type.code = 'non_ref') non_ref_seq_region USING (seq_region_id)" +
-						" WHERE attrib_type.code = 'toplevel'";
+						" WHERE attrib_type.code = 'toplevel'" +
+						" AND species_id = " + genomeEntry.getSpeciesID();
 					result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
 				}
 			} else {
-				// This will trigger the warning about missing species
-				if (speciesNotFound == "") {
-					speciesNotFound = "" + species;
-				} else {
-					speciesNotFound += ", " + species;
-				}
+				ReportManager.problem(this, comparaCon, "No connection for " + genomeEntry.getName());
+				result = false;
 			}
-		}
-
-		// Warning about missing species
-		if (speciesNotFound != "") {
-			ReportManager.problem(this, comparaCon, "No connection for " + speciesNotFound);
 		}
 
 		return result;
