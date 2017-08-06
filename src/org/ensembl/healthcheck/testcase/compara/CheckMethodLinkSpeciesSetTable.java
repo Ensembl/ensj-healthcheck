@@ -110,7 +110,7 @@ public class CheckMethodLinkSpeciesSetTable extends AbstractComparaTestCase {
 					} else if (ssnameMatcher.find()) {
 						if (ssnameMatcher.group(1).equals("protein") || ssnameMatcher.group(1).equals("nc") || ssnameMatcher.group(1).equals("species")) {
 							ReportManager.info(this, con, "\"" + name + "\"(" + mlss_id + ") is named using the old convention (the collection name is missing)");
-						} else if (!ss_name.equals("collection-" + ssnameMatcher.group(1))) {
+						} else if (!ss_name.equals("collection-" + ssnameMatcher.group(1)) && !ss_name.equals(ssnameMatcher.group(1))) {
 							ReportManager.problem(this, con, "FAILED species_set(" + ss_id + ") for \"" + name + "\"(" + mlss_id + ") does not start with the species-set name " + ss_name);
 							result = false;
 						}
