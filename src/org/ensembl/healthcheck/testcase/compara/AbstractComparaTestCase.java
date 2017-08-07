@@ -160,7 +160,8 @@ public abstract class AbstractComparaTestCase extends SingleDatabaseTestCase {
 		for (DatabaseRegistryEntry entry : dbr.getAllEntries()) {
 			// We need to check the database name because some _cdna_
 			// databases have the DatabaseType.CORE type
-			if (entry.getType().equals(DatabaseType.CORE) && entry.getName().contains("_core_")) {
+			// We also need to check the version number
+			if (entry.getType().equals(DatabaseType.CORE) && entry.getName().contains("_core_") && entry.getSchemaVersion().equals(comparaDbre.getSchemaVersion())) {
 				// There can be multiple species in the same core database
 				for (Integer species_id : entry.getSpeciesIds()) {
 					String sql = "SELECT meta_value FROM meta WHERE meta_key = \"species.production_name\" AND species_id = " + species_id;
