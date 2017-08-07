@@ -20,19 +20,18 @@ package org.ensembl.healthcheck.testgroup;
 import org.ensembl.healthcheck.GroupOfTests;
 
 /**
- * Sanity healthchecks for all Compara databases
+ * Manual healthchecks for all Compara databases
  */
-public class ComparaSanity extends GroupOfTests {
+public class ComparaManual extends GroupOfTests {
 
-	public ComparaSanity() {
+	public ComparaManual() {
 
 		addTest(
 			org.ensembl.healthcheck.testcase.compara.CheckTableSizes.class,
-			org.ensembl.healthcheck.testcase.compara.CheckConservationScoreSanity.class,
-			org.ensembl.healthcheck.testcase.compara.CheckMethodLinkSpeciesSetTable.class,
+			org.ensembl.healthcheck.testcase.compara.CheckConservationScoreManual.class,
 			org.ensembl.healthcheck.testcase.compara.CheckGenomicAlignMTs.class,
 			org.ensembl.healthcheck.testcase.compara.CompareMSANames.class,
-			org.ensembl.healthcheck.testcase.compara.CheckSyntenySanity.class
+			org.ensembl.healthcheck.testcase.compara.CheckSyntenyManual.class
 		);
 	}
 }
