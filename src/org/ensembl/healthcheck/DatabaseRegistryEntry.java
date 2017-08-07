@@ -145,10 +145,10 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	// username_ensembl_compara_57
 	protected final static Pattern UC_DB = Pattern
 			.compile("^[^_]+_(ensembl)_(compara)_([0-9]+)");
-	// username_ensembl_compara_57
+	// username_ensembl_compara_master
 	protected final static Pattern UCM_DB = Pattern
 			.compile("^[^_]+_(ensembl)_(compara)_master");
-	// username_ensembl_ancestral_57
+	// ensembl_ancestral_57
 	protected final static Pattern EA_DB = Pattern
 			.compile("^(ensembl)_(ancestral)_([0-9]+)");
 	// username_ensembl_ancestral_57
