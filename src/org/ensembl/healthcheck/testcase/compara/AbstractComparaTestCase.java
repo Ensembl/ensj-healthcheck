@@ -175,7 +175,7 @@ public abstract class AbstractComparaTestCase extends SingleDatabaseTestCase {
 			}
 		}
 
-		String sql = "SELECT name, genome_db_id FROM genome_db WHERE first_release IS NOT NULL AND last_release IS NULL"
+		String sql = "SELECT name, genome_db_id FROM genome_db WHERE first_release IS NOT NULL AND last_release IS NULL AND genome_component IS NULL"
 			+ " AND name <> 'ancestral_sequences'";
 		List<String[]> data = DBUtils.getRowValuesList(comparaDbre.getConnection(), sql);
 

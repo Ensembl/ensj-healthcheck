@@ -83,7 +83,7 @@ public class CheckGenomeDB extends AbstractComparaTestCase {
 		String comparaDbName = (comparaCon == null) ? "no_database" : DBUtils.getShortDatabaseName(comparaCon);
 
 		// Get list of species with more than 1 default assembly
-		String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE first_release IS NOT NULL AND last_release IS NULL"
+		String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE first_release IS NOT NULL AND last_release IS NULL AND genome_component IS NULL"
 			+ " GROUP BY name HAVING count(*) <> 1";
 		List<String[]> data = DBUtils.getRowValuesList(comparaCon, sql);
 		for (String[] line : data) {
