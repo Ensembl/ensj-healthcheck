@@ -136,7 +136,7 @@ public class CheckGenomeDB extends AbstractComparaTestCase {
 
 				/* Check assembly */
 				String sql1 = "SELECT \"" + species + "\", \"assembly\", CONCAT(assembly,\"\") FROM genome_db WHERE genome_db_id = " + genome_db_id;
-				String sql2 = "SELECT \"" + species + "\", \"assembly\", version FROM coord_system WHERE rank = 1 AND species_id = " + species_id;
+				String sql2 = "SELECT \"" + species + "\", \"assembly\", version FROM coord_system WHERE species_id = " + species_id + " ORDER BY rank LIMIT 1";
 				result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
 
 				/* Check genebuild */
