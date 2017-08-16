@@ -55,8 +55,7 @@ public class FuncgenRelease extends GroupOfTests {
 	public FuncgenRelease() {
 
 		addTest(
-			org.ensembl.healthcheck.testcase.generic.AnalyseTables.class,
-			org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions.class,
+			//org.ensembl.healthcheck.testcase.generic.AnalyseTables.class,
 			org.ensembl.healthcheck.testcase.generic.BlankEnums.class,
 			org.ensembl.healthcheck.testcase.generic.BlankInfoType.class,
 			org.ensembl.healthcheck.testcase.generic.BlanksInsteadOfNulls.class,
