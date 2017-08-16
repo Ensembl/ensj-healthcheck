@@ -61,7 +61,6 @@ public class FuncgenRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.BlankInfoType.class,
 			org.ensembl.healthcheck.testcase.generic.BlanksInsteadOfNulls.class,
 			// org.ensembl.healthcheck.testcase.funcgen.CheckResultSetDBFileLink.class,
-			org.ensembl.healthcheck.testcase.funcgen.CoordSystemUpToDate.class,
 			org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema.class,
 			org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionAnalysisDescriptions.class,
 			// org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionRegulatoryFeatures.class,
