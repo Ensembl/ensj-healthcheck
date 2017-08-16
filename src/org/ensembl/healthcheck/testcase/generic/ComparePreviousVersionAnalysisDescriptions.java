@@ -70,6 +70,7 @@ public class ComparePreviousVersionAnalysisDescriptions extends SingleDatabaseTe
 	 */
 	public void types() {
 		removeAppliesToType(DatabaseType.SANGER_VEGA);
+		addAppliesToType(DatabaseType.FUNCGEN);
 	}
 
 	// ----------------------------------------------------------------------

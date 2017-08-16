@@ -21,6 +21,7 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
@@ -43,6 +44,10 @@ public class AnalyseTables extends SingleDatabaseTestCase {
 		setFix("Run ANALYZE TABLE x.");
 		setTeamResponsible(Team.RELEASE_COORDINATOR);
 
+	}
+	
+	public void types() {
+		addAppliesToType(DatabaseType.FUNCGEN);
 	}
 
 	/**

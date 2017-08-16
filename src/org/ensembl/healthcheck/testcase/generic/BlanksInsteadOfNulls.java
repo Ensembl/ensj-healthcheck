@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
@@ -41,6 +42,10 @@ public class BlanksInsteadOfNulls extends SingleDatabaseTestCase {
 		setDescription("Check for text columns that have the default NULL but which actually contain blanks ('') which is probably wrong");
 		setTeamResponsible(Team.GENEBUILD);
 
+	}
+	
+	public void types() {
+		addAppliesToType(DatabaseType.FUNCGEN);
 	}
 
 	/**

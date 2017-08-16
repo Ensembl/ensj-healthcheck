@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
@@ -44,6 +45,9 @@ public class BlankEnums extends SingleDatabaseTestCase {
 		setEffect("Will have blank values where NULL or one of the enum values is expected.");
 		setFix("Re-import after identifying source of problem - possibly the word NULL in import files instead of \\N");
 		setTeamResponsible(Team.GENEBUILD);
+	}
+	public void types() {
+		addAppliesToType(DatabaseType.FUNCGEN);
 	}
 
 	/**
