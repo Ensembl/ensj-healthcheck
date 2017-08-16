@@ -23,7 +23,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  * These are the tests that register themselves as funcgen. The tests are:
  * 
  * <ul>
- *   <li> org.ensembl.healthcheck.testcase.funcgen.ArrayXrefs </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.BlankEnums </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.BlankInfoType </li>
@@ -51,7 +50,6 @@ public class Funcgen extends GroupOfTests {
 	public Funcgen() {
 
 		addTest(
-			org.ensembl.healthcheck.testcase.funcgen.ArrayXrefs.class,
 			org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions.class,
 			org.ensembl.healthcheck.testcase.generic.BlankEnums.class,
 			org.ensembl.healthcheck.testcase.generic.BlankInfoType.class,
