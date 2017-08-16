@@ -32,6 +32,8 @@ package org.ensembl.healthcheck.testcase.generic;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.Statement;
+import java.sql.ResultSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
@@ -102,6 +104,7 @@ public class TranscriptSupportingFeatures extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
+                Statement stmt = null;
 
 		// list of transcript analysis logic_names which are allowed to not have supporting features
 		String allowed = "'" + StringUtils.join(allowedNoSupporting, "','") + "'";
@@ -110,19 +113,29 @@ public class TranscriptSupportingFeatures extends SingleDatabaseTestCase {
 
 		String sql = String
 				.format(
-						"SELECT COUNT(*),t.analysis_id FROM transcript t LEFT JOIN transcript_supporting_feature tsf ON t.transcript_id = tsf.transcript_id JOIN analysis a ON a.analysis_id=t.analysis_id WHERE a.analysis_id=t.analysis_id and tsf.transcript_id IS NULL AND LOWER(a.logic_name) NOT LIKE (%s) AND a.logic_name NOT IN  (%s) group by t.analysis_id",
+						"SELECT COUNT(*), a.logic_name FROM transcript t LEFT JOIN transcript_supporting_feature tsf ON t.transcript_id = tsf.transcript_id JOIN analysis a ON a.analysis_id=t.analysis_id WHERE a.analysis_id=t.analysis_id and tsf.transcript_id IS NULL AND LOWER(a.logic_name) NOT LIKE (%s) AND a.logic_name NOT IN  (%s) group by a.logic_name",
 						rnaseq, allowed);
-		int rows = DBUtils.getRowCount(con, sql);
-
-		if (rows > 0) {
-
-			ReportManager.problem(this, con, rows + " transcripts which should have transcript_supporting_features do not have them\nUseful SQL: " + sql);
-			result = false;
-
-		} else {
-
-			ReportManager.correct(this, con, "All transcripts that require supporting features have them");
-		}
+                try {
+                        stmt = con.createStatement();
+                        ResultSet rs = stmt.executeQuery(sql);
+        
+                        while (rs.next()) {
+        
+                                long rows = rs.getLong(1);
+                                String analysis = rs.getString(2);
+        
+        			ReportManager.problem(this, con, rows + " transcripts which should have transcript_supporting_features do not have them for analysis " + analysis);
+        			result = false;
+        		}
+                        if (result) {
+                                ReportManager.correct(this, con, "All transcripts that require supporting features have them");
+                        } else {
+                                ReportManager.problem(this, con, "Useful SQL: " + sql);
+                        }
+                } catch (Exception e) {
+                        result = false;
+                        e.printStackTrace();
+                }
 
 		return result;
 
