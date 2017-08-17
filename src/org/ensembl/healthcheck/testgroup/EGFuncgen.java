@@ -23,6 +23,9 @@ import org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionArrayXrefs
 import org.ensembl.healthcheck.testcase.funcgen.FuncgenForeignKeys;
 import org.ensembl.healthcheck.testcase.funcgen.FuncgenStableID;
 import org.ensembl.healthcheck.testcase.funcgen.MetaCoord;
+import org.ensembl.healthcheck.testcase.funcgen.ProbeIdsUnique;
+import org.ensembl.healthcheck.testcase.funcgen.ProbeSetTranscriptMappingsUnique;
+import org.ensembl.healthcheck.testcase.funcgen.ProbeTranscriptMappingsUnique;
 import org.ensembl.healthcheck.testcase.funcgen.RegulatoryFeatureTypes;
 
 /**
@@ -36,6 +39,9 @@ public class EGFuncgen extends GroupOfTests {
 				FuncgenForeignKeys.class,
 				RegulatoryFeatureTypes.class,
 				ComparePreviousVersionArrayXrefs.class, FuncgenStableID.class,
-				EGCompareFuncgenSchema.class);
+				EGCompareFuncgenSchema.class,
+				ProbeIdsUnique.class,
+				ProbeTranscriptMappingsUnique.class,
+				ProbeSetTranscriptMappingsUnique.class);
 	}
 }

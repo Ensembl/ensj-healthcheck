@@ -81,8 +81,10 @@ public class FuncgenRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testgroup.FuncgenIntegrity.class,
 			org.ensembl.healthcheck.testgroup.FuncgenPostERSA.class,
 			org.ensembl.healthcheck.testgroup.FuncgenPostProbemapping.class,
-			org.ensembl.healthcheck.testgroup.FuncgenPostRegulatoryBuild.class
-
+			org.ensembl.healthcheck.testgroup.FuncgenPostRegulatoryBuild.class,
+			org.ensembl.healthcheck.testcase.funcgen.ProbeIdsUnique.class,
+			org.ensembl.healthcheck.testcase.funcgen.ProbeTranscriptMappingsUnique.class,
+			org.ensembl.healthcheck.testcase.funcgen.ProbeSetTranscriptMappingsUnique.class
 		);
 
 		removeTest(
