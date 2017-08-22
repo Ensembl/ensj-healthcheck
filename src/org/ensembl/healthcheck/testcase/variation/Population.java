@@ -65,7 +65,7 @@ public class Population extends SingleDatabaseTestCase {
 
       // Check for populations with freqs_from_gts set for mouse and human
       if (dbre.getSpecies() == Species.MUS_MUSCULUS || dbre.getSpecies() == Species.HOMO_SAPIENS) {
-        // Check for populations without sizes
+
         String freq_stmt = "select count(*) from population pop where pop.freqs_from_gts = 1;";
         int freq_rows = DBUtils.getRowCount(con,freq_stmt);
         if (freq_rows == 0) {
@@ -73,6 +73,17 @@ public class Population extends SingleDatabaseTestCase {
           ReportManager.problem(this, con, "No populations have freqs_from_gts set ");
         }
       }
+      // check dislay groups are set
+      if (dbre.getSpecies() == Species.HOMO_SAPIENS) {
+         String display_stmt = "select count(distinct display_group_id) from population ";
+         int display_groups = DBUtils.getRowCount(con,display_stmt);
+        if (display_groups != 3) {
+          result = false;
+          ReportManager.problem(this, con, "Only " + display_groups + " display groups set for current populations");
+        }
+      }
+
+
     } catch (Exception e) {
       ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
       result = false;
