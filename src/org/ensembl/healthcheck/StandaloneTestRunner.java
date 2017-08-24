@@ -16,28 +16,37 @@
 
 package org.ensembl.healthcheck;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.ensembl.healthcheck.StandaloneReporter.OutputFormat;
 import org.ensembl.healthcheck.configuration.ConfigureTestGroups;
 import org.ensembl.healthcheck.configurationmanager.ConfigurationException;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
+import com.google.gson.Gson;
 import com.mysql.jdbc.Driver;
 
 import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
+import uk.co.flamingpenguin.jewel.cli.Cli;
 import uk.co.flamingpenguin.jewel.cli.CliFactory;
 import uk.co.flamingpenguin.jewel.cli.Option;
 
@@ -65,28 +74,34 @@ public class StandaloneTestRunner {
         @Option(helpRequest = true, description = "display help")
         boolean getHelp();
 
-        @Option(shortName = "o", longName = "output_file", defaultValue = "failures.txt", description = "File to write any failures to (use '-' for standard out)")
+        @Option(shortName = "o", longName = "output_file", defaultValue = WRITE_STDOUT, description = "File to write any failures to (use '-' for standard out)")
         String getOutputFile();
+
+        @Option(shortName = "f", longName = "output_format", defaultValue = "text", description = "Format for writing output")
+        String getOutputFormat();
 
         @Option(shortName = "v", longName = "verbose", description = "Show detailed debugging output")
         boolean isVerbose();
 
         @Option(shortName = "d", longName = "dbname", description = "Database to test")
         String getDbname();
+        boolean isDbname();
 
         @Option(shortName = "u", longName = "user", description = "Username for test database")
         String getUser();
+        boolean isUser();
 
         @Option(shortName = "h", longName = "host", description = "Host for test database")
         String getHost();
+        boolean isHost();
 
         @Option(shortName = "p", longName = "pass", description = "Password for test database")
         String getPassword();
-
         boolean isPassword();
 
         @Option(shortName = "P", longName = "port", description = "Port for test database")
         int getPort();
+        boolean isPort();
 
         @Option(longName = "compara_dbname", defaultValue = "ensembl_compara_master", description = "Name of compara master database")
         String getComparaMasterDbname();
@@ -163,6 +178,9 @@ public class StandaloneTestRunner {
 
         boolean isRelease();
 
+        @Option(longName = "list_tests", shortName = "l", description = "Show all the tests in the specified groups and tests")
+        boolean isListTests();
+
     }
 
     /**
@@ -171,13 +189,25 @@ public class StandaloneTestRunner {
     public static void main(String[] args) {
 
         StandaloneTestOptions options = null;
+        Cli<StandaloneTestOptions> cli = CliFactory.createCli(StandaloneTestOptions.class);
         try {
-            options = CliFactory.parseArguments(StandaloneTestOptions.class, args);
+            options = cli.parseArguments(args);
         } catch (ArgumentValidationException e) {
             System.err.println(e.getMessage());
             System.exit(2);
         }
 
+        if (options.isListTests()) {
+            System.exit(listTests(options));
+        }
+
+        
+        if(!options.isDbname() || !options.isHost() || !options.isPort() || !options.isUser()) {
+            System.err.println("--dbname, --host, --port and --user are required options");
+            System.err.println(cli.getHelpMessage());
+            System.exit(2);
+        }
+        
         StandaloneTestRunner runner = new StandaloneTestRunner(options);
 
         if (!StringUtils.isEmpty(options.getOutputFile()) && !options.getOutputFile().equals(WRITE_STDOUT)) {
@@ -196,25 +226,67 @@ public class StandaloneTestRunner {
 
         boolean result = runner.runAll();
         if (!result) {
-            if (options.getOutputFile().equals(WRITE_STDOUT)) {
-                runner.getLogger().severe("Failures detected - writing details to screen");
-                try {
-                    PrintWriter writer = new PrintWriter(System.out);
-                    reporter.writeFailures(writer);
-                    writer.close();
-                } catch (IOException e) {
-                    System.err.println(e.getMessage());
-                    System.exit(4);
-                }
-            } else {
-                runner.getLogger().severe("Failures detected - writing details to " + options.getOutputFile());
-                reporter.writeFailureFile(options.getOutputFile());
-            }
+            printFailures(options, runner, reporter);
         } else {
             runner.getLogger().info("Completed healthchecks with no failures");
         }
         System.exit(result ? 0 : 1);
 
+    }
+
+    private static int listTests(StandaloneTestOptions options) {
+        Writer w = null;
+        try {
+            TestRegistry testRegistry = new ConfigurationBasedTestRegistry(options);
+            Set<String> testCases = new HashSet<>();
+            for (EnsTestCase test : testRegistry.getAll()) {
+                testCases.add(test.getName());
+            }
+            if (options.getOutputFile().equals(WRITE_STDOUT)) {
+                w = new PrintWriter(System.out);
+            } else {
+                w = new BufferedWriter(new FileWriter(new File(options.getOutputFile())));
+            }
+            switch (OutputFormat.valueOf(options.getOutputFormat().toUpperCase())) {
+            case JSON:
+                w.write(new Gson().toJson(testCases));
+                break;
+            case TEXT:
+                for (String test : testCases) {
+                    w.write(test);
+                    w.write("\n");
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Don't know how to handle format " + options.getOutputFormat());
+            }
+            w.close();
+            return 0;
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return 1;
+        } finally {
+            IOUtils.closeQuietly(w);
+        }
+    }
+
+    private static void printFailures(StandaloneTestOptions options, StandaloneTestRunner runner,
+            StandaloneReporter reporter) {
+        OutputFormat format = OutputFormat.valueOf(options.getOutputFormat().toUpperCase());
+        if (options.getOutputFile().equals(WRITE_STDOUT)) {
+            runner.getLogger().severe("Failures detected - writing details to screen");
+            try {
+                PrintWriter writer = new PrintWriter(System.out);
+                reporter.writeFailures(writer, format);
+                writer.close();
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+                System.exit(4);
+            }
+        } else {
+            runner.getLogger().severe("Failures detected - writing details to " + options.getOutputFile());
+            reporter.writeFailureFile(options.getOutputFile(), format);
+        }
     }
 
     private Logger logger;

@@ -70,6 +70,12 @@ public class Meta extends SingleDatabaseTestCase {
 			result &= checkForOrphansWithConstraint(con, "meta", "meta_value",
 					"population", "population_id", "meta_key = '" + metaKey + "'");
 
+			//check sift and polyphen
+			metaKey = "sift_version";
+			result &= checkKeysPresent(con,metaKey);
+
+			metaKey = "polyphen_version";
+			result &= checkKeysPresent(con,metaKey);
 		}
 		if (dbre.getSpecies() == Species.CANIS_FAMILIARIS) {
 			// find out if the entries in the Meta point to the strain

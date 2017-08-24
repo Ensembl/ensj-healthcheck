@@ -24,6 +24,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
@@ -45,6 +46,10 @@ public class SpeciesID extends SingleDatabaseTestCase {
 		setFix("Manually fix affected keys, e.g. UPDATE TABLE meta SET species_id = NULL WHERE meta_key IN ( 'patch', 'schema_version' );");
 		setTeamResponsible(Team.GENEBUILD); // No longer valid for funcgen
 
+	}
+	
+	public void types() {
+		addAppliesToType(DatabaseType.FUNCGEN);
 	}
 
 	/**

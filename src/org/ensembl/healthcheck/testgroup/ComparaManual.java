@@ -15,24 +15,23 @@
  * limitations under the License.
  */
 
-package org.ensembl.healthcheck.testcase.eg_funcgen;
+package org.ensembl.healthcheck.testgroup;
 
-import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.testcase.funcgen.ArrayXrefs;
+import org.ensembl.healthcheck.GroupOfTests;
 
-public class EGArrayXrefs extends ArrayXrefs {
+/**
+ * Manual healthchecks for all Compara databases
+ */
+public class ComparaManual extends GroupOfTests {
 
-	public EGArrayXrefs() {
-		super();
-		removeFromAllGroups();
+	public ComparaManual() {
+
+		addTest(
+			org.ensembl.healthcheck.testcase.compara.CheckTableSizes.class,
+			org.ensembl.healthcheck.testcase.compara.CheckConservationScoreSanity.class,
+			org.ensembl.healthcheck.testcase.compara.CheckGenomicAlignMTs.class,
+			org.ensembl.healthcheck.testcase.compara.CompareMSANames.class,
+			org.ensembl.healthcheck.testcase.compara.CheckSyntenySanity.class
+		);
 	}
-
-	@Override
-	protected String getCoreDbName(DatabaseRegistryEntry dbre,
-			String schemaBuild) {
-		return dbre.getName().replace("_funcgen_", "_core_");
-	}
-	
-	
-
 }

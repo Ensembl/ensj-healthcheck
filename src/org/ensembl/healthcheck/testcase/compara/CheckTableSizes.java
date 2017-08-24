@@ -27,9 +27,8 @@ import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.testcase.compara.AbstractComparaTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.CollectionUtils;
 
@@ -38,7 +37,7 @@ import org.ensembl.healthcheck.util.CollectionUtils;
  * Compara tables are similar to the previous release
  */
 
-public class CheckTableSizes extends SingleDatabaseTestCase {
+public class CheckTableSizes extends AbstractComparaTestCase {
 
 	public CheckTableSizes() {
 		setDescription("Checks the size of the Compara tables");
@@ -71,20 +70,16 @@ public class CheckTableSizes extends SingleDatabaseTestCase {
 	 */
 	public boolean run(final DatabaseRegistryEntry dbre) {
 
-		// Get compara DB connection
-		DatabaseRegistryEntry[] allSecondaryComparaDBs = DBUtils.getSecondaryDatabaseRegistry("compara").getAll(DatabaseType.COMPARA);
-		if (allSecondaryComparaDBs.length == 0) {
+		DatabaseRegistryEntry lastReleaseDbre = getLastComparaReleaseDbre(dbre);
+
+		if (lastReleaseDbre == null) {
 			ReportManager.problem( this, dbre.getConnection(),
 					"Cannot find the compara database in the secondary server. This check expects to find a previous version of the compara database for checking that all the *named* species_sets are still present in the current database.");
 			return false;
 		}
 
-		// For each compara connection...
 		boolean result = true;
-		for (DatabaseRegistryEntry this_other_Compara_dbre : allSecondaryComparaDBs) {
-			// Check vs previous compara DB.
-			result &= compareTableSizes(dbre, this_other_Compara_dbre);
-		}
+		result &= compareTableSizes(dbre, lastReleaseDbre);
 		return result;
 
 	} // run

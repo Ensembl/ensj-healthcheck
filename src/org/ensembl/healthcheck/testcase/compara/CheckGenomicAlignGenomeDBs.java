@@ -25,7 +25,7 @@ import java.sql.Statement;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.testcase.compara.AbstractComparaTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
@@ -33,7 +33,7 @@ import org.ensembl.healthcheck.util.DBUtils;
  * method_link_species_set are present in the genomic_aligns
  */
 
-public class CheckGenomicAlignGenomeDBs extends SingleDatabaseTestCase {
+public class CheckGenomicAlignGenomeDBs extends AbstractComparaTestCase {
 
 	/**
 	 * Create an CheckGenomicAlignGenomeDBs that applies to a specific set of
@@ -83,15 +83,11 @@ public class CheckGenomicAlignGenomeDBs extends SingleDatabaseTestCase {
 				.getColumnValues(con,
 						"SELECT distinct(method_link_species_set_id) FROM genomic_align_block");
 
+		String ancestral_gdb_id = DBUtils.getRowColumnValue(con, "SELECT genome_db_id FROM genome_db WHERE name = \"ancestral_sequences\"");
+
 		if (method_link_species_set_ids.length > 0) {
 
 			for (String mlss_id : method_link_species_set_ids) {
-				/**
-				 * Expected number of genome_db_ids
-				 */
-
-				String gdb_sql = "SELECT COUNT(*) FROM species_set LEFT JOIN method_link_species_set USING (species_set_id) WHERE method_link_species_set_id = " + mlss_id;
-				String[] num_genome_db_ids = DBUtils.getColumnValues(con, gdb_sql);
 
 				/**
 				 * Find genome_db_ids in genomic_aligns. For speed, first only
@@ -104,35 +100,52 @@ public class CheckGenomicAlignGenomeDBs extends SingleDatabaseTestCase {
 				 * if it's equal to or larger - more worried if it's smaller ie
 				 * missed some expected genome_db_ids.
 				 */
-				String part1_sql = "SELECT COUNT(DISTINCT genome_db_id) FROM (SELECT * FROM genomic_align_block WHERE method_link_species_set_id = " + mlss_id + " ";
-				String part2_sql = " ) t1 LEFT JOIN genomic_align USING (genomic_align_block_id) LEFT JOIN dnafrag USING (dnafrag_id) HAVING COUNT(DISTINCT genome_db_id) >= (SELECT COUNT(*) FROM species_set LEFT JOIN method_link_species_set USING (species_set_id) WHERE method_link_species_set_id = "
-						+ mlss_id + " )";
-				String slow_sql = part1_sql + part2_sql;
-				String fast_sql = part1_sql + "LIMIT 100" + part2_sql;
+				String gab_part1_sql = "(SELECT genome_db_id FROM (SELECT genomic_align_block_id FROM genomic_align_block WHERE method_link_species_set_id = " + mlss_id;
+				String gab_part2_sql = " ) _t1 JOIN genomic_align USING (genomic_align_block_id) JOIN dnafrag USING (dnafrag_id) WHERE genome_db_id != " + ancestral_gdb_id + ") _t3";
+				String mlss_sql = "(SELECT genome_db_id FROM species_set JOIN method_link_species_set USING (species_set_id) WHERE method_link_species_set_id = " + mlss_id + ") _t2";
 
-				String[] success = DBUtils.getColumnValues(con, fast_sql);
-				boolean all_found = (success.length > 0);
-				if (!all_found) {
-					success = DBUtils.getColumnValues(con, slow_sql);
-					all_found = (success.length > 0);
+				String useful_sql = "SELECT DISTINCT genome_db_id FROM genomic_align JOIN dnafrag USING (dnafrag_id) WHERE method_link_species_set_id = " + mlss_id + "; ";
+				useful_sql += "SELECT DISTINCT genome_db_id FROM species_set JOIN method_link_species_set USING (species_set_id) WHERE method_link_species_set_id = " + mlss_id + ";";
+
+				// genomic_align -> species_set
+				boolean only_expected_genomes = checkConsistency(con, gab_part1_sql + " LIMIT 100 " + gab_part2_sql, mlss_sql, "_t2.genome_db_id");
+				if (only_expected_genomes) {
+					// Maybe the first 100 blocks were lucky. Check the others !
+					only_expected_genomes = checkConsistency(con, gab_part1_sql + gab_part2_sql, mlss_sql, "_t2.genome_db_id");
+				}
+				if (only_expected_genomes) {
+					ReportManager.correct(this, con, "All the genomic_aligns of method_link_species_set_id " + mlss_id + " match the species-set");
+				} else {
+					ReportManager.problem(this, con, "Some genomic_aligns of method_link_species_set_id " + mlss_id + " are not found in the species-set");
+					ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
+					result = false;
 				}
 
-				if (all_found) {
-					ReportManager.correct(this, con, "All genome_dbs are present in the genomic_aligns for method_link_species_set_id " + mlss_id);
+				// species_set -> genomic_align
+				boolean all_genomes_used = checkConsistency(con, mlss_sql, gab_part1_sql + " LIMIT 100 " + gab_part2_sql, "_t3.genome_db_id");
+				if (!all_genomes_used) {
+					// The first 100 blocks don't contain all the genomes.  Check the remaining blocks as well
+					all_genomes_used = checkConsistency(con, mlss_sql, gab_part1_sql + gab_part2_sql, "_t3.genome_db_id");
+				}
+				if (all_genomes_used) {
+					ReportManager.correct(this, con, "All the genome_dbs of method_link_species_set_id " + mlss_id + " are found in the genomic_aligns");
 				} else {
-					ReportManager.problem(
-									this,
-									con,
-									"Not all the genome_dbs are present in alignment with method_link_species_set_id "
-											+ mlss_id);
-					ReportManager.problem(this, con, "USEFUL SQL: " + slow_sql);
+					ReportManager.problem(this, con, "Some genome_dbs of method_link_species_set_id " + mlss_id + " are not found in the genomic_aligns");
+					ReportManager.problem(this, con, "USEFUL SQL: " + useful_sql);
 					result = false;
 				}
 			}
 		}
 
 		return result;
+	}
 
+	public boolean checkConsistency(Connection con, String left_sql, String right_sql, String right_column) {
+
+		String sql = "SELECT COUNT(*) FROM " + left_sql + " LEFT JOIN " + right_sql + " USING (genome_db_id) WHERE " + right_column + " IS NULL";
+
+		int orphans = DBUtils.getRowCountFast(con, sql);
+		return (orphans == 0);
 	}
 
 } // CheckGenomicAlignGenomeDBs

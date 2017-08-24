@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseRegistryEntry.DatabaseInfo;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
@@ -63,15 +64,6 @@ public abstract class AbstractCoreDatabaseUsingTestCase extends SingleDatabaseTe
 	protected String getCoreDbName(DatabaseRegistryEntry dbre) throws SQLException {
 		
 		String speciesProductionName = getProductionName(dbre.getConnection());
-		String schemaBuild = fetchSchemaBuild(dbre);
-		
-		String dbreSchemaBuild = dbre.getSchemaVersion() + "_" + dbre.getGeneBuildVersion();
-		
-		if (!dbreSchemaBuild.equals(schemaBuild)) {
-			logger.warning("Schema build from database ("+schemaBuild+") is not the same as from the database registry ("+dbreSchemaBuild+").");
-		} else {
-			//logger.info("Schema build from database ("+schemaBuild+") and database registry ("+dbreSchemaBuild+") agree.");
-		}
 		
 		String dbreSpecies = dbre.getSpecies().toString();
 		if (!dbreSpecies.equals(speciesProductionName)) {

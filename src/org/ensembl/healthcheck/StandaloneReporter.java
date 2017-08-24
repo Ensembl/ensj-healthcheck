@@ -21,6 +21,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -31,6 +32,8 @@ import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.util.CollectionUtils;
 
+import com.google.gson.Gson;
+
 /**
  * Reporter that captures messages in a hash
  * 
@@ -38,6 +41,10 @@ import org.ensembl.healthcheck.util.CollectionUtils;
  *
  */
 public class StandaloneReporter implements Reporter {
+
+    public static enum OutputFormat {
+        JSON, TEXT
+    };
 
     private final Logger logger;
 
@@ -56,10 +63,8 @@ public class StandaloneReporter implements Reporter {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.ensembl.healthcheck.Reporter#finishTestCase(org.ensembl.healthcheck.
-     * testcase.EnsTestCase, boolean,
-     * org.ensembl.healthcheck.DatabaseRegistryEntry)
+     * @see org.ensembl.healthcheck.Reporter#finishTestCase(org.ensembl.healthcheck.
+     * testcase.EnsTestCase, boolean, org.ensembl.healthcheck.DatabaseRegistryEntry)
      */
     @Override
     public void finishTestCase(EnsTestCase testCase, boolean result, DatabaseRegistryEntry dbre) {
@@ -119,8 +124,7 @@ public class StandaloneReporter implements Reporter {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.ensembl.healthcheck.Reporter#startTestCase(org.ensembl.healthcheck.
+     * @see org.ensembl.healthcheck.Reporter#startTestCase(org.ensembl.healthcheck.
      * testcase.EnsTestCase, org.ensembl.healthcheck.DatabaseRegistryEntry)
      */
     @Override
@@ -136,11 +140,11 @@ public class StandaloneReporter implements Reporter {
     /**
      * @param outputFile
      */
-    public void writeFailureFile(String outputFile) {
+    public void writeFailureFile(String outputFile, OutputFormat format) {
         Writer writer = null;
         try {
             writer = new BufferedWriter(new FileWriter(outputFile));
-            writeFailures(writer);
+            writeFailures(writer, format);
         } catch (IOException e1) {
             throw new RuntimeException(e1);
         } finally {
@@ -148,7 +152,20 @@ public class StandaloneReporter implements Reporter {
         }
     }
 
-    public void writeFailures(Writer writer) throws IOException {
+    public void writeFailures(Writer writer, OutputFormat format) throws IOException {
+        switch (format) {
+        case TEXT:
+            writeFailuresText(writer);
+            break;
+        case JSON:
+            writeFailuresJson(writer);
+            break;
+        default:
+            break;
+        }
+    }
+
+    public void writeFailuresText(Writer writer) throws IOException {
         for (Entry<String, List<String>> e : this.getFailures().entrySet()) {
             writer.write("Failures detected for " + e.getKey() + ":\n");
             for (String testCase : e.getValue()) {
@@ -157,6 +174,19 @@ public class StandaloneReporter implements Reporter {
                 writer.write("\n");
             }
         }
+    }
+
+    
+    public void writeFailuresJson(Writer writer) throws IOException {
+        Map<String,Map<String,List<String>>> oMap = new HashMap<>();
+        for (Entry<String, List<String>> e : this.getFailures().entrySet()) {
+            Map<String,List<String>> fMap = new HashMap<>();
+            for (String testCase : e.getValue()) {
+                fMap.put(testCase, this.getOutput().get(e.getKey()).get(testCase));
+            }
+            oMap.put(e.getKey(), fMap);
+        }
+        writer.write(new Gson().toJson(oMap));
     }
 
 }

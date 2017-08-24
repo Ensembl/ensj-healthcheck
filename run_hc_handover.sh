@@ -51,7 +51,7 @@ fi
 
 echo $DBNAME
 if [ -z "$GROUP" ]; then
-    if [[ $DBNAME =~ .*_core_.* ]]; then
+    if [[ $DBNAME =~ .*_core|otherfeatures|rnaseq|cdna_.* ]]; then
         GROUP="GenebuildHandover"
     elif [[ $DBNAME =~ .*_variation_.* ]]; then
         GROUP="VariationRelease"

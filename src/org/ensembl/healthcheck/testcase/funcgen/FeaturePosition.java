@@ -29,46 +29,25 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
-import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
-public class FeaturePosition extends SingleDatabaseTestCase {
-
+public class FeaturePosition extends AbstractCoreDatabaseUsingTestCase {
 	
-	/**
-	 * Create a new instance
-	 */
-	public FeaturePosition() {
-		addToGroup("pre_regulatorybuild");
-		addToGroup("funcgen");//do we need this group and the funcgen-release group?
-		addToGroup("funcgen-release");
-		
+	public FeaturePosition() {	
 		setTeamResponsible(Team.FUNCGEN);
-		setDescription("Checks if features lie within bounds of seq_region i.e. start !=0 and end <= seq_region length.");
+		setDescription("Checks if features lie within bounds of seq_region i.e. start >=0 and end <= seq_region length.");
 		setPriority(Priority.AMBER);
-		setEffect("Low quality features will be included which maybe the result of reads mapping to repeat regions at end of seq_regions.");
-		setFix("Fix:  See DELETE SQL. These should have been filtered within the pipeline!");
 	}
-	
 	
 	/**
 	 * This only applies to funcgen databases.
 	 */
 	public void types() {
-		//Do we really need these removes?
-		removeAppliesToType(DatabaseType.OTHERFEATURES);
-		removeAppliesToType(DatabaseType.CDNA);
-		removeAppliesToType(DatabaseType.CORE);
-		removeAppliesToType(DatabaseType.VARIATION);
-		removeAppliesToType(DatabaseType.COMPARA);
+		setAppliesToType(DatabaseType.FUNCGEN);
 	}
 	
 	
 	/**
-	 * Run the test.
-	 * We will check if all the motif features in a regulatory feature contain all
-	 *  the motif features associated to the annotated features associated to the regulatory feature
-	 * 
 	 * @param dbre
 	 *          The database to use.
 	 * @return true if the test passed.
@@ -81,127 +60,94 @@ public class FeaturePosition extends SingleDatabaseTestCase {
             return true;
         }
 
-		boolean     result = true;
-		Connection  efgCon = dbre.getConnection();
-		String schemaBuild = dbre.getSchemaVersion() + "_" + dbre.getGeneBuildVersion();
-		String  coreDBName = dbre.getSpecies() + "_core_" + schemaBuild;
-		DatabaseRegistryEntry coreDbre = getDatabaseRegistryEntryByPattern(coreDBName);
+		boolean               result   = true;
+		Connection            dbConnection   = dbre.getConnection();
+		DatabaseRegistryEntry coreDbre = getCoreDb(dbre);
 		
-		if (coreDbre == null){
-			ReportManager.problem(this, efgCon, "Could not access default core DB:\t" + coreDBName);
+		if (coreDbre == null) {
 			return false;	
-		}		
-				
-    /* String sql = "SELECT schema_build from coord_system order by schema_build desc limit 1";
-    String schemaBuild = DBUtils.getRowColumnValue(efgCon, sql); */
-
-		String sql = "select sr.core_seq_region_id, sr.name, sr.seq_region_id from seq_region sr where schema_build='" + schemaBuild + "'";
-		HashMap<String, String> coreSeqRegionIDName    = new HashMap<String, String>(); 
-		HashMap<String, String> nameFuncgenSeqRegionID = new HashMap<String, String>(); 	
+		}
+		
+		logger.info("Using core database " + coreDbre.getName() + " " + coreDbre.getDatabaseServer().getDatabaseURL());
+						
+		String sql = "select seq_region_id, name, length from seq_region";
+		HashMap<String, String> coreSeqRegionIDName = new HashMap<String, String>();
+		HashMap<String, String> seqRegionIdToLength = new HashMap<String, String>();
  
 		try {
-			ResultSet rs = efgCon.createStatement().executeQuery(sql);
+			ResultSet rs = coreDbre.getConnection().createStatement().executeQuery(sql);
 
-			while (rs.next()){
-				coreSeqRegionIDName.put(rs.getString(1), rs.getString(2));
-				nameFuncgenSeqRegionID.put(rs.getString(2), rs.getString(3));
+			while (rs.next()) {
+				coreSeqRegionIDName.put( rs.getString(1), rs.getString(2) );
+				seqRegionIdToLength.put( rs.getString(1), rs.getString(3) );
 			}
 		}
-		catch (SQLException se) {	
-			se.printStackTrace();
+		catch (SQLException e) {
+			e.printStackTrace();
 			return false;
 		}
-		
-		Connection coreCon = coreDbre.getConnection();
-		HashMap<String, String> seqRegionLen      = new HashMap<String, String>(); 
-			
-		for (Iterator<String> iter = coreSeqRegionIDName.keySet().iterator(); iter.hasNext();) {
-			String coreSrID = (String) iter.next();
-			seqRegionLen.put(coreSrID, DBUtils.getRowColumnValue(coreCon, "select length from seq_region where seq_region_id=" + coreSrID) );
-		}
-		  
-    //Shouldn't these be defined somewhere more generic?
-    String [] featureTables = {"annotated_feature", "regulatory_feature", "motif_feature",
-                               "external_feature",  "segmentation_feature", "mirna_target_feature"};
+				  
+	    String [] featureTables = {"annotated_feature", "regulatory_feature", "motif_feature",
+	                               "external_feature",  "segmentation_feature", "mirna_target_feature"};
     
-    for(String fTable : featureTables){
-        String problemString = "";
-        String usefulSQL     = "";
-        String updateSQL     = "";
-        int    totalFeatures = 0;
-        Iterator<String> it = seqRegionLen.keySet().iterator();
-
-        while(it.hasNext()){
-            String coreRegionId    = it.next();
-            String srName          = coreSeqRegionIDName.get(coreRegionId);
-            String funcgenRegionID = nameFuncgenSeqRegionID.get(srName);
-            String srLength        = seqRegionLen.get(coreRegionId);
-            //Using efg sr_id removes need for use of schema_build and sr join
-     
-            //start = 0 as is unsigned i.e. never <0
-            //only need the bound calc here, as it will be more extreme or equal to seq_region loci
-
-            if(fTable.equals("regulatory_feature")){
-                sql = "select count(" + fTable + "_id) from " + fTable + " WHERE seq_region_id=" + 
-                    funcgenRegionID + " AND  ((seq_region_start - bound_start_length) = 0 " +
-                    "OR (seq_region_end + bound_end_length) > " + srLength + ")";
-            }
-            else{
-                sql = "select count(" + fTable + "_id) from " + fTable + " WHERE seq_region_id=" + 
-                    funcgenRegionID + " AND  (seq_region_start = 0 OR seq_region_end > " + srLength + ")";  
-            }
-
-
-
-            Integer featCount = DBUtils.getRowCount(efgCon, sql); 	
-            totalFeatures    += featCount;
-
-            //This is already being 'caught' higher in the stack, but no exit
-            //but still shows as 'PASSED' as result is true by default!
-            //featCount is -1 not null if sql failed
-
-            if(featCount == -1){
-                ReportManager.problem(this, efgCon, "SQL Failed:\t" + sql);
-                return false;
-            }
-			
-            if(featCount > 0){
-                //Delete as we never trust peaks over ends of sequencable regions, as they are likely
-                //the start of long ranging repeats where alignments stack up erroneously
-          
-                /** if(fTable.equals("regulatory_feature")){
-                    deleteSQL += "DELETE ra, rf from regulatory_feature rf join " + 
-                        "regulatory_attribute ra using (regulatory_feature_id) WHERE seq_region_id=" + 
-                        funcgenRegionID + " AND  ((seq_region_start - bound_start_length)  = 0 " +
-                        "OR  (seq_region_end + bound_end_length)  > " + srLength + ");\n" ; 
-               
-
-                }
-                else{
-                     deleteSQL += "DELETE from " + fTable + " WHERE seq_region_id=" + funcgenRegionID + 
-                        " AND  (seq_region_start = 0 OR seq_region_end  > " + srLength + ");\n"; **/
-                updateSQL += "UPDATE " + fTable + " set seq_region_end =" + srLength +  " WHERE seq_region_id=" + 
-                  funcgenRegionID + " AND seq_region_end  > " + srLength + ";\n";
-
-                updateSQL += "UPDATE " + fTable + " set seq_region_start=1 WHERE seq_region_id=" + 
-                  funcgenRegionID + " AND seq_region_start = 0;\n";
-
-                //}
-            
-                usefulSQL += sql + ";\n";			
-                problemString = problemString + " " + srName + "(" + featCount + ")";
-                result =  false;
-            }
-        }
-
-        if(! problemString.isEmpty() ){     
-            ReportManager.problem
-                (this, efgCon, 
-                 "Found " + totalFeatures + " " + fTable + "s exceeding seq_region bounds:\t" + problemString +
-                 "\nUSEFUL SQL:\n" + usefulSQL + "\nUPDATE SQL:\n" + updateSQL);  
-        }
-    }
+	    for(String featureTable : featureTables) {
+	    	
+	    	logger.info("Checking " + featureTable);
+	    	
+	        String problemString = "";
+	        String usefulSQL     = "";
+	        String updateSQL     = "";
+	        int    totalNumberOfFailedFeatures = 0;
+	        
+	        Iterator<String> seqRegionIdIterator = seqRegionIdToLength.keySet().iterator();
+	
+	        while(seqRegionIdIterator.hasNext()) {
+	        	
+	            String seqRegionId     = seqRegionIdIterator.next();
+	            String seqRegionName   = coreSeqRegionIDName.get(seqRegionId);
+	            String seqRegionLength = seqRegionIdToLength.get(seqRegionId);
+	     
+	            if(featureTable.equals("regulatory_feature")) {
+	                sql = "select count(" + featureTable + "_id) from " + featureTable + " WHERE seq_region_id=" + 
+	                		seqRegionId + " AND  ((seq_region_start - bound_start_length) <= 0 " +
+	                    "OR (seq_region_end + bound_end_length) > " + seqRegionLength + ")";
+	            } else {
+	                sql = "select count(" + featureTable + "_id) from " + featureTable + " WHERE seq_region_id=" + 
+	                		seqRegionId + " AND  (seq_region_start <= 0 OR seq_region_end > " + seqRegionLength + ")";  
+	            }
+	
+	            Integer numberOfFailedFeatures  = DBUtils.getRowCount(dbConnection, sql); 	
+	            totalNumberOfFailedFeatures    += numberOfFailedFeatures;
+	
+	            //This is already being 'caught' higher in the stack, but no exit
+	            //but still shows as 'PASSED' as result is true by default!
+	            //featCount is -1 not null if sql failed
+	
+	            if(numberOfFailedFeatures == -1) {
+	                ReportManager.problem(this, dbConnection, "SQL Failed:\t" + sql);
+	                return false;
+	            }
+				
+	            if(numberOfFailedFeatures > 0) {
+	                updateSQL += "UPDATE " + featureTable + " set seq_region_end =" + seqRegionLength +  " WHERE seq_region_id=" + 
+	                		seqRegionId + " AND seq_region_end  > " + seqRegionLength + ";\n";
+	
+	                updateSQL += "UPDATE " + featureTable + " set seq_region_start=1 WHERE seq_region_id=" + 
+	                		seqRegionId + " AND seq_region_start = 0;\n";
+	            
+	                usefulSQL += sql + ";\n";			
+	                problemString = problemString + " " + seqRegionName + "(" + numberOfFailedFeatures + ")";
+	                result =  false;
+	            }
+	        }
+	
+	        if(! problemString.isEmpty() ) {
+	            ReportManager.problem(this, dbConnection, 
+	                 "Found " + totalNumberOfFailedFeatures + " " + featureTable + "s exceeding seq_region bounds:\t" + problemString +
+	                 "\nUSEFUL SQL:\n" + usefulSQL + "\nUPDATE SQL:\n" + updateSQL);
+	            result = false;  
+	        }
+	    }
 		return result;
 	}
-
 }

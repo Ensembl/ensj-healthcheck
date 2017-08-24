@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
@@ -48,6 +49,11 @@ public class NullStrings extends SingleDatabaseTestCase {
 
 	}
 
+	public void types() {
+		addAppliesToType(DatabaseType.FUNCGEN);
+	}
+
+	
 	public Map<String,Set<String>> getExclusions() {
     Map<String,Set<String>> map = createHashMap();
     map.put("dnac", createLinkedHashSet("n_line"));

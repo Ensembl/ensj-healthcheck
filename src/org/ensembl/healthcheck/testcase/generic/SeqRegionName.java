@@ -113,6 +113,7 @@ public class SeqRegionName extends SingleDatabaseTestCase {
                                      ReportManager.correct(this, con, String.format("1 MT contig region found with special format"));
                               } else {
                                      ReportManager.problem(this, con, String.format("%d seq_regions in coordinate system %s have names that are not of the correct format", rows, coordinateSystem));
+                                     result = false;
                               }
                         } else {
 

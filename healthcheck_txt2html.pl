@@ -65,6 +65,10 @@ my %status_colour = ( $hc_success => 'label-success',
                       'default'   => 'label-info'
                     );
 
+my %special_testcase = ( 'CompareVariationSchema' => 1,
+                         'ForeignKeyCoreId'       => 1
+                       );
+
 my $pre_colour = 'pre_colour';
 my $new_colour = 'new_colour';
 my $err_colour = 'err_colour';
@@ -89,7 +93,7 @@ while (<HC>) {
       
       # Extra generic test case from production:
       if ($current_db_name && $current_test_case eq 'TestRunnerSelfCheck') {
-        $test_case_groups{$current_db_name}{'TestRunnerSelfCheck'} = 'FAILED';
+        $test_case_groups{$current_db_name}{$current_test_case} = 'FAILED';
       }
     }
     # Test case detailled row
@@ -189,6 +193,11 @@ while (<HC>) {
       }
       else {
         $test_cases{$db_name}{$current_test_case} = [$tc_res];
+        # Missing the catch of some HCs when multi DB HCs run is done
+        if ($special_testcase{$current_test_case} && !$test_case_groups{$current_db_name}{$current_test_case}){
+          $test_case_groups{$current_db_name}{$current_test_case} = $hc_failed;
+          $status_by_db{$current_db_name}{$hc_failed} ++;
+        }
       }
     }
   }
@@ -254,6 +263,7 @@ my $several_dbs = (scalar(keys(%test_case_groups)) > 1) ? 1 : 0;
 my $hc_header_icon = ($several_dbs) ? 'glyphicon-menu-right' : 'glyphicon-menu-down';
 my $hc_content_display = ($several_dbs) ? ' style="display:none"' : '';
 
+my $date_time = get_run_date_time();
 
 foreach my $db_name (sort(keys(%test_case_groups))) {
   # Species header
@@ -261,8 +271,8 @@ foreach my $db_name (sort(keys(%test_case_groups))) {
   # List of status with their counts
   foreach my $status (sort{ ($a ne $hc_success) cmp ($b ne $hc_success) || $a cmp $b } keys(%{$status_by_db{$db_name}})) {
     my $status_c = $status_colour{$status} ? $status_colour{$status} : $status_colour{'default'};
-    $status_html .= sprintf( qq{<span class="label %s hc_status hc_font_1"><span class="black">%i</span> %s</span>},
-                             $status_c, $status_by_db{$db_name}{$status}, $status
+    $status_html .= sprintf( qq{<span class="label hc_status hc_status_left hc_font_1">%i</span><span class="label %s hc_status_right hc_font_1">%s</span>},
+                             $status_by_db{$db_name}{$status}, $status_c, $status
                            );
   }
   my $db_top_anchor = $sp_alias{$db_name}."_top";
@@ -273,7 +283,8 @@ foreach my $db_name (sort(keys(%test_case_groups))) {
         <button id="$db_name\_button" class="glyphicon $hc_header_icon showhide_hc" onclick="showhide('$db_name', 1)"></button>
         <span>$db_name</span>
       </div>
-      <div class="left db_header_right">$status_html</div>
+      <div class="left db_header_middle">$status_html</div>
+      <div class="right db_header_right" data-toggle="tooltip" data-placement="bottom" title="HC finished date | time" ><span class="glyphicon glyphicon-time"></span>$date_time</div>
     </div>
     <div id="$db_name\_content" class="db_content"$hc_content_display>
       <div class="clearfix">\n};
@@ -412,6 +423,20 @@ sub thousandify {
   return scalar reverse $text;
 }
 
+sub get_run_date_time {
+  my $time_line = `grep 'Results reported' $input_file`;
+  
+  if ($time_line) {
+    $time_line =~ /Results\sreported\sat\s\w+\s(\w+)\s(\d+)\s(\d+:\d+:\d+)\s(\d+)/;
+    my $month = $1;
+    my $day   = $2;
+    my $time  = $3;
+    my $year  = $4;
+    
+    return qq{<span>$day $month $year | $time</span>};
+  }
+  
+}
 
 sub get_html_head {
  return qq{
@@ -422,9 +447,15 @@ sub get_html_head {
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
     <style type="text/css">
       .db_header { background-color:#555; color: #FFF; padding:5px 6px; margin:5px 0px 10px; font-size:22px; }
-      .db_header_left  { width:500px; }
-      .db_header_right>span { line-height:32px; }
+      .db_header_left  { line-height:32px;vertical-align:middle;width:500px; }
+      .db_header_right>button { vertical-align:middle; }
+      .db_header_right>span   { vertical-align:middle; }
+      .db_header_middle>span { line-height:32px;vertical-align:middle; }
+      .db_header_right { line-height:32px;vertical-align:middle;margin-right:15px;font-size:12px; }
+      .db_header_right>span:first-child { vertical-align:middle;padding-right:5px;top:0px; }
+      .db_header_right>span:last-child { vertical-align:middle; }
       .left { float:left; }
+      .right { float:right; }
       .clearfix:after { clear:both; }
       .db_content { padding: 0px 15px; }
       .table_hc_list { font-size:12px; margin-bottom:15px; max-width:375px; }
@@ -439,6 +470,8 @@ sub get_html_head {
       .showhide_hc:hover { color: #00F; }
       .hc_header_icon { padding:3px 6px; border:none; background-color:transparent; vertical-align:text-bottom; }
       .hc_status { margin-left:25px; vertical-align:middle; }
+      .hc_status_left  { color:#000; background-color:#FFF; border-radius: 0.25em 0 0 0.25em; }
+      .hc_status_right { vertical-align:middle; border-radius: 0 0.25em 0.25em 0; }
       .hc_top_link { float:right; }
       .hc_top_link a { text-decoration:none; padding:4px; }
       .hc_extra_row_div { padding:4px 0px; margin-left:30px; }

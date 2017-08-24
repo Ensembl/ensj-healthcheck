@@ -140,6 +140,7 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
             else {
               String msg = String.format("Analysis with ID %d is used in %s as well as %s", id, featureTable, priorTable);
               ReportManager.problem(this, con, msg);
+              result = false;
             }
           }
           else {
@@ -151,6 +152,7 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
           if(! analysesFromAnalysisTable.containsKey(id) && ! "object_xref".equals(featureTable)) {
             String msg = String.format("Analysis ID %d is used in %d rows in %s but is not present in the analysis table", id, count, featureTable);
             ReportManager.problem(this, con, msg);
+            result = false;
           }
         }
       }

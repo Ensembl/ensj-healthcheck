@@ -33,7 +33,6 @@ import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.compara.AbstractComparaTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -65,22 +64,17 @@ public class CompareMSANames extends AbstractComparaTestCase {
 	 */
 	public boolean run(DatabaseRegistryEntry comparaDbre) {
 
-		boolean result = true;
+		DatabaseRegistryEntry lastReleaseDbre = getLastComparaReleaseDbre(comparaDbre);
 
-		DatabaseRegistryEntry[] allSecondaryComparaDBs = DBUtils.getSecondaryDatabaseRegistry("compara").getAll(DatabaseType.COMPARA);
-
-		if (allSecondaryComparaDBs.length == 0) {
-			result = false;
+		if (lastReleaseDbre == null) {
 			ReportManager.problem(this,
 					comparaDbre.getConnection(),
-					"Cannot find the compara database in the secondary server. This check expects to find a previous version of the compara database for checking that all the *named* species_sets are still present in the current database.");
+					"Cannot find the previous compara database in the secondary server. This check expects to find a previous version of the compara database for checking that all the *named* species_sets are still present in the current database.");
+			return false;
 		}
 
-		for (DatabaseRegistryEntry secondaryComparaDbre: allSecondaryComparaDBs) {
-			// Check vs previous compara DB.
-			result &= checkSetOfSpeciesSets(comparaDbre, secondaryComparaDbre);
-		}
-
+		boolean result = true;
+		result &= checkSetOfSpeciesSets(comparaDbre, lastReleaseDbre);
 		return result;
 	}
 

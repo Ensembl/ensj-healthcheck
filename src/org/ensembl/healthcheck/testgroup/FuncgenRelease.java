@@ -55,13 +55,11 @@ public class FuncgenRelease extends GroupOfTests {
 	public FuncgenRelease() {
 
 		addTest(
-			org.ensembl.healthcheck.testcase.generic.AnalyseTables.class,
-			org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions.class,
+			//org.ensembl.healthcheck.testcase.generic.AnalyseTables.class,
 			org.ensembl.healthcheck.testcase.generic.BlankEnums.class,
 			org.ensembl.healthcheck.testcase.generic.BlankInfoType.class,
 			org.ensembl.healthcheck.testcase.generic.BlanksInsteadOfNulls.class,
 			// org.ensembl.healthcheck.testcase.funcgen.CheckResultSetDBFileLink.class,
-			org.ensembl.healthcheck.testcase.funcgen.CoordSystemUpToDate.class,
 			org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema.class,
 			org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionAnalysisDescriptions.class,
 			// org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionRegulatoryFeatures.class,
@@ -83,8 +81,10 @@ public class FuncgenRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testgroup.FuncgenIntegrity.class,
 			org.ensembl.healthcheck.testgroup.FuncgenPostERSA.class,
 			org.ensembl.healthcheck.testgroup.FuncgenPostProbemapping.class,
-			org.ensembl.healthcheck.testgroup.FuncgenPostRegulatoryBuild.class
-
+			org.ensembl.healthcheck.testgroup.FuncgenPostRegulatoryBuild.class,
+			org.ensembl.healthcheck.testcase.funcgen.ProbeIdsUnique.class,
+			org.ensembl.healthcheck.testcase.funcgen.ProbeTranscriptMappingsUnique.class,
+			org.ensembl.healthcheck.testcase.funcgen.ProbeSetTranscriptMappingsUnique.class
 		);
 
 		removeTest(

@@ -61,14 +61,28 @@ group=$(sed -n 's/^ *groups *= *\([^ ]*.*\)/\1/p' < $properties)
 exclude_dbs=$(sed -n 's/^ *exclude_dbs *= *\([^ ]*.*\)/\1/p' < $properties)
 hosts=$(sed -n 's/^ *host[0-9]* *= *\([^ ]*.*\)/\1/p' < $properties)
 release=$(sed -n 's/^ *release *= *\([0-9]*\)/\1/p' < $properties)
+prev_release=$(($release - 1))
 msg "Will run $group HCs on hosts $hosts, ignoring $exclude_dbs, for release $release"
+
+# Get parameters for main database server (this release)
+DB_HOST=$(sed -n 's/^ *host *= *\([^ ]*.*\)/\1/p' < $properties)
+DB_PORT=$(sed -n 's/^ *port *= *\([^ ]*.*\)/\1/p' < $properties)
+DB_USER=$(sed -n 's/^ *user *= *\([^ ]*.*\)/\1/p' < $properties)
+
+# Get parameters for second database server (last release)
+PREVDB_HOST=$(sed -n 's/^ *secondary.host *= *\([^ ]*.*\)/\1/p' < $properties)
+PREVDB_PORT=$(sed -n 's/^ *secondary.port *= *\([^ ]*.*\)/\1/p' < $properties)
+PREVDB_USER=$(sed -n 's/^ *secondary.user *= *\([^ ]*.*\)/\1/p' < $properties)
 
 # Create output files
 TIMINGS_FILE=/tmp/timings.txt
+PROPAGATE_FILE=propagate.log
 touch $LOG_FILE
 touch $TIMINGS_FILE
+touch $PROPAGATE_FILE
 chmod g+rwx $LOG_FILE
 chmod g+rwx $TIMINGS_FILE
+chmod g+rwx $PROPAGATE_FILE
 
 # Check if there's a lock.
 MYSQL_CMD="mysql --skip-secure-auth --host=$HCDB_HOST --port=$HCDB_PORT --user=$HCDB_USER --password=$HCDB_PASS $HCDB"
@@ -91,6 +105,10 @@ else
   $MYSQL_CMD < /tmp/${HCDB}.sql
   msg "Lock generated"
 fi
+
+msg "Running Propagate script for ${div}"
+#Running the propagate script
+$(perl propagate.pl -host1 $DB_HOST -port1 $DB_PORT -user1 $DB_USER -host2 $DB_HOST -port2 $DB_PORT -user2 $DB_USER -dbname $HCDB -old_release $prev_release -new_release $release -host_hc $HCDB_HOST -port_hc $HCDB_PORT -user_hc $HCDB_USER -pass_hc $HCDB_PASS  -host_prev $PREVDB_HOST -port_prev $PREVDB_PORT -user_prev $PREVDB_USER >& $PROPAGATE_FILE)
 
 msg "Starting healthcheck run for ${div}"
 # do hive stuff

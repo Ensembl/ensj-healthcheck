@@ -51,22 +51,15 @@ to delete the directory with the checkouts.
 	-->
         <target name="checkoutEnsemblDependency" description="" depends="createPerlDependencyDir">
 
-		<!-- property name="ensemblRevisionOption"     value="-r branch-ensembl-65" / -->
-		<property name="ensemblRevisionOption"     value="" />
-		<property name="ensemblCvsRoot"            value=":pserver:cvsuser:CVSUSER@cvs.sanger.ac.uk:/cvsroot/ensembl" />
-
-		<cvs 
-			cvsRoot="${ensemblCvsRoot}" 
-			command="checkout -d ${perlDependencyCheckoutDir}/ensembl ${ensemblRevisionOption} ensembl"
-		/>
-		<cvs 
-			cvsRoot="${ensemblCvsRoot}" 
-			command="checkout -d ${perlDependencyCheckoutDir}/ensembl-variation ${ensemblRevisionOption} ensembl-variation"
-		/>
-		<cvs 
-			cvsRoot="${ensemblCvsRoot}" 
-			command="checkout -d ${perlDependencyCheckoutDir}/ensembl-functgenomics ${ensemblRevisionOption} ensembl-functgenomics"
-		/>
+        <exec dir="." executable="git" os="Linux,Mac OS X">
+          <arg line="clone --branch master https://github.com/Ensembl/ensembl-variation ${perlDependencyCheckoutDir}/ensembl-variation" />
+        </exec>
+        <exec dir="." executable="git" os="Linux,Mac OS X">
+          <arg line="clone --branch master https://github.com/Ensembl/ensembl-funcgen ${perlDependencyCheckoutDir}/ensembl-funcgen" />
+        </exec>
+        <exec dir="." executable="git" os="Linux,Mac OS X">
+          <arg line="clone --branch master https://github.com/Ensembl/ensembl ${perlDependencyCheckoutDir}/ensembl" />
+        </exec>
 	</target>
 
 	<!--
@@ -74,18 +67,10 @@ to delete the directory with the checkouts.
 	-->
         <target name="checkoutBioperlDependency" description="" depends="createPerlDependencyDir">
 
-		<mkdir dir="${perlDependencyCheckoutDir}"/>
+		<mkdir dir="${perlDependencyCheckoutDir}/bioperl"/>
 
-		<exec dir="." executable="wget" os="Linux,Mac OS X">
-		  <arg line="bioperl.org/DIST/old_releases/bioperl-1.2.3.tar.gz" />
-		</exec>
-
-		<exec dir="." executable="tar" os="Linux,Mac OS X">
-		  <arg line="--directory perlcode/ -xzvf bioperl-1.2.3.tar.gz" />
-		</exec>
-
-		<exec dir="." executable="mv" os="Linux,Mac OS X">
-		  <arg line="perlcode/bioperl-1.2.3/ perlcode/bioperl" />
+		<exec dir="." executable="git" os="Linux,Mac OS X">
+		  <arg line="clone --branch v1.6.x https://github.com/bioperl/bioperl-live ${perlDependencyCheckoutDir}/bioperl" />
 		</exec>
 
 	</target>

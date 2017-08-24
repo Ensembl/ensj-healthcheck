@@ -924,7 +924,7 @@ public class ConfigurableTestRunner extends TestRunner {
 			 * The reason is that "getTests" has method calls to set the types
 			 * of databases to which this test can be applied.
 			 * 
-			 * By instantiating the test this way, the tescase is initialised
+			 * By instantiating the test this way, the testcase is initialised
 			 * the same way as it will be when it is run by the testrunner.
 			 * 
 			 */

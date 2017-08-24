@@ -129,6 +129,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 		if (metaTableAssemblyVersion == null || metaTableAssemblyDefault == null || metaTableAssemblyPrefix == null || dbNameAssemblyVersion == null) {
 
 			ReportManager.problem(this, con, "Cannot get all information from meta table - check for null values");
+			result = false;
 
 		} else {
 
@@ -511,6 +512,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 		int exists = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM meta where meta_key like '%build.level'");
 		if (exists == 0) {
 			ReportManager.problem(this, con, "GB: No %build.level entries in the meta table - run ensembl/misc-scripts/meta_levels.pl");
+			result = false; 
 		}
 		int count = 0;
 		for (int i = 0; i < Tables.length; i++) {
@@ -523,12 +525,14 @@ public class MetaValues extends SingleDatabaseTestCase {
 				if (key == 0) {
 					if (rows == toplevel) {
 						ReportManager.problem(this, con, "Table " + Table + " should have a toplevel flag - run ensembl/misc-scripts/meta_levels.pl");
+						result = false;
 					} else {
 						count++;
 					}
 				} else {
 					if (rows != toplevel) {
 						ReportManager.problem(this, con, "Table " + Table + " has some non toplevel regions, should not have a toplevel flag - run ensembl/misc-scripts/meta_levels.pl");
+						result = false;
 					} else {
 						count++;
 					}
@@ -536,6 +540,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 			} else {
 				if (key != 0) {
 					ReportManager.problem(this, con, "Empty table " + Table + " should not have a toplevel flag - run ensembl/misc-scripts/meta_levels.pl");
+					result = false;
 				} else {
 					count++;
 				}
