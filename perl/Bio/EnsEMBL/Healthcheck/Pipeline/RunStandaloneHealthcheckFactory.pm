@@ -29,6 +29,11 @@ sub run {
     my $hc_jar = $self->param('hc_jar');   
     my $db_uri = $self->param_required('db_uri');
 
+    my $live_uri = $self->param('live_uri');
+    my $staging_uri = $self->param('staging_uri');
+    my $production_uri = $self->param('production_uri');
+    my $compara_uri = $self->param('compara_uri');
+
     my $command = sprintf("java -jar %s -l --output_format json --output_file %s", $hc_jar, $list_file);
 
     my $hc_names = $self->param('hc_names');
@@ -58,7 +63,11 @@ sub run {
 	$self->dataflow_output_id({
 				   init_job_id=>$self->input_job()->dbID(),
 				   db_uri => $db_uri,
-				   hc_name => $testcase
+				   hc_name => $testcase,
+				   production_uri=>$production_uri,
+				   live_uri=>$live_uri,
+				   staging_uri=>$staging_uri,
+				   compara_uri=>$compara_uri				   
 				  }, 2);
       }
       unlink $log_file;    
@@ -71,7 +80,11 @@ sub run {
     $self->dataflow_output_id(
 			      {
 			       init_job_id=>$self->input_job()->dbID(),
-			       db_uri=>$db_uri
+			       db_uri=>$db_uri,
+			       production_uri=>$production_uri,
+			       live_uri=>$live_uri,
+			       staging_uri=>$staging_uri,
+			       compara_uri=>$compara_uri
 			      },
 			      1
 			     );
