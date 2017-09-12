@@ -19,7 +19,7 @@ sub pipeline_analyses {
 	   -logic_name => 'RunStandaloneHealthcheckFactory',
 	   -module =>
 	   'Bio::EnsEMBL::Healthcheck::Pipeline::RunStandaloneHealthcheckFactory',
-	   -meadow_type=> 'default',
+	   -meadow_type=> 'LOCAL',
 	   -input_ids => [ ],    # required for automatic seeding
 	   -parameters => {
 			   hc_jar=>$self->o('hc_jar')
@@ -31,7 +31,7 @@ sub pipeline_analyses {
 	   -logic_name => 'RunStandaloneHealthcheckParallel',
 	   -module =>
 	   'Bio::EnsEMBL::Healthcheck::Pipeline::RunStandaloneHealthcheckParallel',
-	   -meadow_type=> 'default',
+	   -rc_name => 'default',
      	   -hive_capacity => 8,
 	   -parameters => {
 			   hc_jar=>$self->o('hc_jar')
@@ -61,7 +61,9 @@ sub pipeline_create_commands {
 	    @{$self->SUPER::pipeline_create_commands},  # inheriting database and hive tables' creation
 
             # additional tables needed for long multiplication pipeline's operation:
-	    $self->db_cmd('CREATE TABLE result (job_id int(10), output TEXT, PRIMARY KEY (job_id))')
+	    $self->db_cmd('CREATE TABLE result (job_id int(10), output TEXT, PRIMARY KEY (job_id))'),
+	    $self->db_cmd('ALTER TABLE job DROP KEY input_id_stacks_analysis'),
+	    $self->db_cmd('ALTER TABLE job MODIFY input_id TEXT')
     ];
   }
 
