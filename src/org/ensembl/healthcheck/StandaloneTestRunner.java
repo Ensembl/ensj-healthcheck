@@ -305,8 +305,14 @@ public class StandaloneTestRunner {
             getLogger().fine("Connecting to secondary server " + options.getSecondaryHost());
             DBUtils.overrideSecondaryDatabaseServer(getSecondaryServer());
         }
-        if (options.isRelease()) {
-            DBUtils.setRelease(options.getRelease());
+        String release = null;
+        if(!options.isRelease()) {
+            release = DatabaseRegistryEntry.getInfoFromName(options.getDbname()).getSchemaVersion();
+        } else {
+            release = options.getRelease();
+        }
+        if(!StringUtils.isEmpty(release)) {
+            DBUtils.setRelease(release);
         }
         System.setProperty("compara_master.database", options.getComparaMasterDbname());
     }
