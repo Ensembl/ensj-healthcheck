@@ -382,11 +382,11 @@ public class StandaloneTestRunner {
     }
 
     public DatabaseRegistryEntry getComparaMasterDb() {
-        if (comparaMasterDb == null && options.isProductionHost()) {
+        if (comparaMasterDb == null && options.isComparaHost()) {
             getLogger().info("Connecting to compara master database " + options.getComparaMasterDbname());
-            comparaMasterDb = new DatabaseRegistryEntry(new DatabaseServer(options.getProductionHost(),
-                    String.valueOf(options.getProductionPort()), options.getProductionUser(),
-                    options.isProductionPassword() ? options.getProductionPassword() : null, Driver.class.getName()),
+            comparaMasterDb = new DatabaseRegistryEntry(new DatabaseServer(options.getComparaHost(),
+                    String.valueOf(options.getComparaPort()), options.getComparaUser(),
+                    options.isComparaPassword() ? options.getComparaPassword() : null, Driver.class.getName()),
                     options.getComparaMasterDbname(), null, null);
         }
         return comparaMasterDb;
