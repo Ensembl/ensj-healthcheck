@@ -38,8 +38,8 @@ sub run {
     $command .= get_db_str( $self->param_required('db_uri'));
     $command .= get_db_str($self->param('production_uri'), 'prod_');
     $command .= get_db_str($self->param('compara_uri'), 'compara_');
-    #$command .= get_db_str($self->param('live_uri'), 'secondary_');
-    #$command .= get_db_str($self->param('staging_uri'), 'staging_');
+    $command .= get_db_str($self->param('live_uri'), 'secondary_');
+    $command .= get_db_str($self->param('staging_uri'), 'staging_');
 
     my (undef,$log_file) = tempfile('_HealthcheckDatabase_XXXXXX',  SUFFIX => '.log', TMPDIR => 1, OPEN=>0);
     $command .= " >& $log_file";
