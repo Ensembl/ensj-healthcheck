@@ -35,7 +35,7 @@ my (
   $port2,     $user2,     $pass2,  $host_prev,   $port_prev,
   $user_prev, $pass_prev, $dbname, $old_release, $new_release,
   $user_hc, $pass_hc, $host_hc, $port_hc,
-  $quiet,     $new_dbname
+  $quiet,     $new_dbname, $prod_dbname
 );
 
 GetOptions(
@@ -60,6 +60,7 @@ GetOptions(
   'new_release=i' => \$new_release,
   'quiet'         => \$quiet,
   'new_dbname=s'  => \$new_dbname,
+  'prod_dbname=s' => \$prod_dbname,
   'help'          => sub { usage(); exit(0); }
 );
 
@@ -435,7 +436,7 @@ sub _check_declaration {
 }
 
 sub get_production_DBAdaptor {
-  my $prod_dbi = DBI->connect( "DBI:mysql:host=$host1:port=$port1;database=ensembl_production", $user1, $pass1, { 'RaiseError' => 1 } );
+  my $prod_dbi = DBI->connect( "DBI:mysql:host=$host1:port=$port1;database=$prod_dbname", $user1, $pass1, { 'RaiseError' => 1 } );
   return $prod_dbi;
 }
 
