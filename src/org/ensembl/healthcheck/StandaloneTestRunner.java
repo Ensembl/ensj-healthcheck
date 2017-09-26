@@ -153,7 +153,7 @@ public class StandaloneTestRunner {
 
         boolean isProductionPassword();
 
-        @Option(longName = "secondary_host", description = "Secondary database host")
+        @Option(longName = "secondary_host", description = "Secondary database host (ie. previous release)")
         String getSecondaryHost();
 
         boolean isSecondaryHost();
@@ -172,6 +172,26 @@ public class StandaloneTestRunner {
         String getSecondaryPassword();
 
         boolean isSecondaryPassword();
+        
+        @Option(longName = "staging_host", description = "Staging database host (ie. current release)")
+        String getStagingHost();
+
+        boolean isStagingHost();
+
+        @Option(longName = "staging_port", description = "Staging database port")
+        int getStagingPort();
+
+        boolean isStagingPort();
+
+        @Option(longName = "staging_user", description = "Staging database user")
+        String getStagingUser();
+
+        boolean isStagingUser();
+
+        @Option(longName = "staging_pass", description = "Staging database password")
+        String getStagingPassword();
+
+        boolean isStagingPassword();
 
         @Option(longName = "release", shortName = "r", description = "Current release")
         String getRelease();
@@ -296,17 +316,30 @@ public class StandaloneTestRunner {
     private DatabaseRegistryEntry testDb;
     private DatabaseServer primaryServer;
     private DatabaseServer secondaryServer;
+    private DatabaseServer stagingServer;
 
     public StandaloneTestRunner(StandaloneTestOptions options) {
         this.options = options;
         getLogger().fine("Connecting to primary server " + options.getHost());
-        DBUtils.overrideMainDatabaseServer(getPrimaryServer());
+        DBUtils.overrideMainDatabaseServer(getPrimaryServer(), true);
         if (options.isSecondaryHost()) {
             getLogger().fine("Connecting to secondary server " + options.getSecondaryHost());
             DBUtils.overrideSecondaryDatabaseServer(getSecondaryServer());
         }
-        if (options.isRelease()) {
-            DBUtils.setRelease(options.getRelease());
+        String release = null;
+        if(!options.isRelease()) {
+            getLogger().fine("Release not specified, inferring from "+options.getDbname());
+            release = DatabaseRegistryEntry.getInfoFromName(options.getDbname()).getSchemaVersion();
+        } else {
+            release = options.getRelease();
+        }
+        if(options.isStagingHost()) {
+            getLogger().fine("Connecting to staging server "+options.getStagingHost());
+            DBUtils.overrideMainDatabaseServer(getStagingServer(), false);
+        }
+        if(!StringUtils.isEmpty(release)) {
+            getLogger().fine("Setting release "+release);
+            DBUtils.setRelease(release);
         }
         System.setProperty("compara_master.database", options.getComparaMasterDbname());
     }
@@ -349,11 +382,11 @@ public class StandaloneTestRunner {
     }
 
     public DatabaseRegistryEntry getComparaMasterDb() {
-        if (comparaMasterDb == null && options.isProductionHost()) {
+        if (comparaMasterDb == null && options.isComparaHost()) {
             getLogger().info("Connecting to compara master database " + options.getComparaMasterDbname());
-            comparaMasterDb = new DatabaseRegistryEntry(new DatabaseServer(options.getProductionHost(),
-                    String.valueOf(options.getProductionPort()), options.getProductionUser(),
-                    options.isProductionPassword() ? options.getProductionPassword() : null, Driver.class.getName()),
+            comparaMasterDb = new DatabaseRegistryEntry(new DatabaseServer(options.getComparaHost(),
+                    String.valueOf(options.getComparaPort()), options.getComparaUser(),
+                    options.isComparaPassword() ? options.getComparaPassword() : null, Driver.class.getName()),
                     options.getComparaMasterDbname(), null, null);
         }
         return comparaMasterDb;
@@ -386,6 +419,15 @@ public class StandaloneTestRunner {
         return secondaryServer;
     }
 
+    public DatabaseServer getStagingServer() {
+        if (stagingServer == null) {
+            stagingServer = new DatabaseServer(options.getStagingHost(), String.valueOf(options.getStagingPort()),
+                    options.getStagingUser(), options.isStagingPassword() ? options.getStagingPassword() : null,
+                    Driver.class.getName());
+        }
+        return stagingServer;
+    }
+    
     private TestRegistry testRegistry;
 
     private TestRegistry getTestRegistry() {

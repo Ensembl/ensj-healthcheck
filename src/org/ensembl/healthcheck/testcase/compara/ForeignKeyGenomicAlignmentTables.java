@@ -50,10 +50,10 @@ public class ForeignKeyGenomicAlignmentTables extends AbstractComparaTestCase {
 		// genomic_align -> genomic_align_tree
 		result &= checkOptionalRelation(con, "genomic_align", "node_id", "genomic_align_tree", "node_id");
 		// genomic_align_tree internal relationships
-		//result &= checkForOrphansSameTable(con, "genomic_align_tree", "parent_id", "node_id", false);
+		result &= checkForOrphansSameTable(con, "genomic_align_tree", "parent_id", "node_id", true);
 		result &= checkForOrphansSameTable(con, "genomic_align_tree", "root_id", "node_id", false);
-		//result &= checkForOrphansSameTable(con, "genomic_align_tree", "left_node_id", "node_id", false);
-		//result &= checkForOrphansSameTable(con, "genomic_align_tree", "right_node_id", "node_id", false);
+		result &= checkForOrphansSameTable(con, "genomic_align_tree", "left_node_id", "node_id", true);
+		result &= checkForOrphansSameTable(con, "genomic_align_tree", "right_node_id", "node_id", true);
 		return result;
 	}
 

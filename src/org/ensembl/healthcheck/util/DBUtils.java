@@ -1124,8 +1124,9 @@ public final class DBUtils {
         secondaryDatabaseServers.add(srv);
     }
 
-    public static void overrideMainDatabaseServer(DatabaseServer srv) {
-        mainDatabaseServers = new ArrayList<DatabaseServer>();
+    public static void overrideMainDatabaseServer(DatabaseServer srv, boolean clear) {
+        if(clear)
+            mainDatabaseServers = new ArrayList<DatabaseServer>();
         mainDatabaseServers.add(srv);
     }
 

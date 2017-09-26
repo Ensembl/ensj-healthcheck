@@ -36,9 +36,10 @@ sub run {
     my $command = sprintf("java -jar %s --output_format json --output_file %s --release %s --t %s", $hc_jar, $fail_file, software_version(), $hc_name);
 
     $command .= get_db_str( $self->param_required('db_uri'));
-    $command .= get_db_str($self->param('prod_uri'), 'prod_');
+    $command .= get_db_str($self->param('production_uri'), 'prod_');
     $command .= get_db_str($self->param('compara_uri'), 'compara_');
     $command .= get_db_str($self->param('live_uri'), 'secondary_');
+    $command .= get_db_str($self->param('staging_uri'), 'staging_');
 
     my (undef,$log_file) = tempfile('_HealthcheckDatabase_XXXXXX',  SUFFIX => '.log', TMPDIR => 1, OPEN=>0);
     $command .= " >& $log_file";
@@ -78,10 +79,10 @@ sub get_db_str {
   $suffix ||= '';
   my $db = Bio::EnsEMBL::Hive::Utils::URL::parse($uri);
   my $db_str = sprintf(" --%shost %s --%sport %s --%suser %s", $suffix, $db->{host}, $suffix, $db->{port}, $suffix, $db->{user});
-  if(defined $db->{pass}) {
+  if(defined $db->{pass} && $db->{pass} ne  '') {
     $db_str .= sprintf(" --%spass %s", $suffix, $db->{pass});
   }
-  if(defined $db->{dbname}) {
+  if(defined $db->{dbname} && $db->{dbname} ne  '') {
     $db_str .= sprintf(" --%sdbname %s", $suffix, $db->{dbname});
   }
   return $db_str;
