@@ -35,11 +35,11 @@ sub run {
     my $output_ids = [];
     for my $sql (
         q/select concat(species.db_name,"_",db.db_type,"_",db.db_release,"_",db.db_assembly) 
-from ensembl_production.division join ensembl_production.division_species using (division_id) 
-join ensembl_production.species using (species_id) 
-join ensembl_production.db using (species_id) 
+from division join division_species using (division_id) 
+join species using (species_id) 
+join db using (species_id) 
 where division.shortname=? and db.is_current=1/,
-        q/select db_name from ensembl_production.division join ensembl_production.division_db using (division_id) where shortname=? and is_current=1/
+        q/select db_name from division join division_db using (division_id) where shortname=? and is_current=1/
         ) {
         for my $db (grep {$_ !~ m/_mart_/} @{$prod_dbc->sql_helper()->execute_simple(-SQL=>$sql,-PARAMS=>[$self->param('division')])}) {
             my $skip = 0;
