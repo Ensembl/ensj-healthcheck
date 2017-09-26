@@ -42,7 +42,23 @@ public enum Species {
 	HETEROCEPHALUS_GLABER_MALE(10181,"HetGla","ENSHGL",""),
 	CRICETULUS_GRISEUS_CHOK1GSHD(10029,"CHOK1GS_HD","ENSCGR",""),
 	CRICETULUS_GRISEUS_CRIGRI(10029,"CriGri","ENSCGR",""),
-		
+	
+	AOTUS_NANCYMAAE (37293, "Anan", "ENSANA",""),
+	CEBUS_CAPUCINUS (9516, "Cebus_imitator", "ENSCCA",""),
+	CERCOCEBUS_ATYS (9531, "Caty", "ENSCAT",""),
+	COLOBUS_ANGOLENSIS_PALLIATUS (9531, "Cang.pa", "ENSCAN",""),
+	MACACA_FASCICULARIS (9541, "Macaca_fascicularis", "ENSMFA",""),
+	MACACA_NEMESTRINA (9545, "Mnem", "ENSMNE",""),
+	MANDRILLUS_LEUCOPHAEUS (956, "Mleu.le", "ENSMLE",""),
+	PAN_PANISCUS (9597, "panpan", "ENSPPA",""),
+	PROPITHECUS_COQUERELI (379532, "Pcoq", "ENSPCO",""),
+	RHINOPITHECUS_BIETI (66062, "ASM169854", "ENSRBI",""),
+	RHINOPITHECUS_ROXELLANA (61622, "Rrox", "ENSRRO",""),
+	NOMASCUS_LEUCOGENYS (61853, "Nleu", "ENSNLE",""),
+	
+
+
+	
 	AEDES_AEGYPTI(7159, "", "IGNORE", "aedes,aedesaegypti,aedes_aegypti"),
 	AILUROPODA_MELANOLEUCA(9646, "ailMel", "ENSAME", "panda,giant panda,ailuropoda melanoleuca,ailuropoda_melanoleuca"),
 	ANAS_PLATYRHYNCHOS(8839, "BGI_duck", "ENSAPL","anapla,apla,mallard,anas_platyrhynchos,aplatyrhynchos,duck,anas platyrhynchos"),
