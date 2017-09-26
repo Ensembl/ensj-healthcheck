@@ -190,7 +190,7 @@ public final class DBUtils {
         }
         Integer lastRelease = Integer.parseInt(release) - 1;
         String query = "SHOW DATABASES WHERE `Database` LIKE '%" + release + "%' OR `Database` LIKE '%"
-                + lastRelease.toString() + "%' OR `Database` LIKE 'ensembl_production'";
+                + lastRelease.toString() + "%' OR `Database` LIKE 'ensembl_production%'";
         List<String> dbs = getSqlTemplate(con).queryForDefaultObjectList(query, String.class);
 
         // Additional clean up for databases which are not needed
