@@ -72,7 +72,7 @@ public class AssemblyExceptionTableUniqueRegion extends SingleDatabaseTestCase {
             + "AND daf.seq_region_id = sr.seq_region_id "
             + "AND ax.seq_region_id = sr.seq_region_id "
             + "AND ax.exc_seq_region_id = sr2.seq_region_id "
-            + "AND logic_name = 'alt_seq_mapping' AND "
+            + "AND logic_name = 'alt_seq_mapping' "
             + "AND exc_type not in ('PAR') AND sr2.name != hit_name" ;
         
         List<String> unique_regions = t.queryForDefaultObjectList(unique_sql, String.class);
