@@ -29,6 +29,10 @@ if [ -z "$JAVA_OPTS" ]; then
     JAVA_OPTS=-Xmx15g
 fi
 export JAVA_OPTS
+if [ -z "$JAVA_HOME" ]; then
+    JAVA_HOME=/nfs/software/ensembl/latest/jenv/versions/1.8
+fi
+export JAVA_HOME
 cwd=$(pwd)
 export PATH=$HOME/src/ensembl/ensembl-hive/scripts:$HOME/ensj-healthcheck:$PATH
 export PERL5LIB=$cwd/perl:$HOME/src/ensembl/ensembl/modules:$HOME/src/ensembl/ensembl-hive/modules:$PERL5LIB
