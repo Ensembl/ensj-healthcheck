@@ -137,7 +137,7 @@ public class AltAllele extends SingleDatabaseTestCase {
                       // Does this member's seq_region_id not match the first member
                       // of the group? Error!
                       } else if(seq_region_id != curr_seq_region_id) {
-                          RReportManager.problem(this, con, "Has non-matching seq_regions for AltAllele group " + alt_allele_group_id + ".");
+                          ReportManager.problem(this, con, "Has non-matching seq_regions for AltAllele group " + alt_allele_group_id + ".");
                           result = false;
                           break;
                       }
