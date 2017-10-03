@@ -100,6 +100,9 @@ public class AssemblyExceptionTableSeqRegionAttribute extends SingleDatabaseTest
                 ReportManager.problem(this, con, "assembly_exception contains "
                     + "at least one exception of type 'HAP' but there are no seq_region_attrib rows of type 'non-reference'");
             }
-
         }
+        
+        return result;
 
+    }
+}

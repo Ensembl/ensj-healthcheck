@@ -117,5 +117,4 @@ public class AssemblyExceptionTableSeqMapping extends SingleDatabaseTestCase {
 
         return result;
     }
-
-
+}
