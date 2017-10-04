@@ -46,7 +46,6 @@ sub pipeline_analyses {
 	   'Bio::EnsEMBL::Healthcheck::Pipeline::RunStandaloneHealthcheckMerge',
 	   -meadow_type=> 'LOCAL',
 	   -parameters    => {},
-	   -hive_capacity => 8,
 	   -flow_into     => {
 			      2 => [ '?table_name=result']
 			      

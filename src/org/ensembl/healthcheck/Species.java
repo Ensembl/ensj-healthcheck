@@ -54,7 +54,8 @@ public enum Species {
 	PROPITHECUS_COQUERELI (379532, "Pcoq", "ENSPCO",""),
 	RHINOPITHECUS_BIETI (66062, "ASM169854", "ENSRBI",""),
 	RHINOPITHECUS_ROXELLANA (61622, "Rrox", "ENSRRO",""),
-
+	GORILLA_GORILLA_GSMRT3(9595, "GSMRT3", "ENSGGO", ""),
+	
 	AEDES_AEGYPTI(7159, "", "IGNORE", "aedes,aedesaegypti,aedes_aegypti"),
 	AILUROPODA_MELANOLEUCA(9646, "ailMel", "ENSAME", "panda,giant panda,ailuropoda melanoleuca,ailuropoda_melanoleuca"),
 	ANAS_PLATYRHYNCHOS(8839, "BGI_duck", "ENSAPL","anapla,apla,mallard,anas_platyrhynchos,aplatyrhynchos,duck,anas platyrhynchos"),
