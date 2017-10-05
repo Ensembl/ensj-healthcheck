@@ -29,6 +29,10 @@ if [ -z "$JAVA_OPTS" ]; then
     JAVA_OPTS=-Xmx15g
 fi
 export JAVA_OPTS
+if [ -z "$JAVA_HOME" ]; then
+    JAVA_HOME=/nfs/software/ensembl/latest/jenv/versions/1.8
+fi
+export JAVA_HOME
 cwd=$(pwd)
 export PATH=$HOME/src/ensembl/ensembl-hive/scripts:$HOME/ensj-healthcheck:$PATH
 export PERL5LIB=$cwd/perl:$HOME/src/ensembl/ensembl/modules:$HOME/src/ensembl/ensembl-hive/modules:$PERL5LIB
@@ -123,8 +127,7 @@ msg "Beekeeper complete"
 failN=$($hive --column-names=false ${USER}_${pipeline_db} -e "select count(*) from job where status=\"FAILED\"")
 
 if [ "$failN" != "0" ]; then
-    echo "$failN failures found for $url" 1>&2 
-    echo "$failN failed hive jobs found when running healthchecks for division $div - please check the hive $url for details" | #mail -s Failure ${USER}@ebi.ac.uk
+    msg "${failN} failed hive jobs found when running healthchecks for division ${div} - please check the hive ${url} for details"
     exit 2
 fi
 

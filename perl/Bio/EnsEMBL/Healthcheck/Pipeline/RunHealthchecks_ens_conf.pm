@@ -121,7 +121,8 @@ sub pipeline_analyses {
             -can_be_empty => 1,
             -hive_capacity => 30,
             -priority => 30,
-            -rc_name => 'himem'
+            -rc_name => 'himem',
+            -max_retry_count => 10
         },
 
         {
@@ -138,7 +139,8 @@ sub pipeline_analyses {
             -hive_capacity => 30,
             -priority => 20,
             -can_be_empty => 1,
-            -rc_name => 'himem'
+            -rc_name => 'himem',
+            -max_retry_count => 10
         },
 
         {
@@ -156,7 +158,8 @@ sub pipeline_analyses {
             -priority => 10,
             -can_be_empty => 1,
             -wait_for => [qw/prioritise/],
-            -rc_name => 'himem'
+            -rc_name => 'himem',
+            -max_retry_count => 10
         },
         
         {
