@@ -24,7 +24,7 @@ sub pipeline_analyses {
         'Bio::EnsEMBL::Healthcheck::Pipeline::RunStandaloneHealthcheckParallel',
       -rc_name       => 'default',
       -hive_capacity => 8,
-      -parameters    => { hc_jar => $self->o('hc_jar'), java_opts => '-Xmx1g' },
+      -parameters    => { hc_jar => $self->o('hc_jar'), java_opts => '' },
       -flow_into     => {
                       -1 => ['RunStandaloneHealthcheckParallelHimem'],
                       2  => ['?accu_name=hc_output&accu_address=[]'] } }, {
