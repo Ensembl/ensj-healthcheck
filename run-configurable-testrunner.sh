@@ -29,5 +29,5 @@ if [ -z "$JAVA_OPTS" ]; then
     JAVA_OPTS=-Xmx4g
 fi
 
-java $JAVA_OPTS -Djava.util.logging.config.file=config/logger/logging.properties org.ensembl.healthcheck.ConfigurableTestRunner $*
+exec java $JAVA_OPTS -Djava.util.logging.config.file=config/logger/logging.properties org.ensembl.healthcheck.ConfigurableTestRunner $*
 
