@@ -25,6 +25,7 @@ sub run {
     my $self = shift @_;
 
     my $hc_jar = $self->param('hc_jar');
+    my $java_opts = $self->param('java_opts') || '';
     
     my $db_uri = $self->param_required('db_uri');
     my $db = Bio::EnsEMBL::Hive::Utils::URL::parse($db_uri)->{dbname};
@@ -33,7 +34,7 @@ sub run {
 
     my $fail_file = sprintf("./%s_%s.json", $db, $hc_name);
 
-    my $command = sprintf("java -jar %s --output_format json --output_file %s --release %s --t %s", $hc_jar, $fail_file, software_version(), $hc_name);
+    my $command = sprintf("java $java_opts -jar %s --output_format json --output_file %s --release %s --t %s", $hc_jar, $fail_file, software_version(), $hc_name);
 
     $command .= get_db_str( $self->param_required('db_uri'));
     $command .= get_db_str($self->param('production_uri'), 'prod_');
