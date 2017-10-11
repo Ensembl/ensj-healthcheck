@@ -40,58 +40,56 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Checks that meta_value for key assembly.name is not longer than 16 characters - the current display width limit on the website.
+ * Checks that meta_value for key assembly.name is not longer than
+ * 16 characters - the current display width limit on the website.
  */
 public class AssemblyNameLength extends SingleDatabaseTestCase {
-	
-	public AssemblyNameLength() {
+    
+    public AssemblyNameLength() {
 
-		setTeamResponsible(Team.GENEBUILD);
-		setDescription("Check that meta_value for key assembly.name is not longer than 16 characters");
-	}
+        setTeamResponsible(Team.GENEBUILD);
+        setDescription("Check that meta_value for key assembly.name is not longer "
+            + "than 16 characters");
+    }
 
-        /**
-         * Data is only tested in core database, as the tables are in sync
-         */
-        public void types() {
+    /**
+     * Data is only tested in core database, as the tables are in sync
+     */
+    public void types() {
+        removeAppliesToType(DatabaseType.OTHERFEATURES);
+        removeAppliesToType(DatabaseType.ESTGENE);
+        removeAppliesToType(DatabaseType.RNASEQ);
+        removeAppliesToType(DatabaseType.CDNA);
+    }
 
-                removeAppliesToType(DatabaseType.OTHERFEATURES);
-                removeAppliesToType(DatabaseType.ESTGENE);
-                removeAppliesToType(DatabaseType.RNASEQ);
-                removeAppliesToType(DatabaseType.CDNA);
+    /**
+     * Checks that meta_value for key assembly.name is not longer than 16 characters.
+     * 
+     * @param dbre
+     *          The database to check.
+     * @return True if the test passed.
+     */
+    public boolean run(final DatabaseRegistryEntry dbre) {
+    
+        boolean result = true;
+        Connection con = dbre.getConnection();
 
+        int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM meta "
+            + "WHERE meta_key='assembly.name'");
+        if (rows == 0) {
+            ReportManager.problem(this, con, "No entry in meta table for assembly.name");
+            return false;
+        } else {
+            int asemblyNameLength =
+                Integer.valueOf(DBUtils.getRowColumnValue(con,
+                    "SELECT LENGTH(meta_value) FROM meta "
+                    + "WHERE meta_key='assembly.name'")).intValue();
+            if (asemblyNameLength > 16 ) {
+                ReportManager.problem(this, con, "assembly.name value in meta table "
+                    + "is longer than 16 characters");
+                return false;
+            }
         }
-
-	/**
-	 * Checks that meta_value for key assembly.name is not longer than 16 characters.
-	 * 
-	 * @param dbre
-	 *          The database to check.
-	 * @return True if the test passed.
-	 */
-	public boolean run(final DatabaseRegistryEntry dbre) {
-	
-		boolean result = true;
-
-		Connection con = dbre.getConnection();
-
-		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key='assembly.name'");
-		if (rows == 0) {
-			ReportManager.problem(this, con, "No entry in meta table for assembly.name");
-			return false;
-		} else {
-			int asemblyNameLength = Integer.valueOf(DBUtils.getRowColumnValue(con, "SELECT LENGTH(meta_value) FROM meta WHERE meta_key='assembly.name'")).intValue();
-
-			if (asemblyNameLength > 16 ) {
-				ReportManager.problem(this, con, "assembly.name value in Meta table is longer than 16 characters");
-				return false;			
-			}		
-		
-		}
-
-		return result;
-
-	} // run
-
-	
+        return result;
+    } // run
 } // AssemblyNameLength
