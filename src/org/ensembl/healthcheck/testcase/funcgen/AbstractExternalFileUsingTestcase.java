@@ -2,6 +2,7 @@ package org.ensembl.healthcheck.testcase.funcgen;
 
 import java.sql.Connection;
 
+import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 
@@ -22,7 +23,7 @@ public abstract class AbstractExternalFileUsingTestcase extends AbstractCoreData
 		String assemblyName   = getAssembly(coreConnection);
 		String dbFileRootDir  = getDataFileBasePath();
 		
-		if (dbFileRootDir.equals("")) {
+		if (StringUtils.isEmpty(dbFileRootDir)) {
 			ReportManager.problem(this, dbre.getConnection(), "datafile_base_path has not been set!");
 		}
 		String speciesAssemblyDataFileBasePath = dbFileRootDir + "/" + productionName + "/" + assemblyName;
