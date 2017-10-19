@@ -54,9 +54,9 @@ sub run {
 			       hc_name=>$hc_name
 			      };
     if($exit == 0) {
-      $output->{status} = 'success';
+      $output->{status} = 'passed';
     } elsif($exit == 1) {
-      $output->{status} = 'failure';
+      $output->{status} = 'failed';
       my $msg = decode_json(read_file($fail_file));
       print Dumper($msg);
       unlink $fail_file;
