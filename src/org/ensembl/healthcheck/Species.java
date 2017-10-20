@@ -105,7 +105,7 @@ public enum Species {
 	MELEAGRIS_GALLOPAVO(9103, "UMD", "ENSMGA", "turkey,common turkey,wild turkey,meleagris_gallopavo, meleagris_gallopavo"),
 	MELOPSITTACUS_UNDULATUS(13146, "MelUnd", "ENSMUN", "budgerigar,melopsittacus_undulatus,mundulatus"),
 	MICROCEBUS_MURINUS(30608, "Mmur", "ENSMIC", "mouse_lemur,mouselemur,microcebus,microcebus_murinus"),
-	MONODELPHIS_DOMESTICA(13616, "BROADO", "ENSMOD", "opossum,monodelphis,mdomestica,mdomesticus,monodelphisdomestica,monodelphisdomesticus,monodelphis_domesticus,monodelphis_domestica"),
+	MONODELPHIS_DOMESTICA(13616, "monDom", "ENSMOD", "opossum,monodelphis,mdomestica,mdomesticus,monodelphisdomestica,monodelphisdomesticus,monodelphis_domesticus,monodelphis_domestica"),
 	MUS_MUSCULUS(10090, "GRCm", "ENSMUS", "mouse,mmusculus,musmusculus,mus_musculus"),
 	MUS_MUSCULUS_129S1SVIMJ(10090, "129S1_SvImJ", "MGP_129S1SvImJ_", ""), 
 	MUS_MUSCULUS_AJ(10090, "A_J", "MGP_AJ_", ""),
