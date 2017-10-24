@@ -34,7 +34,7 @@ import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  *  
- * Test to ensure that there are no alt_allele_group members that contains more than 1 gene on the primary assesmbly
+ * Test to ensure that there are no alt allele groups that contain more than 1 gene on the primary assesmbly
  * 
  * 
  * @author
@@ -43,17 +43,19 @@ import org.ensembl.healthcheck.util.DBUtils;
 
 public class AltAlleleGroup extends SingleDatabaseTestCase {
 
-    private final static String ALLELE_GROUP_SQL = "SELECT count(alt_allele_group_id) AS cnt,alt_allele_group_id FROM "
-    										    + "(SELECT aa.*,ae.exc_type FROM alt_allele aa "
-    										    + "LEFT JOIN gene g ON g.gene_id=aa.gene_id "
-    										    + "LEFT JOIN assembly_exception ae ON ae.seq_region_id=g.seq_region_id "
-    										    + "WHERE exc_type IS NULL) AS aaexc "
-    										    + "GROUP By alt_allele_group_id HAVING cnt>1;";
+    private final static String ALLELE_GROUP_SQL =
+    	  "SELECT count(alt_allele_group_id) AS cnt,alt_allele_group_id FROM "
+    	+ "(SELECT aa.*,ae.exc_type FROM alt_allele aa "
+    	+ "LEFT JOIN gene g ON g.gene_id=aa.gene_id "
+    	+ "LEFT JOIN assembly_exception ae ON ae.seq_region_id=g.seq_region_id "
+    	+ "WHERE exc_type IS NULL) AS aaexc "
+    	+ "GROUP By alt_allele_group_id HAVING cnt>1;";
     
     public AltAlleleGroup() {
 
 	appliesToType(DatabaseType.CORE);
-	setDescription("Test to ensure that there are no alt_allele_group members that contains more than 1 gene on the primary assesmbly");
+	setDescription("Test to ensure that there are no alt allele groups"
+		+ "that contain more than 1 gene on the primary assesmbly");
 
 	setTeamResponsible(Team.GENEBUILD);
 	
@@ -73,7 +75,7 @@ public class AltAlleleGroup extends SingleDatabaseTestCase {
     }
 
     /**
-     * Check that there are no alt_allele_group members that contains more than 1 gene on the primary assesmbly
+     * Check that there are no alt allele groups that contain more than 1 gene on the primary assesmbly
      * 
      * @param dbre
      *          The database to check.
@@ -89,16 +91,19 @@ public class AltAlleleGroup extends SingleDatabaseTestCase {
 	    
 	    if(alt_group_count > 0){
 	    	
-       	    ReportManager.problem(this, con,"Has alt_allele_group members that contains more than 1 gene on the primary assembly " + alt_group_count + ".");
+       	    ReportManager.problem(this, con,"Alt allele group contains more "
+       	    	+ "than 1 gene on the primary assembly " + alt_group_count + ".");
 	    	result = false;
 	    	
 	    }else if(alt_group_count < 0){
 	    	
-       	    ReportManager.problem(this, con,"Query did not execute for some reason. Got row count in negative =>  " + alt_group_count + ".");
+       	    ReportManager.problem(this, con,"Query did not execute for some reason. "
+       	    	+ "Got row count in negative =>  " + alt_group_count + ".");
 	    	result = false;
 	    	
 	    }else if(alt_group_count == 0){
-	    	 ReportManager.correct(this, con, "Has no alt_allele_group members that contains more than 1 gene on the primary assembly ");
+	    	 ReportManager.correct(this, con, "No alt allele groups contain more"
+	    	 + " than 1 gene on the primary assembly ");
 	    	
 	    }
 

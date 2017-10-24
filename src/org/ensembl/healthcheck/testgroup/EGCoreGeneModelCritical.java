@@ -34,7 +34,11 @@ import org.ensembl.healthcheck.testcase.eg_core.VersionedExons;
 import org.ensembl.healthcheck.testcase.eg_core.VersionedGenes;
 import org.ensembl.healthcheck.testcase.eg_core.VersionedTranscripts;
 import org.ensembl.healthcheck.testcase.eg_core.VersionedTranslations;
-import org.ensembl.healthcheck.testcase.generic.AssemblyExceptions;
+import org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableSeqRegionAttribute;
+import org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableIntegrity;
+import org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableSeqMapping;
+import org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableUniqueRegion;
+import org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableStartEnd;
 import org.ensembl.healthcheck.testcase.generic.AssemblyMapping;
 import org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap;
 import org.ensembl.healthcheck.testcase.generic.AssemblySeqregion;
@@ -66,7 +70,11 @@ public class EGCoreGeneModelCritical extends GroupOfTests {
 
 	public EGCoreGeneModelCritical() {
 		addTest(
-			AssemblyExceptions.class, 
+			AssemblyExceptionTableIntegrity.class,
+			AssemblyExceptionTableSeqMapping.class,
+			AssemblyExceptionTableSeqRegionAttribute.class,
+			AssemblyExceptionTableUniqueRegion.class,
+			AssemblyExceptionTableStartEnd.class, 
 			AssemblyMultipleOverlap.class,
 			AssemblySeqregion.class, 
 			CanonicalTranscriptCoding.class,

@@ -40,7 +40,11 @@ import org.ensembl.healthcheck.testcase.eg_core.VersionedTranslations;
 import org.ensembl.healthcheck.testcase.eg_core.XrefDescriptionSpecialChars;
 import org.ensembl.healthcheck.testcase.generic.AnalysisDescription;
 import org.ensembl.healthcheck.testcase.generic.AnalysisLogicName;
-import org.ensembl.healthcheck.testcase.generic.AssemblyExceptions;
+import org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableSeqRegionAttribute;
+import org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableIntegrity;
+import org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableSeqMapping;
+import org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableUniqueRegion;
+import org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableStartEnd;
 import org.ensembl.healthcheck.testcase.generic.AssemblyMapping;
 import org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap;
 import org.ensembl.healthcheck.testcase.generic.AssemblySeqregion;
@@ -86,7 +90,11 @@ import org.ensembl.healthcheck.testcase.generic.XrefTypes;
 public class EGCoreIntegrity extends GroupOfTests {
 
 	public EGCoreIntegrity() {
-		addTest(AssemblyExceptions.class, AssemblyMultipleOverlap.class,
+		addTest(AssemblyExceptionTableIntegrity.class,
+			AssemblyExceptionTableSeqMapping.class,
+			AssemblyExceptionTableSeqRegionAttribute.class,
+			AssemblyExceptionTableUniqueRegion.class,
+			AssemblyExceptionTableStartEnd.class, AssemblyMultipleOverlap.class,
 				AssemblySeqregion.class, CanonicalTranscriptCoding.class,
 				AssemblyDefault.class,
 				CircularAwareFeatureCoords.class,
