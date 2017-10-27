@@ -28,29 +28,30 @@ import java.sql.Statement;
 import java.util.HashMap;
 
 /**
- * Check that every result_set has an associated BAM file entry stored in
- * dbfile_registry table. Check that the file actually exists on the disk.
- *
+ * Check that every alignment which has been used for peak calling
+ * has an associated BIGWIG file entry stored in data_file table. Check
+ * that the file actually exists on the disk.
  * @author ilavidas
  */
 
-public class ResultSetHasBamFile extends DBFileRegistryHasFile {
+public class AlignmentHasBigWigFile extends DataFileTableHasFile {
 
-    public ResultSetHasBamFile() {
+    public AlignmentHasBigWigFile() {
         setTeamResponsible(Team.FUNCGEN);
-        setDescription("Check that every result_set has an associated BAM " +
-                "file entry stored in dbfile_registry table. Check that the " +
-                "file actually exists on the disk.");
+        setDescription("Check that every alignment which has been used for " +
+                "peak calling has an associated BIGWIG file entry stored in " +
+                "data_file table. Check that the file actually exists on the " +
+                "disk.");
     }
 
     @Override
     protected FileType getFileType() {
-        return FileType.BAM;
+        return FileType.BIGWIG;
     }
 
     @Override
     protected TableName getTableName() {
-        return TableName.result_set;
+        return TableName.alignment;
     }
 
     @Override
@@ -60,11 +61,12 @@ public class ResultSetHasBamFile extends DBFileRegistryHasFile {
         Connection con = dbre.getConnection();
         try {
             Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT result_set_id, name " +
-                    "FROM" + " result_set");
+            ResultSet rs = stmt.executeQuery("SELECT alignment.alignment_id, " +
+                    "alignment.name FROM alignment JOIN peak_calling USING" +
+                    "(alignment_id)");
 
-            while(rs!=null && rs.next()){
-                tableIDs.put(rs.getInt(1),rs.getString(2));
+            while (rs != null && rs.next()) {
+                tableIDs.put(rs.getInt(1), rs.getString(2));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -72,6 +74,5 @@ public class ResultSetHasBamFile extends DBFileRegistryHasFile {
 
         return tableIDs;
     }
-
 
 }

@@ -18,6 +18,7 @@
 package org.ensembl.healthcheck.testgroup;
 
 import org.ensembl.healthcheck.GroupOfTests;
+import org.ensembl.healthcheck.testcase.funcgen.AlignmentHasBamFile;
 
 /**
  * These are the tests that register themselves as funcgen-release. The tests are:
@@ -84,14 +85,16 @@ public class FuncgenRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testgroup.FuncgenPostRegulatoryBuild.class,
 			org.ensembl.healthcheck.testcase.funcgen.ProbeIdsUnique.class,
 			org.ensembl.healthcheck.testcase.funcgen.ProbeTranscriptMappingsUnique.class,
-			org.ensembl.healthcheck.testcase.funcgen.ProbeSetTranscriptMappingsUnique.class
+			org.ensembl.healthcheck.testcase.funcgen.ProbeSetTranscriptMappingsUnique.class,
+			org.ensembl.healthcheck.testcase.funcgen.CurrentSchemaBuildUnique.class,
+			org.ensembl.healthcheck.testcase.funcgen.ExternalFeatureFilesExist.class
 		);
 
 		removeTest(
 			// this test belongs to FuncgenPostERSA testgroup and is useful after
 			// the ERSA run but since we do not hand over bam files 
 			// it should not be part of the FuncgenRelease testgroup
-			org.ensembl.healthcheck.testcase.funcgen.ResultSetHasBamFile.class
+			AlignmentHasBamFile.class
 			);
 	}
 }

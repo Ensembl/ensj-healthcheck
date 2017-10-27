@@ -31,21 +31,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Given a list of ids (result_set_id, segmentation_file_id), check that
- * every id has an associated file entry stored in dbfile_registry table.
+ * Given a list of ids (alignment_id, segmentation_file_id), check that
+ * every id has an associated file entry stored in data_file table.
  * Check that the file actually exists on the disk.
  *
  * @author ilavidas
  */
 
-abstract class DBFileRegistryHasFile extends AbstractExternalFileUsingTestcase {
+abstract class DataFileTableHasFile extends AbstractExternalFileUsingTestcase {
 
-    DBFileRegistryHasFile() {
+    DataFileTableHasFile() {
         setTeamResponsible(Team.FUNCGEN);
-        setDescription("Given a list of ids (result_set_id, " +
+        setDescription("Given a list of ids (alignment_id, " +
                 "segmentation_file_id), check that every id has an associated" +
-                " file entry stored in dbfile_registry table. Check that the " +
-                "file actually exists on the disk.");
+                " file entry stored in data_file table. Check that the file " +
+                "actually exists on the disk.");
     }
 
     protected abstract FileType getFileType();
@@ -73,15 +73,15 @@ abstract class DBFileRegistryHasFile extends AbstractExternalFileUsingTestcase {
                 //fetch file path for every table_id
                 Statement stmt = con.createStatement();
                 ResultSet filePath = stmt.executeQuery("SELECT path FROM " +
-                        "dbfile_registry WHERE table_name='" + tableName
-                        .toString() + "' AND file_type='" + fileType.toString
-                        () + "' AND table_id=" + tableID);
+                        "data_file WHERE table_name='" + tableName.toString() +
+                        "' AND file_type='" + fileType.toString() +
+                        "' AND table_id=" + tableID);
 
                 if (!filePath.next()) {
-                    ReportManager.problem(this, con, "No " + fileType
-                            .toString() + " file entry found in " +
-                            "dbfile_registry table for " + tableName.toString
-                            () + " " + name + " with id " + tableID);
+                    ReportManager.problem(this, con, "No " +
+                            fileType.toString() + " file entry found in " +
+                            "data_file table for " + tableName.toString() +
+                            " " + name + " with id " + tableID);
                     result = false;
 
                 } else {
@@ -111,6 +111,6 @@ abstract class DBFileRegistryHasFile extends AbstractExternalFileUsingTestcase {
     }
 
     enum TableName {
-        result_set, segmentation_file, external_feature_file
+        alignment, segmentation_file, external_feature_file
     }
 }

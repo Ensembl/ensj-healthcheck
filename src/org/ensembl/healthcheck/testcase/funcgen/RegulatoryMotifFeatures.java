@@ -41,7 +41,7 @@ public class RegulatoryMotifFeatures extends SingleDatabaseTestCase {
 		//setHintLongRunning(true); // should be relatively fast
 		setTeamResponsible(Team.FUNCGEN);
 
-		setDescription("Checks if all motifs from annotated features are associated to their respective regulatory features.");
+		setDescription("Checks if all motifs from peaks are associated to their respective regulatory features.");
 		setPriority(Priority.AMBER);
 		setEffect("Regulatory Features will seem to miss some motif features.");
 		setFix("Re-project motif features or fix manually.");
@@ -64,7 +64,7 @@ public class RegulatoryMotifFeatures extends SingleDatabaseTestCase {
 	/**
 	 * Run the test.
 	 * We will check if all the motif features in a regulatory feature contain all
-	 *  the motif features associated to the annotated features associated to the regulatory feature
+	 *  the motif features associated to the peaks associated to the regulatory feature
 	 *
 	 * @param dbre
 	 *          The database to use.
@@ -92,7 +92,7 @@ public class RegulatoryMotifFeatures extends SingleDatabaseTestCase {
 		int fmaxLength = 2000;  // Accounts for potential out of bounds MFs from demoted TFs
 
 		int regAMFs = DBUtils.getRowCount
-        ( con, "select count(distinct amf.motif_feature_id) from associated_motif_feature amf, annotated_feature af, regulatory_attribute ra, regulatory_feature rf, feature_set fs where af.annotated_feature_id=amf.annotated_feature_id and ra.attribute_feature_id=af.annotated_feature_id and ra.attribute_feature_table='annotated' and (af.seq_region_end - af.seq_region_start +1) <= " + fmaxLength +" and ra.regulatory_feature_id=rf.regulatory_feature_id and rf.feature_set_id=fs.feature_set_id and fs.name not rlike '.*_v[0-9]+'");
+        ( con, "select count(distinct amf.motif_feature_id) from associated_motif_feature amf, peak p, regulatory_attribute ra, regulatory_feature rf, feature_set fs where p.peak_id=amf.peak_id and ra.attribute_feature_id=p.peak_id and ra.attribute_feature_table='annotated' and (p.seq_region_end - p.seq_region_start +1) <= " + fmaxLength +" and ra.regulatory_feature_id=rf.regulatory_feature_id and rf.feature_set_id=fs.feature_set_id and fs.name not rlike '.*_v[0-9]+'");
 
 
 
@@ -102,14 +102,14 @@ public class RegulatoryMotifFeatures extends SingleDatabaseTestCase {
 
         ReportManager.problem
 				( this,  con, "The number of total non-distinct motif features associated to regulatory features (" + regMFs +
-				  ") does not correspond to the number of distinct motif features within its associated annotated features ("
+				  ") does not correspond to the number of distinct motif features within its associated peaks ("
 				  + regAMFs + ") which are less than " + fmaxLength + " bp\n" +
 				  "USEFUL SQL:\nALTER table regulatory_attribute add index `attribute_id_type`(attribute_feature_table, attribute_feature_id);\n" +
 				  "insert ignore into regulatory_attribute select ra.regulatory_feature_id, amf.motif_feature_id, 'motif' from " +
-				  "annotated_feature af, regulatory_attribute ra, associated_motif_feature amf left join " +
+				  "peak p, regulatory_attribute ra, associated_motif_feature amf left join " +
 				  "regulatory_attribute ra1 on (amf.motif_feature_id=ra1.attribute_feature_id and ra1.attribute_feature_table='motif') " +
-				  "where af.annotated_feature_id=amf.annotated_feature_id and ra.attribute_feature_id=af.annotated_feature_id and " +
-				  "ra.attribute_feature_table='annotated' and (af.seq_region_end - af.seq_region_start +1) <= " +
+				  "where p.peak_id=amf.peak_id and ra.attribute_feature_id=p.peak_id and " +
+				  "ra.attribute_feature_table='annotated' and (p.seq_region_end - p.seq_region_start +1) <= " +
 				  fmaxLength + " and ra1.attribute_feature_id is NULL;\nALTER table regulatory_attribute drop index `attribute_id_type`;"
 				  );
 
