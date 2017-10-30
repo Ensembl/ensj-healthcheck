@@ -57,10 +57,16 @@ sub run {
       $output->{status} = 'passed';
     } elsif($exit == 1) {
       $output->{status} = 'failed';
-      my $msg = decode_json(read_file($fail_file));
-      print Dumper($msg);
-      unlink $fail_file;
-      $output->{messages} = $msg->{$db}->{$hc_name};
+      eval {
+        my $msg = decode_json(read_file($fail_file));
+        print Dumper($msg);
+        unlink $fail_file;
+        $output->{messages} = $msg->{$db}->{$hc_name};
+      }
+      or do {
+        my $log = read_file($log_file);
+        croak "Could not execute $command: $log";
+      };
     } else {
       my $log = read_file($log_file);
       croak "Could not execute $command: $log";

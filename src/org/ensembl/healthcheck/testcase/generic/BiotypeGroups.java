@@ -113,7 +113,9 @@ public class BiotypeGroups extends SingleDatabaseTestCase {
       } else if (transcriptGrouping.size() == 1 && !geneGrouping.equals(transcriptGrouping)) {
           biotypeGroupErrors.add("Genes of biotype '" + geneBiotype + "' should not have transcripts of mismatched group '" + transcriptGrouping + "'");
       } else if (geneGrouping.contains("undefined") || geneGrouping.contains("non-coding")) {
+        if (!(geneGrouping.contains("undefined") && transcriptGrouping.contains("undefined"))) {
           noGroupErrors.add("Genes of biotype '" + geneBiotype + "' should not have transcripts with biotypes in '" + transcriptBiotypes + "'");
+        }
       } else if (geneGrouping.contains("pseudogene")) {
         if (transcriptGrouping.contains("coding") || transcriptGrouping.contains("undefined")) {
           nonCodingErrors.add("Some genes of biotype '" + geneBiotype + "' have transcripts in '" + transcriptBiotypes + "'");
