@@ -29,20 +29,20 @@ import java.util.HashMap;
 
 /**
  * Check that every segmentation_file entry which has been used in the current
- * Regulatory Build is linked to a BIGBED entry in the dbfile_registry table.
+ * Regulatory Build is linked to a BIGBED entry in the data_file table.
  * Check that the file actually exists on the disk.
  *
  * @author ilavidas
  */
 
-public class SegmentationFileHasBigBed extends DBFileRegistryHasFile {
+public class SegmentationFileHasBigBed extends DataFileTableHasFile {
 
     public SegmentationFileHasBigBed() {
         setTeamResponsible(Team.FUNCGEN);
-        setDescription("Check that every segmentation_file entry which has " +
-                "been used in the current Regulatory Build is linked to a " +
-                "BIGBED entry in the dbfile_registry table. Check that the " +
-                "file actually exists on the disk.");
+        setDescription("Check that every segmentation_file entry which has "
+                + "been used in the current Regulatory Build is linked to a "
+                + "BIGBED entry in the data_file table. Check that the file " +
+                "actually exists on the disk.");
     }
 
     @Override

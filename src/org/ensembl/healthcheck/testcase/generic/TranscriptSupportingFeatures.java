@@ -109,7 +109,7 @@ public class TranscriptSupportingFeatures extends SingleDatabaseTestCase {
 		// list of transcript analysis logic_names which are allowed to not have supporting features
 		String allowed = "'" + StringUtils.join(allowedNoSupporting, "','") + "'";
 		// allow all logic_names containing _rnaseq to accomodate all tissue types and species
-		String rnaseq = "'%_rnaseq'";
+		String rnaseq = "'%_rnaseq%'";
 
 		String sql = String
 				.format(

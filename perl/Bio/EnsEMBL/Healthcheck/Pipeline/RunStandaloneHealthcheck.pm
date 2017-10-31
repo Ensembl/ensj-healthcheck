@@ -59,10 +59,10 @@ sub run {
     $logger->info("Exited with status $exit");
     if($exit == 0) {
       $logger->info("No failures found");
-      $output->{status} = 'success';
+      $output->{status} = 'passed';
     } elsif($exit == 1) {
       $logger->info("Failures found");
-      $output->{status} = 'failure';
+      $output->{status} = 'failed';
       $output->{failures} = decode_json(read_file($fail_file));
     } else {
       my $log = read_file($log_file);

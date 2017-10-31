@@ -127,15 +127,15 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
           if(priorTable != null) {
             //Gene & transcript are allowed to share analysis id
             if("transcript".equals(featureTable) && "gene".equals(priorTable)) {
-              result = true;
+                // OK
             }
             //Unmapped object, object_xref & marker_feature are allowed to share
             else if ("unmapped_object".equals(featureTable) && ("object_xref".equals(priorTable) || "marker_feature".equals(priorTable))) {
-              result = true;
+                // OK
             }
             //Operon & operon transcript are allowed to share
             else if ("operon".equals(featureTable) && "operon_transcript".equals(priorTable)) {
-              result = true;
+                // OK
             }
             else {
               String msg = String.format("Analysis with ID %d is used in %s as well as %s", id, featureTable, priorTable);

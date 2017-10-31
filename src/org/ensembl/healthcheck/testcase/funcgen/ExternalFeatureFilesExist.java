@@ -34,7 +34,7 @@ public class ExternalFeatureFilesExist extends AbstractExternalFileUsingTestcase
 
 		boolean testPassed = true;
 		
-		String sql = "select path from dbfile_registry where table_name='external_feature_file'";
+		String sql = "select path from data_file where table_name='external_feature_file'";
 		String speciesAssemblyDbFileRootDir = getSpeciesAssemblyDataFileBasePath(dbre);
 
 		try {

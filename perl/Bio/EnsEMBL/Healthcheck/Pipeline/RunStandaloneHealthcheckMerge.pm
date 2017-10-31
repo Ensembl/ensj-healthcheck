@@ -32,12 +32,12 @@ sub run {
 		  db_name=>$db,
 		  db_uri=>$db_uri,
 		  results=>{},
-		  status=>'success'
+		  status=>'passed'
 		 };
 
     for my $result (@{$results}) {
-      if($result->{status} eq 'failure') {
-	$output->{status} = 'failure';
+      if($result->{status} eq 'failed') {
+	$output->{status} = 'failed';
       }
       $output->{results}->{$result->{hc_name}} = {
 						  status=>$result->{status},

@@ -91,7 +91,12 @@ public class VariationClasses extends SingleDatabaseTestCase {
                                 "AND s.name = 'HGMD-PUBLIC' "+
                                 "AND s.source_id = v.source_id ";
 
-			    result &= (DBUtils.getRowCount(con, query) == 0);
+                int cnt = DBUtils.getRowCount(con, query);
+                if(cnt != 0) {
+                    ReportManager.problem(this, con, cnt + " variations with name 'HGMD-PUBLIC' found that have the attrib 'sequence_alteration' ");
+                    ReportManager.problem(this, con, "Useful SQL: "+query);
+                    result = false;
+                }
 
 		    } 
             catch (Exception e) {

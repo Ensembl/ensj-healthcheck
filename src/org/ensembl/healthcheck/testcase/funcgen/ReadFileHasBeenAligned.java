@@ -29,20 +29,20 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * Check that every input_subset is linked to a result_set. Check that the
- * result_set exists.
+ * Check that every read_file is linked to an alignment. Check that the
+ * alignment exists.
  *
  * @author ilavidas
  */
 
-public class InputSubsetHasResultSet extends SingleDatabaseTestCase {
+public class ReadFileHasBeenAligned extends SingleDatabaseTestCase {
 
     private static final int MAX_ERRORS_REPORTED = 20;
 
-    public InputSubsetHasResultSet() {
+    public ReadFileHasBeenAligned() {
         setTeamResponsible(Team.FUNCGEN);
-        setDescription("Check that every input_subset is linked to a " +
-                "result_set. Check that the result_set exists.");
+        setDescription("Check that every read_file is linked to an alignment." +
+                " Check that the alignment exists.");
     }
 
     @Override
@@ -54,44 +54,44 @@ public class InputSubsetHasResultSet extends SingleDatabaseTestCase {
 //        int noResultSetErrorCount = 0;
 
         try {
-            //fetch all input_subsets
+            //fetch all read_files
             Statement stmt = con.createStatement();
-            ResultSet inputSubsets = stmt.executeQuery("SELECT " +
-                    "input_subset_id,name FROM input_subset");
+            ResultSet readFiles = stmt.executeQuery("SELECT " +
+                    "read_file_id,name FROM read_file");
 
-            while (inputSubsets != null && inputSubsets.next()) {
-                int issID = inputSubsets.getInt(1);
-                String issName = inputSubsets.getString(2);
+            while (readFiles != null && readFiles.next()) {
+                int rfID = readFiles.getInt(1);
+                String rfName = readFiles.getString(2);
 
-                //fetch result_set links for every input_subset
+                //fetch alignments for every read_file
                 Statement newStmt = con.createStatement();
-                ResultSet resultSetLinks = newStmt.executeQuery("SELECT " +
-                        "result_set_id FROM result_set_input WHERE " +
-                        "table_id=" + issID);
+                ResultSet alignmentLinks = newStmt.executeQuery("SELECT " +
+                        "alignment_id FROM alignment_read_file WHERE " +
+                        "read_file_id=" + rfID);
 
-                // Check that the input_subset has link(s) to result_set
-                if (!resultSetLinks.next()) {
-                    ReportManager.problem(this, con, "Input_subset " +
-                            issName + " with input_subset_id " + issID + " is" +
-                            " not linked to any result_set");
+                // Check that the read_file has link(s) to alignments
+                if (!alignmentLinks.next()) {
+                    ReportManager.problem(this, con, "Read_file " + rfName +
+                            " with read_file_id " + rfID + " is not linked to" +
+                            " any alignment");
 //                    noLinkErrorCount++;
                     result = false;
                 } else {
-                    resultSetLinks.first();
-                    while(resultSetLinks.next()){
-                        int resultSetID = resultSetLinks.getInt(1);
+                    alignmentLinks.first();
+                    while (alignmentLinks.next()) {
+                        int alignmentID = alignmentLinks.getInt(1);
                         Statement statement = con.createStatement();
-                        ResultSet resultSets = statement.executeQuery("SELECT * " +
-                                "FROM result_set WHERE result_set_id=" +
-                                resultSetID);
+                        ResultSet alignments = statement.executeQuery("SELECT" +
+                                " * FROM alignment WHERE alignment_id=" +
+                                alignmentID);
 
-                        if(!resultSets.next()){
-                            ReportManager.problem(this,con,"Input_subset " +
-                                    issName + " with input_subset_id " + issID +
-                                    " appears to be linked to result_set_id " +
-                                    resultSetID + " but such id does NOT exist in" +
-                                    " the result_set table.");
-                            result=false;
+                        if (!alignments.next()) {
+                            ReportManager.problem(this, con, "Read_file " +
+                                    rfName + " with read_file_id " + rfID + "" +
+                                    " appears to be linked to alignment_id "
+                                    + alignmentID + " but such id does NOT " +
+                                    "exist in the alignment table.");
+                            result = false;
                         }
                     }
                 }

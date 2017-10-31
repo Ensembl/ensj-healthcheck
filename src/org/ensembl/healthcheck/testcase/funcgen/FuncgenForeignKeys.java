@@ -68,181 +68,155 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 
-		boolean result = true;
+        boolean result = true;
 
-		Connection con = dbre.getConnection();
-		String[] featTabs = getFuncgenFeatureTables();
-		//We need to write a new method here to handle denormalised link tables
-		
-		
-		try{
-		
-		result &= checkForOrphans(con, "annotated_feature", "feature_set_id", "feature_set", "feature_set_id", true);
-		
-		result &= checkForOrphans(con, "array", "array_id", "array_chip", "array_id", false);
-		
-		
-		// ----------------------------
-		// Ensure that we have no  orphaned associate_feature_types
-	
-		result &= checkForOrphans(con, "associated_feature_type", "feature_type_id", "feature_type", "feature_type_id", true);
-		
-		// Get table_names from associated_feature_type
+        Connection con = dbre.getConnection();
+        String[] featTabs = getFuncgenFeatureTables();
+        //We need to write a new method here to handle denormalised link tables
 
-		try {
-			ResultSet rs = con.createStatement().executeQuery("SELECT distinct(table_name) from associated_feature_type");
 
-			while (rs.next()){
-				String tableName   = rs.getString(1); 
-				result &= checkForOrphansWithConstraint(con, "associated_feature_type", "table_id", tableName, tableName + "_id", "table_name='" + tableName + "'");
-			}
-		
-			rs.close();
+        try{
+
+            result &= checkForOrphans(con, "alignment", "analysis_id", "analysis", "analysis_id", true);
+            result &= checkForOrphans(con, "alignment", "bam_file_id", "data_file", "data_file_id", true);
+            result &= checkForOrphans(con, "alignment", "bigwig_file_id", "data_file", "data_file_id", true);
+
+            result &= checkForOrphans(con, "alignment_read_file", "alignment_id", "alignment", "alignment_id", true);
+            result &= checkForOrphans(con, "alignment_read_file", "read_file_id", "read_file", "read_file_id", true);
+
+            result &= checkForOrphans(con, "analysis_description", "analysis_id", "analysis", "analysis_id", true);
+
+            result &= checkForOrphans(con, "array_chip", "array_id", "array", "array_id", true);
+
+            result &= checkForOrphans(con, "associated_feature_type", "feature_type_id", "feature_type", "feature_type_id", true);
+
+            try {
+                ResultSet rs = con.createStatement().executeQuery("SELECT distinct(table_name) from associated_feature_type");
+
+                while (rs.next()) {
+                    String tableName = rs.getString(1);
+                    result &= checkForOrphansWithConstraint(con, "associated_feature_type", "table_id", tableName, tableName + "_id", "table_name='" + tableName + "'");
+                }
+                rs.close();
+            } catch (SQLException se) {
+                se.printStackTrace();
+                return false;
+            }
+
+            result &= checkForOrphans(con, "associated_motif_feature", "motif_feature_id", "motif_feature", "motif_feature_id", true);
+
+            result &= checkForOrphans(con, "associated_xref", "object_xref_id", "object_xref", "object_xref_id", true);
+            result &= checkForOrphans(con, "associated_xref", "xref_id", "xref", "xref_id", true);
+            result &= checkForOrphans(con, "associated_xref", "associated_group_id", "associated_group", "associated_group_id", true);
+
+            try {
+                ResultSet rs = con.createStatement().executeQuery("SELECT distinct(table_name) from data_file");
+
+                while (rs.next()){
+                    String tableName   = rs.getString(1);
+                    result &= checkForOrphansWithConstraint(con, "data_file", "table_id", tableName, tableName + "_id", "table_name='" + tableName + "'");
+                }
+                rs.close();
+            }
+            catch (SQLException se) {
+                se.printStackTrace();
+                return false;
+            }
+
+            result &= checkForOrphans(con, "experiment", "experimental_group_id", "experimental_group", "experimental_group_id", true);
+            result &= checkForOrphans(con, "experiment", "feature_type_id", "feature_type", "feature_type_id", true);
+            result &= checkForOrphans(con, "experiment", "epigenome_id", "epigenome", "epigenome_id", true);
+
+            result &= checkForOrphans(con, "external_feature", "feature_set_id", "feature_set", "feature_set_id", true);
+            result &= checkForOrphans(con, "external_feature", "feature_type_id", "feature_type", "feature_type_id", true);
+
+            result &= checkForOrphans(con, "external_feature_file", "analysis_id", "analysis", "analysis_id", true);
+            result &= checkForOrphans(con, "external_feature_file", "epigenome_id", "epigenome", "epigenome_id", true);
+            result &= checkForOrphans(con, "external_feature_file", "feature_type_id", "feature_type", "feature_type_id", true);
+
+            result &= checkForOrphans(con, "external_synonym", "xref_id", "xref", "xref_id", true);
+
+            result &= checkForOrphans(con, "feature_set", "feature_type_id", "feature_type", "feature_type_id", true);
+            result &= checkForOrphans(con, "feature_set", "analysis_id", "analysis", "analysis_id", true);
+
+            result &= checkForOrphans(con, "feature_type", "analysis_id", "analysis", "analysis_id", true);
+
+            result &= checkForOrphans(con, "identity_xref", "object_xref_id", "object_xref", "object_xref_id", true);
+
+            result &= checkForOrphans(con, "mirna_target_feature", "feature_type_id", "feature_type", "feature_type_id", true);
+            result &= checkForOrphans(con, "mirna_target_feature", "feature_set_id", "feature_set", "feature_set_id", true);
+
+            result &= checkForOrphans(con, "motif_feature", "binding_matrix_id", "binding_matrix", "binding_matrix_id", true);
+
+            result &= checkForOrphans(con, "object_xref", "xref_id", "xref", "xref_id", true);
+            try {
+                ResultSet rs = con.createStatement().executeQuery("SELECT distinct(ensembl_object_type) from object_xref");
+
+                while (rs.next()){
+                    String objType   = rs.getString(1);
+                    result &= checkKeysByEnsemblObjectType(con, "object_xref", objType);
+                }
+
+                rs.close();
+            }
+            catch (SQLException se) {
+                se.printStackTrace();
+                return false;
+            }
+            result &= checkForOrphans(con, "object_xref", "analysis_id", "analysis", "analysis_id", true);
+
+            result &= checkForOrphans(con, "ontology_xref", "object_xref_id", "object_xref", "object_xref_id", true);
+
+            result &= checkForOrphans(con, "peak", "peak_calling_id", "peak_calling", "peak_calling_id", true);
+
+            result &= checkForOrphans(con, "probe", "probe_set_id", "probe_set", "probe_set_id", false);
+//            result &= checkForOrphansWithConstraint(con, "probe", "probe_set_id", "probe_set", "probe_set_id", "probe_set_id !=0");
+            result &= checkForOrphans(con, "probe", "array_chip_id", "array_chip", "array_chip_id", false);
+            result &= checkForOrphans(con, "probe", "probe_seq_id", "probe_seq", "probe_seq_id", false);
+
+            result &= checkForOrphans(con, "probe_feature", "probe_id", "probe", "probe_id", true);
+            result &= checkForOrphans(con, "probe_feature", "analysis_id", "analysis", "analysis_id", true);
+
+            result &= checkForOrphans(con, "probe_feature_transcript", "probe_feature_id", "probe_feature", "probe_feature_id", true);
+
+            result &= checkForOrphans(con, "probe_set", "array_chip_id", "array_chip", "array_chip_id", true);
+
+            result &= checkForOrphans(con, "probe_set_transcript", "probe_set_id", "probe_set", "probe_set_id", true);
+
+            result &= checkForOrphans(con, "read_file", "analysis_id", "analysis", "analysis_id", true);
+
+            result &= checkForOrphans(con, "read_file_experimental_configuration", "read_file_id", "read_file", "read_file_id", true);
+            result &= checkForOrphans(con, "read_file_experimental_configuration", "experiment_id", "experiment", "experiment_id", true);
+
+            result &= checkForOrphans(con, "regulatory_activity", "regulatory_feature_id", "regulatory_feature", "regulatory_feature_id", true);
+            result &= checkForOrphans(con, "regulatory_activity", "epigenome_id", "epigenome", "epigenome_id", true);
+
+            result &= checkForOrphans(con, "regulatory_build", "feature_type_id", "feature_type", "feature_type_id", true);
+            result &= checkForOrphans(con, "regulatory_build", "analysis_id", "analysis", "analysis_id", true);
+            result &= checkForOrphans(con, "regulatory_build", "sample_regulatory_feature_id", "regulatory_feature", "regulatory_feature_id", true);
+
+            result &= checkForOrphans(con, "regulatory_build_epigenome", "regulatory_build_id", "regulatory_build", "regulatory_build_id", true);
+            result &= checkForOrphans(con, "regulatory_build_epigenome", "epigenome_id", "epigenome", "epigenome_id", true);
+
+            result &= checkForOrphans(con, "regulatory_feature", "feature_type_id", "feature_type", "feature_type_id", true);
+            result &= checkForOrphans(con, "regulatory_feature", "regulatory_build_id", "regulatory_build", "regulatory_build_id", true);
+
+            result &= checkForOrphans(con, "segmentation_file", "regulatory_build_id", "regulatory_build", "regulatory_build_id", true);
+            result &= checkForOrphans(con, "segmentation_file", "analysis_id", "analysis", "analysis_id", true);
+            result &= checkForOrphans(con, "segmentation_file", "epigenome_id", "epigenome", "epigenome_id", true);
+
+            result &= checkForOrphans(con, "unmapped_object", "analysis_id", "analysis", "analysis_id", true);
+            result &= checkOptionalRelation(con, "unmapped_object", "external_db_id", "external_db", "external_db_id");
+            result &= checkForOrphans(con, "unmapped_object", "unmapped_reason_id", "unmapped_reason", "unmapped_reason_id", true);
+
+            result &= checkForOrphans(con, "xref", "external_db_id", "external_db", "external_db_id", true);//shouldn't this be false?
 		}
-		catch (SQLException se) {	
-			se.printStackTrace();
-			return false;
-		}
+		catch (Exception e) { //Catch all possible exceptions
+            ReportManager.problem(this, con, "HealthCheck generated an " +
+                    "exception:\n\t" + e.getMessage());
+            result = false;
+        }
 
-
-		//Need a constraint here where fs.epigenome_id is NOT NULL
-		//result &= checkForOrphans(con, "feature_set", "epigenome_id", "epigenome", "epigenome_id", true);
-		result &= checkForOrphansWithConstraint(con, "feature_set", "epigenome_id", "epigenome", "epigenome_id", "epigenome_id IS NOT NULL");
-		
-		result &= checkForOrphans(con, "result_set", "epigenome_id", "epigenome", "epigenome_id", true);
-		//This may fail as it's not necessary to have a epigenome_id in a result_set???
-		
-		result &= checkForOrphans(con, "data_set", "data_set_id", "supporting_set", "data_set_id", false);
-		
-		result &= checkForOrphansWithConstraint(con, "data_set", "feature_set_id", "feature_set", "feature_set_id", "feature_set_id != 0");
-		
-		result &= checkForOrphans(con, "input_subset", "experiment_id", "experiment", "experiment_id", true);
-
-		result &= checkForOrphans(con, "experiment", "experimental_group_id", "experimental_group", "experimental_group_id", true);
-
-		result &= checkForOrphans(con, "external_feature", "feature_set_id", "feature_set", "feature_set_id", true);
-		
-		result &= checkForOrphans(con, "feature_set", "analysis_id", "analysis", "analysis_id", true);
-		
-		result &= checkForOrphans(con, "feature_set", "feature_type_id", "feature_type", "feature_type_id", true);
-		
-		result &= checkForOrphans(con, "regulatory_feature", "feature_type_id", "feature_type", "feature_type_id", true);
-		
-		result &= checkForOrphans(con, "result_set", "feature_type_id", "feature_type", "feature_type_id", true);
-
-    	result &= checkForOrphans(con, "input_subset", "feature_type_id", "feature_type", "feature_type_id", true);
-
-    	result &= checkForOrphans(con, "input_subset", "epigenome_id", "epigenome", "epigenome_id", true);
-
-		result &= checkForOrphans(con, "probe", "array_chip_id", "array_chip", "array_chip_id", false);
-		
-		//result &= checkForOrphans(con, "probe", "probe_set_id", "probe_set", "probe_set_id", false);
-		result &= checkForOrphansWithConstraint(con, "probe", "probe_set_id", "probe_set", "probe_set_id", "probe_set_id !=0");
-		
-		result &= checkForOrphans(con, "probe_set", "probe_set_id", "probe", "probe_set_id");
-		
-		//result &= checkForOrphans(con, "probe", "probe_id", "probe_feature", "probe_id", false);
-		//Can have unmapped probes or arrays
-		
-		result &= checkForOrphans(con, "probe_feature", "probe_id", "probe", "probe_id", true);
-		
-		result &= checkForOrphans(con, "probe_feature", "analysis_id", "analysis", "analysis_id", true);
-		
-		result &= checkForOrphans(con, "result_set", "analysis_id", "analysis", "analysis_id", true);
-
-
-		result &= checkForOrphans(con, "status", "status_name_id", "status_name", "status_name_id", true);
-		
-			
-		//This only checks for table_ids which have been orphaned by the input table
-		try {
-			ResultSet rs = con.createStatement().executeQuery("SELECT distinct(type) from supporting_set");
-			
-			while (rs.next()){
-				String setType   = rs.getString(1); 
-				result &= checkForOrphansWithConstraint(con, "supporting_set", "supporting_set_id", setType + "_set",  setType + "_set_id", "type='" + setType + "'");
-			}
-			
-			rs.close();
-		}
-		catch (SQLException se) {	
-			se.printStackTrace();
-			return false;
-		}
-	
-			
-		
-		result &= checkForOrphans(con, "object_xref", "xref_id", "xref", "xref_id", true);//shouldn't this be false?
-
-		result &= checkForOrphans(con, "xref", "external_db_id", "external_db", "external_db_id", true);//shouldn't this be false?
-
-		result &= checkForOrphans(con, "external_synonym", "xref_id", "xref", "xref_id", true);//shouldn't this be false?
-
-		result &= checkForOrphans(con, "identity_xref", "object_xref_id", "object_xref", "object_xref_id", true);//shouldn't this be false?
-
-
-		// ----------------------------
-		// Check object xrefs point to existing objects
-		try {
-			ResultSet rs = con.createStatement().executeQuery("SELECT distinct(ensembl_object_type) from object_xref");
-			
-			while (rs.next()){
-				String objType   = rs.getString(1); 
-				result &= checkKeysByEnsemblObjectType(con, "object_xref", objType);
-			}
-			
-			rs.close();
-		}
-		catch (SQLException se) {	
-			se.printStackTrace();
-			return false;
-		}
-			
-		result &= checkForOrphans(con, "analysis_description", "analysis_id", "analysis", "analysis_id", true);//shouldn't this be false?
-
-
-		result &= checkForOrphans(con, "unmapped_object", "unmapped_reason_id", "unmapped_reason", "unmapped_reason_id", true);
-		result &= checkForOrphans(con, "unmapped_object", "analysis_id", "analysis", "analysis_id", true);
-
-		result &= checkOptionalRelation(con, "unmapped_object", "external_db_id", "external_db", "external_db_id");
-
-		// ----------------------------
-		// Check tables which reference the analysis table
-		String[] analysisTabs = getFuncgenTablesWithAnalysisID();
-
-		for (int i = 0; i < analysisTabs.length; i++) {
-			String analysisTab = analysisTabs[i];
-			// skip large tables as this test takes an inordinately long time
-			//if (analysisTab.equals("protein_align_feature") || analysisTab.equals("dna_align_feature") || analysisTab.equals("repeat_feature")) {
-			//	continue;
-			//}
-
-			//Isn't this jsut checkForOrphansWithConstraint?
-			//Or is this just allowing the analysisTab to contain NULLs
-			
-			if (countOrphansWithConstraint(con, analysisTab, "analysis_id", "analysis", "analysis_id", "analysis_id IS NOT NULL") > 0) {
-				ReportManager.problem(this, con, "FAILED object_xref -> analysis using FK analysis_id relationships");
-				result = false;
-			}
-
-		}
-		}
-		catch(Exception e){ //Catch all possible exceptions
-		  ReportManager   
-      .problem(
-                      this,
-                      con,
-                      "HealthCheck generated an exception:\n\t"
-                                      + e.getMessage());
-		  result = false;
-		}
-
-	
 		return result;
-
 	}
-	
-	
-	// -------------------------------------------------------------------------
-
 } // FuncgenForeignKeys
