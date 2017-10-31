@@ -64,7 +64,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.MetaCoord </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.GeneTranscriptStartEnd </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.GeneCoordSystem </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.GeneCount </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.IsCurrent </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.Karyotype </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem </li> 
@@ -82,7 +81,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.TranscriptSupportingFeatures </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.SequenceLevel </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.NonGTACNSequence </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.BigGeneExon </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.TranscriptName </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.SingleDBCollations </li> 
  * </ul>
@@ -141,7 +139,6 @@ public class PreSite extends GroupOfTests {
                         org.ensembl.healthcheck.testcase.generic.MetaCoord.class,
 			org.ensembl.healthcheck.testcase.generic.GeneTranscriptStartEnd.class,
                         org.ensembl.healthcheck.testcase.generic.GeneCoordSystem.class,
-                        org.ensembl.healthcheck.testcase.generic.GeneCount.class,
                         org.ensembl.healthcheck.testcase.generic.IsCurrent.class,
 			org.ensembl.healthcheck.testcase.generic.Karyotype.class,
 			org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem.class,
@@ -159,7 +156,6 @@ public class PreSite extends GroupOfTests {
                         org.ensembl.healthcheck.testcase.generic.TranscriptSupportingFeatures.class,
                         org.ensembl.healthcheck.testcase.generic.SequenceLevel.class,
                         org.ensembl.healthcheck.testcase.generic.NonGTACNSequence.class,
-			org.ensembl.healthcheck.testcase.generic.BigGeneExon.class,
                         org.ensembl.healthcheck.testcase.generic.TranscriptNames.class,
                         org.ensembl.healthcheck.testcase.generic.SingleDBCollations.class
 		);

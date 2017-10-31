@@ -25,11 +25,8 @@ import org.ensembl.healthcheck.GroupOfTests;
  * <ul>
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyTablesAcrossSpecies </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies </li>
- *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBiotypes </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousDatabases </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionExonCoords </li>
- *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionRegionSynonyms </li>
- *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionRepeatTypes </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionTableRows </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.CoordSystemAcrossSpecies </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies </li>
@@ -47,11 +44,8 @@ public class CoreCompare extends GroupOfTests {
 		addTest(
                         org.ensembl.healthcheck.testcase.generic.AssemblyTablesAcrossSpecies.class,
                         org.ensembl.healthcheck.testcase.generic.AttribTypeAcrossSpecies.class,
-                        org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBiotypes.class,
                         org.ensembl.healthcheck.testcase.generic.ComparePreviousDatabases.class,
                         org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionExonCoords.class,
-                        org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionRegionSynonyms.class,
-                        org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionRepeatTypes.class,
                         org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionTableRows.class,
                         org.ensembl.healthcheck.testcase.generic.CoordSystemAcrossSpecies.class,
                         org.ensembl.healthcheck.testcase.generic.MetaCrossSpecies.class,

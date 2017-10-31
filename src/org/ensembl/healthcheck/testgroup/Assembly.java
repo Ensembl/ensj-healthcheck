@@ -24,14 +24,16 @@ import org.ensembl.healthcheck.GroupOfTests;
  * 
  * <ul>
  *   <li> org.ensembl.healthcheck.testcase.generic.AncestralSequencesExtraChecks </li>
- *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyExceptions </li>
+ *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableStartEnd </li>
+ *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableSeqRegionAttribute </li>
+ *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableSeqMapping </li>
+ *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableUniqueRegion </li>
+ *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableIntegrity </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyMapping </li>
- *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyNameLength </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblySeqregion </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.DuplicateAssembly </li>
- *   <li> org.ensembl.healthcheck.testcase.generic.GeneCount </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.Karyotype </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.MTCodonTable </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.MultipleComponentAssemblyMapping </li>
@@ -60,7 +62,6 @@ public class Assembly extends GroupOfTests {
                         org.ensembl.healthcheck.testcase.generic.AssemblySeqregion.class,
                         org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions.class,
                         org.ensembl.healthcheck.testcase.generic.DuplicateAssembly.class,
-                        org.ensembl.healthcheck.testcase.generic.GeneCount.class,
                         org.ensembl.healthcheck.testcase.generic.Karyotype.class,
                         org.ensembl.healthcheck.testcase.generic.MTCodonTable.class,
                         org.ensembl.healthcheck.testcase.generic.MultipleComponentAssemblyMapping.class,

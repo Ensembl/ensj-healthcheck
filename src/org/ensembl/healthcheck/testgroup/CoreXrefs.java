@@ -25,7 +25,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  * <ul>
  *   <li> org.ensembl.healthcheck.testcase.generic.BlankInfoType </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionCCDS </li>
- *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionGeneNames </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionSynonyms </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionXrefs </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.DescriptionNewlines </li>
@@ -65,7 +64,6 @@ public class CoreXrefs extends GroupOfTests {
 		addTest(
 			org.ensembl.healthcheck.testcase.generic.BlankInfoType.class,
 			org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionCCDS.class,
-			org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionGeneNames.class,
 			org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionSynonyms.class,
 			org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionXrefs.class,
                         org.ensembl.healthcheck.testcase.generic.DescriptionNewlines.class,
