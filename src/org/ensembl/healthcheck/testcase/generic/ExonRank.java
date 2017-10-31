@@ -39,61 +39,69 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Look for entries in the exon_transcript table that are duplicates apart from the rank.
+ * Look for entries in the exon_transcript table that are duplicates apart from
+ * the rank.
  */
 
 public class ExonRank extends SingleDatabaseTestCase {
 
-	/**
-	 * Create a new EonRank testcase.
-	 */
-	public ExonRank() {
+    /**
+     * Create a new EonRank testcase.
+     */
+    public ExonRank() {
 
-		setDescription("Look for entries in the exon_transcript table that are duplicates apart from the rank.");
-		setTeamResponsible(Team.GENEBUILD);
-	}
+        setDescription("Look for entries in the exon_transcript table that are "
+            + "duplicates apart from the rank.");
+        setTeamResponsible(Team.GENEBUILD);
+    }
 
-	/**
-	 * Only run on core databases.
-	 */
-	public void types() {
+    /**
+     * Only run on core databases.
+     */
+    public void types() {
 
-		removeAppliesToType(DatabaseType.CDNA);
+        removeAppliesToType(DatabaseType.CDNA);
 
-	}
+    }
 
-	/**
-	 * Run the test.
-	 * 
-	 * @param dbre
-	 *          The database to use.
-	 * @return true if the test passed.
-	 * 
-	 */
-	public boolean run(DatabaseRegistryEntry dbre) {
+    /**
+     * Run the test.
+     * 
+     * @param dbre
+     *          The database to use.
+     * @return true if the test passed.
+     * 
+     */
+    public boolean run(DatabaseRegistryEntry dbre) {
 
-		boolean result = true;
+        boolean result = true;
 
-		Connection con = dbre.getConnection();
+        Connection con = dbre.getConnection();
 
-		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM exon_transcript et1, exon_transcript et2 WHERE et1.exon_id=et2.exon_id AND et1.transcript_id=et2.transcript_id AND et1.rank != et2.rank");
+        int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) "
+            + "FROM exon_transcript et1, exon_transcript et2 "
+            + "WHERE et1.exon_id=et2.exon_id "
+            + "AND et1.transcript_id=et2.transcript_id "
+            + "AND et1.rank != et2.rank");
 
-		if (rows > 0) {
+        if (rows > 0) {
 
-			ReportManager.problem(this, con, rows + " rows in exon_transcript specify the same exon more than once in a transcript with a different rank");
-			result = false;
+            ReportManager.problem(this, con, rows + " rows in exon_transcript"
+                + "specify the same exon more than once in a transcript with a "
+                + "different rank");
+            result = false;
 
-		} else {
+        } else {
 
-			ReportManager.correct(this, con, "All ranks OK");
+            ReportManager.correct(this, con, "All ranks OK");
 
-		}
+        }
 
-		return result;
+        return result;
 
-	} // run
+    } // run
 
-	// ----------------------------------------------------------------------
+    // ----------------------------------------------------------------------
 
 } // ExonRank
 
