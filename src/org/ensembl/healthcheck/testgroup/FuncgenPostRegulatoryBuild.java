@@ -38,6 +38,7 @@ public class FuncgenPostRegulatoryBuild extends GroupOfTests {
         org.ensembl.healthcheck.testcase.funcgen.SegmentationFileHasBigBed.class,
         org.ensembl.healthcheck.testcase.funcgen.RegulatoryFeatureIsActive.class,
         org.ensembl.healthcheck.testcase.funcgen.CurrentRegulatoryBuildHasEpigenomes.class
+//              org.ensembl.healthcheck.testcase.funcgen.RegulatoryMotifFeatures.class,
       );
     }
 }

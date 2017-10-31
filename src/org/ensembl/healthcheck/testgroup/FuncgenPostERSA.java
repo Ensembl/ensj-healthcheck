@@ -19,6 +19,8 @@
 package org.ensembl.healthcheck.testgroup;
 
 import org.ensembl.healthcheck.GroupOfTests;
+import org.ensembl.healthcheck.testcase.funcgen.AlignmentHasBamFile;
+import org.ensembl.healthcheck.testcase.funcgen.AlignmentHasBigWigFile;
 
 /**
  * These are the tests that should be run after ERSA pipeline is finished.
@@ -31,9 +33,9 @@ public class FuncgenPostERSA extends GroupOfTests {
 
         addTest(
           FuncgenIntegrity.class,
-          org.ensembl.healthcheck.testcase.funcgen.InputSubsetHasResultSet.class,
-          org.ensembl.healthcheck.testcase.funcgen.ResultSetHasBamFile.class,
-          org.ensembl.healthcheck.testcase.funcgen.ResultSetHasBigWigFile.class,
+          org.ensembl.healthcheck.testcase.funcgen.ReadFileHasBeenAligned.class,
+          AlignmentHasBamFile.class,
+          AlignmentHasBigWigFile.class,
           org.ensembl.healthcheck.testcase.funcgen.ExperimentHasFeatureSet.class,
           org.ensembl.healthcheck.testcase.funcgen.FeaturePosition.class,
           org.ensembl.healthcheck.testcase.funcgen.StableIDsUnique.class

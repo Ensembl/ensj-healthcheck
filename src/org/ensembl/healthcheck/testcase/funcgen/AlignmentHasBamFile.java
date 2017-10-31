@@ -28,30 +28,29 @@ import java.sql.Statement;
 import java.util.HashMap;
 
 /**
- * Check that every result_set which is linked to an annotated feature_set
- * has an associated BIGWIG file entry stored in dbfile_registry table. Check
- * that the file actually exists on the disk.
+ * Check that every alignment has an associated BAM file entry stored in
+ * data_file table. Check that the file actually exists on the disk.
+ *
  * @author ilavidas
  */
 
-public class ResultSetHasBigWigFile extends DBFileRegistryHasFile {
+public class AlignmentHasBamFile extends DataFileTableHasFile {
 
-    public ResultSetHasBigWigFile() {
+    public AlignmentHasBamFile() {
         setTeamResponsible(Team.FUNCGEN);
-        setDescription("Check that every result_set which is linked to an " +
-                "annotated feature_set has an associated BIGWIG file entry " +
-                "stored in dbfile_registry table. Check that the file " +
-                "actually exists on the disk.");
+        setDescription("Check that every alignment has an associated BAM " +
+                "file entry stored in data_file table. Check that the " +
+                "file actually exists on the disk.");
     }
 
     @Override
     protected FileType getFileType() {
-        return FileType.BIGWIG;
+        return FileType.BAM;
     }
 
     @Override
     protected TableName getTableName() {
-        return TableName.result_set;
+        return TableName.alignment;
     }
 
     @Override
@@ -61,11 +60,8 @@ public class ResultSetHasBigWigFile extends DBFileRegistryHasFile {
         Connection con = dbre.getConnection();
         try {
             Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT result_set_id, " +
-                    "result_set.name FROM result_set JOIN supporting_set ON" +
-                    "(result_set_id=supporting_set_id AND type='result') JOIN" +
-                    " data_set USING(data_set_id) JOIN feature_set USING" +
-                    "(feature_set_id) WHERE feature_set.type='annotated'");
+            ResultSet rs = stmt.executeQuery("SELECT alignment_id, name " +
+                    "FROM" + " alignment");
 
             while(rs!=null && rs.next()){
                 tableIDs.put(rs.getInt(1),rs.getString(2));
@@ -76,5 +72,6 @@ public class ResultSetHasBigWigFile extends DBFileRegistryHasFile {
 
         return tableIDs;
     }
+
 
 }

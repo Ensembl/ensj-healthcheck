@@ -40,7 +40,7 @@ public class PostRegulatorybuild extends GroupOfTests {
 	public PostRegulatorybuild() {
 
 		addTest(
-			org.ensembl.healthcheck.testcase.funcgen.CheckResultSetDBFileLink.class,
+//			org.ensembl.healthcheck.testcase.funcgen.CheckResultSetDBFileLink.class,
 			org.ensembl.healthcheck.testcase.funcgen.FuncgenStableID.class,
 			org.ensembl.healthcheck.testcase.funcgen.FuncgenAnalysisDescription.class,
 			org.ensembl.healthcheck.testcase.funcgen.FuncgenForeignKeys.class,
