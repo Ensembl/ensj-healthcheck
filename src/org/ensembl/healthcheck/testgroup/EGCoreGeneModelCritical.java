@@ -40,7 +40,6 @@ import org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableSeqMapping
 import org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableUniqueRegion;
 import org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableStartEnd;
 import org.ensembl.healthcheck.testcase.generic.AssemblyMapping;
-import org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap;
 import org.ensembl.healthcheck.testcase.generic.AssemblySeqregion;
 import org.ensembl.healthcheck.testcase.generic.CanonicalTranscriptCoding;
 import org.ensembl.healthcheck.testcase.generic.CoreForeignKeys;
@@ -75,7 +74,7 @@ public class EGCoreGeneModelCritical extends GroupOfTests {
 			AssemblyExceptionTableSeqRegionAttribute.class,
 			AssemblyExceptionTableUniqueRegion.class,
 			AssemblyExceptionTableStartEnd.class, 
-			AssemblyMultipleOverlap.class,
+			//AssemblyMultipleOverlap.class,
 			AssemblySeqregion.class, 
 			CanonicalTranscriptCoding.class,
 			CircularAwareFeatureCoords.class, 

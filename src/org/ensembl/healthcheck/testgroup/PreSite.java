@@ -111,7 +111,7 @@ public class PreSite extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.TranslationStartEndExon.class,
 			org.ensembl.healthcheck.testcase.generic.Strand.class,
 			org.ensembl.healthcheck.testcase.generic.MTCodonTable.class,
-			org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap.class,
+			//org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap.class,
                         org.ensembl.healthcheck.testcase.generic.AssemblyNameLength.class,
                         org.ensembl.healthcheck.testcase.generic.AssemblyMapping.class,
 			org.ensembl.healthcheck.testcase.generic.MarkerFeatures.class,

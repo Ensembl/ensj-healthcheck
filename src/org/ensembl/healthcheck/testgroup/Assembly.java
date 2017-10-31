@@ -56,7 +56,6 @@ public class Assembly extends GroupOfTests {
                         org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableUniqueRegion.class,
                         org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableIntegrity.class,
                         org.ensembl.healthcheck.testcase.generic.AssemblyMapping.class,
-                        org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap.class,
                         org.ensembl.healthcheck.testcase.generic.AssemblyNameLength.class,
                         org.ensembl.healthcheck.testcase.generic.AssemblySeqregion.class,
                         org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions.class,

@@ -60,7 +60,6 @@ public class ComparaAncestral extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableSeqMapping.class,
 			org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableUniqueRegion.class,
 			org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableStartEnd.class,
-			org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap.class,
 			org.ensembl.healthcheck.testcase.generic.AssemblySeqregion.class,
 			org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions.class,
 			org.ensembl.healthcheck.testcase.generic.BlankEnums.class,
