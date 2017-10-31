@@ -46,7 +46,7 @@ import org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableSeqMapping
 import org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableUniqueRegion;
 import org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableStartEnd;
 import org.ensembl.healthcheck.testcase.generic.AssemblyMapping;
-import org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap;
+//import org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap;
 import org.ensembl.healthcheck.testcase.generic.AssemblySeqregion;
 import org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions;
 import org.ensembl.healthcheck.testcase.generic.BlankEnums;
@@ -94,7 +94,8 @@ public class EGCoreIntegrity extends GroupOfTests {
 			AssemblyExceptionTableSeqMapping.class,
 			AssemblyExceptionTableSeqRegionAttribute.class,
 			AssemblyExceptionTableUniqueRegion.class,
-			AssemblyExceptionTableStartEnd.class, AssemblyMultipleOverlap.class,
+			AssemblyExceptionTableStartEnd.class,
+			//AssemblyMultipleOverlap.class,
 				AssemblySeqregion.class, CanonicalTranscriptCoding.class,
 				AssemblyDefault.class,
 				CircularAwareFeatureCoords.class,
