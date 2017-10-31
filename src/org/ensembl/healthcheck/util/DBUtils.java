@@ -553,7 +553,7 @@ public final class DBUtils {
             } else if (rs2.next()) {
 
                 if (reportErrors) {
-                    ReportManager.problem(testCase, name2,
+                    ReportManager.problem(testCase, name1,
                             name2 + " " + singleTableName + " has additional rows that are not in " + name1 + extra);
 
                 }
