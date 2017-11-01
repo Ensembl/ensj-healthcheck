@@ -87,7 +87,7 @@ public class FeaturePosition extends AbstractCoreDatabaseUsingTestCase {
 			return false;
 		}
 				  
-	    String [] featureTables = {"annotated_feature", "regulatory_feature", "motif_feature",
+	    String [] featureTables = {"peak", "regulatory_feature", "motif_feature",
 	                               "external_feature",  "segmentation_feature", "mirna_target_feature"};
     
 	    for(String featureTable : featureTables) {
