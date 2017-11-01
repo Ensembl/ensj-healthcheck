@@ -59,6 +59,7 @@ public class AnalysisLogicName extends SingleDatabaseTestCase {
     Connection con = dbre.getConnection();
 
     result &= checkLowerCase(con);
+    result &= checkCreatedDate(con);
 
     return result;
   }
@@ -87,6 +88,35 @@ public class AnalysisLogicName extends SingleDatabaseTestCase {
     }
     else {
       ReportManager.correct(this, con, "All logic names are lower case");
+    }
+
+    return result;
+  }
+
+  /**
+   * Check all logic names are lower case
+   */
+
+  private boolean checkCreatedDate(Connection con) {
+
+    boolean result = true;
+    String msg = "All";
+    if (DBUtils.getRowCountFast(con, "SELECT COUNT(*) FROM analysis WHERE (logic_name IN ('trf', 'dust') OR logic_name LIKE 'repeatmask%') AND created = '0000-00-00 00:00:00'") > 0) {
+      ReportManager.problem(
+          this,
+          con,
+          "At least one of your repeat analysis has a created date of '0000-00-00 00:00:00'");
+      result = false;
+    }
+    if (DBUtils.getRowCountFast(con, "SELECT COUNT(*) FROM analysis WHERE logic_name NOT IN ('trf', 'dust') AND logic_name NOT LIKE 'repeatmask%' AND created = '0000-00-00 00:00:00'") > 0) {
+      ReportManager.warning(
+          this,
+          con,
+          "At least one of your analysis has a created date of '0000-00-00 00:00:00'");
+      msg = "Almost all";
+    }
+    if (result) {
+      ReportManager.correct(this, con, msg+" analyses have a correct 'created' date column");
     }
 
     return result;
