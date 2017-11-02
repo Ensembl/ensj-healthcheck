@@ -71,9 +71,6 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
         boolean result = true;
 
         Connection con = dbre.getConnection();
-        String[] featTabs = getFuncgenFeatureTables();
-        //We need to write a new method here to handle denormalised link tables
-
 
         try{
 

@@ -25,15 +25,7 @@ public abstract class AbstractCoreDatabaseUsingTestCase extends SingleDatabaseTe
 		setTeamResponsible(Team.FUNCGEN);
 		setDescription("");
 	}
-	
-	protected String fetchSchemaBuild(DatabaseRegistryEntry dbre)  throws SQLException {
-		Statement stmt = dbre.getConnection().createStatement();
-		ResultSet rs = stmt.executeQuery("select schema_build from coord_system where is_current=true");
-		rs.next();
-		String speciesName = rs.getString("schema_build");
-		return speciesName;
-	}
-	
+
 	protected String getMetaValue(Connection coreConnection, String metaKey) {
 		
 		String sql = "select meta_value from meta where meta_key = \"" + metaKey + "\"";
