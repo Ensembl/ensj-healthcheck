@@ -50,7 +50,7 @@ public class ExonStrandOrder extends SingleDatabaseTestCase {
     }
 
     /**
-     * This only applies to core and Vega databases.
+     * This only applies to core databases.
      */
     public void types() {
 
@@ -113,16 +113,16 @@ public class ExonStrandOrder extends SingleDatabaseTestCase {
                 // long geneStart = rs.getLong(2);
                 // long geneEnd = rs.getLong(3);
                 // int geneStrand = rs.getInt(4);
-                long transcriptID = rs.getLong(5);
-                long transcriptStart = rs.getLong(6);
-                long transcriptEnd = rs.getLong(7);
-                int transcriptStrand = rs.getInt(8);
-                long exonID = rs.getLong(9);
-                long exonStart = rs.getLong(10);
-                long exonEnd = rs.getLong(11);
-                int exonStrand = rs.getInt(12);
-                int exonRank = rs.getInt(13);
-                String geneStableID = rs.getString(14);
+                long transcriptID       = rs.getLong(5);
+                long transcriptStart    = rs.getLong(6);
+                long transcriptEnd      = rs.getLong(7);
+                int transcriptStrand    = rs.getInt(8);
+                long exonID             = rs.getLong(9);
+                long exonStart          = rs.getLong(10);
+                long exonEnd            = rs.getLong(11);
+                int exonStrand          = rs.getInt(12);
+                int exonRank            = rs.getInt(13);
+                String geneStableID     = rs.getString(14);
                 String transcriptStableID = rs.getString(15);
 
                 if (transcriptID == lastTranscriptID) {

@@ -30,83 +30,95 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Check that the start and end of genes and transcripts make sense.
+ * Check that the start and end of exons are within their parent transcript's
+ * boundaries.
  */
 public class ExonTranscriptStartEnd extends SingleDatabaseTestCase {
 
-	/**
-	 * Create a new ExonTranscriptStartEnd test case.
-	 */
-	public ExonTranscriptStartEnd() {
+    /**
+     * Create a new ExonTranscriptStartEnd test case.
+     */
+    public ExonTranscriptStartEnd() {
 
-		setDescription("Checks that exon and transcript start/end agree");
-		setTeamResponsible(Team.GENEBUILD);
-	}
+        setDescription("Checks that exon and transcript start/end agree");
+        setTeamResponsible(Team.GENEBUILD);
+    
+    }
 
-	/**
-	 * This only applies to core and Vega databases.
-	 */
-	public void types() {
+    /**
+     * This only applies to core databases.
+     */
+    public void types() {
 
-		removeAppliesToType(DatabaseType.OTHERFEATURES);
-		removeAppliesToType(DatabaseType.RNASEQ);
+        removeAppliesToType(DatabaseType.OTHERFEATURES);
+        removeAppliesToType(DatabaseType.RNASEQ);
 
-	}
+    }
 
-	/**
-	 * Run the test.
-	 * 
-	 * @param dbre
-	 *          The database to check.
-	 * @return true if the test passed.
-	 */
-	public boolean run(DatabaseRegistryEntry dbre) {
+    /**
+     * Run the test.
+     * 
+     * @param dbre
+     *          The database to check.
+     * @return true if the test passed.
+     */
+    public boolean run(DatabaseRegistryEntry dbre) {
 
-		boolean result = true;
+        boolean result = true;
 
-		// Check that the minimum exon seq_region_start in a transcript is the same as the
-		// transcript's start
-		// and that the maximum exon seq_region_start in a transcript it the same as the
-		// transcript's end
-		// The SQL below will return cases where this is not true
-		String sql = " SELECT tr.transcript_id, e.exon_id, tr.seq_region_start AS transcript_start, tr.seq_region_end AS transcript_end, "
-		        + "MIN(e.seq_region_start) as min_exon_start, MAX(e.seq_region_end) AS max_exon_end "
-		        + "FROM exon e, transcript tr, exon_transcript et "
-		        + "WHERE e.exon_id=et.exon_id AND et.transcript_id=tr.transcript_id "
-		        + "AND tr.transcript_id not in (select transcript_id from transcript_attrib inner join attrib_type using (attrib_type_id) where code='trans_spliced')"
-		        + "GROUP BY et.transcript_id HAVING min_exon_start != transcript_start OR max_exon_end != transcript_end ";
+        // Check that the minimum exon seq_region_start in a transcript
+        // is the same as the transcript's start and that the maximum exon
+        // seq_region_end in a transcript is the same as the transcript's end.
+        // The SQL below will return cases where this is not true
+        String sql = "SELECT tr.transcript_id, e.exon_id, "
+            + "tr.seq_region_start AS transcript_start, "
+            + "tr.seq_region_end AS transcript_end, "
+            + "MIN(e.seq_region_start) AS min_exon_start, "
+            + "MAX(e.seq_region_end) AS max_exon_end "
+            + "FROM exon e, transcript tr, exon_transcript et "
+            + "WHERE e.exon_id=et.exon_id "
+            + "AND et.transcript_id=tr.transcript_id "
+            + "AND tr.transcript_id not in "
+            + "(SELECT transcript_id FROM transcript_attrib "
+                + "INNER JOIN attrib_type USING (attrib_type_id) "
+                + "WHERE code='trans_spliced')"
+            + "GROUP BY et.transcript_id "
+            + "HAVING min_exon_start != transcript_start "
+                + "OR max_exon_end != transcript_end ";
 
-		Connection con = dbre.getConnection();
-		Statement stmt = null;
-		ResultSet rs = null;
-		
-		try {
+        Connection con = dbre.getConnection();
+        Statement stmt = null;
+        ResultSet rs = null;
+        
+        try {
 
-			stmt = dbre.getConnection().createStatement();
-			rs = stmt.executeQuery(sql);
+            stmt = dbre.getConnection().createStatement();
+            rs = stmt.executeQuery(sql);
 
-			while (rs.next()) {
-				ReportManager.problem(this, con, "Min/max exon start/ends do not agree with transcript start/end in transcript " + rs.getLong(1));
-				result = false;
-			}
+            while (rs.next()) {
+                ReportManager.problem(this, con, "Min/max exon start/ends do "
+                    + "not agree with transcript start/end in transcript "
+                    + rs.getLong(1));
+                result = false;
+            }
 
-			rs.close();
-			stmt.close();
+            rs.close();
+            stmt.close();
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		finally {
-			DBUtils.closeQuietly(rs);
-			DBUtils.closeQuietly(stmt);
-		}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            DBUtils.closeQuietly(rs);
+            DBUtils.closeQuietly(stmt);
+        }
 
-		if (result) {
-			ReportManager.correct(this, con, "All exon/transcript start/ends agree");
-		}
+        if (result) {
+            ReportManager.correct(this, con, "All exon/transcript start/ends agree");
+        }
 
-		return result;
+        return result;
 
-	}
+    }
 
 }

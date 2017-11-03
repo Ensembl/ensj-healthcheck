@@ -27,68 +27,68 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Check that there the interpro table is populated and there are interpro protein features
+ * Check that there the interpro table is populated and there are interpro
+ * protein features
  */
 
 public class InterproFeatures extends SingleDatabaseTestCase {
-	
 
-	/**
-	 * Create a new InterproFeatures testcase.
-	 */
-	public InterproFeatures() {
+    /**
+     * Create a new InterproFeatures testcase.
+     */
+    public InterproFeatures() {
 
-		setDescription("Check that there the interpro table is populated and there are interpro protein features");
-		setTeamResponsible(Team.GENEBUILD);
-		removeAppliesToType(DatabaseType.OTHERFEATURES);
+        setDescription("Check that there the interpro table is populated and "
+            + "there are interpro protein features");
+        setTeamResponsible(Team.GENEBUILD);
+        removeAppliesToType(DatabaseType.OTHERFEATURES);
 
-	}
+    }
 
-	/**
-	 * This only really applies to core & vega databases
-	 */
-	public void types() {
+    /**
+     * This only really applies to core databases
+     */
+    public void types() {
 
-		removeAppliesToType(DatabaseType.OTHERFEATURES);
-		removeAppliesToType(DatabaseType.ESTGENE);
-		removeAppliesToType(DatabaseType.CDNA);
-		removeAppliesToType(DatabaseType.RNASEQ);
+        removeAppliesToType(DatabaseType.OTHERFEATURES);
+        removeAppliesToType(DatabaseType.ESTGENE);
+        removeAppliesToType(DatabaseType.CDNA);
+        removeAppliesToType(DatabaseType.RNASEQ);
 
-	}
+    }
 
-	/**
-	 * Run the test.
-	 * 
-	 * @param dbre
-	 *            The database to use.
-	 * @return true if the test passed.
-	 * 
-	 */
-	public boolean run(DatabaseRegistryEntry dbre) {
+    /**
+     * Run the test.
+     * 
+     * @param dbre
+     *            The database to use.
+     * @return true if the test passed.
+     * 
+     */
+    public boolean run(DatabaseRegistryEntry dbre) {
 
-		boolean result = true;
-		
-		Connection con = dbre.getConnection();
+        boolean result = true;
+        
+        Connection con = dbre.getConnection();
 
-		if (DBUtils.getRowCount(con, "SELECT COUNT(*) FROM interpro") == 0) {
+        if (DBUtils.getRowCount(con, "SELECT COUNT(*) FROM interpro") == 0) {
 
-			ReportManager.problem(this, con,
-					"InterPro table is empty");
-			result &= false;
+            ReportManager.problem(this, con, "InterPro table is empty");
+            result &= false;
 
-		}
-		
-		if(DBUtils.getRowCount(con, "SELECT COUNT(*) FROM protein_feature JOIN interpro ON (id=hit_name)") == 0) {
+        }
 
-			ReportManager.problem(this, con,
-					"No InterPro protein features found");
-			result &= false;
-			
-		}
-		
-		return result;
+        if(DBUtils.getRowCount(con, "SELECT COUNT(*) FROM protein_feature "
+            + "JOIN interpro ON (id=hit_name)") == 0) {
 
+            ReportManager.problem(this, con,
+                "No InterPro protein features found");
+            result &= false;
 
-	} // run
+        }
+        
+        return result;
+
+    } // run
 
 }
