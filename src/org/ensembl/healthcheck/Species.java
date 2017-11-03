@@ -44,7 +44,7 @@ public enum Species {
 	CRICETULUS_GRISEUS_CRIGRI(10029,"CriGri","ENSCGR",""),
 	
 	AOTUS_NANCYMAAE (37293, "Anan", "ENSANA",""),
-	CEBUS_CAPUCINUS (9516, "Cebus_imitator", "ENSCCA",""),
+	CEBUS_CAPUCINUS (1737458, "Cebus_imitator", "ENSCCA",""),
 	CERCOCEBUS_ATYS (9531, "Caty", "ENSCAT",""),
 	COLOBUS_ANGOLENSIS_PALLIATUS (336983, "Cang.pa", "ENSCAN",""),
 	MACACA_FASCICULARIS (9541, "Macaca_fascicularis", "ENSMFA",""),
