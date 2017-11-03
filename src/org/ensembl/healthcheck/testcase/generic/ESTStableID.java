@@ -112,6 +112,25 @@ public class ESTStableID extends SingleDatabaseTestCase {
 
 			}
 
+			sql = "SELECT COUNT(*) FROM " + table + " x, analysis a WHERE a.analysis_id=x.analysis_id "
+					+ "AND a.logic_name NOT LIKE '%est%' AND x.stable_id REGEXP '" + regexp + "'";
+			if (table.equals("translation")) {
+				// need extra join to transcript table
+				sql = "SELECT COUNT(*) FROM translation x, transcript t, analysis a WHERE a.analysis_id=t.analysis_id AND x.transcript_id=t.transcript_id AND a.logic_name NOT LIKE '%est%' AND x.stable_id REGEXP 'ESTP[0-9]+'";
+			}
+			rows = DBUtils.getRowCount(con, sql);
+
+			if (rows > 0) {
+
+				ReportManager.problem(this, con, rows + " non ESTs " + table + " stable IDs contain EST" + letter);
+				result = false;
+
+			} else {
+
+				ReportManager.correct(this, con, "All non ESTs stable IDs do not contain EST" + letter);
+
+			}
+
 		}
 
 		return result;
