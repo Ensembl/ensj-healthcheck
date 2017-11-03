@@ -143,9 +143,7 @@ public class FuncgenStableID extends SingleDatabaseTestCase {
 
 		try {
 			Statement stmt = con.createStatement();
-			String     sql = "SELECT fs.feature_set_id, fs.name from feature_set fs, status s, status_name sn " +
-				"where fs.type='regulatory' and fs.feature_set_id=s.table_id and s.table_name='feature_set' " + 
-				"and s.status_name_id=sn.status_name_id and sn.name='DISPLAYABLE'";
+			String     sql = "SELECT feature_set_id, name from feature_set where type='regulatory'";
 			
 			//System.out.println("Executing " + sql);
 			ResultSet fsetIdNames = stmt.executeQuery(sql);

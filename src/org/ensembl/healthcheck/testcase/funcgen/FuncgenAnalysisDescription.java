@@ -42,7 +42,7 @@ import org.ensembl.healthcheck.testcase.generic.AnalysisDescription;
 
 public class FuncgenAnalysisDescription extends AnalysisDescription {
 
-	String[] types = {"feature_set", "probe_feature", "result_set" }; //unmapped_object?
+	String[] types = {"feature_set", "probe_feature", "alignment" }; //unmapped_object?
 	//Will these types be available in parent class?
 
 	/**

@@ -32,17 +32,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
+import static org.apache.commons.lang.StringUtils.join;
+import static org.ensembl.healthcheck.DatabaseType.CORE;
+
 /**
  * Check that meta_coord table contains entries for all the coordinate systems
  * that all the features are stored in.
  */
-public class MetaCoord extends SingleDatabaseTestCase {
+public class MetaCoord extends AbstractCoreDatabaseUsingTestCase {
 
 	private String[] featureTables = getFuncgenFeatureTables();
 
@@ -60,16 +64,20 @@ public class MetaCoord extends SingleDatabaseTestCase {
 	/**
 	 * Run the test.
 	 * 
-	 * @param dbre
+	 * @param funcgenDbre
 	 *          The database to use.
 	 * @return true if the test passed.
 	 * 
 	 */
-	public boolean run(DatabaseRegistryEntry dbre) {
+	public boolean run(DatabaseRegistryEntry funcgenDbre) {
 
 		boolean result = true;
 
-		Connection con = dbre.getConnection();
+		DatabaseRegistryEntry coreDbre = getCoreDb(funcgenDbre);
+
+		Connection funcgenCon = funcgenDbre.getConnection();
+		Connection coreCon = coreDbre.getConnection();
+
 
 		// coordSystems is a hash of lists of coordinate systems that each feature
 		// table contains
@@ -77,35 +85,52 @@ public class MetaCoord extends SingleDatabaseTestCase {
 
 		try {
 
-			Statement stmt = con.createStatement();
+			Statement funcgenStatement = funcgenCon.createStatement();
+			Statement coreStatement = coreCon.createStatement();
 
 			// build up a list of all the coordinate systems that are in the various
 			// feature tables
 			for (int tableIndex = 0; tableIndex < featureTables.length; tableIndex++) {
 
 				String tableName = featureTables[tableIndex];
-				String sql = "SELECT DISTINCT(sr.coord_system_id) FROM seq_region sr, " + tableName
-						+ " f WHERE sr.seq_region_id = f.seq_region_id";
+				String funcgenSql = "SELECT DISTINCT(seq_region_id) FROM " + tableName;
 
-				logger.finest("Getting feature coordinate systems for " + tableName);
-				ResultSet rs = stmt.executeQuery(sql);
+				logger.finest("Getting seq_region_ids for " + tableName);
+				ResultSet funcgenRs = funcgenStatement.executeQuery(funcgenSql);
 
-				while (rs.next()) {
-					String coordSystemID = rs.getString(1);
+				ArrayList<String> seqRegionIDs=new ArrayList<>();
+
+				if (! funcgenRs.isBeforeFirst()){
+				    logger.warning("No features found for " + tableName);
+				    continue;
+                }
+
+				if(funcgenRs.next())
+                while (funcgenRs.next()){
+					seqRegionIDs.add(funcgenRs.getString(1));
+				}
+
+				String seqRegionIDsString = seqRegionIDs.toString().replace("[","").replace("]","");
+				String coreSql = "SELECT DISTINCT(coord_system_id) FROM seq_region WHERE seq_region_id IN (" + seqRegionIDsString + ")";
+				logger.finest("Getting coord_system_ids for " + tableName);
+				ResultSet coreRs = coreStatement.executeQuery(coreSql);
+
+				while (coreRs.next()) {
+					String coordSystemID = coreRs.getString(1);
 					logger.finest("Added feature coordinate system for " + tableName + ": " + coordSystemID);
 					// check that the meta_coord table has an entry corresponding to this
-					int mc = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM meta_coord WHERE coord_system_id=" + coordSystemID + " AND table_name='"
+					int mc = DBUtils.getRowCount(funcgenCon, "SELECT COUNT(*) FROM meta_coord WHERE coord_system_id=" + coordSystemID + " AND table_name='"
 							+ tableName + "'");
 					if (mc == 0) {
-						ReportManager.problem(this, con, "No entry for coordinate system with ID " + coordSystemID + " for " + tableName
+						ReportManager.problem(this, funcgenCon, "No entry for coordinate system with ID " + coordSystemID + " for " + tableName
 								+ " in meta_coord");
 						result = false;
 					} else if (mc > 1) {
-						ReportManager.problem(this, con, "Coordinate system with ID " + coordSystemID + " duplicated for " + tableName
+						ReportManager.problem(this, funcgenCon, "Coordinate system with ID " + coordSystemID + " duplicated for " + tableName
 								+ " in meta_coord");
 						result = false;
 					} else {
-						ReportManager.correct(this, con, "Coordinate system with ID " + coordSystemID + " for table " + tableName
+						ReportManager.correct(this, funcgenCon, "Coordinate system with ID " + coordSystemID + " for table " + tableName
 								+ " has an entry in meta_coord");
 					}
 
@@ -118,7 +143,7 @@ public class MetaCoord extends SingleDatabaseTestCase {
 					coordSystems.put(tableName, csList);
 				}
 
-				rs.close();
+				funcgenRs.close();
 
 			}
 
@@ -126,14 +151,14 @@ public class MetaCoord extends SingleDatabaseTestCase {
 			// that is used in a feature
 			// if this isn't true it's not fatal but should be flagged
 			String sql = "SELECT * FROM meta_coord";
-			ResultSet rs = stmt.executeQuery(sql);
+			ResultSet rs = funcgenStatement.executeQuery(sql);
 			while (rs.next()) {
 				String tableName = rs.getString("table_name");
 				String csID = rs.getString("coord_system_id");
 				logger.finest("Checking for coord_system_id " + csID + " in " + tableName);
 				List featureCSs = (ArrayList) coordSystems.get(tableName);
 				if (featureCSs != null && !featureCSs.contains(csID)) {
-					ReportManager.problem(this, con, "meta_coord has entry for coord_system ID " + csID + " in " + tableName
+					ReportManager.problem(this, funcgenCon, "meta_coord has entry for coord_system ID " + csID + " in " + tableName
 							+ " but this coordinate system is not actually used in " + tableName);
 					result = false;
 				}
@@ -141,10 +166,10 @@ public class MetaCoord extends SingleDatabaseTestCase {
 			}
 
 			rs.close();
-			stmt.close();
+			funcgenStatement.close();
 
 			// check that there are no null max_length entries
-			result &= checkNoNulls(con, "meta_coord", "max_length");
+			result &= checkNoNulls(funcgenCon, "meta_coord", "max_length");
 
 		} catch (SQLException e) {
 			e.printStackTrace();

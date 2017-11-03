@@ -84,7 +84,6 @@ public class FuncgenRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.funcgen.ProbeIdsUnique.class,
 			org.ensembl.healthcheck.testcase.funcgen.ProbeTranscriptMappingsUnique.class,
 			org.ensembl.healthcheck.testcase.funcgen.ProbeSetTranscriptMappingsUnique.class,
-			org.ensembl.healthcheck.testcase.funcgen.CurrentSchemaBuildUnique.class,
 			org.ensembl.healthcheck.testcase.funcgen.ExternalFeatureFilesExist.class
 		);
 

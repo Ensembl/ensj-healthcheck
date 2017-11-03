@@ -54,6 +54,12 @@ public class EpigenomeHasSegmentationFile extends SingleDatabaseTestCase {
             ResultSet currentRegBuild = stmt.executeQuery("SELECT " +
                     "regulatory_build_id FROM regulatory_build WHERE " +
                     "is_current=1");
+
+            if (! currentRegBuild.next()){
+                logger.warning("No current Regulatory Build found");
+                return true;
+            }
+
             currentRegBuild.first();
             int currentRegBuildID = currentRegBuild.getInt(1);
 

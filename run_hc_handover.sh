@@ -31,7 +31,7 @@ DBNAME=
 GROUP=
 while true; do
     case "$1" in
-        -o | --outfile ) VERBOSE=" --outfile $2"; shift 2;;
+        -o | --outfile ) FILE="$2"; shift 2;;
         -v | --verbose ) VERBOSE=" --verbose"; shift ;;
         -d | --dbname ) DBNAME="$2"; shift 2;;
         -s | --src ) SRC="$2"; shift 2;;
@@ -78,7 +78,9 @@ fi
 msg "Running tests for Ensembl $RELEASE"
 
 JAR=./target/healthchecks-jar-with-dependencies.jar
-FILE="${DBNAME}_failures.txt"
+if [ -z "$FILE" ]; then
+  FILE="${DBNAME}_failures.txt"
+fi
 command="java -jar $JAR --dbname $DBNAME $($SRC details script) $($LIVE details script_secondary_) $($COMPARA details script_compara_) $($PROD details script_prod_) -g $GROUP $VERBOSE --release $RELEASE -o $FILE"
 msg "Building healthcheck jar"
 mvn package >& mvn.out || {

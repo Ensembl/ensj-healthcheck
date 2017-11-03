@@ -153,7 +153,7 @@ public abstract class EnsTestCase {
 	 */
 
 	private String[] funcgenFeatureTables = { "probe_feature",
-			"annotated_feature", "regulatory_feature", "external_feature",
+			"peak", "regulatory_feature", "external_feature",
 			"motif_feature", "mirna_target_feature" };
 
 	/**
