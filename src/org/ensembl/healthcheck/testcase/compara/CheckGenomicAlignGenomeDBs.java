@@ -101,7 +101,8 @@ public class CheckGenomicAlignGenomeDBs extends AbstractComparaTestCase {
 				 * missed some expected genome_db_ids.
 				 */
 				String gab_part1_sql = "(SELECT genome_db_id FROM (SELECT genomic_align_block_id FROM genomic_align_block WHERE method_link_species_set_id = " + mlss_id;
-				String gab_part2_sql = " ) _t1 JOIN genomic_align USING (genomic_align_block_id) JOIN dnafrag USING (dnafrag_id) WHERE genome_db_id != " + ancestral_gdb_id + ") _t3";
+				String ancestral_sql = ancestral_gdb_id.equals("") ? "" : ("WHERE genome_db_id != " + ancestral_gdb_id);
+				String gab_part2_sql = " ) _t1 JOIN genomic_align USING (genomic_align_block_id) JOIN dnafrag USING (dnafrag_id) " + ancestral_sql + ") _t3";
 				String mlss_sql = "(SELECT genome_db_id FROM species_set JOIN method_link_species_set USING (species_set_id) WHERE method_link_species_set_id = " + mlss_id + ") _t2";
 
 				String useful_sql = "SELECT DISTINCT genome_db_id FROM genomic_align JOIN dnafrag USING (dnafrag_id) WHERE method_link_species_set_id = " + mlss_id + "; ";
