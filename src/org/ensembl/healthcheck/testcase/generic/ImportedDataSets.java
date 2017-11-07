@@ -117,23 +117,28 @@ public class ImportedDataSets extends SingleDatabaseTestCase {
 
     // Checking RefSeq imports, only on transcript and translations
 		int count_all = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM analysis a LEFT JOIN transcript t ON t.analysis_id = a.analysis_id WHERE a.logic_name = 'refseq_import'");
-    int count = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM analysis a LEFT JOIN transcript t ON t.analysis_id = a.analysis_id WHERE a.logic_name = 'refseq_import' AND t.stable_id REGEXP '[NX][MR]_[0-9]+'");
-    if (count > (count_all*.9)) {
-      ReportManager.correct(this, con, "More than 90% of your transcripts have a RefSeq accession in 'refseq_import'");
-    }
-    else {
-      ReportManager.problem(this, con, "Only "+ count +" of "+ count_all +" transcripts have a RefSeq accession as stable id in 'refseq_import'");
-      result = false;
+    int count = 0;
+    if (count_all > 0) {
+      count = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM analysis a LEFT JOIN transcript t ON t.analysis_id = a.analysis_id WHERE a.logic_name = 'refseq_import' AND t.stable_id REGEXP '[NX][MR]_[0-9]+'");
+      if (count > (count_all*.7)) {
+        ReportManager.correct(this, con, "More than 70% of your transcripts have a RefSeq accession in 'refseq_import'");
+      }
+      else {
+        ReportManager.problem(this, con, "Only "+ count +" of "+ count_all +" transcripts have a RefSeq accession as stable id in 'refseq_import'");
+        result = false;
+      }
     }
 
 		count_all = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM analysis a LEFT JOIN transcript t ON t.analysis_id = a.analysis_id LEFT JOIN translation l ON t.transcript_id = l.transcript_id WHERE a.logic_name = 'refseq_import' AND l.transcript_id IS NOT NULL");
-    count = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM analysis a LEFT JOIN transcript t ON t.analysis_id = a.analysis_id LEFT JOIN translation l ON t.transcript_id = l.transcript_id WHERE a.logic_name = 'refseq_import' AND l.transcript_id IS NOT NULL AND l.stable_id REGEXP '[NX]P_[0-9]+'");
-    if (count == count_all) {
-      ReportManager.correct(this, con, "All your translation have a RefSeq accession in 'refseq_import'");
-    }
-    else {
-      ReportManager.problem(this, con, "Only "+ count +" of "+ count_all +" translations have a RefSeq accession as stable id in 'refseq_import'");
-      result = false;
+    if (count_all > 0) {
+      count = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM analysis a LEFT JOIN transcript t ON t.analysis_id = a.analysis_id LEFT JOIN translation l ON t.transcript_id = l.transcript_id WHERE a.logic_name = 'refseq_import' AND l.transcript_id IS NOT NULL AND l.stable_id REGEXP '[NX]P_[0-9]+'");
+      if (count > count_all*.7) {
+        ReportManager.correct(this, con, "Most of your translations have a RefSeq accession in 'refseq_import'");
+      }
+      else {
+        ReportManager.problem(this, con, "Only "+ count +" of "+ count_all +" translations have a RefSeq accession as stable id in 'refseq_import'");
+        result = false;
+      }
     }
 
     return result;
