@@ -82,6 +82,7 @@ public class ESTStableID extends SingleDatabaseTestCase {
 		tableToLetter.put("gene", "G");
 		tableToLetter.put("transcript", "T");
 		tableToLetter.put("translation", "P");
+    String est_logicnames = "(a.logic_name LIKE '%est' OR a.logic_name IN ('estgene', 'medaka_transcriptcoalescer'))";
 
 		Iterator it = tableToLetter.keySet().iterator();
 
@@ -93,10 +94,10 @@ public class ESTStableID extends SingleDatabaseTestCase {
 			String regexp = "EST" + letter + "[0-9]+";
 
 			String sql = "SELECT COUNT(*) FROM " + table + " x, analysis a WHERE a.analysis_id=x.analysis_id "
-					+ "AND a.logic_name LIKE '%est%' AND x.stable_id NOT REGEXP '" + regexp + "'";
+					+ "AND "+ est_logicnames +" AND x.stable_id NOT REGEXP '" + regexp + "'";
 			if (table.equals("translation")) {
 				// need extra join to transcript table
-				sql = "SELECT COUNT(*) FROM translation x, transcript t, analysis a WHERE a.analysis_id=t.analysis_id AND x.transcript_id=t.transcript_id AND a.logic_name LIKE '%est%' AND x.stable_id NOT REGEXP 'ESTP[0-9]+'";
+				sql = "SELECT COUNT(*) FROM translation x, transcript t, analysis a WHERE a.analysis_id=t.analysis_id AND x.transcript_id=t.transcript_id AND "+ est_logicnames +" AND x.stable_id NOT REGEXP 'ESTP[0-9]+'";
 			}
 
 			int rows = DBUtils.getRowCount(con, sql);
@@ -113,10 +114,10 @@ public class ESTStableID extends SingleDatabaseTestCase {
 			}
 
 			sql = "SELECT COUNT(*) FROM " + table + " x, analysis a WHERE a.analysis_id=x.analysis_id "
-					+ "AND a.logic_name NOT LIKE '%est%' AND x.stable_id REGEXP '" + regexp + "'";
+					+ "AND !"+ est_logicnames +" AND x.stable_id REGEXP '" + regexp + "'";
 			if (table.equals("translation")) {
 				// need extra join to transcript table
-				sql = "SELECT COUNT(*) FROM translation x, transcript t, analysis a WHERE a.analysis_id=t.analysis_id AND x.transcript_id=t.transcript_id AND a.logic_name NOT LIKE '%est%' AND x.stable_id REGEXP 'ESTP[0-9]+'";
+				sql = "SELECT COUNT(*) FROM translation x, transcript t, analysis a WHERE a.analysis_id=t.analysis_id AND x.transcript_id=t.transcript_id AND !"+ est_logicnames +" AND x.stable_id REGEXP 'ESTP[0-9]+'";
 			}
 			rows = DBUtils.getRowCount(con, sql);
 
