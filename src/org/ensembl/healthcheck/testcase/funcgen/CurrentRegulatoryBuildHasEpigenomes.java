@@ -24,7 +24,7 @@ public class CurrentRegulatoryBuildHasEpigenomes extends AbstractTemplatedTestCa
         String.class
      );
     if (dbHasRegulatoryBuild.size()==0) {
-      ReportManager.problem(this, dbre.getConnection(), 
+      ReportManager.info(this, dbre.getConnection(),
           "The database has no regulatory build, so the test will be skipped."
       );
       return true;

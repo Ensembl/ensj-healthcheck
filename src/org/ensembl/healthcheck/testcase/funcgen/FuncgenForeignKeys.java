@@ -128,8 +128,8 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
             result &= checkForOrphans(con, "external_feature", "feature_type_id", "feature_type", "feature_type_id", true);
 
             result &= checkForOrphans(con, "external_feature_file", "analysis_id", "analysis", "analysis_id", true);
-            result &= checkForOrphans(con, "external_feature_file", "epigenome_id", "epigenome", "epigenome_id", true);
-            result &= checkForOrphans(con, "external_feature_file", "feature_type_id", "feature_type", "feature_type_id", true);
+            result &= checkForOrphansWithConstraint(con, "external_feature_file", "epigenome_id", "epigenome", "epigenome_id", "epigenome_id != 0");
+            result &= checkForOrphansWithConstraint(con, "external_feature_file", "feature_type_id", "feature_type", "feature_type_id", "feature_type_id != 0");
 
             result &= checkForOrphans(con, "external_synonym", "xref_id", "xref", "xref_id", true);
 
