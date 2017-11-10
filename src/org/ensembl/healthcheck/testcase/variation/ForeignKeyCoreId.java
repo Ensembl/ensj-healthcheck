@@ -129,7 +129,7 @@ public class ForeignKeyCoreId extends MultiDatabaseTestCase {
 										+ ".seq_region src on (src.name=srv.name) join "
 										+ dbrcore.getName()
 										+ ".coord_system cs on (cs.coord_system_id=src.coord_system_id) "+
-										"WHERE csv.attrib = 'default_version' AND cs.attrib='default_version' AND src.seq_region_id != srv.seq_region_id");
+										"WHERE csv.attrib = 'default_version' AND cs.attrib='default_version' AND csv.name = cs.name AND src.seq_region_id != srv.seq_region_id");
 
 				if (rows > 0) {
 					ReportManager
