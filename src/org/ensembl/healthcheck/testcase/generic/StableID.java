@@ -118,7 +118,7 @@ public class StableID extends SingleDatabaseTestCase {
 		// duplicates
 		int duplicates = DBUtils.getRowCount(con,
 				"SELECT COUNT(stable_id)-COUNT(DISTINCT stable_id) FROM "
-						+ stableIDtable);
+						+ stableIDtable + " WHERE stable_id not like 'LRG%'");
 		if (duplicates > 0) {
 			ReportManager.problem(this, con, stableIDtable + " has "
 					+ duplicates
