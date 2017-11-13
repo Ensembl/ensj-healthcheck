@@ -67,16 +67,16 @@ public class ExperimentHasFeatureSet extends SingleDatabaseTestCase {
                 String epigenomeName = combos.getString(4);
                 String featureTypeName = combos.getString(5);
 
-                //fetch feature_sets for every combination
+                //fetch peak_calling for every combination
                 Statement newStmt = con.createStatement();
                 ResultSet featureSets = newStmt.executeQuery("SELECT " +
-                        "feature_set_id FROM feature_set WHERE " +
-                        "experiment_id=" +experimentID +" AND epigenome_id="
+                        "peak_calling_id FROM peak_calling WHERE " +
+                        " epigenome_id="
                         + epigenomeID + " AND feature_type_id=" +featureTypeID);
 
 
                 if (!featureSets.next()) {
-                    ReportManager.problem(this, con, "There is no feature_set" +
+                    ReportManager.problem(this, con, "There is no peak_calling" +
                             " for this combination: experiment_id = " +
                             experimentID + ", epigenome_id = " + epigenomeID
                             + " (" + epigenomeName + "), feature_type_id = "

@@ -76,7 +76,7 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 
             result &= checkForOrphans(con, "alignment", "analysis_id", "analysis", "analysis_id", true);
             result &= checkForOrphans(con, "alignment", "bam_file_id", "data_file", "data_file_id", true);
-            result &= checkForOrphans(con, "alignment", "bigwig_file_id", "data_file", "data_file_id", true);
+//            result &= checkForOrphans(con, "alignment", "bigwig_file_id", "data_file", "data_file_id", true);
 
             result &= checkForOrphans(con, "alignment_read_file", "alignment_id", "alignment", "alignment_id", true);
             result &= checkForOrphans(con, "alignment_read_file", "read_file_id", "read_file", "read_file_id", true);
@@ -122,21 +122,21 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
 
             result &= checkForOrphans(con, "experiment", "experimental_group_id", "experimental_group", "experimental_group_id", true);
             result &= checkForOrphans(con, "experiment", "feature_type_id", "feature_type", "feature_type_id", true);
-            result &= checkForOrphans(con, "experiment", "epigenome_id", "epigenome", "epigenome_id", true);
+            result &= checkForOrphansWithConstraint(con, "experiment", "epigenome_id", "epigenome", "epigenome_id", "epigenome_id != 0");
 
             result &= checkForOrphans(con, "external_feature", "feature_set_id", "feature_set", "feature_set_id", true);
             result &= checkForOrphans(con, "external_feature", "feature_type_id", "feature_type", "feature_type_id", true);
 
             result &= checkForOrphans(con, "external_feature_file", "analysis_id", "analysis", "analysis_id", true);
-            result &= checkForOrphans(con, "external_feature_file", "epigenome_id", "epigenome", "epigenome_id", true);
-            result &= checkForOrphans(con, "external_feature_file", "feature_type_id", "feature_type", "feature_type_id", true);
+            result &= checkForOrphansWithConstraint(con, "external_feature_file", "epigenome_id", "epigenome", "epigenome_id", "epigenome_id != 0");
+            result &= checkForOrphansWithConstraint(con, "external_feature_file", "feature_type_id", "feature_type", "feature_type_id", "feature_type_id != 0");
 
             result &= checkForOrphans(con, "external_synonym", "xref_id", "xref", "xref_id", true);
 
             result &= checkForOrphans(con, "feature_set", "feature_type_id", "feature_type", "feature_type_id", true);
             result &= checkForOrphans(con, "feature_set", "analysis_id", "analysis", "analysis_id", true);
 
-            result &= checkForOrphans(con, "feature_type", "analysis_id", "analysis", "analysis_id", true);
+//            result &= checkForOrphans(con, "feature_type", "analysis_id", "analysis", "analysis_id", true);
 
             result &= checkForOrphans(con, "identity_xref", "object_xref_id", "object_xref", "object_xref_id", true);
 
@@ -160,14 +160,14 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
                 se.printStackTrace();
                 return false;
             }
-            result &= checkForOrphans(con, "object_xref", "analysis_id", "analysis", "analysis_id", true);
+//            result &= checkForOrphans(con, "object_xref", "analysis_id", "analysis", "analysis_id", true);
 
             result &= checkForOrphans(con, "ontology_xref", "object_xref_id", "object_xref", "object_xref_id", true);
 
             result &= checkForOrphans(con, "peak", "peak_calling_id", "peak_calling", "peak_calling_id", true);
 
-            result &= checkForOrphans(con, "probe", "probe_set_id", "probe_set", "probe_set_id", false);
-//            result &= checkForOrphansWithConstraint(con, "probe", "probe_set_id", "probe_set", "probe_set_id", "probe_set_id !=0");
+//            result &= checkForOrphans(con, "probe", "probe_set_id", "probe_set", "probe_set_id", false);
+            result &= checkForOrphansWithConstraint(con, "probe", "probe_set_id", "probe_set", "probe_set_id", "probe_set_id !=0");
             result &= checkForOrphans(con, "probe", "array_chip_id", "array_chip", "array_chip_id", false);
             result &= checkForOrphans(con, "probe", "probe_seq_id", "probe_seq", "probe_seq_id", false);
 
