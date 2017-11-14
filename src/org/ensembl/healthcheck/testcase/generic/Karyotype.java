@@ -174,7 +174,7 @@ public class Karyotype extends SingleDatabaseTestCase {
                 boolean result = true;
                 String sqlCS = "SELECT count(*) FROM coord_system WHERE name = 'chromosome'";
                 String sqlAttrib = "SELECT count(*) FROM seq_region_attrib sa, attrib_type at WHERE at.attrib_type_id = sa.attrib_type_id AND code = 'karyotype_rank'";
-                String sqlMT = "SELECT count(*) FROM seq_region_attrib sa, attrib_type at, seq_region s WHERE s.seq_region_id = sa.seq_region_id AND at.attrib_type_id = sa.attrib_type_id AND code = 'karyotype_rank' AND s.name IN ('MT', 'Mito', 'dmel_mitochondrion_genome', 'MtDNA')";
+                String sqlMT = "SELECT count(*) FROM seq_region_attrib sa, attrib_type at, seq_region s WHERE s.seq_region_id = sa.seq_region_id AND at.attrib_type_id = sa.attrib_type_id AND code = 'karyotype_rank' AND s.name IN ('MT', 'Mito', 'dmel_mitochondrion_genome', 'MtDNA', 'mitochondrion_genome')";
                 int karyotype = t.queryForDefaultObject(sqlCS, Integer.class);
                 if (karyotype > 0) {
                         int attrib = t.queryForDefaultObject(sqlAttrib, Integer.class);
@@ -185,7 +185,7 @@ public class Karyotype extends SingleDatabaseTestCase {
                         int mt = t.queryForDefaultObject(sqlMT, Integer.class);
                         if (mt == 0 && dbre.getType() != DatabaseType.SANGER_VEGA) {
                                 result = false;
-                                ReportManager.problem(this, con, "Species has chromosomes but neither MT nor Mito nor dmel_mitochondrion_genome nor MtDNA");
+                                ReportManager.problem(this, con, "Species has chromosomes but neither MT nor Mito nor dmel_mitochondrion_genome nor MtDNA nor mitochondrion_genome");
                         }
                 } 
         return result;
