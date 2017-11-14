@@ -195,9 +195,13 @@ public class StandaloneTestRunner {
 
         @Option(longName = "release", shortName = "r", description = "Current release")
         String getRelease();
-
         boolean isRelease();
 
+        @Option(longName = "data_files_path", shortName = "D", description = "Path to data files directory")
+        String getDataFilesPath();
+        boolean isDataFilesPath();
+
+        
         @Option(longName = "list_tests", shortName = "l", description = "Show all the tests in the specified groups and tests")
         boolean isListTests();
 
@@ -340,6 +344,9 @@ public class StandaloneTestRunner {
         if(!StringUtils.isEmpty(release)) {
             getLogger().fine("Setting release "+release);
             DBUtils.setRelease(release);
+        }
+        if(options.isDataFilesPath()) {
+            System.setProperty("dataFileBasePath", options.getDataFilesPath());
         }
         System.setProperty("compara_master.database", options.getComparaMasterDbname());
     }
