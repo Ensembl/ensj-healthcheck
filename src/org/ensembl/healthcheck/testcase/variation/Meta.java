@@ -163,6 +163,7 @@ public class Meta extends SingleDatabaseTestCase {
 
 		// get version from database name
 		String dbNameVersion = dbre.getSchemaVersion();
+		dbNameVersion = dbNameVersion.replaceAll("_[0-9]+","");
 		logger.finest("Schema version from database name: " + dbNameVersion);
 
 		// get version from meta table
