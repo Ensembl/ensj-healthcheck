@@ -75,12 +75,18 @@ public class VariationClasses extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
         	// check HGMD for human - no allele available, so check input type not over-written
+                // check COSMIC & ClinVar as added outside full rebuild
         	if (species == Species.HOMO_SAPIENS) {
-           		String source = "HGMD";
-           	 	boolean hgmd_ok = checkCount(con, source);
-            		if(hgmd_ok == false){
-                		 result = false;
-             		}
+           		String [] sources = {"HGMD", "COSMIC", "ClinVar"};
+                        int len = sources.length;
+    
+			for (int i =0; i< len; i++){
+
+         		boolean source_ok = checkCount(con, sources[i]);
+            			if(source_ok == false){
+                			 result = false;
+             			}
+			}
          	}
 
          	// check dbSNP for all species - did VariationClass pipeline fail?
