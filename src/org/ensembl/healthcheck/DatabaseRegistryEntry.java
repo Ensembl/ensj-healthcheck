@@ -451,8 +451,10 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 			return speciesOrdering;
 		}
 
-		return new Integer(getSchemaVersion()).compareTo(new Integer(dbre
-				.getSchemaVersion()));
+		String sv = getSchemaVersion().replaceAll("[0-9]+_","");
+        String sv2 = dbre
+				.getSchemaVersion().replaceAll("[0-9]+_","");
+        return new Integer(sv).compareTo(new Integer(sv2));
 
 		// return getName().compareTo(dbre.getName());
 	}
