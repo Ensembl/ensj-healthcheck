@@ -74,44 +74,62 @@ public class VariationClasses extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-        // at the moment we only check human
-        
-        if (species == Species.HOMO_SAPIENS) {
-            
-            try {
-                
-                // and we only check that no HGMD mutation is ever classed as 'sequence_alteration'
+        	// check HGMD for human - no allele available, so check input type not over-written
+                // check COSMIC & ClinVar as added outside full rebuild
+        	if (species == Species.HOMO_SAPIENS) {
+           		String [] sources = {"HGMD", "COSMIC", "ClinVar"};
+                        int len = sources.length;
+    
+			for (int i =0; i< len; i++){
 
-                String query =  "SELECT COUNT(*) "+
-                                "FROM variation v, source s, attrib a, attrib_type t "+
-                                "WHERE t.code = 'SO_term' "+
-                                "AND a.attrib_type_id = t.attrib_type_id "+
-                                "AND a.value = 'sequence_alteration' "+
-                                "AND a.attrib_id = v.class_attrib_id "+
-                                "AND s.name = 'HGMD-PUBLIC' "+
-                                "AND s.source_id = v.source_id ";
+         		boolean source_ok = checkCount(con, sources[i]);
+            			if(source_ok == false){
+                			 result = false;
+             			}
+			}
+         	}
 
-                int cnt = DBUtils.getRowCount(con, query);
-                if(cnt != 0) {
-                    ReportManager.problem(this, con, cnt + " variations with name 'HGMD-PUBLIC' found that have the attrib 'sequence_alteration' ");
-                    ReportManager.problem(this, con, "Useful SQL: "+query);
-                    result = false;
-                }
+         	// check dbSNP for all species - did VariationClass pipeline fail?
+         	String source = "dbSNP";
+         	boolean dbsnp_ok = checkCount(con, source);
+         	if(dbsnp_ok == false){
+            		result = false;
+         	}
 
-		    } 
-            catch (Exception e) {
-			    ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
-		    	result = false;
-		    }
-        }
+       		return result;
+    }
 
-		if (result) {
-			ReportManager.correct(this, con, "Variation classes look sane");
-		}
 
-		return result;
+    public boolean checkCount( Connection con, String source) {
 
-	} // run
+      boolean result = true;
+
+      try {
+
+                // check that multiple variation classes have been assigned
+                String query =  "SELECT COUNT(distinct v.class_attrib_id) from variation v, source s "+
+                                "WHERE s.name = '"+ source + "' AND s.source_id = v.source_id ";
+
+                 int rows = DBUtils.getRowCount(con, query);
+                 if (rows == 1) {
+		     result = false;
+		     ReportManager.problem(this, con, "Only one variation class attrib type available for source " + source);
+                 }
+
+         }
+         catch (Exception e) {
+	    ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
+	    result = false;
+	 }
+
+	if (result) {
+		ReportManager.correct(this, con, "Variation classes look sane for source " + source );
+	}
+
+	return result;
+
+     }
+
 
 	// -----------------------------------------------------------------
 
