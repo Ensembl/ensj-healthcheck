@@ -70,7 +70,7 @@ public class FeaturePosition extends AbstractCoreDatabaseUsingTestCase {
 		
 		logger.info("Using core database " + coreDbre.getName() + " " + coreDbre.getDatabaseServer().getDatabaseURL());
 						
-		String sql = "select seq_region_id, name, length from seq_region";
+                String sql = "select seq_region_id, seq_region.name, length from seq_region join seq_region_attrib using (seq_region_id) join attrib_type using (attrib_type_id) where code=\"toplevel\"";
 		HashMap<String, String> coreSeqRegionIDName = new HashMap<String, String>();
 		HashMap<String, String> seqRegionIdToLength = new HashMap<String, String>();
  
