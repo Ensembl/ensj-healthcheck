@@ -46,8 +46,6 @@ import java.util.logging.LogRecord;
  */
 public abstract class AbstractPerlModuleBasedTestCase extends AbstractPerlBasedTestCase {
 
-	//private static final String SCRIPT = "./perl/run_healthcheck.pl -host $host$ -port $port$ -user $user$ -pass $pass$ -dbname $dbname$ -species_id $species_id$ -module $module$";
-	private static final String SCRIPT = "./perl/run_healthcheck.pl -host $host$ -port $port$ -user $user$ -dbname $dbname$ -species_id $species_id$ -module $module$";
 	private final LogMapperPerl2Java logMapper;
 	private final Formatter perlLogMessagesFormatter;
 
@@ -75,13 +73,23 @@ public abstract class AbstractPerlModuleBasedTestCase extends AbstractPerlBasedT
 			int speciesId
 	) {
 		DatabaseServer srv = dbre.getDatabaseServer();
-		return TemplateBuilder.template(SCRIPT, "host", srv.getHost(),
-				"port", srv.getPort(),
-				"user", srv.getUser(),
-//				"pass", srv.getPass(),
-				"dbname", dbre.getName(),
-				"module", getModule(),
-				"species_id", speciesId);
+		if (srv.getPass() == null){
+			return TemplateBuilder.template("./perl/run_healthcheck.pl -host $host$ -port $port$ -user $user$ -dbname $dbname$ -species_id $species_id$ -module $module$", "host", srv.getHost(),
+          "port", srv.getPort(),
+          "user", srv.getUser(),
+          "dbname", dbre.getName(),
+          "module", getModule(),
+          "species_id", speciesId);
+		}
+		else{
+			return TemplateBuilder.template("./perl/run_healthcheck.pl -host $host$ -port $port$ -user $user$ -pass $pass$ -dbname $dbname$ -species_id $species_id$ -module $module$", "host", srv.getHost(),
+				  "port", srv.getPort(),
+				  "user", srv.getUser(),
+				  "pass", srv.getPass(),
+				  "dbname", dbre.getName(),
+				  "module", getModule(),
+				  "species_id", speciesId);
+		}
 	}
 	
 	protected Map<String,String> environmentVarsToSet() {
