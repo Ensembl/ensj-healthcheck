@@ -25,7 +25,7 @@ import org.ensembl.healthcheck.testcase.generic.ProductionBiotypes;
 import org.ensembl.healthcheck.testcase.generic.TranscriptNames;
 
 import org.ensembl.healthcheck.testcase.eg_core.NoRepeatFeatures;
-import org.ensembl.healthcheck.testcase.eg_core.SchemaPatchesApplied;
+import org.ensembl.healthcheck.testcase.generic.CompareSchema;
 import org.ensembl.healthcheck.testcase.eg_core.SeqRegionLength;
 import org.ensembl.healthcheck.testcase.eg_core.SeqRegionsConsistentWithComparaMaster;
 import org.ensembl.healthcheck.testcase.eg_core.SeqRegionAttribForPolyploidGenome;
@@ -62,7 +62,7 @@ public class EGCore extends GroupOfTests {
 			SeqRegionAttribForPolyploidGenomeToplevelOnly.class,
 			SeqRegionLength.class,
 			NoRepeatFeatures.class,
-			SchemaPatchesApplied.class
+			CompareSchema.class
 		);
 	}
 }
