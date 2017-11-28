@@ -142,6 +142,7 @@ sub run {
 		for my $transcript ( @{ $gene->get_all_Transcripts() } ) {
 
 			my $seq = $transcript->translate();
+			next unless $transcript->biotype() eq 'protein_coding';
 			if ($seq) {
 				
 				my $sequence = $seq->seq();
