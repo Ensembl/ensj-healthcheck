@@ -45,6 +45,9 @@ sub run {
     my (undef,$log_file) = tempfile('_HealthcheckDatabase_XXXXXX',  SUFFIX => '.log', TMPDIR => 1, OPEN=>0);
     $command .= " >& $log_file";
 
+    my $hive_dbc = $self->dbc;
+    $hive_dbc->disconnect_if_idle() if defined $hive_dbc;
+
     $logger->info($command);
     my $exit = system($command);
     $exit >>= 8;
