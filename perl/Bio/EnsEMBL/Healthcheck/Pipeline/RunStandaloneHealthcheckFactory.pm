@@ -33,6 +33,7 @@ sub run {
     my $staging_uri = $self->param('staging_uri');
     my $production_uri = $self->param('production_uri');
     my $compara_uri = $self->param('compara_uri');
+    my $data_files_path = $self->param('data_files_path');
 
     my $command = sprintf("java -jar %s -l --output_format json --output_file %s", $hc_jar, $list_file);
 
@@ -67,7 +68,8 @@ sub run {
 				   production_uri=>$production_uri,
 				   live_uri=>$live_uri,
 				   staging_uri=>$staging_uri,
-				   compara_uri=>$compara_uri				   
+				   compara_uri=>$compara_uri,
+           data_files_path=>$data_files_path
 				  }, 2);
       }
       unlink $log_file;    
@@ -84,7 +86,8 @@ sub run {
 			       production_uri=>$production_uri,
 			       live_uri=>$live_uri,
 			       staging_uri=>$staging_uri,
-			       compara_uri=>$compara_uri
+			       compara_uri=>$compara_uri,
+             data_files_path=>$data_files_path
 			      },
 			      1
 			     );
