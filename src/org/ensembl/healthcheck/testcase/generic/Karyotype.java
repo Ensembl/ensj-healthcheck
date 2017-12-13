@@ -50,6 +50,7 @@ import org.ensembl.healthcheck.util.CollectionUtils;
  * Check if any chromosomes have different lengths in karyotype &
  * seq_region tables.
  */
+@Deprecated
 public class Karyotype extends SingleDatabaseTestCase {
 
     /**
