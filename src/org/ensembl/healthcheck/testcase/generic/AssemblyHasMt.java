@@ -24,90 +24,71 @@
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.PreparedStatement;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.SqlTemplate;
-import org.apache.commons.collections.ListUtils;
-import org.ensembl.healthcheck.util.CollectionUtils;
-
-
 
 /**
  * Check if we have chromosomes but not mitochondrion
  */
 public class AssemblyHasMt extends SingleDatabaseTestCase {
 
-    /**
-     * Constructor for karyotype test case
-     */
-    public AssemblyHasMt() {
+	/**
+	 * Constructor for karyotype test case
+	 */
+	public AssemblyHasMt() {
 
-        setDescription("Check that karyotype and seq_region tables agree");
-        setTeamResponsible(Team.GENEBUILD);
+		setDescription("Check that karyotype and seq_region tables agree");
+		setTeamResponsible(Team.GENEBUILD);
 
-    }
+	}
 
-    /**
-     * This only applies to core databases.
-     */
-    public void types() {
+	/**
+	 * This only applies to core databases.
+	 */
+	public void types() {
 
-        removeAppliesToType(DatabaseType.ESTGENE);
-        removeAppliesToType(DatabaseType.VEGA);
-        removeAppliesToType(DatabaseType.OTHERFEATURES);
-        removeAppliesToType(DatabaseType.CDNA);
-        removeAppliesToType(DatabaseType.RNASEQ);
+		removeAppliesToType(DatabaseType.ESTGENE);
+		removeAppliesToType(DatabaseType.VEGA);
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.CDNA);
+		removeAppliesToType(DatabaseType.RNASEQ);
 
-    }
+	}
 
-    /**
-     * Run the test.
-     * 
-     * @param dbre
-     *          The database to use.
-     * @return true if the test passed.
-     * 
-     */
-    public boolean run(DatabaseRegistryEntry dbre) {
+	/**
+	 * Run the test.
+	 * 
+	 * @param dbre
+	 *            The database to use.
+	 * @return true if the test passed.
+	 * 
+	 */
+	public boolean run(DatabaseRegistryEntry dbre) {
 
-       
-        Connection con = dbre.getConnection();
-        SqlTemplate t = DBUtils.getSqlTemplate(dbre);
-        boolean result = true;
-        String sqlCS = "SELECT count(*) FROM coord_system "
-            + "WHERE name = 'chromosome'";
-      
-        String sqlMT = "SELECT count(*) "
-            + "FROM seq_region_attrib sa, attrib_type at, seq_region s "
-            + "WHERE s.seq_region_id = sa.seq_region_id "
-            + "AND at.attrib_type_id = sa.attrib_type_id "
-            + "AND code = 'karyotype_rank' "
-            + "AND s.name IN ('MT', 'Mito', 'dmel_mitochondrion_genome', 'MtDNA')";
-        int karyotype = t.queryForDefaultObject(sqlCS, Integer.class);
-        if (karyotype > 0) {            
-            int mt = t.queryForDefaultObject(sqlMT, Integer.class);
-            if (mt == 0 && dbre.getType() != DatabaseType.SANGER_VEGA) {
-                result = false;
-                ReportManager.problem(this, con,
-                    "Species has chromosomes but neither MT nor Mito "
-                    + "nor dmel_mitochondrion_genome nor MtDNA");
-            }
-        }
-        return result;
-    }
+		Connection con = dbre.getConnection();
+		SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+		boolean result = true;
+		String sqlCS = "SELECT count(*) FROM coord_system " + "WHERE name = 'chromosome'";
+
+		String sqlMT = "SELECT count(*) " + "FROM seq_region_attrib sa, attrib_type at, seq_region s "
+				+ "WHERE s.seq_region_id = sa.seq_region_id " + "AND at.attrib_type_id = sa.attrib_type_id "
+				+ "AND code = 'karyotype_rank' " + "AND s.name IN ('MT', 'Mito', 'dmel_mitochondrion_genome', 'MtDNA')";
+		int karyotype = t.queryForDefaultObject(sqlCS, Integer.class);
+		if (karyotype > 0) {
+			int mt = t.queryForDefaultObject(sqlMT, Integer.class);
+			if (mt == 0 && dbre.getType() != DatabaseType.SANGER_VEGA) {
+				result = false;
+				ReportManager.problem(this, con,
+						"Species has chromosomes but neither MT nor Mito " + "nor dmel_mitochondrion_genome nor MtDNA");
+			}
+		}
+		return result;
+	}
 
 } // Karyotype
