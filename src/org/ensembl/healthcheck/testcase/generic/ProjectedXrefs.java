@@ -15,18 +15,13 @@
  * limitations under the License.
  */
 
-
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -48,39 +43,45 @@ public class ProjectedXrefs extends SingleDatabaseTestCase {
 
 	public void types() {
 
-                removeAppliesToType(DatabaseType.OTHERFEATURES);
-                removeAppliesToType(DatabaseType.ESTGENE);
-                removeAppliesToType(DatabaseType.EST);
-                removeAppliesToType(DatabaseType.CDNA);
-                removeAppliesToType(DatabaseType.VEGA);
-                removeAppliesToType(DatabaseType.RNASEQ);
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.ESTGENE);
+		removeAppliesToType(DatabaseType.EST);
+		removeAppliesToType(DatabaseType.CDNA);
+		removeAppliesToType(DatabaseType.VEGA);
+		removeAppliesToType(DatabaseType.RNASEQ);
 	}
 
 	/**
 	 * Run the test.
 	 * 
 	 * @param dbre
-	 *          The database to use.
+	 *            The database to use.
 	 * @return true if the test passed.
 	 * 
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
-	        Connection con = dbre.getConnection();
-                Species species = dbre.getSpecies();
+		Connection con = dbre.getConnection();
+		String species = dbre.getSpecies();
 
-                if (species.equals(Species.HOMO_SAPIENS) || species.equals(Species.CAENORHABDITIS_ELEGANS) || species.equals(Species.DROSOPHILA_MELANOGASTER) || species.equals(Species.SACCHAROMYCES_CEREVISIAE) || species.equals(Species.CIONA_INTESTINALIS) || species.equals(Species.CIONA_SAVIGNYI)) {
-                        return result;
-                }
+		if (species.equals(DatabaseRegistryEntry.HOMO_SAPIENS)
+				|| species.equals(DatabaseRegistryEntry.CAENORHABDITIS_ELEGANS)
+				|| species.equals(DatabaseRegistryEntry.DROSOPHILA_MELANOGASTER)
+				|| species.equals(DatabaseRegistryEntry.SACCHAROMYCES_CEREVISIAE)
+				|| species.equals(DatabaseRegistryEntry.CIONA_INTESTINALIS)
+				|| species.equals(DatabaseRegistryEntry.CIONA_SAVIGNYI)) {
+			return result;
+		}
 
-                // check display xrefs
+		// check display xrefs
 
-	        int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM gene g, xref x WHERE g.display_xref_id=x.xref_id AND x.info_type='PROJECTION'");
+		int rows = DBUtils.getRowCount(con,
+				"SELECT COUNT(*) FROM gene g, xref x WHERE g.display_xref_id=x.xref_id AND x.info_type='PROJECTION'");
 
-	        if (rows == 0) {
-		        ReportManager.problem(this, con, "No genes in " + species + " have projected display_xrefs");
-		        result = false;
+		if (rows == 0) {
+			ReportManager.problem(this, con, "No genes in " + species + " have projected display_xrefs");
+			result = false;
 		} else {
 			ReportManager.correct(this, con, rows + " genes in " + species + " have projected display_xrefs");
 		}

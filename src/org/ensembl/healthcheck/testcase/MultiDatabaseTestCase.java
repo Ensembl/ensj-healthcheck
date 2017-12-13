@@ -15,30 +15,22 @@
  * limitations under the License.
  */
 
-
 package org.ensembl.healthcheck.testcase;
 
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.sql.Statement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
-import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
-import org.ensembl.healthcheck.util.Utils;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.Utils;
 
 /**
- * Subclass of EnsTestCase for tests that apply to <em>multiple</em> databases. Such tests should subclass <em>this</em> class and
- * implement the <code>run</code> method.
+ * Subclass of EnsTestCase for tests that apply to <em>multiple</em> databases.
+ * Such tests should subclass <em>this</em> class and implement the
+ * <code>run</code> method.
  */
 public abstract class MultiDatabaseTestCase extends EnsTestCase {
 
@@ -46,32 +38,36 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
 	 * This method should be overridden by subclasses.
 	 * 
 	 * @param dbr
-	 *          The database registry containing all the matched databases.
+	 *            The database registry containing all the matched databases.
 	 * @return true if the test passed.
 	 */
 	public abstract boolean run(DatabaseRegistry dbr) throws SQLException;
 
 	// ---------------------------------------------------------------------
 	/**
-	 * Check that the same piece of SQL gives the same result across several species.
+	 * Check that the same piece of SQL gives the same result across several
+	 * species.
 	 * 
 	 * @param sql
-	 *          The SQL to check.
+	 *            The SQL to check.
 	 * @param dbr
-	 *          The registry containing the databases to check.
+	 *            The registry containing the databases to check.
 	 * @param types
-	 *          Only databases from the registry whose types are contined in this array will be used.
-	 * @return true if SQL returns the same for all databases for each species in dbr.
+	 *            Only databases from the registry whose types are contined in this
+	 *            array will be used.
+	 * @return true if SQL returns the same for all databases for each species in
+	 *         dbr.
 	 */
-	public boolean checkSQLAcrossSpecies(String sql, DatabaseRegistry dbr, DatabaseType[] types, boolean comparingSchema) {
+	public boolean checkSQLAcrossSpecies(String sql, DatabaseRegistry dbr, DatabaseType[] types,
+			boolean comparingSchema) {
 
 		boolean result = true;
 
-
-                // Use whole registry to access all databases, but restrict to species of interest
+		// Use whole registry to access all databases, but restrict to species of
+		// interest
 		DatabaseRegistry mainDbr = DBUtils.getMainDatabaseRegistry();
 
-		for (Species species : dbr.getUniqueSpecies()) {
+		for (String species : dbr.getUniqueSpecies()) {
 
 			// filter by database type
 			DatabaseRegistryEntry[] filteredDBs = filterByType(mainDbr.getAll(species), types);
@@ -85,17 +81,19 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
 	// ---------------------------------------------------------------------
 
 	/**
-	 * Check that the contents of a table are the same across each of the species currently defined.
+	 * Check that the contents of a table are the same across each of the species
+	 * currently defined.
 	 * 
 	 * @param table
-	 *          The table to check.
+	 *            The table to check.
 	 * @param dbr
-	 *          The registry containing the databases to check.
+	 *            The registry containing the databases to check.
 	 * @param types
-	 *          The DatabaseTypes to look at.
+	 *            The DatabaseTypes to look at.
 	 * @return true if the table is the same across all species.
 	 */
-	public boolean checkTableAcrossSpecies(String table, DatabaseRegistry dbr, DatabaseType[] types, String correct, String problem, String extraSQL) {
+	public boolean checkTableAcrossSpecies(String table, DatabaseRegistry dbr, DatabaseType[] types, String correct,
+			String problem, String extraSQL) {
 
 		String sql = "SELECT COUNT(*) FROM " + table + " " + extraSQL;
 		boolean result = checkSQLAcrossSpecies(sql, dbr, types, false);
@@ -109,9 +107,9 @@ public abstract class MultiDatabaseTestCase extends EnsTestCase {
 	 * Filter an array of DatabaseRegistryEntries.
 	 * 
 	 * @param The
-	 *          databases to check.
+	 *            databases to check.
 	 * @param types
-	 *          The types to look for.
+	 *            The types to look for.
 	 * @return Those entries in databases that have a type that is in types.
 	 */
 	private DatabaseRegistryEntry[] filterByType(DatabaseRegistryEntry[] databases, DatabaseType[] types) {

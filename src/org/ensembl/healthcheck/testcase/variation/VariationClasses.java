@@ -35,7 +35,6 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -63,47 +62,44 @@ public class VariationClasses extends SingleDatabaseTestCase {
 	 * Sanity check the variation classes.
 	 * 
 	 * @param dbre
-	 *          The database to check.
+	 *            The database to check.
 	 * @return true if the test passed.
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
 
-		Species species = dbre.getSpecies();
+		String species = dbre.getSpecies();
 
 		Connection con = dbre.getConnection();
 
-        // at the moment we only check human
-        
-        if (species == Species.HOMO_SAPIENS) {
-            
-            try {
-                
-                // and we only check that no HGMD mutation is ever classed as 'sequence_alteration'
+		// at the moment we only check human
 
-                String query =  "SELECT COUNT(*) "+
-                                "FROM variation v, source s, attrib a, attrib_type t "+
-                                "WHERE t.code = 'SO_term' "+
-                                "AND a.attrib_type_id = t.attrib_type_id "+
-                                "AND a.value = 'sequence_alteration' "+
-                                "AND a.attrib_id = v.class_attrib_id "+
-                                "AND s.name = 'HGMD-PUBLIC' "+
-                                "AND s.source_id = v.source_id ";
+		if (species == DatabaseRegistryEntry.HOMO_SAPIENS) {
 
-                int cnt = DBUtils.getRowCount(con, query);
-                if(cnt != 0) {
-                    ReportManager.problem(this, con, cnt + " variations with name 'HGMD-PUBLIC' found that have the attrib 'sequence_alteration' ");
-                    ReportManager.problem(this, con, "Useful SQL: "+query);
-                    result = false;
-                }
+			try {
 
-		    } 
-            catch (Exception e) {
-			    ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
-		    	result = false;
-		    }
-        }
+				// and we only check that no HGMD mutation is ever classed as
+				// 'sequence_alteration'
+
+				String query = "SELECT COUNT(*) " + "FROM variation v, source s, attrib a, attrib_type t "
+						+ "WHERE t.code = 'SO_term' " + "AND a.attrib_type_id = t.attrib_type_id "
+						+ "AND a.value = 'sequence_alteration' " + "AND a.attrib_id = v.class_attrib_id "
+						+ "AND s.name = 'HGMD-PUBLIC' " + "AND s.source_id = v.source_id ";
+
+				int cnt = DBUtils.getRowCount(con, query);
+				if (cnt != 0) {
+					ReportManager.problem(this, con, cnt
+							+ " variations with name 'HGMD-PUBLIC' found that have the attrib 'sequence_alteration' ");
+					ReportManager.problem(this, con, "Useful SQL: " + query);
+					result = false;
+				}
+
+			} catch (Exception e) {
+				ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
+				result = false;
+			}
+		}
 
 		if (result) {
 			ReportManager.correct(this, con, "Variation classes look sane");

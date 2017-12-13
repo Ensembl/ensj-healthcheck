@@ -25,7 +25,6 @@ import java.sql.Statement;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
@@ -91,8 +90,9 @@ public class GeneTranscriptStartEnd extends SingleDatabaseTestCase {
 
             // gene GC32491 in drosophila is allowed to have all sorts of
             // things wrong with it
+            //TODO this is very, very wrong indeed
             if (rs != null && !rs.isAfterLast() && rs.next()
-                && dbre.getSpecies() != Species.DROSOPHILA_MELANOGASTER
+                && !dbre.getSpecies().equals(DatabaseRegistryEntry.DROSOPHILA_MELANOGASTER)
                 && rs.getString("stable_id") != null
                 && !rs.getString("stable_id").equalsIgnoreCase("CG32491")) {
 

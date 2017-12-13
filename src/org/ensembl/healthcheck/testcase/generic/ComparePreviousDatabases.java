@@ -15,22 +15,22 @@
  * limitations under the License.
  */
 
-
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.util.Map;
 import java.util.Set;
 
 import org.ensembl.healthcheck.DatabaseRegistry;
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Check that all species and database types in the previous release are represented in the current release.
+ * Check that all species and database types in the previous release are
+ * represented in the current release.
  */
 
 public class ComparePreviousDatabases extends MultiDatabaseTestCase {
@@ -40,40 +40,45 @@ public class ComparePreviousDatabases extends MultiDatabaseTestCase {
 	 */
 	public ComparePreviousDatabases() {
 
-		setDescription("Check that all species and database types in the previous release are represented in the current release.");
+		setDescription(
+				"Check that all species and database types in the previous release are represented in the current release.");
 		setTeamResponsible(Team.RELEASE_COORDINATOR);
 	}
 
 	/**
 	 * @param dbr
-	 *          The database registry containing all the specified databases.
+	 *            The database registry containing all the specified databases.
 	 * @return True if the meta information is consistent within species.
 	 */
 	public boolean run(DatabaseRegistry dbr) {
 
 		boolean result = true;
 
-		// look at all databases on the secondary server, check that we have an equivalent
+		// look at all databases on the secondary server, check that we have an
+		// equivalent
 		DatabaseRegistry secondaryDBR = DBUtils.getSecondaryDatabaseRegistry();
 
 		// need a full registry of all primary databases
 		DatabaseRegistry primaryDBR = new DatabaseRegistry(null, null, null, false);
 
-		// get the map of species, with associated set of types, for both primary and secondary servers
-		Map<Species, Set<DatabaseType>> primarySpeciesAndTypes = primaryDBR.getSpeciesTypeMap();
-		Map<Species, Set<DatabaseType>> secondarySpeciesAndTypes = secondaryDBR.getSpeciesTypeMap();
+		// get the map of species, with associated set of types, for both primary and
+		// secondary servers
+		Map<String, Set<DatabaseType>> primarySpeciesAndTypes = primaryDBR.getSpeciesTypeMap();
+		Map<String, Set<DatabaseType>> secondarySpeciesAndTypes = secondaryDBR.getSpeciesTypeMap();
 
-		for (Species s : secondarySpeciesAndTypes.keySet()) {
+		for (String s : secondarySpeciesAndTypes.keySet()) {
 
-			if (s.equals(Species.UNKNOWN) || s.equals(Species.ANCESTRAL_SEQUENCES)) {
+			if (s.equals(DatabaseRegistryEntry.UNKNOWN) || s.equals(DatabaseRegistryEntry.ANCESTRAL_SEQUENCES)) {
 				continue;
 			}
 
-			// fail at once if there are no databases on the main server for this species at all
+			// fail at once if there are no databases on the main server for this species at
+			// all
 			if (!primarySpeciesAndTypes.containsKey(s)) {
 
-				ReportManager.problem(this, "",
-						String.format("Secondary server contains at least one database for %s (e.g. %s) but there are none on the primary server", s, (secondaryDBR.getAll(s))[0].getName()));
+				ReportManager.problem(this, "", String.format(
+						"Secondary server contains at least one database for %s (e.g. %s) but there are none on the primary server",
+						s, (secondaryDBR.getAll(s))[0].getName()));
 				result = false;
 
 			} else {
@@ -85,7 +90,9 @@ public class ComparePreviousDatabases extends MultiDatabaseTestCase {
 
 					if (!primaryTypes.contains(t)) {
 
-						ReportManager.problem(this, "", String.format("Secondary server has a %s database for %s but there is no equivalent on the primary server", t, s));
+						ReportManager.problem(this, "", String.format(
+								"Secondary server has a %s database for %s but there is no equivalent on the primary server",
+								t, s));
 						result = false;
 
 					}

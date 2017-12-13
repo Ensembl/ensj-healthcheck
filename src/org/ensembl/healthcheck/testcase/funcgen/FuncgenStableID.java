@@ -29,7 +29,6 @@ import java.util.Map;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
@@ -252,21 +251,21 @@ public class FuncgenStableID extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		Map tableToLetter = new HashMap();
+		Map<String,String> tableToLetter = new HashMap<>();
 		tableToLetter.put("gene", "G");
 		tableToLetter.put("transcript", "T");
 		tableToLetter.put("translation", "P");
 		tableToLetter.put("exon", "E");
 
-		Iterator it = tableToLetter.keySet().iterator();
+		Iterator<String> it = tableToLetter.keySet().iterator();
 		while (it.hasNext()) {
 
 			String type = (String) it.next();
 			String table = type + "_stable_id";
 
-			String prefix = Species.getStableIDPrefixForSpecies(dbre.getSpecies(), dbre.getType());
+			String prefix = DatabaseRegistryEntry.getStableIDPrefixForSpecies(dbre.getSpecies());
 			if (prefix == null || prefix == "") {
-				ReportManager.problem(this, con, "Can't get stable ID prefix for " + dbre.getSpecies().toString() + " - please add to Species.java");
+				ReportManager.problem(this, con, "Can't get stable ID prefix for " + dbre.getSpecies().toString());
 				result = false;
 			} else {
 				if (prefix.equalsIgnoreCase("IGNORE")) {

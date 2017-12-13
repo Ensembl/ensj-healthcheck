@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
@@ -26,7 +25,6 @@ import java.sql.Statement;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -52,7 +50,8 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 	 */
 	public MarkerFeatures() {
 
-		setDescription("Checks that marker_features exist and that they have non-zero map_weights, that marker priorities are sensible and that all chromosomes have some marker features and marker_map_locations");
+		setDescription(
+				"Checks that marker_features exist and that they have non-zero map_weights, that marker priorities are sensible and that all chromosomes have some marker features and marker_map_locations");
 		setTeamResponsible(Team.GENEBUILD);
 
 	}
@@ -84,18 +83,17 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		// only check for human, mouse, rat and zebrafish
-		Species s = dbre.getSpecies();
-		if ((dbre.getType() != DatabaseType.SANGER_VEGA && (s
-				.equals(Species.HOMO_SAPIENS) || s.equals(Species.MUS_MUSCULUS) || s
-					.equals(Species.RATTUS_NORVEGICUS)))
-				|| s.equals(Species.DANIO_RERIO)) { // for
-													// sangervega
-													// only
-													// run
-													// the
-													// test
-													// for
-													// zebrafish
+		String s = dbre.getSpecies();
+		if ((dbre.getType() != DatabaseType.SANGER_VEGA && (s.equals(DatabaseRegistryEntry.HOMO_SAPIENS)
+				|| s.equals(DatabaseRegistryEntry.MUS_MUSCULUS) || s.equals(DatabaseRegistryEntry.RATTUS_NORVEGICUS)))
+				|| s.equals(DatabaseRegistryEntry.DANIO_RERIO)) { // for
+			// sangervega
+			// only
+			// run
+			// the
+			// test
+			// for
+			// zebrafish
 
 			result &= checkFeaturesAndMapWeights(con);
 
@@ -117,28 +115,19 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		int rowCount = DBUtils.getRowCount(con,
-				"SELECT COUNT(*) FROM marker_feature");
+		int rowCount = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM marker_feature");
 
 		if (rowCount == 0) {
-			ReportManager
-					.problem(this, con,
-							"No marker features in database even though markers are present");
+			ReportManager.problem(this, con, "No marker features in database even though markers are present");
 			result = false;
 		}
 
-		int badWeightCount = DBUtils
-				.getRowCount(
-						con,
-						"SELECT marker_id, COUNT(*) AS correct, map_weight FROM marker_feature GROUP BY marker_id HAVING map_weight != correct");
+		int badWeightCount = DBUtils.getRowCount(con,
+				"SELECT marker_id, COUNT(*) AS correct, map_weight FROM marker_feature GROUP BY marker_id HAVING map_weight != correct");
 
 		if (badWeightCount > 0) {
-			ReportManager
-					.problem(
-							this,
-							con,
-							badWeightCount
-									+ " marker features have not been assigned correct map weights");
+			ReportManager.problem(this, con,
+					badWeightCount + " marker features have not been assigned correct map weights");
 			result = false;
 		}
 
@@ -152,8 +141,7 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 
 	// ----------------------------------------------------------------------
 	/**
-	 * Check that all chromomes have > 0 markers_map_locations and
-	 * marker_features.
+	 * Check that all chromomes have > 0 markers_map_locations and marker_features.
 	 */
 	private boolean checkAllChromosomesHaveMarkers(Connection con) {
 
@@ -174,8 +162,7 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 
 		if (s.length() == 0) {
 			System.err
-					.println("Error: can't get top-level co-ordinate system for "
-							+ DBUtils.getShortDatabaseName(con));
+					.println("Error: can't get top-level co-ordinate system for " + DBUtils.getShortDatabaseName(con));
 			return false;
 		}
 
@@ -187,10 +174,8 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 			// marker_map_locations and marker features there are
 			Statement stmt = con.createStatement();
 
-			ResultSet rs = stmt
-					.executeQuery("SELECT * FROM seq_region WHERE coord_system_id="
-							+ topLevelCSID
-							+ " AND name NOT LIKE '%\\_%' AND name NOT LIKE '%.%' AND name NOT LIKE 'Un%' AND name NOT LIKE 'MT%' AND LENGTH(name) < 3 ORDER BY name");
+			ResultSet rs = stmt.executeQuery("SELECT * FROM seq_region WHERE coord_system_id=" + topLevelCSID
+					+ " AND name NOT LIKE '%\\_%' AND name NOT LIKE '%.%' AND name NOT LIKE 'Un%' AND name NOT LIKE 'MT%' AND LENGTH(name) < 3 ORDER BY name");
 
 			int numTopLevel = 0;
 
@@ -200,45 +185,37 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 				String seqRegionName = rs.getString("name");
 
 				// check marker_map_locations
-				logger.fine("Counting marker_map_locations on chromosome "
-						+ seqRegionName);
+				logger.fine("Counting marker_map_locations on chromosome " + seqRegionName);
 
-				sql = "SELECT COUNT(*) FROM marker_map_location WHERE chromosome_name='"
-						+ seqRegionName + "'";
+				sql = "SELECT COUNT(*) FROM marker_map_location WHERE chromosome_name='" + seqRegionName + "'";
 				int rows = DBUtils.getRowCount(con, sql);
 				if (rows == 0) {
 
-					ReportManager.problem(this, con, "Chromosome "
-							+ seqRegionName + " (seq_region_id " + seqRegionID
+					ReportManager.problem(this, con, "Chromosome " + seqRegionName + " (seq_region_id " + seqRegionID
 							+ ") has no entries in marker_map_location");
 					result = false;
 
 				} else {
 
-					ReportManager.correct(this, con, "Chromosome "
-							+ seqRegionName + " has " + rows
-							+ " marker_map_locations");
+					ReportManager.correct(this, con,
+							"Chromosome " + seqRegionName + " has " + rows + " marker_map_locations");
 
 				}
 
 				// check marker_features
-				logger.fine("Counting marker_features on chromosome "
-						+ seqRegionName);
-				sql = "SELECT COUNT(*) FROM marker_feature WHERE seq_region_id="
-						+ seqRegionID;
+				logger.fine("Counting marker_features on chromosome " + seqRegionName);
+				sql = "SELECT COUNT(*) FROM marker_feature WHERE seq_region_id=" + seqRegionID;
 				rows = DBUtils.getRowCount(con, sql);
 				if (rows == 0) {
 
-					ReportManager.problem(this, con, "Chromosome "
-							+ seqRegionName + " (seq_region_id " + seqRegionID
+					ReportManager.problem(this, con, "Chromosome " + seqRegionName + " (seq_region_id " + seqRegionID
 							+ ") has no marker_features");
 					result = false;
 
 				} else {
 
-					ReportManager.correct(this, con, "Chromosome "
-							+ seqRegionName + " has " + rows
-							+ " marker_features");
+					ReportManager.correct(this, con,
+							"Chromosome " + seqRegionName + " has " + rows + " marker_features");
 
 				}
 
@@ -248,8 +225,7 @@ public class MarkerFeatures extends SingleDatabaseTestCase {
 			stmt.close();
 
 			if (numTopLevel == MAX_TOP_LEVEL) {
-				logger.warning("Only checked first " + numTopLevel
-						+ " seq_regions");
+				logger.warning("Only checked first " + numTopLevel + " seq_regions");
 			}
 
 		} catch (SQLException se) {

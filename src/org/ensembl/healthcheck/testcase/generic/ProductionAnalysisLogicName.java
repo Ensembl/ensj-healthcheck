@@ -26,38 +26,37 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.SqlTemplate;
 
 public class ProductionAnalysisLogicName extends AbstractTemplatedTestCase {
-  
-  public ProductionAnalysisLogicName() {
-    addToGroup("production");
-    addToGroup("pre-compara-handover");
-    addToGroup("post-compara-handover");
-    addToGroup("post-projection");
-    
-    setDescription("Check that the content of the analysis logic names in the core databases are subsets of production");
-    setPriority(Priority.AMBER);
-    setEffect("Discrepancies between tables can cause problems");
-    setFix("Resync tables");
-    setTeamResponsible(Team.GENEBUILD);
-    setSecondTeamResponsible(Team.RELEASE_COORDINATOR);
-  }
 
-  public void types() {
-    removeAppliesToType(DatabaseType.SANGER_VEGA);
-    removeAppliesToType(DatabaseType.VEGA);
-  }
-  
-  @Override
+	public ProductionAnalysisLogicName() {
+		addToGroup("production");
+		addToGroup("pre-compara-handover");
+		addToGroup("post-compara-handover");
+		addToGroup("post-projection");
+
+		setDescription(
+				"Check that the content of the analysis logic names in the core databases are subsets of production");
+		setPriority(Priority.AMBER);
+		setEffect("Discrepancies between tables can cause problems");
+		setFix("Resync tables");
+		setTeamResponsible(Team.GENEBUILD);
+		setSecondTeamResponsible(Team.RELEASE_COORDINATOR);
+	}
+
+	public void types() {
+		removeAppliesToType(DatabaseType.SANGER_VEGA);
+		removeAppliesToType(DatabaseType.VEGA);
+	}
+
+	@Override
   protected boolean runTest(DatabaseRegistryEntry dbre) {
     boolean result = true;
-    Species dbSpecies = dbre.getSpecies();
-    String species = dbSpecies.toString();
+    String species = dbre.getSpecies();
     if (species == null || species.equalsIgnoreCase("unknown")) {
       species = dbre.getAlias();
     }    
@@ -76,66 +75,70 @@ public class ProductionAnalysisLogicName extends AbstractTemplatedTestCase {
     }
     return result;
   }
-  
-  /**
-   * Minuses the elements in the second collection from the first. Anything
-   * remaining in the first collection cannot exist in the second set 
-   */
-  private <T extends CharSequence> boolean testForIdentity(DatabaseRegistryEntry dbre, Collection<T> core, Collection<T> toRemove, String type) {
-    Set<T> missing = new HashSet<T>(core);
-    missing.removeAll(toRemove);
-    if(missing.isEmpty()) {
-      return true;
-    }
-    for(CharSequence name: missing) {
-      String msg = String.format("The logic name '%s' is missing from %s", name, type);
-      ReportManager.problem(this, dbre.getConnection(), msg);
-    }
-    return false;
-  }
 
-  private <T extends CharSequence> boolean checkHasDbVersion(DatabaseRegistryEntry dbre, Collection<T> core, Collection<T> production, String type) {
-    Set<T> missing = new HashSet<T>(core);
-    missing.removeAll(production);
-    if(missing.isEmpty()) {
-      return true;
-    }
-    for(CharSequence name: missing) {
-      String msg = String.format("Analysis '%s' in %s db should have a dbversion", name, type);
-      ReportManager.problem(this, dbre.getConnection(), msg);
-    }
-    return false;
-  }
-  
-  private Set<String> getLogicNamesDb(DatabaseRegistryEntry dbre) {
-    SqlTemplate t = DBUtils.getSqlTemplate(dbre);
-    String sql = "select logic_name from analysis join analysis_description using (analysis_id)";
-    List<String> results = t.queryForDefaultObjectList(sql, String.class);
-    return new HashSet<String>(results);
-  }
-  
-  private Set<String> getLogicNamesFromProduction(DatabaseRegistryEntry dbre, String species, String databaseType) {
-    SqlTemplate t = DBUtils.getSqlTemplate(getProductionDatabase());
-    String sql = "select logic_name from analysis_description ad, species s, analysis_web_data aw where ad.analysis_description_id = aw.analysis_description_id and aw.species_id = s.species_id and s.db_name = '" + species + "' and aw.db_type = '" + databaseType + "' and s.is_current = 1 and ad.is_current = 1";
-    List<String> results = t.queryForDefaultObjectList(sql, String.class);
-    return new HashSet<String>(results);
-  }
+	/**
+	 * Minuses the elements in the second collection from the first. Anything
+	 * remaining in the first collection cannot exist in the second set
+	 */
+	private <T extends CharSequence> boolean testForIdentity(DatabaseRegistryEntry dbre, Collection<T> core,
+			Collection<T> toRemove, String type) {
+		Set<T> missing = new HashSet<T>(core);
+		missing.removeAll(toRemove);
+		if (missing.isEmpty()) {
+			return true;
+		}
+		for (CharSequence name : missing) {
+			String msg = String.format("The logic name '%s' is missing from %s", name, type);
+			ReportManager.problem(this, dbre.getConnection(), msg);
+		}
+		return false;
+	}
 
-  private Set<String> getDbVersionCore(DatabaseRegistryEntry dbre) {
-    SqlTemplate t = DBUtils.getSqlTemplate(dbre);
-    String sql = "SELECT logic_name FROM analysis where !isnull(db_version)";
-    List<String> results = t.queryForDefaultObjectList(sql, String.class);
-    return new HashSet<String>(results);
-  }
+	private <T extends CharSequence> boolean checkHasDbVersion(DatabaseRegistryEntry dbre, Collection<T> core,
+			Collection<T> production, String type) {
+		Set<T> missing = new HashSet<T>(core);
+		missing.removeAll(production);
+		if (missing.isEmpty()) {
+			return true;
+		}
+		for (CharSequence name : missing) {
+			String msg = String.format("Analysis '%s' in %s db should have a dbversion", name, type);
+			ReportManager.problem(this, dbre.getConnection(), msg);
+		}
+		return false;
+	}
 
-  private Set<String> getDbVersionProduction(DatabaseRegistryEntry dbre, Set<String> analysisList) {
-    SqlTemplate t = DBUtils.getSqlTemplate(getProductionDatabase());
-    Set<String> results = new HashSet<String>();
-    for (String analysis : analysisList) {
-      String sql = "SELECT logic_name FROM analysis_description where logic_name = '" + analysis + "' and db_version = 1";
-      results.addAll(t.queryForDefaultObjectList(sql, String.class));
-    }
-    return results;
-  }
+	private Set<String> getLogicNamesDb(DatabaseRegistryEntry dbre) {
+		SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+		String sql = "select logic_name from analysis join analysis_description using (analysis_id)";
+		List<String> results = t.queryForDefaultObjectList(sql, String.class);
+		return new HashSet<String>(results);
+	}
+
+	private Set<String> getLogicNamesFromProduction(DatabaseRegistryEntry dbre, String species, String databaseType) {
+		SqlTemplate t = DBUtils.getSqlTemplate(getProductionDatabase());
+		String sql = "select logic_name from analysis_description ad, species s, analysis_web_data aw where ad.analysis_description_id = aw.analysis_description_id and aw.species_id = s.species_id and s.db_name = '"
+				+ species + "' and aw.db_type = '" + databaseType + "' and s.is_current = 1 and ad.is_current = 1";
+		List<String> results = t.queryForDefaultObjectList(sql, String.class);
+		return new HashSet<String>(results);
+	}
+
+	private Set<String> getDbVersionCore(DatabaseRegistryEntry dbre) {
+		SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+		String sql = "SELECT logic_name FROM analysis where !isnull(db_version)";
+		List<String> results = t.queryForDefaultObjectList(sql, String.class);
+		return new HashSet<String>(results);
+	}
+
+	private Set<String> getDbVersionProduction(DatabaseRegistryEntry dbre, Set<String> analysisList) {
+		SqlTemplate t = DBUtils.getSqlTemplate(getProductionDatabase());
+		Set<String> results = new HashSet<String>();
+		for (String analysis : analysisList) {
+			String sql = "SELECT logic_name FROM analysis_description where logic_name = '" + analysis
+					+ "' and db_version = 1";
+			results.addAll(t.queryForDefaultObjectList(sql, String.class));
+		}
+		return results;
+	}
 
 }

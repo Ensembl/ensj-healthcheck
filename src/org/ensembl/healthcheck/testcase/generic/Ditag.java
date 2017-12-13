@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
@@ -26,7 +25,6 @@ import java.sql.Statement;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -45,7 +43,8 @@ public class Ditag extends SingleDatabaseTestCase {
 	 */
 	public Ditag() {
 
-		setDescription("Checks that ditag_features exist, that they all have a ditag entry and that all chromosomes have some ditag_features");
+		setDescription(
+				"Checks that ditag_features exist, that they all have a ditag entry and that all chromosomes have some ditag_features");
 		setTeamResponsible(Team.GENEBUILD);
 
 	}
@@ -68,7 +67,7 @@ public class Ditag extends SingleDatabaseTestCase {
 	 * Test various things about ditag features.
 	 * 
 	 * @param dbre
-	 *          The database to use.
+	 *            The database to use.
 	 * @return Result.
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
@@ -78,15 +77,15 @@ public class Ditag extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		// only check for human, mouse
-		Species s = dbre.getSpecies();
-		if (s.equals(Species.HOMO_SAPIENS) || s.equals(Species.MUS_MUSCULUS) || s.equals(Species.ORYZIAS_LATIPES)) {
+		String s = dbre.getSpecies();
+		if (s.equals(DatabaseRegistryEntry.HOMO_SAPIENS) || s.equals(DatabaseRegistryEntry.MUS_MUSCULUS) || s.equals(DatabaseRegistryEntry.ORYZIAS_LATIPES)) {
 
 			result &= checkExistance(con);
 
 			// If there are no ditag records, don't make a lot of noise
 			// saying they're missing for each chromosome
-			if(!result) {
-			    return false;
+			if (!result) {
+				return false;
 			}
 
 			result &= checkDitagRelation(con);
@@ -138,14 +137,16 @@ public class Ditag extends SingleDatabaseTestCase {
 
 	// ----------------------------------------------------------------------
 	/**
-	 * Check that all ditag_features have a ditag entry and that there are not more ditag mappings than allowed.
+	 * Check that all ditag_features have a ditag entry and that there are not more
+	 * ditag mappings than allowed.
 	 */
 
 	private boolean checkDitagRelation(Connection con) {
 
 		boolean result = true;
 
-		int count = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM ditag_feature df LEFT JOIN ditag d ON d.ditag_id=df.ditag_id WHERE d.ditag_id IS NULL");
+		int count = DBUtils.getRowCount(con,
+				"SELECT COUNT(*) FROM ditag_feature df LEFT JOIN ditag d ON d.ditag_id=df.ditag_id WHERE d.ditag_id IS NULL");
 
 		if (count > 0) {
 
@@ -183,7 +184,8 @@ public class Ditag extends SingleDatabaseTestCase {
 		String s = DBUtils.getRowColumnValue(con, sql);
 
 		if (s.length() == 0) {
-			System.err.println("Error: can't get top-level co-ordinate system for " + DBUtils.getShortDatabaseName(con));
+			System.err
+					.println("Error: can't get top-level co-ordinate system for " + DBUtils.getShortDatabaseName(con));
 			return false;
 		}
 
@@ -211,12 +213,14 @@ public class Ditag extends SingleDatabaseTestCase {
 				int rows = DBUtils.getRowCount(con, sql);
 				if (rows == 0) {
 
-					ReportManager.problem(this, con, "Chromosome " + seqRegionName + " (seq_region_id " + seqRegionID + ") has no ditag_features");
+					ReportManager.problem(this, con, "Chromosome " + seqRegionName + " (seq_region_id " + seqRegionID
+							+ ") has no ditag_features");
 					result = false;
 
 				} else {
 
-					ReportManager.correct(this, con, "Chromosome " + seqRegionName + " has " + rows + " ditag_features");
+					ReportManager.correct(this, con,
+							"Chromosome " + seqRegionName + " has " + rows + " ditag_features");
 
 				}
 
@@ -239,7 +243,8 @@ public class Ditag extends SingleDatabaseTestCase {
 
 	// ----------------------------------------------------------------------
 	/**
-	 * Check that all ditags (that are not CAGE tags) have start AND end tags mapped.
+	 * Check that all ditags (that are not CAGE tags) have start AND end tags
+	 * mapped.
 	 */
 
 	private boolean checkForSingles(Connection con) {
@@ -267,7 +272,8 @@ public class Ditag extends SingleDatabaseTestCase {
 			}
 
 			// Check for ditag_ids that occur only once, ignore CAGE tags ("F")
-			String sql = "SELECT COUNT(*) AS singles FROM (select count(*) as count from ditag_feature df where analysis_id IN(" + analysis_ids
+			String sql = "SELECT COUNT(*) AS singles FROM (select count(*) as count from ditag_feature df where analysis_id IN("
+					+ analysis_ids
 					+ ") and df.ditag_side!='F' group by ditag_id, ditag_pair_id having count=1) as counter LIMIT 5;";
 
 			int count = 0;
@@ -294,7 +300,8 @@ public class Ditag extends SingleDatabaseTestCase {
 
 	// ----------------------------------------------------------------------
 	/**
-	 * Check that no ditags have more than 2 ditag_features with the same ditag_id & ditag_pair_id
+	 * Check that no ditags have more than 2 ditag_features with the same ditag_id &
+	 * ditag_pair_id
 	 */
 
 	private boolean checkForMultis(Connection con) {
@@ -322,7 +329,8 @@ public class Ditag extends SingleDatabaseTestCase {
 			}
 
 			// Check for ditag_ids that occur only once, ignore CAGE tags ("F")
-			String sql = "SELECT COUNT(*) AS multis FROM (select count(*) as count from ditag_feature df where analysis_id IN(" + analysis_ids
+			String sql = "SELECT COUNT(*) AS multis FROM (select count(*) as count from ditag_feature df where analysis_id IN("
+					+ analysis_ids
 					+ ") and df.ditag_side!='F' group by ditag_id, ditag_pair_id having count>2 LIMIT 1) as counter;";
 
 			int count = 0;
@@ -332,7 +340,8 @@ public class Ditag extends SingleDatabaseTestCase {
 
 			if (count > 0) {
 
-				ReportManager.problem(this, con, " There are ditag_features with more than two features " + "in same (ditag_id/ditag_pair_id) group!.\n" + sql);
+				ReportManager.problem(this, con, " There are ditag_features with more than two features "
+						+ "in same (ditag_id/ditag_pair_id) group!.\n" + sql);
 				result = false;
 
 			} else {

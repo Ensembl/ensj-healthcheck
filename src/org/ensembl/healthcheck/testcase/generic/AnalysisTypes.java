@@ -15,21 +15,16 @@
  * limitations under the License.
  */
 
-
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
 
-import org.apache.commons.collections.ListUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
@@ -67,22 +62,18 @@ public class AnalysisTypes extends SingleDatabaseTestCase {
 
 	}
 
-	/** 
+	/**
 	 * Run the test.
 	 * 
 	 * @param dbre
-	 *          The database registry containing all the specified databases.
+	 *            The database registry containing all the specified databases.
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 
-		// only applies to human, mouse and zebrafish at the moment
-		Species species = dbre.getSpecies();
-                boolean is_merged = isMerged(species);
-
-		if (!is_merged) {
-
+		if (!dbre.getSpecies().equals(DatabaseRegistryEntry.HOMO_SAPIENS)
+				&& !dbre.getSpecies().equals(DatabaseRegistryEntry.MUS_MUSCULUS)
+				&& !dbre.getSpecies().equals(DatabaseRegistryEntry.DANIO_RERIO)) {
 			return true;
-
 		}
 
 		boolean result = true;
@@ -95,12 +86,11 @@ public class AnalysisTypes extends SingleDatabaseTestCase {
 		String[] seqRegionNames = DBUtils.getColumnValues(con,
 				"SELECT s.name FROM seq_region s, seq_region_attrib sa, attrib_type at WHERE s.seq_region_id = sa.seq_region_id AND sa.attrib_type_id = at.attrib_type_id AND code = 'karyotype_rank' AND s.name NOT LIKE 'MT'");
 
-
 		// loop over each seq region, check that each logic name is represented
 		try {
 
-			PreparedStatement stmt = con
-					.prepareStatement("SELECT COUNT(*) FROM gene g, seq_region sr, analysis a WHERE a.analysis_id=g.analysis_id AND g.seq_region_id=sr.seq_region_id AND sr.name=? AND a.logic_name=?");
+			PreparedStatement stmt = con.prepareStatement(
+					"SELECT COUNT(*) FROM gene g, seq_region sr, analysis a WHERE a.analysis_id=g.analysis_id AND g.seq_region_id=sr.seq_region_id AND sr.name=? AND a.logic_name=?");
 
 			for (String seqRegion : seqRegionNames) {
 
@@ -117,7 +107,8 @@ public class AnalysisTypes extends SingleDatabaseTestCase {
 					if (rows == 0) {
 
 						result = false;
-						ReportManager.problem(this, con, String.format("Chromosome %s has no genes with logic name %s", seqRegion, logicName));
+						ReportManager.problem(this, con,
+								String.format("Chromosome %s has no genes with logic name %s", seqRegion, logicName));
 
 					}
 
@@ -143,4 +134,3 @@ public class AnalysisTypes extends SingleDatabaseTestCase {
 	// --------------------------------------------------------------------------
 
 } // AnalysisTypes
-

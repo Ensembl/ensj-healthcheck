@@ -32,17 +32,11 @@ package org.ensembl.healthcheck.testcase.variation;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Properties;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 
@@ -109,9 +103,9 @@ public class CompressedGenotypeRegion extends SingleDatabaseTestCase {
     
     boolean result = true;
     
-    Species species = dbre.getSpecies();
+    String species = dbre.getSpecies();
     
-    if (species == Species.HOMO_SAPIENS) {  
+		if (species.equals(DatabaseRegistryEntry.HOMO_SAPIENS)) {  
       
       Connection con = dbre.getConnection();
       Properties sqlQueries = getSQLQueries();

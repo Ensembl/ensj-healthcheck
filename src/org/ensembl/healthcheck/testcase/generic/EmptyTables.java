@@ -43,7 +43,6 @@ import java.util.Arrays;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -61,7 +60,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
     private Set<String> idMappingTables, densityTables, markerTables,
         miscTables, karyotypeTables, ditagDataTables;
     // list of species which contain data for the above tables
-    private Set<Species> idMappingSpecies, densitySpecies, markerSpecies,
+    private Set<String> idMappingSpecies, densitySpecies, markerSpecies,
         miscSpecies, karyotypeSpecies, ditagDataSpecies;
     // a map of database types to a list of tables which are
     // allowed to be empty for that particular db type
@@ -89,7 +88,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
      */
     private Set<String> getTablesToCheck(final DatabaseRegistryEntry dbre) {
 
-        Species species = dbre.getSpecies();
+    	String species = dbre.getSpecies();
         DatabaseType type = dbre.getType();
         boolean karyotype = karyotypeExists(dbre);
 
@@ -99,7 +98,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
 
         // the list of tables to check for ancestral sequences is 
         // already set by method getTableNames
-        if(species == Species.ANCESTRAL_SEQUENCES) {
+        if(species.equals(DatabaseRegistryEntry.ANCESTRAL_SEQUENCES)) {
             return tables; 
         }
 
@@ -135,7 +134,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
         }
 
         // ad-hoc adjustment for zebrafish in VEGA
-        if (type == DatabaseType.VEGA && species == Species.DANIO_RERIO) {
+        if (type == DatabaseType.VEGA && species.equals(DatabaseRegistryEntry.DANIO_RERIO)) {
             tables.remove("ontology_xref");
         }
 
@@ -197,9 +196,9 @@ public class EmptyTables extends SingleDatabaseTestCase {
     private Set<String> getTableNames(
         final DatabaseRegistryEntry dbre,
         final DatabaseType type,
-        final Species species) {
+        final String species) {
     
-        if (species == Species.ANCESTRAL_SEQUENCES) {
+        if (species.equals(DatabaseRegistryEntry.ANCESTRAL_SEQUENCES)) {
             // Only a few tables need to be filled in ancestral databases
             return CollectionUtils.createLinkedHashSet(
                 "meta", "coord_system", "dna", "seq_region");
@@ -263,13 +262,13 @@ public class EmptyTables extends SingleDatabaseTestCase {
             "stable_id_event");
         
         // ID mapping related tables are checked in a separate test case
-        idMappingSpecies = new HashSet<Species>();
+        idMappingSpecies = new HashSet<String>();
 
         // density tables and species
         densityTables = CollectionUtils.createLinkedHashSet( "density_feature", "density_type");
         
         // all species should have density mapping data (provided they have karyotype)
-        densitySpecies = new HashSet<Species>();
+        densitySpecies = new HashSet<String>();
 
         // marker tables and species
         markerTables = CollectionUtils.createLinkedHashSet(
@@ -281,15 +280,15 @@ public class EmptyTables extends SingleDatabaseTestCase {
 
         markerSpecies =
             CollectionUtils.createLinkedHashSet(
-                Species.HOMO_SAPIENS,
-                Species.MUS_MUSCULUS,
-                Species.RATTUS_NORVEGICUS,
-                Species.DANIO_RERIO,
-                Species.BOS_TAURUS,
-                Species.CANIS_FAMILIARIS,
-                Species.GALLUS_GALLUS,
-                Species.MACACA_MULATTA,
-                Species.SUS_SCROFA);
+                DatabaseRegistryEntry.HOMO_SAPIENS,
+                DatabaseRegistryEntry.MUS_MUSCULUS,
+                DatabaseRegistryEntry.RATTUS_NORVEGICUS,
+                DatabaseRegistryEntry.DANIO_RERIO,
+                DatabaseRegistryEntry.BOS_TAURUS,
+                DatabaseRegistryEntry.CANIS_FAMILIARIS,
+                DatabaseRegistryEntry.GALLUS_GALLUS,
+                DatabaseRegistryEntry.MACACA_MULATTA,
+                DatabaseRegistryEntry.SUS_SCROFA);
 
         // misc tables and species
         miscTables = CollectionUtils.createLinkedHashSet(
@@ -299,25 +298,25 @@ public class EmptyTables extends SingleDatabaseTestCase {
             "misc_attrib");
 
         miscSpecies = CollectionUtils.createLinkedHashSet(
-            Species.HOMO_SAPIENS,
-            Species.DANIO_RERIO);
+        		DatabaseRegistryEntry.HOMO_SAPIENS,
+        		DatabaseRegistryEntry.DANIO_RERIO);
         
         // karyotype banding tables and species
         // only certain species have a karyotype banding
         karyotypeTables = CollectionUtils.createLinkedHashSet("karyotype");
         karyotypeSpecies = CollectionUtils.createLinkedHashSet(
-            Species.DROSOPHILA_MELANOGASTER,
-            Species.HOMO_SAPIENS,
-            Species.MUS_MUSCULUS,
-            Species.RATTUS_NORVEGICUS);
+        		DatabaseRegistryEntry.DROSOPHILA_MELANOGASTER,
+            DatabaseRegistryEntry.HOMO_SAPIENS,
+            DatabaseRegistryEntry.MUS_MUSCULUS,
+            DatabaseRegistryEntry.RATTUS_NORVEGICUS);
 
         // ditag data tables and species
         // only human, mouse and medaka currently have ditag data
         ditagDataTables = CollectionUtils.createLinkedHashSet("ditag", "ditag_feature");
         ditagDataSpecies = CollectionUtils.createLinkedHashSet(
-            Species.HOMO_SAPIENS,
-            Species.MUS_MUSCULUS,
-            Species.ORYZIAS_LATIPES);
+        		DatabaseRegistryEntry.HOMO_SAPIENS,
+        		DatabaseRegistryEntry.MUS_MUSCULUS,
+        		DatabaseRegistryEntry.ORYZIAS_LATIPES);
 
         // init map of database types to a list of tables which are 
         // allowed to be empty for that particular db type

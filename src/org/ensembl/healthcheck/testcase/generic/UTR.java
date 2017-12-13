@@ -30,99 +30,79 @@
 
 package org.ensembl.healthcheck.testcase.generic;
 
-
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.text.DecimalFormat;
 
-
-import org.ensembl.healthcheck.AssemblyNameInfo;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
-import org.ensembl.healthcheck.util.SqlTemplate;
-import org.ensembl.healthcheck.util.Utils;
-
 
 /**
- * Checks that changes between releases (assembly, repeatmasking or gene set) have been declared. 
+ * Checks that changes between releases (assembly, repeatmasking or gene set)
+ * have been declared.
  */
-
 
 public class UTR extends SingleDatabaseTestCase {
 
-        public UTR() {
+	public UTR() {
 
-                setTeamResponsible(Team.GENEBUILD);
-                setDescription("Check that coding transcripts have UTR attached");
-        }
+		setTeamResponsible(Team.GENEBUILD);
+		setDescription("Check that coding transcripts have UTR attached");
+	}
 
-        /**
-         * This test applies only to core dbs
-         */
-        public void types() {
-                removeAppliesToType(DatabaseType.SANGER_VEGA);
-                removeAppliesToType(DatabaseType.VEGA);
-                removeAppliesToType(DatabaseType.CDNA);
-                removeAppliesToType(DatabaseType.OTHERFEATURES);
-                removeAppliesToType(DatabaseType.RNASEQ);
-        }
+	/**
+	 * This test applies only to core dbs
+	 */
+	public void types() {
+		removeAppliesToType(DatabaseType.SANGER_VEGA);
+		removeAppliesToType(DatabaseType.VEGA);
+		removeAppliesToType(DatabaseType.CDNA);
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.RNASEQ);
+	}
 
+	/**
+	 * Look for UTRs
+	 * 
+	 * @param dbre
+	 *            The database to check.
+	 * @return True if the test passed.
+	 */
 
-        /**
-         * Look for UTRs
-         * 
-         * @param dbre
-         *          The database to check.
-         * @return True if the test passed.
-         */
+	public boolean run(final DatabaseRegistryEntry dbre) {
 
-        public boolean run(final DatabaseRegistryEntry dbre) {
+		boolean result = true;
 
-                boolean result = true;
+		Connection con = dbre.getConnection();
 
-                Connection con = dbre.getConnection();
+		result &= countUTR(dbre);
 
-                result &= countUTR(dbre);
+		return result;
+	}
 
-                return result;
-        }
+	private boolean countUTR(DatabaseRegistryEntry dbre) {
 
-  private boolean countUTR(DatabaseRegistryEntry dbre) {
+		boolean result = true;
 
-    boolean result = true;
+		Connection con = dbre.getConnection();
+		DecimalFormat twoDForm = new DecimalFormat("#.##");
 
-    Connection con = dbre.getConnection();
-    DecimalFormat twoDForm = new DecimalFormat("#.##");
+		String utr_sql = "SELECT count(distinct(gene_id)) FROM exon e, exon_transcript et, transcript t WHERE e.exon_id=et.exon_id AND et.transcript_id=t.transcript_id AND t.biotype = 'protein_coding' AND phase = -1";
+		int utrTranscript = DBUtils.getRowCount(con, utr_sql);
+		String coding_sql = "SELECT count(distinct(gene_id)) FROM transcript WHERE biotype = 'protein_coding'";
+		int codingTranscript = DBUtils.getRowCount(con, coding_sql);
 
-    String utr_sql = "SELECT count(distinct(gene_id)) FROM exon e, exon_transcript et, transcript t WHERE e.exon_id=et.exon_id AND et.transcript_id=t.transcript_id AND t.biotype = 'protein_coding' AND phase = -1";
-    int utrTranscript = DBUtils.getRowCount(con, utr_sql);
-    String coding_sql = "SELECT count(distinct(gene_id)) FROM transcript WHERE biotype = 'protein_coding'";
-    int codingTranscript = DBUtils.getRowCount(con, coding_sql);
+		double percentage = (((double) utrTranscript / (double) codingTranscript) * 100);
+		float comp = Float.valueOf(twoDForm.format(percentage));
 
-    double percentage = (( (double) utrTranscript / (double) codingTranscript) * 100);
-    float comp = Float.valueOf(twoDForm.format(percentage));
+		if (comp < 50) {
+			ReportManager.info(this, con, "Only " + comp + " % coding transcripts have UTRs");
+		}
 
-    if (comp < 50) {
-      ReportManager.info(this, con, "Only " + comp + " % coding transcripts have UTRs");
-    }
-
-    return result;
-  }
+		return result;
+	}
 
 }
-
-
-
-
-

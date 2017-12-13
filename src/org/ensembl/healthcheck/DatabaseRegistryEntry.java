@@ -1,13 +1,13 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
  * Copyright [2016-2017] EMBL-European Bioinformatics Institute
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,13 +17,13 @@
 
 /*
  * Copyright (C) 2003 EBI, GRL
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation,
  * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
@@ -55,33 +55,93 @@ import org.ensembl.healthcheck.util.UtilUncheckedException;
  */
 public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> {
 
+	
+	public final static String UNKNOWN = "unknown";
+	public final static String ANCESTRAL_SEQUENCES = "ancestral";
+	@Deprecated
+	public final static String HOMO_SAPIENS = "homo_sapiens";
+	@Deprecated
+	public static final String PAN_TROGLODYTES = "pan_troglodytes";
+	@Deprecated
+	public static final String MUS_MUSCULUS = "mus_musculus";
+	@Deprecated
+	public static final String EQUUS_CABALLUS = "equus_caballus";
+	@Deprecated
+	public static final String BOS_TAURUS = "bos_taurus";
+	@Deprecated
+	public static final String PONGO_ABELII = "pongo_abelii";
+	@Deprecated
+	public static final String ORNITHORHYNCHUS_ANATINUS = "ornithorhynchus_anatinus";
+	@Deprecated
+	public static final String TETRAODON_NIGROVIRIDIS = "tetraodon_nigroviridis";
+	@Deprecated
+	public static final String MACACA_MULATTA = "macaca_mulatta";
+	@Deprecated
+	public static final String DANIO_RERIO = "danio_rerio";
+	@Deprecated
+	public static final String OVIS_ARIES = "ovis_aries";
+	@Deprecated
+	public static final String ANOPHELES_GAMBIAE = "anopheles_gambiae";
+	@Deprecated
+	public static final String RATTUS_NORVEGICUS = "rattus_norvegicus";
+	@Deprecated
+	public static final String GALLUS_GALLUS = "gallus_gallus";
+	@Deprecated
+	public static final String CANIS_FAMILIARIS = "canis_familiaris";
+	@Deprecated
+	public static final String SUS_SCROFA = "sus_scrofa";
+	@Deprecated
+	public static final String DROSOPHILA_MELANOGASTER = "drosophila_melangaster";
+	@Deprecated
+	public static final String ORYZIAS_LATIPES = "oryzias_latipes";
+	@Deprecated
+	public static final String CAENORHABDITIS_ELEGANS = "caenorhabditis_elegans";
+	@Deprecated
+	public static final String SACCHAROMYCES_CEREVISIAE = "saccharomyces_cerevisae";
+	@Deprecated
+	public static final String CIONA_INTESTINALIS = "ciona_intestinalis";
+	@Deprecated
+	public static final String CIONA_SAVIGNYI = "ciona_savignyi";
+
 	private static final String COLLECTION_CLAUSE = "_collection";
+	private static Pattern p = Pattern.compile("([a-z])[a-z]+_([a-z][a-z]).+");
+
+	public static String getStableIDPrefixForSpecies(String species) {
+		Matcher  m = p.matcher(species);
+		if(m.matches())  {
+			return "ENS"+m.group(1).toUpperCase()+m.group(2).toUpperCase();
+		} else {
+			return null;
+		}
+
+	}
+
 
 	/**
 	 * Simple read-only bean to store pertinent information about a database.
 	 * Objects of this type are held by the {@link DatabaseRegistryEntry} and
 	 * attached to {@link ReportLine} objects to improve reporting
-	 * 
+	 *
 	 * @author dstaines
 	 */
 	public static class DatabaseInfo {
 
 		private final String name;
 		private final String alias;
-		private final Species species;
+		private final String species;
 		private final DatabaseType type;
 		private final String schemaVersion;
 		private final String genebuildVersion;
 
 		/**
 		 * Constructor to set up key properties of {@link DatabaseInfo}
-		 * 
+		 *
 		 * @param name
 		 * @param species
 		 * @param type
 		 * @param schemaVersion
 		 */
-		public DatabaseInfo(String name, String alias, Species species,
+		public DatabaseInfo(String name, String alias, String species,
 				DatabaseType type, String schemaVersion, String genebuildVersion) {
 			this.name = name;
 			this.alias = alias;
@@ -99,7 +159,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 			return alias;
 		}
 
-		public Species getSpecies() {
+		public String getSpecies() {
 			return species;
 		}
 
@@ -183,10 +243,9 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	protected final static Pattern[] patterns = { EC_DB, UA_DB, UC_DB, UCM_DB,
 			EA_DB, EGC_DB, EG_DB, E_DB, PE_DB, EM_DB, EE_DB, EEL_DB, U_DB,
 			V_DB, MYSQL_DB, BLAST_DB, UD_DB, TAX_DB, EW_DB, HELP_DB, GB_DB, MASTER_DB };
-
 	/**
 	 * Utility for building a {@link DatabaseInfo} object given a name
-	 * 
+	 *
 	 * @param name
 	 * @return object containing information about a database
 	 */
@@ -199,7 +258,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	 * Returns information about a database. Queries the meta table to determine
 	 * the type and schema version of the database.
 	 * </p>
-	 * 
+	 *
 	 * @param server
 	 * @param name
 	 * @return DatabaseInfo
@@ -260,7 +319,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 										return new DatabaseInfo(
 												name,
 												null,
-												Species.UNKNOWN,
+												UNKNOWN,
 												DatabaseType
 														.resolveAlias(schemaType),
 												schemaVersion, null);
@@ -278,7 +337,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 				//
 				return null;
 			} finally {
-				
+
 			}
 		}
 		return info;
@@ -287,7 +346,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	/**
 	 * Utility for building a {@link DatabaseInfo} object given a name plus
 	 * optional {@link Species} and {@link DatabaseType} to use explicitly
-	 * 
+	 *
 	 * @param name
 	 * @param species
 	 *            (optional)
@@ -295,7 +354,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	 *            (optional)
 	 * @return object containing information about a database
 	 */
-	public static DatabaseInfo getInfoFromName(String name, Species species,
+	public static DatabaseInfo getInfoFromName(String name, String species,
 			DatabaseType type) {
 
 		String schemaVersion = null;
@@ -332,17 +391,17 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 
 		if (species == null) {
 			if (!StringUtils.isEmpty(alias)) {
-				species = Species.resolveAlias(alias);
+				species = alias;
 			} else {
-				species = Species.UNKNOWN;
+				species = UNKNOWN;
 			}
 		}
 
 		if (type == null) {
 			if (!StringUtils.isEmpty(typeStr)) {
 				type = DatabaseType.resolveAlias(typeStr);
-				if (typeStr.equals("ancestral") && species == Species.UNKNOWN) {
-					species = Species.ANCESTRAL_SEQUENCES;
+				if (typeStr.equals("ancestral") && species == UNKNOWN) {
+					species = ANCESTRAL_SEQUENCES;
 				}
 			} else {
 				type = DatabaseType.UNKNOWN;
@@ -370,7 +429,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	// -----------------------------------------------------------------
 	/**
 	 * Create a new DatabaseRegistryEntry.
-	 * 
+	 *
 	 * @param server
 	 *            The database server where this database resides.
 	 * @param name
@@ -382,7 +441,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	 *            The type of this database. If null, derive it from name.
 	 */
 	public DatabaseRegistryEntry(DatabaseServer server, String name,
-			Species species, DatabaseType type) {
+			String species, DatabaseType type) {
 		this.server = server;
 		DatabaseInfo info = getInfoFromName(name, species, type);
 		if (info.getType() == DatabaseType.UNKNOWN) {
@@ -417,7 +476,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	/**
 	 * @return Species.
 	 */
-	public final Species getSpecies() {
+	public final String getSpecies() {
 
 		return info.getSpecies();
 	}
@@ -435,10 +494,10 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	 * Compares two databases by comparing the names of the species. If they are
 	 * the same, then the schema version is used as a secondary sorting
 	 * criterion.
-	 * 
+	 *
 	 * The schema version is converted to an integer so there is numerical
 	 * sorting on the schema version. Otherwise 9 would come after 10.
-	 * 
+	 *
 	 * This is important, because the comparing is used in
 	 * ComparePreviousVersionBase from which all the ComparePreviousVersion*
 	 * inherit.
@@ -491,7 +550,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 
 	/**
 	 * Check if the database has multiple species
-	 * 
+	 *
 	 * @return true if the database contains more than one species
 	 */
 	public boolean isMultiSpecies() {
@@ -501,13 +560,13 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	/**
 	 * Utility method to determine list of species IDs found within a core
 	 * database
-	 * 
+	 *
 	 * @param con
 	 * @param species
 	 * @param type
 	 * @return list of numeric IDs
 	 */
-	public static List<Integer> getSpeciesIds(Connection con, Species species,
+	public static List<Integer> getSpeciesIds(Connection con, String species,
 			DatabaseType type) {
 
 		List<Integer> speciesId = CollectionUtils.createArrayList();
@@ -549,7 +608,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	public Connection getConnection() {
 
 		if (
-			(connection == null) 
+			(connection == null)
 			|| !(ConnectionPool.isValidConnection(connection))
 		) {
 
@@ -566,7 +625,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	/**
 	 * Test if this entry is equal to another. Comparison is currently only on
 	 * database name.
-	 * 
+	 *
 	 * @param dbre
 	 * @return true if names are the same.
 	 */
@@ -592,7 +651,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	/**
 	 * Utility method to determine list of species IDs found within the attached
 	 * database
-	 * 
+	 *
 	 * @return list of numeric IDs
 	 */
 	public List<Integer> getSpeciesIds() {

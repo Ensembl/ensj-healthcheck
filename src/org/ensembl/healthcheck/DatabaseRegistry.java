@@ -39,7 +39,7 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 	private ArrayList<DatabaseRegistryEntry> entries = new ArrayList<DatabaseRegistryEntry>();
 
 	// these global settings override guessing if they are specified
-	private Species globalSpecies = null;
+	private String globalSpecies = null;
 
 	private DatabaseType globalType = null;
 
@@ -56,7 +56,7 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 	 * @param isSecondary
 	 *          If true, this is a secondary database registry.
 	 */
-	public DatabaseRegistry(List<String> regexps, DatabaseType globalType, Species globalSpecies, boolean isSecondary) {
+	public DatabaseRegistry(List<String> regexps, DatabaseType globalType, String globalSpecies, boolean isSecondary) {
 
 		if (!isSecondary) {
 
@@ -218,7 +218,7 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 	 *          The species to look for.
 	 * @return The DatabaseRegistryEntries for species..
 	 */
-	public final DatabaseRegistryEntry[] getAll(final Species species) {
+	public final DatabaseRegistryEntry[] getAll(final String species) {
 
 		List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
 		Iterator<DatabaseRegistryEntry> it = entries.iterator();
@@ -266,7 +266,7 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 	 *          The Species to look for.
 	 * @return The DatabaseRegistryEntries that match type and species..
 	 */
-	public final DatabaseRegistryEntry[] getAll(final DatabaseType type, final Species species) {
+	public final DatabaseRegistryEntry[] getAll(final DatabaseType type, final String species) {
 
 		List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
 		Iterator<DatabaseRegistryEntry> it = entries.iterator();
@@ -344,10 +344,10 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 	 * 
 	 * @return An array containing each Species found in the registry.
 	 */
-	public final Set<Species> getUniqueSpecies() {
+	public final Set<String> getUniqueSpecies() {
 
 		// using a Set here gets uniqueness for free
-		Set<Species> species = new HashSet<Species>();
+		Set<String> species = new HashSet<String>();
 
 		for (DatabaseRegistryEntry dbre : entries) {
 			species.add(dbre.getSpecies());
@@ -363,11 +363,11 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 	 * 
 	 * @return An array containing each Species found in the registry.
 	 */
-	public final Species[] getSpecies() {
+	public final String[] getSpecies() {
 
-		Set<Species> species = getUniqueSpecies();
+		Set<String> species = getUniqueSpecies();
 
-		return (Species[]) species.toArray(new Species[species.size()]);
+		return (String[]) species.toArray(new String[species.size()]);
 
 	}
 
@@ -375,15 +375,15 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 	/**
 	 * Get a Map containing the list of types for each species.
 	 * 
-	 * @return A map (key:Species, value:Set of DatabaseTypes).
+	 * @return A map (key:String, value:Set of DatabaseTypes).
 	 */
-	public final Map<Species, Set<DatabaseType>> getSpeciesTypeMap() {
+	public final Map<String, Set<DatabaseType>> getSpeciesTypeMap() {
 
-		Map<Species, Set<DatabaseType>> result = new HashMap<Species, Set<DatabaseType>>();
+		Map<String, Set<DatabaseType>> result = new HashMap<String, Set<DatabaseType>>();
 		
 		for (DatabaseRegistryEntry dbre : entries) {
 			
-			Species species = dbre.getSpecies();
+			String species = dbre.getSpecies();
 			
 			// add species with empty Set of types if required
 			if (!result.containsKey(species)) {

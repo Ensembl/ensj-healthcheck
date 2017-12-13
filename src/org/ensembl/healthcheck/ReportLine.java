@@ -100,7 +100,7 @@ public class ReportLine {
 		this.testCaseName = testCase.getTestName();
 		DatabaseInfo info = DatabaseRegistryEntry.getInfoFromName(name);
 		this.databaseName = info.getName();
-		if (info.getSpecies() != Species.UNKNOWN) {
+		if (info.getSpecies() != DatabaseRegistryEntry.UNKNOWN) {
 			speciesName = info.getSpecies().toString();
 		} else {
 			speciesName = info.getAlias();
