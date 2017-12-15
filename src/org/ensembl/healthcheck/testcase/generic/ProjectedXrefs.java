@@ -44,10 +44,7 @@ public class ProjectedXrefs extends SingleDatabaseTestCase {
 	public void types() {
 
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
-		removeAppliesToType(DatabaseType.ESTGENE);
-		removeAppliesToType(DatabaseType.EST);
 		removeAppliesToType(DatabaseType.CDNA);
-		removeAppliesToType(DatabaseType.VEGA);
 		removeAppliesToType(DatabaseType.RNASEQ);
 	}
 

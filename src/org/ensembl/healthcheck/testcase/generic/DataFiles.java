@@ -50,9 +50,7 @@ public class DataFiles extends AbstractTemplatedTestCase {
   */
 
   public void types() {
-    removeAppliesToType(DatabaseType.SANGER_VEGA);
     removeAppliesToType(DatabaseType.OTHERFEATURES);
-    removeAppliesToType(DatabaseType.ESTGENE);
     removeAppliesToType(DatabaseType.CORE);
     removeAppliesToType(DatabaseType.CDNA);
   }

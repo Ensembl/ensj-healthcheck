@@ -55,9 +55,6 @@ public class Ditag extends SingleDatabaseTestCase {
 	public void types() {
 
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
-		removeAppliesToType(DatabaseType.ESTGENE);
-		removeAppliesToType(DatabaseType.VEGA);
-		removeAppliesToType(DatabaseType.SANGER_VEGA);
 		removeAppliesToType(DatabaseType.CDNA);
 		removeAppliesToType(DatabaseType.RNASEQ);
 

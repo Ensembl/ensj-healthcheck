@@ -50,8 +50,6 @@ public class HGNCTypes extends SingleDatabaseTestCase {
 	public void types() {
 
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
-		removeAppliesToType(DatabaseType.ESTGENE);
-		removeAppliesToType(DatabaseType.VEGA);
 		removeAppliesToType(DatabaseType.CDNA);
 		removeAppliesToType(DatabaseType.RNASEQ);
 

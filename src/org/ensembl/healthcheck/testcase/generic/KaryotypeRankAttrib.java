@@ -53,8 +53,6 @@ public class KaryotypeRankAttrib extends SingleDatabaseTestCase {
 	 */
 	public void types() {
 
-		removeAppliesToType(DatabaseType.ESTGENE);
-		removeAppliesToType(DatabaseType.VEGA);
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		removeAppliesToType(DatabaseType.CDNA);
 		removeAppliesToType(DatabaseType.RNASEQ);

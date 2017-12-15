@@ -68,11 +68,7 @@ public class VariationDensity extends SingleDatabaseTestCase {
 	public void types() {
 
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
-		removeAppliesToType(DatabaseType.ESTGENE);
-		removeAppliesToType(DatabaseType.EST);
 		removeAppliesToType(DatabaseType.CDNA);
-		removeAppliesToType(DatabaseType.VEGA);
-                removeAppliesToType(DatabaseType.SANGER_VEGA);
 		removeAppliesToType(DatabaseType.RNASEQ);
 
 	}

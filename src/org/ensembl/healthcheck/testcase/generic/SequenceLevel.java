@@ -52,7 +52,6 @@ public class SequenceLevel extends SingleDatabaseTestCase {
         public void types() {
 
                 removeAppliesToType(DatabaseType.OTHERFEATURES);
-                removeAppliesToType(DatabaseType.ESTGENE);
                 removeAppliesToType(DatabaseType.RNASEQ);
                 removeAppliesToType(DatabaseType.CDNA);
 

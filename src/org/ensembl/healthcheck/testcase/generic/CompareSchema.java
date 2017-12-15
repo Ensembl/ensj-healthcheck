@@ -32,11 +32,8 @@ package org.ensembl.healthcheck.testcase.generic;
 
 import static org.ensembl.healthcheck.DatabaseType.CDNA;
 import static org.ensembl.healthcheck.DatabaseType.CORE;
-import static org.ensembl.healthcheck.DatabaseType.EST;
-import static org.ensembl.healthcheck.DatabaseType.ESTGENE;
 import static org.ensembl.healthcheck.DatabaseType.OTHERFEATURES;
 import static org.ensembl.healthcheck.DatabaseType.RNASEQ;
-import static org.ensembl.healthcheck.DatabaseType.SANGER_VEGA;
 import org.ensembl.healthcheck.Team;
 import static org.ensembl.healthcheck.testcase.generic.AbstractCompareSchema.TestTypes.CHARSET;
 import static org.ensembl.healthcheck.testcase.generic.AbstractCompareSchema.TestTypes.ENGINE;
@@ -71,11 +68,8 @@ public class CompareSchema extends AbstractCompareSchema {
 	public void types() {
 		addAppliesToType(CORE);
 		addAppliesToType(CDNA);
-		addAppliesToType(EST);
-		addAppliesToType(ESTGENE);
 		addAppliesToType(OTHERFEATURES);
 		addAppliesToType(RNASEQ);
-		addAppliesToType(SANGER_VEGA);
 	}
 
 	@Override
