@@ -36,7 +36,7 @@ import org.ensembl.healthcheck.util.DBUtils;
 public class ExonTranscriptStartEnd extends SingleDatabaseTestCase {
 
     /**
-     * Create a new ExonTranscriptStartEnd test case.
+     * Check that exons are within transcripts
      */
     public ExonTranscriptStartEnd() {
 

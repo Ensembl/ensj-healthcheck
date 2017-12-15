@@ -53,10 +53,7 @@ public class AssemblyExceptionTableIntegrity extends SingleDatabaseTestCase {
 
     public void types() {
 
-        removeAppliesToType(DatabaseType.ESTGENE);
         removeAppliesToType(DatabaseType.CDNA);
-        removeAppliesToType(DatabaseType.VEGA);
-        removeAppliesToType(DatabaseType.SANGER_VEGA);
         removeAppliesToType(DatabaseType.OTHERFEATURES);
         removeAppliesToType(DatabaseType.RNASEQ);
 
