@@ -27,7 +27,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Check that there the interpro table is populated and there are interpro
+ * Check that the interpro table is populated and there are interpro
  * protein features
  */
 
