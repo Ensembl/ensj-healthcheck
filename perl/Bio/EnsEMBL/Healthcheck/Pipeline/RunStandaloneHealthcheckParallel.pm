@@ -53,7 +53,7 @@ sub run {
 	-RETRY_COUNT=>$self->param_required('load_retry_count')
 	);
 
-    my $host = $details->{dbname};
+    my $host = $details->{host};
     # wait until load falls beneath a threshold
 	$srv->wait_for_load($host, $self->param_required('load_threshold'));    
     
