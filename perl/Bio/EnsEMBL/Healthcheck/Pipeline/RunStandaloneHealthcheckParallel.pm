@@ -6,6 +6,7 @@ use base ('Bio::EnsEMBL::Hive::Process');
 
 use Bio::EnsEMBL::Hive::Utils::URL;
 use Bio::EnsEMBL::ApiVersion;
+use Bio::EnsEMBL::Production::Utils::ServerStatus;
 
 use Carp qw/croak/;
 use Data::Dumper;
@@ -24,11 +25,15 @@ sub run {
 
     my $self = shift @_;
 
+	# disconnect to avoid keeping hive connections open    
+	$self->dbc()->disconnect_if_idle() if defined $self->dbc();
+
     my $hc_jar = $self->param('hc_jar');
     my $java_opts = $self->param('java_opts') || '';
     
     my $db_uri = $self->param_required('db_uri');
-    my $db = Bio::EnsEMBL::Hive::Utils::URL::parse($db_uri)->{dbname};
+    my $details = Bio::EnsEMBL::Hive::Utils::URL::parse($db_uri);
+    my $db = $details->{dbname};
     my $hc_name = $self->param('hc_name');
     croak "Full HC name must be specified e.g. org.ensembl.healthcheck.testcase.WhatEvs rather than WhatEvs" unless $hc_name =~ m/org.ensembl/;
 
@@ -41,9 +46,20 @@ sub run {
     $command .= get_db_str($self->param('compara_uri'), 'compara_');
     $command .= get_db_str($self->param('live_uri'), 'secondary_');
     $command .= get_db_str($self->param('staging_uri'), 'staging_');
+	
+	my $srv = Bio::EnsEMBL::Production::Utils::ServerStatus->new(
+	-URL=>$self->param_required('load_server'), 
+	-RETRY_WAIT=>$self->param_required('load_retry_wait'), 
+	-RETRY_COUNT=>$self->param_required('load_retry_count')
+	);
 
+    my $host = $details->{dbname};
+    # wait until load falls beneath a threshold
+	$srv->wait_for_load($host, $self->param_required('load_threshold'));    
+    
     my (undef,$log_file) = tempfile('_HealthcheckDatabase_XXXXXX',  SUFFIX => '.log', TMPDIR => 1, OPEN=>0);
     $command .= " >& $log_file";
+        
 
     $logger->info($command);
     my $exit = system($command);

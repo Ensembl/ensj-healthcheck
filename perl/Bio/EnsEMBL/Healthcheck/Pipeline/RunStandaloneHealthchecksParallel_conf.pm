@@ -5,7 +5,13 @@ use parent 'Bio::EnsEMBL::Hive::PipeConfig::EnsemblGeneric_conf';
 
 sub default_options {
   my ($self) = @_;
-  return { %{ $self->SUPER::default_options }, 'hc_jar' => undef, };
+  return { %{ $self->SUPER::default_options }, 
+  	'hc_jar' => undef, 
+  	'load_server' => 'http://ens-prod-1:5002/',
+  	'load_retry_wait'=> 60,
+	'load_retry_count'=>1000,
+	'load_threshold'=>10
+  };
 }
 
 sub pipeline_analyses {
@@ -24,7 +30,14 @@ sub pipeline_analyses {
         'Bio::EnsEMBL::Healthcheck::Pipeline::RunStandaloneHealthcheckParallel',
       -rc_name       => 'default',
       -hive_capacity => 8,
-      -parameters    => { hc_jar => $self->o('hc_jar'), java_opts => '' },
+      -parameters    => { 
+      	hc_jar => $self->o('hc_jar'), 
+      	java_opts => '',
+        load_server => $self->o('load_server'),
+      	load_retry_wait => $self->o('load_retry_wait'),
+      	load_retry_count => $self->o('load_retry_count'),
+      	load_threshold => $self->o('load_threshold')
+      },
       -flow_into     => {
                       -1 => ['RunStandaloneHealthcheckParallelHimem'],
                       2  => ['?accu_name=hc_output&accu_address=[]'] } }, {
@@ -33,7 +46,14 @@ sub pipeline_analyses {
         'Bio::EnsEMBL::Healthcheck::Pipeline::RunStandaloneHealthcheckParallel',
       -rc_name       => 'himem',
       -hive_capacity => 8,
-      -parameters => { hc_jar => $self->o('hc_jar'), java_opts => '-Xmx16g' },
+      -parameters => { 
+      	hc_jar => $self->o('hc_jar'), 
+      	java_opts => '-Xmx16g',
+      	load_server => $self->o('load_server'),
+      	load_retry_wait => $self->o('load_retry_wait'),
+      	load_retry_count => $self->o('load_retry_count'),
+      	load_threshold => $self->o('load_threshold')
+      },
       -flow_into => { 2 => ['?accu_name=hc_output&accu_address=[]'] } }, {
       -logic_name => 'RunStandaloneHealthcheckMerge',
       -module =>
