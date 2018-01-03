@@ -427,7 +427,7 @@ sub get_run_date_time {
   my $time_line = `grep 'Results reported' $input_file`;
   
   if ($time_line) {
-    $time_line =~ /Results\sreported\sat\s\w+\s(\w+)\s(\d+)\s(\d+:\d+:\d+)\s(\d+)/;
+    $time_line =~ /Results\sreported\sat\s\w+\s(\w+)\s+(\d+)\s(\d+:\d+:\d+)\s(\d+)/;
     my $month = $1;
     my $day   = $2;
     my $time  = $3;
