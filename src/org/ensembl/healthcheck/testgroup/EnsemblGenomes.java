@@ -25,7 +25,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  * <ul>
  *   <li> org.ensembl.healthcheck.testcase.eg_core.DuplicateXref </li> 
  *   <li> org.ensembl.healthcheck.testcase.eg_core.ExonBoundary </li> 
- *   <li> org.ensembl.healthcheck.testcase.eg_core.DisplayXrefId </li> 
  *   <li> org.ensembl.healthcheck.testcase.eg_core.MetaForCompara </li> 
  *   <li> org.ensembl.healthcheck.testcase.eg_core.GenesDisplayable </li> 
  *   <li> org.ensembl.healthcheck.testcase.eg_core.DeprecatedEgMeta </li> 
@@ -63,7 +62,6 @@ public class EnsemblGenomes extends GroupOfTests {
 		addTest(
 			org.ensembl.healthcheck.testcase.eg_core.DuplicateXref.class,
 			org.ensembl.healthcheck.testcase.eg_core.ExonBoundary.class,
-			org.ensembl.healthcheck.testcase.eg_core.DisplayXrefId.class,
 			org.ensembl.healthcheck.testcase.eg_core.MetaForCompara.class,
 			org.ensembl.healthcheck.testcase.eg_core.GenesDisplayable.class,
 			org.ensembl.healthcheck.testcase.eg_core.DeprecatedEgMeta.class,

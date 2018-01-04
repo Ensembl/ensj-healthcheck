@@ -19,7 +19,6 @@ package org.ensembl.healthcheck.testgroup;
 
 import org.ensembl.healthcheck.GroupOfTests;
 import org.ensembl.healthcheck.testcase.eg_core.DbDisplayNameUniProt;
-import org.ensembl.healthcheck.testcase.eg_core.DisplayXrefId;
 import org.ensembl.healthcheck.testcase.eg_core.GeneDescriptionSource;
 import org.ensembl.healthcheck.testcase.eg_core.GeneDescriptionUniProtSource;
 import org.ensembl.healthcheck.testcase.eg_core.GeneSource;
