@@ -45,62 +45,66 @@ import org.ensembl.healthcheck.util.DBUtils;
 
 public class Pseudogene extends SingleDatabaseTestCase {
 
-	/**
-	 * Check the assembly_exception table.
-	 */
-	public Pseudogene() {
-		
-		setDescription("Check that there are no translations for pseudogenes");
-		setTeamResponsible(Team.GENEBUILD);
-	}
+    /**
+     * Check the assembly_exception table.
+     */
+    public Pseudogene() {
+        
+        setDescription("Check that there are no translations for pseudogenes");
+        setTeamResponsible(Team.GENEBUILD);
+    }
 
-	/**
-	 * Check the data in the assembly_exception table. Note referential integrity checks are done in CoreForeignKeys.
-	 * 
-	 * @param dbre
-	 *          The database to use.
-	 * @return Result.
-	 */
-	public boolean run(DatabaseRegistryEntry dbre) {
+    /**
+     * Check the data in the assembly_exception table. Note referential integrity checks are done in CoreForeignKeys.
+     * 
+     * @param dbre
+     *          The database to use.
+     * @return Result.
+     */
+    public boolean run(DatabaseRegistryEntry dbre) {
 
-		boolean result = true;
+        boolean result = true;
 
-		Connection con = dbre.getConnection();
+        Connection con = dbre.getConnection();
 
-		String qry = "select count(*) from gene,transcript,translation " + "where gene.biotype like '%pseudogene%'" + " and transcript.gene_id=gene.gene_id "
-				+ " and translation.transcript_id=transcript.transcript_id and gene.biotype!= 'polymorphic_pseudogene' ";
-		if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sangervega ignore genes that do not have source havana or WU and allow
-																											// polymorphic_pseudogene to have translations
-			qry += " and (gene.source='havana' or gene.source='WU')";
-		}
+        String qry = "select count(*) from gene,transcript,translation "
+            + "where gene.biotype like '%pseudogene%'"
+            + " and transcript.gene_id=gene.gene_id "
+            + " and translation.transcript_id=transcript.transcript_id "
+            + "and gene.biotype!= 'polymorphic_pseudogene' ";
+        if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sangervega ignore genes that do not have source havana or WU and allow
+                                                                                                            // polymorphic_pseudogene to have translations
+            qry += " and (gene.source='havana' or gene.source='WU')";
+        }
     if (dbre.getType() == DatabaseType.SANGER_VEGA ||
         dbre.getType() == DatabaseType.VEGA) {
       // Vega allows translations on translated_processed_pseudogene-s
       qry += " and gene.biotype != 'translated_processed_pseudogene'";
     }
 
-		int rows = DBUtils.getRowCount(con, qry);
-		if (rows > 0) {
-			result = false;
-			ReportManager.problem(this, con, "Translation table contains " + rows + " rows for pseudogene types - should contain none");
-		}
+        int rows = DBUtils.getRowCount(con, qry);
+        if (rows > 0) {
+            result = false;
+            ReportManager.problem(this, con, "Translation table contains "
+                + rows + " rows for pseudogene types - should contain none");
+        }
 
-		if (result) {
-			ReportManager.correct(this, con, "No pseudogenes have translations");
-		}
+        if (result) {
+            ReportManager.correct(this, con, "No pseudogenes have translations");
+        }
 
-		return result;
+        return result;
 
-	}
+    }
 
-	/**
-	 * This applies to 'core and 'vega' core schema databases
-	 */
-	public void types() {
+    /**
+     * This applies to 'core and 'vega' core schema databases
+     */
+    public void types() {
 
-		removeAppliesToType(DatabaseType.OTHERFEATURES);
-		removeAppliesToType(DatabaseType.RNASEQ);
+        removeAppliesToType(DatabaseType.OTHERFEATURES);
+        removeAppliesToType(DatabaseType.RNASEQ);
 
-	}
+    }
 
 } // Pseudogene
