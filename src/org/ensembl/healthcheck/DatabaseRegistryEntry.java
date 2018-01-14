@@ -123,7 +123,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 
         // e.g. username_species_type
         protected final static Pattern GB_DB = Pattern
-                        .compile("^[a-z0-9]+_([a-z]+)_([A-Za-z]+)");
+                        .compile("^[a-z0-9]+_([_A-Za-z]+)_(core|otherfeatures|rnaseq|cdna)_[0-9]+");
 	// e.g. neurospora_crassa_core_4_56_1a
 	protected final static Pattern EG_DB = Pattern
 			.compile("^([a-zA-Z0-9_]+)_([a-z]+)_([0-9]+_[0-9]+)_([0-9A-Za-z]+)");
