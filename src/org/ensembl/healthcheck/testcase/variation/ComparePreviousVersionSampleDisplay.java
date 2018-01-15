@@ -53,7 +53,6 @@ public class ComparePreviousVersionSampleDisplay extends ComparePreviousVersionB
 	 */
 	public ComparePreviousVersionSampleDisplay() {
 
-		addToGroup("variation-release");
 		setDescription("Compare the number of samples having each display value in the current database with those from the equivalent database on the secondary server");
     setTeamResponsible(Team.VARIATION);
 	}

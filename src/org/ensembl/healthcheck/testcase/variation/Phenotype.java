@@ -49,7 +49,6 @@ public class Phenotype extends SingleDatabaseTestCase {
 	 */
 	public Phenotype() {
 
-		addToGroup("variation-release");
 		
 		setDescription("Checks that the phenotype table does not have empty descriptions");
 		setTeamResponsible(Team.VARIATION);

@@ -53,7 +53,6 @@ public class ComparePreviousVersionConsequenceType extends ComparePreviousVersio
 	 */
 	public ComparePreviousVersionConsequenceType() {
 
-		addToGroup("variation-release");
 		
 		setDescription("Compare the number of transcript_variations having each consequence type status in the current database with those from the equivalent database on the secondary server");
 		setTeamResponsible(Team.VARIATION);

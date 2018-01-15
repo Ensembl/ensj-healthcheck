@@ -38,7 +38,6 @@ public class Publication extends SingleDatabaseTestCase {
 	 */
 	public Publication() {
 
-		addToGroup("variation-release");
 		setDescription("Check the database does not contain duplicated Publication entries");
 		setTeamResponsible(Team.VARIATION);
 

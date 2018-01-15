@@ -38,7 +38,6 @@ public class Meta extends SingleDatabaseTestCase {
 	 */
 	public Meta() {
 
-		addToGroup("variation-release");
 		setDescription("Check that the meta table contains the right entries for the human and mouse");
 		setTeamResponsible(Team.VARIATION);
 

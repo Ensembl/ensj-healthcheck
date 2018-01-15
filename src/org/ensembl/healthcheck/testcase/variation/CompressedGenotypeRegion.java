@@ -66,7 +66,6 @@ public class CompressedGenotypeRegion extends SingleDatabaseTestCase {
    */
   public CompressedGenotypeRegion() {
 
-    addToGroup("variation-release");
 
     setDescription("Checks that the compressed_genotype_region table is valid for the 1000 Genomes data");
 

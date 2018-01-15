@@ -49,7 +49,6 @@ public class ComparePreviousVersionStructuralVariations extends ComparePreviousV
 	 */
 	public ComparePreviousVersionStructuralVariations() {
 
-		addToGroup("variation-release");
 		setDescription("Compare the number of structural variations in the current database with those from the equivalent database on the secondary server");
 		setTeamResponsible(Team.VARIATION);
 

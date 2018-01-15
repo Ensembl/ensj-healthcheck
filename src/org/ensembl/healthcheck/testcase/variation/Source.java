@@ -33,7 +33,6 @@ public class Source extends SingleDatabaseTestCase {
 
 	public Source() {
 
-		addToGroup("variation-release");
 		
 		setDescription("Checks that the soucre table is consistent");
 		setTeamResponsible(Team.VARIATION);

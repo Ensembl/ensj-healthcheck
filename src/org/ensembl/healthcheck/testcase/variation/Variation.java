@@ -49,7 +49,6 @@ public class Variation extends SingleDatabaseTestCase {
 	 */
 	public Variation() {
 
-		addToGroup("variation-release");
 		
 		setDescription("Checks the variation table");
 		setTeamResponsible(Team.VARIATION);

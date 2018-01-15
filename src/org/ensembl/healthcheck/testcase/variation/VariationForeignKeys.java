@@ -37,7 +37,6 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 	 */
 	public VariationForeignKeys() {
 
-		addToGroup("variation-release");
 		setDescription("Check for broken foreign-key relationships.");
 		setTeamResponsible(Team.VARIATION);
 

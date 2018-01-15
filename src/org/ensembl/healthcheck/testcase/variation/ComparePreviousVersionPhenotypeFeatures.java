@@ -49,7 +49,6 @@ public class ComparePreviousVersionPhenotypeFeatures extends ComparePreviousVers
 	 */
 	public ComparePreviousVersionPhenotypeFeatures() {
 
-		addToGroup("variation-release");
 
 		setDescription("Compare the number of phenotype features in the current database with those from the equivalent database on the secondary server");
 		setTeamResponsible(Team.VARIATION);

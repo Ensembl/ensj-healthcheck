@@ -38,7 +38,6 @@ public class Denormalized extends SingleDatabaseTestCase {
    */
   public Denormalized() {
 
-    addToGroup("variation-release");
     setDescription("Check for broken denormalization.");
     setTeamResponsible(Team.VARIATION);
 
