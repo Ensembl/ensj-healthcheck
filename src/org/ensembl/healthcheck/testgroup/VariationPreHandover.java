@@ -33,6 +33,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionSources </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionStructuralVariations </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionValidationStatus </li>
+ *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionVariationClasses </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionVariationFeatures </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionVariationSets </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionVariationSynonyms </li>
@@ -55,13 +56,14 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.variation.VariationClasses </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.VariationFeature </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.VariationForeignKeys </li>
+ *   <li> org.ensembl.healthcheck.testcase.variation.VariationFeatureAlleles </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.VariationSet </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.VariationSynonym </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.SchemaType </li>
  * </ul>
  *
- * @author Thomas Maurel
+ * @author Helen Schuilenburg
  *
  */
 public class VariationPreHandover extends GroupOfTests {
