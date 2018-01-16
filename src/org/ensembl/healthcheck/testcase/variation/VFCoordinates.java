@@ -41,8 +41,6 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 	 */
 	public VFCoordinates() {
 
-		/*
-		*/
 		setDescription("Check for possible wrong coordinates in Vf table, due to wrong length or outside range seq_region.");
 		// setHintLongRunning(true);
 		setTeamResponsible(Team.VARIATION);
