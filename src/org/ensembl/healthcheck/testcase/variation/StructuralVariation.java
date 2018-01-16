@@ -49,7 +49,6 @@ public class StructuralVariation extends SingleDatabaseTestCase {
 	 */
 	public StructuralVariation() {
 
-		addToGroup("variation-release");
 		
 		setDescription("Checks that the structural variation tables make sense");
 		setTeamResponsible(Team.VARIATION);

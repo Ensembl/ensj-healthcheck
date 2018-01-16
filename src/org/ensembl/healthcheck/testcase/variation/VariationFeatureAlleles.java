@@ -33,7 +33,6 @@ public class VariationFeatureAlleles extends SingleDatabaseTestCase {
      */
     public VariationFeatureAlleles() {
 
-        addToGroup("variation-release");
         setDescription("Check for variation features with no alleles.");
         setTeamResponsible(Team.VARIATION);
 

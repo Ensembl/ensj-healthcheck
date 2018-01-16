@@ -36,7 +36,6 @@ public class VariationSynonym extends SingleDatabaseTestCase {
 	 * Creates a new instance of Check Variation Synonym
 	 */
 	public VariationSynonym() {
-		addToGroup("variation-release");
 		setDescription("Check for duplicate variation synonyms");
 		setTeamResponsible(Team.VARIATION);
 

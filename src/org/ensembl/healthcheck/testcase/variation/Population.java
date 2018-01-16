@@ -38,7 +38,6 @@ public class Population extends SingleDatabaseTestCase {
 	 * Creates a new instance of Population
 	 */
 	public Population() {
-		addToGroup("variation-release");
 		setDescription("Check the Populations are entered as expected");
 		setTeamResponsible(Team.VARIATION);
 	}

@@ -47,7 +47,6 @@ public class ComparePreviousVersionVariationClasses extends ComparePreviousVersi
 	 */
 	public ComparePreviousVersionVariationClasses() {
 
-		addToGroup("variation-release");
 		setDescription("Compare the number of variation classes in the current database with those from the equivalent database on the secondary server");
 		setTeamResponsible(Team.VARIATION);
 

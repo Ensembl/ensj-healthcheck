@@ -46,7 +46,6 @@ public class ComparePreviousVersionSources extends ComparePreviousVersionBase {
 	 */
 	public ComparePreviousVersionSources() {
 
-		addToGroup("variation-release");
 		setDescription("Compare the number of variation sources in the current database with those from the equivalent database on the secondary server");
 		setTeamResponsible(Team.VARIATION);
 

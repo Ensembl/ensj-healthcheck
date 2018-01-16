@@ -49,7 +49,6 @@ public class ComparePreviousVersionGenotypes extends ComparePreviousVersionBase 
 	 */
 	public ComparePreviousVersionGenotypes() {
 
-		addToGroup("variation-release");
 		setDescription("Compare the number of genotypes in the current database with those from the equivalent database on the secondary server");
 		setTeamResponsible(Team.VARIATION);
 

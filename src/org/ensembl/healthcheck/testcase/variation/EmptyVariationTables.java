@@ -49,7 +49,6 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
    */
   public EmptyVariationTables() {
 
-    addToGroup("variation-release");
 
     setDescription("Checks that all tables have data");
     setTeamResponsible(Team.VARIATION);

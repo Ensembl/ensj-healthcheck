@@ -35,7 +35,6 @@ public class CheckNumerous extends SingleDatabaseTestCase {
 
 	public CheckNumerous() {
 
-                addToGroup("variation-release");
 		setDescription("Check the database does not contain tables with columns with unexpectedly only one value");
 		setTeamResponsible(Team.VARIATION);
 

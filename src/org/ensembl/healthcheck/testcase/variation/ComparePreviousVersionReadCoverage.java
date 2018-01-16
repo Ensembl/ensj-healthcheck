@@ -45,7 +45,6 @@ public class ComparePreviousVersionReadCoverage extends ComparePreviousVersionBa
 	 * Create a new testcase.
 	 */
 	public ComparePreviousVersionReadCoverage() {
-		addToGroup("variation-release");
 		setDescription("Compare the number of reads for each sample with read coverage in the current database with those from the equivalent database on the secondary server");
 		setTeamResponsible(Team.VARIATION);
 	}

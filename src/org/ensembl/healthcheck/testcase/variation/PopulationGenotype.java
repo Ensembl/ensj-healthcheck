@@ -38,7 +38,6 @@ public class PopulationGenotype extends SingleDatabaseTestCase {
 	 * Creates a new instance of PopulationGenotype
 	 */
 	public PopulationGenotype() {
-	//	addToGroup("variation-release");
 		setDescription("Check the two PopulationGenotype tables have the same populations");
 		setTeamResponsible(Team.VARIATION);
 	}
