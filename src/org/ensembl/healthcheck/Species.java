@@ -123,7 +123,7 @@ public enum Species {
 	MUS_MUSCULUS_NZOHLLTJ(10090, "NZO_HlLtJ", "MGP_NZOHlLtJ_", ""),
 	MUS_MUSCULUS_PWKPHJ(39442, "PWK_PhJ", "MGP_PWKPhJ_", ""),
 	MUS_MUSCULUS_WSBEIJ(10092, "WSB_EiJ", "MGP_WSBEiJ_", ""),
-	MUS_SPRETUS_SPRETEIJ(10096, "SPRET_EiJ", "MGP_SPRETEiJ_", ""),
+	MUS_SPRETUS(10096, "SPRET_EiJ", "MGP_SPRETEiJ_", ""),
         MUSTELA_PUTORIUS_FURO(9669, "MusPutFur", "ENSMPU", "ferret,domestic ferret,Mustela_putorius_furo,Mustela putorius furo"),
 	MYOTIS_LUCIFUGUS(59463, "Myoluc", "ENSMLU", "microbat,little_brown_bat,mlucifugus,myotis,myotis_lucifugus"),
 	NOMASCUS_LEUCOGENYS(61853, "NLEU", "ENSNLE","gibbon,nleu,nomleu,nleugogenys,nomascus_leucogenys"),
