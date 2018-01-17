@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  * 
  * <ul>
  *   <li> org.ensembl.healthcheck.testcase.variation.CheckChar </li> 
+ *   <li> org.ensembl.healthcheck.testcase.variation.CheckNumerous </li> 
  *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionAlleles </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionConsequenceType </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionGenotypes </li>
@@ -50,6 +51,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.variation.PhenotypeFeatureAttrib </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.Population </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.Publication </li>
+ *   <li> org.ensembl.healthcheck.testcase.variation.Source </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.StructuralVariation </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.TranscriptVariation </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.Variation </li>
@@ -72,6 +74,7 @@ public class VariationPreHandover extends GroupOfTests {
 
 		addTest(
 			org.ensembl.healthcheck.testcase.variation.CheckChar.class,
+			org.ensembl.healthcheck.testcase.variation.CheckNumerous.class,
 			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionAlleles.class,
 			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionConsequenceType.class,
 			org.ensembl.healthcheck.testcase.variation.ComparePreviousVersionGenotypes.class,
@@ -98,6 +101,7 @@ public class VariationPreHandover extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.variation.PhenotypeFeatureAttrib.class,
 			org.ensembl.healthcheck.testcase.variation.Population.class,
 			org.ensembl.healthcheck.testcase.variation.Publication.class,
+			org.ensembl.healthcheck.testcase.variation.Source.class,
 			org.ensembl.healthcheck.testcase.variation.StructuralVariation.class,
 			org.ensembl.healthcheck.testcase.variation.TranscriptVariation.class,
 			org.ensembl.healthcheck.testcase.variation.Variation.class,
