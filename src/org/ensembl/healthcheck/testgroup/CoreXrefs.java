@@ -36,7 +36,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.EntrezGeneNumeric </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ExternalSynonymArray </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.GeneDescriptions </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.GOXrefs </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.HGNCMultipleGenes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.HGNCNumeric </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.HGNCTypes </li> 
@@ -76,7 +75,6 @@ public class CoreXrefs extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.EntrezGeneNumeric.class,
 			org.ensembl.healthcheck.testcase.generic.ExternalSynonymArray.class,
 			org.ensembl.healthcheck.testcase.generic.GeneDescriptions.class,
-			org.ensembl.healthcheck.testcase.generic.GOXrefs.class,
 			org.ensembl.healthcheck.testcase.generic.HGNCMultipleGenes.class,
 			org.ensembl.healthcheck.testcase.generic.HGNCNumeric.class,
 			org.ensembl.healthcheck.testcase.generic.HGNCTypes.class,
