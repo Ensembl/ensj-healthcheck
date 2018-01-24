@@ -20,7 +20,6 @@ package org.ensembl.healthcheck.testgroup;
 import org.ensembl.healthcheck.GroupOfTests;
 import org.ensembl.healthcheck.testcase.eg_core.CircularAwareFeatureCoords;
 import org.ensembl.healthcheck.testcase.eg_core.DuplicateTopLevel;
-import org.ensembl.healthcheck.testcase.eg_core.EGCompareCoreSchema;
 import org.ensembl.healthcheck.testcase.eg_core.ENASeqRegionSynonyms;
 import org.ensembl.healthcheck.testcase.eg_core.EnaSeqRegionName;
 import org.ensembl.healthcheck.testcase.eg_core.MultipleENASeqRegionSynonyms;
@@ -71,7 +70,6 @@ public class EGCoreGeneModelCritical extends GroupOfTests {
 			AssemblySeqregion.class, 
 			CanonicalTranscriptCoding.class,
 			CircularAwareFeatureCoords.class, 
-			EGCompareCoreSchema.class,
 			CoreForeignKeys.class,
 			DuplicateAssembly.class, 
 			DuplicateTopLevel.class,
