@@ -66,7 +66,7 @@ public enum Species {
 	BOS_TAURUS(9913, "UMD", "ENSBTA", "cow,btaurus,bostaurus,bos_taurus"),
 	CAENORHABDITIS_BRIGGSAE(6238, "CBR", "IGNORE", "briggsae,cbriggsae,caenorhabditisbriggsae,caenorhabditis_briggsae"),
 	CAENORHABDITIS_ELEGANS(6239, "WBcel", "IGNORE", "elegans,celegans,caenorhabditiselegans,caenorhabditis_elegans"),
-	CALLITHRIX_JACCHUS(9483, "C_jacchus", "ENSCJA", "marmoset,white-tufted-ear marmoset,callithrix_jacchus,callithrix jacchus,Callithrix_jacchus,Callithrix jacchus,callithrix"),
+	CALLITHRIX_JACCHUS(9483, "ASM275486", "ENSCJA", "marmoset,white-tufted-ear marmoset,callithrix_jacchus,callithrix jacchus,Callithrix_jacchus,Callithrix jacchus,callithrix"),
 	CANIS_FAMILIARIS(9615, "CanFam", "ENSCAF", "dog,doggy,cfamiliaris,canisfamiliaris,canis_familiaris"),
 	CAPRA_HIRCUS(9925, "ARS", "ENSCHI", "goat,capra_hircus,capra hircus"),
         CAVIA_PORCELLUS(10141, "CAVPOR", "ENSCPO", "guineapig,guinea_pig,cporcellus,cavia_porcellus"),
