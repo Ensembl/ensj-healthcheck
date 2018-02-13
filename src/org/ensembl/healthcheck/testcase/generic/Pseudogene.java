@@ -46,16 +46,24 @@ import org.ensembl.healthcheck.util.DBUtils;
 public class Pseudogene extends SingleDatabaseTestCase {
 
     /**
-     * Check the assembly_exception table.
+     * Check the pseudogenes don't have translations
      */
     public Pseudogene() {
-        
         setDescription("Check that there are no translations for pseudogenes");
         setTeamResponsible(Team.GENEBUILD);
     }
 
     /**
-     * Check the data in the assembly_exception table. Note referential integrity checks are done in CoreForeignKeys.
+     * This applies to 'core' schema databases
+     */
+    public void types() {
+        removeAppliesToType(DatabaseType.OTHERFEATURES);
+        removeAppliesToType(DatabaseType.RNASEQ);
+    }
+
+    /**
+     * Check that pseudogenes, excluding a few coding types, don't have
+     * translations by default.
      * 
      * @param dbre
      *          The database to use.
@@ -68,19 +76,11 @@ public class Pseudogene extends SingleDatabaseTestCase {
         Connection con = dbre.getConnection();
 
         String qry = "select count(*) from gene,transcript,translation "
-            + "where gene.biotype like '%pseudogene%'"
-            + " and transcript.gene_id=gene.gene_id "
-            + " and translation.transcript_id=transcript.transcript_id "
-            + "and gene.biotype!= 'polymorphic_pseudogene' ";
-        if (dbre.getType() == DatabaseType.SANGER_VEGA) {// for sangervega ignore genes that do not have source havana or WU and allow
-                                                                                                            // polymorphic_pseudogene to have translations
-            qry += " and (gene.source='havana' or gene.source='WU')";
-        }
-    if (dbre.getType() == DatabaseType.SANGER_VEGA ||
-        dbre.getType() == DatabaseType.VEGA) {
-      // Vega allows translations on translated_processed_pseudogene-s
-      qry += " and gene.biotype != 'translated_processed_pseudogene'";
-    }
+            + "where gene.biotype like '%pseudogene%' "
+            + "and transcript.gene_id=gene.gene_id "
+            + "and translation.transcript_id=transcript.transcript_id "
+            + "and gene.biotype not in ('polymorphic_pseudogene',
+                'translated_processed_pseudogene')";
 
         int rows = DBUtils.getRowCount(con, qry);
         if (rows > 0) {
@@ -94,16 +94,6 @@ public class Pseudogene extends SingleDatabaseTestCase {
         }
 
         return result;
-
-    }
-
-    /**
-     * This applies to 'core and 'vega' core schema databases
-     */
-    public void types() {
-
-        removeAppliesToType(DatabaseType.OTHERFEATURES);
-        removeAppliesToType(DatabaseType.RNASEQ);
 
     }
 
