@@ -41,9 +41,13 @@ sub run {
     $command .= get_db_str($self->param('compara_uri'), 'compara_');
     $command .= get_db_str($self->param('live_uri'), 'secondary_');
     $command .= get_db_str($self->param('staging_uri'), 'staging_');
+    $command .= sprintf(" --data_files_path %s",$self->param('data_files_path'));
 
     my (undef,$log_file) = tempfile('_HealthcheckDatabase_XXXXXX',  SUFFIX => '.log', TMPDIR => 1, OPEN=>0);
     $command .= " >& $log_file";
+
+    my $hive_dbc = $self->dbc;
+    $hive_dbc->disconnect_if_idle() if defined $hive_dbc;
 
     $logger->info($command);
     my $exit = system($command);

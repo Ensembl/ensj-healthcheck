@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2018] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,9 +41,6 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 	 */
 	public VFCoordinates() {
 
-		/*
-		addToGroup("variation-release");
-		*/
 		setDescription("Check for possible wrong coordinates in Vf table, due to wrong length or outside range seq_region.");
 		// setHintLongRunning(true);
 		setTeamResponsible(Team.VARIATION);

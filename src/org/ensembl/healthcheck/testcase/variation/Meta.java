@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2018] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,6 @@ public class Meta extends SingleDatabaseTestCase {
 	 */
 	public Meta() {
 
-		addToGroup("variation-release");
 		setDescription("Check that the meta table contains the right entries for the human and mouse");
 		setTeamResponsible(Team.VARIATION);
 
@@ -161,6 +160,7 @@ public class Meta extends SingleDatabaseTestCase {
 
 		// get version from database name
 		String dbNameVersion = dbre.getSchemaVersion();
+		dbNameVersion = dbNameVersion.replaceAll("_[0-9]+","");
 		logger.finest("Schema version from database name: " + dbNameVersion);
 
 		// get version from meta table

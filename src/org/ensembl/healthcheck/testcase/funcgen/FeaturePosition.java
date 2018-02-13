@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2018] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ public class FeaturePosition extends AbstractCoreDatabaseUsingTestCase {
 		
 		logger.info("Using core database " + coreDbre.getName() + " " + coreDbre.getDatabaseServer().getDatabaseURL());
 						
-		String sql = "select seq_region_id, name, length from seq_region";
+                String sql = "select seq_region_id, seq_region.name, length from seq_region join seq_region_attrib using (seq_region_id) join attrib_type using (attrib_type_id) where code=\"toplevel\"";
 		HashMap<String, String> coreSeqRegionIDName = new HashMap<String, String>();
 		HashMap<String, String> seqRegionIdToLength = new HashMap<String, String>();
  

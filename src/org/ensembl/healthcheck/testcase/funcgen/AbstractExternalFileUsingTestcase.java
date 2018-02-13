@@ -18,7 +18,7 @@ public abstract class AbstractExternalFileUsingTestcase extends AbstractCoreData
 	protected String getSpeciesAssemblyDataFileBasePath(DatabaseRegistryEntry dbre) {
 		
 		Connection coreConnection = getCoreDb(dbre).getConnection();
-		
+			
 		String productionName = getProductionName(coreConnection);
 		String assemblyName   = getAssembly(coreConnection);
 		String dbFileRootDir  = getDataFileBasePath();

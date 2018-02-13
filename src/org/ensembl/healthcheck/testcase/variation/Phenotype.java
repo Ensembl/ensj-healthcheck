@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2018] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,6 @@ public class Phenotype extends SingleDatabaseTestCase {
 	 */
 	public Phenotype() {
 
-		addToGroup("variation-release");
 		
 		setDescription("Checks that the phenotype table does not have empty descriptions");
 		setTeamResponsible(Team.VARIATION);

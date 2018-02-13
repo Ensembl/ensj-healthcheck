@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2018] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.ensembl.healthcheck.testcase.generic.ProductionBiotypes;
 import org.ensembl.healthcheck.testcase.generic.TranscriptNames;
 
 import org.ensembl.healthcheck.testcase.eg_core.NoRepeatFeatures;
-import org.ensembl.healthcheck.testcase.eg_core.SchemaPatchesApplied;
+import org.ensembl.healthcheck.testcase.generic.CompareSchema;
 import org.ensembl.healthcheck.testcase.eg_core.SeqRegionLength;
 import org.ensembl.healthcheck.testcase.eg_core.SeqRegionsConsistentWithComparaMaster;
 import org.ensembl.healthcheck.testcase.eg_core.SeqRegionAttribForPolyploidGenome;
@@ -62,7 +62,7 @@ public class EGCore extends GroupOfTests {
 			SeqRegionAttribForPolyploidGenomeToplevelOnly.class,
 			SeqRegionLength.class,
 			NoRepeatFeatures.class,
-			SchemaPatchesApplied.class
+			CompareSchema.class
 		);
 	}
 }

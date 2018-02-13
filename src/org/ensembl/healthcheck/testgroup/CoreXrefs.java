@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2018] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.EntrezGeneNumeric </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.ExternalSynonymArray </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.GeneDescriptions </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.GOXrefs </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.HGNCMultipleGenes </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.HGNCNumeric </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.HGNCTypes </li> 
@@ -74,7 +73,6 @@ public class CoreXrefs extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.EntrezGeneNumeric.class,
 			org.ensembl.healthcheck.testcase.generic.ExternalSynonymArray.class,
 			org.ensembl.healthcheck.testcase.generic.GeneDescriptions.class,
-			org.ensembl.healthcheck.testcase.generic.GOXrefs.class,
 			org.ensembl.healthcheck.testcase.generic.HGNCMultipleGenes.class,
 			org.ensembl.healthcheck.testcase.generic.HGNCNumeric.class,
 			org.ensembl.healthcheck.testcase.generic.HGNCTypes.class,
