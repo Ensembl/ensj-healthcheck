@@ -37,7 +37,7 @@ import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
+
 
 
 /**
@@ -45,7 +45,7 @@ import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
  * database on the secondary server.
  */
 
-public class ComparePreviousVersionArrayXrefs extends ComparePreviousVersionBase {
+public class ComparePreviousVersionArrayXrefs extends RegulationComparePreviousVersion {
 
 	/**
 	 * Create a new  testcase.

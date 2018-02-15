@@ -6,9 +6,9 @@ import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
 
-abstract public class ComparePreviousVersionProbeFeaturesFromProbeSetsByArrayBase extends ComparePreviousVersionBase{
+
+abstract public class ComparePreviousVersionProbeFeaturesFromProbeSetsByArrayBase extends RegulationComparePreviousVersion{
   
     public ComparePreviousVersionProbeFeaturesFromProbeSetsByArrayBase() {
         setTeamResponsible(Team.FUNCGEN);

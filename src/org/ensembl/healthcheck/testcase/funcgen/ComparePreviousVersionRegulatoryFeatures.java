@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.sql.Statement;
 import java.sql.SQLException;
 
-import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.Team;
@@ -36,7 +35,7 @@ import org.ensembl.healthcheck.Team;
  */
 
 public class ComparePreviousVersionRegulatoryFeatures extends
-        ComparePreviousVersionBase {
+        RegulationComparePreviousVersion {
 
     public ComparePreviousVersionRegulatoryFeatures() {
         setTeamResponsible(Team.FUNCGEN);
