@@ -4,9 +4,8 @@ import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
 
-public class ComparePreviousVersionProbes extends ComparePreviousVersionBase {
+public class ComparePreviousVersionProbes extends RegulationComparePreviousVersion {
 
     public ComparePreviousVersionProbes() {
         setTeamResponsible(Team.FUNCGEN);
@@ -33,6 +32,10 @@ public class ComparePreviousVersionProbes extends ComparePreviousVersionBase {
     @Override
     protected double minimum() {
       return 0;
+    }
+    @Override
+    protected boolean compareReturnProblem(){
+        return true;
     }
 }
 

@@ -3,9 +3,9 @@ package org.ensembl.healthcheck.testcase.funcgen;
 import java.util.Map;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
 
-public class ComparePreviousVersionGenomicProbeFeaturesByArray extends ComparePreviousVersionBase {
+
+public class ComparePreviousVersionGenomicProbeFeaturesByArray extends RegulationComparePreviousVersion {
 
     public ComparePreviousVersionGenomicProbeFeaturesByArray() {
         setTeamResponsible(Team.FUNCGEN);
