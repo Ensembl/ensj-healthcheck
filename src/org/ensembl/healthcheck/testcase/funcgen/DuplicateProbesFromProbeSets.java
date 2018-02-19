@@ -7,9 +7,9 @@ import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase;
 import org.ensembl.healthcheck.util.SqlTemplate;
 
-public class DuplicateProbes extends AbstractTemplatedTestCase {
+public class DuplicateProbesFromProbeSets extends AbstractTemplatedTestCase {
   
-  public DuplicateProbes() {
+  public DuplicateProbesFromProbeSets() {
     setTeamResponsible(Team.FUNCGEN);
   }
 
@@ -19,7 +19,7 @@ public class DuplicateProbes extends AbstractTemplatedTestCase {
     SqlTemplate s = getTemplate(dbre);
     
     List<String> arraysWithDuplicateProbes = s.queryForDefaultObjectList(
-        "select distinct array.name from array join array_chip using (array_id) join probe using (array_chip_id) where array.is_probeset_array = false group by array.name, probe.name having count(distinct probe.probe_id)>1;",
+        "select distinct array.name from array join array_chip using (array_id) join probe using (array_chip_id) where array.is_probeset_array = true group by array.name, probe.name, probe.probe_set_id having count(distinct probe.probe_id)>1",
         String.class
      );
     if (arraysWithDuplicateProbes.size()==0) {
