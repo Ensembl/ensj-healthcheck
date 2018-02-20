@@ -218,8 +218,6 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	protected final static Pattern EM_DB = Pattern
 			.compile("^([a-z_]+)_(mart)_([0-9])+");
 	// username_species_type_version_release
-	protected final static Pattern V_DB = Pattern
-			.compile("vega_([^_]+_[^_]+)_[^_]+_([^_]+)_([^_]+)");
 	protected final static Pattern EE_DB = Pattern
 			.compile("^([^_]+_[^_]+)_[a-z]+_([a-z]+)_[a-z]+_([0-9]+)_([0-9A-Za-z]+)");
 	// username_species_type_version_release
@@ -242,7 +240,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 
 	protected final static Pattern[] patterns = { EC_DB, UA_DB, UC_DB, UCM_DB,
 			EA_DB, EGC_DB, EG_DB, E_DB, PE_DB, EM_DB, EE_DB, EEL_DB, U_DB,
-			V_DB, MYSQL_DB, BLAST_DB, UD_DB, TAX_DB, EW_DB, HELP_DB, GB_DB, MASTER_DB };
+			MYSQL_DB, BLAST_DB, UD_DB, TAX_DB, EW_DB, HELP_DB, GB_DB, MASTER_DB };
 	/**
 	 * Utility for building a {@link DatabaseInfo} object given a name
 	 *

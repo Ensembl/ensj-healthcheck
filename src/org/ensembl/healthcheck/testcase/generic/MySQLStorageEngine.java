@@ -48,7 +48,6 @@ public class MySQLStorageEngine extends AbstractTemplatedTestCase {
                 this.addAppliesToType(DatabaseType.CDNA);
                 this.addAppliesToType(DatabaseType.OTHERFEATURES);
                 this.addAppliesToType(DatabaseType.RNASEQ);
-                this.addAppliesToType(DatabaseType.VEGA);
 	}
 
 	@Override

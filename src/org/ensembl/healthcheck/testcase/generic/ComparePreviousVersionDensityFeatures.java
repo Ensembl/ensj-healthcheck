@@ -53,7 +53,6 @@ public class ComparePreviousVersionDensityFeatures extends ComparePreviousVersio
 
 	public void types() {
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
-		removeAppliesToType(DatabaseType.EST);
 		removeAppliesToType(DatabaseType.CDNA);
 		removeAppliesToType(DatabaseType.RNASEQ);
 	}

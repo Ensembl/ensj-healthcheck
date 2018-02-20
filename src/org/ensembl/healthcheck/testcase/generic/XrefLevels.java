@@ -59,13 +59,11 @@ public class XrefLevels extends MultiDatabaseTestCase {
 	}
 
 	/**
-	 * This only applies to core and Vega databases.
+	 * This only applies to core databases.
 	 */
 	public void types() {
 
-		removeAppliesToType(DatabaseType.OTHERFEATURES);
-		removeAppliesToType(DatabaseType.CDNA);
-		removeAppliesToType(DatabaseType.RNASEQ);
+		setAppliesToType(DatabaseType.CORE);
 
 	}
 

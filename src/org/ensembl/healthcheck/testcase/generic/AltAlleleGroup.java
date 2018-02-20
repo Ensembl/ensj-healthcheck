@@ -68,9 +68,7 @@ public class AltAlleleGroup extends SingleDatabaseTestCase {
 
 	removeAppliesToType(DatabaseType.OTHERFEATURES);
 	removeAppliesToType(DatabaseType.CDNA);
-	removeAppliesToType(DatabaseType.SANGER_VEGA);
 	removeAppliesToType(DatabaseType.RNASEQ);
-	removeAppliesToType(DatabaseType.VEGA);
 
     }
 

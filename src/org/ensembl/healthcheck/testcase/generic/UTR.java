@@ -57,11 +57,9 @@ public class UTR extends SingleDatabaseTestCase {
 	 * This test applies only to core dbs
 	 */
 	public void types() {
-		removeAppliesToType(DatabaseType.SANGER_VEGA);
-		removeAppliesToType(DatabaseType.VEGA);
-		removeAppliesToType(DatabaseType.CDNA);
-		removeAppliesToType(DatabaseType.OTHERFEATURES);
-		removeAppliesToType(DatabaseType.RNASEQ);
+
+		setAppliesToType(DatabaseType.CORE);
+
 	}
 
 	/**

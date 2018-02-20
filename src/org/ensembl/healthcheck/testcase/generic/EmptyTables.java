@@ -103,7 +103,7 @@ public class EmptyTables extends SingleDatabaseTestCase {
         }
 
         // do no check for emptiness for some tables for certain 
-        // database types (i.e. CORE and VEGA), and certain species
+        // database types (i.e. CORE), and certain species
         if(allowedEmptyTablesMap.containsKey(type)) {
             tables.removeAll(allowedEmptyTablesMap.get(type));
 
@@ -131,11 +131,6 @@ public class EmptyTables extends SingleDatabaseTestCase {
                 // don't check ditag data tables
                 tables.removeAll(ditagDataTables);
             }
-        }
-
-        // ad-hoc adjustment for zebrafish in VEGA
-        if (type == DatabaseType.VEGA && species.equals(DatabaseRegistryEntry.DANIO_RERIO)) {
-            tables.remove("ontology_xref");
         }
 
         return tables;
@@ -341,25 +336,6 @@ public class EmptyTables extends SingleDatabaseTestCase {
                 "seq_region_mapping",
                 "transcript_intron_supporting_evidence",
                 "unconventional_transcript_association"));
-
-        allowedEmptyTablesMap.put(DatabaseType.VEGA, 
-            CollectionUtils.createLinkedHashSet(
-                "alt_allele", "alt_allele_attrib", "alt_allele_group", "assembly_exception", "data_file", 
-                "dnac", "seq_region_mapping", "unconventional_transcript_association", 
-                "operon", "operon_transcript", "operon_transcript_gene", 
-                "intron_supporting_evidence", "transcript_intron_supporting_evidence", "associated_xref", 
-                "associated_group", "qtl", "qtl_feature", "qtl_synonym", 
-                "affy_array", "affy_feature", "affy_probe", 
-                "ditag", "ditag_feature", "dna", 
-                "external_synonym", "identity_xref", 
-                "map", "mapping_session", "marker", 
-                "marker_feature", "marker_map_location", "marker_synonym", 
-                "misc_attrib", "misc_feature", "misc_feature_misc_set", 
-                "misc_set", "prediction_exon", "prediction_transcript", 
-                "repeat_consensus", "repeat_feature", "simple_feature", 
-                "supporting_feature", "transcript_attrib", "unconventional_transcript_association", 
-                "dependent_xref", "seq_region_synonym", "density_feature", "unmapped_object",
-                "mapping_set", "density_type", "genome_statistics"));
     }
 
 } // EmptyTablesTestCase

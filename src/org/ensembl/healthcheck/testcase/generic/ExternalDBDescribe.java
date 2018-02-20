@@ -34,7 +34,7 @@ import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
 
 public class ExternalDBDescribe extends MultiDatabaseTestCase {
 
-	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.VEGA };
+	private DatabaseType[] types = { DatabaseType.CORE };
 
 	/**
 	 * Create a new ExternalDBDescribe test case.

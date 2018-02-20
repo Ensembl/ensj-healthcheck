@@ -67,12 +67,9 @@ public class ComparePreviousVersionExonCoords extends SingleDatabaseTestCase {
 
 	}
 
-	/**
-	 * This test Does not apply to sangervega dbs
-	 */
+
 	public void types() {
-		removeAppliesToType(DatabaseType.SANGER_VEGA);
-                removeAppliesToType(DatabaseType.VEGA);
+
                 removeAppliesToType(DatabaseType.RNASEQ);
                 removeAppliesToType(DatabaseType.CDNA);
                 removeAppliesToType(DatabaseType.OTHERFEATURES);

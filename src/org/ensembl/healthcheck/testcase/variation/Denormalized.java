@@ -46,7 +46,7 @@ public class Denormalized extends SingleDatabaseTestCase {
    * Look for broken denormalization relationships.
    * 
    * @param dbre 
-            The database to use.
+   *        The database to use.
    * @return true Ff all foreign key relationships are valid.
    */
   public boolean run(DatabaseRegistryEntry dbre) {
@@ -56,7 +56,7 @@ public class Denormalized extends SingleDatabaseTestCase {
     Connection con = dbre.getConnection();
     try {
       // somatic
-      if (dbre.getSpecies() == Species.HOMO_SAPIENS) {
+      if (dbre.getSpecies().equals(DatabaseRegistryEntry.HOMO_SAPIENS)) {
         // Queries switched off because it was taking too long to run. Need to be run manually.
         //result &= checkForBadDenormalization(con, "variation", "variation_id", "somatic", "variation_feature", "variation_id", "somatic");
         //result &= checkForBadDenormalization(con, "variation_feature", "variation_feature_id", "somatic", "transcript_variation", "variation_feature_id", "somatic");

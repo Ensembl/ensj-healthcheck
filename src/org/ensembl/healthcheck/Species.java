@@ -174,36 +174,12 @@ public enum Species {
 
 	private static Map<String, Species> assemblyPrefixToSpecies = new HashMap<String, Species>();
 
-	private static Map<Species, String> vegaStableIDPrefix = new EnumMap<Species, String>(Species.class);
-
 	private static Logger logger = Logger.getLogger("HealthCheckLogger");
 	// populate the hash tables
 	static {
 		for (Species s : values()) {
 			taxonIDToSpecies.put(s.getTaxonID(), s);
 			assemblyPrefixToSpecies.put(s.getAssemblyPrefix(), s);
-			// we have to add to the Vega hash the 4 species with Vega annotation
-			switch (s) {
-			case HOMO_SAPIENS:
-				vegaStableIDPrefix.put(Species.HOMO_SAPIENS, "OTTHUM");
-				break;
-			case MUS_MUSCULUS:
-				vegaStableIDPrefix.put(Species.MUS_MUSCULUS, "OTTMUS");
-				break;
-			case CANIS_FAMILIARIS:
-				vegaStableIDPrefix.put(Species.CANIS_FAMILIARIS, "OTTCAN");
-				break;
-			case DANIO_RERIO:
-				vegaStableIDPrefix.put(Species.DANIO_RERIO, "OTTDAR");
-				break;
-                        case RATTUS_NORVEGICUS:
-                                vegaStableIDPrefix.put(Species.RATTUS_NORVEGICUS, "OTTRNO");
-                                break;
-                        case SUS_SCROFA:
-                                vegaStableIDPrefix.put(Species.SUS_SCROFA, "OTTSUS");
-                                break;
-                        }
-
 		}
 	}
 
@@ -338,8 +314,6 @@ public enum Species {
 
 		if (t.equals(DatabaseType.CORE)) {
 			result = (String) s.getStableIDPrefix();
-		} else if (t.equals(DatabaseType.VEGA)) {
-			result = (String) vegaStableIDPrefix.get(s);
 		}
 
 		if (result == null || result.equals("")) {

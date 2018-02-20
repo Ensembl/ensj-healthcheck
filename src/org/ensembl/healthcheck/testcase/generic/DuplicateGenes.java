@@ -47,7 +47,7 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 	}
 
 	/**
-	 * This test only applies to core and Vega databases.
+	 * This test only applies to core databases.
 	 */
 	public void types() {
 
@@ -129,14 +129,12 @@ public class DuplicateGenes extends SingleDatabaseTestCase {
 				// canonical_annotation removed in 74
 				// geneCanonicalAnnotation = rs.getString(15);
 
-				if (!first) { // for sangervega, we only want to report true duplicates (i.e. genes that have all fields identical)
+				if (!first) {
 					if (lastGeneChromosome == geneChromosome
 							&& lastGeneStart == geneStart
 							&& lastGeneEnd == geneEnd
 							&& lastGeneStrand == geneStrand
-							&& geneBioType.equals(lastGeneBioType)
-							&& (dbre.getType() != DatabaseType.SANGER_VEGA || (lastGeneAnalysis == geneAnalysis && lastGeneDisplayXref == geneDisplayXref && lastGeneSource == geneSource
-									&& lastGeneDescription == geneDescription && lastGeneIsCurrent == geneIsCurrent && lastGeneCanonicalTranscript == geneCanonicalTranscript && lastGeneCanonicalAnnotation == geneCanonicalAnnotation))) {
+							&& geneBioType.equals(lastGeneBioType)) {
 
 						duplicateGene++;
 						if (duplicateGene < MAX_WARNINGS) {

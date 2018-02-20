@@ -64,13 +64,6 @@ public class BiotypeGroups extends SingleDatabaseTestCase {
 	}
 
 	/**
-	 * This test Does not apply to sangervega dbs
-	 */
-	public void types() {
-		removeAppliesToType(DatabaseType.SANGER_VEGA);
-	}
-
-	/**
 	 * Run the test.
 	 * 
 	 * @param dbre
@@ -92,9 +85,7 @@ public class BiotypeGroups extends SingleDatabaseTestCase {
     Set<String> geneBiotypes = getBiotypesDb(dbre, table);
 
     List<String> annotatorGenes = new ArrayList<String>();
-    if("vega".equals(databaseType) || "sangervega".equals(databaseType)) {
-      annotatorGenes = getGenesWithAnnotatorBiotype(dbre);
-    }
+
     ArrayList<String> transcriptErrors = new ArrayList<String>();
     ArrayList<String> biotypeGroupErrors = new ArrayList<String>();
     ArrayList<String> noGroupErrors = new ArrayList<String>();

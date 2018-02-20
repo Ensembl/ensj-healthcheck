@@ -66,7 +66,6 @@ public class ImportedDataSets extends SingleDatabaseTestCase {
     allowedRegexEns.add("%cdna");
     allowedRegexEns.add("%ensembl_protein");
 
-    allowedInEns.add("estgene");
     allowedInEns.add("medaka_transcriptcoalescer");
 
   }

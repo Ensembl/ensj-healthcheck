@@ -50,7 +50,6 @@ import org.ensembl.healthcheck.util.SqlTemplate;
  * MetaCrossSpecies.
  */
 public class Meta extends SingleDatabaseTestCase {
-	private boolean isSangerVega = false;
 
 	/**
 	 * Creates a new instance of CheckMetaDataTableTestCase
@@ -205,11 +204,7 @@ public class Meta extends SingleDatabaseTestCase {
 			ReportManager.problem(this, con, "Meta schema_version " + schemaVersion + " is not numeric");
 			return false;
 
-		} else if (!dbNameVersion.equals(schemaVersion) && !isSangerVega) {// do
-																			// not
-																			// report
-																			// for
-																			// sangervega
+		} else if (!dbNameVersion.equals(schemaVersion)) {
 
 			ReportManager.problem(this, con, "Meta schema_version " + schemaVersion
 					+ " does not match version inferred from database name (" + dbNameVersion + ")");

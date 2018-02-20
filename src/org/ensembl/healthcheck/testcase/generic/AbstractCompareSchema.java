@@ -259,13 +259,7 @@ public abstract class AbstractCompareSchema extends MultiDatabaseTestCase {
           somethingWasCompared = true;
           int directionFlag = COMPARE_BOTH;
           boolean ignoreBackupTables = false;
-          if (type == DatabaseType.SANGER_VEGA) {
-            directionFlag = COMPARE_RIGHT;
-            ignoreBackupTables = true;
-          }
           
-          // for sangervega, ignore backup tables. If not the same, this
-          // method will generate a report
           try {
             if (!compareTableEquality(masterCon, dbre, ignoreBackupTables, directionFlag)) {
               result = false;

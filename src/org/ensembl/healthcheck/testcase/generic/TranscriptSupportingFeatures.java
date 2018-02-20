@@ -86,8 +86,9 @@ public class TranscriptSupportingFeatures extends SingleDatabaseTestCase {
 
 	public void types() {
 
-		removeAppliesToType(DatabaseType.VEGA);
-		removeAppliesToType(DatabaseType.SANGER_VEGA);
+        setAppliesToType(DatabaseType.CORE);
+        setAppliesToType(DatabaseType.CDNA);
+        setAppliesToType(DatabaseType.RNASEQ);
 
 	}
 

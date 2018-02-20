@@ -62,7 +62,7 @@ public class ProteinFeatureTranslation extends SingleDatabaseTestCase implements
 	}
 
 	/**
-	 * This test only applies to core and Vega databases.
+	 * This test only applies to core databases.
 	 */
 	public void types() {
 

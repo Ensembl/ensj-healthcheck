@@ -100,7 +100,7 @@ public class MappingSession extends SingleDatabaseTestCase {
 	private boolean checkDBNameFormat(final Connection con) {
 
 		boolean result = true;
-		String dbNameRegexp = "[A-Za-z]+_[A-Za-z]+_(core|est|estgene|vega)_\\d+_\\d+[A-Za-z]?.*";
+		String dbNameRegexp = "[A-Za-z]+_[A-Za-z]+_core_\\d+_\\d+[A-Za-z]?.*";
 
 		String[] sql = { "SELECT old_db_name from mapping_session WHERE old_db_name <> 'ALL'",
 				"SELECT new_db_name from mapping_session WHERE new_db_name <> 'LATEST'" };

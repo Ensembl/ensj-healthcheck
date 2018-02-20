@@ -79,8 +79,7 @@ public class Pseudogene extends SingleDatabaseTestCase {
             + "where gene.biotype like '%pseudogene%' "
             + "and transcript.gene_id=gene.gene_id "
             + "and translation.transcript_id=transcript.transcript_id "
-            + "and gene.biotype not in ('polymorphic_pseudogene',
-                'translated_processed_pseudogene')";
+            + "and gene.biotype not in ('polymorphic_pseudogene', 'translated_processed_pseudogene')";
 
         int rows = DBUtils.getRowCount(con, qry);
         if (rows > 0) {

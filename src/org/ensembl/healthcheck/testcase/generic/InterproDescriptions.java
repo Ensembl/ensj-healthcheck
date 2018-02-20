@@ -46,7 +46,7 @@ public class InterproDescriptions extends SingleDatabaseTestCase {
 	}
 
 	/**
-	 * This only really applies to core & vega databases
+	 * This only really applies to core databases
 	 */
 	public void types() {
 

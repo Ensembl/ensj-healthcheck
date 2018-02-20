@@ -80,7 +80,7 @@ public class AssemblyHasMt extends SingleDatabaseTestCase {
 		int karyotype = t.queryForDefaultObject(sqlCS, Integer.class);
 		if (karyotype > 0) {
 			int mt = t.queryForDefaultObject(sqlMT, Integer.class);
-			if (mt == 0 && dbre.getType() != DatabaseType.SANGER_VEGA) {
+			if (mt == 0) {
 				result = false;
 				ReportManager.problem(this, con,
 						"Species has chromosomes but neither MT nor Mito " + "nor dmel_mitochondrion_genome nor MtDNA");

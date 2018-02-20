@@ -52,11 +52,10 @@ public class EgProteinFeatureTranslation extends AbstractEgCoreTestCase {
 	}
 
 	/**
-	 * This test only applies to core and Vega databases.
+	 * This test only applies to core databases.
 	 */
 	public void types() {
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
-		removeAppliesToType(DatabaseType.ESTGENE);
 		removeAppliesToType(DatabaseType.CDNA);
 	}
 

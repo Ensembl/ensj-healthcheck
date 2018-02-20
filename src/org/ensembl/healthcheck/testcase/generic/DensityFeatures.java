@@ -86,14 +86,6 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 	 */
 	@SuppressWarnings("unchecked")
   public boolean run(DatabaseRegistryEntry dbre) {
-		
-		if (dbre.getType() == DatabaseType.SANGER_VEGA) {
-			logicNameToAttribCode.put("PCodDensity", "knownGeneCount");
-                        logicNameToAttribCode.remove("CodingDensity");
-                        logicNameToAttribCode.remove("PseudogeneDensity");
-                        logicNameToAttribCode.put("ShortNonCodingDensity", "noncoding_cnt_s");
-                        logicNameToAttribCode.put("LongNonCodingDensity", "noncoding_cnt_l");
-		}
 
 		boolean result = true;
 
@@ -255,12 +247,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 //		Species species = dbre.getSpecies();
 		String[] logicNames;
-		if (dbre.getType() == DatabaseType.SANGER_VEGA) {
-			logicNames = new String[] { "PCodDensity" };
-		} else {
-
 			logicNames = new String[] { "PercentGC", "PercentageRepeat", "CodingDensity", "PseudogeneDensity", "ShortNonCodingDensity", "LongNonCodingDensity" };
-		}
 
 		// check that each analysis_id is only used by one density_type
 		for (int i = 0; i < logicNames.length; i++) {
@@ -271,10 +258,6 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 			String[] rows = DBUtils.getColumnValues(con, sql);
 			if (rows.length == 0) {
 
-				if (dbre.getType() != DatabaseType.SANGER_VEGA || logicName.equalsIgnoreCase("knownGeneDensity")) {// for sangervega only
-																																																						// report analysis
-					ReportManager.problem(this, con, "RelCo: No entry in density_type for analysis " + logicName + " - run density pipeline");
-				}
 				result = false;
 
 			}

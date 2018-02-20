@@ -139,10 +139,7 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 	 */
 	public void types() {
 
-		removeAppliesToType(DatabaseType.OTHERFEATURES);
-		removeAppliesToType(DatabaseType.CDNA);
-		removeAppliesToType(DatabaseType.CORE);
-		removeAppliesToType(DatabaseType.VEGA);
+		setAppliesToType(DatabaseType.VARIATION);
 
 	}
 

@@ -74,13 +74,8 @@ public class MetaCoord extends SingleDatabaseTestCase {
 
 			// build up a list of all the coordinate systems that are in the various feature tables
 			for (String tableName : featureTables) {
-				String sql = "";
-				if (dbre.getType() == DatabaseType.SANGER_VEGA) {
-					sql = "SELECT DISTINCT(sr.coord_system_id) FROM seq_region sr join coord_system cs on sr.coord_system_id = cs.coord_system_id, " + tableName
-							+ " f WHERE sr.seq_region_id = f.seq_region_id and cs.version like 'VEGA%' ";
-				} else {
-					sql = "SELECT DISTINCT(sr.coord_system_id) FROM seq_region sr, " + tableName + " f WHERE sr.seq_region_id = f.seq_region_id";
-				}
+				String sql = "SELECT DISTINCT(sr.coord_system_id) FROM seq_region sr, "
+					+ tableName + " f WHERE sr.seq_region_id = f.seq_region_id";
 
 				logger.finest("Getting feature coordinate systems and max_length for " + tableName);
 				ResultSet rs = stmt.executeQuery(sql);

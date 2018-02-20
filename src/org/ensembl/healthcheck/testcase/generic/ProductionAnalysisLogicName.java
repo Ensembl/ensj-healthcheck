@@ -48,11 +48,6 @@ public class ProductionAnalysisLogicName extends AbstractTemplatedTestCase {
 		setSecondTeamResponsible(Team.RELEASE_COORDINATOR);
 	}
 
-	public void types() {
-		removeAppliesToType(DatabaseType.SANGER_VEGA);
-		removeAppliesToType(DatabaseType.VEGA);
-	}
-
 	@Override
   protected boolean runTest(DatabaseRegistryEntry dbre) {
     boolean result = true;

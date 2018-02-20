@@ -63,8 +63,6 @@ public class PredictedXrefs extends SingleDatabaseTestCase {
         public void types() {
 
                 removeAppliesToType(DatabaseType.OTHERFEATURES);
-                removeAppliesToType(DatabaseType.VEGA);
-                removeAppliesToType(DatabaseType.SANGER_VEGA);
                 removeAppliesToType(DatabaseType.RNASEQ);
                 removeAppliesToType(DatabaseType.CDNA);
 

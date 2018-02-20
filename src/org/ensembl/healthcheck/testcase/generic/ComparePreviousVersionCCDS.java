@@ -67,8 +67,6 @@ public class ComparePreviousVersionCCDS extends ComparePreviousVersionBase {
 
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		removeAppliesToType(DatabaseType.CDNA);
-		removeAppliesToType(DatabaseType.VEGA);
-		removeAppliesToType(DatabaseType.SANGER_VEGA);
 		removeAppliesToType(DatabaseType.RNASEQ);
 
 	}

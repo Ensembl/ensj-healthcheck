@@ -136,10 +136,7 @@ public class SeqRegionCoordSystem extends SingleDatabaseTestCase {
 
 			String query = "SELECT COUNT(*) FROM seq_region s1, seq_region s2, coord_system c1, coord_system c2 " + "WHERE s1.name=s2.name AND s1.coord_system_id != s2.coord_system_id "
 					+ "AND c1.coord_system_id=s1.coord_system_id AND c2.coord_system_id=s2.coord_system_id " + "AND s1.length != s2.length and c1.species_id=" + speciesId + " and c2.species_id=" + speciesId;
-			// for vega, only report if they are on the same assembly
-			if (dbre.getType() == DatabaseType.SANGER_VEGA || dbre.getType() == DatabaseType.VEGA) {
-				query += " and c1.version=c2.version";
-			}
+
 			int rows = DBUtils.getRowCount(con, query);
 			if (rows > 0) {
 

@@ -52,13 +52,6 @@ public class ComparePreviousVersionAssociatedXrefs extends ComparePreviousVersio
 
 	}
 
-	/**
-	 * This test Does not apply to sangervega dbs
-	 */
-	public void types() {
-		removeAppliesToType(DatabaseType.SANGER_VEGA);
-	}
-
 	// ----------------------------------------------------------------------
 
 	protected Map<String, Integer> getCounts(DatabaseRegistryEntry dbre) {

@@ -42,13 +42,12 @@ public class DNAEmpty extends SingleDatabaseTestCase {
     }
 
     /**
-     * This applies to all core schema databases apart from 'core', 'presite' and 'sangervega'
+     * This applies to all core schema databases apart from 'core', 'presite'
      */
     public void types() {
 
         removeAppliesToType(DatabaseType.CORE);
         removeAppliesToType(DatabaseType.PRE_SITE);
-        removeAppliesToType(DatabaseType.SANGER_VEGA);
 
     }
 

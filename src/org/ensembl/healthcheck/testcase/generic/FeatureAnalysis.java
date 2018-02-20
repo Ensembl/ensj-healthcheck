@@ -57,10 +57,9 @@ public class FeatureAnalysis extends SingleDatabaseTestCase {
   }
 
   /**
-   * This only applies to core and Vega databases.
+   * This only applies to core databases.
    */
   public void types() {
-    removeAppliesToType(DatabaseType.VEGA);
     removeAppliesToType(DatabaseType.CDNA);
   }
 

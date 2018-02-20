@@ -44,7 +44,7 @@ public class ProteinFeatures extends SingleDatabaseTestCase {
 	}
 
 	/**
-	 * This only applies to core and Vega databases.
+	 * This only applies to core databases.
 	 */
 	public void types() {
 

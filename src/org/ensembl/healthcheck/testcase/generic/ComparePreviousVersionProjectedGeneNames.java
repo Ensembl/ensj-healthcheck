@@ -64,7 +64,7 @@ public class ComparePreviousVersionProjectedGeneNames extends SingleDatabaseTest
 	}
 
 	/**
-	 * This only applies to core and Vega databases.
+	 * This only applies to core databases.
 	 */
 	public void types() {
 

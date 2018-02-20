@@ -82,7 +82,7 @@ public class SeqRegionAttribsPresent extends SingleDatabaseTestCase {
 	  boolean result = true;
 
     Connection con = dbre.getConnection();
-    String code = (dbre.getType() == DatabaseType.SANGER_VEGA) ? "KnwnPCCount" : "coding_cnt";
+    String code = "coding_cnt";
 
     SqlTemplate t = DBUtils.getSqlTemplate(dbre);
     String sql = "select distinct g.seq_region_id from gene g where g.biotype = ? and g.seq_region_id not in (select distinct g.seq_region_id from gene g, seq_region_attrib sa, attrib_type at where g.seq_region_id = sa.seq_region_id and sa.attrib_type_id = at.attrib_type_id and at.code in (?,?))" ;

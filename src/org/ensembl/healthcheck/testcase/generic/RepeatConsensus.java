@@ -42,7 +42,7 @@ public class RepeatConsensus extends SingleDatabaseTestCase {
 	}
 
 	/**
-	 * This test only applies to core and Vega databases.
+	 * This test only applies to core databases.
 	 */
 	public void types() {
 
@@ -66,22 +66,15 @@ public class RepeatConsensus extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 		String query = "SELECT COUNT(*) FROM repeat_consensus WHERE repeat_type = ''";
-		if (dbre.getType() != DatabaseType.SANGER_VEGA) {// for sangervega, simple is fine
-			query += " OR repeat_type ='Simple'";
-		}
+
 		int rows = DBUtils.getRowCount(con, query);
 
 		if (rows > 0) {
 			String report = "repeat_consensus table has " + rows + " rows of repeat_type empty";
-			if (dbre.getType() != DatabaseType.SANGER_VEGA) {// for sangervega, simple is fine
-				report += " OR 'Simple'";
-			}
+
 			ReportManager.problem(this, con, report);
-			if (dbre.getType() == DatabaseType.SANGER_VEGA) {
-				ReportManager.problem(this, con, "This probably means the .../sanger-plugins/vega/utils//vega_repeat_libraries.pl script was not run.");
-			} else {
-				ReportManager.problem(this, con, "This probably means the ensembl/misc-scripts/repeats/repeat-types.pl script was not run.");
-			}
+			ReportManager.problem(this, con, "This probably means the ensembl/misc-scripts/repeats/repeat-types.pl script was not run.");
+			
 			result = false;
 
 		} else {

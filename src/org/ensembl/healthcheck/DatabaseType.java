@@ -36,365 +36,300 @@ import org.ensembl.healthcheck.util.Utils;
  */
 public final class DatabaseType {
 
-	/** A core database */
-	public static final DatabaseType CORE = new DatabaseType("core");
+    /** A core database */
+    public static final DatabaseType CORE = new DatabaseType("core");
 
-	/** An EST database */
-	public static final DatabaseType EST = new DatabaseType("est");
+    /** A Compara database */
+    public static final DatabaseType COMPARA = new DatabaseType("compara");
 
-	/** An ESTgene database */
-	public static final DatabaseType ESTGENE = new DatabaseType("estgene");
+    /** A Mart database */
+    public static final DatabaseType MART = new DatabaseType("mart");
 
-	/** A Vega database - note this actually refers to the Ensembl Vega database */
-	public static final DatabaseType VEGA = new DatabaseType("vega");
+    /** A variation database */
+    public static final DatabaseType VARIATION = new DatabaseType("variation");
 
-	/** A Sanger Vega database - note this is different from the Ensembl Vega database */
-	public static final DatabaseType SANGER_VEGA = new DatabaseType("sangervega");
+    /** A disease database */
+    public static final DatabaseType DISEASE = new DatabaseType("disease");
 
-	/** A Compara database */
-	public static final DatabaseType COMPARA = new DatabaseType("compara");
+    /** A haplotype database */
+    public static final DatabaseType HAPLOTYPE = new DatabaseType("haplotype");
 
-	/** A Mart database */
-	public static final DatabaseType MART = new DatabaseType("mart");
+    /** A lite database */
+    public static final DatabaseType LITE = new DatabaseType("lite");
 
-	/** A variation database */
-	public static final DatabaseType VARIATION = new DatabaseType("variation");
+    /** A GO database */
+    public static final DatabaseType GO = new DatabaseType("go");
 
-	/** A disease database */
-	public static final DatabaseType DISEASE = new DatabaseType("disease");
+    /** An xref database */
+    public static final DatabaseType XREF = new DatabaseType("xref");
 
-	/** A haplotype database */
-	public static final DatabaseType HAPLOTYPE = new DatabaseType("haplotype");
+    /** An cDNA database */
+    public static final DatabaseType CDNA = new DatabaseType("cdna");
 
-	/** A lite database */
-	public static final DatabaseType LITE = new DatabaseType("lite");
+    /** A sequence database */
+    public static final DatabaseType SEQ = new DatabaseType("seq");
 
-	/** A GO database */
-	public static final DatabaseType GO = new DatabaseType("go");
+    /** A help database */
+    public static final DatabaseType HELP = new DatabaseType("HELP");
 
-	/** An expression database */
-	public static final DatabaseType EXPRESSION = new DatabaseType("expression");
+    /** An otherfeatures database */
+    public static final DatabaseType OTHERFEATURES = new DatabaseType("otherfeatures");
 
-	/** An xref database */
-	public static final DatabaseType XREF = new DatabaseType("xref");
+    /** A system database */
+    public static final DatabaseType SYSTEM = new DatabaseType("system");
 
-	/** An cDNA database */
-	public static final DatabaseType CDNA = new DatabaseType("cdna");
+    /** A taxonomy database */
+    public static final DatabaseType NCBI_TAXONOMY = new DatabaseType("ncbi_taxonomy");
 
-	/** A sequence database */
-	public static final DatabaseType SEQ = new DatabaseType("seq");
+    /** An ensembl_website database */
+    public static final DatabaseType ENSEMBL_WEBSITE = new DatabaseType("ensembl_website");
 
-	/** A help database */
-	public static final DatabaseType HELP = new DatabaseType("HELP");
+    /** A healthcheck database */
+    public static final DatabaseType HEALTHCHECK = new DatabaseType("healthcheck");
 
-	/** An otherfeatures database */
-	public static final DatabaseType OTHERFEATURES = new DatabaseType("otherfeatures");
+    /** A functional genomics database */
+    public static final DatabaseType FUNCGEN = new DatabaseType("funcgen");
 
-	/** A system database */
-	public static final DatabaseType SYSTEM = new DatabaseType("system");
+    /** A production database */
+    public static final DatabaseType PRODUCTION = new DatabaseType("production");
 
-	/** A taxonomy database */
-	public static final DatabaseType NCBI_TAXONOMY = new DatabaseType("ncbi_taxonomy");
+    /** An rnaseq database */
+    public static final DatabaseType RNASEQ = new DatabaseType("rnaseq");
 
-	/** An ensembl_website database */
-	public static final DatabaseType ENSEMBL_WEBSITE = new DatabaseType("ensembl_website");
+    /** A pre database */
+    public static final DatabaseType PRE_SITE = new DatabaseType("presite");
 
-	/** A healthcheck database */
-	public static final DatabaseType HEALTHCHECK = new DatabaseType("healthcheck");
+    /** A database whose type has not been determined */
+    public static final DatabaseType UNKNOWN = new DatabaseType("unknown");
 
-	/** A functional genomics database */
-	public static final DatabaseType FUNCGEN = new DatabaseType("funcgen");
+    private final String name;
 
-	/** A production database */
-	public static final DatabaseType PRODUCTION = new DatabaseType("production");
+    private DatabaseType(final String name) {
 
-	/** An rnaseq database */
-	public static final DatabaseType RNASEQ = new DatabaseType("rnaseq");
+        this.name = name;
+    }
 
-        /** A pre database */
-        public static final DatabaseType PRE_SITE = new DatabaseType("presite");
+    /**
+     * @return a String representation of this DatabaseType object.
+     */
+    public String toString() {
 
-	/** A database whose type has not been determined */
-	public static final DatabaseType UNKNOWN = new DatabaseType("unknown");
+        return this.name;
+    }
 
-	private final String name;
+    /**
+     * @return a String representation of this DatabaseType object.
+     */
+    public String getName() {
 
-	private DatabaseType(final String name) {
+        return this.name;
+    }
 
-		this.name = name;
-	}
+    // -----------------------------------------------------------------
+    /**
+     * Resolve an alias to a DatabaseType object.
+     * 
+     * @param alias
+     *          The alias (e.g. core).
+     * @return The DatabaseType object corresponding to alias, or DatabaseType.UNKNOWN if it cannot be resolved.
+     */
+    public static DatabaseType resolveAlias(final String alias) {
 
-	/**
-	 * @return a String representation of this DatabaseType object.
-	 */
-	public String toString() {
+        String lcAlias = alias.toLowerCase();
 
-		return this.name;
-	}
+        // --------------------------------------
+        // EG: treat eg_core as core dbs as well
+        if (in(lcAlias, "core") || in(lcAlias, "eg_core") || in(lcAlias, "ancestral")) {
 
-	/**
-	 * @return a String representation of this DatabaseType object.
-	 */
-	public String getName() {
+            return CORE;
 
-		return this.name;
-	}
+        }
 
-	// -----------------------------------------------------------------
-	/**
-	 * Resolve an alias to a DatabaseType object.
-	 * 
-	 * @param alias
-	 *          The alias (e.g. core).
-	 * @return The DatabaseType object corresponding to alias, or DatabaseType.UNKNOWN if it cannot be resolved.
-	 */
-	public static DatabaseType resolveAlias(final String alias) {
+        // --------------------------------------
 
-		String lcAlias = alias.toLowerCase();
+        if (in(lcAlias, "compara") || in(lcAlias, "eg_compara")) {
 
-		// --------------------------------------
-		// needs to be before core and est since names
-		// are of the form homo_sapiens_coreexpressionest_24_34e
-		if (in(lcAlias, "expression")) {
+            return COMPARA;
 
-			return EXPRESSION;
+        }
 
-		}
+        // --------------------------------------
 
-		// --------------------------------------
-		// EG: treat eg_core as core dbs as well
-		if (in(lcAlias, "core") || in(lcAlias, "eg_core") || in(lcAlias, "ancestral")) {
+        if (in(lcAlias, "mart")) {
 
-			return CORE;
+            return MART;
 
-		}
+        }
 
-		// --------------------------------------
+        // --------------------------------------
 
-		if (in(lcAlias, "est")) {
+        if (in(lcAlias, "variation")) {
 
-			return EST;
+            return VARIATION;
 
-		}
+        }
 
-		// --------------------------------------
+        // --------------------------------------
 
-		if (in(lcAlias, "estgene")) {
+        if (in(lcAlias, "disease")) {
 
-			return ESTGENE;
+            return DISEASE;
 
-		}
+        }
 
-		// --------------------------------------
+        // --------------------------------------
 
-		if (in(lcAlias, "compara") || in(lcAlias, "eg_compara")) {
+        if (in(lcAlias, "haplotype")) {
 
-			return COMPARA;
+            return HAPLOTYPE;
 
-		}
+        }
 
-		// --------------------------------------
+        // --------------------------------------
 
-		if (in(lcAlias, "mart")) {
+        if (in(lcAlias, "lite")) {
 
-			return MART;
+            return LITE;
 
-		}
+        }
 
-		// --------------------------------------
+        // --------------------------------------
 
-		if (in(lcAlias, "vega")) {
+        if (in(lcAlias, "go")) {
 
-			return VEGA;
+            return GO;
 
-		}
+        }
 
-		// --------------------------------------
+        // --------------------------------------
 
-		if (in(lcAlias, "variation")) {
+        if (in(lcAlias, "xref")) {
 
-			return VARIATION;
+            return XREF;
 
-		}
+        }
 
-		// --------------------------------------
+        // --------------------------------------
 
-		if (in(lcAlias, "disease")) {
+        if (in(lcAlias, "cdna")) {
 
-			return DISEASE;
+            return CDNA;
 
-		}
+        }
 
-		// --------------------------------------
+        // --------------------------------------
 
-		if (in(lcAlias, "haplotype")) {
+        if (in(lcAlias, "seq")) {
 
-			return HAPLOTYPE;
+            return SEQ;
 
-		}
+        }
 
-		// --------------------------------------
+        // --------------------------------------
 
-		if (in(lcAlias, "lite")) {
+        if (in(lcAlias, "help")) {
 
-			return LITE;
+            return HELP;
 
-		}
+        }
 
-		// --------------------------------------
+        // --------------------------------------
 
-		if (in(lcAlias, "go")) {
+        if (in(lcAlias, "ensembl_website")) {
 
-			return GO;
+            return ENSEMBL_WEBSITE;
 
-		}
+        }
 
-		// --------------------------------------
+        // --------------------------------------
 
-		if (in(lcAlias, "xref")) {
+        if (in(lcAlias, "ncbi_taxonomy")) {
 
-			return XREF;
+            return NCBI_TAXONOMY;
 
-		}
+        }
 
-		// --------------------------------------
+        // --------------------------------------
 
-		if (in(lcAlias, "cdna")) {
+        if (in(lcAlias, "healthcheck")) {
 
-			return CDNA;
+            return HEALTHCHECK;
 
-		}
+        }
 
-		// --------------------------------------
+        // --------------------------------------
 
-		if (in(lcAlias, "seq")) {
+        if (in(lcAlias, "funcgen") || in(lcAlias, "eg_funcgen")) {
 
-			return SEQ;
+            return FUNCGEN;
 
-		}
+        }
 
-		// --------------------------------------
+        // --------------------------------------
 
-		if (in(lcAlias, "help")) {
+        if (in(lcAlias, "ensembl_production")) {
 
-			return HELP;
+            return PRODUCTION;
 
-		}
+        }
 
-		// --------------------------------------
+        // --------------------------------------
 
-		if (in(lcAlias, "otherfeatures")) {
+        if (in(lcAlias, "rnaseq")) {
 
-			return OTHERFEATURES;
+            return RNASEQ;
 
-		}
-
-		// --------------------------------------
-
-		if (in(lcAlias, "ensembl_website")) {
-
-			return ENSEMBL_WEBSITE;
-
-		}
-
-		// --------------------------------------
-
-		if (in(lcAlias, "ncbi_taxonomy")) {
-
-			return NCBI_TAXONOMY;
-
-		}
-
-		// --------------------------------------
-
-		if (in(lcAlias, "healthcheck")) {
-
-			return HEALTHCHECK;
-
-		}
-
-		// --------------------------------------
-
-		if (in(lcAlias, "funcgen") || in(lcAlias, "eg_funcgen")) {
-
-			return FUNCGEN;
-
-		}
-
-		// --------------------------------------
-
-		if (in(lcAlias, "ensembl_production")) {
-
-			return PRODUCTION;
-
-		}
-
-		// --------------------------------------
-
-		if (in(lcAlias, "rnaseq")) {
-
-			return RNASEQ;
-
-		}
+        }
 
                 // --------------------------------------
 
-                if (in(lcAlias, "presite")) {
+        if (in(lcAlias, "presite")) {
 
-                        return PRE_SITE;
+            return PRE_SITE;
 
-                }
+        }
 
-		// --------------------------------------
-		// treat ensembl genomes collection databases as core
+        // --------------------------------------
+        // treat ensembl genomes collection databases as core
 
-		if (in(lcAlias, "collection")) {
+        if (in(lcAlias, "collection")) {
 
-			return CORE;
+            return CORE;
 
-		}
+        }
 
-		// --------------------------------------
-		// and sangervega (generally specified via -type)
+        // --------------------------------------
 
-		if (in(lcAlias, "sangervega")) {
+        // default case
+        return UNKNOWN;
 
-			return SANGER_VEGA;
+    } // resolveAlias
 
-		}
+    // -----------------------------------------------------------------
 
-		// --------------------------------------
+    /**
+     * Return true if alias appears somewhere in comma-separated list.
+     */
+    private static boolean in(final String alias, final String list) {
 
-		// default case
-		return UNKNOWN;
+        return (list.indexOf(alias) > -1);
 
-	} // resolveAlias
+    }
 
-	// -----------------------------------------------------------------
+    // -------------------------------------------------------------------------
+    /**
+     * Check if a DatabaseType is core.
+     * 
+     * @return true if database is core.
+     */
+    public boolean isGeneric() {
 
-	/**
-	 * Return true if alias appears somewhere in comma-separated list.
-	 */
-	private static boolean in(final String alias, final String list) {
+        String[] genericTypes = {"core", "cdna", "otherfeatures", "rnaseq", "presite"};
 
-		return (list.indexOf(alias) > -1);
+        return Utils.stringInArray(name, genericTypes, false);
 
-	}
+    }
 
-	// -------------------------------------------------------------------------
-	/**
-	 * Check if a DatabaseType is generic (core, est, estgene, vega).
-	 * 
-	 * @return true if database is core, est, estgene or vega etc.
-	 */
-	public boolean isGeneric() {
-
-		String[] genericTypes = {"core", "est", "estgene", "vega", "cdna", "otherfeatures", "sangervega", "rnaseq", "presite"};
-
-		return Utils.stringInArray(name, genericTypes, false);
-
-	}
-
-	// -----------------------------------------------------------------
+    // -----------------------------------------------------------------
 
 } // DatabaseType

@@ -57,7 +57,6 @@ import org.ensembl.healthcheck.util.Utils;
  * species are done in MetaCrossSpecies.
  */
 public class MetaValues extends SingleDatabaseTestCase {
-	private boolean isSangerVega = false;
 
 	public MetaValues() {
 
@@ -74,7 +73,6 @@ public class MetaValues extends SingleDatabaseTestCase {
 	 * @return True if the test passed.
 	 */
 	public boolean run(final DatabaseRegistryEntry dbre) {
-		isSangerVega = dbre.getType() == DatabaseType.SANGER_VEGA;
 		boolean result = true;
 
 		Connection con = dbre.getConnection();

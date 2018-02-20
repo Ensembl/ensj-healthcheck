@@ -55,13 +55,6 @@ public class ComparePreviousVersionTableRows extends ComparePreviousVersionBase 
 		setSecondTeamResponsible(Team.GENEBUILD);
 	}
 
-	/**
-	 * This test Does not apply to sangervega dbs
-	 */
-	public void types() {
-		removeAppliesToType(DatabaseType.SANGER_VEGA);
-	}
-
 	// ----------------------------------------------------------------------
 
 	protected Map getCounts(DatabaseRegistryEntry dbre) {

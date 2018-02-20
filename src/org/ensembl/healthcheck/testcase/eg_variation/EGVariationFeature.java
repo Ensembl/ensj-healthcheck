@@ -105,7 +105,6 @@ public class EGVariationFeature extends SingleDatabaseTestCase {
 		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		removeAppliesToType(DatabaseType.CDNA);
 		removeAppliesToType(DatabaseType.CORE);
-		removeAppliesToType(DatabaseType.VEGA);
 
 	}
 

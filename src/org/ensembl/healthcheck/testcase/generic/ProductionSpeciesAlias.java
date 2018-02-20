@@ -44,9 +44,6 @@ public class ProductionSpeciesAlias extends SingleDatabaseTestCase {
         setSecondTeamResponsible(Team.RELEASE_COORDINATOR);
     }
 
-    public void types() {
-        removeAppliesToType(DatabaseType.SANGER_VEGA);
-    }
 
     @Override
     public boolean run(DatabaseRegistryEntry dbre) {

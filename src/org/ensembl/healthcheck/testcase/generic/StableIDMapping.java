@@ -59,9 +59,7 @@ public class StableIDMapping extends SingleDatabaseTestCase {
 
 	public void types() {
 
-		removeAppliesToType(DatabaseType.CDNA);
-		removeAppliesToType(DatabaseType.OTHERFEATURES);
-		removeAppliesToType(DatabaseType.RNASEQ);
+        setAppliesToType(DatabaseType.CORE);
 
 	}
 
@@ -86,8 +84,7 @@ public class StableIDMapping extends SingleDatabaseTestCase {
 				&& !s.equals(DatabaseRegistryEntry.DROSOPHILA_MELANOGASTER)
 				&& !s.equals(DatabaseRegistryEntry.SACCHAROMYCES_CEREVISIAE)
 				&& !s.equals(DatabaseRegistryEntry.ANOPHELES_GAMBIAE) && !s.equals(DatabaseRegistryEntry.UNKNOWN)) {
-			if (dbre.getType() == DatabaseType.CORE) {// for sangervega, do not
-														// check the prefixes
+			if (dbre.getType() == DatabaseType.CORE) {
 				result &= checkStableIDEventTypes(con);
 				result = checkStableIDTimestamps(con);
 			}

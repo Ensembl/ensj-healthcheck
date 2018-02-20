@@ -96,13 +96,7 @@ public class CoreForeignKeys extends SingleDatabaseTestCase {
 
 		result &= checkForOrphans(con, "misc_feature_misc_set", "misc_set_id", "misc_set", "misc_set_id", true);
 
-		// for a sangervega db, ignore misc_featres whcih have no annotation
-		if (dbre.getType() == DatabaseType.SANGER_VEGA) {
-			result &= checkForOrphansWithConstraint(con, "misc_feature", "misc_feature_id", "misc_attrib", "misc_feature_id",
-					"misc_feature_id NOT IN (select mfms.misc_feature_id from misc_feature_misc_set as mfms join misc_set as ms on mfms.misc_set_id=ms.misc_set_id and ms.code='noAnnotation')");
-		} else {
-			result &= checkForOrphans(con, "misc_feature", "misc_feature_id", "misc_attrib", "misc_feature_id", true);
-		}
+		result &= checkForOrphans(con, "misc_feature", "misc_feature_id", "misc_attrib", "misc_feature_id", true);
 
 		result &= checkForOrphans(con, "misc_attrib", "attrib_type_id", "attrib_type", "attrib_type_id", true);
 

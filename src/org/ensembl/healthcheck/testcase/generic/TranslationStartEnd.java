@@ -48,12 +48,11 @@ public class TranslationStartEnd extends SingleDatabaseTestCase {
     }
 
     /**
-     * This only applies to core and Vega databases.
+     * This only applies to core databases.
      */
     public void types() {
 
-        removeAppliesToType(DatabaseType.OTHERFEATURES);
-        removeAppliesToType(DatabaseType.RNASEQ);
+        setAppliesToType(DatabaseType.CORE);
 
     }
 

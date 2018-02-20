@@ -91,7 +91,7 @@ public class SchemaType extends SingleDatabaseTestCase {
 	} // run
 
 	/**
-	 * Check if the key in the meta table matches the database type. Note that all generic (CDNA, core, otherfeatures, vega) dbs
+	 * Check if the key in the meta table matches the database type. Note that all generic (CDNA, core, otherfeatures) dbs
 	 * should have schema_type of "core"
 	 */
 	private boolean typeMatches(DatabaseType type, String key) {
