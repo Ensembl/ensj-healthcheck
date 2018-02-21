@@ -84,8 +84,8 @@ public abstract class RegulationComparePreviousVersion extends ComparePreviousVe
 
 				if ( percentage < 0 ) percentage *= -1;
 
-				if ( compareReturnProblem() ) { 
-					if ( percentage > 0 ) {
+				if ( percentage > 0 ) {
+					if ( compareReturnProblem() ) { 
 						if ( secondaryCount > currentCount ){
 							ReportManager.problem(this, dbre.getConnection(), sec.getName() + " has " + secondaryCount + " " + entityDescription() + " " + key + " but " + dbre.getName() + " only has " + currentCount + " (dif: " + String.format("%1.4f", percentage) + "%)" );
 							result = false;
@@ -93,14 +93,15 @@ public abstract class RegulationComparePreviousVersion extends ComparePreviousVe
 							ReportManager.problem(this, dbre.getConnection(), sec.getName() + " only has " + secondaryCount + " " + entityDescription() + " " + key + " but " + dbre.getName() + " has " + currentCount + " (dif: " + String.format("%1.4f", percentage) + "%)");
 							result = false;
 						}
-					}
-				}else{ 
-					if ( secondaryCount > currentCount ){
-						ReportManager.warning(this, dbre.getConnection(), sec.getName() + " has " + secondaryCount + " " + entityDescription() + " " + key + " but " + dbre.getName() + " only has " + currentCount + " (dif: " + String.format("%1.4f", percentage) + "%)" );
 
-					}else {
-						ReportManager.warning(this, dbre.getConnection(), sec.getName() + " only has " + secondaryCount + " " + entityDescription() + " " + key + " but " + dbre.getName() + " has " + currentCount + " (dif: " + String.format("%1.4f", percentage) + "%)");
+					}else{ 
+						if ( secondaryCount > currentCount ){
+							ReportManager.warning(this, dbre.getConnection(), sec.getName() + " has " + secondaryCount + " " + entityDescription() + " " + key + " but " + dbre.getName() + " only has " + currentCount + " (dif: " + String.format("%1.4f", percentage) + "%)" );
 
+						}else {
+							ReportManager.warning(this, dbre.getConnection(), sec.getName() + " only has " + secondaryCount + " " + entityDescription() + " " + key + " but " + dbre.getName() + " has " + currentCount + " (dif: " + String.format("%1.4f", percentage) + "%)");
+
+						}
 					}
 				}
 			} else {
