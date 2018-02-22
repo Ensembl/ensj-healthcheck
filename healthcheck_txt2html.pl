@@ -467,7 +467,7 @@ sub get_html_head {
       .left { float:left; }
       .right { float:right; }
       .clearfix:after { clear:both; }
-      .db_content { padding: 0px 15px; }
+      .db_content { padding: 0px 15px 50px; }
       .header_hc_list { padding:4px 6px;font-size 14px;font-weight:bold;background-color:#EEE;margin-bottom:5px; }
       .header_hc_list_passed { border-bottom:2px solid #5cb85c;}
       .header_hc_list_passed > span { color:#5cb85c;}
