@@ -50,7 +50,7 @@ public class AttribValues extends SingleDatabaseTestCase {
 	 */
 	public void types() {
 
-		setAppliesToTypes(DatabaseType.CORE);
+		setAppliesToType(DatabaseType.CORE);
 
 	}
 

@@ -48,7 +48,7 @@ public class FrameshiftAttributes extends SingleDatabaseTestCase {
 	 */
 	public void types() {
 
-		setAppliesToTypes(DatabaseType.CORE);
+		setAppliesToType(DatabaseType.CORE);
 
 	}
 
