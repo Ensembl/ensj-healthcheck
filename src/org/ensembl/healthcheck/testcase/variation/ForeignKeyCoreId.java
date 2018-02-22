@@ -136,13 +136,4 @@ public class ForeignKeyCoreId extends MultiDatabaseTestCase {
 
 	}
 
-	/**
-	 * This only applies to variation databases.
-	 */
-	public void types() {
-
-		setAppliesToType(DatabaseType.VARIATION);
-
-	}
-
 } // ForeignKeyCoreId

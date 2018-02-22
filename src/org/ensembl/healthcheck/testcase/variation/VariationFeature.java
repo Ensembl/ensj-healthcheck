@@ -117,15 +117,4 @@ public class VariationFeature extends SingleDatabaseTestCase {
 
 	} // run
 
-	// -----------------------------------------------------------------
-
-	/**
-	 * This only applies to variation databases.
-	 */
-	public void types() {
-
-		setAppliesToType(DatabaseType.VARIATION);
-
-	}
-
 } // VariationFeature

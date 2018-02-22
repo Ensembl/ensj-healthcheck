@@ -38,11 +38,6 @@ public class EGCompareVariationSchema extends EGAbstractCompareSchema {
 	}
 
 	@Override
-	public void types() {
-		setAppliesToType(DatabaseType.VARIATION);
-	}
-	
-	@Override
 	protected String getDefinitionFileKey() {
 		return "variation_schema.file";
 	}

@@ -393,8 +393,6 @@ public class VariationSet extends SingleDatabaseTestCase {
 		return new ArrayList(path);
 	} // getAllSubsets
 
-	// -----------------------------------------------------------------
-
 	/**
 	 * Get the Tree structure including and below the supplied set as a Hashtable. Each set is represented with its dbID as key and a
 	 * Hashtable containing its subsets as value.
@@ -442,15 +440,6 @@ public class VariationSet extends SingleDatabaseTestCase {
 		}
 
 		return isSubSet;
-	}
-
-	/**
-	 * This only applies to variation databases.
-	 */
-	public void types() {
-
-		setAppliesToType(DatabaseType.VARIATION);
-
 	}
 
 } // EmptyVariationTablesTestCase

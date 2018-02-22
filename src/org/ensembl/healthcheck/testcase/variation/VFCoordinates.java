@@ -134,13 +134,4 @@ public class VFCoordinates extends MultiDatabaseTestCase {
 
 	}
 
-	/**
-	 * This only applies to variation databases.
-	 */
-	public void types() {
-
-		setAppliesToType(DatabaseType.VARIATION);
-
-	}
-
 } // VFCoordinates

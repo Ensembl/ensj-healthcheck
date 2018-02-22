@@ -50,12 +50,7 @@ public class AttribValues extends SingleDatabaseTestCase {
 	 */
 	public void types() {
 
-		List types = new ArrayList();
-
-		types.add(DatabaseType.CORE);
-		types.add(DatabaseType.PRE_SITE);
-
-		setAppliesToTypes(types);
+		setAppliesToTypes(DatabaseType.CORE);
 
 	}
 

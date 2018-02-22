@@ -84,14 +84,6 @@ public class TranscriptSupportingFeatures extends SingleDatabaseTestCase {
 
 	}
 
-	public void types() {
-
-        setAppliesToType(DatabaseType.CORE);
-        setAppliesToType(DatabaseType.CDNA);
-        setAppliesToType(DatabaseType.RNASEQ);
-
-	}
-
 	/**
 	 * Run the test.
 	 * 

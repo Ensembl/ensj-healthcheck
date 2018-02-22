@@ -92,15 +92,4 @@ public class StructuralVariation extends SingleDatabaseTestCase {
 
 	} // run
 
-	// -----------------------------------------------------------------
-
-	/**
-	 * This only applies to variation databases.
-	 */
-	public void types() {
-
-		setAppliesToType(DatabaseType.VARIATION);
-
-	}
-
 } // StructuralVariation

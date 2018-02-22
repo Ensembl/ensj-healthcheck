@@ -82,17 +82,6 @@ public class Phenotype extends SingleDatabaseTestCase {
 		
 		return result;
 		
-	} 
-
-	// -----------------------------------------------------------------
-
-	/*
-	 * This only applies to variation databases.
-	 */
-	public void types() {
-
-		setAppliesToType(DatabaseType.VARIATION);
-
 	}
 
 } // Variation

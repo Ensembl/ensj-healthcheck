@@ -40,14 +40,6 @@ public class FeaturePosition extends AbstractCoreDatabaseUsingTestCase {
 	}
 	
 	/**
-	 * This only applies to funcgen databases.
-	 */
-	public void types() {
-		setAppliesToType(DatabaseType.FUNCGEN);
-	}
-	
-	
-	/**
 	 * @param dbre
 	 *          The database to use.
 	 * @return true if the test passed.

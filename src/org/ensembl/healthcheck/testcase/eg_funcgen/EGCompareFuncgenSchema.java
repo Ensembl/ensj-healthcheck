@@ -39,11 +39,6 @@ public class EGCompareFuncgenSchema extends EGAbstractCompareSchema {
 	}
 
 	@Override
-	public void types() {
-		setAppliesToType(DatabaseType.FUNCGEN);
-	}
-	
-	@Override
 	protected String getDefinitionFileKey() {
 		return "funcgen_schema.file";
 	}
