@@ -58,6 +58,12 @@ public class Source extends SingleDatabaseTestCase {
                        result = false;
                        ReportManager.problem(this, con,  versions + " different versions set for dbSNP sources ");
                    }
+                   String desc_stmt = "select count(distinct name) from source where description is NULL";
+                   int sources = DBUtils.getRowCount(con,desc_stmt);
+                   if (sources != 0) {
+                       result = false;
+                       ReportManager.problem(this, con,  sources + " are missing the description ");
+		   }
                 }
                 catch (Exception e) {
                        ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
