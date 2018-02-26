@@ -54,11 +54,11 @@ public class Source extends SingleDatabaseTestCase {
 
                    String versions_stmt = "select count(distinct version) from source where name like '%dbSNP%' ";
                    int versions = DBUtils.getRowCount(con,versions_stmt);
-                   if (versions != 1) {
+                   if (versions > 1) {
                        result = false;
                        ReportManager.problem(this, con,  versions + " different versions set for dbSNP sources ");
                    }
-                   String desc_stmt = "select count(distinct name) from source where description is NULL";
+                   String desc_stmt = "select count(*) from source where description is NULL";
                    int sources = DBUtils.getRowCount(con,desc_stmt);
                    if (sources != 0) {
                        result = false;
