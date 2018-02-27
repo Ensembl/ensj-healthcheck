@@ -58,11 +58,17 @@ public class Source extends SingleDatabaseTestCase {
                        result = false;
                        ReportManager.problem(this, con,  versions + " different versions set for dbSNP sources ");
                    }
-                   String desc_stmt = "select count(*) from source where description is NULL";
+                   String desc_stmt = "select count(*) from source where description is NULL OR description ='NULL' ";
                    int sources = DBUtils.getRowCount(con,desc_stmt);
                    if (sources != 0) {
                        result = false;
                        ReportManager.problem(this, con,  sources + " are missing the description ");
+		   }
+                   // Test for Plants where sometimes the source description is a very long project description
+                   String desc_length_stmt = "select count(*) from source where length(description) > 100 ";
+                   int desc_long = DBUtils.getRowCount(con,desc_length_stmt);
+                   if (desc_long != 0) {
+                       ReportManager.info(this, con,  desc_long + " sources have long descriptions ");
 		   }
                 }
                 catch (Exception e) {
