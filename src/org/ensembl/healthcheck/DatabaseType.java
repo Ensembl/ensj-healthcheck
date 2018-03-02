@@ -48,15 +48,6 @@ public final class DatabaseType {
     /** A variation database */
     public static final DatabaseType VARIATION = new DatabaseType("variation");
 
-    /** A disease database */
-    public static final DatabaseType DISEASE = new DatabaseType("disease");
-
-    /** A haplotype database */
-    public static final DatabaseType HAPLOTYPE = new DatabaseType("haplotype");
-
-    /** A lite database */
-    public static final DatabaseType LITE = new DatabaseType("lite");
-
     /** A GO database */
     public static final DatabaseType GO = new DatabaseType("go");
 
@@ -66,17 +57,11 @@ public final class DatabaseType {
     /** An cDNA database */
     public static final DatabaseType CDNA = new DatabaseType("cdna");
 
-    /** A sequence database */
-    public static final DatabaseType SEQ = new DatabaseType("seq");
-
     /** A help database */
     public static final DatabaseType HELP = new DatabaseType("HELP");
 
     /** An otherfeatures database */
     public static final DatabaseType OTHERFEATURES = new DatabaseType("otherfeatures");
-
-    /** A system database */
-    public static final DatabaseType SYSTEM = new DatabaseType("system");
 
     /** A taxonomy database */
     public static final DatabaseType NCBI_TAXONOMY = new DatabaseType("ncbi_taxonomy");
@@ -95,9 +80,6 @@ public final class DatabaseType {
 
     /** An rnaseq database */
     public static final DatabaseType RNASEQ = new DatabaseType("rnaseq");
-
-    /** A pre database */
-    public static final DatabaseType PRE_SITE = new DatabaseType("presite");
 
     /** A database whose type has not been determined */
     public static final DatabaseType UNKNOWN = new DatabaseType("unknown");
