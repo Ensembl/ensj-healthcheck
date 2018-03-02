@@ -28,7 +28,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * Healthcheck for the dna table. Should be empty in an est database
+ * Healthcheck for the dna table. Should be empty in all core-like databases
  */
 
 public class DNAEmpty extends SingleDatabaseTestCase {
@@ -42,7 +42,7 @@ public class DNAEmpty extends SingleDatabaseTestCase {
     }
 
     /**
-     * This applies to all core schema databases apart from 'core', 'presite'
+     * This applies to all core schema databases apart from 'core'
      */
     public void types() {
 
