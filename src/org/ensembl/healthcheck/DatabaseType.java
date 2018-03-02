@@ -151,29 +151,6 @@ public final class DatabaseType {
 
         }
 
-        // --------------------------------------
-
-        if (in(lcAlias, "disease")) {
-
-            return DISEASE;
-
-        }
-
-        // --------------------------------------
-
-        if (in(lcAlias, "haplotype")) {
-
-            return HAPLOTYPE;
-
-        }
-
-        // --------------------------------------
-
-        if (in(lcAlias, "lite")) {
-
-            return LITE;
-
-        }
 
         // --------------------------------------
 
@@ -199,13 +176,6 @@ public final class DatabaseType {
 
         }
 
-        // --------------------------------------
-
-        if (in(lcAlias, "seq")) {
-
-            return SEQ;
-
-        }
 
         // --------------------------------------
 
@@ -263,13 +233,6 @@ public final class DatabaseType {
 
         }
 
-                // --------------------------------------
-
-        if (in(lcAlias, "presite")) {
-
-            return PRE_SITE;
-
-        }
 
         // --------------------------------------
         // treat ensembl genomes collection databases as core

@@ -1072,7 +1072,6 @@ public abstract class EnsTestCase {
 			types.add(DatabaseType.CDNA);
 			types.add(DatabaseType.OTHERFEATURES);
 			types.add(DatabaseType.RNASEQ);
-                        types.add(DatabaseType.PRE_SITE);
 
 			logger.finest("Set generic types for " + getName());
 
