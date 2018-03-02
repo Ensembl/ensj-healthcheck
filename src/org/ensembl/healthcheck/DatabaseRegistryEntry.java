@@ -61,7 +61,6 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	 * Simple read-only bean to store pertinent information about a database.
 	 * Objects of this type are held by the {@link DatabaseRegistryEntry} and
 	 * attached to {@link ReportLine} objects to improve reporting
-	 * 
 	 * @author dstaines
 	 */
 	public static class DatabaseInfo {
@@ -403,6 +402,12 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 			}
 		}
 		this.info = info;
+	}
+	
+	public DatabaseRegistryEntry(DatabaseInfo info, Connection con) {
+		this.info = info;
+		this.server = null;
+		this.connection = con;
 	}
 
 	// -----------------------------------------------------------------
