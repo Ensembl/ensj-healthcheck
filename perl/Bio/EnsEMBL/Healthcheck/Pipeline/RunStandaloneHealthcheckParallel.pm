@@ -13,6 +13,7 @@ use File::Slurp qw/read_file/;
 use File::Temp qw/tempfile/;
 use JSON;
 use Log::Log4perl qw/:easy/;
+use Bio::EnsEMBL::ApiVersion;
 
 my $logger = get_logger();
 if(!Log::Log4perl->initialized()) {
@@ -42,6 +43,14 @@ sub run {
     $command .= get_db_str($self->param('live_uri'), 'secondary_');
     $command .= get_db_str($self->param('staging_uri'), 'staging_');
     $command .= sprintf(" --data_files_path %s",$self->param('data_files_path'));
+    my $release = $self->param('release');
+    if(!defined $release) {
+		$release = software_version();    	
+    }
+    $command .= sprintf(" --release %d", $release);
+    if(defined $self->param('master_schema')) {
+    		$command .= sprintf(" --master_schema %s",$self->param('master_schema'));
+    }
 
     my (undef,$log_file) = tempfile('_HealthcheckDatabase_XXXXXX',  SUFFIX => '.log', TMPDIR => 1, OPEN=>0);
     $command .= " >& $log_file";
