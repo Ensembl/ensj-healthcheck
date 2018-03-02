@@ -360,16 +360,27 @@ public class StandaloneTestRunner {
 		}
 		System.setProperty("compara_master.database", options.getComparaMasterDbname());
 
-		if (options.isMasterSchema()) {
-			if (options.getDbname().matches("_compara_")) {
-				System.setProperty("master.schema.compara", options.getMasterSchema());
-			} else if (options.getDbname().matches("_funcgen_")) {
-				System.setProperty("master.schema.funcgen", options.getMasterSchema());
-			} else if (options.getDbname().matches("_variation_")) {
-				System.setProperty("master.schema.variation", options.getMasterSchema());
-			} else {
-				System.setProperty("master.schema.core", options.getMasterSchema());
+		String masterSchema = options.isMasterSchema() ? options.getMasterSchema() : null;
+		if (options.getDbname().matches("_compara_")) {
+			if (StringUtils.isEmpty(masterSchema)) {
+				masterSchema = "master_schema_compara_" + release;
 			}
+			System.setProperty("master.schema.compara", masterSchema);
+		} else if (options.getDbname().matches("_funcgen_")) {
+			if (StringUtils.isEmpty(masterSchema)) {
+				masterSchema = "master_schema_funcgen_" + release;
+			}
+			System.setProperty("master.schema.funcgen", masterSchema);
+		} else if (options.getDbname().matches("_variation_")) {
+			if (StringUtils.isEmpty(masterSchema)) {
+				masterSchema = "master_schema_variation_" + release;
+			}
+			System.setProperty("master.schema.variation", masterSchema);
+		} else {
+			if (StringUtils.isEmpty(masterSchema)) {
+				masterSchema = "master_schema_" + release;
+			}
+			System.setProperty("master.schema.core", masterSchema);
 		}
 	}
 
