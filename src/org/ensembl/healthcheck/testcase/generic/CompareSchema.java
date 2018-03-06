@@ -37,19 +37,11 @@ import static org.ensembl.healthcheck.DatabaseType.ESTGENE;
 import static org.ensembl.healthcheck.DatabaseType.OTHERFEATURES;
 import static org.ensembl.healthcheck.DatabaseType.RNASEQ;
 import static org.ensembl.healthcheck.DatabaseType.SANGER_VEGA;
-import static org.ensembl.healthcheck.testcase.generic.SchemaComparer.TestTypes.CHARSET;
-import static org.ensembl.healthcheck.testcase.generic.SchemaComparer.TestTypes.ENGINE;
-import static org.ensembl.healthcheck.testcase.generic.SchemaComparer.TestTypes.IGNORE_AUTOINCREMENT_OPTION;
-
-import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Extension of the compare schema code for working with core like databases
  */
-public class CompareSchema extends SingleDatabaseTestCase {
+public class CompareSchema extends AbstractCompareSchema {
 
 	@Override
 	public void types() {
@@ -63,14 +55,8 @@ public class CompareSchema extends SingleDatabaseTestCase {
 	}
 
 	@Override
-	public boolean run(DatabaseRegistryEntry dbre) {
-		SchemaComparer comparer = new SchemaComparer();
-		comparer.addTestTypes(IGNORE_AUTOINCREMENT_OPTION, CHARSET, ENGINE);
-		String masterName = System.getProperty("master.schema.core");
-		DatabaseRegistryEntry masterDbre = getDatabaseRegistryEntryByPattern(masterName);
-		if (masterDbre==null) {
-			throw new RuntimeException("Can't find master database " + masterName);			
-		}
-		return comparer.compare(this, masterDbre, dbre);
+	protected String getMasterSchemaKey() {
+		return "master.schema.core";
 	}
+
 }
