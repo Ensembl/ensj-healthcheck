@@ -361,17 +361,17 @@ public class StandaloneTestRunner {
 		System.setProperty("compara_master.database", options.getComparaMasterDbname());
 
 		String masterSchema = options.isMasterSchema() ? options.getMasterSchema() : null;
-		if (options.getDbname().matches("_compara_")) {
+		if (options.getDbname().matches(".*_compara_.*")) {
 			if (StringUtils.isEmpty(masterSchema)) {
 				masterSchema = "master_schema_compara_" + release;
 			}
 			System.setProperty("master.schema.compara", masterSchema);
-		} else if (options.getDbname().matches("_funcgen_")) {
+		} else if (options.getDbname().matches(".*_funcgen_.*")) {
 			if (StringUtils.isEmpty(masterSchema)) {
 				masterSchema = "master_schema_funcgen_" + release;
 			}
 			System.setProperty("master.schema.funcgen", masterSchema);
-		} else if (options.getDbname().matches("_variation_")) {
+		} else if (options.getDbname().matches(".*_variation_.*")) {
 			if (StringUtils.isEmpty(masterSchema)) {
 				masterSchema = "master_schema_variation_" + release;
 			}

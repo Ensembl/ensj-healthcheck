@@ -46,34 +46,156 @@ import org.ensembl.healthcheck.util.PoorLruMap;
 import org.ensembl.healthcheck.util.RowMapper;
 
 /**
- * A re-implementation of the {@link CompareSchema} health-check code but the
- * intention is to allow for post modifications in the various extension classes
- * to support all types of schema comparisons.
- * 
- * It has several ways of deciding which schema to use as the "master" to
- * compare all the others against:
- * <p>
- * <ol>
- * <li>If the property getDefinitionFileKey() in database.properties exists, the
- * table.sql file it points to</li>
- * <li>If this is not present, the schema named by the property
- * {@link #getMasterSchemaKey()} is used</li>
- * <li>If neither of the above properties are present, an arbitrary first schema
- * is used as the master</li>
- * </ol>
+ * Abstraction of code needed by compare schema HCs
  * 
  * @author ayates
  */
 public class SchemaComparer {
 
-	protected Logger logger = Logger.getLogger(this.getClass().getSimpleName());
+	/**
+	 * Internal class used to represent a column
+	 */
+	private static class Column {
 
-	private static final int MAX_CACHE_SIZE = 3;
+		private String name;
+		private int dataType;
+		private int columnSize;
+		private int decimalDigits;
+		private boolean nullable;
+		private String columnDefault;
+		private int charOctetLength;
+		private boolean autoIncrement;
 
-	/* comparison flags */
-	private static final int COMPARE_LEFT = 0;
-	private static final int COMPARE_RIGHT = 1;
-	private static final int COMPARE_BOTH = 2;
+		public Column(String name, int dataType, int columnSize, int decimalDigits, boolean nullable,
+				String columnDefault, int charOctetLength, boolean autoIncrement) {
+			super();
+			this.name = name;
+			this.dataType = dataType;
+			this.columnSize = columnSize;
+			this.decimalDigits = decimalDigits;
+			this.nullable = nullable;
+			this.columnDefault = columnDefault;
+			this.charOctetLength = charOctetLength;
+			this.autoIncrement = autoIncrement;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Column other = (Column) obj;
+			if (autoIncrement != other.autoIncrement)
+				return false;
+			if (charOctetLength != other.charOctetLength)
+				return false;
+			if (columnDefault == null) {
+				if (other.columnDefault != null)
+					return false;
+			} else if (!columnDefault.equals(other.columnDefault))
+				return false;
+			if (columnSize != other.columnSize)
+				return false;
+			if (dataType != other.dataType)
+				return false;
+			if (decimalDigits != other.decimalDigits)
+				return false;
+			if (name == null) {
+				if (other.name != null)
+					return false;
+			} else if (!name.equals(other.name))
+				return false;
+			if (nullable != other.nullable)
+				return false;
+			return true;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + (autoIncrement ? 1231 : 1237);
+			result = prime * result + charOctetLength;
+			result = prime * result + ((columnDefault == null) ? 0 : columnDefault.hashCode());
+			result = prime * result + columnSize;
+			result = prime * result + dataType;
+			result = prime * result + decimalDigits;
+			result = prime * result + ((name == null) ? 0 : name.hashCode());
+			result = prime * result + (nullable ? 1231 : 1237);
+			return result;
+		}
+
+		@Override
+		public String toString() {
+			return getName();
+		}
+	}
+
+	/**
+	 * Represents an Index with an equality and hashcode method which does not take
+	 * into account name which is why a List would not suffice
+	 */
+	private static class Index {
+
+		private String name;
+		private List<String> columns = new ArrayList<String>();
+		private boolean nonUnique;
+		private int type;
+
+		public Index(String name, boolean nonUnique, int type) {
+			super();
+			this.name = name;
+			this.nonUnique = nonUnique;
+			this.type = type;
+		}
+
+		public void addColumn(String col) {
+			columns.add(col);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Index other = (Index) obj;
+			if (columns == null) {
+				if (other.columns != null)
+					return false;
+			} else if (!columns.equals(other.columns))
+				return false;
+			if (nonUnique != other.nonUnique)
+				return false;
+			if (type != other.type)
+				return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((columns == null) ? 0 : columns.hashCode());
+			result = prime * result + (nonUnique ? 1231 : 1237);
+			result = prime * result + type;
+			return result;
+		}
+
+		@Override
+		public String toString() {
+			return name + "=[" + StringUtils.join(columns, ',') + "]";
+		}
+	}
 
 	/**
 	 * An enum to contain the types of tests we allow a compare schema to perform.
@@ -82,25 +204,60 @@ public class SchemaComparer {
 	 */
 	public static enum TestTypes {
 		IGNORE_AUTOINCREMENT_OPTION, AVG_ROW_LENGTH, MAX_ROWS, CHARSET, ENGINE, CHECK_UNEQUAL, IGNORE_BACKUP
-	};
+	}
+	private static final int MAX_CACHE_SIZE = 3;
+	/* comparison flags */
+	private static final int COMPARE_LEFT = 0;
 
-	private Set<TestTypes> testTypes = new HashSet<TestTypes>();
+	private static final int COMPARE_RIGHT = 1;;
 
-	public Set<TestTypes> getTestTypes() {
-		return testTypes;
+	private static final int COMPARE_BOTH = 2;
+
+	protected Logger logger = Logger.getLogger(this.getClass().getSimpleName());
+
+	private final Set<TestTypes> testTypes = new HashSet<>();
+	
+	private final Set<String> ignoreTables = new HashSet<>();
+
+	private Set<String> requiredTables = new HashSet<>();
+
+	public Set<String> getRequiredTables() {
+		return requiredTables;
 	}
 
+	private Map<String, Set<String>> views = new PoorLruMap<String, Set<String>>(MAX_CACHE_SIZE);
+	
+
+	private Map<String, Map<String, Set<Column>>> columns = new PoorLruMap<String, Map<String, Set<Column>>>(
+			MAX_CACHE_SIZE);
+	private Map<String, String> createTables = new PoorLruMap<String, String>(MAX_CACHE_SIZE);
+	private Map<String, Set<String>> tables = new PoorLruMap<String, Set<String>>(MAX_CACHE_SIZE);
+
+	/**
+	 * @param tables additional tables that may be in the schema but not the master
+	 */
+	public void addIgnoreTables(String... tables) {
+		for (String table : tables) {
+			ignoreTables.add(table);
+		}
+	}
+	/**
+	 * @param tables additional that must be present in the schema but not in the master
+	 */
+	public void addRequiredTables(String... tables) {
+		for (String table : tables) {
+			requiredTables.add(table);
+		}
+	}
 	public void addTestTypes(TestTypes... types) {
 		for (TestTypes type : types) {
 			testTypes.add(type);
 		}
 	}
 
-	private Map<String, Set<String>> views = new PoorLruMap<String, Set<String>>(MAX_CACHE_SIZE);
-	private Map<String, Map<String, Set<Column>>> columns = new PoorLruMap<String, Map<String, Set<Column>>>(
-			MAX_CACHE_SIZE);
-	private Map<String, String> createTables = new PoorLruMap<String, String>(MAX_CACHE_SIZE);
-	private Map<String, Set<String>> tables = new PoorLruMap<String, Set<String>>(MAX_CACHE_SIZE);
+	private boolean applyTest(TestTypes testType) {
+		return getTestTypes().contains(testType);
+	}
 
 	/**
 	 * Compare each database with the master.
@@ -139,70 +296,14 @@ public class SchemaComparer {
 			}
 
 			for (String table : DBUtils.getTableNames(masterCon)) {
-				result &= compareTable(testcase, master, dbre, table);
+				if(!getIgnoreTables().contains(table)) {
+					result &= compareTable(testcase, master, dbre, table);
+				}
 			}
 		} catch (SQLException e) {
 			logger.severe(e.getMessage());
 		}
 
-		return result;
-	}
-
-	/**
-	 * Currently delegates onto
-	 * {@link #compareTablesInSchema(Connection, Connection, boolean, int)} but can
-	 * be over-ridden if required.
-	 */
-	protected boolean compareTableEquality(EnsTestCase testcase, DatabaseRegistryEntry master,
-			DatabaseRegistryEntry target, int directionFlag) {
-		return compareTablesInSchema(testcase, target, master, directionFlag);
-	}
-
-	/**
-	 * Compare two schemas to see if they have the same tables. The comparison can
-	 * be done in in one direction or both directions.
-	 * 
-	 * @param schema1
-	 *            The first schema to compare.
-	 * @param schema2
-	 *            The second schema to compare.
-	 * @param ignoreBackupTables
-	 *            Should backup tables be excluded form this check?
-	 * @param directionFlag
-	 *            The direction to perform comparison in, either
-	 *            EnsTestCase.COMPARE_RIGHT, EnsTestCase.COMPARE_LEFT or
-	 *            EnsTestCase.COMPARE_BOTH,
-	 * @return for left comparison: all tables in schema1 exist in schema2 for right
-	 *         comparison: all tables in schema1 exist in schema2 for both: if all
-	 *         tables in schema1 exist in schema2, and vice-versa
-	 */
-	public boolean compareTablesInSchema(EnsTestCase testcase, DatabaseRegistryEntry schema1,
-			DatabaseRegistryEntry schema2, int directionFlag) {
-
-		boolean result = true;
-		if (directionFlag == COMPARE_RIGHT || directionFlag == COMPARE_BOTH) {
-
-			// perform right compare if required
-			//
-			result = compareTablesInSchema(testcase, schema2, schema1, COMPARE_LEFT);
-		}
-
-		if (directionFlag == COMPARE_LEFT || directionFlag == COMPARE_BOTH) {
-
-			Connection reportConnection = (directionFlag == COMPARE_LEFT) ? schema2.getConnection()
-					: schema1.getConnection();
-
-			// check each table in turn
-			String[] tables = DBUtils.getTableNames(schema1.getConnection());
-			for (int i = 0; i < tables.length; i++) {
-				String table = tables[i];
-				if (!DBUtils.checkTableExists(schema2.getConnection(), table)) {
-					ReportManager.problem(testcase, reportConnection,
-							"Table " + table + " exists in " + schema1.getName() + " but not in " + schema2.getName());
-					result = false;
-				}
-			}
-		}
 		return result;
 	}
 
@@ -360,81 +461,58 @@ public class SchemaComparer {
 		return okay;
 	}
 
-	private boolean applyTest(TestTypes testType) {
-		return getTestTypes().contains(testType);
-	}
-
-	protected boolean regexCreateTable(EnsTestCase test, DatabaseRegistryEntry master, DatabaseRegistryEntry target,
-			String table, String regex, Class<?> type, TestTypes testing) throws SQLException {
-		Pattern p = Pattern.compile(regex);
-		Object masterValue = regex(p, getCreateTable(master.getConnection(), table), type);
-		Object targetValue = regex(p, getCreateTable(target.getConnection(), table), type);
-		if (masterValue.equals(targetValue)) {
-			return true;
-		}
-
-		String message = String.format("%s in `%s` had different values. `%s` contained '%s'. `%s` contained '%s'",
-				testing.toString(), table, master.getName(), masterValue, target.getName(), targetValue);
-
-		ReportManager.problem(test, target.getConnection(), message);
-
-		return false;
-	}
-
-	protected Object regex(Pattern p, CharSequence target, Class<?> type) {
-		final Object o;
-		Matcher matcher = p.matcher(target);
-		if (matcher.find()) {
-			if (Integer.class.equals(type)) {
-				o = Integer.valueOf(matcher.group(1));
-			} else {
-				o = matcher.group(1);
-			}
-		} else {
-			o = StringUtils.EMPTY;
-		}
-		return o;
-	}
-
-	protected String getCreateTable(Connection conn, String table) throws SQLException {
-		String key = conn.getMetaData().getURL() + ":" + table;
-		if (createTables.containsKey(key)) {
-			return createTables.get(key);
-		}
-		String sql = "SHOW CREATE TABLE " + table;
-		RowMapper<String> mapper = new DefaultObjectRowMapper<String>(String.class, 2);
-		String createTable = new ConnectionBasedSqlTemplateImpl(conn).queryForObject(sql, mapper);
-		if (applyTest(TestTypes.IGNORE_AUTOINCREMENT_OPTION)) {
-			createTable = createTable.replaceFirst("AUTO_INCREMENT=\\d+\\s*", "");
-		}
-		createTables.put(key, createTable);
-		return createTable;
+	/**
+	 * Currently delegates onto
+	 * {@link #compareTablesInSchema(Connection, Connection, boolean, int)} but can
+	 * be over-ridden if required.
+	 */
+	protected boolean compareTableEquality(EnsTestCase testcase, DatabaseRegistryEntry master,
+			DatabaseRegistryEntry target, int directionFlag) {
+		return compareTablesInSchema(testcase, target, master, directionFlag);
 	}
 
 	/**
-	 * Used to cache the current known set of views for each distinct JDBC URL
-	 * retrieved from {@link Connection#getMetaData()}.
+	 * Compare two schemas to see if they have the same tables. The comparison can
+	 * be done in in one direction or both directions.
 	 * 
-	 * @param conn
-	 *            Connection to query with
-	 * @return {@link Set} of all views known of in the given connection
-	 * @throws SQLException
-	 *             Thrown if there is an issue with MetaData retrieval
+	 * @param schema1
+	 *            The first schema to compare.
+	 * @param schema2
+	 *            The second schema to compare.
+	 * @param directionFlag
+	 *            The direction to perform comparison in, either
+	 *            EnsTestCase.COMPARE_RIGHT, EnsTestCase.COMPARE_LEFT or
+	 *            EnsTestCase.COMPARE_BOTH,
+	 * @return for left comparison: all tables in schema1 exist in schema2 for right
+	 *         comparison: all tables in schema1 exist in schema2 for both: if all
+	 *         tables in schema1 exist in schema2, and vice-versa
 	 */
-	private Set<String> getViews(Connection conn) throws SQLException {
-		String dbmsUrl = conn.getMetaData().getURL();
-		if (!views.containsKey(dbmsUrl)) {
-			List<String> dbViews = DBUtils.getViews(conn);
-			views.put(dbmsUrl, new HashSet<String>(dbViews));
-		}
-		return views.get(dbmsUrl);
-	}
+	public boolean compareTablesInSchema(EnsTestCase testcase, DatabaseRegistryEntry schema1,
+			DatabaseRegistryEntry schema2, int directionFlag) {
 
-	/**
-	 * Returns a copy of the columns we currently hold for this table
-	 */
-	protected Set<Column> getColumns(Connection conn, String table) throws SQLException {
-		return new HashSet<Column>(getColumns(conn).get(table));
+		boolean result = true;
+		if (directionFlag == COMPARE_RIGHT || directionFlag == COMPARE_BOTH) {
+
+			// perform right compare if required
+			//
+			result = compareTablesInSchema(testcase, schema2, schema1, COMPARE_LEFT);
+		}
+
+		if (directionFlag == COMPARE_LEFT || directionFlag == COMPARE_BOTH) {
+
+			Connection reportConnection = (directionFlag == COMPARE_LEFT) ? schema2.getConnection()
+					: schema1.getConnection();
+
+			// check each table in turn
+			for(String table: DBUtils.getTableNames(schema1.getConnection())) {
+				if (!getIgnoreTables().contains(table) && !DBUtils.checkTableExists(schema2.getConnection(), table)) {
+					ReportManager.problem(testcase, reportConnection,
+							"Table " + table + " exists in " + schema1.getName() + " but not in " + schema2.getName());
+					result = false;
+				}
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -480,6 +558,32 @@ public class SchemaComparer {
 	}
 
 	/**
+	 * Returns a copy of the columns we currently hold for this table
+	 */
+	protected Set<Column> getColumns(Connection conn, String table) throws SQLException {
+		return new HashSet<Column>(getColumns(conn).get(table));
+	}
+
+	protected String getCreateTable(Connection conn, String table) throws SQLException {
+		String key = conn.getMetaData().getURL() + ":" + table;
+		if (createTables.containsKey(key)) {
+			return createTables.get(key);
+		}
+		String sql = "SHOW CREATE TABLE " + table;
+		RowMapper<String> mapper = new DefaultObjectRowMapper<String>(String.class, 2);
+		String createTable = new ConnectionBasedSqlTemplateImpl(conn).queryForObject(sql, mapper);
+		if (applyTest(TestTypes.IGNORE_AUTOINCREMENT_OPTION)) {
+			createTable = createTable.replaceFirst("AUTO_INCREMENT=\\d+\\s*", "");
+		}
+		createTables.put(key, createTable);
+		return createTable;
+	}
+
+	public Set<String> getIgnoreTables() {
+		return ignoreTables;
+	}
+
+	/**
 	 * Used to return all known indexed columns for a database
 	 * 
 	 * @param conn
@@ -522,6 +626,61 @@ public class SchemaComparer {
 		return tables.get(url);
 	}
 
+	public Set<TestTypes> getTestTypes() {
+		return testTypes;
+	}
+
+	/**
+	 * Used to cache the current known set of views for each distinct JDBC URL
+	 * retrieved from {@link Connection#getMetaData()}.
+	 * 
+	 * @param conn
+	 *            Connection to query with
+	 * @return {@link Set} of all views known of in the given connection
+	 * @throws SQLException
+	 *             Thrown if there is an issue with MetaData retrieval
+	 */
+	private Set<String> getViews(Connection conn) throws SQLException {
+		String dbmsUrl = conn.getMetaData().getURL();
+		if (!views.containsKey(dbmsUrl)) {
+			List<String> dbViews = DBUtils.getViews(conn);
+			views.put(dbmsUrl, new HashSet<String>(dbViews));
+		}
+		return views.get(dbmsUrl);
+	}
+
+	protected Object regex(Pattern p, CharSequence target, Class<?> type) {
+		final Object o;
+		Matcher matcher = p.matcher(target);
+		if (matcher.find()) {
+			if (Integer.class.equals(type)) {
+				o = Integer.valueOf(matcher.group(1));
+			} else {
+				o = matcher.group(1);
+			}
+		} else {
+			o = StringUtils.EMPTY;
+		}
+		return o;
+	}
+
+	protected boolean regexCreateTable(EnsTestCase test, DatabaseRegistryEntry master, DatabaseRegistryEntry target,
+			String table, String regex, Class<?> type, TestTypes testing) throws SQLException {
+		Pattern p = Pattern.compile(regex);
+		Object masterValue = regex(p, getCreateTable(master.getConnection(), table), type);
+		Object targetValue = regex(p, getCreateTable(target.getConnection(), table), type);
+		if (masterValue.equals(targetValue)) {
+			return true;
+		}
+
+		String message = String.format("%s in `%s` had different values. `%s` contained '%s'. `%s` contained '%s'",
+				testing.toString(), table, master.getName(), masterValue, target.getName(), targetValue);
+
+		ReportManager.problem(test, target.getConnection(), message);
+
+		return false;
+	}
+
 	private boolean searchForTemporaryTables(Connection conn) throws SQLException {
 		boolean temporaryTables = false;
 		Set<String> tables = getTables(conn);
@@ -537,148 +696,4 @@ public class SchemaComparer {
 		return temporaryTables;
 	}
 
-	/**
-	 * Internal class used to represent a column
-	 */
-	private static class Column {
-
-		private String name;
-		private int dataType;
-		private int columnSize;
-		private int decimalDigits;
-		private boolean nullable;
-		private String columnDefault;
-		private int charOctetLength;
-		private boolean autoIncrement;
-
-		public Column(String name, int dataType, int columnSize, int decimalDigits, boolean nullable,
-				String columnDefault, int charOctetLength, boolean autoIncrement) {
-			super();
-			this.name = name;
-			this.dataType = dataType;
-			this.columnSize = columnSize;
-			this.decimalDigits = decimalDigits;
-			this.nullable = nullable;
-			this.columnDefault = columnDefault;
-			this.charOctetLength = charOctetLength;
-			this.autoIncrement = autoIncrement;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + (autoIncrement ? 1231 : 1237);
-			result = prime * result + charOctetLength;
-			result = prime * result + ((columnDefault == null) ? 0 : columnDefault.hashCode());
-			result = prime * result + columnSize;
-			result = prime * result + dataType;
-			result = prime * result + decimalDigits;
-			result = prime * result + ((name == null) ? 0 : name.hashCode());
-			result = prime * result + (nullable ? 1231 : 1237);
-			return result;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			Column other = (Column) obj;
-			if (autoIncrement != other.autoIncrement)
-				return false;
-			if (charOctetLength != other.charOctetLength)
-				return false;
-			if (columnDefault == null) {
-				if (other.columnDefault != null)
-					return false;
-			} else if (!columnDefault.equals(other.columnDefault))
-				return false;
-			if (columnSize != other.columnSize)
-				return false;
-			if (dataType != other.dataType)
-				return false;
-			if (decimalDigits != other.decimalDigits)
-				return false;
-			if (name == null) {
-				if (other.name != null)
-					return false;
-			} else if (!name.equals(other.name))
-				return false;
-			if (nullable != other.nullable)
-				return false;
-			return true;
-		}
-
-		@Override
-		public String toString() {
-			return getName();
-		}
-	}
-
-	/**
-	 * Represents an Index with an equality and hashcode method which does not take
-	 * into account name which is why a List would not suffice
-	 */
-	private static class Index {
-
-		private String name;
-		private List<String> columns = new ArrayList<String>();
-		private boolean nonUnique;
-		private int type;
-
-		public Index(String name, boolean nonUnique, int type) {
-			super();
-			this.name = name;
-			this.nonUnique = nonUnique;
-			this.type = type;
-		}
-
-		public void addColumn(String col) {
-			columns.add(col);
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((columns == null) ? 0 : columns.hashCode());
-			result = prime * result + (nonUnique ? 1231 : 1237);
-			result = prime * result + type;
-			return result;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			Index other = (Index) obj;
-			if (columns == null) {
-				if (other.columns != null)
-					return false;
-			} else if (!columns.equals(other.columns))
-				return false;
-			if (nonUnique != other.nonUnique)
-				return false;
-			if (type != other.type)
-				return false;
-			return true;
-		}
-
-		@Override
-		public String toString() {
-			return name + "=[" + StringUtils.join(columns, ',') + "]";
-		}
-	}
 }
