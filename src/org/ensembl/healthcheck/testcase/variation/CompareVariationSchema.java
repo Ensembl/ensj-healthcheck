@@ -52,6 +52,8 @@ import org.ensembl.healthcheck.testcase.generic.SchemaComparer;
  */
 public class CompareVariationSchema extends AbstractCompareSchema {
 
+	public static final String MASTER_VARIATION_SCHEMA = "master_variation.schema";
+
 	@Override
 	public void types() {
 		addAppliesToType(DatabaseType.VARIATION);
@@ -59,7 +61,7 @@ public class CompareVariationSchema extends AbstractCompareSchema {
 
 	@Override
 	protected String getMasterSchemaKey() {
-		return "master.schema.variation";
+		return MASTER_VARIATION_SCHEMA;
 	}
 
 	@Override

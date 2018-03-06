@@ -48,6 +48,8 @@ import org.ensembl.healthcheck.testcase.generic.SchemaComparer;
  */
 public class CompareFuncgenSchema extends AbstractCompareSchema {
 
+	public static final String MASTER_FUNCGEN_SCHEMA = "master_funcgen.schema";
+
 	@Override
 	public void types() {
 		addAppliesToType(FUNCGEN);
@@ -64,7 +66,7 @@ public class CompareFuncgenSchema extends AbstractCompareSchema {
 
 	@Override
 	protected String getMasterSchemaKey() {
-		return "master.schema.funcgen";
+		return MASTER_FUNCGEN_SCHEMA;
 	}
 
 }

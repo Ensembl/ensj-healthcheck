@@ -43,6 +43,8 @@ import static org.ensembl.healthcheck.DatabaseType.SANGER_VEGA;
  */
 public class CompareSchema extends AbstractCompareSchema {
 
+	public static final String MASTER_SCHEMA = "master.schema";
+
 	@Override
 	public void types() {
 		addAppliesToType(CORE);
@@ -56,7 +58,7 @@ public class CompareSchema extends AbstractCompareSchema {
 
 	@Override
 	protected String getMasterSchemaKey() {
-		return "master.schema.core";
+		return MASTER_SCHEMA;
 	}
 
 }

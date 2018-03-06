@@ -40,6 +40,9 @@ import org.ensembl.healthcheck.configuration.ConfigureTestGroups;
 import org.ensembl.healthcheck.configurationmanager.ConfigurationException;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema;
+import org.ensembl.healthcheck.testcase.generic.CompareSchema;
+import org.ensembl.healthcheck.testcase.variation.CompareVariationSchema;
 import org.ensembl.healthcheck.util.DBUtils;
 
 import com.google.gson.Gson;
@@ -365,22 +368,22 @@ public class StandaloneTestRunner {
 			if (StringUtils.isEmpty(masterSchema)) {
 				masterSchema = "master_schema_compara_" + release;
 			}
-			System.setProperty("master.schema.compara", masterSchema);
+			System.setProperty("master_compara.schema", masterSchema);
 		} else if (options.getDbname().matches(".*_funcgen_.*")) {
 			if (StringUtils.isEmpty(masterSchema)) {
 				masterSchema = "master_schema_funcgen_" + release;
 			}
-			System.setProperty("master.schema.funcgen", masterSchema);
+			System.setProperty(CompareFuncgenSchema.MASTER_FUNCGEN_SCHEMA, masterSchema);
 		} else if (options.getDbname().matches(".*_variation_.*")) {
 			if (StringUtils.isEmpty(masterSchema)) {
 				masterSchema = "master_schema_variation_" + release;
 			}
-			System.setProperty("master.schema.variation", masterSchema);
+			System.setProperty(CompareVariationSchema.MASTER_VARIATION_SCHEMA, masterSchema);
 		} else {
 			if (StringUtils.isEmpty(masterSchema)) {
 				masterSchema = "master_schema_" + release;
 			}
-			System.setProperty("master.schema.core", masterSchema);
+			System.setProperty(CompareSchema.MASTER_SCHEMA, masterSchema);
 		}
 	}
 
