@@ -20,7 +20,7 @@ package org.ensembl.healthcheck.testgroup;
 import org.ensembl.healthcheck.GroupOfTests;
 
 /**
- * These are the tests that register themselves as post_genebuild.
+ * Checks that are done to validate the integrity of the handed over databases.
  *
  * @author Thomas Maurel
  *
