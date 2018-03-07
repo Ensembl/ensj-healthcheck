@@ -52,7 +52,7 @@ import org.ensembl.healthcheck.testcase.generic.SchemaComparer;
  */
 public class CompareVariationSchema extends AbstractCompareSchema {
 
-	public static final String MASTER_VARIATION_SCHEMA = "master_variation.schema";
+	public static final String MASTER_VARIATION_SCHEMA = "master.variation_schema";
 
 	@Override
 	public void types() {
