@@ -44,7 +44,7 @@ public class SubCodonTranscript extends AbstractRowCountTestCase {
 	}
 
 	private final static String QUERY = "select count(*) from transcript "
-	        + "where biotype='protein_coding' and abs(seq_region_end-seq_region_start)<2";
+	        + "where biotype='protein_coding' and abs(CAST(seq_region_end AS SIGNED)-CAST(seq_region_start AS SIGNED))<2";
 
 	/*
 	 * (non-Javadoc)
