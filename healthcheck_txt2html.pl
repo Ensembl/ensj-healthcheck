@@ -245,6 +245,19 @@ while (<HC>) {
 }
 close(HC);
 
+sub add_spaces {
+    my $tc = shift;
+    my $tc_label = $tc;
+       $tc_label =~ s/([A-Z])/ $1/g;
+       foreach my $known_name (qw(MLSS MSA MySQL EG VB ID KB EFO CAFE ENA DB CCDS HGNC LRG MIM HTML GO UTR EST DNA MT GERP)) {
+           my $wide_name = $known_name;
+           $wide_name =~ s/([A-Z])/ $1/g;
+           $wide_name =~ s/^\s+//;
+           $tc_label =~ s/$wide_name/$known_name/;
+       }
+       $tc_label =~ s/^\s+//;
+    return $tc_label;
+}
 
 
 #################
@@ -315,9 +328,7 @@ foreach my $db_name (sort(keys(%test_case_groups))) {
     my $status = $test_case_groups{$db_name}{$tc};
     next if ($status eq $hc_success);
     my $status_c = $status_colour{$status} ? $status_colour{$status} : $status_colour{'default'};
-    my $tc_label = $tc;
-       $tc_label =~ s/([A-Z])/ $1/g;
-       $tc_label =~ s/My S Q L/MySQL/;
+    my $tc_label = add_spaces($tc);
        $tc_label =~ s/Previous Version/Previous Version \-/i;
     my $tc_id = $sp_alias{$db_name}."_".lc($tc);
     my $button_id = $tc_id."_".$btn_id_suffix;
@@ -389,10 +400,7 @@ sub get_hc_list {
     my $tc_title = '';
       
     my $status_c = $status_colour{$status} ? $status_colour{$status} : $status_colour{'default'};
-    my $tc_label = $tc;
-       $tc_label =~ s/([A-Z])/ $1/g;
-       $tc_label =~ s/^\s+//;
-       $tc_label =~ s/My S Q L/MySQL/;
+    my $tc_label = add_spaces($tc);
        if ($tc_label =~ /Previous Version/i) {
          $tc_title = qq{ class="hc_help" data-toggle="tooltip" data-placement="right" title="$tc_label"};
          $tc_label =~ s/Previous Version/\.\.\./i;
