@@ -111,6 +111,7 @@ while (<HC>) {
       }
       else {
         $db_name = $current_db_name;
+        $sp_alias{$db_name} = $db_name;
         $tc_res = $_;
         $tc_res =~ s/^\s+//;
       }
