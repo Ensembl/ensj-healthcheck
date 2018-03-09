@@ -109,7 +109,9 @@ public abstract class AbstractPerlBasedTestCase extends
 		
 		Map<String,String> inheritedEnvironment = super.environmentVarsToSet();
 		
-		inheritedEnvironment.put("PERL5LIB", getPERL5LIB());
+		if(!StringUtils.isEmpty(getPERL5LIB())) {
+			inheritedEnvironment.put("PERL5LIB", getPERL5LIB());
+		}
 
 		return inheritedEnvironment;
 		

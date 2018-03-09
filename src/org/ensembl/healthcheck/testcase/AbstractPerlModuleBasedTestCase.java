@@ -23,6 +23,7 @@
  */
 package org.ensembl.healthcheck.testcase;
 
+import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseServer;
 import org.ensembl.healthcheck.ReportManager;
@@ -96,7 +97,9 @@ public abstract class AbstractPerlModuleBasedTestCase extends AbstractPerlBasedT
 		
 		Map<String,String> inheritedEnvironment = super.environmentVarsToSet();
 		
-		inheritedEnvironment.put("pass", this.pass);
+		if(!StringUtils.isEmpty(this.pass)) {
+			inheritedEnvironment.put("pass", this.pass);
+		}
 		
 		return inheritedEnvironment;
 		
