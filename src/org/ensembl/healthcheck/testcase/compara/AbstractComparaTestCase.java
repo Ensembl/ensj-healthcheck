@@ -165,7 +165,7 @@ public abstract class AbstractComparaTestCase extends SingleDatabaseTestCase {
 				// There can be multiple species in the same core database
 				for (Integer species_id : entry.getSpeciesIds()) {
 					String sql = "SELECT meta_value FROM meta WHERE meta_key = \"species.production_name\" AND species_id = " + species_id;
-					String production_name = getRowColumnValue(entry.getConnection(), sql);
+					String production_name = DBUtils.getRowColumnValue(entry.getConnection(), sql);
 					speciesCoreMap.put(production_name, new Pair<DatabaseRegistryEntry,Integer>(entry,species_id));
 					ReportManager.info(this, comparaDbre.getConnection(), entry.toString() + " == " + production_name + " (" + species_id + ")");
 				}
