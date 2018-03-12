@@ -155,7 +155,7 @@ public abstract class AbstractComparaTestCase extends SingleDatabaseTestCase {
 	 */
 	public final List<GenomeEntry> getAllGenomes(final DatabaseRegistryEntry comparaDbre, final DatabaseRegistry dbr) {
 
-		HashMap<String, Pair<DatabaseRegistryEntry,Integer>> speciesCoreMap = new HashMap(); //<String, DatabaseRegistryEntry>();
+		HashMap<String, Pair<DatabaseRegistryEntry,Integer>> speciesCoreMap = new HashMap<String, Pair<DatabaseRegistryEntry,Integer>>();
 
 		for (DatabaseRegistryEntry entry : dbr.getAllEntries()) {
 			// We need to check the database name because some _cdna_
