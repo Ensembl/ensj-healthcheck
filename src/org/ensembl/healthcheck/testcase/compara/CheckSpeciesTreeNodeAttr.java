@@ -23,7 +23,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
-import java.util.Iterator;
 import org.apache.commons.lang.StringUtils;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
