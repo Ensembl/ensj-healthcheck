@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.Iterator;
 
 import org.ensembl.healthcheck.testcase.EnsTestCase;
 
@@ -124,14 +123,10 @@ public class GroupOfTests {
 	 */
 	public List<Class<? extends EnsTestCase>> getListOfTests() {
 		
-		Iterator<Class<? extends EnsTestCase>> i = this.getSetOfTests().iterator();
-		
 		List<Class<? extends EnsTestCase>> list
 			= new LinkedList<Class<? extends EnsTestCase>>();
 		
-		while(i.hasNext()) {
-			
-			Class<? extends EnsTestCase> etc = i.next();
+		for(Class<? extends EnsTestCase> etc: this.getSetOfTests()) {
 			list.add(etc);
 		}
 		Collections.sort(list, new EnsTestCaseComparator());
@@ -305,7 +300,6 @@ public class GroupOfTests {
 	 */
 	public String toString() {
 		
-		Iterator<Class<? extends EnsTestCase>> testIterator = this.getTestClasses().iterator();
 		StringBuffer asString = new StringBuffer(); 
 		
 		asString.append("Class: " + this.getClass().getName() + "\n");
@@ -319,8 +313,8 @@ public class GroupOfTests {
 		
 		asString.append("Tests defined:\n");
 		
-		while (testIterator.hasNext()) {
-			asString.append(" - " + testIterator.next().getName() + "\n");
+		for(Class<? extends EnsTestCase> test: this.getTestClasses()) {
+			asString.append(" - " + test.getName() + "\n");
 		}		
 		return asString.toString();
 	}	

@@ -186,21 +186,17 @@ public class BuildTestLibrary extends TestRunner {
 
         StringBuffer buf = new StringBuffer();
 
-        List allTests = new DiscoveryBasedTestRegistry().findAllTests();
+        List<EnsTestCase> allTests = new DiscoveryBasedTestRegistry().findAllTests();
         String[] groups = listAllGroups(allTests);
 
-        for (int i = 0; i < groups.length; i++) {
-
-            String group = groups[i];
+        for(String group: groups) {
 
             if (!group.equalsIgnoreCase("all") && group.indexOf("TestCase") < 0) {
                 buf.append("<p><strong>" + group + "</strong></p>");
                 String[] tests = listTestsInGroup(allTests, group);
 
-                for (int j = 0; j < tests.length; j++) {
-
-                    buf.append(tests[j] + "<br>");
-
+                for(String t: tests) {
+                    buf.append(t + "<br>");
                 } // tests
 
             }

@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -43,7 +42,7 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 
 	private static Logger logger = Logger.getLogger("HealthCheckLogger");
 
-	private List allTests; // a list of EnsTestCase objects
+	private List<EnsTestCase> allTests; // a list of EnsTestCase objects
 
 	private static final String BASE_TESTCASE_PACKAGE = "org.ensembl.healthcheck.testcase";
 
@@ -61,7 +60,7 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 	/**
 	 * @return All the currently defined (single and multiple database) tests.
 	 */
-	public List getAll() {
+	public List<EnsTestCase> getAll() {
 
 		return allTests;
 
@@ -71,14 +70,12 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 	/**
 	 * @return All the single-database tests.
 	 */
-	public List getAllSingle() {
+	public List<SingleDatabaseTestCase> getAllSingle() {
 
-		List allSingle = new ArrayList();
-		Iterator it = allTests.iterator();
-		while (it.hasNext()) {
-			Object test = it.next();
+		List<SingleDatabaseTestCase> allSingle = new ArrayList<SingleDatabaseTestCase>();
+		for(EnsTestCase test: allTests) {
 			if (test instanceof SingleDatabaseTestCase) {
-				allSingle.add(test);
+				allSingle.add((SingleDatabaseTestCase) test);
 			}
 		}
 
@@ -90,14 +87,12 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 	/**
 	 * @return All the multi-database tests.
 	 */
-	public List getAllMulti() {
+	public List<MultiDatabaseTestCase> getAllMulti() {
 
-		List allMulti = new ArrayList();
-		Iterator it = allTests.iterator();
-		while (it.hasNext()) {
-			Object test = it.next();
+		List<MultiDatabaseTestCase> allMulti = new ArrayList<MultiDatabaseTestCase>();
+		for(EnsTestCase test: allTests) {
 			if (test instanceof MultiDatabaseTestCase) {
-				allMulti.add(test);
+				allMulti.add((MultiDatabaseTestCase) test);
 			}
 		}
 
@@ -109,14 +104,12 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 	/**
 	 * @return All the ordered database tests.
 	 */
-	public List getAllOrdered() {
+	public List<OrderedDatabaseTestCase> getAllOrdered() {
 
-		List allOrdered = new ArrayList();
-		Iterator it = allTests.iterator();
-		while (it.hasNext()) {
-			Object test = it.next();
+		List<OrderedDatabaseTestCase> allOrdered = new ArrayList<OrderedDatabaseTestCase>();
+		for(EnsTestCase test: allTests) {
 			if (test instanceof OrderedDatabaseTestCase) {
-				allOrdered.add(test);
+				allOrdered.add((OrderedDatabaseTestCase) test);
 			}
 		}
 
@@ -134,13 +127,11 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 	 *          The type of databases the result tests should apply to.
 	 * @return All the single-database tests that are in at least one of groups, and apply to type.
 	 */
-	public List getAllSingle(List groups, DatabaseType type) {
+	public List<SingleDatabaseTestCase> getAllSingle(List<String> groups, DatabaseType type) {
 
-		List result = new ArrayList();
+		List<SingleDatabaseTestCase> result = new ArrayList<SingleDatabaseTestCase>();
 
-		Iterator it = getAllSingle().iterator();
-		while (it.hasNext()) {
-			SingleDatabaseTestCase test = (SingleDatabaseTestCase) it.next();
+		for(SingleDatabaseTestCase test: getAllSingle()) {
 			if (test.inGroups(groups) && test.appliesToType(type)) {
 				result.add(test);
 			}
@@ -159,13 +150,11 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 	 *          A list of test case groups
 	 * @return All the multi-database tests that are in at least one of groups.
 	 */
-	public List getAllMulti(List groups) {
+	public List<MultiDatabaseTestCase> getAllMulti(List<String> groups) {
 
-		List result = new ArrayList();
+		List<MultiDatabaseTestCase> result = new ArrayList<MultiDatabaseTestCase>();
 
-		Iterator it = getAllMulti().iterator();
-		while (it.hasNext()) {
-			MultiDatabaseTestCase test = (MultiDatabaseTestCase) it.next();
+		for(MultiDatabaseTestCase test: getAllMulti()) {
 			if (test.inGroups(groups)) {
 				result.add(test);
 			}
@@ -182,13 +171,11 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 	 *          A list of test case groups
 	 * @return All the ordered-database tests that are in at least one of groups.
 	 */
-	public List getAllOrdered(List groups) {
+	public List<OrderedDatabaseTestCase> getAllOrdered(List<String> groups) {
 
-		List result = new ArrayList();
+		List<OrderedDatabaseTestCase> result = new ArrayList<OrderedDatabaseTestCase>();
 
-		Iterator it = getAllOrdered().iterator();
-		while (it.hasNext()) {
-			OrderedDatabaseTestCase test = (OrderedDatabaseTestCase) it.next();
+		for(OrderedDatabaseTestCase test: getAllOrdered()) {
 			if (test.inGroups(groups)) {
 				result.add(test);
 			}
@@ -205,9 +192,9 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 	 * 
 	 * @return A List containing objects of the test case classes found.
 	 */
-	public List findAllTests() {
+	public List<EnsTestCase> findAllTests() {
 
-		allTests = new ArrayList();
+		allTests = new ArrayList<EnsTestCase>();
 
 		// --------------------------------------
 		// Look for class files located in the appropriate package in the build/ directory.
@@ -342,11 +329,11 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 	 *          The package name of the tests.
 	 * @return The list of tests in the jar file.
 	 */
-	public List findTestsInJar(String jarFileName, String packageName) {
+	public List<EnsTestCase> findTestsInJar(String jarFileName, String packageName) {
 
 		logger.finest("Looking for tests in " + jarFileName);
 
-		ArrayList tests = new ArrayList();
+		ArrayList<EnsTestCase> tests = new ArrayList<EnsTestCase>();
 
 		try {
 
@@ -426,12 +413,10 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 	 * @param subList
 	 *          The list to be added.
 	 */
-	public void addUniqueTests(List mainList, List subList) {
+	public void addUniqueTests(List<EnsTestCase> mainList, List<EnsTestCase> subList) {
 
-		Iterator it = subList.iterator();
-		while (it.hasNext()) {
+		for(EnsTestCase test: subList) {
 
-			EnsTestCase test = (EnsTestCase) it.next();
 			// can't really use List.contains() as the lists store objects which may be different
 			if (!testInList(test, mainList)) {
 				mainList.add(test);
@@ -453,13 +438,10 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 	 *          The list to search.
 	 * @return true if test is in list.
 	 */
-	public boolean testInList(EnsTestCase test, List list) {
+	public boolean testInList(EnsTestCase test, List<EnsTestCase> list) {
 
 		boolean inList = false;
-		Iterator it = list.iterator();
-
-		while (it.hasNext()) {
-			EnsTestCase thisTest = (EnsTestCase) it.next();
+		for(EnsTestCase thisTest: list) {
 			if (thisTest.getTestName().equals(test.getTestName())) {
 				inList = true;
 			}
@@ -478,11 +460,9 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 	 */
 	public DatabaseType[] getTypes() {
 
-		List types = new ArrayList();
+		List<DatabaseType> types = new ArrayList<DatabaseType>();
 
-		Iterator it = allTests.iterator();
-		while (it.hasNext()) {
-			EnsTestCase test = (EnsTestCase) it.next();
+		for(EnsTestCase test: allTests) {
 			DatabaseType[] testTypes = test.getAppliesToTypes();
 			for (int i = 0; i < testTypes.length; i++) {
 				if (!types.contains(testTypes[i])) {
@@ -491,7 +471,7 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 			}
 		}
 
-		return (DatabaseType[]) types.toArray(new DatabaseType[types.size()]);
+		return types.toArray(new DatabaseType[types.size()]);
 
 	}
 
@@ -503,15 +483,10 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 	 */
 	public String[] getGroups() {
 
-		List groups = new ArrayList();
+		List<String> groups = new ArrayList<String>();
 
-		Iterator it = allTests.iterator();
-		while (it.hasNext()) {
-			EnsTestCase test = (EnsTestCase) it.next();
-			List testGroups = test.getGroups();
-			Iterator it2 = testGroups.iterator();
-			while (it2.hasNext()) {
-				String group = (String) it2.next();
+		for(EnsTestCase test: allTests) {
+			for(String group: test.getGroups()) {
 				// filter out test names
 				if (!isTestName(group) && !groups.contains(group)) {
 					groups.add(group);
@@ -519,7 +494,7 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 			}
 		}
 
-		return (String[]) groups.toArray(new String[groups.size()]);
+		return groups.toArray(new String[groups.size()]);
 
 	}
 
@@ -533,17 +508,15 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 	 */
 	public EnsTestCase[] getTestsInGroup(String group) {
 
-		List result = new ArrayList();
+		List<EnsTestCase> result = new ArrayList<EnsTestCase>();
 
-		Iterator it = allTests.iterator();
-		while (it.hasNext()) {
-			EnsTestCase test = (EnsTestCase) it.next();
+		for(EnsTestCase test: allTests) {
 			if (test.inGroup(group)) {
 				result.add(test);
 			}
 		}
 
-		return (EnsTestCase[]) result.toArray(new EnsTestCase[result.size()]);
+		return result.toArray(new EnsTestCase[result.size()]);
 
 	}
 
@@ -557,16 +530,11 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 	 */
 	public String[] getGroups(DatabaseType type) {
 
-		List groups = new ArrayList();
+		List<String> groups = new ArrayList<String>();
 
-		Iterator it = allTests.iterator();
-		while (it.hasNext()) {
-			EnsTestCase test = (EnsTestCase) it.next();
+		for(EnsTestCase test: allTests) {
 			if (test.appliesToType(type)) {
-				List testGroups = test.getGroups();
-				Iterator it2 = testGroups.iterator();
-				while (it2.hasNext()) {
-					String group = (String) it2.next();
+				for(String group: test.getGroups()) {
 					// filter out test names
 					if (!isTestName(group) && !groups.contains(group)) {
 						groups.add(group);
@@ -575,7 +543,7 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 			}
 		}
 
-		return (String[]) groups.toArray(new String[groups.size()]);
+		return groups.toArray(new String[groups.size()]);
 
 	}
 
@@ -591,17 +559,15 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 	 */
 	public EnsTestCase[] getTestsInGroup(String group, DatabaseType type) {
 
-		List result = new ArrayList();
+		List<EnsTestCase> result = new ArrayList<EnsTestCase>();
 
-		Iterator it = allTests.iterator();
-		while (it.hasNext()) {
-			EnsTestCase test = (EnsTestCase) it.next();
+		for(EnsTestCase test: allTests) {
 			if (test.inGroup(group) && test.appliesToType(type)) {
 				result.add(test);
 			}
 		}
 
-		return (EnsTestCase[]) result.toArray(new EnsTestCase[result.size()]);
+		return result.toArray(new EnsTestCase[result.size()]);
 
 	}
 
@@ -611,9 +577,7 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 	 */
 	private boolean isTestName(String s) {
 
-		Iterator it = allTests.iterator();
-		while (it.hasNext()) {
-			EnsTestCase test = (EnsTestCase) it.next();
+		for(EnsTestCase test: allTests) {
 			if (test.getShortTestName().equals(s)) {
 				return true;
 			}

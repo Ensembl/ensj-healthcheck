@@ -52,18 +52,18 @@ public class ReportManager {
 	 */
 	public static void initialise() {
 
-		reportsByTest = new HashMap();
-		reportsByDatabase = new HashMap();
+		reportsByTest = new HashMap<String,List<ReportLine>>();
+		reportsByDatabase = new HashMap<String,List<ReportLine>>();
 
 		outputDatabaseConnection = null;
 		sessionID = -1;
 	}
 
 	/** A hash of lists keyed on the test name. */
-	protected static Map reportsByTest = new HashMap();
+	protected static Map<String,List<ReportLine>> reportsByTest = new HashMap<String,List<ReportLine>>();
 
 	/** A hash of lists keyed on the database name */
-	protected static Map reportsByDatabase = new HashMap();
+	protected static Map<String,List<ReportLine>> reportsByDatabase = new HashMap<String,List<ReportLine>>();
 
 	/** The logger to use for this class */
 	protected static Logger logger = Logger.getLogger("HealthCheckLogger");
@@ -156,18 +156,18 @@ public class ReportManager {
 		String testCaseName = report.getTestCaseName();
 		String databaseName = report.getDatabaseName();
 
-		ArrayList lines;
+		List<ReportLine> lines;
 
 		// add to each hash
 		if (testCaseName != null && testCaseName.length() > 0) {
 			// create the lists if they're not there already
 			if (reportsByTest.get(testCaseName) == null) {
-				lines = new ArrayList();
+				lines = new ArrayList<ReportLine>();
 				lines.add(report);
 				reportsByTest.put(testCaseName, lines);
 			} else {
 				// get the relevant list, update it, and re-add it
-				lines = (ArrayList) reportsByTest.get(testCaseName);
+				lines = reportsByTest.get(testCaseName);
 
 				// prevent the buffer getting too big
 				if (lines.size() > MAX_BUFFER_SIZE) {
@@ -190,12 +190,12 @@ public class ReportManager {
 		if (databaseName != null && databaseName.length() > 0) {
 			// create the lists if they're not there already
 			if (reportsByDatabase.get(databaseName) == null) {
-				lines = new ArrayList();
+				lines = new ArrayList<ReportLine>();
 				lines.add(report);
 				reportsByDatabase.put(databaseName, lines);
 			} else {
 				// get the relevant list, update it, and re-add it
-				lines = (ArrayList) reportsByDatabase.get(databaseName);
+				lines = reportsByDatabase.get(databaseName);
 				lines.add(report);
 				reportsByDatabase.put(databaseName, lines);
 			}
@@ -383,7 +383,7 @@ public class ReportManager {
 	 * 
 	 * @return The HashMap of all the reports, keyed on test case name.
 	 */
-	public static Map getAllReportsByTestCase() {
+	public static Map<String,List<ReportLine>> getAllReportsByTestCase() {
 
 		return reportsByTest;
 
@@ -397,7 +397,7 @@ public class ReportManager {
 	 *          The ReportLine level (e.g. PROBLEM) to filter on.
 	 * @return The HashMap of all the reports, keyed on test case name.
 	 */
-	public static Map getAllReportsByTestCase(int level) {
+	public static Map<String,List<ReportLine>> getAllReportsByTestCase(int level) {
 
 		return filterMap(reportsByTest, level);
 
@@ -409,7 +409,7 @@ public class ReportManager {
 	 * 
 	 * @return The HashMap of all the reports, keyed on database name.
 	 */
-	public static Map getAllReportsByDatabase() {
+	public static Map<String,List<ReportLine>> getAllReportsByDatabase() {
 
 		return reportsByDatabase;
 
@@ -423,7 +423,7 @@ public class ReportManager {
 	 *          The ReportLine level (e.g. PROBLEM) to filter on.
 	 * @return The HashMap of all the reports, keyed on test case name.
 	 */
-	public static Map getAllReportsByDatabase(int level) {
+	public static Map<String,List<ReportLine>> getAllReportsByDatabase(int level) {
 
 		return filterMap(reportsByDatabase, level);
 
@@ -439,9 +439,9 @@ public class ReportManager {
 	 * @param level
 	 *          The minimum level of report to include, e.g. ReportLine.INFO
 	 */
-	public static List getReportsByTestCase(String testCaseName, int level) {
+	public static List<ReportLine> getReportsByTestCase(String testCaseName, int level) {
 
-		List allReports = (List) reportsByTest.get(testCaseName);
+		List<ReportLine> allReports = reportsByTest.get(testCaseName);
 
 		return filterList(allReports, level);
 
@@ -457,9 +457,9 @@ public class ReportManager {
 	 *          The minimum level of report to include, e.g. ReportLine.INFO
 	 * @return A List of the ReportLines corresponding to database.
 	 */
-	public static List getReportsByDatabase(String databaseName, int level) {
+	public static List<ReportLine> getReportsByDatabase(String databaseName, int level) {
 
-		return filterList((List) reportsByDatabase.get(databaseName), level);
+		return filterList(reportsByDatabase.get(databaseName), level);
 
 	} // getReportsByDatabase
 
@@ -473,14 +473,12 @@ public class ReportManager {
 	 *          All reports with a priority above this level will be returned.
 	 * @return A list of the ReportLines that have a level >= that specified.
 	 */
-	public static List filterList(List list, int level) {
+	public static List<ReportLine> filterList(List<ReportLine> list, int level) {
 
-		ArrayList result = new ArrayList();
+		ArrayList<ReportLine> result = new ArrayList<ReportLine>();
 
 		if (list != null) {
-			Iterator it = list.iterator();
-			while (it.hasNext()) {
-				ReportLine line = (ReportLine) it.next();
+			for(ReportLine line: list) {
 				if (line.getLevel() >= level) {
 					result.add(line);
 				}
@@ -501,15 +499,12 @@ public class ReportManager {
 	 *          All reports with a priority above this level will be returned.
 	 * @return A HashMap with the same keys as map, but with the lists filtered by level.
 	 */
-	public static Map filterMap(Map map, int level) {
+	public static Map<String,List<ReportLine>> filterMap(Map<String,List<ReportLine>>  map, int level) {
 
-		HashMap result = new HashMap();
+		HashMap<String,List<ReportLine>> result = new HashMap<String,List<ReportLine>>();
 
-		Set keySet = map.keySet();
-		Iterator it = keySet.iterator();
-		while (it.hasNext()) {
-			String key = (String) it.next();
-			List list = (List) map.get(key);
+		for(String key: map.keySet()) {
+			List<ReportLine> list = map.get(key);
 			result.put(key, filterList(list, level));
 		}
 
@@ -530,13 +525,11 @@ public class ReportManager {
 
 		int[] result = new int[2];
 
-		List testsRun = new ArrayList();
+		List<String> testsRun = new ArrayList<String>();
 
 		// get all of them to build a list of the tests that were run
-		List reports = getReportsByDatabase(database, ReportLine.ALL);
-		Iterator it = reports.iterator();
-		while (it.hasNext()) {
-			ReportLine line = (ReportLine) it.next();
+		List<ReportLine> reports = getReportsByDatabase(database, ReportLine.ALL);
+		for(ReportLine line: reports) {
 			String test = line.getTestCaseName();
 			if (!testsRun.contains(test)) {
 				testsRun.add(test);
@@ -544,11 +537,9 @@ public class ReportManager {
 		}
 
 		// count those that failed
-		List testsFailed = new ArrayList();
+		List<String> testsFailed = new ArrayList<String>();
 		reports = getReportsByDatabase(database, ReportLine.PROBLEM);
-		it = reports.iterator();
-		while (it.hasNext()) {
-			ReportLine line = (ReportLine) it.next();
+		for(ReportLine line: reports) {
 			String test = line.getTestCaseName();
 			if (!testsFailed.contains(test)) {
 				testsFailed.add(test);
@@ -576,13 +567,11 @@ public class ReportManager {
 
 		int[] result = new int[2];
 
-		List allDBs = new ArrayList();
+		List<String> allDBs = new ArrayList<String>();
 
 		// get all of them to build a list of the tests that were run
-		List reports = getReportsByTestCase(test, ReportLine.ALL);
-		Iterator it = reports.iterator();
-		while (it.hasNext()) {
-			ReportLine line = (ReportLine) it.next();
+		List<ReportLine> reports = getReportsByTestCase(test, ReportLine.ALL);
+		for(ReportLine line: reports) {
 			String database = line.getDatabaseName();
 			if (!allDBs.contains(database)) {
 				allDBs.add(database);
@@ -590,11 +579,9 @@ public class ReportManager {
 		}
 
 		// count those that failed
-		List dbsFailed = new ArrayList();
+		List<String> dbsFailed = new ArrayList<String>();
 		reports = getReportsByTestCase(test, ReportLine.PROBLEM);
-		it = reports.iterator();
-		while (it.hasNext()) {
-			ReportLine line = (ReportLine) it.next();
+		for(ReportLine line: reports) {
 			String database = line.getDatabaseName();
 			if (!dbsFailed.contains(database)) {
 				dbsFailed.add(database);
@@ -621,11 +608,7 @@ public class ReportManager {
 
 		int[] result = new int[2];
 
-		Map allByDB = getAllReportsByDatabase();
-		Set dbs = allByDB.keySet();
-		Iterator it = dbs.iterator();
-		while (it.hasNext()) {
-			String database = (String) it.next();
+		for(String database: getAllReportsByDatabase().keySet()) {
 			int[] dbResult = countPassesAndFailsDatabase(database);
 			result[0] += dbResult[0];
 			result[1] += dbResult[1];
@@ -648,10 +631,8 @@ public class ReportManager {
 	 */
 	public static boolean databasePassed(String test, String database) {
 
-		List reports = getReportsByTestCase(test, ReportLine.PROBLEM);
-		Iterator it = reports.iterator();
-		while (it.hasNext()) {
-			ReportLine line = (ReportLine) it.next();
+		List<ReportLine> reports = getReportsByTestCase(test, ReportLine.PROBLEM);
+		for(ReportLine line: reports) {
 			if (database.equals(line.getDatabaseName())) {
 				return false;
 			}
@@ -690,15 +671,11 @@ public class ReportManager {
 	 * @param database
 	 *          The database.
 	 */
-	public static List getReports(String test, String database) {
+	public static List<ReportLine> getReports(String test, String database) {
 
-		List result = new ArrayList();
+		List<ReportLine> result = new ArrayList<ReportLine>();
 
-		List allReports = (List) reportsByTest.get(test);
-
-		Iterator it = allReports.iterator();
-		while (it.hasNext()) {
-			ReportLine line = (ReportLine) it.next();
+		for(ReportLine line: reportsByTest.get(test)) {
 			if (database.equals(line.getDatabaseName())) {
 				result.add(line);
 			}
