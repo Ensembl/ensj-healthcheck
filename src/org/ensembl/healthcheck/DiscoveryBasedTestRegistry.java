@@ -511,7 +511,7 @@ public class DiscoveryBasedTestRegistry implements TestRegistry {
 			List testGroups = test.getGroups();
 			Iterator it2 = testGroups.iterator();
 			while (it2.hasNext()) {
-				String group = (String) it.next();
+				String group = (String) it2.next();
 				// filter out test names
 				if (!isTestName(group) && !groups.contains(group)) {
 					groups.add(group);
