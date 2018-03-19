@@ -33,8 +33,13 @@ public abstract class AbstractCoreDatabaseUsingTestCase extends SingleDatabaseTe
 		try {
 			Statement stmt = coreConnection.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
-			rs.next();
-			metaValue = rs.getString("meta_value");
+			if(rs.next()){
+                            metaValue = rs.getString("meta_value");
+                        }
+                        else{
+                            return null;
+                        }
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
