@@ -24,8 +24,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
 
+import org.ensembl.CoreDbNotFoundException;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.MissingMetaKeyException;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
@@ -62,15 +64,24 @@ public class FeaturePosition extends AbstractCoreDatabaseUsingTestCase {
 
 		boolean               result   = true;
 		Connection            dbConnection   = dbre.getConnection();
-		DatabaseRegistryEntry coreDbre = getCoreDb(dbre);
-		
-		if (coreDbre == null) {
-			return false;	
+		DatabaseRegistryEntry coreDbre;
+		try {
+			coreDbre = getCoreDb(dbre);
+		} catch (MissingMetaKeyException e) {
+
+			ReportManager.problem(this, dbre.getConnection(), e.getMessage());
+			return false;
+			
+		} catch (CoreDbNotFoundException e) {
+
+			ReportManager.problem(this, dbre.getConnection(), e.getMessage());
+			return false;
+			
 		}
 		
 		logger.info("Using core database " + coreDbre.getName() + " " + coreDbre.getDatabaseServer().getDatabaseURL());
 						
-                String sql = "select seq_region_id, seq_region.name, length from seq_region join seq_region_attrib using (seq_region_id) join attrib_type using (attrib_type_id) where code=\"toplevel\"";
+        String sql = "select seq_region_id, seq_region.name, length from seq_region join seq_region_attrib using (seq_region_id) join attrib_type using (attrib_type_id) where code=\"toplevel\"";
 		HashMap<String, String> coreSeqRegionIDName = new HashMap<String, String>();
 		HashMap<String, String> seqRegionIdToLength = new HashMap<String, String>();
  
