@@ -44,6 +44,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that the tables handling variation sets are valid and won't cause problems
@@ -112,6 +113,18 @@ public class VariationSet extends SingleDatabaseTestCase {
 		// Query getting the name for a variation set id
 		query = "SELECT vs.name FROM variation_set vs WHERE vs.variation_set_id = ? LIMIT 1";
 		sqlQueries.setProperty("setName", query);
+
+		// Query checking the name for a variation set id is defined
+		query = "SELECT count(*) FROM variation_set vs WHERE vs.name is NULL OR vs.name='NULL' ";
+		sqlQueries.setProperty("setCheckName", query);
+
+		// Query checking the description for a variation set id is defined
+		query = "SELECT count(*) FROM variation_set vs WHERE vs.description is NULL OR vs.description='NULL' ";
+		sqlQueries.setProperty("setCheckDescription", query);
+
+		// Query checking the short name for a variation set id exists and is defined in the attrib table
+		query = "SELECT count(*) FROM variation_set vs LEFT JOIN attrib a ON (vs.short_name_attrib_id = a.attrib_id) WHERE vs.variation_set_id IS NOT NULL AND a.value IS NULL";
+		sqlQueries.setProperty("setCheckShortName", query);
 
 		// Query getting the subsets for a parent variation set id
 		query = "SELECT vss.variation_set_sub FROM variation_set_structure vss WHERE vss.variation_set_super = ?";
@@ -206,6 +219,28 @@ public class VariationSet extends SingleDatabaseTestCase {
 			}
 			*/
 			
+			// Check that no variation set is missing the short name
+			int countShortNames = DBUtils.getRowCount(con,sqlQueries.getProperty("setCheckShortName"));
+			if (countShortNames > 0) {
+				result = false;
+				ReportManager.problem(this, con, "There are " + String.valueOf(countShortNames)
+						+ " variation set(s) whose short name 'short_name_attrib_id' is missing OR is not defined in 'attrib' table");
+			}
+			// Check that no variation set is missing the name
+			int countNames = DBUtils.getRowCount(con,sqlQueries.getProperty("setCheckName"));
+			if (countNames > 0) {
+				result = false;
+				ReportManager.problem(this, con, "There are " + String.valueOf(countNames)
+						+ " variation set(s) whose 'name' is missing");
+			}
+			// Check that no variation set is missing the description
+			int countDesc = DBUtils.getRowCount(con,sqlQueries.getProperty("setCheckDescription"));
+			if (countDesc > 0) {
+				result = false;
+				ReportManager.problem(this, con, "There are " + String.valueOf(countDesc)
+						+ " variation set(s) whose 'description' is missing");
+			}
+
 			// Check that no subset has more than one parent
 			if ((rs = stmt.executeQuery(sqlQueries.getProperty("multiParent"))) != null && (fetch = rs.next())) {
 				String sets = "";
