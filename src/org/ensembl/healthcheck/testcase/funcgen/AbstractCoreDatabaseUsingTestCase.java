@@ -39,7 +39,7 @@ public abstract class AbstractCoreDatabaseUsingTestCase extends SingleDatabaseTe
 			boolean is_valid_row = rs.next();
 			
 			if (! is_valid_row) {
-				throw new MissingMetaKeyException("species.production_name has not been set " + connection.getCatalog() + "!");
+				throw new MissingMetaKeyException(metaKey + " has not been set in the meta table of " + connection.getCatalog() + "!");
 			}
 			
 			metaValue = rs.getString("meta_value");
