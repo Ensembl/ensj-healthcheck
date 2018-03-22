@@ -21,8 +21,14 @@ import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import org.ensembl.CoreDbNotFoundException;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
+import org.ensembl.healthcheck.MissingMetaKeyException;
+import org.ensembl.healthcheck.ReportManager;
+
+import java.lang.NullPointerException;
 
 public class ExternalFeatureFilesExist extends AbstractExternalFileUsingTestcase {
 
@@ -35,7 +41,25 @@ public class ExternalFeatureFilesExist extends AbstractExternalFileUsingTestcase
 		boolean testPassed = true;
 		
 		String sql = "select path from data_file where table_name='external_feature_file'";
-		String speciesAssemblyDbFileRootDir = getSpeciesAssemblyDataFileBasePath(dbre);
+		String speciesAssemblyDbFileRootDir;
+		
+		try {
+			
+			speciesAssemblyDbFileRootDir = getSpeciesAssemblyDataFileBasePath(dbre);
+			
+		} catch (CoreDbNotFoundException e) {
+			
+			ReportManager.problem(this, dbre.getConnection(), e.getMessage());
+			testPassed = false;
+			return testPassed;
+			
+		} catch (MissingMetaKeyException e) {
+			
+			ReportManager.problem(this, dbre.getConnection(), e.getMessage());
+			testPassed = false;
+			return testPassed;
+			
+		}
 
 		try {
 			Statement stmt = dbre.getConnection().createStatement();
