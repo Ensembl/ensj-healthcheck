@@ -187,7 +187,7 @@ public class BiotypeGroups extends SingleDatabaseTestCase {
     SqlTemplate t = DBUtils.getSqlTemplate(getProductionDatabase());
     Set<String> results = new HashSet<String>();
     for (String biotype : biotypes) {
-      String sql = "SELECT biotype_group FROM biotype WHERE object_type='" + table + "' AND is_current = 1 AND name ='" + biotype + "' AND FIND_IN_SET('" + databaseType + "', db_type) > 0";
+      String sql = "SELECT biotype_group FROM biotype WHERE object_type='" + table + "' AND name ='" + biotype + "' AND FIND_IN_SET('" + databaseType + "', db_type) > 0";
       results.addAll(t.queryForDefaultObjectList(sql, String.class));
     }
     return results;
@@ -197,7 +197,7 @@ public class BiotypeGroups extends SingleDatabaseTestCase {
     SqlTemplate t = DBUtils.getSqlTemplate(getProductionDatabase());
     Set<String> results = new HashSet<String>();
     for (String group : biotypeGroup) {
-      String sql = "SELECT name FROM biotype WHERE object_type='" + table + "' AND is_current = 1 AND biotype_group ='" + group + "' AND FIND_IN_SET('" + databaseType + "', db_type) > 0";
+      String sql = "SELECT name FROM biotype WHERE object_type='" + table + "' AND biotype_group ='" + group + "' AND FIND_IN_SET('" + databaseType + "', db_type) > 0";
       results.addAll(t.queryForDefaultObjectList(sql, String.class));
     }
     return results;
