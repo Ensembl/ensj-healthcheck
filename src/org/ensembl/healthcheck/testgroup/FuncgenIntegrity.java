@@ -3,7 +3,22 @@ package org.ensembl.healthcheck.testgroup;
 import org.ensembl.healthcheck.GroupOfTests;
 
 public class FuncgenIntegrity extends GroupOfTests {
+/*
 
+When changing the tests in the class, please notify: 
+
+ensembl-production@ebi.ac.uk
+
+Dear Production Team,
+
+We have made a change to our FuncgenIntegrity class:
+
+< insert link to github commit here >
+
+Cheers,
+< your name >
+
+*/
   public FuncgenIntegrity() {
 
       addTest(
