@@ -70,7 +70,10 @@ public class SequenceLevel extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-                result &= checkVersion(dbre);
+                boolean nbAsm = checkAssemblies(dbre);
+                if (nbAsm) {
+                  result &= checkVersion(dbre);
+                }
 
 		Connection con = dbre.getConnection();
 		String sql = "SELECT cs.name, COUNT(1) FROM coord_system cs, seq_region s, dna d WHERE d.seq_region_id = s.seq_region_id AND cs.coord_system_id =s.coord_system_id AND attrib NOT LIKE '%sequence_level%' GROUP BY cs.coord_system_id";
@@ -119,6 +122,18 @@ public class SequenceLevel extends SingleDatabaseTestCase {
       ReportManager.problem(this, dbre.getConnection(), "Contig version is not null"); 
     }
     return result;
+  }
+
+  private boolean checkAssemblies(DatabaseRegistryEntry dbre) {
+
+    SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+    boolean multiAsm = false ;
+    String sql = "SELECT count(*) FROM coord_system WHERE name = 'chromosome'";
+    int rows = t.queryForDefaultObject(sql, Integer.class);
+    if (rows > 1) {
+      multiAsm = true;
+    }
+    return multiAsm;
   }
 
 } // SequenceLevel
