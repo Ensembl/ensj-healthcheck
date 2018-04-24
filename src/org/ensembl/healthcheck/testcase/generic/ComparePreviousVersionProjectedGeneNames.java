@@ -212,7 +212,7 @@ public class ComparePreviousVersionProjectedGeneNames extends SingleDatabaseTest
 			}	
 			totalCount = changedSource + accessionsChanged;
 	   		percentageChange = totalCount/PreviousCount * 100 ;			
-			if (percentageChange > 2) {
+			if (percentageChange > 5) {
                                 ReportManager.info(this, currentCon, "Overall gene display xrefs have changed by " +percentageChange);
 				nochange = false;
 			}
@@ -224,7 +224,7 @@ public class ComparePreviousVersionProjectedGeneNames extends SingleDatabaseTest
 			float percentage = missingIds/displayXrefPreviousCount * 100;
 			percentage = Float.valueOf(twoDForm.format(percentage));
 			
-			if (missingIds > 0 && percentage > 5) {	
+			if (missingIds > 0 && percentage > 10) {	
                 		ReportManager.problem(this, currentCon, missingIds + "(" + percentage + "%) genes lack projected names in the current database ");
                                 result = false;
          	        }
@@ -232,7 +232,7 @@ public class ComparePreviousVersionProjectedGeneNames extends SingleDatabaseTest
 		        percentage = accessionsChanged/displayXrefPreviousCount * 100;
 		        percentage = Float.valueOf(twoDForm.format(percentage));
 			
-           	        if (accessionsChanged > 50 && percentage > 5) {	
+           	        if (accessionsChanged > 50 && percentage > 10) {	
         		        ReportManager.problem(this, currentCon, accessionsChanged + "(" +percentage + "%) display xref primary accessions changed for the same source ");
                                 result = false;
         	        }
@@ -246,7 +246,7 @@ public class ComparePreviousVersionProjectedGeneNames extends SingleDatabaseTest
 			        int changeCount = changeCounts.get(key);
         			percentage = changeCount/displayXrefPreviousCount * 100;
 	        		percentage = Float.valueOf(twoDForm.format(percentage));
-                                if (percentage > 5 && changeCount > 50) {
+                                if (percentage > 10 && changeCount > 50) {
                                         ReportManager.problem(this, currentCon, changeCount +"("+ percentage +"%) gene display xrefs changed source from " + key + exampleStableIds.get(key) );
                                         result = false;
                                 } else if (changeCount == 0) {
