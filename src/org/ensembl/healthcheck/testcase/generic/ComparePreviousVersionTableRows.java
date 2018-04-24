@@ -112,7 +112,7 @@ public class ComparePreviousVersionTableRows extends ComparePreviousVersionBase 
 
         protected double minimum() {
 
-                return 0;
+                return 1000;
 
         }
 

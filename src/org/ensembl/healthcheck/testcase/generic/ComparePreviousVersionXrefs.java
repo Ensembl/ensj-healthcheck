@@ -80,7 +80,7 @@ public class ComparePreviousVersionXrefs extends ComparePreviousVersionBase {
 
 	protected double threshold() {
 
-		return 0.78;
+		return 0.70;
 
 	}
 
@@ -88,7 +88,7 @@ public class ComparePreviousVersionXrefs extends ComparePreviousVersionBase {
 
         protected double minimum() {
 
-                return 100;
+                return 1000;
 
         }
 
