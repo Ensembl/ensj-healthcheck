@@ -75,7 +75,7 @@ public class AlleleFrequencies extends SingleDatabaseTestCase {
 				// Get the maximum variation id
 				String sql = "SELECT MAX(s.variation_id) FROM " + tables[i] + " s";
 				sql = DBUtils.getRowColumnValue(con, sql);
-				if (sql.length() == 0) {
+				if (sql == null || sql.isEmpty()) {
 					sql = "0";
 				}
 				int maxId = Integer.parseInt(sql);
