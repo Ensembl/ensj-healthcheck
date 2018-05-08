@@ -136,7 +136,7 @@ public class StandaloneTestRunner {
 
 		boolean isComparaPassword();
 
-		@Option(longName = "prod_dbname", defaultValue = "ensembl_production_91", description = "Name of production database")
+		@Option(longName = "prod_dbname", defaultValue = "ensembl_production_93", description = "Name of production database")
 		String getProductionDbname();
 
 		boolean isProductionDbname();
