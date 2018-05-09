@@ -265,7 +265,8 @@ sub report_problem_for_transcript {
 	my $recommended_fix;
  
 	foreach my $current_stop_codon (@$stop_codon) { 
-		my $coordinate_of_stop_codon_in_transcript = Bio::EnsEMBL::Mapper::Coordinate::start($transcript_mapper -> pep2genomic($current_stop_codon,$current_stop_codon));
+		my $coordinate_of_stop_codon_in_transcript =
+                   join "," , map {$_->start } $transcript_mapper -> pep2genomic($current_stop_codon,$current_stop_codon);
 
 		if (!defined $transcript->dbID)                       { confess("dbID is not defined for transcript:\n" .        Dumper($transcript)) }
 		if (!defined $transcript->start)                      { confess("start is not defined for transcript:\n" .       Dumper($transcript)) }
