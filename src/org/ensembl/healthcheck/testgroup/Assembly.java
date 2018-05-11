@@ -35,7 +35,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.Karyotype </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.MTCodonTable </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.MultipleComponentAssemblyMapping </li>
- *   <li> org.ensembl.healthcheck.testcase.generic.NonGTACNSequence </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.SeqRegionName </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.SequenceLevel </li>
@@ -61,7 +60,6 @@ public class Assembly extends GroupOfTests {
                         org.ensembl.healthcheck.testcase.generic.Karyotype.class,
                         org.ensembl.healthcheck.testcase.generic.MTCodonTable.class,
                         org.ensembl.healthcheck.testcase.generic.MultipleComponentAssemblyMapping.class,
-                        org.ensembl.healthcheck.testcase.generic.NonGTACNSequence.class,
                         org.ensembl.healthcheck.testcase.generic.SeqRegionName.class,
                         org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel.class,
                         org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevelRefSeq.class,
