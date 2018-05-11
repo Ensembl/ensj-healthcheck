@@ -81,7 +81,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.SpeciesID </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.TranscriptSupportingFeatures </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.SequenceLevel </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.NonGTACNSequence </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.BigGeneExon </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.TranscriptName </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.SingleDBCollations </li> 
@@ -154,7 +153,6 @@ public class PreSite extends GroupOfTests {
                         org.ensembl.healthcheck.testcase.generic.SpeciesID.class,
                         org.ensembl.healthcheck.testcase.generic.TranscriptSupportingFeatures.class,
                         org.ensembl.healthcheck.testcase.generic.SequenceLevel.class,
-                        org.ensembl.healthcheck.testcase.generic.NonGTACNSequence.class,
 			org.ensembl.healthcheck.testcase.generic.BigGeneExon.class,
                         org.ensembl.healthcheck.testcase.generic.TranscriptNames.class,
                         org.ensembl.healthcheck.testcase.generic.SingleDBCollations.class
