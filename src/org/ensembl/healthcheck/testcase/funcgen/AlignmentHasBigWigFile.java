@@ -61,9 +61,7 @@ public class AlignmentHasBigWigFile extends DataFileTableHasFile {
         Connection con = dbre.getConnection();
         try {
             Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT alignment.alignment_id, " +
-                    "alignment.name FROM alignment JOIN peak_calling USING" +
-                    "(alignment_id)");
+            ResultSet rs = stmt.executeQuery("SELECT select alignment.alignment_id, alignment.name from peak_calling join alignment on (peak_calling.signal_alignment_id = alignment.alignment_id or peak_calling.control_alignment_id = alignment.alignment_id) FROM alignment JOIN peak_calling USING (alignment_id)");
 
             while (rs != null && rs.next()) {
                 tableIDs.put(rs.getInt(1), rs.getString(2));
