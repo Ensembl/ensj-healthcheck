@@ -96,7 +96,7 @@ public class Variation extends SingleDatabaseTestCase {
                 }
 
     try {
-      // Check that there are no variants in the failed variation set, with display = 1 and no citation record
+      // Check that there are no failed variants with display = 1 which don't have citation or phenotype records
       String size_stmt =  "SELECT count( v.variation_id) "
                         + "FROM variation v "
                         + "JOIN failed_variation fv ON (v.variation_id = fv.variation_id) "
