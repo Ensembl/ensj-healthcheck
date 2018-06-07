@@ -96,15 +96,15 @@ public class Variation extends SingleDatabaseTestCase {
                 }
 
     try {
-      // Check that there are no variants in the failed variation set, with display = 1 and no citation record
-      String size_stmt =  "SELECT count(distinct v.variation_id) "
-                        + "FROM variation_set vs "
-                        + "JOIN variation_set_variation vsv ON (vs.variation_set_id = vsv.variation_set_id) "
-                        + "JOIN variation v ON (vsv.variation_id = v.variation_id) "
+      // Check that there are no failed variants with display = 1 which don't have citation or phenotype records
+      String size_stmt =  "SELECT count( v.variation_id) "
+                        + "FROM variation v "
+                        + "JOIN failed_variation fv ON (v.variation_id = fv.variation_id) "
                         + "LEFT JOIN variation_citation vc ON (v.variation_id = vc.variation_id) "
-                        + "WHERE vs.name = 'All failed variations' "
-                        + "AND v.display = 1 "
-                        + "AND vc.variation_id IS NULL;";
+                        + "LEFT JOIN phenotype_feature pf ON (v.name = pf.object_id) "
+                        + "WHERE v.display = 1 "
+                        + "AND vc.variation_id IS NULL "
+                        + "AND pf.phenotype_id IS NULL;";
 
       int size_rows = DBUtils.getRowCount(con,size_stmt);
       if (size_rows > 0) {
