@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.ensembl.healthcheck.util.Pair;
+
 
 import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
@@ -16,7 +18,7 @@ import org.ensembl.healthcheck.util.DBUtils;
 import org.ensembl.healthcheck.util.MapRowMapper;
 import org.ensembl.healthcheck.util.SqlTemplate;
 import org.ensembl.healthcheck.util.TestCaseUtils;
-import org.testng.internal.collections.Pair;
+
 
 /**
  * Base class for checking on the contents of the meta tables to see for each
