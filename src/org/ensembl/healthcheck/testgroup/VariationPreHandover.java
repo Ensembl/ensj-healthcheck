@@ -44,7 +44,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.variation.Denormalized </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.EmptyVariationTables </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.ForeignKeyCoreId </li>
- *   <li>	org.ensembl.healthcheck.testcase.variation.ForeignKeyFuncgenId </li>
+ *   <li> org.ensembl.healthcheck.testcase.variation.ForeignKeyFuncgenId </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.IndividualType </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.Meta </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.Meta_coord </li>
