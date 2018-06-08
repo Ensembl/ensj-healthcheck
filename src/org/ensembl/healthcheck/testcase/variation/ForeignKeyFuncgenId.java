@@ -100,29 +100,23 @@ public class ForeignKeyFuncgenId extends MultiDatabaseTestCase {
           result &= checkForOrphans(con, dbvar.getName()
               + ".regulatory_feature_variation", "feature_stable_id",
               dbrfuncgen.getName() + ".regulatory_feature", "stable_id");
-				  if (result) {
-					  // if there were no problems, just inform for the interface
-					  // to pick the HC
-					  ReportManager.correct(this, con, "ForeignKeyRegulationId test passed without any problem");
-				  }
+          if (result) {
+            // if there were no problems, just inform for the interface
+            // to pick the HC
+            ReportManager.correct(this, con, "ForeignKeyRegulationId test passed without any problem");
+          }
         } else {
-				  ReportManager.correct(this, con, "ForeignKeyRegulationId test not run for this species.");
+          ReportManager.correct(this, con, "ForeignKeyRegulationId test not run for this species.");
         }
-			} catch (Exception e) {
-				ReportManager
-						.problem(
-								this,
-								con,
-								"HealthCheck generated an exception: "
-										+ e.getMessage());
-				result = false;
-			}
-			
-			overallResult &= result;
-			}
-		}
-		return overallResult;
-	}
+      } catch (Exception e) {
+        ReportManager.problem(this, con, "HealthCheck generated an exception: " + e.getMessage());
+        result = false;
+      }
+      overallResult &= result;
+      }
+    }
+    return overallResult;
+  }
 
 	/**
 	 * This only applies to variation databases.
