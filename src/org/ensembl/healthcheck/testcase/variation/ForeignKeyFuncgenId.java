@@ -42,7 +42,6 @@ public class ForeignKeyFuncgenId extends MultiDatabaseTestCase {
 	 * Create a ForeignKeyFuncgenId that applies to a specific set of databases.
 	 */
 	public ForeignKeyFuncgenId() {
-		addToGroup("variation-release");
 		setDescription("Check for broken foreign-key relationships between variation and funcgen databases.");
 		setHintLongRunning(false);
 		setTeamResponsible(Team.VARIATION);
@@ -103,10 +102,10 @@ public class ForeignKeyFuncgenId extends MultiDatabaseTestCase {
           if (result) {
             // if there were no problems, just inform for the interface
             // to pick the HC
-            ReportManager.correct(this, con, "ForeignKeyRegulationId test passed without any problem");
+            ReportManager.correct(this, con, "ForeignKeyFuncgenId test passed without any problem");
           }
         } else {
-          ReportManager.correct(this, con, "ForeignKeyRegulationId test not run for this species.");
+          ReportManager.correct(this, con, "ForeignKeyFuncgenId test not run for this species.");
         }
       } catch (Exception e) {
         ReportManager.problem(this, con, "HealthCheck generated an exception: " + e.getMessage());

@@ -161,7 +161,7 @@ public class CheckChar extends SingleDatabaseTestCase {
         is_ok = false;
       }
       if (!is_ok) {
-        return Character.toString ((char) ascii_val);
+        return Character.toString((char) ascii_val);
       }
     }
     return "";
