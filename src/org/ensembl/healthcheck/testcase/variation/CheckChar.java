@@ -93,7 +93,7 @@ public class CheckChar extends SingleDatabaseTestCase {
         if(char_ok == false){
           result = false;
           String unsupportedChar = getUnsupportedChar(input);
-          ReportManager.problem(this, con, "phenotype: \""+ input +"\" has suspect start or unsupported characters: \"" + unsupportedChar  + "\"");
+          ReportManager.problem(this, con, "phenotype: \""+ input +"\" has suspect start or unsupported characters: \"" + unsupportedChar + "\"");
         }
 
       }					    
@@ -138,11 +138,10 @@ public class CheckChar extends SingleDatabaseTestCase {
     return is_ok;
   }
 
-  public String getUnsupportedChar( String input) {
+  public String  getUnsupportedChar( String input) {
 
     boolean is_ok = true;
     int len = input.length();
-    String unsupportedChar = "";
     for (int i =0; i< len; i++){
       char test_value= input.charAt(i);
 
@@ -162,10 +161,10 @@ public class CheckChar extends SingleDatabaseTestCase {
         is_ok = false;
       }
       if (!is_ok) {
-        unsupportedChar = "" + input.charAt(i);
+        return Character.toString((char) ascii_val);
       }
     }
-    return unsupportedChar;
+    return "";
   }
 
 	public boolean checkNonTerms( String input) {
