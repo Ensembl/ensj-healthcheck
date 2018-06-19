@@ -25,6 +25,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  * <ul>
  *   <li> org.ensembl.healthcheck.testcase.variation.CompareVariationSchema </li>
  *   <li> org.ensembl.healthcheck.testcase.variation.ForeignKeyCoreId </li>
+ *   <li> org.ensembl.healthcheck.testcase.variation.ForeignKeyFuncgenId </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.SchemaType </li>
  * </ul>
@@ -39,6 +40,7 @@ public class VariationRelease extends GroupOfTests {
 		addTest(
 			org.ensembl.healthcheck.testcase.variation.CompareVariationSchema.class,
 			org.ensembl.healthcheck.testcase.variation.ForeignKeyCoreId.class,
+			org.ensembl.healthcheck.testcase.variation.ForeignKeyFuncgenId.class,
       org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class,
       org.ensembl.healthcheck.testcase.generic.SchemaType.class
 		);
