@@ -38,7 +38,8 @@ use Carp;
 use base qw(Bio::EnsEMBL::Healthcheck);
 use Data::Dumper;
 use Bio::Seq;
-
+use Bio::EnsEMBL::TranscriptMapper;
+use Bio::EnsEMBL::Mapper::Coordinate;
 sub new {
 	my $caller = shift;
 	my $class  = ref($caller) || $caller;
@@ -152,10 +153,10 @@ sub run {
 					$passes = 0;
 					
 					$fh->print( "Transcript for "
-						  . "\ndbID:"                   . $transcript->dbID
-						  . "\ndisplay_id:"             . $transcript->display_id
-						  . "\ntranscript stable_id: "  . $transcript->stable_id
-						  . "\ncomprises only of X's.:\n"
+						  . "\ndbID: ".$transcript->dbID
+						  . "\ndisplay_id: ".$transcript->display_id
+						  . "\ntranscript stable_id: ".$transcript->stable_id
+						  . "\ncomprises only of X's\n"
 					);
 				}
 				
@@ -171,10 +172,10 @@ sub run {
 					$problem_report_stop_codons_tabular_all .= $problem_report_tabular; 		
 
 					$fh->print( "Transcript for "
-						  . "\ndbID:"                   . $transcript->dbID
-						  . "\ndisplay_id:"             . $transcript->display_id
-						  . "\ntranscript stable_id: "  . $transcript->stable_id
-						  . "\ncontains stop codons:\n" . $sequence
+						  . "\ndbID: ".$transcript->dbID
+						  . "\ndisplay_id: ".$transcript->display_id
+						  . "\ntranscript stable_id: ".$transcript->stable_id
+						  . "\ncontains stop codons: $sequence\n"
 					);
 					# Reporting all coordinates of stop codons during the run 
 					# is too verbose, hence commented out.
@@ -250,23 +251,22 @@ sub report_problem_for_transcript {
 			"transcript",
 			"dbID",
 			"start",
-			"start+internal_stop_position",
+			"internal_stop_position",
 			"end",
-			"description",
+			"seq_region_name",
 			"display_id",
 			"stable_id",			
-			"current_stop_codon",
+			"protein_sequence_position",
 		);
-	my $result;
-	
-	my $sequence   = $seq->seq();	
-	my $stop_codon = $self->_arrayref_of_stop_codons($sequence);
+	my $result="";
+	my $transcript_mapper = Bio::EnsEMBL::TranscriptMapper->new($transcript);
+	my $stop_codon = $self->_arrayref_of_stop_codons($seq->seq());
 
 	my $recommended_fix;
-
+ 
 	foreach my $current_stop_codon (@$stop_codon) { 
-
-		my $coordinate_of_stop_codon_in_transcript = $transcript->start + $current_stop_codon; 
+		my $coordinate_of_stop_codon_in_transcript =
+                   join "," , map {$_->start } $transcript_mapper -> pep2genomic($current_stop_codon,$current_stop_codon);
 
 		if (!defined $transcript->dbID)                       { confess("dbID is not defined for transcript:\n" .        Dumper($transcript)) }
 		if (!defined $transcript->start)                      { confess("start is not defined for transcript:\n" .       Dumper($transcript)) }
@@ -274,7 +274,7 @@ sub report_problem_for_transcript {
 		#
 		# Otherwise the join later will complain about an undefined value
 		#
-		if (!defined $transcript->description)                { $transcript->description("") }
+		if (!defined $transcript->seq_region_name)                { confess("seq_region_name is not defined for transcript:\n" .  Dumper($transcript)) }
 		if (!defined $transcript->display_id)                 { confess("display_id is not defined for transcript:\n" .  Dumper($transcript)) }
 		if (!defined $transcript->stable_id)                  { confess("stable_id is not defined for transcript:\n" .   Dumper($transcript)) }
 		if (!defined $coordinate_of_stop_codon_in_transcript) { confess("coordinate_of_stop_codon_in_transcript are not defined for transcript:\n" . Dumper($transcript)) }
@@ -285,7 +285,7 @@ sub report_problem_for_transcript {
 			$transcript->start,
 			$coordinate_of_stop_codon_in_transcript,
 			$transcript->end,
-			$transcript->description,
+			$transcript->seq_region_name,
 			$transcript->display_id,
 			$transcript->stable_id,
 			$current_stop_codon,

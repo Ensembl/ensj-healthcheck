@@ -7,3 +7,5 @@
 db_checksums/
 external_reports/
 perlcode/
+*.ipr
+*.iws

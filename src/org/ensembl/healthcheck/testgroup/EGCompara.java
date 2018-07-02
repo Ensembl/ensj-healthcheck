@@ -28,6 +28,7 @@ import org.ensembl.healthcheck.testcase.compara.MultipleGenomicAlignBlockIds;
 import org.ensembl.healthcheck.testcase.eg_compara.EGCheckEmptyLocators;
 import org.ensembl.healthcheck.testcase.eg_compara.EGCheckNoTreeStableIds;
 import org.ensembl.healthcheck.testcase.eg_compara.EGCheckSynteny;
+import org.ensembl.healthcheck.testcase.eg_compara.EGHighConfidence;
 import org.ensembl.healthcheck.testcase.eg_compara.EGMethodLinkSpeciesSetIdStats;
 import org.ensembl.healthcheck.testcase.eg_compara.EGMethodLinkSpeciesSetIdSyntenyStats;
 import org.ensembl.healthcheck.testcase.compara.MemberProductionCounts;
@@ -49,6 +50,7 @@ public class EGCompara extends GroupOfTests {
 				EGCommon.class, 
 				EGComparaGeneTree.class, 
 				EGCheckSynteny.class,
+				EGHighConfidence.class,
 				EGMethodLinkSpeciesSetIdStats.class,
 				EGMethodLinkSpeciesSetIdSyntenyStats.class,
 				EGCheckNoTreeStableIds.class,
