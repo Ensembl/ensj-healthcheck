@@ -96,7 +96,7 @@ public class Variation extends SingleDatabaseTestCase {
                 }
 
     try {
-      // Check that there are no failed variants with display = 1 which don't have citation or phenotype records
+      // Check that there are no variants in the failed variation set, with display = 1 and no citation record
       String size_stmt =  "SELECT count( v.variation_id) "
                         + "FROM variation v "
                         + "JOIN failed_variation fv ON (v.variation_id = fv.variation_id) "
@@ -109,7 +109,7 @@ public class Variation extends SingleDatabaseTestCase {
       int size_rows = DBUtils.getRowCount(con,size_stmt);
       if (size_rows > 0) {
         result = false;
-        ReportManager.problem(this, con, String.valueOf(size_rows) + " failed variants with display = 1 and no citation records");
+        ReportManager.problem(this, con, String.valueOf(size_rows) + " failed variants with display = 1 and no citation or phenotype records");
       }
     } catch (Exception e) {
       ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
