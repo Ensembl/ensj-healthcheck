@@ -32,6 +32,7 @@ public class GenebuildPostHandover extends GroupOfTests {
       org.ensembl.healthcheck.testcase.generic.AssemblyExceptions.class,
       org.ensembl.healthcheck.testcase.generic.AssemblySeqregion.class,
       org.ensembl.healthcheck.testcase.generic.AssemblyTablesAcrossSpecies.class,
+      org.ensembl.healthcheck.testcase.generic.CompareSchema.class,
       org.ensembl.healthcheck.testcase.generic.CoordSystemAcrossSpecies.class,
       org.ensembl.healthcheck.testcase.generic.DNAEmpty.class,
       org.ensembl.healthcheck.testcase.generic.EmptyTables.class,
