@@ -77,6 +77,7 @@ public enum Species {
 	MACCULLOCHELLA_PEELII(135761, "mcod", "ENSMPE", ""), 
 	MONOPTERUS_ALBUS(43700, "M_albus", "ENSMAL", ""), 
 	PARAMORMYROPS_KINGSLEYAE(1676925, "PKINGS", "ENSPKI", ""), 
+	SERIOLA_LALANDI_DORSALIS(1841481, "Sedor1", "ENSSLD", ""),
 	
 	
 	OCTODON_DEGUS(10160, "OctDeg", "ENSODE", "degu,brush_tailed_rat,10160"),
