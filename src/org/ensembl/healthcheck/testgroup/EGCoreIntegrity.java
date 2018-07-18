@@ -1,6 +1,7 @@
 package org.ensembl.healthcheck.testgroup;
 
 import org.ensembl.healthcheck.GroupOfTests;
+
 import org.ensembl.healthcheck.testcase.eg_core.AssemblyDefault;
 import org.ensembl.healthcheck.testcase.eg_core.CircularAwareFeatureCoords;
 import org.ensembl.healthcheck.testcase.eg_core.DbDisplayNameUniProt;
@@ -37,6 +38,7 @@ import org.ensembl.healthcheck.testcase.eg_core.VersionedGenes;
 import org.ensembl.healthcheck.testcase.eg_core.VersionedTranscripts;
 import org.ensembl.healthcheck.testcase.eg_core.VersionedTranslations;
 import org.ensembl.healthcheck.testcase.eg_core.XrefDescriptionSpecialChars;
+
 import org.ensembl.healthcheck.testcase.generic.AnalysisDescription;
 import org.ensembl.healthcheck.testcase.generic.AnalysisLogicName;
 import org.ensembl.healthcheck.testcase.generic.AssemblyExceptions;
@@ -48,6 +50,7 @@ import org.ensembl.healthcheck.testcase.generic.BlankEnums;
 import org.ensembl.healthcheck.testcase.generic.BlankInfoType;
 import org.ensembl.healthcheck.testcase.generic.CanonicalTranscriptCoding;
 import org.ensembl.healthcheck.testcase.generic.CoreForeignKeys;
+import org.ensembl.healthcheck.testcase.generic.DensityFeatures;
 import org.ensembl.healthcheck.testcase.generic.DescriptionNewlines;
 import org.ensembl.healthcheck.testcase.generic.DisplayLabels;
 import org.ensembl.healthcheck.testcase.generic.DuplicateAssembly;
@@ -99,7 +102,7 @@ public class EGCoreIntegrity extends GroupOfTests {
 				TranslationStartEndExon.class, ProteinTranslation.class,
 				AssemblyMapping.class, ValidSeqEnd.class,
 				ExonBoundary.class, InappropriateTranslation.class,
-				DescriptionNewlines.class, DisplayLabels.class,
+				DensityFeatures.class, DescriptionNewlines.class, DisplayLabels.class,
 				GeneDescriptions.class, PositiveCoordinates.class,
 				GeneDescriptionUniProtSource.class, DbDisplayNameUniProt.class,
 				XrefDescriptionSpecialChars.class,
