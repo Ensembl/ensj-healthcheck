@@ -18,6 +18,8 @@
 
 package org.ensembl.healthcheck.testcase.compara;
 
+import java.sql.Connection;
+
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
