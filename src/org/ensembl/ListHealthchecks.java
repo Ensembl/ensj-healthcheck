@@ -51,7 +51,14 @@ public class ListHealthchecks {
             List<String> noms = new ArrayList<String>();
             for (Class<?> c : PackageScan.getClassesForPackage(opts.getPackage(), true)) {
                 if (!Modifier.isAbstract(c.getModifiers()) && targetClass.isAssignableFrom(c)) {
-                    noms.add(c.getCanonicalName());
+                    if (isGroupClassName(opts.getClassType())) {
+                        GroupOfTests test = (GroupOfTests)c.newInstance();
+                        if (! test.getSetOfTests().isEmpty()) {
+                            noms.add(c.getCanonicalName());
+                        }
+                    } else {
+                        noms.add(c.getCanonicalName());
+                    }
                 }
             }
             FileUtils.writeStringToFile(new File(opts.getOutputFile()), new Gson().toJson(noms),
@@ -62,28 +69,39 @@ public class ListHealthchecks {
         } catch (IOException e) {
             System.err.println(e.getMessage());
             System.exit(3);
+        } catch (IllegalAccessException e) {
+            System.err.println(e.getMessage());
+            System.exit(4);
+        } catch (InstantiationException e) {
+            System.err.println(e.getMessage());
+            System.exit(5);
         }
+    }
+
+    private static boolean isGroupClassName(String name) {
+        return (name.equals("group") || name.equals("testgroup"));
     }
 
     public static Class<?> getClass(String name) {
         Class<?> targetClass = null;
         switch (name) {
-        case "test":
-        case "testcase":
-            targetClass = EnsTestCase.class;
-            break;
-        case "group":
-        case "testgroup":
-            targetClass = GroupOfTests.class;
-            break;
-        default:
-            try {
-                targetClass = Class.forName(name);
-            } catch (ClassNotFoundException e1) {
-                System.err.println("Class " + name + " not found");
-                System.exit(1);
-            }
-            break;
+            case "test":
+            case "testcase":
+                targetClass = EnsTestCase.class;
+                break;
+            case "group":
+            case "testgroup":
+                targetClass = GroupOfTests.class;
+                break;
+            default:
+                try {
+                    targetClass = Class.forName(name);
+
+                } catch (ClassNotFoundException e1) {
+                    System.err.println("Class " + name + " not found");
+                    System.exit(1);
+                }
+                break;
         }
         return targetClass;
     }
