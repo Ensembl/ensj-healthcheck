@@ -23,7 +23,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-
+import java.util.stream.IntStream;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
@@ -57,11 +57,15 @@ public class CheckMethodLinkSpeciesSetTable extends AbstractComparaTestCase {
 		/* Check the genomes in the species_set linked to the MLSS table */
 		int numOfGenomesInTheDatabase = DBUtils.getRowCount(con, "SELECT count(*) FROM genome_db WHERE taxon_id > 0");
 		Pattern unaryPattern = Pattern.compile("^([A-Z]\\.[a-z0-9]{2,3}) ");
-		Pattern binaryPattern = Pattern.compile("^([A-Z]\\.[a-z0-9]{2,3})-([A-Z]\\.[a-z0-9]{2,3})");
+		Pattern binaryPattern = Pattern.compile("^([A-Z]\\.bsub -I ant clean jar[a-z0-9]{2,3})-([A-Z]\\.[a-z0-9]{2,3})");
 		Pattern multiPattern = Pattern.compile("([0-9]+)");
 		Pattern ssnamePattern = Pattern.compile("^([a-zA-Z]+) ");
+		//
+		int[] unaryMethodLinkIds = {202}; // this is a list of method link ids that are associated with only one species
+		int[] binaryMethodLinkIds = {1,16,23,101,201}; // this is a list of method link ids that are associated with 2 species
+		//
 		/* Query returns the MLLS.name, the number of genomes and their name ("H.sap" format) */
-		String sql = "SELECT method_link_species_set.name, count(*),"+
+		String sql = "SELECT method_link_species_set.name, method_link_species_set.method_link_id, count(*),"+
 			" GROUP_CONCAT( CONCAT( UPPER(substr(genome_db.name, 1, 1)), '.', SUBSTR(SUBSTRING_INDEX(genome_db.name, '_', -1),1,3) ) ), "+
 			" species_set_id, species_set_header.name, "+
 			" method_link_species_set_id "+
@@ -74,16 +78,19 @@ public class CheckMethodLinkSpeciesSetTable extends AbstractComparaTestCase {
 			if (rs != null) {
 				while (rs.next()) {
 					String name = rs.getString(1);
-					int num = rs.getInt(2);
-					String genomes = rs.getString(3);
-					String ss_id = rs.getString(4);
-					String ss_name = rs.getString(5);
-					String mlss_id = rs.getString(6);
+					int ml_id = rs.getInt(2);
+					int num = rs.getInt(3);
+					String genomes = rs.getString(4);
+					String ss_id = rs.getString(5);
+					String ss_name = rs.getString(6);
+					String mlss_id = rs.getString(7);
+					boolean unaryBoolean = IntStream.of(unaryMethodLinkIds).anyMatch(x -> x == ml_id);
+					boolean binaryBoolean = IntStream.of(binaryMethodLinkIds).anyMatch(x -> x == ml_id);
 					Matcher unaryMatcher = unaryPattern.matcher(name);
 					Matcher binaryMatcher = binaryPattern.matcher(name);
 					Matcher multiMatcher = multiPattern.matcher(name);
 					Matcher ssnameMatcher = ssnamePattern.matcher(name);
-					if (unaryMatcher.find()) {
+					if (unaryBoolean) {
 						if (num != 1) {
 							ReportManager.problem(this, con, "FAILED species_set(" + ss_id + ") for \"" + name + "\"(" + mlss_id + ") links to " + num + " genomes instead of 1");
 							result = false;
@@ -91,7 +98,7 @@ public class CheckMethodLinkSpeciesSetTable extends AbstractComparaTestCase {
 						if (!genomes.equals(unaryMatcher.group(1))) {
 							ReportManager.problem(this, con, "FAILED species_set(" + ss_id + ") for \"" + name + "\"(" + mlss_id + ") links to " + genomes);
 						}
-					} else if (binaryMatcher.find()) {
+					} else if (binaryBoolean) {
 						if (num != 2 && binaryMatcher.group(1) != binaryMatcher.group(2)) {
 							ReportManager.problem(this, con, "FAILED species_set(" + ss_id + ") for \"" + name + "\"(" + mlss_id + ") links to " + num + " genomes instead of 2");
 							result = false;
