@@ -28,6 +28,7 @@ import org.ensembl.healthcheck.DatabaseType;
 public enum Species {
 	// defined new Species and properties: taxonomy_id, assemblyprefix, stableIDprefix, alias
 	
+	HIPPOCAMPUS COMES(109280, "H_comes_QL1", "ENSHCO", ""),
 	ASTATOTILAPIA_CALLIPTERA(8154, "fAstCal", "ENSACL", ""),
 	SCOPHTHALMUS_MAXIMUS(52904, "ASM318616", "ENSSMA", ""),
 	AMPHILOPHUS_CITRINELLUS(61819, "Midas", "ENSACI", ""),
