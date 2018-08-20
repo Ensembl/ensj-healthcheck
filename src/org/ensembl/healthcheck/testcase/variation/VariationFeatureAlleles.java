@@ -20,6 +20,7 @@ package org.ensembl.healthcheck.testcase.variation;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.Species;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for variation feature entries
@@ -47,9 +48,14 @@ public class VariationFeatureAlleles extends SingleDatabaseTestCase {
      */
     public boolean run(DatabaseRegistryEntry dbre) {
 
+        // Alleles are no longer stored for human variants without frequency data
+        Species species = dbre.getSpecies();
+        if (species == Species.HOMO_SAPIENS ){
+          return true;
+        }
+
         return checkForOrphans(dbre.getConnection(), "variation_feature", "variation_id", "allele", "variation_id",
                 true);
-
     }
 
 } 
