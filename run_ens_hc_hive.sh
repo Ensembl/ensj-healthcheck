@@ -18,7 +18,7 @@ mkdir -p $report_dir
 echo "Running HCs on $div:$db in session $sid to $report_dir/$db.out"
 div=${div,,}
 
-if [[ $db =~ core ]] || [[ $db =~ otherfeatures ]] || [[ $db =~ rnaseq ]] || [[ $db =~ cdna ]] || [[ $db =~ vega ]] ; then
+if [[ $db =~ core ]] || [[ $db =~ otherfeatures ]] || [[ $db =~ rnaseq ]] || [[ $db =~ cdna ]] ; then
 ./run-configurable-testrunner.sh \
   -g $group\
   -c $properties \
@@ -46,7 +46,7 @@ elif [[ $db =~ variation ]]; then
 elif [[ $db =~ funcgen ]]; then
 
 ./run-configurable-testrunner.sh \
-  -g FuncgenRelease \
+  -g FuncgenIntegrity \
   -c $properties \
   -R Database --output.database $hcdb \
   -d $db \
