@@ -27,14 +27,13 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
 /**
  * An EnsEMBL Healthcheck test case that checks that
- * wga_coverage and goc_score thresholds are defined for all the mlss_ids
- * that need them
+ * wga_coverage and goc_score thresholds are defined for some mlss_ids
  */
 
 public class CheckOrthologQCThresholds extends SingleDatabaseTestCase {
 
 	public CheckOrthologQCThresholds() {
-		setDescription("Check that the wga_coverage and goc_score thresholds are defined where needed");
+		setDescription("Check that some wga_coverage and goc_score thresholds are defined");
 		setTeamResponsible(Team.COMPARA);
 	}
 
@@ -42,8 +41,8 @@ public class CheckOrthologQCThresholds extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		boolean result = true;
-		result &= checkCountIsZero(con, "homology JOIN method_link_species_set_attr USING (method_link_species_set_id)", "goc_score    IS NOT NULL AND goc_quality_threshold IS NULL");
-		result &= checkCountIsZero(con, "homology JOIN method_link_species_set_attr USING (method_link_species_set_id)", "wga_coverage IS NOT NULL AND wga_quality_threshold IS NULL");
+		result &= checkCountIsNonZero(con, "method_link_species_set_attr", "goc_quality_threshold IS NOT NULL");
+		result &= checkCountIsNonZero(con, "method_link_species_set_attr", "wga_quality_threshold IS NOT NULL");
 		return result;
 	}
 
