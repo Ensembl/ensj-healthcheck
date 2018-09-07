@@ -17,7 +17,9 @@
 
 package org.ensembl.healthcheck.testgroup;
 
+import org.ensembl.healthcheck.testcase.generic.AssemblyExceptions;
 import org.ensembl.healthcheck.testcase.generic.EmptyTables;
+import org.ensembl.healthcheck.testcase.generic.Karyotype;
 
 /**
  * These are the critical checks to run once Genebuild have handed over the core
@@ -27,5 +29,7 @@ public class GenebuildPostHandoverService extends GenebuildPostHandover {
 
   public GenebuildPostHandoverService() {
     this.removeTest(EmptyTables.class);
+    this.removeTest(Karyotype.class);
+    this.removeTest(AssemblyExceptions.class);
   }
 }
