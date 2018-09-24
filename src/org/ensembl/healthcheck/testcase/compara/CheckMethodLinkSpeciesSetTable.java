@@ -71,7 +71,7 @@ public class CheckMethodLinkSpeciesSetTable extends AbstractComparaTestCase {
 			" method_link_species_set_id "+
 			" FROM method_link_species_set JOIN species_set USING (species_set_id)"+
 			" JOIN species_set_header USING (species_set_id)"+
-			" JOIN genome_db USING (genome_db_id) GROUP BY method_link_species_set_id";
+			" JOIN genome_db USING (genome_db_id) WHERE method_link_species_set.last_release IS NULL GROUP BY method_link_species_set_id";
 		try {
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
