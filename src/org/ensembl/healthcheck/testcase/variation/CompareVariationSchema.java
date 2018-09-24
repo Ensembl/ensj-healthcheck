@@ -72,7 +72,7 @@ public class CompareVariationSchema extends AbstractCompareSchema {
 		comparer.addIgnoreTables("MTMP_evidence", "MTMP_motif_feature_variation", "MTMP_phenotype",
 				"MTMP_regulatory_feature_variation", "MTMP_transcript_variation",
 				"MTMP_variation_set_structural_variation", "MTMP_variation_set_variation",
-				"tmp_sample_genotype_single_bp");
+				"tmp_sample_genotype_single_bp","MTMP_population_genotype","MTMP_sample_genotype");
 		return comparer;
 	}
 
