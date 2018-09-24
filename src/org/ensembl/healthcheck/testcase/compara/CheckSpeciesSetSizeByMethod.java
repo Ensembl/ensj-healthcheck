@@ -53,9 +53,17 @@ public class CheckSpeciesSetSizeByMethod extends AbstractComparaTestCase {
 			result &= assertSpeciesSetCountForMLSS(dbre, "ENSEMBL_PARALOGUES", 1);
 		}
 		result &= assertSpeciesSetCountForMLSS(dbre, "ENSEMBL_HOMOEOLOGUES", 1);
+		result &= assertSpeciesSetCountForMLSS(dbre, "ENSEMBL_PROJECTIONS", 1);
+
 		result &= assertSpeciesSetCountForMLSS(dbre, "BLASTZ_NET", 2);
 		result &= assertSpeciesSetCountForMLSS(dbre, "LASTZ_NET", 2);
 		result &= assertSpeciesSetCountForMLSS(dbre, "TRANSLATED_BLAT_NET", 2);
+		result &= assertSpeciesSetCountForMLSS(dbre, "ATAC", 2);
+		result &= assertSpeciesSetCountForMLSS(dbre, "POLYPLOID", 1);
+		result &= assertSpeciesSetCountForMLSS(dbre, "LASTZ_PATCH", 1);
+		result &= assertSpeciesSetCountForMLSS(dbre, "CACTUS_HAL_PW", 2);
+		result &= assertSpeciesSetCountForMLSS(dbre, "SYNTENY", 2);
+
 		return result;
 	}
 
