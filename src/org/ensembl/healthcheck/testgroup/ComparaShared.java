@@ -31,7 +31,7 @@ public class ComparaShared extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.CheckMethodLinkSpeciesSetTable.class,
 			org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetTable.class,
 			org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetSizeByMethod.class,
-			org.ensembl.healthcheck.testcase.compara.CheckTaxon.class,
+			org.ensembl.healthcheck.testcase.compara.CheckDuplicatedTaxaNames.class,
 			org.ensembl.healthcheck.testcase.compara.CheckFirstLastRelease.class,
 			org.ensembl.healthcheck.testcase.compara.CheckTopLevelDnaFrag.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyMasterTables.class,
