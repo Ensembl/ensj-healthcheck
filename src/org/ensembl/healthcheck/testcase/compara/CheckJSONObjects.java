@@ -66,7 +66,8 @@ public class CheckJSONObjects extends SingleDatabaseTestCase {
         ResultSet rs = null;
 		String sql = "SELECT root_id, data_label, UNCOMPRESS(compressed_data) FROM gene_tree_object_store";
         try {
-            stmt = con.createStatement();
+            stmt = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
+            stmt.setFetchSize(Integer.MIN_VALUE);
             rs = stmt.executeQuery(sql);
 
 			while (result && rs.next()) {
