@@ -19,7 +19,7 @@ package org.ensembl.healthcheck.testgroup;
 
 import org.ensembl.healthcheck.GroupOfTests;
 import org.ensembl.healthcheck.testcase.compara.CheckSynteny;
-import org.ensembl.healthcheck.testcase.compara.CheckTaxon;
+import org.ensembl.healthcheck.testcase.compara.CheckDuplicatedTaxaNames;
 import org.ensembl.healthcheck.testcase.compara.CheckTopLevelDnaFrag;
 import org.ensembl.healthcheck.testcase.compara.MLSSTagStatsHomology;
 import org.ensembl.healthcheck.testcase.compara.MLSSTagThresholdDs;
@@ -36,6 +36,6 @@ public class ComparaPanIntegrity extends ComparaIntegrity {
 		addTest(
 			org.ensembl.healthcheck.testcase.eg_compara.ForeignKeyPanMasterTables.class
 		);
-		removeTest(CheckSynteny.class, CheckTaxon.class, CheckTopLevelDnaFrag.class, MLSSTagStatsHomology.class, MLSSTagThresholdDs.class, ForeignKeyMasterTables.class);
+		removeTest(CheckSynteny.class, CheckDuplicatedTaxaNames.class, CheckTopLevelDnaFrag.class, MLSSTagStatsHomology.class, MLSSTagThresholdDs.class, ForeignKeyMasterTables.class);
 	}
 }
