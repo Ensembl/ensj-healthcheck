@@ -14,7 +14,6 @@ sub pipeline_analyses {
       -logic_name => 'RunStandaloneHealthcheckFactory',
       -module =>
         'Bio::EnsEMBL::Healthcheck::Pipeline::RunStandaloneHealthcheckFactory',
-      -meadow_type => 'LOCAL',
       -input_ids   => [],        # required for automatic seeding
       -parameters => { hc_jar => $self->o('hc_jar') },
       -flow_into  => {'2->A' => ['RunStandaloneHealthcheckParallel'],
@@ -38,7 +37,6 @@ sub pipeline_analyses {
       -logic_name => 'RunStandaloneHealthcheckMerge',
       -module =>
         'Bio::EnsEMBL::Healthcheck::Pipeline::RunStandaloneHealthcheckMerge',
-      -meadow_type => 'LOCAL',
       -parameters  => {},
       -flow_into   => {
         2 => ['?table_name=result']
