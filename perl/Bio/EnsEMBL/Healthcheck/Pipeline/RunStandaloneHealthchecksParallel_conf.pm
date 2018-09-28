@@ -13,7 +13,7 @@ sub pipeline_analyses {
   return [ {
       -logic_name => 'RunStandaloneHealthcheckFactory',
       -module =>
-        'Bio::EnsEMBL::Healthcheck::Pipeline::RunStandaloneHealthcheckFactory'
+        'Bio::EnsEMBL::Healthcheck::Pipeline::RunStandaloneHealthcheckFactory',
       -input_ids   => [],        # required for automatic seeding
       -parameters => { hc_jar => $self->o('hc_jar') },
       -flow_into  => {'2->A' => ['RunStandaloneHealthcheckParallel'],
@@ -36,7 +36,7 @@ sub pipeline_analyses {
       -flow_into => { 2 => ['?accu_name=hc_output&accu_address=[]'] } }, {
       -logic_name => 'RunStandaloneHealthcheckMerge',
       -module =>
-        'Bio::EnsEMBL::Healthcheck::Pipeline::RunStandaloneHealthcheckMerge'
+        'Bio::EnsEMBL::Healthcheck::Pipeline::RunStandaloneHealthcheckMerge',
       -parameters  => {},
       -flow_into   => {
         2 => ['?table_name=result']
