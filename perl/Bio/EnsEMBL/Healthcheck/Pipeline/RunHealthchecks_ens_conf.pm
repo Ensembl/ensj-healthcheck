@@ -92,11 +92,9 @@ sub pipeline_analyses {
             -flow_into => {
                 1 => 'finish_session' ,
                 2 => 'prioritise'
-            },
-                    -meadow_type => 'LOCAL'
+            }
         },
         {
-            -meadow_type=> 'LOCAL',
             -logic_name => 'prioritise',
             -module => 'Bio::EnsEMBL::Healthcheck::Pipeline::Prioritise',
             -parameters => { priority => $self->o('priority') },
@@ -185,8 +183,7 @@ sub pipeline_analyses {
                 db_conn => $self->o('hc_conn'),
                 sql => 'update session set end_time=NOW() where session_id="#session_id#"'
             },
-                    -wait_for => [qw/human_variation_run_healthcheck super_priority_run_healthcheck high_priority_run_healthcheck run_healthcheck/],
-                    -meadow_type => 'LOCAL'
+                    -wait_for => [qw/human_variation_run_healthcheck super_priority_run_healthcheck high_priority_run_healthcheck run_healthcheck/]
         }
         ];
     return $anal;
