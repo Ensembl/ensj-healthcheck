@@ -27,6 +27,15 @@ import org.ensembl.healthcheck.DatabaseType;
 
 public enum Species {
 	// defined new Species and properties: taxonomy_id, assemblyprefix, stableIDprefix, alias
+	EQUUS_ASINUS_ASINUS(83772,"ASM303372","ENSEAS",""),
+	GOPHERUS_AGASSIZII(38772),"ASM289641","ENSGAG",""),
+	SPHENODON_PUNCTATUS(8508),"ASM311381","ENSSPU",""),
+	CHRYSEMYS_PICTA_BELLII(8478),"Chrysemys_picta_bellii-","ENSCPI",""),
+	URSUS_MARITIMUS(29073),"UrsMar_","ENSUMA",""),
+	VULPES_VULPES(9627),"VulVul","ENSVVU",""),
+	CANIS_LUPUS_DINGO(286419),"ASM325472","ENSCAF",""),
+	PHASCOLARCTOS_CINEREUS(38626),"phaCin_tgac_","ENSPCI",""),
+	URSUS_AMERICANUS(9643),"ASM334442","ENSUAM",""),
 	
 	HIPPOCAMPUS_COMES(109280, "H_comes_QL1", "ENSHCO", ""),
 	ASTATOTILAPIA_CALLIPTERA(8154, "fAstCal", "ENSACL", ""),
@@ -116,7 +125,7 @@ public enum Species {
 	ANOLIS_CAROLINENSIS(28377, "AnoCar", "ENSACA", "lizard,anole,anolis_lizard,anolis,anolis_carolinensis"),
 	ANOPHELES_GAMBIAE(7165, "AgamP", "IGNORE", "mosquito,anopheles,agambiae,anophelesgambiae,anopheles_gambiae"),
 	APIS_MELLIFERA(7460, "AMEL", "IGNORE", "honeybee,honey_bee,apis,amellifera,apismellifera,apis_mellifera"),
-	BOS_TAURUS(9913, "UMD", "ENSBTA", "cow,btaurus,bostaurus,bos_taurus"),
+	BOS_TAURUS(9913, "ARS-UCD", "ENSBTA", "cow,btaurus,bostaurus,bos_taurus"),
 	CAENORHABDITIS_BRIGGSAE(6238, "CBR", "IGNORE", "briggsae,cbriggsae,caenorhabditisbriggsae,caenorhabditis_briggsae"),
 	CAENORHABDITIS_ELEGANS(6239, "WBcel", "IGNORE", "elegans,celegans,caenorhabditiselegans,caenorhabditis_elegans"),
 	CALLITHRIX_JACCHUS(9483, "ASM275486", "ENSCJA", "marmoset,white-tufted-ear marmoset,callithrix_jacchus,callithrix jacchus,Callithrix_jacchus,Callithrix jacchus,callithrix"),
@@ -145,7 +154,7 @@ public enum Species {
 	FICEDULA_ALBICOLLIS(59894, "FicAlb", "ENSFAL", "flycatcher,falbicollis,collared_flycatcher,f_albicollis,ficalb"),
 	FELIS_CATUS(9685, "Felis_catus", "ENSFCA", "cat,fcatus,felis,domestic_cat,felis_catus"),
         GADUS_MORHUA(8049, "gadMor", "ENSGMO", "cod,gadus_morhua,gmorhua,atlantic_cod"),
-	GALLUS_GALLUS(9031, "Gallus_gallus-", "ENSGAL", "chicken,chick,ggallus,gallusgallus,gallus_gallus"),
+	GALLUS_GALLUS(9031, "GRCg", "ENSGAL", "chicken,chick,ggallus,gallusgallus,gallus_gallus"),
 	GASTEROSTEUS_ACULEATUS(69293, "BROADS", "ENSGAC", "stickleback,gas_aculeatus,gasaculeatus,gasterosteusaculeatus,gasterosteus_aculeatus"),
 	GORILLA_GORILLA(9595, "gorGor", "ENSGGO", "gorilla,gorilla_gorilla,ggor"),
 	HETEROCEPHALUS_GLABER(10181, "HetGla", "ENSHGL", "naked_mole_rat,heterocephalus_glaber,hglaber"),
