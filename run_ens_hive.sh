@@ -1,7 +1,7 @@
 #!/bin/bash -l
 # Script for healthcheck execution with locking
 
-div='ens'
+div='EV'
 
 function msg {
     echo $(date +"%Y-%m-%d %H:%M:%S") $1

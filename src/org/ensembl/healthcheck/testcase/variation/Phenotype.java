@@ -70,7 +70,7 @@ public class Phenotype extends SingleDatabaseTestCase {
 		boolean result = true;
 		
 		try {				
-		    if (!checkCountIsZero(con,"phenotype","description is null ")) {
+		    if (!checkCountIsZero(con,"phenotype","description is null OR description ='' ")) {
 			ReportManager.problem(this, con, "Phenotypes with empty descriptions");
 			result = false;
 		    }

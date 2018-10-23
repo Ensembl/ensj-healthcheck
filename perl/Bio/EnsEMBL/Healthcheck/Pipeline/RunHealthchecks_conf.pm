@@ -77,8 +77,7 @@ sub pipeline_analyses {
             -flow_into => {
                 1 => 'finish_session' ,
                 2 => 'run_healthcheck'
-            },
-                    -meadow_type => 'LOCAL'
+            }
         },
         
         {   
@@ -99,8 +98,7 @@ sub pipeline_analyses {
                 db_conn => $self->o('hc_conn'),
                 sql => 'update session set end_time=NOW() where session_id="#session_id#"'
             },
-                    -wait_for => ['run_healthcheck'],
-                    -meadow_type => 'LOCAL'
+                    -wait_for => ['run_healthcheck']
         }
         ];
     return $anal;

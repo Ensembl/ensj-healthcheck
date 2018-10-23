@@ -63,7 +63,7 @@ public class ComparePreviousVersionXrefs extends ComparePreviousVersionBase {
 
 	protected Map<String, Integer> getCounts(DatabaseRegistryEntry dbre) {
 
-		String sql = "SELECT DISTINCT(e.db_name) AS db_name, COUNT(*) AS count" + " FROM external_db e, xref x, object_xref ox" + " WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id "
+		String sql = "SELECT DISTINCT(e.db_name) AS db_name, COUNT(*) AS count" + " FROM external_db e, xref x, object_xref ox" + " WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id AND e.db_name not like 'GO' "
 				+ getExcludeProjectedSQL(dbre) + " GROUP BY e.db_name";
 		// System.out.println(sql);
 		return getCountsBySQL(dbre, sql);
@@ -96,12 +96,7 @@ public class ComparePreviousVersionXrefs extends ComparePreviousVersionBase {
 
 	private String getExcludeProjectedSQL(DatabaseRegistryEntry dbre) {
 
-		String sql = "";
-		if (dbre.getSchemaVersion() == null) { // guess if we can't get the schema version
-			sql = " AND (x.info_type != 'PROJECTION' OR x.info_type IS NULL)";
-		} else {
-			sql = Integer.parseInt(dbre.getSchemaVersion()) <= 37 ? " AND x.display_label NOT LIKE '%[from%'" : " AND (x.info_type != 'PROJECTION' OR x.info_type IS NULL)";
-		}
+		String sql = " AND (x.info_type != 'PROJECTION' OR x.info_type IS NULL)";
 
 		return sql;
 

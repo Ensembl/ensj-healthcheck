@@ -14,7 +14,6 @@ sub pipeline_analyses {
       -logic_name => 'RunStandaloneHealthcheckFactory',
       -module =>
         'Bio::EnsEMBL::Healthcheck::Pipeline::RunStandaloneHealthcheckFactory',
-      -meadow_type => 'LOCAL',
       -input_ids   => [],        # required for automatic seeding
       -parameters => { hc_jar => $self->o('hc_jar') },
       -flow_into  => {'2->A' => ['RunStandaloneHealthcheckParallel'],
@@ -23,7 +22,7 @@ sub pipeline_analyses {
       -module =>
         'Bio::EnsEMBL::Healthcheck::Pipeline::RunStandaloneHealthcheckParallel',
       -rc_name       => 'default',
-      -hive_capacity => 8,
+      -hive_capacity => 30,
       -parameters    => { hc_jar => $self->o('hc_jar'), java_opts => '' },
       -flow_into     => {
                       -1 => ['RunStandaloneHealthcheckParallelHimem'],
@@ -32,13 +31,12 @@ sub pipeline_analyses {
       -module =>
         'Bio::EnsEMBL::Healthcheck::Pipeline::RunStandaloneHealthcheckParallel',
       -rc_name       => 'himem',
-      -hive_capacity => 8,
+      -hive_capacity => 30,
       -parameters => { hc_jar => $self->o('hc_jar'), java_opts => '-Xmx16g' },
       -flow_into => { 2 => ['?accu_name=hc_output&accu_address=[]'] } }, {
       -logic_name => 'RunStandaloneHealthcheckMerge',
       -module =>
         'Bio::EnsEMBL::Healthcheck::Pipeline::RunStandaloneHealthcheckMerge',
-      -meadow_type => 'LOCAL',
       -parameters  => {},
       -flow_into   => {
         2 => ['?table_name=result']
