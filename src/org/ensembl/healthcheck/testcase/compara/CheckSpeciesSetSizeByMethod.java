@@ -35,8 +35,8 @@ public class CheckSpeciesSetSizeByMethod extends AbstractComparaTestCase {
 	protected HashMap<String,String> sizeExceptions = new HashMap<String,String>();
 
 	// Singletons and pairs should follow a certain pattern
-	protected Pattern unaryPattern = Pattern.compile("^([A-Z]\\.?[a-z0-9]{2,3}) ");
-	protected Pattern binaryPattern = Pattern.compile("^([A-Z]\\.?[a-z0-9]{2,3})-([A-Z]\\.?[a-z0-9]{2,3}) ");
+	protected Pattern unaryPattern = Pattern.compile("^([A-Z]\\.?[a-z0-9]{2,3}(\\.?[A-Z])?) ");
+	protected Pattern binaryPattern = Pattern.compile("^([A-Z]\\.?[a-z0-9]{2,3}(\\.?[A-Z])?)-([A-Z]\\.?[a-z0-9]{2,3}(\\.?[A-Z])?) ");
 
 	public CheckSpeciesSetSizeByMethod() {
 		setTeamResponsible(Team.COMPARA);
