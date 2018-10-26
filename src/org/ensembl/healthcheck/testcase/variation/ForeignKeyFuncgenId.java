@@ -92,7 +92,7 @@ public class ForeignKeyFuncgenId extends MultiDatabaseTestCase {
 
                         result &= checkForOrphans(con, dbvar.getName()
                                         + ".motif_feature_variation", "feature_stable_id",
-                                dbrfuncgen.getName() + ".regulatory_feature", "stable_id");
+                                dbrfuncgen.getName() + ".motif_feature", "stable_id");
 
                         result &= checkForOrphans(con, dbvar.getName()
                                         + ".regulatory_feature_variation", "feature_stable_id",
