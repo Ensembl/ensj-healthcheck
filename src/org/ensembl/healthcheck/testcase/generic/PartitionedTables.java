@@ -91,5 +91,5 @@ public class PartitionedTables extends SingleDatabaseTestCase {
 
 	// -----------------------------------------------------------------------
 
-} // AnalyseTables
+} // PartitionedTables
 
