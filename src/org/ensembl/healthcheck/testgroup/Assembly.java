@@ -27,7 +27,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyExceptions </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyMapping </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap </li>
- *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyNameLength </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblySeqregion </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.DuplicateAssembly </li>
@@ -52,7 +51,6 @@ public class Assembly extends GroupOfTests {
                         org.ensembl.healthcheck.testcase.generic.AssemblyExceptions.class,
                         org.ensembl.healthcheck.testcase.generic.AssemblyMapping.class,
                         org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap.class,
-                        org.ensembl.healthcheck.testcase.generic.AssemblyNameLength.class,
                         org.ensembl.healthcheck.testcase.generic.AssemblySeqregion.class,
                         org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions.class,
                         org.ensembl.healthcheck.testcase.generic.DuplicateAssembly.class,

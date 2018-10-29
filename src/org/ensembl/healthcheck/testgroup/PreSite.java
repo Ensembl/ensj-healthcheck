@@ -39,7 +39,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.Strand </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.MTCodonTable </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyNameLength </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyMapping </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.MarkerFeatures </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.HitNameFormat </li> 
@@ -111,7 +110,6 @@ public class PreSite extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.Strand.class,
 			org.ensembl.healthcheck.testcase.generic.MTCodonTable.class,
 			org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap.class,
-                        org.ensembl.healthcheck.testcase.generic.AssemblyNameLength.class,
                         org.ensembl.healthcheck.testcase.generic.AssemblyMapping.class,
 			org.ensembl.healthcheck.testcase.generic.MarkerFeatures.class,
 			org.ensembl.healthcheck.testcase.generic.HitNameFormat.class,
