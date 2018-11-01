@@ -28,6 +28,7 @@ public class ComparaGenomicOnly extends GroupOfTests {
 	public ComparaGenomicOnly() {
 
 		addTest(
+			org.ensembl.healthcheck.testcase.compara.AlignmentCoordinates.class,
 			org.ensembl.healthcheck.testcase.compara.CheckConservationScore.class,
 			org.ensembl.healthcheck.testcase.compara.CheckConstrainedElementTable.class,
 			org.ensembl.healthcheck.testcase.compara.CheckGenomicAlignGenomeDBs.class,
