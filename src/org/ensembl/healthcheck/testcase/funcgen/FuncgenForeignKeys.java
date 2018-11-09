@@ -75,7 +75,7 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
         try{
 
             result &= checkForOrphans(con, "alignment", "analysis_id", "analysis", "analysis_id", true);
-            result &= checkForOrphans(con, "alignment", "bam_file_id", "data_file", "data_file_id", true);
+//            result &= checkForOrphans(con, "alignment", "bam_file_id", "data_file", "data_file_id", true);
 //            result &= checkForOrphans(con, "alignment", "bigwig_file_id", "data_file", "data_file_id", true);
 
             result &= checkForOrphans(con, "alignment_read_file", "alignment_id", "alignment", "alignment_id", true);
@@ -107,7 +107,7 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
             result &= checkForOrphans(con, "associated_xref", "associated_group_id", "associated_group", "associated_group_id", true);
 
             try {
-                ResultSet rs = con.createStatement().executeQuery("SELECT distinct(table_name) from data_file");
+                ResultSet rs = con.createStatement().executeQuery("SELECT distinct(table_name) from data_file where table_name != 'alignment'");
 
                 while (rs.next()){
                     String tableName   = rs.getString(1);
