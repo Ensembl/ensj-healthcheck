@@ -215,10 +215,6 @@ while (<HC>) {
       # 2 reports on the same line
       if ($_ =~ /^(\w+\s\[\w+\])\s(\w+\s\[\w+\].+)$/) {
         my @entries = ($1,$2);
-        if ($entries[$#entries] =~ /\s*\./) {
-          my $last_status = pop @entries;
-          $entries[$#entries] .= $last_status;
-        }
         foreach my $entry (@entries) {
           if ($entry =~ /\]\s+\./) {
             ($test_case,$db_name,$status) = $entry =~ /^(\w+)\s\[(.+)\]\s+\.*\s?(\w+)$/;
