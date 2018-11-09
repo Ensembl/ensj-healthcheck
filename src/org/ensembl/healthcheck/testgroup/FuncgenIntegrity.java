@@ -35,7 +35,8 @@ We might reinstate it in the future.
         org.ensembl.healthcheck.testcase.funcgen.EpigenomeHasSegmentationFile.class,
         // org.ensembl.healthcheck.testcase.funcgen.ExperimentHasFeatureSet.class,
         org.ensembl.healthcheck.testcase.funcgen.ExternalFeatureFilesExist.class,
-        org.ensembl.healthcheck.testcase.funcgen.FeaturePosition.class,
+        // org.ensembl.healthcheck.testcase.funcgen.FeaturePosition.class,
+        // FeaturePosition takes too long to complete, removed from FuncgenIntegrity testgroup, still part of FuncgenRelease
         org.ensembl.healthcheck.testcase.funcgen.FuncgenAnalysisDescription.class,
         org.ensembl.healthcheck.testcase.funcgen.FuncgenForeignKeys.class,
         org.ensembl.healthcheck.testcase.funcgen.FuncgenStableID.class,
