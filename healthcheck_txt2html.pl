@@ -74,6 +74,8 @@ my $new_colour = 'new_colour';
 my $err_colour = 'err_colour';
 my $span_open_tag = '<span class="bold_font ';
 
+my $skipped_test_text = "<span class=\"bold_font err_colour\">Skipped test</span>: The test died with an exception!<br/>Please try to run the HealthChecks again.";
+
 my @key_words = ('from', 'seq_region', 'entries in', 'in variation set', 'consequence type', 'variations having at least one evidence annotation');
 my $row_id = 1;
 
@@ -210,13 +212,9 @@ while (<HC>) {
     }
     my ($test_case,$db_name,$status);
     if ($_ =~ /\[/) {
-      # Several reports on the same line
-      if ($_ =~ /\]\s\w+/) {
-        my @entries = split(/\]\s+/, $_);
-        if ($entries[$#entries] =~ /\s*\./) {
-          my $last_status = pop @entries;
-          $entries[$#entries] .= $last_status;
-        }
+      # 2 reports on the same line
+      if ($_ =~ /^(\w+\s\[\w+\])\s(\w+\s\[\w+\].+)$/) {
+        my @entries = ($1,$2);
         foreach my $entry (@entries) {
           if ($entry =~ /\]\s+\./) {
             ($test_case,$db_name,$status) = $entry =~ /^(\w+)\s\[(.+)\]\s+\.*\s?(\w+)$/;
@@ -224,6 +222,12 @@ while (<HC>) {
           else {
             ($test_case,$db_name) = $entry =~ /^(\w+)\s\[(.+)\]/;
             $status = 'FAILED';
+            if ($test_cases{$db_name}{$test_case}) {
+              push(@{$test_cases{$db_name}{$test_case}}, $skipped_test_text);
+            }
+            else {
+              $test_cases{$db_name}{$test_case} = [$skipped_test_text];
+            }
           }
           $test_case_groups{$db_name}{$test_case} = $status;
           $current_db_name = $db_name;
