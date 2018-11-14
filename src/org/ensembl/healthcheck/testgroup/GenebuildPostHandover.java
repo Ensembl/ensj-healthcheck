@@ -40,7 +40,6 @@ public class GenebuildPostHandover extends GroupOfTests {
       org.ensembl.healthcheck.testcase.generic.ExonStrandOrder.class,
       org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd.class,
       org.ensembl.healthcheck.testcase.generic.GeneTranscriptStartEnd.class,
-      org.ensembl.healthcheck.testcase.generic.Karyotype.class,
       org.ensembl.healthcheck.testcase.generic.MTCodonTable.class,
       org.ensembl.healthcheck.testcase.generic.NullTranscripts.class,
       org.ensembl.healthcheck.testcase.generic.PredictionTranscriptHasExons.class,
