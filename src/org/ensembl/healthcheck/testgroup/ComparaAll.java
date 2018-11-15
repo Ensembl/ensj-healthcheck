@@ -32,6 +32,7 @@ public class ComparaAll extends GroupOfTests {
 			org.ensembl.healthcheck.testgroup.ComparaGenomicOnly.class,
 			org.ensembl.healthcheck.testgroup.ComparaHomologyOnly.class,
 			org.ensembl.healthcheck.testgroup.ComparaReleaseOnly.class,
+			org.ensembl.healthcheck.testgroup.ControlledComparaTables.class,
 			org.ensembl.healthcheck.testgroup.ComparaShared.class
 		);
 	}
