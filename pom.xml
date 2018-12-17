@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.ensembl</groupId>
   <artifactId>ensj-healthcheck</artifactId>
-  <version>1.0-20161118</version>
+  <version>1.0.0</version>
   <name>ensj-healthcheck</name>
   <description>Ensembl Healthcheck</description>
   <build>

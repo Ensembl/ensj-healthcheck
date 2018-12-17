@@ -24,8 +24,6 @@ import org.ensembl.healthcheck.testcase.funcgen.AlignmentHasBamFile;
  * These are the tests that register themselves as funcgen-release. The tests are:
  *
  * <ul>
- *   <li> org.ensembl.healthcheck.testcase.generic.AnalyseTables </li>
- *   <li> org.ensembl.healthcheck.testcase.funcgen.ArrayXrefs </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.BlankEnums </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.BlankInfoType </li>
@@ -56,7 +54,6 @@ public class FuncgenRelease extends GroupOfTests {
 	public FuncgenRelease() {
 
 		addTest(
-			//org.ensembl.healthcheck.testcase.generic.AnalyseTables.class,
 			org.ensembl.healthcheck.testcase.generic.BlankEnums.class,
 			org.ensembl.healthcheck.testcase.generic.BlankInfoType.class,
 			org.ensembl.healthcheck.testcase.generic.BlanksInsteadOfNulls.class,
