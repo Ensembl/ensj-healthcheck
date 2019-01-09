@@ -78,6 +78,7 @@ public class ComparaIntegrity extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.MLSSTagThresholdDs.class,
 			org.ensembl.healthcheck.testcase.eg_compara.CheckEmptyLeavesTrees.class,
 			org.ensembl.healthcheck.testcase.compara.MemberProductionCounts.class,
+			org.ensembl.healthcheck.testcase.compara.MemberProductionValues.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeTables.class,
 			org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class,
 			org.ensembl.healthcheck.testcase.eg_compara.ControlledTableDnafrag.class,
