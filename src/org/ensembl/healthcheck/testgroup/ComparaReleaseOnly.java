@@ -29,7 +29,8 @@ public class ComparaReleaseOnly extends GroupOfTests {
 
 		addTest(
 			org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeTables.class,
-			org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class
+			org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class,
+			org.ensembl.healthcheck.testcase.compara.NoDataOnGenomeComponents.class
 		);
 	}
 }
