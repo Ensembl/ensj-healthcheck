@@ -204,7 +204,6 @@ public enum Species {
 	MACACA_MULATTA(9544, "Mmul", "ENSMMU", "macacamulatta,rhesusmacaque,rhesus_macaque,macaque,macaca_mulatta"),
         NOTAMACROPUS_EUGENII(9315, "Meug", "ENSMEU", "wallaby,tammar_wallaby,natomacropuseugenii,n_eugenii,notamacropus_eugenii,Notamacropus eugenii,macropuseugenii,m_eugenii,tammarwallaby,Macropus eugenii,macropus_eugenii"),
 	MELEAGRIS_GALLOPAVO(9103, "Turkey", "ENSMGA", "turkey,common turkey,wild turkey,meleagris_gallopavo, meleagris_gallopavo"),
-	MELOPSITTACUS_UNDULATUS(13146, "MelUnd", "ENSMUN", "budgerigar,melopsittacus_undulatus,mundulatus"),
 	MICROCEBUS_MURINUS(30608, "Mmur", "ENSMIC", "mouse_lemur,mouselemur,microcebus,microcebus_murinus"),
 	MONODELPHIS_DOMESTICA(13616, "monDom", "ENSMOD", "opossum,monodelphis,mdomestica,mdomesticus,monodelphisdomestica,monodelphisdomesticus,monodelphis_domesticus,monodelphis_domestica"),
 	MUS_MUSCULUS(10090, "GRCm", "ENSMUS", "mouse,mmusculus,musmusculus,mus_musculus"),
