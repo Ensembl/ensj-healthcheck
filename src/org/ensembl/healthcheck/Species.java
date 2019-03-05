@@ -159,7 +159,7 @@ public enum Species {
 	
 	AEDES_AEGYPTI(7159, "", "IGNORE", "aedes,aedesaegypti,aedes_aegypti"),
 	AILUROPODA_MELANOLEUCA(9646, "ailMel", "ENSAME", "panda,giant panda,ailuropoda melanoleuca,ailuropoda_melanoleuca"),
-	ANAS_PLATYRHYNCHOS(8839, "CAU_duck", "ENSAPL","anapla,apla,mallard,anas_platyrhynchos,aplatyrhynchos,duck,anas platyrhynchos"),
+	ANAS_PLATYRHYNCHOS_PLATYRHYNCHOS(8840, "CAU_duck", "ENSAPL","anapla,apla,mallard,anas_platyrhynchos_platyrhynchos,aplatyrhynchos,duck,anas platyrhynchos"),
 	ANOLIS_CAROLINENSIS(28377, "AnoCar", "ENSACA", "lizard,anole,anolis_lizard,anolis,anolis_carolinensis"),
 	ANOPHELES_GAMBIAE(7165, "AgamP", "IGNORE", "mosquito,anopheles,agambiae,anophelesgambiae,anopheles_gambiae"),
 	APIS_MELLIFERA(7460, "AMEL", "IGNORE", "honeybee,honey_bee,apis,amellifera,apismellifera,apis_mellifera"),
