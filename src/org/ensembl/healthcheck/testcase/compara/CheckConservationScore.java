@@ -68,7 +68,27 @@ public class CheckConservationScore extends SingleDatabaseTestCase {
 				ReportManager.problem(this, con, "FAILED: Database contains entry in the method_link_species_set table but the conservation_score table is empty");
 				return false;
 			}
-			return true;
+
+			boolean result = true;
+			for(String mlss_id : method_link_species_set_ids) {
+
+				// Get the mlss_id for the associated multiple alignment
+				String multi_align_mlss_id = DBUtils.getRowColumnValue(con, "SELECT value FROM method_link_species_set_tag WHERE tag=\"msa_mlss_id\" AND method_link_species_set_id=" + mlss_id);
+				if (multi_align_mlss_id == "") {
+					ReportManager.problem(this, con, "There is no msa_mlss_id tag for the GERP mlss" + mlss_id + "\n");
+				} else {
+					String has_scores_sql = "SELECT 1 FROM genomic_align_block JOIN conservation_score USING (genomic_align_block_id) WHERE method_link_species_set_id = " + multi_align_mlss_id + " LIMIT 1";
+					int rows = DBUtils.getRowCount(con, has_scores_sql);
+					if (rows > 0) {
+						ReportManager.correct(this, con, "Some scores for alignment mlss_id=" + multi_align_mlss_id);
+					} else {
+						ReportManager.problem(this, con, "FAILED conservation_score: no scores for alignment mlss_id=" + multi_align_mlss_id);
+						result = false;
+					}
+				}
+			}
+
+			return result;
 
 		} else if (tableHasRows(con, "conservation_score")) {
 			ReportManager.problem(this, con, "FAILED: Database contains data in the conservation_score table but no corresponding entry in the method_link_species_set table.");
