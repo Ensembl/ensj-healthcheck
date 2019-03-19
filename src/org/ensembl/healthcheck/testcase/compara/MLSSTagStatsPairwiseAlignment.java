@@ -18,7 +18,11 @@
 package org.ensembl.healthcheck.testcase.compara;
 
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.testcase.compara.AbstractMLSSTagStats;
 
 public class MLSSTagStatsPairwiseAlignment extends AbstractMLSSTagStats {
@@ -37,4 +41,18 @@ public class MLSSTagStatsPairwiseAlignment extends AbstractMLSSTagStats {
 		return mandatoryTags;
 	}
 
+	protected boolean runTest(DatabaseRegistryEntry dbre) {
+		boolean result = super.runTest(dbre);
+		// Every genome must have some coding genes
+		String query_wrong_stats = "SELECT method_link_species_set_id FROM method_link_species_set_tag WHERE tag = 'non_ref_coding_exon_length' AND value = '0'";
+		List<String> mlsss = getTemplate(dbre).queryForDefaultObjectList(query_wrong_stats, String.class);
+		if (mlsss.size() > 0) {
+			ReportManager.problem( this, dbre.getConnection(), "MLSSs found with wrong statistics: " + StringUtils.join(mlsss, ","));
+			ReportManager.problem( this, dbre.getConnection(), "USEFUL SQL: " + query_wrong_stats);
+			result = false;
+		} else {
+			ReportManager.correct(this, dbre.getConnection(), "PASSED ");
+		}
+		return result;
+	}
 }
