@@ -28,7 +28,6 @@ public class ComparaManual extends GroupOfTests {
 
 		addTest(
 			org.ensembl.healthcheck.testcase.compara.CheckTableSizes.class,
-			org.ensembl.healthcheck.testcase.compara.CheckConservationScoreSanity.class,
 			org.ensembl.healthcheck.testcase.compara.CheckGenomicAlignMTs.class,
 			org.ensembl.healthcheck.testcase.compara.CompareMSANames.class,
 			org.ensembl.healthcheck.testcase.compara.CheckSyntenySanity.class

@@ -30,13 +30,13 @@ import org.ensembl.healthcheck.util.DBUtils;
  * An EnsEMBL Healthcheck test case that checks the conservation_score table
  */
 
-public class CheckConservationScoreSanity extends SingleDatabaseTestCase {
+public class CheckConservationScorePerBlock extends SingleDatabaseTestCase {
 
 	/**
-	 * Create an CheckConservationScoreSanity that applies to a specific set of
+	 * Create an CheckConservationScorePerBlock that applies to a specific set of
 	 * databases.
 	 */
-	public CheckConservationScoreSanity() {
+	public CheckConservationScorePerBlock() {
 		setDescription("Check the conservation_score table in ensembl_compara databases.");
 		setTeamResponsible(Team.COMPARA);
 	}
@@ -128,4 +128,4 @@ public class CheckConservationScoreSanity extends SingleDatabaseTestCase {
 
 	}
 
-} // CheckConservationScoreSanity
+} // CheckConservationScorePerBlock
