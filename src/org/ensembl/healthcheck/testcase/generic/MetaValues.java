@@ -350,7 +350,7 @@ public class MetaValues extends SingleDatabaseTestCase {
                 // Check that the taxonomy ID matches a known one.
                 // The taxonomy ID-species mapping is held in the Species class.
 
-                String[] allowedTypes   = {"GenBank Assembly ID", "EMBL-Bank WGS Master"};
+                String[] allowedTypes   = {"GenBank Assembly ID", "INSDC Assembly ID", "EMBL-Bank WGS Master"};
                 String[] allowedSources = {"NCBI", "ENA", "DDBJ"};
                 String WebType   = DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.web_accession_type'");
                 String WebSource = DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.web_accession_source'");
