@@ -81,6 +81,8 @@ public class TranscriptSupportingFeatures extends SingleDatabaseTestCase {
 		allowedNoSupporting.add("gsten");
 		allowedNoSupporting.add("cyt");
 		allowedNoSupporting.add("hox");
+		allowedNoSupporting.add("lincRNA");
+		allowedNoSupporting.add("lncRNA");
 
 	}
 
