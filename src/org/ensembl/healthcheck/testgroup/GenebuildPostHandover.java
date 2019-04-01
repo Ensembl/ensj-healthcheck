@@ -29,7 +29,11 @@ public class GenebuildPostHandover extends GroupOfTests {
     addTest(
       org.ensembl.healthcheck.testcase.generic.AltAllele.class,
       org.ensembl.healthcheck.testcase.generic.AltAlleleGroup.class,
-      org.ensembl.healthcheck.testcase.generic.AssemblyExceptions.class,
+      org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableIntegrity.class,
+      org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableSeqMapping.class,
+      org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableSeqRegionAttribute.class,
+      org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableStartEnd.class,
+      org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableUniqueRegion.class,
       org.ensembl.healthcheck.testcase.generic.AssemblySeqregion.class,
       org.ensembl.healthcheck.testcase.generic.AssemblyTablesAcrossSpecies.class,
       org.ensembl.healthcheck.testcase.generic.CompareSchema.class,
