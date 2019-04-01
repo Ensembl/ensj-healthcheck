@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,9 @@ public class ComparaGenomicOnly extends GroupOfTests {
 	public ComparaGenomicOnly() {
 
 		addTest(
+			org.ensembl.healthcheck.testcase.compara.AlignmentCoordinates.class,
 			org.ensembl.healthcheck.testcase.compara.CheckConservationScore.class,
+			org.ensembl.healthcheck.testcase.compara.CheckConservationScorePerBlock.class,
 			org.ensembl.healthcheck.testcase.compara.CheckConstrainedElementTable.class,
 			org.ensembl.healthcheck.testcase.compara.CheckGenomicAlignGenomeDBs.class,
 			org.ensembl.healthcheck.testcase.compara.CheckGenomicAlignTreeTable.class,

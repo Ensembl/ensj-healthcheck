@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -180,6 +180,7 @@ public class Meta extends SingleDatabaseTestCase {
 		boolean result = true;
 		// get version from database name
 		String dbNameVersion = dbre.getSchemaVersion();
+		dbNameVersion = dbNameVersion.replaceAll("_[0-9]+", "");
 		logger.finest("Schema version from database name: " + dbNameVersion);
 
 		// get version from meta table

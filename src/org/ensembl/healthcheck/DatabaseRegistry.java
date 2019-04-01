@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,10 +84,8 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 
 			} else {
 
-				Iterator<String> it = regexps.iterator();
-				while (it.hasNext()) {
+				for(String regexp: regexps) {
 
-					String regexp = it.next();
 					String[] names = null;
 					
 					try {
@@ -115,9 +113,9 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 	 */
 	public DatabaseRegistry(final DatabaseRegistryEntry[] dbres) {
 
-		for (int i = 0; i < dbres.length; i++) {
+		for(DatabaseRegistryEntry dbre: dbres) {
 
-			entries.add(dbres[i]);
+			entries.add(dbre);
 
 		}
 
@@ -132,10 +130,9 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 	 */
 	public DatabaseRegistry(List<DatabaseRegistryEntry> dbres) {
 
-		Iterator<DatabaseRegistryEntry> it = dbres.iterator();
-		while (it.hasNext()) {
+		for(DatabaseRegistryEntry dbre: dbres) {
 
-			entries.add(it.next());
+			entries.add(dbre);
 
 		}
 
@@ -221,9 +218,7 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 	public final DatabaseRegistryEntry[] getAll(final String species) {
 
 		List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
-		Iterator<DatabaseRegistryEntry> it = entries.iterator();
-		while (it.hasNext()) {
-			DatabaseRegistryEntry dbre = it.next();
+		for(DatabaseRegistryEntry dbre: entries) {
 			if (dbre.getSpecies().equals(species)) {
 				result.add(dbre);
 			}
@@ -244,9 +239,7 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 	public final DatabaseRegistryEntry[] getAll(final DatabaseType type) {
 
 		List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
-		Iterator<DatabaseRegistryEntry> it = entries.iterator();
-		while (it.hasNext()) {
-			DatabaseRegistryEntry dbre = it.next();
+		for(DatabaseRegistryEntry dbre: entries) {
 			if (dbre.getType().equals(type)) {
 				result.add(dbre);
 			}
@@ -269,9 +262,7 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 	public final DatabaseRegistryEntry[] getAll(final DatabaseType type, final String species) {
 
 		List<DatabaseRegistryEntry> result = new ArrayList<DatabaseRegistryEntry>();
-		Iterator<DatabaseRegistryEntry> it = entries.iterator();
-		while (it.hasNext()) {
-			DatabaseRegistryEntry dbre = it.next();
+		for(DatabaseRegistryEntry dbre: entries) {
 			if (dbre.getType().equals(type) && dbre.getSpecies().equals(species)) {
 				result.add(dbre);
 			}
@@ -291,9 +282,7 @@ public class DatabaseRegistry implements Iterable<DatabaseRegistryEntry> {
 	 */
 	public final DatabaseRegistryEntry getByExactName(String name) {
 
-		Iterator<DatabaseRegistryEntry> it = entries.iterator();
-		while (it.hasNext()) {
-			DatabaseRegistryEntry dbre = it.next();
+		for(DatabaseRegistryEntry dbre: entries) {
 			if (dbre.getName().equals(name)) {
 				return dbre;
 			}

@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,21 @@
  * limitations under the License.
  */
 
-package org.ensembl.healthcheck.testcase.eg_compara;
+package org.ensembl.healthcheck.testgroup;
 
-import org.ensembl.healthcheck.testcase.AbstractControlledTable;
+import org.ensembl.healthcheck.testcase.eg_compara.MemberXrefAssociation;
 
-public class ControlledTableMethodLinkSpeciesSetTag extends AbstractControlledTable {
-	@Override protected String getControlledTableName() {
-		return "method_link_species_set_tag";	
-	}
+/**
+ * Group of tests for EnsemblGenomes compara databases
+ * 
+ * @author dstaines
+ * 
+ */
+public class EGComparaHandoverService extends EGCompara {
+
+	public EGComparaHandoverService() {
+
+		setDescription("Group of tests for EnsemblGenomes compara databases for the handover service.");
+    this.removeTest(MemberXrefAssociation.class);
+  }
 }

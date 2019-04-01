@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-
+import java.util.stream.IntStream;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
@@ -56,54 +56,32 @@ public class CheckMethodLinkSpeciesSetTable extends AbstractComparaTestCase {
 
 		/* Check the genomes in the species_set linked to the MLSS table */
 		int numOfGenomesInTheDatabase = DBUtils.getRowCount(con, "SELECT count(*) FROM genome_db WHERE taxon_id > 0");
-		Pattern unaryPattern = Pattern.compile("^([A-Z]\\.[a-z0-9]{2,3}) ");
-		Pattern binaryPattern = Pattern.compile("^([A-Z]\\.[a-z0-9]{2,3})-([A-Z]\\.[a-z0-9]{2,3})");
-		Pattern multiPattern = Pattern.compile("([0-9]+)");
+		Pattern multiPattern = Pattern.compile("(^|\\()([0-9]+) ");
 		Pattern ssnamePattern = Pattern.compile("^([a-zA-Z]+) ");
 		/* Query returns the MLLS.name, the number of genomes and their name ("H.sap" format) */
-		String sql = "SELECT method_link_species_set.name, count(*),"+
+		String sql = "SELECT method_link_species_set.name, method_link_species_set.method_link_id, count(*),"+
 			" GROUP_CONCAT( CONCAT( UPPER(substr(genome_db.name, 1, 1)), '.', SUBSTR(SUBSTRING_INDEX(genome_db.name, '_', -1),1,3) ) ), "+
 			" species_set_id, species_set_header.name, "+
 			" method_link_species_set_id "+
 			" FROM method_link_species_set JOIN species_set USING (species_set_id)"+
 			" JOIN species_set_header USING (species_set_id)"+
-			" JOIN genome_db USING (genome_db_id) GROUP BY method_link_species_set_id";
+			" JOIN genome_db USING (genome_db_id) WHERE method_link_species_set.last_release IS NULL AND method_link_species_set.first_release IS NOT NULL GROUP BY method_link_species_set_id";
 		try {
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			if (rs != null) {
 				while (rs.next()) {
 					String name = rs.getString(1);
-					int num = rs.getInt(2);
-					String genomes = rs.getString(3);
-					String ss_id = rs.getString(4);
-					String ss_name = rs.getString(5);
-					String mlss_id = rs.getString(6);
-					Matcher unaryMatcher = unaryPattern.matcher(name);
-					Matcher binaryMatcher = binaryPattern.matcher(name);
+					int ml_id = rs.getInt(2);
+					int num = rs.getInt(3);
+					String genomes = rs.getString(4);
+					String ss_id = rs.getString(5);
+					String ss_name = rs.getString(6);
+					String mlss_id = rs.getString(7);
 					Matcher multiMatcher = multiPattern.matcher(name);
 					Matcher ssnameMatcher = ssnamePattern.matcher(name);
-					if (unaryMatcher.find()) {
-						if (num != 1) {
-							ReportManager.problem(this, con, "FAILED species_set(" + ss_id + ") for \"" + name + "\"(" + mlss_id + ") links to " + num + " genomes instead of 1");
-							result = false;
-						}
-						if (!genomes.equals(unaryMatcher.group(1))) {
-							ReportManager.problem(this, con, "FAILED species_set(" + ss_id + ") for \"" + name + "\"(" + mlss_id + ") links to " + genomes);
-						}
-					} else if (binaryMatcher.find()) {
-						if (num != 2 && binaryMatcher.group(1) != binaryMatcher.group(2)) {
-							ReportManager.problem(this, con, "FAILED species_set(" + ss_id + ") for \"" + name + "\"(" + mlss_id + ") links to " + num + " genomes instead of 2");
-							result = false;
-						}
-						if (!genomes.equals(binaryMatcher.group(1)+ "," + binaryMatcher.group(2)) && !genomes.equals(binaryMatcher.group(2) + "," + binaryMatcher.group(1))) {
-							if (binaryMatcher.group(1).equals (binaryMatcher.group(2)) && genomes.equals(binaryMatcher.group(1))) {
-							} else {
-								ReportManager.problem(this, con, "Yes, we felt here... FAILED species_set(" + ss_id + ") for \"" + name + "\"(" + mlss_id + ") links to " + genomes + " instead of " + binaryMatcher.group(1) + "," + binaryMatcher.group(2));
-							}
-						}
-					} else if (multiMatcher.find()) {
-						if (num != Integer.valueOf(multiMatcher.group()).intValue()) {
+					if (multiMatcher.find()) {
+						if (num != Integer.valueOf(multiMatcher.group(2)).intValue()) {
 							ReportManager.problem(this, con, "FAILED species_set(" + ss_id + ") for \"" + name + "\"(" + mlss_id + ") links to " + num + " genomes instead of " + multiMatcher.group());
 							result = false;
 						}
@@ -114,8 +92,6 @@ public class CheckMethodLinkSpeciesSetTable extends AbstractComparaTestCase {
 							ReportManager.problem(this, con, "FAILED species_set(" + ss_id + ") for \"" + name + "\"(" + mlss_id + ") does not start with the species-set name " + ss_name);
 							result = false;
 						}
-					} else if (num != numOfGenomesInTheDatabase && !isMasterDB(dbre.getConnection())) {
-						ReportManager.problem(this, con, "FAILED species_set(" + ss_id + ") for \"" + name + "\"(" + mlss_id + ") links to " + num + " genomes instead of " + numOfGenomesInTheDatabase);
 					}
 				}
 			}

@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ public class ForeignKeySpeciesTreeTables extends AbstractComparaTestCase {
 		result &= checkForOrphansSameTable(con, "species_tree_node", "parent_id", "node_id", true);
 		result &= checkForOrphans(con, "species_tree_node_tag", "node_id", "species_tree_node", "node_id");
 		result &= checkForOrphans(con, "species_tree_root", "root_id", "species_tree_node", "node_id");
+		result &= checkForOrphans(con, "species_tree_node", "root_id", "species_tree_root", "root_id");
 		result &= checkOptionalRelation(con, "species_tree_node", "genome_db_id", "genome_db", "genome_db_id");
 		result &= checkOptionalRelation(con, "species_tree_node", "taxon_id", "ncbi_taxa_node", "taxon_id");
 		result &= checkOptionalRelation(con, "species_tree_node", "taxon_id", "ncbi_taxa_name", "taxon_id");

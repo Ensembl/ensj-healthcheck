@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.ensembl</groupId>
   <artifactId>ensj-healthcheck</artifactId>
-  <version>1.0-20161118</version>
+  <version>1.0.0</version>
   <name>ensj-healthcheck</name>
   <description>Ensembl Healthcheck</description>
   <build>
@@ -30,8 +30,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.1</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
       <!-- Maven Assembly Plugin -->

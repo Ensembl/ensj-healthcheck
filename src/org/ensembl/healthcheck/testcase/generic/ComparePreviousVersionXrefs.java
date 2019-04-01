@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ public class ComparePreviousVersionXrefs extends ComparePreviousVersionBase {
 
 	protected Map<String, Integer> getCounts(DatabaseRegistryEntry dbre) {
 
-		String sql = "SELECT DISTINCT(e.db_name) AS db_name, COUNT(*) AS count" + " FROM external_db e, xref x, object_xref ox" + " WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id "
+		String sql = "SELECT DISTINCT(e.db_name) AS db_name, COUNT(*) AS count" + " FROM external_db e, xref x, object_xref ox" + " WHERE e.external_db_id=x.external_db_id AND x.xref_id=ox.xref_id AND e.db_name not like 'GO' "
 				+ getExcludeProjectedSQL(dbre) + " GROUP BY e.db_name";
 		// System.out.println(sql);
 		return getCountsBySQL(dbre, sql);
@@ -80,7 +80,7 @@ public class ComparePreviousVersionXrefs extends ComparePreviousVersionBase {
 
 	protected double threshold() {
 
-		return 0.78;
+		return 0.70;
 
 	}
 
@@ -88,7 +88,7 @@ public class ComparePreviousVersionXrefs extends ComparePreviousVersionBase {
 
         protected double minimum() {
 
-                return 100;
+                return 1000;
 
         }
 
@@ -96,12 +96,7 @@ public class ComparePreviousVersionXrefs extends ComparePreviousVersionBase {
 
 	private String getExcludeProjectedSQL(DatabaseRegistryEntry dbre) {
 
-		String sql = "";
-		if (dbre.getSchemaVersion() == null) { // guess if we can't get the schema version
-			sql = " AND (x.info_type != 'PROJECTION' OR x.info_type IS NULL)";
-		} else {
-			sql = Integer.parseInt(dbre.getSchemaVersion()) <= 37 ? " AND x.display_label NOT LIKE '%[from%'" : " AND (x.info_type != 'PROJECTION' OR x.info_type IS NULL)";
-		}
+		String sql = " AND (x.info_type != 'PROJECTION' OR x.info_type IS NULL)";
 
 		return sql;
 

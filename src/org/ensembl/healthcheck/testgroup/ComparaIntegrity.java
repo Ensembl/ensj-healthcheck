@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ public class ComparaIntegrity extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.CheckGenomeDB.class,
 			org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetTable.class,
 			org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetSizeByMethod.class,
-			org.ensembl.healthcheck.testcase.compara.CheckTaxon.class,
+			org.ensembl.healthcheck.testcase.compara.CheckDuplicatedTaxaNames.class,
 			org.ensembl.healthcheck.testcase.compara.CheckFirstLastRelease.class,
 			org.ensembl.healthcheck.testcase.compara.CheckTopLevelDnaFrag.class,
 			org.ensembl.healthcheck.testcase.compara.ForeignKeyMasterTables.class,
@@ -40,6 +40,7 @@ public class ComparaIntegrity extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.MetaSpeciesID.class,
 			org.ensembl.healthcheck.testcase.compara.SingleDBCollations.class,
 			org.ensembl.healthcheck.testcase.compara.CheckConservationScore.class,
+			org.ensembl.healthcheck.testcase.compara.CheckConservationScorePerBlock.class,
 			org.ensembl.healthcheck.testcase.compara.CheckConstrainedElementTable.class,
 			org.ensembl.healthcheck.testcase.compara.CheckGenomicAlignGenomeDBs.class,
 			org.ensembl.healthcheck.testcase.compara.CheckGenomicAlignTreeTable.class,

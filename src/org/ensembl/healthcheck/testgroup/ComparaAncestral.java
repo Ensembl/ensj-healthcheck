@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  * These are the tests that register themselves as compara-ancestral. The tests are:
  * 
  * <ul>
- *   <li> org.ensembl.healthcheck.testcase.generic.AnalyseTables </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.AncestralSequencesExtraChecks </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AnalysisLogicName </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyException </li> 
@@ -52,7 +51,6 @@ public class ComparaAncestral extends GroupOfTests {
 	public ComparaAncestral() {
 
 		addTest(
-			org.ensembl.healthcheck.testcase.generic.AnalyseTables.class,
 			org.ensembl.healthcheck.testcase.generic.AncestralSequencesExtraChecks.class,
 			org.ensembl.healthcheck.testcase.generic.AnalysisLogicName.class,
 			org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableSeqRegionAttribute.class,

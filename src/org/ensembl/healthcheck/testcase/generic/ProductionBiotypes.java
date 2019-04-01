@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,7 +112,7 @@ public class ProductionBiotypes extends SingleDatabaseTestCase {
     String[] tables = { "gene", "transcript" };
     Set<String> results = new HashSet<String>();
     for (String table : tables) {
-      String sql = "SELECT name FROM biotype WHERE object_type='" + table + "' AND is_current = 1 AND FIND_IN_SET('" + databaseType + "', db_type) > 0";
+      String sql = "SELECT name FROM biotype WHERE object_type='" + table + "' AND FIND_IN_SET('" + databaseType + "', db_type) > 0";
       results.addAll(t.queryForDefaultObjectList(sql, String.class));
     }
     return results;

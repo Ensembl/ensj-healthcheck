@@ -3,8 +3,11 @@ package org.ensembl.healthcheck.testcase.funcgen;
 import java.sql.Connection;
 
 import org.apache.commons.lang.StringUtils;
+import org.ensembl.CoreDbNotFoundException;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.MissingMetaKeyException;
 import org.ensembl.healthcheck.ReportManager;
+import java.lang.NullPointerException;
 
 /**
  * @author mnuhn
@@ -15,10 +18,10 @@ import org.ensembl.healthcheck.ReportManager;
  */
 public abstract class AbstractExternalFileUsingTestcase extends AbstractCoreDatabaseUsingTestCase {
 	
-	protected String getSpeciesAssemblyDataFileBasePath(DatabaseRegistryEntry dbre) {
+	protected String getSpeciesAssemblyDataFileBasePath(DatabaseRegistryEntry dbre) throws CoreDbNotFoundException, MissingMetaKeyException {
 		
 		Connection coreConnection = getCoreDb(dbre).getConnection();
-		
+			
 		String productionName = getProductionName(coreConnection);
 		String assemblyName   = getAssembly(coreConnection);
 		String dbFileRootDir  = getDataFileBasePath();

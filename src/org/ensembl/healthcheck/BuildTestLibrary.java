@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -186,21 +186,17 @@ public class BuildTestLibrary extends TestRunner {
 
         StringBuffer buf = new StringBuffer();
 
-        List allTests = new DiscoveryBasedTestRegistry().findAllTests();
+        List<EnsTestCase> allTests = new DiscoveryBasedTestRegistry().findAllTests();
         String[] groups = listAllGroups(allTests);
 
-        for (int i = 0; i < groups.length; i++) {
-
-            String group = groups[i];
+        for(String group: groups) {
 
             if (!group.equalsIgnoreCase("all") && group.indexOf("TestCase") < 0) {
                 buf.append("<p><strong>" + group + "</strong></p>");
                 String[] tests = listTestsInGroup(allTests, group);
 
-                for (int j = 0; j < tests.length; j++) {
-
-                    buf.append(tests[j] + "<br>");
-
+                for(String t: tests) {
+                    buf.append(t + "<br>");
                 } // tests
 
             }

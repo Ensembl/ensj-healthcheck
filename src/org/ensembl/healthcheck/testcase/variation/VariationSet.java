@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,7 @@ import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * Check that the tables handling variation sets are valid and won't cause problems
@@ -58,7 +59,6 @@ public class VariationSet extends SingleDatabaseTestCase {
 	 */
 	public VariationSet() {
 
-		addToGroup("variation-release");
 
 		setDescription("Checks that the variation_set tables are valid");
 
@@ -77,30 +77,6 @@ public class VariationSet extends SingleDatabaseTestCase {
 		Properties sqlQueries = new Properties();
 		String query;
 
-		// Query checking for orphan variation sets in variation_set_variation table
-		query = 
-				"SELECT DISTINCT vsv.variation_set_id FROM variation_set_variation vsv LEFT JOIN variation_set vs ON (vs.variation_set_id = vsv.variation_set_id) WHERE vs.variation_set_id IS NULL";
-		sqlQueries.setProperty("orphanVariation", query);
-
-		// Query checking for orphan variation sets in the variation_set_structure table
-		query = 
-				"SELECT DISTINCT IF (sup.variation_set_id IS NULL, vss.variation_set_super, vss.variation_set_sub) FROM variation_set_structure vss LEFT JOIN variation_set sup ON (sup.variation_set_id = vss.variation_set_super) LEFT JOIN variation_set sub ON (sub.variation_set_id = vss.variation_set_sub) WHERE sup.variation_set_id IS NULL OR sub.variation_set_id IS NULL";
-		sqlQueries.setProperty("orphanStructure", query);
-
-		// Query checking for unused variation sets
-		query = 
-				"SELECT DISTINCT vs.variation_set_id FROM variation_set vs LEFT JOIN variation_set_variation vsv ON (vsv.variation_set_id = vs.variation_set_id) LEFT JOIN variation_set_structure vss ON (vss.variation_set_super = vs.variation_set_id OR vss.variation_set_sub = vs.variation_set_id) WHERE vsv.variation_set_id IS NULL AND vss.variation_set_super IS NULL";
-		sqlQueries.setProperty("unusedSets", query);
-
-		// Query checking that all variations in sets are present in variation table
-		query = 
-				"SELECT vsv.variation_set_id, COUNT(*) FROM variation_set_variation vsv LEFT JOIN variation v ON (v.variation_id = vsv.variation_id) WHERE v.variation_id IS NULL GROUP BY vsv.variation_set_id";
-		sqlQueries.setProperty("orphanVarId", query);
-
-		// Query checking that no variations belonging to a set is failed
-		query = "SELECT vsv.variation_set_id, COUNT(*) FROM variation_set_variation vsv JOIN failed_variation fv ON (fv.variation_id = vsv.variation_id) GROUP BY vsv.variation_set_id";
-		sqlQueries.setProperty("failedVariation", query);
-
 		// Query checking that no variation set has more than one parent
 		query = 
 				"SELECT DISTINCT vss1.variation_set_sub FROM variation_set_structure vss1 JOIN variation_set_structure vss2 ON (vss2.variation_set_sub = vss1.variation_set_sub AND vss2.variation_set_super != vss1.variation_set_super)";
@@ -113,6 +89,18 @@ public class VariationSet extends SingleDatabaseTestCase {
 		// Query getting the name for a variation set id
 		query = "SELECT vs.name FROM variation_set vs WHERE vs.variation_set_id = ? LIMIT 1";
 		sqlQueries.setProperty("setName", query);
+
+		// Query checking the name for a variation set id is defined
+		query = "SELECT count(*) FROM variation_set vs WHERE vs.name is NULL OR vs.name='NULL' ";
+		sqlQueries.setProperty("setCheckName", query);
+
+		// Query checking the description for a variation set id is defined
+		query = "SELECT count(*) FROM variation_set vs WHERE vs.description is NULL OR vs.description='NULL' ";
+		sqlQueries.setProperty("setCheckDescription", query);
+
+		// Query checking the short name for a variation set id exists and is defined in the attrib table
+		query = "SELECT count(*) FROM variation_set vs LEFT JOIN attrib a ON (vs.short_name_attrib_id = a.attrib_id) WHERE vs.variation_set_id IS NOT NULL AND a.value IS NULL";
+		sqlQueries.setProperty("setCheckShortName", query);
 
 		// Query getting the subsets for a parent variation set id
 		query = "SELECT vss.variation_set_sub FROM variation_set_structure vss WHERE vss.variation_set_super = ?";
@@ -157,56 +145,29 @@ public class VariationSet extends SingleDatabaseTestCase {
 			PreparedStatement setName = con.prepareStatement(sqlQueries.getProperty("setName"));
 			// Prepare a statement for getting the variation subsets for an id
 			PreparedStatement subSet = con.prepareStatement(sqlQueries.getProperty("subSet"));
-
-			// Check that there are no variation mappings to orphan variation sets
-			/* Moved to VariationForeignKeys.java 
-			if ((rs = stmt.executeQuery(sqlQueries.getProperty("orphanVariation"))) != null && (fetch = rs.next())) {
-				while (fetch) {
-					ReportManager.problem(this, con, "There are variations mapped to a variation set with variation_set_id '" + String.valueOf(rs.getInt(1))
-							+ "' in variation_set_variation without a corresponding entry in variation_set table");
-					result = false;
-					fetch = rs.next();
-				}
-			} else {
-				msg += "No orphan variation sets in variation_set_variation\n";
-			}
-			*/
 			
-			// Check that no variation sets in the variation_set_structure table without an entry in variation_set
-			String ids = "";
-			/* Moved to VariationForeignKeys.java 
-			if ((rs = stmt.executeQuery(sqlQueries.getProperty("orphanStructure"))) != null && (fetch = rs.next())) {
-				while (fetch) {
-					ids += String.valueOf(rs.getInt(1)) + ", ";
-					fetch = rs.next();
-				}
-			}
-			if (ids.length() > 0) {
-				ReportManager
-						.problem(this, con, "There are variation sets in variation_set_structure with ids " + ids.substring(0, ids.length() - 2) + " without corresponding entries in variation_set table");
+			// Check that no variation set is missing the short name
+			int countShortNames = DBUtils.getRowCount(con,sqlQueries.getProperty("setCheckShortName"));
+			if (countShortNames > 0) {
 				result = false;
-			} else {
-				msg += "No orphan variation sets in variation_set_struncture\n";
+				ReportManager.problem(this, con, "There are " + String.valueOf(countShortNames)
+						+ " variation set(s) whose short name 'short_name_attrib_id' is missing OR is not defined in 'attrib' table");
 			}
-			*/
-			
-			// Check if variation sets that are not used (neither in variation_set_variation nor variation_set_structure) are present in
-			// variation_set table
-
-			/* Moved to VariationForeignKeys.java
-			if ((rs = stmt.executeQuery(sqlQueries.getProperty("unusedSets"))) != null && (fetch = rs.next())) {
-				String sets = "";
-				while (fetch) {
-					sets += "[" + this.getVariationSetName(rs.getInt(1), setName) + "], ";
-					fetch = rs.next();
-				}
-				ReportManager.problem(this, con, "Variation sets " + sets.substring(0, sets.length() - 2) + " appear not to be used");
+			// Check that no variation set is missing the name
+			int countNames = DBUtils.getRowCount(con,sqlQueries.getProperty("setCheckName"));
+			if (countNames > 0) {
 				result = false;
-			} else {
-				msg += "No unused variation sets\n";
+				ReportManager.problem(this, con, "There are " + String.valueOf(countNames)
+						+ " variation set(s) whose 'name' is missing");
 			}
-			*/
-			
+			// Check that no variation set is missing the description
+			int countDesc = DBUtils.getRowCount(con,sqlQueries.getProperty("setCheckDescription"));
+			if (countDesc > 0) {
+				result = false;
+				ReportManager.problem(this, con, "There are " + String.valueOf(countDesc)
+						+ " variation set(s) whose 'description' is missing");
+			}
+
 			// Check that no subset has more than one parent
 			if ((rs = stmt.executeQuery(sqlQueries.getProperty("multiParent"))) != null && (fetch = rs.next())) {
 				String sets = "";
@@ -274,39 +235,6 @@ public class VariationSet extends SingleDatabaseTestCase {
 			} else {
 				ReportManager.info(this, con, "Will not look for overlapping variations in nested subsets because of problems with the nested set structure");
 			}
-
-			// Check that all variations included in sets have an entry in the variation table
-			/* Moved to VariationForeignKeys.java
-			if ((rs = stmt.executeQuery(sqlQueries.getProperty("orphanVarId"))) != null && (fetch = rs.next())) {
-				while (fetch) {
-					ReportManager.problem(this, con, "There are " + String.valueOf(rs.getInt(2)) + " variations in variation set '" + this.getVariationSetName(rs.getInt(1), setName)
-							+ "' without entries in the variation table");
-					result = false;
-					fetch = rs.next();
-				}
-			} else {
-				msg += "All variations in variation sets have entries in the variation table\n";
-			}
-			*/
-			
-			// Check that no variations that are mapped to sets are failed
-
-			/*
-			 This check is no longer performed since we no longer delete failed data. Instead the
-			 behaviour is specified on the DBAdaptor object but the failed variations should still
-			 be included in the variation sets.
-			 
-			if ((rs = stmt.executeQuery(sqlQueries.getProperty("failedVariation"))) != null && (fetch = rs.next())) {
-				while (fetch) {
-					ReportManager.problem(this, con, "There are " + String.valueOf(rs.getInt(2)) + " variations in variation set '" + this.getVariationSetName(rs.getInt(1), setName)
-							+ "' that have validation status 'failed'");
-					result = false;
-					fetch = rs.next();
-				}
-			} else {
-				msg += "No variations in variation sets have validation_status 'failed'\n";
-			}
-			 */
 			
 			// Prepare a statement for checking the variation_set_ids
 			PreparedStatement vsIds = con.prepareStatement(sqlQueries.getProperty("variationSetIds"));

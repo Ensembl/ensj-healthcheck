@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -152,17 +152,17 @@ public abstract class AbstractComparaTestCase extends SingleDatabaseTestCase {
 	 */
 	public final List<GenomeEntry> getAllGenomes(final DatabaseRegistryEntry comparaDbre, final DatabaseRegistry dbr) {
 
-		HashMap<String, Pair<DatabaseRegistryEntry,Integer>> speciesCoreMap = new HashMap(); //<String, DatabaseRegistryEntry>();
+		HashMap<String, Pair<DatabaseRegistryEntry,Integer>> speciesCoreMap = new HashMap<String, Pair<DatabaseRegistryEntry,Integer>>();
 
 		for (DatabaseRegistryEntry entry : dbr.getAllEntries()) {
 			// We need to check the database name because some _cdna_
 			// databases have the DatabaseType.CORE type
 			// We also need to check the version number
-			if (entry.getType().equals(DatabaseType.CORE) && entry.getName().contains("_core_") && entry.getSchemaVersion().equals(comparaDbre.getSchemaVersion())) {
+			if (entry.getType().equals(DatabaseType.CORE) && entry.getName().contains("_core_") && (entry.getSchemaVersion().equals(comparaDbre.getSchemaVersion()) || entry.getSchemaVersion().endsWith("_" + comparaDbre.getSchemaVersion()))) {
 				// There can be multiple species in the same core database
 				for (Integer species_id : entry.getSpeciesIds()) {
 					String sql = "SELECT meta_value FROM meta WHERE meta_key = \"species.production_name\" AND species_id = " + species_id;
-					String production_name = getRowColumnValue(entry.getConnection(), sql);
+					String production_name = DBUtils.getRowColumnValue(entry.getConnection(), sql);
 					speciesCoreMap.put(production_name, new Pair<DatabaseRegistryEntry,Integer>(entry,species_id));
 					ReportManager.info(this, comparaDbre.getConnection(), entry.toString() + " == " + production_name + " (" + species_id + ")");
 				}

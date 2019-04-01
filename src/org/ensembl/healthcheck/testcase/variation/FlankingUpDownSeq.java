@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,6 @@ public class FlankingUpDownSeq extends SingleDatabaseTestCase {
 	 * Creates a new instance of CheckFlankingUpDownSeq
 	 */
 	public FlankingUpDownSeq() {
-		//addToGroup("variation-release");
 		setDescription("Check that if the up_seq or down_seq of flanking_sequence is null, that up_seq_region_start or down_seq_region_start should not be null.");
 		setTeamResponsible(Team.VARIATION);
 

@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ensembl.CoreDbNotFoundException;
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.MissingMetaKeyException;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
@@ -72,8 +74,24 @@ public class MetaCoord extends AbstractCoreDatabaseUsingTestCase {
 	public boolean run(DatabaseRegistryEntry funcgenDbre) {
 
 		boolean result = true;
+		
+		DatabaseRegistryEntry coreDbre;
+		
+		try {
+			
+			coreDbre = getCoreDb(funcgenDbre);
+			
+		} catch (MissingMetaKeyException e) {
 
-		DatabaseRegistryEntry coreDbre = getCoreDb(funcgenDbre);
+			ReportManager.problem(this, funcgenDbre.getConnection(), e.getMessage());
+			return false;
+			
+		} catch (CoreDbNotFoundException e) {
+
+			ReportManager.problem(this, funcgenDbre.getConnection(), e.getMessage());
+			return false;
+			
+		}
 
 		Connection funcgenCon = funcgenDbre.getConnection();
 		Connection coreCon = coreDbre.getConnection();

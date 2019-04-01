@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ public class TranslationCheckZeroLength extends SingleDatabaseTestCase {
 				+ "exon_end.exon_id,exon_end.seq_region_strand,exon_end.seq_region_start as exon_end_seq_start,exon_end.seq_region_end as exon_end_seq_end,"
 				+ "IF(exon_end.seq_region_strand>0,exon_end.seq_region_start+t.seq_end-1,exon_start.seq_region_end-t.seq_start+1) as cds_end, "
 				+ "IF(exon_start.seq_region_strand>0,exon_start.seq_region_start+t.seq_start-1,exon_end.seq_region_end-t.seq_end+1) as cds_start, "
-				+ "(IF(exon_end.seq_region_strand>0,exon_end.seq_region_start+t.seq_end-1,exon_start.seq_region_end-t.seq_start+1)  - IF(exon_start.seq_region_strand>0,exon_start.seq_region_start+t.seq_start-1,exon_end.seq_region_end-t.seq_end+1)+1) as cds_length "
+				+ "(IF(exon_end.seq_region_strand>0,exon_end.seq_region_start+t.seq_end-1,exon_start.seq_region_end-t.seq_start+1)  - IF(exon_start.seq_region_strand>0,exon_start.seq_region_start+t.seq_start-1,cast(exon_end.seq_region_end as signed)-t.seq_end+1)+1) as cds_length "
 				+ "FROM translation t "
 				+ "INNER JOIN exon exon_start on t.start_exon_id = exon_start.exon_id "
 				+ "INNER JOIN exon exon_end on t.end_exon_id=exon_end.exon_id "

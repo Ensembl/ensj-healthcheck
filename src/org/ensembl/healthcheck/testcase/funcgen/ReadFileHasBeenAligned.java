@@ -1,7 +1,7 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the
  * EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,11 +71,19 @@ public class ReadFileHasBeenAligned extends SingleDatabaseTestCase {
 
                 // Check that the read_file has link(s) to alignments
                 if (!alignmentLinks.next()) {
+                    /*
                     ReportManager.problem(this, con, "Read_file " + rfName +
                             " with read_file_id " + rfID + " is not linked to" +
                             " any alignment");
 //                    noLinkErrorCount++;
                     result = false;
+                    */
+                    ReportManager.warning(this, con, "Read_file " + rfName +
+                            " with read_file_id " + rfID + " is not linked to" +
+                            " any alignment");
+//                    noLinkErrorCount++;
+                    result = true;
+
                 } else {
                     alignmentLinks.first();
                     while (alignmentLinks.next()) {

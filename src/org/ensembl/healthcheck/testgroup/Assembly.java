@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,20 +24,16 @@ import org.ensembl.healthcheck.GroupOfTests;
  * 
  * <ul>
  *   <li> org.ensembl.healthcheck.testcase.generic.AncestralSequencesExtraChecks </li>
- *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableStartEnd </li>
- *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableSeqRegionAttribute </li>
- *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableSeqMapping </li>
- *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableUniqueRegion </li>
- *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableIntegrity </li>
+ *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyExceptions </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyMapping </li>
- *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyNameLength </li>
+ *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblySeqregion </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.DuplicateAssembly </li>
+ *   <li> org.ensembl.healthcheck.testcase.generic.GeneCount </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.Karyotype </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.MTCodonTable </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.MultipleComponentAssemblyMapping </li>
- *   <li> org.ensembl.healthcheck.testcase.generic.NonGTACNSequence </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.SeqRegionName </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.SequenceLevel </li>
@@ -52,20 +48,16 @@ public class Assembly extends GroupOfTests {
 
                 addTest(
                         org.ensembl.healthcheck.testcase.generic.AncestralSequencesExtraChecks.class,
-                        org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableStartEnd.class,
-                        org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableSeqRegionAttribute.class,
-                        org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableSeqMapping.class,
-                        org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableUniqueRegion.class,
-                        org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableIntegrity.class,
+                        org.ensembl.healthcheck.testcase.generic.AssemblyExceptions.class,
                         org.ensembl.healthcheck.testcase.generic.AssemblyMapping.class,
-                        org.ensembl.healthcheck.testcase.generic.AssemblyNameLength.class,
+                        org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap.class,
                         org.ensembl.healthcheck.testcase.generic.AssemblySeqregion.class,
                         org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions.class,
                         org.ensembl.healthcheck.testcase.generic.DuplicateAssembly.class,
+                        org.ensembl.healthcheck.testcase.generic.GeneCount.class,
                         org.ensembl.healthcheck.testcase.generic.Karyotype.class,
                         org.ensembl.healthcheck.testcase.generic.MTCodonTable.class,
                         org.ensembl.healthcheck.testcase.generic.MultipleComponentAssemblyMapping.class,
-                        org.ensembl.healthcheck.testcase.generic.NonGTACNSequence.class,
                         org.ensembl.healthcheck.testcase.generic.SeqRegionName.class,
                         org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevel.class,
                         org.ensembl.healthcheck.testcase.generic.SeqRegionsTopLevelRefSeq.class,

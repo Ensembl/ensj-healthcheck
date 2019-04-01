@@ -1,13 +1,13 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
- *
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,13 +17,13 @@
 
 /*
  * Copyright (C) 2003 EBI, GRL
- *
+ * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.
- *
+ * 
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation,
  * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
@@ -55,9 +55,8 @@ import org.ensembl.healthcheck.util.UtilUncheckedException;
  */
 public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> {
 
-	
-	public final static String UNKNOWN = "unknown";
-	public final static String ANCESTRAL_SEQUENCES = "ancestral";
+    public final static String UNKNOWN = "unknown";
+    public final static String ANCESTRAL_SEQUENCES = "ancestral";
 	@Deprecated
 	public final static String HOMO_SAPIENS = "homo_sapiens";
 	@Deprecated
@@ -121,7 +120,6 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	 * Simple read-only bean to store pertinent information about a database.
 	 * Objects of this type are held by the {@link DatabaseRegistryEntry} and
 	 * attached to {@link ReportLine} objects to improve reporting
-	 *
 	 * @author dstaines
 	 */
 	public static class DatabaseInfo {
@@ -135,7 +133,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 
 		/**
 		 * Constructor to set up key properties of {@link DatabaseInfo}
-		 *
+		 * 
 		 * @param name
 		 * @param species
 		 * @param type
@@ -183,10 +181,10 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 
         // e.g. username_species_type
         protected final static Pattern GB_DB = Pattern
-                        .compile("^[a-z0-9]+_([a-z]+)_([A-Za-z]+)");
+                        .compile("^[a-z0-9]+_([_A-Za-z]+)_(core|otherfeatures|rnaseq|cdna)_([0-9]+)");
 	// e.g. neurospora_crassa_core_4_56_1a
 	protected final static Pattern EG_DB = Pattern
-			.compile("^([a-zA-Z0-9_]+)_([a-z]+)_[0-9]+_([0-9]+)_([0-9A-Za-z]+)");
+			.compile("^([a-zA-Z0-9_]+)_([a-z]+)_([0-9]+_[0-9]+)_([0-9A-Za-z]+)");
 	// e.g. homo_sapiens_core_56_37a
 	protected final static Pattern E_DB = Pattern
 			.compile("^([a-z]+_[a-z0-9]+(?:_[a-z0-9]+)?)_([a-z]+)_([0-9]+)_([0-9A-Za-z]+)");
@@ -337,7 +335,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 				//
 				return null;
 			} finally {
-
+				
 			}
 		}
 		return info;
@@ -346,7 +344,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	/**
 	 * Utility for building a {@link DatabaseInfo} object given a name plus
 	 * optional {@link Species} and {@link DatabaseType} to use explicitly
-	 *
+	 * 
 	 * @param name
 	 * @param species
 	 *            (optional)
@@ -464,6 +462,12 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 		this.info = info;
 	}
 
+	public DatabaseRegistryEntry(DatabaseInfo info, Connection con) {
+		this.info = info;
+		this.server = null;
+		this.connection = con;
+	}
+
 	// -----------------------------------------------------------------
 
 	/**
@@ -510,8 +514,10 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 			return speciesOrdering;
 		}
 
-		return new Integer(getSchemaVersion()).compareTo(new Integer(dbre
-				.getSchemaVersion()));
+		String sv = getSchemaVersion().replaceAll("[0-9]+_","");
+        String sv2 = dbre
+				.getSchemaVersion().replaceAll("[0-9]+_","");
+        return new Integer(sv).compareTo(new Integer(sv2));
 
 		// return getName().compareTo(dbre.getName());
 	}

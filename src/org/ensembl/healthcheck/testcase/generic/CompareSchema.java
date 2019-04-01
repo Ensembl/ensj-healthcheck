@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,35 +37,13 @@ import static org.ensembl.healthcheck.DatabaseType.ESTGENE;
 import static org.ensembl.healthcheck.DatabaseType.OTHERFEATURES;
 import static org.ensembl.healthcheck.DatabaseType.RNASEQ;
 import static org.ensembl.healthcheck.DatabaseType.SANGER_VEGA;
-import org.ensembl.healthcheck.Team;
-import static org.ensembl.healthcheck.testcase.generic.AbstractCompareSchema.TestTypes.CHARSET;
-import static org.ensembl.healthcheck.testcase.generic.AbstractCompareSchema.TestTypes.ENGINE;
-import static org.ensembl.healthcheck.testcase.generic.AbstractCompareSchema.TestTypes.IGNORE_AUTOINCREMENT_OPTION;
-
-import java.util.EnumSet;
-import java.util.Set;
 
 /**
  * Extension of the compare schema code for working with core like databases
  */
 public class CompareSchema extends AbstractCompareSchema {
-	
-	@Override
-	protected void addResponsible() {
-		setTeamResponsible(Team.GENEBUILD);
-                setSecondTeamResponsible(Team.RELEASE_COORDINATOR);
-	}
-	
-	@Override
-	protected boolean skipCheckingIfTablesAreUnequal() {
-	  return false;
-	}
 
-	@Override
-	protected void addTestTypes() {
-		Set<TestTypes> tt = EnumSet.of(IGNORE_AUTOINCREMENT_OPTION, CHARSET, ENGINE);
-		getTestTypes().addAll(tt);
-	}
+	public static final String MASTER_SCHEMA = "master.schema";
 
 	@Override
 	public void types() {
@@ -79,13 +57,8 @@ public class CompareSchema extends AbstractCompareSchema {
 	}
 
 	@Override
-	protected String getDefinitionFileKey() {
-		return "schema.file";
-	}
-	
-	@Override
 	protected String getMasterSchemaKey() {
-		return "master.schema";
+		return MASTER_SCHEMA;
 	}
-}
 
+}

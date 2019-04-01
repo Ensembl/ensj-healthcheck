@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,6 @@
  * limitations under the License.
  */
 
-/**
- * Tuple
- * 
- * @author dstaines
- * @author $Author$
- * @version $Revision$
- */
 package org.ensembl.healthcheck.util;
 
 import org.apache.commons.lang.NullArgumentException;
@@ -30,6 +23,8 @@ import org.apache.commons.lang.NullArgumentException;
  * Generic class to associate two objects
  * 
  * @author dstaines
+ * @author $Author$
+ * @version $Revision$
  * 
  * @param <A>
  * @param <B>
@@ -87,5 +82,17 @@ public class Pair<A, B> extends Unit<A> {
 	public String toString() {
 		return super.toString()+",b=[" + String.valueOf(b) + "]";
 	}
+
+
+	/**
+	 *  Return new pair issued from parameters values
+	 *
+	 */
+	public static <A,B> Pair<A,B> of(A a, B b) {
+		return new Pair<>(a, b);
+	}
+
+	public A first() { return a; }
+	public B second() { return b; }
 
 }

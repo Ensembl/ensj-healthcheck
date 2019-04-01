@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,6 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 	 */
 	public VariationForeignKeys() {
 
-		addToGroup("variation-release");
 		setDescription("Check for broken foreign-key relationships.");
 		setTeamResponsible(Team.VARIATION);
 
@@ -64,6 +63,7 @@ public class VariationForeignKeys extends SingleDatabaseTestCase {
 			 * result &= checkForOrphans(con, "allele", "population_id", "population", "population_id",true);
 			 */
 			result &= checkForOrphans(con, "allele", "variation_id", "variation", "variation_id", true);
+			result &= checkForOrphans(con, "allele_synonym", "variation_id", "variation", "variation_id", true);
 			result &= checkForOrphans(con, "compressed_genotype_region", "sample_id", "sample", "sample_id", true);
 			result &= checkForOrphans(con, "compressed_genotype_region", "seq_region_id", "seq_region", "seq_region_id", true);
 			result &= checkForOrphans(con, "compressed_genotype_var", "variation_id", "variation", "variation_id", true);

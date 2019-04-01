@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,10 @@
 
 package org.ensembl.healthcheck.util;
 
+import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -45,6 +47,7 @@ import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.DatabaseRegistryEntry.DatabaseInfo;
 import org.ensembl.healthcheck.DatabaseServer;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.TestRunner;
@@ -190,7 +193,7 @@ public final class DBUtils {
         }
         Integer lastRelease = Integer.parseInt(release) - 1;
         String query = "SHOW DATABASES WHERE `Database` LIKE '%" + release + "%' OR `Database` LIKE '%"
-                + lastRelease.toString() + "%' OR `Database` LIKE 'ensembl_production%'";
+                + lastRelease.toString() + "%' OR `Database` LIKE 'ensembl_production%' OR `Database` LIKE 'ncbi_taxonomy%'";
         List<String> dbs = getSqlTemplate(con).queryForDefaultObjectList(query, String.class);
 
         // Additional clean up for databases which are not needed
@@ -1781,5 +1784,96 @@ public final class DBUtils {
     }
 
     // -------------------------------------------------------------------------
+    
+	/**
+	 * Read a database schema from a file and create a temporary database from
+	 * it.
+	 * 
+	 * @param fileName
+	 *            The name of the schema to read.
+	 * @return A connection to a database built from the schema.
+	 * @throws FileNotFoundException
+	 */
+	public static Connection importSchema(String fileName, String databaseURL, String user, String password)
+			throws FileNotFoundException {
+		Connection con = null;
+
+		// ----------------------------------------------------
+		// Parse the file first in case there are problems
+		SQLParser sqlParser = new SQLParser();
+
+		// try {
+		List sqlCommands = sqlParser.parse(fileName);
+		// sqlParser.printLines();
+		// } catch (FileNotFoundException fnfe) {
+		// fnfe.printStackTrace();
+		// }
+
+		// ----------------------------------------------------
+		// create the database
+
+		String tempDBName = DBUtils.generateTempDatabaseName();
+
+		try {
+
+			Class.forName(System.getProperty("driver"));
+
+
+			Connection tmpCon = DriverManager.getConnection(databaseURL, user,
+					password);
+
+			String sql = "CREATE DATABASE " + tempDBName;
+			logger.finest(sql);
+			Statement stmt = tmpCon.createStatement();
+			stmt.execute(sql);
+			logger.fine("Database " + tempDBName + " created!");
+
+			// close the temporary connection and create a "real" one
+			tmpCon.close();
+			con = DriverManager.getConnection(databaseURL + tempDBName, user,
+					password);
+
+		} catch (Exception e) {
+			String msg = "Could not create database " + tempDBName;
+			logger.severe(msg);
+			throw new RuntimeException(msg, e);
+		}
+
+		// ----------------------------------------------------
+		// Build the schema
+
+		try {
+
+			Statement stmt = con.createStatement();
+
+			// Fill the batch of SQL commands
+			stmt = sqlParser.populateBatch(stmt);
+
+			// execute the batch that has been built up previously
+			logger.info("Creating temporary database ...");
+			stmt.executeBatch();
+			logger.info("Done.");
+
+			// close statement
+			stmt.close();
+
+		} catch (Exception e) {
+
+			String msg = "Could not load schema for database " + tempDBName;
+			logger.severe(msg);
+			throw new RuntimeException(msg, e);
+
+		}
+
+		return con;
+
+	}
+	
+	public static DatabaseRegistryEntry importSchema(String databaseName, String fileName, String databaseURL, String user, String password)
+			throws FileNotFoundException {
+		Connection con  = importSchema(fileName, databaseURL, user, password);
+		DatabaseInfo info = new DatabaseInfo(databaseName, null, null, null, null, null);
+		return new DatabaseRegistryEntry(info, con);		
+	}
 
 } // DBUtils

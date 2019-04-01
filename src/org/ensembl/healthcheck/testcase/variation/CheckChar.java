@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,6 @@ public class CheckChar extends SingleDatabaseTestCase {
 	 */
 	public CheckChar() {
 
-		addToGroup("variation-release");
 		setDescription("Check that imported names/descriptions contains only supported characters");
 		setTeamResponsible(Team.VARIATION);
 
@@ -94,7 +93,7 @@ public class CheckChar extends SingleDatabaseTestCase {
         if(char_ok == false){
           result = false;
           String unsupportedChar = getUnsupportedChar(input);
-          ReportManager.problem(this, con, "phenotype: \""+ input +"\" has suspect start or unsupported characters: \"" + unsupportedChar  + "\"");
+          ReportManager.problem(this, con, "phenotype: \""+ input +"\" has suspect start or unsupported characters: \"" + unsupportedChar + "\"");
         }
 
       }					    
@@ -139,11 +138,10 @@ public class CheckChar extends SingleDatabaseTestCase {
     return is_ok;
   }
 
-  public String getUnsupportedChar( String input) {
+  public String  getUnsupportedChar( String input) {
 
     boolean is_ok = true;
     int len = input.length();
-    String unsupportedChar = "";
     for (int i =0; i< len; i++){
       char test_value= input.charAt(i);
 
@@ -163,16 +161,16 @@ public class CheckChar extends SingleDatabaseTestCase {
         is_ok = false;
       }
       if (!is_ok) {
-        unsupportedChar = "" + input.charAt(i);
+        return Character.toString((char) ascii_val);
       }
     }
-    return unsupportedChar;
+    return "";
   }
 
 	public boolean checkNonTerms( String input) {
 
 		boolean is_ok = true;
-		String[] junk = {"None", "Not provided", "not specified", "Not in OMIM", "Variant of unknown significance", "not_provided", "?","." };
+		String[] junk = {"None", "Not provided", "not specified", "Not in OMIM", "Variant of unknown significance", "not_provided", "ClinVar: phenotype not specified", "?","." };
 
 		int len = junk.length;
 			    

@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@
 package org.ensembl.healthcheck;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -267,12 +266,9 @@ public class TestRunner {
 	public String[] listAllGroups(List<EnsTestCase> tests) {
 
 		ArrayList<String> g = new ArrayList<String>();
-		Iterator<EnsTestCase> it = tests.iterator();
-		while (it.hasNext()) {
-			List<String> thisTestsGroups = it.next().getGroups();
-			Iterator<String> it2 = thisTestsGroups.iterator();
-			while (it2.hasNext()) {
-				String group = it2.next();
+		for(EnsTestCase test: tests) {
+			List<String> thisTestsGroups = test.getGroups();
+			for(String group: thisTestsGroups) {
 				if (!g.contains(group)) {
 					g.add(group);
 				}
@@ -294,18 +290,16 @@ public class TestRunner {
 	 * @return An array containing the names whatever tests are a member of
 	 *         group.
 	 */
-	public String[] listTestsInGroup(List tests, String group) {
+	public String[] listTestsInGroup(List<EnsTestCase> tests, String group) {
 
-		ArrayList g = new ArrayList();
-		Iterator it = tests.iterator();
-		while (it.hasNext()) {
-			EnsTestCase test = (EnsTestCase) it.next();
+		ArrayList<String> g = new ArrayList<String>();
+		for(EnsTestCase test: tests) {
 			if (test.inGroup(group)) {
 				g.add(test.getShortTestName());
 			}
 		}
 
-		return (String[]) g.toArray(new String[g.size()]);
+		return g.toArray(new String[g.size()]);
 
 	} // listTestsInGroup
 
@@ -322,15 +316,11 @@ public class TestRunner {
 	public void printReportsByTest(int level, boolean printFailureText) {
 
 		System.out.println("\n---- RESULTS BY TEST CASE ----");
-		Map map = ReportManager.getAllReportsByTestCase(level);
-		Set keys = map.keySet();
-		Iterator it = keys.iterator();
+		Map<String,List<ReportLine>> map = ReportManager.getAllReportsByTestCase(level);
 
-		while (it.hasNext()) {
+		for(String test: map.keySet()) {
 
-			String test = (String) it.next();
-
-			List lines = (List) map.get(test);
+			List<ReportLine> lines = map.get(test);
 
 			if (lines.size() > 0) {
 
@@ -364,9 +354,7 @@ public class TestRunner {
 					System.out.println("Note: " + failureText);
 				}
 
-				Iterator it2 = lines.iterator();
-				while (it2.hasNext()) {
-					ReportLine reportLine = (ReportLine) it2.next();
+				for(ReportLine reportLine: lines) {
 					if (reportLine.getLevel() >= level) {
 						String dbName = reportLine.getDatabaseName();
 						if (dbName.equals("no_database")) {
@@ -395,22 +383,17 @@ public class TestRunner {
 	public void printReportsByDatabase(int level) {
 
 		System.out.println("\n---- RESULTS BY DATABASE ----");
-		Map map = ReportManager.getAllReportsByDatabase(level);
-		Set keys = map.keySet();
-		Iterator it = keys.iterator();
-		while (it.hasNext()) {
-			String key = (String) it.next();
+		Map<String,List<ReportLine>> map = ReportManager.getAllReportsByDatabase(level);
+		for(String key: map.keySet()) {
 			System.out.print("\n" + key + ": ");
-			List lines = (List) map.get(key);
+			List<ReportLine> lines = map.get(key);
 			int nProblems = lines.size();
 			if (nProblems == 0) {
 				System.out.println("No problems found");
 			} else {
 				String s = (nProblems == 1) ? "" : "s";
 				System.out.println(nProblems + " problem" + s + " found");
-				Iterator it2 = lines.iterator();
-				while (it2.hasNext()) {
-					ReportLine reportLine = (ReportLine) it2.next();
+				for(ReportLine reportLine: lines) {
 					if (reportLine.getLevel() >= level) {
 						System.out.println(" "
 								+ reportLine.getShortTestCaseName() + ": "

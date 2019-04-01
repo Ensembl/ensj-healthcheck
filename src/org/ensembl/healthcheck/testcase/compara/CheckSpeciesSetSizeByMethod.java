@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ package org.ensembl.healthcheck.testcase.compara;
 
 import java.util.List;
 import java.util.HashMap;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
@@ -31,6 +33,10 @@ public class CheckSpeciesSetSizeByMethod extends AbstractComparaTestCase {
 
 	// Maps method_link_species_set_id to size
 	protected HashMap<String,String> sizeExceptions = new HashMap<String,String>();
+
+	// Singletons and pairs should follow a certain pattern
+	protected Pattern unaryPattern = Pattern.compile("^([A-Z]\\.?[a-z0-9]{2,3}(\\.?[A-Z])?) ");
+	protected Pattern binaryPattern = Pattern.compile("^([A-Z]\\.?[a-z0-9]{2,3}(\\.?[A-Z])?)-([A-Z]\\.?[a-z0-9]{2,3}(\\.?[A-Z])?) ");
 
 	public CheckSpeciesSetSizeByMethod() {
 		setTeamResponsible(Team.COMPARA);
@@ -47,9 +53,17 @@ public class CheckSpeciesSetSizeByMethod extends AbstractComparaTestCase {
 			result &= assertSpeciesSetCountForMLSS(dbre, "ENSEMBL_PARALOGUES", 1);
 		}
 		result &= assertSpeciesSetCountForMLSS(dbre, "ENSEMBL_HOMOEOLOGUES", 1);
+		result &= assertSpeciesSetCountForMLSS(dbre, "ENSEMBL_PROJECTIONS", 1);
+
 		result &= assertSpeciesSetCountForMLSS(dbre, "BLASTZ_NET", 2);
 		result &= assertSpeciesSetCountForMLSS(dbre, "LASTZ_NET", 2);
 		result &= assertSpeciesSetCountForMLSS(dbre, "TRANSLATED_BLAT_NET", 2);
+		result &= assertSpeciesSetCountForMLSS(dbre, "ATAC", 2);
+		result &= assertSpeciesSetCountForMLSS(dbre, "POLYPLOID", 1);
+		result &= assertSpeciesSetCountForMLSS(dbre, "LASTZ_PATCH", 1);
+		result &= assertSpeciesSetCountForMLSS(dbre, "CACTUS_HAL_PW", 2);
+		result &= assertSpeciesSetCountForMLSS(dbre, "SYNTENY", 2);
+
 		return result;
 	}
 
@@ -60,30 +74,45 @@ public class CheckSpeciesSetSizeByMethod extends AbstractComparaTestCase {
 		}
 	}
 
+	protected boolean assertMLSSNameNomenclature(DatabaseRegistryEntry dbre, String[] mlss, int expectedCount) {
+		Pattern p = null;
+		if (expectedCount == 1) {
+			p = unaryPattern;
+		} else if (expectedCount == 2) {
+			p = binaryPattern;
+		}
+		if (p != null) {
+			Matcher m = p.matcher(mlss[1]);
+			if (!m.find()) {
+				ReportManager.problem(this, dbre.getConnection(),
+						String.format("The MLSS '%s' (ID %s) doesn't follow the name nomemclature '%s'",
+							mlss[1], mlss[0], m.pattern()));
+				return false;
+			}
+		}
+		return true;
+	}
+
 	protected boolean assertSpeciesSetCountForMLSS(DatabaseRegistryEntry dbre, String methodLinkType, int expectedCount) {
 		String sql = String.format(
 			"SELECT method_link_species_set_id, name, COUNT(*) AS cnt" +
 				" FROM method_link_species_set JOIN method_link USING (method_link_id) JOIN species_set USING (species_set_id)" +
 				" WHERE type = '%s'" +
-				" GROUP BY method_link_species_set_id" +
-				" HAVING COUNT(*) != %d",
-			methodLinkType,
-			expectedCount);
-		List <String[]> badMLSSs = DBUtils.getRowValuesList(dbre.getConnection(), sql);
+				" GROUP BY method_link_species_set_id",
+			methodLinkType);
+		List <String[]> allMLSSs = DBUtils.getRowValuesList(dbre.getConnection(), sql);
 		boolean result = true;
-		for (String [] thisBadMLSS : badMLSSs) {
-			String expected = Integer.toString(expectedCount);
-			if (sizeExceptions.containsKey(thisBadMLSS[0])) {
-				expected = sizeExceptions.get(thisBadMLSS[0]);
-				if (thisBadMLSS[2].equals(expected)) {
-					continue;
-				}
+		for (String [] thisMLSS : allMLSSs) {
+			int expected = sizeExceptions.containsKey(thisMLSS[0]) ? Integer.parseInt(sizeExceptions.get(thisMLSS[0])) : expectedCount;
+			result &= assertMLSSNameNomenclature(dbre, thisMLSS, expected);
+			if (Integer.parseInt(thisMLSS[2]) == expected) {
+				continue;
 			}
 
 			result = false;
 			ReportManager.problem(this, dbre.getConnection(),
-					String.format("The MLSS '%s' (ID %s) has %s GenomeDBs in its species-set instead of %s",
-						thisBadMLSS[1], thisBadMLSS[0], thisBadMLSS[2], expected));
+					String.format("The MLSS '%s' (ID %s) has %s GenomeDBs in its species-set instead of %d",
+						thisMLSS[1], thisMLSS[0], thisMLSS[2], expected));
 		}
 		return result;
 	}

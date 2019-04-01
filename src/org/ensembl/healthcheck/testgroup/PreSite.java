@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,8 +38,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.TranslationStartEndExon </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.Strand </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.MTCodonTable </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyNameLength </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.AssemblyMapping </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.MarkerFeatures </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.HitNameFormat </li> 
@@ -64,6 +63,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.MetaCoord </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.GeneTranscriptStartEnd </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.GeneCoordSystem </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.GeneCount </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.IsCurrent </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.Karyotype </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem </li> 
@@ -80,7 +80,7 @@ import org.ensembl.healthcheck.GroupOfTests;
  *   <li> org.ensembl.healthcheck.testcase.generic.SpeciesID </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.TranscriptSupportingFeatures </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.SequenceLevel </li> 
- *   <li> org.ensembl.healthcheck.testcase.generic.NonGTACNSequence </li> 
+ *   <li> org.ensembl.healthcheck.testcase.generic.BigGeneExon </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.TranscriptName </li> 
  *   <li> org.ensembl.healthcheck.testcase.generic.SingleDBCollations </li> 
  * </ul>
@@ -109,19 +109,14 @@ public class PreSite extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.TranslationStartEndExon.class,
 			org.ensembl.healthcheck.testcase.generic.Strand.class,
 			org.ensembl.healthcheck.testcase.generic.MTCodonTable.class,
-			//org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap.class,
-                        org.ensembl.healthcheck.testcase.generic.AssemblyNameLength.class,
+			org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap.class,
                         org.ensembl.healthcheck.testcase.generic.AssemblyMapping.class,
 			org.ensembl.healthcheck.testcase.generic.MarkerFeatures.class,
 			org.ensembl.healthcheck.testcase.generic.HitNameFormat.class,
 			org.ensembl.healthcheck.testcase.generic.Retrotransposed.class,
 			org.ensembl.healthcheck.testcase.generic.Pseudogene.class,
 			org.ensembl.healthcheck.testcase.generic.DescriptionNewlines.class,
-			org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableSeqRegionAttribute.class,
-			org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableIntegrity.class,
-			org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableSeqMapping.class,
-			org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableUniqueRegion.class,
-			org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableStartEnd.class,
+			org.ensembl.healthcheck.testcase.generic.AssemblyExceptions.class,
 			org.ensembl.healthcheck.testcase.generic.AssemblySeqregion.class,
                         org.ensembl.healthcheck.testcase.generic.MultipleComponentAssemblyMapping.class,
 			org.ensembl.healthcheck.testcase.generic.ExonTranscriptStartEnd.class,
@@ -139,6 +134,7 @@ public class PreSite extends GroupOfTests {
                         org.ensembl.healthcheck.testcase.generic.MetaCoord.class,
 			org.ensembl.healthcheck.testcase.generic.GeneTranscriptStartEnd.class,
                         org.ensembl.healthcheck.testcase.generic.GeneCoordSystem.class,
+                        org.ensembl.healthcheck.testcase.generic.GeneCount.class,
                         org.ensembl.healthcheck.testcase.generic.IsCurrent.class,
 			org.ensembl.healthcheck.testcase.generic.Karyotype.class,
 			org.ensembl.healthcheck.testcase.generic.SeqRegionCoordSystem.class,
@@ -155,7 +151,7 @@ public class PreSite extends GroupOfTests {
                         org.ensembl.healthcheck.testcase.generic.SpeciesID.class,
                         org.ensembl.healthcheck.testcase.generic.TranscriptSupportingFeatures.class,
                         org.ensembl.healthcheck.testcase.generic.SequenceLevel.class,
-                        org.ensembl.healthcheck.testcase.generic.NonGTACNSequence.class,
+			org.ensembl.healthcheck.testcase.generic.BigGeneExon.class,
                         org.ensembl.healthcheck.testcase.generic.TranscriptNames.class,
                         org.ensembl.healthcheck.testcase.generic.SingleDBCollations.class
 		);

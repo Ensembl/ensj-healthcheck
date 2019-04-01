@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,34 +16,35 @@
  */
 
 /**
- * File: DisplayXrefIdTest.java
+ * File: GeneDescriptionSourceTest.java
  * Created by: dstaines
- * Created on: May 27, 2009
+ * Created on: May 26, 2009
  * CVS:  $$
  */
-package org.ensembl.healthcheck.testcase.eg_core;
+package org.ensembl.healthcheck.testcase.generic;
 
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.AbstractRowCountTestCase;
 
 /**
- * Test to find genes where display_xref_id is not set
+ * Test to see if we have any protein_coding transcripts shorter than 3 bp
  * 
  * @author dstaines
  * 
  */
-public class DisplayXrefId extends AbstractRowCountTestCase {
+public class SubCodonTranscript extends AbstractRowCountTestCase {
 
-	public DisplayXrefId() {
+	public SubCodonTranscript() {
 		super();
-		this.addToGroup(AbstractEgCoreTestCase.EG_GROUP);
 		this.appliesToType(DatabaseType.CORE);
-		this.setTeamResponsible(Team.ENSEMBL_GENOMES);
-		this.setDescription("Test to find genes where display_xref_id is not set");
+		this.setTeamResponsible(Team.GENEBUILD);
+        this.setTeamResponsible(Team.ENSEMBL_GENOMES);
+		this.setDescription("Test to see if we have any protein_coding transcripts shorter than 3 bp");
 	}
 
-	private final static String QUERY = "select count(*) from gene where status not in ('NOVEL','ANNOTATED') and display_xref_id is null";
+	private final static String QUERY = "select count(*) from transcript "
+	        + "where biotype='protein_coding' and abs(CAST(seq_region_end AS SIGNED)-CAST(seq_region_start AS SIGNED))<2";
 
 	/*
 	 * (non-Javadoc)
@@ -69,8 +70,8 @@ public class DisplayXrefId extends AbstractRowCountTestCase {
 
 	@Override
 	protected String getErrorMessage(int count) {
-		return count+" genes with non-novel status found with null display_xref_id";
+		return count+" transcripts found shorter than 3 basepairs";
 	}
-	
+
 
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 
 package org.ensembl.healthcheck.testcase.variation;
 
@@ -41,7 +42,6 @@ public class ForeignKeyCoreId extends MultiDatabaseTestCase {
 	 */
 	public ForeignKeyCoreId() {
 
-		addToGroup("variation-release");
 		setDescription("Check for broken foreign-key relationships between variation and core databases.");
 		setHintLongRunning(true);
 		setTeamResponsible(Team.VARIATION);

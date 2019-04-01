@@ -1,7 +1,7 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the
  * EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,9 @@
 
 package org.ensembl.healthcheck.testcase.funcgen;
 
+import org.ensembl.CoreDbNotFoundException;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.MissingMetaKeyException;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 
@@ -86,8 +88,24 @@ abstract class DataFileTableHasFile extends AbstractExternalFileUsingTestcase {
 
                 } else {
                     //check that the file actually exists on the disk
-                    String parentFuncgenDir =
-                            getSpeciesAssemblyDataFileBasePath(dbre);
+                    String parentFuncgenDir;
+					try {
+						
+						parentFuncgenDir = getSpeciesAssemblyDataFileBasePath(dbre);
+						
+					} catch (CoreDbNotFoundException e) {
+						
+						ReportManager.problem(this, dbre.getConnection(), e.getMessage());
+						result = false;
+						continue;
+						
+					} catch (MissingMetaKeyException e) {
+						
+						ReportManager.problem(this, dbre.getConnection(), e.getMessage());
+						result = false;
+						continue;
+						
+					}
                     File file = new File(parentFuncgenDir + filePath
                             .getString(1));
 

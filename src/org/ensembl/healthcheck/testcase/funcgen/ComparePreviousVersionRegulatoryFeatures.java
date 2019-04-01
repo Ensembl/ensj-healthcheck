@@ -1,7 +1,7 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the
  * EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.sql.Statement;
 import java.sql.SQLException;
 
-import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.Team;
@@ -36,7 +35,7 @@ import org.ensembl.healthcheck.Team;
  */
 
 public class ComparePreviousVersionRegulatoryFeatures extends
-        ComparePreviousVersionBase {
+        RegulationComparePreviousVersion {
 
     public ComparePreviousVersionRegulatoryFeatures() {
         setTeamResponsible(Team.FUNCGEN);

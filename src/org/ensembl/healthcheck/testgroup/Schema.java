@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  * These are the tests that checking schema and mysql. The tests are:
  * 
  * <ul>
- *   <li> org.ensembl.healthcheck.testcase.generic.AnalyseTables </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.AutoIncrement </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.CompareSchema </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine </li>
@@ -40,7 +39,6 @@ public class Schema extends GroupOfTests {
 	public Schema() {
 
 		addTest(
-                        org.ensembl.healthcheck.testcase.generic.AnalyseTables.class,
                         org.ensembl.healthcheck.testcase.generic.AutoIncrement.class,
                         org.ensembl.healthcheck.testcase.generic.CompareSchema.class,
                         org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class,

@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,52 +30,43 @@
 
 package org.ensembl.healthcheck.testcase.funcgen;
 
-import java.util.EnumSet;
-import java.util.Set;
-import java.util.Arrays;
+import static org.ensembl.healthcheck.DatabaseType.FUNCGEN;
+import static org.ensembl.healthcheck.testcase.generic.SchemaComparer.TestTypes.AVG_ROW_LENGTH;
+import static org.ensembl.healthcheck.testcase.generic.SchemaComparer.TestTypes.CHARSET;
+import static org.ensembl.healthcheck.testcase.generic.SchemaComparer.TestTypes.CHECK_UNEQUAL;
+import static org.ensembl.healthcheck.testcase.generic.SchemaComparer.TestTypes.ENGINE;
+import static org.ensembl.healthcheck.testcase.generic.SchemaComparer.TestTypes.IGNORE_AUTOINCREMENT_OPTION;
+import static org.ensembl.healthcheck.testcase.generic.SchemaComparer.TestTypes.MAX_ROWS;
 
-import org.ensembl.healthcheck.DatabaseType;
-import org.ensembl.healthcheck.Team;
+import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.testcase.generic.AbstractCompareSchema;
-
+import org.ensembl.healthcheck.testcase.generic.SchemaComparer;
 
 /**
- * Extension of the compare schema functionality customised to run only
- * on funcgen databases
+ * Extension of the compare schema functionality customised to run only on
+ * funcgen databases
  */
 public class CompareFuncgenSchema extends AbstractCompareSchema {
 
+	public static final String MASTER_FUNCGEN_SCHEMA = "master.funcgen_schema";
+
 	@Override
 	public void types() {
-
+		addAppliesToType(FUNCGEN);
 	}
 
 	@Override
-	protected void addResponsible() {
-		setTeamResponsible(Team.FUNCGEN);
-	}
-
-
-    @Override
-	protected void addTestTypes() {
-		Set<TestTypes> types = getTestTypes();
-		types.addAll(Arrays.asList(
-			TestTypes.IGNORE_AUTOINCREMENT_OPTION,
-			TestTypes.CHARSET,
-			TestTypes.ENGINE,
-			TestTypes.MAX_ROWS
-		));
-    }
-
-
-	@Override
-	protected String getDefinitionFileKey() {
-		return "funcgen_schema.file";
+	protected SchemaComparer getComparer(DatabaseRegistryEntry dbre) {
+		SchemaComparer comparer = new SchemaComparer();
+		comparer.addTestTypes(IGNORE_AUTOINCREMENT_OPTION, CHARSET, ENGINE, MAX_ROWS, AVG_ROW_LENGTH, CHECK_UNEQUAL);
+		// add extra tables that we expect may be present but can ignore
+		comparer.addIgnoreTables("MTMP_probestuff_helper");
+		return comparer;
 	}
 
 	@Override
 	protected String getMasterSchemaKey() {
-		return "master.funcgen_schema";
+		return MASTER_FUNCGEN_SCHEMA;
 	}
 
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,8 @@ public class ComparaReleaseOnly extends GroupOfTests {
 
 		addTest(
 			org.ensembl.healthcheck.testcase.compara.ForeignKeySpeciesTreeTables.class,
-			org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class
+			org.ensembl.healthcheck.testcase.generic.MySQLStorageEngine.class,
+			org.ensembl.healthcheck.testcase.compara.NoDataOnGenomeComponents.class
 		);
 	}
 }

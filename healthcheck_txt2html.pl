@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# Copyright [2017] EMBL-European Bioinformatics Institute
+# Copyright [2017-2019] EMBL-European Bioinformatics Institute
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ my $current_test_case;
 my $current_db_name;
 
 
-my $bt_id_suffix  = 'button';
+my $btn_id_suffix = 'button';
 my $div_id_suffix = 'content';
 my $hc_success = 'PASSED';
 my $hc_failed  = 'FAILED';
@@ -73,6 +73,8 @@ my $pre_colour = 'pre_colour';
 my $new_colour = 'new_colour';
 my $err_colour = 'err_colour';
 my $span_open_tag = '<span class="bold_font ';
+
+my $skipped_test_text = "<span class=\"bold_font err_colour\">Skipped test</span>: The test died with an exception!<br/>Please try to run the HealthChecks again.";
 
 my @key_words = ('from', 'seq_region', 'entries in', 'in variation set', 'consequence type', 'variations having at least one evidence annotation');
 my $row_id = 1;
@@ -111,6 +113,7 @@ while (<HC>) {
       }
       else {
         $db_name = $current_db_name;
+        $sp_alias{$db_name} = $db_name;
         $tc_res = $_;
         $tc_res =~ s/^\s+//;
       }
@@ -178,7 +181,7 @@ while (<HC>) {
            
         $tc_res = qq{
           <div>
-            <button id="$div_id\_$bt_id_suffix" class="glyphicon glyphicon-plus-sign showhide_hc" onclick="showhide_row('$div_id')"></button> 
+            <button id="$div_id\_$btn_id_suffix" class="glyphicon glyphicon-plus-sign showhide_hc" onclick="showhide_row('$div_id')"></button> 
             <span>$feature $item : $previous_count / $new_count</span>
           </div>
           <div id="$div_id\_$div_id_suffix" class="hc_extra_row_div" style="display:none">
@@ -209,13 +212,9 @@ while (<HC>) {
     }
     my ($test_case,$db_name,$status);
     if ($_ =~ /\[/) {
-      # Several reports on the same line
-      if ($_ =~ /\]\s\w+/) {
-        my @entries = split(/\]\s+/, $_);
-        if ($entries[$#entries] =~ /\s*\./) {
-          my $last_status = pop @entries;
-          $entries[$#entries] .= $last_status;
-        }
+      # 2 reports on the same line
+      if ($_ =~ /^(\w+\s\[\w+\])\s(\w+\s\[\w+\].+)$/) {
+        my @entries = ($1,$2);
         foreach my $entry (@entries) {
           if ($entry =~ /\]\s+\./) {
             ($test_case,$db_name,$status) = $entry =~ /^(\w+)\s\[(.+)\]\s+\.*\s?(\w+)$/;
@@ -223,6 +222,12 @@ while (<HC>) {
           else {
             ($test_case,$db_name) = $entry =~ /^(\w+)\s\[(.+)\]/;
             $status = 'FAILED';
+            if ($test_cases{$db_name}{$test_case}) {
+              push(@{$test_cases{$db_name}{$test_case}}, $skipped_test_text);
+            }
+            else {
+              $test_cases{$db_name}{$test_case} = [$skipped_test_text];
+            }
           }
           $test_case_groups{$db_name}{$test_case} = $status;
           $current_db_name = $db_name;
@@ -245,6 +250,19 @@ while (<HC>) {
 }
 close(HC);
 
+sub add_spaces {
+    my $tc = shift;
+    my $tc_label = $tc;
+       $tc_label =~ s/([A-Z])/ $1/g;
+       foreach my $known_name (qw(MLSS MSA MySQL EG VB ID KB EFO CAFE ENA DB CCDS HGNC LRG MIM HTML GO UTR EST DNA MT GERP)) {
+           my $wide_name = $known_name;
+           $wide_name =~ s/([A-Z])/ $1/g;
+           $wide_name =~ s/^\s+//;
+           $tc_label =~ s/$wide_name/$known_name/;
+       }
+       $tc_label =~ s/^\s+//;
+    return $tc_label;
+}
 
 
 #################
@@ -315,12 +333,10 @@ foreach my $db_name (sort(keys(%test_case_groups))) {
     my $status = $test_case_groups{$db_name}{$tc};
     next if ($status eq $hc_success);
     my $status_c = $status_colour{$status} ? $status_colour{$status} : $status_colour{'default'};
-    my $tc_label = $tc;
-       $tc_label =~ s/([A-Z])/ $1/g;
-       $tc_label =~ s/My S Q L/MySQL/;
+    my $tc_label = add_spaces($tc);
        $tc_label =~ s/Previous Version/Previous Version \-/i;
     my $tc_id = $sp_alias{$db_name}."_".lc($tc);
-    my $button_id = $tc_id."_".$bt_id_suffix;
+    my $button_id = $tc_id."_".$btn_id_suffix;
 
     if ($test_cases{$db_name}{$tc} && scalar(@{$test_cases{$db_name}{$tc}})) {
       print RESULTS sprintf(
@@ -355,16 +371,26 @@ sub get_hc_list {
 
   my $count_col_header = '';
   my $margin_left      = '';
+
+  my $id = "$db_name\_$type";
+
+  my $glyph_class = ($type eq $hc_success) ? 'glyphicon-menu-right' : 'glyphicon-menu-down';
+  my $display_table = ($type eq $hc_success) ? ' style="display:none"' : '';
   if ($type ne $hc_success) {
     $count_col_header = qq{\n                <th>Count</th>};
     $margin_left = ' style="margin-left:30px"' if ($status_by_db{$db_name}{$hc_success});
   }
+
+  my $lc_type = lc($type);
   $html .=  qq{
         <div class="left"$margin_left">
-          <table class="table table-hover table_hc_list">
+          <div class="header_hc_list header_hc_list_$lc_type">
+            <button id="$id\_$btn_id_suffix" class="glyphicon $glyph_class showhide_hc" onclick="showhide('$id')"></button> HealthCheck <span>$type</span>
+          </div>
+          <table class="table table-hover table_hc_list" id="$id\_$div_id_suffix"$display_table>
             <thead>
               <tr>
-                <th>HealthCheck $type</th>
+                <th>HealthCheck</th>
                 <th>Status</th>$count_col_header
               </tr>
             </thead>
@@ -379,10 +405,7 @@ sub get_hc_list {
     my $tc_title = '';
       
     my $status_c = $status_colour{$status} ? $status_colour{$status} : $status_colour{'default'};
-    my $tc_label = $tc;
-       $tc_label =~ s/([A-Z])/ $1/g;
-       $tc_label =~ s/^\s+//;
-       $tc_label =~ s/My S Q L/MySQL/;
+    my $tc_label = add_spaces($tc);
        if ($tc_label =~ /Previous Version/i) {
          $tc_title = qq{ class="hc_help" data-toggle="tooltip" data-placement="right" title="$tc_label"};
          $tc_label =~ s/Previous Version/\.\.\./i;
@@ -427,7 +450,7 @@ sub get_run_date_time {
   my $time_line = `grep 'Results reported' $input_file`;
   
   if ($time_line) {
-    $time_line =~ /Results\sreported\sat\s\w+\s(\w+)\s(\d+)\s(\d+:\d+:\d+)\s(\d+)/;
+    $time_line =~ /Results\sreported\sat\s\w+\s(\w+)\s+(\d+)\s(\d+:\d+:\d+)\s(\d+)/;
     my $month = $1;
     my $day   = $2;
     my $time  = $3;
@@ -457,7 +480,12 @@ sub get_html_head {
       .left { float:left; }
       .right { float:right; }
       .clearfix:after { clear:both; }
-      .db_content { padding: 0px 15px; }
+      .db_content { padding: 0px 15px 50px; }
+      .header_hc_list { padding:4px 6px;font-size 14px;font-weight:bold;background-color:#EEE;margin-bottom:5px; }
+      .header_hc_list_passed { border-bottom:2px solid #5cb85c;}
+      .header_hc_list_passed > span { color:#5cb85c;}
+      .header_hc_list_failed { border-bottom:2px solid #d9534f;}
+      .header_hc_list_failed > span { color:#d9534f;}
       .table_hc_list { font-size:12px; margin-bottom:15px; max-width:375px; }
       .table_hc_list>thead>tr { background-color:#EEE; }
       .table_hc_list>thead>tr>th { padding:4px 5px; border-top:1px solid #DDD; }
@@ -494,7 +522,7 @@ sub get_html_head {
       
       function showhide(id, long) {
         var div_id = "#"+id+"_$div_id_suffix";
-        var button_id = "#"+id+"_$bt_id_suffix";
+        var button_id = "#"+id+"_$btn_id_suffix";
         
         var duration = 150;
         if (long) {
@@ -513,7 +541,7 @@ sub get_html_head {
       
       function showhide_row(id) {
         var div_id = "#"+id+"_$div_id_suffix";
-        var button_id = "#"+id+"_$bt_id_suffix";
+        var button_id = "#"+id+"_$btn_id_suffix";
         
         if(\$(button_id).hasClass("glyphicon-plus-sign")) {
           \$(button_id).removeClass("glyphicon-plus-sign").addClass("glyphicon-minus-sign");

@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,9 +49,8 @@ public class Variation extends SingleDatabaseTestCase {
 	 */
 	public Variation() {
 
-		addToGroup("variation-release");
 		
-		setDescription("Checks that the variation table does not have blank evidence attribs");
+		setDescription("Checks the variation table");
 		setTeamResponsible(Team.VARIATION);
 
 	}
@@ -95,7 +94,27 @@ public class Variation extends SingleDatabaseTestCase {
                         ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
                         result = false;
                 }
- 
+
+    try {
+      // Check that there are no variants in the failed variation set, with display = 1 and no citation record
+      String size_stmt =  "SELECT count( v.variation_id) "
+                        + "FROM variation v "
+                        + "JOIN failed_variation fv ON (v.variation_id = fv.variation_id) "
+                        + "LEFT JOIN variation_citation vc ON (v.variation_id = vc.variation_id) "
+                        + "LEFT JOIN phenotype_feature pf ON (v.name = pf.object_id) "
+                        + "WHERE v.display = 1 "
+                        + "AND vc.variation_id IS NULL "
+                        + "AND pf.phenotype_id IS NULL;";
+
+      int size_rows = DBUtils.getRowCount(con,size_stmt);
+      if (size_rows > 0) {
+        result = false;
+        ReportManager.problem(this, con, String.valueOf(size_rows) + " failed variants with display = 1 and no citation or phenotype records");
+      }
+    } catch (Exception e) {
+      ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
+      result = false;
+    }
 		
 		return result;
 

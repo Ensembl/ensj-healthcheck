@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,19 @@
  * limitations under the License.
  */
 
-package org.ensembl.healthcheck.testcase.eg_compara;
+package org.ensembl.healthcheck.testgroup;
 
-import org.ensembl.healthcheck.DatabaseRegistryEntry;
+import org.ensembl.healthcheck.testcase.generic.AssemblyExceptions;
+import org.ensembl.healthcheck.testcase.generic.EmptyTables;
 
 /**
- * Inherits from the top level MLSS checks but only runs checks
- * for protein trees to be used when running post pipeline checks.
+ * These are the critical checks to run once Genebuild have handed over the core
+ * databases.
  */
-public class EGGeneTreeForeignKeyMethodLinkSpeciesSetId extends
-	EGForeignKeyMethodLinkSpeciesSetId {
+public class GenebuildPostHandoverService extends GenebuildPostHandover {
 
-	@Override
-	protected boolean runTest(DatabaseRegistryEntry dbre) {
-		return assertGeneTreeRootOrphans(dbre);
-	}
+  public GenebuildPostHandoverService() {
+    this.removeTest(EmptyTables.class);
+    this.removeTest(AssemblyExceptions.class);
+  }
 }

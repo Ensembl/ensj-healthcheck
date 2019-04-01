@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@
  */
 package org.ensembl.healthcheck.testcase;
 
+import org.apache.commons.lang.StringUtils;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseServer;
 import org.ensembl.healthcheck.ReportManager;
@@ -46,8 +47,6 @@ import java.util.logging.LogRecord;
  */
 public abstract class AbstractPerlModuleBasedTestCase extends AbstractPerlBasedTestCase {
 
-	//private static final String SCRIPT = "./perl/run_healthcheck.pl -host $host$ -port $port$ -user $user$ -pass $pass$ -dbname $dbname$ -species_id $species_id$ -module $module$";
-	private static final String SCRIPT = "./perl/run_healthcheck.pl -host $host$ -port $port$ -user $user$ -dbname $dbname$ -species_id $species_id$ -module $module$";
 	private final LogMapperPerl2Java logMapper;
 	private final Formatter perlLogMessagesFormatter;
 
@@ -75,20 +74,32 @@ public abstract class AbstractPerlModuleBasedTestCase extends AbstractPerlBasedT
 			int speciesId
 	) {
 		DatabaseServer srv = dbre.getDatabaseServer();
-		return TemplateBuilder.template(SCRIPT, "host", srv.getHost(),
-				"port", srv.getPort(),
-				"user", srv.getUser(),
-//				"pass", srv.getPass(),
-				"dbname", dbre.getName(),
-				"module", getModule(),
-				"species_id", speciesId);
+		if (srv.getPass() == null){
+			return TemplateBuilder.template("./perl/run_healthcheck.pl -host $host$ -port $port$ -user $user$ -dbname $dbname$ -species_id $species_id$ -module $module$", "host", srv.getHost(),
+          "port", srv.getPort(),
+          "user", srv.getUser(),
+          "dbname", dbre.getName(),
+          "module", getModule(),
+          "species_id", speciesId);
+		}
+		else{
+			return TemplateBuilder.template("./perl/run_healthcheck.pl -host $host$ -port $port$ -user $user$ -pass $pass$ -dbname $dbname$ -species_id $species_id$ -module $module$", "host", srv.getHost(),
+				  "port", srv.getPort(),
+				  "user", srv.getUser(),
+				  "pass", srv.getPass(),
+				  "dbname", dbre.getName(),
+				  "module", getModule(),
+				  "species_id", speciesId);
+		}
 	}
 	
 	protected Map<String,String> environmentVarsToSet() {
 		
 		Map<String,String> inheritedEnvironment = super.environmentVarsToSet();
 		
-		inheritedEnvironment.put("pass", this.pass);
+		if(!StringUtils.isEmpty(this.pass)) {
+			inheritedEnvironment.put("pass", this.pass);
+		}
 		
 		return inheritedEnvironment;
 		

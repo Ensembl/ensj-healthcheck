@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,8 +74,8 @@ public class TranslationCheckSeqStart extends SingleDatabaseTestCase {
 		//Get the seq_region_start from exon tables and check if translation seq_start is greater than start exon's length
 		
 		String sql = "SELECT t.*,exon_start.exon_id,exon_start.seq_region_strand , exon_start.seq_region_end, exon_start.seq_region_start,"
-				+ "exon_start.seq_region_end - exon_start.seq_region_start + 1 as exon_start_length,exon_end.exon_id,exon_end.seq_region_strand, exon_end.seq_region_end, exon_end.seq_region_start, "
-				+ "exon_end.seq_region_end - exon_end.seq_region_start+1 as exon_end_length "
+				+ "cast(exon_start.seq_region_end as signed) - cast(exon_start.seq_region_start as signed) + 1 as exon_start_length,exon_end.exon_id,exon_end.seq_region_strand, exon_end.seq_region_end, exon_end.seq_region_start, "
+				+ "cast(exon_end.seq_region_end as signed) - cast(exon_end.seq_region_start as signed) +1 as exon_end_length "
 				+ "FROM translation t "
 				+ "INNER JOIN exon exon_start on t.start_exon_id = exon_start.exon_id "
 				+ "INNER JOIN exon exon_end on t.end_exon_id=exon_end.exon_id "

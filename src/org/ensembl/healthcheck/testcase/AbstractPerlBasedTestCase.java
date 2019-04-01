@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,7 +109,9 @@ public abstract class AbstractPerlBasedTestCase extends
 		
 		Map<String,String> inheritedEnvironment = super.environmentVarsToSet();
 		
-		inheritedEnvironment.put("PERL5LIB", getPERL5LIB());
+		if(!StringUtils.isEmpty(getPERL5LIB())) {
+			inheritedEnvironment.put("PERL5LIB", getPERL5LIB());
+		}
 
 		return inheritedEnvironment;
 		

@@ -20,6 +20,8 @@ public class FuncgenPostProbemapping extends GroupOfTests {
         org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionTranscriptProbeFeaturesByArray.class,
         org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionTranscriptProbeFeaturesByArrayWithProbeSets.class,
 		org.ensembl.healthcheck.testcase.funcgen.ProbeIdsUnique.class,
+		org.ensembl.healthcheck.testcase.funcgen.DuplicateProbes.class,
+		org.ensembl.healthcheck.testcase.funcgen.DuplicateProbesFromProbeSets.class,
 		org.ensembl.healthcheck.testcase.funcgen.ProbeTranscriptMappingsUnique.class,
 		org.ensembl.healthcheck.testcase.funcgen.ProbeSetTranscriptMappingsUnique.class
       );

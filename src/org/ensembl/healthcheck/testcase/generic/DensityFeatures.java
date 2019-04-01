@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -130,25 +130,13 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		// get top level co-ordinate system ID
-		String sql = "SELECT coord_system_id FROM coord_system WHERE rank=1 LIMIT 1";
-
-		String s = DBUtils.getRowColumnValue(con, sql);
-
-		if (s.length() == 0) {
-			logger.warning("Error: can't get top-level co-ordinate system for " + DBUtils.getShortDatabaseName(con));
-			return false;
-		}
-
-		int topLevelCSID = Integer.parseInt(s);
-
 		try {
 
 			// check each top-level seq_region (up to a limit) to see how many density
 			// features there are
 			Statement stmt = con.createStatement();
 
-			ResultSet rs = stmt.executeQuery("SELECT s.seq_region_id, s.name, CASE WHEN ae.seq_region_id IS NULL THEN 0 ELSE 1 END as exception FROM seq_region_attrib sa, attrib_type at, seq_region s LEFT JOIN assembly_exception ae ON s.seq_region_id = ae.seq_region_id WHERE s.seq_region_id = sa.seq_region_id AND sa.attrib_type_id = at.attrib_type_id AND at.code = 'karyotype_rank' AND coord_system_id=" + topLevelCSID + " AND (exc_type IN ('HAP', 'PAR') or exc_type IS NULL) GROUP BY s.seq_region_id, s.name, exception");
+			ResultSet rs = stmt.executeQuery("SELECT s.seq_region_id, s.name, CASE WHEN ae.seq_region_id IS NULL THEN 0 ELSE 1 END as exception FROM seq_region_attrib sa, attrib_type at, seq_region_attrib sa2, attrib_type at2, seq_region s LEFT JOIN assembly_exception ae ON s.seq_region_id = ae.seq_region_id WHERE s.seq_region_id = sa.seq_region_id AND sa.attrib_type_id = at.attrib_type_id AND at.code = 'karyotype_rank' AND s.seq_region_id = sa2.seq_region_id AND sa2.attrib_type_id = at2.attrib_type_id AND at2.code = 'toplevel' AND (exc_type IN ('HAP', 'PAR') or exc_type IS NULL) GROUP BY s.seq_region_id, s.name, exception");
 
 			int numTopLevel = 0;
                         int noDensity = 0;
@@ -160,7 +148,7 @@ public class DensityFeatures extends SingleDatabaseTestCase {
 				boolean assemblyException = rs.getBoolean("exception");
 				logger.fine("Counting density features on seq_region " + seqRegionName);
 
-				sql = "SELECT COUNT(*) FROM density_feature WHERE seq_region_id=" + seqRegionID;
+				String sql = "SELECT COUNT(*) FROM density_feature WHERE seq_region_id=" + seqRegionID;
 				int dfRows = DBUtils.getRowCount(con, sql);
 				if (dfRows == 0) {
 

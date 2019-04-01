@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,6 @@ public class Denormalized extends SingleDatabaseTestCase {
 	 */
 	public Denormalized() {
 
-		addToGroup("variation-release");
 		setDescription("Check for broken denormalization.");
 		setTeamResponsible(Team.VARIATION);
 
@@ -45,7 +44,7 @@ public class Denormalized extends SingleDatabaseTestCase {
 
 	/**
 	 * Look for broken denormalization relationships.
-	 * 
+	 *
 	 * @param dbre
 	 *            The database to use.
 	 * @return true Ff all foreign key relationships are valid.
@@ -91,7 +90,7 @@ public class Denormalized extends SingleDatabaseTestCase {
 	/**
 	 * Verify denormalization relations, and fills ReportManager with useful sql if
 	 * necessary.
-	 * 
+	 *
 	 * @param con
 	 *            A connection to the database to be tested. Should already be open.
 	 * @param table1

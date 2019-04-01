@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -513,84 +513,17 @@ public abstract class EnsTestCase {
 	 */
 	public Connection importSchema(String fileName)
 			throws FileNotFoundException {
-
-		Connection con = null;
-
-		// ----------------------------------------------------
-		// Parse the file first in case there are problems
-		SQLParser sqlParser = new SQLParser();
-
-		// try {
-		List sqlCommands = sqlParser.parse(fileName);
-		// sqlParser.printLines();
-		// } catch (FileNotFoundException fnfe) {
-		// fnfe.printStackTrace();
-		// }
-
-		// ----------------------------------------------------
-		// create the database
-
-		String tempDBName = DBUtils.generateTempDatabaseName();
-
+		
 		if (setSystemProperties) {
 			setConfiguredProperties();
 		}
+		
+		String databaseURL = System.getProperty("databaseURL");
+		String user = System.getProperty("user");
+		String password = System.getProperty("password");
 
-		try {
+		return DBUtils.importSchema(fileName, databaseURL, user, password);
 
-			Class.forName(System.getProperty("driver"));
-
-			String databaseURL = System.getProperty("databaseURL");
-			String user = System.getProperty("user");
-			String password = System.getProperty("password");
-
-			Connection tmpCon = DriverManager.getConnection(databaseURL, user,
-					password);
-
-			String sql = "CREATE DATABASE " + tempDBName;
-			logger.finest(sql);
-			Statement stmt = tmpCon.createStatement();
-			stmt.execute(sql);
-			logger.fine("Database " + tempDBName + " created!");
-
-			// close the temporary connection and create a "real" one
-			tmpCon.close();
-			con = DriverManager.getConnection(databaseURL + tempDBName, user,
-					password);
-
-		} catch (Exception e) {
-			String msg = "Could not create database " + tempDBName;
-			logger.severe(msg);
-			throw new RuntimeException(msg, e);
-		}
-
-		// ----------------------------------------------------
-		// Build the schema
-
-		try {
-
-			Statement stmt = con.createStatement();
-
-			// Fill the batch of SQL commands
-			stmt = sqlParser.populateBatch(stmt);
-
-			// execute the batch that has been built up previously
-			logger.info("Creating temporary database ...");
-			stmt.executeBatch();
-			logger.info("Done.");
-
-			// close statement
-			stmt.close();
-
-		} catch (Exception e) {
-
-			String msg = "Could not load schema for database " + tempDBName;
-			logger.severe(msg);
-			throw new RuntimeException(msg, e);
-
-		}
-
-		return con;
 	}
 
 	// -------------------------------------------------------------------------

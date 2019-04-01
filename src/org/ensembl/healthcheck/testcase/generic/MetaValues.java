@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -317,7 +317,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 		// Check that the taxonomy ID matches a known one.
 		// The taxonomy ID-species mapping is held in the Species class.
 
-		String[] allowedTypes = { "GenBank Assembly ID", "EMBL-Bank WGS Master" };
+                String[] allowedTypes   = {"GenBank Assembly ID", "INSDC Assembly ID", "EMBL-Bank WGS Master"};
 		String[] allowedSources = { "NCBI", "ENA", "DDBJ" };
 		String WebType = DBUtils.getRowColumnValue(con,
 				"SELECT meta_value FROM meta WHERE meta_key='assembly.web_accession_type'");

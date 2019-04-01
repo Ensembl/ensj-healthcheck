@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2017] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2019] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase;
 
 public abstract class AbstractMLSSTagStats extends AbstractTemplatedTestCase {
 
-	private final static String QUERY = "SELECT method_link_species_set_id FROM "
+	private final static String QUERY = "SELECT method_link_species_set_id, stats_related_tags FROM "
 			+ "(SELECT mlss.method_link_species_set_id, tc.stats_related_tags "
 			+ "FROM method_link_species_set mlss "
 			+ "INNER JOIN method_link ml ON mlss.method_link_id = ml.method_link_id "
@@ -62,6 +62,7 @@ public abstract class AbstractMLSSTagStats extends AbstractTemplatedTestCase {
 			List<String> mlsss = getTemplate(dbre).queryForDefaultObjectList(String.format(QUERY, StringUtils.join(quoted_tags, ","), method_tags.getKey(), method_tags.getValue().length), String.class);
 			if (mlsss.size() > 0) {
 				ReportManager.problem( this, dbre.getConnection(), "MLSSs for " + method_tags.getKey() + " found with no statistics: " + StringUtils.join(mlsss, ","));
+				ReportManager.problem( this, dbre.getConnection(), "USEFUL SQL: " + String.format(QUERY, StringUtils.join(quoted_tags, ","), method_tags.getKey(), method_tags.getValue().length));
 				result = false;
 			} else {
 				ReportManager.correct(this, dbre.getConnection(), "PASSED ");
