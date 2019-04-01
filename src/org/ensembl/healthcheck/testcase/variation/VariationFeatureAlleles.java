@@ -22,7 +22,6 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.util.DBUtils;
 
@@ -70,8 +69,8 @@ public class VariationFeatureAlleles extends SingleDatabaseTestCase {
        }
 
         // Alleles are no longer stored for human variants without frequency data
-        Species species = dbre.getSpecies();
-        if (species == Species.HOMO_SAPIENS ){
+        String species = dbre.getSpecies();
+        if (species.equals(DatabaseRegistryEntry.HOMO_SAPIENS )){
           return true & result;
         }
 

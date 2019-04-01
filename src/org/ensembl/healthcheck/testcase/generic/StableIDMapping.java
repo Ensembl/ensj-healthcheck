@@ -121,9 +121,8 @@ public class StableIDMapping extends SingleDatabaseTestCase {
 			String table = type;
 
 			String prefix = DatabaseRegistryEntry.getStableIDPrefixForSpecies(dbre.getSpecies());
-			if (prefix == null || prefix == "") {
-				ReportManager.problem(this, con, "Can't get stable ID prefix for " + dbre.getSpecies().toString()
-						+ " - please add to Species.java");
+			if (prefix == null || prefix.equals("")) {
+				ReportManager.problem(this, con, "Can't get stable ID prefix for " + dbre.getSpecies().toString());
 				result = false;
 			} else {
 				if (prefix.equalsIgnoreCase("IGNORE")) {
