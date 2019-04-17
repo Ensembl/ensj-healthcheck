@@ -141,7 +141,6 @@ public class FuncgenForeignKeys extends CoreForeignKeys {
             result &= checkForOrphans(con, "identity_xref", "object_xref_id", "object_xref", "object_xref_id", true);
 
             result &= checkForOrphans(con, "mirna_target_feature", "feature_type_id", "feature_type", "feature_type_id", true);
-            result &= checkForOrphans(con, "mirna_target_feature", "feature_set_id", "feature_set", "feature_set_id", true);
 
             result &= checkForOrphans(con, "motif_feature", "binding_matrix_id", "binding_matrix", "binding_matrix_id", true);
 
