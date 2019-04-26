@@ -52,7 +52,6 @@ public class EGCore extends GroupOfTests {
 			EGCommon.class,
 			EGCoreMulti.class,
 			AnalysisTypes.class,
-			ProductionAnalysisLogicName.class,
 			ProductionBiotypes.class,
 			TranscriptNames.class, 
 			ProductionMasterTables.class,

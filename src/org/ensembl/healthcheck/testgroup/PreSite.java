@@ -23,7 +23,6 @@ import org.ensembl.healthcheck.GroupOfTests;
  * These are the tests required for a pre-site database. The tests are:
  *
  * <ul>
- * <li> org.ensembl.healthcheck.testcase.generic.ProductionAnalysisLogicName </li>
  * <li> org.ensembl.healthcheck.testcase.generic.ProductionBiotypes </li>
  * <li> org.ensembl.healthcheck.testcase.generic.ProductionMasterTables </li>
  * <li> org.ensembl.healthcheck.testcase.generic.ProductionMeta </li>
@@ -92,7 +91,6 @@ public class PreSite extends GroupOfTests {
     public PreSite() {
 
         addTest(
-                org.ensembl.healthcheck.testcase.generic.ProductionAnalysisLogicName.class,
                 org.ensembl.healthcheck.testcase.generic.ProductionBiotypes.class,
                 org.ensembl.healthcheck.testcase.generic.BiotypeGroups.class,
                 org.ensembl.healthcheck.testcase.generic.ProductionMasterTables.class,
