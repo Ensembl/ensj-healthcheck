@@ -170,7 +170,7 @@ public class CheckChar extends SingleDatabaseTestCase {
 	public boolean checkNonTerms( String input) {
 
 		boolean is_ok = true;
-		String[] junk = {"None", "Not provided", "not specified", "Not in OMIM", "Variant of unknown significance", "not_provided", "?","." };
+		String[] junk = {"None", "Not provided", "not specified", "Not in OMIM", "Variant of unknown significance", "not_provided", "ClinVar: phenotype not specified", "?","." };
 
 		int len = junk.length;
 			    
