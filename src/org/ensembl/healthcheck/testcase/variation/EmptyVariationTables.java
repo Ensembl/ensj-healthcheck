@@ -73,7 +73,7 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
     String[] genotypeTables         = { "compressed_genotype_region", "compressed_genotype_var" };
     String[] regulatoryTables       = { "motif_feature_variation", "regulatory_feature_variation", "display_group" };
     String[] citationTables         = { "publication", "variation_citation" };
-    String[] largeTables            = { "MTMP_transcript_variation" };
+    String[] largeTables            = { "MTMP_transcript_variation", "transcript_variation" };
 
     // first drop the unused tables
 
