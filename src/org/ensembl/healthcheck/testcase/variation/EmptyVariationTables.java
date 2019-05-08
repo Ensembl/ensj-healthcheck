@@ -73,6 +73,7 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
     String[] genotypeTables         = { "compressed_genotype_region", "compressed_genotype_var" };
     String[] regulatoryTables       = { "motif_feature_variation", "regulatory_feature_variation", "display_group" };
     String[] citationTables         = { "publication", "variation_citation" };
+    String[] largeTables            = { "MTMP_transcript_variation", "transcript_variation" };
 
     // first drop the unused tables
 
@@ -83,6 +84,11 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
     if (species != Species.HOMO_SAPIENS) {
       tables = remove(tables, humanOnlyTables);
       tables = remove(tables, setTables);
+    }
+
+    // Exclude large tables as they throw a Java MySQLDataException
+    if (species == Species.HOMO_SAPIENS) {
+      tables = remove(tables, largeTables);
     }
 
     // only these species have structural variation data
