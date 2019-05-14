@@ -27,6 +27,16 @@ import org.ensembl.healthcheck.DatabaseType;
 
 public enum Species {
 	// defined new Species and properties: taxonomy_id, assemblyprefix, stableIDprefix, alias
+        ELECTROPHORUS_ELECTRICUS(8005,"Ee_SOAP_WITH_SSPACE","ENSEEE",""),
+        CALLORHINCHUS_MILII(7868,"Callorhinchus_milii-6.1.3","ENSCMI",""),
+        HUCHO_HUCHO(62062,"ASM331708v1","ENSHHU",""),
+        LATES_CALCARIFER(8187,"ASB_HGAPassembly_v1","ENSLCA",""),
+        VOMBATUS_URSINUS(29139,"bare-nosed_wombat_genome_assembly","ENSVUR",""),
+        SUS_SCROFA_USMARC(9823,"USMARCv1.0","ENSSSC",""),
+        BOS_TAURUS_HYBRID(30522,"UOA_Angus_1","ENSBIX",""),
+        BOS_INDICUS_HYBRID(30522,"UOA_Brahman_1","ENSBIX",""),
+
+
 	ANSER_BRACHYRHYNCHUS(132585,"ASM259213v1","ENSABR",""),
 	APTERYX_HAASTII(8823,"aptHaa","ENSAHA",""),
 	APTERYX_OWENII(8824,"aptOwe","ENSAOW",""),
