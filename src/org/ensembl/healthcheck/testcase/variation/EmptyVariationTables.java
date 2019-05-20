@@ -64,19 +64,15 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 		String[] tables = getTableNames(dbre.getConnection());
 		String species = dbre.getSpecies();
 
-		String[] unusedTables = { "coord_system", "strain_gtype_poly" };
-		String[] humanOnlyTables = { "protein_function_predictions", "phenotype", "associate_study",
-				"translation_md5" };
-		String[] svTables = { "study", "structural_variation", "structural_variation_feature",
-				"structural_variation_association", "structural_variation_sample", "variation_set_structural_variation",
-				"failed_structural_variation" };
-		String[] sampleTables = { "population_genotype", "population_structure", "population_synonym",
-				"individual_synonym", "sample", "individual", };
-		String[] setTables = { "variation_set_structure" };
-		String[] genotypeTables = { "compressed_genotype_region", "compressed_genotype_var" };
-		String[] regulatoryTables = { "motif_feature_variation", "regulatory_feature_variation", "display_group" };
-		String[] citationTables = { "publication", "variation_citation" };
-
+    String[] unusedTables           = { "coord_system", "strain_gtype_poly" };
+    String[] humanOnlyTables        = { "protein_function_predictions", "phenotype", "associate_study", "translation_md5" };
+    String[] svTables               = { "study", "structural_variation", "structural_variation_feature", "structural_variation_association", "structural_variation_sample", "variation_set_structural_variation", "failed_structural_variation" };
+    String[] sampleTables           = { "population_genotype", "population_structure", "population_synonym", "individual_synonym", "sample", "individual",  };
+    String[] setTables              = { "variation_set_structure" };
+    String[] genotypeTables         = { "compressed_genotype_region", "compressed_genotype_var" };
+    String[] regulatoryTables       = { "motif_feature_variation", "regulatory_feature_variation", "display_group" };
+    String[] citationTables         = { "publication", "variation_citation" };
+    String[] largeTables            = { "MTMP_transcript_variation", "transcript_variation" };
 		// first drop the unused tables
 
 		tables = remove(tables, unusedTables);
@@ -88,7 +84,12 @@ public class EmptyVariationTables extends SingleDatabaseTestCase {
 			tables = remove(tables, setTables);
 		}
 
-		// only these species have structural variation data
+    // Exclude large tables as they throw a Java MySQLDataException
+    if (species == Species.HOMO_SAPIENS) {
+      tables = remove(tables, largeTables);
+    }
+
+    // only these species have structural variation data
 
 		if (!species.equals(DatabaseRegistryEntry.HOMO_SAPIENS) && !species.equals(DatabaseRegistryEntry.MUS_MUSCULUS)
 				&& !species.equals(DatabaseRegistryEntry.BOS_TAURUS) && !species.equals(DatabaseRegistryEntry.EQUUS_CABALLUS)
