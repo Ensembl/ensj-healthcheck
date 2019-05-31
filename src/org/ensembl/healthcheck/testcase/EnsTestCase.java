@@ -49,7 +49,6 @@ import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.TestRunner;
 import org.ensembl.healthcheck.configurationmanager.ConfigurationException;
@@ -802,10 +801,10 @@ public abstract class EnsTestCase {
          * test if a species is merged
          * connect to the production database using the species production_name
          */
-        public boolean isMerged(Species species) {
-          boolean result = false;
-          String speciesName = species.toString();
-          int rows = DBUtils.getRowCount(getProductionDatabase().getConnection(), "SELECT count(*) FROM species s, attrib_type at WHERE at.attrib_type_id = s.attrib_type_id AND code = 'merged' AND production_name = '" + speciesName + "'");
+        public boolean isMerged(DatabaseRegistryEntry dbre) {
+					boolean result = false;
+					Connection con = dbre.getConnection();
+          int rows = DBUtils.getRowCount(con, "SELECT count(*) FROM attrib_type at WHERE code = 'merged'");
           if (rows > 0) {
             result = true;
           }
@@ -1696,7 +1695,7 @@ public abstract class EnsTestCase {
                                         return secDBRE;
                                 }
                         }
-			if (dbre.getSpecies() == Species.UNKNOWN) {
+			if (dbre.getSpecies() == DatabaseRegistryEntry.UNKNOWN) {
 				// EG where we don't know the species, use type and alias
 				// matching instead
 				if (dbre.getType().equals(secDBRE.getType())

@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.testcase.compara.CheckTopLevelDnaFrag;
 import org.ensembl.healthcheck.testcase.compara.MLSSTagStatsHomology;
 import org.ensembl.healthcheck.testcase.compara.MLSSTagThresholdDs;
 import org.ensembl.healthcheck.testcase.compara.ForeignKeyMasterTables;
+import org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetSizeByMethod;
 /**
  * Healthchecks for the genomic Compara databases
  * (and only this kind of database)
@@ -36,6 +37,6 @@ public class ComparaPanIntegrity extends ComparaIntegrity {
 		addTest(
 			org.ensembl.healthcheck.testcase.eg_compara.ForeignKeyPanMasterTables.class
 		);
-		removeTest(CheckSynteny.class, CheckDuplicatedTaxaNames.class, CheckTopLevelDnaFrag.class, MLSSTagStatsHomology.class, MLSSTagThresholdDs.class, ForeignKeyMasterTables.class);
+		removeTest(CheckSynteny.class, CheckDuplicatedTaxaNames.class, CheckTopLevelDnaFrag.class, MLSSTagStatsHomology.class, MLSSTagThresholdDs.class, ForeignKeyMasterTables.class, CheckSpeciesSetSizeByMethod.class);
 	}
 }

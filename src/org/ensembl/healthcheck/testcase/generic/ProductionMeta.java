@@ -87,7 +87,6 @@ public class ProductionMeta extends SingleDatabaseTestCase {
 
 		// we'll use a different query depending on the database type; also some keys are only for certain species
 		String databaseType = dbre.getType().getName(); // will be core, otherfeatures etc
-		String species = dbre.getSpecies().toString(); // will be homo_sapiens etc
 
 		List<String> dbMetaKeys = DBUtils.getColumnValuesList(con, "SELECT DISTINCT(meta_key) FROM meta");
 
@@ -95,11 +94,8 @@ public class ProductionMeta extends SingleDatabaseTestCase {
 		List<String> productionMetaKeys =
 				DBUtils.getColumnValuesList(prodDbre.getConnection(),
                     "SELECT mk.name " +
-                    "FROM meta_key mk LEFT JOIN (" +
-                    "meta_key_species JOIN " +
-                    "species s USING (species_id) ) USING (meta_key_id) " +
+                    "FROM meta_key mk " +
                     "WHERE FIND_IN_SET('" + databaseType + "', mk.db_type) > 0 AND " +
-                    "(s.db_name = '" + species + "' OR s.db_name IS NULL) AND " +
                     "mk.is_current = 1");
 
 		// remove the list of valid keys from the list of keys in the database, the remainder (if any) are invalid
@@ -124,11 +120,8 @@ public class ProductionMeta extends SingleDatabaseTestCase {
 		productionMetaKeys =
 				DBUtils.getColumnValuesList(prodDbre.getConnection(),
                     "SELECT mk.name " +
-                    "FROM meta_key mk LEFT JOIN (" +
-                    "meta_key_species JOIN " +
-                    "species s USING (species_id) ) USING (meta_key_id) " +
+                    "FROM meta_key mk " +
                     "WHERE FIND_IN_SET('" + databaseType + "', mk.db_type) > 0 AND " +
-                    "(s.db_name = '" + species + "' OR s.db_name IS NULL) AND " +
                     "mk.is_current = 1 AND " +
                     "mk.is_optional = 0");
 

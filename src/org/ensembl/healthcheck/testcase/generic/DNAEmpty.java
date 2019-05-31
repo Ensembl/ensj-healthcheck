@@ -33,48 +33,49 @@ import org.ensembl.healthcheck.util.DBUtils;
 
 public class DNAEmpty extends SingleDatabaseTestCase {
 
-	/**
-	 * Check the assembly_exception table.
-	 */
-	public DNAEmpty() {
-		setDescription("Check that dna table is empty");
-		setTeamResponsible(Team.GENEBUILD);
-	}
+    /**
+     * Check the assembly_exception table.
+     */
+    public DNAEmpty() {
+        setDescription("Check that dna table is empty");
+        setTeamResponsible(Team.GENEBUILD);
+    }
 
-	/**
-	 * This applies to all core schema databases apart from 'core', 'presite' and 'sangervega'
-	 */
-	public void types() {
+    /**
+     * This applies to all core schema databases apart from 'core', 'presite' and 'sangervega'
+     */
+    public void types() {
 
-		removeAppliesToType(DatabaseType.CORE);
-                removeAppliesToType(DatabaseType.PRE_SITE);
-		removeAppliesToType(DatabaseType.SANGER_VEGA);
+        removeAppliesToType(DatabaseType.CORE);
+        removeAppliesToType(DatabaseType.PRE_SITE);
+        removeAppliesToType(DatabaseType.SANGER_VEGA);
 
-	}
+    }
 
-	/**
-	 * Run the test.
-	 * 
-	 * @param dbre
-	 *          The database to use.
-	 * @return Result.
-	 */
-	public boolean run(DatabaseRegistryEntry dbre) {
+    /**
+     * Run the test.
+     * 
+     * @param dbre
+     *          The database to use.
+     * @return Result.
+     */
+    public boolean run(DatabaseRegistryEntry dbre) {
 
-		boolean result = true;
+        boolean result = true;
 
-		Connection con = dbre.getConnection();
+        Connection con = dbre.getConnection();
 
-		int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM dna");
-		if (rows > 0) {
-			result = false;
-			ReportManager.problem(this, con, "dna table contains " + rows + " rows - it should be empty unless it's a core database ");
-		} else {
-			ReportManager.correct(this, con, "dna table is empty");
-		}
+        int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM dna");
+        if (rows > 0) {
+            result = false;
+            ReportManager.problem(this, con, "dna table contains " + rows
+                + " rows - it should be empty unless it's a core database ");
+        } else {
+            ReportManager.correct(this, con, "dna table is empty");
+        }
 
-		return result;
+        return result;
 
-	}
+    }
 
 } // DNAEmpty

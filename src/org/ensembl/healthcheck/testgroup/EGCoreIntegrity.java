@@ -38,12 +38,14 @@ import org.ensembl.healthcheck.testcase.eg_core.VersionedGenes;
 import org.ensembl.healthcheck.testcase.eg_core.VersionedTranscripts;
 import org.ensembl.healthcheck.testcase.eg_core.VersionedTranslations;
 import org.ensembl.healthcheck.testcase.eg_core.XrefDescriptionSpecialChars;
-
 import org.ensembl.healthcheck.testcase.generic.AnalysisDescription;
 import org.ensembl.healthcheck.testcase.generic.AnalysisLogicName;
-import org.ensembl.healthcheck.testcase.generic.AssemblyExceptions;
+import org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableSeqRegionAttribute;
+import org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableIntegrity;
+import org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableSeqMapping;
+import org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableUniqueRegion;
+import org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableStartEnd;
 import org.ensembl.healthcheck.testcase.generic.AssemblyMapping;
-import org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap;
 import org.ensembl.healthcheck.testcase.generic.AssemblySeqregion;
 import org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions;
 import org.ensembl.healthcheck.testcase.generic.BlankEnums;
@@ -81,34 +83,52 @@ import org.ensembl.healthcheck.testcase.generic.XrefTypes;
 /**
  * Group containing tests that should never fail for Ensembl Genomes core
  * databases
- * 
- * @author dstaines
  *
+ * @author dstaines
  */
 public class EGCoreIntegrity extends GroupOfTests {
 
     public EGCoreIntegrity() {
-        addTest(AssemblyExceptions.class, AssemblyMultipleOverlap.class, AssemblySeqregion.class,
+        addTest(
+                AssemblyExceptionTableSeqRegionAttribute.class,
+                AssemblyExceptionTableIntegrity.class,
+                AssemblyExceptionTableSeqMapping.class,
+                AssemblyExceptionTableUniqueRegion.class,
+                AssemblyExceptionTableStartEnd.class,
+                AssemblySeqregion.class,
                 CanonicalTranscriptCoding.class, AssemblyDefault.class, CircularAwareFeatureCoords.class,
-                CoreForeignKeys.class, DuplicateAssembly.class, DuplicateTopLevel.class, ExonRank.class,
-                ExonTranscriptStartEnd.class, GeneCoordSystem.class, NullTranscripts.class,
-                PeptideTranslationAttribs.class, ProteinCodingGene.class, SeqRegionAttribsPresent.class,
-                SeqRegionsTopLevel.class, StableID.class, Strand.class, TranscriptsTranslate.class,
-                TranslationStartEnd.class, TranslationStartEndExon.class, ProteinTranslation.class,
-                AssemblyMapping.class, ValidSeqEnd.class, ExonBoundary.class, InappropriateTranslation.class,
+                CoreForeignKeys.class, DuplicateAssembly.class,
+                DuplicateTopLevel.class, ExonRank.class,
+                ExonTranscriptStartEnd.class, GeneCoordSystem.class,
+                NullTranscripts.class, PeptideTranslationAttribs.class,
+                ProteinCodingGene.class, SeqRegionAttribsPresent.class,
+                SeqRegionsTopLevel.class, StableID.class, Strand.class,
+                TranscriptsTranslate.class, TranslationStartEnd.class,
+                TranslationStartEndExon.class, ProteinTranslation.class,
+                AssemblyMapping.class, ValidSeqEnd.class,
+                ExonBoundary.class, InappropriateTranslation.class,
                 DensityFeatures.class, DescriptionNewlines.class, DisplayLabels.class, GeneDescriptions.class, PositiveCoordinates.class,
-                GeneDescriptionUniProtSource.class, DbDisplayNameUniProt.class, XrefDescriptionSpecialChars.class,
-                BlankCoordSystemVersions.class, BlankEnums.class, BlankInfoType.class, DuplicateXref.class,
-                IgiXref.class, InterproDescriptions.class, IsCurrent.class, XrefCategories.class, XrefHTML.class,
-                XrefIdentifiers.class, XrefTypes.class, UniProtExternalDbTypes.class, SeqRegionDna.class,
-                RequiredEgMeta.class, DeprecatedEgMeta.class, GeneBuildStartDate.class, DuplicateMetaKeys.class,
-                GeneGC.class, MetaCoord.class, SampleSetting.class, AnalysisDescription.class, MetaForCompara.class,
-                TranslationAttribType.class, PermittedEgMeta.class, RepeatAnalysesInMeta.class,
-                ProductionBiotypes.class, ProductionMasterTables.class, AnalysisLogicName.class,
-                SeqRegionsConsistentWithComparaMaster.class, SeqRegionAttribForPolyploidGenome.class,
+                GeneDescriptionUniProtSource.class, DbDisplayNameUniProt.class,
+                XrefDescriptionSpecialChars.class,
+                BlankCoordSystemVersions.class, BlankEnums.class,
+                BlankInfoType.class, DuplicateXref.class, IgiXref.class,
+                InterproDescriptions.class, IsCurrent.class,
+                XrefCategories.class, XrefHTML.class, XrefIdentifiers.class,
+                XrefTypes.class, UniProtExternalDbTypes.class,
+                SeqRegionDna.class, RequiredEgMeta.class,
+                DeprecatedEgMeta.class, GeneBuildStartDate.class,
+                DuplicateMetaKeys.class, GeneGC.class, MetaCoord.class,
+                SampleSetting.class, AnalysisDescription.class,
+                MetaForCompara.class, TranslationAttribType.class,
+                PermittedEgMeta.class, RepeatAnalysesInMeta.class,
+                ProductionBiotypes.class,
+                ProductionMasterTables.class, AnalysisLogicName.class,
+                SeqRegionsConsistentWithComparaMaster.class,
+                SeqRegionAttribForPolyploidGenome.class,
                 SeqRegionAttribForPolyploidGenomeToplevelOnly.class, SeqRegionLength.class, EvidenceFreeGO.class,
                 VersionedGenes.class, VersionedTranscripts.class, VersionedTranslations.class, IncorrectExonRank.class, CompareSchema.class,
                 SubCodonTranscript.class);
+
     }
 
 }

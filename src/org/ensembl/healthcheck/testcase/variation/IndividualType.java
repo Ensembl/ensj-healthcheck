@@ -15,14 +15,12 @@
  * limitations under the License.
  */
 
-
 package org.ensembl.healthcheck.testcase.variation;
 
 import java.sql.Connection;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -57,71 +55,53 @@ public class IndividualType extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		if (dbre.getSpecies() == Species.MUS_MUSCULUS) {
-			int mc = DBUtils
-					.getRowCount(con,
-							"SELECT COUNT(*) FROM individual WHERE individual_type_id <> 1");
+		if (dbre.getSpecies().equals(DatabaseRegistryEntry.MUS_MUSCULUS)) {
+			int mc = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM individual WHERE individual_type_id <> 1");
 			if (mc > 0) {
-				ReportManager.problem(this, con,
-						"Individual type incorrect in Individual table");
+				ReportManager.problem(this, con, "Individual type incorrect in Individual table");
 				result = false;
 			} else {
-				ReportManager.correct(this, con,
-						"Individual type table correct in mouse");
+				ReportManager.correct(this, con, "Individual type table correct in mouse");
 			}
 		}
 
-		if (dbre.getSpecies() == Species.CANIS_FAMILIARIS
-				|| dbre.getSpecies() == Species.DANIO_RERIO
-				|| dbre.getSpecies() == Species.GALLUS_GALLUS
-				|| dbre.getSpecies() == Species.RATTUS_NORVEGICUS
-				|| dbre.getSpecies() == Species.BOS_TAURUS
-				|| dbre.getSpecies() == Species.ORNITHORHYNCHUS_ANATINUS
-				|| dbre.getSpecies() == Species.PONGO_ABELII) {
-			int mc = DBUtils
-					.getRowCount(con,
-							"SELECT COUNT(*) FROM individual WHERE individual_type_id <> 2");
+		if (dbre.getSpecies().equals(DatabaseRegistryEntry.CANIS_FAMILIARIS)
+				|| dbre.getSpecies().equals(DatabaseRegistryEntry.DANIO_RERIO)
+				|| dbre.getSpecies().equals(DatabaseRegistryEntry.GALLUS_GALLUS)
+				|| dbre.getSpecies().equals(DatabaseRegistryEntry.RATTUS_NORVEGICUS)
+				|| dbre.getSpecies().equals(DatabaseRegistryEntry.BOS_TAURUS)
+				|| dbre.getSpecies().equals(DatabaseRegistryEntry.ORNITHORHYNCHUS_ANATINUS)
+				|| dbre.getSpecies().equals(DatabaseRegistryEntry.PONGO_ABELII)) {
+			int mc = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM individual WHERE individual_type_id <> 2");
 			if (mc > 0) {
-				ReportManager.problem(this, con,
-						"Individual type incorrect in Individual table");
+				ReportManager.problem(this, con, "Individual type incorrect in Individual table");
 				result = false;
 			} else {
-				ReportManager
-						.correct(this, con, "Individual type table correct in "
-								+ dbre.getSpecies());
+				ReportManager.correct(this, con, "Individual type table correct in " + dbre.getSpecies());
 			}
 		}
-		
-		if (dbre.getSpecies() == Species.ANOPHELES_GAMBIAE) {
-			int mc = DBUtils
-					.getRowCount(con,
-							"SELECT COUNT(*) FROM individual WHERE individual_type_id <> 2 and individual_type_id <> 3");
+
+		if (dbre.getSpecies().equals(DatabaseRegistryEntry.ANOPHELES_GAMBIAE)) {
+			int mc = DBUtils.getRowCount(con,
+					"SELECT COUNT(*) FROM individual WHERE individual_type_id <> 2 and individual_type_id <> 3");
 			if (mc > 0) {
-				ReportManager.problem(this, con,
-						"Individual type incorrect in Individual table");
+				ReportManager.problem(this, con, "Individual type incorrect in Individual table");
 				result = false;
 			} else {
-				ReportManager
-						.correct(this, con, "Individual type table correct in "
-								+ dbre.getSpecies());
+				ReportManager.correct(this, con, "Individual type table correct in " + dbre.getSpecies());
 			}
-			
+
 		}
-		
-		if (dbre.getSpecies() == Species.HOMO_SAPIENS
-				|| dbre.getSpecies() == Species.PAN_TROGLODYTES
-				|| dbre.getSpecies() == Species.TETRAODON_NIGROVIRIDIS) {
-			int mc = DBUtils
-					.getRowCount(con,
-							"SELECT COUNT(*) FROM individual WHERE individual_type_id <> 3");
+
+		if (dbre.getSpecies().equals(DatabaseRegistryEntry.HOMO_SAPIENS)
+				|| dbre.getSpecies().equals(DatabaseRegistryEntry.PAN_TROGLODYTES)
+				|| dbre.getSpecies().equals(DatabaseRegistryEntry.TETRAODON_NIGROVIRIDIS)) {
+			int mc = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM individual WHERE individual_type_id <> 3");
 			if (mc > 0) {
-				ReportManager.problem(this, con,
-						"Individual type incorrect in Individual table");
+				ReportManager.problem(this, con, "Individual type incorrect in Individual table");
 				result = false;
 			} else {
-				ReportManager
-						.correct(this, con, "Individual type table correct in "
-								+ dbre.getSpecies());
+				ReportManager.correct(this, con, "Individual type table correct in " + dbre.getSpecies());
 			}
 		}
 

@@ -47,7 +47,7 @@ import org.ensembl.healthcheck.testcase.generic.SchemaComparer;
  * comparison to variation schemas. This also contains logic for the enforcement
  * of the existence of tables and logic to optionally ignore certain missing
  * tables. These are indicated by the methods
- * 
+ *
  * @{link {@link #requiredTables()} and @{link {@link #notRequiredTables()}.
  */
 public class CompareVariationSchema extends AbstractCompareSchema {

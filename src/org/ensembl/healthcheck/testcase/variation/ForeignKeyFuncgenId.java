@@ -18,18 +18,12 @@
 
 package org.ensembl.healthcheck.testcase.variation;
 
+import org.ensembl.healthcheck.*;
+import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
+
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.ensembl.healthcheck.DatabaseRegistry;
-import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.DatabaseType;
-import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
-import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
-import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for broken foreign-key
@@ -77,7 +71,7 @@ public class ForeignKeyFuncgenId extends MultiDatabaseTestCase {
             if (!variationName.matches("master.*")) {
                 try {
                     // Only for human and mouse
-                    if (dbvar.getSpecies() == Species.HOMO_SAPIENS || dbvar.getSpecies() == Species.MUS_MUSCULUS) {
+                    if (dbvar.getSpecies() == DatabaseRegistryEntry.HOMO_SAPIENS || dbvar.getSpecies() == DatabaseRegistryEntry.MUS_MUSCULUS) {
                         String funcgenName = variationName.replaceAll("variation", "funcgen");
 
                         DatabaseRegistryEntry dbrfuncgen = allDBR.getByExactName(funcgenName);

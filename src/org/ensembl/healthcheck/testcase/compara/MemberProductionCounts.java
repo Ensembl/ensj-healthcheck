@@ -143,7 +143,7 @@ public class MemberProductionCounts extends AbstractTemplatedTestCase {
 		Integer[] numBrokenHomologyCounts = getFirstRowAsIntegers(dbre.getConnection(), sqlBrokenHomologyCounts);
 		Double percBrokenHomologyCounts   = 100. * numBrokenHomologyCounts[1] / numBrokenHomologyCounts[0];
 		// We allow a small number of cases to account for pathological topologies
-		if (percBrokenHomologyCounts > 0.1) {
+		if (percBrokenHomologyCounts > 1) {
 			ReportManager.problem(this, dbre.getConnection(), "Found " + numBrokenHomologyCounts[1] + " rows (" + percBrokenHomologyCounts + "%) for the collection " + collection + " where there are gene_trees without any homologues");
 			result = false;
 		}

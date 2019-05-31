@@ -29,37 +29,48 @@ import org.ensembl.healthcheck.testcase.MultiDatabaseTestCase;
  */
 public class CoordSystemAcrossSpecies extends MultiDatabaseTestCase {
 
-	private DatabaseType[] types = { DatabaseType.CORE, DatabaseType.CDNA, DatabaseType.OTHERFEATURES, DatabaseType.RNASEQ };
+    private DatabaseType[] types = {
+        DatabaseType.CORE,
+        DatabaseType.CDNA,
+        DatabaseType.OTHERFEATURES,
+        DatabaseType.RNASEQ
+    };
 
-	/**
-	 * Creates a new instance of CoordSystemAcrossSpecies
-	 */
-	public CoordSystemAcrossSpecies() {
+    /**
+     * Creates a new instance of CoordSystemAcrossSpecies
+     */
+    public CoordSystemAcrossSpecies() {
 
-		setDescription("Check that the coord_system table is the same across all generic DBs; if not it will cause problems on the website.");
-		setTeamResponsible(Team.GENEBUILD);
+        setDescription("Check that the coord_system table is the same across all "
+            + "generic DBs; if not it will cause problems on the website.");
+        setTeamResponsible(Team.GENEBUILD);
 
-	}
+    }
 
-	/**
-	 * Make sure that the seq_region tables are all the same.
-	 * 
-	 * @param dbr
-	 *          The database registry containing all the specified databases.
-	 * @return True if the seq_region_attrib table is the same across all the species in the registry.
-	 */
-	public boolean run(DatabaseRegistry dbr) {
+    /**
+     * Make sure that the seq_region tables are all the same.
+     * 
+     * @param dbr
+     *          The database registry containing all the specified databases.
+     * @return
+     *  True if the seq_region_attrib table is the same across all the species
+     *  in the registry.
+     */
+    public boolean run(DatabaseRegistry dbr) {
 
-		boolean result = checkSQLAcrossSpecies("SELECT * FROM coord_system WHERE name !='lrg' ", dbr, types, false);
+        boolean result = checkSQLAcrossSpecies(
+            "SELECT * FROM coord_system WHERE name !='lrg' ", dbr, types, false);
 
                 if (!result) {
-                        ReportManager.problem(this, "", "coord_system information not the same for some databases");
+                    ReportManager.problem(this, "",
+                        "coord_system information not the same for some databases");
                 } else {
-                        ReportManager.correct(this, "", "coord_system information is the same for all databases for all species");
+                    ReportManager.correct(this, "",
+                        "coord_system information is the same for all databases for all species");
                 }
                 return result;
 
-	} // run
+    } // run
 
 } // CoordSystemAcrossSpecies
 

@@ -34,10 +34,10 @@ import java.util.Map;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase;
-import org.ensembl.healthcheck.Species;
 
 /**
- * Compare the number of variation features between the current database and the database on the secondary server.
+ * Compare the number of variation features between the current database and the
+ * database on the secondary server.
  */
 
 public class ComparePreviousVersionVariationClasses extends ComparePreviousVersionBase {
@@ -47,16 +47,18 @@ public class ComparePreviousVersionVariationClasses extends ComparePreviousVersi
 	 */
 	public ComparePreviousVersionVariationClasses() {
 
-		setDescription("Compare the number of variation classes in the current database with those from the equivalent database on the secondary server");
+		addToGroup("variation-release");
+		setDescription(
+				"Compare the number of variation classes in the current database with those from the equivalent database on the secondary server");
 		setTeamResponsible(Team.VARIATION);
 
 	}
 
-		
 	// ------------------------------------------------------------------------
-	
+
 	protected Map getCounts(DatabaseRegistryEntry dbre) {
-    return getCountsBySQL(dbre, "SELECT a.value, COUNT(*) FROM variation v, attrib a WHERE v.class_attrib_id = a.attrib_id GROUP BY v.class_attrib_id;");
+		return getCountsBySQL(dbre,
+				"SELECT a.value, COUNT(*) FROM variation v, attrib a WHERE v.class_attrib_id = a.attrib_id GROUP BY v.class_attrib_id;");
 	}
 
 	// ------------------------------------------------------------------------
@@ -75,10 +77,10 @@ public class ComparePreviousVersionVariationClasses extends ComparePreviousVersi
 
 	}
 
-        // ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
-  protected double minimum() {
-    return 0;
-  }
+	protected double minimum() {
+		return 0;
+	}
 
 } // ComparePreviousVersionVariationClasses

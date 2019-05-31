@@ -15,29 +15,15 @@
  * limitations under the License.
  */
 
-
 package org.ensembl.healthcheck.testcase.compara;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-import java.util.regex.Pattern;
 
-import org.ensembl.healthcheck.DatabaseRegistry;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
-import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.compara.AbstractComparaTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
-
 
 /**
  * Check compara genome_db table against core meta one.
@@ -49,21 +35,21 @@ public class CheckGenomeDB extends AbstractComparaTestCase {
 	 * Create a new instance of MetaCrossSpecies
 	 */
 	public CheckGenomeDB() {
-		setDescription("Check that the properties of the genome_db table (taxon_id, assembly" +
-				" and genebuild) correspond to the meta data in the core DB and vice versa.");
+		setDescription("Check that the properties of the genome_db table (taxon_id, assembly"
+				+ " and genebuild) correspond to the meta data in the core DB and vice versa.");
 		setTeamResponsible(Team.COMPARA);
 	}
 
 	/**
-	 * Check that the properties of the genome_db table (taxon_id, assembly and genebuild)
-	 * correspond to the meta data in the core DB and vice versa.
-	 * NB: A warning message is displayed if some dnafrags cannot be checked because
-	 * there is not any connection to the corresponding core database.
+	 * Check that the properties of the genome_db table (taxon_id, assembly and
+	 * genebuild) correspond to the meta data in the core DB and vice versa. NB: A
+	 * warning message is displayed if some dnafrags cannot be checked because there
+	 * is not any connection to the corresponding core database.
 	 * 
 	 * @param comparaDbre
-	 *          The database registry containing all the specified databases.
-	 * @return true if the all the dnafrags are top_level seq_regions in their corresponding
-	 *    core database.
+	 *            The database registry containing all the specified databases.
+	 * @return true if the all the dnafrags are top_level seq_regions in their
+	 *         corresponding core database.
 	 */
 	public boolean run(final DatabaseRegistryEntry comparaDbre) {
 
@@ -75,7 +61,6 @@ public class CheckGenomeDB extends AbstractComparaTestCase {
 		return result;
 	}
 
-
 	public boolean checkAssemblies(DatabaseRegistryEntry comparaDbre) {
 
 		boolean result = true;
@@ -84,7 +69,7 @@ public class CheckGenomeDB extends AbstractComparaTestCase {
 
 		// Get list of species with more than 1 default assembly
 		String sql = "SELECT DISTINCT genome_db.name FROM genome_db WHERE first_release IS NOT NULL AND last_release IS NULL AND genome_component IS NULL"
-			+ " GROUP BY name HAVING count(*) <> 1";
+				+ " GROUP BY name HAVING count(*) <> 1";
 		List<String[]> data = DBUtils.getRowValuesList(comparaCon, sql);
 		for (String[] line : data) {
 			ReportManager.problem(this, comparaCon, "There are more than 1 current assembly for " + line[0]);
@@ -98,7 +83,9 @@ public class CheckGenomeDB extends AbstractComparaTestCase {
 			sql = "SELECT DISTINCT name FROM genome_db WHERE first_release IS NULL OR last_release IS NOT NULL";
 			data = DBUtils.getRowValuesList(comparaCon, sql);
 			for (String[] line : data) {
-				ReportManager.problem(this, comparaCon, comparaDbName + " There is at least one non-current assembly for " + line[0] + " (this should not happen in the release DB)");
+				ReportManager.problem(this, comparaCon,
+						comparaDbName + " There is at least one non-current assembly for " + line[0]
+								+ " (this should not happen in the release DB)");
 				result = false;
 			}
 		} else {
@@ -112,7 +99,6 @@ public class CheckGenomeDB extends AbstractComparaTestCase {
 
 		return result;
 	}
-
 
 	public boolean checkGenomeDB(DatabaseRegistryEntry comparaDbre) {
 
@@ -129,18 +115,23 @@ public class CheckGenomeDB extends AbstractComparaTestCase {
 				Integer species_id = genomeEntry.getSpeciesID();
 
 				/* Check production name */
-				result &= checkGenomeDBField(comparaCon, speciesCon, species_id, species, genome_db_id, "name", "species.production_name");
+				result &= checkGenomeDBField(comparaCon, speciesCon, species_id, species, genome_db_id, "name",
+						"species.production_name");
 
 				/* Check taxon_id */
-				result &= checkGenomeDBField(comparaCon, speciesCon, species_id, species, genome_db_id, "taxon_id", "species.taxonomy_id");
+				result &= checkGenomeDBField(comparaCon, speciesCon, species_id, species, genome_db_id, "taxon_id",
+						"species.taxonomy_id");
 
 				/* Check assembly */
-				String sql1 = "SELECT \"" + species + "\", \"assembly\", CONCAT(assembly,\"\") FROM genome_db WHERE genome_db_id = " + genome_db_id;
-				String sql2 = "SELECT \"" + species + "\", \"assembly\", version FROM coord_system WHERE species_id = " + species_id + " ORDER BY rank LIMIT 1";
+				String sql1 = "SELECT \"" + species
+						+ "\", \"assembly\", CONCAT(assembly,\"\") FROM genome_db WHERE genome_db_id = " + genome_db_id;
+				String sql2 = "SELECT \"" + species + "\", \"assembly\", version FROM coord_system WHERE species_id = "
+						+ species_id + " ORDER BY rank LIMIT 1";
 				result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
 
 				/* Check genebuild */
-				result &= checkGenomeDBField(comparaCon, speciesCon, species_id, species, genome_db_id, "genebuild", "genebuild.start_date");
+				result &= checkGenomeDBField(comparaCon, speciesCon, species_id, species, genome_db_id, "genebuild",
+						"genebuild.start_date");
 
 			} else {
 				ReportManager.problem(this, comparaCon, "No connection for " + species);
@@ -151,10 +142,12 @@ public class CheckGenomeDB extends AbstractComparaTestCase {
 		return result;
 	}
 
-	private boolean checkGenomeDBField(Connection comparaCon, Connection speciesCon, Integer species_id, String species, Integer genome_db_id, String fieldName, String metaKey) {
+	private boolean checkGenomeDBField(Connection comparaCon, Connection speciesCon, Integer species_id, String species,
+			Integer genome_db_id, String fieldName, String metaKey) {
 		String sql0 = "SELECT \"" + species + "\", \"" + fieldName + "\", ";
 		String sql1 = sql0 + fieldName + " FROM genome_db WHERE genome_db_id = " + genome_db_id;
-		String sql2 = sql0 + "CONCAT(meta_value,\"\") FROM meta WHERE meta_key = \"" + metaKey + "\" AND species_id = " + species_id;
+		String sql2 = sql0 + "CONCAT(meta_value,\"\") FROM meta WHERE meta_key = \"" + metaKey + "\" AND species_id = "
+				+ species_id;
 		return compareQueries(comparaCon, sql1, speciesCon, sql2);
 	}
 

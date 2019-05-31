@@ -25,7 +25,6 @@ import java.util.Map;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
@@ -60,10 +59,10 @@ public class StableIDMapping extends SingleDatabaseTestCase {
 
 	public void types() {
 
-                removeAppliesToType(DatabaseType.ESTGENE);
-                removeAppliesToType(DatabaseType.CDNA);
-                removeAppliesToType(DatabaseType.OTHERFEATURES);
-                removeAppliesToType(DatabaseType.RNASEQ);
+		removeAppliesToType(DatabaseType.ESTGENE);
+		removeAppliesToType(DatabaseType.CDNA);
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.RNASEQ);
 
 	}
 
@@ -82,12 +81,12 @@ public class StableIDMapping extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		// there are several species where ID mapping is not done
-		Species s = dbre.getSpecies();
-                result &= checkPrefixes(dbre);
-		if (s != null && s != Species.CAENORHABDITIS_ELEGANS
-				&& s != Species.DROSOPHILA_MELANOGASTER
-				&& s != Species.SACCHAROMYCES_CEREVISIAE
-				&& s != Species.ANOPHELES_GAMBIAE && s != Species.UNKNOWN) {
+		String s = dbre.getSpecies();
+		result &= checkPrefixes(dbre);
+		if (s != null && !s.equals(DatabaseRegistryEntry.CAENORHABDITIS_ELEGANS)
+				&& !s.equals(DatabaseRegistryEntry.DROSOPHILA_MELANOGASTER)
+				&& !s.equals(DatabaseRegistryEntry.SACCHAROMYCES_CEREVISIAE)
+				&& !s.equals(DatabaseRegistryEntry.ANOPHELES_GAMBIAE) && !s.equals(DatabaseRegistryEntry.UNKNOWN)) {
 			if (dbre.getType() == DatabaseType.CORE) {// for sangervega, do not
 														// check the prefixes
 				result &= checkStableIDEventTypes(con);
@@ -100,8 +99,8 @@ public class StableIDMapping extends SingleDatabaseTestCase {
 
 	// -----------------------------------------------------------
 	/**
-	 * Check that all stable IDs in the table have the correct prefix. The
-	 * prefix is defined in Species.java
+	 * Check that all stable IDs in the table have the correct prefix. The prefix is
+	 * defined in Species.java
 	 */
 	private boolean checkPrefixes(DatabaseRegistryEntry dbre) {
 
@@ -121,26 +120,20 @@ public class StableIDMapping extends SingleDatabaseTestCase {
 			String type = (String) it.next();
 			String table = type;
 
-			String prefix = Species.getStableIDPrefixForSpecies(
-					dbre.getSpecies(), dbre.getType());
-			if (prefix == null || prefix == "") {
-				ReportManager.problem(this, con,
-						"Can't get stable ID prefix for "
-								+ dbre.getSpecies().toString()
-								+ " - please add to Species.java");
+			String prefix = DatabaseRegistryEntry.getStableIDPrefixForSpecies(dbre.getSpecies());
+			if (prefix == null || prefix.equals("")) {
+				ReportManager.problem(this, con, "Can't get stable ID prefix for " + dbre.getSpecies().toString());
 				result = false;
 			} else {
 				if (prefix.equalsIgnoreCase("IGNORE")) {
 					return true;
 				}
 				String prefixLetter = prefix + (String) tableToLetter.get(type);
-				int wrong = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM "
-						+ table + " WHERE stable_id NOT LIKE '" + prefixLetter
-						+ "%' AND stable_id NOT LIKE 'LRG%'");
+				int wrong = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + table + " WHERE stable_id NOT LIKE '"
+						+ prefixLetter + "%' AND stable_id NOT LIKE 'LRG%'");
 				if (wrong > 0) {
-					ReportManager.problem(this, con, wrong + " rows in "
-							+ table + " do not have the correct ("
-							+ prefixLetter + ") prefix");
+					ReportManager.problem(this, con,
+							wrong + " rows in " + table + " do not have the correct (" + prefixLetter + ") prefix");
 					result = false;
 				}
 			}
@@ -168,41 +161,26 @@ public class StableIDMapping extends SingleDatabaseTestCase {
 
 			String prefix = getPrefixForType(con, type);
 
-			String sql = "SELECT COUNT(*) FROM stable_id_event WHERE (old_stable_id LIKE '"
-					+ prefix
-					+ "%' OR new_stable_id LIKE '"
-					+ prefix
-					+ "%') AND type != '" + type + "'";
+			String sql = "SELECT COUNT(*) FROM stable_id_event WHERE (old_stable_id LIKE '" + prefix
+					+ "%' OR new_stable_id LIKE '" + prefix + "%') AND type != '" + type + "'";
 
 			int rows = DBUtils.getRowCount(con, sql);
 
 			if (rows > 0) {
 
-				ReportManager
-						.problem(
-								this,
-								con,
-								rows
-										+ " rows of type "
-										+ type
-										+ " (prefix "
-										+ prefix
-										+ ") in stable_id_event have identifiers that do not correspond to "
-										+ type + "s");
+				ReportManager.problem(this, con, rows + " rows of type " + type + " (prefix " + prefix
+						+ ") in stable_id_event have identifiers that do not correspond to " + type + "s");
 				result = false;
 
 			}
 
 			// check for invalid or missing stable ID versions
-			int nInvalidVersions = DBUtils.getRowCount(con,
-					"SELECT COUNT(*) AS " + type + "_with_invalid_version"
-							+ " FROM " + type
-							+ " WHERE version < 1 OR version IS NULL;");
+			int nInvalidVersions = DBUtils.getRowCount(con, "SELECT COUNT(*) AS " + type + "_with_invalid_version"
+					+ " FROM " + type + " WHERE version < 1 OR version IS NULL;");
 
 			if (nInvalidVersions > 0) {
 				ReportManager.problem(this, con, "Invalid versions in " + type);
-				DBUtils.printRows(this, con, "SELECT DISTINCT(version) FROM "
-						+ type);
+				DBUtils.printRows(this, con, "SELECT DISTINCT(version) FROM " + type);
 				result = false;
 			}
 
@@ -210,33 +188,23 @@ public class StableIDMapping extends SingleDatabaseTestCase {
 			// in stable_id_event
 			// for the latest mapping_session
 			String mappingSessionId = DBUtils.getRowColumnValue(con,
-					"SELECT mapping_session_id FROM mapping_session "
-							+ "ORDER BY created DESC LIMIT 1");
+					"SELECT mapping_session_id FROM mapping_session " + "ORDER BY created DESC LIMIT 1");
 
 			if (mappingSessionId.equals("")) {
 				ReportManager.info(this, con, "No mapping_session found");
 				return result;
 			}
 
-			int nVersionMismatch = DBUtils
-					.getRowCount(
-							con,
-							"SELECT COUNT(*) FROM stable_id_event sie, "
-									+ type
-									+ " si WHERE sie.mapping_session_id = "
-									+ Integer.parseInt(mappingSessionId)
-									+ " AND sie.new_stable_id = si.stable_id AND sie.new_version <> si.version");
+			int nVersionMismatch = DBUtils.getRowCount(con,
+					"SELECT COUNT(*) FROM stable_id_event sie, " + type + " si WHERE sie.mapping_session_id = "
+							+ Integer.parseInt(mappingSessionId)
+							+ " AND sie.new_stable_id = si.stable_id AND sie.new_version <> si.version");
 
 			if (nVersionMismatch > 0) {
-				ReportManager.problem(this, con, "Version mismatch between "
-						+ nVersionMismatch + " " + type
+				ReportManager.problem(this, con, "Version mismatch between " + nVersionMismatch + " " + type
 						+ " versions in and stable_id_event");
-				DBUtils.printRows(
-						this,
-						con,
-						"SELECT si.stable_id FROM stable_id_event sie, "
-								+ type
-								+ " si WHERE sie.mapping_session_id = "
+				DBUtils.printRows(this, con,
+						"SELECT si.stable_id FROM stable_id_event sie, " + type + " si WHERE sie.mapping_session_id = "
 								+ Integer.parseInt(mappingSessionId)
 								+ " AND sie.new_stable_id = si.stable_id AND sie.new_version <> si.version");
 				result = false;
@@ -254,14 +222,12 @@ public class StableIDMapping extends SingleDatabaseTestCase {
 		String prefix = "";
 
 		// hope the first row of the type table is correct
-		String stableID = DBUtils.getRowColumnValue(con,
-				"SELECT stable_id FROM " + type + " LIMIT 1");
+		String stableID = DBUtils.getRowColumnValue(con, "SELECT stable_id FROM " + type + " LIMIT 1");
 
 		prefix = stableID.replaceAll("[0-9]", "");
 
 		if (prefix.equals("")) {
-			System.err.println("Error, can't get prefix for " + type
-					+ " from stable ID " + stableID);
+			System.err.println("Error, can't get prefix for " + type + " from stable ID " + stableID);
 		}
 
 		return prefix;
@@ -270,7 +236,7 @@ public class StableIDMapping extends SingleDatabaseTestCase {
 
 	// -----------------------------------------------------------
 	/**
-
+	
 	 * 
 	 */
 	private boolean checkStableIDTimestamps(Connection con) {
@@ -283,21 +249,14 @@ public class StableIDMapping extends SingleDatabaseTestCase {
 
 			String table = types[i];
 
-			String sql = "SELECT COUNT(*) FROM " + table
-					+ " WHERE created_date=0 OR modified_date=0";
+			String sql = "SELECT COUNT(*) FROM " + table + " WHERE created_date=0 OR modified_date=0";
 
 			int rows = DBUtils.getRowCount(con, sql);
 
 			if (rows > 0) {
 
-				ReportManager
-						.problem(
-								this,
-								con,
-								rows
-										+ " rows in "
-										+ table
-										+ " have created or modified dates of 0000-00-00 00:00:00");
+				ReportManager.problem(this, con,
+						rows + " rows in " + table + " have created or modified dates of 0000-00-00 00:00:00");
 				result = false;
 
 			}
