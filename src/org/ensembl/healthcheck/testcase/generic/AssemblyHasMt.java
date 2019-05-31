@@ -15,6 +15,12 @@
  * limitations under the License.
  */
 
+/*
+ * Created on 09-Mar-2004
+ *
+ * To change the template for this generated file go to
+ * Window - Preferences - Java - Code Generation - Code and Comments
+ */
 package org.ensembl.healthcheck.testcase.generic;
 
 import java.sql.Connection;
@@ -25,30 +31,34 @@ import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
+import org.ensembl.healthcheck.util.SqlTemplate;
 
 /**
- * Check that all species that should have projected xrefs do in fact have them.
+ * Check if we have chromosomes but not mitochondrion
  */
-public class ProjectedXrefs extends SingleDatabaseTestCase {
+public class AssemblyHasMt extends SingleDatabaseTestCase {
 
 	/**
-	 * Creates a new instance of ProjectedXrefs.
+	 * Constructor for karyotype test case
 	 */
-	public ProjectedXrefs() {
+	public AssemblyHasMt() {
 
-		setDescription("Check that all species that should have projected xrefs do in fact have them.");
-		setTeamResponsible(Team.CORE);
+		setDescription("Check that karyotype and seq_region tables agree");
+		setTeamResponsible(Team.GENEBUILD);
 
 	}
 
+	/**
+	 * This only applies to core databases.
+	 */
 	public void types() {
 
-		removeAppliesToType(DatabaseType.OTHERFEATURES);
 		removeAppliesToType(DatabaseType.ESTGENE);
-		removeAppliesToType(DatabaseType.EST);
-		removeAppliesToType(DatabaseType.CDNA);
 		removeAppliesToType(DatabaseType.VEGA);
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.CDNA);
 		removeAppliesToType(DatabaseType.RNASEQ);
+
 	}
 
 	/**
@@ -61,33 +71,24 @@ public class ProjectedXrefs extends SingleDatabaseTestCase {
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 
-		boolean result = true;
 		Connection con = dbre.getConnection();
-		String species = dbre.getSpecies();
+		SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+		boolean result = true;
+		String sqlCS = "SELECT count(*) FROM coord_system " + "WHERE name = 'chromosome'";
 
-		if (species.equals(DatabaseRegistryEntry.HOMO_SAPIENS)
-				|| species.equals(DatabaseRegistryEntry.CAENORHABDITIS_ELEGANS)
-				|| species.equals(DatabaseRegistryEntry.DROSOPHILA_MELANOGASTER)
-				|| species.equals(DatabaseRegistryEntry.SACCHAROMYCES_CEREVISIAE)
-				|| species.equals(DatabaseRegistryEntry.CIONA_INTESTINALIS)
-				|| species.equals(DatabaseRegistryEntry.CIONA_SAVIGNYI)) {
-			return result;
+		String sqlMT = "SELECT count(*) " + "FROM seq_region_attrib sa, attrib_type at, seq_region s "
+				+ "WHERE s.seq_region_id = sa.seq_region_id " + "AND at.attrib_type_id = sa.attrib_type_id "
+				+ "AND code = 'karyotype_rank' " + "AND s.name IN ('MT', 'Mito', 'dmel_mitochondrion_genome', 'MtDNA')";
+		int karyotype = t.queryForDefaultObject(sqlCS, Integer.class);
+		if (karyotype > 0) {
+			int mt = t.queryForDefaultObject(sqlMT, Integer.class);
+			if (mt == 0 && dbre.getType() != DatabaseType.SANGER_VEGA) {
+				result = false;
+				ReportManager.problem(this, con,
+						"Species has chromosomes but neither MT nor Mito " + "nor dmel_mitochondrion_genome nor MtDNA");
+			}
 		}
-
-		// check display xrefs
-
-		int rows = DBUtils.getRowCount(con,
-				"SELECT COUNT(*) FROM gene g, xref x WHERE g.display_xref_id=x.xref_id AND x.info_type='PROJECTION'");
-
-		if (rows == 0) {
-			ReportManager.problem(this, con, "No genes in " + species + " have projected display_xrefs");
-			result = false;
-		} else {
-			ReportManager.correct(this, con, rows + " genes in " + species + " have projected display_xrefs");
-		}
-
 		return result;
+	}
 
-	} // run
-
-} // ProjectedXrefs
+} // Karyotype

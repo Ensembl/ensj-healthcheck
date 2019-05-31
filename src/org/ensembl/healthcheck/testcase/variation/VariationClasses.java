@@ -35,7 +35,6 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -62,23 +61,25 @@ public class VariationClasses extends SingleDatabaseTestCase {
 	 * Sanity check the variation classes.
 	 * 
 	 * @param dbre
-	 *          The database to check.
+	 *            The database to check.
 	 * @return true if the test passed.
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
 
-		Species species = dbre.getSpecies();
+		String species = dbre.getSpecies();
 
 		Connection con = dbre.getConnection();
 
+		// at the moment we only check human
+
+		if (species == DatabaseRegistryEntry.HOMO_SAPIENS) {
         	// check HGMD for human - no allele available, so check input type not over-written
                 // check COSMIC & ClinVar as added outside full rebuild
-        	if (species == Species.HOMO_SAPIENS) {
-           		String [] sources = {"HGMD", "COSMIC", "ClinVar"};
+        	String [] sources = {"HGMD", "COSMIC", "ClinVar"};
                         int len = sources.length;
-    
+
 			for (int i =0; i< len; i++){
 
          		boolean source_ok = checkCount(con, sources[i]);
@@ -115,8 +116,8 @@ public class VariationClasses extends SingleDatabaseTestCase {
 		     ReportManager.problem(this, con, "Only one variation class attrib type available for source " + source);
                  }
 
-         }
-         catch (Exception e) {
+		    } 
+            catch (Exception e) {
 	    ReportManager.problem(this, con, "HealthCheck caused an exception: " + e.getMessage());
 	    result = false;
 	 }

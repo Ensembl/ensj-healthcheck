@@ -25,7 +25,6 @@ import java.sql.Statement;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 
@@ -34,98 +33,115 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
  */
 public class GeneTranscriptStartEnd extends SingleDatabaseTestCase {
 
-	/**
-	 * Create a new GeneTranscriptStartEnd test case.
-	 */
-	public GeneTranscriptStartEnd() {
+    /**
+     * Create a new GeneTranscriptStartEnd test case.
+     */
+    public GeneTranscriptStartEnd() {
 
-		setDescription("Checks that gene start/end agrees with transcript table");
-		setTeamResponsible(Team.GENEBUILD);
-	}
+        setDescription("Checks that gene start/end agrees with transcript table");
+        setTeamResponsible(Team.GENEBUILD);
+    }
 
-	/**
-	 * This only applies to core and Vega databases.
-	 */
-	public void types() {
+    /**
+     * This only applies to core and Vega databases.
+     */
+    public void types() {
 
-		removeAppliesToType(DatabaseType.OTHERFEATURES);
-		removeAppliesToType(DatabaseType.RNASEQ);
+        removeAppliesToType(DatabaseType.OTHERFEATURES);
+        removeAppliesToType(DatabaseType.RNASEQ);
 
-	}
+    }
 
-	/**
-	 * Run the test.
-	 * 
-	 * @param dbre
-	 *          The database to use.
-	 * @return true if the test passed.
-	 * 
-	 */
-	public boolean run(DatabaseRegistryEntry dbre) {
+    /**
+     * Run the test.
+     * 
+     * @param dbre
+     *          The database to use.
+     * @return true if the test passed.
+     * 
+     */
+    public boolean run(DatabaseRegistryEntry dbre) {
 
-		boolean startEndResult = true;
-		boolean strandResult = true;
+        boolean startEndResult = true;
+        boolean strandResult = true;
 
-		// check that the lowest transcript start of a gene's transcripts is the
-		// same as the gene's
-		// start
-		// and that the highest transcript end of a gene's transcripts is the same
-		// as the gene's
-		// end
-		// the SQL below will return any where this is /not/ the case
-		String sql = "SELECT g.gene_id, g.stable_id, g.seq_region_start AS gene_start, g.seq_region_end AS gene_end, MIN(tr.seq_region_start) AS min_transcript_start, MAX(tr.seq_region_end) AS max_transcript_end FROM gene g, transcript tr WHERE tr.gene_id=g.gene_id GROUP BY tr.gene_id HAVING (gene_start <> min_transcript_start OR gene_end <> max_transcript_end)";
+        // check that the lowest transcript start and end coordinates matches
+        // the start and end of the gene itself.
+        // the SQL below will return any where this is /not/ the case
+        String sql = "SELECT g.gene_id, g.stable_id, "
+            + "g.seq_region_start AS gene_start, "
+            + "g.seq_region_end AS gene_end, "
+            + "MIN(tr.seq_region_start) AS min_transcript_start, "
+            + "MAX(tr.seq_region_end) AS max_transcript_end "
+            + "FROM gene g, transcript tr "
+            + "WHERE tr.gene_id=g.gene_id "
+            + "GROUP BY tr.gene_id "
+            + "HAVING (gene_start <> min_transcript_start "
+                + "OR gene_end <> max_transcript_end)";
 
-		Connection con = dbre.getConnection();
+        Connection con = dbre.getConnection();
 
-		try {
+        try {
 
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
 
-			rs.beforeFirst();
+            rs.beforeFirst();
 
-			// gene GC32491 in drosophila is allowed to have all sorts of things wrong
-			// with it
-			if (rs != null && !rs.isAfterLast() && rs.next() && dbre.getSpecies() != Species.DROSOPHILA_MELANOGASTER && rs.getString("stable_id") != null
-					&& !rs.getString("stable_id").equalsIgnoreCase("CG32491")) {
+            // gene GC32491 in drosophila is allowed to have all sorts of
+            // things wrong with it
+            //TODO this is very, very wrong indeed
+            if (rs != null && !rs.isAfterLast() && rs.next()
+                && !dbre.getSpecies().equals(DatabaseRegistryEntry.DROSOPHILA_MELANOGASTER)
+                && rs.getString("stable_id") != null
+                && !rs.getString("stable_id").equalsIgnoreCase("CG32491")) {
 
-				ReportManager.problem(this, con, "Gene ID " + rs.getLong(1) + " has start/end that does not agree with transcript start/end");
-				startEndResult = false;
+                ReportManager.problem(this, con, "Gene ID "
+                    + rs.getLong(1)
+                    + " has start/end that does not agree with transcript start/end");
+                startEndResult = false;
 
-				while (rs.next()) {
-					ReportManager.problem(this, con, "Gene ID " + rs.getLong(1) + " has start/end that does not agree with transcript start/end");
-					startEndResult = false;
-				}
-				rs.close();
+                while (rs.next()) {
+                    ReportManager.problem(this, con, "Gene ID "
+                        + rs.getLong(1)
+                        + " has start/end that does not agree with transcript start/end");
+                    startEndResult = false;
+                }
+                rs.close();
 
-				if (startEndResult) {
-					ReportManager.correct(this, con, "All gene/transcript start/end agree");
-				}
+                if (startEndResult) {
+                    ReportManager.correct(this, con, "All gene/transcript start/end agree");
+                }
 
-				// also check that all gene's transcripts have the same strand as the
-				// gene
-				sql = "SELECT g.gene_id FROM gene g, transcript tr WHERE tr.gene_id=g.gene_id AND tr.seq_region_strand != g.seq_region_strand";
-				rs = stmt.executeQuery(sql);
+                // also check that all gene's transcripts have the same strand as the
+                // gene
+                sql = "SELECT g.gene_id "
+                    + "FROM gene g, transcript tr "
+                    + "WHERE tr.gene_id=g.gene_id "
+                    + "AND tr.seq_region_strand != g.seq_region_strand";
+                rs = stmt.executeQuery(sql);
 
-				while (rs.next()) {
-					ReportManager.problem(this, con, "Gene ID " + rs.getLong(1) + " has strand that does not agree with transcript strand");
-					strandResult = false;
-				}
-				rs.close();
-				stmt.close();
+                while (rs.next()) {
+                    ReportManager.problem(this, con, "Gene ID "
+                        + rs.getLong(1)
+                        + " has strand that does not agree with transcript strand");
+                    strandResult = false;
+                }
+                rs.close();
+                stmt.close();
 
-				if (strandResult) {
-					ReportManager.correct(this, con, "All gene/transcript strands agree");
-				}
+                if (strandResult) {
+                    ReportManager.correct(this, con, "All gene/transcript strands agree");
+                }
 
-			} // if drosophila gene
+            } // if drosophila gene
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		return startEndResult && strandResult;
+        return startEndResult && strandResult;
 
-	}
+    }
 
 }

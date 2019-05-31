@@ -17,7 +17,6 @@
 
 package org.ensembl.healthcheck.testgroup;
 
-import org.ensembl.healthcheck.testcase.generic.AssemblyExceptions;
 import org.ensembl.healthcheck.testcase.generic.EmptyTables;
 
 /**
@@ -28,6 +27,5 @@ public class GenebuildPostHandoverService extends GenebuildPostHandover {
 
   public GenebuildPostHandoverService() {
     this.removeTest(EmptyTables.class);
-    this.removeTest(AssemblyExceptions.class);
   }
 }

@@ -35,9 +35,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashSet;
-import java.util.Set;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,7 +44,6 @@ import org.ensembl.healthcheck.AssemblyNameInfo;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -54,17 +52,17 @@ import org.ensembl.healthcheck.util.SqlTemplate;
 import org.ensembl.healthcheck.util.Utils;
 
 /**
- * Checks that meta_value contents in the meta table are OK. Only one meta table at a time is done here; checks for the consistency of the
- * meta table across species are done in MetaCrossSpecies.
+ * Checks that meta_value contents in the meta table are OK. Only one meta table
+ * at a time is done here; checks for the consistency of the meta table across
+ * species are done in MetaCrossSpecies.
  */
 public class MetaValues extends SingleDatabaseTestCase {
 	private boolean isSangerVega = false;
 
-	
 	public MetaValues() {
 
 		setTeamResponsible(Team.GENEBUILD);
-                setSecondTeamResponsible(Team.RELEASE_COORDINATOR);
+		setSecondTeamResponsible(Team.RELEASE_COORDINATOR);
 		setDescription("Check that meta_value contents in the meta table are OK");
 	}
 
@@ -72,7 +70,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 	 * Checks that meta_value contents in the meta table are OK.
 	 * 
 	 * @param dbre
-	 *          The database to check.
+	 *            The database to check.
 	 * @return True if the test passed.
 	 */
 	public boolean run(final DatabaseRegistryEntry dbre) {
@@ -81,40 +79,40 @@ public class MetaValues extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-                DatabaseRegistryEntry sec = getEquivalentFromSecondaryServer(dbre);
+		DatabaseRegistryEntry sec = getEquivalentFromSecondaryServer(dbre);
 
-		Species species = dbre.getSpecies();
+		String species = dbre.getSpecies();
 
-		if (species == Species.ANCESTRAL_SEQUENCES) {
+		if (species.equals(DatabaseRegistryEntry.ANCESTRAL_SEQUENCES)) {
 			// The rest of the tests are not relevant for the ancestral sequences DB
 			return result;
-			
+
 		}
 
 		result &= checkAssemblyMapping(con);
 
-		result &= checkTaxonomyID(dbre);
+		// we can no longer check taxon ID vs species
+		// result &= checkTaxonomyID(dbre);
 
-                result &= checkAssemblyWeb(dbre);
+		result &= checkAssemblyWeb(dbre);
 
 		if (dbre.getType() == DatabaseType.CORE) {
 			result &= checkDates(dbre);
-                        result &= checkGenebuildID(con);
-                        result &= checkGenebuildMethod(dbre);
-                        result &= checkAssemblyAccessionUpdate(dbre);
-                        result &= checkGenes(dbre, sec);
+			result &= checkGenebuildID(con);
+			result &= checkGenebuildMethod(dbre);
+			result &= checkAssemblyAccessionUpdate(dbre);
+			result &= checkGenes(dbre, sec);
 		}
 
 		result &= checkCoordSystemTableCases(con);
 
 		result &= checkBuildLevel(dbre);
 
-                result &= checkSample(dbre);
+		result &= checkSample(dbre);
 
 		// ----------------------------------------
-		//Use an AssemblyNameInfo object to get the assembly information
-		
-			
+		// Use an AssemblyNameInfo object to get the assembly information
+
 		AssemblyNameInfo assembly = new AssemblyNameInfo(con);
 
 		String metaTableAssemblyDefault = assembly.getMetaTableAssemblyDefault();
@@ -126,38 +124,20 @@ public class MetaValues extends SingleDatabaseTestCase {
 		String metaTableAssemblyPrefix = assembly.getMetaTableAssemblyPrefix();
 		logger.finest("meta table assembly prefix: " + metaTableAssemblyPrefix);
 
-		if (metaTableAssemblyVersion == null || metaTableAssemblyDefault == null || metaTableAssemblyPrefix == null || dbNameAssemblyVersion == null) {
+		if (metaTableAssemblyVersion == null || metaTableAssemblyDefault == null || metaTableAssemblyPrefix == null
+				|| dbNameAssemblyVersion == null) {
 
 			ReportManager.problem(this, con, "Cannot get all information from meta table - check for null values");
 			result = false;
 
-		} else {
-
-			// ----------------------------------------
-			// Check that assembly prefix is valid and corresponds to this species
-			// Prefix is OK as long as it starts with the valid one
-			
-			Species dbSpecies = dbre.getSpecies();
-			String correctPrefix = Species.getAssemblyPrefixForSpecies(dbSpecies);
-
-			if (!isSangerVega) {// do not check this for sangervega
-				if (correctPrefix == null) {
-					logger.info("Can't get correct assembly prefix for " + dbSpecies.toString());
-				} else {
-					if (!metaTableAssemblyPrefix.toUpperCase().startsWith(correctPrefix.toUpperCase())) {
-						ReportManager.problem(this, con, "Database species is " + dbSpecies + " but assembly prefix " + metaTableAssemblyPrefix + " should have prefix beginning with " + correctPrefix + " There should not be any version number, check Species.java is using the right value");
-						result = false;
-					}
-				}
-			}
 		}
 
 		// -------------------------------------------
-		
+
 		result &= checkRepeatAnalysis(dbre);
-		
+
 		// -------------------------------------------
-		
+
 		result &= checkForSchemaPatchLineBreaks(dbre);
 
 		return result;
@@ -175,15 +155,18 @@ public class MetaValues extends SingleDatabaseTestCase {
 		// and all coord systems should be valid from coord_system
 		// can also have # instead of | as used in unfinished contigs etc
 
-		Pattern assemblyMappingPattern = Pattern.compile("^([a-zA-Z0-9.]+):?([a-zA-Z0-9._-]+)?[\\|#]([a-zA-Z0-9._-]+):?([a-zA-Z0-9._-]+)?([\\|#]([a-zA-Z0-9.]+):?([a-zA-Z0-9._-]+)?)?$");
+		Pattern assemblyMappingPattern = Pattern.compile(
+				"^([a-zA-Z0-9.]+):?([a-zA-Z0-9._-]+)?[\\|#]([a-zA-Z0-9._-]+):?([a-zA-Z0-9._-]+)?([\\|#]([a-zA-Z0-9.]+):?([a-zA-Z0-9._-]+)?)?$");
 		String[] validCoordSystems = DBUtils.getColumnValues(con, "SELECT name FROM coord_system");
 
-		String[] mappings = DBUtils.getColumnValues(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.mapping'");
+		String[] mappings = DBUtils.getColumnValues(con,
+				"SELECT meta_value FROM meta WHERE meta_key='assembly.mapping'");
 		for (int i = 0; i < mappings.length; i++) {
 			Matcher matcher = assemblyMappingPattern.matcher(mappings[i]);
 			if (!matcher.matches()) {
 				result = false;
-				ReportManager.problem(this, con, "Coordinate system mapping " + mappings[i] + " is not in the correct format");
+				ReportManager.problem(this, con,
+						"Coordinate system mapping " + mappings[i] + " is not in the correct format");
 			} else {
 				// if format is OK, check coord systems are valid
 				boolean valid = true;
@@ -196,21 +179,25 @@ public class MetaValues extends SingleDatabaseTestCase {
 
 				if (!Utils.stringInArray(cs1, validCoordSystems, false)) {
 					valid = false;
-					ReportManager.problem(this, con, "Source co-ordinate system " + cs1 + " is not in the coord_system table");
+					ReportManager.problem(this, con,
+							"Source co-ordinate system " + cs1 + " is not in the coord_system table");
 				}
 				if (!Utils.stringInArray(cs2, validCoordSystems, false)) {
 					valid = false;
-					ReportManager.problem(this, con, "Target co-ordinate system " + cs2 + " is not in the coord_system table");
+					ReportManager.problem(this, con,
+							"Target co-ordinate system " + cs2 + " is not in the coord_system table");
 				}
 				// third coordinate system is optional
 				if (cs3 != null && !Utils.stringInArray(cs3, validCoordSystems, false)) {
 					valid = false;
-					ReportManager.problem(this, con, "Third co-ordinate system in mapping (" + cs3 + ") is not in the coord_system table");
+					ReportManager.problem(this, con,
+							"Third co-ordinate system in mapping (" + cs3 + ") is not in the coord_system table");
 				}
 
 				result &= valid;
 
-				// check that coord_system:version pairs listed here exist in the coord_system table
+				// check that coord_system:version pairs listed here exist in the coord_system
+				// table
 				result &= checkCoordSystemVersionPairs(con, cs1, assembly1, cs2, assembly2, cs3, assembly3);
 
 				// check that coord systems are specified in lower-case
@@ -226,13 +213,16 @@ public class MetaValues extends SingleDatabaseTestCase {
 
 	// ---------------------------------------------------------------------
 	/**
-	 * Check that coordinate system:assembly pairs in assembly.mappings match what's in the coord system table
+	 * Check that coordinate system:assembly pairs in assembly.mappings match what's
+	 * in the coord system table
 	 */
-	private boolean checkCoordSystemVersionPairs(Connection con, String cs1, String assembly1, String cs2, String assembly2, String cs3, String assembly3) {
+	private boolean checkCoordSystemVersionPairs(Connection con, String cs1, String assembly1, String cs2,
+			String assembly2, String cs3, String assembly3) {
 
 		boolean result = true;
 
-		List<String> coordSystemsAndVersions = DBUtils.getColumnValuesList(con, "SELECT CONCAT_WS(':',name,version) FROM coord_system");
+		List<String> coordSystemsAndVersions = DBUtils.getColumnValuesList(con,
+				"SELECT CONCAT_WS(':',name,version) FROM coord_system");
 
 		result &= checkCoordSystemPairInList(con, cs1, assembly1, coordSystemsAndVersions);
 
@@ -250,7 +240,8 @@ public class MetaValues extends SingleDatabaseTestCase {
 
 	// ---------------------------------------------------------------------
 	/**
-	 * Check if a particular coordinate system:version pair is in a list. Deal with nulls appropriately.
+	 * Check if a particular coordinate system:version pair is in a list. Deal with
+	 * nulls appropriately.
 	 */
 	private boolean checkCoordSystemPairInList(Connection con, String cs, String assembly, List<String> coordSystems) {
 
@@ -260,7 +251,8 @@ public class MetaValues extends SingleDatabaseTestCase {
 
 		if (!coordSystems.contains(toCompare)) {
 
-			ReportManager.problem(this, con, "Coordinate system name/version " + toCompare + " in assembly.mapping does not appear in coord_system table.");
+			ReportManager.problem(this, con, "Coordinate system name/version " + toCompare
+					+ " in assembly.mapping does not appear in coord_system table.");
 			result = false;
 
 		}
@@ -316,7 +308,7 @@ public class MetaValues extends SingleDatabaseTestCase {
 
 	// ---------------------------------------------------------------------
 
-	private boolean checkTaxonomyID(DatabaseRegistryEntry dbre) {
+	private boolean checkAssemblyWeb(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
 
@@ -325,53 +317,29 @@ public class MetaValues extends SingleDatabaseTestCase {
 		// Check that the taxonomy ID matches a known one.
 		// The taxonomy ID-species mapping is held in the Species class.
 
-		Species species = dbre.getSpecies();
-		String dbTaxonID = DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='species.taxonomy_id'");
-		logger.finest("Taxonomy ID from database: " + dbTaxonID);
+                String[] allowedTypes   = {"GenBank Assembly ID", "INSDC Assembly ID", "EMBL-Bank WGS Master"};
+		String[] allowedSources = { "NCBI", "ENA", "DDBJ" };
+		String WebType = DBUtils.getRowColumnValue(con,
+				"SELECT meta_value FROM meta WHERE meta_key='assembly.web_accession_type'");
+		String WebSource = DBUtils.getRowColumnValue(con,
+				"SELECT meta_value FROM meta WHERE meta_key='assembly.web_accession_source'");
 
-		if (dbTaxonID.equals(Species.getTaxonomyID(species))) {
-			ReportManager.correct(this, con, "Taxonomy ID " + dbTaxonID + " is correct for " + species.toString());
-		} else {
-			result = false;
-			ReportManager.problem(this, con, "Taxonomy ID " + dbTaxonID + " in database is not correct - should be " + Species.getTaxonomyID(species) + " for " + species.toString());
+		if (WebType.length() > 0) {
+			if (!Utils.stringInArray(WebType, allowedTypes, true)) {
+				result = false;
+				ReportManager.problem(this, con, "Web accession type " + WebType + " is not allowed");
+			}
+		}
+
+		if (WebSource.length() > 0) {
+			if (!Utils.stringInArray(WebSource, allowedSources, true)) {
+				result = false;
+				ReportManager.problem(this, con, "Web accession source " + WebSource + " is not allowed");
+			}
 		}
 		return result;
 
 	}
-
-        // ---------------------------------------------------------------------
-
-        private boolean checkAssemblyWeb(DatabaseRegistryEntry dbre) {
-
-                boolean result = true;
-
-                Connection con = dbre.getConnection();
-
-                // Check that the taxonomy ID matches a known one.
-                // The taxonomy ID-species mapping is held in the Species class.
-
-                String[] allowedTypes   = {"GenBank Assembly ID", "INSDC Assembly ID", "EMBL-Bank WGS Master"};
-                String[] allowedSources = {"NCBI", "ENA", "DDBJ"};
-                String WebType   = DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.web_accession_type'");
-                String WebSource = DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='assembly.web_accession_source'");
-
-                if (WebType.length() > 0) {
-                        if (!Utils.stringInArray(WebType, allowedTypes, true)) {
-                                result = false;
-                                ReportManager.problem(this, con, "Web accession type " + WebType + " is not allowed");
-                        }
-                }
-
-                if (WebSource.length() > 0) {
-                        if (!Utils.stringInArray(WebSource, allowedSources, true)) {
-                                result = false;
-                                ReportManager.problem(this, con, "Web accession source " + WebSource + " is not allowed");
-                        }
-                }
-                return result;
-
-        }
-
 
 	// ---------------------------------------------------------------------
 
@@ -381,7 +349,8 @@ public class MetaValues extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		String[] keys = { "genebuild.start_date", "assembly.date", "genebuild.initial_release_date", "genebuild.last_geneset_update" };
+		String[] keys = { "genebuild.start_date", "assembly.date", "genebuild.initial_release_date",
+				"genebuild.last_geneset_update" };
 
 		String date = "[0-9]{4}-[0-9]{2}";
 		String[] regexps = { date + "-[a-zA-Z]*", date, date, date };
@@ -399,9 +368,9 @@ public class MetaValues extends SingleDatabaseTestCase {
 
 			}
 
-                        if (result) {
-			        result &= checkMetaKey(con, key, value, regexp);
-                        }
+			if (result) {
+				result &= checkMetaKey(con, key, value, regexp);
+			}
 
 			if (result) {
 				result &= checkDateFormat(con, key, value);
@@ -409,27 +378,38 @@ public class MetaValues extends SingleDatabaseTestCase {
 
 		}
 
-                if (!result) {
-                        return result;
-                }
+		if (!result) {
+			return result;
+		}
 
 		// some more checks for sanity of dates
-		int startDate = Integer.valueOf(DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.start_date'").replaceAll("[^0-9]", "")).intValue();
-		int initialReleaseDate = Integer.valueOf(DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.initial_release_date'").replaceAll("[^0-9]", "")).intValue();
-		int lastGenesetUpdate = Integer.valueOf(DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.last_geneset_update'").replaceAll("[^0-9]", "")).intValue();
+		int startDate = Integer.valueOf(
+				DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.start_date'")
+						.replaceAll("[^0-9]", ""))
+				.intValue();
+		int initialReleaseDate = Integer.valueOf(DBUtils
+				.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.initial_release_date'")
+				.replaceAll("[^0-9]", "")).intValue();
+		int lastGenesetUpdate = Integer.valueOf(DBUtils
+				.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.last_geneset_update'")
+				.replaceAll("[^0-9]", "")).intValue();
 
-		// check for genebuild.start_date >= genebuild.initial_release_date (not allowed as we cannot release a gene set before
+		// check for genebuild.start_date >= genebuild.initial_release_date (not allowed
+		// as we cannot release a gene set before
 		// downloaded the evidence)
 		if (startDate >= initialReleaseDate) {
 			result = false;
-			ReportManager.problem(this, con, "genebuild.start_date is greater than or equal to genebuild.initial_release_date");
+			ReportManager.problem(this, con,
+					"genebuild.start_date is greater than or equal to genebuild.initial_release_date");
 		}
 
-		// check for genebuild.initial_release_date > genebuild.last_geneset_update (not allowed as we cannot update a gene set before
+		// check for genebuild.initial_release_date > genebuild.last_geneset_update (not
+		// allowed as we cannot update a gene set before
 		// its initial public release)
 		if (initialReleaseDate > lastGenesetUpdate) {
 			result = false;
-			ReportManager.problem(this, con, "genebuild.initial_release_date is greater than or equal to genebuild.last_geneset_update");
+			ReportManager.problem(this, con,
+					"genebuild.initial_release_date is greater than or equal to genebuild.last_geneset_update");
 		}
 
 		return result;
@@ -507,31 +487,36 @@ public class MetaValues extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-		String[] Tables = { "gene", "transcript", "exon", "repeat_feature", "dna_align_feature", "protein_align_feature", "simple_feature", "prediction_transcript", "prediction_exon" };
+		String[] Tables = { "gene", "transcript", "exon", "repeat_feature", "dna_align_feature",
+				"protein_align_feature", "simple_feature", "prediction_transcript", "prediction_exon" };
 
 		int exists = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM meta where meta_key like '%build.level'");
 		if (exists == 0) {
-			ReportManager.problem(this, con, "GB: No %build.level entries in the meta table - run ensembl/misc-scripts/meta_levels.pl");
-			result = false; 
+			ReportManager.problem(this, con,
+					"GB: No %build.level entries in the meta table - run ensembl/misc-scripts/meta_levels.pl");
+			result = false;
 		}
 		int count = 0;
 		for (int i = 0; i < Tables.length; i++) {
 			String Table = Tables[i];
 			int rows = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + Table);
-			int key = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM meta WHERE meta_key = '" + Table + "build.level' ");
+			int key = DBUtils.getRowCount(con,
+					"SELECT COUNT(*) FROM meta WHERE meta_key = '" + Table + "build.level' ");
 			int toplevel = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM " + Table
 					+ " t, seq_region_attrib sra, attrib_type at WHERE t.seq_region_id = sra.seq_region_id AND sra.attrib_type_id = at.attrib_type_id AND at.code = 'toplevel' ");
 			if (rows != 0) {
 				if (key == 0) {
 					if (rows == toplevel) {
-						ReportManager.problem(this, con, "Table " + Table + " should have a toplevel flag - run ensembl/misc-scripts/meta_levels.pl");
+						ReportManager.problem(this, con, "Table " + Table
+								+ " should have a toplevel flag - run ensembl/misc-scripts/meta_levels.pl");
 						result = false;
 					} else {
 						count++;
 					}
 				} else {
 					if (rows != toplevel) {
-						ReportManager.problem(this, con, "Table " + Table + " has some non toplevel regions, should not have a toplevel flag - run ensembl/misc-scripts/meta_levels.pl");
+						ReportManager.problem(this, con, "Table " + Table
+								+ " has some non toplevel regions, should not have a toplevel flag - run ensembl/misc-scripts/meta_levels.pl");
 						result = false;
 					} else {
 						count++;
@@ -539,7 +524,8 @@ public class MetaValues extends SingleDatabaseTestCase {
 				}
 			} else {
 				if (key != 0) {
-					ReportManager.problem(this, con, "Empty table " + Table + " should not have a toplevel flag - run ensembl/misc-scripts/meta_levels.pl");
+					ReportManager.problem(this, con, "Empty table " + Table
+							+ " should not have a toplevel flag - run ensembl/misc-scripts/meta_levels.pl");
 					result = false;
 				} else {
 					count++;
@@ -557,13 +543,15 @@ public class MetaValues extends SingleDatabaseTestCase {
 	// ---------------------------------------------------------------------
 
 	/**
-	 * Check that the genebuild.method entry exists and has one of the allowed values.
+	 * Check that the genebuild.method entry exists and has one of the allowed
+	 * values.
 	 */
 	private boolean checkGenebuildMethod(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
 
-		String[] allowedMethods = { "full_genebuild", "projection_build", "import", "mixed_strategy_build", "external_annotation_import" };
+		String[] allowedMethods = { "full_genebuild", "projection_build", "import", "mixed_strategy_build",
+				"external_annotation_import" };
 
 		Connection con = dbre.getConnection();
 		String method = DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key='genebuild.method'");
@@ -583,11 +571,10 @@ public class MetaValues extends SingleDatabaseTestCase {
 	}
 	// ---------------------------------------------------------------------
 
-	
 	private boolean checkAssemblyAccessionUpdate(DatabaseRegistryEntry dbre) {
-		
+
 		boolean result = true;
-		
+
 		Connection con = dbre.getConnection();
 		String currentAssemblyAccession = DBUtils.getMetaValue(con, "assembly.accession");
 		String currentAssemblyName = DBUtils.getMetaValue(con, "assembly.name");
@@ -596,41 +583,41 @@ public class MetaValues extends SingleDatabaseTestCase {
 			ReportManager.problem(this, con, "No assembly.accession entry present in Meta table");
 			return false;
 		}
-                if (!currentAssemblyAccession.matches("^GC.*")){
-                        ReportManager.problem(this, con, "Meta key assembly.accession does not start with GC");
-                        return false;
-                }
+		if (!currentAssemblyAccession.matches("^GC.*")) {
+			ReportManager.problem(this, con, "Meta key assembly.accession does not start with GC");
+			return false;
+		}
 		if (currentAssemblyName.equals("")) {
 			ReportManager.problem(this, con, "No assembly.name entry present in Meta table");
 			return false;
 		}
-		
+
 		DatabaseRegistryEntry sec = getEquivalentFromSecondaryServer(dbre);
 
 		if (sec == null) {
-		
+
 			logger.warning("Can't get equivalent database for " + dbre.getName());
 			return true;
 		}
-		
-		logger.finest("Equivalent database on secondary server is " + sec.getName());		
+
+		logger.finest("Equivalent database on secondary server is " + sec.getName());
 
 		Connection previousCon = sec.getConnection();
 		String previousAssemblyAccession = DBUtils.getMetaValue(previousCon, "assembly.accession");
 		String previousAssemblyName = DBUtils.getMetaValue(previousCon, "assembly.name");
-		
+
 		long currentAssemblyChecksum = DBUtils.getChecksum(con, "assembly");
 		long previousAssemblyChecksum = DBUtils.getChecksum(previousCon, "assembly");
-				
+
 		boolean assemblyChanged = false;
 		boolean assemblyTableChanged = false;
 		boolean assemblyExceptionTableChanged = false;
-		
+
 		if (currentAssemblyChecksum != previousAssemblyChecksum) {
 			assemblyTableChanged = true;
 		} else {
-			if (dbre.getSpecies() != Species.HOMO_SAPIENS) {
-						
+			if (!dbre.getSpecies().equals(DatabaseRegistryEntry.HOMO_SAPIENS)) {
+
 				// compare assembly_exception tables (patches only) from each database
 				try {
 
@@ -641,31 +628,33 @@ public class MetaValues extends SingleDatabaseTestCase {
 					ResultSet previousRS = previousStmt.executeQuery(sql);
 					ResultSet currentRS = currentStmt.executeQuery(sql);
 
-					boolean assExSame = DBUtils.compareResultSets(currentRS, previousRS, this, "", false, false, "assembly_exception", false);
+					boolean assExSame = DBUtils.compareResultSets(currentRS, previousRS, this, "", false, false,
+							"assembly_exception", false);
 
 					currentRS.close();
 					previousRS.close();
 					currentStmt.close();
 					previousStmt.close();
-					
+
 					assemblyExceptionTableChanged = !assExSame;
 
 				} catch (SQLException e) {
 					e.printStackTrace();
-				}			
-				
+				}
+
 			}
 		}
-	
+
 		assemblyChanged = assemblyTableChanged || assemblyExceptionTableChanged;
 
-		if (assemblyChanged == previousAssemblyAccession.equals(currentAssemblyAccession) && previousAssemblyName.equals(currentAssemblyName) ) {
+		if (assemblyChanged == previousAssemblyAccession.equals(currentAssemblyAccession)
+				&& previousAssemblyName.equals(currentAssemblyName)) {
 			result = false;
 			String errorMessage = "assembly.accession and assembly.name values need to be updated when "
 					+ "the assembly table changes or new patches are added to the assembly exception table\n"
-					+ "previous assembly.accession: " + previousAssemblyAccession + " assembly.name: " + previousAssemblyName 
-					+ " current assembly.accession: " + currentAssemblyAccession + " assembly.name: " + currentAssemblyName + "\n"
-					+ "assembly table changed:";
+					+ "previous assembly.accession: " + previousAssemblyAccession + " assembly.name: "
+					+ previousAssemblyName + " current assembly.accession: " + currentAssemblyAccession
+					+ " assembly.name: " + currentAssemblyName + "\n" + "assembly table changed:";
 			if (assemblyTableChanged) {
 				errorMessage += " yes;";
 			} else {
@@ -676,141 +665,154 @@ public class MetaValues extends SingleDatabaseTestCase {
 				errorMessage += " yes";
 			} else {
 				errorMessage += " no";
-			}			
-			ReportManager.problem(this, con, errorMessage);		
-		}	
+			}
+			ReportManager.problem(this, con, errorMessage);
+		}
 
 		if (result) {
 			ReportManager.correct(this, con, "assembly.accession and assembly.name values are correct");
-		}			
-								
+		}
+
 		return result;
-	}	
-			
-	
+	}
+
 	// ---------------------------------------------------------------------
 	/**
-	 * Check that all meta_values with meta_key 'repeat.analysis' reference analysis.logic_name
-         * Also check that repeatmask is one of them
+	 * Check that all meta_values with meta_key 'repeat.analysis' reference
+	 * analysis.logic_name Also check that repeatmask is one of them
 	 */
 	private boolean checkRepeatAnalysis(DatabaseRegistryEntry dbre) {
 
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
-		String[] repeatAnalyses = DBUtils.getColumnValues(con, "SELECT meta_value FROM meta LEFT JOIN analysis ON meta_value = logic_name WHERE meta_key = 'repeat.analysis' AND analysis_id IS NULL");
+		String[] repeatAnalyses = DBUtils.getColumnValues(con,
+				"SELECT meta_value FROM meta LEFT JOIN analysis ON meta_value = logic_name WHERE meta_key = 'repeat.analysis' AND analysis_id IS NULL");
 		if (repeatAnalyses.length > 0) {
-                        result = false;
-			ReportManager.problem(this, con, "The following values for meta_key repeat.analysis don't have a corresponding logic_name entry in the analysis table: " + Utils.arrayToString(repeatAnalyses,",") );
+			result = false;
+			ReportManager.problem(this, con,
+					"The following values for meta_key repeat.analysis don't have a corresponding logic_name entry in the analysis table: "
+							+ Utils.arrayToString(repeatAnalyses, ","));
 		} else {
-			ReportManager.correct(this, con, "All values for meta_key repeat.analysis have a corresponding logic_name entry in the analysis table");
+			ReportManager.correct(this, con,
+					"All values for meta_key repeat.analysis have a corresponding logic_name entry in the analysis table");
 		}
 
-                if (dbre.getType() == DatabaseType.CORE) {
+		if (dbre.getType() == DatabaseType.CORE) {
 
-                        int repeatMask = DBUtils.getRowCount(con, "SELECT count(*) FROM meta WHERE meta_key = 'repeat.analysis' AND (meta_value like 'repeatmask_repbase%' or meta_value = 'repeatmask')");
-                        if (repeatMask == 0) {
-                                result = false;
-                                ReportManager.problem(this, con, "There is no entry in meta for repeatmask repeat.analysis");
-                        } else {
-                                ReportManager.correct(this, con, "Repeatmask is present in meta table for repeat.analysis");
-                        }
-                }
-                
+			int repeatMask = DBUtils.getRowCount(con,
+					"SELECT count(*) FROM meta WHERE meta_key = 'repeat.analysis' AND (meta_value like 'repeatmask_repbase%' or meta_value = 'repeatmask')");
+			if (repeatMask == 0) {
+				result = false;
+				ReportManager.problem(this, con, "There is no entry in meta for repeatmask repeat.analysis");
+			} else {
+				ReportManager.correct(this, con, "Repeatmask is present in meta table for repeat.analysis");
+			}
+		}
+
 		return result;
 
 	}
 
-        private boolean checkGenes(DatabaseRegistryEntry dbre, DatabaseRegistryEntry sec) {
+	private boolean checkGenes(DatabaseRegistryEntry dbre, DatabaseRegistryEntry sec) {
 
-          boolean result = true;
+		boolean result = true;
 
-          Connection con = dbre.getConnection();
-          if (sec == null) {
-            logger.warning("Can't get equivalent database for " + dbre.getName());
-            return true;
-          }
-          Connection previousCon = sec.getConnection();
+		Connection con = dbre.getConnection();
+		if (sec == null) {
+			logger.warning("Can't get equivalent database for " + dbre.getName());
+			return true;
+		}
+		Connection previousCon = sec.getConnection();
 
-          SqlTemplate t = getSqlTemplate(dbre);
+		SqlTemplate t = getSqlTemplate(dbre);
 
-          RowMapper<Set<Object>> rowMapper = new RowMapper<Set<Object>>(){
-            public Set<Object> mapRow(ResultSet rs, int position) throws SQLException {
-              Set<Object> set = new HashSet<Object>();
-              for (int i=1; i <= 10; i++) {
-                set.add(rs.getObject(i));
-              }
-              return set;
-            }
-          };
+		RowMapper<Set<Object>> rowMapper = new RowMapper<Set<Object>>() {
+			public Set<Object> mapRow(ResultSet rs, int position) throws SQLException {
+				Set<Object> set = new HashSet<Object>();
+				for (int i = 1; i <= 10; i++) {
+					set.add(rs.getObject(i));
+				}
+				return set;
+			}
+		};
 
-          String sql = "SELECT biotype, analysis_id, seq_region_id, seq_region_start, seq_region_end, seq_region_end, seq_region_strand, stable_id, is_current, version FROM gene WHERE biotype NOT IN ('LRG_gene')" ;
-          Set<Set<Object>> currentGenes = t.queryForSet(sql, rowMapper);
-          Set<Set<Object>> previousGenes = getSqlTemplate(sec).queryForSet(sql, rowMapper);
+		String sql = "SELECT biotype, analysis_id, seq_region_id, seq_region_start, seq_region_end, seq_region_end, seq_region_strand, stable_id, is_current, version FROM gene WHERE biotype NOT IN ('LRG_gene')";
+		Set<Set<Object>> currentGenes = t.queryForSet(sql, rowMapper);
+		Set<Set<Object>> previousGenes = getSqlTemplate(sec).queryForSet(sql, rowMapper);
 
-          String genesetUpdate = DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key = 'genebuild.last_geneset_update'");
-          String previousGenesetUpdate = DBUtils.getRowColumnValue(previousCon, "SELECT meta_value FROM meta WHERE meta_key = 'genebuild.last_geneset_update'");
+		String genesetUpdate = DBUtils.getRowColumnValue(con,
+				"SELECT meta_value FROM meta WHERE meta_key = 'genebuild.last_geneset_update'");
+		String previousGenesetUpdate = DBUtils.getRowColumnValue(previousCon,
+				"SELECT meta_value FROM meta WHERE meta_key = 'genebuild.last_geneset_update'");
 
-          String[] gencodeWebdata = DBUtils.getColumnValues(con, "SELECT web_data FROM analysis_description ad, analysis a WHERE a.analysis_id = ad.analysis_id AND logic_name in ('ensembl_havana_gene', 'ensembl_havana_ig_gene', 'ensembl_lincrna')");
-          String[] previousGencodeWebdata = DBUtils.getColumnValues(previousCon, "SELECT web_data FROM analysis_description ad, analysis a WHERE a.analysis_id = ad.analysis_id AND logic_name in ('ensembl_havana_gene', 'ensembl_havana_ig_gene', 'ensembl_lincrna')");
+		String[] gencodeWebdata = DBUtils.getColumnValues(con,
+				"SELECT web_data FROM analysis_description ad, analysis a WHERE a.analysis_id = ad.analysis_id AND logic_name in ('ensembl_havana_gene', 'ensembl_havana_ig_gene', 'ensembl_lincrna')");
+		String[] previousGencodeWebdata = DBUtils.getColumnValues(previousCon,
+				"SELECT web_data FROM analysis_description ad, analysis a WHERE a.analysis_id = ad.analysis_id AND logic_name in ('ensembl_havana_gene', 'ensembl_havana_ig_gene', 'ensembl_lincrna')");
 
-          String gencode = DBUtils.getRowColumnValue(con, "SELECT meta_value FROM meta WHERE meta_key = 'gencode.version'");
-          String previousGencode = DBUtils.getRowColumnValue(previousCon, "SELECT meta_value FROM meta WHERE meta_key = 'gencode.version'");
+		String gencode = DBUtils.getRowColumnValue(con,
+				"SELECT meta_value FROM meta WHERE meta_key = 'gencode.version'");
+		String previousGencode = DBUtils.getRowColumnValue(previousCon,
+				"SELECT meta_value FROM meta WHERE meta_key = 'gencode.version'");
 
-          if (! currentGenes.equals(previousGenes)) {
-            if (genesetUpdate.equals(previousGenesetUpdate)) {
-              ReportManager.problem(this, con, "Gene set has changed but last_geneset_update has not been updated");
-              result = false;
-            }
-            if (dbre.getSpecies() == Species.HOMO_SAPIENS || dbre.getSpecies() == Species.MUS_MUSCULUS) {
-              if (gencode.equals(previousGencode)) {
-                ReportManager.problem(this, con, "Gene set has changed but gencode.version has not been updated");
-                result = false;
-              }
-              for (int i = 0; i < gencodeWebdata.length; i++) {
-                if (gencodeWebdata[i].equals(previousGencodeWebdata[i])) {
-                  ReportManager.problem(this, con, "Gene set has changed but gencode version in web_data has not been updated");
-                  result = false;
-                }
-              }
-            }
-          }
+		if (!currentGenes.equals(previousGenes)) {
+			if (genesetUpdate.equals(previousGenesetUpdate)) {
+				ReportManager.problem(this, con, "Gene set has changed but last_geneset_update has not been updated");
+				result = false;
+			}
+			if (dbre.getSpecies().equals(DatabaseRegistryEntry.HOMO_SAPIENS)
+					|| dbre.getSpecies().equals(DatabaseRegistryEntry.MUS_MUSCULUS)) {
+				if (gencode.equals(previousGencode)) {
+					ReportManager.problem(this, con, "Gene set has changed but gencode.version has not been updated");
+					result = false;
+				}
+				for (int i = 0; i < gencodeWebdata.length; i++) {
+					if (gencodeWebdata[i].equals(previousGencodeWebdata[i])) {
+						ReportManager.problem(this, con,
+								"Gene set has changed but gencode version in web_data has not been updated");
+						result = false;
+					}
+				}
+			}
+		}
 
-          return result;
+		return result;
 
-        }
-	
-	private boolean checkForSchemaPatchLineBreaks(DatabaseRegistryEntry dbre) {
-	  SqlTemplate t = DBUtils.getSqlTemplate(dbre);
-	  String metaKey = "patch"; 
-	  String sql = "select meta_id from meta where meta_key =? and species_id IS NULL and meta_value like ?";
-	  List<Integer> ids = t.queryForDefaultObjectList(sql, Integer.class, metaKey, "%\n%");
-    if(!ids.isEmpty()) {
-      String idsJoined = Utils.listToString(ids, ",");
-      String usefulSql = "select * from meta where meta_id IN ("+idsJoined+")";
-      String msg = String.format("The meta ids [%s] had values with linebreaks.\nUSEFUL SQL: %s", idsJoined, usefulSql);
-      ReportManager.problem(this, dbre.getConnection(), msg);
-      return false;
-    }
-    return true;
 	}
 
-  private boolean checkSample(DatabaseRegistryEntry dbre) {
-    SqlTemplate t = DBUtils.getSqlTemplate(dbre);
-    String metaKey = "sample.location_text";
-    String sql = "select meta_value from meta where meta_key = ?"; 
-    List<String> value = t.queryForDefaultObjectList(sql, String.class, metaKey);
-    if (!value.isEmpty()) {
-      String linkedKey = "sample.location_param";
-      String linkedSql = "select meta_value from meta where meta_key = ?";
-      List<String> linkedValue = t.queryForDefaultObjectList(linkedSql, String.class, linkedKey);
-      if(!linkedValue.equals(value)) {
-        ReportManager.problem(this, dbre.getConnection(), "Keys " + metaKey + " and " + linkedKey + " do not have same value");
-        return false;
-      }
-    }
-    return true;
-  }
+	private boolean checkForSchemaPatchLineBreaks(DatabaseRegistryEntry dbre) {
+		SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+		String metaKey = "patch";
+		String sql = "select meta_id from meta where meta_key =? and species_id IS NULL and meta_value like ?";
+		List<Integer> ids = t.queryForDefaultObjectList(sql, Integer.class, metaKey, "%\n%");
+		if (!ids.isEmpty()) {
+			String idsJoined = Utils.listToString(ids, ",");
+			String usefulSql = "select * from meta where meta_id IN (" + idsJoined + ")";
+			String msg = String.format("The meta ids [%s] had values with linebreaks.\nUSEFUL SQL: %s", idsJoined,
+					usefulSql);
+			ReportManager.problem(this, dbre.getConnection(), msg);
+			return false;
+		}
+		return true;
+	}
 
-	
+	private boolean checkSample(DatabaseRegistryEntry dbre) {
+		SqlTemplate t = DBUtils.getSqlTemplate(dbre);
+		String metaKey = "sample.location_text";
+		String sql = "select meta_value from meta where meta_key = ?";
+		List<String> value = t.queryForDefaultObjectList(sql, String.class, metaKey);
+		if (!value.isEmpty()) {
+			String linkedKey = "sample.location_param";
+			String linkedSql = "select meta_value from meta where meta_key = ?";
+			List<String> linkedValue = t.queryForDefaultObjectList(linkedSql, String.class, linkedKey);
+			if (!linkedValue.equals(value)) {
+				ReportManager.problem(this, dbre.getConnection(),
+						"Keys " + metaKey + " and " + linkedKey + " do not have same value");
+				return false;
+			}
+		}
+		return true;
+	}
+
 } // MetaValues

@@ -17,7 +17,6 @@
 package org.ensembl.healthcheck.testgroup;
 
 import org.ensembl.healthcheck.testcase.generic.InterproDescriptions;
-import org.ensembl.healthcheck.testcase.generic.ProductionAnalysisLogicName;
 
 /**
  * @author dstaines
@@ -30,7 +29,7 @@ public class EGCoreHandover extends EGCoreIntegrity {
 	 */
 	public EGCoreHandover() {
 		super();
-		this.removeTest(InterproDescriptions.class, ProductionAnalysisLogicName.class);
+		this.removeTest(InterproDescriptions.class);
 	}
 
 }

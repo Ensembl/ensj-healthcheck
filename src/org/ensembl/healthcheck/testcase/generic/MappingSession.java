@@ -25,7 +25,6 @@ import java.sql.Statement;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
@@ -75,8 +74,10 @@ public class MappingSession extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		// there are several species where ID mapping is not done
-		Species s = dbre.getSpecies();
-		if (s != Species.CAENORHABDITIS_ELEGANS && s != Species.DROSOPHILA_MELANOGASTER && s != Species.SACCHAROMYCES_CEREVISIAE) {
+		String s = dbre.getSpecies();
+		if (!s.equals(DatabaseRegistryEntry.CAENORHABDITIS_ELEGANS)
+				&& !s.equals(DatabaseRegistryEntry.DROSOPHILA_MELANOGASTER)
+				&& !s.equals(DatabaseRegistryEntry.SACCHAROMYCES_CEREVISIAE)) {
 
 			Connection con = dbre.getConnection();
 
@@ -104,8 +105,7 @@ public class MappingSession extends SingleDatabaseTestCase {
 		boolean result = true;
 		String dbNameRegexp = "[A-Za-z]+_[A-Za-z]+_(core|est|estgene|vega)_\\d+_\\d+[A-Za-z]?.*";
 
-		String[] sql = {
-				"SELECT old_db_name from mapping_session WHERE old_db_name <> 'ALL'",
+		String[] sql = { "SELECT old_db_name from mapping_session WHERE old_db_name <> 'ALL'",
 				"SELECT new_db_name from mapping_session WHERE new_db_name <> 'LATEST'" };
 
 		for (int i = 0; i < sql.length; i++) {
@@ -113,13 +113,8 @@ public class MappingSession extends SingleDatabaseTestCase {
 			String[] names = DBUtils.getColumnValues(con, sql[i]);
 			for (int j = 0; j < names.length; j++) {
 				if (!(names[j].matches(dbNameRegexp)) && !ignoreName(names[j])) {
-					ReportManager
-							.problem(
-									this,
-									con,
-									"Database name "
-											+ names[j]
-											+ " in mapping_session does not appear to be in the correct format");
+					ReportManager.problem(this, con, "Database name " + names[j]
+							+ " in mapping_session does not appear to be in the correct format");
 					result = false;
 				}
 			}
@@ -127,9 +122,8 @@ public class MappingSession extends SingleDatabaseTestCase {
 		}
 
 		if (result) {
-			ReportManager
-					.correct(this, con,
-							"All database names in mapping_session appear to be in the correct format");
+			ReportManager.correct(this, con,
+					"All database names in mapping_session appear to be in the correct format");
 		}
 
 		return result;
@@ -146,11 +140,9 @@ public class MappingSession extends SingleDatabaseTestCase {
 	 * @return True when all ID mapping-related tables exist and have > 0 rows.
 	 * 
 	 */
-	private boolean checkTablesExistAndPopulated(
-			final DatabaseRegistryEntry dbre) {
+	private boolean checkTablesExistAndPopulated(final DatabaseRegistryEntry dbre) {
 
-		String[] tables = new String[] { "stable_id_event", "mapping_session",
-				"gene_archive", "peptide_archive" };
+		String[] tables = new String[] { "stable_id_event", "mapping_session", "gene_archive", "peptide_archive" };
 
 		boolean result = true;
 
@@ -161,13 +153,11 @@ public class MappingSession extends SingleDatabaseTestCase {
 			boolean exists = DBUtils.checkTableExists(con, table);
 			if (exists) {
 				// gene_archive and peptide_archive can be empty
-				if (table.equals("gene_archive")
-						|| table.equals("peptide_archive")) {
+				if (table.equals("gene_archive") || table.equals("peptide_archive")) {
 					continue;
 				}
 				if (DBUtils.countRowsInTable(con, table) == 0) {
-					ReportManager
-							.problem(this, con, "Empty table:" + table);
+					ReportManager.problem(this, con, "Empty table:" + table);
 					result = false;
 				}
 			} else {
@@ -181,8 +171,8 @@ public class MappingSession extends SingleDatabaseTestCase {
 
 	// -----------------------------------------------------------------
 	/**
-	 * Check that all mapping_sessions have new releases that are greater than
-	 * the old releases.
+	 * Check that all mapping_sessions have new releases that are greater than the
+	 * old releases.
 	 */
 	private boolean checkOldAndNewReleases(final Connection con) {
 
@@ -194,32 +184,20 @@ public class MappingSession extends SingleDatabaseTestCase {
 
 			// nasty forced cast by adding 0 required since the columns are
 			// VARCHARS and need to be compared lexicographically
-			ResultSet rs = stmt
-					.executeQuery("SELECT mapping_session_id, old_db_name, new_db_name, old_release, new_release FROM mapping_session WHERE old_release+0 >= new_release+0");
+			ResultSet rs = stmt.executeQuery(
+					"SELECT mapping_session_id, old_db_name, new_db_name, old_release, new_release FROM mapping_session WHERE old_release+0 >= new_release+0");
 
 			while (rs.next()) {
 
 				// ignore homo_sapiens_core_18_34 -> homo_sapiens_core_18_34a
 				// since this was when we didn't change numbers between releases
-				if (rs.getString("old_db_name").equals(
-						"homo_sapiens_core_18_34")) {
+				if (rs.getString("old_db_name").equals("homo_sapiens_core_18_34")) {
 					continue;
 				}
-				ReportManager
-						.problem(
-								this,
-								con,
-								"Mapping session with ID "
-										+ rs.getLong("mapping_session_id")
-										+ " ("
-										+ rs.getString("old_db_name")
-										+ " -> "
-										+ rs.getString("new_db_name")
-										+ ") has a new_release ("
-										+ rs.getInt("new_release")
-										+ ") that is not greater than the old release ("
-										+ rs.getInt("old_release")
-										+ "). May cause problems with IDHistoryView.");
+				ReportManager.problem(this, con, "Mapping session with ID " + rs.getLong("mapping_session_id") + " ("
+						+ rs.getString("old_db_name") + " -> " + rs.getString("new_db_name") + ") has a new_release ("
+						+ rs.getInt("new_release") + ") that is not greater than the old release ("
+						+ rs.getInt("old_release") + "). May cause problems with IDHistoryView.");
 				result = false;
 
 			}
@@ -230,8 +208,7 @@ public class MappingSession extends SingleDatabaseTestCase {
 
 		if (result) {
 
-			ReportManager.correct(this, con,
-					"All new_release values are greater than old_release.");
+			ReportManager.correct(this, con, "All new_release values are greater than old_release.");
 
 		}
 
@@ -253,12 +230,10 @@ public class MappingSession extends SingleDatabaseTestCase {
 
 		String[] rows = DBUtils.getColumnValues(con, sql);
 		if (rows.length > 0) {
-			ReportManager.problem(this, con, rows.length
-					+ " duplicates in stable_id_event");
+			ReportManager.problem(this, con, rows.length + " duplicates in stable_id_event");
 			result = false;
 		} else {
-			ReportManager
-					.correct(this, con, "No duplicates in stable_id_event");
+			ReportManager.correct(this, con, "No duplicates in stable_id_event");
 		}
 
 		return result;
@@ -266,8 +241,8 @@ public class MappingSession extends SingleDatabaseTestCase {
 
 	// -----------------------------------------------------------------
 	/**
-	 * Certain historical names don't match the new format and should be ignored
-	 * to prevent constant failures.
+	 * Certain historical names don't match the new format and should be ignored to
+	 * prevent constant failures.
 	 */
 	private boolean ignoreName(String name) {
 

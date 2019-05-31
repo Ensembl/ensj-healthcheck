@@ -26,12 +26,9 @@ import java.util.Map;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.Priority;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
-import org.ensembl.healthcheck.util.DBUtils;
-
 
 /**
  * Check for certain combinations of logic name and transcript name.
@@ -48,14 +45,14 @@ public class TranscriptNames extends SingleDatabaseTestCase {
 		setPriority(Priority.AMBER);
 		setEffect("Transcript names do not match the logic names.");
 		setTeamResponsible(Team.CORE);
-                setSecondTeamResponsible(Team.GENEBUILD);
+		setSecondTeamResponsible(Team.GENEBUILD);
 	}
 
 	/**
 	 * Run the test.
 	 * 
 	 * @param dbre
-	 *          The database to use.
+	 *            The database to use.
 	 * @return true if the test passed.
 	 * 
 	 */
@@ -64,8 +61,7 @@ public class TranscriptNames extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		// only valid in human, mouse and zebrafish
-                Species species = dbre.getSpecies();
-                boolean is_merged = isMerged(species);
+		boolean is_merged = isMerged(dbre);
 		if (!is_merged) {
 			return true;
 		}
@@ -75,7 +71,7 @@ public class TranscriptNames extends SingleDatabaseTestCase {
 		logicNameRegexp.put("ensembl", "-2[0-9][0-9]$");
 		logicNameRegexp.put("ensembl_havana_transcript", "-0[0-9][0-9]$");
 		logicNameRegexp.put("havana", "-0[0-9][0-9]$");
-		//logicNameRegexp.put("ncrna", "-2[0-9][0-9]$");
+		// logicNameRegexp.put("ncrna", "-2[0-9][0-9]$");
 		logicNameRegexp.put("ensembl_ig_gene", "-2[0-9][0-9]$");
 		logicNameRegexp.put("havana_ig_gene", "-0[0-9][0-9]$");
 		logicNameRegexp.put("ncrna_pseudogene", "-2[0-9][0-9]$");
@@ -87,8 +83,8 @@ public class TranscriptNames extends SingleDatabaseTestCase {
 
 		try {
 
-			PreparedStatement stmt = con
-					.prepareStatement("SELECT COUNT(*) FROM analysis a, transcript t, xref x WHERE a.analysis_id=t.analysis_id AND t.display_xref_id=x.xref_id AND a.logic_name=? AND x.display_label NOT REGEXP ?");
+			PreparedStatement stmt = con.prepareStatement(
+					"SELECT COUNT(*) FROM analysis a, transcript t, xref x WHERE a.analysis_id=t.analysis_id AND t.display_xref_id=x.xref_id AND a.logic_name=? AND x.display_label NOT REGEXP ?");
 
 			for (String logicName : logicNameRegexp.keySet()) {
 
@@ -104,11 +100,14 @@ public class TranscriptNames extends SingleDatabaseTestCase {
 				if (rows > 0) {
 
 					result = false;
-					ReportManager.problem(this, con, String.format("%d transcripts with logic name %s have names which don't match the required pattern (%s)", rows, logicName, regexp));
+					ReportManager.problem(this, con, String.format(
+							"%d transcripts with logic name %s have names which don't match the required pattern (%s)",
+							rows, logicName, regexp));
 
 				} else {
 
-					ReportManager.correct(this, con, String.format("All transcripts with logic name %s have correct names", logicName));
+					ReportManager.correct(this, con,
+							String.format("All transcripts with logic name %s have correct names", logicName));
 
 				}
 

@@ -372,11 +372,11 @@ public class ConfigurableTestRunner extends TestRunner {
                 }
 
 		List<String> testDatabases = new ArrayList<String>(getTestDatabases());
-		Species globalSpecies = null;
+		String globalSpecies = null;
 
 		if (configuration.isSpecies()) {
-			globalSpecies = Species.resolveAlias(configuration.getSpecies());
-			if (globalSpecies != Species.UNKNOWN) {
+			globalSpecies = configuration.getSpecies();
+			if (globalSpecies != DatabaseRegistryEntry.UNKNOWN) {
 				logger.info("Will override guessed species with "
 						+ globalSpecies + " for all databases");
 			} else {

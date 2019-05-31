@@ -22,15 +22,13 @@ import java.sql.Connection;
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
-import org.ensembl.healthcheck.Species;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
-import org.ensembl.healthcheck.util.Utils;
-
 
 /**
- * Check that the seq_region names are in the right format. Only checks human and mouse.
+ * Check that the seq_region names are in the right format. Only checks human
+ * and mouse.
  */
 
 public class SeqRegionName extends SingleDatabaseTestCase {
@@ -44,23 +42,23 @@ public class SeqRegionName extends SingleDatabaseTestCase {
 		setTeamResponsible(Team.GENEBUILD);
 	}
 
-        /**
-         * Data is only tested in core database, as the tables are in sync
-         */
-        public void types() {
+	/**
+	 * Data is only tested in core database, as the tables are in sync
+	 */
+	public void types() {
 
-                removeAppliesToType(DatabaseType.OTHERFEATURES);
-                removeAppliesToType(DatabaseType.ESTGENE);
-                removeAppliesToType(DatabaseType.RNASEQ);
-                removeAppliesToType(DatabaseType.CDNA);
+		removeAppliesToType(DatabaseType.OTHERFEATURES);
+		removeAppliesToType(DatabaseType.ESTGENE);
+		removeAppliesToType(DatabaseType.RNASEQ);
+		removeAppliesToType(DatabaseType.CDNA);
 
-        }
+	}
 
 	/**
 	 * Run the test.
 	 * 
 	 * @param dbre
-	 *          The database to use.
+	 *            The database to use.
 	 * @return true if the test passed.
 	 * 
 	 */
@@ -68,19 +66,19 @@ public class SeqRegionName extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		Species s = dbre.getSpecies();
-                Connection con = dbre.getConnection();
-                String AssemblyAccession = DBUtils.getMetaValue(con, "assembly.accession");
+		String s = dbre.getSpecies();
+		Connection con = dbre.getConnection();
+		String AssemblyAccession = DBUtils.getMetaValue(con, "assembly.accession");
 
-                if (AssemblyAccession.contains("GCA")) {
+		if (AssemblyAccession.contains("GCA")) {
 
 			result &= seqRegionNameCheck(con, "clone", "^[a-zA-Z]+[0-9]+\\.[0-9]+$");
 			result &= seqRegionNameCheck(con, "contig", "^[a-zA-Z]*[0-9]*(\\\\.[0-9]+)+(\\.[0-9+])*$");
-                        result &= seqRegionNameCheck(con, "scaffold", "^[a-zA-Z]*[0-9]*(\\.[0-9]+)+(\\.[0-9]+)*$");
+			result &= seqRegionNameCheck(con, "scaffold", "^[a-zA-Z]*[0-9]*(\\.[0-9]+)+(\\.[0-9]+)*$");
 
-                }
+		}
 
-		if (s.equals(Species.ANCESTRAL_SEQUENCES)) {
+		if (s.equals(DatabaseRegistryEntry.ANCESTRAL_SEQUENCES)) {
 
 			result &= seqRegionNameCheck(con, "ancestralsegment", "Ancestor_[0-9]+_[0-9]+$");
 
@@ -92,7 +90,8 @@ public class SeqRegionName extends SingleDatabaseTestCase {
 
 	// ----------------------------------------------------------------------
 	/**
-	 * Check that seq regions of a particular coordinate system are named appropriately.
+	 * Check that seq regions of a particular coordinate system are named
+	 * appropriately.
 	 * 
 	 * @return True if all seq_region names match the regexp.
 	 */
@@ -102,28 +101,35 @@ public class SeqRegionName extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		int rows = DBUtils.getRowCount(con, String.format(
-				"SELECT COUNT(*) FROM seq_region sr, coord_system cs WHERE sr.coord_system_id=cs.coord_system_id AND cs.name='%s' AND sr.name NOT LIKE 'LRG%%' AND sr.name NOT LIKE 'MT' AND sr.name NOT REGEXP '%s' ", coordinateSystem,
-				regexp));
+				"SELECT COUNT(*) FROM seq_region sr, coord_system cs WHERE sr.coord_system_id=cs.coord_system_id AND cs.name='%s' AND sr.name NOT LIKE 'LRG%%' AND sr.name NOT LIKE 'MT' AND sr.name NOT REGEXP '%s' ",
+				coordinateSystem, regexp));
 
 		if (rows > 0) {
-                        if (rows == 1 && coordinateSystem.equals("contig")) {
-                              int MT = DBUtils.getRowCount(con, String.format(
-                                 "SELECT COUNT(*) FROM seq_region s1, coord_system cs, seq_region s2, assembly asm WHERE s1.coord_system_id = cs.coord_system_id AND cs.name ='%s' AND s1.seq_region_id = cmp_seq_region_id AND s2.seq_region_id = asm_seq_region_id AND s2.name = 'MT' AND s1.name NOT REGEXP '%s' ", coordinateSystem, regexp));
-                              if (MT == 1) {
-                                     ReportManager.correct(this, con, String.format("1 MT contig region found with special format"));
-                              } else {
-                                     ReportManager.problem(this, con, String.format("%d seq_regions in coordinate system %s have names that are not of the correct format", rows, coordinateSystem));
-                                     result = false;
-                              }
-                        } else {
+			if (rows == 1 && coordinateSystem.equals("contig")) {
+				int MT = DBUtils.getRowCount(con, String.format(
+						"SELECT COUNT(*) FROM seq_region s1, coord_system cs, seq_region s2, assembly asm WHERE s1.coord_system_id = cs.coord_system_id AND cs.name ='%s' AND s1.seq_region_id = cmp_seq_region_id AND s2.seq_region_id = asm_seq_region_id AND s2.name = 'MT' AND s1.name NOT REGEXP '%s' ",
+						coordinateSystem, regexp));
+				if (MT == 1) {
+					ReportManager.correct(this, con, String.format("1 MT contig region found with special format"));
+				} else {
+					ReportManager.problem(this, con, String.format(
+							"%d seq_regions in coordinate system %s have names that are not of the correct format",
+							rows, coordinateSystem));
+					result = false;
+				}
+			} else {
 
-                              ReportManager.problem(this, con, String.format("%d seq_regions in coordinate system %s have names that are not of the correct format", rows, coordinateSystem));
-                              result = false;
-                        }
+				ReportManager.problem(this, con,
+						String.format(
+								"%d seq_regions in coordinate system %s have names that are not of the correct format",
+								rows, coordinateSystem));
+				result = false;
+			}
 
 		} else {
 
-			ReportManager.correct(this, con, String.format("All seq_regions in coordinate system %s have names in the correct format", coordinateSystem));
+			ReportManager.correct(this, con, String.format(
+					"All seq_regions in coordinate system %s have names in the correct format", coordinateSystem));
 
 		}
 

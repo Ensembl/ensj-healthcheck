@@ -48,13 +48,15 @@ public class Assembly extends GroupOfTests {
 
                 addTest(
                         org.ensembl.healthcheck.testcase.generic.AncestralSequencesExtraChecks.class,
-                        org.ensembl.healthcheck.testcase.generic.AssemblyExceptions.class,
+                        org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableIntegrity.class,
+                        org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableSeqMapping.class,
+                        org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableSeqRegionAttribute.class,
+                        org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableStartEnd.class,
+                        org.ensembl.healthcheck.testcase.generic.AssemblyExceptionTableUniqueRegion.class,
                         org.ensembl.healthcheck.testcase.generic.AssemblyMapping.class,
-                        org.ensembl.healthcheck.testcase.generic.AssemblyMultipleOverlap.class,
                         org.ensembl.healthcheck.testcase.generic.AssemblySeqregion.class,
                         org.ensembl.healthcheck.testcase.generic.BlankCoordSystemVersions.class,
                         org.ensembl.healthcheck.testcase.generic.DuplicateAssembly.class,
-                        org.ensembl.healthcheck.testcase.generic.GeneCount.class,
                         org.ensembl.healthcheck.testcase.generic.Karyotype.class,
                         org.ensembl.healthcheck.testcase.generic.MTCodonTable.class,
                         org.ensembl.healthcheck.testcase.generic.MultipleComponentAssemblyMapping.class,

@@ -19,7 +19,6 @@ package org.ensembl.healthcheck.test;
 
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
-import org.ensembl.healthcheck.Species;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -31,20 +30,19 @@ import org.testng.annotations.Test;
  */
 public class DatabaseRegistryEntryTest {
 
-  @Test
-  public void testSetSpeciesAndTypeFromName() {
+	@Test
+	public void testSetSpeciesAndTypeFromName() {
 
-    // all of these should resolve
-    String[] names = { "homo_sapiens_core_20_34", "human_core_20" };
+		// all of these should resolve
+		String[] names = { "homo_sapiens_core_20_34", "human_core_20" };
 
-    for (int i = 0; i < names.length; i++) {
-      DatabaseRegistryEntry dbre = new DatabaseRegistryEntry(null, names[i],
-          null, null);
-      Assert.assertTrue(dbre.getSpecies() != Species.UNKNOWN);
-      Assert.assertTrue(dbre.getType() != DatabaseType.UNKNOWN);
-    }
-  }
+		for (int i = 0; i < names.length; i++) {
+			DatabaseRegistryEntry dbre = new DatabaseRegistryEntry(null, names[i], null, null);
+			Assert.assertTrue(!dbre.getSpecies().equals(DatabaseRegistryEntry.UNKNOWN));
+			Assert.assertTrue(dbre.getType() != DatabaseType.UNKNOWN);
+		}
+	}
 
-  // -----------------------------------------------------------------
+	// -----------------------------------------------------------------
 
 }

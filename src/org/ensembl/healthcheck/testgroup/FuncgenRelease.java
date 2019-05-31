@@ -30,7 +30,6 @@ import org.ensembl.healthcheck.testcase.funcgen.AlignmentHasBamFile;
  *   <li> org.ensembl.healthcheck.testcase.generic.BlanksInsteadOfNulls </li>
  *   <li> org.ensembl.healthcheck.testcase.funcgen.CheckResultSetDBFileLink </li>
  *   <li> org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema </li>
- *   <li> org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionAnalysisDescriptions </li>
  *   <li> org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionArrayXrefs </li>
  *   <li> org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionRegulatoryFeatures </li>
  *   <li> org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName </li>
@@ -59,7 +58,6 @@ public class FuncgenRelease extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.generic.BlanksInsteadOfNulls.class,
 			// org.ensembl.healthcheck.testcase.funcgen.CheckResultSetDBFileLink.class,
 			org.ensembl.healthcheck.testcase.funcgen.CompareFuncgenSchema.class,
-			org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionAnalysisDescriptions.class,
 			// org.ensembl.healthcheck.testcase.funcgen.ComparePreviousVersionRegulatoryFeatures.class,
 			org.ensembl.healthcheck.testcase.generic.ExternalDBDisplayName.class,
 			org.ensembl.healthcheck.testcase.funcgen.FeaturePosition.class,
