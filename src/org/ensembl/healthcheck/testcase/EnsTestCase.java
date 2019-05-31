@@ -801,9 +801,10 @@ public abstract class EnsTestCase {
          * test if a species is merged
          * connect to the production database using the species production_name
          */
-        public boolean isMerged(String species) {
-          boolean result = false;
-          int rows = DBUtils.getRowCount(getProductionDatabase().getConnection(), "SELECT count(*) FROM species s, attrib_type at WHERE at.attrib_type_id = s.attrib_type_id AND code = 'merged' AND production_name = '" + species + "'");
+        public boolean isMerged(DatabaseRegistryEntry dbre) {
+					boolean result = false;
+					Connection con = dbre.getConnection();
+          int rows = DBUtils.getRowCount(con, "SELECT count(*) FROM attrib_type at WHERE code = 'merged'");
           if (rows > 0) {
             result = true;
           }

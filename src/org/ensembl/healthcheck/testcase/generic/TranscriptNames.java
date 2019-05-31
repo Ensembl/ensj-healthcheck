@@ -61,7 +61,7 @@ public class TranscriptNames extends SingleDatabaseTestCase {
 		boolean result = true;
 
 		// only valid in human, mouse and zebrafish
-		boolean is_merged = isMerged(dbre.getSpecies());
+		boolean is_merged = isMerged(dbre);
 		if (!is_merged) {
 			return true;
 		}

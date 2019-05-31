@@ -72,7 +72,7 @@ public class SourceTypes extends SingleDatabaseTestCase {
 
 		// only applies to human, mouse and zebrafish at the moment
 		String species = dbre.getSpecies();
-		boolean is_merged = isMerged(species);
+		boolean is_merged = isMerged(dbre);
 
 		if (!is_merged) {
 
