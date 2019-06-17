@@ -48,7 +48,8 @@ public class ComparaGenomicOnly extends GroupOfTests {
 			org.ensembl.healthcheck.testcase.compara.MLSSTagStatsMultipleAlignment.class,
 			org.ensembl.healthcheck.testcase.compara.MLSSTagStatsPairwiseAlignment.class,
 			org.ensembl.healthcheck.testcase.compara.MLSSTagStatsSynteny.class,
-			org.ensembl.healthcheck.testcase.compara.MultipleGenomicAlignBlockIds.class
+			org.ensembl.healthcheck.testcase.compara.MultipleGenomicAlignBlockIds.class,
+			org.ensembl.healthcheck.testcase.compara.CheckGenomicAlignCoverage.class
 		);
 	}
 }
