@@ -102,7 +102,12 @@ public class CheckGenomicAlignCoverage extends AbstractComparaTestCase {
 					"FROM (" + genomic_coverage_sql + ") y";
 				
 				String coverage_ok = DBUtils.getRowColumnValue(con, summary_sql);
-				if ( !coverage_ok.equals("2") ) {
+				
+				// get species_set size from db to account for self-alignements
+				String species_set_size_sql = "SELECT ss.size FROM species_set_header ss JOIN method_link_species_set m USING(species_set_id) WHERE m.method_link_species_set_id = " + mlss_id;
+				String species_set_size = DBUtils.getRowColumnValue(con, species_set_size_sql);
+				
+				if ( !coverage_ok.equals(species_set_size) ) {
 					ReportManager.problem(this, con, "FAILED genomic_align coverage does not match method_link_species_set_tag coverage");
 					ReportManager.problem(this, con, "FAILURE DETAILS: Alignment coverage for method_link_species_set_id " + mlss_id + " is inconsistent. "+coverage_ok+"/2 coverage values correct.");
 					ReportManager.problem(this, con, "USEFUL SQL: " + summary_sql);
