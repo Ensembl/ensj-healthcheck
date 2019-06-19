@@ -35,11 +35,12 @@ import org.ensembl.healthcheck.util.SqlTemplate.ResultSetCallback;
 
 abstract public class AbstractControlledRows extends AbstractTemplatedTestCase {
 
+	protected DatabaseRegistryEntry masterDbRe;
 	protected Connection masterDbConn;
 	protected SqlTemplate masterSqlTemplate;
 
 	protected void init() {
-		DatabaseRegistryEntry masterDbRe = getComparaMasterDatabase();
+		masterDbRe = getComparaMasterDatabase();
 		masterDbConn = masterDbRe.getConnection();
 		masterSqlTemplate = getSqlTemplate(masterDbConn);		
 	}

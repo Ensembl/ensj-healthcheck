@@ -39,7 +39,6 @@ public class ControlledTableDnafrag extends AbstractControlledRows {
 		
 		String controlledTableToTest = getControlledTableName();
 		
-		DatabaseRegistryEntry masterDbRe = getComparaMasterDatabase();
 		Connection testDbConn = dbre.getConnection();
 		
 		if (masterDbRe==null) {
