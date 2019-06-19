@@ -63,16 +63,16 @@ public class ControlledTableDnafrag extends AbstractControlledRows {
 			final String controlledTableToTest,
 			final String masterTable,
 			DatabaseRegistryEntry testDbre,
-			DatabaseRegistryEntry masterDbRe
+			DatabaseRegistryEntry refDbre
 		) {
-		return checkAllRowsInTableIfInDnaCompara(controlledTableToTest, masterTable, testDbre, masterDbRe);
+		return checkAllRowsInTableIfInDnaCompara(controlledTableToTest, masterTable, testDbre, refDbre);
 	}
 		
 	protected boolean allDnaFragForSpeciesInComparaMaster(
 			final String controlledTableToTest,
 			final String masterTable,
 			DatabaseRegistryEntry testDbre,
-			DatabaseRegistryEntry masterDbRe,
+			DatabaseRegistryEntry refDbre,
 			String speciesName
 ) {
 		//checkRangeOfRowsInTable
@@ -81,7 +81,7 @@ public class ControlledTableDnafrag extends AbstractControlledRows {
 		final Logger logger = getLogger();
 		
 		final Connection testDbConn = testDbre.getConnection();
-		final Connection masterconn = masterDbRe.getConnection();
+		final Connection masterconn = refDbre.getConnection();
 
 		final SqlTemplate sqlTemplateTestDb        = getSqlTemplate(testDbConn);  
 
@@ -136,7 +136,7 @@ public class ControlledTableDnafrag extends AbstractControlledRows {
 				controlledTableToTest,
 				masterTable,
 				testDbre,
-				masterDbRe,
+				refDbre,
 				whereClause,
 				limit,
 				currentOffset
@@ -149,7 +149,7 @@ public class ControlledTableDnafrag extends AbstractControlledRows {
 			final String controlledTableToTest,
 			final String masterTable,
 			DatabaseRegistryEntry testDbre,
-			DatabaseRegistryEntry masterDbRe
+			DatabaseRegistryEntry refDbre
 		) {
 		
 		final Connection testDbConn = testDbre.getConnection();		
@@ -172,7 +172,7 @@ public class ControlledTableDnafrag extends AbstractControlledRows {
 					controlledTableToTest,
 					masterTable,
 					testDbre,
-					masterDbRe,
+					refDbre,
 					currentSpeciesNameInComparaDb
 				);
 				allSpeciesPass = allSpeciesPass && currentSpeciesPasses;
