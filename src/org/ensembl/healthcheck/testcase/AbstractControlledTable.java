@@ -107,6 +107,9 @@ public abstract class AbstractControlledTable extends AbstractControlledRows {
 		
 		Connection testDbConn = dbre.getConnection();
 		init(testDbConn);
+		if (masterDbRe == null) {
+			return false;
+		}
 		
 		boolean passed;
 		

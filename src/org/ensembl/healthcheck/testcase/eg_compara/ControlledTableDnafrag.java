@@ -39,10 +39,11 @@ public class ControlledTableDnafrag extends AbstractControlledRows {
 		
 		Connection testDbConn = dbre.getConnection();
 		init(testDbConn);
+		if (masterDbRe == null) {
+			return false;
+		}
 		
 		boolean passed = checkAllRowsInTableIfInDnaCompara(controlledTableToTest, getControlledTableName(), dbre, masterDbRe);
-		
-		//ReportManager.problem(this, testDbConn, "Not implemented yet!");		
 		
 		return passed;
 	}
