@@ -26,7 +26,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.EnsTestCase;
-import org.ensembl.healthcheck.testcase.eg_compara.AbstractControlledRows;
+import org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase;
 import org.ensembl.healthcheck.util.SqlTemplate;
 import org.ensembl.healthcheck.util.SqlUncheckedException;
 import org.ensembl.healthcheck.util.SqlTemplate.ResultSetCallback;
@@ -39,16 +39,12 @@ import org.ensembl.healthcheck.util.SqlTemplate.ResultSetCallback;
  * @author arnaud
  *
  */
-public class SeqRegionAttribForPolyploidGenome extends AbstractControlledRows {
+public class SeqRegionAttribForPolyploidGenome extends AbstractTemplatedTestCase {
 
-	final int reportMaxMissingRows = 1;
-	
 	protected Connection testDbConn;
 	protected SqlTemplate sqlTemplateTestDb;
 	
 	protected void init(DatabaseRegistryEntry dbre) {
-		
-		super.init();
 		
 		testDbConn   = dbre.getConnection();
 		sqlTemplateTestDb = getSqlTemplate(testDbConn);
