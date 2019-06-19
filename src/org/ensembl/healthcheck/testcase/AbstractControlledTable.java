@@ -95,13 +95,6 @@ public abstract class AbstractControlledTable extends AbstractControlledRows {
 		Checksum 
 	};
 
-	/**
-	 * DatabaseRegistryEntry of the master database.
-	 */
-	protected DatabaseRegistryEntry getMasterDatabase() {
-		return getComparaMasterDatabase();
-	}
-
 	public AbstractControlledTable() {
 		setTypeFromPackageName();
 		setTeamResponsible(Team.ENSEMBL_GENOMES);
@@ -114,7 +107,7 @@ public abstract class AbstractControlledTable extends AbstractControlledRows {
 
 		String controlledTableToTest = getControlledTableName();
 		
-		DatabaseRegistryEntry masterDbRe = getMasterDatabase();
+		DatabaseRegistryEntry masterDbRe = getComparaMasterDatabase();
 		Connection testDbConn = dbre.getConnection();
 		
 		if (masterDbRe==null) {

@@ -32,13 +32,6 @@ public class ControlledTableDnafrag extends AbstractControlledRows {
 		return "dnafrag";	
 	}
 
-	/**
-	 * DatabaseRegistryEntry of the master database.
-	 */
-	protected DatabaseRegistryEntry getMasterDatabase() {
-		return getComparaMasterDatabase();
-	}
-
 	@Override
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
 
@@ -46,7 +39,7 @@ public class ControlledTableDnafrag extends AbstractControlledRows {
 		
 		String controlledTableToTest = getControlledTableName();
 		
-		DatabaseRegistryEntry masterDbRe = getMasterDatabase();
+		DatabaseRegistryEntry masterDbRe = getComparaMasterDatabase();
 		Connection testDbConn = dbre.getConnection();
 		
 		if (masterDbRe==null) {
