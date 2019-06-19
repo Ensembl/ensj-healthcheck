@@ -39,8 +39,18 @@ abstract public class AbstractControlledRows extends AbstractTemplatedTestCase {
 	protected Connection masterDbConn;
 	protected SqlTemplate masterSqlTemplate;
 
-	protected void init() {
+	protected void init(Connection conn) {
 		masterDbRe = getComparaMasterDatabase();
+
+		if (masterDbRe == null) {
+			ReportManager.problem(
+				this,
+				conn,
+				"Can't get connection to master database! Perhaps it has not been configured?"
+			);
+			return;
+		}
+
 		masterDbConn = masterDbRe.getConnection();
 		masterSqlTemplate = getSqlTemplate(masterDbConn);		
 	}

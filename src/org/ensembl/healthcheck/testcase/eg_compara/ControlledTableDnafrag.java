@@ -35,21 +35,10 @@ public class ControlledTableDnafrag extends AbstractControlledRows {
 	@Override
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
 
-		init();
-		
 		String controlledTableToTest = getControlledTableName();
 		
 		Connection testDbConn = dbre.getConnection();
-		
-		if (masterDbRe==null) {
-			ReportManager.problem(
-				this, 
-				testDbConn, 
-				"Can't get connection to master database! Perhaps it has not been "
-				+"configured?"
-			);
-			return false;
-		}
+		init(testDbConn);
 		
 		boolean passed = checkAllRowsInTableIfInDnaCompara(controlledTableToTest, getControlledTableName(), dbre, masterDbRe);
 		
