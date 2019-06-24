@@ -49,10 +49,9 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractControlledRow
 	
 	protected void init(DatabaseRegistryEntry dbre) {
 		
-		super.init();
-		
 		testDbConn   = dbre.getConnection();
 		sqlTemplateTestDb = getSqlTemplate(testDbConn);
+		init(testDbConn);
 		
 		setTeamResponsible(Team.ENSEMBL_GENOMES);
 	}
@@ -62,6 +61,9 @@ public class SeqRegionsConsistentWithComparaMaster extends AbstractControlledRow
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
 
 		init(dbre);
+		if (masterDbRe == null) {
+			return false;
+		}
 		
 		List<Integer> allSpeciesIds = sqlTemplateTestDb.queryForDefaultObjectList(
 			"select distinct species_id from meta where species_id is not null", 

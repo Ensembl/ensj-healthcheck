@@ -35,11 +35,22 @@ import org.ensembl.healthcheck.util.SqlTemplate.ResultSetCallback;
 
 abstract public class AbstractControlledRows extends AbstractTemplatedTestCase {
 
+	protected DatabaseRegistryEntry masterDbRe;
 	protected Connection masterDbConn;
 	protected SqlTemplate masterSqlTemplate;
 
-	protected void init() {
-		DatabaseRegistryEntry masterDbRe = getComparaMasterDatabase();
+	protected void init(Connection conn) {
+		masterDbRe = getComparaMasterDatabase();
+
+		if (masterDbRe == null) {
+			ReportManager.problem(
+				this,
+				conn,
+				"Can't get connection to master database! Perhaps it has not been configured?"
+			);
+			return;
+		}
+
 		masterDbConn = masterDbRe.getConnection();
 		masterSqlTemplate = getSqlTemplate(masterDbConn);		
 	}
@@ -48,7 +59,7 @@ abstract public class AbstractControlledRows extends AbstractTemplatedTestCase {
 			final String controlledTableToTest,
 			final String masterTable,
 			DatabaseRegistryEntry testDbre,
-			DatabaseRegistryEntry masterDbRe,
+			DatabaseRegistryEntry refDbre,
 			int limit,
 			int offset
 		) {
@@ -56,7 +67,7 @@ abstract public class AbstractControlledRows extends AbstractTemplatedTestCase {
 				controlledTableToTest,
 				masterTable,
 				testDbre,
-				masterDbRe,
+				refDbre,
 				"",
 				limit,
 				offset
@@ -66,21 +77,21 @@ abstract public class AbstractControlledRows extends AbstractTemplatedTestCase {
 	/**
 	 * For every row of the table controlledTableToTest in the database 
 	 * testDbre this checks, if this row also exists in the table 
-	 * masterTable of masterDbRe.
+	 * masterTable of refDbre.
 	 * 
 	 */
 	protected boolean checkRangeOfRowsInTable(
 			final String controlledTableToTest,
 			final String masterTable,
 			DatabaseRegistryEntry testDbre,
-			DatabaseRegistryEntry masterDbRe,
+			DatabaseRegistryEntry refDbre,
 			String whereClause,
 			int limit,
 			int offset
 		) {
 
 		final Connection testDbConn = testDbre.getConnection();
-		final Connection masterconn = masterDbRe.getConnection();
+		final Connection masterconn = refDbre.getConnection();
 		
 		final SqlTemplate sqlTemplateTestDb        = getSqlTemplate(testDbConn);  
 		final SqlTemplate sqlTemplateComparaMaster = getSqlTemplate(masterconn);

@@ -95,13 +95,6 @@ public abstract class AbstractControlledTable extends AbstractControlledRows {
 		Checksum 
 	};
 
-	/**
-	 * DatabaseRegistryEntry of the master database.
-	 */
-	protected DatabaseRegistryEntry getMasterDatabase() {
-		return getComparaMasterDatabase();
-	}
-
 	public AbstractControlledTable() {
 		setTypeFromPackageName();
 		setTeamResponsible(Team.ENSEMBL_GENOMES);
@@ -109,21 +102,12 @@ public abstract class AbstractControlledTable extends AbstractControlledRows {
 	
 	@Override
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
-		
-		init();
 
 		String controlledTableToTest = getControlledTableName();
 		
-		DatabaseRegistryEntry masterDbRe = getMasterDatabase();
 		Connection testDbConn = dbre.getConnection();
-		
-		if (masterDbRe==null) {
-			ReportManager.problem(
-				this, 
-				testDbConn, 
-				"Can't get connection to master database! Perhaps it has not been "
-				+"configured?"
-			);
+		init(testDbConn);
+		if (masterDbRe == null) {
 			return false;
 		}
 		
@@ -169,14 +153,14 @@ public abstract class AbstractControlledTable extends AbstractControlledRows {
 	protected boolean checkByChecksum(
 			final String controlledTableToTest,
 			DatabaseRegistryEntry testDbRe,
-			DatabaseRegistryEntry masterDbRe
+			DatabaseRegistryEntry refDbre
 		) {
 		
 		List<String> tablesToChecksum = new ArrayList<String>();
 		tablesToChecksum.add(controlledTableToTest);
 		
 		String checksumValueMaster = calculateChecksumForTable(
-				masterDbRe, tablesToChecksum);
+				refDbre, tablesToChecksum);
 		
 		String checksumValueTest = calculateChecksumForTable(
 				testDbRe, tablesToChecksum);
@@ -216,43 +200,43 @@ public abstract class AbstractControlledTable extends AbstractControlledRows {
 	/**
 	 * For every row of the table controlledTableToTest in the database 
 	 * testDbre this checks, if this row also exists in the table 
-	 * controlledTableToTest of masterDbRe.
+	 * controlledTableToTest of refDbre.
 	 * 
 	 * @param controlledTableToTest
 	 * @param testDbre
-	 * @param masterDbRe
+	 * @param refDbre
 	 * @return true if rows exist
 	 */
 	protected boolean checkAllRowsInTable(
 			final String controlledTableToTest,
 			DatabaseRegistryEntry testDbre,
-			DatabaseRegistryEntry masterDbRe
+			DatabaseRegistryEntry refDbre
 		) {
-		return checkAllRowsInTable(controlledTableToTest, controlledTableToTest, testDbre, masterDbRe);		
+		return checkAllRowsInTable(controlledTableToTest, controlledTableToTest, testDbre, refDbre);
 	}
 	
 	/**
 	 * For every row of the table controlledTableToTest in the database 
 	 * testDbre this checks, if this row also exists in the table 
-	 * masterTable of masterDbRe.
+	 * masterTable of refDbre.
 	 * 
 	 * @param controlledTableToTest
 	 * @param masterTable
 	 * @param testDbre
-	 * @param masterDbRe
+	 * @param refDbre
 	 * @return true if rows exist
 	 */
 	protected boolean checkAllRowsInTable(
 			final String controlledTableToTest,
 			final String masterTable,
 			DatabaseRegistryEntry testDbre,
-			DatabaseRegistryEntry masterDbRe
+			DatabaseRegistryEntry refDbre
 		) {
 		
 		final Logger logger = getLogger();
 		
 		final Connection testDbConn = testDbre.getConnection();
-		final Connection masterconn = masterDbRe.getConnection();
+		final Connection masterconn = refDbre.getConnection();
 
 		final SqlTemplate sqlTemplateTestDb        = getSqlTemplate(testDbConn);  
 		
@@ -300,7 +284,7 @@ public abstract class AbstractControlledTable extends AbstractControlledRows {
 				controlledTableToTest,
 				masterTable,
 				testDbre,
-				masterDbRe,
+				refDbre,
 				limit,
 				currentOffset
 			);			

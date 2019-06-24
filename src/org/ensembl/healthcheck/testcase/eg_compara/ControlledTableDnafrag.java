@@ -32,36 +32,18 @@ public class ControlledTableDnafrag extends AbstractControlledRows {
 		return "dnafrag";	
 	}
 
-	/**
-	 * DatabaseRegistryEntry of the master database.
-	 */
-	protected DatabaseRegistryEntry getMasterDatabase() {
-		return getComparaMasterDatabase();
-	}
-
 	@Override
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
 
-		init();
-		
 		String controlledTableToTest = getControlledTableName();
 		
-		DatabaseRegistryEntry masterDbRe = getMasterDatabase();
 		Connection testDbConn = dbre.getConnection();
-		
-		if (masterDbRe==null) {
-			ReportManager.problem(
-				this, 
-				testDbConn, 
-				"Can't get connection to master database! Perhaps it has not been "
-				+"configured?"
-			);
+		init(testDbConn);
+		if (masterDbRe == null) {
 			return false;
 		}
 		
 		boolean passed = checkAllRowsInTableIfInDnaCompara(controlledTableToTest, getControlledTableName(), dbre, masterDbRe);
-		
-		//ReportManager.problem(this, testDbConn, "Not implemented yet!");		
 		
 		return passed;
 	}
@@ -70,16 +52,16 @@ public class ControlledTableDnafrag extends AbstractControlledRows {
 			final String controlledTableToTest,
 			final String masterTable,
 			DatabaseRegistryEntry testDbre,
-			DatabaseRegistryEntry masterDbRe
+			DatabaseRegistryEntry refDbre
 		) {
-		return checkAllRowsInTableIfInDnaCompara(controlledTableToTest, masterTable, testDbre, masterDbRe);
+		return checkAllRowsInTableIfInDnaCompara(controlledTableToTest, masterTable, testDbre, refDbre);
 	}
 		
 	protected boolean allDnaFragForSpeciesInComparaMaster(
 			final String controlledTableToTest,
 			final String masterTable,
 			DatabaseRegistryEntry testDbre,
-			DatabaseRegistryEntry masterDbRe,
+			DatabaseRegistryEntry refDbre,
 			String speciesName
 ) {
 		//checkRangeOfRowsInTable
@@ -88,7 +70,7 @@ public class ControlledTableDnafrag extends AbstractControlledRows {
 		final Logger logger = getLogger();
 		
 		final Connection testDbConn = testDbre.getConnection();
-		final Connection masterconn = masterDbRe.getConnection();
+		final Connection masterconn = refDbre.getConnection();
 
 		final SqlTemplate sqlTemplateTestDb        = getSqlTemplate(testDbConn);  
 
@@ -143,7 +125,7 @@ public class ControlledTableDnafrag extends AbstractControlledRows {
 				controlledTableToTest,
 				masterTable,
 				testDbre,
-				masterDbRe,
+				refDbre,
 				whereClause,
 				limit,
 				currentOffset
@@ -156,7 +138,7 @@ public class ControlledTableDnafrag extends AbstractControlledRows {
 			final String controlledTableToTest,
 			final String masterTable,
 			DatabaseRegistryEntry testDbre,
-			DatabaseRegistryEntry masterDbRe
+			DatabaseRegistryEntry refDbre
 		) {
 		
 		final Connection testDbConn = testDbre.getConnection();		
@@ -179,7 +161,7 @@ public class ControlledTableDnafrag extends AbstractControlledRows {
 					controlledTableToTest,
 					masterTable,
 					testDbre,
-					masterDbRe,
+					refDbre,
 					currentSpeciesNameInComparaDb
 				);
 				allSpeciesPass = allSpeciesPass && currentSpeciesPasses;

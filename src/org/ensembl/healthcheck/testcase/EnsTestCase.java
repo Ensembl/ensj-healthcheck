@@ -762,10 +762,27 @@ public abstract class EnsTestCase {
 	 */
 	public DatabaseRegistryEntry getComparaMasterDatabase() {
 
-		// return existing one if we already have it, otherwise use method above
-		// to find it
-		return comparaMasterDbre != null ? comparaMasterDbre
-				: getDatabaseRegistryEntryByPattern(System.getProperty("compara_master.database"));
+		// return existing one if we already have it, e.g. it's been set by
+		// StandaloneTestRunner because the user has been explicit about
+		// its location, or we've already run this method
+		if (comparaMasterDbre != null) {
+			return comparaMasterDbre;
+		}
+
+		String masterPattern = System.getProperty("compara_master.database");
+
+		// First looking for an exact match
+		comparaMasterDbre = getDatabaseRegistryEntryByPattern(masterPattern);
+		if (comparaMasterDbre != null) {
+			return comparaMasterDbre;
+		}
+
+		// Then adding wildcards if none are provided
+		if (!masterPattern.contains("%") && !masterPattern.contains(".*")) {
+			comparaMasterDbre = getDatabaseRegistryEntryByPattern("%" + masterPattern + "%");
+		}
+
+		return comparaMasterDbre;
 
 	}
 	
