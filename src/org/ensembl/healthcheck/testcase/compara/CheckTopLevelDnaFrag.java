@@ -73,7 +73,7 @@ public class CheckTopLevelDnaFrag extends AbstractComparaTestCase {
 		Connection comparaCon = comparaDbre.getConnection();
 
 		// LRGs are only required by vertebrates division
-		String division = DBUtils.getRowColumnValue(comparaCon, "SELECT meta_value FROM meta WHERE meta_key = 'division'");
+		String division = getComparaDivisionName(comparaDbre);
 		String dnafragLRGFilter = "";
 		String coordsysLRGFilter = "";
 		if (! division.equals("vertebrates")) {
