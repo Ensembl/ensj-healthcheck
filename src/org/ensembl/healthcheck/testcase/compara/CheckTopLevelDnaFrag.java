@@ -72,6 +72,15 @@ public class CheckTopLevelDnaFrag extends AbstractComparaTestCase {
 		boolean result = true;
 		Connection comparaCon = comparaDbre.getConnection();
 
+		// LRGs are only required by vertebrates division
+		String division = getComparaDivisionName(comparaDbre);
+		String dnafragLRGFilter = "";
+		String coordsysLRGFilter = "";
+		if (! division.equals("vertebrates")) {
+			dnafragLRGFilter = " AND dnafrag.coord_system_name != 'lrg'";
+			coordsysLRGFilter = " AND coord_system.name != 'lrg'";
+		}
+
 		for (GenomeEntry genomeEntry : getAllGenomes(comparaDbre, DBUtils.getMainDatabaseRegistry())) {
 			if (genomeEntry.getCoreDbre() != null) {
 				Connection speciesCon = genomeEntry.getCoreDbre().getConnection();
@@ -82,6 +91,7 @@ public class CheckTopLevelDnaFrag extends AbstractComparaTestCase {
 					for (int rowCount=0; rowCount<rows; rowCount+=maxRows) {
 						String sql1 = "SELECT dnafrag.coord_system_name, dnafrag.name, CONCAT('length=', dnafrag.length), CONCAT('is_ref=', dnafrag.is_reference)" +
 							" FROM dnafrag WHERE genome_db_id = " + genomeEntry.getGenomeDBID() +
+							dnafragLRGFilter +
 							" ORDER BY (dnafrag.name)" +
 							" LIMIT " + rowCount + ", " + maxRows;
 						String sql2 = "SELECT coord_system.name, seq_region.name, CONCAT('length=', seq_region.length),"+
@@ -92,6 +102,7 @@ public class CheckTopLevelDnaFrag extends AbstractComparaTestCase {
 							" JOIN attrib_type USING (attrib_type_id)" +
 							" LEFT JOIN (SELECT seq_region_id FROM seq_region_attrib JOIN attrib_type USING (attrib_type_id) WHERE attrib_type.code = 'non_ref') non_ref_seq_region USING (seq_region_id)" +
 							" WHERE attrib_type.code = 'toplevel'" +
+							coordsysLRGFilter +
 							" AND species_id = " + genomeEntry.getSpeciesID() +
 							" ORDER BY (seq_region.name)" +
 							" LIMIT " + rowCount + ", " + maxRows;
@@ -99,7 +110,8 @@ public class CheckTopLevelDnaFrag extends AbstractComparaTestCase {
 					}
 				} else {
 					String sql1 = "SELECT dnafrag.coord_system_name, dnafrag.name, CONCAT('length=', dnafrag.length), CONCAT('is_ref=', dnafrag.is_reference)" +
-						" FROM dnafrag WHERE genome_db_id = " + genomeEntry.getGenomeDBID();
+						" FROM dnafrag WHERE genome_db_id = " + genomeEntry.getGenomeDBID() +
+						dnafragLRGFilter;
 					String sql2 = "SELECT coord_system.name, seq_region.name, CONCAT('length=', seq_region.length),"+
 						" CONCAT('is_ref=', IF(non_ref_seq_region.seq_region_id is not null, 0, 1))" +
 						" FROM seq_region" +
@@ -108,6 +120,7 @@ public class CheckTopLevelDnaFrag extends AbstractComparaTestCase {
 						" JOIN attrib_type USING (attrib_type_id)" +
 						" LEFT JOIN (SELECT seq_region_id FROM seq_region_attrib JOIN attrib_type USING (attrib_type_id) WHERE attrib_type.code = 'non_ref') non_ref_seq_region USING (seq_region_id)" +
 						" WHERE attrib_type.code = 'toplevel'" +
+						coordsysLRGFilter +
 						" AND species_id = " + genomeEntry.getSpeciesID();
 					result &= compareQueries(comparaCon, sql1, speciesCon, sql2);
 				}
