@@ -56,7 +56,7 @@ public class VariationFeatureAlleles extends SingleDatabaseTestCase {
 
       try {
         // Look for missing alleles in allele strings
-        String stmt = "SELECT COUNT(variation_feature_id) FROM variation_feature WHERE allele_string LIKE '%/' OR allele_string like '%//%' ";
+        String stmt = "SELECT COUNT(variation_feature_id) FROM variation_feature WHERE allele_string LIKE '%/' OR allele_string like '%//%' OR allele_string like '/%' OR allele_string = '-' ";
         int rows = DBUtils.getRowCount(con,stmt);
         if (rows > 0) {
           result = false;
