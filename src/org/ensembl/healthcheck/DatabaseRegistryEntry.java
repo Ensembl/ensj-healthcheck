@@ -398,7 +398,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 		if (type == null) {
 			if (!StringUtils.isEmpty(typeStr)) {
 				type = DatabaseType.resolveAlias(typeStr);
-				if (typeStr.equals("ancestral") && species == UNKNOWN) {
+				if (typeStr.equals("ancestral") && species.equals("ensembl")) {
 					species = ANCESTRAL_SEQUENCES;
 				}
 			} else {
