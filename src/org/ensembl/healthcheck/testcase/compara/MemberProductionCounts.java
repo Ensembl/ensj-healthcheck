@@ -154,6 +154,21 @@ public class MemberProductionCounts extends AbstractTemplatedTestCase {
 			result = false;
 		}
 
+
+		/*
+		 * Check that the columns have been correctly populated
+		 */
+
+		// gene_trees
+		result &= checkCountIsZero(con,
+				"gene_member_hom_stats JOIN gene_member USING (gene_member_id) LEFT JOIN gene_tree_node ON canonical_member_id = seq_member_id",
+				"node_id IS NULL AND gene_trees > 0 AND collection = '" + collection + "'"
+				);
+		result &= checkCountIsZero(con,
+				"gene_member_hom_stats JOIN gene_member USING (gene_member_id) JOIN gene_tree_node ON canonical_member_id = seq_member_id JOIN gene_tree_root USING (root_id)",
+				"gene_trees = 0 AND collection = clusterset_id AND collection = '" + collection + "'"
+				);
+
 		return result;
 	}
 }
