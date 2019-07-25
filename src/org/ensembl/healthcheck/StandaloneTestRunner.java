@@ -111,7 +111,7 @@ public class StandaloneTestRunner {
 
 		boolean isPort();
 
-		@Option(longName = "compara_dbname", defaultValue = "ensembl_compara_master", description = "Name of compara master database")
+		@Option(longName = "compara_dbname", defaultValue = "compara_master", description = "Name of compara master database")
 		String getComparaMasterDbname();
 
 		boolean isComparaMasterDbname();
