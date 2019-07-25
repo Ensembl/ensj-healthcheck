@@ -138,17 +138,15 @@ public class MemberProductionCounts extends AbstractTemplatedTestCase {
 		 * Check the dependencies between columns
 		 */
 
-		// Where there is a gene-tree, there should be homologues
-		String sqlBrokenHomologyCounts    = "SELECT COUNT(*), SUM(orthologues = 0 AND paralogues = 0 AND homoeologues = 0) FROM gene_member_hom_stats WHERE gene_trees > 0 AND collection = '" + collection + "'";
-		Integer[] numBrokenHomologyCounts = getFirstRowAsIntegers(dbre.getConnection(), sqlBrokenHomologyCounts);
-		Double percBrokenHomologyCounts   = 100. * numBrokenHomologyCounts[1] / numBrokenHomologyCounts[0];
-		// We allow a small number of cases to account for pathological topologies
-		if (percBrokenHomologyCounts > 1) {
-			ReportManager.problem(this, dbre.getConnection(), "Found " + numBrokenHomologyCounts[1] + " rows (" + percBrokenHomologyCounts + "%) for the collection " + collection + " where there are gene_trees without any homologues");
+		// Where there are homologues, there must be a gene-tree
+		String sqlBrokenHomologyCounts  = "SELECT COUNT(*) FROM gene_member_hom_stats WHERE gene_trees = 0 AND (orthologues > 0 OR paralogues > 0 OR homoeologues > 0) AND collection = '" + collection + "'";
+		Integer numBrokenHomologyCounts = srv.queryForDefaultObject(sqlBrokenHomologyCounts, Integer.class);
+		if (numBrokenHomologyCounts > 0) {
+			ReportManager.problem(this, dbre.getConnection(), "Found " + numBrokenHomologyCounts + " rows the collection " + collection + " where there are homologues without gene_trees");
 			result = false;
 		}
 
-		// Where there is a CAFE tree, there should be a gene-tree
+		// Where there is a CAFE tree, there must be a gene-tree
 		String sqlBrokenCAFEcounts  = "SELECT COUNT(*) FROM gene_member_hom_stats WHERE gene_trees = 0 AND gene_gain_loss_trees > 0 AND collection = '" + collection + "'";
 		Integer numBrokenCAFEcounts = srv.queryForDefaultObject(sqlBrokenCAFEcounts, Integer.class);
 		if (numBrokenCAFEcounts > 0) {
