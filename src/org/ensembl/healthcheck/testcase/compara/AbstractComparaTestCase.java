@@ -154,11 +154,15 @@ public abstract class AbstractComparaTestCase extends SingleDatabaseTestCase {
 
 		HashMap<String, Pair<DatabaseRegistryEntry,Integer>> speciesCoreMap = new HashMap<String, Pair<DatabaseRegistryEntry,Integer>>();
 
+		// Use given release number instead of comparaDbre.getSchemaVersion() to
+		// find the core databases because the schema version of the compara
+		// master database might correspond to a different release
+		String release = DBUtils.getRelease();
 		for (DatabaseRegistryEntry entry : dbr.getAllEntries()) {
 			// We need to check the database name because some _cdna_
 			// databases have the DatabaseType.CORE type
 			// We also need to check the version number
-			if (entry.getType().equals(DatabaseType.CORE) && entry.getName().contains("_core_") && (entry.getSchemaVersion().equals(comparaDbre.getSchemaVersion()) || entry.getSchemaVersion().endsWith("_" + comparaDbre.getSchemaVersion()))) {
+			if (entry.getType().equals(DatabaseType.CORE) && entry.getName().contains("_core_") && (entry.getSchemaVersion().equals(release) || entry.getSchemaVersion().endsWith("_" + release))) {
 				// There can be multiple species in the same core database
 				for (Integer species_id : entry.getSpeciesIds()) {
 					String sql = "SELECT meta_value FROM meta WHERE meta_key = \"species.production_name\" AND species_id = " + species_id;
