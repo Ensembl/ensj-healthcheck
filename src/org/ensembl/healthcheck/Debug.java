@@ -25,6 +25,16 @@ public class Debug {
 	public static String classpathToString() {
 		//Get the System Classloader
         ClassLoader sysClassLoader = ClassLoader.getSystemClassLoader();
+
+        // The code below only work with the interface provided by
+        // sun.misc.Launcher$AppClassLoader. OpenJDK since v9 returns a
+        // jdk.internal.loader.ClassLoaders$AppClassLoader
+        // Instead we can print the current CLASSPATH. It's not exactly the
+        // same format, but close enough when debugging
+        if (sysClassLoader.getClass().getName().startsWith("jdk.internal.loader")) {
+            return System.getProperty("java.class.path").replace(":", "\n");
+        }
+
         StringBuffer buf = new StringBuffer(); 
 
         //Get the URLs

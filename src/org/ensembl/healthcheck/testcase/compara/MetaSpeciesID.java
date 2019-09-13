@@ -39,7 +39,7 @@ import org.ensembl.healthcheck.util.Utils; // needed for stringInArray
 
 public class MetaSpeciesID extends AbstractRepairableComparaTestCase {
 
-	String[] speciesless_meta_keys = { "schema_version", "schema_type", "patch" };
+	String[] speciesless_meta_keys = { "schema_version", "schema_type", "patch", "division" };
 
 	protected String getTableName() {
 		return "meta";

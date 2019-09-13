@@ -81,7 +81,7 @@ public class AncestralSequencesExtraChecks extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		result &= checkForOrphansWithConstraint(con, "seq_region", "seq_region_id", "dna", "seq_region_id",
-				"coord_system_id = (SELECT coord_system_id FROM coord_system WHERE attrib LIKE '%sequence_level%')");
+				"coord_system_id IN (SELECT coord_system_id FROM coord_system WHERE attrib LIKE '%sequence_level%')");
 
 		return result;
 	}
