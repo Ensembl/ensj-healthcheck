@@ -239,6 +239,12 @@ public abstract class AbstractComparaTestCase extends SingleDatabaseTestCase {
 	protected final static Pattern EC_DB = Pattern.compile("^([^_]+_)?ensembl_compara_[0-9]+");
 
 	String getComparaDivisionName(DatabaseRegistryEntry compara_dbre) {
+		Connection compara_con = compara_dbre.getConnection();
+		String sql_division = "SELECT meta_value FROM meta WHERE meta_key = 'division'";
+		String division = DBUtils.getRowColumnValue(compara_con, sql_division);
+		if (! division.isEmpty()) {
+			return division;
+		}
 		Matcher m = EGC_DB.matcher(compara_dbre.getName());
 		if (m.matches()) {
 			if (m.groupCount() > 1) {
@@ -249,12 +255,13 @@ public abstract class AbstractComparaTestCase extends SingleDatabaseTestCase {
 		} else {
 			m = EC_DB.matcher(compara_dbre.getName());
 			if (m.matches()) {
-				return "ensembl";
+				return "vertebrates";
 			} else {
 				ReportManager.problem(this, compara_dbre.getConnection(), "Cannot find the division name of this database: '" + compara_dbre.getName() + "'");
 				return null;
 			}
 		}
+
 	}
 
 } // AbstractComparaTestCase

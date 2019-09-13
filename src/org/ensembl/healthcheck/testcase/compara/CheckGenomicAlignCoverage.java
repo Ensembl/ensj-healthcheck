@@ -70,8 +70,7 @@ public class CheckGenomicAlignCoverage extends AbstractComparaTestCase {
 		 *  - Check if we're working with vertebrates or not
 		 *  - Set the overlap check accordingly
 		 */
-		String division_sql = "SELECT meta_value FROM meta WHERE meta_key = 'division'";
-		String division = DBUtils.getRowColumnValue(con, division_sql);
+		String division = getComparaDivisionName(dbre);
 		String overlap_check = "1"; // non-vertebrate default : overlaps always allowed
 		if ( division.equals("vertebrates") ) {
 			// vertebrate-specific condition : overlaps only expected in some cases
