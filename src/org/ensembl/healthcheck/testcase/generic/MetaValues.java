@@ -745,11 +745,22 @@ public class MetaValues extends SingleDatabaseTestCase {
 				"SELECT meta_value FROM meta WHERE meta_key = 'genebuild.last_geneset_update'");
 		String previousGenesetUpdate = DBUtils.getRowColumnValue(previousCon,
 				"SELECT meta_value FROM meta WHERE meta_key = 'genebuild.last_geneset_update'");
+		String gencodesql = "SELECT web_data FROM analysis_description ad, analysis a WHERE a.analysis_id = ad.analysis_id";
+		String[] gencodeWebdata = new String[0];
+		String[] previousGencodeWebdata = new String[0];
 
-		String[] gencodeWebdata = DBUtils.getColumnValues(con,
-				"SELECT web_data FROM analysis_description ad, analysis a WHERE a.analysis_id = ad.analysis_id AND logic_name in ('ensembl_havana_gene', 'ensembl_havana_ig_gene', 'ensembl_lincrna')");
-		String[] previousGencodeWebdata = DBUtils.getColumnValues(previousCon,
-				"SELECT web_data FROM analysis_description ad, analysis a WHERE a.analysis_id = ad.analysis_id AND logic_name in ('ensembl_havana_gene', 'ensembl_havana_ig_gene', 'ensembl_lincrna')");
+		if (dbre.getSpecies().equals(DatabaseRegistryEntry.HOMO_SAPIENS)){
+			gencodeWebdata = DBUtils.getColumnValues(con,
+			gencodesql + " AND logic_name in ('ensembl_havana_gene_homo_sapiens', 'ensembl_havana_ig_gene_homo_sapiens', 'ensembl_lincrna_homo_sapiens')");
+			previousGencodeWebdata = DBUtils.getColumnValues(previousCon,
+			gencodesql + " AND logic_name in ('ensembl_havana_gene_homo_sapiens', 'ensembl_havana_ig_gene_homo_sapiens', 'ensembl_lincrna_homo_sapiens')");
+		}
+		else if (dbre.getSpecies().equals(DatabaseRegistryEntry.MUS_MUSCULUS)){
+			gencodeWebdata = DBUtils.getColumnValues(con,
+			gencodesql + " AND logic_name in ('ensembl_havana_gene_mus_musculus', 'ensembl_havana_ig_gene_mus_musculus', 'ensembl_lincrna_mus_musculus')");
+	    previousGencodeWebdata =  DBUtils.getColumnValues(previousCon,
+			gencodesql + " AND logic_name in ('ensembl_havana_gene_mus_musculus', 'ensembl_havana_ig_gene_mus_musculus', 'ensembl_lincrna_mus_musculus')");
+		}
 
 		String gencode = DBUtils.getRowColumnValue(con,
 				"SELECT meta_value FROM meta WHERE meta_key = 'gencode.version'");
