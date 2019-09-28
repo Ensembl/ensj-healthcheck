@@ -53,9 +53,10 @@ public class CheckGenomicAlignTreeTable extends AbstractComparaTestCase {
 		for (String mlss_id: method_link_species_set_ids) {
 			String mlss_id_condition = "FLOOR(node_id/10000000000) = " + mlss_id;
 
-			// Check the left_node_id values are set (and assume right_node_ids have also been set)
-			// FIXME: this will have to be updated when left_node_id becomes NULLable
-			result &= checkCountIsNonZero(con, "genomic_align_tree", mlss_id_condition + " AND left_node_id != 0");
+			// Check the NULLable columns are not always NULL
+			result &= checkCountIsNonZero(con, "genomic_align_tree", mlss_id_condition + " AND parent_id IS NOT NULL");
+			result &= checkCountIsNonZero(con, "genomic_align_tree", mlss_id_condition + " AND left_node_id IS NOT NULL");
+			result &= checkCountIsNonZero(con, "genomic_align_tree", mlss_id_condition + " AND right_node_id IS NOT NULL");
 
 			/* Looking at distance_to_parent > 1 is true for LOW_COVERAGE but not epo */
 			/* Update 2015-30-04: there are nodes with distance_to_parent > 1
