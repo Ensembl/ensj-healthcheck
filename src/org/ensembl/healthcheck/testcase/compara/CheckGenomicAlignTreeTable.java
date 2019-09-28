@@ -58,11 +58,19 @@ public class CheckGenomicAlignTreeTable extends AbstractComparaTestCase {
 			result &= checkCountIsNonZero(con, "genomic_align_tree", mlss_id_condition + " AND left_node_id IS NOT NULL");
 			result &= checkCountIsNonZero(con, "genomic_align_tree", mlss_id_condition + " AND right_node_id IS NOT NULL");
 
-			/* Looking at distance_to_parent > 1 is true for LOW_COVERAGE but not epo */
-			/* Update 2015-30-04: there are nodes with distance_to_parent > 1
-			 * in all the EPO alignments, but also for the "11 fish EPO_LOW_COVERAGE"
-			 */
-			//result &= checkCountIsZero(con, "genomic_align_tree", mlss_id_condition + " AND distance_to_parent > 1");
+			// Check the validity of distance_to_parent
+			String all_rows_sql = "SELECT 1 FROM genomic_align_tree WHERE " + mlss_id_condition;
+			int n_rows = DBUtils.getRowCount(con, all_rows_sql);
+			String bad_dist_rows_sql = "SELECT 1 FROM genomic_align_tree WHERE " + mlss_id_condition + " AND distance_to_parent > 1";
+			int n_bad_dist_rows = DBUtils.getRowCount(con, bad_dist_rows_sql);
+			// We allow up to 1% of the rows to have distance_to_parent>1
+			// (it only happens in 0.025% of the cases at the moment)
+			if (100 * n_bad_dist_rows < 1 * n_rows) {
+				ReportManager.correct(this, con, "distance_to_parent<1 alignment mlss_id=" + mlss_id);
+			} else {
+				ReportManager.problem(this, con, "distance_to_parent<1 for " + n_bad_dist_rows + " rows out of " + n_rows + " for alignment mlss_id=" + mlss_id);
+				result = false;
+			}
 		}
 
 		return result;
