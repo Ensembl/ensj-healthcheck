@@ -55,6 +55,7 @@ public class MemberProductionCounts extends AbstractTemplatedTestCase {
 		// Check the counts for each collection name
 		for (String collection : allCollectionNames) {
 			result &= checkCountsForCollection(dbre, collection);
+			result &= checkCountsForGenomeDBsInCollection(dbre, collection);
 		}
 
 		return result;
@@ -183,6 +184,20 @@ public class MemberProductionCounts extends AbstractTemplatedTestCase {
 				"gene_trees = 0 AND collection = clusterset_id AND collection = '" + collection + "'"
 				);
 
+		return result;
+	}
+
+	private boolean checkCountsForGenomeDBsInCollection(DatabaseRegistryEntry dbre, String collection) {
+		SqlTemplate srv = getSqlTemplate(dbre);
+		Connection con  = dbre.getConnection();
+
+		String sqlAllGenomeDBs = "SELECT DISTINCT genome_db_id FROM gene_tree_root JOIN method_link_species_set USING (method_link_species_set_id) JOIN species_set USING (species_set_id) WHERE clusterset_id = \"" + collection + "\"";
+		String[] genome_db_ids = DBUtils.getColumnValues(con, sqlAllGenomeDBs);
+
+		boolean result = true;
+		for (String genome_db_id : genome_db_ids) {
+			result &= checkCountIsNonZero(con, "gene_member_hom_stats JOIN gene_member USING (gene_member_id)", "collection = \"" + collection + "\" AND genome_db_id = " + genome_db_id + " LIMIT 1");
+		}
 		return result;
 	}
 }
