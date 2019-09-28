@@ -24,6 +24,20 @@ public class MemberProductionCounts extends AbstractTemplatedTestCase {
 
 	@Override
 	protected boolean runTest(DatabaseRegistryEntry dbre) {
+		Connection con  = dbre.getConnection();
+
+		boolean result = true;
+
+		// All the gene_member_ids must exist
+		result &= checkForOrphans(con, "gene_member_hom_stats", "gene_member_id", "gene_member", "gene_member_id");
+
+		// Check every collection
+		result &= checkCountsForAllCollections(dbre);
+
+		return result;
+	}
+
+	private boolean checkCountsForAllCollections(DatabaseRegistryEntry dbre) {
 
 		// All the possible collection names
 		List<String> allCollectionNames = DBUtils.getColumnValuesList(dbre.getConnection(), "SELECT DISTINCT clusterset_id FROM gene_tree_root WHERE tree_type = \"tree\" AND ref_root_id IS NULL");
