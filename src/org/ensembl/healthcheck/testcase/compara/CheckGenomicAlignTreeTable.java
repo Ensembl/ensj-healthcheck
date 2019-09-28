@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.compara.AbstractComparaTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for the consistency of the
@@ -47,15 +48,21 @@ public class CheckGenomicAlignTreeTable extends AbstractComparaTestCase {
 
 		boolean result = true;
 
-		// Check the left_node_id values are set (and assume right_node_ids have also been set)
-		// FIXME: this will have to be updated when left_node_id becomes NULLable
-		result &= checkCountIsNonZero(con, "genomic_align_tree", "left_node_id != 0");
+		String[] method_link_species_set_ids = DBUtils.getColumnValues(con, "SELECT method_link_species_set_id FROM method_link_species_set LEFT JOIN method_link USING (method_link_id) WHERE class IN (\"GenomicAlignTree.ancestral_alignment\", \"GenomicAlignTree.tree_alignment\")");
 
-		/* Looking at distance_to_parent > 1 is true for LOW_COVERAGE but not epo */
-		/* Update 2015-30-04: there are nodes with distance_to_parent > 1
-		 * in all the EPO alignments, but also for the "11 fish EPO_LOW_COVERAGE"
-		 */
-		//result &= checkCountIsZero(con, "genomic_align_tree", "distance_to_parent > 1");
+		for (String mlss_id: method_link_species_set_ids) {
+			String mlss_id_condition = "FLOOR(node_id/10000000000) = " + mlss_id;
+
+			// Check the left_node_id values are set (and assume right_node_ids have also been set)
+			// FIXME: this will have to be updated when left_node_id becomes NULLable
+			result &= checkCountIsNonZero(con, "genomic_align_tree", mlss_id_condition + " AND left_node_id != 0");
+
+			/* Looking at distance_to_parent > 1 is true for LOW_COVERAGE but not epo */
+			/* Update 2015-30-04: there are nodes with distance_to_parent > 1
+			 * in all the EPO alignments, but also for the "11 fish EPO_LOW_COVERAGE"
+			 */
+			//result &= checkCountIsZero(con, "genomic_align_tree", mlss_id_condition + " AND distance_to_parent > 1");
+		}
 
 		return result;
 	}
