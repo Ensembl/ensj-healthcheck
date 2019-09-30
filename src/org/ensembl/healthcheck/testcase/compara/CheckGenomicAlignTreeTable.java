@@ -68,7 +68,7 @@ public class CheckGenomicAlignTreeTable extends AbstractComparaTestCase {
 			if (100 * n_bad_dist_rows < 1 * n_rows) {
 				ReportManager.correct(this, con, "distance_to_parent<1 alignment mlss_id=" + mlss_id);
 			} else {
-				ReportManager.problem(this, con, "distance_to_parent<1 for " + n_bad_dist_rows + " rows out of " + n_rows + " for alignment mlss_id=" + mlss_id);
+				ReportManager.problem(this, con, "distance_to_parent>1 for " + n_bad_dist_rows + " rows out of " + n_rows + " for alignment mlss_id=" + mlss_id);
 				result = false;
 			}
 		}
