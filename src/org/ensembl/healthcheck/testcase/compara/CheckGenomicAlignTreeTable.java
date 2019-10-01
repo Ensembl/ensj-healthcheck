@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.compara.AbstractComparaTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * An EnsEMBL Healthcheck test case that looks for the consistency of the
@@ -47,15 +48,30 @@ public class CheckGenomicAlignTreeTable extends AbstractComparaTestCase {
 
 		boolean result = true;
 
-		// Check the left_node_id values are set (and assume right_node_ids have also been set)
-		// FIXME: this will have to be updated when left_node_id becomes NULLable
-		result &= checkCountIsNonZero(con, "genomic_align_tree", "left_node_id != 0");
+		String[] method_link_species_set_ids = DBUtils.getColumnValues(con, "SELECT method_link_species_set_id FROM method_link_species_set LEFT JOIN method_link USING (method_link_id) WHERE class IN (\"GenomicAlignTree.ancestral_alignment\", \"GenomicAlignTree.tree_alignment\")");
 
-		/* Looking at distance_to_parent > 1 is true for LOW_COVERAGE but not epo */
-		/* Update 2015-30-04: there are nodes with distance_to_parent > 1
-		 * in all the EPO alignments, but also for the "11 fish EPO_LOW_COVERAGE"
-		 */
-		//result &= checkCountIsZero(con, "genomic_align_tree", "distance_to_parent > 1");
+		for (String mlss_id: method_link_species_set_ids) {
+			String mlss_id_condition = "FLOOR(node_id/10000000000) = " + mlss_id;
+
+			// Check the NULLable columns are not always NULL
+			result &= checkCountIsNonZero(con, "genomic_align_tree", mlss_id_condition + " AND parent_id IS NOT NULL");
+			result &= checkCountIsNonZero(con, "genomic_align_tree", mlss_id_condition + " AND left_node_id IS NOT NULL");
+			result &= checkCountIsNonZero(con, "genomic_align_tree", mlss_id_condition + " AND right_node_id IS NOT NULL");
+
+			// Check the validity of distance_to_parent
+			String all_rows_sql = "SELECT 1 FROM genomic_align_tree WHERE " + mlss_id_condition;
+			int n_rows = DBUtils.getRowCount(con, all_rows_sql);
+			String bad_dist_rows_sql = "SELECT 1 FROM genomic_align_tree WHERE " + mlss_id_condition + " AND distance_to_parent > 1";
+			int n_bad_dist_rows = DBUtils.getRowCount(con, bad_dist_rows_sql);
+			// We allow up to 1% of the rows to have distance_to_parent>1
+			// (it only happens in 0.025% of the cases at the moment)
+			if (100 * n_bad_dist_rows < 1 * n_rows) {
+				ReportManager.correct(this, con, "distance_to_parent<1 alignment mlss_id=" + mlss_id);
+			} else {
+				ReportManager.problem(this, con, "distance_to_parent>1 for " + n_bad_dist_rows + " rows out of " + n_rows + " for alignment mlss_id=" + mlss_id);
+				result = false;
+			}
+		}
 
 		return result;
 	}
