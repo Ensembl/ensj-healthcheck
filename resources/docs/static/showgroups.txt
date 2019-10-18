@@ -75,7 +75,6 @@ core_xrefs:
 	InterproDescriptions
 	PredictedXrefs
 	ProjectedXrefs
-	XrefCategories
 	XrefHTML
 	XrefIdentifiers
 	XrefLevels
@@ -222,7 +221,6 @@ post_genebuild:
 	TranscriptsTranslate
 	TranslationStartEnd
 	TranslationStartEndExon
-	XrefCategories
 	XrefIdentifiers
 	XrefPrefixes
 	XrefTypes
@@ -340,7 +338,6 @@ release:
 	TranscriptsTranslate
 	TranslationStartEnd
 	TranslationStartEndExon
-	XrefCategories
 	XrefHTML
 	XrefIdentifiers
 	XrefLevels
