@@ -72,8 +72,8 @@ public class CheckGenomicAlignMTs extends SingleDatabaseTestCase {
 				+ " FROM method_link_species_set LEFT JOIN method_link USING (method_link_id)"
 				+ " LEFT JOIN species_set USING (species_set_id)"
 				+ " LEFT JOIN genome_db USING (genome_db_id)"
-				+ " LEFT JOIN dnafrag ON (genome_db.genome_db_id = dnafrag.genome_db_id AND dnafrag.name = 'MT')"
-				+ " WHERE (type NOT LIKE 'CACTUS_HAL%') AND (class LIKE 'GenomicAlignTree%' OR class LIKE 'GenomicAlign%multiple%') AND dnafrag.name = 'MT'";
+				+ " LEFT JOIN dnafrag ON (genome_db.genome_db_id = dnafrag.genome_db_id AND dnafrag.cellular_component = 'MT')"
+				+ " WHERE (type NOT LIKE 'CACTUS_HAL%') AND (class LIKE 'GenomicAlignTree%' OR class LIKE 'GenomicAlign%multiple%') AND dnafrag.cellular_component = 'MT'";
 		try {
 			Statement stmt1 = comparaCon.createStatement();
 			ResultSet rs1 = stmt1.executeQuery(sql1);
