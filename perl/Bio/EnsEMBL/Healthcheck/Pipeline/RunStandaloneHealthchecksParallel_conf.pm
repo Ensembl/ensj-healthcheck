@@ -23,7 +23,7 @@ sub pipeline_analyses {
         'Bio::EnsEMBL::Healthcheck::Pipeline::RunStandaloneHealthcheckParallel',
       -rc_name       => 'default',
       -hive_capacity => 30,
-      -parameters    => { hc_jar => $self->o('hc_jar'), java_opts => '' },
+      -parameters    => { hc_jar => $self->o('hc_jar'), java_opts => '-Xmx8g' },
       -flow_into     => {
                       -1 => ['RunStandaloneHealthcheckParallelHimem'],
                       2  => ['?accu_name=hc_output&accu_address=[]'] } }, {
@@ -63,7 +63,7 @@ sub pipeline_create_commands {
 sub resource_classes {
   my ($self) = @_;
   return {
-     'default' => { 'LSF' => '-q production-rh74' },
+     'default' => { 'LSF' => '-q production-rh74 -M 8192 -R "rusage[mem=8192]"' },
      'himem' => { 'LSF' => '-q production-rh74 -M 16384 -R "rusage[mem=16384]"' }
   };
 }
