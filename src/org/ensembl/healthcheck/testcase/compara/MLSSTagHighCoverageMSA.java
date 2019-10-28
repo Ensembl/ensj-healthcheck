@@ -33,7 +33,7 @@ import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
 import org.ensembl.healthcheck.util.DBUtils;
 
 /**
- * An EnsEMBL Healthcheck test case for the "high_coverage_mlss_id" MethodLinkSpeciesSetTag entries
+ * An EnsEMBL Healthcheck test case for the "base_mlss_id" MethodLinkSpeciesSetTag entries
  */
 
 public class MLSSTagHighCoverageMSA extends SingleDatabaseTestCase {
@@ -64,7 +64,7 @@ public class MLSSTagHighCoverageMSA extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 		String sql = "SELECT mlss1.method_link_species_set_id, tag, value, mlss2.method_link_species_set_id, ml2.type"
 			+ " FROM method_link_species_set mlss1 JOIN method_link ml1 USING (method_link_id)"
-			+ " LEFT JOIN method_link_species_set_tag mlsst ON mlsst.method_link_species_set_id = mlss1.method_link_species_set_id AND tag = 'high_coverage_mlss_id'"
+			+ " LEFT JOIN method_link_species_set_tag mlsst ON mlsst.method_link_species_set_id = mlss1.method_link_species_set_id AND tag = 'base_mlss_id'"
 			+ " LEFT JOIN (method_link_species_set mlss2 JOIN method_link ml2 USING (method_link_id)) ON value = mlss2.method_link_species_set_id"
 			+ " WHERE ml1.type = 'EPO_LOW_COVERAGE'";
 
@@ -73,15 +73,15 @@ public class MLSSTagHighCoverageMSA extends SingleDatabaseTestCase {
 		for (String[] row : all_rows) {
 			// Check all the potential errors
 			if (row[1] == null) {
-				ReportManager.problem(this, con, String.format("The MLSS ID %s is missing its 'high_coverage_mlss_id' tag", row[0]));
+				ReportManager.problem(this, con, String.format("The MLSS ID %s is missing its 'base_mlss_id' tag", row[0]));
 			} else if (row[2] == null) {
-				ReportManager.problem(this, con, String.format("The 'high_coverage_mlss_id' tag for MLSS ID %s has a NULL value", row[0]));
+				ReportManager.problem(this, con, String.format("The 'base_mlss_id' tag for MLSS ID %s has a NULL value", row[0]));
 			} else if (row[3] == null) {
-				ReportManager.problem(this, con, String.format("The value of the 'high_coverage_mlss_id' tag for MLSS ID %s does not link to a valid MLSS ID: '%s'", row[0], row[2]));
-			} else if (!row[4].equals("EPO")) {
-				ReportManager.problem(this, con, String.format("The value of the 'high_coverage_mlss_id' tag for MLSS ID %s does not link to a 'EPO' MLSS but '%s' (ID %s)", row[0], row[4], row[3]));
+				ReportManager.problem(this, con, String.format("The value of the 'base_mlss_id' tag for MLSS ID %s does not link to a valid MLSS ID: '%s'", row[0], row[2]));
+			} else if (!(row[4].equals("EPO") || row[4].equals("EPO_LOW_COVERAGE"))) {
+				ReportManager.problem(this, con, String.format("The value of the 'base_mlss_id' tag for MLSS ID %s does not link to an 'EPO' or 'EPO_LOW_COVERAGE' MLSS but '%s' (ID %s)", row[0], row[4], row[3]));
 			} else {
-				// This row is correct: everything is non-NULL, and the EPO_LOW_COVERAGE mlss is linked to a EPO
+				// This row is correct: everything is non-NULL, and the EPO_LOW_COVERAGE mlss is linked to an EPO or EPO_LOW_COVERAGE
 				continue;
 			}
 			result = false;
