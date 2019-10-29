@@ -191,8 +191,9 @@ public class MemberProductionCounts extends AbstractTemplatedTestCase {
 		SqlTemplate srv = getSqlTemplate(dbre);
 		Connection con  = dbre.getConnection();
 
-		String sqlAllGenomeDBs = "SELECT DISTINCT genome_db_id FROM gene_tree_root JOIN method_link_species_set USING (method_link_species_set_id) JOIN species_set USING (species_set_id) WHERE clusterset_id = \"" + collection + "\"";
+		String sqlAllGenomeDBs = "SELECT DISTINCT genome_db_id FROM gene_tree_root JOIN method_link_species_set USING (method_link_species_set_id) JOIN species_set USING (species_set_id) JOIN genome_db USING(genome_db_id) WHERE genome_component IS NULL AND clusterset_id = \"" + collection + "\"";
 		String[] genome_db_ids = DBUtils.getColumnValues(con, sqlAllGenomeDBs);
+        
 
 		boolean result = true;
 		for (String genome_db_id : genome_db_ids) {
