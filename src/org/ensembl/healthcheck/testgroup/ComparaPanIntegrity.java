@@ -25,6 +25,7 @@ import org.ensembl.healthcheck.testcase.compara.MLSSTagStatsHomology;
 import org.ensembl.healthcheck.testcase.compara.MLSSTagThresholdDs;
 import org.ensembl.healthcheck.testcase.compara.ForeignKeyMasterTables;
 import org.ensembl.healthcheck.testcase.compara.CheckSpeciesSetSizeByMethod;
+import org.ensembl.healthcheck.testcase.compara.CheckOrthologQCThresholds;
 /**
  * Healthchecks for the genomic Compara databases
  * (and only this kind of database)
