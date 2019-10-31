@@ -37,6 +37,6 @@ public class ComparaPanIntegrity extends ComparaIntegrity {
 		addTest(
 			org.ensembl.healthcheck.testcase.eg_compara.ForeignKeyPanMasterTables.class
 		);
-		removeTest(CheckSynteny.class, CheckDuplicatedTaxaNames.class, CheckTopLevelDnaFrag.class, MLSSTagStatsHomology.class, MLSSTagThresholdDs.class, ForeignKeyMasterTables.class, CheckSpeciesSetSizeByMethod.class);
+		removeTest(CheckOrthologQCThresholds.class, CheckSynteny.class, CheckDuplicatedTaxaNames.class, CheckTopLevelDnaFrag.class, MLSSTagStatsHomology.class, MLSSTagThresholdDs.class, ForeignKeyMasterTables.class, CheckSpeciesSetSizeByMethod.class);
 	}
 }
