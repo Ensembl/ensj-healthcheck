@@ -45,6 +45,37 @@ import org.ensembl.healthcheck.util.SqlUncheckedException;
 
 public abstract class AbstractComparaTestCase extends SingleDatabaseTestCase {
 
+	protected boolean checkMLSSIds(DatabaseRegistryEntry dbre, String[] method_link_species_set_ids) {
+		ReportManager.info(this, dbre.getConnection(), "No further testing done on the " . method_link_species_set_ids.length + " mlss_ids provided");
+		return true;
+	}
+
+	public boolean checkTableForMLSS(DatabaseRegistryEntry dbre, String mlss_filter, String table_name) {
+
+		Connection con = dbre.getConnection();
+
+		String[] method_link_species_set_ids = DBUtils.getColumnValues(con, "SELECT method_link_species_set_id FROM method_link_species_set JOIN method_link USING (method_link_id) WHERE " + mlss_filter);
+
+		if (method_link_species_set_ids.length > 0) {
+
+			if (!tableHasRows(con, table_name)) {
+				ReportManager.problem(this, con, "FAILED: Database contains entry in the method_link_species_set table but the " + table_name + " table is empty");
+				return false;
+			}
+
+			return checkMLSSIds(dbre, method_link_species_set_ids);
+
+		} else if (tableHasRows(con, table_name)) {
+			ReportManager.problem(this, con, "FAILED: Database contains data in the " + table_name + " table but no corresponding entry in the method_link_species_set table.");
+			return false;
+
+		} else {
+			ReportManager.correct(this, con, "Empty " + table_name);
+			return true;
+		}
+	}
+
+
 
 	/**
 	 * Verify foreign-key relations, and fills ReportManager with useful sql if
