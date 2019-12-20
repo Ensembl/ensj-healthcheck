@@ -111,11 +111,22 @@ public class MemberProductionCounts extends AbstractTemplatedTestCase {
 		 * Check that the table is not empty
 		 */
 
-		if ((hasFamilies || hasGeneTrees) && (counts[0] == null)) {
-			ReportManager.problem(this, con, "Found no entries in gene_member_hom_stats for the " + collection + " collection. There should be some");
-			return false;
+		boolean shouldBeNonEmpty = false;
+		for (boolean e: expectNonEmpty) {
+			shouldBeNonEmpty |= e;
 		}
 
+		if (shouldBeNonEmpty) {
+			if (counts[0] == null) {
+				ReportManager.problem(this, con, "Found no entries in gene_member_hom_stats " + filterDescription + ". There should be some");
+				return false;
+			}
+		} else {
+			if (counts[0] != null) {
+				ReportManager.problem(this, con, "Found entries in gene_member_hom_stats " + filterDescription + ". There shouldn't be any");
+				return false;
+			}
+		}
 
 		/*
 		 * Check every column independently
