@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * An EnsEMBL Healthcheck test case that checks that
@@ -41,8 +42,15 @@ public class CheckOrthologQCThresholds extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		boolean result = true;
-		result &= checkCountIsNonZero(con, "method_link_species_set_attr", "goc_quality_threshold IS NOT NULL");
-		result &= checkCountIsNonZero(con, "method_link_species_set_attr", "wga_quality_threshold IS NOT NULL");
+
+		int numOrthologyMLSS = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM method_link_species_set JOIN method_link USING (method_link_id) WHERE type = 'ENSEMBL_ORTHOLOGUES'");
+		if (numOrthologyMLSS > 0) {
+			result &= checkCountIsNonZero(con, "method_link_species_set_attr", "goc_quality_threshold IS NOT NULL");
+			result &= checkCountIsNonZero(con, "method_link_species_set_attr", "wga_quality_threshold IS NOT NULL");
+		} else {
+			result &= checkCountIsZero(con, "method_link_species_set_attr", "goc_quality_threshold IS NOT NULL");
+			result &= checkCountIsZero(con, "method_link_species_set_attr", "wga_quality_threshold IS NOT NULL");
+		}
 		return result;
 	}
 
