@@ -149,20 +149,22 @@ public class MemberProductionCounts extends AbstractTemplatedTestCase {
 		 * Check the dependencies between columns
 		 */
 
-		// Where there are homologues, there must be a gene-tree
-		String sqlBrokenHomologyCounts  = "SELECT COUNT(*) FROM gene_member_hom_stats WHERE gene_trees = 0 AND (orthologues > 0 OR paralogues > 0 OR homoeologues > 0) AND collection = '" + collection + "'";
-		Integer numBrokenHomologyCounts = srv.queryForDefaultObject(sqlBrokenHomologyCounts, Integer.class);
-		if (numBrokenHomologyCounts > 0) {
-			ReportManager.problem(this, con, "Found " + numBrokenHomologyCounts + " rows the collection " + collection + " where there are homologues without gene_trees");
-			result = false;
-		}
+		if (expectNonEmpty[1]) { // gene_trees flag
+			// Where there are homologues, there must be a gene-tree
+			String sqlBrokenHomologyCounts  = "SELECT COUNT(*) FROM gene_member_hom_stats WHERE gene_trees = 0 AND (orthologues > 0 OR paralogues > 0 OR homoeologues > 0) AND collection = '" + collection + "'";
+			Integer numBrokenHomologyCounts = srv.queryForDefaultObject(sqlBrokenHomologyCounts, Integer.class);
+			if (numBrokenHomologyCounts > 0) {
+				ReportManager.problem(this, con, "Found " + numBrokenHomologyCounts + " rows the collection " + collection + " where there are homologues without gene_trees");
+				result = false;
+			}
 
-		// Where there is a CAFE tree, there must be a gene-tree
-		String sqlBrokenCAFEcounts  = "SELECT COUNT(*) FROM gene_member_hom_stats WHERE gene_trees = 0 AND gene_gain_loss_trees > 0 AND collection = '" + collection + "'";
-		Integer numBrokenCAFEcounts = srv.queryForDefaultObject(sqlBrokenCAFEcounts, Integer.class);
-		if (numBrokenCAFEcounts > 0) {
-			ReportManager.problem(this, con, "Found " + numBrokenCAFEcounts + " rows for the collection " + collection + " where there are gene_gain_loss_trees without gene_trees");
-			result = false;
+			// Where there is a CAFE tree, there must be a gene-tree
+			String sqlBrokenCAFEcounts  = "SELECT COUNT(*) FROM gene_member_hom_stats WHERE gene_trees = 0 AND gene_gain_loss_trees > 0 AND collection = '" + collection + "'";
+			Integer numBrokenCAFEcounts = srv.queryForDefaultObject(sqlBrokenCAFEcounts, Integer.class);
+			if (numBrokenCAFEcounts > 0) {
+				ReportManager.problem(this, con, "Found " + numBrokenCAFEcounts + " rows for the collection " + collection + " where there are gene_gain_loss_trees without gene_trees");
+				result = false;
+			}
 		}
 
 
