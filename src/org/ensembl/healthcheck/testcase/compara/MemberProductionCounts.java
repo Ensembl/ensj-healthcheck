@@ -101,7 +101,7 @@ public class MemberProductionCounts extends AbstractTemplatedTestCase {
 		// NOTE: keep "headers" in sync with the columns used in SUM
 		String[] headers = {"families", "gene_trees", "gene_gain_loss_trees", "orthologues", "paralogues", "homoeologues"};
 		String sqlCounts = "SELECT SUM(families), SUM(gene_trees), SUM(gene_gain_loss_trees), SUM(orthologues), SUM(paralogues), SUM(homoeologues) FROM gene_member_hom_stats WHERE collection = \"" + collection + "\"";
-		Integer[] counts = getFirstRowAsIntegers(dbre.getConnection(), sqlCounts);
+		Integer[] counts = getFirstRowAsIntegers(con, sqlCounts);
 
 		// Which counts should be non-zero
 		boolean[] expectNonEmpty = {hasFamilies, hasGeneTrees, hasCAFETrees, hasGeneTrees, hasGeneTrees, hasGeneTrees && hasPolyploids};
@@ -112,7 +112,7 @@ public class MemberProductionCounts extends AbstractTemplatedTestCase {
 		 */
 
 		if ((hasFamilies || hasGeneTrees) && (counts[0] == null)) {
-			ReportManager.problem(this, dbre.getConnection(), "Found no entries in gene_member_hom_stats for the " + collection + " collection. There should be some");
+			ReportManager.problem(this, con, "Found no entries in gene_member_hom_stats for the " + collection + " collection. There should be some");
 			return false;
 		}
 
@@ -125,10 +125,10 @@ public class MemberProductionCounts extends AbstractTemplatedTestCase {
 		for (int i=0; i<headers.length; i++) {
 			// Compare the zeroness of the count to the expectation
 			if (expectNonEmpty[i] && (counts[i] == 0)) {
-				ReportManager.problem(this, dbre.getConnection(), "Found no entries in gene_member_hom_stats with " + headers[i] + " > 0 for the " + collection + " collection. There should be some");
+				ReportManager.problem(this, con, "Found no entries in gene_member_hom_stats with " + headers[i] + " > 0 for the " + collection + " collection. There should be some");
 				result = false;
 			} else if (!expectNonEmpty[i] && (counts[i] > 0)) {
-				ReportManager.problem(this, dbre.getConnection(), "Found entries in gene_member_hom_stats with " + headers[i] + " > 0 for the " + collection + " collection. There shouldn't be any");
+				ReportManager.problem(this, con, "Found entries in gene_member_hom_stats with " + headers[i] + " > 0 for the " + collection + " collection. There shouldn't be any");
 				result = false;
 			}
 		}
@@ -142,7 +142,7 @@ public class MemberProductionCounts extends AbstractTemplatedTestCase {
 		String sqlBrokenHomologyCounts  = "SELECT COUNT(*) FROM gene_member_hom_stats WHERE gene_trees = 0 AND (orthologues > 0 OR paralogues > 0 OR homoeologues > 0) AND collection = '" + collection + "'";
 		Integer numBrokenHomologyCounts = srv.queryForDefaultObject(sqlBrokenHomologyCounts, Integer.class);
 		if (numBrokenHomologyCounts > 0) {
-			ReportManager.problem(this, dbre.getConnection(), "Found " + numBrokenHomologyCounts + " rows the collection " + collection + " where there are homologues without gene_trees");
+			ReportManager.problem(this, con, "Found " + numBrokenHomologyCounts + " rows the collection " + collection + " where there are homologues without gene_trees");
 			result = false;
 		}
 
@@ -150,7 +150,7 @@ public class MemberProductionCounts extends AbstractTemplatedTestCase {
 		String sqlBrokenCAFEcounts  = "SELECT COUNT(*) FROM gene_member_hom_stats WHERE gene_trees = 0 AND gene_gain_loss_trees > 0 AND collection = '" + collection + "'";
 		Integer numBrokenCAFEcounts = srv.queryForDefaultObject(sqlBrokenCAFEcounts, Integer.class);
 		if (numBrokenCAFEcounts > 0) {
-			ReportManager.problem(this, dbre.getConnection(), "Found " + numBrokenCAFEcounts + " rows for the collection " + collection + " where there are gene_gain_loss_trees without gene_trees");
+			ReportManager.problem(this, con, "Found " + numBrokenCAFEcounts + " rows for the collection " + collection + " where there are gene_gain_loss_trees without gene_trees");
 			result = false;
 		}
 
