@@ -46,7 +46,7 @@ import org.ensembl.healthcheck.util.SqlUncheckedException;
 public abstract class AbstractComparaTestCase extends SingleDatabaseTestCase {
 
 	protected boolean checkMLSSIds(DatabaseRegistryEntry dbre, String[] method_link_species_set_ids) {
-		ReportManager.info(this, dbre.getConnection(), "No further testing done on the " . method_link_species_set_ids.length + " mlss_ids provided");
+		ReportManager.info(this, dbre.getConnection(), "No further testing done on the " + method_link_species_set_ids.length + " mlss_ids provided");
 		return true;
 	}
 

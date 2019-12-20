@@ -31,7 +31,7 @@ import org.ensembl.healthcheck.util.DBUtils;
  * relationships.
  */
 
-public class CheckSynteny extends SingleDatabaseTestCase {
+public class CheckSynteny extends AbstractComparaTestCase {
 
 	/**
 	 * Create an CheckSynteny that applies to a specific set of databases.
@@ -50,23 +50,20 @@ public class CheckSynteny extends SingleDatabaseTestCase {
 	 * 
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
+		return checkTableForMLSS(
+				dbre,
+				"type=\"SYNTENY\" OR class LIKE \"SyntenyRegion%\"",
+				"synteny_region"
+				);
+	}
+
+	public boolean checkMLSSIds(DatabaseRegistryEntry dbre, String[] method_link_species_set_ids) {
 
 		Connection con = dbre.getConnection();
 
-		if (!tableHasRows(con, "synteny_region")) {
-			ReportManager.problem(this, con, "NO ENTRIES in the synteny_region table");
-			return false;
-		} else if (!tableHasRows(con, "dnafrag_region")) {
-			ReportManager.problem(this, con, "NO ENTRIES in the dnafrag_region table");
-			return false;
-		} else if (!tableHasRows(con, "dnafrag")) {
-			ReportManager.problem(this, con, "NO ENTRIES in the dnafrag table");
-			return false;
-		} else {
 			boolean result = true;
 			result &= checkForSingles(con, "dnafrag_region", "synteny_region_id");
 			return result;
-		}
 	}
 
-} // CheckHomology
+} // CheckSynteny
