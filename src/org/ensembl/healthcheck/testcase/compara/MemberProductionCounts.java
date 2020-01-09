@@ -34,7 +34,7 @@ public class MemberProductionCounts extends AbstractComparaTestCase {
 			List<String> allCollectionNames = Arrays.asList("default");
 			result &= compareCollectionNames(dbre, allCollectionNames);
 
-			// The automatic detection doesn't allow homolgies in the absence of gene-trees
+			// The automatic detection doesn't allow homologies in the absence of gene-trees
 			boolean[] expectNonEmpty = {false, false, false, false, true, false};
 			result &= runComparison(dbre, "1", "(GRCh37)", expectNonEmpty);
 
