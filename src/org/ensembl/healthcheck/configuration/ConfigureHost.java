@@ -142,6 +142,31 @@ public interface ConfigureHost {
 
 	boolean isDriver2();
 
+	@Option(description = "Host for server 3 (support for multiple staging servers in Ensembl)")
+	String getHost3();
+
+	boolean isHost3();
+
+	@Option(description = "Port for server 3 (support for multiple staging servers in Ensembl)")
+	String getPort3();
+
+	boolean isPort3();
+
+	@Option(description = "User for server 3 (support for multiple staging servers in Ensembl)")
+	String getUser3();
+
+	boolean isUser3();
+
+	@Option(description = "Password for server 3 (support for multiple staging servers in Ensembl)")
+	String getPassword3();
+
+	boolean isPassword3();
+
+	@Option(description = "Driver for server 3 (support for multiple staging servers in Ensembl)")
+	String getDriver3();
+
+	boolean isDriver3();
+
 	@Option(longName = "release", description = "Release number which will apply once the data you're testing is released")
 	String getRelease();
 	boolean isRelease();
