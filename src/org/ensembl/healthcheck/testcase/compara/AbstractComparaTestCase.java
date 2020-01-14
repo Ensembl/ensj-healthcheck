@@ -199,7 +199,7 @@ public abstract class AbstractComparaTestCase extends SingleDatabaseTestCase {
 					String sql = "SELECT meta_value FROM meta WHERE meta_key = \"species.production_name\" AND species_id = " + species_id;
 					String production_name = DBUtils.getRowColumnValue(entry.getConnection(), sql);
 					speciesCoreMap.put(production_name, new Pair<DatabaseRegistryEntry,Integer>(entry,species_id));
-					ReportManager.info(this, comparaDbre.getConnection(), entry.toString() + " == " + production_name + " (" + species_id + ")");
+					//ReportManager.info(this, comparaDbre.getConnection(), entry.toString() + " == " + production_name + " (" + species_id + ")");
 				}
 				try {
 					entry.getConnection().close();
