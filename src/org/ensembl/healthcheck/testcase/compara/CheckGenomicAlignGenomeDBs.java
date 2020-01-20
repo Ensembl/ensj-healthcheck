@@ -53,39 +53,20 @@ public class CheckGenomicAlignGenomeDBs extends AbstractComparaTestCase {
 	 * 
 	 */
 	public boolean run(DatabaseRegistryEntry dbre) {
+		return checkTableForMLSS(
+				dbre,
+				"class LIKE \"GenomicAlign%\" AND type NOT LIKE \"CACTUS_HAL%\"",
+				"genomic_align_block"
+				);
+	}
+
+	public boolean checkMLSSIds(DatabaseRegistryEntry dbre, String[] method_link_species_set_ids) {
 
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
 
-		/**
-		 * Check have entries in the genomic_align table
-		 */
-		if (!tableHasRows(con, "genomic_align")) {
-			ReportManager.problem(this, con,
-					"No entries in the genomic_align table");
-			return result;
-		}
-		if (!tableHasRows(con, "genomic_align_block")) {
-			ReportManager.problem(this, con,
-					"No entries in the genomic_align_block table");
-			return result;
-		}
-		if (!tableHasRows(con, "method_link_species_set")) {
-			ReportManager.problem(this, con,
-					"No entries in the method_link_species_set table");
-			return result;
-		}
-		/**
-		 * Get all method_link_species_set_ids for genomic_align_blocks
-		 */
-		String[] method_link_species_set_ids = DBUtils
-				.getColumnValues(con,
-						"SELECT distinct(method_link_species_set_id) FROM genomic_align_block");
-
 		String ancestral_gdb_id = DBUtils.getRowColumnValue(con, "SELECT genome_db_id FROM genome_db WHERE name = \"ancestral_sequences\"");
-
-		if (method_link_species_set_ids.length > 0) {
 
 			for (String mlss_id : method_link_species_set_ids) {
 
@@ -136,7 +117,6 @@ public class CheckGenomicAlignGenomeDBs extends AbstractComparaTestCase {
 					result = false;
 				}
 			}
-		}
 
 		return result;
 	}

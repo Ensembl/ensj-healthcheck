@@ -57,19 +57,9 @@ public class CheckSyntenySanity extends SingleDatabaseTestCase {
 
 		Connection con = dbre.getConnection();
 
-		if (!tableHasRows(con, "synteny_region")) {
-			ReportManager.problem(this, con,
-					"NO ENTRIES in the synteny_region table");
-		} else if (!tableHasRows(con, "dnafrag_region")) {
-			ReportManager.problem(this, con,
-					"NO ENTRIES in the dnafrag_region table");
-		} else if (!tableHasRows(con, "dnafrag")) {
-			ReportManager.problem(this, con, "NO ENTRIES in the dnafrag table");
-		} else {
 			for (String this_mlss_id : get_all_method_link_species_set_ids(con)) {
 				result &= check_this_synteny(con, this_mlss_id);
 			}
-		}
 
 		return result;
 

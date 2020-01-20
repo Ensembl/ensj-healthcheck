@@ -59,6 +59,8 @@ command-line options through to the ConfigurableTestRunner class.
 
         [--driver2 value]                  : Driver for server 2 (support for multiple staging servers in Ensembl)
 
+        [--driver3 value]                  : Driver for server 3 (support for multiple staging servers in Ensembl)
+
         [--endSession value]               : Flag to run an empty testrunnerUsed to mark the end of a parallel run
 
         [--exclude_groups -G value...]     : Specify which groups of tests should not be run. Fully qualified class names can be used as well as their short names.
@@ -76,6 +78,8 @@ command-line options through to the ConfigurableTestRunner class.
         [--host1 value]                    : Host for server 1 (support for multiple staging servers in Ensembl)
 
         [--host2 value]                    : Host for server 2 (support for multiple staging servers in Ensembl)
+
+        [--host3 value]                    : Host for server 3 (support for multiple staging servers in Ensembl)
 
         [--ignore.previous.checks value]   : Parameter used only in org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionExonCoords, org.ensembl.healthcheck.testcase.generic.ComparePreviousVersionBase and org.ensembl.healthcheck.testcase.generic.GeneStatus
 
@@ -113,6 +117,8 @@ command-line options through to the ConfigurableTestRunner class.
 
         [--password2 value]                : Password for server 2 (support for multiple staging servers in Ensembl)
 
+        [--password3 value]                : Password for server 3 (support for multiple staging servers in Ensembl)
+
         [--perl value]                     : Parameter used only in org.ensembl.healthcheck.testcase.AbstractPerlBasedTestCase
 
         [--port -P value]                  : The port for the database server you wish to connect to.
@@ -120,6 +126,8 @@ command-line options through to the ConfigurableTestRunner class.
         [--port1 value]                    : Port for server 1 (support for multiple staging servers in Ensembl)
 
         [--port2 value]                    : Port for server 2 (support for multiple staging servers in Ensembl)
+
+        [--port3 value]                    : Port for server 3 (support for multiple staging servers in Ensembl)
 
         [--production.database value]      : The name of the Ensembl production database to use to retrieve division information. Assumed to be on the same server as the output databases.
 
@@ -160,6 +168,8 @@ command-line options through to the ConfigurableTestRunner class.
         [--user1 value]                    : User for server 1 (support for multiple staging servers in Ensembl)
 
         [--user2 value]                    : User for server 2 (support for multiple staging servers in Ensembl)
+
+        [--user3 value]                    : User for server 3 (support for multiple staging servers in Ensembl)
 
         [--variation_schema.file value]    : Parameter used only in org.ensembl.healthcheck.testcase.variation.CompareVariationSchema
 

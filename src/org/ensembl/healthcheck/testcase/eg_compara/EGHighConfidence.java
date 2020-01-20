@@ -17,28 +17,32 @@
 
 package org.ensembl.healthcheck.testcase.eg_compara;
 
+import java.sql.Connection;
+
 import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.DatabaseType;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
-import org.ensembl.healthcheck.testcase.AbstractTemplatedTestCase;
-import org.ensembl.healthcheck.util.SqlTemplate;
+import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
-public class EGHighConfidence extends AbstractTemplatedTestCase {
+public class EGHighConfidence extends SingleDatabaseTestCase {
 
 	public EGHighConfidence() {
-		setTeamResponsible(Team.ENSEMBL_GENOMES);
+		setTeamResponsible(Team.COMPARA);
 		appliesToType(DatabaseType.COMPARA);
 		setDescription("Checks whether HighConfidenceOrthologs pipeline has been run");
 	}
 
-	@Override
-	protected boolean runTest(DatabaseRegistryEntry dbre) {
-		SqlTemplate srv = getSqlTemplate(dbre);
+	public boolean run(DatabaseRegistryEntry dbre) {
+		Connection con = dbre.getConnection();
 		boolean result = true;
-		if(srv.queryForDefaultObject("SELECT COUNT(*) FROM homology WHERE is_high_confidence IS NOT NULL", Integer.class)==0) {
-			ReportManager.problem(this, dbre.getConnection(), "No homologies have been annotated with a confidence level");
-			result = false;
+		int numOrthologyMLSS = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM method_link_species_set JOIN method_link USING (method_link_id) WHERE type = 'ENSEMBL_ORTHOLOGUES'");
+		if (numOrthologyMLSS > 0) {
+			if (DBUtils.getRowCount(con, "SELECT COUNT(*) FROM homology WHERE description LIKE \"ortholog%\" AND is_high_confidence IS NOT NULL") == 0) {
+				ReportManager.problem(this, dbre.getConnection(), "No orthologies have been annotated with a confidence level");
+				result = false;
+			}
 		}
 		return result;
 	}
