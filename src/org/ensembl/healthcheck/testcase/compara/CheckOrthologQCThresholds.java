@@ -43,14 +43,20 @@ public class CheckOrthologQCThresholds extends SingleDatabaseTestCase {
 
 		boolean result = true;
 
-		int numOrthologyMLSS = DBUtils.getRowCount(con, "SELECT COUNT(*) FROM method_link_species_set JOIN method_link USING (method_link_id) WHERE type = 'ENSEMBL_ORTHOLOGUES'");
-		if (numOrthologyMLSS > 0) {
+		boolean hasGOCScore = DBUtils.getColumnValues(con, "SELECT 1 FROM homology WHERE goc_score IS NOT NULL LIMIT 1").length > 0;
+		if (hasGOCScore) {
 			result &= checkCountIsNonZero(con, "method_link_species_set_attr", "goc_quality_threshold IS NOT NULL");
-			result &= checkCountIsNonZero(con, "method_link_species_set_attr", "wga_quality_threshold IS NOT NULL");
 		} else {
 			result &= checkCountIsZero(con, "method_link_species_set_attr", "goc_quality_threshold IS NOT NULL");
+		}
+
+		boolean hasWGAScore = DBUtils.getColumnValues(con, "SELECT 1 FROM homology WHERE wga_coverage IS NOT NULL LIMIT 1").length > 0;
+		if (hasWGAScore) {
+			result &= checkCountIsNonZero(con, "method_link_species_set_attr", "wga_quality_threshold IS NOT NULL");
+		} else {
 			result &= checkCountIsZero(con, "method_link_species_set_attr", "wga_quality_threshold IS NOT NULL");
 		}
+
 		return result;
 	}
 
