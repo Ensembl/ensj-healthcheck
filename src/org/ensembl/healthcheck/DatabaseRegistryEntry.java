@@ -209,6 +209,9 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 	// ensembl_ancestral_57
 	protected final static Pattern EA_DB = Pattern
 			.compile("^(ensembl)_(ancestral)_([0-9]+)");
+	// ensembl_ancestral_plants_47_100
+	protected final static Pattern EGA_DB = Pattern
+			.compile("^(ensembl)_(ancestral)_[a-z_]+_[0-9]+_([0-9]+)");
 	// username_ensembl_ancestral_57
 	protected final static Pattern UA_DB = Pattern
 			.compile("^[^_]+_(ensembl)_(ancestral)_([0-9]+)");
@@ -239,7 +242,7 @@ public class DatabaseRegistryEntry implements Comparable<DatabaseRegistryEntry> 
 			.compile("^(mysql|information_schema)");
 
 	protected final static Pattern[] patterns = { EC_DB, UA_DB, UC_DB, UCM_DB,
-			EA_DB, EGC_DB, EG_DB, E_DB, PE_DB, EM_DB, EE_DB, EEL_DB, U_DB,
+			EA_DB, EGA_DB, EGC_DB, EG_DB, E_DB, PE_DB, EM_DB, EE_DB, EEL_DB, U_DB,
 			V_DB, MYSQL_DB, BLAST_DB, UD_DB, TAX_DB, EW_DB, HELP_DB, GB_DB, MASTER_DB };
 	/**
 	 * Utility for building a {@link DatabaseInfo} object given a name
