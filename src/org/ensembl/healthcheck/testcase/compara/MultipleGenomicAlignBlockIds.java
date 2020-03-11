@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2019] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2020] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import org.ensembl.healthcheck.util.DBUtils;
  * relationships.
  */
 
-public class MultipleGenomicAlignBlockIds extends SingleDatabaseTestCase {
+public class MultipleGenomicAlignBlockIds extends AbstractComparaTestCase {
 
 	public MultipleGenomicAlignBlockIds() {
 		setDescription("Check that every genomic_align_block_id is linked to more than one single genomic_align_id.");
@@ -41,24 +41,23 @@ public class MultipleGenomicAlignBlockIds extends SingleDatabaseTestCase {
 	}
 
 	public boolean run(DatabaseRegistryEntry dbre) {
+		return checkTableForMLSS(
+				dbre,
+				// The test does not apply to EPO alignments because they store ancestral sequences in a different genomic_align_block_id
+				"class LIKE 'GenomicAlign%' AND class != 'GenomicAlignTree.ancestral_alignment'",
+				"genomic_align"
+				);
+	}
+
+	public boolean checkMLSSIds(DatabaseRegistryEntry dbre, String[] method_link_species_set_ids) {
 
 		boolean result = true;
 
 		Connection con = dbre.getConnection();
 
-		if (tableHasRows(con, "genomic_align")) {
-
-			// The test does not apply to EPO alignments because they store
-			// ancestral sequences in a different genomic_align_block_id
-			String sqlNonEPOmlss_ids = "SELECT method_link_species_set_id FROM method_link_species_set JOIN method_link USING (method_link_id) WHERE class LIKE 'GenomicAlign%' AND class != 'GenomicAlignTree.ancestral_alignment'";
-			String[] nonEPOmlss_ids = DBUtils.getColumnValues(con, sqlNonEPOmlss_ids);
-			for (String mlss_id : nonEPOmlss_ids) {
+			for (String mlss_id : method_link_species_set_ids) {
 				result &= checkForSinglesWithConstraint(con, "genomic_align", "genomic_align_block_id", "WHERE method_link_species_set_id = " + mlss_id);
 			}
-
-		} else {
-			ReportManager.correct(this, con, "NO ENTRIES in genomic_align table, so nothing to test IGNORED");
-		}
 
 		return result;
 

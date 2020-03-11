@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2019] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2020] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * An EnsEMBL Healthcheck test case to check for "threshold_on_ds" in the
@@ -47,8 +48,13 @@ public class MLSSTagThresholdDs extends SingleDatabaseTestCase {
 		}
 
 		boolean result = true;
-		result &= checkCountIsNonZero(con, "method_link_species_set_attr", "threshold_on_ds IS NOT NULL");
-		result &= checkCountIsZero(con, "method_link_species_set_attr", "(threshold_on_ds IS NOT NULL) AND (threshold_on_ds NOT IN (1,2))");
+		int dndsCount = Integer.valueOf(DBUtils.getRowColumnValue(con, "SELECT COUNT(*) FROM (SELECT ds FROM homology WHERE ds IS NOT NULL LIMIT 1) _t")).intValue();
+		if (dndsCount > 0) {
+			result &= checkCountIsNonZero(con, "method_link_species_set_attr", "threshold_on_ds IS NOT NULL");
+			result &= checkCountIsZero(con, "method_link_species_set_attr", "(threshold_on_ds IS NOT NULL) AND (threshold_on_ds NOT IN (1,2))");
+		} else {
+			result &= checkCountIsZero(con, "method_link_species_set_attr", "threshold_on_ds IS NOT NULL");
+		}
 		return result;
 	}
 

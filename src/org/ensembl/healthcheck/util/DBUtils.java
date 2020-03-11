@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2019] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2020] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -990,6 +990,7 @@ public final class DBUtils {
             checkAndAddDatabaseServer(mainDatabaseServers, "host", "port", "user", "password", "driver");
             checkAndAddDatabaseServer(mainDatabaseServers, "host1", "port1", "user1", "password1", "driver1");
             checkAndAddDatabaseServer(mainDatabaseServers, "host2", "port2", "user2", "password2", "driver2");
+            checkAndAddDatabaseServer(mainDatabaseServers, "host3", "port3", "user3", "password3", "driver3");
         }
 
         logger.fine("Number of main database servers found: " + mainDatabaseServers.size());
@@ -1052,6 +1053,19 @@ public final class DBUtils {
                 checkAndAddDatabaseServerConf(mainDatabaseServers, hostConfiguration.getHost2(),
                         hostConfiguration.getPort2(), hostConfiguration.getUser2(), password,
                         hostConfiguration.getDriver2());
+            }
+
+            if (hostConfiguration.isHost3() && hostConfiguration.isPort3() && hostConfiguration.isUser3()) {
+
+                String password = null;
+
+                if (hostConfiguration.isPassword3()) {
+                    password = hostConfiguration.getPassword3();
+                }
+
+                checkAndAddDatabaseServerConf(mainDatabaseServers, hostConfiguration.getHost3(),
+                        hostConfiguration.getPort3(), hostConfiguration.getUser3(), password,
+                        hostConfiguration.getDriver3());
             }
         }
         return mainDatabaseServers;

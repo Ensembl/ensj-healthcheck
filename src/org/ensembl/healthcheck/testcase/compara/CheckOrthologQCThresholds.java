@@ -1,6 +1,6 @@
 /*
  * Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
- * Copyright [2016-2019] EMBL-European Bioinformatics Institute
+ * Copyright [2016-2020] EMBL-European Bioinformatics Institute
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.ensembl.healthcheck.DatabaseRegistryEntry;
 import org.ensembl.healthcheck.ReportManager;
 import org.ensembl.healthcheck.Team;
 import org.ensembl.healthcheck.testcase.SingleDatabaseTestCase;
+import org.ensembl.healthcheck.util.DBUtils;
 
 /**
  * An EnsEMBL Healthcheck test case that checks that
@@ -41,8 +42,21 @@ public class CheckOrthologQCThresholds extends SingleDatabaseTestCase {
 		Connection con = dbre.getConnection();
 
 		boolean result = true;
-		result &= checkCountIsNonZero(con, "method_link_species_set_attr", "goc_quality_threshold IS NOT NULL");
-		result &= checkCountIsNonZero(con, "method_link_species_set_attr", "wga_quality_threshold IS NOT NULL");
+
+		boolean hasGOCScore = DBUtils.getColumnValues(con, "SELECT 1 FROM homology WHERE goc_score IS NOT NULL LIMIT 1").length > 0;
+		if (hasGOCScore) {
+			result &= checkCountIsNonZero(con, "method_link_species_set_attr", "goc_quality_threshold IS NOT NULL");
+		} else {
+			result &= checkCountIsZero(con, "method_link_species_set_attr", "goc_quality_threshold IS NOT NULL");
+		}
+
+		boolean hasWGAScore = DBUtils.getColumnValues(con, "SELECT 1 FROM homology WHERE wga_coverage IS NOT NULL LIMIT 1").length > 0;
+		if (hasWGAScore) {
+			result &= checkCountIsNonZero(con, "method_link_species_set_attr", "wga_quality_threshold IS NOT NULL");
+		} else {
+			result &= checkCountIsZero(con, "method_link_species_set_attr", "wga_quality_threshold IS NOT NULL");
+		}
+
 		return result;
 	}
 
