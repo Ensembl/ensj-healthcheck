@@ -40,8 +40,8 @@ public class NoDataOnGenomeComponents extends AbstractComparaTestCase {
 
 		boolean result = true;
 
-		// The only MLSS that is allowed to have component GenomeDBs is protein-trees (401)
-		result &= checkCountIsZero(con, "genome_db JOIN species_set USING (genome_db_id) JOIN method_link_species_set USING (species_set_id)", "genome_component IS NOT NULL AND method_link_id != 401");
+		// The only MLSSs that are allowed to have component GenomeDBs are protein-trees (401) and species-tree (600)
+		result &= checkCountIsZero(con, "genome_db JOIN species_set USING (genome_db_id) JOIN method_link_species_set USING (species_set_id)", "genome_component IS NOT NULL AND method_link_id NOT IN (401, 600)");
 
 		// All the alignments, syntenies, genes etc should be attached to the principal GenomeDBs
 		String[] tables = {"genomic_align", "dnafrag_region", "constrained_element", "gene_member", "seq_member"};
