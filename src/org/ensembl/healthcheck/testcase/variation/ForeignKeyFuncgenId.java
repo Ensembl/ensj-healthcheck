@@ -71,7 +71,7 @@ public class ForeignKeyFuncgenId extends MultiDatabaseTestCase {
             if (!variationName.matches("master.*")) {
                 try {
                     // Only for human and mouse
-                    if (dbvar.getSpecies() == DatabaseRegistryEntry.HOMO_SAPIENS || dbvar.getSpecies() == DatabaseRegistryEntry.MUS_MUSCULUS) {
+                    if (dbvar.getSpecies().equals(DatabaseRegistryEntry.HOMO_SAPIENS) || dbvar.getSpecies().equals(DatabaseRegistryEntry.MUS_MUSCULUS)) {
                         String funcgenName = variationName.replaceAll("variation", "funcgen");
 
                         DatabaseRegistryEntry dbrfuncgen = allDBR.getByExactName(funcgenName);
